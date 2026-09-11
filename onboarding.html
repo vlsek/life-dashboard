@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("site_theme")||"dark";document.documentElement.className="theme-"+t;}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title data-i18n="onb_title">Расскажи о себе</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="centered-body">
+<main class="auth-main" style="max-width:440px;">
+    <h1 data-i18n="onb_h1">👋 Пара вопросов для старта</h1>
+    <p class="dim" data-i18n="onb_intro">Это поможет сразу подобрать метрики под твою цель. Можно будет поменять что угодно позже.</p>
+    <div class="card" id="form-card" data-i18n="loading_ellipsis">Загрузка…</div>
+</main>
+<script src="i18n.js"></script>
+<script src="theme.js"></script>
+<script src="config.js"></script>
+<script src="onboarding.js"></script>
+</body>
+</html>

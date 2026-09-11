@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("site_theme")||"dark";document.documentElement.className="theme-"+t;}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title data-i18n="cal_title">Календарь</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<main>
+    <h1 data-i18n="cal_h1">🗓️ Календарь</h1>
+    <p class="dim" data-i18n="cal_intro">Кликни на день, чтобы записать план — сразу попадёт в "Что полезного сделал"
+    этого дня на дашборде, когда он наступит (или уже отмечено, если день прошёл).</p>
+
+    <div class="day-nav">
+        <button class="secondary" id="prev-month" data-i18n="cal_prev_month">← Пред.</button>
+        <strong id="month-label"></strong>
+        <button class="secondary" id="today-month" data-i18n="today_btn">Сегодня</button>
+        <button class="secondary" id="next-month" data-i18n="cal_next_month">След. →</button>
+    </div>
+
+    <div id="calendar-grid" class="calendar-grid" data-i18n="loading_ellipsis">Загрузка…</div>
+</main>
+<script src="i18n.js"></script>
+<script src="theme.js"></script>
+<script src="config.js"></script>
+<script src="calendar.js"></script>
+</body>
+</html>

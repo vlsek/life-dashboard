@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("site_theme")||"dark";document.documentElement.className="theme-"+t;}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title data-i18n="goals_title">Цели</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<main>
+    <h1 data-i18n="goals_h1">🎯 Долгосрочные цели</h1>
+    <button id="add-goal-btn" data-i18n="goals_add_btn">➕ Добавить цель</button>
+    <div id="goals-active"></div>
+    <h2 data-i18n="goals_done_h2">✅ Выполненные цели</h2>
+    <div id="goals-done"></div>
+</main>
+<script src="i18n.js"></script>
+<script src="theme.js"></script>
+<script src="config.js"></script>
+<script src="goals.js"></script>
+</body>
+</html>

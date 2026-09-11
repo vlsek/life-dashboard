@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("site_theme")||"dark";document.documentElement.className="theme-"+t;}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title data-i18n="acc_title">Аккаунт</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<main>
+    <h1 data-i18n="acc_h1">👤 Аккаунт</h1>
+
+    <div class="card" style="max-width:420px;">
+        <h3 style="margin-top:0;" data-i18n="acc_change_password_h3">🔑 Сменить пароль</h3>
+        <label>
+            <span data-i18n="acc_new_password_label">Новый пароль</span>
+            <input type="password" id="new-password" style="width:100%; margin-top:4px;">
+        </label>
+        <label style="display:block; margin-top:12px;">
+            <span data-i18n="acc_confirm_password_label">Повтори новый пароль</span>
+            <input type="password" id="confirm-password" style="width:100%; margin-top:4px;">
+        </label>
+        <button id="change-password-btn" style="margin-top:16px;" data-i18n="acc_change_password_btn">Сменить пароль</button>
+        <p id="password-msg" class="dim" style="margin-top:10px; font-size:0.9em;"></p>
+    </div>
+</main>
+<script src="i18n.js"></script>
+<script src="theme.js"></script>
+<script src="config.js"></script>
+<script src="account.js"></script>
+</body>
+</html>

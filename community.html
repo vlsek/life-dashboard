@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("site_theme")||"dark";document.documentElement.className="theme-"+t;}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title data-i18n="comm_title">Сообщество</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<main>
+    <h1 data-i18n="comm_h1">🏆 Сообщество</h1>
+
+    <div class="card">
+        <p class="dim" style="margin:0;" data-i18n="comm_privacy_1">Другим видно: твоё публичное имя (задаётся ниже), сумму баллов, streak,
+        и заметку "что сделал сегодня" — если сам её написал.</p>
+        <p class="dim" style="margin:8px 0 0;" data-i18n-html="comm_privacy_2">В разделе "Сравнение по активностям" ниже — это НЕ настройка, это уже
+        видно всем по умолчанию: суммарное число по конкретной активности (например, сколько всего отжиманий),
+        если у тебя есть метрика, привязанная к этой категории. Приватны только твои <em>сырые данные по дням</em>
+        (например, ровно сколько мл воды ты выпил именно во вторник) — их не видит никто, кроме тебя.</p>
+    </div>
+
+    <h2 data-i18n="comm_friends_h2">🤝 Друзья</h2>
+    <div class="card" id="friends-card" data-i18n="loading_ellipsis">Загрузка…</div>
+
+    <h2 data-i18n="comm_leaderboard_h2">🥇 Лидерборд (всё время)</h2>
+    <div class="day-nav">
+        <button id="scope-everyone" class="secondary" data-i18n="comm_scope_everyone">Все</button>
+        <button id="scope-friends" class="secondary" data-i18n="comm_scope_friends">Только друзья</button>
+    </div>
+    <div class="card" id="leaderboard-card" data-i18n="loading_ellipsis">Загрузка…</div>
+
+    <h2 data-i18n="comm_category_h2">📊 Сравнение по активности</h2>
+    <p class="dim" data-i18n="comm_category_intro">Например «у кого больше баллов по отжиманиям» — сравнивает только тех, у кого метрика привязана к той же категории.</p>
+    <select id="category-select" style="margin-bottom:12px;"></select>
+    <div class="card" id="category-card" data-i18n="comm_pick_category_above">Выбери категорию выше</div>
+    <div class="card" id="category-chart-card" style="margin-top:10px;"></div>
+
+    <h2 data-i18n="comm_today_h2">📝 Что сделали сегодня</h2>
+    <div class="card" id="today-card" data-i18n="loading_ellipsis">Загрузка…</div>
+</main>
+<script src="i18n.js"></script>
+<script src="theme.js"></script>
+<script src="config.js"></script>
+<script src="community.js"></script>
+</body>
+</html>

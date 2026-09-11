@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("site_theme")||"dark";document.documentElement.className="theme-"+t;}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title data-i18n="skills_title">Навыки</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<main>
+    <h1 data-i18n="skills_h1">🥋 Навыки</h1>
+    <button id="add-skill-btn" data-i18n="skills_add_btn">➕ Добавить навык</button>
+    <h3 data-i18n="skills_suggestions_h3">💡 Быстрые идеи</h3>
+    <div class="card" id="suggestions-card" data-i18n="loading_ellipsis">Загрузка…</div>
+    <h3 data-i18n="skills_active_h3">В процессе</h3>
+    <div id="skills-active"></div>
+    <h2 data-i18n="skills_mastered_h2">✅ Освоенные навыки</h2>
+    <div id="skills-done"></div>
+
+    <h2 data-i18n="skills_books_h2">📚 Книги</h2>
+    <button id="add-book-btn" data-i18n="skills_add_book_btn">➕ Добавить книгу</button>
+    <h3 data-i18n="skills_books_to_read_h3">Хочу прочитать</h3>
+    <div id="books-active"></div>
+    <h3 data-i18n="skills_books_done_h3">✅ Прочитано</h3>
+    <div id="books-done"></div>
+</main>
+<script src="i18n.js"></script>
+<script src="theme.js"></script>
+<script src="config.js"></script>
+<script src="skills.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("site_theme")||"dark";document.documentElement.className="theme-"+t;}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>English</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<main>
+    <h1>🇬🇧 English</h1>
+    <p class="dim" data-i18n="eng_intro">Словарь новых слов — добавляй, что встретил, отмечай, когда выучил.</p>
+
+    <div class="card" id="stats-card" data-i18n="loading_ellipsis">Загрузка…</div>
+
+    <button id="add-word-btn" data-i18n="eng_add_word_btn">➕ Добавить слово</button>
+
+    <h3 data-i18n="eng_learning_h3">📖 Учу</h3>
+    <div id="words-active"></div>
+    <h2 data-i18n="eng_learned_h2">✅ Выучено</h2>
+    <div id="words-done"></div>
+</main>
+<script src="i18n.js"></script>
+<script src="theme.js"></script>
+<script src="config.js"></script>
+<script src="english.js"></script>
+</body>
+</html>

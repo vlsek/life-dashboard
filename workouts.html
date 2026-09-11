@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("site_theme")||"dark";document.documentElement.className="theme-"+t;}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title data-i18n="workouts_title">Тренировки</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<main>
+    <h1 data-i18n="workouts_h1">🏋️ Тренировки</h1>
+    <button id="add-exercise-btn" data-i18n="workouts_add_exercise_btn">➕ Добавить упражнение</button>
+    <button id="open-templates-btn" class="secondary" data-i18n="workouts_templates_btn">📋 Типовые программы</button>
+    <div class="card" id="overview-card" style="margin:14px 0;"></div>
+    <div id="exercises-list"></div>
+</main>
+<script src="i18n.js"></script>
+<script src="theme.js"></script>
+<script src="config.js"></script>
+<script src="workouts.js"></script>
+</body>
+</html>
