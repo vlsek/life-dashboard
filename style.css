@@ -98,6 +98,38 @@ body {
     font-size: 1em;
 }
 
+.quick-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.quick-nav::-webkit-scrollbar { display: none; }
+.quick-nav-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    font-size: 1.15em;
+    text-decoration: none;
+    opacity: 0.55;
+    transition: opacity 0.15s, background 0.15s;
+}
+.quick-nav-icon.home {
+    width: 40px;
+    height: 40px;
+    font-size: 1.4em;
+}
+.quick-nav-icon:hover { opacity: 0.85; background: var(--bg); }
+.quick-nav-icon.active {
+    opacity: 1;
+    background: var(--accent);
+}
+
 /* ---- Выезжающий сайдбар ---- */
 .sidebar-backdrop {
     display: none;
@@ -183,7 +215,12 @@ body {
     color: var(--text-dim);
     opacity: 0.6;
     text-align: center;
+    background: transparent;
+    border: none;
+    width: 100%;
+    cursor: pointer;
 }
+.sidebar-version:hover { opacity: 1; }
 
 main {
     max-width: 900px;
@@ -196,18 +233,21 @@ h1 { font-size: 1.6em; margin-bottom: 6px; }
 .dash-header-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    gap: 6px;
     margin-bottom: 8px;
 }
 .dash-header-row h1 { margin-bottom: 0; }
 .icon-btn {
-    flex-shrink: 0;
-    padding: 6px 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    padding: 2px 6px;
     font-size: 1.15em;
     line-height: 1;
     min-height: auto;
+    cursor: pointer;
 }
+.icon-btn:hover { color: var(--text); }
 h2 { font-size: 1.2em; margin-top: 32px; margin-bottom: 12px; border-left: 4px solid var(--accent); padding-left: 10px; }
 h3 { font-size: 1.05em; margin-top: 20px; opacity: 0.9; }
 

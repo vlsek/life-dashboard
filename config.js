@@ -5,7 +5,18 @@ const SUPABASE_ANON_KEY = "sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SITE_VERSION = "0.15";
+const SITE_VERSION = "0.16";
+
+// ==== История обновлений — короткая заметка на каждую версию, показывается по клику
+// на номер версии в сайдбаре. Добавлять новую запись сверху при каждом бампе версии. ====
+const CHANGELOG = [
+    { version: "0.16", date: "2026-09-17", changes: [
+        "Иконка ⚙️ вместо кнопки «Настроить дашборд» — просто рядом с заголовком, без фона",
+        "Смена email в разделе «Аккаунт»",
+        "Быстрая навигация эмодзи-иконками в верхней строке (🏠 — на главную, крупнее остальных)",
+        "История обновлений по клику на номер версии в сайдбаре",
+    ]},
+];
 
 // Возвращает текущую сессию или null
 async function getSession() {
@@ -483,18 +494,18 @@ function renderNav(active, userEmail) {
     document.querySelectorAll(".topbar, .sidebar, .sidebar-backdrop").forEach(el => el.remove());
 
     const pages = [
-        { href: "dashboard.html", key: "dashboard", i18n: "nav_dashboard" },
-        { href: "goals.html", key: "goals", i18n: "nav_goals" },
-        { href: "skills.html", key: "skills", i18n: "nav_skills" },
-        { href: "workouts.html", key: "workouts", i18n: "nav_workouts" },
-        { href: "challenges.html", key: "challenges", i18n: "nav_challenges" },
-        { href: "english.html", key: "english", i18n: "nav_english" },
-        { href: "calendar.html", key: "calendar", i18n: "nav_calendar" },
-        { href: "shop.html", key: "shop", i18n: "nav_shop" },
-        { href: "community.html", key: "community", i18n: "nav_community" },
+        { href: "dashboard.html", key: "dashboard", i18n: "nav_dashboard", icon: "🏠", home: true },
+        { href: "goals.html", key: "goals", i18n: "nav_goals", icon: "🎯" },
+        { href: "skills.html", key: "skills", i18n: "nav_skills", icon: "🥋" },
+        { href: "workouts.html", key: "workouts", i18n: "nav_workouts", icon: "🏋️" },
+        { href: "challenges.html", key: "challenges", i18n: "nav_challenges", icon: "🏁" },
+        { href: "english.html", key: "english", i18n: "nav_english", icon: "🇬🇧" },
+        { href: "calendar.html", key: "calendar", i18n: "nav_calendar", icon: "🗓️" },
+        { href: "shop.html", key: "shop", i18n: "nav_shop", icon: "🛍️" },
+        { href: "community.html", key: "community", i18n: "nav_community", icon: "🏆" },
     ];
 
-    // ---- Тонкая верхняя полоса: только гамбургер + текущая страница ----
+    // ---- Тонкая верхняя полоса: гамбургер + быстрая эмодзи-навигация ----
     const topbar = document.createElement("div");
     topbar.className = "topbar";
 
@@ -504,11 +515,17 @@ function renderNav(active, userEmail) {
     hamburger.innerHTML = "☰";
     topbar.appendChild(hamburger);
 
-    const currentTitle = document.createElement("span");
-    currentTitle.className = "topbar-title";
-    const activePage = pages.find(p => p.key === active);
-    currentTitle.textContent = activePage ? t(activePage.i18n) : (active === "account" ? t("nav_account_title") : "");
-    topbar.appendChild(currentTitle);
+    const quickNav = document.createElement("div");
+    quickNav.className = "quick-nav";
+    for (const p of pages) {
+        const a = document.createElement("a");
+        a.href = p.href;
+        a.textContent = p.icon;
+        a.title = t(p.i18n);
+        a.className = "quick-nav-icon" + (p.home ? " home" : "") + (p.key === active ? " active" : "");
+        quickNav.appendChild(a);
+    }
+    topbar.appendChild(quickNav);
 
     document.body.prepend(topbar);
 
@@ -567,9 +584,10 @@ function renderNav(active, userEmail) {
         sidebar.appendChild(logoutBtn);
     }
 
-    const version = document.createElement("div");
+    const version = document.createElement("button");
     version.className = "sidebar-version";
     version.textContent = "v" + SITE_VERSION;
+    version.onclick = showChangelogModal;
     sidebar.appendChild(version);
 
     document.body.appendChild(backdrop);
@@ -580,6 +598,49 @@ function renderNav(active, userEmail) {
     hamburger.onclick = openSidebar;
     backdrop.onclick = closeSidebar;
     sidebar.querySelectorAll("a").forEach(a => a.addEventListener("click", closeSidebar));
+}
+
+// ---- Модалка "Что нового" — по клику на версию в сайдбаре ----
+function showChangelogModal() {
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.innerHTML = `<h3>${t("changelog_title")}</h3>`;
+
+    if (CHANGELOG.length === 0) {
+        const p = document.createElement("p");
+        p.className = "dim";
+        p.textContent = t("changelog_empty");
+        modal.appendChild(p);
+    }
+    for (const entry of CHANGELOG) {
+        const h4 = document.createElement("h4");
+        h4.style.cssText = "margin-top:16px; margin-bottom:6px;";
+        h4.textContent = "v" + entry.version + (entry.date ? " — " + entry.date : "");
+        modal.appendChild(h4);
+        const ul = document.createElement("ul");
+        ul.style.cssText = "margin:0; padding-left:20px; font-size:0.9em; color:var(--text-dim);";
+        for (const c of entry.changes) {
+            const li = document.createElement("li");
+            li.textContent = c;
+            ul.appendChild(li);
+        }
+        modal.appendChild(ul);
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "modal-actions";
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "secondary";
+    closeBtn.textContent = t("close");
+    closeBtn.onclick = () => backdrop.remove();
+    actions.appendChild(closeBtn);
+    modal.appendChild(actions);
+
+    backdrop.appendChild(modal);
+    backdrop.onclick = (e) => { if (e.target === backdrop) backdrop.remove(); };
+    document.body.appendChild(backdrop);
 }
 
 // ---- Модальные окна (переиспользуются везде) ----
