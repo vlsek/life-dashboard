@@ -68,12 +68,13 @@ body {
     padding-bottom: 60px;
 }
 
-/* ---- Тонкая верхняя полоса (гамбургер + название страницы) ---- */
+/* ---- Тонкая верхняя полоса (гамбургер + быстрая навигация) ---- */
 .topbar {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 10px 16px;
     background: var(--bg-card);
     border-bottom: 1px solid var(--border);
     position: sticky;
@@ -122,32 +123,11 @@ body {
     background: var(--accent);
 }
 
-.quick-nav-toggle {
-    flex-shrink: 0;
-    background: transparent;
-    border: none;
-    color: var(--text-dim);
-    font-size: 1.3em;
-    line-height: 1;
-    padding: 4px 6px;
-    cursor: pointer;
-    border-radius: 8px;
-}
-.quick-nav-toggle:hover { color: var(--text); background: var(--bg); }
-.quick-nav-toggle.open { color: var(--text); }
-
-.quick-nav-extra {
+.quick-nav {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 4px;
-    max-width: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-    transition: max-width 0.25s ease;
-}
-.quick-nav-extra::-webkit-scrollbar { display: none; }
-.quick-nav-extra.open {
-    max-width: 220px;
 }
 
 /* ---- Выезжающий сайдбар ---- */

@@ -5,11 +5,15 @@ const SUPABASE_ANON_KEY = "sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SITE_VERSION = "0.18";
+const SITE_VERSION = "0.19";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.19", date: "2026-09-17", changes: [
+        "Верхняя навигация больше не сворачивается — все иконки разделов сразу видны, переносятся на вторую строку при нехватке места вместо скролла",
+        "Почистили README в репозитории и убрали служебный файл для переноса контекста между чатами",
+    ]},
     { version: "0.18", date: "2026-09-17", changes: [
         "Кнопка быстрой навигации теперь «»»» вместо многоточия",
         "Полный проход по переводу сайта: переключатель темы, сообщения входа/регистрации, единица веса по умолчанию в тренировках — теперь на двух языках",
@@ -26,6 +30,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.19", date: "2026-09-17", changes: [
+        "Top navigation no longer collapses — all section icons are visible right away, wrapping to a second line instead of scrolling when space is tight",
+        "Cleaned up the repo README and removed the internal chat-handoff file",
+    ]},
     { version: "0.18", date: "2026-09-17", changes: [
         "Quick-nav toggle button is now \"»»»\" instead of an ellipsis",
         "Full pass on site translation: theme switcher, login/signup messages, default weight unit in workouts — now bilingual",
@@ -548,14 +556,8 @@ function renderNav(active, userEmail) {
     homeIconLink.className = "quick-nav-icon home" + (homePage.key === active ? " active" : "");
     topbar.appendChild(homeIconLink);
 
-    const moreToggle = document.createElement("button");
-    moreToggle.className = "quick-nav-toggle";
-    moreToggle.innerHTML = "&gt;&gt;&gt;";
-    moreToggle.setAttribute("aria-label", t("nav_more"));
-    topbar.appendChild(moreToggle);
-
-    const quickNavExtra = document.createElement("div");
-    quickNavExtra.className = "quick-nav-extra";
+    const quickNav = document.createElement("div");
+    quickNav.className = "quick-nav";
     for (const p of pages) {
         if (p.home) continue;
         const a = document.createElement("a");
@@ -563,21 +565,9 @@ function renderNav(active, userEmail) {
         a.textContent = p.icon;
         a.title = t(p.i18n);
         a.className = "quick-nav-icon" + (p.key === active ? " active" : "");
-        quickNavExtra.appendChild(a);
+        quickNav.appendChild(a);
     }
-    topbar.appendChild(quickNavExtra);
-
-    moreToggle.onclick = (e) => {
-        e.stopPropagation();
-        const isOpen = quickNavExtra.classList.toggle("open");
-        moreToggle.classList.toggle("open", isOpen);
-    };
-    document.addEventListener("click", (e) => {
-        if (quickNavExtra.classList.contains("open") && !quickNavExtra.contains(e.target) && e.target !== moreToggle) {
-            quickNavExtra.classList.remove("open");
-            moreToggle.classList.remove("open");
-        }
-    });
+    topbar.appendChild(quickNav);
 
     document.body.prepend(topbar);
 
