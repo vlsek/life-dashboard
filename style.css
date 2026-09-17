@@ -98,14 +98,6 @@ body {
     font-size: 1em;
 }
 
-.quick-nav {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    overflow-x: auto;
-    scrollbar-width: none;
-}
-.quick-nav::-webkit-scrollbar { display: none; }
 .quick-nav-icon {
     flex-shrink: 0;
     display: flex;
@@ -128,6 +120,34 @@ body {
 .quick-nav-icon.active {
     opacity: 1;
     background: var(--accent);
+}
+
+.quick-nav-toggle {
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.3em;
+    line-height: 1;
+    padding: 4px 6px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+.quick-nav-toggle:hover { color: var(--text); background: var(--bg); }
+.quick-nav-toggle.open { color: var(--text); }
+
+.quick-nav-extra {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    transition: max-width 0.25s ease;
+}
+.quick-nav-extra::-webkit-scrollbar { display: none; }
+.quick-nav-extra.open {
+    max-width: 220px;
 }
 
 /* ---- Выезжающий сайдбар ---- */

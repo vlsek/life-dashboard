@@ -5,11 +5,14 @@ const SUPABASE_ANON_KEY = "sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SITE_VERSION = "0.16";
+const SITE_VERSION = "0.17";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху при каждом бампе версии. ====
 const CHANGELOG = [
+    { version: "0.17", date: "2026-09-17", changes: [
+        "Верхняя навигация переделана: в строке остался только домик, остальные разделы — в выезжающей вправо панели по кнопке ⋯",
+    ]},
     { version: "0.16", date: "2026-09-17", changes: [
         "Иконка ⚙️ вместо кнопки «Настроить дашборд» — просто рядом с заголовком, без фона",
         "Смена email в разделе «Аккаунт»",
@@ -515,17 +518,44 @@ function renderNav(active, userEmail) {
     hamburger.innerHTML = "☰";
     topbar.appendChild(hamburger);
 
-    const quickNav = document.createElement("div");
-    quickNav.className = "quick-nav";
+    const homePage = pages.find(p => p.home);
+    const homeIconLink = document.createElement("a");
+    homeIconLink.href = homePage.href;
+    homeIconLink.textContent = homePage.icon;
+    homeIconLink.title = t(homePage.i18n);
+    homeIconLink.className = "quick-nav-icon home" + (homePage.key === active ? " active" : "");
+    topbar.appendChild(homeIconLink);
+
+    const moreToggle = document.createElement("button");
+    moreToggle.className = "quick-nav-toggle";
+    moreToggle.innerHTML = "⋯";
+    moreToggle.setAttribute("aria-label", t("nav_more"));
+    topbar.appendChild(moreToggle);
+
+    const quickNavExtra = document.createElement("div");
+    quickNavExtra.className = "quick-nav-extra";
     for (const p of pages) {
+        if (p.home) continue;
         const a = document.createElement("a");
         a.href = p.href;
         a.textContent = p.icon;
         a.title = t(p.i18n);
-        a.className = "quick-nav-icon" + (p.home ? " home" : "") + (p.key === active ? " active" : "");
-        quickNav.appendChild(a);
+        a.className = "quick-nav-icon" + (p.key === active ? " active" : "");
+        quickNavExtra.appendChild(a);
     }
-    topbar.appendChild(quickNav);
+    topbar.appendChild(quickNavExtra);
+
+    moreToggle.onclick = (e) => {
+        e.stopPropagation();
+        const isOpen = quickNavExtra.classList.toggle("open");
+        moreToggle.classList.toggle("open", isOpen);
+    };
+    document.addEventListener("click", (e) => {
+        if (quickNavExtra.classList.contains("open") && !quickNavExtra.contains(e.target) && e.target !== moreToggle) {
+            quickNavExtra.classList.remove("open");
+            moreToggle.classList.remove("open");
+        }
+    });
 
     document.body.prepend(topbar);
 

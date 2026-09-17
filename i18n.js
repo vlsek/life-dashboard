@@ -425,6 +425,7 @@ const translations = {
         nav_workouts: "🏋️ Workouts",
         nav_account_title: "Account",
         nav_open_menu: "Open menu",
+        nav_more: "More sections",
         delete_btn: "🗑",
         edit_btn: "✏️",
 
@@ -933,6 +934,7 @@ const translations = {
         nav_workouts: "🏋️ Тренировки",
         nav_account_title: "Аккаунт",
         nav_open_menu: "Открыть меню",
+        nav_more: "Остальные разделы",
         delete_btn: "🗑",
         edit_btn: "✏️",
 
