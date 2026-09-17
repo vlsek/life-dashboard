@@ -1,11 +1,11 @@
 // ==== НАСТРОЙ ЭТИ ДВЕ СТРОКИ ПОСЛЕ СОЗДАНИЯ ПРОЕКТА В SUPABASE ====
-const SUPABASE_URL = "https://haxmgtflegsfpxieaydv.supabase.co/";
+const SUPABASE_URL = "https://haxmgtflegsfpxieaydv.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF";
 // ===================================================================
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SITE_VERSION = "0.14";
+const SITE_VERSION = "0.15";
 
 // Возвращает текущую сессию или null
 async function getSession() {

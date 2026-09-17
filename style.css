@@ -192,6 +192,22 @@ main {
 }
 
 h1 { font-size: 1.6em; margin-bottom: 6px; }
+
+.dash-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+.dash-header-row h1 { margin-bottom: 0; }
+.icon-btn {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    font-size: 1.15em;
+    line-height: 1;
+    min-height: auto;
+}
 h2 { font-size: 1.2em; margin-top: 32px; margin-bottom: 12px; border-left: 4px solid var(--accent); padding-left: 10px; }
 h3 { font-size: 1.05em; margin-top: 20px; opacity: 0.9; }
 
