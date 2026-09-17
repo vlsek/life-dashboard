@@ -1,8 +1,8 @@
-const THEMES = {
-    dark: "🌑 Тёмная",
-    monet: "🎨 Monet",
-    light: "☀️ Светлая",
-    pink: "🌸 Розовая",
+const THEME_KEYS = {
+    dark: "theme_dark",
+    monet: "theme_monet",
+    light: "theme_light",
+    pink: "theme_pink",
 };
 
 function getTheme() {
@@ -16,7 +16,7 @@ function setTheme(theme) {
 
 function applyTheme() {
     const theme = getTheme();
-    document.documentElement.classList.remove(...Object.keys(THEMES).map(k => "theme-" + k));
+    document.documentElement.classList.remove(...Object.keys(THEME_KEYS).map(k => "theme-" + k));
     document.documentElement.classList.add("theme-" + theme);
     document.querySelectorAll(".theme-select").forEach(sel => sel.value = theme);
 }
@@ -24,10 +24,10 @@ function applyTheme() {
 function renderThemeSwitcher(parent) {
     const select = document.createElement("select");
     select.className = "theme-select";
-    Object.entries(THEMES).forEach(([key, label]) => {
+    Object.entries(THEME_KEYS).forEach(([key, i18nKey]) => {
         const opt = document.createElement("option");
         opt.value = key;
-        opt.textContent = label;
+        opt.textContent = t(i18nKey);
         select.appendChild(opt);
     });
     select.value = getTheme();

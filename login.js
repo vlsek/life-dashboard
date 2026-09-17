@@ -8,15 +8,15 @@ async function redirectAfterAuth() {
 }
 
 function describeError(e) {
-    if (!e) return "неизвестная ошибка";
+    if (!e) return t("login_unknown_error");
     const parts = [];
     if (e.message) parts.push(e.message);
     if (e.error_description) parts.push(e.error_description);
-    if (e.status) parts.push(`(код ${e.status})`);
+    if (e.status) parts.push(`${t("login_error_code")}${e.status})`);
     if (parts.length === 0) {
         try { parts.push(JSON.stringify(e)); } catch { parts.push(String(e)); }
     }
-    return parts.join(" ") || "неизвестная ошибка — смотри консоль (F12)";
+    return parts.join(" ") || t("login_unknown_error_console");
 }
 
 function renderForm() {
@@ -59,31 +59,31 @@ function renderForm() {
 
     async function submit() {
         const msg = document.getElementById("msg");
-        msg.textContent = "Подождите…";
+        msg.textContent = t("login_please_wait");
         const email = emailInput.value.trim();
         const password = passInput.value;
-        if (!email || !password) { msg.textContent = "Заполни email и пароль."; return; }
+        if (!email || !password) { msg.textContent = t("login_fill_fields"); return; }
 
         if (mode === "login") {
             try {
                 const { error } = await sb.auth.signInWithPassword({ email, password });
-                if (error) { msg.textContent = "Ошибка: " + describeError(error); console.error(error); return; }
+                if (error) { msg.textContent = t("login_error_prefix") + describeError(error); console.error(error); return; }
                 await redirectAfterAuth();
             } catch (e) {
-                msg.textContent = "Сетевая ошибка: " + describeError(e);
+                msg.textContent = t("login_network_error_prefix") + describeError(e);
                 console.error(e);
             }
         } else {
             try {
                 const { data, error } = await sb.auth.signUp({ email, password });
-                if (error) { msg.textContent = "Ошибка: " + describeError(error); console.error(error); return; }
+                if (error) { msg.textContent = t("login_error_prefix") + describeError(error); console.error(error); return; }
                 if (data.session) {
                     window.location.href = "onboarding.html";
                 } else {
-                    msg.textContent = "Готово! Проверь почту и перейди по ссылке, чтобы подтвердить регистрацию, потом войди.";
+                    msg.textContent = t("login_signup_check_email");
                 }
             } catch (e) {
-                msg.textContent = "Сетевая ошибка: " + describeError(e);
+                msg.textContent = t("login_network_error_prefix") + describeError(e);
                 console.error(e);
             }
         }

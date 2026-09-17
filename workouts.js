@@ -295,7 +295,7 @@ async function applyTemplate(tpl) {
             rows.push({
                 user_id: userId, name: ex.name, category: day.label,
                 tracks_weight: ex.tracksWeight, value_label: ex.valueLabel,
-                suggested_scheme: ex.scheme, unit: "кг"
+                suggested_scheme: ex.scheme, unit: t("workouts_default_unit")
             });
             existingNames.add(ex.name.trim().toLowerCase());
         }
@@ -357,7 +357,7 @@ function exerciseFormFields(existing) {
             value: (existing?.tracks_weight ?? true) ? "yes" : "no"
         },
         { key: "value_label", label: t("workouts_field_value_label"), type: "text", value: existing?.value_label ?? t("workouts_default_value_label") },
-        { key: "unit", label: t("workouts_field_unit"), type: "text", value: existing?.unit ?? "кг" },
+        { key: "unit", label: t("workouts_field_unit"), type: "text", value: existing?.unit ?? t("workouts_default_unit") },
     ];
 }
 
@@ -365,7 +365,7 @@ async function addExercise() {
     openModal(t("workouts_new_exercise"), exerciseFormFields(null), async (res) => {
         if (!res.name?.trim()) return;
         const { error } = await sb.from("workout_exercises").insert({
-            user_id: userId, name: res.name.trim(), category: res.category?.trim() || null, unit: res.unit?.trim() || "кг",
+            user_id: userId, name: res.name.trim(), category: res.category?.trim() || null, unit: res.unit?.trim() || t("workouts_default_unit"),
             tracks_weight: res.tracks_weight !== "no", value_label: res.value_label?.trim() || t("workouts_default_value_label")
         });
         if (error) { showToast(t("workouts_toast_save_error") + error.message, "error"); console.error(error); return; }
@@ -377,7 +377,7 @@ async function editExercise(ex) {
     openModal(t("workouts_edit_exercise"), exerciseFormFields(ex), async (res) => {
         if (!res.name?.trim()) return;
         const { error } = await sb.from("workout_exercises").update({
-            name: res.name.trim(), category: res.category?.trim() || null, unit: res.unit?.trim() || "кг",
+            name: res.name.trim(), category: res.category?.trim() || null, unit: res.unit?.trim() || t("workouts_default_unit"),
             tracks_weight: res.tracks_weight !== "no", value_label: res.value_label?.trim() || t("workouts_default_value_label")
         }).eq("id", ex.id);
         if (error) { showToast(t("workouts_toast_save_error") + error.message, "error"); console.error(error); return; }
@@ -444,7 +444,7 @@ function openEntryModal(exercise, existing, onSubmit) {
                 const weightInput = document.createElement("input");
                 weightInput.type = "number";
                 weightInput.step = "0.5";
-                weightInput.placeholder = t("workouts_weight_placeholder") + ` (${exercise.unit || "кг"})`;
+                weightInput.placeholder = t("workouts_weight_placeholder") + ` (${exercise.unit || t("workouts_default_unit")})`;
                 weightInput.style.width = "110px";
                 weightInput.value = s.weight ?? "";
                 weightInput.onchange = () => s.weight = weightInput.value === "" ? null : (parseFloat(weightInput.value) || 0);
@@ -532,7 +532,7 @@ async function deleteEntry(entry) {
 function formatSets(sets, exercise) {
     if (!sets || !sets.length) return "—";
     if (exercise.tracks_weight) {
-        return sets.map(s => s.weight != null ? `${s.reps}×${s.weight}${exercise.unit || "кг"}` : `${s.reps}`).join(", ");
+        return sets.map(s => s.weight != null ? `${s.reps}×${s.weight}${exercise.unit || t("workouts_default_unit")}` : `${s.reps}`).join(", ");
     }
     const unitSuffix = exercise.unit ? ` ${exercise.unit}` : "";
     return sets.map(s => `${s.reps}${unitSuffix}`).join(", ");
@@ -597,7 +597,7 @@ async function renderExerciseCard(container, exercise, entries) {
         const chartWrap = document.createElement("div");
         chartWrap.style.marginBottom = "10px";
         const chartTitle = exercise.tracks_weight ? t("workouts_chart_title") : t("workouts_chart_title_volume");
-        const chartUnit = exercise.tracks_weight ? " " + (exercise.unit || "кг") : (exercise.unit ? " " + exercise.unit : "");
+        const chartUnit = exercise.tracks_weight ? " " + (exercise.unit || t("workouts_default_unit")) : (exercise.unit ? " " + exercise.unit : "");
         renderChartBlock(chartWrap, chartTitle, chartPoints, { unit: chartUnit, color: "var(--accent)" });
         card.appendChild(chartWrap);
     }

@@ -5,13 +5,18 @@ const SUPABASE_ANON_KEY = "sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SITE_VERSION = "0.17";
+const SITE_VERSION = "0.18";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
-// на номер версии в сайдбаре. Добавлять новую запись сверху при каждом бампе версии. ====
-const CHANGELOG = [
+// на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
+const CHANGELOG_RU = [
+    { version: "0.18", date: "2026-09-17", changes: [
+        "Кнопка быстрой навигации теперь «»»» вместо многоточия",
+        "Полный проход по переводу сайта: переключатель темы, сообщения входа/регистрации, единица веса по умолчанию в тренировках — теперь на двух языках",
+        "История обновлений в сайдбаре тоже переведена на английский",
+    ]},
     { version: "0.17", date: "2026-09-17", changes: [
-        "Верхняя навигация переделана: в строке остался только домик, остальные разделы — в выезжающей вправо панели по кнопке ⋯",
+        "Верхняя навигация переделана: в строке остался только домик, остальные разделы — в выезжающей вправо панели по кнопке »»»",
     ]},
     { version: "0.16", date: "2026-09-17", changes: [
         "Иконка ⚙️ вместо кнопки «Настроить дашборд» — просто рядом с заголовком, без фона",
@@ -20,6 +25,23 @@ const CHANGELOG = [
         "История обновлений по клику на номер версии в сайдбаре",
     ]},
 ];
+const CHANGELOG_EN = [
+    { version: "0.18", date: "2026-09-17", changes: [
+        "Quick-nav toggle button is now \"»»»\" instead of an ellipsis",
+        "Full pass on site translation: theme switcher, login/signup messages, default weight unit in workouts — now bilingual",
+        "The sidebar's update history is now translated into English too",
+    ]},
+    { version: "0.17", date: "2026-09-17", changes: [
+        "Top navigation redesigned: only the home icon stays in the bar, the other sections slide out in a panel via the »»» button",
+    ]},
+    { version: "0.16", date: "2026-09-17", changes: [
+        "⚙️ icon instead of the \"Customize dashboard\" button — sits plainly next to the title, no background",
+        "Email change added to the Account section",
+        "Quick emoji navigation in the top bar (🏠 — home, larger than the rest)",
+        "Update history available by clicking the version number in the sidebar",
+    ]},
+];
+const CHANGELOG = getLang() === "en" ? CHANGELOG_EN : CHANGELOG_RU;
 
 // Возвращает текущую сессию или null
 async function getSession() {
@@ -528,7 +550,7 @@ function renderNav(active, userEmail) {
 
     const moreToggle = document.createElement("button");
     moreToggle.className = "quick-nav-toggle";
-    moreToggle.innerHTML = "⋯";
+    moreToggle.innerHTML = "&gt;&gt;&gt;";
     moreToggle.setAttribute("aria-label", t("nav_more"));
     topbar.appendChild(moreToggle);
 
