@@ -5,11 +5,65 @@ const SUPABASE_ANON_KEY = "sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SITE_VERSION = "0.27";
+// ---- PWA: установка приложения ----
+let deferredInstallPrompt = null;
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+});
+
+function isStandaloneApp() {
+    return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+function isIOSDevice() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
+function showInstallInstructionsModal() {
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.innerHTML = `<h3>${t("install_title")}</h3>`;
+
+    const p = document.createElement("p");
+    p.style.cssText = "margin-top:12px; line-height:1.6;";
+    p.textContent = isIOSDevice() ? t("install_ios_steps") : t("install_generic_steps");
+    modal.appendChild(p);
+
+    const actions = document.createElement("div");
+    actions.className = "modal-actions";
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "secondary";
+    closeBtn.textContent = t("close");
+    closeBtn.onclick = () => backdrop.remove();
+    actions.appendChild(closeBtn);
+    modal.appendChild(actions);
+
+    backdrop.appendChild(modal);
+    backdrop.onclick = (e) => { if (e.target === backdrop) backdrop.remove(); };
+    document.body.appendChild(backdrop);
+}
+
+async function handleInstallClick() {
+    if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+    } else {
+        showInstallInstructionsModal();
+    }
+}
+
+const SITE_VERSION = "0.28";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.28", date: "2026-09-18", changes: [
+        "В сайдбаре появился пункт «📲 Установить приложение» — на Android/desktop Chrome сразу открывает системный диалог установки, на iPhone/iPad и остальных браузерах показывает понятную инструкцию (нативного диалога на iOS не бывает вообще — это ограничение самого iOS)",
+        "Добавили iOS-мета-теги, чтобы установленное на iPhone приложение открывалось в полноэкранном режиме и с нормальной иконкой",
+    ]},
     { version: "0.27", date: "2026-09-18", changes: [
         "Дашборд теперь PWA — можно установить на Android как приложение («Установить» / «На главный экран» в Chrome): своя иконка, запуск в полноэкранном режиме без адресной строки, цвет статус-бара подстраивается под выбранную тему",
     ]},
@@ -54,6 +108,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.28", date: "2026-09-18", changes: [
+        "Added a \"📲 Install app\" item to the sidebar — on Android/desktop Chrome it opens the native install dialog right away; on iPhone/iPad and other browsers it shows clear step-by-step instructions instead (iOS has no native install prompt at all — that's an iOS limitation, not this app's)",
+        "Added iOS web-app meta tags so the app opens full-screen with a proper icon once added to the Home Screen on iPhone",
+    ]},
     { version: "0.27", date: "2026-09-18", changes: [
         "The dashboard is now a PWA — installable on Android as an app (\"Install\" / \"Add to Home Screen\" in Chrome): its own icon, full-screen launch with no address bar, status-bar color matches whichever theme is selected",
     ]},
@@ -650,6 +708,15 @@ function renderNav(active, userEmail) {
     aboutLink.className = "dim-link";
     aboutLink.onclick = (e) => { e.preventDefault(); showAboutModal(); };
     sidebar.appendChild(aboutLink);
+
+    if (!isStandaloneApp()) {
+        const installLink = document.createElement("a");
+        installLink.href = "#";
+        installLink.textContent = "📲 " + t("nav_install_app");
+        installLink.className = "dim-link";
+        installLink.onclick = (e) => { e.preventDefault(); handleInstallClick(); };
+        sidebar.appendChild(installLink);
+    }
 
     for (const p of pages) {
         const a = document.createElement("a");
