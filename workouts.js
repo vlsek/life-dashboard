@@ -548,7 +548,7 @@ async function renderExerciseCard(container, exercise, entries) {
     const title = document.createElement("h3");
     title.style.margin = "0";
     title.style.flex = "1";
-    title.textContent = exercise.category ? `${exercise.name} · ${exercise.category}` : exercise.name;
+    title.textContent = exercise.name;
     header.appendChild(title);
 
     const addBtn = document.createElement("button");
@@ -633,6 +633,45 @@ async function renderExerciseCard(container, exercise, entries) {
     container.appendChild(card);
 }
 
+// Сворачиваемая группа упражнений по категории (свободный текст, задаётся в форме
+// упражнения — можно писать что угодно, "Верх"/"Низ"/"Фулбади" и т.п.). Состояние
+// свёрнуто/развёрнуто запоминается по каждой категории отдельно.
+function renderCollapsibleCategory(container, categoryLabel, storageKey) {
+    const headingRow = document.createElement("div");
+    headingRow.style.cssText = "display:flex; align-items:center; gap:8px; margin-top:24px; margin-bottom:10px;";
+    const h3 = document.createElement("h3");
+    h3.style.margin = "0";
+    h3.textContent = categoryLabel;
+    headingRow.appendChild(h3);
+
+    const lsKey = "workouts_collapsed:" + storageKey;
+    const collapsed = localStorage.getItem(lsKey) === "1";
+
+    const toggleBtn = document.createElement("button");
+    toggleBtn.type = "button";
+    toggleBtn.className = "secondary";
+    toggleBtn.style.cssText = "padding:2px 9px; font-size:0.8em;";
+    toggleBtn.textContent = collapsed ? "▶" : "▼";
+    toggleBtn.title = collapsed ? t("dash_expand_btn") : t("dash_collapse_btn");
+    headingRow.appendChild(toggleBtn);
+
+    container.appendChild(headingRow);
+
+    const content = document.createElement("div");
+    content.style.display = collapsed ? "none" : "block";
+    container.appendChild(content);
+
+    toggleBtn.onclick = () => {
+        const willCollapse = content.style.display !== "none";
+        content.style.display = willCollapse ? "none" : "block";
+        toggleBtn.textContent = willCollapse ? "▶" : "▼";
+        toggleBtn.title = willCollapse ? t("dash_expand_btn") : t("dash_collapse_btn");
+        localStorage.setItem(lsKey, willCollapse ? "1" : "0");
+    };
+
+    return content;
+}
+
 async function render() {
     const list = document.getElementById("exercises-list");
     list.innerHTML = t("workouts_loading");
@@ -654,9 +693,22 @@ async function render() {
         return;
     }
 
+    // группируем по категории — каждая группа сворачивается независимо
+    const groups = new Map();
     for (const ex of exercises) {
-        const exEntries = (entries || []).filter(e => e.exercise_id === ex.id);
-        await renderExerciseCard(list, ex, exEntries);
+        const key = ex.category?.trim() || "";
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(ex);
+    }
+
+    for (const [category, exList] of groups) {
+        const label = category || t("workouts_uncategorized");
+        const storageKey = category || "uncategorized";
+        const content = renderCollapsibleCategory(list, label, storageKey);
+        for (const ex of exList) {
+            const exEntries = (entries || []).filter(e => e.exercise_id === ex.id);
+            await renderExerciseCard(content, ex, exEntries);
+        }
     }
 }
 

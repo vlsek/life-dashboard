@@ -453,13 +453,15 @@ th { font-size: 0.8em; color: var(--text-dim); font-weight: normal; }
     transform: translateY(-50%);
     background: transparent;
     border: none;
-    font-size: 1.05em;
-    line-height: 1;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     padding: 6px 8px;
     border-radius: 6px;
 }
-.password-toggle:hover { background: var(--bg); }
+.password-toggle:hover { background: var(--bg); color: var(--text); }
 
 .variation-combo {
     position: relative;
@@ -522,6 +524,11 @@ th { font-size: 0.8em; color: var(--text-dim); font-weight: normal; }
 }
 .modal label { display: block; margin-top: 12px; font-size: 0.85em; color: var(--text-dim); }
 .modal input, .modal select { width: 100%; margin-top: 4px; }
+.modal input[type="checkbox"], .modal input[type="radio"] {
+    width: auto;
+    margin-top: 0;
+    flex-shrink: 0;
+}
 .modal a { color: var(--accent); text-decoration: none; }
 .modal a:hover { text-decoration: underline; }
 .modal .modal-actions { margin-top: 18px; display: flex; justify-content: flex-end; gap: 8px; }

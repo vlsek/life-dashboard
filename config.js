@@ -55,11 +55,17 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.29";
+const SITE_VERSION = "0.30";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.30", date: "2026-09-19", changes: [
+        "Страница «Аккаунт» — убрали лишнее ограничение ширины блоков, теперь как на остальных страницах",
+        "Глазик показать/скрыть пароль — вместо эмодзи обычная SVG-иконка, как везде",
+        "Починили сломанный CSS: чекбоксы (видимость профиля в сообществе, отметки в плане календаря) больше не растягиваются на полблока",
+        "Тренировки: упражнения теперь группируются по категории (то самое поле «Категория» при создании упражнения — можно писать «Верх», «Низ», «Фулбади» и т.п.), каждая группа сворачивается независимо",
+    ]},
     { version: "0.29", date: "2026-09-18", changes: [
         "Вход через Google на странице логина (кнопка под формой) — работает после настройки Google-провайдера в Supabase, см. README",
         "Привязка Google к уже существующему аккаунту — в «Аккаунте», если регистрировался по почте, а теперь хочет заодно входить через Google",
@@ -118,6 +124,12 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.30", date: "2026-09-19", changes: [
+        "Account page — removed the leftover narrow width cap on its cards, now matches every other page",
+        "Password show/hide toggle — a proper SVG icon instead of an emoji, matching the usual pattern",
+        "Fixed broken CSS: checkboxes (community profile visibility, calendar plan items) no longer stretch to half the block's width",
+        "Workouts: exercises now group by category (the existing \"Category\" field on each exercise — write \"Upper\", \"Lower\", \"Full body\" or whatever fits), each group collapses independently",
+    ]},
     { version: "0.29", date: "2026-09-18", changes: [
         "Sign in with Google on the login page (button below the form) — works once the Google provider is configured in Supabase, see README",
         "Link Google to an existing account — in Account, for anyone who signed up by email and now wants to also sign in with Google",
@@ -883,6 +895,9 @@ function showChangelogModal() {
 }
 
 // ---- Глазик "показать/скрыть пароль" — оборачивает существующий input ----
+const EYE_ICON_OPEN = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_ICON_OFF = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
 function attachPasswordToggle(input) {
     const wrap = document.createElement("div");
     wrap.className = "password-field";
@@ -892,12 +907,12 @@ function attachPasswordToggle(input) {
     const toggle = document.createElement("button");
     toggle.type = "button";
     toggle.className = "password-toggle";
-    toggle.textContent = "👁";
+    toggle.innerHTML = EYE_ICON_OPEN;
     toggle.setAttribute("aria-label", t("password_toggle_show"));
     toggle.onclick = () => {
         const willShow = input.type === "password";
         input.type = willShow ? "text" : "password";
-        toggle.textContent = willShow ? "🙈" : "👁";
+        toggle.innerHTML = willShow ? EYE_ICON_OFF : EYE_ICON_OPEN;
         toggle.setAttribute("aria-label", willShow ? t("password_toggle_hide") : t("password_toggle_show"));
     };
     wrap.appendChild(toggle);
