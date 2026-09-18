@@ -5,11 +5,14 @@ const SUPABASE_ANON_KEY = "sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SITE_VERSION = "0.25";
+const SITE_VERSION = "0.26";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.26", date: "2026-09-18", changes: [
+        "Убрали ссылку «← Портфолио» из сайдбара (раз проекты разделены — смысла в ней больше нет), вместо неё — «О проекте»: ссылка на визитку + контакт для обратной связи",
+    ]},
     { version: "0.25", date: "2026-09-18", changes: [
         "Починили деплой: без index.html в корне Cloudflare Workers не мог найти статику и падал со сборкой. Вернули index.html — теперь это лёгкая заглушка с мгновенным редиректом на /login.html",
     ]},
@@ -48,6 +51,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.26", date: "2026-09-18", changes: [
+        "Removed the \"← Portfolio\" sidebar link (no longer relevant now the projects are split) — replaced with \"About\": a link to the portfolio plus a feedback contact",
+    ]},
     { version: "0.25", date: "2026-09-18", changes: [
         "Fixed the deploy: without an index.html at the root, Cloudflare Workers couldn't find any static files and the build failed. Brought index.html back as a lightweight stub that instantly redirects to /login.html",
     ]},
@@ -632,11 +638,12 @@ function renderNav(active, userEmail) {
     const sidebar = document.createElement("nav");
     sidebar.className = "sidebar";
 
-    const homeLink = document.createElement("a");
-    homeLink.href = "https://portfolio.orneryhero.workers.dev/";
-    homeLink.textContent = t("nav_portfolio");
-    homeLink.className = "dim-link";
-    sidebar.appendChild(homeLink);
+    const aboutLink = document.createElement("a");
+    aboutLink.href = "#";
+    aboutLink.textContent = "ℹ️ " + t("nav_about");
+    aboutLink.className = "dim-link";
+    aboutLink.onclick = (e) => { e.preventDefault(); showAboutModal(); };
+    sidebar.appendChild(aboutLink);
 
     for (const p of pages) {
         const a = document.createElement("a");
@@ -694,6 +701,45 @@ function renderNav(active, userEmail) {
     hamburger.onclick = openSidebar;
     backdrop.onclick = closeSidebar;
     sidebar.querySelectorAll("a").forEach(a => a.addEventListener("click", closeSidebar));
+}
+
+// ---- Модалка "О проекте" — портфолио + обратная связь ----
+function showAboutModal() {
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.innerHTML = `<h3>${t("about_title")}</h3>`;
+
+    const portfolioP = document.createElement("p");
+    portfolioP.style.cssText = "margin-top:12px;";
+    const portfolioLink = document.createElement("a");
+    portfolioLink.href = "https://portfolio.orneryhero.workers.dev/";
+    portfolioLink.target = "_blank";
+    portfolioLink.rel = "noopener";
+    portfolioLink.textContent = t("about_portfolio_link");
+    portfolioP.appendChild(portfolioLink);
+    modal.appendChild(portfolioP);
+
+    const feedbackP = document.createElement("p");
+    feedbackP.className = "dim";
+    feedbackP.style.cssText = "font-size:0.9em; margin-top:16px; line-height:1.6;";
+    feedbackP.innerHTML = t("about_feedback_intro") +
+        `<br>Telegram: <a href="https://t.me/vsekorolev" target="_blank" rel="noopener">@vsekorolev</a>`;
+    modal.appendChild(feedbackP);
+
+    const actions = document.createElement("div");
+    actions.className = "modal-actions";
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "secondary";
+    closeBtn.textContent = t("close");
+    closeBtn.onclick = () => backdrop.remove();
+    actions.appendChild(closeBtn);
+    modal.appendChild(actions);
+
+    backdrop.appendChild(modal);
+    backdrop.onclick = (e) => { if (e.target === backdrop) backdrop.remove(); };
+    document.body.appendChild(backdrop);
 }
 
 // ---- Модалка "Что нового" — по клику на версию в сайдбаре ----

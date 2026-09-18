@@ -1,7 +1,10 @@
 const translations = {
     en: {
         // nav / shared
-        nav_portfolio: "← Portfolio",
+        nav_about: "About",
+        about_title: "ℹ️ About",
+        about_portfolio_link: "→ Portfolio",
+        about_feedback_intro: "Found a bug or have a suggestion? Write to:",
         nav_dashboard: "🏠 Dashboard",
         nav_goals: "🎯 Goals",
         nav_skills: "🥋 Skills",
@@ -526,7 +529,10 @@ const translations = {
         ch_item_placeholder_generic: "Item (optional note)",
     },
     ru: {
-        nav_portfolio: "← Портфолио",
+        nav_about: "О проекте",
+        about_title: "ℹ️ О проекте",
+        about_portfolio_link: "→ Портфолио",
+        about_feedback_intro: "Нашёл баг или есть предложение? Пиши:",
         nav_dashboard: "🏠 Дашборд",
         nav_goals: "🎯 Цели",
         nav_skills: "🥋 Навыки",
