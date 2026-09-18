@@ -5,11 +5,14 @@ const SUPABASE_ANON_KEY = "sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SITE_VERSION = "0.23";
+const SITE_VERSION = "0.24";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.24", date: "2026-09-18", changes: [
+        "Подключили реальный URL визитки вместо заглушки, добавили редирект с корня сайта на страницу входа",
+    ]},
     { version: "0.23", date: "2026-09-18", changes: [
         "Визитка вынесена в отдельный репозиторий и будет жить на отдельном деплое — из этого репо убраны index.html/portfolio.css, ссылки на визитку временно указывают на заглушку до подключения реального URL",
     ]},
@@ -42,6 +45,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.24", date: "2026-09-18", changes: [
+        "Wired in the real portfolio URL instead of the placeholder, added a redirect from the site root to the login page",
+    ]},
     { version: "0.23", date: "2026-09-18", changes: [
         "The portfolio has been split into its own repo and will live on its own deployment — index.html/portfolio.css removed from this repo, portfolio links temporarily point to a placeholder until the real URL is wired in",
     ]},
@@ -94,8 +100,7 @@ async function requireAuth() {
 
 async function logout() {
     await sb.auth.signOut();
-    // TODO: заменить на реальный URL визитки после деплоя на Cloudflare
-    window.location.href = "https://REPLACE-WITH-PORTFOLIO-URL";
+    window.location.href = "https://portfolio.orneryhero.workers.dev/";
 }
 
 function fmtDate(d) {
@@ -622,8 +627,7 @@ function renderNav(active, userEmail) {
     sidebar.className = "sidebar";
 
     const homeLink = document.createElement("a");
-    // TODO: заменить на реальный URL визитки после деплоя на Cloudflare
-    homeLink.href = "https://REPLACE-WITH-PORTFOLIO-URL";
+    homeLink.href = "https://portfolio.orneryhero.workers.dev/";
     homeLink.textContent = t("nav_portfolio");
     homeLink.className = "dim-link";
     sidebar.appendChild(homeLink);
