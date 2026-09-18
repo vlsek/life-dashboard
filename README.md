@@ -47,8 +47,8 @@ Project Settings → API:
 Secret key использовать не нужно — весь доступ идёт через RLS-политики на уровне базы.
 
 ### 5. Хостинг
-Cloudflare Pages, билд — статика из корня репозитория. Автодеплой на пуш в `main`.
-Корень сайта (`/`) редиректит на `/login.html` — см. `_redirects`.
+Cloudflare Workers (статика из корня репозитория, деплой через `wrangler deploy`, без `wrangler.toml` — конфигурация по умолчанию). Автодеплой на пуш в `main`.
+Корень сайта (`/`) — `index.html`-заглушка с мгновенным редиректом на `/login.html` (нужна, чтобы wrangler вообще нашёл статику для деплоя — без index.html в корне сборка падает с ошибкой "Could not detect a directory containing static files").
 
 ## Известные ограничения
 

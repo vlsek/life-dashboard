@@ -5,11 +5,14 @@ const SUPABASE_ANON_KEY = "sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SITE_VERSION = "0.24";
+const SITE_VERSION = "0.25";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.25", date: "2026-09-18", changes: [
+        "Починили деплой: без index.html в корне Cloudflare Workers не мог найти статику и падал со сборкой. Вернули index.html — теперь это лёгкая заглушка с мгновенным редиректом на /login.html",
+    ]},
     { version: "0.24", date: "2026-09-18", changes: [
         "Подключили реальный URL визитки вместо заглушки, добавили редирект с корня сайта на страницу входа",
     ]},
@@ -45,6 +48,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.25", date: "2026-09-18", changes: [
+        "Fixed the deploy: without an index.html at the root, Cloudflare Workers couldn't find any static files and the build failed. Brought index.html back as a lightweight stub that instantly redirects to /login.html",
+    ]},
     { version: "0.24", date: "2026-09-18", changes: [
         "Wired in the real portfolio URL instead of the placeholder, added a redirect from the site root to the login page",
     ]},
