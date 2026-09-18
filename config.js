@@ -55,11 +55,21 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.28";
+const SITE_VERSION = "0.29";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.29", date: "2026-09-18", changes: [
+        "Вход через Google на странице логина (кнопка под формой) — работает после настройки Google-провайдера в Supabase, см. README",
+        "Привязка Google к уже существующему аккаунту — в «Аккаунте», если регистрировался по почте, а теперь хочет заодно входить через Google",
+        "Глазик показать/скрыть пароль — на входе, регистрации и смене пароля в аккаунте",
+        "Графики без данных больше не показываются пустыми — секция сама сворачивается, если данных нет вообще, и разворачивается, как только они появляются (если раздел не трогали руками)",
+        "Домик в быстрой навигации заменили на лого (тот самый огонёк)",
+        "Кнопка быстрой навигации — простой текст >>> вместо спецсимволов",
+        "Выпадающий список «Тип» в форме метрики (включая «Подходы») переделан со стандартного select на свой рендер — на случай если системный пикер плохо ведёт себя в установленном PWA",
+        "«О проекте» переехал в самый низ бокового меню, ссылки внутри модалок стали нормального акцентного цвета вместо стандартного синего",
+    ]},
     { version: "0.28", date: "2026-09-18", changes: [
         "В сайдбаре появился пункт «📲 Установить приложение» — на Android/desktop Chrome сразу открывает системный диалог установки, на iPhone/iPad и остальных браузерах показывает понятную инструкцию (нативного диалога на iOS не бывает вообще — это ограничение самого iOS)",
         "Добавили iOS-мета-теги, чтобы установленное на iPhone приложение открывалось в полноэкранном режиме и с нормальной иконкой",
@@ -108,6 +118,16 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.29", date: "2026-09-18", changes: [
+        "Sign in with Google on the login page (button below the form) — works once the Google provider is configured in Supabase, see README",
+        "Link Google to an existing account — in Account, for anyone who signed up by email and now wants to also sign in with Google",
+        "Eye icon to show/hide the password — on login, sign-up, and the account password change",
+        "Charts with no data no longer render empty — the section auto-collapses when there's nothing to show and auto-expands once data appears (as long as the section hasn't been toggled by hand)",
+        "Replaced the home icon in quick nav with the actual logo (the flame)",
+        "Quick-nav toggle button is now plain text >>> instead of special characters",
+        "The \"Type\" dropdown in the metric form (including \"Sets\") now uses a custom-built dropdown instead of a native select — in case the system picker misbehaves inside an installed PWA",
+        "\"About\" moved to the very bottom of the sidebar menu; links inside modals now use the site's accent color instead of default blue",
+    ]},
     { version: "0.28", date: "2026-09-18", changes: [
         "Added a \"📲 Install app\" item to the sidebar — on Android/desktop Chrome it opens the native install dialog right away; on iPhone/iPad and other browsers it shows clear step-by-step instructions instead (iOS has no native install prompt at all — that's an iOS limitation, not this app's)",
         "Added iOS web-app meta tags so the app opens full-screen with a proper icon once added to the Home Screen on iPhone",
@@ -657,14 +677,18 @@ function renderNav(active, userEmail) {
     const homePage = pages.find(p => p.home);
     const homeIconLink = document.createElement("a");
     homeIconLink.href = homePage.href;
-    homeIconLink.textContent = homePage.icon;
     homeIconLink.title = t(homePage.i18n);
     homeIconLink.className = "quick-nav-icon home" + (homePage.key === active ? " active" : "");
+    const homeLogo = document.createElement("img");
+    homeLogo.src = "/favicon.svg";
+    homeLogo.alt = t(homePage.i18n);
+    homeLogo.className = "quick-nav-logo";
+    homeIconLink.appendChild(homeLogo);
     topbar.appendChild(homeIconLink);
 
     const moreToggle = document.createElement("button");
     moreToggle.className = "quick-nav-toggle";
-    moreToggle.innerHTML = "&raquo;&raquo;&raquo;";
+    moreToggle.textContent = ">>>";
     moreToggle.setAttribute("aria-label", t("nav_more"));
     topbar.appendChild(moreToggle);
 
@@ -701,22 +725,6 @@ function renderNav(active, userEmail) {
 
     const sidebar = document.createElement("nav");
     sidebar.className = "sidebar";
-
-    const aboutLink = document.createElement("a");
-    aboutLink.href = "#";
-    aboutLink.textContent = "ℹ️ " + t("nav_about");
-    aboutLink.className = "dim-link";
-    aboutLink.onclick = (e) => { e.preventDefault(); showAboutModal(); };
-    sidebar.appendChild(aboutLink);
-
-    if (!isStandaloneApp()) {
-        const installLink = document.createElement("a");
-        installLink.href = "#";
-        installLink.textContent = "📲 " + t("nav_install_app");
-        installLink.className = "dim-link";
-        installLink.onclick = (e) => { e.preventDefault(); handleInstallClick(); };
-        sidebar.appendChild(installLink);
-    }
 
     for (const p of pages) {
         const a = document.createElement("a");
@@ -759,6 +767,22 @@ function renderNav(active, userEmail) {
         logoutBtn.onclick = logout;
         sidebar.appendChild(logoutBtn);
     }
+
+    if (!isStandaloneApp()) {
+        const installLink = document.createElement("a");
+        installLink.href = "#";
+        installLink.textContent = "📲 " + t("nav_install_app");
+        installLink.className = "dim-link";
+        installLink.onclick = (e) => { e.preventDefault(); handleInstallClick(); };
+        sidebar.appendChild(installLink);
+    }
+
+    const aboutLink = document.createElement("a");
+    aboutLink.href = "#";
+    aboutLink.textContent = "ℹ️ " + t("nav_about");
+    aboutLink.className = "dim-link";
+    aboutLink.onclick = (e) => { e.preventDefault(); showAboutModal(); };
+    sidebar.appendChild(aboutLink);
 
     const version = document.createElement("button");
     version.className = "sidebar-version";
@@ -856,6 +880,82 @@ function showChangelogModal() {
     backdrop.appendChild(modal);
     backdrop.onclick = (e) => { if (e.target === backdrop) backdrop.remove(); };
     document.body.appendChild(backdrop);
+}
+
+// ---- Глазик "показать/скрыть пароль" — оборачивает существующий input ----
+function attachPasswordToggle(input) {
+    const wrap = document.createElement("div");
+    wrap.className = "password-field";
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(input);
+
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "password-toggle";
+    toggle.textContent = "👁";
+    toggle.setAttribute("aria-label", t("password_toggle_show"));
+    toggle.onclick = () => {
+        const willShow = input.type === "password";
+        input.type = willShow ? "text" : "password";
+        toggle.textContent = willShow ? "🙈" : "👁";
+        toggle.setAttribute("aria-label", willShow ? t("password_toggle_hide") : t("password_toggle_show"));
+    };
+    wrap.appendChild(toggle);
+    return wrap;
+}
+
+// ---- Обёртка нативного <select> собственной выпадашкой — на случай если системный пикер
+// плохо ведёт себя в установленном PWA. Сам select прячем, но не убираем: он остаётся
+// источником истины (.value/.onchange продолжают работать как раньше, весь остальной код
+// вокруг select менять не нужно) — просто синхронизируем его со своей видимой кнопкой-списком.
+function enhanceSelectWithCustomDropdown(select) {
+    const wrap = document.createElement("div");
+    wrap.className = "custom-select";
+    select.parentNode.insertBefore(wrap, select);
+    select.style.display = "none";
+    wrap.appendChild(select);
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "custom-select-btn";
+    wrap.appendChild(btn);
+
+    const dropdown = document.createElement("div");
+    dropdown.className = "custom-select-dropdown";
+    wrap.appendChild(dropdown);
+
+    function currentLabel() {
+        const opt = select.options[select.selectedIndex];
+        return opt ? opt.textContent : "";
+    }
+    function renderBtn() {
+        btn.textContent = currentLabel();
+    }
+    function renderOptions() {
+        dropdown.innerHTML = "";
+        Array.from(select.options).forEach(opt => {
+            const item = document.createElement("div");
+            item.className = "custom-select-option" + (opt.value === select.value ? " selected" : "");
+            item.textContent = opt.textContent;
+            item.onmousedown = (e) => {
+                e.preventDefault();
+                select.value = opt.value;
+                select.dispatchEvent(new Event("change"));
+                renderBtn();
+                dropdown.classList.remove("open");
+            };
+            dropdown.appendChild(item);
+        });
+    }
+    btn.onclick = (e) => {
+        e.stopPropagation();
+        renderOptions();
+        dropdown.classList.toggle("open");
+    };
+    document.addEventListener("click", () => dropdown.classList.remove("open"));
+
+    renderBtn();
+    return wrap;
 }
 
 // ---- Модальные окна (переиспользуются везде) ----

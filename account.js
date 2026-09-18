@@ -52,9 +52,39 @@ document.getElementById("change-email-btn").onclick = async () => {
     showToast(t("acc_email_change_requested_toast"));
 };
 
+document.getElementById("link-google-btn").onclick = async () => {
+    const { error } = await sb.auth.linkIdentity({
+        provider: "google",
+        options: { redirectTo: window.location.origin + "/account.html" },
+    });
+    if (error) {
+        document.getElementById("google-link-status").textContent = t("acc_error_prefix") + error.message;
+        console.error(error);
+    }
+    // при успехе браузер уводит на Google и возвращает обратно на эту же страницу
+};
+
+async function refreshGoogleLinkStatus() {
+    const { data, error } = await sb.auth.getUserIdentities();
+    const statusEl = document.getElementById("google-link-status");
+    const btn = document.getElementById("link-google-btn");
+    if (error) { console.error(error); return; }
+    const linked = (data?.identities || []).some(i => i.provider === "google");
+    if (linked) {
+        statusEl.textContent = t("acc_google_linked");
+        btn.style.display = "none";
+    } else {
+        statusEl.textContent = t("acc_google_not_linked");
+        btn.style.display = "inline-block";
+    }
+}
+
 (async () => {
     user = await requireAuth();
     if (!user) return;
     document.getElementById("current-email").textContent = user.email;
     renderNav("account", user.email);
+    attachPasswordToggle(document.getElementById("new-password"));
+    attachPasswordToggle(document.getElementById("confirm-password"));
+    refreshGoogleLinkStatus();
 })();

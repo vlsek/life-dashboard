@@ -116,6 +116,11 @@ body {
     height: 40px;
     font-size: 1.4em;
 }
+.quick-nav-logo {
+    width: 26px;
+    height: 26px;
+    display: block;
+}
 .quick-nav-icon:hover { opacity: 0.85; background: var(--bg); }
 .quick-nav-icon.active {
     opacity: 1;
@@ -371,7 +376,91 @@ th { font-size: 0.8em; color: var(--text-dim); font-weight: normal; }
     color: var(--text-dim);
 }
 
+/* ---- Кастомный select (замена нативному, если системный пикер плохо себя ведёт в PWA) ---- */
+.custom-select {
+    position: relative;
+    width: 100%;
+}
+.custom-select-btn {
+    width: 100%;
+    text-align: left;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 1em;
+    cursor: pointer;
+}
+.custom-select-btn::after {
+    content: "▾";
+    float: right;
+    color: var(--text-dim);
+}
+.custom-select-dropdown {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 4px);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 30;
+}
+.custom-select-dropdown.open { display: block; }
+.custom-select-option {
+    padding: 9px 12px;
+    cursor: pointer;
+}
+.custom-select-option:hover { background: var(--bg); }
+.custom-select-option.selected {
+    background: var(--accent);
+    color: var(--accent-text);
+}
+
 /* ---- Комбобокс "особенность подхода" в метрике-раскладушке (замена нативному datalist) ---- */
+/* ---- Разделитель "или" между формой входа и кнопкой Google ---- */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 16px 0;
+    color: var(--text-dim);
+    font-size: 0.85em;
+}
+.auth-divider::before, .auth-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+/* ---- Поле пароля с глазиком показать/скрыть ---- */.password-field {
+    position: relative;
+}
+.password-field input {
+    width: 100%;
+    padding-right: 40px;
+}
+.password-toggle {
+    position: absolute;
+    right: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    font-size: 1.05em;
+    line-height: 1;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+}
+.password-toggle:hover { background: var(--bg); }
+
 .variation-combo {
     position: relative;
     width: 100%;
@@ -433,6 +522,8 @@ th { font-size: 0.8em; color: var(--text-dim); font-weight: normal; }
 }
 .modal label { display: block; margin-top: 12px; font-size: 0.85em; color: var(--text-dim); }
 .modal input, .modal select { width: 100%; margin-top: 4px; }
+.modal a { color: var(--accent); text-decoration: none; }
+.modal a:hover { text-decoration: underline; }
 .modal .modal-actions { margin-top: 18px; display: flex; justify-content: flex-end; gap: 8px; }
 
 /* ---- Адаптивность ---- */

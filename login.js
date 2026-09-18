@@ -40,6 +40,7 @@ function renderForm() {
     passInput.style.width = "100%";
     passInput.style.marginTop = "4px";
     passLabel.appendChild(passInput);
+    attachPasswordToggle(passInput);
 
     area.appendChild(emailLabel);
     area.appendChild(passLabel);
@@ -120,3 +121,18 @@ langSwitch.querySelectorAll(".lang-btn").forEach(btn => {
 });
 
 renderForm();
+
+document.getElementById("google-signin-btn").onclick = async () => {
+    const msg = document.getElementById("msg");
+    msg.textContent = t("login_please_wait");
+    const { error } = await sb.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin + "/login.html" },
+    });
+    if (error) {
+        msg.textContent = t("login_error_prefix") + describeError(error);
+        console.error(error);
+    }
+    // при успехе браузер сразу уводит на Google — обработка возврата происходит выше,
+    // в IIFE, которая проверяет сессию и сама решает, на онбординг вести или на дашборд
+};

@@ -63,6 +63,7 @@ function createCollapsibleSection(container, headingKey, storageKey) {
     headingRow.appendChild(h2);
 
     const lsKey = "dash_collapsed:" + storageKey;
+    const hadStoredPreference = localStorage.getItem(lsKey) !== null;
     const collapsed = localStorage.getItem(lsKey) === "1";
 
     const toggleBtn = document.createElement("button");
@@ -85,6 +86,22 @@ function createCollapsibleSection(container, headingKey, storageKey) {
         toggleBtn.textContent = willCollapse ? "▶" : "▼";
         toggleBtn.title = willCollapse ? t("dash_expand_btn") : t("dash_collapse_btn");
         localStorage.setItem(lsKey, willCollapse ? "1" : "0");
+    };
+
+    // Автосворачивание секции, если внутри оказалось нечего показывать (например, графики
+    // без единой точки данных) — но только пока пользователь сам ни разу не трогал стрелку
+    // для этой секции; свой выбор мы никогда не перезаписываем.
+    content.autoCollapseIfNoPreference = () => {
+        if (hadStoredPreference || content.style.display === "none") return;
+        content.style.display = "none";
+        toggleBtn.textContent = "▶";
+        toggleBtn.title = t("dash_expand_btn");
+    };
+    content.autoExpandIfNoPreference = () => {
+        if (hadStoredPreference || content.style.display !== "none") return;
+        content.style.display = "block";
+        toggleBtn.textContent = "▼";
+        toggleBtn.title = t("dash_collapse_btn");
     };
 
     return content;
@@ -450,8 +467,20 @@ async function loadCharts() {
 
     if (selectedEntries.length === 0) {
         newContent.appendChild(Object.assign(document.createElement("p"), { className: "dim", textContent: t("dash_charts_empty") }));
+        card.parentElement?.autoCollapseIfNoPreference?.();
     } else {
-        for (const entry of selectedEntries) {
+        // Показываем только серии, для которых реально есть хотя бы одна точка данных —
+        // пустой график ничего не даёт, кроме визуального шума.
+        const entriesWithData = selectedEntries.filter(entry => (allSeries[entry.key]?.points?.length ?? 0) > 0);
+
+        if (entriesWithData.length === 0) {
+            newContent.appendChild(Object.assign(document.createElement("p"), { className: "dim", textContent: t("dash_charts_no_data_yet") }));
+            card.parentElement?.autoCollapseIfNoPreference?.();
+        } else {
+            card.parentElement?.autoExpandIfNoPreference?.();
+        }
+
+        for (const entry of entriesWithData) {
             const s = allSeries[entry.key];
             const chartWrap = document.createElement("div");
             chartWrap.style.marginBottom = "18px";
@@ -1552,6 +1581,7 @@ function openMetricFormModal(existing, categoryOptions, onSubmit) {
         .forEach(([v, l]) => { const o = document.createElement("option"); o.value = v; o.textContent = l; typeSelect.appendChild(o); });
     typeSelect.value = existing?.type ?? "number";
     field(t("dash_metric_field_type"), typeSelect);
+    enhanceSelectWithCustomDropdown(typeSelect);
 
     const goalDirSelect = document.createElement("select");
     [["at_least", t("dash_goal_dir_at_least")], ["at_most", t("dash_goal_dir_at_most")]].forEach(([v, l]) => { const o = document.createElement("option"); o.value = v; o.textContent = l; goalDirSelect.appendChild(o); });
