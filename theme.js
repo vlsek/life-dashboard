@@ -5,6 +5,14 @@ const THEME_KEYS = {
     pink: "theme_pink",
 };
 
+// Цвета фона по темам — держим в синхронизации с --bg из style.css
+const THEME_BG_COLORS = {
+    dark: "#121212",
+    monet: "#0d0703",
+    light: "#f7f4ef",
+    pink: "#fff0f5",
+};
+
 function getTheme() {
     return localStorage.getItem("site_theme") || "dark";
 }
@@ -19,6 +27,10 @@ function applyTheme() {
     document.documentElement.classList.remove(...Object.keys(THEME_KEYS).map(k => "theme-" + k));
     document.documentElement.classList.add("theme-" + theme);
     document.querySelectorAll(".theme-select").forEach(sel => sel.value = theme);
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta && THEME_BG_COLORS[theme]) {
+        themeColorMeta.setAttribute("content", THEME_BG_COLORS[theme]);
+    }
 }
 
 function renderThemeSwitcher(parent) {

@@ -50,6 +50,9 @@ Secret key использовать не нужно — весь доступ и
 Cloudflare Workers (статика из корня репозитория, деплой через `wrangler deploy`, без `wrangler.toml` — конфигурация по умолчанию). Автодеплой на пуш в `main`.
 Корень сайта (`/`) — `index.html`-заглушка с мгновенным редиректом на `/login.html` (нужна, чтобы wrangler вообще нашёл статику для деплоя — без index.html в корне сборка падает с ошибкой "Could not detect a directory containing static files").
 
+### 6. PWA
+`manifest.json` + иконки в `icons/` — сайт можно установить на Android/desktop Chrome как приложение ("Установить" / "На главный экран"). Иконки сгенерированы из `favicon.svg`; при смене иконки перегенерировать `icons/icon-192.png`, `icons/icon-512.png`, `icons/icon-512-maskable.png`, `icons/apple-touch-icon.png`.
+
 ## Известные ограничения
 
 - Регистрация открыта всем, у кого есть ссылка (обычная email+пароль модель). Закрыть — можно отключить публичный signUp и заводить пользователей вручную через Supabase Dashboard.

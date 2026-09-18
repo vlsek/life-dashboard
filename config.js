@@ -5,11 +5,14 @@ const SUPABASE_ANON_KEY = "sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SITE_VERSION = "0.26";
+const SITE_VERSION = "0.27";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.27", date: "2026-09-18", changes: [
+        "Дашборд теперь PWA — можно установить на Android как приложение («Установить» / «На главный экран» в Chrome): своя иконка, запуск в полноэкранном режиме без адресной строки, цвет статус-бара подстраивается под выбранную тему",
+    ]},
     { version: "0.26", date: "2026-09-18", changes: [
         "Убрали ссылку «← Портфолио» из сайдбара (раз проекты разделены — смысла в ней больше нет), вместо неё — «О проекте»: ссылка на визитку + контакт для обратной связи",
     ]},
@@ -51,6 +54,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.27", date: "2026-09-18", changes: [
+        "The dashboard is now a PWA — installable on Android as an app (\"Install\" / \"Add to Home Screen\" in Chrome): its own icon, full-screen launch with no address bar, status-bar color matches whichever theme is selected",
+    ]},
     { version: "0.26", date: "2026-09-18", changes: [
         "Removed the \"← Portfolio\" sidebar link (no longer relevant now the projects are split) — replaced with \"About\": a link to the portfolio plus a feedback contact",
     ]},
