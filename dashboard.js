@@ -973,23 +973,9 @@ function renderSetsMetric(m) {
     box.className = "card";
     box.style.marginBottom = "14px";
 
-    const datalistId = `sets-variations-${m.id}`;
-    const datalist = document.createElement("datalist");
-    datalist.id = datalistId;
-    function renderDatalist() {
-        datalist.innerHTML = "";
-        (m.options || []).forEach(o => {
-            const opt = document.createElement("option");
-            opt.value = o.label || o.key;
-            datalist.appendChild(opt);
-        });
-    }
-    renderDatalist();
-    box.appendChild(datalist);
-
-    // Новая особенность подхода, которой ещё нет в сохранённом списке — запоминаем в фоне
-    // (пишем в metrics.options), чтобы в следующий раз она уже была в выпадающем списке.
-    // Список можно почистить/поправить вручную через ⚙️ у метрики.
+    // Особенность подхода (например "широкий хват") — своя мини-подсказка вместо нативного
+    // <datalist>: показываем список при фокусе/вводе, с иконкой ✕ у каждого варианта, чтобы
+    // можно было сразу удалить случайно/неверно введённый вариант, а не лезть в ⚙️ метрики.
     async function rememberVariation(text) {
         if (!text) return;
         const known = new Set((m.options || []).map(o => (o.label || o.key || "").toLowerCase()));
@@ -998,7 +984,81 @@ function renderSetsMetric(m) {
         const { error } = await sb.from("metrics").update({ options: newOptions }).eq("id", m.id);
         if (error) { console.error(error); return; } // тихо — это фоновая подсказка, не критично, если не сохранилась
         m.options = newOptions;
-        renderDatalist();
+    }
+
+    async function forgetVariation(labelToRemove) {
+        const newOptions = (m.options || []).filter(o => (o.label || o.key) !== labelToRemove);
+        const { error } = await sb.from("metrics").update({ options: newOptions }).eq("id", m.id);
+        if (error) { showToast(t("dash_save_error_generic") + error.message, "error"); console.error(error); return; }
+        m.options = newOptions;
+    }
+
+    // Комбобокс "особенность подхода": текстовое поле + своя выпадашка вместо datalist
+    function buildVariationCombo(s, onPersist) {
+        const wrap = document.createElement("div");
+        wrap.className = "variation-combo";
+
+        const varInput = document.createElement("input");
+        varInput.type = "text";
+        varInput.placeholder = t("dash_sets_variation_placeholder");
+        varInput.value = s.variation ?? "";
+        wrap.appendChild(varInput);
+
+        const dropdown = document.createElement("div");
+        dropdown.className = "variation-dropdown";
+        wrap.appendChild(dropdown);
+
+        function renderDropdown() {
+            dropdown.innerHTML = "";
+            const query = varInput.value.trim().toLowerCase();
+            const matches = (m.options || []).filter(o => (o.label || o.key || "").toLowerCase().includes(query));
+            if (matches.length === 0) { dropdown.classList.remove("open"); return; }
+            matches.forEach(o => {
+                const label = o.label || o.key;
+                const item = document.createElement("div");
+                item.className = "variation-option";
+
+                const text = document.createElement("span");
+                text.textContent = label;
+                text.className = "variation-option-text";
+                text.onmousedown = (e) => {
+                    e.preventDefault();
+                    varInput.value = label;
+                    dropdown.classList.remove("open");
+                    s.variation = label;
+                    onPersist();
+                };
+                item.appendChild(text);
+
+                const del = document.createElement("button");
+                del.type = "button";
+                del.className = "variation-option-remove";
+                del.textContent = "✕";
+                del.title = t("dash_sets_variation_remove_title");
+                del.onmousedown = async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    await forgetVariation(label);
+                    renderDropdown();
+                };
+                item.appendChild(del);
+
+                dropdown.appendChild(item);
+            });
+            dropdown.classList.add("open");
+        }
+
+        varInput.oninput = renderDropdown;
+        varInput.onfocus = renderDropdown;
+        varInput.onblur = () => setTimeout(() => dropdown.classList.remove("open"), 150);
+        varInput.onchange = () => {
+            const text = varInput.value.trim();
+            s.variation = text || null;
+            onPersist();
+            rememberVariation(text);
+        };
+
+        return wrap;
     }
 
     const headerRow = document.createElement("div");
@@ -1062,19 +1122,8 @@ function renderSetsMetric(m) {
                 repsCell.appendChild(repsInput);
 
                 const varCell = row.insertCell();
-                const varInput = document.createElement("input");
-                varInput.type = "text";
-                varInput.style.width = "100%";
-                varInput.setAttribute("list", datalistId);
-                varInput.placeholder = t("dash_sets_variation_placeholder");
-                varInput.value = s.variation ?? "";
-                varInput.onchange = () => {
-                    const text = varInput.value.trim();
-                    s.variation = text || null;
-                    persist();
-                    rememberVariation(text);
-                };
-                varCell.appendChild(varInput);
+                const combo = buildVariationCombo(s, persist);
+                varCell.appendChild(combo);
 
                 const delCell = row.insertCell();
                 const delBtn = document.createElement("button");

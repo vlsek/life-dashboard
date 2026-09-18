@@ -5,11 +5,14 @@ const SUPABASE_ANON_KEY = "sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SITE_VERSION = "0.21";
+const SITE_VERSION = "0.22";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.22", date: "2026-09-17", changes: [
+        "Выпадающий список «особенность подхода» в метрике-раскладушке (например «Отжимания») переделан со стандартного нативного datalist на свою выпадашку — теперь у каждого варианта есть ✕, чтобы сразу удалить случайно/неверно введённое значение, не заходя в настройки метрики",
+    ]},
     { version: "0.21", date: "2026-09-17", changes: [
         "Убрал перенос строк у быстрой навигации — при раскрытии все иконки остаются в одной строке рядом с кнопкой »»»",
     ]},
@@ -36,6 +39,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.22", date: "2026-09-17", changes: [
+        "The \"set variation\" dropdown in the sets-metric card (e.g. \"Push-ups\") is now a custom combobox instead of the native datalist — each suggestion has a ✕ to remove a mistyped entry right there, without going into metric settings",
+    ]},
     { version: "0.21", date: "2026-09-17", changes: [
         "Removed line-wrapping from the quick nav — expanded icons now stay on one row next to the »»» button",
     ]},
