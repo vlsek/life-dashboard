@@ -72,7 +72,6 @@ body {
 .topbar {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
     gap: 8px 12px;
     padding: 10px 16px;
     background: var(--bg-card);
@@ -125,11 +124,12 @@ body {
 
 .quick-nav {
     display: none;
-    flex-wrap: wrap;
     align-items: center;
     gap: 4px;
-    flex-basis: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
 }
+.quick-nav::-webkit-scrollbar { display: none; }
 .quick-nav.open {
     display: flex;
 }

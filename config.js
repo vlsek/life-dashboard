@@ -5,11 +5,14 @@ const SUPABASE_ANON_KEY = "sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SITE_VERSION = "0.20";
+const SITE_VERSION = "0.21";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.21", date: "2026-09-17", changes: [
+        "Убрал перенос строк у быстрой навигации — при раскрытии все иконки остаются в одной строке рядом с кнопкой »»»",
+    ]},
     { version: "0.20", date: "2026-09-17", changes: [
         "Быстрая навигация снова скрыта за кнопкой »»», но теперь по нажатию раскрываются сразу все иконки (новой строкой), без частичного показа и скролла",
     ]},
@@ -33,6 +36,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.21", date: "2026-09-17", changes: [
+        "Removed line-wrapping from the quick nav — expanded icons now stay on one row next to the »»» button",
+    ]},
     { version: "0.20", date: "2026-09-17", changes: [
         "Quick nav is hidden behind the »»» button again, but now opens to show all icons at once on a new line — no partial view, no scrolling",
     ]},
