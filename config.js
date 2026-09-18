@@ -5,11 +5,14 @@ const SUPABASE_ANON_KEY = "sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SITE_VERSION = "0.19";
+const SITE_VERSION = "0.20";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.20", date: "2026-09-17", changes: [
+        "Быстрая навигация снова скрыта за кнопкой »»», но теперь по нажатию раскрываются сразу все иконки (новой строкой), без частичного показа и скролла",
+    ]},
     { version: "0.19", date: "2026-09-17", changes: [
         "Верхняя навигация больше не сворачивается — все иконки разделов сразу видны, переносятся на вторую строку при нехватке места вместо скролла",
         "Почистили README в репозитории и убрали служебный файл для переноса контекста между чатами",
@@ -30,6 +33,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.20", date: "2026-09-17", changes: [
+        "Quick nav is hidden behind the »»» button again, but now opens to show all icons at once on a new line — no partial view, no scrolling",
+    ]},
     { version: "0.19", date: "2026-09-17", changes: [
         "Top navigation no longer collapses — all section icons are visible right away, wrapping to a second line instead of scrolling when space is tight",
         "Cleaned up the repo README and removed the internal chat-handoff file",
@@ -556,6 +562,12 @@ function renderNav(active, userEmail) {
     homeIconLink.className = "quick-nav-icon home" + (homePage.key === active ? " active" : "");
     topbar.appendChild(homeIconLink);
 
+    const moreToggle = document.createElement("button");
+    moreToggle.className = "quick-nav-toggle";
+    moreToggle.innerHTML = "&raquo;&raquo;&raquo;";
+    moreToggle.setAttribute("aria-label", t("nav_more"));
+    topbar.appendChild(moreToggle);
+
     const quickNav = document.createElement("div");
     quickNav.className = "quick-nav";
     for (const p of pages) {
@@ -568,6 +580,18 @@ function renderNav(active, userEmail) {
         quickNav.appendChild(a);
     }
     topbar.appendChild(quickNav);
+
+    moreToggle.onclick = (e) => {
+        e.stopPropagation();
+        const isOpen = quickNav.classList.toggle("open");
+        moreToggle.classList.toggle("open", isOpen);
+    };
+    document.addEventListener("click", (e) => {
+        if (quickNav.classList.contains("open") && !quickNav.contains(e.target) && e.target !== moreToggle) {
+            quickNav.classList.remove("open");
+            moreToggle.classList.remove("open");
+        }
+    });
 
     document.body.prepend(topbar);
 

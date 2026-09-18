@@ -124,11 +124,29 @@ body {
 }
 
 .quick-nav {
-    display: flex;
+    display: none;
     flex-wrap: wrap;
     align-items: center;
     gap: 4px;
+    flex-basis: 100%;
 }
+.quick-nav.open {
+    display: flex;
+}
+
+.quick-nav-toggle {
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.1em;
+    line-height: 1;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+.quick-nav-toggle:hover { color: var(--text); background: var(--bg); }
+.quick-nav-toggle.open { color: var(--text); }
 
 /* ---- Выезжающий сайдбар ---- */
 .sidebar-backdrop {
