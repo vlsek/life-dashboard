@@ -5,11 +5,14 @@ const SUPABASE_ANON_KEY = "sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SITE_VERSION = "0.22";
+const SITE_VERSION = "0.23";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.23", date: "2026-09-18", changes: [
+        "Визитка вынесена в отдельный репозиторий и будет жить на отдельном деплое — из этого репо убраны index.html/portfolio.css, ссылки на визитку временно указывают на заглушку до подключения реального URL",
+    ]},
     { version: "0.22", date: "2026-09-17", changes: [
         "Выпадающий список «особенность подхода» в метрике-раскладушке (например «Отжимания») переделан со стандартного нативного datalist на свою выпадашку — теперь у каждого варианта есть ✕, чтобы сразу удалить случайно/неверно введённое значение, не заходя в настройки метрики",
     ]},
@@ -39,6 +42,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.23", date: "2026-09-18", changes: [
+        "The portfolio has been split into its own repo and will live on its own deployment — index.html/portfolio.css removed from this repo, portfolio links temporarily point to a placeholder until the real URL is wired in",
+    ]},
     { version: "0.22", date: "2026-09-17", changes: [
         "The \"set variation\" dropdown in the sets-metric card (e.g. \"Push-ups\") is now a custom combobox instead of the native datalist — each suggestion has a ✕ to remove a mistyped entry right there, without going into metric settings",
     ]},
@@ -88,7 +94,8 @@ async function requireAuth() {
 
 async function logout() {
     await sb.auth.signOut();
-    window.location.href = "index.html";
+    // TODO: заменить на реальный URL визитки после деплоя на Cloudflare
+    window.location.href = "https://REPLACE-WITH-PORTFOLIO-URL";
 }
 
 function fmtDate(d) {
@@ -615,7 +622,8 @@ function renderNav(active, userEmail) {
     sidebar.className = "sidebar";
 
     const homeLink = document.createElement("a");
-    homeLink.href = "index.html";
+    // TODO: заменить на реальный URL визитки после деплоя на Cloudflare
+    homeLink.href = "https://REPLACE-WITH-PORTFOLIO-URL";
     homeLink.textContent = t("nav_portfolio");
     homeLink.className = "dim-link";
     sidebar.appendChild(homeLink);
