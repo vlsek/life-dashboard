@@ -1060,6 +1060,21 @@ function renderSetsMetric(m) {
         dropdown.className = "variation-dropdown";
         wrap.appendChild(dropdown);
 
+        // Умное открытие: если снизу внутри прокручиваемой таблицы (.table-scroll обрезает
+        // overflow) не хватает места — открываем список вверх, а не вниз, иначе у последней
+        // строки список обрезается контейнером и становится некликабельным.
+        function positionDropdown() {
+            dropdown.classList.remove("upward");
+            const scrollAncestor = wrap.closest(".table-scroll");
+            if (!scrollAncestor) return;
+            const scrollRect = scrollAncestor.getBoundingClientRect();
+            const inputRect = varInput.getBoundingClientRect();
+            const spaceBelow = scrollRect.bottom - inputRect.bottom;
+            if (spaceBelow < 120) {
+                dropdown.classList.add("upward");
+            }
+        }
+
         function renderDropdown(showAll) {
             dropdown.innerHTML = "";
             const query = showAll ? "" : varInput.value.trim().toLowerCase();
@@ -1097,6 +1112,7 @@ function renderSetsMetric(m) {
 
                 dropdown.appendChild(item);
             });
+            positionDropdown();
             dropdown.classList.add("open");
         }
 

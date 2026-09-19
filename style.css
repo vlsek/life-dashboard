@@ -501,6 +501,10 @@ th { font-size: 0.8em; color: var(--text-dim); font-weight: normal; }
     z-index: 30;
 }
 .variation-dropdown.open { display: block; }
+.variation-dropdown.upward {
+    top: auto;
+    bottom: calc(100% + 4px);
+}
 .variation-option {
     display: flex;
     align-items: center;

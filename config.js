@@ -55,11 +55,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.32";
+const SITE_VERSION = "0.33";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.33", date: "2026-09-19", changes: [
+        "Починили обрезанный и некликабельный список «особенность подхода» у последней строки в таблице — теперь список сам открывается вверх, если снизу не хватает места внутри прокручиваемой таблицы",
+    ]},
     { version: "0.32", date: "2026-09-19", changes: [
         "У поля «особенность подхода» появилась стрелка ▾ справа — по клику сразу показывает полный список запомненных вариантов, не дожидаясь ввода текста",
     ]},
@@ -130,6 +133,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.33", date: "2026-09-19", changes: [
+        "Fixed the clipped, unclickable \"set variation\" dropdown on the last row of the table — it now opens upward on its own when there's not enough room below inside the scrollable table",
+    ]},
     { version: "0.32", date: "2026-09-19", changes: [
         "The \"set variation\" field now has a ▾ arrow on the right — click it to see the full list of saved variations right away, without typing first",
     ]},
