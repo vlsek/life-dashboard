@@ -55,11 +55,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.30";
+const SITE_VERSION = "0.31";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.31", date: "2026-09-19", changes: [
+        "Сократили строку профиля, чтобы влезала в одну строку: «💰 Баланс: 120» → «💰 120», у изменений тела в скобках убрали «с начала» — просто «(+1.0кг)», возраст теперь «29 лет» с правильным склонением вместо «Возраст: 29»",
+    ]},
     { version: "0.30", date: "2026-09-19", changes: [
         "Страница «Аккаунт» — убрали лишнее ограничение ширины блоков, теперь как на остальных страницах",
         "Глазик показать/скрыть пароль — вместо эмодзи обычная SVG-иконка, как везде",
@@ -124,6 +127,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.31", date: "2026-09-19", changes: [
+        "Shortened the profile row to fit on one line: \"💰 Balance: 120\" → \"💰 120\", dropped \"since start\" from the body-metric deltas — just \"(+1.0kg)\" now, age now reads \"29 years\" instead of \"Age: 29\"",
+    ]},
     { version: "0.30", date: "2026-09-19", changes: [
         "Account page — removed the leftover narrow width cap on its cards, now matches every other page",
         "Password show/hide toggle — a proper SVG icon instead of an emoji, matching the usual pattern",

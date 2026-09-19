@@ -779,6 +779,21 @@ async function deleteBodyParameter(p) {
     loadCharts();
 }
 
+// Возраст с правильным склонением: 21 год, 22 года, 25 лет и т.п.
+function formatAge(age) {
+    if (getLang() === "en") {
+        return `${age} ${age === 1 ? "year" : "years"}`;
+    }
+    const mod100 = age % 100;
+    const mod10 = age % 10;
+    let word;
+    if (mod100 >= 11 && mod100 <= 14) word = "лет";
+    else if (mod10 === 1) word = "год";
+    else if (mod10 >= 2 && mod10 <= 4) word = "года";
+    else word = "лет";
+    return `${age} ${word}`;
+}
+
 async function loadProfile() {
     const card = document.getElementById("profile-card");
     if (!card) return; // блок скрыт в настройках дашборда
@@ -863,7 +878,7 @@ async function loadProfile() {
             let text = `${param.icon} ${param.name}: ${latest.value}${unit}`;
             if (sinceFirst != null && Math.abs(sinceFirst) > 0.001) {
                 const sign = sinceFirst > 0 ? "+" : "";
-                text += ` <span style="color:${color};">(${sign}${sinceFirst.toFixed(1)}${unit} ${t("dash_since_start")})</span>`;
+                text += ` <span style="color:${color};">(${sign}${sinceFirst.toFixed(1)}${unit})</span>`;
             }
             statsHtml += `<div>${text}</div>`;
         }
@@ -877,7 +892,7 @@ async function loadProfile() {
     const balanceEl = document.createElement("div");
     balanceEl.className = "push-right";
     balanceEl.style.fontWeight = "bold";
-    balanceEl.textContent = `${t("dash_balance_label")} ${balance}`;
+    balanceEl.textContent = `💰 ${balance}`;
     row.appendChild(balanceEl);
 
     // теперь добавляем возраст с кнопкой — уже после того, как весь текстовый HTML собран,
@@ -888,7 +903,7 @@ async function loadProfile() {
         const today = new Date();
         let age = today.getFullYear() - bd.getFullYear();
         if (today.getMonth() < bd.getMonth() || (today.getMonth() === bd.getMonth() && today.getDate() < bd.getDate())) age--;
-        ageSlot.innerHTML = `${t("dash_age_label")} ${age} `;
+        ageSlot.innerHTML = `🎂 ${formatAge(age)} `;
         const editAgeBtn = document.createElement("button");
         editAgeBtn.className = "secondary";
         editAgeBtn.textContent = "✏️";
