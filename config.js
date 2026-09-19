@@ -55,11 +55,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.31";
+const SITE_VERSION = "0.32";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.32", date: "2026-09-19", changes: [
+        "У поля «особенность подхода» появилась стрелка ▾ справа — по клику сразу показывает полный список запомненных вариантов, не дожидаясь ввода текста",
+    ]},
     { version: "0.31", date: "2026-09-19", changes: [
         "Сократили строку профиля, чтобы влезала в одну строку: «💰 Баланс: 120» → «💰 120», у изменений тела в скобках убрали «с начала» — просто «(+1.0кг)», возраст теперь «29 лет» с правильным склонением вместо «Возраст: 29»",
     ]},
@@ -127,6 +130,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.32", date: "2026-09-19", changes: [
+        "The \"set variation\" field now has a ▾ arrow on the right — click it to see the full list of saved variations right away, without typing first",
+    ]},
     { version: "0.31", date: "2026-09-19", changes: [
         "Shortened the profile row to fit on one line: \"💰 Balance: 120\" → \"💰 120\", dropped \"since start\" from the body-metric deltas — just \"(+1.0kg)\" now, age now reads \"29 years\" instead of \"Age: 29\"",
     ]},

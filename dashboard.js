@@ -1048,13 +1048,21 @@ function renderSetsMetric(m) {
         varInput.value = s.variation ?? "";
         wrap.appendChild(varInput);
 
+        const arrowBtn = document.createElement("button");
+        arrowBtn.type = "button";
+        arrowBtn.className = "variation-combo-arrow";
+        arrowBtn.textContent = "▾";
+        arrowBtn.tabIndex = -1;
+        arrowBtn.title = t("dash_sets_variation_show_all_title");
+        wrap.appendChild(arrowBtn);
+
         const dropdown = document.createElement("div");
         dropdown.className = "variation-dropdown";
         wrap.appendChild(dropdown);
 
-        function renderDropdown() {
+        function renderDropdown(showAll) {
             dropdown.innerHTML = "";
-            const query = varInput.value.trim().toLowerCase();
+            const query = showAll ? "" : varInput.value.trim().toLowerCase();
             const matches = (m.options || []).filter(o => (o.label || o.key || "").toLowerCase().includes(query));
             if (matches.length === 0) { dropdown.classList.remove("open"); return; }
             matches.forEach(o => {
@@ -1083,7 +1091,7 @@ function renderSetsMetric(m) {
                     e.preventDefault();
                     e.stopPropagation();
                     await forgetVariation(label);
-                    renderDropdown();
+                    renderDropdown(showAll);
                 };
                 item.appendChild(del);
 
@@ -1092,14 +1100,23 @@ function renderSetsMetric(m) {
             dropdown.classList.add("open");
         }
 
-        varInput.oninput = renderDropdown;
-        varInput.onfocus = renderDropdown;
+        varInput.oninput = () => renderDropdown(false);
+        varInput.onfocus = () => renderDropdown(false);
         varInput.onblur = () => setTimeout(() => dropdown.classList.remove("open"), 150);
         varInput.onchange = () => {
             const text = varInput.value.trim();
             s.variation = text || null;
             onPersist();
             rememberVariation(text);
+        };
+        arrowBtn.onmousedown = (e) => {
+            e.preventDefault();
+            if (dropdown.classList.contains("open")) {
+                dropdown.classList.remove("open");
+            } else {
+                renderDropdown(true);
+                varInput.focus();
+            }
         };
 
         return wrap;

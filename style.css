@@ -469,7 +469,23 @@ th { font-size: 0.8em; color: var(--text-dim); font-weight: normal; }
 }
 .variation-combo input {
     width: 100%;
+    padding-right: 28px;
 }
+.variation-combo-arrow {
+    position: absolute;
+    right: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 0.9em;
+    line-height: 1;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+}
+.variation-combo-arrow:hover { background: var(--bg); color: var(--text); }
 .variation-dropdown {
     display: none;
     position: absolute;
