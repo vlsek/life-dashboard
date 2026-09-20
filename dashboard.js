@@ -794,6 +794,149 @@ function formatAge(age) {
     return `${age} ${word}`;
 }
 
+// ---- Диаграмма "на сколько % день сделан" — настройки хранятся в localStorage (личная
+// настройка отображения, не данные, синхронизировать между устройствами не нужно) ----
+function getDayProgressSettings() {
+    try {
+        const raw = localStorage.getItem("day_progress_settings");
+        if (!raw) return { enabled: true, includePlanned: true, includeMetrics: true };
+        return { enabled: true, includePlanned: true, includeMetrics: true, ...JSON.parse(raw) };
+    } catch { return { enabled: true, includePlanned: true, includeMetrics: true }; }
+}
+function setDayProgressSettings(s) {
+    localStorage.setItem("day_progress_settings", JSON.stringify(s));
+}
+
+// Считает done/total по сегодняшнему дню из выбранных в настройках источников:
+// дневные метрики (isMetricDone/calcDailyPoints — та же логика, что и в счёте дня) и/или
+// список "Запланировано на сегодня" (обычные пункты + привязанные цели).
+async function computeDayProgress() {
+    const settings = getDayProgressSettings();
+    if (!settings.enabled) return null;
+    const dateStr = fmtDate(new Date());
+    let done = 0, total = 0;
+
+    if (settings.includeMetrics) {
+        const metrics = await getMetrics();
+        done += await calcDailyPoints(user.id, dateStr, metrics);
+        total += metrics.length;
+    }
+    if (settings.includePlanned) {
+        const { data: note } = await sb.from("daily_notes").select("planned_goals").eq("user_id", user.id).eq("date", dateStr).maybeSingle();
+        const planned = note?.planned_goals ?? [];
+        if (planned.length > 0) {
+            const { data: allGoals } = await sb.from("goals").select("*").eq("user_id", user.id);
+            for (const item of planned) {
+                if (item.type === "goal") {
+                    const g = (allGoals || []).find(x => x.name === item.text);
+                    if (!g) continue; // удалённая цель — больше не в счёте
+                    total++;
+                    const stages = g.stages ?? 1;
+                    if (stages <= 1 ? g.done : (g.current_stage ?? 0) >= stages) done++;
+                } else {
+                    total++;
+                    if (item.done) done++;
+                }
+            }
+        }
+    }
+    return { done, total };
+}
+
+function openDayProgressSettingsModal(onSave) {
+    const settings = getDayProgressSettings();
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.innerHTML = `<h3>${t("dash_day_progress_settings_title")}</h3>`;
+
+    function checkboxRow(labelText, checked) {
+        const label = document.createElement("label");
+        label.style.cssText = "display:flex; align-items:center; gap:8px; flex-direction:row;";
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = checked;
+        label.appendChild(cb);
+        const span = document.createElement("span");
+        span.textContent = labelText;
+        span.style.cssText = "color:var(--text); font-size:1em; margin:0;";
+        label.appendChild(span);
+        modal.appendChild(label);
+        return cb;
+    }
+
+    const enabledCb = checkboxRow(t("dash_day_progress_show"), settings.enabled);
+    const plannedCb = checkboxRow(t("dash_day_progress_include_planned"), settings.includePlanned);
+    const metricsCb = checkboxRow(t("dash_day_progress_include_metrics"), settings.includeMetrics);
+
+    const actions = document.createElement("div");
+    actions.className = "modal-actions";
+    const cancelBtn = document.createElement("button");
+    cancelBtn.className = "secondary";
+    cancelBtn.textContent = t("cancel");
+    cancelBtn.onclick = () => backdrop.remove();
+    const okBtn = document.createElement("button");
+    okBtn.textContent = t("save");
+    okBtn.onclick = () => {
+        setDayProgressSettings({ enabled: enabledCb.checked, includePlanned: plannedCb.checked, includeMetrics: metricsCb.checked });
+        backdrop.remove();
+        onSave();
+    };
+    actions.appendChild(cancelBtn);
+    actions.appendChild(okBtn);
+    modal.appendChild(actions);
+    backdrop.appendChild(modal);
+    backdrop.onclick = (e) => { if (e.target === backdrop) backdrop.remove(); };
+    document.body.appendChild(backdrop);
+}
+
+async function renderDayProgressDonut(container) {
+    const progress = await computeDayProgress();
+
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "display:flex; align-items:center; gap:14px; margin-bottom:16px;";
+
+    if (!progress || progress.total === 0) {
+        // нечего показывать (выключено в настройках или пока нет ни метрик, ни плана) —
+        // оставляем только маленькую шестерёнку, чтобы можно было включить/настроить
+        const gearOnly = document.createElement("button");
+        gearOnly.type = "button";
+        gearOnly.className = "icon-btn";
+        gearOnly.textContent = "⚙️";
+        gearOnly.title = t("dash_day_progress_settings_title");
+        gearOnly.onclick = () => openDayProgressSettingsModal(loadProfile);
+        wrap.appendChild(gearOnly);
+        container.appendChild(wrap);
+        return;
+    }
+
+    const { done, total } = progress;
+    const pct = Math.round((done / total) * 100);
+    const r = 15.5;
+    const circumference = 2 * Math.PI * r;
+    const offset = circumference * (1 - done / total);
+
+    wrap.innerHTML = `
+        <svg width="60" height="60" viewBox="0 0 36 36" style="flex-shrink:0; transform: rotate(-90deg);">
+            <circle cx="18" cy="18" r="${r}" fill="none" stroke="var(--border)" stroke-width="3.5"/>
+            <circle cx="18" cy="18" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3.5"
+                stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
+        </svg>
+        <div style="flex:1;">
+            <div style="font-size:1.4em; font-weight:700;">${pct}%</div>
+            <div class="dim" style="font-size:0.85em;">${t("dash_day_progress_label")} (${done}/${total})</div>
+        </div>`;
+    const gearBtn = document.createElement("button");
+    gearBtn.type = "button";
+    gearBtn.className = "icon-btn";
+    gearBtn.textContent = "⚙️";
+    gearBtn.title = t("dash_day_progress_settings_title");
+    gearBtn.onclick = () => openDayProgressSettingsModal(loadProfile);
+    wrap.appendChild(gearBtn);
+    container.appendChild(wrap);
+}
+
 async function loadProfile() {
     const card = document.getElementById("profile-card");
     if (!card) return; // блок скрыт в настройках дашборда
@@ -803,6 +946,7 @@ async function loadProfile() {
     const { balance, total } = await calcBalance(user.id);
 
     card.innerHTML = "";
+    await renderDayProgressDonut(card);
 
     const row = document.createElement("div");
     row.className = "stat-row";
@@ -1862,23 +2006,6 @@ async function renderPlanned(dateStr) {
     async function persistPlanned(newPlanned) {
         await sb.from("daily_notes").upsert({ user_id: user.id, date: dateStr, planned_goals: newPlanned }, { onConflict: "user_id,date" });
     }
-
-    // Считаем прогресс дня: сколько из запланированного уже отмечено выполненным.
-    // Удалённые цели (warning-пункты) в счёт не идут — их больше нельзя выполнить.
-    let doneCount = 0, totalCount = 0;
-    for (const item of planned) {
-        if (item.type === "goal") {
-            const g = (allGoals || []).find(x => x.name === item.text);
-            if (!g) continue;
-            totalCount++;
-            const stages = g.stages ?? 1;
-            if (stages <= 1 ? g.done : (g.current_stage ?? 0) >= stages) doneCount++;
-        } else {
-            totalCount++;
-            if (item.done) doneCount++;
-        }
-    }
-    renderDayProgressDonut(card, doneCount, totalCount);
 
     if (planned.length === 0) {
         const emptyMsg = document.createElement("p");

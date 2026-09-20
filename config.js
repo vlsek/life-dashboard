@@ -55,11 +55,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.35";
+const SITE_VERSION = "0.36";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.36", date: "2026-09-20", changes: [
+        "Форма огонька в лого стала стройнее — убрал «шарообразность» снизу, теперь больше похоже на живое пламя",
+        "Диаграмма дня переехала в блок «Профиль» (была в «Запланировано на сегодня») — теперь складывается и из дневных метрик, и из плана на день, можно настроить через ⚙️ рядом с ней (в т.ч. вообще скрыть)",
+        "В онбординге новый первый вопрос — «Как планируешь использовать?» (трекер целей / ежедневник / и то и другое). Для «ежедневника» форма сразу прячет фитнес-поля (рост/вес/цель/метрики) — они не нужны, если человеку нужен просто список дел",
+    ]},
     { version: "0.35", date: "2026-09-20", changes: [
         "Новый логотип — тот же огонёк, но с градиентом и объёмом вместо плоской заливки (иконка, favicon, PWA — везде обновилось)",
         "В тренировках теперь можно добавить свою категорию с любым названием — кроме пресетов Верх/Низ/Фулбади/Кастом появился пункт «➕ Добавить свою категорию…»",
@@ -143,6 +148,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.36", date: "2026-09-20", changes: [
+        "Flame logo shape is leaner now — removed the \"balloon\" look at the bottom, reads more like an actual flame",
+        "Day-progress chart moved into the Profile block (was in \"Planned for today\") — now draws from both daily metrics and today's plan, configurable via ⚙️ next to it (including hiding it entirely)",
+        "New first onboarding question — \"How do you plan to use this?\" (goal tracker / daily planner / both). Choosing \"planner\" hides the fitness fields (height/weight/goal/metrics) right away since they're not needed for a plain to-do list",
+    ]},
     { version: "0.35", date: "2026-09-20", changes: [
         "New logo — same flame, now with a gradient and depth instead of a flat fill (icon, favicon, PWA — updated everywhere)",
         "Workouts now support adding your own category with any name — besides the Upper/Lower/Full body/Custom presets there's a \"➕ Add my own category…\" option",

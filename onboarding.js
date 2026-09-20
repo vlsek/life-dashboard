@@ -88,9 +88,26 @@ function renderForm() {
         return inputEl;
     }
 
+    // ---- Как планируешь использовать — влияет на то, что показываем дальше в форме
+    // и какие настройки дашборда включаем по умолчанию (метрики vs план на день) ----
+    const usecaseSelect = document.createElement("select");
+    [
+        { value: "goals", label: t("onb_usecase_goals") },
+        { value: "planner", label: t("onb_usecase_planner") },
+        { value: "both", label: t("onb_usecase_both") },
+    ].forEach(opt => {
+        const o = document.createElement("option");
+        o.value = opt.value;
+        o.textContent = opt.label;
+        usecaseSelect.appendChild(o);
+    });
+    field(t("onb_field_usecase"), usecaseSelect);
+    enhanceSelectWithCustomDropdown(usecaseSelect);
+
     const genderSelect = document.createElement("select");
     genderSelect.innerHTML = `<option value="male">${t("onb_gender_male")}</option><option value="female">${t("onb_gender_female")}</option>`;
     field(t("onb_field_gender"), genderSelect);
+    enhanceSelectWithCustomDropdown(genderSelect);
 
     const birthdateInput = document.createElement("input");
     birthdateInput.type = "date";
@@ -102,12 +119,14 @@ function renderForm() {
     heightInput.type = "number";
     heightInput.placeholder = t("onb_height_placeholder");
     field(t("onb_field_height"), heightInput);
+    const heightLabel = heightInput.parentNode;
 
     const weightInput = document.createElement("input");
     weightInput.type = "number";
     weightInput.step = "0.1";
     weightInput.placeholder = t("onb_weight_placeholder");
     field(t("onb_field_weight"), weightInput);
+    const weightLabel = weightInput.parentNode;
 
     const goalSelect = document.createElement("select");
     for (const g of GOAL_OPTIONS) {
@@ -117,6 +136,8 @@ function renderForm() {
         goalSelect.appendChild(opt);
     }
     field(t("onb_field_priority"), goalSelect);
+    const goalLabel = goalSelect.parentNode;
+    enhanceSelectWithCustomDropdown(goalSelect);
 
     const skillsWrap = document.createElement("div");
     skillsWrap.style.display = "none";
@@ -179,6 +200,21 @@ function renderForm() {
         renderMetricsCheckboxes();
     };
 
+    // Для сценария "ежедневник" скрываем всё, что относится к фитнес-целям и метрикам —
+    // человеку, который хочет просто список дел, не нужно продираться через это на старте.
+    function applyUsecaseVisibility() {
+        const isPlanner = usecaseSelect.value === "planner";
+        heightLabel.style.display = isPlanner ? "none" : "block";
+        weightLabel.style.display = isPlanner ? "none" : "block";
+        goalLabel.style.display = isPlanner ? "none" : "block";
+        metricsToggle.style.display = isPlanner ? "none" : "block";
+        metricsWrap.style.display = "none";
+        metricsToggle.textContent = t("onb_metrics_toggle_show");
+        skillsWrap.style.display = (!isPlanner && goalSelect.value === "learn_skill") ? "block" : "none";
+    }
+    usecaseSelect.onchange = applyUsecaseVisibility;
+    applyUsecaseVisibility();
+
     const submitBtn = document.createElement("button");
     submitBtn.textContent = t("onb_submit_btn");
     submitBtn.style.width = "100%";
@@ -191,15 +227,27 @@ function renderForm() {
         }
         submitBtn.disabled = true;
         submitBtn.textContent = t("onb_submitting");
-        const candidates = [...BASE_METRICS, ...(GOAL_METRICS[goalSelect.value] || [])];
+        const isPlanner = usecaseSelect.value === "planner";
+        const candidates = isPlanner ? [] : [...BASE_METRICS, ...(GOAL_METRICS[goalSelect.value] || [])];
         const selectedMetrics = candidates.filter(m => checkboxByKey[m.key] !== false);
+
+        // Настройка диаграммы дня по умолчанию под выбранный сценарий — личная настройка
+        // отображения (localStorage), можно будет поменять в любой момент через ⚙️ на диаграмме.
+        try {
+            localStorage.setItem("day_progress_settings", JSON.stringify(
+                isPlanner ? { enabled: true, includePlanned: true, includeMetrics: false }
+                    : usecaseSelect.value === "goals" ? { enabled: true, includePlanned: false, includeMetrics: true }
+                        : { enabled: true, includePlanned: true, includeMetrics: true }
+            ));
+        } catch { /* localStorage недоступен — не критично, останутся дефолтные настройки */ }
+
         await completeOnboarding({
             gender: genderSelect.value,
             birthdate: birthdateInput.value || null,
-            height: heightInput.value ? parseFloat(heightInput.value) : null,
-            weight: weightInput.value ? parseFloat(weightInput.value) : null,
-            goal_type: goalSelect.value,
-            skills_raw: skillsInput.value,
+            height: isPlanner ? null : (heightInput.value ? parseFloat(heightInput.value) : null),
+            weight: isPlanner ? null : (weightInput.value ? parseFloat(weightInput.value) : null),
+            goal_type: isPlanner ? null : goalSelect.value,
+            skills_raw: isPlanner ? "" : skillsInput.value,
             selectedMetrics,
         });
     };
@@ -212,6 +260,9 @@ function renderForm() {
     skipBtn.style.marginTop = "8px";
     skipBtn.onclick = async () => {
         skipBtn.disabled = true;
+        try {
+            localStorage.setItem("day_progress_settings", JSON.stringify({ enabled: true, includePlanned: true, includeMetrics: true }));
+        } catch { /* не критично */ }
         const { error: profileError } = await sb.from("profiles").upsert({ user_id: user.id, onboarded: true });
         if (profileError) {
             alert(t("dash_save_error_generic") + profileError.message + "\n\n" + t("onb_migration_hint_001"));
