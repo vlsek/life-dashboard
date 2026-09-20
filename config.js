@@ -55,11 +55,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.34";
+const SITE_VERSION = "0.35";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.35", date: "2026-09-20", changes: [
+        "Новый логотип — тот же огонёк, но с градиентом и объёмом вместо плоской заливки (иконка, favicon, PWA — везде обновилось)",
+        "В тренировках теперь можно добавить свою категорию с любым названием — кроме пресетов Верх/Низ/Фулбади/Кастом появился пункт «➕ Добавить свою категорию…»",
+        "На дашборде в блоке «Запланировано на сегодня» — круглая диаграмма: сколько % из запланированного на сегодня уже сделано",
+    ]},
     { version: "0.34", date: "2026-09-19", changes: [
         "Категория упражнения в тренировках стала выбором из фиксированных вариантов: Верх / Низ / Фулбади / Кастом (плюс «без категории») — вместо свободного текста, чтобы группы не расходились из-за опечаток и регистра",
         "Порядок групп в тренировках теперь фиксированный (Верх → Низ → Фулбади → Кастом → старые категории → без категории), а не по порядку добавления",
@@ -138,6 +143,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.35", date: "2026-09-20", changes: [
+        "New logo — same flame, now with a gradient and depth instead of a flat fill (icon, favicon, PWA — updated everywhere)",
+        "Workouts now support adding your own category with any name — besides the Upper/Lower/Full body/Custom presets there's a \"➕ Add my own category…\" option",
+        "Dashboard's \"Planned for today\" block now has a circular chart showing what % of today's plan is already done",
+    ]},
     { version: "0.34", date: "2026-09-19", changes: [
         "Exercise category in workouts is now a fixed set of choices: Upper / Lower / Full body / Custom (plus \"no category\") — instead of free text, so groups don't split apart over typos or capitalization",
         "Workout category groups now sort in a fixed order (Upper → Lower → Full body → Custom → legacy categories → uncategorized) instead of insertion order",

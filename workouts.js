@@ -347,37 +347,120 @@ async function renderOverviewChart(allEntries) {
     renderChartBlock(card, "", points, { unit: " " + t("workouts_sets_word"), color: "var(--accent)" });
 }
 
-function exerciseFormFields(existing) {
+// ---- Форма добавления/редактирования упражнения — своя модалка (не через общий openModal),
+// т.к. нужно условное поле "своя категория", которого нет в общей системе полей ----
+function openExerciseFormModal(existing, onSubmit) {
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.innerHTML = `<h3>${existing ? t("workouts_edit_exercise") : t("workouts_new_exercise")}</h3>`;
+
+    const nameLabel = document.createElement("label");
+    nameLabel.textContent = t("workouts_field_name");
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.value = existing?.name ?? "";
+    nameLabel.appendChild(nameInput);
+    modal.appendChild(nameLabel);
+
     const knownCats = ["upper", "lower", "fullbody", "custom"];
     const currentCat = existing?.category ?? "";
-    return [
-        { key: "name", label: t("workouts_field_name"), type: "text", value: existing?.name ?? "" },
-        {
-            key: "category", label: t("workouts_field_category"), type: "select",
-            options: [
-                { value: "", label: t("workouts_cat_none") },
-                { value: "upper", label: t("workouts_cat_upper") },
-                { value: "lower", label: t("workouts_cat_lower") },
-                { value: "fullbody", label: t("workouts_cat_fullbody") },
-                { value: "custom", label: t("workouts_cat_custom") },
-                // старые произвольные категории, введённые до этого обновления — чтобы их
-                // не потерять при редактировании, добавляем как есть отдельным пунктом
-                ...(currentCat && !knownCats.includes(currentCat) ? [{ value: currentCat, label: currentCat }] : []),
-            ],
-            value: currentCat,
-        },
-        {
-            key: "tracks_weight", label: t("workouts_field_tracks_weight"), type: "select",
-            options: [{ value: "yes", label: t("workouts_tracks_weight_yes") }, { value: "no", label: t("workouts_tracks_weight_no") }],
-            value: (existing?.tracks_weight ?? true) ? "yes" : "no"
-        },
-        { key: "value_label", label: t("workouts_field_value_label"), type: "text", value: existing?.value_label ?? t("workouts_default_value_label") },
-        { key: "unit", label: t("workouts_field_unit"), type: "text", value: existing?.unit ?? t("workouts_default_unit") },
-    ];
+    const isLegacyCustom = currentCat && !knownCats.includes(currentCat);
+
+    const catLabel = document.createElement("label");
+    catLabel.textContent = t("workouts_field_category");
+    const catSelect = document.createElement("select");
+    [
+        { value: "", label: t("workouts_cat_none") },
+        { value: "upper", label: t("workouts_cat_upper") },
+        { value: "lower", label: t("workouts_cat_lower") },
+        { value: "fullbody", label: t("workouts_cat_fullbody") },
+        { value: "custom", label: t("workouts_cat_custom") },
+        { value: "__new__", label: t("workouts_cat_add_new") },
+    ].forEach(opt => {
+        const o = document.createElement("option");
+        o.value = opt.value;
+        o.textContent = opt.label;
+        catSelect.appendChild(o);
+    });
+    catSelect.value = isLegacyCustom ? "__new__" : currentCat;
+    catLabel.appendChild(catSelect);
+    modal.appendChild(catLabel);
+    enhanceSelectWithCustomDropdown(catSelect);
+
+    const newCatLabel = document.createElement("label");
+    newCatLabel.textContent = t("workouts_cat_new_name_label");
+    newCatLabel.style.display = catSelect.value === "__new__" ? "block" : "none";
+    const newCatInput = document.createElement("input");
+    newCatInput.type = "text";
+    newCatInput.value = isLegacyCustom ? currentCat : "";
+    newCatLabel.appendChild(newCatInput);
+    modal.appendChild(newCatLabel);
+    catSelect.addEventListener("change", () => {
+        newCatLabel.style.display = catSelect.value === "__new__" ? "block" : "none";
+        if (catSelect.value === "__new__") newCatInput.focus();
+    });
+
+    const tracksLabel = document.createElement("label");
+    tracksLabel.textContent = t("workouts_field_tracks_weight");
+    const tracksSelect = document.createElement("select");
+    [{ value: "yes", label: t("workouts_tracks_weight_yes") }, { value: "no", label: t("workouts_tracks_weight_no") }].forEach(opt => {
+        const o = document.createElement("option");
+        o.value = opt.value;
+        o.textContent = opt.label;
+        tracksSelect.appendChild(o);
+    });
+    tracksSelect.value = (existing?.tracks_weight ?? true) ? "yes" : "no";
+    tracksLabel.appendChild(tracksSelect);
+    modal.appendChild(tracksLabel);
+    enhanceSelectWithCustomDropdown(tracksSelect);
+
+    const valueLabelLabel = document.createElement("label");
+    valueLabelLabel.textContent = t("workouts_field_value_label");
+    const valueLabelInput = document.createElement("input");
+    valueLabelInput.type = "text";
+    valueLabelInput.value = existing?.value_label ?? t("workouts_default_value_label");
+    valueLabelLabel.appendChild(valueLabelInput);
+    modal.appendChild(valueLabelLabel);
+
+    const unitLabel = document.createElement("label");
+    unitLabel.textContent = t("workouts_field_unit");
+    const unitInput = document.createElement("input");
+    unitInput.type = "text";
+    unitInput.value = existing?.unit ?? t("workouts_default_unit");
+    unitLabel.appendChild(unitInput);
+    modal.appendChild(unitLabel);
+
+    const actions = document.createElement("div");
+    actions.className = "modal-actions";
+    const cancelBtn = document.createElement("button");
+    cancelBtn.className = "secondary";
+    cancelBtn.textContent = t("cancel");
+    cancelBtn.onclick = () => backdrop.remove();
+    const okBtn = document.createElement("button");
+    okBtn.textContent = t("save");
+    okBtn.onclick = async () => {
+        const category = catSelect.value === "__new__" ? newCatInput.value.trim() : catSelect.value;
+        backdrop.remove();
+        await onSubmit({
+            name: nameInput.value,
+            category,
+            tracks_weight: tracksSelect.value,
+            value_label: valueLabelInput.value,
+            unit: unitInput.value,
+        });
+    };
+    actions.appendChild(cancelBtn);
+    actions.appendChild(okBtn);
+    modal.appendChild(actions);
+    backdrop.appendChild(modal);
+    document.body.appendChild(backdrop);
+    nameInput.focus();
 }
 
 async function addExercise() {
-    openModal(t("workouts_new_exercise"), exerciseFormFields(null), async (res) => {
+    openExerciseFormModal(null, async (res) => {
         if (!res.name?.trim()) return;
         const { error } = await sb.from("workout_exercises").insert({
             user_id: userId, name: res.name.trim(), category: res.category?.trim() || null, unit: res.unit?.trim() || t("workouts_default_unit"),
@@ -389,7 +472,7 @@ async function addExercise() {
 }
 
 async function editExercise(ex) {
-    openModal(t("workouts_edit_exercise"), exerciseFormFields(ex), async (res) => {
+    openExerciseFormModal(ex, async (res) => {
         if (!res.name?.trim()) return;
         const { error } = await sb.from("workout_exercises").update({
             name: res.name.trim(), category: res.category?.trim() || null, unit: res.unit?.trim() || t("workouts_default_unit"),

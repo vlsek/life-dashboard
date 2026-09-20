@@ -1827,6 +1827,28 @@ async function openMetricsManagerModal() {
 
 // ---- Цели на сегодня ----
 
+// Круглая диаграмма "на сколько % день сделан" — по списку запланированного на сегодня
+function renderDayProgressDonut(container, done, total) {
+    if (total === 0) return;
+    const pct = Math.round((done / total) * 100);
+    const r = 15.5;
+    const circumference = 2 * Math.PI * r;
+    const offset = circumference * (1 - done / total);
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "display:flex; align-items:center; gap:14px; margin-bottom:14px;";
+    wrap.innerHTML = `
+        <svg width="60" height="60" viewBox="0 0 36 36" style="flex-shrink:0; transform: rotate(-90deg);">
+            <circle cx="18" cy="18" r="${r}" fill="none" stroke="var(--border)" stroke-width="3.5"/>
+            <circle cx="18" cy="18" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3.5"
+                stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
+        </svg>
+        <div>
+            <div style="font-size:1.4em; font-weight:700;">${pct}%</div>
+            <div class="dim" style="font-size:0.85em;">${t("dash_day_progress_label")} (${done}/${total})</div>
+        </div>`;
+    container.appendChild(wrap);
+}
+
 async function renderPlanned(dateStr) {
     const card = document.getElementById("planned-card");
     card.innerHTML = "";
@@ -1841,8 +1863,28 @@ async function renderPlanned(dateStr) {
         await sb.from("daily_notes").upsert({ user_id: user.id, date: dateStr, planned_goals: newPlanned }, { onConflict: "user_id,date" });
     }
 
+    // Считаем прогресс дня: сколько из запланированного уже отмечено выполненным.
+    // Удалённые цели (warning-пункты) в счёт не идут — их больше нельзя выполнить.
+    let doneCount = 0, totalCount = 0;
+    for (const item of planned) {
+        if (item.type === "goal") {
+            const g = (allGoals || []).find(x => x.name === item.text);
+            if (!g) continue;
+            totalCount++;
+            const stages = g.stages ?? 1;
+            if (stages <= 1 ? g.done : (g.current_stage ?? 0) >= stages) doneCount++;
+        } else {
+            totalCount++;
+            if (item.done) doneCount++;
+        }
+    }
+    renderDayProgressDonut(card, doneCount, totalCount);
+
     if (planned.length === 0) {
-        card.innerHTML = `<p class="dim">${t("dash_planned_empty")}</p>`;
+        const emptyMsg = document.createElement("p");
+        emptyMsg.className = "dim";
+        emptyMsg.textContent = t("dash_planned_empty");
+        card.appendChild(emptyMsg);
     } else {
         const table = document.createElement("table");
         for (const item of planned) {
