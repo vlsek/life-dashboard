@@ -348,9 +348,24 @@ async function renderOverviewChart(allEntries) {
 }
 
 function exerciseFormFields(existing) {
+    const knownCats = ["upper", "lower", "fullbody", "custom"];
+    const currentCat = existing?.category ?? "";
     return [
         { key: "name", label: t("workouts_field_name"), type: "text", value: existing?.name ?? "" },
-        { key: "category", label: t("workouts_field_category"), type: "text", value: existing?.category ?? "" },
+        {
+            key: "category", label: t("workouts_field_category"), type: "select",
+            options: [
+                { value: "", label: t("workouts_cat_none") },
+                { value: "upper", label: t("workouts_cat_upper") },
+                { value: "lower", label: t("workouts_cat_lower") },
+                { value: "fullbody", label: t("workouts_cat_fullbody") },
+                { value: "custom", label: t("workouts_cat_custom") },
+                // старые произвольные категории, введённые до этого обновления — чтобы их
+                // не потерять при редактировании, добавляем как есть отдельным пунктом
+                ...(currentCat && !knownCats.includes(currentCat) ? [{ value: currentCat, label: currentCat }] : []),
+            ],
+            value: currentCat,
+        },
         {
             key: "tracks_weight", label: t("workouts_field_tracks_weight"), type: "select",
             options: [{ value: "yes", label: t("workouts_tracks_weight_yes") }, { value: "no", label: t("workouts_tracks_weight_no") }],
@@ -693,18 +708,35 @@ async function render() {
         return;
     }
 
-    // группируем по категории — каждая группа сворачивается независимо
+    // группируем по категории — каждая группа сворачивается независимо.
+    // Порядок: Верх/Низ/Фулбади/Кастом (фиксированный), затем старые произвольные
+    // категории по алфавиту, «Без категории» — всегда в самом конце.
+    const CATEGORY_ORDER = ["upper", "lower", "fullbody", "custom"];
+    function categoryRank(key) {
+        if (key === "") return 1000;
+        const i = CATEGORY_ORDER.indexOf(key);
+        return i === -1 ? 500 : i;
+    }
+    function categoryLabel(key) {
+        if (key === "") return t("workouts_uncategorized");
+        if (CATEGORY_ORDER.includes(key)) return t("workouts_cat_" + key);
+        return key;
+    }
+
     const groups = new Map();
     for (const ex of exercises) {
         const key = ex.category?.trim() || "";
         if (!groups.has(key)) groups.set(key, []);
         groups.get(key).push(ex);
     }
+    const sortedKeys = [...groups.keys()].sort((a, b) => {
+        const diff = categoryRank(a) - categoryRank(b);
+        return diff !== 0 ? diff : categoryLabel(a).localeCompare(categoryLabel(b));
+    });
 
-    for (const [category, exList] of groups) {
-        const label = category || t("workouts_uncategorized");
-        const storageKey = category || "uncategorized";
-        const content = renderCollapsibleCategory(list, label, storageKey);
+    for (const category of sortedKeys) {
+        const exList = groups.get(category);
+        const content = renderCollapsibleCategory(list, categoryLabel(category), category || "uncategorized");
         for (const ex of exList) {
             const exEntries = (entries || []).filter(e => e.exercise_id === ex.id);
             await renderExerciseCard(content, ex, exEntries);

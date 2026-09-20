@@ -55,11 +55,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.33";
+const SITE_VERSION = "0.34";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.34", date: "2026-09-19", changes: [
+        "Категория упражнения в тренировках стала выбором из фиксированных вариантов: Верх / Низ / Фулбади / Кастом (плюс «без категории») — вместо свободного текста, чтобы группы не расходились из-за опечаток и регистра",
+        "Порядок групп в тренировках теперь фиксированный (Верх → Низ → Фулбади → Кастом → старые категории → без категории), а не по порядку добавления",
+        "Все select-поля в модалках (не только «Тип» метрики) теперь используют свою выпадашку вместо нативного пикера",
+    ]},
     { version: "0.33", date: "2026-09-19", changes: [
         "Починили обрезанный и некликабельный список «особенность подхода» у последней строки в таблице — теперь список сам открывается вверх, если снизу не хватает места внутри прокручиваемой таблицы",
     ]},
@@ -133,6 +138,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.34", date: "2026-09-19", changes: [
+        "Exercise category in workouts is now a fixed set of choices: Upper / Lower / Full body / Custom (plus \"no category\") — instead of free text, so groups don't split apart over typos or capitalization",
+        "Workout category groups now sort in a fixed order (Upper → Lower → Full body → Custom → legacy categories → uncategorized) instead of insertion order",
+        "Every select field in modals (not just the metric \"Type\") now uses the custom dropdown instead of the native picker",
+    ]},
     { version: "0.33", date: "2026-09-19", changes: [
         "Fixed the clipped, unclickable \"set variation\" dropdown on the last row of the table — it now opens upward on its own when there's not enough room below inside the scrollable table",
     ]},
@@ -1025,6 +1035,7 @@ function openModal(title, fields, onSubmit) {
         label.appendChild(input);
         modal.appendChild(label);
         inputs[f.key] = input;
+        if (f.type === "select") enhanceSelectWithCustomDropdown(input);
     }
 
     const actions = document.createElement("div");
