@@ -55,11 +55,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.36";
+const SITE_VERSION = "0.37";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.37", date: "2026-09-20", changes: [
+        "Выпадающие списки (select и особенность подхода) переделаны на позиционирование относительно экрана, а не блока — раньше в тесных местах не хватало места ни вверху, ни внизу и список было не проскроллить с телефона. Теперь высота списка всегда подгоняется под реально доступное место и скроллится нормально",
+    ]},
     { version: "0.36", date: "2026-09-20", changes: [
         "Форма огонька в лого стала стройнее — убрал «шарообразность» снизу, теперь больше похоже на живое пламя",
         "Диаграмма дня переехала в блок «Профиль» (была в «Запланировано на сегодня») — теперь складывается и из дневных метрик, и из плана на день, можно настроить через ⚙️ рядом с ней (в т.ч. вообще скрыть)",
@@ -148,6 +151,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.37", date: "2026-09-20", changes: [
+        "Dropdown lists (select and set-variation) now position relative to the screen instead of their block — in tight spots there used to be no room above or below and the list couldn't be scrolled on phone. Its height now always fits the actually available space and scrolls properly",
+    ]},
     { version: "0.36", date: "2026-09-20", changes: [
         "Flame logo shape is leaner now — removed the \"balloon\" look at the bottom, reads more like an actual flame",
         "Day-progress chart moved into the Profile block (was in \"Planned for today\") — now draws from both daily metrics and today's plan, configurable via ⚙️ next to it (including hiding it entirely)",
@@ -967,6 +973,31 @@ function attachPasswordToggle(input) {
     return wrap;
 }
 
+// ---- Позиционирование плавающих списков (кастомный select, комбобокс вариантов и т.п.)
+// относительно ЭКРАНА (position: fixed), а не родителя — так список никогда не обрезается
+// оverflow-контейнерами (таблицы с горизонтальным скроллом, тесные модалки и т.п.) и высота
+// всегда подгоняется под реально доступное место, так что скроллить есть где и его видно.
+function positionFloatingPanel(anchor, panel) {
+    const rect = anchor.getBoundingClientRect();
+    const margin = 8;
+    const spaceBelow = window.innerHeight - rect.bottom - margin;
+    const spaceAbove = rect.top - margin;
+    const preferredMax = 280;
+
+    panel.style.left = Math.max(margin, rect.left) + "px";
+    panel.style.width = Math.min(rect.width, window.innerWidth - margin * 2) + "px";
+
+    if (spaceBelow >= 100 || spaceBelow >= spaceAbove) {
+        panel.style.top = (rect.bottom + 4) + "px";
+        panel.style.bottom = "auto";
+        panel.style.maxHeight = Math.max(80, Math.min(preferredMax, spaceBelow)) + "px";
+    } else {
+        panel.style.bottom = (window.innerHeight - rect.top + 4) + "px";
+        panel.style.top = "auto";
+        panel.style.maxHeight = Math.max(80, Math.min(preferredMax, spaceAbove)) + "px";
+    }
+}
+
 // ---- Обёртка нативного <select> собственной выпадашкой — на случай если системный пикер
 // плохо ведёт себя в установленном PWA. Сам select прячем, но не убираем: он остаётся
 // источником истины (.value/.onchange продолжают работать как раньше, весь остальной код
@@ -985,7 +1016,7 @@ function enhanceSelectWithCustomDropdown(select) {
 
     const dropdown = document.createElement("div");
     dropdown.className = "custom-select-dropdown";
-    wrap.appendChild(dropdown);
+    document.body.appendChild(dropdown);
 
     function currentLabel() {
         const opt = select.options[select.selectedIndex];
@@ -1013,6 +1044,8 @@ function enhanceSelectWithCustomDropdown(select) {
     btn.onclick = (e) => {
         e.stopPropagation();
         renderOptions();
+        const willOpen = !dropdown.classList.contains("open");
+        if (willOpen) positionFloatingPanel(btn, dropdown);
         dropdown.classList.toggle("open");
     };
     document.addEventListener("click", () => dropdown.classList.remove("open"));
