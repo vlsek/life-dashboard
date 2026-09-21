@@ -2072,8 +2072,8 @@ async function renderPlanned(dateStr) {
         starBtn.title = t("dash_planned_bonus_toggle_title");
         starBtn.onclick = async () => {
             item.bonus = !item.bonus;
+            starBtn.textContent = item.bonus ? "⭐" : "☆";
             await persistPlanned(planned);
-            renderPlanned(dateStr);
             loadProfile();
         };
         return starBtn;
@@ -2094,22 +2094,23 @@ async function renderPlanned(dateStr) {
                 if (g) {
                     const stages = g.stages ?? 1;
                     const cell = row.insertCell();
+                    const nameCell = row.insertCell();
+                    nameCell.textContent = item.text;
                     if (stages <= 1) {
                         const cb = document.createElement("input");
                         cb.type = "checkbox";
                         cb.checked = !!g.done;
                         cb.onchange = async () => {
-                            await sb.from("goals").update({ done: cb.checked, done_date: cb.checked ? todayStr() : null }).eq("id", g.id);
+                            g.done = cb.checked; // держим локальную копию в согласии — без неё перерисовка не нужна
+                            await sb.from("goals").update({ done: g.done, done_date: g.done ? todayStr() : null }).eq("id", g.id);
+                            nameCell.className = g.done ? "done-text" : "";
                             loadProfile();
-                            renderPlanned(dateStr);
                         };
                         cell.appendChild(cb);
                     } else {
                         cell.textContent = `${g.current_stage ?? 0}/${stages}`;
                         cell.className = "dim";
                     }
-                    const nameCell = row.insertCell();
-                    nameCell.textContent = item.text;
                     if (g.done) nameCell.className = "done-text";
                     row.insertCell().appendChild(buildBonusStarBtn(item));
                 } else {
@@ -2123,16 +2124,16 @@ async function renderPlanned(dateStr) {
                 const cb = document.createElement("input");
                 cb.type = "checkbox";
                 cb.checked = !!item.done;
-                cb.onchange = async () => {
-                    item.done = cb.checked;
-                    await persistPlanned(planned);
-                    renderPlanned(dateStr);
-                    loadProfile();
-                };
-                cell.appendChild(cb);
                 const textCell = row.insertCell();
                 textCell.textContent = item.text;
                 if (item.done) textCell.className = "done-text";
+                cb.onchange = async () => {
+                    item.done = cb.checked;
+                    await persistPlanned(planned);
+                    textCell.className = item.done ? "done-text" : "";
+                    loadProfile();
+                };
+                cell.appendChild(cb);
                 row.insertCell().appendChild(buildBonusStarBtn(item));
             }
 

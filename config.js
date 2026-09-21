@@ -55,11 +55,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.40";
+const SITE_VERSION = "0.41";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.41", date: "2026-09-21", changes: [
+        "«Запланировано на сегодня» больше не пересобирает весь список при отметке пункта или звёздочки — меняется только конкретная строка, без дёрганья всего блока",
+    ]},
     { version: "0.40", date: "2026-09-21", changes: [
         "Починили бонусные ⭐-пункты — раньше они считались только если план на сегодня включён в базовые 100% настроек диаграммы дня, из-за чего при сценарии «трекер целей» (только метрики) бонус вообще не срабатывал и было не перевыполнить 100%. Теперь бонус считается всегда, независимо от этой настройки",
     ]},
@@ -165,6 +168,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.41", date: "2026-09-21", changes: [
+        "\"Planned for today\" no longer rebuilds the whole list when checking an item or toggling its star — only that one row updates, no more jarring whole-block redraw",
+    ]},
     { version: "0.40", date: "2026-09-21", changes: [
         "Fixed ⭐ bonus items — they only counted before if \"Planned for today\" was included in the base 100% of the day-progress settings, so with the \"goal tracker\" onboarding path (metrics only) the bonus never triggered and 100% couldn't be exceeded. Bonus now counts always, regardless of that setting",
     ]},
