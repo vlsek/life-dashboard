@@ -55,11 +55,18 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.38";
+const SITE_VERSION = "0.39";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.39", date: "2026-09-21", changes: [
+        "Лого: вернул плоские цвета вместо градиента, поправил — иконка была смещена от центра, теперь по центру и лучше заполняет форму",
+        "Кольцо прогресса дня теперь обновляется сразу, без перезагрузки страницы — при сохранении метрики или отметке пункта плана",
+        "Под аватаркой появился процент дня текстом, шестерёнка настройки стала аккуратнее (эмодзи по центру)",
+        "У пунктов «Запланировано на сегодня» — звёздочка ⭐ «доп. пункт»: не входит в базовые 100%, а при выполнении добавляет +20% сверху отдельным кольцом другого цвета — так можно перевыполнить день",
+        "У каждого графика теперь свой период (кнопка 🗓️ рядом с графиком) — можно оставить общий из «Настроить графики» или задать свой только для этого графика",
+    ]},
     { version: "0.38", date: "2026-09-20", changes: [
         "Починили баг с NaN% в диаграмме дня — в коде осталось два определения одной функции, побеждала старая, отсюда и NaN, и невидимая шестерёнка настроек",
         "Диаграмма дня переехала с отдельного блока прямо на кольцо вокруг аватарки — при 100% полная рамка вокруг фото, при 50% половина и т.д. Шестерёнка настройки — маленький значок в углу кольца",
@@ -155,6 +162,13 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.39", date: "2026-09-21", changes: [
+        "Logo: reverted to flat colors instead of the gradient, and fixed it being off-center — now centered and fills the icon shape better",
+        "Day-progress ring now updates instantly, no page reload needed — right when a metric is saved or a plan item is checked off",
+        "Added a percentage number as text under the avatar; the settings gear badge is cleaner now (emoji properly centered)",
+        "\"Planned for today\" items now have a ⭐ \"bonus item\" star — it doesn't count toward the base 100%, but adds +20% on top when completed, shown as a second ring in a different color — a way to go past 100%",
+        "Each chart now has its own period (🗓️ button next to it) — use the shared one from \"Configure charts\" or set a custom range just for that chart",
+    ]},
     { version: "0.38", date: "2026-09-20", changes: [
         "Fixed the NaN% bug in the day-progress chart — the code had two definitions of the same function, the old one was winning, hence the NaN and the invisible settings gear",
         "Day-progress chart moved from its own block onto a ring around the avatar — 100% draws a full ring around the photo, 50% half, and so on. The settings gear is a small icon on the ring's corner now",

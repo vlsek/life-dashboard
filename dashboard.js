@@ -484,20 +484,38 @@ async function loadCharts() {
             const s = allSeries[entry.key];
             const chartWrap = document.createElement("div");
             chartWrap.style.marginBottom = "18px";
+
+            const chartHeaderRow = document.createElement("div");
+            chartHeaderRow.style.cssText = "display:flex; justify-content:flex-end; margin-bottom:2px;";
+            const periodBtn = document.createElement("button");
+            periodBtn.type = "button";
+            periodBtn.className = "secondary";
+            periodBtn.style.cssText = "padding:2px 8px; font-size:0.78em;";
+            periodBtn.textContent = "🗓️";
+            periodBtn.title = t("dash_chart_period_btn_title");
+            chartHeaderRow.appendChild(periodBtn);
+            chartWrap.appendChild(chartHeaderRow);
+
             const chartImgWrap = document.createElement("div");
             chartWrap.appendChild(chartImgWrap);
 
+            function effectivePeriod() {
+                return loadPeriodState("dash_period_chart:" + entry.key, null) || chartPeriodState;
+            }
+
             function refreshChartImage() {
                 chartImgWrap.innerHTML = "";
-                const pts = filterPointsByRange(s.points, chartPeriodState.range, chartPeriodState.from, chartPeriodState.to);
+                const period = effectivePeriod();
+                const pts = filterPointsByRange(s.points, period.range, period.from, period.to);
                 const goalValue = entry.goal != null ? entry.goal : (s.defaultGoal ?? null);
                 const goalLabel = goalValue != null ? `${t("chart_goal_label")} ${goalValue}${s.unit || ''}` : null;
                 renderChartBlock(chartImgWrap, s.label, pts, { unit: s.unit, color: s.color, goalValue, goalLabel });
             }
+            periodBtn.onclick = () => openChartPeriodModal(entry.key, refreshChartImage);
             refreshChartImage();
             dashboardChartRefreshers[entry.key] = refreshChartImage;
 
-            const points = filterPointsByRange(s.points, chartPeriodState.range, chartPeriodState.from, chartPeriodState.to);
+            const points = filterPointsByRange(s.points, effectivePeriod().range, effectivePeriod().from, effectivePeriod().to);
             renderEditableSeriesValues(chartWrap, entry.key, points, s.unit, refreshChartImage, s.type);
             newContent.appendChild(chartWrap);
         }
@@ -567,12 +585,64 @@ function renderEditableSeriesValues(container, entryKey, points, unit, onValueSa
                 onValueSaved();
                 if (prefix === "body") loadProfile();
                 if (prefix === "metric" && p.date === fmtDate(currentDate)) renderDay(); // сегодняшний день виден и на карточке дня — тоже обновим
+                if (prefix === "metric" && p.date === fmtDate(new Date())) loadProfile(); // кольцо прогресса дня — только если правили именно сегодняшнюю дату
             };
             valCell.appendChild(input);
             if (unit) { const u = document.createElement("span"); u.className = "dim"; u.style.marginLeft = "4px"; u.textContent = unit.trim(); valCell.appendChild(u); }
         }
         editWrap.appendChild(wrapTable(table));
     }
+}
+
+// Период для ОДНОГО графика — если не настроен отдельно, график использует общий
+// chartPeriodState (из "Настроить графики"). Хранится в localStorage по ключу серии.
+function openChartPeriodModal(key, onApply) {
+    const storageKey = "dash_period_chart:" + key;
+    const existing = loadPeriodState(storageKey, null);
+    let localState = existing ? { ...existing } : { ...chartPeriodState };
+
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.innerHTML = `<h3>${t("dash_chart_period_modal_title")}</h3>`;
+
+    const periodRow = document.createElement("div");
+    function renderRow() { periodRow.innerHTML = ""; renderPeriodPicker(periodRow, localState, renderRow); }
+    renderRow();
+    modal.appendChild(periodRow);
+
+    const hint = document.createElement("p");
+    hint.className = "dim";
+    hint.style.cssText = "font-size:0.8em; margin-top:12px;";
+    hint.textContent = existing ? t("dash_chart_period_is_custom_hint") : t("dash_chart_period_uses_shared_hint");
+    modal.appendChild(hint);
+
+    const actions = document.createElement("div");
+    actions.className = "modal-actions";
+    if (existing) {
+        const resetBtn = document.createElement("button");
+        resetBtn.className = "secondary";
+        resetBtn.textContent = t("dash_chart_period_reset_btn");
+        resetBtn.onclick = () => {
+            localStorage.removeItem(storageKey);
+            backdrop.remove();
+            onApply();
+        };
+        actions.appendChild(resetBtn);
+    }
+    const okBtn = document.createElement("button");
+    okBtn.textContent = t("save");
+    okBtn.onclick = () => {
+        savePeriodState(storageKey, localState);
+        backdrop.remove();
+        onApply();
+    };
+    actions.appendChild(okBtn);
+    modal.appendChild(actions);
+    backdrop.appendChild(modal);
+    backdrop.onclick = (e) => { if (e.target === backdrop) backdrop.remove(); };
+    document.body.appendChild(backdrop);
 }
 
 function openChartsConfigModal(allSeries, selectedEntries) {
@@ -807,14 +877,19 @@ function setDayProgressSettings(s) {
     localStorage.setItem("day_progress_settings", JSON.stringify(s));
 }
 
+// Сколько % сверху плана добавляет один выполненный бонусный (⭐) пункт
+const BONUS_PCT_PER_ITEM = 20;
+
 // Считает done/total по сегодняшнему дню из выбранных в настройках источников:
 // дневные метрики (isMetricDone/calcDailyPoints — та же логика, что и в счёте дня) и/или
-// список "Запланировано на сегодня" (обычные пункты + привязанные цели).
+// список "Запланировано на сегодня" (обычные пункты + привязанные цели). Бонусные (⭐)
+// пункты плана в done/total не идут — они дают отдельный bonusPct сверху, позволяя
+// "перевыполнить" день выше 100%.
 async function computeDayProgress() {
     const settings = getDayProgressSettings();
     if (!settings.enabled) return null;
     const dateStr = fmtDate(new Date());
-    let done = 0, total = 0;
+    let done = 0, total = 0, bonusPct = 0;
 
     if (settings.includeMetrics) {
         const metrics = await getMetrics();
@@ -827,20 +902,25 @@ async function computeDayProgress() {
         if (planned.length > 0) {
             const { data: allGoals } = await sb.from("goals").select("*").eq("user_id", user.id);
             for (const item of planned) {
+                let isDone;
                 if (item.type === "goal") {
                     const g = (allGoals || []).find(x => x.name === item.text);
                     if (!g) continue; // удалённая цель — больше не в счёте
-                    total++;
                     const stages = g.stages ?? 1;
-                    if (stages <= 1 ? g.done : (g.current_stage ?? 0) >= stages) done++;
+                    isDone = stages <= 1 ? g.done : (g.current_stage ?? 0) >= stages;
+                } else {
+                    isDone = !!item.done;
+                }
+                if (item.bonus) {
+                    if (isDone) bonusPct += BONUS_PCT_PER_ITEM;
                 } else {
                     total++;
-                    if (item.done) done++;
+                    if (isDone) done++;
                 }
             }
         }
     }
-    return { done, total };
+    return { done, total, bonusPct };
 }
 
 function openDayProgressSettingsModal(onSave) {
@@ -904,6 +984,10 @@ async function loadProfile() {
     const row = document.createElement("div");
     row.className = "stat-row";
 
+    // Колонка: аватарка с кольцом прогресса дня + текст с процентом под ней.
+    const avatarCol = document.createElement("div");
+    avatarCol.style.cssText = "display:flex; flex-direction:column; align-items:center; gap:3px;";
+
     // Внешняя обёртка чуть больше самой аватарки — в ней рисуется кольцо прогресса дня
     // вокруг фото (пустое кольцо, если день не начат; при 100% — полная рамка).
     const avatarRingWrap = document.createElement("div");
@@ -932,14 +1016,21 @@ async function loadProfile() {
 
     avatarRingWrap.appendChild(avatarWrap);
 
-    // Кольцо прогресса дня вокруг аватарки — рисуется, только если в настройках включено
-    // и есть что показывать (иначе просто маленькая шестерёнка, чтобы найти настройки).
+    // Кольцо прогресса дня вокруг аватарки: базовое кольцо (обычные пункты/метрики) плюс,
+    // если есть выполненные бонусные (⭐) пункты — второй слой поверх другим цветом,
+    // показывающий перевыполнение сверх 100%.
+    const dayProgressText = document.createElement("div");
+    dayProgressText.style.cssText = "font-size:0.72em; color:var(--text-dim); text-align:center; white-space:nowrap;";
     const dayProgress = await computeDayProgress();
-    if (dayProgress && dayProgress.total > 0) {
-        const pct = dayProgress.done / dayProgress.total;
-        const r = 24;
+    if (dayProgress && (dayProgress.total > 0 || dayProgress.bonusPct > 0)) {
+        const basePct = dayProgress.total > 0 ? dayProgress.done / dayProgress.total : 0;
+        const r = 24, rBonus = 19;
         const circumference = 2 * Math.PI * r;
-        const offset = circumference * (1 - pct);
+        const circumferenceBonus = 2 * Math.PI * rBonus;
+        const offset = circumference * (1 - basePct);
+        const bonusFraction = Math.min(1, dayProgress.bonusPct / 100);
+        const offsetBonus = circumferenceBonus * (1 - bonusFraction);
+
         const ringWrap = document.createElement("div");
         ringWrap.style.cssText = "position:absolute; inset:0; pointer-events:none;";
         ringWrap.innerHTML = `
@@ -947,19 +1038,28 @@ async function loadProfile() {
                 <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--border)" stroke-width="3"/>
                 <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3"
                     stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
+                ${dayProgress.bonusPct > 0 ? `<circle cx="26" cy="26" r="${rBonus}" fill="none" stroke="#22c55e" stroke-width="3"
+                    stroke-linecap="round" stroke-dasharray="${circumferenceBonus}" stroke-dashoffset="${offsetBonus}"/>` : ""}
             </svg>`;
-        avatarRingWrap.title = `${t("dash_day_progress_label")}: ${Math.round(pct * 100)}% (${dayProgress.done}/${dayProgress.total})`;
         avatarRingWrap.appendChild(ringWrap);
+
+        const totalPct = Math.round(basePct * 100) + dayProgress.bonusPct;
+        avatarRingWrap.title = `${t("dash_day_progress_label")}: ${totalPct}% (${dayProgress.done}/${dayProgress.total}${dayProgress.bonusPct > 0 ? " +" + dayProgress.bonusPct + "% ⭐" : ""})`;
+        dayProgressText.textContent = totalPct + "%";
+    } else {
+        dayProgressText.textContent = "";
     }
     const dayProgressGear = document.createElement("button");
     dayProgressGear.type = "button";
     dayProgressGear.textContent = "⚙️";
     dayProgressGear.title = t("dash_day_progress_settings_title");
-    dayProgressGear.style.cssText = "position:absolute; bottom:-3px; right:-3px; width:18px; height:18px; border-radius:50%; background:var(--bg-card); border:1px solid var(--border); font-size:0.62em; line-height:1; padding:0; display:flex; align-items:center; justify-content:center; cursor:pointer;";
+    dayProgressGear.style.cssText = "position:absolute; bottom:-3px; right:-3px; width:19px; height:19px; border-radius:50%; background:var(--bg-card); border:1px solid var(--border); font-size:11px; line-height:19px; text-align:center; padding:0; cursor:pointer;";
     dayProgressGear.onclick = (e) => { e.stopPropagation(); openDayProgressSettingsModal(loadProfile); };
     avatarRingWrap.appendChild(dayProgressGear);
 
-    row.appendChild(avatarRingWrap);
+    avatarCol.appendChild(avatarRingWrap);
+    avatarCol.appendChild(dayProgressText);
+    row.appendChild(avatarCol);
     row.appendChild(fileInput);
 
     function openBirthdateModal() {
@@ -1109,6 +1209,7 @@ async function renderDay() {
         if (inputEl) flashSaved(inputEl);
         renderScore(metrics, pending);
         pushPointToChart("metric:" + m.id, dateStr, metricNumericValue(m, value)); // обновить график точечно, без мигания всего блока
+        if (dateStr === fmtDate(new Date())) loadProfile(); // кольцо прогресса дня на аватарке — сразу же, без ожидания обновления страницы
     }
 
     async function autoSaveBodyParam(p, value, inputEl) {
@@ -1957,6 +2058,25 @@ async function renderPlanned(dateStr) {
         await sb.from("daily_notes").upsert({ user_id: user.id, date: dateStr, planned_goals: newPlanned }, { onConflict: "user_id,date" });
     }
 
+    // Звёздочка "доп. пункт" — не входит в базовые 100% (в счёт done/total не идёт),
+    // а при выполнении добавляет фиксированный бонус к проценту дня поверх плана (см.
+    // computeDayProgress/BONUS_PCT_PER_ITEM). Так можно "перевыполнить" день.
+    function buildBonusStarBtn(item) {
+        const starBtn = document.createElement("button");
+        starBtn.type = "button";
+        starBtn.className = "secondary";
+        starBtn.style.cssText = "padding:2px 7px; font-size:0.9em;";
+        starBtn.textContent = item.bonus ? "⭐" : "☆";
+        starBtn.title = t("dash_planned_bonus_toggle_title");
+        starBtn.onclick = async () => {
+            item.bonus = !item.bonus;
+            await persistPlanned(planned);
+            renderPlanned(dateStr);
+            loadProfile();
+        };
+        return starBtn;
+    }
+
     if (planned.length === 0) {
         const emptyMsg = document.createElement("p");
         emptyMsg.className = "dim";
@@ -1989,9 +2109,11 @@ async function renderPlanned(dateStr) {
                     const nameCell = row.insertCell();
                     nameCell.textContent = item.text;
                     if (g.done) nameCell.className = "done-text";
+                    row.insertCell().appendChild(buildBonusStarBtn(item));
                 } else {
                     row.insertCell().textContent = "⚠️";
                     row.insertCell().textContent = `${item.text}${t("dash_goal_deleted_suffix")}`;
+                    row.insertCell();
                 }
             } else {
                 // произвольный пункт, не привязанный к цели — просто личная отметка на день
@@ -2003,11 +2125,13 @@ async function renderPlanned(dateStr) {
                     item.done = cb.checked;
                     await persistPlanned(planned);
                     renderPlanned(dateStr);
+                    loadProfile();
                 };
                 cell.appendChild(cb);
                 const textCell = row.insertCell();
                 textCell.textContent = item.text;
                 if (item.done) textCell.className = "done-text";
+                row.insertCell().appendChild(buildBonusStarBtn(item));
             }
 
             const removeCell = row.insertCell();
