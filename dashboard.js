@@ -896,27 +896,29 @@ async function computeDayProgress() {
         done += await calcDailyPoints(user.id, dateStr, metrics);
         total += metrics.length;
     }
-    if (settings.includePlanned) {
-        const { data: note } = await sb.from("daily_notes").select("planned_goals").eq("user_id", user.id).eq("date", dateStr).maybeSingle();
-        const planned = note?.planned_goals ?? [];
-        if (planned.length > 0) {
-            const { data: allGoals } = await sb.from("goals").select("*").eq("user_id", user.id);
-            for (const item of planned) {
-                let isDone;
-                if (item.type === "goal") {
-                    const g = (allGoals || []).find(x => x.name === item.text);
-                    if (!g) continue; // удалённая цель — больше не в счёте
-                    const stages = g.stages ?? 1;
-                    isDone = stages <= 1 ? g.done : (g.current_stage ?? 0) >= stages;
-                } else {
-                    isDone = !!item.done;
-                }
-                if (item.bonus) {
-                    if (isDone) bonusPct += BONUS_PCT_PER_ITEM;
-                } else {
-                    total++;
-                    if (isDone) done++;
-                }
+
+    // Бонусные (⭐) пункты дают перевыполнение НЕЗАВИСИМО от того, включён ли сам план
+    // в базовые 100% ("Учитывать пункты «Запланировано на сегодня»") — это осознанный
+    // бонус сверху, а не часть общего счёта, поэтому список планов читаем всегда.
+    const { data: note } = await sb.from("daily_notes").select("planned_goals").eq("user_id", user.id).eq("date", dateStr).maybeSingle();
+    const planned = note?.planned_goals ?? [];
+    if (planned.length > 0) {
+        const { data: allGoals } = await sb.from("goals").select("*").eq("user_id", user.id);
+        for (const item of planned) {
+            let isDone;
+            if (item.type === "goal") {
+                const g = (allGoals || []).find(x => x.name === item.text);
+                if (!g) continue; // удалённая цель — больше не в счёте
+                const stages = g.stages ?? 1;
+                isDone = stages <= 1 ? g.done : (g.current_stage ?? 0) >= stages;
+            } else {
+                isDone = !!item.done;
+            }
+            if (item.bonus) {
+                if (isDone) bonusPct += BONUS_PCT_PER_ITEM;
+            } else if (settings.includePlanned) {
+                total++;
+                if (isDone) done++;
             }
         }
     }

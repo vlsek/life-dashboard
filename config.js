@@ -55,11 +55,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.39";
+const SITE_VERSION = "0.40";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.40", date: "2026-09-21", changes: [
+        "Починили бонусные ⭐-пункты — раньше они считались только если план на сегодня включён в базовые 100% настроек диаграммы дня, из-за чего при сценарии «трекер целей» (только метрики) бонус вообще не срабатывал и было не перевыполнить 100%. Теперь бонус считается всегда, независимо от этой настройки",
+    ]},
     { version: "0.39", date: "2026-09-21", changes: [
         "Лого: вернул плоские цвета вместо градиента, поправил — иконка была смещена от центра, теперь по центру и лучше заполняет форму",
         "Кольцо прогресса дня теперь обновляется сразу, без перезагрузки страницы — при сохранении метрики или отметке пункта плана",
@@ -162,6 +165,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.40", date: "2026-09-21", changes: [
+        "Fixed ⭐ bonus items — they only counted before if \"Planned for today\" was included in the base 100% of the day-progress settings, so with the \"goal tracker\" onboarding path (metrics only) the bonus never triggered and 100% couldn't be exceeded. Bonus now counts always, regardless of that setting",
+    ]},
     { version: "0.39", date: "2026-09-21", changes: [
         "Logo: reverted to flat colors instead of the gradient, and fixed it being off-center — now centered and fills the icon shape better",
         "Day-progress ring now updates instantly, no page reload needed — right when a metric is saved or a plan item is checked off",
