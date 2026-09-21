@@ -55,11 +55,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.37";
+const SITE_VERSION = "0.38";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.38", date: "2026-09-20", changes: [
+        "Починили баг с NaN% в диаграмме дня — в коде осталось два определения одной функции, побеждала старая, отсюда и NaN, и невидимая шестерёнка настроек",
+        "Диаграмма дня переехала с отдельного блока прямо на кольцо вокруг аватарки — при 100% полная рамка вокруг фото, при 50% половина и т.д. Шестерёнка настройки — маленький значок в углу кольца",
+    ]},
     { version: "0.37", date: "2026-09-20", changes: [
         "Выпадающие списки (select и особенность подхода) переделаны на позиционирование относительно экрана, а не блока — раньше в тесных местах не хватало места ни вверху, ни внизу и список было не проскроллить с телефона. Теперь высота списка всегда подгоняется под реально доступное место и скроллится нормально",
     ]},
@@ -151,6 +155,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.38", date: "2026-09-20", changes: [
+        "Fixed the NaN% bug in the day-progress chart — the code had two definitions of the same function, the old one was winning, hence the NaN and the invisible settings gear",
+        "Day-progress chart moved from its own block onto a ring around the avatar — 100% draws a full ring around the photo, 50% half, and so on. The settings gear is a small icon on the ring's corner now",
+    ]},
     { version: "0.37", date: "2026-09-20", changes: [
         "Dropdown lists (select and set-variation) now position relative to the screen instead of their block — in tight spots there used to be no room above or below and the list couldn't be scrolled on phone. Its height now always fits the actually available space and scrolls properly",
     ]},

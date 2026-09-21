@@ -891,52 +891,6 @@ function openDayProgressSettingsModal(onSave) {
     document.body.appendChild(backdrop);
 }
 
-async function renderDayProgressDonut(container) {
-    const progress = await computeDayProgress();
-
-    const wrap = document.createElement("div");
-    wrap.style.cssText = "display:flex; align-items:center; gap:14px; margin-bottom:16px;";
-
-    if (!progress || progress.total === 0) {
-        // нечего показывать (выключено в настройках или пока нет ни метрик, ни плана) —
-        // оставляем только маленькую шестерёнку, чтобы можно было включить/настроить
-        const gearOnly = document.createElement("button");
-        gearOnly.type = "button";
-        gearOnly.className = "icon-btn";
-        gearOnly.textContent = "⚙️";
-        gearOnly.title = t("dash_day_progress_settings_title");
-        gearOnly.onclick = () => openDayProgressSettingsModal(loadProfile);
-        wrap.appendChild(gearOnly);
-        container.appendChild(wrap);
-        return;
-    }
-
-    const { done, total } = progress;
-    const pct = Math.round((done / total) * 100);
-    const r = 15.5;
-    const circumference = 2 * Math.PI * r;
-    const offset = circumference * (1 - done / total);
-
-    wrap.innerHTML = `
-        <svg width="60" height="60" viewBox="0 0 36 36" style="flex-shrink:0; transform: rotate(-90deg);">
-            <circle cx="18" cy="18" r="${r}" fill="none" stroke="var(--border)" stroke-width="3.5"/>
-            <circle cx="18" cy="18" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3.5"
-                stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
-        </svg>
-        <div style="flex:1;">
-            <div style="font-size:1.4em; font-weight:700;">${pct}%</div>
-            <div class="dim" style="font-size:0.85em;">${t("dash_day_progress_label")} (${done}/${total})</div>
-        </div>`;
-    const gearBtn = document.createElement("button");
-    gearBtn.type = "button";
-    gearBtn.className = "icon-btn";
-    gearBtn.textContent = "⚙️";
-    gearBtn.title = t("dash_day_progress_settings_title");
-    gearBtn.onclick = () => openDayProgressSettingsModal(loadProfile);
-    wrap.appendChild(gearBtn);
-    container.appendChild(wrap);
-}
-
 async function loadProfile() {
     const card = document.getElementById("profile-card");
     if (!card) return; // блок скрыт в настройках дашборда
@@ -946,13 +900,17 @@ async function loadProfile() {
     const { balance, total } = await calcBalance(user.id);
 
     card.innerHTML = "";
-    await renderDayProgressDonut(card);
 
     const row = document.createElement("div");
     row.className = "stat-row";
 
+    // Внешняя обёртка чуть больше самой аватарки — в ней рисуется кольцо прогресса дня
+    // вокруг фото (пустое кольцо, если день не начат; при 100% — полная рамка).
+    const avatarRingWrap = document.createElement("div");
+    avatarRingWrap.style.cssText = "position:relative; width:52px; height:52px; flex-shrink:0;";
+
     const avatarWrap = document.createElement("div");
-    avatarWrap.style.cssText = "position:relative; width:44px; height:44px; flex-shrink:0;";
+    avatarWrap.style.cssText = "position:absolute; top:4px; left:4px; width:44px; height:44px;";
     const avatarImg = document.createElement("img");
     avatarImg.src = profile?.avatar_url || "";
     avatarImg.style.cssText = "width:44px; height:44px; border-radius:50%; object-fit:cover; background:var(--bg); border:2px solid var(--border); display:" + (profile?.avatar_url ? "block" : "none") + ";";
@@ -972,7 +930,36 @@ async function loadProfile() {
     avatarWrap.title = t("dash_photo_btn");
     avatarWrap.onclick = () => fileInput.click();
 
-    row.appendChild(avatarWrap);
+    avatarRingWrap.appendChild(avatarWrap);
+
+    // Кольцо прогресса дня вокруг аватарки — рисуется, только если в настройках включено
+    // и есть что показывать (иначе просто маленькая шестерёнка, чтобы найти настройки).
+    const dayProgress = await computeDayProgress();
+    if (dayProgress && dayProgress.total > 0) {
+        const pct = dayProgress.done / dayProgress.total;
+        const r = 24;
+        const circumference = 2 * Math.PI * r;
+        const offset = circumference * (1 - pct);
+        const ringWrap = document.createElement("div");
+        ringWrap.style.cssText = "position:absolute; inset:0; pointer-events:none;";
+        ringWrap.innerHTML = `
+            <svg width="52" height="52" viewBox="0 0 52 52" style="transform: rotate(-90deg);">
+                <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--border)" stroke-width="3"/>
+                <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3"
+                    stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
+            </svg>`;
+        avatarRingWrap.title = `${t("dash_day_progress_label")}: ${Math.round(pct * 100)}% (${dayProgress.done}/${dayProgress.total})`;
+        avatarRingWrap.appendChild(ringWrap);
+    }
+    const dayProgressGear = document.createElement("button");
+    dayProgressGear.type = "button";
+    dayProgressGear.textContent = "⚙️";
+    dayProgressGear.title = t("dash_day_progress_settings_title");
+    dayProgressGear.style.cssText = "position:absolute; bottom:-3px; right:-3px; width:18px; height:18px; border-radius:50%; background:var(--bg-card); border:1px solid var(--border); font-size:0.62em; line-height:1; padding:0; display:flex; align-items:center; justify-content:center; cursor:pointer;";
+    dayProgressGear.onclick = (e) => { e.stopPropagation(); openDayProgressSettingsModal(loadProfile); };
+    avatarRingWrap.appendChild(dayProgressGear);
+
+    row.appendChild(avatarRingWrap);
     row.appendChild(fileInput);
 
     function openBirthdateModal() {
@@ -1955,28 +1942,6 @@ async function openMetricsManagerModal() {
 }
 
 // ---- Цели на сегодня ----
-
-// Круглая диаграмма "на сколько % день сделан" — по списку запланированного на сегодня
-function renderDayProgressDonut(container, done, total) {
-    if (total === 0) return;
-    const pct = Math.round((done / total) * 100);
-    const r = 15.5;
-    const circumference = 2 * Math.PI * r;
-    const offset = circumference * (1 - done / total);
-    const wrap = document.createElement("div");
-    wrap.style.cssText = "display:flex; align-items:center; gap:14px; margin-bottom:14px;";
-    wrap.innerHTML = `
-        <svg width="60" height="60" viewBox="0 0 36 36" style="flex-shrink:0; transform: rotate(-90deg);">
-            <circle cx="18" cy="18" r="${r}" fill="none" stroke="var(--border)" stroke-width="3.5"/>
-            <circle cx="18" cy="18" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3.5"
-                stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
-        </svg>
-        <div>
-            <div style="font-size:1.4em; font-weight:700;">${pct}%</div>
-            <div class="dim" style="font-size:0.85em;">${t("dash_day_progress_label")} (${done}/${total})</div>
-        </div>`;
-    container.appendChild(wrap);
-}
 
 async function renderPlanned(dateStr) {
     const card = document.getElementById("planned-card");
