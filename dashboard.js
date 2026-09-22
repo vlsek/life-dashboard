@@ -585,7 +585,7 @@ function renderEditableSeriesValues(container, entryKey, points, unit, onValueSa
                 onValueSaved();
                 if (prefix === "body") loadProfile();
                 if (prefix === "metric" && p.date === fmtDate(currentDate)) renderDay(); // сегодняшний день виден и на карточке дня — тоже обновим
-                if (prefix === "metric" && p.date === fmtDate(new Date())) renderDayProgressRing(); // кольцо прогресса дня — только если правили именно сегодняшнюю дату
+                if (prefix === "metric" && p.date === fmtDate(new Date())) { renderDayProgressRing(); renderWeekProgress(); } // кольцо прогресса дня — только если правили именно сегодняшнюю дату
             };
             valCell.appendChild(input);
             if (unit) { const u = document.createElement("span"); u.className = "dim"; u.style.marginLeft = "4px"; u.textContent = unit.trim(); valCell.appendChild(u); }
@@ -867,11 +867,12 @@ function formatAge(age) {
 // ---- Диаграмма "на сколько % день сделан" — настройки хранятся в localStorage (личная
 // настройка отображения, не данные, синхронизировать между устройствами не нужно) ----
 function getDayProgressSettings() {
+    const defaults = { enabled: true, includePlanned: true, includeMetrics: true, displayMode: "avatar" };
     try {
         const raw = localStorage.getItem("day_progress_settings");
-        if (!raw) return { enabled: true, includePlanned: true, includeMetrics: true };
-        return { enabled: true, includePlanned: true, includeMetrics: true, ...JSON.parse(raw) };
-    } catch { return { enabled: true, includePlanned: true, includeMetrics: true }; }
+        if (!raw) return defaults;
+        return { ...defaults, ...JSON.parse(raw) };
+    } catch { return defaults; }
 }
 function setDayProgressSettings(s) {
     localStorage.setItem("day_progress_settings", JSON.stringify(s));
@@ -892,34 +893,134 @@ let dayProgressRingWrapEl = null;
 let dayProgressRingHostEl = null;
 let dayProgressTextEl = null;
 
+// ---- Прогресс недели — отдельный бейдж-кружок рядом с аватаркой (не совмещаем с кольцом
+// дня, чтобы не громоздить несколько колец друг на друга). Если неделя не закрыта —
+// подсказка с одной случайной незавершённой целью, чтобы было понятно, что доделать.
+let weekProgressHostEl = null;
+
+async function renderWeekProgress() {
+    if (!weekProgressHostEl) return;
+    weekProgressHostEl.innerHTML = "";
+    const settings = getDayProgressSettings();
+    if (!settings.enabled) return;
+    const week = await computeWeekProgress();
+    if (!week || (week.total === 0 && week.bonusPct === 0)) return;
+
+    const basePct = week.total > 0 ? week.done / week.total : 0;
+    const totalPct = Math.round(basePct * 100) + week.bonusPct;
+    const r = 20;
+    const circumference = 2 * Math.PI * r;
+    const offset = circumference * (1 - basePct);
+    const bonusFraction = Math.min(1, week.bonusPct / 100);
+    const offsetBonus = circumference * (1 - bonusFraction);
+
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer;";
+    wrap.title = `${t("dash_week_progress_label")}: ${totalPct}% (${week.done}/${week.total}${week.bonusPct > 0 ? " +" + week.bonusPct + "% ⭐" : ""})`;
+    wrap.innerHTML = `
+        <div style="position:relative; width:48px; height:48px;">
+            <svg width="48" height="48" viewBox="0 0 48 48" style="transform: rotate(-90deg);">
+                <circle cx="24" cy="24" r="${r}" fill="none" stroke="var(--border)" stroke-width="3"/>
+                <circle cx="24" cy="24" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3"
+                    stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
+                ${week.bonusPct > 0 ? `<circle cx="24" cy="24" r="${r}" fill="none" stroke="#d6336c" stroke-width="3"
+                    stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offsetBonus}"/>` : ""}
+            </svg>
+            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:0.68em; font-weight:700;">${totalPct}%</div>
+        </div>
+        <div class="dim" style="font-size:0.65em; white-space:nowrap;">${t("dash_week_progress_label")}</div>`;
+    weekProgressHostEl.appendChild(wrap);
+
+    if (totalPct < 100) {
+        const { data: allGoals } = await sb.from("goals").select("*").eq("user_id", user.id);
+        const incomplete = (allGoals || []).filter(g => {
+            const stages = g.stages ?? 1;
+            return stages <= 1 ? !g.done : (g.current_stage ?? 0) < stages;
+        });
+        if (incomplete.length > 0) {
+            const pick = incomplete[Math.floor(Math.random() * incomplete.length)];
+            const hint = document.createElement("p");
+            hint.className = "dim";
+            hint.style.cssText = "font-size:0.72em; margin:4px 0 0; max-width:110px; text-align:center; line-height:1.3;";
+            hint.textContent = t("dash_week_progress_suggestion_prefix") + " «" + pick.name + "»";
+            weekProgressHostEl.appendChild(hint);
+        }
+    }
+}
+
 async function renderDayProgressRing() {
     if (!dayProgressRingHostEl) return; // карточка профиля ещё не строилась в этой сессии
+    const settings = getDayProgressSettings();
     const dayProgress = await computeDayProgress();
+
     dayProgressRingHostEl.innerHTML = "";
-    if (dayProgress && (dayProgress.total > 0 || dayProgress.bonusPct > 0)) {
-        const basePct = dayProgress.total > 0 ? dayProgress.done / dayProgress.total : 0;
-        const r = 24;
-        const circumference = 2 * Math.PI * r;
-        const offset = circumference * (1 - basePct);
-        const bonusFraction = Math.min(1, dayProgress.bonusPct / 100);
-        const offsetBonus = circumference * (1 - bonusFraction);
+    dayProgressTextEl.textContent = "";
+    dayProgressRingWrapEl.title = "";
+    removeHeaderProgressBadge();
 
-        dayProgressRingHostEl.innerHTML = `
-            <svg width="52" height="52" viewBox="0 0 52 52" style="transform: rotate(-90deg);">
-                <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--border)" stroke-width="3"/>
-                <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3"
-                    stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
-                ${dayProgress.bonusPct > 0 ? `<circle cx="26" cy="26" r="${r}" fill="none" stroke="#d6336c" stroke-width="3"
-                    stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offsetBonus}"/>` : ""}
-            </svg>`;
+    if (!dayProgress || (dayProgress.total === 0 && dayProgress.bonusPct === 0)) return;
 
-        const totalPct = Math.round(basePct * 100) + dayProgress.bonusPct;
-        dayProgressRingWrapEl.title = `${t("dash_day_progress_label")}: ${totalPct}% (${dayProgress.done}/${dayProgress.total}${dayProgress.bonusPct > 0 ? " +" + dayProgress.bonusPct + "% ⭐" : ""})`;
-        dayProgressTextEl.textContent = totalPct + "%";
-    } else {
-        dayProgressRingWrapEl.title = "";
-        dayProgressTextEl.textContent = "";
+    const basePct = dayProgress.total > 0 ? dayProgress.done / dayProgress.total : 0;
+    const totalPct = Math.round(basePct * 100) + dayProgress.bonusPct;
+    const titleText = `${t("dash_day_progress_label")}: ${totalPct}% (${dayProgress.done}/${dayProgress.total}${dayProgress.bonusPct > 0 ? " +" + dayProgress.bonusPct + "% ⭐" : ""})`;
+
+    if (settings.displayMode === "header") {
+        renderHeaderProgressBadge(basePct, dayProgress.bonusPct, totalPct, titleText);
+        return;
     }
+
+    const r = 24;
+    const circumference = 2 * Math.PI * r;
+    const offset = circumference * (1 - basePct);
+    const bonusFraction = Math.min(1, dayProgress.bonusPct / 100);
+    const offsetBonus = circumference * (1 - bonusFraction);
+
+    dayProgressRingHostEl.innerHTML = `
+        <svg width="52" height="52" viewBox="0 0 52 52" style="transform: rotate(-90deg);">
+            <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--border)" stroke-width="3"/>
+            <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3"
+                stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
+            ${dayProgress.bonusPct > 0 ? `<circle cx="26" cy="26" r="${r}" fill="none" stroke="#d6336c" stroke-width="3"
+                stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offsetBonus}"/>` : ""}
+        </svg>`;
+    dayProgressRingWrapEl.title = titleText;
+    dayProgressTextEl.textContent = totalPct + "%";
+}
+
+// Второй режим отображения — отдельный заполняемый кружок с процентом в шапке страницы,
+// вместо кольца вокруг аватарки. Живёт в .topbar (собирается в renderNav из config.js),
+// поэтому просто находим её в DOM и добавляем/обновляем свой элемент.
+function removeHeaderProgressBadge() {
+    const el = document.getElementById("day-progress-header-badge");
+    if (el) el.remove();
+}
+function renderHeaderProgressBadge(basePct, bonusPct, totalPct, titleText) {
+    const topbar = document.querySelector(".topbar");
+    if (!topbar) return;
+    removeHeaderProgressBadge();
+
+    const r = 13;
+    const circumference = 2 * Math.PI * r;
+    const offset = circumference * (1 - basePct);
+    const bonusFraction = Math.min(1, bonusPct / 100);
+    const offsetBonus = circumference * (1 - bonusFraction);
+
+    const badge = document.createElement("button");
+    badge.type = "button";
+    badge.id = "day-progress-header-badge";
+    badge.title = titleText;
+    badge.onclick = () => openDayProgressSettingsModal(loadProfile);
+    badge.style.cssText = "margin-left:auto; background:transparent; border:none; cursor:pointer; position:relative; width:32px; height:32px; flex-shrink:0; padding:0;";
+    badge.innerHTML = `
+        <svg width="32" height="32" viewBox="0 0 32 32" style="transform: rotate(-90deg);">
+            <circle cx="16" cy="16" r="${r}" fill="none" stroke="var(--border)" stroke-width="3"/>
+            <circle cx="16" cy="16" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3"
+                stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
+            ${bonusPct > 0 ? `<circle cx="16" cy="16" r="${r}" fill="none" stroke="#d6336c" stroke-width="3"
+                stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offsetBonus}"/>` : ""}
+        </svg>
+        <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; color:var(--text);">${totalPct}%</span>`;
+    topbar.appendChild(badge);
 }
 
 async function computeDayProgress() {
@@ -962,6 +1063,75 @@ async function computeDayProgress() {
     return { done, total, bonusPct };
 }
 
+// ---- Прогресс недели — по аналогии с днём, только сумма за 7 дней. Неделя считается
+// с субботы по пятницу (личная настройка недели пользователя, не стандартная пн-вс).
+function getWeekDates() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const daysSinceSaturday = (today.getDay() + 1) % 7; // сб=0, вс=1, пн=2, ... пт=6
+    const start = new Date(today);
+    start.setDate(today.getDate() - daysSinceSaturday);
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(start);
+        d.setDate(start.getDate() + i);
+        dates.push(fmtDate(d));
+    }
+    return dates;
+}
+
+async function computeWeekProgress() {
+    const settings = getDayProgressSettings();
+    if (!settings.enabled) return null;
+    const dates = getWeekDates();
+    const todayStr2 = fmtDate(new Date());
+    const pastOrToday = dates.filter(d => d <= todayStr2); // будущие дни недели ещё не считаем
+    let done = 0, total = 0, bonusPct = 0;
+
+    if (settings.includeMetrics) {
+        const metrics = await getMetrics();
+        if (metrics.length > 0 && pastOrToday.length > 0) {
+            const { data: values } = await sb.from("daily_values").select("*").eq("user_id", user.id).in("date", pastOrToday);
+            const byDate = {};
+            (values || []).forEach(v => { (byDate[v.date] ||= {})[v.metric_id] = v.value; });
+            for (const dateStr of pastOrToday) {
+                const byMetric = byDate[dateStr] || {};
+                for (const m of metrics) {
+                    total++;
+                    if (isMetricDone(m, byMetric[m.id])) done++;
+                }
+            }
+        }
+    }
+
+    if (pastOrToday.length > 0) {
+        const { data: notes } = await sb.from("daily_notes").select("date, planned_goals").eq("user_id", user.id).in("date", pastOrToday);
+        if (notes && notes.length > 0) {
+            const { data: allGoals } = await sb.from("goals").select("*").eq("user_id", user.id);
+            for (const note of notes) {
+                for (const item of (note.planned_goals || [])) {
+                    let isDone;
+                    if (item.type === "goal") {
+                        const g = (allGoals || []).find(x => x.name === item.text);
+                        if (!g) continue;
+                        const stages = g.stages ?? 1;
+                        isDone = stages <= 1 ? g.done : (g.current_stage ?? 0) >= stages;
+                    } else {
+                        isDone = !!item.done;
+                    }
+                    if (item.bonus) {
+                        if (isDone) bonusPct += BONUS_PCT_PER_ITEM;
+                    } else if (settings.includePlanned) {
+                        total++;
+                        if (isDone) done++;
+                    }
+                }
+            }
+        }
+    }
+    return { done, total, bonusPct };
+}
+
 function openDayProgressSettingsModal(onSave) {
     const settings = getDayProgressSettings();
     const backdrop = document.createElement("div");
@@ -989,6 +1159,24 @@ function openDayProgressSettingsModal(onSave) {
     const plannedCb = checkboxRow(t("dash_day_progress_include_planned"), settings.includePlanned);
     const metricsCb = checkboxRow(t("dash_day_progress_include_metrics"), settings.includeMetrics);
 
+    const modeLabel = document.createElement("label");
+    modeLabel.style.cssText = "display:block; margin-top:14px; font-size:0.85em; color:var(--text-dim);";
+    modeLabel.textContent = t("dash_day_progress_display_mode_label");
+    const modeSelect = document.createElement("select");
+    [
+        { value: "avatar", label: t("dash_day_progress_mode_avatar") },
+        { value: "header", label: t("dash_day_progress_mode_header") },
+    ].forEach(opt => {
+        const o = document.createElement("option");
+        o.value = opt.value;
+        o.textContent = opt.label;
+        modeSelect.appendChild(o);
+    });
+    modeSelect.value = settings.displayMode;
+    modeLabel.appendChild(modeSelect);
+    modal.appendChild(modeLabel);
+    enhanceSelectWithCustomDropdown(modeSelect);
+
     const actions = document.createElement("div");
     actions.className = "modal-actions";
     const cancelBtn = document.createElement("button");
@@ -998,7 +1186,7 @@ function openDayProgressSettingsModal(onSave) {
     const okBtn = document.createElement("button");
     okBtn.textContent = t("save");
     okBtn.onclick = () => {
-        setDayProgressSettings({ enabled: enabledCb.checked, includePlanned: plannedCb.checked, includeMetrics: metricsCb.checked });
+        setDayProgressSettings({ enabled: enabledCb.checked, includePlanned: plannedCb.checked, includeMetrics: metricsCb.checked, displayMode: modeSelect.value });
         backdrop.remove();
         onSave();
     };
@@ -1105,6 +1293,11 @@ async function loadProfileInner() {
     avatarCol.appendChild(avatarRingWrap);
     avatarCol.appendChild(dayProgressText);
     row.appendChild(avatarCol);
+
+    weekProgressHostEl = document.createElement("div");
+    row.appendChild(weekProgressHostEl);
+    await renderWeekProgress();
+
     row.appendChild(fileInput);
 
     function openBirthdateModal() {
@@ -1254,7 +1447,7 @@ async function renderDay() {
         if (inputEl) flashSaved(inputEl);
         renderScore(metrics, pending);
         pushPointToChart("metric:" + m.id, dateStr, metricNumericValue(m, value)); // обновить график точечно, без мигания всего блока
-        if (dateStr === fmtDate(new Date())) renderDayProgressRing(); // кольцо прогресса дня на аватарке — сразу же, без ожидания обновления страницы
+        if (dateStr === fmtDate(new Date())) { renderDayProgressRing(); renderWeekProgress(); } // кольцо прогресса дня на аватарке — сразу же, без ожидания обновления страницы
     }
 
     async function autoSaveBodyParam(p, value, inputEl) {
@@ -2124,6 +2317,7 @@ async function renderPlanned(dateStr) {
             starBtn.textContent = item.bonus ? "⭐" : "☆";
             await persistPlanned(planned);
             renderDayProgressRing();
+            renderWeekProgress();
         };
         return starBtn;
     }
@@ -2154,6 +2348,7 @@ async function renderPlanned(dateStr) {
                             await sb.from("goals").update({ done: g.done, done_date: g.done ? todayStr() : null }).eq("id", g.id);
                             nameCell.className = g.done ? "done-text" : "";
                             renderDayProgressRing();
+                            renderWeekProgress();
                         };
                         cell.appendChild(cb);
                     } else {
@@ -2181,6 +2376,7 @@ async function renderPlanned(dateStr) {
                     await persistPlanned(planned);
                     textCell.className = item.done ? "done-text" : "";
                     renderDayProgressRing();
+                    renderWeekProgress();
                 };
                 cell.appendChild(cb);
                 row.insertCell().appendChild(buildBonusStarBtn(item));

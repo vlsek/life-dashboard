@@ -55,11 +55,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.43";
+const SITE_VERSION = "0.44";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.44", date: "2026-09-22", changes: [
+        "Иконка приложения: добавили monochrome-вариант — на Android с системной тёмной/цветной темой (Material You) иконка теперь встраивается в общий стиль, как у остальных приложений, а не остаётся всегда со своим фоном",
+        "У прогресса дня теперь два режима отображения (настраивается через ⚙️): кольцом вокруг аватарки (как раньше) или отдельным заполняемым кружком с процентом в шапке страницы",
+        "Добавили прогресс недели — отдельный кружок рядом с аватаркой, по той же логике, что и день, но за 7 дней. Неделя считается с субботы по пятницу. Если неделя не закрыта — рядом подсказка с незавершённой целью, которую можно доделать",
+    ]},
     { version: "0.43", date: "2026-09-22", changes: [
         "Отметка пункта плана / звёздочки / метрики за сегодня больше не перерисовывает всю карточку «Профиль» — обновляется только само кольцо прогресса дня, без исчезновения и появления всего блока",
     ]},
@@ -176,6 +181,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.44", date: "2026-09-22", changes: [
+        "App icon: added a monochrome variant — on Android with a system dark/themed look (Material You), the icon now blends in like other apps instead of always keeping its own background",
+        "Day progress now has two display modes (via ⚙️): a ring around the avatar (as before) or a separate filling circle with the percentage in the page header",
+        "Added week progress — a separate circle next to the avatar, same logic as the day one but over 7 days. The week runs Saturday through Friday. If the week isn't finished, a hint next to it suggests an unfinished goal to wrap up",
+    ]},
     { version: "0.43", date: "2026-09-22", changes: [
         "Checking a plan item / toggling its star / saving today's metric no longer redraws the whole Profile card — only the day-progress ring itself updates, without the block vanishing and reappearing",
     ]},
