@@ -973,7 +973,29 @@ function openDayProgressSettingsModal(onSave) {
     document.body.appendChild(backdrop);
 }
 
+// loadProfile() дёргается из многих мест (галочки, звёздочки, автосейв метрик и т.д.) —
+// без защиты от параллельного запуска два быстрых подряд вызова могли начать выполняться
+// одновременно: первый уже успел очистить и начать заново наполнять карточку, а второй
+// в этот момент тоже очищал её и добавлял своё — в итоге на странице оказывалось несколько
+// копий блока профиля друг под другом. Гарантируем, что реально выполняется только один
+// вызов за раз, а всё, что накопилось, пока шёл текущий — схлопывается в один повторный запуск.
+let loadProfileRunning = false;
+let loadProfileQueued = false;
 async function loadProfile() {
+    if (loadProfileRunning) { loadProfileQueued = true; return; }
+    loadProfileRunning = true;
+    try {
+        await loadProfileInner();
+    } finally {
+        loadProfileRunning = false;
+        if (loadProfileQueued) {
+            loadProfileQueued = false;
+            loadProfile();
+        }
+    }
+}
+
+async function loadProfileInner() {
     const card = document.getElementById("profile-card");
     if (!card) return; // блок скрыт в настройках дашборда
     const { data: profile } = await sb.from("profiles").select("*").eq("user_id", user.id).maybeSingle();
@@ -1026,12 +1048,11 @@ async function loadProfile() {
     const dayProgress = await computeDayProgress();
     if (dayProgress && (dayProgress.total > 0 || dayProgress.bonusPct > 0)) {
         const basePct = dayProgress.total > 0 ? dayProgress.done / dayProgress.total : 0;
-        const r = 24, rBonus = 19;
+        const r = 24;
         const circumference = 2 * Math.PI * r;
-        const circumferenceBonus = 2 * Math.PI * rBonus;
         const offset = circumference * (1 - basePct);
         const bonusFraction = Math.min(1, dayProgress.bonusPct / 100);
-        const offsetBonus = circumferenceBonus * (1 - bonusFraction);
+        const offsetBonus = circumference * (1 - bonusFraction);
 
         const ringWrap = document.createElement("div");
         ringWrap.style.cssText = "position:absolute; inset:0; pointer-events:none;";
@@ -1040,8 +1061,8 @@ async function loadProfile() {
                 <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--border)" stroke-width="3"/>
                 <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3"
                     stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
-                ${dayProgress.bonusPct > 0 ? `<circle cx="26" cy="26" r="${rBonus}" fill="none" stroke="#22c55e" stroke-width="3"
-                    stroke-linecap="round" stroke-dasharray="${circumferenceBonus}" stroke-dashoffset="${offsetBonus}"/>` : ""}
+                ${dayProgress.bonusPct > 0 ? `<circle cx="26" cy="26" r="${r}" fill="none" stroke="#d6336c" stroke-width="3"
+                    stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offsetBonus}"/>` : ""}
             </svg>`;
         avatarRingWrap.appendChild(ringWrap);
 
@@ -2049,6 +2070,12 @@ async function openMetricsManagerModal() {
 async function renderPlanned(dateStr) {
     const card = document.getElementById("planned-card");
     card.innerHTML = "";
+
+    const hint = document.createElement("p");
+    hint.className = "dim";
+    hint.style.cssText = "font-size:0.8em; margin:0 0 10px;";
+    hint.textContent = t("dash_planned_bonus_hint");
+    card.appendChild(hint);
 
     const { data: note } = await sb.from("daily_notes").select("*").eq("user_id", user.id).eq("date", dateStr).maybeSingle();
     // planned теперь список объектов: {type: 'goal', text: имя цели} или {type: 'custom', text, done}

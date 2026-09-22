@@ -55,11 +55,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.41";
+const SITE_VERSION = "0.42";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.42", date: "2026-09-21", changes: [
+        "Починили размножение блока профиля при быстрых подряд изменениях (например, несколько раз подряд жмёшь звёздочку) — теперь параллельные вызовы обновления схлопываются в один, вместо того чтобы плодить копии друг под другом",
+        "Бонусное кольцо теперь рисуется поверх основного тем же радиусом (не отдельным маленьким кольцом внутри), цвет — малиновый вместо зелёного",
+        "В «Запланировано на сегодня» добавили подсказку прямо на странице про то, что делает звёздочка ⭐ — раньше это можно было узнать только из всплывающей подсказки при наведении",
+    ]},
     { version: "0.41", date: "2026-09-21", changes: [
         "«Запланировано на сегодня» больше не пересобирает весь список при отметке пункта или звёздочки — меняется только конкретная строка, без дёрганья всего блока",
     ]},
@@ -168,6 +173,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.42", date: "2026-09-21", changes: [
+        "Fixed the profile block duplicating itself on rapid successive changes (e.g. toggling the star several times quickly) — overlapping refresh calls now collapse into one instead of stacking up copies",
+        "The bonus ring now draws on top of the base ring at the same radius (not a separate smaller inner ring), colored crimson instead of green",
+        "Added an on-page hint in \"Planned for today\" explaining what the ⭐ star does — previously that was only discoverable via a hover tooltip",
+    ]},
     { version: "0.41", date: "2026-09-21", changes: [
         "\"Planned for today\" no longer rebuilds the whole list when checking an item or toggling its star — only that one row updates, no more jarring whole-block redraw",
     ]},
