@@ -585,7 +585,7 @@ function renderEditableSeriesValues(container, entryKey, points, unit, onValueSa
                 onValueSaved();
                 if (prefix === "body") loadProfile();
                 if (prefix === "metric" && p.date === fmtDate(currentDate)) renderDay(); // сегодняшний день виден и на карточке дня — тоже обновим
-                if (prefix === "metric" && p.date === fmtDate(new Date())) loadProfile(); // кольцо прогресса дня — только если правили именно сегодняшнюю дату
+                if (prefix === "metric" && p.date === fmtDate(new Date())) renderDayProgressRing(); // кольцо прогресса дня — только если правили именно сегодняшнюю дату
             };
             valCell.appendChild(input);
             if (unit) { const u = document.createElement("span"); u.className = "dim"; u.style.marginLeft = "4px"; u.textContent = unit.trim(); valCell.appendChild(u); }
@@ -885,6 +885,43 @@ const BONUS_PCT_PER_ITEM = 20;
 // список "Запланировано на сегодня" (обычные пункты + привязанные цели). Бонусные (⭐)
 // пункты плана в done/total не идут — они дают отдельный bonusPct сверху, позволяя
 // "перевыполнить" день выше 100%.
+// Элементы кольца прогресса дня — заполняются в loadProfileInner при полной отрисовке
+// карточки профиля; refreshDayProgressRing() ниже использует их, чтобы обновить только
+// само кольцо (например, после отметки пункта плана), не трогая остальную карточку.
+let dayProgressRingWrapEl = null;
+let dayProgressRingHostEl = null;
+let dayProgressTextEl = null;
+
+async function renderDayProgressRing() {
+    if (!dayProgressRingHostEl) return; // карточка профиля ещё не строилась в этой сессии
+    const dayProgress = await computeDayProgress();
+    dayProgressRingHostEl.innerHTML = "";
+    if (dayProgress && (dayProgress.total > 0 || dayProgress.bonusPct > 0)) {
+        const basePct = dayProgress.total > 0 ? dayProgress.done / dayProgress.total : 0;
+        const r = 24;
+        const circumference = 2 * Math.PI * r;
+        const offset = circumference * (1 - basePct);
+        const bonusFraction = Math.min(1, dayProgress.bonusPct / 100);
+        const offsetBonus = circumference * (1 - bonusFraction);
+
+        dayProgressRingHostEl.innerHTML = `
+            <svg width="52" height="52" viewBox="0 0 52 52" style="transform: rotate(-90deg);">
+                <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--border)" stroke-width="3"/>
+                <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3"
+                    stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
+                ${dayProgress.bonusPct > 0 ? `<circle cx="26" cy="26" r="${r}" fill="none" stroke="#d6336c" stroke-width="3"
+                    stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offsetBonus}"/>` : ""}
+            </svg>`;
+
+        const totalPct = Math.round(basePct * 100) + dayProgress.bonusPct;
+        dayProgressRingWrapEl.title = `${t("dash_day_progress_label")}: ${totalPct}% (${dayProgress.done}/${dayProgress.total}${dayProgress.bonusPct > 0 ? " +" + dayProgress.bonusPct + "% ⭐" : ""})`;
+        dayProgressTextEl.textContent = totalPct + "%";
+    } else {
+        dayProgressRingWrapEl.title = "";
+        dayProgressTextEl.textContent = "";
+    }
+}
+
 async function computeDayProgress() {
     const settings = getDayProgressSettings();
     if (!settings.enabled) return null;
@@ -1042,36 +1079,21 @@ async function loadProfileInner() {
 
     // Кольцо прогресса дня вокруг аватарки: базовое кольцо (обычные пункты/метрики) плюс,
     // если есть выполненные бонусные (⭐) пункты — второй слой поверх другим цветом,
-    // показывающий перевыполнение сверх 100%.
+    // показывающий перевыполнение сверх 100%. Сама отрисовка вынесена в отдельную функцию
+    // и держится в переменных модуля — чтобы при отметке пункта плана можно было обновить
+    // только кольцо (refreshDayProgressRing), не перерисовывая всю карточку профиля.
+    const ringHost = document.createElement("div");
+    ringHost.style.cssText = "position:absolute; inset:0; pointer-events:none;";
+    avatarRingWrap.appendChild(ringHost);
+
     const dayProgressText = document.createElement("div");
     dayProgressText.style.cssText = "font-size:0.72em; color:var(--text-dim); text-align:center; white-space:nowrap;";
-    const dayProgress = await computeDayProgress();
-    if (dayProgress && (dayProgress.total > 0 || dayProgress.bonusPct > 0)) {
-        const basePct = dayProgress.total > 0 ? dayProgress.done / dayProgress.total : 0;
-        const r = 24;
-        const circumference = 2 * Math.PI * r;
-        const offset = circumference * (1 - basePct);
-        const bonusFraction = Math.min(1, dayProgress.bonusPct / 100);
-        const offsetBonus = circumference * (1 - bonusFraction);
 
-        const ringWrap = document.createElement("div");
-        ringWrap.style.cssText = "position:absolute; inset:0; pointer-events:none;";
-        ringWrap.innerHTML = `
-            <svg width="52" height="52" viewBox="0 0 52 52" style="transform: rotate(-90deg);">
-                <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--border)" stroke-width="3"/>
-                <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3"
-                    stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
-                ${dayProgress.bonusPct > 0 ? `<circle cx="26" cy="26" r="${r}" fill="none" stroke="#d6336c" stroke-width="3"
-                    stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offsetBonus}"/>` : ""}
-            </svg>`;
-        avatarRingWrap.appendChild(ringWrap);
+    dayProgressRingWrapEl = avatarRingWrap;
+    dayProgressRingHostEl = ringHost;
+    dayProgressTextEl = dayProgressText;
+    await renderDayProgressRing();
 
-        const totalPct = Math.round(basePct * 100) + dayProgress.bonusPct;
-        avatarRingWrap.title = `${t("dash_day_progress_label")}: ${totalPct}% (${dayProgress.done}/${dayProgress.total}${dayProgress.bonusPct > 0 ? " +" + dayProgress.bonusPct + "% ⭐" : ""})`;
-        dayProgressText.textContent = totalPct + "%";
-    } else {
-        dayProgressText.textContent = "";
-    }
     const dayProgressGear = document.createElement("button");
     dayProgressGear.type = "button";
     dayProgressGear.textContent = "⚙️";
@@ -1232,7 +1254,7 @@ async function renderDay() {
         if (inputEl) flashSaved(inputEl);
         renderScore(metrics, pending);
         pushPointToChart("metric:" + m.id, dateStr, metricNumericValue(m, value)); // обновить график точечно, без мигания всего блока
-        if (dateStr === fmtDate(new Date())) loadProfile(); // кольцо прогресса дня на аватарке — сразу же, без ожидания обновления страницы
+        if (dateStr === fmtDate(new Date())) renderDayProgressRing(); // кольцо прогресса дня на аватарке — сразу же, без ожидания обновления страницы
     }
 
     async function autoSaveBodyParam(p, value, inputEl) {
@@ -2101,7 +2123,7 @@ async function renderPlanned(dateStr) {
             item.bonus = !item.bonus;
             starBtn.textContent = item.bonus ? "⭐" : "☆";
             await persistPlanned(planned);
-            loadProfile();
+            renderDayProgressRing();
         };
         return starBtn;
     }
@@ -2131,7 +2153,7 @@ async function renderPlanned(dateStr) {
                             g.done = cb.checked; // держим локальную копию в согласии — без неё перерисовка не нужна
                             await sb.from("goals").update({ done: g.done, done_date: g.done ? todayStr() : null }).eq("id", g.id);
                             nameCell.className = g.done ? "done-text" : "";
-                            loadProfile();
+                            renderDayProgressRing();
                         };
                         cell.appendChild(cb);
                     } else {
@@ -2158,7 +2180,7 @@ async function renderPlanned(dateStr) {
                     item.done = cb.checked;
                     await persistPlanned(planned);
                     textCell.className = item.done ? "done-text" : "";
-                    loadProfile();
+                    renderDayProgressRing();
                 };
                 cell.appendChild(cb);
                 row.insertCell().appendChild(buildBonusStarBtn(item));

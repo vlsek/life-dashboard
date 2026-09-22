@@ -55,11 +55,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.42";
+const SITE_VERSION = "0.43";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.43", date: "2026-09-22", changes: [
+        "Отметка пункта плана / звёздочки / метрики за сегодня больше не перерисовывает всю карточку «Профиль» — обновляется только само кольцо прогресса дня, без исчезновения и появления всего блока",
+    ]},
     { version: "0.42", date: "2026-09-21", changes: [
         "Починили размножение блока профиля при быстрых подряд изменениях (например, несколько раз подряд жмёшь звёздочку) — теперь параллельные вызовы обновления схлопываются в один, вместо того чтобы плодить копии друг под другом",
         "Бонусное кольцо теперь рисуется поверх основного тем же радиусом (не отдельным маленьким кольцом внутри), цвет — малиновый вместо зелёного",
@@ -173,6 +176,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.43", date: "2026-09-22", changes: [
+        "Checking a plan item / toggling its star / saving today's metric no longer redraws the whole Profile card — only the day-progress ring itself updates, without the block vanishing and reappearing",
+    ]},
     { version: "0.42", date: "2026-09-21", changes: [
         "Fixed the profile block duplicating itself on rapid successive changes (e.g. toggling the star several times quickly) — overlapping refresh calls now collapse into one instead of stacking up copies",
         "The bonus ring now draws on top of the base ring at the same radius (not a separate smaller inner ring), colored crimson instead of green",
