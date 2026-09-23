@@ -280,31 +280,34 @@ async function computeStreakItems() {
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const todayStr3 = fmtDate(today);
     // если сегодня ещё не заполнено — считаем серию со вчера, чтобы не сбрасывало на 0 раньше времени
-    const startFrom = byDay[fmtDate(today)] ? today : new Date(today.getTime() - 86400000);
+    const startFrom = byDay[todayStr3] ? today : new Date(today.getTime() - 86400000);
 
     const items = [];
 
     // серия "идеальный день" — выполнены все метрики
     if (metrics && metrics.length) {
         const perfectDays = new Set(Object.keys(byDay).filter(d => metrics.every(m => isMetricDone(m, byDay[d][m.id]))));
-        items.push({ label: t("dash_streak_perfect_days"), streak: computeStreak(perfectDays, startFrom) });
+        items.push({ label: t("dash_streak_perfect_days"), streak: computeStreak(perfectDays, startFrom), todayCounted: perfectDays.has(todayStr3) });
     }
 
     // серия по каждой метрике отдельно
     for (const m of (metrics || [])) {
         const doneDays = new Set(Object.keys(byDay).filter(d => isMetricDone(m, byDay[d][m.id])));
         const streak = computeStreak(doneDays, startFrom);
-        if (streak > 0) items.push({ label: `${m.icon} ${m.name}`, streak });
+        if (streak > 0) items.push({ label: `${m.icon} ${m.name}`, streak, todayCounted: doneDays.has(todayStr3) });
     }
 
     // серия "заполнил заметку дня"
     const noteDays = new Set((allNotes || []).filter(n => n.items && n.items.length > 0).map(n => n.date));
-    items.push({ label: t("dash_streak_note_filled"), streak: computeStreak(noteDays, startFrom) });
+    items.push({ label: t("dash_streak_note_filled"), streak: computeStreak(noteDays, startFrom), todayCounted: noteDays.has(todayStr3) });
 
     items.sort((a, b) => b.streak - a.streak);
     return items.filter(i => i.streak > 0);
 }
+
+const STREAK_OUTLINE_ICON = '<svg viewBox="0 0 32 32" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2.6 2.2" stroke-linejoin="round"><path d="M16 2c1 5-3 6-3 10a3 3 0 0 0 6 0c2 1 3 4 3 7a9 9 0 1 1-18 0c0-6 4-9 6-13 1-2 2-3 6-4z"/></svg>';
 
 function openStreaksModal(items) {
     const backdrop = document.createElement("div");
@@ -313,12 +316,19 @@ function openStreaksModal(items) {
     modal.className = "modal";
     modal.innerHTML = `<h3>${t("dash_streaks_h2")}</h3>`;
 
+    if (items.some(i => !i.todayCounted)) {
+        const warning = document.createElement("p");
+        warning.style.cssText = "background:rgba(214,51,108,0.12); border:1px solid #d6336c; border-radius:8px; padding:8px 12px; font-size:0.85em; margin-top:10px;";
+        warning.textContent = t("dash_streak_at_risk_warning");
+        modal.appendChild(warning);
+    }
+
     const wrap = document.createElement("div");
-    wrap.style.cssText = "display:flex; flex-wrap:wrap; gap:10px;";
+    wrap.style.cssText = "display:flex; flex-wrap:wrap; gap:10px; margin-top:12px;";
     for (const item of items) {
         const badge = document.createElement("div");
-        badge.style.cssText = "background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:8px 14px;";
-        badge.innerHTML = `<div style="font-size:1.3em; font-weight:bold;">${item.streak} 🔥</div><div class="dim" style="font-size:0.8em;">${item.label}</div>`;
+        badge.style.cssText = "background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:8px 14px;" + (item.todayCounted ? "" : " border-color:#d6336c;");
+        badge.innerHTML = `<div style="font-size:1.3em; font-weight:bold;">${item.streak} 🔥</div><div class="dim" style="font-size:0.8em;">${item.label}${item.todayCounted ? "" : " · " + t("dash_streak_not_done_today")}</div>`;
         wrap.appendChild(badge);
     }
     modal.appendChild(wrap);
@@ -342,9 +352,11 @@ async function renderStreakBadge(container) {
 
     const top = items[0];
     const badge = document.createElement("div");
-    badge.style.cssText = "cursor:pointer; font-weight:bold; white-space:nowrap;";
-    badge.textContent = `🔥 ${top.streak}`;
-    badge.title = items.length > 1 ? `${top.label} — ${t("dash_streak_more_hint")}` : top.label;
+    badge.style.cssText = "cursor:pointer; font-weight:bold; white-space:nowrap; display:flex; align-items:center; gap:4px;" + (top.todayCounted ? "" : " color:#d6336c;");
+    badge.innerHTML = `${STREAK_OUTLINE_ICON} ${top.streak}`;
+    badge.title = top.todayCounted
+        ? (items.length > 1 ? `${top.label} — ${t("dash_streak_more_hint")}` : top.label)
+        : t("dash_streak_at_risk_warning");
     badge.onclick = () => openStreaksModal(items);
     container.appendChild(badge);
 }
@@ -585,7 +597,7 @@ function renderEditableSeriesValues(container, entryKey, points, unit, onValueSa
                 onValueSaved();
                 if (prefix === "body") loadProfile();
                 if (prefix === "metric" && p.date === fmtDate(currentDate)) renderDay(); // сегодняшний день виден и на карточке дня — тоже обновим
-                if (prefix === "metric" && p.date === fmtDate(new Date())) { renderDayProgressRing(); renderWeekProgress(); } // кольцо прогресса дня — только если правили именно сегодняшнюю дату
+                if (prefix === "metric" && p.date === fmtDate(new Date())) { renderDayProgressRing(); renderWeekProgress(); refreshStreakBadge(); } // кольцо прогресса дня — только если правили именно сегодняшнюю дату
             };
             valCell.appendChild(input);
             if (unit) { const u = document.createElement("span"); u.className = "dim"; u.style.marginLeft = "4px"; u.textContent = unit.trim(); valCell.appendChild(u); }
@@ -892,6 +904,13 @@ const BONUS_PCT_PER_ITEM = 20;
 let dayProgressRingWrapEl = null;
 let dayProgressRingHostEl = null;
 let dayProgressTextEl = null;
+let streakBadgeHostEl = null;
+
+async function refreshStreakBadge() {
+    if (!streakBadgeHostEl) return;
+    streakBadgeHostEl.innerHTML = "";
+    await renderStreakBadge(streakBadgeHostEl);
+}
 
 // ---- Прогресс недели — отдельный бейдж-кружок рядом с аватаркой (не совмещаем с кольцом
 // дня, чтобы не громоздить несколько колец друг на друга). Если неделя не закрыта —
@@ -930,22 +949,48 @@ async function renderWeekProgress() {
         </div>
         <div class="dim" style="font-size:0.65em; white-space:nowrap;">${t("dash_week_progress_label")}</div>`;
     weekProgressHostEl.appendChild(wrap);
+}
 
-    if (totalPct < 100) {
-        const { data: allGoals } = await sb.from("goals").select("*").eq("user_id", user.id);
-        const incomplete = (allGoals || []).filter(g => {
-            const stages = g.stages ?? 1;
-            return stages <= 1 ? !g.done : (g.current_stage ?? 0) < stages;
-        });
-        if (incomplete.length > 0) {
-            const pick = incomplete[Math.floor(Math.random() * incomplete.length)];
-            const hint = document.createElement("p");
-            hint.className = "dim";
-            hint.style.cssText = "font-size:0.72em; margin:4px 0 0; max-width:110px; text-align:center; line-height:1.3;";
-            hint.textContent = t("dash_week_progress_suggestion_prefix") + " «" + pick.name + "»";
-            weekProgressHostEl.appendChild(hint);
-        }
-    }
+// Напоминание про недоделанную неделю — показывается только по сб/вс (когда неделя ещё
+// не закрыта), а не постоянно рядом с кружком. Один раз закрыл крестиком — не всплывает
+// повторно в этот же день (localStorage), назавтра снова появится, если актуально.
+async function checkWeekendGoalReminder() {
+    const dow = new Date().getDay(); // 0=вс, 6=сб
+    if (dow !== 0 && dow !== 6) return;
+    const todayKey = fmtDate(new Date());
+    const dismissedKey = "week_reminder_dismissed:" + todayKey;
+    if (localStorage.getItem(dismissedKey)) return;
+
+    const settings = getDayProgressSettings();
+    if (!settings.enabled) return;
+    const week = await computeWeekProgress();
+    if (!week) return;
+    const basePct = week.total > 0 ? week.done / week.total : 0;
+    const totalPct = Math.round(basePct * 100) + week.bonusPct;
+    if (totalPct >= 100) return;
+
+    const { data: allGoals } = await sb.from("goals").select("*").eq("user_id", user.id);
+    const incomplete = (allGoals || []).filter(g => {
+        const stages = g.stages ?? 1;
+        return stages <= 1 ? !g.done : (g.current_stage ?? 0) < stages;
+    });
+    if (incomplete.length === 0) return;
+    const pick = incomplete[Math.floor(Math.random() * incomplete.length)];
+
+    const banner = document.createElement("div");
+    banner.className = "card";
+    banner.style.cssText = "border:1px solid var(--accent); display:flex; align-items:center; gap:12px; justify-content:space-between;";
+    const text = document.createElement("div");
+    text.innerHTML = `<strong>${t("dash_week_reminder_title")}</strong><br><span class="dim" style="font-size:0.9em;">${t("dash_week_progress_suggestion_prefix")} «${pick.name}» — ${t("dash_week_reminder_currently")} ${totalPct}%</span>`;
+    banner.appendChild(text);
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "secondary";
+    closeBtn.textContent = "✕";
+    closeBtn.onclick = () => { localStorage.setItem(dismissedKey, "1"); banner.remove(); };
+    banner.appendChild(closeBtn);
+
+    const main = document.querySelector("main");
+    if (main) main.insertBefore(banner, main.firstChild);
 }
 
 async function renderDayProgressRing() {
@@ -1068,9 +1113,9 @@ async function computeDayProgress() {
 function getWeekDates() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const daysSinceSaturday = (today.getDay() + 1) % 7; // сб=0, вс=1, пн=2, ... пт=6
+    const daysSinceMonday = (today.getDay() + 6) % 7; // пн=0, вт=1, ... вс=6
     const start = new Date(today);
-    start.setDate(today.getDate() - daysSinceSaturday);
+    start.setDate(today.getDate() - daysSinceMonday);
     const dates = [];
     for (let i = 0; i < 7; i++) {
         const d = new Date(start);
@@ -1355,12 +1400,18 @@ async function loadProfileInner() {
 
     row.insertAdjacentHTML("beforeend", statsHtml);
     // Стрик — компактным бейджем в этой же строке (раньше был отдельным блоком на всю ширину).
-    // Клик открывает детали по всем активным сериям, если их несколько.
-    await renderStreakBadge(row); // ждём перед балансом — иначе баланс (pinned right) успеет встать раньше и порядок съедет
+    // Клик открывает детали по всем активным сериям, если их несколько. Держим в отдельном
+    // хосте, чтобы обновлять бейдж точечно (после метрики/плана), не трогая всю карточку.
+    streakBadgeHostEl = document.createElement("span");
+    row.appendChild(streakBadgeHostEl);
+    await renderStreakBadge(streakBadgeHostEl); // ждём перед балансом — иначе баланс (pinned right) успеет встать раньше и порядок съедет
 
     const balanceEl = document.createElement("div");
     balanceEl.className = "push-right";
     balanceEl.style.fontWeight = "bold";
+    balanceEl.style.cursor = "pointer";
+    balanceEl.title = t("dash_balance_click_hint");
+    balanceEl.onclick = () => { window.location.href = "shop.html"; };
     balanceEl.textContent = `💰 ${balance}`;
     row.appendChild(balanceEl);
 
@@ -1390,6 +1441,180 @@ async function loadProfileInner() {
     row.insertBefore(ageSlot, row.children[2] || null);
 
     card.appendChild(row);
+}
+
+// ---- Виджет воды в шапке: стакан, который наполняется по ходу дня, быстрые кнопки
+// добавления и дневная норма (из веса, если не задана вручную). Хранится как обычная
+// метрика — специально ничего нового в базе не заводим, просто ищем метрику по имени/иконке
+// (или предлагаем создать, если её ещё нет), значения — та же daily_values, что и у всех.
+function findWaterMetric(metrics) {
+    return (metrics || []).find(m => m.icon === "💧" || /вода|water/i.test(m.name || ""));
+}
+
+async function getAutoWaterNormMl() {
+    const { data: params } = await sb.from("body_parameters").select("*").eq("user_id", user.id);
+    const weightParam = (params || []).find(p => p.icon === "⚖️" || /вес|weight/i.test(p.name || ""));
+    if (!weightParam) return null;
+    const { data: values } = await sb.from("body_parameter_values").select("*").eq("user_id", user.id).eq("parameter_id", weightParam.id).order("date", { ascending: false }).limit(1);
+    const weightKg = values?.[0]?.value;
+    if (!weightKg) return null;
+    return Math.round(weightKg * 30); // стандартная грубая формула — 30мл на кг веса
+}
+
+async function getTodayWaterMl(metric) {
+    const { data } = await sb.from("daily_values").select("value").eq("user_id", user.id).eq("metric_id", metric.id).eq("date", fmtDate(new Date())).maybeSingle();
+    return data?.value ?? 0;
+}
+
+async function addWaterMl(metric, deltaMl) {
+    const current = await getTodayWaterMl(metric);
+    const next = Math.max(0, current + deltaMl);
+    await sb.from("daily_values").upsert({ user_id: user.id, metric_id: metric.id, date: fmtDate(new Date()), value: next }, { onConflict: "user_id,date,metric_id" });
+    return next;
+}
+
+async function createWaterMetric() {
+    const metrics = await getMetrics();
+    const maxPos = metrics.reduce((mx, m) => Math.max(mx, m.position ?? 0), 0);
+    const { data, error } = await sb.from("metrics").insert({
+        user_id: user.id, name: t("dash_water_metric_name"), icon: "💧", unit: "мл", type: "number", position: maxPos + 1, active: true,
+    }).select().single();
+    if (error) { showToast(t("dash_save_error_generic") + error.message, "error"); console.error(error); return null; }
+    return data;
+}
+
+function openWaterModal(metric, currentMl, normMl) {
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.innerHTML = `<h3>💧 ${t("dash_water_modal_title")}</h3>`;
+
+    const amountP = document.createElement("p");
+    amountP.style.cssText = "font-size:1.3em; font-weight:700; margin-top:10px;";
+    modal.appendChild(amountP);
+
+    const barOuter = document.createElement("div");
+    barOuter.style.cssText = "background:var(--bg); border:1px solid var(--border); border-radius:8px; height:14px; overflow:hidden; margin-bottom:14px;";
+    const barInner = document.createElement("div");
+    barInner.style.cssText = "height:100%; background:#3b9ee5; transition:width 0.2s;";
+    barOuter.appendChild(barInner);
+    modal.appendChild(barOuter);
+
+    function refreshLabel(ml) {
+        const pct = normMl > 0 ? Math.min(100, Math.round(ml / normMl * 100)) : 0;
+        amountP.textContent = `${ml} / ${normMl} мл (${pct}%)`;
+        barInner.style.width = pct + "%";
+    }
+    refreshLabel(currentMl);
+
+    const btnRow = document.createElement("div");
+    btnRow.style.cssText = "display:flex; gap:8px; flex-wrap:wrap;";
+    [200, 1000].forEach(ml => {
+        const btn = document.createElement("button");
+        btn.className = "secondary";
+        btn.textContent = "+ " + (ml >= 1000 ? (ml / 1000) + " л" : ml + " мл");
+        btn.onclick = async () => {
+            const next = await addWaterMl(metric, ml);
+            refreshLabel(next);
+            renderWaterBadge();
+        };
+        btnRow.appendChild(btn);
+    });
+    const customBtn = document.createElement("button");
+    customBtn.className = "secondary";
+    customBtn.textContent = t("dash_water_add_custom_btn");
+    customBtn.onclick = async () => {
+        const val = prompt(t("dash_water_add_custom_prompt"));
+        const ml = parseInt(val, 10);
+        if (!ml || ml <= 0) return;
+        const next = await addWaterMl(metric, ml);
+        refreshLabel(next);
+        renderWaterBadge();
+    };
+    btnRow.appendChild(customBtn);
+    modal.appendChild(btnRow);
+
+    const goalLabel = document.createElement("label");
+    goalLabel.style.cssText = "display:block; margin-top:16px; font-size:0.85em; color:var(--text-dim);";
+    goalLabel.textContent = t("dash_water_goal_label");
+    const goalInput = document.createElement("input");
+    goalInput.type = "number";
+    goalInput.value = metric.goal_value ?? normMl;
+    goalInput.style.width = "100%";
+    goalLabel.appendChild(goalInput);
+    modal.appendChild(goalLabel);
+    const goalHint = document.createElement("p");
+    goalHint.className = "dim";
+    goalHint.style.cssText = "font-size:0.78em; margin-top:4px;";
+    goalHint.textContent = metric.goal_value != null ? t("dash_water_goal_manual_hint") : t("dash_water_goal_auto_hint");
+    modal.appendChild(goalHint);
+
+    const actions = document.createElement("div");
+    actions.className = "modal-actions";
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "secondary";
+    closeBtn.textContent = t("dash_close_btn");
+    closeBtn.onclick = () => backdrop.remove();
+    const saveGoalBtn = document.createElement("button");
+    saveGoalBtn.textContent = t("dash_water_goal_save_btn");
+    saveGoalBtn.onclick = async () => {
+        const ml = parseInt(goalInput.value, 10);
+        if (!ml || ml <= 0) return;
+        await sb.from("metrics").update({ goal_value: ml }).eq("id", metric.id);
+        metric.goal_value = ml;
+        refreshLabel(currentMl);
+        renderWaterBadge();
+        goalHint.textContent = t("dash_water_goal_manual_hint");
+    };
+    actions.appendChild(closeBtn);
+    actions.appendChild(saveGoalBtn);
+    modal.appendChild(actions);
+
+    backdrop.appendChild(modal);
+    backdrop.onclick = (e) => { if (e.target === backdrop) backdrop.remove(); };
+    document.body.appendChild(backdrop);
+}
+
+async function renderWaterBadge() {
+    const topbar = document.querySelector(".topbar");
+    if (!topbar) return;
+    const existing = document.getElementById("water-badge");
+    if (existing) existing.remove();
+
+    const metrics = await getMetrics();
+    const metric = findWaterMetric(metrics);
+
+    const badge = document.createElement("button");
+    badge.type = "button";
+    badge.id = "water-badge";
+    badge.style.cssText = "background:transparent; border:none; cursor:pointer; flex-shrink:0; padding:4px 6px; display:flex; align-items:center; justify-content:center;";
+
+    if (!metric) {
+        badge.title = t("dash_water_setup_prompt");
+        badge.innerHTML = '<span style="font-size:1.1em;">💧</span>';
+        badge.onclick = async () => {
+            const created = await createWaterMetric();
+            if (created) { renderWaterBadge(); openWaterModal(created, 0, (await getAutoWaterNormMl()) || 2000); }
+        };
+        topbar.appendChild(badge);
+        return;
+    }
+
+    const normMl = metric.goal_value ?? (await getAutoWaterNormMl()) ?? 2000;
+    const currentMl = await getTodayWaterMl(metric);
+    const pct = normMl > 0 ? Math.min(1, currentMl / normMl) : 0;
+
+    badge.title = `💧 ${currentMl} / ${normMl} мл`;
+    // "стакан" — просто прямоугольник с заливкой снизу пропорционально проценту
+    badge.innerHTML = `
+        <svg width="20" height="24" viewBox="0 0 20 24">
+            <defs><clipPath id="water-clip"><rect x="2" y="${24 - pct * 20 - 2}" width="16" height="${pct * 20}"/></clipPath></defs>
+            <path d="M3 2h14l-2 20H5L3 2z" fill="none" stroke="var(--text-dim)" stroke-width="1.6"/>
+            <path d="M3 2h14l-2 20H5L3 2z" fill="#3b9ee5" clip-path="url(#water-clip)"/>
+        </svg>`;
+    badge.onclick = () => openWaterModal(metric, currentMl, normMl);
+    topbar.appendChild(badge);
 }
 
 async function getMetrics() {
@@ -1447,7 +1672,7 @@ async function renderDay() {
         if (inputEl) flashSaved(inputEl);
         renderScore(metrics, pending);
         pushPointToChart("metric:" + m.id, dateStr, metricNumericValue(m, value)); // обновить график точечно, без мигания всего блока
-        if (dateStr === fmtDate(new Date())) { renderDayProgressRing(); renderWeekProgress(); } // кольцо прогресса дня на аватарке — сразу же, без ожидания обновления страницы
+        if (dateStr === fmtDate(new Date())) { renderDayProgressRing(); renderWeekProgress(); refreshStreakBadge(); } // кольцо прогресса дня на аватарке — сразу же, без ожидания обновления страницы
     }
 
     async function autoSaveBodyParam(p, value, inputEl) {
@@ -2451,4 +2676,6 @@ async function renderPlanned(dateStr) {
     dashboardLayout = normalizeDashboardLayout(profile.dashboard_layout);
     document.getElementById("customize-dashboard-btn").onclick = openDashboardLayoutModal;
     renderDashboardLayoutAndLoad();
+    checkWeekendGoalReminder();
+    renderWaterBadge();
 })();

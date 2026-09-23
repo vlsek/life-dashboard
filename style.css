@@ -134,6 +134,20 @@ body {
     overflow-x: auto;
     scrollbar-width: none;
 }
+
+.topbar-logout-btn {
+    margin-left: auto;
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    padding: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+.topbar-logout-btn:hover { color: var(--text); background: var(--bg); }
 .quick-nav::-webkit-scrollbar { display: none; }
 .quick-nav.open {
     display: flex;

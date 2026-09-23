@@ -55,11 +55,19 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.44";
+const SITE_VERSION = "0.45";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.45", date: "2026-09-22", changes: [
+        "Неделя теперь считается пн-вс, а не сб-пт",
+        "Подсказка про незакрытую неделю убрана из постоянного кружка — вместо этого баннер-напоминание, который появляется только по субботам/воскресеньям, если неделя ещё не на 100%",
+        "Иконка выхода (дверь) в правом углу шапки — теперь не обязательно лезть в боковое меню",
+        "Клик по баллам (💰) в профиле уводит в магазин",
+        "Иконка стрика — контурная/пунктирная SVG вместо заливного эмодзи; если сегодня ещё не засчитано — подсвечивается малиновым, а при клике прямым текстом предупреждает, что серия под угрозой. Плюс починили баг: стрик не обновлялся без перезагрузки страницы",
+        "Новый виджет — вода в шапке: стакан заполняется по ходу дня, кнопки +200мл/+1л/+своё, дневная норма считается по весу автоматически или задаётся вручную",
+    ]},
     { version: "0.44", date: "2026-09-22", changes: [
         "Иконка приложения: добавили monochrome-вариант — на Android с системной тёмной/цветной темой (Material You) иконка теперь встраивается в общий стиль, как у остальных приложений, а не остаётся всегда со своим фоном",
         "У прогресса дня теперь два режима отображения (настраивается через ⚙️): кольцом вокруг аватарки (как раньше) или отдельным заполняемым кружком с процентом в шапке страницы",
@@ -181,6 +189,14 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.45", date: "2026-09-22", changes: [
+        "Week now runs Monday-Sunday instead of Saturday-Friday",
+        "The unfinished-week hint moved out of the permanent circle — now a reminder banner that only shows up on Saturday/Sunday if the week isn't at 100% yet",
+        "Logout icon (open door) in the top-right corner of the header — no need to dig into the side menu just for that",
+        "Clicking the points (💰) in the profile takes you to the shop",
+        "Streak icon is now an outline/dashed SVG instead of a solid emoji; turns crimson if today isn't counted yet, and clicking it spells out that the streak is at risk. Also fixed a bug where the streak wouldn't update without a page reload",
+        "New widget — water tracker in the header: a glass that fills up through the day, +200ml/+1L/+custom buttons, daily goal calculated from weight automatically or set manually",
+    ]},
     { version: "0.44", date: "2026-09-22", changes: [
         "App icon: added a monochrome variant — on Android with a system dark/themed look (Material You), the icon now blends in like other apps instead of always keeping its own background",
         "Day progress now has two display modes (via ⚙️): a ring around the avatar (as before) or a separate filling circle with the percentage in the page header",
@@ -842,6 +858,17 @@ function renderNav(active, userEmail) {
             moreToggle.classList.remove("open");
         }
     });
+
+    // Выход — иконкой открытой двери в правом углу шапки (только если человек залогинен)
+    if (userEmail) {
+        const logoutIcon = document.createElement("button");
+        logoutIcon.type = "button";
+        logoutIcon.className = "topbar-logout-btn";
+        logoutIcon.title = `${t("logout")} (${userEmail})`;
+        logoutIcon.innerHTML = '<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>';
+        logoutIcon.onclick = logout;
+        topbar.appendChild(logoutIcon);
+    }
 
     document.body.prepend(topbar);
 
