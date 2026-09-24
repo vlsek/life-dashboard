@@ -275,6 +275,7 @@ function renderForm() {
             alert(t("onb_profile_saved_metrics_failed") + seedError.message);
             console.error(seedError);
         }
+        try { localStorage.setItem("tour_pending", "1"); } catch { /* не критично */ }
         window.location.href = "dashboard.html";
     };
     card.appendChild(skipBtn);
@@ -341,6 +342,7 @@ async function completeOnboarding(answers) {
         }
     }
 
+    try { localStorage.setItem("tour_pending", "1"); } catch { /* не критично */ }
     window.location.href = "dashboard.html";
 }
 

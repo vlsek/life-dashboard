@@ -2778,6 +2778,10 @@ async function renderPlanned(dateStr) {
     if (!profile?.onboarded) { window.location.href = "onboarding.html"; return; }
 
     renderNav("dashboard", user.email);
+    // Сразу после онбординга показываем приветственный тур (один раз)
+    try {
+        if (localStorage.getItem("tour_pending")) { localStorage.removeItem("tour_pending"); showWelcomeTour(); }
+    } catch { /* localStorage недоступен — тур можно открыть из меню */ }
     currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
 

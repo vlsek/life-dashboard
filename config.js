@@ -55,11 +55,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.48";
+const SITE_VERSION = "0.49";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.49", date: "2026-09-24", changes: [
+        "Приветственный тур для новых пользователей: 7 коротких шагов про дашборд, цели, навыки, тренировки, челленджи, магазин, сообщество и календарь. Показывается один раз сразу после онбординга",
+        "Тур можно открыть снова в любой момент: в боковом меню появился пункт «Как пользоваться»",
+    ]},
     { version: "0.48", date: "2026-09-24", changes: [
         "Воду можно вносить за прошлые дни: в окошке воды появился выбор даты. Кружок, стрик, графики и неделя обновляются сразу, без перезагрузки",
         "У каждого подхода теперь фиксируется время: проставляется само, когда вписываешь повторения, и его можно поправить руками (дашборд и раздел «Тренировки»)",
@@ -208,6 +212,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.49", date: "2026-09-24", changes: [
+        "Welcome tour for new users: 7 short steps covering the dashboard, goals, skills, workouts, challenges, shop, community and calendar. Shown once right after onboarding",
+        "The tour can be reopened any time: the side menu has a new \"How it works\" item",
+    ]},
     { version: "0.48", date: "2026-09-24", changes: [
         "Water can be logged for past days: the water dialog has a date picker. The circle, streak, charts and week update instantly, no reload needed",
         "Every set now records its time: it is filled in automatically when you enter the reps and can be edited by hand (dashboard and the Workouts page)",
@@ -970,6 +978,13 @@ function renderNav(active, userEmail) {
         sidebar.appendChild(installLink);
     }
 
+    const tourLink = document.createElement("a");
+    tourLink.href = "#";
+    tourLink.textContent = "❓ " + t("nav_tour");
+    tourLink.className = "dim-link";
+    tourLink.onclick = (e) => { e.preventDefault(); showWelcomeTour(); };
+    sidebar.appendChild(tourLink);
+
     const aboutLink = document.createElement("a");
     aboutLink.href = "#";
     aboutLink.textContent = "ℹ️ " + t("nav_about");
@@ -991,6 +1006,82 @@ function renderNav(active, userEmail) {
     hamburger.onclick = openSidebar;
     backdrop.onclick = closeSidebar;
     sidebar.querySelectorAll("a").forEach(a => a.addEventListener("click", closeSidebar));
+}
+
+// ---- Приветственный тур для новых пользователей ----
+// Показывается один раз сразу после онбординга (флаг tour_pending в localStorage ставит
+// onboarding.js), а потом всегда доступен из бокового меню («Как пользоваться»).
+const TOUR_STEPS = [
+    { icon: "👋", key: "tour_1" },
+    { icon: "🏠", key: "tour_2" },
+    { icon: "🎯", key: "tour_3" },
+    { icon: "🥋", key: "tour_4" },
+    { icon: "🏆", key: "tour_5" },
+    { icon: "🗓️", key: "tour_6" },
+    { icon: "🧭", key: "tour_7" },
+];
+
+function showWelcomeTour() {
+    if (document.getElementById("welcome-tour")) return;
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+    backdrop.id = "welcome-tour";
+    const modal = document.createElement("div");
+    modal.className = "modal";
+
+    let step = 0;
+    const iconEl = document.createElement("div");
+    iconEl.style.cssText = "font-size:2.2em; text-align:center; margin-top:4px;";
+    const titleEl = document.createElement("h3");
+    titleEl.style.cssText = "text-align:center; margin:8px 0;";
+    const textEl = document.createElement("p");
+    textEl.style.cssText = "font-size:0.95em; line-height:1.6; white-space:pre-line;";
+    const dotsEl = document.createElement("div");
+    dotsEl.style.cssText = "display:flex; justify-content:center; gap:6px; margin:14px 0 4px;";
+
+    const actions = document.createElement("div");
+    actions.className = "modal-actions";
+    const skipBtn = document.createElement("button");
+    skipBtn.className = "secondary";
+    const backBtn = document.createElement("button");
+    backBtn.className = "secondary";
+    backBtn.textContent = t("tour_back");
+    const nextBtn = document.createElement("button");
+
+    const close = () => backdrop.remove();
+    skipBtn.onclick = close;
+    backBtn.onclick = () => { if (step > 0) { step--; render(); } };
+    nextBtn.onclick = () => { if (step < TOUR_STEPS.length - 1) { step++; render(); } else close(); };
+
+    function render() {
+        const s = TOUR_STEPS[step];
+        iconEl.textContent = s.icon;
+        titleEl.textContent = t(s.key + "_title");
+        textEl.textContent = t(s.key + "_text");
+        dotsEl.innerHTML = "";
+        TOUR_STEPS.forEach((_, i) => {
+            const d = document.createElement("span");
+            d.style.cssText = "width:8px; height:8px; border-radius:50%; background:" + (i === step ? "var(--accent)" : "var(--border)") + ";";
+            dotsEl.appendChild(d);
+        });
+        const last = step === TOUR_STEPS.length - 1;
+        nextBtn.textContent = last ? t("tour_done") : t("tour_next");
+        skipBtn.textContent = t("tour_skip");
+        skipBtn.style.display = last ? "none" : "";
+        backBtn.style.display = step === 0 ? "none" : "";
+    }
+
+    modal.appendChild(iconEl);
+    modal.appendChild(titleEl);
+    modal.appendChild(textEl);
+    modal.appendChild(dotsEl);
+    actions.appendChild(skipBtn);
+    actions.appendChild(backBtn);
+    actions.appendChild(nextBtn);
+    modal.appendChild(actions);
+    backdrop.appendChild(modal);
+    document.body.appendChild(backdrop);
+    render();
 }
 
 // ---- Модалка "О создателе" — кто сделал проект, ссылка на портфолио + обратная связь ----
