@@ -363,7 +363,7 @@ async function computeStreakItems() {
 
 const STREAK_OUTLINE_ICON = '<svg viewBox="0 0 32 32" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2.6 2.2" stroke-linejoin="round"><path d="M16 2c1 5-3 6-3 10a3 3 0 0 0 6 0c2 1 3 4 3 7a9 9 0 1 1-18 0c0-6 4-9 6-13 1-2 2-3 6-4z"/></svg>';
 
-const STREAK_SOLID_ICON = '<svg viewBox="0 0 32 32" width="18" height="18" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M16 2c1 5-3 6-3 10a3 3 0 0 0 6 0c2 1 3 4 3 7a9 9 0 1 1-18 0c0-6 4-9 6-13 1-2 2-3 6-4z"/></svg>';
+const STREAK_SOLID_ICON = '<svg class="streak-flame" viewBox="0 0 32 32" width="18" height="18" aria-hidden="true"><g transform="translate(16 16) scale(1.04) translate(-16 -16) translate(3.3 0.7)"><path class="fl-outer" d="M16.5 0.5c1.2 5.3-3.2 6.8-3.5 11a3.2 3.2 0 0 0 6.4 0.2c2.1 1.1 3.1 4.3 3.1 7.5a9.5 10.5 0 1 1-19.5 0.3c-0.1-6.4 4.2-9.7 6.3-14 1.1-2.2 2.1-3.5 7.2-5z"/><path class="fl-inner" d="M16.3 11.2c.6 3.2-1.6 3.8-1.6 6a1.6 1.6 0 0 0 3.2 0c1.1 3.2-.5 7-3.7 7a5.3 5.3 0 0 1-5.3-5.4c0-3.7 3.2-5.3 5.3-9 .4-.7.9-1.3 2.1-2.6z"/></g></svg>';
 
 function openStreaksModal(items) {
     const backdrop = document.createElement("div");
@@ -408,7 +408,8 @@ async function renderStreakBadge(container) {
 
     const top = items[0];
     const badge = document.createElement("div");
-    badge.style.cssText = "cursor:pointer; font-weight:bold; white-space:nowrap; display:flex; align-items:center; gap:4px;" + (top.todayCounted ? "" : " color:#d6336c;");
+    badge.style.cssText = "cursor:pointer; font-weight:bold; white-space:nowrap; display:flex; align-items:center; gap:4px;";
+    if (!top.todayCounted) badge.className = "streak-unlit";
     badge.innerHTML = `${top.todayCounted ? STREAK_SOLID_ICON : STREAK_OUTLINE_ICON} ${top.streak}${top.unit === "w" ? " " + t("dash_streak_unit_weeks") : ""}`;
     badge.title = top.todayCounted
         ? (items.length > 1 ? `${top.label} — ${t("dash_streak_more_hint")}` : top.label)
@@ -962,10 +963,25 @@ let dayProgressRingHostEl = null;
 let dayProgressTextEl = null;
 let streakBadgeHostEl = null;
 
+// Обновление бейджа стрика. Параллельные вызовы (например, при быстром вводе подходов)
+// схлопываются в один повторный, а новое содержимое собирается отдельно и подменяет старое
+// разом — иначе два одновременных обновления оба дорисовывали огонёк и он "дублировался".
+let streakRefreshRunning = false;
+let streakRefreshQueued = false;
 async function refreshStreakBadge() {
     if (!streakBadgeHostEl) return;
-    streakBadgeHostEl.innerHTML = "";
-    await renderStreakBadge(streakBadgeHostEl);
+    if (streakRefreshRunning) { streakRefreshQueued = true; return; }
+    streakRefreshRunning = true;
+    try {
+        do {
+            streakRefreshQueued = false;
+            const fresh = document.createElement("span");
+            await renderStreakBadge(fresh);
+            if (streakBadgeHostEl) streakBadgeHostEl.replaceChildren(...fresh.childNodes);
+        } while (streakRefreshQueued);
+    } finally {
+        streakRefreshRunning = false;
+    }
 }
 
 // ---- Прогресс недели — отдельный бейдж-кружок рядом с аватаркой (не совмещаем с кольцом
@@ -1482,7 +1498,7 @@ async function loadProfileInner() {
     dayProgressGear.type = "button";
     setIcon(dayProgressGear, "gear");
     dayProgressGear.title = t("dash_day_progress_settings_title");
-    dayProgressGear.style.cssText = "position:absolute; bottom:-3px; right:-3px; width:19px; height:19px; min-height:0; box-sizing:border-box; border-radius:50%; background:var(--bg-card); border:1px solid var(--border); font-size:11px; line-height:1; display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer;";
+    dayProgressGear.style.cssText = "position:absolute; bottom:-3px; right:-3px; width:19px; height:19px; min-height:0; box-sizing:border-box; border-radius:50%; background:var(--accent); color:var(--accent-text); border:2px solid var(--bg); box-shadow:0 1px 4px rgba(0,0,0,0.45); font-size:11px; line-height:1; display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer;";
     dayProgressGear.onclick = (e) => { e.stopPropagation(); openDayProgressSettingsModal(loadProfile); };
     avatarRingWrap.appendChild(dayProgressGear);
 
@@ -1555,7 +1571,7 @@ async function loadProfileInner() {
     // хосте, чтобы обновлять бейдж точечно (после метрики/плана), не трогая всю карточку.
     streakBadgeHostEl = document.createElement("span");
     row.appendChild(streakBadgeHostEl);
-    await renderStreakBadge(streakBadgeHostEl); // ждём перед балансом — иначе баланс (pinned right) успеет встать раньше и порядок съедет
+    await refreshStreakBadge(); // ждём перед балансом — иначе баланс (pinned right) успеет встать раньше и порядок съедет
 
     const balanceEl = document.createElement("div");
     balanceEl.className = "push-right";
@@ -1801,16 +1817,29 @@ async function renderWaterBadge() {
     const pct = normMl > 0 ? Math.min(1, currentMl / normMl) : 0;
     const full = pct >= 1;
     // при 100% стакан становится золотым; цвет темы уже занят кружком прогресса, поэтому именно золото
-    const fillColor = full ? "#f5b82e" : "#3b9ee5";
-    const strokeColor = full ? "#f5b82e" : "var(--text-dim)";
-
+    // Стакан: стекло с бликом, вода с градиентом и волной на поверхности. При 100% — золотой.
+    const waterTop = full ? "#ffd86b" : "#7cc6f5";
+    const waterBottom = full ? "#e8a417" : "#2f8fdc";
+    const rimColor = full ? "#e8a417" : "var(--text-dim)";
+    const levelY = 26 - pct * 20; // 26 — дно, 6 — верхний край воды
+    const waveAmp = pct > 0 && pct < 1 ? 1.1 : 0;
     badge.title = `💧 ${currentMl} / ${normMl} мл`;
-    // "стакан" — трапеция с заливкой снизу пропорционально проценту
     badge.innerHTML = `
-        <svg width="20" height="24" viewBox="0 0 20 24" style="display:block;">
-            <defs><clipPath id="water-clip"><rect x="2" y="${22 - pct * 20}" width="16" height="${pct * 20}"/></clipPath></defs>
-            <path d="M3 2h14l-2 20H5L3 2z" fill="none" stroke="${strokeColor}" stroke-width="1.6" stroke-linejoin="round"/>
-            <path d="M3 2h14l-2 20H5L3 2z" fill="${fillColor}" clip-path="url(#water-clip)"/>
+        <svg width="24" height="30" viewBox="0 0 24 30" style="display:block;" aria-hidden="true">
+            <defs>
+                <linearGradient id="water-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="${waterTop}"/>
+                    <stop offset="1" stop-color="${waterBottom}"/>
+                </linearGradient>
+                <clipPath id="water-glass-clip"><path d="M4.2 4.5h15.6l-1.9 22.2a1.8 1.8 0 0 1-1.8 1.6H7.9a1.8 1.8 0 0 1-1.8-1.6L4.2 4.5z"/></clipPath>
+            </defs>
+            <g clip-path="url(#water-glass-clip)">
+                <rect x="0" y="0" width="24" height="30" fill="${rimColor}" fill-opacity="0.08"/>
+                ${pct > 0 ? `<path d="M0 ${levelY} q3 ${-waveAmp} 6 0 t6 0 t6 0 t6 0 V30 H0 Z" fill="url(#water-grad)"/>` : ""}
+            </g>
+            <path d="M4.2 4.5h15.6l-1.9 22.2a1.8 1.8 0 0 1-1.8 1.6H7.9a1.8 1.8 0 0 1-1.8-1.6L4.2 4.5z" fill="none" stroke="${rimColor}" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M3.2 4.5h17.6" stroke="${rimColor}" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M7.4 8.5l1 14" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.3" stroke-linecap="round"/>
         </svg>`;
     badge.onclick = () => openWaterModal(metric, currentMl, normMl);
 }
@@ -1854,6 +1883,8 @@ async function renderDay() {
     // для number: если на этот день ещё ничего не сохранено — оставляем undefined (пусто в поле,
     // "0" только как плейсхолдер), чтобы не приходилось стирать 0 перед вводом своего значения.
     // Если значение уже сохранено (в т.ч. настоящий 0) — показываем его.
+    const waterMetricHidden = findWaterMetric(metrics); // вода ведётся стаканом в шапке, в списке метрик её не дублируем
+    const visibleMetrics = metrics.filter(m => m !== waterMetricHidden);
     metrics.forEach(m => pending[m.id] = valueByMetric[m.id] ?? ((m.type === "multiselect" || m.type === "sets") ? [] : m.type === "boolean" ? false : undefined));
 
     // Автосохранение: срабатывает сразу при уходе с поля (blur/change), а не только по кнопке
@@ -2130,7 +2161,7 @@ function renderSetsMetric(m) {
     return box;
 }
 
-for (const m of metrics) {
+for (const m of visibleMetrics) {
     if (m.type === "number") {
         const wrap = document.createElement("div");
         wrap.style.cssText = "display:flex; flex-direction:column; gap:4px;";
@@ -2237,7 +2268,7 @@ for (const m of metrics) {
 }
 card.appendChild(grid);
 
-for (const m of metrics) {
+for (const m of visibleMetrics) {
     if (m.type === "boolean") {
         const row = document.createElement("div");
         row.style.cssText = "display:flex; align-items:center; gap:8px; margin-bottom:10px;";
@@ -2257,7 +2288,7 @@ for (const m of metrics) {
     }
 }
 
-for (const m of metrics) {
+for (const m of visibleMetrics) {
     if (m.type === "multiselect") {
         const wrap = document.createElement("div");
         wrap.style.marginBottom = "14px";
@@ -2287,7 +2318,7 @@ for (const m of metrics) {
     }
 }
 
-for (const m of metrics) {
+for (const m of visibleMetrics) {
     if (m.type === "sets") {
         card.appendChild(renderSetsMetric(m));
     }

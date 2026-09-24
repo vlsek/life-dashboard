@@ -344,7 +344,7 @@ button.pill.selected {
     border-color: var(--accent);
 }
 
-input[type=text], input[type=number], input[type=date], select {
+input[type=text], input[type=number], input[type=date], input[type=time], select {
     background: var(--bg);
     border: 1px solid var(--border);
     color: var(--text);
@@ -718,7 +718,7 @@ th { font-size: 0.8em; color: var(--text-dim); font-weight: normal; }
 
     .field-grid { grid-template-columns: 1fr; gap: 8px; }
     button { padding: 8px 12px; font-size: 0.85em; }
-    input[type=text], input[type=number], input[type=date], select {
+    input[type=text], input[type=number], input[type=date], input[type=time], select {
         font-size: 16px; /* не даёт iOS зумить страницу при фокусе на инпуте */
         width: 100%;
     }
@@ -803,3 +803,39 @@ body.centered-body {
 .sidebar a .icon { width: 1.2em; height: 1.2em; }
 .quick-nav-icon .icon { width: 1.15em; height: 1.15em; vertical-align: middle; }
 button .icon { vertical-align: middle; }
+
+/* Нативные поля даты/времени и их выпадашки — в цвет темы (раньше времени было просто белым) */
+html.theme-dark, html.theme-monet { color-scheme: dark; }
+html.theme-light, html.theme-pink { color-scheme: light; }
+input[type=time], input[type=date] {
+    min-height: 34px;
+    font-variant-numeric: tabular-nums;
+    accent-color: var(--accent);
+}
+input[type=time]::-webkit-calendar-picker-indicator,
+input[type=date]::-webkit-calendar-picker-indicator {
+    opacity: 0.7;
+    cursor: pointer;
+}
+html.theme-dark input[type=time]::-webkit-calendar-picker-indicator,
+html.theme-monet input[type=time]::-webkit-calendar-picker-indicator,
+html.theme-dark input[type=date]::-webkit-calendar-picker-indicator,
+html.theme-monet input[type=date]::-webkit-calendar-picker-indicator { filter: invert(1); }
+input[type=time]:focus, input[type=date]:focus { outline: none; border-color: var(--accent); }
+
+/* Огонёк стрика: горит цветами темы и слегка мерцает; не засчитанный сегодня — тусклый пунктирный контур */
+.streak-flame { transform-origin: 50% 90%; animation: flame-flicker 1.8s ease-in-out infinite; filter: drop-shadow(0 0 3px color-mix(in srgb, var(--accent) 55%, transparent)); }
+.streak-flame .fl-outer { fill: var(--accent); }
+.streak-flame .fl-inner { fill: color-mix(in srgb, var(--accent) 40%, #ffffff); }
+.streak-unlit { color: var(--text-dim); opacity: 0.75; }
+@keyframes flame-flicker {
+    0%, 100% { transform: scale(1, 1) rotate(0deg); }
+    25% { transform: scale(1.05, 0.97) rotate(-1.5deg); }
+    55% { transform: scale(0.97, 1.05) rotate(1.2deg); }
+    80% { transform: scale(1.03, 1) rotate(-0.6deg); }
+}
+@media (prefers-reduced-motion: reduce) { .streak-flame { animation: none; } }
+
+/* Приветственный тур: плавная смена шага */
+.tour-body { animation: tour-in 0.22s ease; }
+@keyframes tour-in { from { opacity: 0; transform: translateX(var(--tour-dir, 16px)); } to { opacity: 1; transform: none; } }

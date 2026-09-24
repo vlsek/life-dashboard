@@ -110,11 +110,20 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.54";
+const SITE_VERSION = "0.55";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.55", date: "2026-09-24", changes: [
+        "Огонёк стрика теперь горит цветами выбранной темы и слегка мерцает; если стрик на сегодня ещё не засчитан — тусклый пунктирный контур. Исправлен баг с дублированием огонька при вводе нового подхода",
+        "Шестерёнка у аватарки стала контрастной и видна на любом фоне",
+        "Стакан воды перерисован: стекло с бликом, вода с градиентом и волной, при 100% золотой",
+        "Вода убрана из списка ежедневных метрик — её ведёт только стакан в шапке",
+        "Поле времени подхода и выпадашки даты/времени оформлены под тему (раньше были белыми)",
+        "«Как пользоваться» листается свайпами (и стрелками на клавиатуре) с плавной сменой шагов",
+        "Раздел «English» переименован в «Языки»: можно вести не только английский",
+    ]},
     { version: "0.54", date: "2026-09-24", changes: [
         "Новый раздел «Вехи»: регулярные дела с датой — замена масла и расходников в машине, визит к врачу и т.п. Записываешь, когда сделал в последний раз и как часто повторять (дни/недели/месяцы/годы), необязательно пробег; раздел считает срок следующего раза, подсвечивает просроченное и скоро наступающее, ведёт историю выполнений. Кнопка «сделано» переносит веху на следующий срок",
         "На дашборде появляется баннер, если есть просроченные вехи или срок в ближайшую неделю (можно скрыть до завтра)",
@@ -291,6 +300,15 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.55", date: "2026-09-24", changes: [
+        "The streak flame now burns in the colors of the chosen theme and flickers slightly; if today's streak isn't counted yet it is a dim dashed outline. Fixed the bug where the flame got duplicated when entering a new set",
+        "The gear next to the avatar is now high-contrast and visible on any background",
+        "The water glass was redrawn: glass with a highlight, water with a gradient and a wave, gold at 100%",
+        "Water was removed from the daily metrics list — only the glass in the header tracks it",
+        "The set time field and the date/time pickers now match the theme (they used to be plain white)",
+        "\"How it works\" can be flipped with swipes (and arrow keys) with a smooth transition",
+        "The \"English\" section was renamed to \"Languages\": you can track more than English",
+    ]},
     { version: "0.54", date: "2026-09-24", changes: [
         "New section \"Milestones\": recurring things with a date — a car's oil change and consumables, a doctor visit, etc. Note when you last did it and how often to repeat (days/weeks/months/years), optionally the mileage; the page calculates the next due date, highlights overdue and upcoming ones and keeps a completion history. The \"done\" button moves the milestone to its next due date",
         "The dashboard shows a banner when milestones are overdue or due within a week (can be hidden until tomorrow)",
@@ -1188,16 +1206,40 @@ function showWelcomeTour() {
     backBtn.textContent = t("tour_back");
     const nextBtn = document.createElement("button");
 
-    const close = () => backdrop.remove();
+    const bodyEl = document.createElement("div");
+    bodyEl.className = "tour-body";
+
+    const onKey = (e) => {
+        if (e.key === "ArrowRight") goNext();
+        else if (e.key === "ArrowLeft") goBack();
+        else if (e.key === "Escape") close();
+    };
+    const close = () => { document.removeEventListener("keydown", onKey); backdrop.remove(); };
+    function goBack() { if (step > 0) { step--; bodyEl.style.setProperty("--tour-dir", "-16px"); render(); } }
+    function goNext() { if (step < TOUR_STEPS.length - 1) { step++; bodyEl.style.setProperty("--tour-dir", "16px"); render(); } else close(); }
     skipBtn.onclick = close;
-    backBtn.onclick = () => { if (step > 0) { step--; render(); } };
-    nextBtn.onclick = () => { if (step < TOUR_STEPS.length - 1) { step++; render(); } else close(); };
+    backBtn.onclick = goBack;
+    nextBtn.onclick = goNext;
+    document.addEventListener("keydown", onKey);
+
+    // Листание свайпами: влево — дальше, вправо — назад (только явный горизонтальный жест)
+    let touchX = null, touchY = null;
+    modal.addEventListener("touchstart", (e) => { touchX = e.touches[0].clientX; touchY = e.touches[0].clientY; }, { passive: true });
+    modal.addEventListener("touchend", (e) => {
+        if (touchX === null) return;
+        const dx = e.changedTouches[0].clientX - touchX;
+        const dy = e.changedTouches[0].clientY - touchY;
+        touchX = touchY = null;
+        if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+        if (dx < 0) goNext(); else goBack();
+    }, { passive: true });
 
     function render() {
         const s = TOUR_STEPS[step];
         iconEl.textContent = s.icon;
         titleEl.textContent = t(s.key + "_title");
         textEl.textContent = t(s.key + "_text");
+        bodyEl.style.animation = "none"; void bodyEl.offsetWidth; bodyEl.style.animation = ""; // перезапуск плавной смены
         dotsEl.innerHTML = "";
         TOUR_STEPS.forEach((_, i) => {
             const d = document.createElement("span");
@@ -1211,9 +1253,10 @@ function showWelcomeTour() {
         backBtn.style.display = step === 0 ? "none" : "";
     }
 
-    modal.appendChild(iconEl);
-    modal.appendChild(titleEl);
-    modal.appendChild(textEl);
+    bodyEl.appendChild(iconEl);
+    bodyEl.appendChild(titleEl);
+    bodyEl.appendChild(textEl);
+    modal.appendChild(bodyEl);
     modal.appendChild(dotsEl);
     actions.appendChild(skipBtn);
     actions.appendChild(backBtn);
