@@ -55,11 +55,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.46";
+const SITE_VERSION = "0.47";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.47", date: "2026-09-24", changes: [
+        "Кружок недели теперь можно вынести в шапку: в настройке прогресса (⚙️) новый вариант «Кружок недели в шапке». Он отличается от дневного пунктирной дорожкой и подписью «нед»",
+        "Напоминание по выходным больше не подбирает случайную цель: просто показывает текущий процент и ссылку «Сделай что-то из целей, чтобы добить до 100%», ведущую в цели",
+    ]},
     { version: "0.46", date: "2026-09-24", changes: [
         "Иконка выхода (дверь) убрана из шапки — выход снова только в боковом меню. Выход теперь ведёт на страницу входа, а не на визитку",
         "Кружок прогресса и стакан воды закреплены у правого края шапки в фиксированном порядке и больше не прыгают",
@@ -197,6 +201,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.47", date: "2026-09-24", changes: [
+        "The week circle can now live in the header: the progress settings (⚙️) have a new \"Week circle in the header\" option. It differs from the day circle by a dashed track and a \"wk\" label",
+        "The weekend reminder no longer picks a random goal: it just shows the current percentage and a link \"Do something from your goals to reach 100%\" that leads to the goals page",
+    ]},
     { version: "0.46", date: "2026-09-24", changes: [
         "Logout icon (door) removed from the header — logout lives in the side menu again. Logging out now leads to the login page instead of the portfolio",
         "The progress circle and the water glass are pinned to the right edge of the header in a fixed order and no longer jump around",

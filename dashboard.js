@@ -924,6 +924,7 @@ async function renderWeekProgress() {
     weekProgressHostEl.innerHTML = "";
     const settings = getDayProgressSettings();
     if (!settings.enabled) return;
+    if (settings.displayMode === "header_week") return; // кружок недели живёт в шапке (renderDayProgressRing)
     const week = await computeWeekProgress();
     if (!week || (week.total === 0 && week.bonusPct === 0)) return;
 
@@ -971,19 +972,11 @@ async function checkWeekendGoalReminder() {
     const totalPct = Math.round(basePct * 100) + week.bonusPct;
     if (totalPct >= 100) return;
 
-    const { data: allGoals } = await sb.from("goals").select("*").eq("user_id", user.id);
-    const incomplete = (allGoals || []).filter(g => {
-        const stages = g.stages ?? 1;
-        return stages <= 1 ? !g.done : (g.current_stage ?? 0) < stages;
-    });
-    if (incomplete.length === 0) return;
-    const pick = incomplete[Math.floor(Math.random() * incomplete.length)];
-
     const banner = document.createElement("div");
     banner.className = "card";
     banner.style.cssText = "border:1px solid var(--accent); display:flex; align-items:center; gap:12px; justify-content:space-between;";
     const text = document.createElement("div");
-    text.innerHTML = `<strong>${t("dash_week_reminder_title")}</strong><br><span class="dim" style="font-size:0.9em;">${t("dash_week_progress_suggestion_prefix")} «${pick.name}» — ${t("dash_week_reminder_currently")} ${totalPct}%</span>`;
+    text.innerHTML = `<strong>${t("dash_week_reminder_title")}</strong> <span class="dim" style="font-size:0.9em;">· ${t("dash_week_reminder_currently")} ${totalPct}%</span><br><a href="goals.html" style="color:var(--accent); text-decoration:none; font-size:0.9em;">${t("dash_week_reminder_link")}</a>`;
     banner.appendChild(text);
     const closeBtn = document.createElement("button");
     closeBtn.className = "secondary";
@@ -998,6 +991,22 @@ async function checkWeekendGoalReminder() {
 async function renderDayProgressRing() {
     if (!dayProgressRingHostEl) return; // карточка профиля ещё не строилась в этой сессии
     const settings = getDayProgressSettings();
+
+    // Режим «кружок недели в шапке»: вместо дня показываем неделю, кольцо у аватарки не рисуем
+    if (settings.displayMode === "header_week") {
+        const week = settings.enabled ? await computeWeekProgress() : null;
+        dayProgressRingHostEl.innerHTML = "";
+        dayProgressTextEl.textContent = "";
+        dayProgressRingWrapEl.title = "";
+        removeHeaderProgressBadge();
+        if (!week || (week.total === 0 && week.bonusPct === 0)) return;
+        const wBase = week.total > 0 ? week.done / week.total : 0;
+        const wTotal = Math.round(wBase * 100) + week.bonusPct;
+        const wTitle = `${t("dash_week_progress_label")}: ${wTotal}% (${week.done}/${week.total}${week.bonusPct > 0 ? " +" + week.bonusPct + "% ⭐" : ""})`;
+        renderHeaderWeekBadge(wBase, week.bonusPct, wTotal, wTitle);
+        return;
+    }
+
     const dayProgress = await computeDayProgress();
 
     dayProgressRingHostEl.innerHTML = "";
@@ -1067,6 +1076,40 @@ function renderHeaderProgressBadge(basePct, bonusPct, totalPct, titleText) {
                 stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offsetBonus}"/>` : ""}
         </svg>
         <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; color:var(--text);">${totalPct}%</span>`;
+    (document.getElementById("topbar-right") || topbar).appendChild(badge);
+}
+
+// Вариант «кружок недели в шапке»: тот же слот, что у кружка дня, но выглядит иначе —
+// пунктирная дорожка и подпись «нед», чтобы сразу было видно, что это неделя.
+function renderHeaderWeekBadge(basePct, bonusPct, totalPct, titleText) {
+    const topbar = document.querySelector(".topbar");
+    if (!topbar) return;
+    removeHeaderProgressBadge();
+
+    const r = 13;
+    const circumference = 2 * Math.PI * r;
+    const offset = circumference * (1 - basePct);
+    const bonusFraction = Math.min(1, bonusPct / 100);
+    const offsetBonus = circumference * (1 - bonusFraction);
+
+    const badge = document.createElement("button");
+    badge.type = "button";
+    badge.id = "day-progress-header-badge"; // тот же id — чтобы старый бейдж снимался тем же removeHeaderProgressBadge()
+    badge.title = titleText;
+    badge.onclick = () => openDayProgressSettingsModal(loadProfile);
+    badge.style.cssText = "background:transparent; border:none; cursor:pointer; display:flex; align-items:center; gap:4px; height:32px; min-height:0; flex-shrink:0; padding:0 4px;";
+    badge.innerHTML = `
+        <span style="position:relative; width:32px; height:32px; display:block;">
+            <svg width="32" height="32" viewBox="0 0 32 32" style="transform: rotate(-90deg); display:block;">
+                <circle cx="16" cy="16" r="${r}" fill="none" stroke="var(--border)" stroke-width="3" stroke-dasharray="3 3"/>
+                <circle cx="16" cy="16" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3"
+                    stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
+                ${bonusPct > 0 ? `<circle cx="16" cy="16" r="${r}" fill="none" stroke="#d6336c" stroke-width="3"
+                    stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offsetBonus}"/>` : ""}
+            </svg>
+            <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; color:var(--text);">${totalPct}%</span>
+        </span>
+        <span style="font-size:0.65em; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.03em;">${t("dash_week_short")}</span>`;
     (document.getElementById("topbar-right") || topbar).appendChild(badge);
 }
 
@@ -1213,6 +1256,7 @@ function openDayProgressSettingsModal(onSave) {
     [
         { value: "avatar", label: t("dash_day_progress_mode_avatar") },
         { value: "header", label: t("dash_day_progress_mode_header") },
+        { value: "header_week", label: t("dash_day_progress_mode_header_week") },
     ].forEach(opt => {
         const o = document.createElement("option");
         o.value = opt.value;
