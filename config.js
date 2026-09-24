@@ -43,6 +43,9 @@ const ICON_PATHS = {
     eyeoff: '<path d="M3 3l18 18"/><path d="M10.6 6a9 9 0 0 1 1.4-.1c6 0 9.5 6.1 9.5 6.1a16 16 0 0 1-3 3.6M6.6 6.9A16 16 0 0 0 2.5 12S6 18.5 12 18.5a9 9 0 0 0 3.4-.7"/><path d="M9.9 9.9a2.8 2.8 0 0 0 4 4"/>',
     cake: '<path d="M4 20h16v-6H4z"/><path d="M4 16.5c2 1.3 4 1.3 6 0s4-1.3 6 0c1.4.9 2.7 1 4 .3"/><path d="M12 9.5V13"/><path d="M12 5c1.1 1 1.1 2.2 0 3.2-1.1-1-1.1-2.2 0-3.2z"/>',
     alert: '<path d="M12 4l9.5 16.5h-19L12 4z"/><path d="M12 10v4.5"/><path d="M12 17.5h.01"/>',
+    history: '<path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3.5 4.5v4h4"/><path d="M12 7.5V12l3 2"/>',
+    chevron_left: '<path d="M15 5l-7 7 7 7"/>',
+    chevron_right: '<path d="M9 5l7 7-7 7"/>',
     done: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
     star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8L12 3.5z"/>',
     book: '<path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13c-3-.5-6 0-8 1.5z"/><path d="M12 6v13"/>',
@@ -114,11 +117,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.57";
+const SITE_VERSION = "0.58";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.58", date: "2026-09-24", changes: [
+        "Новый раздел «История»: календарь месяца, где каждый день закрашен снизу вверх по проценту выполнения (100% — сплошной зелёный, перевыполнение с бонусами — золотая рамка). Справа в каждой строке процент недели, над календарём — средний процент месяца, число идеальных дней и дней с данными",
+        "По нажатию на день — подробности: процент, значения каждой метрики (подходы со временем, числа с целью, выбранные варианты), выполнение планов, заметки. Месяцы листаются кнопками и свайпом; ниже — недели списком (последние 8) с полосами прогресса",
+        "Проценты считаются так же, как кружки на дашборде: те же настройки, расписание метрик и бонусы. Миграции не нужны",
+    ]},
     { version: "0.57", date: "2026-09-24", changes: [
         "Прогресс дня и недели — в одном окне («⚙️» у аватарки или клик по любому из кружков): отдельно выбираешь, где показывать кружок дня (у аватарки / в шапке / скрыть) и где кружок недели (рядом с профилем / в шапке / скрыть). Прежняя настройка переносится сама",
         "Лидерборд и сравнение по категориям в Сообществе учитывают расписание метрик: метрики «только по дням» и «N раз в неделю» не рвут серию в нерасчётные дни. Нужна миграция migrations/023_leaderboard_schedule.sql",
@@ -315,6 +323,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.58", date: "2026-09-24", changes: [
+        "New \"History\" section: a month calendar where each day is filled bottom-up by its completion percentage (100% is solid green, an overachieved day with bonuses gets a gold border). Each row shows the week's percentage at the end; above the calendar are the month's average, the number of perfect days and days tracked",
+        "Tap a day for details: the percentage, every metric's value (sets with times, numbers against the goal, chosen options), plan completion and notes. Months flip with buttons or a swipe; below are the last 8 weeks as progress bars",
+        "Percentages are calculated exactly like the circles on the dashboard: the same settings, metric schedules and bonuses. No migrations needed",
+    ]},
     { version: "0.57", date: "2026-09-24", changes: [
         "Day and week progress live in one dialog (the ⚙️ by the avatar or a click on either circle): you choose separately where the day circle goes (around the avatar / header / hidden) and where the week circle goes (next to the profile / header / hidden). Your previous setting is carried over automatically",
         "The leaderboard and the category comparison in Community respect metric schedules: \"certain days\" and \"N times a week\" metrics no longer break a streak on days they aren't due. Requires migration migrations/023_leaderboard_schedule.sql",
@@ -589,6 +602,29 @@ function isMetricDone(metric, value) {
         return numeric >= goal;
     }
     return false;
+}
+
+// ---- Настройки прогресса дня/недели (общие для дашборда и истории; хранятся на устройстве) ----
+const BONUS_PCT_PER_ITEM = 20;
+function getDayProgressSettings() {
+    // dayPlace: "avatar" | "header" | "off" — где кружок дня; weekPlace: "profile" | "header" | "off" — где кружок недели
+    const defaults = { enabled: true, includePlanned: true, includeMetrics: true, dayPlace: "avatar", weekPlace: "profile" };
+    try {
+        const raw = localStorage.getItem("day_progress_settings");
+        if (!raw) return defaults;
+        const saved = JSON.parse(raw);
+        // старый формат (displayMode) → новые поля
+        if (saved.displayMode && !saved.dayPlace) {
+            if (saved.displayMode === "header") { saved.dayPlace = "header"; saved.weekPlace = "profile"; }
+            else if (saved.displayMode === "header_week") { saved.dayPlace = "off"; saved.weekPlace = "header"; }
+            else { saved.dayPlace = "avatar"; saved.weekPlace = "profile"; }
+        }
+        delete saved.displayMode;
+        return { ...defaults, ...saved };
+    } catch { return defaults; }
+}
+function setDayProgressSettings(s) {
+    localStorage.setItem("day_progress_settings", JSON.stringify(s));
 }
 
 // ---- Расписание метрики (см. migrations/021) ----
@@ -1028,6 +1064,7 @@ function renderNav(active, userEmail) {
 
     const pages = [
         { href: "dashboard.html", key: "dashboard", i18n: "nav_dashboard", icon: "home", home: true },
+        { href: "history.html", key: "history", i18n: "nav_history", icon: "history" },
         { href: "goals.html", key: "goals", i18n: "nav_goals", icon: "goals" },
         { href: "skills.html", key: "skills", i18n: "nav_skills", icon: "skills" },
         { href: "workouts.html", key: "workouts", i18n: "nav_workouts", icon: "workouts" },

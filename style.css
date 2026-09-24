@@ -840,3 +840,38 @@ input[type=time]:focus, input[type=date]:focus { outline: none; border-color: va
 /* Приветственный тур: плавная смена шага */
 .tour-body { animation: tour-in 0.22s ease; }
 @keyframes tour-in { from { opacity: 0; transform: translateX(var(--tour-dir, 16px)); } to { opacity: 1; transform: none; } }
+
+/* ===== Раздел «История» ===== */
+:root { --hist-ok: #3fa66b; }
+.hist-nav { display: flex; align-items: center; gap: 8px; margin: 12px 0; }
+.hist-nav button { min-height: 0; padding: 6px 10px; }
+.hist-month-title { flex: 1; text-align: center; font-weight: 700; font-size: 1.05em; }
+.hist-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.hist-stat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 8px 6px; text-align: center; }
+.hist-stat-val { font-size: 1.35em; font-weight: 700; }
+.hist-stat-label { font-size: 0.7em; }
+.hist-calendar { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+.hist-row { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)) minmax(0, 1.05fr); gap: 4px; }
+.hist-head > div { text-align: center; font-size: 0.72em; color: var(--text-dim); padding: 2px 0; }
+.hist-cell, button.hist-cell {
+    position: relative; aspect-ratio: 1 / 1.1; min-height: 44px; min-width: 0;
+    border: 1px solid var(--border); border-radius: 8px; background: var(--bg-card); color: var(--text);
+    padding: 3px 4px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;
+    cursor: pointer; overflow: hidden; font-size: 1em; box-shadow: none; text-align: left;
+}
+.hist-cell.hist-empty { background: transparent; border-color: transparent; cursor: default; }
+.hist-today { outline: 2px solid var(--accent); outline-offset: -2px; }
+.hist-future { opacity: 0.4; }
+.hist-nodata { opacity: 0.55; }
+.hist-over { box-shadow: inset 0 0 0 2px #e0a93b; }
+.hist-dark-text { color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); }
+.hist-daynum { font-size: 0.78em; font-weight: 600; }
+.hist-pct { font-size: 0.68em; font-weight: 600; align-self: flex-end; }
+.hist-weekcell { cursor: default; justify-content: flex-end; align-items: center; }
+.hist-weekcell .hist-pct { align-self: center; }
+.hist-accent-text { color: var(--accent-text); }
+.hist-weekrow { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
+.hist-weeklabel { flex: 0 0 124px; font-size: 0.85em; }
+.hist-bar { flex: 1; height: 10px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.hist-bar-fill { height: 100%; background: var(--accent); border-radius: 6px; transition: width 0.3s; }
+.hist-weekpct { flex: 0 0 44px; text-align: right; font-weight: 600; font-size: 0.9em; }

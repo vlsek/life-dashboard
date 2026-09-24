@@ -937,29 +937,8 @@ function formatAge(age) {
 
 // ---- Диаграмма "на сколько % день сделан" — настройки хранятся в localStorage (личная
 // настройка отображения, не данные, синхронизировать между устройствами не нужно) ----
-function getDayProgressSettings() {
-    // dayPlace: "avatar" | "header" | "off" — где кружок дня; weekPlace: "profile" | "header" | "off" — где кружок недели
-    const defaults = { enabled: true, includePlanned: true, includeMetrics: true, dayPlace: "avatar", weekPlace: "profile" };
-    try {
-        const raw = localStorage.getItem("day_progress_settings");
-        if (!raw) return defaults;
-        const saved = JSON.parse(raw);
-        // старый формат (displayMode) → новые поля
-        if (saved.displayMode && !saved.dayPlace) {
-            if (saved.displayMode === "header") { saved.dayPlace = "header"; saved.weekPlace = "profile"; }
-            else if (saved.displayMode === "header_week") { saved.dayPlace = "off"; saved.weekPlace = "header"; }
-            else { saved.dayPlace = "avatar"; saved.weekPlace = "profile"; }
-        }
-        delete saved.displayMode;
-        return { ...defaults, ...saved };
-    } catch { return defaults; }
-}
-function setDayProgressSettings(s) {
-    localStorage.setItem("day_progress_settings", JSON.stringify(s));
-}
 
 // Сколько % сверху плана добавляет один выполненный бонусный (⭐) пункт
-const BONUS_PCT_PER_ITEM = 20;
 
 // Считает done/total по сегодняшнему дню из выбранных в настройках источников:
 // дневные метрики (isMetricDone/calcDailyPoints — та же логика, что и в счёте дня) и/или

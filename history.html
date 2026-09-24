@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("site_theme")||"dark";document.documentElement.className="theme-"+t;}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#121212">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Dashboard">
+<title data-i18n="hist_title">История</title>
+<link rel="preconnect" href="https://haxmgtflegsfpxieaydv.supabase.co" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="style.css">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<main>
+    <h1 data-i18n="hist_h1">🕘 История</h1>
+    <p class="dim" data-i18n="hist_intro">Прогресс по дням и неделям. Чем полнее закрашен день, тем больше выполнено; полностью зелёный — 100%. Нажми на день, чтобы увидеть подробности.</p>
+
+    <div class="hist-nav">
+        <button id="hist-prev" class="secondary" aria-label="prev"></button>
+        <div id="hist-month-title" class="hist-month-title"></div>
+        <button id="hist-next" class="secondary" aria-label="next"></button>
+        <button id="hist-today" class="secondary" data-i18n="hist_today_btn">Сегодня</button>
+    </div>
+
+    <div id="hist-stats" class="hist-stats"></div>
+    <div id="hist-calendar" class="hist-calendar" data-i18n="loading_ellipsis">Загрузка…</div>
+
+    <h2 data-i18n="hist_weeks_h2">📊 Недели</h2>
+    <div id="hist-weeks"></div>
+</main>
+<script defer src="i18n.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="config.js"></script>
+<script defer src="datacache.js"></script>
+<script defer src="history.js"></script>
+</body>
+</html>

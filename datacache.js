@@ -121,7 +121,7 @@ function getAllValues() {
 function getAllNotes() {
     if (!dataCache.notes) {
         dataCache.notesDirty.clear();
-        dataCache.notes = fetchAllRows(() => sb.from("daily_notes").select("date, items").eq("user_id", user.id).order("date"))
+        dataCache.notes = fetchAllRows(() => sb.from("daily_notes").select("date, items, planned_goals").eq("user_id", user.id).order("date"))
             .catch(e => { dataCache.notes = null; console.error(e); return []; });
     } else if (dataCache.notesDirty.size) {
         const dates = [...dataCache.notesDirty];
@@ -130,7 +130,7 @@ function getAllNotes() {
         dataCache.notes = (async () => {
             const rows = await prev;
             try {
-                const fresh = await fetchAllRows(() => sb.from("daily_notes").select("date, items").eq("user_id", user.id).in("date", dates).order("date"));
+                const fresh = await fetchAllRows(() => sb.from("daily_notes").select("date, items, planned_goals").eq("user_id", user.id).in("date", dates).order("date"));
                 const set = new Set(dates);
                 return rows.filter(r => !set.has(r.date)).concat(fresh).sort(byDateAsc);
             } catch (e) {
