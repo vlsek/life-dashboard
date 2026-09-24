@@ -1507,16 +1507,29 @@ async function getAutoWaterNormMl() {
     return Math.round(weightKg * 30); // стандартная грубая формула — 30мл на кг веса
 }
 
-async function getTodayWaterMl(metric) {
-    const { data } = await sb.from("daily_values").select("value").eq("user_id", user.id).eq("metric_id", metric.id).eq("date", fmtDate(new Date())).maybeSingle();
+async function getWaterMlForDate(metric, dateStr) {
+    const { data } = await sb.from("daily_values").select("value").eq("user_id", user.id).eq("metric_id", metric.id).eq("date", dateStr).maybeSingle();
     return data?.value ?? 0;
 }
+async function getTodayWaterMl(metric) {
+    return getWaterMlForDate(metric, fmtDate(new Date()));
+}
 
-async function addWaterMl(metric, deltaMl) {
-    const current = await getTodayWaterMl(metric);
+async function addWaterMl(metric, deltaMl, dateStr = fmtDate(new Date())) {
+    const current = await getWaterMlForDate(metric, dateStr);
     const next = Math.max(0, current + deltaMl);
-    await sb.from("daily_values").upsert({ user_id: user.id, metric_id: metric.id, date: fmtDate(new Date()), value: next }, { onConflict: "user_id,date,metric_id" });
+    await sb.from("daily_values").upsert({ user_id: user.id, metric_id: metric.id, date: dateStr, value: next }, { onConflict: "user_id,date,metric_id" });
     return next;
+}
+
+// После изменения воды за любую дату — точечно обновляем всё, что от неё зависит,
+// без полной перерисовки страницы.
+function refreshAfterWaterChange(metric, dateStr, value) {
+    renderWaterBadge();
+    if (dateStr === fmtDate(new Date())) { renderDayProgressRing(); refreshStreakBadge(); }
+    renderWeekProgress();
+    pushPointToChart(`metric:${metric.id}`, dateStr, value);
+    if (currentDate && dateStr === fmtDate(currentDate)) renderDay();
 }
 
 async function createWaterMetric() {
@@ -1536,6 +1549,23 @@ function openWaterModal(metric, currentMl, normMl) {
     modal.className = "modal";
     modal.innerHTML = `<h3>💧 ${t("dash_water_modal_title")}</h3>`;
 
+    // Дата, за которую вносим воду: по умолчанию сегодня, можно выбрать любой прошлый день
+    let dateStr = fmtDate(new Date());
+    let amountMl = currentMl;
+    let norm = normMl;
+
+    const dateLabel = document.createElement("label");
+    dateLabel.style.cssText = "display:block; margin-top:10px; font-size:0.85em; color:var(--text-dim);";
+    dateLabel.textContent = t("dash_water_date_label");
+    const dateInput = document.createElement("input");
+    dateInput.type = "date";
+    dateInput.value = dateStr;
+    dateInput.max = dateStr;
+    dateInput.min = "2000-01-01";
+    dateInput.style.width = "100%";
+    dateLabel.appendChild(dateInput);
+    modal.appendChild(dateLabel);
+
     const amountP = document.createElement("p");
     amountP.style.cssText = "font-size:1.3em; font-weight:700; margin-top:10px;";
     modal.appendChild(amountP);
@@ -1547,12 +1577,28 @@ function openWaterModal(metric, currentMl, normMl) {
     barOuter.appendChild(barInner);
     modal.appendChild(barOuter);
 
-    function refreshLabel(ml) {
-        const pct = normMl > 0 ? Math.min(100, Math.round(ml / normMl * 100)) : 0;
-        amountP.textContent = `${ml} / ${normMl} мл (${pct}%)`;
+    function refreshLabel() {
+        const pct = norm > 0 ? Math.min(100, Math.round(amountMl / norm * 100)) : 0;
+        amountP.textContent = `${amountMl} / ${norm} мл (${pct}%)`;
         barInner.style.width = pct + "%";
+        barInner.style.background = pct >= 100 ? "#f5b82e" : "#3b9ee5";
     }
-    refreshLabel(currentMl);
+    refreshLabel();
+
+    dateInput.onchange = async () => {
+        const picked = dateInput.value;
+        if (!picked || picked > fmtDate(new Date())) { dateInput.value = dateStr; return; }
+        dateStr = picked;
+        amountMl = await getWaterMlForDate(metric, dateStr);
+        refreshLabel();
+    };
+
+    async function addMl(ml) {
+        const forDate = dateStr; // дата могла смениться, пока шёл запрос
+        const next = await addWaterMl(metric, ml, forDate);
+        if (forDate === dateStr) { amountMl = next; refreshLabel(); }
+        refreshAfterWaterChange(metric, forDate, next);
+    }
 
     const btnRow = document.createElement("div");
     btnRow.style.cssText = "display:flex; gap:8px; flex-wrap:wrap;";
@@ -1560,23 +1606,17 @@ function openWaterModal(metric, currentMl, normMl) {
         const btn = document.createElement("button");
         btn.className = "secondary";
         btn.textContent = "+ " + (ml >= 1000 ? (ml / 1000) + " л" : ml + " мл");
-        btn.onclick = async () => {
-            const next = await addWaterMl(metric, ml);
-            refreshLabel(next);
-            renderWaterBadge();
-        };
+        btn.onclick = () => addMl(ml);
         btnRow.appendChild(btn);
     });
     const customBtn = document.createElement("button");
     customBtn.className = "secondary";
     customBtn.textContent = t("dash_water_add_custom_btn");
-    customBtn.onclick = async () => {
+    customBtn.onclick = () => {
         const val = prompt(t("dash_water_add_custom_prompt"));
         const ml = parseInt(val, 10);
         if (!ml || ml <= 0) return;
-        const next = await addWaterMl(metric, ml);
-        refreshLabel(next);
-        renderWaterBadge();
+        addMl(ml);
     };
     btnRow.appendChild(customBtn);
     modal.appendChild(btnRow);
@@ -1609,7 +1649,8 @@ function openWaterModal(metric, currentMl, normMl) {
         if (!ml || ml <= 0) return;
         await sb.from("metrics").update({ goal_value: ml }).eq("id", metric.id);
         metric.goal_value = ml;
-        refreshLabel(currentMl);
+        norm = ml;
+        refreshLabel();
         renderWaterBadge();
         goalHint.textContent = t("dash_water_goal_manual_hint");
     };
@@ -1920,6 +1961,17 @@ function renderSetsMetric(m) {
                 const row = table.insertRow();
                 row.insertCell().textContent = `${i + 1}`;
 
+                // Время подхода: проставляется само, когда впервые вписали повторения
+                // (можно поправить руками — например, внести подход задним числом)
+                const timeCell = row.insertCell();
+                const timeInput = document.createElement("input");
+                timeInput.type = "time";
+                timeInput.style.width = "96px";
+                timeInput.title = t("sets_time_title");
+                timeInput.value = s.time ?? "";
+                timeInput.onchange = () => { s.time = timeInput.value || null; persist(); };
+                timeCell.appendChild(timeInput);
+
                 const repsCell = row.insertCell();
                 const repsInput = document.createElement("input");
                 repsInput.type = "number";
@@ -1927,7 +1979,11 @@ function renderSetsMetric(m) {
                 repsInput.style.width = "70px";
                 repsInput.placeholder = t("dash_sets_reps_placeholder");
                 repsInput.value = s.reps ?? "";
-                repsInput.onchange = () => { s.reps = repsInput.value === "" ? null : (parseFloat(repsInput.value) || 0); persist(); };
+                repsInput.onchange = () => {
+                    s.reps = repsInput.value === "" ? null : (parseFloat(repsInput.value) || 0);
+                    if (s.reps != null && !s.time) { s.time = nowHHMM(); timeInput.value = s.time; }
+                    persist();
+                };
                 repsCell.appendChild(repsInput);
 
                 const varCell = row.insertCell();
@@ -1953,7 +2009,7 @@ function renderSetsMetric(m) {
         addBtn.className = "secondary";
         addBtn.textContent = t("dash_sets_add_btn");
         addBtn.onclick = () => {
-            sets.push({ reps: null, variation: null });
+            sets.push({ reps: null, variation: null, time: null });
             open = true;
             persist();
             renderBody();

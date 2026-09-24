@@ -55,11 +55,18 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.47";
+const SITE_VERSION = "0.48";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.48", date: "2026-09-24", changes: [
+        "Воду можно вносить за прошлые дни: в окошке воды появился выбор даты. Кружок, стрик, графики и неделя обновляются сразу, без перезагрузки",
+        "У каждого подхода теперь фиксируется время: проставляется само, когда вписываешь повторения, и его можно поправить руками (дашборд и раздел «Тренировки»)",
+        "Раздел «О проекте» превратился в «О создателе»: короткая информация об авторе и ссылка на портфолио",
+        "Монохромная иконка для тем Android пересобрана: силуэт теперь целиком внутри безопасной зоны, добавлен размер 192 и явный id приложения. Чтобы иконка подхватилась, приложение нужно удалить с экрана и добавить заново",
+        "Мелочь: цель воды в окошке теперь сразу пересчитывает полосу, а при 100% полоса золотая",
+    ]},
     { version: "0.47", date: "2026-09-24", changes: [
         "Кружок недели теперь можно вынести в шапку: в настройке прогресса (⚙️) новый вариант «Кружок недели в шапке». Он отличается от дневного пунктирной дорожкой и подписью «нед»",
         "Напоминание по выходным больше не подбирает случайную цель: просто показывает текущий процент и ссылку «Сделай что-то из целей, чтобы добить до 100%», ведущую в цели",
@@ -201,6 +208,13 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.48", date: "2026-09-24", changes: [
+        "Water can be logged for past days: the water dialog has a date picker. The circle, streak, charts and week update instantly, no reload needed",
+        "Every set now records its time: it is filled in automatically when you enter the reps and can be edited by hand (dashboard and the Workouts page)",
+        "The \"About\" section became \"About the creator\": short info about the author and a link to the portfolio",
+        "The monochrome icon for Android themes was rebuilt: the silhouette now sits fully inside the safe zone, a 192 size and an explicit app id were added. To pick it up, remove the app from the home screen and add it again",
+        "Small thing: changing the water goal in the dialog now recalculates the bar right away, and the bar turns gold at 100%",
+    ]},
     { version: "0.47", date: "2026-09-24", changes: [
         "The week circle can now live in the header: the progress settings (⚙️) have a new \"Week circle in the header\" option. It differs from the day circle by a dashed track and a \"wk\" label",
         "The weekend reminder no longer picks a random goal: it just shows the current percentage and a link \"Do something from your goals to reach 100%\" that leads to the goals page",
@@ -363,6 +377,12 @@ async function requireAuth() {
 async function logout() {
     await sb.auth.signOut();
     window.location.href = "login.html";
+}
+
+// Текущее время "ЧЧ:ММ" — для отметки времени подхода
+function nowHHMM() {
+    const d = new Date();
+    return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
 }
 
 function fmtDate(d) {
@@ -973,7 +993,7 @@ function renderNav(active, userEmail) {
     sidebar.querySelectorAll("a").forEach(a => a.addEventListener("click", closeSidebar));
 }
 
-// ---- Модалка "О проекте" — портфолио + обратная связь ----
+// ---- Модалка "О создателе" — кто сделал проект, ссылка на портфолио + обратная связь ----
 function showAboutModal() {
     const backdrop = document.createElement("div");
     backdrop.className = "modal-backdrop";
@@ -981,8 +1001,17 @@ function showAboutModal() {
     modal.className = "modal";
     modal.innerHTML = `<h3>${t("about_title")}</h3>`;
 
+    // Блок «О создателе» (вместо прежней одиночной ссылки на портфолио)
+    const creatorH = document.createElement("h4");
+    creatorH.style.cssText = "margin:14px 0 6px;";
+    creatorH.textContent = t("about_creator_title");
+    modal.appendChild(creatorH);
+    const creatorP = document.createElement("p");
+    creatorP.style.cssText = "font-size:0.92em; line-height:1.55;";
+    creatorP.textContent = t("about_creator_text");
+    modal.appendChild(creatorP);
     const portfolioP = document.createElement("p");
-    portfolioP.style.cssText = "margin-top:12px;";
+    portfolioP.style.cssText = "margin-top:8px; font-size:0.92em;";
     const portfolioLink = document.createElement("a");
     portfolioLink.href = "https://portfolio.orneryhero.workers.dev/";
     portfolioLink.target = "_blank";

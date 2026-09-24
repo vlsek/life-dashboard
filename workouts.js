@@ -516,21 +516,32 @@ function openEntryModal(exercise, existing, onSubmit) {
     setsTitle.textContent = exercise.tracks_weight ? t("workouts_sets_label") : (exercise.value_label || t("workouts_default_value_label"));
     setsWrap.appendChild(setsTitle);
 
-    let sets = existing?.sets?.length ? existing.sets.map(s => ({ ...s })) : [{ reps: "", weight: "" }];
+    let sets = existing?.sets?.length ? existing.sets.map(s => ({ ...s })) : [{ reps: "", weight: "", time: null }];
 
     function renderSets() {
         setsWrap.querySelectorAll(".set-row").forEach(el => el.remove());
         sets.forEach((s, i) => {
             const row = document.createElement("div");
             row.className = "set-row";
-            row.style.cssText = "display:flex; gap:6px; align-items:center; margin-bottom:6px;";
+            row.style.cssText = "display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-bottom:6px;";
+
+            const timeInput = document.createElement("input");
+            timeInput.type = "time";
+            timeInput.style.width = "96px";
+            timeInput.title = t("sets_time_title");
+            timeInput.value = s.time ?? "";
+            timeInput.onchange = () => { s.time = timeInput.value || null; };
 
             const repsInput = document.createElement("input");
             repsInput.type = "number";
             repsInput.placeholder = exercise.tracks_weight ? t("workouts_reps_placeholder") : (exercise.value_label || t("workouts_default_value_label"));
             repsInput.style.width = exercise.tracks_weight ? "80px" : "160px";
             repsInput.value = s.reps ?? "";
-            repsInput.onchange = () => s.reps = repsInput.value === "" ? null : (parseFloat(repsInput.value) || 0);
+            repsInput.onchange = () => {
+                s.reps = repsInput.value === "" ? null : (parseFloat(repsInput.value) || 0);
+                // время подхода проставляется само, когда впервые вписали повторения
+                if (s.reps != null && !s.time) { s.time = nowHHMM(); timeInput.value = s.time; }
+            };
             row.appendChild(repsInput);
 
             if (exercise.tracks_weight) {
@@ -549,12 +560,14 @@ function openEntryModal(exercise, existing, onSubmit) {
                 row.appendChild(weightInput);
             }
 
+            row.appendChild(timeInput);
+
             const removeBtn = document.createElement("button");
             removeBtn.type = "button";
             removeBtn.className = "danger";
             removeBtn.textContent = "✕";
             removeBtn.style.padding = "2px 8px";
-            removeBtn.onclick = () => { sets.splice(i, 1); if (sets.length === 0) sets.push({ reps: "", weight: "" }); renderSets(); };
+            removeBtn.onclick = () => { sets.splice(i, 1); if (sets.length === 0) sets.push({ reps: "", weight: "", time: null }); renderSets(); };
             row.appendChild(removeBtn);
 
             setsWrap.appendChild(row);
@@ -566,7 +579,7 @@ function openEntryModal(exercise, existing, onSubmit) {
     addSetBtn.type = "button";
     addSetBtn.className = "secondary";
     addSetBtn.textContent = t("workouts_add_set_btn");
-    addSetBtn.onclick = () => { sets.push({ reps: "", weight: "" }); renderSets(); };
+    addSetBtn.onclick = () => { sets.push({ reps: "", weight: "", time: null }); renderSets(); };
     setsWrap.appendChild(addSetBtn);
     modal.appendChild(setsWrap);
 
@@ -587,7 +600,7 @@ function openEntryModal(exercise, existing, onSubmit) {
     const okBtn = document.createElement("button");
     okBtn.textContent = t("save");
     okBtn.onclick = async () => {
-        const cleanSets = sets.filter(s => s.reps !== "" && s.reps != null).map(s => ({ reps: parseFloat(s.reps) || 0, weight: s.weight === "" || s.weight == null ? null : (parseFloat(s.weight) || 0) }));
+        const cleanSets = sets.filter(s => s.reps !== "" && s.reps != null).map(s => ({ reps: parseFloat(s.reps) || 0, weight: s.weight === "" || s.weight == null ? null : (parseFloat(s.weight) || 0), time: s.time || null }));
         backdrop.remove();
         await onSubmit({ date: dateInput.value || todayStr(), sets: cleanSets, notes: notesInput.value.trim() || null });
     };
@@ -629,11 +642,12 @@ async function deleteEntry(entry) {
 
 function formatSets(sets, exercise) {
     if (!sets || !sets.length) return "—";
+    const at = s => s.time ? ` (${s.time})` : "";
     if (exercise.tracks_weight) {
-        return sets.map(s => s.weight != null ? `${s.reps}×${s.weight}${exercise.unit || t("workouts_default_unit")}` : `${s.reps}`).join(", ");
+        return sets.map(s => (s.weight != null ? `${s.reps}×${s.weight}${exercise.unit || t("workouts_default_unit")}` : `${s.reps}`) + at(s)).join(", ");
     }
     const unitSuffix = exercise.unit ? ` ${exercise.unit}` : "";
-    return sets.map(s => `${s.reps}${unitSuffix}`).join(", ");
+    return sets.map(s => `${s.reps}${unitSuffix}` + at(s)).join(", ");
 }
 
 async function renderExerciseCard(container, exercise, entries) {
