@@ -94,6 +94,8 @@ create table if not exists goals (
   current_stage int default 0,
   done boolean default false,
   done_date date,
+  deadline date,       -- миграция 020: необязательный срок выполнения
+  difficulty text check (difficulty is null or difficulty in ('easy', 'medium', 'hard')),
   created_at timestamptz default now()
 );
 

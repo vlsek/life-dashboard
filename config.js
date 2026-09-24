@@ -55,11 +55,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.49";
+const SITE_VERSION = "0.50";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.50", date: "2026-09-24", changes: [
+        "У целей появились дедлайн и сложность (лёгкая/средняя/сложная). Под названием цели показываются метки: сколько дней осталось до срока (жёлтая — 3 дня и меньше, красная — срок сегодня или просрочено) и сложность",
+        "Цели внутри категории сортируются по ближайшему дедлайну, без срока — в конце",
+        "Нужна миграция migrations/020_goal_deadline_difficulty.sql (выполнить один раз в Supabase → SQL Editor); без неё всё остальное работает как раньше",
+    ]},
     { version: "0.49", date: "2026-09-24", changes: [
         "Приветственный тур для новых пользователей: 7 коротких шагов про дашборд, цели, навыки, тренировки, челленджи, магазин, сообщество и календарь. Показывается один раз сразу после онбординга",
         "Тур можно открыть снова в любой момент: в боковом меню появился пункт «Как пользоваться»",
@@ -212,6 +217,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.50", date: "2026-09-24", changes: [
+        "Goals now have a deadline and a difficulty (easy/medium/hard). Chips under the goal name show how many days are left (amber at 3 days or less, red when due today or overdue) and the difficulty",
+        "Goals inside a category are sorted by the nearest deadline; goals without one go last",
+        "Requires migration migrations/020_goal_deadline_difficulty.sql (run once in Supabase → SQL Editor); everything else keeps working without it",
+    ]},
     { version: "0.49", date: "2026-09-24", changes: [
         "Welcome tour for new users: 7 short steps covering the dashboard, goals, skills, workouts, challenges, shop, community and calendar. Shown once right after onboarding",
         "The tour can be reopened any time: the side menu has a new \"How it works\" item",

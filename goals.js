@@ -12,7 +12,37 @@ function openGoalForm(existing, onSubmit) {
         { key: "points", label: t("goals_field_points"), type: "number", value: existing?.points ?? 5 },
         { key: "category", label: t("goals_field_category"), type: "text", value: existing?.category ?? "" },
         { key: "stages", label: t("goals_field_stages"), type: "number", value: existing?.stages ?? 1 },
+        { key: "difficulty", label: t("goals_field_difficulty"), type: "select", value: existing?.difficulty ?? "", options: [
+            { value: "", label: t("goals_diff_none") },
+            { value: "easy", label: t("goals_diff_easy") },
+            { value: "medium", label: t("goals_diff_medium") },
+            { value: "hard", label: t("goals_diff_hard") },
+        ] },
+        { key: "deadline", label: t("goals_field_deadline"), type: "date", value: existing?.deadline ?? "" },
     ], onSubmit);
+}
+
+// Дедлайн и сложность пишем в базу только если они заданы (или уже были у цели) —
+// так страница продолжает работать и до применения миграции 020.
+function goalExtraFields(res, existing) {
+    const extra = {};
+    const hasCols = existing ? ("deadline" in existing) : false;
+    if (res.deadline || hasCols) extra.deadline = res.deadline || null;
+    if (res.difficulty || hasCols) extra.difficulty = res.difficulty || null;
+    return extra;
+}
+
+function showGoalSaveError(error) {
+    const missingCol = /deadline|difficulty/i.test(error.message || "");
+    showToast(t("dash_save_error_generic") + error.message + (missingCol ? " — " + t("goals_migration_hint") : ""), "error");
+    console.error(error);
+}
+
+// Сколько дней до дедлайна (отрицательное — просрочено)
+function daysUntil(isoDate) {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const target = new Date(isoDate + "T00:00:00");
+    return Math.round((target - today) / 86400000);
 }
 
 async function addGoal() {
@@ -21,9 +51,9 @@ async function addGoal() {
         const { error } = await sb.from("goals").insert({
             user_id: userId, name: res.name.trim(), points: res.points || 5,
             category: (res.category || t("goals_no_category")).trim(), stages: Math.max(1, res.stages || 1),
-            current_stage: 0, done: false
+            current_stage: 0, done: false, ...goalExtraFields(res, null)
         });
-        if (error) { showToast(t("dash_save_error_generic") + error.message, "error"); console.error(error); return; }
+        if (error) { showGoalSaveError(error); return; }
         render();
     });
 }
@@ -34,12 +64,13 @@ async function editGoal(g) {
         const stages = Math.max(1, res.stages || 1);
         const patch = {
             name: res.name.trim(), points: res.points || 5,
-            category: (res.category || t("goals_no_category")).trim(), stages
+            category: (res.category || t("goals_no_category")).trim(), stages,
+            ...goalExtraFields(res, g)
         };
         if (g.current_stage > stages) patch.current_stage = stages;
         if (stages > 1) patch.done = (g.current_stage ?? 0) >= stages;
         const { error } = await sb.from("goals").update(patch).eq("id", g.id);
-        if (error) { showToast(t("dash_save_error_generic") + error.message, "error"); console.error(error); return; }
+        if (error) { showGoalSaveError(error); return; }
         showToast(t("goals_updated_toast"));
         render();
     });
@@ -109,8 +140,36 @@ function renderGoalRow(table, g, { showDate = false } = {}) {
     }
 
     const nameCell = row.insertCell();
-    nameCell.textContent = g.name;
-    if (g.done) nameCell.className = "done-text";
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = g.name;
+    if (g.done) nameSpan.className = "done-text";
+    nameCell.appendChild(nameSpan);
+
+    // Метки под названием: сложность и дедлайн (у выполненных целей не показываем дедлайн)
+    const chips = [];
+    if (g.difficulty) {
+        const colors = { easy: "#3fa66b", medium: "#e0a93b", hard: "#d6336c" };
+        chips.push({ text: t("goals_diff_" + g.difficulty), color: colors[g.difficulty] || "var(--text-dim)" });
+    }
+    if (g.deadline && !g.done) {
+        const days = daysUntil(g.deadline);
+        let label, color;
+        if (days < 0) { label = `${t("goals_deadline_overdue")} ${-days} ${t("goals_days_short")}`; color = "#d6336c"; }
+        else if (days === 0) { label = t("goals_deadline_today"); color = "#d6336c"; }
+        else { label = `${t("goals_deadline_until")} ${fmtRu(g.deadline)} · ${days} ${t("goals_days_short")}`; color = days <= 3 ? "#e0a93b" : "var(--text-dim)"; }
+        chips.push({ text: label, color });
+    }
+    if (chips.length) {
+        const chipRow = document.createElement("div");
+        chipRow.style.cssText = "display:flex; flex-wrap:wrap; gap:6px; margin-top:4px;";
+        for (const c of chips) {
+            const chip = document.createElement("span");
+            chip.textContent = c.text;
+            chip.style.cssText = `font-size:0.72em; padding:1px 8px; border-radius:10px; border:1px solid ${c.color}; color:${c.color}; white-space:nowrap;`;
+            chipRow.appendChild(chip);
+        }
+        nameCell.appendChild(chipRow);
+    }
 
     row.insertCell().textContent = `${g.points ?? 5} 🪙`;
 
@@ -159,7 +218,13 @@ async function render() {
             h.textContent = cat;
             activeBox.appendChild(h);
             const table = document.createElement("table");
-            for (const g of categories[cat]) renderGoalRow(table, g);
+            const byDeadline = categories[cat].slice().sort((a, b) => {
+                if (!a.deadline && !b.deadline) return 0;
+                if (!a.deadline) return 1;
+                if (!b.deadline) return -1;
+                return a.deadline.localeCompare(b.deadline);
+            });
+            for (const g of byDeadline) renderGoalRow(table, g);
             activeBox.appendChild(wrapTable(table));
         }
     }
