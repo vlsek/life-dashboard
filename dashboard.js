@@ -341,13 +341,13 @@ async function computeStreakItems() {
         const sched = metricSchedule(m);
         if (sched?.type === "weekly") {
             const w = computeWeeklyStreak(doneDays, sched.min, today);
-            if (w.streak > 0) items.push({ label: `${m.icon} ${m.name}`, streak: w.streak, unit: "w", todayCounted: !w.atRisk });
+            if (w.streak > 0) items.push({ label: iconLabelText(m.icon, m.name), labelHtml: labelHtml(m.icon, m.name), streak: w.streak, unit: "w", todayCounted: !w.atRisk });
             continue;
         }
         const isSkip = (d) => !metricExpectedOn(m, d) && !doneDays.has(d);
         const streak = computeStreakSkipping(doneDays, isSkip, startFrom);
         const todayCounted = doneDays.has(todayStr3) || !metricExpectedOn(m, todayStr3);
-        if (streak > 0) items.push({ label: `${m.icon} ${m.name}`, streak, todayCounted });
+        if (streak > 0) items.push({ label: iconLabelText(m.icon, m.name), labelHtml: labelHtml(m.icon, m.name), streak, todayCounted });
     }
 
     // серия "заполнил заметку дня"
@@ -382,7 +382,7 @@ function openStreaksModal(items) {
     for (const item of items) {
         const badge = document.createElement("div");
         badge.style.cssText = "background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:8px 14px;" + (item.todayCounted ? "" : " border-color:#d6336c;");
-        badge.innerHTML = `<div style="font-size:1.3em; font-weight:bold; display:flex; align-items:center; gap:4px;">${item.streak}${item.unit === "w" ? " " + t("dash_streak_unit_weeks") : ""} ${STREAK_SOLID_ICON}</div><div class="dim" style="font-size:0.8em;">${item.label}${item.todayCounted ? "" : " · " + t("dash_streak_not_done_today")}</div>`;
+        badge.innerHTML = `<div style="font-size:1.3em; font-weight:bold; display:flex; align-items:center; gap:4px;">${item.streak}${item.unit === "w" ? " " + t("dash_streak_unit_weeks") : ""} ${STREAK_SOLID_ICON}</div><div class="dim" style="font-size:0.8em;">${item.labelHtml ?? escapeHtmlText(item.label)}${item.todayCounted ? "" : " · " + t("dash_streak_not_done_today")}</div>`;
         wrap.appendChild(badge);
     }
     modal.appendChild(wrap);
@@ -441,7 +441,7 @@ async function buildAvailableSeries() {
             .filter(v => v.parameter_id === p.id && v.value != null)
             .map(v => ({ date: v.date, y: v.value }));
         series[`body:${p.id}`] = {
-            label: `${p.icon} ${p.name}`, unit: p.unit ? (p.unit.startsWith("%") ? p.unit : " " + p.unit) : "",
+            label: iconLabelText(p.icon, p.name), unit: p.unit ? (p.unit.startsWith("%") ? p.unit : " " + p.unit) : "",
             color: "var(--accent)", points: pointsForParam
         };
     }
@@ -458,7 +458,7 @@ async function buildAvailableSeries() {
 
     for (const m of (metrics || [])) {
         series[`metric:${m.id}`] = {
-            label: `${m.icon} ${m.name}`, unit: m.unit ? " " + m.unit : "", color: "var(--accent)", type: m.type,
+            label: iconLabelText(m.icon, m.name), unit: m.unit ? " " + m.unit : "", color: "var(--accent)", type: m.type,
             points: days.filter(d => byDay[d][m.id] !== undefined)
                 .map(d => ({ date: d, y: metricNumericValue(m, byDay[d][m.id]) }))
                 .filter(p => p.y != null), // "sets" с пустым/битым значением — пропускаем точку, а не рисуем дыру числом
@@ -875,7 +875,7 @@ async function getBodyParameters() {
 function bodyParamFormFields(existing) {
     return [
         { key: "name", label: t("dash_metric_field_name"), type: "text", value: existing?.name ?? "" },
-        { key: "icon", label: t("dash_metric_field_icon"), type: "text", value: existing?.icon ?? "📏" },
+        { key: "icon", label: t("dash_metric_field_icon"), type: "icon", value: existing?.icon ?? "svg:ruler" },
         { key: "unit", label: t("dash_body_param_unit_label"), type: "text", value: existing?.unit ?? "" },
     ];
 }
@@ -886,7 +886,7 @@ async function addBodyParameter() {
         const existing = await getBodyParameters();
         const position = existing.length;
         const { error } = await sb.from("body_parameters").insert({
-            user_id: user.id, name: res.name.trim(), icon: res.icon || "📏", unit: res.unit, position, active: true
+            user_id: user.id, name: res.name.trim(), icon: res.icon || "svg:ruler", unit: res.unit, position, active: true
         });
         if (error) { showToast(t("dash_save_error_generic") + error.message, "error"); console.error(error); return; }
         showToast(t("dash_param_added_toast"));
@@ -900,7 +900,7 @@ async function editBodyParameter(p) {
     openModal(t("dash_body_param_edit_title"), bodyParamFormFields(p), async (res) => {
         if (!res.name?.trim()) return;
         const { error } = await sb.from("body_parameters").update({
-            name: res.name.trim(), icon: res.icon || "📏", unit: res.unit
+            name: res.name.trim(), icon: res.icon || "svg:ruler", unit: res.unit
         }).eq("id", p.id);
         if (error) { showToast(t("dash_save_error_generic") + error.message, "error"); console.error(error); return; }
         showToast(t("saved_toast"));
@@ -1552,7 +1552,7 @@ async function loadProfileInner() {
             }
 
             const unit = param.unit ? (param.unit.startsWith("%") ? param.unit : " " + param.unit) : "";
-            let text = `${param.icon} ${param.name}: ${latest.value}${unit}`;
+            let text = `${iconHtml(param.icon, "margin-right:0.3em;")}${escapeHtmlText(param.name)}: ${latest.value}${unit}`;
             if (sinceFirst != null && Math.abs(sinceFirst) > 0.001) {
                 const sign = sinceFirst > 0 ? "+" : "";
                 text += ` <span style="color:${color};">(${sign}${sinceFirst.toFixed(1)}${unit})</span>`;
@@ -1611,12 +1611,12 @@ async function loadProfileInner() {
 // метрика — специально ничего нового в базе не заводим, просто ищем метрику по имени/иконке
 // (или предлагаем создать, если её ещё нет), значения — та же daily_values, что и у всех.
 function findWaterMetric(metrics) {
-    return (metrics || []).find(m => m.icon === "💧" || /вода|water/i.test(m.name || ""));
+    return (metrics || []).find(m => metricIconKey(m.icon) === "droplet" || /вода|water/i.test(m.name || ""));
 }
 
 async function getAutoWaterNormMl() {
     const { data: params } = await sb.from("body_parameters").select("*").eq("user_id", user.id);
-    const weightParam = (params || []).find(p => p.icon === "⚖️" || /вес|weight/i.test(p.name || ""));
+    const weightParam = (params || []).find(p => metricIconKey(p.icon) === "scale" || /вес|weight/i.test(p.name || ""));
     if (!weightParam) return null;
     const { data: values } = await sb.from("body_parameter_values").select("*").eq("user_id", user.id).eq("parameter_id", weightParam.id).order("date", { ascending: false }).limit(1);
     const weightKg = values?.[0]?.value;
@@ -2041,7 +2041,7 @@ function renderSetsMetric(m) {
     const headerRow = document.createElement("div");
     headerRow.style.cssText = "display:flex; align-items:center; gap:8px;";
     const title = document.createElement("strong");
-    title.textContent = `${m.icon} ${m.name}`;
+    title.innerHTML = labelHtml(m.icon, m.name);
     headerRow.appendChild(title);
     headerRow.appendChild(makeGearBtn(m));
 
@@ -2161,7 +2161,7 @@ for (const m of visibleMetrics) {
         const labelText = document.createElement("span");
         labelText.className = "dim";
         labelText.style.fontSize = "0.85em";
-        labelText.textContent = `${m.icon} ${m.name}${m.unit ? " (" + m.unit + ")" : ""}`;
+        labelText.innerHTML = labelHtml(m.icon, `${m.name}${m.unit ? " (" + m.unit + ")" : ""}`);
         labelRow.appendChild(labelText);
 
         const isAddMode = m.input_mode === "add";
@@ -2271,7 +2271,7 @@ for (const m of visibleMetrics) {
             autoSaveMetric(m, pending[m.id]);
         };
         const labelSpan = document.createElement("span");
-        labelSpan.textContent = `${m.icon} ${m.name}`;
+        labelSpan.innerHTML = labelHtml(m.icon, m.name);
         row.appendChild(cb);
         row.appendChild(labelSpan);
         row.appendChild(makeGearBtn(m));
@@ -2287,7 +2287,7 @@ for (const m of visibleMetrics) {
         wLabel.style.cssText = "display:flex; align-items:center; gap:6px; margin-bottom:6px;";
         const labelText = document.createElement("span");
         labelText.className = "dim";
-        labelText.textContent = `${m.icon} ${m.name}:`;
+        labelText.innerHTML = labelHtml(m.icon, m.name + ":");
         wLabel.appendChild(labelText);
         wLabel.appendChild(makeGearBtn(m));
         wrap.appendChild(wLabel);
@@ -2325,7 +2325,7 @@ for (const m of visibleMetrics) {
         const labelText = document.createElement("span");
         labelText.className = "dim";
         labelText.style.fontSize = "0.85em";
-        labelText.textContent = `${p.icon} ${p.name}${p.unit ? " (" + p.unit + ")" : ""}`;
+        labelText.innerHTML = labelHtml(p.icon, `${p.name}${p.unit ? " (" + p.unit + ")" : ""}`);
         labelRow.appendChild(labelText);
         const gearBtn = document.createElement("button");
         gearBtn.type = "button";
@@ -2537,7 +2537,12 @@ function openMetricFormModal(existing, categoryOptions, onSubmit) {
     }
 
     const nameInput = field(t("dash_metric_field_name"), Object.assign(document.createElement("input"), { type: "text", value: existing?.name ?? "" }));
-    const iconInput = field(t("dash_metric_field_icon"), Object.assign(document.createElement("input"), { type: "text", value: existing?.icon ?? "📌" }));
+    const iconCaption = document.createElement("div");
+    iconCaption.className = "icon-picker-caption";
+    iconCaption.textContent = t("dash_metric_field_icon");
+    const iconPicker = buildIconPicker(existing?.icon ?? "svg:pin");
+    modal.appendChild(iconCaption);
+    modal.appendChild(iconPicker.el);
 
     const typeSelect = document.createElement("select");
     [["number", t("dash_metric_type_number")], ["boolean", t("dash_metric_type_boolean")], ["multiselect", t("dash_metric_type_multiselect")], ["sets", t("dash_metric_type_sets")]]
@@ -2641,7 +2646,7 @@ function openMetricFormModal(existing, categoryOptions, onSubmit) {
         backdrop.remove();
         await onSubmit({
             name: nameInput.value.trim(),
-            icon: iconInput.value || "📌",
+            icon: iconPicker.getValue() || "svg:pin",
             type: typeSelect.value,
             goal_direction: goalDirSelect.value,
             goal_value: parseFloat(goalValueInput.value) || 0,
@@ -2759,7 +2764,7 @@ async function openMetricsManagerModal() {
         const table = document.createElement("table");
         for (const m of metrics) {
             const row = table.insertRow();
-            row.insertCell().textContent = `${m.icon} ${m.name}`;
+            row.insertCell().innerHTML = labelHtml(m.icon, m.name);
             const goalCell = row.insertCell();
             goalCell.className = "dim";
             goalCell.style.fontSize = "0.85em";

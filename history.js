@@ -315,7 +315,7 @@ function showDay(dateStr) {
                 else if (expected) setIcon(status, "x", "color:var(--text-dim); opacity:0.6;");
                 else status.innerHTML = `<span class="dim">–</span>`;
                 const name = row.insertCell();
-                name.textContent = `${m.icon || ""} ${m.name}`;
+                name.innerHTML = labelHtml(m.icon, m.name);
                 if (!expected && !isDone) {
                     const off = document.createElement("div");
                     off.className = "dim";

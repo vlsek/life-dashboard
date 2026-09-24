@@ -46,6 +46,41 @@ const ICON_PATHS = {
     history: '<path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3.5 4.5v4h4"/><path d="M12 7.5V12l3 2"/>',
     chevron_left: '<path d="M15 5l-7 7 7 7"/>',
     chevron_right: '<path d="M9 5l7 7-7 7"/>',
+    pushup: '<circle cx="19" cy="8.2" r="1.7"/><path d="M17.2 10.8L6.5 15.2"/><path d="M16.2 11.4V18.5"/><path d="M6.5 15.2L4.8 18.5"/><path d="M2.5 19.5h19"/>',
+    pullup: '<path d="M3 4.5h18"/><path d="M8 4.5l1.8 6.5"/><path d="M16 4.5l-1.8 6.5"/><circle cx="12" cy="8.3" r="1.6"/><path d="M12 10.6v6.2"/><path d="M12 16.8l-2.2 4.2"/><path d="M12 16.8l2.2 4.2"/>',
+    squat: '<circle cx="9.8" cy="4.3" r="1.7"/><path d="M10.4 6.9L8.6 12.4"/><path d="M8.6 12.4h7v6.6"/><path d="M15.6 19h3.6"/><path d="M10 9.2l7.4-.6"/>',
+    run: '<circle cx="15.5" cy="4.3" r="1.7"/><path d="M14 7.6l-3.2 5 3.4 2.6-1.2 5.2"/><path d="M10.8 12.6L7.2 16"/><path d="M13.6 9.6l3.6 1.6"/><path d="M12.4 10.4L8.8 9"/>',
+    walk: '<circle cx="12" cy="4.3" r="1.7"/><path d="M12 7.5V13"/><path d="M12 13l-2.6 7"/><path d="M12 13l2.6 2.4.8 4.6"/><path d="M12 9.2l-3 3"/><path d="M12 9.2l3 2.6"/>',
+    bike: '<circle cx="6" cy="16.5" r="3.6"/><circle cx="18" cy="16.5" r="3.6"/><path d="M6 16.5l4.3-7h4.6l3.1 7"/><path d="M10.3 9.5l2.6 7H6"/><path d="M14.9 9.5L14 7h2.2"/><path d="M8.6 7.3h3"/>',
+    swim: '<circle cx="16.5" cy="7" r="1.7"/><path d="M4.5 12l4-2.4 4.4 2.2 2.6-2.6"/><path d="M2.8 16.2q2.3-1.9 4.6 0t4.6 0 4.6 0 4.6 0"/><path d="M2.8 20q2.3-1.9 4.6 0t4.6 0 4.6 0 4.6 0"/>',
+    yoga: '<circle cx="12" cy="5" r="1.8"/><path d="M12 7.6v4.6"/><path d="M12 9.4L8 12.4 5.8 10.6"/><path d="M12 9.4l4 3 2.2-1.8"/><path d="M4.5 17.6c3.4 2.6 11.6 2.6 15 0"/><path d="M8 15.2c2.4 1.6 5.6 1.6 8 0"/>',
+    sleep: '<path d="M19.5 14.6A8 8 0 1 1 9.4 4.5a6.4 6.4 0 0 0 10.1 10.1z"/><path d="M15 4.5h3.2L15 8h3.2"/>',
+    apple: '<path d="M12 8C9.4 6 5 7.6 5.3 12.4c.3 4 2.8 7.8 5.2 7.8.9 0 1.1-.5 1.5-.5s.6.5 1.5.5c2.4 0 4.9-3.8 5.2-7.8C18.9 7.6 14.6 6 12 8z"/><path d="M12 8c0-2.2 1-3.7 2.8-4.3"/>',
+    meal: '<path d="M6.5 3v7.5"/><path d="M4 3v5a2.5 2.5 0 0 0 5 0V3"/><path d="M6.5 10.5V21"/><path d="M17 3c-2.2 1.6-3.2 4-3.2 7 0 2 1 3 3.2 3V21"/>',
+    coffee: '<path d="M5 9.5h11v4.5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V9.5z"/><path d="M16 10.8h1.4a2.4 2.4 0 0 1 0 4.8H16"/><path d="M9 3.6c-.8 1 .8 1.6 0 2.8M12.6 3.6c-.8 1 .8 1.6 0 2.8"/>',
+    study: '<path d="M2.5 9.5L12 5l9.5 4.5L12 14 2.5 9.5z"/><path d="M6.5 11.9V16c0 1.5 2.5 3 5.5 3s5.5-1.5 5.5-3v-4.1"/><path d="M21.5 9.5V15"/>',
+    code: '<path d="M8.5 7l-5 5 5 5"/><path d="M15.5 7l5 5-5 5"/><path d="M13.6 5.5l-3.2 13"/>',
+    pill: '<g transform="rotate(-40 12 12)"><rect x="2.8" y="8.4" width="18.4" height="7.2" rx="3.6"/><path d="M12 8.4v7.2"/></g>',
+    scale: '<rect x="3.5" y="4.5" width="17" height="15" rx="2.2"/><path d="M8 10.5a4.6 4.2 0 0 1 8 0"/><path d="M12 12.6l1.8-2.2"/>',
+    heart: '<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"/>',
+    pulse: '<path d="M2.5 12H7l2.2-5.5 4.2 11 2.3-5.5h5.8"/>',
+    music: '<path d="M9 17.5V5.5l10-2v12"/><circle cx="6.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="15.5" r="2.5"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7"/>',
+    wallet: '<path d="M17 6.5H5A2 2 0 0 0 3 8.5v9a2 2 0 0 0 2 2h14a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 19 8.5H5.5"/><path d="M17 6.5V5A1.5 1.5 0 0 0 15.5 3.5H6"/><circle cx="16.2" cy="13.8" r="1.1" fill="currentColor"/>',
+    sparkles: '<path d="M11 3.5l1.9 5 5 1.9-5 1.9-1.9 5-1.9-5-5-1.9 5-1.9 1.9-5z"/><path d="M18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8.8-2z"/>',
+    phone: '<rect x="7" y="3" width="10" height="18" rx="2.4"/><path d="M11 18h2"/>',
+    leaf: '<path d="M5 19C5 10.5 9.5 5.5 19.5 4.5 19.5 14.5 14.5 19.5 6.5 19.5"/><path d="M5 19.5L13 11.5"/>',
+    tooth: '<path d="M8 4.5c-2.6 0-4 2-4 4.3 0 2.5 1.5 3.7 1.7 6.2.2 2.3.6 4.5 2.1 4.5 1.4 0 1.4-3.5 4.2-3.5s2.8 3.5 4.2 3.5c1.5 0 1.9-2.2 2.1-4.5.2-2.5 1.7-3.7 1.7-6.2 0-2.3-1.4-4.3-4-4.3-1.7 0-2.6.9-4 .9S9.7 4.5 8 4.5z"/>',
+    clock: '<circle cx="12" cy="13" r="8"/><path d="M12 8.8V13l2.6 1.6"/><path d="M9.5 2.8h5"/>',
+    mountain: '<path d="M3 19.5l6.2-11 4 6.6 2.5-3.8 5.3 8.2H3z"/>',
+    car: '<rect x="3.2" y="12.8" width="17.6" height="5.2" rx="1.6"/><path d="M5.2 12.8l1.6-4.3a2 2 0 0 1 1.9-1.3h6.6a2 2 0 0 1 1.9 1.3l1.6 4.3"/><circle cx="7.5" cy="18" r="1.6"/><circle cx="16.5" cy="18" r="1.6"/>',
+    zap: '<path d="M13.2 2.5L5 13.5h6.2l-1 8 8.3-11h-6.3l1-8z"/>',
+    smile: '<circle cx="12" cy="12" r="9"/><path d="M8.3 14.2c1 1.6 2.3 2.4 3.7 2.4s2.7-.8 3.7-2.4"/><path d="M9 9.6h.01M15 9.6h.01"/>',
+    ruler: '<path d="M3.5 15.5L15.5 3.5l5 5-12 12-5-5z"/><path d="M7 12l2 2M10 9l2 2M13 6l2 2"/>',
+    pin: '<path d="M9 3.5h6l-1 5 3 3.5H7l3-3.5-1-5z"/><path d="M12 12v8.5"/>',
+    medical: '<path d="M9 4h6v5h5v6h-5v5H9v-5H4V9h5V4z"/>',
+    brain: '<path d="M9.5 4.5a3 3 0 0 0-3 3 3 3 0 0 0-2 2.8 3 3 0 0 0 1.2 2.4 3 3 0 0 0 .8 4.3 3 3 0 0 0 5 1.5V5.5a2 2 0 0 0-2-1z"/><path d="M14.5 4.5a3 3 0 0 1 3 3 3 3 0 0 1 2 2.8 3 3 0 0 1-1.2 2.4 3 3 0 0 1-.8 4.3 3 3 0 0 1-5 1.5V5.5a2 2 0 0 1 2-1z"/>',
+    dumbbell: '<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/>',
     done: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
     star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8L12 3.5z"/>',
     book: '<path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13c-3-.5-6 0-8 1.5z"/><path d="M12 6v13"/>',
@@ -61,6 +96,145 @@ function iconSvg(name, extraStyle = "") {
     const body = ICON_PATHS[name];
     if (!body) return "";
     return `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"${extraStyle ? ` style="${extraStyle}"` : ""}>${body}</svg>`;
+}
+
+
+// ==== Иконки метрик и параметров тела ====
+// В поле icon хранится либо эмодзи (как раньше), либо "svg:<имя>" из ICON_PATHS. Известные эмодзи
+// рисуются их SVG-аналогом сразу, без правки данных; неизвестные остаются как есть.
+const EMOJI_TO_SVG = {
+    "💧": "droplet",
+    "💦": "droplet",
+    "💪": "dumbbell",
+    "🏋": "dumbbell",
+    "🚶": "walk",
+    "🏃": "run",
+    "🚴": "bike",
+    "🚲": "bike",
+    "🏊": "swim",
+    "🧘": "yoga",
+    "😴": "sleep",
+    "💤": "sleep",
+    "🛌": "sleep",
+    "🌙": "sleep",
+    "🍎": "apple",
+    "🍏": "apple",
+    "🥗": "apple",
+    "🍽": "meal",
+    "🍴": "meal",
+    "🥩": "meal",
+    "🍗": "meal",
+    "☕": "coffee",
+    "📚": "book",
+    "📖": "book",
+    "🎓": "study",
+    "💻": "code",
+    "💊": "pill",
+    "⚖": "scale",
+    "❤": "heart",
+    "♥": "heart",
+    "🫀": "heart",
+    "💓": "pulse",
+    "💗": "pulse",
+    "🎵": "music",
+    "🎧": "music",
+    "☀": "sun",
+    "🌞": "sun",
+    "💰": "wallet",
+    "💵": "wallet",
+    "✨": "sparkles",
+    "📱": "phone",
+    "🌿": "leaf",
+    "🌱": "leaf",
+    "🦷": "tooth",
+    "⏱": "clock",
+    "⏰": "clock",
+    "🕐": "clock",
+    "🏔": "mountain",
+    "⛰": "mountain",
+    "🚗": "car",
+    "⚡": "zap",
+    "😊": "smile",
+    "🙂": "smile",
+    "😀": "smile",
+    "📏": "ruler",
+    "📌": "pin",
+    "🔥": "flame",
+    "🎯": "goals",
+    "✅": "done",
+    "📈": "chart",
+    "📊": "chart",
+    "🗓": "calendar",
+    "📅": "calendar",
+    "⭐": "star",
+    "🏆": "trophy",
+    "🧠": "brain",
+    "✏": "edit",
+    "📝": "note",
+    "🏠": "home",
+    "🩺": "medical",
+};
+const METRIC_ICON_CHOICES = ['pushup', 'pullup', 'squat', 'dumbbell', 'run', 'walk', 'bike', 'swim', 'yoga', 'mountain', 'heart', 'pulse', 'droplet', 'scale', 'apple', 'meal', 'coffee', 'sleep', 'pill', 'medical', 'tooth', 'book', 'study', 'brain', 'code', 'note', 'music', 'sun', 'leaf', 'smile', 'zap', 'flame', 'clock', 'wallet', 'car', 'phone', 'sparkles', 'goals', 'star', 'trophy', 'ruler', 'pin', 'calendar', 'home'];
+function metricIconKey(icon) {
+    if (!icon || typeof icon !== "string") return null;
+    if (icon.startsWith("svg:")) { const k = icon.slice(4); return ICON_PATHS[k] ? k : null; }
+    const norm = icon.replace(/\uFE0F/g, "").replace(/\u200D[\u2640\u2642]/g, "").trim();
+    return EMOJI_TO_SVG[norm] || null;
+}
+// HTML иконки: SVG, если есть, иначе сам эмодзи (экранированный)
+function iconHtml(icon, style = "") {
+    const k = metricIconKey(icon);
+    return k ? iconSvg(k, style) : escapeHtmlText(icon || "");
+}
+// Текст для мест, где SVG не нарисовать (пункты списков, подписи графиков): эмодзи как есть, "svg:" — пусто
+function iconText(icon) {
+    if (!icon || String(icon).startsWith("svg:")) return "";
+    return icon;
+}
+function iconLabelText(icon, name) { return `${iconText(icon)} ${name}`.trim(); }
+// Иконка + название как HTML (название экранируется)
+function labelHtml(icon, name) {
+    const ic = iconHtml(icon, "margin-right:0.35em;");
+    return `${ic}${escapeHtmlText(name)}`;
+}
+
+// Выбор иконки: сетка SVG + поле для своего эмодзи. getValue() отдаёт "svg:<имя>" или эмодзи.
+function buildIconPicker(current) {
+    let value = current || "";
+    const wrap = document.createElement("div");
+    wrap.className = "icon-picker";
+    const grid = document.createElement("div");
+    grid.className = "icon-picker-grid";
+    const buttons = {};
+    const emojiInput = document.createElement("input");
+    emojiInput.type = "text";
+    emojiInput.maxLength = 8;
+    emojiInput.placeholder = t("icon_picker_custom");
+
+    function paint() {
+        const k = metricIconKey(value);
+        for (const [name, b] of Object.entries(buttons)) b.classList.toggle("selected", name === k);
+    }
+    METRIC_ICON_CHOICES.forEach(name => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "icon-choice";
+        b.innerHTML = iconSvg(name);
+        b.onclick = () => { value = "svg:" + name; emojiInput.value = ""; paint(); };
+        buttons[name] = b;
+        grid.appendChild(b);
+    });
+    // своё эмодзи, которого нет среди аналогов, подставляем в поле
+    if (value && !value.startsWith("svg:") && !metricIconKey(value)) emojiInput.value = value;
+    emojiInput.oninput = () => {
+        const v = emojiInput.value.trim();
+        if (v) value = v;
+        paint();
+    };
+    wrap.appendChild(grid);
+    wrap.appendChild(emojiInput);
+    paint();
+    return { el: wrap, getValue: () => value };
 }
 
 // Иконка баллов (золотая монетка)
@@ -117,11 +291,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.58";
+const SITE_VERSION = "0.59";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.59", date: "2026-09-24", changes: [
+        "SVG-иконки для метрик и параметров тела: в формах вместо текстового поля — сетка из 44 иконок (отжимания, подтягивания, приседания, бег, ходьба, велосипед, плавание, йога, сон, вода, еда, кофе, книга, код, пульс и другие); при желании можно вписать свой эмодзи",
+        "Известные эмодзи (💧, 💪, 🏋️, 🚶, 🏃, 📚, ⚖️, ❤️ и др.) уже сейчас рисуются их SVG-аналогом — без правки твоих данных; неизвестные остаются как есть",
+    ]},
     { version: "0.58", date: "2026-09-24", changes: [
         "Новый раздел «История»: календарь месяца, где каждый день закрашен снизу вверх по проценту выполнения (100% — сплошной зелёный, перевыполнение с бонусами — золотая рамка). Справа в каждой строке процент недели, над календарём — средний процент месяца, число идеальных дней и дней с данными",
         "По нажатию на день — подробности: процент, значения каждой метрики (подходы со временем, числа с целью, выбранные варианты), выполнение планов, заметки. Месяцы листаются кнопками и свайпом; ниже — недели списком (последние 8) с полосами прогресса",
@@ -323,6 +501,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.59", date: "2026-09-24", changes: [
+        "SVG icons for metrics and body parameters: the forms now have a grid of 44 icons instead of a text field (push-ups, pull-ups, squats, running, walking, cycling, swimming, yoga, sleep, water, food, coffee, book, code, pulse and more); you can still type your own emoji",
+        "Known emoji (💧, 💪, 🏋️, 🚶, 🏃, 📚, ⚖️, ❤️ and others) are already drawn as their SVG counterpart — without changing your data; unknown ones stay as they are",
+    ]},
     { version: "0.58", date: "2026-09-24", changes: [
         "New \"History\" section: a month calendar where each day is filled bottom-up by its completion percentage (100% is solid green, an overachieved day with bonuses gets a gold border). Each row shows the week's percentage at the end; above the calendar are the month's average, the number of perfect days and days tracked",
         "Tap a day for details: the percentage, every metric's value (sets with times, numbers against the goal, chosen options), plan completion and notes. Months flip with buttons or a swipe; below are the last 8 weeks as progress bars",
@@ -1539,6 +1721,17 @@ function openModal(title, fields, onSubmit) {
 
     const inputs = {};
     for (const f of fields) {
+        if (f.type === "icon") {
+            // выбор иконки: подпись + сетка (не внутри <label>, чтобы клик по подписи не нажимал первую кнопку)
+            const caption = document.createElement("div");
+            caption.className = "icon-picker-caption";
+            caption.textContent = f.label;
+            const picker = buildIconPicker(f.value);
+            modal.appendChild(caption);
+            modal.appendChild(picker.el);
+            inputs[f.key] = { get value() { return picker.getValue(); } };
+            continue;
+        }
         const label = document.createElement("label");
         label.textContent = f.label;
         let input;

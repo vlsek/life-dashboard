@@ -198,7 +198,7 @@ async function renderCategoryChart(catKey) {
             unlinkedNumberMetrics.forEach(m => {
                 const opt = document.createElement("option");
                 opt.value = m.id;
-                opt.textContent = `${m.icon} ${m.name}` + (m.category_id ? ` (${t("comm_already_linked")})` : "");
+                opt.textContent = iconLabelText(m.icon, m.name) + (m.category_id ? ` (${t("comm_already_linked")})` : "");
                 select.appendChild(opt);
             });
             const linkBtn = document.createElement("button");

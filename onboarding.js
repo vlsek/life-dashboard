@@ -182,7 +182,7 @@ function renderForm() {
             cb.onchange = () => { checkboxByKey[m.key] = cb.checked; };
             row.appendChild(cb);
             const textWrap = document.createElement("div");
-            textWrap.innerHTML = `${m.icon} <strong>${m.name}</strong> <span class="dim" style="font-size:0.85em;">— ${metricDescription(m)}</span>`;
+            textWrap.innerHTML = `${iconHtml(m.icon, "margin-right:0.35em;")}<strong>${m.name}</strong> <span class="dim" style="font-size:0.85em;">— ${metricDescription(m)}</span>`;
             row.appendChild(textWrap);
             metricsWrap.appendChild(row);
         }
