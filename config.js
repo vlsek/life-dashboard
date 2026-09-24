@@ -55,11 +55,19 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.45";
+const SITE_VERSION = "0.46";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.46", date: "2026-09-24", changes: [
+        "Иконка выхода (дверь) убрана из шапки — выход снова только в боковом меню. Выход теперь ведёт на страницу входа, а не на визитку",
+        "Кружок прогресса и стакан воды закреплены у правого края шапки в фиксированном порядке и больше не прыгают",
+        "Стакан воды при 100% нормы становится золотым",
+        "Огонёк стрика теперь сплошной, если стрик на сегодня уже засчитан (пунктир остаётся только как предупреждение)",
+        "Шестерёнка у аватарки снова круглая, а не вытянутый овал",
+        "Ссылка «Назад к портфолио» на странице входа оформлена как остальные элементы",
+    ]},
     { version: "0.45", date: "2026-09-22", changes: [
         "Неделя теперь считается пн-вс, а не сб-пт",
         "Подсказка про незакрытую неделю убрана из постоянного кружка — вместо этого баннер-напоминание, который появляется только по субботам/воскресеньям, если неделя ещё не на 100%",
@@ -189,6 +197,14 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.46", date: "2026-09-24", changes: [
+        "Logout icon (door) removed from the header — logout lives in the side menu again. Logging out now leads to the login page instead of the portfolio",
+        "The progress circle and the water glass are pinned to the right edge of the header in a fixed order and no longer jump around",
+        "The water glass turns gold at 100% of the daily goal",
+        "The streak flame is solid once today's streak is counted (dashed only stays as an at-risk warning)",
+        "The gear next to the avatar is round again instead of a stretched oval",
+        "The \"Back to portfolio\" link on the login page is properly styled",
+    ]},
     { version: "0.45", date: "2026-09-22", changes: [
         "Week now runs Monday-Sunday instead of Saturday-Friday",
         "The unfinished-week hint moved out of the permanent circle — now a reminder banner that only shows up on Saturday/Sunday if the week isn't at 100% yet",
@@ -338,7 +354,7 @@ async function requireAuth() {
 
 async function logout() {
     await sb.auth.signOut();
-    window.location.href = "https://portfolio.orneryhero.workers.dev/";
+    window.location.href = "login.html";
 }
 
 function fmtDate(d) {
@@ -859,16 +875,12 @@ function renderNav(active, userEmail) {
         }
     });
 
-    // Выход — иконкой открытой двери в правом углу шапки (только если человек залогинен)
-    if (userEmail) {
-        const logoutIcon = document.createElement("button");
-        logoutIcon.type = "button";
-        logoutIcon.className = "topbar-logout-btn";
-        logoutIcon.title = `${t("logout")} (${userEmail})`;
-        logoutIcon.innerHTML = '<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>';
-        logoutIcon.onclick = logout;
-        topbar.appendChild(logoutIcon);
-    }
+    // Правый край шапки: сюда встают бейджи (кружок прогресса, стакан воды) в фиксированном
+    // порядке — чтобы они не прыгали друг относительно друга при перерисовке.
+    const topbarRight = document.createElement("div");
+    topbarRight.className = "topbar-right";
+    topbarRight.id = "topbar-right";
+    topbar.appendChild(topbarRight);
 
     document.body.prepend(topbar);
 

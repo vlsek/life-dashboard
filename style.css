@@ -135,19 +135,15 @@ body {
     scrollbar-width: none;
 }
 
-.topbar-logout-btn {
+.topbar-right {
     margin-left: auto;
-    flex-shrink: 0;
-    background: transparent;
-    border: none;
-    color: var(--text-dim);
-    padding: 6px;
-    border-radius: 8px;
-    cursor: pointer;
     display: flex;
     align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
 }
-.topbar-logout-btn:hover { color: var(--text); background: var(--bg); }
+.topbar-right > #day-progress-header-badge { order: 1; }
+.topbar-right > #water-badge { order: 2; }
 .quick-nav::-webkit-scrollbar { display: none; }
 .quick-nav.open {
     display: flex;
@@ -780,3 +776,14 @@ body.centered-body {
     background: var(--accent);
     color: var(--accent-text);
 }
+
+.auth-main .back-link {
+    display: inline-block;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.9em;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: color 0.15s, background 0.15s;
+}
+.auth-main .back-link:hover { color: var(--text); background: var(--bg-card); }

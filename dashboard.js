@@ -309,6 +309,8 @@ async function computeStreakItems() {
 
 const STREAK_OUTLINE_ICON = '<svg viewBox="0 0 32 32" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2.6 2.2" stroke-linejoin="round"><path d="M16 2c1 5-3 6-3 10a3 3 0 0 0 6 0c2 1 3 4 3 7a9 9 0 1 1-18 0c0-6 4-9 6-13 1-2 2-3 6-4z"/></svg>';
 
+const STREAK_SOLID_ICON = '<svg viewBox="0 0 32 32" width="18" height="18" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M16 2c1 5-3 6-3 10a3 3 0 0 0 6 0c2 1 3 4 3 7a9 9 0 1 1-18 0c0-6 4-9 6-13 1-2 2-3 6-4z"/></svg>';
+
 function openStreaksModal(items) {
     const backdrop = document.createElement("div");
     backdrop.className = "modal-backdrop";
@@ -353,7 +355,7 @@ async function renderStreakBadge(container) {
     const top = items[0];
     const badge = document.createElement("div");
     badge.style.cssText = "cursor:pointer; font-weight:bold; white-space:nowrap; display:flex; align-items:center; gap:4px;" + (top.todayCounted ? "" : " color:#d6336c;");
-    badge.innerHTML = `${STREAK_OUTLINE_ICON} ${top.streak}`;
+    badge.innerHTML = `${top.todayCounted ? STREAK_SOLID_ICON : STREAK_OUTLINE_ICON} ${top.streak}`;
     badge.title = top.todayCounted
         ? (items.length > 1 ? `${top.label} — ${t("dash_streak_more_hint")}` : top.label)
         : t("dash_streak_at_risk_warning");
@@ -1055,7 +1057,7 @@ function renderHeaderProgressBadge(basePct, bonusPct, totalPct, titleText) {
     badge.id = "day-progress-header-badge";
     badge.title = titleText;
     badge.onclick = () => openDayProgressSettingsModal(loadProfile);
-    badge.style.cssText = "margin-left:auto; background:transparent; border:none; cursor:pointer; position:relative; width:32px; height:32px; flex-shrink:0; padding:0;";
+    badge.style.cssText = "background:transparent; border:none; cursor:pointer; position:relative; width:32px; height:32px; min-height:0; flex-shrink:0; padding:0;";
     badge.innerHTML = `
         <svg width="32" height="32" viewBox="0 0 32 32" style="transform: rotate(-90deg);">
             <circle cx="16" cy="16" r="${r}" fill="none" stroke="var(--border)" stroke-width="3"/>
@@ -1065,7 +1067,7 @@ function renderHeaderProgressBadge(basePct, bonusPct, totalPct, titleText) {
                 stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offsetBonus}"/>` : ""}
         </svg>
         <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; color:var(--text);">${totalPct}%</span>`;
-    topbar.appendChild(badge);
+    (document.getElementById("topbar-right") || topbar).appendChild(badge);
 }
 
 async function computeDayProgress() {
@@ -1331,7 +1333,7 @@ async function loadProfileInner() {
     dayProgressGear.type = "button";
     dayProgressGear.textContent = "⚙️";
     dayProgressGear.title = t("dash_day_progress_settings_title");
-    dayProgressGear.style.cssText = "position:absolute; bottom:-3px; right:-3px; width:19px; height:19px; border-radius:50%; background:var(--bg-card); border:1px solid var(--border); font-size:11px; line-height:19px; text-align:center; padding:0; cursor:pointer;";
+    dayProgressGear.style.cssText = "position:absolute; bottom:-3px; right:-3px; width:19px; height:19px; min-height:0; box-sizing:border-box; border-radius:50%; background:var(--bg-card); border:1px solid var(--border); font-size:11px; line-height:1; display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer;";
     dayProgressGear.onclick = (e) => { e.stopPropagation(); openDayProgressSettingsModal(loadProfile); };
     avatarRingWrap.appendChild(dayProgressGear);
 
@@ -1579,16 +1581,20 @@ function openWaterModal(metric, currentMl, normMl) {
 async function renderWaterBadge() {
     const topbar = document.querySelector(".topbar");
     if (!topbar) return;
-    const existing = document.getElementById("water-badge");
-    if (existing) existing.remove();
 
     const metrics = await getMetrics();
     const metric = findWaterMetric(metrics);
 
-    const badge = document.createElement("button");
-    badge.type = "button";
-    badge.id = "water-badge";
-    badge.style.cssText = "background:transparent; border:none; cursor:pointer; flex-shrink:0; padding:4px 6px; display:flex; align-items:center; justify-content:center;";
+    // Переиспользуем уже существующую кнопку и меняем только содержимое — иначе при каждой
+    // перерисовке она удалялась и вставала заново, и стакан "прыгал" по шапке.
+    let badge = document.getElementById("water-badge");
+    if (!badge) {
+        badge = document.createElement("button");
+        badge.type = "button";
+        badge.id = "water-badge";
+        badge.style.cssText = "background:transparent; border:none; cursor:pointer; flex-shrink:0; width:32px; height:32px; min-height:0; padding:0; display:flex; align-items:center; justify-content:center;";
+        (document.getElementById("topbar-right") || topbar).appendChild(badge);
+    }
 
     if (!metric) {
         badge.title = t("dash_water_setup_prompt");
@@ -1597,24 +1603,26 @@ async function renderWaterBadge() {
             const created = await createWaterMetric();
             if (created) { renderWaterBadge(); openWaterModal(created, 0, (await getAutoWaterNormMl()) || 2000); }
         };
-        topbar.appendChild(badge);
         return;
     }
 
     const normMl = metric.goal_value ?? (await getAutoWaterNormMl()) ?? 2000;
     const currentMl = await getTodayWaterMl(metric);
     const pct = normMl > 0 ? Math.min(1, currentMl / normMl) : 0;
+    const full = pct >= 1;
+    // при 100% стакан становится золотым; цвет темы уже занят кружком прогресса, поэтому именно золото
+    const fillColor = full ? "#f5b82e" : "#3b9ee5";
+    const strokeColor = full ? "#f5b82e" : "var(--text-dim)";
 
     badge.title = `💧 ${currentMl} / ${normMl} мл`;
-    // "стакан" — просто прямоугольник с заливкой снизу пропорционально проценту
+    // "стакан" — трапеция с заливкой снизу пропорционально проценту
     badge.innerHTML = `
-        <svg width="20" height="24" viewBox="0 0 20 24">
-            <defs><clipPath id="water-clip"><rect x="2" y="${24 - pct * 20 - 2}" width="16" height="${pct * 20}"/></clipPath></defs>
-            <path d="M3 2h14l-2 20H5L3 2z" fill="none" stroke="var(--text-dim)" stroke-width="1.6"/>
-            <path d="M3 2h14l-2 20H5L3 2z" fill="#3b9ee5" clip-path="url(#water-clip)"/>
+        <svg width="20" height="24" viewBox="0 0 20 24" style="display:block;">
+            <defs><clipPath id="water-clip"><rect x="2" y="${22 - pct * 20}" width="16" height="${pct * 20}"/></clipPath></defs>
+            <path d="M3 2h14l-2 20H5L3 2z" fill="none" stroke="${strokeColor}" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M3 2h14l-2 20H5L3 2z" fill="${fillColor}" clip-path="url(#water-clip)"/>
         </svg>`;
     badge.onclick = () => openWaterModal(metric, currentMl, normMl);
-    topbar.appendChild(badge);
 }
 
 async function getMetrics() {
