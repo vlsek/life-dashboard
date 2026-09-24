@@ -39,6 +39,10 @@ const ICON_PATHS = {
     help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1.9-1.1 1.8"/><path d="M12 17h.01"/>',
     info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5h.01"/>',
     milestones: '<path d="M12 3v18"/><path d="M12 5h7l2 2.5-2 2.5h-7"/><path d="M12 12H5l-2 2.5L5 17h7"/>',
+    eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>',
+    eyeoff: '<path d="M3 3l18 18"/><path d="M10.6 6a9 9 0 0 1 1.4-.1c6 0 9.5 6.1 9.5 6.1a16 16 0 0 1-3 3.6M6.6 6.9A16 16 0 0 0 2.5 12S6 18.5 12 18.5a9 9 0 0 0 3.4-.7"/><path d="M9.9 9.9a2.8 2.8 0 0 0 4 4"/>',
+    cake: '<path d="M4 20h16v-6H4z"/><path d="M4 16.5c2 1.3 4 1.3 6 0s4-1.3 6 0c1.4.9 2.7 1 4 .3"/><path d="M12 9.5V13"/><path d="M12 5c1.1 1 1.1 2.2 0 3.2-1.1-1-1.1-2.2 0-3.2z"/>',
+    alert: '<path d="M12 4l9.5 16.5h-19L12 4z"/><path d="M12 10v4.5"/><path d="M12 17.5h.01"/>',
     done: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
     star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8L12 3.5z"/>',
     book: '<path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13c-3-.5-6 0-8 1.5z"/><path d="M12 6v13"/>',
@@ -110,11 +114,17 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.56";
+const SITE_VERSION = "0.57";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.57", date: "2026-09-24", changes: [
+        "Прогресс дня и недели — в одном окне («⚙️» у аватарки или клик по любому из кружков): отдельно выбираешь, где показывать кружок дня (у аватарки / в шапке / скрыть) и где кружок недели (рядом с профилем / в шапке / скрыть). Прежняя настройка переносится сама",
+        "Лидерборд и сравнение по категориям в Сообществе учитывают расписание метрик: метрики «только по дням» и «N раз в неделю» не рвут серию в нерасчётные дни. Нужна миграция migrations/023_leaderboard_schedule.sql",
+        "В разделе «Языки» у каждого слова есть язык (20 языков), список фильтруется по языку, автоперевод идёт с выбранного языка на язык интерфейса. Нужна миграция migrations/024_vocabulary_language.sql, все прежние слова остаются английскими",
+        "Ещё больше SVG-иконок на главной: скрыть/показать блок, период графика, аватарка-заглушка, баланс, возраст, звезда бонуса, предупреждение и капля в окне воды",
+    ]},
     { version: "0.56", date: "2026-09-24", changes: [
         "Ускорение загрузки: список метрик и вся история значений/заметок теперь загружаются один раз и хранятся в кэше; после записи обновляются только затронутые дни. Раньше каждая галочка и каждый подход заново скачивали всю историю",
         "Историю читаем постранично: у Supabase лимит ответа 1000 строк, и без этого стрики и графики у давних пользователей могли считаться по обрезанным данным",
@@ -305,6 +315,12 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.57", date: "2026-09-24", changes: [
+        "Day and week progress live in one dialog (the ⚙️ by the avatar or a click on either circle): you choose separately where the day circle goes (around the avatar / header / hidden) and where the week circle goes (next to the profile / header / hidden). Your previous setting is carried over automatically",
+        "The leaderboard and the category comparison in Community respect metric schedules: \"certain days\" and \"N times a week\" metrics no longer break a streak on days they aren't due. Requires migration migrations/023_leaderboard_schedule.sql",
+        "In \"Languages\" every word has a language (20 languages), the list can be filtered by language, and auto-translate goes from the chosen language to the interface language. Requires migration migrations/024_vocabulary_language.sql, all existing words stay English",
+        "More SVG icons on the main page: hide/show block, chart period, avatar placeholder, balance, age, bonus star, warning and the drop in the water dialog",
+    ]},
     { version: "0.56", date: "2026-09-24", changes: [
         "Faster loading: the metrics list and the whole history of values/notes are now loaded once and cached; after a write only the affected days are refreshed. Before, every tick and every set re-downloaded the whole history",
         "History is now read page by page: Supabase caps a response at 1000 rows, and without this streaks and charts for long-time users could be computed from truncated data",

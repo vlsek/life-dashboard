@@ -220,7 +220,7 @@ function openDashboardLayoutModal() {
             const toggleBtn = document.createElement("button");
             toggleBtn.type = "button";
             toggleBtn.className = "secondary";
-            toggleBtn.textContent = item.visible ? "👁️" : "🚫";
+            setIcon(toggleBtn, item.visible ? "eye" : "eyeoff");
             toggleBtn.title = item.visible ? t("dash_layout_hide") : t("dash_layout_show");
             toggleBtn.onclick = () => { item.visible = !item.visible; renderList(); };
             row.appendChild(toggleBtn);
@@ -562,7 +562,7 @@ async function loadCharts() {
             periodBtn.type = "button";
             periodBtn.className = "secondary";
             periodBtn.style.cssText = "padding:2px 8px; font-size:0.78em;";
-            periodBtn.textContent = "🗓️";
+            setIcon(periodBtn, "calendar");
             periodBtn.title = t("dash_chart_period_btn_title");
             chartHeaderRow.appendChild(periodBtn);
             chartWrap.appendChild(chartHeaderRow);
@@ -938,11 +938,20 @@ function formatAge(age) {
 // ---- Диаграмма "на сколько % день сделан" — настройки хранятся в localStorage (личная
 // настройка отображения, не данные, синхронизировать между устройствами не нужно) ----
 function getDayProgressSettings() {
-    const defaults = { enabled: true, includePlanned: true, includeMetrics: true, displayMode: "avatar" };
+    // dayPlace: "avatar" | "header" | "off" — где кружок дня; weekPlace: "profile" | "header" | "off" — где кружок недели
+    const defaults = { enabled: true, includePlanned: true, includeMetrics: true, dayPlace: "avatar", weekPlace: "profile" };
     try {
         const raw = localStorage.getItem("day_progress_settings");
         if (!raw) return defaults;
-        return { ...defaults, ...JSON.parse(raw) };
+        const saved = JSON.parse(raw);
+        // старый формат (displayMode) → новые поля
+        if (saved.displayMode && !saved.dayPlace) {
+            if (saved.displayMode === "header") { saved.dayPlace = "header"; saved.weekPlace = "profile"; }
+            else if (saved.displayMode === "header_week") { saved.dayPlace = "off"; saved.weekPlace = "header"; }
+            else { saved.dayPlace = "avatar"; saved.weekPlace = "profile"; }
+        }
+        delete saved.displayMode;
+        return { ...defaults, ...saved };
     } catch { return defaults; }
 }
 function setDayProgressSettings(s) {
@@ -994,14 +1003,19 @@ let weekProgressHostEl = null;
 async function renderWeekProgress() {
     if (!weekProgressHostEl) return;
     weekProgressHostEl.innerHTML = "";
+    removeHeaderWeekBadge();
     const settings = getDayProgressSettings();
-    if (!settings.enabled) return;
-    if (settings.displayMode === "header_week") return; // кружок недели живёт в шапке (renderDayProgressRing)
+    if (!settings.enabled || settings.weekPlace === "off") return;
     const week = await computeWeekProgress();
     if (!week || (week.total === 0 && week.bonusPct === 0)) return;
 
     const basePct = week.total > 0 ? week.done / week.total : 0;
     const totalPct = Math.round(basePct * 100) + week.bonusPct;
+    if (settings.weekPlace === "header") {
+        const wTitle = `${t("dash_week_progress_label")}: ${totalPct}% (${week.done}/${week.total}${week.bonusPct > 0 ? " +" + week.bonusPct + "% ⭐" : ""})`;
+        renderHeaderWeekBadge(basePct, week.bonusPct, totalPct, wTitle);
+        return;
+    }
     const r = 20;
     const circumference = 2 * Math.PI * r;
     const offset = circumference * (1 - basePct);
@@ -1010,6 +1024,7 @@ async function renderWeekProgress() {
 
     const wrap = document.createElement("div");
     wrap.style.cssText = "display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer;";
+    wrap.onclick = () => openDayProgressSettingsModal(loadProfile);
     wrap.title = `${t("dash_week_progress_label")}: ${totalPct}% (${week.done}/${week.total}${week.bonusPct > 0 ? " +" + week.bonusPct + "% ⭐" : ""})`;
     wrap.innerHTML = `
         <div style="position:relative; width:48px; height:48px;">
@@ -1097,21 +1112,6 @@ async function renderDayProgressRing() {
     if (!dayProgressRingHostEl) return; // карточка профиля ещё не строилась в этой сессии
     const settings = getDayProgressSettings();
 
-    // Режим «кружок недели в шапке»: вместо дня показываем неделю, кольцо у аватарки не рисуем
-    if (settings.displayMode === "header_week") {
-        const week = settings.enabled ? await computeWeekProgress() : null;
-        dayProgressRingHostEl.innerHTML = "";
-        dayProgressTextEl.textContent = "";
-        dayProgressRingWrapEl.title = "";
-        removeHeaderProgressBadge();
-        if (!week || (week.total === 0 && week.bonusPct === 0)) return;
-        const wBase = week.total > 0 ? week.done / week.total : 0;
-        const wTotal = Math.round(wBase * 100) + week.bonusPct;
-        const wTitle = `${t("dash_week_progress_label")}: ${wTotal}% (${week.done}/${week.total}${week.bonusPct > 0 ? " +" + week.bonusPct + "% ⭐" : ""})`;
-        renderHeaderWeekBadge(wBase, week.bonusPct, wTotal, wTitle);
-        return;
-    }
-
     const dayProgress = await computeDayProgress();
 
     dayProgressRingHostEl.innerHTML = "";
@@ -1119,13 +1119,14 @@ async function renderDayProgressRing() {
     dayProgressRingWrapEl.title = "";
     removeHeaderProgressBadge();
 
+    if (settings.dayPlace === "off") return;
     if (!dayProgress || (dayProgress.total === 0 && dayProgress.bonusPct === 0)) return;
 
     const basePct = dayProgress.total > 0 ? dayProgress.done / dayProgress.total : 0;
     const totalPct = Math.round(basePct * 100) + dayProgress.bonusPct;
     const titleText = `${t("dash_day_progress_label")}: ${totalPct}% (${dayProgress.done}/${dayProgress.total}${dayProgress.bonusPct > 0 ? " +" + dayProgress.bonusPct + "% ⭐" : ""})`;
 
-    if (settings.displayMode === "header") {
+    if (settings.dayPlace === "header") {
         renderHeaderProgressBadge(basePct, dayProgress.bonusPct, totalPct, titleText);
         return;
     }
@@ -1153,6 +1154,10 @@ async function renderDayProgressRing() {
 // поэтому просто находим её в DOM и добавляем/обновляем свой элемент.
 function removeHeaderProgressBadge() {
     const el = document.getElementById("day-progress-header-badge");
+    if (el) el.remove();
+}
+function removeHeaderWeekBadge() {
+    const el = document.getElementById("week-progress-header-badge");
     if (el) el.remove();
 }
 function renderHeaderProgressBadge(basePct, bonusPct, totalPct, titleText) {
@@ -1189,7 +1194,7 @@ function renderHeaderProgressBadge(basePct, bonusPct, totalPct, titleText) {
 function renderHeaderWeekBadge(basePct, bonusPct, totalPct, titleText) {
     const topbar = document.querySelector(".topbar");
     if (!topbar) return;
-    removeHeaderProgressBadge();
+    removeHeaderWeekBadge();
 
     const r = 13;
     const circumference = 2 * Math.PI * r;
@@ -1199,7 +1204,7 @@ function renderHeaderWeekBadge(basePct, bonusPct, totalPct, titleText) {
 
     const badge = document.createElement("button");
     badge.type = "button";
-    badge.id = "day-progress-header-badge"; // тот же id — чтобы старый бейдж снимался тем же removeHeaderProgressBadge()
+    badge.id = "week-progress-header-badge";
     badge.title = titleText;
     badge.onclick = () => openDayProgressSettingsModal(loadProfile);
     badge.style.cssText = "background:transparent; border:none; cursor:pointer; display:flex; align-items:center; gap:4px; height:32px; min-height:0; flex-shrink:0; padding:0 4px;";
@@ -1372,24 +1377,34 @@ function openDayProgressSettingsModal(onSave) {
     const plannedCb = checkboxRow(t("dash_day_progress_include_planned"), settings.includePlanned);
     const metricsCb = checkboxRow(t("dash_day_progress_include_metrics"), settings.includeMetrics);
 
-    const modeLabel = document.createElement("label");
-    modeLabel.style.cssText = "display:block; margin-top:14px; font-size:0.85em; color:var(--text-dim);";
-    modeLabel.textContent = t("dash_day_progress_display_mode_label");
-    const modeSelect = document.createElement("select");
-    [
-        { value: "avatar", label: t("dash_day_progress_mode_avatar") },
-        { value: "header", label: t("dash_day_progress_mode_header") },
-        { value: "header_week", label: t("dash_day_progress_mode_header_week") },
-    ].forEach(opt => {
-        const o = document.createElement("option");
-        o.value = opt.value;
-        o.textContent = opt.label;
-        modeSelect.appendChild(o);
-    });
-    modeSelect.value = settings.displayMode;
-    modeLabel.appendChild(modeSelect);
-    modal.appendChild(modeLabel);
-    enhanceSelectWithCustomDropdown(modeSelect);
+    // Где показывать кружок дня и кружок недели — независимо друг от друга
+    function placeSelect(labelText, options, current) {
+        const label = document.createElement("label");
+        label.style.cssText = "display:block; margin-top:14px; font-size:0.85em; color:var(--text-dim);";
+        label.textContent = labelText;
+        const select = document.createElement("select");
+        options.forEach(opt => {
+            const o = document.createElement("option");
+            o.value = opt.value;
+            o.textContent = opt.label;
+            select.appendChild(o);
+        });
+        select.value = current;
+        label.appendChild(select);
+        modal.appendChild(label);
+        enhanceSelectWithCustomDropdown(select);
+        return select;
+    }
+    const daySelect = placeSelect(t("dash_progress_day_place_label"), [
+        { value: "avatar", label: t("dash_place_avatar") },
+        { value: "header", label: t("dash_place_header") },
+        { value: "off", label: t("dash_place_off") },
+    ], settings.dayPlace);
+    const weekSelect = placeSelect(t("dash_progress_week_place_label"), [
+        { value: "profile", label: t("dash_place_profile") },
+        { value: "header", label: t("dash_place_header") },
+        { value: "off", label: t("dash_place_off") },
+    ], settings.weekPlace);
 
     const actions = document.createElement("div");
     actions.className = "modal-actions";
@@ -1400,7 +1415,7 @@ function openDayProgressSettingsModal(onSave) {
     const okBtn = document.createElement("button");
     okBtn.textContent = t("save");
     okBtn.onclick = () => {
-        setDayProgressSettings({ enabled: enabledCb.checked, includePlanned: plannedCb.checked, includeMetrics: metricsCb.checked, displayMode: modeSelect.value });
+        setDayProgressSettings({ enabled: enabledCb.checked, includePlanned: plannedCb.checked, includeMetrics: metricsCb.checked, dayPlace: daySelect.value, weekPlace: weekSelect.value });
         backdrop.remove();
         onSave();
     };
@@ -1462,7 +1477,7 @@ async function loadProfileInner() {
     avatarImg.src = profile?.avatar_url || "";
     avatarImg.style.cssText = "width:44px; height:44px; border-radius:50%; object-fit:cover; background:var(--bg); border:2px solid var(--border); display:" + (profile?.avatar_url ? "block" : "none") + ";";
     const avatarPlaceholder = document.createElement("div");
-    avatarPlaceholder.textContent = "👤";
+    setIcon(avatarPlaceholder, "user");
     avatarPlaceholder.style.cssText = "width:44px; height:44px; border-radius:50%; background:var(--bg); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:1.3em;" + (profile?.avatar_url ? " display:none;" : "");
     avatarWrap.appendChild(avatarImg);
     avatarWrap.appendChild(avatarPlaceholder);
@@ -1581,7 +1596,7 @@ async function loadProfileInner() {
     balanceEl.style.cursor = "pointer";
     balanceEl.title = t("dash_balance_click_hint");
     balanceEl.onclick = () => { window.location.href = "shop.html"; };
-    balanceEl.textContent = `💰 ${balance}`;
+    balanceEl.innerHTML = `${coinIcon()} ${balance}`;
     row.appendChild(balanceEl);
 
     // теперь добавляем возраст с кнопкой — уже после того, как весь текстовый HTML собран,
@@ -1592,7 +1607,7 @@ async function loadProfileInner() {
         const today = new Date();
         let age = today.getFullYear() - bd.getFullYear();
         if (today.getMonth() < bd.getMonth() || (today.getMonth() === bd.getMonth() && today.getDate() < bd.getDate())) age--;
-        ageSlot.innerHTML = `🎂 ${formatAge(age)} `;
+        ageSlot.innerHTML = `${iconSvg("cake", "margin-right:0.3em;")}${formatAge(age)} `;
         const editAgeBtn = document.createElement("button");
         editAgeBtn.className = "secondary";
         setIcon(editAgeBtn, "edit");
@@ -1670,7 +1685,7 @@ function openWaterModal(metric, currentMl, normMl) {
     backdrop.className = "modal-backdrop";
     const modal = document.createElement("div");
     modal.className = "modal";
-    modal.innerHTML = `<h3>💧 ${t("dash_water_modal_title")}</h3>`;
+    modal.innerHTML = `<h3>${iconSvg("droplet", "color:#3b9ee5; margin-right:0.45em;")}${escapeHtmlText(t("dash_water_modal_title"))}</h3>`;
 
     // Дата, за которую вносим воду: по умолчанию сегодня, можно выбрать любой прошлый день
     let dateStr = fmtDate(new Date());
@@ -2844,11 +2859,12 @@ async function renderPlanned(dateStr) {
         starBtn.type = "button";
         starBtn.className = "secondary";
         starBtn.style.cssText = "padding:2px 7px; font-size:0.9em;";
-        starBtn.textContent = item.bonus ? "⭐" : "☆";
+        const paintStar = () => setIcon(starBtn, "star", item.bonus ? "color:#e0a93b; fill:#e0a93b;" : "opacity:0.55;");
+        paintStar();
         starBtn.title = t("dash_planned_bonus_toggle_title");
         starBtn.onclick = async () => {
             item.bonus = !item.bonus;
-            starBtn.textContent = item.bonus ? "⭐" : "☆";
+            paintStar();
             await persistPlanned(planned);
             renderDayProgressRing();
             renderWeekProgress();
@@ -2892,7 +2908,7 @@ async function renderPlanned(dateStr) {
                     if (g.done) nameCell.className = "done-text";
                     row.insertCell().appendChild(buildBonusStarBtn(item));
                 } else {
-                    row.insertCell().textContent = "⚠️";
+                    setIcon(row.insertCell(), "alert", "color:#e0a93b;");
                     row.insertCell().textContent = `${item.text}${t("dash_goal_deleted_suffix")}`;
                     row.insertCell();
                 }

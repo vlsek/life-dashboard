@@ -1,5 +1,25 @@
 let userId;
 
+// Языки, на которых можно вести словарь: код ISO 639-1 → название на самом языке
+const VOCAB_LANGS = [
+    ["en", "English"], ["de", "Deutsch"], ["fr", "Français"], ["es", "Español"], ["it", "Italiano"],
+    ["pt", "Português"], ["nl", "Nederlands"], ["pl", "Polski"], ["cs", "Čeština"], ["sv", "Svenska"],
+    ["tr", "Türkçe"], ["uk", "Українська"], ["ru", "Русский"], ["ka", "ქართული"], ["ar", "العربية"],
+    ["he", "עברית"], ["hi", "हिन्दी"], ["zh", "中文"], ["ja", "日本語"], ["ko", "한국어"],
+];
+function langName(code) { return (VOCAB_LANGS.find(l => l[0] === code) || [code, (code || "").toUpperCase()])[1]; }
+
+// Выбранный фильтр списка ("all" или код языка) и последний язык, на котором добавляли слово
+function getLangFilter() { try { return localStorage.getItem("vocab_lang_filter") || "all"; } catch { return "all"; } }
+function setLangFilter(v) { try { localStorage.setItem("vocab_lang_filter", v); } catch { /* ignore */ } }
+function getLastLang() { try { return localStorage.getItem("vocab_last_lang") || "en"; } catch { return "en"; } }
+function setLastLang(v) { try { localStorage.setItem("vocab_last_lang", v); } catch { /* ignore */ } }
+// Перевод идёт на язык интерфейса; если учишь как раз его — тогда на английский
+function translationTarget(fromLang) {
+    const ui = getLang() === "en" ? "en" : "ru";
+    return ui === fromLang ? "en" : ui;
+}
+
 // Бесплатный переводчик без ключа (MyMemory) — вызывается прямо из браузера пользователя,
 // никаких серверных секретов не нужно. Лимит щедрый для личного использования (не для спама).
 async function autoTranslate(text, fromLang = "en", toLang = "ru") {
@@ -27,6 +47,24 @@ function openWordModal(existing, onSubmit) {
     const modal = document.createElement("div");
     modal.className = "modal";
     modal.innerHTML = `<h3>${existing ? t("eng_edit_word") : t("eng_new_word")}</h3>`;
+
+    // Язык слова
+    const langLabel = document.createElement("label");
+    langLabel.style.cssText = "display:block; margin-bottom:14px;";
+    langLabel.textContent = t("eng_field_lang");
+    const langSelect = document.createElement("select");
+    langSelect.style.cssText = "width:100%; margin-top:4px;";
+    VOCAB_LANGS.forEach(([code, name]) => {
+        const o = document.createElement("option");
+        o.value = code;
+        o.textContent = name;
+        langSelect.appendChild(o);
+    });
+    const filterNow = getLangFilter();
+    langSelect.value = existing?.lang || (filterNow !== "all" ? filterNow : getLastLang());
+    langLabel.appendChild(langSelect);
+    modal.appendChild(langLabel);
+    enhanceSelectWithCustomDropdown(langSelect);
 
     const wordLabel = document.createElement("label");
     wordLabel.style.cssText = "display:block; margin-bottom:14px;";
@@ -64,7 +102,7 @@ function openWordModal(existing, onSubmit) {
         if (!wordInput.value.trim()) return;
         translateBtn.disabled = true;
         translateBtn.textContent = "⏳";
-        const result = await autoTranslate(wordInput.value, "en", "ru");
+        const result = await autoTranslate(wordInput.value, langSelect.value, translationTarget(langSelect.value));
         translateBtn.disabled = false;
         translateBtn.textContent = "🔄";
         if (result) {
@@ -104,7 +142,8 @@ function openWordModal(existing, onSubmit) {
     okBtn.onclick = async () => {
         if (!wordInput.value.trim()) return;
         backdrop.remove();
-        await onSubmit({ word: wordInput.value.trim(), translation: translationInput.value.trim() || null, example: exampleInput.value.trim() || null });
+        setLastLang(langSelect.value);
+        await onSubmit({ word: wordInput.value.trim(), translation: translationInput.value.trim() || null, example: exampleInput.value.trim() || null, lang: langSelect.value });
     };
     actions.appendChild(cancelBtn);
     actions.appendChild(okBtn);
@@ -115,13 +154,23 @@ function openWordModal(existing, onSubmit) {
     wordInput.focus();
 }
 
+function langFields(res, existing) {
+    if (res.lang !== "en" || (existing && "lang" in existing)) return { lang: res.lang };
+    return {};
+}
+function showVocabSaveError(error) {
+    const hint = /lang/i.test(error.message || "") ? " — " + t("eng_lang_migration_hint") : "";
+    showToast(t("dash_save_error_generic") + error.message + hint, "error");
+    console.error(error);
+}
+
 async function addWord() {
     openWordModal(null, async (res) => {
         const { error } = await sb.from("vocabulary").insert({
             user_id: userId, word: res.word, translation: res.translation,
-            example: res.example, learned: false
+            example: res.example, learned: false, ...langFields(res, null)
         });
-        if (error) { showToast(t("dash_save_error_generic") + error.message, "error"); console.error(error); return; }
+        if (error) { showVocabSaveError(error); return; }
         render();
     });
 }
@@ -129,9 +178,9 @@ async function addWord() {
 async function editWord(w) {
     openWordModal(w, async (res) => {
         const { error } = await sb.from("vocabulary").update({
-            word: res.word, translation: res.translation, example: res.example
+            word: res.word, translation: res.translation, example: res.example, ...langFields(res, w)
         }).eq("id", w.id);
-        if (error) { showToast(t("dash_save_error_generic") + error.message, "error"); console.error(error); return; }
+        if (error) { showVocabSaveError(error); return; }
         render();
     });
 }
@@ -159,9 +208,18 @@ function renderWordRow(table, w) {
     checkCell.appendChild(cb);
 
     const wordCell = row.insertCell();
-    wordCell.textContent = w.word;
-    if (w.learned) wordCell.className = "done-text";
-    wordCell.style.fontWeight = "600";
+    const wordSpan = document.createElement("span");
+    wordSpan.textContent = w.word;
+    if (w.learned) wordSpan.className = "done-text";
+    wordSpan.style.fontWeight = "600";
+    wordCell.appendChild(wordSpan);
+    if (getLangFilter() === "all") {
+        const tag = document.createElement("span");
+        tag.textContent = (w.lang || "en").toUpperCase();
+        tag.title = langName(w.lang || "en");
+        tag.style.cssText = "margin-left:6px; font-size:0.65em; padding:1px 6px; border-radius:8px; border:1px solid var(--border); color:var(--text-dim); vertical-align:middle;";
+        wordCell.appendChild(tag);
+    }
 
     row.insertCell().textContent = w.translation || "—";
 
@@ -186,9 +244,30 @@ function renderWordRow(table, w) {
 }
 
 async function render() {
-    const { data: words } = await sb.from("vocabulary").select("*").eq("user_id", userId).order("created_at", { ascending: false });
-    const active = (words || []).filter(w => !w.learned);
-    const done = (words || []).filter(w => w.learned);
+    const { data: allWords } = await sb.from("vocabulary").select("*").eq("user_id", userId).order("created_at", { ascending: false });
+
+    // Фильтр по языку: "Все" + только те языки, на которых уже есть слова
+    const counts = {};
+    (allWords || []).forEach(w => { const l = w.lang || "en"; counts[l] = (counts[l] || 0) + 1; });
+    let filter = getLangFilter();
+    if (filter !== "all" && !counts[filter]) { filter = "all"; setLangFilter("all"); }
+    const filterBox = document.getElementById("lang-filter");
+    filterBox.innerHTML = "";
+    const codes = Object.keys(counts);
+    if (codes.length > 1) {
+        [["all", t("eng_filter_all"), allWords.length], ...codes.map(c => [c, langName(c), counts[c]])].forEach(([code, label, n]) => {
+            const b = document.createElement("button");
+            b.type = "button";
+            b.className = "pill" + (filter === code ? " selected" : "");
+            b.style.minHeight = "0";
+            b.textContent = `${label} · ${n}`;
+            b.onclick = () => { setLangFilter(code); render(); };
+            filterBox.appendChild(b);
+        });
+    }
+    const words = (allWords || []).filter(w => filter === "all" || (w.lang || "en") === filter);
+    const active = words.filter(w => !w.learned);
+    const done = words.filter(w => w.learned);
 
     const statsCard = document.getElementById("stats-card");
     statsCard.innerHTML = `<div class="stat-row">
