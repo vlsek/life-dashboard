@@ -276,7 +276,7 @@ function renderDailyChallengeCard(ch, entries) {
     header.appendChild(title);
     const abandonBtn = document.createElement("button");
     abandonBtn.className = "danger";
-    abandonBtn.textContent = "🗑";
+    setIcon(abandonBtn, "trash");
     abandonBtn.style.cssText = "margin-left:auto; padding:2px 8px;";
     abandonBtn.onclick = () => abandonChallenge(ch);
     header.appendChild(abandonBtn);
@@ -370,7 +370,7 @@ function renderCumulativeChallengeCard(ch, entries) {
     header.appendChild(title);
     const abandonBtn = document.createElement("button");
     abandonBtn.className = "danger";
-    abandonBtn.textContent = "🗑";
+    setIcon(abandonBtn, "trash");
     abandonBtn.style.cssText = "margin-left:auto; padding:2px 8px;";
     abandonBtn.onclick = () => abandonChallenge(ch);
     header.appendChild(abandonBtn);
@@ -432,7 +432,7 @@ function renderCumulativeChallengeCard(ch, entries) {
             const delCell = row.insertCell();
             const delBtn = document.createElement("button");
             delBtn.className = "danger";
-            delBtn.textContent = "✕";
+            setIcon(delBtn, "x");
             delBtn.style.padding = "2px 8px";
             delBtn.onclick = () => deleteEntry(e.id, render);
             delCell.appendChild(delBtn);

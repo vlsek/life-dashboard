@@ -12,6 +12,51 @@ window.addEventListener("beforeinstallprompt", (e) => {
     deferredInstallPrompt = e;
 });
 
+// ==== Единый набор SVG-иконок (вместо эмодзи в элементах интерфейса) ====
+// Линейный стиль, рисуются цветом текста (currentColor), размер по умолчанию = размеру шрифта
+// вокруг (1em), поэтому сами подстраиваются под кнопку/заголовок и тему.
+// Иконки пользовательских метрик (💧, 🏃 и т.п.) остаются эмодзи — это данные пользователя.
+const ICON_PATHS = {
+    home: '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-6h4v6"/>',
+    goals: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/>',
+    skills: '<circle cx="12" cy="9" r="5.5"/><path d="M8.5 13.5L7 21l5-3 5 3-1.5-7.5"/>',
+    workouts: '<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/>',
+    challenges: '<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>',
+    english: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c3 3 3 15 0 18"/><path d="M12 3c-3 3-3 15 0 18"/>',
+    calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+    shop: '<path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+    community: '<circle cx="9" cy="8.5" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9.5" r="2.4"/><path d="M17 14.5c2.4 0 4 1.7 4 4"/>',
+    user: '<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/>',
+    edit: '<path d="M4 20l1-4L16.5 4.5a2 2 0 0 1 3 3L8 19l-4 1z"/><path d="M14.5 6.5l3 3"/>',
+    trash: '<path d="M4 7h16"/><path d="M9 7V4.5h6V7"/><path d="M6.5 7l1 13h9l1-13"/><path d="M10 11v6M14 11v6"/>',
+    gear: '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+    x: '<path d="M6 6l12 12M18 6L6 18"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    coin: '<circle cx="12" cy="12" r="9" fill="currentColor" fill-opacity="0.2"/><circle cx="12" cy="12" r="5"/>',
+    flame: '<g transform="scale(0.75)" stroke-width="2.4"><path d="M16 2c1 5-3 6-3 10a3 3 0 0 0 6 0c2 1 3 4 3 7a9 9 0 1 1-18 0c0-6 4-9 6-13 1-2 2-3 6-4z" fill="currentColor" fill-opacity="0.25"/></g>',
+    droplet: '<path d="M12 3.5c3.5 4.5 6 7.3 6 10.5a6 6 0 0 1-12 0c0-3.2 2.5-6 6-10.5z"/>',
+    download: '<path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 20h14"/>',
+    help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1.9-1.1 1.8"/><path d="M12 17h.01"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5h.01"/>',
+};
+
+function iconSvg(name, extraStyle = "") {
+    const body = ICON_PATHS[name];
+    if (!body) return "";
+    return `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"${extraStyle ? ` style="${extraStyle}"` : ""}>${body}</svg>`;
+}
+
+// Иконка баллов (золотая монетка)
+function coinIcon() {
+    return iconSvg("coin").replace('class="icon"', 'class="icon icon-coin"');
+}
+
+// Кладёт иконку внутрь элемента (например, кнопки) вместо текста/эмодзи
+function setIcon(el, name, extraStyle = "") {
+    el.innerHTML = iconSvg(name, extraStyle);
+    return el;
+}
+
 function isStandaloneApp() {
     return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
 }
@@ -55,11 +100,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.50";
+const SITE_VERSION = "0.51";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.51", date: "2026-09-24", changes: [
+        "Единый набор SVG-иконок вместо эмодзи в интерфейсе: навигация (шапка и боковое меню), кнопки «изменить», «удалить», «настройки», «закрыть», «добавить», баллы, огонёк стрика и капля воды. Иконки берут цвет темы и масштабируются вместе с текстом",
+        "Иконки, которые ты сам выбираешь для метрик и параметров тела, остаются эмодзи — это твои данные",
+    ]},
     { version: "0.50", date: "2026-09-24", changes: [
         "У целей появились дедлайн и сложность (лёгкая/средняя/сложная). Под названием цели показываются метки: сколько дней осталось до срока (жёлтая — 3 дня и меньше, красная — срок сегодня или просрочено) и сложность",
         "Цели внутри категории сортируются по ближайшему дедлайну, без срока — в конце",
@@ -217,6 +266,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.51", date: "2026-09-24", changes: [
+        "A unified set of SVG icons replaces emoji across the interface: navigation (header and side menu), edit/delete/settings/close/add buttons, points, the streak flame and the water drop. Icons follow the theme color and scale with the text",
+        "Icons you pick yourself for metrics and body parameters stay emoji — that's your data",
+    ]},
     { version: "0.50", date: "2026-09-24", changes: [
         "Goals now have a deadline and a difficulty (easy/medium/hard). Chips under the goal name show how many days are left (amber at 3 days or less, red when due today or overdue) and the difficulty",
         "Goals inside a category are sorted by the nearest deadline; goals without one go last",
@@ -857,16 +910,19 @@ function renderNav(active, userEmail) {
     document.querySelectorAll(".topbar, .sidebar, .sidebar-backdrop").forEach(el => el.remove());
 
     const pages = [
-        { href: "dashboard.html", key: "dashboard", i18n: "nav_dashboard", icon: "🏠", home: true },
-        { href: "goals.html", key: "goals", i18n: "nav_goals", icon: "🎯" },
-        { href: "skills.html", key: "skills", i18n: "nav_skills", icon: "🥋" },
-        { href: "workouts.html", key: "workouts", i18n: "nav_workouts", icon: "🏋️" },
-        { href: "challenges.html", key: "challenges", i18n: "nav_challenges", icon: "🏁" },
-        { href: "english.html", key: "english", i18n: "nav_english", icon: "🇬🇧" },
-        { href: "calendar.html", key: "calendar", i18n: "nav_calendar", icon: "🗓️" },
-        { href: "shop.html", key: "shop", i18n: "nav_shop", icon: "🛍️" },
-        { href: "community.html", key: "community", i18n: "nav_community", icon: "🏆" },
+        { href: "dashboard.html", key: "dashboard", i18n: "nav_dashboard", icon: "home", home: true },
+        { href: "goals.html", key: "goals", i18n: "nav_goals", icon: "goals" },
+        { href: "skills.html", key: "skills", i18n: "nav_skills", icon: "skills" },
+        { href: "workouts.html", key: "workouts", i18n: "nav_workouts", icon: "workouts" },
+        { href: "challenges.html", key: "challenges", i18n: "nav_challenges", icon: "challenges" },
+        { href: "english.html", key: "english", i18n: "nav_english", icon: "english" },
+        { href: "calendar.html", key: "calendar", i18n: "nav_calendar", icon: "calendar" },
+        { href: "shop.html", key: "shop", i18n: "nav_shop", icon: "shop" },
+        { href: "community.html", key: "community", i18n: "nav_community", icon: "community" },
     ];
+    // В i18n названия разделов начинаются с эмодзи ("🎯 Цели") — для подписей рядом с SVG-иконкой
+    // отрезаем ведущие эмодзи/пробелы.
+    const plainLabel = (key) => t(key).replace(/^[^\p{L}\p{N}]+/u, "");
 
     // ---- Тонкая верхняя полоса: гамбургер + быстрая эмодзи-навигация ----
     const topbar = document.createElement("div");
@@ -881,11 +937,11 @@ function renderNav(active, userEmail) {
     const homePage = pages.find(p => p.home);
     const homeIconLink = document.createElement("a");
     homeIconLink.href = homePage.href;
-    homeIconLink.title = t(homePage.i18n);
+    homeIconLink.title = plainLabel(homePage.i18n);
     homeIconLink.className = "quick-nav-icon home" + (homePage.key === active ? " active" : "");
     const homeLogo = document.createElement("img");
     homeLogo.src = "/favicon.svg";
-    homeLogo.alt = t(homePage.i18n);
+    homeLogo.alt = plainLabel(homePage.i18n);
     homeLogo.className = "quick-nav-logo";
     homeIconLink.appendChild(homeLogo);
     topbar.appendChild(homeIconLink);
@@ -902,8 +958,8 @@ function renderNav(active, userEmail) {
         if (p.home) continue;
         const a = document.createElement("a");
         a.href = p.href;
-        a.textContent = p.icon;
-        a.title = t(p.i18n);
+        a.innerHTML = iconSvg(p.icon);
+        a.title = plainLabel(p.i18n);
         a.className = "quick-nav-icon" + (p.key === active ? " active" : "");
         quickNav.appendChild(a);
     }
@@ -940,7 +996,7 @@ function renderNav(active, userEmail) {
     for (const p of pages) {
         const a = document.createElement("a");
         a.href = p.href;
-        a.textContent = t(p.i18n);
+        a.innerHTML = `${iconSvg(p.icon)}<span>${plainLabel(p.i18n)}</span>`;
         if (p.key === active) a.className = "active";
         sidebar.appendChild(a);
     }
@@ -948,7 +1004,7 @@ function renderNav(active, userEmail) {
     if (userEmail) {
         const accountLink = document.createElement("a");
         accountLink.href = "account.html";
-        accountLink.textContent = "👤 " + t("nav_account_title");
+        accountLink.innerHTML = `${iconSvg("user")}<span>${t("nav_account_title")}</span>`;
         accountLink.className = active === "account" ? "active" : "";
         sidebar.appendChild(accountLink);
     }
@@ -982,7 +1038,7 @@ function renderNav(active, userEmail) {
     if (!isStandaloneApp()) {
         const installLink = document.createElement("a");
         installLink.href = "#";
-        installLink.textContent = "📲 " + t("nav_install_app");
+        installLink.innerHTML = `${iconSvg("download")}<span>${t("nav_install_app")}</span>`;
         installLink.className = "dim-link";
         installLink.onclick = (e) => { e.preventDefault(); handleInstallClick(); };
         sidebar.appendChild(installLink);
@@ -990,14 +1046,14 @@ function renderNav(active, userEmail) {
 
     const tourLink = document.createElement("a");
     tourLink.href = "#";
-    tourLink.textContent = "❓ " + t("nav_tour");
+    tourLink.innerHTML = `${iconSvg("help")}<span>${t("nav_tour")}</span>`;
     tourLink.className = "dim-link";
     tourLink.onclick = (e) => { e.preventDefault(); showWelcomeTour(); };
     sidebar.appendChild(tourLink);
 
     const aboutLink = document.createElement("a");
     aboutLink.href = "#";
-    aboutLink.textContent = "ℹ️ " + t("nav_about");
+    aboutLink.innerHTML = `${iconSvg("info")}<span>${t("nav_about")}</span>`;
     aboutLink.className = "dim-link";
     aboutLink.onclick = (e) => { e.preventDefault(); showAboutModal(); };
     sidebar.appendChild(aboutLink);

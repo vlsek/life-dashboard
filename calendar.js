@@ -47,7 +47,7 @@ function openDayModal(dateStr, existingPlanned) {
 
             const delBtn = document.createElement("button");
             delBtn.className = "danger";
-            delBtn.textContent = "✕";
+            setIcon(delBtn, "x");
             delBtn.style.padding = "2px 8px";
             delBtn.onclick = () => { planned = planned.filter((_, i) => i !== idx); renderList(); };
             row.appendChild(delBtn);
@@ -64,7 +64,7 @@ function openDayModal(dateStr, existingPlanned) {
     addInput.style.flex = "1";
     const addBtn = document.createElement("button");
     addBtn.className = "secondary";
-    addBtn.textContent = "➕";
+    setIcon(addBtn, "plus");
     function addItem() {
         const text = addInput.value.trim();
         if (!text) return;

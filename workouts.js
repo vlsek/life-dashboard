@@ -322,7 +322,7 @@ async function renderOverviewChart(allEntries) {
     const periodBtn = document.createElement("button");
     periodBtn.className = "secondary";
     periodBtn.style.cssText = "margin-left:auto; padding:2px 10px;";
-    periodBtn.textContent = "⚙️";
+    setIcon(periodBtn, "gear");
     periodBtn.title = t("dash_charts_period_label");
     periodBtn.onclick = () => openPeriodModal(t("dash_charts_period_label"), workoutsPeriodState, wrapPeriodPersist("dash_period_workouts", workoutsPeriodState, () => renderOverviewChart(allEntries)));
     headerRow.appendChild(periodBtn);
@@ -565,7 +565,7 @@ function openEntryModal(exercise, existing, onSubmit) {
             const removeBtn = document.createElement("button");
             removeBtn.type = "button";
             removeBtn.className = "danger";
-            removeBtn.textContent = "✕";
+            setIcon(removeBtn, "x");
             removeBtn.style.padding = "2px 8px";
             removeBtn.onclick = () => { sets.splice(i, 1); if (sets.length === 0) sets.push({ reps: "", weight: "", time: null }); renderSets(); };
             row.appendChild(removeBtn);
@@ -671,13 +671,13 @@ async function renderExerciseCard(container, exercise, entries) {
 
     const editBtn = document.createElement("button");
     editBtn.className = "secondary";
-    editBtn.textContent = "✏️";
+    setIcon(editBtn, "edit");
     editBtn.onclick = () => editExercise(exercise);
     header.appendChild(editBtn);
 
     const delBtn = document.createElement("button");
     delBtn.className = "danger";
-    delBtn.textContent = "🗑";
+    setIcon(delBtn, "trash");
     delBtn.onclick = () => deleteExercise(exercise);
     header.appendChild(delBtn);
 
@@ -729,13 +729,13 @@ async function renderExerciseCard(container, exercise, entries) {
             actionsCell.style.whiteSpace = "nowrap";
             const eEditBtn = document.createElement("button");
             eEditBtn.className = "secondary";
-            eEditBtn.textContent = "✏️";
+            setIcon(eEditBtn, "edit");
             eEditBtn.style.marginRight = "4px";
             eEditBtn.onclick = () => editEntry(exercise, e);
             actionsCell.appendChild(eEditBtn);
             const eDelBtn = document.createElement("button");
             eDelBtn.className = "danger";
-            eDelBtn.textContent = "🗑";
+            setIcon(eDelBtn, "trash");
             eDelBtn.onclick = () => deleteEntry(e);
             actionsCell.appendChild(eDelBtn);
         }

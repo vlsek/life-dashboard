@@ -171,7 +171,7 @@ function renderGoalRow(table, g, { showDate = false } = {}) {
         nameCell.appendChild(chipRow);
     }
 
-    row.insertCell().textContent = `${g.points ?? 5} 🪙`;
+    row.insertCell().innerHTML = `${g.points ?? 5} ${coinIcon()}`;
 
     if (showDate) {
         row.insertCell().textContent = g.done_date ? fmtRu(g.done_date) : "";
@@ -181,13 +181,13 @@ function renderGoalRow(table, g, { showDate = false } = {}) {
     actionsCell.style.whiteSpace = "nowrap";
     const editBtn = document.createElement("button");
     editBtn.className = "secondary";
-    editBtn.textContent = "✏️";
+    setIcon(editBtn, "edit");
     editBtn.style.marginRight = "4px";
     editBtn.onclick = () => editGoal(g);
     actionsCell.appendChild(editBtn);
     const delBtn = document.createElement("button");
     delBtn.className = "danger";
-    delBtn.textContent = "🗑";
+    setIcon(delBtn, "trash");
     delBtn.onclick = () => deleteGoal(g.id);
     actionsCell.appendChild(delBtn);
 }

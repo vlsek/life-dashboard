@@ -124,13 +124,13 @@ function renderSkillRow(table, s, { withControls = true } = {}) {
     actionsCell.style.whiteSpace = "nowrap";
     const editBtn = document.createElement("button");
     editBtn.className = "secondary";
-    editBtn.textContent = "✏️";
+    setIcon(editBtn, "edit");
     editBtn.style.marginRight = "4px";
     editBtn.onclick = () => editSkill(s);
     actionsCell.appendChild(editBtn);
     const delBtn = document.createElement("button");
     delBtn.className = "danger";
-    delBtn.textContent = "🗑";
+    setIcon(delBtn, "trash");
     delBtn.onclick = () => deleteSkill(s.id);
     actionsCell.appendChild(delBtn);
 }
@@ -220,13 +220,13 @@ function renderBookRow(table, b, { showDate = false } = {}) {
     actionsCell.style.whiteSpace = "nowrap";
     const editBtn = document.createElement("button");
     editBtn.className = "secondary";
-    editBtn.textContent = "✏️";
+    setIcon(editBtn, "edit");
     editBtn.style.marginRight = "4px";
     editBtn.onclick = () => editBook(b);
     actionsCell.appendChild(editBtn);
     const delBtn = document.createElement("button");
     delBtn.className = "danger";
-    delBtn.textContent = "🗑";
+    setIcon(delBtn, "trash");
     delBtn.onclick = () => deleteBook(b.id);
     actionsCell.appendChild(delBtn);
 }

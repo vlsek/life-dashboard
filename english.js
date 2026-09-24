@@ -174,13 +174,13 @@ function renderWordRow(table, w) {
     actionsCell.style.whiteSpace = "nowrap";
     const editBtn = document.createElement("button");
     editBtn.className = "secondary";
-    editBtn.textContent = "✏️";
+    setIcon(editBtn, "edit");
     editBtn.style.marginRight = "4px";
     editBtn.onclick = () => editWord(w);
     actionsCell.appendChild(editBtn);
     const delBtn = document.createElement("button");
     delBtn.className = "danger";
-    delBtn.textContent = "🗑";
+    setIcon(delBtn, "trash");
     delBtn.onclick = () => deleteWord(w.id);
     actionsCell.appendChild(delBtn);
 }

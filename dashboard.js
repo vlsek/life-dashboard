@@ -153,7 +153,7 @@ function buildBlockDom(key, container) {
         manageBtn.className = "secondary";
         manageBtn.id = "manage-metrics-btn";
         manageBtn.style.marginLeft = "auto";
-        manageBtn.textContent = "⚙️";
+        setIcon(manageBtn, "gear");
         manageBtn.title = t("manage_metrics_btn");
         manageBtn.onclick = openMetricsManagerModal;
         nav.appendChild(manageBtn);
@@ -330,7 +330,7 @@ function openStreaksModal(items) {
     for (const item of items) {
         const badge = document.createElement("div");
         badge.style.cssText = "background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:8px 14px;" + (item.todayCounted ? "" : " border-color:#d6336c;");
-        badge.innerHTML = `<div style="font-size:1.3em; font-weight:bold;">${item.streak} 🔥</div><div class="dim" style="font-size:0.8em;">${item.label}${item.todayCounted ? "" : " · " + t("dash_streak_not_done_today")}</div>`;
+        badge.innerHTML = `<div style="font-size:1.3em; font-weight:bold; display:flex; align-items:center; gap:4px;">${item.streak} ${STREAK_SOLID_ICON}</div><div class="dim" style="font-size:0.8em;">${item.label}${item.todayCounted ? "" : " · " + t("dash_streak_not_done_today")}</div>`;
         wrap.appendChild(badge);
     }
     modal.appendChild(wrap);
@@ -736,7 +736,7 @@ function openChartsConfigModal(allSeries, selectedEntries) {
             row.appendChild(downBtn);
             const removeBtn = document.createElement("button");
             removeBtn.className = "danger";
-            removeBtn.textContent = "✕";
+            setIcon(removeBtn, "x");
             removeBtn.style.padding = "2px 8px";
             removeBtn.onclick = () => { order = order.filter(e => e !== entry); renderList(); };
             row.appendChild(removeBtn);
@@ -980,7 +980,7 @@ async function checkWeekendGoalReminder() {
     banner.appendChild(text);
     const closeBtn = document.createElement("button");
     closeBtn.className = "secondary";
-    closeBtn.textContent = "✕";
+    setIcon(closeBtn, "x");
     closeBtn.onclick = () => { localStorage.setItem(dismissedKey, "1"); banner.remove(); };
     banner.appendChild(closeBtn);
 
@@ -1375,7 +1375,7 @@ async function loadProfileInner() {
 
     const dayProgressGear = document.createElement("button");
     dayProgressGear.type = "button";
-    dayProgressGear.textContent = "⚙️";
+    setIcon(dayProgressGear, "gear");
     dayProgressGear.title = t("dash_day_progress_settings_title");
     dayProgressGear.style.cssText = "position:absolute; bottom:-3px; right:-3px; width:19px; height:19px; min-height:0; box-sizing:border-box; border-radius:50%; background:var(--bg-card); border:1px solid var(--border); font-size:11px; line-height:1; display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer;";
     dayProgressGear.onclick = (e) => { e.stopPropagation(); openDayProgressSettingsModal(loadProfile); };
@@ -1472,7 +1472,7 @@ async function loadProfileInner() {
         ageSlot.innerHTML = `🎂 ${formatAge(age)} `;
         const editAgeBtn = document.createElement("button");
         editAgeBtn.className = "secondary";
-        editAgeBtn.textContent = "✏️";
+        setIcon(editAgeBtn, "edit");
         editAgeBtn.style.cssText = "padding:1px 6px; font-size:0.8em;";
         editAgeBtn.onclick = openBirthdateModal;
         ageSlot.appendChild(editAgeBtn);
@@ -1683,7 +1683,7 @@ async function renderWaterBadge() {
 
     if (!metric) {
         badge.title = t("dash_water_setup_prompt");
-        badge.innerHTML = '<span style="font-size:1.1em;">💧</span>';
+        badge.innerHTML = iconSvg("droplet", "width:20px; height:20px; color:#3b9ee5;");
         badge.onclick = async () => {
             const created = await createWaterMetric();
             if (created) { renderWaterBadge(); openWaterModal(created, 0, (await getAutoWaterNormMl()) || 2000); }
@@ -1789,7 +1789,7 @@ async function renderDay() {
 function makeGearBtn(m) {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.textContent = "⚙️";
+    setIcon(btn, "gear");
     btn.className = "gear-btn";
     btn.title = t("dash_gear_configure_metric_title");
     btn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); editMetric(m); };
@@ -1873,7 +1873,7 @@ function renderSetsMetric(m) {
                 const del = document.createElement("button");
                 del.type = "button";
                 del.className = "variation-option-remove";
-                del.textContent = "✕";
+                setIcon(del, "x");
                 del.title = t("dash_sets_variation_remove_title");
                 del.onmousedown = async (e) => {
                     e.preventDefault();
@@ -1994,7 +1994,7 @@ function renderSetsMetric(m) {
                 const delBtn = document.createElement("button");
                 delBtn.type = "button";
                 delBtn.className = "danger";
-                delBtn.textContent = "✕";
+                setIcon(delBtn, "x");
                 delBtn.style.padding = "2px 8px";
                 delBtn.onclick = () => { sets.splice(i, 1); persist(); renderBody(); };
                 delCell.appendChild(delBtn);
@@ -2056,7 +2056,7 @@ for (const m of metrics) {
             const fixBtn = document.createElement("button");
             fixBtn.type = "button";
             fixBtn.className = "secondary";
-            fixBtn.textContent = "✏️";
+            setIcon(fixBtn, "edit");
             fixBtn.title = t("dash_metric_fix_total_title");
             fixBtn.style.cssText = "padding:1px 6px; font-size:0.75em; min-height:0; line-height:1.4; flex-shrink:0;";
             fixBtn.onclick = () => {
@@ -2202,14 +2202,14 @@ for (const m of metrics) {
         labelRow.appendChild(labelText);
         const gearBtn = document.createElement("button");
         gearBtn.type = "button";
-        gearBtn.textContent = "⚙️";
+        setIcon(gearBtn, "gear");
         gearBtn.className = "gear-btn";
         gearBtn.title = t("dash_gear_configure_param_title");
         gearBtn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); editBodyParameter(p); };
         labelRow.appendChild(gearBtn);
         const delBtn = document.createElement("button");
         delBtn.type = "button";
-        delBtn.textContent = "🗑";
+        setIcon(delBtn, "trash");
         delBtn.className = "gear-btn";
         delBtn.title = t("dash_gear_delete_param_title");
         delBtn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); deleteBodyParameter(p); };
@@ -2270,7 +2270,7 @@ for (const m of metrics) {
             row.appendChild(bullet);
             const delBtn = document.createElement("button");
             delBtn.className = "danger";
-            delBtn.textContent = "✕";
+            setIcon(delBtn, "x");
             delBtn.style.padding = "2px 8px";
             delBtn.onclick = async () => {
                 itemsValue = itemsValue.filter((_, i) => i !== idx);
@@ -2583,13 +2583,13 @@ async function openMetricsManagerModal() {
             actionsCell.style.whiteSpace = "nowrap";
             const editBtn = document.createElement("button");
             editBtn.className = "secondary";
-            editBtn.textContent = "✏️";
+            setIcon(editBtn, "edit");
             editBtn.style.marginRight = "4px";
             editBtn.onclick = () => editMetric(m, openMetricsManagerModal);
             actionsCell.appendChild(editBtn);
             const delBtn = document.createElement("button");
             delBtn.className = "danger";
-            delBtn.textContent = "🗑";
+            setIcon(delBtn, "trash");
             delBtn.onclick = () => deleteMetric(m);
             actionsCell.appendChild(delBtn);
         }
@@ -2718,7 +2718,7 @@ async function renderPlanned(dateStr) {
             const removeCell = row.insertCell();
             const removeBtn = document.createElement("button");
             removeBtn.className = "secondary";
-            removeBtn.textContent = "✕";
+            setIcon(removeBtn, "x");
             removeBtn.onclick = async () => {
                 const newPlanned = planned.filter(p => p !== item);
                 await persistPlanned(newPlanned);

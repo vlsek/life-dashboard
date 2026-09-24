@@ -192,6 +192,9 @@ body {
 .sidebar.open { left: 0; }
 
 .sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     color: var(--text-dim);
     text-decoration: none;
     padding: 10px 12px;
@@ -787,3 +790,16 @@ body.centered-body {
     transition: color 0.15s, background 0.15s;
 }
 .auth-main .back-link:hover { color: var(--text); background: var(--bg-card); }
+
+/* SVG-иконки интерфейса (см. iconSvg() в config.js) */
+.icon {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: -0.14em;
+    flex-shrink: 0;
+}
+.icon-coin { color: #e0a93b; }
+.sidebar a .icon { width: 1.2em; height: 1.2em; }
+.quick-nav-icon .icon { width: 1.15em; height: 1.15em; vertical-align: middle; }
+button .icon { vertical-align: middle; }

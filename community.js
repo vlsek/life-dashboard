@@ -27,7 +27,7 @@ async function renderFriendsCard() {
             nameSpan.style.fontSize = "0.9em";
             chip.appendChild(nameSpan);
             const unfollowBtn = document.createElement("button");
-            unfollowBtn.textContent = "✕";
+            setIcon(unfollowBtn, "x");
             unfollowBtn.className = "secondary";
             unfollowBtn.style.cssText = "padding:1px 6px; margin-left:4px;";
             unfollowBtn.onclick = async () => {
@@ -102,7 +102,7 @@ async function loadLeaderboard() {
         nameCell.textContent = row.display_name;
         if (row.perfect_streak > 0) {
             const streakSpan = document.createElement("span");
-            streakSpan.textContent = ` 🔥${row.perfect_streak}`;
+            streakSpan.innerHTML = ` ${iconSvg("flame")}${row.perfect_streak}`;
             streakSpan.style.cssText = "font-size:0.8em; opacity:0.8;";
             streakSpan.title = `${t("comm_perfect_streak_title")} ${row.perfect_streak}`;
             nameCell.appendChild(streakSpan);
@@ -243,7 +243,7 @@ async function renderCategoryChart(catKey) {
     const periodBtn = document.createElement("button");
     periodBtn.className = "secondary";
     periodBtn.style.cssText = "margin-left:auto; padding:2px 10px;";
-    periodBtn.textContent = "⚙️";
+    setIcon(periodBtn, "gear");
     periodBtn.title = t("dash_charts_period_label");
     periodBtn.onclick = () => openPeriodModal(t("dash_charts_period_label"), chartPeriodState, wrapPeriodPersist("dash_period_community", chartPeriodState, () => renderCategoryChart(catKey)));
     titleRow.appendChild(periodBtn);
@@ -299,7 +299,7 @@ async function loadCategoryLeaderboard(catKey) {
     } else {
         const table = document.createElement("table");
         const thead = table.insertRow();
-        ["#", "", t("comm_th_name"), t("comm_th_sum"), t("comm_th_points"), "🔥"].forEach(h => { const th = document.createElement("th"); th.textContent = h; thead.appendChild(th); });
+        ["#", "", t("comm_th_name"), t("comm_th_sum"), t("comm_th_points"), "flame"].forEach(h => { const th = document.createElement("th"); if (h === "flame") th.innerHTML = iconSvg("flame"); else th.textContent = h; thead.appendChild(th); });
         rows.forEach((row, i) => {
             const tr = table.insertRow();
             tr.insertCell().textContent = `#${i + 1}`;

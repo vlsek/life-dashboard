@@ -172,7 +172,7 @@ async function render() {
 
         const costEl = document.createElement("div");
         costEl.className = "dim";
-        costEl.textContent = `${item.cost} 🪙`;
+        costEl.innerHTML = `${item.cost} ${coinIcon()}`;
         card.appendChild(costEl);
 
         const statusEl = document.createElement("div");
@@ -182,7 +182,7 @@ async function render() {
         } else {
             const affordable = balance >= item.cost;
             const buyBtn = document.createElement("button");
-            buyBtn.textContent = affordable ? t("shop_buy_btn") : `${t("shop_not_enough")} ${item.cost - balance} 🪙`;
+            buyBtn.innerHTML = affordable ? t("shop_buy_btn") : `${t("shop_not_enough")} ${item.cost - balance} ${coinIcon()}`;
             buyBtn.disabled = !affordable;
             buyBtn.onclick = () => buyItem(item);
             statusEl.appendChild(buyBtn);
@@ -193,13 +193,13 @@ async function render() {
         actionsEl.style.cssText = "margin-top:8px; white-space:nowrap;";
         const editBtn = document.createElement("button");
         editBtn.className = "secondary";
-        editBtn.textContent = "✏️";
+        setIcon(editBtn, "edit");
         editBtn.style.marginRight = "4px";
         editBtn.onclick = () => editItem(item);
         actionsEl.appendChild(editBtn);
         const delBtn = document.createElement("button");
         delBtn.className = "danger";
-        delBtn.textContent = "🗑";
+        setIcon(delBtn, "trash");
         delBtn.onclick = () => deleteItem(item.id);
         actionsEl.appendChild(delBtn);
         card.appendChild(actionsEl);
