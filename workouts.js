@@ -218,7 +218,7 @@ function openTemplatesModal() {
     const modal = document.createElement("div");
     modal.className = "modal";
     modal.style.width = "480px";
-    modal.innerHTML = `<h3>${t("workouts_templates_title")}</h3><p class="dim" style="font-size:0.85em; margin-top:-8px;">${t("workouts_templates_hint")}</p>`;
+    modal.innerHTML = `<h3>${tIcon("workouts_templates_title")}</h3><p class="dim" style="font-size:0.85em; margin-top:-8px;">${t("workouts_templates_hint")}</p>`;
 
     const listWrap = document.createElement("div");
     modal.appendChild(listWrap);
@@ -317,7 +317,7 @@ async function renderOverviewChart(allEntries) {
     const headerRow = document.createElement("div");
     headerRow.style.cssText = "display:flex; align-items:center; gap:8px; margin-bottom:8px;";
     const title = document.createElement("strong");
-    title.textContent = t("workouts_overview_title");
+    title.innerHTML = tIcon("workouts_overview_title");
     headerRow.appendChild(title);
     const periodBtn = document.createElement("button");
     periodBtn.className = "secondary";
@@ -578,7 +578,7 @@ function openEntryModal(exercise, existing, onSubmit) {
     const addSetBtn = document.createElement("button");
     addSetBtn.type = "button";
     addSetBtn.className = "secondary";
-    addSetBtn.textContent = t("workouts_add_set_btn");
+    addSetBtn.innerHTML = tIcon("workouts_add_set_btn");
     addSetBtn.onclick = () => { sets.push({ reps: "", weight: "", time: null }); renderSets(); };
     setsWrap.appendChild(addSetBtn);
     modal.appendChild(setsWrap);
@@ -665,7 +665,7 @@ async function renderExerciseCard(container, exercise, entries) {
 
     const addBtn = document.createElement("button");
     addBtn.className = "secondary";
-    addBtn.textContent = t("workouts_add_entry_btn");
+    addBtn.innerHTML = tIcon("workouts_add_entry_btn");
     addBtn.onclick = () => addEntry(exercise);
     header.appendChild(addBtn);
 

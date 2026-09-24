@@ -38,7 +38,7 @@ async function render() {
         if (u.user_id !== user.id) {
             const delBtn = document.createElement("button");
             delBtn.className = "danger";
-            delBtn.textContent = t("admin_delete_btn");
+            delBtn.innerHTML = tIcon("admin_delete_btn");
             delBtn.onclick = () => deleteUser(u);
             actionsCell.appendChild(delBtn);
         } else {

@@ -38,6 +38,15 @@ const ICON_PATHS = {
     download: '<path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 20h14"/>',
     help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1.9-1.1 1.8"/><path d="M12 17h.01"/>',
     info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5h.01"/>',
+    done: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
+    star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8L12 3.5z"/>',
+    book: '<path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13c-3-.5-6 0-8 1.5z"/><path d="M12 6v13"/>',
+    list: '<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1" fill="currentColor"/><circle cx="4.5" cy="12" r="1" fill="currentColor"/><circle cx="4.5" cy="18" r="1" fill="currentColor"/>',
+    chart: '<path d="M4 4v16h16"/><path d="M8 15l4-5 3 3 5-6"/>',
+    note: '<path d="M6 3.5h9l4 4V20.5H6z"/><path d="M14.5 3.5V8H19"/><path d="M9 12.5h6M9 16h6"/>',
+    trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H5v1.5A3 3 0 0 0 8 10.5M16 6h3v1.5a3 3 0 0 1-3 3"/><path d="M12 13v4M8.5 20h7M10 17h4v3h-4z"/>',
+    medal: '<circle cx="12" cy="14.5" r="5.5"/><path d="M8.5 10L7 3.5h4l1 3 1-3h4L15.5 10"/>',
+    lock: '<rect x="5" y="11" width="14" height="9.5" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
 };
 
 function iconSvg(name, extraStyle = "") {
@@ -69,7 +78,7 @@ function showInstallInstructionsModal() {
     backdrop.className = "modal-backdrop";
     const modal = document.createElement("div");
     modal.className = "modal";
-    modal.innerHTML = `<h3>${t("install_title")}</h3>`;
+    modal.innerHTML = `<h3>${tIcon("install_title")}</h3>`;
 
     const p = document.createElement("p");
     p.style.cssText = "margin-top:12px; line-height:1.6;";
@@ -100,11 +109,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.52";
+const SITE_VERSION = "0.53";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.53", date: "2026-09-24", changes: [
+        "Вторая волна SVG-иконок: заголовки страниц и блоков, названия окон и подписи кнопок («Добавить», «Настроить» и т.п.) теперь тоже с иконками вместо эмодзи. Добавлены новые иконки: галочка, звезда, книга, список, график, заметка, кубок, медаль, замок",
+        "Пользовательские названия, категории и эмодзи метрик по-прежнему показываются как введены",
+    ]},
     { version: "0.52", date: "2026-09-24", changes: [
         "«Рваные» ежедневные метрики: у метрики появилось расписание — каждый день, только в выбранные дни недели или не менее N раз в неделю (настраивается в ⚙️ метрики)",
         "Стрик метрики по дням недели не рвётся в дни, когда её делать не нужно; «идеальный день» учитывает только метрики, нужные в этот день. Метрики «N раз в неделю» считают серию в неделях (нед.), а если добрать норму можно только каждый оставшийся день, серия помечается как под угрозой",
@@ -272,6 +285,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.53", date: "2026-09-24", changes: [
+        "Second wave of SVG icons: page and block headings, dialog titles and button labels (\"Add\", \"Configure\", etc.) now use icons instead of emoji too. New icons: check, star, book, list, chart, note, trophy, medal, lock",
+        "Your own names, categories and metric emoji are still shown exactly as you entered them",
+    ]},
     { version: "0.52", date: "2026-09-24", changes: [
         "\"Ragged\" daily metrics: a metric can now have a schedule — every day, only on chosen weekdays, or at least N times a week (set in the metric's ⚙️)",
         "A weekday-scheduled metric's streak doesn't break on days it isn't due; \"perfect day\" only considers metrics due that day. \"N times a week\" metrics count their streak in weeks (wk), and it is flagged at risk when the quota can only be met by doing it every remaining day",
@@ -1201,7 +1218,7 @@ function showAboutModal() {
     backdrop.className = "modal-backdrop";
     const modal = document.createElement("div");
     modal.className = "modal";
-    modal.innerHTML = `<h3>${t("about_title")}</h3>`;
+    modal.innerHTML = `<h3>${tIcon("about_title")}</h3>`;
 
     // Блок «О создателе» (вместо прежней одиночной ссылки на портфолио)
     const creatorH = document.createElement("h4");
@@ -1249,7 +1266,7 @@ function showChangelogModal() {
     backdrop.className = "modal-backdrop";
     const modal = document.createElement("div");
     modal.className = "modal";
-    modal.innerHTML = `<h3>${t("changelog_title")}</h3>`;
+    modal.innerHTML = `<h3>${tIcon("changelog_title")}</h3>`;
 
     if (CHANGELOG.length === 0) {
         const p = document.createElement("p");

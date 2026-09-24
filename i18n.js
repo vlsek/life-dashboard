@@ -1280,14 +1280,76 @@ function t(key) {
     return (translations[lang] && translations[lang][key]) ?? translations.en[key] ?? key;
 }
 
+// ---- Ведущий эмодзи строки интерфейса → SVG-иконка (см. ICON_PATHS в config.js) ----
+// Работает только для строк из словаря переводов, то есть для текста интерфейса; названия и
+// эмодзи, которые вводит сам пользователь (метрики, категории), эта функция не трогает.
+const LEADING_EMOJI_ICONS = {
+    "➕": "plus",
+    "✅": "done",
+    "⚙": "gear",
+    "🏆": "trophy",
+    "📋": "list",
+    "🎯": "goals",
+    "🗓": "calendar",
+    "📅": "calendar",
+    "🔥": "flame",
+    "📈": "chart",
+    "📊": "chart",
+    "🥋": "skills",
+    "⭐": "star",
+    "🏠": "home",
+    "🛍": "shop",
+    "📝": "note",
+    "👤": "user",
+    "📖": "book",
+    "📚": "book",
+    "🏋": "workouts",
+    "🏁": "challenges",
+    "📲": "download",
+    "🇬🇧": "english",
+    "🤝": "community",
+    "🥇": "medal",
+    "🗑": "trash",
+    "✏": "edit",
+    "🔐": "lock",
+    "ℹ": "info",
+};
+function escapeHtmlText(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+// Возвращает { icon, rest } если строка начинается с известного эмодзи, иначе null
+function splitLeadingIcon(str) {
+    if (typeof iconSvg !== "function" || typeof str !== "string") return null;
+    for (const emoji of Object.keys(LEADING_EMOJI_ICONS)) {
+        if (str.startsWith(emoji)) {
+            const rest = str.slice(emoji.length).replace(/^[\uFE0F\s]+/, "");
+            return { icon: iconSvg(LEADING_EMOJI_ICONS[emoji], "margin-right:0.45em;"), rest };
+        }
+    }
+    return null;
+}
+// Строка перевода как HTML: иконка + экранированный текст (для innerHTML)
+function tIcon(key) {
+    const s = t(key);
+    const p = splitLeadingIcon(s);
+    return p ? p.icon + escapeHtmlText(p.rest) : escapeHtmlText(s);
+}
+function setI18nText(el, s) {
+    const p = splitLeadingIcon(s);
+    if (p) el.innerHTML = p.icon + escapeHtmlText(p.rest);
+    else el.textContent = s;
+}
+
 function applyI18n() {
     const lang = getLang();
     document.documentElement.lang = lang;
     document.querySelectorAll("[data-i18n]").forEach(el => {
-        el.textContent = t(el.getAttribute("data-i18n"));
+        setI18nText(el, t(el.getAttribute("data-i18n")));
     });
     document.querySelectorAll("[data-i18n-html]").forEach(el => {
-        el.innerHTML = t(el.getAttribute("data-i18n-html"));
+        const htmlStr = t(el.getAttribute("data-i18n-html"));
+        const p = splitLeadingIcon(htmlStr);
+        el.innerHTML = p ? p.icon + p.rest : htmlStr;
     });
     document.querySelectorAll(".lang-btn").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.lang === lang);

@@ -50,7 +50,7 @@ async function renderFriendsCard() {
     searchInput.placeholder = t("comm_search_placeholder");
     searchInput.style.flex = "1";
     const addBtn = document.createElement("button");
-    addBtn.textContent = t("comm_follow_btn");
+    addBtn.innerHTML = tIcon("comm_follow_btn");
     addBtn.onclick = async () => {
         const query = searchInput.value.trim();
         if (!query) return;
@@ -238,7 +238,7 @@ async function renderCategoryChart(catKey) {
     const titleRow = document.createElement("div");
     titleRow.style.cssText = "display:flex; align-items:center; gap:8px; margin-bottom:8px;";
     const titleSpan = document.createElement("strong");
-    titleSpan.textContent = t("comm_your_progress_chart");
+    titleSpan.innerHTML = tIcon("comm_your_progress_chart");
     titleRow.appendChild(titleSpan);
     const periodBtn = document.createElement("button");
     periodBtn.className = "secondary";
@@ -387,7 +387,7 @@ document.getElementById("scope-friends").onclick = () => { scope = "friends"; in
     renderNav("community", user.email);
 
     const nameBtn = document.createElement("button");
-    nameBtn.textContent = t("comm_public_profile_btn");
+    nameBtn.innerHTML = tIcon("comm_public_profile_btn");
     nameBtn.className = "secondary";
     nameBtn.style.marginBottom = "16px";
     nameBtn.onclick = editDisplayName;

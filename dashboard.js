@@ -184,7 +184,7 @@ function openDashboardLayoutModal() {
     backdrop.className = "modal-backdrop";
     const modal = document.createElement("div");
     modal.className = "modal";
-    modal.innerHTML = `<h3>${t("dash_layout_modal_title")}</h3><p class="dim" style="font-size:0.85em; margin-top:-8px;">${t("dash_layout_hint")}</p>`;
+    modal.innerHTML = `<h3>${tIcon("dash_layout_modal_title")}</h3><p class="dim" style="font-size:0.85em; margin-top:-8px;">${t("dash_layout_hint")}</p>`;
 
     const listWrap = document.createElement("div");
     let localLayout = dashboardLayout.map(i => ({ ...i }));
@@ -370,7 +370,7 @@ function openStreaksModal(items) {
     backdrop.className = "modal-backdrop";
     const modal = document.createElement("div");
     modal.className = "modal";
-    modal.innerHTML = `<h3>${t("dash_streaks_h2")}</h3>`;
+    modal.innerHTML = `<h3>${tIcon("dash_streaks_h2")}</h3>`;
 
     if (items.some(i => !i.todayCounted)) {
         const warning = document.createElement("p");
@@ -527,7 +527,7 @@ async function loadCharts() {
 
     const configBtn = document.createElement("button");
     configBtn.className = "secondary";
-    configBtn.textContent = t("dash_charts_configure_btn");
+    configBtn.innerHTML = tIcon("dash_charts_configure_btn");
     configBtn.onclick = () => openChartsConfigModal(allSeries, selectedEntries);
     topRow.appendChild(configBtn);
 
@@ -608,7 +608,7 @@ function renderEditableSeriesValues(container, entryKey, points, unit, onValueSa
     const toggleBtn = document.createElement("button");
     toggleBtn.className = "secondary";
     toggleBtn.style.cssText = "font-size:0.8em; padding:3px 10px; margin-top:4px;";
-    toggleBtn.textContent = t("dash_chart_edit_values_btn");
+    toggleBtn.innerHTML = tIcon("dash_chart_edit_values_btn");
     container.appendChild(toggleBtn);
 
     const editWrap = document.createElement("div");
@@ -673,7 +673,7 @@ function openChartPeriodModal(key, onApply) {
     backdrop.className = "modal-backdrop";
     const modal = document.createElement("div");
     modal.className = "modal";
-    modal.innerHTML = `<h3>${t("dash_chart_period_modal_title")}</h3>`;
+    modal.innerHTML = `<h3>${tIcon("dash_chart_period_modal_title")}</h3>`;
 
     const periodRow = document.createElement("div");
     function renderRow() { periodRow.innerHTML = ""; renderPeriodPicker(periodRow, localState, renderRow); }
@@ -719,7 +719,7 @@ function openChartsConfigModal(allSeries, selectedEntries) {
     const modal = document.createElement("div");
     modal.className = "modal";
     modal.style.width = "460px";
-    modal.innerHTML = `<h3>${t("dash_charts_config_title")}</h3><p class="dim" style="font-size:0.85em; margin-top:-8px;">${t("dash_charts_config_hint")}</p>`;
+    modal.innerHTML = `<h3>${tIcon("dash_charts_config_title")}</h3><p class="dim" style="font-size:0.85em; margin-top:-8px;">${t("dash_charts_config_hint")}</p>`;
 
     // Период — теперь тоже здесь, а не отдельным рядом кнопок над графиками
     const periodLabel = document.createElement("div");
@@ -814,7 +814,7 @@ function openChartsConfigModal(allSeries, selectedEntries) {
     modal.appendChild(addLabel);
     const addBtn = document.createElement("button");
     addBtn.className = "secondary";
-    addBtn.textContent = t("add_btn");
+    addBtn.innerHTML = tIcon("add_btn");
     addBtn.style.marginTop = "8px";
     addBtn.onclick = () => {
         if (addSelect.value && !order.some(e => e.key === addSelect.value)) {
@@ -1300,7 +1300,7 @@ function openDayProgressSettingsModal(onSave) {
     backdrop.className = "modal-backdrop";
     const modal = document.createElement("div");
     modal.className = "modal";
-    modal.innerHTML = `<h3>${t("dash_day_progress_settings_title")}</h3>`;
+    modal.innerHTML = `<h3>${tIcon("dash_day_progress_settings_title")}</h3>`;
 
     function checkboxRow(labelText, checked) {
         const label = document.createElement("label");
@@ -2079,7 +2079,7 @@ function renderSetsMetric(m) {
         const addBtn = document.createElement("button");
         addBtn.type = "button";
         addBtn.className = "secondary";
-        addBtn.textContent = t("dash_sets_add_btn");
+        addBtn.innerHTML = tIcon("dash_sets_add_btn");
         addBtn.onclick = () => {
             sets.push({ reps: null, variation: null, time: null });
             open = true;
@@ -2303,7 +2303,7 @@ for (const m of metrics) {
 
     const addParamBtn = document.createElement("button");
     addParamBtn.className = "secondary";
-    addParamBtn.textContent = t("dash_add_body_param_btn");
+    addParamBtn.innerHTML = tIcon("dash_add_body_param_btn");
     addParamBtn.style.marginBottom = "14px";
     addParamBtn.onclick = addBodyParameter;
     card.appendChild(addParamBtn);
@@ -2311,7 +2311,7 @@ for (const m of metrics) {
     const itemsWrap = document.createElement("div");
     itemsWrap.style.marginBottom = "14px";
     const itemsTitle = document.createElement("div");
-    itemsTitle.textContent = t("dash_useful_today_title");
+    itemsTitle.innerHTML = tIcon("dash_useful_today_title");
     itemsTitle.style.marginBottom = "6px";
     itemsWrap.appendChild(itemsTitle);
 
@@ -2363,7 +2363,7 @@ for (const m of metrics) {
     addInput.style.flex = "1";
     const addBtn = document.createElement("button");
     addBtn.className = "secondary";
-    addBtn.textContent = t("add_btn");
+    addBtn.innerHTML = tIcon("add_btn");
     async function addItemToList() {
         const text = addInput.value.trim();
         if (!text) return;
@@ -2696,7 +2696,7 @@ async function openMetricsManagerModal() {
     const modal = document.createElement("div");
     modal.className = "modal";
     modal.style.width = "480px";
-    modal.innerHTML = `<h3>${t("dash_metrics_manager_title")}</h3>`;
+    modal.innerHTML = `<h3>${tIcon("dash_metrics_manager_title")}</h3>`;
 
     if (metrics.length === 0) {
         modal.innerHTML += `<p class="dim">${t("dash_metrics_manager_empty")}</p>`;
@@ -2739,7 +2739,7 @@ async function openMetricsManagerModal() {
     const actions = document.createElement("div");
     actions.className = "modal-actions";
     const addBtn = document.createElement("button");
-    addBtn.textContent = t("dash_add_metric_btn");
+    addBtn.innerHTML = tIcon("dash_add_metric_btn");
     addBtn.onclick = () => addMetric(openMetricsManagerModal);
     const closeBtn = document.createElement("button");
     closeBtn.className = "secondary";
@@ -2888,11 +2888,11 @@ async function renderPlanned(dateStr) {
     customInput.onkeydown = (e) => { if (e.key === "Enter") { e.preventDefault(); addCustom(); } };
     const addCustomBtn = document.createElement("button");
     addCustomBtn.className = "secondary";
-    addCustomBtn.textContent = t("add_btn");
+    addCustomBtn.innerHTML = tIcon("add_btn");
     addCustomBtn.onclick = addCustom;
 
     const addFromGoalsBtn = document.createElement("button");
-    addFromGoalsBtn.textContent = t("dash_planned_add_from_goals_btn");
+    addFromGoalsBtn.innerHTML = tIcon("dash_planned_add_from_goals_btn");
     addFromGoalsBtn.onclick = () => {
         const plannedGoalNames = planned.filter(p => p.type === "goal").map(p => p.text);
         const options = (allGoals || []).filter(g => !g.done && !plannedGoalNames.includes(g.name)).map(g => ({ value: g.name, label: g.name }));

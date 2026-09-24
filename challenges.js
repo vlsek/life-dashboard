@@ -86,7 +86,7 @@ function openCatalogModal() {
     const modal = document.createElement("div");
     modal.className = "modal";
     modal.style.width = "480px";
-    modal.innerHTML = `<h3>${t("ch_catalog_title")}</h3>`;
+    modal.innerHTML = `<h3>${tIcon("ch_catalog_title")}</h3>`;
 
     const list = document.createElement("div");
     for (const tpl of CHALLENGE_TEMPLATES) {
@@ -410,7 +410,7 @@ function renderCumulativeChallengeCard(ch, entries) {
     noteInput.placeholder = ch.item_label ? `${t("ch_item_placeholder_prefix")} ${ch.item_label}` : t("ch_item_placeholder_generic");
     const addBtn = document.createElement("button");
     addBtn.className = "secondary";
-    addBtn.textContent = t("add_btn");
+    addBtn.innerHTML = tIcon("add_btn");
     addBtn.onclick = async () => {
         const { error } = await addCumulativeEntry(ch.id, noteInput.value.trim());
         if (error) { showToast(t("dash_save_error_generic") + error.message, "error"); console.error(error); return; }

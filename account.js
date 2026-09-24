@@ -71,7 +71,7 @@ async function refreshGoogleLinkStatus() {
     if (error) { console.error(error); return; }
     const linked = (data?.identities || []).some(i => i.provider === "google");
     if (linked) {
-        statusEl.textContent = t("acc_google_linked");
+        statusEl.innerHTML = tIcon("acc_google_linked");
         btn.style.display = "none";
     } else {
         statusEl.textContent = t("acc_google_not_linked");
