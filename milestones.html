@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("site_theme")||"dark";document.documentElement.className="theme-"+t;}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#121212">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Dashboard">
+<title data-i18n="ms_title">Вехи</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<main>
+    <h1 data-i18n="ms_h1">🚩 Вехи</h1>
+    <p class="dim" data-i18n="ms_intro">Регулярные дела с датой: замена масла, расходники, визит к врачу. Записываешь, когда сделал в последний раз и как часто повторять — раздел подскажет, когда пора снова.</p>
+    <button id="add-ms-btn" data-i18n="ms_add_btn">➕ Добавить веху</button>
+    <div id="ms-active"></div>
+    <h2 data-i18n="ms_done_h2">✅ Выполненные разовые</h2>
+    <div id="ms-done"></div>
+</main>
+<script src="i18n.js"></script>
+<script src="theme.js"></script>
+<script src="config.js"></script>
+<script src="milestones.js"></script>
+</body>
+</html>

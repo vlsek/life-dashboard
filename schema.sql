@@ -263,3 +263,26 @@ create policy "users delete own avatar" on storage.objects
 -- сохранить — напиши, сделаем скрипт переноса под конкретный случай (нужен будет твой
 -- новый auth UUID и старое имя пользователя). Для пары недель данных обычно проще и
 -- быстрее просто внести их заново вручную.
+
+-- ===== Вехи (миграция 022): регулярные дела с датой и периодом =====
+create table if not exists milestones (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  name text not null,
+  category text default '',
+  last_date date,
+  interval_value int,
+  interval_unit text,
+  due_date date,
+  last_km numeric,
+  interval_km numeric,
+  note text,
+  history jsonb default '[]'::jsonb,
+  done boolean default false,
+  created_at timestamptz default now(),
+  constraint milestones_interval_unit_check check (interval_unit is null or interval_unit in ('day', 'week', 'month', 'year'))
+);
+create index if not exists milestones_user_due_idx on milestones(user_id, due_date);
+alter table milestones enable row level security;
+drop policy if exists "own milestones" on milestones;
+create policy "own milestones" on milestones for all using (auth.uid() = user_id) with check (auth.uid() = user_id);

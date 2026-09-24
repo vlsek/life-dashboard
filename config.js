@@ -38,6 +38,7 @@ const ICON_PATHS = {
     download: '<path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 20h14"/>',
     help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1.9-1.1 1.8"/><path d="M12 17h.01"/>',
     info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5h.01"/>',
+    milestones: '<path d="M12 3v18"/><path d="M12 5h7l2 2.5-2 2.5h-7"/><path d="M12 12H5l-2 2.5L5 17h7"/>',
     done: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
     star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8L12 3.5z"/>',
     book: '<path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13c-3-.5-6 0-8 1.5z"/><path d="M12 6v13"/>',
@@ -109,11 +110,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.53";
+const SITE_VERSION = "0.54";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.54", date: "2026-09-24", changes: [
+        "Новый раздел «Вехи»: регулярные дела с датой — замена масла и расходников в машине, визит к врачу и т.п. Записываешь, когда сделал в последний раз и как часто повторять (дни/недели/месяцы/годы), необязательно пробег; раздел считает срок следующего раза, подсвечивает просроченное и скоро наступающее, ведёт историю выполнений. Кнопка «сделано» переносит веху на следующий срок",
+        "На дашборде появляется баннер, если есть просроченные вехи или срок в ближайшую неделю (можно скрыть до завтра)",
+        "Нужна миграция migrations/022_milestones.sql (один раз в Supabase → SQL Editor)",
+    ]},
     { version: "0.53", date: "2026-09-24", changes: [
         "Вторая волна SVG-иконок: заголовки страниц и блоков, названия окон и подписи кнопок («Добавить», «Настроить» и т.п.) теперь тоже с иконками вместо эмодзи. Добавлены новые иконки: галочка, звезда, книга, список, график, заметка, кубок, медаль, замок",
         "Пользовательские названия, категории и эмодзи метрик по-прежнему показываются как введены",
@@ -285,6 +291,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.54", date: "2026-09-24", changes: [
+        "New section \"Milestones\": recurring things with a date — a car's oil change and consumables, a doctor visit, etc. Note when you last did it and how often to repeat (days/weeks/months/years), optionally the mileage; the page calculates the next due date, highlights overdue and upcoming ones and keeps a completion history. The \"done\" button moves the milestone to its next due date",
+        "The dashboard shows a banner when milestones are overdue or due within a week (can be hidden until tomorrow)",
+        "Requires migration migrations/022_milestones.sql (run once in Supabase → SQL Editor)",
+    ]},
     { version: "0.53", date: "2026-09-24", changes: [
         "Second wave of SVG icons: page and block headings, dialog titles and button labels (\"Add\", \"Configure\", etc.) now use icons instead of emoji too. New icons: check, star, book, list, chart, note, trophy, medal, lock",
         "Your own names, categories and metric emoji are still shown exactly as you entered them",
@@ -979,6 +990,7 @@ function renderNav(active, userEmail) {
         { href: "challenges.html", key: "challenges", i18n: "nav_challenges", icon: "challenges" },
         { href: "english.html", key: "english", i18n: "nav_english", icon: "english" },
         { href: "calendar.html", key: "calendar", i18n: "nav_calendar", icon: "calendar" },
+        { href: "milestones.html", key: "milestones", i18n: "nav_milestones", icon: "milestones" },
         { href: "shop.html", key: "shop", i18n: "nav_shop", icon: "shop" },
         { href: "community.html", key: "community", i18n: "nav_community", icon: "community" },
     ];

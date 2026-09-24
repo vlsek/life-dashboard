@@ -1011,6 +1011,39 @@ async function renderWeekProgress() {
 // Напоминание про недоделанную неделю — показывается только по сб/вс (когда неделя ещё
 // не закрыта), а не постоянно рядом с кружком. Один раз закрыл крестиком — не всплывает
 // повторно в этот же день (localStorage), назавтра снова появится, если актуально.
+// Баннер на дашборде: есть просроченные вехи или срок которых в ближайшую неделю.
+// Скрывается до завтра крестиком; если таблицы вех ещё нет (миграция 022) — молча ничего не показываем.
+async function checkMilestonesReminder() {
+    const dismissKey = "ms_reminder_dismissed";
+    try { if (localStorage.getItem(dismissKey) === todayStr()) return; } catch { /* ignore */ }
+    const soonDate = fmtDate(new Date(Date.now() + 7 * 86400000));
+    const { data, error } = await sb.from("milestones").select("name, due_date").eq("user_id", user.id).eq("done", false).not("due_date", "is", null).lte("due_date", soonDate);
+    if (error || !data?.length) return;
+    const today = todayStr();
+    const overdue = data.filter(m => m.due_date < today);
+    const soon = data.filter(m => m.due_date >= today);
+    const main = document.querySelector("main");
+    if (!main || document.getElementById("ms-reminder")) return;
+
+    const banner = document.createElement("div");
+    banner.id = "ms-reminder";
+    banner.style.cssText = "display:flex; align-items:center; gap:10px; background:var(--bg-card); border:1px solid var(--border); border-left:3px solid " + (overdue.length ? "#d6336c" : "#e0a93b") + "; border-radius:10px; padding:10px 12px; margin-bottom:12px;";
+    const text = document.createElement("div");
+    text.style.flex = "1";
+    const parts = [];
+    if (overdue.length) parts.push(`<span style="color:#d6336c;">${overdue.length} ${escapeHtmlText(t("ms_reminder_overdue"))}</span>`);
+    if (soon.length) parts.push(`<span style="color:#e0a93b;">${soon.length} ${escapeHtmlText(t("ms_reminder_soon"))}</span>`);
+    text.innerHTML = `<strong>${iconSvg("milestones", "margin-right:0.4em;")}${escapeHtmlText(t("ms_reminder_title"))}</strong> · ${parts.join(" · ")}<br><a href="milestones.html" style="color:var(--accent); text-decoration:none; font-size:0.9em;">${escapeHtmlText(t("ms_reminder_open"))} →</a>`;
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "secondary";
+    setIcon(closeBtn, "x");
+    closeBtn.style.padding = "2px 8px";
+    closeBtn.onclick = () => { try { localStorage.setItem(dismissKey, todayStr()); } catch { /* ignore */ } banner.remove(); };
+    banner.appendChild(text);
+    banner.appendChild(closeBtn);
+    main.insertBefore(banner, main.firstChild);
+}
+
 async function checkWeekendGoalReminder() {
     const dow = new Date().getDay(); // 0=вс, 6=сб
     if (dow !== 0 && dow !== 6) return;
@@ -2929,5 +2962,6 @@ async function renderPlanned(dateStr) {
     document.getElementById("customize-dashboard-btn").onclick = openDashboardLayoutModal;
     renderDashboardLayoutAndLoad();
     checkWeekendGoalReminder();
+    checkMilestonesReminder();
     renderWaterBadge();
 })();
