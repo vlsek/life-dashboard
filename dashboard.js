@@ -302,9 +302,7 @@ function computeWeeklyStreak(doneDays, min, todayDate) {
 }
 
 async function computeStreakItems() {
-    const { data: metrics } = await sb.from("metrics").select("*").eq("user_id", user.id).eq("active", true);
-    const { data: allValues } = await sb.from("daily_values").select("*").eq("user_id", user.id);
-    const { data: allNotes } = await sb.from("daily_notes").select("date, items").eq("user_id", user.id);
+    const [metrics, allValues, allNotes] = await Promise.all([getMetrics(), getAllValues(), getAllNotes()]);
 
     const byDay = {};
     (allValues || []).forEach(v => {
@@ -419,11 +417,15 @@ async function renderStreakBadge(container) {
 }
 
 async function buildAvailableSeries() {
-    const { data: bodyParams } = await sb.from("body_parameters").select("*").eq("user_id", user.id).eq("active", true).order("position");
-    const { data: bodyValues } = await sb.from("body_parameter_values").select("*").eq("user_id", user.id).order("date");
-    const { data: metrics } = await sb.from("metrics").select("*").eq("user_id", user.id).eq("active", true).in("type", ["number", "sets"]);
-    const { data: allMetrics } = await sb.from("metrics").select("*").eq("user_id", user.id).eq("active", true);
-    const { data: allValues } = await sb.from("daily_values").select("*").eq("user_id", user.id).order("date");
+    const [bodyParamsRes, bodyValuesRes, allMetrics, allValues] = await Promise.all([
+        sb.from("body_parameters").select("*").eq("user_id", user.id).eq("active", true).order("position"),
+        sb.from("body_parameter_values").select("*").eq("user_id", user.id).order("date"),
+        getMetrics(),
+        getAllValues(),
+    ]);
+    const bodyParams = bodyParamsRes.data;
+    const bodyValues = bodyValuesRes.data;
+    const metrics = allMetrics.filter(m => m.type === "number" || m.type === "sets");
 
     const byDay = {};
     (allValues || []).forEach(v => {
@@ -1844,11 +1846,6 @@ async function renderWaterBadge() {
     badge.onclick = () => openWaterModal(metric, currentMl, normMl);
 }
 
-async function getMetrics() {
-    const { data } = await sb.from("metrics").select("*").eq("user_id", user.id).eq("active", true).order("position");
-    return data || [];
-}
-
 // Небольшая зелёная вспышка рамки поля — подтверждение, что автосохранение сработало
 function flashSaved(el) {
     el.classList.add("saved-flash");
@@ -2975,6 +2972,7 @@ async function renderPlanned(dateStr) {
 }
 
 (async () => {
+    installCacheInvalidation(sb); // следит за записями и держит кэш данных актуальным (см. datacache.js)
     user = await requireAuth();
     if (!user) return;
 

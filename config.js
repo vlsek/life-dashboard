@@ -110,11 +110,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.55";
+const SITE_VERSION = "0.56";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.56", date: "2026-09-24", changes: [
+        "Ускорение загрузки: список метрик и вся история значений/заметок теперь загружаются один раз и хранятся в кэше; после записи обновляются только затронутые дни. Раньше каждая галочка и каждый подход заново скачивали всю историю",
+        "Историю читаем постранично: у Supabase лимит ответа 1000 строк, и без этого стрики и графики у давних пользователей могли считаться по обрезанным данным",
+        "Скрипты загружаются с defer, а к серверам подключаемся заранее (preconnect): страницы показываются раньше",
+    ]},
     { version: "0.55", date: "2026-09-24", changes: [
         "Огонёк стрика теперь горит цветами выбранной темы и слегка мерцает; если стрик на сегодня ещё не засчитан — тусклый пунктирный контур. Исправлен баг с дублированием огонька при вводе нового подхода",
         "Шестерёнка у аватарки стала контрастной и видна на любом фоне",
@@ -300,6 +305,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.56", date: "2026-09-24", changes: [
+        "Faster loading: the metrics list and the whole history of values/notes are now loaded once and cached; after a write only the affected days are refreshed. Before, every tick and every set re-downloaded the whole history",
+        "History is now read page by page: Supabase caps a response at 1000 rows, and without this streaks and charts for long-time users could be computed from truncated data",
+        "Scripts load with defer and the servers are pre-connected (preconnect): pages appear sooner",
+    ]},
     { version: "0.55", date: "2026-09-24", changes: [
         "The streak flame now burns in the colors of the chosen theme and flickers slightly; if today's streak isn't counted yet it is a dim dashed outline. Fixed the bug where the flame got duplicated when entering a new set",
         "The gear next to the avatar is now high-contrast and visible on any background",
