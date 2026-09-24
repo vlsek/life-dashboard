@@ -267,6 +267,40 @@ function computeStreak(sortedDatesSet, fromDate) {
 // Считает серии (streaks) — общая логика для компактного бейджа в шапке профиля
 // и для модалки с полным списком по клику. Раньше это было отдельным блоком "🔥 Streaks"
 // на всю ширину страницы — решили, что он того не стоит, и свернули в шапку.
+// Серия с пропуском "нерасчётных" дней: день из doneSet — +1, день, которого не должно
+// быть по расписанию (isSkip), серию не рвёт и не считается, любой другой — обрыв.
+// Для метрик без расписания isSkip всегда false — поведение как у computeStreak().
+function computeStreakSkipping(doneSet, isSkip, fromDate) {
+    let streak = 0;
+    const cursor = new Date(fromDate);
+    for (let i = 0; i < 3650; i++) {
+        const d = fmtDate(cursor);
+        if (doneSet.has(d)) streak++;
+        else if (!isSkip(d)) break;
+        cursor.setDate(cursor.getDate() - 1);
+    }
+    return streak;
+}
+
+// Серия для метрики "не менее N раз в неделю": считается в неделях (пн-вс).
+// Текущая неделя, пока норма не добрана, серию не рвёт — просто ещё не засчитана.
+function computeWeeklyStreak(doneDays, min, todayDate) {
+    const counts = {};
+    doneDays.forEach(d => { const k = weekStartStr(d); counts[k] = (counts[k] || 0) + 1; });
+    const cur = new Date(weekStartStr(fmtDate(todayDate)) + "T00:00:00");
+    const curCount = counts[fmtDate(cur)] || 0;
+    let streak = curCount >= min ? 1 : 0;
+    for (let i = 0; i < 520; i++) {
+        cur.setDate(cur.getDate() - 7);
+        if ((counts[fmtDate(cur)] || 0) >= min) streak++;
+        else break;
+    }
+    // под угрозой, если добрать норму можно только выполняя метрику каждый из оставшихся дней
+    const needed = min - curCount;
+    const daysLeft = 7 - ((todayDate.getDay() + 6) % 7); // включая сегодня
+    return { streak, atRisk: needed > 0 && needed >= daysLeft };
+}
+
 async function computeStreakItems() {
     const { data: metrics } = await sb.from("metrics").select("*").eq("user_id", user.id).eq("active", true);
     const { data: allValues } = await sb.from("daily_values").select("*").eq("user_id", user.id);
@@ -286,24 +320,44 @@ async function computeStreakItems() {
 
     const items = [];
 
-    // серия "идеальный день" — выполнены все метрики
+    // серия "идеальный день" — выполнены все метрики, которые нужны в этот день по расписанию
+    // (метрики "N раз в неделю" в идеальный день не входят; день без обязательных метрик серию не рвёт)
     if (metrics && metrics.length) {
-        const perfectDays = new Set(Object.keys(byDay).filter(d => metrics.every(m => isMetricDone(m, byDay[d][m.id]))));
-        items.push({ label: t("dash_streak_perfect_days"), streak: computeStreak(perfectDays, startFrom), todayCounted: perfectDays.has(todayStr3) });
+        const expectedOn = (d) => metrics.filter(m => metricExpectedOn(m, d));
+        const perfectDays = new Set(Object.keys(byDay).filter(d => {
+            const exp = expectedOn(d);
+            return exp.length > 0 && exp.every(m => isMetricDone(m, byDay[d][m.id]));
+        }));
+        const isSkip = (d) => expectedOn(d).length === 0;
+        const todayIsRest = isSkip(todayStr3) && !perfectDays.has(todayStr3);
+        items.push({
+            label: t("dash_streak_perfect_days"),
+            streak: computeStreakSkipping(perfectDays, isSkip, startFrom),
+            todayCounted: perfectDays.has(todayStr3) || todayIsRest
+        });
     }
 
     // серия по каждой метрике отдельно
     for (const m of (metrics || [])) {
         const doneDays = new Set(Object.keys(byDay).filter(d => isMetricDone(m, byDay[d][m.id])));
-        const streak = computeStreak(doneDays, startFrom);
-        if (streak > 0) items.push({ label: `${m.icon} ${m.name}`, streak, todayCounted: doneDays.has(todayStr3) });
+        const sched = metricSchedule(m);
+        if (sched?.type === "weekly") {
+            const w = computeWeeklyStreak(doneDays, sched.min, today);
+            if (w.streak > 0) items.push({ label: `${m.icon} ${m.name}`, streak: w.streak, unit: "w", todayCounted: !w.atRisk });
+            continue;
+        }
+        const isSkip = (d) => !metricExpectedOn(m, d) && !doneDays.has(d);
+        const streak = computeStreakSkipping(doneDays, isSkip, startFrom);
+        const todayCounted = doneDays.has(todayStr3) || !metricExpectedOn(m, todayStr3);
+        if (streak > 0) items.push({ label: `${m.icon} ${m.name}`, streak, todayCounted });
     }
 
     // серия "заполнил заметку дня"
     const noteDays = new Set((allNotes || []).filter(n => n.items && n.items.length > 0).map(n => n.date));
     items.push({ label: t("dash_streak_note_filled"), streak: computeStreak(noteDays, startFrom), todayCounted: noteDays.has(todayStr3) });
 
-    items.sort((a, b) => b.streak - a.streak);
+    // серии в днях — выше, недельные (в неделях) — ниже: числа в разных единицах не сравниваем
+    items.sort((a, b) => ((a.unit === "w") - (b.unit === "w")) || (b.streak - a.streak));
     return items.filter(i => i.streak > 0);
 }
 
@@ -330,7 +384,7 @@ function openStreaksModal(items) {
     for (const item of items) {
         const badge = document.createElement("div");
         badge.style.cssText = "background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:8px 14px;" + (item.todayCounted ? "" : " border-color:#d6336c;");
-        badge.innerHTML = `<div style="font-size:1.3em; font-weight:bold; display:flex; align-items:center; gap:4px;">${item.streak} ${STREAK_SOLID_ICON}</div><div class="dim" style="font-size:0.8em;">${item.label}${item.todayCounted ? "" : " · " + t("dash_streak_not_done_today")}</div>`;
+        badge.innerHTML = `<div style="font-size:1.3em; font-weight:bold; display:flex; align-items:center; gap:4px;">${item.streak}${item.unit === "w" ? " " + t("dash_streak_unit_weeks") : ""} ${STREAK_SOLID_ICON}</div><div class="dim" style="font-size:0.8em;">${item.label}${item.todayCounted ? "" : " · " + t("dash_streak_not_done_today")}</div>`;
         wrap.appendChild(badge);
     }
     modal.appendChild(wrap);
@@ -355,7 +409,7 @@ async function renderStreakBadge(container) {
     const top = items[0];
     const badge = document.createElement("div");
     badge.style.cssText = "cursor:pointer; font-weight:bold; white-space:nowrap; display:flex; align-items:center; gap:4px;" + (top.todayCounted ? "" : " color:#d6336c;");
-    badge.innerHTML = `${top.todayCounted ? STREAK_SOLID_ICON : STREAK_OUTLINE_ICON} ${top.streak}`;
+    badge.innerHTML = `${top.todayCounted ? STREAK_SOLID_ICON : STREAK_OUTLINE_ICON} ${top.streak}${top.unit === "w" ? " " + t("dash_streak_unit_weeks") : ""}`;
     badge.title = top.todayCounted
         ? (items.length > 1 ? `${top.label} — ${t("dash_streak_more_hint")}` : top.label)
         : t("dash_streak_at_risk_warning");
@@ -1121,8 +1175,15 @@ async function computeDayProgress() {
 
     if (settings.includeMetrics) {
         const metrics = await getMetrics();
-        done += await calcDailyPoints(user.id, dateStr, metrics);
-        total += metrics.length;
+        const { data: dayVals } = await sb.from("daily_values").select("*").eq("user_id", user.id).eq("date", dateStr);
+        const byMetricToday = {};
+        (dayVals || []).forEach(v => byMetricToday[v.metric_id] = v.value);
+        for (const m of metrics) {
+            const isDone = isMetricDone(m, byMetricToday[m.id]);
+            if (!metricCountsInDay(m, dateStr, isDone)) continue; // сегодня по расписанию не нужна — не штрафуем
+            total++;
+            if (isDone) done++;
+        }
     }
 
     // Бонусные (⭐) пункты дают перевыполнение НЕЗАВИСИМО от того, включён ли сам план
@@ -1184,12 +1245,23 @@ async function computeWeekProgress() {
             const { data: values } = await sb.from("daily_values").select("*").eq("user_id", user.id).in("date", pastOrToday);
             const byDate = {};
             (values || []).forEach(v => { (byDate[v.date] ||= {})[v.metric_id] = v.value; });
+            const weeklyDoneCount = {};
             for (const dateStr of pastOrToday) {
                 const byMetric = byDate[dateStr] || {};
                 for (const m of metrics) {
+                    const isDone = isMetricDone(m, byMetric[m.id]);
+                    if (metricSchedule(m)?.type === "weekly") { if (isDone) weeklyDoneCount[m.id] = (weeklyDoneCount[m.id] || 0) + 1; continue; }
+                    if (!metricCountsInDay(m, dateStr, isDone)) continue;
                     total++;
-                    if (isMetricDone(m, byMetric[m.id])) done++;
+                    if (isDone) done++;
                 }
+            }
+            // "N раз в неделю": в неделю идёт как N пунктов, из которых сделано столько, сколько выполнено дней
+            for (const m of metrics) {
+                const s = metricSchedule(m);
+                if (s?.type !== "weekly") continue;
+                total += s.min;
+                done += Math.min(s.min, weeklyDoneCount[m.id] || 0);
             }
         }
     }
@@ -2435,6 +2507,49 @@ function openMetricFormModal(existing, categoryOptions, onSubmit) {
     inputModeSelect.value = existing?.input_mode ?? "set";
     field(t("dash_metric_field_input_mode"), inputModeSelect);
 
+    // Расписание: каждый день / только в выбранные дни недели / не менее N раз в неделю
+    const sched0 = metricSchedule(existing);
+    const scheduleSelect = document.createElement("select");
+    [["daily", t("dash_schedule_daily")], ["days", t("dash_schedule_days")], ["weekly", t("dash_schedule_weekly")]]
+        .forEach(([v, l]) => { const o = document.createElement("option"); o.value = v; o.textContent = l; scheduleSelect.appendChild(o); });
+    scheduleSelect.value = sched0?.type ?? "daily";
+    field(t("dash_metric_field_schedule"), scheduleSelect);
+    enhanceSelectWithCustomDropdown(scheduleSelect);
+
+    const selectedDays = new Set(sched0?.type === "days" ? sched0.days : [1, 2, 3, 4, 5]);
+    const daysBox = document.createElement("div");
+    daysBox.style.cssText = "margin:-4px 0 10px;";
+    const daysCaption = document.createElement("div");
+    daysCaption.className = "dim";
+    daysCaption.style.cssText = "font-size:0.8em; margin-bottom:6px;";
+    daysCaption.textContent = t("dash_schedule_days_caption");
+    daysBox.appendChild(daysCaption);
+    const daysRow = document.createElement("div");
+    daysRow.style.cssText = "display:flex; flex-wrap:wrap; gap:6px;";
+    const dayNames = t("dash_weekdays_short").split(",");
+    [1, 2, 3, 4, 5, 6, 0].forEach((dow, i) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "pill" + (selectedDays.has(dow) ? " selected" : "");
+        b.textContent = dayNames[i];
+        b.style.minHeight = "0";
+        b.onclick = () => {
+            if (selectedDays.has(dow)) selectedDays.delete(dow); else selectedDays.add(dow);
+            b.classList.toggle("selected", selectedDays.has(dow));
+        };
+        daysRow.appendChild(b);
+    });
+    daysBox.appendChild(daysRow);
+    modal.appendChild(daysBox);
+
+    const weeklyInput = field(t("dash_schedule_weekly_label"), Object.assign(document.createElement("input"), { type: "number", min: 1, max: 7, value: sched0?.type === "weekly" ? sched0.min : 3 }));
+    function applyScheduleState() {
+        daysBox.style.display = scheduleSelect.value === "days" ? "block" : "none";
+        weeklyInput.parentElement.style.display = scheduleSelect.value === "weekly" ? "" : "none";
+    }
+    scheduleSelect.onchange = applyScheduleState;
+    applyScheduleState();
+
     const catSelect = document.createElement("select");
     categoryOptions.forEach(c => { const o = document.createElement("option"); o.value = c.value; o.textContent = c.label; catSelect.appendChild(o); });
     catSelect.value = existing?.category_id ?? "";
@@ -2479,6 +2594,11 @@ function openMetricFormModal(existing, categoryOptions, onSubmit) {
             options_raw: optionsInput.value,
             category_id: catSelect.value,
             input_mode: inputModeSelect.value,
+            schedule: scheduleSelect.value === "days" && selectedDays.size > 0 && selectedDays.size < 7
+                ? { type: "days", days: [...selectedDays].sort((a, b) => a - b) }
+                : scheduleSelect.value === "weekly"
+                    ? { type: "weekly", min: Math.min(7, Math.max(1, parseInt(weeklyInput.value, 10) || 1)) }
+                    : null,
         });
     };
     actions.appendChild(cancelBtn);
@@ -2488,6 +2608,18 @@ function openMetricFormModal(existing, categoryOptions, onSubmit) {
     backdrop.appendChild(modal);
     document.body.appendChild(backdrop);
     nameInput.focus();
+}
+
+// Расписание пишем в базу только если оно задано (или колонка уже есть у метрики) —
+// так добавление/правка метрик работает и до применения миграции 021.
+function scheduleFields(res, existing) {
+    if (res.schedule || (existing && "schedule" in existing)) return { schedule: res.schedule };
+    return {};
+}
+function showMetricSaveError(error) {
+    const hint = /schedule/i.test(error.message || "") ? " — " + t("dash_schedule_migration_hint") : "";
+    showToast(t("dash_save_error_generic") + error.message + hint, "error");
+    console.error(error);
 }
 
 function parseOptionsRaw(raw) {
@@ -2513,9 +2645,9 @@ async function addMetric(onDone) {
             user_id: user.id, name: res.name, icon: res.icon, type: res.type,
             goal_direction: res.goal_direction, goal_value: res.goal_value, unit: res.unit,
             options: parseOptionsRaw(res.options_raw), position, active: true, category_id: categoryId,
-            input_mode: res.input_mode
+            input_mode: res.input_mode, ...scheduleFields(res, null)
         });
-        if (error) { showToast(t("dash_save_error_generic") + error.message, "error"); console.error(error); return; }
+        if (error) { showMetricSaveError(error); return; }
         renderDay();
         loadCharts();
         if (onDone) onDone(); else openMetricsManagerModal();
@@ -2535,9 +2667,9 @@ async function editMetric(m, onDone) {
             name: res.name, icon: res.icon, type: res.type,
             goal_direction: res.goal_direction, goal_value: res.goal_value, unit: res.unit,
             options: parseOptionsRaw(res.options_raw), category_id: categoryId,
-            input_mode: res.input_mode
+            input_mode: res.input_mode, ...scheduleFields(res, m)
         }).eq("id", m.id);
-        if (error) { showToast(t("dash_save_error_generic") + error.message, "error"); console.error(error); return; }
+        if (error) { showMetricSaveError(error); return; }
         renderDay();
         loadCharts();
         if (onDone) onDone();
@@ -2579,6 +2711,14 @@ async function openMetricsManagerModal() {
             goalCell.textContent = m.type === "number"
                 ? `${m.goal_direction === "at_most" ? "<" : "≥"} ${m.goal_value ?? 0} ${m.unit || ""}`
                 : m.type === "boolean" ? t("dash_metric_goal_bool") : t("dash_metric_goal_multiselect");
+            const sched = metricSchedule(m);
+            if (sched) {
+                const names = t("dash_weekdays_short").split(",");
+                const summary = sched.type === "days"
+                    ? [1, 2, 3, 4, 5, 6, 0].filter(d => sched.days.includes(d)).map(d => names[[1, 2, 3, 4, 5, 6, 0].indexOf(d)]).join(" ")
+                    : `${sched.min}${t("dash_schedule_weekly_short")}`;
+                goalCell.textContent += ` · ${summary}`;
+            }
             const actionsCell = row.insertCell();
             actionsCell.style.whiteSpace = "nowrap";
             const editBtn = document.createElement("button");

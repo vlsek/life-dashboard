@@ -49,6 +49,7 @@ create table if not exists metrics (
   options jsonb default '[]',              -- для multiselect: [{"key":"gym","label":"🏋️ Зал"}, ...]
   position int default 0,
   active boolean default true,
+  schedule jsonb,                          -- миграция 021: null = каждый день; {"type":"days","days":[1,3]} | {"type":"weekly","min":5}
   created_at timestamptz default now()
 );
 

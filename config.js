@@ -100,11 +100,17 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.51";
+const SITE_VERSION = "0.52";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.52", date: "2026-09-24", changes: [
+        "«Рваные» ежедневные метрики: у метрики появилось расписание — каждый день, только в выбранные дни недели или не менее N раз в неделю (настраивается в ⚙️ метрики)",
+        "Стрик метрики по дням недели не рвётся в дни, когда её делать не нужно; «идеальный день» учитывает только метрики, нужные в этот день. Метрики «N раз в неделю» считают серию в неделях (нед.), а если добрать норму можно только каждый оставшийся день, серия помечается как под угрозой",
+        "Проценты дня и недели не штрафуют за метрики вне расписания: они учитываются только если сделаны, а «N раз в неделю» идёт в неделю как N пунктов",
+        "Нужна миграция migrations/021_metric_schedule.sql (один раз в Supabase → SQL Editor); серия в лидерборде считается как раньше",
+    ]},
     { version: "0.51", date: "2026-09-24", changes: [
         "Единый набор SVG-иконок вместо эмодзи в интерфейсе: навигация (шапка и боковое меню), кнопки «изменить», «удалить», «настройки», «закрыть», «добавить», баллы, огонёк стрика и капля воды. Иконки берут цвет темы и масштабируются вместе с текстом",
         "Иконки, которые ты сам выбираешь для метрик и параметров тела, остаются эмодзи — это твои данные",
@@ -266,6 +272,12 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.52", date: "2026-09-24", changes: [
+        "\"Ragged\" daily metrics: a metric can now have a schedule — every day, only on chosen weekdays, or at least N times a week (set in the metric's ⚙️)",
+        "A weekday-scheduled metric's streak doesn't break on days it isn't due; \"perfect day\" only considers metrics due that day. \"N times a week\" metrics count their streak in weeks (wk), and it is flagged at risk when the quota can only be met by doing it every remaining day",
+        "Day and week percentages no longer penalize off-schedule metrics: they count only when done, and \"N times a week\" counts as N items for the week",
+        "Requires migration migrations/021_metric_schedule.sql (run once in Supabase → SQL Editor); the leaderboard streak is calculated as before",
+    ]},
     { version: "0.51", date: "2026-09-24", changes: [
         "A unified set of SVG icons replaces emoji across the interface: navigation (header and side menu), edit/delete/settings/close/add buttons, points, the streak flame and the water drop. Icons follow the theme color and scale with the text",
         "Icons you pick yourself for metrics and body parameters stay emoji — that's your data",
@@ -505,6 +517,39 @@ function isMetricDone(metric, value) {
         return numeric >= goal;
     }
     return false;
+}
+
+// ---- Расписание метрики (см. migrations/021) ----
+// null = каждый день; {type:"days", days:[0..6]} = только в эти дни недели (0 = воскресенье);
+// {type:"weekly", min:N} = не менее N раз в неделю (неделя пн-вс) в любые дни.
+function metricSchedule(m) {
+    const s = m?.schedule;
+    if (!s || typeof s !== "object") return null;
+    if (s.type === "days" && Array.isArray(s.days) && s.days.length > 0 && s.days.length < 7) return { type: "days", days: s.days };
+    if (s.type === "weekly" && s.min >= 1) return { type: "weekly", min: Math.min(7, Math.floor(s.min)) };
+    return null;
+}
+function weekdayOf(dateStr) { return new Date(dateStr + "T00:00:00").getDay(); }
+
+// Нужно ли выполнять метрику именно в этот день (для weekly — нет, она не привязана к дню)
+function metricExpectedOn(m, dateStr) {
+    const s = metricSchedule(m);
+    if (!s) return true;
+    if (s.type === "days") return s.days.includes(weekdayOf(dateStr));
+    return false;
+}
+
+// Учитывать ли метрику в "проценте дня": обязательные на этот день — да; сделанные вне
+// расписания и "N раз в неделю" — только если сделаны (это бонус, а не штраф за отдых)
+function metricCountsInDay(m, dateStr, isDone) {
+    return metricExpectedOn(m, dateStr) || isDone;
+}
+
+// Понедельник недели, в которую попадает дата (неделя пн-вс, как в прогрессе недели)
+function weekStartStr(dateStr) {
+    const d = new Date(dateStr + "T00:00:00");
+    d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+    return fmtDate(d);
 }
 
 async function calcDailyPoints(userId, dateStr, metrics) {
