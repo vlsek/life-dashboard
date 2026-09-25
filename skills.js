@@ -93,7 +93,7 @@ function renderSkillRow(table, s, { withControls = true } = {}) {
     barCell.textContent = bar(s.progress ?? 0);
 
     row.insertCell().textContent = `${s.progress ?? 0}%`;
-    row.insertCell().textContent = `${s.points ?? 10} ⭐`;
+    row.insertCell().innerHTML = `${s.points ?? 10} ${starIcon()}`;
 
     if (withControls) {
         const btnCell = row.insertCell();
@@ -213,7 +213,7 @@ function renderBookRow(table, b, { showDate = false } = {}) {
     titleCell.textContent = b.author ? `${b.title} — ${b.author}` : b.title;
     if (b.status === "done") titleCell.className = "done-text";
 
-    row.insertCell().textContent = `${b.points ?? 10} ⭐`;
+    row.insertCell().innerHTML = `${b.points ?? 10} ${starIcon()}`;
     if (showDate) row.insertCell().textContent = b.done_date ? fmtRu(b.done_date) : "";
 
     const actionsCell = row.insertCell();

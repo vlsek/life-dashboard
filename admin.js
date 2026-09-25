@@ -31,7 +31,7 @@ async function render() {
         nameCell.textContent = u.display_name || "—";
         if (u.user_id === user.id) nameCell.style.cssText = "font-weight:bold; color:var(--accent);";
         row.insertCell().textContent = u.email;
-        row.insertCell().textContent = u.is_admin ? "✅" : "";
+        row.insertCell().innerHTML = u.is_admin ? iconSvg("done", "color:var(--accent);") : "";
         row.insertCell().textContent = fmtRu(u.created_at?.slice(0, 10));
 
         const actionsCell = row.insertCell();

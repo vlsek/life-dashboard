@@ -301,6 +301,25 @@ function computeWeeklyStreak(doneDays, min, todayDate) {
     return { streak, atRisk: needed > 0 && needed >= daysLeft };
 }
 
+// Серия для метрики "не чаще N раз в неделю": в отличие от "не менее", превышение лимита
+// нельзя отменить в течение недели, поэтому текущая неделя засчитывается предварительно, пока
+// лимит не превышен, а прошлые недели — только если лимит не был превышен.
+function computeAtMostWeeklyStreak(doneCountByWeek, max, todayDate, earliestWeekStart) {
+    const cur = new Date(weekStartStr(fmtDate(todayDate)) + "T00:00:00");
+    const curCount = doneCountByWeek[fmtDate(cur)] || 0;
+    let streak = curCount <= max ? 1 : 0;
+    for (let i = 0; i < 520; i++) {
+        cur.setDate(cur.getDate() - 7);
+        // недостаток "не чаще": 0 обращений в непрослеженную неделю тоже "укладывается в лимит",
+        // поэтому останавливаемся на границе самых ранних данных, а не когда встретим превышение
+        if (earliestWeekStart && fmtDate(cur) < earliestWeekStart) break;
+        if ((doneCountByWeek[fmtDate(cur)] || 0) <= max) streak++;
+        else break;
+    }
+    // под угрозой — лимит уже исчерпан или ещё одно выполнение его исчерпает
+    return { streak, atRisk: curCount >= max };
+}
+
 async function computeStreakItems() {
     const [metrics, allValues, allNotes] = await Promise.all([getMetrics(), getAllValues(), getAllNotes()]);
 
@@ -315,6 +334,8 @@ async function computeStreakItems() {
     const todayStr3 = fmtDate(today);
     // если сегодня ещё не заполнено — считаем серию со вчера, чтобы не сбрасывало на 0 раньше времени
     const startFrom = byDay[todayStr3] ? today : new Date(today.getTime() - 86400000);
+    const earliestDate = Object.keys(byDay).length ? Object.keys(byDay).sort()[0] : todayStr3;
+    const earliestWeekStart = weekStartStr(earliestDate);
 
     const items = [];
 
@@ -344,8 +365,21 @@ async function computeStreakItems() {
             if (w.streak > 0) items.push({ label: iconLabelText(m.icon, m.name), labelHtml: labelHtml(m.icon, m.name), streak: w.streak, unit: "w", todayCounted: !w.atRisk });
             continue;
         }
+        if (sched?.type === "at_most") {
+            const counts = {};
+            doneDays.forEach(d => { const k = weekStartStr(d); counts[k] = (counts[k] || 0) + 1; });
+            const w = computeAtMostWeeklyStreak(counts, sched.max, today, earliestWeekStart);
+            if (w.streak > 0) items.push({ label: iconLabelText(m.icon, m.name), labelHtml: labelHtml(m.icon, m.name), streak: w.streak, unit: "w", todayCounted: !w.atRisk });
+            continue;
+        }
         const isSkip = (d) => !metricExpectedOn(m, d) && !doneDays.has(d);
-        const streak = computeStreakSkipping(doneDays, isSkip, startFrom);
+        let streak = computeStreakSkipping(doneDays, isSkip, startFrom);
+        // Импортированный стрик (см. migrations/026): добавляется поверх посчитанного, только пока
+        // посчитанный стрик без разрывов доходит до даты импорта — иначе они больше не непрерывны.
+        if (m.streak_import_days > 0 && m.streak_import_date) {
+            const streakStart = fmtDate(new Date(startFrom.getTime() - (streak > 0 ? (streak - 1) : 0) * 86400000));
+            if (streak > 0 && streakStart <= m.streak_import_date) streak += m.streak_import_days;
+        }
         const todayCounted = doneDays.has(todayStr3) || !metricExpectedOn(m, todayStr3);
         if (streak > 0) items.push({ label: iconLabelText(m.icon, m.name), labelHtml: labelHtml(m.icon, m.name), streak, todayCounted });
     }
@@ -1170,35 +1204,37 @@ function renderHeaderProgressBadge(basePct, bonusPct, totalPct, titleText) {
 
 // Вариант «кружок недели в шапке»: тот же слот, что у кружка дня, но выглядит иначе —
 // пунктирная дорожка и подпись «нед», чтобы сразу было видно, что это неделя.
+// Кружок недели в шапке нарочно другой формы, чем кружок дня (скруглённый квадрат вместо
+// круга, толще обводка) — так видно с первого взгляда, что это неделя, без подписи "нед".
 function renderHeaderWeekBadge(basePct, bonusPct, totalPct, titleText) {
     const topbar = document.querySelector(".topbar");
     if (!topbar) return;
     removeHeaderWeekBadge();
 
-    const r = 13;
-    const circumference = 2 * Math.PI * r;
-    const offset = circumference * (1 - basePct);
+    // периметр скруглённого квадрата 24×24 с радиусом угла 6 (4 прямые стороны + 4 дуги)
+    const side = 24, rx = 6;
+    const perimeter = 4 * (side - 2 * rx) + 2 * Math.PI * rx;
+    const offset = perimeter * (1 - basePct);
     const bonusFraction = Math.min(1, bonusPct / 100);
-    const offsetBonus = circumference * (1 - bonusFraction);
+    const offsetBonus = perimeter * (1 - bonusFraction);
 
     const badge = document.createElement("button");
     badge.type = "button";
     badge.id = "week-progress-header-badge";
     badge.title = titleText;
     badge.onclick = () => openDayProgressSettingsModal(loadProfile);
-    badge.style.cssText = "background:transparent; border:none; cursor:pointer; display:flex; align-items:center; gap:4px; height:32px; min-height:0; flex-shrink:0; padding:0 4px;";
+    badge.style.cssText = "background:transparent; border:none; cursor:pointer; display:flex; align-items:center; height:32px; min-height:0; width:32px; flex-shrink:0; padding:0;";
     badge.innerHTML = `
         <span style="position:relative; width:32px; height:32px; display:block;">
             <svg width="32" height="32" viewBox="0 0 32 32" style="transform: rotate(-90deg); display:block;">
-                <circle cx="16" cy="16" r="${r}" fill="none" stroke="var(--border)" stroke-width="3" stroke-dasharray="3 3"/>
-                <circle cx="16" cy="16" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3"
-                    stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
-                ${bonusPct > 0 ? `<circle cx="16" cy="16" r="${r}" fill="none" stroke="#d6336c" stroke-width="3"
-                    stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offsetBonus}"/>` : ""}
+                <rect x="4" y="4" width="${side}" height="${side}" rx="${rx}" fill="none" stroke="var(--border)" stroke-width="4" stroke-dasharray="3 3"/>
+                <rect x="4" y="4" width="${side}" height="${side}" rx="${rx}" fill="none" stroke="var(--accent)" stroke-width="4"
+                    stroke-linecap="round" stroke-dasharray="${perimeter}" stroke-dashoffset="${offset}"/>
+                ${bonusPct > 0 ? `<rect x="4" y="4" width="${side}" height="${side}" rx="${rx}" fill="none" stroke="#d6336c" stroke-width="4"
+                    stroke-linecap="round" stroke-dasharray="${perimeter}" stroke-dashoffset="${offsetBonus}"/>` : ""}
             </svg>
             <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; color:var(--text);">${totalPct}%</span>
-        </span>
-        <span style="font-size:0.65em; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.03em;">${t("dash_week_short")}</span>`;
+        </span>`;
     (document.getElementById("topbar-right") || topbar).appendChild(badge);
 }
 
@@ -1215,6 +1251,7 @@ async function computeDayProgress() {
         (dayVals || []).forEach(v => byMetricToday[v.metric_id] = v.value);
         for (const m of metrics) {
             const isDone = isMetricDone(m, byMetricToday[m.id]);
+            if (metricSchedule(m)?.type === "at_most") continue; // не дневной пункт — считается в неделе
             if (!metricCountsInDay(m, dateStr, isDone)) continue; // сегодня по расписанию не нужна — не штрафуем
             total++;
             if (isDone) done++;
@@ -1285,18 +1322,19 @@ async function computeWeekProgress() {
                 const byMetric = byDate[dateStr] || {};
                 for (const m of metrics) {
                     const isDone = isMetricDone(m, byMetric[m.id]);
-                    if (metricSchedule(m)?.type === "weekly") { if (isDone) weeklyDoneCount[m.id] = (weeklyDoneCount[m.id] || 0) + 1; continue; }
+                    const sc = metricSchedule(m);
+                    if (sc?.type === "weekly" || sc?.type === "at_most") { if (isDone) weeklyDoneCount[m.id] = (weeklyDoneCount[m.id] || 0) + 1; continue; }
                     if (!metricCountsInDay(m, dateStr, isDone)) continue;
                     total++;
                     if (isDone) done++;
                 }
             }
-            // "N раз в неделю": в неделю идёт как N пунктов, из которых сделано столько, сколько выполнено дней
+            // "N раз в неделю": в неделю идёт как N пунктов, из которых сделано столько, сколько выполнено дней.
+            // "Не чаще N раз в неделю": один пункт недели — уложился в лимит или нет.
             for (const m of metrics) {
                 const s = metricSchedule(m);
-                if (s?.type !== "weekly") continue;
-                total += s.min;
-                done += Math.min(s.min, weeklyDoneCount[m.id] || 0);
+                if (s?.type === "weekly") { total += s.min; done += Math.min(s.min, weeklyDoneCount[m.id] || 0); }
+                else if (s?.type === "at_most") { total += 1; if ((weeklyDoneCount[m.id] || 0) <= s.max) done += 1; }
             }
         }
     }
@@ -1614,6 +1652,18 @@ function findWaterMetric(metrics) {
     return (metrics || []).find(m => metricIconKey(m.icon) === "droplet" || /вода|water/i.test(m.name || ""));
 }
 
+// Возвращает { ml, weightKg } или null, если веса нет — используется и для расчёта, и для
+// текста подсказки (откуда взялось число)
+async function getAutoWaterNorm() {
+    const { data: params } = await sb.from("body_parameters").select("*").eq("user_id", user.id);
+    const weightParam = (params || []).find(p => metricIconKey(p.icon) === "scale" || /вес|weight/i.test(p.name || ""));
+    if (!weightParam) return null;
+    const { data: values } = await sb.from("body_parameter_values").select("*").eq("user_id", user.id).eq("parameter_id", weightParam.id).order("date", { ascending: false }).limit(1);
+    const weightKg = values?.[0]?.value;
+    if (!weightKg) return null;
+    return { ml: Math.round(weightKg * 30), weightKg };
+}
+
 async function getAutoWaterNormMl() {
     const { data: params } = await sb.from("body_parameters").select("*").eq("user_id", user.id);
     const weightParam = (params || []).find(p => metricIconKey(p.icon) === "scale" || /вес|weight/i.test(p.name || ""));
@@ -1664,7 +1714,9 @@ function openWaterModal(metric, currentMl, normMl) {
     backdrop.className = "modal-backdrop";
     const modal = document.createElement("div");
     modal.className = "modal";
-    modal.innerHTML = `<h3>${iconSvg("droplet", "color:#3b9ee5; margin-right:0.45em;")}${escapeHtmlText(t("dash_water_modal_title"))}</h3>`;
+    const titleH3 = document.createElement("h3");
+    titleH3.innerHTML = `${iconSvg("droplet", "color:var(--accent); margin-right:0.45em;")}${escapeHtmlText(t("dash_water_modal_title"))}`;
+    modal.appendChild(titleH3);
 
     // Дата, за которую вносим воду: по умолчанию сегодня, можно выбрать любой прошлый день
     let dateStr = fmtDate(new Date());
@@ -1690,7 +1742,7 @@ function openWaterModal(metric, currentMl, normMl) {
     const barOuter = document.createElement("div");
     barOuter.style.cssText = "background:var(--bg); border:1px solid var(--border); border-radius:8px; height:14px; overflow:hidden; margin-bottom:14px;";
     const barInner = document.createElement("div");
-    barInner.style.cssText = "height:100%; background:#3b9ee5; transition:width 0.2s;";
+    barInner.style.cssText = "height:100%; background:var(--accent); transition:width 0.2s;";
     barOuter.appendChild(barInner);
     modal.appendChild(barOuter);
 
@@ -1698,7 +1750,6 @@ function openWaterModal(metric, currentMl, normMl) {
         const pct = norm > 0 ? Math.min(100, Math.round(amountMl / norm * 100)) : 0;
         amountP.textContent = `${amountMl} / ${norm} мл (${pct}%)`;
         barInner.style.width = pct + "%";
-        barInner.style.background = pct >= 100 ? "#f5b82e" : "#3b9ee5";
     }
     refreshLabel();
 
@@ -1740,7 +1791,26 @@ function openWaterModal(metric, currentMl, normMl) {
 
     const goalLabel = document.createElement("label");
     goalLabel.style.cssText = "display:block; margin-top:16px; font-size:0.85em; color:var(--text-dim);";
-    goalLabel.textContent = t("dash_water_goal_label");
+    const goalLabelRow = document.createElement("span");
+    goalLabelRow.style.cssText = "display:inline-flex; align-items:center; gap:5px;";
+    goalLabelRow.textContent = t("dash_water_goal_label");
+    const goalInfoBtn = document.createElement("button");
+    goalInfoBtn.type = "button";
+    goalInfoBtn.className = "secondary";
+    setIcon(goalInfoBtn, "info");
+    goalInfoBtn.style.cssText = "min-height:0; width:18px; height:18px; padding:0; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;";
+    goalInfoBtn.onclick = async (e) => {
+        e.preventDefault();
+        const auto = await getAutoWaterNorm();
+        const text = metric.goal_value != null
+            ? t("dash_water_info_manual")
+            : auto
+                ? `${t("dash_water_info_auto_prefix")} ${auto.weightKg} ${t("dash_water_info_auto_kg")} × 30 ${t("dash_water_info_auto_ml_per_kg")} = ${auto.ml} ${getLang() === "en" ? "ml" : "мл"}.\n\n${t("dash_water_info_editable")}`
+                : `${t("dash_water_info_no_weight")}\n\n${t("dash_water_info_editable")}`;
+        alert(text);
+    };
+    goalLabelRow.appendChild(goalInfoBtn);
+    goalLabel.appendChild(goalLabelRow);
     const goalInput = document.createElement("input");
     goalInput.type = "number";
     goalInput.value = metric.goal_value ?? normMl;
@@ -1812,30 +1882,29 @@ async function renderWaterBadge() {
     const currentMl = await getTodayWaterMl(metric);
     const pct = normMl > 0 ? Math.min(1, currentMl / normMl) : 0;
     const full = pct >= 1;
-    // при 100% стакан становится золотым; цвет темы уже занят кружком прогресса, поэтому именно золото
-    // Стакан: стекло с бликом, вода с градиентом и волной на поверхности. При 100% — золотой.
-    const waterTop = full ? "#ffd86b" : "#7cc6f5";
-    const waterBottom = full ? "#e8a417" : "#2f8fdc";
-    const rimColor = full ? "#e8a417" : "var(--text-dim)";
-    const levelY = 26 - pct * 20; // 26 — дно, 6 — верхний край воды
-    const waveAmp = pct > 0 && pct < 1 ? 1.1 : 0;
+    // Стакан: округлая форма, вода и контур в цвете темы (var(--accent) через style — подхватывает
+    // смену темы сама, без перерисовки). При 100% — просто более насыщенный акцент, без золота.
+    const levelY = 22.5 - pct * 16.5; // 22.5 — низ округлой части, 6 — верх у горлышка
+    const waveAmp = pct > 0 && pct < 1 ? 1.0 : 0;
+    const GLASS_OUTLINE = "M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3.2L4.6 5.3z";
+    const rimStyle = full ? "stroke:var(--accent);" : "stroke:var(--text-dim);";
     badge.title = `💧 ${currentMl} / ${normMl} мл`;
     badge.innerHTML = `
         <svg width="24" height="30" viewBox="0 0 24 30" style="display:block;" aria-hidden="true">
             <defs>
                 <linearGradient id="water-grad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stop-color="${waterTop}"/>
-                    <stop offset="1" stop-color="${waterBottom}"/>
+                    <stop offset="0" style="stop-color:color-mix(in srgb, var(--accent) ${full ? 65 : 55}%, white ${full ? 0 : 30}%);"/>
+                    <stop offset="1" style="stop-color:var(--accent);"/>
                 </linearGradient>
-                <clipPath id="water-glass-clip"><path d="M4.2 4.5h15.6l-1.9 22.2a1.8 1.8 0 0 1-1.8 1.6H7.9a1.8 1.8 0 0 1-1.8-1.6L4.2 4.5z"/></clipPath>
+                <clipPath id="water-glass-clip"><path d="${GLASS_OUTLINE}"/></clipPath>
             </defs>
             <g clip-path="url(#water-glass-clip)">
-                <rect x="0" y="0" width="24" height="30" fill="${rimColor}" fill-opacity="0.08"/>
-                ${pct > 0 ? `<path d="M0 ${levelY} q3 ${-waveAmp} 6 0 t6 0 t6 0 t6 0 V30 H0 Z" fill="url(#water-grad)"/>` : ""}
+                <rect x="0" y="0" width="24" height="30" style="fill:var(--text-dim); fill-opacity:0.07;"/>
+                ${pct > 0 ? `<path d="M0 ${levelY.toFixed(1)} q3 ${-waveAmp} 6 0 t6 0 t6 0 t6 0 V30 H0 Z" fill="url(#water-grad)"/>` : ""}
             </g>
-            <path d="M4.2 4.5h15.6l-1.9 22.2a1.8 1.8 0 0 1-1.8 1.6H7.9a1.8 1.8 0 0 1-1.8-1.6L4.2 4.5z" fill="none" stroke="${rimColor}" stroke-width="1.6" stroke-linejoin="round"/>
-            <path d="M3.2 4.5h17.6" stroke="${rimColor}" stroke-width="1.6" stroke-linecap="round"/>
-            <path d="M7.4 8.5l1 14" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="${GLASS_OUTLINE}" fill="none" style="${rimStyle}" stroke-width="1.6" stroke-linejoin="round"/>
+            <ellipse cx="12" cy="5.3" rx="7.4" ry="1.25" fill="none" style="${rimStyle}" stroke-width="1.4"/>
+            <path d="M7.6 8.5l0.9 12.5" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.2" stroke-linecap="round"/>
         </svg>`;
     badge.onclick = () => openWaterModal(metric, currentMl, normMl);
 }
@@ -1893,6 +1962,18 @@ async function renderDay() {
         renderScore(metrics, pending);
         pushPointToChart("metric:" + m.id, dateStr, metricNumericValue(m, value)); // обновить график точечно, без мигания всего блока
         if (dateStr === fmtDate(new Date())) { renderDayProgressRing(); renderWeekProgress(); refreshStreakBadge(); } // кольцо прогресса дня на аватарке — сразу же, без ожидания обновления страницы
+        refreshRemainingHighlights();
+    }
+
+    // Подсветка того, что ещё осталось сделать сегодня: у метрик, нужных сегодня и ещё не
+    // выполненных, тонкая полоса слева. Выполненные и метрики вне расписания на сегодня — без неё.
+    function refreshRemainingHighlights() {
+        card.querySelectorAll("[data-metric-id]").forEach(el => {
+            const m = metrics.find(x => x.id === el.dataset.metricId);
+            if (!m) return;
+            const remaining = metricExpectedOn(m, dateStr) && !isMetricDone(m, pending[m.id]);
+            el.classList.toggle("metric-remaining", remaining);
+        });
     }
 
     async function autoSaveBodyParam(p, value, inputEl) {
@@ -1931,6 +2012,7 @@ function renderSetsMetric(m) {
     const box = document.createElement("div");
     box.className = "card";
     box.style.marginBottom = "14px";
+    box.dataset.metricId = m.id;
 
     // Особенность подхода (например "широкий хват") — своя мини-подсказка вместо нативного
     // <datalist>: показываем список при фокусе/вводе, с иконкой ✕ у каждого варианта, чтобы
@@ -2106,11 +2188,7 @@ function renderSetsMetric(m) {
                 repsInput.style.width = "70px";
                 repsInput.placeholder = t("dash_sets_reps_placeholder");
                 repsInput.value = s.reps ?? "";
-                repsInput.onchange = () => {
-                    s.reps = repsInput.value === "" ? null : (parseFloat(repsInput.value) || 0);
-                    if (s.reps != null && !s.time) { s.time = nowHHMM(); timeInput.value = s.time; }
-                    persist();
-                };
+                repsInput.onchange = () => { s.reps = repsInput.value === "" ? null : (parseFloat(repsInput.value) || 0); persist(); };
                 repsCell.appendChild(repsInput);
 
                 const varCell = row.insertCell();
@@ -2136,7 +2214,7 @@ function renderSetsMetric(m) {
         addBtn.className = "secondary";
         addBtn.innerHTML = tIcon("dash_sets_add_btn");
         addBtn.onclick = () => {
-            sets.push({ reps: null, variation: null, time: null });
+            sets.push({ reps: null, variation: null, time: nowHHMM() });
             open = true;
             persist();
             renderBody();
@@ -2156,6 +2234,7 @@ for (const m of visibleMetrics) {
     if (m.type === "number") {
         const wrap = document.createElement("div");
         wrap.style.cssText = "display:flex; flex-direction:column; gap:4px;";
+        wrap.dataset.metricId = m.id;
         const labelRow = document.createElement("div");
         labelRow.style.cssText = "display:flex; align-items:center; gap:6px; flex-wrap:wrap;";
         const labelText = document.createElement("span");
@@ -2270,6 +2349,7 @@ for (const m of visibleMetrics) {
             pending[m.id] = cb.checked;
             autoSaveMetric(m, pending[m.id]);
         };
+        row.dataset.metricId = m.id;
         const labelSpan = document.createElement("span");
         labelSpan.innerHTML = labelHtml(m.icon, m.name);
         row.appendChild(cb);
@@ -2283,6 +2363,7 @@ for (const m of visibleMetrics) {
     if (m.type === "multiselect") {
         const wrap = document.createElement("div");
         wrap.style.marginBottom = "14px";
+        wrap.dataset.metricId = m.id;
         const wLabel = document.createElement("div");
         wLabel.style.cssText = "display:flex; align-items:center; gap:6px; margin-bottom:6px;";
         const labelText = document.createElement("span");
@@ -2355,6 +2436,7 @@ for (const m of visibleMetrics) {
         bodyGrid.appendChild(wrap);
     }
     card.appendChild(bodyGrid);
+    refreshRemainingHighlights();
 
     const addParamBtn = document.createElement("button");
     addParamBtn.className = "secondary";
@@ -2570,7 +2652,7 @@ function openMetricFormModal(existing, categoryOptions, onSubmit) {
     // Расписание: каждый день / только в выбранные дни недели / не менее N раз в неделю
     const sched0 = metricSchedule(existing);
     const scheduleSelect = document.createElement("select");
-    [["daily", t("dash_schedule_daily")], ["days", t("dash_schedule_days")], ["weekly", t("dash_schedule_weekly")]]
+    [["daily", t("dash_schedule_daily")], ["days", t("dash_schedule_days")], ["weekly", t("dash_schedule_weekly")], ["at_most", t("dash_schedule_at_most")]]
         .forEach(([v, l]) => { const o = document.createElement("option"); o.value = v; o.textContent = l; scheduleSelect.appendChild(o); });
     scheduleSelect.value = sched0?.type ?? "daily";
     field(t("dash_metric_field_schedule"), scheduleSelect);
@@ -2603,9 +2685,11 @@ function openMetricFormModal(existing, categoryOptions, onSubmit) {
     modal.appendChild(daysBox);
 
     const weeklyInput = field(t("dash_schedule_weekly_label"), Object.assign(document.createElement("input"), { type: "number", min: 1, max: 7, value: sched0?.type === "weekly" ? sched0.min : 3 }));
+    const atMostInput = field(t("dash_schedule_at_most_label"), Object.assign(document.createElement("input"), { type: "number", min: 0, max: 7, value: sched0?.type === "at_most" ? sched0.max : 2 }));
     function applyScheduleState() {
         daysBox.style.display = scheduleSelect.value === "days" ? "block" : "none";
         weeklyInput.parentElement.style.display = scheduleSelect.value === "weekly" ? "" : "none";
+        atMostInput.parentElement.style.display = scheduleSelect.value === "at_most" ? "" : "none";
     }
     scheduleSelect.onchange = applyScheduleState;
     applyScheduleState();
@@ -2633,6 +2717,17 @@ function openMetricFormModal(existing, categoryOptions, onSubmit) {
     typeSelect.onchange = applyTypeState;
     applyTypeState();
 
+    // Импортировать существующий стрик (см. migrations/026): "уже было N дней" — считается
+    // как непрерывно продолжающийся с сегодняшнего дня, пока в приложении не пропущен день.
+    const importInput = field(t("dash_streak_import_field"), Object.assign(document.createElement("input"), { type: "number", min: 0, value: existing?.streak_import_days ?? "" }));
+    const importHint = document.createElement("p");
+    importHint.className = "dim";
+    importHint.style.cssText = "font-size:0.78em; margin-top:-8px;";
+    importHint.textContent = existing?.streak_import_date
+        ? `${t("dash_streak_import_hint_set")} ${fmtRu(existing.streak_import_date)}`
+        : t("dash_streak_import_hint_new");
+    modal.appendChild(importHint);
+
     const actions = document.createElement("div");
     actions.className = "modal-actions";
     const cancelBtn = document.createElement("button");
@@ -2658,7 +2753,13 @@ function openMetricFormModal(existing, categoryOptions, onSubmit) {
                 ? { type: "days", days: [...selectedDays].sort((a, b) => a - b) }
                 : scheduleSelect.value === "weekly"
                     ? { type: "weekly", min: Math.min(7, Math.max(1, parseInt(weeklyInput.value, 10) || 1)) }
-                    : null,
+                    : scheduleSelect.value === "at_most"
+                        ? { type: "at_most", max: Math.min(7, Math.max(0, parseInt(atMostInput.value, 10) || 0)) }
+                        : null,
+            streak_import_days: importInput.value === "" ? null : Math.max(0, parseInt(importInput.value, 10) || 0),
+            // дата импорта переустанавливается на сегодня, только когда число реально поменяли —
+            // иначе не трогаем сохранённую дату при обычном редактировании других полей
+            streak_import_date_reset: parseInt(importInput.value, 10) !== (existing?.streak_import_days ?? null),
         });
     };
     actions.appendChild(cancelBtn);
@@ -2676,8 +2777,20 @@ function scheduleFields(res, existing) {
     if (res.schedule || (existing && "schedule" in existing)) return { schedule: res.schedule };
     return {};
 }
+function streakImportFields(res, existing) {
+    if (!(res.streak_import_days > 0)) {
+        // поле очищено/0 — сбрасываем импорт, если колонка уже есть
+        return existing && "streak_import_days" in existing ? { streak_import_days: null, streak_import_date: null } : {};
+    }
+    if (!(existing && "streak_import_days" in existing)) return {}; // миграция 026 ещё не применена — не пишем
+    return {
+        streak_import_days: res.streak_import_days,
+        streak_import_date: res.streak_import_date_reset ? todayStr() : existing.streak_import_date,
+    };
+}
 function showMetricSaveError(error) {
-    const hint = /schedule/i.test(error.message || "") ? " — " + t("dash_schedule_migration_hint") : "";
+    const hint = /schedule/i.test(error.message || "") ? " — " + t("dash_schedule_migration_hint")
+        : /streak_import/i.test(error.message || "") ? " — " + t("dash_streak_import_migration_hint") : "";
     showToast(t("dash_save_error_generic") + error.message + hint, "error");
     console.error(error);
 }
@@ -2708,6 +2821,14 @@ async function addMetric(onDone) {
             input_mode: res.input_mode, ...scheduleFields(res, null)
         });
         if (error) { showMetricSaveError(error); return; }
+        // Импорт стрика для новой метрики сохраняем отдельным update: до insert колонок ещё не видно,
+        // и это не критично — поле просто пусто в форме создания, если миграция 026 не применена.
+        if (res.streak_import_days > 0) {
+            const { data: created } = await sb.from("metrics").select("id, streak_import_days").eq("user_id", user.id).eq("name", res.name).order("created_at", { ascending: false }).limit(1).maybeSingle();
+            if (created && "streak_import_days" in created) {
+                await sb.from("metrics").update({ streak_import_days: res.streak_import_days, streak_import_date: todayStr() }).eq("id", created.id);
+            }
+        }
         renderDay();
         loadCharts();
         if (onDone) onDone(); else openMetricsManagerModal();
@@ -2727,7 +2848,7 @@ async function editMetric(m, onDone) {
             name: res.name, icon: res.icon, type: res.type,
             goal_direction: res.goal_direction, goal_value: res.goal_value, unit: res.unit,
             options: parseOptionsRaw(res.options_raw), category_id: categoryId,
-            input_mode: res.input_mode, ...scheduleFields(res, m)
+            input_mode: res.input_mode, ...scheduleFields(res, m), ...streakImportFields(res, m)
         }).eq("id", m.id);
         if (error) { showMetricSaveError(error); return; }
         renderDay();
@@ -2776,7 +2897,8 @@ async function openMetricsManagerModal() {
                 const names = t("dash_weekdays_short").split(",");
                 const summary = sched.type === "days"
                     ? [1, 2, 3, 4, 5, 6, 0].filter(d => sched.days.includes(d)).map(d => names[[1, 2, 3, 4, 5, 6, 0].indexOf(d)]).join(" ")
-                    : `${sched.min}${t("dash_schedule_weekly_short")}`;
+                    : sched.type === "weekly" ? `${sched.min}${t("dash_schedule_weekly_short")}`
+                    : `${t("dash_schedule_at_most_short")} ${sched.max}${t("dash_schedule_weekly_short")}`;
                 goalCell.textContent += ` · ${summary}`;
             }
             const actionsCell = row.insertCell();
@@ -2969,6 +3091,88 @@ async function renderPlanned(dateStr) {
     addRow.appendChild(addCustomBtn);
     addRow.appendChild(addFromGoalsBtn);
     card.appendChild(addRow);
+
+    // Невыполненные пункты за последние дни (только для сегодняшнего дня): чтобы то, что не успел
+    // сделать, не терялось молча в прошлом дне, а предлагалось перенести на сегодня одним нажатием.
+    if (dateStr === fmtDate(new Date())) {
+        const carryBtn = document.createElement("button");
+        carryBtn.className = "secondary";
+        carryBtn.style.marginTop = "8px";
+        carryBtn.innerHTML = tIcon("dash_planned_carry_over_btn");
+        carryBtn.onclick = () => openCarryOverModal(dateStr, planned, persistPlanned);
+        card.appendChild(carryBtn);
+    }
+}
+
+// Список невыполненных обычных (не целей, не бонусных) пунктов плана за последние 7 дней,
+// которых ещё нет в сегодняшнем плане — с чекбоксами, чтобы выбрать, что перенести на сегодня.
+async function openCarryOverModal(todayDateStr, todayPlanned, persistToday) {
+    const notes = await getAllNotes();
+    const todayTexts = new Set(todayPlanned.filter(p => p.type === "custom").map(p => p.text));
+    const seen = new Set();
+    const candidates = [];
+    for (const n of notes.slice().sort((a, b) => b.date.localeCompare(a.date))) {
+        if (n.date >= todayDateStr) continue;
+        if (n.date < addDaysIso(todayDateStr, -7)) continue;
+        for (const raw of (n.planned_goals || [])) {
+            const p = typeof raw === "string" ? { type: "goal", text: raw } : raw;
+            if (p.type !== "custom" || p.done || p.bonus) continue;
+            if (todayTexts.has(p.text) || seen.has(p.text)) continue;
+            seen.add(p.text);
+            candidates.push({ text: p.text, date: n.date });
+        }
+    }
+    if (candidates.length === 0) { showToast(t("dash_planned_carry_over_empty")); return; }
+
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.innerHTML = `<h3>${tIcon("dash_planned_carry_over_title")}</h3>`;
+    const list = document.createElement("div");
+    const checks = [];
+    for (const c of candidates) {
+        const row = document.createElement("label");
+        row.style.cssText = "display:flex; align-items:center; gap:8px; padding:5px 0; font-weight:normal; color:var(--text);";
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = true;
+        const span = document.createElement("span");
+        span.style.flex = "1";
+        span.textContent = c.text;
+        const dateSpan = document.createElement("span");
+        dateSpan.className = "dim";
+        dateSpan.style.fontSize = "0.78em";
+        dateSpan.textContent = fmtRu(c.date);
+        row.appendChild(cb);
+        row.appendChild(span);
+        row.appendChild(dateSpan);
+        list.appendChild(row);
+        checks.push({ cb, text: c.text });
+    }
+    modal.appendChild(list);
+    const actions = document.createElement("div");
+    actions.className = "modal-actions";
+    const cancelBtn = document.createElement("button");
+    cancelBtn.className = "secondary";
+    cancelBtn.textContent = t("cancel");
+    cancelBtn.onclick = () => backdrop.remove();
+    const okBtn = document.createElement("button");
+    okBtn.textContent = t("dash_planned_carry_over_add_btn");
+    okBtn.onclick = async () => {
+        const chosen = checks.filter(c => c.cb.checked).map(c => c.text);
+        if (chosen.length === 0) { backdrop.remove(); return; }
+        const newPlanned = [...todayPlanned, ...chosen.map(text => ({ type: "custom", text, done: false }))];
+        backdrop.remove();
+        await persistToday(newPlanned);
+        renderPlanned(todayDateStr);
+    };
+    actions.appendChild(cancelBtn);
+    actions.appendChild(okBtn);
+    modal.appendChild(actions);
+    backdrop.appendChild(modal);
+    backdrop.onclick = (e) => { if (e.target === backdrop) backdrop.remove(); };
+    document.body.appendChild(backdrop);
 }
 
 (async () => {

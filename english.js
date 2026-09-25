@@ -66,6 +66,25 @@ function openWordModal(existing, onSubmit) {
     modal.appendChild(langLabel);
     enhanceSelectWithCustomDropdown(langSelect);
 
+    // Куда переводить: по умолчанию язык интерфейса (или английский, если учишь его), но можно
+    // выбрать любой другой язык из словаря — на случай если ведёшь перевод не на родной
+    const toLabel = document.createElement("label");
+    toLabel.style.cssText = "display:block; margin-bottom:14px;";
+    toLabel.textContent = t("eng_field_translate_to");
+    const toSelect = document.createElement("select");
+    toSelect.style.cssText = "width:100%; margin-top:4px;";
+    VOCAB_LANGS.forEach(([code, name]) => {
+        const o = document.createElement("option");
+        o.value = code;
+        o.textContent = name;
+        toSelect.appendChild(o);
+    });
+    toSelect.value = translationTarget(langSelect.value);
+    toLabel.appendChild(toSelect);
+    modal.appendChild(toLabel);
+    enhanceSelectWithCustomDropdown(toSelect);
+    langSelect.onchange = () => { toSelect.value = translationTarget(langSelect.value); };
+
     const wordLabel = document.createElement("label");
     wordLabel.style.cssText = "display:block; margin-bottom:14px;";
     wordLabel.textContent = t("eng_field_word");
@@ -90,7 +109,7 @@ function openWordModal(existing, onSubmit) {
     const translateBtn = document.createElement("button");
     translateBtn.type = "button";
     translateBtn.className = "secondary";
-    translateBtn.textContent = "🔄";
+    setIcon(translateBtn, "refresh");
     translateBtn.title = t("eng_translate_btn_title");
     translationRow.appendChild(translationInput);
     translationRow.appendChild(translateBtn);
@@ -101,10 +120,10 @@ function openWordModal(existing, onSubmit) {
     async function runTranslate() {
         if (!wordInput.value.trim()) return;
         translateBtn.disabled = true;
-        translateBtn.textContent = "⏳";
-        const result = await autoTranslate(wordInput.value, langSelect.value, translationTarget(langSelect.value));
+        translateBtn.style.opacity = "0.5";
+        const result = await autoTranslate(wordInput.value, langSelect.value, toSelect.value);
         translateBtn.disabled = false;
-        translateBtn.textContent = "🔄";
+        translateBtn.style.opacity = "1";
         if (result) {
             translationInput.value = result;
             autoFilled = true;
@@ -143,7 +162,8 @@ function openWordModal(existing, onSubmit) {
         if (!wordInput.value.trim()) return;
         backdrop.remove();
         setLastLang(langSelect.value);
-        await onSubmit({ word: wordInput.value.trim(), translation: translationInput.value.trim() || null, example: exampleInput.value.trim() || null, lang: langSelect.value });
+        try { localStorage.setItem("vocab_last_target", toSelect.value); } catch { /* ignore */ }
+        await onSubmit({ word: wordInput.value.trim(), translation: translationInput.value.trim() || null, example: exampleInput.value.trim() || null, lang: langSelect.value, translateTo: toSelect.value });
     };
     actions.appendChild(cancelBtn);
     actions.appendChild(okBtn);

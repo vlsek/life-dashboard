@@ -67,6 +67,7 @@ function dayStats(dateStr) {
         const vals = ctx.byDate[dateStr] || {};
         for (const m of ctx.metrics) {
             const isDone = isMetricDone(m, vals[m.id]);
+            if (metricSchedule(m)?.type === "at_most") continue;
             if (!metricCountsInDay(m, dateStr, isDone)) continue;
             total++;
             if (isDone) done++;
@@ -97,7 +98,8 @@ function weekStats(mondayStr) {
             const vals = ctx.byDate[d] || {};
             for (const m of ctx.metrics) {
                 const isDone = isMetricDone(m, vals[m.id]);
-                if (metricSchedule(m)?.type === "weekly") { if (isDone) weeklyDone[m.id] = (weeklyDone[m.id] || 0) + 1; continue; }
+                const scLoop = metricSchedule(m);
+                if (scLoop?.type === "weekly" || scLoop?.type === "at_most") { if (isDone) weeklyDone[m.id] = (weeklyDone[m.id] || 0) + 1; continue; }
                 if (!metricCountsInDay(m, d, isDone)) continue;
                 total++;
                 if (isDone) done++;
@@ -105,9 +107,8 @@ function weekStats(mondayStr) {
         }
         for (const m of ctx.metrics) {
             const sc = metricSchedule(m);
-            if (sc?.type !== "weekly") continue;
-            total += sc.min;
-            done += Math.min(sc.min, weeklyDone[m.id] || 0);
+            if (sc?.type === "weekly") { total += sc.min; done += Math.min(sc.min, weeklyDone[m.id] || 0); }
+            else if (sc?.type === "at_most") { total += 1; if ((weeklyDone[m.id] || 0) <= sc.max) done += 1; }
         }
     }
     for (const d of days) {

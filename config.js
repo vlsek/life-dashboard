@@ -79,6 +79,8 @@ const ICON_PATHS = {
     ruler: '<path d="M3.5 15.5L15.5 3.5l5 5-12 12-5-5z"/><path d="M7 12l2 2M10 9l2 2M13 6l2 2"/>',
     pin: '<path d="M9 3.5h6l-1 5 3 3.5H7l3-3.5-1-5z"/><path d="M12 12v8.5"/>',
     medical: '<path d="M9 4h6v5h5v6h-5v5H9v-5H4V9h5V4z"/>',
+    refresh: '<path d="M4 12a8 8 0 0 1 14-5.2M20 12a8 8 0 0 1-14 5.2"/><path d="M18 3.5V7h-3.5"/><path d="M6 20.5V17h3.5"/>',
+    link: '<path d="M9.5 14.5L14.5 9.5"/><path d="M11 6.5l1.4-1.4a3.5 3.5 0 0 1 5 5L16 11.5"/><path d="M13 17.5l-1.4 1.4a3.5 3.5 0 0 1-5-5L8 12.5"/>',
     brain: '<path d="M9.5 4.5a3 3 0 0 0-3 3 3 3 0 0 0-2 2.8 3 3 0 0 0 1.2 2.4 3 3 0 0 0 .8 4.3 3 3 0 0 0 5 1.5V5.5a2 2 0 0 0-2-1z"/><path d="M14.5 4.5a3 3 0 0 1 3 3 3 3 0 0 1 2 2.8 3 3 0 0 1-1.2 2.4 3 3 0 0 1-.8 4.3 3 3 0 0 1-5 1.5V5.5a2 2 0 0 1 2-1z"/>',
     dumbbell: '<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/>',
     done: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
@@ -237,6 +239,11 @@ function buildIconPicker(current) {
     return { el: wrap, getValue: () => value };
 }
 
+// Иконка звезды (баллы навыков/лидерборд)
+function starIcon(style = "color:#e0a93b; fill:#e0a93b;") {
+    return iconSvg("star", style);
+}
+
 // Иконка баллов (золотая монетка)
 function coinIcon() {
     return iconSvg("coin").replace('class="icon"', 'class="icon icon-coin"');
@@ -291,11 +298,24 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.59";
+const SITE_VERSION = "0.60";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.60", date: "2026-09-25 16:20", changes: [
+        "Import an existing streak: a metric can now say \"I already had a streak of N days\" (set in its ⚙️); it keeps counting from today and stops applying the first day you miss",
+        "Languages: an explicit \"translate to\" language, separate from the word's own language",
+        "Workouts: a personal-record line under each exercise — the best single set by weight (or reps for bodyweight exercises)",
+        "A \"↺ Unfinished from previous days\" button in today's plan: pick from the last 7 days' undone items instead of losing them once the day rolls over",
+        "A thin accent-colored bar highlights metrics still needed today, so what's left before 100% stands out",
+        "Checkboxes and radio buttons everywhere now follow the theme's accent color, not just in dialogs",
+        "The status bar / address bar color now matches the theme from the very first frame — it used to briefly show the wrong color while the page loaded",
+        "The streak flame gets a faint outline in the Monet theme so it doesn't blend into the dark corner",
+        "More emoji replaced with SVG icons: the mini-calendar's day badge, skill/leaderboard point stars, leaderboard medals (gold/silver/bronze), a shop item's link icon, the vocabulary translate button, the admin checkmark",
+        "The portfolio site got its own favicon (a \"VK\" monogram) instead of reusing the dashboard's flame",
+        "Changelog entries now include the time, not just the date",
+    ]},
     { version: "0.59", date: "2026-09-24", changes: [
         "SVG-иконки для метрик и параметров тела: в формах вместо текстового поля — сетка из 44 иконок (отжимания, подтягивания, приседания, бег, ходьба, велосипед, плавание, йога, сон, вода, еда, кофе, книга, код, пульс и другие); при желании можно вписать свой эмодзи",
         "Известные эмодзи (💧, 💪, 🏋️, 🚶, 🏃, 📚, ⚖️, ❤️ и др.) уже сейчас рисуются их SVG-аналогом — без правки твоих данных; неизвестные остаются как есть",
@@ -501,6 +521,19 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.60", date: "2026-09-25 16:20", changes: [
+        "Импорт существующего стрика: у метрики можно указать «уже был стрик N дней» (в её ⚙️) — он продолжает считаться с сегодняшнего дня и перестаёт применяться в первый пропущенный день",
+        "Языки: явный выбор «переводить на», отдельно от языка самого слова",
+        "Тренировки: строка личного рекорда под каждым упражнением — лучший отдельный подход по весу (или по повторениям для упражнений без веса)",
+        "Кнопка «↺ Незавершённое с прошлых дней» в плане на сегодня: можно выбрать из невыполненного за последние 7 дней, вместо того чтобы это терялось после смены дня",
+        "Тонкая полоса цвета темы подсвечивает метрики, ещё нужные сегодня — видно, что осталось до 100%",
+        "Чекбоксы и переключатели везде в цвет темы, а не только в модалках",
+        "Цвет шторки/строки состояния на телефоне теперь совпадает с темой с первого кадра — раньше на загрузке на миг мелькал неверный цвет",
+        "У огонька стрика в теме Monet — слабая обводка, чтобы не терялся в тёмном углу",
+        "Ещё эмодзи заменены на SVG: значок дня в мини-календаре, звёзды баллов в навыках и лидерборде, медали лидерборда (золото/серебро/бронза), иконка ссылки у товара в магазине, кнопка перевода в словаре, галочка администратора",
+        "У сайта-визитки своя иконка («VK») вместо переиспользованного огонька дашборда",
+        "В истории изменений теперь указывается и время, не только дата",
+    ]},
     { version: "0.59", date: "2026-09-24", changes: [
         "SVG icons for metrics and body parameters: the forms now have a grid of 44 icons instead of a text field (push-ups, pull-ups, squats, running, walking, cycling, swimming, yoga, sleep, water, food, coffee, book, code, pulse and more); you can still type your own emoji",
         "Known emoji (💧, 💪, 🏋️, 🚶, 🏃, 📚, ⚖️, ❤️ and others) are already drawn as their SVG counterpart — without changing your data; unknown ones stay as they are",
@@ -755,6 +788,11 @@ function fmtRu(isoDateStr) {
     return `${parts[2]}.${parts[1]}.${parts[0]}`;
 }
 
+function addDaysIso(iso, n) {
+    const d = new Date(iso + "T00:00:00");
+    d.setDate(d.getDate() + n);
+    return fmtDate(d);
+}
 function todayStr() {
     return fmtDate(new Date());
 }
@@ -817,6 +855,7 @@ function metricSchedule(m) {
     if (!s || typeof s !== "object") return null;
     if (s.type === "days" && Array.isArray(s.days) && s.days.length > 0 && s.days.length < 7) return { type: "days", days: s.days };
     if (s.type === "weekly" && s.min >= 1) return { type: "weekly", min: Math.min(7, Math.floor(s.min)) };
+    if (s.type === "at_most" && s.max >= 0) return { type: "at_most", max: Math.min(7, Math.floor(s.max)) };
     return null;
 }
 function weekdayOf(dateStr) { return new Date(dateStr + "T00:00:00").getDay(); }
@@ -1246,7 +1285,6 @@ function renderNav(active, userEmail) {
 
     const pages = [
         { href: "dashboard.html", key: "dashboard", i18n: "nav_dashboard", icon: "home", home: true },
-        { href: "history.html", key: "history", i18n: "nav_history", icon: "history" },
         { href: "goals.html", key: "goals", i18n: "nav_goals", icon: "goals" },
         { href: "skills.html", key: "skills", i18n: "nav_skills", icon: "skills" },
         { href: "workouts.html", key: "workouts", i18n: "nav_workouts", icon: "workouts" },
@@ -1256,6 +1294,7 @@ function renderNav(active, userEmail) {
         { href: "milestones.html", key: "milestones", i18n: "nav_milestones", icon: "milestones" },
         { href: "shop.html", key: "shop", i18n: "nav_shop", icon: "shop" },
         { href: "community.html", key: "community", i18n: "nav_community", icon: "community" },
+        { href: "history.html", key: "history", i18n: "nav_history", icon: "history" },
     ];
     // В i18n названия разделов начинаются с эмодзи ("🎯 Цели") — для подписей рядом с SVG-иконкой
     // отрезаем ведущие эмодзи/пробелы.

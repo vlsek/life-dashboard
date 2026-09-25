@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<script>(function(){try{var t=localStorage.getItem("site_theme")||"dark";document.documentElement.className="theme-"+t;}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem("site_theme")||"dark";document.documentElement.className="theme-"+t;var bg={dark:"#121212",monet:"#0d0703",light:"#f7f4ef",pink:"#fff0f5"}[t];var m=document.querySelector('meta[name="theme-color"]');if(m&&bg)m.setAttribute("content",bg);}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="manifest" href="/manifest.json">

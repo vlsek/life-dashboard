@@ -90,12 +90,13 @@ async function loadLeaderboard() {
     card.innerHTML = "";
     if (rows.length === 0) { card.innerHTML = `<p class="dim">${t("comm_empty")}</p>`; return; }
 
-    const medals = ["🥇", "🥈", "🥉"];
+    const medalColors = ["#e0b23c", "#b9c2cc", "#c98a4e"];
     const table = document.createElement("table");
     rows.forEach((row, i) => {
         const tr = table.insertRow();
         const rankCell = tr.insertCell();
-        rankCell.textContent = medals[i] || `#${i + 1}`;
+        if (i < medalColors.length) rankCell.innerHTML = iconSvg("medal", `color:${medalColors[i]};`);
+        else rankCell.textContent = `#${i + 1}`;
         const avatarCell = tr.insertCell();
         avatarCell.appendChild(makeAvatarEl(row.avatar_url));
         const nameCell = tr.insertCell();
@@ -109,7 +110,7 @@ async function loadLeaderboard() {
         }
         if (row.user_id === user.id) nameCell.style.cssText += "font-weight:bold; color:var(--accent);";
         const ptsCell = tr.insertCell();
-        ptsCell.textContent = `${row.total_points} ⭐`;
+        ptsCell.innerHTML = `${row.total_points} ${starIcon()}`;
         ptsCell.style.textAlign = "right";
     });
     card.appendChild(wrapTable(table));
@@ -308,7 +309,7 @@ async function loadCategoryLeaderboard(catKey) {
             nameCell.textContent = row.display_name;
             if (row.user_id === user.id) nameCell.style.cssText = "font-weight:bold; color:var(--accent);";
             tr.insertCell().textContent = row.total_value;
-            tr.insertCell().textContent = `${row.category_points} ⭐`;
+            tr.insertCell().innerHTML = `${row.category_points} ${starIcon()}`;
             tr.insertCell().textContent = row.category_streak > 0 ? `${row.category_streak}` : "—";
         });
         card.appendChild(wrapTable(table));

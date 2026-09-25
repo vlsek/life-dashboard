@@ -162,7 +162,7 @@ async function render() {
             const a = document.createElement("a");
             a.href = item.link;
             a.target = "_blank";
-            a.textContent = item.name + " 🔗";
+            a.innerHTML = `${escapeHtmlText(item.name)} ${iconSvg("link")}`;
             a.style.color = "inherit";
             nameEl.appendChild(a);
         } else {

@@ -309,6 +309,28 @@ async function applyTemplate(tpl) {
 }
 
 let userId;
+
+// Лучший отдельный подход за всю историю упражнения: по весу (при равенстве — по повторениям),
+// либо, если упражнение без веса, по повторениям. Возвращает { text, date } или null.
+function bestSetRecord(entries, exercise) {
+    let best = null; // { weight, reps, date }
+    for (const e of entries) {
+        for (const s of (e.sets || [])) {
+            if (s.reps == null) continue;
+            const w = exercise.tracks_weight ? (s.weight ?? 0) : null;
+            const better = !best
+                || (exercise.tracks_weight && ((w ?? 0) > (best.weight ?? 0) || ((w ?? 0) === (best.weight ?? 0) && s.reps > best.reps)))
+                || (!exercise.tracks_weight && s.reps > best.reps);
+            if (better) best = { weight: w, reps: s.reps, date: e.date };
+        }
+    }
+    if (!best) return null;
+    const unitSuffix = exercise.unit ? " " + exercise.unit : "";
+    const text = exercise.tracks_weight && best.weight != null
+        ? `${best.reps}×${best.weight}${exercise.unit || t("workouts_default_unit")}`
+        : `${best.reps}${unitSuffix}`;
+    return { text, date: best.date };
+}
 const workoutsPeriodState = loadPeriodState("dash_period_workouts", { range: "month", from: null, to: null });
 
 async function renderOverviewChart(allEntries) {
@@ -537,11 +559,7 @@ function openEntryModal(exercise, existing, onSubmit) {
             repsInput.placeholder = exercise.tracks_weight ? t("workouts_reps_placeholder") : (exercise.value_label || t("workouts_default_value_label"));
             repsInput.style.width = exercise.tracks_weight ? "80px" : "160px";
             repsInput.value = s.reps ?? "";
-            repsInput.onchange = () => {
-                s.reps = repsInput.value === "" ? null : (parseFloat(repsInput.value) || 0);
-                // время подхода проставляется само, когда впервые вписали повторения
-                if (s.reps != null && !s.time) { s.time = nowHHMM(); timeInput.value = s.time; }
-            };
+            repsInput.onchange = () => { s.reps = repsInput.value === "" ? null : (parseFloat(repsInput.value) || 0); };
             row.appendChild(repsInput);
 
             if (exercise.tracks_weight) {
@@ -579,7 +597,7 @@ function openEntryModal(exercise, existing, onSubmit) {
     addSetBtn.type = "button";
     addSetBtn.className = "secondary";
     addSetBtn.innerHTML = tIcon("workouts_add_set_btn");
-    addSetBtn.onclick = () => { sets.push({ reps: "", weight: "", time: null }); renderSets(); };
+    addSetBtn.onclick = () => { sets.push({ reps: "", weight: "", time: nowHHMM() }); renderSets(); };
     setsWrap.appendChild(addSetBtn);
     modal.appendChild(setsWrap);
 
@@ -689,6 +707,16 @@ async function renderExerciseCard(container, exercise, entries) {
         scheme.style.cssText = "font-size:0.85em; margin-bottom:8px;";
         scheme.textContent = `${t("workouts_suggested_scheme_label")} ${exercise.suggested_scheme}`;
         card.appendChild(scheme);
+    }
+
+    // Личный рекорд: лучший отдельный подход за всю историю — по весу (если упражнение с весом),
+    // иначе по повторениям. При равном весе/повторениях выбираем более раннюю дату (первый раз).
+    const best = bestSetRecord(entries, exercise);
+    if (best) {
+        const recEl = document.createElement("div");
+        recEl.style.cssText = "font-size:0.85em; margin-bottom:8px; display:flex; align-items:center; gap:5px; color:var(--text-dim);";
+        recEl.innerHTML = `${iconSvg("trophy", "color:#e0a93b; flex-shrink:0;")}${escapeHtmlText(t("workouts_record_label"))} ${escapeHtmlText(best.text)} <span class="dim" style="opacity:0.7;">· ${escapeHtmlText(fmtRu(best.date))}</span>`;
+        card.appendChild(recEl);
     }
 
     // мини-график прогресса: для упражнений с весом — максимальный вес за день,

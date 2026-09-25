@@ -158,7 +158,7 @@ async function render() {
             const badge = document.createElement("div");
             badge.className = "cal-badge";
             badge.title = `${total} ${t("cal_items_word")}, ${t("cal_done_word")}: ${done}`;
-            badge.textContent = done === total ? "✅" : `📌 ${done}/${total}`;
+            badge.innerHTML = done === total ? iconSvg("done", "color:var(--hist-ok, #3fa66b);") : `${iconSvg("pin")}${done}/${total}`;
             cell.appendChild(badge);
         }
         grid.appendChild(cell);
