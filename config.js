@@ -298,11 +298,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.60";
+const SITE_VERSION = "0.61";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.61", date: "2026-09-25 17:05", changes: [
+        "Exercises can now also log duration per set (⚙️ on the exercise → \"Also log duration\"): a set becomes \"5 km in 30 min\", and the app shows the pace (value per hour — km/h for running, etc.)",
+        "Two personal-record lines instead of one where it applies: the best single set (furthest run, heaviest lift) and, for duration-tracked exercises, the best pace — since they're rarely from the same session",
+        "Requires migration migrations/027_exercise_duration.sql; without it, everything works as before and duration just isn't offered",
+    ]},
     { version: "0.60", date: "2026-09-25 16:20", changes: [
         "Import an existing streak: a metric can now say \"I already had a streak of N days\" (set in its ⚙️); it keeps counting from today and stops applying the first day you miss",
         "Languages: an explicit \"translate to\" language, separate from the word's own language",
@@ -521,6 +526,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.61", date: "2026-09-25 17:05", changes: [
+        "У упражнений можно включить учёт длительности подхода (⚙️ упражнения → «Также фиксировать длительность»): подход становится «5 км за 30 мин», и приложение показывает темп (значение в час — км/ч для бега и т.п.)",
+        "Там, где это применимо, теперь две строки рекорда вместо одной: лучший отдельный подход (самая длинная дистанция, самый большой вес) и, для упражнений с длительностью, лучший темп — они почти всегда из разных тренировок",
+        "Нужна миграция migrations/027_exercise_duration.sql; без неё всё работает как раньше, просто длительность не предлагается",
+    ]},
     { version: "0.60", date: "2026-09-25 16:20", changes: [
         "Импорт существующего стрика: у метрики можно указать «уже был стрик N дней» (в её ⚙️) — он продолжает считаться с сегодняшнего дня и перестаёт применяться в первый пропущенный день",
         "Языки: явный выбор «переводить на», отдельно от языка самого слова",

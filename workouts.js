@@ -331,6 +331,21 @@ function bestSetRecord(entries, exercise) {
         : `${best.reps}${unitSuffix}`;
     return { text, date: best.date };
 }
+
+// Лучший темп (наибольшее значение/час) — отдельно от "самого большого подхода", потому что
+// самая длинная дистанция и самая быстрая скорость почти всегда были в разных тренировках.
+function bestPaceRecord(entries, exercise) {
+    if (!exercise.tracks_duration) return null;
+    let best = null; // { perHour, text, date }
+    for (const e of entries) {
+        for (const s of (e.sets || [])) {
+            if (s.reps == null || !s.duration) continue;
+            const perHour = s.reps / s.duration * 60;
+            if (!best || perHour > best.perHour) best = { perHour, text: paceText(s.reps, s.duration, exercise.value_label), date: e.date };
+        }
+    }
+    return best ? { text: best.text, date: best.date } : null;
+}
 const workoutsPeriodState = loadPeriodState("dash_period_workouts", { range: "month", from: null, to: null });
 
 async function renderOverviewChart(allEntries) {
@@ -444,6 +459,23 @@ function openExerciseFormModal(existing, onSubmit) {
     valueLabelInput.type = "text";
     valueLabelInput.value = existing?.value_label ?? t("workouts_default_value_label");
     valueLabelLabel.appendChild(valueLabelInput);
+
+    // Необязательная длительность подхода (для дистанции/бега — расчёт средней скорости)
+    const durationLabel = document.createElement("label");
+    durationLabel.style.cssText = "display:flex; align-items:center; gap:8px; margin-top:10px;";
+    const durationCb = document.createElement("input");
+    durationCb.type = "checkbox";
+    durationCb.checked = existing?.tracks_duration ?? false;
+    const durationSpan = document.createElement("span");
+    durationSpan.textContent = t("workouts_field_tracks_duration");
+    durationLabel.appendChild(durationCb);
+    durationLabel.appendChild(durationSpan);
+    modal.appendChild(durationLabel);
+    const durationHint = document.createElement("p");
+    durationHint.className = "dim";
+    durationHint.style.cssText = "font-size:0.78em; margin:2px 0 0;";
+    durationHint.textContent = t("workouts_field_tracks_duration_hint");
+    modal.appendChild(durationHint);
     modal.appendChild(valueLabelLabel);
 
     const unitLabel = document.createElement("label");
@@ -471,6 +503,7 @@ function openExerciseFormModal(existing, onSubmit) {
             tracks_weight: tracksSelect.value,
             value_label: valueLabelInput.value,
             unit: unitInput.value,
+            tracks_duration: durationCb.checked,
         });
     };
     actions.appendChild(cancelBtn);
@@ -481,6 +514,16 @@ function openExerciseFormModal(existing, onSubmit) {
     nameInput.focus();
 }
 
+function exerciseDurationField(res, existing) {
+    if (!res.tracks_duration) return existing && "tracks_duration" in existing ? { tracks_duration: false } : {};
+    return existing && "tracks_duration" in existing ? { tracks_duration: true } : {};
+}
+function showExerciseSaveError(error) {
+    const hint = /tracks_duration/i.test(error.message || "") ? " — " + t("workouts_duration_migration_hint") : "";
+    showToast(t("workouts_toast_save_error") + error.message + hint, "error");
+    console.error(error);
+}
+
 async function addExercise() {
     openExerciseFormModal(null, async (res) => {
         if (!res.name?.trim()) return;
@@ -488,7 +531,12 @@ async function addExercise() {
             user_id: userId, name: res.name.trim(), category: res.category?.trim() || null, unit: res.unit?.trim() || t("workouts_default_unit"),
             tracks_weight: res.tracks_weight !== "no", value_label: res.value_label?.trim() || t("workouts_default_value_label")
         });
-        if (error) { showToast(t("workouts_toast_save_error") + error.message, "error"); console.error(error); return; }
+        if (error) { showExerciseSaveError(error); return; }
+        // длительность для новой записи — отдельным update, аналогично streak_import у метрик
+        if (res.tracks_duration) {
+            const { data: created } = await sb.from("workout_exercises").select("id, tracks_duration").eq("user_id", userId).eq("name", res.name.trim()).order("created_at", { ascending: false }).limit(1).maybeSingle();
+            if (created && "tracks_duration" in created) await sb.from("workout_exercises").update({ tracks_duration: true }).eq("id", created.id);
+        }
         render();
     });
 }
@@ -498,9 +546,10 @@ async function editExercise(ex) {
         if (!res.name?.trim()) return;
         const { error } = await sb.from("workout_exercises").update({
             name: res.name.trim(), category: res.category?.trim() || null, unit: res.unit?.trim() || t("workouts_default_unit"),
-            tracks_weight: res.tracks_weight !== "no", value_label: res.value_label?.trim() || t("workouts_default_value_label")
+            tracks_weight: res.tracks_weight !== "no", value_label: res.value_label?.trim() || t("workouts_default_value_label"),
+            ...exerciseDurationField(res, ex)
         }).eq("id", ex.id);
-        if (error) { showToast(t("workouts_toast_save_error") + error.message, "error"); console.error(error); return; }
+        if (error) { showExerciseSaveError(error); return; }
         render();
     });
 }
@@ -538,7 +587,7 @@ function openEntryModal(exercise, existing, onSubmit) {
     setsTitle.textContent = exercise.tracks_weight ? t("workouts_sets_label") : (exercise.value_label || t("workouts_default_value_label"));
     setsWrap.appendChild(setsTitle);
 
-    let sets = existing?.sets?.length ? existing.sets.map(s => ({ ...s })) : [{ reps: "", weight: "", time: null }];
+    let sets = existing?.sets?.length ? existing.sets.map(s => ({ ...s })) : [{ reps: "", weight: "", time: null, duration: "" }];
 
     function renderSets() {
         setsWrap.querySelectorAll(".set-row").forEach(el => el.remove());
@@ -561,6 +610,21 @@ function openEntryModal(exercise, existing, onSubmit) {
             repsInput.value = s.reps ?? "";
             repsInput.onchange = () => { s.reps = repsInput.value === "" ? null : (parseFloat(repsInput.value) || 0); };
             row.appendChild(repsInput);
+
+            if (exercise.tracks_duration) {
+                const inSpan = document.createElement("span");
+                inSpan.textContent = t("workouts_duration_in");
+                inSpan.className = "dim";
+                row.appendChild(inSpan);
+                const durationInput = document.createElement("input");
+                durationInput.type = "number";
+                durationInput.min = "0";
+                durationInput.placeholder = t("workouts_duration_placeholder");
+                durationInput.style.width = "90px";
+                durationInput.value = s.duration ?? "";
+                durationInput.onchange = () => { s.duration = durationInput.value === "" ? null : (parseFloat(durationInput.value) || 0); };
+                row.appendChild(durationInput);
+            }
 
             if (exercise.tracks_weight) {
                 const xSpan = document.createElement("span");
@@ -585,7 +649,7 @@ function openEntryModal(exercise, existing, onSubmit) {
             removeBtn.className = "danger";
             setIcon(removeBtn, "x");
             removeBtn.style.padding = "2px 8px";
-            removeBtn.onclick = () => { sets.splice(i, 1); if (sets.length === 0) sets.push({ reps: "", weight: "", time: null }); renderSets(); };
+            removeBtn.onclick = () => { sets.splice(i, 1); if (sets.length === 0) sets.push({ reps: "", weight: "", time: null, duration: "" }); renderSets(); };
             row.appendChild(removeBtn);
 
             setsWrap.appendChild(row);
@@ -597,7 +661,7 @@ function openEntryModal(exercise, existing, onSubmit) {
     addSetBtn.type = "button";
     addSetBtn.className = "secondary";
     addSetBtn.innerHTML = tIcon("workouts_add_set_btn");
-    addSetBtn.onclick = () => { sets.push({ reps: "", weight: "", time: nowHHMM() }); renderSets(); };
+    addSetBtn.onclick = () => { sets.push({ reps: "", weight: "", time: nowHHMM(), duration: "" }); renderSets(); };
     setsWrap.appendChild(addSetBtn);
     modal.appendChild(setsWrap);
 
@@ -618,7 +682,7 @@ function openEntryModal(exercise, existing, onSubmit) {
     const okBtn = document.createElement("button");
     okBtn.textContent = t("save");
     okBtn.onclick = async () => {
-        const cleanSets = sets.filter(s => s.reps !== "" && s.reps != null).map(s => ({ reps: parseFloat(s.reps) || 0, weight: s.weight === "" || s.weight == null ? null : (parseFloat(s.weight) || 0), time: s.time || null }));
+        const cleanSets = sets.filter(s => s.reps !== "" && s.reps != null).map(s => ({ reps: parseFloat(s.reps) || 0, weight: s.weight === "" || s.weight == null ? null : (parseFloat(s.weight) || 0), time: s.time || null, duration: s.duration === "" || s.duration == null ? null : (parseFloat(s.duration) || 0) }));
         backdrop.remove();
         await onSubmit({ date: dateInput.value || todayStr(), sets: cleanSets, notes: notesInput.value.trim() || null });
     };
@@ -661,11 +725,20 @@ async function deleteEntry(entry) {
 function formatSets(sets, exercise) {
     if (!sets || !sets.length) return "—";
     const at = s => s.time ? ` (${s.time})` : "";
+    const dur = s => (exercise.tracks_duration && s.duration) ? ` · ${paceText(s.reps, s.duration, exercise.value_label)}` : "";
     if (exercise.tracks_weight) {
-        return sets.map(s => (s.weight != null ? `${s.reps}×${s.weight}${exercise.unit || t("workouts_default_unit")}` : `${s.reps}`) + at(s)).join(", ");
+        return sets.map(s => (s.weight != null ? `${s.reps}×${s.weight}${exercise.unit || t("workouts_default_unit")}` : `${s.reps}`) + dur(s) + at(s)).join(", ");
     }
     const unitSuffix = exercise.unit ? ` ${exercise.unit}` : "";
-    return sets.map(s => `${s.reps}${unitSuffix}` + at(s)).join(", ");
+    return sets.map(s => `${s.reps}${unitSuffix}` + dur(s) + at(s)).join(", ");
+}
+
+// "5.2 км за 28 мин" → средняя скорость в час, плюс сама длительность
+function paceText(value, durationMin, valueLabel) {
+    if (!durationMin) return "";
+    const perHour = (value / durationMin * 60);
+    const rounded = perHour >= 10 ? Math.round(perHour) : Math.round(perHour * 10) / 10;
+    return `${durationMin} ${t("workouts_duration_unit")} · ${rounded} ${valueLabel || ""}/${t("workouts_per_hour")}`.replace(/\s+/g, " ").trim();
 }
 
 async function renderExerciseCard(container, exercise, entries) {
@@ -712,12 +785,15 @@ async function renderExerciseCard(container, exercise, entries) {
     // Личный рекорд: лучший отдельный подход за всю историю — по весу (если упражнение с весом),
     // иначе по повторениям. При равном весе/повторениях выбираем более раннюю дату (первый раз).
     const best = bestSetRecord(entries, exercise);
-    if (best) {
-        const recEl = document.createElement("div");
-        recEl.style.cssText = "font-size:0.85em; margin-bottom:8px; display:flex; align-items:center; gap:5px; color:var(--text-dim);";
-        recEl.innerHTML = `${iconSvg("trophy", "color:#e0a93b; flex-shrink:0;")}${escapeHtmlText(t("workouts_record_label"))} ${escapeHtmlText(best.text)} <span class="dim" style="opacity:0.7;">· ${escapeHtmlText(fmtRu(best.date))}</span>`;
-        card.appendChild(recEl);
-    }
+    const bestPace = bestPaceRecord(entries, exercise);
+    const recordLine = (icon, label, r) => {
+        const el = document.createElement("div");
+        el.style.cssText = "font-size:0.85em; margin-bottom:6px; display:flex; align-items:center; gap:5px; color:var(--text-dim);";
+        el.innerHTML = `${iconSvg(icon, "color:#e0a93b; flex-shrink:0;")}${escapeHtmlText(label)} ${escapeHtmlText(r.text)} <span class="dim" style="opacity:0.7;">· ${escapeHtmlText(fmtRu(r.date))}</span>`;
+        return el;
+    };
+    if (best) card.appendChild(recordLine("trophy", t("workouts_record_label"), best));
+    if (bestPace) card.appendChild(recordLine("zap", t("workouts_record_pace_label"), bestPace));
 
     // мини-график прогресса: для упражнений с весом — максимальный вес за день,
     // для остальных — суммарный объём (сумма всех подходов за день, например всего повторений)
