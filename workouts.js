@@ -312,11 +312,12 @@ let userId;
 
 // Лучший отдельный подход за всю историю упражнения: по весу (при равенстве — по повторениям),
 // либо, если упражнение без веса, по повторениям. Возвращает { text, date } или null.
-function bestSetRecord(entries, exercise) {
+function bestSetRecord(entries, exercise, sideFilter = null) {
     let best = null; // { weight, reps, date }
     for (const e of entries) {
         for (const s of (e.sets || [])) {
             if (s.reps == null) continue;
+            if (sideFilter && s.side !== sideFilter) continue;
             const w = exercise.tracks_weight ? (s.weight ?? 0) : null;
             const better = !best
                 || (exercise.tracks_weight && ((w ?? 0) > (best.weight ?? 0) || ((w ?? 0) === (best.weight ?? 0) && s.reps > best.reps)))
@@ -334,12 +335,13 @@ function bestSetRecord(entries, exercise) {
 
 // Лучший темп (наибольшее значение/час) — отдельно от "самого большого подхода", потому что
 // самая длинная дистанция и самая быстрая скорость почти всегда были в разных тренировках.
-function bestPaceRecord(entries, exercise) {
+function bestPaceRecord(entries, exercise, sideFilter = null) {
     if (!exercise.tracks_duration) return null;
     let best = null; // { perHour, text, date }
     for (const e of entries) {
         for (const s of (e.sets || [])) {
             if (s.reps == null || !s.duration) continue;
+            if (sideFilter && s.side !== sideFilter) continue;
             const perHour = s.reps / s.duration * 60;
             if (!best || perHour > best.perHour) best = { perHour, text: paceText(s.reps, s.duration, exercise.value_label), date: e.date };
         }
@@ -476,6 +478,23 @@ function openExerciseFormModal(existing, onSubmit) {
     durationHint.style.cssText = "font-size:0.78em; margin:2px 0 0;";
     durationHint.textContent = t("workouts_field_tracks_duration_hint");
     modal.appendChild(durationHint);
+
+    // Разделение по сторонам (для упражнений, которые делают поочерёдно левой/правой)
+    const bilateralLabel = document.createElement("label");
+    bilateralLabel.style.cssText = "display:flex; align-items:center; gap:8px; margin-top:10px;";
+    const bilateralCb = document.createElement("input");
+    bilateralCb.type = "checkbox";
+    bilateralCb.checked = existing?.bilateral ?? false;
+    const bilateralSpan = document.createElement("span");
+    bilateralSpan.textContent = t("workouts_field_bilateral");
+    bilateralLabel.appendChild(bilateralCb);
+    bilateralLabel.appendChild(bilateralSpan);
+    modal.appendChild(bilateralLabel);
+    const bilateralHint = document.createElement("p");
+    bilateralHint.className = "dim";
+    bilateralHint.style.cssText = "font-size:0.78em; margin:2px 0 0;";
+    bilateralHint.textContent = t("workouts_field_bilateral_hint");
+    modal.appendChild(bilateralHint);
     modal.appendChild(valueLabelLabel);
 
     const unitLabel = document.createElement("label");
@@ -504,6 +523,7 @@ function openExerciseFormModal(existing, onSubmit) {
             value_label: valueLabelInput.value,
             unit: unitInput.value,
             tracks_duration: durationCb.checked,
+            bilateral: bilateralCb.checked,
         });
     };
     actions.appendChild(cancelBtn);
@@ -518,8 +538,13 @@ function exerciseDurationField(res, existing) {
     if (!res.tracks_duration) return existing && "tracks_duration" in existing ? { tracks_duration: false } : {};
     return existing && "tracks_duration" in existing ? { tracks_duration: true } : {};
 }
+function exerciseBilateralField(res, existing) {
+    if (!res.bilateral) return existing && "bilateral" in existing ? { bilateral: false } : {};
+    return existing && "bilateral" in existing ? { bilateral: true } : {};
+}
 function showExerciseSaveError(error) {
-    const hint = /tracks_duration/i.test(error.message || "") ? " — " + t("workouts_duration_migration_hint") : "";
+    const hint = /tracks_duration/i.test(error.message || "") ? " — " + t("workouts_duration_migration_hint")
+        : /bilateral/i.test(error.message || "") ? " — " + t("workouts_bilateral_migration_hint") : "";
     showToast(t("workouts_toast_save_error") + error.message + hint, "error");
     console.error(error);
 }
@@ -533,9 +558,14 @@ async function addExercise() {
         });
         if (error) { showExerciseSaveError(error); return; }
         // длительность для новой записи — отдельным update, аналогично streak_import у метрик
-        if (res.tracks_duration) {
-            const { data: created } = await sb.from("workout_exercises").select("id, tracks_duration").eq("user_id", userId).eq("name", res.name.trim()).order("created_at", { ascending: false }).limit(1).maybeSingle();
-            if (created && "tracks_duration" in created) await sb.from("workout_exercises").update({ tracks_duration: true }).eq("id", created.id);
+        if (res.tracks_duration || res.bilateral) {
+            const { data: created } = await sb.from("workout_exercises").select("id, tracks_duration, bilateral").eq("user_id", userId).eq("name", res.name.trim()).order("created_at", { ascending: false }).limit(1).maybeSingle();
+            if (created) {
+                const patch = {};
+                if (res.tracks_duration && "tracks_duration" in created) patch.tracks_duration = true;
+                if (res.bilateral && "bilateral" in created) patch.bilateral = true;
+                if (Object.keys(patch).length) await sb.from("workout_exercises").update(patch).eq("id", created.id);
+            }
         }
         render();
     });
@@ -547,7 +577,7 @@ async function editExercise(ex) {
         const { error } = await sb.from("workout_exercises").update({
             name: res.name.trim(), category: res.category?.trim() || null, unit: res.unit?.trim() || t("workouts_default_unit"),
             tracks_weight: res.tracks_weight !== "no", value_label: res.value_label?.trim() || t("workouts_default_value_label"),
-            ...exerciseDurationField(res, ex)
+            ...exerciseDurationField(res, ex), ...exerciseBilateralField(res, ex)
         }).eq("id", ex.id);
         if (error) { showExerciseSaveError(error); return; }
         render();
@@ -587,7 +617,7 @@ function openEntryModal(exercise, existing, onSubmit) {
     setsTitle.textContent = exercise.tracks_weight ? t("workouts_sets_label") : (exercise.value_label || t("workouts_default_value_label"));
     setsWrap.appendChild(setsTitle);
 
-    let sets = existing?.sets?.length ? existing.sets.map(s => ({ ...s })) : [{ reps: "", weight: "", time: null, duration: "" }];
+    let sets = existing?.sets?.length ? existing.sets.map(s => ({ ...s })) : [{ reps: "", weight: "", time: null, duration: "", side: null }];
 
     function renderSets() {
         setsWrap.querySelectorAll(".set-row").forEach(el => el.remove());
@@ -610,6 +640,20 @@ function openEntryModal(exercise, existing, onSubmit) {
             repsInput.value = s.reps ?? "";
             repsInput.onchange = () => { s.reps = repsInput.value === "" ? null : (parseFloat(repsInput.value) || 0); };
             row.appendChild(repsInput);
+
+            if (exercise.bilateral) {
+                const sideWrap = document.createElement("div");
+                sideWrap.style.cssText = "display:flex; border:1px solid var(--border); border-radius:8px; overflow:hidden;";
+                ["L", "R"].forEach(side => {
+                    const b = document.createElement("button");
+                    b.type = "button";
+                    b.textContent = t("workouts_side_" + side);
+                    b.style.cssText = "min-height:0; padding:6px 10px; border:none; border-radius:0; background:" + (s.side === side ? "var(--accent)" : "var(--bg-card)") + "; color:" + (s.side === side ? "var(--accent-text)" : "var(--text)") + ";";
+                    b.onclick = () => { s.side = s.side === side ? null : side; renderSets(); };
+                    sideWrap.appendChild(b);
+                });
+                row.appendChild(sideWrap);
+            }
 
             if (exercise.tracks_duration) {
                 const inSpan = document.createElement("span");
@@ -649,7 +693,7 @@ function openEntryModal(exercise, existing, onSubmit) {
             removeBtn.className = "danger";
             setIcon(removeBtn, "x");
             removeBtn.style.padding = "2px 8px";
-            removeBtn.onclick = () => { sets.splice(i, 1); if (sets.length === 0) sets.push({ reps: "", weight: "", time: null, duration: "" }); renderSets(); };
+            removeBtn.onclick = () => { sets.splice(i, 1); if (sets.length === 0) sets.push({ reps: "", weight: "", time: null, duration: "", side: null }); renderSets(); };
             row.appendChild(removeBtn);
 
             setsWrap.appendChild(row);
@@ -661,7 +705,14 @@ function openEntryModal(exercise, existing, onSubmit) {
     addSetBtn.type = "button";
     addSetBtn.className = "secondary";
     addSetBtn.innerHTML = tIcon("workouts_add_set_btn");
-    addSetBtn.onclick = () => { sets.push({ reps: "", weight: "", time: nowHHMM(), duration: "" }); renderSets(); };
+    // Новый подход по умолчанию берёт противоположную сторону от предыдущего — большинство
+    // упражнений так и делают (то одна рука, то другая)
+    addSetBtn.onclick = () => {
+        const last = sets[sets.length - 1];
+        const side = exercise.bilateral ? (last?.side === "L" ? "R" : last?.side === "R" ? "L" : "L") : null;
+        sets.push({ reps: "", weight: "", time: nowHHMM(), duration: "", side });
+        renderSets();
+    };
     setsWrap.appendChild(addSetBtn);
     modal.appendChild(setsWrap);
 
@@ -682,7 +733,7 @@ function openEntryModal(exercise, existing, onSubmit) {
     const okBtn = document.createElement("button");
     okBtn.textContent = t("save");
     okBtn.onclick = async () => {
-        const cleanSets = sets.filter(s => s.reps !== "" && s.reps != null).map(s => ({ reps: parseFloat(s.reps) || 0, weight: s.weight === "" || s.weight == null ? null : (parseFloat(s.weight) || 0), time: s.time || null, duration: s.duration === "" || s.duration == null ? null : (parseFloat(s.duration) || 0) }));
+        const cleanSets = sets.filter(s => s.reps !== "" && s.reps != null).map(s => ({ reps: parseFloat(s.reps) || 0, weight: s.weight === "" || s.weight == null ? null : (parseFloat(s.weight) || 0), time: s.time || null, duration: s.duration === "" || s.duration == null ? null : (parseFloat(s.duration) || 0), side: s.side || null }));
         backdrop.remove();
         await onSubmit({ date: dateInput.value || todayStr(), sets: cleanSets, notes: notesInput.value.trim() || null });
     };
@@ -784,16 +835,27 @@ async function renderExerciseCard(container, exercise, entries) {
 
     // Личный рекорд: лучший отдельный подход за всю историю — по весу (если упражнение с весом),
     // иначе по повторениям. При равном весе/повторениях выбираем более раннюю дату (первый раз).
-    const best = bestSetRecord(entries, exercise);
-    const bestPace = bestPaceRecord(entries, exercise);
     const recordLine = (icon, label, r) => {
         const el = document.createElement("div");
         el.style.cssText = "font-size:0.85em; margin-bottom:6px; display:flex; align-items:center; gap:5px; color:var(--text-dim);";
         el.innerHTML = `${iconSvg(icon, "color:#e0a93b; flex-shrink:0;")}${escapeHtmlText(label)} ${escapeHtmlText(r.text)} <span class="dim" style="opacity:0.7;">· ${escapeHtmlText(fmtRu(r.date))}</span>`;
         return el;
     };
-    if (best) card.appendChild(recordLine("trophy", t("workouts_record_label"), best));
-    if (bestPace) card.appendChild(recordLine("zap", t("workouts_record_pace_label"), bestPace));
+    if (exercise.bilateral) {
+        // Отдельные рекорды по сторонам — общая цифра тут почти бессмысленна (то одна рука, то другая)
+        for (const side of ["L", "R"]) {
+            const sideLabel = t("workouts_side_" + side);
+            const best = bestSetRecord(entries, exercise, side);
+            const bestPace = bestPaceRecord(entries, exercise, side);
+            if (best) card.appendChild(recordLine("trophy", `${sideLabel}: ${t("workouts_record_label")}`, best));
+            if (bestPace) card.appendChild(recordLine("zap", `${sideLabel}: ${t("workouts_record_pace_label")}`, bestPace));
+        }
+    } else {
+        const best = bestSetRecord(entries, exercise);
+        const bestPace = bestPaceRecord(entries, exercise);
+        if (best) card.appendChild(recordLine("trophy", t("workouts_record_label"), best));
+        if (bestPace) card.appendChild(recordLine("zap", t("workouts_record_pace_label"), bestPace));
+    }
 
     // мини-график прогресса: для упражнений с весом — максимальный вес за день,
     // для остальных — суммарный объём (сумма всех подходов за день, например всего повторений)

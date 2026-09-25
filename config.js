@@ -298,11 +298,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.61";
+const SITE_VERSION = "0.62";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.62", date: "2026-09-25 17:35", changes: [
+        "Exercises done one side at a time can now track left/right separately (⚙️ on the exercise → \"Track left/right separately\"): each set gets an L/R toggle, and new sets alternate sides by default",
+        "Personal records split by side for these exercises — best set and best pace for the left arm/leg and the right, shown as separate lines instead of one mixed number",
+        "Requires migration migrations/028_exercise_bilateral.sql; without it, everything works as before and the toggle just isn't offered",
+    ]},
     { version: "0.61", date: "2026-09-25 17:05", changes: [
         "Exercises can now also log duration per set (⚙️ on the exercise → \"Also log duration\"): a set becomes \"5 km in 30 min\", and the app shows the pace (value per hour — km/h for running, etc.)",
         "Two personal-record lines instead of one where it applies: the best single set (furthest run, heaviest lift) and, for duration-tracked exercises, the best pace — since they're rarely from the same session",
@@ -526,6 +531,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.62", date: "2026-09-25 17:35", changes: [
+        "Упражнения, которые делаются поочерёдно одной стороной, теперь можно разделить на левую/правую (⚙️ упражнения → «Разделять левую и правую сторону»): у каждого подхода — переключатель Л/П, новые подходы по умолчанию чередуют сторону",
+        "Личные рекорды для таких упражнений делятся по сторонам — лучший подход и лучший темп отдельно для левой и правой, а не одна смешанная цифра",
+        "Нужна миграция migrations/028_exercise_bilateral.sql; без неё всё работает как раньше, просто переключатель не предлагается",
+    ]},
     { version: "0.61", date: "2026-09-25 17:05", changes: [
         "У упражнений можно включить учёт длительности подхода (⚙️ упражнения → «Также фиксировать длительность»): подход становится «5 км за 30 мин», и приложение показывает темп (значение в час — км/ч для бега и т.п.)",
         "Там, где это применимо, теперь две строки рекорда вместо одной: лучший отдельный подход (самая длинная дистанция, самый большой вес) и, для упражнений с длительностью, лучший темп — они почти всегда из разных тренировок",
