@@ -6,7 +6,7 @@ import MarkDoneModal from './components/MarkDoneModal.vue'
 import HistoryModal from './components/HistoryModal.vue'
 import { useMilestones } from './lib/useMilestones'
 import { buildRow, groupActiveByCategory, sortDone, summary, statusLevel } from './lib/milestones'
-import { t } from './lib/i18n'
+import { t, locale } from './lib/i18n'
 import type { Milestone, MilestoneFormInput } from './lib/types'
 
 const { auth, items, error, init, addMilestone, updateMilestone, markDone, deleteMilestone } = useMilestones()
@@ -38,6 +38,33 @@ function chipText(m: Milestone): string | null {
   if (level === 'overdue') return `${t('ms_overdue_by')} ${-days} ${t('ms_days_short')}`
   if (level === 'today') return t('ms_due_today')
   return `${t('ms_due_in')} ${days} ${t('ms_days_short')} · ${fmtRu(m.due_date)}`
+}
+
+// Портировано из intervalLabel()/renderRow() в milestones.js — доп. чипы под названием.
+const unitShort: Record<string, string> = {
+  day: t('ms_unit_short_day'),
+  week: t('ms_unit_short_week'),
+  month: t('ms_unit_short_month'),
+  year: t('ms_unit_short_year'),
+}
+
+function intervalText(m: Milestone): string | null {
+  if (!m.interval_value || !m.interval_unit) return null
+  return `${t('ms_every')} ${m.interval_value} ${unitShort[m.interval_unit]}`
+}
+
+function fmtKmVal(n: number | null): string {
+  return n ? Number(n).toLocaleString(locale()) + ' ' + t('ms_km') : ''
+}
+
+function lastTimeText(m: Milestone): string | null {
+  if (!m.last_date) return null
+  return `${t('ms_last_time')} ${fmtRu(m.last_date)}${m.last_km ? ' · ' + fmtKmVal(m.last_km) : ''}`
+}
+
+function nextKmText(m: Milestone): string | null {
+  if (!m.last_km || !m.interval_km) return null
+  return `${t('ms_next_km')} ${fmtKmVal(Number(m.last_km) + Number(m.interval_km))}`
 }
 
 // ---- Форма создания/редактирования (все поля — см. MilestoneFormModal.vue) ----
@@ -161,6 +188,9 @@ function closeHistory() {
                       :style="{ borderColor: chipColor(statusLevel(m.due_date).level), color: chipColor(statusLevel(m.due_date).level) }"
                       >{{ chipText(m) }}</span
                     >
+                    <span v-if="intervalText(m)" class="dim whitespace-nowrap rounded-full border px-2 py-0.5" style="border-color: var(--border)">{{ intervalText(m) }}</span>
+                    <span v-if="lastTimeText(m)" class="dim whitespace-nowrap rounded-full border px-2 py-0.5" style="border-color: var(--border)">{{ lastTimeText(m) }}</span>
+                    <span v-if="nextKmText(m)" class="dim whitespace-nowrap rounded-full border px-2 py-0.5" style="border-color: var(--border)">{{ nextKmText(m) }}</span>
                   </div>
                   <div v-if="m.note" class="dim mt-1 text-xs">{{ m.note }}</div>
                 </td>
@@ -180,7 +210,7 @@ function closeHistory() {
           <tbody>
             <tr v-for="m in done" :key="m.id" class="align-top">
               <td class="done-text">{{ m.name }}</td>
-              <td class="dim text-xs">{{ fmtRu(m.last_date) }}</td>
+              <td class="dim text-xs">{{ fmtRu(m.last_date) }}{{ m.last_km ? ' · ' + fmtKmVal(m.last_km) : '' }}</td>
               <td class="w-20 pl-2 text-right whitespace-nowrap">
                 <button v-if="m.history?.length" class="secondary" :title="t('ms_history_title')" @click="openHistory(m)">🕘</button>
                 <button class="secondary" :title="t('ms_edit_btn')" @click="openEditForm(m)">✎</button>

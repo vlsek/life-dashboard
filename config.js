@@ -471,11 +471,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.68";
+const SITE_VERSION = "0.69";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.69", date: "2026-09-27 22:50", changes: [
+        "Milestones pilot: reached full display parity with the vanilla page — interval label (\"every N months\"), last-time chip (with mileage), and next-mileage chip now shown under each milestone, same as milestones.js",
+    ]},
     { version: "0.68", date: "2026-09-27 22:35", changes: [
         "Milestones pilot: history modal for each milestone — past completions (date, mileage, note), newest first, matching the vanilla page's History button",
     ]},
@@ -730,6 +733,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.69", date: "2026-09-27 22:50", changes: [
+        "Пилот «Вехи»: достигнут полный паритет отображения с ванильной страницей — под каждой вехой теперь показывается метка интервала («каждые N месяцев»), чип «в последний раз» (с пробегом) и чип следующего пробега, как в milestones.js",
+    ]},
     { version: "0.68", date: "2026-09-27 22:35", changes: [
         "Пилот «Вехи»: модалка истории по каждой вехе — прошлые отметки (дата, пробег, заметка), новые сверху, как кнопка «История» на ванильной странице",
     ]},

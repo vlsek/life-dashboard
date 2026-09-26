@@ -78,6 +78,13 @@ const DICT = {
     ms_history_title: 'History',
     ms_history_empty: 'No completions logged yet.',
     ms_km: 'km',
+    ms_every: 'every',
+    ms_last_time: 'last:',
+    ms_next_km: 'next at',
+    ms_unit_short_day: 'd',
+    ms_unit_short_week: 'wk',
+    ms_unit_short_month: 'mo',
+    ms_unit_short_year: 'yr',
   },
   ru: {
     nav_open_menu: 'Открыть меню',
@@ -145,6 +152,13 @@ const DICT = {
     ms_history_title: 'История',
     ms_history_empty: 'Выполнений пока не записано.',
     ms_km: 'км',
+    ms_every: 'каждые',
+    ms_last_time: 'в последний раз:',
+    ms_next_km: 'следующий на',
+    ms_unit_short_day: 'дн.',
+    ms_unit_short_week: 'нед.',
+    ms_unit_short_month: 'мес.',
+    ms_unit_short_year: 'г.',
   },
 } as const
 
