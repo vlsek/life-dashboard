@@ -75,6 +75,9 @@ const DICT = {
     dash_delete_error_generic: "Couldn't delete: ",
     save: 'Save',
     cancel: 'Cancel',
+    ms_history_title: 'History',
+    ms_history_empty: 'No completions logged yet.',
+    ms_km: 'km',
   },
   ru: {
     nav_open_menu: 'Открыть меню',
@@ -139,6 +142,9 @@ const DICT = {
     dash_delete_error_generic: 'Не удалось удалить: ',
     save: 'Сохранить',
     cancel: 'Отмена',
+    ms_history_title: 'История',
+    ms_history_empty: 'Выполнений пока не записано.',
+    ms_km: 'км',
   },
 } as const
 

@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import AppShell from './components/AppShell.vue'
 import MilestoneFormModal from './components/MilestoneFormModal.vue'
 import MarkDoneModal from './components/MarkDoneModal.vue'
+import HistoryModal from './components/HistoryModal.vue'
 import { useMilestones } from './lib/useMilestones'
 import { buildRow, groupActiveByCategory, sortDone, summary, statusLevel } from './lib/milestones'
 import { t } from './lib/i18n'
@@ -101,6 +102,15 @@ async function onDelete(m: Milestone) {
     saveError.value = t('dash_delete_error_generic') + (e as Error).message
   }
 }
+
+// ---- История прошлых отметок (см. HistoryModal.vue) ----
+const historyTarget = ref<Milestone | null>(null)
+function openHistory(m: Milestone) {
+  historyTarget.value = m
+}
+function closeHistory() {
+  historyTarget.value = null
+}
 </script>
 
 <template>
@@ -154,7 +164,8 @@ async function onDelete(m: Milestone) {
                   </div>
                   <div v-if="m.note" class="dim mt-1 text-xs">{{ m.note }}</div>
                 </td>
-                <td class="w-16 pl-2 text-right whitespace-nowrap">
+                <td class="w-20 pl-2 text-right whitespace-nowrap">
+                  <button v-if="m.history?.length" class="secondary" :title="t('ms_history_title')" @click="openHistory(m)">🕘</button>
                   <button class="secondary" :title="t('ms_edit_btn')" @click="openEditForm(m)">✎</button>
                   <button class="danger" @click="onDelete(m)">✕</button>
                 </td>
@@ -170,7 +181,8 @@ async function onDelete(m: Milestone) {
             <tr v-for="m in done" :key="m.id" class="align-top">
               <td class="done-text">{{ m.name }}</td>
               <td class="dim text-xs">{{ fmtRu(m.last_date) }}</td>
-              <td class="w-16 pl-2 text-right whitespace-nowrap">
+              <td class="w-20 pl-2 text-right whitespace-nowrap">
+                <button v-if="m.history?.length" class="secondary" :title="t('ms_history_title')" @click="openHistory(m)">🕘</button>
                 <button class="secondary" :title="t('ms_edit_btn')" @click="openEditForm(m)">✎</button>
                 <button class="danger" @click="onDelete(m)">✕</button>
               </td>
@@ -187,5 +199,6 @@ async function onDelete(m: Milestone) {
       @close="closeForm"
     />
     <MarkDoneModal v-if="markDoneTarget" :milestone="markDoneTarget" @submit="onMarkDoneSubmit" @close="closeMarkDone" />
+    <HistoryModal v-if="historyTarget" :milestone="historyTarget" @close="closeHistory" />
   </main>
 </template>

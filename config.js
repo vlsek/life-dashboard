@@ -471,11 +471,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.67";
+const SITE_VERSION = "0.68";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.68", date: "2026-09-27 22:35", changes: [
+        "Milestones pilot: history modal for each milestone — past completions (date, mileage, note), newest first, matching the vanilla page's History button",
+    ]},
     { version: "0.67", date: "2026-09-27 22:15", changes: [
         "Milestones pilot: add/edit form with every field (category, last time, repeat interval and unit, due date, mileage at last time / repeat every, note) — same rules as the vanilla page, a set interval recalculates the due date automatically",
         "Marking a milestone done now asks for the date, mileage and a note (was a quick one-click confirm before) and edit/delete are now available for completed one-off milestones too, not just active ones",
@@ -727,6 +730,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.68", date: "2026-09-27 22:35", changes: [
+        "Пилот «Вехи»: модалка истории по каждой вехе — прошлые отметки (дата, пробег, заметка), новые сверху, как кнопка «История» на ванильной странице",
+    ]},
     { version: "0.67", date: "2026-09-27 22:15", changes: [
         "Пилот «Вехи»: форма добавления/редактирования со всеми полями (категория, дата последнего раза, интервал и единица повтора, срок, пробег в последний раз / интервал в км, заметка) — те же правила, что и на ванильной странице, при заданном интервале срок пересчитывается сам",
         "Отметка «сделано» теперь спрашивает дату, пробег и заметку (раньше было мгновенное подтверждение в один клик), а редактирование/удаление стали доступны и для уже выполненных разовых вех, а не только для активных",
