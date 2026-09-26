@@ -471,11 +471,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.65";
+const SITE_VERSION = "0.66";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.66", date: "2026-09-27 21:40", changes: [
+        "Second step of the gradual move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of the Milestones page, kept separate from the live site at /milestones-vue/",
+        "Active milestones grouped by category with an overdue/today/due-soon status chip, completed one-offs listed separately, mark-as-done and delete actions; add/edit forms with all fields (interval, km, history) are a follow-up iteration",
+        "Same login, theme, header and menu as the History pilot; the underlying due-date math is covered by tests checked against the original page's numbers",
+    ]},
     { version: "0.65", date: "2026-09-26 12:40", changes: [
         "The Vue pilot (/history-vue/) got its own header and swipeable side menu, matching the rest of the site — the menu links to all the other (still vanilla) pages, plus language and theme switchers and logout",
         "Install app / guided tour / about-the-project are intentionally not ported into the pilot yet — a later iteration if the pilot sticks",
@@ -718,6 +723,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.66", date: "2026-09-27 21:40", changes: [
+        "Второй шаг постепенного переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка раздела «Вехи», отдельно от рабочего сайта, по адресу /milestones-vue/",
+        "Активные вехи сгруппированы по категориям с чипом статуса (просрочено/сегодня/скоро), выполненные разовые — отдельным списком, отметка «готово» и удаление; формы добавления/редактирования всех полей (интервал, км, история) — в одной из следующих итераций",
+        "Тот же вход, тема, шапка и меню, что и у пилота Истории; расчёт срока проверен тестами против цифр оригинальной страницы",
+    ]},
     { version: "0.65", date: "2026-09-26 12:40", changes: [
         "У Vue-пилота (/history-vue/) появились своя шапка и выезжающее по свайпу боковое меню, как на остальном сайте — меню ведёт на все остальные (пока ванильные) страницы, плюс переключатели языка и темы, выход из аккаунта",
         "Установка приложения / обучающий тур / «о проекте» в пилот пока сознательно не перенесены — сделаю следующей итерацией, если пилот приживётся",

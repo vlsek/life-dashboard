@@ -6,3 +6,6 @@ ROADMAP.md
 # Сборка Vue-пилота (см. web-history/) — исходники коммитятся, node_modules/dist нет
 web-history/node_modules
 web-history/dist
+
+web-milestones/node_modules
+web-milestones/dist
