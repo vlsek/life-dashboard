@@ -1,9 +1,6 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
 import type { Milestone } from './types'
-// MilestoneFormInput/buildRow are wired in once the add/edit forms land (TODO, see
-// ROADMAP.md "B-milestones: формы") — addMilestone/updateMilestone below already accept
-// a pre-built row so the form component can call buildRow() itself.
 import { addInterval } from './milestones'
 
 export type AuthState =

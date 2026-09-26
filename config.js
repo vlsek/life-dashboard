@@ -471,11 +471,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.66";
+const SITE_VERSION = "0.67";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.67", date: "2026-09-27 22:15", changes: [
+        "Milestones pilot: add/edit form with every field (category, last time, repeat interval and unit, due date, mileage at last time / repeat every, note) — same rules as the vanilla page, a set interval recalculates the due date automatically",
+        "Marking a milestone done now asks for the date, mileage and a note (was a quick one-click confirm before) and edit/delete are now available for completed one-off milestones too, not just active ones",
+    ]},
     { version: "0.66", date: "2026-09-27 21:40", changes: [
         "Second step of the gradual move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of the Milestones page, kept separate from the live site at /milestones-vue/",
         "Active milestones grouped by category with an overdue/today/due-soon status chip, completed one-offs listed separately, mark-as-done and delete actions; add/edit forms with all fields (interval, km, history) are a follow-up iteration",
@@ -723,6 +727,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.67", date: "2026-09-27 22:15", changes: [
+        "Пилот «Вехи»: форма добавления/редактирования со всеми полями (категория, дата последнего раза, интервал и единица повтора, срок, пробег в последний раз / интервал в км, заметка) — те же правила, что и на ванильной странице, при заданном интервале срок пересчитывается сам",
+        "Отметка «сделано» теперь спрашивает дату, пробег и заметку (раньше было мгновенное подтверждение в один клик), а редактирование/удаление стали доступны и для уже выполненных разовых вех, а не только для активных",
+    ]},
     { version: "0.66", date: "2026-09-27 21:40", changes: [
         "Второй шаг постепенного переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка раздела «Вехи», отдельно от рабочего сайта, по адресу /milestones-vue/",
         "Активные вехи сгруппированы по категориям с чипом статуса (просрочено/сегодня/скоро), выполненные разовые — отдельным списком, отметка «готово» и удаление; формы добавления/редактирования всех полей (интервал, км, история) — в одной из следующих итераций",
