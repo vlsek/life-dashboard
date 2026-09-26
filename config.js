@@ -471,11 +471,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.64";
+const SITE_VERSION = "0.65";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.65", date: "2026-09-26 12:40", changes: [
+        "The Vue pilot (/history-vue/) got its own header and swipeable side menu, matching the rest of the site — the menu links to all the other (still vanilla) pages, plus language and theme switchers and logout",
+        "Install app / guided tour / about-the-project are intentionally not ported into the pilot yet — a later iteration if the pilot sticks",
+    ]},
     { version: "0.64", date: "2026-09-26 11:15", changes: [
         "First step of the gradual move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of the History page, kept separate from the live site at /history-vue/ while it's being tried out — nothing on the current site changed",
         "The pilot reuses the exact same login (same Supabase project, same browser session) and the same 4 themes, and its day/week percentage math is covered by tests checked against the original page's numbers",
@@ -714,6 +718,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.65", date: "2026-09-26 12:40", changes: [
+        "У Vue-пилота (/history-vue/) появились своя шапка и выезжающее по свайпу боковое меню, как на остальном сайте — меню ведёт на все остальные (пока ванильные) страницы, плюс переключатели языка и темы, выход из аккаунта",
+        "Установка приложения / обучающий тур / «о проекте» в пилот пока сознательно не перенесены — сделаю следующей итерацией, если пилот приживётся",
+    ]},
     { version: "0.64", date: "2026-09-26 11:15", changes: [
         "Первый шаг постепенного переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка раздела «История», отдельно от рабочего сайта, по адресу /history-vue/, пока идёт обкатка — на текущем сайте ничего не изменилось",
         "Пилот использует тот же вход (тот же проект Supabase, та же сессия браузера) и те же 4 темы, а расчёт процентов дня/недели проверен тестами против цифр оригинальной страницы",

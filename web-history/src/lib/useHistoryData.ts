@@ -39,7 +39,10 @@ async function fetchAllRows<T>(build: (from: number, to: number) => PromiseLike<
   return rows
 }
 
-export type AuthState = { status: 'loading' } | { status: 'redirecting' } | { status: 'ready'; userId: string }
+export type AuthState =
+  | { status: 'loading' }
+  | { status: 'redirecting' }
+  | { status: 'ready'; userId: string; userEmail: string | null }
 
 export function useAuthAndData() {
   const auth = ref<AuthState>({ status: 'loading' })
@@ -55,6 +58,7 @@ export function useAuthAndData() {
       return
     }
     const userId = session.user.id
+    const userEmail = session.user.email ?? null
 
     const { data: profile } = await sb.from('profiles').select('onboarded').eq('user_id', userId).maybeSingle()
     if (!profile?.onboarded) {
@@ -63,7 +67,7 @@ export function useAuthAndData() {
       return
     }
 
-    auth.value = { status: 'ready', userId }
+    auth.value = { status: 'ready', userId, userEmail }
     await loadData(userId)
   }
 

@@ -6,6 +6,7 @@ import { dayStats, hasData, weekStats } from './lib/stats'
 import type { HistoryContext } from './lib/stats'
 import { locale, t } from './lib/i18n'
 import DayDetailModal from './components/DayDetailModal.vue'
+import AppShell from './components/AppShell.vue'
 
 const { auth, ctx, error } = useAuthAndData()
 
@@ -145,6 +146,7 @@ function onTouchEnd(e: TouchEvent) {
 </script>
 
 <template>
+  <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-6">
     <h1 class="mb-1 text-xl font-bold">{{ t('hist_h1') }}</h1>
     <p class="mb-4 text-sm" style="color: var(--text-dim)">{{ t('hist_intro') }}</p>
@@ -204,7 +206,7 @@ function onTouchEnd(e: TouchEvent) {
           </div>
         </div>
 
-        <div class="mb-2 flex flex-col gap-1" @touchstart="onTouchStart" @touchend="onTouchEnd">
+        <div class="no-edge-swipe mb-2 flex flex-col gap-1" @touchstart="onTouchStart" @touchend="onTouchEnd">
           <div class="grid gap-1" style="grid-template-columns: repeat(7, minmax(0, 1fr)) minmax(0, 1.05fr)">
             <div v-for="n in weekdayNames" :key="n" class="py-0.5 text-center text-[0.72em]" style="color: var(--text-dim)">{{ n }}</div>
             <div class="py-0.5 text-center text-[0.72em]" style="color: var(--text-dim)">{{ t('hist_week_col') }}</div>
