@@ -1,0 +1,8 @@
+# Локальные файлы для передачи контекста между чатами — никогда не коммитить
+# (см. HANDOFF.md: осознанное решение, чтобы не выдавать ИИ-происхождение проекта)
+HANDOFF.md
+ROADMAP.md
+
+# Сборка Vue-пилота (см. web-history/) — исходники коммитятся, node_modules/dist нет
+web-history/node_modules
+web-history/dist
