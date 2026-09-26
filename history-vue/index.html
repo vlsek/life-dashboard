@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Тот же приём, что и на остальных страницах сайта: класс темы и цвет строки состояния
+         ставятся синхронно, до первой отрисовки, чтобы не мелькал неверный цвет (см. v0.60). -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('site_theme') || 'dark'
+          document.documentElement.className = 'theme-' + t
+          var bg = { dark: '#121212', monet: '#0d0703', light: '#f7f4ef', pink: '#fff0f5' }[t]
+          var m = document.querySelector('meta[name="theme-color"]')
+          if (m && bg) m.setAttribute('content', bg)
+        } catch (e) {}
+      })()
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#121212" />
+    <link rel="icon" type="image/svg+xml" href="/history-vue/favicon.svg" />
+    <title>История (пилот на Vue)</title>
+    <script type="module" crossorigin src="/history-vue/assets/index-ysDANGs4.js"></script>
+    <link rel="stylesheet" crossorigin href="/history-vue/assets/index-yklW0Bsg.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>

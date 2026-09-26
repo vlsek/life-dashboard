@@ -471,11 +471,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.63";
+const SITE_VERSION = "0.64";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.64", date: "2026-09-26 11:15", changes: [
+        "First step of the gradual move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of the History page, kept separate from the live site at /history-vue/ while it's being tried out — nothing on the current site changed",
+        "The pilot reuses the exact same login (same Supabase project, same browser session) and the same 4 themes, and its day/week percentage math is covered by tests checked against the original page's numbers",
+        "Stack-migration commits will only bump the version by 0.01 each, regardless of how much work they contain",
+    ]},
     { version: "0.63", date: "2026-09-25 18:20", changes: [
         "The metric icon picker grew from 44 to 90 icons — added stretching, boxing, jump rope, weight plate, treadmill, skiing, health (bandage, thermometer, eye, lungs), food and drink (tea, water bottle, pizza, salad, bread), home and chores, finance, gifts, weather and nature, travel, tech, hobbies, pets and more",
         "A search field above the grid finds icons by name in Russian or English (e.g. \"бег\" or \"run\"), including synonyms — no need to scroll through the whole set",
@@ -709,6 +714,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.64", date: "2026-09-26 11:15", changes: [
+        "Первый шаг постепенного переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка раздела «История», отдельно от рабочего сайта, по адресу /history-vue/, пока идёт обкатка — на текущем сайте ничего не изменилось",
+        "Пилот использует тот же вход (тот же проект Supabase, та же сессия браузера) и те же 4 темы, а расчёт процентов дня/недели проверен тестами против цифр оригинальной страницы",
+        "Коммиты по переезду на новый стек будут поднимать версию только на 0,01, независимо от объёма работы в них",
+    ]},
     { version: "0.63", date: "2026-09-25 18:20", changes: [
         "Выбор иконки метрики вырос с 44 до 90: добавлены растяжка, бокс, скакалка, блин штанги, беговая дорожка, лыжи, здоровье (пластырь, градусник, глаз, лёгкие), еда и напитки (чай, бутылка воды, пицца, салат, хлеб), дом и быт, финансы, подарки, погода и природа, путешествия, техника, хобби, питомцы и другое",
         "Над сеткой — поиск иконки по названию на русском или английском («бег» или «run»), включая синонимы — не нужно листать весь список",
