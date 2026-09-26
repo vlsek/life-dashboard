@@ -893,3 +893,5 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--accent); width
 
 /* Monet: огонёк слабо теряется на очень тёмном фоне — тонкая обводка */
 html.theme-monet .streak-flame .fl-outer { stroke: var(--accent); stroke-width: 0.6; stroke-opacity: 0.5; }
+
+.icon-picker-search { width: 100%; margin-bottom: 8px; }

@@ -83,6 +83,52 @@ const ICON_PATHS = {
     link: '<path d="M9.5 14.5L14.5 9.5"/><path d="M11 6.5l1.4-1.4a3.5 3.5 0 0 1 5 5L16 11.5"/><path d="M13 17.5l-1.4 1.4a3.5 3.5 0 0 1-5-5L8 12.5"/>',
     brain: '<path d="M9.5 4.5a3 3 0 0 0-3 3 3 3 0 0 0-2 2.8 3 3 0 0 0 1.2 2.4 3 3 0 0 0 .8 4.3 3 3 0 0 0 5 1.5V5.5a2 2 0 0 0-2-1z"/><path d="M14.5 4.5a3 3 0 0 1 3 3 3 3 0 0 1 2 2.8 3 3 0 0 1-1.2 2.4 3 3 0 0 1-.8 4.3 3 3 0 0 1-5 1.5V5.5a2 2 0 0 1 2-1z"/>',
     dumbbell: '<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/>',
+    stretch: '<circle cx="12" cy="4" r="1.7"/><path d="M12 6.6v6"/><path d="M12 8.5l-6 2.5"/><path d="M12 8.5l6 2.5"/><path d="M12 12.6l-3 7"/><path d="M12 12.6l3 7"/>',
+    boxing: '<path d="M13.5 4.5c2.5 0 4.5 2 4.5 4.5 0 1-.3 1.8-.9 2.6l-3.4 4.4a2 2 0 0 1-1.6.8H8.5a2.5 2.5 0 0 1-2.5-2.5v-3A6.5 6.5 0 0 1 13.5 4.5z"/><path d="M8.5 9.2v5.1"/><path d="M6 19.5c1-2 2.5-2.5 4-2.5"/>',
+    jumprope: '<path d="M4 20c3-8 6-14 8-16M20 20c-3-8-6-14-8-16"/><circle cx="5" cy="20.5" r="1.3"/><circle cx="19" cy="20.5" r="1.3"/><circle cx="12" cy="3.5" r="1.6"/>',
+    plate: '<circle cx="12" cy="12" r="9.2"/><circle cx="12" cy="12" r="4"/>',
+    treadmill: '<rect x="3" y="15" width="14" height="3.2" rx="1.4"/><path d="M17 12.5V19"/><path d="M17 12.5l3.5-1.5"/><circle cx="8.5" cy="6" r="1.7"/><path d="M8.5 8.5v4l-2.5 3"/><path d="M8.5 10.5l3 1.5 1 4"/>',
+    ski: '<path d="M2.5 20l6-13.5"/><path d="M11.5 20l6-13.5"/><path d="M4 16.5h4.5M13 16.5h4.5"/><path d="M4.5 5.5l14 5"/>',
+    bandage: '<rect x="3.5" y="9.5" width="17" height="5" rx="2.5" transform="rotate(-30 12 12)"/><path d="M9.5 8l1.6 3.2M14.6 12.6l1.6 3.2" transform="rotate(-30 12 12)"/>',
+    thermometer: '<path d="M12 3.5a2 2 0 0 0-2 2v9.6a4 4 0 1 0 4 0V5.5a2 2 0 0 0-2-2z"/><path d="M12 8.5v6.6"/><circle cx="12" cy="17.5" r="1.6" fill="currentColor"/>',
+    eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>',
+    lungs: '<path d="M12 3v9"/><path d="M12 9c-1-2-2.5-2.5-4-2-2 .6-3.5 2.8-3.5 6 0 3 1.5 5 3 5 1.3 0 1.8-1 2-2.3l1.5-6.7"/><path d="M12 9c1-2 2.5-2.5 4-2 2 .6 3.5 2.8 3.5 6 0 3-1.5 5-3 5-1.3 0-1.8-1-2-2.3L12.5 9"/>',
+    tea: '<path d="M4.5 9.5h11v4.5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V9.5z"/><path d="M15.5 10.8h1.4a2.4 2.4 0 0 1 0 4.8h-1.4"/><path d="M7 5.5c1.3.8 1.3 1.7 0 2.5M11 5.5c1.3.8 1.3 1.7 0 2.5"/>',
+    bottle: '<path d="M10 2.5h4v2.8l1.5 2V19a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V7.3l1.5-2V2.5z"/><path d="M8.5 12.5h7"/>',
+    pizza: '<path d="M12 3.5l9 16.5H3l9-16.5z"/><circle cx="12" cy="11" r="1" fill="currentColor"/><circle cx="9.5" cy="15" r="1" fill="currentColor"/><circle cx="14.5" cy="15.5" r="1" fill="currentColor"/>',
+    salad: '<path d="M3.5 12.5a8.5 6.5 0 0 0 17 0z"/><path d="M12 12.5V7"/><path d="M12 7c-1.5-1.5-1.5-3-1-4.5 1.8.3 2.8 1.6 3 3"/><path d="M8 12.2l-1-3M16 12.2l1-3"/>',
+    bread: '<path d="M4 12.5c0-4.5 3.5-8 8-8s8 3.5 8 8-1 6-8 6-8-1.5-8-6z"/><path d="M8 9.5v5M12 8.5v6.5M16 9.5v5"/>',
+    bed: '<path d="M2.5 19.5V9.5a2 2 0 0 1 2-2h15a2 2 0 0 1 2 2v10"/><path d="M2.5 15.5h19"/><path d="M6 13v-3.2A1.3 1.3 0 0 1 7.3 8.5h3.4A1.3 1.3 0 0 1 12 9.8V13"/>',
+    broom: '<path d="M13 3l7 7-2.5 2.5L10 5z"/><path d="M10.5 5.5l-8 8"/><path d="M2 21c1-4 3-5.5 6-6.5"/><path d="M2 21c2-2 3-1 5-2.5"/><path d="M2 21c1.5-2.5 1-4 3-6"/>',
+    laundry: '<circle cx="12" cy="13" r="6"/><path d="M9 13a3 3 0 0 0 5 2.2"/><path d="M6 4.5h.01M9 4.5h.01"/><rect x="3.5" y="2.5" width="17" height="19" rx="2.5"/>',
+    trash2: '<path d="M4 7h16"/><path d="M9 7V4.5h6V7"/><path d="M6.5 7l1 13h9l1-13"/><path d="M10 11v6M14 11v6"/>',
+    wrench: '<path d="M14.5 3a5 5 0 0 0-6.8 5.9L3 13.6l2.4 2.4 4.7-4.7A5 5 0 0 0 16 8.5l-3-.5-.5-3z"/>',
+    piggybank: '<path d="M4.5 13a6 5 0 0 1 6-5.2h4a4.5 4.5 0 0 1 4 2.4l2 .3v3l-2 .5a5 5 0 0 1-1.2 2l.4 2.5h-2.7l-.3-1.5h-3.4l-.3 1.5H8.3l.4-2.5A6 5 0 0 1 4.5 13z"/><path d="M8 9.3V7.5M15.5 10h.01"/>',
+    card: '<rect x="2.5" y="5.5" width="19" height="13" rx="2.2"/><path d="M2.5 9.5h19"/><path d="M6 14.5h4"/>',
+    receipt: '<path d="M6 3.5h12v17l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5v-17z"/><path d="M9 8h6M9 11.5h6M9 15h4"/>',
+    gift: '<rect x="3.5" y="9.5" width="17" height="10" rx="1.6"/><path d="M3.5 9.5h17v3.5h-17z"/><path d="M12 9.5v10"/><path d="M12 9.5C10.5 6 7 6.2 7 8.3c0 1 1 1.2 2 1.2h3zM12 9.5c1.5-3.5 5-3.3 5-1.2 0 1-1 1.2-2 1.2h-3z"/>',
+    party: '<path d="M4 20.5L14.5 3.5l5 5-17 11z"/><path d="M9.5 12.5l3 3"/><circle cx="18" cy="4" r="1" fill="currentColor"/><circle cx="21" cy="8" r="1" fill="currentColor"/><circle cx="15" cy="2.5" r="1" fill="currentColor"/>',
+    tree: '<path d="M12 21v-7"/><path d="M12 14c-3 0-5.5-2.2-5.5-5S9 4 12 4s5.5 2.2 5.5 5-2.5 5-5.5 5z"/><path d="M12 4c-1.6 0-3 1.4-3 3.5"/>',
+    cloud: '<path d="M7 18.5a4.2 4.2 0 0 1-.5-8.4 5.5 5.5 0 0 1 10.6-2 4 4 0 0 1 1.4 7.8"/><path d="M7 18.5h11"/>',
+    rain: '<path d="M7 14.5a4.2 4.2 0 0 1-.5-8.4 5.5 5.5 0 0 1 10.6-2 4 4 0 0 1 1.4 7.8"/><path d="M8 17.5l-1.2 3M12 17.5l-1.2 3M16 17.5l-1.2 3"/>',
+    snow: '<path d="M7 12.5a4.2 4.2 0 0 1-.5-8.4 5.5 5.5 0 0 1 10.6-2 4 4 0 0 1 1.4 7.8"/><path d="M12 15v6M9.5 17l5 2M14.5 17l-5 2"/>',
+    flower: '<circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="6.5" r="2.4"/><circle cx="17.5" cy="12" r="2.4"/><circle cx="12" cy="17.5" r="2.4"/><circle cx="6.5" cy="12" r="2.4"/><path d="M12 19.5V22"/>',
+    plane: '<path d="M2.5 13.5l19-6.5-6.5 19-2.5-8-8-2.5z"/><path d="M12.5 13.5l-4 4"/>',
+    suitcase: '<rect x="3" y="7.5" width="18" height="12.5" rx="2"/><path d="M9 7.5V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v2.5"/><path d="M3 13h18"/>',
+    train: '<rect x="5.5" y="3.5" width="13" height="13" rx="4"/><circle cx="9" cy="13" r="1" fill="currentColor"/><circle cx="15" cy="13" r="1" fill="currentColor"/><path d="M8 20.5l2-3M16 20.5l-2-3"/><path d="M5.5 8.5h13"/>',
+    laptop: '<rect x="3.5" y="4.5" width="17" height="11" rx="1.5"/><path d="M2 19.5h20"/><path d="M9 19.5l1-4h4l1 4"/>',
+    camera: '<rect x="2.5" y="7" width="19" height="13" rx="2.2"/><path d="M8 7l1.5-3h5L16 7"/><circle cx="12" cy="13.5" r="4"/>',
+    headphones: '<path d="M4 15v-2.5a8 8 0 0 1 16 0V15"/><rect x="2.5" y="13.5" width="4" height="6" rx="1.6"/><rect x="17.5" y="13.5" width="4" height="6" rx="1.6"/>',
+    gamepad: '<rect x="2.5" y="8" width="19" height="10" rx="5"/><path d="M7 11v4M5 13h4"/><circle cx="16" cy="12" r="1" fill="currentColor"/><circle cx="18.5" cy="14.5" r="1" fill="currentColor"/>',
+    tv: '<rect x="3" y="5" width="18" height="12.5" rx="1.8"/><path d="M8 20.5h8"/>',
+    hourglass: '<path d="M6.5 3.5h11M6.5 20.5h11"/><path d="M7.5 3.5v3.2a4.5 4.5 0 0 0 2.2 3.9L12 12l2.3-1.4a4.5 4.5 0 0 0 2.2-3.9V3.5"/><path d="M7.5 20.5v-3.2a4.5 4.5 0 0 1 2.2-3.9L12 12l2.3 1.4a4.5 4.5 0 0 1 2.2 3.9v3.2"/>',
+    paintbrush: '<path d="M4.5 19.5c-1.5-3 0-5 2-5s3 1.7 2 3.5-2.5 2.5-4 1.5z"/><path d="M8.5 14L18 4.5a1.8 1.8 0 0 1 2.5 2.5L11 16.5"/>',
+    guitar: '<circle cx="8" cy="16" r="4.5"/><circle cx="8" cy="16" r="1.6"/><path d="M10.5 12.5L18 5"/><path d="M17 4l3 3-1.5 1.5-3-3z"/>',
+    paw: '<circle cx="7" cy="8.5" r="1.8"/><circle cx="12" cy="6.5" r="1.8"/><circle cx="17" cy="8.5" r="1.8"/><path d="M12 11.5c-3.3 0-5.5 2.2-5.5 4.5s2 3.5 5.5 3.5 5.5-1.2 5.5-3.5-2.2-4.5-5.5-4.5z"/>',
+    fish: '<path d="M2.5 12c3.5-4.5 9-5.5 13-3.8 2 .9 4 2.3 6 3.8-2 1.5-4 2.9-6 3.8-4 1.7-9.5.7-13-3.8z"/><circle cx="7.5" cy="11" r="0.9" fill="currentColor"/><path d="M21.5 12l-2.3-2.7M21.5 12l-2.3 2.7"/>',
+    bird: '<path d="M2.5 13.5c2.7-5 8-6.5 12-4.8 1.2.5 2.2 1.3 3 2.3-1 .2-1.9.1-2.7-.3-.5 3.5-3.5 6-7.3 6.3.9-1.2 1.3-2.2 1.2-3.1-2.4.3-4.7-.1-6.2-.4z"/><circle cx="14.5" cy="10" r="0.8" fill="currentColor"/>',
+    briefcase: '<rect x="2.5" y="7.5" width="19" height="12" rx="2"/><path d="M8.5 7.5V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5v2"/><path d="M2.5 13h19"/>',
+    checklist: '<path d="M4 6.5l1.5 1.5L8 5.5"/><path d="M4 12.5l1.5 1.5L8 11.5"/><path d="M4 18.5l1.5 1.5L8 17.5"/><path d="M11 6.5h9M11 12.5h9M11 18.5h9"/>',
     done: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
     star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8L12 3.5z"/>',
     book: '<path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13c-3-.5-6 0-8 1.5z"/><path d="M12 6v13"/>',
@@ -176,7 +222,107 @@ const EMOJI_TO_SVG = {
     "🏠": "home",
     "🩺": "medical",
 };
-const METRIC_ICON_CHOICES = ['pushup', 'pullup', 'squat', 'dumbbell', 'run', 'walk', 'bike', 'swim', 'yoga', 'mountain', 'heart', 'pulse', 'droplet', 'scale', 'apple', 'meal', 'coffee', 'sleep', 'pill', 'medical', 'tooth', 'book', 'study', 'brain', 'code', 'note', 'music', 'sun', 'leaf', 'smile', 'zap', 'flame', 'clock', 'wallet', 'car', 'phone', 'sparkles', 'goals', 'star', 'trophy', 'ruler', 'pin', 'calendar', 'home'];
+
+// Ключевые слова для поиска иконки метрики (рус/eng), включая синонимы вроде "цель"→goals,
+// "карандаш"→note, чтобы не плодить визуально дублирующиеся значки.
+const ICON_KEYWORDS = {
+    pushup: "отжимания push up press",
+    pullup: "подтягивания pull up bar",
+    squat: "приседания squat legs",
+    dumbbell: "гантели вес силовая strength weight gym",
+    run: "бег running jog cardio",
+    walk: "ходьба прогулка walking steps",
+    bike: "велосипед cycling bicycle",
+    swim: "плавание swimming pool",
+    yoga: "йога растяжка stretching",
+    mountain: "горы поход hiking trekking outdoors",
+    heart: "сердце любовь health love",
+    pulse: "пульс давление heart rate cardio",
+    droplet: "вода капля water hydration",
+    scale: "весы вес взвешивание weight measure",
+    apple: "яблоко еда фрукт food fruit diet",
+    meal: "еда обед ужин завтрак food meal dinner lunch",
+    coffee: "кофе напиток drink caffeine",
+    sleep: "сон отдых спать rest nap",
+    pill: "таблетки лекарство medicine drug supplement",
+    medical: "медицина аптечка врач health cross",
+    tooth: "зубы стоматолог dental teeth",
+    book: "книга чтение reading learn",
+    study: "учёба образование study school university",
+    brain: "мозг мышление ум mind think memory",
+    code: "код программирование programming dev",
+    note: "заметка текст note write",
+    music: "музыка песня music song",
+    sun: "солнце свет утро sun light morning",
+    leaf: "растение природа зелёный plant nature eco",
+    smile: "улыбка настроение happy mood",
+    zap: "энергия молния скорость energy speed fast",
+    flame: "огонь стрик fire streak",
+    clock: "время часы time",
+    wallet: "деньги финансы кошелёк money finance budget",
+    car: "машина авто транспорт car drive",
+    phone: "телефон звонок phone call",
+    sparkles: "блеск магия sparkle special",
+    goals: "цель мишень target aim",
+    star: "звезда баллы бонус star points bonus",
+    trophy: "кубок победа приз trophy win award",
+    ruler: "линейка измерение measure size",
+    pin: "метка место pin location marker",
+    calendar: "календарь дата calendar date",
+    home: "дом квартира home house apartment",
+    stretch: "растяжка гибкость stretching flexibility",
+    boxing: "бокс единоборства boxing fight punch",
+    jumprope: "скакалка прыжки jump rope skipping",
+    plate: "блин штанга диск plate barbell",
+    treadmill: "беговая дорожка treadmill",
+    ski: "лыжи зимний спорт skiing winter",
+    bandage: "пластырь травма первая помощь bandage injury first aid",
+    thermometer: "температура градусник fever thermometer",
+    eye: "глаза зрение eye vision sight",
+    lungs: "дыхание лёгкие breathing breath lungs",
+    tea: "чай напиток tea drink",
+    bottle: "бутылка вода питьё bottle drink water",
+    pizza: "пицца еда fastfood pizza food",
+    salad: "салат овощи здоровое питание salad veggies healthy",
+    bread: "хлеб выпечка bread bakery",
+    bed: "кровать постель сон bed sleep",
+    broom: "уборка чистота cleaning chores broom",
+    laundry: "стирка бельё laundry washing",
+    trash2: "мусор выброс trash garbage bin",
+    wrench: "ремонт инструмент repair tool fix",
+    piggybank: "копилка сбережения savings piggy bank",
+    card: "карта оплата банк card payment bank",
+    receipt: "чек квитанция receipt bill",
+    gift: "подарок праздник gift present",
+    party: "праздник вечеринка party celebration",
+    tree: "дерево природа tree nature",
+    cloud: "облако погода cloud weather",
+    rain: "дождь погода rain weather",
+    snow: "снег зима winter snow",
+    flower: "цветок растение flower plant",
+    plane: "самолёт путешествие полёт plane travel flight",
+    suitcase: "чемодан путешествие багаж suitcase travel luggage",
+    train: "поезд транспорт train",
+    laptop: "ноутбук работа компьютер laptop work computer",
+    camera: "камера фото photo camera",
+    headphones: "наушники музыка звук headphones audio",
+    gamepad: "игры геймпад games controller",
+    tv: "телевизор экран tv screen",
+    hourglass: "песочные часы время ожидание hourglass time wait",
+    paintbrush: "рисование творчество art painting brush",
+    guitar: "гитара музыка инструмент guitar music instrument",
+    paw: "питомец животное pet animal paw",
+    fish: "рыба аквариум fish",
+    bird: "птица bird",
+    briefcase: "работа офис карьера work office career job",
+    checklist: "список задачи todo checklist tasks",
+};
+function iconSearchMatches(name, query) {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return name.includes(q) || (ICON_KEYWORDS[name] || "").toLowerCase().includes(q);
+}
+const METRIC_ICON_CHOICES = ['pushup', 'pullup', 'squat', 'dumbbell', 'run', 'walk', 'bike', 'swim', 'yoga', 'mountain', 'heart', 'pulse', 'droplet', 'scale', 'apple', 'meal', 'coffee', 'sleep', 'pill', 'medical', 'tooth', 'book', 'study', 'brain', 'code', 'note', 'music', 'sun', 'leaf', 'smile', 'zap', 'flame', 'clock', 'wallet', 'car', 'phone', 'sparkles', 'goals', 'star', 'trophy', 'ruler', 'pin', 'calendar', 'home', 'stretch', 'boxing', 'jumprope', 'plate', 'treadmill', 'ski', 'bandage', 'thermometer', 'eye', 'lungs', 'tea', 'bottle', 'pizza', 'salad', 'bread', 'bed', 'broom', 'laundry', 'trash2', 'wrench', 'piggybank', 'card', 'receipt', 'gift', 'party', 'tree', 'cloud', 'rain', 'snow', 'flower', 'plane', 'suitcase', 'train', 'laptop', 'camera', 'headphones', 'gamepad', 'tv', 'hourglass', 'paintbrush', 'guitar', 'paw', 'fish', 'bird', 'briefcase', 'checklist'];
 function metricIconKey(icon) {
     if (!icon || typeof icon !== "string") return null;
     if (icon.startsWith("svg:")) { const k = icon.slice(4); return ICON_PATHS[k] ? k : null; }
@@ -205,9 +351,22 @@ function buildIconPicker(current) {
     let value = current || "";
     const wrap = document.createElement("div");
     wrap.className = "icon-picker";
+
+    // Поиск по названию и ключевым словам (рус/eng) — библиотека большая, пролистывать всю
+    // неудобно, а искать "бег" или "run" быстрее
+    const searchInput = document.createElement("input");
+    searchInput.type = "text";
+    searchInput.placeholder = t("icon_picker_search");
+    searchInput.className = "icon-picker-search";
+
     const grid = document.createElement("div");
     grid.className = "icon-picker-grid";
     const buttons = {};
+    const emptyMsg = document.createElement("p");
+    emptyMsg.className = "dim";
+    emptyMsg.style.cssText = "font-size:0.85em; text-align:center; padding:10px 0; display:none;";
+    emptyMsg.textContent = t("icon_picker_no_results");
+
     const emojiInput = document.createElement("input");
     emojiInput.type = "text";
     emojiInput.maxLength = 8;
@@ -217,15 +376,27 @@ function buildIconPicker(current) {
         const k = metricIconKey(value);
         for (const [name, b] of Object.entries(buttons)) b.classList.toggle("selected", name === k);
     }
+    function applyFilter() {
+        const q = searchInput.value;
+        let visible = 0;
+        for (const [name, b] of Object.entries(buttons)) {
+            const show = iconSearchMatches(name, q);
+            b.style.display = show ? "" : "none";
+            if (show) visible++;
+        }
+        emptyMsg.style.display = visible === 0 ? "" : "none";
+    }
     METRIC_ICON_CHOICES.forEach(name => {
         const b = document.createElement("button");
         b.type = "button";
         b.className = "icon-choice";
+        b.title = name;
         b.innerHTML = iconSvg(name);
         b.onclick = () => { value = "svg:" + name; emojiInput.value = ""; paint(); };
         buttons[name] = b;
         grid.appendChild(b);
     });
+    searchInput.oninput = applyFilter;
     // своё эмодзи, которого нет среди аналогов, подставляем в поле
     if (value && !value.startsWith("svg:") && !metricIconKey(value)) emojiInput.value = value;
     emojiInput.oninput = () => {
@@ -233,7 +404,9 @@ function buildIconPicker(current) {
         if (v) value = v;
         paint();
     };
+    wrap.appendChild(searchInput);
     wrap.appendChild(grid);
+    wrap.appendChild(emptyMsg);
     wrap.appendChild(emojiInput);
     paint();
     return { el: wrap, getValue: () => value };
@@ -298,11 +471,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.62";
+const SITE_VERSION = "0.63";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.63", date: "2026-09-25 18:20", changes: [
+        "The metric icon picker grew from 44 to 90 icons — added stretching, boxing, jump rope, weight plate, treadmill, skiing, health (bandage, thermometer, eye, lungs), food and drink (tea, water bottle, pizza, salad, bread), home and chores, finance, gifts, weather and nature, travel, tech, hobbies, pets and more",
+        "A search field above the grid finds icons by name in Russian or English (e.g. \"бег\" or \"run\"), including synonyms — no need to scroll through the whole set",
+        "No migration needed — this only changes what's offered in the picker",
+    ]},
     { version: "0.62", date: "2026-09-25 17:35", changes: [
         "Exercises done one side at a time can now track left/right separately (⚙️ on the exercise → \"Track left/right separately\"): each set gets an L/R toggle, and new sets alternate sides by default",
         "Personal records split by side for these exercises — best set and best pace for the left arm/leg and the right, shown as separate lines instead of one mixed number",
@@ -531,6 +709,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.63", date: "2026-09-25 18:20", changes: [
+        "Выбор иконки метрики вырос с 44 до 90: добавлены растяжка, бокс, скакалка, блин штанги, беговая дорожка, лыжи, здоровье (пластырь, градусник, глаз, лёгкие), еда и напитки (чай, бутылка воды, пицца, салат, хлеб), дом и быт, финансы, подарки, погода и природа, путешествия, техника, хобби, питомцы и другое",
+        "Над сеткой — поиск иконки по названию на русском или английском («бег» или «run»), включая синонимы — не нужно листать весь список",
+        "Миграция не нужна — меняется только набор в выборе иконки",
+    ]},
     { version: "0.62", date: "2026-09-25 17:35", changes: [
         "Упражнения, которые делаются поочерёдно одной стороной, теперь можно разделить на левую/правую (⚙️ упражнения → «Разделять левую и правую сторону»): у каждого подхода — переключатель Л/П, новые подходы по умолчанию чередуют сторону",
         "Личные рекорды для таких упражнений делятся по сторонам — лучший подход и лучший темп отдельно для левой и правой, а не одна смешанная цифра",
