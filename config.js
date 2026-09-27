@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.81";
+const SITE_VERSION = "0.82";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.82", date: "2026-09-28 08:20", changes: [
+        "Начат перенос Дашборда на Vite + Vue 3 + TypeScript + Tailwind (самая большая и сложная страница, переносится в несколько итераций — см. ROADMAP.md, тикет B-dashboard). Пилот честно помечен как незаконченный: сверху баннер и ссылка на обычный Дашборд для всего, чего пока нет",
+        "Первая итерация — блок серий (streaks): идеальные дни подряд, серии по каждой метрике (включая «не менее/не чаще N раз в неделю» и импортированные до переезда серии), заполнение заметки дня. Бизнес-логика (lib/metrics.ts + lib/streaks.ts) перенесена дословно из dashboard.js и покрыта 41 тестом до какой-либо разметки — риск разъехаться с оригиналом в расчётах сведён к минимуму",
+        "Следующие итерации: дневной/недельный прогресс, графики (от них, как выяснилось при переносе Сообщества, зависит ещё и раздел сравнения с друзьями), дневные метрики и вода",
+    ]},
     { version: "0.81", date: "2026-09-27 17:32", changes: [
         "Шестой шаг постепенного переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка «Сообщества», отдельно от рабочего сайта, по адресу /community-vue/",
         "Друзья (поиск по email/нику, подписка/отписка), лидерборд (все / только друзья, медали за топ-3, streak), лента «что сделали сегодня», публичный профиль (имя + видимость в лидербордах)",
@@ -797,6 +802,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.82", date: "2026-09-28 08:20", changes: [
+        "Started moving the Dashboard to Vite + Vue 3 + TypeScript + Tailwind (the biggest, most complex page — ported over several iterations, see ROADMAP.md, ticket B-dashboard). The pilot is honestly marked as unfinished: a banner up top links back to the full Dashboard for anything not moved yet",
+        "First iteration — the streaks block: perfect days in a row, per-metric streaks (including \"at least/at most N times a week\" schedules and streaks imported before the move), day-note-filled streak. The business logic (lib/metrics.ts + lib/streaks.ts) was ported verbatim from dashboard.js and covered by 41 tests before any markup was written, to keep it from drifting from the original's math",
+        "Next iterations: day/week progress, charts (which, as it turned out while porting Community, the friend-comparison section also depends on), daily metrics and water",
+    ]},
     { version: "0.81", date: "2026-09-27 17:32", changes: [
         "Sixth step of the gradual move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of Community, kept separate from the live site at /community-vue/",
         "Friends (search by email/nickname, follow/unfollow), leaderboard (everyone / friends only, medals for the top 3, streak), a \"what they did today\" feed, public profile (name + leaderboard visibility)",
