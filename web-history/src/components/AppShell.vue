@@ -49,7 +49,7 @@ const pages: NavPage[] = [
   { href: '/skills-vue/', key: 'skills', labelKey: 'nav_skills', icon: 'skills' },
   { href: '/workouts.html', key: 'workouts', labelKey: 'nav_workouts', icon: 'workouts' },
   { href: '/challenges.html', key: 'challenges', labelKey: 'nav_challenges', icon: 'challenges' },
-  { href: '/english.html', key: 'english', labelKey: 'nav_english', icon: 'english' },
+  { href: '/languages-vue/', key: 'english', labelKey: 'nav_english', icon: 'english' },
   { href: '/calendar-vue/', key: 'calendar', labelKey: 'nav_calendar', icon: 'calendar' },
   { href: '/milestones-vue/', key: 'milestones', labelKey: 'nav_milestones', icon: 'milestones' },
   { href: '/shop-vue/', key: 'shop', labelKey: 'nav_shop', icon: 'shop' },

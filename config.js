@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.79";
+const SITE_VERSION = "0.80";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.80", date: "2026-09-27 17:27", changes: [
+        "Шестой шаг переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка «Языков» (бывшая english.js/html) по адресу /languages-vue/ — словарь слов с фильтром по языку, добавление/редактирование с автопереводом (MyMemory), отметка «выучено»",
+        "Ссылка на эту страницу в меню всех остальных пилотов (История, Вехи, Календарь, Цели, Навыки, Аккаунт, Магазин) обновлена на /languages-vue/ вместо /english.html — сама ванильная страница пока называется по-старому, переименование её файлов на будущее, отдельной задачей",
+    ]},
     { version: "0.79", date: "2026-09-27 13:05", changes: [
         "Пилот-мелочи, не связанные с новой страницей: почищены ссылки в меню, которые ещё вели на /skills.html и /shop.html вместо актуальных /skills-vue/ и /shop-vue/ (История, Календарь, Вехи, Цели, Навыки, Аккаунт), а также догнал /goals-vue/ и /calendar-vue/ в меню Аккаунта",
         "В пилоте «Вехи» появились стили для кнопок (обычная/secondary/danger) и модалок — раньше ссылались в разметке, но не были заведены в CSS, из-за чего кнопки выглядели неоформленными браузерными",
@@ -788,6 +792,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.80", date: "2026-09-27 17:27", changes: [
+        "Sixth step of the move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of Languages (formerly english.js/html) at /languages-vue/ - a word dictionary with a per-language filter, add/edit with auto-translate (MyMemory), and a \"learned\" toggle",
+        "The link to this page in every other pilot's menu (History, Milestones, Calendar, Goals, Skills, Account, Shop) now points to /languages-vue/ instead of /english.html - the vanilla page itself still keeps its old name for now; renaming its files is a separate, later task",
+    ]},
     { version: "0.79", date: "2026-09-27 13:05", changes: [
         "Small pilot cleanup, not tied to a new page: fixed menu links that still pointed at /skills.html and /shop.html instead of the current /skills-vue/ and /shop-vue/ (History, Calendar, Milestones, Goals, Skills, Account), and caught up /goals-vue/ and /calendar-vue/ in the Account menu too",
         "The Milestones pilot now has real CSS for its buttons (default/secondary/danger) and modals — the markup referenced these classes already, but they weren't defined, so the buttons looked like unstyled browser defaults",

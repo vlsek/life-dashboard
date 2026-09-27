@@ -56,7 +56,7 @@ const pages: NavPage[] = [
   { href: '/community.html', key: 'community', labelKey: 'nav_community', icon: 'community' },
   { href: '/history-vue/', key: 'history', labelKey: 'nav_history', icon: 'history' },
 ]
-const active: string = 'account'
+const active: string = 'english'
 function plainLabel(key: DictKey): string {
   return t(key).replace(/^[^\p{L}\p{N}]+/u, '')
 }
