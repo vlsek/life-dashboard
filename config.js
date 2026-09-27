@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.73";
+const SITE_VERSION = "0.74";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.74", date: "2026-09-27 07:20", changes: [
+        "Третий шаг постепенного переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка «Календаря», отдельно от рабочего сайта, по адресу /calendar-vue/",
+        "Сетка месяца с бейджами прогресса (план на день выполнен/частично), навигация по месяцам, модалка плана дня — добавление пунктов, отметка выполнения, удаление, сохранение",
+        "Тот же вход, тема, шапка и меню, что и у остальных пилотных страниц; раскладка сетки месяца проверена тестами против реальных дней недели",
+    ]},
     { version: "0.73", date: "2026-09-27 03:15", changes: [
         "Пилот «История»: общий модуль иконок (src/lib/icons.ts, все 120 иконок + ключевые слова поиска, сверены побайтово с config.js) плюс компоненты Icon.vue/MetricIcon.vue/IconPicker.vue — та же сетка, поиск и поле для своего эмодзи, что и в buildIconPicker()",
         "Заодно починен реальный баг отображения в пилоте: метрика с иконкой svg: показывала буквальный текст «svg:dumbbell» вместо иконки (DayDetailModal теперь использует MetricIcon); навигация (сайдбар и быстрые ссылки) тоже получила настоящие иконки вместо текстовых подписей",
@@ -758,6 +763,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.74", date: "2026-09-27 07:20", changes: [
+        "Third step of the gradual move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of the Calendar, kept separate from the live site at /calendar-vue/",
+        "Month grid with progress badges (day's plan done/partial), month navigation, a day-plan modal — add items, mark done, delete, save",
+        "Same login, theme, header and menu as the other pilot pages; the month-grid layout is covered by tests checked against real weekdays",
+    ]},
     { version: "0.73", date: "2026-09-27 03:15", changes: [
         "History pilot: shared icon module (src/lib/icons.ts, all 120 icons + search keywords, byte-checked against config.js) plus Icon.vue/MetricIcon.vue/IconPicker.vue components — same picker grid, search and custom-emoji fallback as buildIconPicker()",
         "Fixed a real pilot display bug along the way: a metric with an svg: icon was showing the literal text \"svg:dumbbell\" instead of the icon (DayDetailModal now uses MetricIcon); nav sidebar/quick-nav also gained the real icons instead of text-only labels",
