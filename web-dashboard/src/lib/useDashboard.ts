@@ -1,7 +1,9 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
-import { fmtDate } from './date'
+import { fmtDate, todayStr } from './date'
 import { computeStreakItemsPure, type StreakItem } from './streaks'
+import { computeDayProgressPure, computeWeekProgressPure, getWeekDates, type ProgressResult, type PlannedItem, type GoalLite } from './progress'
+import { getDayProgressSettings, setDayProgressSettings, type DayProgressSettings } from './progressSettings'
 import type { Metric } from './types'
 
 export type AuthState =
@@ -12,7 +14,12 @@ export type AuthState =
 export function useDashboard() {
   const auth = ref<AuthState>({ status: 'loading' })
   const streaks = ref<StreakItem[]>([])
-  const streaksError = ref<string | null>(null)
+  const dayProgress = ref<ProgressResult | null>(null)
+  const weekProgress = ref<ProgressResult | null>(null)
+  const progressSettings = ref<DayProgressSettings>(getDayProgressSettings())
+  const loadError = ref<string | null>(null)
+
+  let currentUserId: string | null = null
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -32,36 +39,72 @@ export function useDashboard() {
       return
     }
 
+    currentUserId = userId
     auth.value = { status: 'ready', userId, userEmail }
-    await loadStreaks(userId)
+    await loadAll(userId)
   }
 
-  // Тонкая обёртка вокруг computeStreakItemsPure: тянет метрики/значения/заметки и передаёт
-  // уже загруженные данные в чистую функцию — портировано из computeStreakItems() в
-  // dashboard.js, но fetch и расчёт разделены (расчёт покрыт тестами без сети).
-  async function loadStreaks(userId: string) {
-    const [metricsRes, valuesRes, notesRes] = await Promise.all([
+  // Один поход за данными для стриков + дневного/недельного прогресса — все три расчёта
+  // читают в основном одни и те же таблицы (metrics/daily_values/daily_notes/goals), портировано
+  // из computeStreakItems()/computeDayProgress()/computeWeekProgress() в dashboard.js, но с общим
+  // fetch вместо трёх независимых.
+  async function loadAll(userId: string) {
+    const [metricsRes, valuesRes, notesRes, goalsRes] = await Promise.all([
       sb.from('metrics').select('*').eq('user_id', userId).eq('active', true).order('position'),
       sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId),
-      sb.from('daily_notes').select('date, items').eq('user_id', userId),
+      sb.from('daily_notes').select('date, items, planned_goals').eq('user_id', userId),
+      sb.from('goals').select('name, stages, done, current_stage').eq('user_id', userId),
     ])
-    if (metricsRes.error || valuesRes.error || notesRes.error) {
-      streaksError.value = (metricsRes.error || valuesRes.error || notesRes.error)!.message
+    const firstError = metricsRes.error || valuesRes.error || notesRes.error || goalsRes.error
+    if (firstError) {
+      loadError.value = firstError.message
       return
     }
+    loadError.value = null
+
     const metrics = (metricsRes.data || []) as Metric[]
     const byDay: Record<string, Record<string, unknown>> = {}
     for (const v of valuesRes.data || []) {
       ;(byDay[v.date] ||= {})[v.metric_id] = v.value
     }
+    const notesByDate: Record<string, { items?: unknown[]; planned_goals?: PlannedItem[] }> = {}
+    for (const n of notesRes.data || []) {
+      notesByDate[n.date] = n as any
+    }
     const noteDays = new Set(
-      (notesRes.data || []).filter((n: any) => Array.isArray(n.items) && n.items.length > 0).map((n: any) => n.date),
+      Object.entries(notesByDate)
+        .filter(([, n]) => Array.isArray(n.items) && n.items.length > 0)
+        .map(([d]) => d),
     )
-    streaksError.value = null
+    const allGoals = (goalsRes.data || []) as GoalLite[]
+
     streaks.value = computeStreakItemsPure(metrics, byDay, noteDays, new Date())
+
+    const settings = getDayProgressSettings()
+    progressSettings.value = settings
+    const today = todayStr()
+    dayProgress.value = computeDayProgressPure(
+      settings,
+      metrics,
+      byDay[today] || {},
+      today,
+      notesByDate[today]?.planned_goals || [],
+      allGoals,
+    )
+
+    const weekDates = getWeekDates(new Date())
+    const pastOrToday = weekDates.filter((d) => d <= today)
+    const plannedByDate: Record<string, PlannedItem[]> = {}
+    for (const d of pastOrToday) plannedByDate[d] = notesByDate[d]?.planned_goals || []
+    weekProgress.value = computeWeekProgressPure(settings, metrics, byDay, pastOrToday, plannedByDate, allGoals)
   }
 
-  return { auth, streaks, streaksError, init }
+  async function saveProgressSettings(s: DayProgressSettings) {
+    setDayProgressSettings(s)
+    if (currentUserId) await loadAll(currentUserId)
+  }
+
+  return { auth, streaks, dayProgress, weekProgress, progressSettings, loadError, init, saveProgressSettings }
 }
 
 export { fmtDate }
