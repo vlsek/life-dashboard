@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.82";
+const SITE_VERSION = "0.83";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.83", date: "2026-09-28 09:15", changes: [
+        "Пилот «Челленджи»: web-challenges/ → challenges-vue/ на Vite + Vue 3 + TypeScript + Tailwind. Каталог из 6 готовых пресетов и свой челлендж 4 типов — фиксированная дневная цель (100 отжиманий/день), растущая дневная цель (+5 в день), ежедневная привычка-галочка (без сахара) и накопительный счётчик со списком (100 книг)",
+        "Точечные дневные отметки — 30 кружков прогресса за весь срок челленджа, сегодняшний день подсвечен; для накопительных — прогресс-бар и список записей с заметками и удалением. Кнопка «завершить», когда цель или срок достигнуты. 19 тестов бизнес-логики (lib/challenges.ts) + 8 smoke-тестов на компоненты",
+        "Заодно продолжение B-nav-fix: ссылки на /challenges.html поправлены на /challenges-vue/ во всех уже перенесённых страницах (History, Calendar, Community, Goals, Account, Languages, Milestones, Shop, Skills) — кроме Дашборда, он сейчас активно дорабатывается отдельно",
+    ]},
     { version: "0.82", date: "2026-09-28 08:20", changes: [
         "Начат перенос Дашборда на Vite + Vue 3 + TypeScript + Tailwind (самая большая и сложная страница, переносится в несколько итераций — см. ROADMAP.md, тикет B-dashboard). Пилот честно помечен как незаконченный: сверху баннер и ссылка на обычный Дашборд для всего, чего пока нет",
         "Первая итерация — блок серий (streaks): идеальные дни подряд, серии по каждой метрике (включая «не менее/не чаще N раз в неделю» и импортированные до переезда серии), заполнение заметки дня. Бизнес-логика (lib/metrics.ts + lib/streaks.ts) перенесена дословно из dashboard.js и покрыта 41 тестом до какой-либо разметки — риск разъехаться с оригиналом в расчётах сведён к минимуму",
@@ -802,6 +807,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.83", date: "2026-09-28 09:15", changes: [
+        "Challenges pilot: web-challenges/ → challenges-vue/ on Vite + Vue 3 + TypeScript + Tailwind. A catalog of 6 ready-made presets plus a custom challenge in 4 flavors — fixed daily target (100 push-ups/day), growing daily target (+5/day), a daily habit checkbox (no sugar), and a cumulative counter with a list (100 books)",
+        "Per-day dots — 30 progress dots across the whole challenge, today highlighted; cumulative challenges get a progress bar and an entry list with notes and delete. A \"mark completed\" button once the target or duration is reached. 19 business-logic tests (lib/challenges.ts) + 8 component smoke tests",
+        "Also continued B-nav-fix: links to /challenges.html were fixed to /challenges-vue/ across every already-migrated page (History, Calendar, Community, Goals, Account, Languages, Milestones, Shop, Skills) — except Dashboard, which is currently under active separate work",
+    ]},
     { version: "0.82", date: "2026-09-28 08:20", changes: [
         "Started moving the Dashboard to Vite + Vue 3 + TypeScript + Tailwind (the biggest, most complex page — ported over several iterations, see ROADMAP.md, ticket B-dashboard). The pilot is honestly marked as unfinished: a banner up top links back to the full Dashboard for anything not moved yet",
         "First iteration — the streaks block: perfect days in a row, per-metric streaks (including \"at least/at most N times a week\" schedules and streaks imported before the move), day-note-filled streak. The business logic (lib/metrics.ts + lib/streaks.ts) was ported verbatim from dashboard.js and covered by 41 tests before any markup was written, to keep it from drifting from the original's math",
