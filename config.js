@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.80";
+const SITE_VERSION = "0.81";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.81", date: "2026-09-27 17:32", changes: [
+        "Шестой шаг постепенного переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка «Сообщества», отдельно от рабочего сайта, по адресу /community-vue/",
+        "Друзья (поиск по email/нику, подписка/отписка), лидерборд (все / только друзья, медали за топ-3, streak), лента «что сделали сегодня», публичный профиль (имя + видимость в лидербордах)",
+        "Раздел «Сравнение по активностям» (сравнение с друзьями по конкретной метрике + личный график) в этот заход НЕ перенесён — зависит от инфраструктуры графиков дашборда, которой ещё нет ни в одном пилоте; ссылка на ванильную страницу пока остаётся рабочим способом посмотреть его",
+    ]},
     { version: "0.80", date: "2026-09-27 17:27", changes: [
         "Шестой шаг переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка «Языков» (бывшая english.js/html) по адресу /languages-vue/ — словарь слов с фильтром по языку, добавление/редактирование с автопереводом (MyMemory), отметка «выучено»",
         "Ссылка на эту страницу в меню всех остальных пилотов (История, Вехи, Календарь, Цели, Навыки, Аккаунт, Магазин) обновлена на /languages-vue/ вместо /english.html — сама ванильная страница пока называется по-старому, переименование её файлов на будущее, отдельной задачей",
@@ -792,6 +797,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.81", date: "2026-09-27 17:32", changes: [
+        "Sixth step of the gradual move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of Community, kept separate from the live site at /community-vue/",
+        "Friends (search by email/nickname, follow/unfollow), leaderboard (everyone / friends only, medals for the top 3, streak), a \"what they did today\" feed, public profile (name + leaderboard visibility)",
+        "The \"Compare by activity\" section (per-metric comparison with friends + a personal chart) was NOT ported this round — it depends on the dashboard's charting infrastructure, which no pilot has yet; the link to the vanilla page still works for viewing it in the meantime",
+    ]},
     { version: "0.80", date: "2026-09-27 17:27", changes: [
         "Sixth step of the move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of Languages (formerly english.js/html) at /languages-vue/ - a word dictionary with a per-language filter, add/edit with auto-translate (MyMemory), and a \"learned\" toggle",
         "The link to this page in every other pilot's menu (History, Milestones, Calendar, Goals, Skills, Account, Shop) now points to /languages-vue/ instead of /english.html - the vanilla page itself still keeps its old name for now; renaming its files is a separate, later task",
