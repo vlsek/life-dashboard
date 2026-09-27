@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.74";
+const SITE_VERSION = "0.75";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.75", date: "2026-09-27 07:44", changes: [
+        "Четвёртый шаг постепенного переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка «Целей», отдельно от рабочего сайта, по адресу /goals-vue/",
+        "Активные цели сгруппированы по категориям (с прогресс-баром для многоэтапных, чипами сложности и срочности дедлайна), сумма баллов, выполненные — отдельным списком; форма добавления/редактирования со всеми полями",
+        "Тот же вход, тема, шапка и меню, что и у остальных пилотных страниц; расчёт прогресса и срочности дедлайна проверен тестами против оригинального goals.js",
+    ]},
     { version: "0.74", date: "2026-09-27 07:20", changes: [
         "Третий шаг постепенного переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка «Календаря», отдельно от рабочего сайта, по адресу /calendar-vue/",
         "Сетка месяца с бейджами прогресса (план на день выполнен/частично), навигация по месяцам, модалка плана дня — добавление пунктов, отметка выполнения, удаление, сохранение",
@@ -763,6 +768,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.75", date: "2026-09-27 07:44", changes: [
+        "Fourth step of the gradual move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of Goals, kept separate from the live site at /goals-vue/",
+        "Active goals grouped by category (with a progress bar for multi-stage ones, difficulty and deadline-urgency chips), points earned so far, completed goals listed separately; a full add/edit form with every field",
+        "Same login, theme, header and menu as the other pilot pages; the progress and deadline-urgency math is covered by tests checked against the original goals.js",
+    ]},
     { version: "0.74", date: "2026-09-27 07:20", changes: [
         "Third step of the gradual move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of the Calendar, kept separate from the live site at /calendar-vue/",
         "Month grid with progress badges (day's plan done/partial), month navigation, a day-plan modal — add items, mark done, delete, save",

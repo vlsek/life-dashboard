@@ -1,0 +1,141 @@
+// Мини-словарь только для этой страницы — ровно те строки, что использует Goals
+// (i18n.js целиком не модульный, чтобы его импортировать). Тексты скопированы дословно.
+
+export function getLang(): 'en' | 'ru' {
+  // Ровно как getLang() в i18n.js: по умолчанию "en", если ключ не задан
+  try {
+    return (localStorage.getItem('site_lang') || 'en') === 'ru' ? 'ru' : 'en'
+  } catch {
+    return 'en'
+  }
+}
+
+const DICT = {
+  en: {
+    nav_open_menu: 'Open menu',
+    nav_more: 'More sections',
+    nav_dashboard: '🏠 Dashboard',
+    nav_goals: '🎯 Goals',
+    nav_skills: '🥋 Skills',
+    nav_workouts: '🏋️ Workouts',
+    nav_challenges: '🏁 Challenges',
+    nav_english: '🌐 Languages',
+    nav_calendar: '🗓️ Calendar',
+    nav_milestones: '🚩 Milestones',
+    nav_shop: '🛍️ Shop',
+    nav_community: '🏆 Community',
+    nav_history: '🕘 History',
+    nav_account_title: 'Account',
+    theme_dark: '🌑 Dark',
+    theme_monet: '🎨 Monet',
+    theme_light: '☀️ Light',
+    theme_pink: '🌸 Pink',
+    logout: 'Log out',
+    pilot_badge: 'Vue pilot',
+    goals_title: 'Goals',
+    goals_h1: '🎯 Long-term goals',
+    goals_add_btn: '➕ Add goal',
+    goals_done_h2: '✅ Completed goals',
+    goals_edit_title: 'Edit goal',
+    goals_new_title: 'New goal',
+    goals_field_name: 'Name',
+    goals_field_points: 'Points for completion',
+    goals_field_category: 'Category',
+    goals_field_stages: 'Number of stages (1 = simple checkbox)',
+    goals_no_category: 'No category',
+    goals_field_difficulty: 'Difficulty',
+    goals_diff_none: 'Not set',
+    goals_diff_easy: 'Easy',
+    goals_diff_medium: 'Medium',
+    goals_diff_hard: 'Hard',
+    goals_field_deadline: 'Deadline (optional)',
+    goals_deadline_until: 'by',
+    goals_deadline_today: 'due today',
+    goals_deadline_overdue: 'overdue by',
+    goals_days_short: 'd',
+    goals_migration_hint: 'run migration 020 in Supabase (SQL editor)',
+    goals_updated_toast: 'Goal updated ✓',
+    goals_confirm_delete: 'Delete this goal?',
+    goals_no_active: 'No active goals yet.',
+    goals_points_earned: 'Points earned from goals:',
+    goals_no_done: 'Nothing completed yet.',
+    save: 'Save',
+    cancel: 'Cancel',
+    comm_load_error: "Couldn't load:",
+    dash_save_error_generic: "Couldn't save: ",
+    dash_delete_error_generic: "Couldn't delete: ",
+    dash_close_btn: 'Close',
+  },
+  ru: {
+    nav_open_menu: 'Открыть меню',
+    nav_more: 'Остальные разделы',
+    nav_dashboard: '🏠 Дашборд',
+    nav_goals: '🎯 Цели',
+    nav_skills: '🥋 Навыки',
+    nav_workouts: '🏋️ Тренировки',
+    nav_challenges: '🏁 Челленджи',
+    nav_english: '🌐 Языки',
+    nav_calendar: '🗓️ Календарь',
+    nav_milestones: '🚩 Вехи',
+    nav_shop: '🛍️ Магазин',
+    nav_community: '🏆 Сообщество',
+    nav_history: '🕘 История',
+    nav_account_title: 'Аккаунт',
+    theme_dark: '🌑 Тёмная',
+    theme_monet: '🎨 Monet',
+    theme_light: '☀️ Светлая',
+    theme_pink: '🌸 Розовая',
+    logout: 'Выйти',
+    pilot_badge: 'Пилот на Vue',
+    goals_title: 'Цели',
+    goals_h1: '🎯 Долгосрочные цели',
+    goals_add_btn: '➕ Добавить цель',
+    goals_done_h2: '✅ Выполненные цели',
+    goals_edit_title: 'Изменить цель',
+    goals_new_title: 'Новая цель',
+    goals_field_name: 'Название',
+    goals_field_points: 'Баллы за выполнение',
+    goals_field_category: 'Категория',
+    goals_field_stages: 'Количество этапов (1 = обычная галочка)',
+    goals_no_category: 'Без категории',
+    goals_field_difficulty: 'Сложность',
+    goals_diff_none: 'Не задана',
+    goals_diff_easy: 'Лёгкая',
+    goals_diff_medium: 'Средняя',
+    goals_diff_hard: 'Сложная',
+    goals_field_deadline: 'Дедлайн (необязательно)',
+    goals_deadline_until: 'до',
+    goals_deadline_today: 'срок сегодня',
+    goals_deadline_overdue: 'просрочено на',
+    goals_days_short: 'дн.',
+    goals_migration_hint: 'примени миграцию 020 в Supabase (SQL editor)',
+    goals_updated_toast: 'Цель обновлена ✓',
+    goals_confirm_delete: 'Удалить эту цель?',
+    goals_no_active: 'Пока нет активных целей.',
+    goals_points_earned: 'Заработано баллов за цели:',
+    goals_no_done: 'Пока ничего не выполнено.',
+    save: 'Сохранить',
+    cancel: 'Отмена',
+    comm_load_error: 'Не удалось загрузить:',
+    dash_save_error_generic: 'Не удалось сохранить: ',
+    dash_delete_error_generic: 'Не удалось удалить: ',
+    dash_close_btn: 'Закрыть',
+  },
+} as const
+
+export type DictKey = keyof (typeof DICT)['ru']
+
+export function t(key: DictKey): string {
+  return DICT[getLang()][key]
+}
+
+export function setLang(lang: 'en' | 'ru') {
+  // Как и на остальном сайте: большая часть контента рендерится JS-ом, простой и
+  // надёжный способ переключить язык везде — перезагрузить страницу.
+  localStorage.setItem('site_lang', lang)
+  location.reload()
+}
+
+export function locale(): string {
+  return getLang() === 'en' ? 'en-US' : 'ru-RU'
+}
