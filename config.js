@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.84";
+const SITE_VERSION = "0.85";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.85", date: "2026-09-28 09:55", changes: [
+        "Пилот Дашборда: перенесён дневной/недельный прогресс (кольца вокруг темы + настройки — что учитывать, где показывать) поверх стриков, перенесённых раньше — lib/progress.ts/progressSettings.ts, 17 новых тестов",
+        "Смерджено с параллельно переехавшим блоком «Вода» (агент 4, v0.84) — оба блока писали в web-dashboard/src/App.vue и i18n.ts одновременно, разрешил конфликт вручную (взял обе стороны, ничего не потеряно), все 80 тестов и билд проверены после слияния",
+    ]},
     { version: "0.84", date: "2026-09-28 09:50", changes: [
         "Пилот Дашборда: добавлен блок «Вода» (web-dashboard/, параллельно с блоком дневного/недельного прогресса, который переносит другой агент, — см. ROADMAP.md) — стакан-бейдж с той же волновой анимацией по проценту от нормы, что и на обычном сайте, модалка с быстрым добавлением (+200мл/+1л/своё), выбор даты задним числом, дневная норма (ручная или авто по последнему весу ≈30мл/кг — 17 тестов на lib/water.ts)",
         "Сделан отдельным композаблом (lib/useWater.ts) и отдельным файлом тестов, не трогающими lib/useDashboard.ts и общий smoke.test.ts, — чтобы не пересекаться с другими блоками Дашборда, которые переносятся тем же заходом",
@@ -811,6 +815,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.85", date: "2026-09-28 09:55", changes: [
+        "Dashboard pilot: ported day/week progress (theme-colored rings + settings — what counts, where it shows) on top of the streaks block ported earlier — lib/progress.ts/progressSettings.ts, 17 new tests",
+        "Merged with the Water block that moved over in parallel (agent 4, v0.84) — both blocks touched web-dashboard/src/App.vue and i18n.ts at the same time, resolved by hand (kept both sides, nothing lost), all 80 tests and the build re-checked after merging",
+    ]},
     { version: "0.84", date: "2026-09-28 09:50", changes: [
         "Dashboard pilot: added the Water block (web-dashboard/, alongside the day/week progress block another agent is porting in parallel — see ROADMAP.md) — a glass badge with the same wave animation by percent of the goal as the full site, a modal for quick add (+200ml/+1l/custom), picking a past date, a daily goal (manual or auto from the latest weight ≈30ml/kg — 17 tests on lib/water.ts)",
         "Built as its own composable (lib/useWater.ts) and its own test file, without touching lib/useDashboard.ts or the shared smoke.test.ts — to avoid colliding with the other Dashboard blocks being ported in the same pass",
