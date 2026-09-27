@@ -70,6 +70,9 @@ const DICT = {
       'DevOps and infrastructure engineer. Life Dashboard is my personal project: a tracker for goals, habits and metrics that I build for myself and keep improving bit by bit.',
     about_portfolio_link: 'More about me in the portfolio →',
     about_feedback_intro: 'Found a bug or have a suggestion? Write to:',
+    icon_picker_search: 'Search icons (e.g. run, water)',
+    icon_picker_no_results: 'No icons match — type your own emoji below instead.',
+    icon_picker_custom: '…or type your own emoji',
     hist_title: 'History',
     hist_h1: '🕘 History',
     hist_intro:
@@ -153,6 +156,9 @@ const DICT = {
       'DevOps- и инфраструктурный инженер. Life Dashboard — мой личный проект: трекер целей, привычек и метрик, который я делаю для себя и понемногу развиваю.',
     about_portfolio_link: 'Больше обо мне — в портфолио →',
     about_feedback_intro: 'Нашёл баг или есть предложение? Пиши:',
+    icon_picker_search: 'Поиск иконки (например, бег, вода)',
+    icon_picker_no_results: 'Ничего не найдено — впиши свой эмодзи ниже.',
+    icon_picker_custom: '…или впиши свой эмодзи',
     hist_title: 'История',
     hist_h1: '🕘 История',
     hist_intro:

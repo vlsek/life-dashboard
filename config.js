@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.72";
+const SITE_VERSION = "0.73";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.73", date: "2026-09-27 03:15", changes: [
+        "Пилот «История»: общий модуль иконок (src/lib/icons.ts, все 120 иконок + ключевые слова поиска, сверены побайтово с config.js) плюс компоненты Icon.vue/MetricIcon.vue/IconPicker.vue — та же сетка, поиск и поле для своего эмодзи, что и в buildIconPicker()",
+        "Заодно починен реальный баг отображения в пилоте: метрика с иконкой svg: показывала буквальный текст «svg:dumbbell» вместо иконки (DayDetailModal теперь использует MetricIcon); навигация (сайдбар и быстрые ссылки) тоже получила настоящие иконки вместо текстовых подписей",
+        "Модуль иконок пока по-прежнему дублируется в каждом пилоте (сейчас только web-history/), а не вынесен в общий npm-воркспейс — вопрос ещё открыт, см. B2 в роадмапе",
+    ]},
     { version: "0.72", date: "2026-09-27 23:20", changes: [
         "Первый шаг офлайн-режима (вариант «локально, без синка»): страницы «История» и «Вехи» теперь показывают последние сохранённые данные, если сеть пропала — раньше просто падала ошибка загрузки. Плюс service worker кэширует саму оболочку сайта (HTML/JS/CSS/иконки), так что страницы открываются и без сети",
         "Заодно защитил вход на сайт офлайн: раньше при пропавшей сети во время проверки «прошёл ли онбординг» пользователя ошибочно перекидывало на экран онбординга",
@@ -753,6 +758,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.73", date: "2026-09-27 03:15", changes: [
+        "History pilot: shared icon module (src/lib/icons.ts, all 120 icons + search keywords, byte-checked against config.js) plus Icon.vue/MetricIcon.vue/IconPicker.vue components — same picker grid, search and custom-emoji fallback as buildIconPicker()",
+        "Fixed a real pilot display bug along the way: a metric with an svg: icon was showing the literal text \"svg:dumbbell\" instead of the icon (DayDetailModal now uses MetricIcon); nav sidebar/quick-nav also gained the real icons instead of text-only labels",
+        "Icon module still duplicated per pilot (web-history/ only for now), not yet a shared npm-workspace package — that question is still open, see B2 in the roadmap",
+    ]},
     { version: "0.72", date: "2026-09-27 23:20", changes: [
         "First step of offline mode (\"local, no sync\" variant): the History and Milestones pages now show the last saved data when the network drops — previously they'd just show a load error. Also added a service worker that caches the app's static shell (HTML/JS/CSS/icons), so pages open even with no connection",
         "Also hardened offline sign-in: previously, if the network dropped during the \"has this user finished onboarding\" check, they'd be wrongly bounced to the onboarding screen",

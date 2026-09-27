@@ -5,6 +5,7 @@ import { dayStats, hasData, plannedItemDone, plannedOf } from '../lib/stats'
 import { isMetricDone, metricExpectedOn, metricSchedule } from '../lib/metrics'
 import type { Metric, MetricValue, SetEntry } from '../lib/types'
 import { locale, t } from '../lib/i18n'
+import MetricIcon from './MetricIcon.vue'
 
 const props = defineProps<{ ctx: HistoryContext; dateStr: string }>()
 const emit = defineEmits<{ close: [] }>()
@@ -98,7 +99,7 @@ const notes = computed<string[]>(() => {
                   <span v-else style="color: var(--text-dim)">–</span>
                 </td>
                 <td class="py-1 align-top">
-                  <span>{{ r.metric.icon }} {{ r.metric.name }}</span>
+                  <span class="inline-flex items-center gap-1"><MetricIcon :icon="r.metric.icon" /> {{ r.metric.name }}</span>
                   <div v-if="r.offLabel" class="text-[0.75em]" style="color: var(--text-dim)">{{ r.offLabel }}</div>
                 </td>
                 <td class="whitespace-pre-line py-1 text-right align-top">{{ r.valueText }}</td>

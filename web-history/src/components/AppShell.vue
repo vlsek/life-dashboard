@@ -7,6 +7,7 @@ import { handleInstallClick, isStandaloneApp } from '../lib/install'
 import InstallModal from './InstallModal.vue'
 import WelcomeTourModal from './WelcomeTourModal.vue'
 import AboutModal from './AboutModal.vue'
+import Icon from './Icon.vue'
 
 // Порт шапки + выезжающего меню из renderNav() (config.js) на Vue. Пилотная страница
 // сейчас единственная на новом стеке, поэтому остальные пункты меню ведут на старые
@@ -183,6 +184,7 @@ onUnmounted(() => {
           color: p.key === active ? 'var(--accent-text)' : 'var(--text)',
         }"
       >
+        <Icon :name="p.icon" />
         {{ plainLabel(p.labelKey) }}
       </a>
     </div>
@@ -211,6 +213,7 @@ onUnmounted(() => {
       :style="{ background: p.key === active ? 'var(--accent)' : 'transparent', color: p.key === active ? 'var(--accent-text)' : 'var(--text)' }"
       @click="closeSidebar"
     >
+      <Icon :name="p.icon" />
       <span>{{ plainLabel(p.labelKey) }}</span>
     </a>
 
@@ -221,6 +224,7 @@ onUnmounted(() => {
       style="color: var(--text)"
       @click="closeSidebar"
     >
+      <Icon name="user" />
       {{ t('nav_account_title') }}
     </a>
 
@@ -269,6 +273,7 @@ onUnmounted(() => {
       style="color: var(--text-dim)"
       @click="openInstall"
     >
+      <Icon name="download" />
       {{ t('nav_install_app') }}
     </button>
     <button
@@ -277,6 +282,7 @@ onUnmounted(() => {
       style="color: var(--text-dim)"
       @click="openTour"
     >
+      <Icon name="help" />
       {{ t('nav_tour') }}
     </button>
     <button
@@ -285,6 +291,7 @@ onUnmounted(() => {
       style="color: var(--text-dim)"
       @click="openAbout"
     >
+      <Icon name="info" />
       {{ t('nav_about') }}
     </button>
   </nav>
