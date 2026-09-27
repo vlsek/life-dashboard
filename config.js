@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.77";
+const SITE_VERSION = "0.78";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.78", date: "2026-09-27 12:37", changes: [
+        "Пятый шаг постепенного переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка «Магазина за баллы», отдельно от рабочего сайта, по адресу /shop-vue/",
+        "Карточка баланса (заработано/потрачено/остаток) считается той же формулой, что и на дашборде — метрики по всем дням, выполненные цели, освоенные навыки, дочитанные книги; сетка товаров с картинкой (вставить ссылку или загрузить файл), покупкой, редактированием и удалением",
+        "Тот же вход, тема, шапка и меню, что и у остальных пилотных страниц; расчёт баланса проверен тестами против оригинального config.js",
+    ]},
     { version: "0.77", date: "2026-09-27 12:27", changes: [
         "Починен баг: service worker (офлайн-режим, v0.72) ронял навигацию по ссылкам вида /goals.html, /shop.html и т.п. с ошибкой «не удаётся получить доступ к сайту» — Cloudflare редиректит такие адреса на их короткую форму без .html, а браузер запрещает отвечать на переход по ссылке уже редиректнутым ответом. Раньше (до появления service worker) редирект просто тихо обрабатывался браузером",
         "Пилот «Аккаунт» (web-account/ → /account-vue/): смена пароля, смена почты, привязка Google-аккаунта — пятая перенесённая страница",
@@ -779,6 +784,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.78", date: "2026-09-27 12:37", changes: [
+        "Fifth step of the gradual move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of the points Shop, kept separate from the live site at /shop-vue/",
+        "The balance card (earned/spent/remaining) uses the exact same formula as the dashboard — metrics across every day, done goals, mastered skills, finished books; an item grid with an image (paste a link or upload a file), buying, editing and deleting",
+        "Same login, theme, header and menu as the other pilot pages; the balance math is covered by tests checked against the original config.js",
+    ]},
     { version: "0.77", date: "2026-09-27 12:27", changes: [
         "Fixed a bug: the offline-mode service worker (v0.72) broke navigation to links like /goals.html, /shop.html etc. with a \"site can't be reached\" error — Cloudflare redirects those addresses to their short, extension-less form, and browsers refuse to satisfy a link navigation with an already-redirected response. Before the service worker existed, the browser just quietly followed the redirect itself",
         "Account pilot (web-account/ → /account-vue/): change password, change email, link a Google account — the fifth page ported over",
