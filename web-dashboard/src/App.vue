@@ -3,6 +3,7 @@ import { onMounted, ref, computed } from 'vue'
 import AppShell from './components/AppShell.vue'
 import Icon from './components/Icon.vue'
 import MetricIcon from './components/MetricIcon.vue'
+import WaterSection from './components/WaterSection.vue'
 import { useDashboard } from './lib/useDashboard'
 import { t } from './lib/i18n'
 import type { StreakItem } from './lib/streaks'
@@ -40,6 +41,10 @@ function streakLabel(item: StreakItem): string {
     <p v-if="auth.status === 'loading'" class="dim">{{ t('loading_ellipsis') }}</p>
 
     <template v-else-if="auth.status === 'ready'">
+      <div class="mb-4">
+        <WaterSection :user-id="auth.userId" />
+      </div>
+
       <p v-if="streaksError" class="dim">{{ t('comm_load_error') }} {{ streaksError }}</p>
 
       <template v-else-if="streaks.length > 0">

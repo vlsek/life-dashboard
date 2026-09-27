@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.83";
+const SITE_VERSION = "0.84";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.84", date: "2026-09-28 09:50", changes: [
+        "Пилот Дашборда: добавлен блок «Вода» (web-dashboard/, параллельно с блоком дневного/недельного прогресса, который переносит другой агент, — см. ROADMAP.md) — стакан-бейдж с той же волновой анимацией по проценту от нормы, что и на обычном сайте, модалка с быстрым добавлением (+200мл/+1л/своё), выбор даты задним числом, дневная норма (ручная или авто по последнему весу ≈30мл/кг — 17 тестов на lib/water.ts)",
+        "Сделан отдельным композаблом (lib/useWater.ts) и отдельным файлом тестов, не трогающими lib/useDashboard.ts и общий smoke.test.ts, — чтобы не пересекаться с другими блоками Дашборда, которые переносятся тем же заходом",
+    ]},
     { version: "0.83", date: "2026-09-28 09:15", changes: [
         "Пилот «Челленджи»: web-challenges/ → challenges-vue/ на Vite + Vue 3 + TypeScript + Tailwind. Каталог из 6 готовых пресетов и свой челлендж 4 типов — фиксированная дневная цель (100 отжиманий/день), растущая дневная цель (+5 в день), ежедневная привычка-галочка (без сахара) и накопительный счётчик со списком (100 книг)",
         "Точечные дневные отметки — 30 кружков прогресса за весь срок челленджа, сегодняшний день подсвечен; для накопительных — прогресс-бар и список записей с заметками и удалением. Кнопка «завершить», когда цель или срок достигнуты. 19 тестов бизнес-логики (lib/challenges.ts) + 8 smoke-тестов на компоненты",
@@ -807,6 +811,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.84", date: "2026-09-28 09:50", changes: [
+        "Dashboard pilot: added the Water block (web-dashboard/, alongside the day/week progress block another agent is porting in parallel — see ROADMAP.md) — a glass badge with the same wave animation by percent of the goal as the full site, a modal for quick add (+200ml/+1l/custom), picking a past date, a daily goal (manual or auto from the latest weight ≈30ml/kg — 17 tests on lib/water.ts)",
+        "Built as its own composable (lib/useWater.ts) and its own test file, without touching lib/useDashboard.ts or the shared smoke.test.ts — to avoid colliding with the other Dashboard blocks being ported in the same pass",
+    ]},
     { version: "0.83", date: "2026-09-28 09:15", changes: [
         "Challenges pilot: web-challenges/ → challenges-vue/ on Vite + Vue 3 + TypeScript + Tailwind. A catalog of 6 ready-made presets plus a custom challenge in 4 flavors — fixed daily target (100 push-ups/day), growing daily target (+5/day), a daily habit checkbox (no sugar), and a cumulative counter with a list (100 books)",
         "Per-day dots — 30 progress dots across the whole challenge, today highlighted; cumulative challenges get a progress bar and an entry list with notes and delete. A \"mark completed\" button once the target or duration is reached. 19 business-logic tests (lib/challenges.ts) + 8 component smoke tests",
