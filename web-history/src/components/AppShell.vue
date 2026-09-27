@@ -3,14 +3,38 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { getLang, setLang, t, type DictKey } from '../lib/i18n'
 import { getTheme, setTheme, THEME_KEYS, type ThemeKey } from '../lib/theme'
 import { logout } from '../lib/supabase'
+import { handleInstallClick, isStandaloneApp } from '../lib/install'
+import InstallModal from './InstallModal.vue'
+import WelcomeTourModal from './WelcomeTourModal.vue'
+import AboutModal from './AboutModal.vue'
 
 // Порт шапки + выезжающего меню из renderNav() (config.js) на Vue. Пилотная страница
 // сейчас единственная на новом стеке, поэтому остальные пункты меню ведут на старые
 // (ванильные) страницы по абсолютным путям — тот же домен, та же сессия входа.
-// "Install app", "Как пользоваться" и "О проекте" пока не перенесены — это отдельные
-// модалки/логика (beforeinstallprompt, приветственный тур), сделаю в одной из следующих
-// итераций переезда, если пилот приживётся.
 const props = defineProps<{ userEmail: string | null }>()
+
+// "Install app" / тур / "о проекте" — те же три модалки, что и в config.js, портированные
+// как контролируемые Vue-компоненты (см. InstallModal/WelcomeTourModal/AboutModal.vue).
+const showInSidebar = !isStandaloneApp() // вычисляется один раз, как и в renderNav()
+const installModalOpen = ref(false)
+const tourOpen = ref(false)
+const aboutOpen = ref(false)
+async function onInstallClick() {
+  const shown = await handleInstallClick()
+  if (!shown) installModalOpen.value = true
+}
+function openInstall() {
+  closeSidebar()
+  onInstallClick()
+}
+function openTour() {
+  closeSidebar()
+  tourOpen.value = true
+}
+function openAbout() {
+  closeSidebar()
+  aboutOpen.value = true
+}
 
 interface NavPage {
   href: string
@@ -237,5 +261,35 @@ onUnmounted(() => {
     >
       {{ t('logout') }} ({{ props.userEmail }})
     </button>
+
+    <button
+      v-if="showInSidebar"
+      type="button"
+      class="mt-2 flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm"
+      style="color: var(--text-dim)"
+      @click="openInstall"
+    >
+      {{ t('nav_install_app') }}
+    </button>
+    <button
+      type="button"
+      class="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm"
+      style="color: var(--text-dim)"
+      @click="openTour"
+    >
+      {{ t('nav_tour') }}
+    </button>
+    <button
+      type="button"
+      class="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm"
+      style="color: var(--text-dim)"
+      @click="openAbout"
+    >
+      {{ t('nav_about') }}
+    </button>
   </nav>
+
+  <InstallModal v-if="installModalOpen" @close="installModalOpen = false" />
+  <WelcomeTourModal v-if="tourOpen" @close="tourOpen = false" />
+  <AboutModal v-if="aboutOpen" @close="aboutOpen = false" />
 </template>
