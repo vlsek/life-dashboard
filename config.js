@@ -479,11 +479,17 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.76";
+const SITE_VERSION = "0.77";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.77", date: "2026-09-27 12:27", changes: [
+        "Починен баг: service worker (офлайн-режим, v0.72) ронял навигацию по ссылкам вида /goals.html, /shop.html и т.п. с ошибкой «не удаётся получить доступ к сайту» — Cloudflare редиректит такие адреса на их короткую форму без .html, а браузер запрещает отвечать на переход по ссылке уже редиректнутым ответом. Раньше (до появления service worker) редирект просто тихо обрабатывался браузером",
+        "Пилот «Аккаунт» (web-account/ → /account-vue/): смена пароля, смена почты, привязка Google-аккаунта — пятая перенесённая страница",
+        "Иконки в шапке/меню (модуль из v0.73) были только у пилота «История» — дособрал в Вехах, Календаре, Целях и Навыках, теперь везде иконки вместо голого текста",
+        "Заодно поправил несколько ссылок в меню (Цели/Календарь/Вехи), которые в некоторых пилотах ещё вели на старые ванильные страницы вместо актуальных *-vue/ адресов",
+    ]},
     { version: "0.76", date: "2026-09-28 07:55", changes: [
         "Ещё один шаг переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка «Навыков», отдельно от рабочего сайта, по адресу /skills-vue/",
         "Навыки: прогресс-бар с шагом ±N% на клик, отметка «освоено», карточки быстрых идей (подсказки с иконкой), форма добавления/редактирования; отдельно — книги (хочу прочитать/прочитано, отметка «готово», форма с автором и баллами)",
@@ -773,6 +779,12 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.77", date: "2026-09-27 12:27", changes: [
+        "Fixed a bug: the offline-mode service worker (v0.72) broke navigation to links like /goals.html, /shop.html etc. with a \"site can't be reached\" error — Cloudflare redirects those addresses to their short, extension-less form, and browsers refuse to satisfy a link navigation with an already-redirected response. Before the service worker existed, the browser just quietly followed the redirect itself",
+        "Account pilot (web-account/ → /account-vue/): change password, change email, link a Google account — the fifth page ported over",
+        "The header/menu icons (from the shared module in v0.73) only ever made it into the History pilot — backported them into Milestones, Calendar, Goals and Skills too, so every pilot page now shows real icons instead of plain text",
+        "Also fixed a few menu links (Goals/Calendar/Milestones) that in some pilots still pointed at the old vanilla pages instead of the current *-vue/ addresses",
+    ]},
     { version: "0.76", date: "2026-09-28 07:55", changes: [
         "Another step of the move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of Skills, kept separate from the live site at /skills-vue/",
         "Skills: a progress bar with a ±N% step per click, a \"mastered\" toggle, quick-idea suggestion chips, an add/edit form; separately — books (want-to-read/read, a \"done\" toggle, a form with author and points)",

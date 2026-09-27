@@ -57,7 +57,8 @@ self.addEventListener("fetch", (event) => {
     if (!isKnownAsset) return; // всё остальное, включая Supabase REST/Auth, идёт мимо SW как обычно
 
     event.respondWith(
-        caches.match(req).then((cached) => {
+        (async () => {
+            const cached = await caches.match(req);
             const network = fetch(req)
                 .then((resp) => {
                     if (resp && (resp.ok || resp.type === "opaque")) {
@@ -67,7 +68,19 @@ self.addEventListener("fetch", (event) => {
                     return resp;
                 })
                 .catch(() => cached);
-            return cached || network;
-        })
+
+            let result = cached || (await network);
+            // Cloudflare 308-редиректит любой *.html путь (например /goals.html) на его
+            // канонический адрес без расширения (/goals) — так было всегда, просто раньше
+            // браузер сам тихо шёл по редиректу при обычной навигации. Но respondWith() не
+            // может отдать РЕДИРЕКТНУТЫЙ Response для навигационного запроса — браузер кидает
+            // NetworkError ("не удаётся получить доступ к сайту") вместо загрузки страницы.
+            // Пересобираем чистый Response без флага redirected, прежде чем его отдавать.
+            if (result && result.redirected) {
+                const body = await result.clone().blob();
+                result = new Response(body, { status: result.status, statusText: result.statusText, headers: result.headers });
+            }
+            return result;
+        })()
     );
 });

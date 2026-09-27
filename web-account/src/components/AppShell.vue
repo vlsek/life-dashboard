@@ -3,17 +3,39 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { getLang, setLang, t, type DictKey } from '../lib/i18n'
 import { getTheme, setTheme, THEME_KEYS, type ThemeKey } from '../lib/theme'
 import { logout } from '../lib/supabase'
+import { handleInstallClick, isStandaloneApp } from '../lib/install'
+import InstallModal from './InstallModal.vue'
+import WelcomeTourModal from './WelcomeTourModal.vue'
+import AboutModal from './AboutModal.vue'
 import Icon from './Icon.vue'
 
-// Порт шапки + выезжающего меню из renderNav() (config.js) на Vue. Копия компонента из
-// web-history/ (см. ROADMAP.md — пока намеренно дублируется для каждой страницы пилота,
-// а не выносится в общий пакет). Пункты меню ведут на остальные страницы по абсолютным
-// путям — тот же домен, та же сессия входа; на новом стеке уже мигрированные страницы
-// ссылаются на свои *-vue/ адреса, остальные — на старые ванильные .html.
-// "Install app", "Как пользоваться" и "О проекте" пока не перенесены — это отдельные
-// модалки/логика (beforeinstallprompt, приветственный тур), сделаю в одной из следующих
-// итераций переезда, если пилот приживётся.
+// Порт шапки + выезжающего меню из renderNav() (config.js) на Vue. Пилотная страница
+// сейчас единственная на новом стеке, поэтому остальные пункты меню ведут на старые
+// (ванильные) страницы по абсолютным путям — тот же домен, та же сессия входа.
 const props = defineProps<{ userEmail: string | null }>()
+
+// "Install app" / тур / "о проекте" — те же три модалки, что и в config.js, портированные
+// как контролируемые Vue-компоненты (см. InstallModal/WelcomeTourModal/AboutModal.vue).
+const showInSidebar = !isStandaloneApp() // вычисляется один раз, как и в renderNav()
+const installModalOpen = ref(false)
+const tourOpen = ref(false)
+const aboutOpen = ref(false)
+async function onInstallClick() {
+  const shown = await handleInstallClick()
+  if (!shown) installModalOpen.value = true
+}
+function openInstall() {
+  closeSidebar()
+  onInstallClick()
+}
+function openTour() {
+  closeSidebar()
+  tourOpen.value = true
+}
+function openAbout() {
+  closeSidebar()
+  aboutOpen.value = true
+}
 
 interface NavPage {
   href: string
@@ -23,18 +45,18 @@ interface NavPage {
 }
 const pages: NavPage[] = [
   { href: '/dashboard.html', key: 'dashboard', labelKey: 'nav_dashboard', icon: 'home' },
-  { href: '/goals-vue/', key: 'goals', labelKey: 'nav_goals', icon: 'goals' },
+  { href: '/goals.html', key: 'goals', labelKey: 'nav_goals', icon: 'goals' },
   { href: '/skills.html', key: 'skills', labelKey: 'nav_skills', icon: 'skills' },
   { href: '/workouts.html', key: 'workouts', labelKey: 'nav_workouts', icon: 'workouts' },
   { href: '/challenges.html', key: 'challenges', labelKey: 'nav_challenges', icon: 'challenges' },
   { href: '/english.html', key: 'english', labelKey: 'nav_english', icon: 'english' },
-  { href: '/calendar-vue/', key: 'calendar', labelKey: 'nav_calendar', icon: 'calendar' },
+  { href: '/calendar.html', key: 'calendar', labelKey: 'nav_calendar', icon: 'calendar' },
   { href: '/milestones-vue/', key: 'milestones', labelKey: 'nav_milestones', icon: 'milestones' },
   { href: '/shop.html', key: 'shop', labelKey: 'nav_shop', icon: 'shop' },
   { href: '/community.html', key: 'community', labelKey: 'nav_community', icon: 'community' },
   { href: '/history-vue/', key: 'history', labelKey: 'nav_history', icon: 'history' },
 ]
-const active = 'calendar'
+const active = 'account'
 function plainLabel(key: DictKey): string {
   return t(key).replace(/^[^\p{L}\p{N}]+/u, '')
 }
@@ -197,11 +219,12 @@ onUnmounted(() => {
 
     <a
       v-if="props.userEmail"
-      href="/account.html"
+      href="/account-vue/"
       class="flex items-center gap-2.5 rounded-lg px-3 py-2.5"
-      style="color: var(--text)"
+      :style="{ background: active === 'account' ? 'var(--accent)' : 'transparent', color: active === 'account' ? 'var(--accent-text)' : 'var(--text)' }"
       @click="closeSidebar"
     >
+      <Icon name="user" />
       {{ t('nav_account_title') }}
     </a>
 
@@ -242,5 +265,38 @@ onUnmounted(() => {
     >
       {{ t('logout') }} ({{ props.userEmail }})
     </button>
+
+    <button
+      v-if="showInSidebar"
+      type="button"
+      class="mt-2 flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm"
+      style="color: var(--text-dim)"
+      @click="openInstall"
+    >
+      <Icon name="download" />
+      {{ t('nav_install_app') }}
+    </button>
+    <button
+      type="button"
+      class="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm"
+      style="color: var(--text-dim)"
+      @click="openTour"
+    >
+      <Icon name="help" />
+      {{ t('nav_tour') }}
+    </button>
+    <button
+      type="button"
+      class="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm"
+      style="color: var(--text-dim)"
+      @click="openAbout"
+    >
+      <Icon name="info" />
+      {{ t('nav_about') }}
+    </button>
   </nav>
+
+  <InstallModal v-if="installModalOpen" @close="installModalOpen = false" />
+  <WelcomeTourModal v-if="tourOpen" @close="tourOpen = false" />
+  <AboutModal v-if="aboutOpen" @close="aboutOpen = false" />
 </template>

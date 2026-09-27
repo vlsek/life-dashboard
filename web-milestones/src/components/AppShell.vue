@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { getLang, setLang, t, type DictKey } from '../lib/i18n'
 import { getTheme, setTheme, THEME_KEYS, type ThemeKey } from '../lib/theme'
 import { logout } from '../lib/supabase'
+import Icon from './Icon.vue'
 
 // Порт шапки + выезжающего меню из renderNav() (config.js) на Vue. Копия компонента из
 // web-history/ (см. ROADMAP.md — пока намеренно дублируется для каждой страницы пилота,
@@ -22,12 +23,12 @@ interface NavPage {
 }
 const pages: NavPage[] = [
   { href: '/dashboard.html', key: 'dashboard', labelKey: 'nav_dashboard', icon: 'home' },
-  { href: '/goals.html', key: 'goals', labelKey: 'nav_goals', icon: 'goals' },
+  { href: '/goals-vue/', key: 'goals', labelKey: 'nav_goals', icon: 'goals' },
   { href: '/skills.html', key: 'skills', labelKey: 'nav_skills', icon: 'skills' },
   { href: '/workouts.html', key: 'workouts', labelKey: 'nav_workouts', icon: 'workouts' },
   { href: '/challenges.html', key: 'challenges', labelKey: 'nav_challenges', icon: 'challenges' },
   { href: '/english.html', key: 'english', labelKey: 'nav_english', icon: 'english' },
-  { href: '/calendar.html', key: 'calendar', labelKey: 'nav_calendar', icon: 'calendar' },
+  { href: '/calendar-vue/', key: 'calendar', labelKey: 'nav_calendar', icon: 'calendar' },
   { href: '/milestones-vue/', key: 'milestones', labelKey: 'nav_milestones', icon: 'milestones' },
   { href: '/shop.html', key: 'shop', labelKey: 'nav_shop', icon: 'shop' },
   { href: '/community.html', key: 'community', labelKey: 'nav_community', icon: 'community' },
@@ -161,6 +162,7 @@ onUnmounted(() => {
           color: p.key === active ? 'var(--accent-text)' : 'var(--text)',
         }"
       >
+        <Icon :name="p.icon" />
         {{ plainLabel(p.labelKey) }}
       </a>
     </div>
@@ -189,6 +191,7 @@ onUnmounted(() => {
       :style="{ background: p.key === active ? 'var(--accent)' : 'transparent', color: p.key === active ? 'var(--accent-text)' : 'var(--text)' }"
       @click="closeSidebar"
     >
+      <Icon :name="p.icon" />
       <span>{{ plainLabel(p.labelKey) }}</span>
     </a>
 

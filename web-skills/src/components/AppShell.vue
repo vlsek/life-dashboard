@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { getLang, setLang, t, type DictKey } from '../lib/i18n'
 import { getTheme, setTheme, THEME_KEYS, type ThemeKey } from '../lib/theme'
 import { logout } from '../lib/supabase'
+import Icon from './Icon.vue'
 
 // Порт шапки + выезжающего меню из renderNav() (config.js) на Vue. Копия компонента из
 // web-history/ (см. ROADMAP.md — пока намеренно дублируется для каждой страницы пилота,
@@ -161,6 +162,7 @@ onUnmounted(() => {
           color: p.key === active ? 'var(--accent-text)' : 'var(--text)',
         }"
       >
+        <Icon :name="p.icon" />
         {{ plainLabel(p.labelKey) }}
       </a>
     </div>
@@ -189,6 +191,7 @@ onUnmounted(() => {
       :style="{ background: p.key === active ? 'var(--accent)' : 'transparent', color: p.key === active ? 'var(--accent-text)' : 'var(--text)' }"
       @click="closeSidebar"
     >
+      <Icon :name="p.icon" />
       <span>{{ plainLabel(p.labelKey) }}</span>
     </a>
 
