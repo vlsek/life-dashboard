@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.75";
+const SITE_VERSION = "0.76";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.76", date: "2026-09-28 07:55", changes: [
+        "Ещё один шаг переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка «Навыков», отдельно от рабочего сайта, по адресу /skills-vue/",
+        "Навыки: прогресс-бар с шагом ±N% на клик, отметка «освоено», карточки быстрых идей (подсказки с иконкой), форма добавления/редактирования; отдельно — книги (хочу прочитать/прочитано, отметка «готово», форма с автором и баллами)",
+        "Тот же вход, тема, шапка и меню, что и у остальных пилотных страниц; прогресс-бар и список подсказок проверены тестами против оригинального skills.js",
+    ]},
     { version: "0.75", date: "2026-09-27 07:44", changes: [
         "Четвёртый шаг постепенного переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка «Целей», отдельно от рабочего сайта, по адресу /goals-vue/",
         "Активные цели сгруппированы по категориям (с прогресс-баром для многоэтапных, чипами сложности и срочности дедлайна), сумма баллов, выполненные — отдельным списком; форма добавления/редактирования со всеми полями",
@@ -768,6 +773,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.76", date: "2026-09-28 07:55", changes: [
+        "Another step of the move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of Skills, kept separate from the live site at /skills-vue/",
+        "Skills: a progress bar with a ±N% step per click, a \"mastered\" toggle, quick-idea suggestion chips, an add/edit form; separately — books (want-to-read/read, a \"done\" toggle, a form with author and points)",
+        "Same login, theme, header and menu as the other pilot pages; the progress bar and suggestion list are covered by tests checked against the original skills.js",
+    ]},
     { version: "0.75", date: "2026-09-27 07:44", changes: [
         "Fourth step of the gradual move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of Goals, kept separate from the live site at /goals-vue/",
         "Active goals grouped by category (with a progress bar for multi-stage ones, difficulty and deadline-urgency chips), points earned so far, completed goals listed separately; a full add/edit form with every field",
