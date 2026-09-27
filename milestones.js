@@ -237,11 +237,24 @@ function renderRow(table, m, { done = false } = {}) {
     actionsCell.appendChild(delBtn);
 }
 
-async function render() {
+async function fetchMilestonesRaw() {
     const { data, error } = await sb.from("milestones").select("*").eq("user_id", userId).order("created_at");
+    if (error) throw error;
+    return data || [];
+}
+
+async function render() {
     const activeBox = document.getElementById("ms-active");
     const doneBox = document.getElementById("ms-done");
-    if (error) {
+    let all;
+    try {
+        const res = await offlineCache.read(userId, "milestones:list", fetchMilestonesRaw);
+        if (res.stale) {
+            const msg = offlineCache.banner(res.savedAt);
+            if (msg) showToast(msg, "info");
+        }
+        all = res.data;
+    } catch (error) {
         const missing = /milestones|relation|schema cache/i.test(error.message || "");
         activeBox.innerHTML = "";
         const p = document.createElement("p");
@@ -252,7 +265,6 @@ async function render() {
         console.error(error);
         return;
     }
-    const all = data || [];
     const active = all.filter(m => !m.done);
     const done = all.filter(m => m.done);
 

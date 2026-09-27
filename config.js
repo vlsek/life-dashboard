@@ -5,6 +5,14 @@ const SUPABASE_ANON_KEY = "sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// ---- Офлайн-кэш для чтения (C3, вариант 3): регистрация service worker'а, который кэширует
+// статическую оболочку сайта (HTML/JS/CSS/иконки). Сами данные страниц кэширует offline-cache.js.
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js").catch((e) => console.warn("sw register failed", e));
+    });
+}
+
 // ---- PWA: установка приложения ----
 let deferredInstallPrompt = null;
 window.addEventListener("beforeinstallprompt", (e) => {
@@ -471,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.71";
+const SITE_VERSION = "0.72";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.72", date: "2026-09-27 23:20", changes: [
+        "Первый шаг офлайн-режима (вариант «локально, без синка»): страницы «История» и «Вехи» теперь показывают последние сохранённые данные, если сеть пропала — раньше просто падала ошибка загрузки. Плюс service worker кэширует саму оболочку сайта (HTML/JS/CSS/иконки), так что страницы открываются и без сети",
+        "Заодно защитил вход на сайт офлайн: раньше при пропавшей сети во время проверки «прошёл ли онбординг» пользователя ошибочно перекидывало на экран онбординга",
+    ]},
     { version: "0.71", date: "2026-09-27 02:43", changes: [
         "Починил баг: массивы с текстом истории обновлений (RU/EN) были перепутаны местами для версий 0.60–0.70 — русский текст показывался при английском языке интерфейса и наоборот. Сами тексты не менялись, только расставлены по нужным массивам",
         "Версии 0.59 и старше багом не затронуты",
@@ -741,6 +753,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.72", date: "2026-09-27 23:20", changes: [
+        "First step of offline mode (\"local, no sync\" variant): the History and Milestones pages now show the last saved data when the network drops — previously they'd just show a load error. Also added a service worker that caches the app's static shell (HTML/JS/CSS/icons), so pages open even with no connection",
+        "Also hardened offline sign-in: previously, if the network dropped during the \"has this user finished onboarding\" check, they'd be wrongly bounced to the onboarding screen",
+    ]},
     { version: "0.71", date: "2026-09-27 02:43", changes: [
         "Fixed a bug: the update-history text arrays (RU/EN) were swapped for versions 0.60–0.70 — Russian text showed up with the interface set to English and vice versa. The wording itself didn't change, just which array it lives in",
         "Versions 0.59 and older were not affected",
@@ -1211,8 +1227,18 @@ function makeAvatarEl(url, size = 32) {
 }
 
 async function requireOnboarded(userId) {
-    const { data: profile } = await sb.from("profiles").select("onboarded").eq("user_id", userId).maybeSingle();
+    const { data: profile, error } = await sb.from("profiles").select("onboarded").eq("user_id", userId).maybeSingle();
+    if (error) {
+        // Сетевой сбой (не "профиля нет") — не гоним офлайн-пользователя на онбординг:
+        // либо доверяем последнему известному состоянию, либо (нет кэша, но браузер сам говорит
+        // "офлайн") пропускаем на страницу — там уже offline-cache.js покажет последние данные.
+        if (localStorage.getItem("ld_onboarded_" + userId) === "1") return true;
+        if (!navigator.onLine) return true;
+        window.location.href = "onboarding.html";
+        return false;
+    }
     if (!profile?.onboarded) { window.location.href = "onboarding.html"; return false; }
+    try { localStorage.setItem("ld_onboarded_" + userId, "1"); } catch (e) { /* приватный режим — не критично */ }
     return true;
 }
 

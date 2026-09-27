@@ -23,22 +23,34 @@ function addDays(iso, n) {
 function locale() { return getLang() === "en" ? "en-US" : "ru-RU"; }
 
 // ---- Данные ----
+let ctxOffline = false; // true, если ctx сейчас — последняя сохранённая офлайн-копия
+
 async function loadData() {
-    const [metrics, values, notes, goalsRes] = await Promise.all([
-        getMetrics(),
-        getAllValues(),
-        getAllNotes(),
-        sb.from("goals").select("name, stages, done, current_stage").eq("user_id", user.id),
-    ]);
-    const byDate = {};
-    values.forEach(v => { (byDate[v.date] ||= {})[v.metric_id] = v.value; });
-    const notesByDate = {};
-    notes.forEach(n => { notesByDate[n.date] = n; });
-    let firstDate = null;
-    for (const d of [...Object.keys(byDate), ...Object.keys(notesByDate)]) {
-        if (!firstDate || d < firstDate) firstDate = d;
+    const res = await offlineCache.read(user.id, "history:ctx", async () => {
+        const [metrics, values, notes, goalsRes] = await Promise.all([
+            getMetrics(),
+            getAllValues(),
+            getAllNotes(),
+            sb.from("goals").select("name, stages, done, current_stage").eq("user_id", user.id),
+        ]);
+        const byDate = {};
+        values.forEach(v => { (byDate[v.date] ||= {})[v.metric_id] = v.value; });
+        const notesByDate = {};
+        notes.forEach(n => { notesByDate[n.date] = n; });
+        let firstDate = null;
+        for (const d of [...Object.keys(byDate), ...Object.keys(notesByDate)]) {
+            if (!firstDate || d < firstDate) firstDate = d;
+        }
+        return { metrics, byDate, notesByDate, goals: goalsRes.data || [], firstDate };
+    });
+    // settings/today не кэшируем — настройки прогресса и "сегодня" пересчитываем каждый раз,
+    // даже когда сама история отдана из офлайн-копии.
+    ctx = { ...res.data, settings: getDayProgressSettings(), today: todayStr() };
+    ctxOffline = res.stale;
+    if (res.stale) {
+        const msg = offlineCache.banner(res.savedAt);
+        if (msg) showToast(msg, "info");
     }
-    ctx = { metrics, byDate, notesByDate, goals: goalsRes.data || [], settings: getDayProgressSettings(), firstDate, today: todayStr() };
 }
 
 function hasData(dateStr) {
