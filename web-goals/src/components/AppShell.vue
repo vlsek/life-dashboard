@@ -24,13 +24,13 @@ interface NavPage {
 const pages: NavPage[] = [
   { href: '/dashboard.html', key: 'dashboard', labelKey: 'nav_dashboard', icon: 'home' },
   { href: '/goals-vue/', key: 'goals', labelKey: 'nav_goals', icon: 'goals' },
-  { href: '/skills.html', key: 'skills', labelKey: 'nav_skills', icon: 'skills' },
+  { href: '/skills-vue/', key: 'skills', labelKey: 'nav_skills', icon: 'skills' },
   { href: '/workouts.html', key: 'workouts', labelKey: 'nav_workouts', icon: 'workouts' },
   { href: '/challenges.html', key: 'challenges', labelKey: 'nav_challenges', icon: 'challenges' },
   { href: '/english.html', key: 'english', labelKey: 'nav_english', icon: 'english' },
   { href: '/calendar-vue/', key: 'calendar', labelKey: 'nav_calendar', icon: 'calendar' },
   { href: '/milestones-vue/', key: 'milestones', labelKey: 'nav_milestones', icon: 'milestones' },
-  { href: '/shop.html', key: 'shop', labelKey: 'nav_shop', icon: 'shop' },
+  { href: '/shop-vue/', key: 'shop', labelKey: 'nav_shop', icon: 'shop' },
   { href: '/community.html', key: 'community', labelKey: 'nav_community', icon: 'community' },
   { href: '/history-vue/', key: 'history', labelKey: 'nav_history', icon: 'history' },
 ]

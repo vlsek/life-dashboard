@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.78";
+const SITE_VERSION = "0.79";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.79", date: "2026-09-27 13:05", changes: [
+        "Пилот-мелочи, не связанные с новой страницей: почищены ссылки в меню, которые ещё вели на /skills.html и /shop.html вместо актуальных /skills-vue/ и /shop-vue/ (История, Календарь, Вехи, Цели, Навыки, Аккаунт), а также догнал /goals-vue/ и /calendar-vue/ в меню Аккаунта",
+        "В пилоте «Вехи» появились стили для кнопок (обычная/secondary/danger) и модалок — раньше ссылались в разметке, но не были заведены в CSS, из-за чего кнопки выглядели неоформленными браузерными",
+    ]},
     { version: "0.78", date: "2026-09-27 12:37", changes: [
         "Пятый шаг постепенного переезда на Vite + Vue 3 + TypeScript + Tailwind: пилотная пересборка «Магазина за баллы», отдельно от рабочего сайта, по адресу /shop-vue/",
         "Карточка баланса (заработано/потрачено/остаток) считается той же формулой, что и на дашборде — метрики по всем дням, выполненные цели, освоенные навыки, дочитанные книги; сетка товаров с картинкой (вставить ссылку или загрузить файл), покупкой, редактированием и удалением",
@@ -784,6 +788,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.79", date: "2026-09-27 13:05", changes: [
+        "Small pilot cleanup, not tied to a new page: fixed menu links that still pointed at /skills.html and /shop.html instead of the current /skills-vue/ and /shop-vue/ (History, Calendar, Milestones, Goals, Skills, Account), and caught up /goals-vue/ and /calendar-vue/ in the Account menu too",
+        "The Milestones pilot now has real CSS for its buttons (default/secondary/danger) and modals — the markup referenced these classes already, but they weren't defined, so the buttons looked like unstyled browser defaults",
+    ]},
     { version: "0.78", date: "2026-09-27 12:37", changes: [
         "Fifth step of the gradual move to Vite + Vue 3 + TypeScript + Tailwind: a pilot rebuild of the points Shop, kept separate from the live site at /shop-vue/",
         "The balance card (earned/spent/remaining) uses the exact same formula as the dashboard — metrics across every day, done goals, mastered skills, finished books; an item grid with an image (paste a link or upload a file), buying, editing and deleting",
