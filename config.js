@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.98";
+const SITE_VERSION = "0.99";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.99", date: "2026-09-28 12:05", changes: [
+        "Пилот Дашборда: добавлен блок «Цели на сегодня» — план на день (пункты из целей и свои), отметка ★ «доп. пункт», перенос незавершённого за последние 7 дней одним нажатием и отметка одноэтапных целей прямо из плана. Любое изменение сразу обновляет кольца дня/недели и стрики. Свои компоненты и composable, 44 теста (lib/planned.ts, usePlanned.ts, PlannedSection.vue)",
+        "План принимает дату, поэтому его можно встроить в карточку дня вместе с дневными метриками; перенос предлагается только для сегодняшнего дня, как на классическом сайте",
+        "Сохранения плана идут по очереди — две быстрые правки не приходят на сервер в перепутанном порядке, а при ошибке план откатывается к последнему сохранённому состоянию",
+    ]},
     { version: "0.98", date: "2026-09-28 11:10", changes: [
         "Исправлено: история длиннее 1000 записей обрезалась там, где читалась одним запросом, — стрики и дневной/недельный прогресс в пилоте Дашборда и баланс баллов в пилоте Магазина могли считаться по неполным данным. Теперь читаются постранично в стабильном порядке (дата, метрика)",
         "Исправлено: в ночь перевода часов (в Европе — последнее воскресенье марта/октября) стрик считался со сдвигом на день («вчера» вычислялось как минус 24 часа), а на оси дат графика одна дата дублировалась и одна пропадала. Исправлено в классическом Дашборде и графиках, в пилоте Дашборда и в графике Сообщества",
@@ -872,6 +877,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.99", date: "2026-09-28 12:05", changes: [
+        "Dashboard pilot: added the \"Today's goals\" block — the day plan (items from your goals and your own items), the ★ bonus mark, one-tap carry-over of unfinished items from the last 7 days, and ticking single-stage goals right from the plan. Everything you change updates the day/week rings and streaks immediately. Own components and composable, 44 tests (lib/planned.ts, usePlanned.ts, PlannedSection.vue)",
+        "The plan takes a date, so it can be dropped into the day card together with the daily metrics; carry-over is only offered for today, as on the classic site",
+        "Plan saves are queued so two quick edits can't reach the server out of order, and a failed save rolls back to the last saved state",
+    ]},
     { version: "0.98", date: "2026-09-28 11:10", changes: [
         "Fixed: history longer than 1000 rows was cut off in places that read it in one request — streaks and day/week progress on the Dashboard pilot and the points balance in the Shop pilot could be calculated from truncated data. They now read page by page in a stable order (date, metric)",
         "Fixed: around the clock change (in Europe — the last Sunday of March/October) streaks were off by a day (\"yesterday\" was computed as minus 24 hours) and chart date axes could duplicate one date and drop another. Fixed on the classic Dashboard and charts, in the Dashboard pilot and in the Community chart",

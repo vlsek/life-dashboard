@@ -13,6 +13,7 @@ import type { RingData } from './lib/ringPlacement'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import ReminderBanners from './components/ReminderBanners.vue'
 import ProfileSection from './components/ProfileSection.vue'
+import PlannedSection from './components/PlannedSection.vue'
 import { useReminders } from './lib/useReminders'
 import { useDashboard } from './lib/useDashboard'
 import { progressPercent } from './lib/progress'
@@ -118,6 +119,8 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
       </div>
 
       <SetsSection :user-id="auth.userId" />
+
+      <PlannedSection :user-id="auth.userId" />
 
       <h2 class="mb-2 text-lg font-semibold">{{ t('dash_charts_h2') }}</h2>
       <div class="mb-5">
