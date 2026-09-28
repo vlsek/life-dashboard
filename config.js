@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.95";
+const SITE_VERSION = "0.96";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.96", date: "2026-09-28 17:20", changes: [
+        "Пилот Дашборда: остаток блока «Профиль» — кольцо прогресса дня теперь вокруг аватарки (процент под ней и шестерёнка настроек в углу, как на обычном сайте), кольцо недели стоит в строке профиля, а в режиме «в шапке» дневной круг и недельный скруглённый квадрат появляются бейджами в правой части шапки. Шестерёнка на аватарке есть всегда, так что настройки доступны и когда кольца выключены или уехали в шапку",
+        "Отдельное кольцо-блок из App.vue убран; ProfileSection получает данные колец пропсами. Новые файлы: lib/ringPlacement.ts (куда рисовать кольцо, геометрия), AvatarProgress.vue, HeaderProgressBadge.vue (через Teleport в #topbar-right), 16 новых тестов. Стрик-бейдж в строку профиля пока не переносился — им занимается другой агент",
+    ]},
     { version: "0.95", date: "2026-09-28 16:05", changes: [
         "Доводка после починки сайдбара (v0.94): у значка серии и значка воды на Дашборде и у подсказок навыков на странице Навыков задан явный прозрачный фон и цвет текста — иначе после выноса общего правила кнопок в слой base они выглядели бы синими кнопками с рамкой. Остальные кнопки на страницах проверены: у них фон уже задан или они используют классы secondary/danger",
     ]},
@@ -857,6 +861,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.96", date: "2026-09-28 17:20", changes: [
+        "Dashboard pilot: the rest of the Profile block — the day progress ring now wraps the avatar (percent below it and a settings gear in the corner, like the full site), the week ring sits in the profile row, and in \"header\" mode the day circle and the week rounded square appear as badges on the right of the top bar. The gear on the avatar is always there, so settings stay reachable when the rings are off or moved to the header",
+        "The standalone ring block was removed from App.vue; ProfileSection receives the ring data as props. New files: lib/ringPlacement.ts (where to draw a ring, geometry), AvatarProgress.vue, HeaderProgressBadge.vue (Teleport into #topbar-right), 16 new tests. The streak badge has not been moved into the profile row yet — another agent is working on streaks",
+    ]},
     { version: "0.95", date: "2026-09-28 16:05", changes: [
         "Follow-up to the sidebar fix (v0.94): the streak badge and water badge on the Dashboard and the suggestion chips on the Skills page now have an explicit transparent background and text color — otherwise, after moving the shared button rule into the base layer, they would have looked like blue buttons with a border. The other buttons on those pages were checked: they either already set a background or use the secondary/danger classes",
     ]},

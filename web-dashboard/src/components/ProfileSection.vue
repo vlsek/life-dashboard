@@ -5,6 +5,9 @@ import MetricIcon from './MetricIcon.vue'
 import BirthdateModal from './BirthdateModal.vue'
 import BodyParamFormModal from './BodyParamFormModal.vue'
 import BodyParamsModal from './BodyParamsModal.vue'
+import AvatarProgress from './AvatarProgress.vue'
+import ProgressRing from './ProgressRing.vue'
+import type { RingData } from '../lib/ringPlacement'
 import { useProfile } from '../lib/useProfile'
 import { BODY_VALUES_CHANGED } from '../lib/useCharts'
 import { calcAge, formatAge, formatDelta, unitSuffix, type BodyParam, type BodyParamForm } from '../lib/profile'
@@ -12,8 +15,12 @@ import { getLang, t } from '../lib/i18n'
 
 // Единственная точка подключения блока «Профиль» в App.vue: аватар (загрузка фото), возраст
 // (дата рождения), динамика параметров тела, баланс баллов, управление параметрами тела.
-// Кольца дня/недели и стрик остаются в App.vue (перенесены раньше, другим агентом).
-const props = defineProps<{ userId: string | null }>()
+// Кольцо дня вокруг аватарки и кольцо недели показываем здесь (данные приходят из App.vue);
+// стрик остаётся в App.vue.
+// day — кольцо вокруг аватарки, week — кольцо недели в строке профиля (null — не показывать);
+// шестерёнка и клики по кольцам поднимают событие progress-settings.
+const props = defineProps<{ userId: string | null; day?: RingData | null; week?: RingData | null }>()
+const emit = defineEmits<{ 'progress-settings': [] }>()
 const { profile, params, stats, balance, loaded, error, init, uploadAvatar, saveBirthdate, addParam, updateParam, deleteParam, refreshValues } = useProfile()
 
 watch(
@@ -71,11 +78,19 @@ function openForm(p: BodyParam | 'new') {
 
 <template>
   <section v-if="loaded" class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border p-3" style="border-color: var(--border); background: var(--bg-card)">
-    <button type="button" class="relative h-11 w-11 shrink-0 rounded-full p-0" :title="t('dash_photo_btn')" style="background: transparent; border: 0" @click="fileInput?.click()">
-      <img v-if="profile?.avatar_url" :src="profile.avatar_url" alt="" class="h-11 w-11 rounded-full border-2 object-cover" style="border-color: var(--border); background: var(--bg)" />
-      <span v-else class="flex h-11 w-11 items-center justify-center rounded-full border-2 text-xl" style="border-color: var(--border); background: var(--bg)"><Icon name="user" /></span>
-    </button>
+    <AvatarProgress :avatar-url="profile?.avatar_url" :ring="day ?? null" @pick="fileInput?.click()" @settings="emit('progress-settings')" />
     <input ref="fileInput" type="file" accept="image/*" class="hidden" data-test="avatar-input" @change="onFile" />
+
+    <ProgressRing
+      v-if="week"
+      :base-pct="week.basePct"
+      :bonus-pct="week.bonusPct"
+      :total-pct="week.totalPct"
+      :title="week.title"
+      :label="t('dash_week_progress_label')"
+      :size="48"
+      @click="emit('progress-settings')"
+    />
 
     <div class="flex items-center gap-1">
       <template v-if="age">

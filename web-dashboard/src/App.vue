@@ -7,7 +7,9 @@ import WaterSection from './components/WaterSection.vue'
 import ChartsSection from './components/ChartsSection.vue'
 import SetsSection from './components/SetsSection.vue'
 import MetricsManagerSection from './components/MetricsManagerSection.vue'
-import ProgressRing from './components/ProgressRing.vue'
+import HeaderProgressBadge from './components/HeaderProgressBadge.vue'
+import { dayRingTarget, weekRingTarget } from './lib/ringPlacement'
+import type { RingData } from './lib/ringPlacement'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import ReminderBanners from './components/ReminderBanners.vue'
 import ProfileSection from './components/ProfileSection.vue'
@@ -61,9 +63,22 @@ const weekTitle = computed(() => {
   return `${t('dash_week_progress_label')}: ${weekPct.value}% (${p.done}/${p.total}${p.bonusPct > 0 ? ' +' + p.bonusPct + '% ⭐' : ''})`
 })
 
-// "off" или пусто (total=0 и bonus=0) — не показываем, как и в dashboard.js
-const showDayRing = computed(() => progressSettings.value.dayPlace !== 'off' && dayProgress.value && (dayProgress.value.total > 0 || dayProgress.value.bonusPct > 0))
-const showWeekRing = computed(() => progressSettings.value.weekPlace !== 'off' && weekProgress.value && (weekProgress.value.total > 0 || weekProgress.value.bonusPct > 0))
+// "off" или пусто (total=0 и bonus=0) — не показываем, как и в dashboard.js; иначе кольцо уходит
+// либо в профиль (вокруг аватарки / в строку профиля), либо бейджем в шапку.
+const hasDayData = computed(() => !!dayProgress.value && (dayProgress.value.total > 0 || dayProgress.value.bonusPct > 0))
+const hasWeekData = computed(() => !!weekProgress.value && (weekProgress.value.total > 0 || weekProgress.value.bonusPct > 0))
+const dayTarget = computed(() => dayRingTarget(progressSettings.value.dayPlace, hasDayData.value))
+const weekTarget = computed(() => weekRingTarget(progressSettings.value.weekPlace, hasWeekData.value))
+const dayRing = computed<RingData | null>(() =>
+  hasDayData.value ? { basePct: dayBase.value, bonusPct: dayProgress.value!.bonusPct, totalPct: dayPct.value, title: dayTitle.value } : null,
+)
+const weekRing = computed<RingData | null>(() =>
+  hasWeekData.value ? { basePct: weekBase.value, bonusPct: weekProgress.value!.bonusPct, totalPct: weekPct.value, title: weekTitle.value } : null,
+)
+const dayRingProfile = computed(() => (dayTarget.value === 'avatar' ? dayRing.value : null))
+const weekRingProfile = computed(() => (weekTarget.value === 'profile' ? weekRing.value : null))
+const dayRingHeader = computed(() => (dayTarget.value === 'header' ? dayRing.value : null))
+const weekRingHeader = computed(() => (weekTarget.value === 'header' ? weekRing.value : null))
 
 async function onSaveProgressSettings(s: DayProgressSettings) {
   showProgressSettings.value = false
@@ -93,7 +108,9 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
         @dismiss-weekend="dismissWeekendReminder"
       />
 
-      <ProfileSection :user-id="auth.userId" />
+      <ProfileSection :user-id="auth.userId" :day="dayRingProfile" :week="weekRingProfile" @progress-settings="showProgressSettings = true" />
+      <HeaderProgressBadge v-if="dayRingHeader" kind="day" v-bind="dayRingHeader" @click="showProgressSettings = true" />
+      <HeaderProgressBadge v-if="weekRingHeader" kind="week" v-bind="weekRingHeader" @click="showProgressSettings = true" />
 
       <div class="mb-4 flex flex-wrap items-center gap-2">
         <WaterSection :user-id="auth.userId" />
@@ -110,37 +127,6 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
       <p v-if="loadError" class="dim">{{ t('comm_load_error') }} {{ loadError }}</p>
 
       <template v-else>
-        <!-- Кольца дневного/недельного прогресса — клик по любому открывает настройки -->
-        <div v-if="showDayRing || showWeekRing" class="mb-5 flex items-start gap-5">
-          <ProgressRing
-            v-if="showDayRing"
-            :base-pct="dayBase"
-            :bonus-pct="dayProgress!.bonusPct"
-            :total-pct="dayPct"
-            :title="dayTitle"
-            :size="60"
-            @click="showProgressSettings = true"
-          />
-          <ProgressRing
-            v-if="showWeekRing"
-            :base-pct="weekBase"
-            :bonus-pct="weekProgress!.bonusPct"
-            :total-pct="weekPct"
-            :title="weekTitle"
-            :label="t('dash_week_progress_label')"
-            :size="48"
-            @click="showProgressSettings = true"
-          />
-          <button
-            type="button"
-            class="secondary mt-1 px-2 text-xs"
-            :title="t('dash_day_progress_settings_title')"
-            @click="showProgressSettings = true"
-          >
-            <Icon name="gear" />
-          </button>
-        </div>
-
         <template v-if="streaks.length > 0">
           <h2 class="mb-2 text-lg font-semibold">{{ t('dash_streaks_h2') }}</h2>
 
