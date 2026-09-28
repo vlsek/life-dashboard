@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.88";
+const SITE_VERSION = "0.89";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.89", date: "2026-09-28 03:57", changes: [
+        "Оформление: на всех страницах-пилотах на Vue вместо стандартного синего логотипа Vite (молния) — вкладка браузера и значок в шапке — теперь наш огонёк, но в голубо-оранжевом цвете, чтобы Vue-версии сразу отличались от старых страниц с оранжевым огоньком. Убраны неиспользуемые шаблонные логотипы Vite/Vue из папок пилотов",
+        "Если в браузере всё ещё видна молния — значок во вкладке кэшируется, помогает жёсткое обновление страницы",
+    ]},
     { version: "0.88", date: "2026-09-28 03:52", changes: [
         "Пилотная пересборка «Тренировок» на Vite + Vue 3 + TypeScript + Tailwind по адресу /workouts-vue/, итерация 1 из 2: добавление/изменение/удаление упражнений (категории, вес, длительность, левая/правая сторона), записи с подходами, личные рекорды (по весу и по темпу, отдельно по сторонам), группировка по категориям со сворачиванием, каталог типовых программ",
         "Графики (мини-график прогресса у каждого упражнения и общий график объёма тренировок) пока остаются на старой странице — это итерация 2",
@@ -827,6 +831,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.89", date: "2026-09-28 03:57", changes: [
+        "Look and feel: every Vue pilot page now shows our flame instead of the default blue Vite lightning bolt (browser tab and header logo) - in blue and orange, so the Vue versions are instantly distinguishable from the old pages with the orange flame. Removed the unused Vite/Vue template logos from the pilot folders",
+        "If you still see the bolt, the tab icon is cached - a hard refresh fixes it",
+    ]},
     { version: "0.88", date: "2026-09-28 03:52", changes: [
         "Pilot rebuild of Workouts on Vite + Vue 3 + TypeScript + Tailwind at /workouts-vue/, iteration 1 of 2: add/edit/delete exercises (categories, weight, duration, left/right side), logged entries with sets, personal records (by weight and by pace, split by side), category grouping with collapsing, and the workout-template catalog",
         "Charts (the per-exercise progress mini-chart and the overall training-volume chart) still live on the old page for now - that's iteration 2",
