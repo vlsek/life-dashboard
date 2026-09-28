@@ -21,6 +21,14 @@ export interface Metric {
   position: number
   streak_import_days?: number | null
   streak_import_date?: string | null
+  // Поля ниже нужны блоку «Управление метриками» (multiselect/sets и режим ввода числа)
+  options?: MetricOption[] | null
+  input_mode?: 'set' | 'add' | null
+}
+
+export interface MetricOption {
+  key: string
+  label: string
 }
 
 export type SetEntry = { reps?: number; weight?: number; time?: string }

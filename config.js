@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.85";
+const SITE_VERSION = "0.86";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.86", date: "2026-09-28 11:10", changes: [
+        "Пилот Дашборда: добавлен блок «Управление метриками» (web-dashboard/) — кнопка ⚙️ открывает список метрик с правкой и удалением, форма создания/правки со всеми полями обычного сайта: тип (число/галочка/выбор/подходы), цель и её направление, единица, варианты, режим ввода, расписание (каждый день / дни недели / не менее N раз / не более N раз в неделю), категория (с созданием новой), импорт стрика и выбор иконки с поиском",
+        "Отдельные файлы (lib/metricsManager.ts, lib/useMetricsManager.ts, три компонента, свои тесты — 34 новых), в App.vue только импорт и одна строка. Тип Metric дополнен необязательными полями options/input_mode. Расписание и импорт стрика по-прежнему не пишутся, если миграции 021/026 ещё не применены",
+    ]},
     { version: "0.85", date: "2026-09-28 09:55", changes: [
         "Пилот Дашборда: перенесён дневной/недельный прогресс (кольца вокруг темы + настройки — что учитывать, где показывать) поверх стриков, перенесённых раньше — lib/progress.ts/progressSettings.ts, 17 новых тестов",
         "Смерджено с параллельно переехавшим блоком «Вода» (агент 4, v0.84) — оба блока писали в web-dashboard/src/App.vue и i18n.ts одновременно, разрешил конфликт вручную (взял обе стороны, ничего не потеряно), все 80 тестов и билд проверены после слияния",
@@ -815,6 +819,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.86", date: "2026-09-28 11:10", changes: [
+        "Dashboard pilot: added the Metrics management block (web-dashboard/) — a ⚙️ button opens the metrics list with edit and delete, and a create/edit form with every field of the full site: type (number/checkbox/multiselect/sets), goal and its direction, unit, options, input mode, schedule (every day / weekdays / at least N / at most N times a week), category (with creating a new one), streak import, and an icon picker with search",
+        "Separate files (lib/metricsManager.ts, lib/useMetricsManager.ts, three components, their own tests — 34 new), App.vue only gets an import and one line. The Metric type gained optional options/input_mode fields. Schedule and streak import are still skipped when migrations 021/026 haven't been applied",
+    ]},
     { version: "0.85", date: "2026-09-28 09:55", changes: [
         "Dashboard pilot: ported day/week progress (theme-colored rings + settings — what counts, where it shows) on top of the streaks block ported earlier — lib/progress.ts/progressSettings.ts, 17 new tests",
         "Merged with the Water block that moved over in parallel (agent 4, v0.84) — both blocks touched web-dashboard/src/App.vue and i18n.ts at the same time, resolved by hand (kept both sides, nothing lost), all 80 tests and the build re-checked after merging",

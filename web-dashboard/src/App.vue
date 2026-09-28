@@ -4,6 +4,7 @@ import AppShell from './components/AppShell.vue'
 import Icon from './components/Icon.vue'
 import MetricIcon from './components/MetricIcon.vue'
 import WaterSection from './components/WaterSection.vue'
+import MetricsManagerSection from './components/MetricsManagerSection.vue'
 import ProgressRing from './components/ProgressRing.vue'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import { useDashboard } from './lib/useDashboard'
@@ -71,8 +72,9 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
     <p v-if="auth.status === 'loading'" class="dim">{{ t('loading_ellipsis') }}</p>
 
     <template v-else-if="auth.status === 'ready'">
-      <div class="mb-4">
+      <div class="mb-4 flex flex-wrap items-center gap-2">
         <WaterSection :user-id="auth.userId" />
+        <MetricsManagerSection :user-id="auth.userId" @changed="init" />
       </div>
 
       <p v-if="loadError" class="dim">{{ t('comm_load_error') }} {{ loadError }}</p>
