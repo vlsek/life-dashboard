@@ -1066,7 +1066,7 @@ async function renderWeekProgress() {
 async function checkMilestonesReminder() {
     const dismissKey = "ms_reminder_dismissed";
     try { if (localStorage.getItem(dismissKey) === todayStr()) return; } catch { /* ignore */ }
-    const soonDate = fmtDate(new Date(Date.now() + 7 * 86400000));
+    const soonDate = addDaysIso(todayStr(), 7); // календарные +7 дней (не мс) — без сдвига в сутки перехода на летнее/зимнее время
     const { data, error } = await sb.from("milestones").select("name, due_date").eq("user_id", user.id).eq("done", false).not("due_date", "is", null).lte("due_date", soonDate);
     if (error || !data?.length) return;
     const today = todayStr();

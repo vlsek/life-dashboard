@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
-import { fmtDate } from './date'
-import { classifyMilestoneReminders, shouldShowWeekendReminder, type MilestoneReminderCounts } from './reminders'
+import { fmtDate, todayStr } from './date'
+import { classifyMilestoneReminders, shouldShowWeekendReminder, soonDateFor, type MilestoneReminderCounts } from './reminders'
 
 // Отдельный композабл, а не часть useDashboard.ts — по тому же принципу, что и lib/useWater.ts
 // (см. коммит агента 4, v0.84): несколько человек переносят разные блоки Дашборда одновременно,
@@ -17,7 +17,7 @@ export function useReminders() {
     } catch {
       /* приватный режим — просто не запоминаем закрытие */
     }
-    const soonDate = fmtDate(new Date(Date.now() + 7 * 86400000))
+    const soonDate = soonDateFor(todayStr())
     const { data, error } = await sb
       .from('milestones')
       .select('due_date')

@@ -1,3 +1,12 @@
+import { addDaysIso } from './date'
+
+// Порог "срок в ближайшую неделю" — календарные +7 дней от сегодня, не Date.now()+7*86400000:
+// в сутки перехода на летнее/зимнее время миллисекундная арифметика на час короче/длиннее
+// суток и в редких случаях даёт не тот календарный день. Вынесено отдельной функцией ради теста.
+export function soonDateFor(todayStr: string): string {
+  return addDaysIso(todayStr, 7)
+}
+
 export interface MilestoneReminderCounts {
   overdue: number
   soon: number

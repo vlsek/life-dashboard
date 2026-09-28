@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { classifyMilestoneReminders, shouldShowWeekendReminder } from './reminders'
+import { classifyMilestoneReminders, shouldShowWeekendReminder, soonDateFor } from './reminders'
 
 describe('classifyMilestoneReminders', () => {
   it('splits rows into overdue (before today) and soon (today or later)', () => {
@@ -22,5 +22,17 @@ describe('shouldShowWeekendReminder', () => {
   it('false once the week already reached (or exceeded) 100%', () => {
     expect(shouldShowWeekendReminder(6, 100)).toBe(false)
     expect(shouldShowWeekendReminder(0, 120)).toBe(false)
+  })
+})
+
+describe('soonDateFor', () => {
+  it('adds 7 calendar days, not 7*86400000ms (safe across a DST transition)', () => {
+    // 2026-10-25 — переход на зимнее время в ЕС: этот день длится 25 часов, поэтому
+    // Date.now()+7*86400000 (мс-арифметика) даёт на час меньше суток и рискует не
+    // перевалить за полночь — соответствующий регрессии баг, который мы чиним.
+    expect(soonDateFor('2026-10-25')).toBe('2026-11-01')
+  })
+  it('is a plain calendar +7 on an ordinary week', () => {
+    expect(soonDateFor('2026-01-01')).toBe('2026-01-08')
   })
 })

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.05";
+const SITE_VERSION = "1.06";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.06", date: "2026-09-28 19:40", changes: [
+        "Фикс перехода времени (DST) в напоминании о вехах: срок «ближайшая неделя» считался как Date.now()+7×86400000 — в сутки перехода на летнее/зимнее время эта арифметика на час короче/длиннее суток и в редких случаях не перевалит за полночь. Заменено на календарные +7 дней (addDaysIso) — в ванильном dashboard.js и в пилоте (lib/reminders.ts, новая функция soonDateFor + 2 регресс-теста)",
+    ]},
     { version: "1.05", date: "2026-09-28 21:20", changes: [
         "Пилот Тренировок: итерация 2 из 2 — мини-график прогресса на карточке каждого упражнения (максимальный вес по дням для упражнений с весом, суммарные повторения по дням для остальных) и общий график объёма тренировок (число подходов за день, со своим выбором периода). Инфраструктура графиков скопирована из пилота Дашборда по принятому правилу «копировать, не импортировать» (lib/chart.ts, ChartBlock/PeriodPicker/CustomPeriodModal); 14 новых тестов",
         "Этим закрывается пересборка пилота Тренировок — /workouts-vue/ теперь покрывает всё, что было в классической странице workouts.js",
@@ -897,6 +900,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.06", date: "2026-09-28 19:40", changes: [
+        "Fixed a DST bug in the milestones reminder: the \"due within a week\" cutoff was computed as Date.now()+7×86400000 — on the day clocks change, that arithmetic is an hour short of or over a full day and can rarely miss crossing midnight. Replaced with a calendar +7 days (addDaysIso) in both the classic dashboard.js and the pilot (lib/reminders.ts, new soonDateFor function + 2 regression tests)",
+    ]},
     { version: "1.05", date: "2026-09-28 21:20", changes: [
         "Workouts pilot: iteration 2 of 2 — a mini progress chart on every exercise card (max weight by day for weighted exercises, total reps by day otherwise) and an overall training-volume chart (total sets per day, with its own period picker). Chart infrastructure copied from the Dashboard pilot per the project's copy-not-import rule (lib/chart.ts, ChartBlock/PeriodPicker/CustomPeriodModal); 14 new tests",
         "This closes the Workouts pilot rebuild — /workouts-vue/ now covers everything the classic workouts.js page did",
