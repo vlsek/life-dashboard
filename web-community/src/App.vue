@@ -3,9 +3,10 @@ import { computed, onMounted, ref } from 'vue'
 import AppShell from './components/AppShell.vue'
 import Icon from './components/Icon.vue'
 import ProfileModal from './components/ProfileModal.vue'
+import CategorySection from './components/CategorySection.vue'
 import { useCommunity } from './lib/useCommunity'
 import { leaderboardRows, medalIndex, todayRows, friendDisplayName, normalizeDisplayName } from './lib/community'
-import { t, getLang } from './lib/i18n'
+import { t } from './lib/i18n'
 import type { Scope } from './lib/types'
 
 const { auth, friendIds, friendProfiles, leaderboard, leaderboardError, today, todayError, profile, init, unfollow, follow, saveProfile } = useCommunity()
@@ -143,15 +144,11 @@ async function onSaveProfile(name: string, visible: boolean) {
         </div>
       </div>
 
-      <!-- TODO(следующая итерация): "Сравнение по активностям" (category leaderboard +
-           личный график прогресса) зависит от инфраструктуры графиков дашборда
-           (renderChartBlock/periodBounds/openPeriodModal), которой ещё нет ни в одном
-           пилоте — переносить вместе с ней, не раньше. Пока — просто ссылка на ванильную
-           страницу, где раздел работает как обычно. -->
-      <p class="dim mt-5 text-sm">
-        📊 <a href="/community.html#category-select" style="color: inherit; text-decoration: underline">{{ getLang() === 'ru' ? 'Сравнение по активностям' : 'Compare by activity' }}</a>
-        {{ getLang() === 'ru' ? '— пока на ванильной странице.' : "— still on the classic page for now." }}
-      </p>
+      <!-- Сравнение по активности: свой композабл/компонент (useCategories.ts, CategorySection.vue),
+           график — общая инфраструктура из web-dashboard/ (chart.ts, ChartBlock, PeriodPicker) -->
+      <div class="mt-5">
+        <CategorySection :user-id="auth.userId" :scope="scope" :friend-ids="friendIds" />
+      </div>
     </template>
 
     <ProfileModal v-if="showProfileModal && profile" :initial="profile" @close="showProfileModal = false" @save="onSaveProfile" />
