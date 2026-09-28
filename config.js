@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.00";
+const SITE_VERSION = "1.01";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.01", date: "2026-09-28 21:02", changes: [
+        "Исправлено: в классическом Дашборде возраст считался от даты рождения, разобранной как UTC-полночь, — в часовых поясах западнее UTC накануне дня рождения возраст показывался на год больше. Теперь дата рождения разбирается как локальная. В Европе поведение не менялось",
+    ]},
     { version: "1.00", date: "2026-09-28 12:48", changes: [
         "Исправлено: в разделе «Челленджи» (классическая версия и пилот) даты дней челленджа считались от UTC-полуночи, из-за чего в часовых поясах западнее UTC все дни сдвигались на сутки назад. Теперь даты считаются по календарю; в Европе поведение не менялось. Добавлен регресс-тест на 400 дней, проверен в четырёх часовых поясах",
     ]},
@@ -880,6 +883,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.01", date: "2026-09-28 21:02", changes: [
+        "Fixed: on the classic Dashboard the age was computed from a birth date parsed as UTC midnight, so in time zones west of UTC the age showed one year too high on the day before the birthday. The birth date is now parsed as local. Nothing changes in Europe",
+    ]},
     { version: "1.00", date: "2026-09-28 12:48", changes: [
         "Fixed: in the Challenges section (classic site and pilot) challenge day dates were computed from UTC midnight, so in time zones west of UTC every day shifted back by one. Dates are now calendar-based; nothing changes in Europe. Added a 400-day regression test, verified in four time zones",
     ]},

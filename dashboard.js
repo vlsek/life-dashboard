@@ -1624,7 +1624,7 @@ async function loadProfileInner() {
     // так что обработчик клика на кнопке больше никто не снесёт
     const ageSlot = document.createElement("div");
     if (profile?.birthdate) {
-        const bd = new Date(profile.birthdate);
+        const bd = new Date(profile.birthdate + "T00:00:00"); // локальная полночь: без суффикса это UTC и возраст плывёт западнее UTC
         const today = new Date();
         let age = today.getFullYear() - bd.getFullYear();
         if (today.getMonth() < bd.getMonth() || (today.getMonth() === bd.getMonth() && today.getDate() < bd.getDate())) age--;
