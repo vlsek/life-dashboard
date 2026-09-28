@@ -6,17 +6,18 @@ import { t } from './lib/i18n'
 import { showToast } from './lib/toast'
 import AppShell from './components/AppShell.vue'
 import ExerciseCard from './components/ExerciseCard.vue'
+import OverviewChart from './components/OverviewChart.vue'
 import ExerciseForm from './components/ExerciseForm.vue'
 import EntryForm from './components/EntryForm.vue'
 import TemplatesModal from './components/TemplatesModal.vue'
 import Toast from './components/Toast.vue'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry, WorkoutTemplate } from './lib/types'
 
-// Порт workouts.js/html — ИТЕРАЦИЯ 1: CRUD упражнений и записей (подходы), личные рекорды,
-// группировка по категориям со сворачиванием, каталог типовых программ. НЕ перенесено
-// (итерация 2): мини-график прогресса на упражнении и общий график объёма тренировок.
+// Порт workouts.js/html целиком: CRUD упражнений и записей (подходы), личные рекорды,
+// группировка по категориям со сворачиванием, каталог типовых программ, мини-график прогресса
+// на каждом упражнении (ExerciseChart в ExerciseCard) и общий график объёма тренировок.
 const wk = useWorkouts()
-const { auth, exercises, loadError, entriesFor } = wk
+const { auth, exercises, entries, loadError, entriesFor } = wk
 
 const defaultUnit = () => t('workouts_default_unit')
 const defaultValueLabel = () => t('workouts_default_value_label')
@@ -185,6 +186,8 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
         {{ t('workouts_toast_save_error') }}{{ loadError }} — {{ t('workouts_migration_hint') }}
       </p>
       <p v-else-if="exercises.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('workouts_empty') }}</p>
+
+      <OverviewChart :entries="entries" />
 
       <section v-for="g in groups" :key="g.key">
         <div class="mb-2.5 mt-6 flex items-center gap-2">

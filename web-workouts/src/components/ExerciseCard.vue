@@ -4,11 +4,11 @@ import { t } from '../lib/i18n'
 import { fmtRu } from '../lib/date'
 import { bestPaceRecord, bestSetRecord, formatSets } from '../lib/workouts'
 import Icon from './Icon.vue'
+import ExerciseChart from './ExerciseChart.vue'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 
 // Порт renderExerciseCard() из workouts.js — заголовок с кнопками, рекомендованная схема,
-// личные рекорды (по сторонам для билатеральных), таблица записей. Мини-график прогресса
-// (chartPoints) сюда пока НЕ перенесён — это итерация 2, вместе с общим графиком объёма.
+// личные рекорды (по сторонам для билатеральных), мини-график прогресса, таблица записей.
 const props = defineProps<{ exercise: Exercise; entries: WorkoutEntry[] }>()
 const emit = defineEmits<{
   addEntry: []
@@ -78,6 +78,8 @@ const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date
       <Icon :name="r.icon" extra-style="color:#e0a93b; flex-shrink:0;" />
       {{ r.label }} {{ r.text }} <span style="opacity: 0.7">· {{ fmtRu(r.date) }}</span>
     </div>
+
+    <ExerciseChart :exercise="exercise" :entries="entries" />
 
     <p v-if="entries.length === 0" class="mt-2 text-sm" style="color: var(--text-dim)">{{ t('workouts_no_entries') }}</p>
     <div v-else class="mt-2 overflow-x-auto">

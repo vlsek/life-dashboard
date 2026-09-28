@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.04";
+const SITE_VERSION = "1.05";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.05", date: "2026-09-28 21:20", changes: [
+        "Пилот Тренировок: итерация 2 из 2 — мини-график прогресса на карточке каждого упражнения (максимальный вес по дням для упражнений с весом, суммарные повторения по дням для остальных) и общий график объёма тренировок (число подходов за день, со своим выбором периода). Инфраструктура графиков скопирована из пилота Дашборда по принятому правилу «копировать, не импортировать» (lib/chart.ts, ChartBlock/PeriodPicker/CustomPeriodModal); 14 новых тестов",
+        "Этим закрывается пересборка пилота Тренировок — /workouts-vue/ теперь покрывает всё, что было в классической странице workouts.js",
+    ]},
     { version: "1.04", date: "2026-09-28 13:54", changes: [
         "Значок Vue-страниц (вкладка браузера и шапка) переделан: теперь это наш оранжевый огонёк с небольшим голубым акцентом в сердцевине — вместо прежнего голубого пламени из v0.89",
         "Проверил проблему с аватаркой в профиле Дашборда (вытянутый овал вместо круга): причина была в общем правиле для кнопок, которое перебивало размеры внутри кнопки-обёртки, — оно уже исправлено в v0.94 (сейчас аватарка 44×44 и круглая на всех ширинах экрана и с любыми пропорциями фото). Если у тебя ещё овал — это закэшированная старая версия, поможет жёсткое обновление",
@@ -893,6 +897,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.05", date: "2026-09-28 21:20", changes: [
+        "Workouts pilot: iteration 2 of 2 — a mini progress chart on every exercise card (max weight by day for weighted exercises, total reps by day otherwise) and an overall training-volume chart (total sets per day, with its own period picker). Chart infrastructure copied from the Dashboard pilot per the project's copy-not-import rule (lib/chart.ts, ChartBlock/PeriodPicker/CustomPeriodModal); 14 new tests",
+        "This closes the Workouts pilot rebuild — /workouts-vue/ now covers everything the classic workouts.js page did",
+    ]},
     { version: "1.04", date: "2026-09-28 13:54", changes: [
         "The Vue pages' icon (browser tab and header) is redone: it is now our orange flame with a small blue accent in the core - replacing the all-blue flame from v0.89",
         "Checked the profile avatar problem on the Dashboard (a stretched oval instead of a circle): it came from the shared button rule overriding the sizes inside the wrapper button, and was already fixed in v0.94 (the avatar is now a 44x44 circle at every screen width and for any photo proportions). If you still see an oval it is a cached old version - a hard refresh helps",
