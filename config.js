@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.02";
+const SITE_VERSION = "1.03";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.03", date: "2026-09-28 21:15", changes: [
+        "Пилот «Сообщество»: взаимная дружба с заявками, как в классической версии (1.02) — заявки (принять / отклонить входящие, отменить исходящие), список друзей отдельно от подписок, кнопка «В друзья» рядом с поиском; встречная заявка принимается сразу. Фильтр «Только друзья» показывает друзей и подписки. Нужна миграция 029_friendships.sql — без неё новый блок скрыт. Своя логика (lib/friends.ts), компонент PersonChip и 17 новых тестов, в том числе на сам интерфейс",
+    ]},
     { version: "1.02", date: "2026-09-28 21:12", changes: [
         "Сообщество (классическая версия): взаимная дружба с заявками. В блоке «Друзья» появились заявки (принять / отклонить входящие, отменить исходящие), список друзей и кнопка «В друзья» рядом с поиском по email или нику; встречная заявка принимается сразу. Подписки остаются как были, а фильтр «Только друзья» теперь показывает и друзей, и тех, на кого ты подписан. Нужна миграция 029_friendships.sql — без неё новый блок скрыт, и раздел работает как раньше",
     ]},
@@ -886,6 +889,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.03", date: "2026-09-28 21:15", changes: [
+        "Community pilot: mutual friendship with requests, same as the classic site (1.02) — requests (accept / decline incoming, cancel outgoing), a friends list separate from follows, an \"Add friend\" button next to the search; a matching request is accepted right away. The \"Friends only\" filter shows friends and follows. Needs migration 029_friendships.sql — without it the new block is hidden. Own logic (lib/friends.ts), a PersonChip component and 17 new tests, including UI tests",
+    ]},
     { version: "1.02", date: "2026-09-28 21:12", changes: [
         "Community (classic site): mutual friendship with requests. The Friends block now has requests (accept / decline incoming, cancel outgoing), a friends list and an \"Add friend\" button next to the email/nickname search; a matching request is accepted right away. Follows work as before, and the \"Friends only\" filter now shows both friends and people you follow. Needs migration 029_friendships.sql — without it the new block is hidden and the page works as before",
     ]},

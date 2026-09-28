@@ -1,7 +1,8 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
 import { toFriendIdSet } from './community'
-import type { FollowedProfile, LeaderboardRow, TodayActivityRow, PublicProfile } from './types'
+import { mergeFriendScope, requestOutcome, toAcceptedIdSet, type FriendRequestOutcome } from './friends'
+import type { FollowedProfile, FriendRequestRow, LeaderboardRow, TodayActivityRow, PublicProfile } from './types'
 
 export type AuthState =
   | { status: 'loading' }
@@ -12,8 +13,15 @@ export type AuthState =
 // из requireAuth()/requireOnboarded() в config.js.
 export function useCommunity() {
   const auth = ref<AuthState>({ status: 'loading' })
+  // friendIds — то, что показывает фильтр «Только друзья»: принятые друзья ∪ подписки
   const friendIds = ref<Set<string>>(new Set())
-  const friendProfiles = ref<FollowedProfile[]>([])
+  const followIds = ref<Set<string>>(new Set())
+  const acceptedIds = ref<Set<string>>(new Set())
+  const followProfiles = ref<FollowedProfile[]>([])
+  const acceptedProfiles = ref<FollowedProfile[]>([])
+  const requests = ref<FriendRequestRow[]>([])
+  // false — миграция 029 не применена: блок заявок/друзей скрыт, раздел работает как раньше
+  const friendsApi = ref(false)
   const leaderboard = ref<LeaderboardRow[]>([])
   const leaderboardError = ref<string | null>(null)
   const today = ref<TodayActivityRow[]>([])
@@ -50,14 +58,31 @@ export function useCommunity() {
 
   async function loadFriends(userId: string) {
     const { data: follows } = await sb.from('follows').select('followed_id').eq('follower_id', userId)
-    friendIds.value = toFriendIdSet(follows || [])
+    followIds.value = toFriendIdSet(follows || [])
+
+    const { data: fr, error: frErr } = await sb.rpc('get_friend_ids')
+    if (frErr) {
+      friendsApi.value = false
+      acceptedIds.value = new Set()
+      requests.value = []
+    } else {
+      friendsApi.value = true
+      acceptedIds.value = toAcceptedIdSet(fr)
+      const { data: rq, error: rqErr } = await sb.rpc('get_friend_requests')
+      requests.value = rqErr ? [] : ((rq || []) as FriendRequestRow[])
+    }
+
+    friendIds.value = mergeFriendScope(followIds.value, acceptedIds.value)
     const ids = [...friendIds.value]
     if (ids.length === 0) {
-      friendProfiles.value = []
+      followProfiles.value = []
+      acceptedProfiles.value = []
       return
     }
     const { data: profiles } = await sb.from('profiles').select('user_id, display_name, avatar_url').in('user_id', ids)
-    friendProfiles.value = (profiles || []) as FollowedProfile[]
+    const all = (profiles || []) as FollowedProfile[]
+    followProfiles.value = all.filter((p) => followIds.value.has(p.user_id))
+    acceptedProfiles.value = all.filter((p) => acceptedIds.value.has(p.user_id))
   }
 
   async function loadLeaderboard() {
@@ -91,17 +116,50 @@ export function useCommunity() {
     await reload()
   }
 
-  // Портировано из addBtn.onclick в renderFriendsCard(): по email или по нику, через две
-  // разные RPC (сервер решает совпадение — не тянем список всех пользователей на клиент).
-  async function follow(userId: string, query: string): Promise<{ ok: true } | { ok: false; reason: 'not_found' | 'thats_you' | 'error'; message?: string }> {
+  // Поиск по email или по нику через две разные RPC (сервер решает совпадение — не тянем список
+  // всех пользователей на клиент). Портировано из addBtn.onclick в renderFriendsCard().
+  async function lookupUser(userId: string, query: string): Promise<{ ok: true; id: string } | { ok: false; reason: 'not_found' | 'thats_you' }> {
     const isEmail = query.includes('@')
     const { data: foundId, error } = isEmail ? await sb.rpc('find_user_by_email', { lookup_email: query }) : await sb.rpc('find_user_by_name', { lookup_name: query })
     if (error || !foundId) return { ok: false, reason: 'not_found' }
     if (foundId === userId) return { ok: false, reason: 'thats_you' }
-    const { error: insErr } = await sb.from('follows').insert({ follower_id: userId, followed_id: foundId })
+    return { ok: true, id: foundId as string }
+  }
+
+  async function follow(userId: string, query: string): Promise<{ ok: true } | { ok: false; reason: 'not_found' | 'thats_you' | 'error'; message?: string }> {
+    const found = await lookupUser(userId, query)
+    if (!found.ok) return found
+    const { error: insErr } = await sb.from('follows').insert({ follower_id: userId, followed_id: found.id })
     if (insErr) return { ok: false, reason: 'error', message: insErr.message }
     await reload()
     return { ok: true }
+  }
+
+  // Заявка в друзья (RPC из миграции 029). Встречная заявка принимается сервером сразу.
+  async function sendFriendRequest(
+    userId: string,
+    query: string,
+  ): Promise<{ ok: true; outcome: FriendRequestOutcome } | { ok: false; reason: 'not_found' | 'thats_you' | 'error'; message?: string }> {
+    const found = await lookupUser(userId, query)
+    if (!found.ok) return found
+    if (acceptedIds.value.has(found.id)) return { ok: true, outcome: 'already' }
+    const { data, error } = await sb.rpc('send_friend_request', { target: found.id })
+    if (error) return { ok: false, reason: 'error', message: error.message }
+    await reload()
+    return { ok: true, outcome: requestOutcome(data as { status?: string } | null) }
+  }
+
+  async function respondToRequest(requestId: string, accept: boolean) {
+    const { error } = await sb.rpc('respond_friend_request', { request_id: requestId, accept })
+    if (error) throw error
+    await reload()
+  }
+
+  // Убрать из друзей и отменить свою исходящую заявку — одна и та же функция на сервере.
+  async function removeFriend(otherUserId: string) {
+    const { error } = await sb.rpc('remove_friend', { other: otherUserId })
+    if (error) throw error
+    await reload()
   }
 
   async function saveProfile(userId: string, displayName: string | null, visible: boolean) {
@@ -110,5 +168,9 @@ export function useCommunity() {
     await reload()
   }
 
-  return { auth, friendIds, friendProfiles, leaderboard, leaderboardError, today, todayError, profile, init, reload, unfollow, follow, saveProfile }
+  return {
+    auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
+    leaderboard, leaderboardError, today, todayError, profile,
+    init, reload, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
+  }
 }

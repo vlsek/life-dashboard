@@ -25,6 +25,16 @@ export interface TodayActivityRow {
 
 export type Scope = 'everyone' | 'friends'
 
+// Строка RPC get_friend_requests (миграция 029): ожидающая заявка в друзья.
+export interface FriendRequestRow {
+  id: string
+  other_user_id: string
+  display_name: string
+  avatar_url: string | null
+  direction: 'incoming' | 'outgoing'
+  created_at: string
+}
+
 export interface PublicProfile {
   display_name: string | null
   leaderboard_visible: boolean | null
