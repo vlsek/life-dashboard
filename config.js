@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.99";
+const SITE_VERSION = "1.00";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.00", date: "2026-09-28 12:48", changes: [
+        "Исправлено: в разделе «Челленджи» (классическая версия и пилот) даты дней челленджа считались от UTC-полуночи, из-за чего в часовых поясах западнее UTC все дни сдвигались на сутки назад. Теперь даты считаются по календарю; в Европе поведение не менялось. Добавлен регресс-тест на 400 дней, проверен в четырёх часовых поясах",
+    ]},
     { version: "0.99", date: "2026-09-28 12:05", changes: [
         "Пилот Дашборда: добавлен блок «Цели на сегодня» — план на день (пункты из целей и свои), отметка ★ «доп. пункт», перенос незавершённого за последние 7 дней одним нажатием и отметка одноэтапных целей прямо из плана. Любое изменение сразу обновляет кольца дня/недели и стрики. Свои компоненты и composable, 44 теста (lib/planned.ts, usePlanned.ts, PlannedSection.vue)",
         "План принимает дату, поэтому его можно встроить в карточку дня вместе с дневными метриками; перенос предлагается только для сегодняшнего дня, как на классическом сайте",
@@ -877,6 +880,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.00", date: "2026-09-28 12:48", changes: [
+        "Fixed: in the Challenges section (classic site and pilot) challenge day dates were computed from UTC midnight, so in time zones west of UTC every day shifted back by one. Dates are now calendar-based; nothing changes in Europe. Added a 400-day regression test, verified in four time zones",
+    ]},
     { version: "0.99", date: "2026-09-28 12:05", changes: [
         "Dashboard pilot: added the \"Today's goals\" block — the day plan (items from your goals and your own items), the ★ bonus mark, one-tap carry-over of unfinished items from the last 7 days, and ticking single-stage goals right from the plan. Everything you change updates the day/week rings and streaks immediately. Own components and composable, 44 tests (lib/planned.ts, usePlanned.ts, PlannedSection.vue)",
         "The plan takes a date, so it can be dropped into the day card together with the daily metrics; carry-over is only offered for today, as on the classic site",

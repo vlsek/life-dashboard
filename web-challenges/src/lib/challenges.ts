@@ -1,4 +1,4 @@
-import { fmtDate } from './date'
+import { addDaysIso } from './date'
 import type { Challenge, ChallengeEntry, ChallengeTemplate, ChallengeType, CustomChallengeFormInput } from './types'
 
 // Портировано 1:1 из daysBetween() в challenges.js.
@@ -17,11 +17,11 @@ export function targetForDay(
   return null
 }
 
-// Дата i-го дня челленджа, считая от start_date — та же арифметика (мс от start_date),
-// что и в оригинальном renderDailyChallengeCard(), не через parseIso/addDaysIso из date.ts,
-// чтобы поведение не разошлось с уже работающей ванильной версией.
+// Дата i-го дня челленджа, считая от start_date. Календарная арифметика в локальном поясе
+// (addDaysIso), а не «мс от start_date»: new Date('YYYY-MM-DD') — это UTC-полночь, и к западу
+// от UTC fmtDate() давал предыдущий день.
 export function dayDateStr(startDate: string, i: number): string {
-  return fmtDate(new Date(new Date(startDate).getTime() + i * 86400000))
+  return addDaysIso(startDate, i)
 }
 
 export interface DayDot {

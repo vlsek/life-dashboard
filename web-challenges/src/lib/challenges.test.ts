@@ -45,6 +45,17 @@ describe('dayDateStr', () => {
     expect(dayDateStr('2026-01-01', 5)).toBe('2026-01-06')
     expect(dayDateStr('2026-01-30', 3)).toBe('2026-02-02')
   })
+
+  // Регресс: дата строится по календарю, а не по мс от UTC-полуночи — иначе в поясах
+  // западнее UTC (TZ=America/Los_Angeles) все даты уезжали на день назад.
+  it('совпадает с чистой календарной арифметикой на весь год, включая переходы времени', () => {
+    const start = '2026-01-01'
+    for (let i = 0; i < 400; i++) {
+      const d = new Date(Date.UTC(2026, 0, 1 + i))
+      const expected = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`
+      expect(dayDateStr(start, i)).toBe(expected)
+    }
+  })
 })
 
 function entry(overrides: Partial<ChallengeEntry>): ChallengeEntry {

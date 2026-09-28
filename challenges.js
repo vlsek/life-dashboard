@@ -260,7 +260,7 @@ function renderDailyChallengeCard(ch, entries) {
     const isBoolean = ch.type === "daily_boolean";
     const doneDays = [];
     for (let i = 0; i < duration; i++) {
-        const dateStr = fmtDate(new Date(new Date(ch.start_date).getTime() + i * 86400000));
+        const dateStr = addDaysIso(ch.start_date, i);
         const e = entryByDate[dateStr];
         const target = targetForDay(ch, i);
         const done = isBoolean ? (e?.value === 1) : (e && target != null && e.value >= target);
