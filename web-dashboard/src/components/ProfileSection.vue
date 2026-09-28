@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import Icon from './Icon.vue'
 import MetricIcon from './MetricIcon.vue'
 import BirthdateModal from './BirthdateModal.vue'
 import BodyParamFormModal from './BodyParamFormModal.vue'
 import BodyParamsModal from './BodyParamsModal.vue'
 import { useProfile } from '../lib/useProfile'
+import { BODY_VALUES_CHANGED } from '../lib/useCharts'
 import { calcAge, formatAge, formatDelta, unitSuffix, type BodyParam, type BodyParamForm } from '../lib/profile'
 import { getLang, t } from '../lib/i18n'
 
@@ -13,7 +14,7 @@ import { getLang, t } from '../lib/i18n'
 // (дата рождения), динамика параметров тела, баланс баллов, управление параметрами тела.
 // Кольца дня/недели и стрик остаются в App.vue (перенесены раньше, другим агентом).
 const props = defineProps<{ userId: string | null }>()
-const { profile, params, stats, balance, loaded, error, init, uploadAvatar, saveBirthdate, addParam, updateParam, deleteParam } = useProfile()
+const { profile, params, stats, balance, loaded, error, init, uploadAvatar, saveBirthdate, addParam, updateParam, deleteParam, refreshValues } = useProfile()
 
 watch(
   () => props.userId,
@@ -22,6 +23,13 @@ watch(
   },
   { immediate: true },
 )
+
+// Значение параметра тела поправили из графика — обновляем цифры в профиле.
+const onBodyValues = (e: Event) => {
+  if ((e as CustomEvent).detail?.source !== 'profile') refreshValues()
+}
+onMounted(() => window.addEventListener(BODY_VALUES_CHANGED, onBodyValues))
+onBeforeUnmount(() => window.removeEventListener(BODY_VALUES_CHANGED, onBodyValues))
 
 const fileInput = ref<HTMLInputElement | null>(null)
 const showBirthdate = ref(false)

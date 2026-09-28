@@ -3,6 +3,7 @@ import { sb } from './supabase'
 import { todayStr } from './date'
 import { t } from './i18n'
 import { fetchAllRows } from './fetchAll'
+import { BODY_PARAMS_CHANGED, BODY_VALUES_CHANGED } from './useCharts'
 import { calcBalance, type BalanceMetric, type BalanceValueRow } from './balance'
 import { avatarPath, paramStats, validateBirthdate, type BodyParam, type BodyParamForm, type BodyValue, type ProfileRow } from './profile'
 
@@ -112,6 +113,7 @@ export function useProfile() {
     })
     if (e) return t('dash_save_error_generic') + e.message
     await loadParams()
+    notifyParams()
     return null
   }
 
@@ -120,6 +122,7 @@ export function useProfile() {
     const { error: e } = await sb.from('body_parameters').update({ name: form.name.trim(), icon: form.icon || 'svg:ruler', unit: form.unit }).eq('id', id)
     if (e) return t('dash_save_error_generic') + e.message
     await loadParams()
+    notifyParams()
     return null
   }
 
@@ -127,6 +130,7 @@ export function useProfile() {
     const { error: e } = await sb.from('body_parameters').delete().eq('id', id)
     if (e) return t('dash_delete_error_generic') + e.message
     await Promise.all([loadParams(), loadValues()])
+    notifyParams()
     return null
   }
 
@@ -136,8 +140,19 @@ export function useProfile() {
     const { error: e } = await sb.from('body_parameter_values').upsert({ user_id: userId, date, parameter_id: parameterId, value }, { onConflict: 'user_id,date,parameter_id' })
     if (e) return t('dash_save_error_generic') + e.message
     await loadValues()
+    window.dispatchEvent(new CustomEvent(BODY_VALUES_CHANGED, { detail: { source: 'profile' } }))
     return null
   }
 
-  return { profile, params, values, stats, balance, loaded, error, init, uploadAvatar, saveBirthdate, addParam, updateParam, deleteParam, saveBodyValue }
+  // Графики пересобирают серии, когда параметры тела добавлены/изменены/удалены.
+  function notifyParams() {
+    window.dispatchEvent(new CustomEvent(BODY_PARAMS_CHANGED))
+  }
+
+  // Значение изменили снаружи (например, из графика) — перечитать историю параметров тела.
+  async function refreshValues() {
+    await loadValues()
+  }
+
+  return { profile, params, values, stats, balance, loaded, error, init, uploadAvatar, saveBirthdate, addParam, updateParam, deleteParam, saveBodyValue, refreshValues }
 }

@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.92";
+const SITE_VERSION = "0.93";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.93", date: "2026-09-28 09:50", changes: [
+        "Пилот Дашборда: графики теперь включают параметры тела и числовые метрики/подходы (с целью самой метрики как линией-ориентиром), а не только «баллы за день». «Настроить графики»: какие графики показывать, их порядок, линия-ориентир для каждого и общий период; выбор сохраняется в профиле (то же поле dashboard_charts, что и на классическом сайте). У каждого графика можно задать свой период, а значения — править прямо из графика (кроме баллов и подходов, как и раньше)",
+        "Профиль и графики синхронизируются: добавление/изменение/удаление параметра тела или правка значения из графика обновляют соседний блок. Графики читают историю постранично, поэтому длинная история больше не обрезается на 1000 строках",
+        "33 новых теста (построение серий сверено вручную с оригиналом: порядок серий, баллы за день, суммы подходов, форматы сохранённого выбора)",
+    ]},
     { version: "0.92", date: "2026-09-28 09:25", changes: [
         "Пилот Дашборда: добавлен блок «Профиль» — аватар (загрузка фото), возраст с редактированием даты рождения, последние значения параметров тела с изменением с первой записи (цвет зависит от цели: например, вес вниз — зелёный при похудении), баланс баллов со ссылкой в магазин и управление параметрами тела (добавить / изменить / удалить, выбор иконки). Свои компоненты, composable и 36 тестов (lib/profile.ts, balance.ts, useProfile.ts, ProfileSection.vue)",
         "Баланс баллов и история параметров тела читаются постранично, поэтому больше не обрезаются на 1000 строках",
@@ -845,6 +850,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.93", date: "2026-09-28 09:50", changes: [
+        "Dashboard pilot: charts now cover body parameters and numeric/sets metrics (with the metric's own goal as a reference line), not just points per day. \"Configure charts\": pick which charts to show, their order, a reference line per chart and the shared period; the choice is saved to your profile (same dashboard_charts field as on the classic site). Each chart also gets its own period, and values can be edited right from the chart (not for points and sets, same as before)",
+        "Profile and Charts stay in sync: adding/editing/deleting a body parameter or fixing a value from a chart refreshes the other block. Charts now read history page by page, so long histories are no longer cut off at 1000 rows",
+        "Covered by 33 new tests (series building checked by hand against the original: order of series, points per day, sets sums, saved-selection formats)",
+    ]},
     { version: "0.92", date: "2026-09-28 09:25", changes: [
         "Dashboard pilot: added the Profile block — avatar (photo upload), age with date-of-birth editing, latest body-parameter values with change since the first entry (coloured by your goal: e.g. weight going down is green when losing weight), points balance linking to the shop, and body-parameter management (add / edit / delete, icon picker). Own components, composable and 36 tests (lib/profile.ts, balance.ts, useProfile.ts, ProfileSection.vue)",
         "Points balance and body-parameter history are read page by page, so they no longer get cut off at 1000 rows",
