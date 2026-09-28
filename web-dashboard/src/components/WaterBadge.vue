@@ -19,7 +19,7 @@ const GLASS_OUTLINE = 'M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3
   <button
     type="button"
     class="inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 font-bold"
-    style="border-color: var(--border)"
+    style="background: transparent; color: var(--text); border-color: var(--border)"
     :title="`💧 ${currentMl} / ${normMl} ${unitLabel}`"
     @click="emit('click')"
   >

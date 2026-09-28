@@ -47,13 +47,13 @@ const pages: NavPage[] = [
   { href: '/dashboard.html', key: 'dashboard', labelKey: 'nav_dashboard', icon: 'home' },
   { href: '/goals-vue/', key: 'goals', labelKey: 'nav_goals', icon: 'goals' },
   { href: '/skills-vue/', key: 'skills', labelKey: 'nav_skills', icon: 'skills' },
-  { href: '/workouts.html', key: 'workouts', labelKey: 'nav_workouts', icon: 'workouts' },
+  { href: '/workouts-vue/', key: 'workouts', labelKey: 'nav_workouts', icon: 'workouts' },
   { href: '/challenges-vue/', key: 'challenges', labelKey: 'nav_challenges', icon: 'challenges' },
   { href: '/languages-vue/', key: 'english', labelKey: 'nav_english', icon: 'english' },
   { href: '/calendar-vue/', key: 'calendar', labelKey: 'nav_calendar', icon: 'calendar' },
   { href: '/milestones-vue/', key: 'milestones', labelKey: 'nav_milestones', icon: 'milestones' },
   { href: '/shop-vue/', key: 'shop', labelKey: 'nav_shop', icon: 'shop' },
-  { href: '/community.html', key: 'community', labelKey: 'nav_community', icon: 'community' },
+  { href: '/community-vue/', key: 'community', labelKey: 'nav_community', icon: 'community' },
   { href: '/history-vue/', key: 'history', labelKey: 'nav_history', icon: 'history' },
 ]
 const active: string = 'english'
@@ -154,7 +154,7 @@ onUnmounted(() => {
     <button
       type="button"
       class="rounded-lg border px-3 py-1.5 text-lg leading-none"
-      style="border-color: var(--border); color: var(--text)"
+      style="background: transparent; border-color: var(--border); color: var(--text)"
       :aria-label="t('nav_open_menu')"
       @click="openSidebar"
     >
@@ -166,7 +166,7 @@ onUnmounted(() => {
     <button
       type="button"
       class="shrink-0 rounded-lg px-2 py-1 text-sm"
-      style="color: var(--text-dim)"
+      style="background: transparent; color: var(--text-dim)"
       :aria-label="t('nav_more')"
       @click="quickNavOpen = !quickNavOpen"
     >
@@ -197,7 +197,7 @@ onUnmounted(() => {
     @click="closeSidebar"
   ></div>
   <nav
-    class="fixed inset-y-0 left-0 z-30 flex w-72 max-w-[85vw] flex-col gap-1 overflow-y-auto border-r p-4 transition-transform duration-200"
+    class="fixed inset-y-0 left-0 z-30 flex w-72 max-w-[85vw] flex-col gap-1 overflow-y-auto border-r p-4 [&>*]:shrink-0 transition-transform duration-200"
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     style="background: var(--bg-card); border-color: var(--border)"
   >
@@ -260,7 +260,7 @@ onUnmounted(() => {
       v-if="props.userEmail"
       type="button"
       class="mt-2 truncate rounded-lg border px-3 py-2 text-left text-sm"
-      style="border-color: var(--border); color: var(--text-dim)"
+      style="background: transparent; border-color: var(--border); color: var(--text-dim)"
       @click="logout"
     >
       {{ t('logout') }} ({{ props.userEmail }})
@@ -270,7 +270,7 @@ onUnmounted(() => {
       v-if="showInSidebar"
       type="button"
       class="mt-2 flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm"
-      style="color: var(--text-dim)"
+      style="background: transparent; color: var(--text-dim)"
       @click="openInstall"
     >
       <Icon name="download" />
@@ -279,7 +279,7 @@ onUnmounted(() => {
     <button
       type="button"
       class="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm"
-      style="color: var(--text-dim)"
+      style="background: transparent; color: var(--text-dim)"
       @click="openTour"
     >
       <Icon name="help" />
@@ -288,7 +288,7 @@ onUnmounted(() => {
     <button
       type="button"
       class="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm"
-      style="color: var(--text-dim)"
+      style="background: transparent; color: var(--text-dim)"
       @click="openAbout"
     >
       <Icon name="info" />

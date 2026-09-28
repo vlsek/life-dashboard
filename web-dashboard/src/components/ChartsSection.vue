@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import { reactive, watch } from 'vue'
+import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import ChartBlock from './ChartBlock.vue'
-import PeriodPicker from './PeriodPicker.vue'
+import ChartsConfigModal from './ChartsConfigModal.vue'
+import ChartPeriodModal from './ChartPeriodModal.vue'
+import ChartEditValues from './ChartEditValues.vue'
 import Icon from './Icon.vue'
-import { useCharts } from '../lib/useCharts'
+import { BODY_PARAMS_CHANGED, BODY_VALUES_CHANGED, useCharts } from '../lib/useCharts'
+import { canEditValues, entryGoal, type ChartEntry } from '../lib/chartSeries'
+import { effectivePeriod } from '../lib/chartPeriods'
 import { filterPointsByRange, loadPeriodState, savePeriodState, type PeriodState } from '../lib/chart'
 import { t } from '../lib/i18n'
 
+// Блок «Графики»: серии параметров тела, «баллы за день» и числовых метрик; выбор/порядок/цели
+// (profiles.dashboard_charts), период общий + свой у каждого графика, правка значений из графика.
 const props = defineProps<{ userId: string | null }>()
-
-const { pointsSeries, loaded, error, init } = useCharts()
+const { series, entries, loaded, error, init, reload, saveEntries, saveValue } = useCharts()
 
 watch(
   () => props.userId,
@@ -19,11 +24,53 @@ watch(
   { immediate: true },
 )
 
-const period = reactive<PeriodState>(loadPeriodState('dash_period_dashboard', { range: 'days10', from: null, to: null }))
+// Профиль добавил/изменил/удалил параметр тела (или записал значение) — серии надо пересобрать.
+const onParamsChanged = () => {
+  if (props.userId) reload()
+}
+const onValuesChanged = (e: Event) => {
+  if ((e as CustomEvent).detail?.source !== 'charts') onParamsChanged()
+}
+onMounted(() => {
+  window.addEventListener(BODY_PARAMS_CHANGED, onParamsChanged)
+  window.addEventListener(BODY_VALUES_CHANGED, onValuesChanged)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener(BODY_PARAMS_CHANGED, onParamsChanged)
+  window.removeEventListener(BODY_VALUES_CHANGED, onValuesChanged)
+})
 
-function onPeriodChange(next: PeriodState) {
-  Object.assign(period, next)
+const period = reactive<PeriodState>(loadPeriodState('dash_period_dashboard', { range: 'days10', from: null, to: null }))
+const showConfig = ref(false)
+const configError = ref<string | null>(null)
+const periodFor = ref<string | null>(null)
+const periodTick = ref(0) // пересчёт периодов отдельных графиков после сохранения/сброса
+
+function pointsFor(key: string) {
+  void periodTick.value
+  const p = effectivePeriod(key, period)
+  return filterPointsByRange(series.value[key].points, p.range, p.from, p.to)
+}
+
+function goalFor(entry: ChartEntry) {
+  const s = series.value[entry.key]
+  const g = entryGoal(entry, s)
+  return { value: g, label: g != null ? `${t('chart_goal_label')} ${g}${s.unit || ''}` : null }
+}
+
+const withData = () => entries.value.filter((e) => (series.value[e.key]?.points.length ?? 0) > 0)
+
+async function onSaveConfig(order: ChartEntry[], nextPeriod: PeriodState) {
+  configError.value = await saveEntries(order)
+  if (configError.value) return
+  Object.assign(period, nextPeriod)
   savePeriodState('dash_period_dashboard', period)
+  showConfig.value = false
+}
+
+function onPeriodApplied() {
+  periodFor.value = null
+  periodTick.value++
 }
 </script>
 
@@ -32,11 +79,30 @@ function onPeriodChange(next: PeriodState) {
     <p v-if="error" class="dim text-sm">{{ t('comm_load_error') }} {{ error }}</p>
 
     <template v-else>
-      <div class="mb-2.5 flex items-center gap-2">
-        <PeriodPicker :state="period" @change="onPeriodChange" />
-        <span class="dim inline-flex items-center gap-1 text-xs" :title="t('dash_charts_period_label')"><Icon name="gear" /></span>
+      <div class="mb-3.5 flex justify-end">
+        <button type="button" class="secondary" data-test="configure" @click="((configError = null), (showConfig = true))">{{ t('dash_charts_configure_btn') }}</button>
       </div>
-      <ChartBlock :title="t('dash_points_series_label')" :points="filterPointsByRange(pointsSeries, period.range, period.from, period.to)" color="var(--danger)" />
+
+      <p v-if="entries.length === 0" class="dim">{{ t('dash_charts_empty') }}</p>
+      <p v-else-if="withData().length === 0" class="dim">{{ t('dash_charts_no_data_yet') }}</p>
+
+      <div v-for="entry in withData()" :key="entry.key" class="mb-4" data-test="chart">
+        <div class="mb-0.5 flex justify-end">
+          <button type="button" class="secondary px-2 py-0.5 text-xs" :title="t('dash_chart_period_btn_title')" data-test="period-btn" @click="periodFor = entry.key"><Icon name="calendar" /></button>
+        </div>
+        <ChartBlock
+          :title="series[entry.key].label"
+          :points="pointsFor(entry.key)"
+          :unit="series[entry.key].unit"
+          :color="series[entry.key].color"
+          :goal-value="goalFor(entry).value"
+          :goal-label="goalFor(entry).label"
+        />
+        <ChartEditValues v-if="canEditValues(entry.key, series[entry.key].type) && pointsFor(entry.key).length" :points="pointsFor(entry.key)" :unit="series[entry.key].unit" :save="(d, raw) => saveValue(entry.key, d, raw)" />
+      </div>
     </template>
   </template>
+
+  <ChartsConfigModal v-if="showConfig" :series="series" :entries="entries" :period="period" :error="configError" @close="showConfig = false" @save="onSaveConfig" />
+  <ChartPeriodModal v-if="periodFor" :series-key="periodFor" :shared="period" @close="periodFor = null" @applied="onPeriodApplied" />
 </template>

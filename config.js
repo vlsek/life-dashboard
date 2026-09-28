@@ -479,11 +479,32 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.91";
+const SITE_VERSION = "0.96";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.96", date: "2026-09-28 17:20", changes: [
+        "Пилот Дашборда: остаток блока «Профиль» — кольцо прогресса дня теперь вокруг аватарки (процент под ней и шестерёнка настроек в углу, как на обычном сайте), кольцо недели стоит в строке профиля, а в режиме «в шапке» дневной круг и недельный скруглённый квадрат появляются бейджами в правой части шапки. Шестерёнка на аватарке есть всегда, так что настройки доступны и когда кольца выключены или уехали в шапку",
+        "Отдельное кольцо-блок из App.vue убран; ProfileSection получает данные колец пропсами. Новые файлы: lib/ringPlacement.ts (куда рисовать кольцо, геометрия), AvatarProgress.vue, HeaderProgressBadge.vue (через Teleport в #topbar-right), 16 новых тестов. Стрик-бейдж в строку профиля пока не переносился — им занимается другой агент",
+    ]},
+    { version: "0.95", date: "2026-09-28 16:05", changes: [
+        "Доводка после починки сайдбара (v0.94): у значка серии и значка воды на Дашборде и у подсказок навыков на странице Навыков задан явный прозрачный фон и цвет текста — иначе после выноса общего правила кнопок в слой base они выглядели бы синими кнопками с рамкой. Остальные кнопки на страницах проверены: у них фон уже задан или они используют классы secondary/danger",
+    ]},
+    { version: "0.94", date: "2026-09-28 15:40", changes: [
+        "Починен левый сайдбар на всех страницах пилота. Причина в двух вещах: кнопка «Выйти» сжималась по высоте до 12–18px (элементы меню сжимались вместо прокрутки) — теперь меню прокручивается, а элементы не сжимаются; и общее правило `button {}` в style.css перебивало все Tailwind-классы на кнопках (на Целях/Навыках/Календаре/Магазине и др. кнопка выхода и EN/RU выглядели «чепухой») — теперь оно вынесено в слой base и не мешает",
+        "Ссылки в меню приведены в порядок: Тренировки, Сообщество, Языки, Челленджи и Аккаунт везде ведут на новые *-vue/ страницы (раньше часть страниц ещё вела на старые .html, а Аккаунт — на /account.html). Дашборд намеренно остаётся на старом /dashboard.html, пока в пилоте не перенесены дневные метрики и план. У пункта «Аккаунт» в меню добавлена иконка",
+    ]},
+    { version: "0.93", date: "2026-09-28 09:50", changes: [
+        "Пилот Дашборда: графики теперь включают параметры тела и числовые метрики/подходы (с целью самой метрики как линией-ориентиром), а не только «баллы за день». «Настроить графики»: какие графики показывать, их порядок, линия-ориентир для каждого и общий период; выбор сохраняется в профиле (то же поле dashboard_charts, что и на классическом сайте). У каждого графика можно задать свой период, а значения — править прямо из графика (кроме баллов и подходов, как и раньше)",
+        "Профиль и графики синхронизируются: добавление/изменение/удаление параметра тела или правка значения из графика обновляют соседний блок. Графики читают историю постранично, поэтому длинная история больше не обрезается на 1000 строках",
+        "33 новых теста (построение серий сверено вручную с оригиналом: порядок серий, баллы за день, суммы подходов, форматы сохранённого выбора)",
+    ]},
+    { version: "0.92", date: "2026-09-28 09:25", changes: [
+        "Пилот Дашборда: добавлен блок «Профиль» — аватар (загрузка фото), возраст с редактированием даты рождения, последние значения параметров тела с изменением с первой записи (цвет зависит от цели: например, вес вниз — зелёный при похудении), баланс баллов со ссылкой в магазин и управление параметрами тела (добавить / изменить / удалить, выбор иконки). Свои компоненты, composable и 36 тестов (lib/profile.ts, balance.ts, useProfile.ts, ProfileSection.vue)",
+        "Баланс баллов и история параметров тела читаются постранично, поэтому больше не обрезаются на 1000 строках",
+        "Пока не перенесено: ввод значений параметров тела в карточке дня (ждёт блок дневных метрик; для него в useProfile есть saveBodyValue) и графики параметров тела",
+    ]},
     { version: "0.91", date: "2026-09-28 10:20", changes: [
         "Пилот Дашборда: добавлены баннеры-напоминания — «Вехи» (сколько просрочено и сколько со сроком в ближайшую неделю, с закрытием до конца дня) и «Итоги недели на подходе» по субботам/воскресеньям, если неделя ещё не на 100%. Отдельный компонент, composable и тесты (lib/reminders.ts, useReminders.ts, ReminderBanners.vue), чтобы не пересекаться с блоками других агентов",
         "Смерджено с графиками, управлением метриками и подходами, которые переехали параллельно (v0.86–v0.90): конфликт только в App.vue, оба варианта сохранены, все 148 тестов и билд проверены",
@@ -840,6 +861,27 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.96", date: "2026-09-28 17:20", changes: [
+        "Dashboard pilot: the rest of the Profile block — the day progress ring now wraps the avatar (percent below it and a settings gear in the corner, like the full site), the week ring sits in the profile row, and in \"header\" mode the day circle and the week rounded square appear as badges on the right of the top bar. The gear on the avatar is always there, so settings stay reachable when the rings are off or moved to the header",
+        "The standalone ring block was removed from App.vue; ProfileSection receives the ring data as props. New files: lib/ringPlacement.ts (where to draw a ring, geometry), AvatarProgress.vue, HeaderProgressBadge.vue (Teleport into #topbar-right), 16 new tests. The streak badge has not been moved into the profile row yet — another agent is working on streaks",
+    ]},
+    { version: "0.95", date: "2026-09-28 16:05", changes: [
+        "Follow-up to the sidebar fix (v0.94): the streak badge and water badge on the Dashboard and the suggestion chips on the Skills page now have an explicit transparent background and text color — otherwise, after moving the shared button rule into the base layer, they would have looked like blue buttons with a border. The other buttons on those pages were checked: they either already set a background or use the secondary/danger classes",
+    ]},
+    { version: "0.94", date: "2026-09-28 15:40", changes: [
+        "Fixed the left sidebar on every pilot page. Two causes: the Log out button was being squashed to 12–18px tall (menu items shrank instead of scrolling) — the menu now scrolls and items keep their size; and the shared `button {}` rule in style.css overrode every Tailwind class on buttons (on Goals/Skills/Calendar/Shop etc. the logout and EN/RU buttons looked broken) — it now lives in the base layer and no longer interferes",
+        "Menu links cleaned up: Workouts, Community, Languages, Challenges and Account now point at the new *-vue/ pages everywhere (some pages still linked to the old .html files, and Account to /account.html). Dashboard intentionally stays on the old /dashboard.html until the pilot has daily metrics and the plan. The Account menu item now has an icon",
+    ]},
+    { version: "0.93", date: "2026-09-28 09:50", changes: [
+        "Dashboard pilot: charts now cover body parameters and numeric/sets metrics (with the metric's own goal as a reference line), not just points per day. \"Configure charts\": pick which charts to show, their order, a reference line per chart and the shared period; the choice is saved to your profile (same dashboard_charts field as on the classic site). Each chart also gets its own period, and values can be edited right from the chart (not for points and sets, same as before)",
+        "Profile and Charts stay in sync: adding/editing/deleting a body parameter or fixing a value from a chart refreshes the other block. Charts now read history page by page, so long histories are no longer cut off at 1000 rows",
+        "Covered by 33 new tests (series building checked by hand against the original: order of series, points per day, sets sums, saved-selection formats)",
+    ]},
+    { version: "0.92", date: "2026-09-28 09:25", changes: [
+        "Dashboard pilot: added the Profile block — avatar (photo upload), age with date-of-birth editing, latest body-parameter values with change since the first entry (coloured by your goal: e.g. weight going down is green when losing weight), points balance linking to the shop, and body-parameter management (add / edit / delete, icon picker). Own components, composable and 36 tests (lib/profile.ts, balance.ts, useProfile.ts, ProfileSection.vue)",
+        "Points balance and body-parameter history are read page by page, so they no longer get cut off at 1000 rows",
+        "Not ported yet: entering body-parameter values inside the day card (waits for the daily-metrics block; useProfile exposes saveBodyValue for it) and the body-parameter charts",
+    ]},
     { version: "0.91", date: "2026-09-28 10:20", changes: [
         "Dashboard pilot: added reminder banners — \"Milestones\" (how many are overdue and how many are due within a week, dismissible until end of day) and a Saturday/Sunday \"Weekend check-in\" when the week isn't at 100% yet. Its own component, composable and tests (lib/reminders.ts, useReminders.ts, ReminderBanners.vue) to stay clear of other agents' blocks",
         "Merged with the charts, metrics management and sets blocks that moved over in parallel (v0.86–v0.90): the only conflict was in App.vue, both sides kept, all 148 tests and the build re-checked",
