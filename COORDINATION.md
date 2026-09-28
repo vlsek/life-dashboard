@@ -44,7 +44,7 @@
 проверь `git log` и переключись на другую задачу из бэклога.
 
 ### Агент 5
-— свободен — (закрыл v0.98 стрики/пагинация/DST, v0.99 план на сегодня; ждёт указаний пользователя)
+Challenges: фикс UTC-парсинга дат `YYYY-MM-DD` (`web-challenges/src/lib/challenges.ts`, `challenges.js`, `challenges-vue/` пересобрать) + тест. С 2026-09-28 (время по часам пользователя уточнить).
 
 ## Бэклог
 
@@ -67,7 +67,7 @@
 - [~ агент 2] Логин / онбординг
 
 ### Найдено попутно (мелкое, свободно)
-- [ ] Challenges: `new Date(startDate).getTime() + i*86400000` (`web-challenges/src/lib/challenges.ts:24`, `challenges.js:263`) парсит `YYYY-MM-DD` как UTC → к западу от UTC даты на день раньше; в Вильнюсе не видно. Заменить на `parseIso` + `setDate`
+- [~ агент 5] Challenges: `new Date(startDate).getTime() + i*86400000` (`web-challenges/src/lib/challenges.ts:24`, `challenges.js:263`) парсит `YYYY-MM-DD` как UTC → к западу от UTC даты на день раньше; в Вильнюсе не видно. Заменить на `parseIso` + `setDate`
 - [ ] `useReminders.ts:20` и `dashboard.js:1065`: `Date.now() + 7*86400000` — в сутки перехода времени сдвиг на час, редко даст соседнюю дату (косметика)
 
 ### Ванильный сайт / прочее
