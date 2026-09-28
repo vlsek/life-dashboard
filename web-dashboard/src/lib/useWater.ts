@@ -1,5 +1,6 @@
 import { computed, ref } from 'vue'
 import { sb } from './supabase'
+import { notifyDataChanged } from './events'
 import { fmtDate } from './date'
 import { t } from './i18n'
 import { autoNormMlFromWeight, effectiveNormMl, findWaterMetric, findWeightParam, nextWaterValue } from './water'
@@ -87,6 +88,7 @@ export function useWater() {
       .from('daily_values')
       .upsert({ user_id: userId, metric_id: metric.value.id, date: dateStr, value: next }, { onConflict: 'user_id,date,metric_id' })
     if (dateStr === fmtDate(new Date())) todayMl.value = next
+    notifyDataChanged({ source: 'water', metricId: metric.value.id, date: dateStr, value: next })
     return next
   }
 

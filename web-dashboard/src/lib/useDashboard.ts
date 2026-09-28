@@ -1,9 +1,11 @@
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { sb } from './supabase'
+import { fetchAllRows } from './fetchAll'
 import { fmtDate, todayStr } from './date'
 import { computeStreakItemsPure, type StreakItem } from './streaks'
 import { computeDayProgressPure, computeWeekProgressPure, getWeekDates, type ProgressResult, type PlannedItem, type GoalLite } from './progress'
 import { getDayProgressSettings, setDayProgressSettings, type DayProgressSettings } from './progressSettings'
+import { DATA_CHANGED } from './events'
 import type { Metric } from './types'
 
 export type AuthState =
@@ -20,6 +22,31 @@ export function useDashboard() {
   const loadError = ref<string | null>(null)
 
   let currentUserId: string | null = null
+
+  // Пересчёт стриков и колец после действий в других блоках. Один запрос за раз: пока идёт
+  // загрузка, новые события лишь помечают «нужен ещё один проход» (как Running/Queued в
+  // refreshStreakBadge() в dashboard.js) — быстрые нажатия «+250 мл» не плодят запросы.
+  let refreshing = false
+  let refreshQueued = false
+  async function refresh() {
+    if (!currentUserId) return
+    if (refreshing) {
+      refreshQueued = true
+      return
+    }
+    refreshing = true
+    try {
+      await loadAll(currentUserId)
+    } finally {
+      refreshing = false
+      if (refreshQueued) {
+        refreshQueued = false
+        void refresh()
+      }
+    }
+  }
+  onMounted(() => window.addEventListener(DATA_CHANGED, refresh))
+  onBeforeUnmount(() => window.removeEventListener(DATA_CHANGED, refresh))
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -51,24 +78,30 @@ export function useDashboard() {
   async function loadAll(userId: string) {
     const [metricsRes, valuesRes, notesRes, goalsRes] = await Promise.all([
       sb.from('metrics').select('*').eq('user_id', userId).eq('active', true).order('position'),
-      sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId),
-      sb.from('daily_notes').select('date, items, planned_goals').eq('user_id', userId),
+      // Supabase отдаёт максимум 1000 строк за запрос — без постраничного чтения у пользователя
+      // с длинной историей стрики и прогресс считались бы по обрезанным данным.
+      fetchAllRows<{ date: string; metric_id: string; value: unknown }>((from, to) =>
+        sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId).order('date').order('metric_id').range(from, to),
+      ),
+      fetchAllRows<{ date: string; items?: unknown[]; planned_goals?: PlannedItem[] }>((from, to) =>
+        sb.from('daily_notes').select('date, items, planned_goals').eq('user_id', userId).order('date').range(from, to),
+      ),
       sb.from('goals').select('name, stages, done, current_stage').eq('user_id', userId),
     ])
-    const firstError = metricsRes.error || valuesRes.error || notesRes.error || goalsRes.error
+    const firstError = metricsRes.error?.message || valuesRes.error || notesRes.error || goalsRes.error?.message
     if (firstError) {
-      loadError.value = firstError.message
+      loadError.value = firstError
       return
     }
     loadError.value = null
 
     const metrics = (metricsRes.data || []) as Metric[]
     const byDay: Record<string, Record<string, unknown>> = {}
-    for (const v of valuesRes.data || []) {
+    for (const v of valuesRes.rows) {
       ;(byDay[v.date] ||= {})[v.metric_id] = v.value
     }
     const notesByDate: Record<string, { items?: unknown[]; planned_goals?: PlannedItem[] }> = {}
-    for (const n of notesRes.data || []) {
+    for (const n of notesRes.rows) {
       notesByDate[n.date] = n as any
     }
     const noteDays = new Set(
@@ -104,7 +137,7 @@ export function useDashboard() {
     if (currentUserId) await loadAll(currentUserId)
   }
 
-  return { auth, streaks, dayProgress, weekProgress, progressSettings, loadError, init, saveProgressSettings }
+  return { auth, streaks, dayProgress, weekProgress, progressSettings, loadError, init, refresh, saveProgressSettings }
 }
 
 export { fmtDate }

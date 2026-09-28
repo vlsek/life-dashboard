@@ -1,7 +1,8 @@
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { sb } from './supabase'
 import { t } from './i18n'
 import { fetchAllRows } from './fetchAll'
+import { DATA_CHANGED, notifyDataChanged, type DataChangedDetail } from './events'
 import { addableKeys, buildSeries, parseEditedValue, parseKey, resolveEntries, upsertPoint, type ChartEntry, type ChartSeries } from './chartSeries'
 import type { BodyParam, BodyValue } from './profile'
 import type { Metric, DailyValueRow } from './types'
@@ -26,9 +27,9 @@ export function useCharts() {
   async function load() {
     const [paramsRes, bodyRes, metricsRes, valuesRes, profileRes] = await Promise.all([
       sb.from('body_parameters').select('id, name, icon, unit, position').eq('user_id', userId).eq('active', true).order('position'),
-      fetchAllRows<BodyValue>((from, to) => sb.from('body_parameter_values').select('parameter_id, date, value').eq('user_id', userId).order('date').range(from, to)),
+      fetchAllRows<BodyValue>((from, to) => sb.from('body_parameter_values').select('parameter_id, date, value').eq('user_id', userId).order('date').order('parameter_id').range(from, to)),
       sb.from('metrics').select('*').eq('user_id', userId).eq('active', true),
-      fetchAllRows<DailyValueRow>((from, to) => sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId).range(from, to)),
+      fetchAllRows<DailyValueRow>((from, to) => sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId).order('date').order('metric_id').range(from, to)),
       sb.from('profiles').select('dashboard_charts').eq('user_id', userId).maybeSingle(),
     ])
     const err = paramsRes.error?.message || bodyRes.error || metricsRes.error?.message || valuesRes.error
@@ -72,8 +73,23 @@ export function useCharts() {
     const s = series.value[key]
     if (s) series.value = { ...series.value, [key]: { ...s, points: upsertPoint(s.points, date, value) } }
     if (prefix === 'body') window.dispatchEvent(new CustomEvent(BODY_VALUES_CHANGED, { detail: { source: 'charts' } }))
+    // значение метрики изменилось — стрики и кольца прогресса пересчитает useDashboard
+    else notifyDataChanged({ source: 'charts', metricId: id, date, value: value ?? 0 })
     return null
   }
+
+  // Значение числовой метрики записали в другом блоке (вода, подходы) — обновляем точку в её графике
+  // (аналог pushPointToChart в оригинале). «Баллы за день» и графики других метрик не пересчитываем:
+  // полная перезагрузка на каждое нажатие «+250 мл» дороже, чем устаревшая до следующего входа цифра.
+  function onDataChanged(e: Event) {
+    const d = (e as CustomEvent<DataChangedDetail>).detail
+    if (!d || d.source === 'charts' || !d.metricId || !d.date || d.value == null) return
+    const key = `metric:${d.metricId}`
+    const s = series.value[key]
+    if (s) series.value = { ...series.value, [key]: { ...s, points: upsertPoint(s.points, d.date, d.value) } }
+  }
+  onMounted(() => window.addEventListener(DATA_CHANGED, onDataChanged))
+  onBeforeUnmount(() => window.removeEventListener(DATA_CHANGED, onDataChanged))
 
   const addable = () => addableKeys(series.value, entries.value)
 

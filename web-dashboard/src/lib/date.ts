@@ -16,6 +16,14 @@ export function parseIso(iso: string): Date {
   return new Date(iso + 'T00:00:00')
 }
 
+// Сдвиг даты на n календарных дней (setDate), а НЕ на n×86400000 мс: в сутки перехода на
+// летнее/зимнее время день длится 23/25 часов, и сдвиг в миллисекундах даёт соседнюю дату.
+export function addDays(d: Date, n: number): Date {
+  const r = new Date(d)
+  r.setDate(r.getDate() + n)
+  return r
+}
+
 export function addDaysIso(iso: string, n: number): string {
   const d = parseIso(iso)
   d.setDate(d.getDate() + n)

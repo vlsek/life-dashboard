@@ -479,11 +479,17 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.97";
+const SITE_VERSION = "0.98";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.98", date: "2026-09-28 11:10", changes: [
+        "Исправлено: история длиннее 1000 записей обрезалась там, где читалась одним запросом, — стрики и дневной/недельный прогресс в пилоте Дашборда и баланс баллов в пилоте Магазина могли считаться по неполным данным. Теперь читаются постранично в стабильном порядке (дата, метрика)",
+        "Исправлено: в ночь перевода часов (в Европе — последнее воскресенье марта/октября) стрик считался со сдвигом на день («вчера» вычислялось как минус 24 часа), а на оси дат графика одна дата дублировалась и одна пропадала. Исправлено в классическом Дашборде и графиках, в пилоте Дашборда и в графике Сообщества",
+        "Пилот Дашборда: стрики, кольца дневного/недельного прогресса и график метрики обновляются сразу после добавления воды, записи подхода или правки значения на графике — без перезагрузки страницы",
+        "Добавлен COORDINATION.md — общая доска для агентов (кто что делает сейчас, свободные задачи, журнал). 27 новых тестов",
+    ]},
     { version: "0.97", date: "2026-09-28 09:03", changes: [
         "Пилот «Сообщество»: вернулся раздел «Сравнение по активности» — выбор категории, таблица сравнения (по сумме / баллам / streak, за неделю / прошлую неделю / месяц / всё время, все или только друзья) и личный график прогресса в этой категории с выбором периода и линией-целью",
         "Если своей метрики в категории нет — можно привязать любую числовую метрику прямо на странице; график построен на той же общей инфраструктуре, что и графики Дашборда",
@@ -866,6 +872,12 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.98", date: "2026-09-28 11:10", changes: [
+        "Fixed: history longer than 1000 rows was cut off in places that read it in one request — streaks and day/week progress on the Dashboard pilot and the points balance in the Shop pilot could be calculated from truncated data. They now read page by page in a stable order (date, metric)",
+        "Fixed: around the clock change (in Europe — the last Sunday of March/October) streaks were off by a day (\"yesterday\" was computed as minus 24 hours) and chart date axes could duplicate one date and drop another. Fixed on the classic Dashboard and charts, in the Dashboard pilot and in the Community chart",
+        "Dashboard pilot: streaks, the day/week progress rings and the chart of a metric now update right after you add water, log a set or edit a value on a chart, without reloading the page",
+        "Added COORDINATION.md — a shared board for the agents (who works on what right now, free tasks, done log). 27 new tests",
+    ]},
     { version: "0.97", date: "2026-09-28 09:03", changes: [
         "Community pilot: the \"Compare by activity\" section is back — pick a category, see the comparison table (by total / points / streak, for this week / last week / this month / all time, everyone or friends only) and your own progress chart for that category with a period picker and a goal line",
         "If you have no metric in the category you can link any number metric right on the page; the chart uses the same shared infrastructure as the Dashboard charts",
@@ -1518,7 +1530,9 @@ function prepareChartSeries(rawPoints, maxPoints = 24) {
 
     let full = [];
     for (let i = 0; i < totalDays; i++) {
-        const d = new Date(first.getTime() + i * dayMs);
+        // календарный шаг, а не first + i×24ч: в сутки перехода времени это давало дубль и пропуск даты
+        const d = new Date(first);
+        d.setDate(first.getDate() + i);
         const key = fmtDate(d);
         full.push({ date: key, y: key in byDate ? byDate[key] : null });
     }

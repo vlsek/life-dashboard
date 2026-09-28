@@ -23,7 +23,9 @@ export function prepareChartSeries(rawPoints: { date: string; y: number | null }
 
   const full: ChartPoint[] = []
   for (let i = 0; i < totalDays; i++) {
-    const d = new Date(first.getTime() + i * dayMs)
+    // календарный шаг (setDate), а не first + i×24ч: в сутки перехода времени это давало дубль и пропуск даты
+    const d = new Date(first)
+    d.setDate(first.getDate() + i)
     const key = fmtDateLocal(d)
     full.push({ date: key, y: key in byDate ? byDate[key] : null })
   }

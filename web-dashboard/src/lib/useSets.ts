@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
 import { t } from './i18n'
+import { notifyDataChanged } from './events'
 import { forgetVariationOptions, normalizeSets, rememberVariationOptions } from './setsBlock'
 import type { SetRow } from './setsBlock'
 import type { Metric } from './types'
@@ -59,7 +60,11 @@ export function useSets() {
       .from('daily_values')
       .upsert({ user_id: userId, date, metric_id: m.id, value: sets }, { onConflict: 'user_id,date,metric_id' })
     if (err) error.value = t('dash_metric_save_error') + m.name + '»: ' + err.message
-    else error.value = null
+    else {
+      error.value = null
+      // подход засчитывается в «идеальный день»/кольца — пересчитать стрики; в графике точка = сумма повторений
+      notifyDataChanged({ source: 'sets', metricId: m.id, date, value: sets.reduce((sum, s) => sum + (s?.reps || 0), 0) })
+    }
   }
 
   function patchMetric(id: string, options: Metric['options']) {

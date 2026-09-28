@@ -333,7 +333,9 @@ async function computeStreakItems() {
     today.setHours(0, 0, 0, 0);
     const todayStr3 = fmtDate(today);
     // если сегодня ещё не заполнено — считаем серию со вчера, чтобы не сбрасывало на 0 раньше времени
-    const startFrom = byDay[todayStr3] ? today : new Date(today.getTime() - 86400000);
+    // «вчера» — календарным сдвигом: вычитание 86400000 мс в сутки перехода на летнее время даёт позавчера
+    const startFrom = new Date(today);
+    if (!byDay[todayStr3]) startFrom.setDate(startFrom.getDate() - 1);
     const earliestDate = Object.keys(byDay).length ? Object.keys(byDay).sort()[0] : todayStr3;
     const earliestWeekStart = weekStartStr(earliestDate);
 
@@ -377,7 +379,9 @@ async function computeStreakItems() {
         // Импортированный стрик (см. migrations/026): добавляется поверх посчитанного, только пока
         // посчитанный стрик без разрывов доходит до даты импорта — иначе они больше не непрерывны.
         if (m.streak_import_days > 0 && m.streak_import_date) {
-            const streakStart = fmtDate(new Date(startFrom.getTime() - (streak > 0 ? (streak - 1) : 0) * 86400000));
+            const streakStartDate = new Date(startFrom);
+            streakStartDate.setDate(streakStartDate.getDate() - (streak > 0 ? (streak - 1) : 0));
+            const streakStart = fmtDate(streakStartDate);
             if (streak > 0 && streakStart <= m.streak_import_date) streak += m.streak_import_days;
         }
         const todayCounted = doneDays.has(todayStr3) || !metricExpectedOn(m, todayStr3);

@@ -35,7 +35,7 @@ export function useProfile() {
 
   async function loadValues() {
     const res = await fetchAllRows<BodyValue>((from, to) =>
-      sb.from('body_parameter_values').select('parameter_id, date, value').eq('user_id', userId).order('date', { ascending: true }).range(from, to),
+      sb.from('body_parameter_values').select('parameter_id, date, value').eq('user_id', userId).order('date', { ascending: true }).order('parameter_id').range(from, to),
     )
     if (res.error) error.value = res.error
     values.value = res.rows
@@ -45,7 +45,7 @@ export function useProfile() {
   async function loadBalance() {
     const [metricsRes, valuesRes, goalsRes, skillsRes, booksRes, redeemedRes] = await Promise.all([
       sb.from('metrics').select('id, type, goal_value, goal_direction').eq('user_id', userId).eq('active', true),
-      fetchAllRows<BalanceValueRow>((from, to) => sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId).range(from, to)),
+      fetchAllRows<BalanceValueRow>((from, to) => sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId).order('date').order('metric_id').range(from, to)),
       sb.from('goals').select('points').eq('user_id', userId).eq('done', true),
       sb.from('skills').select('points').eq('user_id', userId).eq('mastered', true),
       sb.from('books').select('points').eq('user_id', userId).eq('status', 'done'),

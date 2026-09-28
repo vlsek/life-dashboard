@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
+import { fetchAllRows } from './fetchAll'
 import { todayStr } from './date'
 import { calcTotalPoints, calcBalanceFromTotals } from './points'
 import type { DailyValue, GoalRow, SkillRow, BookRow, Metric, ShopItem, ShopItemFormInput } from './types'
@@ -44,20 +45,21 @@ export function useShop() {
   async function loadBalance(userId: string) {
     const [metricsRes, valuesRes, goalsRes, skillsRes, booksRes, redeemedRes] = await Promise.all([
       sb.from('metrics').select('*').eq('user_id', userId).eq('active', true),
-      sb.from('daily_values').select('*').eq('user_id', userId),
+      // постранично: Supabase отдаёт максимум 1000 строк за запрос, иначе баланс считался бы по обрезанной истории
+      fetchAllRows<DailyValue>((from, to) => sb.from('daily_values').select('*').eq('user_id', userId).order('date').order('metric_id').range(from, to)),
       sb.from('goals').select('*').eq('user_id', userId).eq('done', true),
       sb.from('skills').select('*').eq('user_id', userId).eq('mastered', true),
       sb.from('books').select('*').eq('user_id', userId).eq('status', 'done'),
       sb.from('shop_items').select('cost').eq('user_id', userId).eq('redeemed', true),
     ])
-    const err = metricsRes.error || valuesRes.error || goalsRes.error || skillsRes.error || booksRes.error || redeemedRes.error
+    const err = metricsRes.error?.message || valuesRes.error || goalsRes.error?.message || skillsRes.error?.message || booksRes.error?.message || redeemedRes.error?.message
     if (err) {
-      error.value = err.message
+      error.value = err
       return
     }
     const total = calcTotalPoints(
       (metricsRes.data || []) as Metric[],
-      (valuesRes.data || []) as DailyValue[],
+      valuesRes.rows,
       (goalsRes.data || []) as GoalRow[],
       (skillsRes.data || []) as SkillRow[],
       (booksRes.data || []) as BookRow[],
