@@ -108,6 +108,15 @@ function openDayModal(dateStr, existingPlanned) {
     addInput.focus();
 }
 
+// Портировано по образцу history.js/milestones.js (C3, офлайн-кэш чтения): каждый месяц
+// кэшируется под своим ключом, так что уже открытые месяцы остаются доступны офлайн при
+// пролистывании календаря, а не только текущий.
+async function fetchNotesRaw(fromDate, toDate) {
+    const { data, error } = await sb.from("daily_notes").select("date, planned_goals").eq("user_id", user.id).gte("date", fromDate).lte("date", toDate);
+    if (error) throw error;
+    return data || [];
+}
+
 async function render() {
     const grid = document.getElementById("calendar-grid");
     document.getElementById("month-label").textContent = `${MONTH_NAMES[viewDate.getMonth()]} ${viewDate.getFullYear()}`;
@@ -118,8 +127,19 @@ async function render() {
     const fromDate = fmtDate(firstOfMonth);
     const toDate = fmtDate(lastOfMonth);
 
-    const { data: notes, error } = await sb.from("daily_notes").select("date, planned_goals").eq("user_id", user.id).gte("date", fromDate).lte("date", toDate);
-    if (error) { grid.innerHTML = `<p class="dim">${t("comm_load_error")} ${error.message}</p>`; console.error(error); return; }
+    let notes;
+    try {
+        const res = await offlineCache.read(user.id, "calendar:" + fromDate, () => fetchNotesRaw(fromDate, toDate));
+        if (res.stale) {
+            const msg = offlineCache.banner(res.savedAt);
+            if (msg) showToast(msg, "info");
+        }
+        notes = res.data;
+    } catch (error) {
+        grid.innerHTML = `<p class="dim">${t("comm_load_error")} ${error.message}</p>`;
+        console.error(error);
+        return;
+    }
 
     const byDate = {};
     (notes || []).forEach(n => byDate[n.date] = n.planned_goals || []);

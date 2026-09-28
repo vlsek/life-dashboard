@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.06";
+const SITE_VERSION = "1.07";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.07", date: "2026-09-28 20:35", changes: [
+        "Расширен офлайн-кэш чтения (C3) на Календарь — раньше был только у Истории и Вех. Заметки месяца кэшируются под своим ключом при каждом переключении месяца, так что уже открытые месяцы остаются доступны офлайн (не только текущий); без сети и без сохранённой копии — как раньше, ошибка загрузки. Запись (план на день) по-прежнему требует сеть, как и везде в этом варианте офлайн-кэша",
+    ]},
     { version: "1.06", date: "2026-09-28 19:40", changes: [
         "Фикс перехода времени (DST) в напоминании о вехах: срок «ближайшая неделя» считался как Date.now()+7×86400000 — в сутки перехода на летнее/зимнее время эта арифметика на час короче/длиннее суток и в редких случаях не перевалит за полночь. Заменено на календарные +7 дней (addDaysIso) — в ванильном dashboard.js и в пилоте (lib/reminders.ts, новая функция soonDateFor + 2 регресс-теста)",
     ]},
@@ -900,6 +903,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.07", date: "2026-09-28 20:35", changes: [
+        "Extended the read-only offline cache (C3) to Calendar — previously only History and Milestones had it. Each month's notes are cached under their own key as you browse, so previously-viewed months stay available offline (not just the current one); with no network and no saved copy, it behaves as before (a load error). Saving (the day's plan) still requires a connection, same as everywhere else in this offline-cache approach",
+    ]},
     { version: "1.06", date: "2026-09-28 19:40", changes: [
         "Fixed a DST bug in the milestones reminder: the \"due within a week\" cutoff was computed as Date.now()+7×86400000 — on the day clocks change, that arithmetic is an hour short of or over a full day and can rarely miss crossing midnight. Replaced with a calendar +7 days (addDaysIso) in both the classic dashboard.js and the pilot (lib/reminders.ts, new soonDateFor function + 2 regression tests)",
     ]},
