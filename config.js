@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.01";
+const SITE_VERSION = "1.02";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.02", date: "2026-09-28 21:12", changes: [
+        "Сообщество (классическая версия): взаимная дружба с заявками. В блоке «Друзья» появились заявки (принять / отклонить входящие, отменить исходящие), список друзей и кнопка «В друзья» рядом с поиском по email или нику; встречная заявка принимается сразу. Подписки остаются как были, а фильтр «Только друзья» теперь показывает и друзей, и тех, на кого ты подписан. Нужна миграция 029_friendships.sql — без неё новый блок скрыт, и раздел работает как раньше",
+    ]},
     { version: "1.01", date: "2026-09-28 21:02", changes: [
         "Исправлено: в классическом Дашборде возраст считался от даты рождения, разобранной как UTC-полночь, — в часовых поясах западнее UTC накануне дня рождения возраст показывался на год больше. Теперь дата рождения разбирается как локальная. В Европе поведение не менялось",
     ]},
@@ -883,6 +886,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.02", date: "2026-09-28 21:12", changes: [
+        "Community (classic site): mutual friendship with requests. The Friends block now has requests (accept / decline incoming, cancel outgoing), a friends list and an \"Add friend\" button next to the email/nickname search; a matching request is accepted right away. Follows work as before, and the \"Friends only\" filter now shows both friends and people you follow. Needs migration 029_friendships.sql — without it the new block is hidden and the page works as before",
+    ]},
     { version: "1.01", date: "2026-09-28 21:02", changes: [
         "Fixed: on the classic Dashboard the age was computed from a birth date parsed as UTC midnight, so in time zones west of UTC the age showed one year too high on the day before the birthday. The birth date is now parsed as local. Nothing changes in Europe",
     ]},

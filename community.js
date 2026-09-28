@@ -1,70 +1,160 @@
 let user;
 let scope = "everyone"; // "everyone" | "friends"
-let friendIds = new Set();
+let friendIds = new Set();         // кого показываем в фильтре «Только друзья»: друзья ∪ подписки
+let followIds = new Set();         // односторонние подписки (таблица follows)
+let acceptedFriendIds = new Set(); // взаимные друзья (миграция 029, RPC get_friend_ids)
+let friendsApi = false;            // false — миграция 029 не применена: блок заявок/друзей скрыт, всё как раньше
 
 async function loadFriendIds() {
     const { data } = await sb.from("follows").select("followed_id").eq("follower_id", user.id);
-    friendIds = new Set((data || []).map(f => f.followed_id));
+    followIds = new Set((data || []).map(f => f.followed_id));
+    acceptedFriendIds = new Set();
+    const { data: fr, error } = await sb.rpc("get_friend_ids");
+    if (error) {
+        friendsApi = false;
+        console.warn("get_friend_ids недоступна (применена ли миграция 029?):", error.message);
+    } else {
+        friendsApi = true;
+        acceptedFriendIds = new Set((fr || []).map(x => (x && typeof x === "object") ? Object.values(x)[0] : x));
+    }
+    friendIds = new Set([...followIds, ...acceptedFriendIds]);
+}
+
+function makeChipButton(iconName, title, onclick) {
+    const btn = document.createElement("button");
+    setIcon(btn, iconName);
+    btn.className = "secondary";
+    btn.style.cssText = "padding:1px 6px; margin-left:4px;";
+    btn.title = title;
+    btn.onclick = onclick;
+    return btn;
+}
+
+function makePersonChip(profile, buttons = [], note = "") {
+    const chip = document.createElement("div");
+    chip.style.cssText = "display:flex; align-items:center; gap:6px; background:var(--bg); border:1px solid var(--border); border-radius:20px; padding:4px 10px 4px 4px;";
+    chip.appendChild(makeAvatarEl(profile.avatar_url, 26));
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = profile.display_name || t("comm_no_name");
+    nameSpan.style.fontSize = "0.9em";
+    chip.appendChild(nameSpan);
+    if (note) {
+        const noteSpan = document.createElement("span");
+        noteSpan.className = "dim";
+        noteSpan.textContent = note;
+        noteSpan.style.fontSize = "0.8em";
+        chip.appendChild(noteSpan);
+    }
+    buttons.forEach(b => chip.appendChild(b));
+    return chip;
+}
+
+// Вызов RPC друзей: при ошибке показывает тост и возвращает null, иначе { data }
+async function callFriendRpc(name, args) {
+    const { data, error } = await sb.rpc(name, args);
+    if (error) { showToast(t("comm_friend_action_error") + error.message, "error"); console.error(error); return null; }
+    return { data };
 }
 
 async function renderFriendsCard() {
     const card = document.getElementById("friends-card");
     card.innerHTML = "";
 
-    const { data: follows } = await sb.from("follows").select("followed_id").eq("follower_id", user.id);
-    const ids = (follows || []).map(f => f.followed_id);
+    let requests = [];
+    if (friendsApi) {
+        const { data, error } = await sb.rpc("get_friend_requests");
+        if (error) console.warn("get_friend_requests:", error.message);
+        else requests = data || [];
+    }
+    const incoming = requests.filter(r => r.direction === "incoming");
+    const outgoing = requests.filter(r => r.direction === "outgoing");
 
+    const ids = [...friendIds];
+    let profiles = [];
     if (ids.length > 0) {
-        const { data: profiles } = await sb.from("profiles").select("user_id, display_name, avatar_url").in("user_id", ids);
+        const { data } = await sb.from("profiles").select("user_id, display_name, avatar_url").in("user_id", ids);
+        profiles = data || [];
+    }
+    const friendProfiles = profiles.filter(p => acceptedFriendIds.has(p.user_id));
+    const followProfiles = profiles.filter(p => followIds.has(p.user_id));
+
+    // Заголовки подсекций нужны только когда есть новый блок друзей; без миграции 029 — прежний вид
+    const addSection = (label, chips) => {
+        if (chips.length === 0) return;
+        if (friendsApi) {
+            const lbl = document.createElement("div");
+            lbl.className = "dim";
+            lbl.style.cssText = "font-size:0.85em; margin-bottom:6px;";
+            lbl.textContent = label;
+            card.appendChild(lbl);
+        }
         const list = document.createElement("div");
         list.style.cssText = "display:flex; flex-wrap:wrap; gap:10px; margin-bottom:14px;";
-        for (const p of (profiles || [])) {
-            const chip = document.createElement("div");
-            chip.style.cssText = "display:flex; align-items:center; gap:6px; background:var(--bg); border:1px solid var(--border); border-radius:20px; padding:4px 10px 4px 4px;";
-            chip.appendChild(makeAvatarEl(p.avatar_url, 26));
-            const nameSpan = document.createElement("span");
-            nameSpan.textContent = p.display_name || t("comm_no_name");
-            nameSpan.style.fontSize = "0.9em";
-            chip.appendChild(nameSpan);
-            const unfollowBtn = document.createElement("button");
-            setIcon(unfollowBtn, "x");
-            unfollowBtn.className = "secondary";
-            unfollowBtn.style.cssText = "padding:1px 6px; margin-left:4px;";
-            unfollowBtn.onclick = async () => {
-                const { error } = await sb.from("follows").delete().eq("follower_id", user.id).eq("followed_id", p.user_id);
-                if (error) { showToast(t("dash_delete_error_generic") + error.message, "error"); console.error(error); return; }
-                init();
-            };
-            chip.appendChild(unfollowBtn);
-            list.appendChild(chip);
-        }
+        chips.forEach(c => list.appendChild(c));
         card.appendChild(list);
-    } else {
+    };
+
+    const requestChips = [];
+    for (const r of incoming) {
+        const acceptBtn = document.createElement("button");
+        acceptBtn.innerHTML = tIcon("comm_friend_accept");
+        acceptBtn.style.cssText = "padding:1px 8px; margin-left:4px; font-size:0.85em;";
+        acceptBtn.onclick = async () => { if (await callFriendRpc("respond_friend_request", { request_id: r.id, accept: true })) { showToast(t("comm_friend_now_friends_toast")); init(); } };
+        const declineBtn = document.createElement("button");
+        declineBtn.textContent = t("comm_friend_decline");
+        declineBtn.className = "secondary";
+        declineBtn.style.cssText = "padding:1px 8px; font-size:0.85em;";
+        declineBtn.onclick = async () => { if (await callFriendRpc("respond_friend_request", { request_id: r.id, accept: false })) init(); };
+        requestChips.push(makePersonChip({ display_name: r.display_name, avatar_url: r.avatar_url }, [acceptBtn, declineBtn], t("comm_friend_incoming_note")));
+    }
+    for (const r of outgoing) {
+        const cancelBtn = makeChipButton("x", t("comm_friend_cancel_title"), async () => { if (await callFriendRpc("remove_friend", { other: r.other_user_id })) init(); });
+        requestChips.push(makePersonChip({ display_name: r.display_name, avatar_url: r.avatar_url }, [cancelBtn], t("comm_friend_outgoing_note")));
+    }
+    addSection(t("comm_requests_sub"), requestChips);
+
+    addSection(t("comm_friends_sub"), friendProfiles.map(p =>
+        makePersonChip(p, [makeChipButton("x", t("comm_friend_remove_title"), async () => { if (await callFriendRpc("remove_friend", { other: p.user_id })) init(); })])));
+
+    addSection(t("comm_following_sub"), followProfiles.map(p =>
+        makePersonChip(p, [makeChipButton("x", "", async () => {
+            const { error } = await sb.from("follows").delete().eq("follower_id", user.id).eq("followed_id", p.user_id);
+            if (error) { showToast(t("dash_delete_error_generic") + error.message, "error"); console.error(error); return; }
+            init();
+        })])));
+
+    if (requestChips.length === 0 && friendProfiles.length === 0 && followProfiles.length === 0) {
         card.innerHTML = `<p class="dim">${t("comm_no_follows")}</p>`;
     }
 
     const addRow = document.createElement("div");
-    addRow.style.cssText = "display:flex; gap:8px;";
+    addRow.style.cssText = "display:flex; gap:8px; flex-wrap:wrap;";
     const searchInput = document.createElement("input");
     searchInput.type = "text";
     searchInput.placeholder = t("comm_search_placeholder");
     searchInput.style.flex = "1";
-    const addBtn = document.createElement("button");
-    addBtn.innerHTML = tIcon("comm_follow_btn");
-    addBtn.onclick = async () => {
-        const query = searchInput.value.trim();
-        if (!query) return;
 
+    // Поиск пользователя по email или нику; null — не найден / это ты (тост уже показан)
+    const lookupUser = async () => {
+        const query = searchInput.value.trim();
+        if (!query) return null;
         const isEmail = query.includes("@");
         const { data: foundId, error } = isEmail
             ? await sb.rpc("find_user_by_email", { lookup_email: query })
             : await sb.rpc("find_user_by_name", { lookup_name: query });
-
         if (error || !foundId) {
             showToast(isEmail ? t("comm_user_not_found_email") : t("comm_user_not_found_name"), "error");
-            return;
+            return null;
         }
-        if (foundId === user.id) { showToast(t("comm_thats_you"), "error"); return; }
+        if (foundId === user.id) { showToast(t("comm_thats_you"), "error"); return null; }
+        return foundId;
+    };
+
+    const addBtn = document.createElement("button");
+    addBtn.innerHTML = tIcon("comm_follow_btn");
+    addBtn.onclick = async () => {
+        const foundId = await lookupUser();
+        if (!foundId) return;
         const { error: insErr } = await sb.from("follows").insert({ follower_id: user.id, followed_id: foundId });
         if (insErr) { showToast(t("comm_follow_error") + insErr.message, "error"); return; }
         searchInput.value = "";
@@ -74,6 +164,23 @@ async function renderFriendsCard() {
     searchInput.onkeydown = (e) => { if (e.key === "Enter") { e.preventDefault(); addBtn.click(); } };
     addRow.appendChild(searchInput);
     addRow.appendChild(addBtn);
+
+    if (friendsApi) {
+        const friendBtn = document.createElement("button");
+        friendBtn.innerHTML = tIcon("comm_friend_add_btn");
+        friendBtn.onclick = async () => {
+            const foundId = await lookupUser();
+            if (!foundId) return;
+            if (acceptedFriendIds.has(foundId)) { showToast(t("comm_friend_already_toast")); return; }
+            const { data, error } = await sb.rpc("send_friend_request", { target: foundId });
+            if (error) { showToast(t("comm_friend_error") + error.message, "error"); console.error(error); return; }
+            searchInput.value = "";
+            // встречная заявка принимается сразу — сервер вернёт status = accepted
+            showToast(t(data && data.status === "accepted" ? "comm_friend_now_friends_toast" : "comm_friend_request_sent_toast"));
+            init();
+        };
+        addRow.appendChild(friendBtn);
+    }
     card.appendChild(addRow);
 }
 
