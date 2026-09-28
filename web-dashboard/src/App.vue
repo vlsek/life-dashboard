@@ -4,6 +4,7 @@ import AppShell from './components/AppShell.vue'
 import Icon from './components/Icon.vue'
 import MetricIcon from './components/MetricIcon.vue'
 import WaterSection from './components/WaterSection.vue'
+import ChartsSection from './components/ChartsSection.vue'
 import { useDashboard } from './lib/useDashboard'
 import { t } from './lib/i18n'
 import type { StreakItem } from './lib/streaks'
@@ -43,6 +44,11 @@ function streakLabel(item: StreakItem): string {
     <template v-else-if="auth.status === 'ready'">
       <div class="mb-4">
         <WaterSection :user-id="auth.userId" />
+      </div>
+
+      <h2 class="mb-2 text-lg font-semibold">{{ t('dash_charts_h2') }}</h2>
+      <div class="mb-5">
+        <ChartsSection :user-id="auth.userId" />
       </div>
 
       <p v-if="streaksError" class="dim">{{ t('comm_load_error') }} {{ streaksError }}</p>
