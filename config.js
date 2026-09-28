@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.87";
+const SITE_VERSION = "0.88";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.88", date: "2026-09-28 03:52", changes: [
+        "Пилотная пересборка «Тренировок» на Vite + Vue 3 + TypeScript + Tailwind по адресу /workouts-vue/, итерация 1 из 2: добавление/изменение/удаление упражнений (категории, вес, длительность, левая/правая сторона), записи с подходами, личные рекорды (по весу и по темпу, отдельно по сторонам), группировка по категориям со сворачиванием, каталог типовых программ",
+        "Графики (мини-график прогресса у каждого упражнения и общий график объёма тренировок) пока остаются на старой странице — это итерация 2",
+    ]},
     { version: "0.87", date: "2026-09-28 12:30", changes: [
         "Пилот Дашборда: добавлен блок «Подходы» (метрики типа sets, например отжимания) — сворачиваемая карточка со списком подходов: время (проставляется само при добавлении, можно поправить), количество раз и «особенность» с выпадашкой сохранённых вариантов (у каждого ✕, чтобы убрать неверный). Сводка «N подходов · M повторений всего», автосохранение на каждую правку",
         "Блок не привязан к навигации по дням: SetsSection принимает date (по умолчанию сегодня), а SetsCard — чисто презентационный, так что блок «дневные метрики» сможет вставить его в свой список. Отдельные файлы (lib/setsBlock.ts, lib/useSets.ts, SetsCard/SetsSection/VariationCombo, свои тесты — 20 новых), в App.vue только импорт и одна строка",
@@ -823,6 +827,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.88", date: "2026-09-28 03:52", changes: [
+        "Pilot rebuild of Workouts on Vite + Vue 3 + TypeScript + Tailwind at /workouts-vue/, iteration 1 of 2: add/edit/delete exercises (categories, weight, duration, left/right side), logged entries with sets, personal records (by weight and by pace, split by side), category grouping with collapsing, and the workout-template catalog",
+        "Charts (the per-exercise progress mini-chart and the overall training-volume chart) still live on the old page for now - that's iteration 2",
+    ]},
     { version: "0.87", date: "2026-09-28 12:30", changes: [
         "Dashboard pilot: added the Sets block (metrics of type sets, e.g. push-ups) — a collapsible card with a list of sets: time (filled in automatically when added, editable), reps, and a \"variation\" field with a dropdown of saved options (each has a ✕ to remove a wrong one). A summary line \"N sets · M reps total\" and autosave on every edit",
         "The block isn't tied to day navigation: SetsSection takes a date (default today) and SetsCard is purely presentational, so the daily-metrics block can drop it into its own list. Separate files (lib/setsBlock.ts, lib/useSets.ts, SetsCard/SetsSection/VariationCombo, their own tests — 20 new), App.vue only gets an import and one line",
