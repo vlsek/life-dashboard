@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.93";
+const SITE_VERSION = "0.94";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.94", date: "2026-09-28 15:40", changes: [
+        "Починен левый сайдбар на всех страницах пилота. Причина в двух вещах: кнопка «Выйти» сжималась по высоте до 12–18px (элементы меню сжимались вместо прокрутки) — теперь меню прокручивается, а элементы не сжимаются; и общее правило `button {}` в style.css перебивало все Tailwind-классы на кнопках (на Целях/Навыках/Календаре/Магазине и др. кнопка выхода и EN/RU выглядели «чепухой») — теперь оно вынесено в слой base и не мешает",
+        "Ссылки в меню приведены в порядок: Тренировки, Сообщество, Языки, Челленджи и Аккаунт везде ведут на новые *-vue/ страницы (раньше часть страниц ещё вела на старые .html, а Аккаунт — на /account.html). Дашборд намеренно остаётся на старом /dashboard.html, пока в пилоте не перенесены дневные метрики и план. У пункта «Аккаунт» в меню добавлена иконка",
+    ]},
     { version: "0.93", date: "2026-09-28 09:50", changes: [
         "Пилот Дашборда: графики теперь включают параметры тела и числовые метрики/подходы (с целью самой метрики как линией-ориентиром), а не только «баллы за день». «Настроить графики»: какие графики показывать, их порядок, линия-ориентир для каждого и общий период; выбор сохраняется в профиле (то же поле dashboard_charts, что и на классическом сайте). У каждого графика можно задать свой период, а значения — править прямо из графика (кроме баллов и подходов, как и раньше)",
         "Профиль и графики синхронизируются: добавление/изменение/удаление параметра тела или правка значения из графика обновляют соседний блок. Графики читают историю постранично, поэтому длинная история больше не обрезается на 1000 строках",
@@ -850,6 +854,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.94", date: "2026-09-28 15:40", changes: [
+        "Fixed the left sidebar on every pilot page. Two causes: the Log out button was being squashed to 12–18px tall (menu items shrank instead of scrolling) — the menu now scrolls and items keep their size; and the shared `button {}` rule in style.css overrode every Tailwind class on buttons (on Goals/Skills/Calendar/Shop etc. the logout and EN/RU buttons looked broken) — it now lives in the base layer and no longer interferes",
+        "Menu links cleaned up: Workouts, Community, Languages, Challenges and Account now point at the new *-vue/ pages everywhere (some pages still linked to the old .html files, and Account to /account.html). Dashboard intentionally stays on the old /dashboard.html until the pilot has daily metrics and the plan. The Account menu item now has an icon",
+    ]},
     { version: "0.93", date: "2026-09-28 09:50", changes: [
         "Dashboard pilot: charts now cover body parameters and numeric/sets metrics (with the metric's own goal as a reference line), not just points per day. \"Configure charts\": pick which charts to show, their order, a reference line per chart and the shared period; the choice is saved to your profile (same dashboard_charts field as on the classic site). Each chart also gets its own period, and values can be edited right from the chart (not for points and sets, same as before)",
         "Profile and Charts stay in sync: adding/editing/deleting a body parameter or fixing a value from a chart refreshes the other block. Charts now read history page by page, so long histories are no longer cut off at 1000 rows",

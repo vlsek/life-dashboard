@@ -132,7 +132,7 @@ onUnmounted(() => {
     <button
       type="button"
       class="rounded-lg border px-3 py-1.5 text-lg leading-none"
-      style="border-color: var(--border); color: var(--text)"
+      style="background: transparent; border-color: var(--border); color: var(--text)"
       :aria-label="t('nav_open_menu')"
       @click="openSidebar"
     >
@@ -144,7 +144,7 @@ onUnmounted(() => {
     <button
       type="button"
       class="shrink-0 rounded-lg px-2 py-1 text-sm"
-      style="color: var(--text-dim)"
+      style="background: transparent; color: var(--text-dim)"
       :aria-label="t('nav_more')"
       @click="quickNavOpen = !quickNavOpen"
     >
@@ -175,7 +175,7 @@ onUnmounted(() => {
     @click="closeSidebar"
   ></div>
   <nav
-    class="fixed inset-y-0 left-0 z-30 flex w-72 max-w-[85vw] flex-col gap-1 overflow-y-auto border-r p-4 transition-transform duration-200"
+    class="fixed inset-y-0 left-0 z-30 flex w-72 max-w-[85vw] flex-col gap-1 overflow-y-auto border-r p-4 [&>*]:shrink-0 transition-transform duration-200"
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     style="background: var(--bg-card); border-color: var(--border)"
   >
@@ -202,6 +202,7 @@ onUnmounted(() => {
       style="color: var(--text)"
       @click="closeSidebar"
     >
+      <Icon name="user" />
       {{ t('nav_account_title') }}
     </a>
 
@@ -237,7 +238,7 @@ onUnmounted(() => {
       v-if="props.userEmail"
       type="button"
       class="mt-2 truncate rounded-lg border px-3 py-2 text-left text-sm"
-      style="border-color: var(--border); color: var(--text-dim)"
+      style="background: transparent; border-color: var(--border); color: var(--text-dim)"
       @click="logout"
     >
       {{ t('logout') }} ({{ props.userEmail }})
