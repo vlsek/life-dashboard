@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.86";
+const SITE_VERSION = "0.87";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.87", date: "2026-09-28 12:30", changes: [
+        "Пилот Дашборда: добавлен блок «Подходы» (метрики типа sets, например отжимания) — сворачиваемая карточка со списком подходов: время (проставляется само при добавлении, можно поправить), количество раз и «особенность» с выпадашкой сохранённых вариантов (у каждого ✕, чтобы убрать неверный). Сводка «N подходов · M повторений всего», автосохранение на каждую правку",
+        "Блок не привязан к навигации по дням: SetsSection принимает date (по умолчанию сегодня), а SetsCard — чисто презентационный, так что блок «дневные метрики» сможет вставить его в свой список. Отдельные файлы (lib/setsBlock.ts, lib/useSets.ts, SetsCard/SetsSection/VariationCombo, свои тесты — 20 новых), в App.vue только импорт и одна строка",
+    ]},
     { version: "0.86", date: "2026-09-28 11:10", changes: [
         "Пилот Дашборда: добавлен блок «Управление метриками» (web-dashboard/) — кнопка ⚙️ открывает список метрик с правкой и удалением, форма создания/правки со всеми полями обычного сайта: тип (число/галочка/выбор/подходы), цель и её направление, единица, варианты, режим ввода, расписание (каждый день / дни недели / не менее N раз / не более N раз в неделю), категория (с созданием новой), импорт стрика и выбор иконки с поиском",
         "Отдельные файлы (lib/metricsManager.ts, lib/useMetricsManager.ts, три компонента, свои тесты — 34 новых), в App.vue только импорт и одна строка. Тип Metric дополнен необязательными полями options/input_mode. Расписание и импорт стрика по-прежнему не пишутся, если миграции 021/026 ещё не применены",
@@ -819,6 +823,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.87", date: "2026-09-28 12:30", changes: [
+        "Dashboard pilot: added the Sets block (metrics of type sets, e.g. push-ups) — a collapsible card with a list of sets: time (filled in automatically when added, editable), reps, and a \"variation\" field with a dropdown of saved options (each has a ✕ to remove a wrong one). A summary line \"N sets · M reps total\" and autosave on every edit",
+        "The block isn't tied to day navigation: SetsSection takes a date (default today) and SetsCard is purely presentational, so the daily-metrics block can drop it into its own list. Separate files (lib/setsBlock.ts, lib/useSets.ts, SetsCard/SetsSection/VariationCombo, their own tests — 20 new), App.vue only gets an import and one line",
+    ]},
     { version: "0.86", date: "2026-09-28 11:10", changes: [
         "Dashboard pilot: added the Metrics management block (web-dashboard/) — a ⚙️ button opens the metrics list with edit and delete, and a create/edit form with every field of the full site: type (number/checkbox/multiselect/sets), goal and its direction, unit, options, input mode, schedule (every day / weekdays / at least N / at most N times a week), category (with creating a new one), streak import, and an icon picker with search",
         "Separate files (lib/metricsManager.ts, lib/useMetricsManager.ts, three components, their own tests — 34 new), App.vue only gets an import and one line. The Metric type gained optional options/input_mode fields. Schedule and streak import are still skipped when migrations 021/026 haven't been applied",

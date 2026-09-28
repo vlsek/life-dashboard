@@ -4,6 +4,7 @@ import AppShell from './components/AppShell.vue'
 import Icon from './components/Icon.vue'
 import MetricIcon from './components/MetricIcon.vue'
 import WaterSection from './components/WaterSection.vue'
+import SetsSection from './components/SetsSection.vue'
 import MetricsManagerSection from './components/MetricsManagerSection.vue'
 import ProgressRing from './components/ProgressRing.vue'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
@@ -76,6 +77,8 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
         <WaterSection :user-id="auth.userId" />
         <MetricsManagerSection :user-id="auth.userId" @changed="init" />
       </div>
+
+      <SetsSection :user-id="auth.userId" />
 
       <p v-if="loadError" class="dim">{{ t('comm_load_error') }} {{ loadError }}</p>
 
