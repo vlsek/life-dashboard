@@ -9,6 +9,8 @@ import SetsSection from './components/SetsSection.vue'
 import MetricsManagerSection from './components/MetricsManagerSection.vue'
 import ProgressRing from './components/ProgressRing.vue'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
+import ReminderBanners from './components/ReminderBanners.vue'
+import { useReminders } from './lib/useReminders'
 import { useDashboard } from './lib/useDashboard'
 import { progressPercent } from './lib/progress'
 import { t } from './lib/i18n'
@@ -16,13 +18,21 @@ import type { StreakItem } from './lib/streaks'
 import type { DayProgressSettings } from './lib/progressSettings'
 
 // Дашборд переносится по частям (см. ROADMAP.md, тикет B-dashboard) — самая большая и
-// сложная страница сайта. На эту итерацию перенесены: стрики, вода (агент 4, WaterSection —
-// см. lib/water.ts/useWater.ts) и дневной/недельный прогресс (кольца + настройки), все три с
-// полным покрытием тестами в lib/. Остальное — графики, дневные метрики, план на день —
-// переносится следующими итерациями.
+// сложная страница сайта, над ней параллельно работают несколько агентов, каждый блок — свой
+// компонент + свой lib/composable (чтобы не сталкиваться при мерже). Уже перенесены: стрики и
+// дневной/недельный прогресс (этот файл + lib/streaks.ts, progress.ts), вода, управление
+// метриками, подходы, графики и баннеры-напоминания (Вехи/итоги недели, lib/reminders.ts).
+// Остальное (дневные метрики boolean/number, план на день, профиль, раскладка) — впереди.
 
 const { auth, streaks, dayProgress, weekProgress, progressSettings, loadError, init, saveProgressSettings } = useDashboard()
-onMounted(init)
+const { milestonesReminder, weekendReminderVisible, loadMilestonesReminder, dismissMilestonesReminder, checkWeekendReminder, dismissWeekendReminder } = useReminders()
+onMounted(async () => {
+  await init()
+  if (auth.value.status === 'ready') {
+    await loadMilestonesReminder(auth.value.userId)
+    if (weekProgress.value) checkWeekendReminder(progressPercent(weekProgress.value))
+  }
+})
 
 const showAllStreaks = ref(false)
 const showProgressSettings = ref(false)
@@ -74,6 +84,14 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
     <p v-if="auth.status === 'loading'" class="dim">{{ t('loading_ellipsis') }}</p>
 
     <template v-else-if="auth.status === 'ready'">
+      <ReminderBanners
+        :milestones-reminder="milestonesReminder"
+        :weekend-reminder-visible="weekendReminderVisible"
+        :week-total-pct="weekProgress ? progressPercent(weekProgress) : 0"
+        @dismiss-milestones="dismissMilestonesReminder"
+        @dismiss-weekend="dismissWeekendReminder"
+      />
+
       <div class="mb-4 flex flex-wrap items-center gap-2">
         <WaterSection :user-id="auth.userId" />
         <MetricsManagerSection :user-id="auth.userId" @changed="init" />

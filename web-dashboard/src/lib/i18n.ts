@@ -159,6 +159,13 @@ const DICT = {
     dash_place_off: 'Hidden',
     save: 'Save',
     cancel: 'Cancel',
+    ms_reminder_title: 'Milestones',
+    ms_reminder_overdue: 'overdue',
+    ms_reminder_soon: 'due within a week',
+    ms_reminder_open: 'Open',
+    dash_week_reminder_title: '🗓️ Weekend check-in',
+    dash_week_reminder_currently: 'currently',
+    dash_week_reminder_link: 'Do something from your goals to reach 100%',
   },
   ru: {
     nav_open_menu: 'Открыть меню',
@@ -307,6 +314,13 @@ const DICT = {
     dash_place_off: 'Не показывать',
     save: 'Сохранить',
     cancel: 'Отмена',
+    ms_reminder_title: 'Вехи',
+    ms_reminder_overdue: 'просрочено',
+    ms_reminder_soon: 'срок в ближайшую неделю',
+    ms_reminder_open: 'Открыть',
+    dash_week_reminder_title: '🗓️ Итоги недели на подходе',
+    dash_week_reminder_currently: 'сейчас',
+    dash_week_reminder_link: 'Сделай что-то из целей, чтобы добить до 100%',
   },
 } as const
 
