@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.96";
+const SITE_VERSION = "0.97";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.97", date: "2026-09-28 09:03", changes: [
+        "Пилот «Сообщество»: вернулся раздел «Сравнение по активности» — выбор категории, таблица сравнения (по сумме / баллам / streak, за неделю / прошлую неделю / месяц / всё время, все или только друзья) и личный график прогресса в этой категории с выбором периода и линией-целью",
+        "Если своей метрики в категории нет — можно привязать любую числовую метрику прямо на странице; график построен на той же общей инфраструктуре, что и графики Дашборда",
+        "Сортировка и фильтр таблицы, сумма значений по дням и линия-цель покрыты тестами, сверенными с оригинальным community.js",
+    ]},
     { version: "0.96", date: "2026-09-28 17:20", changes: [
         "Пилот Дашборда: остаток блока «Профиль» — кольцо прогресса дня теперь вокруг аватарки (процент под ней и шестерёнка настроек в углу, как на обычном сайте), кольцо недели стоит в строке профиля, а в режиме «в шапке» дневной круг и недельный скруглённый квадрат появляются бейджами в правой части шапки. Шестерёнка на аватарке есть всегда, так что настройки доступны и когда кольца выключены или уехали в шапку",
         "Отдельное кольцо-блок из App.vue убран; ProfileSection получает данные колец пропсами. Новые файлы: lib/ringPlacement.ts (куда рисовать кольцо, геометрия), AvatarProgress.vue, HeaderProgressBadge.vue (через Teleport в #topbar-right), 16 новых тестов. Стрик-бейдж в строку профиля пока не переносился — им занимается другой агент",
@@ -861,6 +866,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.97", date: "2026-09-28 09:03", changes: [
+        "Community pilot: the \"Compare by activity\" section is back — pick a category, see the comparison table (by total / points / streak, for this week / last week / this month / all time, everyone or friends only) and your own progress chart for that category with a period picker and a goal line",
+        "If you have no metric in the category you can link any number metric right on the page; the chart uses the same shared infrastructure as the Dashboard charts",
+        "Table sorting/filtering, per-day totals and the goal line are covered by tests checked against the original community.js",
+    ]},
     { version: "0.96", date: "2026-09-28 17:20", changes: [
         "Dashboard pilot: the rest of the Profile block — the day progress ring now wraps the avatar (percent below it and a settings gear in the corner, like the full site), the week ring sits in the profile row, and in \"header\" mode the day circle and the week rounded square appear as badges on the right of the top bar. The gear on the avatar is always there, so settings stay reachable when the rings are off or moved to the header",
         "The standalone ring block was removed from App.vue; ProfileSection receives the ring data as props. New files: lib/ringPlacement.ts (where to draw a ring, geometry), AvatarProgress.vue, HeaderProgressBadge.vue (Teleport into #topbar-right), 16 new tests. The streak badge has not been moved into the profile row yet — another agent is working on streaks",
