@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.03";
+const SITE_VERSION = "1.04";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.04", date: "2026-09-28 13:54", changes: [
+        "Значок Vue-страниц (вкладка браузера и шапка) переделан: теперь это наш оранжевый огонёк с небольшим голубым акцентом в сердцевине — вместо прежнего голубого пламени из v0.89",
+        "Проверил проблему с аватаркой в профиле Дашборда (вытянутый овал вместо круга): причина была в общем правиле для кнопок, которое перебивало размеры внутри кнопки-обёртки, — оно уже исправлено в v0.94 (сейчас аватарка 44×44 и круглая на всех ширинах экрана и с любыми пропорциями фото). Если у тебя ещё овал — это закэшированная старая версия, поможет жёсткое обновление",
+    ]},
     { version: "1.03", date: "2026-09-28 21:15", changes: [
         "Пилот «Сообщество»: взаимная дружба с заявками, как в классической версии (1.02) — заявки (принять / отклонить входящие, отменить исходящие), список друзей отдельно от подписок, кнопка «В друзья» рядом с поиском; встречная заявка принимается сразу. Фильтр «Только друзья» показывает друзей и подписки. Нужна миграция 029_friendships.sql — без неё новый блок скрыт. Своя логика (lib/friends.ts), компонент PersonChip и 17 новых тестов, в том числе на сам интерфейс",
     ]},
@@ -889,6 +893,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.04", date: "2026-09-28 13:54", changes: [
+        "The Vue pages' icon (browser tab and header) is redone: it is now our orange flame with a small blue accent in the core - replacing the all-blue flame from v0.89",
+        "Checked the profile avatar problem on the Dashboard (a stretched oval instead of a circle): it came from the shared button rule overriding the sizes inside the wrapper button, and was already fixed in v0.94 (the avatar is now a 44x44 circle at every screen width and for any photo proportions). If you still see an oval it is a cached old version - a hard refresh helps",
+    ]},
     { version: "1.03", date: "2026-09-28 21:15", changes: [
         "Community pilot: mutual friendship with requests, same as the classic site (1.02) — requests (accept / decline incoming, cancel outgoing), a friends list separate from follows, an \"Add friend\" button next to the search; a matching request is accepted right away. The \"Friends only\" filter shows friends and follows. Needs migration 029_friendships.sql — without it the new block is hidden. Own logic (lib/friends.ts), a PersonChip component and 17 new tests, including UI tests",
     ]},
