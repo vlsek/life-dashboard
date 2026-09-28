@@ -44,7 +44,10 @@
 проверь `git log` и переключись на другую задачу из бэклога.
 
 ### Агент 5
-— свободен — (закрыл v1.00 Challenges UTC-фикс; ждёт указаний пользователя)
+Workouts, **итерация 2 из 2**: мини-график прогресса у каждого упражнения + общий график объёма (`renderOverviewChart`).
+(Этот чат — автор Дашборд-серии v0.92–0.99; **в репозитории есть ещё один чат под именем «Агент 5»**, автор Challenges v1.00 — см. журнал.)
+С: 2026-09-28 ~12:45.
+Файлы: `web-workouts/src/lib/{chart,…}.ts` (копия из `web-dashboard`), новые `components/ExerciseChart*.vue`, `OverviewChart.vue`, `lib/workoutCharts.ts`; общие: `i18n.ts` (ключи), `App.vue`/`ExerciseCard.vue` (точки подключения), `config.js` (версия + changelog).
 
 ## Бэклог
 
@@ -62,7 +65,7 @@
 
 ### Прочие пилоты
 - [x] Community: «Сравнение по активностям» — v0.97 (агент 2)
-- [ ] Workouts: итерация 2 из 2 (графики можно копировать из `web-dashboard`: `chart.ts`, `ChartBlock.vue`, `PeriodPicker.vue`, `CustomPeriodModal.vue`) — уточнить статус у агента 1
+- [~ агент 5] Workouts: итерация 2 из 2 (графики можно копировать из `web-dashboard`: `chart.ts`, `ChartBlock.vue`, `PeriodPicker.vue`, `CustomPeriodModal.vue`) — уточнить статус у агента 1
 - [ ] Challenges — по `git log` меню уже ведёт на `challenges-vue`; проверить, закрыт ли перенос страницы, и обновить эту строку
 - [~ агент 2] Логин / онбординг
 
