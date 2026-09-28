@@ -148,7 +148,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
             type="button"
             class="mb-3 inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 font-bold"
             :class="{ 'streak-unlit': topStreak && !topStreak.todayCounted }"
-            style="border-color: var(--border)"
+            style="background: transparent; color: var(--text); border-color: var(--border)"
             :title="topStreak?.todayCounted ? (streaks.length > 1 ? `${streakLabel(topStreak)} — ${t('dash_streak_more_hint')}` : streakLabel(topStreak)) : t('dash_streak_at_risk_warning')"
             @click="showAllStreaks = true"
           >

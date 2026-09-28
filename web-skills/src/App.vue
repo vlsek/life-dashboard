@@ -106,7 +106,7 @@ async function onDeleteBook(b: Book) {
             :key="s.name"
             type="button"
             class="rounded-full border px-3 py-1 text-sm"
-            style="border-color: var(--border)"
+            style="background: transparent; color: var(--text); border-color: var(--border)"
             @click="openAddSkill(s.name)"
           >
             {{ s.icon }} {{ s.name }} +

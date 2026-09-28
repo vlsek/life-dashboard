@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.94";
+const SITE_VERSION = "0.95";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.95", date: "2026-09-28 16:05", changes: [
+        "Доводка после починки сайдбара (v0.94): у значка серии и значка воды на Дашборде и у подсказок навыков на странице Навыков задан явный прозрачный фон и цвет текста — иначе после выноса общего правила кнопок в слой base они выглядели бы синими кнопками с рамкой. Остальные кнопки на страницах проверены: у них фон уже задан или они используют классы secondary/danger",
+    ]},
     { version: "0.94", date: "2026-09-28 15:40", changes: [
         "Починен левый сайдбар на всех страницах пилота. Причина в двух вещах: кнопка «Выйти» сжималась по высоте до 12–18px (элементы меню сжимались вместо прокрутки) — теперь меню прокручивается, а элементы не сжимаются; и общее правило `button {}` в style.css перебивало все Tailwind-классы на кнопках (на Целях/Навыках/Календаре/Магазине и др. кнопка выхода и EN/RU выглядели «чепухой») — теперь оно вынесено в слой base и не мешает",
         "Ссылки в меню приведены в порядок: Тренировки, Сообщество, Языки, Челленджи и Аккаунт везде ведут на новые *-vue/ страницы (раньше часть страниц ещё вела на старые .html, а Аккаунт — на /account.html). Дашборд намеренно остаётся на старом /dashboard.html, пока в пилоте не перенесены дневные метрики и план. У пункта «Аккаунт» в меню добавлена иконка",
@@ -854,6 +857,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.95", date: "2026-09-28 16:05", changes: [
+        "Follow-up to the sidebar fix (v0.94): the streak badge and water badge on the Dashboard and the suggestion chips on the Skills page now have an explicit transparent background and text color — otherwise, after moving the shared button rule into the base layer, they would have looked like blue buttons with a border. The other buttons on those pages were checked: they either already set a background or use the secondary/danger classes",
+    ]},
     { version: "0.94", date: "2026-09-28 15:40", changes: [
         "Fixed the left sidebar on every pilot page. Two causes: the Log out button was being squashed to 12–18px tall (menu items shrank instead of scrolling) — the menu now scrolls and items keep their size; and the shared `button {}` rule in style.css overrode every Tailwind class on buttons (on Goals/Skills/Calendar/Shop etc. the logout and EN/RU buttons looked broken) — it now lives in the base layer and no longer interferes",
         "Menu links cleaned up: Workouts, Community, Languages, Challenges and Account now point at the new *-vue/ pages everywhere (some pages still linked to the old .html files, and Account to /account.html). Dashboard intentionally stays on the old /dashboard.html until the pilot has daily metrics and the plan. The Account menu item now has an icon",
