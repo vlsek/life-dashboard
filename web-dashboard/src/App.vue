@@ -10,6 +10,7 @@ import MetricsManagerSection from './components/MetricsManagerSection.vue'
 import ProgressRing from './components/ProgressRing.vue'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import ReminderBanners from './components/ReminderBanners.vue'
+import ProfileSection from './components/ProfileSection.vue'
 import { useReminders } from './lib/useReminders'
 import { useDashboard } from './lib/useDashboard'
 import { progressPercent } from './lib/progress'
@@ -91,6 +92,8 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
         @dismiss-milestones="dismissMilestonesReminder"
         @dismiss-weekend="dismissWeekendReminder"
       />
+
+      <ProfileSection :user-id="auth.userId" />
 
       <div class="mb-4 flex flex-wrap items-center gap-2">
         <WaterSection :user-id="auth.userId" />

@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.91";
+const SITE_VERSION = "0.92";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.92", date: "2026-09-28 09:25", changes: [
+        "Пилот Дашборда: добавлен блок «Профиль» — аватар (загрузка фото), возраст с редактированием даты рождения, последние значения параметров тела с изменением с первой записи (цвет зависит от цели: например, вес вниз — зелёный при похудении), баланс баллов со ссылкой в магазин и управление параметрами тела (добавить / изменить / удалить, выбор иконки). Свои компоненты, composable и 36 тестов (lib/profile.ts, balance.ts, useProfile.ts, ProfileSection.vue)",
+        "Баланс баллов и история параметров тела читаются постранично, поэтому больше не обрезаются на 1000 строках",
+        "Пока не перенесено: ввод значений параметров тела в карточке дня (ждёт блок дневных метрик; для него в useProfile есть saveBodyValue) и графики параметров тела",
+    ]},
     { version: "0.91", date: "2026-09-28 10:20", changes: [
         "Пилот Дашборда: добавлены баннеры-напоминания — «Вехи» (сколько просрочено и сколько со сроком в ближайшую неделю, с закрытием до конца дня) и «Итоги недели на подходе» по субботам/воскресеньям, если неделя ещё не на 100%. Отдельный компонент, composable и тесты (lib/reminders.ts, useReminders.ts, ReminderBanners.vue), чтобы не пересекаться с блоками других агентов",
         "Смерджено с графиками, управлением метриками и подходами, которые переехали параллельно (v0.86–v0.90): конфликт только в App.vue, оба варианта сохранены, все 148 тестов и билд проверены",
@@ -840,6 +845,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.92", date: "2026-09-28 09:25", changes: [
+        "Dashboard pilot: added the Profile block — avatar (photo upload), age with date-of-birth editing, latest body-parameter values with change since the first entry (coloured by your goal: e.g. weight going down is green when losing weight), points balance linking to the shop, and body-parameter management (add / edit / delete, icon picker). Own components, composable and 36 tests (lib/profile.ts, balance.ts, useProfile.ts, ProfileSection.vue)",
+        "Points balance and body-parameter history are read page by page, so they no longer get cut off at 1000 rows",
+        "Not ported yet: entering body-parameter values inside the day card (waits for the daily-metrics block; useProfile exposes saveBodyValue for it) and the body-parameter charts",
+    ]},
     { version: "0.91", date: "2026-09-28 10:20", changes: [
         "Dashboard pilot: added reminder banners — \"Milestones\" (how many are overdue and how many are due within a week, dismissible until end of day) and a Saturday/Sunday \"Weekend check-in\" when the week isn't at 100% yet. Its own component, composable and tests (lib/reminders.ts, useReminders.ts, ReminderBanners.vue) to stay clear of other agents' blocks",
         "Merged with the charts, metrics management and sets blocks that moved over in parallel (v0.86–v0.90): the only conflict was in App.vue, both sides kept, all 148 tests and the build re-checked",
