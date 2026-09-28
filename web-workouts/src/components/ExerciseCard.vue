@@ -1,0 +1,105 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { t } from '../lib/i18n'
+import { fmtRu } from '../lib/date'
+import { bestPaceRecord, bestSetRecord, formatSets } from '../lib/workouts'
+import Icon from './Icon.vue'
+import type { Exercise, WorkoutEntry } from '../lib/types'
+
+// Порт renderExerciseCard() из workouts.js — заголовок с кнопками, рекомендованная схема,
+// личные рекорды (по сторонам для билатеральных), таблица записей. Мини-график прогресса
+// (chartPoints) сюда пока НЕ перенесён — это итерация 2, вместе с общим графиком объёма.
+const props = defineProps<{ exercise: Exercise; entries: WorkoutEntry[] }>()
+const emit = defineEmits<{
+  addEntry: []
+  editExercise: []
+  deleteExercise: []
+  editEntry: [WorkoutEntry]
+  deleteEntry: [WorkoutEntry]
+}>()
+
+interface RecordLine {
+  icon: string
+  label: string
+  text: string
+  date: string
+}
+
+const records = computed<RecordLine[]>(() => {
+  const ex = props.exercise
+  const perHour = t('workouts_per_hour')
+  const durUnit = t('workouts_duration_unit')
+  const unitFallback = t('workouts_default_unit')
+  const out: RecordLine[] = []
+  const push = (icon: string, label: string, r: { text: string; date: string } | null) => {
+    if (r) out.push({ icon, label, text: r.text, date: r.date })
+  }
+  if (ex.bilateral) {
+    for (const side of ['L', 'R'] as const) {
+      const sideLabel = t(side === 'L' ? 'workouts_side_L' : 'workouts_side_R')
+      push('trophy', `${sideLabel}: ${t('workouts_record_label')}`, bestSetRecord(props.entries, ex, unitFallback, side))
+      push('zap', `${sideLabel}: ${t('workouts_record_pace_label')}`, bestPaceRecord(props.entries, ex, perHour, durUnit, side))
+    }
+  } else {
+    push('trophy', t('workouts_record_label'), bestSetRecord(props.entries, ex, unitFallback))
+    push('zap', t('workouts_record_pace_label'), bestPaceRecord(props.entries, ex, perHour, durUnit))
+  }
+  return out
+})
+
+const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date.localeCompare(a.date)))
+</script>
+
+<template>
+  <div class="mb-3.5 rounded-xl border p-4" style="border-color: var(--border); background: var(--bg-card)">
+    <div class="mb-0.5 flex flex-wrap items-center gap-2">
+      <h3 class="m-0 flex-1 font-bold">{{ exercise.name }}</h3>
+      <button
+        type="button"
+        class="rounded-lg border px-3 py-1.5 text-sm"
+        style="border-color: var(--border); background: var(--bg); color: var(--text)"
+        @click="emit('addEntry')"
+      >
+        {{ t('workouts_add_entry_btn') }}
+      </button>
+      <button type="button" class="rounded-lg border px-2.5 py-1.5" style="border-color: var(--border); color: var(--text)" @click="emit('editExercise')">
+        <Icon name="edit" />
+      </button>
+      <button type="button" class="rounded-lg border px-2.5 py-1.5" style="border-color: var(--border); color: var(--danger, #e05555)" @click="emit('deleteExercise')">
+        <Icon name="trash" />
+      </button>
+    </div>
+
+    <div v-if="exercise.suggested_scheme" class="mb-2 text-[0.85em]" style="color: var(--text-dim)">
+      {{ t('workouts_suggested_scheme_label') }} {{ exercise.suggested_scheme }}
+    </div>
+
+    <div v-for="(r, i) in records" :key="i" class="mb-1.5 flex items-center gap-1.5 text-[0.85em]" style="color: var(--text-dim)">
+      <Icon :name="r.icon" extra-style="color:#e0a93b; flex-shrink:0;" />
+      {{ r.label }} {{ r.text }} <span style="opacity: 0.7">· {{ fmtRu(r.date) }}</span>
+    </div>
+
+    <p v-if="entries.length === 0" class="mt-2 text-sm" style="color: var(--text-dim)">{{ t('workouts_no_entries') }}</p>
+    <div v-else class="mt-2 overflow-x-auto">
+      <table class="w-full text-sm">
+        <tbody>
+          <tr v-for="e in sortedEntries" :key="e.id" class="border-b last:border-0" style="border-color: var(--border)">
+            <td class="whitespace-nowrap py-1.5 pr-3 align-top">{{ fmtRu(e.date) }}</td>
+            <td class="py-1.5 pr-3 align-top">
+              {{ formatSets(e.sets, exercise, t('workouts_per_hour'), t('workouts_duration_unit'), t('workouts_default_unit')) }}
+            </td>
+            <td class="py-1.5 pr-3 align-top" style="color: var(--text-dim)">{{ e.notes || '' }}</td>
+            <td class="whitespace-nowrap py-1.5 text-right align-top">
+              <button type="button" class="mr-1 rounded p-1" style="color: var(--text-dim)" @click="emit('editEntry', e)">
+                <Icon name="edit" />
+              </button>
+              <button type="button" class="rounded p-1" style="color: var(--danger, #e05555)" @click="emit('deleteEntry', e)">
+                <Icon name="trash" />
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>

@@ -479,11 +479,36 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "0.84";
+const SITE_VERSION = "0.90";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "0.90", date: "2026-09-28 04:01", changes: [
+        "Пилот «Дашборд»: блок графиков — общая инфраструктура (заполнение пропущенных дней пунктиром, укрупнение длинной истории, линия-цель, выбор периода: 10 дней / неделя / прошлая неделя / месяц / всё время / свой период, период запоминается) и первый график — «баллы за день»",
+        "Логика (prepareChartSeries, periodBounds, серия баллов) покрыта тестами, сверенными с оригинальным config.js/dashboard.js; ChartBlock и PeriodPicker — самостоятельные компоненты, их можно переиспользовать на других страницах пилота (Сообщество, Тренировки)",
+        "Пока не перенесено: графики параметров тела и отдельных метрик с выбором серий и правкой значений прямо из графика — ждут блок «Профиль»",
+    ]},
+    { version: "0.89", date: "2026-09-28 03:57", changes: [
+        "Оформление: на всех страницах-пилотах на Vue вместо стандартного синего логотипа Vite (молния) — вкладка браузера и значок в шапке — теперь наш огонёк, но в голубо-оранжевом цвете, чтобы Vue-версии сразу отличались от старых страниц с оранжевым огоньком. Убраны неиспользуемые шаблонные логотипы Vite/Vue из папок пилотов",
+        "Если в браузере всё ещё видна молния — значок во вкладке кэшируется, помогает жёсткое обновление страницы",
+    ]},
+    { version: "0.88", date: "2026-09-28 03:52", changes: [
+        "Пилотная пересборка «Тренировок» на Vite + Vue 3 + TypeScript + Tailwind по адресу /workouts-vue/, итерация 1 из 2: добавление/изменение/удаление упражнений (категории, вес, длительность, левая/правая сторона), записи с подходами, личные рекорды (по весу и по темпу, отдельно по сторонам), группировка по категориям со сворачиванием, каталог типовых программ",
+        "Графики (мини-график прогресса у каждого упражнения и общий график объёма тренировок) пока остаются на старой странице — это итерация 2",
+    ]},
+    { version: "0.87", date: "2026-09-28 12:30", changes: [
+        "Пилот Дашборда: добавлен блок «Подходы» (метрики типа sets, например отжимания) — сворачиваемая карточка со списком подходов: время (проставляется само при добавлении, можно поправить), количество раз и «особенность» с выпадашкой сохранённых вариантов (у каждого ✕, чтобы убрать неверный). Сводка «N подходов · M повторений всего», автосохранение на каждую правку",
+        "Блок не привязан к навигации по дням: SetsSection принимает date (по умолчанию сегодня), а SetsCard — чисто презентационный, так что блок «дневные метрики» сможет вставить его в свой список. Отдельные файлы (lib/setsBlock.ts, lib/useSets.ts, SetsCard/SetsSection/VariationCombo, свои тесты — 20 новых), в App.vue только импорт и одна строка",
+    ]},
+    { version: "0.86", date: "2026-09-28 11:10", changes: [
+        "Пилот Дашборда: добавлен блок «Управление метриками» (web-dashboard/) — кнопка ⚙️ открывает список метрик с правкой и удалением, форма создания/правки со всеми полями обычного сайта: тип (число/галочка/выбор/подходы), цель и её направление, единица, варианты, режим ввода, расписание (каждый день / дни недели / не менее N раз / не более N раз в неделю), категория (с созданием новой), импорт стрика и выбор иконки с поиском",
+        "Отдельные файлы (lib/metricsManager.ts, lib/useMetricsManager.ts, три компонента, свои тесты — 34 новых), в App.vue только импорт и одна строка. Тип Metric дополнен необязательными полями options/input_mode. Расписание и импорт стрика по-прежнему не пишутся, если миграции 021/026 ещё не применены",
+    ]},
+    { version: "0.85", date: "2026-09-28 09:55", changes: [
+        "Пилот Дашборда: перенесён дневной/недельный прогресс (кольца вокруг темы + настройки — что учитывать, где показывать) поверх стриков, перенесённых раньше — lib/progress.ts/progressSettings.ts, 17 новых тестов",
+        "Смерджено с параллельно переехавшим блоком «Вода» (агент 4, v0.84) — оба блока писали в web-dashboard/src/App.vue и i18n.ts одновременно, разрешил конфликт вручную (взял обе стороны, ничего не потеряно), все 80 тестов и билд проверены после слияния",
+    ]},
     { version: "0.84", date: "2026-09-28 09:50", changes: [
         "Пилот Дашборда: добавлен блок «Вода» (web-dashboard/, параллельно с блоком дневного/недельного прогресса, который переносит другой агент, — см. ROADMAP.md) — стакан-бейдж с той же волновой анимацией по проценту от нормы, что и на обычном сайте, модалка с быстрым добавлением (+200мл/+1л/своё), выбор даты задним числом, дневная норма (ручная или авто по последнему весу ≈30мл/кг — 17 тестов на lib/water.ts)",
         "Сделан отдельным композаблом (lib/useWater.ts) и отдельным файлом тестов, не трогающими lib/useDashboard.ts и общий smoke.test.ts, — чтобы не пересекаться с другими блоками Дашборда, которые переносятся тем же заходом",
@@ -811,6 +836,31 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "0.90", date: "2026-09-28 04:01", changes: [
+        "Dashboard pilot: charts block — shared chart infrastructure (missing days drawn dashed, long histories bucketed, goal line, period picker: 10 days / week / last week / month / all time / custom, remembered between visits) and the first chart, \"points per day\"",
+        "The logic (prepareChartSeries, periodBounds, the points series) is covered by tests checked against the original config.js/dashboard.js; ChartBlock and PeriodPicker are standalone components that other pilot pages (Community, Workouts) can reuse",
+        "Not ported yet: body-measurement and per-metric charts with series selection and editing values right from the chart — waiting on the Profile block",
+    ]},
+    { version: "0.89", date: "2026-09-28 03:57", changes: [
+        "Look and feel: every Vue pilot page now shows our flame instead of the default blue Vite lightning bolt (browser tab and header logo) - in blue and orange, so the Vue versions are instantly distinguishable from the old pages with the orange flame. Removed the unused Vite/Vue template logos from the pilot folders",
+        "If you still see the bolt, the tab icon is cached - a hard refresh fixes it",
+    ]},
+    { version: "0.88", date: "2026-09-28 03:52", changes: [
+        "Pilot rebuild of Workouts on Vite + Vue 3 + TypeScript + Tailwind at /workouts-vue/, iteration 1 of 2: add/edit/delete exercises (categories, weight, duration, left/right side), logged entries with sets, personal records (by weight and by pace, split by side), category grouping with collapsing, and the workout-template catalog",
+        "Charts (the per-exercise progress mini-chart and the overall training-volume chart) still live on the old page for now - that's iteration 2",
+    ]},
+    { version: "0.87", date: "2026-09-28 12:30", changes: [
+        "Dashboard pilot: added the Sets block (metrics of type sets, e.g. push-ups) — a collapsible card with a list of sets: time (filled in automatically when added, editable), reps, and a \"variation\" field with a dropdown of saved options (each has a ✕ to remove a wrong one). A summary line \"N sets · M reps total\" and autosave on every edit",
+        "The block isn't tied to day navigation: SetsSection takes a date (default today) and SetsCard is purely presentational, so the daily-metrics block can drop it into its own list. Separate files (lib/setsBlock.ts, lib/useSets.ts, SetsCard/SetsSection/VariationCombo, their own tests — 20 new), App.vue only gets an import and one line",
+    ]},
+    { version: "0.86", date: "2026-09-28 11:10", changes: [
+        "Dashboard pilot: added the Metrics management block (web-dashboard/) — a ⚙️ button opens the metrics list with edit and delete, and a create/edit form with every field of the full site: type (number/checkbox/multiselect/sets), goal and its direction, unit, options, input mode, schedule (every day / weekdays / at least N / at most N times a week), category (with creating a new one), streak import, and an icon picker with search",
+        "Separate files (lib/metricsManager.ts, lib/useMetricsManager.ts, three components, their own tests — 34 new), App.vue only gets an import and one line. The Metric type gained optional options/input_mode fields. Schedule and streak import are still skipped when migrations 021/026 haven't been applied",
+    ]},
+    { version: "0.85", date: "2026-09-28 09:55", changes: [
+        "Dashboard pilot: ported day/week progress (theme-colored rings + settings — what counts, where it shows) on top of the streaks block ported earlier — lib/progress.ts/progressSettings.ts, 17 new tests",
+        "Merged with the Water block that moved over in parallel (agent 4, v0.84) — both blocks touched web-dashboard/src/App.vue and i18n.ts at the same time, resolved by hand (kept both sides, nothing lost), all 80 tests and the build re-checked after merging",
+    ]},
     { version: "0.84", date: "2026-09-28 09:50", changes: [
         "Dashboard pilot: added the Water block (web-dashboard/, alongside the day/week progress block another agent is porting in parallel — see ROADMAP.md) — a glass badge with the same wave animation by percent of the goal as the full site, a modal for quick add (+200ml/+1l/custom), picking a past date, a daily goal (manual or auto from the latest weight ≈30ml/kg — 17 tests on lib/water.ts)",
         "Built as its own composable (lib/useWater.ts) and its own test file, without touching lib/useDashboard.ts or the shared smoke.test.ts — to avoid colliding with the other Dashboard blocks being ported in the same pass",
