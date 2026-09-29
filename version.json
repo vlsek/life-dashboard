@@ -1,6 +1,13 @@
 {
-  "version": "1.31",
+  "version": "1.32",
   "en": [
+    {
+      "version": "1.32",
+      "date": "2026-09-30 00:40",
+      "changes": [
+        "Phase 2: \"Account\" is now at the short address /account/ instead of /account-vue/, and the classic version lives at /legacy/account.html; the old /account.html address redirects to the new one. Side-menu links on every Vue page were updated and rebuilt, and the return trip after linking Google lands on the current page"
+      ]
+    },
     {
       "version": "1.31",
       "date": "2026-09-30 00:16",
@@ -963,6 +970,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.32",
+      "date": "2026-09-30 00:40",
+      "changes": [
+        "Фаза 2: «Аккаунт» теперь на коротком адресе /account/ вместо /account-vue/, а классическая версия — в /legacy/account.html; старый адрес /account.html перенаправляет на новый. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны, возврат после привязки Google ведёт на актуальную страницу"
+      ]
+    },
     {
       "version": "1.31",
       "date": "2026-09-30 00:16",

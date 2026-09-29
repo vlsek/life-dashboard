@@ -209,7 +209,7 @@ onUnmounted(() => {
 
     <a
       v-if="props.userEmail"
-      href="/account-vue/"
+      href="/account/"
       class="flex items-center gap-2.5 rounded-lg px-3 py-2.5"
       style="color: var(--text)"
       @click="closeSidebar"

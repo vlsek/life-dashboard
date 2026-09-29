@@ -55,7 +55,7 @@ document.getElementById("change-email-btn").onclick = async () => {
 document.getElementById("link-google-btn").onclick = async () => {
     const { error } = await sb.auth.linkIdentity({
         provider: "google",
-        options: { redirectTo: window.location.origin + "/account.html" },
+        options: { redirectTo: window.location.origin + "/legacy/account.html" },
     });
     if (error) {
         document.getElementById("google-link-status").textContent = t("acc_error_prefix") + error.message;

@@ -19,7 +19,7 @@ describe('AppShell (account pilot)', () => {
     const wrapper = mount(AppShell, { props: { userEmail: 'user@example.com' } })
     const html = wrapper.html()
     expect(html).toContain('user@example.com')
-    expect(html).toContain('/account-vue/')
+    expect(html).toContain('/account/')
     wrapper.unmount()
   })
 

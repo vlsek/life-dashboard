@@ -25,6 +25,7 @@ STUBS = {
     "shop.html": "/shop/",
     "community.html": "/community/",
     "history.html": "/history/",
+    "account.html": "/account/",
 }
 
 TEMPLATE = """<!DOCTYPE html>

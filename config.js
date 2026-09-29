@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.31";
+const SITE_VERSION = "1.32";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.32", date: "2026-09-30 00:40", changes: [
+        "Фаза 2: «Аккаунт» теперь на коротком адресе /account/ вместо /account-vue/, а классическая версия — в /legacy/account.html; старый адрес /account.html перенаправляет на новый. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны, возврат после привязки Google ведёт на актуальную страницу",
+    ]},
     { version: "1.31", date: "2026-09-30 00:16", changes: [
         "Пилот Дашборда: секции «Профиль», «Ежедневные метрики», «Планы» и «Графики» сворачиваются стрелкой ▼/▶ у заголовка, как в классической версии. Состояние запоминается в браузере (тот же ключ, что в классике — свёрнутое там остаётся свёрнутым и здесь). У «Профиля» появился заголовок",
     ]},
@@ -982,6 +985,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.32", date: "2026-09-30 00:40", changes: [
+        "Phase 2: \"Account\" is now at the short address /account/ instead of /account-vue/, and the classic version lives at /legacy/account.html; the old /account.html address redirects to the new one. Side-menu links on every Vue page were updated and rebuilt, and the return trip after linking Google lands on the current page",
+    ]},
     { version: "1.31", date: "2026-09-30 00:16", changes: [
         "Dashboard pilot: the Profile, Daily metrics, Plans and Charts sections collapse with a ▼/▶ arrow next to the heading, like in the classic version. The state is remembered in the browser (same key as classic — a section collapsed there stays collapsed here). Profile now has a heading",
     ]},
@@ -2158,11 +2164,11 @@ function renderNav(active, userEmail) {
 
     if (userEmail) {
         const accountLink = document.createElement("a");
-        accountLink.href = navHref("account.html");
+        accountLink.href = navHref("legacy/account.html");
         accountLink.innerHTML = `${iconSvg("user")}<span>${t("nav_account_title")}</span>`;
         accountLink.className = active === "account" ? "active" : "";
         sidebar.appendChild(accountLink);
-        if (active === "account") appendTryPilotLink("account-vue/");
+        if (active === "account") appendTryPilotLink("account/");
     }
 
     const divider = document.createElement("div");

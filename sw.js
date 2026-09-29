@@ -4,12 +4,12 @@
 // статических файлов в список ASSETS, иначе новые файлы не попадут в кэш у уже установленных
 // пользователей до следующего изменения версии.
 
-const CACHE_NAME = "ld-shell-v12";
+const CACHE_NAME = "ld-shell-v13";
 
 const ASSETS = [
     "/", "/index.html", "/login.html", "/login.js", "/onboarding.html", "/onboarding.js",
     "/legacy/dashboard.html", "/legacy/dashboard.js",
-    "/account.html", "/account.js",
+    "/legacy/account.html", "/legacy/account.js",
     "/admin.html", "/admin.js",
     "/legacy/calendar.html", "/legacy/calendar.js",
     "/legacy/challenges.html", "/legacy/challenges.js",

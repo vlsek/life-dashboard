@@ -306,6 +306,13 @@ v1.31 — Дашборд-пилот (агент 6): сворачиваемые �
   компоненты остаются смонтированными). Ключи: profile, daily, planned, charts. У «Профиля» появился заголовок (в классике он был).
   Ловушка: при v-model от родителя `defineModel().value` после присваивания обновляется только после перерисовки — в toggle
   писать в localStorage вычисленное значение, а не перечитанное. 10 новых тестов, web-dashboard 407 зелёные, `vue-tsc -b` чист.
+v1.32 — Фаза 2 (агент 4): Аккаунт на /account/ (без -vue), классика в /legacy/account.html, корневая заглушка
+  account.html -> /account/ (scripts/gen_redirect_stubs.py). config.js: ссылка «Аккаунт» в сайдбаре классики и
+  «Попробовать новый дизайн» на /account/; redirectTo привязки Google — /legacy/account.html (классика) и /account/ (пилот).
+  ВАЖНО для владельца: `/account/` и `/legacy/account.html` надо добавить в Supabase Redirect URLs (как /login) — иначе
+  возврат после привязки Google уйдёт на Site URL. Пересобраны все 14 пилотов, grep бандлов на account-vue пуст.
+  Тесты: account 17, dashboard 407, login 9, onboarding 13 и остальные зелёные, vue-tsc чист. CACHE_NAME → v13.
+  Admin не переносился: у него нет Vue-пилота (admin.html остаётся в корне).
 v1.03 — Пилот Сообщества: заявки в друзья, друзья отдельно от подписок, «В друзья»
   (lib/friends.ts, PersonChip.vue, 17 тестов, в т.ч. UI-тест App.vue с подменой Supabase).
 v1.02 — Сообщество (классика): то же в ванильном community.js. Фильтр «Только друзья» =

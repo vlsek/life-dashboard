@@ -20,7 +20,7 @@
 | `calendar.html` | Календарь |
 | `legacy/shop.html` | Магазин за баллы (классика; основная версия — `/shop/`) |
 | `legacy/community.html` | Общий лидерборд и лента активности |
-| `account.html` | Настройки аккаунта |
+| `legacy/account.html` | Настройки аккаунта |
 | `admin.html` | Админка |
 
 Общая логика (клиент Supabase, авторизация, модалки, навигация) — в `config.js`.

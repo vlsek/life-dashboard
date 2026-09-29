@@ -72,10 +72,7 @@
 — свободен — (задачу «Кастомизация раскладки» с 2026-09-29 00:35 перехватил агент 6 по прямому решению владельца, 2026-09-30; у агента 3 не было ни одного коммита и кода раскладки в web-dashboard/)
 
 ### Агент 4
-По решению владельца (2026-09-30 00:19): Фаза 2 для **Account** — `/account/` без `-vue`, классика `account.html`+`account.js` →
-`/legacy/account.html`+`/legacy/account.js`, заглушка `account.html` в корне. Admin — у него нет Vue-пилота, решение по нему
-уточняю у владельца (сам не переношу). Файлы: `web-account/vite.config.ts`, `account-vue/`→`account/`, `sw.js`,
-`config.js`, все 12 `AppShell.vue` (ссылка на аккаунт), `scripts/gen_redirect_stubs.py`, пересборка пилотов. С: 2026-09-30 00:19.
+— свободен —
 
 ### Агент 5
 — свободен —
@@ -150,7 +147,8 @@ badge, сверься с этим блоком. У агента 3 — правл
 - [x] (v1.06, агент 4) `useReminders.ts:20` и `dashboard.js:1065`: `Date.now() + 7*86400000` заменено на календарные +7 дней (`addDaysIso`/`soonDateFor`), 2 регресс-теста
 
 ### Ванильный сайт / прочее
-- [~ агент 4] Фаза 2: Account на `/account/` без `-vue`, классика → `/legacy/account.html` (Admin — вопрос владельцу: пилота нет)
+- [x] (v1.32, агент 4) Фаза 2: Account на `/account/` без `-vue`, классика → `/legacy/account.html`, заглушка `account.html`
+- [ ] Admin (`admin.html`): Vue-пилота нет, остаётся в корне — нужно ли переносить/делать пилот, решает владелец. Владельцу: добавить `/account/` и `/legacy/account.html` в Supabase Redirect URLs
 - [x] Друзья (C2): SQL — `migrations/029_friendships.sql` (владелец применяет сам; без неё новые элементы скрыты), фронт классики — v1.02, фронт пилота `web-community` — v1.03 (агент 6). Открыто на будущее: уведомление/бейдж о новых входящих заявках, заявка прямо из строки лидерборда
 - [x] Расширение офлайн-кэша на Календарь — v1.07 (агент 4)
 - [x] (v1.22, агент 1) Фаза 2, первая страница: Skills на `/skills/` без `-vue`, классика → `/legacy/skills.html`
@@ -209,3 +207,4 @@ badge, сверься с этим блоком. У агента 3 — правл
 - 2026-09-30 · v1.29 · агент 6 · Фаза 2: Дашборд переехал на /dashboard/, классика в /legacy/dashboard.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v12, pages[] в config.js, все AppShell.vue, пересборка всех 14 пилотов, grep бандлов пуст). Логин/Онбординг (классика + Vue) ведут на /dashboard/. Тесты: dashboard 402, login 9, onboarding 13, account 17, history 30, goals 23, milestones 20, community 54, vue-tsc чист
 - 2026-09-30 · v1.30 · агент 6 · Фаза 2, финал: корневые заглушки-редиректы старых адресов (11 страниц) с сохранением search/hash, генератор scripts/gen_redirect_stubs.py; в HANDOFF шаг 7б. Проверка на боевом домене (поведение Workers Assets для /x и /x.html) — за владельцем
 - 2026-09-30 · v1.31 · агент 6 · Дашборд-пилот: сворачиваемые секции (Профиль, Ежедневные метрики, Планы, Графики) — ▼/▶ у заголовка, состояние в localStorage `dash_collapsed:*` (общий с классикой ключ). 10 новых тестов, web-dashboard 407, vue-tsc -b чист
+- 2026-09-30 · v1.32 · агент 4 · Фаза 2: Аккаунт переехал на /account/, классика в /legacy/account.html, корневая заглушка account.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v13, config.js accountLink + «новый дизайн», redirectTo привязки Google в классике и пилоте, все 12 AppShell.vue, пересборка всех 14 пилотов, grep бандлов на account-vue пуст). Admin не трогал (нет пилота). Тесты: account 17, dashboard 407, login 9, onboarding 13, vue-tsc чист

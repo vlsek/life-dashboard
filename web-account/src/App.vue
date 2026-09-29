@@ -83,7 +83,7 @@ watch(
 async function linkGoogle() {
   const { error } = await sb.auth.linkIdentity({
     provider: 'google',
-    options: { redirectTo: window.location.origin + '/account-vue/' },
+    options: { redirectTo: window.location.origin + '/account/' },
   })
   if (error) googleError.value = t('acc_error_prefix') + error.message
   // при успехе браузер уводит на Google и возвращает обратно на эту же страницу
