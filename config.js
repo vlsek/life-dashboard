@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.22";
+const SITE_VERSION = "1.23";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.23", date: "2026-09-29 23:18", changes: [
+        "Исправление после переезда страниц в /legacy/: выход из аккаунта и редирект «не залогинен → вход» / «не прошёл онбординг → онбординг» на классических страницах вели на несуществующий /legacy/login.html и /legacy/onboarding.html. Теперь адреса абсолютные",
+    ]},
     { version: "1.22", date: "2026-09-29 23:14", changes: [
         "Фаза 2, первая страница: «Навыки» теперь на коротком адресе /skills/ вместо /skills-vue/, а классическая версия — в /legacy/skills.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны",
     ]},
@@ -955,6 +958,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.23", date: "2026-09-29 23:18", changes: [
+        "Fix after pages moved to /legacy/: logging out and the \"not signed in → login\" / \"onboarding not done → onboarding\" redirects on classic pages pointed to the non-existent /legacy/login.html and /legacy/onboarding.html. The addresses are now absolute",
+    ]},
     { version: "1.22", date: "2026-09-29 23:14", changes: [
         "Phase 2, first page: \"Skills\" is now at the short address /skills/ instead of /skills-vue/, and the classic version lives at /legacy/skills.html. Side-menu links on every Vue page were updated and rebuilt",
     ]},
@@ -1438,7 +1444,7 @@ async function getSession() {
 async function requireAuth() {
     const session = await getSession();
     if (!session) {
-        window.location.href = "login.html";
+        window.location.href = "/login.html";
         return null;
     }
     return session.user;
@@ -1446,7 +1452,7 @@ async function requireAuth() {
 
 async function logout() {
     await sb.auth.signOut();
-    window.location.href = "login.html";
+    window.location.href = "/login.html";
 }
 
 // Текущее время "ЧЧ:ММ" — для отметки времени подхода
@@ -1638,10 +1644,10 @@ async function requireOnboarded(userId) {
         // "офлайн") пропускаем на страницу — там уже offline-cache.js покажет последние данные.
         if (localStorage.getItem("ld_onboarded_" + userId) === "1") return true;
         if (!navigator.onLine) return true;
-        window.location.href = "onboarding.html";
+        window.location.href = "/onboarding.html";
         return false;
     }
-    if (!profile?.onboarded) { window.location.href = "onboarding.html"; return false; }
+    if (!profile?.onboarded) { window.location.href = "/onboarding.html"; return false; }
     try { localStorage.setItem("ld_onboarded_" + userId, "1"); } catch (e) { /* приватный режим — не критично */ }
     return true;
 }
