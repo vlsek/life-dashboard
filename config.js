@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.36";
+const SITE_VERSION = "1.37";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.37", date: "2026-09-30 00:49", changes: [
+        "Тренировки (новая версия): каждое упражнение теперь можно свернуть стрелкой ▼/▶ рядом с названием — остаётся только заголовок с кнопками; состояние запоминается для каждого упражнения отдельно (категории сворачиваются, как и раньше)",
+    ]},
     { version: "1.36", date: "2026-09-30 00:44", changes: [
         "Тренировки (новая версия): в форме записи упражнения с левой и правой стороной теперь один блок на подход — две ячейки «Левая» и «Правая» с общим временем, вместо двух отдельных подходов. В базе по-прежнему два подхода со стороной, так что рекорды по сторонам, графики и классическая версия работают как раньше",
         "Тренировки (новая версия): вверху страницы появилось напоминание о разминке — показывается, пока сегодня нет записей, кнопка «Понятно» скрывает его до завтра",
@@ -1001,6 +1004,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.37", date: "2026-09-30 00:49", changes: [
+        "Workouts (new version): each exercise can now be collapsed with the ▼/▶ arrow next to its name, leaving just the header with its buttons; the state is remembered per exercise (categories still collapse as before)",
+    ]},
     { version: "1.36", date: "2026-09-30 00:44", changes: [
         "Workouts (new version): in the entry form, exercises with a left and a right side now use one block per set — two cells, \"Left\" and \"Right\", sharing one time — instead of two separate sets. The database still stores two sided sets, so per-side records, charts and the classic version work as before",
         "Workouts (new version): a warm-up reminder now shows at the top of the page while there are no entries today; \"Got it\" hides it until tomorrow",

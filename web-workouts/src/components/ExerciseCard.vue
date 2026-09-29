@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { fmtRu } from '../lib/date'
 import { bestPaceRecord, bestSetRecord, formatSets } from '../lib/workouts'
 import Icon from './Icon.vue'
 import ExerciseChart from './ExerciseChart.vue'
+import { readExerciseCollapsed, writeExerciseCollapsed } from '../lib/exerciseCollapse'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 
 // Порт renderExerciseCard() из workouts.js — заголовок с кнопками, рекомендованная схема,
@@ -47,12 +48,30 @@ const records = computed<RecordLine[]>(() => {
   return out
 })
 
+// Свёрнутое упражнение показывает только заголовок с кнопками; состояние помним по id.
+const collapsed = ref(readExerciseCollapsed(props.exercise.id))
+function toggleCollapsed() {
+  collapsed.value = !collapsed.value
+  writeExerciseCollapsed(props.exercise.id, collapsed.value)
+}
+
 const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date.localeCompare(a.date)))
 </script>
 
 <template>
   <div class="mb-3.5 rounded-xl border p-4" style="border-color: var(--border); background: var(--bg-card)">
     <div class="mb-0.5 flex flex-wrap items-center gap-2">
+      <button
+        type="button"
+        class="rounded-lg border px-2 py-0.5 text-[0.8em]"
+        style="border-color: var(--border); color: var(--text)"
+        data-testid="exercise-toggle"
+        :title="collapsed ? t('dash_expand_btn') : t('dash_collapse_btn')"
+        :aria-expanded="!collapsed"
+        @click="toggleCollapsed"
+      >
+        {{ collapsed ? '▶' : '▼' }}
+      </button>
       <h3 class="m-0 flex-1 font-bold">{{ exercise.name }}</h3>
       <button
         type="button"
@@ -70,6 +89,7 @@ const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date
       </button>
     </div>
 
+    <div v-show="!collapsed" data-testid="exercise-body">
     <div v-if="exercise.suggested_scheme" class="mb-2 text-[0.85em]" style="color: var(--text-dim)">
       {{ t('workouts_suggested_scheme_label') }} {{ exercise.suggested_scheme }}
     </div>
@@ -102,6 +122,7 @@ const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date
           </tr>
         </tbody>
       </table>
+    </div>
     </div>
   </div>
 </template>
