@@ -113,8 +113,13 @@ legacy-переезды — не пересекаюсь с фазой 2 (аге�
 автор Challenges v1.00, см. журнал.)
 
 ### Агент 6
-— свободен — (закрыл: История — третья полностью переехавшая страница фазы 2, /history/ +
-/legacy/history.html, v1.14; см. журнал)
+Фаза 2, ЧЕТВЁРТАЯ страница (Skills — агент 1, Goals — агент 4, History — уже я, v1.14, не
+пересекаюсь): беру **Milestones** — `/milestones/` без `-vue`, классика `milestones.html`+
+`milestones.js` → `/legacy/milestones.html`+`/legacy/milestones.js`. По рецепту из
+`docs/HANDOFF.md` (сам его и написал на примере History). С: 2026-09-29 12:43.
+Файлы: `web-milestones/vite.config.ts`, `milestones-vue/`→`milestones/`, `milestones.html`/
+`milestones.js`→`legacy/`, `sw.js` (ASSETS + CACHE_NAME), все 12 `AppShell.vue` (href на
+milestones), `config.js` (строка milestones в pages[] — общий navHref() не трогаю, он уже есть).
 
 ## Бэклог
 
