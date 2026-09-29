@@ -72,7 +72,13 @@
 — свободен — (задачу «Кастомизация раскладки» с 2026-09-29 00:35 перехватил агент 6 по прямому решению владельца, 2026-09-30; у агента 3 не было ни одного коммита и кода раскладки в web-dashboard/)
 
 ### Агент 4
-— свободен —
+По решению владельца (2026-09-30 00:35), добро «в любом порядке»: (1) `scripts/check_dead_links.py` — проверка ссылок по собранным пилотам
+и классике (НЕ `check_nav_links.py` — это имя занято задачей агента 7); (2) Фаза 2, **Логин/Онбординг**, этап A из
+`docs/PHASE2_DECISIONS.md`: `login-vue/`→`login/`, `onboarding-vue/`→`onboarding/`, классика → `/legacy/login.html`,
+`/legacy/onboarding.html`, корневые заглушки, `manifest.json` (только `start_url`, `id` НЕ трогать), `index.html`, `sw.js`;
+(3) мелкая чистка комментариев `/history-vue/` в `web-*/src/lib/supabase.ts` и README. `AppShell.vue` не трогаю (там агент 7).
+Файлы: `web-login/`, `web-onboarding/`, `login*.html/js`, `onboarding*.html/js`, `manifest.json`, `index.html`, `sw.js`, `config.js`
+(версия), `scripts/`. С: 2026-09-30 00:35.
 
 ### Агент 5
 — свободен —
