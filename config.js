@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.27";
+const SITE_VERSION = "1.28";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.28", date: "2026-09-30 00:04", changes: [
+        "Пилот Дашборда: кастомизация раскладки блоков. Кнопка ⚙️ рядом с заголовком открывает окно, где блоки «Профиль», «Графики» и «Дневные метрики и планы» можно переставлять (↑/↓) и скрывать; скрытые блоки не подгружают данные. Раскладка хранится в profiles.dashboard_layout — общая с классическим Дашбордом (миграция 015, новой не нужно). Если скрыт «Профиль», кольца дня/недели показываются бейджем в шапке",
+    ]},
     { version: "1.27", date: "2026-09-30 00:10", changes: [
         "Фаза 2: «Цели» теперь на коротком адресе /goals/ вместо /goals-vue/, а классическая версия — в /legacy/goals.html. Ссылки в боковом меню всех Vue-страниц и ссылка в недельном напоминании обновлены и пересобраны",
     ]},
@@ -970,6 +973,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.28", date: "2026-09-30 00:04", changes: [
+        "Dashboard pilot: block layout customization. The ⚙️ button next to the title opens a dialog where the Profile, Charts and Daily metrics & plans blocks can be reordered (↑/↓) and hidden; hidden blocks do not load their data. The layout is stored in profiles.dashboard_layout — shared with the classic Dashboard (migration 015, nothing new to apply). If Profile is hidden, the day/week rings show as a header badge",
+    ]},
     { version: "1.27", date: "2026-09-30 00:10", changes: [
         "Phase 2: \"Goals\" is now at the short address /goals/ instead of /goals-vue/, and the classic version lives at /legacy/goals.html. Side-menu links on every Vue page and the link in the weekly reminder were updated and rebuilt",
     ]},

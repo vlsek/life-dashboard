@@ -1,6 +1,13 @@
 {
-  "version": "1.27",
+  "version": "1.28",
   "en": [
+    {
+      "version": "1.28",
+      "date": "2026-09-30 00:04",
+      "changes": [
+        "Dashboard pilot: block layout customization. The ⚙️ button next to the title opens a dialog where the Profile, Charts and Daily metrics & plans blocks can be reordered (↑/↓) and hidden; hidden blocks do not load their data. The layout is stored in profiles.dashboard_layout — shared with the classic Dashboard (migration 015, nothing new to apply). If Profile is hidden, the day/week rings show as a header badge"
+      ]
+    },
     {
       "version": "1.27",
       "date": "2026-09-30 00:10",
@@ -935,6 +942,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.28",
+      "date": "2026-09-30 00:04",
+      "changes": [
+        "Пилот Дашборда: кастомизация раскладки блоков. Кнопка ⚙️ рядом с заголовком открывает окно, где блоки «Профиль», «Графики» и «Дневные метрики и планы» можно переставлять (↑/↓) и скрывать; скрытые блоки не подгружают данные. Раскладка хранится в profiles.dashboard_layout — общая с классическим Дашбордом (миграция 015, новой не нужно). Если скрыт «Профиль», кольца дня/недели показываются бейджем в шапке"
+      ]
+    },
     {
       "version": "1.27",
       "date": "2026-09-30 00:10",
