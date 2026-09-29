@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.35";
+const SITE_VERSION = "1.36";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.36", date: "2026-09-30 00:44", changes: [
+        "Тренировки (новая версия): в форме записи упражнения с левой и правой стороной теперь один блок на подход — две ячейки «Левая» и «Правая» с общим временем, вместо двух отдельных подходов. В базе по-прежнему два подхода со стороной, так что рекорды по сторонам, графики и классическая версия работают как раньше",
+        "Тренировки (новая версия): вверху страницы появилось напоминание о разминке — показывается, пока сегодня нет записей, кнопка «Понятно» скрывает его до завтра",
+    ]},
     { version: "1.35", date: "2026-09-30 00:40", changes: [
         "Дашборд (пилот): в вечернем напоминании заголовок «Остались невыполненные метрики!» и текст «Сделайте их, чтобы не потерять стрейк» теперь на разных строках, между ними есть отступ",
         "Сообщество (пилот): кнопки «Подписаться» и «В друзья» больше не молчат. Если поле пустое — появляется подсказка «Сначала введите email или ник». Если поиск пользователя упал из-за ошибки (нет прав, нет функции в базе, сеть), показывается настоящая ошибка, а не ложное «не найден», и кнопки не остаются заблокированными",
@@ -997,6 +1001,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.36", date: "2026-09-30 00:44", changes: [
+        "Workouts (new version): in the entry form, exercises with a left and a right side now use one block per set — two cells, \"Left\" and \"Right\", sharing one time — instead of two separate sets. The database still stores two sided sets, so per-side records, charts and the classic version work as before",
+        "Workouts (new version): a warm-up reminder now shows at the top of the page while there are no entries today; \"Got it\" hides it until tomorrow",
+    ]},
     { version: "1.35", date: "2026-09-30 00:40", changes: [
         "Dashboard (pilot): in the evening reminder, the title \"Unfinished metrics left!\" and the text \"Finish them so you don't lose your streak.\" are now on separate lines with a gap between them",
         "Community (pilot): the Follow and Add friend buttons no longer do nothing silently. With an empty field a hint appears (\"Enter an email or a nickname first\"). If the user lookup fails with an error (no permission, missing DB function, network), the real error is shown instead of a false \"not found\", and the buttons no longer stay disabled",

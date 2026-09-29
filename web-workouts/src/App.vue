@@ -2,10 +2,13 @@
 import { computed, ref } from 'vue'
 import { useWorkouts } from './lib/useWorkouts'
 import { isKnownCategory, sortCategoryKeys } from './lib/workouts'
+import { readWarmupDismissed, shouldShowWarmup, writeWarmupDismissed } from './lib/warmup'
+import { todayStr } from './lib/date'
 import { t } from './lib/i18n'
 import { showToast } from './lib/toast'
 import AppShell from './components/AppShell.vue'
 import ExerciseCard from './components/ExerciseCard.vue'
+import WarmupReminder from './components/WarmupReminder.vue'
 import OverviewChart from './components/OverviewChart.vue'
 import ExerciseForm from './components/ExerciseForm.vue'
 import EntryForm from './components/EntryForm.vue'
@@ -75,6 +78,22 @@ function toggleCollapsed(key: string) {
   } catch {
     /* ignore */
   }
+}
+
+// ---- напоминание о разминке ----
+const warmupDismissedOn = ref<string | null>(readWarmupDismissed())
+const showWarmup = computed(() =>
+  shouldShowWarmup({
+    hasExercises: exercises.value.length > 0,
+    entries: entries.value,
+    dismissedOn: warmupDismissedOn.value,
+    today: todayStr(),
+  }),
+)
+function dismissWarmup() {
+  const day = todayStr()
+  warmupDismissedOn.value = day
+  writeWarmupDismissed(day)
 }
 
 // ---- формы ----
@@ -186,6 +205,8 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
         {{ t('workouts_toast_save_error') }}{{ loadError }} — {{ t('workouts_migration_hint') }}
       </p>
       <p v-else-if="exercises.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('workouts_empty') }}</p>
+
+      <WarmupReminder v-if="showWarmup" @dismiss="dismissWarmup" />
 
       <OverviewChart :entries="entries" />
 

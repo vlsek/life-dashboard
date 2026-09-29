@@ -3,49 +3,46 @@ import { onMounted, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { nowHHMM, todayStr } from '../lib/date'
 import { cleanSets } from '../lib/workouts'
+import { CELL_ORDER, blankRow, fromRows, toRows } from '../lib/sides'
+import type { CellKey, SetRow } from '../lib/sides'
 import Icon from './Icon.vue'
-import type { EntryFormInput, Exercise, WorkoutEntry, WorkoutSet } from '../lib/types'
+import type { EntryFormInput, Exercise, WorkoutEntry } from '../lib/types'
 
 // Порт openEntryModal() из workouts.js: дата, динамический список подходов (повторы,
-// вес, длительность, сторона Л/П, время), заметка. Новый подход для билатерального
-// упражнения по умолчанию берёт противоположную сторону от предыдущего.
+// вес, длительность, время), заметка. Для билатеральных упражнений левая и правая сторона —
+// ОДНА строка с двумя ячейками (в базе это по-прежнему два подхода со стороной L/R, см. lib/sides.ts).
 const props = defineProps<{ exercise: Exercise; existing: WorkoutEntry | null }>()
 const emit = defineEmits<{ close: []; save: [EntryFormInput] }>()
 
-function blankSet(): WorkoutSet {
-  return { reps: null, weight: null, time: null, duration: null, side: null }
-}
-
 const date = ref(props.existing?.date ?? todayStr())
 const notes = ref(props.existing?.notes ?? '')
-const sets = ref<WorkoutSet[]>(
-  props.existing?.sets?.length ? props.existing.sets.map((s) => ({ ...s })) : [{ ...blankSet(), time: nowHHMM() }],
-)
+const rows = ref<SetRow[]>(props.existing?.sets?.length ? toRows(props.existing.sets) : [blankRow(!!props.exercise.bilateral, nowHHMM())])
 
 // «Утяжеление»: у упражнений с собственным весом доп. вес необязателен и включается галочкой.
 // Если в существующей записи уже есть доп. вес — галочка стоит сразу.
-const weighted = ref(!props.exercise.tracks_weight && sets.value.some((s) => s.weight != null && (s.weight as unknown) !== ''))
+const weighted = ref(
+  !props.exercise.tracks_weight &&
+    rows.value.some((r) => CELL_ORDER.some((k) => r.cells[k] && r.cells[k]!.weight != null && (r.cells[k]!.weight as unknown) !== '')),
+)
+const showWeight = () => props.exercise.tracks_weight || weighted.value
 
 const dateInput = ref<HTMLInputElement | null>(null)
 onMounted(() => dateInput.value?.focus())
 
 function addSet() {
-  const last = sets.value[sets.value.length - 1]
-  const side = props.exercise.bilateral ? (last?.side === 'L' ? 'R' : last?.side === 'R' ? 'L' : 'L') : null
-  sets.value.push({ reps: null, weight: null, time: nowHHMM(), duration: null, side })
+  rows.value.push(blankRow(!!props.exercise.bilateral, nowHHMM()))
 }
-function removeSet(i: number) {
-  sets.value.splice(i, 1)
-  if (sets.value.length === 0) sets.value.push(blankSet())
+function removeRow(i: number) {
+  rows.value.splice(i, 1)
+  if (rows.value.length === 0) rows.value.push(blankRow(!!props.exercise.bilateral))
 }
-function toggleSide(s: WorkoutSet, side: 'L' | 'R') {
-  s.side = s.side === side ? null : side
-}
+const keysOf = (row: SetRow): CellKey[] => CELL_ORDER.filter((k) => row.cells[k])
+const sideLabel = (k: CellKey) => (k === 'L' ? t('workouts_side_L') : t('workouts_side_R'))
 
 function onSubmit() {
   // Без галочки «Утяжеление» доп. вес не сохраняем (иначе остался бы скрытый вес от прошлого включения).
-  if (!props.exercise.tracks_weight && !weighted.value) sets.value.forEach((s) => (s.weight = null))
-  emit('save', { date: date.value || todayStr(), sets: cleanSets(sets.value), notes: notes.value.trim() || null })
+  if (!showWeight()) rows.value.forEach((r) => CELL_ORDER.forEach((k) => r.cells[k] && (r.cells[k]!.weight = null)))
+  emit('save', { date: date.value || todayStr(), sets: cleanSets(fromRows(rows.value)), notes: notes.value.trim() || null })
 }
 
 const valueLabel = () => props.exercise.value_label || t('workouts_default_value_label')
@@ -75,73 +72,72 @@ const unitLabel = () => props.exercise.unit || t('workouts_default_unit')
             {{ t('workouts_weighted_label') }}
           </label>
 
-          <div v-for="(s, i) in sets" :key="i" class="mb-1.5 flex flex-wrap items-center gap-1.5">
-            <input
-              v-model.number="s.reps"
-              type="number"
-              class="modal-input"
-              :style="{ width: exercise.tracks_weight ? '80px' : '160px' }"
-              :placeholder="exercise.tracks_weight ? t('workouts_reps_placeholder') : valueLabel()"
-            />
+          <div
+            v-for="(row, i) in rows"
+            :key="i"
+            class="mb-1.5"
+            :class="keysOf(row).length > 1 ? 'flex flex-col gap-1.5 rounded-lg border p-2' : 'flex flex-wrap items-center gap-1.5'"
+            :style="keysOf(row).length > 1 ? 'border-color: var(--border)' : ''"
+            data-testid="set-row"
+          >
+            <div
+              v-for="key in keysOf(row)"
+              :key="key"
+              :class="keysOf(row).length > 1 ? 'flex flex-wrap items-center gap-1.5' : 'contents'"
+            >
+              <span v-if="key !== 'P'" class="w-14 text-sm font-medium" style="color: var(--text-dim)">{{ sideLabel(key) }}</span>
 
-            <div v-if="exercise.bilateral" class="flex overflow-hidden rounded-lg border" style="border-color: var(--border)">
-              <button
-                v-for="side in (['L', 'R'] as const)"
-                :key="side"
-                type="button"
-                class="px-2.5 py-1.5 text-sm"
-                :style="{
-                  background: s.side === side ? 'var(--accent)' : 'var(--bg-card)',
-                  color: s.side === side ? 'var(--accent-text)' : 'var(--text)',
-                }"
-                @click="toggleSide(s, side)"
-              >
-                {{ side === 'L' ? t('workouts_side_L') : t('workouts_side_R') }}
-              </button>
+              <input
+                v-model.number="row.cells[key]!.reps"
+                type="number"
+                class="modal-input"
+                :style="{ width: exercise.tracks_weight ? '80px' : '160px' }"
+                :placeholder="exercise.tracks_weight ? t('workouts_reps_placeholder') : valueLabel()"
+              />
+
+              <template v-if="exercise.tracks_duration">
+                <span class="text-sm" style="color: var(--text-dim)">{{ t('workouts_duration_in') }}</span>
+                <input
+                  v-model.number="row.cells[key]!.duration"
+                  type="number"
+                  min="0"
+                  class="modal-input"
+                  style="width: 90px"
+                  :placeholder="t('workouts_duration_placeholder')"
+                />
+              </template>
+
+              <template v-if="exercise.tracks_weight">
+                <span class="text-sm" style="color: var(--text-dim)">×</span>
+                <input
+                  v-model.number="row.cells[key]!.weight"
+                  type="number"
+                  step="0.5"
+                  class="modal-input"
+                  style="width: 110px"
+                  :placeholder="t('workouts_weight_placeholder') + ' (' + unitLabel() + ')'"
+                />
+              </template>
+              <template v-else-if="weighted">
+                <span class="text-sm" style="color: var(--text-dim)">+</span>
+                <input
+                  v-model.number="row.cells[key]!.weight"
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  class="modal-input"
+                  style="width: 110px"
+                  :placeholder="t('workouts_extra_weight_placeholder') + ' (' + t('workouts_default_unit') + ')'"
+                />
+              </template>
             </div>
 
-            <template v-if="exercise.tracks_duration">
-              <span class="text-sm" style="color: var(--text-dim)">{{ t('workouts_duration_in') }}</span>
-              <input
-                v-model.number="s.duration"
-                type="number"
-                min="0"
-                class="modal-input"
-                style="width: 90px"
-                :placeholder="t('workouts_duration_placeholder')"
-              />
-            </template>
-
-            <template v-if="exercise.tracks_weight">
-              <span class="text-sm" style="color: var(--text-dim)">×</span>
-              <input
-                v-model.number="s.weight"
-                type="number"
-                step="0.5"
-                class="modal-input"
-                style="width: 110px"
-                :placeholder="t('workouts_weight_placeholder') + ' (' + unitLabel() + ')'"
-              />
-            </template>
-
-            <template v-if="!exercise.tracks_weight && weighted">
-              <span class="text-sm" style="color: var(--text-dim)">+</span>
-              <input
-                v-model.number="s.weight"
-                type="number"
-                min="0"
-                step="0.5"
-                class="modal-input"
-                style="width: 110px"
-                :placeholder="t('workouts_extra_weight_placeholder') + ' (' + t('workouts_default_unit') + ')'"
-              />
-            </template>
-
-            <input v-model="s.time" type="time" class="modal-input" style="width: 96px" :title="t('sets_time_title')" />
-
-            <button type="button" class="rounded-lg border px-2 py-1" style="border-color: var(--border); color: var(--danger, #e05555)" @click="removeSet(i)">
-              <Icon name="x" />
-            </button>
+            <div class="flex items-center gap-1.5">
+              <input v-model="row.time" type="time" class="modal-input" style="width: 96px" :title="t('sets_time_title')" />
+              <button type="button" class="rounded-lg border px-2 py-1" style="border-color: var(--border); color: var(--danger, #e05555)" @click="removeRow(i)">
+                <Icon name="x" />
+              </button>
+            </div>
           </div>
 
           <button
