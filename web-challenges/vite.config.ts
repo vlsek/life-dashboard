@@ -2,15 +2,16 @@ import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 
-// Восьмая страница пилота на Vue 3 + TS + Tailwind (после Истории, Вех, Календаря, Целей,
-// Навыков, Аккаунта и Магазина — см. ROADMAP.md, тикет B-challenges). Собирается в
-// ../challenges-vue — отдельную папку в корне репозитория, раздаётся Cloudflare Workers
-// как статика рядом со старыми HTML-страницами.
+// Страница на Vue 3 + TS + Tailwind. Фаза 2 (см. COORDINATION.md): пилот переехал на короткий
+// адрес /challenges/ (без -vue) — теперь это и есть основной раздел «Челленджи», классическая
+// версия перенесена в /legacy/challenges.html. Собирается в ../challenges — отдельную папку в
+// корне репозитория, которую Cloudflare Workers раздаёт как статику. base совпадает с этим
+// путём, чтобы собранные ссылки на ассеты (/challenges/assets/...) резолвились правильно.
 export default defineConfig({
-  base: '/challenges-vue/',
+  base: '/challenges/',
   plugins: [vue(), tailwindcss()],
   build: {
-    outDir: '../challenges-vue',
+    outDir: '../challenges',
     emptyOutDir: true,
   },
 })

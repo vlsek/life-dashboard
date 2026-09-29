@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.16";
+const SITE_VERSION = "1.17";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.17", date: "2026-09-29 18:39", changes: [
+        "Фаза 2, седьмая страница: «Челленджи» теперь на коротком адресе /challenges/ вместо /challenges-vue/, а классическая версия — в /legacy/challenges.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны",
+    ]},
     { version: "1.16", date: "2026-09-29 18:31", changes: [
         "Фаза 2, шестая страница: «Магазин» теперь на коротком адресе /shop/ вместо /shop-vue/, а классическая версия — в /legacy/shop.html. Заодно починены ссылки в боковом меню Vue-страниц: после переезда Календаря в 1.15 они не были пересобраны и на части страниц пункт «Календарь» вёл на удалённый адрес /calendar-vue/",
     ]},
@@ -937,6 +940,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.17", date: "2026-09-29 18:39", changes: [
+        "Phase 2, seventh page: Challenges now lives at the short address /challenges/ instead of /challenges-vue/, and the classic version moved to /legacy/challenges.html. Sidebar links on every Vue page were updated and rebuilt",
+    ]},
     { version: "1.16", date: "2026-09-29 18:31", changes: [
         "Phase 2, sixth page: Shop now lives at the short address /shop/ instead of /shop-vue/, and the classic version moved to /legacy/shop.html. Also fixed the sidebar links on the Vue pages: after Calendar moved in 1.15 they had not been rebuilt, so on some pages the Calendar item pointed at the removed /calendar-vue/ address",
     ]},
@@ -1963,7 +1969,7 @@ function renderNav(active, userEmail) {
         { href: "goals.html", key: "goals", i18n: "nav_goals", icon: "goals", vue: "goals-vue/" },
         { href: "skills.html", key: "skills", i18n: "nav_skills", icon: "skills" },
         { href: "workouts.html", key: "workouts", i18n: "nav_workouts", icon: "workouts", vue: "workouts-vue/" },
-        { href: "challenges.html", key: "challenges", i18n: "nav_challenges", icon: "challenges", vue: "challenges-vue/" },
+        { href: "legacy/challenges.html", key: "challenges", i18n: "nav_challenges", icon: "challenges", vue: "challenges/" },
         { href: "english.html", key: "english", i18n: "nav_english", icon: "english", vue: "languages-vue/" },
         { href: "legacy/calendar.html", key: "calendar", i18n: "nav_calendar", icon: "calendar", vue: "calendar/" },
         { href: "milestones.html", key: "milestones", i18n: "nav_milestones", icon: "milestones", vue: "milestones-vue/" },

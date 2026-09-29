@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
 // Тот же проект и тот же анонимный ключ, что и у остального сайта (config.js). Поскольку
-// страница раздаётся с того же домена (life-dashboard.orneryhero.workers.dev/challenges-vue/),
+// страница раздаётся с того же домена (life-dashboard.orneryhero.workers.dev/challenges/),
 // supabase-js по умолчанию хранит сессию в localStorage под одним и тем же ключом — вход,
 // сделанный на старом сайте, подхватывается здесь без какой-либо доп. синхронизации.
 const SUPABASE_URL = 'https://haxmgtflegsfpxieaydv.supabase.co'

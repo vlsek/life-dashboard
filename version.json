@@ -1,6 +1,13 @@
 {
-  "version": "1.16",
+  "version": "1.17",
   "en": [
+    {
+      "version": "1.17",
+      "date": "2026-09-29 18:39",
+      "changes": [
+        "Phase 2, seventh page: Challenges now lives at the short address /challenges/ instead of /challenges-vue/, and the classic version moved to /legacy/challenges.html. Sidebar links on every Vue page were updated and rebuilt"
+      ]
+    },
     {
       "version": "1.16",
       "date": "2026-09-29 18:31",
@@ -858,6 +865,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.17",
+      "date": "2026-09-29 18:39",
+      "changes": [
+        "Фаза 2, седьмая страница: «Челленджи» теперь на коротком адресе /challenges/ вместо /challenges-vue/, а классическая версия — в /legacy/challenges.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны"
+      ]
+    },
     {
       "version": "1.16",
       "date": "2026-09-29 18:31",
