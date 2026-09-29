@@ -1,6 +1,13 @@
 {
-  "version": "1.23",
+  "version": "1.24",
   "en": [
+    {
+      "version": "1.24",
+      "date": "2026-09-29 23:24",
+      "changes": [
+        "Phase 2, ninth page: \"Languages\" is now at the short address /languages/ instead of /languages-vue/, and the classic version lives at /legacy/english.html. Side-menu links on every Vue page were updated and rebuilt"
+      ]
+    },
     {
       "version": "1.23",
       "date": "2026-09-29 23:18",
@@ -907,6 +914,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.24",
+      "date": "2026-09-29 23:24",
+      "changes": [
+        "Фаза 2, девятая страница: «Языки» теперь на коротком адресе /languages/ вместо /languages-vue/, а классическая версия — в /legacy/english.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны"
+      ]
+    },
     {
       "version": "1.23",
       "date": "2026-09-29 23:18",

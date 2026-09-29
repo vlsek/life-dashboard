@@ -29,7 +29,7 @@ const pages: NavPage[] = [
   { href: '/skills/', key: 'skills', labelKey: 'nav_skills', icon: 'skills' },
   { href: '/workouts/', key: 'workouts', labelKey: 'nav_workouts', icon: 'workouts' },
   { href: '/challenges/', key: 'challenges', labelKey: 'nav_challenges', icon: 'challenges' },
-  { href: '/languages-vue/', key: 'english', labelKey: 'nav_english', icon: 'english' },
+  { href: '/languages/', key: 'english', labelKey: 'nav_english', icon: 'english' },
   { href: '/calendar/', key: 'calendar', labelKey: 'nav_calendar', icon: 'calendar' },
   { href: '/milestones-vue/', key: 'milestones', labelKey: 'nav_milestones', icon: 'milestones' },
   { href: '/shop/', key: 'shop', labelKey: 'nav_shop', icon: 'shop' },

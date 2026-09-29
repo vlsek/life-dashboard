@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.23";
+const SITE_VERSION = "1.24";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.24", date: "2026-09-29 23:24", changes: [
+        "Фаза 2, девятая страница: «Языки» теперь на коротком адресе /languages/ вместо /languages-vue/, а классическая версия — в /legacy/english.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны",
+    ]},
     { version: "1.23", date: "2026-09-29 23:18", changes: [
         "Исправление после переезда страниц в /legacy/: выход из аккаунта и редирект «не залогинен → вход» / «не прошёл онбординг → онбординг» на классических страницах вели на несуществующий /legacy/login.html и /legacy/onboarding.html. Теперь адреса абсолютные",
     ]},
@@ -958,6 +961,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.24", date: "2026-09-29 23:24", changes: [
+        "Phase 2, ninth page: \"Languages\" is now at the short address /languages/ instead of /languages-vue/, and the classic version lives at /legacy/english.html. Side-menu links on every Vue page were updated and rebuilt",
+    ]},
     { version: "1.23", date: "2026-09-29 23:18", changes: [
         "Fix after pages moved to /legacy/: logging out and the \"not signed in → login\" / \"onboarding not done → onboarding\" redirects on classic pages pointed to the non-existent /legacy/login.html and /legacy/onboarding.html. The addresses are now absolute",
     ]},
@@ -2006,7 +2012,7 @@ function renderNav(active, userEmail) {
         { href: "legacy/skills.html", key: "skills", i18n: "nav_skills", icon: "skills", vue: "skills/" },
         { href: "legacy/workouts.html", key: "workouts", i18n: "nav_workouts", icon: "workouts", vue: "workouts/" },
         { href: "legacy/challenges.html", key: "challenges", i18n: "nav_challenges", icon: "challenges", vue: "challenges/" },
-        { href: "english.html", key: "english", i18n: "nav_english", icon: "english", vue: "languages-vue/" },
+        { href: "legacy/english.html", key: "english", i18n: "nav_english", icon: "english", vue: "languages/" },
         { href: "legacy/calendar.html", key: "calendar", i18n: "nav_calendar", icon: "calendar", vue: "calendar/" },
         { href: "milestones.html", key: "milestones", i18n: "nav_milestones", icon: "milestones", vue: "milestones-vue/" },
         { href: "legacy/shop.html", key: "shop", i18n: "nav_shop", icon: "shop", vue: "shop/" },

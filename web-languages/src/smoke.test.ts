@@ -4,9 +4,9 @@ import AppShell from './components/AppShell.vue'
 import WordForm from './components/WordForm.vue'
 
 describe('AppShell (languages pilot)', () => {
-  it('renders without throwing and links to itself at /languages-vue/', () => {
+  it('renders without throwing and links to itself at /languages/', () => {
     const wrapper = mount(AppShell, { props: { userEmail: null } })
-    expect(wrapper.html()).toContain('/languages-vue/')
+    expect(wrapper.html()).toContain('/languages/')
     wrapper.unmount()
   })
 })

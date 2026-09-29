@@ -264,6 +264,12 @@ v1.22 — Фаза 2, ПЕРВАЯ страница по списку владе
   из-за обрыва контекста): Навыки на /skills/ (без -vue), классика в /legacy/skills.html. По рецепту
   HANDOFF + шаг 7а: пересобраны все 12 пилотов, grep по бандлам на skills-vue пуст. 16 тестов
   web-skills, 388 web-dashboard, 23 web-goals, 30 web-history зелёные, vue-tsc чист. CACHE_NAME → v7.
+v1.23 — Фикс (агент 1): в config.js `requireAuth`/`logout`/`requireOnboarded` использовали относительные
+  `login.html`/`onboarding.html` — со страниц в /legacy/ вели на 404. Теперь `/login.html`, `/onboarding.html`.
+v1.24 — Фаза 2, девятая страница (агент 1): Языки на /languages/ (без -vue), классика в /legacy/english.html
+  (вариант A, одобрен владельцем; ключ `english` в pages[] не менялся). По рецепту HANDOFF + шаг 7а: пересобраны
+  все 12 пилотов, grep по бандлам на languages-vue пуст. 26 тестов web-languages, 388 web-dashboard, 23 web-goals,
+  16 web-skills, 30 web-history зелёные, vue-tsc чист. CACHE_NAME → v8.
 v1.03 — Пилот Сообщества: заявки в друзья, друзья отдельно от подписок, «В друзья»
   (lib/friends.ts, PersonChip.vue, 17 тестов, в т.ч. UI-тест App.vue с подменой Supabase).
 v1.02 — Сообщество (классика): то же в ванильном community.js. Фильтр «Только друзья» =

@@ -63,12 +63,7 @@
 <!-- Каждый агент правит ТОЛЬКО свой блок. Блоки разделены пустой строкой намеренно (меньше конфликтов). -->
 
 ### Агент 1
-Фаза 2, Languages (владелец одобрил вариант A, 2026-09-29): пилот на `/languages/` без `-vue`,
-классика `english.html`+`english.js` → `/legacy/english.html`+`/legacy/english.js`. Ключ страницы в
-`pages[]` остаётся `english`. Схема и обоснование — `docs/PHASE2_DECISIONS.md`, раздел 1. С: 2026-09-29 23:21.
-Файлы: `web-languages/vite.config.ts` + `smoke.test.ts`, `languages-vue/`→`languages/`,
-`english.html`/`english.js`→`legacy/`, `sw.js` (ASSETS+CACHE_NAME), все 12 `AppShell.vue` (href на
-languages), `config.js` (строка english в pages[]), README.
+— свободен —
 
 ### Агент 2
 Фаза 2, беру **Community** — короткий адрес `/community/` без `-vue`, классика
@@ -170,15 +165,9 @@ badge, сверься с этим блоком. У агента 3 — правл
 
 ### Найдено попутно (мелкое, свободно)
 - [ ] Новые пожелания владельца от 2026-09-29 (12 пунктов: баллы, цели/планы, вода, чекбоксы, профиль на телефоне, cookie/защита и др.) — записаны в `docs/BACKLOG.md`, раздел 7 (фаза 3, кроме явных багов)
-- [ ] Фаза 2 для Логина/Онбординга (`web-login/`, `web-onboarding/`) — НЕ по стандартному
-      План агента 1 (два этапа, заглушки-редиректы, порядок после Дашборда) — `docs/PHASE2_DECISIONS.md`, раздел 2; ждёт решения владельца
-      рецепту History/Skills/Goals/Milestones: `/login.html` и путь на онбординг — не рядовой
-      пункт меню, а цель редиректа `requireAuth()`/`requireOnboarded()`/`logout()` буквально
-      ВЕЗДЕ — грепом найдено 32 места (config.js, sw.js, все 14 web-*/src/lib). Перенос на
-      короткий адрес потребует править редирект-таргеты во всех пилотах, не только 12
-      AppShell.vue — рецепт нужно расширять, не копировать 1:1. Оценивал сам (агент 2), не
-      брал — блэст-радиус заметно шире обычной страницы, лучше отдельным заходом и с
-      уведомлением пользователя перед стартом.
+- [ ] Фаза 2 для Логина/Онбординга — план ОДОБРЕН владельцем (`docs/PHASE2_DECISIONS.md`, раздел 2): два этапа, заглушки `login.html`/`onboarding.html`, legacy-копии; делать ПОСЛЕ переезда Дашборда. Действие владельца до деплоя: добавить `/login/` в Supabase Redirect URLs
+- [ ] Фаза 2, финал: заглушки-редиректы для ВСЕХ старых адресов (`/goals.html`, `/english.html`, ...), сохраняющие search/hash — одобрено владельцем, делать в конце фазы 2
+- [ ] Фаза 2: Дашборд на `/dashboard/` (классика → `/legacy/dashboard.html`) — свободно, но не раньше, чем агент 3 закончит кастомизацию раскладки
 - [x] (v1.01, агент 6) `dashboard.js:1627`: `new Date(profile.birthdate)` — UTC-парсинг, к западу от UTC возраст в день рождения на год меньше (пилот: `calcAge` уже через `parseIso`, ок)
 - [x] (v1.00, агент 6) Challenges: `new Date(startDate).getTime() + i*86400000` (`web-challenges/src/lib/challenges.ts:24`, `challenges.js:263`) парсит `YYYY-MM-DD` как UTC → к западу от UTC даты на день раньше; в Вильнюсе не видно. Заменить на `parseIso` + `setDate`
 - [x] (v1.06, агент 4) `useReminders.ts:20` и `dashboard.js:1065`: `Date.now() + 7*86400000` заменено на календарные +7 дней (`addDaysIso`/`soonDateFor`), 2 регресс-теста
@@ -195,7 +184,7 @@ badge, сверься с этим блоком. У агента 3 — правл
 - [x] (v1.17, агент 7) Фаза 2, седьмая страница: Challenges на `/challenges/` без `-vue`, классика → `/legacy/challenges.html`
 - [x] (v1.18, агент 7) Фаза 2, восьмая страница: Workouts на `/workouts/` без `-vue`, классика → `/legacy/workouts.html`
 - [~ агент 7] (по запросу владельца) Убрать плашки «пилот», ссылка на классику одна — внизу меню (`legacy-<стр>`), заменяет `pilot_badge`-задачу агента 4
-- [~ агент 1] Фаза 2: Languages на `/languages/` без `-vue`, классика `english.html` → `/legacy/english.html` (вариант A одобрен владельцем)
+- [x] (v1.24, агент 1) Фаза 2, девятая страница: Languages на `/languages/` без `-vue`, классика → `/legacy/english.html`
 - [x] Пилот Дашборда включён в меню всех 12 Vue-пилотов (`/dashboard-vue/` вместо `dashboard.html`) — v1.10 (агент 5), по добру владельца, до завершения раскладки/визуала
 
 ## Журнал (новое — внизу)
@@ -232,3 +221,4 @@ badge, сверься с этим блоком. У агента 3 — правл
 - 2026-09-29 · v1.21 · агент 5 · по просьбе владельца снят баннер «ранняя версия пилота» в `web-dashboard/src/App.vue` (это часть (1) задачи агента 7; ключи `dash_wip_*` в `i18n.ts` НЕ удалял — агенту 7 удалить их и сделать остальное: плашки `pilot_badge` в 12 `AppShell.vue` и ссылку `legacy-<страница>` внизу меню). `dashboard-vue/` пересобран
 - 2026-09-29 · v1.22 · агент 1 · Фаза 2: Навыки переехали на /skills/, классика в /legacy/skills.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v7, pages[] в config.js, все 12 AppShell.vue, README, пересборка всех пилотов, grep по бандлам на skills-vue пуст). Предыдущая попытка оборвалась переполнением контекста и сделана заново. Тесты: skills 16, dashboard 388, goals 23, history 30, vue-tsc чист
 - 2026-09-29 · v1.23 · агент 1 · Фикс: `requireAuth`/`logout`/`requireOnboarded` в config.js использовали относительные `login.html`/`onboarding.html` — со страниц в /legacy/ вели на 404 (/legacy/login.html); теперь абсолютные. Плюс `docs/PHASE2_DECISIONS.md`: предложения по адресам Languages и по переезду Логина/Онбординга (ждут владельца)
+- 2026-09-29 · v1.24 · агент 1 · Фаза 2: Языки переехали на /languages/, классика в /legacy/english.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v8, pages[] в config.js, все 12 AppShell.vue, README, пересборка всех пилотов, grep по бандлам на languages-vue пуст). Тесты: languages 26, dashboard 388, goals 23, skills 16, history 30, vue-tsc чист. Владелец одобрил все предложения из docs/PHASE2_DECISIONS.md
