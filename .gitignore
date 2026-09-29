@@ -20,3 +20,7 @@ web-community/node_modules
 web-community/dist
 web-workouts/node_modules
 web-workouts/dist
+web-login/node_modules
+web-login/dist
+web-onboarding/node_modules
+web-onboarding/dist

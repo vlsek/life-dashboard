@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.12";
+const SITE_VERSION = "1.13";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.13", date: "2026-09-29 05:13", changes: [
+        "Вход и регистрация на Vue 3 + Vite + TS + Tailwind (/login-vue/): email/пароль, регистрация, вход через Google, переключатель RU/EN и темы прямо на странице (сайдбара тут нет)",
+        "Онбординг на том же стеке (/onboarding-vue/): анкета «как планируешь использовать» (цели/ежедневник/и то и другое) со скрытием ненужных полей, выбор стартовых метрик под цель, кнопка «пропустить», заполнение параметров тела и базовых метрик — 1:1 с оригинальным onboarding.js",
+        "22 теста (в т.ч. UI-тесты форм с подменой Supabase) сверены с login.js/onboarding.js; ванильные страницы login.html/onboarding.html пока остаются рабочими. Этим закрывается фаза 1 (миграция всех страниц на Vue) — см. COORDINATION.md",
+    ]},
     { version: "1.12", date: "2026-09-29 07:06", changes: [
         "Дашборд-пилот: визуальный паритет с обычным сайтом по нескольким пунктам. Чекбоксы и радиокнопки теперь в цвете темы, а не браузерном синем — акцентного цвета не было вообще ни у одного поля пилота. Значок воды переехал из отдельного блока в теле страницы в шапку рядом с кольцами прогресса — как на обычном сайте, кликабельная иконка без подписи. У блоков «Дневные метрики», «Цели на сегодня» и «Графики» появился фон-карточка — раньше класса для него не было вовсе, хотя разметка кое-где уже на него ссылалась. Серия (стрик) переехала из отдельного раздела внизу страницы в строку профиля рядом с аватаром, как в оригинале, и огонёк теперь по-настоящему «горит»: два разных значка (тёплый мерцающий, когда день засчитан, и тусклый пунктирный контур, когда ещё нет) вместо одной приглушённой иконки",
         "Плашка «это пилот, данные могут быть неактуальны» пока осталась — уберём вместе с кастомизацией раскладки блоков",
@@ -923,6 +928,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.13", date: "2026-09-29 05:13", changes: [
+        "Log in and sign up on Vite + Vue 3 + TS + Tailwind (/login-vue/): email/password, sign-up, Google sign-in, an RU/EN and theme switcher right on the page (no sidebar here)",
+        "Onboarding on the same stack (/onboarding-vue/): the \"how do you plan to use this\" questionnaire (goals / daily planner / both) hiding fields that don't apply, starting metrics picked for your goal, a skip button, body parameters and base metrics seeded — 1:1 with the original onboarding.js",
+        "22 tests (including UI tests for the forms with Supabase mocked) checked against login.js/onboarding.js; the classic login.html/onboarding.html pages still work in the meantime. This closes phase 1 (migrating every page to Vue) — see COORDINATION.md",
+    ]},
     { version: "1.12", date: "2026-09-29 07:06", changes: [
         "Dashboard pilot: closer visual match to the classic site. Checkboxes and radio buttons now use the theme's accent color instead of the browser's default blue — the pilot had no accent-color rule for them at all. The water badge moved from its own block in the page body into the header next to the progress rings — a clickable icon with no text label, like the classic site. The Daily metrics, Today's goals and Charts blocks now sit on a card background — the pilot's stylesheet had no card class at all, even though some markup already referenced it. The streak moved from its own section at the bottom of the page into the profile row next to the avatar, matching the original, and the flame icon now actually \"lights up\": two distinct icons (a warm flickering flame once today counts, a dim dashed outline when it doesn't) instead of one dimmed generic icon",
         "The \"this is a pilot, data may be stale\" notice is still there for now — it'll come out together with the block layout customization",
