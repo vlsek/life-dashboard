@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.20";
+const SITE_VERSION = "1.21";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.21", date: "2026-09-29 19:19", changes: [
+        "Дашборд (пилот): убран баннер «ранняя версия пилота» с описанием и ссылкой на классику — по просьбе владельца ссылка на классическую версию будет одна, в самом низу бокового меню",
+    ]},
     { version: "1.20", date: "2026-09-29 19:15", changes: [
         "Дашборд (пилот): блок «Цели на сегодня» переименован в «Планы», у пункта плана можно задать время напоминания (поле рядом с пунктом или при добавлении). Когда время наступает, а пункт не выполнен, вверху страницы появляется плашка «Пора по плану» (крестик закрывает её до конца дня); если в блоке нажать «Включить уведомления» и разрешить их в браузере, приходит ещё и системное уведомление — по одному на пункт в день, без повторов после перезагрузки. Работает, пока Дашборд открыт: пуш при закрытой странице пока не делается. Время хранится внутри пункта плана, миграция не нужна, классика поле не трогает",
     ]},
@@ -949,6 +952,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.21", date: "2026-09-29 19:19", changes: [
+        "Dashboard (pilot): removed the \"early pilot version\" banner with the link to the classic page — at the owner's request the link to the classic version will be a single one at the very bottom of the side menu",
+    ]},
     { version: "1.20", date: "2026-09-29 19:15", changes: [
         "Dashboard (pilot): the \"Today's goals\" block is now called \"Plans\", and a plan item can have a reminder time (a field next to the item, or when adding it). When the time comes and the item is not done, a \"Time for your plan\" banner appears at the top of the page (the X hides it for the rest of the day); if you press \"Enable notifications\" in the block and allow them in the browser, you also get a system notification, once per item per day and not repeated after a reload. Works while the dashboard is open; push while the page is closed is not done yet. The time is stored inside the plan item, no migration needed, and the classic site leaves the field alone",
     ]},

@@ -99,11 +99,6 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
     <h1 class="mb-3 text-xl font-semibold">{{ t('dash_h1') }}</h1>
 
-    <div class="mb-5 rounded-lg border p-3 text-sm" style="border-color: var(--border); background: var(--bg-card)">
-      <p class="dim">{{ t('dash_wip_notice') }}</p>
-      <a href="/dashboard.html" class="mt-1 inline-block" style="color: var(--accent)">{{ t('dash_wip_link') }}</a>
-    </div>
-
     <p v-if="auth.status === 'loading'" class="dim">{{ t('loading_ellipsis') }}</p>
 
     <template v-else-if="auth.status === 'ready'">

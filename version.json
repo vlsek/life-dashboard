@@ -1,6 +1,13 @@
 {
-  "version": "1.20",
+  "version": "1.21",
   "en": [
+    {
+      "version": "1.21",
+      "date": "2026-09-29 19:19",
+      "changes": [
+        "Dashboard (pilot): removed the \"early pilot version\" banner with the link to the classic page — at the owner's request the link to the classic version will be a single one at the very bottom of the side menu"
+      ]
+    },
     {
       "version": "1.20",
       "date": "2026-09-29 19:15",
@@ -886,6 +893,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.21",
+      "date": "2026-09-29 19:19",
+      "changes": [
+        "Дашборд (пилот): убран баннер «ранняя версия пилота» с описанием и ссылкой на классику — по просьбе владельца ссылка на классическую версию будет одна, в самом низу бокового меню"
+      ]
+    },
     {
       "version": "1.20",
       "date": "2026-09-29 19:15",
