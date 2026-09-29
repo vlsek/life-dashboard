@@ -2,16 +2,16 @@ import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 
-// Пилотная страница на Vue 3 + TS + Tailwind (постепенный переезд, начиная с одной
-// самостоятельной страницы — см. обсуждение в чате). Собирается в ../history-vue —
-// отдельную папку в корне репозитория, которая раздаётся Cloudflare Workers как статика,
-// рядом со старыми HTML-страницами. base совпадает с этим путём, чтобы собранные ссылки
-// на ассеты (/history-vue/assets/...) резолвились правильно после деплоя.
+// Страница на Vue 3 + TS + Tailwind. Фаза 2 (см. COORDINATION.md): пилот переехал на короткий
+// адрес /history/ (без -vue) — теперь это и есть основной раздел «История», классическая
+// версия перенесена в /legacy/history.html. Собирается в ../history — отдельную папку в корне
+// репозитория, которую Cloudflare Workers раздаёт как статику. base совпадает с этим путём,
+// чтобы собранные ссылки на ассеты (/history/assets/...) резолвились правильно после деплоя.
 export default defineConfig({
-  base: '/history-vue/',
+  base: '/history/',
   plugins: [vue(), tailwindcss()],
   build: {
-    outDir: '../history-vue',
+    outDir: '../history',
     emptyOutDir: true,
   },
 })

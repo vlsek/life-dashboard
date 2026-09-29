@@ -34,7 +34,7 @@ const pages: NavPage[] = [
   { href: '/milestones-vue/', key: 'milestones', labelKey: 'nav_milestones', icon: 'milestones' },
   { href: '/shop-vue/', key: 'shop', labelKey: 'nav_shop', icon: 'shop' },
   { href: '/community-vue/', key: 'community', labelKey: 'nav_community', icon: 'community' },
-  { href: '/history-vue/', key: 'history', labelKey: 'nav_history', icon: 'history' },
+  { href: '/history/', key: 'history', labelKey: 'nav_history', icon: 'history' },
 ]
 const active: string = 'workouts'
 function plainLabel(key: DictKey): string {

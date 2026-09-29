@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.13";
+const SITE_VERSION = "1.14";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.14", date: "2026-09-29 12:05", changes: [
+        "Фаза 2 (переезд на Vue как основной сайт), первая полностью переехавшая страница: «История» теперь живёт на коротком адресе /history/ вместо /history-vue/, а классическая версия — в /legacy/history.html. Ссылки в боковом меню и на других страницах обновлены автоматически в обе стороны",
+    ]},
     { version: "1.13", date: "2026-09-29 05:13", changes: [
         "Вход и регистрация на Vue 3 + Vite + TS + Tailwind (/login-vue/): email/пароль, регистрация, вход через Google, переключатель RU/EN и темы прямо на странице (сайдбара тут нет)",
         "Онбординг на том же стеке (/onboarding-vue/): анкета «как планируешь использовать» (цели/ежедневник/и то и другое) со скрытием ненужных полей, выбор стартовых метрик под цель, кнопка «пропустить», заполнение параметров тела и базовых метрик — 1:1 с оригинальным onboarding.js",
@@ -928,6 +931,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.14", date: "2026-09-29 12:05", changes: [
+        "Phase 2 (making the Vue site primary), first fully-moved page: History now lives at the short address /history/ instead of /history-vue/, and the classic version moved to /legacy/history.html. Sidebar links and cross-page links updated automatically both ways",
+    ]},
     { version: "1.13", date: "2026-09-29 05:13", changes: [
         "Log in and sign up on Vite + Vue 3 + TS + Tailwind (/login-vue/): email/password, sign-up, Google sign-in, an RU/EN and theme switcher right on the page (no sidebar here)",
         "Onboarding on the same stack (/onboarding-vue/): the \"how do you plan to use this\" questionnaire (goals / daily planner / both) hiding fields that don't apply, starting metrics picked for your goal, a skip button, body parameters and base metrics seeded — 1:1 with the original onboarding.js",
