@@ -63,7 +63,12 @@
 <!-- Каждый агент правит ТОЛЬКО свой блок. Блоки разделены пустой строкой намеренно (меньше конфликтов). -->
 
 ### Агент 1
-— свободен —
+Фаза 2, Languages (владелец одобрил вариант A, 2026-09-29): пилот на `/languages/` без `-vue`,
+классика `english.html`+`english.js` → `/legacy/english.html`+`/legacy/english.js`. Ключ страницы в
+`pages[]` остаётся `english`. Схема и обоснование — `docs/PHASE2_DECISIONS.md`, раздел 1. С: 2026-09-29 23:21.
+Файлы: `web-languages/vite.config.ts` + `smoke.test.ts`, `languages-vue/`→`languages/`,
+`english.html`/`english.js`→`legacy/`, `sw.js` (ASSETS+CACHE_NAME), все 12 `AppShell.vue` (href на
+languages), `config.js` (строка english в pages[]), README.
 
 ### Агент 2
 Фаза 2, беру **Community** — короткий адрес `/community/` без `-vue`, классика
@@ -190,8 +195,7 @@ badge, сверься с этим блоком. У агента 3 — правл
 - [x] (v1.17, агент 7) Фаза 2, седьмая страница: Challenges на `/challenges/` без `-vue`, классика → `/legacy/challenges.html`
 - [x] (v1.18, агент 7) Фаза 2, восьмая страница: Workouts на `/workouts/` без `-vue`, классика → `/legacy/workouts.html`
 - [~ агент 7] (по запросу владельца) Убрать плашки «пилот», ссылка на классику одна — внизу меню (`legacy-<стр>`), заменяет `pilot_badge`-задачу агента 4
-- [ ] Фаза 2: Languages — НУЖНО РЕШЕНИЕ ВЛАДЕЛЬЦА по адресам: классика `english.html/js`, пилот `web-languages/`→`languages-vue/`. Варианты: нового `/languages/` + legacy `/legacy/english.html` (по схеме «legacy = старое имя»), либо иначе
-      Предложение агента 1 (вариант A: `/languages/` + `/legacy/english.html`) — `docs/PHASE2_DECISIONS.md`, раздел 1; ждёт «да» владельца
+- [~ агент 1] Фаза 2: Languages на `/languages/` без `-vue`, классика `english.html` → `/legacy/english.html` (вариант A одобрен владельцем)
 - [x] Пилот Дашборда включён в меню всех 12 Vue-пилотов (`/dashboard-vue/` вместо `dashboard.html`) — v1.10 (агент 5), по добру владельца, до завершения раскладки/визуала
 
 ## Журнал (новое — внизу)
