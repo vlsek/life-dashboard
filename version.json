@@ -1,6 +1,13 @@
 {
-  "version": "1.18",
+  "version": "1.19",
   "en": [
+    {
+      "version": "1.19",
+      "date": "2026-09-29 19:08",
+      "changes": [
+        "Dashboard (pilot): evening reminder. From 21:00 local time, if any metrics scheduled for today are still unfinished, a banner appears at the top of the page: \"Unfinished metrics left! Finish them so you don't lose your streak.\" Click it to expand and see exactly what is left (for number metrics and sets: done / goal). It shows up on its own at 21:00 without a reload, disappears once everything is done, and the X hides it for the rest of the day"
+      ]
+    },
     {
       "version": "1.18",
       "date": "2026-09-29 18:48",
@@ -872,6 +879,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.19",
+      "date": "2026-09-29 19:08",
+      "changes": [
+        "Дашборд (пилот): вечернее напоминание. С 21:00 по местному времени, если на сегодня остались невыполненные метрики по расписанию, вверху страницы появляется плашка «Остались невыполненные метрики! Сделайте их, чтобы не потерять стрейк». По клику она раскрывается и показывает, что именно осталось (у числовых метрик и подходов — сделано / цель). Плашка появляется сама в 21:00 без перезагрузки, исчезает, когда всё сделано, а крестик прячет её до конца дня"
+      ]
+    },
     {
       "version": "1.18",
       "date": "2026-09-29 18:48",

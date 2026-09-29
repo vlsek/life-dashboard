@@ -11,9 +11,11 @@ import { dayRingTarget, weekRingTarget } from './lib/ringPlacement'
 import type { RingData } from './lib/ringPlacement'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import ReminderBanners from './components/ReminderBanners.vue'
+import EveningReminderBanner from './components/EveningReminderBanner.vue'
 import ProfileSection from './components/ProfileSection.vue'
 import DailyMetricsSection from './components/DailyMetricsSection.vue'
 import { useReminders } from './lib/useReminders'
+import { useEveningReminder } from './lib/useEveningReminder'
 import { useDashboard } from './lib/useDashboard'
 import { progressPercent } from './lib/progress'
 import { t } from './lib/i18n'
@@ -27,11 +29,13 @@ import type { DayProgressSettings } from './lib/progressSettings'
 // с общей выбранной датой (см. DailyMetricsSection.vue). Осталось: кастомизация раскладки блоков.
 
 const { auth, streaks, dayProgress, weekProgress, progressSettings, loadError, init, saveProgressSettings } = useDashboard()
+const { items: eveningItems, visible: eveningVisible, load: loadEveningReminder, dismiss: dismissEveningReminder } = useEveningReminder()
 const { milestonesReminder, weekendReminderVisible, loadMilestonesReminder, dismissMilestonesReminder, checkWeekendReminder, dismissWeekendReminder } = useReminders()
 onMounted(async () => {
   await init()
   if (auth.value.status === 'ready') {
     await loadMilestonesReminder(auth.value.userId)
+    void loadEveningReminder(auth.value.userId)
     if (weekProgress.value) checkWeekendReminder(progressPercent(weekProgress.value))
   }
 })
@@ -106,6 +110,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
         @dismiss-milestones="dismissMilestonesReminder"
         @dismiss-weekend="dismissWeekendReminder"
       />
+      <EveningReminderBanner v-if="eveningVisible" :items="eveningItems" @dismiss="dismissEveningReminder" />
 
       <ProfileSection
         :user-id="auth.userId"

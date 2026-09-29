@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.18";
+const SITE_VERSION = "1.19";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.19", date: "2026-09-29 19:08", changes: [
+        "Дашборд (пилот): вечернее напоминание. С 21:00 по местному времени, если на сегодня остались невыполненные метрики по расписанию, вверху страницы появляется плашка «Остались невыполненные метрики! Сделайте их, чтобы не потерять стрейк». По клику она раскрывается и показывает, что именно осталось (у числовых метрик и подходов — сделано / цель). Плашка появляется сама в 21:00 без перезагрузки, исчезает, когда всё сделано, а крестик прячет её до конца дня",
+    ]},
     { version: "1.18", date: "2026-09-29 18:48", changes: [
         "Фаза 2, восьмая страница: «Тренировки» теперь на коротком адресе /workouts/ вместо /workouts-vue/, а классическая версия — в /legacy/workouts.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны",
     ]},
@@ -943,6 +946,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.19", date: "2026-09-29 19:08", changes: [
+        "Dashboard (pilot): evening reminder. From 21:00 local time, if any metrics scheduled for today are still unfinished, a banner appears at the top of the page: \"Unfinished metrics left! Finish them so you don't lose your streak.\" Click it to expand and see exactly what is left (for number metrics and sets: done / goal). It shows up on its own at 21:00 without a reload, disappears once everything is done, and the X hides it for the rest of the day",
+    ]},
     { version: "1.18", date: "2026-09-29 18:48", changes: [
         "Phase 2, eighth page: Workouts now lives at the short address /workouts/ instead of /workouts-vue/, and the classic version moved to /legacy/workouts.html. Sidebar links on every Vue page were updated and rebuilt",
     ]},
