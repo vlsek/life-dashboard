@@ -13,17 +13,20 @@ export function bestSetRecord(
   unitFallback: string,
   sideFilter: 'L' | 'R' | null = null,
 ): BestRecord | null {
-  let best: { weight: number | null; reps: number; date: string } | null = null
+  let best: { weight: number | null; extra: number; reps: number; date: string } | null = null
   for (const e of entries) {
     for (const s of e.sets || []) {
       if (s.reps == null) continue
       if (sideFilter && s.side !== sideFilter) continue
       const w = exercise.tracks_weight ? (s.weight ?? 0) : null
+      // «Утяжеление» — необязательный доп. вес у упражнений с собственным весом: при равных
+      // повторениях побеждает подход с большим доп. весом.
+      const extra = !exercise.tracks_weight ? (s.weight ?? 0) : 0
       const better =
         !best ||
         (exercise.tracks_weight && ((w ?? 0) > (best.weight ?? 0) || ((w ?? 0) === (best.weight ?? 0) && s.reps > best.reps))) ||
-        (!exercise.tracks_weight && s.reps > best.reps)
-      if (better) best = { weight: w, reps: s.reps, date: e.date }
+        (!exercise.tracks_weight && (s.reps > best.reps || (s.reps === best.reps && extra > best.extra)))
+      if (better) best = { weight: w, extra, reps: s.reps, date: e.date }
     }
   }
   if (!best) return null
@@ -31,7 +34,7 @@ export function bestSetRecord(
   const text =
     exercise.tracks_weight && best.weight != null
       ? `${best.reps}×${best.weight}${exercise.unit || unitFallback}`
-      : `${best.reps}${unitSuffix}`
+      : `${best.reps}${unitSuffix}${best.extra > 0 ? ` (+${best.extra}${unitFallback})` : ''}`
   return { text, date: best.date }
 }
 
@@ -84,7 +87,9 @@ export function formatSets(
     return sets.map((s) => (s.weight != null ? `${s.reps}×${s.weight}${exercise.unit || unitFallback}` : `${s.reps}`) + dur(s) + at(s)).join(', ')
   }
   const unitSuffix = exercise.unit ? ` ${exercise.unit}` : ''
-  return sets.map((s) => `${s.reps}${unitSuffix}` + dur(s) + at(s)).join(', ')
+  // Доп. вес («Утяжеление») измеряется в весовых единицах (кг), а не в единицах самого упражнения.
+  const extra = (s: WorkoutSet) => (s.weight != null && s.weight > 0 ? ` (+${s.weight}${unitFallback})` : '')
+  return sets.map((s) => `${s.reps}${unitSuffix}` + extra(s) + dur(s) + at(s)).join(', ')
 }
 
 // Порядок фиксированных категорий; свободные (старые произвольные) идут после по

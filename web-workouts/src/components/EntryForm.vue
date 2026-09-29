@@ -18,7 +18,13 @@ function blankSet(): WorkoutSet {
 
 const date = ref(props.existing?.date ?? todayStr())
 const notes = ref(props.existing?.notes ?? '')
-const sets = ref<WorkoutSet[]>(props.existing?.sets?.length ? props.existing.sets.map((s) => ({ ...s })) : [blankSet()])
+const sets = ref<WorkoutSet[]>(
+  props.existing?.sets?.length ? props.existing.sets.map((s) => ({ ...s })) : [{ ...blankSet(), time: nowHHMM() }],
+)
+
+// «Утяжеление»: у упражнений с собственным весом доп. вес необязателен и включается галочкой.
+// Если в существующей записи уже есть доп. вес — галочка стоит сразу.
+const weighted = ref(!props.exercise.tracks_weight && sets.value.some((s) => s.weight != null && (s.weight as unknown) !== ''))
 
 const dateInput = ref<HTMLInputElement | null>(null)
 onMounted(() => dateInput.value?.focus())
@@ -37,6 +43,8 @@ function toggleSide(s: WorkoutSet, side: 'L' | 'R') {
 }
 
 function onSubmit() {
+  // Без галочки «Утяжеление» доп. вес не сохраняем (иначе остался бы скрытый вес от прошлого включения).
+  if (!props.exercise.tracks_weight && !weighted.value) sets.value.forEach((s) => (s.weight = null))
   emit('save', { date: date.value || todayStr(), sets: cleanSets(sets.value), notes: notes.value.trim() || null })
 }
 
@@ -61,6 +69,11 @@ const unitLabel = () => props.exercise.unit || t('workouts_default_unit')
           <div class="mb-1.5 text-sm" style="color: var(--text-dim)">
             {{ exercise.tracks_weight ? t('workouts_sets_label') : valueLabel() }}
           </div>
+
+          <label v-if="!exercise.tracks_weight" class="mb-2 flex items-center gap-2 text-sm">
+            <input v-model="weighted" type="checkbox" style="accent-color: var(--accent)" />
+            {{ t('workouts_weighted_label') }}
+          </label>
 
           <div v-for="(s, i) in sets" :key="i" class="mb-1.5 flex flex-wrap items-center gap-1.5">
             <input
@@ -108,6 +121,19 @@ const unitLabel = () => props.exercise.unit || t('workouts_default_unit')
                 class="modal-input"
                 style="width: 110px"
                 :placeholder="t('workouts_weight_placeholder') + ' (' + unitLabel() + ')'"
+              />
+            </template>
+
+            <template v-if="!exercise.tracks_weight && weighted">
+              <span class="text-sm" style="color: var(--text-dim)">+</span>
+              <input
+                v-model.number="s.weight"
+                type="number"
+                min="0"
+                step="0.5"
+                class="modal-input"
+                style="width: 110px"
+                :placeholder="t('workouts_extra_weight_placeholder') + ' (' + t('workouts_default_unit') + ')'"
               />
             </template>
 

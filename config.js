@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.33";
+const SITE_VERSION = "1.34";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.34", date: "2026-09-30 00:38", changes: [
+        "Тренировки (новая версия): у упражнений с собственным весом (отжимания, подтягивания, приседания) в форме записи появилась галочка «Утяжеление» — можно указать дополнительный вес для каждого подхода; он показывается в записях как «15 (+5кг)» и учитывается в рекордах при равных повторениях",
+        "Тренировки (новая версия): время подхода теперь проставляется сразу и у первого подхода новой записи, а не только у добавленных следом",
+    ]},
     { version: "1.33", date: "2026-09-30 01:10", changes: [
         "Онбординг: сверху появился переключатель языка (RU/EN) и выбор темы — как на странице входа, чтобы после регистрации или первого входа через Google можно было сменить язык до заполнения анкеты",
         "Значок-огонёк во вкладке браузера у всех Vue-страниц теперь такой же, как на классическом сайте (без синего акцента в сердцевине)",
@@ -989,6 +993,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.34", date: "2026-09-30 00:38", changes: [
+        "Workouts (new version): bodyweight exercises (push-ups, pull-ups, squats) now have a \"Added weight\" checkbox in the entry form — set extra weight per set; it shows in entries as \"15 (+5kg)\" and breaks ties between equal reps in records",
+        "Workouts (new version): a set's time is now filled in right away for the first set of a new entry too, not only for sets added after it",
+    ]},
     { version: "1.33", date: "2026-09-30 01:10", changes: [
         "Onboarding: a language switcher (RU/EN) and a theme picker now sit at the top, like on the sign-in page, so after signing up or a first Google sign-in you can change the language before filling in the questionnaire",
         "The flame icon in the browser tab on every Vue page now matches the classic site (no blue accent in the core)",

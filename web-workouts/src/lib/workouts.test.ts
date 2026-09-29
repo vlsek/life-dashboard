@@ -99,6 +99,30 @@ describe('formatSets', () => {
   })
 })
 
+describe('«Утяжеление» (доп. вес у упражнений с собственным весом)', () => {
+  const bw = () => ex({ tracks_weight: false, unit: null })
+  it('formatSets shows extra weight in the weight unit, not the exercise unit', () => {
+    const sets = [
+      { reps: 15, weight: null, time: null, duration: null, side: null },
+      { reps: 10, weight: 5, time: '10:00', duration: null, side: null },
+    ]
+    expect(formatSets(sets, bw(), 'h', 'min', 'kg')).toBe('15, 10 (+5kg) (10:00)')
+  })
+  it('formatSets ignores zero extra weight', () => {
+    const sets = [{ reps: 12, weight: 0, time: null, duration: null, side: null }]
+    expect(formatSets(sets, bw(), 'h', 'min', 'kg')).toBe('12')
+  })
+  it('bestSetRecord still ranks by reps first, extra weight only breaks ties', () => {
+    const entries = [
+      { id: '1', user_id: 'u', exercise_id: 'ex1', date: '2026-01-01', sets: [{ reps: 20, weight: null, time: null, duration: null, side: null }], notes: null },
+      { id: '2', user_id: 'u', exercise_id: 'ex1', date: '2026-01-02', sets: [{ reps: 12, weight: 10, time: null, duration: null, side: null }], notes: null },
+      { id: '3', user_id: 'u', exercise_id: 'ex1', date: '2026-01-03', sets: [{ reps: 20, weight: 5, time: null, duration: null, side: null }], notes: null },
+    ]
+    const best = bestSetRecord(entries, bw(), 'kg')
+    expect(best).toEqual({ text: '20 (+5kg)', date: '2026-01-03' })
+  })
+})
+
 describe('category ordering', () => {
   it('ranks known categories in the fixed order, unknowns after, blank last', () => {
     expect(categoryRank('upper')).toBeLessThan(categoryRank('lower'))
