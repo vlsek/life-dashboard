@@ -1,6 +1,14 @@
 {
-  "version": "1.32",
+  "version": "1.33",
   "en": [
+    {
+      "version": "1.33",
+      "date": "2026-09-30 01:10",
+      "changes": [
+        "Onboarding: a language switcher (RU/EN) and a theme picker now sit at the top, like on the sign-in page, so after signing up or a first Google sign-in you can change the language before filling in the questionnaire",
+        "The flame icon in the browser tab on every Vue page now matches the classic site (no blue accent in the core)"
+      ]
+    },
     {
       "version": "1.32",
       "date": "2026-09-30 00:40",
@@ -970,6 +978,14 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.33",
+      "date": "2026-09-30 01:10",
+      "changes": [
+        "Онбординг: сверху появился переключатель языка (RU/EN) и выбор темы — как на странице входа, чтобы после регистрации или первого входа через Google можно было сменить язык до заполнения анкеты",
+        "Значок-огонёк во вкладке браузера у всех Vue-страниц теперь такой же, как на классическом сайте (без синего акцента в сердцевине)"
+      ]
+    },
     {
       "version": "1.32",
       "date": "2026-09-30 00:40",

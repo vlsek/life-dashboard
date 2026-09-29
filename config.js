@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.32";
+const SITE_VERSION = "1.33";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.33", date: "2026-09-30 01:10", changes: [
+        "Онбординг: сверху появился переключатель языка (RU/EN) и выбор темы — как на странице входа, чтобы после регистрации или первого входа через Google можно было сменить язык до заполнения анкеты",
+        "Значок-огонёк во вкладке браузера у всех Vue-страниц теперь такой же, как на классическом сайте (без синего акцента в сердцевине)",
+    ]},
     { version: "1.32", date: "2026-09-30 00:40", changes: [
         "Фаза 2: «Аккаунт» теперь на коротком адресе /account/ вместо /account-vue/, а классическая версия — в /legacy/account.html; старый адрес /account.html перенаправляет на новый. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны, возврат после привязки Google ведёт на актуальную страницу",
     ]},
@@ -985,6 +989,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.33", date: "2026-09-30 01:10", changes: [
+        "Onboarding: a language switcher (RU/EN) and a theme picker now sit at the top, like on the sign-in page, so after signing up or a first Google sign-in you can change the language before filling in the questionnaire",
+        "The flame icon in the browser tab on every Vue page now matches the classic site (no blue accent in the core)",
+    ]},
     { version: "1.32", date: "2026-09-30 00:40", changes: [
         "Phase 2: \"Account\" is now at the short address /account/ instead of /account-vue/, and the classic version lives at /legacy/account.html; the old /account.html address redirects to the new one. Side-menu links on every Vue page were updated and rebuilt, and the return trip after linking Google lands on the current page",
     ]},

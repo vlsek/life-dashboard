@@ -355,3 +355,10 @@ async function completeOnboarding(answers) {
 
     renderForm();
 })();
+
+// Переключатель языка и темы — как на странице входа: после регистрации или первого входа через Google
+// человек попадает сюда с языком по умолчанию и должен иметь возможность сменить его до заполнения анкеты.
+// setLang() перезагружает страницу, форма и списки целей/метрик собираются заново на новом языке.
+const langSwitchSlot = document.getElementById("lang-switch-slot");
+renderLangSwitcher(langSwitchSlot);
+renderThemeSwitcher(langSwitchSlot);
