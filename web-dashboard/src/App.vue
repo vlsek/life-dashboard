@@ -5,7 +5,6 @@ import Icon from './components/Icon.vue'
 import MetricIcon from './components/MetricIcon.vue'
 import WaterSection from './components/WaterSection.vue'
 import ChartsSection from './components/ChartsSection.vue'
-import SetsSection from './components/SetsSection.vue'
 import MetricsManagerSection from './components/MetricsManagerSection.vue'
 import HeaderProgressBadge from './components/HeaderProgressBadge.vue'
 import { dayRingTarget, weekRingTarget } from './lib/ringPlacement'
@@ -13,7 +12,7 @@ import type { RingData } from './lib/ringPlacement'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import ReminderBanners from './components/ReminderBanners.vue'
 import ProfileSection from './components/ProfileSection.vue'
-import PlannedSection from './components/PlannedSection.vue'
+import DailyMetricsSection from './components/DailyMetricsSection.vue'
 import { useReminders } from './lib/useReminders'
 import { useDashboard } from './lib/useDashboard'
 import { progressPercent } from './lib/progress'
@@ -23,10 +22,9 @@ import type { DayProgressSettings } from './lib/progressSettings'
 
 // Дашборд переносится по частям (см. ROADMAP.md, тикет B-dashboard) — самая большая и
 // сложная страница сайта, над ней параллельно работают несколько агентов, каждый блок — свой
-// компонент + свой lib/composable (чтобы не сталкиваться при мерже). Уже перенесены: стрики и
-// дневной/недельный прогресс (этот файл + lib/streaks.ts, progress.ts), вода, управление
-// метриками, подходы, графики и баннеры-напоминания (Вехи/итоги недели, lib/reminders.ts).
-// Остальное (дневные метрики boolean/number, план на день, профиль, раскладка) — впереди.
+// компонент + свой lib/composable (чтобы не сталкиваться при мерже, см. COORDINATION.md).
+// Дневные метрики (boolean/number/multiselect) встраивают в себя «Подходы» и «Цели на сегодня»
+// с общей выбранной датой (см. DailyMetricsSection.vue). Осталось: кастомизация раскладки блоков.
 
 const { auth, streaks, dayProgress, weekProgress, progressSettings, loadError, init, saveProgressSettings } = useDashboard()
 const { milestonesReminder, weekendReminderVisible, loadMilestonesReminder, dismissMilestonesReminder, checkWeekendReminder, dismissWeekendReminder } = useReminders()
@@ -118,9 +116,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
         <MetricsManagerSection :user-id="auth.userId" @changed="init" />
       </div>
 
-      <SetsSection :user-id="auth.userId" />
-
-      <PlannedSection :user-id="auth.userId" />
+      <DailyMetricsSection :user-id="auth.userId" />
 
       <h2 class="mb-2 text-lg font-semibold">{{ t('dash_charts_h2') }}</h2>
       <div class="mb-5">
