@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.07";
+const SITE_VERSION = "1.08";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.08", date: "2026-09-29 00:20", changes: [
+        "Пилот Дашборда: карточка дня «Дневные метрики» — boolean/number (два режима: заменять и прибавлять, с «Итого сегодня» и ручной правкой итога)/multiselect, автосохранение каждого поля, «Что полезного сделал за день», кнопка «Сохранить день», «Баллы за день»",
+        "«Подходы» и «Цели на сегодня» встроены в ту же карточку с общей выбранной датой (раньше были отдельными блоками без листания дней). Пересчёт стриков/колец/графиков — через уже существующую событийную шину (notifyDataChanged), без прямых вызовов между блоками",
+        "36 новых тестов (чистая логика + composable с мок-сетью), билд и весь набор пилота (319 тестов) проверены после мержа с фазой 2 (Skills), Логином и офлайн-кэшем Календаря",
+    ]},
     { version: "1.07", date: "2026-09-28 20:35", changes: [
         "Расширен офлайн-кэш чтения (C3) на Календарь — раньше был только у Истории и Вех. Заметки месяца кэшируются под своим ключом при каждом переключении месяца, так что уже открытые месяцы остаются доступны офлайн (не только текущий); без сети и без сохранённой копии — как раньше, ошибка загрузки. Запись (план на день) по-прежнему требует сеть, как и везде в этом варианте офлайн-кэша",
     ]},
@@ -903,6 +908,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.08", date: "2026-09-29 00:20", changes: [
+        "Dashboard pilot: the \"Daily metrics\" day card — boolean/number (two modes: replace and add-to-total, with a \"Total today\" readout and a manual fix) /multiselect fields, autosave per field, \"What you got done today\", a \"Save day\" button, \"Points for the day\"",
+        "\"Sets\" and \"Today's goals\" are now embedded in the same card sharing the selected date (previously separate blocks with no day navigation). Streaks/rings/charts refresh through the existing event bus (notifyDataChanged), no direct calls between blocks",
+        "36 new tests (pure logic + a composable with a mocked network), build and the full pilot suite (319 tests) re-checked after merging with phase 2 (Skills), Login and the Calendar offline cache",
+    ]},
     { version: "1.07", date: "2026-09-28 20:35", changes: [
         "Extended the read-only offline cache (C3) to Calendar — previously only History and Milestones had it. Each month's notes are cached under their own key as you browse, so previously-viewed months stay available offline (not just the current one); with no network and no saved copy, it behaves as before (a load error). Saving (the day's plan) still requires a connection, same as everywhere else in this offline-cache approach",
     ]},
