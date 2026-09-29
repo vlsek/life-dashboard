@@ -73,8 +73,12 @@ v1.07) — беру сам, двойной работы не будет. Рец�
 (нав. классики, если есть общий список), обратные ссылки legacy↔новая версия.
 
 ### Агент 2
-— свободен — (закрыл: Логин web-login/→login-vue/ + Онбординг web-onboarding/→onboarding-vue/,
-v1.13, 22 теста. Этим закрыта фаза 1 — все страницы существуют на Vue. См. журнал)
+Фаза 2, беру **Community** — короткий адрес `/community/` без `-vue`, классика
+`community.html`+`community.js` → `/legacy/community.html`+`/legacy/community.js`.
+По рецепту из `docs/HANDOFF.md` (агент 6, на примере History). С: 2026-09-29 10:11.
+Файлы: `web-community/vite.config.ts`, `community-vue/`→`community/`, `community.html`/
+`community.js`→`legacy/`, `sw.js` (ASSETS+CACHE_NAME), все 12 `AppShell.vue` (href на
+community), `config.js` (строка community в pages[]).
 
 ### Агент 3
 Дашборд: «Кастомизация раскладки блоков» (показать/скрыть/переставить), с 2026-09-29 00:35.
@@ -148,6 +152,14 @@ milestones), `config.js` (строка milestones в pages[] — общий navH
       по образцу оригинальных login.html/onboarding.html
 
 ### Найдено попутно (мелкое, свободно)
+- [ ] Фаза 2 для Логина/Онбординга (`web-login/`, `web-onboarding/`) — НЕ по стандартному
+      рецепту History/Skills/Goals/Milestones: `/login.html` и путь на онбординг — не рядовой
+      пункт меню, а цель редиректа `requireAuth()`/`requireOnboarded()`/`logout()` буквально
+      ВЕЗДЕ — грепом найдено 32 места (config.js, sw.js, все 14 web-*/src/lib). Перенос на
+      короткий адрес потребует править редирект-таргеты во всех пилотах, не только 12
+      AppShell.vue — рецепт нужно расширять, не копировать 1:1. Оценивал сам (агент 2), не
+      брал — блэст-радиус заметно шире обычной страницы, лучше отдельным заходом и с
+      уведомлением пользователя перед стартом.
 - [x] (v1.01, агент 6) `dashboard.js:1627`: `new Date(profile.birthdate)` — UTC-парсинг, к западу от UTC возраст в день рождения на год меньше (пилот: `calcAge` уже через `parseIso`, ок)
 - [x] (v1.00, агент 6) Challenges: `new Date(startDate).getTime() + i*86400000` (`web-challenges/src/lib/challenges.ts:24`, `challenges.js:263`) парсит `YYYY-MM-DD` как UTC → к западу от UTC даты на день раньше; в Вильнюсе не видно. Заменить на `parseIso` + `setDate`
 - [x] (v1.06, агент 4) `useReminders.ts:20` и `dashboard.js:1065`: `Date.now() + 7*86400000` заменено на календарные +7 дней (`addDaysIso`/`soonDateFor`), 2 регресс-теста
