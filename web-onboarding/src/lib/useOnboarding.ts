@@ -22,7 +22,7 @@ export function useOnboarding() {
     const { data: profile } = await sb.from('profiles').select('onboarded').eq('user_id', session.user.id).maybeSingle()
     if (profile?.onboarded) {
       auth.value = { status: 'redirecting' }
-      window.location.href = '/dashboard.html'
+      window.location.href = '/dashboard/'
       return
     }
     auth.value = { status: 'ready', userId: session.user.id }

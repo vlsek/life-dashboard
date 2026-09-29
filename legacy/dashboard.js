@@ -1616,7 +1616,7 @@ async function loadProfileInner() {
     balanceEl.style.fontWeight = "bold";
     balanceEl.style.cursor = "pointer";
     balanceEl.title = t("dash_balance_click_hint");
-    balanceEl.onclick = () => { window.location.href = "legacy/shop.html"; };
+    balanceEl.onclick = () => { window.location.href = "/legacy/shop.html"; };
     balanceEl.innerHTML = `${coinIcon()} ${balance}`;
     row.appendChild(balanceEl);
 
@@ -3185,7 +3185,7 @@ async function openCarryOverModal(todayDateStr, todayPlanned, persistToday) {
     if (!user) return;
 
     const { data: profile } = await sb.from("profiles").select("onboarded, dashboard_layout").eq("user_id", user.id).maybeSingle();
-    if (!profile?.onboarded) { window.location.href = "onboarding.html"; return; }
+    if (!profile?.onboarded) { window.location.href = "/onboarding.html"; return; }
 
     renderNav("dashboard", user.email);
     // Сразу после онбординга показываем приветственный тур (один раз)

@@ -24,7 +24,7 @@ interface NavPage {
   icon: string
 }
 const pages: NavPage[] = [
-  { href: '/dashboard-vue/', key: 'dashboard', labelKey: 'nav_dashboard', icon: 'home' },
+  { href: '/dashboard/', key: 'dashboard', labelKey: 'nav_dashboard', icon: 'home' },
   { href: '/goals/', key: 'goals', labelKey: 'nav_goals', icon: 'goals' },
   { href: '/skills/', key: 'skills', labelKey: 'nav_skills', icon: 'skills' },
   { href: '/workouts/', key: 'workouts', labelKey: 'nav_workouts', icon: 'workouts' },
@@ -150,7 +150,7 @@ onUnmounted(() => {
     >
       ☰
     </button>
-    <a href="/dashboard-vue/" class="flex h-10 w-10 items-center justify-center rounded-lg" :title="plainLabel('nav_dashboard')">
+    <a href="/dashboard/" class="flex h-10 w-10 items-center justify-center rounded-lg" :title="plainLabel('nav_dashboard')">
       <img src="/favicon.svg" alt="" class="h-7 w-7" />
     </a>
     <button

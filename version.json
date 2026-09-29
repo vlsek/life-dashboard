@@ -1,6 +1,13 @@
 {
-  "version": "1.28",
+  "version": "1.29",
   "en": [
+    {
+      "version": "1.29",
+      "date": "2026-09-30 00:12",
+      "changes": [
+        "Phase 2, Dashboard: the pilot is now at the short address /dashboard/ instead of /dashboard-vue/, and the classic version lives at /legacy/dashboard.html. Side-menu links on every Vue page were updated and rebuilt; after sign-in and after onboarding (classic and Vue) /dashboard/ opens"
+      ]
+    },
     {
       "version": "1.28",
       "date": "2026-09-30 00:04",
@@ -942,6 +949,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.29",
+      "date": "2026-09-30 00:12",
+      "changes": [
+        "Фаза 2, Дашборд: пилот теперь на коротком адресе /dashboard/ вместо /dashboard-vue/, а классическая версия — в /legacy/dashboard.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны; после входа и после онбординга (классика и Vue) открывается /dashboard/"
+      ]
+    },
     {
       "version": "1.28",
       "date": "2026-09-30 00:04",

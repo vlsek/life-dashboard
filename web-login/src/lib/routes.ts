@@ -4,7 +4,7 @@
 export const ROUTES = {
   login: '/login-vue/',
   onboarding: '/onboarding-vue/',
-  dashboard: '/dashboard.html',
+  dashboard: '/dashboard/',
   portfolio: 'https://portfolio.orneryhero.workers.dev/',
 } as const
 

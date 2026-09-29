@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.28";
+const SITE_VERSION = "1.29";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.29", date: "2026-09-30 00:12", changes: [
+        "Фаза 2, Дашборд: пилот теперь на коротком адресе /dashboard/ вместо /dashboard-vue/, а классическая версия — в /legacy/dashboard.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны; после входа и после онбординга (классика и Vue) открывается /dashboard/",
+    ]},
     { version: "1.28", date: "2026-09-30 00:04", changes: [
         "Пилот Дашборда: кастомизация раскладки блоков. Кнопка ⚙️ рядом с заголовком открывает окно, где блоки «Профиль», «Графики» и «Дневные метрики и планы» можно переставлять (↑/↓) и скрывать; скрытые блоки не подгружают данные. Раскладка хранится в profiles.dashboard_layout — общая с классическим Дашбордом (миграция 015, новой не нужно). Если скрыт «Профиль», кольца дня/недели показываются бейджем в шапке",
     ]},
@@ -973,6 +976,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.29", date: "2026-09-30 00:12", changes: [
+        "Phase 2, Dashboard: the pilot is now at the short address /dashboard/ instead of /dashboard-vue/, and the classic version lives at /legacy/dashboard.html. Side-menu links on every Vue page were updated and rebuilt; after sign-in and after onboarding (classic and Vue) /dashboard/ opens",
+    ]},
     { version: "1.28", date: "2026-09-30 00:04", changes: [
         "Dashboard pilot: block layout customization. The ⚙️ button next to the title opens a dialog where the Profile, Charts and Daily metrics & plans blocks can be reordered (↑/↓) and hidden; hidden blocks do not load their data. The layout is stored in profiles.dashboard_layout — shared with the classic Dashboard (migration 015, nothing new to apply). If Profile is hidden, the day/week rings show as a header badge",
     ]},
@@ -2031,7 +2037,7 @@ function renderNav(active, userEmail) {
     const navHref = (href) => "/" + href.replace(/^\//, "");
 
     const pages = [
-        { href: "dashboard.html", key: "dashboard", i18n: "nav_dashboard", icon: "home", home: true, vue: "dashboard-vue/" },
+        { href: "legacy/dashboard.html", key: "dashboard", i18n: "nav_dashboard", icon: "home", home: true, vue: "dashboard/" },
         { href: "legacy/goals.html", key: "goals", i18n: "nav_goals", icon: "goals", vue: "goals/" },
         { href: "legacy/skills.html", key: "skills", i18n: "nav_skills", icon: "skills", vue: "skills/" },
         { href: "legacy/workouts.html", key: "workouts", i18n: "nav_workouts", icon: "workouts", vue: "workouts/" },

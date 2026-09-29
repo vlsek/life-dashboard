@@ -276,7 +276,7 @@ function renderForm() {
             console.error(seedError);
         }
         try { localStorage.setItem("tour_pending", "1"); } catch { /* не критично */ }
-        window.location.href = "dashboard.html";
+        window.location.href = "/dashboard/";
     };
     card.appendChild(skipBtn);
 }
@@ -343,7 +343,7 @@ async function completeOnboarding(answers) {
     }
 
     try { localStorage.setItem("tour_pending", "1"); } catch { /* не критично */ }
-    window.location.href = "dashboard.html";
+    window.location.href = "/dashboard/";
 }
 
 (async () => {
@@ -351,7 +351,7 @@ async function completeOnboarding(answers) {
     if (!user) return;
 
     const { data: profile } = await sb.from("profiles").select("onboarded").eq("user_id", user.id).maybeSingle();
-    if (profile?.onboarded) { window.location.href = "dashboard.html"; return; }
+    if (profile?.onboarded) { window.location.href = "/dashboard/"; return; }
 
     renderForm();
 })();

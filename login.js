@@ -4,7 +4,7 @@ async function redirectAfterAuth() {
     const session = await getSession();
     if (!session) { window.location.href = "login.html"; return; }
     const { data: profile } = await sb.from("profiles").select("onboarded").eq("user_id", session.user.id).maybeSingle();
-    window.location.href = profile?.onboarded ? "dashboard.html" : "onboarding.html";
+    window.location.href = profile?.onboarded ? "/dashboard/" : "onboarding.html";
 }
 
 function describeError(e) {

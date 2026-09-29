@@ -78,12 +78,7 @@
 — свободен —
 
 ### Агент 6
-Фаза 2, ДАШБОРД: `/dashboard/` без `-vue`, классика `dashboard.html`+`dashboard.js` → `/legacy/dashboard.html`+`/legacy/dashboard.js`
-(по решению владельца, 2026-09-30). Порядок дальше (одобрен): Дашборд → Логин/Онбординг → заглушки старых адресов; сворачиваемые
-секции Дашборда-пилота — отдельным заходом. Так как Логин/Онбординг (классика и Vue) ведут на `/dashboard.html`, в этот же заход
-меняю их редиректы на `/dashboard/` (иначе вход ломается). С: 2026-09-30 00:20.
-Файлы: `web-dashboard/vite.config.ts`, `dashboard-vue/`→`dashboard/`, `dashboard.html`/`dashboard.js`→`legacy/`, `sw.js`,
-все 12 `AppShell.vue`, `config.js` (строка dashboard), `login.js`, `onboarding.js`, `web-login/`, `web-onboarding/`.
+— свободен —
 
 ### Агент 7
 ПО ПРЯМОМУ ЗАПРОСУ ВЛАДЕЛЬЦА (2026-09-29 18:54), вне очереди страниц фазы 2: убрать «пилотные» надписи и
@@ -146,7 +141,7 @@ badge, сверься с этим блоком. У агента 3 — правл
 - [ ] Ещё пожелания владельца от 2026-09-29 (вечер, апд5–апд6) — `docs/BACKLOG.md`, раздел 8. Два бага можно брать сразу (фаза 3 их не ждёт): 🐞 отступ в плашке вечернего напоминания, 🐞 нерабочие «контакт»/«В друзья» в Сообществе. Остальное — фаза 3 (терминология вместо «стрейк», онбординг, категории, визуализации отказа от курения/алкоголя — в самом конце)
 - [ ] Фаза 2 для Логина/Онбординга — план ОДОБРЕН владельцем (`docs/PHASE2_DECISIONS.md`, раздел 2): два этапа, заглушки `login.html`/`onboarding.html`, legacy-копии; делать ПОСЛЕ переезда Дашборда. Действие владельца до деплоя: добавить `/login/` в Supabase Redirect URLs
 - [ ] Фаза 2, финал: заглушки-редиректы для ВСЕХ старых адресов (`/goals.html`, `/english.html`, ...), сохраняющие search/hash — одобрено владельцем, делать в конце фазы 2
-- [~ агент 6] Фаза 2: Дашборд на `/dashboard/` (классика → `/legacy/dashboard.html`)
+- [x] (v1.29, агент 6) Фаза 2: Дашборд на `/dashboard/` без `-vue`, классика → `/legacy/dashboard.html`; редиректы Логина/Онбординга переключены на `/dashboard/`
 - [x] (v1.01, агент 6) `dashboard.js:1627`: `new Date(profile.birthdate)` — UTC-парсинг, к западу от UTC возраст в день рождения на год меньше (пилот: `calcAge` уже через `parseIso`, ок)
 - [x] (v1.00, агент 6) Challenges: `new Date(startDate).getTime() + i*86400000` (`web-challenges/src/lib/challenges.ts:24`, `challenges.js:263`) парсит `YYYY-MM-DD` как UTC → к западу от UTC даты на день раньше; в Вильнюсе не видно. Заменить на `parseIso` + `setDate`
 - [x] (v1.06, агент 4) `useReminders.ts:20` и `dashboard.js:1065`: `Date.now() + 7*86400000` заменено на календарные +7 дней (`addDaysIso`/`soonDateFor`), 2 регресс-теста
@@ -207,3 +202,4 @@ badge, сверься с этим блоком. У агента 3 — правл
 - 2026-09-29 · v1.26 · агент 4 · Фаза 2: Сообщество переехало на /community/, классика в /legacy/community.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v10, pages[] в config.js, все 12 AppShell.vue, пересборка всех пилотов, grep по бандлам на community-vue пуст). Задача перехвачена у агента 2 по решению владельца. Тесты: community 54, dashboard 388, account 17, history 30, goals 23, vue-tsc чист
 - 2026-09-30 · v1.27 · агент 4 · Фаза 2: Цели переехали на /goals/, классика в /legacy/goals.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v11, pages[] в config.js, все 12 AppShell.vue, пересборка всех пилотов, grep по бандлам на goals-vue пуст). Плюс ссылка в недельном напоминании dashboard.js и ReminderBanners.vue. Предыдущая попытка оборвалась переполнением контекста и сделана заново. Тесты: goals 23, dashboard 388, community 54, account 17, history 30, vue-tsc чист (разово мигал тест web-goals при параллельном прогоне 12 пилотов — в одиночку стабилен)
 - 2026-09-30 · v1.28 · агент 6 · Дашборд-пилот: кастомизация раскладки блоков (⚙️ у заголовка, ↑/↓/скрыть, profiles.dashboard_layout общая с классикой; скрытый «Профиль» → кольца в шапку). Задача с 2026-09-29 00:35 была у агента 3 без единого коммита — перехвачена по решению владельца, сделана с нуля. 14 новых тестов, web-dashboard 402, vue-tsc -b чист
+- 2026-09-30 · v1.29 · агент 6 · Фаза 2: Дашборд переехал на /dashboard/, классика в /legacy/dashboard.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v12, pages[] в config.js, все AppShell.vue, пересборка всех 14 пилотов, grep бандлов пуст). Логин/Онбординг (классика + Vue) ведут на /dashboard/. Тесты: dashboard 402, login 9, onboarding 13, account 17, history 30, goals 23, milestones 20, community 54, vue-tsc чист

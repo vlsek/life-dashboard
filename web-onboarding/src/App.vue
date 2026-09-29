@@ -68,7 +68,7 @@ async function onSubmit() {
     return
   }
   if (res.seedError) errorMsg.value = t('onb_form_saved_metrics_failed') + res.seedError.message
-  window.location.href = '/dashboard.html'
+  window.location.href = '/dashboard/'
 }
 
 async function onSkip() {
@@ -83,7 +83,7 @@ async function onSkip() {
     return
   }
   if (res.seedError) errorMsg.value = t('onb_profile_saved_metrics_failed') + res.seedError.message
-  window.location.href = '/dashboard.html'
+  window.location.href = '/dashboard/'
 }
 </script>
 
