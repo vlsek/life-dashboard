@@ -72,6 +72,7 @@ async function addCarried(texts: string[]) {
 <template>
   <section v-if="loaded" class="mb-5" data-test="planned">
     <h2 class="mb-2 text-lg font-semibold">{{ t('dash_planned_h2') }}</h2>
+    <div class="card">
     <p class="dim mb-2.5 text-xs">{{ t('dash_planned_bonus_hint') }}</p>
 
     <p v-if="planned.length === 0" class="dim">{{ t('dash_planned_empty') }}</p>
@@ -121,6 +122,7 @@ async function addCarried(texts: string[]) {
 
     <p v-if="notice" class="dim mt-2 text-sm" data-test="notice">{{ notice }}</p>
     <p v-if="error" class="mt-2 text-sm" style="color: var(--danger)" data-test="error">{{ error }}</p>
+    </div>
   </section>
 
   <PlannedAddGoalModal v-if="goalPicker" :goals="goalPicker" @close="goalPicker = null" @pick="pickGoal" />

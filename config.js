@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.11";
+const SITE_VERSION = "1.12";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.12", date: "2026-09-29 07:06", changes: [
+        "Дашборд-пилот: визуальный паритет с обычным сайтом по нескольким пунктам. Чекбоксы и радиокнопки теперь в цвете темы, а не браузерном синем — акцентного цвета не было вообще ни у одного поля пилота. Значок воды переехал из отдельного блока в теле страницы в шапку рядом с кольцами прогресса — как на обычном сайте, кликабельная иконка без подписи. У блоков «Дневные метрики», «Цели на сегодня» и «Графики» появился фон-карточка — раньше класса для него не было вовсе, хотя разметка кое-где уже на него ссылалась. Серия (стрик) переехала из отдельного раздела внизу страницы в строку профиля рядом с аватаром, как в оригинале, и огонёк теперь по-настоящему «горит»: два разных значка (тёплый мерцающий, когда день засчитан, и тусклый пунктирный контур, когда ещё нет) вместо одной приглушённой иконки",
+        "Плашка «это пилот, данные могут быть неактуальны» пока осталась — уберём вместе с кастомизацией раскладки блоков",
+    ]},
     { version: "1.11", date: "2026-09-29 09:15", changes: [
         "Первый лёгкий шаг фазы 2 (полный переезд адресов делается отдельно, постранично): в сайдбаре классического сайта под текущим разделом появилась ссылка «✨ Попробовать новый дизайн», если у раздела уже есть готовый Vue-пилот — Дашборд, Цели, Тренировки, Челленджи, Языки, Календарь, Вехи, Магазин, Сообщество, История, Аккаунт. У Навыков ссылки пока нет — туда переезжает полный адрес без -vue отдельным заходом. Обратная ссылка (из пилотов на классику) пока не сделана — сначала для неё нужно решить общий вид «бейджа пилота» во всех 12 AppShell",
     ]},
@@ -919,6 +923,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.12", date: "2026-09-29 07:06", changes: [
+        "Dashboard pilot: closer visual match to the classic site. Checkboxes and radio buttons now use the theme's accent color instead of the browser's default blue — the pilot had no accent-color rule for them at all. The water badge moved from its own block in the page body into the header next to the progress rings — a clickable icon with no text label, like the classic site. The Daily metrics, Today's goals and Charts blocks now sit on a card background — the pilot's stylesheet had no card class at all, even though some markup already referenced it. The streak moved from its own section at the bottom of the page into the profile row next to the avatar, matching the original, and the flame icon now actually \"lights up\": two distinct icons (a warm flickering flame once today counts, a dim dashed outline when it doesn't) instead of one dimmed generic icon",
+        "The \"this is a pilot, data may be stale\" notice is still there for now — it'll come out together with the block layout customization",
+    ]},
     { version: "1.11", date: "2026-09-29 09:15", changes: [
         "First light step of phase 2 (the full address move happens separately, page by page): the classic site's sidebar now shows a \"✨ Try the new design\" link under the current section when that section already has a finished Vue pilot — Dashboard, Goals, Workouts, Challenges, Languages, Calendar, Milestones, Shop, Community, History, Account. Skills has no such link yet — its short address (without -vue) is being set up separately. The reverse link (pilot → classic) isn't in place yet — that needs a shared design for the \"pilot badge\" across all 12 AppShells first",
     ]},

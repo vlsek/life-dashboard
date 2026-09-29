@@ -74,6 +74,63 @@ body {
     sans-serif;
 }
 
+/* Карточка с фоном темы — как .card в основном сайте. Раньше в этом файле класса не было
+   вообще, хотя разметка кое-где на него уже ссылалась (см. SetsCard.vue). */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+/* Чекбоксы/радио в цвете темы, а не браузерном синем — как в основном сайте. */
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--accent);
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+/* Огонёк стрика: горит цветом темы и слегка мерцает; не засчитанный сегодня — тусклый
+   пунктирный контур. Портировано дословно из style.css основного сайта. */
+.streak-flame {
+  transform-origin: 50% 90%;
+  animation: flame-flicker 1.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--accent) 55%, transparent));
+}
+.streak-flame .fl-outer {
+  fill: var(--accent);
+}
+.streak-flame .fl-inner {
+  fill: color-mix(in srgb, var(--accent) 40%, #ffffff);
+}
+.streak-unlit {
+  color: var(--text-dim);
+  opacity: 0.75;
+}
+@keyframes flame-flicker {
+  0%,
+  100% {
+    transform: scale(1, 1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.05, 0.97) rotate(-1.5deg);
+  }
+  55% {
+    transform: scale(0.97, 1.05) rotate(1.2deg);
+  }
+  80% {
+    transform: scale(1.03, 1) rotate(-0.6deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .streak-flame {
+    animation: none;
+  }
+}
+
 /* Базовые утилитарные классы, повторяющие стиль ванильного сайта (button/.dim/.modal-*) —
    в самой Vue-странице их ещё нет ни в одном из пилотов, хотя разметка на них уже
    ссылается (см. web-milestones/src/App.vue) — здесь заведены по-настоящему, не просто

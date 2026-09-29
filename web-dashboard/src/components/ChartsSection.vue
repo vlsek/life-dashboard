@@ -78,7 +78,7 @@ function onPeriodApplied() {
   <template v-if="loaded">
     <p v-if="error" class="dim text-sm">{{ t('comm_load_error') }} {{ error }}</p>
 
-    <template v-else>
+    <div v-else class="card">
       <div class="mb-3.5 flex justify-end">
         <button type="button" class="secondary" data-test="configure" @click="((configError = null), (showConfig = true))">{{ t('dash_charts_configure_btn') }}</button>
       </div>
@@ -100,7 +100,7 @@ function onPeriodApplied() {
         />
         <ChartEditValues v-if="canEditValues(entry.key, series[entry.key].type) && pointsFor(entry.key).length" :points="pointsFor(entry.key)" :unit="series[entry.key].unit" :save="(d, raw) => saveValue(entry.key, d, raw)" />
       </div>
-    </template>
+    </div>
   </template>
 
   <ChartsConfigModal v-if="showConfig" :series="series" :entries="entries" :period="period" :error="configError" @close="showConfig = false" @save="onSaveConfig" />

@@ -61,7 +61,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
       <button type="button" class="secondary" @click="go(1)">{{ t('next_day') }}</button>
     </div>
 
-    <div class="rounded-lg border p-3" style="border-color: var(--border); background: var(--bg-card)">
+    <div class="card">
       <p v-if="error" class="mb-2 text-sm" style="color: var(--danger)">{{ error }}</p>
       <p v-if="!loaded" class="dim text-sm">{{ t('loading_ellipsis') }}</p>
 

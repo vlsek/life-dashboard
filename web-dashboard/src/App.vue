@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import AppShell from './components/AppShell.vue'
-import Icon from './components/Icon.vue'
+import StreakFlame from './components/StreakFlame.vue'
 import MetricIcon from './components/MetricIcon.vue'
 import WaterSection from './components/WaterSection.vue'
 import ChartsSection from './components/ChartsSection.vue'
@@ -107,12 +107,20 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
         @dismiss-weekend="dismissWeekendReminder"
       />
 
-      <ProfileSection :user-id="auth.userId" :day="dayRingProfile" :week="weekRingProfile" @progress-settings="showProgressSettings = true" />
+      <ProfileSection
+        :user-id="auth.userId"
+        :day="dayRingProfile"
+        :week="weekRingProfile"
+        :top-streak="topStreak"
+        :streak-count="streaks.length"
+        @progress-settings="showProgressSettings = true"
+        @show-streaks="showAllStreaks = true"
+      />
       <HeaderProgressBadge v-if="dayRingHeader" kind="day" v-bind="dayRingHeader" @click="showProgressSettings = true" />
       <HeaderProgressBadge v-if="weekRingHeader" kind="week" v-bind="weekRingHeader" @click="showProgressSettings = true" />
+      <WaterSection :user-id="auth.userId" />
 
       <div class="mb-4 flex flex-wrap items-center gap-2">
-        <WaterSection :user-id="auth.userId" />
         <MetricsManagerSection :user-id="auth.userId" @changed="init" />
       </div>
 
@@ -127,20 +135,6 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
 
       <template v-else>
         <template v-if="streaks.length > 0">
-          <h2 class="mb-2 text-lg font-semibold">{{ t('dash_streaks_h2') }}</h2>
-
-          <button
-            type="button"
-            class="mb-3 inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 font-bold"
-            :class="{ 'streak-unlit': topStreak && !topStreak.todayCounted }"
-            style="background: transparent; color: var(--text); border-color: var(--border)"
-            :title="topStreak?.todayCounted ? (streaks.length > 1 ? `${streakLabel(topStreak)} — ${t('dash_streak_more_hint')}` : streakLabel(topStreak)) : t('dash_streak_at_risk_warning')"
-            @click="showAllStreaks = true"
-          >
-            <Icon name="flame" />
-            {{ topStreak?.streak }}{{ topStreak?.unit === 'w' ? ' ' + t('dash_streak_unit_weeks') : '' }}
-          </button>
-
           <div v-if="showAllStreaks" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" @click.self="showAllStreaks = false">
             <div class="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)">
               <h3 class="mb-3 text-lg font-bold">{{ t('dash_streaks_h2') }}</h3>
@@ -162,7 +156,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
                 >
                   <div class="flex items-center gap-1 text-lg font-bold">
                     {{ item.streak }}{{ item.unit === 'w' ? ' ' + t('dash_streak_unit_weeks') : '' }}
-                    <Icon name="flame" />
+                    <StreakFlame :lit="item.todayCounted" />
                   </div>
                   <div class="dim flex items-center gap-1 text-xs">
                     <MetricIcon v-if="item.kind === 'metric'" :icon="item.metric?.icon" />

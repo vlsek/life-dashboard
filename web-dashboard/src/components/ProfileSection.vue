@@ -7,7 +7,9 @@ import BodyParamFormModal from './BodyParamFormModal.vue'
 import BodyParamsModal from './BodyParamsModal.vue'
 import AvatarProgress from './AvatarProgress.vue'
 import ProgressRing from './ProgressRing.vue'
+import StreakFlame from './StreakFlame.vue'
 import type { RingData } from '../lib/ringPlacement'
+import type { StreakItem } from '../lib/streaks'
 import { useProfile } from '../lib/useProfile'
 import { BODY_VALUES_CHANGED } from '../lib/useCharts'
 import { calcAge, formatAge, formatDelta, unitSuffix, type BodyParam, type BodyParamForm } from '../lib/profile'
@@ -15,12 +17,32 @@ import { getLang, t } from '../lib/i18n'
 
 // Единственная точка подключения блока «Профиль» в App.vue: аватар (загрузка фото), возраст
 // (дата рождения), динамика параметров тела, баланс баллов, управление параметрами тела.
-// Кольцо дня вокруг аватарки и кольцо недели показываем здесь (данные приходят из App.vue);
-// стрик остаётся в App.vue.
+// Кольцо дня вокруг аватарки и кольцо недели показываем здесь (данные приходят из App.vue).
+// Стрик — компактный бейдж прямо в этой строке (портировано из streakBadgeHostEl в
+// loadProfileInner()): в App.vue раньше был отдельным разделом внизу страницы, что не совпадало
+// с ванильным сайтом. topStreak/streakCount приходят из App.vue (там же общий список стриков
+// для модалки со всеми сериями); клик по бейджу поднимает show-streaks.
 // day — кольцо вокруг аватарки, week — кольцо недели в строке профиля (null — не показывать);
 // шестерёнка и клики по кольцам поднимают событие progress-settings.
-const props = defineProps<{ userId: string | null; day?: RingData | null; week?: RingData | null }>()
-const emit = defineEmits<{ 'progress-settings': [] }>()
+const props = defineProps<{
+  userId: string | null
+  day?: RingData | null
+  week?: RingData | null
+  topStreak?: StreakItem | null
+  streakCount?: number
+}>()
+const emit = defineEmits<{ 'progress-settings': []; 'show-streaks': [] }>()
+
+function streakLabel(item: StreakItem): string {
+  if (item.kind === 'perfect_days') return t('dash_streak_perfect_days')
+  if (item.kind === 'note_filled') return t('dash_streak_note_filled')
+  return item.metric?.name ?? ''
+}
+const streakTitle = computed(() => {
+  const top = props.topStreak
+  if (!top) return ''
+  return top.todayCounted ? ((props.streakCount ?? 0) > 1 ? `${streakLabel(top)} — ${t('dash_streak_more_hint')}` : streakLabel(top)) : t('dash_streak_at_risk_warning')
+})
 const { profile, params, stats, balance, loaded, error, init, uploadAvatar, saveBirthdate, addParam, updateParam, deleteParam, refreshValues } = useProfile()
 
 watch(
@@ -106,6 +128,20 @@ function openForm(p: BodyParam | 'new') {
     </div>
 
     <button type="button" class="secondary px-2 text-xs" :title="t('dash_body_params_title')" data-test="params-btn" @click="showParams = true"><Icon name="ruler" /></button>
+
+    <button
+      v-if="topStreak"
+      type="button"
+      data-test="streak-badge"
+      class="flex items-center gap-1 font-bold"
+      :class="{ 'streak-unlit': !topStreak.todayCounted }"
+      style="background: transparent; border: none; padding: 0; cursor: pointer; color: inherit"
+      :title="streakTitle"
+      @click="emit('show-streaks')"
+    >
+      <StreakFlame :lit="topStreak.todayCounted" />
+      {{ topStreak.streak }}{{ topStreak.unit === 'w' ? ' ' + t('dash_streak_unit_weeks') : '' }}
+    </button>
 
     <a v-if="balance != null" href="/shop-vue/" class="ml-auto font-bold" :title="t('dash_balance_click_hint')" style="color: inherit; text-decoration: none"><Icon name="coin" /> {{ balance }}</a>
 
