@@ -2,6 +2,7 @@ const translations = {
     en: {
         // nav / shared
         nav_tour: "How it works",
+        nav_try_pilot: "✨ Try the new design",
         tour_back: "Back",
         tour_next: "Next",
         tour_skip: "Skip",
@@ -762,6 +763,7 @@ const translations = {
     },
     ru: {
         nav_tour: "Как пользоваться",
+        nav_try_pilot: "✨ Попробовать новый дизайн",
         tour_back: "Назад",
         tour_next: "Далее",
         tour_skip: "Пропустить",

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.10";
+const SITE_VERSION = "1.11";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.11", date: "2026-09-29 09:15", changes: [
+        "Первый лёгкий шаг фазы 2 (полный переезд адресов делается отдельно, постранично): в сайдбаре классического сайта под текущим разделом появилась ссылка «✨ Попробовать новый дизайн», если у раздела уже есть готовый Vue-пилот — Дашборд, Цели, Тренировки, Челленджи, Языки, Календарь, Вехи, Магазин, Сообщество, История, Аккаунт. У Навыков ссылки пока нет — туда переезжает полный адрес без -vue отдельным заходом. Обратная ссылка (из пилотов на классику) пока не сделана — сначала для неё нужно решить общий вид «бейджа пилота» во всех 12 AppShell",
+    ]},
     { version: "1.10", date: "2026-09-29 14:10", changes: [
         "Во всех 12 Vue-пилотах пункт «Дашборд» в сайдбаре теперь открывает пилот Дашборда (/dashboard-vue/) вместо классического dashboard.html — включено заранее, не дожидаясь двух оставшихся пунктов пилота (кастомизация раскладки блоков, визуальный паритет с классикой), которые продолжаются отдельно",
         "Навигация между классическими страницами не изменилась: они по-прежнему ссылаются друг на друга через .html",
@@ -916,6 +919,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.11", date: "2026-09-29 09:15", changes: [
+        "First light step of phase 2 (the full address move happens separately, page by page): the classic site's sidebar now shows a \"✨ Try the new design\" link under the current section when that section already has a finished Vue pilot — Dashboard, Goals, Workouts, Challenges, Languages, Calendar, Milestones, Shop, Community, History, Account. Skills has no such link yet — its short address (without -vue) is being set up separately. The reverse link (pilot → classic) isn't in place yet — that needs a shared design for the \"pilot badge\" across all 12 AppShells first",
+    ]},
     { version: "1.10", date: "2026-09-29 14:10", changes: [
         "All 12 Vue pilots: the \"Dashboard\" sidebar link now opens the Dashboard pilot (/dashboard-vue/) instead of the classic dashboard.html — approved ahead of the pilot's remaining two items (block layout customization, visual parity with the classic look), which continue separately",
         "Classic-to-classic navigation is unchanged: other classic pages still link to each other's .html pages as before",
@@ -1904,18 +1910,22 @@ function wrapTable(table) {
 function renderNav(active, userEmail) {
     document.querySelectorAll(".topbar, .sidebar, .sidebar-backdrop").forEach(el => el.remove());
 
+    // vue: путь до готового Vue-пилота этой страницы — если задан, в сайдбаре под пунктом
+    // навигации появляется тонкая ссылка "Попробовать новую версию" (см. ниже, после списка
+    // pages). У Skills это поле сознательно не трогаем — полный переезд адреса/в legacy делает
+    // другой агент отдельным заходом (см. COORDINATION.md), а не эта лёгкая перелинковка.
     const pages = [
-        { href: "dashboard.html", key: "dashboard", i18n: "nav_dashboard", icon: "home", home: true },
-        { href: "goals.html", key: "goals", i18n: "nav_goals", icon: "goals" },
+        { href: "dashboard.html", key: "dashboard", i18n: "nav_dashboard", icon: "home", home: true, vue: "dashboard-vue/" },
+        { href: "goals.html", key: "goals", i18n: "nav_goals", icon: "goals", vue: "goals-vue/" },
         { href: "skills.html", key: "skills", i18n: "nav_skills", icon: "skills" },
-        { href: "workouts.html", key: "workouts", i18n: "nav_workouts", icon: "workouts" },
-        { href: "challenges.html", key: "challenges", i18n: "nav_challenges", icon: "challenges" },
-        { href: "english.html", key: "english", i18n: "nav_english", icon: "english" },
-        { href: "calendar.html", key: "calendar", i18n: "nav_calendar", icon: "calendar" },
-        { href: "milestones.html", key: "milestones", i18n: "nav_milestones", icon: "milestones" },
-        { href: "shop.html", key: "shop", i18n: "nav_shop", icon: "shop" },
-        { href: "community.html", key: "community", i18n: "nav_community", icon: "community" },
-        { href: "history.html", key: "history", i18n: "nav_history", icon: "history" },
+        { href: "workouts.html", key: "workouts", i18n: "nav_workouts", icon: "workouts", vue: "workouts-vue/" },
+        { href: "challenges.html", key: "challenges", i18n: "nav_challenges", icon: "challenges", vue: "challenges-vue/" },
+        { href: "english.html", key: "english", i18n: "nav_english", icon: "english", vue: "languages-vue/" },
+        { href: "calendar.html", key: "calendar", i18n: "nav_calendar", icon: "calendar", vue: "calendar-vue/" },
+        { href: "milestones.html", key: "milestones", i18n: "nav_milestones", icon: "milestones", vue: "milestones-vue/" },
+        { href: "shop.html", key: "shop", i18n: "nav_shop", icon: "shop", vue: "shop-vue/" },
+        { href: "community.html", key: "community", i18n: "nav_community", icon: "community", vue: "community-vue/" },
+        { href: "history.html", key: "history", i18n: "nav_history", icon: "history", vue: "history-vue/" },
     ];
     // В i18n названия разделов начинаются с эмодзи ("🎯 Цели") — для подписей рядом с SVG-иконкой
     // отрезаем ведущие эмодзи/пробелы.
@@ -1990,12 +2000,26 @@ function renderNav(active, userEmail) {
     const sidebar = document.createElement("nav");
     sidebar.className = "sidebar";
 
+    // Тонкая ссылка "Попробовать новую версию" сразу под пунктом навигации, у которого есть
+    // готовый Vue-пилот (см. поле vue в pages выше) — только у ТЕКУЩЕЙ активной страницы, а не
+    // у каждого пункта сразу, чтобы не захламлять список. Первый лёгкий шаг фазы 2 (полный
+    // переезд адреса и /legacy/ — отдельная, более рискованная задача для конкретной страницы).
+    function appendTryPilotLink(vuePath) {
+        if (!vuePath) return;
+        const link = document.createElement("a");
+        link.href = "/" + vuePath;
+        link.innerHTML = `${iconSvg("sparkles")}<span>${t("nav_try_pilot")}</span>`;
+        link.className = "nav-try-pilot";
+        sidebar.appendChild(link);
+    }
+
     for (const p of pages) {
         const a = document.createElement("a");
         a.href = p.href;
         a.innerHTML = `${iconSvg(p.icon)}<span>${plainLabel(p.i18n)}</span>`;
         if (p.key === active) a.className = "active";
         sidebar.appendChild(a);
+        if (p.key === active) appendTryPilotLink(p.vue);
     }
 
     if (userEmail) {
@@ -2004,6 +2028,7 @@ function renderNav(active, userEmail) {
         accountLink.innerHTML = `${iconSvg("user")}<span>${t("nav_account_title")}</span>`;
         accountLink.className = active === "account" ? "active" : "";
         sidebar.appendChild(accountLink);
+        if (active === "account") appendTryPilotLink("account-vue/");
     }
 
     const divider = document.createElement("div");
