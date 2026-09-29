@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.15";
+const SITE_VERSION = "1.16";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.16", date: "2026-09-29 18:31", changes: [
+        "Фаза 2, шестая страница: «Магазин» теперь на коротком адресе /shop/ вместо /shop-vue/, а классическая версия — в /legacy/shop.html. Заодно починены ссылки в боковом меню Vue-страниц: после переезда Календаря в 1.15 они не были пересобраны и на части страниц пункт «Календарь» вёл на удалённый адрес /calendar-vue/",
+    ]},
     { version: "1.15", date: "2026-09-29 18:23", changes: [
         "Фаза 2 (переезд на Vue как основной сайт), пятая страница: «Календарь» теперь на коротком адресе /calendar/ вместо /calendar-vue/, а классическая версия — в /legacy/calendar.html. Ссылки в боковом меню и на других страницах обновлены",
     ]},
@@ -934,6 +937,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.16", date: "2026-09-29 18:31", changes: [
+        "Phase 2, sixth page: Shop now lives at the short address /shop/ instead of /shop-vue/, and the classic version moved to /legacy/shop.html. Also fixed the sidebar links on the Vue pages: after Calendar moved in 1.15 they had not been rebuilt, so on some pages the Calendar item pointed at the removed /calendar-vue/ address",
+    ]},
     { version: "1.15", date: "2026-09-29 18:23", changes: [
         "Phase 2 (making the Vue site primary), fifth page: Calendar now lives at the short address /calendar/ instead of /calendar-vue/, and the classic version moved to /legacy/calendar.html. Sidebar links and cross-page links updated",
     ]},
@@ -1961,7 +1967,7 @@ function renderNav(active, userEmail) {
         { href: "english.html", key: "english", i18n: "nav_english", icon: "english", vue: "languages-vue/" },
         { href: "legacy/calendar.html", key: "calendar", i18n: "nav_calendar", icon: "calendar", vue: "calendar/" },
         { href: "milestones.html", key: "milestones", i18n: "nav_milestones", icon: "milestones", vue: "milestones-vue/" },
-        { href: "shop.html", key: "shop", i18n: "nav_shop", icon: "shop", vue: "shop-vue/" },
+        { href: "legacy/shop.html", key: "shop", i18n: "nav_shop", icon: "shop", vue: "shop/" },
         { href: "community.html", key: "community", i18n: "nav_community", icon: "community", vue: "community-vue/" },
         { href: "legacy/history.html", key: "history", i18n: "nav_history", icon: "history", vue: "history/" },
     ];

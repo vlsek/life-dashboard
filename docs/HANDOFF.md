@@ -200,6 +200,12 @@ Astro тут не даёт преимуществ. TypeScript — типы. Tail
 7. Проверить репозиторий целиком на другие упоминания "<page>-vue" и "<page>.html" вне
    самой страницы (грепом) — например комментарий в web-<page>/src/lib/supabase.ts со
    старым путём в примере URL, если он там есть.
+7а. ПЕРЕСОБРАТЬ КАЖДЫЙ ПИЛОТ, у которого менялся исходник (AppShell.vue и т.п.): npm run build в
+   каждой web-<x>/. Прод раздаёт собранные бандлы (*-vue/assets, history/, calendar/, shop/), а не
+   исходники — без пересборки ссылки в меню остаются старыми, а после git rm старой <page>-vue/
+   ведут в 404 (так было в 1.14/1.15, починено в 1.16). Проверка: grep -l "<page>-vue"
+   */assets/*.js должно быть пусто. Ещё места вне AppShell: classic dashboard.js (клик по балансу),
+   web-dashboard/ProfileSection.vue + его тест — грепать и по <page>.html, и по <page>-vue.
 8. node --check на все тронутые .js, vue-tsc --noEmit + vitest run в web-<page>/ и в паре
    других пилотов (AppShell.vue общий), npm run build. Версия/changelog RU+EN, запись в
    ROADMAP.md и COORDINATION.md (блок + журнал), git pull --rebase перед финальным push.

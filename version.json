@@ -1,6 +1,13 @@
 {
-  "version": "1.15",
+  "version": "1.16",
   "en": [
+    {
+      "version": "1.16",
+      "date": "2026-09-29 18:31",
+      "changes": [
+        "Phase 2, sixth page: Shop now lives at the short address /shop/ instead of /shop-vue/, and the classic version moved to /legacy/shop.html. Also fixed the sidebar links on the Vue pages: after Calendar moved in 1.15 they had not been rebuilt, so on some pages the Calendar item pointed at the removed /calendar-vue/ address"
+      ]
+    },
     {
       "version": "1.15",
       "date": "2026-09-29 18:23",
@@ -851,6 +858,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.16",
+      "date": "2026-09-29 18:31",
+      "changes": [
+        "Фаза 2, шестая страница: «Магазин» теперь на коротком адресе /shop/ вместо /shop-vue/, а классическая версия — в /legacy/shop.html. Заодно починены ссылки в боковом меню Vue-страниц: после переезда Календаря в 1.15 они не были пересобраны и на части страниц пункт «Календарь» вёл на удалённый адрес /calendar-vue/"
+      ]
+    },
     {
       "version": "1.15",
       "date": "2026-09-29 18:23",

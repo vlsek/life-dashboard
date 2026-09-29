@@ -1616,7 +1616,7 @@ async function loadProfileInner() {
     balanceEl.style.fontWeight = "bold";
     balanceEl.style.cursor = "pointer";
     balanceEl.title = t("dash_balance_click_hint");
-    balanceEl.onclick = () => { window.location.href = "shop.html"; };
+    balanceEl.onclick = () => { window.location.href = "legacy/shop.html"; };
     balanceEl.innerHTML = `${coinIcon()} ${balance}`;
     row.appendChild(balanceEl);
 

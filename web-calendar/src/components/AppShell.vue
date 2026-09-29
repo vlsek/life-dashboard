@@ -32,7 +32,7 @@ const pages: NavPage[] = [
   { href: '/languages-vue/', key: 'english', labelKey: 'nav_english', icon: 'english' },
   { href: '/calendar/', key: 'calendar', labelKey: 'nav_calendar', icon: 'calendar' },
   { href: '/milestones-vue/', key: 'milestones', labelKey: 'nav_milestones', icon: 'milestones' },
-  { href: '/shop-vue/', key: 'shop', labelKey: 'nav_shop', icon: 'shop' },
+  { href: '/shop/', key: 'shop', labelKey: 'nav_shop', icon: 'shop' },
   { href: '/community-vue/', key: 'community', labelKey: 'nav_community', icon: 'community' },
   { href: '/history/', key: 'history', labelKey: 'nav_history', icon: 'history' },
 ]

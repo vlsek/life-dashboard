@@ -90,7 +90,7 @@ describe('ProfileSection', () => {
     expect(stat.text()).toContain('Вес: 77.5 кг')
     expect(stat.text()).toContain('-2.5 кг')
     const a = w.find('a')
-    expect(a.attributes('href')).toBe('/shop-vue/')
+    expect(a.attributes('href')).toBe('/shop/')
     expect(a.text()).toContain('42')
     w.unmount()
   })

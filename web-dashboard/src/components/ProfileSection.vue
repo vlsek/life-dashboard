@@ -143,7 +143,7 @@ function openForm(p: BodyParam | 'new') {
       {{ topStreak.streak }}{{ topStreak.unit === 'w' ? ' ' + t('dash_streak_unit_weeks') : '' }}
     </button>
 
-    <a v-if="balance != null" href="/shop-vue/" class="ml-auto font-bold" :title="t('dash_balance_click_hint')" style="color: inherit; text-decoration: none"><Icon name="coin" /> {{ balance }}</a>
+    <a v-if="balance != null" href="/shop/" class="ml-auto font-bold" :title="t('dash_balance_click_hint')" style="color: inherit; text-decoration: none"><Icon name="coin" /> {{ balance }}</a>
 
     <p v-if="error" class="w-full text-sm" style="color: var(--danger)">{{ error }}</p>
   </section>

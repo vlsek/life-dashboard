@@ -126,13 +126,7 @@ legacy-переезды — не пересекаюсь с фазой 2 (аге�
 milestones), `config.js` (строка milestones в pages[] — общий navHref() не трогаю, он уже есть).
 
 ### Агент 7
-Фаза 2, ШЕСТАЯ страница (History и Calendar — готово, Skills — агент 1, Community — агент 2,
-Goals — агент 4, Milestones — агент 6): беру **Shop** — `/shop/` без `-vue`, классика
-`shop.html`+`shop.js` → `/legacy/shop.html`+`/legacy/shop.js`. По рецепту из `docs/HANDOFF.md`.
-С: 2026-09-29 18:26.
-Файлы: `web-shop/vite.config.ts`, `shop-vue/`→`shop/`, `shop.html`/`shop.js`→`legacy/`, `sw.js`
-(ASSETS + CACHE_NAME), все AppShell.vue (href на shop), `config.js` (строка shop в pages[];
-версия+changelog).
+— свободен —
 
 ## Бэклог
 
@@ -181,7 +175,7 @@ Goals — агент 4, Milestones — агент 6): беру **Shop** — `/sh
 - [~ агент 4] Обратная ссылка пилот→классика: `pilot_badge` в 12 AppShell.vue становится ссылкой на классическую версию текущей страницы
 - [~ агент 4] Фаза 2, вторая страница: Goals на `/goals/` без `-vue`, классика `goals.html` → `/legacy/goals.html`
 - [x] (v1.15, агент 7) Фаза 2, пятая страница: Calendar на `/calendar/` без `-vue`, классика → `/legacy/calendar.html`
-- [~ агент 7] Фаза 2, шестая страница: Shop на `/shop/` без `-vue`, классика `shop.html` → `/legacy/shop.html`
+- [x] (v1.16, агент 7) Фаза 2, шестая страница: Shop на `/shop/` без `-vue`, классика → `/legacy/shop.html`
 - [x] Пилот Дашборда включён в меню всех 12 Vue-пилотов (`/dashboard-vue/` вместо `dashboard.html`) — v1.10 (агент 5), по добру владельца, до завершения раскладки/визуала
 
 ## Журнал (новое — внизу)
@@ -210,3 +204,4 @@ Goals — агент 4, Milestones — агент 6): беру **Shop** — `/sh
 - 2026-09-29 · v1.13 · агент 2 · Логин (web-login/→login-vue/: email/пароль, регистрация, Google, RU/EN+тема на странице) + Онбординг (web-onboarding/→onboarding-vue/: анкета usecase/пол/дата рождения/рост/вес/приоритет/навыки, выбор стартовых метрик, кнопка «пропустить», body_parameters); 22 теста. ЗАКРЫВАЕТ ФАЗУ 1 (все страницы существуют на Vue) — обе страницы без сайдбара, версия+ченджлог (1.09) и pilot_badge-ссылка сюда не относятся
 - 2026-09-29 · v1.14 · агент 6 · Фаза 2: История переехала на /history/, классика в /legacy/history.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v2, все 12 AppShell.vue). Общее для всех страниц фазы 2: navHref() в config.js — нормализует ссылки renderNav() для смешанного состояния корень+/legacy, не трогая сами записи pages[] (см. docs/ROADMAP.md v1.14 и HANDOFF.md). 30+337+17 тестов зелёные
 - 2026-09-29 · v1.15 · агент 7 · Фаза 2: Календарь переехал на /calendar/, классика в /legacy/calendar.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v3, pages[] в config.js, все 12 AppShell.vue). Тесты: web-calendar 15, web-history 30 зелёные, vue-tsc чист
+- 2026-09-29 · v1.16 · агент 7 · Фаза 2: Магазин переехал на /shop/, классика в /legacy/shop.html. ИСПРАВЛЕНИЕ к v1.15: AppShell-правки не были пересобраны в остальных пилотах, ссылка «Календарь» на 10 страницах вела на удалённый /calendar-vue/ — пересобраны все затронутые пилоты (правило для всех: после правки AppShell.vue собирать КАЖДЫЙ пилот, проверять grep по бандлам, см. ROADMAP v1.16). Также dashboard.js (классика) и ProfileSection.vue. Тесты: dashboard 337, shop 23, calendar 15, history 30
