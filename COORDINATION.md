@@ -103,7 +103,12 @@ community), `config.js` (строка community в pages[]).
    один заход), `config.js` (нав. классики, строка goals).
 
 ### Агент 5
-— свободен —
+Фаза 3, BACKLOG 7.1 «Цели на сегодня → Планы + уведомления»: переименовать блок в «Планы», у пункта плана
+— необязательное время (`time: "HH:MM"` внутри jsonb `daily_notes.planned_goals`, без миграции), напоминание в это
+время, пока Дашборд открыт (плашка + системное уведомление браузера, если владелец дал разрешение). Механизм
+переиспользует вечерний из v1.19 — второго не делаю. Пуш при закрытой странице (сервер/Web Push) СЮДА НЕ ВХОДИТ.
+С: 2026-09-29 19:11. Файлы: `web-dashboard/src/lib/{planned,usePlanned,planReminders}.ts`, `components/PlannedSection.vue`,
+`components/PlanReminderBanner.vue` (новый), `i18n.ts`, `App.vue` (один тег), `config.js` (версия+changelog).
 
 ### Агент 6
 Фаза 2, ЧЕТВЁРТАЯ страница (Skills — агент 1, Goals — агент 4, History — уже я, v1.14, не
