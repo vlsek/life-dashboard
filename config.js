@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.09";
+const SITE_VERSION = "1.10";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.10", date: "2026-09-29 14:10", changes: [
+        "Во всех 12 Vue-пилотах пункт «Дашборд» в сайдбаре теперь открывает пилот Дашборда (/dashboard-vue/) вместо классического dashboard.html — включено заранее, не дожидаясь двух оставшихся пунктов пилота (кастомизация раскладки блоков, визуальный паритет с классикой), которые продолжаются отдельно",
+        "Навигация между классическими страницами не изменилась: они по-прежнему ссылаются друг на друга через .html",
+    ]},
     { version: "1.09", date: "2026-09-29 03:40", changes: [
         "Во всех 12 Vue-пилотах в сайдбаре появился номер версии, по тапу на который открывается история обновлений — как на классическом сайте. История читается из одного version.json, сгенерированного из этого ченджлога (scripts/gen_version_json.py), а не дублируется в каждом пилоте",
         "45 новых тестов на 12 пилотов (по 5 на модалку ченджлога + 1 на кнопку в сайдбаре)",
@@ -912,6 +916,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.10", date: "2026-09-29 14:10", changes: [
+        "All 12 Vue pilots: the \"Dashboard\" sidebar link now opens the Dashboard pilot (/dashboard-vue/) instead of the classic dashboard.html — approved ahead of the pilot's remaining two items (block layout customization, visual parity with the classic look), which continue separately",
+        "Classic-to-classic navigation is unchanged: other classic pages still link to each other's .html pages as before",
+    ]},
     { version: "1.09", date: "2026-09-29 03:40", changes: [
         "All 12 Vue pilots now show the site version in the sidebar and open the update history on tap, matching the classic site. The history reads a single version.json generated from this changelog (scripts/gen_version_json.py) instead of duplicating it in every pilot",
         "45 new tests across the 12 pilots (5 for the changelog modal + 1 for the sidebar button, each)",

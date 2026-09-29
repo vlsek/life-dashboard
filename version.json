@@ -1,6 +1,14 @@
 {
-  "version": "1.09",
+  "version": "1.10",
   "en": [
+    {
+      "version": "1.10",
+      "date": "2026-09-29 14:10",
+      "changes": [
+        "All 12 Vue pilots: the \"Dashboard\" sidebar link now opens the Dashboard pilot (/dashboard-vue/) instead of the classic dashboard.html — approved ahead of the pilot's remaining two items (block layout customization, visual parity with the classic look), which continue separately",
+        "Classic-to-classic navigation is unchanged: other classic pages still link to each other's .html pages as before"
+      ]
+    },
     {
       "version": "1.09",
       "date": "2026-09-29 03:40",
@@ -805,6 +813,14 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.10",
+      "date": "2026-09-29 14:10",
+      "changes": [
+        "Во всех 12 Vue-пилотах пункт «Дашборд» в сайдбаре теперь открывает пилот Дашборда (/dashboard-vue/) вместо классического dashboard.html — включено заранее, не дожидаясь двух оставшихся пунктов пилота (кастомизация раскладки блоков, визуальный паритет с классикой), которые продолжаются отдельно",
+        "Навигация между классическими страницами не изменилась: они по-прежнему ссылаются друг на друга через .html"
+      ]
+    },
     {
       "version": "1.09",
       "date": "2026-09-29 03:40",
