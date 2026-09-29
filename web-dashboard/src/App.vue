@@ -17,6 +17,7 @@ import ProfileSection from './components/ProfileSection.vue'
 import DailyMetricsSection from './components/DailyMetricsSection.vue'
 import LayoutModal from './components/LayoutModal.vue'
 import Icon from './components/Icon.vue'
+import SectionHeading from './components/SectionHeading.vue'
 import { useReminders } from './lib/useReminders'
 import { useEveningReminder } from './lib/useEveningReminder'
 import { usePlanReminders } from './lib/usePlanReminders'
@@ -54,6 +55,8 @@ onMounted(async () => {
 const showAllStreaks = ref(false)
 const showProgressSettings = ref(false)
 const showLayoutModal = ref(false)
+const profileCollapsed = ref(false)
+const chartsCollapsed = ref(false)
 const topStreak = computed<StreakItem | null>(() => streaks.value[0] ?? null)
 
 function streakLabel(item: StreakItem): string {
@@ -148,16 +151,20 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
       <template v-if="layoutLoaded">
         <template v-for="item in layout" :key="item.key">
           <template v-if="item.visible">
-            <ProfileSection
-              v-if="item.key === 'profile'"
-              :user-id="auth.userId"
-              :day="dayRingProfile"
-              :week="weekRingProfile"
-              :top-streak="topStreak"
-              :streak-count="streaks.length"
-              @progress-settings="showProgressSettings = true"
-              @show-streaks="showAllStreaks = true"
-            />
+            <template v-if="item.key === 'profile'">
+              <SectionHeading v-model:collapsed="profileCollapsed" :title="t('dash_block_profile')" storage-key="profile" />
+              <div v-show="!profileCollapsed">
+                <ProfileSection
+                  :user-id="auth.userId"
+                  :day="dayRingProfile"
+                  :week="weekRingProfile"
+                  :top-streak="topStreak"
+                  :streak-count="streaks.length"
+                  @progress-settings="showProgressSettings = true"
+                  @show-streaks="showAllStreaks = true"
+                />
+              </div>
+            </template>
 
             <template v-else-if="item.key === 'daily'">
               <div class="mb-4 flex flex-wrap items-center gap-2">
@@ -167,8 +174,8 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
             </template>
 
             <template v-else-if="item.key === 'charts'">
-              <h2 class="mb-2 text-lg font-semibold">{{ t('dash_charts_h2') }}</h2>
-              <div class="mb-5">
+              <SectionHeading v-model:collapsed="chartsCollapsed" :title="t('dash_charts_h2')" storage-key="charts" />
+              <div v-show="!chartsCollapsed" class="mb-5">
                 <ChartsSection :user-id="auth.userId" />
               </div>
             </template>

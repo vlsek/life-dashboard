@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import Icon from './Icon.vue'
+import SectionHeading from './SectionHeading.vue'
 import PlannedAddGoalModal from './PlannedAddGoalModal.vue'
 import PlannedCarryOverModal from './PlannedCarryOverModal.vue'
 import { usePlanned } from '../lib/usePlanned'
@@ -76,12 +77,13 @@ async function addCarried(texts: string[]) {
   carryCandidates.value = null
   if (texts.length) await carryOver(texts)
 }
+const collapsed = ref(false)
 </script>
 
 <template>
   <section v-if="loaded" class="mb-5" data-test="planned">
-    <h2 class="mb-2 text-lg font-semibold">{{ t('dash_planned_h2') }}</h2>
-    <div class="card">
+    <SectionHeading v-model:collapsed="collapsed" :title="t('dash_planned_h2')" storage-key="planned" />
+    <div v-show="!collapsed" class="card">
     <p class="dim mb-2.5 text-xs">{{ t('dash_planned_bonus_hint') }}</p>
 
     <p v-if="planned.length === 0" class="dim">{{ t('dash_planned_empty') }}</p>

@@ -290,8 +290,7 @@ v1.28 — Дашборд-пилот (агент 6, задача перехвач
   `lib/layout.ts` (normalize/move/toggle — порт normalizeDashboardLayout), `useLayout.ts` (profiles.dashboard_layout,
   общая с классикой, миграция 015), `LayoutModal.vue`, кнопка ⚙️ у заголовка, `App.vue` рисует блоки profile/charts/daily по
   раскладке (скрытые не монтируются → не грузят данные). Вода, баннеры, стрики-модалка вне раскладки. Скрыт «Профиль» →
-  кольца дня/недели уходят бейджем в шапку. НЕ сделано: сворачиваемые секции (в классике `dash_collapsed:*` в localStorage),
-  «Профиль»+«Вода» как отдельные блоки. 14 новых тестов, web-dashboard 402 зелёные, `vue-tsc -b` чист.
+  кольца дня/недели уходят бейджем в шапку. НЕ сделано: «Профиль»+«Вода» как отдельные блоки (сворачиваемые секции — v1.31). 14 новых тестов, web-dashboard 402 зелёные, `vue-tsc -b` чист.
 v1.29 — Фаза 2, Дашборд (агент 6): пилот на /dashboard/ (без -vue), классика в /legacy/dashboard.html. Рецепт HANDOFF +
   шаг 7а (пересобраны все 14 пилотов, grep бандлов на dashboard-vue и /dashboard.html пуст). Особое: Логин/Онбординг (классика
   login.js/onboarding.js и Vue web-login/web-onboarding) вели на /dashboard.html — переключены на /dashboard/ в этом же заходе
@@ -302,6 +301,11 @@ v1.30 — Фаза 2, финал (агент 6): заглушки-редирек
   (meta refresh + location.replace с ?query и #hash). НЕ проверено на боевом домене: как Cloudflare Workers Assets
   (html_handling) отдаёт `/goals` и `/goals.html` при наличии и goals.html, и goals/index.html — по документации `/goals/`
   берёт index.html, петли быть не должно, но проверить руками. Логин/Онбординг в заглушки не входят (свой этап).
+v1.31 — Дашборд-пилот (агент 6): сворачиваемые секции как в классике — `lib/collapsed.ts` (localStorage `dash_collapsed:<ключ>`,
+  "1"/"0", тот же формат, что в dashboard.js), `SectionHeading.vue` (заголовок + ▼/▶, v-model:collapsed; тело прячется v-show,
+  компоненты остаются смонтированными). Ключи: profile, daily, planned, charts. У «Профиля» появился заголовок (в классике он был).
+  Ловушка: при v-model от родителя `defineModel().value` после присваивания обновляется только после перерисовки — в toggle
+  писать в localStorage вычисленное значение, а не перечитанное. 10 новых тестов, web-dashboard 407 зелёные, `vue-tsc -b` чист.
 v1.03 — Пилот Сообщества: заявки в друзья, друзья отдельно от подписок, «В друзья»
   (lib/friends.ts, PersonChip.vue, 17 тестов, в т.ч. UI-тест App.vue с подменой Supabase).
 v1.02 — Сообщество (классика): то же в ванильном community.js. Фильтр «Только друзья» =

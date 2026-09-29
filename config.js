@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.30";
+const SITE_VERSION = "1.31";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.31", date: "2026-09-30 00:16", changes: [
+        "Пилот Дашборда: секции «Профиль», «Ежедневные метрики», «Планы» и «Графики» сворачиваются стрелкой ▼/▶ у заголовка, как в классической версии. Состояние запоминается в браузере (тот же ключ, что в классике — свёрнутое там остаётся свёрнутым и здесь). У «Профиля» появился заголовок",
+    ]},
     { version: "1.30", date: "2026-09-30 00:13", changes: [
         "Фаза 2, финал: старые адреса переехавших страниц (/dashboard.html, /goals.html, /english.html и остальные) больше не дают 404 — там лежат маленькие заглушки, которые переводят на новый адрес (/dashboard/, /goals/, /languages/ ...) с сохранением параметров и якоря. Закладки и старые ссылки продолжают работать",
     ]},
@@ -979,6 +982,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.31", date: "2026-09-30 00:16", changes: [
+        "Dashboard pilot: the Profile, Daily metrics, Plans and Charts sections collapse with a ▼/▶ arrow next to the heading, like in the classic version. The state is remembered in the browser (same key as classic — a section collapsed there stays collapsed here). Profile now has a heading",
+    ]},
     { version: "1.30", date: "2026-09-30 00:13", changes: [
         "Phase 2, finish: the old addresses of the moved pages (/dashboard.html, /goals.html, /english.html and the rest) no longer return 404 — small stubs there forward to the new address (/dashboard/, /goals/, /languages/ ...), keeping the query string and hash. Bookmarks and old links keep working",
     ]},

@@ -4,6 +4,7 @@ import MultiselectMetric from './MultiselectMetric.vue'
 import NumberMetricField from './NumberMetricField.vue'
 import SetsSection from './SetsSection.vue'
 import PlannedSection from './PlannedSection.vue'
+import SectionHeading from './SectionHeading.vue'
 import UsefulTodayList from './UsefulTodayList.vue'
 import { useDailyMetrics } from '../lib/useDailyMetrics'
 import { dayLabel, isRemaining, shiftDate } from '../lib/daily'
@@ -46,14 +47,16 @@ async function onSaveDay() {
   }
 }
 
+const collapsed = ref(false)
 const numberValue = (id: string) => pending.value[id] as number | undefined
 const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.value[id] as string[]) : [])
 </script>
 
 <template>
   <section class="mb-5">
-    <h2 class="mb-2 text-lg font-semibold">{{ t('dash_daily_h2') }}</h2>
+    <SectionHeading v-model:collapsed="collapsed" :title="t('dash_daily_h2')" storage-key="daily" />
 
+    <div v-show="!collapsed">
     <div class="day-nav">
       <button type="button" class="secondary" @click="go(-1)">{{ t('prev_day') }}</button>
       <strong>{{ dayLabel(date, getLang()) }}</strong>
@@ -113,6 +116,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
 
     <div class="mt-4">
       <SetsSection :user-id="userId" :date="date" />
+    </div>
     </div>
     <PlannedSection :user-id="userId" :date="date" />
   </section>
