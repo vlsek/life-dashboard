@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { getLang, setLang, t, type DictKey } from '../lib/i18n'
+import { loadVersionInfo } from '../lib/version'
 import { getTheme, setTheme, THEME_KEYS, type ThemeKey } from '../lib/theme'
 import { logout } from '../lib/supabase'
 import { handleInstallClick, isStandaloneApp } from '../lib/install'
@@ -8,6 +9,7 @@ import InstallModal from './InstallModal.vue'
 import WelcomeTourModal from './WelcomeTourModal.vue'
 import AboutModal from './AboutModal.vue'
 import Icon from './Icon.vue'
+import ChangelogModal from './ChangelogModal.vue'
 
 // Порт шапки + выезжающего меню из renderNav() (config.js) на Vue. Пилотная страница
 // сейчас единственная на новом стеке, поэтому остальные пункты меню ведут на старые
@@ -69,6 +71,16 @@ function openSidebar() {
 function closeSidebar() {
   sidebarOpen.value = false
 }
+
+const changelogOpen = ref(false)
+const version = ref('')
+onMounted(async () => {
+  try {
+    version.value = (await loadVersionInfo()).version
+  } catch {
+    /* сайдбар остаётся без номера версии — не критично */
+  }
+})
 
 const themeVal = ref<ThemeKey>(getTheme())
 function onThemeChange(e: Event) {
@@ -294,9 +306,20 @@ onUnmounted(() => {
       <Icon name="info" />
       {{ t('nav_about') }}
     </button>
+
+    <button
+      type="button"
+      class="mt-2 rounded-lg px-3 py-1.5 text-center text-xs"
+      style="background: transparent; color: var(--text-dim); opacity: 0.7"
+      data-test="version-btn"
+      @click="changelogOpen = true"
+    >
+      v{{ version }}
+    </button>
   </nav>
 
   <InstallModal v-if="installModalOpen" @close="installModalOpen = false" />
   <WelcomeTourModal v-if="tourOpen" @close="tourOpen = false" />
   <AboutModal v-if="aboutOpen" @close="aboutOpen = false" />
+  <ChangelogModal v-if="changelogOpen" @close="changelogOpen = false" />
 </template>

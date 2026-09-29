@@ -96,6 +96,8 @@ const DICT = {
     cal_goal_suffix: 'goal',
     dash_close_btn: 'Close',
     dash_weekdays_short: 'Mon,Tue,Wed,Thu,Fri,Sat,Sun',
+    changelog_title: "📋 What's new",
+    changelog_empty: "No history yet.",
   },
   ru: {
     nav_open_menu: 'Открыть меню',
@@ -182,6 +184,8 @@ const DICT = {
     cal_goal_suffix: 'цель',
     dash_close_btn: 'Закрыть',
     dash_weekdays_short: 'Пн,Вт,Ср,Чт,Пт,Сб,Вс',
+    changelog_title: "📋 Что нового",
+    changelog_empty: "История пока пуста.",
   },
 } as const
 

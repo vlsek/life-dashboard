@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.08";
+const SITE_VERSION = "1.09";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.09", date: "2026-09-29 03:40", changes: [
+        "Во всех 12 Vue-пилотах в сайдбаре появился номер версии, по тапу на который открывается история обновлений — как на классическом сайте. История читается из одного version.json, сгенерированного из этого ченджлога (scripts/gen_version_json.py), а не дублируется в каждом пилоте",
+        "45 новых тестов на 12 пилотов (по 5 на модалку ченджлога + 1 на кнопку в сайдбаре)",
+    ]},
     { version: "1.08", date: "2026-09-29 00:20", changes: [
         "Пилот Дашборда: карточка дня «Дневные метрики» — boolean/number (два режима: заменять и прибавлять, с «Итого сегодня» и ручной правкой итога)/multiselect, автосохранение каждого поля, «Что полезного сделал за день», кнопка «Сохранить день», «Баллы за день»",
         "«Подходы» и «Цели на сегодня» встроены в ту же карточку с общей выбранной датой (раньше были отдельными блоками без листания дней). Пересчёт стриков/колец/графиков — через уже существующую событийную шину (notifyDataChanged), без прямых вызовов между блоками",
@@ -908,6 +912,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.09", date: "2026-09-29 03:40", changes: [
+        "All 12 Vue pilots now show the site version in the sidebar and open the update history on tap, matching the classic site. The history reads a single version.json generated from this changelog (scripts/gen_version_json.py) instead of duplicating it in every pilot",
+        "45 new tests across the 12 pilots (5 for the changelog modal + 1 for the sidebar button, each)",
+    ]},
     { version: "1.08", date: "2026-09-29 00:20", changes: [
         "Dashboard pilot: the \"Daily metrics\" day card — boolean/number (two modes: replace and add-to-total, with a \"Total today\" readout and a manual fix) /multiselect fields, autosave per field, \"What you got done today\", a \"Save day\" button, \"Points for the day\"",
         "\"Sets\" and \"Today's goals\" are now embedded in the same card sharing the selected date (previously separate blocks with no day navigation). Streaks/rings/charts refresh through the existing event bus (notifyDataChanged), no direct calls between blocks",

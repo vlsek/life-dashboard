@@ -65,6 +65,9 @@ const DICT = {
     dash_save_error_generic: "Couldn't save: ",
     dash_delete_error_generic: "Couldn't delete: ",
     dash_close_btn: 'Close',
+    close: "Close",
+    changelog_title: "📋 What's new",
+    changelog_empty: "No history yet.",
   },
   ru: {
     nav_open_menu: 'Открыть меню',
@@ -120,6 +123,9 @@ const DICT = {
     dash_save_error_generic: 'Не удалось сохранить: ',
     dash_delete_error_generic: 'Не удалось удалить: ',
     dash_close_btn: 'Закрыть',
+    close: "Закрыть",
+    changelog_title: "📋 Что нового",
+    changelog_empty: "История пока пуста.",
   },
 } as const
 

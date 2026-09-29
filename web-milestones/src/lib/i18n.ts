@@ -85,6 +85,9 @@ const DICT = {
     ms_unit_short_week: 'wk',
     ms_unit_short_month: 'mo',
     ms_unit_short_year: 'yr',
+    close: "Close",
+    changelog_title: "📋 What's new",
+    changelog_empty: "No history yet.",
   },
   ru: {
     nav_open_menu: 'Открыть меню',
@@ -159,6 +162,9 @@ const DICT = {
     ms_unit_short_week: 'нед.',
     ms_unit_short_month: 'мес.',
     ms_unit_short_year: 'г.',
+    close: "Закрыть",
+    changelog_title: "📋 Что нового",
+    changelog_empty: "История пока пуста.",
   },
 } as const
 

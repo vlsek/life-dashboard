@@ -226,6 +226,9 @@ const DICT = {
     dash_planned_add_goal_title: "Add a goal for today",
     dash_planned_goal_field: "Goal",
     dash_planned_add_from_goals_btn: "🎯 Add from goals",
+    close: "Close",
+    changelog_title: "📋 What's new",
+    changelog_empty: "No history yet.",
   },
   ru: {
     nav_open_menu: 'Открыть меню',
@@ -441,6 +444,9 @@ const DICT = {
     dash_planned_add_goal_title: "Добавить цель на сегодня",
     dash_planned_goal_field: "Цель",
     dash_planned_add_from_goals_btn: "🎯 Добавить из целей",
+    close: "Закрыть",
+    changelog_title: "📋 Что нового",
+    changelog_empty: "История пока пуста.",
   },
 } as const
 

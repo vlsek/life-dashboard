@@ -97,6 +97,8 @@ const DICT = {
     acc_link_google_btn: 'Link Google',
     acc_google_linked: '✅ Google account is linked — you can also sign in with it.',
     acc_google_not_linked: "Google isn't linked yet. Link it so you can sign in with Google too, without a password.",
+    changelog_title: "📋 What's new",
+    changelog_empty: "No history yet.",
   },
   ru: {
     nav_open_menu: 'Открыть меню',
@@ -184,6 +186,8 @@ const DICT = {
     acc_link_google_btn: 'Привязать Google',
     acc_google_linked: '✅ Google-аккаунт привязан — можешь входить и через него тоже.',
     acc_google_not_linked: 'Google пока не привязан. Привяжи, чтобы можно было входить и через Google, без пароля.',
+    changelog_title: "📋 Что нового",
+    changelog_empty: "История пока пуста.",
   },
 } as const
 

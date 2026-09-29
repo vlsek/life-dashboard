@@ -166,6 +166,8 @@ const DICT = {
     dash_chart_period_uses_shared_hint: "Currently using the shared period from \"Configure charts\". Pick a range here to set a custom period just for this chart.",
     dash_chart_period_reset_btn: "Use shared period",
     dash_charts_configure_btn: "⚙️ Configure charts",
+    changelog_title: "📋 What's new",
+    changelog_empty: "No history yet.",
   },
   ru: {
     nav_open_menu: 'Открыть меню',
@@ -322,6 +324,8 @@ const DICT = {
     dash_chart_period_uses_shared_hint: "Сейчас используется общий период из «Настроить графики». Выбери диапазон здесь, чтобы задать свой период именно для этого графика.",
     dash_chart_period_reset_btn: "Использовать общий период",
     dash_charts_configure_btn: "⚙️ Настроить графики",
+    changelog_title: "📋 Что нового",
+    changelog_empty: "История пока пуста.",
   },
 } as const
 

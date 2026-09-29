@@ -50,6 +50,9 @@ const DICT = {
     dash_save_error_generic: "Couldn't save: ",
     comm_load_error: "Couldn't load:",
     dash_close_btn: 'Close',
+    close: "Close",
+    changelog_title: "📋 What's new",
+    changelog_empty: "No history yet.",
   },
   ru: {
     nav_open_menu: 'Открыть меню',
@@ -90,6 +93,9 @@ const DICT = {
     dash_save_error_generic: 'Не удалось сохранить: ',
     comm_load_error: 'Не удалось загрузить:',
     dash_close_btn: 'Закрыть',
+    close: "Закрыть",
+    changelog_title: "📋 Что нового",
+    changelog_empty: "История пока пуста.",
   },
 } as const
 

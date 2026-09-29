@@ -101,6 +101,8 @@ const DICT = {
     eng_nothing_learned: 'Nothing learned yet.',
     eng_translate_btn_title: 'Auto-translate (via MyMemory)',
     eng_translate_error: "Couldn't auto-translate — enter the translation yourself.",
+    changelog_title: "📋 What's new",
+    changelog_empty: "No history yet.",
   },
   ru: {
     nav_open_menu: 'Открыть меню',
@@ -192,6 +194,8 @@ const DICT = {
     eng_nothing_learned: 'Пока ничего не выучено.',
     eng_translate_btn_title: 'Автоперевод (через MyMemory)',
     eng_translate_error: 'Не удалось автоматически перевести — впиши перевод сам.',
+    changelog_title: "📋 Что нового",
+    changelog_empty: "История пока пуста.",
   },
 } as const
 

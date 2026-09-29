@@ -3,7 +3,9 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { getLang, setLang, t, type DictKey } from '../lib/i18n'
 import { getTheme, setTheme, THEME_KEYS, type ThemeKey } from '../lib/theme'
 import { logout } from '../lib/supabase'
+import { loadVersionInfo } from '../lib/version'
 import Icon from './Icon.vue'
+import ChangelogModal from './ChangelogModal.vue'
 
 // Порт шапки + выезжающего меню из renderNav() (config.js) на Vue. Копия компонента из
 // web-history/ (см. ROADMAP.md — пока намеренно дублируется для каждой страницы пилота,
@@ -47,6 +49,16 @@ function openSidebar() {
 function closeSidebar() {
   sidebarOpen.value = false
 }
+
+const changelogOpen = ref(false)
+const version = ref('')
+onMounted(async () => {
+  try {
+    version.value = (await loadVersionInfo()).version
+  } catch {
+    /* сайдбар остаётся без номера версии — не критично */
+  }
+})
 
 const themeVal = ref<ThemeKey>(getTheme())
 function onThemeChange(e: Event) {
@@ -243,5 +255,17 @@ onUnmounted(() => {
     >
       {{ t('logout') }} ({{ props.userEmail }})
     </button>
+
+    <button
+      type="button"
+      class="mt-2 rounded-lg px-3 py-1.5 text-center text-xs"
+      style="background: transparent; color: var(--text-dim); opacity: 0.7"
+      data-test="version-btn"
+      @click="changelogOpen = true"
+    >
+      v{{ version }}
+    </button>
   </nav>
+
+  <ChangelogModal v-if="changelogOpen" @close="changelogOpen = false" />
 </template>
