@@ -126,12 +126,7 @@ legacy-переезды — не пересекаюсь с фазой 2 (аге�
 milestones), `config.js` (строка milestones в pages[] — общий navHref() не трогаю, он уже есть).
 
 ### Агент 7
-Фаза 2, ВОСЬМАЯ страница (готово: History, Calendar, Shop, Challenges; у других: Skills — агент 1,
-Community — агент 2, Goals — агент 4, Milestones — агент 6): беру **Workouts** — `/workouts/`
-без `-vue`, классика `workouts.html`+`workouts.js` → `/legacy/workouts.html`+`/legacy/workouts.js`.
-По рецепту из `docs/HANDOFF.md` (с шагом 7а — пересборка затронутых пилотов). С: 2026-09-29 18:45.
-Файлы: `web-workouts/vite.config.ts`, `workouts-vue/`→`workouts/`, `workouts.html`/`workouts.js`→
-`legacy/`, `sw.js` (ASSETS + CACHE_NAME), все AppShell.vue, `config.js` (pages[]; версия+changelog).
+— свободен —
 
 ## Бэклог
 
@@ -183,7 +178,7 @@ Community — агент 2, Goals — агент 4, Milestones — агент 6)
 - [x] (v1.15, агент 7) Фаза 2, пятая страница: Calendar на `/calendar/` без `-vue`, классика → `/legacy/calendar.html`
 - [x] (v1.16, агент 7) Фаза 2, шестая страница: Shop на `/shop/` без `-vue`, классика → `/legacy/shop.html`
 - [x] (v1.17, агент 7) Фаза 2, седьмая страница: Challenges на `/challenges/` без `-vue`, классика → `/legacy/challenges.html`
-- [~ агент 7] Фаза 2, восьмая страница: Workouts на `/workouts/` без `-vue`, классика `workouts.html` → `/legacy/workouts.html`
+- [x] (v1.18, агент 7) Фаза 2, восьмая страница: Workouts на `/workouts/` без `-vue`, классика → `/legacy/workouts.html`
 - [ ] Фаза 2: Languages — НУЖНО РЕШЕНИЕ ВЛАДЕЛЬЦА по адресам: классика `english.html/js`, пилот `web-languages/`→`languages-vue/`. Варианты: нового `/languages/` + legacy `/legacy/english.html` (по схеме «legacy = старое имя»), либо иначе
 - [x] Пилот Дашборда включён в меню всех 12 Vue-пилотов (`/dashboard-vue/` вместо `dashboard.html`) — v1.10 (агент 5), по добру владельца, до завершения раскладки/визуала
 
@@ -215,3 +210,4 @@ Community — агент 2, Goals — агент 4, Milestones — агент 6)
 - 2026-09-29 · v1.15 · агент 7 · Фаза 2: Календарь переехал на /calendar/, классика в /legacy/calendar.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v3, pages[] в config.js, все 12 AppShell.vue). Тесты: web-calendar 15, web-history 30 зелёные, vue-tsc чист
 - 2026-09-29 · v1.16 · агент 7 · Фаза 2: Магазин переехал на /shop/, классика в /legacy/shop.html. ИСПРАВЛЕНИЕ к v1.15: AppShell-правки не были пересобраны в остальных пилотах, ссылка «Календарь» на 10 страницах вела на удалённый /calendar-vue/ — пересобраны все затронутые пилоты (правило для всех: после правки AppShell.vue собирать КАЖДЫЙ пилот, проверять grep по бандлам, см. ROADMAP v1.16). Также dashboard.js (классика) и ProfileSection.vue. Тесты: dashboard 337, shop 23, calendar 15, history 30
 - 2026-09-29 · v1.17 · агент 7 · Фаза 2: Челленджи переехали на /challenges/, классика в /legacy/challenges.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v5, pages[] в config.js, все AppShell.vue, пересборка всех затронутых пилотов по шагу 7а). Тесты: challenges 34, dashboard 337, history 30
+- 2026-09-29 · v1.18 · агент 7 · Фаза 2: Тренировки переехали на /workouts/, классика в /legacy/workouts.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v6, pages[] в config.js, все AppShell.vue, пересборка всех затронутых пилотов, smoke-тест workouts). Тесты: workouts 56, dashboard 337

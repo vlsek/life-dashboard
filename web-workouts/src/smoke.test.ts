@@ -28,9 +28,9 @@ const entry: WorkoutEntry = {
 }
 
 describe('AppShell (workouts pilot)', () => {
-  it('links to itself at /workouts-vue/', () => {
+  it('links to itself at /workouts/', () => {
     const wrapper = mount(AppShell, { props: { userEmail: null } })
-    expect(wrapper.html()).toContain('/workouts-vue/')
+    expect(wrapper.html()).toContain('/workouts/')
     wrapper.unmount()
   })
 })

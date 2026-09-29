@@ -256,6 +256,10 @@ v1.17 — Фаза 2, седьмая страница (агент 7): Челле
   /legacy/challenges.html. По рецепту HANDOFF с шагом 7а: пересобраны все 12 затронутых пилотов,
   grep по бандлам на challenges-vue/calendar-vue/shop-vue/history-vue пуст. 34 теста web-challenges,
   337 web-dashboard, 30 web-history зелёные, vue-tsc чист. sw.js CACHE_NAME → ld-shell-v5.
+v1.18 — Фаза 2, восьмая страница (агент 7): Тренировки на /workouts/ (без -vue), классика в
+  /legacy/workouts.html. Рецепт HANDOFF + шаг 7а: пересобраны все 12 затронутых пилотов, grep по
+  бандлам на *-vue переехавших страниц пуст. Ещё поправлен smoke-тест web-workouts (ссылка страницы
+  на саму себя). 56 тестов web-workouts и 337 web-dashboard зелёные, vue-tsc чист. CACHE_NAME → v6.
 v1.03 — Пилот Сообщества: заявки в друзья, друзья отдельно от подписок, «В друзья»
   (lib/friends.ts, PersonChip.vue, 17 тестов, в т.ч. UI-тест App.vue с подменой Supabase).
 v1.02 — Сообщество (классика): то же в ванильном community.js. Фильтр «Только друзья» =

@@ -2,14 +2,16 @@ import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 
-// Пилотная страница на Vue 3 + TS + Tailwind — перенос workouts.js/html, итерациями
-// (как и Dashboard): итерация 1 — CRUD упражнений/записей, рекорды, категории, шаблоны.
-// Мини-графики и общий график объёма — отдельная итерация. Собирается в ../workouts-vue.
+// Страница на Vue 3 + TS + Tailwind (перенос workouts.js/html, обе итерации закрыты). Фаза 2
+// (см. COORDINATION.md): пилот переехал на короткий адрес /workouts/ (без -vue) — теперь это и
+// есть основной раздел «Тренировки», классическая версия перенесена в /legacy/workouts.html.
+// Собирается в ../workouts — отдельную папку в корне репозитория, которую Cloudflare Workers
+// раздаёт как статику. base совпадает с этим путём, чтобы ссылки на ассеты резолвились верно.
 export default defineConfig({
-  base: '/workouts-vue/',
+  base: '/workouts/',
   plugins: [vue(), tailwindcss()],
   build: {
-    outDir: '../workouts-vue',
+    outDir: '../workouts',
     emptyOutDir: true,
   },
 })

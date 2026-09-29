@@ -1,6 +1,13 @@
 {
-  "version": "1.17",
+  "version": "1.18",
   "en": [
+    {
+      "version": "1.18",
+      "date": "2026-09-29 18:48",
+      "changes": [
+        "Phase 2, eighth page: Workouts now lives at the short address /workouts/ instead of /workouts-vue/, and the classic version moved to /legacy/workouts.html. Sidebar links on every Vue page were updated and rebuilt"
+      ]
+    },
     {
       "version": "1.17",
       "date": "2026-09-29 18:39",
@@ -865,6 +872,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.18",
+      "date": "2026-09-29 18:48",
+      "changes": [
+        "Фаза 2, восьмая страница: «Тренировки» теперь на коротком адресе /workouts/ вместо /workouts-vue/, а классическая версия — в /legacy/workouts.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны"
+      ]
+    },
     {
       "version": "1.17",
       "date": "2026-09-29 18:39",

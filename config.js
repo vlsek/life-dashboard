@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.17";
+const SITE_VERSION = "1.18";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.18", date: "2026-09-29 18:48", changes: [
+        "Фаза 2, восьмая страница: «Тренировки» теперь на коротком адресе /workouts/ вместо /workouts-vue/, а классическая версия — в /legacy/workouts.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны",
+    ]},
     { version: "1.17", date: "2026-09-29 18:39", changes: [
         "Фаза 2, седьмая страница: «Челленджи» теперь на коротком адресе /challenges/ вместо /challenges-vue/, а классическая версия — в /legacy/challenges.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны",
     ]},
@@ -940,6 +943,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.18", date: "2026-09-29 18:48", changes: [
+        "Phase 2, eighth page: Workouts now lives at the short address /workouts/ instead of /workouts-vue/, and the classic version moved to /legacy/workouts.html. Sidebar links on every Vue page were updated and rebuilt",
+    ]},
     { version: "1.17", date: "2026-09-29 18:39", changes: [
         "Phase 2, seventh page: Challenges now lives at the short address /challenges/ instead of /challenges-vue/, and the classic version moved to /legacy/challenges.html. Sidebar links on every Vue page were updated and rebuilt",
     ]},
@@ -1968,7 +1974,7 @@ function renderNav(active, userEmail) {
         { href: "dashboard.html", key: "dashboard", i18n: "nav_dashboard", icon: "home", home: true, vue: "dashboard-vue/" },
         { href: "goals.html", key: "goals", i18n: "nav_goals", icon: "goals", vue: "goals-vue/" },
         { href: "skills.html", key: "skills", i18n: "nav_skills", icon: "skills" },
-        { href: "workouts.html", key: "workouts", i18n: "nav_workouts", icon: "workouts", vue: "workouts-vue/" },
+        { href: "legacy/workouts.html", key: "workouts", i18n: "nav_workouts", icon: "workouts", vue: "workouts/" },
         { href: "legacy/challenges.html", key: "challenges", i18n: "nav_challenges", icon: "challenges", vue: "challenges/" },
         { href: "english.html", key: "english", i18n: "nav_english", icon: "english", vue: "languages-vue/" },
         { href: "legacy/calendar.html", key: "calendar", i18n: "nav_calendar", icon: "calendar", vue: "calendar/" },
