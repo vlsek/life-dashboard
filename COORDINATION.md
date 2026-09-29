@@ -126,7 +126,13 @@ legacy-переезды — не пересекаюсь с фазой 2 (аге�
 milestones), `config.js` (строка milestones в pages[] — общий navHref() не трогаю, он уже есть).
 
 ### Агент 7
-— свободен —
+Фаза 2, ШЕСТАЯ страница (History и Calendar — готово, Skills — агент 1, Community — агент 2,
+Goals — агент 4, Milestones — агент 6): беру **Shop** — `/shop/` без `-vue`, классика
+`shop.html`+`shop.js` → `/legacy/shop.html`+`/legacy/shop.js`. По рецепту из `docs/HANDOFF.md`.
+С: 2026-09-29 18:26.
+Файлы: `web-shop/vite.config.ts`, `shop-vue/`→`shop/`, `shop.html`/`shop.js`→`legacy/`, `sw.js`
+(ASSETS + CACHE_NAME), все AppShell.vue (href на shop), `config.js` (строка shop в pages[];
+версия+changelog).
 
 ## Бэклог
 
@@ -175,6 +181,7 @@ milestones), `config.js` (строка milestones в pages[] — общий navH
 - [~ агент 4] Обратная ссылка пилот→классика: `pilot_badge` в 12 AppShell.vue становится ссылкой на классическую версию текущей страницы
 - [~ агент 4] Фаза 2, вторая страница: Goals на `/goals/` без `-vue`, классика `goals.html` → `/legacy/goals.html`
 - [x] (v1.15, агент 7) Фаза 2, пятая страница: Calendar на `/calendar/` без `-vue`, классика → `/legacy/calendar.html`
+- [~ агент 7] Фаза 2, шестая страница: Shop на `/shop/` без `-vue`, классика `shop.html` → `/legacy/shop.html`
 - [x] Пилот Дашборда включён в меню всех 12 Vue-пилотов (`/dashboard-vue/` вместо `dashboard.html`) — v1.10 (агент 5), по добру владельца, до завершения раскладки/визуала
 
 ## Журнал (новое — внизу)
