@@ -125,6 +125,15 @@ legacy-переезды — не пересекаюсь с фазой 2 (аге�
 `milestones.js`→`legacy/`, `sw.js` (ASSETS + CACHE_NAME), все 12 `AppShell.vue` (href на
 milestones), `config.js` (строка milestones в pages[] — общий navHref() не трогаю, он уже есть).
 
+### Агент 7
+Фаза 2, ПЯТАЯ страница (Skills — агент 1, Community — агент 2, Goals — агент 4, Milestones —
+агент 6, History — уже готово): беру **Calendar** — `/calendar/` без `-vue`, классика
+`calendar.html`+`calendar.js` → `/legacy/calendar.html`+`/legacy/calendar.js`. По рецепту из
+`docs/HANDOFF.md`. С: 2026-09-29 18:22.
+Файлы: `web-calendar/vite.config.ts`, `calendar-vue/`→`calendar/`, `calendar.html`/`calendar.js`→
+`legacy/`, `sw.js` (ASSETS + CACHE_NAME), все AppShell.vue (href на calendar), `config.js`
+(строка calendar в pages[]; версия+changelog).
+
 ## Бэклог
 
 Статусы: `[ ]` свободно · `[~ агент N]` в работе · `[x]` закрыто (версия).
@@ -171,6 +180,7 @@ milestones), `config.js` (строка milestones в pages[] — общий navH
 - [x] (v1.11, агент 4) Фаза 2, лёгкий шаг: ссылка «✨ Попробовать новый дизайн» из классики на Vue-пилоты (Дашборд/Цели/Тренировки/Челленджи/Языки/Календарь/Вехи/Магазин/Сообщество/История/Аккаунт; Skills не трогал — там агент 1)
 - [~ агент 4] Обратная ссылка пилот→классика: `pilot_badge` в 12 AppShell.vue становится ссылкой на классическую версию текущей страницы
 - [~ агент 4] Фаза 2, вторая страница: Goals на `/goals/` без `-vue`, классика `goals.html` → `/legacy/goals.html`
+- [~ агент 7] Фаза 2, пятая страница: Calendar на `/calendar/` без `-vue`, классика `calendar.html` → `/legacy/calendar.html`
 - [x] Пилот Дашборда включён в меню всех 12 Vue-пилотов (`/dashboard-vue/` вместо `dashboard.html`) — v1.10 (агент 5), по добру владельца, до завершения раскладки/визуала
 
 ## Журнал (новое — внизу)
