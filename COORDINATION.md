@@ -66,12 +66,7 @@
 — свободен —
 
 ### Агент 2
-Фаза 2, беру **Community** — короткий адрес `/community/` без `-vue`, классика
-`community.html`+`community.js` → `/legacy/community.html`+`/legacy/community.js`.
-По рецепту из `docs/HANDOFF.md` (агент 6, на примере History). С: 2026-09-29 10:11.
-Файлы: `web-community/vite.config.ts`, `community-vue/`→`community/`, `community.html`/
-`community.js`→`legacy/`, `sw.js` (ASSETS+CACHE_NAME), все 12 `AppShell.vue` (href на
-community), `config.js` (строка community в pages[]).
+— свободен — (задачу Community с 10:11 перехватил агент 4 по прямому решению владельца, 2026-09-29 23:44; свежих коммитов у агента 2 не было)
 
 ### Агент 3
 Дашборд: «Кастомизация раскладки блоков» (показать/скрыть/переставить), с 2026-09-29 00:35.
@@ -79,14 +74,14 @@ community), `config.js` (строка community в pages[]).
 (новый lib + компонент настроек, минимальная правка App.vue для обёртки блоков).
 
 ### Агент 4
-Фаза 2, беру **Goals** — короткий адрес `/goals/` без `-vue`, классика `goals.html`+`goals.js` →
-`/legacy/goals.html`+`/legacy/goals.js`. Заново после обрыва контекста (прежняя попытка ничего не
-запушила). По рецепту из `docs/HANDOFF.md` (шаги 1–8, включая 7а — пересборка каждого пилота).
-Прежняя задача 1 («pilot_badge → ссылка на классику») снята: её заменяет задача агента 7 по решению
-владельца. С: 2026-09-29 23:43.
-Файлы: `web-goals/vite.config.ts`, `goals-vue/`→`goals/`, `goals.html`/`goals.js`→`legacy/`, `sw.js`
-(ASSETS + CACHE_NAME), `config.js` (строка goals в pages[], версия/changelog), все 12 `AppShell.vue`
-(href на goals) + пересборка затронутых пилотов, `dashboard.js`/`web-dashboard` (грепом на goals.html/goals-vue).
+По решению владельца (2026-09-29 23:44): СНАЧАЛА **Community** (перехвачено у агента 2), ПОТОМ **Goals**.
+1) Фаза 2, **Community** — `/community/` без `-vue`, классика `community.html`+`community.js` →
+`/legacy/community.html`+`/legacy/community.js`. Файлы: `web-community/vite.config.ts`,
+`community-vue/`→`community/`, `sw.js` (ASSETS+CACHE_NAME), `config.js` (pages[] + версия), все 12 `AppShell.vue`,
+пересборка затронутых пилотов. С: 2026-09-29 23:44.
+2) Затем Фаза 2, **Goals** — `/goals/`, классика → `/legacy/goals.html`+`/legacy/goals.js` (прежняя попытка ничего
+не запушила). Рецепт — `docs/HANDOFF.md`, шаги 1–8 (в т.ч. 7а). Прежняя задача 1 («pilot_badge → ссылка»)
+снята: её заменяет агент 7.
 
 ### Агент 5
 — свободен —
@@ -164,6 +159,7 @@ badge, сверься с этим блоком. У агента 3 — правл
 - [x] Расширение офлайн-кэша на Календарь — v1.07 (агент 4)
 - [x] (v1.22, агент 1) Фаза 2, первая страница: Skills на `/skills/` без `-vue`, классика → `/legacy/skills.html`
 - [x] (v1.11, агент 4) Фаза 2, лёгкий шаг: ссылка «✨ Попробовать новый дизайн» из классики на Vue-пилоты (Дашборд/Цели/Тренировки/Челленджи/Языки/Календарь/Вехи/Магазин/Сообщество/История/Аккаунт; Skills не трогал — там агент 1)
+- [~ агент 4] Фаза 2: Community на `/community/` без `-vue`, классика → `/legacy/community.html` (перехвачено у агента 2 по решению владельца), затем Goals
 - [x] (снято, без реализации) Обратная ссылка пилот→классика через `pilot_badge` — заменена задачей агента 7 (ссылка `legacy-<стр>` внизу меню), по решению владельца
 - [~ агент 4] Фаза 2, вторая страница: Goals на `/goals/` без `-vue`, классика `goals.html` → `/legacy/goals.html`
 - [x] (v1.15, агент 7) Фаза 2, пятая страница: Calendar на `/calendar/` без `-vue`, классика → `/legacy/calendar.html`
