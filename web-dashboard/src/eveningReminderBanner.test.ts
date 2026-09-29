@@ -18,6 +18,10 @@ describe('EveningReminderBanner', () => {
     expect(w.text()).toContain('Остались невыполненные метрики!')
     expect(w.text()).toContain('Сделайте их, чтобы не потерять стрейк')
     expect(w.find('[data-test="evening-reminder-details"]').exists()).toBe(false)
+    // Второй абзац — отдельный блочный элемент под заголовком, а не продолжение строки заголовка
+    const text = w.find('[data-test="evening-reminder-text"]')
+    expect(text.classes()).toContain('block')
+    expect(text.element.parentElement?.querySelector('strong')?.textContent).not.toContain('Сделайте их')
     expect(w.text()).not.toContain('Reading')
   })
 

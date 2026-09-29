@@ -44,12 +44,21 @@ async function onUnfollow(followedId: string) {
 async function onFollow() {
   if (auth.value.status !== 'ready') return
   const query = searchQuery.value.trim()
-  if (!query) return
+  if (!query) {
+    followMsg.value = { text: t('comm_enter_query'), error: true }
+    return
+  }
   followBusy.value = true
   followMsg.value = null
   const isEmail = query.includes('@')
-  const res = await follow(auth.value.userId, query)
-  followBusy.value = false
+  let res: Awaited<ReturnType<typeof follow>>
+  try {
+    res = await follow(auth.value.userId, query)
+  } catch (err) {
+    res = { ok: false, reason: 'error', message: err instanceof Error ? err.message : String(err) }
+  } finally {
+    followBusy.value = false
+  }
   if (res.ok) {
     searchQuery.value = ''
     followMsg.value = { text: t('comm_follow_added_toast'), error: false }
@@ -65,12 +74,21 @@ async function onFollow() {
 async function onAddFriend() {
   if (auth.value.status !== 'ready') return
   const query = searchQuery.value.trim()
-  if (!query) return
+  if (!query) {
+    followMsg.value = { text: t('comm_enter_query'), error: true }
+    return
+  }
   followBusy.value = true
   followMsg.value = null
   const isEmail = query.includes('@')
-  const res = await sendFriendRequest(auth.value.userId, query)
-  followBusy.value = false
+  let res: Awaited<ReturnType<typeof sendFriendRequest>>
+  try {
+    res = await sendFriendRequest(auth.value.userId, query)
+  } catch (err) {
+    res = { ok: false, reason: 'error', message: err instanceof Error ? err.message : String(err) }
+  } finally {
+    followBusy.value = false
+  }
   if (res.ok) {
     searchQuery.value = ''
     const key = res.outcome === 'friends' ? 'comm_friend_now_friends_toast' : res.outcome === 'already' ? 'comm_friend_already_toast' : 'comm_friend_request_sent_toast'

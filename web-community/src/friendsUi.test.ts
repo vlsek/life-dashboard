@@ -4,6 +4,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 // Подмена клиента Supabase: from() — универсальная «цепочка», rpc() пишет вызовы.
 const h = vi.hoisted(() => ({
   rpcAvailable: true,
+  lookupError: false,
   calls: [] as { fn: string; args: unknown }[],
 }))
 
@@ -50,6 +51,7 @@ vi.mock('./lib/supabase', () => {
             error: null,
           }
         case 'find_user_by_name':
+          if (h.lookupError) return { data: null, error: { message: 'permission denied for function find_user_by_name' } }
           return { data: (args as { lookup_name: string }).lookup_name === 'nobody' ? null : 'ann', error: null }
         case 'send_friend_request':
           return { data: { status: 'pending' }, error: null }
@@ -74,6 +76,7 @@ describe('Community: friends UI', () => {
   beforeEach(() => {
     h.calls.length = 0
     h.rpcAvailable = true
+    h.lookupError = false
   })
 
   it('without migration 029: no requests, no sub-headings, no "Add friend"; follow works as before', async () => {
@@ -139,6 +142,29 @@ describe('Community: friends UI', () => {
     await flushPromises()
     expect(h.calls.some((c) => c.fn === 'send_friend_request')).toBe(false)
     expect(w.text()).toMatch(/не найден|No user found/)
+    w.unmount()
+  })
+  it('empty search field: both buttons say what is needed instead of doing nothing', async () => {
+    const w = await mountApp()
+    for (const label of [['Подписаться', 'Follow'], ['В друзья', 'Add friend']]) {
+      await (buttonWith(w, label[0]) ?? buttonWith(w, label[1]))!.trigger('click')
+      await flushPromises()
+      expect(w.text()).toMatch(/Сначала введите email или ник|Enter an email or a nickname first/)
+    }
+    expect(h.calls.some((c) => c.fn === 'send_friend_request' || c.fn === 'find_user_by_name')).toBe(false)
+    w.unmount()
+  })
+
+  it('a failing lookup RPC shows the real error (not \"not found\") and does not lock the buttons', async () => {
+    h.lookupError = true
+    const w = await mountApp()
+    await w.find('input[type=\"text\"]').setValue('ann')
+    const add = () => (buttonWith(w, 'В друзья') ?? buttonWith(w, 'Add friend'))!
+    await add().trigger('click')
+    await flushPromises()
+    expect(w.text()).toContain('permission denied for function find_user_by_name')
+    expect(w.text()).not.toMatch(/не найден|No user found/)
+    expect(add().attributes('disabled')).toBeUndefined()
     w.unmount()
   })
 })

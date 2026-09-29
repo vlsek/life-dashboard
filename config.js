@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.34";
+const SITE_VERSION = "1.35";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.35", date: "2026-09-30 00:40", changes: [
+        "Дашборд (пилот): в вечернем напоминании заголовок «Остались невыполненные метрики!» и текст «Сделайте их, чтобы не потерять стрейк» теперь на разных строках, между ними есть отступ",
+        "Сообщество (пилот): кнопки «Подписаться» и «В друзья» больше не молчат. Если поле пустое — появляется подсказка «Сначала введите email или ник». Если поиск пользователя упал из-за ошибки (нет прав, нет функции в базе, сеть), показывается настоящая ошибка, а не ложное «не найден», и кнопки не остаются заблокированными",
+    ]},
     { version: "1.34", date: "2026-09-30 00:38", changes: [
         "Тренировки (новая версия): у упражнений с собственным весом (отжимания, подтягивания, приседания) в форме записи появилась галочка «Утяжеление» — можно указать дополнительный вес для каждого подхода; он показывается в записях как «15 (+5кг)» и учитывается в рекордах при равных повторениях",
         "Тренировки (новая версия): время подхода теперь проставляется сразу и у первого подхода новой записи, а не только у добавленных следом",
@@ -993,6 +997,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.35", date: "2026-09-30 00:40", changes: [
+        "Dashboard (pilot): in the evening reminder, the title \"Unfinished metrics left!\" and the text \"Finish them so you don't lose your streak.\" are now on separate lines with a gap between them",
+        "Community (pilot): the Follow and Add friend buttons no longer do nothing silently. With an empty field a hint appears (\"Enter an email or a nickname first\"). If the user lookup fails with an error (no permission, missing DB function, network), the real error is shown instead of a false \"not found\", and the buttons no longer stay disabled",
+    ]},
     { version: "1.34", date: "2026-09-30 00:38", changes: [
         "Workouts (new version): bodyweight exercises (push-ups, pull-ups, squats) now have a \"Added weight\" checkbox in the entry form — set extra weight per set; it shows in entries as \"15 (+5kg)\" and breaks ties between equal reps in records",
         "Workouts (new version): a set's time is now filled in right away for the first set of a new entry too, not only for sets added after it",

@@ -31,10 +31,11 @@ const expanded = ref(false)
         :title="expanded ? t('evening_reminder_details_hide') : t('evening_reminder_details_show')"
         @click="expanded = !expanded"
       >
-        <strong class="inline-flex items-center gap-1"><Icon name="flame" />{{ t('evening_reminder_title') }}</strong>
-        <span class="dim"> {{ t('evening_reminder_text') }}</span>
-        <span class="dim ml-1 inline-flex items-center" style="font-size: 0.85em">
-          <Icon :name="expanded ? 'chevron_left' : 'chevron_right'" :extra-style="expanded ? 'transform: rotate(-90deg)' : 'transform: rotate(90deg)'" />
+        <strong class="flex items-center gap-1"><Icon name="flame" />{{ t('evening_reminder_title') }}</strong>
+        <span class="dim mt-0.5 block" data-test="evening-reminder-text">{{ t('evening_reminder_text') }}
+          <span class="ml-1 inline-flex items-center" style="font-size: 0.85em">
+            <Icon :name="expanded ? 'chevron_left' : 'chevron_right'" :extra-style="expanded ? 'transform: rotate(-90deg)' : 'transform: rotate(90deg)'" />
+          </span>
         </span>
       </button>
       <button type="button" class="secondary px-2" data-test="evening-reminder-dismiss" :aria-label="t('dash_close_btn')" @click="emit('dismiss')">

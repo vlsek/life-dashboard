@@ -118,10 +118,13 @@ export function useCommunity() {
 
   // Поиск по email или по нику через две разные RPC (сервер решает совпадение — не тянем список
   // всех пользователей на клиент). Портировано из addBtn.onclick в renderFriendsCard().
-  async function lookupUser(userId: string, query: string): Promise<{ ok: true; id: string } | { ok: false; reason: 'not_found' | 'thats_you' }> {
+  async function lookupUser(userId: string, query: string): Promise<{ ok: true; id: string } | { ok: false; reason: 'not_found' | 'thats_you' | 'error'; message?: string }> {
     const isEmail = query.includes('@')
     const { data: foundId, error } = isEmail ? await sb.rpc('find_user_by_email', { lookup_email: query }) : await sb.rpc('find_user_by_name', { lookup_name: query })
-    if (error || !foundId) return { ok: false, reason: 'not_found' }
+    // Ошибка самого запроса (нет функции в БД, права, сеть) — НЕ «пользователь не найден»: иначе
+    // причина, почему кнопки «не работают», остаётся невидимой. «Не найден» — только чистый пустой ответ.
+    if (error) return { ok: false, reason: 'error', message: error.message }
+    if (!foundId) return { ok: false, reason: 'not_found' }
     if (foundId === userId) return { ok: false, reason: 'thats_you' }
     return { ok: true, id: foundId as string }
   }

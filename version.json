@@ -1,6 +1,14 @@
 {
-  "version": "1.34",
+  "version": "1.35",
   "en": [
+    {
+      "version": "1.35",
+      "date": "2026-09-30 00:40",
+      "changes": [
+        "Dashboard (pilot): in the evening reminder, the title \"Unfinished metrics left!\" and the text \"Finish them so you don't lose your streak.\" are now on separate lines with a gap between them",
+        "Community (pilot): the Follow and Add friend buttons no longer do nothing silently. With an empty field a hint appears (\"Enter an email or a nickname first\"). If the user lookup fails with an error (no permission, missing DB function, network), the real error is shown instead of a false \"not found\", and the buttons no longer stay disabled"
+      ]
+    },
     {
       "version": "1.34",
       "date": "2026-09-30 00:38",
@@ -986,6 +994,14 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.35",
+      "date": "2026-09-30 00:40",
+      "changes": [
+        "Дашборд (пилот): в вечернем напоминании заголовок «Остались невыполненные метрики!» и текст «Сделайте их, чтобы не потерять стрейк» теперь на разных строках, между ними есть отступ",
+        "Сообщество (пилот): кнопки «Подписаться» и «В друзья» больше не молчат. Если поле пустое — появляется подсказка «Сначала введите email или ник». Если поиск пользователя упал из-за ошибки (нет прав, нет функции в базе, сеть), показывается настоящая ошибка, а не ложное «не найден», и кнопки не остаются заблокированными"
+      ]
+    },
     {
       "version": "1.34",
       "date": "2026-09-30 00:38",
