@@ -10,6 +10,7 @@ export interface PlannedEntry {
   text: string
   done?: boolean // только у custom; у goal «выполнено» берётся из самой цели
   bonus?: boolean // доп. пункт: не в базовые 100%, при выполнении +% сверху
+  time?: string // «HH:MM» — необязательное время напоминания (v1.20); классика поле не знает и не трогает
 }
 
 export interface PlanGoal {
@@ -38,10 +39,28 @@ export function normalizePlanned(raw: unknown): PlannedEntry[] {
 }
 
 // Все операции возвращают НОВЫЙ массив — компонент сначала показывает результат, потом сохраняет.
-export function addCustom(planned: PlannedEntry[], rawText: string): PlannedEntry[] {
+export function addCustom(planned: PlannedEntry[], rawText: string, time?: string | null): PlannedEntry[] {
   const text = rawText.trim()
   if (!text) return planned
-  return [...planned, { type: 'custom', text, done: false }]
+  const entry: PlannedEntry = { type: 'custom', text, done: false }
+  if (isValidTime(time)) entry.time = time
+  return [...planned, entry]
+}
+
+// Время напоминания — строго «HH:MM», 24 часа (то, что отдаёт <input type="time">). Пустая строка,
+// null и мусор — «времени нет».
+export function isValidTime(v: unknown): v is string {
+  return typeof v === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(v)
+}
+
+// Задать или снять (null / пусто / мусор) время у пункта. Поле убирается совсем, а не пишется пустым:
+// в jsonb не копится мусор.
+export function setTimeAt(planned: PlannedEntry[], index: number, time: string | null): PlannedEntry[] {
+  return planned.map((p, i) => {
+    if (i !== index) return p
+    const { time: _old, ...rest } = p
+    return isValidTime(time) ? { ...rest, time } : rest
+  })
 }
 
 export function addGoal(planned: PlannedEntry[], goalName: string): PlannedEntry[] {

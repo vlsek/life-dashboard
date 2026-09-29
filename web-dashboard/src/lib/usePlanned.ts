@@ -13,6 +13,7 @@ import {
   normalizePlanned,
   removeAt,
   setCustomDone,
+  setTimeAt,
   toggleBonus,
   type CarryCandidate,
   type PlanGoal,
@@ -20,7 +21,7 @@ import {
   type PlannedEntry,
 } from './planned'
 
-// Композабл блока «Цели на сегодня» (план на день). Портировано из renderPlanned()/
+// Композабл блока «Планы» (раньше «Цели на сегодня») (план на день). Портировано из renderPlanned()/
 // openCarryOverModal() в dashboard.js. load(userId, date) — после auth 'ready' и при смене даты.
 // После КАЖДОЙ записи шлёт dashboard:data-changed — кольца дня/недели и стрики пересчитает useDashboard.
 export function usePlanned() {
@@ -74,11 +75,12 @@ export function usePlanned() {
     return run
   }
 
-  const addCustomItem = (text: string) => persist(addCustom(planned.value, text))
+  const addCustomItem = (text: string, time?: string | null) => persist(addCustom(planned.value, text, time))
   const addGoalItem = (name: string) => persist(addGoal(planned.value, name))
   const removeItem = (index: number) => persist(removeAt(planned.value, index))
   const toggleItemBonus = (index: number) => persist(toggleBonus(planned.value, index))
   const setItemDone = (index: number, done: boolean) => persist(setCustomDone(planned.value, index, done))
+  const setItemTime = (index: number, time: string | null) => persist(setTimeAt(planned.value, index, time))
 
   // Отметка одноэтапной цели прямо из плана: пишется в саму цель (done + дата выполнения),
   // как в оригинале — календарный день, на который смотрим, тут ни при чём (done_date = сегодня).
@@ -116,6 +118,6 @@ export function usePlanned() {
 
   return {
     planned, goals, loaded, error, notice, load,
-    addCustomItem, addGoalItem, removeItem, toggleItemBonus, setItemDone, setGoalDone, loadCarryOver, carryOver, availableGoals,
+    addCustomItem, addGoalItem, removeItem, toggleItemBonus, setItemDone, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals,
   }
 }

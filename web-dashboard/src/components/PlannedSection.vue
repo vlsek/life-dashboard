@@ -7,14 +7,15 @@ import { usePlanned } from '../lib/usePlanned'
 import { goalRowKind, stageLabel, type CarryCandidate, type PlanGoal, type PlannedEntry } from '../lib/planned'
 import { todayStr } from '../lib/date'
 import { t } from '../lib/i18n'
+import { notifyPermission, requestNotifyPermission, type NotifyPermission } from '../lib/browserNotify'
 
-// Блок «Цели на сегодня»: план на день (пункты из целей и свои), звёздочка «доп. пункт»,
+// Блок «Планы» (раньше «Цели на сегодня»): план на день (пункты из целей и свои), звёздочка «доп. пункт»,
 // перенос незавершённого за 7 дней. `date` — день плана (по умолчанию сегодня): когда карточка дня
 // появится в пилоте, этот компонент встраивается в неё с той же датой, что и дневные метрики.
 // Кнопка переноса — только для сегодняшнего дня, как в оригинале.
 const props = defineProps<{ userId: string | null; date?: string }>()
 const day = computed(() => props.date ?? todayStr())
-const { planned, goals, loaded, error, load, addCustomItem, addGoalItem, removeItem, toggleItemBonus, setItemDone, setGoalDone, loadCarryOver, carryOver, availableGoals } = usePlanned()
+const { planned, goals, loaded, error, load, addCustomItem, addGoalItem, removeItem, toggleItemBonus, setItemDone, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals } = usePlanned()
 
 watch(
   [() => props.userId, day],
@@ -25,6 +26,12 @@ watch(
 )
 
 const newText = ref('')
+const newTime = ref('')
+const perm = ref<NotifyPermission>(notifyPermission())
+async function enableNotifications() {
+  perm.value = await requestNotifyPermission()
+}
+const onTimeChange = (i: number, e: Event) => setItemTime(i, (e.target as HTMLInputElement).value || null)
 const notice = ref<string | null>(null)
 const goalPicker = ref<PlanGoal[] | null>(null)
 const carryCandidates = ref<CarryCandidate[] | null>(null)
@@ -34,8 +41,10 @@ const goalOf = (item: PlannedEntry) => goals.value.find((g) => g.name === item.t
 async function addCustom() {
   const text = newText.value
   if (!text.trim()) return
+  const time = newTime.value || null
   newText.value = ''
-  await addCustomItem(text)
+  newTime.value = ''
+  await addCustomItem(text, time)
 }
 
 function openGoalPicker() {
@@ -107,6 +116,17 @@ async function addCarried(texts: string[]) {
               </button>
             </td>
           </template>
+          <td>
+            <input
+              v-if="!(item.type === 'goal' && goalRowKind(goalOf(item)) === 'missing')"
+              type="time"
+              class="plan-time"
+              :value="item.time ?? ''"
+              :title="item.time ? t('plan_time_clear') : t('plan_time_set')"
+              data-test="time"
+              @change="onTimeChange(i, $event)"
+            />
+          </td>
           <td><button type="button" class="secondary px-2 py-0.5" data-test="remove" @click="removeItem(i)"><Icon name="x" /></button></td>
         </tr>
       </tbody>
@@ -114,11 +134,17 @@ async function addCarried(texts: string[]) {
 
     <div class="mt-2 flex flex-wrap gap-2">
       <input v-model="newText" type="text" class="min-w-40 flex-1" :placeholder="t('dash_planned_custom_placeholder')" data-test="custom-input" @keydown.enter.prevent="addCustom" />
+      <input v-model="newTime" type="time" class="plan-time" :title="t('plan_time_label')" data-test="new-time" />
       <button type="button" class="secondary" data-test="add-custom" @click="addCustom">{{ t('add_btn') }}</button>
       <button type="button" data-test="add-goal" @click="openGoalPicker">{{ t('dash_planned_add_from_goals_btn') }}</button>
     </div>
 
     <button v-if="day === todayStr()" type="button" class="secondary mt-2" data-test="carry" @click="openCarryOver">{{ t('dash_planned_carry_over_btn') }}</button>
+
+    <div v-if="perm !== 'unsupported' && perm !== 'granted'" class="mt-2 text-sm" data-test="notify">
+      <button v-if="perm === 'default'" type="button" class="secondary" data-test="notify-enable" @click="enableNotifications">{{ t('plan_notify_enable_btn') }}</button>
+      <p class="dim mt-1 text-xs">{{ perm === 'denied' ? t('plan_notify_denied') : t('plan_notify_hint') }}</p>
+    </div>
 
     <p v-if="notice" class="dim mt-2 text-sm" data-test="notice">{{ notice }}</p>
     <p v-if="error" class="mt-2 text-sm" style="color: var(--danger)" data-test="error">{{ error }}</p>
@@ -128,3 +154,9 @@ async function addCarried(texts: string[]) {
   <PlannedAddGoalModal v-if="goalPicker" :goals="goalPicker" @close="goalPicker = null" @pick="pickGoal" />
   <PlannedCarryOverModal v-if="carryCandidates" :candidates="carryCandidates" @close="carryCandidates = null" @add="addCarried" />
 </template>
+
+<style scoped>
+.plan-time {
+  width: 7.5rem;
+}
+</style>
