@@ -211,6 +211,8 @@ Astro тут не даёт преимуществ. TypeScript — типы. Tail
 8. node --check на все тронутые .js, vue-tsc --noEmit + vitest run в web-<page>/ и в паре
    других пилотов (AppShell.vue общий), npm run build. Версия/changelog RU+EN, запись в
    ROADMAP.md и COORDINATION.md (блок + журнал), git pull --rebase перед финальным push.
+7б. Заглушка старого адреса: добавь строку `"<page>.html": "/<page>/"` в STUBS `scripts/gen_redirect_stubs.py` и запусти его
+   (корневой <page>.html — редирект с сохранением ?query и #hash; иначе закладки на старый адрес дадут 404).
 ГРАБЛИ (нашёл агент 1, v1.23): любой редирект/ссылка на другую страницу внутри классических .js/config.js
 должен быть АБСОЛЮТНЫМ (`/login.html`, не `login.html`) — со страницы в /legacy/ относительный путь ведёт на
 /legacy/<...> и даёт 404. После каждого переезда: grep `location.href *= *"[a-z-]+\.html"` по legacy/ и config.js.

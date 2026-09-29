@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.29";
+const SITE_VERSION = "1.30";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.30", date: "2026-09-30 00:13", changes: [
+        "Фаза 2, финал: старые адреса переехавших страниц (/dashboard.html, /goals.html, /english.html и остальные) больше не дают 404 — там лежат маленькие заглушки, которые переводят на новый адрес (/dashboard/, /goals/, /languages/ ...) с сохранением параметров и якоря. Закладки и старые ссылки продолжают работать",
+    ]},
     { version: "1.29", date: "2026-09-30 00:12", changes: [
         "Фаза 2, Дашборд: пилот теперь на коротком адресе /dashboard/ вместо /dashboard-vue/, а классическая версия — в /legacy/dashboard.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны; после входа и после онбординга (классика и Vue) открывается /dashboard/",
     ]},
@@ -976,6 +979,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.30", date: "2026-09-30 00:13", changes: [
+        "Phase 2, finish: the old addresses of the moved pages (/dashboard.html, /goals.html, /english.html and the rest) no longer return 404 — small stubs there forward to the new address (/dashboard/, /goals/, /languages/ ...), keeping the query string and hash. Bookmarks and old links keep working",
+    ]},
     { version: "1.29", date: "2026-09-30 00:12", changes: [
         "Phase 2, Dashboard: the pilot is now at the short address /dashboard/ instead of /dashboard-vue/, and the classic version lives at /legacy/dashboard.html. Side-menu links on every Vue page were updated and rebuilt; after sign-in and after onboarding (classic and Vue) /dashboard/ opens",
     ]},

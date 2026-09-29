@@ -297,6 +297,11 @@ v1.29 — Фаза 2, Дашборд (агент 6): пилот на /dashboard/
   login.js/onboarding.js и Vue web-login/web-onboarding) вели на /dashboard.html — переключены на /dashboard/ в этом же заходе
   (иначе вход ломался бы 404). В legacy/dashboard.js относительные переходы сделаны абсолютными (/legacy/shop.html, /onboarding.html).
   402 теста web-dashboard, 9 web-login, 13 web-onboarding и др. зелёные, vue-tsc чист. CACHE_NAME → v12.
+v1.30 — Фаза 2, финал (агент 6): заглушки-редиректы для 11 переехавших страниц (`dashboard/goals/skills/workouts/challenges/
+  english/calendar/milestones/shop/community/history .html` в корне → новые адреса), генерирует `scripts/gen_redirect_stubs.py`
+  (meta refresh + location.replace с ?query и #hash). НЕ проверено на боевом домене: как Cloudflare Workers Assets
+  (html_handling) отдаёт `/goals` и `/goals.html` при наличии и goals.html, и goals/index.html — по документации `/goals/`
+  берёт index.html, петли быть не должно, но проверить руками. Логин/Онбординг в заглушки не входят (свой этап).
 v1.03 — Пилот Сообщества: заявки в друзья, друзья отдельно от подписок, «В друзья»
   (lib/friends.ts, PersonChip.vue, 17 тестов, в т.ч. UI-тест App.vue с подменой Supabase).
 v1.02 — Сообщество (классика): то же в ванильном community.js. Фильтр «Только друзья» =
