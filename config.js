@@ -1932,6 +1932,14 @@ function renderNav(active, userEmail) {
     // навигации появляется тонкая ссылка "Попробовать новую версию" (см. ниже, после списка
     // pages). У Skills это поле сознательно не трогаем — полный переезд адреса/в legacy делает
     // другой агент отдельным заходом (см. COORDINATION.md), а не эта лёгкая перелинковка.
+    // Пока часть классических страниц переезжает на короткие адреса пилота, а часть остаётся
+    // в корне (см. docs/ROADMAP.md, фаза 2), href в pages[] и у accountLink ниже бывает и
+    // "goals.html" (страница ещё в корне), и "legacy/history.html" (уже переехала). navHref()
+    // нормализует оба варианта в абсолютный путь от корня сайта — тогда ссылка работает
+    // одинаково верно с ЛЮБОЙ страницы, независимо от того, открыли её из корня или уже из
+    // /legacy/ (без этого относительная ссылка с переехавшей страницы вела бы не туда).
+    const navHref = (href) => "/" + href.replace(/^\//, "");
+
     const pages = [
         { href: "dashboard.html", key: "dashboard", i18n: "nav_dashboard", icon: "home", home: true, vue: "dashboard-vue/" },
         { href: "goals.html", key: "goals", i18n: "nav_goals", icon: "goals", vue: "goals-vue/" },
@@ -1943,7 +1951,7 @@ function renderNav(active, userEmail) {
         { href: "milestones.html", key: "milestones", i18n: "nav_milestones", icon: "milestones", vue: "milestones-vue/" },
         { href: "shop.html", key: "shop", i18n: "nav_shop", icon: "shop", vue: "shop-vue/" },
         { href: "community.html", key: "community", i18n: "nav_community", icon: "community", vue: "community-vue/" },
-        { href: "history.html", key: "history", i18n: "nav_history", icon: "history", vue: "history-vue/" },
+        { href: "legacy/history.html", key: "history", i18n: "nav_history", icon: "history", vue: "history/" },
     ];
     // В i18n названия разделов начинаются с эмодзи ("🎯 Цели") — для подписей рядом с SVG-иконкой
     // отрезаем ведущие эмодзи/пробелы.
@@ -1961,7 +1969,7 @@ function renderNav(active, userEmail) {
 
     const homePage = pages.find(p => p.home);
     const homeIconLink = document.createElement("a");
-    homeIconLink.href = homePage.href;
+    homeIconLink.href = navHref(homePage.href);
     homeIconLink.title = plainLabel(homePage.i18n);
     homeIconLink.className = "quick-nav-icon home" + (homePage.key === active ? " active" : "");
     const homeLogo = document.createElement("img");
@@ -1982,7 +1990,7 @@ function renderNav(active, userEmail) {
     for (const p of pages) {
         if (p.home) continue;
         const a = document.createElement("a");
-        a.href = p.href;
+        a.href = navHref(p.href);
         a.innerHTML = iconSvg(p.icon);
         a.title = plainLabel(p.i18n);
         a.className = "quick-nav-icon" + (p.key === active ? " active" : "");
@@ -2033,7 +2041,7 @@ function renderNav(active, userEmail) {
 
     for (const p of pages) {
         const a = document.createElement("a");
-        a.href = p.href;
+        a.href = navHref(p.href);
         a.innerHTML = `${iconSvg(p.icon)}<span>${plainLabel(p.i18n)}</span>`;
         if (p.key === active) a.className = "active";
         sidebar.appendChild(a);
@@ -2042,7 +2050,7 @@ function renderNav(active, userEmail) {
 
     if (userEmail) {
         const accountLink = document.createElement("a");
-        accountLink.href = "account.html";
+        accountLink.href = navHref("account.html");
         accountLink.innerHTML = `${iconSvg("user")}<span>${t("nav_account_title")}</span>`;
         accountLink.className = active === "account" ? "active" : "";
         sidebar.appendChild(accountLink);
