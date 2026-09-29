@@ -155,6 +155,7 @@ milestones), `config.js` (строка milestones в pages[] — общий navH
       по образцу оригинальных login.html/onboarding.html
 
 ### Найдено попутно (мелкое, свободно)
+- [ ] Новые пожелания владельца от 2026-09-29 (12 пунктов: баллы, цели/планы, вода, чекбоксы, профиль на телефоне, cookie/защита и др.) — записаны в `docs/BACKLOG.md`, раздел 7 (фаза 3, кроме явных багов)
 - [ ] Фаза 2 для Логина/Онбординга (`web-login/`, `web-onboarding/`) — НЕ по стандартному
       рецепту History/Skills/Goals/Milestones: `/login.html` и путь на онбординг — не рядовой
       пункт меню, а цель редиректа `requireAuth()`/`requireOnboarded()`/`logout()` буквально
