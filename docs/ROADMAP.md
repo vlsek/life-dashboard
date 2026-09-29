@@ -239,6 +239,11 @@ v1.14 — Фаза 2, ПЕРВАЯ полностью переехавшая с�
   путь от корня — правит только 4 места присвоения .href, не сами записи pages[], так что
   Skills/Goals (агенты 1/4, ещё в работе) пишут свои записи как договорились, без привязки
   к формату. CACHE_NAME в sw.js забамплен (ld-shell-v2) из-за смены путей в ASSETS.
+v1.15 — Фаза 2, пятая страница (агент 7): Календарь на /calendar/ (без -vue), классика в
+  /legacy/calendar.html. По рецепту из HANDOFF: vite base/outDir, calendar-vue/ → calendar/,
+  относительные пути в legacy/calendar.html на ../, pages[] (config.js) → legacy/calendar.html +
+  vue: "calendar/", sw.js ASSETS + CACHE_NAME→v3, 12 AppShell.vue. 15 тестов web-calendar и 30
+  web-history зелёные, vue-tsc чист.
 v1.03 — Пилот Сообщества: заявки в друзья, друзья отдельно от подписок, «В друзья»
   (lib/friends.ts, PersonChip.vue, 17 тестов, в т.ч. UI-тест App.vue с подменой Supabase).
 v1.02 — Сообщество (классика): то же в ванильном community.js. Фильтр «Только друзья» =

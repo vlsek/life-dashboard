@@ -1,6 +1,20 @@
 {
-  "version": "1.13",
+  "version": "1.15",
   "en": [
+    {
+      "version": "1.15",
+      "date": "2026-09-29 18:23",
+      "changes": [
+        "Phase 2 (making the Vue site primary), fifth page: Calendar now lives at the short address /calendar/ instead of /calendar-vue/, and the classic version moved to /legacy/calendar.html. Sidebar links and cross-page links updated"
+      ]
+    },
+    {
+      "version": "1.14",
+      "date": "2026-09-29 12:05",
+      "changes": [
+        "Phase 2 (making the Vue site primary), first fully-moved page: History now lives at the short address /history/ instead of /history-vue/, and the classic version moved to /legacy/history.html. Sidebar links and cross-page links updated automatically both ways"
+      ]
+    },
     {
       "version": "1.13",
       "date": "2026-09-29 05:13",
@@ -837,6 +851,20 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.15",
+      "date": "2026-09-29 18:23",
+      "changes": [
+        "Фаза 2 (переезд на Vue как основной сайт), пятая страница: «Календарь» теперь на коротком адресе /calendar/ вместо /calendar-vue/, а классическая версия — в /legacy/calendar.html. Ссылки в боковом меню и на других страницах обновлены"
+      ]
+    },
+    {
+      "version": "1.14",
+      "date": "2026-09-29 12:05",
+      "changes": [
+        "Фаза 2 (переезд на Vue как основной сайт), первая полностью переехавшая страница: «История» теперь живёт на коротком адресе /history/ вместо /history-vue/, а классическая версия — в /legacy/history.html. Ссылки в боковом меню и на других страницах обновлены автоматически в обе стороны"
+      ]
+    },
     {
       "version": "1.13",
       "date": "2026-09-29 05:13",

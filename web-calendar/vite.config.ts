@@ -2,15 +2,16 @@ import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 
-// Третья страница пилота на Vue 3 + TS + Tailwind (после Истории и Вех — см.
-// ROADMAP.md, тикет B-calendar). Собирается в ../calendar-vue — отдельную папку в
-// корне репозитория, раздаётся Cloudflare Workers как статика рядом со старыми
-// HTML-страницами. base совпадает с этим путём, чтобы ссылки на ассеты резолвились.
+// Страница на Vue 3 + TS + Tailwind. Фаза 2 (см. COORDINATION.md): пилот переехал на короткий
+// адрес /calendar/ (без -vue) — теперь это и есть основной раздел «Календарь», классическая
+// версия перенесена в /legacy/calendar.html. Собирается в ../calendar — отдельную папку в корне
+// репозитория, которую Cloudflare Workers раздаёт как статику. base совпадает с этим путём,
+// чтобы собранные ссылки на ассеты (/calendar/assets/...) резолвились правильно после деплоя.
 export default defineConfig({
-  base: '/calendar-vue/',
+  base: '/calendar/',
   plugins: [vue(), tailwindcss()],
   build: {
-    outDir: '../calendar-vue',
+    outDir: '../calendar',
     emptyOutDir: true,
   },
 })

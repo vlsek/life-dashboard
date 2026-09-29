@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.14";
+const SITE_VERSION = "1.15";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.15", date: "2026-09-29 18:23", changes: [
+        "Фаза 2 (переезд на Vue как основной сайт), пятая страница: «Календарь» теперь на коротком адресе /calendar/ вместо /calendar-vue/, а классическая версия — в /legacy/calendar.html. Ссылки в боковом меню и на других страницах обновлены",
+    ]},
     { version: "1.14", date: "2026-09-29 12:05", changes: [
         "Фаза 2 (переезд на Vue как основной сайт), первая полностью переехавшая страница: «История» теперь живёт на коротком адресе /history/ вместо /history-vue/, а классическая версия — в /legacy/history.html. Ссылки в боковом меню и на других страницах обновлены автоматически в обе стороны",
     ]},
@@ -931,6 +934,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.15", date: "2026-09-29 18:23", changes: [
+        "Phase 2 (making the Vue site primary), fifth page: Calendar now lives at the short address /calendar/ instead of /calendar-vue/, and the classic version moved to /legacy/calendar.html. Sidebar links and cross-page links updated",
+    ]},
     { version: "1.14", date: "2026-09-29 12:05", changes: [
         "Phase 2 (making the Vue site primary), first fully-moved page: History now lives at the short address /history/ instead of /history-vue/, and the classic version moved to /legacy/history.html. Sidebar links and cross-page links updated automatically both ways",
     ]},
@@ -1953,7 +1959,7 @@ function renderNav(active, userEmail) {
         { href: "workouts.html", key: "workouts", i18n: "nav_workouts", icon: "workouts", vue: "workouts-vue/" },
         { href: "challenges.html", key: "challenges", i18n: "nav_challenges", icon: "challenges", vue: "challenges-vue/" },
         { href: "english.html", key: "english", i18n: "nav_english", icon: "english", vue: "languages-vue/" },
-        { href: "calendar.html", key: "calendar", i18n: "nav_calendar", icon: "calendar", vue: "calendar-vue/" },
+        { href: "legacy/calendar.html", key: "calendar", i18n: "nav_calendar", icon: "calendar", vue: "calendar/" },
         { href: "milestones.html", key: "milestones", i18n: "nav_milestones", icon: "milestones", vue: "milestones-vue/" },
         { href: "shop.html", key: "shop", i18n: "nav_shop", icon: "shop", vue: "shop-vue/" },
         { href: "community.html", key: "community", i18n: "nav_community", icon: "community", vue: "community-vue/" },

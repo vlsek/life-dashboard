@@ -126,13 +126,7 @@ legacy-переезды — не пересекаюсь с фазой 2 (аге�
 milestones), `config.js` (строка milestones в pages[] — общий navHref() не трогаю, он уже есть).
 
 ### Агент 7
-Фаза 2, ПЯТАЯ страница (Skills — агент 1, Community — агент 2, Goals — агент 4, Milestones —
-агент 6, History — уже готово): беру **Calendar** — `/calendar/` без `-vue`, классика
-`calendar.html`+`calendar.js` → `/legacy/calendar.html`+`/legacy/calendar.js`. По рецепту из
-`docs/HANDOFF.md`. С: 2026-09-29 18:22.
-Файлы: `web-calendar/vite.config.ts`, `calendar-vue/`→`calendar/`, `calendar.html`/`calendar.js`→
-`legacy/`, `sw.js` (ASSETS + CACHE_NAME), все AppShell.vue (href на calendar), `config.js`
-(строка calendar в pages[]; версия+changelog).
+— свободен —
 
 ## Бэклог
 
@@ -180,7 +174,7 @@ milestones), `config.js` (строка milestones в pages[] — общий navH
 - [x] (v1.11, агент 4) Фаза 2, лёгкий шаг: ссылка «✨ Попробовать новый дизайн» из классики на Vue-пилоты (Дашборд/Цели/Тренировки/Челленджи/Языки/Календарь/Вехи/Магазин/Сообщество/История/Аккаунт; Skills не трогал — там агент 1)
 - [~ агент 4] Обратная ссылка пилот→классика: `pilot_badge` в 12 AppShell.vue становится ссылкой на классическую версию текущей страницы
 - [~ агент 4] Фаза 2, вторая страница: Goals на `/goals/` без `-vue`, классика `goals.html` → `/legacy/goals.html`
-- [~ агент 7] Фаза 2, пятая страница: Calendar на `/calendar/` без `-vue`, классика `calendar.html` → `/legacy/calendar.html`
+- [x] (v1.15, агент 7) Фаза 2, пятая страница: Calendar на `/calendar/` без `-vue`, классика → `/legacy/calendar.html`
 - [x] Пилот Дашборда включён в меню всех 12 Vue-пилотов (`/dashboard-vue/` вместо `dashboard.html`) — v1.10 (агент 5), по добру владельца, до завершения раскладки/визуала
 
 ## Журнал (новое — внизу)
@@ -208,3 +202,4 @@ milestones), `config.js` (строка milestones в pages[] — общий navH
 - 2026-09-29 · v1.12 · агент 6 · Дашборд-пилот, визуальный паритет: accent-color чекбоксов, вода в #topbar-right через Teleport (иконка без текста), класс `.card` заведён в style.css (его не было вовсе) и применён к Дневным метрикам/Целям на сегодня/Графикам, стрик-бейдж перенесён из отдельного раздела внизу в ProfileSection.vue (проп/emit), новый StreakFlame.vue — два SVG (лит/не лит) + CSS-мерцание из ванильного сайта. 14 новых тестов (StreakFlame, стрик-бейдж в профиле, водяной бейдж в шапке). Плашку «это пилот» не трогал — увязана с кастомизацией раскладки (агент 3)
 - 2026-09-29 · v1.13 · агент 2 · Логин (web-login/→login-vue/: email/пароль, регистрация, Google, RU/EN+тема на странице) + Онбординг (web-onboarding/→onboarding-vue/: анкета usecase/пол/дата рождения/рост/вес/приоритет/навыки, выбор стартовых метрик, кнопка «пропустить», body_parameters); 22 теста. ЗАКРЫВАЕТ ФАЗУ 1 (все страницы существуют на Vue) — обе страницы без сайдбара, версия+ченджлог (1.09) и pilot_badge-ссылка сюда не относятся
 - 2026-09-29 · v1.14 · агент 6 · Фаза 2: История переехала на /history/, классика в /legacy/history.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v2, все 12 AppShell.vue). Общее для всех страниц фазы 2: navHref() в config.js — нормализует ссылки renderNav() для смешанного состояния корень+/legacy, не трогая сами записи pages[] (см. docs/ROADMAP.md v1.14 и HANDOFF.md). 30+337+17 тестов зелёные
+- 2026-09-29 · v1.15 · агент 7 · Фаза 2: Календарь переехал на /calendar/, классика в /legacy/calendar.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v3, pages[] в config.js, все 12 AppShell.vue). Тесты: web-calendar 15, web-history 30 зелёные, vue-tsc чист
