@@ -1,6 +1,13 @@
 {
-  "version": "1.37",
+  "version": "1.38",
   "en": [
+    {
+      "version": "1.38",
+      "date": "2026-09-30 00:52",
+      "changes": [
+        "New version: checkboxes and radio buttons on every page (Calendar, Challenges, Goals, Languages, Skills, Community, Workouts and more) now use the current theme's accent color, like the classic version, instead of gray/white"
+      ]
+    },
     {
       "version": "1.37",
       "date": "2026-09-30 00:49",
@@ -1009,6 +1016,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.38",
+      "date": "2026-09-30 00:52",
+      "changes": [
+        "Новая версия: галочки и переключатели на всех страницах (Календарь, Челленджи, Цели, Языки, Навыки, Сообщество, Тренировки и др.) теперь в цвет выбранной темы, как в классической версии, а не серые/белые"
+      ]
+    },
     {
       "version": "1.37",
       "date": "2026-09-30 00:49",

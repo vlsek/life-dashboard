@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.37";
+const SITE_VERSION = "1.38";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.38", date: "2026-09-30 00:52", changes: [
+        "Новая версия: галочки и переключатели на всех страницах (Календарь, Челленджи, Цели, Языки, Навыки, Сообщество, Тренировки и др.) теперь в цвет выбранной темы, как в классической версии, а не серые/белые",
+    ]},
     { version: "1.37", date: "2026-09-30 00:49", changes: [
         "Тренировки (новая версия): каждое упражнение теперь можно свернуть стрелкой ▼/▶ рядом с названием — остаётся только заголовок с кнопками; состояние запоминается для каждого упражнения отдельно (категории сворачиваются, как и раньше)",
     ]},
@@ -1004,6 +1007,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.38", date: "2026-09-30 00:52", changes: [
+        "New version: checkboxes and radio buttons on every page (Calendar, Challenges, Goals, Languages, Skills, Community, Workouts and more) now use the current theme's accent color, like the classic version, instead of gray/white",
+    ]},
     { version: "1.37", date: "2026-09-30 00:49", changes: [
         "Workouts (new version): each exercise can now be collapsed with the ▼/▶ arrow next to its name, leaving just the header with its buttons; the state is remembered per exercise (categories still collapse as before)",
     ]},

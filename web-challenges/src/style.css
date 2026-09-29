@@ -155,3 +155,13 @@ body {
   gap: 0.5rem;
   margin-top: 1rem;
 }
+
+/* Чекбоксы/радио в цвете темы, а не браузерном синем — как в основном сайте (style.css) и в Дашборде.
+   Глобально, чтобы не красить каждый <input> по отдельности (BACKLOG 7.2, v1.38). */
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--accent);
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
