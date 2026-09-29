@@ -1113,7 +1113,7 @@ async function checkWeekendGoalReminder() {
     banner.className = "card";
     banner.style.cssText = "border:1px solid var(--accent); display:flex; align-items:center; gap:12px; justify-content:space-between;";
     const text = document.createElement("div");
-    text.innerHTML = `<strong>${t("dash_week_reminder_title")}</strong> <span class="dim" style="font-size:0.9em;">· ${t("dash_week_reminder_currently")} ${totalPct}%</span><br><a href="goals.html" style="color:var(--accent); text-decoration:none; font-size:0.9em;">${t("dash_week_reminder_link")}</a>`;
+    text.innerHTML = `<strong>${t("dash_week_reminder_title")}</strong> <span class="dim" style="font-size:0.9em;">· ${t("dash_week_reminder_currently")} ${totalPct}%</span><br><a href="/legacy/goals.html" style="color:var(--accent); text-decoration:none; font-size:0.9em;">${t("dash_week_reminder_link")}</a>`;
     banner.appendChild(text);
     const closeBtn = document.createElement("button");
     closeBtn.className = "secondary";

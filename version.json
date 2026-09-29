@@ -1,6 +1,13 @@
 {
-  "version": "1.26",
+  "version": "1.27",
   "en": [
+    {
+      "version": "1.27",
+      "date": "2026-09-30 00:10",
+      "changes": [
+        "Phase 2: \"Goals\" is now at the short address /goals/ instead of /goals-vue/, and the classic version lives at /legacy/goals.html. Side-menu links on every Vue page and the link in the weekly reminder were updated and rebuilt"
+      ]
+    },
     {
       "version": "1.26",
       "date": "2026-09-29 23:50",
@@ -928,6 +935,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.27",
+      "date": "2026-09-30 00:10",
+      "changes": [
+        "Фаза 2: «Цели» теперь на коротком адресе /goals/ вместо /goals-vue/, а классическая версия — в /legacy/goals.html. Ссылки в боковом меню всех Vue-страниц и ссылка в недельном напоминании обновлены и пересобраны"
+      ]
+    },
     {
       "version": "1.26",
       "date": "2026-09-29 23:50",

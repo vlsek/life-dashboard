@@ -280,6 +280,12 @@ v1.26 — Фаза 2 (агент 4, перехвачено у агента 2 п�
   классика в /legacy/community.html (у неё в html нет offline-cache.js — так и оставлено). По рецепту HANDOFF +
   шаг 7а: пересобраны все 12 пилотов, grep по бандлам на community-vue пуст. 54 web-community, 388 web-dashboard,
   17 web-account, 30 web-history, 23 web-goals зелёные, vue-tsc чист. CACHE_NAME → v10.
+v1.27 — Фаза 2 (агент 4, заново после обрыва контекста): Цели на /goals/ (без -vue), классика в /legacy/goals.html.
+  По рецепту HANDOFF + шаг 7а: пересобраны все 12 пилотов, grep по бандлам на goals-vue пуст. Отдельно: ссылка в недельном
+  напоминании классического dashboard.js (`href="goals.html"`) → `/legacy/goals.html`, в пилоте Дашборда
+  (`ReminderBanners.vue`) → `/goals/`. 23 web-goals, 388 web-dashboard, 54 web-community и др. зелёные, vue-tsc чист.
+  ЗАМЕЧАНИЕ: при параллельном запуске vitest во всех 12 пилотах разово падал один тест web-goals (в одиночку 3/3
+  зелёные) — вероятно таймаут из-за нагрузки; гонять тесты по одному пилоту. CACHE_NAME → v11.
 v1.03 — Пилот Сообщества: заявки в друзья, друзья отдельно от подписок, «В друзья»
   (lib/friends.ts, PersonChip.vue, 17 тестов, в т.ч. UI-тест App.vue с подменой Supabase).
 v1.02 — Сообщество (классика): то же в ванильном community.js. Фильтр «Только друзья» =

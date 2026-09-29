@@ -33,7 +33,7 @@ const emit = defineEmits<{ dismissMilestones: []; dismissWeekend: [] }>()
       <strong>{{ t('dash_week_reminder_title') }}</strong>
       <span class="dim" style="font-size: 0.9em"> · {{ t('dash_week_reminder_currently') }} {{ weekTotalPct }}%</span>
       <br />
-      <a href="/goals-vue/" style="color: var(--accent); text-decoration: none; font-size: 0.9em">{{ t('dash_week_reminder_link') }}</a>
+      <a href="/goals/" style="color: var(--accent); text-decoration: none; font-size: 0.9em">{{ t('dash_week_reminder_link') }}</a>
     </div>
     <button type="button" class="secondary px-2" @click="emit('dismissWeekend')"><Icon name="x" /></button>
   </div>
