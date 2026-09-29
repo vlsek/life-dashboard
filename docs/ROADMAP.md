@@ -276,6 +276,10 @@ v1.25 — Фаза 2, четвёртая страница (агент 6, зан�
   → `/legacy/milestones.html`, в пилоте Дашборда (`ReminderBanners.vue`) → `/milestones/`; smoke-тест web-account
   обновлён. 20 тестов web-milestones, 388 web-dashboard, 17 web-account, 30 web-history и др. зелёные, vue-tsc чист.
   CACHE_NAME → v9.
+v1.26 — Фаза 2 (агент 4, перехвачено у агента 2 по решению владельца): Сообщество на /community/ (без -vue),
+  классика в /legacy/community.html (у неё в html нет offline-cache.js — так и оставлено). По рецепту HANDOFF +
+  шаг 7а: пересобраны все 12 пилотов, grep по бандлам на community-vue пуст. 54 web-community, 388 web-dashboard,
+  17 web-account, 30 web-history, 23 web-goals зелёные, vue-tsc чист. CACHE_NAME → v10.
 v1.03 — Пилот Сообщества: заявки в друзья, друзья отдельно от подписок, «В друзья»
   (lib/friends.ts, PersonChip.vue, 17 тестов, в т.ч. UI-тест App.vue с подменой Supabase).
 v1.02 — Сообщество (классика): то же в ванильном community.js. Фильтр «Только друзья» =

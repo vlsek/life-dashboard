@@ -74,14 +74,10 @@
 (новый lib + компонент настроек, минимальная правка App.vue для обёртки блоков).
 
 ### Агент 4
-По решению владельца (2026-09-29 23:44): СНАЧАЛА **Community** (перехвачено у агента 2), ПОТОМ **Goals**.
-1) Фаза 2, **Community** — `/community/` без `-vue`, классика `community.html`+`community.js` →
-`/legacy/community.html`+`/legacy/community.js`. Файлы: `web-community/vite.config.ts`,
-`community-vue/`→`community/`, `sw.js` (ASSETS+CACHE_NAME), `config.js` (pages[] + версия), все 12 `AppShell.vue`,
-пересборка затронутых пилотов. С: 2026-09-29 23:44.
-2) Затем Фаза 2, **Goals** — `/goals/`, классика → `/legacy/goals.html`+`/legacy/goals.js` (прежняя попытка ничего
-не запушила). Рецепт — `docs/HANDOFF.md`, шаги 1–8 (в т.ч. 7а). Прежняя задача 1 («pilot_badge → ссылка»)
-снята: её заменяет агент 7.
+Фаза 2, **Goals** — `/goals/` без `-vue`, классика `goals.html`+`goals.js` → `/legacy/goals.html`+`/legacy/goals.js`
+(прежняя попытка ничего не запушила). Рецепт — `docs/HANDOFF.md`, шаги 1–8 (в т.ч. 7а). Файлы: `web-goals/vite.config.ts`,
+`goals-vue/`→`goals/`, `goals.html`/`goals.js`→`legacy/`, `sw.js` (ASSETS + CACHE_NAME), `config.js` (pages[] + версия),
+12× `AppShell.vue`, пересборка пилотов. С: 2026-09-29 23:50. (Community закрыт — v1.26.)
 
 ### Агент 5
 — свободен —
@@ -159,7 +155,7 @@ badge, сверься с этим блоком. У агента 3 — правл
 - [x] Расширение офлайн-кэша на Календарь — v1.07 (агент 4)
 - [x] (v1.22, агент 1) Фаза 2, первая страница: Skills на `/skills/` без `-vue`, классика → `/legacy/skills.html`
 - [x] (v1.11, агент 4) Фаза 2, лёгкий шаг: ссылка «✨ Попробовать новый дизайн» из классики на Vue-пилоты (Дашборд/Цели/Тренировки/Челленджи/Языки/Календарь/Вехи/Магазин/Сообщество/История/Аккаунт; Skills не трогал — там агент 1)
-- [~ агент 4] Фаза 2: Community на `/community/` без `-vue`, классика → `/legacy/community.html` (перехвачено у агента 2 по решению владельца), затем Goals
+- [x] (v1.26, агент 4, перехвачено у агента 2) Фаза 2, десятая страница: Community на `/community/` без `-vue`, классика → `/legacy/community.html`
 - [x] (снято, без реализации) Обратная ссылка пилот→классика через `pilot_badge` — заменена задачей агента 7 (ссылка `legacy-<стр>` внизу меню), по решению владельца
 - [~ агент 4] Фаза 2, вторая страница: Goals на `/goals/` без `-vue`, классика `goals.html` → `/legacy/goals.html`
 - [x] (v1.15, агент 7) Фаза 2, пятая страница: Calendar на `/calendar/` без `-vue`, классика → `/legacy/calendar.html`
@@ -207,3 +203,4 @@ badge, сверься с этим блоком. У агента 3 — правл
 - 2026-09-29 · v1.23 · агент 1 · Фикс: `requireAuth`/`logout`/`requireOnboarded` в config.js использовали относительные `login.html`/`onboarding.html` — со страниц в /legacy/ вели на 404 (/legacy/login.html); теперь абсолютные. Плюс `docs/PHASE2_DECISIONS.md`: предложения по адресам Languages и по переезду Логина/Онбординга (ждут владельца)
 - 2026-09-29 · v1.24 · агент 1 · Фаза 2: Языки переехали на /languages/, классика в /legacy/english.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v8, pages[] в config.js, все 12 AppShell.vue, README, пересборка всех пилотов, grep по бандлам на languages-vue пуст). Тесты: languages 26, dashboard 388, goals 23, skills 16, history 30, vue-tsc чист. Владелец одобрил все предложения из docs/PHASE2_DECISIONS.md
 - 2026-09-29 · v1.25 · агент 6 · Фаза 2: Вехи переехали на /milestones/, классика в /legacy/milestones.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v9, pages[] в config.js, все 12 AppShell.vue, пересборка всех пилотов, grep по бандлам на milestones-vue пуст). Плюс ссылка «открыть вехи» в напоминании dashboard.js и ReminderBanners.vue. Предыдущая попытка оборвалась переполнением контекста и сделана заново. Тесты: milestones 20, dashboard 388, account 17, history 30, goals 23, vue-tsc чист
+- 2026-09-29 · v1.26 · агент 4 · Фаза 2: Сообщество переехало на /community/, классика в /legacy/community.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v10, pages[] в config.js, все 12 AppShell.vue, пересборка всех пилотов, grep по бандлам на community-vue пуст). Задача перехвачена у агента 2 по решению владельца. Тесты: community 54, dashboard 388, account 17, history 30, goals 23, vue-tsc чист

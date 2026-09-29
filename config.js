@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.25";
+const SITE_VERSION = "1.26";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.26", date: "2026-09-29 23:50", changes: [
+        "Фаза 2: «Сообщество» теперь на коротком адресе /community/ вместо /community-vue/, а классическая версия — в /legacy/community.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны",
+    ]},
     { version: "1.25", date: "2026-09-29 23:35", changes: [
         "Фаза 2, четвёртая страница: «Вехи» теперь на коротком адресе /milestones/ вместо /milestones-vue/, а классическая версия — в /legacy/milestones.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны, ссылка «открыть вехи» в напоминании классического Дашборда ведёт в /legacy/milestones.html, а в пилоте Дашборда — на /milestones/",
     ]},
@@ -964,6 +967,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.26", date: "2026-09-29 23:50", changes: [
+        "Phase 2: \"Community\" is now at the short address /community/ instead of /community-vue/, and the classic version lives at /legacy/community.html. Side-menu links on every Vue page were updated and rebuilt",
+    ]},
     { version: "1.25", date: "2026-09-29 23:35", changes: [
         "Phase 2, fourth page: \"Milestones\" is now at the short address /milestones/ instead of /milestones-vue/, and the classic version lives at /legacy/milestones.html. Side-menu links on every Vue page were updated and rebuilt; the \"open milestones\" link in the classic Dashboard reminder points to /legacy/milestones.html, and the pilot Dashboard one to /milestones/",
     ]},
@@ -2022,7 +2028,7 @@ function renderNav(active, userEmail) {
         { href: "legacy/calendar.html", key: "calendar", i18n: "nav_calendar", icon: "calendar", vue: "calendar/" },
         { href: "legacy/milestones.html", key: "milestones", i18n: "nav_milestones", icon: "milestones", vue: "milestones/" },
         { href: "legacy/shop.html", key: "shop", i18n: "nav_shop", icon: "shop", vue: "shop/" },
-        { href: "community.html", key: "community", i18n: "nav_community", icon: "community", vue: "community-vue/" },
+        { href: "legacy/community.html", key: "community", i18n: "nav_community", icon: "community", vue: "community/" },
         { href: "legacy/history.html", key: "history", i18n: "nav_history", icon: "history", vue: "history/" },
     ];
     // В i18n названия разделов начинаются с эмодзи ("🎯 Цели") — для подписей рядом с SVG-иконкой
