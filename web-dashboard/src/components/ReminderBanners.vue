@@ -23,7 +23,7 @@ const emit = defineEmits<{ dismissMilestones: []; dismissWeekend: [] }>()
       <span v-if="milestonesReminder.overdue && milestonesReminder.soon"> · </span>
       <span v-if="milestonesReminder.soon" style="color: #e0a93b">{{ milestonesReminder.soon }} {{ t('ms_reminder_soon') }}</span>
       <br />
-      <a href="/milestones-vue/" style="color: var(--accent); text-decoration: none; font-size: 0.9em">{{ t('ms_reminder_open') }} →</a>
+      <a href="/milestones/" style="color: var(--accent); text-decoration: none; font-size: 0.9em">{{ t('ms_reminder_open') }} →</a>
     </div>
     <button type="button" class="secondary px-2" @click="emit('dismissMilestones')"><Icon name="x" /></button>
   </div>

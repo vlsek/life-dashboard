@@ -206,6 +206,8 @@ Astro тут не даёт преимуществ. TypeScript — типы. Tail
    ведут в 404 (так было в 1.14/1.15, починено в 1.16). Проверка: grep -l "<page>-vue"
    */assets/*.js должно быть пусто. Ещё места вне AppShell: classic dashboard.js (клик по балансу),
    web-dashboard/ProfileSection.vue + его тест — грепать и по <page>.html, и по <page>-vue.
+   Ещё: напоминания в classic dashboard.js / пилоте Дашборда (ReminderBanners.vue) ссылаются на страницу
+   (вехи — `milestones.html`, найдено в v1.25) — грепать `<page>.html` в dashboard.js и `<page>-vue` в web-dashboard/src.
 8. node --check на все тронутые .js, vue-tsc --noEmit + vitest run в web-<page>/ и в паре
    других пилотов (AppShell.vue общий), npm run build. Версия/changelog RU+EN, запись в
    ROADMAP.md и COORDINATION.md (блок + журнал), git pull --rebase перед финальным push.

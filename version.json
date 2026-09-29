@@ -1,6 +1,13 @@
 {
-  "version": "1.24",
+  "version": "1.25",
   "en": [
+    {
+      "version": "1.25",
+      "date": "2026-09-29 23:35",
+      "changes": [
+        "Phase 2, fourth page: \"Milestones\" is now at the short address /milestones/ instead of /milestones-vue/, and the classic version lives at /legacy/milestones.html. Side-menu links on every Vue page were updated and rebuilt; the \"open milestones\" link in the classic Dashboard reminder points to /legacy/milestones.html, and the pilot Dashboard one to /milestones/"
+      ]
+    },
     {
       "version": "1.24",
       "date": "2026-09-29 23:24",
@@ -914,6 +921,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.25",
+      "date": "2026-09-29 23:35",
+      "changes": [
+        "Фаза 2, четвёртая страница: «Вехи» теперь на коротком адресе /milestones/ вместо /milestones-vue/, а классическая версия — в /legacy/milestones.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны, ссылка «открыть вехи» в напоминании классического Дашборда ведёт в /legacy/milestones.html, а в пилоте Дашборда — на /milestones/"
+      ]
+    },
     {
       "version": "1.24",
       "date": "2026-09-29 23:24",

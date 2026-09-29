@@ -1083,7 +1083,7 @@ async function checkMilestonesReminder() {
     const parts = [];
     if (overdue.length) parts.push(`<span style="color:#d6336c;">${overdue.length} ${escapeHtmlText(t("ms_reminder_overdue"))}</span>`);
     if (soon.length) parts.push(`<span style="color:#e0a93b;">${soon.length} ${escapeHtmlText(t("ms_reminder_soon"))}</span>`);
-    text.innerHTML = `<strong>${iconSvg("milestones", "margin-right:0.4em;")}${escapeHtmlText(t("ms_reminder_title"))}</strong> · ${parts.join(" · ")}<br><a href="milestones.html" style="color:var(--accent); text-decoration:none; font-size:0.9em;">${escapeHtmlText(t("ms_reminder_open"))} →</a>`;
+    text.innerHTML = `<strong>${iconSvg("milestones", "margin-right:0.4em;")}${escapeHtmlText(t("ms_reminder_title"))}</strong> · ${parts.join(" · ")}<br><a href="/legacy/milestones.html" style="color:var(--accent); text-decoration:none; font-size:0.9em;">${escapeHtmlText(t("ms_reminder_open"))} →</a>`;
     const closeBtn = document.createElement("button");
     closeBtn.className = "secondary";
     setIcon(closeBtn, "x");

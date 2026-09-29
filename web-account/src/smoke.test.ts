@@ -23,9 +23,9 @@ describe('AppShell (account pilot)', () => {
     wrapper.unmount()
   })
 
-  it('links Milestones to the live milestones-vue pilot', () => {
+  it('links Milestones to the live milestones pilot', () => {
     const wrapper = mount(AppShell, { props: { userEmail: null } })
-    expect(wrapper.html()).toContain('/milestones-vue/')
+    expect(wrapper.html()).toContain('/milestones/')
     wrapper.unmount()
   })
 })

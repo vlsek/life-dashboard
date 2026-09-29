@@ -99,13 +99,7 @@ community), `config.js` (строка community в pages[]).
 — свободен —
 
 ### Агент 6
-Фаза 2, ЧЕТВЁРТАЯ страница (Skills — агент 1, Goals — агент 4, History — уже я, v1.14, не
-пересекаюсь): беру **Milestones** — `/milestones/` без `-vue`, классика `milestones.html`+
-`milestones.js` → `/legacy/milestones.html`+`/legacy/milestones.js`. По рецепту из
-`docs/HANDOFF.md` (сам его и написал на примере History). С: 2026-09-29 12:43.
-Файлы: `web-milestones/vite.config.ts`, `milestones-vue/`→`milestones/`, `milestones.html`/
-`milestones.js`→`legacy/`, `sw.js` (ASSETS + CACHE_NAME), все 12 `AppShell.vue` (href на
-milestones), `config.js` (строка milestones в pages[] — общий navHref() не трогаю, он уже есть).
+— свободен —
 
 ### Агент 7
 ПО ПРЯМОМУ ЗАПРОСУ ВЛАДЕЛЬЦА (2026-09-29 18:54), вне очереди страниц фазы 2: убрать «пилотные» надписи и
@@ -185,6 +179,7 @@ badge, сверься с этим блоком. У агента 3 — правл
 - [x] (v1.18, агент 7) Фаза 2, восьмая страница: Workouts на `/workouts/` без `-vue`, классика → `/legacy/workouts.html`
 - [~ агент 7] (по запросу владельца) Убрать плашки «пилот», ссылка на классику одна — внизу меню (`legacy-<стр>`), заменяет `pilot_badge`-задачу агента 4
 - [x] (v1.24, агент 1) Фаза 2, девятая страница: Languages на `/languages/` без `-vue`, классика → `/legacy/english.html`
+- [x] (v1.25, агент 6) Фаза 2, четвёртая страница: Milestones на `/milestones/` без `-vue`, классика → `/legacy/milestones.html`
 - [x] Пилот Дашборда включён в меню всех 12 Vue-пилотов (`/dashboard-vue/` вместо `dashboard.html`) — v1.10 (агент 5), по добру владельца, до завершения раскладки/визуала
 
 ## Журнал (новое — внизу)
@@ -222,3 +217,4 @@ badge, сверься с этим блоком. У агента 3 — правл
 - 2026-09-29 · v1.22 · агент 1 · Фаза 2: Навыки переехали на /skills/, классика в /legacy/skills.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v7, pages[] в config.js, все 12 AppShell.vue, README, пересборка всех пилотов, grep по бандлам на skills-vue пуст). Предыдущая попытка оборвалась переполнением контекста и сделана заново. Тесты: skills 16, dashboard 388, goals 23, history 30, vue-tsc чист
 - 2026-09-29 · v1.23 · агент 1 · Фикс: `requireAuth`/`logout`/`requireOnboarded` в config.js использовали относительные `login.html`/`onboarding.html` — со страниц в /legacy/ вели на 404 (/legacy/login.html); теперь абсолютные. Плюс `docs/PHASE2_DECISIONS.md`: предложения по адресам Languages и по переезду Логина/Онбординга (ждут владельца)
 - 2026-09-29 · v1.24 · агент 1 · Фаза 2: Языки переехали на /languages/, классика в /legacy/english.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v8, pages[] в config.js, все 12 AppShell.vue, README, пересборка всех пилотов, grep по бандлам на languages-vue пуст). Тесты: languages 26, dashboard 388, goals 23, skills 16, history 30, vue-tsc чист. Владелец одобрил все предложения из docs/PHASE2_DECISIONS.md
+- 2026-09-29 · v1.25 · агент 6 · Фаза 2: Вехи переехали на /milestones/, классика в /legacy/milestones.html (vite.config.ts, sw.js ASSETS + CACHE_NAME→v9, pages[] в config.js, все 12 AppShell.vue, пересборка всех пилотов, grep по бандлам на milestones-vue пуст). Плюс ссылка «открыть вехи» в напоминании dashboard.js и ReminderBanners.vue. Предыдущая попытка оборвалась переполнением контекста и сделана заново. Тесты: milestones 20, dashboard 388, account 17, history 30, goals 23, vue-tsc чист
