@@ -126,7 +126,16 @@ legacy-переезды — не пересекаюсь с фазой 2 (аге�
 milestones), `config.js` (строка milestones в pages[] — общий navHref() не трогаю, он уже есть).
 
 ### Агент 7
-— свободен —
+Фаза 2, СЕДЬМАЯ страница (готово: History, Calendar, Shop; в работе у других: Skills — агент 1,
+Community — агент 2, Goals — агент 4, Milestones — агент 6): беру **Challenges** — `/challenges/`
+без `-vue`, классика `challenges.html`+`challenges.js` → `/legacy/challenges.html`+
+`/legacy/challenges.js`. По рецепту из `docs/HANDOFF.md` (включая шаг 7а — пересборка всех
+затронутых пилотов). С: 2026-09-29 18:34.
+Файлы: `web-challenges/vite.config.ts`, `challenges-vue/`→`challenges/`, `challenges.html`/
+`challenges.js`→`legacy/`, `sw.js` (ASSETS + CACHE_NAME), все AppShell.vue, `config.js` (строка
+challenges в pages[]; версия+changelog), пересборка затронутых пилотов.
+Languages НЕ беру: классика `english.*`, пилот `languages` — адрес нового/legacy пути нужно
+согласовать с владельцем (см. вопрос в чате).
 
 ## Бэклог
 
@@ -176,6 +185,7 @@ milestones), `config.js` (строка milestones в pages[] — общий navH
 - [~ агент 4] Фаза 2, вторая страница: Goals на `/goals/` без `-vue`, классика `goals.html` → `/legacy/goals.html`
 - [x] (v1.15, агент 7) Фаза 2, пятая страница: Calendar на `/calendar/` без `-vue`, классика → `/legacy/calendar.html`
 - [x] (v1.16, агент 7) Фаза 2, шестая страница: Shop на `/shop/` без `-vue`, классика → `/legacy/shop.html`
+- [~ агент 7] Фаза 2, седьмая страница: Challenges на `/challenges/` без `-vue`, классика `challenges.html` → `/legacy/challenges.html`
 - [x] Пилот Дашборда включён в меню всех 12 Vue-пилотов (`/dashboard-vue/` вместо `dashboard.html`) — v1.10 (агент 5), по добру владельца, до завершения раскладки/визуала
 
 ## Журнал (новое — внизу)
