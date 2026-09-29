@@ -26,7 +26,7 @@ interface NavPage {
 const pages: NavPage[] = [
   { href: '/dashboard-vue/', key: 'dashboard', labelKey: 'nav_dashboard', icon: 'home' },
   { href: '/goals-vue/', key: 'goals', labelKey: 'nav_goals', icon: 'goals' },
-  { href: '/skills-vue/', key: 'skills', labelKey: 'nav_skills', icon: 'skills' },
+  { href: '/skills/', key: 'skills', labelKey: 'nav_skills', icon: 'skills' },
   { href: '/workouts/', key: 'workouts', labelKey: 'nav_workouts', icon: 'workouts' },
   { href: '/challenges/', key: 'challenges', labelKey: 'nav_challenges', icon: 'challenges' },
   { href: '/languages-vue/', key: 'english', labelKey: 'nav_english', icon: 'english' },

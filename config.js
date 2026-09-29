@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.21";
+const SITE_VERSION = "1.22";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.22", date: "2026-09-29 23:14", changes: [
+        "Фаза 2, первая страница: «Навыки» теперь на коротком адресе /skills/ вместо /skills-vue/, а классическая версия — в /legacy/skills.html. Ссылки в боковом меню всех Vue-страниц обновлены и пересобраны",
+    ]},
     { version: "1.21", date: "2026-09-29 19:19", changes: [
         "Дашборд (пилот): убран баннер «ранняя версия пилота» с описанием и ссылкой на классику — по просьбе владельца ссылка на классическую версию будет одна, в самом низу бокового меню",
     ]},
@@ -952,6 +955,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.22", date: "2026-09-29 23:14", changes: [
+        "Phase 2, first page: \"Skills\" is now at the short address /skills/ instead of /skills-vue/, and the classic version lives at /legacy/skills.html. Side-menu links on every Vue page were updated and rebuilt",
+    ]},
     { version: "1.21", date: "2026-09-29 19:19", changes: [
         "Dashboard (pilot): removed the \"early pilot version\" banner with the link to the classic page — at the owner's request the link to the classic version will be a single one at the very bottom of the side menu",
     ]},
@@ -1991,7 +1997,7 @@ function renderNav(active, userEmail) {
     const pages = [
         { href: "dashboard.html", key: "dashboard", i18n: "nav_dashboard", icon: "home", home: true, vue: "dashboard-vue/" },
         { href: "goals.html", key: "goals", i18n: "nav_goals", icon: "goals", vue: "goals-vue/" },
-        { href: "skills.html", key: "skills", i18n: "nav_skills", icon: "skills" },
+        { href: "legacy/skills.html", key: "skills", i18n: "nav_skills", icon: "skills", vue: "skills/" },
         { href: "legacy/workouts.html", key: "workouts", i18n: "nav_workouts", icon: "workouts", vue: "workouts/" },
         { href: "legacy/challenges.html", key: "challenges", i18n: "nav_challenges", icon: "challenges", vue: "challenges/" },
         { href: "english.html", key: "english", i18n: "nav_english", icon: "english", vue: "languages-vue/" },
