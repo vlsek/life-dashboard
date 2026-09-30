@@ -73,7 +73,9 @@
 (версия+changelog), `docs/`. Дашборд, Workouts, `web-header/` (агенты 4/6) не трогаю. С: 2026-09-30 15:33.
 
 ### Агент 2
-— свободен —
+Фаза 3, крупная (владелец: «давай», 2026-09-30), только Vue, legacy не трогаю: BACKLOG 14 «11:15 — нужно ли считать стрик у метрики (1)» + «11:15 — разграничение в настройках метрики (2)».
+Замысел: колонка `metrics.count_streak` (миграция 031, по умолчанию true; код терпит её отсутствие, как 026) + в форме метрики переключатель «Просто записывать значение (вес и т.п.)» — при «да» цель/направление/расписание/импорт стрика неактивны, серия не считается.
+Файлы: `migrations/031_metric_count_streak.sql`, `schema.sql`, `web-dashboard/src/lib/` (`types.ts`, `streaks.ts`, `metricsManager.ts`, `useMetricsManager.ts`), `components/MetricFormModal.vue`, точечно `lib/i18n.ts` (новые ключи `dash_metric_track_*`), тесты; пересборка `dashboard/`, `config.js`, `docs/ROADMAP.md`, `docs/BACKLOG.md`, `docs/HANDOFF.md` (примечание про миграцию 031). С: 2026-09-30 20:04.
 
 ### Агент 3
 — свободен —
