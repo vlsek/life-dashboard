@@ -42,6 +42,13 @@ describe('buildSeries', () => {
     expect(s['body:w'].unit).toBe(' кг')
     expect(s['body:x'].points).toEqual([])
   })
+  it('серия несёт «чистое» имя и исходную иконку — заголовок графика рисует иконку сам (апд9: svg-иконка не терялась)', () => {
+    expect(s['body:w']).toMatchObject({ name: 'Вес', icon: 'svg:scale', label: 'Вес' })
+    expect(s['body:f']).toMatchObject({ name: 'Жир', icon: '🧈', label: '🧈 Жир' })
+    const withSvg = buildSeries([], [], [m({ id: 'p2', name: 'Отжимания', type: 'sets', icon: 'svg:pushup' })], [], '')
+    expect(withSvg['metric:p2']).toMatchObject({ name: 'Отжимания', icon: 'svg:pushup', label: 'Отжимания' })
+    expect(s['metric:push']).toMatchObject({ name: 'Отжимания', icon: null })
+  })
   it('баллы за день считаются по выполненным метрикам (вручную: 01.01 → 3, 02.01 → 0, 03.01 → 1)', () => {
     // 01.01: вода 2000>=2000 ✓, подходы 22>=20 ✓, зарядка ✓ = 3; 02.01: вода 1500<2000, подходы 0<20, зарядка ✗ = 0; 03.01: зарядка ✓ = 1
     expect(s['points'].points.map((p) => p.y)).toEqual([3, 0, 1])

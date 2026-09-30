@@ -13,7 +13,9 @@ export interface SeriesPoint {
 }
 
 export interface ChartSeries {
-  label: string
+  label: string // текстовая подпись (списки, <option>): эмодзи как есть, svg-иконка в текст не попадает
+  name?: string // «чистое» название без иконки — для заголовка графика, где иконку рисует <MetricIcon>
+  icon?: string | null // иконка метрики/параметра тела как хранится ("svg:<имя>" или эмодзи)
   unit: string
   color: string
   points: SeriesPoint[]
@@ -40,6 +42,8 @@ export function buildSeries(bodyParams: BodyParam[], bodyValues: BodyValue[], me
   for (const p of bodyParams) {
     series[`body:${p.id}`] = {
       label: iconLabelText(p.icon, p.name),
+      name: p.name,
+      icon: p.icon,
       unit: unitSuffix(p.unit),
       color: 'var(--accent)',
       points: bodyValues.filter((v) => v.parameter_id === p.id && v.value != null).map((v) => ({ date: v.date, y: v.value })),
@@ -55,6 +59,8 @@ export function buildSeries(bodyParams: BodyParam[], bodyValues: BodyValue[], me
   for (const m of metrics.filter((x) => x.type === 'number' || x.type === 'sets')) {
     series[`metric:${m.id}`] = {
       label: iconLabelText(m.icon, m.name),
+      name: m.name,
+      icon: m.icon,
       unit: m.unit ? ' ' + m.unit : '',
       color: 'var(--accent)',
       type: m.type,

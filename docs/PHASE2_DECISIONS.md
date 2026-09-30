@@ -86,3 +86,5 @@
 `manifest.json` только `start_url`, `index.html` -> `/login/`, `sw.js` (CACHE_NAME v15). Отступление от плана, п. 5:
 `redirectTo` Google оставлен `/login.html` (через заглушку) — нулевой риск, пока владелец не подтвердит запись в Supabase;
 переключение на `/login/` — в этапе B. Admin не переезжает (решение владельца).
+
+Этап B выполнен (v1.43, агент 4): все прошитые редиректы на `/login/` и `/onboarding/`; ссылки классика <-> новая на login/onboarding добавлены. Единственное отступление — Google `redirectTo` остаётся `/login.html` до подтверждения записи в Supabase.

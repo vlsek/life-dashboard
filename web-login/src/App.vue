@@ -69,5 +69,6 @@ const tabStyle = (active: boolean) => ({
     </div>
 
     <p class="mt-5"><a :href="ROUTES.portfolio" class="text-sm" style="color: var(--text-dim)">{{ t('back_to_portfolio') }}</a></p>
+    <p class="mt-3 text-center"><a href="/legacy/login.html" class="text-[0.7em]" style="color: var(--text-dim); opacity: 0.55" data-test="legacy-link">legacy-login</a></p>
   </main>
 </template>

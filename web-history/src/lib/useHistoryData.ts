@@ -54,7 +54,7 @@ export function useAuthAndData() {
     const session = data.session
     if (!session) {
       auth.value = { status: 'redirecting' }
-      window.location.href = '/login.html'
+      window.location.href = '/login/'
       return
     }
     const userId = session.user.id
@@ -63,7 +63,7 @@ export function useAuthAndData() {
     const { data: profile } = await sb.from('profiles').select('onboarded').eq('user_id', userId).maybeSingle()
     if (!profile?.onboarded) {
       auth.value = { status: 'redirecting' }
-      window.location.href = '/onboarding.html'
+      window.location.href = '/onboarding/'
       return
     }
 

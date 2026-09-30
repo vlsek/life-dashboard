@@ -375,6 +375,16 @@ v1.42 — Фаза 2, этап A для Логина и Онбординга (а
   Google redirectTo намеренно остался /login.html (через заглушку) — ROUTES.oauthReturn. Пересобраны только login и
   onboarding (остальные пилоты на -vue не ссылаются; правки в 12 комментариях supabase.ts на бандлы не влияют).
   Новое: scripts/check_dead_links.py (проверка внутренних ссылок, мутационно проверена). Тесты: login 9, onboarding 13, vue-tsc чист.
+v1.43 — (агент 4, по запросу владельца) (1) Фаза 2, этап B: прошитые `/login.html` и `/onboarding.html` заменены на
+  `/login/` и `/onboarding/` в config.js (requireAuth/logout/requireOnboarded), legacy/login.js, legacy/dashboard.js и
+  во всех 14 пилотах (lib/supabase.ts logout(), useX.ts). Google `redirectTo` намеренно оставлен `/login.html`
+  (ROUTES.oauthReturn и legacy/login.js:130) — ждём подтверждения записи в Supabase Redirect URLs. Заглушки остаются.
+  (2) Ссылки классика<->новая: в Vue login/onboarding — неприметная `legacy-login`/`legacy-onboarding` (как в AppShell),
+  в legacy/login.html и legacy/onboarding.html — «Попробовать новый дизайн» (ключ nav_try_pilot). (3) BACKLOG 10:
+  SVG-иконка метрики терялась в заголовках графиков — `iconLabelText` сознательно отдаёт только эмодзи (для текстовых
+  мест), а заголовок был текстовым. Пилот: `ChartSeries` получил `name`/`icon`, `ChartBlock` рисует `<MetricIcon>` перед
+  названием, то же в строке ChartsConfigModal (`<option>` остаётся текстом). Классика: `renderChartBlock(..., {titleHtml})`
+  и `labelHtml` в сериях. Тесты: dashboard 412 (+5), остальные пилоты зелёные, vue-tsc чист. CACHE_NAME → v16.
 v1.03 — Пилот Сообщества: заявки в друзья, друзья отдельно от подписок, «В друзья»
   (lib/friends.ts, PersonChip.vue, 17 тестов, в т.ч. UI-тест App.vue с подменой Supabase).
 v1.02 — Сообщество (классика): то же в ванильном community.js. Фильтр «Только друзья» =

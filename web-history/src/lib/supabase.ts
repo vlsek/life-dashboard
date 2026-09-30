@@ -11,5 +11,5 @@ export const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 export async function logout() {
   await sb.auth.signOut()
-  window.location.href = '/login.html'
+  window.location.href = '/login/'
 }

@@ -91,7 +91,8 @@ function onPeriodApplied() {
           <button type="button" class="secondary px-2 py-0.5 text-xs" :title="t('dash_chart_period_btn_title')" data-test="period-btn" @click="periodFor = entry.key"><Icon name="calendar" /></button>
         </div>
         <ChartBlock
-          :title="series[entry.key].label"
+          :title="series[entry.key].name ?? series[entry.key].label"
+          :icon="series[entry.key].icon"
           :points="pointsFor(entry.key)"
           :unit="series[entry.key].unit"
           :color="series[entry.key].color"

@@ -67,7 +67,7 @@ COORDINATION.md/git log верь им, а не этому файлу.
    адресов): history, milestones, calendar, shop, challenges, workouts, skills, languages (классика
    /legacy/english.html), community, goals, dashboard, account, login, onboarding. Admin (admin.html) остаётся
    классикой в корне — решение владельца, Vue-версия не нужна. ОСТАЛОСЬ: ручная проверка владельцем на боевом
-   домене и косметический этап B (см. «ОСТАЁТСЯ ПО ФАЗЕ 2» ниже, в рецепте переезда). Supabase Redirect URLs
+   домене и смена Google redirectTo на /login/ (см. «ОСТАЁТСЯ ПО ФАЗЕ 2» ниже, в рецепте переезда). Supabase Redirect URLs
    владелец уже добавил (/login, /account/ и /legacy/account.html).
 3. Фаза 3 (docs/BACKLOG.md) — НАЧАТА по прямому решению владельца («бери любые задачи из 3 этапа, только
    отмечай»), хотя фаза 2 формально не закрыта: правило «не начинать следующую фазу» не отменено,
@@ -305,15 +305,13 @@ Astro тут не даёт преимуществ. TypeScript — типы. Tail
    вход по email; регистрация -> онбординг (есть переключатель RU/EN) -> дашборд; вход через Google; выход из пилота
    и из /legacy/; старые закладки /login.html?x=1#y=2 и /onboarding.html; запуск уже установленного PWA
    (start_url теперь /login/, id=/login.html НАМЕРЕННО не менялся — идентичность установленного PWA).
-2. Этап B (косметика, не срочно): заменить прошитые `/login.html` и `/onboarding.html` (config.js requireAuth/logout/
-   requireOnboarded, legacy/login.js, legacy/onboarding.js, dashboard.js, в пилотах lib/supabase.ts logout() и
-   useX.ts) на `/login/` и `/onboarding/` — уберёт лишний переход через заглушку. Google `redirectTo` СЕЙЧАС
-   намеренно `/login.html` (ROUTES.oauthReturn в web-login/src/lib/routes.ts): этот адрес заведомо в Redirect URLs
-   Supabase, заглушка донесёт ?code= и #hash до /login/. Менять на `/login/` только после того, как владелец
-   подтвердит точную запись (со слэшем или маска) в Supabase -> Authentication -> URL Configuration.
+2. Этап B — ВЫПОЛНЕН (v1.43): прошитые `/login.html` и `/onboarding.html` заменены на `/login/` и `/onboarding/`
+   (config.js, legacy/*.js, все пилоты). Остаётся единственное намеренное исключение: Google `redirectTo` СЕЙЧАС
+   `/login.html` (ROUTES.oauthReturn в web-login/src/lib/routes.ts и legacy/login.js:130) — этот адрес заведомо в
+   Redirect URLs Supabase, заглушка донесёт ?code= и #hash до /login/. Менять на `/login/` только после того, как
+   владелец подтвердит точную запись (со слэшем или маска) в Supabase -> Authentication -> URL Configuration.
    Заглушки остаются НАВСЕГДА (закладки, установленные PWA, письма Supabase со старыми ссылками).
-3. Необязательно: ссылки «классика <-> новая версия» на login/onboarding (одобрены в PHASE2_DECISIONS, раздел 2,
-   пункт 2; не сделаны — у этих страниц нет сайдбара).
+3. Ссылки «классика <-> новая версия» на login/onboarding — СДЕЛАНЫ (v1.43).
 
 Актуальное состояние пилота (на v1.36)
 Каждая страница — отдельный mini-Vite-проект web-<page>/ → /<page>/ со своими копиями общих кусков (код

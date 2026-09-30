@@ -2,6 +2,7 @@
 import { computed, reactive, ref } from 'vue'
 import PeriodPicker from './PeriodPicker.vue'
 import Icon from './Icon.vue'
+import MetricIcon from './MetricIcon.vue'
 import { t } from '../lib/i18n'
 import { addableKeys, moveEntry, removeEntry, type ChartEntry, type ChartSeries } from '../lib/chartSeries'
 import type { PeriodState } from '../lib/chart'
@@ -39,7 +40,7 @@ function add() {
       <p class="dim mb-2 text-xs">{{ t('dash_charts_goal_hint') }}</p>
 
       <div v-for="(entry, i) in order" :key="entry.key" class="flex flex-wrap items-center gap-1.5 py-1" data-test="entry">
-        <span class="min-w-28 flex-1">{{ series[entry.key]?.label ?? entry.key }}</span>
+        <span class="min-w-28 flex-1"><MetricIcon v-if="series[entry.key]?.icon" :icon="series[entry.key].icon" extra-style="margin-right:0.35em;" />{{ series[entry.key]?.name ?? series[entry.key]?.label ?? entry.key }}</span>
         <input
           type="number"
           step="any"

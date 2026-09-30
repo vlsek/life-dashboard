@@ -33,7 +33,7 @@ export function useCommunity() {
     const session = data.session
     if (!session) {
       auth.value = { status: 'redirecting' }
-      window.location.href = '/login.html'
+      window.location.href = '/login/'
       return
     }
     const userId = session.user.id
@@ -42,7 +42,7 @@ export function useCommunity() {
     const { data: prof } = await sb.from('profiles').select('onboarded').eq('user_id', userId).maybeSingle()
     if (!prof?.onboarded) {
       auth.value = { status: 'redirecting' }
-      window.location.href = '/onboarding.html'
+      window.location.href = '/onboarding/'
       return
     }
 

@@ -479,7 +479,7 @@ async function buildAvailableSeries() {
             .filter(v => v.parameter_id === p.id && v.value != null)
             .map(v => ({ date: v.date, y: v.value }));
         series[`body:${p.id}`] = {
-            label: iconLabelText(p.icon, p.name), unit: p.unit ? (p.unit.startsWith("%") ? p.unit : " " + p.unit) : "",
+            label: iconLabelText(p.icon, p.name), labelHtml: labelHtml(p.icon, p.name), unit: p.unit ? (p.unit.startsWith("%") ? p.unit : " " + p.unit) : "",
             color: "var(--accent)", points: pointsForParam
         };
     }
@@ -496,7 +496,7 @@ async function buildAvailableSeries() {
 
     for (const m of (metrics || [])) {
         series[`metric:${m.id}`] = {
-            label: iconLabelText(m.icon, m.name), unit: m.unit ? " " + m.unit : "", color: "var(--accent)", type: m.type,
+            label: iconLabelText(m.icon, m.name), labelHtml: labelHtml(m.icon, m.name), unit: m.unit ? " " + m.unit : "", color: "var(--accent)", type: m.type,
             points: days.filter(d => byDay[d][m.id] !== undefined)
                 .map(d => ({ date: d, y: metricNumericValue(m, byDay[d][m.id]) }))
                 .filter(p => p.y != null), // "sets" с пустым/битым значением — пропускаем точку, а не рисуем дыру числом
@@ -618,7 +618,7 @@ async function loadCharts() {
                 const pts = filterPointsByRange(s.points, period.range, period.from, period.to);
                 const goalValue = entry.goal != null ? entry.goal : (s.defaultGoal ?? null);
                 const goalLabel = goalValue != null ? `${t("chart_goal_label")} ${goalValue}${s.unit || ''}` : null;
-                renderChartBlock(chartImgWrap, s.label, pts, { unit: s.unit, color: s.color, goalValue, goalLabel });
+                renderChartBlock(chartImgWrap, s.label, pts, { unit: s.unit, color: s.color, goalValue, goalLabel, titleHtml: s.labelHtml });
             }
             periodBtn.onclick = () => openChartPeriodModal(entry.key, refreshChartImage);
             refreshChartImage();
@@ -804,7 +804,7 @@ function openChartsConfigModal(allSeries, selectedEntries) {
             const label = document.createElement("span");
             label.style.flex = "1";
             label.style.minWidth = "110px";
-            label.textContent = s?.label ?? key;
+            if (s?.labelHtml) label.innerHTML = s.labelHtml; else label.textContent = s?.label ?? key;
             row.appendChild(label);
 
             const goalInput = document.createElement("input");
@@ -3185,7 +3185,7 @@ async function openCarryOverModal(todayDateStr, todayPlanned, persistToday) {
     if (!user) return;
 
     const { data: profile } = await sb.from("profiles").select("onboarded, dashboard_layout").eq("user_id", user.id).maybeSingle();
-    if (!profile?.onboarded) { window.location.href = "/onboarding.html"; return; }
+    if (!profile?.onboarded) { window.location.href = "/onboarding/"; return; }
 
     renderNav("dashboard", user.email);
     // Сразу после онбординга показываем приветственный тур (один раз)

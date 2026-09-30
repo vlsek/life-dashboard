@@ -2,17 +2,19 @@
 import { computed } from 'vue'
 import { prepareChartSeries, type ChartPoint } from '../lib/chart'
 import { t } from '../lib/i18n'
+import MetricIcon from './MetricIcon.vue'
 
 const props = withDefaults(
   defineProps<{
     title?: string
+    icon?: string | null // иконка метрики: svg или эмодзи, рисуется перед названием
     points: { date: string; y: number | null }[]
     unit?: string
     color?: string
     goalValue?: number | null
     goalLabel?: string | null
   }>(),
-  { title: '', unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null },
+  { title: '', icon: null, unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null },
 )
 
 const prepared = computed<ChartPoint[]>(() => prepareChartSeries(props.points))
@@ -100,7 +102,7 @@ const fallbackText = computed(() => {
 
 <template>
   <div>
-    <h4 v-if="title" class="mb-1.5 font-medium">{{ title }}</h4>
+    <h4 v-if="title" class="mb-1.5 font-medium"><MetricIcon v-if="icon" :icon="icon" extra-style="margin-right:0.35em;" />{{ title }}</h4>
     <template v-if="innerSvg">
       <svg viewBox="0 0 620 160" width="100%" :height="160" v-html="innerSvg"></svg>
       <p v-if="hasGaps" class="dim mt-0.5 text-xs">{{ t('chart_dashed_hint') }}</p>

@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.42";
+const SITE_VERSION = "1.43";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.43", date: "2026-09-30 08:04", changes: [
+        "Графики на главной: у метрик с SVG-иконкой (например «Отжимания») иконка теперь показывается в заголовке графика и в списке настройки графиков — раньше терялась, показывались только эмодзи-иконки. Исправлено и в новой версии, и в классической",
+        "Фаза 2, этап B: выход из аккаунта и переходы «не вошёл → вход» и «не прошёл онбординг → онбординг» теперь ведут сразу на /login/ и /onboarding/, без лишней пересылки через старые адреса",
+        "Страницы входа и онбординга: внизу неприметная ссылка на классическую версию (legacy-login / legacy-onboarding), а в классической версии — «Попробовать новый дизайн»",
+    ]},
     { version: "1.42", date: "2026-09-30 05:10", changes: [
         "Фаза 2: «Вход» и «Онбординг» теперь на коротких адресах /login/ и /onboarding/ вместо /login-vue/ и /onboarding-vue/, а классические версии — в /legacy/login.html и /legacy/onboarding.html. Старые адреса /login.html и /onboarding.html перенаправляют на новые (с сохранением параметров возврата из Google), корень сайта ведёт на /login/",
     ]},
@@ -1019,6 +1024,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.43", date: "2026-09-30 08:04", changes: [
+        "Home charts: metrics with an SVG icon (e.g. \"Push-ups\") now show that icon in the chart heading and in the chart settings list — it used to be dropped, only emoji icons were shown. Fixed in both the new and the classic version",
+        "Phase 2, stage B: logging out and the \"not signed in → sign in\" / \"onboarding not done → onboarding\" redirects now go straight to /login/ and /onboarding/, without an extra hop through the old addresses",
+        "Sign-in and onboarding pages: an unobtrusive link to the classic version at the bottom (legacy-login / legacy-onboarding), and \"Try the new design\" in the classic version",
+    ]},
     { version: "1.42", date: "2026-09-30 05:10", changes: [
         "Phase 2: \"Sign in\" and \"Onboarding\" are now at the short addresses /login/ and /onboarding/ instead of /login-vue/ and /onboarding-vue/, and the classic versions live at /legacy/login.html and /legacy/onboarding.html. The old /login.html and /onboarding.html addresses redirect to the new ones (keeping the Google return parameters), and the site root leads to /login/",
     ]},
@@ -1562,11 +1572,11 @@ async function getSession() {
 }
 
 // Для защищённых страниц (дашборд/цели/навыки/магазин):
-// если не залогинен — уводит на login.html
+// если не залогинен — уводит на /login/
 async function requireAuth() {
     const session = await getSession();
     if (!session) {
-        window.location.href = "/login.html";
+        window.location.href = "/login/";
         return null;
     }
     return session.user;
@@ -1574,7 +1584,7 @@ async function requireAuth() {
 
 async function logout() {
     await sb.auth.signOut();
-    window.location.href = "/login.html";
+    window.location.href = "/login/";
 }
 
 // Текущее время "ЧЧ:ММ" — для отметки времени подхода
@@ -1766,10 +1776,10 @@ async function requireOnboarded(userId) {
         // "офлайн") пропускаем на страницу — там уже offline-cache.js покажет последние данные.
         if (localStorage.getItem("ld_onboarded_" + userId) === "1") return true;
         if (!navigator.onLine) return true;
-        window.location.href = "/onboarding.html";
+        window.location.href = "/onboarding/";
         return false;
     }
-    if (!profile?.onboarded) { window.location.href = "/onboarding.html"; return false; }
+    if (!profile?.onboarded) { window.location.href = "/onboarding/"; return false; }
     try { localStorage.setItem("ld_onboarded_" + userId, "1"); } catch (e) { /* приватный режим — не критично */ }
     return true;
 }
@@ -1906,7 +1916,8 @@ function svgLineChart(points, opts = {}) {
 function renderChartBlock(container, title, points, opts) {
     if (title) {
         const h4 = document.createElement("h4");
-        h4.textContent = title;
+        // titleHtml — заголовок с SVG-иконкой (название внутри уже экранировано, см. labelHtml()); иначе просто текст
+        if (opts && opts.titleHtml) h4.innerHTML = opts.titleHtml; else h4.textContent = title;
         h4.style.marginBottom = "6px";
         container.appendChild(h4);
     }

@@ -155,5 +155,6 @@ async function onSkip() {
 
       <p v-if="errorMsg" class="mt-2.5 whitespace-pre-line text-sm" style="color: var(--danger)">{{ errorMsg }}</p>
     </form>
+    <p class="mt-3 text-center"><a href="/legacy/onboarding.html" class="text-[0.7em]" style="color: var(--text-dim); opacity: 0.55" data-test="legacy-link">legacy-onboarding</a></p>
   </main>
 </template>
