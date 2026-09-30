@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.58";
+const SITE_VERSION = "1.59";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.59", date: "2026-09-30 09:22", changes: [
+        "Тренировки: новый блок «Прогрессии упражнений» (свёрнут по умолчанию). Пять цепочек ступеней от лёгкого к сложному: отжимания (с колен → обычные → на кулаках → алмазные → лучника), подтягивания, приседания и ноги, пресс, брусья. Ступень пройдена, когда в одном подходе набрано нужное число повторений; для текущей ступени видно лучший подход и кнопку «Добавить запись». Ступени сопоставляются с вашими упражнениями по названию (русские и английские)",
+    ]},
     { version: "1.58", date: "2026-09-30 10:48", changes: [
         "Часовой пояс в стриках и Сообществе: сервер теперь считает «сегодня» по часовому поясу пользователя, а не по UTC. Раньше у жителей Москвы и Вильнюса между полуночью и 2–3 часами ночи стрик и очки дня в Сообществе отставали на день. Нужна миграция 030 в Supabase; без неё всё работает как раньше",
         "Дашборд (пилот): при входе тихо записывает часовой пояс браузера в профиль (например, Europe/Moscow — переход на летнее время учитывается сам). Ничего не показывает и ничего не ломает, если миграция ещё не применена",
@@ -1072,6 +1075,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.59", date: "2026-09-30 09:22", changes: [
+        "Workouts: new \"Exercise progressions\" block (collapsed by default). Five chains of steps from easier to harder: push-ups (knee → regular → fist → diamond → archer), pull-ups, squats and legs, core, dips. A step is done when you reach its target reps in a single set; the current step shows your best set and an \"Add record\" button. Steps are matched to your exercises by name (Russian and English)",
+    ]},
     { version: "1.58", date: "2026-09-30 10:48", changes: [
         "Time zone in streaks and Community: the server now computes \"today\" in the user's time zone instead of UTC. Before, for people in Moscow and Vilnius, between midnight and 2–3 a.m. the streak and day points in Community lagged a day behind. Requires migration 030 in Supabase; without it everything works as before",
         "Dashboard (pilot): on sign-in it quietly saves the browser's time zone into the profile (for example Europe/Moscow — daylight saving is handled automatically). It shows nothing and breaks nothing if the migration is not applied yet",

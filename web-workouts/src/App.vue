@@ -11,6 +11,7 @@ import ExerciseCard from './components/ExerciseCard.vue'
 import WarmupReminder from './components/WarmupReminder.vue'
 import OverviewChart from './components/OverviewChart.vue'
 import MuscleMap from './components/MuscleMap.vue'
+import ProgressionTrees from './components/ProgressionTrees.vue'
 import ExerciseForm from './components/ExerciseForm.vue'
 import EntryForm from './components/EntryForm.vue'
 import TemplatesModal from './components/TemplatesModal.vue'
@@ -212,6 +213,13 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
       <OverviewChart :entries="entries" />
 
       <MuscleMap
+        v-if="exercises.length > 0"
+        :entries="entries"
+        :exercises="exercises"
+        @add-entry="(ex) => (entryForm = { exercise: ex, existing: null })"
+      />
+
+      <ProgressionTrees
         v-if="exercises.length > 0"
         :entries="entries"
         :exercises="exercises"
