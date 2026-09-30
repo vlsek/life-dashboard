@@ -10,6 +10,7 @@ import AppShell from './components/AppShell.vue'
 import ExerciseCard from './components/ExerciseCard.vue'
 import WarmupReminder from './components/WarmupReminder.vue'
 import OverviewChart from './components/OverviewChart.vue'
+import MuscleMap from './components/MuscleMap.vue'
 import ExerciseForm from './components/ExerciseForm.vue'
 import EntryForm from './components/EntryForm.vue'
 import TemplatesModal from './components/TemplatesModal.vue'
@@ -209,6 +210,13 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
       <WarmupReminder v-if="showWarmup" @dismiss="dismissWarmup" />
 
       <OverviewChart :entries="entries" />
+
+      <MuscleMap
+        v-if="exercises.length > 0"
+        :entries="entries"
+        :exercises="exercises"
+        @add-entry="(ex) => (entryForm = { exercise: ex, existing: null })"
+      />
 
       <section v-for="g in groups" :key="g.key">
         <div class="mb-2.5 mt-6 flex items-center gap-2">

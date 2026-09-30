@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.40";
+const SITE_VERSION = "1.41";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.41", date: "2026-09-30 04:44", changes: [
+        "Тренировки: новый блок «Карта мышц» (свёрнут по умолчанию). Схема тела спереди и сзади: зелёным подсвечены мышцы, задействованные за последние 4 дня, серым — остальные. Клик по мышце показывает ваши упражнения на неё (с кнопкой «Добавить запись») и подсказки, что ещё можно делать. Ниже — какие группы мышц вы тренировали чаще всего за 30 дней. Мышцы определяются по названию упражнения (русские и английские названия); упражнения, которые не удалось привязать, перечислены отдельно",
+    ]},
     { version: "1.40", date: "2026-09-30 07:34", changes: [
         "Аккаунт (новая версия): у администраторов внизу страницы появилась ссылка «Админка»; у обычных пользователей её нет",
     ]},
@@ -1013,6 +1016,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.41", date: "2026-09-30 04:44", changes: [
+        "Workouts: new \"Muscle map\" block (collapsed by default). A front and back body diagram: muscles worked in the last 4 days are green, the rest are grey. Tap a muscle to see your exercises for it (with an \"Add record\" button) and suggestions for what else to do. Below, the muscle groups you trained most over the last 30 days. Muscles are recognised from the exercise name (Russian and English); exercises that could not be matched are listed separately",
+    ]},
     { version: "1.40", date: "2026-09-30 07:34", changes: [
         "Account (new version): admins now get an \"Admin panel\" link at the bottom of the page; regular users do not see it",
     ]},
