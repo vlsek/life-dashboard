@@ -1,6 +1,13 @@
 {
-  "version": "1.54",
+  "version": "1.55",
   "en": [
+    {
+      "version": "1.55",
+      "date": "2026-09-30 10:29",
+      "changes": [
+        "Dashboard: clicking the points in the profile now opens a \"Points\" window — what was earned today and over the last 7 days (completed metrics, goals, books, shop purchases), with day and week totals and the current balance. The shop is reached by a button inside the window instead of the balance click itself. Skill points are not listed by day (skills have no date) but are part of the balance"
+      ]
+    },
     {
       "version": "1.54",
       "date": "2026-09-30 07:27",
@@ -1130,6 +1137,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.55",
+      "date": "2026-09-30 10:29",
+      "changes": [
+        "Дашборд: клик по баллам в профиле теперь открывает окно «Баллы» — за что начислено сегодня и за последние 7 дней (выполненные метрики, цели, книги, покупки в магазине), с итогами за день и неделю и текущим балансом. В магазин ведёт кнопка внутри окна, а не сам клик по балансу. Баллы за навыки в список по дням не попадают (у навыков нет даты), но входят в баланс"
+      ]
+    },
     {
       "version": "1.54",
       "date": "2026-09-30 07:27",

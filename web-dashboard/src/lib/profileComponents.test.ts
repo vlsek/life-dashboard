@@ -81,7 +81,7 @@ describe('ProfileSection', () => {
     state.balance.value = 42
   })
 
-  it('вызывает init с userId и показывает параметр, дельту и баланс-ссылку в магазин', async () => {
+  it('вызывает init с userId и показывает параметр, дельту и баланс (кнопка окна баллов, не ссылка в магазин)', async () => {
     const { default: ProfileSection } = await import('../components/ProfileSection.vue')
     const w = mount(ProfileSection, { props: { userId: 'u1' } })
     await flushPromises()
@@ -89,9 +89,11 @@ describe('ProfileSection', () => {
     const stat = w.find('[data-test="param-stat"]')
     expect(stat.text()).toContain('Вес: 77.5 кг')
     expect(stat.text()).toContain('-2.5 кг')
-    const a = w.find('a')
-    expect(a.attributes('href')).toBe('/shop/')
-    expect(a.text()).toContain('42')
+    // баланс — кнопка, открывающая окно «за что начислены баллы»; в магазин ведёт ссылка уже из окна (BACKLOG 7.1)
+    const balance = w.find('[data-test="balance-btn"]')
+    expect(balance.element.tagName).toBe('BUTTON')
+    expect(balance.text()).toContain('42')
+    expect(w.find('a[href="/shop/"]').exists()).toBe(false)
     w.unmount()
   })
 

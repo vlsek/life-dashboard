@@ -5,6 +5,7 @@ import MetricIcon from './MetricIcon.vue'
 import BirthdateModal from './BirthdateModal.vue'
 import BodyParamFormModal from './BodyParamFormModal.vue'
 import BodyParamsModal from './BodyParamsModal.vue'
+import PointsLogModal from './PointsLogModal.vue'
 import AvatarProgress from './AvatarProgress.vue'
 import ProgressRing from './ProgressRing.vue'
 import StreakFlame from './StreakFlame.vue'
@@ -64,6 +65,7 @@ onBeforeUnmount(() => window.removeEventListener(BODY_VALUES_CHANGED, onBodyValu
 const fileInput = ref<HTMLInputElement | null>(null)
 const showBirthdate = ref(false)
 const showParams = ref(false)
+const showPoints = ref(false)
 const formFor = ref<BodyParam | 'new' | null>(null)
 const modalError = ref<string | null>(null)
 
@@ -144,12 +146,23 @@ function openForm(p: BodyParam | 'new') {
       {{ topStreak.streak }}{{ topStreak.unit === 'w' ? ' ' + t('dash_streak_unit_weeks') : '' }}
     </button>
 
-    <a v-if="balance != null" href="/shop/" class="ml-auto font-bold" :title="t('dash_balance_click_hint')" style="color: inherit; text-decoration: none"><Icon name="coin" /> {{ balance }}</a>
+    <button
+      v-if="balance != null"
+      type="button"
+      data-test="balance-btn"
+      class="ml-auto flex items-center gap-1 font-bold"
+      :title="t('dash_balance_click_hint')"
+      style="background: transparent; border: none; padding: 0; cursor: pointer; color: inherit"
+      @click="showPoints = true"
+    >
+      <Icon name="coin" /> {{ balance }}
+    </button>
 
     <p v-if="error" class="w-full text-sm" style="color: var(--danger)">{{ error }}</p>
   </section>
 
   <BirthdateModal v-if="showBirthdate" :initial="profile?.birthdate ?? null" :error="modalError" @close="showBirthdate = false" @save="onSaveBirthdate" />
+  <PointsLogModal v-if="showPoints && userId" :user-id="userId" :balance="balance" @close="showPoints = false" />
   <BodyParamsModal v-if="showParams" :params="params" @close="showParams = false" @add="openForm('new')" @edit="openForm" @remove="onRemoveParam" />
   <BodyParamFormModal v-if="formFor" :existing="formFor === 'new' ? null : formFor" :error="modalError" @close="formFor = null" @save="onSaveParam" />
 </template>

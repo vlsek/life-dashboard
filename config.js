@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.54";
+const SITE_VERSION = "1.55";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.55", date: "2026-09-30 10:29", changes: [
+        "Дашборд: клик по баллам в профиле теперь открывает окно «Баллы» — за что начислено сегодня и за последние 7 дней (выполненные метрики, цели, книги, покупки в магазине), с итогами за день и неделю и текущим балансом. В магазин ведёт кнопка внутри окна, а не сам клик по балансу. Баллы за навыки в список по дням не попадают (у навыков нет даты), но входят в баланс",
+    ]},
     { version: "1.54", date: "2026-09-30 07:27", changes: [
         "Дашборд (пилот): бонус ⭐ в кольце НЕДЕЛИ стал пропорциональным — один выполненный бонусный пункт даёт неделе +20%/7 ≈ +2,9% вместо +20% (в дне без изменений: +20%). Так бонус, сделанный каждый день, добавляет неделе те же +20%, что дню. Сводка по клику на кольцо недели считает так же",
     ]},
@@ -1057,6 +1060,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.55", date: "2026-09-30 10:29", changes: [
+        "Dashboard: clicking the points in the profile now opens a \"Points\" window — what was earned today and over the last 7 days (completed metrics, goals, books, shop purchases), with day and week totals and the current balance. The shop is reached by a button inside the window instead of the balance click itself. Skill points are not listed by day (skills have no date) but are part of the balance",
+    ]},
     { version: "1.54", date: "2026-09-30 07:27", changes: [
         "Dashboard (pilot): the ⭐ bonus in the WEEK ring is now proportional — one done bonus item adds +20%/7 ≈ +2.9% to the week instead of +20% (the day is unchanged: +20%). A bonus done every day therefore adds the same +20% to the week as to a day. The summary shown when you tap the week ring uses the same maths",
     ]},

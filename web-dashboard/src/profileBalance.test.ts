@@ -1,0 +1,39 @@
+import { describe, expect, it, vi } from 'vitest'
+import { flushPromises, mount } from '@vue/test-utils'
+import { ref, computed } from 'vue'
+
+// Клик по баллам в профиле открывает окно «за что начислены баллы», а не уводит сразу в магазин (BACKLOG 7.1).
+vi.mock('./lib/useProfile', () => ({
+  useProfile: () => ({
+    profile: ref({ avatar_url: null, birthdate: null, goal_type: null }),
+    params: ref([]),
+    stats: computed(() => []),
+    balance: ref(42),
+    loaded: ref(true),
+    error: ref(null),
+    init: vi.fn(), uploadAvatar: vi.fn(), saveBirthdate: vi.fn(), addParam: vi.fn(),
+    updateParam: vi.fn(), deleteParam: vi.fn(), refreshValues: vi.fn(),
+  }),
+}))
+vi.mock('./lib/usePointsLog', () => ({
+  usePointsLog: () => ({ log: ref(null), error: ref(null), loading: ref(false), load: vi.fn() }),
+}))
+
+import ProfileSection from './components/ProfileSection.vue'
+
+describe('ProfileSection: balance', () => {
+  it('is a button (not a link to the shop) that opens the points modal', async () => {
+    const w = mount(ProfileSection, { props: { userId: 'u1' } })
+    const btn = w.find('[data-test="balance-btn"]')
+    expect(btn.exists()).toBe(true)
+    expect(btn.element.tagName).toBe('BUTTON')
+    expect(btn.text()).toContain('42')
+    expect(w.find('a[href="/shop/"]').exists()).toBe(false)
+    expect(w.find('[data-test="points-modal"]').exists()).toBe(false)
+    await btn.trigger('click')
+    await flushPromises()
+    expect(w.find('[data-test="points-modal"]').exists()).toBe(true)
+    expect(w.find('[data-test="points-shop-link"]').attributes('href')).toBe('/shop/')
+    w.unmount()
+  })
+})
