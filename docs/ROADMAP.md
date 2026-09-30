@@ -76,6 +76,11 @@ package.json/vite.config.ts/tsconfig и СОБСТВЕННЫМИ копиями 
 ===================================================================
 СДЕЛАНО К ЭТОМУ МОМЕНТУ (не переоткрывать, не дублировать)
 ===================================================================
+v1.47 — Фаза 3 (агент 3), BACKLOG 1.1 «Обводка иконки Streak»: в `web-dashboard/src/style.css` добавлено правило
+  `html.theme-monet .streak-flame .fl-outer` (stroke акцент, 0.6, opacity 0.5) — дословно как в классике (`style.css:899`);
+  `dashboard/` пересобран. Огонь с классом `.fl-outer` есть только в Дашборде (`StreakFlame.vue`), в других пилотах правка не нужна.
+  Тест `StreakFlameTheme.test.ts` читает исходник CSS (vitest отдаёт пустую строку для `?raw` у .css, а happy-dom не считает стили).
+  Тесты web-dashboard: 413, vue-tsc чист. Визуально в браузере не проверял.
 v0.64 — web-history/ → history-vue/: страница «История» на Vue 3 + Vite + TS
   + Tailwind (auth, тема, пагинация Supabase, day/week статистика).
 v0.65 — AppShell.vue (шапка + меню) в web-history/.

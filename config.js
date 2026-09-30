@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.46";
+const SITE_VERSION = "1.47";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.47", date: "2026-09-30 08:34", changes: [
+        "Дашборд (новая версия): в теме Monet у огонька стрика появилась тонкая обводка акцентным цветом, чтобы он не терялся на тёмном фоне — как в классической версии",
+    ]},
     { version: "1.46", date: "2026-09-30 08:24", changes: [
         "Вход: с экрана входа убрана ссылка «Вернуться на портфолио» — и в новой, и в классической версии",
     ]},
@@ -1033,6 +1036,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.47", date: "2026-09-30 08:34", changes: [
+        "Dashboard (new version): in the Monet theme the streak flame now has a thin accent-colored outline so it no longer gets lost on the dark background, like in the classic version",
+    ]},
     { version: "1.46", date: "2026-09-30 08:24", changes: [
         "Sign-in: the \"Back to portfolio\" link is gone from the sign-in screen, in both the new and the classic version",
     ]},

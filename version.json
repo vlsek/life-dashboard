@@ -1,6 +1,13 @@
 {
-  "version": "1.46",
+  "version": "1.47",
   "en": [
+    {
+      "version": "1.47",
+      "date": "2026-09-30 08:34",
+      "changes": [
+        "Dashboard (new version): in the Monet theme the streak flame now has a thin accent-colored outline so it no longer gets lost on the dark background, like in the classic version"
+      ]
+    },
     {
       "version": "1.46",
       "date": "2026-09-30 08:24",
@@ -1074,6 +1081,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.47",
+      "date": "2026-09-30 08:34",
+      "changes": [
+        "Дашборд (новая версия): в теме Monet у огонька стрика появилась тонкая обводка акцентным цветом, чтобы он не терялся на тёмном фоне — как в классической версии"
+      ]
+    },
     {
       "version": "1.46",
       "date": "2026-09-30 08:24",

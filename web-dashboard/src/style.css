@@ -106,6 +106,13 @@ input[type='radio'] {
 .streak-flame .fl-inner {
   fill: color-mix(in srgb, var(--accent) 40%, #ffffff);
 }
+/* Monet: огонёк теряется на очень тёмном фоне — тонкая обводка акцентным цветом, как в основном сайте
+   (style.css, BACKLOG 1.1). */
+html.theme-monet .streak-flame .fl-outer {
+  stroke: var(--accent);
+  stroke-width: 0.6;
+  stroke-opacity: 0.5;
+}
 .streak-unlit {
   color: var(--text-dim);
   opacity: 0.75;
