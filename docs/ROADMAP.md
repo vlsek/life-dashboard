@@ -447,6 +447,13 @@ v1.57 — BACKLOG 7.3 «Часовой пояс / DST» (агент 1): ауди
   завершения челленджа (web-challenges: localDateOfTimestamp вместо completed_at.slice(0, 10)). Тесты под TZ Москва/Вильнюс/
   Нью-Йорк/Окленд на переходах DST: dashboard 478, challenges 42, goals 28, milestones 25. ОТКРЫТО: серверные SQL-функции
   (лидерборд, стрики) считают «сегодня» по current_date БД (UTC) — см. BACKLOG 7.3.
+v1.58 — BACKLOG 7.3, серверная часть (агент 1): «сегодня» по часовому поясу пользователя. Миграция
+  `030_user_timezone.sql`: profiles.timezone (IANA), user_today(uuid) (NULL/неверный пояс → current_date, поведение прежнее),
+  period_from/period_to, переписаны get_today_activity, get_category_leaderboard, calc_perfect_streak, calc_category_streak.
+  Фронт: web-dashboard/lib/timezone.ts (тихая запись пояса при входе, повтор раз в 6 ч при неудаче) + 1 строка в useDashboard.
+  Проверено на реальном PostgreSQL 16 (schema.sql + 001–029 + 030): без пояса результаты идентичны прежним, с поясом
+  Pacific/Pago_Pago «сегодня» = вчера по UTC (today_points 0 → 1), неверное имя пояса безопасно откатывается на current_date.
+  Тесты dashboard 483. ВЛАДЕЛЬЦУ: применить migrations/030_user_timezone.sql в Supabase, затем docs/sql-checks/030_user_timezone_check.sql.
 
 ТЕКУЩАЯ РАБОТА: см. COORDINATION.md (блоки агентов, бэклог, журнал). Открыто на
 момент записи: Дашборд — дневные метрики (карточка дня; после сохранения слать

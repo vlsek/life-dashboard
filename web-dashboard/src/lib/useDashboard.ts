@@ -7,6 +7,7 @@ import { computeDayProgressPure, computeWeekProgressPure, getWeekDates, type Pro
 import { daySummary, weekSummary, type ProgressSummary } from './progressSummary'
 import { getDayProgressSettings, setDayProgressSettings, type DayProgressSettings } from './progressSettings'
 import { DATA_CHANGED } from './events'
+import { syncUserTimezone } from './timezone'
 import type { Metric } from './types'
 
 export type AuthState =
@@ -71,6 +72,7 @@ export function useDashboard() {
 
     currentUserId = userId
     auth.value = { status: 'ready', userId, userEmail }
+    void syncUserTimezone(userId) // часовой пояс в профиль для серверного «сегодня» (миграция 030)
     await loadAll(userId)
   }
 

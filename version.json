@@ -1,6 +1,14 @@
 {
-  "version": "1.57",
+  "version": "1.58",
   "en": [
+    {
+      "version": "1.58",
+      "date": "2026-09-30 10:48",
+      "changes": [
+        "Time zone in streaks and Community: the server now computes \"today\" in the user's time zone instead of UTC. Before, for people in Moscow and Vilnius, between midnight and 2–3 a.m. the streak and day points in Community lagged a day behind. Requires migration 030 in Supabase; without it everything works as before",
+        "Dashboard (pilot): on sign-in it quietly saves the browser's time zone into the profile (for example Europe/Moscow — daylight saving is handled automatically). It shows nothing and breaks nothing if the migration is not applied yet"
+      ]
+    },
     {
       "version": "1.57",
       "date": "2026-09-30 10:36",
@@ -1153,6 +1161,14 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.58",
+      "date": "2026-09-30 10:48",
+      "changes": [
+        "Часовой пояс в стриках и Сообществе: сервер теперь считает «сегодня» по часовому поясу пользователя, а не по UTC. Раньше у жителей Москвы и Вильнюса между полуночью и 2–3 часами ночи стрик и очки дня в Сообществе отставали на день. Нужна миграция 030 в Supabase; без неё всё работает как раньше",
+        "Дашборд (пилот): при входе тихо записывает часовой пояс браузера в профиль (например, Europe/Moscow — переход на летнее время учитывается сам). Ничего не показывает и ничего не ломает, если миграция ещё не применена"
+      ]
+    },
     {
       "version": "1.57",
       "date": "2026-09-30 10:36",

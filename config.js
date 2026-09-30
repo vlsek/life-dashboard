@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.57";
+const SITE_VERSION = "1.58";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.58", date: "2026-09-30 10:48", changes: [
+        "Часовой пояс в стриках и Сообществе: сервер теперь считает «сегодня» по часовому поясу пользователя, а не по UTC. Раньше у жителей Москвы и Вильнюса между полуночью и 2–3 часами ночи стрик и очки дня в Сообществе отставали на день. Нужна миграция 030 в Supabase; без неё всё работает как раньше",
+        "Дашборд (пилот): при входе тихо записывает часовой пояс браузера в профиль (например, Europe/Moscow — переход на летнее время учитывается сам). Ничего не показывает и ничего не ломает, если миграция ещё не применена",
+    ]},
     { version: "1.57", date: "2026-09-30 10:36", changes: [
         "Аудит часовых поясов и перехода на летнее время (Москва — без DST, Вильнюс и Нью-Йорк — с DST, плюс Окленд): арифметика дат в пилотах уже календарная и не ломается в сутки перехода. Найдено и исправлено два места, где локальная дата бралась из UTC",
         "Дашборд (пилот): при создании метрики с «импортом стрика» дата импорта записывалась по UTC — у пользователей восточнее Гринвича между полуночью и несколькими часами ночи это был вчерашний день, и импортированные дни могли не засчитаться. Теперь берётся локальная дата",
@@ -1068,6 +1072,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.58", date: "2026-09-30 10:48", changes: [
+        "Time zone in streaks and Community: the server now computes \"today\" in the user's time zone instead of UTC. Before, for people in Moscow and Vilnius, between midnight and 2–3 a.m. the streak and day points in Community lagged a day behind. Requires migration 030 in Supabase; without it everything works as before",
+        "Dashboard (pilot): on sign-in it quietly saves the browser's time zone into the profile (for example Europe/Moscow — daylight saving is handled automatically). It shows nothing and breaks nothing if the migration is not applied yet",
+    ]},
     { version: "1.57", date: "2026-09-30 10:36", changes: [
         "Time zone and daylight-saving audit (Moscow — no DST, Vilnius and New York — with DST, plus Auckland): date arithmetic in the pilots is already calendar-based and holds on switch days. Two places that took the local date from UTC were found and fixed",
         "Dashboard (pilot): when creating a metric with a streak import, the import date was stored in UTC — for users east of Greenwich, between midnight and a few hours after, that was yesterday, so the imported days could be dropped. It now uses the local date",
