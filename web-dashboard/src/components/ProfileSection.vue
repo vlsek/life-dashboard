@@ -15,6 +15,7 @@ import { useProfile } from '../lib/useProfile'
 import { BODY_VALUES_CHANGED } from '../lib/useCharts'
 import { calcAge, formatAge, formatDelta, unitSuffix, type BodyParam, type BodyParamForm } from '../lib/profile'
 import { getLang, t } from '../lib/i18n'
+import CoinIcon from './CoinIcon.vue'
 
 // Единственная точка подключения блока «Профиль» в App.vue: аватар (загрузка фото), возраст
 // (дата рождения), динамика параметров тела, баланс баллов, управление параметрами тела.
@@ -155,7 +156,7 @@ function openForm(p: BodyParam | 'new') {
       style="background: transparent; border: none; padding: 0; cursor: pointer; color: inherit"
       @click="showPoints = true"
     >
-      <Icon name="coin" /> {{ balance }}
+      <CoinIcon /> {{ balance }}
     </button>
 
     <p v-if="error" class="w-full text-sm" style="color: var(--danger)">{{ error }}</p>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import Icon from './Icon.vue'
 import MetricIcon from './MetricIcon.vue'
 import { t, type DictKey } from '../lib/i18n'
 import { usePointsLog } from '../lib/usePointsLog'
 import { parseIso } from '../lib/date'
 import type { PointsDay, PointsEntry } from '../lib/pointsLog'
+import CoinIcon from './CoinIcon.vue'
 
 // Окно по клику на баллы в профиле (BACKLOG 7.1): за что начислено сегодня и за последние 7 дней.
 // В магазин — только кнопкой отсюда, а не сразу по клику на баланс.
@@ -38,7 +38,7 @@ const sign = (n: number) => (n > 0 ? `+${n}` : String(n))
       <h3>{{ t('dash_points_title') }}</h3>
 
       <p v-if="balance != null" class="mb-2 flex items-center gap-1 font-bold">
-        <Icon name="coin" /> {{ balance }} <span class="dim text-sm font-normal">— {{ t('dash_points_balance') }}</span>
+        <CoinIcon /> {{ balance }} <span class="dim text-sm font-normal">— {{ t('dash_points_balance') }}</span>
       </p>
 
       <p v-if="loading && !log" class="dim text-sm">{{ t('dash_points_loading') }}</p>

@@ -1,6 +1,13 @@
 {
-  "version": "1.67",
+  "version": "1.68",
   "en": [
+    {
+      "version": "1.68",
+      "date": "2026-09-30 13:20",
+      "changes": [
+        "The points icon (the \"coin\") got a makeover: a translucent coin with a small burning flame in the theme color, with a gentle flicker (static when the system \"reduce motion\" setting is on). Shown next to the balance in the home profile, in the \"where points came from\" window and on shop prices"
+      ]
+    },
     {
       "version": "1.67",
       "date": "2026-09-30 13:13",
@@ -1225,6 +1232,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.68",
+      "date": "2026-09-30 13:20",
+      "changes": [
+        "Иконка баллов («монета») стала живой: полупрозрачная монета с небольшим горящим огоньком цвета темы, огонёк слегка мерцает (при включённом в системе «уменьшении движения» — статичный). Показывается у баланса в профиле на главной, в окне «откуда баллы» и у цен в магазине"
+      ]
+    },
     {
       "version": "1.67",
       "date": "2026-09-30 13:13",

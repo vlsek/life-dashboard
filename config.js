@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.67";
+const SITE_VERSION = "1.68";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.68", date: "2026-09-30 13:20", changes: [
+        "Иконка баллов («монета») стала живой: полупрозрачная монета с небольшим горящим огоньком цвета темы, огонёк слегка мерцает (при включённом в системе «уменьшении движения» — статичный). Показывается у баланса в профиле на главной, в окне «откуда баллы» и у цен в магазине",
+    ]},
     { version: "1.67", date: "2026-09-30 13:13", changes: [
         "Сворачивание блоков стало современным: вместо стрелок ▼/▶ — шеврон, который плавно поворачивается; нажимать можно на всю шапку блока (в том числе с клавиатуры), а само содержимое сворачивается и разворачивается с плавной анимацией высоты. Сделано в Дашборде (Профиль, Ежедневные метрики, Планы, Графики, карточки подходов) и в Тренировках (группы и карточки упражнений, карта мышц, деревья прогрессии). При включённом «уменьшении движения» в системе анимация отключается",
     ]},
@@ -1100,6 +1103,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.68", date: "2026-09-30 13:20", changes: [
+        "The points icon (the \"coin\") got a makeover: a translucent coin with a small burning flame in the theme color, with a gentle flicker (static when the system \"reduce motion\" setting is on). Shown next to the balance in the home profile, in the \"where points came from\" window and on shop prices",
+    ]},
     { version: "1.67", date: "2026-09-30 13:13", changes: [
         "Collapsing blocks now looks modern: instead of the ▼/▶ arrows there is a chevron that turns smoothly; the whole block header is clickable (keyboard too), and the content collapses and expands with a smooth height animation. Done on the Dashboard (Profile, Daily metrics, Plans, Charts, sets cards) and in Workouts (groups and exercise cards, muscle map, progression trees). The animation is off when the system \"reduce motion\" setting is on",
     ]},

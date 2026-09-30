@@ -7,6 +7,7 @@ import Icon from './components/Icon.vue'
 import { useShop } from './lib/useShop'
 import { t } from './lib/i18n'
 import type { ShopItem, ShopItemFormInput } from './lib/types'
+import CoinIcon from './components/CoinIcon.vue'
 
 const { auth, items, balance, error, init, addItem, updateItem, buyItem, deleteItem, uploadImage } = useShop()
 onMounted(init)
@@ -66,7 +67,7 @@ async function onUpload(file: File): Promise<string | null> {
           </a>
           <template v-else>{{ item.name }}</template>
         </div>
-        <div class="dim inline-flex items-center gap-1">{{ item.cost }} <Icon name="coin" /></div>
+        <div class="dim inline-flex items-center gap-1">{{ item.cost }} <CoinIcon /></div>
         <ItemProgressBar v-if="!item.redeemed && balance" :cost="item.cost" :balance="balance.balance" />
 
         <div class="mt-2">

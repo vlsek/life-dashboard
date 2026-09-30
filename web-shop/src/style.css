@@ -162,3 +162,23 @@ input[type='radio'] {
   height: 17px;
   flex-shrink: 0;
 }
+
+/* Иконка баллов с огоньком (CoinIcon.vue): монета полупрозрачная, огонёк горит цветом темы и мерцает */
+.coin-icon .coin-body { fill: color-mix(in srgb, var(--accent) 26%, transparent); stroke: currentColor; stroke-width: 1.5; stroke-opacity: 0.75; }
+.coin-icon .coin-ring { stroke: currentColor; stroke-width: 1.2; stroke-opacity: 0.45; }
+.coin-icon .coin-shine { stroke: #ffffff; stroke-width: 1.3; stroke-opacity: 0.55; }
+.coin-icon .coin-flame-outer { fill: color-mix(in srgb, var(--accent) 70%, transparent); stroke: none; }
+.coin-icon .coin-flame-inner { fill: color-mix(in srgb, var(--accent) 35%, #ffffff); fill-opacity: 0.85; stroke: none; }
+.coin-icon .coin-flame-outer, .coin-icon .coin-flame-inner {
+  transform-box: fill-box; transform-origin: 50% 90%;
+  animation: flame-flicker 1.6s ease-in-out infinite;
+}
+.coin-icon { filter: drop-shadow(0 0 2px color-mix(in srgb, var(--accent) 45%, transparent)); }
+@media (prefers-reduced-motion: reduce) { .coin-icon .coin-flame-outer, .coin-icon .coin-flame-inner { animation: none; } }
+/* Мерцание огонька (как у огонька стрика на Дашборде) — нужно иконке баллов CoinIcon.vue */
+@keyframes flame-flicker {
+  0%, 100% { transform: scale(1, 1) rotate(0deg); }
+  25% { transform: scale(1.05, 0.97) rotate(-1.5deg); }
+  55% { transform: scale(0.97, 1.05) rotate(1.2deg); }
+  80% { transform: scale(1.03, 1) rotate(-0.6deg); }
+}
