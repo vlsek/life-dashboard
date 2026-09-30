@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.52";
+const SITE_VERSION = "1.53";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.53", date: "2026-09-30 10:25", changes: [
+        "Дашборд: «Вода» убрана из списка «Управление метриками» — у неё свой блок в правом верхнем углу, и настраивать её как обычную метрику дня не нужно",
+    ]},
     { version: "1.52", date: "2026-09-30 07:23", changes: [
         "Тренировки (пилот), карта мышц: статистика стала гибче — переключатель периода 7 / 30 / 90 дней (выбор запоминается), вместо топ-6 выводятся все группы мышц, которые были в работе за период, а под ними строка «Не тренировалось за период» со списком остальных групп",
     ]},
@@ -1051,6 +1054,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.53", date: "2026-09-30 10:25", changes: [
+        "Dashboard: \"Water\" is removed from the \"Manage metrics\" list — it has its own block in the top right corner and does not need to be configured as a regular daily metric",
+    ]},
     { version: "1.52", date: "2026-09-30 07:23", changes: [
         "Workouts (pilot), muscle map: the statistics are more flexible — a 7 / 30 / 90 day period switch (your choice is remembered), all muscle groups worked in the period are listed instead of the top 6, and a \"Not worked in this period\" line lists the rest",
     ]},

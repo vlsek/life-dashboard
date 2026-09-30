@@ -1,4 +1,5 @@
 import { todayStr } from './date'
+import { findWaterMetric } from './water'
 import type { GoalDirection, Metric, MetricOption, MetricType, Schedule } from './types'
 
 // Портировано из блока «Настройка метрик» в dashboard.js (openMetricFormModal/addMetric/
@@ -191,4 +192,12 @@ export function categoryKeyFor(label: string, nowMs: number = Date.now()): strin
 export function goalSummary(m: Pick<Metric, 'type' | 'goal_direction' | 'goal_value' | 'unit'>, boolLabel: string, multiLabel: string): string {
   if (m.type === 'number') return `${m.goal_direction === 'at_most' ? '<' : '≥'} ${m.goal_value ?? 0} ${m.unit || ''}`
   return m.type === 'boolean' ? boolLabel : multiLabel
+}
+
+// «Вода» живёт своим блоком (правый верхний угол Дашборда) и в списке настроек метрик дня быть не должна
+// (BACKLOG 7.1, решение владельца): отключается только из будущих «Глобальных настроек». Скрываем ровно ту
+// метрику, которую Дашборд считает водой (findWaterMetric — первая по иконке-капле/названию), остальные — как есть.
+export function withoutWater(metrics: Metric[]): Metric[] {
+  const water = findWaterMetric(metrics)
+  return water ? metrics.filter((m) => m !== water) : metrics
 }

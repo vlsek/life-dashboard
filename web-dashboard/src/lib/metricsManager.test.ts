@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   parseOptionsRaw, optionsToRaw, buildSchedule, scheduleSummary, fieldsEnabledForType, clearedForBoolean,
   emptyForm, formFromMetric, scheduleFields, streakImportFields, buildInsertRow, buildUpdateRow,
-  nextPosition, categoryKeyFor, goalSummary,
+  nextPosition, categoryKeyFor, goalSummary, withoutWater,
 } from './metricsManager'
 import type { Metric } from './types'
 
@@ -143,5 +143,26 @@ describe('nextPosition / categoryKeyFor / goalSummary', () => {
     expect(goalSummary(metric({ goal_value: 5, unit: 'km' }), 'yes/no', 'multi')).toBe('≥ 5 km')
     expect(goalSummary(metric({ type: 'boolean' }), 'yes/no', 'multi')).toBe('yes/no')
     expect(goalSummary(metric({ type: 'sets' }), 'yes/no', 'multi')).toBe('multi')
+  })
+})
+
+describe('withoutWater', () => {
+  it('hides the water metric found by the droplet icon', () => {
+    const water = metric({ id: 'w', name: 'Hydration', icon: '💧' })
+    const other = metric({ id: 'o', name: 'Steps' })
+    expect(withoutWater([other, water])).toEqual([other])
+  })
+  it('hides the water metric found by name (RU/EN) when there is no icon', () => {
+    expect(withoutWater([metric({ id: 'a', name: 'Вода' }), metric({ id: 'b', name: 'Steps' })]).map((m) => m.id)).toEqual(['b'])
+    expect(withoutWater([metric({ id: 'a', name: 'Water' })])).toEqual([])
+  })
+  it('hides only the one metric the dashboard treats as water', () => {
+    const first = metric({ id: 'a', name: 'Вода' })
+    const second = metric({ id: 'b', name: 'Не пить воду', type: 'boolean' })
+    expect(withoutWater([first, second]).map((m) => m.id)).toEqual(['b'])
+  })
+  it('returns the list untouched when there is no water metric', () => {
+    const list = [metric({ id: 'a', name: 'Steps' })]
+    expect(withoutWater(list)).toBe(list)
   })
 })

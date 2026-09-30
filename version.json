@@ -1,6 +1,13 @@
 {
-  "version": "1.52",
+  "version": "1.53",
   "en": [
+    {
+      "version": "1.53",
+      "date": "2026-09-30 10:25",
+      "changes": [
+        "Dashboard: \"Water\" is removed from the \"Manage metrics\" list — it has its own block in the top right corner and does not need to be configured as a regular daily metric"
+      ]
+    },
     {
       "version": "1.52",
       "date": "2026-09-30 07:23",
@@ -1116,6 +1123,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.53",
+      "date": "2026-09-30 10:25",
+      "changes": [
+        "Дашборд: «Вода» убрана из списка «Управление метриками» — у неё свой блок в правом верхнем углу, и настраивать её как обычную метрику дня не нужно"
+      ]
+    },
     {
       "version": "1.52",
       "date": "2026-09-30 07:23",

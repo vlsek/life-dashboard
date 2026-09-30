@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import MetricsManagerModal from './MetricsManagerModal.vue'
 import Icon from './Icon.vue'
 import { useMetricsManager } from '../lib/useMetricsManager'
 import { t } from '../lib/i18n'
+import { withoutWater } from '../lib/metricsManager'
 import type { MetricFormValues } from '../lib/metricsManager'
 import type { Metric } from '../lib/types'
 
@@ -14,6 +15,8 @@ const emit = defineEmits<{ changed: [] }>()
 
 const { metrics, categories, error, load, addMetric, editMetric, deleteMetric } = useMetricsManager(() => emit('changed'))
 const open = ref(false)
+// вода — отдельный блок, в менеджере метрик её нет (BACKLOG 7.1)
+const listed = computed(() => withoutWater(metrics.value))
 
 async function openModal() {
   if (props.userId) await load(props.userId)
@@ -41,7 +44,7 @@ async function onEdit(m: Metric, form: MetricFormValues, done: (ok: boolean) => 
   </button>
   <MetricsManagerModal
     v-if="open"
-    :metrics="metrics"
+    :metrics="listed"
     :categories="categories"
     :error="error"
     @close="open = false"
