@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.47";
+const SITE_VERSION = "1.48";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.48", date: "2026-09-30 09:45", changes: [
+        "Аккаунт: смена пароля теперь в отдельном окне и спрашивает текущий пароль — без него пароль не меняется. Если аккаунт создан через Google и пароля ещё нет, окно предложит просто задать первый пароль",
+    ]},
     { version: "1.47", date: "2026-09-30 08:34", changes: [
         "Дашборд (новая версия): в теме Monet у огонька стрика появилась тонкая обводка акцентным цветом, чтобы он не терялся на тёмном фоне — как в классической версии",
     ]},
@@ -1036,6 +1039,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.48", date: "2026-09-30 09:45", changes: [
+        "Account: changing the password now happens in a separate dialog and asks for the current password — without it the password is not changed. If the account was created with Google and has no password yet, the dialog simply lets you set the first one",
+    ]},
     { version: "1.47", date: "2026-09-30 08:34", changes: [
         "Dashboard (new version): in the Monet theme the streak flame now has a thin accent-colored outline so it no longer gets lost on the dark background, like in the classic version",
     ]},

@@ -1,6 +1,13 @@
 {
-  "version": "1.47",
+  "version": "1.48",
   "en": [
+    {
+      "version": "1.48",
+      "date": "2026-09-30 09:45",
+      "changes": [
+        "Account: changing the password now happens in a separate dialog and asks for the current password — without it the password is not changed. If the account was created with Google and has no password yet, the dialog simply lets you set the first one"
+      ]
+    },
     {
       "version": "1.47",
       "date": "2026-09-30 08:34",
@@ -1081,6 +1088,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.48",
+      "date": "2026-09-30 09:45",
+      "changes": [
+        "Аккаунт: смена пароля теперь в отдельном окне и спрашивает текущий пароль — без него пароль не меняется. Если аккаунт создан через Google и пароля ещё нет, окно предложит просто задать первый пароль"
+      ]
+    },
     {
       "version": "1.47",
       "date": "2026-09-30 08:34",

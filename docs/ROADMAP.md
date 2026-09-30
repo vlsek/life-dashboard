@@ -402,6 +402,10 @@ v1.43 — (агент 4, по запросу владельца) (1) Фаза 2,
   мест), а заголовок был текстовым. Пилот: `ChartSeries` получил `name`/`icon`, `ChartBlock` рисует `<MetricIcon>` перед
   названием, то же в строке ChartsConfigModal (`<option>` остаётся текстом). Классика: `renderChartBlock(..., {titleHtml})`
   и `labelHtml` в сериях. Тесты: dashboard 412 (+5), остальные пилоты зелёные, vue-tsc чист. CACHE_NAME → v16.
+v1.48 — Аккаунт-пилот (агент 6): смена пароля в отдельном окне со старым паролем. `lib/passwordChange.ts` (validate + submit:
+  signInWithPassword(старый) → updateUser), `PasswordModal.vue`; identity 'email' в getUserIdentities определяет, есть ли у аккаунта
+  пароль (только Google — без поля «текущий»). Неверный старый: status 400 / code invalid_credentials → «Текущий пароль неверный»,
+  иная ошибка входа (429, сеть) показывается как есть. Классика legacy/account.js не тронута. 12 новых тестов, web-account 35, vue-tsc чист.
 v1.03 — Пилот Сообщества: заявки в друзья, друзья отдельно от подписок, «В друзья»
   (lib/friends.ts, PersonChip.vue, 17 тестов, в т.ч. UI-тест App.vue с подменой Supabase).
 v1.02 — Сообщество (классика): то же в ванильном community.js. Фильтр «Только друзья» =

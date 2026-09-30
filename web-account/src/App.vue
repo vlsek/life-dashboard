@@ -5,7 +5,7 @@ import { sb } from './lib/supabase'
 import { t } from './lib/i18n'
 import { showToast } from './lib/toast'
 import AppShell from './components/AppShell.vue'
-import PasswordInput from './components/PasswordInput.vue'
+import PasswordModal from './components/PasswordModal.vue'
 import Icon from './components/Icon.vue'
 import Toast from './components/Toast.vue'
 
@@ -30,27 +30,13 @@ watch(
   { immediate: true },
 )
 
-const newPassword = ref('')
-const confirmPassword = ref('')
-const passwordMsg = ref('')
-async function changePassword() {
-  if (!newPassword.value || newPassword.value.length < 6) {
-    passwordMsg.value = t('acc_password_too_short')
-    return
-  }
-  if (newPassword.value !== confirmPassword.value) {
-    passwordMsg.value = t('acc_passwords_mismatch')
-    return
-  }
-  passwordMsg.value = t('dash_saving_btn')
-  const { error } = await sb.auth.updateUser({ password: newPassword.value })
-  if (error) {
-    passwordMsg.value = t('acc_error_prefix') + error.message
-    return
-  }
-  passwordMsg.value = ''
-  newPassword.value = ''
-  confirmPassword.value = ''
+// Смена пароля — отдельное окно PasswordModal со старым паролем (BACKLOG 11). hasPassword = у аккаунта есть
+// identity 'email'; пока identities не загрузились (или запрос упал) считаем, что пароль есть — как в классике.
+const showPasswordModal = ref(false)
+const hasPassword = ref(true)
+function onPasswordChanged() {
+  showPasswordModal.value = false
+  hasPassword.value = true
   showToast(t('acc_password_changed_toast'))
 }
 
@@ -87,7 +73,9 @@ async function refreshGoogleLinkStatus() {
     googleError.value = t('acc_error_prefix') + error.message
     return
   }
-  googleLinked.value = (data?.identities || []).some((i) => i.provider === 'google')
+  const identities = data?.identities || []
+  googleLinked.value = identities.some((i) => i.provider === 'google')
+  hasPassword.value = identities.length === 0 || identities.some((i) => i.provider === 'email')
 }
 watch(
   auth,
@@ -121,24 +109,17 @@ const googleLinkedRest = computed(() => t('acc_google_linked').replace(/^\u2705\
 
     <template v-else>
       <div class="mb-4 rounded-xl border p-4" style="border-color: var(--border); background: var(--bg-card)">
-        <h3 class="mb-3 font-bold">{{ t('acc_change_password_h3') }}</h3>
-        <label class="block text-sm">
-          <span>{{ t('acc_new_password_label') }}</span>
-          <PasswordInput v-model="newPassword" class="mt-1" />
-        </label>
-        <label class="mt-3 block text-sm">
-          <span>{{ t('acc_confirm_password_label') }}</span>
-          <PasswordInput v-model="confirmPassword" class="mt-1" />
-        </label>
+        <h3 class="mb-1 font-bold">{{ t('acc_change_password_h3') }}</h3>
+        <p class="mb-3 text-sm" style="color: var(--text-dim)">{{ hasPassword ? t('acc_password_card_hint') : t('acc_password_none_hint') }}</p>
         <button
           type="button"
-          class="mt-4 rounded-lg px-4 py-2 text-sm font-medium"
+          class="rounded-lg px-4 py-2 text-sm font-medium"
           style="background: var(--accent); color: var(--accent-text)"
-          @click="changePassword"
+          data-test="open-password"
+          @click="showPasswordModal = true"
         >
           {{ t('acc_change_password_btn') }}
         </button>
-        <p v-if="passwordMsg" class="mt-2.5 text-sm" style="color: var(--text-dim)">{{ passwordMsg }}</p>
       </div>
 
       <div class="mb-4 rounded-xl border p-4" style="border-color: var(--border); background: var(--bg-card)">
@@ -196,5 +177,12 @@ const googleLinkedRest = computed(() => t('acc_google_linked').replace(/^\u2705\
       </a>
     </template>
   </main>
+  <PasswordModal
+    v-if="showPasswordModal"
+    :email="auth.status === 'ready' ? auth.userEmail : null"
+    :has-password="hasPassword"
+    @close="showPasswordModal = false"
+    @changed="onPasswordChanged"
+  />
   <Toast />
 </template>
