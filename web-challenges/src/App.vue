@@ -8,7 +8,7 @@ import CumulativeChallengeCard from './components/CumulativeChallengeCard.vue'
 import { useChallenges } from './lib/useChallenges'
 import { t } from './lib/i18n'
 import { ref } from 'vue'
-import { todayStr } from './lib/date'
+import { localDateOfTimestamp, todayStr } from './lib/date'
 import type { Challenge, ChallengeTemplate, CustomChallengeFormInput } from './lib/types'
 
 const {
@@ -106,7 +106,7 @@ async function onSetToday(challengeId: string, value: number) {
         <p v-if="completed.length === 0" class="dim">{{ t('ch_no_completed') }}</p>
         <div v-for="ch in completed" :key="ch.id" class="card mb-2">
           <strong>{{ ch.icon }} {{ ch.title }}</strong>
-          <span class="dim text-sm"> — {{ fmtRu((ch.completed_at?.slice(0, 10)) || ch.start_date) }}</span>
+          <span class="dim text-sm"> — {{ fmtRu((ch.completed_at ? localDateOfTimestamp(ch.completed_at) : '') || ch.start_date) }}</span>
         </div>
       </template>
     </template>

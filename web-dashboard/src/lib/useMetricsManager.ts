@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
+import { todayStr } from './date'
 import { t } from './i18n'
 import { buildInsertRow, buildUpdateRow, categoryKeyFor, nextPosition } from './metricsManager'
 import type { MetricFormValues } from './metricsManager'
@@ -79,7 +80,7 @@ export function useMetricsManager(onChanged?: () => void) {
         .limit(1)
         .maybeSingle()
       if (created && 'streak_import_days' in created) {
-        await sb.from('metrics').update({ streak_import_days: days, streak_import_date: new Date().toISOString().slice(0, 10) }).eq('id', created.id)
+        await sb.from('metrics').update({ streak_import_days: days, streak_import_date: todayStr() }).eq('id', created.id)
       }
     }
     error.value = null

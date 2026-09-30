@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.56";
+const SITE_VERSION = "1.57";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.57", date: "2026-09-30 10:36", changes: [
+        "Аудит часовых поясов и перехода на летнее время (Москва — без DST, Вильнюс и Нью-Йорк — с DST, плюс Окленд): арифметика дат в пилотах уже календарная и не ломается в сутки перехода. Найдено и исправлено два места, где локальная дата бралась из UTC",
+        "Дашборд (пилот): при создании метрики с «импортом стрика» дата импорта записывалась по UTC — у пользователей восточнее Гринвича между полуночью и несколькими часами ночи это был вчерашний день, и импортированные дни могли не засчитаться. Теперь берётся локальная дата",
+        "Челленджи (пилот): дата завершения выполненного челленджа брались из UTC-метки — вечером или ночью она показывалась на день раньше или позже. Теперь показывается локальная дата пользователя",
+    ]},
     { version: "1.56", date: "2026-09-30 07:33", changes: [
         "Дашборд (пилот), блок «Планы»: при добавлении своего пункта можно поставить галочку «Уже сделано» — пункт сразу создаётся выполненным и идёт в прогресс дня и недели. Это способ занести то, что вы сделали не из списка целей, не отмечая потом галочкой (первый шаг к объединению «Что полезного сделал за день» и «Планов»)",
     ]},
@@ -1063,6 +1068,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.57", date: "2026-09-30 10:36", changes: [
+        "Time zone and daylight-saving audit (Moscow — no DST, Vilnius and New York — with DST, plus Auckland): date arithmetic in the pilots is already calendar-based and holds on switch days. Two places that took the local date from UTC were found and fixed",
+        "Dashboard (pilot): when creating a metric with a streak import, the import date was stored in UTC — for users east of Greenwich, between midnight and a few hours after, that was yesterday, so the imported days could be dropped. It now uses the local date",
+        "Challenges (pilot): the completion date of a finished challenge came from a UTC timestamp — in the evening or at night it showed a day earlier or later. It now shows the user's local date",
+    ]},
     { version: "1.56", date: "2026-09-30 07:33", changes: [
         "Dashboard (pilot), the \"Plans\" block: when adding your own item you can tick \"Already done\" — the item is created as completed right away and counts toward the day and week progress. It is a way to log something you did that was not on your goals list, without ticking it afterwards (a first step towards merging \"What you got done today\" and \"Plans\")",
     ]},

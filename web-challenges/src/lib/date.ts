@@ -12,6 +12,12 @@ export function todayStr(): string {
   return fmtDate(new Date())
 }
 
+// Метка времени из БД (timestamptz, ISO в UTC) -> локальная календарная дата пользователя.
+// НЕ ts.slice(0, 10): это дата по UTC, и вечером/ночью у пользователей вне UTC она уезжает на день.
+export function localDateOfTimestamp(ts: string): string {
+  return fmtDate(new Date(ts))
+}
+
 export function parseIso(iso: string): Date {
   return new Date(iso + 'T00:00:00')
 }
