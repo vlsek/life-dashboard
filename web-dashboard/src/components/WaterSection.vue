@@ -12,7 +12,7 @@ import { getLang, t } from '../lib/i18n'
 // страницы с текстовой подписью — так было на пилоте раньше и расходилось с ванильным сайтом.
 const props = defineProps<{ userId: string | null }>()
 
-const { metric, normMl, autoNormMl, weightKg, todayMl, loaded, error, init, addMl, getMlForDate, saveGoal, createWaterMetric } = useWater()
+const { metric, normMl, autoNormMl, weightKg, todayMl, loaded, error, saveError, init, addMl, getMlForDate, saveGoal, createWaterMetric } = useWater()
 
 watch(
   () => props.userId,
@@ -33,8 +33,14 @@ async function onSetupClick() {
   modalOpen.value = true
 }
 
+// Анимация «записалось» — только после подтверждённой записи в БД (addMl вернул значение, а не null)
+const savedTick = ref(0)
+const goalSavedTick = ref(0)
 async function onAdd(ml: number, dateStr: string) {
-  await addMl(ml, dateStr)
+  if ((await addMl(ml, dateStr)) !== null) savedTick.value++
+}
+async function onSaveGoal(ml: number) {
+  if (await saveGoal(ml)) goalSavedTick.value++
 }
 
 const pct = computed(() => waterPct(todayMl.value, normMl.value))
@@ -97,8 +103,11 @@ const GLASS_OUTLINE = 'M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3
     :auto-norm-ml="autoNormMl"
     :weight-kg="weightKg"
     :get-ml-for-date="getMlForDate"
+    :saved-tick="savedTick"
+    :goal-saved-tick="goalSavedTick"
+    :save-error="saveError"
     @close="modalOpen = false"
     @add="onAdd"
-    @save-goal="saveGoal"
+    @save-goal="onSaveGoal"
   />
 </template>

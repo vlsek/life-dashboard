@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { t, getLang } from '../lib/i18n'
 import { fmtDate } from '../lib/date'
 import type { Metric } from '../lib/types'
+import WaterSavedAnim from './WaterSavedAnim.vue'
 
 // Портировано из openWaterModal() в dashboard.js: дата по умолчанию сегодня (можно выбрать
 // прошлый день), быстрые кнопки +200мл/+1л, своя сумма, редактирование дневной нормы.
@@ -13,6 +14,9 @@ const props = defineProps<{
   autoNormMl: number | null
   weightKg: number | null
   getMlForDate: (dateStr: string) => Promise<number>
+  savedTick?: number // растёт после каждой подтверждённой записи выпитого — запускает анимацию «записалось»
+  goalSavedTick?: number // то же после смены дневной нормы
+  saveError?: string | null
 }>()
 const emit = defineEmits<{
   close: []
@@ -70,7 +74,8 @@ function showInfo() {
 
 <template>
   <div class="modal-backdrop" @click.self="emit('close')">
-    <div class="modal">
+    <div class="modal relative">
+      <WaterSavedAnim :tick="savedTick ?? 0" />
       <h3>💧 {{ t('dash_water_modal_title') }}</h3>
 
       <label class="mt-2 block text-sm">{{ t('dash_water_date_label') }}</label>
@@ -82,7 +87,7 @@ function showInfo() {
       </div>
 
       <div class="flex flex-wrap gap-2">
-        <button class="secondary" @click="addMl(200)">+ 200 {{ unitLabel }}</button>
+        <button class="secondary" data-test="add-200" @click="addMl(200)">+ 200 {{ unitLabel }}</button>
         <button class="secondary" @click="addMl(1000)">+ 1 {{ getLang() === 'en' ? 'l' : 'л' }}</button>
         <button class="secondary" @click="addCustom">{{ t('dash_water_add_custom_btn') }}</button>
       </div>
@@ -97,10 +102,12 @@ function showInfo() {
       </label>
       <input v-model.number="goalInput" type="number" class="w-full" />
       <p class="dim mt-1 text-xs">{{ goalHint }}</p>
+      <button type="button" class="secondary mt-2" data-test="change-goal" @click="saveGoal">{{ t('dash_water_goal_save_btn') }}</button>
+      <span v-if="goalSavedTick" :key="goalSavedTick" class="ml-2 text-sm" style="color: var(--accent)" data-test="goal-saved">✓ {{ t('dash_water_goal_saved') }}</span>
+      <p v-if="saveError" class="mt-2 text-sm" style="color: var(--danger, #d6336c)" data-test="water-save-error">{{ saveError }}</p>
 
       <div class="modal-actions">
-        <button class="secondary" @click="emit('close')">{{ t('dash_close_btn') }}</button>
-        <button @click="saveGoal">{{ t('dash_water_goal_save_btn') }}</button>
+        <button @click="emit('close')">{{ t('dash_close_btn') }}</button>
       </div>
     </div>
   </div>

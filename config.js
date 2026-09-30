@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.49";
+const SITE_VERSION = "1.50";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.50", date: "2026-09-30 09:53", changes: [
+        "Вода: кнопка «Сохранить норму» переименована в «Изменить дневную норму» и вынесена под поле нормы — теперь её не спутать с добавлением выпитого; после смены нормы показывается подтверждение. После добавления выпитого появляется анимация: стакан наполняется, поверх рисуется галочка — она запускается только когда значение действительно записано, а при ошибке записи в окне показывается сообщение. Кнопка переименована и в классическом Дашборде",
+    ]},
     { version: "1.49", date: "2026-09-30 09:49", changes: [
         "Дашборд: по клику на прогресс дня или недели сначала открывается сводка — что уже сделано, что осталось и сколько процентов даёт каждый пункт (плюс бонус ⭐). Значок настроек прогресса теперь внутри сводки, настройки открываются оттуда",
     ]},
@@ -1042,6 +1045,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.50", date: "2026-09-30 09:53", changes: [
+        "Water: the \"Save goal\" button is renamed to \"Change daily goal\" and moved under the goal field, so it can no longer be mistaken for adding the amount you drank; a confirmation is shown after the goal changes. After adding water an animation plays: the glass fills and a check mark is drawn over it — it starts only once the value is really saved, and a save error is shown in the dialog. The button is renamed in the classic Dashboard too",
+    ]},
     { version: "1.49", date: "2026-09-30 09:49", changes: [
         "Dashboard: clicking the day or week progress now opens a summary first — what is done, what is left and how many percent each item is worth (plus the ⭐ bonus). The progress settings icon now lives inside the summary and opens the settings from there",
     ]},

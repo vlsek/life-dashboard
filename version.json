@@ -1,6 +1,13 @@
 {
-  "version": "1.49",
+  "version": "1.50",
   "en": [
+    {
+      "version": "1.50",
+      "date": "2026-09-30 09:53",
+      "changes": [
+        "Water: the \"Save goal\" button is renamed to \"Change daily goal\" and moved under the goal field, so it can no longer be mistaken for adding the amount you drank; a confirmation is shown after the goal changes. After adding water an animation plays: the glass fills and a check mark is drawn over it — it starts only once the value is really saved, and a save error is shown in the dialog. The button is renamed in the classic Dashboard too"
+      ]
+    },
     {
       "version": "1.49",
       "date": "2026-09-30 09:49",
@@ -1095,6 +1102,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.50",
+      "date": "2026-09-30 09:53",
+      "changes": [
+        "Вода: кнопка «Сохранить норму» переименована в «Изменить дневную норму» и вынесена под поле нормы — теперь её не спутать с добавлением выпитого; после смены нормы показывается подтверждение. После добавления выпитого появляется анимация: стакан наполняется, поверх рисуется галочка — она запускается только когда значение действительно записано, а при ошибке записи в окне показывается сообщение. Кнопка переименована и в классическом Дашборде"
+      ]
+    },
     {
       "version": "1.49",
       "date": "2026-09-30 09:49",

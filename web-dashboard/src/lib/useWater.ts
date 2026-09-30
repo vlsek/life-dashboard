@@ -17,6 +17,8 @@ export function useWater() {
   const todayMl = ref(0)
   const loaded = ref(false)
   const error = ref<string | null>(null)
+  // ошибка записи (добавление воды/смена нормы): показывается в окне, а не прячет весь значок, как error загрузки
+  const saveError = ref<string | null>(null)
   let userId = ''
 
   const normMl = computed(() => effectiveNormMl(metric.value?.goal_value, autoNormMl.value))
@@ -80,26 +82,34 @@ export function useWater() {
   }
 
   // Портировано из addWaterMl(): читает текущее значение за дату, прибавляет дельту, upsert-ит.
-  async function addMl(deltaMl: number, dateStr: string): Promise<number> {
-    if (!metric.value) return 0
+  // Возвращает новое значение, либо null, если запись в БД не удалась (тогда UI не показывает «сохранилось»).
+  async function addMl(deltaMl: number, dateStr: string): Promise<number | null> {
+    if (!metric.value) return null
     const current = await getMlForDate(dateStr)
     const next = nextWaterValue(current, deltaMl)
-    await sb
+    const { error: upErr } = await sb
       .from('daily_values')
       .upsert({ user_id: userId, metric_id: metric.value.id, date: dateStr, value: next }, { onConflict: 'user_id,date,metric_id' })
+    if (upErr) {
+      saveError.value = t('dash_save_error_generic') + upErr.message
+      return null
+    }
+    saveError.value = null
     if (dateStr === fmtDate(new Date())) todayMl.value = next
     notifyDataChanged({ source: 'water', metricId: metric.value.id, date: dateStr, value: next })
     return next
   }
 
-  async function saveGoal(ml: number) {
-    if (!metric.value) return
+  async function saveGoal(ml: number): Promise<boolean> {
+    if (!metric.value) return false
     const { error: err } = await sb.from('metrics').update({ goal_value: ml }).eq('id', metric.value.id)
     if (err) {
-      error.value = err.message
-      return
+      saveError.value = t('dash_save_error_generic') + err.message
+      return false
     }
+    saveError.value = null
     metric.value = { ...metric.value, goal_value: ml }
+    return true
   }
 
   // Портировано из createWaterMetric(): позиция — максимум текущих + 1, как и в оригинале.
@@ -119,5 +129,5 @@ export function useWater() {
     todayMl.value = 0
   }
 
-  return { metric, normMl, autoNormMl, weightKg, todayMl, loaded, error, init, addMl, getMlForDate, saveGoal, createWaterMetric }
+  return { metric, normMl, autoNormMl, weightKg, todayMl, loaded, error, saveError, init, addMl, getMlForDate, saveGoal, createWaterMetric }
 }
