@@ -30,7 +30,7 @@ const geo = computed(() => (props.ring ? circleGeometry(24, props.ring.basePct, 
       <svg v-if="ring && geo" class="pointer-events-none absolute inset-0" width="52" height="52" viewBox="0 0 52 52" style="transform: rotate(-90deg)" data-test="avatar-ring">
         <circle cx="26" cy="26" r="24" fill="none" stroke="var(--border)" stroke-width="3" />
         <circle cx="26" cy="26" r="24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" :stroke-dasharray="geo.circumference" :stroke-dashoffset="geo.offsetBase" />
-        <circle v-if="ring.bonusPct > 0" cx="26" cy="26" r="24" fill="none" stroke="#d6336c" stroke-width="3" stroke-linecap="round" :stroke-dasharray="geo.circumference" :stroke-dashoffset="geo.offsetBonus" />
+        <circle v-if="ring.bonusPct > 0" cx="26" cy="26" r="24" fill="none" class="ring-bonus" stroke-width="3" stroke-linecap="round" :stroke-dasharray="geo.circumference" :stroke-dashoffset="geo.offsetBonus" />
       </svg>
 
       <button

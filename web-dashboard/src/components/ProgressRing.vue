@@ -45,7 +45,7 @@ const center = computed(() => (props.size ?? 52) / 2)
           :cy="center"
           :r="r"
           fill="none"
-          stroke="#d6336c"
+          class="ring-bonus"
           stroke-width="3"
           stroke-linecap="round"
           :stroke-dasharray="circumference"

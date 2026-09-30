@@ -30,12 +30,12 @@ const square = computed(() => squareGeometry(24, 6, props.basePct, props.bonusPc
         <template v-if="kind === 'day'">
           <circle cx="16" cy="16" r="13" fill="none" stroke="var(--border)" stroke-width="3" />
           <circle cx="16" cy="16" r="13" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" :stroke-dasharray="circle.circumference" :stroke-dashoffset="circle.offsetBase" />
-          <circle v-if="bonusPct > 0" cx="16" cy="16" r="13" fill="none" stroke="#d6336c" stroke-width="3" stroke-linecap="round" :stroke-dasharray="circle.circumference" :stroke-dashoffset="circle.offsetBonus" />
+          <circle v-if="bonusPct > 0" cx="16" cy="16" r="13" fill="none" class="ring-bonus" stroke-width="3" stroke-linecap="round" :stroke-dasharray="circle.circumference" :stroke-dashoffset="circle.offsetBonus" />
         </template>
         <template v-else>
           <rect x="4" y="4" width="24" height="24" rx="6" fill="none" stroke="var(--border)" stroke-width="4" stroke-dasharray="3 3" />
           <rect x="4" y="4" width="24" height="24" rx="6" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" :stroke-dasharray="square.perimeter" :stroke-dashoffset="square.offsetBase" />
-          <rect v-if="bonusPct > 0" x="4" y="4" width="24" height="24" rx="6" fill="none" stroke="#d6336c" stroke-width="4" stroke-linecap="round" :stroke-dasharray="square.perimeter" :stroke-dashoffset="square.offsetBonus" />
+          <rect v-if="bonusPct > 0" x="4" y="4" width="24" height="24" rx="6" fill="none" class="ring-bonus" stroke-width="4" stroke-linecap="round" :stroke-dasharray="square.perimeter" :stroke-dashoffset="square.offsetBonus" />
         </template>
       </svg>
       <span class="absolute inset-0 flex items-center justify-center text-[9px] font-bold" style="color: var(--text)">{{ totalPct }}%</span>

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.61";
+const SITE_VERSION = "1.62";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.62", date: "2026-09-30 12:40", changes: [
+        "Дашборд: часть кольца прогресса сверх 100% теперь светлый оттенок цвета выбранной темы вместо жёстко заданного малинового — хорошо видна поверх основной дуги в любой теме (новая и классическая версии)",
+    ]},
     { version: "1.61", date: "2026-09-30 09:35", changes: [
         "Челленджи: теперь можно вносить и править значения за прошедшие дни. Нажмите на кружок нужного дня в карточке ежедневного челленджа — под ним появится его дата, цель и поле ввода, значение сохранится именно за этот день (будущие дни недоступны). Поле ввода стало заметным: акцентная рамка и фон, отличающийся от карточки, — раньше оно сливалось с фоном",
     ]},
@@ -1081,6 +1084,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.62", date: "2026-09-30 12:40", changes: [
+        "Dashboard: the part of the progress ring beyond 100% is now a light tint of the current theme's accent instead of a hardcoded crimson, so it stays visible over the main arc in every theme (new and classic versions)",
+    ]},
     { version: "1.61", date: "2026-09-30 09:35", changes: [
         "Challenges: you can now add and fix values for past days. Tap the dot of the day in a daily challenge card — its date, target and an input field appear below, and the value is saved for that exact day (future days are unavailable). The input field is now easy to see: an accent border and a background different from the card, instead of blending into it",
     ]},

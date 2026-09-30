@@ -1049,7 +1049,7 @@ async function renderWeekProgress() {
                 <circle cx="24" cy="24" r="${r}" fill="none" stroke="var(--border)" stroke-width="3"/>
                 <circle cx="24" cy="24" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3"
                     stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
-                ${week.bonusPct > 0 ? `<circle cx="24" cy="24" r="${r}" fill="none" stroke="#d6336c" stroke-width="3"
+                ${week.bonusPct > 0 ? `<circle cx="24" cy="24" r="${r}" fill="none" class="ring-bonus" stroke-width="3"
                     stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offsetBonus}"/>` : ""}
             </svg>
             <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:0.68em; font-weight:700;">${totalPct}%</div>
@@ -1159,7 +1159,7 @@ async function renderDayProgressRing() {
             <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--border)" stroke-width="3"/>
             <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3"
                 stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
-            ${dayProgress.bonusPct > 0 ? `<circle cx="26" cy="26" r="${r}" fill="none" stroke="#d6336c" stroke-width="3"
+            ${dayProgress.bonusPct > 0 ? `<circle cx="26" cy="26" r="${r}" fill="none" class="ring-bonus" stroke-width="3"
                 stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offsetBonus}"/>` : ""}
         </svg>`;
     dayProgressRingWrapEl.title = titleText;
@@ -1199,7 +1199,7 @@ function renderHeaderProgressBadge(basePct, bonusPct, totalPct, titleText) {
             <circle cx="16" cy="16" r="${r}" fill="none" stroke="var(--border)" stroke-width="3"/>
             <circle cx="16" cy="16" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3"
                 stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"/>
-            ${bonusPct > 0 ? `<circle cx="16" cy="16" r="${r}" fill="none" stroke="#d6336c" stroke-width="3"
+            ${bonusPct > 0 ? `<circle cx="16" cy="16" r="${r}" fill="none" class="ring-bonus" stroke-width="3"
                 stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offsetBonus}"/>` : ""}
         </svg>
         <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; color:var(--text);">${totalPct}%</span>`;
@@ -1234,7 +1234,7 @@ function renderHeaderWeekBadge(basePct, bonusPct, totalPct, titleText) {
                 <rect x="4" y="4" width="${side}" height="${side}" rx="${rx}" fill="none" stroke="var(--border)" stroke-width="4" stroke-dasharray="3 3"/>
                 <rect x="4" y="4" width="${side}" height="${side}" rx="${rx}" fill="none" stroke="var(--accent)" stroke-width="4"
                     stroke-linecap="round" stroke-dasharray="${perimeter}" stroke-dashoffset="${offset}"/>
-                ${bonusPct > 0 ? `<rect x="4" y="4" width="${side}" height="${side}" rx="${rx}" fill="none" stroke="#d6336c" stroke-width="4"
+                ${bonusPct > 0 ? `<rect x="4" y="4" width="${side}" height="${side}" rx="${rx}" fill="none" class="ring-bonus" stroke-width="4"
                     stroke-linecap="round" stroke-dasharray="${perimeter}" stroke-dashoffset="${offsetBonus}"/>` : ""}
             </svg>
             <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; color:var(--text);">${totalPct}%</span>

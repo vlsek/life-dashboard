@@ -899,3 +899,9 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--accent); width
 html.theme-monet .streak-flame .fl-outer { stroke: var(--accent); stroke-width: 0.6; stroke-opacity: 0.5; }
 
 .icon-picker-search { width: 100%; margin-bottom: 8px; }
+
+/* 100%+ (бонусная дуга колец прогресса): светлый оттенок акцента темы вместо жёстко заданного малинового —
+   виден поверх основной дуги в любой теме (BACKLOG 1.1 «Цветовая логика прогресс-баров»). */
+.ring-bonus {
+  stroke: color-mix(in srgb, var(--accent) 45%, #ffffff);
+}
