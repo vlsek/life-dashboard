@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.71";
+const SITE_VERSION = "1.72";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.72", date: "2026-09-30 15:32", changes: [
+        "Вход и регистрация: при первом заходе язык теперь выбирается по языку устройства (русский — если он первый из поддерживаемых в настройках устройства, иначе английский). Раньше новому пользователю почти всегда показывался английский. Дальше язык переключается вручную, выбор не перезаписывается",
+    ]},
     { version: "1.71", date: "2026-09-30 15:11", changes: [
         "Дашборд: блок «Профиль» на телефоне больше не «едет» — теперь две чёткие строки: сверху аватар с кольцом дня, кольцо недели и возраст, справа стрик и баллы; ниже параметры тела (вес, рост и т.д.), которые переносятся по ширине, а длинные названия не выталкивают вёрстку",
     ]},
@@ -1112,6 +1115,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.72", date: "2026-09-30 15:32", changes: [
+        "Sign-in and sign-up: on the first visit the language is now chosen from the device language (Russian if it is the first supported one in the device settings, otherwise English). Before, new users almost always saw English. After that the language is switched manually and the choice is never overwritten",
+    ]},
     { version: "1.71", date: "2026-09-30 15:11", changes: [
         "Dashboard: the \"Profile\" block no longer breaks on phones — it is now two clear rows: avatar with the day ring, the week ring and age on top with the streak and points on the right; below them the body parameters (weight, height, etc.), which wrap to the width, and long names no longer push the layout around",
     ]},

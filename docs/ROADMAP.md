@@ -544,6 +544,9 @@ v1.58 — BACKLOG 7.3, серверная часть (агент 1): «сего�
   Проверено на реальном PostgreSQL 16 (schema.sql + 001–029 + 030): без пояса результаты идентичны прежним, с поясом
   Pacific/Pago_Pago «сегодня» = вчера по UTC (today_points 0 → 1), неверное имя пояса безопасно откатывается на current_date.
   Тесты dashboard 483. ВЛАДЕЛЬЦУ: применить migrations/030_user_timezone.sql в Supabase, затем docs/sql-checks/030_user_timezone_check.sql.
+v1.72 — BACKLOG 13, язык при первом входе по языку устройства (агент 1): в web-login и web-onboarding `applyDeviceLangIfUnset()`
+  до монтирования приложения (первый поддерживаемый RU/EN из navigator.languages, иначе EN; сохранённый выбор не трогается).
+  Тесты: login 14, onboarding 17. Пересобраны login/ и onboarding/. Остальные пилоты не менялись.
 
 ТЕКУЩАЯ РАБОТА: см. COORDINATION.md (блоки агентов, бэклог, журнал). Открыто на
 момент записи: Дашборд — дневные метрики (карточка дня; после сохранения слать

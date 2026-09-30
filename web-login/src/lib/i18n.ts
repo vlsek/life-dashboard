@@ -65,6 +65,37 @@ const DICT = {
 
 export type DictKey = keyof (typeof DICT)['ru']
 
+// Язык устройства -> язык сайта (поддерживаются только RU и EN). Идём по предпочтениям устройства
+// (navigator.languages) по порядку и берём первый поддерживаемый язык, например ['de-DE', 'ru'] -> 'ru';
+// если ни одного нет — английский, как и раньше по умолчанию.
+export function detectDeviceLang(languages?: readonly string[]): 'en' | 'ru' {
+  let list: readonly string[] = languages ?? []
+  if (!languages) {
+    try {
+      list = navigator.languages?.length ? navigator.languages : [navigator.language]
+    } catch {
+      list = []
+    }
+  }
+  for (const raw of list) {
+    const base = String(raw || '').toLowerCase().split(/[-_]/)[0]
+    if (base === 'ru') return 'ru'
+    if (base === 'en') return 'en'
+  }
+  return 'en'
+}
+
+// Первый заход нового пользователя: пока язык не сохранён, выбираем по устройству и сохраняем — дальше он
+// переключает язык сам, и его выбор больше не перезаписывается. Вызывается один раз до монтирования приложения.
+export function applyDeviceLangIfUnset(languages?: readonly string[]): void {
+  try {
+    if (localStorage.getItem('site_lang')) return
+    localStorage.setItem('site_lang', detectDeviceLang(languages))
+  } catch {
+    /* localStorage недоступен (приватный режим) — остаётся язык по умолчанию */
+  }
+}
+
 export function t(key: DictKey): string {
   return DICT[getLang()][key]
 }
