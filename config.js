@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.53";
+const SITE_VERSION = "1.54";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.54", date: "2026-09-30 07:27", changes: [
+        "Дашборд (пилот): бонус ⭐ в кольце НЕДЕЛИ стал пропорциональным — один выполненный бонусный пункт даёт неделе +20%/7 ≈ +2,9% вместо +20% (в дне без изменений: +20%). Так бонус, сделанный каждый день, добавляет неделе те же +20%, что дню. Сводка по клику на кольцо недели считает так же",
+    ]},
     { version: "1.53", date: "2026-09-30 10:25", changes: [
         "Дашборд: «Вода» убрана из списка «Управление метриками» — у неё свой блок в правом верхнем углу, и настраивать её как обычную метрику дня не нужно",
     ]},
@@ -1054,6 +1057,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.54", date: "2026-09-30 07:27", changes: [
+        "Dashboard (pilot): the ⭐ bonus in the WEEK ring is now proportional — one done bonus item adds +20%/7 ≈ +2.9% to the week instead of +20% (the day is unchanged: +20%). A bonus done every day therefore adds the same +20% to the week as to a day. The summary shown when you tap the week ring uses the same maths",
+    ]},
     { version: "1.53", date: "2026-09-30 10:25", changes: [
         "Dashboard: \"Water\" is removed from the \"Manage metrics\" list — it has its own block in the top right corner and does not need to be configured as a regular daily metric",
     ]},

@@ -11,6 +11,14 @@ export interface DayProgressSettings {
 
 export const BONUS_PCT_PER_ITEM = 20
 
+// В дне один бонусный пункт (⭐) даёт +20% сверху. В неделе пунктов в разы больше, и те же +20% за
+// один пункт перекосили бы кольцо, поэтому бонус недели пропорционален: +20%/7 за пункт — так
+// бонус, сделанный каждый день, даёт неделе ровно те же +20%, что дню. Одна цифра после запятой.
+export const WEEK_DAYS = 7
+export function weekBonusPct(doneBonusItems: number): number {
+  return Math.round(((doneBonusItems * BONUS_PCT_PER_ITEM) / WEEK_DAYS) * 10) / 10
+}
+
 const DEFAULTS: DayProgressSettings = {
   enabled: true,
   includePlanned: true,

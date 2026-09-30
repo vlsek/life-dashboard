@@ -1,6 +1,6 @@
 import { isMetricDone, metricCountsInDay, metricSchedule } from './metrics'
 import { isPlannedItemDone, type GoalLite, type PlannedItem } from './progress'
-import { BONUS_PCT_PER_ITEM, type DayProgressSettings } from './progressSettings'
+import { BONUS_PCT_PER_ITEM, weekBonusPct, type DayProgressSettings } from './progressSettings'
 import type { Metric } from './types'
 
 // Сводка по клику на кольцо дня/недели (BACKLOG 11): что сделано, что осталось и сколько процентов даёт каждый пункт.
@@ -35,12 +35,14 @@ export interface ProgressSummary {
 
 export const isItemDone = (i: SummaryItem) => i.doneWeight >= i.weight
 
-function finish(items: SummaryItem[], bonus: BonusItem[]): ProgressSummary {
+function finish(items: SummaryItem[], bonus: BonusItem[], isWeek = false): ProgressSummary {
   const total = items.reduce((s, i) => s + i.weight, 0)
   const done = items.reduce((s, i) => s + i.doneWeight, 0)
   const basePct = total > 0 ? Math.round((done / total) * 100) : 0
-  const bonusPct = bonus.filter((b) => b.done).length * BONUS_PCT_PER_ITEM
-  return { items, bonus, done, total, basePct, bonusPct, totalPct: basePct + bonusPct, itemPct: total > 0 ? 100 / total : 0 }
+  const doneBonus = bonus.filter((b) => b.done).length
+  const bonusPct = isWeek ? weekBonusPct(doneBonus) : doneBonus * BONUS_PCT_PER_ITEM // неделя — пропорционально (progressSettings.ts)
+  const rawBasePct = total > 0 ? (done / total) * 100 : 0
+  return { items, bonus, done, total, basePct, bonusPct, totalPct: Math.round(rawBasePct + bonusPct), itemPct: total > 0 ? 100 / total : 0 }
 }
 
 function planItems(
@@ -117,7 +119,7 @@ export function weekSummary(
     }
   }
   for (const dateStr of pastOrToday) planItems(plannedByDate[dateStr] || [], allGoals, settings.includePlanned, dateStr, items, bonus)
-  return finish(items, bonus)
+  return finish(items, bonus, true)
 }
 
 // Сколько процентов даёт пункт (или недостающая часть «N раз в неделю»): вес / общий вес, одной цифрой после запятой.

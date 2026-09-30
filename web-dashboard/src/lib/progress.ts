@@ -1,6 +1,6 @@
 import { fmtDate } from './date'
 import { isMetricDone, metricCountsInDay, metricSchedule } from './metrics'
-import { BONUS_PCT_PER_ITEM, type DayProgressSettings } from './progressSettings'
+import { BONUS_PCT_PER_ITEM, weekBonusPct, type DayProgressSettings } from './progressSettings'
 import type { Metric } from './types'
 
 export interface PlannedItem {
@@ -99,7 +99,7 @@ export function computeWeekProgressPure(
   if (!settings.enabled) return null
   let done = 0
   let total = 0
-  let bonusPct = 0
+  let doneBonusItems = 0
 
   if (settings.includeMetrics && metrics.length > 0 && pastOrToday.length > 0) {
     const weeklyDoneCount: Record<string, number> = {}
@@ -136,18 +136,18 @@ export function computeWeekProgressPure(
       const isDone = isPlannedItemDone(item, allGoals)
       if (isDone === undefined) continue
       if (item.bonus) {
-        if (isDone) bonusPct += BONUS_PCT_PER_ITEM
+        if (isDone) doneBonusItems++
       } else if (settings.includePlanned) {
         total++
         if (isDone) done++
       }
     }
   }
-  return { done, total, bonusPct }
+  return { done, total, bonusPct: weekBonusPct(doneBonusItems) }
 }
 
 // Итоговый процент (кольцо/бейдж): округлённая база + бонус сверху (может уйти за 100%).
 export function progressPercent(p: ProgressResult): number {
   const basePct = p.total > 0 ? p.done / p.total : 0
-  return Math.round(basePct * 100) + p.bonusPct
+  return Math.round(basePct * 100 + p.bonusPct)
 }

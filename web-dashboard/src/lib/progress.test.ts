@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { computeDayProgressPure, computeWeekProgressPure, getWeekDates, progressPercent } from './progress'
-import type { DayProgressSettings } from './progressSettings'
+import { weekBonusPct, type DayProgressSettings } from './progressSettings'
 import type { Metric } from './types'
 
 const SETTINGS: DayProgressSettings = {
@@ -140,5 +140,47 @@ describe('progressPercent', () => {
   })
   it('total=0 with only a bonus still yields the bonus percent', () => {
     expect(progressPercent({ done: 0, total: 0, bonusPct: 20 })).toBe(20)
+  })
+})
+
+describe('бонус ⭐ недели пропорционален (BACKLOG 4.1)', () => {
+  const dates = ['2026-09-28', '2026-09-29', '2026-09-30']
+  const bonus = (done: boolean) => ({ text: 'Б', done, bonus: true })
+
+  it('weekBonusPct: +20%/7 за пункт, одна цифра после запятой; 7 пунктов = ровно +20%', () => {
+    expect(weekBonusPct(0)).toBe(0)
+    expect(weekBonusPct(1)).toBe(2.9)
+    expect(weekBonusPct(3)).toBe(8.6)
+    expect(weekBonusPct(7)).toBe(20)
+  })
+
+  it('в дне один бонус по-прежнему +20%, в неделе тот же пункт — только +2.9%', () => {
+    expect(computeDayProgressPure(SETTINGS, [], {}, '2026-09-30', [bonus(true)], [])?.bonusPct).toBe(20)
+    const week = computeWeekProgressPure(SETTINGS, [], {}, dates, { '2026-09-30': [bonus(true)] }, [])
+    expect(week?.bonusPct).toBe(2.9)
+  })
+
+  it('невыполненный бонус недели ничего не даёт, выполненные с разных дней складываются', () => {
+    const planned = { '2026-09-28': [bonus(true)], '2026-09-29': [bonus(false)], '2026-09-30': [bonus(true)] }
+    expect(computeWeekProgressPure(SETTINGS, [], {}, dates, planned, [])?.bonusPct).toBe(5.7)
+  })
+
+  it('progressPercent недели округляет сумму базы и дробного бонуса', () => {
+    expect(progressPercent({ done: 1, total: 2, bonusPct: 2.9 })).toBe(53) // 50 + 2.9
+    expect(progressPercent({ done: 1, total: 3, bonusPct: 5.7 })).toBe(39) // 33.3 + 5.7
+    expect(progressPercent({ done: 1, total: 2, bonusPct: 20 })).toBe(70) // день не изменился
+  })
+
+  it('выполненная цель, запланированная в один из дней, плюсуется в неделю (баг «цели не плюсуются»)', () => {
+    const goals = [{ name: 'Прочитать', done: true, stages: 1, current_stage: 0 }]
+    const planned = { '2026-09-29': [{ type: 'goal', text: 'Прочитать' }, { type: 'goal', text: 'Пробежать' }] }
+    const withGoals = [...goals, { name: 'Пробежать', done: false, stages: 1, current_stage: 0 }]
+    expect(computeWeekProgressPure(SETTINGS, [], {}, dates, planned, withGoals)).toEqual({ done: 1, total: 2, bonusPct: 0 })
+  })
+
+  it('выполненная бонусная цель (type goal) даёт бонус недели', () => {
+    const goals = [{ name: 'Сложная', done: true, stages: 1, current_stage: 0 }]
+    const planned = { '2026-09-30': [{ type: 'goal', text: 'Сложная', bonus: true }] }
+    expect(computeWeekProgressPure(SETTINGS, [], {}, dates, planned, goals)?.bonusPct).toBe(2.9)
   })
 })
