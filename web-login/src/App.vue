@@ -3,7 +3,6 @@ import { onMounted } from 'vue'
 import LangThemeBar from './components/LangThemeBar.vue'
 import PasswordInput from './components/PasswordInput.vue'
 import { useLogin } from './lib/useLogin'
-import { ROUTES } from './lib/routes'
 import { t } from './lib/i18n'
 
 const { mode, email, password, msg, busy, setMode, submit, signInWithGoogle, checkExistingSession } = useLogin()
@@ -68,7 +67,6 @@ const tabStyle = (active: boolean) => ({
       <p class="mt-2.5 text-sm" style="color: var(--text-dim)">{{ msg }}</p>
     </div>
 
-    <p class="mt-5"><a :href="ROUTES.portfolio" class="text-sm" style="color: var(--text-dim)">{{ t('back_to_portfolio') }}</a></p>
     <p class="mt-3 text-center"><a href="/legacy/login.html" class="text-[0.7em]" style="color: var(--text-dim); opacity: 0.55" data-test="legacy-link">legacy-login</a></p>
   </main>
 </template>

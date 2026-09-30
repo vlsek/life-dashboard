@@ -1,6 +1,13 @@
 {
-  "version": "1.45",
+  "version": "1.46",
   "en": [
+    {
+      "version": "1.46",
+      "date": "2026-09-30 08:24",
+      "changes": [
+        "Sign-in: the \"Back to portfolio\" link is gone from the sign-in screen, in both the new and the classic version"
+      ]
+    },
     {
       "version": "1.45",
       "date": "2026-09-30 08:17",
@@ -1067,6 +1074,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.46",
+      "date": "2026-09-30 08:24",
+      "changes": [
+        "Вход: с экрана входа убрана ссылка «Вернуться на портфолио» — и в новой, и в классической версии"
+      ]
+    },
     {
       "version": "1.45",
       "date": "2026-09-30 08:17",

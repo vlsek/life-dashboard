@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.45";
+const SITE_VERSION = "1.46";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.46", date: "2026-09-30 08:24", changes: [
+        "Вход: с экрана входа убрана ссылка «Вернуться на портфолио» — и в новой, и в классической версии",
+    ]},
     { version: "1.45", date: "2026-09-30 08:17", changes: [
         "Тренировки (новая версия): в «Типовых программах» появились прогрессивные программы с постепенным ростом нагрузки — «Отжимания: 6 недель» и «Подтягивания: 6 недель». В предпросмотре есть таблица нагрузки по неделям, в упражнение сохраняется схема первой недели",
     ]},
@@ -1030,6 +1033,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.46", date: "2026-09-30 08:24", changes: [
+        "Sign-in: the \"Back to portfolio\" link is gone from the sign-in screen, in both the new and the classic version",
+    ]},
     { version: "1.45", date: "2026-09-30 08:17", changes: [
         "Workouts (new version): the workout templates now include progressive programs with a gradually growing load — \"Push-ups: 6 weeks\" and \"Pull-ups: 6 weeks\". The preview shows a week-by-week load table, and the first week's scheme is saved with the exercise",
     ]},

@@ -34,3 +34,9 @@ describe('postAuthTarget', () => {
     expect(postAuthTarget(undefined)).toBe(ROUTES.onboarding)
   })
 })
+
+describe('login screen has no link back to the portfolio (BACKLOG 1.1)', () => {
+  it('ROUTES no longer carries a portfolio address', () => {
+    expect('portfolio' in ROUTES).toBe(false)
+  })
+})

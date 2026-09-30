@@ -9,7 +9,6 @@ export const ROUTES = {
   // после проверки списка разрешённых адресов).
   oauthReturn: '/login.html',
   dashboard: '/dashboard/',
-  portfolio: 'https://portfolio.orneryhero.workers.dev/',
 } as const
 
 // Портировано из redirectAfterAuth() в login.js: онбординг пройден — на дашборд,
