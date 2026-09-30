@@ -62,4 +62,11 @@ export interface WorkoutTemplate {
   goalTag: string
   meta: string
   days: WorkoutTemplateDay[]
+  // Прогрессивные программы (BACKLOG 3.3): нагрузка по неделям. В упражнение при добавлении попадает
+  // схема первой недели (`days`), остальные недели показываются в предпросмотре шаблона.
+  weeks?: WorkoutTemplateWeek[]
+}
+export interface WorkoutTemplateWeek {
+  label: string
+  scheme: string
 }

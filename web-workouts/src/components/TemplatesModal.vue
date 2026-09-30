@@ -48,6 +48,16 @@ const selected = ref<WorkoutTemplate | null>(null)
             </li>
           </ul>
         </div>
+        <div v-if="selected.weeks?.length" class="mt-3 rounded-xl border p-3" style="border-color: var(--border); background: var(--bg)" data-testid="template-weeks">
+          <div class="mb-1 font-bold">{{ t('workouts_templates_weeks_title') }}</div>
+          <p class="mb-2 text-[0.8em]" style="color: var(--text-dim)">{{ t('workouts_templates_weeks_hint') }}</p>
+          <ul class="m-0 list-none p-0">
+            <li v-for="w in selected.weeks" :key="w.label" class="flex justify-between gap-3 border-t py-1 text-[0.9em]" style="border-color: var(--border)">
+              <span style="color: var(--text-dim)">{{ w.label }}</span>
+              <span class="font-medium">{{ w.scheme }}</span>
+            </li>
+          </ul>
+        </div>
         <button
           type="button"
           class="mt-2.5 rounded-lg px-4 py-2 text-sm"

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.44";
+const SITE_VERSION = "1.45";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.45", date: "2026-09-30 08:17", changes: [
+        "Тренировки (новая версия): в «Типовых программах» появились прогрессивные программы с постепенным ростом нагрузки — «Отжимания: 6 недель» и «Подтягивания: 6 недель». В предпросмотре есть таблица нагрузки по неделям, в упражнение сохраняется схема первой недели",
+    ]},
     { version: "1.44", date: "2026-09-30 08:14", changes: [
         "Аккаунт (новая версия): ссылка для администраторов теперь называется «Панель администратора» (раньше «Админка»)",
     ]},
@@ -1027,6 +1030,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.45", date: "2026-09-30 08:17", changes: [
+        "Workouts (new version): the workout templates now include progressive programs with a gradually growing load — \"Push-ups: 6 weeks\" and \"Pull-ups: 6 weeks\". The preview shows a week-by-week load table, and the first week's scheme is saved with the exercise",
+    ]},
     { version: "1.44", date: "2026-09-30 08:14", changes: [
         "Account (new version): the admin-only link is now labelled \"Administrator panel\" (previously \"Admin panel\")",
     ]},

@@ -107,6 +107,46 @@ export const WORKOUT_TEMPLATES_RU: WorkoutTemplate[] = [
       },
     ],
   },
+  {
+    id: "pushups_6w",
+    title: "Отжимания: 6 недель",
+    goalTag: "Выносливость / собственный вес",
+    meta: "3 тренировки в неделю через день · без инвентаря · нагрузка растёт каждую неделю",
+    days: [
+      {
+        label: "Отжимания: программа на 6 недель",
+        exercises: [{ name: "Отжимания", tracksWeight: false, valueLabel: "Повторения", scheme: "3×8" }],
+      },
+    ],
+    weeks: [
+      { label: "Неделя 1", scheme: "3×8" },
+      { label: "Неделя 2", scheme: "3×10" },
+      { label: "Неделя 3", scheme: "4×10" },
+      { label: "Неделя 4", scheme: "4×12" },
+      { label: "Неделя 5", scheme: "4×15" },
+      { label: "Неделя 6", scheme: "3× максимум (контрольная неделя)" },
+    ],
+  },
+  {
+    id: "pullups_6w",
+    title: "Подтягивания: 6 недель",
+    goalTag: "Сила спины / собственный вес",
+    meta: "3 тренировки в неделю через день · нужна перекладина · нагрузка растёт каждую неделю",
+    days: [
+      {
+        label: "Подтягивания: программа на 6 недель",
+        exercises: [{ name: "Подтягивания", tracksWeight: false, valueLabel: "Повторения", scheme: "4×2" }],
+      },
+    ],
+    weeks: [
+      { label: "Неделя 1", scheme: "4×2" },
+      { label: "Неделя 2", scheme: "4×3" },
+      { label: "Неделя 3", scheme: "5×3" },
+      { label: "Неделя 4", scheme: "4×4" },
+      { label: "Неделя 5", scheme: "4×5" },
+      { label: "Неделя 6", scheme: "3× максимум (контрольная неделя)" },
+    ],
+  },
 ]
 
 export const WORKOUT_TEMPLATES_EN: WorkoutTemplate[] = [
@@ -209,6 +249,46 @@ export const WORKOUT_TEMPLATES_EN: WorkoutTemplate[] = [
           { name: "Plank", tracksWeight: false, valueLabel: "Seconds", scheme: "3×30–60 sec" },
         ],
       },
+    ],
+  },
+  {
+    id: "pushups_6w",
+    title: "Push-ups: 6 weeks",
+    goalTag: "Endurance / bodyweight",
+    meta: "3 sessions a week, every other day · no equipment · the load grows every week",
+    days: [
+      {
+        label: "Push-ups: 6-week program",
+        exercises: [{ name: "Push-ups", tracksWeight: false, valueLabel: "Reps", scheme: "3×8" }],
+      },
+    ],
+    weeks: [
+      { label: "Week 1", scheme: "3×8" },
+      { label: "Week 2", scheme: "3×10" },
+      { label: "Week 3", scheme: "4×10" },
+      { label: "Week 4", scheme: "4×12" },
+      { label: "Week 5", scheme: "4×15" },
+      { label: "Week 6", scheme: "3× max (test week)" },
+    ],
+  },
+  {
+    id: "pullups_6w",
+    title: "Pull-ups: 6 weeks",
+    goalTag: "Back strength / bodyweight",
+    meta: "3 sessions a week, every other day · needs a pull-up bar · the load grows every week",
+    days: [
+      {
+        label: "Pull-ups: 6-week program",
+        exercises: [{ name: "Pull-ups", tracksWeight: false, valueLabel: "Reps", scheme: "4×2" }],
+      },
+    ],
+    weeks: [
+      { label: "Week 1", scheme: "4×2" },
+      { label: "Week 2", scheme: "4×3" },
+      { label: "Week 3", scheme: "5×3" },
+      { label: "Week 4", scheme: "4×4" },
+      { label: "Week 5", scheme: "4×5" },
+      { label: "Week 6", scheme: "3× max (test week)" },
     ],
   },
 ]

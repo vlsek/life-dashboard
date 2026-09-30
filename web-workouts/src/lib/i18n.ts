@@ -148,6 +148,8 @@ const DICT = {
     workouts_templates_hint:
       "Standard, well-known training splits for different goals. Pick one, review the exercises, and add it to your list in one click — you'll still log your own actual reps/weight as you go.",
     workouts_templates_apply_btn: 'Add to my exercises',
+    workouts_templates_weeks_title: 'Load by week',
+    workouts_templates_weeks_hint: 'The first week\'s scheme is saved with the exercise; follow the table below week by week.',
     workouts_templates_all_exist: 'All exercises from this template are already in your list.',
     workouts_templates_applied_toast: 'Added {n} exercises ✓',
     workouts_suggested_scheme_label: 'Suggested:',
@@ -338,6 +340,8 @@ const DICT = {
     workouts_templates_hint:
       'Стандартные, давно устоявшиеся схемы тренировок под разные цели. Выбери, посмотри упражнения и добавь в свой список одной кнопкой — реальные повторения/вес по-прежнему вносишь сам по ходу тренировок.',
     workouts_templates_apply_btn: 'Добавить в мои упражнения',
+    workouts_templates_weeks_title: 'Нагрузка по неделям',
+    workouts_templates_weeks_hint: 'В упражнение сохранится схема первой недели; дальше ориентируйся на таблицу ниже по неделям.',
     workouts_templates_all_exist: 'Все упражнения из этого шаблона уже есть в твоём списке.',
     workouts_templates_applied_toast: 'Добавлено упражнений: {n} ✓',
     workouts_suggested_scheme_label: 'Рекомендуется:',
