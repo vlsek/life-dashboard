@@ -13,6 +13,7 @@ import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import ProgressSummaryModal from './components/ProgressSummaryModal.vue'
 import ReminderBanners from './components/ReminderBanners.vue'
 import EveningReminderBanner from './components/EveningReminderBanner.vue'
+import SplashLoader from './components/SplashLoader.vue'
 import PlanReminderBanner from './components/PlanReminderBanner.vue'
 import ProfileSection from './components/ProfileSection.vue'
 import DailyMetricsSection from './components/DailyMetricsSection.vue'
@@ -134,7 +135,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
       </button>
     </div>
 
-    <p v-if="auth.status === 'loading'" class="dim">{{ t('loading_ellipsis') }}</p>
+    <SplashLoader v-if="auth.status === 'loading'" />
 
     <template v-else-if="auth.status === 'ready'">
       <ReminderBanners

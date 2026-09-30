@@ -292,3 +292,51 @@ html.theme-monet .streak-flame .fl-outer {
 }
 .coin-icon { filter: drop-shadow(0 0 2px color-mix(in srgb, var(--accent) 45%, transparent)); }
 @media (prefers-reduced-motion: reduce) { .coin-icon .coin-flame-outer, .coin-icon .coin-flame-inner { animation: none; } }
+
+/* Заставка загрузки (SplashLoader.vue и статичная копия в index.html): огонёк цвета темы,
+   мерцание + пульсирующее свечение. Огонёк берёт .streak-flame .fl-outer/.fl-inner выше. */
+.splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 50vh;
+  color: var(--text-dim);
+}
+.splash-flame {
+  transform-origin: 50% 90%;
+  animation:
+    flame-flicker 1.8s ease-in-out infinite,
+    splash-glow 2.4s ease-in-out infinite;
+}
+.splash-flame .fl-outer {
+  fill: var(--accent);
+}
+.splash-flame .fl-inner {
+  fill: color-mix(in srgb, var(--accent) 40%, #ffffff);
+}
+html.theme-monet .splash-flame .fl-outer {
+  stroke: var(--accent);
+  stroke-width: 0.6;
+  stroke-opacity: 0.5;
+}
+.splash-text {
+  margin: 0;
+  font-size: 0.9em;
+}
+@keyframes splash-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 45%, transparent));
+  }
+  50% {
+    filter: drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 80%, transparent));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .splash-flame {
+    animation: none;
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 55%, transparent));
+  }
+}
