@@ -216,16 +216,6 @@ body {
    см. COORDINATION.md) — акцентным цветом, а не приглушённым, как у dim-link, чтобы
    выделялась среди Установить приложение/Как это работает/О проекте. Своя, не dim-link:
    той нужен групповой border-bottom-разделитель внизу списка, а этой — нет. */
-.sidebar a.nav-try-pilot {
-    color: var(--accent);
-    font-size: 0.85em;
-    margin-top: -4px;
-    margin-bottom: 4px;
-}
-.sidebar a.nav-try-pilot:hover {
-    color: var(--accent-text);
-}
-
 .sidebar-divider {
     border-top: 1px solid var(--border);
     margin: 10px 0;

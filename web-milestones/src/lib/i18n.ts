@@ -31,7 +31,6 @@ const DICT = {
     theme_light: '☀️ Light',
     theme_pink: '🌸 Pink',
     logout: 'Log out',
-    pilot_badge: 'Vue pilot',
     ms_title: 'Milestones',
     ms_h1: '🚩 Milestones',
     ms_no_active:
@@ -109,7 +108,6 @@ const DICT = {
     theme_light: '☀️ Светлая',
     theme_pink: '🌸 Розовая',
     logout: 'Выйти',
-    pilot_badge: 'Пилот на Vue',
     ms_title: 'Вехи',
     ms_h1: '🚩 Вехи',
     ms_no_active: 'Пока пусто. Добавь первую, например «Замена масла» с датой последнего раза и «каждые 6 месяцев».',

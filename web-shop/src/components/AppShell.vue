@@ -37,6 +37,10 @@ const pages: NavPage[] = [
   { href: '/history/', key: 'history', labelKey: 'nav_history', icon: 'history' },
 ]
 const active = 'shop'
+// Ссылка на классическую (legacy) версию ЭТОЙ страницы — одна, неприметная, внизу меню.
+// Страница переезжает в /legacy/ (фаза 2) — обновить значение здесь (HANDOFF, шаг 6);
+// scripts/check_nav_links.py проверяет, что адрес существует.
+const classicHref = '/legacy/shop.html'
 function plainLabel(key: DictKey): string {
   return t(key).replace(/^[^\p{L}\p{N}]+/u, '')
 }
@@ -191,9 +195,6 @@ onUnmounted(() => {
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     style="background: var(--bg-card); border-color: var(--border)"
   >
-    <div class="mb-2 rounded-lg border px-2.5 py-1 text-center text-[0.72em]" style="border-color: var(--border); color: var(--text-dim)">
-      {{ t('pilot_badge') }}
-    </div>
 
     <a
       v-for="p in pages"
@@ -265,6 +266,16 @@ onUnmounted(() => {
     >
       v{{ version }}
     </button>
+
+    <a
+      v-if="classicHref"
+      :href="classicHref"
+      class="mt-auto pt-3 text-center text-[0.7em]"
+      style="color: var(--text-dim); opacity: 0.55"
+      data-test="legacy-link"
+    >
+      legacy-{{ active }}
+    </a>
   </nav>
 
   <ChangelogModal v-if="changelogOpen" @close="changelogOpen = false" />

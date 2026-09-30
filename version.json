@@ -1,6 +1,13 @@
 {
-  "version": "1.38",
+  "version": "1.39",
   "en": [
+    {
+      "version": "1.39",
+      "date": "2026-09-30 04:29",
+      "changes": [
+        "Removed the \"Vue pilot\" badge from the sidebar of every Vue page. The link to the classic version of a page is now a single, unobtrusive link always in the same place — at the very bottom of the slide-out menu (legacy-dashboard, legacy-goals, etc.). The \"Try the new design\" link on classic pages also moved to the bottom of the menu instead of sitting under the active item"
+      ]
+    },
     {
       "version": "1.38",
       "date": "2026-09-30 00:52",
@@ -1016,6 +1023,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.39",
+      "date": "2026-09-30 04:29",
+      "changes": [
+        "Убрана плашка «Пилот на Vue» из бокового меню всех Vue-страниц. Ссылка на классическую версию страницы теперь одна и всегда в одном месте — внизу выдвижного меню, неприметным шрифтом (legacy-dashboard, legacy-goals и т. д.). Ссылка «Попробовать новый дизайн» в классических страницах тоже переехала вниз меню, вместо места под активным пунктом"
+      ]
+    },
     {
       "version": "1.38",
       "date": "2026-09-30 00:52",

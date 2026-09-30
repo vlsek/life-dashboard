@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.38";
+const SITE_VERSION = "1.39";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.39", date: "2026-09-30 04:29", changes: [
+        "Убрана плашка «Пилот на Vue» из бокового меню всех Vue-страниц. Ссылка на классическую версию страницы теперь одна и всегда в одном месте — внизу выдвижного меню, неприметным шрифтом (legacy-dashboard, legacy-goals и т. д.). Ссылка «Попробовать новый дизайн» в классических страницах тоже переехала вниз меню, вместо места под активным пунктом",
+    ]},
     { version: "1.38", date: "2026-09-30 00:52", changes: [
         "Новая версия: галочки и переключатели на всех страницах (Календарь, Челленджи, Цели, Языки, Навыки, Сообщество, Тренировки и др.) теперь в цвет выбранной темы, как в классической версии, а не серые/белые",
     ]},
@@ -1007,6 +1010,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.39", date: "2026-09-30 04:29", changes: [
+        "Removed the \"Vue pilot\" badge from the sidebar of every Vue page. The link to the classic version of a page is now a single, unobtrusive link always in the same place — at the very bottom of the slide-out menu (legacy-dashboard, legacy-goals, etc.). The \"Try the new design\" link on classic pages also moved to the bottom of the menu instead of sitting under the active item",
+    ]},
     { version: "1.38", date: "2026-09-30 00:52", changes: [
         "New version: checkboxes and radio buttons on every page (Calendar, Challenges, Goals, Languages, Skills, Community, Workouts and more) now use the current theme's accent color, like the classic version, instead of gray/white",
     ]},
@@ -2184,17 +2190,13 @@ function renderNav(active, userEmail) {
     const sidebar = document.createElement("nav");
     sidebar.className = "sidebar";
 
-    // Тонкая ссылка "Попробовать новую версию" сразу под пунктом навигации, у которого есть
-    // готовый Vue-пилот (см. поле vue в pages выше) — только у ТЕКУЩЕЙ активной страницы, а не
-    // у каждого пункта сразу, чтобы не захламлять список. Первый лёгкий шаг фазы 2 (полный
-    // переезд адреса и /legacy/ — отдельная, более рискованная задача для конкретной страницы).
+    // Ссылка "Попробовать новый дизайн" на Vue-версию текущей страницы: одна, неприметная (dim-link)
+    // и всегда в одном месте — внизу меню, над номером версии (по запросу владельца; раньше она
+    // вставлялась под активным пунктом навигации). Здесь только запоминаем адрес, сама ссылка
+    // добавляется ниже.
+    let tryPilotPath = null;
     function appendTryPilotLink(vuePath) {
-        if (!vuePath) return;
-        const link = document.createElement("a");
-        link.href = "/" + vuePath;
-        link.innerHTML = `${iconSvg("sparkles")}<span>${t("nav_try_pilot")}</span>`;
-        link.className = "nav-try-pilot";
-        sidebar.appendChild(link);
+        if (vuePath) tryPilotPath = vuePath;
     }
 
     for (const p of pages) {
@@ -2263,6 +2265,14 @@ function renderNav(active, userEmail) {
     aboutLink.className = "dim-link";
     aboutLink.onclick = (e) => { e.preventDefault(); showAboutModal(); };
     sidebar.appendChild(aboutLink);
+
+    if (tryPilotPath) {
+        const tryPilotLink = document.createElement("a");
+        tryPilotLink.href = "/" + tryPilotPath;
+        tryPilotLink.innerHTML = `${iconSvg("sparkles")}<span>${t("nav_try_pilot")}</span>`;
+        tryPilotLink.className = "dim-link";
+        sidebar.appendChild(tryPilotLink);
+    }
 
     const version = document.createElement("button");
     version.className = "sidebar-version";
