@@ -26,4 +26,16 @@ describe('ExerciseCard collapse', () => {
     expect((body(w).element as HTMLElement).style.display).not.toBe('none')
     expect(localStorage.getItem('workouts_ex_collapsed:ex1')).toBeNull()
   })
+
+  it('toggle button shows a chevron (no text arrow) that turns with the state, and exposes aria-expanded', async () => {
+    const w = mount(ExerciseCard, { props: { exercise, entries: [] } })
+    const toggle = w.find('[data-testid="exercise-toggle"]')
+    const chevron = () => toggle.find('.collapse-chevron').attributes('data-collapsed')
+    expect(toggle.text()).toBe('')
+    expect(chevron()).toBe('false')
+    expect(toggle.attributes('aria-expanded')).toBe('true')
+    await toggle.trigger('click')
+    expect(chevron()).toBe('true')
+    expect(toggle.attributes('aria-expanded')).toBe('false')
+  })
 })

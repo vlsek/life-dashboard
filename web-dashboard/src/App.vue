@@ -19,6 +19,7 @@ import DailyMetricsSection from './components/DailyMetricsSection.vue'
 import LayoutModal from './components/LayoutModal.vue'
 import Icon from './components/Icon.vue'
 import SectionHeading from './components/SectionHeading.vue'
+import { vCollapse } from './lib/collapseMotion'
 import { useReminders } from './lib/useReminders'
 import { useEveningReminder } from './lib/useEveningReminder'
 import { usePlanReminders } from './lib/usePlanReminders'
@@ -155,7 +156,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
           <template v-if="item.visible">
             <template v-if="item.key === 'profile'">
               <SectionHeading v-model:collapsed="profileCollapsed" :title="t('dash_block_profile')" storage-key="profile" />
-              <div v-show="!profileCollapsed">
+              <div v-collapse="!profileCollapsed">
                 <ProfileSection
                   :user-id="auth.userId"
                   :day="dayRingProfile"
@@ -177,7 +178,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
 
             <template v-else-if="item.key === 'charts'">
               <SectionHeading v-model:collapsed="chartsCollapsed" :title="t('dash_charts_h2')" storage-key="charts" />
-              <div v-show="!chartsCollapsed" class="mb-5">
+              <div v-collapse="!chartsCollapsed" class="mb-5">
                 <ChartsSection :user-id="auth.userId" />
               </div>
             </template>

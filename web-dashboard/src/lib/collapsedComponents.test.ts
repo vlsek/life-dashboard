@@ -42,23 +42,27 @@ function host(key: string) {
 }
 
 describe('SectionHeading', () => {
-  it('по умолчанию развёрнуто: стрелка ▼, подсказка «Свернуть»', async () => {
+  const chevron = (w: ReturnType<typeof host>['w']) => w.find('.collapse-chevron').attributes('data-collapsed')
+
+  it('по умолчанию развёрнуто: шеврон вниз, подсказка «Свернуть»', async () => {
     const { w, state } = host('profile')
     await w.vm.$nextTick()
     const btn = w.find('[data-test="collapse-toggle"]')
-    expect(btn.text()).toBe('▼')
+    expect(chevron(w)).toBe('false')
+    expect(btn.attributes('aria-expanded')).toBe('true')
     expect(btn.attributes('title')).toBe(t('dash_collapse_btn'))
     expect(state.value).toBe(false)
     w.unmount()
   })
 
-  it('клик сворачивает, запоминает в localStorage и меняет стрелку/подсказку; повторный клик разворачивает', async () => {
+  it('клик сворачивает, запоминает в localStorage и меняет шеврон/подсказку; повторный клик разворачивает', async () => {
     const { w, state } = host('charts')
     const btn = () => w.find('[data-test="collapse-toggle"]')
     await btn().trigger('click')
     expect(state.value).toBe(true)
     expect(localStorage.getItem('dash_collapsed:charts')).toBe('1')
-    expect(btn().text()).toBe('▶')
+    expect(chevron(w)).toBe('true')
+    expect(btn().attributes('aria-expanded')).toBe('false')
     expect(btn().attributes('title')).toBe(t('dash_expand_btn'))
     expect((w.find('[data-test="body"]').element as HTMLElement).style.display).toBe('none')
     await btn().trigger('click')
@@ -72,7 +76,22 @@ describe('SectionHeading', () => {
     const { w, state } = host('daily')
     await w.vm.$nextTick()
     expect(state.value).toBe(true)
-    expect(w.find('[data-test="collapse-toggle"]').text()).toBe('▶')
+    expect(chevron(w)).toBe('true')
+    w.unmount()
+  })
+
+  it('шапка кликабельна целиком, доступна с клавиатуры (Enter и Пробел), клик по заголовку тоже сворачивает', async () => {
+    const { w, state } = host('profile')
+    await w.vm.$nextTick()
+    const head = w.find('[data-test="collapse-toggle"]')
+    expect(head.attributes('role')).toBe('button')
+    expect(head.attributes('tabindex')).toBe('0')
+    await w.find('h2').trigger('click')
+    expect(state.value).toBe(true)
+    await head.trigger('keydown', { key: 'Enter' })
+    expect(state.value).toBe(false)
+    await head.trigger('keydown', { key: ' ' })
+    expect(state.value).toBe(true)
     w.unmount()
   })
 })

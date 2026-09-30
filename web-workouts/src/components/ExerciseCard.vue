@@ -7,6 +7,8 @@ import Icon from './Icon.vue'
 import ExerciseChart from './ExerciseChart.vue'
 import { readExerciseCollapsed, writeExerciseCollapsed } from '../lib/exerciseCollapse'
 import type { Exercise, WorkoutEntry } from '../lib/types'
+import CollapseChevron from './CollapseChevron.vue'
+import { vCollapse } from '../lib/collapseMotion'
 
 // Порт renderExerciseCard() из workouts.js — заголовок с кнопками, рекомендованная схема,
 // личные рекорды (по сторонам для билатеральных), мини-график прогресса, таблица записей.
@@ -63,14 +65,14 @@ const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date
     <div class="mb-0.5 flex flex-wrap items-center gap-2">
       <button
         type="button"
-        class="rounded-lg border px-2 py-0.5 text-[0.8em]"
+        class="rounded-lg border px-1.5 py-1 leading-none"
         style="border-color: var(--border); color: var(--text)"
         data-testid="exercise-toggle"
         :title="collapsed ? t('dash_expand_btn') : t('dash_collapse_btn')"
         :aria-expanded="!collapsed"
         @click="toggleCollapsed"
       >
-        {{ collapsed ? '▶' : '▼' }}
+        <CollapseChevron :collapsed="collapsed" />
       </button>
       <h3 class="m-0 flex-1 font-bold">{{ exercise.name }}</h3>
       <button
@@ -89,7 +91,7 @@ const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date
       </button>
     </div>
 
-    <div v-show="!collapsed" data-testid="exercise-body">
+    <div v-collapse="!collapsed" data-testid="exercise-body">
     <div v-if="exercise.suggested_scheme" class="mb-2 text-[0.85em]" style="color: var(--text-dim)">
       {{ t('workouts_suggested_scheme_label') }} {{ exercise.suggested_scheme }}
     </div>

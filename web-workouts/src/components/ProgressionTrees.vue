@@ -4,6 +4,7 @@ import { getLang, t, type DictKey } from '../lib/i18n'
 import { todayStr } from '../lib/date'
 import { chainDoneCount, chainState, PROGRESSIONS, type StepState, type StepStatus } from '../lib/progressions'
 import type { Exercise, WorkoutEntry } from '../lib/types'
+import CollapseChevron from './CollapseChevron.vue'
 
 // Деревья прогрессии (BACKLOG 3.3, первый срез): цепочки ступеней от лёгкого к сложному.
 // Ступень пройдена, когда в одном подходе набрана её цель (повторения). Данные — только из
@@ -53,17 +54,18 @@ function pct(s: StepState): number {
 
 <template>
   <section class="mb-4 rounded-xl border p-3.5" style="border-color: var(--border); background: var(--bg-card)" data-testid="progressions">
-    <div class="flex items-center gap-2">
+    <div
+      class="collapse-head flex items-center gap-2"
+      role="button"
+      tabindex="0"
+      data-testid="progressions-toggle"
+      :aria-expanded="open"
+      @click="toggle"
+      @keydown.enter.prevent="toggle"
+      @keydown.space.prevent="toggle"
+    >
       <h3 class="m-0 font-bold">{{ t('workouts_prog_title') }}</h3>
-      <button
-        type="button"
-        class="rounded-lg border px-2 py-0.5 text-[0.8em]"
-        style="border-color: var(--border); color: var(--text)"
-        data-testid="progressions-toggle"
-        @click="toggle"
-      >
-        {{ open ? '▼' : '▶' }}
-      </button>
+      <CollapseChevron :collapsed="!open" />
     </div>
 
     <div v-if="open" class="mt-3" data-testid="progressions-body">

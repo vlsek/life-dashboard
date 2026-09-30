@@ -5,6 +5,7 @@ import NumberMetricField from './NumberMetricField.vue'
 import SetsSection from './SetsSection.vue'
 import PlannedSection from './PlannedSection.vue'
 import SectionHeading from './SectionHeading.vue'
+import { vCollapse } from '../lib/collapseMotion'
 import UsefulTodayList from './UsefulTodayList.vue'
 import { useDailyMetrics } from '../lib/useDailyMetrics'
 import { dayLabel, isRemaining, shiftDate } from '../lib/daily'
@@ -56,7 +57,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
   <section class="mb-5">
     <SectionHeading v-model:collapsed="collapsed" :title="t('dash_daily_h2')" storage-key="daily" />
 
-    <div v-show="!collapsed">
+    <div v-collapse="!collapsed">
     <div class="day-nav">
       <button type="button" class="secondary" @click="go(-1)">{{ t('prev_day') }}</button>
       <strong>{{ dayLabel(date, getLang()) }}</strong>

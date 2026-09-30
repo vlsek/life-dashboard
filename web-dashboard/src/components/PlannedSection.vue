@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import Icon from './Icon.vue'
 import SectionHeading from './SectionHeading.vue'
+import { vCollapse } from '../lib/collapseMotion'
 import PlannedAddGoalModal from './PlannedAddGoalModal.vue'
 import PlannedCarryOverModal from './PlannedCarryOverModal.vue'
 import { usePlanned } from '../lib/usePlanned'
@@ -89,7 +90,7 @@ const collapsed = ref(false)
 <template>
   <section v-if="loaded" class="mb-5" data-test="planned">
     <SectionHeading v-model:collapsed="collapsed" :title="t('dash_planned_h2')" storage-key="planned" />
-    <div v-show="!collapsed" class="card">
+    <div v-collapse="!collapsed" class="card">
     <p class="dim mb-2.5 text-xs">{{ t('dash_planned_bonus_hint') }}</p>
 
     <p v-if="planned.length === 0" class="dim">{{ t('dash_planned_empty') }}</p>

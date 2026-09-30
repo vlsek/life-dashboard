@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.66";
+const SITE_VERSION = "1.67";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.67", date: "2026-09-30 13:13", changes: [
+        "Сворачивание блоков стало современным: вместо стрелок ▼/▶ — шеврон, который плавно поворачивается; нажимать можно на всю шапку блока (в том числе с клавиатуры), а само содержимое сворачивается и разворачивается с плавной анимацией высоты. Сделано в Дашборде (Профиль, Ежедневные метрики, Планы, Графики, карточки подходов) и в Тренировках (группы и карточки упражнений, карта мышц, деревья прогрессии). При включённом «уменьшении движения» в системе анимация отключается",
+    ]},
     { version: "1.66", date: "2026-09-30 13:05", changes: [
         "Дашборд (новая версия), «Планы»: между чекбоксом и текстом плана появился отступ; неотмеченный чекбокс больше не белый квадрат — у него рамка и фон в цвет темы, а отмеченный заливается акцентом с галочкой (это касается всех чекбоксов на Дашборде)",
         "Дашборд (новая версия), «Планы»: время теперь подтягивается — оно из поля рядом с «Добавить» попадает и в цель, выбранную из списка, а при переносе незавершённого сохраняется время исходного пункта",
@@ -1097,6 +1100,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.67", date: "2026-09-30 13:13", changes: [
+        "Collapsing blocks now looks modern: instead of the ▼/▶ arrows there is a chevron that turns smoothly; the whole block header is clickable (keyboard too), and the content collapses and expands with a smooth height animation. Done on the Dashboard (Profile, Daily metrics, Plans, Charts, sets cards) and in Workouts (groups and exercise cards, muscle map, progression trees). The animation is off when the system \"reduce motion\" setting is on",
+    ]},
     { version: "1.66", date: "2026-09-30 13:05", changes: [
         "Dashboard (new version), Plans: there is now spacing between the checkbox and the plan text; an unchecked checkbox is no longer a white square — it has a theme-colored border and background, and a checked one fills with the accent and a tick (applies to every checkbox on the Dashboard)",
         "Dashboard (new version), Plans: the time now follows the item — the time from the field next to \"Add\" also applies to a goal picked from the list, and carrying unfinished items over keeps the original item's time",

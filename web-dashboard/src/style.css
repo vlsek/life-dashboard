@@ -271,3 +271,11 @@ html.theme-monet .streak-flame .fl-outer {
 .ring-bonus {
   stroke: color-mix(in srgb, var(--accent) 45%, #ffffff);
 }
+/* Сворачиваемые блоки: шеврон с плавным поворотом, шапка кликабельна целиком */
+.collapse-chevron { flex: none; color: var(--text-dim); transition: transform 0.2s ease, color 0.15s ease; }
+.collapse-chevron[data-collapsed="true"] { transform: rotate(-90deg); }
+.collapse-head { cursor: pointer; user-select: none; border-radius: 8px; padding: 2px 6px; margin-left: -6px; }
+.collapse-head:hover { background: var(--bg-card); }
+.collapse-head:hover .collapse-chevron { color: var(--text); }
+.collapse-head:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .collapse-chevron { transition: none; } }

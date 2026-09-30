@@ -17,6 +17,8 @@ import EntryForm from './components/EntryForm.vue'
 import TemplatesModal from './components/TemplatesModal.vue'
 import Toast from './components/Toast.vue'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry, WorkoutTemplate } from './lib/types'
+import CollapseChevron from './components/CollapseChevron.vue'
+import { vCollapse } from './lib/collapseMotion'
 
 // Порт workouts.js/html целиком: CRUD упражнений и записей (подходы), личные рекорды,
 // группировка по категориям со сворачиванием, каталог типовых программ, мини-график прогресса
@@ -227,19 +229,21 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
       />
 
       <section v-for="g in groups" :key="g.key">
-        <div class="mb-2.5 mt-6 flex items-center gap-2">
+        <div
+          class="collapse-head mb-2.5 mt-6 flex items-center gap-2"
+          role="button"
+          tabindex="0"
+          data-testid="group-toggle"
+          :aria-expanded="!isCollapsed(g.key)"
+          :title="isCollapsed(g.key) ? t('dash_expand_btn') : t('dash_collapse_btn')"
+          @click="toggleCollapsed(g.key)"
+          @keydown.enter.prevent="toggleCollapsed(g.key)"
+          @keydown.space.prevent="toggleCollapsed(g.key)"
+        >
           <h3 class="m-0 font-bold">{{ g.label }}</h3>
-          <button
-            type="button"
-            class="rounded-lg border px-2 py-0.5 text-[0.8em]"
-            style="border-color: var(--border); color: var(--text)"
-            :title="isCollapsed(g.key) ? t('dash_expand_btn') : t('dash_collapse_btn')"
-            @click="toggleCollapsed(g.key)"
-          >
-            {{ isCollapsed(g.key) ? '▶' : '▼' }}
-          </button>
+          <CollapseChevron :collapsed="isCollapsed(g.key)" />
         </div>
-        <div v-show="!isCollapsed(g.key)">
+        <div v-collapse="!isCollapsed(g.key)">
           <ExerciseCard
             v-for="ex in g.items"
             :key="ex.id"

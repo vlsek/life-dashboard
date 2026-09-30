@@ -3,6 +3,8 @@ import { computed, ref } from 'vue'
 import VariationCombo from './VariationCombo.vue'
 import MetricIcon from './MetricIcon.vue'
 import Icon from './Icon.vue'
+import CollapseChevron from './CollapseChevron.vue'
+import { vCollapse } from '../lib/collapseMotion'
 import { t } from '../lib/i18n'
 import { newSet, parseReps, parseTime, parseVariation, removeSet, setsSummary, updateSet, variationLabels } from '../lib/setsBlock'
 import type { SetRow } from '../lib/setsBlock'
@@ -42,7 +44,7 @@ function onVariation(i: number, text: string) {
   <div class="card mb-3.5" :data-metric-id="metric.id">
     <div class="flex items-center gap-2">
       <strong><MetricIcon :icon="metric.icon" /> {{ metric.name }}</strong>
-      <button type="button" class="secondary ml-auto" style="padding: 2px 10px; font-size: 0.85em" @click="open = !open">{{ open ? '▼' : '▶' }}</button>
+      <button type="button" class="secondary ml-auto" style="padding: 4px 8px; line-height: 0" :aria-expanded="open" :title="open ? t('dash_collapse_btn') : t('dash_expand_btn')" data-test="sets-toggle" @click="open = !open"><CollapseChevron :collapsed="!open" /></button>
     </div>
 
     <div class="dim mt-1 text-sm">
@@ -50,7 +52,7 @@ function onVariation(i: number, text: string) {
       <template v-else>{{ t('dash_sets_empty') }}</template>
     </div>
 
-    <div v-show="open" class="mt-2">
+    <div v-collapse="open" class="mt-2">
       <div v-if="sets.length > 0" class="overflow-x-auto">
         <table class="w-full text-sm">
           <tbody>
