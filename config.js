@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.62";
+const SITE_VERSION = "1.63";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.63", date: "2026-09-30 12:44", changes: [
+        "Магазин (новая версия): под каждым товаром появился прогресс-бар накопления — сколько процентов цены уже набрано; когда баллов хватает, надпись меняется на «Хватает на покупку»",
+    ]},
     { version: "1.62", date: "2026-09-30 12:40", changes: [
         "Дашборд: часть кольца прогресса сверх 100% теперь светлый оттенок цвета выбранной темы вместо жёстко заданного малинового — хорошо видна поверх основной дуги в любой теме (новая и классическая версии)",
     ]},
@@ -1084,6 +1087,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.63", date: "2026-09-30 12:44", changes: [
+        "Shop (new version): every item now has a saving progress bar showing what percentage of the price you already have; once you have enough points it switches to \"Enough to buy\"",
+    ]},
     { version: "1.62", date: "2026-09-30 12:40", changes: [
         "Dashboard: the part of the progress ring beyond 100% is now a light tint of the current theme's accent instead of a hardcoded crimson, so it stays visible over the main arc in every theme (new and classic versions)",
     ]},

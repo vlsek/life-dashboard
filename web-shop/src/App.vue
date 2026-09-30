@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import AppShell from './components/AppShell.vue'
 import ItemForm from './components/ItemForm.vue'
+import ItemProgressBar from './components/ItemProgressBar.vue'
 import Icon from './components/Icon.vue'
 import { useShop } from './lib/useShop'
 import { t } from './lib/i18n'
@@ -66,6 +67,7 @@ async function onUpload(file: File): Promise<string | null> {
           <template v-else>{{ item.name }}</template>
         </div>
         <div class="dim inline-flex items-center gap-1">{{ item.cost }} <Icon name="coin" /></div>
+        <ItemProgressBar v-if="!item.redeemed && balance" :cost="item.cost" :balance="balance.balance" />
 
         <div class="mt-2">
           <span v-if="item.redeemed">{{ t('shop_bought_prefix') }} {{ item.redeemed_date ? fmtRu(item.redeemed_date) : '' }}</span>
