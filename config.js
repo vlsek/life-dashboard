@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.43";
+const SITE_VERSION = "1.44";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.44", date: "2026-09-30 08:14", changes: [
+        "Аккаунт (новая версия): ссылка для администраторов теперь называется «Панель администратора» (раньше «Админка»)",
+    ]},
     { version: "1.43", date: "2026-09-30 08:04", changes: [
         "Графики на главной: у метрик с SVG-иконкой (например «Отжимания») иконка теперь показывается в заголовке графика и в списке настройки графиков — раньше терялась, показывались только эмодзи-иконки. Исправлено и в новой версии, и в классической",
         "Фаза 2, этап B: выход из аккаунта и переходы «не вошёл → вход» и «не прошёл онбординг → онбординг» теперь ведут сразу на /login/ и /onboarding/, без лишней пересылки через старые адреса",
@@ -1024,6 +1027,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.44", date: "2026-09-30 08:14", changes: [
+        "Account (new version): the admin-only link is now labelled \"Administrator panel\" (previously \"Admin panel\")",
+    ]},
     { version: "1.43", date: "2026-09-30 08:04", changes: [
         "Home charts: metrics with an SVG icon (e.g. \"Push-ups\") now show that icon in the chart heading and in the chart settings list — it used to be dropped, only emoji icons were shown. Fixed in both the new and the classic version",
         "Phase 2, stage B: logging out and the \"not signed in → sign in\" / \"onboarding not done → onboarding\" redirects now go straight to /login/ and /onboarding/, without an extra hop through the old addresses",

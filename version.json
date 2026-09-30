@@ -1,6 +1,13 @@
 {
-  "version": "1.43",
+  "version": "1.44",
   "en": [
+    {
+      "version": "1.44",
+      "date": "2026-09-30 08:14",
+      "changes": [
+        "Account (new version): the admin-only link is now labelled \"Administrator panel\" (previously \"Admin panel\")"
+      ]
+    },
     {
       "version": "1.43",
       "date": "2026-09-30 08:04",
@@ -1053,6 +1060,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.44",
+      "date": "2026-09-30 08:14",
+      "changes": [
+        "Аккаунт (новая версия): ссылка для администраторов теперь называется «Панель администратора» (раньше «Админка»)"
+      ]
+    },
     {
       "version": "1.43",
       "date": "2026-09-30 08:04",
