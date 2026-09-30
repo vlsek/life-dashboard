@@ -13,6 +13,23 @@ import Toast from './components/Toast.vue'
 // Данных, кроме сессии, странице не нужно — useAuth() вместо полного useAuthAndData().
 const { auth } = useAuth()
 
+// Ссылка на админку — только для админов (profiles.is_admin, миграция 009). Отдельный запрос, а не
+// расширение useAuth: если миграция не применена, ошибка колонки не должна ломать вход/онбординг.
+const isAdmin = ref(false)
+watch(
+  () => (auth.value.status === 'ready' ? auth.value.userId : null),
+  async (userId) => {
+    if (!userId) return
+    try {
+      const { data } = await sb.from('profiles').select('is_admin').eq('user_id', userId).maybeSingle()
+      isAdmin.value = data?.is_admin === true
+    } catch {
+      isAdmin.value = false
+    }
+  },
+  { immediate: true },
+)
+
 const newPassword = ref('')
 const confirmPassword = ref('')
 const passwordMsg = ref('')
@@ -167,6 +184,16 @@ const googleLinkedRest = computed(() => t('acc_google_linked').replace(/^\u2705\
           </button>
         </template>
       </div>
+
+      <a
+        v-if="isAdmin"
+        href="/admin.html"
+        class="block rounded-xl border p-4 text-sm font-medium no-underline"
+        style="border-color: var(--border); background: var(--bg-card); color: var(--text)"
+        data-testid="admin-link"
+      >
+        {{ t('acc_admin_link') }}
+      </a>
     </template>
   </main>
   <Toast />

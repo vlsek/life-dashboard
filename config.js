@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.39";
+const SITE_VERSION = "1.40";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.40", date: "2026-09-30 07:34", changes: [
+        "Аккаунт (новая версия): у администраторов внизу страницы появилась ссылка «Админка»; у обычных пользователей её нет",
+    ]},
     { version: "1.39", date: "2026-09-30 04:29", changes: [
         "Убрана плашка «Пилот на Vue» из бокового меню всех Vue-страниц. Ссылка на классическую версию страницы теперь одна и всегда в одном месте — внизу выдвижного меню, неприметным шрифтом (legacy-dashboard, legacy-goals и т. д.). Ссылка «Попробовать новый дизайн» в классических страницах тоже переехала вниз меню, вместо места под активным пунктом",
     ]},
@@ -1010,6 +1013,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.40", date: "2026-09-30 07:34", changes: [
+        "Account (new version): admins now get an \"Admin panel\" link at the bottom of the page; regular users do not see it",
+    ]},
     { version: "1.39", date: "2026-09-30 04:29", changes: [
         "Removed the \"Vue pilot\" badge from the sidebar of every Vue page. The link to the classic version of a page is now a single, unobtrusive link always in the same place — at the very bottom of the slide-out menu (legacy-dashboard, legacy-goals, etc.). The \"Try the new design\" link on classic pages also moved to the bottom of the menu instead of sitting under the active item",
     ]},

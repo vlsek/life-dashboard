@@ -1,6 +1,13 @@
 {
-  "version": "1.39",
+  "version": "1.40",
   "en": [
+    {
+      "version": "1.40",
+      "date": "2026-09-30 07:34",
+      "changes": [
+        "Account (new version): admins now get an \"Admin panel\" link at the bottom of the page; regular users do not see it"
+      ]
+    },
     {
       "version": "1.39",
       "date": "2026-09-30 04:29",
@@ -1023,6 +1030,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.40",
+      "date": "2026-09-30 07:34",
+      "changes": [
+        "Аккаунт (новая версия): у администраторов внизу страницы появилась ссылка «Админка»; у обычных пользователей её нет"
+      ]
+    },
     {
       "version": "1.39",
       "date": "2026-09-30 04:29",
