@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { sb } from './lib/supabase'
 import { getLang, t } from './lib/i18n'
 import { progressPercent } from './lib/progress'
+import { todayStr } from './lib/date'
 import { dayRingTarget, weekRingTarget } from './lib/ringPlacement'
 import { useHeaderProgress } from './lib/useHeaderProgress'
 import { useWater } from './lib/useWater'
@@ -11,6 +12,10 @@ import WaterGlass from './components/WaterGlass.vue'
 import WaterModal from './components/WaterModal.vue'
 import ProgressSummaryModal from './components/ProgressSummaryModal.vue'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
+import RightPanel, { type GaugeData } from './components/RightPanel.vue'
+
+// panelOnly — режим для Дашборда: своя шапка (стакан, кольца) там уже есть, поэтому бандл даёт только правую панель.
+const props = defineProps<{ panelOnly?: boolean }>()
 
 // Глобальный хедер (BACKLOG 2.3): стакан воды + кольца дня/недели в #topbar-right на любой странице, кроме Дашборда
 // (там свои). Без сессии — молчим (страница сама отправит на вход). Ничего не показываем, пока не загрузились данные,
@@ -51,6 +56,7 @@ const unitLabel = computed(() => (getLang() === 'en' ? 'ml' : 'мл'))
 const waterVisible = computed(() => waterLoaded.value && !waterError.value && !!metric.value)
 
 const waterOpen = ref(false)
+const panelOpen = ref(false)
 const summaryKind = ref<'day' | 'week' | null>(null)
 const settingsOpen = ref(false)
 
@@ -63,6 +69,18 @@ async function onAdd(ml: number, dateStr: string) {
 async function onSaveGoal(ml: number) {
   if (await saveGoal(ml)) goalSavedTick.value++
 }
+// Данные для спидометров панели: панель показывает и день, и неделю, если они не выключены настройкой «Кружок … : выключить»
+const gauge = (p: NonNullable<typeof day.value>): GaugeData => {
+  const r = ring(p, '')
+  return { basePct: r.basePct, bonusPct: r.bonusPct, totalPct: r.totalPct, detail: `${p.done}/${p.total}${p.bonusPct > 0 ? ' +' + p.bonusPct + '% ⭐' : ''}` }
+}
+const panelDay = computed(() => (day.value && showDay.value ? gauge(day.value) : null))
+const panelWeek = computed(() => (week.value && showWeek.value ? gauge(week.value) : null))
+const panelWater = computed(() => (waterVisible.value ? { todayMl: todayMl.value, normMl: normMl.value } : null))
+async function onPanelAddWater(ml: number) {
+  await onAdd(ml, todayStr())
+}
+
 async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
   await saveSettings(s)
   settingsOpen.value = false
@@ -71,9 +89,28 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
 
 <template>
   <div v-if="ready && userId" class="gh-root" data-test="header-widgets">
-    <WaterGlass v-if="waterVisible" :today-ml="todayMl" :norm-ml="normMl" :title="`💧 ${todayMl} / ${normMl} ${unitLabel}`" @click="waterOpen = true" />
-    <DayWeekBadge v-if="dayRing" kind="day" v-bind="dayRing" @click="summaryKind = 'day'" />
-    <DayWeekBadge v-if="weekRing" kind="week" v-bind="weekRing" @click="summaryKind = 'week'" />
+    <template v-if="!props.panelOnly">
+      <WaterGlass v-if="waterVisible" :today-ml="todayMl" :norm-ml="normMl" :title="`💧 ${todayMl} / ${normMl} ${unitLabel}`" @click="waterOpen = true" />
+      <DayWeekBadge v-if="dayRing" kind="day" v-bind="dayRing" @click="summaryKind = 'day'" />
+      <DayWeekBadge v-if="weekRing" kind="week" v-bind="weekRing" @click="summaryKind = 'week'" />
+    </template>
+    <button type="button" class="gh-badge" data-test="panel-open" :title="t('hdr_panel_open')" :aria-label="t('hdr_panel_open')" @click="panelOpen = true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim, #999)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3.5" y="4.5" width="17" height="15" rx="2.2" />
+        <path d="M14.5 4.5v15" />
+      </svg>
+    </button>
+
+    <RightPanel
+      v-model:open="panelOpen"
+      :day="panelDay"
+      :week="panelWeek"
+      :water="panelWater"
+      :saved-tick="savedTick"
+      @open-summary="(k) => { panelOpen = false; summaryKind = k }"
+      @open-water="waterOpen = true"
+      @add-water="onPanelAddWater"
+    />
 
     <WaterModal
       v-if="waterOpen && metric"

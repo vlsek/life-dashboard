@@ -149,3 +149,90 @@ describe('глобальный хедер (App.vue)', () => {
     w.unmount()
   })
 })
+
+describe('правая панель (BACKLOG 6.2)', () => {
+  const water = { id: 'w', name: 'Вода', icon: '💧', type: 'number', goal_value: 2000, active: true, position: 1, user_id: 'u1' }
+
+  it('кнопка в шапке открывает панель со спидометрами дня/недели и стаканом; ✕ закрывает', async () => {
+    setup({ metrics: [water, habit], daily_values: [{ date: today, metric_id: 'w', value: 500 }, { date: today, metric_id: 'h', value: true }] })
+    const w = mount(App)
+    await flushPromises()
+    expect(w.find('[data-test="right-panel"]').classes()).not.toContain('gh-panel-open')
+    await w.find('[data-test="panel-open"]').trigger('click')
+    expect(w.find('[data-test="right-panel"]').classes()).toContain('gh-panel-open')
+    expect(w.findAll('.gh-gauge')).toHaveLength(2)
+    expect(w.find('[data-test="panel-water"]').text()).toContain('500 / 2000')
+    await w.find('[data-test="panel-close"]').trigger('click')
+    expect(w.find('[data-test="right-panel"]').classes()).not.toContain('gh-panel-open')
+    w.unmount()
+  })
+
+  it('быстрое «+ 200 мл» из панели пишет воду за сегодня и запускает анимацию «записалось»', async () => {
+    setup({ metrics: [water], daily_values: [] })
+    const w = mount(App, { global: { stubs: { transition: false } } })
+    await flushPromises()
+    await w.find('[data-test="panel-open"]').trigger('click')
+    await w.find('[data-test="panel-add-200"]').trigger('click')
+    await flushPromises()
+    expect(db.writes.find((x) => x.table === 'daily_values')!.payload).toMatchObject({ metric_id: 'w', date: today, value: 200 })
+    w.unmount()
+  })
+
+  it('клик по спидометру закрывает панель и открывает сводку', async () => {
+    setup({ metrics: [habit], daily_values: [{ date: today, metric_id: 'h', value: true }] })
+    const w = mount(App)
+    await flushPromises()
+    await w.find('[data-test="panel-open"]').trigger('click')
+    await w.find('.gh-gauge[data-kind="day"]').trigger('click')
+    expect(w.find('[data-test="right-panel"]').classes()).not.toContain('gh-panel-open')
+    expect(w.find('[data-test="summary-modal"]').exists()).toBe(true)
+    w.unmount()
+  })
+
+  it('панель без данных прогресса показывает пояснение, без метрики воды — без блока воды', async () => {
+    setup({ metrics: [], daily_values: [] })
+    const w = mount(App)
+    await flushPromises()
+    expect(w.find('[data-test="panel-empty"]').exists()).toBe(true)
+    expect(w.find('[data-test="panel-water"]').exists()).toBe(false)
+    w.unmount()
+  })
+
+  it('режим panelOnly (Дашборд): нет стакана и колец в шапке, но панель и кнопка есть', async () => {
+    setup({ metrics: [water, habit], daily_values: [{ date: today, metric_id: 'h', value: true }] })
+    const w = mount(App, { props: { panelOnly: true } })
+    await flushPromises()
+    expect(w.find('[data-kind="day"].gh-badge').exists()).toBe(false)
+    expect(w.find('.gh-badge[data-test="water-badge"]').exists()).toBe(false)
+    expect(w.find('[data-test="panel-open"]').exists()).toBe(true)
+    await w.find('[data-test="panel-open"]').trigger('click')
+    expect(w.findAll('.gh-gauge')).toHaveLength(2)
+    w.unmount()
+  })
+
+  it('свайп от правого края открывает панель, свайп вправо и Esc закрывают', async () => {
+    setup({ metrics: [habit], daily_values: [] })
+    Object.defineProperty(window, 'innerWidth', { value: 400, configurable: true })
+    const w = mount(App, { attachTo: document.body })
+    await flushPromises()
+    const touch = (type: string, x: number, y: number) => {
+      const e = new Event(type, { bubbles: true }) as any
+      e.touches = type === 'touchend' ? [] : [{ clientX: x, clientY: y }]
+      e.changedTouches = [{ clientX: x, clientY: y }]
+      document.dispatchEvent(e)
+    }
+    touch('touchstart', 395, 300)
+    touch('touchend', 250, 305)
+    await flushPromises()
+    expect(w.find('[data-test="right-panel"]').classes()).toContain('gh-panel-open')
+    touch('touchstart', 200, 300)
+    touch('touchend', 320, 305)
+    await flushPromises()
+    expect(w.find('[data-test="right-panel"]').classes()).not.toContain('gh-panel-open')
+    await w.find('[data-test="panel-open"]').trigger('click')
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+    await flushPromises()
+    expect(w.find('[data-test="right-panel"]').classes()).not.toContain('gh-panel-open')
+    w.unmount()
+  })
+})

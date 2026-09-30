@@ -6,7 +6,8 @@ import App from './App.vue'
 // <script type="module" src="/header-widgets/header.js"></script>. Ждёт, пока страница (Vue AppShell) нарисует
 // #topbar-right, и вставляет свой контейнер В НАЧАЛО этого блока. На Дашборде и служебных страницах не работает:
 // Дашборд рисует стакан и кольца сам, вход/онбординг/админка без шапки.
-const SKIP = /^\/(dashboard|login|onboarding|admin|legacy)(\/|\.html|$)/
+const SKIP = /^\/(login|onboarding|admin|legacy)(\/|\.html|$)/
+const PANEL_ONLY = /^\/dashboard(\/|\.html|$)/ // на Дашборде своя шапка — только правая панель
 
 function mount(target: HTMLElement) {
   if (document.getElementById('global-header-widgets')) return
@@ -17,7 +18,7 @@ function mount(target: HTMLElement) {
   host.id = 'global-header-widgets'
   host.style.display = 'contents'
   target.prepend(host)
-  createApp(App).mount(host)
+  createApp(App, { panelOnly: PANEL_ONLY.test(location.pathname) }).mount(host)
 }
 
 function start() {

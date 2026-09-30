@@ -1,6 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { h } from 'vue'
 
-vi.mock('./App.vue', () => ({ default: { render: () => null } }))
+vi.mock('./App.vue', () => ({
+  default: { props: ['panelOnly'], render() { return h('i', { 'data-panel-only': String(!!(this as any).panelOnly) }) } },
+}))
 vi.mock('./header.css?inline', () => ({ default: '.gh-root{}' }))
 
 async function run(path: string) {
@@ -35,7 +38,16 @@ describe('main.ts — монтирование в #topbar-right', () => {
     expect(document.getElementById('global-header-widgets')).toBeTruthy()
   })
 
-  it.each(['/dashboard/', '/login/', '/onboarding/', '/admin.html', '/legacy/goals.html'])('на %s не монтируется', async (path) => {
+  it('на Дашборде монтируется в режиме «только панель» (стакан и кольца там свои), на остальных страницах — целиком', async () => {
+    document.body.innerHTML = '<div id="topbar-right"></div>'
+    await run('/dashboard/')
+    expect(document.querySelector('#global-header-widgets [data-panel-only]')!.getAttribute('data-panel-only')).toBe('true')
+    document.body.innerHTML = '<div id="topbar-right"></div>'
+    await run('/goals/')
+    expect(document.querySelector('#global-header-widgets [data-panel-only]')!.getAttribute('data-panel-only')).toBe('false')
+  })
+
+  it.each(['/login/', '/onboarding/', '/admin.html', '/legacy/goals.html'])('на %s не монтируется', async (path) => {
     document.body.innerHTML = '<div id="topbar-right"></div>'
     await run(path)
     expect(document.getElementById('global-header-widgets')).toBeNull()

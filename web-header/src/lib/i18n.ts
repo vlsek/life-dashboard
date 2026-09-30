@@ -42,6 +42,11 @@ const DICT = {
     close: "Close",
     dash_save_error_generic: "Couldn't save: ",
     hdr_water_title: 'Water',
+    hdr_panel_title: 'Panel',
+    hdr_panel_open: 'Open panel',
+    hdr_panel_details: 'Details',
+    hdr_panel_no_progress: 'No progress data yet: add metrics or plans for today.',
+    hdr_panel_water_open: 'Open water',
     hdr_open_settings: 'Progress settings',
   },
   ru: {
@@ -85,6 +90,11 @@ const DICT = {
     close: "Закрыть",
     dash_save_error_generic: 'Не удалось сохранить: ',
     hdr_water_title: 'Вода',
+    hdr_panel_title: 'Панель',
+    hdr_panel_open: 'Открыть панель',
+    hdr_panel_details: 'Подробнее',
+    hdr_panel_no_progress: 'Пока нет данных прогресса: добавьте метрики или планы на сегодня.',
+    hdr_panel_water_open: 'Открыть воду',
     hdr_open_settings: 'Настройки прогресса',
   },
 } as const
