@@ -69,7 +69,11 @@
 — свободен —
 
 ### Агент 2
-— свободен —
+Фаза 3, две задачи из BACKLOG 7.1 (владелец: «любые задачи», 2026-09-30), только новая версия на Vue, legacy не трогаю:
+(A) «Вода в настройках метрик дня» — убрать метрику воды из списка менеджера метрик Дашборда (`web-dashboard/src/components/MetricsManagerModal.vue`,
+`lib/metricsManager.ts`, тесты); (B) «Клик по баллам на главной» — новое окно «за что начислены баллы сегодня и за 7 дней», в магазин — ссылкой оттуда
+(`web-dashboard/src/components/ProfileSection.vue` (только ссылка баланса), новые `PointsLogModal.vue`, `lib/pointsLog.ts`, `lib/useProfile.ts` (данные), `lib/i18n.ts` (ключи `dash_points_*`), тесты).
+Кольца/`AvatarProgress`/`HeaderProgressBadge` (агент 3) и `SectionHeading.vue` (агент 4) не трогаю. Пересборка `dashboard/`, `config.js` (версия+changelog), `docs/ROADMAP.md`, `docs/BACKLOG.md`. С: 2026-09-30 10:22.
 
 ### Агент 3
 Фаза 3, BACKLOG 1.1 «Цветовая логика прогресс-баров»: 100%+ подсвечивать акцентным цветом темы вместо жёсткого малинового `#d6336c` в кольцах прогресса Дашборда (`web-dashboard/src/components/ProgressRing.vue`, `AvatarProgress.vue`, `HeaderProgressBadge.vue`, тесты), пересборка `dashboard/`, `config.js`, `docs/ROADMAP.md`, `docs/BACKLOG.md`. Вторую часть пункта (цвет чекбоксов «Целей») закрыл в v1.38. Время приёма воды (2.2) НЕ беру: нужна новая таблица в БД, ждёт решения владельца. С: 2026-09-30 09:33.
