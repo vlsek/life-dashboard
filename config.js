@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.70";
+const SITE_VERSION = "1.71";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.71", date: "2026-09-30 15:11", changes: [
+        "Дашборд: блок «Профиль» на телефоне больше не «едет» — теперь две чёткие строки: сверху аватар с кольцом дня, кольцо недели и возраст, справа стрик и баллы; ниже параметры тела (вес, рост и т.д.), которые переносятся по ширине, а длинные названия не выталкивают вёрстку",
+    ]},
     { version: "1.70", date: "2026-09-30 12:05", changes: [
         "Дашборд (пилот): вместо сухого «Загрузка…» — заставка с горящим огоньком стрика в цвете текущей темы (мерцание и мягкое свечение; при включённом «уменьшении движения» в системе анимация выключается). Огонёк виден ещё до загрузки скриптов страницы, так что пустого экрана при медленной сети больше нет. Остальные страницы — отдельным шагом",
     ]},
@@ -1109,6 +1112,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.71", date: "2026-09-30 15:11", changes: [
+        "Dashboard: the \"Profile\" block no longer breaks on phones — it is now two clear rows: avatar with the day ring, the week ring and age on top with the streak and points on the right; below them the body parameters (weight, height, etc.), which wrap to the width, and long names no longer push the layout around",
+    ]},
     { version: "1.70", date: "2026-09-30 12:05", changes: [
         "Dashboard (pilot): instead of a plain \"Loading…\" text there is now a splash with the burning streak flame in the current theme colour (flicker and soft glow; the animation is turned off when the system asks for reduced motion). The flame shows up even before the page scripts have loaded, so a slow connection no longer means a blank screen. Other pages will follow separately",
     ]},

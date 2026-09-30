@@ -1,6 +1,13 @@
 {
-  "version": "1.70",
+  "version": "1.71",
   "en": [
+    {
+      "version": "1.71",
+      "date": "2026-09-30 15:11",
+      "changes": [
+        "Dashboard: the \"Profile\" block no longer breaks on phones — it is now two clear rows: avatar with the day ring, the week ring and age on top with the streak and points on the right; below them the body parameters (weight, height, etc.), which wrap to the width, and long names no longer push the layout around"
+      ]
+    },
     {
       "version": "1.70",
       "date": "2026-09-30 12:05",
@@ -1246,6 +1253,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.71",
+      "date": "2026-09-30 15:11",
+      "changes": [
+        "Дашборд: блок «Профиль» на телефоне больше не «едет» — теперь две чёткие строки: сверху аватар с кольцом дня, кольцо недели и возраст, справа стрик и баллы; ниже параметры тела (вес, рост и т.д.), которые переносятся по ширине, а длинные названия не выталкивают вёрстку"
+      ]
+    },
     {
       "version": "1.70",
       "date": "2026-09-30 12:05",
