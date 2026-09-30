@@ -37,3 +37,21 @@ describe('ProfileSection: balance', () => {
     w.unmount()
   })
 })
+
+// BACKLOG 7.2: вёрстка профиля с телефона — две чёткие строки вместо одного flex-wrap-ряда.
+describe('ProfileSection: mobile layout', () => {
+  it('keeps avatar/ring/age and the score group in the top row and body params in their own wrapping row', () => {
+    const w = mount(ProfileSection, { props: { userId: 'u1' } })
+    const top = w.find('[data-test="profile-top-row"]')
+    const params = w.find('[data-test="profile-params-row"]')
+    expect(top.exists() && params.exists()).toBe(true)
+    expect(top.classes()).toContain('flex-wrap')
+    expect(params.classes()).toContain('flex-wrap')
+    // баллы (и стрик) справа в верхней строке, параметры тела и кнопка «линейка» — во второй
+    expect(top.find('[data-test="profile-score-group"]').find('[data-test="balance-btn"]').exists()).toBe(true)
+    expect(top.find('[data-test="params-btn"]').exists()).toBe(false)
+    expect(params.find('[data-test="params-btn"]').exists()).toBe(true)
+    expect(w.find('[data-test="profile-score-group"]').classes()).toContain('ml-auto')
+    w.unmount()
+  })
+})

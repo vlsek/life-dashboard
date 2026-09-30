@@ -103,61 +103,70 @@ function openForm(p: BodyParam | 'new') {
 </script>
 
 <template>
-  <section v-if="loaded" class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border p-3" style="border-color: var(--border); background: var(--bg-card)">
-    <AvatarProgress :avatar-url="profile?.avatar_url" :ring="day ?? null" @pick="fileInput?.click()" @settings="emit('progress-settings', 'day')" />
-    <input ref="fileInput" type="file" accept="image/*" class="hidden" data-test="avatar-input" @change="onFile" />
+  <section v-if="loaded" class="mb-4 flex flex-col gap-2 rounded-lg border p-3" style="border-color: var(--border); background: var(--bg-card)">
+    <!-- Строка 1 (BACKLOG 7.2): главное — аватар с кольцом дня, кольцо недели, возраст; справа стрик и баллы.
+         На очень узком экране правая группа переносится под левую, но не ломает остальное. -->
+    <div class="flex w-full flex-wrap items-center gap-x-3 gap-y-2" data-test="profile-top-row">
+      <AvatarProgress :avatar-url="profile?.avatar_url" :ring="day ?? null" @pick="fileInput?.click()" @settings="emit('progress-settings', 'day')" />
+      <input ref="fileInput" type="file" accept="image/*" class="hidden" data-test="avatar-input" @change="onFile" />
 
-    <ProgressRing
-      v-if="week"
-      :base-pct="week.basePct"
-      :bonus-pct="week.bonusPct"
-      :total-pct="week.totalPct"
-      :title="week.title"
-      :label="t('dash_week_progress_label')"
-      :size="48"
-      @click="emit('progress-settings', 'week')"
-    />
+      <ProgressRing
+        v-if="week"
+        :base-pct="week.basePct"
+        :bonus-pct="week.bonusPct"
+        :total-pct="week.totalPct"
+        :title="week.title"
+        :label="t('dash_week_progress_label')"
+        :size="48"
+        @click="emit('progress-settings', 'week')"
+      />
 
-    <div class="flex items-center gap-1">
-      <template v-if="age">
-        <Icon name="cake" extra-style="margin-right:0.3em;" />{{ age }}
-        <button type="button" class="secondary px-1.5 py-px text-xs" @click="showBirthdate = true"><Icon name="edit" /></button>
-      </template>
-      <button v-else type="button" class="secondary" @click="showBirthdate = true">{{ t('dash_set_birthdate_btn') }}</button>
+      <div class="flex items-center gap-1">
+        <template v-if="age">
+          <Icon name="cake" extra-style="margin-right:0.3em;" />{{ age }}
+          <button type="button" class="secondary px-1.5 py-px text-xs" @click="showBirthdate = true"><Icon name="edit" /></button>
+        </template>
+        <button v-else type="button" class="secondary" @click="showBirthdate = true">{{ t('dash_set_birthdate_btn') }}</button>
+      </div>
+
+      <div class="ml-auto flex shrink-0 items-center gap-3" data-test="profile-score-group">
+        <button
+          v-if="topStreak"
+          type="button"
+          data-test="streak-badge"
+          class="flex items-center gap-1 font-bold"
+          :class="{ 'streak-unlit': !topStreak.todayCounted }"
+          style="background: transparent; border: none; padding: 0; cursor: pointer; color: inherit"
+          :title="streakTitle"
+          @click="emit('show-streaks')"
+        >
+          <StreakFlame :lit="topStreak.todayCounted" />
+          {{ topStreak.streak }}{{ topStreak.unit === 'w' ? ' ' + t('dash_streak_unit_weeks') : '' }}
+        </button>
+
+        <button
+          v-if="balance != null"
+          type="button"
+          data-test="balance-btn"
+          class="flex items-center gap-1 font-bold"
+          :title="t('dash_balance_click_hint')"
+          style="background: transparent; border: none; padding: 0; cursor: pointer; color: inherit"
+          @click="showPoints = true"
+        >
+          <CoinIcon /> {{ balance }}
+        </button>
+      </div>
     </div>
 
-    <div v-for="s in stats" :key="s.param.id" data-test="param-stat">
-      <MetricIcon :icon="s.param.icon" extra-style="margin-right:0.3em;" />{{ s.param.name }}: {{ s.latest }}{{ unitSuffix(s.param.unit) }}
-      <span v-if="formatDelta(s.sinceFirst)" :style="{ color: toneColor[s.tone] }">({{ formatDelta(s.sinceFirst) }}{{ unitSuffix(s.param.unit) }})</span>
+    <!-- Строка 2: параметры тела — сколько бы их ни было, переносятся по ширине; длинное название не выталкивает вёрстку. -->
+    <div class="flex w-full flex-wrap items-center gap-x-4 gap-y-1 text-sm" data-test="profile-params-row">
+      <div v-for="s in stats" :key="s.param.id" class="min-w-0 max-w-full break-words" data-test="param-stat">
+        <MetricIcon :icon="s.param.icon" extra-style="margin-right:0.3em;" />{{ s.param.name }}: {{ s.latest }}{{ unitSuffix(s.param.unit) }}
+        <span v-if="formatDelta(s.sinceFirst)" :style="{ color: toneColor[s.tone] }">({{ formatDelta(s.sinceFirst) }}{{ unitSuffix(s.param.unit) }})</span>
+      </div>
+
+      <button type="button" class="secondary shrink-0 px-2 text-xs" :title="t('dash_body_params_title')" data-test="params-btn" @click="showParams = true"><Icon name="ruler" /></button>
     </div>
-
-    <button type="button" class="secondary px-2 text-xs" :title="t('dash_body_params_title')" data-test="params-btn" @click="showParams = true"><Icon name="ruler" /></button>
-
-    <button
-      v-if="topStreak"
-      type="button"
-      data-test="streak-badge"
-      class="flex items-center gap-1 font-bold"
-      :class="{ 'streak-unlit': !topStreak.todayCounted }"
-      style="background: transparent; border: none; padding: 0; cursor: pointer; color: inherit"
-      :title="streakTitle"
-      @click="emit('show-streaks')"
-    >
-      <StreakFlame :lit="topStreak.todayCounted" />
-      {{ topStreak.streak }}{{ topStreak.unit === 'w' ? ' ' + t('dash_streak_unit_weeks') : '' }}
-    </button>
-
-    <button
-      v-if="balance != null"
-      type="button"
-      data-test="balance-btn"
-      class="ml-auto flex items-center gap-1 font-bold"
-      :title="t('dash_balance_click_hint')"
-      style="background: transparent; border: none; padding: 0; cursor: pointer; color: inherit"
-      @click="showPoints = true"
-    >
-      <CoinIcon /> {{ balance }}
-    </button>
 
     <p v-if="error" class="w-full text-sm" style="color: var(--danger)">{{ error }}</p>
   </section>
