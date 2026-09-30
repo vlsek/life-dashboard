@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.63";
+const SITE_VERSION = "1.64";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.64", date: "2026-09-30 12:48", changes: [
+        "Классическая версия: на главной появилась закрывающаяся плашка «Проект переехал на новую версию» с кратким описанием преимуществ и кнопкой «Открыть новую версию»; после закрытия крестиком она больше не показывается",
+    ]},
     { version: "1.63", date: "2026-09-30 12:44", changes: [
         "Магазин (новая версия): под каждым товаром появился прогресс-бар накопления — сколько процентов цены уже набрано; когда баллов хватает, надпись меняется на «Хватает на покупку»",
     ]},
@@ -1087,6 +1090,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.64", date: "2026-09-30 12:48", changes: [
+        "Classic version: the home page now shows a dismissible banner \"The project has moved to a new version\" with a short list of benefits and an \"Open the new version\" button; once dismissed with the cross it stays hidden",
+    ]},
     { version: "1.63", date: "2026-09-30 12:44", changes: [
         "Shop (new version): every item now has a saving progress bar showing what percentage of the price you already have; once you have enough points it switches to \"Enough to buy\"",
     ]},

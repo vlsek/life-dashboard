@@ -3179,6 +3179,31 @@ async function openCarryOverModal(todayDateStr, todayPlanned, persistToday) {
     document.body.appendChild(backdrop);
 }
 
+// Закрывающаяся плашка о переезде на новую версию (BACKLOG 12). Закрытие запоминаем в localStorage;
+// ссылка в боковом меню «✨ Попробовать новый дизайн» остаётся — плашка её дополняет, а не заменяет.
+const MIGRATION_BANNER_KEY = "migration_banner_dismissed";
+function showMigrationBanner() {
+    try { if (localStorage.getItem(MIGRATION_BANNER_KEY) === "1") return; } catch { /* нет localStorage — показываем каждый раз */ }
+    const main = document.querySelector("main");
+    if (!main || document.getElementById("migration-banner")) return;
+    const banner = document.createElement("div");
+    banner.id = "migration-banner";
+    banner.className = "migration-banner";
+    banner.setAttribute("role", "status");
+    banner.innerHTML = `
+        <div class="migration-banner-body">
+            <strong>${escapeHtmlText(t("migration_banner_title"))}</strong>
+            <p>${escapeHtmlText(t("migration_banner_text"))}</p>
+            <a class="migration-banner-btn" href="/dashboard/">${escapeHtmlText(t("migration_banner_btn"))}</a>
+        </div>
+        <button type="button" class="migration-banner-close" aria-label="${escapeHtmlText(t("migration_banner_close"))}" title="${escapeHtmlText(t("migration_banner_close"))}">✕</button>`;
+    banner.querySelector(".migration-banner-close").onclick = () => {
+        try { localStorage.setItem(MIGRATION_BANNER_KEY, "1"); } catch { /* ignore */ }
+        banner.remove();
+    };
+    main.insertBefore(banner, main.firstChild);
+}
+
 (async () => {
     installCacheInvalidation(sb); // следит за записями и держит кэш данных актуальным (см. datacache.js)
     user = await requireAuth();
@@ -3188,6 +3213,7 @@ async function openCarryOverModal(todayDateStr, todayPlanned, persistToday) {
     if (!profile?.onboarded) { window.location.href = "/onboarding/"; return; }
 
     renderNav("dashboard", user.email);
+    showMigrationBanner();
     // Сразу после онбординга показываем приветственный тур (один раз)
     try {
         if (localStorage.getItem("tour_pending")) { localStorage.removeItem("tour_pending"); showWelcomeTour(); }

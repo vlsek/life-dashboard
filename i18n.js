@@ -3,6 +3,10 @@ const translations = {
         // nav / shared
         nav_tour: "How it works",
         nav_try_pilot: "✨ Try the new design",
+        migration_banner_title: "The project has moved to a new version",
+        migration_banner_text: "The dashboard now runs on the redesigned version: a faster, cleaner interface plus new features such as the muscle map, exercise progressions and a progress summary. We recommend using it. This classic version stays available for now.",
+        migration_banner_btn: "Open the new version",
+        migration_banner_close: "Dismiss",
         tour_back: "Back",
         tour_next: "Next",
         tour_skip: "Skip",
@@ -764,6 +768,10 @@ const translations = {
     ru: {
         nav_tour: "Как пользоваться",
         nav_try_pilot: "✨ Попробовать новый дизайн",
+        migration_banner_title: "Проект переехал на новую версию",
+        migration_banner_text: "Дашборд теперь работает на обновлённой версии: быстрее и аккуратнее, плюс новые возможности — карта мышц, прогрессии упражнений, сводка по прогрессу. Рекомендуем пользоваться ей. Эта классическая версия пока остаётся доступной.",
+        migration_banner_btn: "Открыть новую версию",
+        migration_banner_close: "Закрыть",
         tour_back: "Назад",
         tour_next: "Далее",
         tour_skip: "Пропустить",

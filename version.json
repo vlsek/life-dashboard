@@ -1,6 +1,13 @@
 {
-  "version": "1.63",
+  "version": "1.64",
   "en": [
+    {
+      "version": "1.64",
+      "date": "2026-09-30 12:48",
+      "changes": [
+        "Classic version: the home page now shows a dismissible banner \"The project has moved to a new version\" with a short list of benefits and an \"Open the new version\" button; once dismissed with the cross it stays hidden"
+      ]
+    },
     {
       "version": "1.63",
       "date": "2026-09-30 12:44",
@@ -1196,6 +1203,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.64",
+      "date": "2026-09-30 12:48",
+      "changes": [
+        "Классическая версия: на главной появилась закрывающаяся плашка «Проект переехал на новую версию» с кратким описанием преимуществ и кнопкой «Открыть новую версию»; после закрытия крестиком она больше не показывается"
+      ]
+    },
     {
       "version": "1.63",
       "date": "2026-09-30 12:44",

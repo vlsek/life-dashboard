@@ -905,3 +905,37 @@ html.theme-monet .streak-flame .fl-outer { stroke: var(--accent); stroke-width: 
 .ring-bonus {
   stroke: color-mix(in srgb, var(--accent) 45%, #ffffff);
 }
+
+/* Закрывающаяся плашка о переезде на новую версию (классика, главная; BACKLOG 12) */
+.migration-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 12px;
+}
+.migration-banner-body { flex: 1; min-width: 0; }
+.migration-banner-body p { margin: 4px 0 10px; font-size: 0.9em; color: var(--text-dim); }
+.migration-banner-btn {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-text, #fff);
+  text-decoration: none;
+  font-size: 0.9em;
+  font-weight: 600;
+}
+.migration-banner-close {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1.1em;
+  cursor: pointer;
+  padding: 2px 6px;
+}
