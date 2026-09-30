@@ -1,6 +1,13 @@
 {
-  "version": "1.69",
+  "version": "1.70",
   "en": [
+    {
+      "version": "1.70",
+      "date": "2026-09-30 12:05",
+      "changes": [
+        "Dashboard (pilot): instead of a plain \"Loading…\" text there is now a splash with the burning streak flame in the current theme colour (flicker and soft glow; the animation is turned off when the system asks for reduced motion). The flame shows up even before the page scripts have loaded, so a slow connection no longer means a blank screen. Other pages will follow separately"
+      ]
+    },
     {
       "version": "1.69",
       "date": "2026-09-30 14:44",
@@ -1239,6 +1246,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.70",
+      "date": "2026-09-30 12:05",
+      "changes": [
+        "Дашборд (пилот): вместо сухого «Загрузка…» — заставка с горящим огоньком стрика в цвете текущей темы (мерцание и мягкое свечение; при включённом «уменьшении движения» в системе анимация выключается). Огонёк виден ещё до загрузки скриптов страницы, так что пустого экрана при медленной сети больше нет. Остальные страницы — отдельным шагом"
+      ]
+    },
     {
       "version": "1.69",
       "date": "2026-09-30 14:44",

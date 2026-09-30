@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.69";
+const SITE_VERSION = "1.70";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.70", date: "2026-09-30 12:05", changes: [
+        "Дашборд (пилот): вместо сухого «Загрузка…» — заставка с горящим огоньком стрика в цвете текущей темы (мерцание и мягкое свечение; при включённом «уменьшении движения» в системе анимация выключается). Огонёк виден ещё до загрузки скриптов страницы, так что пустого экрана при медленной сети больше нет. Остальные страницы — отдельным шагом",
+    ]},
     { version: "1.69", date: "2026-09-30 14:44", changes: [
         "Глобальная шапка: стакан воды и кольца прогресса дня/недели теперь есть на всех страницах (Цели, Навыки, Тренировки, Челленджи, Языки, Календарь, Вехи, Магазин, Сообщество, История, Аккаунт), а не только на Дашборде. Клик по стакану — окно воды (добавить выпитое, сменить норму), клик по кольцу — сводка «что сделано / что осталось» с настройками. Показываются по тем же настройкам прогресса, что и на Дашборде; страница Дашборда осталась со своей шапкой",
     ]},
@@ -1106,6 +1109,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.70", date: "2026-09-30 12:05", changes: [
+        "Dashboard (pilot): instead of a plain \"Loading…\" text there is now a splash with the burning streak flame in the current theme colour (flicker and soft glow; the animation is turned off when the system asks for reduced motion). The flame shows up even before the page scripts have loaded, so a slow connection no longer means a blank screen. Other pages will follow separately",
+    ]},
     { version: "1.69", date: "2026-09-30 14:44", changes: [
         "Global header: the water glass and the day/week progress rings now appear on every page (Goals, Skills, Workouts, Challenges, Languages, Calendar, Milestones, Shop, Community, History, Account), not only on the Dashboard. Tap the glass for the water dialog (add water, change the goal); tap a ring for the done / left summary with settings. They follow the same progress settings as the Dashboard; the Dashboard page keeps its own header",
     ]},
