@@ -81,6 +81,9 @@ const DICT = {
     ch_edit_btn: "Edit",
     ch_edit_type_locked: "The type can't be changed after creation — it would change how existing entries are read.",
     ch_edit_save_error: "Couldn't save changes. Please try again.",
+    ch_target_for: "Target for",
+    ch_done_on: "Done on",
+    ch_pick_day_hint: "Tap a past day to add or fix its value.",
   },
   ru: {
     nav_open_menu: 'Открыть меню',
@@ -151,6 +154,9 @@ const DICT = {
     ch_edit_btn: "Править",
     ch_edit_type_locked: "Тип нельзя менять после создания — иначе изменится смысл уже внесённых записей.",
     ch_edit_save_error: "Не удалось сохранить изменения. Попробуйте ещё раз.",
+    ch_target_for: "Цель на",
+    ch_done_on: "Сделано",
+    ch_pick_day_hint: "Нажмите на прошедший день, чтобы внести или поправить значение.",
   },
 } as const
 

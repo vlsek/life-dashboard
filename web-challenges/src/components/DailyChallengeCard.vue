@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { t } from '../lib/i18n'
-import { computeDailyStats } from '../lib/challenges'
+import { computeDailyStats, defaultDayIdx } from '../lib/challenges'
 import { todayStr } from '../lib/date'
 import Icon from './Icon.vue'
 import type { Challenge, ChallengeEntry } from '../lib/types'
@@ -11,39 +11,61 @@ const emit = defineEmits<{
   abandon: [ch: Challenge]
   edit: [ch: Challenge]
   markCompleted: [ch: Challenge]
-  setToday: [challengeId: string, value: number]
+  setDay: [challengeId: string, dateStr: string, value: number]
 }>()
 
 const stats = computed(() => computeDailyStats(props.challenge, props.entries, todayStr()))
 
+// Выбранный день: null — по умолчанию (сегодня; после конца челленджа — последний день).
+// Клик по кружку прошедшего дня выбирает его — значение вносится/правится за этот день (BACKLOG 14, 11:28).
+const selectedIdx = ref<number | null>(null)
+const idx = computed(() => selectedIdx.value ?? defaultDayIdx(stats.value.todayIdx, stats.value.duration))
+const day = computed(() => stats.value.doneDays[idx.value])
+
 const numberValue = ref<string>('')
 watch(
-  () => stats.value.todayEntryValue,
-  (v) => {
-    numberValue.value = v == null ? '' : String(v)
+  () => [idx.value, day.value?.value] as const,
+  () => {
+    numberValue.value = day.value?.value == null ? '' : String(day.value.value)
   },
   { immediate: true },
 )
 
+const shortDate = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}`
+const unitText = computed(() => (props.challenge.unit ? ' ' + props.challenge.unit : ''))
+const dayLabel = computed(() => {
+  const d = day.value
+  if (!d) return ''
+  if (stats.value.isBoolean) return d.isToday ? t('ch_done_today_label') : `${t('ch_done_on')} ${shortDate(d.dateStr)}`
+  const head = d.isToday ? t('ch_target_today') : `${t('ch_target_for')} ${shortDate(d.dateStr)}:`
+  return `${head.replace(/:$/, '')} ${d.target ?? ''}${unitText.value}:`
+})
+
 function onCheckbox(e: Event) {
-  const checked = (e.target as HTMLInputElement).checked
-  emit('setToday', props.challenge.id, checked ? 1 : 0)
+  const d = day.value
+  if (!d || d.isFuture) return
+  emit('setDay', props.challenge.id, d.dateStr, (e.target as HTMLInputElement).checked ? 1 : 0)
 }
 function onNumberChange() {
+  const d = day.value
+  if (!d || d.isFuture) return
   const value = numberValue.value === '' ? 0 : parseFloat(numberValue.value) || 0
-  emit('setToday', props.challenge.id, value)
+  emit('setDay', props.challenge.id, d.dateStr, value)
 }
 
-function dotStyle(d: { isFuture: boolean; done: boolean; isToday: boolean }): Record<string, string> {
+function dotStyle(d: { i: number; isFuture: boolean; done: boolean; isToday: boolean }): Record<string, string> {
   const bg = d.isFuture ? 'var(--border)' : d.done ? 'var(--success)' : 'var(--danger)'
   return {
-    width: '10px',
-    height: '10px',
+    width: '12px',
+    height: '12px',
     borderRadius: '50%',
     display: 'inline-block',
+    padding: '0',
+    border: 'none',
     background: bg,
     opacity: !d.isFuture && !d.done ? '0.6' : '1',
-    boxShadow: d.isToday ? '0 0 0 2px var(--accent)' : 'none',
+    cursor: d.isFuture ? 'default' : 'pointer',
+    boxShadow: d.i === idx.value ? '0 0 0 2px var(--text)' : d.isToday ? '0 0 0 2px var(--accent)' : 'none',
   }
 }
 </script>
@@ -62,21 +84,49 @@ function dotStyle(d: { isFuture: boolean; done: boolean; isToday: boolean }): Re
     </div>
 
     <div class="mb-2.5 flex flex-wrap gap-[3px]">
-      <span v-for="d in stats.doneDays" :key="d.i" :title="d.dateStr" :style="dotStyle(d)"></span>
+      <button
+        v-for="d in stats.doneDays"
+        :key="d.i"
+        type="button"
+        :title="d.dateStr"
+        :aria-label="d.dateStr"
+        :disabled="d.isFuture"
+        :data-day="d.dateStr"
+        :data-selected="d.i === idx"
+        :style="dotStyle(d)"
+        @click="selectedIdx = d.i"
+      ></button>
     </div>
 
-    <div v-if="!stats.isOver" class="flex items-center gap-2">
-      <label v-if="stats.isBoolean" class="flex cursor-pointer items-center gap-1.5">
-        <input type="checkbox" :checked="stats.todayEntryValue === 1" @change="onCheckbox" />
-        {{ t('ch_done_today_label') }}
+    <p class="dim mb-2 text-xs">{{ t('ch_pick_day_hint') }}</p>
+
+    <div v-if="day && !day.isFuture" class="flex flex-wrap items-center gap-2" data-testid="day-input">
+      <label
+        v-if="stats.isBoolean"
+        class="flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2"
+        style="border: 1.5px solid var(--accent); background: var(--bg)"
+      >
+        <input type="checkbox" :checked="day.value === 1" data-testid="day-checkbox" @change="onCheckbox" />
+        <span data-testid="day-label">{{ dayLabel }}</span>
       </label>
       <template v-else>
-        <span class="dim text-sm">{{ t('ch_target_today') }} {{ stats.todayTarget }}{{ challenge.unit ? ' ' + challenge.unit : '' }}:</span>
-        <input v-model="numberValue" type="number" step="any" class="w-[90px]" placeholder="0" @change="onNumberChange" />
+        <span class="dim text-sm" data-testid="day-label">{{ dayLabel }}</span>
+        <!-- рамка акцентом и фон отличаются от карточки: раньше ячейка сливалась с фоном (владелец, 11:28) -->
+        <input
+          v-model="numberValue"
+          type="number"
+          step="any"
+          class="w-[110px] rounded-lg px-2.5 py-1.5 font-semibold"
+          style="border: 2px solid var(--accent); background: var(--bg); color: var(--text)"
+          placeholder="0"
+          data-testid="day-value"
+          @change="onNumberChange"
+        />
       </template>
     </div>
-    <template v-else>
-      <p class="dim text-sm">{{ t('ch_duration_over_note') }}</p>
+
+    <template v-if="stats.isOver">
+      <p class="dim mt-2 text-sm">{{ t('ch_duration_over_note') }}</p>
       <button @click="emit('markCompleted', challenge)">{{ t('ch_mark_completed_btn') }}</button>
     </template>
   </div>

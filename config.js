@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.60";
+const SITE_VERSION = "1.61";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.61", date: "2026-09-30 09:35", changes: [
+        "Челленджи: теперь можно вносить и править значения за прошедшие дни. Нажмите на кружок нужного дня в карточке ежедневного челленджа — под ним появится его дата, цель и поле ввода, значение сохранится именно за этот день (будущие дни недоступны). Поле ввода стало заметным: акцентная рамка и фон, отличающийся от карточки, — раньше оно сливалось с фоном",
+    ]},
     { version: "1.60", date: "2026-09-30 09:30", changes: [
         "Челленджи: теперь можно редактировать уже добавленные челленджи. На карточке появилась кнопка-карандаш: откроется та же форма, что и для своего челленджа, с заполненными значениями — можно поменять название, иконку, единицу, длительность, цели и количество. Тип челленджа и дата старта не меняются (иначе поменялся бы смысл уже внесённых записей), уже внесённый прогресс сохраняется",
     ]},
@@ -1078,6 +1081,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.61", date: "2026-09-30 09:35", changes: [
+        "Challenges: you can now add and fix values for past days. Tap the dot of the day in a daily challenge card — its date, target and an input field appear below, and the value is saved for that exact day (future days are unavailable). The input field is now easy to see: an accent border and a background different from the card, instead of blending into it",
+    ]},
     { version: "1.60", date: "2026-09-30 09:30", changes: [
         "Challenges: you can now edit challenges you have already added. Each card has a pencil button that opens the same form as a custom challenge, pre-filled — you can change the title, icon, unit, duration, targets and count. The challenge type and start date stay fixed (changing them would change the meaning of entries already logged), and your existing progress is kept",
     ]},

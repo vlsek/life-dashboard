@@ -1,6 +1,13 @@
 {
-  "version": "1.60",
+  "version": "1.61",
   "en": [
+    {
+      "version": "1.61",
+      "date": "2026-09-30 09:35",
+      "changes": [
+        "Challenges: you can now add and fix values for past days. Tap the dot of the day in a daily challenge card — its date, target and an input field appear below, and the value is saved for that exact day (future days are unavailable). The input field is now easy to see: an accent border and a background different from the card, instead of blending into it"
+      ]
+    },
     {
       "version": "1.60",
       "date": "2026-09-30 09:30",
@@ -1175,6 +1182,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.61",
+      "date": "2026-09-30 09:35",
+      "changes": [
+        "Челленджи: теперь можно вносить и править значения за прошедшие дни. Нажмите на кружок нужного дня в карточке ежедневного челленджа — под ним появится его дата, цель и поле ввода, значение сохранится именно за этот день (будущие дни недоступны). Поле ввода стало заметным: акцентная рамка и фон, отличающийся от карточки, — раньше оно сливалось с фоном"
+      ]
+    },
     {
       "version": "1.60",
       "date": "2026-09-30 09:30",

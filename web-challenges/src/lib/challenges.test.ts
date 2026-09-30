@@ -379,3 +379,30 @@ describe('formFromChallenge', () => {
     expect(patch).toMatchObject({ title: ch.title, icon: ch.icon, unit: ch.unit, duration_days: ch.duration_days, daily_target: 25 })
   })
 })
+
+// ---- Прошлые дни (BACKLOG 14, 11:28) ----
+import { computeDailyStats as computeStatsForDays, defaultDayIdx } from './challenges'
+
+describe('computeDailyStats — значение и цель по каждому дню', () => {
+  const ch = { type: 'daily_progressive' as const, start_date: '2026-09-01', duration_days: 5, daily_target: null, start_value: 10, daily_increment: 5 }
+  const e = (date: string, value: number | null) => ({ id: date, user_id: 'u', challenge_id: 'c', date, value, note: null, created_at: '' }) as ChallengeEntry
+
+  it('у каждого дня есть value (или null) и target', () => {
+    const s = computeStatsForDays(ch, [e('2026-09-01', 12), e('2026-09-03', 20)], '2026-09-03')
+    expect(s.doneDays.map((d) => d.value)).toEqual([12, null, 20, null, null])
+    expect(s.doneDays.map((d) => d.target)).toEqual([10, 15, 20, 25, 30])
+    expect(s.doneDays.map((d) => d.done)).toEqual([true, false, true, false, false])
+  })
+
+  it('boolean-челлендж: цели нет (null), значение 1/0', () => {
+    const s = computeStatsForDays({ ...ch, type: 'daily_boolean', start_value: null, daily_increment: null }, [e('2026-09-02', 1)], '2026-09-03')
+    expect(s.doneDays[1]).toMatchObject({ value: 1, target: null, done: true })
+    expect(s.doneDays[0]).toMatchObject({ value: null, done: false })
+  })
+})
+
+describe('defaultDayIdx', () => {
+  it('сегодняшний день внутри челленджа', () => expect(defaultDayIdx(2, 5)).toBe(2))
+  it('челлендж закончился — последний день', () => expect(defaultDayIdx(9, 5)).toBe(4))
+  it('челлендж ещё не начался — первый день (он будущий)', () => expect(defaultDayIdx(-2, 5)).toBe(0))
+})

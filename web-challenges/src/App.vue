@@ -8,7 +8,7 @@ import CumulativeChallengeCard from './components/CumulativeChallengeCard.vue'
 import { useChallenges } from './lib/useChallenges'
 import { t } from './lib/i18n'
 import { ref } from 'vue'
-import { localDateOfTimestamp, todayStr } from './lib/date'
+import { localDateOfTimestamp } from './lib/date'
 import type { Challenge, ChallengeTemplate, CustomChallengeFormInput } from './lib/types'
 
 const {
@@ -70,8 +70,9 @@ async function onAbandon(ch: Challenge) {
 async function onDeleteEntry(id: string) {
   await deleteEntry(id)
 }
-async function onSetToday(challengeId: string, value: number) {
-  await upsertDailyEntry(challengeId, todayStr(), value)
+// Значение за конкретный день челленджа (сегодня или прошедший) — дату отдаёт карточка.
+async function onSetDay(challengeId: string, dateStr: string, value: number) {
+  await upsertDailyEntry(challengeId, dateStr, value)
 }
 </script>
 
@@ -112,7 +113,7 @@ async function onSetToday(challengeId: string, value: number) {
             @abandon="onAbandon"
             @edit="editing = $event"
             @mark-completed="markCompleted"
-            @set-today="onSetToday"
+            @set-day="onSetDay"
           />
         </template>
 

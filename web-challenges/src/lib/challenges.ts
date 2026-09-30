@@ -30,6 +30,14 @@ export interface DayDot {
   done: boolean
   isFuture: boolean
   isToday: boolean
+  value: number | null // внесённое значение за этот день (null — записи нет)
+  target: number | null // цель на этот день (null — у типа нет числовой цели)
+}
+
+// Какой день выбран в карточке по умолчанию: сегодняшний; если челлендж уже закончился — последний
+// день. Если он ещё не начался (todayIdx < 0), берём первый — он будущий, ввод для него закрыт.
+export function defaultDayIdx(todayIdx: number, duration: number): number {
+  return Math.max(0, Math.min(todayIdx, duration - 1))
 }
 
 export interface DailyStats {
@@ -63,7 +71,7 @@ export function computeDailyStats(
     const e = entryByDate[dateStr]
     const target = targetForDay(ch, i)
     const done = isBoolean ? e?.value === 1 : !!(e && target != null && (e.value ?? 0) >= target)
-    doneDays.push({ i, dateStr, done, isFuture: i > todayIdx, isToday: i === todayIdx })
+    doneDays.push({ i, dateStr, done, isFuture: i > todayIdx, isToday: i === todayIdx, value: e?.value ?? null, target })
   }
   const completedCount = doneDays.filter((d) => d.done).length
   const isOver = todayIdx >= duration
