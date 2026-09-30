@@ -52,3 +52,23 @@ export function trainingDaysByMuscle(entries: EntryLite[], exercises: ExLite[], 
 export function unmappedExercises<T extends ExLite>(exercises: T[]): T[] {
   return exercises.filter((ex) => musclesForExercise(ex.name).length === 0)
 }
+
+// Периоды статистики (BACKLOG 3.2): сколько последних дней смотреть. Окно включает сегодня.
+export const STATS_PERIODS = [7, 30, 90] as const
+export type StatsPeriod = (typeof STATS_PERIODS)[number]
+export const DEFAULT_STATS_PERIOD: StatsPeriod = 30
+
+export function isStatsPeriod(v: unknown): v is StatsPeriod {
+  return (STATS_PERIODS as readonly unknown[]).includes(v)
+}
+
+// Дата начала окна из N последних дней (включая сегодня): N=7 → сегодня и 6 дней назад.
+export function periodStart(today: string, days: number): string {
+  return addDaysIso(today, -(days - 1))
+}
+
+// Группы мышц, которые за период ни разу не были в работе: все из `all`, которых нет в статистике.
+export function untrainedMuscles(stats: { muscle: MuscleId }[], all: readonly MuscleId[]): MuscleId[] {
+  const trained = new Set(stats.map((s) => s.muscle))
+  return all.filter((m) => !trained.has(m))
+}

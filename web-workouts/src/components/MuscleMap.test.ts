@@ -75,7 +75,7 @@ describe('MuscleMap', () => {
     expect(w.find('[data-testid="muscle-detail"]').exists()).toBe(true)
   })
 
-  it('статистика: чаще всего тренируемые группы за 30 дней и список непривязанных упражнений', async () => {
+  it('статистика: чаще всего тренируемые группы (период по умолчанию — 30 дней) и список непривязанных упражнений', async () => {
     const w = await openMap([entry('bench', '2026-09-28'), entry('bench', '2026-09-25'), entry('squat', '2026-09-29')], [bench, squat, yoga])
     const stats = w.find('[data-testid="muscle-stats"]').text()
     expect(stats).toContain('Грудь')
@@ -85,6 +85,58 @@ describe('MuscleMap', () => {
 
   it('пустая история — сообщение вместо статистики', async () => {
     const w = await openMap([], [bench])
-    expect(w.find('[data-testid="muscle-stats"]').text()).toContain('За 30 дней нет тренировок')
+    expect(w.find('[data-testid="muscle-stats"]').text()).toContain('За выбранный период нет тренировок')
+  })
+
+  describe('статистика: период', () => {
+    // жим — 2026-09-28 (2 дня назад), 2026-09-10 (20 дней назад), 2026-07-25 (67 дней назад)
+    const entries = [entry('bench', '2026-09-28'), entry('bench', '2026-09-10'), entry('bench', '2026-07-25')]
+    const daysOf = (w: ReturnType<typeof mount>) => w.find('[data-testid="muscle-stats"]').text()
+
+    it('по умолчанию 30 дней: старая запись (67 дней назад) не считается, кнопка 30 нажата', async () => {
+      const w = await openMap(entries, [bench])
+      expect(w.find('[data-testid="muscle-period-30"]').attributes('aria-pressed')).toBe('true')
+      expect(daysOf(w)).toContain('2 дн.')
+    })
+
+    it('7 дней: только запись 2 дня назад; 90 дней: все три', async () => {
+      const w = await openMap(entries, [bench])
+      await w.find('[data-testid="muscle-period-7"]').trigger('click')
+      expect(daysOf(w)).toContain('1 дн.')
+      await w.find('[data-testid="muscle-period-90"]').trigger('click')
+      expect(daysOf(w)).toContain('3 дн.')
+    })
+
+    it('выбор периода запоминается между открытиями', async () => {
+      const w = await openMap(entries, [bench])
+      await w.find('[data-testid="muscle-period-90"]').trigger('click')
+      expect(localStorage.getItem('workouts_musclemap_period')).toBe('90')
+      // блок уже помнит, что он раскрыт, — второй раз просто монтируем
+      const again = mount(MuscleMap, { props: { entries, exercises: [bench], today: TODAY } })
+      expect(again.find('[data-testid="muscle-period-90"]').attributes('aria-pressed')).toBe('true')
+    })
+
+    it('мусор в хранилище → период по умолчанию', async () => {
+      localStorage.setItem('workouts_musclemap_period', '45')
+      const w = await openMap(entries, [bench])
+      expect(w.find('[data-testid="muscle-period-30"]').attributes('aria-pressed')).toBe('true')
+    })
+
+    it('выводятся все группы за период, а не только шесть', async () => {
+      const exs = [bench, squat, mk('pull', 'Подтягивания'), mk('plank', 'Планка'), mk('dip', 'Отжимания на брусьях'), mk('curl', 'Сгибания на бицепс')]
+      const w = await openMap(exs.map((e) => entry(e.id, '2026-09-29')), exs)
+      const names = w.findAll('[data-testid="muscle-stats"] .w-28')
+      expect(names.length).toBeGreaterThan(6)
+    })
+
+    it('«не тренировалось» перечисляет остальные группы; при пустой статистике строки нет', async () => {
+      const w = await openMap([entry('bench', '2026-09-28')], [bench])
+      const line = w.find('[data-testid="muscle-untrained"]').text()
+      expect(line).toContain('Не тренировалось за период')
+      expect(line).toContain('Ягодицы')
+      expect(line).not.toContain('Грудь')
+      const empty = await openMap([], [bench])
+      expect(empty.find('[data-testid="muscle-untrained"]').exists()).toBe(false)
+    })
   })
 })

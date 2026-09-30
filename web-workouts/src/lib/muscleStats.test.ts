@@ -61,3 +61,36 @@ describe('unmappedExercises', () => {
     expect(unmappedExercises(ex).map((e) => e.id)).toEqual(['yoga'])
   })
 })
+
+import { DEFAULT_STATS_PERIOD, STATS_PERIODS, isStatsPeriod, periodStart, untrainedMuscles } from './muscleStats'
+import { MUSCLE_IDS } from './muscles'
+
+describe('период статистики', () => {
+  it('периоды 7/30/90, по умолчанию 30; isStatsPeriod принимает только их', () => {
+    expect([...STATS_PERIODS]).toEqual([7, 30, 90])
+    expect(DEFAULT_STATS_PERIOD).toBe(30)
+    expect(isStatsPeriod(7)).toBe(true)
+    expect(isStatsPeriod(45)).toBe(false)
+    expect(isStatsPeriod('30')).toBe(false)
+    expect(isStatsPeriod(NaN)).toBe(false)
+  })
+  it('periodStart: окно из N дней включает сегодня', () => {
+    expect(periodStart('2026-09-30', 7)).toBe('2026-09-24')
+    expect(periodStart('2026-09-30', 1)).toBe('2026-09-30')
+    expect(periodStart('2026-03-01', 30)).toBe('2026-01-31')
+  })
+})
+
+describe('untrainedMuscles', () => {
+  it('возвращает группы, которых нет в статистике, в порядке справочника', () => {
+    const rest = untrainedMuscles([{ muscle: 'chest' }, { muscle: 'abs' }], MUSCLE_IDS)
+    expect(rest).not.toContain('chest')
+    expect(rest).not.toContain('abs')
+    expect(rest).toHaveLength(MUSCLE_IDS.length - 2)
+    expect(rest[0]).toBe(MUSCLE_IDS.find((m) => m !== 'chest' && m !== 'abs'))
+  })
+  it('пустая статистика — все группы; всё потренировано — пусто', () => {
+    expect(untrainedMuscles([], MUSCLE_IDS)).toEqual([...MUSCLE_IDS])
+    expect(untrainedMuscles(MUSCLE_IDS.map((muscle) => ({ muscle })), MUSCLE_IDS)).toEqual([])
+  })
+})

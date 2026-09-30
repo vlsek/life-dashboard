@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
-import { todayStr, addDaysIso } from '../lib/date'
+import { todayStr } from '../lib/date'
 import { MUSCLE_IDS, referenceFor, ruleForExercise, type MuscleId } from '../lib/muscles'
 import { BACK_SHAPES, FRONT_SHAPES, type MuscleShape } from '../lib/muscleShapes'
-import { isTrainedRecently, lastTrainedByMuscle, trainingDaysByMuscle, unmappedExercises } from '../lib/muscleStats'
+import {
+  DEFAULT_STATS_PERIOD,
+  STATS_PERIODS,
+  isStatsPeriod,
+  isTrainedRecently,
+  lastTrainedByMuscle,
+  periodStart,
+  trainingDaysByMuscle,
+  unmappedExercises,
+  untrainedMuscles,
+  type StatsPeriod,
+} from '../lib/muscleStats'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 
 // Карта мышц (BACKLOG 3.2, первый срез): зелёные — мышцы, задействованные за последние 4 дня,
@@ -33,7 +44,27 @@ function toggle() {
 const today = computed(() => props.today ?? todayStr())
 const last = computed(() => lastTrainedByMuscle(props.entries, props.exercises, today.value))
 const done = computed(() => new Set(MUSCLE_IDS.filter((m) => isTrainedRecently(last.value[m], today.value))))
-const stats = computed(() => trainingDaysByMuscle(props.entries, props.exercises, today.value, addDaysIso(today.value, -29)).slice(0, 6))
+const PERIOD_KEY = 'workouts_musclemap_period'
+function readPeriod(): StatsPeriod {
+  try {
+    const v = Number(localStorage.getItem(PERIOD_KEY))
+    return isStatsPeriod(v) ? v : DEFAULT_STATS_PERIOD
+  } catch {
+    return DEFAULT_STATS_PERIOD
+  }
+}
+const period = ref<StatsPeriod>(readPeriod())
+function setPeriod(p: StatsPeriod) {
+  period.value = p
+  try {
+    localStorage.setItem(PERIOD_KEY, String(p))
+  } catch {
+    /* выбор периода не критичен */
+  }
+}
+// Все группы, которые были в работе за период (а не только топ), по убыванию числа дней.
+const stats = computed(() => trainingDaysByMuscle(props.entries, props.exercises, today.value, periodStart(today.value, period.value)))
+const untrained = computed(() => untrainedMuscles(stats.value, MUSCLE_IDS))
 const maxDays = computed(() => Math.max(1, ...stats.value.map((s) => s.days)))
 const unmapped = computed(() => unmappedExercises(props.exercises))
 
@@ -153,13 +184,36 @@ function shapeStyle(m: MuscleId) {
       </div>
 
       <div class="mt-4" data-testid="muscle-stats">
-        <div class="mb-1 text-[0.85em] font-semibold">{{ t('workouts_muscles_stats_title') }}</div>
+        <div class="mb-1 flex flex-wrap items-center gap-2">
+          <span class="text-[0.85em] font-semibold">{{ t('workouts_muscles_stats_title') }}</span>
+          <span class="ml-auto flex gap-1" role="group" :aria-label="t('workouts_muscles_period_label')">
+            <button
+              v-for="p in STATS_PERIODS"
+              :key="p"
+              type="button"
+              class="rounded-lg border px-2 py-0.5 text-[0.8em]"
+              :style="{
+                borderColor: 'var(--border)',
+                background: period === p ? 'var(--accent)' : 'transparent',
+                color: period === p ? 'var(--accent-text)' : 'var(--text)',
+              }"
+              :aria-pressed="period === p"
+              :data-testid="'muscle-period-' + p"
+              @click="setPeriod(p)"
+            >
+              {{ p }} {{ t('workouts_muscles_days_suffix') }}
+            </button>
+          </span>
+        </div>
         <p v-if="stats.length === 0" class="m-0 text-[0.85em]" style="color: var(--text-dim)">{{ t('workouts_muscles_stats_empty') }}</p>
         <div v-for="s in stats" :key="s.muscle" class="mb-1 flex items-center gap-2 text-[0.85em]">
           <span class="w-28 shrink-0 truncate">{{ muscleName(s.muscle) }}</span>
           <span class="h-2 rounded" style="background: var(--accent)" :style="{ width: (s.days / maxDays) * 100 + '%', minWidth: '4px' }"></span>
           <span style="color: var(--text-dim)">{{ s.days }} {{ t('workouts_muscles_days_suffix') }}</span>
         </div>
+        <p v-if="stats.length && untrained.length" class="m-0 mt-2 text-[0.8em]" style="color: var(--text-dim)" data-testid="muscle-untrained">
+          {{ t('workouts_muscles_untrained') }} {{ untrained.map(muscleName).join(', ') }}
+        </p>
         <p v-if="unmapped.length" class="m-0 mt-2 text-[0.8em]" style="color: var(--text-dim)" data-testid="muscle-unmapped">
           {{ t('workouts_muscles_unmapped') }} {{ unmapped.map((x) => x.name).join(', ') }}
         </p>

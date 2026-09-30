@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.51";
+const SITE_VERSION = "1.52";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.52", date: "2026-09-30 07:23", changes: [
+        "Тренировки (пилот), карта мышц: статистика стала гибче — переключатель периода 7 / 30 / 90 дней (выбор запоминается), вместо топ-6 выводятся все группы мышц, которые были в работе за период, а под ними строка «Не тренировалось за период» со списком остальных групп",
+    ]},
     { version: "1.51", date: "2026-09-30 10:10", changes: [
         "Дашборд, «Подходы»: список сохранённых «особенностей подхода» больше не обрезается на телефоне — теперь он открывается поверх страницы под полем (или над ним, если снизу мало места из-за клавиатуры), как в классике. Выбор варианта тапом и крестик «убрать вариант» работают на сенсорных экранах; список закрывается тапом мимо",
     ]},
@@ -1048,6 +1051,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.52", date: "2026-09-30 07:23", changes: [
+        "Workouts (pilot), muscle map: the statistics are more flexible — a 7 / 30 / 90 day period switch (your choice is remembered), all muscle groups worked in the period are listed instead of the top 6, and a \"Not worked in this period\" line lists the rest",
+    ]},
     { version: "1.51", date: "2026-09-30 10:10", changes: [
         "Dashboard, \"Sets\": the list of saved set variations is no longer clipped on phones — it now opens over the page below the field (or above it when the keyboard leaves little room below), like in the classic version. Tapping a variation and the \"remove variation\" cross work on touch screens; the list closes with a tap outside",
     ]},
