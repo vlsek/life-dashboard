@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.41";
+const SITE_VERSION = "1.42";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.42", date: "2026-09-30 05:10", changes: [
+        "Фаза 2: «Вход» и «Онбординг» теперь на коротких адресах /login/ и /onboarding/ вместо /login-vue/ и /onboarding-vue/, а классические версии — в /legacy/login.html и /legacy/onboarding.html. Старые адреса /login.html и /onboarding.html перенаправляют на новые (с сохранением параметров возврата из Google), корень сайта ведёт на /login/",
+    ]},
     { version: "1.41", date: "2026-09-30 04:44", changes: [
         "Тренировки: новый блок «Карта мышц» (свёрнут по умолчанию). Схема тела спереди и сзади: зелёным подсвечены мышцы, задействованные за последние 4 дня, серым — остальные. Клик по мышце показывает ваши упражнения на неё (с кнопкой «Добавить запись») и подсказки, что ещё можно делать. Ниже — какие группы мышц вы тренировали чаще всего за 30 дней. Мышцы определяются по названию упражнения (русские и английские названия); упражнения, которые не удалось привязать, перечислены отдельно",
     ]},
@@ -1016,6 +1019,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.42", date: "2026-09-30 05:10", changes: [
+        "Phase 2: \"Sign in\" and \"Onboarding\" are now at the short addresses /login/ and /onboarding/ instead of /login-vue/ and /onboarding-vue/, and the classic versions live at /legacy/login.html and /legacy/onboarding.html. The old /login.html and /onboarding.html addresses redirect to the new ones (keeping the Google return parameters), and the site root leads to /login/",
+    ]},
     { version: "1.41", date: "2026-09-30 04:44", changes: [
         "Workouts: new \"Muscle map\" block (collapsed by default). A front and back body diagram: muscles worked in the last 4 days are green, the rest are grey. Tap a muscle to see your exercises for it (with an \"Add record\" button) and suggestions for what else to do. Below, the muscle groups you trained most over the last 30 days. Muscles are recognised from the exercise name (Russian and English); exercises that could not be matched are listed separately",
     ]},

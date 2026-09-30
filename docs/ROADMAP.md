@@ -369,6 +369,12 @@ v1.41 — Фаза 3, BACKLOG 3.2 «Карта мышц», первый срез
   2D-фигура спереди/сзади (`lib/muscleShapes.ts`, `MuscleMap.vue`), клик → упражнения и подсказки,
   топ групп за 30 дней. Без миграций и новых запросов. 31 новый тест (102 в web-workouts), все
   упражнения встроенных шаблонов покрыты справочником (тест). Собран только workouts/ — общие файлы не менялись.
+v1.42 — Фаза 2, этап A для Логина и Онбординга (агент 4): /login/ и /onboarding/ (без -vue), классика в /legacy/login.html
+  и /legacy/onboarding.html (пути с ../, редиректы абсолютные), корневые заглушки login.html и onboarding.html,
+  manifest.json start_url=/login/ (id не тронут), index.html -> /login/ с сохранением ?query/#hash, sw.js ASSETS + CACHE_NAME v15.
+  Google redirectTo намеренно остался /login.html (через заглушку) — ROUTES.oauthReturn. Пересобраны только login и
+  onboarding (остальные пилоты на -vue не ссылаются; правки в 12 комментариях supabase.ts на бандлы не влияют).
+  Новое: scripts/check_dead_links.py (проверка внутренних ссылок, мутационно проверена). Тесты: login 9, onboarding 13, vue-tsc чист.
 v1.03 — Пилот Сообщества: заявки в друзья, друзья отдельно от подписок, «В друзья»
   (lib/friends.ts, PersonChip.vue, 17 тестов, в т.ч. UI-тест App.vue с подменой Supabase).
 v1.02 — Сообщество (классика): то же в ванильном community.js. Фильтр «Только друзья» =

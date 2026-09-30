@@ -2,31 +2,11 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<script>(function(){try{var t=localStorage.getItem("site_theme")||"dark";document.documentElement.className="theme-"+t;var bg={dark:"#121212",monet:"#0d0703",light:"#f7f4ef",pink:"#fff0f5"}[t];var m=document.querySelector('meta[name="theme-color"]');if(m&&bg)m.setAttribute("content",bg);}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<meta name="theme-color" content="#121212">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Dashboard">
-<title data-i18n="onb_title">Расскажи о себе</title>
-<link rel="preconnect" href="https://haxmgtflegsfpxieaydv.supabase.co" crossorigin>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="stylesheet" href="style.css">
-<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta http-equiv="refresh" content="0; url=/onboarding/">
+<meta name="robots" content="noindex">
+<title>Life Dashboard</title>
+<script>location.replace("/onboarding/" + location.search + location.hash);</script>
 </head>
-<body class="centered-body">
-<main class="auth-main" style="max-width:440px;">
-    <div id="lang-switch-slot" style="display:flex; justify-content:center; margin-bottom:14px;"></div>
-    <h1 data-i18n="onb_h1">👋 Пара вопросов для старта</h1>
-    <p class="dim" data-i18n="onb_intro">Это поможет сразу подобрать метрики под твою цель. Можно будет поменять что угодно позже.</p>
-    <div class="card" id="form-card" data-i18n="loading_ellipsis">Загрузка…</div>
-</main>
-<script defer src="i18n.js"></script>
-<script defer src="theme.js"></script>
-<script defer src="config.js"></script>
-<script defer src="onboarding.js"></script>
-</body>
+<body><p><a href="/onboarding/">/onboarding/</a></p></body>
 </html>

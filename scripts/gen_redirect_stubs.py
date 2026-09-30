@@ -6,7 +6,7 @@
 (см. docs/HANDOFF.md), поэтому — обычный HTML: meta refresh (без JS) + location.replace (с сохранением
 ?query и #hash). Запуск: python3 scripts/gen_redirect_stubs.py — идемпотентен.
 
-Логин/Онбординг сюда пока НЕ входят (их переезд — отдельный этап, docs/PHASE2_DECISIONS.md, раздел 2).
+Логин и Онбординг входят с v1.34 (этап A, docs/PHASE2_DECISIONS.md, раздел 2). Admin не переезжает (решение владельца).
 """
 import pathlib
 
@@ -26,6 +26,8 @@ STUBS = {
     "community.html": "/community/",
     "history.html": "/history/",
     "account.html": "/account/",
+    "login.html": "/login/",
+    "onboarding.html": "/onboarding/",
 }
 
 TEMPLATE = """<!DOCTYPE html>

@@ -2,7 +2,7 @@
   "name": "Life Dashboard",
   "short_name": "Dashboard",
   "description": "Личный трекер целей, метрик и привычек",
-  "start_url": "/login.html",
+  "start_url": "/login/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

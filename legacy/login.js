@@ -2,9 +2,9 @@ let mode = "login";
 
 async function redirectAfterAuth() {
     const session = await getSession();
-    if (!session) { window.location.href = "login.html"; return; }
+    if (!session) { window.location.href = "/login.html"; return; }
     const { data: profile } = await sb.from("profiles").select("onboarded").eq("user_id", session.user.id).maybeSingle();
-    window.location.href = profile?.onboarded ? "/dashboard/" : "onboarding.html";
+    window.location.href = profile?.onboarded ? "/dashboard/" : "/onboarding.html";
 }
 
 function describeError(e) {
@@ -79,7 +79,7 @@ function renderForm() {
                 const { data, error } = await sb.auth.signUp({ email, password });
                 if (error) { msg.textContent = t("login_error_prefix") + describeError(error); console.error(error); return; }
                 if (data.session) {
-                    window.location.href = "onboarding.html";
+                    window.location.href = "/onboarding.html";
                 } else {
                     msg.textContent = t("login_signup_check_email");
                 }

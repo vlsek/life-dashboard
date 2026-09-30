@@ -2,8 +2,12 @@
 // переключении сайта на новый стек (см. ROADMAP.md, B-cutover) поменять пути в одном файле.
 // Дашборд пока остаётся ванильным (дневные метрики ещё переносятся), поэтому ведёт на .html.
 export const ROUTES = {
-  login: '/login-vue/',
-  onboarding: '/onboarding-vue/',
+  login: '/login/',
+  onboarding: '/onboarding/',
+  // Возврат из Google остаётся на старом адресе: он заведомо есть в Redirect URLs Supabase, а корневая
+  // заглушка login.html пересылает на /login/ с сохранением ?code= и хэша (этап B: перейти на /login/
+  // после проверки списка разрешённых адресов).
+  oauthReturn: '/login.html',
   dashboard: '/dashboard/',
   portfolio: 'https://portfolio.orneryhero.workers.dev/',
 } as const

@@ -74,7 +74,7 @@ export function useLogin() {
     msg.value = t('login_please_wait')
     // ВАЖНО: этот адрес должен быть в списке разрешённых Redirect URLs проекта Supabase
     // (Authentication → URL Configuration), иначе Supabase вернёт на Site URL.
-    const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + ROUTES.login } })
+    const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + ROUTES.oauthReturn } })
     if (error) msg.value = t('login_error_prefix') + describeError(error, labels())
     // при успехе браузер сразу уходит на Google; возврат обработает checkExistingSession()
   }

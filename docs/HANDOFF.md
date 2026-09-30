@@ -62,13 +62,13 @@ COORDINATION.md/git log верь им, а не этому файлу.
 
 Четыре фазы (порядок задан владельцем, верх COORDINATION.md)
 1. Миграция на Vue — ЗАКРЫТА (v1.13): все страницы существуют как Vue-пилоты (14 штук: web-<стр>/).
-2. Пилот становится основным, ванильный сайт — в /legacy — почти закрыта. Переехали на короткие адреса
-   (/<стр>/ без -vue, классика в /legacy/<старое-имя>.html, корневые заглушки-редиректы со старых
+2. Пилот становится основным, ванильный сайт — в /legacy — по коду ЗАКРЫТА (v1.42). Все 14 пилотов на коротких
+   адресах (/<стр>/ без -vue, классика в /legacy/<старое-имя>.html, корневые заглушки-редиректы со старых
    адресов): history, milestones, calendar, shop, challenges, workouts, skills, languages (классика
-   /legacy/english.html), community, goals, dashboard, account. ОСТАЛОСЬ: Логин/Онбординг (этап A из
-   docs/PHASE2_DECISIONS.md — login-vue/, onboarding-vue/ пока на старых адресах; в работе у агента 4,
-   проверь COORDINATION.md) и Admin (admin.html остаётся в корне, пилота нет — решение за владельцем).
-   Владельцу до деплоя: добавить /login/, /account/ и /legacy/account.html в Supabase Redirect URLs.
+   /legacy/english.html), community, goals, dashboard, account, login, onboarding. Admin (admin.html) остаётся
+   классикой в корне — решение владельца, Vue-версия не нужна. ОСТАЛОСЬ: ручная проверка владельцем на боевом
+   домене и косметический этап B (см. «ОСТАЁТСЯ ПО ФАЗЕ 2» ниже, в рецепте переезда). Supabase Redirect URLs
+   владелец уже добавил (/login, /account/ и /legacy/account.html).
 3. Фаза 3 (docs/BACKLOG.md) — НАЧАТА по прямому решению владельца («бери любые задачи из 3 этапа, только
    отмечай»), хотя фаза 2 формально не закрыта: правило «не начинать следующую фазу» не отменено,
    исключение — прямой запрос владельца. Готово: вечернее напоминание (v1.19), «Планы» с временем (v1.20),
@@ -83,10 +83,11 @@ COORDINATION.md/git log верь им, а не этому файлу.
 
 Карта адресов и папок (после фазы 2)
 - Пилот: исходники web-<стр>/ (свой mini-Vite-проект), сборка — в корневую папку /<стр>/ (коммитится,
-  раздаётся Workers). Исключение до конца этапа A: login-vue/, onboarding-vue/.
+  раздаётся Workers).
 - Классика: legacy/<имя>.html + legacy/<имя>.js (общие config.js, i18n.js, style.css, datacache.js,
-  offline-cache.js, theme.js — в корне, из legacy подключаются как ../x). В корне остаются login.html,
-  onboarding.html, admin.html, index.html и заглушки-редиректы старых адресов (scripts/gen_redirect_stubs.py).
+  offline-cache.js, theme.js — в корне, из legacy подключаются как ../x). В корне остаются admin.html,
+  index.html (редирект на /login/) и 14 заглушек-редиректов старых адресов, включая login.html и onboarding.html
+  (scripts/gen_redirect_stubs.py).
 - Взаимные ссылки: в пилоте — одна неприметная ссылка «классика» внизу выдвижного меню (константа
   classicHref в каждом AppShell.vue); в классике — «✨ Попробовать новый дизайн» (config.js renderNav).
 - sw.js: список ASSETS + CACHE_NAME (сейчас v13+); при переезде страницы или добавлении файла в shell — бампать.
@@ -292,10 +293,27 @@ Astro тут не даёт преимуществ. TypeScript — типы. Tail
 ГРАБЛИ (нашёл агент 1, v1.23): любой редирект/ссылка на другую страницу внутри классических .js/config.js
 должен быть АБСОЛЮТНЫМ (`/login.html`, не `login.html`) — со страницы в /legacy/ относительный путь ведёт на
 /legacy/<...> и даёт 404. После каждого переезда: grep `location.href *= *"[a-z-]+\.html"` по legacy/ и config.js.
-Остались открытыми: Логин/Онбординг и заглушки старых адресов — см. docs/PHASE2_DECISIONS.md.
 Обратная ссылка пилот→классика сделана агентом 7 (v1.39): плашки pilot_badge нет, внизу выдвижного
 меню каждого AppShell.vue — неприметная `legacy-<стр>` (константа `classicHref`, ведёт на
 /legacy/<имя>.html; старые корневые адреса — только редирект-заглушки, на них НЕ ссылаться).
+ПЕРЕД ПУШЕМ: python3 scripts/check_dead_links.py (без сети; ловит ссылки на несуществующие адреса в классике, legacy/,
+исходниках пилотов, pages[] в config.js, sw.js ASSETS, manifest.json и в собранных <страница>/index.html; проверено
+мутационным тестом на 4 видах поломок). Заодно сверяет base из vite.config.ts с папкой сборки.
+
+ОСТАЁТСЯ ПО ФАЗЕ 2 (на v1.42, 2026-09-30; Логин/Онбординг и Account закрыты, Admin — остаётся классикой по решению владельца):
+1. Ручная проверка ВЛАДЕЛЬЦЕМ на боевом домене после деплоя v1.42 (локально Google OAuth и PWA не проверить):
+   вход по email; регистрация -> онбординг (есть переключатель RU/EN) -> дашборд; вход через Google; выход из пилота
+   и из /legacy/; старые закладки /login.html?x=1#y=2 и /onboarding.html; запуск уже установленного PWA
+   (start_url теперь /login/, id=/login.html НАМЕРЕННО не менялся — идентичность установленного PWA).
+2. Этап B (косметика, не срочно): заменить прошитые `/login.html` и `/onboarding.html` (config.js requireAuth/logout/
+   requireOnboarded, legacy/login.js, legacy/onboarding.js, dashboard.js, в пилотах lib/supabase.ts logout() и
+   useX.ts) на `/login/` и `/onboarding/` — уберёт лишний переход через заглушку. Google `redirectTo` СЕЙЧАС
+   намеренно `/login.html` (ROUTES.oauthReturn в web-login/src/lib/routes.ts): этот адрес заведомо в Redirect URLs
+   Supabase, заглушка донесёт ?code= и #hash до /login/. Менять на `/login/` только после того, как владелец
+   подтвердит точную запись (со слэшем или маска) в Supabase -> Authentication -> URL Configuration.
+   Заглушки остаются НАВСЕГДА (закладки, установленные PWA, письма Supabase со старыми ссылками).
+3. Необязательно: ссылки «классика <-> новая версия» на login/onboarding (одобрены в PHASE2_DECISIONS, раздел 2,
+   пункт 2; не сделаны — у этих страниц нет сайдбара).
 
 Актуальное состояние пилота (на v1.36)
 Каждая страница — отдельный mini-Vite-проект web-<page>/ → /<page>/ со своими копиями общих кусков (код
