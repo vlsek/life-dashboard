@@ -28,6 +28,7 @@ watch(
 
 const newText = ref('')
 const newTime = ref('')
+const newDone = ref(false)
 const perm = ref<NotifyPermission>(notifyPermission())
 async function enableNotifications() {
   perm.value = await requestNotifyPermission()
@@ -43,9 +44,11 @@ async function addCustom() {
   const text = newText.value
   if (!text.trim()) return
   const time = newTime.value || null
+  const done = newDone.value
   newText.value = ''
   newTime.value = ''
-  await addCustomItem(text, time)
+  newDone.value = false
+  await addCustomItem(text, time, done)
 }
 
 function openGoalPicker() {
@@ -137,6 +140,10 @@ const collapsed = ref(false)
     <div class="mt-2 flex flex-wrap gap-2">
       <input v-model="newText" type="text" class="min-w-40 flex-1" :placeholder="t('dash_planned_custom_placeholder')" data-test="custom-input" @keydown.enter.prevent="addCustom" />
       <input v-model="newTime" type="time" class="plan-time" :title="t('plan_time_label')" data-test="new-time" />
+      <label class="inline-flex items-center gap-1 text-sm" :title="t('dash_planned_done_already_title')">
+        <input v-model="newDone" type="checkbox" data-test="new-done" />
+        {{ t('dash_planned_done_already') }}
+      </label>
       <button type="button" class="secondary" data-test="add-custom" @click="addCustom">{{ t('add_btn') }}</button>
       <button type="button" data-test="add-goal" @click="openGoalPicker">{{ t('dash_planned_add_from_goals_btn') }}</button>
     </div>

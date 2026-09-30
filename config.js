@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.55";
+const SITE_VERSION = "1.56";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.56", date: "2026-09-30 07:33", changes: [
+        "Дашборд (пилот), блок «Планы»: при добавлении своего пункта можно поставить галочку «Уже сделано» — пункт сразу создаётся выполненным и идёт в прогресс дня и недели. Это способ занести то, что вы сделали не из списка целей, не отмечая потом галочкой (первый шаг к объединению «Что полезного сделал за день» и «Планов»)",
+    ]},
     { version: "1.55", date: "2026-09-30 10:29", changes: [
         "Дашборд: клик по баллам в профиле теперь открывает окно «Баллы» — за что начислено сегодня и за последние 7 дней (выполненные метрики, цели, книги, покупки в магазине), с итогами за день и неделю и текущим балансом. В магазин ведёт кнопка внутри окна, а не сам клик по балансу. Баллы за навыки в список по дням не попадают (у навыков нет даты), но входят в баланс",
     ]},
@@ -1060,6 +1063,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.56", date: "2026-09-30 07:33", changes: [
+        "Dashboard (pilot), the \"Plans\" block: when adding your own item you can tick \"Already done\" — the item is created as completed right away and counts toward the day and week progress. It is a way to log something you did that was not on your goals list, without ticking it afterwards (a first step towards merging \"What you got done today\" and \"Plans\")",
+    ]},
     { version: "1.55", date: "2026-09-30 10:29", changes: [
         "Dashboard: clicking the points in the profile now opens a \"Points\" window — what was earned today and over the last 7 days (completed metrics, goals, books, shop purchases), with day and week totals and the current balance. The shop is reached by a button inside the window instead of the balance click itself. Skill points are not listed by day (skills have no date) but are part of the balance",
     ]},

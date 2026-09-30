@@ -107,3 +107,39 @@ describe('PlannedSection: время и уведомления', () => {
     expect(q('[data-test="notify"]')).toBeNull()
   })
 })
+
+describe('PlannedSection: «Уже сделано»', () => {
+  it('с галочкой «Уже сделано» пункт создаётся выполненным, галочка после добавления сбрасывается', async () => {
+    await mountSection()
+    type(q('[data-test="custom-input"]') as HTMLInputElement, 'Разобрался с багом')
+    const cb = q('[data-test="new-done"]') as HTMLInputElement
+    cb.checked = true
+    cb.dispatchEvent(new Event('change'))
+    await flushPromises()
+    q('[data-test="add-custom"]')!.click()
+    await flushPromises()
+    expect(lastPlan()).toEqual([{ type: 'custom', text: 'Разобрался с багом', done: true }])
+    expect((q('[data-test="new-done"]') as HTMLInputElement).checked).toBe(false)
+  })
+
+  it('без галочки — обычный невыполненный пункт', async () => {
+    await mountSection()
+    type(q('[data-test="custom-input"]') as HTMLInputElement, 'Позвонить')
+    q('[data-test="add-custom"]')!.click()
+    await flushPromises()
+    expect(lastPlan()).toEqual([{ type: 'custom', text: 'Позвонить', done: false }])
+  })
+
+  it('можно совместить со временем', async () => {
+    await mountSection()
+    type(q('[data-test="custom-input"]') as HTMLInputElement, 'Зарядка')
+    type(q('[data-test="new-time"]') as HTMLInputElement, '07:30')
+    const cb = q('[data-test="new-done"]') as HTMLInputElement
+    cb.checked = true
+    cb.dispatchEvent(new Event('change'))
+    await flushPromises()
+    q('[data-test="add-custom"]')!.click()
+    await flushPromises()
+    expect(lastPlan()).toEqual([{ type: 'custom', text: 'Зарядка', done: true, time: '07:30' }])
+  })
+})

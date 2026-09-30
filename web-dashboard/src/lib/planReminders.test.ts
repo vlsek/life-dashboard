@@ -81,3 +81,17 @@ describe('dueReminders', () => {
     expect(reminderKey(D, e)).not.toBe(reminderKey('2026-09-30', e))
   })
 })
+
+describe('addCustom: done', () => {
+  it('done=true создаёт выполненный пункт, по умолчанию — невыполненный; пустой текст ничего не добавляет', () => {
+    expect(addCustom([], 'A', null, true)[0]).toEqual({ type: 'custom', text: 'A', done: true })
+    expect(addCustom([], 'A')[0].done).toBe(false)
+    expect(addCustom([], '   ', null, true)).toEqual([])
+  })
+  it('выполненный пункт сразу идёт в базу прогресса дня (done++ и total++)', async () => {
+    const { computeDayProgressPure } = await import('./progress')
+    const plan = addCustom([], 'Сделал не по плану', null, true)
+    const res = computeDayProgressPure({ enabled: true, includePlanned: true, includeMetrics: true, dayPlace: 'avatar', weekPlace: 'profile' }, [], {}, '2026-09-30', plan, [])
+    expect(res).toEqual({ done: 1, total: 1, bonusPct: 0 })
+  })
+})

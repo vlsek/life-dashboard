@@ -1,6 +1,13 @@
 {
-  "version": "1.55",
+  "version": "1.56",
   "en": [
+    {
+      "version": "1.56",
+      "date": "2026-09-30 07:33",
+      "changes": [
+        "Dashboard (pilot), the \"Plans\" block: when adding your own item you can tick \"Already done\" — the item is created as completed right away and counts toward the day and week progress. It is a way to log something you did that was not on your goals list, without ticking it afterwards (a first step towards merging \"What you got done today\" and \"Plans\")"
+      ]
+    },
     {
       "version": "1.55",
       "date": "2026-09-30 10:29",
@@ -1137,6 +1144,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.56",
+      "date": "2026-09-30 07:33",
+      "changes": [
+        "Дашборд (пилот), блок «Планы»: при добавлении своего пункта можно поставить галочку «Уже сделано» — пункт сразу создаётся выполненным и идёт в прогресс дня и недели. Это способ занести то, что вы сделали не из списка целей, не отмечая потом галочкой (первый шаг к объединению «Что полезного сделал за день» и «Планов»)"
+      ]
+    },
     {
       "version": "1.55",
       "date": "2026-09-30 10:29",

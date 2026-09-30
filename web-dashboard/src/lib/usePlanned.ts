@@ -75,7 +75,7 @@ export function usePlanned() {
     return run
   }
 
-  const addCustomItem = (text: string, time?: string | null) => persist(addCustom(planned.value, text, time))
+  const addCustomItem = (text: string, time?: string | null, done = false) => persist(addCustom(planned.value, text, time, done))
   const addGoalItem = (name: string) => persist(addGoal(planned.value, name))
   const removeItem = (index: number) => persist(removeAt(planned.value, index))
   const toggleItemBonus = (index: number) => persist(toggleBonus(planned.value, index))
