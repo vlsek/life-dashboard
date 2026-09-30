@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.72";
+const SITE_VERSION = "1.73";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.73", date: "2026-09-30 20:33", changes: [
+        "Языки (пилот): вкладки словарей — у каждого языка своя вкладка со счётчиком слов, вкладка «Все» появляется, когда словарей больше одного. Кнопка «＋» создаёт новый словарь (можно пустой и заполнить позже), пустой словарь можно удалить. Порядок вкладок запоминается и не прыгает, новое слово добавляется в открытый словарь. Слова и их данные не менялись, миграция не нужна",
+    ]},
     { version: "1.72", date: "2026-09-30 15:32", changes: [
         "Вход и регистрация: при первом заходе язык теперь выбирается по языку устройства (русский — если он первый из поддерживаемых в настройках устройства, иначе английский). Раньше новому пользователю почти всегда показывался английский. Дальше язык переключается вручную, выбор не перезаписывается",
     ]},
@@ -1115,6 +1118,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.73", date: "2026-09-30 20:33", changes: [
+        "Languages (pilot): dictionary tabs — every language has its own tab with a word counter, and an \"All\" tab appears once there is more than one dictionary. The \"＋\" button creates a new dictionary (it can be empty and filled later), and an empty dictionary can be removed. The tab order is remembered and does not jump, and a new word is added to the open dictionary. Words and their data are unchanged, no migration needed",
+    ]},
     { version: "1.72", date: "2026-09-30 15:32", changes: [
         "Sign-in and sign-up: on the first visit the language is now chosen from the device language (Russian if it is the first supported one in the device settings, otherwise English). Before, new users almost always saw English. After that the language is switched manually and the choice is never overwritten",
     ]},

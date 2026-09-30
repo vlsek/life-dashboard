@@ -1,6 +1,13 @@
 {
-  "version": "1.72",
+  "version": "1.73",
   "en": [
+    {
+      "version": "1.73",
+      "date": "2026-09-30 20:33",
+      "changes": [
+        "Languages (pilot): dictionary tabs — every language has its own tab with a word counter, and an \"All\" tab appears once there is more than one dictionary. The \"＋\" button creates a new dictionary (it can be empty and filled later), and an empty dictionary can be removed. The tab order is remembered and does not jump, and a new word is added to the open dictionary. Words and their data are unchanged, no migration needed"
+      ]
+    },
     {
       "version": "1.72",
       "date": "2026-09-30 15:32",
@@ -1260,6 +1267,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.73",
+      "date": "2026-09-30 20:33",
+      "changes": [
+        "Языки (пилот): вкладки словарей — у каждого языка своя вкладка со счётчиком слов, вкладка «Все» появляется, когда словарей больше одного. Кнопка «＋» создаёт новый словарь (можно пустой и заполнить позже), пустой словарь можно удалить. Порядок вкладок запоминается и не прыгает, новое слово добавляется в открытый словарь. Слова и их данные не менялись, миграция не нужна"
+      ]
+    },
     {
       "version": "1.72",
       "date": "2026-09-30 15:32",

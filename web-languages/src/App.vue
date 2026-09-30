@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useVocab } from './lib/useVocab'
-import { getLangFilter, langName, setLangFilter, setLastLang } from './lib/vocab'
+import { addableLangs, buildTabs, getLangFilter, getSavedTabs, langName, resolveActiveTab, setLangFilter, setLastLang, setSavedTabs } from './lib/vocab'
 import { t } from './lib/i18n'
 import AppShell from './components/AppShell.vue'
 import WordForm from './components/WordForm.vue'
+import DictionaryTabs from './components/DictionaryTabs.vue'
 import Icon from './components/Icon.vue'
 import type { VocabWord, WordFormInput } from './lib/types'
 
@@ -16,31 +17,36 @@ function setFilter(code: string) {
   setLangFilter(code)
 }
 
-// Счётчик слов по языку — тот же расчёт, что и в render() из english.js, плюс сброс
-// фильтра на "все", если ранее выбранный язык больше не встречается ни в одном слове.
-const langCounts = computed(() => {
-  const counts: Record<string, number> = {}
-  for (const w of words.value) {
-    const l = w.lang || 'en'
-    counts[l] = (counts[l] || 0) + 1
+// Вкладки-словари: по одному на язык (BACKLOG 14). Порядок и пустые вкладки помним в localStorage.
+const savedTabs = ref(getSavedTabs())
+const tabs = computed(() => buildTabs(words.value, savedTabs.value))
+// Когда слова появляются в языке, которого нет в сохранённом порядке, закрепляем его место — порядок не прыгает.
+// Пока слова ещё не загрузились, ничего не пишем, чтобы не затереть сохранённые пустые вкладки.
+watch(tabs, (list) => {
+  if (auth.value.status !== 'ready') return
+  const codes = list.map((tab) => tab.code)
+  if (codes.length !== savedTabs.value.length || codes.some((c, i) => c !== savedTabs.value[i])) {
+    savedTabs.value = codes
+    setSavedTabs(codes)
   }
-  return counts
 })
-const effectiveFilter = computed(() => {
-  if (filter.value !== 'all' && !langCounts.value[filter.value]) {
-    setFilter('all')
-    return 'all'
+const effectiveFilter = computed(() => resolveActiveTab(filter.value, tabs.value))
+const addable = computed(() => addableLangs(tabs.value))
+
+function onAddTab(code: string) {
+  if (!savedTabs.value.includes(code)) {
+    savedTabs.value = [...savedTabs.value, code]
+    setSavedTabs(savedTabs.value)
   }
-  return filter.value
-})
-const filterChips = computed(() => {
-  const codes = Object.keys(langCounts.value)
-  if (codes.length <= 1) return []
-  return [
-    { code: 'all', label: t('eng_filter_all'), count: words.value.length },
-    ...codes.map((c) => ({ code: c, label: langName(c), count: langCounts.value[c] })),
-  ]
-})
+  setFilter(code)
+}
+function onRemoveTab(code: string) {
+  // Удалить можно только пустой словарь — слова не пропадают.
+  if (tabs.value.find((tab) => tab.code === code)?.count) return
+  savedTabs.value = savedTabs.value.filter((c) => c !== code)
+  setSavedTabs(savedTabs.value)
+  setFilter('all')
+}
 
 const filteredWords = computed(() =>
   words.value.filter((w) => effectiveFilter.value === 'all' || (w.lang || 'en') === effectiveFilter.value),
@@ -105,22 +111,18 @@ async function onDelete(id: string) {
       <p v-if="error" class="mb-3 text-sm" style="color: var(--text-dim)">{{ t('dash_save_error_generic') }}{{ error }}</p>
       <p v-if="saveError" class="mb-3 text-sm" style="color: var(--text-dim)">{{ saveError }}</p>
 
-      <div v-if="filterChips.length" class="mb-3 flex flex-wrap gap-1.5">
-        <button
-          v-for="chip in filterChips"
-          :key="chip.code"
-          type="button"
-          class="rounded-full border px-3 py-1 text-xs"
-          :style="{
-            borderColor: 'var(--border)',
-            background: effectiveFilter === chip.code ? 'var(--accent)' : 'var(--bg-card)',
-            color: effectiveFilter === chip.code ? 'var(--accent-text)' : 'var(--text)',
-          }"
-          @click="setFilter(chip.code)"
-        >
-          {{ chip.label }} · {{ chip.count }}
-        </button>
-      </div>
+      <DictionaryTabs
+        :tabs="tabs"
+        :active="effectiveFilter"
+        :total-count="words.length"
+        :addable="addable"
+        @select="setFilter"
+        @add="onAddTab"
+        @remove="onRemoveTab"
+      />
+      <p v-if="effectiveFilter !== 'all' && filteredWords.length === 0" class="mb-3 text-sm" style="color: var(--text-dim)" data-test="dictionary-empty">
+        {{ t('eng_tab_empty') }}
+      </p>
 
       <div class="mb-4 flex justify-between rounded-xl border p-4 text-sm" style="border-color: var(--border); background: var(--bg-card)">
         <div>{{ t('eng_learning_label') }} {{ activeWords.length }}</div>
