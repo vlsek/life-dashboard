@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.64";
+const SITE_VERSION = "1.65";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.65", date: "2026-09-30 12:52", changes: [
+        "Дашборд (новая версия): вода в стакане теперь всегда голубая или синяя, а не цвета темы; оттенок подобран отдельно для каждой темы (на светлых — темнее), чтобы вода хорошо читалась на фоне карточки. Это касается стакана в шапке, блока «Вода» и анимации «выпитое сохранилось»",
+    ]},
     { version: "1.64", date: "2026-09-30 12:48", changes: [
         "Классическая версия: на главной появилась закрывающаяся плашка «Проект переехал на новую версию» с кратким описанием преимуществ и кнопкой «Открыть новую версию»; после закрытия крестиком она больше не показывается",
     ]},
@@ -1090,6 +1093,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.65", date: "2026-09-30 12:52", changes: [
+        "Dashboard (new version): the water in the glass is now always light or deep blue instead of the theme accent, with a separate shade for each theme (darker on the light ones) so it stays readable against the card. This covers the header glass, the Water block and the \"saved\" animation",
+    ]},
     { version: "1.64", date: "2026-09-30 12:48", changes: [
         "Classic version: the home page now shows a dismissible banner \"The project has moved to a new version\" with a short list of benefits and an \"Open the new version\" button; once dismissed with the cross it stays hidden",
     ]},

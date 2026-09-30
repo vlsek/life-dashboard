@@ -26,8 +26,8 @@ const GLASS_OUTLINE = 'M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3
     <svg width="20" height="25" viewBox="0 0 24 30" aria-hidden="true">
       <defs>
         <linearGradient :id="'water-grad'" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" :style="`stop-color:color-mix(in srgb, var(--accent) ${full ? 65 : 55}%, white ${full ? 0 : 30}%);`" />
-          <stop offset="1" style="stop-color: var(--accent)" />
+          <stop offset="0" style="stop-color: var(--water-top)" />
+          <stop offset="1" style="stop-color: var(--water-bottom)" />
         </linearGradient>
         <clipPath :id="'water-glass-clip'"><path :d="GLASS_OUTLINE" /></clipPath>
       </defs>
@@ -39,8 +39,8 @@ const GLASS_OUTLINE = 'M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3
           fill="url(#water-grad)"
         />
       </g>
-      <path :d="GLASS_OUTLINE" fill="none" :style="full ? 'stroke: var(--accent)' : 'stroke: var(--text-dim)'" stroke-width="1.6" stroke-linejoin="round" />
-      <ellipse cx="12" cy="5.3" rx="7.4" ry="1.25" fill="none" :style="full ? 'stroke: var(--accent)' : 'stroke: var(--text-dim)'" stroke-width="1.4" />
+      <path :d="GLASS_OUTLINE" fill="none" :style="full ? 'stroke: var(--water-line)' : 'stroke: var(--text-dim)'" stroke-width="1.6" stroke-linejoin="round" />
+      <ellipse cx="12" cy="5.3" rx="7.4" ry="1.25" fill="none" :style="full ? 'stroke: var(--water-line)' : 'stroke: var(--text-dim)'" stroke-width="1.4" />
       <path d="M7.6 8.5l0.9 12.5" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.2" stroke-linecap="round" />
     </svg>
     {{ currentMl }} / {{ normMl }} {{ unitLabel }}
