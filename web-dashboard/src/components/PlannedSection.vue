@@ -63,7 +63,10 @@ function openGoalPicker() {
 
 async function pickGoal(name: string) {
   goalPicker.value = null
-  await addGoalItem(name)
+  // Время из поля рядом с «Добавить» распространяется и на цель из списка (раньше терялось: BACKLOG 14, 11:08).
+  const time = newTime.value || null
+  newTime.value = ''
+  await addGoalItem(name, time)
 }
 
 async function openCarryOver() {
@@ -76,9 +79,9 @@ async function openCarryOver() {
   carryCandidates.value = found
 }
 
-async function addCarried(texts: string[]) {
+async function addCarried(items: { text: string; time?: string }[]) {
   carryCandidates.value = null
-  if (texts.length) await carryOver(texts)
+  if (items.length) await carryOver(items)
 }
 const collapsed = ref(false)
 </script>
@@ -167,5 +170,11 @@ const collapsed = ref(false)
 <style scoped>
 .plan-time {
   width: 7.5rem;
+}
+/* Отступ между чекбоксом и текстом плана (BACKLOG 14, 11:08): чекбокс стоит в своей ячейке таблицы. */
+[data-test='item'] > td:first-child {
+  width: 1%;
+  padding-right: 0.75rem;
+  white-space: nowrap;
 }
 </style>

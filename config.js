@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.65";
+const SITE_VERSION = "1.66";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.66", date: "2026-09-30 13:05", changes: [
+        "Дашборд (новая версия), «Планы»: между чекбоксом и текстом плана появился отступ; неотмеченный чекбокс больше не белый квадрат — у него рамка и фон в цвет темы, а отмеченный заливается акцентом с галочкой (это касается всех чекбоксов на Дашборде)",
+        "Дашборд (новая версия), «Планы»: время теперь подтягивается — оно из поля рядом с «Добавить» попадает и в цель, выбранную из списка, а при переносе незавершённого сохраняется время исходного пункта",
+    ]},
     { version: "1.65", date: "2026-09-30 12:52", changes: [
         "Дашборд (новая версия): вода в стакане теперь всегда голубая или синяя, а не цвета темы; оттенок подобран отдельно для каждой темы (на светлых — темнее), чтобы вода хорошо читалась на фоне карточки. Это касается стакана в шапке, блока «Вода» и анимации «выпитое сохранилось»",
     ]},
@@ -1093,6 +1097,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.66", date: "2026-09-30 13:05", changes: [
+        "Dashboard (new version), Plans: there is now spacing between the checkbox and the plan text; an unchecked checkbox is no longer a white square — it has a theme-colored border and background, and a checked one fills with the accent and a tick (applies to every checkbox on the Dashboard)",
+        "Dashboard (new version), Plans: the time now follows the item — the time from the field next to \"Add\" also applies to a goal picked from the list, and carrying unfinished items over keeps the original item's time",
+    ]},
     { version: "1.65", date: "2026-09-30 12:52", changes: [
         "Dashboard (new version): the water in the glass is now always light or deep blue instead of the theme accent, with a separate shade for each theme (darker on the light ones) so it stays readable against the card. This covers the header glass, the Water block and the \"saved\" animation",
     ]},

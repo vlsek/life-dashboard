@@ -18,6 +18,7 @@ import {
   type CarryCandidate,
   type PlanGoal,
   type PlanNote,
+  type CarriedItem,
   type PlannedEntry,
 } from './planned'
 
@@ -76,7 +77,7 @@ export function usePlanned() {
   }
 
   const addCustomItem = (text: string, time?: string | null, done = false) => persist(addCustom(planned.value, text, time, done))
-  const addGoalItem = (name: string) => persist(addGoal(planned.value, name))
+  const addGoalItem = (name: string, time?: string | null) => persist(addGoal(planned.value, name, time))
   const removeItem = (index: number) => persist(removeAt(planned.value, index))
   const toggleItemBonus = (index: number) => persist(toggleBonus(planned.value, index))
   const setItemDone = (index: number, done: boolean) => persist(setCustomDone(planned.value, index, done))
@@ -113,7 +114,7 @@ export function usePlanned() {
     return carryOverCandidates((data || []) as PlanNote[], date, planned.value)
   }
 
-  const carryOver = (texts: string[]) => persist(appendCarried(planned.value, texts))
+  const carryOver = (items: CarriedItem[]) => persist(appendCarried(planned.value, items))
   const availableGoals = () => goalOptions(goals.value, planned.value)
 
   return {

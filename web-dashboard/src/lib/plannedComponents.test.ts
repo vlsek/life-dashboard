@@ -210,3 +210,35 @@ describe('PlannedSection: без пользователя', () => {
     expect(h.calls).toHaveLength(0)
   })
 })
+
+describe('PlannedSection: время плана подтягивается (BACKLOG 14, 11:08)', () => {
+  it('время из поля рядом с «Добавить» попадает и в цель, выбранную из списка', async () => {
+    h.goalsData = [{ id: '3', name: 'Свободная', stages: null, done: false, current_stage: null }]
+    await mountSection()
+    const time = q('[data-test="new-time"]') as HTMLInputElement
+    time.value = '09:30'
+    time.dispatchEvent(new Event('input'))
+    await flushPromises()
+    q('[data-test="add-goal"]')!.click()
+    await flushPromises()
+    q('[data-test="ok"]')!.click()
+    await flushPromises()
+    expect(lastPlan()).toEqual([{ type: 'goal', text: 'Свободная', time: '09:30' }])
+    expect((q('[data-test="new-time"]') as HTMLInputElement).value).toBe('')
+  })
+
+  it('при переносе незавершённого время исходного пункта сохраняется', async () => {
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    const y = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`
+    h.windowNotes = [{ date: y, planned_goals: [{ type: 'custom', text: 'Позвонить', done: false, time: '18:00' }] }]
+    await mountSection()
+    q('[data-test="carry"]')!.click()
+    await flushPromises()
+    expect(q('[data-test="candidate"]')!.textContent).toContain('18:00')
+    q('[data-test="add"]')!.click()
+    await flushPromises()
+    expect(lastPlan()).toEqual([{ type: 'custom', text: 'Позвонить', done: false, time: '18:00' }])
+  })
+})
+

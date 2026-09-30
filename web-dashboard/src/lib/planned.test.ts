@@ -101,3 +101,25 @@ describe('appendCarried', () => {
     expect(appendCarried(base, [])).toBe(base)
   })
 })
+
+describe('plan time follows the item (BACKLOG 14, 11:08)', () => {
+  it('addGoal keeps a valid time and drops an invalid one', () => {
+    expect(addGoal([], 'Goal A', '09:30')).toEqual([{ type: 'goal', text: 'Goal A', time: '09:30' }])
+    expect(addGoal([], 'Goal A', '25:99')).toEqual([{ type: 'goal', text: 'Goal A' }])
+    expect(addGoal([], 'Goal A', null)).toEqual([{ type: 'goal', text: 'Goal A' }])
+  })
+
+  it('carry-over candidates remember the time of the original item', () => {
+    const notes = [{ date: '2026-09-29', planned_goals: [{ type: 'custom', text: 'Call', done: false, time: '18:00' }, { type: 'custom', text: 'Read', done: false }] }]
+    const out = carryOverCandidates(notes, '2026-09-30', [])
+    expect(out).toEqual([{ text: 'Call', date: '2026-09-29', time: '18:00' }, { text: 'Read', date: '2026-09-29' }])
+  })
+
+  it('appendCarried accepts objects with a time and still accepts plain strings', () => {
+    expect(appendCarried([], [{ text: 'Call', time: '18:00' }, 'Read', { text: 'Bad', time: 'xx' }])).toEqual([
+      { type: 'custom', text: 'Call', done: false, time: '18:00' },
+      { type: 'custom', text: 'Read', done: false },
+      { type: 'custom', text: 'Bad', done: false },
+    ])
+  })
+})

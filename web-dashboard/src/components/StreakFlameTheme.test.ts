@@ -30,3 +30,17 @@ describe('bonus (100%+) ring color', () => {
     }
   })
 })
+
+describe('checkbox look (BACKLOG 14, 11:08)', () => {
+  it('unchecked boxes have their own background and border instead of the browser white square', () => {
+    const m = css.match(/input\[type='checkbox'\]\s*\{[^}]*appearance:\s*none[^}]*\}/)
+    expect(m).not.toBeNull()
+    expect(m![0]).toContain('border: 1.5px solid var(--text-dim)')
+    expect(m![0]).toContain('background-color: var(--bg)')
+  })
+  it('checked boxes fill with the theme accent', () => {
+    const m = css.match(/input\[type='checkbox'\]:checked\s*\{([^}]*)\}/)
+    expect(m).not.toBeNull()
+    expect(m![1]).toContain('background-color: var(--accent)')
+  })
+})

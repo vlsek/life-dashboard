@@ -65,9 +65,11 @@ export function setTimeAt(planned: PlannedEntry[], index: number, time: string |
   })
 }
 
-export function addGoal(planned: PlannedEntry[], goalName: string): PlannedEntry[] {
+export function addGoal(planned: PlannedEntry[], goalName: string, time?: string | null): PlannedEntry[] {
   if (planned.some((p) => p.type === 'goal' && p.text === goalName)) return planned
-  return [...planned, { type: 'goal', text: goalName }]
+  const entry: PlannedEntry = { type: 'goal', text: goalName }
+  if (isValidTime(time)) entry.time = time
+  return [...planned, entry]
 }
 
 export function removeAt(planned: PlannedEntry[], index: number): PlannedEntry[] {
@@ -102,6 +104,7 @@ export function stageLabel(goal: PlanGoal): string {
 export interface CarryCandidate {
   text: string
   date: string
+  time?: string // время исходного пункта — переносится вместе с ним (BACKLOG 14, 11:08)
 }
 
 export const CARRY_OVER_DAYS = 7
@@ -120,13 +123,24 @@ export function carryOverCandidates(notes: PlanNote[], todayIso: string, planned
       if (p.type !== 'custom' || p.done || p.bonus) continue
       if (todayTexts.has(p.text) || seen.has(p.text)) continue
       seen.add(p.text)
-      out.push({ text: p.text, date: n.date })
+      out.push(isValidTime(p.time) ? { text: p.text, date: n.date, time: p.time } : { text: p.text, date: n.date })
     }
   }
   return out
 }
 
-export function appendCarried(planned: PlannedEntry[], texts: string[]): PlannedEntry[] {
-  if (texts.length === 0) return planned
-  return [...planned, ...texts.map((text) => ({ type: 'custom', text, done: false }))]
+export type CarriedItem = string | { text: string; time?: string | null }
+
+export function appendCarried(planned: PlannedEntry[], items: CarriedItem[]): PlannedEntry[] {
+  if (items.length === 0) return planned
+  return [
+    ...planned,
+    ...items.map((it): PlannedEntry => {
+      const text = typeof it === 'string' ? it : it.text
+      const time = typeof it === 'string' ? null : it.time
+      const entry: PlannedEntry = { type: 'custom', text, done: false }
+      if (isValidTime(time)) entry.time = time
+      return entry
+    }),
+  ]
 }
