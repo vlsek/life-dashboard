@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.50";
+const SITE_VERSION = "1.51";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.51", date: "2026-09-30 10:10", changes: [
+        "Дашборд, «Подходы»: список сохранённых «особенностей подхода» больше не обрезается на телефоне — теперь он открывается поверх страницы под полем (или над ним, если снизу мало места из-за клавиатуры), как в классике. Выбор варианта тапом и крестик «убрать вариант» работают на сенсорных экранах; список закрывается тапом мимо",
+    ]},
     { version: "1.50", date: "2026-09-30 09:53", changes: [
         "Вода: кнопка «Сохранить норму» переименована в «Изменить дневную норму» и вынесена под поле нормы — теперь её не спутать с добавлением выпитого; после смены нормы показывается подтверждение. После добавления выпитого появляется анимация: стакан наполняется, поверх рисуется галочка — она запускается только когда значение действительно записано, а при ошибке записи в окне показывается сообщение. Кнопка переименована и в классическом Дашборде",
     ]},
@@ -1045,6 +1048,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.51", date: "2026-09-30 10:10", changes: [
+        "Dashboard, \"Sets\": the list of saved set variations is no longer clipped on phones — it now opens over the page below the field (or above it when the keyboard leaves little room below), like in the classic version. Tapping a variation and the \"remove variation\" cross work on touch screens; the list closes with a tap outside",
+    ]},
     { version: "1.50", date: "2026-09-30 09:53", changes: [
         "Water: the \"Save goal\" button is renamed to \"Change daily goal\" and moved under the goal field, so it can no longer be mistaken for adding the amount you drank; a confirmation is shown after the goal changes. After adding water an animation plays: the glass fills and a check mark is drawn over it — it starts only once the value is really saved, and a save error is shown in the dialog. The button is renamed in the classic Dashboard too",
     ]},

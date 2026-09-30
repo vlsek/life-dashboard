@@ -1,6 +1,13 @@
 {
-  "version": "1.50",
+  "version": "1.51",
   "en": [
+    {
+      "version": "1.51",
+      "date": "2026-09-30 10:10",
+      "changes": [
+        "Dashboard, \"Sets\": the list of saved set variations is no longer clipped on phones — it now opens over the page below the field (or above it when the keyboard leaves little room below), like in the classic version. Tapping a variation and the \"remove variation\" cross work on touch screens; the list closes with a tap outside"
+      ]
+    },
     {
       "version": "1.50",
       "date": "2026-09-30 09:53",
@@ -1102,6 +1109,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.51",
+      "date": "2026-09-30 10:10",
+      "changes": [
+        "Дашборд, «Подходы»: список сохранённых «особенностей подхода» больше не обрезается на телефоне — теперь он открывается поверх страницы под полем (или над ним, если снизу мало места из-за клавиатуры), как в классике. Выбор варианта тапом и крестик «убрать вариант» работают на сенсорных экранах; список закрывается тапом мимо"
+      ]
+    },
     {
       "version": "1.50",
       "date": "2026-09-30 09:53",

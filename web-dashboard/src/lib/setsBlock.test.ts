@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   nowHHMM, normalizeSets, newSet, totalReps, parseReps, parseTime, parseVariation, removeSet, updateSet,
-  variationLabels, matchVariations, rememberVariationOptions, forgetVariationOptions, setsSummary,
+  variationLabels, matchVariations, rememberVariationOptions, forgetVariationOptions, setsSummary, floatingPanelStyle,
 } from './setsBlock'
 import type { SetRow } from './setsBlock'
 
@@ -92,5 +92,30 @@ describe('variations', () => {
     expect(forgetVariationOptions(m, 'Wide grip')).toEqual([{ key: 'narrow', label: '' }])
     expect(forgetVariationOptions(m, 'narrow')).toEqual([{ key: 'wide', label: 'Wide grip' }])
     expect(forgetVariationOptions({ options: null }, 'x')).toEqual([])
+  })
+})
+
+describe('floatingPanelStyle', () => {
+  const vp = { top: 0, bottom: 800, width: 390 }
+  it('opens below the field when there is room', () => {
+    const st = floatingPanelStyle({ left: 20, top: 100, bottom: 130, width: 200 }, vp)
+    expect(st).toEqual({ left: '20px', width: '200px', top: '134px', bottom: 'auto', maxHeight: '280px' })
+  })
+  it('caps the height by the free space below', () => {
+    const st = floatingPanelStyle({ left: 20, top: 500, bottom: 530, width: 200 }, vp)
+    expect(st.top).toBe('534px')
+    expect(st.maxHeight).toBe('262px')
+  })
+  it('opens above the field when the keyboard leaves little room below', () => {
+    const small = { top: 0, bottom: 350, width: 390 }
+    const st = floatingPanelStyle({ left: 20, top: 250, bottom: 280, width: 200 }, small)
+    expect(st.top).toBe('auto')
+    expect(st.maxHeight).toBe('242px')
+    expect(parseInt(st.bottom)).toBe(window.innerHeight - 250 + 4)
+  })
+  it('keeps the panel inside the screen horizontally', () => {
+    const st = floatingPanelStyle({ left: -30, top: 100, bottom: 130, width: 900 }, vp)
+    expect(st.left).toBe('8px')
+    expect(st.width).toBe('374px')
   })
 })

@@ -83,3 +83,35 @@ export function forgetVariationOptions(m: Pick<Metric, 'options'>, label: string
 export function setsSummary(sets: SetRow[]): { count: number; reps: number } | null {
   return sets.length === 0 ? null : { count: sets.length, reps: totalReps(sets) }
 }
+
+// Позиция плавающей выпадашки (position: fixed) под полем или над ним — порт positionFloatingPanel()
+// из config.js. Нужна, потому что таблица подходов лежит в контейнере с overflow-x: auto, и обычная
+// absolute-выпадашка внутри него обрезалась на узком экране (телефон). viewport — видимая область
+// (visualViewport на мобильных: клавиатура её уменьшает).
+export interface FloatingRect { left: number; top: number; bottom: number; width: number }
+export interface FloatingViewport { top: number; bottom: number; width: number }
+export interface FloatingStyle { left: string; width: string; top: string; bottom: string; maxHeight: string }
+
+export function floatingPanelStyle(rect: FloatingRect, vp: FloatingViewport, margin = 8, preferredMax = 280): FloatingStyle {
+  const spaceBelow = vp.bottom - rect.bottom - margin
+  const spaceAbove = rect.top - vp.top - margin
+  const left = Math.max(margin, rect.left)
+  const width = Math.max(0, Math.min(rect.width, vp.width - margin * 2))
+  if (spaceBelow >= 100 || spaceBelow >= spaceAbove) {
+    return {
+      left: left + 'px',
+      width: width + 'px',
+      top: rect.bottom + 4 + 'px',
+      bottom: 'auto',
+      maxHeight: Math.max(80, Math.min(preferredMax, spaceBelow)) + 'px',
+    }
+  }
+  return {
+    left: left + 'px',
+    width: width + 'px',
+    top: 'auto',
+    // bottom считается от нижнего края экрана, а не видимой области — как и в оригинале (fixed)
+    bottom: Math.max(0, window.innerHeight - rect.top + 4) + 'px',
+    maxHeight: Math.max(80, Math.min(preferredMax, spaceAbove)) + 'px',
+  }
+}

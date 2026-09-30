@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import SetsCard from '../components/SetsCard.vue'
 import VariationCombo from '../components/VariationCombo.vue'
 import type { Metric } from './types'
@@ -56,9 +57,44 @@ describe('VariationCombo', () => {
   it('suggests matching saved variations on focus and emits forget for the ✕', async () => {
     const w = mount(VariationCombo, { props: { modelValue: null, labels: ['Wide grip', 'Narrow'] } })
     await w.find('input').trigger('focus')
-    expect(w.text()).toContain('Wide grip')
-    await w.findAll('button.danger')[0].trigger('mousedown')
+    await nextTick()
+    // список вынесен в <body> (Teleport), а не лежит внутри компонента
+    expect(w.text()).not.toContain('Wide grip')
+    expect(document.body.textContent).toContain('Wide grip')
+    const remove = document.body.querySelectorAll('.variation-panel button.danger')[0] as HTMLElement
+    remove.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }))
     expect(w.emitted('forget')![0]).toEqual(['Wide grip'])
+    w.unmount()
+  })
+  it('renders the dropdown as a fixed panel outside any overflow container', async () => {
+    const w = mount(VariationCombo, { props: { modelValue: null, labels: ['Wide grip'] } })
+    await w.find('input').trigger('focus')
+    await nextTick()
+    await nextTick()
+    const panel = document.body.querySelector('.variation-panel') as HTMLElement
+    expect(panel.style.position).toBe('fixed')
+    expect(panel.parentElement).toBe(document.body)
+    w.unmount()
+    expect(document.body.querySelector('.variation-panel')).toBeNull()
+  })
+  it('picks a saved variation with a tap (mousedown) and closes the list', async () => {
+    const w = mount(VariationCombo, { props: { modelValue: null, labels: ['Wide grip', 'Narrow'] } })
+    await w.find('input').trigger('focus')
+    await nextTick()
+    const first = document.body.querySelector('.variation-panel span') as HTMLElement
+    first.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }))
+    await nextTick()
+    expect(w.emitted('commit')![0]).toEqual(['Wide grip'])
+    expect(document.body.querySelector('.variation-panel')).toBeNull()
+    w.unmount()
+  })
+  it('closes the list on a tap outside', async () => {
+    const w = mount(VariationCombo, { props: { modelValue: null, labels: ['Wide grip'] } })
+    await w.find('input').trigger('focus')
+    await nextTick()
+    document.body.dispatchEvent(new Event('pointerdown', { bubbles: true }))
+    await nextTick()
+    expect(document.body.querySelector('.variation-panel')).toBeNull()
     w.unmount()
   })
 })
