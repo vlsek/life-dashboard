@@ -313,6 +313,9 @@ Astro тут не даёт преимуществ. TypeScript — типы. Tail
    ROADMAP.md и COORDINATION.md (блок + журнал), git pull --rebase перед финальным push.
 7б. Заглушка старого адреса: добавь строку `"<page>.html": "/<page>/"` в STUBS `scripts/gen_redirect_stubs.py` и запусти его
    (корневой <page>.html — редирект с сохранением ?query и #hash; иначе закладки на старый адрес дадут 404).
+7в. Новая страница пилота с шапкой (`#topbar-right` в AppShell): в её `index.html` после `main.ts` вставь тот же блок-загрузчик
+   глобального хедера (`/header-widgets/header.js`, см. web-goals/index.html) — иначе на ней не будет стакана и колец прогресса.
+   Код хедера — в `web-header/` (сборка `npm run build` → `header-widgets/`); менять его нужно там, а не в страницах.
 ГРАБЛИ (нашёл агент 1, v1.23): любой редирект/ссылка на другую страницу внутри классических .js/config.js
 должен быть АБСОЛЮТНЫМ (`/login.html`, не `login.html`) — со страницы в /legacy/ относительный путь ведёт на
 /legacy/<...> и даёт 404. После каждого переезда: grep `location.href *= *"[a-z-]+\.html"` по legacy/ и config.js.

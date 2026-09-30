@@ -1,0 +1,80 @@
+/* Стили глобального хедера. Префикс gh- — чтобы не пересекаться со стилями страницы; цвета — токены темы страницы
+   (--bg, --bg-card, --border, --text, --text-dim, --accent, --accent-text) с запасными значениями. */
+.gh-root { display: contents; }
+.gh-badge { position: relative; flex: none; padding: 0; background: transparent; border: none; width: 32px; height: 32px; min-height: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.gh-badge-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--text, #eee); }
+.gh-backdrop { position: fixed; inset: 0; z-index: 2000; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.gh-modal { position: relative; width: 100%; max-width: 384px; max-height: 85vh; overflow-y: auto; box-sizing: border-box; border-radius: 16px; border: 1px solid var(--border, #333); background: var(--bg-card, #1e1e1e); color: var(--text, #eee); padding: 20px; font-size: 14px; line-height: 1.4; }
+.gh-modal h3 { margin: 0 0 8px; font-size: 18px; font-weight: 700; }
+.gh-modal h4 { margin: 0 0 4px; font-size: 14px; font-weight: 600; }
+.gh-dim { color: var(--text-dim, #999); }
+.gh-row { display: flex; align-items: center; gap: 8px; }
+.gh-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+.gh-btn { border: 1px solid var(--border, #333); background: var(--bg, #121212); color: var(--text, #eee); border-radius: 8px; padding: 8px 16px; font: inherit; font-size: 14px; cursor: pointer; min-height: 0; }
+.gh-btn-primary { background: var(--accent, #6c8cff); color: var(--accent-text, #fff); border-color: transparent; }
+.gh-btn-icon { padding: 6px 10px; }
+.gh-input { width: 100%; box-sizing: border-box; border: 1px solid var(--border, #333); background: var(--bg, #121212); color: var(--text, #eee); border-radius: 8px; padding: 6px 10px; font: inherit; }
+.gh-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.gh-list { list-style: none; margin: 0 0 12px; padding: 0; }
+.gh-list li { display: flex; align-items: baseline; gap: 8px; padding: 4px 0; border-bottom: 1px solid var(--border, #333); }
+.gh-list li > span:first-child { flex: 1; }
+.gh-bar { height: 14px; border-radius: 8px; overflow: hidden; margin: 6px 0 14px; background: var(--bg, #121212); border: 1px solid var(--border, #333); }
+.gh-bar > div { height: 100%; background: var(--accent, #6c8cff); transition: width 0.3s; }
+.gh-total { font-size: 24px; font-weight: 700; margin: 8px 0 12px; }
+.gh-total small { font-size: 14px; font-weight: 400; }
+.gh-check { display: flex; align-items: center; gap: 8px; }
+.gh-field { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+
+/* Цвета воды по теме — те же значения, что в web-dashboard/src/style.css (на других страницах этих переменных нет). */
+html.theme-dark .gh-root, html.theme-monet .gh-root { --water-top: #63b3f5; --water-bottom: #2f86dc; --water-line: #4aa3ee; }
+html.theme-light .gh-root { --water-top: #3f95e0; --water-bottom: #1560b8; --water-line: #1560b8; }
+html.theme-pink .gh-root { --water-top: #3184d6; --water-bottom: #1359b0; --water-line: #1359b0; }
+.gh-root { --water-top: #63b3f5; --water-bottom: #2f86dc; --water-line: #4aa3ee; }
+
+/* Анимация «записалось» (вынесена из WaterSavedAnim.vue: scoped-стили отдельным css-файлом не подгрузились бы) */
+.water-saved {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+.water-saved svg {
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.25));
+  background: var(--bg-card, #1e1e1e);
+  border-radius: 16px;
+  padding: 10px 14px;
+  box-sizing: content-box;
+}
+.water-saved-fill {
+  transform-origin: 50% 100%;
+  animation: water-saved-rise 0.7s ease-out forwards;
+}
+.water-saved-check {
+  stroke-dasharray: 20;
+  stroke-dashoffset: 20;
+  animation: water-saved-draw 0.4s ease-out 0.55s forwards;
+}
+.water-saved-enter-active,
+.water-saved-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.water-saved-enter-from,
+.water-saved-leave-to {
+  opacity: 0;
+  transform: scale(0.85);
+}
+@keyframes water-saved-rise {
+  from { transform: translateY(100%); }
+  to { transform: translateY(12%); }
+}
+@keyframes water-saved-draw {
+  to { stroke-dashoffset: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .water-saved-fill { animation: none; transform: translateY(12%); }
+  .water-saved-check { animation: none; stroke-dashoffset: 0; }
+  .water-saved-enter-active, .water-saved-leave-active { transition: opacity 0.2s ease; }
+  .water-saved-enter-from, .water-saved-leave-to { transform: none; }
+}

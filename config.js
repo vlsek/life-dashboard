@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.68";
+const SITE_VERSION = "1.69";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.69", date: "2026-09-30 14:44", changes: [
+        "Глобальная шапка: стакан воды и кольца прогресса дня/недели теперь есть на всех страницах (Цели, Навыки, Тренировки, Челленджи, Языки, Календарь, Вехи, Магазин, Сообщество, История, Аккаунт), а не только на Дашборде. Клик по стакану — окно воды (добавить выпитое, сменить норму), клик по кольцу — сводка «что сделано / что осталось» с настройками. Показываются по тем же настройкам прогресса, что и на Дашборде; страница Дашборда осталась со своей шапкой",
+    ]},
     { version: "1.68", date: "2026-09-30 13:20", changes: [
         "Иконка баллов («монета») стала живой: полупрозрачная монета с небольшим горящим огоньком цвета темы, огонёк слегка мерцает (при включённом в системе «уменьшении движения» — статичный). Показывается у баланса в профиле на главной, в окне «откуда баллы» и у цен в магазине",
     ]},
@@ -1103,6 +1106,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.69", date: "2026-09-30 14:44", changes: [
+        "Global header: the water glass and the day/week progress rings now appear on every page (Goals, Skills, Workouts, Challenges, Languages, Calendar, Milestones, Shop, Community, History, Account), not only on the Dashboard. Tap the glass for the water dialog (add water, change the goal); tap a ring for the done / left summary with settings. They follow the same progress settings as the Dashboard; the Dashboard page keeps its own header",
+    ]},
     { version: "1.68", date: "2026-09-30 13:20", changes: [
         "The points icon (the \"coin\") got a makeover: a translucent coin with a small burning flame in the theme color, with a gentle flicker (static when the system \"reduce motion\" setting is on). Shown next to the balance in the home profile, in the \"where points came from\" window and on shop prices",
     ]},

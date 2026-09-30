@@ -1,6 +1,13 @@
 {
-  "version": "1.68",
+  "version": "1.69",
   "en": [
+    {
+      "version": "1.69",
+      "date": "2026-09-30 14:44",
+      "changes": [
+        "Global header: the water glass and the day/week progress rings now appear on every page (Goals, Skills, Workouts, Challenges, Languages, Calendar, Milestones, Shop, Community, History, Account), not only on the Dashboard. Tap the glass for the water dialog (add water, change the goal); tap a ring for the done / left summary with settings. They follow the same progress settings as the Dashboard; the Dashboard page keeps its own header"
+      ]
+    },
     {
       "version": "1.68",
       "date": "2026-09-30 13:20",
@@ -1232,6 +1239,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.69",
+      "date": "2026-09-30 14:44",
+      "changes": [
+        "Глобальная шапка: стакан воды и кольца прогресса дня/недели теперь есть на всех страницах (Цели, Навыки, Тренировки, Челленджи, Языки, Календарь, Вехи, Магазин, Сообщество, История, Аккаунт), а не только на Дашборде. Клик по стакану — окно воды (добавить выпитое, сменить норму), клик по кольцу — сводка «что сделано / что осталось» с настройками. Показываются по тем же настройкам прогресса, что и на Дашборде; страница Дашборда осталась со своей шапкой"
+      ]
+    },
     {
       "version": "1.68",
       "date": "2026-09-30 13:20",
