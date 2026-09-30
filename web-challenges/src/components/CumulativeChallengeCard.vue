@@ -8,6 +8,7 @@ import type { Challenge, ChallengeEntry } from '../lib/types'
 const props = defineProps<{ challenge: Challenge; entries: ChallengeEntry[] }>()
 const emit = defineEmits<{
   abandon: [ch: Challenge]
+  edit: [ch: Challenge]
   markCompleted: [ch: Challenge]
   addEntry: [challengeId: string, note: string]
   deleteEntry: [id: string]
@@ -36,7 +37,8 @@ const placeholder = computed(() =>
   <div class="card mb-3.5">
     <div class="flex flex-wrap items-center gap-2">
       <strong>{{ challenge.icon }} {{ challenge.title }}</strong>
-      <button class="danger ml-auto px-2 py-0.5" @click="emit('abandon', challenge)"><Icon name="trash" /></button>
+      <button class="secondary ml-auto px-2 py-0.5" :title="t('ch_edit_btn')" :aria-label="t('ch_edit_btn')" data-testid="edit-challenge" @click="emit('edit', challenge)"><Icon name="edit" /></button>
+      <button class="danger px-2 py-0.5" @click="emit('abandon', challenge)"><Icon name="trash" /></button>
     </div>
 
     <div class="dim my-1.5 text-sm">{{ stats.count }} / {{ stats.target }} {{ stats.itemWord }}</div>

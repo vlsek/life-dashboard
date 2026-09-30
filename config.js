@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.59";
+const SITE_VERSION = "1.60";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.60", date: "2026-09-30 09:30", changes: [
+        "Челленджи: теперь можно редактировать уже добавленные челленджи. На карточке появилась кнопка-карандаш: откроется та же форма, что и для своего челленджа, с заполненными значениями — можно поменять название, иконку, единицу, длительность, цели и количество. Тип челленджа и дата старта не меняются (иначе поменялся бы смысл уже внесённых записей), уже внесённый прогресс сохраняется",
+    ]},
     { version: "1.59", date: "2026-09-30 09:22", changes: [
         "Тренировки: новый блок «Прогрессии упражнений» (свёрнут по умолчанию). Пять цепочек ступеней от лёгкого к сложному: отжимания (с колен → обычные → на кулаках → алмазные → лучника), подтягивания, приседания и ноги, пресс, брусья. Ступень пройдена, когда в одном подходе набрано нужное число повторений; для текущей ступени видно лучший подход и кнопку «Добавить запись». Ступени сопоставляются с вашими упражнениями по названию (русские и английские)",
     ]},
@@ -1075,6 +1078,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.60", date: "2026-09-30 09:30", changes: [
+        "Challenges: you can now edit challenges you have already added. Each card has a pencil button that opens the same form as a custom challenge, pre-filled — you can change the title, icon, unit, duration, targets and count. The challenge type and start date stay fixed (changing them would change the meaning of entries already logged), and your existing progress is kept",
+    ]},
     { version: "1.59", date: "2026-09-30 09:22", changes: [
         "Workouts: new \"Exercise progressions\" block (collapsed by default). Five chains of steps from easier to harder: push-ups (knee → regular → fist → diamond → archer), pull-ups, squats and legs, core, dips. A step is done when you reach its target reps in a single set; the current step shows your best set and an \"Add record\" button. Steps are matched to your exercises by name (Russian and English)",
     ]},

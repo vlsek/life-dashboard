@@ -19,6 +19,7 @@ const {
   init,
   startFromTemplate,
   startCustom,
+  updateChallenge,
   upsertDailyEntry,
   addCumulativeEntry,
   deleteEntry,
@@ -41,6 +42,7 @@ function fmtRu(iso: string): string {
 
 const catalogOpen = ref(false)
 const customFormOpen = ref(false)
+const editing = ref<Challenge | null>(null)
 
 async function onSelectTemplate(tpl: ChallengeTemplate) {
   await startFromTemplate(tpl)
@@ -49,6 +51,16 @@ async function onSelectTemplate(tpl: ChallengeTemplate) {
 async function onSaveCustom(res: CustomChallengeFormInput) {
   await startCustom(res)
   customFormOpen.value = false
+}
+async function onSaveEdit(res: CustomChallengeFormInput) {
+  if (!editing.value) return
+  try {
+    await updateChallenge(editing.value, res)
+    editing.value = null
+  } catch {
+    // форма остаётся открытой с введёнными значениями — можно повторить
+    alert(t('ch_edit_save_error'))
+  }
 }
 
 async function onAbandon(ch: Challenge) {
@@ -88,6 +100,7 @@ async function onSetToday(challengeId: string, value: number) {
             :challenge="ch"
             :entries="entriesFor(ch)"
             @abandon="onAbandon"
+            @edit="editing = $event"
             @mark-completed="markCompleted"
             @add-entry="addCumulativeEntry"
             @delete-entry="onDeleteEntry"
@@ -97,6 +110,7 @@ async function onSetToday(challengeId: string, value: number) {
             :challenge="ch"
             :entries="entriesFor(ch)"
             @abandon="onAbandon"
+            @edit="editing = $event"
             @mark-completed="markCompleted"
             @set-today="onSetToday"
           />
@@ -113,5 +127,6 @@ async function onSetToday(challengeId: string, value: number) {
 
     <CatalogModal v-if="catalogOpen" @close="catalogOpen = false" @select="onSelectTemplate" />
     <CustomChallengeForm v-if="customFormOpen" @close="customFormOpen = false" @save="onSaveCustom" />
+    <CustomChallengeForm v-if="editing" :key="editing.id" :challenge="editing" @close="editing = null" @save="onSaveEdit" />
   </main>
 </template>

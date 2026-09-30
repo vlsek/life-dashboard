@@ -135,6 +135,34 @@ export function buildInsertCustom(form: CustomChallengeFormInput) {
   }
 }
 
+// Правка уже созданного челленджа (BACKLOG 14, 11:26). Тип и дата старта НЕ меняются: смена типа
+// переосмыслила бы уже внесённые записи (значение за день / 1 за штуку), а дата старта сдвинула бы
+// нумерацию дней. Поэтому патч содержит только редактируемые поля; template_id и type остаются как
+// были (челлендж из шаблона после правки остаётся челленджем из шаблона). Поля, не относящиеся к
+// типу, пишутся как null — как и при создании.
+export function buildUpdateFromForm(form: CustomChallengeFormInput, type: ChallengeType) {
+  const { template_id: _templateId, type: _type, ...patch } = buildInsertCustom({ ...form, type })
+  void _templateId
+  void _type
+  return patch
+}
+
+// Значения формы правки из существующего челленджа (то, чего в базе нет, берём как при создании).
+export function formFromChallenge(ch: Challenge): CustomChallengeFormInput {
+  return {
+    title: ch.title,
+    icon: ch.icon || '🏆',
+    type: ch.type,
+    duration: ch.duration_days ?? 30,
+    dailyTarget: ch.daily_target ?? 0,
+    startValue: ch.start_value ?? 0,
+    increment: ch.daily_increment ?? 1,
+    unit: ch.unit ?? '',
+    targetCount: ch.target_count ?? 10,
+    itemLabel: ch.item_label ?? '',
+  }
+}
+
 // Какие поля формы активны для данного типа — портировано из applyTypeState().
 export function fieldsEnabledForType(type: ChallengeType) {
   return {

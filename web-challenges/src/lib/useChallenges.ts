@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
 import { todayStr } from './date'
-import { buildInsertCustom, buildInsertFromTemplate } from './challenges'
+import { buildInsertCustom, buildInsertFromTemplate, buildUpdateFromForm } from './challenges'
 import type { Challenge, ChallengeEntry, ChallengeTemplate, CustomChallengeFormInput } from './types'
 
 export type AuthState =
@@ -121,6 +121,14 @@ export function useChallenges() {
     await reload()
   }
 
+  // Правка полей существующего челленджа (тип и дата старта не меняются — см. buildUpdateFromForm).
+  async function updateChallenge(ch: Challenge, form: CustomChallengeFormInput) {
+    const userId = requireUserId()
+    const { error: err } = await sb.from('challenge_instances').update(buildUpdateFromForm(form, ch.type)).eq('id', ch.id).eq('user_id', userId)
+    if (err) throw err
+    await reload()
+  }
+
   async function abandonChallenge(ch: Challenge) {
     const { error: err } = await sb.from('challenge_instances').update({ active: false }).eq('id', ch.id)
     if (err) throw err
@@ -136,6 +144,7 @@ export function useChallenges() {
     reload,
     startFromTemplate,
     startCustom,
+    updateChallenge,
     upsertDailyEntry,
     addCumulativeEntry,
     deleteEntry,

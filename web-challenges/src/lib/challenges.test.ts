@@ -295,3 +295,87 @@ describe('fieldsEnabledForType', () => {
     })
   })
 })
+
+// ---- Правка существующего челленджа (BACKLOG 14, 11:26) ----
+import { buildUpdateFromForm, formFromChallenge } from './challenges'
+import type { Challenge } from './types'
+
+const baseCh = (over: Partial<Challenge>): Challenge => ({
+  id: 'c1',
+  user_id: 'u',
+  template_id: 'pushups_30',
+  title: 'Отжимания',
+  icon: '💪',
+  type: 'daily_progressive',
+  unit: 'раз',
+  start_date: '2026-09-01',
+  duration_days: 30,
+  daily_target: null,
+  start_value: 10,
+  daily_increment: 2,
+  target_count: null,
+  item_label: null,
+  active: true,
+  completed: false,
+  completed_at: null,
+  created_at: '2026-09-01T00:00:00Z',
+  ...over,
+})
+
+describe('buildUpdateFromForm', () => {
+  it('не трогает тип, шаблон и дату старта — только редактируемые поля', () => {
+    const form = formFromChallenge(baseCh({}))
+    const patch = buildUpdateFromForm({ ...form, title: '  Отжимания+  ', startValue: 15 }, 'daily_progressive')
+    expect(patch).not.toHaveProperty('type')
+    expect(patch).not.toHaveProperty('template_id')
+    expect(patch).not.toHaveProperty('start_date')
+    expect(patch.title).toBe('Отжимания+')
+    expect(patch.start_value).toBe(15)
+    expect(patch.daily_increment).toBe(2)
+    expect(patch.duration_days).toBe(30)
+  })
+
+  it('поля, не относящиеся к типу, пишутся как null (тип берётся у челленджа, а не из формы)', () => {
+    const form = formFromChallenge(baseCh({ type: 'cumulative_count', target_count: 12, item_label: 'книга', duration_days: null, start_value: null, daily_increment: null }))
+    // даже если в форме «застряли» значения другого типа, для cumulative_count они не сохраняются
+    const patch = buildUpdateFromForm({ ...form, duration: 99, dailyTarget: 5, startValue: 3, increment: 4 }, 'cumulative_count')
+    expect(patch.duration_days).toBeNull()
+    expect(patch.daily_target).toBeNull()
+    expect(patch.start_value).toBeNull()
+    expect(patch.daily_increment).toBeNull()
+    expect(patch.target_count).toBe(12)
+    expect(patch.item_label).toBe('книга')
+  })
+
+  it('boolean-челлендж: единицы нет, цели нет', () => {
+    const form = formFromChallenge(baseCh({ type: 'daily_boolean', unit: null, start_value: null, daily_increment: null }))
+    const patch = buildUpdateFromForm({ ...form, unit: 'раз' }, 'daily_boolean')
+    expect(patch.unit).toBeNull()
+    expect(patch.daily_target).toBeNull()
+    expect(patch.duration_days).toBe(30)
+  })
+
+  it('пустая иконка и нулевая длительность получают те же значения по умолчанию, что при создании', () => {
+    const form = formFromChallenge(baseCh({ type: 'daily_fixed', daily_target: 20 }))
+    const patch = buildUpdateFromForm({ ...form, icon: '', duration: 0 }, 'daily_fixed')
+    expect(patch.icon).toBe('🏆')
+    expect(patch.duration_days).toBe(30)
+    expect(patch.daily_target).toBe(20)
+  })
+})
+
+describe('formFromChallenge', () => {
+  it('переносит значения челленджа в форму', () => {
+    const f = formFromChallenge(baseCh({}))
+    expect(f).toMatchObject({ title: 'Отжимания', icon: '💪', type: 'daily_progressive', duration: 30, startValue: 10, increment: 2, unit: 'раз' })
+  })
+  it('null-поля получают значения по умолчанию формы создания', () => {
+    const f = formFromChallenge(baseCh({ icon: '', unit: null, duration_days: null, start_value: null, daily_increment: null, target_count: null, item_label: null }))
+    expect(f).toMatchObject({ icon: '🏆', unit: '', duration: 30, startValue: 0, increment: 1, targetCount: 10, itemLabel: '' })
+  })
+  it('круг «челлендж → форма → патч» не меняет данных челленджа', () => {
+    const ch = baseCh({ type: 'daily_fixed', daily_target: 25, start_value: null, daily_increment: null })
+    const patch = buildUpdateFromForm(formFromChallenge(ch), ch.type)
+    expect(patch).toMatchObject({ title: ch.title, icon: ch.icon, unit: ch.unit, duration_days: ch.duration_days, daily_target: 25 })
+  })
+})

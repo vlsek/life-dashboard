@@ -1,21 +1,28 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
-import { fieldsEnabledForType } from '../lib/challenges'
-import type { ChallengeType, CustomChallengeFormInput } from '../lib/types'
+import { fieldsEnabledForType, formFromChallenge } from '../lib/challenges'
+import type { Challenge, ChallengeType, CustomChallengeFormInput } from '../lib/types'
 
+// Без `challenge` — создание своего челленджа; с `challenge` — правка существующего (тип фиксирован).
+const props = defineProps<{ challenge?: Challenge }>()
 const emit = defineEmits<{ close: []; save: [res: CustomChallengeFormInput] }>()
 
-const title = ref('')
-const icon = ref('🏆')
-const type = ref<ChallengeType>('daily_fixed')
-const duration = ref(30)
-const dailyTarget = ref(0)
-const startValue = ref(0)
-const increment = ref(1)
-const unit = ref('')
-const targetCount = ref(10)
-const itemLabel = ref('')
+const initial: CustomChallengeFormInput = props.challenge
+  ? formFromChallenge(props.challenge)
+  : { title: '', icon: '🏆', type: 'daily_fixed', duration: 30, dailyTarget: 0, startValue: 0, increment: 1, unit: '', targetCount: 10, itemLabel: '' }
+const isEdit = computed(() => !!props.challenge)
+
+const title = ref(initial.title)
+const icon = ref(initial.icon)
+const type = ref<ChallengeType>(initial.type)
+const duration = ref(initial.duration)
+const dailyTarget = ref(initial.dailyTarget)
+const startValue = ref(initial.startValue)
+const increment = ref(initial.increment)
+const unit = ref(initial.unit)
+const targetCount = ref(initial.targetCount)
+const itemLabel = ref(initial.itemLabel)
 
 const enabled = computed(() => fieldsEnabledForType(type.value))
 
@@ -46,7 +53,7 @@ function save() {
 <template>
   <div class="modal-backdrop" @click.self="emit('close')">
     <div class="modal">
-      <h3>{{ t('ch_custom_title') }}</h3>
+      <h3>{{ isEdit ? t('ch_edit_title') : t('ch_custom_title') }}</h3>
 
       <label class="mt-2 block text-sm">{{ t('ch_field_title') }}</label>
       <input v-model="title" type="text" class="w-full" />
@@ -55,9 +62,10 @@ function save() {
       <input v-model="icon" type="text" class="w-full" />
 
       <label class="mt-2 block text-sm">{{ t('ch_field_type') }}</label>
-      <select v-model="type" class="w-full">
+      <select v-model="type" class="w-full" :disabled="isEdit" data-testid="type-select">
         <option v-for="opt in typeOptions" :key="opt.value" :value="opt.value">{{ t(opt.labelKey) }}</option>
       </select>
+      <p v-if="isEdit" class="dim mt-1 text-xs" data-testid="type-locked-hint">{{ t('ch_edit_type_locked') }}</p>
 
       <label class="mt-2 block text-sm" :style="{ opacity: enabled.duration ? 1 : 0.4 }">{{ t('ch_field_duration') }}</label>
       <input v-model.number="duration" type="number" class="w-full" :disabled="!enabled.duration" :style="{ opacity: enabled.duration ? 1 : 0.4 }" />

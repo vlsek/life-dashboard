@@ -77,6 +77,10 @@ const DICT = {
     close: "Close",
     changelog_title: "📋 What's new",
     changelog_empty: "No history yet.",
+    ch_edit_title: "Edit challenge",
+    ch_edit_btn: "Edit",
+    ch_edit_type_locked: "The type can't be changed after creation — it would change how existing entries are read.",
+    ch_edit_save_error: "Couldn't save changes. Please try again.",
   },
   ru: {
     nav_open_menu: 'Открыть меню',
@@ -143,6 +147,10 @@ const DICT = {
     close: "Закрыть",
     changelog_title: "📋 Что нового",
     changelog_empty: "История пока пуста.",
+    ch_edit_title: "Править челлендж",
+    ch_edit_btn: "Править",
+    ch_edit_type_locked: "Тип нельзя менять после создания — иначе изменится смысл уже внесённых записей.",
+    ch_edit_save_error: "Не удалось сохранить изменения. Попробуйте ещё раз.",
   },
 } as const
 
