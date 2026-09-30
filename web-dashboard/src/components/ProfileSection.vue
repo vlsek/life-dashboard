@@ -31,7 +31,8 @@ const props = defineProps<{
   topStreak?: StreakItem | null
   streakCount?: number
 }>()
-const emit = defineEmits<{ 'progress-settings': []; 'show-streaks': [] }>()
+// 'progress-settings' = клик по кольцу/шестерёнке: 'day' — дневное (у аватарки), 'week' — недельное; App.vue открывает сводку
+const emit = defineEmits<{ 'progress-settings': [kind: 'day' | 'week']; 'show-streaks': [] }>()
 
 function streakLabel(item: StreakItem): string {
   if (item.kind === 'perfect_days') return t('dash_streak_perfect_days')
@@ -100,7 +101,7 @@ function openForm(p: BodyParam | 'new') {
 
 <template>
   <section v-if="loaded" class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border p-3" style="border-color: var(--border); background: var(--bg-card)">
-    <AvatarProgress :avatar-url="profile?.avatar_url" :ring="day ?? null" @pick="fileInput?.click()" @settings="emit('progress-settings')" />
+    <AvatarProgress :avatar-url="profile?.avatar_url" :ring="day ?? null" @pick="fileInput?.click()" @settings="emit('progress-settings', 'day')" />
     <input ref="fileInput" type="file" accept="image/*" class="hidden" data-test="avatar-input" @change="onFile" />
 
     <ProgressRing
@@ -111,7 +112,7 @@ function openForm(p: BodyParam | 'new') {
       :title="week.title"
       :label="t('dash_week_progress_label')"
       :size="48"
-      @click="emit('progress-settings')"
+      @click="emit('progress-settings', 'week')"
     />
 
     <div class="flex items-center gap-1">

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.48";
+const SITE_VERSION = "1.49";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.49", date: "2026-09-30 09:49", changes: [
+        "Дашборд: по клику на прогресс дня или недели сначала открывается сводка — что уже сделано, что осталось и сколько процентов даёт каждый пункт (плюс бонус ⭐). Значок настроек прогресса теперь внутри сводки, настройки открываются оттуда",
+    ]},
     { version: "1.48", date: "2026-09-30 09:45", changes: [
         "Аккаунт: смена пароля теперь в отдельном окне и спрашивает текущий пароль — без него пароль не меняется. Если аккаунт создан через Google и пароля ещё нет, окно предложит просто задать первый пароль",
     ]},
@@ -1039,6 +1042,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.49", date: "2026-09-30 09:49", changes: [
+        "Dashboard: clicking the day or week progress now opens a summary first — what is done, what is left and how many percent each item is worth (plus the ⭐ bonus). The progress settings icon now lives inside the summary and opens the settings from there",
+    ]},
     { version: "1.48", date: "2026-09-30 09:45", changes: [
         "Account: changing the password now happens in a separate dialog and asks for the current password — without it the password is not changed. If the account was created with Google and has no password yet, the dialog simply lets you set the first one",
     ]},

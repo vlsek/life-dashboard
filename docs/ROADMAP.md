@@ -406,6 +406,11 @@ v1.48 — Аккаунт-пилот (агент 6): смена пароля в �
   signInWithPassword(старый) → updateUser), `PasswordModal.vue`; identity 'email' в getUserIdentities определяет, есть ли у аккаунта
   пароль (только Google — без поля «текущий»). Неверный старый: status 400 / code invalid_credentials → «Текущий пароль неверный»,
   иная ошибка входа (429, сеть) показывается как есть. Классика legacy/account.js не тронута. 12 новых тестов, web-account 35, vue-tsc чист.
+v1.49 — Дашборд-пилот (агент 6): сводка по клику на прогресс дня/недели. `lib/progressSummary.ts` (daySummary/weekSummary — пункты
+  с весом и долей в %; «N раз в неделю» = N пунктов и прогресс 2/3, «не чаще N» = 1 пункт), `ProgressSummaryModal.vue`
+  (Сделано / Осталось / ⭐ Бонус, итоговый %, шестерёнка → ProgressSettingsModal). `useDashboard` отдаёт `summaries`.
+  `ProfileSection` эмитит `progress-settings` с аргументом 'day'|'week' (шестерёнка аватарки = день, кольцо недели = неделя).
+  Кольца/AvatarProgress/HeaderProgressBadge не менялись (там работает Агент 3). 9 новых тестов, web-dashboard 421, vue-tsc чист.
 v1.03 — Пилот Сообщества: заявки в друзья, друзья отдельно от подписок, «В друзья»
   (lib/friends.ts, PersonChip.vue, 17 тестов, в т.ч. UI-тест App.vue с подменой Supabase).
 v1.02 — Сообщество (классика): то же в ванильном community.js. Фильтр «Только друзья» =

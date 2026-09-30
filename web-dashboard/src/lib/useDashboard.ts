@@ -4,6 +4,7 @@ import { fetchAllRows } from './fetchAll'
 import { fmtDate, todayStr } from './date'
 import { computeStreakItemsPure, type StreakItem } from './streaks'
 import { computeDayProgressPure, computeWeekProgressPure, getWeekDates, type ProgressResult, type PlannedItem, type GoalLite } from './progress'
+import { daySummary, weekSummary, type ProgressSummary } from './progressSummary'
 import { getDayProgressSettings, setDayProgressSettings, type DayProgressSettings } from './progressSettings'
 import { DATA_CHANGED } from './events'
 import type { Metric } from './types'
@@ -18,6 +19,8 @@ export function useDashboard() {
   const streaks = ref<StreakItem[]>([])
   const dayProgress = ref<ProgressResult | null>(null)
   const weekProgress = ref<ProgressResult | null>(null)
+  // Сводка по клику на кольцо (что сделано/осталось/сколько %): считается из тех же данных, что и кольца.
+  const summaries = ref<{ day: ProgressSummary; week: ProgressSummary } | null>(null)
   const progressSettings = ref<DayProgressSettings>(getDayProgressSettings())
   const loadError = ref<string | null>(null)
 
@@ -130,6 +133,10 @@ export function useDashboard() {
     const plannedByDate: Record<string, PlannedItem[]> = {}
     for (const d of pastOrToday) plannedByDate[d] = notesByDate[d]?.planned_goals || []
     weekProgress.value = computeWeekProgressPure(settings, metrics, byDay, pastOrToday, plannedByDate, allGoals)
+    summaries.value = {
+      day: daySummary(settings, metrics, byDay[today] || {}, today, notesByDate[today]?.planned_goals || [], allGoals),
+      week: weekSummary(settings, metrics, byDay, pastOrToday, plannedByDate, allGoals),
+    }
   }
 
   async function saveProgressSettings(s: DayProgressSettings) {
@@ -137,7 +144,7 @@ export function useDashboard() {
     if (currentUserId) await loadAll(currentUserId)
   }
 
-  return { auth, streaks, dayProgress, weekProgress, progressSettings, loadError, init, refresh, saveProgressSettings }
+  return { auth, streaks, dayProgress, weekProgress, summaries, progressSettings, loadError, init, refresh, saveProgressSettings }
 }
 
 export { fmtDate }

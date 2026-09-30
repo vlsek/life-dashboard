@@ -24,7 +24,7 @@ export interface ProgressResult {
   bonusPct: number
 }
 
-function isPlannedItemDone(item: PlannedItem, allGoals: GoalLite[]): boolean | undefined {
+export function isPlannedItemDone(item: PlannedItem, allGoals: GoalLite[]): boolean | undefined {
   if (item.type === 'goal') {
     const g = allGoals.find((x) => x.name === item.text)
     if (!g) return undefined // удалённая цель — больше не в счёте

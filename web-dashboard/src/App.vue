@@ -10,6 +10,7 @@ import HeaderProgressBadge from './components/HeaderProgressBadge.vue'
 import { dayRingTarget, weekRingTarget } from './lib/ringPlacement'
 import type { RingData } from './lib/ringPlacement'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
+import ProgressSummaryModal from './components/ProgressSummaryModal.vue'
 import ReminderBanners from './components/ReminderBanners.vue'
 import EveningReminderBanner from './components/EveningReminderBanner.vue'
 import PlanReminderBanner from './components/PlanReminderBanner.vue'
@@ -36,7 +37,7 @@ import type { DayProgressSettings } from './lib/progressSettings'
 // с общей выбранной датой (см. DailyMetricsSection.vue). Раскладка блоков (показать/скрыть/переставить) —
 // lib/layout.ts + useLayout.ts + LayoutModal.vue, колонка profiles.dashboard_layout общая с классикой.
 
-const { auth, streaks, dayProgress, weekProgress, progressSettings, loadError, init, saveProgressSettings } = useDashboard()
+const { auth, streaks, dayProgress, weekProgress, summaries, progressSettings, loadError, init, saveProgressSettings } = useDashboard()
 const { items: eveningItems, visible: eveningVisible, load: loadEveningReminder, dismiss: dismissEveningReminder } = useEveningReminder()
 const { layout, loaded: layoutLoaded, saveError: layoutError, load: loadLayout, save: saveLayout } = useLayout()
 const { visible: planReminders, load: loadPlanReminders, dismiss: dismissPlanReminder } = usePlanReminders()
@@ -54,6 +55,7 @@ onMounted(async () => {
 
 const showAllStreaks = ref(false)
 const showProgressSettings = ref(false)
+const summaryKind = ref<'day' | 'week' | null>(null)
 const showLayoutModal = ref(false)
 const profileCollapsed = ref(false)
 const chartsCollapsed = ref(false)
@@ -144,8 +146,8 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
       <PlanReminderBanner :items="planReminders" @dismiss="dismissPlanReminder" />
       <EveningReminderBanner v-if="eveningVisible" :items="eveningItems" @dismiss="dismissEveningReminder" />
 
-      <HeaderProgressBadge v-if="dayRingHeader" kind="day" v-bind="dayRingHeader" @click="showProgressSettings = true" />
-      <HeaderProgressBadge v-if="weekRingHeader" kind="week" v-bind="weekRingHeader" @click="showProgressSettings = true" />
+      <HeaderProgressBadge v-if="dayRingHeader" kind="day" v-bind="dayRingHeader" @click="summaryKind = 'day'" />
+      <HeaderProgressBadge v-if="weekRingHeader" kind="week" v-bind="weekRingHeader" @click="summaryKind = 'week'" />
       <WaterSection :user-id="auth.userId" />
 
       <template v-if="layoutLoaded">
@@ -160,7 +162,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
                   :week="weekRingProfile"
                   :top-streak="topStreak"
                   :streak-count="streaks.length"
-                  @progress-settings="showProgressSettings = true"
+                  @progress-settings="summaryKind = $event"
                   @show-streaks="showAllStreaks = true"
                 />
               </div>
@@ -234,6 +236,13 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
     </template>
 
     <LayoutModal v-if="showLayoutModal" :initial="layout" :error="layoutError" @close="showLayoutModal = false" @save="onSaveLayout" />
+    <ProgressSummaryModal
+      v-if="summaryKind && summaries"
+      :kind="summaryKind"
+      :summary="summaries[summaryKind]"
+      @close="summaryKind = null"
+      @settings="summaryKind = null; showProgressSettings = true"
+    />
     <ProgressSettingsModal v-if="showProgressSettings" :initial="progressSettings" @close="showProgressSettings = false" @save="onSaveProgressSettings" />
   </main>
 </template>
