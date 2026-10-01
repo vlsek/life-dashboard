@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { metricDescription, selectedMetrics, dayProgressSettingsFor, baseMetrics, goalMetrics } from './onboardingData'
+import { metricDescription, selectedMetrics, dayProgressSettingsFor, goalMetrics, recommendedKeys, metricGroups, starterMetrics, bodyParamKeysFor, layoutFor, stepsFor, candidateMetrics } from './onboardingData'
 
 const labels = { bool: 'yes/no', multiselect: 'choice from options', lessThan: 'less than', atLeast: 'at least' }
 
@@ -15,16 +15,80 @@ describe('metricDescription', () => {
 })
 
 describe('selectedMetrics', () => {
-  it('planner usecase always yields no metrics, regardless of goal', () => {
-    expect(selectedMetrics('planner', 'en', 'gain_muscle', new Set())).toEqual([])
+  it('planner usecase always yields no metrics, regardless of goal or selection', () => {
+    expect(selectedMetrics('planner', 'en', 'gain_muscle', new Set(['pushups', 'water']))).toEqual([])
   })
-  it('combines base + goal metrics, minus unchecked keys', () => {
-    const out = selectedMetrics('goals', 'en', 'gain_muscle', new Set(['pushups', 'mood']))
-    expect(out.map((m) => m.key)).toEqual(['water', 'study', 'calories', 'workout', 'protein'])
+  it('returns only the selected candidates, in candidate order', () => {
+    const out = selectedMetrics('goals', 'en', 'gain_muscle', new Set(['protein', 'water', 'pushups']))
+    expect(out.map((m) => m.key)).toEqual(['pushups', 'water', 'protein'])
   })
-  it('goals with no extra metrics (learn_skill) just uses base', () => {
-    const out = selectedMetrics('both', 'en', 'learn_skill', new Set())
-    expect(out).toHaveLength(baseMetrics('en').length)
+  it('ignores selected keys that are not candidates for this goal', () => {
+    expect(selectedMetrics('both', 'en', 'learn_skill', new Set(['protein', 'steps', 'study'])).map((m) => m.key)).toEqual(['study'])
+  })
+  it('nothing selected means no metrics at all', () => {
+    expect(selectedMetrics('goals', 'en', 'lose_weight', new Set())).toEqual([])
+  })
+})
+
+describe('recommendations (BACKLOG 8.3: no clutter after sign-up)', () => {
+  it('every recommended key is a real candidate for that goal', () => {
+    for (const goal of ['lose_weight', 'gain_muscle', 'learn_skill', 'general_fitness'] as const) {
+      const keys = candidateMetrics('goals', 'en', goal).map((m) => m.key)
+      for (const k of recommendedKeys(goal)) expect(keys).toContain(k)
+    }
+  })
+  it('recommendations are a small subset, never the whole list', () => {
+    for (const goal of ['lose_weight', 'gain_muscle', 'learn_skill', 'general_fitness'] as const) {
+      const all = candidateMetrics('goals', 'en', goal).length
+      expect(recommendedKeys(goal).length).toBeGreaterThan(0)
+      expect(recommendedKeys(goal).length).toBeLessThan(all)
+    }
+  })
+  it('metricGroups splits candidates without losing or duplicating any', () => {
+    const g = metricGroups('goals', 'ru', 'lose_weight')
+    expect(g.recommended.map((m) => m.key)).toEqual(['water', 'calories', 'workout', 'steps']) // порядок как в списке кандидатов
+    expect(g.other.map((m) => m.key)).toEqual(['pushups', 'study', 'mood'])
+    expect(g.recommended.length + g.other.length).toBe(candidateMetrics('goals', 'ru', 'lose_weight').length)
+  })
+  it('planner has no metric groups', () => {
+    expect(metricGroups('planner', 'en', 'lose_weight')).toEqual({ recommended: [], other: [] })
+  })
+})
+
+describe('starterMetrics (skip)', () => {
+  it('two universal metrics instead of all six', () => {
+    expect(starterMetrics('en').map((m) => m.key)).toEqual(['water', 'workout'])
+    expect(starterMetrics('ru').map((m) => m.key)).toEqual(['water', 'workout'])
+  })
+})
+
+describe('bodyParamKeysFor', () => {
+  it('planner gets no body parameters', () => {
+    expect(bodyParamKeysFor('planner', null)).toEqual([])
+    expect(bodyParamKeysFor('planner', 'lose_weight')).toEqual([])
+  })
+  it('weight-related goals get weight + fat + muscle, the rest only weight; body water is never default', () => {
+    expect(bodyParamKeysFor('goals', 'lose_weight')).toEqual(['weight', 'fat', 'muscle'])
+    expect(bodyParamKeysFor('both', 'gain_muscle')).toEqual(['weight', 'fat', 'muscle'])
+    expect(bodyParamKeysFor('goals', 'learn_skill')).toEqual(['weight'])
+    expect(bodyParamKeysFor('goals', 'general_fitness')).toEqual(['weight'])
+  })
+})
+
+describe('layoutFor / stepsFor', () => {
+  it('planner hides the metric charts block, the others keep the default layout', () => {
+    expect(layoutFor('planner')).toEqual([
+      { key: 'profile', visible: true },
+      { key: 'charts', visible: false },
+      { key: 'daily', visible: true },
+    ])
+    expect(layoutFor('goals')).toBeNull()
+    expect(layoutFor('both')).toBeNull()
+  })
+  it('planner finishes after "about you", everybody else goes through priority and metrics', () => {
+    expect(stepsFor('planner')).toEqual(['usecase', 'about'])
+    expect(stepsFor('goals')).toEqual(['usecase', 'about', 'priority', 'metrics'])
+    expect(stepsFor('both')).toEqual(['usecase', 'about', 'priority', 'metrics'])
   })
 })
 

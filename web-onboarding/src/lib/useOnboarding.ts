@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
 import { todayStr } from './date'
-import type { MetricTemplate, OnboardingAnswers } from './types'
+import type { BodyParamKey, MetricTemplate, OnboardingAnswers } from './types'
 
 export type AuthState = { status: 'loading' } | { status: 'redirecting' } | { status: 'ready'; userId: string }
 
@@ -52,24 +52,37 @@ export function useOnboarding() {
       .upsert({ user_id: userId, gender: answers.gender, birthdate: answers.birthdate, height: answers.height, goal_type: answers.goal_type, onboarded: true })
     if (profileError) return { ok: false as const, stage: 'profile' as const, error: profileError }
 
-    const { data: existingParams } = await sb.from('body_parameters').select('id, name').eq('user_id', userId)
-    let weightParamId = existingParams?.find((p) => p.name === bodyParamLabels.weight)?.id
-    if (!existingParams || existingParams.length === 0) {
-      const defaults = [
-        { user_id: userId, name: bodyParamLabels.weight, icon: '⚖️', unit: bodyParamLabels.kg, position: 0 },
-        { user_id: userId, name: bodyParamLabels.fat, icon: '🧬', unit: '%', position: 1 },
-        { user_id: userId, name: bodyParamLabels.muscle, icon: '💪', unit: bodyParamLabels.kg, position: 2 },
-        { user_id: userId, name: bodyParamLabels.water, icon: '💧', unit: '%', position: 3 },
-      ]
-      const { data: inserted } = await sb.from('body_parameters').insert(defaults).select()
-      weightParamId = inserted?.find((p) => p.name === bodyParamLabels.weight)?.id
-    }
+    if (answers.bodyParamKeys.length) {
+      const { data: existingParams } = await sb.from('body_parameters').select('id, name').eq('user_id', userId)
+      let weightParamId = existingParams?.find((p) => p.name === bodyParamLabels.weight)?.id
+      if (!existingParams || existingParams.length === 0) {
+        const all: Record<BodyParamKey, { name: string; icon: string; unit: string }> = {
+          weight: { name: bodyParamLabels.weight, icon: '⚖️', unit: bodyParamLabels.kg },
+          fat: { name: bodyParamLabels.fat, icon: '🧬', unit: '%' },
+          muscle: { name: bodyParamLabels.muscle, icon: '💪', unit: bodyParamLabels.kg },
+          water: { name: bodyParamLabels.water, icon: '💧', unit: '%' },
+        }
+        const defaults = answers.bodyParamKeys.map((key, position) => ({ user_id: userId, ...all[key], position }))
+        const { data: inserted } = await sb.from('body_parameters').insert(defaults).select()
+        weightParamId = inserted?.find((p) => p.name === bodyParamLabels.weight)?.id
+      }
 
-    if (answers.weight && weightParamId) {
-      await sb.from('body_parameter_values').upsert({ user_id: userId, date: todayStr(), parameter_id: weightParamId, value: answers.weight }, { onConflict: 'user_id,date,parameter_id' })
+      if (answers.weight && weightParamId) {
+        await sb.from('body_parameter_values').upsert({ user_id: userId, date: todayStr(), parameter_id: weightParamId, value: answers.weight }, { onConflict: 'user_id,date,parameter_id' })
+      }
     }
 
     const seedError = await seedMetrics(userId, answers.selectedMetrics)
+
+    // Раскладка Дашборда — необязательная часть: если колонки profiles.dashboard_layout ещё нет (миграция 015),
+    // онбординг не должен из-за этого падать.
+    if (answers.layout) {
+      try {
+        await sb.from('profiles').upsert({ user_id: userId, dashboard_layout: answers.layout })
+      } catch {
+        /* не критично */
+      }
+    }
 
     if (answers.goal_type === 'learn_skill' && answers.skills_raw.trim()) {
       const skillNames = answers.skills_raw

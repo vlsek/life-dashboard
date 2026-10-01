@@ -1,4 +1,4 @@
-import type { GoalType, MetricTemplate, Usecase } from './types'
+import type { BodyParamKey, GoalType, LayoutItem, MetricTemplate, Usecase } from './types'
 
 // Портировано 1:1 из onboarding.js (BASE_METRICS_RU/EN, GOAL_METRICS_RU/EN, GOAL_OPTIONS_RU/EN).
 
@@ -88,12 +88,64 @@ export function metricDescription(m: Pick<MetricTemplate, 'type' | 'goal_directi
   return `${prefix} ${m.goal_value}${m.unit ? ' ' + m.unit : ''}`
 }
 
-// Портировано из submitBtn.onclick(): какие метрики реально уйдут в базу — кандидаты
-// (базовые + под цель, или пусто для "ежедневника") минус снятые галочки.
-export function selectedMetrics(usecase: Usecase, lang: 'en' | 'ru', goal: GoalType, uncheckedKeys: Set<string>): MetricTemplate[] {
+// Все метрики, из которых человек может выбрать (базовые + под цель; для «ежедневника» метрик нет вовсе).
+export function candidateMetrics(usecase: Usecase, lang: 'en' | 'ru', goal: GoalType): MetricTemplate[] {
   if (usecase === 'planner') return []
-  const candidates = [...baseMetrics(lang), ...goalMetrics(lang, goal)]
-  return candidates.filter((m) => !uncheckedKeys.has(m.key))
+  return [...baseMetrics(lang), ...goalMetrics(lang, goal)]
+}
+
+// BACKLOG 8.3: новому пользователю не навязываем всё подряд — по цели предвыбраны только подходящие метрики,
+// остальные доступны по желанию (и всегда добавляются позже на главной).
+const RECOMMENDED: Record<GoalType, string[]> = {
+  lose_weight: ['water', 'calories', 'steps', 'workout'],
+  gain_muscle: ['pushups', 'protein', 'workout', 'water'],
+  learn_skill: ['study', 'mood'],
+  general_fitness: ['water', 'workout', 'mood'],
+}
+
+export function recommendedKeys(goal: GoalType): string[] {
+  return [...RECOMMENDED[goal]]
+}
+
+// Делит кандидатов на «рекомендуем под цель» и «остальные» (порядок внутри групп — как в списке кандидатов).
+export function metricGroups(usecase: Usecase, lang: 'en' | 'ru', goal: GoalType): { recommended: MetricTemplate[]; other: MetricTemplate[] } {
+  const all = candidateMetrics(usecase, lang, goal)
+  const rec = new Set(RECOMMENDED[goal])
+  return { recommended: all.filter((m) => rec.has(m.key)), other: all.filter((m) => !rec.has(m.key)) }
+}
+
+// Какие метрики реально уйдут в базу: выбранные человеком среди кандидатов (для «ежедневника» — пусто).
+export function selectedMetrics(usecase: Usecase, lang: 'en' | 'ru', goal: GoalType, selectedKeys: ReadonlySet<string>): MetricTemplate[] {
+  return candidateMetrics(usecase, lang, goal).filter((m) => selectedKeys.has(m.key))
+}
+
+// «Пропустить, настрою сам»: не шесть метрик, а две универсальные — чтобы главная не была пустой, но и не была завалена.
+export function starterMetrics(lang: 'en' | 'ru'): MetricTemplate[] {
+  return baseMetrics(lang).filter((m) => m.key === 'water' || m.key === 'workout')
+}
+
+// Параметры тела: «ежедневнику» не нужны вовсе; остальным — вес, а при цели «похудеть»/«набрать» ещё % жира и мышцы.
+// Вода в теле по умолчанию больше не создаётся (её можно добавить позже вручную).
+export function bodyParamKeysFor(usecase: Usecase, goal: GoalType | null): BodyParamKey[] {
+  if (usecase === 'planner') return []
+  if (goal === 'lose_weight' || goal === 'gain_muscle') return ['weight', 'fat', 'muscle']
+  return ['weight']
+}
+
+// Раскладка Дашборда (profiles.dashboard_layout, ключи как в Дашборде): «ежедневнику» не нужны графики метрик.
+export function layoutFor(usecase: Usecase): LayoutItem[] | null {
+  if (usecase !== 'planner') return null
+  return [
+    { key: 'profile', visible: true },
+    { key: 'charts', visible: false },
+    { key: 'daily', visible: true },
+  ]
+}
+
+// Шаги мастера: «ежедневнику» нужны только выбор сценария и «о себе».
+export type StepId = 'usecase' | 'about' | 'priority' | 'metrics'
+export function stepsFor(usecase: Usecase): StepId[] {
+  return usecase === 'planner' ? ['usecase', 'about'] : ['usecase', 'about', 'priority', 'metrics']
 }
 
 // Портировано из submitBtn.onclick(): настройка диаграммы дня по умолчанию под сценарий.

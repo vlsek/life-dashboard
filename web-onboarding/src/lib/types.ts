@@ -19,6 +19,13 @@ export interface MetricTemplate {
   options?: MultiselectOption[]
 }
 
+export type BodyParamKey = 'weight' | 'fat' | 'muscle' | 'water'
+export type LayoutKey = 'profile' | 'charts' | 'daily'
+export interface LayoutItem {
+  key: LayoutKey
+  visible: boolean
+}
+
 export interface OnboardingAnswers {
   gender: 'male' | 'female'
   birthdate: string | null
@@ -27,4 +34,8 @@ export interface OnboardingAnswers {
   goal_type: GoalType | null
   skills_raw: string
   selectedMetrics: MetricTemplate[]
+  // какие параметры тела создать (BACKLOG 8.3: только нужные по цели, для «ежедневника» — ни одного)
+  bodyParamKeys: BodyParamKey[]
+  // раскладка блоков Дашборда (profiles.dashboard_layout); null — оставить по умолчанию
+  layout: LayoutItem[] | null
 }
