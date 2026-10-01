@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import MetricIcon from './MetricIcon.vue'
 import { t, type DictKey } from '../lib/i18n'
 import { usePointsLog } from '../lib/usePointsLog'
 import { parseIso } from '../lib/date'
-import type { PointsDay, PointsEntry } from '../lib/pointsLog'
+import { RECENT_LIMIT, incomeRows, purchaseRows } from '../lib/pointsLog'
+import type { LogRow, PointsEntry } from '../lib/pointsLog'
+import { vCollapse } from '../lib/collapseMotion'
 import CoinIcon from './CoinIcon.vue'
 
 // Окно по клику на баллы в профиле (BACKLOG 7.1): за что начислено сегодня и за последние 7 дней.
 // В магазин — только кнопкой отсюда, а не сразу по клику на баланс.
+// BACKLOG 16 (17:02): по умолчанию — последние 5 источников прибытка, остальное и покупки разворачиваются вниз.
 const props = defineProps<{ userId: string; balance: number | null }>()
 const emit = defineEmits<{ close: [] }>()
 
@@ -22,14 +25,25 @@ const KIND: Record<PointsEntry['kind'], DictKey> = {
   spent: 'dash_points_kind_spent',
 }
 
-function dayTitle(d: PointsDay, index: number): string {
-  if (index === 0) return t('dash_points_today')
-  if (index === 1) return t('dash_points_yesterday')
-  const dt = parseIso(d.date)
+// Подпись дня строки: «Сегодня» / «Вчера» / «Пн 29.09» (по позиции дня в журнале: он идёт от сегодняшнего назад)
+function dayLabel(date: string): string {
+  const idx = log.value ? log.value.days.findIndex((d) => d.date === date) : -1
+  if (idx === 0) return t('dash_points_today')
+  if (idx === 1) return t('dash_points_yesterday')
+  const dt = parseIso(date)
   const wd = t('dash_summary_weekdays').split(',')[dt.getDay()]
   return `${wd} ${String(dt.getDate()).padStart(2, '0')}.${String(dt.getMonth() + 1).padStart(2, '0')}`
 }
-const sign = (n: number) => (n > 0 ? `+${n}` : String(n))
+
+const expanded = ref(false)
+const income = computed<LogRow[]>(() => (log.value ? incomeRows(log.value) : []))
+const purchases = computed<LogRow[]>(() => (log.value ? purchaseRows(log.value) : []))
+const recent = computed(() => income.value.slice(0, RECENT_LIMIT))
+const rest = computed(() => income.value.slice(RECENT_LIMIT))
+// есть что разворачивать: ещё начисления за неделю или покупки
+const canExpand = computed(() => rest.value.length > 0 || purchases.value.length > 0)
+// типографский минус (как в итогах «потрачено −N»), а не дефис
+const sign = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : String(n))
 </script>
 
 <template>
@@ -51,25 +65,53 @@ const sign = (n: number) => (n > 0 ? `+${n}` : String(n))
           <template v-if="log.spentWeek > 0"> · {{ t('dash_points_spent') }}: <strong>−{{ log.spentWeek }}</strong></template>
         </p>
 
-        <div class="overflow-y-auto" style="max-height: 55vh">
-          <section v-for="(d, i) in log.days" :key="d.date" class="mb-2" :data-day="d.date">
-            <div class="flex items-center justify-between text-sm font-bold">
-              <span>{{ dayTitle(d, i) }}</span>
-              <span class="dim font-normal">{{ sign(d.earned - d.spent) }}</span>
-            </div>
-            <p v-if="d.entries.length === 0" class="dim text-xs">{{ t('dash_points_nothing') }}</p>
-            <ul v-else class="m-0 list-none p-0 text-sm">
-              <li v-for="(e, k) in d.entries" :key="k" class="flex items-center justify-between gap-2 py-0.5">
+        <div class="overflow-y-auto" style="max-height: 55vh" data-test="points-list">
+          <h4 class="mb-1 text-sm font-bold">{{ t('dash_points_recent_title') }}</h4>
+          <p v-if="income.length === 0" class="dim text-xs" data-test="points-empty">{{ t('dash_points_nothing') }}</p>
+          <ul v-else class="m-0 list-none p-0 text-sm" data-test="points-recent">
+            <li v-for="(e, k) in recent" :key="'r' + k" class="flex items-center justify-between gap-2 py-0.5" data-test="points-row">
+              <span class="min-w-0 flex-1 truncate">
+                <MetricIcon v-if="e.kind === 'metric'" :icon="e.icon" />
+                {{ e.label }}
+                <span class="dim text-xs">· {{ dayLabel(e.date) }}<template v-if="e.kind !== 'metric'"> · {{ t(KIND[e.kind]) }}</template></span>
+              </span>
+              <span class="whitespace-nowrap" style="color: var(--success)">{{ sign(e.points) }}</span>
+            </li>
+          </ul>
+
+          <div v-if="canExpand" v-collapse="expanded" data-test="points-more">
+            <ul v-if="rest.length" class="m-0 list-none p-0 text-sm">
+              <li v-for="(e, k) in rest" :key="'m' + k" class="flex items-center justify-between gap-2 py-0.5" data-test="points-row-more">
                 <span class="min-w-0 flex-1 truncate">
                   <MetricIcon v-if="e.kind === 'metric'" :icon="e.icon" />
                   {{ e.label }}
-                  <span v-if="e.kind !== 'metric'" class="dim text-xs">· {{ t(KIND[e.kind]) }}</span>
+                  <span class="dim text-xs">· {{ dayLabel(e.date) }}<template v-if="e.kind !== 'metric'"> · {{ t(KIND[e.kind]) }}</template></span>
                 </span>
-                <span class="whitespace-nowrap" :style="{ color: e.points < 0 ? 'var(--danger)' : 'var(--success)' }">{{ sign(e.points) }}</span>
+                <span class="whitespace-nowrap" style="color: var(--success)">{{ sign(e.points) }}</span>
               </li>
             </ul>
-          </section>
+            <template v-if="purchases.length">
+              <h4 class="mb-1 mt-2 text-sm font-bold">{{ t('dash_points_purchases') }}</h4>
+              <ul class="m-0 list-none p-0 text-sm" data-test="points-purchases">
+                <li v-for="(e, k) in purchases" :key="'p' + k" class="flex items-center justify-between gap-2 py-0.5">
+                  <span class="min-w-0 flex-1 truncate">{{ e.label }} <span class="dim text-xs">· {{ dayLabel(e.date) }}</span></span>
+                  <span class="whitespace-nowrap" style="color: var(--danger)">{{ sign(e.points) }}</span>
+                </li>
+              </ul>
+            </template>
+          </div>
         </div>
+
+        <button
+          v-if="canExpand"
+          type="button"
+          class="secondary mt-2 w-full text-sm"
+          data-test="points-toggle"
+          :aria-expanded="expanded"
+          @click="expanded = !expanded"
+        >
+          {{ expanded ? t('dash_points_show_less') : t('dash_points_show_more') + (rest.length ? ` (${rest.length})` : '') }}
+        </button>
 
         <p class="dim mt-2 text-xs">{{ t('dash_points_skills_note') }}</p>
       </template>

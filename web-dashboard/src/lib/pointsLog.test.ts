@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildPointsLog, windowDates } from './pointsLog'
+import { RECENT_LIMIT, buildPointsLog, incomeRows, purchaseRows, windowDates } from './pointsLog'
 import type { LogMetric } from './pointsLog'
 
 const m = (o: Partial<LogMetric> = {}): LogMetric => ({
@@ -69,5 +69,31 @@ describe('buildPointsLog', () => {
   it('ignores rows outside the window', () => {
     const log = buildPointsLog(today, [m({ id: 'a' })], [{ date: '2026-09-01', metric_id: 'a', value: 99 }], [], [], [])
     expect(log.earnedWeek).toBe(0)
+  })
+})
+
+describe('incomeRows / purchaseRows', () => {
+  const today = '2026-09-30'
+  const log = buildPointsLog(
+    today,
+    [m({ id: 'a', name: 'Steps' })],
+    [{ date: today, metric_id: 'a', value: 20 }, { date: '2026-09-29', metric_id: 'a', value: 20 }],
+    [{ name: 'Marathon', points: 20, done_date: '2026-09-29' }],
+    [],
+    [{ name: 'Headphones', cost: 100, redeemed_date: today }],
+  )
+  it('income rows are the positive entries, newest day first, each with its date', () => {
+    const rows = incomeRows(log)
+    expect(rows.map((r) => [r.date, r.label, r.points])).toEqual([
+      [today, 'Steps', 1],
+      ['2026-09-29', 'Steps', 1],
+      ['2026-09-29', 'Marathon', 20],
+    ])
+  })
+  it('purchase rows are only the negative entries', () => {
+    expect(purchaseRows(log).map((r) => [r.date, r.label, r.points])).toEqual([[today, 'Headphones', -100]])
+  })
+  it('the default compact size is 5', () => {
+    expect(RECENT_LIMIT).toBe(5)
   })
 })

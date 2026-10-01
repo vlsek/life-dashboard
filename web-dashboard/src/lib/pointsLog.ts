@@ -77,3 +77,21 @@ export function buildPointsLog(
     spentWeek: list.reduce((s, d) => s + d.spent, 0),
   }
 }
+
+// Компактный вид окна «Баллы» (BACKLOG 16, 17:02): по умолчанию — последние RECENT_LIMIT «источников прибытка»,
+// остальное разворачивается вниз. Источник прибытка — запись с положительными баллами (метрика, цель, книга);
+// покупки в магазине — отдельный список (они не «прибыток»). Порядок: новые дни сверху; внутри дня — как в журнале.
+export const RECENT_LIMIT = 5
+
+export interface LogRow extends PointsEntry {
+  date: string
+}
+
+function flatten(log: PointsLog, pick: (e: PointsEntry) => boolean): LogRow[] {
+  const rows: LogRow[] = []
+  for (const d of log.days) for (const e of d.entries) if (pick(e)) rows.push({ ...e, date: d.date })
+  return rows
+}
+
+export const incomeRows = (log: PointsLog): LogRow[] => flatten(log, (e) => e.points > 0)
+export const purchaseRows = (log: PointsLog): LogRow[] => flatten(log, (e) => e.points < 0)
