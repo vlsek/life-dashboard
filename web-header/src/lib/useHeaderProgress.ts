@@ -7,6 +7,7 @@ import { daySummary, weekSummary, type ProgressSummary } from './progressSummary
 import { getDayProgressSettings, setDayProgressSettings, type DayProgressSettings } from './progressSettings'
 import { DATA_CHANGED } from './events'
 import type { Metric } from './types'
+import { withWaterGoal } from './waterGoal'
 
 // Кольца дня/недели для шапки ЛЮБОЙ страницы (BACKLOG 2.3). Тот же расчёт, что в useDashboard.loadAll(), но без
 // стриков. Пересчёт: по событию DATA_CHANGED (вода из этого же бандла или Дашборд), когда вкладка снова видна и
@@ -51,7 +52,8 @@ export function useHeaderProgress() {
     ])
     if (metricsRes.error || valuesRes.error || notesRes.error || goalsRes.error) return // шапка молча остаётся с прошлыми значениями
 
-    const metrics = (metricsRes.data || []) as Metric[]
+    // вода «выполнена» по эффективной норме, а не по пустому goal_value (migrations/033)
+    const metrics = await withWaterGoal(uid, (metricsRes.data || []) as Metric[])
     const byDay: Record<string, Record<string, unknown>> = {}
     for (const v of valuesRes.rows) (byDay[v.date] ||= {})[v.metric_id] = v.value
     const planned: Record<string, PlannedItem[]> = {}

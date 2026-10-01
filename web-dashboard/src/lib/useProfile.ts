@@ -5,6 +5,7 @@ import { t } from './i18n'
 import { fetchAllRows } from './fetchAll'
 import { BODY_PARAMS_CHANGED, BODY_VALUES_CHANGED } from './useCharts'
 import { calcBalance, type BalanceMetric, type BalanceValueRow } from './balance'
+import { withWaterGoal } from './waterGoal'
 import { avatarPath, paramStats, validateBirthdate, type BodyParam, type BodyParamForm, type BodyValue, type ProfileRow } from './profile'
 
 // Отдельный композабл блока «Профиль» (не трогает useDashboard.ts — параллельная работа
@@ -44,7 +45,7 @@ export function useProfile() {
   // Баланс: те же 6 источников, что у дашборда и магазина; daily_values читается постранично.
   async function loadBalance() {
     const [metricsRes, valuesRes, goalsRes, skillsRes, booksRes, redeemedRes] = await Promise.all([
-      sb.from('metrics').select('id, type, goal_value, goal_direction').eq('user_id', userId).eq('active', true),
+      sb.from('metrics').select('id, name, icon, type, goal_value, goal_direction, position').eq('user_id', userId).eq('active', true),
       fetchAllRows<BalanceValueRow>((from, to) => sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId).order('date').order('metric_id').range(from, to)),
       sb.from('goals').select('points').eq('user_id', userId).eq('done', true),
       sb.from('skills').select('points').eq('user_id', userId).eq('mastered', true),
@@ -57,7 +58,8 @@ export function useProfile() {
       return
     }
     balance.value = calcBalance(
-      (metricsRes.data || []) as BalanceMetric[],
+      // вода — по эффективной норме, а не по пустому goal_value (migrations/033)
+      await withWaterGoal(userId, (metricsRes.data || []) as (BalanceMetric & { name?: string | null; icon?: string | null; position?: number | null })[]),
       valuesRes.rows,
       goalsRes.data || [],
       skillsRes.data || [],

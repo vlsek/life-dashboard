@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue'
 import { sb } from './supabase'
 import { notifyDataChanged } from './events'
+import { emitPointsFloat, pointsDelta } from './pointsFloat'
 import { fmtDate } from './date'
 import { t } from './i18n'
 import { autoNormMlFromWeight, effectiveNormMl, findWaterMetric, findWeightParam, nextWaterValue } from './water'
@@ -97,6 +98,9 @@ export function useWater() {
     saveError.value = null
     if (dateStr === fmtDate(new Date())) todayMl.value = next
     notifyDataChanged({ source: 'water', metricId: metric.value.id, date: dateStr, value: next })
+    // «+1 / −1 с монетой» (BACKLOG 14, 11:11): балл за воду — когда набрана эффективная норма (ручная → авто по весу → 2000),
+    // а не при любом значении: считаем по метрике с подставленной нормой (migrations/033). Только если статус «выполнено» сменился.
+    emitPointsFloat(pointsDelta({ ...metric.value, goal_value: normMl.value }, current, next))
     return next
   }
 

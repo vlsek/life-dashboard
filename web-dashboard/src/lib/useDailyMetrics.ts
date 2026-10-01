@@ -1,6 +1,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { sb } from './supabase'
 import { findWaterMetric } from './water'
+import { withWaterGoal } from './waterGoal'
 import { DATA_CHANGED, notifyDataChanged, type DataChangedDetail } from './events'
 import { emitPointsFloat, pointsDelta } from './pointsFloat'
 import {
@@ -74,7 +75,9 @@ export function useDailyMetrics() {
       return
     }
     error.value = null
-    const all = (metricsRes.data || []) as Metric[]
+    // «Баллы за день» считают воду по эффективной норме (migrations/033); сама вода сохраняется в WaterSection
+    const all = await withWaterGoal(uid, (metricsRes.data || []) as Metric[])
+    if (token !== loadToken) return
     metrics.value = all
     const w = findWaterMetric(all)
     const mine = new Set(all.filter((m) => m !== w && m.type !== 'sets').map((m) => m.id))

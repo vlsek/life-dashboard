@@ -8,6 +8,7 @@ import { daySummary, weekSummary, type ProgressSummary } from './progressSummary
 import { getDayProgressSettings, setDayProgressSettings, type DayProgressSettings } from './progressSettings'
 import { DATA_CHANGED } from './events'
 import { syncUserTimezone } from './timezone'
+import { withWaterGoal } from './waterGoal'
 import type { Metric } from './types'
 
 export type AuthState =
@@ -100,7 +101,8 @@ export function useDashboard() {
     }
     loadError.value = null
 
-    const metrics = (metricsRes.data || []) as Metric[]
+    // вода «выполнена» по эффективной норме, а не по пустому goal_value (migrations/033)
+    const metrics = await withWaterGoal(userId, (metricsRes.data || []) as Metric[])
     const byDay: Record<string, Record<string, unknown>> = {}
     for (const v of valuesRes.rows) {
       ;(byDay[v.date] ||= {})[v.metric_id] = v.value

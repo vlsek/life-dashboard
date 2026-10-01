@@ -3,6 +3,7 @@ import { sb } from './supabase'
 import type { HistoryContext } from './stats'
 import type { DailyNote, DayProgressSettings, Metric, MetricValue } from './types'
 import { fmtDate, todayStr } from './date'
+import { withWaterGoal } from './waterGoal'
 
 // Те же ключ и формат, что у getDayProgressSettings() в config.js — читаем настройки,
 // сохранённые на этом же устройстве через основной сайт.
@@ -85,7 +86,8 @@ export function useAuthAndData() {
       ])
       if (metricsRes.error) throw metricsRes.error
 
-      const metrics = (metricsRes.data || []) as Metric[]
+      // вода «выполнена» по эффективной норме, а не по пустому goal_value (migrations/033)
+      const metrics = await withWaterGoal(userId, (metricsRes.data || []) as Metric[])
       const byDate: Record<string, Record<string, MetricValue>> = {}
       for (const v of values) {
         ;(byDate[v.date] ||= {})[v.metric_id] = v.value

@@ -4,6 +4,7 @@ import { fetchAllRows } from './fetchAll'
 import { todayStr } from './date'
 import { calcTotalPoints, calcBalanceFromTotals } from './points'
 import type { DailyValue, GoalRow, SkillRow, BookRow, Metric, ShopItem, ShopItemFormInput } from './types'
+import { withWaterGoal } from './waterGoal'
 
 export type AuthState =
   | { status: 'loading' }
@@ -58,7 +59,8 @@ export function useShop() {
       return
     }
     const total = calcTotalPoints(
-      (metricsRes.data || []) as Metric[],
+      // вода — по эффективной норме, а не по пустому goal_value (migrations/033)
+      await withWaterGoal(userId, (metricsRes.data || []) as Metric[]),
       valuesRes.rows,
       (goalsRes.data || []) as GoalRow[],
       (skillsRes.data || []) as SkillRow[],
