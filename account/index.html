@@ -15,6 +15,13 @@
         } catch (e) {}
       })()
     </script>
+    <script>
+      // выключатель «отключить все анимации» (BACKLOG 16, 14:02): флаг на <html> до первой отрисовки,
+      // чтобы вся страница уважала выбор человека с первого кадра (правило — в src/style.css)
+      try {
+        if (localStorage.getItem('site_motion') === 'off') document.documentElement.setAttribute('data-motion', 'off')
+      } catch (e) {}
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#121212" />
     <link rel="icon" type="image/svg+xml" href="/account/favicon.svg" />
@@ -24,13 +31,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="apple-mobile-web-app-title" content="Dashboard" />
     <title>Аккаунт (пилот на Vue)</title>
-<<<<<<< HEAD
-    <script type="module" crossorigin src="/account/assets/index-Cz22ItxL.js"></script>
-    <link rel="stylesheet" crossorigin href="/account/assets/index-DxZ1eYDE.css">
-=======
-    <script type="module" crossorigin src="/account/assets/index-BX15eu9D.js"></script>
+    <script type="module" crossorigin src="/account/assets/index-COAIrG-W.js"></script>
     <link rel="stylesheet" crossorigin href="/account/assets/index-BlEM8nIo.css">
->>>>>>> 2a5ffc7 (Global animations switch on every pilot page: css rule + early script in 13 pilots, workouts collapse honors the flag, guard test (BACKLOG 16, 14:02 second slice), all pilots rebuilt, v1.99)
   </head>
   <body>
     <div id="app"></div>

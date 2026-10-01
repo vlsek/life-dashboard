@@ -1,6 +1,13 @@
 {
-  "version": "2.04",
+  "version": "2.05",
   "en": [
+    {
+      "version": "2.05",
+      "date": "2026-10-01 19:57",
+      "changes": [
+        "The \"turn off all animations\" switch now works on every page: Calendar, Shop, Workouts, Challenges, Goals, Skills, History, Languages, Community, Account, as well as the sign-in and onboarding pages — before, it only silenced animations on the Dashboard and in the header widgets. The flag is applied before the page is first drawn, so nothing flickers or moves from the very first frame; the smooth block collapsing in Workouts respects it too"
+      ]
+    },
     {
       "version": "2.04",
       "date": "2026-10-01 22:48",
@@ -1486,6 +1493,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.05",
+      "date": "2026-10-01 19:57",
+      "changes": [
+        "Выключатель «отключить все анимации» теперь действует на всех страницах: в Календаре, Магазине, Тренировках, Челленджах, Целях, Навыках, Истории, Языках, Сообществе, Аккаунте, а также на страницах входа и онбординга — раньше он гасил анимации только в Дашборде и в виджетах шапки. Флаг применяется до первой отрисовки страницы, поэтому с первого кадра ничего не мерцает и не движется; плавное сворачивание блоков в Тренировках тоже его учитывает"
+      ]
+    },
     {
       "version": "2.04",
       "date": "2026-10-01 22:48",

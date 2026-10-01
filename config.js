@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.04";
+const SITE_VERSION = "2.05";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.05", date: "2026-10-01 19:57", changes: [
+        "Выключатель «отключить все анимации» теперь действует на всех страницах: в Календаре, Магазине, Тренировках, Челленджах, Целях, Навыках, Истории, Языках, Сообществе, Аккаунте, а также на страницах входа и онбординга — раньше он гасил анимации только в Дашборде и в виджетах шапки. Флаг применяется до первой отрисовки страницы, поэтому с первого кадра ничего не мерцает и не движется; плавное сворачивание блоков в Тренировках тоже его учитывает",
+    ]},
     { version: "2.04", date: "2026-10-01 22:48", changes: [
         "Вода: в автоматической норме теперь учитывается рост. Если в профиле указан рост, норма считается по площади поверхности тела (формула Мостеллера: √(рост × вес / 3600)) × 1200 мл/м² — это обычная потребность в жидкости 1500 мл/м² в сутки, из которых около 20% приходит с едой. Пример: 70 кг и 175 см дают 2210 мл. Без роста расчёт прежний — вес × 30 мл. В окне воды (на Дашборде и в шапке на всех страницах) появилось поле «Рост, см», а справка (i) подробно объясняет, как получена норма. Рост берётся из профиля, который вы заполняли при онбординге",
     ]},
@@ -1213,6 +1216,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.05", date: "2026-10-01 19:57", changes: [
+        "The \"turn off all animations\" switch now works on every page: Calendar, Shop, Workouts, Challenges, Goals, Skills, History, Languages, Community, Account, as well as the sign-in and onboarding pages — before, it only silenced animations on the Dashboard and in the header widgets. The flag is applied before the page is first drawn, so nothing flickers or moves from the very first frame; the smooth block collapsing in Workouts respects it too",
+    ]},
     { version: "2.04", date: "2026-10-01 22:48", changes: [
         "Water: the automatic goal now takes height into account. When your profile has a height, the goal is based on body surface area (Mosteller formula: √(height × weight / 3600)) × 1200 ml/m² — the usual fluid need of 1500 ml/m² a day, about 20% of which comes with food. Example: 70 kg and 175 cm give 2210 ml. Without height the calculation stays as before — weight × 30 ml. The water window (on the Dashboard and in the header on every page) has a new Height, cm field, and the (i) help explains in detail how the goal was obtained. The height comes from the profile you filled in during onboarding",
     ]},
