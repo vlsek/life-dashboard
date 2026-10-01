@@ -13,6 +13,7 @@ import { isRemaining } from '../lib/daily'
 import { todayStr } from '../lib/date'
 import { t } from '../lib/i18n'
 import { ref, watch } from 'vue'
+import type { MetricStreakInfo } from '../lib/metricStreaks'
 
 // Блок «Дневные метрики» (порт renderDay() из dashboard.js): листание дней, поля boolean/
 // number/multiselect с автосохранением, «Подходы» и «Цели на сегодня» встроены сюда же с той
@@ -27,7 +28,7 @@ const {
   load, setBoolean, setNumber, addToNumber, fixTotal, toggleOpt, addItem, removeItem, saveDay,
 } = useDailyMetrics()
 
-const props = defineProps<{ userId: string | null }>()
+const props = defineProps<{ userId: string | null; metricStreaks?: Record<string, MetricStreakInfo> }>()
 watch(
   () => [props.userId, date.value] as const,
   ([uid, d]) => {
@@ -70,6 +71,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
             :value="numberValue(m.id)"
             :flashed="!!flashed[m.id]"
             :remaining="isRemaining(m, date, pending[m.id])"
+            :streak="props.metricStreaks?.[m.id]"
             @set="setNumber(m, $event)"
             @add="addToNumber(m, $event)"
             @fix="fixTotal(m, $event)"
@@ -82,6 +84,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
           :metric="m"
           :checked="!!pending[m.id]"
           :remaining="isRemaining(m, date, pending[m.id])"
+            :streak="props.metricStreaks?.[m.id]"
           @toggle="setBoolean(m, $event)"
         />
 
@@ -91,6 +94,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
           :metric="m"
           :selected="selectedOf(m.id)"
           :remaining="isRemaining(m, date, pending[m.id])"
+            :streak="props.metricStreaks?.[m.id]"
           @toggle="toggleOpt(m, $event)"
         />
 

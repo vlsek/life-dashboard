@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import MetricIcon from './MetricIcon.vue'
+import MetricStreakBadge from './MetricStreakBadge.vue'
+import type { MetricStreakInfo } from '../lib/metricStreaks'
 import type { Metric } from '../lib/types'
 
 // Порт блока `m.type === "boolean"` из renderDay(): чекбокс + подпись, сохраняется сразу.
-defineProps<{ metric: Metric; checked: boolean; remaining?: boolean }>()
+defineProps<{ metric: Metric; checked: boolean; remaining?: boolean; streak?: MetricStreakInfo | null }>()
 const emit = defineEmits<{ toggle: [boolean] }>()
 </script>
 
 <template>
   <label class="row" :class="{ 'metric-remaining': remaining }" :data-metric-id="metric.id">
     <input type="checkbox" :checked="checked" @change="emit('toggle', ($event.target as HTMLInputElement).checked)" />
-    <span><MetricIcon :icon="metric.icon" /> {{ metric.name }}</span>
+    <span><MetricIcon :icon="metric.icon" /> {{ metric.name }}<MetricStreakBadge v-if="streak" :info="streak" /></span>
   </label>
 </template>
 

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import Icon from './Icon.vue'
+import MetricStreakBadge from './MetricStreakBadge.vue'
+import type { MetricStreakInfo } from '../lib/metricStreaks'
 import MetricIcon from './MetricIcon.vue'
 import { t } from '../lib/i18n'
 import type { Metric } from '../lib/types'
@@ -14,6 +16,7 @@ const props = defineProps<{
   value: number | undefined
   remaining?: boolean
   flashed?: boolean
+  streak?: MetricStreakInfo | null
 }>()
 const emit = defineEmits<{ set: [string]; add: [string]; fix: [string] }>()
 
@@ -48,6 +51,7 @@ function fixTotal() {
   <div class="field" :class="{ 'metric-remaining': remaining }" :data-metric-id="metric.id">
     <div class="label-row">
       <span class="dim label"><MetricIcon :icon="metric.icon" /> {{ metric.name }}{{ metric.unit ? ` (${metric.unit})` : '' }}</span>
+      <MetricStreakBadge v-if="streak" :info="streak" />
     </div>
 
     <div v-if="isAddMode" class="total-row">

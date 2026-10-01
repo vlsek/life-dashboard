@@ -33,6 +33,7 @@ import type { LayoutItem } from './lib/layout'
 import { progressPercent } from './lib/progress'
 import { t } from './lib/i18n'
 import type { StreakItem } from './lib/streaks'
+import { metricStreakMap } from './lib/metricStreaks'
 import type { DayProgressSettings } from './lib/progressSettings'
 
 // Дашборд переносится по частям (см. ROADMAP.md, тикет B-dashboard) — самая большая и
@@ -73,6 +74,8 @@ const chartsCollapsed = ref(false)
 const chartsState = ref<{ loaded: boolean; hasChart: boolean }>({ loaded: false, hasChart: false })
 const chartsDefaultCollapsed = computed(() => chartsState.value.loaded && !chartsState.value.hasChart)
 const topStreak = computed<StreakItem | null>(() => streaks.value[0] ?? null)
+// огонёк и число дней серии у каждой метрики в «Дневных метриках» (BACKLOG 18.5)
+const metricStreaks = computed(() => metricStreakMap(streaks.value))
 
 function streakLabel(item: StreakItem): string {
   if (item.kind === 'perfect_days') return t('dash_streak_perfect_days')
@@ -186,7 +189,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
               <div class="mb-4 flex flex-wrap items-center gap-2">
                 <MetricsManagerSection :user-id="auth.userId" @changed="init" />
               </div>
-              <DailyMetricsSection :user-id="auth.userId" />
+              <DailyMetricsSection :user-id="auth.userId" :metric-streaks="metricStreaks" />
             </template>
 
             <template v-else-if="item.key === 'charts'">

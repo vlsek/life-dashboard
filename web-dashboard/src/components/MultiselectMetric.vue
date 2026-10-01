@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import MetricIcon from './MetricIcon.vue'
+import MetricStreakBadge from './MetricStreakBadge.vue'
+import type { MetricStreakInfo } from '../lib/metricStreaks'
 import type { Metric } from '../lib/types'
 
 // Порт блока `m.type === "multiselect"` из renderDay(): подпись + кнопки-«пилюли» вариантов,
 // каждый клик сразу переключает вариант и сохраняется.
-const props = defineProps<{ metric: Metric; selected: string[]; remaining?: boolean }>()
+const props = defineProps<{ metric: Metric; selected: string[]; remaining?: boolean; streak?: MetricStreakInfo | null }>()
 const emit = defineEmits<{ toggle: [string] }>()
 
 const opts = () => (Array.isArray(props.metric.options) ? props.metric.options : [])
@@ -12,7 +14,7 @@ const opts = () => (Array.isArray(props.metric.options) ? props.metric.options :
 
 <template>
   <div class="wrap" :class="{ 'metric-remaining': remaining }" :data-metric-id="metric.id">
-    <div class="dim label"><MetricIcon :icon="metric.icon" /> {{ metric.name }}:</div>
+    <div class="dim label"><MetricIcon :icon="metric.icon" /> {{ metric.name }}:<MetricStreakBadge v-if="streak" :info="streak" /></div>
     <button
       v-for="opt in opts()"
       :key="opt.key"
