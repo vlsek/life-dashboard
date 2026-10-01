@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.95";
+const SITE_VERSION = "1.96";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.96", date: "2026-10-01 11:33", changes: [
+        "Дашборд (пилот): исправлено «пропадает фон внизу экрана при прокрутке». Причина — в заставке загрузки (v1.70) фон страницы был зафиксирован цветом темы на момент загрузки, и после смены темы без перезагрузки область ниже первого экрана оставалась прежнего цвета. Теперь фон следует за текущей темой",
+    ]},
     { version: "1.95", date: "2026-10-01 11:30", changes: [
         "Дашборд (пилот): «Выйти» теперь с подтверждением — по нажатию в боковом меню появляется окно «Точно выйти?» с кнопками «Выйти» и «Отмена» (защита от случайного нажатия). Esc и клик по фону отменяют, фокус сразу на «Отмене». На остальных страницах и в правой панели пока по-старому",
     ]},
@@ -1185,6 +1188,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.96", date: "2026-10-01 11:33", changes: [
+        "Dashboard (pilot): fixed \"the background disappears at the bottom of the screen when scrolling\". The cause was the loading splash (v1.70) pinning the page background to the theme colour at load time, so after switching theme without a reload the area below the first screen kept the old colour. The background now follows the current theme",
+    ]},
     { version: "1.95", date: "2026-10-01 11:30", changes: [
         "Dashboard (pilot): \"Log out\" now asks for confirmation — tapping it in the side menu opens a \"Log out?\" window with \"Log out\" and \"Cancel\" buttons (protection against an accidental tap). Esc and a tap on the backdrop cancel, and focus starts on \"Cancel\". The other pages and the right panel still work the old way",
     ]},

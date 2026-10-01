@@ -1,6 +1,13 @@
 {
-  "version": "1.95",
+  "version": "1.96",
   "en": [
+    {
+      "version": "1.96",
+      "date": "2026-10-01 11:33",
+      "changes": [
+        "Dashboard (pilot): fixed \"the background disappears at the bottom of the screen when scrolling\". The cause was the loading splash (v1.70) pinning the page background to the theme colour at load time, so after switching theme without a reload the area below the first screen kept the old colour. The background now follows the current theme"
+      ]
+    },
     {
       "version": "1.95",
       "date": "2026-10-01 11:30",
@@ -1422,6 +1429,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.96",
+      "date": "2026-10-01 11:33",
+      "changes": [
+        "Дашборд (пилот): исправлено «пропадает фон внизу экрана при прокрутке». Причина — в заставке загрузки (v1.70) фон страницы был зафиксирован цветом темы на момент загрузки, и после смены темы без перезагрузки область ниже первого экрана оставалась прежнего цвета. Теперь фон следует за текущей темой"
+      ]
+    },
     {
       "version": "1.95",
       "date": "2026-10-01 11:30",
