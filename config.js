@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.93";
+const SITE_VERSION = "1.94";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.94", date: "2026-10-01 11:24", changes: [
+        "Дашборд (пилот): логотип слева сверху в шапке теперь «горит» — вместо статичной картинки там живое пламя в цвете текущей темы, с отдельными языками, у каждого свой ритм (как на заставке загрузки, но компактнее и без искр). Движение выключается при «уменьшении движения» в системе и выключателем «Отключить все анимации»",
+    ]},
     { version: "1.93", date: "2026-10-01 14:17", changes: [
         "Вода (Дашборд): в окне воды появились кнопка «Отменить последнее добавление» — откатывает записанное шаг за шагом, пока значение дня не изменили в другом месте, — и карандашик, которым можно поправить всю сумму выпитого за выбранный день. Правку суммы тоже можно отменить. После отмены и правки показывается «сохранилось», а «+1»/«−1» с монеткой — если из-за этого дневная норма стала набранной или перестала ею быть. Если записал лишнее, теперь не нужно считать обратное вручную",
     ]},
@@ -1179,6 +1182,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.94", date: "2026-10-01 11:24", changes: [
+        "Dashboard (pilot): the logo in the top-left of the header now \"burns\" — instead of a static image there is a living flame in the current theme colour, with separate tongues each at its own rhythm (like on the loading splash, but more compact and without sparks). Motion is switched off by the system \"reduce motion\" setting and by the \"Turn off all animations\" switch",
+    ]},
     { version: "1.93", date: "2026-10-01 14:17", changes: [
         "Water (Dashboard): the water window now has an 'Undo last add' button — it rolls back what you logged step by step, as long as the day's value has not been changed elsewhere — and a pencil to correct the whole amount for the selected day. A total correction can be undone too. After undoing or editing you get the 'saved' confirmation, and the coin '+1' / '−1' if the daily goal became reached or no longer reached. Logged too much by accident? No need to subtract it by hand any more",
     ]},
