@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.74";
+const SITE_VERSION = "1.75";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.75", date: "2026-10-01 06:15", changes: [
+        "Дашборд, настройки метрики: появился переключатель «Просто записывать значение (вес, замеры и т.п.)» — при нём цель, расписание, серия и импорт серии отключаются, остаётся название, иконка, тип и единица; такая метрика не даёт серии и не мешает «идеальному дню». А для обычных метрик есть галочка «Считать серию (стрик) по этой метрике» — выключи, если серия не нужна. В списке метрик такая метрика подписана «только значение». Нужна миграция 031 (metrics.count_streak) в Supabase",
+    ]},
     { version: "1.74", date: "2026-10-01 06:04", changes: [
         "Челленджи (пилот): значения дней можно брать из метрики. В форме челленджа появился «Источник значений» — выберите свою метрику (например, «Отжимания»), и дни без ручной записи сами подтянут значение с Дашборда: число, сумма повторений по подходам или «сделано» для галочки. Ручная запись за день всегда главнее. На карточке видна пометка «из метрики» и подсказка, как заменить значение. Нужна миграция 032 в Supabase; без неё всё работает как раньше",
     ]},
@@ -1121,6 +1124,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.75", date: "2026-10-01 06:15", changes: [
+        "Dashboard, metric settings: a new switch \"Just record a value (weight, measurements)\" turns off the goal, schedule, streak and streak import and keeps the name, icon, type and unit; such a metric gives no streak and does not get in the way of the \"perfect day\". Regular metrics get a \"Count a streak for this metric\" checkbox — turn it off when a streak is not needed. In the metrics list such a metric is labelled \"value only\". Needs migration 031 (metrics.count_streak) in Supabase",
+    ]},
     { version: "1.74", date: "2026-10-01 06:04", changes: [
         "Challenges (pilot): day values can come from a metric. The challenge form now has a \"Source of values\" field — pick one of your metrics (for example \"Push-ups\") and days without a manual entry pick up the value from the Dashboard: a number, the sum of reps across sets, or \"done\" for a checkbox. A manual entry for a day always wins. The card shows a \"from metric\" tag and a hint on how to replace the value. Requires migration 032 in Supabase; without it everything works as before",
     ]},
