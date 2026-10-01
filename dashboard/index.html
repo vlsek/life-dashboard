@@ -69,5 +69,15 @@
         </svg>
       </div>
     </div>
+    <script>
+      // Правая выдвижная панель (BACKLOG 6.2) — из отдельного бандла web-header/ → /header-widgets/. На Дашборде бандл
+      // даёт ТОЛЬКО панель (свой стакан и кольца тут уже есть). Не <script src>, чтобы Vite не собирал его в бандл страницы.
+      ;(function () {
+        var s = document.createElement('script')
+        s.type = 'module'
+        s.src = '/header-widgets/header.js'
+        document.body.appendChild(s)
+      })()
+    </script>
   </body>
 </html>
