@@ -1,6 +1,13 @@
 {
-  "version": "1.81",
+  "version": "1.82",
   "en": [
+    {
+      "version": "1.82",
+      "date": "2026-10-01 07:29",
+      "changes": [
+        "Right slide-out panel on every page (including the Dashboard): open it with a swipe from the right screen edge or the button in the header. Inside: day and week progress \"speedometers\" (tap one for the summary) and the water glass with quick +200 / +500 ml. Close it with a swipe right, a tap on the dimmed area, Esc or the cross. Respects the turn-off-animations switch"
+      ]
+    },
     {
       "version": "1.81",
       "date": "2026-10-01 04:22",
@@ -1323,6 +1330,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.82",
+      "date": "2026-10-01 07:29",
+      "changes": [
+        "Правая выдвижная панель на всех страницах (включая Дашборд): открывается свайпом от правого края экрана или кнопкой в шапке справа. Внутри — «спидометры» прогресса дня и недели (клик открывает сводку) и стакан воды с быстрым добавлением +200 / +500 мл. Закрывается свайпом вправо, касанием по затемнению, Esc или крестиком. Учитывает выключатель анимаций из настроек"
+      ]
+    },
     {
       "version": "1.81",
       "date": "2026-10-01 04:22",

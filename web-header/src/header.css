@@ -91,3 +91,8 @@ html.theme-pink .gh-root { --water-top: #3184d6; --water-bottom: #1359b0; --wate
 .gh-panel-water { position: relative; border: 1px solid var(--border, #333); border-radius: 12px; padding: 12px; }
 .gh-plain { background: transparent; border: none; padding: 0; cursor: pointer; min-height: 0; display: flex; }
 @media (prefers-reduced-motion: reduce) { .gh-panel, .gh-panel-open { transition: none; } }
+
+/* Глобальный выключатель анимаций (BACKLOG 16, Дашборд: localStorage `site_motion` = 'off' → <html data-motion="off">) */
+html[data-motion="off"] .gh-root *, html[data-motion="off"] .gh-root, html[data-motion="off"] .gh-panel, html[data-motion="off"] .gh-panel-backdrop { animation: none !important; transition: none !important; }
+html[data-motion="off"] .water-saved-fill { transform: translateY(12%); }
+html[data-motion="off"] .water-saved-check { stroke-dashoffset: 0; }

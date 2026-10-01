@@ -9,8 +9,19 @@ import App from './App.vue'
 const SKIP = /^\/(login|onboarding|admin|legacy)(\/|\.html|$)/
 const PANEL_ONLY = /^\/dashboard(\/|\.html|$)/ // на Дашборде своя шапка — только правая панель
 
+// Выключатель анимаций живёт в настройках Дашборда и хранится в localStorage; на других страницах <html data-motion>
+// никто не ставит, поэтому применяем его здесь (на Дашборде он уже стоит — повтор безвреден).
+function applyMotion() {
+  try {
+    if (localStorage.getItem('site_motion') === 'off') document.documentElement.setAttribute('data-motion', 'off')
+  } catch {
+    /* приватный режим */
+  }
+}
+
 function mount(target: HTMLElement) {
   if (document.getElementById('global-header-widgets')) return
+  applyMotion()
   const style = document.createElement('style')
   style.textContent = css
   document.head.appendChild(style)

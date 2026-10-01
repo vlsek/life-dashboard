@@ -47,6 +47,15 @@ describe('main.ts — монтирование в #topbar-right', () => {
     expect(document.querySelector('#global-header-widgets [data-panel-only]')!.getAttribute('data-panel-only')).toBe('false')
   })
 
+  it('выключатель анимаций из настроек Дашборда (site_motion=off) ставит <html data-motion="off"> и на других страницах', async () => {
+    localStorage.setItem('site_motion', 'off')
+    document.body.innerHTML = '<div id="topbar-right"></div>'
+    await run('/goals/')
+    expect(document.documentElement.getAttribute('data-motion')).toBe('off')
+    document.documentElement.removeAttribute('data-motion')
+    localStorage.removeItem('site_motion')
+  })
+
   it.each(['/login/', '/onboarding/', '/admin.html', '/legacy/goals.html'])('на %s не монтируется', async (path) => {
     document.body.innerHTML = '<div id="topbar-right"></div>'
     await run(path)

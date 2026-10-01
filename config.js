@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.81";
+const SITE_VERSION = "1.82";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.82", date: "2026-10-01 07:29", changes: [
+        "Правая выдвижная панель на всех страницах (включая Дашборд): открывается свайпом от правого края экрана или кнопкой в шапке справа. Внутри — «спидометры» прогресса дня и недели (клик открывает сводку) и стакан воды с быстрым добавлением +200 / +500 мл. Закрывается свайпом вправо, касанием по затемнению, Esc или крестиком. Учитывает выключатель анимаций из настроек",
+    ]},
     { version: "1.81", date: "2026-10-01 04:22", changes: [
         "Дашборд (пилот): появился выключатель «Отключить все анимации» — в окне «Настроить Дашборд», рядом с поздравлениями за серии. Одним переключателем гасит всё движение: пламя и заставку, всплывающие баллы, плавное сворачивание блоков, поздравления, анимацию воды. Применяется сразу, запоминается и работает с первой отрисовки страницы. Если на устройстве уже включено «уменьшить движение», переключатель отмечен и заблокирован с пояснением, где это менять. На остальных страницах пилота пока не подключён",
     ]},
@@ -1142,6 +1145,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.82", date: "2026-10-01 07:29", changes: [
+        "Right slide-out panel on every page (including the Dashboard): open it with a swipe from the right screen edge or the button in the header. Inside: day and week progress \"speedometers\" (tap one for the summary) and the water glass with quick +200 / +500 ml. Close it with a swipe right, a tap on the dimmed area, Esc or the cross. Respects the turn-off-animations switch",
+    ]},
     { version: "1.81", date: "2026-10-01 04:22", changes: [
         "Dashboard (pilot): a \"Turn off all animations\" switch is now in the \"Customize dashboard\" window, next to the streak celebrations. One toggle silences all motion: flames and the splash, floating points, smooth collapsing of blocks, celebrations, the water animation. It applies at once, is remembered and works from the very first paint of the page. If your device already has \"reduce motion\" turned on, the switch is checked and locked with a note on where to change it. Not yet connected on the other pilot pages",
     ]},
