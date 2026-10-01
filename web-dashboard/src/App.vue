@@ -14,6 +14,7 @@ import ProgressSummaryModal from './components/ProgressSummaryModal.vue'
 import ReminderBanners from './components/ReminderBanners.vue'
 import EveningReminderBanner from './components/EveningReminderBanner.vue'
 import SplashLoader from './components/SplashLoader.vue'
+import PointsFloat from './components/PointsFloat.vue'
 import StreakMilestoneModal from './components/StreakMilestoneModal.vue'
 import PlanReminderBanner from './components/PlanReminderBanner.vue'
 import ProfileSection from './components/ProfileSection.vue'
@@ -124,6 +125,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
 
 <template>
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
+  <PointsFloat />
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
     <div class="mb-3 flex items-center gap-2">

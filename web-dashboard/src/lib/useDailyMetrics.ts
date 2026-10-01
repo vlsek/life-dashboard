@@ -2,6 +2,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { sb } from './supabase'
 import { findWaterMetric } from './water'
 import { DATA_CHANGED, notifyDataChanged, type DataChangedDetail } from './events'
+import { emitPointsFloat, pointsDelta } from './pointsFloat'
 import {
   applyDelta,
   dayScore,
@@ -106,7 +107,9 @@ export function useDailyMetrics() {
     }, 900)
   }
 
-  async function autoSave(m: Metric, value: MetricValue) {
+  // before — значение метрики до правки: по переходу «выполнена ↔ нет» понимаем, начислился ли балл, и показываем «+1 / −1»
+  // (BACKLOG 14, 11:11). Анимация — только после подтверждённой записи, чтобы не обещать балл, которого не будет.
+  async function autoSave(m: Metric, value: MetricValue, before?: MetricValue) {
     const { error: err } = await sb
       .from('daily_values')
       .upsert({ user_id: userId, date, metric_id: m.id, value }, { onConflict: 'user_id,date,metric_id' })
@@ -117,42 +120,48 @@ export function useDailyMetrics() {
     error.value = null
     flash(m.id)
     notifyDataChanged({ source: 'day', metricId: m.id, date, value: typeof value === 'number' ? value : null })
+    emitPointsFloat(pointsDelta(m, before, value))
     return true
   }
 
   const setBoolean = (m: Metric, checked: boolean) => {
+    const before = pending.value[m.id]
     pending.value = { ...pending.value, [m.id]: checked }
-    return autoSave(m, checked)
+    return autoSave(m, checked, before)
   }
 
   // Режим "заменять": пустое поле → значение не задано (undefined) в UI, но в базу пишем 0
   async function setNumber(m: Metric, raw: string) {
     const v = parseNumberInput(raw)
+    const before = pending.value[m.id]
     pending.value = { ...pending.value, [m.id]: v }
-    return autoSave(m, v ?? 0)
+    return autoSave(m, v ?? 0, before)
   }
 
   // Режим "прибавлять": введённое число добавляется к итогу за день
   async function addToNumber(m: Metric, raw: string) {
     const next = applyDelta(pending.value[m.id], raw)
     if (next === null) return false
+    const before = pending.value[m.id]
     pending.value = { ...pending.value, [m.id]: next }
-    return autoSave(m, next)
+    return autoSave(m, next, before)
   }
 
   // Ручная правка итога (карандаш) — минуя логику "прибавить дельту"
   async function fixTotal(m: Metric, raw: string | null) {
     const fixed = parseFixedTotal(raw)
     if (fixed === null) return false
+    const before = pending.value[m.id]
     pending.value = { ...pending.value, [m.id]: fixed }
-    return autoSave(m, fixed)
+    return autoSave(m, fixed, before)
   }
 
   async function toggleOpt(m: Metric, key: string) {
     const cur = Array.isArray(pending.value[m.id]) ? (pending.value[m.id] as string[]) : []
     const next = toggleOption(cur, key)
+    const before = pending.value[m.id]
     pending.value = { ...pending.value, [m.id]: next }
-    return autoSave(m, next)
+    return autoSave(m, next, before)
   }
 
   // «Что полезного сделал за день»: пишем только items. Сначала update существующей строки (не

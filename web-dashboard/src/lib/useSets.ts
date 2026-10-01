@@ -2,9 +2,10 @@ import { ref } from 'vue'
 import { sb } from './supabase'
 import { t } from './i18n'
 import { notifyDataChanged } from './events'
+import { emitPointsFloat, pointsDelta } from './pointsFloat'
 import { forgetVariationOptions, normalizeSets, rememberVariationOptions } from './setsBlock'
 import type { SetRow } from './setsBlock'
-import type { Metric } from './types'
+import type { Metric, MetricValue } from './types'
 
 // Композабл блока «Подходы» (метрики типа sets) — отдельно от useDashboard.ts, чтобы не пересекаться
 // с другими блоками (см. ROADMAP.md). Блок 6 («дневные метрики») может использовать его же
@@ -55,6 +56,7 @@ export function useSets() {
 
   // Автосохранение при каждой правке (как autoSaveMetric в оригинале).
   async function saveSets(m: Metric, sets: SetRow[]) {
+    const before = setsByMetric.value[m.id] // до правки — по нему видно, перешла ли метрика в «выполнено» (+1) или обратно (−1)
     setsByMetric.value = { ...setsByMetric.value, [m.id]: sets }
     const { error: err } = await sb
       .from('daily_values')
@@ -64,6 +66,7 @@ export function useSets() {
       error.value = null
       // подход засчитывается в «идеальный день»/кольца — пересчитать стрики; в графике точка = сумма повторений
       notifyDataChanged({ source: 'sets', metricId: m.id, date, value: sets.reduce((sum, s) => sum + (s?.reps || 0), 0) })
+      emitPointsFloat(pointsDelta(m, before as unknown as MetricValue, sets as unknown as MetricValue)) // BACKLOG 14, 11:11
     }
   }
 
