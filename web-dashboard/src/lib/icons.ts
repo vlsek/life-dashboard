@@ -366,10 +366,59 @@ export const METRIC_ICON_CHOICES: IconName[] = [
   'gamepad', 'tv', 'hourglass', 'paintbrush', 'guitar', 'paw', 'fish', 'bird', 'briefcase', 'checklist',
 ]
 
+// Поиск: регистр и «ё/е» не важны; запрос из нескольких слов — КАЖДОЕ слово должно найтись в имени или
+// ключевых словах иконки («бег лёгкая» ≠ «бег вода»). Пустой запрос подходит всему.
+function normalizeQuery(s: string): string {
+  return s.toLowerCase().replace(/ё/g, 'е')
+}
 export function iconSearchMatches(name: IconName, query: string): boolean {
-  const q = query.trim().toLowerCase()
-  if (!q) return true
-  return name.includes(q) || (ICON_KEYWORDS[name] || '').toLowerCase().includes(q)
+  const words = normalizeQuery(query).split(/\s+/).filter(Boolean)
+  if (words.length === 0) return true
+  const hay = normalizeQuery(name + ' ' + (ICON_KEYWORDS[name] || ''))
+  return words.every((w) => hay.includes(w))
+}
+
+// «Редкие иконки скрыты по умолчанию» (BACKLOG 1.3): без запроса пикер показывает только подборку
+// POPULAR_ICONS; остальные — по вкладкам-категориям и во «Всех». Поиск идёт по всему архиву
+// (METRIC_ICON_CHOICES). Подборка и категории — подмножества METRIC_ICON_CHOICES: каждая иконка
+// пикера входит РОВНО в одну категорию (проверяет тест icons.test.ts).
+export const POPULAR_ICONS: IconName[] = [
+  'pushup', 'pullup', 'squat', 'dumbbell', 'run', 'walk', 'bike', 'swim', 'yoga', 'heart',
+  'droplet', 'scale', 'sleep', 'apple', 'coffee', 'book', 'study', 'code', 'music', 'flame',
+]
+
+export interface IconCategory {
+  key: string
+  ru: string
+  en: string
+  icons: IconName[]
+}
+
+export const ICON_CATEGORIES: IconCategory[] = [
+  { key: 'sport', ru: 'Спорт', en: 'Sport', icons: ['pushup', 'pullup', 'squat', 'dumbbell', 'run', 'walk', 'bike', 'swim', 'yoga', 'mountain', 'stretch', 'boxing', 'jumprope', 'plate', 'treadmill', 'ski'] },
+  { key: 'health', ru: 'Здоровье', en: 'Health', icons: ['heart', 'pulse', 'droplet', 'scale', 'pill', 'medical', 'tooth', 'bandage', 'thermometer', 'eye', 'lungs', 'sleep', 'bed', 'smile', 'brain'] },
+  { key: 'food', ru: 'Еда', en: 'Food', icons: ['apple', 'meal', 'coffee', 'tea', 'bottle', 'pizza', 'salad', 'bread'] },
+  { key: 'work', ru: 'Учёба и работа', en: 'Study & work', icons: ['book', 'study', 'code', 'note', 'laptop', 'briefcase', 'checklist', 'hourglass', 'clock', 'calendar'] },
+  { key: 'home', ru: 'Дом и деньги', en: 'Home & money', icons: ['home', 'broom', 'laundry', 'trash2', 'wrench', 'piggybank', 'wallet', 'card', 'receipt', 'gift', 'party', 'car', 'phone'] },
+  { key: 'nature', ru: 'Природа и путешествия', en: 'Nature & travel', icons: ['sun', 'leaf', 'tree', 'cloud', 'rain', 'snow', 'flower', 'plane', 'suitcase', 'train', 'paw', 'fish', 'bird', 'pin'] },
+  { key: 'creative', ru: 'Творчество и разное', en: 'Creative & other', icons: ['music', 'headphones', 'guitar', 'paintbrush', 'camera', 'gamepad', 'tv', 'sparkles', 'zap', 'flame', 'goals', 'star', 'trophy', 'ruler'] },
+]
+
+// Человекочитаемое название иконки для подсказки: первое слово ключевых слов на нужном языке
+// (русское — кириллицей, английское — латиницей); если слов нужного алфавита нет — само имя.
+export function iconLabel(name: IconName, lang: 'ru' | 'en'): string {
+  const words = (ICON_KEYWORDS[name] || '').split(/\s+/).filter(Boolean)
+  const pick = words.find((w) => (lang === 'ru' ? /[а-яё]/i.test(w) : /^[a-z]/i.test(w)))
+  return pick || name
+}
+
+// Что показывать в пикере: непустой запрос — поиск по всему архиву (вкладка не важна); иначе содержимое
+// вкладки: 'popular' (подборка), 'all' (все) или ключ категории.
+export function iconsForPicker(query: string, tab: string): IconName[] {
+  if (query.trim()) return METRIC_ICON_CHOICES.filter((n) => iconSearchMatches(n, query))
+  if (tab === 'all') return METRIC_ICON_CHOICES
+  if (tab === 'popular') return POPULAR_ICONS
+  return ICON_CATEGORIES.find((c) => c.key === tab)?.icons ?? POPULAR_ICONS
 }
 
 // "svg:<имя>" или известный эмодзи → имя иконки в ICON_PATHS; иначе null (эмодзи

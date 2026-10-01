@@ -104,7 +104,7 @@ describe('MetricsManagerModal', () => {
 describe('IconPicker', () => {
   it('emits svg: value on picking an icon, and the typed emoji as-is', async () => {
     const w = mount(IconPicker, { props: { modelValue: 'svg:pin' } })
-    await w.find('button').trigger('click')
+    await w.find('[data-icon]').trigger('click')
     expect((w.emitted('update:modelValue')![0][0] as string).startsWith('svg:')).toBe(true)
     const inputs = w.findAll('input')
     await inputs[1].setValue('🔥')

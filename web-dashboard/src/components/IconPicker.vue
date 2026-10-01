@@ -1,18 +1,29 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import Icon from './Icon.vue'
-import { METRIC_ICON_CHOICES, iconSearchMatches, metricIconKey } from '../lib/icons'
-import { t } from '../lib/i18n'
+import { ICON_CATEGORIES, iconLabel, iconsForPicker, metricIconKey } from '../lib/icons'
+import { getLang, t } from '../lib/i18n'
 
-// Портировано из buildIconPicker() в config.js: поиск по названию/ключевым словам, сетка иконок,
-// поле для своего эмодзи. Значение — 'svg:<имя>' или эмодзи-строка.
+// Выбор иконки метрики/параметра тела (BACKLOG 1.3 «Библиотека и поиск SVG»). Без запроса показывается
+// компактная подборка «Популярные»; редкие иконки — во вкладках-категориях и во «Всех». Запрос ищет по
+// ВСЕМУ архиву (несколько слов — все должны совпасть). Выбранная иконка всегда видна отдельной строкой,
+// даже если её нет в текущей вкладке. Значение — 'svg:<имя>' или эмодзи-строка (свой эмодзи — внизу).
 const props = defineProps<{ modelValue: string }>()
 const emit = defineEmits<{ 'update:modelValue': [v: string] }>()
 
+const lang = getLang()
 const query = ref('')
+const tab = ref('popular')
 const custom = ref(metricIconKey(props.modelValue) ? '' : props.modelValue)
 const selectedKey = computed(() => metricIconKey(props.modelValue))
-const visible = computed(() => METRIC_ICON_CHOICES.filter((n) => iconSearchMatches(n, query.value)))
+const searching = computed(() => query.value.trim().length > 0)
+const visible = computed(() => iconsForPicker(query.value, tab.value))
+
+const tabs = computed(() => [
+  { key: 'popular', label: t('icon_picker_popular') },
+  ...ICON_CATEGORIES.map((c) => ({ key: c.key, label: lang === 'ru' ? c.ru : c.en })),
+  { key: 'all', label: t('icon_picker_all') },
+])
 
 function pick(name: string) {
   custom.value = ''
@@ -25,9 +36,33 @@ function onCustom() {
 </script>
 
 <template>
-  <div>
-    <input v-model="query" type="text" class="w-full" :placeholder="t('icon_picker_search')" />
-    <div class="my-2 flex max-h-36 flex-wrap gap-1 overflow-y-auto">
+  <div data-testid="icon-picker">
+    <input v-model="query" type="text" class="w-full" :placeholder="t('icon_picker_search')" data-testid="icon-search" />
+
+    <div v-if="selectedKey" class="mt-2 flex items-center gap-2 text-sm" data-testid="icon-selected">
+      <span class="dim">{{ t('icon_picker_selected') }}</span>
+      <Icon :name="selectedKey" />
+      <span>{{ iconLabel(selectedKey, lang) }}</span>
+    </div>
+
+    <div v-if="!searching" class="mt-2 flex gap-1 overflow-x-auto pb-1" role="tablist" data-testid="icon-tabs">
+      <button
+        v-for="tb in tabs"
+        :key="tb.key"
+        type="button"
+        role="tab"
+        class="secondary shrink-0"
+        :aria-selected="tab === tb.key"
+        :data-tab="tb.key"
+        :style="'padding: 3px 10px; min-height: 0; font-size: 0.8rem; border-radius: 9999px;' + (tab === tb.key ? ' border-color: var(--accent); color: var(--accent)' : '')"
+        @click="tab = tb.key"
+      >
+        {{ tb.label }}
+      </button>
+    </div>
+    <p v-else class="dim mt-2 text-xs" data-testid="icon-count">{{ t('icon_picker_found') }}: {{ visible.length }}</p>
+
+    <div class="my-2 flex max-h-40 flex-wrap gap-1 overflow-y-auto" data-testid="icon-grid">
       <button
         v-for="name in visible"
         :key="name"
@@ -36,7 +71,10 @@ function onCustom() {
         :class="{ 'ring-2': selectedKey === name }"
         style="padding: 4px 6px; min-height: 0"
         :style="selectedKey === name ? 'border-color: var(--accent)' : ''"
-        :title="name"
+        :title="iconLabel(name, lang)"
+        :aria-label="iconLabel(name, lang)"
+        :aria-pressed="selectedKey === name"
+        :data-icon="name"
         @click="pick(name)"
       >
         <Icon :name="name" />

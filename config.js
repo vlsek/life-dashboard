@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.05";
+const SITE_VERSION = "2.06";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.06", date: "2026-10-01 20:12", changes: [
+        "Выбор иконки для метрик и параметров тела стал удобнее: по умолчанию показываются только популярные иконки, а редкие спрятаны во вкладки по темам (Спорт, Здоровье, Еда, Учёба и работа, Дом и деньги, Природа и путешествия, Творчество и разное) и во вкладку «Все». Поиск работает по всему набору иконок и понимает несколько слов (например, «бег лёгкая»), «ё» и «е» не различаются. Выбранная иконка всегда видна отдельной строкой с названием, а у каждой иконки есть подсказка с названием на вашем языке",
+    ]},
     { version: "2.05", date: "2026-10-01 19:57", changes: [
         "Выключатель «отключить все анимации» теперь действует на всех страницах: в Календаре, Магазине, Тренировках, Челленджах, Целях, Навыках, Истории, Языках, Сообществе, Аккаунте, а также на страницах входа и онбординга — раньше он гасил анимации только в Дашборде и в виджетах шапки. Флаг применяется до первой отрисовки страницы, поэтому с первого кадра ничего не мерцает и не движется; плавное сворачивание блоков в Тренировках тоже его учитывает",
     ]},
@@ -1216,6 +1219,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.06", date: "2026-10-01 20:12", changes: [
+        "Picking an icon for metrics and body parameters is easier now: only popular icons are shown by default, while rare ones are tucked into topic tabs (Sport, Health, Food, Study & work, Home & money, Nature & travel, Creative & other) and an \"All\" tab. Search covers the whole icon set and understands several words (for example, \"run light\"), and every icon has a tooltip with its name in your language. The selected icon is always shown on its own line with its name",
+    ]},
     { version: "2.05", date: "2026-10-01 19:57", changes: [
         "The \"turn off all animations\" switch now works on every page: Calendar, Shop, Workouts, Challenges, Goals, Skills, History, Languages, Community, Account, as well as the sign-in and onboarding pages — before, it only silenced animations on the Dashboard and in the header widgets. The flag is applied before the page is first drawn, so nothing flickers or moves from the very first frame; the smooth block collapsing in Workouts respects it too",
     ]},

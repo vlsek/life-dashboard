@@ -1,6 +1,13 @@
 {
-  "version": "2.05",
+  "version": "2.06",
   "en": [
+    {
+      "version": "2.06",
+      "date": "2026-10-01 20:12",
+      "changes": [
+        "Picking an icon for metrics and body parameters is easier now: only popular icons are shown by default, while rare ones are tucked into topic tabs (Sport, Health, Food, Study & work, Home & money, Nature & travel, Creative & other) and an \"All\" tab. Search covers the whole icon set and understands several words (for example, \"run light\"), and every icon has a tooltip with its name in your language. The selected icon is always shown on its own line with its name"
+      ]
+    },
     {
       "version": "2.05",
       "date": "2026-10-01 19:57",
@@ -1493,6 +1500,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.06",
+      "date": "2026-10-01 20:12",
+      "changes": [
+        "Выбор иконки для метрик и параметров тела стал удобнее: по умолчанию показываются только популярные иконки, а редкие спрятаны во вкладки по темам (Спорт, Здоровье, Еда, Учёба и работа, Дом и деньги, Природа и путешествия, Творчество и разное) и во вкладку «Все». Поиск работает по всему набору иконок и понимает несколько слов (например, «бег лёгкая»), «ё» и «е» не различаются. Выбранная иконка всегда видна отдельной строкой с названием, а у каждой иконки есть подсказка с названием на вашем языке"
+      ]
+    },
     {
       "version": "2.05",
       "date": "2026-10-01 19:57",
