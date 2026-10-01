@@ -129,7 +129,7 @@ function openForm(p: BodyParam | 'new') {
         <button v-else type="button" class="secondary" @click="showBirthdate = true">{{ t('dash_set_birthdate_btn') }}</button>
       </div>
 
-      <div class="ml-auto flex shrink-0 items-center gap-3" data-test="profile-score-group">
+      <div class="ml-auto flex shrink-0 items-center gap-2" data-test="profile-score-group">
         <button
           v-if="topStreak"
           type="button"

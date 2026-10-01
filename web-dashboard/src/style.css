@@ -281,9 +281,11 @@ html.theme-monet .streak-flame .fl-outer {
 @media (prefers-reduced-motion: reduce) { .collapse-chevron { transition: none; } }
 
 /* Иконка баллов с огоньком (CoinIcon.vue): монета полупрозрачная, огонёк горит цветом темы и мерцает */
-.coin-icon .coin-body { fill: color-mix(in srgb, var(--accent) 26%, transparent); stroke: currentColor; stroke-width: 1.5; stroke-opacity: 0.75; }
-.coin-icon .coin-ring { stroke: currentColor; stroke-width: 1.2; stroke-opacity: 0.45; }
-.coin-icon .coin-shine { stroke: #ffffff; stroke-width: 1.3; stroke-opacity: 0.55; }
+.coin-icon .coin-body { fill: color-mix(in srgb, var(--accent) 26%, transparent); stroke: currentColor; stroke-width: 1.5; stroke-opacity: 0.7; }
+/* ребристый кант: 20 насечек по окружности r=8.9 (длина 55,9 → шаг 2,8) */
+.coin-icon .coin-rim { fill: none; stroke: currentColor; stroke-width: 1.2; stroke-opacity: 0.55; stroke-dasharray: 1.2 1.6; }
+.coin-icon .coin-ring { fill: none; stroke: currentColor; stroke-width: 1; stroke-opacity: 0.35; }
+.coin-icon .coin-shine { fill: none; stroke: #ffffff; stroke-width: 1.2; stroke-opacity: 0.6; }
 .coin-icon .coin-flame-outer { fill: color-mix(in srgb, var(--accent) 70%, transparent); stroke: none; }
 .coin-icon .coin-flame-inner { fill: color-mix(in srgb, var(--accent) 35%, #ffffff); fill-opacity: 0.85; stroke: none; }
 .coin-icon .coin-flame-outer, .coin-icon .coin-flame-inner {
