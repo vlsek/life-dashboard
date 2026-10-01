@@ -43,7 +43,7 @@ onBeforeUnmount(() => {
   window.removeEventListener(BODY_VALUES_CHANGED, onValuesChanged)
 })
 
-const period = reactive<PeriodState>(loadPeriodState('dash_period_dashboard', { range: 'days10', from: null, to: null }))
+const period = reactive<PeriodState>(loadPeriodState('dash_period_dashboard', { range: 'days30', from: null, to: null }))
 const showConfig = ref(false)
 const configError = ref<string | null>(null)
 const periodFor = ref<string | null>(null)

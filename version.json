@@ -1,6 +1,13 @@
 {
-  "version": "1.99",
+  "version": "1.100",
   "en": [
+    {
+      "version": "1.100",
+      "date": "2026-10-01 21:51",
+      "changes": [
+        "Dashboard (pilot), charts: the period picker now has a \"Last 30 days\" option and it is the default instead of \"Last 10 days\" (a period you already picked by hand is kept). The short default made charts look empty even though there was a month of data"
+      ]
+    },
     {
       "version": "1.99",
       "date": "2026-10-01 20:02",
@@ -1451,6 +1458,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.100",
+      "date": "2026-10-01 21:51",
+      "changes": [
+        "Дашборд (пилот), графики: в выборе периода появился вариант «Последние 30 дней», и он стал периодом по умолчанию вместо «Последних 10 дней» (у кого период уже выбран вручную, он сохраняется). Из-за короткого периода по умолчанию графики казались пустыми, хотя данные за месяц были"
+      ]
+    },
     {
       "version": "1.99",
       "date": "2026-10-01 20:02",

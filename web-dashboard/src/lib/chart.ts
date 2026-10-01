@@ -62,7 +62,7 @@ function fmtDateLocal(d: Date): string {
   return `${y}-${m}-${day}`
 }
 
-export type PeriodRange = 'days10' | 'week' | 'last_week' | 'month' | 'all' | 'custom'
+export type PeriodRange = 'days10' | 'days30' | 'week' | 'last_week' | 'month' | 'all' | 'custom'
 
 export interface PeriodState {
   range: PeriodRange
@@ -81,6 +81,11 @@ export function periodBounds(rangeKey: PeriodRange, customFrom: string | null, c
   if (rangeKey === 'days10') {
     const start = new Date(today)
     start.setDate(today.getDate() - 9)
+    return [fmtDateLocal(start), fmtDateLocal(today)]
+  }
+  if (rangeKey === 'days30') {
+    const start = new Date(today)
+    start.setDate(today.getDate() - 29)
     return [fmtDateLocal(start), fmtDateLocal(today)]
   }
   if (rangeKey === 'week') return [fmtDateLocal(startOfWeek), fmtDateLocal(today)]

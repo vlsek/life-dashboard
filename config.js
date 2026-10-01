@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.99";
+const SITE_VERSION = "1.100";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.100", date: "2026-10-01 21:51", changes: [
+        "Дашборд (пилот), графики: в выборе периода появился вариант «Последние 30 дней», и он стал периодом по умолчанию вместо «Последних 10 дней» (у кого период уже выбран вручную, он сохраняется). Из-за короткого периода по умолчанию графики казались пустыми, хотя данные за месяц были",
+    ]},
     { version: "1.99", date: "2026-10-01 20:02", changes: [
         "Тренировки: в форме упражнения поле «Что считаем?» теперь выпадающий список — повторения, секунды, минуты, км, метры, раунды — вместо ручного ввода. Если нужного варианта нет, выбери «Другое…» и впиши своё слово. У уже созданных упражнений значение сохраняется как было, в том числе своё",
     ]},
@@ -1198,6 +1201,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.100", date: "2026-10-01 21:51", changes: [
+        "Dashboard (pilot), charts: the period picker now has a \"Last 30 days\" option and it is the default instead of \"Last 10 days\" (a period you already picked by hand is kept). The short default made charts look empty even though there was a month of data",
+    ]},
     { version: "1.99", date: "2026-10-01 20:02", changes: [
         "Workouts: in the exercise form, \"What are you counting?\" is now a dropdown — reps, seconds, minutes, km, meters, rounds — instead of free typing. If your option is not there, choose \"Other…\" and type your own word. Existing exercises keep their value as it was, including custom ones",
     ]},

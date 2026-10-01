@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { filterPointsByRange, filterPointsWithFallback } from './chart'
+import { filterPointsByRange, filterPointsWithFallback, periodBounds } from './chart'
 
 const TODAY = new Date(2026, 9, 1) // 2026-10-01 (четверг)
 const pts = (rows: [string, number | null][]) => rows.map(([date, y]) => ({ date, y }))
@@ -53,5 +53,16 @@ describe('filterPointsWithFallback (BACKLOG 18.2)', () => {
     const r = filterPointsWithFallback(s, 'days10', null, null, TODAY)
     expect(r.widened).toBe(true)
     expect(r.points.map((p) => p.date)).toEqual(['2026-09-02', '2026-09-28', '2026-09-30', '2026-10-01'])
+  })
+})
+
+describe('last 30 days period (new default for charts, BACKLOG 18.2)', () => {
+  it('covers exactly 30 calendar days including today', () => {
+    expect(periodBounds('days30', null, null, TODAY)).toEqual(['2026-09-02', '2026-10-01'])
+  })
+  it('shows an entry from 20 days ago without any fallback, unlike the 10-day window', () => {
+    const series = pts([['2026-09-11', 89.5], ['2026-10-01', 90]])
+    const r = filterPointsWithFallback(series, 'days30', null, null, TODAY)
+    expect(r).toEqual({ points: series, widened: false })
   })
 })

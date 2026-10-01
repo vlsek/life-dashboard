@@ -9,6 +9,7 @@ const emit = defineEmits<{ change: [state: PeriodState] }>()
 
 const presets: [PeriodRange, string][] = [
   ['days10', 'period_10_days'],
+  ['days30', 'period_30_days'],
   ['week', 'period_week'],
   ['last_week', 'period_last_week'],
   ['month', 'period_month'],
