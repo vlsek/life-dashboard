@@ -1,6 +1,13 @@
 {
-  "version": "1.91",
+  "version": "1.92",
   "en": [
+    {
+      "version": "1.92",
+      "date": "2026-10-01 14:05",
+      "changes": [
+        "Water and points: water now counts as done against the real daily goal — the one you set, or if none is set, your weight × 30 ml, or 2000 ml without a weight. Before, with no goal set, any logged amount earned the point, even 100 ml. Fixed everywhere: in the balance and points log, day and week rings, streaks, the evening reminder, Shop, History and the header, and on the server too — daily and category points, the leaderboard and Community streaks. When you add water, the coin '+1' / '−1' appears when the goal is reached or no longer reached. If you have no water goal set, past days with little water will be recalculated; to pin your goal, set it manually ('Change daily goal')"
+      ]
+    },
     {
       "version": "1.91",
       "date": "2026-10-01 13:50",
@@ -1394,6 +1401,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.92",
+      "date": "2026-10-01 14:05",
+      "changes": [
+        "Вода и баллы: вода теперь считается выполненной по реальной норме — заданной тобой, а если её нет, то по весу (вес × 30 мл), а без веса — 2000 мл. Раньше при незаданной норме балл за воду давало любое записанное значение, даже 100 мл. Исправлено везде: в балансе и журнале баллов, кольцах дня и недели, стриках, вечернем напоминании, Магазине, Истории и в шапке, а также на сервере — в баллах дня и категории, лидерборде и стриках Сообщества. При добавлении воды «+1»/«−1» с монеткой появляется, когда норма набрана или перестала быть набранной. Если норма воды у тебя не задана, баллы за прошлые дни с малым количеством воды пересчитаются; чтобы зафиксировать норму, задай её вручную («Изменить дневную норму»)"
+      ]
+    },
     {
       "version": "1.91",
       "date": "2026-10-01 13:50",

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.91";
+const SITE_VERSION = "1.92";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.92", date: "2026-10-01 14:05", changes: [
+        "Вода и баллы: вода теперь считается выполненной по реальной норме — заданной тобой, а если её нет, то по весу (вес × 30 мл), а без веса — 2000 мл. Раньше при незаданной норме балл за воду давало любое записанное значение, даже 100 мл. Исправлено везде: в балансе и журнале баллов, кольцах дня и недели, стриках, вечернем напоминании, Магазине, Истории и в шапке, а также на сервере — в баллах дня и категории, лидерборде и стриках Сообщества. При добавлении воды «+1»/«−1» с монеткой появляется, когда норма набрана или перестала быть набранной. Если норма воды у тебя не задана, баллы за прошлые дни с малым количеством воды пересчитаются; чтобы зафиксировать норму, задай её вручную («Изменить дневную норму»)",
+    ]},
     { version: "1.91", date: "2026-10-01 13:50", changes: [
         "Тренировки: у упражнений «просто повторения» больше нет лишних «кг». Раньше при добавлении отжиманий «просто раз» в подходах и рекордах всё равно дописывалось «кг» — теперь пишется только число повторений, и это исправлено и для упражнений, созданных раньше. В форме упражнения без веса единица веса не спрашивается. Если вес ведётся, единица по умолчанию «кг» показана текстом, а сменить её (lb или своя) можно карандашиком; выбранная единица запоминается и подставляется в следующие упражнения",
     ]},
@@ -1173,6 +1176,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.92", date: "2026-10-01 14:05", changes: [
+        "Water and points: water now counts as done against the real daily goal — the one you set, or if none is set, your weight × 30 ml, or 2000 ml without a weight. Before, with no goal set, any logged amount earned the point, even 100 ml. Fixed everywhere: in the balance and points log, day and week rings, streaks, the evening reminder, Shop, History and the header, and on the server too — daily and category points, the leaderboard and Community streaks. When you add water, the coin '+1' / '−1' appears when the goal is reached or no longer reached. If you have no water goal set, past days with little water will be recalculated; to pin your goal, set it manually ('Change daily goal')",
+    ]},
     { version: "1.91", date: "2026-10-01 13:50", changes: [
         "Workouts: \"just reps\" exercises no longer show a stray \"kg\". Before, adding push-ups as plain reps still appended \"kg\" in sets and records — now only the number of reps is shown, including for exercises created earlier. The exercise form no longer asks for a weight unit when the exercise has no weight. When weight is tracked, the default unit \"kg\" is shown as text and can be changed (lb or your own) with the pencil; the chosen unit is remembered and used for the next exercises",
     ]},
