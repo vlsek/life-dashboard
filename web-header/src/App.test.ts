@@ -413,8 +413,7 @@ describe('норма воды: справка и «Считать автомат
     await w.find('.gh-modal button[style*="border-radius: 50%"]').trigger('click')
     expect(alerts[0]).toContain('зафиксирована')
     expect(alerts[0]).not.toContain('вручную по заданию')
-    expect(alerts[0]).toContain('70')
-    expect(alerts[0]).toContain('2100')
+    expect(alerts[0]).toContain('Автоматический расчёт дал бы: 2100')
     w.unmount()
 
     setup({ metrics: [auto], body_parameters: [weightParam], body_parameter_values: [{ parameter_id: 'bp', value: 70, date: today }] })
@@ -423,7 +422,8 @@ describe('норма воды: справка и «Считать автомат
     await openWater(w)
     await w.find('.gh-modal button[style*="border-radius: 50%"]').trigger('click')
     expect(alerts[1]).toContain('Рассчитана автоматически')
-    expect(alerts[1]).toContain('2100')
+    expect(alerts[1]).toContain('70 кг × 30 мл = 2100') // роста нет → прежняя формула
+    expect(alerts[1]).toContain('Укажите рост')
     w.unmount()
     vi.unstubAllGlobals()
   })

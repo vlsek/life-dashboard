@@ -5,6 +5,7 @@ const h = vi.hoisted(() => ({
   calls: [] as string[],
   params: [] as any[],
   values: [] as any[],
+  profile: null as any, // строка profiles (рост) или null
   fail: false,
 }))
 vi.mock('./supabase', () => ({
@@ -15,6 +16,11 @@ vi.mock('./supabase', () => ({
         eq: () => chain,
         order: () => chain,
         limit: () => chain,
+        maybeSingle: () => {
+          h.calls.push(table)
+          if (h.fail) return Promise.reject(new Error('network'))
+          return Promise.resolve({ data: h.profile, error: null })
+        },
         then: (res: (v: unknown) => unknown, rej?: (e: unknown) => unknown) => {
           h.calls.push(table)
           if (h.fail) return Promise.reject(new Error('network')).then(res, rej)
@@ -28,6 +34,7 @@ vi.mock('./supabase', () => ({
 
 import {
   applyWaterGoal,
+  autoNormFromBody,
   autoNormFromWeight,
   findWaterNumberMetric,
   isWaterLike,
@@ -45,6 +52,7 @@ beforeEach(() => {
   h.calls = []
   h.params = []
   h.values = []
+  h.profile = null
   h.fail = false
   resetWaterGoalCache()
 })
@@ -150,7 +158,7 @@ describe('loadAutoNormMl / withWaterGoal (сеть)', () => {
     h.values = [{ value: 80 }]
     const out = await withWaterGoal('u', [metric()])
     expect(out[0].goal_value).toBe(2400)
-    expect(h.calls).toEqual(['body_parameters', 'body_parameter_values'])
+    expect(h.calls).toEqual(['body_parameters', 'body_parameter_values', 'profiles'])
   })
   it('нет параметра веса / вес 0 / ошибка сети → 2000, ошибка не кэшируется', async () => {
     expect((await withWaterGoal('u', [metric()]))[0].goal_value).toBe(2000)
@@ -175,5 +183,33 @@ describe('loadAutoNormMl / withWaterGoal (сеть)', () => {
     expect(h.calls.filter((c) => c === 'body_parameters').length).toBe(2)
     await loadAutoNormMl('other-user') // другой пользователь — отдельный запрос
     expect(h.calls.filter((c) => c === 'body_parameters').length).toBe(3)
+  })
+})
+
+describe('рост в авто-норме (BACKLOG 17; SQL: migrations/034)', () => {
+  it('есть рост в профиле → норма по площади поверхности тела: 70 кг, 175 см → 2210', async () => {
+    h.params = [{ id: 'p1', name: 'Вес', icon: 'svg:scale', position: 0 }]
+    h.values = [{ value: 70 }]
+    h.profile = { height: 175 }
+    expect(await loadAutoNormMl('u')).toBe(2210)
+    expect(autoNormFromBody(70, 175)).toBe(2210)
+  })
+
+  it('профиля/роста нет или рост неправдоподобен → вес × 30, как раньше', async () => {
+    h.params = [{ id: 'p1', name: 'Вес', icon: 'svg:scale', position: 0 }]
+    h.values = [{ value: 70 }]
+    expect(await loadAutoNormMl('u')).toBe(2100)
+    resetWaterGoalCache()
+    h.profile = { height: 17 }
+    expect(await loadAutoNormMl('u')).toBe(2100)
+    resetWaterGoalCache()
+    h.profile = { height: null }
+    expect(await loadAutoNormMl('u')).toBe(2100)
+  })
+
+  it('нет веса — норма не считается, рост не запрашивается', async () => {
+    h.profile = { height: 175 }
+    expect(await loadAutoNormMl('u')).toBeNull()
+    expect(h.calls).not.toContain('profiles')
   })
 })

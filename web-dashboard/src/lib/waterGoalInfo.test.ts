@@ -5,12 +5,13 @@ import type { Metric } from './types'
 
 // BACKLOG 17 (07:22): справка (i) у «Дневной нормы» не должна врать «задана вручную»; есть способ вернуть авто-расчёт по весу.
 const metric = (goal: number | null) => ({ id: 'm1', user_id: 'u1', name: 'Вода', icon: '💧', type: 'number', unit: 'мл', goal_value: goal, goal_direction: null, schedule: null, category_id: null, position: 0 }) as unknown as Metric
-const props = (goal: number | null, auto: number | null = 2100, weight: number | null = 70) => ({
+const props = (goal: number | null, auto: number | null = 2100, weight: number | null = 70, height: number | null = null) => ({
   metric: metric(goal),
   currentMl: 500,
   normMl: goal ?? auto ?? 2000,
   autoNormMl: auto,
   weightKg: weight,
+  heightCm: height,
   getMlForDate: async () => 0,
 })
 const alerts: string[] = []
@@ -64,6 +65,52 @@ describe('WaterModal: справка о норме и возврат к авто
     expect(w.find('[data-test="goal-saved"]').text()).toContain('Норма снова считается по весу')
     await w.setProps({ goalSavedMsg: 'manual' as const })
     expect(w.find('[data-test="goal-saved"]').text()).toContain('Дневная норма изменена')
+    w.unmount()
+  })
+})
+
+describe('WaterModal: рост в авто-норме (BACKLOG 17)', () => {
+  it('известен рост: справка называет вес, рост, площадь поверхности тела (Мостеллер) и итог', () => {
+    const w = mount(WaterModal, { props: props(null, 2210, 70, 175) })
+    w.find('button[style*="border-radius: 50%"]').trigger('click')
+    expect(alerts[0]).toContain('по весу и росту')
+    expect(alerts[0]).toContain('70 кг')
+    expect(alerts[0]).toContain('175 см')
+    expect(alerts[0]).toContain('1.84')
+    expect(alerts[0]).toContain('Мостеллера')
+    expect(alerts[0]).toContain('2210')
+    w.unmount()
+  })
+
+  it('рост неизвестен: справка считает по весу и предлагает указать рост', () => {
+    const w = mount(WaterModal, { props: props(null, 2100, 70, null) })
+    w.find('button[style*="border-radius: 50%"]').trigger('click')
+    expect(alerts[0]).toContain('70 кг × 30 мл = 2100')
+    expect(alerts[0]).toContain('Укажите рост')
+    w.unmount()
+  })
+
+  it('поле роста: значение из профиля подставляется, «Сохранить рост» шлёт saveHeight', async () => {
+    const w = mount(WaterModal, { props: props(null, 2210, 70, 175) })
+    expect((w.find('[data-test="height-input"]').element as HTMLInputElement).value).toBe('175')
+    await w.find('[data-test="height-input"]').setValue('180')
+    await w.find('[data-test="save-height"]').trigger('click')
+    expect(w.emitted('saveHeight')![0]).toEqual([180])
+    w.unmount()
+  })
+
+  it('неправдоподобный рост не отправляется, показывается подсказка', async () => {
+    const w = mount(WaterModal, { props: props(null, 2100, 70, null) })
+    await w.find('[data-test="height-input"]').setValue('17')
+    await w.find('[data-test="save-height"]').trigger('click')
+    expect(w.emitted('saveHeight')).toBeUndefined()
+    expect(w.find('[data-test="height-error"]').text()).toContain('от 100 до 250')
+    w.unmount()
+  })
+
+  it('подтверждение «Рост сохранён — норма пересчитана»', () => {
+    const w = mount(WaterModal, { props: { ...props(null), goalSavedTick: 1, goalSavedMsg: 'height' as const } })
+    expect(w.find('[data-test="goal-saved"]').text()).toContain('Рост сохранён')
     w.unmount()
   })
 })

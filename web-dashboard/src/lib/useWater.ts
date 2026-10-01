@@ -4,7 +4,8 @@ import { notifyDataChanged } from './events'
 import { emitPointsFloat, pointsDelta } from './pointsFloat'
 import { fmtDate, todayStr } from './date'
 import { t } from './i18n'
-import { autoNormMlFromWeight, effectiveNormMl, findWaterMetric, findWeightParam, nextWaterValue } from './water'
+import { effectiveNormMl, findWaterMetric, findWeightParam, nextWaterValue } from './water'
+import { autoNormFromBody, validHeightCm, resetWaterGoalCache } from './waterGoal'
 import type { BodyParameter } from './water'
 import { canUndo as stackCanUndo, loadStacks, pushEntry, saveStack, type UndoEntry } from './waterUndo'
 import type { Metric } from './types'
@@ -16,6 +17,8 @@ export function useWater() {
   const metric = ref<Metric | null>(null)
   const autoNormMl = ref<number | null>(null)
   const weightKg = ref<number | null>(null)
+  // Рост (см) из profiles.height — нужен для авто-нормы по площади поверхности тела (BACKLOG 17); null = неизвестен → норма вес × 30
+  const heightCm = ref<number | null>(null)
   const todayMl = ref(0)
   const loaded = ref(false)
   const error = ref<string | null>(null)
@@ -33,6 +36,8 @@ export function useWater() {
     if (!weightParam) {
       autoNormMl.value = null
       weightKg.value = null
+      const { data: p0 } = await sb.from('profiles').select('height').eq('user_id', userId).maybeSingle()
+      heightCm.value = validHeightCm((p0 as { height?: number | null } | null)?.height)
       return
     }
     const { data: values } = await sb
@@ -44,7 +49,24 @@ export function useWater() {
       .limit(1)
     const weight = values?.[0]?.value
     weightKg.value = weight ?? null
-    autoNormMl.value = weight ? autoNormMlFromWeight(weight) : null
+    const { data: prof } = await sb.from('profiles').select('height').eq('user_id', userId).maybeSingle()
+    heightCm.value = validHeightCm((prof as { height?: number | null } | null)?.height)
+    autoNormMl.value = weight ? autoNormFromBody(weight, heightCm.value) : null
+  }
+
+  // Сохранить рост (см) в профиль — нужен для авто-нормы; false при неправдоподобном значении или ошибке записи.
+  async function saveHeight(cm: number): Promise<boolean> {
+    const h = validHeightCm(cm)
+    if (h == null) return false
+    const { error: err } = await sb.from('profiles').upsert({ user_id: userId, height: h })
+    if (err) {
+      saveError.value = t('dash_save_error_generic') + err.message
+      return false
+    }
+    saveError.value = null
+    resetWaterGoalCache()
+    await loadAutoNorm()
+    return true
   }
 
   async function init(uid: string) {
@@ -192,5 +214,5 @@ export function useWater() {
     return true
   }
 
-  return { metric, normMl, autoNormMl, weightKg, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, getMlForDate, saveGoal, resetGoalToAuto, createWaterMetric }
+  return { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, getMlForDate, saveGoal, resetGoalToAuto, createWaterMetric }
 }

@@ -26,7 +26,7 @@ const userId = ref<string | null>(null)
 const ready = ref(false)
 
 const { day, week, summaries, settings, init: initProgress, saveSettings } = useHeaderProgress()
-const { metric, normMl, autoNormMl, weightKg, todayMl, loaded: waterLoaded, error: waterError, saveError, init: initWater, addMl, getMlForDate, saveGoal, resetGoalToAuto } = useWater()
+const { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded: waterLoaded, error: waterError, saveError, init: initWater, addMl, getMlForDate, saveGoal, resetGoalToAuto } = useWater()
 
 onMounted(async () => {
   const { data } = await sb.auth.getSession()
@@ -72,13 +72,19 @@ const settingsOpen = ref(false)
 // «Записалось» — только после подтверждённой записи (см. useWater.addMl: null при ошибке БД)
 const savedTick = ref(0)
 const goalSavedTick = ref(0)
-const goalSavedMsg = ref<'manual' | 'auto'>('manual')
+const goalSavedMsg = ref<'manual' | 'auto' | 'height'>('manual')
 async function onAdd(ml: number, dateStr: string) {
   if ((await addMl(ml, dateStr)) !== null) savedTick.value++
 }
 async function onSaveGoal(ml: number) {
   if (await saveGoal(ml)) {
     goalSavedMsg.value = 'manual'
+    goalSavedTick.value++
+  }
+}
+async function onSaveHeight(cm: number) {
+  if (await saveHeight(cm)) {
+    goalSavedMsg.value = 'height'
     goalSavedTick.value++
   }
 }
@@ -151,6 +157,8 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
       :saved-tick="savedTick"
       :goal-saved-tick="goalSavedTick"
       :goal-saved-msg="goalSavedMsg"
+      :height-cm="heightCm"
+      @save-height="onSaveHeight"
       :save-error="saveError"
       @close="waterOpen = false"
       @add="onAdd"

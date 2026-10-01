@@ -49,6 +49,32 @@ export function autoNormFromWeight(weightKg: number | null | undefined): number 
   return Math.round(Math.round(weightKg * WATER_ML_PER_KG * 100) / 100)
 }
 
+// --- Рост в формуле (BACKLOG 17, просьба владельца 2026-10-01) ---
+// Общепринятый клинический подход: суточная потребность во ВСЕЙ жидкости ≈ 1500 мл на м² поверхности тела (maintenance fluid),
+// а площадь поверхности — по формуле Мостеллера BSA = √(рост[см] × вес[кг] / 3600) (Mosteller, NEJM 1987). Около 20% воды человек
+// получает с едой (оценка IOM/EFSA), поэтому «питьевая» норма = BSA × 1500 × 0.8 = BSA × 1200 мл. Округляем до 10 мл.
+// Пример: 70 кг, 175 см → BSA 1,84 м² → 2210 мл. Без роста (или рост вне 100–250 см) — прежний расчёт вес × 30.
+// SQL-зеркало: migrations/034_water_norm_height.sql (water_auto_norm_ml) — править ВМЕСТЕ.
+export const WATER_ML_PER_M2 = 1200
+export const HEIGHT_MIN_CM = 100
+export const HEIGHT_MAX_CM = 250
+
+export function validHeightCm(heightCm: number | null | undefined): number | null {
+  const h = Number(heightCm)
+  return Number.isFinite(h) && h >= HEIGHT_MIN_CM && h <= HEIGHT_MAX_CM ? h : null
+}
+
+export function bodySurfaceAreaM2(weightKg: number, heightCm: number): number {
+  return Math.sqrt((heightCm * weightKg) / 3600)
+}
+
+export function autoNormFromBody(weightKg: number | null | undefined, heightCm: number | null | undefined): number | null {
+  if (!weightKg) return null
+  const h = validHeightCm(heightCm)
+  if (h == null) return autoNormFromWeight(weightKg)
+  return Math.round((bodySurfaceAreaM2(weightKg, h) * WATER_ML_PER_M2) / 10) * 10
+}
+
 // Подставляет эффективную норму в goal_value воды, если он пуст. Остальные метрики и вода с заданной нормой — без изменений.
 export function applyWaterGoal<T extends GoalMetric>(metrics: T[], autoNormMl: number | null): T[] {
   const water = findWaterNumberMetric(metrics)
@@ -83,7 +109,10 @@ async function fetchAutoNormMl(userId: string): Promise<number | null> {
     .eq('parameter_id', weightParam.id)
     .order('date', { ascending: false })
     .limit(1)
-  return autoNormFromWeight(values?.[0]?.value as number | null | undefined)
+  const weight = values?.[0]?.value as number | null | undefined
+  if (!weight) return null
+  const { data: prof } = await sb.from('profiles').select('height').eq('user_id', userId).maybeSingle()
+  return autoNormFromBody(weight, (prof as { height?: number | null } | null)?.height)
 }
 
 export function loadAutoNormMl(userId: string): Promise<number | null> {

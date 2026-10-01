@@ -12,7 +12,7 @@ import { getLang, t } from '../lib/i18n'
 // страницы с текстовой подписью — так было на пилоте раньше и расходилось с ванильным сайтом.
 const props = defineProps<{ userId: string | null }>()
 
-const { metric, normMl, autoNormMl, weightKg, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, getMlForDate, saveGoal, resetGoalToAuto, createWaterMetric } = useWater()
+const { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, getMlForDate, saveGoal, resetGoalToAuto, createWaterMetric } = useWater()
 
 watch(
   () => props.userId,
@@ -36,7 +36,7 @@ async function onSetupClick() {
 // Анимация «записалось» — только после подтверждённой записи в БД (addMl вернул значение, а не null)
 const savedTick = ref(0)
 const goalSavedTick = ref(0)
-const goalSavedMsg = ref<'manual' | 'auto'>('manual')
+const goalSavedMsg = ref<'manual' | 'auto' | 'height'>('manual')
 async function onAdd(ml: number, dateStr: string) {
   if ((await addMl(ml, dateStr)) !== null) savedTick.value++
 }
@@ -54,6 +54,12 @@ async function onSetTotal(ml: number, dateStr: string) {
 async function onSaveGoal(ml: number) {
   if (await saveGoal(ml)) {
     goalSavedMsg.value = 'manual'
+    goalSavedTick.value++
+  }
+}
+async function onSaveHeight(cm: number) {
+  if (await saveHeight(cm)) {
+    goalSavedMsg.value = 'height'
     goalSavedTick.value++
   }
 }
@@ -133,6 +139,8 @@ const GLASS_OUTLINE = 'M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3
     @close="modalOpen = false"
     @add="onAdd"
     :goal-saved-msg="goalSavedMsg"
+    :height-cm="heightCm"
+    @save-height="onSaveHeight"
     @save-goal="onSaveGoal"
     @reset-goal="onResetGoal"
   />

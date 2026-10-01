@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { t, getLang } from '../lib/i18n'
 import { fmtDate } from '../lib/date'
+import { bodySurfaceAreaM2 } from '../lib/waterGoal'
 import type { Metric } from '../lib/types'
 import WaterSavedAnim from './WaterSavedAnim.vue'
 import { MAX_DAY_ML, parseTotalInput } from '../lib/waterUndo'
@@ -17,7 +18,8 @@ const props = defineProps<{
   getMlForDate: (dateStr: string) => Promise<number>
   savedTick?: number // растёт после каждой подтверждённой записи выпитого — запускает анимацию «записалось»
   goalSavedTick?: number // то же после смены дневной нормы
-  goalSavedMsg?: 'manual' | 'auto' // что именно подтвердить: «Дневная норма изменена» или «Норма снова считается по весу»
+  heightCm?: number | null // рост из профиля (см) — для авто-нормы по площади поверхности тела
+  goalSavedMsg?: 'manual' | 'auto' | 'height' // что именно подтвердить: «Дневная норма изменена» или «Норма снова считается по весу»
   saveError?: string | null
   // «Отменить последнее добавление» и правка суммы за день (BACKLOG 12). Необязательные: без них блок не показывается.
   canUndo?: (dateStr: string, currentMl: number) => boolean
@@ -29,6 +31,7 @@ const emit = defineEmits<{
   add: [ml: number, dateStr: string]
   saveGoal: [ml: number]
   resetGoal: []
+  saveHeight: [cm: number]
 }>()
 
 const today = fmtDate(new Date())
@@ -107,13 +110,33 @@ function saveGoal() {
   emit('saveGoal', ml)
 }
 
+function fmt(key: Parameters<typeof t>[0], vars: Record<string, string | number>): string {
+  return Object.entries(vars).reduce((acc, [k, v]) => acc.replace(`{${k}}`, String(v)), t(key))
+}
+
+function autoExplanation(): string {
+  const w = props.weightKg
+  if (!w || !props.autoNormMl) return t('dash_water_info_no_weight')
+  if (props.heightCm) {
+    return fmt('dash_water_info_auto_body', { weight: w, height: props.heightCm, bsa: bodySurfaceAreaM2(w, props.heightCm).toFixed(2), norm: props.autoNormMl })
+  }
+  return fmt('dash_water_info_auto_weight', { weight: w, norm: props.autoNormMl })
+}
+
 function showInfo() {
-  const text = props.metric.goal_value != null
-    ? `${t('dash_water_info_manual')}${props.autoNormMl && props.weightKg ? `\n\n${t('dash_water_info_auto_prefix')} ${props.weightKg} ${t('dash_water_info_auto_kg')} × 30 ${t('dash_water_info_auto_ml_per_kg')} = ${props.autoNormMl} ${unitLabel.value}.` : ''}`
-    : props.autoNormMl && props.weightKg
-      ? `${t('dash_water_info_auto_prefix')} ${props.weightKg} ${t('dash_water_info_auto_kg')} × 30 ${t('dash_water_info_auto_ml_per_kg')} = ${props.autoNormMl} ${unitLabel.value}.\n\n${t('dash_water_info_editable')}`
-      : `${t('dash_water_info_no_weight')}\n\n${t('dash_water_info_editable')}`
+  const text =
+    props.metric.goal_value != null
+      ? `${t('dash_water_info_manual')}${props.autoNormMl ? `\n\n${fmt('dash_water_info_would', { norm: props.autoNormMl })}` : ''}`
+      : `${autoExplanation()}\n\n${t('dash_water_info_editable')}`
   alert(text)
+}
+
+const heightInput = ref<number | string>(props.heightCm ?? '')
+const heightError = ref(false)
+function saveHeightClick() {
+  const h = Number(heightInput.value)
+  heightError.value = !(h >= 100 && h <= 250)
+  if (!heightError.value) emit('saveHeight', h)
 }
 </script>
 
@@ -185,7 +208,15 @@ function showInfo() {
       <p class="dim mt-1 text-xs">{{ goalHint }}</p>
       <button type="button" class="secondary mt-2" data-test="change-goal" @click="saveGoal">{{ t('dash_water_goal_save_btn') }}</button>
       <button v-if="metric.goal_value != null && autoNormMl" type="button" class="secondary mt-2 ml-2" data-test="auto-goal" @click="emit('resetGoal')">{{ t('dash_water_goal_auto_btn') }} ({{ autoNormMl }} {{ unitLabel }})</button>
-      <span v-if="goalSavedTick" :key="goalSavedTick" class="ml-2 text-sm" style="color: var(--accent)" data-test="goal-saved">✓ {{ goalSavedMsg === 'auto' ? t('dash_water_goal_auto_done') : t('dash_water_goal_saved') }}</span>
+      <span v-if="goalSavedTick" :key="goalSavedTick" class="ml-2 text-sm" style="color: var(--accent)" data-test="goal-saved">✓ {{ goalSavedMsg === 'auto' ? t('dash_water_goal_auto_done') : goalSavedMsg === 'height' ? t('dash_water_height_saved') : t('dash_water_goal_saved') }}</span>
+      <label class="mt-3 block text-sm">
+        {{ t('dash_water_height_label') }}
+        <div class="mt-1 flex gap-2">
+          <input v-model="heightInput" type="number" min="100" max="250" class="w-full" data-test="height-input" />
+          <button type="button" class="secondary" data-test="save-height" @click="saveHeightClick">{{ t('dash_water_height_save') }}</button>
+        </div>
+      </label>
+      <p v-if="heightError" class="mt-1 text-xs" style="color: #d6336c" data-test="height-error">{{ t('dash_water_height_invalid') }}</p>
       <p v-if="saveError" class="mt-2 text-sm" style="color: var(--danger, #d6336c)" data-test="water-save-error">{{ saveError }}</p>
 
       <div class="modal-actions">
