@@ -1,8 +1,8 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
 import { todayStr } from './date'
-import { buildInsertCustom, buildInsertFromTemplate, buildUpdateFromForm } from './challenges'
-import type { Challenge, ChallengeEntry, ChallengeTemplate, CustomChallengeFormInput } from './types'
+import { buildInsertCustom, buildInsertFromTemplate, buildUpdateFromForm, mergeMetricValues, metricValueToNumber } from './challenges'
+import type { Challenge, ChallengeEntry, ChallengeTemplate, CustomChallengeFormInput, SourceMetric } from './types'
 
 export type AuthState =
   | { status: 'loading' }
@@ -16,6 +16,9 @@ export function useChallenges() {
   const instances = ref<Challenge[]>([])
   const entriesByChallenge = ref<Record<string, ChallengeEntry[]>>({})
   const error = ref<string | null>(null)
+  // Метрики пользователя (для выбора источника значений) и значения источников по дням: challengeId -> дата -> число.
+  const metrics = ref<SourceMetric[]>([])
+  const sourceValues = ref<Record<string, Record<string, number>>>({})
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -60,6 +63,64 @@ export function useChallenges() {
       list.push(e as ChallengeEntry)
     })
     entriesByChallenge.value = grouped
+
+    await loadMetricSources(userId)
+  }
+
+  // Необязательная часть: любая ошибка (нет колонки source_metric_id до миграции 032, сеть) просто оставляет
+  // челленджи в режиме ручного ввода и не ломает страницу.
+  async function loadMetricSources(userId: string) {
+    try {
+      const { data: metricRows } = await sb.from('metrics').select('id, name, icon, type, unit, active').eq('user_id', userId)
+      const allMetrics = (metricRows || []) as (SourceMetric & { active?: boolean })[]
+      metrics.value = allMetrics.filter((m) => m.active !== false && ['number', 'sets', 'boolean'].includes(m.type))
+
+      const sourced = instances.value.filter((c) => c.source_metric_id && c.type.startsWith('daily'))
+      if (!sourced.length) {
+        sourceValues.value = {}
+        return
+      }
+      const ids = [...new Set(sourced.map((c) => c.source_metric_id as string))]
+      const minStart = sourced.reduce((min, c) => (c.start_date < min ? c.start_date : min), sourced[0].start_date)
+      const rows: { metric_id: string; date: string; value: unknown }[] = []
+      for (let from = 0; ; from += 1000) {
+        const { data, error: err } = await sb
+          .from('daily_values')
+          .select('metric_id, date, value')
+          .eq('user_id', userId)
+          .in('metric_id', ids)
+          .gte('date', minStart)
+          .order('date')
+          .range(from, from + 999)
+        if (err) throw err
+        rows.push(...((data || []) as typeof rows))
+        if (!data || data.length < 1000) break
+      }
+      const typeById = new Map(allMetrics.map((m) => [m.id, m.type]))
+      const out: Record<string, Record<string, number>> = {}
+      for (const c of sourced) {
+        const byDate: Record<string, number> = {}
+        for (const r of rows) {
+          if (r.metric_id !== c.source_metric_id) continue
+          const n = metricValueToNumber(typeById.get(r.metric_id) || 'number', r.value)
+          if (n !== null) byDate[r.date] = n
+        }
+        out[c.id] = byDate
+      }
+      sourceValues.value = out
+    } catch {
+      sourceValues.value = {}
+    }
+  }
+
+  // Записи челленджа для показа: ручные + значения из метрики-источника там, где ручной записи нет.
+  function effectiveEntries(ch: Challenge): ChallengeEntry[] {
+    return mergeMetricValues(ch, entriesByChallenge.value[ch.id] || [], sourceValues.value[ch.id] || {})
+  }
+
+  function sourceMetricName(ch: Challenge): string | null {
+    if (!ch.source_metric_id) return null
+    return metrics.value.find((m) => m.id === ch.source_metric_id)?.name ?? null
   }
 
   async function reload() {
@@ -124,7 +185,7 @@ export function useChallenges() {
   // Правка полей существующего челленджа (тип и дата старта не меняются — см. buildUpdateFromForm).
   async function updateChallenge(ch: Challenge, form: CustomChallengeFormInput) {
     const userId = requireUserId()
-    const { error: err } = await sb.from('challenge_instances').update(buildUpdateFromForm(form, ch.type)).eq('id', ch.id).eq('user_id', userId)
+    const { error: err } = await sb.from('challenge_instances').update(buildUpdateFromForm(form, ch.type, ch)).eq('id', ch.id).eq('user_id', userId)
     if (err) throw err
     await reload()
   }
@@ -139,6 +200,9 @@ export function useChallenges() {
     auth,
     instances,
     entriesByChallenge,
+    metrics,
+    effectiveEntries,
+    sourceMetricName,
     error,
     init,
     reload,

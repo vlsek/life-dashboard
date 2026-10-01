@@ -140,6 +140,8 @@ export function buildInsertCustom(form: CustomChallengeFormInput) {
     daily_increment: type === 'daily_progressive' ? form.increment || 0 : null,
     target_count: type === 'cumulative_count' ? form.targetCount || 0 : null,
     item_label: type === 'cumulative_count' ? form.itemLabel || null : null,
+    // Поле добавляем только когда источник выбран: без миграции 032 колонки нет, и лишний null уронил бы любой insert.
+    ...(type.startsWith('daily') && form.sourceMetricId ? { source_metric_id: form.sourceMetricId } : {}),
   }
 }
 
@@ -148,10 +150,14 @@ export function buildInsertCustom(form: CustomChallengeFormInput) {
 // нумерацию дней. Поэтому патч содержит только редактируемые поля; template_id и type остаются как
 // были (челлендж из шаблона после правки остаётся челленджем из шаблона). Поля, не относящиеся к
 // типу, пишутся как null — как и при создании.
-export function buildUpdateFromForm(form: CustomChallengeFormInput, type: ChallengeType) {
+export function buildUpdateFromForm(form: CustomChallengeFormInput, type: ChallengeType, existing?: Pick<Challenge, 'source_metric_id'>) {
   const { template_id: _templateId, type: _type, ...patch } = buildInsertCustom({ ...form, type })
   void _templateId
   void _type
+  // Снять источник (вернуться к ручному вводу) можно, только если колонка уже есть у этой записи.
+  if (type.startsWith('daily') && !form.sourceMetricId && existing && 'source_metric_id' in existing) {
+    return { ...patch, source_metric_id: null }
+  }
   return patch
 }
 
@@ -168,6 +174,7 @@ export function formFromChallenge(ch: Challenge): CustomChallengeFormInput {
     unit: ch.unit ?? '',
     targetCount: ch.target_count ?? 10,
     itemLabel: ch.item_label ?? '',
+    sourceMetricId: ch.source_metric_id ?? '',
   }
 }
 
@@ -182,4 +189,42 @@ export function fieldsEnabledForType(type: ChallengeType) {
     targetCount: type === 'cumulative_count',
     itemLabel: type === 'cumulative_count',
   }
+}
+
+// ===== Значения из метрики (BACKLOG 14, «11:28») =====
+
+// Значение метрики за день -> число для челленджа. boolean: true=1, false=0; число — как есть; подходы ('sets') —
+// сумма повторений (как metric_numeric_value() в migrations/018 и metricNumericValue() в Дашборде). Остальное — null.
+export function metricValueToNumber(metricType: string, raw: unknown): number | null {
+  if (raw === null || raw === undefined) return null
+  if (typeof raw === 'boolean') return raw ? 1 : 0
+  if (typeof raw === 'number') return Number.isFinite(raw) ? raw : null
+  if (metricType === 'sets' && Array.isArray(raw)) {
+    return (raw as { reps?: number }[]).reduce((sum, set) => sum + (Number(set?.reps) || 0), 0)
+  }
+  return null
+}
+
+export const METRIC_ENTRY_PREFIX = 'metric:'
+export function isMetricEntry(e: Pick<ChallengeEntry, 'id'>): boolean {
+  return e.id.startsWith(METRIC_ENTRY_PREFIX)
+}
+
+// Ручные записи + значения метрики за дни, где ручной записи нет. Для boolean-челленджа любое положительное
+// значение метрики = «сделано» (1). Дни вне окна челленджа не добавляем — карточка их всё равно не показывает.
+export function mergeMetricValues(
+  ch: Pick<Challenge, 'id' | 'user_id' | 'type'>,
+  entries: ChallengeEntry[],
+  metricByDate: Record<string, number>,
+): ChallengeEntry[] {
+  if (!ch.type.startsWith('daily')) return entries
+  const manualDates = new Set(entries.map((e) => e.date))
+  const extra: ChallengeEntry[] = []
+  for (const [date, raw] of Object.entries(metricByDate)) {
+    if (manualDates.has(date)) continue
+    const value = ch.type === 'daily_boolean' ? (raw > 0 ? 1 : 0) : raw
+    extra.push({ id: `${METRIC_ENTRY_PREFIX}${ch.id}:${date}`, user_id: ch.user_id, challenge_id: ch.id, date, value, note: null, created_at: '' })
+  }
+  extra.sort((a, b) => a.date.localeCompare(b.date))
+  return extra.length ? [...entries, ...extra] : entries
 }

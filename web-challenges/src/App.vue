@@ -15,6 +15,9 @@ const {
   auth,
   instances,
   entriesByChallenge,
+  metrics,
+  effectiveEntries,
+  sourceMetricName,
   error,
   init,
   startFromTemplate,
@@ -32,7 +35,8 @@ const active = computed(() => instances.value.filter((ch) => !ch.completed))
 const completed = computed(() => instances.value.filter((ch) => ch.completed))
 
 function entriesFor(ch: Challenge) {
-  return entriesByChallenge.value[ch.id] || []
+  // для дневных челленджей с источником-метрикой подмешиваем значения метрики там, где ручной записи нет
+  return ch.type.startsWith('daily') ? effectiveEntries(ch) : entriesByChallenge.value[ch.id] || []
 }
 
 function fmtRu(iso: string): string {
@@ -110,6 +114,7 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
             v-else
             :challenge="ch"
             :entries="entriesFor(ch)"
+            :source-name="sourceMetricName(ch)"
             @abandon="onAbandon"
             @edit="editing = $event"
             @mark-completed="markCompleted"
@@ -127,7 +132,7 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
     </template>
 
     <CatalogModal v-if="catalogOpen" @close="catalogOpen = false" @select="onSelectTemplate" />
-    <CustomChallengeForm v-if="customFormOpen" @close="customFormOpen = false" @save="onSaveCustom" />
-    <CustomChallengeForm v-if="editing" :key="editing.id" :challenge="editing" @close="editing = null" @save="onSaveEdit" />
+    <CustomChallengeForm v-if="customFormOpen" :metrics="metrics" @close="customFormOpen = false" @save="onSaveCustom" />
+    <CustomChallengeForm v-if="editing" :key="editing.id" :challenge="editing" :metrics="metrics" @close="editing = null" @save="onSaveEdit" />
   </main>
 </template>

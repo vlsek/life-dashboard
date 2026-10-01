@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.73";
+const SITE_VERSION = "1.74";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.74", date: "2026-10-01 06:04", changes: [
+        "Челленджи (пилот): значения дней можно брать из метрики. В форме челленджа появился «Источник значений» — выберите свою метрику (например, «Отжимания»), и дни без ручной записи сами подтянут значение с Дашборда: число, сумма повторений по подходам или «сделано» для галочки. Ручная запись за день всегда главнее. На карточке видна пометка «из метрики» и подсказка, как заменить значение. Нужна миграция 032 в Supabase; без неё всё работает как раньше",
+    ]},
     { version: "1.73", date: "2026-09-30 20:33", changes: [
         "Языки (пилот): вкладки словарей — у каждого языка своя вкладка со счётчиком слов, вкладка «Все» появляется, когда словарей больше одного. Кнопка «＋» создаёт новый словарь (можно пустой и заполнить позже), пустой словарь можно удалить. Порядок вкладок запоминается и не прыгает, новое слово добавляется в открытый словарь. Слова и их данные не менялись, миграция не нужна",
     ]},
@@ -1118,6 +1121,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.74", date: "2026-10-01 06:04", changes: [
+        "Challenges (pilot): day values can come from a metric. The challenge form now has a \"Source of values\" field — pick one of your metrics (for example \"Push-ups\") and days without a manual entry pick up the value from the Dashboard: a number, the sum of reps across sets, or \"done\" for a checkbox. A manual entry for a day always wins. The card shows a \"from metric\" tag and a hint on how to replace the value. Requires migration 032 in Supabase; without it everything works as before",
+    ]},
     { version: "1.73", date: "2026-09-30 20:33", changes: [
         "Languages (pilot): dictionary tabs — every language has its own tab with a word counter, and an \"All\" tab appears once there is more than one dictionary. The \"＋\" button creates a new dictionary (it can be empty and filled later), and an empty dictionary can be removed. The tab order is remembered and does not jump, and a new word is added to the open dictionary. Words and their data are unchanged, no migration needed",
     ]},

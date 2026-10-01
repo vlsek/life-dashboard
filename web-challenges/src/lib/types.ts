@@ -18,6 +18,8 @@ export interface Challenge {
   active: boolean
   completed: boolean
   completed_at: string | null // ISO timestamp
+  // Миграция 032: метрика-источник значений дней. Колонки может ещё не быть (тогда поля нет вовсе).
+  source_metric_id?: string | null
   created_at: string
 }
 
@@ -59,4 +61,15 @@ export interface CustomChallengeFormInput {
   unit: string
   targetCount: number
   itemLabel: string
+  // id метрики-источника ('' или не задано — вводить вручную)
+  sourceMetricId?: string
+}
+
+// Метрика пользователя, из которой челлендж может брать значения дней (BACKLOG 14, «11:28»).
+export interface SourceMetric {
+  id: string
+  name: string
+  icon: string | null
+  type: string
+  unit: string | null
 }
