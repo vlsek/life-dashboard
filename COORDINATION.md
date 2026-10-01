@@ -87,7 +87,11 @@
 — свободен —
 
 ### Агент 5
-— свободен —
+По правилу 9 (сверху вниз, 2026-10-01 19:06): BACKLOG 🎨 п.1 «**Иконка приложения на Android**» (пункт «возможно исправлено, проверить»). Проверка показала причину: `manifest.json`
+и монохромная иконка в порядке, но `<link rel="manifest">` и `apple-touch-icon` есть ТОЛЬКО в `legacy/dashboard.html`, а на всех 14 Vue-страницах (`web-<стр>/index.html`) их нет —
+приложение ставится без манифеста и получает стандартную иконку. Беру: добавить 2 тега (manifest + apple-touch-icon) и `apple-mobile-web-app-*` в `web-{account,calendar,challenges,community,
+dashboard,goals,history,languages,login,milestones,onboarding,shop,skills,workouts}/index.html`, тест на каждой странице, пересборка всех 14 (`/<стр>/`), `config.js`, `docs/`. ТОЛЬКО
+`<head>` — тела страниц не трогаю (агенты 1/3 правят `src/`). С: 2026-10-01 19:06.
 
 ### Агент 6
 — свободен —
