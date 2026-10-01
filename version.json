@@ -1,6 +1,13 @@
 {
-  "version": "1.92",
+  "version": "1.93",
   "en": [
+    {
+      "version": "1.93",
+      "date": "2026-10-01 14:17",
+      "changes": [
+        "Water (Dashboard): the water window now has an 'Undo last add' button — it rolls back what you logged step by step, as long as the day's value has not been changed elsewhere — and a pencil to correct the whole amount for the selected day. A total correction can be undone too. After undoing or editing you get the 'saved' confirmation, and the coin '+1' / '−1' if the daily goal became reached or no longer reached. Logged too much by accident? No need to subtract it by hand any more"
+      ]
+    },
     {
       "version": "1.92",
       "date": "2026-10-01 14:05",
@@ -1401,6 +1408,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.93",
+      "date": "2026-10-01 14:17",
+      "changes": [
+        "Вода (Дашборд): в окне воды появились кнопка «Отменить последнее добавление» — откатывает записанное шаг за шагом, пока значение дня не изменили в другом месте, — и карандашик, которым можно поправить всю сумму выпитого за выбранный день. Правку суммы тоже можно отменить. После отмены и правки показывается «сохранилось», а «+1»/«−1» с монеткой — если из-за этого дневная норма стала набранной или перестала ею быть. Если записал лишнее, теперь не нужно считать обратное вручную"
+      ]
+    },
     {
       "version": "1.92",
       "date": "2026-10-01 14:05",

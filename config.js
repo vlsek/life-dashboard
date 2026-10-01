@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.92";
+const SITE_VERSION = "1.93";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.93", date: "2026-10-01 14:17", changes: [
+        "Вода (Дашборд): в окне воды появились кнопка «Отменить последнее добавление» — откатывает записанное шаг за шагом, пока значение дня не изменили в другом месте, — и карандашик, которым можно поправить всю сумму выпитого за выбранный день. Правку суммы тоже можно отменить. После отмены и правки показывается «сохранилось», а «+1»/«−1» с монеткой — если из-за этого дневная норма стала набранной или перестала ею быть. Если записал лишнее, теперь не нужно считать обратное вручную",
+    ]},
     { version: "1.92", date: "2026-10-01 14:05", changes: [
         "Вода и баллы: вода теперь считается выполненной по реальной норме — заданной тобой, а если её нет, то по весу (вес × 30 мл), а без веса — 2000 мл. Раньше при незаданной норме балл за воду давало любое записанное значение, даже 100 мл. Исправлено везде: в балансе и журнале баллов, кольцах дня и недели, стриках, вечернем напоминании, Магазине, Истории и в шапке, а также на сервере — в баллах дня и категории, лидерборде и стриках Сообщества. При добавлении воды «+1»/«−1» с монеткой появляется, когда норма набрана или перестала быть набранной. Если норма воды у тебя не задана, баллы за прошлые дни с малым количеством воды пересчитаются; чтобы зафиксировать норму, задай её вручную («Изменить дневную норму»)",
     ]},
@@ -1176,6 +1179,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.93", date: "2026-10-01 14:17", changes: [
+        "Water (Dashboard): the water window now has an 'Undo last add' button — it rolls back what you logged step by step, as long as the day's value has not been changed elsewhere — and a pencil to correct the whole amount for the selected day. A total correction can be undone too. After undoing or editing you get the 'saved' confirmation, and the coin '+1' / '−1' if the daily goal became reached or no longer reached. Logged too much by accident? No need to subtract it by hand any more",
+    ]},
     { version: "1.92", date: "2026-10-01 14:05", changes: [
         "Water and points: water now counts as done against the real daily goal — the one you set, or if none is set, your weight × 30 ml, or 2000 ml without a weight. Before, with no goal set, any logged amount earned the point, even 100 ml. Fixed everywhere: in the balance and points log, day and week rings, streaks, the evening reminder, Shop, History and the header, and on the server too — daily and category points, the leaderboard and Community streaks. When you add water, the coin '+1' / '−1' appears when the goal is reached or no longer reached. If you have no water goal set, past days with little water will be recalculated; to pin your goal, set it manually ('Change daily goal')",
     ]},
