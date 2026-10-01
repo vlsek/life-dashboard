@@ -1,6 +1,13 @@
 {
-  "version": "1.79",
+  "version": "1.80",
   "en": [
+    {
+      "version": "1.80",
+      "date": "2026-10-01 04:17",
+      "changes": [
+        "Dashboard (pilot): the loading splash now really \"burns\". Three variants: \"Living flame\" (default) — separate flame tongues, each with its own speed and phase, plus rising sparks; \"Fire ring\" — a rotating ring with a tail and a small flame in the middle; \"Classic\" — the previous flickering outline (kept). Preview: add ?splash=ring, ?splash=flame or ?splash=classic to the dashboard address (your choice is remembered). The splash shows even before the page scripts load and repeats the chosen variant. Animations are turned off when the system asks for reduced motion. Choosing a variant from the interface will come later, in \"Customization\""
+      ]
+    },
     {
       "version": "1.79",
       "date": "2026-10-01 04:09",
@@ -1309,6 +1316,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.80",
+      "date": "2026-10-01 04:17",
+      "changes": [
+        "Дашборд (пилот): заставка загрузки теперь «прям горит». Три варианта: «Живое пламя» (по умолчанию) — отдельные языки пламени, у каждого своя скорость и фаза, плюс поднимающиеся искры; «Огненный круг» — вращающееся кольцо с хвостом и огоньком в центре; «Классика» — прежний контур с мерцанием (оставлен). Предпросмотр: добавьте ?splash=ring, ?splash=flame или ?splash=classic к адресу Дашборда (выбор запоминается). Заставка видна ещё до загрузки скриптов и повторяет выбранный вариант. Анимации выключаются при «уменьшении движения» в системе. Выбор варианта из интерфейса — позже, в «Кастомизации»"
+      ]
+    },
     {
       "version": "1.79",
       "date": "2026-10-01 04:09",

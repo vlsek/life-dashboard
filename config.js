@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.79";
+const SITE_VERSION = "1.80";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.80", date: "2026-10-01 04:17", changes: [
+        "Дашборд (пилот): заставка загрузки теперь «прям горит». Три варианта: «Живое пламя» (по умолчанию) — отдельные языки пламени, у каждого своя скорость и фаза, плюс поднимающиеся искры; «Огненный круг» — вращающееся кольцо с хвостом и огоньком в центре; «Классика» — прежний контур с мерцанием (оставлен). Предпросмотр: добавьте ?splash=ring, ?splash=flame или ?splash=classic к адресу Дашборда (выбор запоминается). Заставка видна ещё до загрузки скриптов и повторяет выбранный вариант. Анимации выключаются при «уменьшении движения» в системе. Выбор варианта из интерфейса — позже, в «Кастомизации»",
+    ]},
     { version: "1.79", date: "2026-10-01 04:09", changes: [
         "Дашборд (пилот), «Дневные метрики»: переключатель дня переделан — вместо трёх кнопок-текстов «Пред. / Сегодня / След.» теперь капсула «‹ вт, 1 октября ›» (тап по дате открывает календарь для выбора дня) и отдельный чип «Сегодня», который активен только когда выбран не сегодняшний день; кнопки крупнее для пальца. «›» не блокируется на сегодня — планы на завтра по-прежнему доступны. Блок «Подходы» (и другие вложенные карточки) снова с собственной подложкой — раньше сливался с фоном блока метрик",
     ]},
@@ -1136,6 +1139,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.80", date: "2026-10-01 04:17", changes: [
+        "Dashboard (pilot): the loading splash now really \"burns\". Three variants: \"Living flame\" (default) — separate flame tongues, each with its own speed and phase, plus rising sparks; \"Fire ring\" — a rotating ring with a tail and a small flame in the middle; \"Classic\" — the previous flickering outline (kept). Preview: add ?splash=ring, ?splash=flame or ?splash=classic to the dashboard address (your choice is remembered). The splash shows even before the page scripts load and repeats the chosen variant. Animations are turned off when the system asks for reduced motion. Choosing a variant from the interface will come later, in \"Customization\"",
+    ]},
     { version: "1.79", date: "2026-10-01 04:09", changes: [
         "Dashboard (pilot), \"Daily metrics\": the day switcher is redesigned — instead of three text buttons \"Prev / Today / Next\" there is now a \"‹ Thu, October 1 ›\" capsule (tap the date to pick a day from the calendar) and a separate \"Today\" chip that is active only when a day other than today is selected; the buttons are bigger for fingers. \"›\" is not disabled on today — planning for tomorrow still works. The \"Sets\" block (and other nested cards) has its own plate again — it used to blend into the metrics block background",
     ]},
