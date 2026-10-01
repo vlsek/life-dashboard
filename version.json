@@ -1,6 +1,13 @@
 {
-  "version": "1.96",
+  "version": "1.97",
   "en": [
+    {
+      "version": "1.97",
+      "date": "2026-10-01 11:43",
+      "changes": [
+        "\"Log out\" now asks for confirmation on every page of the new site (Account, Calendar, Challenges, Community, Goals, History, Languages, Milestones, Shop, Skills, Workouts; the Dashboard since v1.95): tapping it in the side menu opens a \"Log out?\" window with \"Log out\" and \"Cancel\" buttons. Esc and a tap on the backdrop cancel, and focus starts on \"Cancel\" — protection against an accidental tap. The right panel still works the old way"
+      ]
+    },
     {
       "version": "1.96",
       "date": "2026-10-01 11:33",
@@ -1429,6 +1436,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.97",
+      "date": "2026-10-01 11:43",
+      "changes": [
+        "«Выйти» теперь с подтверждением на всех страницах нового сайта (Аккаунт, Календарь, Челленджи, Сообщество, Цели, История, Языки, Вехи, Магазин, Навыки, Тренировки; Дашборд — с v1.95): по нажатию в боковом меню появляется окно «Точно выйти?» с кнопками «Выйти» и «Отмена». Esc и клик по фону отменяют, фокус сразу на «Отмене» — защита от случайного нажатия. В правой панели пока по-старому"
+      ]
+    },
     {
       "version": "1.96",
       "date": "2026-10-01 11:33",

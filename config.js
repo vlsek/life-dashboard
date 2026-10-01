@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.96";
+const SITE_VERSION = "1.97";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.97", date: "2026-10-01 11:43", changes: [
+        "«Выйти» теперь с подтверждением на всех страницах нового сайта (Аккаунт, Календарь, Челленджи, Сообщество, Цели, История, Языки, Вехи, Магазин, Навыки, Тренировки; Дашборд — с v1.95): по нажатию в боковом меню появляется окно «Точно выйти?» с кнопками «Выйти» и «Отмена». Esc и клик по фону отменяют, фокус сразу на «Отмене» — защита от случайного нажатия. В правой панели пока по-старому",
+    ]},
     { version: "1.96", date: "2026-10-01 11:33", changes: [
         "Дашборд (пилот): исправлено «пропадает фон внизу экрана при прокрутке». Причина — в заставке загрузки (v1.70) фон страницы был зафиксирован цветом темы на момент загрузки, и после смены темы без перезагрузки область ниже первого экрана оставалась прежнего цвета. Теперь фон следует за текущей темой",
     ]},
@@ -1188,6 +1191,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.97", date: "2026-10-01 11:43", changes: [
+        "\"Log out\" now asks for confirmation on every page of the new site (Account, Calendar, Challenges, Community, Goals, History, Languages, Milestones, Shop, Skills, Workouts; the Dashboard since v1.95): tapping it in the side menu opens a \"Log out?\" window with \"Log out\" and \"Cancel\" buttons. Esc and a tap on the backdrop cancel, and focus starts on \"Cancel\" — protection against an accidental tap. The right panel still works the old way",
+    ]},
     { version: "1.96", date: "2026-10-01 11:33", changes: [
         "Dashboard (pilot): fixed \"the background disappears at the bottom of the screen when scrolling\". The cause was the loading splash (v1.70) pinning the page background to the theme colour at load time, so after switching theme without a reload the area below the first screen kept the old colour. The background now follows the current theme",
     ]},
