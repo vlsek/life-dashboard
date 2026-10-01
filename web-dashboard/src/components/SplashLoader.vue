@@ -1,16 +1,23 @@
 <script setup lang="ts">
+import SplashFlameLive from './splash/SplashFlameLive.vue'
+import SplashFireRing from './splash/SplashFireRing.vue'
 import { t } from '../lib/i18n'
+import { readSplashVariant, type SplashVariant } from '../lib/splashVariants'
 
-// Заставка на время фоновой подгрузки (BACKLOG 6.1): большой огонёк стрика цвета темы, мерцание
-// и мягкое свечение вместо сухого «Загрузка…». Те же контуры, что у StreakFlame.vue, но крупнее и
-// со своим свечением. role="status" — скринридер прочитает подпись; при prefers-reduced-motion
-// анимации выключены (см. style.css). Статичная копия этой разметки лежит в index.html и видна
-// ещё до загрузки бандла — правишь здесь, поправь и там.
+// Заставка на время фоновой подгрузки (BACKLOG 6.1 + 16): вариант выбирается реестром splashVariants.ts —
+// «живое пламя» (по умолчанию), «огненный круг» или «классика» (контур с мерцанием, v1.70, не удалена).
+// Предпросмотр: добавить ?splash=ring | flame | classic к адресу (запоминается). role="status" — скринридер
+// читает подпись; при prefers-reduced-motion и html[data-motion="off"] анимации выключены (style.css).
+// Статичная копия разметки лежит в index.html и видна до загрузки бандла — правишь здесь, поправь и там.
+const props = defineProps<{ variant?: SplashVariant }>()
+const variant: SplashVariant = props.variant ?? readSplashVariant()
 </script>
 
 <template>
-  <div class="splash" role="status" aria-live="polite" data-test="splash">
-    <svg class="splash-flame" viewBox="0 0 32 32" width="72" height="72" aria-hidden="true">
+  <div class="splash" role="status" aria-live="polite" :data-variant="variant" data-test="splash">
+    <SplashFlameLive v-if="variant === 'flame'" />
+    <SplashFireRing v-else-if="variant === 'ring'" />
+    <svg v-else class="splash-flame" viewBox="0 0 32 32" width="72" height="72" aria-hidden="true">
       <g transform="translate(16 16) scale(1.04) translate(-16 -16) translate(3.3 0.7)">
         <path
           class="fl-outer"
