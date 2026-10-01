@@ -564,3 +564,10 @@ html[data-motion='off'] *::after {
   transition: none !important;
   scroll-behavior: auto !important;
 }
+
+/* Огонёк-логотип в шапке (AppShell.vue, BACKLOG 16: «пламя прям горело… левый верхний угол»): то же «живое пламя»,
+   что на заставке, но компактное — свечение мягче, чтобы не пестрило рядом с кнопками шапки. */
+.splash-live.splash-live-sm {
+  animation: none;
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--accent) 50%, transparent));
+}

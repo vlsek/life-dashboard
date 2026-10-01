@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SplashFlameLive from './splash/SplashFlameLive.vue'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { getLang, setLang, t, type DictKey } from '../lib/i18n'
 import { getTheme, setTheme, THEME_KEYS, type ThemeKey } from '../lib/theme'
@@ -162,7 +163,7 @@ onUnmounted(() => {
       ☰
     </button>
     <a href="/dashboard/" class="flex h-10 w-10 items-center justify-center rounded-lg" :title="plainLabel('nav_dashboard')">
-      <img src="/favicon.svg" alt="" class="h-7 w-7" />
+      <SplashFlameLive :size="30" :sparks="false" data-test="brand-flame" />
     </a>
     <button
       type="button"
