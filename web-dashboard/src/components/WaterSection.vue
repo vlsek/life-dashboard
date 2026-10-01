@@ -12,7 +12,7 @@ import { getLang, t } from '../lib/i18n'
 // страницы с текстовой подписью — так было на пилоте раньше и расходилось с ванильным сайтом.
 const props = defineProps<{ userId: string | null }>()
 
-const { metric, normMl, autoNormMl, weightKg, todayMl, loaded, error, saveError, init, addMl, getMlForDate, saveGoal, createWaterMetric } = useWater()
+const { metric, normMl, autoNormMl, weightKg, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, getMlForDate, saveGoal, createWaterMetric } = useWater()
 
 watch(
   () => props.userId,
@@ -38,6 +38,17 @@ const savedTick = ref(0)
 const goalSavedTick = ref(0)
 async function onAdd(ml: number, dateStr: string) {
   if ((await addMl(ml, dateStr)) !== null) savedTick.value++
+}
+// Отмена последнего добавления и правка суммы за день (BACKLOG 12): та же «записалось»-анимация после подтверждённой записи
+async function onUndo(dateStr: string) {
+  const v = await undoLast(dateStr)
+  if (v !== null) savedTick.value++
+  return v
+}
+async function onSetTotal(ml: number, dateStr: string) {
+  const v = await setTotal(ml, dateStr)
+  if (v !== null) savedTick.value++
+  return v
 }
 async function onSaveGoal(ml: number) {
   if (await saveGoal(ml)) goalSavedTick.value++
@@ -106,6 +117,9 @@ const GLASS_OUTLINE = 'M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3
     :saved-tick="savedTick"
     :goal-saved-tick="goalSavedTick"
     :save-error="saveError"
+    :can-undo="canUndo"
+    :undo-last="onUndo"
+    :set-total="onSetTotal"
     @close="modalOpen = false"
     @add="onAdd"
     @save-goal="onSaveGoal"

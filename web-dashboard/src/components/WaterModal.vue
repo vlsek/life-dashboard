@@ -4,6 +4,7 @@ import { t, getLang } from '../lib/i18n'
 import { fmtDate } from '../lib/date'
 import type { Metric } from '../lib/types'
 import WaterSavedAnim from './WaterSavedAnim.vue'
+import { MAX_DAY_ML, parseTotalInput } from '../lib/waterUndo'
 
 // Портировано из openWaterModal() в dashboard.js: дата по умолчанию сегодня (можно выбрать
 // прошлый день), быстрые кнопки +200мл/+1л, своя сумма, редактирование дневной нормы.
@@ -17,6 +18,10 @@ const props = defineProps<{
   savedTick?: number // растёт после каждой подтверждённой записи выпитого — запускает анимацию «записалось»
   goalSavedTick?: number // то же после смены дневной нормы
   saveError?: string | null
+  // «Отменить последнее добавление» и правка суммы за день (BACKLOG 12). Необязательные: без них блок не показывается.
+  canUndo?: (dateStr: string, currentMl: number) => boolean
+  undoLast?: (dateStr: string) => Promise<number | null>
+  setTotal?: (ml: number, dateStr: string) => Promise<number | null>
 }>()
 const emit = defineEmits<{
   close: []
@@ -41,6 +46,7 @@ async function onDateChange(e: Event) {
     return
   }
   dateStr.value = picked
+  editing.value = false
   amountMl.value = await props.getMlForDate(picked)
 }
 
@@ -54,6 +60,43 @@ function addCustom() {
   const ml = parseInt(val || '', 10)
   if (!ml || ml <= 0) return
   addMl(ml)
+}
+
+// --- отмена последнего добавления и правка суммы за день (BACKLOG 12) ---
+const busy = ref(false)
+const undoAvailable = computed(() => !!props.canUndo && props.canUndo(dateStr.value, amountMl.value))
+const editing = ref(false)
+const editValue = ref('')
+const editError = ref(false)
+
+async function onUndo() {
+  if (!props.undoLast || busy.value || !undoAvailable.value) return
+  busy.value = true
+  const v = await props.undoLast(dateStr.value)
+  if (v !== null) amountMl.value = v
+  busy.value = false
+}
+
+function startEdit() {
+  editValue.value = String(amountMl.value)
+  editError.value = false
+  editing.value = true
+}
+
+async function saveEdit() {
+  if (!props.setTotal || busy.value) return
+  const ml = parseTotalInput(editValue.value)
+  if (ml === null) {
+    editError.value = true
+    return
+  }
+  busy.value = true
+  const v = await props.setTotal(ml, dateStr.value)
+  busy.value = false
+  if (v !== null) {
+    amountMl.value = v
+    editing.value = false
+  }
 }
 
 function saveGoal() {
@@ -90,6 +133,42 @@ function showInfo() {
         <button class="secondary" data-test="add-200" @click="addMl(200)">+ 200 {{ unitLabel }}</button>
         <button class="secondary" @click="addMl(1000)">+ 1 {{ getLang() === 'en' ? 'l' : 'л' }}</button>
         <button class="secondary" @click="addCustom">{{ t('dash_water_add_custom_btn') }}</button>
+      </div>
+
+      <div v-if="undoLast || setTotal" class="mt-2 flex flex-wrap items-center gap-2" data-test="water-day-tools">
+        <button v-if="undoLast" type="button" class="secondary" data-test="undo-last" :disabled="!undoAvailable || busy" @click="onUndo">
+          ↶ {{ t('dash_water_undo_btn') }}
+        </button>
+        <button
+          v-if="setTotal"
+          type="button"
+          class="secondary"
+          data-test="edit-total"
+          :title="t('dash_water_edit_total_btn')"
+          :aria-label="t('dash_water_edit_total_btn')"
+          @click="editing ? (editing = false) : startEdit()"
+        >
+          ✎
+        </button>
+      </div>
+      <div v-if="editing && setTotal" class="mt-2" data-test="edit-total-form">
+        <label class="block text-sm">{{ t('dash_water_edit_total_label') }}</label>
+        <input
+          v-model="editValue"
+          type="number"
+          inputmode="numeric"
+          min="0"
+          :max="MAX_DAY_ML"
+          class="w-full"
+          data-test="edit-total-input"
+          @keydown.enter.prevent="saveEdit"
+          @keydown.esc.stop.prevent="editing = false"
+        />
+        <p v-if="editError" class="mt-1 text-sm" style="color: var(--danger, #d6336c)" data-test="edit-total-invalid">{{ t('dash_water_edit_invalid') }}</p>
+        <div class="mt-2 flex gap-2">
+          <button type="button" class="secondary" data-test="edit-total-save" :disabled="busy" @click="saveEdit">{{ t('dash_water_edit_save') }}</button>
+          <button type="button" class="secondary" data-test="edit-total-cancel" @click="editing = false">{{ t('dash_water_edit_cancel') }}</button>
+        </div>
       </div>
 
       <label class="mt-4 block text-sm">
