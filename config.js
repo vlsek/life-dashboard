@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.86";
+const SITE_VERSION = "1.87";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.87", date: "2026-10-01 11:35", changes: [
+        "Дашборд (пилот), графики: если в выбранном периоде (например, «последние 10 дней» или «эта неделя» в понедельник) меньше двух значений, а за более широкий срок записи есть, график больше не остаётся пустым с надписью «маловато данных». Показываются последние записи с пометкой «За выбранный период мало данных — показаны последние записи». Для периода «Всё» и когда данных правда нет, ничего не меняется",
+    ]},
     { version: "1.86", date: "2026-10-01 11:27", changes: [
         "Онбординг (пилот): вместо длинной формы — пошаговая настройка: сценарий → о себе → приоритет → метрики, с индикатором шагов и кнопками «Назад / Далее». Новому пользователю больше не создаются все метрики подряд: под выбранную цель заранее отмечены только подходящие (например, для «похудеть» — вода, калории, тренировка, шаги), остальные спрятаны за «Ещё метрики» и добавляются по желанию",
         "Онбординг: «Пропустить, настрою сам» создаёт две стартовые метрики (вода и тренировка) вместо шести; параметры тела создаются только нужные по цели (вес; для «похудеть» и «набрать» ещё % жира и мышечная масса), «ежедневнику» — ни одного; для «ежедневника» на главной сразу скрыт блок графиков метрик",
@@ -1158,6 +1161,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.87", date: "2026-10-01 11:35", changes: [
+        "Dashboard (pilot), charts: when the chosen period (for example \"last 10 days\", or \"this week\" on a Monday) holds fewer than two values but there are entries over a longer span, the chart no longer stays empty with a \"not enough data\" message. It shows the latest entries with the note \"Too little data in the chosen period — showing the latest entries instead.\" Nothing changes for the \"All\" period or when there really is no data",
+    ]},
     { version: "1.86", date: "2026-10-01 11:27", changes: [
         "Onboarding (pilot): instead of one long form — a step-by-step setup: use case → about you → priority → metrics, with a step indicator and Back / Next buttons. New users no longer get every metric created: only the ones that fit the chosen goal are pre-checked (for example for \"lose weight\" — water, calories, workout, steps), the rest are tucked behind \"More metrics\" and added on request",
         "Onboarding: \"Skip, I'll set it up myself\" creates two starter metrics (water and workout) instead of six; body parameters are created only as needed for the goal (weight; for \"lose weight\" and \"gain muscle\" also body fat % and muscle mass), none for the planner; for the planner the metric charts block is hidden on the dashboard from the start",

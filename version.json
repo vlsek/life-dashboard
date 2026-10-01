@@ -1,6 +1,13 @@
 {
-  "version": "1.86",
+  "version": "1.87",
   "en": [
+    {
+      "version": "1.87",
+      "date": "2026-10-01 11:35",
+      "changes": [
+        "Dashboard (pilot), charts: when the chosen period (for example \"last 10 days\", or \"this week\" on a Monday) holds fewer than two values but there are entries over a longer span, the chart no longer stays empty with a \"not enough data\" message. It shows the latest entries with the note \"Too little data in the chosen period — showing the latest entries instead.\" Nothing changes for the \"All\" period or when there really is no data"
+      ]
+    },
     {
       "version": "1.86",
       "date": "2026-10-01 11:27",
@@ -1359,6 +1366,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.87",
+      "date": "2026-10-01 11:35",
+      "changes": [
+        "Дашборд (пилот), графики: если в выбранном периоде (например, «последние 10 дней» или «эта неделя» в понедельник) меньше двух значений, а за более широкий срок записи есть, график больше не остаётся пустым с надписью «маловато данных». Показываются последние записи с пометкой «За выбранный период мало данных — показаны последние записи». Для периода «Всё» и когда данных правда нет, ничего не меняется"
+      ]
+    },
     {
       "version": "1.86",
       "date": "2026-10-01 11:27",
