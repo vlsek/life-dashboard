@@ -17,6 +17,7 @@ const props = defineProps<{
   getMlForDate: (dateStr: string) => Promise<number>
   savedTick?: number // растёт после каждой подтверждённой записи выпитого — запускает анимацию «записалось»
   goalSavedTick?: number // то же после смены дневной нормы
+  goalSavedMsg?: 'manual' | 'auto' // что именно подтвердить: «Дневная норма изменена» или «Норма снова считается по весу»
   saveError?: string | null
   // «Отменить последнее добавление» и правка суммы за день (BACKLOG 12). Необязательные: без них блок не показывается.
   canUndo?: (dateStr: string, currentMl: number) => boolean
@@ -27,6 +28,7 @@ const emit = defineEmits<{
   close: []
   add: [ml: number, dateStr: string]
   saveGoal: [ml: number]
+  resetGoal: []
 }>()
 
 const today = fmtDate(new Date())
@@ -107,7 +109,7 @@ function saveGoal() {
 
 function showInfo() {
   const text = props.metric.goal_value != null
-    ? t('dash_water_info_manual')
+    ? `${t('dash_water_info_manual')}${props.autoNormMl && props.weightKg ? `\n\n${t('dash_water_info_auto_prefix')} ${props.weightKg} ${t('dash_water_info_auto_kg')} × 30 ${t('dash_water_info_auto_ml_per_kg')} = ${props.autoNormMl} ${unitLabel.value}.` : ''}`
     : props.autoNormMl && props.weightKg
       ? `${t('dash_water_info_auto_prefix')} ${props.weightKg} ${t('dash_water_info_auto_kg')} × 30 ${t('dash_water_info_auto_ml_per_kg')} = ${props.autoNormMl} ${unitLabel.value}.\n\n${t('dash_water_info_editable')}`
       : `${t('dash_water_info_no_weight')}\n\n${t('dash_water_info_editable')}`
@@ -182,7 +184,8 @@ function showInfo() {
       <input v-model.number="goalInput" type="number" class="w-full" />
       <p class="dim mt-1 text-xs">{{ goalHint }}</p>
       <button type="button" class="secondary mt-2" data-test="change-goal" @click="saveGoal">{{ t('dash_water_goal_save_btn') }}</button>
-      <span v-if="goalSavedTick" :key="goalSavedTick" class="ml-2 text-sm" style="color: var(--accent)" data-test="goal-saved">✓ {{ t('dash_water_goal_saved') }}</span>
+      <button v-if="metric.goal_value != null && autoNormMl" type="button" class="secondary mt-2 ml-2" data-test="auto-goal" @click="emit('resetGoal')">{{ t('dash_water_goal_auto_btn') }} ({{ autoNormMl }} {{ unitLabel }})</button>
+      <span v-if="goalSavedTick" :key="goalSavedTick" class="ml-2 text-sm" style="color: var(--accent)" data-test="goal-saved">✓ {{ goalSavedMsg === 'auto' ? t('dash_water_goal_auto_done') : t('dash_water_goal_saved') }}</span>
       <p v-if="saveError" class="mt-2 text-sm" style="color: var(--danger, #d6336c)" data-test="water-save-error">{{ saveError }}</p>
 
       <div class="modal-actions">

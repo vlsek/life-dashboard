@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { metricDescription, selectedMetrics, dayProgressSettingsFor, goalMetrics, recommendedKeys, metricGroups, starterMetrics, bodyParamKeysFor, layoutFor, stepsFor, candidateMetrics } from './onboardingData'
+import { baseMetrics, metricDescription, selectedMetrics, dayProgressSettingsFor, goalMetrics, recommendedKeys, metricGroups, starterMetrics, bodyParamKeysFor, layoutFor, stepsFor, candidateMetrics } from './onboardingData'
 
 const labels = { bool: 'yes/no', multiselect: 'choice from options', lessThan: 'less than', atLeast: 'at least' }
 
@@ -110,5 +110,21 @@ describe('goalMetrics', () => {
     expect(goalMetrics('en', 'gain_muscle').map((m) => m.key)).toEqual(['protein'])
     expect(goalMetrics('en', 'learn_skill')).toEqual([])
     expect(goalMetrics('en', 'general_fitness')).toEqual([])
+  })
+})
+
+describe('вода: норма считается автоматически (BACKLOG 17)', () => {
+  it('шаблон воды создаётся без goal_value — иначе справка пишет «задана вручную» и расчёт по весу не включается', () => {
+    for (const lang of ['en', 'ru'] as const) {
+      const water = baseMetrics(lang).find((m) => m.key === 'water')!
+      expect(water.goal_value).toBeUndefined()
+      expect(water.goal_direction).toBe('at_least')
+    }
+  })
+
+  it('описание метрики без нормы — «считается по весу», у остальных по-прежнему «не меньше N»', () => {
+    const labels = { bool: 'yes/no', multiselect: 'options', lessThan: 'under', atLeast: 'at least', auto: 'auto by weight' }
+    expect(metricDescription({ type: 'number', goal_direction: 'at_least', goal_value: undefined, unit: 'ml' }, labels)).toBe('auto by weight')
+    expect(metricDescription({ type: 'number', goal_direction: 'at_least', goal_value: 100, unit: '' }, labels)).toBe('at least 100')
   })
 })

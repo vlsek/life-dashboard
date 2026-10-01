@@ -39,7 +39,7 @@ watch(goalType, (g) => {
 })
 const groups = computed(() => metricGroups(usecase.value, lang, goalType.value))
 const otherOpen = ref(false)
-const descLabels = { bool: t('onb_metric_bool'), multiselect: t('onb_metric_multiselect'), lessThan: t('onb_metric_less_than'), atLeast: t('onb_metric_at_least') }
+const descLabels = { bool: t('onb_metric_bool'), multiselect: t('onb_metric_multiselect'), lessThan: t('onb_metric_less_than'), atLeast: t('onb_metric_at_least'), auto: t('onb_metric_auto') }
 
 function toggleMetric(key: string, checked: boolean) {
   selectionTouched.value = true

@@ -1,17 +1,25 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import { t } from '../lib/i18n'
-import { readCollapsed, writeCollapsed } from '../lib/collapsed'
+import { hasStoredCollapsed, readCollapsed, writeCollapsed } from '../lib/collapsed'
 import CollapseChevron from './CollapseChevron.vue'
 
 // Заголовок секции: кликабельна вся шапка, справа шеврон (BACKLOG 9; в классике createCollapsibleSection остаётся со стрелкой). Состояние — v-model:collapsed,
 // тело секции родитель прячет сам через v-show (компоненты остаются смонтированными и не теряют данные).
-const props = defineProps<{ title: string; storageKey: string }>()
+// defaultCollapsed — «свернуть по умолчанию» (например, график, который ещё не построен: BACKLOG 17). Действует ТОЛЬКО пока
+// пользователь сам не разворачивал/сворачивал секцию (нет записи в localStorage) — явный выбор всегда сильнее.
+const props = defineProps<{ title: string; storageKey: string; defaultCollapsed?: boolean }>()
 const collapsed = defineModel<boolean>('collapsed', { default: false })
 
 onMounted(() => {
-  collapsed.value = readCollapsed(props.storageKey)
+  collapsed.value = hasStoredCollapsed(props.storageKey) ? readCollapsed(props.storageKey) : !!props.defaultCollapsed
 })
+watch(
+  () => props.defaultCollapsed,
+  (v) => {
+    if (!hasStoredCollapsed(props.storageKey)) collapsed.value = !!v
+  },
+)
 
 function toggle() {
   // при v-model от родителя collapsed.value обновится только после его перерисовки — пишем вычисленное значение

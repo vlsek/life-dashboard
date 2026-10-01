@@ -12,7 +12,7 @@ import { getLang, t } from '../lib/i18n'
 // страницы с текстовой подписью — так было на пилоте раньше и расходилось с ванильным сайтом.
 const props = defineProps<{ userId: string | null }>()
 
-const { metric, normMl, autoNormMl, weightKg, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, getMlForDate, saveGoal, createWaterMetric } = useWater()
+const { metric, normMl, autoNormMl, weightKg, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, getMlForDate, saveGoal, resetGoalToAuto, createWaterMetric } = useWater()
 
 watch(
   () => props.userId,
@@ -36,6 +36,7 @@ async function onSetupClick() {
 // Анимация «записалось» — только после подтверждённой записи в БД (addMl вернул значение, а не null)
 const savedTick = ref(0)
 const goalSavedTick = ref(0)
+const goalSavedMsg = ref<'manual' | 'auto'>('manual')
 async function onAdd(ml: number, dateStr: string) {
   if ((await addMl(ml, dateStr)) !== null) savedTick.value++
 }
@@ -51,7 +52,16 @@ async function onSetTotal(ml: number, dateStr: string) {
   return v
 }
 async function onSaveGoal(ml: number) {
-  if (await saveGoal(ml)) goalSavedTick.value++
+  if (await saveGoal(ml)) {
+    goalSavedMsg.value = 'manual'
+    goalSavedTick.value++
+  }
+}
+async function onResetGoal() {
+  if (await resetGoalToAuto()) {
+    goalSavedMsg.value = 'auto'
+    goalSavedTick.value++
+  }
 }
 
 const pct = computed(() => waterPct(todayMl.value, normMl.value))
@@ -122,6 +132,8 @@ const GLASS_OUTLINE = 'M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3
     :set-total="onSetTotal"
     @close="modalOpen = false"
     @add="onAdd"
+    :goal-saved-msg="goalSavedMsg"
     @save-goal="onSaveGoal"
+    @reset-goal="onResetGoal"
   />
 </template>

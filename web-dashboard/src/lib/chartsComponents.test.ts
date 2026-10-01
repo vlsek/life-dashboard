@@ -120,6 +120,25 @@ describe('ChartsSection', () => {
     state.entries.value = [{ key: 'body:w', goal: null }, { key: 'body:empty', goal: null }, { key: 'points', goal: null }]
   })
 
+  it('state: сообщает, построен ли хотя бы один график (≥2 точек); пустой/одноточечный набор — hasChart=false (BACKLOG 17)', async () => {
+    const { default: ChartsSection } = await import('../components/ChartsSection.vue')
+    const built = mount(ChartsSection, { props: { userId: 'u1' } })
+    await flushPromises()
+    expect(built.emitted('state')!.at(-1)).toEqual([{ loaded: true, hasChart: true }])
+    built.unmount()
+
+    state.entries.value = [{ key: 'points', goal: null }, { key: 'body:empty', goal: null }] // одна точка и пусто — ничего не построено
+    const unbuilt = mount(ChartsSection, { props: { userId: 'u1' } })
+    await flushPromises()
+    expect(unbuilt.emitted('state')!.at(-1)).toEqual([{ loaded: true, hasChart: false }])
+    unbuilt.unmount()
+
+    state.entries.value = []
+    const none = mount(ChartsSection, { props: { userId: 'u1' } })
+    await flushPromises()
+    expect(none.emitted('state')!.at(-1)).toEqual([{ loaded: true, hasChart: false }])
+    none.unmount()
+  })
   it('рисует только графики с данными; правка значений есть у параметра тела, но не у «баллов»', async () => {
     const { default: ChartsSection } = await import('../components/ChartsSection.vue')
     const w = mount(ChartsSection, { props: { userId: 'u1' } })

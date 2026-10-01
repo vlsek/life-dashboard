@@ -179,5 +179,18 @@ export function useWater() {
     todayMl.value = 0
   }
 
-  return { metric, normMl, autoNormMl, weightKg, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, getMlForDate, saveGoal, createWaterMetric }
+  // Вернуть автоматический расчёт нормы по весу: ручная норма (goal_value) снимается. Возвращает false при ошибке записи.
+  async function resetGoalToAuto(): Promise<boolean> {
+    if (!metric.value) return false
+    const { error: err } = await sb.from('metrics').update({ goal_value: null }).eq('id', metric.value.id)
+    if (err) {
+      saveError.value = t('dash_save_error_generic') + err.message
+      return false
+    }
+    saveError.value = null
+    metric.value = { ...metric.value, goal_value: null }
+    return true
+  }
+
+  return { metric, normMl, autoNormMl, weightKg, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, getMlForDate, saveGoal, resetGoalToAuto, createWaterMetric }
 }

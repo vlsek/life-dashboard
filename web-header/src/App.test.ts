@@ -366,3 +366,65 @@ describe('глобальные настройки (BACKLOG 6.2)', () => {
     w.unmount()
   })
 })
+
+describe('норма воды: справка и «Считать автоматически» (BACKLOG 17)', () => {
+  const manual = { id: 'w', name: 'Вода', icon: '💧', type: 'number', goal_value: 2500, active: true, position: 1, user_id: 'u1' }
+  const auto = { ...manual, goal_value: null }
+  const weightParam = { id: 'bp', name: 'Вес', icon: '⚖️', unit: 'кг', user_id: 'u1', position: 1 }
+
+  async function openWater(w: ReturnType<typeof mount>) {
+    await w.find('[data-test="water-badge"]').trigger('click')
+    await flushPromises()
+  }
+
+  it('норма зафиксирована (goal_value задан) и вес известен: есть кнопка «Считать автоматически (N мл)»; клик снимает ручную норму в БД', async () => {
+    setup({ metrics: [manual], body_parameters: [weightParam], body_parameter_values: [{ parameter_id: 'bp', value: 70, date: today }] })
+    const w = mount(App)
+    await flushPromises()
+    await openWater(w)
+    const btn = w.find('[data-test="auto-goal"]')
+    expect(btn.exists()).toBe(true)
+    expect(btn.text()).toContain('2100')
+    await btn.trigger('click')
+    await flushPromises()
+    const upd = db.writes.find((x) => x.table === 'metrics' && x.op === 'update')!
+    expect(upd.payload).toEqual({ goal_value: null })
+    expect(w.find('[data-test="goal-saved"]').text()).toContain('Норма снова считается по весу')
+    expect(w.find('[data-test="auto-goal"]').exists()).toBe(false)
+    w.unmount()
+  })
+
+  it('норма уже автоматическая — кнопки нет', async () => {
+    setup({ metrics: [auto], body_parameters: [weightParam], body_parameter_values: [{ parameter_id: 'bp', value: 70, date: today }] })
+    const w = mount(App)
+    await flushPromises()
+    await openWater(w)
+    expect(w.find('[data-test="auto-goal"]').exists()).toBe(false)
+    w.unmount()
+  })
+
+  it('справка (i): при зафиксированной норме честно говорит «зафиксирована» и показывает, что дал бы расчёт по весу; при авто — «рассчитана по весу»', async () => {
+    const alerts: string[] = []
+    vi.stubGlobal('alert', (m: string) => alerts.push(m))
+    setup({ metrics: [manual], body_parameters: [weightParam], body_parameter_values: [{ parameter_id: 'bp', value: 70, date: today }] })
+    let w = mount(App)
+    await flushPromises()
+    await openWater(w)
+    await w.find('.gh-modal button[style*="border-radius: 50%"]').trigger('click')
+    expect(alerts[0]).toContain('зафиксирована')
+    expect(alerts[0]).not.toContain('вручную по заданию')
+    expect(alerts[0]).toContain('70')
+    expect(alerts[0]).toContain('2100')
+    w.unmount()
+
+    setup({ metrics: [auto], body_parameters: [weightParam], body_parameter_values: [{ parameter_id: 'bp', value: 70, date: today }] })
+    w = mount(App)
+    await flushPromises()
+    await openWater(w)
+    await w.find('.gh-modal button[style*="border-radius: 50%"]').trigger('click')
+    expect(alerts[1]).toContain('Рассчитана автоматически')
+    expect(alerts[1]).toContain('2100')
+    w.unmount()
+    vi.unstubAllGlobals()
+  })
+})

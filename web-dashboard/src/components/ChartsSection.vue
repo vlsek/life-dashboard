@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import ChartBlock from './ChartBlock.vue'
 import ChartsConfigModal from './ChartsConfigModal.vue'
 import ChartPeriodModal from './ChartPeriodModal.vue'
@@ -14,6 +14,9 @@ import { t } from '../lib/i18n'
 // Блок «Графики»: серии параметров тела, «баллы за день» и числовых метрик; выбор/порядок/цели
 // (profiles.dashboard_charts), период общий + свой у каждого графика, правка значений из графика.
 const props = defineProps<{ userId: string | null }>()
+// state: данные блока загружены, и есть ли хотя бы один ПОСТРОЕННЫЙ график (≥2 точек за окно). Дашборд по этому сигналу сворачивает
+// пустой блок «Графики» по умолчанию, чтобы он не занимал место впустую (BACKLOG 17, 07:20).
+const emit = defineEmits<{ state: [s: { loaded: boolean; hasChart: boolean }] }>()
 const { series, entries, loaded, error, init, reload, saveEntries, saveValue } = useCharts()
 
 watch(
@@ -66,6 +69,11 @@ function goalFor(entry: ChartEntry) {
 }
 
 const withData = () => entries.value.filter((e) => (series.value[e.key]?.points.length ?? 0) > 0)
+const hasBuiltChart = computed(() => {
+  void periodTick.value
+  return entries.value.some((e) => series.value[e.key] && pointsFor(e.key).filter((p) => p.y != null).length >= 2)
+})
+watch([loaded, hasBuiltChart], () => emit('state', { loaded: loaded.value, hasChart: hasBuiltChart.value }), { immediate: true })
 
 async function onSaveConfig(order: ChartEntry[], nextPeriod: PeriodState) {
   configError.value = await saveEntries(order)

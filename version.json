@@ -1,6 +1,14 @@
 {
-  "version": "1.97",
+  "version": "1.98",
   "en": [
+    {
+      "version": "1.98",
+      "date": "2026-10-01 14:54",
+      "changes": [
+        "Water: the (i) help next to the daily goal no longer says \"set manually\" when it was not. It now explains the real source: if the goal is automatic — \"calculated automatically from your latest weight (weight × 30 ml)\"; if it is fixed — that it holds the shown value (you changed it yourself or it was kept from the template) and what the weight-based calculation would give. A new \"Calculate automatically (N ml)\" button switches the goal back to the weight-based value. New users get an automatic goal after onboarding instead of a preset 2500 ml. Works in the header water window on every page too",
+        "Dashboard: the Charts block is collapsed by default while no chart is built (no data or fewer than two points) so it does not waste space; it expands by itself as soon as data appears. If you expanded or collapsed the block yourself, your choice always wins"
+      ]
+    },
     {
       "version": "1.97",
       "date": "2026-10-01 11:43",
@@ -1436,6 +1444,14 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.98",
+      "date": "2026-10-01 14:54",
+      "changes": [
+        "Вода: справка (i) у дневной нормы больше не пишет «задана вручную», когда это не так. Теперь она честно объясняет источник: если норма автоматическая — «рассчитана автоматически по вашему последнему весу (вес × 30 мл)», если зафиксирована — что она держится на показанном значении (вы поменяли её сами или она осталась от шаблона) и что дал бы расчёт по весу. Появилась кнопка «Считать автоматически (N мл)», чтобы снова считать норму по весу. Новые пользователи после онбординга сразу получают автоматическую норму, а не предустановленные 2500 мл. Работает и в окне воды в шапке на всех страницах",
+        "Дашборд: блок «Графики» свёрнут по умолчанию, пока ни один график не построен (нет данных или меньше двух точек) — не занимает место впустую; как только данные появляются, разворачивается сам. Если вы сами развернули или свернули блок, ваш выбор всегда сильнее"
+      ]
+    },
     {
       "version": "1.97",
       "date": "2026-10-01 11:43",

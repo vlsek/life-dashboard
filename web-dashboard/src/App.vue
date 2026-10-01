@@ -69,6 +69,9 @@ const summaryKind = ref<'day' | 'week' | null>(null)
 const showLayoutModal = ref(false)
 const profileCollapsed = ref(false)
 const chartsCollapsed = ref(false)
+// пока ни один график не построен (нет данных/мало данных) — блок «Графики» свёрнут по умолчанию (BACKLOG 17); явный выбор пользователя сильнее
+const chartsState = ref<{ loaded: boolean; hasChart: boolean }>({ loaded: false, hasChart: false })
+const chartsDefaultCollapsed = computed(() => chartsState.value.loaded && !chartsState.value.hasChart)
 const topStreak = computed<StreakItem | null>(() => streaks.value[0] ?? null)
 
 function streakLabel(item: StreakItem): string {
@@ -187,9 +190,9 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
             </template>
 
             <template v-else-if="item.key === 'charts'">
-              <SectionHeading v-model:collapsed="chartsCollapsed" :title="t('dash_charts_h2')" storage-key="charts" />
+              <SectionHeading v-model:collapsed="chartsCollapsed" :title="t('dash_charts_h2')" storage-key="charts" :default-collapsed="chartsDefaultCollapsed" />
               <div v-collapse="!chartsCollapsed" class="mb-5">
-                <ChartsSection :user-id="auth.userId" />
+                <ChartsSection :user-id="auth.userId" @state="chartsState = $event" />
               </div>
             </template>
           </template>

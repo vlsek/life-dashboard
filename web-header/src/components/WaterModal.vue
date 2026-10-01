@@ -17,9 +17,10 @@ const props = defineProps<{
   getMlForDate: (dateStr: string) => Promise<number>
   savedTick?: number
   goalSavedTick?: number
+  goalSavedMsg?: 'manual' | 'auto'
   saveError?: string | null
 }>()
-const emit = defineEmits<{ close: []; add: [ml: number, dateStr: string]; saveGoal: [ml: number] }>()
+const emit = defineEmits<{ close: []; add: [ml: number, dateStr: string]; saveGoal: [ml: number]; resetGoal: [] }>()
 
 const today = fmtDate(new Date())
 const dateStr = ref(today)
@@ -59,7 +60,7 @@ function saveGoal() {
 function showInfo() {
   const text =
     props.metric.goal_value != null
-      ? t('dash_water_info_manual')
+      ? `${t('dash_water_info_manual')}${props.autoNormMl && props.weightKg ? `\n\n${t('dash_water_info_auto_prefix')} ${props.weightKg} ${t('dash_water_info_auto_kg')} × 30 ${t('dash_water_info_auto_ml_per_kg')} = ${props.autoNormMl} ${unitLabel.value}.` : ''}`
       : props.autoNormMl && props.weightKg
         ? `${t('dash_water_info_auto_prefix')} ${props.weightKg} ${t('dash_water_info_auto_kg')} × 30 ${t('dash_water_info_auto_ml_per_kg')} = ${props.autoNormMl} ${unitLabel.value}.\n\n${t('dash_water_info_editable')}`
         : `${t('dash_water_info_no_weight')}\n\n${t('dash_water_info_editable')}`
@@ -93,7 +94,8 @@ function showInfo() {
       <p class="gh-dim" style="margin: 4px 0 0; font-size: 12px">{{ goalHint }}</p>
       <div class="gh-row" style="margin-top: 8px">
         <button type="button" class="gh-btn" data-test="change-goal" @click="saveGoal">{{ t('dash_water_goal_save_btn') }}</button>
-        <span v-if="goalSavedTick" :key="goalSavedTick" style="color: var(--accent, #6c8cff)" data-test="goal-saved">✓ {{ t('dash_water_goal_saved') }}</span>
+        <button v-if="metric.goal_value != null && autoNormMl" type="button" class="gh-btn" data-test="auto-goal" @click="emit('resetGoal')">{{ t('dash_water_goal_auto_btn') }} ({{ autoNormMl }} {{ unitLabel }})</button>
+        <span v-if="goalSavedTick" :key="goalSavedTick" style="color: var(--accent, #6c8cff)" data-test="goal-saved">✓ {{ goalSavedMsg === 'auto' ? t('dash_water_goal_auto_done') : t('dash_water_goal_saved') }}</span>
       </div>
       <p v-if="saveError" style="color: #d6336c; margin: 8px 0 0" data-test="water-save-error">{{ saveError }}</p>
 

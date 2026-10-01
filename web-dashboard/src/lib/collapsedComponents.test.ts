@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { defineComponent, h, ref } from 'vue'
 import SectionHeading from '../components/SectionHeading.vue'
-import { COLLAPSED_PREFIX, readCollapsed, writeCollapsed } from './collapsed'
+import { COLLAPSED_PREFIX, hasStoredCollapsed, readCollapsed, writeCollapsed } from './collapsed'
 import { t } from './i18n'
 
 beforeEach(() => {
@@ -92,6 +92,59 @@ describe('SectionHeading', () => {
     expect(state.value).toBe(false)
     await head.trigger('keydown', { key: ' ' })
     expect(state.value).toBe(true)
+    w.unmount()
+  })
+})
+
+describe('SectionHeading: свёрнуто по умолчанию (BACKLOG 17)', () => {
+  function hostDefault(key: string, def: boolean) {
+    const state = ref(false)
+    const dflt = ref(def)
+    const w = mount(
+      defineComponent({
+        setup: () => () => h(SectionHeading, { title: 'Графики', storageKey: key, defaultCollapsed: dflt.value, collapsed: state.value, 'onUpdate:collapsed': (v: boolean) => (state.value = v) }),
+      }),
+    )
+    return { w, state, dflt }
+  }
+
+  it('hasStoredCollapsed: false без записи, true после явного выбора', () => {
+    expect(hasStoredCollapsed('charts')).toBe(false)
+    writeCollapsed('charts', false)
+    expect(hasStoredCollapsed('charts')).toBe(true)
+  })
+
+  it('без выбора пользователя defaultCollapsed сворачивает секцию, и меняется вслед за данными (появились данные → развернулась)', async () => {
+    const { w, state, dflt } = hostDefault('charts', true)
+    await w.vm.$nextTick()
+    expect(state.value).toBe(true)
+    dflt.value = false
+    await w.vm.$nextTick()
+    expect(state.value).toBe(false)
+    w.unmount()
+  })
+
+  it('явный выбор пользователя сильнее: развернул сам — остаётся развёрнутой, даже если график не построен', async () => {
+    localStorage.setItem('dash_collapsed:charts', '0')
+    const { w, state, dflt } = hostDefault('charts', true)
+    await w.vm.$nextTick()
+    expect(state.value).toBe(false)
+    dflt.value = true
+    await w.vm.$nextTick()
+    expect(state.value).toBe(false)
+    w.unmount()
+  })
+
+  it('пользователь развернул свёрнутую по умолчанию секцию — выбор запоминается и дальше уже не перебивается', async () => {
+    const { w, state, dflt } = hostDefault('charts', true)
+    await w.vm.$nextTick()
+    await w.find('[data-test="collapse-toggle"]').trigger('click')
+    expect(state.value).toBe(false)
+    expect(localStorage.getItem('dash_collapsed:charts')).toBe('0')
+    dflt.value = false
+    dflt.value = true
+    await w.vm.$nextTick()
+    expect(state.value).toBe(false)
     w.unmount()
   })
 })

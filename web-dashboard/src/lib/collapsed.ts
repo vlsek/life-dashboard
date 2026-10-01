@@ -10,6 +10,15 @@ export function readCollapsed(key: string): boolean {
   }
 }
 
+// Есть ли явный выбор пользователя (развернул/свернул сам). Без него секция может быть свёрнута «по умолчанию» (BACKLOG 17).
+export function hasStoredCollapsed(key: string): boolean {
+  try {
+    return localStorage.getItem(COLLAPSED_PREFIX + key) !== null
+  } catch {
+    return false
+  }
+}
+
 export function writeCollapsed(key: string, collapsed: boolean): void {
   try {
     localStorage.setItem(COLLAPSED_PREFIX + key, collapsed ? '1' : '0')

@@ -22,7 +22,7 @@ export function baseMetrics(lang: 'en' | 'ru'): MetricTemplate[] {
   if (lang === 'en')
     return [
       { key: 'pushups', name: 'Push-ups', icon: '💪', type: 'number', goal_value: 100, goal_direction: 'at_least', unit: '' },
-      { key: 'water', name: 'Water', icon: '💧', type: 'number', goal_value: 2500, goal_direction: 'at_least', unit: 'ml' },
+      { key: 'water', name: 'Water', icon: '💧', type: 'number', goal_direction: 'at_least', unit: 'ml' },
       { key: 'study', name: 'Study', icon: '📚', type: 'number', goal_value: 30, goal_direction: 'at_least', unit: 'min' },
       { key: 'calories', name: 'Calories', icon: '🍽️', type: 'number', goal_value: 2000, goal_direction: 'at_most', unit: 'kcal' },
       { key: 'mood', name: 'Good mood / peace in relationships', icon: '❤️', type: 'boolean' },
@@ -43,7 +43,7 @@ export function baseMetrics(lang: 'en' | 'ru'): MetricTemplate[] {
     ]
   return [
     { key: 'pushups', name: 'Отжимания', icon: '💪', type: 'number', goal_value: 100, goal_direction: 'at_least', unit: '' },
-    { key: 'water', name: 'Вода', icon: '💧', type: 'number', goal_value: 2500, goal_direction: 'at_least', unit: 'мл' },
+    { key: 'water', name: 'Вода', icon: '💧', type: 'number', goal_direction: 'at_least', unit: 'мл' },
     { key: 'study', name: 'Учёба', icon: '📚', type: 'number', goal_value: 30, goal_direction: 'at_least', unit: 'мин' },
     { key: 'calories', name: 'Калории', icon: '🍽️', type: 'number', goal_value: 2000, goal_direction: 'at_most', unit: 'ккал' },
     { key: 'mood', name: 'Хорошее настроение / мир в отношениях', icon: '❤️', type: 'boolean' },
@@ -81,9 +81,11 @@ export function goalMetrics(lang: 'en' | 'ru', goal: GoalType): MetricTemplate[]
 }
 
 // Портировано из metricDescription() в onboarding.js.
-export function metricDescription(m: Pick<MetricTemplate, 'type' | 'goal_direction' | 'goal_value' | 'unit'>, labels: { bool: string; multiselect: string; lessThan: string; atLeast: string }): string {
+export function metricDescription(m: Pick<MetricTemplate, 'type' | 'goal_direction' | 'goal_value' | 'unit'>, labels: { bool: string; multiselect: string; lessThan: string; atLeast: string; auto?: string }): string {
   if (m.type === 'boolean') return labels.bool
   if (m.type === 'multiselect') return labels.multiselect
+  // Метрика воды создаётся БЕЗ заданной нормы: норма считается автоматически по весу (×30 мл/кг), а не «вручную» (BACKLOG 17)
+  if (m.goal_value == null) return labels.auto ?? labels.atLeast
   const prefix = m.goal_direction === 'at_most' ? labels.lessThan : labels.atLeast
   return `${prefix} ${m.goal_value}${m.unit ? ' ' + m.unit : ''}`
 }

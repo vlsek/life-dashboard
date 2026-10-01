@@ -26,7 +26,7 @@ const userId = ref<string | null>(null)
 const ready = ref(false)
 
 const { day, week, summaries, settings, init: initProgress, saveSettings } = useHeaderProgress()
-const { metric, normMl, autoNormMl, weightKg, todayMl, loaded: waterLoaded, error: waterError, saveError, init: initWater, addMl, getMlForDate, saveGoal } = useWater()
+const { metric, normMl, autoNormMl, weightKg, todayMl, loaded: waterLoaded, error: waterError, saveError, init: initWater, addMl, getMlForDate, saveGoal, resetGoalToAuto } = useWater()
 
 onMounted(async () => {
   const { data } = await sb.auth.getSession()
@@ -72,11 +72,21 @@ const settingsOpen = ref(false)
 // «Записалось» — только после подтверждённой записи (см. useWater.addMl: null при ошибке БД)
 const savedTick = ref(0)
 const goalSavedTick = ref(0)
+const goalSavedMsg = ref<'manual' | 'auto'>('manual')
 async function onAdd(ml: number, dateStr: string) {
   if ((await addMl(ml, dateStr)) !== null) savedTick.value++
 }
 async function onSaveGoal(ml: number) {
-  if (await saveGoal(ml)) goalSavedTick.value++
+  if (await saveGoal(ml)) {
+    goalSavedMsg.value = 'manual'
+    goalSavedTick.value++
+  }
+}
+async function onResetGoal() {
+  if (await resetGoalToAuto()) {
+    goalSavedMsg.value = 'auto'
+    goalSavedTick.value++
+  }
 }
 // Данные для спидометров панели: панель показывает и день, и неделю, если они не выключены настройкой «Кружок … : выключить»
 const gauge = (p: NonNullable<typeof day.value>): GaugeData => {
@@ -140,10 +150,12 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
       :get-ml-for-date="getMlForDate"
       :saved-tick="savedTick"
       :goal-saved-tick="goalSavedTick"
+      :goal-saved-msg="goalSavedMsg"
       :save-error="saveError"
       @close="waterOpen = false"
       @add="onAdd"
       @save-goal="onSaveGoal"
+      @reset-goal="onResetGoal"
     />
     <ProgressSummaryModal
       v-if="summaryKind && summaries"

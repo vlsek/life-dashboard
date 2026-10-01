@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.97";
+const SITE_VERSION = "1.98";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.98", date: "2026-10-01 14:54", changes: [
+        "Вода: справка (i) у дневной нормы больше не пишет «задана вручную», когда это не так. Теперь она честно объясняет источник: если норма автоматическая — «рассчитана автоматически по вашему последнему весу (вес × 30 мл)», если зафиксирована — что она держится на показанном значении (вы поменяли её сами или она осталась от шаблона) и что дал бы расчёт по весу. Появилась кнопка «Считать автоматически (N мл)», чтобы снова считать норму по весу. Новые пользователи после онбординга сразу получают автоматическую норму, а не предустановленные 2500 мл. Работает и в окне воды в шапке на всех страницах",
+        "Дашборд: блок «Графики» свёрнут по умолчанию, пока ни один график не построен (нет данных или меньше двух точек) — не занимает место впустую; как только данные появляются, разворачивается сам. Если вы сами развернули или свернули блок, ваш выбор всегда сильнее",
+    ]},
     { version: "1.97", date: "2026-10-01 11:43", changes: [
         "«Выйти» теперь с подтверждением на всех страницах нового сайта (Аккаунт, Календарь, Челленджи, Сообщество, Цели, История, Языки, Вехи, Магазин, Навыки, Тренировки; Дашборд — с v1.95): по нажатию в боковом меню появляется окно «Точно выйти?» с кнопками «Выйти» и «Отмена». Esc и клик по фону отменяют, фокус сразу на «Отмене» — защита от случайного нажатия. В правой панели пока по-старому",
     ]},
@@ -1191,6 +1195,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.98", date: "2026-10-01 14:54", changes: [
+        "Water: the (i) help next to the daily goal no longer says \"set manually\" when it was not. It now explains the real source: if the goal is automatic — \"calculated automatically from your latest weight (weight × 30 ml)\"; if it is fixed — that it holds the shown value (you changed it yourself or it was kept from the template) and what the weight-based calculation would give. A new \"Calculate automatically (N ml)\" button switches the goal back to the weight-based value. New users get an automatic goal after onboarding instead of a preset 2500 ml. Works in the header water window on every page too",
+        "Dashboard: the Charts block is collapsed by default while no chart is built (no data or fewer than two points) so it does not waste space; it expands by itself as soon as data appears. If you expanded or collapsed the block yourself, your choice always wins",
+    ]},
     { version: "1.97", date: "2026-10-01 11:43", changes: [
         "\"Log out\" now asks for confirmation on every page of the new site (Account, Calendar, Challenges, Community, Goals, History, Languages, Milestones, Shop, Skills, Workouts; the Dashboard since v1.95): tapping it in the side menu opens a \"Log out?\" window with \"Log out\" and \"Cancel\" buttons. Esc and a tap on the backdrop cancel, and focus starts on \"Cancel\" — protection against an accidental tap. The right panel still works the old way",
     ]},
