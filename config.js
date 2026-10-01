@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.83";
+const SITE_VERSION = "1.84";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.84", date: "2026-10-01 07:35", changes: [
+        "Глобальные настройки: в правой панели (кнопка ⚙️) открывается единое окно со всеми настройками — язык, тема, «выключить все анимации», поздравления за серии, прогресс дня/недели, порядок и видимость блоков Дашборда, вода, ссылка на Аккаунт. Работает на любой странице; то, что можно применить сразу, применяется сразу",
+    ]},
     { version: "1.83", date: "2026-10-01 07:32", changes: [
         "Правая панель: добавлена карта мышц — тело спереди и сзади, зелёным подсвечены мышцы, которые тренировались за последние 4 дня, серым — остальные. Нажатие на мышцу показывает, когда её тренировали в последний раз; есть быстрая ссылка на «Тренировки». Данные подходов подгружаются только при открытии панели, а блок виден, если у вас есть хотя бы одно упражнение",
     ]},
@@ -1148,6 +1151,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.84", date: "2026-10-01 07:35", changes: [
+        "Global settings: the right panel (the ⚙️ button) opens one window with all settings — language, theme, turn off all animations, streak congratulations, day/week progress, order and visibility of Dashboard blocks, water, and a link to Account. Works on any page; whatever can be applied right away is applied right away",
+    ]},
     { version: "1.83", date: "2026-10-01 07:32", changes: [
         "Right panel: added the muscle map — the body from the front and back, with muscles worked in the last 4 days highlighted green and the rest grey. Tapping a muscle shows when it was last worked; there is a quick link to Workouts. Set data is loaded only when the panel opens, and the block shows if you have at least one exercise",
     ]},

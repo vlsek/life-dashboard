@@ -1,6 +1,13 @@
 {
-  "version": "1.83",
+  "version": "1.84",
   "en": [
+    {
+      "version": "1.84",
+      "date": "2026-10-01 07:35",
+      "changes": [
+        "Global settings: the right panel (the ⚙️ button) opens one window with all settings — language, theme, turn off all animations, streak congratulations, day/week progress, order and visibility of Dashboard blocks, water, and a link to Account. Works on any page; whatever can be applied right away is applied right away"
+      ]
+    },
     {
       "version": "1.83",
       "date": "2026-10-01 07:32",
@@ -1337,6 +1344,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.84",
+      "date": "2026-10-01 07:35",
+      "changes": [
+        "Глобальные настройки: в правой панели (кнопка ⚙️) открывается единое окно со всеми настройками — язык, тема, «выключить все анимации», поздравления за серии, прогресс дня/недели, порядок и видимость блоков Дашборда, вода, ссылка на Аккаунт. Работает на любой странице; то, что можно применить сразу, применяется сразу"
+      ]
+    },
     {
       "version": "1.83",
       "date": "2026-10-01 07:32",

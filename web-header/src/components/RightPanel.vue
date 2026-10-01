@@ -24,7 +24,7 @@ const props = defineProps<{
   savedTick: number
   muscles?: { done: Set<MuscleId>; last: Partial<Record<MuscleId, string>> } | null // null/не передано — блока мышц нет (нет упражнений)
 }>()
-const emit = defineEmits<{ 'update:open': [boolean]; 'open-summary': [kind: 'day' | 'week']; 'open-water': []; 'add-water': [ml: number] }>()
+const emit = defineEmits<{ 'update:open': [boolean]; 'open-summary': [kind: 'day' | 'week']; 'open-water': []; 'add-water': [ml: number]; 'open-settings': [] }>()
 
 const unit = computed(() => (getLang() === 'en' ? 'ml' : 'мл'))
 const waterPct = computed(() => (props.water && props.water.normMl > 0 ? Math.min(100, Math.round((props.water.todayMl / props.water.normMl) * 100)) : 0))
@@ -72,6 +72,7 @@ onBeforeUnmount(() => (document.documentElement.style.overflow = ''))
   <aside class="gh-panel" :class="{ 'gh-panel-open': open }" role="dialog" :aria-label="t('hdr_panel_title')" :aria-hidden="!open" data-test="right-panel">
     <div class="gh-row" style="margin-bottom: 12px">
       <h3 style="flex: 1; margin: 0">{{ t('hdr_panel_title') }}</h3>
+      <button type="button" class="gh-btn gh-btn-icon" data-test="panel-settings" :title="t('hdr_settings_open')" :aria-label="t('hdr_settings_open')" @click="emit('open-settings')">⚙️</button>
       <button type="button" class="gh-btn gh-btn-icon" data-test="panel-close" :aria-label="t('close')" @click="emit('update:open', false)">✕</button>
     </div>
 

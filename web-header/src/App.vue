@@ -14,6 +14,7 @@ import WaterModal from './components/WaterModal.vue'
 import ProgressSummaryModal from './components/ProgressSummaryModal.vue'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import RightPanel, { type GaugeData } from './components/RightPanel.vue'
+import SettingsModal from './components/SettingsModal.vue'
 
 // panelOnly — режим для Дашборда: своя шапка (стакан, кольца) там уже есть, поэтому бандл даёт только правую панель.
 const props = defineProps<{ panelOnly?: boolean }>()
@@ -58,6 +59,7 @@ const waterVisible = computed(() => waterLoaded.value && !waterError.value && !!
 
 const waterOpen = ref(false)
 const panelOpen = ref(false)
+const globalSettingsOpen = ref(false)
 const muscles = useMuscles()
 // карта мышц грузится лениво: при каждом открытии панели (подходы могли добавить на другой странице)
 watch(panelOpen, (open) => {
@@ -118,6 +120,14 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
       @open-summary="(k) => { panelOpen = false; summaryKind = k }"
       @open-water="waterOpen = true"
       @add-water="onPanelAddWater"
+      @open-settings="panelOpen = false; globalSettingsOpen = true"
+    />
+    <SettingsModal
+      v-if="globalSettingsOpen && userId"
+      :user-id="userId"
+      @close="globalSettingsOpen = false"
+      @open-progress-settings="settingsOpen = true"
+      @open-water="waterOpen = true"
     />
 
     <WaterModal
