@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.98";
+const SITE_VERSION = "1.99";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.99", date: "2026-10-01 20:02", changes: [
+        "Тренировки: в форме упражнения поле «Что считаем?» теперь выпадающий список — повторения, секунды, минуты, км, метры, раунды — вместо ручного ввода. Если нужного варианта нет, выбери «Другое…» и впиши своё слово. У уже созданных упражнений значение сохраняется как было, в том числе своё",
+    ]},
     { version: "1.98", date: "2026-10-01 14:54", changes: [
         "Вода: справка (i) у дневной нормы больше не пишет «задана вручную», когда это не так. Теперь она честно объясняет источник: если норма автоматическая — «рассчитана автоматически по вашему последнему весу (вес × 30 мл)», если зафиксирована — что она держится на показанном значении (вы поменяли её сами или она осталась от шаблона) и что дал бы расчёт по весу. Появилась кнопка «Считать автоматически (N мл)», чтобы снова считать норму по весу. Новые пользователи после онбординга сразу получают автоматическую норму, а не предустановленные 2500 мл. Работает и в окне воды в шапке на всех страницах",
         "Дашборд: блок «Графики» свёрнут по умолчанию, пока ни один график не построен (нет данных или меньше двух точек) — не занимает место впустую; как только данные появляются, разворачивается сам. Если вы сами развернули или свернули блок, ваш выбор всегда сильнее",
@@ -1195,6 +1198,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.99", date: "2026-10-01 20:02", changes: [
+        "Workouts: in the exercise form, \"What are you counting?\" is now a dropdown — reps, seconds, minutes, km, meters, rounds — instead of free typing. If your option is not there, choose \"Other…\" and type your own word. Existing exercises keep their value as it was, including custom ones",
+    ]},
     { version: "1.98", date: "2026-10-01 14:54", changes: [
         "Water: the (i) help next to the daily goal no longer says \"set manually\" when it was not. It now explains the real source: if the goal is automatic — \"calculated automatically from your latest weight (weight × 30 ml)\"; if it is fixed — that it holds the shown value (you changed it yourself or it was kept from the template) and what the weight-based calculation would give. A new \"Calculate automatically (N ml)\" button switches the goal back to the weight-based value. New users get an automatic goal after onboarding instead of a preset 2500 ml. Works in the header water window on every page too",
         "Dashboard: the Charts block is collapsed by default while no chart is built (no data or fewer than two points) so it does not waste space; it expands by itself as soon as data appears. If you expanded or collapsed the block yourself, your choice always wins",

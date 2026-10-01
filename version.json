@@ -1,6 +1,13 @@
 {
-  "version": "1.98",
+  "version": "1.99",
   "en": [
+    {
+      "version": "1.99",
+      "date": "2026-10-01 20:02",
+      "changes": [
+        "Workouts: in the exercise form, \"What are you counting?\" is now a dropdown — reps, seconds, minutes, km, meters, rounds — instead of free typing. If your option is not there, choose \"Other…\" and type your own word. Existing exercises keep their value as it was, including custom ones"
+      ]
+    },
     {
       "version": "1.98",
       "date": "2026-10-01 14:54",
@@ -1444,6 +1451,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.99",
+      "date": "2026-10-01 20:02",
+      "changes": [
+        "Тренировки: в форме упражнения поле «Что считаем?» теперь выпадающий список — повторения, секунды, минуты, км, метры, раунды — вместо ручного ввода. Если нужного варианта нет, выбери «Другое…» и впиши своё слово. У уже созданных упражнений значение сохраняется как было, в том числе своё"
+      ]
+    },
     {
       "version": "1.98",
       "date": "2026-10-01 14:54",
