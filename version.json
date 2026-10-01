@@ -1,6 +1,13 @@
 {
-  "version": "2.01",
+  "version": "2.02",
   "en": [
+    {
+      "version": "2.02",
+      "date": "2026-10-01 19:16",
+      "changes": [
+        "App icon on Android: the app manifest and the iOS icon are now linked on every page of the new site (Dashboard, Goals, Skills, History, Calendar, Shop, Challenges, Community, Milestones, Languages, Account, Workouts, login and onboarding). They used to exist only in the old version, so when installing from the new pages Android did not see the monochrome icon and kept the default one. To refresh the icon, remove the app from the home screen and install it again; recolouring to the system theme works on Android 13+ with \"Themed icons\" turned on"
+      ]
+    },
     {
       "version": "2.01",
       "date": "2026-10-01 22:02",
@@ -1465,6 +1472,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.02",
+      "date": "2026-10-01 19:16",
+      "changes": [
+        "Иконка приложения на Android: на всех страницах нового сайта (Дашборд, Цели, Навыки, История, Календарь, Магазин, Челленджи, Сообщество, Вехи, Языки, Аккаунт, Тренировки, вход и онбординг) подключены манифест приложения и иконка для iOS. Раньше они были только в старой версии, поэтому при установке с новых страниц Android не видел монохромную иконку и оставлял стандартную. Чтобы иконка обновилась, приложение нужно удалить с экрана и установить заново; перекраска под тему системы работает на Android 13+ при включённых «Тематических значках»"
+      ]
+    },
     {
       "version": "2.01",
       "date": "2026-10-01 22:02",

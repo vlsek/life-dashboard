@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.01";
+const SITE_VERSION = "2.02";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.02", date: "2026-10-01 19:16", changes: [
+        "Иконка приложения на Android: на всех страницах нового сайта (Дашборд, Цели, Навыки, История, Календарь, Магазин, Челленджи, Сообщество, Вехи, Языки, Аккаунт, Тренировки, вход и онбординг) подключены манифест приложения и иконка для iOS. Раньше они были только в старой версии, поэтому при установке с новых страниц Android не видел монохромную иконку и оставлял стандартную. Чтобы иконка обновилась, приложение нужно удалить с экрана и установить заново; перекраска под тему системы работает на Android 13+ при включённых «Тематических значках»",
+    ]},
     { version: "2.01", date: "2026-10-01 22:02", changes: [
         "Дашборд (пилот): рядом с названием каждой метрики, по которой идёт серия, теперь виден огонёк и число дней подряд (у недельных расписаний — недели). Если сегодня ещё не засчитано, огонёк приглушён с подсказкой «сегодня не сделано». У метрик с выключенным «считать стрик» огонька нет",
     ]},
@@ -1204,6 +1207,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.02", date: "2026-10-01 19:16", changes: [
+        "App icon on Android: the app manifest and the iOS icon are now linked on every page of the new site (Dashboard, Goals, Skills, History, Calendar, Shop, Challenges, Community, Milestones, Languages, Account, Workouts, login and onboarding). They used to exist only in the old version, so when installing from the new pages Android did not see the monochrome icon and kept the default one. To refresh the icon, remove the app from the home screen and install it again; recolouring to the system theme works on Android 13+ with \"Themed icons\" turned on",
+    ]},
     { version: "2.01", date: "2026-10-01 22:02", changes: [
         "Dashboard (pilot): next to the name of every metric that has a streak you now see a flame and the number of days in a row (weeks for weekly schedules). If today is not counted yet, the flame is dimmed with a \"not done today\" hint. Metrics with \"count a streak\" switched off have no flame",
     ]},

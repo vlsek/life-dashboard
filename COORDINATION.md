@@ -87,11 +87,7 @@
 — свободен —
 
 ### Агент 5
-По правилу 9 (сверху вниз, 2026-10-01 19:06): BACKLOG 🎨 п.1 «**Иконка приложения на Android**» (пункт «возможно исправлено, проверить»). Проверка показала причину: `manifest.json`
-и монохромная иконка в порядке, но `<link rel="manifest">` и `apple-touch-icon` есть ТОЛЬКО в `legacy/dashboard.html`, а на всех 14 Vue-страницах (`web-<стр>/index.html`) их нет —
-приложение ставится без манифеста и получает стандартную иконку. Беру: добавить 2 тега (manifest + apple-touch-icon) и `apple-mobile-web-app-*` в `web-{account,calendar,challenges,community,
-dashboard,goals,history,languages,login,milestones,onboarding,shop,skills,workouts}/index.html`, тест на каждой странице, пересборка всех 14 (`/<стр>/`), `config.js`, `docs/`. ТОЛЬКО
-`<head>` — тела страниц не трогаю (агенты 1/3 правят `src/`). С: 2026-10-01 19:06.
+— свободен —
 
 ### Агент 6
 — свободен —
@@ -327,3 +323,4 @@ CSS-анимации, есть только в `web-dashboard/style.css`, хед
 - 2026-10-01 · v2.00 · агент 1 · Баг 18.2 закрыт полностью: период графиков «Последние 30 дней» + по умолчанию (решение владельца), сохранённый вручную период не трогается. Тесты dashboard 759, пересобран dashboard/
 - 2026-10-01 · v2.00 · агент 1 · ИСПРАВЛЕНИЕ НУМЕРАЦИИ: после 1.99 я по ошибке выпустил «1.100» — переименовано в **2.00** (config.js, version.json, ROADMAP/BACKLOG). ВАЖНО ВСЕМ АГЕНТАМ: формат версии X.YY, следующая — **2.01**, затем 2.02 и т. д. (не 2.1, не 2.001). Правило записано в docs/HANDOFF.md
 - 2026-10-01 · v2.01 · агент 1 · BACKLOG 18.5: огонёк и число дней серии у каждой метрики в «Дневных метриках» (MetricStreakBadge + metricStreaks.ts, проп `streak` в трёх строках, `metricStreaks` в DailyMetricsSection, 1 строка в App.vue). Тесты dashboard 770, пересобран dashboard/. Осталось: метрики-подходы (SetsSection) без огонька
+- 2026-10-01 · v2.02 · агент 5 · BACKLOG 🎨 п.1 «Иконка приложения на Android»: причина найдена — `<link rel="manifest">` и `apple-touch-icon` были ТОЛЬКО в `legacy/dashboard.html`, на 14 Vue-страницах (`web-<стр>/index.html`) их не было, поэтому PWA ставилось без манифеста и с стандартной иконкой. Добавлены manifest + apple-touch-icon + `apple-mobile-web-app-*` в `<head>` всех 14 страниц (account, calendar, challenges, community, dashboard, goals, history, languages, login, milestones, onboarding, shop, skills, workouts), `pwaHead.test.ts` на каждой (проверяет теги и что в манифесте есть any/maskable/monochrome и все файлы иконок существуют), пересборка всех 14. Сам `manifest.json` и монохромная иконка не менялись (проверено: чёрный силуэт на прозрачном, в безопасной зоне). НЕ проверено на устройстве: нужен Android 13+ с «Тематическими значками» и переустановка PWA. Заметка: `manifest.json` → `"id": "/login.html"`, `start_url: "/login/"` — не менял (смена `id` создаст «новое» приложение)
