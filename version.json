@@ -1,6 +1,13 @@
 {
-  "version": "1.87",
+  "version": "1.88",
   "en": [
+    {
+      "version": "1.88",
+      "date": "2026-10-01 13:13",
+      "changes": [
+        "Dashboard, \"Points\" window (click on the points in the profile): by default it now shows a compact list of the latest 5 sources of income (metrics, goals, books; newest first, with the date), and the \"Show more\" button smoothly expands the rest of the earnings for 7 days and a separate list of purchases. The minus sign in the lists is now typographic (\"−100\")"
+      ]
+    },
     {
       "version": "1.87",
       "date": "2026-10-01 11:35",
@@ -1366,6 +1373,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.88",
+      "date": "2026-10-01 13:13",
+      "changes": [
+        "Дашборд, окно «Баллы» (клик по баллам в профиле): теперь по умолчанию — компактный список из последних 5 источников прибытка (метрики, цели, книги; новые сверху, с датой), а кнопка «Показать ещё» плавно разворачивает остальные начисления за 7 дней и отдельный список покупок. Минус в списках теперь типографский («−100»)"
+      ]
+    },
     {
       "version": "1.87",
       "date": "2026-10-01 11:35",

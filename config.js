@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.87";
+const SITE_VERSION = "1.88";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.88", date: "2026-10-01 13:13", changes: [
+        "Дашборд, окно «Баллы» (клик по баллам в профиле): теперь по умолчанию — компактный список из последних 5 источников прибытка (метрики, цели, книги; новые сверху, с датой), а кнопка «Показать ещё» плавно разворачивает остальные начисления за 7 дней и отдельный список покупок. Минус в списках теперь типографский («−100»)",
+    ]},
     { version: "1.87", date: "2026-10-01 11:35", changes: [
         "Дашборд (пилот), графики: если в выбранном периоде (например, «последние 10 дней» или «эта неделя» в понедельник) меньше двух значений, а за более широкий срок записи есть, график больше не остаётся пустым с надписью «маловато данных». Показываются последние записи с пометкой «За выбранный период мало данных — показаны последние записи». Для периода «Всё» и когда данных правда нет, ничего не меняется",
     ]},
@@ -1161,6 +1164,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.88", date: "2026-10-01 13:13", changes: [
+        "Dashboard, \"Points\" window (click on the points in the profile): by default it now shows a compact list of the latest 5 sources of income (metrics, goals, books; newest first, with the date), and the \"Show more\" button smoothly expands the rest of the earnings for 7 days and a separate list of purchases. The minus sign in the lists is now typographic (\"−100\")",
+    ]},
     { version: "1.87", date: "2026-10-01 11:35", changes: [
         "Dashboard (pilot), charts: when the chosen period (for example \"last 10 days\", or \"this week\" on a Monday) holds fewer than two values but there are entries over a longer span, the chart no longer stays empty with a \"not enough data\" message. It shows the latest entries with the note \"Too little data in the chosen period — showing the latest entries instead.\" Nothing changes for the \"All\" period or when there really is no data",
     ]},
