@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.90";
+const SITE_VERSION = "1.91";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.91", date: "2026-10-01 13:50", changes: [
+        "Тренировки: у упражнений «просто повторения» больше нет лишних «кг». Раньше при добавлении отжиманий «просто раз» в подходах и рекордах всё равно дописывалось «кг» — теперь пишется только число повторений, и это исправлено и для упражнений, созданных раньше. В форме упражнения без веса единица веса не спрашивается. Если вес ведётся, единица по умолчанию «кг» показана текстом, а сменить её (lb или своя) можно карандашиком; выбранная единица запоминается и подставляется в следующие упражнения",
+    ]},
     { version: "1.90", date: "2026-10-01 13:32", changes: [
         "Дашборд: огонёк стрика на главной теперь «горит по-настоящему». Когда серия достигает 7 дней, вместо обычного огонька появляется живое пламя: три языка и светлая сердцевина качаются и мерцают, как на заставке загрузки. Чем длиннее серия, тем ярче: от 30 дней свечение сильнее, пламя быстрее и над ним летят две искры, от 100 дней — самое яркое свечение и четыре искры. Если сегодня серия ещё не засчитана, огонёк остаётся тусклым контуром. При включённом «уменьшить движение» или «отключить все анимации» пламя горит, но не двигается",
     ]},
@@ -1170,6 +1173,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.91", date: "2026-10-01 13:50", changes: [
+        "Workouts: \"just reps\" exercises no longer show a stray \"kg\". Before, adding push-ups as plain reps still appended \"kg\" in sets and records — now only the number of reps is shown, including for exercises created earlier. The exercise form no longer asks for a weight unit when the exercise has no weight. When weight is tracked, the default unit \"kg\" is shown as text and can be changed (lb or your own) with the pencil; the chosen unit is remembered and used for the next exercises",
+    ]},
     { version: "1.90", date: "2026-10-01 13:32", changes: [
         "Dashboard: the streak flame on the main page now truly burns. Once your streak reaches 7 days, the plain flame is replaced by a living one: three tongues and a bright core sway and flicker just like on the loading screen. The longer the streak, the brighter it gets: from 30 days the glow is stronger, the flame faster and two sparks rise above it; from 100 days it has the brightest glow and four sparks. If today's streak is not counted yet, the flame stays a dim outline. With \"reduce motion\" or \"turn off all animations\" enabled, the flame still shows but does not move",
     ]},
