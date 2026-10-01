@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.94";
+const SITE_VERSION = "1.95";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.95", date: "2026-10-01 11:30", changes: [
+        "Дашборд (пилот): «Выйти» теперь с подтверждением — по нажатию в боковом меню появляется окно «Точно выйти?» с кнопками «Выйти» и «Отмена» (защита от случайного нажатия). Esc и клик по фону отменяют, фокус сразу на «Отмене». На остальных страницах и в правой панели пока по-старому",
+    ]},
     { version: "1.94", date: "2026-10-01 11:24", changes: [
         "Дашборд (пилот): логотип слева сверху в шапке теперь «горит» — вместо статичной картинки там живое пламя в цвете текущей темы, с отдельными языками, у каждого свой ритм (как на заставке загрузки, но компактнее и без искр). Движение выключается при «уменьшении движения» в системе и выключателем «Отключить все анимации»",
     ]},
@@ -1182,6 +1185,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.95", date: "2026-10-01 11:30", changes: [
+        "Dashboard (pilot): \"Log out\" now asks for confirmation — tapping it in the side menu opens a \"Log out?\" window with \"Log out\" and \"Cancel\" buttons (protection against an accidental tap). Esc and a tap on the backdrop cancel, and focus starts on \"Cancel\". The other pages and the right panel still work the old way",
+    ]},
     { version: "1.94", date: "2026-10-01 11:24", changes: [
         "Dashboard (pilot): the logo in the top-left of the header now \"burns\" — instead of a static image there is a living flame in the current theme colour, with separate tongues each at its own rhythm (like on the loading splash, but more compact and without sparks). Motion is switched off by the system \"reduce motion\" setting and by the \"Turn off all animations\" switch",
     ]},

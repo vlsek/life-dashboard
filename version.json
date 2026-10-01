@@ -1,6 +1,13 @@
 {
-  "version": "1.94",
+  "version": "1.95",
   "en": [
+    {
+      "version": "1.95",
+      "date": "2026-10-01 11:30",
+      "changes": [
+        "Dashboard (pilot): \"Log out\" now asks for confirmation — tapping it in the side menu opens a \"Log out?\" window with \"Log out\" and \"Cancel\" buttons (protection against an accidental tap). Esc and a tap on the backdrop cancel, and focus starts on \"Cancel\". The other pages and the right panel still work the old way"
+      ]
+    },
     {
       "version": "1.94",
       "date": "2026-10-01 11:24",
@@ -1415,6 +1422,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.95",
+      "date": "2026-10-01 11:30",
+      "changes": [
+        "Дашборд (пилот): «Выйти» теперь с подтверждением — по нажатию в боковом меню появляется окно «Точно выйти?» с кнопками «Выйти» и «Отмена» (защита от случайного нажатия). Esc и клик по фону отменяют, фокус сразу на «Отмене». На остальных страницах и в правой панели пока по-старому"
+      ]
+    },
     {
       "version": "1.94",
       "date": "2026-10-01 11:24",
