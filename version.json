@@ -1,6 +1,13 @@
 {
-  "version": "1.78",
+  "version": "1.79",
   "en": [
+    {
+      "version": "1.79",
+      "date": "2026-10-01 04:09",
+      "changes": [
+        "Dashboard (pilot), \"Daily metrics\": the day switcher is redesigned — instead of three text buttons \"Prev / Today / Next\" there is now a \"‹ Thu, October 1 ›\" capsule (tap the date to pick a day from the calendar) and a separate \"Today\" chip that is active only when a day other than today is selected; the buttons are bigger for fingers. \"›\" is not disabled on today — planning for tomorrow still works. The \"Sets\" block (and other nested cards) has its own plate again — it used to blend into the metrics block background"
+      ]
+    },
     {
       "version": "1.78",
       "date": "2026-10-01 06:44",
@@ -1302,6 +1309,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.79",
+      "date": "2026-10-01 04:09",
+      "changes": [
+        "Дашборд (пилот), «Дневные метрики»: переключатель дня переделан — вместо трёх кнопок-текстов «Пред. / Сегодня / След.» теперь капсула «‹ вт, 1 октября ›» (тап по дате открывает календарь для выбора дня) и отдельный чип «Сегодня», который активен только когда выбран не сегодняшний день; кнопки крупнее для пальца. «›» не блокируется на сегодня — планы на завтра по-прежнему доступны. Блок «Подходы» (и другие вложенные карточки) снова с собственной подложкой — раньше сливался с фоном блока метрик"
+      ]
+    },
     {
       "version": "1.78",
       "date": "2026-10-01 06:44",
