@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.80";
+const SITE_VERSION = "1.81";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.81", date: "2026-10-01 04:22", changes: [
+        "Дашборд (пилот): появился выключатель «Отключить все анимации» — в окне «Настроить Дашборд», рядом с поздравлениями за серии. Одним переключателем гасит всё движение: пламя и заставку, всплывающие баллы, плавное сворачивание блоков, поздравления, анимацию воды. Применяется сразу, запоминается и работает с первой отрисовки страницы. Если на устройстве уже включено «уменьшить движение», переключатель отмечен и заблокирован с пояснением, где это менять. На остальных страницах пилота пока не подключён",
+    ]},
     { version: "1.80", date: "2026-10-01 04:17", changes: [
         "Дашборд (пилот): заставка загрузки теперь «прям горит». Три варианта: «Живое пламя» (по умолчанию) — отдельные языки пламени, у каждого своя скорость и фаза, плюс поднимающиеся искры; «Огненный круг» — вращающееся кольцо с хвостом и огоньком в центре; «Классика» — прежний контур с мерцанием (оставлен). Предпросмотр: добавьте ?splash=ring, ?splash=flame или ?splash=classic к адресу Дашборда (выбор запоминается). Заставка видна ещё до загрузки скриптов и повторяет выбранный вариант. Анимации выключаются при «уменьшении движения» в системе. Выбор варианта из интерфейса — позже, в «Кастомизации»",
     ]},
@@ -1139,6 +1142,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.81", date: "2026-10-01 04:22", changes: [
+        "Dashboard (pilot): a \"Turn off all animations\" switch is now in the \"Customize dashboard\" window, next to the streak celebrations. One toggle silences all motion: flames and the splash, floating points, smooth collapsing of blocks, celebrations, the water animation. It applies at once, is remembered and works from the very first paint of the page. If your device already has \"reduce motion\" turned on, the switch is checked and locked with a note on where to change it. Not yet connected on the other pilot pages",
+    ]},
     { version: "1.80", date: "2026-10-01 04:17", changes: [
         "Dashboard (pilot): the loading splash now really \"burns\". Three variants: \"Living flame\" (default) — separate flame tongues, each with its own speed and phase, plus rising sparks; \"Fire ring\" — a rotating ring with a tail and a small flame in the middle; \"Classic\" — the previous flickering outline (kept). Preview: add ?splash=ring, ?splash=flame or ?splash=classic to the dashboard address (your choice is remembered). The splash shows even before the page scripts load and repeats the chosen variant. Animations are turned off when the system asks for reduced motion. Choosing a variant from the interface will come later, in \"Customization\"",
     ]},
