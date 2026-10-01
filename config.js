@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.89";
+const SITE_VERSION = "1.90";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.90", date: "2026-10-01 13:32", changes: [
+        "Дашборд: огонёк стрика на главной теперь «горит по-настоящему». Когда серия достигает 7 дней, вместо обычного огонька появляется живое пламя: три языка и светлая сердцевина качаются и мерцают, как на заставке загрузки. Чем длиннее серия, тем ярче: от 30 дней свечение сильнее, пламя быстрее и над ним летят две искры, от 100 дней — самое яркое свечение и четыре искры. Если сегодня серия ещё не засчитана, огонёк остаётся тусклым контуром. При включённом «уменьшить движение» или «отключить все анимации» пламя горит, но не двигается",
+    ]},
     { version: "1.89", date: "2026-10-01 13:20", changes: [
         "Дашборд, графики подходов (отжимания и т. п.): точка дня теперь мини-круг из долей по особенностям подхода — например, из 100 отжиманий 50 классических, 30 алмазных и 20 на бицепс; если особенность одна, точка сплошная её цвета. Под графиком появилась легенда «цвет — особенность — сумма повторений за период», у точки — подсказка с разбивкой. Цвета особенностей постоянные и не меняются при смене периода. Если у подходов нет названий особенностей, график выглядит как раньше",
     ]},
@@ -1167,6 +1170,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.90", date: "2026-10-01 13:32", changes: [
+        "Dashboard: the streak flame on the main page now truly burns. Once your streak reaches 7 days, the plain flame is replaced by a living one: three tongues and a bright core sway and flicker just like on the loading screen. The longer the streak, the brighter it gets: from 30 days the glow is stronger, the flame faster and two sparks rise above it; from 100 days it has the brightest glow and four sparks. If today's streak is not counted yet, the flame stays a dim outline. With \"reduce motion\" or \"turn off all animations\" enabled, the flame still shows but does not move",
+    ]},
     { version: "1.89", date: "2026-10-01 13:20", changes: [
         "Dashboard, set charts (push-ups etc.): a day's point is now a mini pie made of the shares of each set variation — e.g. of 100 push-ups, 50 classic, 30 diamond and 20 biceps; with a single variation the point is a solid dot of its colour. A legend \"colour — variation — total reps for the period\" appears under the chart, and each point has a tooltip with the breakdown. Variation colours are stable and do not change when the period changes. If sets have no variation names, the chart looks as before",
     ]},
