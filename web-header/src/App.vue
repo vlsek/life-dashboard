@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { sb } from './lib/supabase'
 import { getLang, t } from './lib/i18n'
 import { progressPercent } from './lib/progress'
@@ -7,6 +7,7 @@ import { todayStr } from './lib/date'
 import { dayRingTarget, weekRingTarget } from './lib/ringPlacement'
 import { useHeaderProgress } from './lib/useHeaderProgress'
 import { useWater } from './lib/useWater'
+import { useMuscles } from './lib/useMuscles'
 import DayWeekBadge from './components/DayWeekBadge.vue'
 import WaterGlass from './components/WaterGlass.vue'
 import WaterModal from './components/WaterModal.vue'
@@ -57,6 +58,12 @@ const waterVisible = computed(() => waterLoaded.value && !waterError.value && !!
 
 const waterOpen = ref(false)
 const panelOpen = ref(false)
+const muscles = useMuscles()
+// карта мышц грузится лениво: при каждом открытии панели (подходы могли добавить на другой странице)
+watch(panelOpen, (open) => {
+  if (open && userId.value) void muscles.load(userId.value)
+})
+const panelMuscles = computed(() => (muscles.loaded.value && muscles.hasExercises.value ? { done: muscles.done.value, last: muscles.last.value } : null))
 const summaryKind = ref<'day' | 'week' | null>(null)
 const settingsOpen = ref(false)
 
@@ -107,6 +114,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
       :week="panelWeek"
       :water="panelWater"
       :saved-tick="savedTick"
+      :muscles="panelMuscles"
       @open-summary="(k) => { panelOpen = false; summaryKind = k }"
       @open-water="waterOpen = true"
       @add-water="onPanelAddWater"

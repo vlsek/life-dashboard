@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.82";
+const SITE_VERSION = "1.83";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.83", date: "2026-10-01 07:32", changes: [
+        "Правая панель: добавлена карта мышц — тело спереди и сзади, зелёным подсвечены мышцы, которые тренировались за последние 4 дня, серым — остальные. Нажатие на мышцу показывает, когда её тренировали в последний раз; есть быстрая ссылка на «Тренировки». Данные подходов подгружаются только при открытии панели, а блок виден, если у вас есть хотя бы одно упражнение",
+    ]},
     { version: "1.82", date: "2026-10-01 07:29", changes: [
         "Правая выдвижная панель на всех страницах (включая Дашборд): открывается свайпом от правого края экрана или кнопкой в шапке справа. Внутри — «спидометры» прогресса дня и недели (клик открывает сводку) и стакан воды с быстрым добавлением +200 / +500 мл. Закрывается свайпом вправо, касанием по затемнению, Esc или крестиком. Учитывает выключатель анимаций из настроек",
     ]},
@@ -1145,6 +1148,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.83", date: "2026-10-01 07:32", changes: [
+        "Right panel: added the muscle map — the body from the front and back, with muscles worked in the last 4 days highlighted green and the rest grey. Tapping a muscle shows when it was last worked; there is a quick link to Workouts. Set data is loaded only when the panel opens, and the block shows if you have at least one exercise",
+    ]},
     { version: "1.82", date: "2026-10-01 07:29", changes: [
         "Right slide-out panel on every page (including the Dashboard): open it with a swipe from the right screen edge or the button in the header. Inside: day and week progress \"speedometers\" (tap one for the summary) and the water glass with quick +200 / +500 ml. Close it with a swipe right, a tap on the dimmed area, Esc or the cross. Respects the turn-off-animations switch",
     ]},

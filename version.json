@@ -1,6 +1,13 @@
 {
-  "version": "1.82",
+  "version": "1.83",
   "en": [
+    {
+      "version": "1.83",
+      "date": "2026-10-01 07:32",
+      "changes": [
+        "Right panel: added the muscle map — the body from the front and back, with muscles worked in the last 4 days highlighted green and the rest grey. Tapping a muscle shows when it was last worked; there is a quick link to Workouts. Set data is loaded only when the panel opens, and the block shows if you have at least one exercise"
+      ]
+    },
     {
       "version": "1.82",
       "date": "2026-10-01 07:29",
@@ -1330,6 +1337,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.83",
+      "date": "2026-10-01 07:32",
+      "changes": [
+        "Правая панель: добавлена карта мышц — тело спереди и сзади, зелёным подсвечены мышцы, которые тренировались за последние 4 дня, серым — остальные. Нажатие на мышцу показывает, когда её тренировали в последний раз; есть быстрая ссылка на «Тренировки». Данные подходов подгружаются только при открытии панели, а блок виден, если у вас есть хотя бы одно упражнение"
+      ]
+    },
     {
       "version": "1.82",
       "date": "2026-10-01 07:29",

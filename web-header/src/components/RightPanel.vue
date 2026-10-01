@@ -5,6 +5,8 @@ import { isCloseSwipe, isOpenSwipe, type Point } from '../lib/edgeSwipe'
 import WaterGlass from './WaterGlass.vue'
 import WaterSavedAnim from './WaterSavedAnim.vue'
 import ProgressGauge from './ProgressGauge.vue'
+import MuscleMiniMap from './MuscleMiniMap.vue'
+import type { MuscleId } from '../lib/muscles'
 
 // Выдвижная правая панель (BACKLOG 6.2): спидометры дня/недели и стакан воды с быстрым добавлением. Открывается
 // свайпом от правого края или кнопкой в шапке; закрывается свайпом вправо, тапом по затемнению, Esc или крестиком.
@@ -20,6 +22,7 @@ const props = defineProps<{
   week: GaugeData | null
   water: { todayMl: number; normMl: number } | null
   savedTick: number
+  muscles?: { done: Set<MuscleId>; last: Partial<Record<MuscleId, string>> } | null // null/не передано — блока мышц нет (нет упражнений)
 }>()
 const emit = defineEmits<{ 'update:open': [boolean]; 'open-summary': [kind: 'day' | 'week']; 'open-water': []; 'add-water': [ml: number] }>()
 
@@ -93,6 +96,10 @@ onBeforeUnmount(() => (document.documentElement.style.overflow = ''))
         <button type="button" class="gh-btn" data-test="panel-add-500" @click="emit('add-water', 500)">+ 500 {{ unit }}</button>
         <button type="button" class="gh-btn" data-test="panel-water-details" @click="emit('open-water')">{{ t('hdr_panel_details') }}</button>
       </div>
+    </section>
+    <section v-if="muscles" class="gh-panel-water" style="margin-top: 12px" data-test="panel-muscles">
+      <h4>🏋️ {{ t('workouts_muscles_title') }}</h4>
+      <MuscleMiniMap :done="muscles.done" :last="muscles.last" />
     </section>
   </aside>
 </template>

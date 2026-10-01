@@ -13,6 +13,7 @@ vi.mock('./lib/supabase', () => {
     const c: any = {
       select: () => c,
       eq: () => c,
+      gte: () => c,
       order: () => c,
       limit: () => c,
       range: () => c,
@@ -41,7 +42,7 @@ const waterMetric = { id: 'w', name: 'Вода', icon: '💧', type: 'number', g
 const habit = { id: 'h', name: 'Зарядка', icon: null, type: 'boolean', goal_value: null, active: true, position: 2, user_id: 'u1' }
 
 function setup(rows: Record<string, unknown[]>) {
-  db.rows = { metrics: [], daily_values: [], daily_notes: [], goals: [], body_parameters: [], body_parameter_values: [], ...rows }
+  db.rows = { metrics: [], daily_values: [], daily_notes: [], goals: [], body_parameters: [], body_parameter_values: [], workout_exercises: [], workout_entries: [], ...rows }
 }
 
 beforeEach(() => {
@@ -233,6 +234,37 @@ describe('правая панель (BACKLOG 6.2)', () => {
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
     await flushPromises()
     expect(w.find('[data-test="right-panel"]').classes()).not.toContain('gh-panel-open')
+    w.unmount()
+  })
+})
+
+describe('карта мышц в правой панели (BACKLOG 3.2)', () => {
+  const squat = { id: 'ex1', name: 'Приседания' }
+
+  it('при открытии панели грузит подходы; мышцы с тренировкой за 4 дня зелёные', async () => {
+    setup({
+      metrics: [habit],
+      workout_exercises: [squat],
+      workout_entries: [{ exercise_id: 'ex1', date: today, sets: [{ reps: 10 }] }],
+    })
+    const w = mount(App)
+    await flushPromises()
+    expect(w.find('[data-test="panel-muscles"]').exists()).toBe(false) // до открытия панели данные не грузились
+    await w.find('[data-test="panel-open"]').trigger('click')
+    await flushPromises()
+    expect(w.find('[data-test="panel-muscles"]').exists()).toBe(true)
+    expect(w.find('[data-muscle="quads"]').attributes('data-state')).toBe('done')
+    expect(w.find('[data-muscle="chest"]').attributes('data-state')).toBe('idle')
+    w.unmount()
+  })
+
+  it('нет упражнений — блока мышц в панели нет', async () => {
+    setup({ metrics: [habit], workout_exercises: [], workout_entries: [] })
+    const w = mount(App)
+    await flushPromises()
+    await w.find('[data-test="panel-open"]').trigger('click')
+    await flushPromises()
+    expect(w.find('[data-test="panel-muscles"]').exists()).toBe(false)
     w.unmount()
   })
 })
