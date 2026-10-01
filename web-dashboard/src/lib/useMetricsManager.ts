@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { sb } from './supabase'
 import { todayStr } from './date'
 import { t } from './i18n'
-import { buildInsertRow, buildUpdateRow, categoryKeyFor, nextPosition } from './metricsManager'
+import { effectiveForm, buildInsertRow, buildUpdateRow, categoryKeyFor, nextPosition } from './metricsManager'
 import type { MetricFormValues } from './metricsManager'
 import type { Metric } from './types'
 
@@ -38,7 +38,8 @@ export function useMetricsManager(onChanged?: () => void) {
   // Подсказка про миграции — портировано из showMetricSaveError().
   function saveErrorText(message: string): string {
     const hint = /schedule/i.test(message) ? ' — ' + t('dash_schedule_migration_hint')
-      : /streak_import/i.test(message) ? ' — ' + t('dash_streak_import_migration_hint') : ''
+      : /streak_import/i.test(message) ? ' — ' + t('dash_streak_import_migration_hint')
+      : /count_streak/i.test(message) ? ' — ' + t('dash_count_streak_migration_hint') : ''
     return t('dash_save_error_generic') + message + hint
   }
 
@@ -69,7 +70,8 @@ export function useMetricsManager(onChanged?: () => void) {
       return false
     }
     // Импорт стрика для новой метрики — отдельным update (до insert колонок ещё не видно)
-    const days = form.streakImportDays === '' ? 0 : parseInt(form.streakImportDays, 10) || 0
+    const importRaw = effectiveForm(form).streakImportDays // в режиме «просто значение» импорта серии нет
+    const days = importRaw === '' ? 0 : parseInt(importRaw, 10) || 0
     if (days > 0) {
       const { data: created } = await sb
         .from('metrics')

@@ -40,7 +40,7 @@ function onSave(form: MetricFormValues) {
 
 const weekdayNames = () => t('dash_weekdays_short').split(',')
 function summary(m: Metric): string {
-  const goal = goalSummary(m, t('dash_metric_goal_bool'), t('dash_metric_goal_multiselect'))
+  const goal = goalSummary(m, t('dash_metric_goal_bool'), t('dash_metric_goal_multiselect'), t('dash_metric_goal_track_only'))
   const sched = scheduleSummary(m.schedule, weekdayNames(), t('dash_schedule_weekly_short'), t('dash_schedule_at_most_short'))
   return sched ? `${goal} · ${sched}` : goal
 }

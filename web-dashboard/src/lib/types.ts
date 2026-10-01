@@ -21,6 +21,8 @@ export interface Metric {
   position: number
   streak_import_days?: number | null
   streak_import_date?: string | null
+  // Миграция 031: false — серию по метрике не считаем и в «идеальный день» она не входит (вес и т.п.)
+  count_streak?: boolean | null
   // Поля ниже нужны блоку «Управление метриками» (multiselect/sets и режим ввода числа)
   options?: MetricOption[] | null
   input_mode?: 'set' | 'add' | null

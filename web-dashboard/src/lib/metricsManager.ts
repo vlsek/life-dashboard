@@ -23,6 +23,8 @@ export interface MetricFormValues {
   weeklyMin: number
   atMostMax: number
   streakImportDays: string // строка, потому что пустое поле ≠ 0
+  countStreak: boolean // миграция 031: считать ли серию по метрике
+  trackOnly: boolean // «просто записывать значение»: без цели, расписания и серии (только number)
 }
 
 export const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0] as const
@@ -89,6 +91,37 @@ export function clearedForBoolean(f: MetricFormValues): MetricFormValues {
   return { ...f, goalValue: 0, unit: '', optionsRaw: '' }
 }
 
+// «Просто записывать значение» (BACKLOG 14, 11:15): числовая метрика без цели, расписания и серии — вес, замеры.
+// Отдельной колонки нет: режим определяется по сохранённым полям — серия выключена (миграция 031), цель нейтральная
+// (0, «не менее»), расписания нет. Метрика с такими полями по смыслу и есть «только значение».
+export function isTrackOnlyMetric(m: Pick<Metric, 'type' | 'count_streak' | 'goal_value' | 'schedule'>): boolean {
+  return m.type === 'number' && m.count_streak === false && (m.goal_value ?? 0) === 0 && !m.schedule
+}
+
+// Значения формы, которые реально сохраняются: в режиме «просто записывать значение» всё остальное нейтрализуется
+// (цель 0 «не менее», каждый день, без импорта серии, серия выключена); вне числового типа режим не действует.
+export function effectiveForm(f: MetricFormValues): MetricFormValues {
+  if (!(f.trackOnly && f.type === 'number')) return f.trackOnly ? { ...f, trackOnly: false } : f
+  return { ...f, goalValue: 0, goalDirection: 'at_least', scheduleKind: 'daily', streakImportDays: '', countStreak: false }
+}
+
+// Какие поля формы активны — по типу (fieldsEnabledForType) и по режиму «просто записывать значение»:
+// при «да» цель, расписание, серия и импорт серии отключаются; единица измерения остаётся (вес — «кг»).
+export function fieldsEnabledForForm(f: Pick<MetricFormValues, 'type' | 'trackOnly'>) {
+  const byType = fieldsEnabledForType(f.type)
+  const track = f.trackOnly && f.type === 'number'
+  return {
+    trackOnlyAvailable: f.type === 'number',
+    goal: byType.goal && !track, // направление и значение цели
+    unit: byType.goal, // единица нужна и «просто значению»
+    inputMode: byType.inputMode,
+    options: byType.options,
+    schedule: !track,
+    countStreak: !track,
+    streakImport: !track,
+  }
+}
+
 export function emptyForm(): MetricFormValues {
   return {
     name: '',
@@ -105,6 +138,8 @@ export function emptyForm(): MetricFormValues {
     weeklyMin: 3,
     atMostMax: 2,
     streakImportDays: '',
+    countStreak: true,
+    trackOnly: false,
   }
 }
 
@@ -125,6 +160,8 @@ export function formFromMetric(m: Metric): MetricFormValues {
     weeklyMin: s?.type === 'weekly' ? s.min : 3,
     atMostMax: s?.type === 'at_most' ? s.max : 2,
     streakImportDays: m.streak_import_days != null ? String(m.streak_import_days) : '',
+    countStreak: m.count_streak !== false,
+    trackOnly: isTrackOnlyMetric(m),
   }
 }
 
@@ -137,6 +174,14 @@ function parsedImportDays(f: MetricFormValues): number | null {
 export function scheduleFields(f: MetricFormValues, existing: Metric | null): { schedule?: Schedule } {
   const schedule = buildSchedule(f)
   if (schedule || (existing && 'schedule' in existing)) return { schedule }
+  return {}
+}
+
+// Миграция 031: серию пишем, если она выключена (иначе без колонки получим понятную ошибку с подсказкой) или колонка
+// у метрики уже есть — так правка метрик работает и до применения миграции (по образцу scheduleFields()).
+export function countStreakFields(f: MetricFormValues, existing: Metric | null): { count_streak?: boolean } {
+  const value = effectiveForm(f).countStreak
+  if (!value || (existing && 'count_streak' in existing)) return { count_streak: value }
   return {}
 }
 
@@ -170,12 +215,14 @@ function commonFields(f: MetricFormValues, categoryId: string | null) {
   }
 }
 
-export function buildInsertRow(f: MetricFormValues, userId: string, position: number, categoryId: string | null) {
-  return { user_id: userId, ...commonFields(f, categoryId), position, active: true, ...scheduleFields(f, null) }
+export function buildInsertRow(form: MetricFormValues, userId: string, position: number, categoryId: string | null) {
+  const f = effectiveForm(form)
+  return { user_id: userId, ...commonFields(f, categoryId), position, active: true, ...scheduleFields(f, null), ...countStreakFields(f, null) }
 }
 
-export function buildUpdateRow(f: MetricFormValues, existing: Metric, categoryId: string | null) {
-  return { ...commonFields(f, categoryId), ...scheduleFields(f, existing), ...streakImportFields(f, existing) }
+export function buildUpdateRow(form: MetricFormValues, existing: Metric, categoryId: string | null) {
+  const f = effectiveForm(form)
+  return { ...commonFields(f, categoryId), ...scheduleFields(f, existing), ...countStreakFields(f, existing), ...streakImportFields(f, existing) }
 }
 
 // Позиция новой метрики — максимум существующих + 1 (пусто → 0).
@@ -189,7 +236,16 @@ export function categoryKeyFor(label: string, nowMs: number = Date.now()): strin
 }
 
 // Подпись цели в списке метрик (портировано из openMetricsManagerModal()).
-export function goalSummary(m: Pick<Metric, 'type' | 'goal_direction' | 'goal_value' | 'unit'>, boolLabel: string, multiLabel: string): string {
+export function goalSummary(
+  m: Pick<Metric, 'type' | 'goal_direction' | 'goal_value' | 'unit'> & Partial<Pick<Metric, 'count_streak' | 'schedule'>>,
+  boolLabel: string,
+  multiLabel: string,
+  trackOnlyLabel?: string,
+): string {
+  // «просто значение» (вес и т.п.) — не «≥ 0 кг», а своя подпись
+  if (trackOnlyLabel && isTrackOnlyMetric({ type: m.type, count_streak: m.count_streak, goal_value: m.goal_value, schedule: m.schedule ?? null })) {
+    return m.unit ? `${trackOnlyLabel}, ${m.unit}` : trackOnlyLabel
+  }
   if (m.type === 'number') return `${m.goal_direction === 'at_most' ? '<' : '≥'} ${m.goal_value ?? 0} ${m.unit || ''}`
   return m.type === 'boolean' ? boolLabel : multiLabel
 }
