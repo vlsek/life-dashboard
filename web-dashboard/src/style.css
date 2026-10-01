@@ -166,6 +166,31 @@ html.theme-monet .streak-flame .fl-outer {
   color: var(--text-dim);
   opacity: 0.75;
 }
+/* «Живое пламя» стрика ≥ 7 дней (BACKLOG 18, StreakFlame.vue + lib/streakFlameTier.ts): три языка пламени заставки
+   (keyframes tongue-* и spark-rise — общие со .splash-live), свечение и скорость растут со ступенью 1 → 2 (30 дн.) → 3 (100 дн.). */
+.streak-live {
+  overflow: visible;
+  --glow: 3px;
+  --glow-a: 55%;
+  --speed: 1;
+  filter: drop-shadow(0 0 var(--glow) color-mix(in srgb, var(--accent) var(--glow-a), transparent));
+}
+.streak-live[data-tier='2'] { --glow: 5px; --glow-a: 65%; --speed: 0.85; }
+.streak-live[data-tier='3'] { --glow: 7px; --glow-a: 78%; --speed: 0.7; }
+.streak-live .tongue { transform-box: fill-box; transform-origin: 50% 100%; }
+.streak-live .tongue-c { fill: var(--accent); animation: tongue-c calc(1.3s * var(--speed)) ease-in-out infinite; }
+.streak-live .tongue-l { fill: color-mix(in srgb, var(--accent) 78%, transparent); animation: tongue-l calc(0.95s * var(--speed)) ease-in-out -0.3s infinite; }
+.streak-live .tongue-r { fill: color-mix(in srgb, var(--accent) 78%, transparent); animation: tongue-r calc(1.15s * var(--speed)) ease-in-out -0.7s infinite; }
+.streak-live .tongue-core { fill: color-mix(in srgb, var(--accent) 35%, #ffffff); animation: tongue-core calc(0.8s * var(--speed)) ease-in-out -0.2s infinite; }
+.streak-live[data-tier='3'] .tongue-core { fill: color-mix(in srgb, var(--accent) 12%, #ffffff); }
+.streak-live .spark { fill: color-mix(in srgb, var(--accent) 45%, #ffffff); opacity: 0; animation: spark-rise var(--d, 2s) ease-out var(--o, 0s) infinite; }
+html.theme-monet .streak-live .tongue-c { stroke: var(--accent); stroke-width: 2; stroke-opacity: 0.5; }
+@media (prefers-reduced-motion: reduce) {
+  .streak-live, .streak-live * { animation: none !important; }
+  .streak-live .spark { opacity: 0; }
+}
+html[data-motion='off'] .streak-live,
+html[data-motion='off'] .streak-live * { animation: none !important; }
 @keyframes flame-flicker {
   0%,
   100% {

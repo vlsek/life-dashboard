@@ -9,6 +9,7 @@ import PointsLogModal from './PointsLogModal.vue'
 import AvatarProgress from './AvatarProgress.vue'
 import ProgressRing from './ProgressRing.vue'
 import StreakFlame from './StreakFlame.vue'
+import { streakDays } from '../lib/streakFlameTier'
 import type { RingData } from '../lib/ringPlacement'
 import type { StreakItem } from '../lib/streaks'
 import { useProfile } from '../lib/useProfile'
@@ -140,7 +141,7 @@ function openForm(p: BodyParam | 'new') {
           :title="streakTitle"
           @click="emit('show-streaks')"
         >
-          <StreakFlame :lit="topStreak.todayCounted" />
+          <StreakFlame :lit="topStreak.todayCounted" :days="streakDays(topStreak.streak, topStreak.unit)" />
           {{ topStreak.streak }}{{ topStreak.unit === 'w' ? ' ' + t('dash_streak_unit_weeks') : '' }}
         </button>
 

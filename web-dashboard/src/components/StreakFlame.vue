@@ -2,12 +2,55 @@
 // Иконка огонька стрика — два разных SVG (не один тусклый generic-icon), как в dashboard.js:
 // STREAK_SOLID_ICON (lit, двухслойное пламя, окрашено через .fl-outer/.fl-inner + CSS-мерцание)
 // и STREAK_OUTLINE_ICON (unlit, пунктирный контур). Разметка путей скопирована дословно.
-defineProps<{ lit: boolean }>()
+//
+// «Живое пламя» (BACKLOG 18): если передан days и серия ≥ 7 дней, вместо обычного огонька рисуется пламя заставки
+// (splash/SplashFlameLive.vue: три языка + светлая сердцевина, те же keyframes tongue-*), а ступени 30 и 100 дней
+// делают его ярче и добавляют искры (lib/streakFlameTier.ts, стили .streak-live в style.css). Без days — как раньше.
+// Не засчитанный сегодня стрик остаётся тусклым пунктирным контуром на любой длине серии.
+// prefers-reduced-motion и общий выключатель анимаций (html[data-motion="off"]) гасят анимацию — пламя остаётся статичным.
+import { computed } from 'vue'
+import { streakFlameTier } from '../lib/streakFlameTier'
+
+const props = defineProps<{ lit: boolean; days?: number }>()
+const tier = computed(() => (props.lit ? streakFlameTier(props.days) : 0))
+
+const SPARKS = [
+  { cx: 25, cy: 14, r: 1.6, dx: '-5px', d: '2.1s', o: '0s' },
+  { cx: 41, cy: 16, r: 1.7, dx: '6px', d: '2.4s', o: '-1.2s' },
+  { cx: 34, cy: 10, r: 1.4, dx: '3px', d: '1.7s', o: '-0.6s' },
+  { cx: 30, cy: 12, r: 1.2, dx: '-2px', d: '1.9s', o: '-1.7s' },
+]
+const sparks = computed(() => SPARKS.slice(0, tier.value >= 3 ? 4 : tier.value >= 2 ? 2 : 0))
 </script>
 
 <template>
   <svg
-    v-if="lit"
+    v-if="lit && tier > 0"
+    class="streak-live"
+    :data-tier="tier"
+    viewBox="0 0 64 64"
+    width="22"
+    height="22"
+    aria-hidden="true"
+    data-test="streak-flame-live"
+  >
+    <path class="tongue tongue-l" d="M17 22C20 31 11 36 11 44C11 52 18 57 25 57C18 52 22 44 24 38C21 33 18 29 17 22Z" />
+    <path class="tongue tongue-r" d="M47 22C44 31 53 36 53 44C53 52 46 57 39 57C46 52 42 44 40 38C43 33 46 29 47 22Z" />
+    <path class="tongue tongue-c" d="M32 3C34 13 46 21 46 37C46 49 40 58 32 58C24 58 18 49 18 37C18 29 24 25 26 17C28 21 30 21 31 15C31.5 10 31.8 7 32 3Z" />
+    <path class="tongue tongue-core" d="M32 30C33 36 40 40 40 47C40 53 36 58 32 58C28 58 24 53 24 47C24 40 31 36 32 30Z" />
+    <circle
+      v-for="(sp, i) in sparks"
+      :key="i"
+      class="spark"
+      :cx="sp.cx"
+      :cy="sp.cy"
+      :r="sp.r"
+      :style="{ '--dx': sp.dx, '--d': sp.d, '--o': sp.o }"
+      data-test="streak-spark"
+    />
+  </svg>
+  <svg
+    v-else-if="lit"
     class="streak-flame"
     viewBox="0 0 32 32"
     width="18"
