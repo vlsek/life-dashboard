@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.84";
+const SITE_VERSION = "1.85";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.85", date: "2026-10-01 04:46", changes: [
+        "Верхняя панель на всех Vue-страницах: вместо текстовых стрелочек «>>>» — аккуратная круглая кнопка с шевроном, который поворачивается при раскрытии. Быстрые ссылки на разделы стали «пилюлями», плавно появляются и мягко затухают у правого края; закрыть их можно повторным нажатием или клавишей Esc. Анимации отключаются настройкой «уменьшить движение» в системе и общим выключателем анимаций",
+    ]},
     { version: "1.84", date: "2026-10-01 07:35", changes: [
         "Глобальные настройки: в правой панели (кнопка ⚙️) открывается единое окно со всеми настройками — язык, тема, «выключить все анимации», поздравления за серии, прогресс дня/недели, порядок и видимость блоков Дашборда, вода, ссылка на Аккаунт. Работает на любой странице; то, что можно применить сразу, применяется сразу",
     ]},
@@ -1151,6 +1154,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.85", date: "2026-10-01 04:46", changes: [
+        "Top bar on all Vue pages: instead of the text arrows \">>>\" there is now a neat round button with a chevron that rotates when opened. The quick links to sections are pill-shaped, fade in smoothly and softly fade out at the right edge; close them by tapping again or pressing Esc. Animations are turned off by the system \"reduce motion\" setting and by the global animations switch",
+    ]},
     { version: "1.84", date: "2026-10-01 07:35", changes: [
         "Global settings: the right panel (the ⚙️ button) opens one window with all settings — language, theme, turn off all animations, streak congratulations, day/week progress, order and visibility of Dashboard blocks, water, and a link to Account. Works on any page; whatever can be applied right away is applied right away",
     ]},

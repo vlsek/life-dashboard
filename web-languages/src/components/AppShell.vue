@@ -150,15 +150,22 @@ function onTouchEnd() {
   tracking = false
 }
 
+// Esc закрывает быстрые ссылки в верхней панели (доступность: кнопка-раскрывашка с aria-expanded).
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape') quickNavOpen.value = false
+}
+
 onMounted(() => {
   document.addEventListener('touchstart', onTouchStart, { passive: true })
   document.addEventListener('touchmove', onTouchMove, { passive: true })
   document.addEventListener('touchend', onTouchEnd)
+  document.addEventListener('keydown', onKeydown)
 })
 onUnmounted(() => {
   document.removeEventListener('touchstart', onTouchStart)
   document.removeEventListener('touchmove', onTouchMove)
   document.removeEventListener('touchend', onTouchEnd)
+  document.removeEventListener('keydown', onKeydown)
 })
 </script>
 
@@ -181,29 +188,33 @@ onUnmounted(() => {
     </a>
     <button
       type="button"
-      class="shrink-0 rounded-lg px-2 py-1 text-sm"
-      style="background: transparent; color: var(--text-dim)"
+      class="qn-toggle"
+      :class="{ 'qn-open': quickNavOpen }"
       :aria-label="t('nav_more')"
+      :title="t('nav_more')"
+      :aria-expanded="quickNavOpen"
+      aria-controls="quick-nav"
+      data-testid="quicknav-toggle"
       @click="quickNavOpen = !quickNavOpen"
     >
-      &gt;&gt;&gt;
+      <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M7 4l6 6-6 6" />
+      </svg>
     </button>
-    <div v-if="quickNavOpen" class="no-edge-swipe flex items-center gap-1 overflow-x-auto">
-      <a
-        v-for="p in pages.filter((p) => p.key !== 'dashboard')"
-        :key="p.key"
-        :href="p.href"
-        class="shrink-0 whitespace-nowrap rounded-lg border px-2.5 py-1.5 text-xs"
-        :style="{
-          borderColor: 'var(--border)',
-          background: p.key === active ? 'var(--accent)' : 'var(--bg)',
-          color: p.key === active ? 'var(--accent-text)' : 'var(--text)',
-        }"
-      >
-        <Icon :name="p.icon" />
-        {{ plainLabel(p.labelKey) }}
-      </a>
-    </div>
+    <Transition name="qn">
+      <div v-if="quickNavOpen" id="quick-nav" class="qn-list no-edge-swipe" data-testid="quicknav-list">
+        <a
+          v-for="p in pages.filter((p) => p.key !== 'dashboard')"
+          :key="p.key"
+          :href="p.href"
+          class="qn-chip"
+          :class="{ 'qn-chip-active': p.key === active }"
+        >
+          <Icon :name="p.icon" />
+          {{ plainLabel(p.labelKey) }}
+        </a>
+      </div>
+    </Transition>
     <div class="ml-auto flex items-center gap-1.5" id="topbar-right"></div>
   </div>
 
@@ -334,3 +345,101 @@ onUnmounted(() => {
   <AboutModal v-if="aboutOpen" @close="aboutOpen = false" />
   <ChangelogModal v-if="changelogOpen" @close="changelogOpen = false" />
 </template>
+
+<style>
+/* Быстрые ссылки в верхней панели (BACKLOG 16, «14:55»): круглая кнопка с шевроном вместо «>>>»,
+   ссылки-«пилюли» с плавным появлением и затуханием по правому краю. Анимации гасятся
+   системной настройкой «уменьшить движение» и общим выключателем <html data-motion="off">. */
+.qn-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.qn-toggle:hover {
+  color: var(--text);
+  border-color: var(--text-dim);
+}
+.qn-toggle:focus-visible,
+.qn-chip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.qn-toggle svg {
+  transition: transform 0.2s ease;
+}
+.qn-toggle.qn-open {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.qn-toggle.qn-open svg {
+  transform: rotate(180deg);
+}
+.qn-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  padding: 2px 18px 2px 2px;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+}
+.qn-list::-webkit-scrollbar {
+  display: none;
+}
+.qn-chip {
+  flex-shrink: 0;
+  white-space: nowrap;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  text-decoration: none;
+  transition: border-color 0.15s ease;
+}
+.qn-chip:hover {
+  border-color: var(--text-dim);
+}
+.qn-chip.qn-chip-active {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+}
+.qn-enter-active,
+.qn-leave-active {
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.qn-enter-from,
+.qn-leave-to {
+  opacity: 0;
+  transform: translateX(-8px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .qn-toggle,
+  .qn-toggle svg,
+  .qn-chip,
+  .qn-enter-active,
+  .qn-leave-active {
+    transition: none;
+  }
+}
+html[data-motion='off'] .qn-toggle,
+html[data-motion='off'] .qn-toggle svg,
+html[data-motion='off'] .qn-chip,
+html[data-motion='off'] .qn-enter-active,
+html[data-motion='off'] .qn-leave-active {
+  transition: none;
+}
+</style>

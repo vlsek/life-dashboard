@@ -573,6 +573,14 @@ v1.84 — Глобальные настройки (агент 6, BACKLOG 6.2): �
   «Достижения»), а окно в общем бандле — доступно везде одним кодом. Ключи localStorage совпадают со страницами (`site_lang`, `site_theme`,
   `site_motion`, `streak_celebrations_off`, `day_progress_settings`), раскладка Дашборда — `profiles.dashboard_layout`; язык при смене
   перезагружает страницу, как в боковом меню. Если на странице появится новая настройка — добавлять и сюда. 6 новых тестов, web-header 52.
+v1.85 — BACKLOG 16 (14:55) современная кнопка быстрых ссылок (агент 7), все 12 AppShell.vue: `>>>` →
+  круглая кнопка с SVG-шевроном (`.qn-toggle`, поворот на 180° при раскрытии, `aria-expanded`,
+  `aria-controls="quick-nav"`), список — `<Transition name="qn">` с «пилюлями» `.qn-chip` и затуханием
+  по правому краю; Esc закрывает (keydown на document, снимается в onUnmounted). Новых i18n-ключей нет
+  (`nav_more`). Стили лежат в `<style>` самого AppShell (а не в style.css пилота): правило
+  `data-motion='off'` из v1.81 есть только в style.css Дашборда, поэтому в AppShell свои правила для
+  `prefers-reduced-motion` и `html[data-motion='off']`. Тест `AppShellQuickNav.test.ts` в каждом пилоте
+  (36 новых). Пересобраны все 12 пилотов.
 v1.03 — Пилот Сообщества: заявки в друзья, друзья отдельно от подписок, «В друзья»
   (lib/friends.ts, PersonChip.vue, 17 тестов, в т.ч. UI-тест App.vue с подменой Supabase).
 v1.02 — Сообщество (классика): то же в ванильном community.js. Фильтр «Только друзья» =
