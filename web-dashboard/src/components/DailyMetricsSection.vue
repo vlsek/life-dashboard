@@ -5,12 +5,13 @@ import NumberMetricField from './NumberMetricField.vue'
 import SetsSection from './SetsSection.vue'
 import PlannedSection from './PlannedSection.vue'
 import SectionHeading from './SectionHeading.vue'
+import DateStepper from './DateStepper.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import UsefulTodayList from './UsefulTodayList.vue'
 import { useDailyMetrics } from '../lib/useDailyMetrics'
-import { dayLabel, isRemaining, shiftDate } from '../lib/daily'
+import { isRemaining } from '../lib/daily'
 import { todayStr } from '../lib/date'
-import { getLang, t } from '../lib/i18n'
+import { t } from '../lib/i18n'
 import { ref, watch } from 'vue'
 
 // Блок «Дневные метрики» (порт renderDay() из dashboard.js): листание дней, поля boolean/
@@ -35,10 +36,6 @@ watch(
   { immediate: true },
 )
 
-function go(delta: number) {
-  date.value = shiftDate(date.value, delta)
-}
-
 const savedMsg = ref(false)
 async function onSaveDay() {
   const ok = await saveDay()
@@ -58,12 +55,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
     <SectionHeading v-model:collapsed="collapsed" :title="t('dash_daily_h2')" storage-key="daily" />
 
     <div v-collapse="!collapsed">
-    <div class="day-nav">
-      <button type="button" class="secondary" @click="go(-1)">{{ t('prev_day') }}</button>
-      <strong>{{ dayLabel(date, getLang()) }}</strong>
-      <button type="button" class="secondary" :disabled="date === todayStr()" @click="date = todayStr()">{{ t('today_btn') }}</button>
-      <button type="button" class="secondary" @click="go(1)">{{ t('next_day') }}</button>
-    </div>
+    <DateStepper v-model="date" />
 
     <div class="card">
       <p v-if="error" class="mb-2 text-sm" style="color: var(--danger)">{{ error }}</p>
@@ -124,14 +116,15 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
 </template>
 
 <style scoped>
-.day-nav {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 12px;
+/* Подложка у вложенных карточек (BACKLOG 16, 13:18): «Подходы» — это .card внутри внешнего .card блока,
+   с тем же фоном, и сливались с ним. Вложенная карточка чуть темнее/светлее фона блока (смесь с цветом
+   текста темы — читается и на светлых, и на тёмных темах) + собственная рамка и скругление. */
+.card :deep(.card) {
+  background: color-mix(in srgb, var(--text) 5%, var(--bg-card));
+  border: 1px solid color-mix(in srgb, var(--text) 14%, var(--border));
+  border-radius: 10px;
+  padding: 12px 14px;
 }
-.day-nav strong { margin-right: auto; }
 .field-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
