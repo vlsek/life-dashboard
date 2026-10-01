@@ -13,8 +13,9 @@ const props = withDefaults(
     color?: string
     goalValue?: number | null
     goalLabel?: string | null
+    note?: string | null // пояснение под графиком (например, «период расширен»)
   }>(),
-  { title: '', icon: null, unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null },
+  { title: '', icon: null, unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null, note: null },
 )
 
 const prepared = computed<ChartPoint[]>(() => prepareChartSeries(props.points))
@@ -106,6 +107,7 @@ const fallbackText = computed(() => {
     <template v-if="innerSvg">
       <svg viewBox="0 0 620 160" width="100%" :height="160" v-html="innerSvg"></svg>
       <p v-if="hasGaps" class="dim mt-0.5 text-xs">{{ t('chart_dashed_hint') }}</p>
+      <p v-if="note" class="dim mt-0.5 text-xs" data-test="chart-note">{{ note }}</p>
     </template>
     <p v-else class="dim">{{ fallbackText }}</p>
   </div>

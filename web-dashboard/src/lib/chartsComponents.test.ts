@@ -167,4 +167,20 @@ describe('ChartsSection', () => {
     expect(document.body.querySelector('.modal')).not.toBeNull()
     w.unmount()
   })
+  it('BACKLOG 18.2: период «10 дней» с одной свежей записью не оставляет пустой график — показаны последние записи и пометка', async () => {
+    const { default: ChartsSection } = await import('../components/ChartsSection.vue')
+    localStorage.setItem('dash_period_dashboard', JSON.stringify({ range: 'days10', from: null, to: null }))
+    const today = new Date()
+    const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    const old = new Date(today)
+    old.setDate(today.getDate() - 20)
+    state.series.value = { 'body:w': { label: 'Вес', unit: ' кг', color: 'var(--accent)', points: [{ date: iso(old), y: 88 }, { date: iso(today), y: 90 }] } }
+    state.entries.value = [{ key: 'body:w', goal: null }]
+    const w = mount(ChartsSection, { props: { userId: 'u1' } })
+    await flushPromises()
+    expect(w.text()).not.toMatch(/маловато данных|Not enough data/)
+    expect(w.find('svg').exists()).toBe(true)
+    expect(w.find('[data-test="chart-note"]').text()).toMatch(/мало данных|Too little data/)
+    w.unmount()
+  })
 })

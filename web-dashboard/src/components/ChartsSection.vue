@@ -8,7 +8,7 @@ import Icon from './Icon.vue'
 import { BODY_PARAMS_CHANGED, BODY_VALUES_CHANGED, useCharts } from '../lib/useCharts'
 import { canEditValues, entryGoal, type ChartEntry } from '../lib/chartSeries'
 import { effectivePeriod } from '../lib/chartPeriods'
-import { filterPointsByRange, loadPeriodState, savePeriodState, type PeriodState } from '../lib/chart'
+import { filterPointsWithFallback, loadPeriodState, savePeriodState, type PeriodState } from '../lib/chart'
 import { t } from '../lib/i18n'
 
 // Блок «Графики»: серии параметров тела, «баллы за день» и числовых метрик; выбор/порядок/цели
@@ -46,10 +46,17 @@ const configError = ref<string | null>(null)
 const periodFor = ref<string | null>(null)
 const periodTick = ref(0) // пересчёт периодов отдельных графиков после сохранения/сброса
 
-function pointsFor(key: string) {
+function windowFor(key: string) {
   void periodTick.value
   const p = effectivePeriod(key, period)
-  return filterPointsByRange(series.value[key].points, p.range, p.from, p.to)
+  return filterPointsWithFallback(series.value[key].points, p.range, p.from, p.to)
+}
+function pointsFor(key: string) {
+  return windowFor(key).points
+}
+// период был слишком коротким для графика — показали последние записи и говорим об этом
+function noteFor(key: string): string | null {
+  return windowFor(key).widened ? t('chart_period_widened') : null
 }
 
 function goalFor(entry: ChartEntry) {
@@ -94,6 +101,7 @@ function onPeriodApplied() {
           :title="series[entry.key].name ?? series[entry.key].label"
           :icon="series[entry.key].icon"
           :points="pointsFor(entry.key)"
+          :note="noteFor(entry.key)"
           :unit="series[entry.key].unit"
           :color="series[entry.key].color"
           :goal-value="goalFor(entry).value"

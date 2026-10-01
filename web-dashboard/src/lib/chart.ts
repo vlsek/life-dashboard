@@ -91,6 +91,27 @@ export function filterPointsByRange(points: { date: string; y: number | null }[]
   return points.filter((p) => p.date >= from && (!to || p.date <= to))
 }
 
+// BACKLOG 18.2: короткий период («последние 10 дней», «эта неделя» в понедельник) мог оставить в окне 0–1 значение, и график
+// писал «мало данных», хотя за более широкий срок записи есть. Если в выбранном периоде меньше двух значений, а в серии
+// (до конца периода) их есть минимум два — показываем окно от предпоследней записи и помечаем это (widened), чтобы
+// интерфейс честно сказал, что период расширен. Для «Всё» и когда данных нет вообще ничего не меняется.
+export function filterPointsWithFallback(
+  points: { date: string; y: number | null }[],
+  rangeKey: PeriodRange,
+  customFrom: string | null,
+  customTo: string | null,
+  today: Date = new Date(),
+): { points: { date: string; y: number | null }[]; widened: boolean } {
+  const base = filterPointsByRange(points, rangeKey, customFrom, customTo, today)
+  const realCount = (arr: { y: number | null }[]) => arr.reduce((n, p) => n + (p.y != null ? 1 : 0), 0)
+  if (rangeKey === 'all' || realCount(base) >= 2) return { points: base, widened: false }
+  const [, to] = periodBounds(rangeKey, customFrom, customTo, today)
+  const upto = points.filter((p) => p.y != null && (!to || p.date <= to))
+  if (upto.length < 2) return { points: base, widened: false }
+  const start = upto[upto.length - 2].date
+  return { points: points.filter((p) => p.date >= start && (!to || p.date <= to)), widened: true }
+}
+
 // Период графика запоминается в localStorage между сессиями — портировано из
 // loadPeriodState()/savePeriodState() в config.js.
 export function loadPeriodState(storageKey: string, fallback: PeriodState): PeriodState {
