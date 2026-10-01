@@ -184,3 +184,16 @@ input[type='radio'] {
   55% { transform: scale(0.97, 1.05) rotate(1.2deg); }
   80% { transform: scale(1.03, 1) rotate(-0.6deg); }
 }
+
+/* «Отключить все анимации» (BACKLOG 16, 14:02): выбор человека → <html data-motion="off"> (localStorage `site_motion`,
+   окно «Глобальные настройки» в правой панели). Гасит все CSS-анимации и переходы страницы разом.
+   Системное prefers-reduced-motion обрабатывается отдельными правилами компонентов — этот блок его не заменяет.
+   Такое же правило есть в каждом web-<стр>/src/style.css (наличие проверяет web-dashboard/src/motionAllPilots.test.ts).
+   ВАЖНО: в комментариях CSS нельзя писать звёздочку со слэшем — она закрывает комментарий и ломает следующее правило. */
+html[data-motion='off'] *,
+html[data-motion='off'] *::before,
+html[data-motion='off'] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}

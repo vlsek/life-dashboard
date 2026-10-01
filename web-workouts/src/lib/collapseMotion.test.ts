@@ -12,7 +12,10 @@ function host(initial: boolean) {
   return { w, open, el: () => w.find('[data-test="body"]').element as HTMLElement }
 }
 
-afterEach(() => vi.useRealTimers())
+afterEach(() => {
+  vi.useRealTimers()
+  document.documentElement.removeAttribute('data-motion')
+})
 
 describe('vCollapse', () => {
   it('изначально открыто — виден; изначально закрыто — display:none без анимации', () => {
@@ -44,6 +47,28 @@ describe('vCollapse', () => {
     expect(el().style.display).toBe('none')
     expect(el().style.height).toBe('')
     expect(el().style.overflow).toBe('')
+    w.unmount()
+  })
+
+  it('выключатель «все анимации» (data-motion=off): сворачивание мгновенное, без промежуточного состояния', async () => {
+    vi.useFakeTimers()
+    document.documentElement.setAttribute('data-motion', 'off')
+    const { open, el, w } = host(true)
+    Object.defineProperty(el(), 'scrollHeight', { value: 120, configurable: true })
+    open.value = false
+    await nextTick()
+    expect(el().style.display).toBe('none') // без ожидания 300 мс
+    expect(el().style.overflow).toBe('')
+    w.unmount()
+  })
+
+  it('без флага при измеримой высоте анимация есть (контроль к тесту выше)', async () => {
+    vi.useFakeTimers()
+    const { open, el, w } = host(true)
+    Object.defineProperty(el(), 'scrollHeight', { value: 120, configurable: true })
+    open.value = false
+    await nextTick()
+    expect(el().style.display).not.toBe('none')
     w.unmount()
   })
 

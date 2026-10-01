@@ -92,3 +92,16 @@ input[type='radio'] {
 .collapse-head:hover .collapse-chevron { color: var(--text); }
 .collapse-head:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .collapse-chevron { transition: none; } }
+
+/* «Отключить все анимации» (BACKLOG 16, 14:02): выбор человека → <html data-motion="off"> (localStorage `site_motion`,
+   окно «Глобальные настройки» в правой панели). Гасит все CSS-анимации и переходы страницы разом.
+   Системное prefers-reduced-motion обрабатывается отдельными правилами компонентов — этот блок его не заменяет.
+   Такое же правило есть в каждом web-<стр>/src/style.css (наличие проверяет web-dashboard/src/motionAllPilots.test.ts).
+   ВАЖНО: в комментариях CSS нельзя писать звёздочку со слэшем — она закрывает комментарий и ломает следующее правило. */
+html[data-motion='off'] *,
+html[data-motion='off'] *::before,
+html[data-motion='off'] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
