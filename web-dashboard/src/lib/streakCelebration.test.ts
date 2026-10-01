@@ -1,10 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
 import { nextTick, ref } from 'vue'
 import { mount } from '@vue/test-utils'
 import { celebrationsEnabled, loadShown, saveShown, setCelebrationsEnabled, useStreakCelebration } from './useStreakCelebration'
 import StreakMilestoneModal from '../components/StreakMilestoneModal.vue'
+import modalSource from '../components/StreakMilestoneModal.vue?raw'
 import LayoutModal from '../components/LayoutModal.vue'
 import type { StreakItem } from './streaks'
 import type { Milestone } from './streakMilestones'
@@ -120,8 +119,7 @@ describe('StreakMilestoneModal', () => {
   })
   it('respects prefers-reduced-motion: animations and flash rings are switched off', () => {
     // стили scoped живут в SFC, в happy-dom их не прогнать — проверяем исходник компонента
-    const src = readFileSync(resolve(process.cwd(), 'src/components/StreakMilestoneModal.vue'), 'utf-8')
-    const block = src.slice(src.indexOf('@media (prefers-reduced-motion: reduce)'))
+    const block = modalSource.slice(modalSource.indexOf('@media (prefers-reduced-motion: reduce)'))
     expect(block).toContain('.celebrate-card')
     expect(block).toContain('.celebrate-flame')
     expect(block).toContain('animation: none')
