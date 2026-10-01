@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.88";
+const SITE_VERSION = "1.89";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.89", date: "2026-10-01 13:20", changes: [
+        "Дашборд, графики подходов (отжимания и т. п.): точка дня теперь мини-круг из долей по особенностям подхода — например, из 100 отжиманий 50 классических, 30 алмазных и 20 на бицепс; если особенность одна, точка сплошная её цвета. Под графиком появилась легенда «цвет — особенность — сумма повторений за период», у точки — подсказка с разбивкой. Цвета особенностей постоянные и не меняются при смене периода. Если у подходов нет названий особенностей, график выглядит как раньше",
+    ]},
     { version: "1.88", date: "2026-10-01 13:13", changes: [
         "Дашборд, окно «Баллы» (клик по баллам в профиле): теперь по умолчанию — компактный список из последних 5 источников прибытка (метрики, цели, книги; новые сверху, с датой), а кнопка «Показать ещё» плавно разворачивает остальные начисления за 7 дней и отдельный список покупок. Минус в списках теперь типографский («−100»)",
     ]},
@@ -1164,6 +1167,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.89", date: "2026-10-01 13:20", changes: [
+        "Dashboard, set charts (push-ups etc.): a day's point is now a mini pie made of the shares of each set variation — e.g. of 100 push-ups, 50 classic, 30 diamond and 20 biceps; with a single variation the point is a solid dot of its colour. A legend \"colour — variation — total reps for the period\" appears under the chart, and each point has a tooltip with the breakdown. Variation colours are stable and do not change when the period changes. If sets have no variation names, the chart looks as before",
+    ]},
     { version: "1.88", date: "2026-10-01 13:13", changes: [
         "Dashboard, \"Points\" window (click on the points in the profile): by default it now shows a compact list of the latest 5 sources of income (metrics, goals, books; newest first, with the date), and the \"Show more\" button smoothly expands the rest of the earnings for 7 days and a separate list of purchases. The minus sign in the lists is now typographic (\"−100\")",
     ]},

@@ -1,6 +1,13 @@
 {
-  "version": "1.88",
+  "version": "1.89",
   "en": [
+    {
+      "version": "1.89",
+      "date": "2026-10-01 13:20",
+      "changes": [
+        "Dashboard, set charts (push-ups etc.): a day's point is now a mini pie made of the shares of each set variation — e.g. of 100 push-ups, 50 classic, 30 diamond and 20 biceps; with a single variation the point is a solid dot of its colour. A legend \"colour — variation — total reps for the period\" appears under the chart, and each point has a tooltip with the breakdown. Variation colours are stable and do not change when the period changes. If sets have no variation names, the chart looks as before"
+      ]
+    },
     {
       "version": "1.88",
       "date": "2026-10-01 13:13",
@@ -1373,6 +1380,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.89",
+      "date": "2026-10-01 13:20",
+      "changes": [
+        "Дашборд, графики подходов (отжимания и т. п.): точка дня теперь мини-круг из долей по особенностям подхода — например, из 100 отжиманий 50 классических, 30 алмазных и 20 на бицепс; если особенность одна, точка сплошная её цвета. Под графиком появилась легенда «цвет — особенность — сумма повторений за период», у точки — подсказка с разбивкой. Цвета особенностей постоянные и не меняются при смене периода. Если у подходов нет названий особенностей, график выглядит как раньше"
+      ]
+    },
     {
       "version": "1.88",
       "date": "2026-10-01 13:13",
