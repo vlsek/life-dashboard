@@ -101,6 +101,7 @@ function onPeriodApplied() {
           :title="series[entry.key].name ?? series[entry.key].label"
           :icon="series[entry.key].icon"
           :points="pointsFor(entry.key)"
+          :variations="series[entry.key].variations"
           :note="noteFor(entry.key)"
           :unit="series[entry.key].unit"
           :color="series[entry.key].color"

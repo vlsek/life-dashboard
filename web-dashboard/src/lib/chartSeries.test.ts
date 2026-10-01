@@ -61,7 +61,9 @@ describe('buildSeries', () => {
     expect(s['metric:water'].label).toBe('💧 Вода')
   })
   it('подходы: сумма повторений; пустой список даёт 0 (а не пропуск), тип запоминается', () => {
-    expect(s['metric:push'].points).toEqual([{ date: '2026-01-01', y: 22 }, { date: '2026-01-02', y: 0 }])
+    // значение (y) — как и раньше; сверх него у точки подходов теперь доли по особенностям (BACKLOG 19, 11:41): без особенностей — одна доля «без особенности», пустой день — пусто
+    expect(s['metric:push'].points.map((p) => ({ date: p.date, y: p.y }))).toEqual([{ date: '2026-01-01', y: 22 }, { date: '2026-01-02', y: 0 }])
+    expect(s['metric:push'].points[1].shares).toEqual([])
     expect(s['metric:push'].type).toBe('sets')
   })
   it('битое значение подходов (не массив) пропускается, а не рисуется дырой', () => {
@@ -142,5 +144,33 @@ describe('upsertPoint / parseEditedValue', () => {
     expect(parseEditedValue('')).toBeNull()
     expect(parseEditedValue('12.5')).toBe(12.5)
     expect(parseEditedValue('abc')).toBe(0)
+  })
+})
+
+// BACKLOG 19 (11:41): метрики-подходы несут доли по особенностям и стабильный порядок
+describe('buildSeries: sets variations', () => {
+  const set = (reps: number, variation: string | null) => ({ reps, variation, time: null })
+  const dv = (date: string, value: unknown): DailyValueRow => ({ date, metric_id: 'push', value } as DailyValueRow)
+  const rows = [
+    dv('2026-09-02', [set(30, 'diamond'), set(20, 'classic')]),
+    dv('2026-09-01', [set(50, 'classic')]),
+    dv('2026-09-03', [set(10, null)]),
+  ]
+  it('adds per-day shares and the variation order to a sets series', () => {
+    const s = buildSeries([], [], [pushups], rows)['metric:push']
+    expect(s.variations).toEqual(['classic', 'diamond']) // classic появилась раньше
+    expect(s.points.map((p) => p.y)).toEqual([50, 50, 10])
+    expect(s.points[1].shares).toEqual([{ label: 'classic', reps: 20 }, { label: 'diamond', reps: 30 }])
+    expect(s.points[2].shares).toEqual([{ label: null, reps: 10 }])
+  })
+  it('does not add shares or variations to number metrics', () => {
+    const s = buildSeries([], [], [water], [{ date: '2026-09-01', metric_id: 'water', value: 1500 } as DailyValueRow])['metric:water']
+    expect(s.variations).toBeUndefined()
+    expect(s.points[0].shares).toBeUndefined()
+  })
+  it('the order is built from the whole history, not from the shown period', () => {
+    const s = buildSeries([], [], [pushups], rows)['metric:push']
+    // «diamond» появилась 02.09 — даже если в окне графика только 03.09, цвета определяются по всей истории
+    expect(s.variations!.indexOf('diamond')).toBe(1)
   })
 })

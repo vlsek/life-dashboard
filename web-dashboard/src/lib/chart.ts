@@ -1,14 +1,18 @@
+import type { VariationShare } from './variationChart'
+
 export interface ChartPoint {
   date: string // ISO
   y: number | null
   bucketDays?: number
+  // доли по особенностям подхода (метрики-подходы, BACKLOG 19 11:41): из какого дня взято значение точки
+  shares?: VariationShare[]
 }
 
 // Заполняет пропущенные дни null-точками (чтобы график рисовал пунктир на дырах, а не
 // схлопывал соседние даты), затем, если точек больше maxPoints, укрупняет в корзины —
 // последнее известное значение в каждой корзине. Портировано 1:1 из prepareChartSeries()
 // в config.js.
-export function prepareChartSeries(rawPoints: { date: string; y: number | null }[], maxPoints = 24): ChartPoint[] {
+export function prepareChartSeries(rawPoints: { date: string; y: number | null; shares?: VariationShare[] }[], maxPoints = 24): ChartPoint[] {
   if (!rawPoints || rawPoints.length === 0) return []
   const sorted = [...rawPoints].sort((a, b) => a.date.localeCompare(b.date))
   if (sorted.length === 1) return sorted
@@ -19,7 +23,11 @@ export function prepareChartSeries(rawPoints: { date: string; y: number | null }
   const totalDays = Math.round((last.getTime() - first.getTime()) / dayMs) + 1
 
   const byDate: Record<string, number | null> = {}
-  sorted.forEach((p) => (byDate[p.date] = p.y))
+  const sharesByDate: Record<string, VariationShare[] | undefined> = {}
+  sorted.forEach((p) => {
+    byDate[p.date] = p.y
+    if (p.shares) sharesByDate[p.date] = p.shares
+  })
 
   const full: ChartPoint[] = []
   for (let i = 0; i < totalDays; i++) {
@@ -27,7 +35,7 @@ export function prepareChartSeries(rawPoints: { date: string; y: number | null }
     const d = new Date(first)
     d.setDate(first.getDate() + i)
     const key = fmtDateLocal(d)
-    full.push({ date: key, y: key in byDate ? byDate[key] : null })
+    full.push(key in sharesByDate ? { date: key, y: key in byDate ? byDate[key] : null, shares: sharesByDate[key] } : { date: key, y: key in byDate ? byDate[key] : null })
   }
 
   if (full.length <= maxPoints) return full
@@ -37,8 +45,12 @@ export function prepareChartSeries(rawPoints: { date: string; y: number | null }
   for (let i = 0; i < full.length; i += bucketSize) {
     const chunk = full.slice(i, i + bucketSize)
     const withValue = chunk.filter((p) => p.y != null)
-    const y = withValue.length ? withValue[withValue.length - 1].y : null
-    bucketed.push({ date: chunk[chunk.length - 1].date, y, bucketDays: chunk.length })
+    const lastReal = withValue.length ? withValue[withValue.length - 1] : null
+    const y = lastReal ? lastReal.y : null
+    // значение корзины — последнее известное, поэтому и доли берём из того же дня
+    const bucket: ChartPoint = { date: chunk[chunk.length - 1].date, y, bucketDays: chunk.length }
+    if (lastReal?.shares) bucket.shares = lastReal.shares
+    bucketed.push(bucket)
   }
   return bucketed
 }
@@ -85,7 +97,7 @@ export function periodBounds(rangeKey: PeriodRange, customFrom: string | null, c
 }
 
 // Портировано из filterPointsByRange() в dashboard.js.
-export function filterPointsByRange(points: { date: string; y: number | null }[], rangeKey: PeriodRange, customFrom: string | null, customTo: string | null, today: Date = new Date()) {
+export function filterPointsByRange<P extends { date: string; y: number | null }>(points: P[], rangeKey: PeriodRange, customFrom: string | null, customTo: string | null, today: Date = new Date()) {
   const [from, to] = periodBounds(rangeKey, customFrom, customTo, today)
   if (!from) return points
   return points.filter((p) => p.date >= from && (!to || p.date <= to))
@@ -95,13 +107,13 @@ export function filterPointsByRange(points: { date: string; y: number | null }[]
 // писал «мало данных», хотя за более широкий срок записи есть. Если в выбранном периоде меньше двух значений, а в серии
 // (до конца периода) их есть минимум два — показываем окно от предпоследней записи и помечаем это (widened), чтобы
 // интерфейс честно сказал, что период расширен. Для «Всё» и когда данных нет вообще ничего не меняется.
-export function filterPointsWithFallback(
-  points: { date: string; y: number | null }[],
+export function filterPointsWithFallback<P extends { date: string; y: number | null }>(
+  points: P[],
   rangeKey: PeriodRange,
   customFrom: string | null,
   customTo: string | null,
   today: Date = new Date(),
-): { points: { date: string; y: number | null }[]; widened: boolean } {
+): { points: P[]; widened: boolean } {
   const base = filterPointsByRange(points, rangeKey, customFrom, customTo, today)
   const realCount = (arr: { y: number | null }[]) => arr.reduce((n, p) => n + (p.y != null ? 1 : 0), 0)
   if (rangeKey === 'all' || realCount(base) >= 2) return { points: base, widened: false }

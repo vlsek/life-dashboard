@@ -4,6 +4,7 @@ import { ref } from 'vue'
 import ChartsConfigModal from '../components/ChartsConfigModal.vue'
 import ChartPeriodModal from '../components/ChartPeriodModal.vue'
 import ChartEditValues from '../components/ChartEditValues.vue'
+import ChartBlock from '../components/ChartBlock.vue'
 import type { ChartSeries } from './chartSeries'
 
 const series: Record<string, ChartSeries> = {
@@ -182,5 +183,64 @@ describe('ChartsSection', () => {
     expect(w.find('svg').exists()).toBe(true)
     expect(w.find('[data-test="chart-note"]').text()).toMatch(/мало данных|Too little data/)
     w.unmount()
+  })
+})
+
+// BACKLOG 19 (11:41): точки-«мини-круги» и легенда по особенностям подхода
+describe('ChartBlock: variations', () => {
+  const pts = (...shares: { label: string | null; reps: number }[][]) =>
+    shares.map((sh, i) => ({ date: `2026-09-0${i + 1}`, y: sh.reduce((n, s) => n + s.reps, 0), shares: sh }))
+  const mountBlock = (points: any[], variations: string[] = ['classic', 'diamond', 'biceps']) =>
+    mount(ChartBlock, { props: { title: 'Push-ups', points, variations } })
+
+  it('draws a pie marker per day with sectors for several variations and a solid dot for one', () => {
+    const w = mountBlock(pts([{ label: 'classic', reps: 50 }, { label: 'diamond', reps: 30 }, { label: 'biceps', reps: 20 }], [{ label: 'classic', reps: 40 }]))
+    const markers = w.findAll('[data-test="pie-point"]')
+    expect(markers).toHaveLength(2)
+    expect(markers[0].findAll('path')).toHaveLength(3)
+    expect(markers[0].findAll('circle')).toHaveLength(0)
+    expect(markers[1].findAll('path')).toHaveLength(0)
+    expect(markers[1].find('circle').attributes('fill')).toBe('#3b82f6')
+  })
+  it('shows a legend under the chart: colour, variation, total reps over the period', () => {
+    const w = mountBlock(pts([{ label: 'classic', reps: 50 }, { label: 'diamond', reps: 30 }], [{ label: 'classic', reps: 10 }, { label: null, reps: 5 }]))
+    const items = w.findAll('[data-test="legend-item"]').map((i) => i.text())
+    expect(items).toHaveLength(3)
+    expect(items[0]).toContain('classic')
+    expect(items[0]).toContain('60')
+    expect(items[1]).toContain('diamond')
+    expect(items[2]).toContain('5')
+    const swatches = w.findAll('[data-test="legend-item"] span.rounded-full').map((s) => (s.element as HTMLElement).style.background)
+    expect(swatches[0]).toMatch(/#3b82f6|rgb\(59, 130, 246\)/)
+  })
+  it('puts a tooltip with the breakdown into each marker', () => {
+    const w = mountBlock(pts([{ label: 'classic', reps: 50 }, { label: 'diamond', reps: 30 }], [{ label: 'classic', reps: 40 }]))
+    const title = w.find('[data-test="pie-point"] title').text()
+    expect(title).toContain('50 classic · 30 diamond')
+    expect(title).toContain('= 80')
+    expect(title.startsWith('01.09')).toBe(true)
+  })
+  it('keeps the plain look when no set has a named variation (no legend, ordinary dots)', () => {
+    const w = mountBlock(pts([{ label: null, reps: 10 }], [{ label: null, reps: 20 }]))
+    expect(w.find('[data-test="chart-legend"]').exists()).toBe(false)
+    expect(w.findAll('[data-test="pie-point"]')).toHaveLength(0)
+    expect(w.findAll('circle').length).toBeGreaterThanOrEqual(2)
+  })
+  it('does not touch charts of other metrics (points without shares)', () => {
+    const w = mount(ChartBlock, { props: { title: 'Weight', points: [{ date: '2026-09-01', y: 80 }, { date: '2026-09-02', y: 79 }] } })
+    expect(w.find('[data-test="chart-legend"]').exists()).toBe(false)
+    expect(w.findAll('[data-test="pie-point"]')).toHaveLength(0)
+  })
+  it('escapes user text in the tooltip so a variation name cannot inject markup', () => {
+    const evil = '<script>alert(1)</script>"'
+    const w = mountBlock(pts([{ label: evil, reps: 10 }, { label: 'classic', reps: 10 }], [{ label: 'classic', reps: 5 }]), [evil, 'classic'])
+    expect(w.html()).not.toContain('<script>alert(1)')
+    expect(w.find('[data-test="pie-point"] title').text()).toContain('<script>alert(1)</script>"')
+    // и легенда (текст через шаблон Vue) безопасна
+    expect(w.find('[data-test="chart-legend"]').element.querySelector('script')).toBeNull()
+  })
+  it('shows colours of "no variation" sets in grey', () => {
+    const w = mountBlock(pts([{ label: 'classic', reps: 5 }, { label: null, reps: 5 }], [{ label: 'classic', reps: 5 }]))
+    expect(w.find('[data-test="pie-point"]').html()).toContain('#9aa0a6')
   })
 })

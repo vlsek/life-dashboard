@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { prepareChartSeries, type ChartPoint } from '../lib/chart'
+import { buildLegend, describeShares, escapeXml, hasNamedVariations, pieSlices } from '../lib/variationChart'
+import type { VariationShare } from '../lib/variationChart'
 import { t } from '../lib/i18n'
 import MetricIcon from './MetricIcon.vue'
 
@@ -8,22 +10,42 @@ const props = withDefaults(
   defineProps<{
     title?: string
     icon?: string | null // иконка метрики: svg или эмодзи, рисуется перед названием
-    points: { date: string; y: number | null }[]
+    points: { date: string; y: number | null; shares?: VariationShare[] }[]
     unit?: string
     color?: string
     goalValue?: number | null
     goalLabel?: string | null
     note?: string | null // пояснение под графиком (например, «период расширен»)
+    variations?: string[] | null // метрики-подходы: стабильный порядок особенностей (от него цвета точек и легенды)
   }>(),
-  { title: '', icon: null, unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null, note: null },
+  { title: '', icon: null, unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null, note: null, variations: null },
 )
 
 const prepared = computed<ChartPoint[]>(() => prepareChartSeries(props.points))
+// «Цветные» точки и легенда (BACKLOG 19, 11:41) — только если у подходов есть особенности с названием; иначе график как прежде.
+const order = computed(() => props.variations ?? [])
+const colored = computed(() => hasNamedVariations(props.points))
+const legend = computed(() => (colored.value ? buildLegend(props.points, order.value) : []))
 const hasGaps = computed(() => prepared.value.some((p) => p.y == null) && prepared.value.some((p) => p.y != null))
 
 function fmtChartLabel(iso: string): string {
   const parts = iso.split('-')
   return `${parts[2]}.${parts[1]}`
+}
+
+// Точка-«мини-круг»: сектора по долям особенностей (одна особенность — сплошной круг её цвета). Подсказка <title> —
+// «дд.мм: 50 классических · 30 алмазных · 20 на бицепс = 100»; названия — текст пользователя, поэтому экранируются.
+function pieMarker(x: number, y: number, label: string, shares: VariationShare[]): string {
+  const slices = pieSlices(shares, order.value, x, y, 6.5)
+  if (!slices.length) return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="${props.color}" />`
+  const total = shares.reduce((n, s) => n + (s.reps > 0 ? s.reps : 0), 0)
+  const tip = escapeXml(`${label}: ${describeShares(shares, t('chart_legend_none'))} = ${total}`)
+  const parts = slices.map((s) =>
+    s.full
+      ? `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6.5" fill="${s.color}" stroke="var(--bg-card)" stroke-width="1.5" />`
+      : `<path d="${s.path}" fill="${s.color}" stroke="var(--bg-card)" stroke-width="1" />`,
+  )
+  return `<g data-test="pie-point"><title>${tip}</title>${parts.join('')}</g>`
 }
 
 // Портировано 1:1 из svgLineChart() в config.js — строит только внутренность <svg>
@@ -52,6 +74,7 @@ const innerSvg = computed<string | null>(() => {
     y: p.y != null ? h - pad - ((p.y - min) / range) * (h - pad * 2) : null,
     label: fmtChartLabel(p.date),
     value: p.y,
+    shares: p.shares,
   }))
 
   let svg = ''
@@ -83,7 +106,7 @@ const innerSvg = computed<string | null>(() => {
   let shown = 0
   for (const c of coords) {
     if (c.y == null) continue
-    svg += `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="4" fill="${props.color}" />`
+    svg += colored.value && c.shares && c.shares.length ? pieMarker(c.x, c.y, c.label, c.shares) : `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="4" fill="${props.color}" />`
     if (shown % labelEvery === 0) {
       svg += `<text x="${c.x.toFixed(1)}" y="${(c.y - 10).toFixed(1)}" font-size="11" fill="var(--text)" text-anchor="middle">${c.value}${props.unit || ''}</text>`
       svg += `<text x="${c.x.toFixed(1)}" y="${h - 8}" font-size="10" fill="var(--text-dim)" text-anchor="middle">${c.label}</text>`
@@ -106,6 +129,13 @@ const fallbackText = computed(() => {
     <h4 v-if="title" class="mb-1.5 font-medium"><MetricIcon v-if="icon" :icon="icon" extra-style="margin-right:0.35em;" />{{ title }}</h4>
     <template v-if="innerSvg">
       <svg viewBox="0 0 620 160" width="100%" :height="160" v-html="innerSvg"></svg>
+      <ul v-if="legend.length" class="m-0 mt-1 flex list-none flex-wrap gap-x-3 gap-y-1 p-0 text-xs" data-test="chart-legend" :aria-label="t('chart_legend_aria')">
+        <li v-for="(item, i) in legend" :key="i" class="flex items-center gap-1" data-test="legend-item">
+          <span class="inline-block h-2.5 w-2.5 rounded-full" :style="{ background: item.color }" aria-hidden="true"></span>
+          {{ item.label ?? t('chart_legend_none') }}
+          <span class="dim">· {{ item.reps }}</span>
+        </li>
+      </ul>
       <p v-if="hasGaps" class="dim mt-0.5 text-xs">{{ t('chart_dashed_hint') }}</p>
       <p v-if="note" class="dim mt-0.5 text-xs" data-test="chart-note">{{ note }}</p>
     </template>

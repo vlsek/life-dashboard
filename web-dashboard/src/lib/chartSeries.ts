@@ -1,4 +1,6 @@
 import { metricNumericValue } from './metrics'
+import { dayShares, variationOrder } from './variationChart'
+import type { VariationShare } from './variationChart'
 import { pointsPerDaySeries } from './points-series'
 import { unitSuffix, type BodyParam, type BodyValue } from './profile'
 import type { Metric, DailyValueRow } from './types'
@@ -10,6 +12,7 @@ import type { Metric, DailyValueRow } from './types'
 export interface SeriesPoint {
   date: string
   y: number | null
+  shares?: VariationShare[] // метрики-подходы: доли по особенностям за день (BACKLOG 19, 11:41)
 }
 
 export interface ChartSeries {
@@ -21,6 +24,7 @@ export interface ChartSeries {
   points: SeriesPoint[]
   defaultGoal?: number | null
   type?: string // тип метрики (для 'sets' значения из графика не правятся)
+  variations?: string[] // метрики-подходы: стабильный порядок особенностей по всей истории (от него зависят цвета)
 }
 
 export interface ChartEntry {
@@ -57,6 +61,8 @@ export function buildSeries(bodyParams: BodyParam[], bodyValues: BodyValue[], me
   const days = Object.keys(byDay).sort()
 
   for (const m of metrics.filter((x) => x.type === 'number' || x.type === 'sets')) {
+    // метрики-подходы: порядок особенностей по ВСЕЙ истории (а не по выбранному периоду) — цвета не прыгают при смене периода
+    const variations = m.type === 'sets' ? variationOrder(days.filter((d) => byDay[d][m.id] !== undefined).map((d) => ({ date: d, value: byDay[d][m.id] }))) : undefined
     series[`metric:${m.id}`] = {
       label: iconLabelText(m.icon, m.name),
       name: m.name,
@@ -64,9 +70,14 @@ export function buildSeries(bodyParams: BodyParam[], bodyValues: BodyValue[], me
       unit: m.unit ? ' ' + m.unit : '',
       color: 'var(--accent)',
       type: m.type,
+      ...(variations ? { variations } : {}),
       points: days
         .filter((d) => byDay[d][m.id] !== undefined)
-        .map((d) => ({ date: d, y: metricNumericValue(m, byDay[d][m.id]) }))
+        .map((d) => {
+          const point: SeriesPoint = { date: d, y: metricNumericValue(m, byDay[d][m.id]) }
+          if (m.type === 'sets') point.shares = dayShares(byDay[d][m.id], variations)
+          return point
+        })
         .filter((p) => p.y != null), // «подходы» с пустым/битым значением — пропускаем точку, а не рисуем дыру нулём
       // цель из самой метрики — линия-ориентир по умолчанию
       defaultGoal: m.goal_value ? m.goal_value : null,
