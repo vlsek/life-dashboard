@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.76";
+const SITE_VERSION = "1.77";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.77", date: "2026-10-01 06:37", changes: [
+        "Дашборд: анимация баллов — когда ты отмечаешь метрику выполненной (или набираешь цель по числу, подходам, вариантам), у места нажатия появляется «+1» с монеткой, плавно уплывает вверх и растворяется. Если снимаешь отметку и метрика перестаёт быть выполненной — то же самое, но «−1». Подпись показывается только после того, как значение реально сохранилось, и только когда балл правда начислился или снялся (например, число 3 → 5 при цели 10 баллов не меняет). Если в системе включено «уменьшить движение», подпись не плывёт, а коротко проявляется и гаснет на месте",
+    ]},
     { version: "1.76", date: "2026-10-01 06:24", changes: [
         "Дашборд: поздравления за серии — когда серия набирает 5, 10, 30, 50, 100, 200 или 365 дней (у недельных метрик 4, 12, 26 или 52 недели), появляется анимированная плашка: разгорающийся огонёк, крупное число, подпись, за что серия, и тёплые слова (несколько вариантов, чтобы не приедалось). Показывается один раз на порог; при первом запуске — только самая высокая из уже набранных серий. Отключается кнопкой «Больше не показывать» в плашке или галочкой «Поздравлять за серии» в окне ⚙ «Настроить Дашборд». Если в системе включено «уменьшить движение», анимация отключена",
     ]},
@@ -1127,6 +1130,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.77", date: "2026-10-01 06:37", changes: [
+        "Dashboard: points animation — when you mark a metric as done (or reach a goal for a number, sets or options), a \"+1\" with a coin appears where you tapped, floats up smoothly and fades away. If you undo it and the metric stops being done, the same happens with \"−1\". The label only appears after the value has actually been saved, and only when a point was really gained or lost (for example, a number going 3 → 5 with a goal of 10 changes nothing). If the system asks to reduce motion, the label does not float: it briefly fades in and out in place",
+    ]},
     { version: "1.76", date: "2026-10-01 06:24", changes: [
         "Dashboard: streak congratulations — when a streak reaches 5, 10, 30, 50, 100, 200 or 365 days (4, 12, 26 or 52 weeks for weekly metrics), an animated card appears: an igniting flame, a big number, what the streak is for and a few warm words (several variants so it does not get stale). Shown once per threshold; on the very first run only the highest of the already earned streaks. Turn it off with \"Don't show these again\" in the card or the \"Show congratulations for streaks\" checkbox in the ⚙ \"Customize dashboard\" window. Animation is off when the system asks to reduce motion",
     ]},
