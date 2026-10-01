@@ -17,6 +17,7 @@ import SplashLoader from './components/SplashLoader.vue'
 import PointsFloat from './components/PointsFloat.vue'
 import StreakMilestoneModal from './components/StreakMilestoneModal.vue'
 import PlanReminderBanner from './components/PlanReminderBanner.vue'
+import InstallBanner from './components/InstallBanner.vue'
 import ProfileSection from './components/ProfileSection.vue'
 import DailyMetricsSection from './components/DailyMetricsSection.vue'
 import LayoutModal from './components/LayoutModal.vue'
@@ -160,6 +161,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
         @dismiss-milestones="dismissMilestonesReminder"
         @dismiss-weekend="dismissWeekendReminder"
       />
+      <InstallBanner />
       <PlanReminderBanner :items="planReminders" @dismiss="dismissPlanReminder" />
       <EveningReminderBanner v-if="eveningVisible" :items="eveningItems" @dismiss="dismissEveningReminder" />
 
