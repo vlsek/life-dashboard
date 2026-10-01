@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { getLang, setLang, t, type DictKey } from '../lib/i18n'
 import { getTheme, setTheme, THEME_KEYS, type ThemeKey } from '../lib/theme'
 import { logout } from '../lib/supabase'
+import ConfirmLogoutModal from './ConfirmLogoutModal.vue'
 import { loadVersionInfo } from '../lib/version'
 import Icon from './Icon.vue'
 import ChangelogModal from './ChangelogModal.vue'
@@ -55,6 +56,7 @@ function closeSidebar() {
 }
 
 const changelogOpen = ref(false)
+const logoutConfirmOpen = ref(false) // «Точно выйти?» (BACKLOG 18)
 const version = ref('')
 onMounted(async () => {
   try {
@@ -263,7 +265,8 @@ onUnmounted(() => {
       type="button"
       class="mt-2 truncate rounded-lg border px-3 py-2 text-left text-sm"
       style="background: transparent; border-color: var(--border); color: var(--text-dim)"
-      @click="logout"
+      data-test="logout-btn"
+      @click="logoutConfirmOpen = true"
     >
       {{ t('logout') }} ({{ props.userEmail }})
     </button>
@@ -290,6 +293,7 @@ onUnmounted(() => {
   </nav>
 
   <ChangelogModal v-if="changelogOpen" @close="changelogOpen = false" />
+  <ConfirmLogoutModal v-if="logoutConfirmOpen" @confirm="logout" @cancel="logoutConfirmOpen = false" />
 </template>
 
 <style>
