@@ -1,6 +1,13 @@
 {
-  "version": "2.03",
+  "version": "2.04",
   "en": [
+    {
+      "version": "2.04",
+      "date": "2026-10-01 22:48",
+      "changes": [
+        "Water: the automatic goal now takes height into account. When your profile has a height, the goal is based on body surface area (Mosteller formula: √(height × weight / 3600)) × 1200 ml/m² — the usual fluid need of 1500 ml/m² a day, about 20% of which comes with food. Example: 70 kg and 175 cm give 2210 ml. Without height the calculation stays as before — weight × 30 ml. The water window (on the Dashboard and in the header on every page) has a new Height, cm field, and the (i) help explains in detail how the goal was obtained. The height comes from the profile you filled in during onboarding"
+      ]
+    },
     {
       "version": "2.03",
       "date": "2026-10-01 19:35",
@@ -1479,6 +1486,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.04",
+      "date": "2026-10-01 22:48",
+      "changes": [
+        "Вода: в автоматической норме теперь учитывается рост. Если в профиле указан рост, норма считается по площади поверхности тела (формула Мостеллера: √(рост × вес / 3600)) × 1200 мл/м² — это обычная потребность в жидкости 1500 мл/м² в сутки, из которых около 20% приходит с едой. Пример: 70 кг и 175 см дают 2210 мл. Без роста расчёт прежний — вес × 30 мл. В окне воды (на Дашборде и в шапке на всех страницах) появилось поле «Рост, см», а справка (i) подробно объясняет, как получена норма. Рост берётся из профиля, который вы заполняли при онбординге"
+      ]
+    },
     {
       "version": "2.03",
       "date": "2026-10-01 19:35",

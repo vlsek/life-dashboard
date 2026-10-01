@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.03";
+const SITE_VERSION = "2.04";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.04", date: "2026-10-01 22:48", changes: [
+        "Вода: в автоматической норме теперь учитывается рост. Если в профиле указан рост, норма считается по площади поверхности тела (формула Мостеллера: √(рост × вес / 3600)) × 1200 мл/м² — это обычная потребность в жидкости 1500 мл/м² в сутки, из которых около 20% приходит с едой. Пример: 70 кг и 175 см дают 2210 мл. Без роста расчёт прежний — вес × 30 мл. В окне воды (на Дашборде и в шапке на всех страницах) появилось поле «Рост, см», а справка (i) подробно объясняет, как получена норма. Рост берётся из профиля, который вы заполняли при онбординге",
+    ]},
     { version: "2.03", date: "2026-10-01 19:35", changes: [
         "Установка приложения (PWA): на всех страницах нового сайта теперь регистрируется service worker (раньше его регистрировали только страницы старой версии, и новый пользователь, открывший сайт на новой странице, не получал его — браузер не считал сайт устанавливаемым и не показывал значок установки в адресной строке). На Дашборде появилась закрывающаяся плашка «Установите приложение» с кнопкой «Установить» (на iPhone — подсказка «Поделиться → На экран Домой»); закрытая плашка не появляется 14 дней. Установленное приложение плашку не видит",
     ]},
@@ -1210,6 +1213,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.04", date: "2026-10-01 22:48", changes: [
+        "Water: the automatic goal now takes height into account. When your profile has a height, the goal is based on body surface area (Mosteller formula: √(height × weight / 3600)) × 1200 ml/m² — the usual fluid need of 1500 ml/m² a day, about 20% of which comes with food. Example: 70 kg and 175 cm give 2210 ml. Without height the calculation stays as before — weight × 30 ml. The water window (on the Dashboard and in the header on every page) has a new Height, cm field, and the (i) help explains in detail how the goal was obtained. The height comes from the profile you filled in during onboarding",
+    ]},
     { version: "2.03", date: "2026-10-01 19:35", changes: [
         "App installation (PWA): the service worker is now registered on every page of the new site (before, only the old-version pages registered it, so a new user who opened the site on a new page never got it — the browser did not treat the site as installable and showed no install icon in the address bar). The Dashboard now has a dismissible \"Install the app\" banner with an \"Install\" button (on iPhone — a \"Share → Add to Home Screen\" hint); a closed banner stays hidden for 14 days. The installed app does not see the banner",
     ]},
