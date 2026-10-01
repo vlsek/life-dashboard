@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { fmtRu } from '../lib/date'
 import { bestPaceRecord, bestSetRecord, formatSets } from '../lib/workouts'
+import { defaultWeightUnit } from '../lib/weightUnit'
 import Icon from './Icon.vue'
 import ExerciseChart from './ExerciseChart.vue'
 import { readExerciseCollapsed, writeExerciseCollapsed } from '../lib/exerciseCollapse'
@@ -32,7 +33,7 @@ const records = computed<RecordLine[]>(() => {
   const ex = props.exercise
   const perHour = t('workouts_per_hour')
   const durUnit = t('workouts_duration_unit')
-  const unitFallback = t('workouts_default_unit')
+  const unitFallback = defaultWeightUnit()
   const out: RecordLine[] = []
   const push = (icon: string, label: string, r: { text: string; date: string } | null) => {
     if (r) out.push({ icon, label, text: r.text, date: r.date })
@@ -110,7 +111,7 @@ const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date
           <tr v-for="e in sortedEntries" :key="e.id" class="border-b last:border-0" style="border-color: var(--border)">
             <td class="whitespace-nowrap py-1.5 pr-3 align-top">{{ fmtRu(e.date) }}</td>
             <td class="py-1.5 pr-3 align-top">
-              {{ formatSets(e.sets, exercise, t('workouts_per_hour'), t('workouts_duration_unit'), t('workouts_default_unit')) }}
+              {{ formatSets(e.sets, exercise, t('workouts_per_hour'), t('workouts_duration_unit'), defaultWeightUnit()) }}
             </td>
             <td class="py-1.5 pr-3 align-top" style="color: var(--text-dim)">{{ e.notes || '' }}</td>
             <td class="whitespace-nowrap py-1.5 text-right align-top">

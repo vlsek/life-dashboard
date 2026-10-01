@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useWorkouts } from './lib/useWorkouts'
+import { defaultWeightUnit } from './lib/weightUnit'
 import { isKnownCategory, sortCategoryKeys } from './lib/workouts'
 import { readWarmupDismissed, shouldShowWarmup, writeWarmupDismissed } from './lib/warmup'
 import { todayStr } from './lib/date'
@@ -26,7 +27,7 @@ import { vCollapse } from './lib/collapseMotion'
 const wk = useWorkouts()
 const { auth, exercises, entries, loadError, entriesFor } = wk
 
-const defaultUnit = () => t('workouts_default_unit')
+const defaultUnit = () => defaultWeightUnit()
 const defaultValueLabel = () => t('workouts_default_value_label')
 
 function errMsg(e: unknown): string {

@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { nowHHMM, todayStr } from '../lib/date'
 import { cleanSets } from '../lib/workouts'
+import { defaultWeightUnit } from '../lib/weightUnit'
 import { CELL_ORDER, blankRow, fromRows, toRows } from '../lib/sides'
 import type { CellKey, SetRow } from '../lib/sides'
 import Icon from './Icon.vue'
@@ -46,7 +47,7 @@ function onSubmit() {
 }
 
 const valueLabel = () => props.exercise.value_label || t('workouts_default_value_label')
-const unitLabel = () => props.exercise.unit || t('workouts_default_unit')
+const unitLabel = () => props.exercise.unit || defaultWeightUnit()
 </script>
 
 <template>
@@ -127,7 +128,7 @@ const unitLabel = () => props.exercise.unit || t('workouts_default_unit')
                   step="0.5"
                   class="modal-input"
                   style="width: 110px"
-                  :placeholder="t('workouts_extra_weight_placeholder') + ' (' + t('workouts_default_unit') + ')'"
+                  :placeholder="t('workouts_extra_weight_placeholder') + ' (' + defaultWeightUnit() + ')'"
                 />
               </template>
             </div>

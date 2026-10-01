@@ -1,4 +1,5 @@
 import type { Exercise, WorkoutEntry, WorkoutSet } from './types'
+import { repUnit } from './weightUnit'
 
 export interface BestRecord {
   text: string
@@ -30,7 +31,7 @@ export function bestSetRecord(
     }
   }
   if (!best) return null
-  const unitSuffix = exercise.unit ? ' ' + exercise.unit : ''
+  const unitSuffix = repUnit(exercise) ? ' ' + repUnit(exercise) : '' // у упражнения без веса «кг» после повторений не пишем
   const text =
     exercise.tracks_weight && best.weight != null
       ? `${best.reps}×${best.weight}${exercise.unit || unitFallback}`
@@ -86,7 +87,7 @@ export function formatSets(
   if (exercise.tracks_weight) {
     return sets.map((s) => (s.weight != null ? `${s.reps}×${s.weight}${exercise.unit || unitFallback}` : `${s.reps}`) + dur(s) + at(s)).join(', ')
   }
-  const unitSuffix = exercise.unit ? ` ${exercise.unit}` : ''
+  const unitSuffix = repUnit(exercise) ? ` ${repUnit(exercise)}` : ''
   // Доп. вес («Утяжеление») измеряется в весовых единицах (кг), а не в единицах самого упражнения.
   const extra = (s: WorkoutSet) => (s.weight != null && s.weight > 0 ? ` (+${s.weight}${unitFallback})` : '')
   return sets.map((s) => `${s.reps}${unitSuffix}` + extra(s) + dur(s) + at(s)).join(', ')

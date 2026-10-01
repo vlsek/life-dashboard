@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
 import { exerciseBilateralField, exerciseDurationField } from './workouts'
+import { unitToSave } from './weightUnit'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry } from './types'
 
 export type AuthState =
@@ -65,7 +66,7 @@ export function useWorkouts() {
       user_id: userId,
       name: res.name.trim(),
       category: res.category?.trim() || null,
-      unit: res.unit?.trim() || defaultUnit,
+      unit: unitToSave(res, defaultUnit),
       tracks_weight: res.tracks_weight !== 'no',
       value_label: res.value_label?.trim() || defaultValueLabel,
     })
@@ -98,7 +99,7 @@ export function useWorkouts() {
       .update({
         name: res.name.trim(),
         category: res.category?.trim() || null,
-        unit: res.unit?.trim() || defaultUnit,
+        unit: unitToSave(res, defaultUnit),
         tracks_weight: res.tracks_weight !== 'no',
         value_label: res.value_label?.trim() || defaultValueLabel,
         ...exerciseDurationField(res.tracks_duration, existing),

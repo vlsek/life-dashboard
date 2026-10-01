@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { t } from '../lib/i18n'
+import { defaultWeightUnit, isWeightUnit, rememberWeightUnit } from '../lib/weightUnit'
+import Icon from './Icon.vue'
 import type { Exercise, ExerciseFormInput } from '../lib/types'
 
 // Порт openExerciseFormModal() из workouts.js: имя, категория (фиксированный список +
@@ -18,7 +20,15 @@ const catSelect = ref(isLegacyCustom ? '__new__' : currentCat)
 const newCatName = ref(isLegacyCustom ? currentCat : '')
 const tracksWeight = ref<'yes' | 'no'>((props.existing?.tracks_weight ?? true) ? 'yes' : 'no')
 const valueLabel = ref(props.existing?.value_label ?? t('workouts_default_value_label'))
-const unit = ref(props.existing?.unit ?? t('workouts_default_unit'))
+// Единица веса (BACKLOG 18): у упражнения с весом по умолчанию «кг» (или последняя выбранная — запоминается), показана текстом,
+// сменить можно карандашиком. У упражнения без веса единицу не спрашиваем и не пишем (см. lib/weightUnit.ts).
+const OTHER = '__other__'
+const startUnit = props.existing?.unit && isWeightUnit(props.existing.unit) ? props.existing.unit : props.existing?.tracks_weight === false ? defaultWeightUnit() : props.existing?.unit || defaultWeightUnit()
+const unitPresets = Array.from(new Set([t('workouts_default_unit'), 'lb', startUnit]))
+const editingUnit = ref(false)
+const unitChoice = ref(unitPresets.includes(startUnit) ? startUnit : OTHER)
+const customUnit = ref(unitPresets.includes(startUnit) ? '' : startUnit)
+const chosenUnit = computed(() => (unitChoice.value === OTHER ? customUnit.value.trim() : unitChoice.value) || defaultWeightUnit())
 const tracksDuration = ref(props.existing?.tracks_duration ?? false)
 const bilateral = ref(props.existing?.bilateral ?? false)
 
@@ -30,12 +40,16 @@ onMounted(() => nameInput.value?.focus())
 function onSubmit() {
   if (!name.value.trim()) return
   const category = catSelect.value === '__new__' ? newCatName.value.trim() : catSelect.value
+  // Без веса единицу веса не пишем (остаётся только прежняя НЕвесовая единица, если была); с весом — выбранная, и запоминаем её.
+  const keptRepUnit = props.existing?.unit && !isWeightUnit(props.existing.unit) ? props.existing.unit : ''
+  const unitOut = tracksWeight.value === 'yes' ? chosenUnit.value : keptRepUnit
+  if (tracksWeight.value === 'yes') rememberWeightUnit(unitOut)
   emit('save', {
     name: name.value.trim(),
     category,
     tracks_weight: tracksWeight.value,
     value_label: valueLabel.value,
-    unit: unit.value,
+    unit: unitOut,
     tracks_duration: tracksDuration.value,
     bilateral: bilateral.value,
   })
@@ -94,10 +108,31 @@ function onSubmit() {
         </label>
         <p class="-mt-2 text-xs" style="color: var(--text-dim)">{{ t('workouts_field_bilateral_hint') }}</p>
 
-        <label class="flex flex-col gap-1 text-sm">
-          {{ t('workouts_field_unit') }}
-          <input v-model="unit" type="text" class="modal-input" />
-        </label>
+        <div v-if="tracksWeight === 'yes'" class="flex flex-col gap-1 text-sm" data-testid="unit-row">
+          {{ t('workouts_weight_unit_label') }}
+          <div v-if="!editingUnit" class="flex items-center gap-2">
+            <span class="font-medium" data-testid="unit-value">{{ chosenUnit }}</span>
+            <button
+              type="button"
+              class="rounded-lg border px-2 py-1"
+              style="border-color: var(--border); background: var(--bg); color: var(--text)"
+              :title="t('workouts_weight_unit_edit')"
+              :aria-label="t('workouts_weight_unit_edit')"
+              data-testid="unit-edit"
+              @click="editingUnit = true"
+            >
+              <Icon name="edit" />
+            </button>
+          </div>
+          <div v-else class="flex flex-wrap items-center gap-2">
+            <select v-model="unitChoice" class="modal-input" data-testid="unit-select">
+              <option v-for="u in unitPresets" :key="u" :value="u">{{ u }}</option>
+              <option :value="OTHER">{{ t('workouts_weight_unit_other') }}</option>
+            </select>
+            <input v-if="unitChoice === OTHER" v-model="customUnit" type="text" maxlength="8" class="modal-input" style="width: 96px" data-testid="unit-custom" />
+          </div>
+        </div>
+        <p v-else class="-mt-1 text-xs" style="color: var(--text-dim)" data-testid="unit-no-weight-hint">{{ t('workouts_reps_no_weight_hint') }}</p>
 
         <div class="mt-2 flex justify-end gap-2">
           <button
