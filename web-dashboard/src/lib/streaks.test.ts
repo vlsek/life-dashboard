@@ -156,3 +156,43 @@ describe('computeStreakItemsPure', () => {
     expect(firstWeekIdx).toBeGreaterThan(lastDayIdx)
   })
 })
+
+// BACKLOG 14 (11:15): метрика с выключенным «считать серию» (count_streak = false, миграция 031)
+describe('count_streak = false', () => {
+  const today = D('2026-09-30')
+  const days = (n: number, ids: string[]) => {
+    const by: Record<string, Record<string, unknown>> = {}
+    for (let i = 0; i < n; i++) {
+      const d = new Date(today)
+      d.setDate(d.getDate() - i)
+      const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      by[iso] = Object.fromEntries(ids.map((id) => [id, true]))
+    }
+    return by
+  }
+  it('gives no per-metric streak to a metric with the streak switched off', () => {
+    const on = metric({ id: 'a', name: 'Read' })
+    const off = metric({ id: 'b', name: 'Weight', count_streak: false })
+    const items = computeStreakItemsPure([on, off], days(5, ['a', 'b']), new Set(), today)
+    const ids = items.filter((i) => i.kind === 'metric').map((i) => i.metric!.id)
+    expect(ids).toEqual(['a'])
+  })
+  it('does not require such a metric for the "perfect day" streak', () => {
+    const on = metric({ id: 'a' })
+    const off = metric({ id: 'b', count_streak: false })
+    // «b» (вес) не вносится никогда — серия идеальных дней при этом не рвётся
+    const items = computeStreakItemsPure([on, off], days(6, ['a']), new Set(), today)
+    expect(items.find((i) => i.kind === 'perfect_days')?.streak).toBe(6)
+  })
+  it('still requires metrics whose flag is true or missing', () => {
+    const a = metric({ id: 'a' })
+    const b = metric({ id: 'b', count_streak: true })
+    const items = computeStreakItemsPure([a, b], days(4, ['a']), new Set(), today)
+    expect(items.find((i) => i.kind === 'perfect_days')).toBeUndefined()
+  })
+  it('keeps the streak of a metric whose flag is null (column present but unset)', () => {
+    const a = metric({ id: 'a', count_streak: null })
+    const items = computeStreakItemsPure([a], days(3, ['a']), new Set(), today)
+    expect(items.some((i) => i.kind === 'metric' && i.metric?.id === 'a' && i.streak === 3)).toBe(true)
+  })
+})

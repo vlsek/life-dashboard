@@ -3,6 +3,7 @@ import {
   parseOptionsRaw, optionsToRaw, buildSchedule, scheduleSummary, fieldsEnabledForType, clearedForBoolean,
   emptyForm, formFromMetric, scheduleFields, streakImportFields, buildInsertRow, buildUpdateRow,
   nextPosition, categoryKeyFor, goalSummary, withoutWater,
+  isTrackOnlyMetric, effectiveForm, fieldsEnabledForForm, countStreakFields,
 } from './metricsManager'
 import type { Metric } from './types'
 
@@ -164,5 +165,75 @@ describe('withoutWater', () => {
   it('returns the list untouched when there is no water metric', () => {
     const list = [metric({ id: 'a', name: 'Steps' })]
     expect(withoutWater(list)).toBe(list)
+  })
+})
+
+// BACKLOG 14 (11:15): «нужно ли считать стрик у метрики» + «просто записывать значение»
+describe('track-only mode / count_streak', () => {
+  const weight = () => metric({ id: 'w', name: 'Weight', unit: 'kg', goal_value: 0, goal_direction: 'at_least', count_streak: false })
+
+  it('detects a track-only metric from the stored fields', () => {
+    expect(isTrackOnlyMetric(weight())).toBe(true)
+    expect(isTrackOnlyMetric(metric({ count_streak: false, goal_value: null }))).toBe(true)
+  })
+  it('is not track-only when the streak is on, the goal is real, there is a schedule, or the type is not number', () => {
+    expect(isTrackOnlyMetric(metric({ goal_value: 0 }))).toBe(false)
+    expect(isTrackOnlyMetric(metric({ count_streak: false, goal_value: 5 }))).toBe(false)
+    expect(isTrackOnlyMetric(metric({ count_streak: false, goal_value: 0, schedule: { type: 'days', days: [1] } }))).toBe(false)
+    expect(isTrackOnlyMetric(metric({ count_streak: false, goal_value: 0, type: 'boolean' }))).toBe(false)
+  })
+  it('formFromMetric restores the switches (and defaults to counting a streak)', () => {
+    expect(formFromMetric(weight())).toMatchObject({ trackOnly: true, countStreak: false })
+    expect(formFromMetric(metric())).toMatchObject({ trackOnly: false, countStreak: true })
+    expect(emptyForm()).toMatchObject({ trackOnly: false, countStreak: true })
+  })
+  it('effectiveForm neutralises goal, schedule, streak import and streak in track-only mode', () => {
+    const f = { ...emptyForm(), name: 'W', goalValue: 80, goalDirection: 'at_most' as const, scheduleKind: 'weekly' as const, streakImportDays: '12', trackOnly: true }
+    expect(effectiveForm(f)).toMatchObject({ goalValue: 0, goalDirection: 'at_least', scheduleKind: 'daily', streakImportDays: '', countStreak: false })
+  })
+  it('track-only does not apply to other types', () => {
+    const f = { ...emptyForm(), type: 'boolean' as const, trackOnly: true, countStreak: true }
+    expect(effectiveForm(f)).toMatchObject({ trackOnly: false, countStreak: true })
+  })
+  it('effectiveForm leaves an ordinary form untouched', () => {
+    const f = { ...emptyForm(), goalValue: 8, scheduleKind: 'weekly' as const }
+    expect(effectiveForm(f)).toBe(f)
+  })
+  it('fieldsEnabledForForm turns off goal, schedule, streak and import in track-only mode, but keeps the unit', () => {
+    const on = fieldsEnabledForForm({ type: 'number', trackOnly: true })
+    expect(on).toMatchObject({ trackOnlyAvailable: true, goal: false, unit: true, schedule: false, countStreak: false, streakImport: false })
+    const off = fieldsEnabledForForm({ type: 'number', trackOnly: false })
+    expect(off).toMatchObject({ goal: true, unit: true, schedule: true, countStreak: true, streakImport: true })
+    expect(fieldsEnabledForForm({ type: 'boolean', trackOnly: false })).toMatchObject({ trackOnlyAvailable: false, goal: false, unit: false, schedule: true })
+  })
+  it('countStreakFields: written when off, or when the column already exists; skipped when on without the column', () => {
+    const f = emptyForm()
+    expect(countStreakFields(f, null)).toEqual({})
+    expect(countStreakFields({ ...f, countStreak: false }, null)).toEqual({ count_streak: false })
+    expect(countStreakFields(f, metric({ count_streak: true }))).toEqual({ count_streak: true })
+    expect(countStreakFields(f, metric())).toEqual({}) // миграция 031 ещё не применена
+    expect(countStreakFields({ ...f, trackOnly: true }, null)).toEqual({ count_streak: false })
+  })
+  it('buildInsertRow in track-only mode saves a neutral metric with the streak off', () => {
+    const f = { ...emptyForm(), name: ' Weight ', unit: 'kg', goalValue: 70, scheduleKind: 'weekly' as const, trackOnly: true }
+    const row = buildInsertRow(f, 'u1', 3, null)
+    expect(row).toMatchObject({ name: 'Weight', unit: 'kg', goal_value: 0, goal_direction: 'at_least', count_streak: false })
+    expect('schedule' in row).toBe(false)
+  })
+  it('buildUpdateRow clears schedule and streak import of an existing metric when switched to track-only', () => {
+    const existing = metric({ schedule: { type: 'weekly', min: 3 }, streak_import_days: 40, streak_import_date: '2026-09-01', count_streak: true })
+    const row = buildUpdateRow({ ...formFromMetric(existing), trackOnly: true }, existing, null)
+    expect(row).toMatchObject({ count_streak: false, goal_value: 0, schedule: null, streak_import_days: null, streak_import_date: null })
+  })
+  it('buildUpdateRow turns the streak back on when track-only is switched off', () => {
+    const existing = weekly()
+    function weekly() { return metric({ id: 'w', name: 'Weight', goal_value: 0, count_streak: false }) }
+    const row = buildUpdateRow({ ...formFromMetric(existing), trackOnly: false, countStreak: true }, existing, null)
+    expect(row).toMatchObject({ count_streak: true })
+  })
+  it('goalSummary shows "value only" instead of "≥ 0 kg" for a track-only metric', () => {
+    expect(goalSummary(weight(), 'yes', 'multi', 'value only')).toBe('value only, kg')
+    expect(goalSummary(metric({ goal_value: 5, goal_direction: 'at_least', unit: 'km' }), 'yes', 'multi', 'value only')).toBe('≥ 5 km')
+    expect(goalSummary(weight(), 'yes', 'multi')).toBe('≥ 0 kg') // без подписи — как раньше
   })
 })

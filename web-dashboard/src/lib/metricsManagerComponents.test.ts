@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import MetricFormModal from '../components/MetricFormModal.vue'
 import MetricsManagerModal from '../components/MetricsManagerModal.vue'
 import IconPicker from '../components/IconPicker.vue'
@@ -11,6 +12,46 @@ function metric(o: Partial<Metric> = {}): Metric {
 }
 
 describe('MetricFormModal', () => {
+  it('"just record a value" disables goal, schedule, streak and import but keeps the unit', async () => {
+    const w = mount(MetricFormModal, { props: { existing: null, categories: [] } })
+    const dis = (sel: string) => (w.find(sel).element as HTMLInputElement).disabled
+    expect(dis('[data-test="count-streak"]')).toBe(false)
+    await w.find('[data-test="track-only"]').setValue(true)
+    expect(dis('[data-test="count-streak"]')).toBe(true)
+    expect(dis('[data-test="streak-import"]')).toBe(true)
+    // порядок select: тип, направление цели, режим ввода, расписание, категория
+    const selects = w.findAll('select').map((e) => (e.element as HTMLSelectElement).disabled)
+    expect(selects[0]).toBe(false) // тип остаётся
+    expect(selects[1]).toBe(true) // направление цели отключено
+    expect(selects[2]).toBe(false) // режим ввода числа остаётся
+    expect(selects[3]).toBe(true) // расписание отключено
+    expect((w.find('input[type="number"]').element as HTMLInputElement).disabled).toBe(true) // значение цели
+    // единица измерения остаётся активной (вес — «кг»): название и единица — первые два текстовых поля
+    const texts = w.findAll('input[type="text"]').map((e) => (e.element as HTMLInputElement).disabled)
+    expect(texts.slice(0, 2)).toEqual([false, false])
+    // галочка серии показывается выключенной
+    expect((w.find('[data-test="count-streak"]').element as HTMLInputElement).checked).toBe(false)
+    w.unmount()
+  })
+  it('the track-only switch is offered only for a number metric', async () => {
+    const w = mount(MetricFormModal, { props: { existing: null, categories: [] } })
+    expect(w.find('[data-test="track-only-block"]').exists()).toBe(true)
+    await w.find('select').setValue('boolean')
+    await nextTick()
+    expect(w.find('[data-test="track-only-block"]').exists()).toBe(false)
+    w.unmount()
+  })
+  it('emits the track-only form on save and opens an existing track-only metric with the switch on', async () => {
+    const w = mount(MetricFormModal, { props: { existing: null, categories: [] } })
+    await w.find('input[type="text"]').setValue('Weight')
+    await w.find('[data-test="track-only"]').setValue(true)
+    await w.findAll('button').at(-1)!.trigger('click')
+    expect((w.emitted('save')![0][0] as { trackOnly: boolean }).trackOnly).toBe(true)
+    w.unmount()
+    const e = mount(MetricFormModal, { props: { existing: metric({ unit: 'kg', goal_value: 0, count_streak: false }), categories: [] } })
+    expect((e.find('[data-test="track-only"]').element as HTMLInputElement).checked).toBe(true)
+    e.unmount()
+  })
   it('does not emit save with an empty name', async () => {
     const w = mount(MetricFormModal, { props: { existing: null, categories: [] } })
     await w.findAll('button').at(-1)!.trigger('click')
