@@ -3,11 +3,19 @@ import { ref } from 'vue'
 import Icon from './Icon.vue'
 import { t } from '../lib/i18n'
 import { moveBlock, toggleBlock, type DashboardBlockKey, type LayoutItem } from '../lib/layout'
+import { celebrationsEnabled, setCelebrationsEnabled } from '../lib/useStreakCelebration'
 
 const props = defineProps<{ initial: LayoutItem[]; error?: string }>()
 const emit = defineEmits<{ close: []; save: [LayoutItem[]] }>()
 
 const local = ref<LayoutItem[]>(props.initial.map((i) => ({ ...i })))
+
+// Поздравления за серии (BACKLOG 13): пока нет «Глобальных настроек» — выключатель живёт здесь, применяется сразу (localStorage)
+const celebrate = ref(celebrationsEnabled())
+function onCelebrate(e: Event) {
+  celebrate.value = (e.target as HTMLInputElement).checked
+  setCelebrationsEnabled(celebrate.value)
+}
 
 function label(key: DashboardBlockKey): string {
   return { profile: t('dash_block_profile'), charts: t('dash_charts_h2'), daily: t('dash_block_daily') }[key]
@@ -29,6 +37,14 @@ function label(key: DashboardBlockKey): string {
             <Icon :name="item.visible ? 'eye' : 'eyeoff'" />
           </button>
         </div>
+      </div>
+
+      <div class="mt-3">
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" :checked="celebrate" data-test="celebrate-toggle" @change="onCelebrate" />
+          {{ t('dash_celebrate_setting') }}
+        </label>
+        <p class="dim mt-1 text-xs">{{ t('dash_celebrate_setting_hint') }}</p>
       </div>
 
       <p v-if="error" class="mt-2 text-sm" style="color: #d6336c" data-test="layout-error">{{ t('dash_layout_save_error') }}{{ error }}</p>

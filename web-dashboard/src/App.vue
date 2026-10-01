@@ -14,6 +14,7 @@ import ProgressSummaryModal from './components/ProgressSummaryModal.vue'
 import ReminderBanners from './components/ReminderBanners.vue'
 import EveningReminderBanner from './components/EveningReminderBanner.vue'
 import SplashLoader from './components/SplashLoader.vue'
+import StreakMilestoneModal from './components/StreakMilestoneModal.vue'
 import PlanReminderBanner from './components/PlanReminderBanner.vue'
 import ProfileSection from './components/ProfileSection.vue'
 import DailyMetricsSection from './components/DailyMetricsSection.vue'
@@ -25,6 +26,7 @@ import { useReminders } from './lib/useReminders'
 import { useEveningReminder } from './lib/useEveningReminder'
 import { usePlanReminders } from './lib/usePlanReminders'
 import { useDashboard } from './lib/useDashboard'
+import { useStreakCelebration } from './lib/useStreakCelebration'
 import { useLayout } from './lib/useLayout'
 import type { LayoutItem } from './lib/layout'
 import { progressPercent } from './lib/progress'
@@ -40,6 +42,11 @@ import type { DayProgressSettings } from './lib/progressSettings'
 // lib/layout.ts + useLayout.ts + LayoutModal.vue, колонка profiles.dashboard_layout общая с классикой.
 
 const { auth, streaks, dayProgress, weekProgress, summaries, progressSettings, loadError, init, saveProgressSettings } = useDashboard()
+// Поздравление за серию (BACKLOG 13): один раз на порог 5/10/30/…, выключается в плашке или в ⚙ «Настроить Дашборд»
+const { pending: milestone, close: closeMilestone, disable: disableMilestone } = useStreakCelebration(
+  () => (auth.value.status === 'ready' ? auth.value.userId : null),
+  streaks,
+)
 const { items: eveningItems, visible: eveningVisible, load: loadEveningReminder, dismiss: dismissEveningReminder } = useEveningReminder()
 const { layout, loaded: layoutLoaded, saveError: layoutError, load: loadLayout, save: saveLayout } = useLayout()
 const { visible: planReminders, load: loadPlanReminders, dismiss: dismissPlanReminder } = usePlanReminders()
@@ -246,6 +253,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
       @settings="summaryKind = null; showProgressSettings = true"
     />
     <ProgressSettingsModal v-if="showProgressSettings" :initial="progressSettings" @close="showProgressSettings = false" @save="onSaveProgressSettings" />
+    <StreakMilestoneModal v-if="milestone" :milestone="milestone" @close="closeMilestone" @disable="disableMilestone" />
   </main>
 </template>
 
