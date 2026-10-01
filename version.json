@@ -1,6 +1,13 @@
 {
-  "version": "1.77",
+  "version": "1.78",
   "en": [
+    {
+      "version": "1.78",
+      "date": "2026-10-01 06:44",
+      "changes": [
+        "Dashboard and Shop: the points icon was redrawn to look like a real coin — a round disc filling the whole box with a reeded edge, an inner rim and a highlight; the theme-coloured flame now sits in the middle of the coin like an emblem and still flickers softly. In the Profile block the gap between the streak flame and the points coin is smaller"
+      ]
+    },
     {
       "version": "1.77",
       "date": "2026-10-01 06:37",
@@ -1295,6 +1302,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "1.78",
+      "date": "2026-10-01 06:44",
+      "changes": [
+        "Дашборд и Магазин: иконка баллов перерисована, чтобы читалась как монета — круглый диск на всю клетку с ребристым кантом, внутренним бортиком и бликом; огонёк цвета темы теперь горит по центру монеты, как тиснение, и по-прежнему слегка мерцает. В блоке «Профиль» сокращён промежуток между огоньком серии и монетой с баллами"
+      ]
+    },
     {
       "version": "1.77",
       "date": "2026-10-01 06:37",

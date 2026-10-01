@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.77";
+const SITE_VERSION = "1.78";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.78", date: "2026-10-01 06:44", changes: [
+        "Дашборд и Магазин: иконка баллов перерисована, чтобы читалась как монета — круглый диск на всю клетку с ребристым кантом, внутренним бортиком и бликом; огонёк цвета темы теперь горит по центру монеты, как тиснение, и по-прежнему слегка мерцает. В блоке «Профиль» сокращён промежуток между огоньком серии и монетой с баллами",
+    ]},
     { version: "1.77", date: "2026-10-01 06:37", changes: [
         "Дашборд: анимация баллов — когда ты отмечаешь метрику выполненной (или набираешь цель по числу, подходам, вариантам), у места нажатия появляется «+1» с монеткой, плавно уплывает вверх и растворяется. Если снимаешь отметку и метрика перестаёт быть выполненной — то же самое, но «−1». Подпись показывается только после того, как значение реально сохранилось, и только когда балл правда начислился или снялся (например, число 3 → 5 при цели 10 баллов не меняет). Если в системе включено «уменьшить движение», подпись не плывёт, а коротко проявляется и гаснет на месте",
     ]},
@@ -1130,6 +1133,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.78", date: "2026-10-01 06:44", changes: [
+        "Dashboard and Shop: the points icon was redrawn to look like a real coin — a round disc filling the whole box with a reeded edge, an inner rim and a highlight; the theme-coloured flame now sits in the middle of the coin like an emblem and still flickers softly. In the Profile block the gap between the streak flame and the points coin is smaller",
+    ]},
     { version: "1.77", date: "2026-10-01 06:37", changes: [
         "Dashboard: points animation — when you mark a metric as done (or reach a goal for a number, sets or options), a \"+1\" with a coin appears where you tapped, floats up smoothly and fades away. If you undo it and the metric stops being done, the same happens with \"−1\". The label only appears after the value has actually been saved, and only when a point was really gained or lost (for example, a number going 3 → 5 with a goal of 10 changes nothing). If the system asks to reduce motion, the label does not float: it briefly fades in and out in place",
     ]},
