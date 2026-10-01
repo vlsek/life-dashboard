@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "1.75";
+const SITE_VERSION = "1.76";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "1.76", date: "2026-10-01 06:24", changes: [
+        "Дашборд: поздравления за серии — когда серия набирает 5, 10, 30, 50, 100, 200 или 365 дней (у недельных метрик 4, 12, 26 или 52 недели), появляется анимированная плашка: разгорающийся огонёк, крупное число, подпись, за что серия, и тёплые слова (несколько вариантов, чтобы не приедалось). Показывается один раз на порог; при первом запуске — только самая высокая из уже набранных серий. Отключается кнопкой «Больше не показывать» в плашке или галочкой «Поздравлять за серии» в окне ⚙ «Настроить Дашборд». Если в системе включено «уменьшить движение», анимация отключена",
+    ]},
     { version: "1.75", date: "2026-10-01 06:15", changes: [
         "Дашборд, настройки метрики: появился переключатель «Просто записывать значение (вес, замеры и т.п.)» — при нём цель, расписание, серия и импорт серии отключаются, остаётся название, иконка, тип и единица; такая метрика не даёт серии и не мешает «идеальному дню». А для обычных метрик есть галочка «Считать серию (стрик) по этой метрике» — выключи, если серия не нужна. В списке метрик такая метрика подписана «только значение». Нужна миграция 031 (metrics.count_streak) в Supabase",
     ]},
@@ -1124,6 +1127,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "1.76", date: "2026-10-01 06:24", changes: [
+        "Dashboard: streak congratulations — when a streak reaches 5, 10, 30, 50, 100, 200 or 365 days (4, 12, 26 or 52 weeks for weekly metrics), an animated card appears: an igniting flame, a big number, what the streak is for and a few warm words (several variants so it does not get stale). Shown once per threshold; on the very first run only the highest of the already earned streaks. Turn it off with \"Don't show these again\" in the card or the \"Show congratulations for streaks\" checkbox in the ⚙ \"Customize dashboard\" window. Animation is off when the system asks to reduce motion",
+    ]},
     { version: "1.75", date: "2026-10-01 06:15", changes: [
         "Dashboard, metric settings: a new switch \"Just record a value (weight, measurements)\" turns off the goal, schedule, streak and streak import and keeps the name, icon, type and unit; such a metric gives no streak and does not get in the way of the \"perfect day\". Regular metrics get a \"Count a streak for this metric\" checkbox — turn it off when a streak is not needed. In the metrics list such a metric is labelled \"value only\". Needs migration 031 (metrics.count_streak) in Supabase",
     ]},
