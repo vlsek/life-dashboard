@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { defaultWeightUnit, isWeightUnit, rememberWeightUnit } from '../lib/weightUnit'
+import { valueLabelOptions } from '../lib/valueLabels'
 import Icon from './Icon.vue'
 import type { Exercise, ExerciseFormInput } from '../lib/types'
 
@@ -19,7 +20,14 @@ const name = ref(props.existing?.name ?? '')
 const catSelect = ref(isLegacyCustom ? '__new__' : currentCat)
 const newCatName = ref(isLegacyCustom ? currentCat : '')
 const tracksWeight = ref<'yes' | 'no'>((props.existing?.tracks_weight ?? true) ? 'yes' : 'no')
-const valueLabel = ref(props.existing?.value_label ?? t('workouts_default_value_label'))
+// «Что считаем?» (BACKLOG 18): выбор из списка (повторения, секунды, минуты, км, метры, раунды) + «Другое…» со своим словом.
+// Текущее значение упражнения, если его нет среди готовых, остаётся отдельным пунктом списка.
+const OTHER_LABEL = '__other__'
+const startLabel = props.existing?.value_label?.trim() || t('workouts_default_value_label')
+const labelOptions = valueLabelOptions(startLabel)
+const labelChoice = ref(startLabel)
+const customLabel = ref('')
+const chosenLabel = computed(() => (labelChoice.value === OTHER_LABEL ? customLabel.value.trim() : labelChoice.value) || t('workouts_default_value_label'))
 // Единица веса (BACKLOG 18): у упражнения с весом по умолчанию «кг» (или последняя выбранная — запоминается), показана текстом,
 // сменить можно карандашиком. У упражнения без веса единицу не спрашиваем и не пишем (см. lib/weightUnit.ts).
 const OTHER = '__other__'
@@ -48,7 +56,7 @@ function onSubmit() {
     name: name.value.trim(),
     category,
     tracks_weight: tracksWeight.value,
-    value_label: valueLabel.value,
+    value_label: chosenLabel.value,
     unit: unitOut,
     tracks_duration: tracksDuration.value,
     bilateral: bilateral.value,
@@ -93,8 +101,12 @@ function onSubmit() {
 
         <label class="flex flex-col gap-1 text-sm">
           {{ t('workouts_field_value_label') }}
-          <input v-model="valueLabel" type="text" class="modal-input" />
+          <select v-model="labelChoice" class="modal-input" data-testid="value-label-select">
+            <option v-for="o in labelOptions" :key="o" :value="o">{{ o }}</option>
+            <option :value="OTHER_LABEL">{{ t('workouts_value_other') }}</option>
+          </select>
         </label>
+        <input v-if="labelChoice === OTHER_LABEL" v-model="customLabel" type="text" maxlength="24" class="modal-input -mt-1" data-testid="value-label-custom" :placeholder="t('workouts_field_value_label')" />
 
         <label class="flex items-center gap-2 text-sm">
           <input v-model="tracksDuration" type="checkbox" />
