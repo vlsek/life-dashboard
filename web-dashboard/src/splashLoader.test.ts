@@ -105,3 +105,20 @@ describe('index.html: статичная заставка до загрузки 
     expect(css).toContain("html[data-motion='off'] .splash-ring")
   })
 })
+
+describe('index.html: фон html следует за текущей темой (🐞 «пропадает фон внизу при прокрутке»)', () => {
+  it('html { background } сначала берёт var(--bg) (меняется вместе с темой), --pre-bg — только запасной до загрузки бандла', () => {
+    const m = html.match(/\n\s*html \{ background: ([^;]+); \}/)
+    expect(m).not.toBeNull()
+    expect(m![1]).toMatch(/^var\(--bg, var\(--pre-bg,/)
+  })
+
+  it('фиксированного html { background: var(--pre-bg…) } без --bg больше нет — он перекрывал фон body после смены темы', () => {
+    expect(html).not.toMatch(/html \{ background: var\(--pre-bg[^}]*\}/)
+  })
+
+  it('body по-прежнему красится var(--bg) в style.css, а у html/body/#app есть height: 100%', () => {
+    expect(css).toMatch(/body \{[^}]*background: var\(--bg\)/)
+    expect(css).toMatch(/html,\s*body,\s*#app \{\s*height: 100%;/)
+  })
+})

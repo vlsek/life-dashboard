@@ -34,7 +34,11 @@
     <style>
       /* Заставка до загрузки бандла: Vue заменяет содержимое #app при монтировании. Без CSS
          бандла — свои стили и цвета темы из скрипта выше; в SplashLoader.vue та же разметка. */
-      html { background: var(--pre-bg, #121212); }
+      /* Фон html: до загрузки бандла --bg ещё нет — берём цвет темы из скрипта (--pre-bg); после загрузки
+         html.theme-* задаёт --bg и фон следует за ТЕКУЩЕЙ темой (BACKLOG 18, 🐞 «пропадает фон внизу экрана
+         при прокрутке»: раньше здесь был фиксированный --pre-bg, и после смены темы без перезагрузки область
+         ниже первого экрана оставалась цвета прежней темы — фон html, в отличие от body, не обновлялся). */
+      html { background: var(--bg, var(--pre-bg, #121212)); }
       .pre-splash { display: flex; align-items: center; justify-content: center; min-height: 60vh; }
       .pre-splash svg { display: none; overflow: visible; filter: drop-shadow(0 0 8px var(--pre-accent, #5b8def)); }
       .pre-splash .pre-flame { display: block; }
