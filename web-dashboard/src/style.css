@@ -528,3 +528,14 @@ html[data-motion='off'] .splash-ring *,
 html[data-motion='off'] .splash-flame {
   animation: none !important;
 }
+
+/* «Отключить все анимации» (BACKLOG 16, 14:02): выбор человека → <html data-motion="off"> (lib/motion.ts).
+   Гасит все CSS-анимации и переходы сайта разом; JS-анимации читают тот же флаг (collapseMotion.ts, pointsFloat.ts).
+   Системное prefers-reduced-motion обрабатывается отдельными правилами выше и ниже — этот блок его не заменяет. */
+html[data-motion='off'] *,
+html[data-motion='off'] *::before,
+html[data-motion='off'] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}

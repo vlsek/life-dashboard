@@ -20,6 +20,8 @@
           var q = new URLSearchParams(location.search).get('splash')
           var sp = sv.indexOf(q) >= 0 ? q : localStorage.getItem('splash_variant')
           document.documentElement.setAttribute('data-splash', sv.indexOf(sp) >= 0 ? sp : 'flame')
+          // выключатель «все анимации» (src/lib/motion.ts): флаг на <html> до первой отрисовки
+          if (localStorage.getItem('site_motion') === 'off') document.documentElement.setAttribute('data-motion', 'off')
           var m = document.querySelector('meta[name="theme-color"]')
           if (m && bg) m.setAttribute('content', bg)
         } catch (e) {}

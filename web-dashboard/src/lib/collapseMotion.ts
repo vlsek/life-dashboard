@@ -12,6 +12,7 @@ type El = HTMLElement & { _collapseTimer?: ReturnType<typeof setTimeout>; _colla
 const CLOSED: Snap = { height: '0px', paddingTop: '0px', paddingBottom: '0px', marginTop: '0px', marginBottom: '0px', borderTopWidth: '0px', borderBottomWidth: '0px', opacity: '0' }
 
 function reducedMotion(): boolean {
+  if (typeof document !== 'undefined' && document.documentElement.getAttribute('data-motion') === 'off') return true // выключатель «все анимации»
   return typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 

@@ -4,6 +4,7 @@ import Icon from './Icon.vue'
 import { t } from '../lib/i18n'
 import { moveBlock, toggleBlock, type DashboardBlockKey, type LayoutItem } from '../lib/layout'
 import { celebrationsEnabled, setCelebrationsEnabled } from '../lib/useStreakCelebration'
+import { setMotionOff, systemReducedMotion, userMotionOff } from '../lib/motion'
 
 const props = defineProps<{ initial: LayoutItem[]; error?: string }>()
 const emit = defineEmits<{ close: []; save: [LayoutItem[]] }>()
@@ -15,6 +16,15 @@ const celebrate = ref(celebrationsEnabled())
 function onCelebrate(e: Event) {
   celebrate.value = (e.target as HTMLInputElement).checked
   setCelebrationsEnabled(celebrate.value)
+}
+
+// «Отключить все анимации» (BACKLOG 16, 14:02): применяется сразу. Если анимации уже выключены системной
+// настройкой «уменьшить движение», переключатель включён и заблокирован — с пояснением, где это менять.
+const systemReduced = systemReducedMotion()
+const motionOff = ref(userMotionOff() || systemReduced)
+function onMotion(e: Event) {
+  motionOff.value = (e.target as HTMLInputElement).checked
+  setMotionOff(motionOff.value)
 }
 
 function label(key: DashboardBlockKey): string {
@@ -45,6 +55,14 @@ function label(key: DashboardBlockKey): string {
           {{ t('dash_celebrate_setting') }}
         </label>
         <p class="dim mt-1 text-xs">{{ t('dash_celebrate_setting_hint') }}</p>
+      </div>
+
+      <div class="mt-3">
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" :checked="motionOff" :disabled="systemReduced" data-test="motion-toggle" @change="onMotion" />
+          {{ t('motion_off_setting') }}
+        </label>
+        <p class="dim mt-1 text-xs" data-test="motion-hint">{{ systemReduced ? t('motion_off_system_hint') : t('motion_off_setting_hint') }}</p>
       </div>
 
       <p v-if="error" class="mt-2 text-sm" style="color: #d6336c" data-test="layout-error">{{ t('dash_layout_save_error') }}{{ error }}</p>
