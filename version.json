@@ -1,6 +1,13 @@
 {
-  "version": "2.02",
+  "version": "2.03",
   "en": [
+    {
+      "version": "2.03",
+      "date": "2026-10-01 19:35",
+      "changes": [
+        "App installation (PWA): the service worker is now registered on every page of the new site (before, only the old-version pages registered it, so a new user who opened the site on a new page never got it — the browser did not treat the site as installable and showed no install icon in the address bar). The Dashboard now has a dismissible \"Install the app\" banner with an \"Install\" button (on iPhone — a \"Share → Add to Home Screen\" hint); a closed banner stays hidden for 14 days. The installed app does not see the banner"
+      ]
+    },
     {
       "version": "2.02",
       "date": "2026-10-01 19:16",
@@ -1472,6 +1479,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.03",
+      "date": "2026-10-01 19:35",
+      "changes": [
+        "Установка приложения (PWA): на всех страницах нового сайта теперь регистрируется service worker (раньше его регистрировали только страницы старой версии, и новый пользователь, открывший сайт на новой странице, не получал его — браузер не считал сайт устанавливаемым и не показывал значок установки в адресной строке). На Дашборде появилась закрывающаяся плашка «Установите приложение» с кнопкой «Установить» (на iPhone — подсказка «Поделиться → На экран Домой»); закрытая плашка не появляется 14 дней. Установленное приложение плашку не видит"
+      ]
+    },
     {
       "version": "2.02",
       "date": "2026-10-01 19:16",

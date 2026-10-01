@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.02";
+const SITE_VERSION = "2.03";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.03", date: "2026-10-01 19:35", changes: [
+        "Установка приложения (PWA): на всех страницах нового сайта теперь регистрируется service worker (раньше его регистрировали только страницы старой версии, и новый пользователь, открывший сайт на новой странице, не получал его — браузер не считал сайт устанавливаемым и не показывал значок установки в адресной строке). На Дашборде появилась закрывающаяся плашка «Установите приложение» с кнопкой «Установить» (на iPhone — подсказка «Поделиться → На экран Домой»); закрытая плашка не появляется 14 дней. Установленное приложение плашку не видит",
+    ]},
     { version: "2.02", date: "2026-10-01 19:16", changes: [
         "Иконка приложения на Android: на всех страницах нового сайта (Дашборд, Цели, Навыки, История, Календарь, Магазин, Челленджи, Сообщество, Вехи, Языки, Аккаунт, Тренировки, вход и онбординг) подключены манифест приложения и иконка для iOS. Раньше они были только в старой версии, поэтому при установке с новых страниц Android не видел монохромную иконку и оставлял стандартную. Чтобы иконка обновилась, приложение нужно удалить с экрана и установить заново; перекраска под тему системы работает на Android 13+ при включённых «Тематических значках»",
     ]},
@@ -1207,6 +1210,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.03", date: "2026-10-01 19:35", changes: [
+        "App installation (PWA): the service worker is now registered on every page of the new site (before, only the old-version pages registered it, so a new user who opened the site on a new page never got it — the browser did not treat the site as installable and showed no install icon in the address bar). The Dashboard now has a dismissible \"Install the app\" banner with an \"Install\" button (on iPhone — a \"Share → Add to Home Screen\" hint); a closed banner stays hidden for 14 days. The installed app does not see the banner",
+    ]},
     { version: "2.02", date: "2026-10-01 19:16", changes: [
         "App icon on Android: the app manifest and the iOS icon are now linked on every page of the new site (Dashboard, Goals, Skills, History, Calendar, Shop, Challenges, Community, Milestones, Languages, Account, Workouts, login and onboarding). They used to exist only in the old version, so when installing from the new pages Android did not see the monochrome icon and kept the default one. To refresh the icon, remove the app from the home screen and install it again; recolouring to the system theme works on Android 13+ with \"Themed icons\" turned on",
     ]},

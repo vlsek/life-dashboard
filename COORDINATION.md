@@ -87,12 +87,7 @@
 — свободен —
 
 ### Агент 5
-По правилу 9 (2026-10-01 19:19): BACKLOG 🎨 п.2 «**PWA / Установка** — предложение установить из адресной строки». Находка: `/sw.js` регистрирует только `config.js` (легаси), на Vue-страницах НЕ загружается
-→ новый пользователь, открывший `/login/`, service worker не получает, и браузер не считает сайт устанавливаемым (нет значка установки в адресной строке); плюс на Дашборде нет предложения установить
-(в Аккаунте `InstallModal` уже есть). Беру (1) `web-<стр>/src/lib/registerSw.ts` + вызов в `src/main.ts` на всех 14 страницах (account, calendar, challenges, community, dashboard, goals, history,
-languages, login, milestones, onboarding, shop, skills, workouts) + тест на каждой + пересборка всех 14; (2) пилот Дашборда: `lib/install.ts` (копия из web-account), `components/InstallBanner.vue`
-(закрывающаяся плашка «Установить приложение»; на iOS — подсказка «Поделиться → На экран Домой»), подключение в `App.vue` (1 тег), ключи i18n. НЕ трогаю: `sw.js` (список ASSETS — только легаси; офлайн-оболочка Vue-страниц — отдельная задача),
-`manifest.json`, `config.js` кроме версии. `web-header/` (агент 6) не трогаю. С: 2026-10-01 19:19.
+— свободен —
 
 ### Агент 6
 — свободен —
@@ -329,3 +324,4 @@ CSS-анимации, есть только в `web-dashboard/style.css`, хед
 - 2026-10-01 · v2.00 · агент 1 · ИСПРАВЛЕНИЕ НУМЕРАЦИИ: после 1.99 я по ошибке выпустил «1.100» — переименовано в **2.00** (config.js, version.json, ROADMAP/BACKLOG). ВАЖНО ВСЕМ АГЕНТАМ: формат версии X.YY, следующая — **2.01**, затем 2.02 и т. д. (не 2.1, не 2.001). Правило записано в docs/HANDOFF.md
 - 2026-10-01 · v2.01 · агент 1 · BACKLOG 18.5: огонёк и число дней серии у каждой метрики в «Дневных метриках» (MetricStreakBadge + metricStreaks.ts, проп `streak` в трёх строках, `metricStreaks` в DailyMetricsSection, 1 строка в App.vue). Тесты dashboard 770, пересобран dashboard/. Осталось: метрики-подходы (SetsSection) без огонька
 - 2026-10-01 · v2.02 · агент 5 · BACKLOG 🎨 п.1 «Иконка приложения на Android»: причина найдена — `<link rel="manifest">` и `apple-touch-icon` были ТОЛЬКО в `legacy/dashboard.html`, на 14 Vue-страницах (`web-<стр>/index.html`) их не было, поэтому PWA ставилось без манифеста и с стандартной иконкой. Добавлены manifest + apple-touch-icon + `apple-mobile-web-app-*` в `<head>` всех 14 страниц (account, calendar, challenges, community, dashboard, goals, history, languages, login, milestones, onboarding, shop, skills, workouts), `pwaHead.test.ts` на каждой (проверяет теги и что в манифесте есть any/maskable/monochrome и все файлы иконок существуют), пересборка всех 14. Сам `manifest.json` и монохромная иконка не менялись (проверено: чёрный силуэт на прозрачном, в безопасной зоне). НЕ проверено на устройстве: нужен Android 13+ с «Тематическими значками» и переустановка PWA. Заметка: `manifest.json` → `"id": "/login.html"`, `start_url: "/login/"` — не менял (смена `id` создаст «новое» приложение)
+- 2026-10-01 · v2.03 · агент 5 · BACKLOG 🎨 п.2 «PWA / Установка»: (1) `registerSw.ts` + вызов в `main.ts` на всех 14 Vue-страницах (раньше `/sw.js` регистрировал только `config.js` легаси — новый пользователь на `/login/` service worker не получал и сайт не считался устанавливаемым), `registerSw.test.ts` на каждой; (2) Дашборд: реактивный `lib/install.ts` (перехват `beforeinstallprompt`/`appinstalled`, запоминание закрытия на 14 дней), `InstallBanner.vue` в `App.vue` (на iOS — подсказка про «Поделиться»), 11 новых тестов (dashboard 788). НЕ сделано: плашка установки на остальных страницах (в Аккаунте уже есть `InstallModal`), офлайн-оболочка для Vue-страниц — список `ASSETS` в `sw.js` содержит только легаси-файлы (отдельная задача: добавить `/dashboard/…` и бампнуть `CACHE_NAME`), проверка на устройстве
