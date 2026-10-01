@@ -1,6 +1,13 @@
 {
-  "version": "2.00",
+  "version": "2.01",
   "en": [
+    {
+      "version": "2.01",
+      "date": "2026-10-01 22:02",
+      "changes": [
+        "Dashboard (pilot): next to the name of every metric that has a streak you now see a flame and the number of days in a row (weeks for weekly schedules). If today is not counted yet, the flame is dimmed with a \"not done today\" hint. Metrics with \"count a streak\" switched off have no flame"
+      ]
+    },
     {
       "version": "2.00",
       "date": "2026-10-01 21:51",
@@ -1458,6 +1465,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.01",
+      "date": "2026-10-01 22:02",
+      "changes": [
+        "Дашборд (пилот): рядом с названием каждой метрики, по которой идёт серия, теперь виден огонёк и число дней подряд (у недельных расписаний — недели). Если сегодня ещё не засчитано, огонёк приглушён с подсказкой «сегодня не сделано». У метрик с выключенным «считать стрик» огонька нет"
+      ]
+    },
     {
       "version": "2.00",
       "date": "2026-10-01 21:51",

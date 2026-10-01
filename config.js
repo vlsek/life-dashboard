@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.00";
+const SITE_VERSION = "2.01";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.01", date: "2026-10-01 22:02", changes: [
+        "Дашборд (пилот): рядом с названием каждой метрики, по которой идёт серия, теперь виден огонёк и число дней подряд (у недельных расписаний — недели). Если сегодня ещё не засчитано, огонёк приглушён с подсказкой «сегодня не сделано». У метрик с выключенным «считать стрик» огонька нет",
+    ]},
     { version: "2.00", date: "2026-10-01 21:51", changes: [
         "Дашборд (пилот), графики: в выборе периода появился вариант «Последние 30 дней», и он стал периодом по умолчанию вместо «Последних 10 дней» (у кого период уже выбран вручную, он сохраняется). Из-за короткого периода по умолчанию графики казались пустыми, хотя данные за месяц были",
     ]},
@@ -1201,6 +1204,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.01", date: "2026-10-01 22:02", changes: [
+        "Dashboard (pilot): next to the name of every metric that has a streak you now see a flame and the number of days in a row (weeks for weekly schedules). If today is not counted yet, the flame is dimmed with a \"not done today\" hint. Metrics with \"count a streak\" switched off have no flame",
+    ]},
     { version: "2.00", date: "2026-10-01 21:51", changes: [
         "Dashboard (pilot), charts: the period picker now has a \"Last 30 days\" option and it is the default instead of \"Last 10 days\" (a period you already picked by hand is kept). The short default made charts look empty even though there was a month of data",
     ]},
