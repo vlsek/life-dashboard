@@ -1,6 +1,13 @@
 {
-  "version": "2.16",
+  "version": "2.17",
   "en": [
+    {
+      "version": "2.17",
+      "date": "2026-10-02 13:10",
+      "changes": [
+        "Dashboard (pilot): metrics with sets now also show the flame and the streak days next to the name (like the other metrics). Every set in the sets table sits on its own plate card instead of a bare row"
+      ]
+    },
     {
       "version": "2.16",
       "date": "2026-10-02 04:36",
@@ -1570,6 +1577,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.17",
+      "date": "2026-10-02 13:10",
+      "changes": [
+        "Дашборд (пилот): метрики с подходами теперь тоже показывают огонёк и число дней серии рядом с названием (как остальные метрики). Каждый подход в таблице подходов лежит на собственной подложке-карточке, а не голой строкой"
+      ]
+    },
     {
       "version": "2.16",
       "date": "2026-10-02 04:36",
