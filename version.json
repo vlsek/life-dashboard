@@ -1,6 +1,13 @@
 {
-  "version": "2.21",
+  "version": "2.22",
   "en": [
+    {
+      "version": "2.22",
+      "date": "2026-10-02 11:10",
+      "changes": [
+        "Dashboard (pilot): the weekly progress ring in the profile is now a heptagon — seven sides for the seven days of the week and a thicker line than the day circle, so day and week look different at a glance. Progress runs along the perimeter and the ⭐ bonus is still shown as a second arc. The day ring around the avatar and the week badge in the header were not changed"
+      ]
+    },
     {
       "version": "2.21",
       "date": "2026-10-02 11:03",
@@ -1605,6 +1612,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.22",
+      "date": "2026-10-02 11:10",
+      "changes": [
+        "Дашборд (пилот): кольцо прогресса недели в профиле теперь семиугольник — семь сторон по числу дней недели, линия толще, чем у круга дня, так что день и неделя отличаются с первого взгляда. Прогресс идёт по периметру, бонус ⭐ показывается второй дугой, как и раньше. Кольцо дня вокруг аватара и значок недели в шапке не менялись"
+      ]
+    },
     {
       "version": "2.21",
       "date": "2026-10-02 11:03",

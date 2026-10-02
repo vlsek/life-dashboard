@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.21";
+const SITE_VERSION = "2.22";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.22", date: "2026-10-02 11:10", changes: [
+        "Дашборд (пилот): кольцо прогресса недели в профиле теперь семиугольник — семь сторон по числу дней недели, линия толще, чем у круга дня, так что день и неделя отличаются с первого взгляда. Прогресс идёт по периметру, бонус ⭐ показывается второй дугой, как и раньше. Кольцо дня вокруг аватара и значок недели в шапке не менялись",
+    ]},
     { version: "2.21", date: "2026-10-02 11:03", changes: [
         "Дашборд (пилот): стакан воды в шапке при достижении 100% нормы становится золотым — контур и ободок окрашиваются в золото (на светлых темах — более тёмный оттенок, чтобы читался), вокруг мягкое свечение, а по воде время от времени проходит блик. Если норма снова не выполнена (например, отменили последнее добавление), стакан возвращается к обычному виду. Анимация выключается при «уменьшении движения» в системе и выключателем «Отключить все анимации». Стакан на других страницах (в правой панели) пока прежний",
     ]},
@@ -1264,6 +1267,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.22", date: "2026-10-02 11:10", changes: [
+        "Dashboard (pilot): the weekly progress ring in the profile is now a heptagon — seven sides for the seven days of the week and a thicker line than the day circle, so day and week look different at a glance. Progress runs along the perimeter and the ⭐ bonus is still shown as a second arc. The day ring around the avatar and the week badge in the header were not changed",
+    ]},
     { version: "2.21", date: "2026-10-02 11:03", changes: [
         "Dashboard (pilot): the water glass in the header turns golden when you reach 100% of your goal — the outline and rim become gold (a darker shade on light themes so it stays readable), there is a soft glow around it and a highlight sweeps across the water from time to time. If the goal is no longer met (for example you undid the last addition), the glass goes back to its normal look. The animation is switched off by the system \"reduce motion\" setting and by the \"Turn off all animations\" switch. The glass on other pages (in the right panel) is unchanged for now",
     ]},
