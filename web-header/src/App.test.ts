@@ -468,3 +468,86 @@ describe('раскладка блоков в глобальных настрой
     w.unmount()
   })
 })
+
+describe('свайп справа: открытие на touchmove, широкая зона, блокировки (BACKLOG 18.1)', () => {
+  const fire = (type: string, x: number, y: number, target: EventTarget = document) => {
+    const e = new Event(type, { bubbles: true }) as any
+    e.touches = type === 'touchend' || type === 'touchcancel' ? [] : [{ clientX: x, clientY: y }]
+    e.changedTouches = [{ clientX: x, clientY: y }]
+    target.dispatchEvent(e)
+  }
+  const isOpen = (w: ReturnType<typeof mount>) => w.find('[data-test="right-panel"]').classes().includes('gh-panel-open')
+
+  async function mounted() {
+    setup({ metrics: [habit], daily_values: [] })
+    Object.defineProperty(window, 'innerWidth', { value: 400, configurable: true })
+    const w = mount(App, { attachTo: document.body })
+    await flushPromises()
+    return w
+  }
+
+  it('панель открывается, как только палец ушёл влево на порог, — не дожидаясь touchend (браузер мог забрать жест → touchcancel)', async () => {
+    const w = await mounted()
+    fire('touchstart', 390, 300)
+    fire('touchmove', 360, 302)
+    await flushPromises()
+    expect(isOpen(w)).toBe(false) // ещё мало
+    fire('touchmove', 320, 305)
+    await flushPromises()
+    expect(isOpen(w)).toBe(true)
+    fire('touchcancel', 320, 305)
+    w.unmount()
+  })
+
+  it('жест можно начать не у самого края: 60 px от края на 400-px экране', async () => {
+    const w = await mounted()
+    fire('touchstart', 340, 300)
+    fire('touchmove', 270, 300)
+    await flushPromises()
+    expect(isOpen(w)).toBe(true)
+    w.unmount()
+  })
+
+  it('начало вне зоны, вертикальная прокрутка и несколько пальцев панель не открывают', async () => {
+    const w = await mounted()
+    fire('touchstart', 200, 300)
+    fire('touchmove', 100, 300)
+    fire('touchend', 100, 300)
+    fire('touchstart', 390, 300)
+    fire('touchmove', 385, 480)
+    fire('touchend', 385, 480)
+    const two = new Event('touchstart', { bubbles: true }) as any
+    two.touches = [{ clientX: 390, clientY: 300 }, { clientX: 200, clientY: 300 }]
+    document.dispatchEvent(two)
+    fire('touchmove', 300, 300)
+    await flushPromises()
+    expect(isOpen(w)).toBe(false)
+    w.unmount()
+  })
+
+  it('палец лёг на ползунок или на data-no-swipe — панель не открывается', async () => {
+    const w = await mounted()
+    const slider = document.createElement('input')
+    slider.type = 'range'
+    document.body.appendChild(slider)
+    fire('touchstart', 390, 300, slider)
+    fire('touchmove', 300, 300, slider)
+    await flushPromises()
+    expect(isOpen(w)).toBe(false)
+    slider.remove()
+    w.unmount()
+  })
+
+  it('закрытие свайпом вправо по-прежнему на touchend', async () => {
+    const w = await mounted()
+    fire('touchstart', 390, 300)
+    fire('touchmove', 300, 300)
+    await flushPromises()
+    expect(isOpen(w)).toBe(true)
+    fire('touchstart', 100, 300)
+    fire('touchend', 200, 305)
+    await flushPromises()
+    expect(isOpen(w)).toBe(false)
+    w.unmount()
+  })
+})

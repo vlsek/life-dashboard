@@ -1,6 +1,13 @@
 {
-  "version": "2.14",
+  "version": "2.15",
   "en": [
+    {
+      "version": "2.15",
+      "date": "2026-10-02 07:27",
+      "changes": [
+        "Right panel: the swipe is more reliable. You can start the gesture not only at the very screen edge but in the right part of the screen (about a fifth of the width) — on Android the edge is taken by the system back gesture, so the swipe could fail before. The panel opens as soon as the finger moves left, without waiting for release. The gesture is ignored when the finger lands on a slider, an input or a horizontally scrollable block. The header button works as before"
+      ]
+    },
     {
       "version": "2.14",
       "date": "2026-10-02 07:12",
@@ -1556,6 +1563,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.15",
+      "date": "2026-10-02 07:27",
+      "changes": [
+        "Правая панель: свайп стал надёжнее. Жест можно начинать не только у самого края экрана, а в правой части (примерно пятая часть ширины) — на Android край занят системным жестом «назад», поэтому раньше свайп мог не срабатывать. Панель открывается, как только палец ушёл влево, не дожидаясь отпускания. Жест не срабатывает, если палец лёг на ползунок, поле ввода или горизонтально прокручиваемый блок. Кнопка в шапке работает по-прежнему"
+      ]
+    },
     {
       "version": "2.14",
       "date": "2026-10-02 07:12",

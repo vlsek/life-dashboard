@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, watch } from 'vue'
 import { getLang, t } from '../lib/i18n'
-import { isCloseSwipe, isOpenSwipe, type Point } from '../lib/edgeSwipe'
+import { isCloseSwipe, isLeftSwipe, isSwipeBlockedTarget, startsInOpenZone, type Point } from '../lib/edgeSwipe'
 import WaterGlass from './WaterGlass.vue'
 import WaterSavedAnim from './WaterSavedAnim.vue'
 import ProgressGauge from './ProgressGauge.vue'
@@ -30,17 +30,37 @@ const unit = computed(() => (getLang() === 'en' ? 'ml' : 'мл'))
 const waterPct = computed(() => (props.water && props.water.normMl > 0 ? Math.min(100, Math.round((props.water.todayMl / props.water.normMl) * 100)) : 0))
 
 // --- жесты ---
+// Открытие решаем уже на touchmove, не дожидаясь touchend: когда браузер/система забирает жест (прокрутка, «назад»), touchend
+// не приходит — приходит touchcancel, и жест «пропадал». Закрытие — на touchend (палец и так остаётся на панели).
 let start: Point | null = null
-const point = (e: TouchEvent): Point => ({ x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY })
+let startOpenCandidate = false
+const pt = (t: Touch): Point => ({ x: t.clientX, y: t.clientY })
 function onTouchStart(e: TouchEvent) {
-  if (e.touches.length !== 1) return (start = null)
-  start = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+  if (e.touches.length !== 1) {
+    start = null
+    return
+  }
+  start = pt(e.touches[0])
+  startOpenCandidate = !props.open && startsInOpenZone(start, window.innerWidth) && !isSwipeBlockedTarget(e.target)
+}
+function onTouchMove(e: TouchEvent) {
+  if (!start || !startOpenCandidate || props.open || !e.touches.length) return
+  if (isLeftSwipe(start, pt(e.touches[0]))) {
+    startOpenCandidate = false
+    start = null
+    emit('update:open', true)
+  }
 }
 function onTouchEnd(e: TouchEvent) {
   if (!start || !e.changedTouches.length) return
-  const end = point(e)
-  if (!props.open && isOpenSwipe(start, end, window.innerWidth)) emit('update:open', true)
-  else if (props.open && isCloseSwipe(start, end)) emit('update:open', false)
+  const end = pt(e.changedTouches[0])
+  if (props.open && isCloseSwipe(start, end)) emit('update:open', false)
+  // запасной путь: если touchmove почему-то не дошёл (синтетические события, особые браузеры), решаем по touchend
+  else if (!props.open && startOpenCandidate && isLeftSwipe(start, end)) emit('update:open', true)
+  start = null
+  startOpenCandidate = false
+}
+function onTouchCancel() {
   start = null
 }
 function onKey(e: KeyboardEvent) {
@@ -48,12 +68,16 @@ function onKey(e: KeyboardEvent) {
 }
 onMounted(() => {
   document.addEventListener('touchstart', onTouchStart, { passive: true })
+  document.addEventListener('touchmove', onTouchMove, { passive: true })
   document.addEventListener('touchend', onTouchEnd, { passive: true })
+  document.addEventListener('touchcancel', onTouchCancel, { passive: true })
   document.addEventListener('keydown', onKey)
 })
 onBeforeUnmount(() => {
   document.removeEventListener('touchstart', onTouchStart)
+  document.removeEventListener('touchmove', onTouchMove)
   document.removeEventListener('touchend', onTouchEnd)
+  document.removeEventListener('touchcancel', onTouchCancel)
   document.removeEventListener('keydown', onKey)
 })
 
