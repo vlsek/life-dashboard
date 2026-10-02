@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.17";
+const SITE_VERSION = "2.18";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.18", date: "2026-10-02 13:25", changes: [
+        "Русский язык: слово «стрик/стрейк» заменено на «серия» везде, где пользователь его видит (Дашборд, вечернее напоминание, настройки метрики, тур по сайту, старые записи в списке изменений). Английский текст («streak») без изменений",
+    ]},
     { version: "2.17", date: "2026-10-02 13:10", changes: [
         "Дашборд (пилот): метрики с подходами теперь тоже показывают огонёк и число дней серии рядом с названием (как остальные метрики). Каждый подход в таблице подходов лежит на собственной подложке-карточке, а не голой строкой",
     ]},
@@ -1252,6 +1255,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.18", date: "2026-10-02 13:25", changes: [
+        "Russian language: the word \"стрик/стрейк\" was replaced with \"серия\" everywhere the user sees it (Dashboard, evening reminder, metric settings, site tour, older entries in the changelog). English text (\"streak\") is unchanged",
+    ]},
     { version: "2.17", date: "2026-10-02 13:10", changes: [
         "Dashboard (pilot): metrics with sets now also show the flame and the streak days next to the name (like the other metrics). Every set in the sets table sits on its own plate card instead of a bare row",
     ]},
