@@ -7,6 +7,7 @@ import { overviewPoints } from '../lib/workoutCharts'
 import { filterPointsByRange, loadPeriodState, savePeriodState, type PeriodState } from '../lib/chart'
 import { t } from '../lib/i18n'
 import type { WorkoutEntry } from '../lib/types'
+import EmojiText from './EmojiText.vue'
 
 // Общий график объёма тренировок (все упражнения сразу) — портировано из renderOverviewChart()
 // в workouts.js. Свой период (dash_period_workouts — тот же ключ localStorage, что в оригинале,
@@ -26,7 +27,7 @@ function onPeriodChange(next: PeriodState) {
 <template>
   <section v-if="allPoints.length >= 2" class="mb-4 rounded-xl border p-4" style="border-color: var(--border); background: var(--bg-card)" data-test="overview-card">
     <div class="mb-2 flex items-center gap-2">
-      <strong class="flex-1">{{ t('workouts_overview_title') }}</strong>
+      <strong class="flex-1"><EmojiText :text="t('workouts_overview_title')" /></strong>
       <button type="button" class="secondary px-2 py-0.5" :title="t('dash_charts_period_label')" data-test="period-btn" @click="showPeriod = !showPeriod"><Icon name="gear" /></button>
     </div>
     <PeriodPicker v-if="showPeriod" :state="period" @change="onPeriodChange" />

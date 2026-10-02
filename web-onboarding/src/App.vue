@@ -6,6 +6,7 @@ import { goalOptions, metricGroups, metricDescription, recommendedKeys, selected
 import { todayStr } from './lib/date'
 import { t, getLang } from './lib/i18n'
 import type { GoalType, Usecase } from './lib/types'
+import EmojiText from './components/EmojiText.vue'
 
 const { auth, init, complete, skip } = useOnboarding()
 onMounted(init)
@@ -139,7 +140,7 @@ const usecaseCards: { value: Usecase; title: 'onb_usecase_goals' | 'onb_usecase_
 <template>
   <main class="mx-auto max-w-[440px] px-4 py-8">
     <LangThemeBar />
-    <h1 class="mb-1.5 text-2xl font-semibold">{{ t('onb_h1') }}</h1>
+    <h1 class="mb-1.5 text-2xl font-semibold"><EmojiText :text="t('onb_h1')" /></h1>
     <p class="dim mb-4">{{ t('onb_intro') }}</p>
 
     <div v-if="auth.status !== 'ready'" class="card rounded-lg border p-4" style="border-color: var(--border)">{{ t('loading_ellipsis') }}</div>

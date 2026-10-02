@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { getLang, t } from '../lib/i18n'
 import { workoutTemplates } from '../lib/templates'
 import type { WorkoutTemplate } from '../lib/types'
+import EmojiText from './EmojiText.vue'
 
 // Порт openTemplatesModal() из workouts.js: список типовых программ → предпросмотр
 // (по дням) → "Добавить в мои упражнения". Само добавление делает родитель (save).
@@ -15,7 +16,7 @@ const selected = ref<WorkoutTemplate | null>(null)
 <template>
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" @click.self="emit('close')">
     <div class="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)">
-      <h3 class="mb-1 text-lg font-bold">{{ t('workouts_templates_title') }}</h3>
+      <h3 class="mb-1 text-lg font-bold"><EmojiText :text="t('workouts_templates_title')" /></h3>
       <p class="mb-3 text-[0.85em]" style="color: var(--text-dim)">{{ t('workouts_templates_hint') }}</p>
 
       <div v-if="!selected">
@@ -38,7 +39,7 @@ const selected = ref<WorkoutTemplate | null>(null)
           style="border-color: var(--border); background: var(--bg); color: var(--text)"
           @click="selected = null"
         >
-          ← {{ t('workouts_templates_title') }}
+          ← <EmojiText :text="t('workouts_templates_title')" />
         </button>
         <div v-for="day in selected.days" :key="day.label">
           <div class="mb-1 mt-2.5 font-bold">{{ day.label }}</div>

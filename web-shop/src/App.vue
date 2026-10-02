@@ -8,6 +8,7 @@ import { useShop } from './lib/useShop'
 import { t } from './lib/i18n'
 import type { ShopItem, ShopItemFormInput } from './lib/types'
 import CoinIcon from './components/CoinIcon.vue'
+import EmojiText from './components/EmojiText.vue'
 
 const { auth, items, balance, error, init, addItem, updateItem, buyItem, deleteItem, uploadImage } = useShop()
 onMounted(init)
@@ -41,18 +42,18 @@ async function onUpload(file: File): Promise<string | null> {
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
 
   <main class="mx-auto max-w-4xl px-4 pb-16 pt-4">
-    <h1 class="mb-1 text-xl font-semibold">{{ t('shop_h1') }}</h1>
+    <h1 class="mb-1 text-xl font-semibold"><EmojiText :text="t('shop_h1')" /></h1>
     <p class="dim mb-3 text-sm">{{ t('shop_intro') }}</p>
 
     <div class="card mb-3 rounded-lg border p-3.5" style="border-color: var(--border)">
       <template v-if="balance">
-        <strong class="text-lg">{{ t('dash_balance_label') }} {{ balance.balance }} {{ t('shop_points_word') }}</strong>
+        <strong class="text-lg"><EmojiText :text="t('dash_balance_label')" /> {{ balance.balance }} {{ t('shop_points_word') }}</strong>
         <div class="dim mt-1 text-sm">{{ t('shop_total_earned') }} {{ balance.total }} · {{ t('shop_total_spent') }} {{ balance.spent }}</div>
       </template>
       <span v-else class="dim">{{ t('loading_ellipsis') }}</span>
     </div>
 
-    <button class="mb-4 rounded-lg px-3 py-1.5 text-sm" @click="formTarget = 'new'">{{ t('shop_add_item_btn') }}</button>
+    <button class="mb-4 rounded-lg px-3 py-1.5 text-sm" @click="formTarget = 'new'"><EmojiText :text="t('shop_add_item_btn')" /></button>
 
     <p v-if="error" class="dim">{{ t('comm_load_error') }} {{ error }}</p>
     <p v-else-if="items.length === 0" class="dim">{{ t('shop_list_empty') }}</p>
@@ -71,8 +72,8 @@ async function onUpload(file: File): Promise<string | null> {
         <ItemProgressBar v-if="!item.redeemed && balance" :cost="item.cost" :balance="balance.balance" />
 
         <div class="mt-2">
-          <span v-if="item.redeemed">{{ t('shop_bought_prefix') }} {{ item.redeemed_date ? fmtRu(item.redeemed_date) : '' }}</span>
-          <button v-else-if="balance && balance.balance >= item.cost" @click="buyItem(item.id)">{{ t('shop_buy_btn') }}</button>
+          <span v-if="item.redeemed"><EmojiText :text="t('shop_bought_prefix')" /> {{ item.redeemed_date ? fmtRu(item.redeemed_date) : '' }}</span>
+          <button v-else-if="balance && balance.balance >= item.cost" @click="buyItem(item.id)"><EmojiText :text="t('shop_buy_btn')" /></button>
           <button v-else disabled>{{ t('shop_not_enough') }} {{ balance ? item.cost - balance.balance : item.cost }} 🪙</button>
         </div>
 

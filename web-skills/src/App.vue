@@ -12,6 +12,7 @@ import { useBooks } from './lib/useBooks'
 import { suggestionsFor } from './lib/skills'
 import { t, getLang } from './lib/i18n'
 import type { Skill, SkillFormInput, Book, BookFormInput } from './lib/types'
+import EmojiText from './components/EmojiText.vue'
 
 const { auth, items: skills, error: skillsError, init, addSkill, updateSkill, deleteSkill, bumpProgress, toggleMastered } = useSkills()
 const { items: books, error: booksError, load: loadBooks, addBook, updateBook, deleteBook, toggleDone: toggleBookDone } = useBooks()
@@ -91,9 +92,9 @@ async function onDeleteBook(b: Book) {
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
     <div class="mb-4 flex items-center justify-between">
-      <h1 class="text-xl font-semibold">{{ t('skills_h1') }}</h1>
+      <h1 class="text-xl font-semibold"><EmojiText :text="t('skills_h1')" /></h1>
       <button class="rounded-lg px-3 py-1.5 text-sm" style="background: var(--accent); color: var(--accent-text)" @click="openAddSkill()">
-        {{ t('skills_add_btn') }}
+        <EmojiText :text="t('skills_add_btn')" />
       </button>
     </div>
 
@@ -103,9 +104,9 @@ async function onDeleteBook(b: Book) {
       <p v-if="skillsError" class="dim">{{ t('comm_load_error') }} {{ skillsError }}</p>
 
       <template v-else>
-        <h3 class="mb-2 text-base font-medium">{{ t('skills_suggestions_h3') }}</h3>
+        <h3 class="mb-2 text-base font-medium"><EmojiText :text="t('skills_suggestions_h3')" /></h3>
         <div class="mb-5 flex flex-wrap gap-2">
-          <p v-if="suggestions.length === 0" class="dim">{{ t('skills_all_suggestions_added') }}</p>
+          <p v-if="suggestions.length === 0" class="dim"><EmojiText :text="t('skills_all_suggestions_added')" /></p>
           <button
             v-for="s in suggestions"
             :key="s.name"
@@ -132,7 +133,7 @@ async function onDeleteBook(b: Book) {
           />
         </div>
 
-        <h2 class="mb-2 text-base font-medium">{{ t('skills_mastered_h2') }}</h2>
+        <h2 class="mb-2 text-base font-medium"><EmojiText :text="t('skills_mastered_h2')" /></h2>
         <p v-if="mastered.length === 0" class="dim">{{ t('skills_none_mastered') }}</p>
         <table v-else class="w-full">
           <tbody>
@@ -151,9 +152,9 @@ async function onDeleteBook(b: Book) {
       <div class="my-6 border-t" style="border-color: var(--border)"></div>
 
       <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-lg font-semibold">{{ t('skills_books_h2') }}</h2>
+        <h2 class="text-lg font-semibold"><EmojiText :text="t('skills_books_h2')" /></h2>
         <button class="rounded-lg px-3 py-1.5 text-sm" style="background: var(--accent); color: var(--accent-text)" @click="bookFormTarget = 'new'">
-          {{ t('skills_add_book_btn') }}
+          <EmojiText :text="t('skills_add_book_btn')" />
         </button>
       </div>
 
@@ -175,7 +176,7 @@ async function onDeleteBook(b: Book) {
           </tbody>
         </table>
 
-        <h3 class="mb-2 text-base font-medium">{{ t('skills_books_done_h3') }}</h3>
+        <h3 class="mb-2 text-base font-medium"><EmojiText :text="t('skills_books_done_h3')" /></h3>
         <p v-if="doneBooks.length === 0" class="dim">{{ t('skills_book_none_read') }}</p>
         <table v-else class="w-full">
           <tbody>

@@ -5,6 +5,7 @@ import { computeDailyStats, defaultDayIdx, isMetricEntry } from '../lib/challeng
 import { todayStr } from '../lib/date'
 import Icon from './Icon.vue'
 import type { Challenge, ChallengeEntry } from '../lib/types'
+import EmojiText from './EmojiText.vue'
 
 const props = defineProps<{ challenge: Challenge; entries: ChallengeEntry[]; sourceName?: string | null }>()
 const emit = defineEmits<{
@@ -134,7 +135,7 @@ function dotStyle(d: { i: number; isFuture: boolean; done: boolean; isToday: boo
 
     <template v-if="stats.isOver">
       <p class="dim mt-2 text-sm">{{ t('ch_duration_over_note') }}</p>
-      <button @click="emit('markCompleted', challenge)">{{ t('ch_mark_completed_btn') }}</button>
+      <button @click="emit('markCompleted', challenge)"><EmojiText :text="t('ch_mark_completed_btn')" /></button>
     </template>
   </div>
 </template>

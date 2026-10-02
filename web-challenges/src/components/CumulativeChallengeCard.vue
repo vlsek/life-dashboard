@@ -4,6 +4,7 @@ import { t } from '../lib/i18n'
 import { computeCumulativeStats } from '../lib/challenges'
 import Icon from './Icon.vue'
 import type { Challenge, ChallengeEntry } from '../lib/types'
+import EmojiText from './EmojiText.vue'
 
 const props = defineProps<{ challenge: Challenge; entries: ChallengeEntry[] }>()
 const emit = defineEmits<{
@@ -47,7 +48,7 @@ const placeholder = computed(() =>
       <div class="h-full" :style="{ background: 'var(--accent)', width: stats.pct + '%' }"></div>
     </div>
 
-    <button v-if="stats.canComplete" class="mb-2.5" @click="emit('markCompleted', challenge)">{{ t('ch_mark_completed_btn') }}</button>
+    <button v-if="stats.canComplete" class="mb-2.5" @click="emit('markCompleted', challenge)"><EmojiText :text="t('ch_mark_completed_btn')" /></button>
 
     <div class="mb-2.5 flex gap-1.5">
       <input v-model="noteInput" type="text" class="flex-1" :placeholder="placeholder" @keyup.enter="onAdd" />

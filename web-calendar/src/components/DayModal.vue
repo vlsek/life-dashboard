@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { t, getLang } from '../lib/i18n'
 import type { PlannedItem } from '../lib/types'
+import EmojiText from './EmojiText.vue'
 
 const props = defineProps<{ dateStr: string; initial: PlannedItem[] }>()
 const emit = defineEmits<{ close: []; save: [items: PlannedItem[]] }>()
@@ -55,7 +56,7 @@ function save() {
         />
         <button class="secondary" @click="addItem">+</button>
       </div>
-      <p class="dim mt-1.5 text-xs">{{ t('cal_hint') }}</p>
+      <p class="dim mt-1.5 text-xs"><EmojiText :text="t('cal_hint')" /></p>
 
       <div class="modal-actions">
         <button class="secondary" @click="emit('close')">{{ t('cancel') }}</button>

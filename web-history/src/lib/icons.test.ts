@@ -6,9 +6,12 @@ import MetricIcon from '../components/MetricIcon.vue'
 import IconPicker from '../components/IconPicker.vue'
 
 describe('icons lib', () => {
-  it('has all 120 icon paths from config.js, all non-empty', () => {
+  // 120 иконок из config.js классики + служебные иконки интерфейса (BACKLOG 1.3: меню, колокольчик… вместо эмодзи)
+  const UI_ONLY_ICONS = ['menu', 'upload', 'mail', 'key', 'hash', 'save', 'bell', 'cart', 'bulb', 'hand', 'compass']
+  it('has all 120 icon paths from config.js plus the UI-only icons, all non-empty', () => {
     const names = Object.keys(ICON_PATHS)
-    expect(names.length).toBe(120)
+    expect(names.length).toBe(120 + UI_ONLY_ICONS.length)
+    for (const n of UI_ONLY_ICONS) expect(names).toContain(n)
     for (const n of names) expect(ICON_PATHS[n as keyof typeof ICON_PATHS].length).toBeGreaterThan(0)
   })
 

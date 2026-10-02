@@ -8,6 +8,7 @@ import { CELL_ORDER, blankRow, fromRows, toRows } from '../lib/sides'
 import type { CellKey, SetRow } from '../lib/sides'
 import Icon from './Icon.vue'
 import type { EntryFormInput, Exercise, WorkoutEntry } from '../lib/types'
+import EmojiText from './EmojiText.vue'
 
 // Порт openEntryModal() из workouts.js: дата, динамический список подходов (повторы,
 // вес, длительность, время), заметка. Для билатеральных упражнений левая и правая сторона —
@@ -147,7 +148,7 @@ const unitLabel = () => props.exercise.unit || defaultWeightUnit()
             style="border-color: var(--border); background: var(--bg); color: var(--text)"
             @click="addSet"
           >
-            {{ t('workouts_add_set_btn') }}
+            <EmojiText :text="t('workouts_add_set_btn')" />
           </button>
         </div>
 

@@ -10,6 +10,7 @@ import { t } from './lib/i18n'
 import { ref } from 'vue'
 import { localDateOfTimestamp } from './lib/date'
 import type { Challenge, ChallengeTemplate, CustomChallengeFormInput } from './lib/types'
+import EmojiText from './components/EmojiText.vue'
 
 const {
   auth,
@@ -85,17 +86,17 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
     <div class="mb-4 flex items-center justify-between">
-      <h1 class="text-xl font-semibold">{{ t('ch_h1') }}</h1>
+      <h1 class="text-xl font-semibold"><EmojiText :text="t('ch_h1')" /></h1>
     </div>
     <div class="mb-4 flex flex-wrap gap-2">
-      <button @click="catalogOpen = true">{{ t('ch_catalog_btn') }}</button>
-      <button class="secondary" @click="customFormOpen = true">{{ t('ch_custom_btn') }}</button>
+      <button @click="catalogOpen = true"><EmojiText :text="t('ch_catalog_btn')" /></button>
+      <button class="secondary" @click="customFormOpen = true"><EmojiText :text="t('ch_custom_btn')" /></button>
     </div>
 
     <p v-if="auth.status === 'loading'" class="dim">…</p>
 
     <template v-else-if="auth.status === 'ready'">
-      <h2 class="mb-2 mt-4 text-base font-medium">{{ t('ch_active_h2') }}</h2>
+      <h2 class="mb-2 mt-4 text-base font-medium"><EmojiText :text="t('ch_active_h2')" /></h2>
       <p v-if="error" class="dim">{{ t('comm_load_error') }} {{ error }} — {{ t('ch_migration_hint') }}</p>
       <template v-else>
         <p v-if="active.length === 0" class="dim">{{ t('ch_no_active') }}</p>
@@ -122,7 +123,7 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
           />
         </template>
 
-        <h2 class="mb-2 mt-6 text-base font-medium">{{ t('ch_completed_h2') }}</h2>
+        <h2 class="mb-2 mt-6 text-base font-medium"><EmojiText :text="t('ch_completed_h2')" /></h2>
         <p v-if="completed.length === 0" class="dim">{{ t('ch_no_completed') }}</p>
         <div v-for="ch in completed" :key="ch.id" class="card mb-2">
           <strong>{{ ch.icon }} {{ ch.title }}</strong>

@@ -8,6 +8,7 @@ import { categoryRows, categoryChartPoints, defaultGoalSum, categoryLabel } from
 import { loadPeriodState, savePeriodState, type PeriodState } from '../lib/chart'
 import { t } from '../lib/i18n'
 import type { CategoryMode, CategoryRange, Scope } from '../lib/types'
+import EmojiText from './EmojiText.vue'
 
 const props = defineProps<{ userId: string; scope: Scope; friendIds: Set<string> }>()
 
@@ -80,7 +81,7 @@ onMounted(loadCategories)
 
 <template>
   <section>
-    <h2 class="mb-1 text-lg font-medium">{{ t('comm_category_h2') }}</h2>
+    <h2 class="mb-1 text-lg font-medium"><EmojiText :text="t('comm_category_h2')" /></h2>
     <p class="dim mb-2 text-sm">{{ t('comm_category_intro') }}</p>
 
     <select v-model="catKey" class="mb-3 w-full" @change="refresh">
@@ -133,7 +134,7 @@ onMounted(loadCategories)
     <div v-if="catKey && own.status !== 'idle'" class="card mt-2.5 rounded-lg border p-3.5" style="border-color: var(--border)">
       <template v-if="own.status === 'ready'">
         <div class="mb-2 flex items-center gap-2">
-          <strong>{{ t('comm_your_progress_chart') }}</strong>
+          <strong><EmojiText :text="t('comm_your_progress_chart')" /></strong>
         </div>
         <div class="mb-2.5"><PeriodPicker :state="period" @change="onPeriodChange" /></div>
         <ChartBlock :points="chartPoints" color="var(--accent)" :goal-value="chartGoal" :goal-label="chartGoal != null ? `${t('chart_goal_label')} ${chartGoal}` : null" />
@@ -145,9 +146,9 @@ onMounted(loadCategories)
           <select v-model="linkTarget">
             <option v-for="m in own.candidates" :key="m.id" :value="m.id">{{ metricLabel(m) }}</option>
           </select>
-          <button @click="onLink">{{ t('comm_link_btn') }}</button>
+          <button @click="onLink"><EmojiText :text="t('comm_link_btn')" /></button>
         </div>
-        <p v-else class="dim mt-2">{{ t('comm_no_number_metrics') }}</p>
+        <p v-else class="dim mt-2"><EmojiText :text="t('comm_no_number_metrics')" /></p>
         <p v-if="linkMsg" class="mt-1.5 text-xs" :style="{ color: linkMsg.error ? 'var(--danger)' : 'inherit' }">{{ linkMsg.text }}</p>
       </template>
     </div>

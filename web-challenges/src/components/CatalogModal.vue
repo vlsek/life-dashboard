@@ -2,6 +2,7 @@
 import { challengeTemplates } from '../lib/templates'
 import { t } from '../lib/i18n'
 import type { ChallengeTemplate } from '../lib/types'
+import EmojiText from './EmojiText.vue'
 
 const emit = defineEmits<{ close: []; select: [tpl: ChallengeTemplate] }>()
 const templates = challengeTemplates()
@@ -10,7 +11,7 @@ const templates = challengeTemplates()
 <template>
   <div class="modal-backdrop" @click.self="emit('close')">
     <div class="modal" style="max-width: 30rem">
-      <h3>{{ t('ch_catalog_title') }}</h3>
+      <h3><EmojiText :text="t('ch_catalog_title')" /></h3>
 
       <div
         v-for="tpl in templates"

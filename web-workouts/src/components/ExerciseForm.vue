@@ -5,6 +5,7 @@ import { defaultWeightUnit, isWeightUnit, rememberWeightUnit } from '../lib/weig
 import { valueLabelOptions } from '../lib/valueLabels'
 import Icon from './Icon.vue'
 import type { Exercise, ExerciseFormInput } from '../lib/types'
+import { stripEmoji } from '../lib/emojiText'
 
 // Порт openExerciseFormModal() из workouts.js: имя, категория (фиксированный список +
 // "своя категория" текстом), вести вес да/нет, подпись значения, единица, доп. флаги
@@ -79,11 +80,11 @@ function onSubmit() {
           {{ t('workouts_field_category') }}
           <select v-model="catSelect" class="modal-input">
             <option value="">{{ t('workouts_cat_none') }}</option>
-            <option value="upper">{{ t('workouts_cat_upper') }}</option>
-            <option value="lower">{{ t('workouts_cat_lower') }}</option>
-            <option value="fullbody">{{ t('workouts_cat_fullbody') }}</option>
-            <option value="custom">{{ t('workouts_cat_custom') }}</option>
-            <option value="__new__">{{ t('workouts_cat_add_new') }}</option>
+            <option value="upper">{{ stripEmoji(t('workouts_cat_upper')) }}</option>
+            <option value="lower">{{ stripEmoji(t('workouts_cat_lower')) }}</option>
+            <option value="fullbody">{{ stripEmoji(t('workouts_cat_fullbody')) }}</option>
+            <option value="custom">{{ stripEmoji(t('workouts_cat_custom')) }}</option>
+            <option value="__new__">{{ stripEmoji(t('workouts_cat_add_new')) }}</option>
           </select>
         </label>
         <label v-if="showNewCatInput" class="flex flex-col gap-1 text-sm">

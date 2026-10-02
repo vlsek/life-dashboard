@@ -20,6 +20,7 @@ import Toast from './components/Toast.vue'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry, WorkoutTemplate } from './lib/types'
 import CollapseChevron from './components/CollapseChevron.vue'
 import { vCollapse } from './lib/collapseMotion'
+import EmojiText from './components/EmojiText.vue'
 
 // Порт workouts.js/html целиком: CRUD упражнений и записей (подходы), личные рекорды,
 // группировка по категориям со сворачиванием, каталог типовых программ, мини-график прогресса
@@ -180,7 +181,7 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
 <template>
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-6">
-    <h1 class="mb-3 text-xl font-bold">{{ t('workouts_h1') }}</h1>
+    <h1 class="mb-3 text-xl font-bold"><EmojiText :text="t('workouts_h1')" /></h1>
 
     <div class="mb-4 flex flex-wrap gap-2">
       <button
@@ -189,7 +190,7 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
         style="background: var(--accent); color: var(--accent-text)"
         @click="exerciseForm = { existing: null }"
       >
-        {{ t('workouts_add_exercise_btn') }}
+        <EmojiText :text="t('workouts_add_exercise_btn')" />
       </button>
       <button
         type="button"
@@ -197,7 +198,7 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
         style="border-color: var(--border); background: var(--bg-card); color: var(--text)"
         @click="templatesOpen = true"
       >
-        {{ t('workouts_templates_btn') }}
+        <EmojiText :text="t('workouts_templates_btn')" />
       </button>
     </div>
 

@@ -1,19 +1,20 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { t, type DictKey } from '../lib/i18n'
+import Icon from './Icon.vue'
 
 // Порт showWelcomeTour() из config.js: те же 7 шагов, тот же текст, клавиши ←/→/Esc,
 // свайп влево/вправо. Здесь — как контролируемая Vue-модалка вместо ручной сборки DOM.
 const emit = defineEmits<{ close: [] }>()
 
 const TOUR_STEPS = [
-  { icon: '👋', key: 'tour_1' },
-  { icon: '🏠', key: 'tour_2' },
-  { icon: '🎯', key: 'tour_3' },
-  { icon: '🥋', key: 'tour_4' },
-  { icon: '🏆', key: 'tour_5' },
-  { icon: '🗓️', key: 'tour_6' },
-  { icon: '🧭', key: 'tour_7' },
+  { icon: 'hand', key: 'tour_1' },
+  { icon: 'home', key: 'tour_2' },
+  { icon: 'goals', key: 'tour_3' },
+  { icon: 'skills', key: 'tour_4' },
+  { icon: 'trophy', key: 'tour_5' },
+  { icon: 'calendar', key: 'tour_6' },
+  { icon: 'compass', key: 'tour_7' },
 ] as const
 
 const step = ref(0)
@@ -62,7 +63,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKey))
     @touchend="onTouchEnd"
   >
     <div class="w-full max-w-md rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)">
-      <div class="mt-1 text-center text-[2.2em]">{{ TOUR_STEPS[step].icon }}</div>
+      <div class="mt-1 flex justify-center text-[2.2em]"><Icon :name="TOUR_STEPS[step].icon" /></div>
       <h3 class="my-2 text-center text-lg font-bold">{{ t((TOUR_STEPS[step].key + '_title') as DictKey) }}</h3>
       <p class="whitespace-pre-line text-center text-sm leading-relaxed">{{ t((TOUR_STEPS[step].key + '_text') as DictKey) }}</p>
 

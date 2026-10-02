@@ -7,6 +7,7 @@ import type { HistoryContext } from './lib/stats'
 import { locale, t } from './lib/i18n'
 import DayDetailModal from './components/DayDetailModal.vue'
 import AppShell from './components/AppShell.vue'
+import EmojiText from './components/EmojiText.vue'
 
 const { auth, ctx, error } = useAuthAndData()
 
@@ -148,7 +149,7 @@ function onTouchEnd(e: TouchEvent) {
 <template>
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-6">
-    <h1 class="mb-1 text-xl font-bold">{{ t('hist_h1') }}</h1>
+    <h1 class="mb-1 text-xl font-bold"><EmojiText :text="t('hist_h1')" /></h1>
     <p class="mb-4 text-sm" style="color: var(--text-dim)">{{ t('hist_intro') }}</p>
 
     <p v-if="error" class="mb-3 text-sm" style="color: var(--danger)">{{ error }}</p>
@@ -257,7 +258,7 @@ function onTouchEnd(e: TouchEvent) {
           </div>
         </div>
 
-        <h2 class="mb-2 mt-6 text-lg font-bold">{{ t('hist_weeks_h2') }}</h2>
+        <h2 class="mb-2 mt-6 text-lg font-bold"><EmojiText :text="t('hist_weeks_h2')" /></h2>
         <p v-if="recentWeeks.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('hist_no_data') }}</p>
         <div v-for="w in recentWeeks" :key="w.label" class="my-2 flex items-center gap-2.5">
           <div class="w-[124px] shrink-0 text-sm">{{ w.label }}</div>

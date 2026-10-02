@@ -10,6 +10,7 @@ import { leaderboardRows, medalIndex, todayRows, friendDisplayName, normalizeDis
 import { splitRequests } from './lib/friends'
 import { t } from './lib/i18n'
 import type { Scope } from './lib/types'
+import EmojiText from './components/EmojiText.vue'
 
 const {
   auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
@@ -138,8 +139,8 @@ async function onSaveProfile(name: string, visible: boolean) {
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
     <div class="mb-4 flex items-center justify-between">
-      <h1 class="text-xl font-semibold">{{ t('comm_h1') }}</h1>
-      <button class="secondary" @click="showProfileModal = true">{{ t('comm_public_profile_btn') }}</button>
+      <h1 class="text-xl font-semibold"><EmojiText :text="t('comm_h1')" /></h1>
+      <button class="secondary" @click="showProfileModal = true"><EmojiText :text="t('comm_public_profile_btn')" /></button>
     </div>
 
     <div class="card mb-5 rounded-lg border p-3.5 text-sm" style="border-color: var(--border)">
@@ -148,7 +149,7 @@ async function onSaveProfile(name: string, visible: boolean) {
 
     <template v-if="auth.status === 'ready'">
       <!-- Друзья -->
-      <h2 class="mb-2 text-lg font-medium">{{ t('comm_friends_h2') }}</h2>
+      <h2 class="mb-2 text-lg font-medium"><EmojiText :text="t('comm_friends_h2')" /></h2>
       <div class="card mb-5 rounded-lg border p-3.5" style="border-color: var(--border)">
         <p v-if="!hasAnyFriendItems" class="dim mb-3">{{ t('comm_no_follows') }}</p>
 
@@ -157,7 +158,7 @@ async function onSaveProfile(name: string, visible: boolean) {
           <p class="dim mb-1.5 text-sm">{{ t('comm_requests_sub') }}</p>
           <div class="flex flex-wrap gap-2.5">
             <PersonChip v-for="r in incomingRequests" :key="r.id" :name="r.display_name" :avatar-url="r.avatar_url" :note="t('comm_friend_incoming_note')">
-              <button class="px-2 py-0 text-sm" @click="onRespond(r.id, true)">{{ t('comm_friend_accept') }}</button>
+              <button class="px-2 py-0 text-sm" @click="onRespond(r.id, true)"><EmojiText :text="t('comm_friend_accept')" /></button>
               <button class="secondary px-2 py-0 text-sm" @click="onRespond(r.id, false)">{{ t('comm_friend_decline') }}</button>
             </PersonChip>
             <PersonChip v-for="r in outgoingRequests" :key="r.id" :name="r.display_name" :avatar-url="r.avatar_url" :note="t('comm_friend_outgoing_note')">
@@ -186,14 +187,14 @@ async function onSaveProfile(name: string, visible: boolean) {
 
         <div class="flex flex-wrap gap-2">
           <input v-model="searchQuery" type="text" class="flex-1" style="min-width: 10rem" :placeholder="t('comm_search_placeholder')" @keydown.enter.prevent="onFollow" />
-          <button :disabled="followBusy" @click="onFollow">{{ t('comm_follow_btn') }}</button>
-          <button v-if="friendsApi" :disabled="followBusy" @click="onAddFriend">{{ t('comm_friend_add_btn') }}</button>
+          <button :disabled="followBusy" @click="onFollow"><EmojiText :text="t('comm_follow_btn')" /></button>
+          <button v-if="friendsApi" :disabled="followBusy" @click="onAddFriend"><EmojiText :text="t('comm_friend_add_btn')" /></button>
         </div>
         <p v-if="followMsg" class="mt-1.5 text-xs" :style="{ color: followMsg.error ? 'var(--danger)' : 'inherit' }">{{ followMsg.text }}</p>
       </div>
 
       <!-- Лидерборд -->
-      <h2 class="mb-2 text-lg font-medium">{{ t('comm_leaderboard_h2') }}</h2>
+      <h2 class="mb-2 text-lg font-medium"><EmojiText :text="t('comm_leaderboard_h2')" /></h2>
       <div class="mb-2.5 flex gap-2">
         <button :class="{ secondary: scope !== 'everyone' }" @click="scope = 'everyone'">{{ t('comm_scope_everyone') }}</button>
         <button :class="{ secondary: scope !== 'friends' }" @click="scope = 'friends'">{{ t('comm_scope_friends') }}</button>
@@ -222,7 +223,7 @@ async function onSaveProfile(name: string, visible: boolean) {
       </div>
 
       <!-- Сегодня -->
-      <h2 class="mb-2 text-lg font-medium">{{ t('comm_today_h2') }}</h2>
+      <h2 class="mb-2 text-lg font-medium"><EmojiText :text="t('comm_today_h2')" /></h2>
       <div class="card rounded-lg border p-3.5" style="border-color: var(--border)">
         <p v-if="todayError" class="dim">{{ t('comm_load_error') }} {{ todayError }}</p>
         <p v-else-if="visibleToday.length === 0" class="dim">{{ t('comm_empty') }}</p>

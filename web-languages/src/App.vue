@@ -8,6 +8,7 @@ import WordForm from './components/WordForm.vue'
 import DictionaryTabs from './components/DictionaryTabs.vue'
 import Icon from './components/Icon.vue'
 import type { VocabWord, WordFormInput } from './lib/types'
+import EmojiText from './components/EmojiText.vue'
 
 const { auth, words, error, addWord, editWord, deleteWord, toggleLearned } = useVocab()
 
@@ -100,7 +101,7 @@ async function onDelete(id: string) {
 <template>
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
   <main class="mx-auto max-w-2xl px-4 pb-16 pt-6">
-    <h1 class="mb-1 text-xl font-bold">{{ t('eng_h1') }}</h1>
+    <h1 class="mb-1 text-xl font-bold"><EmojiText :text="t('eng_h1')" /></h1>
     <p class="mb-4 text-sm" style="color: var(--text-dim)">{{ t('eng_intro') }}</p>
 
     <div v-if="auth.status === 'loading' || auth.status === 'redirecting'" class="text-sm" style="color: var(--text-dim)">
@@ -125,8 +126,8 @@ async function onDelete(id: string) {
       </p>
 
       <div class="mb-4 flex justify-between rounded-xl border p-4 text-sm" style="border-color: var(--border); background: var(--bg-card)">
-        <div>{{ t('eng_learning_label') }} {{ activeWords.length }}</div>
-        <div>{{ t('eng_learned_label') }} {{ doneWords.length }}</div>
+        <div><EmojiText :text="t('eng_learning_label')" /> {{ activeWords.length }}</div>
+        <div><EmojiText :text="t('eng_learned_label')" /> {{ doneWords.length }}</div>
         <div class="font-bold">{{ t('eng_total_label') }} {{ filteredWords.length }}</div>
       </div>
 
@@ -136,10 +137,10 @@ async function onDelete(id: string) {
         style="background: var(--accent); color: var(--accent-text)"
         @click="openAdd"
       >
-        {{ t('eng_add_word_btn') }}
+        <EmojiText :text="t('eng_add_word_btn')" />
       </button>
 
-      <h3 class="mb-2 font-bold">{{ t('eng_learning_h3') }}</h3>
+      <h3 class="mb-2 font-bold"><EmojiText :text="t('eng_learning_h3')" /></h3>
       <p v-if="activeWords.length === 0" class="mb-5 text-sm" style="color: var(--text-dim)">{{ t('eng_nothing_to_learn') }}</p>
       <div v-else class="mb-5 overflow-x-auto rounded-xl border" style="border-color: var(--border)">
         <table class="w-full text-sm">
@@ -174,7 +175,7 @@ async function onDelete(id: string) {
         </table>
       </div>
 
-      <h2 class="mb-2 font-bold">{{ t('eng_learned_h2') }}</h2>
+      <h2 class="mb-2 font-bold"><EmojiText :text="t('eng_learned_h2')" /></h2>
       <p v-if="doneWords.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('eng_nothing_learned') }}</p>
       <div v-else class="overflow-x-auto rounded-xl border" style="border-color: var(--border)">
         <table class="w-full text-sm">

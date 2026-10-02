@@ -10,6 +10,7 @@ import { readExerciseCollapsed, writeExerciseCollapsed } from '../lib/exerciseCo
 import type { Exercise, WorkoutEntry } from '../lib/types'
 import CollapseChevron from './CollapseChevron.vue'
 import { vCollapse } from '../lib/collapseMotion'
+import EmojiText from './EmojiText.vue'
 
 // Порт renderExerciseCard() из workouts.js — заголовок с кнопками, рекомендованная схема,
 // личные рекорды (по сторонам для билатеральных), мини-график прогресса, таблица записей.
@@ -82,7 +83,7 @@ const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date
         style="border-color: var(--border); background: var(--bg); color: var(--text)"
         @click="emit('addEntry')"
       >
-        {{ t('workouts_add_entry_btn') }}
+        <EmojiText :text="t('workouts_add_entry_btn')" />
       </button>
       <button type="button" class="rounded-lg border px-2.5 py-1.5" style="border-color: var(--border); color: var(--text)" @click="emit('editExercise')">
         <Icon name="edit" />

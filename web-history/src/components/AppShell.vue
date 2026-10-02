@@ -200,7 +200,7 @@ onUnmounted(() => {
       :aria-label="t('nav_open_menu')"
       @click="openSidebar"
     >
-      ☰
+      <Icon name="menu" />
     </button>
     <a href="/dashboard/" class="flex h-10 w-10 items-center justify-center rounded-lg" :title="plainLabel('nav_dashboard')">
       <img src="/favicon.svg" alt="" class="h-7 w-7" />

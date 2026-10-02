@@ -8,6 +8,7 @@ import { useMilestones } from './lib/useMilestones'
 import { buildRow, groupActiveByCategory, sortDone, summary, statusLevel } from './lib/milestones'
 import { t, locale } from './lib/i18n'
 import type { Milestone, MilestoneFormInput } from './lib/types'
+import EmojiText from './components/EmojiText.vue'
 
 const { auth, items, error, init, addMilestone, updateMilestone, markDone, deleteMilestone } = useMilestones()
 onMounted(init)
@@ -152,7 +153,7 @@ function closeHistory() {
         style="background: var(--accent); color: var(--accent-text)"
         @click="openAddForm"
       >
-        {{ t('ms_add_btn') }}
+        <EmojiText :text="t('ms_add_btn')" />
       </button>
     </div>
 
@@ -204,7 +205,7 @@ function closeHistory() {
           </table>
         </div>
 
-        <h3 class="mb-2 mt-6 text-base font-medium">{{ t('ms_done_h2') }}</h3>
+        <h3 class="mb-2 mt-6 text-base font-medium"><EmojiText :text="t('ms_done_h2')" /></h3>
         <p v-if="done.length === 0" class="dim">{{ t('ms_no_done') }}</p>
         <table v-else class="w-full">
           <tbody>

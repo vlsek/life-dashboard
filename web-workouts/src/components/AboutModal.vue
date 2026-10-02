@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { t } from '../lib/i18n'
+import EmojiText from './EmojiText.vue'
 
 defineEmits<{ close: [] }>()
 </script>
@@ -7,7 +8,7 @@ defineEmits<{ close: [] }>()
 <template>
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" @click.self="$emit('close')">
     <div class="w-full max-w-md rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)">
-      <h3 class="text-lg font-bold">{{ t('about_title') }}</h3>
+      <h3 class="text-lg font-bold"><EmojiText :text="t('about_title')" /></h3>
 
       <h4 class="mb-1.5 mt-3.5 font-semibold">{{ t('about_creator_title') }}</h4>
       <p class="text-sm leading-relaxed">{{ t('about_creator_text') }}</p>

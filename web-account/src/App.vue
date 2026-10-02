@@ -8,6 +8,7 @@ import AppShell from './components/AppShell.vue'
 import PasswordModal from './components/PasswordModal.vue'
 import Icon from './components/Icon.vue'
 import Toast from './components/Toast.vue'
+import EmojiText from './components/EmojiText.vue'
 
 // Порт account.js/account.html: смена пароля, смена почты, привязка Google-аккаунта.
 // Данных, кроме сессии, странице не нужно — useAuth() вместо полного useAuthAndData().
@@ -103,13 +104,13 @@ const googleLinkedRest = computed(() => t('acc_google_linked').replace(/^\u2705\
 <template>
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
   <main class="mx-auto max-w-xl px-4 pb-16 pt-6">
-    <h1 class="mb-4 text-xl font-bold">{{ t('acc_h1') }}</h1>
+    <h1 class="mb-4 text-xl font-bold"><EmojiText :text="t('acc_h1')" /></h1>
 
     <div v-if="auth.status === 'loading' || auth.status === 'redirecting'" class="text-sm" style="color: var(--text-dim)">…</div>
 
     <template v-else>
       <div class="mb-4 rounded-xl border p-4" style="border-color: var(--border); background: var(--bg-card)">
-        <h3 class="mb-1 font-bold">{{ t('acc_change_password_h3') }}</h3>
+        <h3 class="mb-1 font-bold"><EmojiText :text="t('acc_change_password_h3')" /></h3>
         <p class="mb-3 text-sm" style="color: var(--text-dim)">{{ hasPassword ? t('acc_password_card_hint') : t('acc_password_none_hint') }}</p>
         <button
           type="button"
@@ -123,7 +124,7 @@ const googleLinkedRest = computed(() => t('acc_google_linked').replace(/^\u2705\
       </div>
 
       <div class="mb-4 rounded-xl border p-4" style="border-color: var(--border); background: var(--bg-card)">
-        <h3 class="mb-3 font-bold">{{ t('acc_change_email_h3') }}</h3>
+        <h3 class="mb-3 font-bold"><EmojiText :text="t('acc_change_email_h3')" /></h3>
         <p class="mb-3 text-sm" style="color: var(--text-dim)">
           {{ t('acc_current_email_label') }}: <span>{{ auth.status === 'ready' ? auth.userEmail : '' }}</span>
         </p>
@@ -148,7 +149,7 @@ const googleLinkedRest = computed(() => t('acc_google_linked').replace(/^\u2705\
       </div>
 
       <div class="rounded-xl border p-4" style="border-color: var(--border); background: var(--bg-card)">
-        <h3 class="mb-3 font-bold">{{ t('acc_google_h3') }}</h3>
+        <h3 class="mb-3 font-bold"><EmojiText :text="t('acc_google_h3')" /></h3>
         <p v-if="googleError" class="mb-3 text-sm" style="color: var(--text-dim)">{{ googleError }}</p>
         <p v-else-if="googleLinked === true" class="mb-3 flex items-center gap-1.5 text-sm" style="color: var(--text-dim)">
           <Icon name="done" extra-style="margin-right:0.15em" /> {{ googleLinkedRest }}
@@ -173,7 +174,7 @@ const googleLinkedRest = computed(() => t('acc_google_linked').replace(/^\u2705\
         style="border-color: var(--border); background: var(--bg-card); color: var(--text)"
         data-testid="admin-link"
       >
-        {{ t('acc_admin_link') }}
+        <EmojiText :text="t('acc_admin_link')" />
       </a>
     </template>
   </main>
