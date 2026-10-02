@@ -1,6 +1,13 @@
 {
-  "version": "2.12",
+  "version": "2.13",
   "en": [
+    {
+      "version": "2.13",
+      "date": "2026-10-02 04:00",
+      "changes": [
+        "Dashboard (pilot): emoji on buttons and block labels are now replaced by the single SVG icon set too — \"Add\", \"Add set\", \"Add metric\", \"Daily score\", \"Enable notifications\", \"Configure charts\", \"Edit values\", \"Add from goals\", the summary \"Bonus\", the streak warning and more. The icons take the text and theme colour. A guard test was added: new template text with an emoji that has an SVG will not pass the check"
+      ]
+    },
     {
       "version": "2.12",
       "date": "2026-10-02 03:56",
@@ -1542,6 +1549,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.13",
+      "date": "2026-10-02 04:00",
+      "changes": [
+        "Дашборд (пилот): эмодзи на кнопках и в подписях блоков тоже заменены на единые SVG-иконки — «Добавить», «Добавить подход», «Добавить метрику», «Баллы за день», «Включить уведомления», «Настроить графики», «Изменить значения», «Добавить из целей», «Бонус» в итогах, предупреждение о серии и др. Иконки берут цвет текста и темы. Добавлен тест-страж: новый текст с эмодзи в шаблоне, у которого есть SVG, не пройдёт проверку"
+      ]
+    },
     {
       "version": "2.12",
       "date": "2026-10-02 03:56",

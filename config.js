@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.12";
+const SITE_VERSION = "2.13";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.13", date: "2026-10-02 04:00", changes: [
+        "Дашборд (пилот): эмодзи на кнопках и в подписях блоков тоже заменены на единые SVG-иконки — «Добавить», «Добавить подход», «Добавить метрику», «Баллы за день», «Включить уведомления», «Настроить графики», «Изменить значения», «Добавить из целей», «Бонус» в итогах, предупреждение о серии и др. Иконки берут цвет текста и темы. Добавлен тест-страж: новый текст с эмодзи в шаблоне, у которого есть SVG, не пройдёт проверку",
+    ]},
     { version: "2.12", date: "2026-10-02 03:56", changes: [
         "Дашборд (пилот): эмодзи в заголовках секций и окон (Профиль, Планы, Графики, Серии, Ежедневные метрики, «Что нового», настройки и др.) заменены на единый набор SVG-иконок — они берут цвет текста и темы, не зависят от системного набора эмодзи и выглядят одинаково на всех устройствах. Эмодзи, для которых иконки пока нет (например, луна в названии тёмной темы), остаются как были. Тексты в словаре не менялись, классическая версия не затронута",
     ]},
@@ -1237,6 +1240,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.13", date: "2026-10-02 04:00", changes: [
+        "Dashboard (pilot): emoji on buttons and block labels are now replaced by the single SVG icon set too — \"Add\", \"Add set\", \"Add metric\", \"Daily score\", \"Enable notifications\", \"Configure charts\", \"Edit values\", \"Add from goals\", the summary \"Bonus\", the streak warning and more. The icons take the text and theme colour. A guard test was added: new template text with an emoji that has an SVG will not pass the check",
+    ]},
     { version: "2.12", date: "2026-10-02 03:56", changes: [
         "Dashboard (pilot): emoji in section and window headings (Profile, Plans, Charts, Streaks, Daily metrics, \"What's new\", settings and others) are replaced by a single set of SVG icons — they take the text and theme colour, do not depend on the system emoji set and look the same on every device. Emoji that have no icon yet (for example the moon in the dark theme name) stay as they were. The dictionary texts were not changed and the classic version is not affected",
     ]},
