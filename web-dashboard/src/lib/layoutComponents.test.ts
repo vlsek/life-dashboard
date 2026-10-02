@@ -93,7 +93,7 @@ describe('LayoutModal', () => {
   it('три строки с подписями блоков; «вверх» у первого и «вниз» у последнего отключены', () => {
     const w = mount(LayoutModal, { props: { initial } })
     const rows = w.findAll('[data-test="layout-row"]')
-    expect(rows.map((r) => r.find('span').text())).toEqual([t('dash_block_profile'), t('dash_charts_h2'), t('dash_block_daily')])
+    expect(rows.map((r) => r.find('.font-medium').text())).toEqual([t('dash_block_profile'), t('dash_charts_h2'), t('dash_block_daily')])
     expect(rows[0].find('[data-test="up"]').attributes('disabled')).toBeDefined()
     expect(rows[2].find('[data-test="down"]').attributes('disabled')).toBeDefined()
     w.unmount()
