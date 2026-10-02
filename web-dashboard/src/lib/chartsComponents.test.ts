@@ -187,6 +187,24 @@ describe('ChartsSection', () => {
     expect(document.body.querySelector('.modal')).not.toBeNull()
     w.unmount()
   })
+  it('BACKLOG 16 (13:44): таблетка у графика показывает период этого графика; со своим периодом — подсвечена и показывает его', async () => {
+    const { default: ChartsSection } = await import('../components/ChartsSection.vue')
+    localStorage.setItem('dash_period_dashboard', JSON.stringify({ range: 'days30', from: null, to: null }))
+    localStorage.setItem('dash_period_chart:body:w', JSON.stringify({ range: 'year', from: null, to: null }))
+    state.series.value = { 'body:w': { label: 'Вес', unit: ' кг', color: 'var(--accent)', points: [{ date: '2026-01-01', y: 80 }, { date: '2026-01-02', y: 79 }] }, points: { label: 'Баллы', unit: '', color: 'var(--danger)', points: [{ date: '2026-01-01', y: 3 }, { date: '2026-01-02', y: 4 }] } }
+    state.entries.value = [{ key: 'body:w', goal: null }, { key: 'points', goal: null }]
+    const w = mount(ChartsSection, { props: { userId: 'u1' } })
+    await flushPromises()
+    const chips = w.findAll('[data-test="period-btn"]')
+    expect(chips).toHaveLength(2)
+    // у веса свой период (год), у баллов — общий (30 дней)
+    expect(chips[0].find('[data-test="period-chip"]').text()).toMatch(/^(1Y|1Г)$/)
+    expect(chips[0].classes()).toContain('chart-period-btn-own')
+    expect(chips[1].find('[data-test="period-chip"]').text()).toMatch(/^(30D|30Д)$/)
+    expect(chips[1].classes()).not.toContain('chart-period-btn-own')
+    w.unmount()
+  })
+
   it('BACKLOG 18.2: период «10 дней» с одной свежей записью не оставляет пустой график — показаны последние записи и пометка', async () => {
     const { default: ChartsSection } = await import('../components/ChartsSection.vue')
     localStorage.setItem('dash_period_dashboard', JSON.stringify({ range: 'days10', from: null, to: null }))

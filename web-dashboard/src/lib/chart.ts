@@ -62,7 +62,8 @@ function fmtDateLocal(d: Date): string {
   return `${y}-${m}-${day}`
 }
 
-export type PeriodRange = 'days10' | 'days30' | 'week' | 'last_week' | 'month' | 'all' | 'custom'
+// days7/days90/year — новые короткие пресеты (BACKLOG 16, 13:44); days10/week/last_week/month остаются, чтобы сохранённые у людей периоды работали
+export type PeriodRange = 'days7' | 'days10' | 'days30' | 'days90' | 'year' | 'week' | 'last_week' | 'month' | 'all' | 'custom'
 
 export interface PeriodState {
   range: PeriodRange
@@ -78,6 +79,12 @@ export function periodBounds(rangeKey: PeriodRange, customFrom: string | null, c
   startOfWeek.setDate(today.getDate() - dow)
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
 
+  if (rangeKey === 'days7' || rangeKey === 'days90' || rangeKey === 'year') {
+    const span = rangeKey === 'days7' ? 6 : rangeKey === 'days90' ? 89 : 364 // скользящее окно, включая сегодня
+    const start = new Date(today)
+    start.setDate(today.getDate() - span)
+    return [fmtDateLocal(start), fmtDateLocal(today)]
+  }
   if (rangeKey === 'days10') {
     const start = new Date(today)
     start.setDate(today.getDate() - 9)

@@ -443,6 +443,53 @@ html.theme-monet .splash-flame .fl-outer {
   }
 }
 
+/* ── Выбор периода у графиков (BACKLOG 16, 13:44): сегмент коротких пресетов + листание недели/месяца в стиле DateStepper ── */
+.period-picker { display: flex; flex-direction: column; gap: 8px; }
+.period-seg {
+  display: flex;
+  width: 100%;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-card);
+}
+.period-seg-btn {
+  flex: 1 1 0;
+  min-height: 40px;
+  padding: 0 4px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.period-seg-btn:hover,
+.period-seg-btn:focus-visible { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.period-seg-btn[aria-pressed='true'] { background: var(--accent); color: var(--accent-text); }
+.period-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.period-chip {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font-weight: 600;
+}
+.period-chip:hover,
+.period-chip:focus-visible { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.period-chip[aria-pressed='true'] { border-color: var(--accent); color: var(--accent); }
+.period-chip-custom { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; }
+.period-stepper { align-self: flex-start; }
+.period-stepper-label { cursor: default; min-width: 9rem; }
+.period-stepper .date-stepper-btn:disabled { opacity: 0.35; cursor: default; }
+.period-caption { margin: 0; font-size: 0.85rem; }
+/* таблетка периода у отдельного графика: что показано, и подсветка, если у графика свой период */
+.chart-period-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+.chart-period-btn-own { border-color: var(--accent); color: var(--accent); }
+
 /* ── Варианты заставки (BACKLOG 16): «живое пламя» (.splash-live) и «огненный круг» (.splash-ring) ── */
 .splash-live,
 .splash-ring {

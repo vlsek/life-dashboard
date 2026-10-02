@@ -8,9 +8,10 @@ import ChartEditValues from './ChartEditValues.vue'
 import Icon from './Icon.vue'
 import { BODY_PARAMS_CHANGED, BODY_VALUES_CHANGED, useCharts } from '../lib/useCharts'
 import { canEditValues, entryGoal, type ChartEntry } from '../lib/chartSeries'
-import { effectivePeriod } from '../lib/chartPeriods'
+import { effectivePeriod, loadOwnPeriod } from '../lib/chartPeriods'
+import { PRESET_LABEL_KEYS, classifyPeriod, formatRange, monthLabel } from '../lib/periodNav'
 import { filterPointsWithFallback, loadPeriodState, savePeriodState, type PeriodState } from '../lib/chart'
-import { t } from '../lib/i18n'
+import { getLang, t } from '../lib/i18n'
 
 // Блок «Графики»: серии параметров тела, «баллы за день» и числовых метрик; выбор/порядок/цели
 // (profiles.dashboard_charts), период общий + свой у каждого графика, правка значений из графика.
@@ -63,6 +64,19 @@ function noteFor(key: string): string | null {
   return windowFor(key).widened ? t('chart_period_widened') : null
 }
 
+// Таблетка у графика: период ЭТОГО графика коротко («30Д», «21–27 сент.», «Сентябрь»); если у графика свой период — подсвечена
+function isOwnPeriod(key: string): boolean {
+  void periodTick.value
+  return loadOwnPeriod(key) !== null
+}
+function periodChip(key: string): string {
+  void periodTick.value
+  const view = classifyPeriod(effectivePeriod(key, period))
+  if (view.kind === 'preset') return t(PRESET_LABEL_KEYS[view.key] as any)
+  if (view.kind === 'month') return monthLabel(view.from, getLang())
+  return formatRange(view.from, view.to, getLang())
+}
+
 function goalFor(entry: ChartEntry) {
   const s = series.value[entry.key]
   const g = entryGoal(entry, s)
@@ -104,7 +118,16 @@ function onPeriodApplied() {
 
       <div v-for="entry in withData()" :key="entry.key" class="mb-4" data-test="chart">
         <div class="mb-0.5 flex justify-end">
-          <button type="button" class="secondary px-2 py-0.5 text-xs" :title="t('dash_chart_period_btn_title')" data-test="period-btn" @click="periodFor = entry.key"><Icon name="calendar" /></button>
+          <button
+            type="button"
+            class="secondary chart-period-btn"
+            :class="{ 'chart-period-btn-own': isOwnPeriod(entry.key) }"
+            :title="isOwnPeriod(entry.key) ? t('dash_chart_period_is_custom_hint') : t('dash_chart_period_btn_title')"
+            data-test="period-btn"
+            @click="periodFor = entry.key"
+          >
+            <Icon name="calendar" /> <span data-test="period-chip">{{ periodChip(entry.key) }}</span>
+          </button>
         </div>
         <ChartBlock
           :title="series[entry.key].name ?? series[entry.key].label"
