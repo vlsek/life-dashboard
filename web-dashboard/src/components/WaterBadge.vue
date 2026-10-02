@@ -20,7 +20,7 @@ const GLASS_OUTLINE = 'M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3
     type="button"
     class="inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 font-bold"
     style="background: transparent; color: var(--text); border-color: var(--border)"
-    :title="`💧 ${currentMl} / ${normMl} ${unitLabel}`"
+    :title="`${currentMl} / ${normMl} ${unitLabel}`"
     @click="emit('click')"
   >
     <svg class="water-glass" :class="{ 'water-glass-full': full }" width="20" height="25" viewBox="0 0 24 30" aria-hidden="true" data-test="water-glass">

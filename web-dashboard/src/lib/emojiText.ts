@@ -65,6 +65,7 @@ const UI_EXTRA: Record<string, string> = {
   '🧭': 'compass',
   '🪙': 'coin',
   '✎': 'edit',
+  '↶': 'undo', // кнопка «Отменить последнее добавление» в окне воды (BACKLOG «Эмодзи: вода и шапка»)
 }
 
 export const UI_EMOJI_TO_SVG: Record<string, string> = { ...(EMOJI_TO_SVG as Record<string, string>), ...UI_EXTRA }

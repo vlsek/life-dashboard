@@ -100,7 +100,7 @@ const GLASS_OUTLINE = 'M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3
       data-test="water-badge"
       class="relative shrink-0 p-0"
       style="background: transparent; border: none; width: 32px; height: 32px; min-height: 0; display: flex; align-items: center; justify-content: center"
-      :title="`💧 ${todayMl} / ${normMl} ${unitLabel}`"
+      :title="`${todayMl} / ${normMl} ${unitLabel}`"
       @click="modalOpen = true"
     >
       <svg width="24" height="30" viewBox="0 0 24 30" style="display: block" aria-hidden="true">
