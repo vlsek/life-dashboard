@@ -103,8 +103,13 @@ export function computeStreakItemsPure(
   today: Date,
 ): StreakItem[] {
   const todayStr3 = fmtDate(today)
-  // если сегодня ещё не заполнено — считаем серию со вчера, чтобы не сбрасывало на 0 раньше времени
-  const startFrom = byDay[todayStr3] ? today : addDays(today, -1)
+  // Точка отсчёта у КАЖДОЙ серии своя (BACKLOG 22.1 🐞 «пунктир огонька пропал»): если серия сегодня уже засчитана — считаем
+  // с сегодняшнего дня, если ещё нет — со вчерашнего, чтобы незавершённый день не обнулял серию раньше времени, а показывался как
+  // «серия идёт, сегодня не готово» (пунктирный огонёк, красная рамка). Раньше точка отсчёта была общей — «сегодня есть хоть
+  // какая-то запись» (byDay[today], как в старом dashboard.js): стоило внести, например, воду, и все ещё не выполненные сегодня
+  // серии начинали считаться с сегодняшнего дня, обнулялись и пропадали из списка (а заметка, наоборот, недосчитывалась на день).
+  const yesterday = addDays(today, -1)
+  const startFor = (counted: boolean) => (counted ? today : yesterday)
   const earliestDate = Object.keys(byDay).length ? Object.keys(byDay).sort()[0] : todayStr3
   const earliestWeekStart = weekStartStr(earliestDate)
 
@@ -125,10 +130,11 @@ export function computeStreakItemsPure(
     )
     const isSkip = (d: string) => expectedOn(d).length === 0
     const todayIsRest = isSkip(todayStr3) && !perfectDays.has(todayStr3)
+    const todayCounted = perfectDays.has(todayStr3) || todayIsRest
     items.push({
       kind: 'perfect_days',
-      streak: computeStreakSkipping(perfectDays, isSkip, startFrom),
-      todayCounted: perfectDays.has(todayStr3) || todayIsRest,
+      streak: computeStreakSkipping(perfectDays, isSkip, startFor(todayCounted)),
+      todayCounted,
     })
   }
 
@@ -152,6 +158,8 @@ export function computeStreakItemsPure(
       continue
     }
     const isSkip = (d: string) => !metricExpectedOn(m, d) && !doneDays.has(d)
+    const todayCounted = doneDays.has(todayStr3) || !metricExpectedOn(m, todayStr3)
+    const startFrom = startFor(todayCounted)
     let streak = computeStreakSkipping(doneDays, isSkip, startFrom)
     // Импортированный стрик (см. migrations/026): добавляется поверх посчитанного, только пока
     // посчитанный стрик без разрывов доходит до даты импорта — иначе они больше не непрерывны.
@@ -159,12 +167,12 @@ export function computeStreakItemsPure(
       const streakStart = fmtDate(addDays(startFrom, -(streak > 0 ? streak - 1 : 0)))
       if (streak > 0 && streakStart <= m.streak_import_date) streak += m.streak_import_days
     }
-    const todayCounted = doneDays.has(todayStr3) || !metricExpectedOn(m, todayStr3)
     if (streak > 0) items.push({ kind: 'metric', metric: m, streak, todayCounted })
   }
 
   // серия "заполнил заметку дня"
-  items.push({ kind: 'note_filled', streak: computeStreak(noteDays, startFrom), todayCounted: noteDays.has(todayStr3) })
+  const noteToday = noteDays.has(todayStr3)
+  items.push({ kind: 'note_filled', streak: computeStreak(noteDays, startFor(noteToday)), todayCounted: noteToday })
 
   // серии в днях — выше, недельные (в неделях) — ниже: числа в разных единицах не сравниваем
   items.sort((a, b) => Number(a.unit === 'w') - Number(b.unit === 'w') || b.streak - a.streak)

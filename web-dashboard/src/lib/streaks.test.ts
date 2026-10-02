@@ -126,10 +126,9 @@ describe('computeStreakItemsPure', () => {
     expect(metricItem?.streak).toBe(1)
   })
 
-  it('note_filled: tracked separately from metrics (startFrom still keys off byDay, per the original)', () => {
-    // Как и в dashboard.js: startFrom определяется по тому, заполнены ли МЕТРИКИ сегодня
-    // (byDay), а не по самим заметкам — поэтому даже для note_filled нужен непустой byDay[today],
-    // иначе streak "сдвигается" на вчера. Подаём {} — пустой объект, но присутствует (truthy).
+  it('note_filled: tracked separately from metrics (counted from today when today\'s note is filled)', () => {
+    // BACKLOG 22.1: точка отсчёта у заметки своя — по самой заметке, а не по тому, есть ли за сегодня записи метрик.
+    // Здесь byDay[today] есть, но результат от этого больше не зависит (см. отдельные тесты ниже).
     const byDay = { '2026-09-28': {} }
     const items = computeStreakItemsPure([], byDay, new Set(['2026-09-28', '2026-09-27']), today)
     const note = items.find((i) => i.kind === 'note_filled')
@@ -194,5 +193,90 @@ describe('count_streak = false', () => {
     const a = metric({ id: 'a', count_streak: null })
     const items = computeStreakItemsPure([a], days(3, ['a']), new Set(), today)
     expect(items.some((i) => i.kind === 'metric' && i.metric?.id === 'a' && i.streak === 3)).toBe(true)
+  })
+})
+
+// BACKLOG 22.1 🐞 «пунктир огонька пропал»: точка отсчёта у каждой серии своя
+describe('computeStreakItemsPure: today not counted yet (dashed flame)', () => {
+  const today = D('2026-09-30')
+  const prev = (n: number) => {
+    const d = new Date(today)
+    d.setDate(d.getDate() - n)
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  }
+  const find = (items: ReturnType<typeof computeStreakItemsPure>, kind: string, id?: string) =>
+    items.find((i) => i.kind === kind && (id === undefined || i.metric?.id === id))
+
+  it('an entry of ANOTHER metric today does not wipe the unfinished series (they stay as "at risk")', () => {
+    const a = metric({ id: 'a', name: 'Read' })
+    const b = metric({ id: 'b', name: 'Run' })
+    const byDay: Record<string, Record<string, unknown>> = { [prev(0)]: { a: true } }
+    for (let i = 1; i <= 5; i++) byDay[prev(i)] = { a: true, b: true }
+    const items = computeStreakItemsPure([a, b], byDay, new Set(), today)
+    // «a» выполнена сегодня — серия 6 и засчитана
+    expect(find(items, 'metric', 'a')).toMatchObject({ streak: 6, todayCounted: true })
+    // «b» сегодня не выполнена — серия 5 НЕ обнулена и помечена как «сегодня не готово»
+    expect(find(items, 'metric', 'b')).toMatchObject({ streak: 5, todayCounted: false })
+    // идеальный день: 5 дней подряд, сегодня ещё не завершён
+    expect(find(items, 'perfect_days')).toMatchObject({ streak: 5, todayCounted: false })
+  })
+
+  it('any unrelated value today (e.g. water) keeps the metric streak and marks it not counted', () => {
+    const m = metric({ id: 'm1' })
+    const byDay: Record<string, Record<string, unknown>> = { [prev(0)]: { water: 250 } }
+    for (let i = 1; i <= 3; i++) byDay[prev(i)] = { m1: true }
+    const items = computeStreakItemsPure([m], byDay, new Set(), today)
+    expect(find(items, 'metric', 'm1')).toMatchObject({ streak: 3, todayCounted: false })
+  })
+
+  it('a metric explicitly saved as not done today does not reset its streak either', () => {
+    const m = metric({ id: 'm1' })
+    const byDay: Record<string, Record<string, unknown>> = { [prev(0)]: { m1: false } }
+    for (let i = 1; i <= 4; i++) byDay[prev(i)] = { m1: true }
+    const items = computeStreakItemsPure([m], byDay, new Set(), today)
+    expect(find(items, 'metric', 'm1')).toMatchObject({ streak: 4, todayCounted: false })
+  })
+
+  it('nothing entered today: same as before — counted from yesterday, not counted', () => {
+    const m = metric({ id: 'm1' })
+    const byDay: Record<string, Record<string, unknown>> = {}
+    for (let i = 1; i <= 2; i++) byDay[prev(i)] = { m1: true }
+    const items = computeStreakItemsPure([m], byDay, new Set(), today)
+    expect(find(items, 'metric', 'm1')).toMatchObject({ streak: 2, todayCounted: false })
+    expect(find(items, 'perfect_days')).toMatchObject({ streak: 2, todayCounted: false })
+  })
+
+  it('a series that is done today counts today whether or not the byDay row looks "empty"', () => {
+    const m = metric({ id: 'm1' })
+    const byDay: Record<string, Record<string, unknown>> = { [prev(0)]: { m1: true }, [prev(1)]: { m1: true } }
+    expect(find(computeStreakItemsPure([m], byDay, new Set(), today), 'metric', 'm1')).toMatchObject({ streak: 2, todayCounted: true })
+  })
+
+  it('note_filled: today\'s note counts even when there are no metric rows today (it used to be one day short)', () => {
+    const byDay: Record<string, Record<string, unknown>> = {}
+    const notes = new Set([prev(0), prev(1), prev(2)])
+    expect(find(computeStreakItemsPure([], byDay, notes, today), 'note_filled')).toMatchObject({ streak: 3, todayCounted: true })
+  })
+
+  it('note_filled: an unfilled note today with other entries today keeps the earlier streak (not reset to 0)', () => {
+    const byDay: Record<string, Record<string, unknown>> = { [prev(0)]: { m1: true } }
+    const notes = new Set([prev(1), prev(2)])
+    expect(find(computeStreakItemsPure([], byDay, notes, today), 'note_filled')).toMatchObject({ streak: 2, todayCounted: false })
+  })
+
+  it('a rest day (metric not expected today) counts as covered and does not break the streak', () => {
+    // метрика по расписанию только пн–пт; 2026-09-30 — среда, а проверим субботу как «сегодня»
+    const sat = D('2026-09-26')
+    const m = metric({ id: 'm1', schedule: { type: 'days', days: [1, 2, 3, 4, 5] } as Metric['schedule'] })
+    const byDay: Record<string, Record<string, unknown>> = { '2026-09-25': { m1: true }, '2026-09-24': { m1: true } }
+    const items = computeStreakItemsPure([m], byDay, new Set(), sat)
+    expect(find(items, 'metric', 'm1')).toMatchObject({ streak: 2, todayCounted: true })
+  })
+
+  it('the imported streak is still added when the series is at risk today (counted from yesterday)', () => {
+    const m = metric({ id: 'm1', streak_import_days: 10, streak_import_date: prev(2) })
+    const byDay: Record<string, Record<string, unknown>> = { [prev(0)]: { other: 1 }, [prev(1)]: { m1: true }, [prev(2)]: { m1: true } }
+    const item = find(computeStreakItemsPure([m], byDay, new Set(), today), 'metric', 'm1')
+    expect(item).toMatchObject({ streak: 12, todayCounted: false })
   })
 })
