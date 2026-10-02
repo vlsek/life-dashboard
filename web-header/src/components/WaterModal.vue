@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { getLang, t } from '../lib/i18n'
 import { fmtDate } from '../lib/date'
 import { bodySurfaceAreaM2 } from '../lib/waterGoal'
-import { MAX_DAY_ML, dayLogEntries, fmtDelta, fmtEntryTime, parseTotalInput, type UndoEntry } from '../lib/waterUndo'
+import { MAX_DAY_ML, parseTotalInput } from '../lib/waterUndo'
+import { fmtDeltaMl, fmtLogTime, timeToMs, type DayLogView } from '../lib/waterLog'
 import type { Metric } from '../lib/types'
 import WaterSavedAnim from './WaterSavedAnim.vue'
 
@@ -26,10 +27,11 @@ const props = defineProps<{
   canUndo?: (dateStr: string, currentMl: number) => boolean
   undoLast?: (dateStr: string) => Promise<number | null>
   setTotal?: (ml: number, dateStr: string) => Promise<number | null>
-  // Журнал добавлений за дату со временем (BACKLOG 2.2): только записи этого устройства. Необязательный.
-  dayLog?: (dateStr: string) => UndoEntry[]
+  // Журнал воды за дату со временем (BACKLOG 2.2): из БД (water_log) или, пока таблицы нет, записи этого устройства. Необязательные.
+  dayLog?: (dateStr: string) => DayLogView
+  loadDayLog?: (dateStr: string) => Promise<void>
 }>()
-const emit = defineEmits<{ close: []; add: [ml: number, dateStr: string]; saveGoal: [ml: number]; resetGoal: []; saveHeight: [cm: number] }>()
+const emit = defineEmits<{ close: []; add: [ml: number, dateStr: string, drankAt?: number]; saveGoal: [ml: number]; resetGoal: []; saveHeight: [cm: number] }>()
 
 const today = fmtDate(new Date())
 const dateStr = ref(today)
@@ -47,11 +49,14 @@ async function onDateChange(e: Event) {
   }
   dateStr.value = picked
   editing.value = false
+  timeStr.value = ''
+  timeTouched.value = false
+  void props.loadDayLog?.(picked)
   amountMl.value = await props.getMlForDate(picked)
 }
 
 function addMl(ml: number) {
-  emit('add', ml, dateStr.value)
+  emit('add', ml, dateStr.value, pickedDrankAt())
   amountMl.value = Math.max(0, amountMl.value + ml)
 }
 
@@ -63,10 +68,20 @@ function addCustom() {
 
 // --- отмена последнего добавления и правка суммы за день (BACKLOG 12) ---
 const busy = ref(false)
-// Журнал выбранного дня: последние записи со временем, от новых к старым (зависит от dateStr и от стека в композабле).
-const logRows = computed(() =>
-  dayLogEntries(props.dayLog ? props.dayLog(dateStr.value) : []).map((e) => ({ time: fmtEntryTime(e.at), delta: fmtDelta(e.prev, e.next), at: e.at })),
-)
+// Журнал выбранного дня: записи со временем от новых к старым; источник — аккаунт (все устройства) или только это устройство.
+const logView = computed<DayLogView>(() => (props.dayLog ? props.dayLog(dateStr.value) : { rows: [], source: 'local' }))
+const logRows = computed(() => logView.value.rows.map((r) => ({ id: r.id, time: fmtLogTime(r.at), delta: fmtDeltaMl(r.delta) })))
+onMounted(() => props.loadDayLog?.(dateStr.value))
+
+// Время выпитого: пусто — «сейчас» (для прошлого дня — 12:00); можно указать вручную (вода задним числом или «пил час назад»).
+const timeStr = ref('')
+const timeTouched = ref(false)
+function pickedDrankAt(): number | undefined {
+  if (!timeTouched.value || !timeStr.value) return undefined
+  const ms = timeToMs(dateStr.value, timeStr.value)
+  if (ms === null) return undefined
+  return dateStr.value === today ? Math.min(ms, Date.now()) : ms // сегодня — не из будущего
+}
 const undoAvailable = computed(() => !!props.canUndo && props.canUndo(dateStr.value, amountMl.value))
 const editing = ref(false)
 const editValue = ref('')
@@ -147,6 +162,10 @@ function saveHeightClick() {
       <label class="gh-dim" style="display: block; margin-top: 8px">{{ t('dash_water_date_label') }}</label>
       <input type="date" :value="dateStr" :max="today" min="2000-01-01" class="gh-input" @change="onDateChange" />
 
+      <label class="gh-dim" style="display: block; margin-top: 8px">{{ t('dash_water_time_label') }}</label>
+      <input v-model="timeStr" type="time" class="gh-input" data-test="water-time" @input="timeTouched = true" />
+      <p class="gh-dim" style="margin: 2px 0 0; font-size: 12px">{{ t('dash_water_time_hint') }}</p>
+
       <p style="margin: 10px 0 0; font-size: 18px; font-weight: 700">{{ amountMl }} / {{ normMl }} {{ unitLabel }} ({{ pct }}%)</p>
       <div class="gh-bar"><div :style="{ width: pct + '%' }"></div></div>
 
@@ -195,12 +214,12 @@ function saveHeightClick() {
       <div v-if="logRows.length" style="margin-top: 12px" data-test="water-log">
         <div style="font-weight: 600">{{ t('dash_water_log_title') }}</div>
         <ul style="list-style: none; margin: 4px 0 0; padding: 0">
-          <li v-for="r in logRows" :key="r.at" style="display: flex; gap: 12px; padding: 2px 0" data-test="water-log-row">
+          <li v-for="r in logRows" :key="r.id" style="display: flex; gap: 12px; padding: 2px 0" data-test="water-log-row">
             <span class="gh-dim" style="font-variant-numeric: tabular-nums">{{ r.time }}</span>
             <span :style="'font-variant-numeric: tabular-nums;' + (r.delta.startsWith('\u2212') ? ' color: #d6336c' : '')">{{ r.delta }} {{ unitLabel }}</span>
           </li>
         </ul>
-        <p class="gh-dim" style="margin: 4px 0 0; font-size: 12px">{{ t('dash_water_log_note') }}</p>
+        <p class="gh-dim" style="margin: 4px 0 0; font-size: 12px">{{ logView.source === 'server' ? t('dash_water_log_note_server') : t('dash_water_log_note') }}</p>
       </div>
 
       <label class="gh-row" style="margin-top: 16px">

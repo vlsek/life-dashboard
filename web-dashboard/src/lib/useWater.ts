@@ -8,6 +8,18 @@ import { effectiveNormMl, findWaterMetric, findWeightParam, nextWaterValue } fro
 import { autoNormFromBody, validHeightCm, resetWaterGoalCache } from './waterGoal'
 import type { BodyParameter } from './water'
 import { canUndo as stackCanUndo, loadStacks, pushEntry, saveStack, type UndoEntry } from './waterUndo'
+import {
+  LOG_VIEW_LIMIT,
+  buildLogInsert,
+  defaultDrankAt,
+  isMissingTable,
+  localRows,
+  rowFromDb,
+  sortNewestFirst,
+  type DayLogView,
+  type WaterLogKind,
+  type WaterLogRow,
+} from './waterLog'
 import type { Metric } from './types'
 
 // Отдельный композабл для блока «Вода» (не трогает useDashboard.ts/loadStreaks — минимизирует
@@ -26,6 +38,15 @@ export function useWater() {
   const saveError = ref<string | null>(null)
   // «Отменить последнее добавление»: стеки {prev,next} по дням (localStorage), см. waterUndo.ts. Реактивны — кнопка в окне гаснет/оживает сама.
   const undoStacks = ref<Record<string, UndoEntry[]>>({})
+  // Журнал воды в БД (water_log, миграция 036): строки по дням + «таблица есть?» (null — ещё не знаем; false — миграция не применена,
+  // тогда журнал берём из записей этого устройства). Запись в журнал идёт ОЧЕРЕДЬЮ в фоне (best-effort): её сбой не ломает основную запись.
+  const serverLogs = ref<Record<string, WaterLogRow[]>>({})
+  const logAvailable = ref<boolean | null>(null)
+  let logTail: Promise<unknown> = Promise.resolve()
+  function enqueueLog(job: () => Promise<void>) {
+    logTail = logTail.then(job).catch(() => {})
+    return logTail
+  }
   let userId = ''
 
   const normMl = computed(() => effectiveNormMl(metric.value?.goal_value, autoNormMl.value))
@@ -115,7 +136,7 @@ export function useWater() {
 
   // Единая запись значения дня (добавление, правка суммы, отмена). Возвращает записанное значение или null, если запись в БД не
   // удалась (тогда UI не показывает «сохранилось»). `record` — запоминать ли шаг для «Отменить» (сама отмена себя не запоминает).
-  async function writeDay(dateStr: string, current: number, next: number, record = true): Promise<number | null> {
+  async function writeDay(dateStr: string, current: number, next: number, record = true, drankAt?: number, kind: WaterLogKind = 'add'): Promise<number | null> {
     if (!metric.value) return null
     const { error: upErr } = await sb
       .from('daily_values')
@@ -126,7 +147,12 @@ export function useWater() {
     }
     saveError.value = null
     if (dateStr === fmtDate(new Date())) todayMl.value = next
-    if (record) setStack(dateStr, pushEntry(undoStacks.value[dateStr] ?? [], current, next, Date.now()))
+    if (record) {
+      // Когда выпито: выбранное в окне время; иначе сейчас (сегодня) / 12:00 (прошлый день, вода задним числом).
+      const at = drankAt ?? defaultDrankAt(dateStr, fmtDate(new Date()), Date.now())
+      setStack(dateStr, pushEntry(undoStacks.value[dateStr] ?? [], current, next, at))
+      void enqueueLog(() => insertLog(dateStr, current, next, kind, at))
+    }
     notifyDataChanged({ source: 'water', metricId: metric.value.id, date: dateStr, value: next })
     // «+1 / −1 с монетой» (BACKLOG 14, 11:11): балл за воду — когда набрана эффективная норма (ручная → авто по весу → 2000),
     // а не при любом значении: считаем по метрике с подставленной нормой (migrations/033). Только если статус «выполнено» сменился.
@@ -134,26 +160,81 @@ export function useWater() {
     return next
   }
 
+  // Запись в журнал (water_log): вставка строки, привязка её id к записи стека «Отменить», показ в журнале дня. Всё в try/catch снаружи
+  // (enqueueLog глотает ошибки); нет таблицы — запоминаем это и дальше не пытаемся.
+  async function insertLog(dateStr: string, current: number, next: number, kind: WaterLogKind, at: number): Promise<void> {
+    if (logAvailable.value === false || next === current) return
+    const { data, error: err } = await sb
+      .from('water_log')
+      .insert(buildLogInsert(userId, dateStr, next - current, next, kind, at))
+      .select('id, drank_at, delta_ml, total_after_ml, kind')
+      .single()
+    if (err) {
+      if (isMissingTable(err)) logAvailable.value = false
+      return
+    }
+    logAvailable.value = true
+    const row = rowFromDb(data as never)
+    if (!row) return
+    const stack = undoStacks.value[dateStr] ?? []
+    const idx = stack.findIndex((e) => e.at === at && e.next === next && !e.logId)
+    if (idx >= 0) setStack(dateStr, stack.map((e, i) => (i === idx ? { ...e, logId: row.id } : e)))
+    serverLogs.value = { ...serverLogs.value, [dateStr]: sortNewestFirst([row, ...(serverLogs.value[dateStr] ?? [])]).slice(0, LOG_VIEW_LIMIT) }
+  }
+
+  async function deleteLog(dateStr: string, logId: string): Promise<void> {
+    const { error: err } = await sb.from('water_log').delete().eq('id', logId).eq('user_id', userId)
+    if (err) return
+    serverLogs.value = { ...serverLogs.value, [dateStr]: (serverLogs.value[dateStr] ?? []).filter((r) => r.id !== logId) }
+  }
+
+  // Журнал дня для окна воды: из БД (виден на всех устройствах), пока таблицы нет или за день там пусто — записи этого устройства.
+  async function loadDayLog(dateStr: string): Promise<void> {
+    if (!metric.value || logAvailable.value === false) return
+    await logTail // не перетирать только что добавленные строки, которые ещё пишутся
+    const { data, error: err } = await sb
+      .from('water_log')
+      .select('id, drank_at, delta_ml, total_after_ml, kind')
+      .eq('user_id', userId)
+      .eq('date', dateStr)
+      .order('drank_at', { ascending: false })
+      .limit(LOG_VIEW_LIMIT)
+    if (err) {
+      if (isMissingTable(err)) logAvailable.value = false
+      return
+    }
+    logAvailable.value = true
+    const rows = ((data ?? []) as never[]).map(rowFromDb).filter((r): r is WaterLogRow => r !== null)
+    serverLogs.value = { ...serverLogs.value, [dateStr]: rows }
+  }
+
+  function dayLog(dateStr: string): DayLogView {
+    const server = serverLogs.value[dateStr]
+    if (logAvailable.value !== false && server && server.length) return { rows: sortNewestFirst(server).slice(0, LOG_VIEW_LIMIT), source: 'server' }
+    return { rows: localRows(undoStacks.value[dateStr]).slice(0, LOG_VIEW_LIMIT), source: 'local' }
+  }
+
   // Портировано из addWaterMl(): читает текущее значение за дату, прибавляет дельту, upsert-ит.
-  async function addMl(deltaMl: number, dateStr: string): Promise<number | null> {
+  async function addMl(deltaMl: number, dateStr: string, drankAt?: number): Promise<number | null> {
     if (!metric.value) return null
     const current = await getMlForDate(dateStr)
-    return writeDay(dateStr, current, nextWaterValue(current, deltaMl))
+    return writeDay(dateStr, current, nextWaterValue(current, deltaMl), true, drankAt, 'add')
   }
 
   // Правка ВСЕЙ суммы за день (карандашик в окне): перезаписывает значение выбранной даты, откатывается кнопкой «Отменить».
-  async function setTotal(ml: number, dateStr: string): Promise<number | null> {
+  async function setTotal(ml: number, dateStr: string, drankAt?: number): Promise<number | null> {
     if (!metric.value || !Number.isFinite(ml) || ml < 0) return null
     const current = await getMlForDate(dateStr)
     const next = Math.round(ml)
     if (next === current) return current
-    return writeDay(dateStr, current, next)
+    return writeDay(dateStr, current, next, true, drankAt, 'edit')
   }
 
   // Отмена последней записи дня: только если значение дня всё ещё то, что мы записали (иначе его успели изменить в другом месте —
   // откатывать «вслепую» нельзя, стек в этом случае сбрасываем). Возвращает значение после отмены или null.
   async function undoLast(dateStr: string): Promise<number | null> {
     if (!metric.value) return null
+    await logTail // запись журнала могла ещё не закончиться: нужен её id, чтобы удалить строку
     const stack = undoStacks.value[dateStr] ?? []
     const top = stack[stack.length - 1]
     if (!top) return null
@@ -163,13 +244,12 @@ export function useWater() {
       return null
     }
     const res = await writeDay(dateStr, current, top.prev, false)
-    if (res !== null) setStack(dateStr, stack.slice(0, -1))
+    if (res !== null) {
+      setStack(dateStr, stack.slice(0, -1))
+      const id = top.logId
+      if (id) void enqueueLog(() => deleteLog(dateStr, id))
+    }
     return res
-  }
-
-  // Журнал добавлений за дату для окна воды (BACKLOG 2.2): только записи этого устройства, со временем.
-  function dayLog(dateStr: string): UndoEntry[] {
-    return undoStacks.value[dateStr] ?? []
   }
 
   // Для окна воды: доступна ли отмена для даты при показанной сейчас сумме.
@@ -219,5 +299,5 @@ export function useWater() {
     return true
   }
 
-  return { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, dayLog, getMlForDate, saveGoal, resetGoalToAuto, createWaterMetric }
+  return { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, dayLog, loadDayLog, flushLog: () => logTail, getMlForDate, saveGoal, resetGoalToAuto, createWaterMetric }
 }

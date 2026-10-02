@@ -113,18 +113,19 @@ describe('useWater: отмена последнего добавления', () 
   })
 })
 
-// «Время приема воды» (BACKLOG 2.2, срез без БД): журнал дня берётся из стека «Отменить», в записях есть время.
-describe('useWater: журнал добавлений со временем', () => {
-  it('каждое добавление пишется со временем «сейчас» и изменением; журнал растёт по порядку', async () => {
+// «Время приема воды» (BACKLOG 2.2): запасной журнал из стека «Отменить» (когда таблицы water_log нет — заглушка БД ниже её не знает).
+describe('useWater: запасной журнал добавлений со временем', () => {
+  it('каждое добавление пишется со временем «сейчас» и изменением; от новых к старым', async () => {
     const w = await fresh()
     const before = Date.now()
     await w.addMl(200, D)
     await w.addMl(300, D)
-    const log = w.dayLog(D)
-    expect(log.map((e) => [e.prev, e.next])).toEqual([[0, 200], [200, 500]])
-    for (const e of log) {
-      expect(e.at).toBeGreaterThanOrEqual(before)
-      expect(e.at).toBeLessThanOrEqual(Date.now())
+    const view = w.dayLog(D)
+    expect(view.source).toBe('local')
+    expect(view.rows.map((r) => r.delta)).toEqual([300, 200])
+    for (const r of view.rows) {
+      expect(r.at).toBeGreaterThanOrEqual(before)
+      expect(r.at).toBeLessThanOrEqual(Date.now())
     }
   })
 
@@ -133,13 +134,13 @@ describe('useWater: журнал добавлений со временем', ()
     await w.addMl(200, D)
     await w.addMl(300, D)
     await w.undoLast(D)
-    expect(w.dayLog(D).map((e) => e.next)).toEqual([200])
+    expect(w.dayLog(D).rows.map((r) => r.total)).toEqual([200])
     const saved = JSON.parse(localStorage.getItem(undoKey('u', D)) as string)
     expect(saved).toHaveLength(1)
     expect(typeof saved[0].at).toBe('number')
     const w2 = await fresh() // «перезагрузка»: стек читается из localStorage
-    expect(w2.dayLog(D).map((e) => e.next)).toEqual([200])
-    expect(w2.dayLog(D)[0].at).toBe(saved[0].at)
+    expect(w2.dayLog(D).rows.map((r) => r.total)).toEqual([200])
+    expect(w2.dayLog(D).rows[0].at).toBe(saved[0].at)
   })
 
   it('правка суммы за день тоже попадает в журнал (с уменьшением), «нет изменения» — нет', async () => {
@@ -147,13 +148,12 @@ describe('useWater: журнал добавлений со временем', ()
     await w.addMl(500, D)
     await w.setTotal(300, D)
     await w.setTotal(300, D) // то же значение — записи не будет
-    const log = w.dayLog(D)
-    expect(log.map((e) => [e.prev, e.next])).toEqual([[0, 500], [500, 300]])
+    expect(w.dayLog(D).rows.map((r) => r.delta)).toEqual([-200, 500])
   })
 
   it('журнал разных дат не смешивается; для даты без записей — пусто', async () => {
     const w = await fresh()
     await w.addMl(200, D)
-    expect(w.dayLog('2020-01-01')).toEqual([])
+    expect(w.dayLog('2020-01-01').rows).toEqual([])
   })
 })

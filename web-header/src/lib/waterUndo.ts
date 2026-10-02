@@ -12,6 +12,8 @@ export interface UndoEntry {
   // Когда сделана запись (мс от эпохи) — для журнала «Записи за день» (BACKLOG 2.2 «Время приема воды», срез без БД:
   // время хранится только на этом устройстве, вместе со стеком отмены). У старых записей поля нет.
   at?: number
+  // id строки журнала в БД (water_log), созданной этой записью: «Отменить» удаляет и её. Нет у записей до миграции 036.
+  logId?: string
 }
 
 export const UNDO_LIMIT = 10 // сколько последних записей дня помним
@@ -22,9 +24,10 @@ const PREFIX = 'water-undo:'
 export const undoKey = (userId: string, date: string) => `${PREFIX}${userId}:${date}`
 
 // Добавить запись; no-op (prev === next) не пишем, стек не длиннее UNDO_LIMIT (старые выпадают).
-export function pushEntry(stack: UndoEntry[], prev: number, next: number, at?: number): UndoEntry[] {
+export function pushEntry(stack: UndoEntry[], prev: number, next: number, at?: number, logId?: string): UndoEntry[] {
   if (prev === next) return stack
   const entry: UndoEntry = at !== undefined && Number.isFinite(at) ? { prev, next, at } : { prev, next }
+  if (logId) entry.logId = logId
   return [...stack, entry].slice(-UNDO_LIMIT)
 }
 
@@ -43,8 +46,10 @@ export function parseStack(raw: string | null | undefined): UndoEntry[] {
     return data
       .filter((e) => e && Number.isFinite(e.prev) && Number.isFinite(e.next) && e.prev >= 0 && e.next >= 0)
       .map((e): UndoEntry => {
-        const base = { prev: Number(e.prev), next: Number(e.next) }
-        return Number.isFinite(e.at) && e.at > 0 ? { ...base, at: Number(e.at) } : base
+        const base: UndoEntry = { prev: Number(e.prev), next: Number(e.next) }
+        if (Number.isFinite(e.at) && e.at > 0) base.at = Number(e.at)
+        if (typeof e.logId === 'string' && e.logId) base.logId = e.logId
+        return base
       })
       .slice(-UNDO_LIMIT)
   } catch {
