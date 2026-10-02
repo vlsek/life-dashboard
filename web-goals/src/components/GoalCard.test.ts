@@ -23,6 +23,12 @@ describe('GoalCard: simple goal', () => {
     expect(w.find('[data-test="goal-progress"]').exists()).toBe(false)
     expect(w.find('[data-test="goal-expand"]').exists()).toBe(false)
   })
+  it('shows the points with the SVG coin icon, not an emoji (BACKLOG 22, 11:57)', () => {
+    const w = mountCard()
+    expect(w.find('[data-test="goal-points"] svg.coin-icon').exists()).toBe(true)
+    expect(w.find('[data-test="goal-points"]').text()).not.toContain('🪙')
+    expect(w.find('[data-test="goal-points"]').text()).toContain('20')
+  })
   it('defaults the points to 5 when empty', () => {
     const w = mountCard({ points: null as unknown as number })
     expect(w.find('[data-test="goal-points"]').text()).toContain('5')

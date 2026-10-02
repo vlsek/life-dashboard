@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { bar, suggestionsFor, buildSkillRow } from './skills'
+import { skillPercent, bar, suggestionsFor, buildSkillRow } from './skills'
 
 describe('bar', () => {
   it('renders filled/empty blocks proportionally, width 16 by default', () => {
@@ -43,5 +43,25 @@ describe('buildSkillRow', () => {
 
   it('keeps explicit non-zero values', () => {
     expect(buildSkillRow({ name: 'X', step: 5, points: 20 })).toEqual({ name: 'X', step: 5, points: 20 })
+  })
+})
+
+// BACKLOG 22 (11:58): прогресс-бар навыка
+describe('skillPercent', () => {
+  it('rounds to a whole percent', () => {
+    expect(skillPercent(0)).toBe(0)
+    expect(skillPercent(33.4)).toBe(33)
+    expect(skillPercent(66.5)).toBe(67)
+    expect(skillPercent(100)).toBe(100)
+  })
+  it('clamps into 0..100', () => {
+    expect(skillPercent(-20)).toBe(0)
+    expect(skillPercent(140)).toBe(100)
+  })
+  it('treats empty and garbage as 0', () => {
+    expect(skillPercent(null)).toBe(0)
+    expect(skillPercent(undefined)).toBe(0)
+    expect(skillPercent(NaN)).toBe(0)
+    expect(skillPercent(Infinity)).toBe(0)
   })
 })

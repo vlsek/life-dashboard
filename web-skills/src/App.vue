@@ -2,10 +2,13 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import SkillForm from './components/SkillForm.vue'
+import SkillCard from './components/SkillCard.vue'
+import CoinIcon from './components/CoinIcon.vue'
+import Icon from './components/Icon.vue'
 import BookForm from './components/BookForm.vue'
 import { useSkills } from './lib/useSkills'
 import { useBooks } from './lib/useBooks'
-import { bar, suggestionsFor } from './lib/skills'
+import { suggestionsFor } from './lib/skills'
 import { t, getLang } from './lib/i18n'
 import type { Skill, SkillFormInput, Book, BookFormInput } from './lib/types'
 
@@ -115,27 +118,17 @@ async function onDeleteBook(b: Book) {
 
         <h3 class="mb-2 text-base font-medium">{{ t('skills_active_h3') }}</h3>
         <p v-if="active.length === 0" class="dim">{{ t('skills_none_active') }}</p>
-        <table v-else class="mb-6 w-full">
-          <tbody>
-            <tr v-for="s in active" :key="s.id" class="align-top">
-              <td>{{ s.name }}</td>
-              <td class="dim whitespace-nowrap px-2 font-mono text-xs">{{ bar(s.progress ?? 0) }}</td>
-              <td class="dim whitespace-nowrap px-2 text-xs">{{ s.progress ?? 0 }}%</td>
-              <td class="whitespace-nowrap px-2 text-xs">{{ s.points ?? 10 }} ⭐</td>
-              <td class="whitespace-nowrap px-1 text-right">
-                <button class="secondary px-2" @click="bumpProgress(s, -1)">−{{ s.step ?? 10 }}%</button>
-                <button class="secondary ml-1 px-2" @click="bumpProgress(s, 1)">+{{ s.step ?? 10 }}%</button>
-              </td>
-              <td class="px-1 text-center">
-                <input type="checkbox" :checked="s.mastered" @change="toggleMastered(s)" />
-              </td>
-              <td class="whitespace-nowrap text-right">
-                <button class="secondary px-2" @click="skillFormTarget = s">✎</button>
-                <button class="danger ml-1 px-2" @click="onDeleteSkill(s)">✕</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div v-else class="mb-6 flex flex-col gap-2">
+          <SkillCard
+            v-for="s in active"
+            :key="s.id"
+            :skill="s"
+            @bump="bumpProgress(s, $event)"
+            @mastered="toggleMastered(s)"
+            @edit="skillFormTarget = s"
+            @delete="onDeleteSkill(s)"
+          />
+        </div>
 
         <h2 class="mb-2 text-base font-medium">{{ t('skills_mastered_h2') }}</h2>
         <p v-if="mastered.length === 0" class="dim">{{ t('skills_none_mastered') }}</p>
@@ -143,10 +136,10 @@ async function onDeleteBook(b: Book) {
           <tbody>
             <tr v-for="s in mastered" :key="s.id" class="align-top">
               <td class="done-text">{{ s.name }}</td>
-              <td class="whitespace-nowrap px-2 text-xs">{{ s.points ?? 10 }} ⭐</td>
+              <td class="whitespace-nowrap px-2 text-xs">{{ s.points ?? 10 }} <CoinIcon /></td>
               <td class="whitespace-nowrap text-right">
-                <button class="secondary px-2" @click="skillFormTarget = s">✎</button>
-                <button class="danger ml-1 px-2" @click="onDeleteSkill(s)">✕</button>
+                <button class="secondary icon-btn" :title="t('skills_edit_aria')" :aria-label="t('skills_edit_aria')" @click="skillFormTarget = s"><Icon name="edit" /></button>
+                <button class="danger icon-btn ml-1" :title="t('skills_delete_aria')" :aria-label="t('skills_delete_aria')" @click="onDeleteSkill(s)"><Icon name="trash" /></button>
               </td>
             </tr>
           </tbody>
@@ -171,10 +164,10 @@ async function onDeleteBook(b: Book) {
             <tr v-for="b in activeBooks" :key="b.id" class="align-top">
               <td class="px-1"><input type="checkbox" :checked="false" @change="toggleBookDone(b)" /></td>
               <td>{{ b.author ? `${b.title} — ${b.author}` : b.title }}</td>
-              <td class="whitespace-nowrap px-2 text-xs">{{ b.points ?? 10 }} ⭐</td>
+              <td class="whitespace-nowrap px-2 text-xs">{{ b.points ?? 10 }} <CoinIcon /></td>
               <td class="whitespace-nowrap text-right">
-                <button class="secondary px-2" @click="bookFormTarget = b">✎</button>
-                <button class="danger ml-1 px-2" @click="onDeleteBook(b)">✕</button>
+                <button class="secondary icon-btn" :title="t('skills_edit_aria')" :aria-label="t('skills_edit_aria')" @click="bookFormTarget = b"><Icon name="edit" /></button>
+                <button class="danger icon-btn ml-1" :title="t('skills_delete_aria')" :aria-label="t('skills_delete_aria')" @click="onDeleteBook(b)"><Icon name="trash" /></button>
               </td>
             </tr>
           </tbody>
@@ -187,11 +180,11 @@ async function onDeleteBook(b: Book) {
             <tr v-for="b in doneBooks" :key="b.id" class="align-top">
               <td class="px-1"><input type="checkbox" :checked="true" @change="toggleBookDone(b)" /></td>
               <td class="done-text">{{ b.author ? `${b.title} — ${b.author}` : b.title }}</td>
-              <td class="whitespace-nowrap px-2 text-xs">{{ b.points ?? 10 }} ⭐</td>
+              <td class="whitespace-nowrap px-2 text-xs">{{ b.points ?? 10 }} <CoinIcon /></td>
               <td class="dim whitespace-nowrap px-2 text-xs">{{ fmtRu(b.done_date) }}</td>
               <td class="whitespace-nowrap text-right">
-                <button class="secondary px-2" @click="bookFormTarget = b">✎</button>
-                <button class="danger ml-1 px-2" @click="onDeleteBook(b)">✕</button>
+                <button class="secondary icon-btn" :title="t('skills_edit_aria')" :aria-label="t('skills_edit_aria')" @click="bookFormTarget = b"><Icon name="edit" /></button>
+                <button class="danger icon-btn ml-1" :title="t('skills_delete_aria')" :aria-label="t('skills_delete_aria')" @click="onDeleteBook(b)"><Icon name="trash" /></button>
               </td>
             </tr>
           </tbody>
@@ -203,3 +196,16 @@ async function onDeleteBook(b: Book) {
     <BookForm v-if="bookFormTarget" :is-edit="bookFormTarget !== 'new'" :initial="bookFormInitial" @close="bookFormTarget = null" @save="onSaveBook" />
   </main>
 </template>
+
+<style scoped>
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+}
+</style>

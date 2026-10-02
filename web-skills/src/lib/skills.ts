@@ -45,3 +45,10 @@ export function suggestionsFor(lang: 'en' | 'ru', existingNames: Set<string>): S
 export function buildSkillRow(res: SkillFormInput): { name: string; step: number; points: number } {
   return { name: res.name.trim(), step: res.step || 10, points: res.points || 10 }
 }
+
+// Процент прогресса навыка для полоски: целое 0..100, пустое/битое значение — 0 (BACKLOG 22, 11:58).
+export function skillPercent(progress: number | null | undefined): number {
+  const n = Number(progress)
+  if (!Number.isFinite(n)) return 0
+  return Math.max(0, Math.min(100, Math.round(n)))
+}

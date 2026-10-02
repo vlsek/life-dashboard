@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import CoinIcon from './CoinIcon.vue'
 import Icon from './Icon.vue'
 import { deadlineLevel, stagePercent, stageProgress, stageTapTarget } from '../lib/goals'
 import { t } from '../lib/i18n'
@@ -69,7 +70,7 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
       <div class="min-w-0 flex-1">
         <div class="flex items-start justify-between gap-2">
           <h4 class="m-0 break-words text-base font-medium" :class="{ 'done-text line-through opacity-60': goal.done }" data-test="goal-name">{{ goal.name }}</h4>
-          <span class="whitespace-nowrap rounded-full border px-2 py-0.5 text-xs" style="border-color: var(--border)" data-test="goal-points">{{ goal.points ?? 5 }} 🪙</span>
+          <span class="whitespace-nowrap rounded-full border px-2 py-0.5 text-xs" style="border-color: var(--border)" data-test="goal-points">{{ goal.points ?? 5 }} <CoinIcon /></span>
         </div>
 
         <div v-if="diffChip || deadlineChip" class="mt-1 flex flex-wrap gap-1.5 text-xs">
