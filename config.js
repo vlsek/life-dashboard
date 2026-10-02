@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.24";
+const SITE_VERSION = "2.25";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.25", date: "2026-10-02 22:16", changes: [
+        "Эмодзи в интерфейсе заменены на единые SVG-иконки на всех страницах: заголовки окон («Что нового», «Установка», «О приложении»), кнопки («Добавить», «Готово»), значки «Предложить», «Завершено» и др., кнопка меню-«гамбургер», окно знакомства с приложением, выбор периода, календарь, вехи, история дня, магазин. Исправлено: в «Метриках дня» рядом с иконкой-шестерёнкой оставалась ещё и настоящая эмодзи-шестерёнка. Добавлено 11 новых иконок (меню, колокольчик, ключ, письмо, корзина и др.). Оставшиеся места (вода, шапка, пресеты шаблонов) — в очереди",
+    ]},
     { version: "2.24", date: "2026-10-02 21:53", changes: [
         "Серии: исправлено — пунктирный огонёк «серия идёт, но сегодня ещё не готово» снова показывается. Раньше стоило внести за сегодня любую запись (например, воду), и все ещё не выполненные сегодня серии (идеальный день, метрики) обнулялись и пропадали из списка, а огонёк горел сплошным. Теперь незавершённая серия сохраняется и помечается как требующая внимания. Заодно: серия «заметка дня» больше не недосчитывается на один день",
     ]},
@@ -1273,6 +1276,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.25", date: "2026-10-02 22:16", changes: [
+        "Emoji in the interface are replaced by the unified SVG icons on all pages: dialog titles (\"What's new\", \"Install\", \"About\"), buttons (\"Add\", \"Done\"), badges, the menu hamburger button, the welcome tour, the period picker, calendar, milestones, day details and the shop. Fixed: in \"Daily metrics\" a real emoji gear was shown next to the gear icon. 11 new icons added (menu, bell, key, mail, cart and others). Remaining places (water, header, template presets) are queued",
+    ]},
     { version: "2.24", date: "2026-10-02 21:53", changes: [
         "Streaks: fixed — the dashed flame meaning \"the streak is going but today is not done yet\" is shown again. Previously, as soon as you entered anything for today (for example water), all series not yet completed today (perfect day, metrics) were reset and disappeared from the list while the flame stayed solid. Now an unfinished series is kept and marked as needing attention. Also: the \"daily note\" streak no longer comes up one day short",
     ]},
