@@ -13,6 +13,7 @@ import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import ProgressSummaryModal from './components/ProgressSummaryModal.vue'
 import ReminderBanners from './components/ReminderBanners.vue'
 import EveningReminderBanner from './components/EveningReminderBanner.vue'
+import WaterReminderBanner from './components/WaterReminderBanner.vue'
 import SplashLoader from './components/SplashLoader.vue'
 import PointsFloat from './components/PointsFloat.vue'
 import StreakMilestoneModal from './components/StreakMilestoneModal.vue'
@@ -26,6 +27,7 @@ import SectionHeading from './components/SectionHeading.vue'
 import { vCollapse } from './lib/collapseMotion'
 import { useReminders } from './lib/useReminders'
 import { useEveningReminder } from './lib/useEveningReminder'
+import { useWaterReminder } from './lib/useWaterReminder'
 import { usePlanReminders } from './lib/usePlanReminders'
 import { useDashboard } from './lib/useDashboard'
 import { useStreakCelebration } from './lib/useStreakCelebration'
@@ -51,6 +53,7 @@ const { pending: milestone, close: closeMilestone, disable: disableMilestone } =
   streaks,
 )
 const { items: eveningItems, visible: eveningVisible, load: loadEveningReminder, dismiss: dismissEveningReminder } = useEveningReminder()
+const { visible: waterReminderVisible, ml: waterReminderMl, goal: waterReminderGoal, load: loadWaterReminder, dismiss: dismissWaterReminder } = useWaterReminder()
 const { layout, loaded: layoutLoaded, saveError: layoutError, load: loadLayout, save: saveLayout } = useLayout()
 const { visible: planReminders, load: loadPlanReminders, dismiss: dismissPlanReminder } = usePlanReminders()
 const { milestonesReminder, weekendReminderVisible, loadMilestonesReminder, dismissMilestonesReminder, checkWeekendReminder, dismissWeekendReminder } = useReminders()
@@ -60,6 +63,7 @@ onMounted(async () => {
     await loadLayout(auth.value.userId)
     await loadMilestonesReminder(auth.value.userId)
     void loadEveningReminder(auth.value.userId)
+    void loadWaterReminder(auth.value.userId)
     void loadPlanReminders(auth.value.userId)
     if (weekProgress.value) checkWeekendReminder(progressPercent(weekProgress.value))
   }
@@ -163,6 +167,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
       />
       <InstallBanner />
       <PlanReminderBanner :items="planReminders" @dismiss="dismissPlanReminder" />
+      <WaterReminderBanner v-if="waterReminderVisible" :ml="waterReminderMl" :goal="waterReminderGoal" @dismiss="dismissWaterReminder" />
       <EveningReminderBanner v-if="eveningVisible" :items="eveningItems" @dismiss="dismissEveningReminder" />
 
       <HeaderProgressBadge v-if="dayRingHeader" kind="day" v-bind="dayRingHeader" @click="summaryKind = 'day'" />

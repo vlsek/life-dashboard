@@ -322,6 +322,19 @@ describe('глобальные настройки (BACKLOG 6.2)', () => {
     w.unmount()
   })
 
+  it('«Напоминать выпить воды» пишет ключ water_reminders_off (читает плашка Дашборда); по умолчанию включено', async () => {
+    setup({ metrics: [habit] })
+    const w = mount(App)
+    await flushPromises()
+    await openSettings(w)
+    expect((w.find('[data-test="water-reminders"]').element as HTMLInputElement).checked).toBe(true)
+    await w.find('[data-test="water-reminders"]').setValue(false)
+    expect(localStorage.getItem('water_reminders_off')).toBe('1')
+    await w.find('[data-test="water-reminders"]').setValue(true)
+    expect(localStorage.getItem('water_reminders_off')).toBeNull()
+    w.unmount()
+  })
+
   it('раскладка блоков Дашборда: читается из profiles.dashboard_layout, ↓ и скрыть сохраняются сразу', async () => {
     setup({ metrics: [habit], profiles: [{ dashboard_layout: [{ key: 'charts', visible: true }, { key: 'profile', visible: true }, { key: 'daily', visible: true }] }] })
     const w = mount(App)

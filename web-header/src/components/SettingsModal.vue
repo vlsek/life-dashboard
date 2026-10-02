@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
 import { moveBlock, toggleBlock, type DashboardBlockKey, type LayoutItem } from '../lib/layout'
 import { useLayout } from '../lib/useLayout'
-import { THEME_KEYS, celebrationsEnabled, getTheme, setCelebrationsEnabled, setLangAndReload, setMotionOff, setTheme, systemReducedMotion, userMotionOff, type ThemeKey } from '../lib/prefs'
+import { THEME_KEYS, celebrationsEnabled, getTheme, setCelebrationsEnabled, setLangAndReload, setMotionOff, setTheme, setWaterRemindersEnabled, systemReducedMotion, userMotionOff, waterRemindersEnabled, type ThemeKey } from '../lib/prefs'
 
 // «Глобальные настройки» (BACKLOG 6.2): единое окно со всеми настройками, которые раньше были разбросаны по страницам
 // (язык/тема — в боковом меню, анимации и поздравления — в окне раскладки Дашборда, прогресс — в окне прогресса...).
@@ -16,6 +16,7 @@ const theme = ref<ThemeKey>(getTheme())
 const systemReduced = systemReducedMotion()
 const motionOff = ref(userMotionOff() || systemReduced)
 const celebrate = ref(celebrationsEnabled())
+const waterReminders = ref(waterRemindersEnabled())
 
 const { layout, loaded, saveError, load, save } = useLayout()
 const local = ref<LayoutItem[]>([])
@@ -38,6 +39,10 @@ function onMotion(e: Event) {
 function onCelebrate(e: Event) {
   celebrate.value = (e.target as HTMLInputElement).checked
   setCelebrationsEnabled(celebrate.value)
+}
+function onWaterReminders(e: Event) {
+  waterReminders.value = (e.target as HTMLInputElement).checked
+  setWaterRemindersEnabled(waterReminders.value)
 }
 // раскладка блоков сохраняется сразу при каждом изменении (как и остальные настройки здесь)
 async function changeLayout(next: LayoutItem[]) {
@@ -79,7 +84,12 @@ async function changeLayout(next: LayoutItem[]) {
         <input type="checkbox" :checked="celebrate" data-test="celebrate" @change="onCelebrate" />
         {{ t('dash_celebrate_setting') }}
       </label>
-      <p class="gh-dim" style="margin: 2px 0 0 24px; font-size: 12px">{{ t('dash_celebrate_setting_hint') }}</p>
+      <p class="gh-dim" style="margin: 2px 0 8px 24px; font-size: 12px">{{ t('dash_celebrate_setting_hint') }}</p>
+      <label class="gh-check">
+        <input type="checkbox" :checked="waterReminders" data-test="water-reminders" @change="onWaterReminders" />
+        {{ t('water_reminders_setting') }}
+      </label>
+      <p class="gh-dim" style="margin: 2px 0 0 24px; font-size: 12px">{{ t('water_reminders_setting_hint') }}</p>
 
       <h4 style="margin-top: 16px">{{ t('hdr_settings_progress') }}</h4>
       <button type="button" class="gh-btn" data-test="open-progress" @click="emit('open-progress-settings')">{{ t('hdr_settings_progress_btn') }}</button>

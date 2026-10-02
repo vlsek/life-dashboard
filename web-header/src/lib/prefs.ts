@@ -1,7 +1,8 @@
 // Мелкие пользовательские настройки, которые живут в localStorage и применяются сразу. Ключи и поведение — те же, что
 // в пилотах (чтобы глобальные настройки и настройки на страницах не расходились):
 //   site_lang (язык; смена перезагружает страницу), site_theme (+ классы theme-* на <html>), site_motion = 'off'
-//   (<html data-motion="off">, BACKLOG 16), streak_celebrations_off = '1' (поздравления за серии, BACKLOG 13).
+//   (<html data-motion="off">, BACKLOG 16), streak_celebrations_off = '1' (поздравления за серии, BACKLOG 13),
+//   water_reminders_off = '1' (напоминание выпить воду при открытии, BACKLOG 18.5; читает Дашборд — lib/waterReminder.ts).
 export const THEME_KEYS = { dark: 'theme_dark', monet: 'theme_monet', light: 'theme_light', pink: 'theme_pink' } as const
 export type ThemeKey = keyof typeof THEME_KEYS
 
@@ -56,3 +57,6 @@ export function setMotionOff(off: boolean) {
 
 export const celebrationsEnabled = () => read('streak_celebrations_off') !== '1'
 export const setCelebrationsEnabled = (on: boolean) => write('streak_celebrations_off', on ? null : '1')
+
+export const waterRemindersEnabled = () => read('water_reminders_off') !== '1'
+export const setWaterRemindersEnabled = (on: boolean) => write('water_reminders_off', on ? null : '1')
