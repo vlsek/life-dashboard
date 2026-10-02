@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.15";
+const SITE_VERSION = "2.16";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.16", date: "2026-10-02 04:36", changes: [
+        "Вода: в окне воды появился блок «Записи за день» — время каждого добавления и на сколько изменилась сумма (например, 08:05 +250 мл; уменьшение показывается красным). Блок есть и на главной, и в окне воды в шапке на остальных страницах. Пока записи хранятся только на этом устройстве и на другие не передаются; отмена последнего добавления убирает и его строку из журнала",
+    ]},
     { version: "2.15", date: "2026-10-02 07:27", changes: [
         "Правая панель: свайп стал надёжнее. Жест можно начинать не только у самого края экрана, а в правой части (примерно пятая часть ширины) — на Android край занят системным жестом «назад», поэтому раньше свайп мог не срабатывать. Панель открывается, как только палец ушёл влево, не дожидаясь отпускания. Жест не срабатывает, если палец лёг на ползунок, поле ввода или горизонтально прокручиваемый блок. Кнопка в шапке работает по-прежнему",
     ]},
@@ -1246,6 +1249,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.16", date: "2026-10-02 04:36", changes: [
+        "Water: the water window now has an \"Entries today\" block — the time of each addition and how much the total changed (for example, 08:05 +250 ml; decreases are shown in red). It is available both on the main page and in the header water window on the other pages. For now the entries are kept only on this device and are not synced to others; undoing the last addition also removes its row from the log",
+    ]},
     { version: "2.15", date: "2026-10-02 07:27", changes: [
         "Right panel: the swipe is more reliable. You can start the gesture not only at the very screen edge but in the right part of the screen (about a fifth of the width) — on Android the edge is taken by the system back gesture, so the swipe could fail before. The panel opens as soon as the finger moves left, without waiting for release. The gesture is ignored when the finger lands on a slider, an input or a horizontally scrollable block. The header button works as before",
     ]},
