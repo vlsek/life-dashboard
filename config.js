@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.18";
+const SITE_VERSION = "2.19";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.19", date: "2026-10-02 13:33", changes: [
+        "Цели и Навыки: старые монетки и прогресс-бары заменены на современные. Баллы теперь везде показываются иконкой-монетой с огоньком (в целях, навыках и книгах вместо эмодзи). Навыки — карточки: скруглённый прогресс-бар цвета темы с плавным заполнением и процентом, шаги «−/+», круглая отметка «освоено» и иконки правки и удаления вместо символов ✎ ✕",
+    ]},
     { version: "2.18", date: "2026-10-02 13:25", changes: [
         "Русский язык: слово «стрик/стрейк» заменено на «серия» везде, где пользователь его видит (Дашборд, вечернее напоминание, настройки метрики, тур по сайту, старые записи в списке изменений). Английский текст («streak») без изменений",
     ]},
@@ -1255,6 +1258,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.19", date: "2026-10-02 13:33", changes: [
+        "Goals and Skills: the old coins and progress bars are replaced with modern ones. Points are now shown with the coin-with-flame icon everywhere (goals, skills and books instead of emoji). Skills are cards: a rounded theme-coloured progress bar that fills smoothly with a percentage, \"−/+\" steps, a round \"mastered\" mark and edit/delete icons instead of the ✎ ✕ symbols",
+    ]},
     { version: "2.18", date: "2026-10-02 13:25", changes: [
         "Russian language: the word \"стрик/стрейк\" was replaced with \"серия\" everywhere the user sees it (Dashboard, evening reminder, metric settings, site tour, older entries in the changelog). English text (\"streak\") is unchanged",
     ]},
