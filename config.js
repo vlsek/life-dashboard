@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.07";
+const SITE_VERSION = "2.8";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.8", date: "2026-10-02 06:18", changes: [
+        "Цели: страница целей в современном виде — вместо таблицы с текстовой полоской и кнопками «−/+» теперь карточки. Простая цель — круглая галочка; многоэтапная — прогресс по этапам (сегмент на каждый этап, а при многих этапах — полоса), «2/5» и процент, кнопка «+» для следующего этапа и раскрывающийся список этапов: тап по этапу отмечает прогресс до него, повторный тап по последнему выполненному откатывает его. Выполненные цели — компактные карточки",
+    ]},
     { version: "2.07", date: "2026-10-02 06:11", changes: [
         "Дашборд (пилот): напоминание выпить воды. Если при открытии приложения дневная норма воды ещё не выпита, на главной появляется мягкая плашка «Пора выпить воды» с тем, сколько выпито и сколько осталось. Не чаще раза в 3 часа, только при открытии (без уведомлений и фоновых таймеров) и не ночью, с 22:00 до 08:00. Выключается в «Настройках» (правая панель): «Напоминать выпить воды»",
     ]},
@@ -1222,6 +1225,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.8", date: "2026-10-02 06:18", changes: [
+        "Goals: the goals page has a modern look — cards instead of a table with a text bar and \"−/+\" buttons. A simple goal is a round checkmark; a multi-stage goal shows progress per stage (a segment for each stage, or a bar when there are many), \"2/5\" and a percentage, a \"+\" button for the next stage and an expandable stage list: tapping a stage marks progress up to it, tapping the last completed one again undoes it. Completed goals are compact cards",
+    ]},
     { version: "2.07", date: "2026-10-02 06:11", changes: [
         "Dashboard (pilot): water reminder. If the daily water goal is not reached when you open the app, a soft \"Time for some water\" note appears on the main page showing how much you drank and how much is left. At most once every 3 hours, only on open (no notifications or background timers) and not at night, 22:00–08:00. Switch it off in Settings (right panel): \"Remind me to drink water\"",
     ]},
