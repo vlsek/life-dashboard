@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { calcBalance, isDone, type BalanceMetric } from './balance'
-import { fetchAllRows } from './fetchAll'
+import { PARALLEL_PAGES, fetchAllRows } from './fetchAll'
 
 const bool: BalanceMetric = { id: 'b', type: 'boolean', goal_value: null, goal_direction: null }
 const num: BalanceMetric = { id: 'n', type: 'number', goal_value: 5, goal_direction: 'at_least' }
@@ -40,6 +40,17 @@ describe('fetchAllRows', () => {
   it('читает страницами по 1000, пока страница не неполная', async () => {
     const page = vi.fn(async (from: number) => ({ data: Array.from({ length: from === 0 ? 1000 : 5 }, (_, i) => ({ i })), error: null }))
     const { rows, error } = await fetchAllRows(page)
+    // строки и ошибка — как раньше; лишние строки «за концом» пачки (этот мок отдаёт 5 строк на любую страницу после первой) не попадают
+    expect(rows).toHaveLength(1005)
+    expect(error).toBeNull()
+    expect(page.mock.calls[0]).toEqual([0, 999])
+    expect(page.mock.calls[1]).toEqual([1000, 1999])
+    // BACKLOG 6: страницы после первой читаются пачкой параллельно — запросов не больше 1 + PARALLEL_PAGES
+    expect(page.mock.calls.length).toBeLessThanOrEqual(1 + PARALLEL_PAGES)
+  })
+  it('в последовательном режиме (parallel = 1) — строго по одной странице, как раньше', async () => {
+    const page = vi.fn(async (from: number) => ({ data: Array.from({ length: from === 0 ? 1000 : 5 }, (_, i) => ({ i })), error: null }))
+    const { rows, error } = await fetchAllRows(page, 1)
     expect(rows).toHaveLength(1005)
     expect(error).toBeNull()
     expect(page).toHaveBeenCalledTimes(2)
