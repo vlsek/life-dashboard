@@ -68,7 +68,7 @@ describe('WaterModal: норма и подтверждение', () => {
     const w = mount(WaterModal, { props: baseProps, global: { stubs: { transition: false } } })
     await w.find('[data-test="add-200"]').trigger('click')
     await vi.advanceTimersByTimeAsync(50)
-    expect(w.emitted('add')?.[0]).toEqual([200, expect.any(String)])
+    expect(w.emitted('add')?.[0]).toEqual([200, expect.any(String), undefined]) // третий аргумент — время; пока его не выбрали, undefined (решает useWater)
     expect(w.find('[data-test="water-saved"]').exists()).toBe(false)
     await w.setProps({ savedTick: 1 })
     await vi.advanceTimersByTimeAsync(50)

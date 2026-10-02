@@ -70,7 +70,7 @@ describe('WaterModal', () => {
     })
     const btn = wrapper.findAll('button').find((b) => b.text().includes('200'))
     await btn?.trigger('click')
-    expect(wrapper.emitted('add')?.[0]).toEqual([200, expect.any(String)])
+    expect(wrapper.emitted('add')?.[0]).toEqual([200, expect.any(String), undefined]) // третий аргумент — время; пока его не выбрали, undefined (решает useWater)
     wrapper.unmount()
   })
 
