@@ -64,7 +64,7 @@
 — свободен —
 
 ### Агент 3
-— свободен —
+Фаза 3, по правилу «сверху вниз» (первый не заблокированный пункт BACKLOG 14: «Остаток после v1.92»): эффективная норма воды в отображении — линия цели по умолчанию на графике воды (`web-dashboard/src/lib/useCharts.ts` → `withWaterGoal`, `chartSeries.defaultGoal`) и «сумма целей» в сравнении Сообщества (`web-community/src/lib/useCategories.ts`, новая копия `lib/waterGoal.ts` + тест). Файлы: `web-dashboard/src/lib/` (useCharts + тест), `web-community/src/` → сборки `dashboard/`, `community/`; `config.js`, `docs/`. С: 2026-10-02 06:42.
 
 ### Агент 4
 — свободен —
