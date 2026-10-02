@@ -55,3 +55,30 @@ export function squareGeometry(side: number, rx: number, basePct: number, bonusP
     offsetBonus: perimeter * (1 - Math.min(1, bonusPct / 100)),
   }
 }
+
+export interface HeptagonGeometry {
+  points: string // вершины для <polygon> (первая — сверху, дальше по часовой стрелке)
+  perimeter: number
+  offsetBase: number
+  offsetBonus: number
+}
+
+// Правильный семиугольник для кольца недели (BACKLOG 💧 2.3 «Выделение недельного круга»): 7 сторон — по числу дней
+// недели, поэтому кольцо недели с первого взгляда отличается от круга дня. Прогресс идёт по периметру тем же
+// приёмом stroke-dasharray/-dashoffset, что у круга и квадрата. Первая вершина — сверху (угол −90°), обход по часовой.
+export const HEPTAGON_SIDES = 7
+export function heptagonGeometry(center: number, radius: number, basePct: number, bonusPct: number): HeptagonGeometry {
+  const pts: [number, number][] = []
+  for (let i = 0; i < HEPTAGON_SIDES; i++) {
+    const a = -Math.PI / 2 + (2 * Math.PI * i) / HEPTAGON_SIDES
+    pts.push([center + radius * Math.cos(a), center + radius * Math.sin(a)])
+  }
+  const side = 2 * radius * Math.sin(Math.PI / HEPTAGON_SIDES)
+  const perimeter = side * HEPTAGON_SIDES
+  return {
+    points: pts.map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' '),
+    perimeter,
+    offsetBase: perimeter * (1 - basePct),
+    offsetBonus: perimeter * (1 - Math.min(1, bonusPct / 100)),
+  }
+}
