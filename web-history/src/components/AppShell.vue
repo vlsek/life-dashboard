@@ -84,6 +84,9 @@ function readFavorites(): string[] {
 }
 const favorites = ref<string[]>(readFavorites())
 const syncFavorites = () => (favorites.value = readFavorites())
+// Боковое меню (BACKLOG 6.2): основные страницы, затем разделитель и «История» в самом низу (перед «Аккаунтом»)
+const sidebarPages = pages.filter((p) => p.key !== 'history')
+const bottomPages = pages.filter((p) => p.key === 'history')
 const quickPages = computed(() => pages.filter((p) => p.key !== 'dashboard' && favorites.value.includes(p.key)))
 onMounted(() => window.addEventListener('favorites:changed', syncFavorites))
 onUnmounted(() => window.removeEventListener('favorites:changed', syncFavorites))
@@ -248,9 +251,25 @@ onUnmounted(() => {
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     style="background: var(--bg-card); border-color: var(--border)"
   >
+    <!-- сюда бандл /header-widgets/ рисует блок профиля (аватар, имя) и, по настройке, кольца дня/недели (BACKLOG 6.2) -->
+    <div id="sidebar-top"></div>
 
     <a
-      v-for="p in pages"
+      v-for="p in sidebarPages"
+      :key="p.key"
+      :href="p.href"
+      class="flex items-center gap-2.5 rounded-lg px-3 py-2.5"
+      :style="{ background: p.key === active ? 'var(--accent)' : 'transparent', color: p.key === active ? 'var(--accent-text)' : 'var(--text)' }"
+      @click="closeSidebar"
+    >
+      <Icon :name="p.icon" />
+      <span>{{ plainLabel(p.labelKey) }}</span>
+    </a>
+
+    <div class="my-1 border-t" style="border-color: var(--border)"></div>
+
+    <a
+      v-for="p in bottomPages"
       :key="p.key"
       :href="p.href"
       class="flex items-center gap-2.5 rounded-lg px-3 py-2.5"
