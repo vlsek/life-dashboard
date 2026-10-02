@@ -6,6 +6,8 @@ vi.mock('../lib/supabase', () => ({ logout: vi.fn() }))
 
 beforeEach(() => {
   vi.resetModules()
+  // по умолчанию избранными считаем все страницы меню — прежние проверки списка остаются в силе (BACKLOG 6.2)
+  localStorage.setItem('favorite_pages', JSON.stringify(['goals', 'skills', 'workouts', 'challenges', 'english', 'calendar', 'milestones', 'shop', 'community', 'history']))
   globalThis.fetch = vi.fn(async () => new Response(JSON.stringify({ version: '1.00', en: [], ru: [] }))) as unknown as typeof fetch
 })
 
@@ -50,6 +52,53 @@ describe('AppShell: быстрые ссылки', () => {
     await w.vm.$nextTick()
     expect(w.find('[data-testid="quicknav-list"]').exists()).toBe(false)
     expect(w.find('[data-testid="quicknav-toggle"]').attributes('aria-expanded')).toBe('false')
+    w.unmount()
+  })
+})
+
+describe('AppShell: «Избранное» в списке по шеврону (BACKLOG 6.2)', () => {
+  const chips = (w: Awaited<ReturnType<typeof mountShell>>) => w.find('[data-testid="quicknav-list"]').findAll('a').map((a) => a.attributes('href'))
+
+  it('в списке только избранные страницы; остальные в сайдбаре остаются', async () => {
+    localStorage.setItem('favorite_pages', JSON.stringify(['shop', 'history']))
+    const w = await mountShell()
+    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
+    expect(chips(w)).toEqual(['/shop/', '/history/'])
+    expect(w.findAll('nav a[href="/goals/"]').length).toBe(1)
+    w.unmount()
+  })
+
+  it('избранного нет — вместо чипов подсказка про сердечко', async () => {
+    localStorage.removeItem('favorite_pages')
+    const w = await mountShell()
+    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
+    expect(chips(w)).toEqual([])
+    expect(w.find('[data-testid="quicknav-empty"]').text().length).toBeGreaterThan(5)
+    w.unmount()
+  })
+
+  it('мусор в localStorage и неизвестные ключи не ломают список; Дашборд даже в избранном в нём не появляется', async () => {
+    localStorage.setItem('favorite_pages', '{oops')
+    let w = await mountShell()
+    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
+    expect(chips(w)).toEqual([])
+    w.unmount()
+    localStorage.setItem('favorite_pages', JSON.stringify(['dashboard', 'nope', 'shop']))
+    w = await mountShell()
+    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
+    expect(chips(w)).toEqual(['/shop/'])
+    w.unmount()
+  })
+
+  it('событие favorites:changed (сердечко в шапке) обновляет открытый список сразу', async () => {
+    localStorage.setItem('favorite_pages', JSON.stringify(['shop']))
+    const w = await mountShell()
+    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
+    expect(chips(w)).toEqual(['/shop/'])
+    localStorage.setItem('favorite_pages', JSON.stringify(['shop', 'goals']))
+    window.dispatchEvent(new CustomEvent('favorites:changed'))
+    await w.vm.$nextTick()
+    expect(chips(w)).toEqual(['/goals/', '/shop/'])
     w.unmount()
   })
 })

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { getLang, setLang, t, type DictKey } from '../lib/i18n'
 import { loadVersionInfo } from '../lib/version'
 import { getTheme, setTheme, THEME_KEYS, type ThemeKey } from '../lib/theme'
@@ -70,6 +70,23 @@ function plainLabel(key: DictKey): string {
 
 const sidebarOpen = ref(false)
 const quickNavOpen = ref(false)
+
+// «Избранное» (BACKLOG 6.2): список по шеврону показывает только избранные страницы. Состояние лежит в localStorage
+// `favorite_pages` (JSON-массив ключей страниц) и меняется сердечком в шапке (бандл /header-widgets/, событие favorites:changed);
+// синхронизацию с профилем делает тот же бандл — здесь только чтение.
+function readFavorites(): string[] {
+  try {
+    const v = JSON.parse(localStorage.getItem('favorite_pages') || '[]')
+    return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []
+  } catch {
+    return []
+  }
+}
+const favorites = ref<string[]>(readFavorites())
+const syncFavorites = () => (favorites.value = readFavorites())
+const quickPages = computed(() => pages.filter((p) => p.key !== 'dashboard' && favorites.value.includes(p.key)))
+onMounted(() => window.addEventListener('favorites:changed', syncFavorites))
+onUnmounted(() => window.removeEventListener('favorites:changed', syncFavorites))
 function openSidebar() {
   sidebarOpen.value = true
 }
@@ -206,7 +223,7 @@ onUnmounted(() => {
     <Transition name="qn">
       <div v-if="quickNavOpen" id="quick-nav" class="qn-list no-edge-swipe" data-testid="quicknav-list">
         <a
-          v-for="p in pages.filter((p) => p.key !== 'dashboard')"
+          v-for="p in quickPages"
           :key="p.key"
           :href="p.href"
           class="qn-chip"
@@ -215,6 +232,7 @@ onUnmounted(() => {
           <Icon :name="p.icon" />
           {{ plainLabel(p.labelKey) }}
         </a>
+        <span v-if="!quickPages.length" class="qn-empty" data-testid="quicknav-empty">{{ t('nav_favorites_empty') }}</span>
       </div>
     </Transition>
     <div class="ml-auto flex items-center gap-1.5" id="topbar-right"></div>
@@ -445,5 +463,11 @@ html[data-motion='off'] .qn-chip,
 html[data-motion='off'] .qn-enter-active,
 html[data-motion='off'] .qn-leave-active {
   transition: none;
+}
+/* Пустое «Избранное» в списке по шеврону (BACKLOG 6.2) */
+.qn-empty {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  white-space: nowrap;
 }
 </style>

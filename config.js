@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.22";
+const SITE_VERSION = "2.23";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.23", date: "2026-10-02 14:33", changes: [
+        "Избранное: вместо дублирующего списка страниц по шеврону вверху теперь «Избранное». На каждой странице меню (Цели, Навыки, Тренировки, Челленджи, Языки, Календарь, Вехи, Магазин, Сообщество, История) вверху появилось сердечко: пустое — страницы нет в избранном, залито цветом темы — есть. Список по шеврону показывает только избранные страницы; пока ничего не выбрано, там подсказка. Все страницы по-прежнему в боковом меню. Избранное запоминается на устройстве сразу, а для синхронизации между устройствами нужна миграция 035 (владельцу применить в Supabase)",
+    ]},
     { version: "2.22", date: "2026-10-02 11:10", changes: [
         "Дашборд (пилот): кольцо прогресса недели в профиле теперь семиугольник — семь сторон по числу дней недели, линия толще, чем у круга дня, так что день и неделя отличаются с первого взгляда. Прогресс идёт по периметру, бонус ⭐ показывается второй дугой, как и раньше. Кольцо дня вокруг аватара и значок недели в шапке не менялись",
     ]},
@@ -1267,6 +1270,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.23", date: "2026-10-02 14:33", changes: [
+        "Favorites: instead of the duplicate page list behind the chevron at the top there is now Favorites. Every menu page (Goals, Skills, Workouts, Challenges, Languages, Calendar, Milestones, Shop, Community, History) has a heart at the top: empty — the page is not a favorite, filled with the theme colour — it is. The chevron list shows only favorite pages; until you pick some it shows a hint. All pages stay in the side menu. Favorites are remembered on the device at once; syncing between devices needs migration 035 (the owner applies it in Supabase)",
+    ]},
     { version: "2.22", date: "2026-10-02 11:10", changes: [
         "Dashboard (pilot): the weekly progress ring in the profile is now a heptagon — seven sides for the seven days of the week and a thicker line than the day circle, so day and week look different at a glance. Progress runs along the perimeter and the ⭐ bonus is still shown as a second arc. The day ring around the avatar and the week badge in the header were not changed",
     ]},

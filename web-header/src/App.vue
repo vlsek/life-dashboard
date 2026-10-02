@@ -15,6 +15,8 @@ import ProgressSummaryModal from './components/ProgressSummaryModal.vue'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import RightPanel, { type GaugeData } from './components/RightPanel.vue'
 import SettingsModal from './components/SettingsModal.vue'
+import FavoriteHeart from './components/FavoriteHeart.vue'
+import { pageKeyFor, readFavorites, saveFavoritesToProfile, syncFavoritesFromProfile, toggleFavorite, writeFavorites } from './lib/favorites'
 
 // panelOnly — режим для Дашборда: своя шапка (стакан, кольца) там уже есть, поэтому бандл даёт только правую панель.
 const props = defineProps<{ panelOnly?: boolean }>()
@@ -33,7 +35,7 @@ onMounted(async () => {
   const uid = data.session?.user.id
   if (!uid) return
   userId.value = uid
-  await Promise.all([initProgress(uid), initWater(uid)])
+  await Promise.all([initProgress(uid), initWater(uid), syncFavoritesFromProfile(uid).then((l) => (favorites.value = l))])
   ready.value = true
 })
 
@@ -60,6 +62,17 @@ const waterVisible = computed(() => waterLoaded.value && !waterError.value && !!
 const waterOpen = ref(false)
 const panelOpen = ref(false)
 const globalSettingsOpen = ref(false)
+// «Избранное»: сердечко есть только на страницах из бокового меню (не на Дашборде/служебных); на Дашборде бандл лишь синхронизирует список
+const favorites = ref<string[]>(readFavorites())
+const pageKey = pageKeyFor(location.pathname)
+const isFavorite = computed(() => !!pageKey && favorites.value.includes(pageKey))
+function onToggleFavorite() {
+  if (!pageKey || !userId.value) return
+  const next = toggleFavorite(favorites.value, pageKey)
+  favorites.value = next
+  writeFavorites(next)
+  void saveFavoritesToProfile(userId.value, next)
+}
 const muscles = useMuscles()
 // карта мышц грузится лениво: при каждом открытии панели (подходы могли добавить на другой странице)
 watch(panelOpen, (open) => {
@@ -125,6 +138,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
 
 <template>
   <div v-if="ready && userId" class="gh-root" data-test="header-widgets">
+    <FavoriteHeart v-if="pageKey && !props.panelOnly" :active="isFavorite" @toggle="onToggleFavorite" />
     <template v-if="!props.panelOnly">
       <WaterGlass v-if="waterVisible" :today-ml="todayMl" :norm-ml="normMl" :title="`💧 ${todayMl} / ${normMl} ${unitLabel}`" @click="waterOpen = true" />
       <DayWeekBadge v-if="dayRing" kind="day" v-bind="dayRing" @click="summaryKind = 'day'" />

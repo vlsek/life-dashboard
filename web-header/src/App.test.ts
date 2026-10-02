@@ -551,3 +551,59 @@ describe('свайп справа: открытие на touchmove, широка
     w.unmount()
   })
 })
+
+describe('«Избранное»: сердечко в шапке (BACKLOG 6.2)', () => {
+  function at(path: string) {
+    history.replaceState(null, '', path)
+  }
+  beforeEach(() => at('/goals/'))
+
+  it('на странице из меню есть пустое сердечко; клик добавляет страницу: localStorage, событие и профиль', async () => {
+    setup({ metrics: [habit], profiles: [{ favorite_pages: [] }] })
+    let evt: unknown = null
+    window.addEventListener('favorites:changed', ((e: CustomEvent) => (evt = e.detail)) as unknown as EventListener, { once: true })
+    const w = mount(App)
+    await flushPromises()
+    const heart = w.find('[data-test="favorite-heart"]')
+    expect(heart.exists()).toBe(true)
+    expect(heart.attributes('aria-pressed')).toBe('false')
+    expect(heart.find('svg').attributes('data-state')).toBe('off')
+    await heart.trigger('click')
+    await flushPromises()
+    expect(localStorage.getItem('favorite_pages')).toBe('["goals"]')
+    expect(evt).toEqual(['goals'])
+    expect(db.writes.filter((x) => x.table === 'profiles').at(-1)!.payload).toEqual({ user_id: 'u1', favorite_pages: ['goals'] })
+    expect(w.find('[data-test="favorite-heart"]').attributes('aria-pressed')).toBe('true')
+    expect(w.find('[data-test="favorite-heart"] svg').attributes('data-state')).toBe('on')
+    w.unmount()
+  })
+
+  it('страница уже в избранном (из профиля): сердечко залито; повторный клик убирает', async () => {
+    setup({ metrics: [habit], profiles: [{ favorite_pages: ['goals', 'shop'] }] })
+    const w = mount(App)
+    await flushPromises()
+    expect(w.find('[data-test="favorite-heart"]').attributes('aria-pressed')).toBe('true')
+    await w.find('[data-test="favorite-heart"]').trigger('click')
+    await flushPromises()
+    expect(localStorage.getItem('favorite_pages')).toBe('["shop"]')
+    expect(w.find('[data-test="favorite-heart"]').attributes('aria-pressed')).toBe('false')
+    w.unmount()
+  })
+
+  it('на Дашборде (panelOnly), в Аккаунте и на неизвестных страницах сердечка нет, а список из профиля всё равно синхронизируется', async () => {
+    setup({ metrics: [habit], profiles: [{ favorite_pages: ['history'] }] })
+    at('/dashboard/')
+    const dash = mount(App, { props: { panelOnly: true } })
+    await flushPromises()
+    expect(dash.find('[data-test="favorite-heart"]').exists()).toBe(false)
+    expect(localStorage.getItem('favorite_pages')).toBe('["history"]')
+    dash.unmount()
+    for (const p of ['/account/', '/nope/']) {
+      at(p)
+      const w = mount(App)
+      await flushPromises()
+      expect(w.find('[data-test="favorite-heart"]').exists()).toBe(false)
+      w.unmount()
+    }
+  })
+})

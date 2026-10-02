@@ -14,6 +14,7 @@ const DICT = {
   en: {
     nav_open_menu: 'Open menu',
     nav_more: 'More sections',
+    nav_favorites_empty: 'Add pages to favorites with the heart at the top of a page',
     nav_dashboard: '🏠 Dashboard',
     nav_goals: '🎯 Goals',
     nav_skills: '🥋 Skills',
@@ -110,6 +111,7 @@ const DICT = {
   ru: {
     nav_open_menu: 'Открыть меню',
     nav_more: 'Остальные разделы',
+    nav_favorites_empty: 'Добавьте страницы в избранное — сердечком вверху страницы',
     nav_dashboard: '🏠 Дашборд',
     nav_goals: '🎯 Цели',
     nav_skills: '🥋 Навыки',
