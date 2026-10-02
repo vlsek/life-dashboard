@@ -71,8 +71,13 @@ export function useProfile() {
   async function init(uid: string) {
     userId = uid
     error.value = null
-    await Promise.all([loadProfileRow(), loadParams(), loadValues(), loadBalance()])
-    loaded.value = true
+    // Блок «Профиль» (аватар, возраст, параметры тела) показываем, как только готовы лёгкие данные: баланс считается по ВСЕЙ
+    // истории `daily_values` (постранично) и раньше задерживал весь блок (BACKLOG 6 «Оптимизация блоков»). Монета с баллами
+    // у блока и так появляется отдельно (`v-if="balance != null"`). Промис init по-прежнему ждёт и баланс — как и раньше.
+    const light = Promise.all([loadProfileRow(), loadParams(), loadValues()]).then(() => {
+      loaded.value = true
+    })
+    await Promise.all([light, loadBalance()])
   }
 
   async function uploadAvatar(file: File): Promise<boolean> {
