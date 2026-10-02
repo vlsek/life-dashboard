@@ -571,3 +571,26 @@ html[data-motion='off'] *::after {
   animation: none;
   filter: drop-shadow(0 0 3px color-mix(in srgb, var(--accent) 50%, transparent));
 }
+
+/* Подходы (SetsCard.vue, BACKLOG 18.4 «подложка у каждого подхода»): каждая строка подхода — своя «подложка»-карточка,
+   а не голая строка таблицы. Фон — цвет страницы (темнее/светлее карточки метрики), рамка — как у остальных карточек. */
+.sets-table {
+  border-collapse: separate;
+  border-spacing: 0 6px;
+}
+.sets-table td {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 4px;
+}
+.sets-table td:first-child {
+  border-left: 1px solid var(--border);
+  border-radius: 10px 0 0 10px;
+  padding-left: 10px;
+}
+.sets-table td:last-child {
+  border-right: 1px solid var(--border);
+  border-radius: 0 10px 10px 0;
+  padding-right: 8px;
+}

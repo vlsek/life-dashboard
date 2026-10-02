@@ -113,7 +113,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
     </div>
 
     <div class="mt-4">
-      <SetsSection :user-id="userId" :date="date" />
+      <SetsSection :user-id="userId" :date="date" :metric-streaks="props.metricStreaks" />
     </div>
     </div>
     <PlannedSection :user-id="userId" :date="date" />

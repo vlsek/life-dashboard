@@ -45,6 +45,31 @@ describe('SetsCard', () => {
   })
 })
 
+describe('SetsCard: огонёк серии и подложка у каждого подхода (BACKLOG 18.5 / 18.4)', () => {
+  it('shows the flame and the number of days next to the metric name when a streak is passed', () => {
+    const w = mount(SetsCard, { props: { metric: metric(), sets: [], streak: { streak: 8, todayCounted: true } } })
+    expect(w.find('[data-test="metric-streak"]').text()).toBe('8')
+    expect(w.text()).toContain('Push-ups')
+    w.unmount()
+  })
+  it('a dimmed flame when today is not counted yet', () => {
+    const w = mount(SetsCard, { props: { metric: metric(), sets: [], streak: { streak: 3, todayCounted: false } } })
+    expect(w.find('[data-test="metric-streak"]').classes()).toContain('unlit')
+    w.unmount()
+  })
+  it('no flame without a streak', () => {
+    expect(mount(SetsCard, { props: { metric: metric(), sets: [] } }).find('[data-test="metric-streak"]').exists()).toBe(false)
+    expect(mount(SetsCard, { props: { metric: metric(), sets: [], streak: null } }).find('[data-test="metric-streak"]').exists()).toBe(false)
+  })
+  it('every set is a separate plate row inside the .sets-table', () => {
+    const w = mount(SetsCard, { props: { metric: metric(), sets: [row({ reps: 10 }), row({ reps: 12 }), row({ reps: 8 })] } })
+    const table = w.find('[data-test="sets-table"]')
+    expect(table.classes()).toContain('sets-table')
+    expect(table.findAll('[data-test="set-row"]')).toHaveLength(3)
+    w.unmount()
+  })
+})
+
 describe('VariationCombo', () => {
   it('emits commit with the trimmed text on change', async () => {
     const w = mount(VariationCombo, { props: { modelValue: null, labels: ['Wide grip'] } })

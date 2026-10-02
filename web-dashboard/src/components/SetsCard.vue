@@ -4,6 +4,8 @@ import { computed, ref } from 'vue'
 import VariationCombo from './VariationCombo.vue'
 import MetricIcon from './MetricIcon.vue'
 import Icon from './Icon.vue'
+import MetricStreakBadge from './MetricStreakBadge.vue'
+import type { MetricStreakInfo } from '../lib/metricStreaks'
 import CollapseChevron from './CollapseChevron.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import { t } from '../lib/i18n'
@@ -13,7 +15,7 @@ import type { Metric } from '../lib/types'
 
 // Портировано из renderSetsMetric() в dashboard.js. Презентационный компонент: сам ничего не
 // сохраняет, а на каждую правку отдаёт новый список подходов через change (родитель пишет в БД).
-const props = defineProps<{ metric: Metric; sets: SetRow[] }>()
+const props = defineProps<{ metric: Metric; sets: SetRow[]; streak?: MetricStreakInfo | null }>()
 const emit = defineEmits<{
   change: [sets: SetRow[]]
   remember: [text: string]
@@ -44,7 +46,7 @@ function onVariation(i: number, text: string) {
 <template>
   <div class="card mb-3.5" :data-metric-id="metric.id">
     <div class="flex items-center gap-2">
-      <strong><MetricIcon :icon="metric.icon" /> {{ metric.name }}</strong>
+      <strong><MetricIcon :icon="metric.icon" /> {{ metric.name }}</strong><MetricStreakBadge v-if="streak" :info="streak" />
       <button type="button" class="secondary ml-auto" style="padding: 4px 8px; line-height: 0" :aria-expanded="open" :title="open ? t('dash_collapse_btn') : t('dash_expand_btn')" data-test="sets-toggle" @click="open = !open"><CollapseChevron :collapsed="!open" /></button>
     </div>
 
@@ -55,9 +57,9 @@ function onVariation(i: number, text: string) {
 
     <div v-collapse="open" class="mt-2">
       <div v-if="sets.length > 0" class="overflow-x-auto">
-        <table class="w-full text-sm">
+        <table class="sets-table w-full text-sm" data-test="sets-table">
           <tbody>
-            <tr v-for="(s, i) in sets" :key="i" class="align-middle">
+            <tr v-for="(s, i) in sets" :key="i" class="align-middle" data-test="set-row">
               <td class="py-1 pr-2">{{ i + 1 }}</td>
               <td class="py-1 pr-2">
                 <input type="time" :value="s.time ?? ''" :title="t('sets_time_title')" style="width: 96px" @change="onTime(i, $event)" />
