@@ -112,3 +112,38 @@ export function stepStage(g: Pick<Goal, 'stages' | 'current_stage'>, delta: numb
   const cur = Math.max(0, Math.min(stages, (g.current_stage ?? 0) + delta))
   return { current_stage: cur, done: cur >= stages }
 }
+
+// ---- Многоэтапные цели в виде карточек (BACKLOG 7.1 «Многоступенчатые цели») ----
+// Этапы — счётчик `current_stage` из `stages` (названий этапов в БД нет), поэтому «отметить этап k» = выставить прогресс до k:
+// этапы идут по порядку, пропустить второй и отметить третий нельзя. Тап по последнему выполненному этапу откатывает его.
+
+// Новый прогресс после тапа по этапу k (1-based): тап по текущему (последнему выполненному) — откат на k-1, иначе — выставить k.
+export function stageTapTarget(current: number, stages: number, k: number): number {
+  const total = Math.max(1, stages)
+  const kk = Math.max(1, Math.min(total, Math.round(k)))
+  const cur = Math.max(0, Math.min(total, current))
+  return cur === kk ? kk - 1 : kk
+}
+
+// Результат выставления прогресса: тот же формат, что у stepStage().
+export function stageResult(stages: number, target: number): { current_stage: number; done: boolean } {
+  const total = Math.max(1, stages)
+  const cur = Math.max(0, Math.min(total, Math.round(target)))
+  return { current_stage: cur, done: cur >= total }
+}
+
+// Процент выполнения этапов (0..100, целое).
+export function stagePercent(current: number, stages: number): number {
+  const total = Math.max(1, stages)
+  return Math.round((Math.max(0, Math.min(total, current)) / total) * 100)
+}
+
+// Как рисовать прогресс: до MAX_SEGMENTS этапов — сегменты (по одному на этап), больше — сплошная полоса (сегменты стали бы крошечными).
+export const MAX_SEGMENTS = 12
+export type StageProgress = { mode: 'segments'; filled: number; total: number } | { mode: 'bar'; pct: number }
+export function stageProgress(current: number, stages: number): StageProgress {
+  const total = Math.max(1, stages)
+  const cur = Math.max(0, Math.min(total, current))
+  if (total <= MAX_SEGMENTS) return { mode: 'segments', filled: cur, total }
+  return { mode: 'bar', pct: stagePercent(cur, total) }
+}

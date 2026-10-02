@@ -9,6 +9,11 @@ import {
   sortDone,
   pointsSummary,
   stepStage,
+  stageTapTarget,
+  stageResult,
+  stagePercent,
+  stageProgress,
+  MAX_SEGMENTS,
 } from './goals'
 import type { Goal } from './types'
 
@@ -145,5 +150,66 @@ describe('stepStage', () => {
   it('clamps between 0 and stages, marks done at the max', () => {
     expect(stepStage({ stages: 3, current_stage: 2 }, 1)).toEqual({ current_stage: 3, done: true })
     expect(stepStage({ stages: 3, current_stage: 0 }, -1)).toEqual({ current_stage: 0, done: false })
+  })
+})
+
+// BACKLOG 7.1 «Многоступенчатые цели»: современные карточки с этапами
+describe('stageTapTarget', () => {
+  it('sets progress up to the tapped stage', () => {
+    expect(stageTapTarget(0, 5, 3)).toBe(3)
+    expect(stageTapTarget(2, 5, 5)).toBe(5)
+    expect(stageTapTarget(4, 5, 2)).toBe(2) // можно вернуться на более ранний этап
+  })
+  it('tapping the last completed stage undoes it', () => {
+    expect(stageTapTarget(3, 5, 3)).toBe(2)
+    expect(stageTapTarget(1, 5, 1)).toBe(0)
+    expect(stageTapTarget(5, 5, 5)).toBe(4)
+  })
+  it('clamps garbage input into 1..stages', () => {
+    expect(stageTapTarget(0, 5, 99)).toBe(5)
+    expect(stageTapTarget(0, 5, 0)).toBe(1)
+    expect(stageTapTarget(0, 5, -3)).toBe(1)
+    expect(stageTapTarget(9, 5, 5)).toBe(4) // current > stages приводится к stages
+    expect(stageTapTarget(0, 0, 1)).toBe(1) // stages < 1 считается за 1
+  })
+  it('the "next stage" button is a tap on current + 1', () => {
+    expect(stageTapTarget(2, 5, 3)).toBe(3)
+    expect(stageTapTarget(4, 5, 5)).toBe(5)
+  })
+})
+
+describe('stageResult', () => {
+  it('marks the goal done only when all stages are completed', () => {
+    expect(stageResult(5, 4)).toEqual({ current_stage: 4, done: false })
+    expect(stageResult(5, 5)).toEqual({ current_stage: 5, done: true })
+    expect(stageResult(5, 0)).toEqual({ current_stage: 0, done: false })
+  })
+  it('clamps the target', () => {
+    expect(stageResult(5, 9)).toEqual({ current_stage: 5, done: true })
+    expect(stageResult(5, -2)).toEqual({ current_stage: 0, done: false })
+  })
+  it('agrees with stepStage for a single step', () => {
+    const g = { stages: 4, current_stage: 2 }
+    expect(stageResult(4, 3)).toEqual(stepStage(g, 1))
+    expect(stageResult(4, 1)).toEqual(stepStage(g, -1))
+  })
+})
+
+describe('stagePercent / stageProgress', () => {
+  it('rounds the percentage', () => {
+    expect(stagePercent(0, 3)).toBe(0)
+    expect(stagePercent(1, 3)).toBe(33)
+    expect(stagePercent(2, 3)).toBe(67)
+    expect(stagePercent(3, 3)).toBe(100)
+    expect(stagePercent(7, 3)).toBe(100)
+  })
+  it('uses one segment per stage up to the limit and a bar beyond it', () => {
+    expect(stageProgress(2, 5)).toEqual({ mode: 'segments', filled: 2, total: 5 })
+    expect(stageProgress(0, MAX_SEGMENTS)).toEqual({ mode: 'segments', filled: 0, total: MAX_SEGMENTS })
+    expect(stageProgress(13, MAX_SEGMENTS + 2)).toEqual({ mode: 'bar', pct: 93 }) // 13 из 14
+    expect(stageProgress(13, MAX_SEGMENTS + 1)).toEqual({ mode: 'bar', pct: 100 }) // 13 из 13: уже полоса, а не 13 сегментов
+  })
+  it('never fills more than the total', () => {
+    expect(stageProgress(9, 4)).toEqual({ mode: 'segments', filled: 4, total: 4 })
   })
 })

@@ -41,6 +41,8 @@ export const ICON_PATHS = {
   history: '<path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3.5 4.5v4h4"/><path d="M12 7.5V12l3 2"/>',
   chevron_left: '<path d="M15 5l-7 7 7 7"/>',
   chevron_right: '<path d="M9 5l7 7-7 7"/>',
+  chevron_down: '<path d="M5 9l7 7 7-7"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
   pushup:
     '<circle cx="19" cy="8.2" r="1.7"/><path d="M17.2 10.8L6.5 15.2"/><path d="M16.2 11.4V18.5"/><path d="M6.5 15.2L4.8 18.5"/><path d="M2.5 19.5h19"/>',
   pullup:

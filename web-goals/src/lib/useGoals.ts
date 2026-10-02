@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
 import { todayStr } from './date'
-import { buildInsertRow, buildUpdateRow, stepStage } from './goals'
+import { buildInsertRow, buildUpdateRow, stageResult, stepStage } from './goals'
 import type { Goal, GoalFormInput } from './types'
 
 export type AuthState =
@@ -86,5 +86,13 @@ export function useGoals() {
     await reload()
   }
 
-  return { auth, items, error, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal }
+  // Выставить прогресс многоэтапной цели сразу до этапа `target` (тап по этапу в карточке, BACKLOG 7.1)
+  async function setStage(g: Goal, target: number) {
+    const { current_stage, done } = stageResult(g.stages ?? 1, target)
+    const { error: err } = await sb.from('goals').update({ current_stage, done, done_date: done ? todayStr() : null }).eq('id', g.id)
+    if (err) throw err
+    await reload()
+  }
+
+  return { auth, items, error, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage }
 }
