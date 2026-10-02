@@ -340,7 +340,7 @@ describe('глобальные настройки (BACKLOG 6.2)', () => {
     const w = mount(App)
     await flushPromises()
     await openSettings(w)
-    const rows = () => w.findAll('[data-test="layout-row"]').map((r) => r.find('span').text())
+    const rows = () => w.findAll('[data-test="layout-row"]').map((r) => r.find('.gh-block-text div').text())
     expect(rows()).toEqual(['Графики', 'Профиль', 'Дневные метрики и планы'].map((x) => expect.stringContaining(x.split(' ')[0])))
     await w.findAll('[data-test="layout-row"]')[0].find('[data-test="down"]').trigger('click')
     await flushPromises()
@@ -439,5 +439,32 @@ describe('норма воды: справка и «Считать автомат
     expect(alerts[1]).toContain('Укажите рост')
     w.unmount()
     vi.unstubAllGlobals()
+  })
+})
+
+describe('раскладка блоков в глобальных настройках: перетаскивание (BACKLOG 6.2)', () => {
+  const ptr = (type: string, y: number) => new MouseEvent(type, { clientY: y, bubbles: true, button: 0 })
+
+  it('перетаскивание ручкой ☰ меняет порядок и сразу сохраняется в profiles.dashboard_layout', async () => {
+    setup({ metrics: [habit], profiles: [{ dashboard_layout: [{ key: 'profile', visible: true }, { key: 'charts', visible: true }, { key: 'daily', visible: true }] }] })
+    const w = mount(App, { attachTo: document.body })
+    await flushPromises()
+    await w.find('[data-test="panel-open"]').trigger('click')
+    await w.find('[data-test="panel-settings"]').trigger('click')
+    await flushPromises()
+    w.findAll('[data-test="layout-row"]').forEach((row, i) => {
+      ;(row.element as HTMLElement).getBoundingClientRect = () => ({ top: i * 58, bottom: i * 58 + 50, height: 50, left: 0, right: 300, width: 300, x: 0, y: i * 58, toJSON: () => ({}) }) as DOMRect
+    })
+    const handle = w.findAll('[data-test="drag-handle"]')[0].element
+    handle.dispatchEvent(ptr('pointerdown', 25))
+    handle.dispatchEvent(ptr('pointermove', 25 + 70))
+    handle.dispatchEvent(ptr('pointerup', 95))
+    await flushPromises()
+    expect(db.writes.filter((x) => x.table === 'profiles').at(-1)!.payload).toMatchObject({
+      user_id: 'u1',
+      dashboard_layout: [{ key: 'charts', visible: true }, { key: 'profile', visible: true }, { key: 'daily', visible: true }],
+    })
+    expect(w.find('[data-test="layout-saved"]').exists()).toBe(true)
+    w.unmount()
   })
 })

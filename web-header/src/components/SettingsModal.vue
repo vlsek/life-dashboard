@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
-import { moveBlock, toggleBlock, type DashboardBlockKey, type LayoutItem } from '../lib/layout'
+import type { DashboardBlockKey, LayoutItem } from '../lib/layout'
+import BlockOrderList from './BlockOrderList.vue'
 import { useLayout } from '../lib/useLayout'
 import { THEME_KEYS, celebrationsEnabled, getTheme, setCelebrationsEnabled, setLangAndReload, setMotionOff, setTheme, setWaterRemindersEnabled, systemReducedMotion, userMotionOff, waterRemindersEnabled, type ThemeKey } from '../lib/prefs'
 
@@ -26,7 +27,11 @@ onMounted(async () => {
   local.value = layout.value.map((i) => ({ ...i }))
 })
 
-const BLOCKS: Record<DashboardBlockKey, DictKey> = { profile: 'dash_block_profile', charts: 'dash_charts_h2', daily: 'dash_block_daily' }
+const blockLabels = computed<Record<DashboardBlockKey, { title: string; desc: string }>>(() => ({
+  profile: { title: t('dash_block_profile'), desc: t('dash_layout_desc_profile') },
+  charts: { title: t('dash_charts_h2'), desc: t('dash_layout_desc_charts') },
+  daily: { title: t('dash_block_daily'), desc: t('dash_layout_desc_daily') },
+}))
 
 function onTheme(e: Event) {
   theme.value = (e.target as HTMLSelectElement).value as ThemeKey
@@ -96,14 +101,7 @@ async function changeLayout(next: LayoutItem[]) {
 
       <h4 style="margin-top: 16px">{{ t('hdr_settings_dashboard') }}</h4>
       <p class="gh-dim" style="margin: 0 0 4px; font-size: 12px">{{ t('dash_layout_hint') }}</p>
-      <ul v-if="loaded" class="gh-list" data-test="layout-list">
-        <li v-for="(item, i) in local" :key="item.key" data-test="layout-row">
-          <span :style="{ opacity: item.visible ? 1 : 0.5 }">{{ t(BLOCKS[item.key]) }}</span>
-          <button type="button" class="gh-btn gh-btn-icon" data-test="up" :disabled="i === 0" @click="changeLayout(moveBlock(local, i, -1))">↑</button>
-          <button type="button" class="gh-btn gh-btn-icon" data-test="down" :disabled="i === local.length - 1" @click="changeLayout(moveBlock(local, i, 1))">↓</button>
-          <button type="button" class="gh-btn gh-btn-icon" data-test="toggle" :title="item.visible ? t('dash_layout_hide') : t('dash_layout_show')" @click="changeLayout(toggleBlock(local, i))">{{ item.visible ? '👁' : '🚫' }}</button>
-        </li>
-      </ul>
+      <BlockOrderList v-if="loaded" :model-value="local" :labels="blockLabels" data-test="layout-list" @update:model-value="changeLayout" />
       <p v-if="layoutSaved" style="color: var(--accent, #6c8cff); margin: 0" data-test="layout-saved">✓ {{ t('hdr_settings_layout_saved') }}</p>
       <p v-if="saveError" style="color: #d6336c; margin: 0" data-test="layout-error">{{ t('dash_layout_save_error') }}{{ saveError }}</p>
 

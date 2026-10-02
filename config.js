@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.13";
+const SITE_VERSION = "2.14";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.14", date: "2026-10-02 07:12", changes: [
+        "Раскладка блоков Дашборда: окно «Отображение и порядок» переделано. Блоки теперь карточки с названием и коротким описанием; порядок меняется перетаскиванием за ручку ☰ (пальцем или мышью — соседние карточки уступают место) либо стрелками ↑/↓; видимость — понятным переключателем вместо глаза. Тот же список в «Глобальных настройках» (правая панель, любая страница) — изменения сохраняются сразу. Ручка ☰ доступна и с клавиатуры: стрелки вверх/вниз двигают блок",
+    ]},
     { version: "2.13", date: "2026-10-02 04:00", changes: [
         "Дашборд (пилот): эмодзи на кнопках и в подписях блоков тоже заменены на единые SVG-иконки — «Добавить», «Добавить подход», «Добавить метрику», «Баллы за день», «Включить уведомления», «Настроить графики», «Изменить значения», «Добавить из целей», «Бонус» в итогах, предупреждение о серии и др. Иконки берут цвет текста и темы. Добавлен тест-страж: новый текст с эмодзи в шаблоне, у которого есть SVG, не пройдёт проверку",
     ]},
@@ -1240,6 +1243,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.14", date: "2026-10-02 07:12", changes: [
+        "Dashboard block layout: the Display and order window was redesigned. Blocks are now cards with a title and a short description; change the order by dragging the ☰ handle (finger or mouse — neighbouring cards make room) or with the ↑/↓ arrows; visibility is a clear switch instead of an eye. The same list is in Global settings (right panel, any page) — changes are saved at once. The ☰ handle also works from the keyboard: the up/down arrows move the block",
+    ]},
     { version: "2.13", date: "2026-10-02 04:00", changes: [
         "Dashboard (pilot): emoji on buttons and block labels are now replaced by the single SVG icon set too — \"Add\", \"Add set\", \"Add metric\", \"Daily score\", \"Enable notifications\", \"Configure charts\", \"Edit values\", \"Add from goals\", the summary \"Bonus\", the streak warning and more. The icons take the text and theme colour. A guard test was added: new template text with an emoji that has an SVG will not pass the check",
     ]},

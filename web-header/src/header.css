@@ -96,3 +96,13 @@ html.theme-pink .gh-root { --water-top: #3184d6; --water-bottom: #1359b0; --wate
 html[data-motion="off"] .gh-root *, html[data-motion="off"] .gh-root, html[data-motion="off"] .gh-panel, html[data-motion="off"] .gh-panel-backdrop { animation: none !important; transition: none !important; }
 html[data-motion="off"] .water-saved-fill { transform: translateY(12%); }
 html[data-motion="off"] .water-saved-check { stroke-dashoffset: 0; }
+
+/* Список блоков Дашборда с перетаскиванием (BlockOrderList.vue) */
+.gh-blocks { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+.gh-block { position: relative; display: flex; align-items: center; gap: 8px; padding: 10px; border: 1px solid var(--border, #333); border-radius: 12px; background: var(--bg, #121212); }
+.gh-block-handle { flex: none; width: 32px; height: 36px; display: grid; place-items: center; border: none; background: transparent; color: var(--text-dim, #999); font-size: 18px; line-height: 1; cursor: grab; touch-action: none; min-height: 0; padding: 0; }
+.gh-block-text { flex: 1; min-width: 0; }
+.gh-switch { flex: none; position: relative; width: 44px; height: 24px; border-radius: 12px; border: 1px solid var(--border, #333); background: var(--bg-card, #1e1e1e); padding: 0; cursor: pointer; min-height: 0; transition: background 0.15s; }
+.gh-switch span { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--text-dim, #999); transition: left 0.15s; }
+.gh-switch-on { background: var(--accent, #6c8cff); }
+.gh-switch-on span { left: 23px; background: var(--accent-text, #fff); }
