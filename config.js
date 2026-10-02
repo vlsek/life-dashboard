@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.19";
+const SITE_VERSION = "2.20";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.20", date: "2026-10-02 13:53", changes: [
+        "Баллы на страницах Целей и Навыков: когда закрываешь цель, осваиваешь навык или отмечаешь книгу прочитанной, у места нажатия появляется «+N» с монеткой и плавно уплывает вверх; если снять отметку — «−N». Сумма — столько, сколько цель, навык или книга приносят в баланс. Анимация показывается только после того, как отметка сохранилась, и отключается общим выключателем анимаций",
+    ]},
     { version: "2.19", date: "2026-10-02 13:33", changes: [
         "Цели и Навыки: старые монетки и прогресс-бары заменены на современные. Баллы теперь везде показываются иконкой-монетой с огоньком (в целях, навыках и книгах вместо эмодзи). Навыки — карточки: скруглённый прогресс-бар цвета темы с плавным заполнением и процентом, шаги «−/+», круглая отметка «освоено» и иконки правки и удаления вместо символов ✎ ✕",
     ]},
@@ -1258,6 +1261,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.20", date: "2026-10-02 13:53", changes: [
+        "Points on the Goals and Skills pages: when you complete a goal, master a skill or mark a book as read, a coin '+N' appears where you tapped and floats up; if you undo it — '−N'. The amount is exactly what that goal, skill or book adds to your balance. It shows only after the change is saved and respects the global animations switch",
+    ]},
     { version: "2.19", date: "2026-10-02 13:33", changes: [
         "Goals and Skills: the old coins and progress bars are replaced with modern ones. Points are now shown with the coin-with-flame icon everywhere (goals, skills and books instead of emoji). Skills are cards: a rounded theme-coloured progress bar that fills smoothly with a percentage, \"−/+\" steps, a round \"mastered\" mark and edit/delete icons instead of the ✎ ✕ symbols",
     ]},

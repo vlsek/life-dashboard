@@ -1,6 +1,13 @@
 {
-  "version": "2.19",
+  "version": "2.20",
   "en": [
+    {
+      "version": "2.20",
+      "date": "2026-10-02 13:53",
+      "changes": [
+        "Points on the Goals and Skills pages: when you complete a goal, master a skill or mark a book as read, a coin '+N' appears where you tapped and floats up; if you undo it — '−N'. The amount is exactly what that goal, skill or book adds to your balance. It shows only after the change is saved and respects the global animations switch"
+      ]
+    },
     {
       "version": "2.19",
       "date": "2026-10-02 13:33",
@@ -1591,6 +1598,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.20",
+      "date": "2026-10-02 13:53",
+      "changes": [
+        "Баллы на страницах Целей и Навыков: когда закрываешь цель, осваиваешь навык или отмечаешь книгу прочитанной, у места нажатия появляется «+N» с монеткой и плавно уплывает вверх; если снять отметку — «−N». Сумма — столько, сколько цель, навык или книга приносят в баланс. Анимация показывается только после того, как отметка сохранилась, и отключается общим выключателем анимаций"
+      ]
+    },
     {
       "version": "2.19",
       "date": "2026-10-02 13:33",
