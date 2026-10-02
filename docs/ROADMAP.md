@@ -165,3 +165,8 @@ v2.28 — Левое меню (агент 6, BACKLOG 6.2 + 2.3): AppShell ост
   `lib/sidebarProfile.ts`: profiles.display_name/avatar_url, ошибка → буква+почта), работает и на Дашборде (panelOnly). Опция прогресса — реактивный
   `sidebarProgress` в `lib/prefs.ts` (общий для окна настроек и блока). Если нужен ещё один блок в меню — класть в этот же Teleport, а не в AppShell.
   Параллельный `vitest` в 6 процессах даёт ложные падения по таймауту первого теста (history/languages) — по одному проходит. 17 новых тестов (header 124; 12×2 в AppShell).
+v2.30 — BACKLOG 22.1, серверная часть (агент 1): миграция `037_streak_from_yesterday.sql` — calc_perfect_streak и calc_category_streak
+  пропускают незавершённый СЕГОДНЯШНИЙ день (серия «со вчера»), а не обрываются на нём; вчерашний и ранние пропуски рвут серию как раньше.
+  Клиентская часть бага (стартовая дата у каждой серии) — агент 2; мои регрессионные тесты `streakUnlit.test.ts` (dashboard 1074).
+  Проверено на PostgreSQL 16: до — «частично сегодня» даёт 0, после — 2; пропущенный вчера по-прежнему 0; полный сегодня — 3.
+  ВЛАДЕЛЬЦУ: применить migrations/037_streak_from_yesterday.sql, затем docs/sql-checks/037_streak_from_yesterday_check.sql.

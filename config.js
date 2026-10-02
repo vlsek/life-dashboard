@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.29";
+const SITE_VERSION = "2.30";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.30", date: "2026-10-03 01:49", changes: [
+        "Серия в Сообществе и лидерборде больше не обнуляется из-за незавершённого сегодняшнего дня: если вчера всё было сделано, а сегодня внесена лишь часть метрик, серия считается со вчерашнего дня, а не показывается как 0. Нужна миграция 037 в Supabase; без неё всё работает как раньше",
+    ]},
     { version: "2.29", date: "2026-10-02 20:07", changes: [
         "Вода: каждое добавление воды теперь сохраняется с точным временем в вашем аккаунте — журнал «Записи за день» виден на всех устройствах. В окне воды появилось необязательное поле «Время»: можно указать, когда вы выпили (или внести воду за прошлый день с нужным временем); если оставить пустым — берётся «сейчас», а для прошлого дня 12:00. «Отменить последнее добавление» убирает и строку журнала. Пока обновление базы данных не применено, журнал показывает записи только этого устройства",
     ]},
@@ -1288,6 +1291,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.30", date: "2026-10-03 01:49", changes: [
+        "The streak in Community and the leaderboard no longer resets because of today being unfinished: if everything was done yesterday and only some metrics are filled in today, the streak is counted from yesterday instead of showing 0. Requires migration 037 in Supabase; without it everything works as before",
+    ]},
     { version: "2.29", date: "2026-10-02 20:07", changes: [
         "Water: every water addition is now saved with its exact time in your account — the \"Entries today\" log is visible on all your devices. The water window has an optional \"Time\" field: you can say when you drank (or add water for a past day with the right time); if left empty, \"now\" is used, and 12:00 for a past day. \"Undo last add\" also removes the log row. Until the database update is applied, the log shows only this device's entries",
     ]},

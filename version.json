@@ -1,6 +1,13 @@
 {
-  "version": "2.29",
+  "version": "2.30",
   "en": [
+    {
+      "version": "2.30",
+      "date": "2026-10-03 01:49",
+      "changes": [
+        "The streak in Community and the leaderboard no longer resets because of today being unfinished: if everything was done yesterday and only some metrics are filled in today, the streak is counted from yesterday instead of showing 0. Requires migration 037 in Supabase; without it everything works as before"
+      ]
+    },
     {
       "version": "2.29",
       "date": "2026-10-02 20:07",
@@ -1661,6 +1668,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.30",
+      "date": "2026-10-03 01:49",
+      "changes": [
+        "Серия в Сообществе и лидерборде больше не обнуляется из-за незавершённого сегодняшнего дня: если вчера всё было сделано, а сегодня внесена лишь часть метрик, серия считается со вчерашнего дня, а не показывается как 0. Нужна миграция 037 в Supabase; без неё всё работает как раньше"
+      ]
+    },
     {
       "version": "2.29",
       "date": "2026-10-02 20:07",
