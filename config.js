@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.11";
+const SITE_VERSION = "2.12";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.12", date: "2026-10-02 03:56", changes: [
+        "Дашборд (пилот): эмодзи в заголовках секций и окон (Профиль, Планы, Графики, Серии, Ежедневные метрики, «Что нового», настройки и др.) заменены на единый набор SVG-иконок — они берут цвет текста и темы, не зависят от системного набора эмодзи и выглядят одинаково на всех устройствах. Эмодзи, для которых иконки пока нет (например, луна в названии тёмной темы), остаются как были. Тексты в словаре не менялись, классическая версия не затронута",
+    ]},
     { version: "2.11", date: "2026-10-02 06:46", changes: [
         "Вода без заданной нормы теперь честно отображается на графиках: на графике воды линия-ориентир показывает твою расчётную норму (по весу и росту, а без них — 2000 мл), а в сравнении в Сообществе она входит в «сумму целей» категории. Раньше там было пусто или ноль",
     ]},
@@ -1234,6 +1237,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.12", date: "2026-10-02 03:56", changes: [
+        "Dashboard (pilot): emoji in section and window headings (Profile, Plans, Charts, Streaks, Daily metrics, \"What's new\", settings and others) are replaced by a single set of SVG icons — they take the text and theme colour, do not depend on the system emoji set and look the same on every device. Emoji that have no icon yet (for example the moon in the dark theme name) stay as they were. The dictionary texts were not changed and the classic version is not affected",
+    ]},
     { version: "2.11", date: "2026-10-02 06:46", changes: [
         "Water without a set goal is now shown correctly in charts: the water chart's guideline shows your calculated goal (from weight and height, or 2000 ml without them), and in the Community comparison it counts toward the category's goal total. Before, it was empty or zero there",
     ]},

@@ -1,6 +1,13 @@
 {
-  "version": "2.11",
+  "version": "2.12",
   "en": [
+    {
+      "version": "2.12",
+      "date": "2026-10-02 03:56",
+      "changes": [
+        "Dashboard (pilot): emoji in section and window headings (Profile, Plans, Charts, Streaks, Daily metrics, \"What's new\", settings and others) are replaced by a single set of SVG icons — they take the text and theme colour, do not depend on the system emoji set and look the same on every device. Emoji that have no icon yet (for example the moon in the dark theme name) stay as they were. The dictionary texts were not changed and the classic version is not affected"
+      ]
+    },
     {
       "version": "2.11",
       "date": "2026-10-02 06:46",
@@ -1535,6 +1542,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.12",
+      "date": "2026-10-02 03:56",
+      "changes": [
+        "Дашборд (пилот): эмодзи в заголовках секций и окон (Профиль, Планы, Графики, Серии, Ежедневные метрики, «Что нового», настройки и др.) заменены на единый набор SVG-иконок — они берут цвет текста и темы, не зависят от системного набора эмодзи и выглядят одинаково на всех устройствах. Эмодзи, для которых иконки пока нет (например, луна в названии тёмной темы), остаются как были. Тексты в словаре не менялись, классическая версия не затронута"
+      ]
+    },
     {
       "version": "2.11",
       "date": "2026-10-02 06:46",
