@@ -69,7 +69,7 @@ function summary(m: Metric): string {
       <p v-if="error && !formOpen" class="mt-2 text-sm" style="color: var(--danger)">{{ error }}</p>
 
       <div class="modal-actions">
-        <button @click="openAdd">{{ t('dash_add_metric_btn') }}</button>
+        <button @click="openAdd"><EmojiText :text="t('dash_add_metric_btn')" /></button>
         <button class="secondary" @click="emit('close')">{{ t('dash_close_btn') }}</button>
       </div>
 

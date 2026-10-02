@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { computed, ref } from 'vue'
 import VariationCombo from './VariationCombo.vue'
 import MetricIcon from './MetricIcon.vue'
@@ -74,7 +75,7 @@ function onVariation(i: number, text: string) {
           </tbody>
         </table>
       </div>
-      <button type="button" class="secondary" @click="add">{{ t('dash_sets_add_btn') }}</button>
+      <button type="button" class="secondary" @click="add"><EmojiText :text="t('dash_sets_add_btn')" /></button>
     </div>
   </div>
 </template>

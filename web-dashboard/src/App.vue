@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './components/EmojiText.vue'
 import { onMounted, ref, computed } from 'vue'
 import AppShell from './components/AppShell.vue'
 import StreakFlame from './components/StreakFlame.vue'
@@ -140,7 +141,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
     <div class="mb-3 flex items-center gap-2">
-      <h1 class="flex-1 text-xl font-semibold">{{ t('dash_h1') }}</h1>
+      <h1 class="flex-1 text-xl font-semibold"><EmojiText :text="t('dash_h1')" /></h1>
       <button
         v-if="auth.status === 'ready'"
         type="button"
@@ -215,14 +216,14 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
         <template v-if="streaks.length > 0">
           <div v-if="showAllStreaks" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" @click.self="showAllStreaks = false">
             <div class="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)">
-              <h3 class="mb-3 text-lg font-bold">{{ t('dash_streaks_h2') }}</h3>
+              <h3 class="mb-3 text-lg font-bold"><EmojiText :text="t('dash_streaks_h2')" /></h3>
 
               <p
                 v-if="streaks.some((i) => !i.todayCounted)"
                 class="mb-3 rounded-lg border p-2 text-sm"
                 style="background: rgba(214, 51, 108, 0.12); border-color: #d6336c"
               >
-                {{ t('dash_streak_at_risk_warning') }}
+                <EmojiText :text="t('dash_streak_at_risk_warning')" />
               </p>
 
               <div class="flex flex-wrap gap-2.5">

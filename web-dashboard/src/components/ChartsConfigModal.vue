@@ -61,7 +61,7 @@ function add() {
         <select v-model="toAdd" class="w-full" data-test="add-select">
           <option v-for="k in addable" :key="k" :value="k">{{ series[k].label }}</option>
         </select>
-        <button type="button" class="secondary mt-2" data-test="add" @click="add">{{ t('add_btn') }}</button>
+        <button type="button" class="secondary mt-2" data-test="add" @click="add"><EmojiText :text="t('add_btn')" /></button>
       </template>
 
       <p v-if="props.error" class="mt-2 text-sm whitespace-pre-line" style="color: var(--danger)">{{ props.error }}</p>

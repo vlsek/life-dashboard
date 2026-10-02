@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import ChartBlock from './ChartBlock.vue'
 import ChartsConfigModal from './ChartsConfigModal.vue'
@@ -95,7 +96,7 @@ function onPeriodApplied() {
 
     <div v-else class="card">
       <div class="mb-3.5 flex justify-end">
-        <button type="button" class="secondary" data-test="configure" @click="((configError = null), (showConfig = true))">{{ t('dash_charts_configure_btn') }}</button>
+        <button type="button" class="secondary" data-test="configure" @click="((configError = null), (showConfig = true))"><EmojiText :text="t('dash_charts_configure_btn')" /></button>
       </div>
 
       <p v-if="entries.length === 0" class="dim">{{ t('dash_charts_empty') }}</p>

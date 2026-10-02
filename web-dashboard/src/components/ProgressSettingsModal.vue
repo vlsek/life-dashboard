@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { ref } from 'vue'
 import { t } from '../lib/i18n'
 import type { DayProgressSettings } from '../lib/progressSettings'
@@ -26,7 +27,7 @@ function onSave() {
 <template>
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" @click.self="emit('close')">
     <div class="w-full max-w-sm rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)">
-      <h3 class="mb-3 text-lg font-bold">{{ t('dash_day_progress_settings_title') }}</h3>
+      <h3 class="mb-3 text-lg font-bold"><EmojiText :text="t('dash_day_progress_settings_title')" /></h3>
 
       <div class="flex flex-col gap-2.5 text-sm">
         <label class="flex items-center gap-2"><input v-model="enabled" type="checkbox" /> {{ t('dash_day_progress_show') }}</label>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import BooleanMetricRow from './BooleanMetricRow.vue'
 import MultiselectMetric from './MultiselectMetric.vue'
 import NumberMetricField from './NumberMetricField.vue'
@@ -106,7 +107,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
         </div>
 
         <div class="mt-3 rounded-lg border p-3" style="border-color: var(--border)">
-          <strong>{{ t('dash_score_label') }} {{ score.points }} / {{ score.total }}</strong>
+          <strong><EmojiText :text="t('dash_score_label')" /> {{ score.points }} / {{ score.total }}</strong>
         </div>
       </template>
     </div>

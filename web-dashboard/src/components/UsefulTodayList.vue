@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { ref } from 'vue'
 import Icon from './Icon.vue'
 import { t } from '../lib/i18n'
@@ -19,7 +20,7 @@ function add() {
 
 <template>
   <div class="wrap">
-    <div class="title">{{ t('dash_useful_today_title') }}</div>
+    <div class="title"><EmojiText :text="t('dash_useful_today_title')" /></div>
     <p v-if="items.length === 0" class="dim empty">{{ t('dash_useful_today_empty') }}</p>
     <div v-for="(item, idx) in items" :key="idx + item" class="item">
       <span class="text">• {{ item }}</span>
@@ -27,7 +28,7 @@ function add() {
     </div>
     <div class="add-row">
       <input v-model="text" type="text" :placeholder="t('dash_useful_today_placeholder')" @keydown.enter.prevent="add" />
-      <button type="button" class="secondary" @click="add">{{ t('add_btn') }}</button>
+      <button type="button" class="secondary" @click="add"><EmojiText :text="t('add_btn')" /></button>
     </div>
   </div>
 </template>

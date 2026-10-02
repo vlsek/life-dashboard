@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { computed } from 'vue'
 import Icon from './Icon.vue'
 import { t, type DictKey } from '../lib/i18n'
@@ -72,7 +73,7 @@ function share(i: SummaryItem, done: boolean): string {
         </template>
 
         <template v-if="summary.bonus.length">
-          <h4 class="mb-1 font-semibold">{{ t('dash_summary_bonus_h') }}</h4>
+          <h4 class="mb-1 font-semibold"><EmojiText :text="t('dash_summary_bonus_h')" /></h4>
           <ul class="mb-1">
             <li v-for="(b, k) in summary.bonus" :key="'b' + k" class="flex items-baseline gap-2 border-b py-1" style="border-color: var(--border)" data-test="bonus-item">
               <span class="flex-1" :style="{ opacity: b.done ? 1 : 0.6 }">{{ b.name }}<span v-if="when(b)" class="dim"> · {{ when(b) }}</span></span>

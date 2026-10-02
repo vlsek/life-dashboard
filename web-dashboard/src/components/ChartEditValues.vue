@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { ref } from 'vue'
 import { t } from '../lib/i18n'
 import type { SeriesPoint } from '../lib/chartSeries'
@@ -22,7 +23,7 @@ async function onChange(p: SeriesPoint, e: Event) {
 
 <template>
   <div>
-    <button type="button" class="secondary mt-1 px-2.5 py-0.5 text-sm" data-test="toggle" @click="open = !open">{{ t('dash_chart_edit_values_btn') }}</button>
+    <button type="button" class="secondary mt-1 px-2.5 py-0.5 text-sm" data-test="toggle" @click="open = !open"><EmojiText :text="t('dash_chart_edit_values_btn')" /></button>
     <div v-if="open" class="mt-2 max-h-56 overflow-y-auto">
       <table>
         <tbody>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import Icon from './Icon.vue'
 import { t } from '../lib/i18n'
 import type { MilestoneReminderCounts } from '../lib/reminders'
@@ -30,7 +31,7 @@ const emit = defineEmits<{ dismissMilestones: []; dismissWeekend: [] }>()
 
   <div v-if="weekendReminderVisible" class="mb-3 flex items-center justify-between gap-3 rounded-lg border p-2.5" style="border-color: var(--accent); background: var(--bg-card)">
     <div class="text-sm">
-      <strong>{{ t('dash_week_reminder_title') }}</strong>
+      <strong><EmojiText :text="t('dash_week_reminder_title')" /></strong>
       <span class="dim" style="font-size: 0.9em"> · {{ t('dash_week_reminder_currently') }} {{ weekTotalPct }}%</span>
       <br />
       <a href="/goals/" style="color: var(--accent); text-decoration: none; font-size: 0.9em">{{ t('dash_week_reminder_link') }}</a>

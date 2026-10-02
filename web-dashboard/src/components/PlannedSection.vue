@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { computed, ref, watch } from 'vue'
 import Icon from './Icon.vue'
 import SectionHeading from './SectionHeading.vue'
@@ -91,7 +92,7 @@ const collapsed = ref(false)
   <section v-if="loaded" class="mb-5" data-test="planned">
     <SectionHeading v-model:collapsed="collapsed" :title="t('dash_planned_h2')" storage-key="planned" />
     <div v-collapse="!collapsed" class="card">
-    <p class="dim mb-2.5 text-xs">{{ t('dash_planned_bonus_hint') }}</p>
+    <p class="dim mb-2.5 text-xs"><EmojiText :text="t('dash_planned_bonus_hint')" /></p>
 
     <p v-if="planned.length === 0" class="dim">{{ t('dash_planned_empty') }}</p>
     <table v-else>
@@ -148,14 +149,14 @@ const collapsed = ref(false)
         <input v-model="newDone" type="checkbox" data-test="new-done" />
         {{ t('dash_planned_done_already') }}
       </label>
-      <button type="button" class="secondary" data-test="add-custom" @click="addCustom">{{ t('add_btn') }}</button>
-      <button type="button" data-test="add-goal" @click="openGoalPicker">{{ t('dash_planned_add_from_goals_btn') }}</button>
+      <button type="button" class="secondary" data-test="add-custom" @click="addCustom"><EmojiText :text="t('add_btn')" /></button>
+      <button type="button" data-test="add-goal" @click="openGoalPicker"><EmojiText :text="t('dash_planned_add_from_goals_btn')" /></button>
     </div>
 
     <button v-if="day === todayStr()" type="button" class="secondary mt-2" data-test="carry" @click="openCarryOver">{{ t('dash_planned_carry_over_btn') }}</button>
 
     <div v-if="perm !== 'unsupported' && perm !== 'granted'" class="mt-2 text-sm" data-test="notify">
-      <button v-if="perm === 'default'" type="button" class="secondary" data-test="notify-enable" @click="enableNotifications">{{ t('plan_notify_enable_btn') }}</button>
+      <button v-if="perm === 'default'" type="button" class="secondary" data-test="notify-enable" @click="enableNotifications"><EmojiText :text="t('plan_notify_enable_btn')" /></button>
       <p class="dim mt-1 text-xs">{{ perm === 'denied' ? t('plan_notify_denied') : t('plan_notify_hint') }}</p>
     </div>
 

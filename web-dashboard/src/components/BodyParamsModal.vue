@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import MetricIcon from './MetricIcon.vue'
 import Icon from './Icon.vue'
 import { t } from '../lib/i18n'
@@ -24,7 +25,7 @@ const emit = defineEmits<{ close: []; add: []; edit: [p: BodyParam]; remove: [p:
           <button type="button" class="secondary px-2" :title="t('dash_gear_delete_param_title')" @click="emit('remove', p)"><Icon name="trash" /></button>
         </li>
       </ul>
-      <button type="button" class="secondary mt-2" @click="emit('add')">{{ t('dash_add_body_param_btn') }}</button>
+      <button type="button" class="secondary mt-2" @click="emit('add')"><EmojiText :text="t('dash_add_body_param_btn')" /></button>
       <div class="modal-actions">
         <button type="button" class="secondary" @click="emit('close')">{{ t('dash_close_btn') }}</button>
       </div>
