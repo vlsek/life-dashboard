@@ -1,6 +1,13 @@
 {
-  "version": "2.10",
+  "version": "2.11",
   "en": [
+    {
+      "version": "2.11",
+      "date": "2026-10-02 06:46",
+      "changes": [
+        "Water without a set goal is now shown correctly in charts: the water chart's guideline shows your calculated goal (from weight and height, or 2000 ml without them), and in the Community comparison it counts toward the category's goal total. Before, it was empty or zero there"
+      ]
+    },
     {
       "version": "2.10",
       "date": "2026-10-02 06:41",
@@ -1528,6 +1535,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.11",
+      "date": "2026-10-02 06:46",
+      "changes": [
+        "Вода без заданной нормы теперь честно отображается на графиках: на графике воды линия-ориентир показывает твою расчётную норму (по весу и росту, а без них — 2000 мл), а в сравнении в Сообществе она входит в «сумму целей» категории. Раньше там было пусто или ноль"
+      ]
+    },
     {
       "version": "2.10",
       "date": "2026-10-02 06:41",

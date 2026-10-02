@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.10";
+const SITE_VERSION = "2.11";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.11", date: "2026-10-02 06:46", changes: [
+        "Вода без заданной нормы теперь честно отображается на графиках: на графике воды линия-ориентир показывает твою расчётную норму (по весу и росту, а без них — 2000 мл), а в сравнении в Сообществе она входит в «сумму целей» категории. Раньше там было пусто или ноль",
+    ]},
     { version: "2.10", date: "2026-10-02 06:41", changes: [
         "Вода во всех разделах: в окне воды из шапки (на любой странице и в правой панели) тоже появились «Отменить последнее добавление» и карандашик для правки всей суммы за день — как в Дашборде. Отмена откатывает записанное шаг за шагом, пока значение дня не изменили в другом месте; правку суммы тоже можно отменить. После отмены и правки показывается «сохранилось»",
     ]},
@@ -1231,6 +1234,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.11", date: "2026-10-02 06:46", changes: [
+        "Water without a set goal is now shown correctly in charts: the water chart's guideline shows your calculated goal (from weight and height, or 2000 ml without them), and in the Community comparison it counts toward the category's goal total. Before, it was empty or zero there",
+    ]},
     { version: "2.10", date: "2026-10-02 06:41", changes: [
         "Water everywhere: the water window opened from the header (on any page and in the right panel) now also has 'Undo last add' and a pencil to correct the whole amount for the day — just like on the Dashboard. Undo rolls back what you logged step by step, as long as the day's value has not been changed elsewhere; a total correction can be undone too. After undoing or editing you get the 'saved' confirmation",
     ]},
