@@ -30,11 +30,11 @@ beforeEach(() => {
 })
 
 describe('BlockOrderList', () => {
-  it('рисует карточки: ручка ☰, название, описание, переключатель видимости (скрытый блок бледный и выключен)', () => {
+  it('рисует карточки: ручка (SVG), название, описание, переключатель видимости (скрытый блок бледный и выключен)', () => {
     const w = mountWithGeometry()
     const rows = w.findAll('[data-test="layout-row"]')
     expect(rows).toHaveLength(3)
-    expect(rows[0].find('[data-test="drag-handle"]').text()).toBe('☰')
+    expect(rows[0].find('[data-test="drag-handle"] svg').exists()).toBe(true) // ручка — SVG-иконка menu (BACKLOG 1.3), а не символ ☰
     expect(rows[1].text()).toContain('Графики')
     expect(rows[1].text()).toContain('д2')
     expect(rows[0].find('[data-test="toggle"]').attributes('aria-checked')).toBe('true')

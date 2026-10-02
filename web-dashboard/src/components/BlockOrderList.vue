@@ -4,6 +4,7 @@ import EmojiText from './EmojiText.vue'
 import { t } from '../lib/i18n'
 import { dropIndex, moveTo, rowShift } from '../lib/dragReorder'
 import { toggleBlock, type DashboardBlockKey, type LayoutItem } from '../lib/layout'
+import Icon from './Icon.vue'
 
 // Список блоков Дашборда: карточки с ручкой ☰ (перетаскивание пальцем/мышью), переключателем видимости и кнопками ↑/↓
 // (клавиатура и точный порядок без жеста). Состояние — v-model; сохранение делает родитель.
@@ -100,7 +101,7 @@ onBeforeUnmount(() => finish(false))
         @pointerup="onUp"
         @pointercancel="onCancel"
         @keydown="onKey($event, i)"
-      >☰</button>
+      ><Icon name="menu" /></button>
 
       <div class="min-w-0 flex-1" :style="{ opacity: item.visible ? 1 : 0.5 }">
         <div class="font-medium"><EmojiText :text="labels[item.key].title" /></div>

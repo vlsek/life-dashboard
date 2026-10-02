@@ -4,6 +4,7 @@ import { computed } from 'vue'
 import Icon from './Icon.vue'
 import { t, type DictKey } from '../lib/i18n'
 import { isItemDone, itemSharePct, type ProgressSummary, type SummaryItem } from '../lib/progressSummary'
+import { stripEmoji } from '../lib/emojiText'
 
 // Сводка по клику на кольцо дня/недели (BACKLOG 11): что сделано, что осталось, сколько процентов даёт каждый пункт.
 // Значок настроек — только здесь; отсюда открывается ProgressSettingsModal (через событие settings).
@@ -38,7 +39,7 @@ function share(i: SummaryItem, done: boolean): string {
     <div class="flex max-h-[85vh] w-full max-w-sm flex-col rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)" data-test="summary-modal">
       <div class="mb-1 flex items-center gap-2">
         <h3 class="flex-1 text-lg font-bold">{{ title }}</h3>
-        <button type="button" class="rounded-lg border px-2.5 py-1.5" style="border-color: var(--border); background: var(--bg); color: var(--text)" data-test="open-settings" :title="t('dash_day_progress_settings_title')" :aria-label="t('dash_day_progress_settings_title')" @click="emit('settings')">
+        <button type="button" class="rounded-lg border px-2.5 py-1.5" style="border-color: var(--border); background: var(--bg); color: var(--text)" data-test="open-settings" :title="stripEmoji(t('dash_day_progress_settings_title'))" :aria-label="stripEmoji(t('dash_day_progress_settings_title'))" @click="emit('settings')">
           <Icon name="gear" />
         </button>
       </div>

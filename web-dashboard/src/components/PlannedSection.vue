@@ -11,6 +11,7 @@ import { goalRowKind, stageLabel, type CarryCandidate, type PlanGoal, type Plann
 import { todayStr } from '../lib/date'
 import { t } from '../lib/i18n'
 import { notifyPermission, requestNotifyPermission, type NotifyPermission } from '../lib/browserNotify'
+import { stripEmoji } from '../lib/emojiText'
 
 // Блок «Планы» (раньше «Цели на сегодня»): план на день (пункты из целей и свои), звёздочка «доп. пункт»,
 // перенос незавершённого за 7 дней. `date` — день плана (по умолчанию сегодня): когда карточка дня
@@ -90,7 +91,7 @@ const collapsed = ref(false)
 
 <template>
   <section v-if="loaded" class="mb-5" data-test="planned">
-    <SectionHeading v-model:collapsed="collapsed" :title="t('dash_planned_h2')" storage-key="planned" />
+    <SectionHeading v-model:collapsed="collapsed" :title="stripEmoji(t('dash_planned_h2'))" storage-key="planned" />
     <div v-collapse="!collapsed" class="card">
     <p class="dim mb-2.5 text-xs"><EmojiText :text="t('dash_planned_bonus_hint')" /></p>
 
@@ -111,7 +112,7 @@ const collapsed = ref(false)
               </td>
               <td :class="{ 'line-through opacity-60': goalOf(item)!.done }">{{ item.text }}</td>
               <td>
-                <button type="button" class="secondary px-2 py-0.5" :title="t('dash_planned_bonus_toggle_title')" data-test="bonus" @click="toggleItemBonus(i)">
+                <button type="button" class="secondary px-2 py-0.5" :title="stripEmoji(t('dash_planned_bonus_toggle_title'))" data-test="bonus" @click="toggleItemBonus(i)">
                   <Icon name="star" :extra-style="item.bonus ? 'color:#e0a93b; fill:#e0a93b;' : 'opacity:0.55;'" />
                 </button>
               </td>
@@ -121,7 +122,7 @@ const collapsed = ref(false)
             <td><input type="checkbox" :checked="!!item.done" data-test="custom-check" @change="setItemDone(i, ($event.target as HTMLInputElement).checked)" /></td>
             <td :class="{ 'line-through opacity-60': item.done }">{{ item.text }}</td>
             <td>
-              <button type="button" class="secondary px-2 py-0.5" :title="t('dash_planned_bonus_toggle_title')" data-test="bonus" @click="toggleItemBonus(i)">
+              <button type="button" class="secondary px-2 py-0.5" :title="stripEmoji(t('dash_planned_bonus_toggle_title'))" data-test="bonus" @click="toggleItemBonus(i)">
                 <Icon name="star" :extra-style="item.bonus ? 'color:#e0a93b; fill:#e0a93b;' : 'opacity:0.55;'" />
               </button>
             </td>
@@ -153,7 +154,7 @@ const collapsed = ref(false)
       <button type="button" data-test="add-goal" @click="openGoalPicker"><EmojiText :text="t('dash_planned_add_from_goals_btn')" /></button>
     </div>
 
-    <button v-if="day === todayStr()" type="button" class="secondary mt-2" data-test="carry" @click="openCarryOver">{{ t('dash_planned_carry_over_btn') }}</button>
+    <button v-if="day === todayStr()" type="button" class="secondary mt-2" data-test="carry" @click="openCarryOver"><EmojiText :text="t('dash_planned_carry_over_btn')" /></button>
 
     <div v-if="perm !== 'unsupported' && perm !== 'granted'" class="mt-2 text-sm" data-test="notify">
       <button v-if="perm === 'default'" type="button" class="secondary" data-test="notify-enable" @click="enableNotifications"><EmojiText :text="t('plan_notify_enable_btn')" /></button>

@@ -6,6 +6,7 @@ import { isMetricDone, metricExpectedOn, metricSchedule } from '../lib/metrics'
 import type { Metric, MetricValue, SetEntry } from '../lib/types'
 import { locale, t } from '../lib/i18n'
 import MetricIcon from './MetricIcon.vue'
+import Icon from './Icon.vue'
 
 const props = defineProps<{ ctx: HistoryContext; dateStr: string }>()
 const emit = defineEmits<{ close: [] }>()
@@ -111,13 +112,13 @@ const notes = computed<string[]>(() => {
         <template v-if="plannedRows.length">
           <h4 class="mb-1.5 mt-3.5 font-semibold">{{ t('hist_planned_h') }}</h4>
           <div v-for="(r, i) in plannedRows" :key="i" class="flex items-center gap-2 py-0.5">
-            <span v-if="r.done === null" style="color: #e0a93b">⚠</span>
+            <span v-if="r.done === null" style="color: #e0a93b"><Icon name="alert" /></span>
             <span v-else-if="r.done" style="color: var(--hist-ok)">✓</span>
             <span v-else style="color: var(--text-dim); opacity: 0.6">✕</span>
             <span :style="{ opacity: r.done ? 0.7 : 1 }">
               {{ r.item.text }}<template v-if="r.item.type === 'goal'"> ({{ t('cal_goal_suffix') }})</template>
             </span>
-            <span v-if="r.item.bonus" style="color: #e0a93b">★</span>
+            <span v-if="r.item.bonus" style="color: #e0a93b"><Icon name="star" /></span>
           </div>
         </template>
 

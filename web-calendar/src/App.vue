@@ -7,6 +7,7 @@ import { buildMonthGrid, doneCount } from './lib/calendar'
 import { todayStr } from './lib/date'
 import { t, getLang } from './lib/i18n'
 import type { PlannedItem } from './lib/types'
+import Icon from './components/Icon.vue'
 
 const { auth, byDate, error, init, loadMonth, savePlanned } = useCalendar()
 
@@ -92,8 +93,8 @@ async function onSaveDay(items: PlannedItem[]) {
         >
           <div class="cal-num text-sm">{{ cell.day }}</div>
           <div v-if="cell.planned.length" class="cal-badge mt-1 text-xs">
-            <template v-if="doneCount(cell.planned).done === doneCount(cell.planned).total">✅</template>
-            <template v-else>📌 {{ doneCount(cell.planned).done }}/{{ doneCount(cell.planned).total }}</template>
+            <template v-if="doneCount(cell.planned).done === doneCount(cell.planned).total"><Icon name="done" /></template>
+            <template v-else><Icon name="pin" /> {{ doneCount(cell.planned).done }}/{{ doneCount(cell.planned).total }}</template>
           </div>
         </div>
       </template>

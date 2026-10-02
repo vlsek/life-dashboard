@@ -4,6 +4,7 @@ import Icon from './Icon.vue'
 import { circleGeometry } from '../lib/ringPlacement'
 import type { RingData } from '../lib/ringPlacement'
 import { t } from '../lib/i18n'
+import { stripEmoji } from '../lib/emojiText'
 
 // Колонка аватарки: фото 44px внутри кольца прогресса дня 52px (пустое, если кольца нет), процент
 // под ней и шестерёнка настроек в углу — портировано из loadProfileInner() в dashboard.js.
@@ -20,7 +21,7 @@ const geo = computed(() => (props.ring ? circleGeometry(24, props.ring.basePct, 
         type="button"
         class="absolute rounded-full p-0"
         style="top: 4px; left: 4px; width: 44px; height: 44px; background: transparent; border: 0; min-height: 0"
-        :title="t('dash_photo_btn')"
+        :title="stripEmoji(t('dash_photo_btn'))"
         @click="emit('pick')"
       >
         <img v-if="avatarUrl" :src="avatarUrl" alt="" class="h-11 w-11 rounded-full border-2 object-cover" style="border-color: var(--border); background: var(--bg)" />
@@ -37,7 +38,7 @@ const geo = computed(() => (props.ring ? circleGeometry(24, props.ring.basePct, 
         type="button"
         class="absolute flex items-center justify-center rounded-full p-0"
         style="bottom: -3px; right: -3px; width: 19px; height: 19px; min-height: 0; background: var(--accent); color: var(--accent-text); border: 2px solid var(--bg); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45); font-size: 11px; line-height: 1"
-        :title="t('dash_day_progress_settings_title')"
+        :title="stripEmoji(t('dash_day_progress_settings_title'))"
         data-test="avatar-gear"
         @click.stop="emit('settings')"
       >

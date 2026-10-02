@@ -15,6 +15,7 @@ import { todayStr } from '../lib/date'
 import { t } from '../lib/i18n'
 import { ref, watch } from 'vue'
 import type { MetricStreakInfo } from '../lib/metricStreaks'
+import { stripEmoji } from '../lib/emojiText'
 
 // Блок «Дневные метрики» (порт renderDay() из dashboard.js): листание дней, поля boolean/
 // number/multiselect с автосохранением, «Подходы» и «Цели на сегодня» встроены сюда же с той
@@ -54,7 +55,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
 
 <template>
   <section class="mb-5">
-    <SectionHeading v-model:collapsed="collapsed" :title="t('dash_daily_h2')" storage-key="daily" />
+    <SectionHeading v-model:collapsed="collapsed" :title="stripEmoji(t('dash_daily_h2'))" storage-key="daily" />
 
     <div v-collapse="!collapsed">
     <DateStepper v-model="date" />

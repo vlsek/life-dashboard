@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 // @ts-ignore — в проекте нет типов node, а vitest выполняется в node (как в других тестах, читающих исходники)
-import { readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import EmojiText from '../components/EmojiText.vue'
 import { hasEmoji, splitEmojiText, stripEmoji, UI_EMOJI_TO_SVG } from './emojiText'
 import { ICON_PATHS } from './icons'
+import { t } from './i18n'
 
 // BACKLOG 1.3 «Замена эмодзи на SVG» + повторы владельца 17:05 и 12:00: эмодзи в интерфейсе — единым набором SVG.
 describe('emojiText: эмодзи → SVG', () => {
@@ -57,12 +58,37 @@ describe('stripEmoji: для title / placeholder / option', () => {
 // Защита от возврата проблемы: новая строка i18n с эмодзи, для которого нет SVG, уронит тест (nav_/theme_ идут через plainLabel/иконки меню).
 describe('i18n: ни одной строки с эмодзи без SVG-аналога', () => {
   const src: string = readFileSync('src/lib/i18n.ts', 'utf-8')
-  const rows = [...src.matchAll(/^\s+'?([\w.-]+)'?:\s*'((?:[^'\\]|\\.)*)',?\s*$/gm)].filter((m) => !/^(nav_|theme_)/.test(m[1]) && hasEmoji(m[2]))
+  const rows = [...src.matchAll(/^\s+'?([\w.-]+)'?:\s*(?:'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)"),?\s*$/gm)]
+    .map((m) => [m[1], m[2] ?? m[3]] as [string, string])
+    .filter(([k, v]) => !/^(nav_|theme_)/.test(k) && hasEmoji(v))
   it('разбор i18n.ts работает (тест не пустой)', () => {
     expect([...src.matchAll(/^\s+'?([\w.-]+)'?:\s*'/gm)].length).toBeGreaterThan(20)
   })
   it('в каждой такой строке все эмодзи имеют SVG', () => {
-    const bad = rows.filter((m) => splitEmojiText(m[2]).some((s) => s.kind === 'text' && hasEmoji(s.value))).map((m) => m[1] + ': ' + m[2])
+    const bad = rows.filter(([, v]) => splitEmojiText(v).some((s) => s.kind === 'text' && hasEmoji(s.value))).map(([k, v]) => k + ': ' + v)
+    expect(bad).toEqual([])
+  })
+})
+
+// Страж шаблонов (по образцу emojiGuard.test.ts из web-dashboard): {{ t('ключ') }} со строкой, где есть эмодзи с SVG, — это сырой эмодзи на экране.
+// Нужно <EmojiText :text="t('ключ')" /> (или stripEmoji(...) в <option>/title/placeholder). nav_/theme_ идут через plainLabel и иконки меню.
+describe('шаблоны не выводят эмодзи сырым текстом', () => {
+  it('нет {{ t(key) }} со строкой словаря, содержащей заменяемое эмодзи', () => {
+    const dir = 'src/components'
+    const files: string[] = (readdirSync(dir) as string[]).filter((f) => f.endsWith('.vue')).map((f) => `${dir}/${f}`).concat(['src/App.vue'])
+    const bad: string[] = []
+    for (const lang of ['ru', 'en']) {
+      localStorage.setItem('site_lang', lang)
+      for (const f of files) {
+        if (!existsSync(f)) continue
+        const src: string = readFileSync(f, 'utf-8')
+        const tpl = src.slice(src.indexOf('<template>'))
+        for (const m of tpl.matchAll(/\{\{\s*t\('([\w.-]+)'\)\s*\}\}/g)) {
+          if (/^(nav_|theme_)/.test(m[1])) continue
+          if (splitEmojiText(t(m[1] as never)).some((seg) => seg.kind === 'icon')) bad.push(`${f.split('/').pop()}:${m[1]} (${lang})`)
+        }
+      }
+    }
     expect(bad).toEqual([])
   })
 })

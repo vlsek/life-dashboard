@@ -7,9 +7,8 @@ import { t } from './lib/i18n'
 // Страж против возврата сырых эмодзи (BACKLOG 🎨 «Замена эмодзи на SVG»): если в шаблоне .vue текст выводится как
 // {{ t('ключ') }}, а строка словаря начинается с эмодзи, у которого есть SVG, — нужно <EmojiText :text="t('ключ')" />.
 // Исключения — места, где компонент вставить нельзя (внутри <option> и т. п.) или рядом уже стоит своя иконка.
-const ALLOWED = new Set([
-  'MetricFormModal.vue:dash_category_new', // внутри <option> нельзя вставлять элементы
-  'MetricsManagerSection.vue:dash_metrics_manager_title', // рядом уже <Icon name="gear" />
+const ALLOWED = new Set<string>([
+  // исключений нет: в <option> и title/placeholder эмодзи убирается через stripEmoji(), рядом с EmojiText своей иконки не ставим
 ])
 
 const dir = 'src/components'

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import MetricsManagerModal from './MetricsManagerModal.vue'
-import Icon from './Icon.vue'
 import { useMetricsManager } from '../lib/useMetricsManager'
 import { t } from '../lib/i18n'
 import { withoutWater } from '../lib/metricsManager'
 import type { MetricFormValues } from '../lib/metricsManager'
 import type { Metric } from '../lib/types'
+import EmojiText from './EmojiText.vue'
 
 // Единственная точка подключения блока «Управление метриками» в App.vue: кнопка + модалка.
 // onChanged — родитель может перечитать данные дашборда после правки метрик.
@@ -40,7 +40,7 @@ async function onEdit(m: Metric, form: MetricFormValues, done: (ok: boolean) => 
 
 <template>
   <button type="button" class="secondary inline-flex items-center gap-1.5" @click="openModal">
-    <Icon name="gear" /> {{ t('dash_metrics_manager_title') }}
+    <EmojiText :text="t('dash_metrics_manager_title')" />
   </button>
   <MetricsManagerModal
     v-if="open"

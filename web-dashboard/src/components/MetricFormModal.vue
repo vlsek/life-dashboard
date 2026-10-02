@@ -6,6 +6,7 @@ import { WEEK_ORDER, clearedForBoolean, emptyForm, fieldsEnabledForForm, formFro
 import type { MetricFormValues } from '../lib/metricsManager'
 import type { MetricCategory } from '../lib/useMetricsManager'
 import type { Metric } from '../lib/types'
+import { stripEmoji } from '../lib/emojiText'
 
 // Портировано из openMetricFormModal() в dashboard.js.
 const props = defineProps<{ existing: Metric | null; categories: MetricCategory[]; error?: string | null }>()
@@ -128,7 +129,7 @@ const dim = (on: boolean) => ({ opacity: on ? 1 : 0.4 })
       <select v-model="form.categoryId" class="w-full">
         <option value="">{{ t('dash_category_none') }}</option>
         <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.label_ru }} / {{ c.label_en }}</option>
-        <option value="__new__">{{ t('dash_category_new') }}</option>
+        <option value="__new__">{{ stripEmoji(t('dash_category_new')) }}</option>
       </select>
 
       <label class="mt-2 flex items-center gap-2 text-sm" :style="dim(enabled.countStreak)">

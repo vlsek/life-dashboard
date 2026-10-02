@@ -74,7 +74,7 @@ async function onUpload(file: File): Promise<string | null> {
         <div class="mt-2">
           <span v-if="item.redeemed"><EmojiText :text="t('shop_bought_prefix')" /> {{ item.redeemed_date ? fmtRu(item.redeemed_date) : '' }}</span>
           <button v-else-if="balance && balance.balance >= item.cost" @click="buyItem(item.id)"><EmojiText :text="t('shop_buy_btn')" /></button>
-          <button v-else disabled>{{ t('shop_not_enough') }} {{ balance ? item.cost - balance.balance : item.cost }} 🪙</button>
+          <button v-else disabled>{{ t('shop_not_enough') }} {{ balance ? item.cost - balance.balance : item.cost }} <CoinIcon /></button>
         </div>
 
         <div class="mt-2 whitespace-nowrap">

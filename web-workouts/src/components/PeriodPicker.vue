@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { t } from '../lib/i18n'
 import CustomPeriodModal from './CustomPeriodModal.vue'
 import type { PeriodRange, PeriodState } from '../lib/chart'
+import Icon from './Icon.vue'
 
 const props = defineProps<{ state: PeriodState }>()
 const emit = defineEmits<{ change: [state: PeriodState] }>()
@@ -38,7 +39,7 @@ function applyCustom(from: string | null, to: string | null) {
       {{ t(labelKey as any) }}
     </button>
     <button :class="{ secondary: state.range !== 'custom' }" class="px-2.5 py-1 text-sm" @click="showCustom = true">
-      <template v-if="state.range === 'custom' && state.from">📅 {{ fmtRu(state.from) }} – {{ state.to ? fmtRu(state.to) : '…' }}</template>
+      <template v-if="state.range === 'custom' && state.from"><Icon name="calendar" /> {{ fmtRu(state.from) }} – {{ state.to ? fmtRu(state.to) : '…' }}</template>
       <template v-else>{{ t('period_custom') }}</template>
     </button>
 

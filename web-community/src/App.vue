@@ -231,7 +231,7 @@ async function onSaveProfile(name: string, visible: boolean) {
           <img v-if="row.avatar_url" :src="row.avatar_url" class="h-10 w-10 flex-shrink-0 rounded-full object-cover" />
           <div>
             <strong :style="row.user_id === myId ? 'color:var(--accent)' : ''">{{ row.display_name }}</strong>
-            <span class="dim"> — {{ row.today_points }} ⭐ {{ t('comm_today_word') }}</span>
+            <span class="dim"> — {{ row.today_points }} <Icon name="star" /> {{ t('comm_today_word') }}</span>
             <ul v-if="row.items && row.items.length" class="mt-1.5 list-disc pl-4 opacity-85">
               <li v-for="(it, idx) in row.items" :key="idx">{{ it }}</li>
             </ul>

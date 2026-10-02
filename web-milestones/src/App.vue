@@ -9,6 +9,7 @@ import { buildRow, groupActiveByCategory, sortDone, summary, statusLevel } from 
 import { t, locale } from './lib/i18n'
 import type { Milestone, MilestoneFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
+import Icon from './components/Icon.vue'
 
 const { auth, items, error, init, addMilestone, updateMilestone, markDone, deleteMilestone } = useMilestones()
 onMounted(init)
@@ -196,8 +197,8 @@ function closeHistory() {
                   <div v-if="m.note" class="dim mt-1 text-xs">{{ m.note }}</div>
                 </td>
                 <td class="w-20 pl-2 text-right whitespace-nowrap">
-                  <button v-if="m.history?.length" class="secondary" :title="t('ms_history_title')" @click="openHistory(m)">🕘</button>
-                  <button class="secondary" :title="t('ms_edit_btn')" @click="openEditForm(m)">✎</button>
+                  <button v-if="m.history?.length" class="secondary" :title="t('ms_history_title')" @click="openHistory(m)"><Icon name="history" /></button>
+                  <button class="secondary" :title="t('ms_edit_btn')" @click="openEditForm(m)"><Icon name="edit" /></button>
                   <button class="danger" @click="onDelete(m)">✕</button>
                 </td>
               </tr>
@@ -213,8 +214,8 @@ function closeHistory() {
               <td class="done-text">{{ m.name }}</td>
               <td class="dim text-xs">{{ fmtRu(m.last_date) }}{{ m.last_km ? ' · ' + fmtKmVal(m.last_km) : '' }}</td>
               <td class="w-20 pl-2 text-right whitespace-nowrap">
-                <button v-if="m.history?.length" class="secondary" :title="t('ms_history_title')" @click="openHistory(m)">🕘</button>
-                <button class="secondary" :title="t('ms_edit_btn')" @click="openEditForm(m)">✎</button>
+                <button v-if="m.history?.length" class="secondary" :title="t('ms_history_title')" @click="openHistory(m)"><Icon name="history" /></button>
+                <button class="secondary" :title="t('ms_edit_btn')" @click="openEditForm(m)"><Icon name="edit" /></button>
                 <button class="danger" @click="onDelete(m)">✕</button>
               </td>
             </tr>

@@ -1,9 +1,10 @@
 import { EMOJI_TO_SVG, ICON_PATHS } from './icons'
 
-// Эмодзи в тексте интерфейса → единые SVG-иконки (BACKLOG 🎨 «Замена эмодзи на SVG»). Тексты в i18n.ts остаются с эмодзи
-// (их же использует классика и plainLabel), а при выводе EmojiText.vue заменяет известные эмодзи на <Icon>. Неизвестные
-// эмодзи остаются текстом — ничего не пропадает. Отдельная карта, а не правка EMOJI_TO_SVG: та решает судьбу эмодзи в
-// метриках пользователя (там 🎂 или 👤 должны остаться как выбрал человек).
+// Эмодзи в тексте интерфейса → единые SVG-иконки (BACKLOG 1.3 «Замена эмодзи на SVG» + повторы владельца 17:05 и 12:00).
+// Тексты в i18n.ts остаются с эмодзи (их же использует классика и plainLabel), а при выводе EmojiText.vue заменяет известные
+// эмодзи на <Icon>. Неизвестные эмодзи остаются текстом — ничего не пропадает. Отдельная карта, а не правка EMOJI_TO_SVG: та решает
+// судьбу эмодзи в метриках пользователя (там 🎂 или 👤 должны остаться как выбрал человек). Одинаковая копия во всех пилотах.
+// Для мест, где SVG не вставить (title, placeholder, aria-label, option), есть stripEmoji(): убирает эмодзи и лишний пробел.
 const UI_EXTRA: Record<string, string> = {
   '👤': 'user',
   '🎨': 'paintbrush',
@@ -22,6 +23,48 @@ const UI_EXTRA: Record<string, string> = {
   '🥋': 'skills',
   '🌸': 'flower',
   '✕': 'x',
+  '✅': 'done',
+  '🏆': 'trophy',
+  '🏋': 'workouts',
+  '📈': 'chart',
+  '📊': 'chart',
+  '📲': 'phone',
+  '⬆': 'upload',
+  'ℹ': 'info',
+  '☰': 'menu',
+  '💧': 'droplet',
+  '🔥': 'flame',
+  '⭐': 'star',
+  '🎉': 'party',
+  '📅': 'calendar',
+  '🗓': 'calendar',
+  '✉': 'mail',
+  '🔗': 'link',
+  '📌': 'pin',
+  '🤝': 'community',
+  '📝': 'note',
+  '🎯': 'goals',
+  '📖': 'book',
+  '📚': 'book',
+  '✨': 'sparkles',
+  '🛠': 'wrench',
+  '🔑': 'key',
+  '🥇': 'medal',
+  '🔢': 'hash',
+  '🙂': 'smile',
+  '🏠': 'home',
+  '💾': 'save',
+  '🔔': 'bell',
+  '🔐': 'lock',
+  '👋': 'hand',
+  '💰': 'wallet',
+  '🛒': 'cart',
+  '💡': 'bulb',
+  '💪': 'dumbbell',
+  '🦵': 'squat',
+  '🧭': 'compass',
+  '🪙': 'coin',
+  '✎': 'edit',
 }
 
 export const UI_EMOJI_TO_SVG: Record<string, string> = { ...(EMOJI_TO_SVG as Record<string, string>), ...UI_EXTRA }
@@ -57,4 +100,22 @@ export function splitEmojiText(text: string): EmojiSegment[] {
   }
   if (buf) out.push({ kind: 'text', value: buf })
   return out
+}
+
+// Пиктограммы (эмодзи и символы-картинки), но не типографика: ✓ ✕ → … — остаются.
+const KEEP = new Set(['✓', '✔', '✕', '✖', '→', '←', '↑', '↓', '…', '—', '–', '·', '•', '×', '±', '↻', '↶', '▾', '▴', '★', '☆']) // ★ ☆ — текстовые ссылки на глиф кнопки «бонус» в пояснениях, не картинки
+const PICTO = /[\u{1F300}-\u{1FAFF}\u{1F000}-\u{1F2FF}\u{2600}-\u{27BF}\u{2B50}\u{2B55}\u{2B05}-\u{2B07}\u{2705}\u{2728}\u{23F0}\u{231B}\u{2139}\u{2194}-\u{2199}\u{21A9}\u{21AA}\u{2934}\u{2935}][\uFE0F\u200D]?/gu
+
+// Есть ли в тексте пиктограмма (кроме типографики). Нужен защитному тесту: ни одна строка интерфейса не должна оставлять эмодзи без SVG.
+export function hasEmoji(text: string): boolean {
+  for (const m of text.matchAll(PICTO)) if (!KEEP.has(m[0].replace(/[️‍]/g, ''))) return true
+  return false
+}
+
+// Текст без эмодзи — для title / placeholder / aria-label / <option>, куда SVG не вставить: «🔥 Активные» → «Активные».
+export function stripEmoji(text: string): string {
+  return text
+    .replace(PICTO, (m) => (KEEP.has(m.replace(/[\uFE0F\u200D]/g, '')) ? m : ''))
+    .replace(/^\s+/, '')
+    .replace(/ {2,}/g, ' ')
 }

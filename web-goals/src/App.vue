@@ -9,6 +9,7 @@ import { useGoals } from './lib/useGoals'
 import { groupActiveByCategory, sortDone, pointsSummary } from './lib/goals'
 import { t } from './lib/i18n'
 import type { Goal, GoalFormInput } from './lib/types'
+import EmojiText from './components/EmojiText.vue'
 
 const { auth, items, error, init, addGoal, updateGoal, deleteGoal, toggleGoal, setStage } = useGoals()
 onMounted(init)
@@ -53,8 +54,8 @@ async function onDelete(g: Goal) {
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
     <div class="mb-4 flex items-center justify-between">
-      <h1 class="text-xl font-semibold">{{ t('goals_h1') }}</h1>
-      <button class="rounded-lg px-3 py-1.5 text-sm" @click="formTarget = 'new'">{{ t('goals_add_btn') }}</button>
+      <h1 class="text-xl font-semibold"><EmojiText :text="t('goals_h1')" /></h1>
+      <button class="rounded-lg px-3 py-1.5 text-sm" @click="formTarget = 'new'"><EmojiText :text="t('goals_add_btn')" /></button>
     </div>
 
     <p v-if="auth.status === 'loading'" class="dim">…</p>
@@ -85,7 +86,7 @@ async function onDelete(g: Goal) {
 
         <p class="dim text-sm">{{ t('goals_points_earned') }} {{ summary.earned }} / {{ summary.possible }}</p>
 
-        <h3 class="mb-2 mt-6 text-base font-medium">{{ t('goals_done_h2') }}</h3>
+        <h3 class="mb-2 mt-6 text-base font-medium"><EmojiText :text="t('goals_done_h2')" /></h3>
         <p v-if="done.length === 0" class="dim">{{ t('goals_no_done') }}</p>
         <ul v-else class="m-0 flex list-none flex-col gap-1.5 p-0" data-test="goals-done">
           <li
