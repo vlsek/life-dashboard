@@ -479,12 +479,12 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.8";
+const SITE_VERSION = "2.08";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
-    { version: "2.8", date: "2026-10-02 06:18", changes: [
+    { version: "2.08", date: "2026-10-02 06:18", changes: [
         "Цели: страница целей в современном виде — вместо таблицы с текстовой полоской и кнопками «−/+» теперь карточки. Простая цель — круглая галочка; многоэтапная — прогресс по этапам (сегмент на каждый этап, а при многих этапах — полоса), «2/5» и процент, кнопка «+» для следующего этапа и раскрывающийся список этапов: тап по этапу отмечает прогресс до него, повторный тап по последнему выполненному откатывает его. Выполненные цели — компактные карточки",
     ]},
     { version: "2.07", date: "2026-10-02 06:11", changes: [
@@ -1225,7 +1225,7 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
-    { version: "2.8", date: "2026-10-02 06:18", changes: [
+    { version: "2.08", date: "2026-10-02 06:18", changes: [
         "Goals: the goals page has a modern look — cards instead of a table with a text bar and \"−/+\" buttons. A simple goal is a round checkmark; a multi-stage goal shows progress per stage (a segment for each stage, or a bar when there are many), \"2/5\" and a percentage, a \"+\" button for the next stage and an expandable stage list: tapping a stage marks progress up to it, tapping the last completed one again undoes it. Completed goals are compact cards",
     ]},
     { version: "2.07", date: "2026-10-02 06:11", changes: [
