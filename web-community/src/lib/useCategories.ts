@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
+import { withWaterGoal } from './waterGoal'
 import type { CategoryLeaderboardRow, CategoryRange, DailyValueRaw, MetricCategory, NumberMetric } from './types'
 
 export type OwnState =
@@ -51,9 +52,12 @@ export function useCategories() {
       own.value = { status: 'unlinked', candidates: (allNumber || []) as NumberMetric[] }
       return
     }
+    // «сумма целей» для линии цели на сравнении: у воды с пустой нормой — эффективная норма (migrations/033, 034). Только отображение; если у человека
+    // несколько «вод», а в категории не главная, норма может быть подставлена ей — на баллы это не влияет (их считает сервер).
+    const mineGoals = (await withWaterGoal(userId, (mine as NumberMetric[]).map((m) => ({ ...m, type: 'number' })))) as NumberMetric[]
     const ids = mine.map((m) => m.id)
     const { data: values } = await sb.from('daily_values').select('*').eq('user_id', userId).in('metric_id', ids).order('date')
-    own.value = { status: 'ready', metrics: mine as NumberMetric[], values: (values || []) as DailyValueRaw[] }
+    own.value = { status: 'ready', metrics: mineGoals, values: (values || []) as DailyValueRaw[] }
   }
 
   async function linkMetric(metricId: string, categoryId: string) {

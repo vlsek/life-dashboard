@@ -2,6 +2,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { sb } from './supabase'
 import { t } from './i18n'
 import { fetchAllRows } from './fetchAll'
+import { withWaterGoal } from './waterGoal'
 import { DATA_CHANGED, notifyDataChanged, type DataChangedDetail } from './events'
 import { addableKeys, buildSeries, parseEditedValue, parseKey, resolveEntries, upsertPoint, type ChartEntry, type ChartSeries } from './chartSeries'
 import type { BodyParam, BodyValue } from './profile'
@@ -39,7 +40,9 @@ export function useCharts() {
       return
     }
     error.value = null
-    series.value = buildSeries((paramsRes.data || []) as BodyParam[], bodyRes.rows, (metricsRes.data || []) as Metric[], valuesRes.rows, t('dash_points_series_label'))
+    // линия цели по умолчанию у воды — эффективная норма (ручная → по весу/росту → 2000), а не пусто (migrations/033, 034)
+    const metrics = await withWaterGoal(userId, (metricsRes.data || []) as Metric[])
+    series.value = buildSeries((paramsRes.data || []) as BodyParam[], bodyRes.rows, metrics, valuesRes.rows, t('dash_points_series_label'))
     entries.value = resolveEntries(profileRes.data?.dashboard_charts, series.value)
     loaded.value = true
   }
