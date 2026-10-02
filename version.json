@@ -1,6 +1,13 @@
 {
-  "version": "2.28",
+  "version": "2.29",
   "en": [
+    {
+      "version": "2.29",
+      "date": "2026-10-02 20:07",
+      "changes": [
+        "Water: every water addition is now saved with its exact time in your account — the \"Entries today\" log is visible on all your devices. The water window has an optional \"Time\" field: you can say when you drank (or add water for a past day with the right time); if left empty, \"now\" is used, and 12:00 for a past day. \"Undo last add\" also removes the log row. Until the database update is applied, the log shows only this device's entries"
+      ]
+    },
     {
       "version": "2.28",
       "date": "2026-10-02 22:58",
@@ -1654,6 +1661,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.29",
+      "date": "2026-10-02 20:07",
+      "changes": [
+        "Вода: каждое добавление воды теперь сохраняется с точным временем в вашем аккаунте — журнал «Записи за день» виден на всех устройствах. В окне воды появилось необязательное поле «Время»: можно указать, когда вы выпили (или внести воду за прошлый день с нужным временем); если оставить пустым — берётся «сейчас», а для прошлого дня 12:00. «Отменить последнее добавление» убирает и строку журнала. Пока обновление базы данных не применено, журнал показывает записи только этого устройства"
+      ]
+    },
     {
       "version": "2.28",
       "date": "2026-10-02 22:58",
