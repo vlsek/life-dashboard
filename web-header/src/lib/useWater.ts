@@ -1,10 +1,11 @@
 import { computed, ref } from 'vue'
 import { sb } from './supabase'
 import { notifyDataChanged } from './events'
-import { fmtDate } from './date'
+import { fmtDate, todayStr } from './date'
 import { t } from './i18n'
 import { effectiveNormMl, findWaterMetric, findWeightParam, nextWaterValue } from './water'
 import { autoNormFromBody, validHeightCm, resetWaterGoalCache } from './waterGoal'
+import { canUndo as stackCanUndo, loadStacks, pushEntry, saveStack, type UndoEntry } from './waterUndo'
 import type { BodyParameter } from './water'
 import type { Metric } from './types'
 
@@ -22,6 +23,8 @@ export function useWater() {
   const error = ref<string | null>(null)
   // ошибка записи (добавление воды/смена нормы): показывается в окне, а не прячет весь значок, как error загрузки
   const saveError = ref<string | null>(null)
+  // «Отменить последнее добавление»: стеки {prev,next} по дням (localStorage), см. waterUndo.ts. Реактивны — кнопка в окне гаснет/оживает сама.
+  const undoStacks = ref<Record<string, UndoEntry[]>>({})
   let userId = ''
 
   const normMl = computed(() => effectiveNormMl(metric.value?.goal_value, autoNormMl.value))
@@ -67,6 +70,7 @@ export function useWater() {
 
   async function init(uid: string) {
     userId = uid
+    undoStacks.value = loadStacks(uid, todayStr())
     const { data: metrics, error: err } = await sb.from('metrics').select('*').eq('user_id', userId).eq('active', true)
     if (err) {
       error.value = err.message
@@ -103,12 +107,16 @@ export function useWater() {
     return (data?.value as number) ?? 0
   }
 
-  // Портировано из addWaterMl(): читает текущее значение за дату, прибавляет дельту, upsert-ит.
-  // Возвращает новое значение, либо null, если запись в БД не удалась (тогда UI не показывает «сохранилось»).
-  async function addMl(deltaMl: number, dateStr: string): Promise<number | null> {
+  function setStack(dateStr: string, stack: UndoEntry[]) {
+    undoStacks.value = { ...undoStacks.value, [dateStr]: stack }
+    saveStack(userId, dateStr, stack)
+  }
+
+  // Единая запись значения дня (добавление, правка суммы, отмена). Возвращает записанное значение или null, если запись в БД не
+  // удалась (тогда UI не показывает «сохранилось»). `record` — запоминать ли шаг для «Отменить» (сама отмена себя не запоминает).
+  // Копия логики из web-dashboard/src/lib/useWater.ts (BACKLOG 12), без анимации баллов: слоя PointsFloat в шапке нет.
+  async function writeDay(dateStr: string, current: number, next: number, record = true): Promise<number | null> {
     if (!metric.value) return null
-    const current = await getMlForDate(dateStr)
-    const next = nextWaterValue(current, deltaMl)
     const { error: upErr } = await sb
       .from('daily_values')
       .upsert({ user_id: userId, metric_id: metric.value.id, date: dateStr, value: next }, { onConflict: 'user_id,date,metric_id' })
@@ -118,8 +126,47 @@ export function useWater() {
     }
     saveError.value = null
     if (dateStr === fmtDate(new Date())) todayMl.value = next
+    if (record) setStack(dateStr, pushEntry(undoStacks.value[dateStr] ?? [], current, next))
     notifyDataChanged({ source: 'water', metricId: metric.value.id, date: dateStr, value: next })
     return next
+  }
+
+  // Портировано из addWaterMl(): читает текущее значение за дату, прибавляет дельту, upsert-ит.
+  async function addMl(deltaMl: number, dateStr: string): Promise<number | null> {
+    if (!metric.value) return null
+    const current = await getMlForDate(dateStr)
+    return writeDay(dateStr, current, nextWaterValue(current, deltaMl))
+  }
+
+  // Правка ВСЕЙ суммы за день (карандашик в окне): перезаписывает значение выбранной даты, откатывается кнопкой «Отменить».
+  async function setTotal(ml: number, dateStr: string): Promise<number | null> {
+    if (!metric.value || !Number.isFinite(ml) || ml < 0) return null
+    const current = await getMlForDate(dateStr)
+    const next = Math.round(ml)
+    if (next === current) return current
+    return writeDay(dateStr, current, next)
+  }
+
+  // Отмена последней записи дня: только если значение дня всё ещё то, что мы записали (иначе его успели изменить в другом месте —
+  // откатывать «вслепую» нельзя, стек в этом случае сбрасываем). Возвращает значение после отмены или null.
+  async function undoLast(dateStr: string): Promise<number | null> {
+    if (!metric.value) return null
+    const stack = undoStacks.value[dateStr] ?? []
+    const top = stack[stack.length - 1]
+    if (!top) return null
+    const current = await getMlForDate(dateStr)
+    if (!stackCanUndo(stack, current)) {
+      setStack(dateStr, [])
+      return null
+    }
+    const res = await writeDay(dateStr, current, top.prev, false)
+    if (res !== null) setStack(dateStr, stack.slice(0, -1))
+    return res
+  }
+
+  // Для окна воды: доступна ли отмена для даты при показанной сейчас сумме.
+  function canUndo(dateStr: string, currentMl: number): boolean {
+    return stackCanUndo(undoStacks.value[dateStr], currentMl)
   }
 
   async function saveGoal(ml: number): Promise<boolean> {
@@ -147,5 +194,5 @@ export function useWater() {
     return true
   }
 
-  return { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded, error, saveError, init, addMl, getMlForDate, saveGoal, resetGoalToAuto }
+  return { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, getMlForDate, saveGoal, resetGoalToAuto }
 }

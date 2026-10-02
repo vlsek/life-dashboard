@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { getLang, t } from '../lib/i18n'
 import { fmtDate } from '../lib/date'
 import { bodySurfaceAreaM2 } from '../lib/waterGoal'
+import { MAX_DAY_ML, parseTotalInput } from '../lib/waterUndo'
 import type { Metric } from '../lib/types'
 import WaterSavedAnim from './WaterSavedAnim.vue'
 
@@ -21,6 +22,10 @@ const props = defineProps<{
   heightCm?: number | null
   goalSavedMsg?: 'manual' | 'auto' | 'height'
   saveError?: string | null
+  // «Отменить последнее добавление» и правка суммы за день (BACKLOG 12; копия из Дашборда). Необязательные: без них блок не показывается.
+  canUndo?: (dateStr: string, currentMl: number) => boolean
+  undoLast?: (dateStr: string) => Promise<number | null>
+  setTotal?: (ml: number, dateStr: string) => Promise<number | null>
 }>()
 const emit = defineEmits<{ close: []; add: [ml: number, dateStr: string]; saveGoal: [ml: number]; resetGoal: []; saveHeight: [cm: number] }>()
 
@@ -39,6 +44,7 @@ async function onDateChange(e: Event) {
     return
   }
   dateStr.value = picked
+  editing.value = false
   amountMl.value = await props.getMlForDate(picked)
 }
 
@@ -51,6 +57,43 @@ function addCustom() {
   const ml = parseInt(prompt(t('dash_water_add_custom_prompt')) || '', 10)
   if (!ml || ml <= 0) return
   addMl(ml)
+}
+
+// --- отмена последнего добавления и правка суммы за день (BACKLOG 12) ---
+const busy = ref(false)
+const undoAvailable = computed(() => !!props.canUndo && props.canUndo(dateStr.value, amountMl.value))
+const editing = ref(false)
+const editValue = ref('')
+const editError = ref(false)
+
+async function onUndo() {
+  if (!props.undoLast || busy.value || !undoAvailable.value) return
+  busy.value = true
+  const v = await props.undoLast(dateStr.value)
+  if (v !== null) amountMl.value = v
+  busy.value = false
+}
+
+function startEdit() {
+  editValue.value = String(amountMl.value)
+  editError.value = false
+  editing.value = true
+}
+
+async function saveEdit() {
+  if (!props.setTotal || busy.value) return
+  const ml = parseTotalInput(editValue.value)
+  if (ml === null) {
+    editError.value = true
+    return
+  }
+  busy.value = true
+  const v = await props.setTotal(ml, dateStr.value)
+  busy.value = false
+  if (v !== null) {
+    amountMl.value = v
+    editing.value = false
+  }
 }
 
 function saveGoal() {
@@ -105,6 +148,42 @@ function saveHeightClick() {
         <button class="gh-btn" data-test="add-200" @click="addMl(200)">+ 200 {{ unitLabel }}</button>
         <button class="gh-btn" @click="addMl(1000)">+ 1 {{ getLang() === 'en' ? 'l' : 'л' }}</button>
         <button class="gh-btn" @click="addCustom">{{ t('dash_water_add_custom_btn') }}</button>
+      </div>
+
+      <div v-if="undoLast || setTotal" class="gh-wrap" style="margin-top: 8px; align-items: center" data-test="water-day-tools">
+        <button v-if="undoLast" type="button" class="gh-btn" data-test="undo-last" :disabled="!undoAvailable || busy" @click="onUndo">
+          ↶ {{ t('dash_water_undo_btn') }}
+        </button>
+        <button
+          v-if="setTotal"
+          type="button"
+          class="gh-btn"
+          data-test="edit-total"
+          :title="t('dash_water_edit_total_btn')"
+          :aria-label="t('dash_water_edit_total_btn')"
+          @click="editing ? (editing = false) : startEdit()"
+        >
+          ✎
+        </button>
+      </div>
+      <div v-if="editing && setTotal" style="margin-top: 8px" data-test="edit-total-form">
+        <label class="gh-dim" style="display: block">{{ t('dash_water_edit_total_label') }}</label>
+        <input
+          v-model="editValue"
+          type="number"
+          inputmode="numeric"
+          min="0"
+          :max="MAX_DAY_ML"
+          class="gh-input"
+          data-test="edit-total-input"
+          @keydown.enter.prevent="saveEdit"
+          @keydown.esc.stop.prevent="editing = false"
+        />
+        <p v-if="editError" style="color: #d6336c; margin: 4px 0 0; font-size: 13px" data-test="edit-total-invalid">{{ t('dash_water_edit_invalid') }}</p>
+        <div class="gh-wrap" style="margin-top: 8px">
+          <button type="button" class="gh-btn" data-test="edit-total-save" :disabled="busy" @click="saveEdit">{{ t('dash_water_edit_save') }}</button>
+          <button type="button" class="gh-btn" data-test="edit-total-cancel" @click="editing = false">{{ t('dash_water_edit_cancel') }}</button>
+        </div>
       </div>
 
       <label class="gh-row" style="margin-top: 16px">

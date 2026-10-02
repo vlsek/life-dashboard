@@ -26,7 +26,7 @@ const userId = ref<string | null>(null)
 const ready = ref(false)
 
 const { day, week, summaries, settings, init: initProgress, saveSettings } = useHeaderProgress()
-const { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded: waterLoaded, error: waterError, saveError, init: initWater, addMl, getMlForDate, saveGoal, resetGoalToAuto } = useWater()
+const { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded: waterLoaded, error: waterError, saveError, init: initWater, addMl, setTotal, undoLast, canUndo, getMlForDate, saveGoal, resetGoalToAuto } = useWater()
 
 onMounted(async () => {
   const { data } = await sb.auth.getSession()
@@ -75,6 +75,17 @@ const goalSavedTick = ref(0)
 const goalSavedMsg = ref<'manual' | 'auto' | 'height'>('manual')
 async function onAdd(ml: number, dateStr: string) {
   if ((await addMl(ml, dateStr)) !== null) savedTick.value++
+}
+// Отмена последнего добавления и правка суммы за день (BACKLOG 12): та же «записалось»-анимация после подтверждённой записи
+async function onUndo(dateStr: string) {
+  const v = await undoLast(dateStr)
+  if (v !== null) savedTick.value++
+  return v
+}
+async function onSetTotal(ml: number, dateStr: string) {
+  const v = await setTotal(ml, dateStr)
+  if (v !== null) savedTick.value++
+  return v
 }
 async function onSaveGoal(ml: number) {
   if (await saveGoal(ml)) {
@@ -160,6 +171,9 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
       :height-cm="heightCm"
       @save-height="onSaveHeight"
       :save-error="saveError"
+      :can-undo="canUndo"
+      :undo-last="onUndo"
+      :set-total="onSetTotal"
       @close="waterOpen = false"
       @add="onAdd"
       @save-goal="onSaveGoal"
