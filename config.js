@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.25";
+const SITE_VERSION = "2.26";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.26", date: "2026-10-02 22:29", changes: [
+        "Графики: выбор периода стал понятнее. Вместо шести длинных кнопок в несколько рядов — одна строка коротких вариантов 7Д · 30Д · 90Д · 1Г · Всё и кнопка «Свой период» с календарём. Неделю и месяц теперь можно листать стрелками назад и вперёд (отдельной «Прошлой недели» больше нет), а под выбором всегда подписаны даты выбранного периода. У каждого графика рядом с календарём теперь видно, какой период он показывает, а если у него свой — кнопка подсвечена. Ранее сохранённые периоды продолжают работать",
+    ]},
     { version: "2.25", date: "2026-10-02 22:16", changes: [
         "Эмодзи в интерфейсе заменены на единые SVG-иконки на всех страницах: заголовки окон («Что нового», «Установка», «О приложении»), кнопки («Добавить», «Готово»), значки «Предложить», «Завершено» и др., кнопка меню-«гамбургер», окно знакомства с приложением, выбор периода, календарь, вехи, история дня, магазин. Исправлено: в «Метриках дня» рядом с иконкой-шестерёнкой оставалась ещё и настоящая эмодзи-шестерёнка. Добавлено 11 новых иконок (меню, колокольчик, ключ, письмо, корзина и др.). Оставшиеся места (вода, шапка, пресеты шаблонов) — в очереди",
     ]},
@@ -1276,6 +1279,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.26", date: "2026-10-02 22:29", changes: [
+        "Charts: choosing the period is clearer. Instead of six long buttons wrapping onto several rows there is one row of short options — 7D · 30D · 90D · 1Y · All — plus a 'Custom period' button with a calendar. You can now flip the week and the month back and forth with arrows (no separate 'Last week' any more), and the chosen period is always labelled with its dates. Each chart now shows next to its calendar button which period it uses, highlighted when it has its own. Previously saved periods keep working",
+    ]},
     { version: "2.25", date: "2026-10-02 22:16", changes: [
         "Emoji in the interface are replaced by the unified SVG icons on all pages: dialog titles (\"What's new\", \"Install\", \"About\"), buttons (\"Add\", \"Done\"), badges, the menu hamburger button, the welcome tour, the period picker, calendar, milestones, day details and the shop. Fixed: in \"Daily metrics\" a real emoji gear was shown next to the gear icon. 11 new icons added (menu, bell, key, mail, cart and others). Remaining places (water, header, template presets) are queued",
     ]},

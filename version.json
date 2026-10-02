@@ -1,6 +1,13 @@
 {
-  "version": "2.25",
+  "version": "2.26",
   "en": [
+    {
+      "version": "2.26",
+      "date": "2026-10-02 22:29",
+      "changes": [
+        "Charts: choosing the period is clearer. Instead of six long buttons wrapping onto several rows there is one row of short options — 7D · 30D · 90D · 1Y · All — plus a 'Custom period' button with a calendar. You can now flip the week and the month back and forth with arrows (no separate 'Last week' any more), and the chosen period is always labelled with its dates. Each chart now shows next to its calendar button which period it uses, highlighted when it has its own. Previously saved periods keep working"
+      ]
+    },
     {
       "version": "2.25",
       "date": "2026-10-02 22:16",
@@ -1633,6 +1640,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.26",
+      "date": "2026-10-02 22:29",
+      "changes": [
+        "Графики: выбор периода стал понятнее. Вместо шести длинных кнопок в несколько рядов — одна строка коротких вариантов 7Д · 30Д · 90Д · 1Г · Всё и кнопка «Свой период» с календарём. Неделю и месяц теперь можно листать стрелками назад и вперёд (отдельной «Прошлой недели» больше нет), а под выбором всегда подписаны даты выбранного периода. У каждого графика рядом с календарём теперь видно, какой период он показывает, а если у него свой — кнопка подсвечена. Ранее сохранённые периоды продолжают работать"
+      ]
+    },
     {
       "version": "2.25",
       "date": "2026-10-02 22:16",
