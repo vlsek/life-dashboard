@@ -3,6 +3,7 @@ import { onMounted, watch } from 'vue'
 import { t } from '../lib/i18n'
 import { hasStoredCollapsed, readCollapsed, writeCollapsed } from '../lib/collapsed'
 import CollapseChevron from './CollapseChevron.vue'
+import EmojiText from './EmojiText.vue'
 
 // Заголовок секции: кликабельна вся шапка, справа шеврон (BACKLOG 9; в классике createCollapsibleSection остаётся со стрелкой). Состояние — v-model:collapsed,
 // тело секции родитель прячет сам через v-show (компоненты остаются смонтированными и не теряют данные).
@@ -41,7 +42,7 @@ function toggle() {
     @keydown.enter.prevent="toggle"
     @keydown.space.prevent="toggle"
   >
-    <h2 class="text-lg font-semibold">{{ title }}</h2>
+    <h2 class="text-lg font-semibold"><EmojiText :text="title" /></h2>
     <CollapseChevron :collapsed="collapsed" />
   </div>
 </template>

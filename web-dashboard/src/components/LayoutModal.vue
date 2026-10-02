@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { ref } from 'vue'
 import Icon from './Icon.vue'
 import { t } from '../lib/i18n'
@@ -35,7 +36,7 @@ function label(key: DashboardBlockKey): string {
 <template>
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" @click.self="emit('close')">
     <div class="w-full max-w-sm rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)" data-test="layout-modal">
-      <h3 class="mb-1 text-lg font-bold">{{ t('dash_layout_modal_title') }}</h3>
+      <h3 class="mb-1 text-lg font-bold"><EmojiText :text="t('dash_layout_modal_title')" /></h3>
       <p class="dim mb-3 text-sm">{{ t('dash_layout_hint') }}</p>
 
       <div>

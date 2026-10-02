@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { computed, reactive, ref } from 'vue'
 import PeriodPicker from './PeriodPicker.vue'
 import Icon from './Icon.vue'
@@ -30,7 +31,7 @@ function add() {
 <template>
   <div class="modal-backdrop" @click.self="emit('close')">
     <div class="modal">
-      <h3>{{ t('dash_charts_config_title') }}</h3>
+      <h3><EmojiText :text="t('dash_charts_config_title')" /></h3>
       <p class="dim text-sm">{{ t('dash_charts_config_hint') }}</p>
 
       <div class="dim mt-3 mb-1 text-sm">{{ t('dash_charts_period_label') }}</div>

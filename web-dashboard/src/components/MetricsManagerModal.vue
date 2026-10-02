@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { ref } from 'vue'
 import MetricFormModal from './MetricFormModal.vue'
 import MetricIcon from './MetricIcon.vue'
@@ -49,7 +50,7 @@ function summary(m: Metric): string {
 <template>
   <div class="modal-backdrop" @click.self="emit('close')">
     <div class="modal" style="max-width: 30rem">
-      <h3>{{ t('dash_metrics_manager_title') }}</h3>
+      <h3><EmojiText :text="t('dash_metrics_manager_title')" /></h3>
 
       <p v-if="metrics.length === 0" class="dim">{{ t('dash_metrics_manager_empty') }}</p>
       <table v-else class="w-full text-sm">

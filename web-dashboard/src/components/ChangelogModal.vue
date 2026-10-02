@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { onMounted, ref } from 'vue'
 import { getLang, t } from '../lib/i18n'
 import { loadVersionInfo, type ChangelogEntry } from '../lib/version'
@@ -25,7 +26,7 @@ onMounted(async () => {
 <template>
   <div class="modal-backdrop" @click.self="emit('close')">
     <div class="modal" data-test="changelog-modal">
-      <h3>{{ t('changelog_title') }}</h3>
+      <h3><EmojiText :text="t('changelog_title')" /></h3>
       <p v-if="loaded && (error || entries.length === 0)" class="dim">{{ t('changelog_empty') }}</p>
       <template v-for="e in entries" :key="e.version">
         <h4 class="mb-1.5 mt-4 text-sm font-semibold">v{{ e.version }}{{ e.date ? ' — ' + e.date : '' }}</h4>

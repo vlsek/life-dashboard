@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { reactive } from 'vue'
 import PeriodPicker from './PeriodPicker.vue'
 import { t } from '../lib/i18n'
@@ -25,7 +26,7 @@ function reset() {
 <template>
   <div class="modal-backdrop" @click.self="emit('close')">
     <div class="modal">
-      <h3>{{ t('dash_chart_period_modal_title') }}</h3>
+      <h3><EmojiText :text="t('dash_chart_period_modal_title')" /></h3>
       <div class="mt-2"><PeriodPicker :state="local" @change="Object.assign(local, $event)" /></div>
       <p class="dim mt-3 text-xs">{{ own ? t('dash_chart_period_is_custom_hint') : t('dash_chart_period_uses_shared_hint') }}</p>
       <div class="modal-actions">
