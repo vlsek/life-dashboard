@@ -1,6 +1,13 @@
 {
-  "version": "2.08",
+  "version": "2.09",
   "en": [
+    {
+      "version": "2.09",
+      "date": "2026-10-02 06:27",
+      "changes": [
+        "Dashboard: the \"Profile\" block (avatar, age, body parameters) now appears as soon as its own data is loaded and no longer waits for the points to be calculated — it used to be held back while the balance was computed over the whole history. The coin with the points appears right after. Reading of large data histories is also faster: pages after the first are loaded with several requests at once"
+      ]
+    },
     {
       "version": "2.08",
       "date": "2026-10-02 06:18",
@@ -1514,6 +1521,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.09",
+      "date": "2026-10-02 06:27",
+      "changes": [
+        "Дашборд: блок «Профиль» (аватар, возраст, параметры тела) теперь появляется сразу, как только загружены его собственные данные, и не ждёт подсчёта баллов — раньше он задерживался, пока считался баланс по всей истории. Монета с баллами подгружается следом. Заодно ускорено чтение больших историй данных: страницы после первой загружаются несколькими запросами одновременно"
+      ]
+    },
     {
       "version": "2.08",
       "date": "2026-10-02 06:18",
