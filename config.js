@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.26";
+const SITE_VERSION = "2.27";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.27", date: "2026-10-02 19:41", changes: [
+        "Дашборд (пилот): в окне воды эмодзи заменены на SVG-иконки — капля в заголовке, стрелка «Отменить последнее добавление» (новая иконка), карандаш правки суммы за день; из подсказок над стаканом убрана капля-эмодзи (остался текст «выпито / норма»). Остальные эмодзи в шапке и правой панели — следующим шагом",
+    ]},
     { version: "2.26", date: "2026-10-02 22:29", changes: [
         "Графики: выбор периода стал понятнее. Вместо шести длинных кнопок в несколько рядов — одна строка коротких вариантов 7Д · 30Д · 90Д · 1Г · Всё и кнопка «Свой период» с календарём. Неделю и месяц теперь можно листать стрелками назад и вперёд (отдельной «Прошлой недели» больше нет), а под выбором всегда подписаны даты выбранного периода. У каждого графика рядом с календарём теперь видно, какой период он показывает, а если у него свой — кнопка подсвечена. Ранее сохранённые периоды продолжают работать",
     ]},
@@ -1279,6 +1282,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.27", date: "2026-10-02 19:41", changes: [
+        "Dashboard (pilot): emoji in the water window are replaced by SVG icons — the drop in the heading, the \"Undo last addition\" arrow (a new icon) and the pencil for editing the day total; the drop emoji was removed from the glass tooltips (the \"drunk / goal\" text stays). The remaining emoji in the header and the right panel come in a later step",
+    ]},
     { version: "2.26", date: "2026-10-02 22:29", changes: [
         "Charts: choosing the period is clearer. Instead of six long buttons wrapping onto several rows there is one row of short options — 7D · 30D · 90D · 1Y · All — plus a 'Custom period' button with a calendar. You can now flip the week and the month back and forth with arrows (no separate 'Last week' any more), and the chosen period is always labelled with its dates. Each chart now shows next to its calendar button which period it uses, highlighted when it has its own. Previously saved periods keep working",
     ]},
