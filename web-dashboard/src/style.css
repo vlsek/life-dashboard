@@ -594,3 +594,43 @@ html[data-motion='off'] *::after {
   border-radius: 0 10px 10px 0;
   padding-right: 8px;
 }
+
+/* Стакан при ≥100% нормы (BACKLOG 💧 2.1 «Состояние 100%»): контур становится золотым (токен по теме: яркий на тёмных,
+   тёмно-золотой на светлых — чтобы читался на фоне), вокруг мягкое свечение, по воде проходит блик. Работает в
+   WaterBadge.vue (шапка Дашборда). Анимации гасятся prefers-reduced-motion и «отключить все анимации». */
+html.theme-dark,
+html.theme-monet {
+  --water-gold: #f0b429;
+}
+html.theme-light,
+html.theme-pink {
+  --water-gold: #b87900;
+}
+.water-glass-full {
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--water-gold) 60%, transparent));
+  animation: water-glow 2.8s ease-in-out infinite;
+}
+.water-glass .glass-sheen {
+  fill: #ffffff;
+  fill-opacity: 0.45;
+  animation: water-sheen 3.2s ease-in-out infinite;
+}
+@keyframes water-sheen {
+  0% { transform: translateX(0); opacity: 0; }
+  15% { opacity: 1; }
+  60% { transform: translateX(32px); opacity: 0; }
+  100% { transform: translateX(32px); opacity: 0; }
+}
+@keyframes water-glow {
+  0%, 100% { filter: drop-shadow(0 0 2px color-mix(in srgb, var(--water-gold) 45%, transparent)); }
+  50% { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--water-gold) 80%, transparent)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .water-glass-full,
+  .water-glass .glass-sheen {
+    animation: none !important;
+  }
+  .water-glass .glass-sheen {
+    opacity: 0;
+  }
+}
