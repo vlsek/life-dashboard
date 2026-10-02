@@ -1,6 +1,13 @@
 {
-  "version": "2.20",
+  "version": "2.21",
   "en": [
+    {
+      "version": "2.21",
+      "date": "2026-10-02 11:03",
+      "changes": [
+        "Dashboard (pilot): the water glass in the header turns golden when you reach 100% of your goal — the outline and rim become gold (a darker shade on light themes so it stays readable), there is a soft glow around it and a highlight sweeps across the water from time to time. If the goal is no longer met (for example you undid the last addition), the glass goes back to its normal look. The animation is switched off by the system \"reduce motion\" setting and by the \"Turn off all animations\" switch. The glass on other pages (in the right panel) is unchanged for now"
+      ]
+    },
     {
       "version": "2.20",
       "date": "2026-10-02 13:53",
@@ -1598,6 +1605,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.21",
+      "date": "2026-10-02 11:03",
+      "changes": [
+        "Дашборд (пилот): стакан воды в шапке при достижении 100% нормы становится золотым — контур и ободок окрашиваются в золото (на светлых темах — более тёмный оттенок, чтобы читался), вокруг мягкое свечение, а по воде время от времени проходит блик. Если норма снова не выполнена (например, отменили последнее добавление), стакан возвращается к обычному виду. Анимация выключается при «уменьшении движения» в системе и выключателем «Отключить все анимации». Стакан на других страницах (в правой панели) пока прежний"
+      ]
+    },
     {
       "version": "2.20",
       "date": "2026-10-02 13:53",

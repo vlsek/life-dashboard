@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.20";
+const SITE_VERSION = "2.21";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.21", date: "2026-10-02 11:03", changes: [
+        "Дашборд (пилот): стакан воды в шапке при достижении 100% нормы становится золотым — контур и ободок окрашиваются в золото (на светлых темах — более тёмный оттенок, чтобы читался), вокруг мягкое свечение, а по воде время от времени проходит блик. Если норма снова не выполнена (например, отменили последнее добавление), стакан возвращается к обычному виду. Анимация выключается при «уменьшении движения» в системе и выключателем «Отключить все анимации». Стакан на других страницах (в правой панели) пока прежний",
+    ]},
     { version: "2.20", date: "2026-10-02 13:53", changes: [
         "Баллы на страницах Целей и Навыков: когда закрываешь цель, осваиваешь навык или отмечаешь книгу прочитанной, у места нажатия появляется «+N» с монеткой и плавно уплывает вверх; если снять отметку — «−N». Сумма — столько, сколько цель, навык или книга приносят в баланс. Анимация показывается только после того, как отметка сохранилась, и отключается общим выключателем анимаций",
     ]},
@@ -1261,6 +1264,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.21", date: "2026-10-02 11:03", changes: [
+        "Dashboard (pilot): the water glass in the header turns golden when you reach 100% of your goal — the outline and rim become gold (a darker shade on light themes so it stays readable), there is a soft glow around it and a highlight sweeps across the water from time to time. If the goal is no longer met (for example you undid the last addition), the glass goes back to its normal look. The animation is switched off by the system \"reduce motion\" setting and by the \"Turn off all animations\" switch. The glass on other pages (in the right panel) is unchanged for now",
+    ]},
     { version: "2.20", date: "2026-10-02 13:53", changes: [
         "Points on the Goals and Skills pages: when you complete a goal, master a skill or mark a book as read, a coin '+N' appears where you tapped and floats up; if you undo it — '−N'. The amount is exactly what that goal, skill or book adds to your balance. It shows only after the change is saved and respects the global animations switch",
     ]},
