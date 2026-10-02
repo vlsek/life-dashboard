@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.06";
+const SITE_VERSION = "2.07";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.07", date: "2026-10-02 06:11", changes: [
+        "Дашборд (пилот): напоминание выпить воды. Если при открытии приложения дневная норма воды ещё не выпита, на главной появляется мягкая плашка «Пора выпить воды» с тем, сколько выпито и сколько осталось. Не чаще раза в 3 часа, только при открытии (без уведомлений и фоновых таймеров) и не ночью, с 22:00 до 08:00. Выключается в «Настройках» (правая панель): «Напоминать выпить воды»",
+    ]},
     { version: "2.06", date: "2026-10-01 20:12", changes: [
         "Выбор иконки для метрик и параметров тела стал удобнее: по умолчанию показываются только популярные иконки, а редкие спрятаны во вкладки по темам (Спорт, Здоровье, Еда, Учёба и работа, Дом и деньги, Природа и путешествия, Творчество и разное) и во вкладку «Все». Поиск работает по всему набору иконок и понимает несколько слов (например, «бег лёгкая»), «ё» и «е» не различаются. Выбранная иконка всегда видна отдельной строкой с названием, а у каждой иконки есть подсказка с названием на вашем языке",
     ]},
@@ -1219,6 +1222,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.07", date: "2026-10-02 06:11", changes: [
+        "Dashboard (pilot): water reminder. If the daily water goal is not reached when you open the app, a soft \"Time for some water\" note appears on the main page showing how much you drank and how much is left. At most once every 3 hours, only on open (no notifications or background timers) and not at night, 22:00–08:00. Switch it off in Settings (right panel): \"Remind me to drink water\"",
+    ]},
     { version: "2.06", date: "2026-10-01 20:12", changes: [
         "Picking an icon for metrics and body parameters is easier now: only popular icons are shown by default, while rare ones are tucked into topic tabs (Sport, Health, Food, Study & work, Home & money, Nature & travel, Creative & other) and an \"All\" tab. Search covers the whole icon set and understands several words (for example, \"run light\"), and every icon has a tooltip with its name in your language. The selected icon is always shown on its own line with its name",
     ]},

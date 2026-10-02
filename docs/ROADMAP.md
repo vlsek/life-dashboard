@@ -711,6 +711,11 @@ v2.01 — BACKLOG 18.5 «Огонёк и число дней у метрики �
   (map из уже посчитанных `streaks`, kind=metric); бейдж в строках number/boolean/multiselect «Дневных метрик», приглушён если сегодня
   не засчитано, недели — «N нед.». Метрики с count_streak=false в streaks отсутствуют, огонька нет. Подходы (SetsSection) не тронуты.
   Без миграций. Тесты dashboard 770, пересобран dashboard/.
+v2.07 — BACKLOG 18.5 «Напоминание о воде каждые 3 часа при открытии» (агент 1): web-dashboard `lib/waterReminder.ts` (чистая логика: 3 ч,
+  тихие часы 22–08, выключатель), `lib/useWaterReminder.ts` (своё решение РОВНО один раз при открытии страницы, потом плашка может
+  только погаснуть; нормa через withWaterGoal), `WaterReminderBanner.vue`; web-header: выключатель «Напоминать выпить воды» в
+  SettingsModal (ключ localStorage water_reminders_off). Время последнего показа — localStorage water_reminder_last. Без миграций.
+  Тесты dashboard 904, header 59; пересобраны dashboard/ и header-widgets/. Тихие часы 22–08 — моё допущение, в бэклоге не было.
 
 ТЕКУЩАЯ РАБОТА: см. COORDINATION.md (блоки агентов, бэклог, журнал). Открыто на
 момент записи: Дашборд — дневные метрики (карточка дня; после сохранения слать

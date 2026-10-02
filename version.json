@@ -1,6 +1,13 @@
 {
-  "version": "2.06",
+  "version": "2.07",
   "en": [
+    {
+      "version": "2.07",
+      "date": "2026-10-02 06:11",
+      "changes": [
+        "Dashboard (pilot): water reminder. If the daily water goal is not reached when you open the app, a soft \"Time for some water\" note appears on the main page showing how much you drank and how much is left. At most once every 3 hours, only on open (no notifications or background timers) and not at night, 22:00–08:00. Switch it off in Settings (right panel): \"Remind me to drink water\""
+      ]
+    },
     {
       "version": "2.06",
       "date": "2026-10-01 20:12",
@@ -1500,6 +1507,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.07",
+      "date": "2026-10-02 06:11",
+      "changes": [
+        "Дашборд (пилот): напоминание выпить воды. Если при открытии приложения дневная норма воды ещё не выпита, на главной появляется мягкая плашка «Пора выпить воды» с тем, сколько выпито и сколько осталось. Не чаще раза в 3 часа, только при открытии (без уведомлений и фоновых таймеров) и не ночью, с 22:00 до 08:00. Выключается в «Настройках» (правая панель): «Напоминать выпить воды»"
+      ]
+    },
     {
       "version": "2.06",
       "date": "2026-10-01 20:12",
