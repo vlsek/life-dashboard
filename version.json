@@ -1,6 +1,13 @@
 {
-  "version": "2.27",
+  "version": "2.28",
   "en": [
+    {
+      "version": "2.28",
+      "date": "2026-10-02 22:58",
+      "changes": [
+        "Left side menu: the top now has a profile block — avatar (or a letter on the theme colour), name and email; a click opens Account. History moved to the very bottom of the page list: separated by a line and placed right before Account. A new option in Global settings (the right panel): Show day and week progress at the top of the side menu — the day and week rings right in the menu, a click opens the summary. The option is off by default"
+      ]
+    },
     {
       "version": "2.27",
       "date": "2026-10-02 19:41",
@@ -1647,6 +1654,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.28",
+      "date": "2026-10-02 22:58",
+      "changes": [
+        "Левое боковое меню: наверху теперь блок профиля — аватар (или буква на цвете темы), имя и почта; клик ведёт в Аккаунт. «История» перенесена в самый низ списка страниц: отделена чертой и стоит сразу перед «Аккаунтом». Новая опция в «Глобальных настройках» (правая панель): «Показывать прогресс дня и недели вверху бокового меню» — кольца дня и недели прямо в меню, клик открывает сводку. По умолчанию опция выключена"
+      ]
+    },
     {
       "version": "2.27",
       "date": "2026-10-02 19:41",

@@ -4,7 +4,7 @@ import { getLang, t, type DictKey } from '../lib/i18n'
 import type { DashboardBlockKey, LayoutItem } from '../lib/layout'
 import BlockOrderList from './BlockOrderList.vue'
 import { useLayout } from '../lib/useLayout'
-import { THEME_KEYS, celebrationsEnabled, getTheme, setCelebrationsEnabled, setLangAndReload, setMotionOff, setTheme, setWaterRemindersEnabled, systemReducedMotion, userMotionOff, waterRemindersEnabled, type ThemeKey } from '../lib/prefs'
+import { THEME_KEYS, celebrationsEnabled, setSidebarProgress, sidebarProgress, getTheme, setCelebrationsEnabled, setLangAndReload, setMotionOff, setTheme, setWaterRemindersEnabled, systemReducedMotion, userMotionOff, waterRemindersEnabled, type ThemeKey } from '../lib/prefs'
 
 // «Глобальные настройки» (BACKLOG 6.2): единое окно со всеми настройками, которые раньше были разбросаны по страницам
 // (язык/тема — в боковом меню, анимации и поздравления — в окне раскладки Дашборда, прогресс — в окне прогресса...).
@@ -98,6 +98,10 @@ async function changeLayout(next: LayoutItem[]) {
 
       <h4 style="margin-top: 16px">{{ t('hdr_settings_progress') }}</h4>
       <button type="button" class="gh-btn" data-test="open-progress" @click="emit('open-progress-settings')">{{ t('hdr_settings_progress_btn') }}</button>
+      <label class="gh-check" style="margin-top: 10px">
+        <input type="checkbox" :checked="sidebarProgress" data-test="sidebar-progress-toggle" @change="setSidebarProgress(($event.target as HTMLInputElement).checked)" />
+        {{ t('hdr_settings_sidebar_progress') }}
+      </label>
 
       <h4 style="margin-top: 16px">{{ t('hdr_settings_dashboard') }}</h4>
       <p class="gh-dim" style="margin: 0 0 4px; font-size: 12px">{{ t('dash_layout_hint') }}</p>

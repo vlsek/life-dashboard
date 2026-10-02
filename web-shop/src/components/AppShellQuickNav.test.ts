@@ -102,3 +102,33 @@ describe('AppShell: «Избранное» в списке по шеврону (
     w.unmount()
   })
 })
+
+describe('AppShell: боковое меню — профиль наверху, «История» внизу (BACKLOG 6.2)', () => {
+  async function mountWithEmail() {
+    const { default: AppShell } = await import('./AppShell.vue')
+    return mount(AppShell, { props: { userEmail: 'a@b.c' }, attachTo: document.body })
+  }
+  const navLinks = (w: Awaited<ReturnType<typeof mountWithEmail>>) => w.find('nav').findAll('a').map((a) => a.attributes('href'))
+
+  it('первым в <nav> стоит якорь #sidebar-top — туда бандл /header-widgets/ рисует аватар и имя', async () => {
+    const w = await mountWithEmail()
+    const first = w.find('nav').element.firstElementChild as HTMLElement
+    expect(first.id).toBe('sidebar-top')
+    w.unmount()
+  })
+
+  it('«История» отделена разделителем и стоит в самом низу списка страниц — сразу перед «Аккаунтом»; в основной части её нет', async () => {
+    const w = await mountWithEmail()
+    const links = navLinks(w)
+    const hist = links.indexOf('/history/')
+    expect(hist).toBeGreaterThan(-1)
+    expect(links.filter((h) => h === '/history/')).toHaveLength(1)
+    expect(links[hist + 1]).toBe('/account/')
+    expect(links.indexOf('/community/')).toBeLessThan(hist)
+    // разделитель между основными страницами и «Историей»
+    const nav = w.find('nav').element
+    const histEl = nav.querySelector('a[href="/history/"]')!
+    expect((histEl.previousElementSibling as HTMLElement).className).toContain('border-t')
+    w.unmount()
+  })
+})

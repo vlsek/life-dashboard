@@ -1,3 +1,5 @@
+import { ref } from 'vue'
+
 // Мелкие пользовательские настройки, которые живут в localStorage и применяются сразу. Ключи и поведение — те же, что
 // в пилотах (чтобы глобальные настройки и настройки на страницах не расходились):
 //   site_lang (язык; смена перезагружает страницу), site_theme (+ классы theme-* на <html>), site_motion = 'off'
@@ -60,3 +62,12 @@ export const setCelebrationsEnabled = (on: boolean) => write('streak_celebration
 
 export const waterRemindersEnabled = () => read('water_reminders_off') !== '1'
 export const setWaterRemindersEnabled = (on: boolean) => write('water_reminders_off', on ? null : '1')
+
+// Прогресс дня/недели в верхней части левого меню (BACKLOG 2.3 «Перенос в меню») — опция, по умолчанию выключена.
+// Ключ localStorage `sidebar_progress` = '1'. Реактивная ссылка общая для окна настроек и блока в меню.
+export const SIDEBAR_PROGRESS_KEY = 'sidebar_progress'
+export const sidebarProgress = ref(read(SIDEBAR_PROGRESS_KEY) === '1')
+export function setSidebarProgress(on: boolean) {
+  sidebarProgress.value = on
+  write(SIDEBAR_PROGRESS_KEY, on ? '1' : null)
+}

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.27";
+const SITE_VERSION = "2.28";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.28", date: "2026-10-02 22:58", changes: [
+        "Левое боковое меню: наверху теперь блок профиля — аватар (или буква на цвете темы), имя и почта; клик ведёт в Аккаунт. «История» перенесена в самый низ списка страниц: отделена чертой и стоит сразу перед «Аккаунтом». Новая опция в «Глобальных настройках» (правая панель): «Показывать прогресс дня и недели вверху бокового меню» — кольца дня и недели прямо в меню, клик открывает сводку. По умолчанию опция выключена",
+    ]},
     { version: "2.27", date: "2026-10-02 19:41", changes: [
         "Дашборд (пилот): в окне воды эмодзи заменены на SVG-иконки — капля в заголовке, стрелка «Отменить последнее добавление» (новая иконка), карандаш правки суммы за день; из подсказок над стаканом убрана капля-эмодзи (остался текст «выпито / норма»). Остальные эмодзи в шапке и правой панели — следующим шагом",
     ]},
@@ -1282,6 +1285,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.28", date: "2026-10-02 22:58", changes: [
+        "Left side menu: the top now has a profile block — avatar (or a letter on the theme colour), name and email; a click opens Account. History moved to the very bottom of the page list: separated by a line and placed right before Account. A new option in Global settings (the right panel): Show day and week progress at the top of the side menu — the day and week rings right in the menu, a click opens the summary. The option is off by default",
+    ]},
     { version: "2.27", date: "2026-10-02 19:41", changes: [
         "Dashboard (pilot): emoji in the water window are replaced by SVG icons — the drop in the heading, the \"Undo last addition\" arrow (a new icon) and the pencil for editing the day total; the drop emoji was removed from the glass tooltips (the \"drunk / goal\" text stays). The remaining emoji in the header and the right panel come in a later step",
     ]},

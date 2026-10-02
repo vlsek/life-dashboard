@@ -16,6 +16,9 @@ import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import RightPanel, { type GaugeData } from './components/RightPanel.vue'
 import SettingsModal from './components/SettingsModal.vue'
 import FavoriteHeart from './components/FavoriteHeart.vue'
+import SidebarTop from './components/SidebarTop.vue'
+import { useSidebarProfile } from './lib/sidebarProfile'
+import { sidebarProgress } from './lib/prefs'
 import { pageKeyFor, readFavorites, saveFavoritesToProfile, syncFavoritesFromProfile, toggleFavorite, writeFavorites } from './lib/favorites'
 
 // panelOnly — режим для Дашборда: своя шапка (стакан, кольца) там уже есть, поэтому бандл даёт только правую панель.
@@ -25,6 +28,10 @@ const props = defineProps<{ panelOnly?: boolean }>()
 // (там свои). Без сессии — молчим (страница сама отправит на вход). Ничего не показываем, пока не загрузились данные,
 // чтобы шапка не «прыгала».
 const userId = ref<string | null>(null)
+const userEmail = ref<string | null>(null)
+const sideProfile = useSidebarProfile()
+// Левое меню (BACKLOG 6.2): блок профиля рисуем в #sidebar-top, который AppShell ставит первым в <nav>; нет якоря — ничего не делаем
+const sidebarTarget = ref<HTMLElement | null>(null)
 const ready = ref(false)
 
 const { day, week, summaries, settings, init: initProgress, saveSettings } = useHeaderProgress()
@@ -35,6 +42,9 @@ onMounted(async () => {
   const uid = data.session?.user.id
   if (!uid) return
   userId.value = uid
+  userEmail.value = data.session?.user.email ?? null
+  sidebarTarget.value = document.getElementById('sidebar-top')
+  void sideProfile.load(uid)
   await Promise.all([initProgress(uid), initWater(uid), syncFavoritesFromProfile(uid).then((l) => (favorites.value = l))])
   ready.value = true
 })
@@ -138,6 +148,17 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
 
 <template>
   <div v-if="ready && userId" class="gh-root" data-test="header-widgets">
+    <Teleport v-if="sidebarTarget" :to="sidebarTarget">
+      <SidebarTop
+        :display-name="sideProfile.displayName.value"
+        :email="userEmail"
+        :avatar-url="sideProfile.avatarUrl.value"
+        :show-progress="sidebarProgress"
+        :day="dayRing"
+        :week="weekRing"
+        @open-summary="(k) => (summaryKind = k)"
+      />
+    </Teleport>
     <FavoriteHeart v-if="pageKey && !props.panelOnly" :active="isFavorite" @toggle="onToggleFavorite" />
     <template v-if="!props.panelOnly">
       <WaterGlass v-if="waterVisible" :today-ml="todayMl" :norm-ml="normMl" :title="`💧 ${todayMl} / ${normMl} ${unitLabel}`" @click="waterOpen = true" />
