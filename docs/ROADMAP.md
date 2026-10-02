@@ -100,3 +100,7 @@ v2.07 — BACKLOG 18.5 «Напоминание о воде каждые 3 ча�
   только погаснуть; нормa через withWaterGoal), `WaterReminderBanner.vue`; web-header: выключатель «Напоминать выпить воды» в
   SettingsModal (ключ localStorage water_reminders_off). Время последнего показа — localStorage water_reminder_last. Без миграций.
   Тесты dashboard 904, header 59; пересобраны dashboard/ и header-widgets/. Тихие часы 22–08 — моё допущение, в бэклоге не было.
+v2.10 — Вода: отмена последнего добавления и правка суммы за день — копия для шапки (агент 3, BACKLOG 12, продолжение v1.93; взято сразу после того, как агент 6 закончил правки окна воды). Перенос по правилу пилотов (копия, не импорт): `web-header/src/lib/waterUndo.ts`
+  (тот же стек шагов в `localStorage`, ключ `water-undo:<userId>:<дата>`, общий с Дашбордом — на одном устройстве шаги видны в обоих окнах), `useWater.ts` шапки (`writeDay`/`setTotal`/`undoLast`/`canUndo` поверх существующих `saveGoal`/`resetGoalToAuto`/`saveHeight` агента 6),
+  блок «↶ Отменить последнее добавление» и «✎» в `components/WaterModal.vue` в стилях `gh-*` (Tailwind на других страницах не гарантирован), подключение и «записалось»-анимация в `App.vue`, ключи `dash_water_undo_btn`/`dash_water_edit_*` в `i18n.ts`. Анимации баллов в шапке нет — слоя `PointsFloat` там
+  нет (отдельный пункт BACKLOG про воду из `header-widgets`). Тесты шапки +17 (`waterUndo.test.ts`, `waterUndoFlow.test.ts`, `WaterModalUndo.test.ts`): web-header 76, vue-tsc чист. Пересобран `header-widgets/`.

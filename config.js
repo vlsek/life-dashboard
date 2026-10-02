@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.09";
+const SITE_VERSION = "2.10";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.10", date: "2026-10-02 06:41", changes: [
+        "Вода во всех разделах: в окне воды из шапки (на любой странице и в правой панели) тоже появились «Отменить последнее добавление» и карандашик для правки всей суммы за день — как в Дашборде. Отмена откатывает записанное шаг за шагом, пока значение дня не изменили в другом месте; правку суммы тоже можно отменить. После отмены и правки показывается «сохранилось»",
+    ]},
     { version: "2.09", date: "2026-10-02 06:27", changes: [
         "Дашборд: блок «Профиль» (аватар, возраст, параметры тела) теперь появляется сразу, как только загружены его собственные данные, и не ждёт подсчёта баллов — раньше он задерживался, пока считался баланс по всей истории. Монета с баллами подгружается следом. Заодно ускорено чтение больших историй данных: страницы после первой загружаются несколькими запросами одновременно",
     ]},
@@ -1228,6 +1231,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.10", date: "2026-10-02 06:41", changes: [
+        "Water everywhere: the water window opened from the header (on any page and in the right panel) now also has 'Undo last add' and a pencil to correct the whole amount for the day — just like on the Dashboard. Undo rolls back what you logged step by step, as long as the day's value has not been changed elsewhere; a total correction can be undone too. After undoing or editing you get the 'saved' confirmation",
+    ]},
     { version: "2.09", date: "2026-10-02 06:27", changes: [
         "Dashboard: the \"Profile\" block (avatar, age, body parameters) now appears as soon as its own data is loaded and no longer waits for the points to be calculated — it used to be held back while the balance was computed over the whole history. The coin with the points appears right after. Reading of large data histories is also faster: pages after the first are loaded with several requests at once",
     ]},
