@@ -4,6 +4,7 @@ import AppShell from './components/AppShell.vue'
 import GoalCard from './components/GoalCard.vue'
 import GoalForm from './components/GoalForm.vue'
 import Icon from './components/Icon.vue'
+import PointsFloat from './components/PointsFloat.vue'
 import { useGoals } from './lib/useGoals'
 import { groupActiveByCategory, sortDone, pointsSummary } from './lib/goals'
 import { t } from './lib/i18n'
@@ -48,6 +49,7 @@ async function onDelete(g: Goal) {
 
 <template>
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
+  <PointsFloat />
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
     <div class="mb-4 flex items-center justify-between">

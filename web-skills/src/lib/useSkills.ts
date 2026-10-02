@@ -2,6 +2,10 @@ import { ref } from 'vue'
 import { sb } from './supabase'
 import { buildSkillRow } from './skills'
 import type { Skill, SkillFormInput } from './types'
+import { completionDelta, emitPointsFloat } from './pointsFloat'
+
+// Очки навыка по умолчанию — как в балансе: пусто → 10
+const SKILL_DEFAULT_POINTS = 10
 
 export type AuthState =
   | { status: 'loading' }
@@ -77,6 +81,8 @@ export function useSkills() {
     const progress = Math.max(0, Math.min(100, (s.progress ?? 0) + direction * step))
     const { error: err } = await sb.from('skills').update({ progress, mastered: progress >= 100 }).eq('id', s.id)
     if (err) throw err
+    // дошёл до 100% — навык освоен (+очки), откатил ниже — снят (−очки)
+    emitPointsFloat(completionDelta(!!s.mastered, progress >= 100, s.points, SKILL_DEFAULT_POINTS))
     await reload()
   }
 
@@ -84,6 +90,7 @@ export function useSkills() {
     const mastered = !s.mastered
     const { error: err } = await sb.from('skills').update({ mastered, progress: mastered ? 100 : s.progress }).eq('id', s.id)
     if (err) throw err
+    emitPointsFloat(completionDelta(!!s.mastered, mastered, s.points, SKILL_DEFAULT_POINTS))
     await reload()
   }
 

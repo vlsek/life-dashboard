@@ -3,6 +3,10 @@ import { sb } from './supabase'
 import { todayStr } from './date'
 import { buildInsertRow, buildUpdateRow, stageResult, stepStage } from './goals'
 import type { Goal, GoalFormInput } from './types'
+import { completionDelta, emitPointsFloat } from './pointsFloat'
+
+// Очки цели по умолчанию — как в балансе (balance.ts / web-shop points.ts): пусто → 5
+const GOAL_DEFAULT_POINTS = 5
 
 export type AuthState =
   | { status: 'loading' }
@@ -63,6 +67,8 @@ export function useGoals() {
     const patch = buildUpdateRow(res, existing, noCategoryLabel)
     const { error: err } = await sb.from('goals').update(patch).eq('id', existing.id)
     if (err) throw err
+    // правка числа этапов может сама закрыть/открыть многоэтапную цель (patch.done) — баллы идут по новым очкам цели
+    if (typeof patch.done === 'boolean') emitPointsFloat(completionDelta(!!existing.done, patch.done, res.points || GOAL_DEFAULT_POINTS, GOAL_DEFAULT_POINTS))
     await reload()
   }
 
@@ -76,6 +82,7 @@ export function useGoals() {
     const done = !g.done
     const { error: err } = await sb.from('goals').update({ done, done_date: done ? todayStr() : null }).eq('id', g.id)
     if (err) throw err
+    emitPointsFloat(completionDelta(!!g.done, done, g.points, GOAL_DEFAULT_POINTS))
     await reload()
   }
 
@@ -83,6 +90,7 @@ export function useGoals() {
     const { current_stage, done } = stepStage(g, delta)
     const { error: err } = await sb.from('goals').update({ current_stage, done, done_date: done ? todayStr() : null }).eq('id', g.id)
     if (err) throw err
+    emitPointsFloat(completionDelta(!!g.done, done, g.points, GOAL_DEFAULT_POINTS))
     await reload()
   }
 
@@ -91,6 +99,7 @@ export function useGoals() {
     const { current_stage, done } = stageResult(g.stages ?? 1, target)
     const { error: err } = await sb.from('goals').update({ current_stage, done, done_date: done ? todayStr() : null }).eq('id', g.id)
     if (err) throw err
+    emitPointsFloat(completionDelta(!!g.done, done, g.points, GOAL_DEFAULT_POINTS))
     await reload()
   }
 

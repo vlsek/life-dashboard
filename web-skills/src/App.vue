@@ -6,6 +6,7 @@ import SkillCard from './components/SkillCard.vue'
 import CoinIcon from './components/CoinIcon.vue'
 import Icon from './components/Icon.vue'
 import BookForm from './components/BookForm.vue'
+import PointsFloat from './components/PointsFloat.vue'
 import { useSkills } from './lib/useSkills'
 import { useBooks } from './lib/useBooks'
 import { suggestionsFor } from './lib/skills'
@@ -86,6 +87,7 @@ async function onDeleteBook(b: Book) {
 
 <template>
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
+  <PointsFloat />
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
     <div class="mb-4 flex items-center justify-between">

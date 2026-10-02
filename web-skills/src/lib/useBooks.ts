@@ -2,6 +2,10 @@ import { ref } from 'vue'
 import { sb } from './supabase'
 import { todayStr } from './date'
 import type { Book, BookFormInput } from './types'
+import { completionDelta, emitPointsFloat } from './pointsFloat'
+
+// Очки книги по умолчанию — как в балансе: пусто → 10
+const BOOK_DEFAULT_POINTS = 10
 
 // Отдельная таблица от навыков, но живёт на той же странице — авторизация уже сделана
 // useSkills(), сюда передаётся готовый userId. Портировано из renderBooks()/addBook()/
@@ -57,6 +61,7 @@ export function useBooks() {
       .update({ status: done ? 'done' : 'to_read', done_date: done ? todayStr() : null })
       .eq('id', b.id)
     if (err) throw err
+    emitPointsFloat(completionDelta(b.status === 'done', done, b.points, BOOK_DEFAULT_POINTS))
     await reload()
   }
 
