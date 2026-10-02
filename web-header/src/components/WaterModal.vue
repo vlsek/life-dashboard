@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { getLang, t } from '../lib/i18n'
 import { fmtDate } from '../lib/date'
 import { bodySurfaceAreaM2 } from '../lib/waterGoal'
-import { MAX_DAY_ML, parseTotalInput } from '../lib/waterUndo'
+import { MAX_DAY_ML, dayLogEntries, fmtDelta, fmtEntryTime, parseTotalInput, type UndoEntry } from '../lib/waterUndo'
 import type { Metric } from '../lib/types'
 import WaterSavedAnim from './WaterSavedAnim.vue'
 
@@ -26,6 +26,8 @@ const props = defineProps<{
   canUndo?: (dateStr: string, currentMl: number) => boolean
   undoLast?: (dateStr: string) => Promise<number | null>
   setTotal?: (ml: number, dateStr: string) => Promise<number | null>
+  // Журнал добавлений за дату со временем (BACKLOG 2.2): только записи этого устройства. Необязательный.
+  dayLog?: (dateStr: string) => UndoEntry[]
 }>()
 const emit = defineEmits<{ close: []; add: [ml: number, dateStr: string]; saveGoal: [ml: number]; resetGoal: []; saveHeight: [cm: number] }>()
 
@@ -61,6 +63,10 @@ function addCustom() {
 
 // --- отмена последнего добавления и правка суммы за день (BACKLOG 12) ---
 const busy = ref(false)
+// Журнал выбранного дня: последние записи со временем, от новых к старым (зависит от dateStr и от стека в композабле).
+const logRows = computed(() =>
+  dayLogEntries(props.dayLog ? props.dayLog(dateStr.value) : []).map((e) => ({ time: fmtEntryTime(e.at), delta: fmtDelta(e.prev, e.next), at: e.at })),
+)
 const undoAvailable = computed(() => !!props.canUndo && props.canUndo(dateStr.value, amountMl.value))
 const editing = ref(false)
 const editValue = ref('')
@@ -184,6 +190,17 @@ function saveHeightClick() {
           <button type="button" class="gh-btn" data-test="edit-total-save" :disabled="busy" @click="saveEdit">{{ t('dash_water_edit_save') }}</button>
           <button type="button" class="gh-btn" data-test="edit-total-cancel" @click="editing = false">{{ t('dash_water_edit_cancel') }}</button>
         </div>
+      </div>
+
+      <div v-if="logRows.length" style="margin-top: 12px" data-test="water-log">
+        <div style="font-weight: 600">{{ t('dash_water_log_title') }}</div>
+        <ul style="list-style: none; margin: 4px 0 0; padding: 0">
+          <li v-for="r in logRows" :key="r.at" style="display: flex; gap: 12px; padding: 2px 0" data-test="water-log-row">
+            <span class="gh-dim" style="font-variant-numeric: tabular-nums">{{ r.time }}</span>
+            <span :style="'font-variant-numeric: tabular-nums;' + (r.delta.startsWith('\u2212') ? ' color: #d6336c' : '')">{{ r.delta }} {{ unitLabel }}</span>
+          </li>
+        </ul>
+        <p class="gh-dim" style="margin: 4px 0 0; font-size: 12px">{{ t('dash_water_log_note') }}</p>
       </div>
 
       <label class="gh-row" style="margin-top: 16px">

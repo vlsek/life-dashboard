@@ -9,6 +9,9 @@ import { addDaysIso } from './date'
 export interface UndoEntry {
   prev: number
   next: number
+  // Когда сделана запись (мс от эпохи) — для журнала «Записи за день» (BACKLOG 2.2 «Время приема воды», срез без БД:
+  // время хранится только на этом устройстве, вместе со стеком отмены). У старых записей поля нет.
+  at?: number
 }
 
 export const UNDO_LIMIT = 10 // сколько последних записей дня помним
@@ -19,9 +22,10 @@ const PREFIX = 'water-undo:'
 export const undoKey = (userId: string, date: string) => `${PREFIX}${userId}:${date}`
 
 // Добавить запись; no-op (prev === next) не пишем, стек не длиннее UNDO_LIMIT (старые выпадают).
-export function pushEntry(stack: UndoEntry[], prev: number, next: number): UndoEntry[] {
+export function pushEntry(stack: UndoEntry[], prev: number, next: number, at?: number): UndoEntry[] {
   if (prev === next) return stack
-  return [...stack, { prev, next }].slice(-UNDO_LIMIT)
+  const entry: UndoEntry = at !== undefined && Number.isFinite(at) ? { prev, next, at } : { prev, next }
+  return [...stack, entry].slice(-UNDO_LIMIT)
 }
 
 // Можно откатить, только если текущее значение дня — именно то, что записали последним.
@@ -38,7 +42,10 @@ export function parseStack(raw: string | null | undefined): UndoEntry[] {
     if (!Array.isArray(data)) return []
     return data
       .filter((e) => e && Number.isFinite(e.prev) && Number.isFinite(e.next) && e.prev >= 0 && e.next >= 0)
-      .map((e) => ({ prev: Number(e.prev), next: Number(e.next) }))
+      .map((e): UndoEntry => {
+        const base = { prev: Number(e.prev), next: Number(e.next) }
+        return Number.isFinite(e.at) && e.at > 0 ? { ...base, at: Number(e.at) } : base
+      })
       .slice(-UNDO_LIMIT)
   } catch {
     return []
@@ -54,6 +61,25 @@ export function parseTotalInput(raw: string | number | null | undefined): number
   if (!Number.isFinite(n) || n < 0) return null
   const ml = Math.round(n)
   return ml > MAX_DAY_ML ? null : ml
+}
+
+// --- журнал дня: время и изменение каждой записи ---
+
+// «ЧЧ:ММ» по местному времени устройства (дата дня в приложении тоже считается по устройству — fmtDate).
+export function fmtEntryTime(at: number): string {
+  const d = new Date(at)
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+}
+
+// «+250» / «−100» (настоящий минус U+2212, чтобы не путать с дефисом); правка суммы может дать и минус, и плюс.
+export function fmtDelta(prev: number, next: number): string {
+  const d = next - prev
+  return `${d > 0 ? '+' : d < 0 ? '\u2212' : ''}${Math.abs(d)}`
+}
+
+// Записи дня, у которых известно время, — от новых к старым. Старые записи (без времени) в журнал не попадают.
+export function dayLogEntries(stack: UndoEntry[] | undefined): (UndoEntry & { at: number })[] {
+  return (stack ?? []).filter((e): e is UndoEntry & { at: number } => typeof e.at === 'number').reverse()
 }
 
 // --- localStorage ---

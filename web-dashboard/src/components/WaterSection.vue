@@ -12,7 +12,7 @@ import { getLang, t } from '../lib/i18n'
 // страницы с текстовой подписью — так было на пилоте раньше и расходилось с ванильным сайтом.
 const props = defineProps<{ userId: string | null }>()
 
-const { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, getMlForDate, saveGoal, resetGoalToAuto, createWaterMetric } = useWater()
+const { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, dayLog, getMlForDate, saveGoal, resetGoalToAuto, createWaterMetric } = useWater()
 
 watch(
   () => props.userId,
@@ -136,6 +136,7 @@ const GLASS_OUTLINE = 'M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3
     :can-undo="canUndo"
     :undo-last="onUndo"
     :set-total="onSetTotal"
+    :day-log="dayLog"
     @close="modalOpen = false"
     @add="onAdd"
     :goal-saved-msg="goalSavedMsg"

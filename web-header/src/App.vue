@@ -26,7 +26,7 @@ const userId = ref<string | null>(null)
 const ready = ref(false)
 
 const { day, week, summaries, settings, init: initProgress, saveSettings } = useHeaderProgress()
-const { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded: waterLoaded, error: waterError, saveError, init: initWater, addMl, setTotal, undoLast, canUndo, getMlForDate, saveGoal, resetGoalToAuto } = useWater()
+const { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded: waterLoaded, error: waterError, saveError, init: initWater, addMl, setTotal, undoLast, canUndo, dayLog, getMlForDate, saveGoal, resetGoalToAuto } = useWater()
 
 onMounted(async () => {
   const { data } = await sb.auth.getSession()
@@ -174,6 +174,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
       :can-undo="canUndo"
       :undo-last="onUndo"
       :set-total="onSetTotal"
+      :day-log="dayLog"
       @close="waterOpen = false"
       @add="onAdd"
       @save-goal="onSaveGoal"

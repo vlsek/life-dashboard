@@ -126,7 +126,7 @@ export function useWater() {
     }
     saveError.value = null
     if (dateStr === fmtDate(new Date())) todayMl.value = next
-    if (record) setStack(dateStr, pushEntry(undoStacks.value[dateStr] ?? [], current, next))
+    if (record) setStack(dateStr, pushEntry(undoStacks.value[dateStr] ?? [], current, next, Date.now()))
     notifyDataChanged({ source: 'water', metricId: metric.value.id, date: dateStr, value: next })
     return next
   }
@@ -164,6 +164,11 @@ export function useWater() {
     return res
   }
 
+  // Журнал добавлений за дату для окна воды (BACKLOG 2.2): только записи этого устройства, со временем.
+  function dayLog(dateStr: string): UndoEntry[] {
+    return undoStacks.value[dateStr] ?? []
+  }
+
   // Для окна воды: доступна ли отмена для даты при показанной сейчас сумме.
   function canUndo(dateStr: string, currentMl: number): boolean {
     return stackCanUndo(undoStacks.value[dateStr], currentMl)
@@ -194,5 +199,5 @@ export function useWater() {
     return true
   }
 
-  return { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, getMlForDate, saveGoal, resetGoalToAuto }
+  return { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, dayLog, getMlForDate, saveGoal, resetGoalToAuto }
 }
