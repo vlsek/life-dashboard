@@ -1,6 +1,13 @@
 {
-  "version": "2.23",
+  "version": "2.24",
   "en": [
+    {
+      "version": "2.24",
+      "date": "2026-10-02 21:53",
+      "changes": [
+        "Streaks: fixed — the dashed flame meaning \"the streak is going but today is not done yet\" is shown again. Previously, as soon as you entered anything for today (for example water), all series not yet completed today (perfect day, metrics) were reset and disappeared from the list while the flame stayed solid. Now an unfinished series is kept and marked as needing attention. Also: the \"daily note\" streak no longer comes up one day short"
+      ]
+    },
     {
       "version": "2.23",
       "date": "2026-10-02 14:33",
@@ -1619,6 +1626,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.24",
+      "date": "2026-10-02 21:53",
+      "changes": [
+        "Серии: исправлено — пунктирный огонёк «серия идёт, но сегодня ещё не готово» снова показывается. Раньше стоило внести за сегодня любую запись (например, воду), и все ещё не выполненные сегодня серии (идеальный день, метрики) обнулялись и пропадали из списка, а огонёк горел сплошным. Теперь незавершённая серия сохраняется и помечается как требующая внимания. Заодно: серия «заметка дня» больше не недосчитывается на один день"
+      ]
+    },
     {
       "version": "2.23",
       "date": "2026-10-02 14:33",

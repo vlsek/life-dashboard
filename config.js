@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.23";
+const SITE_VERSION = "2.24";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.24", date: "2026-10-02 21:53", changes: [
+        "Серии: исправлено — пунктирный огонёк «серия идёт, но сегодня ещё не готово» снова показывается. Раньше стоило внести за сегодня любую запись (например, воду), и все ещё не выполненные сегодня серии (идеальный день, метрики) обнулялись и пропадали из списка, а огонёк горел сплошным. Теперь незавершённая серия сохраняется и помечается как требующая внимания. Заодно: серия «заметка дня» больше не недосчитывается на один день",
+    ]},
     { version: "2.23", date: "2026-10-02 14:33", changes: [
         "Избранное: вместо дублирующего списка страниц по шеврону вверху теперь «Избранное». На каждой странице меню (Цели, Навыки, Тренировки, Челленджи, Языки, Календарь, Вехи, Магазин, Сообщество, История) вверху появилось сердечко: пустое — страницы нет в избранном, залито цветом темы — есть. Список по шеврону показывает только избранные страницы; пока ничего не выбрано, там подсказка. Все страницы по-прежнему в боковом меню. Избранное запоминается на устройстве сразу, а для синхронизации между устройствами нужна миграция 035 (владельцу применить в Supabase)",
     ]},
@@ -1270,6 +1273,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.24", date: "2026-10-02 21:53", changes: [
+        "Streaks: fixed — the dashed flame meaning \"the streak is going but today is not done yet\" is shown again. Previously, as soon as you entered anything for today (for example water), all series not yet completed today (perfect day, metrics) were reset and disappeared from the list while the flame stayed solid. Now an unfinished series is kept and marked as needing attention. Also: the \"daily note\" streak no longer comes up one day short",
+    ]},
     { version: "2.23", date: "2026-10-02 14:33", changes: [
         "Favorites: instead of the duplicate page list behind the chevron at the top there is now Favorites. Every menu page (Goals, Skills, Workouts, Challenges, Languages, Calendar, Milestones, Shop, Community, History) has a heart at the top: empty — the page is not a favorite, filled with the theme colour — it is. The chevron list shows only favorite pages; until you pick some it shows a hint. All pages stay in the side menu. Favorites are remembered on the device at once; syncing between devices needs migration 035 (the owner applies it in Supabase)",
     ]},
