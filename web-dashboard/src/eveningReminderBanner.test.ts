@@ -16,7 +16,7 @@ describe('EveningReminderBanner', () => {
     localStorage.setItem('site_lang', 'ru')
     const w = mount(EveningReminderBanner, { props: { items } })
     expect(w.text()).toContain('Остались невыполненные метрики!')
-    expect(w.text()).toContain('Сделайте их, чтобы не потерять стрейк')
+    expect(w.text()).toContain('Сделайте их, чтобы не потерять серию')
     expect(w.find('[data-test="evening-reminder-details"]').exists()).toBe(false)
     // Второй абзац — отдельный блочный элемент под заголовком, а не продолжение строки заголовка
     const text = w.find('[data-test="evening-reminder-text"]')
