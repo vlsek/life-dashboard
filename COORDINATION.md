@@ -57,7 +57,8 @@
 — свободен —
 
 ### Агент 2
-— свободен —
+Фаза 3 («бери из любого раздела», 2026-10-02), только Vue, legacy не трогаю: BACKLOG 22 «11:57 — Цели: до сих пор старые монетки» (в моей карточке цели осталась эмодзи 🪙) + «11:58 — Навыки: старые прогресс-бары». Делаю: (1) `web-goals/` — SVG-иконка баллов `CoinIcon.vue` (копия из Дашборда/Магазина + её CSS в `style.css`) вместо эмодзи в `GoalCard.vue`; (2) `web-skills/` — карточки навыков `SkillCard.vue` вместо таблицы: современный прогресс-бар (скруглённый, цвет акцента, плавное заполнение, «N%»), круглая отметка «освоено», та же монета вместо ⭐ (и в книгах), иконки вместо глифов ✎ ✕; логика (`bumpProgress`, `toggleMastered`) не меняется.
+Файлы: `web-goals/src/components/{GoalCard.vue,CoinIcon.vue}`, `web-goals/src/style.css`; `web-skills/src/{App.vue,style.css}`, `components/{SkillCard.vue,CoinIcon.vue}`, `lib/icons.ts`, `lib/i18n.ts`, тесты; пересборка `goals/` и `skills/`, `config.js`, `docs/ROADMAP.md`, `docs/BACKLOG.md`. С: 2026-10-02 13:29.
 
 ### Агент 3
 Фаза 3, по правилу «сверху вниз» (BACKLOG 14: «Анимация баллов: цели / книги / навыки»; пункт про шапку оценён и оставлен открытым): при закрытии цели, освоении навыка и прочтении книги — «+N» с монетой (и «−N» при снятии отметки). Механизм копируется из Дашборда по правилу пилотов (`pointsFloat.ts`, `usePointsFloat.ts`, `PointsFloat.vue`, `CoinIcon.vue`, стили монеты, ключ i18n). Файлы: `web-goals/src/` и `web-skills/src/` (на странице Навыков и навыки, и книги) → сборки `goals/`, `skills/`; `config.js`, `docs/`. Агенту 1: `web-skills` сейчас не трогаю в SetsCard (он в `web-dashboard`), только `App.vue`/composables навыков и книг. С: 2026-10-02 06:49.
