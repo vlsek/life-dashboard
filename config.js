@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.33";
+const SITE_VERSION = "2.34";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.34", date: "2026-10-03 03:12", changes: [
+        "Заставка загрузки с горящим огоньком теперь на всех страницах нового сайта (Цели, Навыки, История, Календарь, Магазин, Челленджи, Сообщество, Вехи, Языки, Аккаунт, Тренировки, вход и онбординг), а не только на Дашборде. Раньше, пока страница грузилась, был пустой экран — теперь огонёк в цвете вашей темы виден с первого кадра и сам сменяется страницей. Вариант заставки (живое пламя, огненный круг, классика) общий и берётся из того же выбора, что на Дашборде; движение выключается «уменьшением движения» в системе и переключателем «Отключить все анимации»",
+    ]},
     { version: "2.33", date: "2026-10-03 05:49", changes: [
         "Избранное: круглая кнопка наверху страницы, которая открывает быстрые ссылки на избранные разделы, теперь с сердечком (раньше в ней была только маленькая стрелка и она выглядела пустым кружком). Сердечко пустое, пока список закрыт, и заливается цветом темы, когда открыт; подпись кнопки — «Избранное». Сердечко «добавить страницу в избранное» тоже стало контрастнее: его контур больше не теряется на тёмных и тёплых темах",
     ]},
@@ -1300,6 +1303,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.34", date: "2026-10-03 03:12", changes: [
+        "The loading splash with the burning flame is now on every page of the new site (Goals, Skills, History, Calendar, Shop, Challenges, Community, Milestones, Languages, Account, Workouts, login and onboarding), not only on the Dashboard. Before, there was a blank screen while a page was loading — now a flame in your theme colour is visible from the first frame and is replaced by the page by itself. The splash variant (living flame, fire ring, classic) is shared with the Dashboard choice; motion is switched off by the system \"reduce motion\" setting and by the \"Turn off all animations\" switch",
+    ]},
     { version: "2.33", date: "2026-10-03 05:49", changes: [
         "Favorites: the round button at the top of a page that opens the quick links to your favourite sections now shows a heart (before it had just a small arrow and looked like an empty circle). The heart is an outline while the list is closed and fills with the theme colour when it is open; the button is labelled 'Favorites'. The 'add this page to favorites' heart is also more visible: its outline no longer gets lost on the dark and warm themes",
     ]},
