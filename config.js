@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.45";
+const SITE_VERSION = "2.46";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.46", date: "2026-10-03 20:01", changes: [
+        "Тренировки, «Прогрессии упражнений»: новая цепочка «Планка (на время)» — на коленях, обычная, боковая, с подъёмом ноги. Ступень проходится, когда в одном подходе вы продержались нужное число секунд (30, 60, 45 и 30). Секунды записывайте так же, как раньше: в поле подхода, где у других упражнений повторения. В цели и в лучшем подходе теперь стоит «сек» вместо «повт.»",
+    ]},
     { version: "2.45", date: "2026-10-03 19:54", changes: [
         "Правая панель и окна шапки: вместо эмодзи (капля, шестерёнка, гантель, звезда бонуса, «Отменить», карандаш) теперь те же аккуратные иконки, что и на страницах сайта, — в цвет темы. В подсказках при наведении на стакан и кольца эмодзи убраны, остались только числа",
     ]},
@@ -1337,6 +1340,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.46", date: "2026-10-03 20:01", changes: [
+        "Workouts, \"Exercise progressions\": a new \"Plank (hold time)\" chain: knee, regular, side and with a leg lift. A step is done when you hold for the target number of seconds in a single set (30, 60, 45 and 30). Log seconds the same way as before, in the set field where other exercises take reps. The goal and best set now read \"sec\" instead of \"reps\"",
+    ]},
     { version: "2.45", date: "2026-10-03 19:54", changes: [
         "Right panel and header windows: emoji (drop, gear, dumbbell, bonus star, Undo, pencil) are replaced by the same clean icons used across the site, in the theme colour. Hover tips on the glass and rings no longer contain emoji, only the numbers",
     ]},
