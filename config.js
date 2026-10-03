@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.52";
+const SITE_VERSION = "2.53";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.53", date: "2026-10-04 02:33", changes: [
+        "Сообщество: друзья и подписки теперь карточками (аватар, имя, серия и баллы за выбранный период, кнопки действий справа), заявки в друзья — тем же видом. Данные берутся из лидерборда, SQL не нужен; скрытым из лидерборда баллы не показываются."
+    ]},
     { version: "2.52", date: "2026-10-04 02:28", changes: [
         "Сообщество переоформлено: сверху карточка с вашим местом, баллами и серией, лидерборд с подиумом топ-3 и списком с 4-го места, аватары-заглушки с инициалами. Переключатель периода «Неделя / Месяц / Всё время» (нужна миграция 046; без неё остаётся «Всё время» и всё работает как раньше). Блок «Сегодня» поднят выше, друзья и поиск — ниже, сравнение по активности без изменений. За период считаются только баллы за дни; цели, навыки и книги входят в «Всё время»."
     ]},
@@ -1360,6 +1363,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.53", date: "2026-10-04 02:33", changes: [
+        "Community: friends and follows are now cards (avatar, name, streak and points for the selected period, action buttons on the right); friend requests use the same look. Data comes from the leaderboard, no SQL needed; people hidden from the leaderboard show no points."
+    ]},
     { version: "2.52", date: "2026-10-04 02:28", changes: [
         "Community redesigned: your place, points and streak on top, a leaderboard with a top-3 podium and a list from 4th place, initials avatars as fallback. A \"Week / Month / All time\" period switch (needs migration 046; without it only \"All time\" is shown and everything works as before). The \"Today\" block moved up, friends and search moved down, activity comparison unchanged. Period points count only daily points; goals, skills and books are part of \"All time\"."
     ]},

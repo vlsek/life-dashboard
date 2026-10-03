@@ -4,7 +4,7 @@ import AppShell from './components/AppShell.vue'
 import Icon from './components/Icon.vue'
 import ProfileModal from './components/ProfileModal.vue'
 import CategorySection from './components/CategorySection.vue'
-import PersonChip from './components/PersonChip.vue'
+import FriendCard from './components/FriendCard.vue'
 import { useCommunity } from './lib/useCommunity'
 import { leaderboardRows, todayRows, friendDisplayName, normalizeDisplayName } from './lib/community'
 import { splitRequests } from './lib/friends'
@@ -14,6 +14,7 @@ import EmojiText from './components/EmojiText.vue'
 import Avatar from './components/Avatar.vue'
 import Podium from './components/Podium.vue'
 import ProfileHeader from './components/ProfileHeader.vue'
+import { friendStats } from './lib/friendCards'
 import { PERIODS, formatPoints, myPlace, podiumSlots, restRows, type Period } from './lib/leaderboardView'
 
 const {
@@ -221,32 +222,32 @@ async function onSaveProfile(name: string, visible: boolean) {
         <!-- Заявки в друзья (только если применена миграция 029) -->
         <div v-if="friendsApi && requests.length > 0" class="mb-3">
           <p class="dim mb-1.5 text-sm">{{ t('comm_requests_sub') }}</p>
-          <div class="flex flex-wrap gap-2.5">
-            <PersonChip v-for="r in incomingRequests" :key="r.id" :name="r.display_name" :avatar-url="r.avatar_url" :note="t('comm_friend_incoming_note')">
+          <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr))">
+            <FriendCard v-for="r in incomingRequests" :key="r.id" :name="r.display_name" :avatar-url="r.avatar_url" :note="t('comm_friend_incoming_note')">
               <button class="px-2 py-0 text-sm" @click="onRespond(r.id, true)"><EmojiText :text="t('comm_friend_accept')" /></button>
               <button class="secondary px-2 py-0 text-sm" @click="onRespond(r.id, false)">{{ t('comm_friend_decline') }}</button>
-            </PersonChip>
-            <PersonChip v-for="r in outgoingRequests" :key="r.id" :name="r.display_name" :avatar-url="r.avatar_url" :note="t('comm_friend_outgoing_note')">
+            </FriendCard>
+            <FriendCard v-for="r in outgoingRequests" :key="r.id" :name="r.display_name" :avatar-url="r.avatar_url" :note="t('comm_friend_outgoing_note')">
               <button class="secondary px-1.5 py-0" :title="t('comm_friend_cancel_title')" @click="onRemoveFriend(r.other_user_id)"><Icon name="x" /></button>
-            </PersonChip>
+            </FriendCard>
           </div>
         </div>
 
         <div v-if="acceptedProfiles.length > 0" class="mb-3">
           <p class="dim mb-1.5 text-sm">{{ t('comm_friends_sub') }}</p>
-          <div class="flex flex-wrap gap-2.5">
-            <PersonChip v-for="p in acceptedProfiles" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url">
+          <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr))">
+            <FriendCard v-for="p in acceptedProfiles" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)">
               <button class="secondary px-1.5 py-0" :title="t('comm_friend_remove_title')" @click="onRemoveFriend(p.user_id)"><Icon name="x" /></button>
-            </PersonChip>
+            </FriendCard>
           </div>
         </div>
 
         <div v-if="followProfiles.length > 0" class="mb-3">
           <p v-if="friendsApi" class="dim mb-1.5 text-sm">{{ t('comm_following_sub') }}</p>
-          <div class="flex flex-wrap gap-2.5">
-            <PersonChip v-for="p in followProfiles" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url">
+          <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr))">
+            <FriendCard v-for="p in followProfiles" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)">
               <button class="secondary px-1.5 py-0" @click="onUnfollow(p.user_id)"><Icon name="x" /></button>
-            </PersonChip>
+            </FriendCard>
           </div>
         </div>
 

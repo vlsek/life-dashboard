@@ -1,6 +1,13 @@
 {
-  "version": "2.52",
+  "version": "2.53",
   "en": [
+    {
+      "version": "2.53",
+      "date": "2026-10-04 02:33",
+      "changes": [
+        "Community: friends and follows are now cards (avatar, name, streak and points for the selected period, action buttons on the right); friend requests use the same look. Data comes from the leaderboard, no SQL needed; people hidden from the leaderboard show no points."
+      ]
+    },
     {
       "version": "2.52",
       "date": "2026-10-04 02:28",
@@ -1825,6 +1832,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.53",
+      "date": "2026-10-04 02:33",
+      "changes": [
+        "Сообщество: друзья и подписки теперь карточками (аватар, имя, серия и баллы за выбранный период, кнопки действий справа), заявки в друзья — тем же видом. Данные берутся из лидерборда, SQL не нужен; скрытым из лидерборда баллы не показываются."
+      ]
+    },
     {
       "version": "2.52",
       "date": "2026-10-04 02:28",
