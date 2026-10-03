@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.42";
+const SITE_VERSION = "2.43";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.43", date: "2026-10-03 19:24", changes: [
+        "Метрики-подходы: новый параметр «Подходов в день по плану» (первый срез, только Дашборд). Если он задан, метрика считается выполненной, когда внесено не меньше этого числа подходов (и достигнут общий объём цели, если он задан). Правило действует с того дня, когда параметр задан или изменён; прошлые дни не пересчитываются, баланс и серии не «прыгают». Поле в форме метрики появится после применения миграции 041 в Supabase; без неё всё работает как раньше. Остальные страницы, баллы за каждый подход и серии на сервере — следующими шагами",
+    ]},
     { version: "2.42", date: "2026-10-03 19:17", changes: [
         "Вода: исправлено добавление по кнопке «+200» / «+500» из правой шторки и из окна воды. Раньше число и анимация менялись только после ответа сервера, и при нескольких быстрых нажатиях записи затирали друг друга, а в журнал попадала «куча нажатий». Теперь значение растёт сразу при нажатии, все нажатия записываются по очереди и дают ровно сумму; если запись не удалась, добавка откатывается. Отмена и правка суммы тоже встают в эту очередь",
     ]},
@@ -1328,6 +1331,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.43", date: "2026-10-03 19:24", changes: [
+        "Sets metrics: new \"Planned sets per day\" parameter (first slice, Dashboard only). When it is set, the metric counts as done once at least that many sets are logged (and the total goal is reached, if one is set). The rule applies from the day the parameter is set or changed; past days are not recalculated, so the balance and streaks do not jump. The field appears in the metric form after migration 041 is applied in Supabase; without it everything works as before. Other pages, points per set and server-side streaks come in the next steps",
+    ]},
     { version: "2.42", date: "2026-10-03 19:17", changes: [
         "Water: fixed adding water with the \"+200\" / \"+500\" buttons from the right panel and the water window. Before, the number and the animation changed only after the server replied, and with several quick taps the writes overwrote each other and the log got a \"pile of taps\". Now the value grows right at the tap, all taps are written in order and add up exactly; if a write fails, the addition is rolled back. Undo and total edits join the same queue",
     ]},
