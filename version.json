@@ -1,6 +1,15 @@
 {
-  "version": "2.48",
+  "version": "2.49",
   "en": [
+    {
+      "version": "2.49",
+      "date": "2026-10-03 21:02",
+      "changes": [
+        "Water: the goal is now a DRINKING goal — water from food (soup, fruit, vegetables) is not included; people get about 20% of their daily water with food and that share is taken off. The automatic goal uses one formula: with height — body surface area × 1000 ml/m² (was 1200), without height — weight × 26 ml (was 30), without weight — 1800 ml (was 2000). For example 70 kg and 175 cm: was 2210, now 1840 ml. A goal you set by hand does not change",
+        "The «i» help next to the daily water goal (the water window on the Dashboard and in the header) is now an inline plate under the label instead of a system browser dialog: it shows the calculation, always explains that water from food does not count, and a second click hides it",
+        "Points and streaks in the database need migration 043 (the owner applies it in the Supabase SQL Editor): until then the site uses the new goal and the database the old one, so rings and points may briefly disagree"
+      ]
+    },
     {
       "version": "2.48",
       "date": "2026-10-03 20:31",
@@ -1795,6 +1804,15 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.49",
+      "date": "2026-10-03 21:02",
+      "changes": [
+        "Вода: норма стала нормой ПИТЬЯ — вода из еды (супы, фрукты, овощи) в неё не входит, около 20% суточной воды человек получает с едой, и эта доля вычтена. Автоматическая норма пересчитана одной формулой: с ростом — площадь поверхности тела × 1000 мл/м² (было 1200), без роста — вес × 26 мл (было 30), без веса — 1800 мл (было 2000). Например, 70 кг и 175 см: было 2210, стало 1840 мл. Норма, заданная вручную, не меняется",
+        "Справка «i» у дневной нормы воды (окно воды на Дашборде и в шапке) теперь встроенная плашка под подписью, а не системное окно браузера: показывает расчёт и во всех случаях объясняет, что вода из еды не считается; повторный клик скрывает её",
+        "Для баллов и серий в базе нужна миграция 043 (владелец применяет в Supabase SQL Editor): до неё сайт считает по новой норме, а база — по старой, кольца и баллы могут ненадолго расходиться"
+      ]
+    },
     {
       "version": "2.48",
       "date": "2026-10-03 20:31",

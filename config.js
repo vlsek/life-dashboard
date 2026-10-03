@@ -479,11 +479,16 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.48";
+const SITE_VERSION = "2.49";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.49", date: "2026-10-03 21:02", changes: [
+        "Вода: норма стала нормой ПИТЬЯ — вода из еды (супы, фрукты, овощи) в неё не входит, около 20% суточной воды человек получает с едой, и эта доля вычтена. Автоматическая норма пересчитана одной формулой: с ростом — площадь поверхности тела × 1000 мл/м² (было 1200), без роста — вес × 26 мл (было 30), без веса — 1800 мл (было 2000). Например, 70 кг и 175 см: было 2210, стало 1840 мл. Норма, заданная вручную, не меняется",
+        "Справка «i» у дневной нормы воды (окно воды на Дашборде и в шапке) теперь встроенная плашка под подписью, а не системное окно браузера: показывает расчёт и во всех случаях объясняет, что вода из еды не считается; повторный клик скрывает её",
+        "Для баллов и серий в базе нужна миграция 043 (владелец применяет в Supabase SQL Editor): до неё сайт считает по новой норме, а база — по старой, кольца и баллы могут ненадолго расходиться",
+    ]},
     { version: "2.48", date: "2026-10-03 20:31", changes: [
         "Новый раздел «Достижения» (первый срез, адрес /achievements/): 19 стартовых значков — первые шаги (галочка, вес, цель, навык, книга, тренировка), серии «идеальных дней» 5/10/30/100, накопленные баллы 100/500/1000, 10 и 50 дней с тренировкой, 1 и 5 завершённых челленджей, 10 целей, 5 книг. Открытые — цветные с датой, закрытые — тусклые с условием и полоской прогресса. Открытое остаётся открытым, даже если число потом уменьшилось; достижения, выполненные до появления раздела, открываются без даты. Пока владелец не применил миграцию 039, открытые значки хранятся на устройстве — ничего не ломается. Пункт в боковом меню, окно-поздравление и награды-предметы из «Кастомизации» — следующими шагами",
     ]},
@@ -1346,6 +1351,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.49", date: "2026-10-03 21:02", changes: [
+        "Water: the goal is now a DRINKING goal — water from food (soup, fruit, vegetables) is not included; people get about 20% of their daily water with food and that share is taken off. The automatic goal uses one formula: with height — body surface area × 1000 ml/m² (was 1200), without height — weight × 26 ml (was 30), without weight — 1800 ml (was 2000). For example 70 kg and 175 cm: was 2210, now 1840 ml. A goal you set by hand does not change",
+        "The «i» help next to the daily water goal (the water window on the Dashboard and in the header) is now an inline plate under the label instead of a system browser dialog: it shows the calculation, always explains that water from food does not count, and a second click hides it",
+        "Points and streaks in the database need migration 043 (the owner applies it in the Supabase SQL Editor): until then the site uses the new goal and the database the old one, so rings and points may briefly disagree",
+    ]},
     { version: "2.48", date: "2026-10-03 20:31", changes: [
         "New Achievements section (first slice, at /achievements/): 19 starter badges - first steps (tick, weight, goal, skill, book, workout), perfect-days streaks of 5/10/30/100, total points 100/500/1000, 10 and 50 workout days, 1 and 5 completed challenges, 10 goals, 5 books. Unlocked ones are colored with a date, locked ones are dimmed with the condition and a progress bar. An unlocked badge stays unlocked even if the number later drops; achievements already met before the section appeared unlock without a date. Until the owner applies migration 039, unlocked badges are kept on the device - nothing breaks. The side-menu entry, the congratulation window and reward items from Customization come in the next steps",
     ]},
