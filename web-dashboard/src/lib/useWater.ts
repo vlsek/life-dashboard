@@ -5,6 +5,7 @@ import { emitPointsFloat, pointsDelta } from './pointsFloat'
 import { fmtDate, todayStr } from './date'
 import { t } from './i18n'
 import { effectiveNormMl, findWaterMetric, findWeightParam, nextWaterValue } from './water'
+import { createWriteQueue } from './writeQueue'
 import { autoNormFromBody, validHeightCm, resetWaterGoalCache } from './waterGoal'
 import type { BodyParameter } from './water'
 import { canUndo as stackCanUndo, loadStacks, pushEntry, saveStack, type UndoEntry } from './waterUndo'
@@ -42,6 +43,10 @@ export function useWater() {
   // тогда журнал берём из записей этого устройства). Запись в журнал идёт ОЧЕРЕДЬЮ в фоне (best-effort): её сбой не ломает основную запись.
   const serverLogs = ref<Record<string, WaterLogRow[]>>({})
   const logAvailable = ref<boolean | null>(null)
+  // Очередь записей значения дня (BACKLOG 24 🐞 «23:16»): добавление/правка/отмена идут строго по одной, а «сегодня» обновляется
+  // сразу, оптимистично: pendingToday — сколько мл уже нажато, но ещё не подтверждено записью (чтобы при серии нажатий число не «прыгало назад»).
+  const writeQueue = createWriteQueue()
+  let pendingToday = 0
   let logTail: Promise<unknown> = Promise.resolve()
   function enqueueLog(job: () => Promise<void>) {
     logTail = logTail.then(job).catch(() => {})
@@ -146,7 +151,7 @@ export function useWater() {
       return null
     }
     saveError.value = null
-    if (dateStr === fmtDate(new Date())) todayMl.value = next
+    if (dateStr === fmtDate(new Date())) todayMl.value = nextWaterValue(next, pendingToday) // + ещё не подтверждённые нажатия очереди
     if (record) {
       // Когда выпито: выбранное в окне время; иначе сейчас (сегодня) / 12:00 (прошлый день, вода задним числом).
       const at = drankAt ?? defaultDrankAt(dateStr, fmtDate(new Date()), Date.now())
@@ -215,41 +220,63 @@ export function useWater() {
   }
 
   // Портировано из addWaterMl(): читает текущее значение за дату, прибавляет дельту, upsert-ит.
+  // Число и анимация реагируют СРАЗУ (оптимистично, только для сегодняшнего дня), сама запись идёт в очереди: каждая следующая читает
+  // значение уже после предыдущей, так что серия нажатий даёт ровно сумму нажатий (раньше — потерянные обновления и «куча нажатий»
+  // в журнале). Не удалось записать — оптимистичная добавка откатывается.
   async function addMl(deltaMl: number, dateStr: string, drankAt?: number): Promise<number | null> {
     if (!metric.value) return null
-    const current = await getMlForDate(dateStr)
-    return writeDay(dateStr, current, nextWaterValue(current, deltaMl), true, drankAt, 'add')
+    const isToday = dateStr === fmtDate(new Date())
+    if (isToday) {
+      pendingToday += deltaMl
+      todayMl.value = nextWaterValue(todayMl.value, deltaMl)
+    }
+    return writeQueue.run(async () => {
+      if (isToday) pendingToday -= deltaMl // с этого момента её учтёт writeDay (next уже включает дельту)
+      let res: number | null = null
+      try {
+        const current = await getMlForDate(dateStr)
+        res = await writeDay(dateStr, current, nextWaterValue(current, deltaMl), true, drankAt, 'add')
+      } finally {
+        if (isToday && res === null) todayMl.value = nextWaterValue(todayMl.value, -deltaMl) // запись не удалась — убираем оптимистичную добавку
+      }
+      return res
+    })
   }
 
   // Правка ВСЕЙ суммы за день (карандашик в окне): перезаписывает значение выбранной даты, откатывается кнопкой «Отменить».
   async function setTotal(ml: number, dateStr: string, drankAt?: number): Promise<number | null> {
     if (!metric.value || !Number.isFinite(ml) || ml < 0) return null
-    const current = await getMlForDate(dateStr)
-    const next = Math.round(ml)
-    if (next === current) return current
-    return writeDay(dateStr, current, next, true, drankAt, 'edit')
+    return writeQueue.run(async () => {
+      const current = await getMlForDate(dateStr)
+      const next = Math.round(ml)
+      if (next === current) return current
+      return writeDay(dateStr, current, next, true, drankAt, 'edit')
+    })
   }
 
   // Отмена последней записи дня: только если значение дня всё ещё то, что мы записали (иначе его успели изменить в другом месте —
   // откатывать «вслепую» нельзя, стек в этом случае сбрасываем). Возвращает значение после отмены или null.
   async function undoLast(dateStr: string): Promise<number | null> {
     if (!metric.value) return null
-    await logTail // запись журнала могла ещё не закончиться: нужен её id, чтобы удалить строку
-    const stack = undoStacks.value[dateStr] ?? []
-    const top = stack[stack.length - 1]
-    if (!top) return null
-    const current = await getMlForDate(dateStr)
-    if (!stackCanUndo(stack, current)) {
-      setStack(dateStr, [])
-      return null
-    }
-    const res = await writeDay(dateStr, current, top.prev, false)
-    if (res !== null) {
-      setStack(dateStr, stack.slice(0, -1))
-      const id = top.logId
-      if (id) void enqueueLog(() => deleteLog(dateStr, id))
-    }
-    return res
+    // в очереди записей: стек «Отменить» читаем уже после того, как завершились поставленные раньше добавления (BACKLOG 24 🐞 «23:16»)
+    return writeQueue.run(async () => {
+      await logTail // запись журнала могла ещё не закончиться: нужен её id, чтобы удалить строку
+      const stack = undoStacks.value[dateStr] ?? []
+      const top = stack[stack.length - 1]
+      if (!top) return null
+      const current = await getMlForDate(dateStr)
+      if (!stackCanUndo(stack, current)) {
+        setStack(dateStr, [])
+        return null
+      }
+      const res = await writeDay(dateStr, current, top.prev, false)
+      if (res !== null) {
+        setStack(dateStr, stack.slice(0, -1))
+        const id = top.logId
+        if (id) void enqueueLog(() => deleteLog(dateStr, id))
+      }
+      return res
+    })
   }
 
   // Для окна воды: доступна ли отмена для даты при показанной сейчас сумме.
