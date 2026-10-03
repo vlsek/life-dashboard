@@ -1,6 +1,13 @@
 {
-  "version": "2.35",
+  "version": "2.36",
   "en": [
+    {
+      "version": "2.36",
+      "date": "2026-10-03 06:44",
+      "changes": [
+        "Dashboard: a Reorder blocks mode right on the main page. A new button next to the ⚙️ in the header folds the heavy blocks into a compact list of cards — Profile, Charts, Daily metrics and plans. Take a block by the ☰ handle and move it with a finger or the mouse (the ↑/↓ arrows and the visibility switch are next to it); the order is saved at once, and Done brings back the normal page. The same drag code as in the layout window and in Global settings"
+      ]
+    },
     {
       "version": "2.35",
       "date": "2026-10-03 06:33",
@@ -1704,6 +1711,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.36",
+      "date": "2026-10-03 06:44",
+      "changes": [
+        "Дашборд: режим «Изменить порядок блоков» прямо на главной. Новая кнопка рядом с ⚙️ в заголовке сворачивает тяжёлые блоки в компактный список карточек — Профиль, Графики, Дневные метрики и планы. Блок берётся за ручку ☰ и переносится пальцем или мышью (стрелки ↑/↓ и переключатель видимости рядом); порядок сохраняется сразу, «Готово» возвращает обычный вид страницы. Тот же код перетаскивания, что в окне раскладки и в «Глобальных настройках»"
+      ]
+    },
     {
       "version": "2.35",
       "date": "2026-10-03 06:33",

@@ -23,6 +23,7 @@ import InstallBanner from './components/InstallBanner.vue'
 import ProfileSection from './components/ProfileSection.vue'
 import DailyMetricsSection from './components/DailyMetricsSection.vue'
 import LayoutModal from './components/LayoutModal.vue'
+import ReorderPanel from './components/ReorderPanel.vue'
 import Icon from './components/Icon.vue'
 import SectionHeading from './components/SectionHeading.vue'
 import { vCollapse } from './lib/collapseMotion'
@@ -75,6 +76,22 @@ const showAllStreaks = ref(false)
 const showProgressSettings = ref(false)
 const summaryKind = ref<'day' | 'week' | null>(null)
 const showLayoutModal = ref(false)
+// Режим «Изменить порядок» прямо на странице (BACKLOG 22, 11:53): блоки сворачиваются в список карточек, порядок пишется сразу
+const reorderMode = ref(false)
+const reorderDraft = ref<LayoutItem[]>([])
+const reorderSaved = ref(false)
+function startReorder() {
+  reorderDraft.value = layout.value.map((i) => ({ ...i }))
+  reorderSaved.value = false
+  reorderMode.value = true
+}
+async function onReorder(next: LayoutItem[]) {
+  if (auth.value.status !== 'ready') return
+  const prev = reorderDraft.value
+  reorderDraft.value = next
+  reorderSaved.value = await saveLayout(auth.value.userId, next)
+  if (!reorderSaved.value) reorderDraft.value = prev
+}
 const profileCollapsed = ref(false)
 const chartsCollapsed = ref(false)
 // пока ни один график не построен (нет данных/мало данных) — блок «Графики» свёрнут по умолчанию (BACKLOG 17); явный выбор пользователя сильнее
@@ -155,6 +172,19 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
       >
         <Icon name="gear" />
       </button>
+      <button
+        v-if="auth.status === 'ready' && layoutLoaded"
+        type="button"
+        class="rounded-lg border px-2.5 py-1.5"
+        :style="{ borderColor: 'var(--border)', background: reorderMode ? 'var(--accent)' : 'var(--bg)', color: reorderMode ? 'var(--accent-text)' : 'var(--text)' }"
+        data-test="reorder-btn"
+        :title="t('dash_reorder_btn')"
+        :aria-label="t('dash_reorder_btn')"
+        :aria-pressed="reorderMode"
+        @click="reorderMode ? (reorderMode = false) : startReorder()"
+      >
+        <Icon name="list" />
+      </button>
     </div>
 
     <SplashLoader v-if="auth.status === 'loading'" />
@@ -176,7 +206,9 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
       <HeaderProgressBadge v-if="weekRingHeader" kind="week" v-bind="weekRingHeader" @click="summaryKind = 'week'" />
       <WaterSection :user-id="auth.userId" />
 
-      <template v-if="layoutLoaded">
+      <ReorderPanel v-if="layoutLoaded && reorderMode" :model-value="reorderDraft" :error="layoutError" :saved="reorderSaved" @update:model-value="onReorder" @done="reorderMode = false" />
+
+      <template v-else-if="layoutLoaded">
         <template v-for="item in layout" :key="item.key">
           <template v-if="item.visible">
             <template v-if="item.key === 'profile'">
