@@ -54,7 +54,7 @@
 <!-- Каждый агент правит ТОЛЬКО свой блок. Блоки разделены пустой строкой намеренно (меньше конфликтов). -->
 
 ### Агент 1
-— свободен —
+BACKLOG 4.2/13, ВТОРОЙ СРЕЗ «подходов в день по плану» (первый — v2.43): то же правило «выполнено» (`planned_sets_log`, `isMetricDone(m, value, dateStr)`) в копиях логики других пилотов, чтобы кольцо дня, История, Магазин и баланс не расходились. ТРОГАЮ: `web-header/src/lib/{types,metrics,progress,progressSummary}.ts`; `web-history/src/lib/{types,metrics,stats}.ts` + `components/DayDetailModal.vue`; `web-shop/src/lib/points.ts` (+типы, загрузчик метрик); `web-dashboard/src/lib/{balance,pointsLog,useProfile,usePointsLog}.ts` (явные списки колонок в select → добавить `planned_sets_log` без поломки до миграции); тесты; пересборка `header-widgets/`, `history/`, `shop/`, `dashboard/`; `config.js` (версия), ROADMAP, BACKLOG. НЕ трогаю: SQL (серии/баллы/лидерборд — третий срез отдельной заявкой), `useWater*`, `AppShell.vue`, `web-achievements/`, `web-workouts/`. С: 2026-10-03 19:25.
 
 ### Агент 2
 — свободен —
