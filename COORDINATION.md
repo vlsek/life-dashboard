@@ -63,7 +63,7 @@ BACKLOG 4.2/13, ВТОРОЙ СРЕЗ «подходов в день по пла
 — свободен —
 
 ### Агент 4
-— свободен —
+По порядку очереди: BACKLOG 182 «Skill Trees», срез «ступени на время» — цепочка «Планка» (секунды пишутся в `reps`, как в шаблонах с «Seconds»), единица ступени (сек/повт) в строке цели и прогресса. ТРОГАЮ: `web-workouts/src/lib/progressions.ts` (+тест), `components/ProgressionTrees.vue` (+тест), `lib/i18n.ts` (ключи `workouts_prog_*`), пересборка `workouts/`, `config.js`, ROADMAP, BACKLOG. НЕ трогаю: `program*.ts`, `ProgramCard.vue`, `TemplatesModal.vue` (агент 7). С: 2026-10-03 19:59.
 
 ### Агент 5
 — свободен —
