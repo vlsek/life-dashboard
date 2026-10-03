@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.41";
+const SITE_VERSION = "2.42";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.42", date: "2026-10-03 19:17", changes: [
+        "Вода: исправлено добавление по кнопке «+200» / «+500» из правой шторки и из окна воды. Раньше число и анимация менялись только после ответа сервера, и при нескольких быстрых нажатиях записи затирали друг друга, а в журнал попадала «куча нажатий». Теперь значение растёт сразу при нажатии, все нажатия записываются по очереди и дают ровно сумму; если запись не удалась, добавка откатывается. Отмена и правка суммы тоже встают в эту очередь",
+    ]},
     { version: "2.41", date: "2026-10-03 10:27", changes: [
         "Календарь: свайп по сетке месяца и по строке выбора месяца больше не выдвигает боковые плашки (левое меню и правую панель). Жесты у самого края страницы, вне календаря, работают как раньше",
     ]},
@@ -1325,6 +1328,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.42", date: "2026-10-03 19:17", changes: [
+        "Water: fixed adding water with the \"+200\" / \"+500\" buttons from the right panel and the water window. Before, the number and the animation changed only after the server replied, and with several quick taps the writes overwrote each other and the log got a \"pile of taps\". Now the value grows right at the tap, all taps are written in order and add up exactly; if a write fails, the addition is rolled back. Undo and total edits join the same queue",
+    ]},
     { version: "2.41", date: "2026-10-03 10:27", changes: [
         "Calendar: swiping over the month grid and the month selector row no longer pulls out the side panels (the left menu and the right panel). Gestures at the very edge of the page, outside the calendar, work as before",
     ]},
