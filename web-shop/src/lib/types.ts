@@ -20,6 +20,7 @@ export interface Metric {
 
 export interface SetEntry {
   reps?: number
+  time?: string | null // подход по времени (миграция 041: считается как сделанный подход)
 }
 
 export type MetricValue = boolean | string[] | number | SetEntry[] | null
