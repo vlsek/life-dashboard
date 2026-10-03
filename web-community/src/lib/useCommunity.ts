@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { sb } from './supabase'
 import { toFriendIdSet } from './community'
 import { mergeFriendScope, requestOutcome, toAcceptedIdSet, type FriendRequestOutcome } from './friends'
+import type { Period } from './leaderboardView'
 import type { FollowedProfile, FriendRequestRow, LeaderboardRow, TodayActivityRow, PublicProfile } from './types'
 
 export type AuthState =
@@ -24,6 +25,9 @@ export function useCommunity() {
   const friendsApi = ref(false)
   const leaderboard = ref<LeaderboardRow[]>([])
   const leaderboardError = ref<string | null>(null)
+  // период лидерборда; periodApi=false — миграция 046 не применена: переключатель скрыт, всё как раньше («всё время»)
+  const period = ref<Period>('all')
+  const periodApi = ref(true)
   const today = ref<TodayActivityRow[]>([])
   const todayError = ref<string | null>(null)
   const profile = ref<PublicProfile | null>(null)
@@ -86,6 +90,16 @@ export function useCommunity() {
   }
 
   async function loadLeaderboard() {
+    if (periodApi.value) {
+      const { data, error } = await sb.rpc('get_leaderboard_period', { range_key: period.value })
+      if (!error) {
+        leaderboardError.value = null
+        leaderboard.value = (data || []) as LeaderboardRow[]
+        return
+      }
+      periodApi.value = false
+      period.value = 'all'
+    }
     const { data, error } = await sb.rpc('get_leaderboard')
     if (error) {
       leaderboardError.value = error.message
@@ -93,6 +107,11 @@ export function useCommunity() {
     }
     leaderboardError.value = null
     leaderboard.value = (data || []) as LeaderboardRow[]
+  }
+
+  async function setPeriod(next: Period) {
+    period.value = next
+    await loadLeaderboard()
   }
 
   async function loadToday() {
@@ -173,7 +192,7 @@ export function useCommunity() {
 
   return {
     auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
-    leaderboard, leaderboardError, today, todayError, profile,
-    init, reload, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
+    leaderboard, leaderboardError, period, periodApi, today, todayError, profile,
+    init, reload, setPeriod, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
   }
 }

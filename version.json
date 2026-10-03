@@ -1,6 +1,13 @@
 {
-  "version": "2.51",
+  "version": "2.52",
   "en": [
+    {
+      "version": "2.52",
+      "date": "2026-10-04 02:28",
+      "changes": [
+        "Community redesigned: your place, points and streak on top, a leaderboard with a top-3 podium and a list from 4th place, initials avatars as fallback. A \"Week / Month / All time\" period switch (needs migration 046; without it only \"All time\" is shown and everything works as before). The \"Today\" block moved up, friends and search moved down, activity comparison unchanged. Period points count only daily points; goals, skills and books are part of \"All time\"."
+      ]
+    },
     {
       "version": "2.51",
       "date": "2026-10-04 02:15",
@@ -1818,6 +1825,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.52",
+      "date": "2026-10-04 02:28",
+      "changes": [
+        "Сообщество переоформлено: сверху карточка с вашим местом, баллами и серией, лидерборд с подиумом топ-3 и списком с 4-го места, аватары-заглушки с инициалами. Переключатель периода «Неделя / Месяц / Всё время» (нужна миграция 046; без неё остаётся «Всё время» и всё работает как раньше). Блок «Сегодня» поднят выше, друзья и поиск — ниже, сравнение по активности без изменений. За период считаются только баллы за дни; цели, навыки и книги входят в «Всё время»."
+      ]
+    },
     {
       "version": "2.51",
       "date": "2026-10-04 02:15",

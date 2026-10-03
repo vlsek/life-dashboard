@@ -6,16 +6,20 @@ import ProfileModal from './components/ProfileModal.vue'
 import CategorySection from './components/CategorySection.vue'
 import PersonChip from './components/PersonChip.vue'
 import { useCommunity } from './lib/useCommunity'
-import { leaderboardRows, medalIndex, todayRows, friendDisplayName, normalizeDisplayName } from './lib/community'
+import { leaderboardRows, todayRows, friendDisplayName, normalizeDisplayName } from './lib/community'
 import { splitRequests } from './lib/friends'
 import { t } from './lib/i18n'
 import type { Scope } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
+import Avatar from './components/Avatar.vue'
+import Podium from './components/Podium.vue'
+import ProfileHeader from './components/ProfileHeader.vue'
+import { PERIODS, formatPoints, myPlace, podiumSlots, restRows, type Period } from './lib/leaderboardView'
 
 const {
   auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
-  leaderboard, leaderboardError, today, todayError, profile,
-  init, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
+  leaderboard, leaderboardError, period, periodApi, today, todayError, profile,
+  init, setPeriod, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
 } = useCommunity()
 onMounted(init)
 
@@ -31,7 +35,15 @@ const incomingRequests = computed(() => splitRequests(requests.value).incoming)
 const outgoingRequests = computed(() => splitRequests(requests.value).outgoing)
 const hasAnyFriendItems = computed(() => requests.value.length + acceptedProfiles.value.length + followProfiles.value.length > 0)
 
-const medalColors = ['#e0b23c', '#b9c2cc', '#c98a4e']
+const podium = computed(() => podiumSlots(visibleLeaderboard.value))
+const rest = computed(() => restRows(visibleLeaderboard.value))
+// Шапка — моё место в общем списке выбранного периода (не зависит от «Только друзья»)
+const myPlaceAll = computed(() => myPlace(leaderboardRows(leaderboard.value, myId.value, 'everyone', friendIds.value), myId.value))
+const periodLabels: Record<Period, () => string> = {
+  week: () => t('comm_period_week'),
+  month: () => t('comm_period_month'),
+  all: () => t('comm_period_all'),
+}
 
 async function onUnfollow(followedId: string) {
   if (auth.value.status !== 'ready') return
@@ -138,16 +150,69 @@ async function onSaveProfile(name: string, visible: boolean) {
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
-    <div class="mb-4 flex items-center justify-between">
-      <h1 class="text-xl font-semibold"><EmojiText :text="t('comm_h1')" /></h1>
-      <button class="secondary" @click="showProfileModal = true"><EmojiText :text="t('comm_public_profile_btn')" /></button>
-    </div>
+    <h1 class="mb-4 text-xl font-semibold"><EmojiText :text="t('comm_h1')" /></h1>
 
     <div class="card mb-5 rounded-lg border p-3.5 text-sm" style="border-color: var(--border)">
       <p class="dim m-0">{{ t('comm_privacy_1') }}</p>
     </div>
 
+    <ProfileHeader
+      v-if="auth.status === 'ready'"
+      :name="profile?.display_name ?? null"
+      :avatar-url="myPlaceAll?.row.avatar_url ?? null"
+      :points="myPlaceAll ? myPlaceAll.row.total_points : null"
+      :streak="myPlaceAll?.row.perfect_streak ?? 0"
+      :rank="myPlaceAll?.rank ?? null"
+      @edit="showProfileModal = true"
+    />
+
     <template v-if="auth.status === 'ready'">
+      <!-- Лидерборд: период + область, подиум топ-3, остальные списком -->
+      <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex gap-2">
+          <button :class="{ secondary: scope !== 'everyone' }" @click="scope = 'everyone'">{{ t('comm_scope_everyone') }}</button>
+          <button :class="{ secondary: scope !== 'friends' }" @click="scope = 'friends'">{{ t('comm_scope_friends') }}</button>
+        </div>
+        <div v-if="periodApi" class="flex gap-2" data-testid="period-switch">
+          <button v-for="p in PERIODS" :key="p" :class="{ secondary: period !== p }" @click="setPeriod(p)">{{ periodLabels[p]() }}</button>
+        </div>
+      </div>
+      <p v-if="leaderboardError" class="dim mb-5">{{ t('comm_load_error') }} {{ leaderboardError }}</p>
+      <p v-else-if="visibleLeaderboard.length === 0" class="dim mb-5">{{ t('comm_empty') }}</p>
+      <template v-else>
+        <Podium :slots="podium" :my-id="myId" class="mb-3" />
+        <div v-if="rest.length" class="card mb-5 rounded-lg border px-3.5 py-1" style="border-color: var(--border)">
+          <div v-for="r in rest" :key="r.row.user_id" class="flex items-center gap-3 border-b py-2.5 last:border-0" style="border-color: var(--border)">
+            <span class="dim w-7 text-sm">#{{ r.rank }}</span>
+            <Avatar :name="r.row.display_name" :url="r.row.avatar_url" :size="32" />
+            <span class="min-w-0 flex-1 truncate" :style="r.row.user_id === myId ? 'font-weight:bold;color:var(--accent)' : ''">
+              {{ r.row.display_name }}
+              <span v-if="r.row.perfect_streak > 0" class="dim ml-1 text-xs" :title="`${t('comm_perfect_streak_title')} ${r.row.perfect_streak}`"><Icon name="flame" />{{ r.row.perfect_streak }}</span>
+            </span>
+            <span>{{ formatPoints(r.row.total_points) }} <Icon name="star" /></span>
+          </div>
+        </div>
+        <div v-else class="mb-5"></div>
+      </template>
+
+      <!-- Сегодня -->
+      <h2 class="mb-2 text-lg font-medium"><EmojiText :text="t('comm_today_h2')" /></h2>
+      <div class="card mb-5 rounded-lg border p-3.5" style="border-color: var(--border)">
+        <p v-if="todayError" class="dim">{{ t('comm_load_error') }} {{ todayError }}</p>
+        <p v-else-if="visibleToday.length === 0" class="dim">{{ t('comm_empty') }}</p>
+        <div v-for="row in visibleToday" :key="row.user_id" class="flex gap-3 border-b py-2.5 last:border-0" style="border-color: var(--border)">
+          <Avatar :name="row.display_name" :url="row.avatar_url" :size="40" />
+          <div>
+            <strong :style="row.user_id === myId ? 'color:var(--accent)' : ''">{{ row.display_name }}</strong>
+            <span class="dim"> — {{ row.today_points }} <Icon name="star" /> {{ t('comm_today_word') }}</span>
+            <ul v-if="row.items && row.items.length" class="mt-1.5 list-disc pl-4 opacity-85">
+              <li v-for="(it, idx) in row.items" :key="idx">{{ it }}</li>
+            </ul>
+            <p v-else-if="row.notes" class="mt-1.5 opacity-85">{{ row.notes }}</p>
+          </div>
+        </div>
+      </div>
+
       <!-- Друзья -->
       <h2 class="mb-2 text-lg font-medium"><EmojiText :text="t('comm_friends_h2')" /></h2>
       <div class="card mb-5 rounded-lg border p-3.5" style="border-color: var(--border)">
@@ -193,56 +258,9 @@ async function onSaveProfile(name: string, visible: boolean) {
         <p v-if="followMsg" class="mt-1.5 text-xs" :style="{ color: followMsg.error ? 'var(--danger)' : 'inherit' }">{{ followMsg.text }}</p>
       </div>
 
-      <!-- Лидерборд -->
-      <h2 class="mb-2 text-lg font-medium"><EmojiText :text="t('comm_leaderboard_h2')" /></h2>
-      <div class="mb-2.5 flex gap-2">
-        <button :class="{ secondary: scope !== 'everyone' }" @click="scope = 'everyone'">{{ t('comm_scope_everyone') }}</button>
-        <button :class="{ secondary: scope !== 'friends' }" @click="scope = 'friends'">{{ t('comm_scope_friends') }}</button>
-      </div>
-      <div class="card mb-5 rounded-lg border p-3.5" style="border-color: var(--border)">
-        <p v-if="leaderboardError" class="dim">{{ t('comm_load_error') }} {{ leaderboardError }}</p>
-        <p v-else-if="visibleLeaderboard.length === 0" class="dim">{{ t('comm_empty') }}</p>
-        <table v-else class="w-full">
-          <tbody>
-            <tr v-for="(row, i) in visibleLeaderboard" :key="row.user_id">
-              <td class="w-8">
-                <span v-if="medalIndex(i) !== null" :style="{ color: medalColors[i] }"><Icon name="medal" /></span>
-                <span v-else class="dim text-sm">#{{ i + 1 }}</span>
-              </td>
-              <td class="w-10"><img v-if="row.avatar_url" :src="row.avatar_url" class="h-8 w-8 rounded-full object-cover" /></td>
-              <td :style="row.user_id === myId ? 'font-weight:bold;color:var(--accent)' : ''">
-                {{ row.display_name }}
-                <span v-if="row.perfect_streak > 0" class="dim ml-1 text-xs" :title="`${t('comm_perfect_streak_title')} ${row.perfect_streak}`">
-                  <Icon name="flame" />{{ row.perfect_streak }}
-                </span>
-              </td>
-              <td class="text-right">{{ row.total_points }} <Icon name="star" /></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Сегодня -->
-      <h2 class="mb-2 text-lg font-medium"><EmojiText :text="t('comm_today_h2')" /></h2>
-      <div class="card rounded-lg border p-3.5" style="border-color: var(--border)">
-        <p v-if="todayError" class="dim">{{ t('comm_load_error') }} {{ todayError }}</p>
-        <p v-else-if="visibleToday.length === 0" class="dim">{{ t('comm_empty') }}</p>
-        <div v-for="row in visibleToday" :key="row.user_id" class="flex gap-3 border-b py-2.5 last:border-0" style="border-color: var(--border)">
-          <img v-if="row.avatar_url" :src="row.avatar_url" class="h-10 w-10 flex-shrink-0 rounded-full object-cover" />
-          <div>
-            <strong :style="row.user_id === myId ? 'color:var(--accent)' : ''">{{ row.display_name }}</strong>
-            <span class="dim"> — {{ row.today_points }} <Icon name="star" /> {{ t('comm_today_word') }}</span>
-            <ul v-if="row.items && row.items.length" class="mt-1.5 list-disc pl-4 opacity-85">
-              <li v-for="(it, idx) in row.items" :key="idx">{{ it }}</li>
-            </ul>
-            <p v-else-if="row.notes" class="mt-1.5 opacity-85">{{ row.notes }}</p>
-          </div>
-        </div>
-      </div>
-
       <!-- Сравнение по активности: свой композабл/компонент (useCategories.ts, CategorySection.vue),
            график — общая инфраструктура из web-dashboard/ (chart.ts, ChartBlock, PeriodPicker) -->
-      <div class="mt-5">
+      <div>
         <CategorySection :user-id="auth.userId" :scope="scope" :friend-ids="friendIds" />
       </div>
     </template>

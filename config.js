@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.51";
+const SITE_VERSION = "2.52";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.52", date: "2026-10-04 02:28", changes: [
+        "Сообщество переоформлено: сверху карточка с вашим местом, баллами и серией, лидерборд с подиумом топ-3 и списком с 4-го места, аватары-заглушки с инициалами. Переключатель периода «Неделя / Месяц / Всё время» (нужна миграция 046; без неё остаётся «Всё время» и всё работает как раньше). Блок «Сегодня» поднят выше, друзья и поиск — ниже, сравнение по активности без изменений. За период считаются только баллы за дни; цели, навыки и книги входят в «Всё время»."
+    ]},
     { version: "2.51", date: "2026-10-04 02:15", changes: [
         "Подходы в день по плану: серверные серии, баллы и лидерборд теперь считают «выполнено» по тому же правилу, что и страницы (миграция 044), поэтому серии, очки категорий и баланс совпадают везде. Каждый день считается по правилу, действовавшему в этот день: прошлые дни и уже набранные очки не меняются. После применения миграций 041 и 044 параметр «Подходов в день по плану» в форме метрики-подходов можно заполнять. Без миграций всё работает как раньше",
     ]},
@@ -1357,6 +1360,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.52", date: "2026-10-04 02:28", changes: [
+        "Community redesigned: your place, points and streak on top, a leaderboard with a top-3 podium and a list from 4th place, initials avatars as fallback. A \"Week / Month / All time\" period switch (needs migration 046; without it only \"All time\" is shown and everything works as before). The \"Today\" block moved up, friends and search moved down, activity comparison unchanged. Period points count only daily points; goals, skills and books are part of \"All time\"."
+    ]},
     { version: "2.51", date: "2026-10-04 02:15", changes: [
         "Planned sets per day: server-side streaks, points and the leaderboard now judge \"done\" by the same rule as the pages (migration 044), so streaks, category points and the balance agree everywhere. Each day is judged by the rule in force that day: past days and points already earned do not change. Once migrations 041 and 044 are applied, the \"Planned sets per day\" field in the sets metric form can be filled in. Without the migrations everything works as before",
     ]},
