@@ -510,9 +510,9 @@ describe('свайп справа: открытие на touchmove, широка
 
   it('начало вне зоны, вертикальная прокрутка и несколько пальцев панель не открывают', async () => {
     const w = await mounted()
-    fire('touchstart', 200, 300)
-    fire('touchmove', 100, 300)
-    fire('touchend', 100, 300)
+    fire('touchstart', 150, 300)
+    fire('touchmove', 40, 300)
+    fire('touchend', 40, 300)
     fire('touchstart', 390, 300)
     fire('touchmove', 385, 480)
     fire('touchend', 385, 480)
@@ -610,5 +610,83 @@ describe('«Избранное»: сердечко в шапке (BACKLOG 6.2)',
       expect(w.find('[data-test="favorite-heart"]').exists()).toBe(false)
       w.unmount()
     }
+  })
+})
+
+describe('свайп с середины экрана и блокировка прокрутки (BACKLOG 07:52, 23:01)', () => {
+  const fire = (type: string, x: number, y: number, target: EventTarget = document) => {
+    const e = new Event(type, { bubbles: true }) as any
+    e.touches = type === 'touchend' || type === 'touchcancel' ? [] : [{ clientX: x, clientY: y }]
+    e.changedTouches = [{ clientX: x, clientY: y }]
+    target.dispatchEvent(e)
+  }
+  const isOpen = (w: ReturnType<typeof mount>) => w.find('[data-test="right-panel"]').classes().includes('gh-panel-open')
+  async function mounted() {
+    setup({ metrics: [habit], daily_values: [] })
+    Object.defineProperty(window, 'innerWidth', { value: 400, configurable: true })
+    document.documentElement.style.overflow = ''
+    document.documentElement.removeAttribute('data-lock-left')
+    document.documentElement.removeAttribute('data-lock-right')
+    const w = mount(App, { attachTo: document.body })
+    await flushPromises()
+    return w
+  }
+
+  it('жест, начатый с середины экрана, длинный и горизонтальный — открывает панель', async () => {
+    const w = await mounted()
+    fire('touchstart', 260, 300)
+    fire('touchmove', 150, 305)
+    await flushPromises()
+    expect(isOpen(w)).toBe(true)
+    w.unmount()
+  })
+
+  it('с середины короткий или наклонный жест панель не открывает', async () => {
+    const w = await mounted()
+    fire('touchstart', 260, 300)
+    fire('touchmove', 200, 300) // 60 px — для «широкой» зоны мало
+    fire('touchend', 200, 300)
+    fire('touchstart', 260, 300)
+    fire('touchmove', 150, 360) // наклон
+    fire('touchend', 150, 360)
+    await flushPromises()
+    expect(isOpen(w)).toBe(false)
+    w.unmount()
+  })
+
+  it('на canvas (графике) жест с середины не открывает панель', async () => {
+    const w = await mounted()
+    const canvas = document.createElement('canvas')
+    document.body.appendChild(canvas)
+    fire('touchstart', 260, 300, canvas)
+    fire('touchmove', 100, 300, canvas)
+    await flushPromises()
+    expect(isOpen(w)).toBe(false)
+    canvas.remove()
+    w.unmount()
+  })
+
+  it('пока правая панель открыта, страница не прокручивается; после закрытия прокрутка возвращается', async () => {
+    const w = await mounted()
+    await w.find('[data-test="panel-open"]').trigger('click')
+    await flushPromises()
+    expect(document.documentElement.style.overflow).toBe('hidden')
+    expect(document.documentElement.hasAttribute('data-lock-right')).toBe(true)
+    await w.find('[data-test="panel-close"]').trigger('click')
+    await flushPromises()
+    expect(document.documentElement.style.overflow).toBe('')
+    w.unmount()
+  })
+
+  it('блокировку делят обе шторки: пока открыта левая, закрытие правой прокрутку не возвращает', async () => {
+    const w = await mounted()
+    document.documentElement.setAttribute('data-lock-left', '') // левая шторка открыта (её ставит AppShell)
+    await w.find('[data-test="panel-open"]').trigger('click')
+    await flushPromises()
+    await w.find('[data-test="panel-close"]').trigger('click')
+    await flushPromises()
+    expect(document.documentElement.style.overflow).toBe('hidden')
+    document.documentElement.removeAttribute('data-lock-left')
+    w.unmount()
   })
 })

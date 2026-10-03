@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, watch } from 'vue'
 import { getLang, t } from '../lib/i18n'
-import { isCloseSwipe, isLeftSwipe, isSwipeBlockedTarget, startsInOpenZone, type Point } from '../lib/edgeSwipe'
+import { isCloseSwipe, isOpenSwipeFrom, isSwipeBlockedTarget, swipeZone, type Point, type SwipeZone } from '../lib/edgeSwipe'
 import WaterGlass from './WaterGlass.vue'
 import WaterSavedAnim from './WaterSavedAnim.vue'
 import ProgressGauge from './ProgressGauge.vue'
@@ -34,6 +34,7 @@ const waterPct = computed(() => (props.water && props.water.normMl > 0 ? Math.mi
 // не приходит — приходит touchcancel, и жест «пропадал». Закрытие — на touchend (палец и так остаётся на панели).
 let start: Point | null = null
 let startOpenCandidate = false
+let startZone: SwipeZone | null = null
 const pt = (t: Touch): Point => ({ x: t.clientX, y: t.clientY })
 function onTouchStart(e: TouchEvent) {
   if (e.touches.length !== 1) {
@@ -41,11 +42,12 @@ function onTouchStart(e: TouchEvent) {
     return
   }
   start = pt(e.touches[0])
-  startOpenCandidate = !props.open && startsInOpenZone(start, window.innerWidth) && !isSwipeBlockedTarget(e.target)
+  startZone = swipeZone(start, window.innerWidth)
+  startOpenCandidate = !props.open && startZone !== null && !isSwipeBlockedTarget(e.target)
 }
 function onTouchMove(e: TouchEvent) {
   if (!start || !startOpenCandidate || props.open || !e.touches.length) return
-  if (isLeftSwipe(start, pt(e.touches[0]))) {
+  if (isOpenSwipeFrom(startZone, start, pt(e.touches[0]))) {
     startOpenCandidate = false
     start = null
     emit('update:open', true)
@@ -56,7 +58,7 @@ function onTouchEnd(e: TouchEvent) {
   const end = pt(e.changedTouches[0])
   if (props.open && isCloseSwipe(start, end)) emit('update:open', false)
   // запасной путь: если touchmove почему-то не дошёл (синтетические события, особые браузеры), решаем по touchend
-  else if (!props.open && startOpenCandidate && isLeftSwipe(start, end)) emit('update:open', true)
+  else if (!props.open && startOpenCandidate && isOpenSwipeFrom(startZone, start, end)) emit('update:open', true)
   start = null
   startOpenCandidate = false
 }
@@ -82,13 +84,18 @@ onBeforeUnmount(() => {
 })
 
 // пока панель открыта, страница под ней не должна прокручиваться
+// общая с левой шторкой блокировка: у каждой стороны свой атрибут на <html>, прокрутка возвращается, когда сняты оба
+function applyScrollLock(on: boolean) {
+  const root = document.documentElement
+  if (on) root.setAttribute('data-lock-right', '')
+  else root.removeAttribute('data-lock-right')
+  root.style.overflow = root.hasAttribute('data-lock-left') || root.hasAttribute('data-lock-right') ? 'hidden' : ''
+}
 watch(
   () => props.open,
-  (v) => {
-    document.documentElement.style.overflow = v ? 'hidden' : ''
-  },
+  (v) => applyScrollLock(v),
 )
-onBeforeUnmount(() => (document.documentElement.style.overflow = ''))
+onBeforeUnmount(() => applyScrollLock(false))
 </script>
 
 <template>

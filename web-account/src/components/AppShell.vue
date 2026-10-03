@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { getLang, setLang, t, type DictKey } from '../lib/i18n'
 import { loadVersionInfo } from '../lib/version'
 import { getTheme, setTheme, THEME_KEYS, type ThemeKey } from '../lib/theme'
@@ -96,6 +96,17 @@ function openSidebar() {
 function closeSidebar() {
   sidebarOpen.value = false
 }
+
+// Пока боковое меню открыто, страница под ним не прокручивается (BACKLOG 23:01). Блокировку делят левая шторка (здесь) и правая
+// панель из бандла /header-widgets/: у каждой свой атрибут на <html>, прокрутка возвращается, когда сняты оба.
+function applyScrollLock(side: 'left' | 'right', on: boolean) {
+  const root = document.documentElement
+  if (on) root.setAttribute('data-lock-' + side, '')
+  else root.removeAttribute('data-lock-' + side)
+  root.style.overflow = root.hasAttribute('data-lock-left') || root.hasAttribute('data-lock-right') ? 'hidden' : ''
+}
+watch(sidebarOpen, (open) => applyScrollLock('left', open))
+onUnmounted(() => applyScrollLock('left', false))
 
 const changelogOpen = ref(false)
 const logoutConfirmOpen = ref(false) // «Точно выйти?» (BACKLOG 18)
@@ -244,7 +255,10 @@ onUnmounted(() => {
   <div
     v-if="sidebarOpen"
     class="fixed inset-0 z-[29] bg-black/50"
+    style="touch-action: none"
+    data-testid="sidebar-overlay"
     @click="closeSidebar"
+    @touchmove.prevent
   ></div>
   <nav
     class="fixed inset-y-0 left-0 z-30 flex w-72 max-w-[85vw] flex-col gap-1 overflow-y-auto border-r p-4 [&>*]:shrink-0 transition-transform duration-200"

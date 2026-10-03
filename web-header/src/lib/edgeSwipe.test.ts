@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { isCloseSwipe, isLeftSwipe, isOpenSwipe, isSwipeBlockedTarget, openZonePx, startsInOpenZone } from './edgeSwipe'
+import { isCloseSwipe, isLeftSwipe, isOpenSwipe, isOpenSwipeFrom, isSwipeBlockedTarget, isWideLeftSwipe, openZonePx, startsInOpenZone, swipeZone } from './edgeSwipe'
 
 const W = 400
 
@@ -28,7 +28,7 @@ describe('isLeftSwipe / isOpenSwipe', () => {
   })
   it('открытие = старт в зоне + свайп влево', () => {
     expect(isOpenSwipe({ x: 345, y: 300 }, { x: 250, y: 310 }, W)).toBe(true)
-    expect(isOpenSwipe({ x: 200, y: 300 }, { x: 100, y: 300 }, W)).toBe(false) // старт не в зоне
+    expect(isOpenSwipe({ x: 150, y: 300 }, { x: 40, y: 300 }, W)).toBe(false) // старт в левой половине — не наш
     expect(isOpenSwipe({ x: 395, y: 300 }, { x: 370, y: 300 }, W)).toBe(false) // короткий
   })
 })
@@ -83,5 +83,40 @@ describe('isSwipeBlockedTarget', () => {
     expect(isSwipeBlockedTarget(scrollable('scroll'))).toBe(true)
     expect(isSwipeBlockedTarget(scrollable('hidden'))).toBe(false)
     expect(isSwipeBlockedTarget(scrollable('visible'))).toBe(false)
+  })
+})
+
+describe('свайп с середины экрана (BACKLOG 07:52)', () => {
+  it('зоны: у края — edge, правая половина — wide, левая половина — не наш', () => {
+    expect(swipeZone({ x: 390, y: 0 }, W)).toBe('edge')
+    expect(swipeZone({ x: 200, y: 0 }, W)).toBe('wide') // ровно середина
+    expect(swipeZone({ x: 250, y: 0 }, W)).toBe('wide')
+    expect(swipeZone({ x: 199, y: 0 }, W)).toBeNull()
+  })
+
+  it('в «широкой» зоне жест строже: путь ≥ 84 px и почти строго горизонтально (наклон ≤ 0.4)', () => {
+    expect(isWideLeftSwipe({ x: 300, y: 300 }, { x: 200, y: 320 })).toBe(true)
+    expect(isWideLeftSwipe({ x: 300, y: 300 }, { x: 230, y: 300 })).toBe(false) // 70 px — мало
+    expect(isWideLeftSwipe({ x: 300, y: 300 }, { x: 200, y: 345 })).toBe(false) // наклон 0.45
+    expect(isWideLeftSwipe({ x: 300, y: 300 }, { x: 400, y: 300 })).toBe(false) // вправо
+  })
+
+  it('isOpenSwipeFrom выбирает пороги по зоне: тот же жест в 60 px у края открывает, а с середины — нет', () => {
+    const start = { x: 390, y: 300 }
+    expect(isOpenSwipeFrom('edge', start, { x: 330, y: 300 })).toBe(true)
+    expect(isOpenSwipeFrom('wide', { x: 300, y: 300 }, { x: 240, y: 300 })).toBe(false)
+    expect(isOpenSwipeFrom('wide', { x: 300, y: 300 }, { x: 200, y: 300 })).toBe(true)
+    expect(isOpenSwipeFrom(null, start, { x: 0, y: 300 })).toBe(false)
+  })
+
+  it('isOpenSwipe для старта с середины экрана', () => {
+    expect(isOpenSwipe({ x: 250, y: 300 }, { x: 140, y: 310 }, W)).toBe(true)
+    expect(isOpenSwipe({ x: 250, y: 300 }, { x: 200, y: 300 }, W)).toBe(false)
+  })
+
+  it('canvas (график) жест блокирует', () => {
+    const c = document.createElement('canvas')
+    document.body.appendChild(c)
+    expect(isSwipeBlockedTarget(c)).toBe(true)
   })
 })

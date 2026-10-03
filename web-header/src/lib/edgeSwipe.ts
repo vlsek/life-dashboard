@@ -8,6 +8,14 @@ export const EDGE_ZONE_MAX_PX = 96 // …но не шире этого (на п�
 export const MIN_DISTANCE_PX = 56 // палец должен уйти влево не меньше
 export const MAX_SLOPE = 0.6 // |dy| / |dx| — ближе к горизонтали, иначе это прокрутка страницы
 
+// BACKLOG 07:52 — «почему свайп справа не с центра экрана?»: открывать можно и с середины. Вне узкой «краевой» зоны жест строже,
+// чтобы не мешать обычному касанию и горизонтальной прокрутке: длиннее путь и почти строго горизонтально.
+export const WIDE_ZONE_START_RATIO = 0.5 // «широкая» зона — правая половина экрана
+export const WIDE_MIN_DISTANCE_PX = 84
+export const WIDE_MAX_SLOPE = 0.4
+
+export type SwipeZone = 'edge' | 'wide'
+
 export interface Point {
   x: number
   y: number
@@ -29,8 +37,27 @@ export function isLeftSwipe(start: Point, now: Point): boolean {
   return Math.abs(dy) <= Math.abs(dx) * MAX_SLOPE
 }
 
+// Где начался жест: у края (мягкие пороги), в правой половине экрана (строгие) или вне зон (не наш)
+export function swipeZone(start: Point, viewportWidth: number): SwipeZone | null {
+  if (startsInOpenZone(start, viewportWidth)) return 'edge'
+  return start.x >= viewportWidth * WIDE_ZONE_START_RATIO ? 'wide' : null
+}
+
+export function isWideLeftSwipe(start: Point, now: Point): boolean {
+  const dx = now.x - start.x
+  const dy = now.y - start.y
+  if (dx > -WIDE_MIN_DISTANCE_PX) return false
+  return Math.abs(dy) <= Math.abs(dx) * WIDE_MAX_SLOPE
+}
+
+export function isOpenSwipeFrom(zone: SwipeZone | null, start: Point, now: Point): boolean {
+  if (zone === 'edge') return isLeftSwipe(start, now)
+  if (zone === 'wide') return isWideLeftSwipe(start, now)
+  return false
+}
+
 export function isOpenSwipe(start: Point, end: Point, viewportWidth: number): boolean {
-  return startsInOpenZone(start, viewportWidth) && isLeftSwipe(start, end)
+  return isOpenSwipeFrom(swipeZone(start, viewportWidth), start, end)
 }
 
 export function isCloseSwipe(start: Point, end: Point): boolean {
@@ -46,6 +73,7 @@ export function isSwipeBlockedTarget(target: EventTarget | null): boolean {
   let el = target instanceof Element ? target : null
   while (el && el !== document.documentElement) {
     if (el.hasAttribute('data-no-swipe')) return true
+    if (el instanceof HTMLCanvasElement || el.tagName === 'canvas') return true // графики: касание-перетаскивание показывает подсказку точки
     if (el instanceof HTMLInputElement && (el.type === 'range' || el.type === 'text' || el.type === 'number' || el.type === 'search')) return true
     if (el instanceof HTMLTextAreaElement) return true
     if (el.scrollWidth > el.clientWidth + 1) {
