@@ -20,4 +20,16 @@ describe('WaterReminderBanner', () => {
     await w.find('[data-test="water-reminder-dismiss"]').trigger('click')
     expect(w.emitted('dismiss')).toHaveLength(1)
   })
+
+  it('never prints NaN, Infinity or a negative number (BACKLOG 23, 15:19)', () => {
+    for (const [ml, goal] of [[NaN, 2000], [500, NaN], [-300, 2000], [Infinity, 2000], [500, -1], [undefined as unknown as number, 2000]]) {
+      const w = mount(WaterReminderBanner, { props: { ml, goal } })
+      const text = w.find('[data-test="water-reminder-text"]').text()
+      expect(text).not.toMatch(/NaN|Infinity|undefined|-\d/)
+    }
+  })
+  it('a drunk amount above the goal shows "0 left", not a negative number', () => {
+    const w = mount(WaterReminderBanner, { props: { ml: 2600, goal: 2000 } })
+    expect(w.find('[data-test="water-reminder-text"]').text()).toContain('осталось 0 мл')
+  })
 })
