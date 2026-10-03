@@ -1,6 +1,13 @@
 {
-  "version": "2.40",
+  "version": "2.41",
   "en": [
+    {
+      "version": "2.41",
+      "date": "2026-10-03 10:27",
+      "changes": [
+        "Calendar: swiping over the month grid and the month selector row no longer pulls out the side panels (the left menu and the right panel). Gestures at the very edge of the page, outside the calendar, work as before"
+      ]
+    },
     {
       "version": "2.40",
       "date": "2026-10-03 10:24",
@@ -1739,6 +1746,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.41",
+      "date": "2026-10-03 10:27",
+      "changes": [
+        "Календарь: свайп по сетке месяца и по строке выбора месяца больше не выдвигает боковые плашки (левое меню и правую панель). Жесты у самого края страницы, вне календаря, работают как раньше"
+      ]
+    },
     {
       "version": "2.40",
       "date": "2026-10-03 10:24",

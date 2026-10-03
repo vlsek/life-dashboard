@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.40";
+const SITE_VERSION = "2.41";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.41", date: "2026-10-03 10:27", changes: [
+        "Календарь: свайп по сетке месяца и по строке выбора месяца больше не выдвигает боковые плашки (левое меню и правую панель). Жесты у самого края страницы, вне календаря, работают как раньше",
+    ]},
     { version: "2.40", date: "2026-10-03 10:24", changes: [
         "Дашборд: в плашке «Установите приложение» заголовок и пояснение больше не слипаются в одну строку — теперь это два отдельных блока, пояснение под заголовком (и на русском, и на английском)",
     ]},
@@ -1322,6 +1325,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.41", date: "2026-10-03 10:27", changes: [
+        "Calendar: swiping over the month grid and the month selector row no longer pulls out the side panels (the left menu and the right panel). Gestures at the very edge of the page, outside the calendar, work as before",
+    ]},
     { version: "2.40", date: "2026-10-03 10:24", changes: [
         "Dashboard: in the \"Install the app\" banner the title and the explanation no longer run together on one line — they are now two separate blocks, with the explanation under the title (in both Russian and English)",
     ]},
