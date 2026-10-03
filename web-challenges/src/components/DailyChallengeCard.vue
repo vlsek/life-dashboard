@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { t } from '../lib/i18n'
-import { computeDailyStats, defaultDayIdx, isMetricEntry } from '../lib/challenges'
+import { computeDailyStats, defaultDayIdx, hasAutoSource, isMetricEntry } from '../lib/challenges'
 import { todayStr } from '../lib/date'
 import Icon from './Icon.vue'
 import type { Challenge, ChallengeEntry } from '../lib/types'
@@ -77,8 +77,8 @@ function dotStyle(d: { i: number; isFuture: boolean; done: boolean; isToday: boo
   <div class="card mb-3.5">
     <div class="flex flex-wrap items-center gap-2">
       <strong><EmojiText :text="`${challenge.icon} ${challenge.title}`" /></strong>
-      <span v-if="challenge.source_metric_id" class="dim rounded-full border px-2 py-0.5 text-xs" style="border-color: var(--border)" data-testid="source-badge">
-        ↻ {{ t('ch_source_badge') }}{{ sourceName ? ' · ' + sourceName : '' }}
+      <span v-if="hasAutoSource(challenge)" class="dim rounded-full border px-2 py-0.5 text-xs" style="border-color: var(--border)" data-testid="source-badge">
+        ↻ {{ t(challenge.source_exercise_id ? 'ch_source_badge_workout' : 'ch_source_badge') }}{{ sourceName ? ' · ' + sourceName : '' }}
       </span>
       <button class="secondary ml-auto px-2 py-0.5" :title="t('ch_edit_btn')" :aria-label="t('ch_edit_btn')" data-testid="edit-challenge" @click="emit('edit', challenge)"><Icon name="edit" /></button>
       <button class="danger px-2 py-0.5" @click="emit('abandon', challenge)"><Icon name="trash" /></button>
@@ -131,7 +131,7 @@ function dotStyle(d: { i: number; isFuture: boolean; done: boolean; isToday: boo
       </template>
     </div>
 
-    <p v-if="dayFromMetric" class="dim mt-1.5 text-xs" data-testid="day-from-metric">{{ t('ch_source_day_hint') }}</p>
+    <p v-if="dayFromMetric" class="dim mt-1.5 text-xs" data-testid="day-from-metric">{{ t(challenge.source_exercise_id ? 'ch_source_day_hint_workout' : 'ch_source_day_hint') }}</p>
 
     <template v-if="stats.isOver">
       <p class="dim mt-2 text-sm">{{ t('ch_duration_over_note') }}</p>

@@ -1,6 +1,13 @@
 {
-  "version": "2.46",
+  "version": "2.47",
   "en": [
+    {
+      "version": "2.47",
+      "date": "2026-10-03 20:12",
+      "changes": [
+        "Challenges: daily values can now come from your workouts. The \"Source of values\" field in the challenge form has a new \"Workout exercises\" group: pick an exercise and every day without a manual entry takes the sum of reps over all sets of that exercise (several entries on one day add up). A manual entry for a day always wins, and days before the challenge start are not touched. Cards show a \"from workouts\" badge. Needs migration 042; until the owner applies it the exercise choice stays hidden and everything works as before"
+      ]
+    },
     {
       "version": "2.46",
       "date": "2026-10-03 20:01",
@@ -1781,6 +1788,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.47",
+      "date": "2026-10-03 20:12",
+      "changes": [
+        "Челленджи: значения дней можно брать из тренировок. В «Источнике значений» (форма челленджа) теперь есть группа «Упражнения из тренировок»: выберите упражнение — для каждого дня без ручной записи будет подставлена сумма повторов по всем подходам этого упражнения (несколько записей за день складываются). Ручная запись за день всегда главнее, дни до старта челленджа не меняются. На карточке появилась пометка «из тренировок». Нужна миграция 042: пока владелец её не применил, выбор упражнений скрыт и всё работает как раньше"
+      ]
+    },
     {
       "version": "2.46",
       "date": "2026-10-03 20:01",

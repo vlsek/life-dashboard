@@ -1,8 +1,8 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
 import { todayStr } from './date'
-import { buildInsertCustom, buildInsertFromTemplate, buildUpdateFromForm, mergeMetricValues, metricValueToNumber } from './challenges'
-import type { Challenge, ChallengeEntry, ChallengeTemplate, CustomChallengeFormInput, SourceMetric } from './types'
+import { buildInsertCustom, buildInsertFromTemplate, buildUpdateFromForm, exerciseRepsByDate, mergeMetricValues, metricValueToNumber } from './challenges'
+import type { Challenge, ChallengeEntry, ChallengeTemplate, CustomChallengeFormInput, SourceExercise, SourceMetric } from './types'
 
 export type AuthState =
   | { status: 'loading' }
@@ -19,6 +19,8 @@ export function useChallenges() {
   // Метрики пользователя (для выбора источника значений) и значения источников по дням: challengeId -> дата -> число.
   const metrics = ref<SourceMetric[]>([])
   const sourceValues = ref<Record<string, Record<string, number>>>({})
+  // Упражнения Workouts для выбора источника. Пусто, пока нет миграции 042 (колонки source_exercise_id нет) — тогда выбор скрыт.
+  const exercises = ref<SourceExercise[]>([])
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -65,6 +67,7 @@ export function useChallenges() {
     entriesByChallenge.value = grouped
 
     await loadMetricSources(userId)
+    await loadExerciseSources(userId)
   }
 
   // Необязательная часть: любая ошибка (нет колонки source_metric_id до миграции 032, сеть) просто оставляет
@@ -113,6 +116,46 @@ export function useChallenges() {
     }
   }
 
+  // Источник «упражнение» (миграция 042). Необязательная часть, как и метрики: нет колонки, сеть, нет таблицы тренировок —
+  // выбор упражнения скрыт, челленджи остаются в ручном режиме. Значения дописываем к уже посчитанным значениям метрик.
+  async function loadExerciseSources(userId: string) {
+    try {
+      // Колонка есть? Проверка запросом: до миграции 042 он вернёт ошибку, и фича остаётся скрытой.
+      const probe = await sb.from('challenge_instances').select('source_exercise_id').limit(1)
+      if (probe.error) {
+        exercises.value = []
+        return
+      }
+      const { data: exRows, error: exErr } = await sb.from('workout_exercises').select('id, name, category, unit').eq('user_id', userId).order('name')
+      if (exErr) throw exErr
+      exercises.value = (exRows || []) as SourceExercise[]
+
+      const sourced = instances.value.filter((c) => c.source_exercise_id && c.type.startsWith('daily'))
+      if (!sourced.length) return
+      const ids = [...new Set(sourced.map((c) => c.source_exercise_id as string))]
+      const minStart = sourced.reduce((min, c) => (c.start_date < min ? c.start_date : min), sourced[0].start_date)
+      const rows: { exercise_id: string; date: string; sets: unknown }[] = []
+      for (let from = 0; ; from += 1000) {
+        const { data, error: err } = await sb
+          .from('workout_entries')
+          .select('exercise_id, date, sets')
+          .eq('user_id', userId)
+          .in('exercise_id', ids)
+          .gte('date', minStart)
+          .order('date')
+          .range(from, from + 999)
+        if (err) throw err
+        rows.push(...((data || []) as typeof rows))
+        if (!data || data.length < 1000) break
+      }
+      const out = { ...sourceValues.value }
+      for (const c of sourced) out[c.id] = exerciseRepsByDate(rows, c.source_exercise_id as string)
+      sourceValues.value = out
+    } catch {
+      // значения упражнений не подтянулись — ручные записи и метрики остаются как есть
+    }
+  }
+
   // Записи челленджа для показа: ручные + значения из метрики-источника там, где ручной записи нет.
   function effectiveEntries(ch: Challenge): ChallengeEntry[] {
     return mergeMetricValues(ch, entriesByChallenge.value[ch.id] || [], sourceValues.value[ch.id] || {})
@@ -121,6 +164,11 @@ export function useChallenges() {
   function sourceMetricName(ch: Challenge): string | null {
     if (!ch.source_metric_id) return null
     return metrics.value.find((m) => m.id === ch.source_metric_id)?.name ?? null
+  }
+
+  function sourceExerciseName(ch: Challenge): string | null {
+    if (!ch.source_exercise_id) return null
+    return exercises.value.find((e) => e.id === ch.source_exercise_id)?.name ?? null
   }
 
   async function reload() {
@@ -203,6 +251,8 @@ export function useChallenges() {
     metrics,
     effectiveEntries,
     sourceMetricName,
+    exercises,
+    sourceExerciseName,
     error,
     init,
     reload,

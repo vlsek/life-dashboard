@@ -2,15 +2,15 @@
 import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { fieldsEnabledForType, formFromChallenge } from '../lib/challenges'
-import type { Challenge, ChallengeType, CustomChallengeFormInput, SourceMetric } from '../lib/types'
+import type { Challenge, ChallengeType, CustomChallengeFormInput, SourceExercise, SourceMetric } from '../lib/types'
 
 // Без `challenge` — создание своего челленджа; с `challenge` — правка существующего (тип фиксирован).
-const props = defineProps<{ challenge?: Challenge; metrics?: SourceMetric[] }>()
+const props = defineProps<{ challenge?: Challenge; metrics?: SourceMetric[]; exercises?: SourceExercise[] }>()
 const emit = defineEmits<{ close: []; save: [res: CustomChallengeFormInput] }>()
 
 const initial: CustomChallengeFormInput = props.challenge
   ? formFromChallenge(props.challenge)
-  : { title: '', icon: '🏆', type: 'daily_fixed', duration: 30, dailyTarget: 0, startValue: 0, increment: 1, unit: '', targetCount: 10, itemLabel: '', sourceMetricId: '' }
+  : { title: '', icon: '🏆', type: 'daily_fixed', duration: 30, dailyTarget: 0, startValue: 0, increment: 1, unit: '', targetCount: 10, itemLabel: '', sourceMetricId: '', sourceExerciseId: '' }
 const isEdit = computed(() => !!props.challenge)
 
 const title = ref(initial.title)
@@ -23,11 +23,19 @@ const increment = ref(initial.increment)
 const unit = ref(initial.unit)
 const targetCount = ref(initial.targetCount)
 const itemLabel = ref(initial.itemLabel)
-const sourceMetricId = ref(initial.sourceMetricId ?? '')
-// Источник значений — только для дневных челленджей и только если у человека есть подходящие метрики.
-// Если выбранная ранее метрика пропала из списка (деактивирована), оставляем её в списке пустой строкой-подписью.
+// Один выбор на два вида источника: значение метрики — её id, упражнение Workouts — 'ex:<id>' (миграция 042).
+const EX_PREFIX = 'ex:'
+const sourceChoice = ref(initial.sourceExerciseId ? EX_PREFIX + initial.sourceExerciseId : (initial.sourceMetricId ?? ''))
+// Источник — только для дневных челленджей и только если у человека есть подходящие метрики или упражнения.
+// Если выбранный ранее источник пропал из списка (метрика деактивирована, упражнение удалено), оставляем его пустой строкой-подписью.
 const sourceOptions = computed(() => props.metrics ?? [])
-const showSource = computed(() => type.value.startsWith('daily') && (sourceOptions.value.length > 0 || !!sourceMetricId.value))
+const exerciseOptions = computed(() => props.exercises ?? [])
+const showSource = computed(() => type.value.startsWith('daily') && (sourceOptions.value.length > 0 || exerciseOptions.value.length > 0 || !!sourceChoice.value))
+const choiceMissing = computed(() => {
+  const v = sourceChoice.value
+  if (!v) return false
+  return v.startsWith(EX_PREFIX) ? !exerciseOptions.value.some((e) => EX_PREFIX + e.id === v) : !sourceOptions.value.some((m) => m.id === v)
+})
 
 const enabled = computed(() => fieldsEnabledForType(type.value))
 
@@ -51,7 +59,8 @@ function save() {
     unit: unit.value,
     targetCount: targetCount.value,
     itemLabel: itemLabel.value,
-    sourceMetricId: type.value.startsWith('daily') ? sourceMetricId.value : '',
+    sourceMetricId: type.value.startsWith('daily') && !sourceChoice.value.startsWith(EX_PREFIX) ? sourceChoice.value : '',
+    sourceExerciseId: type.value.startsWith('daily') && sourceChoice.value.startsWith(EX_PREFIX) ? sourceChoice.value.slice(EX_PREFIX.length) : '',
   })
 }
 </script>
@@ -90,10 +99,20 @@ function save() {
 
       <template v-if="showSource">
         <label class="mt-2 block text-sm">{{ t('ch_source_label') }}</label>
-        <select v-model="sourceMetricId" class="w-full" data-testid="source-select">
+        <select v-model="sourceChoice" class="w-full" data-testid="source-select">
           <option value="">{{ t('ch_source_manual') }}</option>
-          <option v-for="m in sourceOptions" :key="m.id" :value="m.id">{{ m.icon ? m.icon + ' ' : '' }}{{ m.name }}{{ m.unit ? ' (' + m.unit + ')' : '' }}</option>
-          <option v-if="sourceMetricId && !sourceOptions.some((m) => m.id === sourceMetricId)" :value="sourceMetricId">…</option>
+          <template v-if="exerciseOptions.length">
+            <optgroup v-if="sourceOptions.length" :label="t('ch_source_group_metrics')">
+              <option v-for="m in sourceOptions" :key="m.id" :value="m.id">{{ m.icon ? m.icon + ' ' : '' }}{{ m.name }}{{ m.unit ? ' (' + m.unit + ')' : '' }}</option>
+            </optgroup>
+            <optgroup :label="t('ch_source_group_workouts')">
+              <option v-for="e in exerciseOptions" :key="e.id" :value="EX_PREFIX + e.id" data-source-kind="exercise">{{ e.name }}{{ e.category ? ' · ' + e.category : '' }}</option>
+            </optgroup>
+          </template>
+          <template v-else>
+            <option v-for="m in sourceOptions" :key="m.id" :value="m.id">{{ m.icon ? m.icon + ' ' : '' }}{{ m.name }}{{ m.unit ? ' (' + m.unit + ')' : '' }}</option>
+          </template>
+          <option v-if="choiceMissing" :value="sourceChoice">…</option>
         </select>
         <p class="dim mt-1 text-xs">{{ t('ch_source_hint') }}</p>
       </template>

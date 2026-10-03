@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.46";
+const SITE_VERSION = "2.47";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.47", date: "2026-10-03 20:12", changes: [
+        "Челленджи: значения дней можно брать из тренировок. В «Источнике значений» (форма челленджа) теперь есть группа «Упражнения из тренировок»: выберите упражнение — для каждого дня без ручной записи будет подставлена сумма повторов по всем подходам этого упражнения (несколько записей за день складываются). Ручная запись за день всегда главнее, дни до старта челленджа не меняются. На карточке появилась пометка «из тренировок». Нужна миграция 042: пока владелец её не применил, выбор упражнений скрыт и всё работает как раньше",
+    ]},
     { version: "2.46", date: "2026-10-03 20:01", changes: [
         "Тренировки, «Прогрессии упражнений»: новая цепочка «Планка (на время)» — на коленях, обычная, боковая, с подъёмом ноги. Ступень проходится, когда в одном подходе вы продержались нужное число секунд (30, 60, 45 и 30). Секунды записывайте так же, как раньше: в поле подхода, где у других упражнений повторения. В цели и в лучшем подходе теперь стоит «сек» вместо «повт.»",
     ]},
@@ -1340,6 +1343,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.47", date: "2026-10-03 20:12", changes: [
+        "Challenges: daily values can now come from your workouts. The \"Source of values\" field in the challenge form has a new \"Workout exercises\" group: pick an exercise and every day without a manual entry takes the sum of reps over all sets of that exercise (several entries on one day add up). A manual entry for a day always wins, and days before the challenge start are not touched. Cards show a \"from workouts\" badge. Needs migration 042; until the owner applies it the exercise choice stays hidden and everything works as before",
+    ]},
     { version: "2.46", date: "2026-10-03 20:01", changes: [
         "Workouts, \"Exercise progressions\": a new \"Plank (hold time)\" chain: knee, regular, side and with a leg lift. A step is done when you hold for the target number of seconds in a single set (30, 60, 45 and 30). Log seconds the same way as before, in the set field where other exercises take reps. The goal and best set now read \"sec\" instead of \"reps\"",
     ]},

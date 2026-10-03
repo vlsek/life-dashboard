@@ -141,7 +141,9 @@ export function buildInsertCustom(form: CustomChallengeFormInput) {
     target_count: type === 'cumulative_count' ? form.targetCount || 0 : null,
     item_label: type === 'cumulative_count' ? form.itemLabel || null : null,
     // Поле добавляем только когда источник выбран: без миграции 032 колонки нет, и лишний null уронил бы любой insert.
-    ...(type.startsWith('daily') && form.sourceMetricId ? { source_metric_id: form.sourceMetricId } : {}),
+    // Источник один: если выбрано упражнение (042), метрика не пишется.
+    ...(type.startsWith('daily') && form.sourceMetricId && !form.sourceExerciseId ? { source_metric_id: form.sourceMetricId } : {}),
+    ...(type.startsWith('daily') && form.sourceExerciseId ? { source_exercise_id: form.sourceExerciseId } : {}),
   }
 }
 
@@ -150,15 +152,23 @@ export function buildInsertCustom(form: CustomChallengeFormInput) {
 // нумерацию дней. Поэтому патч содержит только редактируемые поля; template_id и type остаются как
 // были (челлендж из шаблона после правки остаётся челленджем из шаблона). Поля, не относящиеся к
 // типу, пишутся как null — как и при создании.
-export function buildUpdateFromForm(form: CustomChallengeFormInput, type: ChallengeType, existing?: Pick<Challenge, 'source_metric_id'>) {
+export function buildUpdateFromForm(
+  form: CustomChallengeFormInput,
+  type: ChallengeType,
+  existing?: Pick<Challenge, 'source_metric_id' | 'source_exercise_id'>,
+) {
   const { template_id: _templateId, type: _type, ...patch } = buildInsertCustom({ ...form, type })
   void _templateId
   void _type
-  // Снять источник (вернуться к ручному вводу) можно, только если колонка уже есть у этой записи.
-  if (type.startsWith('daily') && !form.sourceMetricId && existing && 'source_metric_id' in existing) {
-    return { ...patch, source_metric_id: null }
-  }
-  return patch
+  if (!type.startsWith('daily')) return patch
+  // Источник один. Снять/сбросить другой можно, только если его колонка уже есть у этой записи (иначе лишний null
+  // уронил бы update на базе без миграции 032 / 042).
+  const hasMetricCol = !!existing && 'source_metric_id' in existing
+  const hasExerciseCol = !!existing && 'source_exercise_id' in existing
+  const extra: { source_metric_id?: null; source_exercise_id?: null } = {}
+  if (hasMetricCol && !(form.sourceMetricId && !form.sourceExerciseId)) extra.source_metric_id = null
+  if (hasExerciseCol && !form.sourceExerciseId) extra.source_exercise_id = null
+  return { ...patch, ...extra }
 }
 
 // Значения формы правки из существующего челленджа (то, чего в базе нет, берём как при создании).
@@ -175,6 +185,7 @@ export function formFromChallenge(ch: Challenge): CustomChallengeFormInput {
     targetCount: ch.target_count ?? 10,
     itemLabel: ch.item_label ?? '',
     sourceMetricId: ch.source_metric_id ?? '',
+    sourceExerciseId: ch.source_exercise_id ?? '',
   }
 }
 
@@ -227,4 +238,29 @@ export function mergeMetricValues(
   }
   extra.sort((a, b) => a.date.localeCompare(b.date))
   return extra.length ? [...entries, ...extra] : entries
+}
+
+// ===== Значения из упражнения Workouts (миграция 042, BACKLOG 14, «11:28») =====
+
+// Сумма повторов по подходам одной записи тренировки: [{reps, weight, ...}] -> число. Подход без reps (например,
+// «планка» только со временем) вклада не даёт. Старый формат (просто число) — как есть.
+export function exerciseSetsToReps(sets: unknown): number {
+  return metricValueToNumber('sets', sets) ?? 0
+}
+
+// Записи тренировок выбранного упражнения -> дата -> сумма повторов за день (несколько записей за день складываются).
+// Дни, где повторов нет (0), в результат не попадают: «пусто» для челленджа то же, что «не тренировался».
+export function exerciseRepsByDate(entries: { exercise_id: string; date: string; sets: unknown }[], exerciseId: string): Record<string, number> {
+  const out: Record<string, number> = {}
+  for (const e of entries) {
+    if (e.exercise_id !== exerciseId) continue
+    const n = exerciseSetsToReps(e.sets)
+    if (n > 0) out[e.date] = (out[e.date] ?? 0) + n
+  }
+  return out
+}
+
+// У челленджа есть любой автоисточник значений (метрика или упражнение).
+export function hasAutoSource(ch: Pick<Challenge, 'source_metric_id' | 'source_exercise_id'>): boolean {
+  return !!(ch.source_metric_id || ch.source_exercise_id)
 }

@@ -20,6 +20,8 @@ export interface Challenge {
   completed_at: string | null // ISO timestamp
   // Миграция 032: метрика-источник значений дней. Колонки может ещё не быть (тогда поля нет вовсе).
   source_metric_id?: string | null
+  // Миграция 042: упражнение Workouts как источник значений дней (сумма повторов по подходам). Колонки может ещё не быть.
+  source_exercise_id?: string | null
   created_at: string
 }
 
@@ -63,6 +65,8 @@ export interface CustomChallengeFormInput {
   itemLabel: string
   // id метрики-источника ('' или не задано — вводить вручную)
   sourceMetricId?: string
+  // id упражнения-источника (миграция 042). Метрика и упражнение взаимоисключающие: задан один из двух.
+  sourceExerciseId?: string
 }
 
 // Метрика пользователя, из которой челлендж может брать значения дней (BACKLOG 14, «11:28»).
@@ -71,5 +75,13 @@ export interface SourceMetric {
   name: string
   icon: string | null
   type: string
+  unit: string | null
+}
+
+// Упражнение Workouts, из подходов которого челлендж может брать значения дней (миграция 042).
+export interface SourceExercise {
+  id: string
+  name: string
+  category: string | null
   unit: string | null
 }

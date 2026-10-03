@@ -19,6 +19,8 @@ const {
   metrics,
   effectiveEntries,
   sourceMetricName,
+  exercises,
+  sourceExerciseName,
   error,
   init,
   startFromTemplate,
@@ -115,7 +117,7 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
             v-else
             :challenge="ch"
             :entries="entriesFor(ch)"
-            :source-name="sourceMetricName(ch)"
+            :source-name="ch.source_exercise_id ? sourceExerciseName(ch) : sourceMetricName(ch)"
             @abandon="onAbandon"
             @edit="editing = $event"
             @mark-completed="markCompleted"
@@ -133,7 +135,7 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
     </template>
 
     <CatalogModal v-if="catalogOpen" @close="catalogOpen = false" @select="onSelectTemplate" />
-    <CustomChallengeForm v-if="customFormOpen" :metrics="metrics" @close="customFormOpen = false" @save="onSaveCustom" />
-    <CustomChallengeForm v-if="editing" :key="editing.id" :challenge="editing" :metrics="metrics" @close="editing = null" @save="onSaveEdit" />
+    <CustomChallengeForm v-if="customFormOpen" :metrics="metrics" :exercises="exercises" @close="customFormOpen = false" @save="onSaveCustom" />
+    <CustomChallengeForm v-if="editing" :key="editing.id" :challenge="editing" :metrics="metrics" :exercises="exercises" @close="editing = null" @save="onSaveEdit" />
   </main>
 </template>
