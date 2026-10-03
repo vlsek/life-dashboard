@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.31";
+const SITE_VERSION = "2.32";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.32", date: "2026-10-03 05:38", changes: [
+        "Тренировки: в форме упражнения появился выбор групп мышц. Если упражнения нет в справочнике (например, «Wall angels»), отметь нужные группы — и оно попадёт на карту мышц, в статистику и перестанет висеть в списке «не привязанных». Под названием видно, распознано ли упражнение автоматически, а кнопка «Сбросить на автоматическую» возвращает прежнее поведение. Привязка хранится на этом устройстве и переживает переименование упражнения",
+    ]},
     { version: "2.31", date: "2026-10-03 05:27", changes: [
         "Вода: плашка-напоминалка «Пора выпить воды» теперь пропадает сразу, как только вы добавили воду (раньше — только когда была выпита вся норма), а числа в ней обновляются мгновенно из записи воды в шапке или правой панели. Вода, добавленная за другую дату, сегодняшнюю плашку не гасит. Числа в плашке стали защищены: вместо пустых, отрицательных или нечисловых значений показывается 0, а «осталось» никогда не уходит в минус",
     ]},
@@ -1294,6 +1297,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.32", date: "2026-10-03 05:38", changes: [
+        "Workouts: the exercise form now lets you pick muscle groups. If an exercise is not in the reference (for example \"Wall angels\"), mark the groups and it shows up on the muscle map and in the stats, and stops sitting in the \"unlinked\" list. Under the name you can see whether the exercise was recognised automatically, and \"Reset to automatic\" brings the old behaviour back. The link is stored on this device and survives renaming the exercise",
+    ]},
     { version: "2.31", date: "2026-10-03 05:27", changes: [
         "Water: the \"Time for some water\" reminder now disappears as soon as you add water (before, only when the whole goal was reached), and its numbers update instantly from the water entry in the header or the right panel. Water added for another date does not dismiss today's reminder. The numbers are now guarded: empty, negative or non-numeric values show as 0, and \"left\" never goes negative",
     ]},
