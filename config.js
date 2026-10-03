@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.49";
+const SITE_VERSION = "2.50";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.50", date: "2026-10-04 02:07", changes: [
+        "Подходы в день по плану: правило «N подходов» теперь учитывается не только на Дашборде, но и в шапке, Истории, Магазине и в балансе и журнале баллов профиля — кольца, баллы и История не расходятся. Каждый день считается по правилу, действовавшему в этот день: прошлые дни и уже начисленные баллы не пересчитываются. Поле в форме метрики по-прежнему появляется после применения миграции 041; серии и баллы на сервере — следующим шагом",
+    ]},
     { version: "2.49", date: "2026-10-03 21:02", changes: [
         "Вода: норма стала нормой ПИТЬЯ — вода из еды (супы, фрукты, овощи) в неё не входит, около 20% суточной воды человек получает с едой, и эта доля вычтена. Автоматическая норма пересчитана одной формулой: с ростом — площадь поверхности тела × 1000 мл/м² (было 1200), без роста — вес × 26 мл (было 30), без веса — 1800 мл (было 2000). Например, 70 кг и 175 см: было 2210, стало 1840 мл. Норма, заданная вручную, не меняется",
         "Справка «i» у дневной нормы воды (окно воды на Дашборде и в шапке) теперь встроенная плашка под подписью, а не системное окно браузера: показывает расчёт и во всех случаях объясняет, что вода из еды не считается; повторный клик скрывает её",
@@ -1351,6 +1354,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.50", date: "2026-10-04 02:07", changes: [
+        "Planned sets per day: the \"N sets\" rule now applies not only on the Dashboard but also in the header, History, Shop and in the profile balance and points log, so rings, points and History agree. Each day is judged by the rule that was in force that day: past days and points already earned are not recalculated. The metric form field still appears once migration 041 is applied; server-side streaks and points come next",
+    ]},
     { version: "2.49", date: "2026-10-03 21:02", changes: [
         "Water: the goal is now a DRINKING goal — water from food (soup, fruit, vegetables) is not included; people get about 20% of their daily water with food and that share is taken off. The automatic goal uses one formula: with height — body surface area × 1000 ml/m² (was 1200), without height — weight × 26 ml (was 30), without weight — 1800 ml (was 2000). For example 70 kg and 175 cm: was 2210, now 1840 ml. A goal you set by hand does not change",
         "The «i» help next to the daily water goal (the water window on the Dashboard and in the header) is now an inline plate under the label instead of a system browser dialog: it shows the calculation, always explains that water from food does not count, and a second click hides it",

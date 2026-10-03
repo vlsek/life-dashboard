@@ -1,6 +1,13 @@
 {
-  "version": "2.49",
+  "version": "2.50",
   "en": [
+    {
+      "version": "2.50",
+      "date": "2026-10-04 02:07",
+      "changes": [
+        "Planned sets per day: the \"N sets\" rule now applies not only on the Dashboard but also in the header, History, Shop and in the profile balance and points log, so rings, points and History agree. Each day is judged by the rule that was in force that day: past days and points already earned are not recalculated. The metric form field still appears once migration 041 is applied; server-side streaks and points come next"
+      ]
+    },
     {
       "version": "2.49",
       "date": "2026-10-03 21:02",
@@ -1804,6 +1811,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.50",
+      "date": "2026-10-04 02:07",
+      "changes": [
+        "Подходы в день по плану: правило «N подходов» теперь учитывается не только на Дашборде, но и в шапке, Истории, Магазине и в балансе и журнале баллов профиля — кольца, баллы и История не расходятся. Каждый день считается по правилу, действовавшему в этот день: прошлые дни и уже начисленные баллы не пересчитываются. Поле в форме метрики по-прежнему появляется после применения миграции 041; серии и баллы на сервере — следующим шагом"
+      ]
+    },
     {
       "version": "2.49",
       "date": "2026-10-03 21:02",
