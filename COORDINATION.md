@@ -63,7 +63,7 @@ BACKLOG 4.2/13, ВТОРОЙ СРЕЗ «подходов в день по пла
 — свободен —
 
 ### Агент 4
-— свободен —
+BACKLOG 388 + 391, ПЕРВЫЙ СРЕЗ «Виджеты на главной»: блок «Виджеты» (ключ `widgets` в `profiles.dashboard_layout`, по умолчанию скрыт; пока не выбран ни один виджет — блока нет) и виджет «Навыки» (выбранные навыки хранятся в самом элементе раскладки, `config.skills`, без миграции; карточка: название, полоса прогресса, «+шаг» по правилу раздела Навыков, анимация очков). Выбор — галочками в окне «Настроить дашборд». ТРОГАЮ: `web-dashboard/src/lib/{layout,widgets,useSkillsWidget}.ts`, `components/{SkillsWidget,LayoutModal}.vue`, `App.vue` (ТОЛЬКО ветка `widgets` в списке блоков и `blockTitles`), `lib/i18n.ts` (ключи `dash_widget_*`); копия правил раскладки в `web-header/src/lib/layout.ts` + подпись блока в `SettingsModal.vue` и i18n шапки (чтобы сохранение из шапки не стирало `widgets`); тесты; пересборка `dashboard/` и `header-widgets/`; `config.js`, ROADMAP, BACKLOG. НЕ трогаю: `useWater*`, `AppShell.vue`, `web-header/src/lib/{types,metrics,progress,progressSummary}.ts` (агент 1), `web-achievements/`, SQL. НЕ входит: виджеты «Языки» и «Коплю на товар» (следующие срезы). С: 2026-10-03 20:04.
 
 ### Агент 5
 — свободен —
