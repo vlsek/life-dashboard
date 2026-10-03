@@ -122,3 +122,43 @@ describe('InstallBanner', () => {
     expect(w.find('[data-test="install-ios-hint"]').text()).toContain('Поделиться')
   })
 })
+
+describe('InstallBanner: заголовок и пояснение не слипаются (BACKLOG 25, 🐞 «Install the appIt opens…»)', () => {
+  const mk = async (lang: string) => {
+    localStorage.setItem('site_lang', lang)
+    vi.resetModules()
+    const { default: InstallBanner } = await import('./components/InstallBanner.vue')
+    const w = mount(InstallBanner)
+    fireInstallEvent()
+    await flushPromises()
+    return w
+  }
+
+  it('заголовок и пояснение — разные блочные элементы (display:block), а не склеенный текст в одной строке', async () => {
+    for (const lang of ['ru', 'en']) {
+      const w = await mk(lang)
+      const title = w.find('[data-test="install-title"]')
+      const text = w.find('[data-test="install-text"]')
+      expect(title.exists() && text.exists(), lang).toBe(true)
+      expect(title.element).not.toBe(text.element)
+      expect(title.classes(), lang).toContain('block')
+      expect(text.classes(), lang).toContain('block')
+      expect(title.text().length).toBeGreaterThan(3)
+      expect(text.text().length).toBeGreaterThan(10)
+    }
+  })
+
+  it('порядок: сначала заголовок, ниже пояснение; тексты на нужном языке', async () => {
+    const w = await mk('en')
+    const kids = w.find('[data-test="install-title"]').element.parentElement!.children
+    expect(kids[0].getAttribute('data-test')).toBe('install-title')
+    expect(kids[1].getAttribute('data-test')).toBe('install-text')
+    expect(kids[0].textContent).toBe('Install the app')
+    expect(kids[1].textContent).toContain('It opens as a separate app')
+  })
+
+  it('пояснение не начинается с пробела (больше не полагаемся на пробел между span-ами)', async () => {
+    const w = await mk('ru')
+    expect(w.find('[data-test="install-text"]').element.textContent!.startsWith(' ')).toBe(false)
+  })
+})

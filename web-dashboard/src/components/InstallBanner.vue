@@ -27,9 +27,11 @@ function close() {
 <template>
   <div v-if="visible" class="mb-3 rounded-lg border p-2.5" data-test="install-banner" style="border-color: var(--border); border-left: 3px solid var(--accent); background: var(--bg-card)">
     <div class="flex items-center gap-2.5">
+      <!-- заголовок и пояснение — два блока друг под другом: раньше между ними держался только пробел внутри <span>, который Vue при
+           сборке схлопывал, и «Install the appIt opens as a separate app» слипалось в одну строку (BACKLOG 25, 🐞 без времени) -->
       <div class="flex-1 text-sm">
-        <strong>{{ t('install_banner_title') }}</strong>
-        <span class="dim"> {{ t('install_banner_text') }}</span>
+        <strong class="block" data-test="install-title">{{ t('install_banner_title') }}</strong>
+        <span class="dim block" data-test="install-text">{{ t('install_banner_text') }}</span>
       </div>
       <button type="button" data-test="install-btn" @click="onInstall">{{ t('install_banner_btn') }}</button>
       <button type="button" class="secondary px-2" data-test="install-dismiss" :aria-label="t('dash_close_btn')" @click="close"><Icon name="x" /></button>
