@@ -60,7 +60,7 @@ function ring(p: NonNullable<typeof day.value>, label: string) {
     basePct: p.total > 0 ? p.done / p.total : 0,
     bonusPct: p.bonusPct,
     totalPct: pct,
-    title: `${label}: ${pct}% (${p.done}/${p.total}${p.bonusPct > 0 ? ' +' + p.bonusPct + '% ⭐' : ''})`,
+    title: `${label}: ${pct}% (${p.done}/${p.total}${p.bonusPct > 0 ? ' +' + p.bonusPct + '%' : ''})`,
   }
 }
 const dayRing = computed(() => (day.value && showDay.value ? ring(day.value, t('dash_day_progress_label')) : null))
@@ -161,7 +161,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
     </Teleport>
     <FavoriteHeart v-if="pageKey && !props.panelOnly" :active="isFavorite" @toggle="onToggleFavorite" />
     <template v-if="!props.panelOnly">
-      <WaterGlass v-if="waterVisible" :today-ml="todayMl" :norm-ml="normMl" :title="`💧 ${todayMl} / ${normMl} ${unitLabel}`" @click="waterOpen = true" />
+      <WaterGlass v-if="waterVisible" :today-ml="todayMl" :norm-ml="normMl" :title="`${todayMl} / ${normMl} ${unitLabel}`" @click="waterOpen = true" />
       <DayWeekBadge v-if="dayRing" kind="day" v-bind="dayRing" @click="summaryKind = 'day'" />
       <DayWeekBadge v-if="weekRing" kind="week" v-bind="weekRing" @click="summaryKind = 'week'" />
     </template>

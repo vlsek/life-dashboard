@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { ref } from 'vue'
 import { t } from '../lib/i18n'
 import type { DayProgressSettings } from '../lib/progressSettings'
@@ -22,7 +23,7 @@ function onSave() {
 <template>
   <div class="gh-backdrop" @click.self="emit('close')">
     <div class="gh-modal" data-test="settings-modal">
-      <h3>{{ t('dash_day_progress_settings_title') }}</h3>
+      <h3><EmojiText :text="t('dash_day_progress_settings_title')" /></h3>
       <label class="gh-check"><input v-model="enabled" type="checkbox" /> {{ t('dash_day_progress_show') }}</label>
       <label class="gh-check" style="margin-top: 10px"><input v-model="includePlanned" type="checkbox" /> {{ t('dash_day_progress_include_planned') }}</label>
       <label class="gh-check" style="margin-top: 10px"><input v-model="includeMetrics" type="checkbox" /> {{ t('dash_day_progress_include_metrics') }}</label>

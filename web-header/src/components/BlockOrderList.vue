@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { dropIndex, moveTo, rowShift } from '../lib/dragReorder'
@@ -73,7 +74,7 @@ onBeforeUnmount(() => finish(false))
         @keydown="onKey($event, i)"
       >☰</button>
       <div class="gh-block-text" :style="{ opacity: item.visible ? 1 : 0.5 }">
-        <div style="font-weight: 600">{{ labels[item.key].title }}</div>
+        <div style="font-weight: 600"><EmojiText :text="labels[item.key].title" /></div>
         <div class="gh-dim" style="font-size: 12px">{{ labels[item.key].desc }}</div>
       </div>
       <button type="button" class="gh-btn gh-btn-icon" data-test="up" :disabled="i === 0" :aria-label="t('dash_layout_up')" @click="commit(moveTo(modelValue, i, i - 1))">↑</button>

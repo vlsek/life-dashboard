@@ -1,6 +1,13 @@
 {
-  "version": "2.44",
+  "version": "2.45",
   "en": [
+    {
+      "version": "2.45",
+      "date": "2026-10-03 19:54",
+      "changes": [
+        "Right panel and header windows: emoji (drop, gear, dumbbell, bonus star, Undo, pencil) are replaced by the same clean icons used across the site, in the theme colour. Hover tips on the glass and rings no longer contain emoji, only the numbers"
+      ]
+    },
     {
       "version": "2.44",
       "date": "2026-10-03 19:32",
@@ -1767,6 +1774,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.45",
+      "date": "2026-10-03 19:54",
+      "changes": [
+        "Правая панель и окна шапки: вместо эмодзи (капля, шестерёнка, гантель, звезда бонуса, «Отменить», карандаш) теперь те же аккуратные иконки, что и на страницах сайта, — в цвет темы. В подсказках при наведении на стакан и кольца эмодзи убраны, остались только числа"
+      ]
+    },
     {
       "version": "2.44",
       "date": "2026-10-03 19:32",

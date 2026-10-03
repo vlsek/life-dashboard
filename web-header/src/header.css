@@ -117,3 +117,7 @@ html[data-motion="off"] .water-saved-check { stroke-dashoffset: 0; }
 .gh-side-email { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gh-side-progress { display: flex; gap: 8px; margin-top: 6px; }
 .gh-side-ring { flex: 1; display: flex; align-items: center; gap: 6px; font-size: 12px; min-width: 0; }
+
+.gh-icon { display: inline-block; width: 1em; height: 1em; flex-shrink: 0; vertical-align: -0.15em; }
+.emoji-text-icon { margin-right: 0.35em; }
+.emoji-text-icon:last-child { margin-right: 0; }

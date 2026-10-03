@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { computed, ref, onMounted } from 'vue'
 import { getLang, t } from '../lib/i18n'
 import { fmtDate } from '../lib/date'
@@ -157,7 +158,7 @@ function saveHeightClick() {
   <div class="gh-backdrop" data-test="water-modal" @click.self="emit('close')">
     <div class="gh-modal">
       <WaterSavedAnim :tick="savedTick ?? 0" />
-      <h3>💧 {{ t('dash_water_modal_title') }}</h3>
+      <h3><EmojiText :text="'💧 ' + t('dash_water_modal_title')" /></h3>
 
       <label class="gh-dim" style="display: block; margin-top: 8px">{{ t('dash_water_date_label') }}</label>
       <input type="date" :value="dateStr" :max="today" min="2000-01-01" class="gh-input" @change="onDateChange" />
@@ -177,7 +178,7 @@ function saveHeightClick() {
 
       <div v-if="undoLast || setTotal" class="gh-wrap" style="margin-top: 8px; align-items: center" data-test="water-day-tools">
         <button v-if="undoLast" type="button" class="gh-btn" data-test="undo-last" :disabled="!undoAvailable || busy" @click="onUndo">
-          ↶ {{ t('dash_water_undo_btn') }}
+          <EmojiText :text="'↶ ' + t('dash_water_undo_btn')" />
         </button>
         <button
           v-if="setTotal"
@@ -188,7 +189,7 @@ function saveHeightClick() {
           :aria-label="t('dash_water_edit_total_btn')"
           @click="editing ? (editing = false) : startEdit()"
         >
-          ✎
+          <EmojiText text="✎" />
         </button>
       </div>
       <div v-if="editing && setTotal" style="margin-top: 8px" data-test="edit-total-form">

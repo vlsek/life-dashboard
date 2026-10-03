@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { computed } from 'vue'
 
 // «Спидометр» прогресса для правой панели: дуга в 270° (разрыв внизу), основная доля — цветом акцента, бонус ⭐ — золотым
@@ -27,6 +28,6 @@ const bonusLen = computed(() => arc * Math.min(1, Math.max(0, props.bonusPct / 1
       <div class="gh-gauge-pct">{{ totalPct }}%</div>
     </div>
     <div style="font-weight: 600; margin-top: 2px">{{ label }}</div>
-    <div class="gh-dim" style="font-size: 12px">{{ detail }}</div>
+    <div class="gh-dim" style="font-size: 12px"><EmojiText :text="detail" /></div>
   </button>
 </template>

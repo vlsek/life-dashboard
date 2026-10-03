@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.44";
+const SITE_VERSION = "2.45";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.45", date: "2026-10-03 19:54", changes: [
+        "Правая панель и окна шапки: вместо эмодзи (капля, шестерёнка, гантель, звезда бонуса, «Отменить», карандаш) теперь те же аккуратные иконки, что и на страницах сайта, — в цвет темы. В подсказках при наведении на стакан и кольца эмодзи убраны, остались только числа",
+    ]},
     { version: "2.44", date: "2026-10-03 19:32", changes: [
         "Дашборд: блоки можно перетаскивать прямо на главной, как на телефоне. В заголовке каждого блока (Профиль, Дневные метрики, Графики) есть ручка из трёх полосок: возьмите её и потяните вверх или вниз. Пока тянете, поверх страницы показываются компактные карточки блоков: ваша идёт за пальцем, остальные расступаются; отпустили, и порядок сразу сохранён. С клавиатуры блок двигают стрелки вверх и вниз на ручке. Отдельный режим «Изменить порядок» убран; в окне настройки дашборда по-прежнему можно скрывать и показывать блоки",
     ]},
@@ -1334,6 +1337,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.45", date: "2026-10-03 19:54", changes: [
+        "Right panel and header windows: emoji (drop, gear, dumbbell, bonus star, Undo, pencil) are replaced by the same clean icons used across the site, in the theme colour. Hover tips on the glass and rings no longer contain emoji, only the numbers",
+    ]},
     { version: "2.44", date: "2026-10-03 19:32", changes: [
         "Dashboard: blocks can now be dragged right on the main page, like on a phone. Every block heading (Profile, Daily metrics, Charts) has a three-bar handle: grab it and pull up or down. While you drag, compact block cards appear over the page: yours follows your finger and the others make room; let go and the order is saved at once. From the keyboard, the up and down arrows on the handle move a block. The separate \"Reorder blocks\" mode is gone; the dashboard settings window still lets you hide and show blocks",
     ]},

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { computed, onBeforeUnmount, onMounted, watch } from 'vue'
 import { getLang, t } from '../lib/i18n'
 import { isCloseSwipe, isOpenSwipeFrom, isSwipeBlockedTarget, swipeZone, type Point, type SwipeZone } from '../lib/edgeSwipe'
@@ -103,7 +104,7 @@ onBeforeUnmount(() => applyScrollLock(false))
   <aside class="gh-panel" :class="{ 'gh-panel-open': open }" role="dialog" :aria-label="t('hdr_panel_title')" :aria-hidden="!open" data-test="right-panel">
     <div class="gh-row" style="margin-bottom: 12px">
       <h3 style="flex: 1; margin: 0">{{ t('hdr_panel_title') }}</h3>
-      <button type="button" class="gh-btn gh-btn-icon" data-test="panel-settings" :title="t('hdr_settings_open')" :aria-label="t('hdr_settings_open')" @click="emit('open-settings')">⚙️</button>
+      <button type="button" class="gh-btn gh-btn-icon" data-test="panel-settings" :title="t('hdr_settings_open')" :aria-label="t('hdr_settings_open')" @click="emit('open-settings')"><EmojiText text="⚙️" /></button>
       <button type="button" class="gh-btn gh-btn-icon" data-test="panel-close" :aria-label="t('close')" @click="emit('update:open', false)">✕</button>
     </div>
 
@@ -115,7 +116,7 @@ onBeforeUnmount(() => applyScrollLock(false))
 
     <section v-if="water" class="gh-panel-water" data-test="panel-water">
       <WaterSavedAnim :tick="savedTick" />
-      <h4>💧 {{ t('dash_water_modal_title') }}</h4>
+      <h4><EmojiText :text="'💧 ' + t('dash_water_modal_title')" /></h4>
       <div class="gh-row" style="gap: 14px">
         <WaterGlass plain :scale="2.2" :today-ml="water.todayMl" :norm-ml="water.normMl" :title="t('hdr_panel_water_open')" @click="emit('open-water')" />
         <div>
@@ -130,7 +131,7 @@ onBeforeUnmount(() => applyScrollLock(false))
       </div>
     </section>
     <section v-if="muscles" class="gh-panel-water" style="margin-top: 12px" data-test="panel-muscles">
-      <h4>🏋️ {{ t('workouts_muscles_title') }}</h4>
+      <h4><EmojiText :text="'🏋️ ' + t('workouts_muscles_title')" /></h4>
       <MuscleMiniMap :done="muscles.done" :last="muscles.last" />
     </section>
   </aside>

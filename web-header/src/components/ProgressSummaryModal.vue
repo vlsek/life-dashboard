@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiText from './EmojiText.vue'
 import { computed } from 'vue'
 import { t, type DictKey } from '../lib/i18n'
 import { isItemDone, itemSharePct, type ProgressSummary, type SummaryItem } from '../lib/progressSummary'
@@ -65,7 +66,7 @@ function share(i: SummaryItem, done: boolean): string {
         </ul>
       </template>
       <template v-if="summary.bonus.length">
-        <h4>{{ t('dash_summary_bonus_h') }}</h4>
+        <h4><EmojiText :text="t('dash_summary_bonus_h')" /></h4>
         <ul class="gh-list">
           <li v-for="(b, k) in summary.bonus" :key="'b' + k" data-test="bonus-item">
             <span :style="{ opacity: b.done ? 1 : 0.6 }">{{ b.name }}<span v-if="when(b)" class="gh-dim"> · {{ when(b) }}</span></span>

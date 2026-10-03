@@ -63,7 +63,7 @@ BACKLOG 4.2/13, ВТОРОЙ СРЕЗ «подходов в день по пла
 — свободен —
 
 ### Агент 4
-По порядку очереди (после сброса контекста): BACKLOG 90–93 «Замена эмодзи на SVG», ОСТАТОК — пилот шапки `web-header/` и вода: `RightPanel`, `SettingsModal`, `WaterModal`, `App.vue` (💧 ⚙️ 🏋️ ↶ ✎ → `EmojiText`; копия `emojiText.ts` + `EmojiText.vue` + иконок из Дашборда), плюс 💧/⚙️ в `title` у `WaterSection`/`WaterBadge`/`web-header/App.vue` и заголовок `dash_day_progress_settings_title` — через `stripEmoji`. ТРОГАЮ: `web-header/src/{components,App.vue,lib/{icons,emojiText,i18n}}`, `web-dashboard/src/components/{WaterSection,WaterBadge}.vue` (только `title`), тесты, пересборка `header-widgets/` и `dashboard/`, `config.js`, ROADMAP, BACKLOG. НЕ трогаю: `web-header/src/lib/{types,metrics,progress,progressSummary}.ts` (агент 1), `useWater*`, SQL. С: 2026-10-03 19:51.
+— свободен —
 
 ### Агент 5
 — свободен —
@@ -153,3 +153,4 @@ BACKLOG 19:06 «Новый раздел «Достижения»» (решени
 - 2026-10-03 · v2.42 · агент 2 · BACKLOG 24 🐞 «23:16 вода +200»: запись воды — очередь (`writeQueue.ts`) + мгновенное число + откат при сбое, в `web-header` и `web-dashboard` (`useWater.ts`). +42 теста, 11 из 13 падают на старом коде. Тесты: header 180, dashboard 1140, vue-tsc чист, `header-widgets/` + `dashboard/` пересобраны
 - 2026-10-03 19:24 · v2.43 · агент 1 · BACKLOG 4.2/13, первый срез: параметр метрики-подходов «Подходов в день по плану» — миграция 041 (`metrics.planned_sets_log`, ЖУРНАЛ `[{from,n}]`: прошлые дни и смена N не пересчитывают историю), `isMetricDone(m, v, dateStr)` с датой во всех местах Дашборда, поле в форме (только если колонка есть), `plannedSetsFields`. Тесты dashboard 1165 (+25), vue-tsc чист, `dashboard/` пересобран. НЕ сделано (пункты BACKLOG остаются [ ]): копии `isDone` в header/history/shop/balance.ts, SQL серий и баллов, дробные баллы 1/N, челленджи из тренировок
 - 2026-10-03 · v2.44 · агент 3 · Дашборд: перетаскивание блоков прямо на главной — ручка ☰ в заголовке каждого блока, на время жеста поверх страницы компактные карточки (идёт за пальцем, остальные расступаются), порядок сохраняется сразу, при сбое откат; режим «Изменить порядок» убран. `lib/blockDrag.ts`, `BlockDragHandle/Overlay.vue`, слот в `SectionHeading`. Тесты dashboard 1186 (+21), vue-tsc чист. Нужна проверка на телефоне
+- 2026-10-03 · v2.45 · агент 4 · Эмодзи → SVG в шапке (`web-header`): `EmojiText`/`Icon` + 10 иконок, правая панель и окна воды/настроек/прогресса рисуют 💧 ⚙️ 🏋️ ↶ ✎ ⭐ иконками, в `title` колец и стакана эмодзи убраны; стили в `header.css` (не scoped — CSS шапки идёт `?inline`). Тесты header 186 (+6), vue-tsc чист, `header-widgets/` пересобран. Нужна проверка глазами: размер и отступ иконок
