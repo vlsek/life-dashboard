@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.43";
+const SITE_VERSION = "2.44";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.44", date: "2026-10-03 19:32", changes: [
+        "Дашборд: блоки можно перетаскивать прямо на главной, как на телефоне. В заголовке каждого блока (Профиль, Дневные метрики, Графики) есть ручка из трёх полосок: возьмите её и потяните вверх или вниз. Пока тянете, поверх страницы показываются компактные карточки блоков: ваша идёт за пальцем, остальные расступаются; отпустили, и порядок сразу сохранён. С клавиатуры блок двигают стрелки вверх и вниз на ручке. Отдельный режим «Изменить порядок» убран; в окне настройки дашборда по-прежнему можно скрывать и показывать блоки",
+    ]},
     { version: "2.43", date: "2026-10-03 19:24", changes: [
         "Метрики-подходы: новый параметр «Подходов в день по плану» (первый срез, только Дашборд). Если он задан, метрика считается выполненной, когда внесено не меньше этого числа подходов (и достигнут общий объём цели, если он задан). Правило действует с того дня, когда параметр задан или изменён; прошлые дни не пересчитываются, баланс и серии не «прыгают». Поле в форме метрики появится после применения миграции 041 в Supabase; без неё всё работает как раньше. Остальные страницы, баллы за каждый подход и серии на сервере — следующими шагами",
     ]},
@@ -1331,6 +1334,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.44", date: "2026-10-03 19:32", changes: [
+        "Dashboard: blocks can now be dragged right on the main page, like on a phone. Every block heading (Profile, Daily metrics, Charts) has a three-bar handle: grab it and pull up or down. While you drag, compact block cards appear over the page: yours follows your finger and the others make room; let go and the order is saved at once. From the keyboard, the up and down arrows on the handle move a block. The separate \"Reorder blocks\" mode is gone; the dashboard settings window still lets you hide and show blocks",
+    ]},
     { version: "2.43", date: "2026-10-03 19:24", changes: [
         "Sets metrics: new \"Planned sets per day\" parameter (first slice, Dashboard only). When it is set, the metric counts as done once at least that many sets are logged (and the total goal is reached, if one is set). The rule applies from the day the parameter is set or changed; past days are not recalculated, so the balance and streaks do not jump. The field appears in the metric form after migration 041 is applied in Supabase; without it everything works as before. Other pages, points per set and server-side streaks come in the next steps",
     ]},
