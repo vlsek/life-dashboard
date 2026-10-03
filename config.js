@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.32";
+const SITE_VERSION = "2.33";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.33", date: "2026-10-03 05:49", changes: [
+        "Избранное: круглая кнопка наверху страницы, которая открывает быстрые ссылки на избранные разделы, теперь с сердечком (раньше в ней была только маленькая стрелка и она выглядела пустым кружком). Сердечко пустое, пока список закрыт, и заливается цветом темы, когда открыт; подпись кнопки — «Избранное». Сердечко «добавить страницу в избранное» тоже стало контрастнее: его контур больше не теряется на тёмных и тёплых темах",
+    ]},
     { version: "2.32", date: "2026-10-03 05:38", changes: [
         "Тренировки: в форме упражнения появился выбор групп мышц. Если упражнения нет в справочнике (например, «Wall angels»), отметь нужные группы — и оно попадёт на карту мышц, в статистику и перестанет висеть в списке «не привязанных». Под названием видно, распознано ли упражнение автоматически, а кнопка «Сбросить на автоматическую» возвращает прежнее поведение. Привязка хранится на этом устройстве и переживает переименование упражнения",
     ]},
@@ -1297,6 +1300,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.33", date: "2026-10-03 05:49", changes: [
+        "Favorites: the round button at the top of a page that opens the quick links to your favourite sections now shows a heart (before it had just a small arrow and looked like an empty circle). The heart is an outline while the list is closed and fills with the theme colour when it is open; the button is labelled 'Favorites'. The 'add this page to favorites' heart is also more visible: its outline no longer gets lost on the dark and warm themes",
+    ]},
     { version: "2.32", date: "2026-10-03 05:38", changes: [
         "Workouts: the exercise form now lets you pick muscle groups. If an exercise is not in the reference (for example \"Wall angels\"), mark the groups and it shows up on the muscle map and in the stats, and stops sitting in the \"unlinked\" list. Under the name you can see whether the exercise was recognised automatically, and \"Reset to automatic\" brings the old behaviour back. The link is stored on this device and survives renaming the exercise",
     ]},
