@@ -1,6 +1,13 @@
 {
-  "version": "2.39",
+  "version": "2.40",
   "en": [
+    {
+      "version": "2.40",
+      "date": "2026-10-03 10:24",
+      "changes": [
+        "Dashboard: in the \"Install the app\" banner the title and the explanation no longer run together on one line — they are now two separate blocks, with the explanation under the title (in both Russian and English)"
+      ]
+    },
     {
       "version": "2.39",
       "date": "2026-10-03 12:57",
@@ -1732,6 +1739,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.40",
+      "date": "2026-10-03 10:24",
+      "changes": [
+        "Дашборд: в плашке «Установите приложение» заголовок и пояснение больше не слипаются в одну строку — теперь это два отдельных блока, пояснение под заголовком (и на русском, и на английском)"
+      ]
+    },
     {
       "version": "2.39",
       "date": "2026-10-03 12:57",

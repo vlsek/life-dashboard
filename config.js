@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.39";
+const SITE_VERSION = "2.40";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.40", date: "2026-10-03 10:24", changes: [
+        "Дашборд: в плашке «Установите приложение» заголовок и пояснение больше не слипаются в одну строку — теперь это два отдельных блока, пояснение под заголовком (и на русском, и на английском)",
+    ]},
     { version: "2.39", date: "2026-10-03 12:57", changes: [
         "Эмодзи → иконки: значки шаблонов челленджей (каталог, карточки и список), предложенных навыков и подсказок в онбординге теперь рисуются единым набором иконок, а не цветными эмодзи. Для «Холодного душа», «Без сахара», «Выучить слов», «Слепой печати», «Мостика», «Свиста», «Шпагата», «Жонглирования», «Стойки на руках» и дыхания подобраны близкие по смыслу иконки. Всё, что уже сохранено у тебя, не меняется",
     ]},
@@ -1319,6 +1322,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.40", date: "2026-10-03 10:24", changes: [
+        "Dashboard: in the \"Install the app\" banner the title and the explanation no longer run together on one line — they are now two separate blocks, with the explanation under the title (in both Russian and English)",
+    ]},
     { version: "2.39", date: "2026-10-03 12:57", changes: [
         "Emoji → icons: the icons of challenge templates (catalog, cards and list), suggested skills and onboarding hints are now drawn with the single icon set instead of colourful emoji. Close-in-meaning icons were picked for Cold shower, No sugar, Learn words, Touch typing, Bridge, Whistling, Splits, Juggling, Handstand and breathing. Nothing you already saved changes",
     ]},
