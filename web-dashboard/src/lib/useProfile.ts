@@ -45,7 +45,7 @@ export function useProfile() {
   // Баланс: те же 6 источников, что у дашборда и магазина; daily_values читается постранично.
   async function loadBalance() {
     const [metricsRes, valuesRes, goalsRes, skillsRes, booksRes, redeemedRes] = await Promise.all([
-      sb.from('metrics').select('id, name, icon, type, goal_value, goal_direction, position').eq('user_id', userId).eq('active', true),
+      sb.from('metrics').select('*').eq('user_id', userId).eq('active', true),
       fetchAllRows<BalanceValueRow>((from, to) => sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId).order('date').order('metric_id').range(from, to)),
       sb.from('goals').select('points').eq('user_id', userId).eq('done', true),
       sb.from('skills').select('points').eq('user_id', userId).eq('mastered', true),

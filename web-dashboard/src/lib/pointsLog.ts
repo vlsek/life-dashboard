@@ -60,7 +60,7 @@ export function buildPointsLog(
   const list: PointsDay[] = dates.map((date) => {
     const entries: PointsEntry[] = []
     for (const m of metrics) {
-      if (isDone(m, byDay[date]?.[m.id])) entries.push({ kind: 'metric', label: m.name, icon: m.icon, points: 1 })
+      if (isDone(m, byDay[date]?.[m.id], date)) entries.push({ kind: 'metric', label: m.name, icon: m.icon, points: 1 })
     }
     for (const g of goals) if (g.done_date === date) entries.push({ kind: 'goal', label: g.name, icon: null, points: g.points ?? 5 })
     for (const b of books) if (b.done_date === date) entries.push({ kind: 'book', label: b.title, icon: null, points: b.points ?? 10 })

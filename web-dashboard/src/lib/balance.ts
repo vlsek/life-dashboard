@@ -2,27 +2,16 @@
 // правилу пилота — копировать, а не импортировать между папками); в оригинале это
 // calcTotalPoints()/calcBalance() в config.js. Типы свои, минимальные.
 
-export type BalanceMetric = { id: string; type: string; goal_value: number | null; goal_direction: string | null }
+import { isMetricDone } from './metrics'
+import type { Metric, PlannedSetsEntry } from './types'
+
+export type BalanceMetric = { id: string; type: string; goal_value: number | null; goal_direction: string | null; planned_sets_log?: PlannedSetsEntry[] | null }
 export type BalanceValueRow = { date: string; metric_id: string; value: unknown }
 
-function numeric(metric: BalanceMetric, value: unknown): number | null {
-  if (value == null) return null
-  if (metric.type === 'sets' && Array.isArray(value)) return (value as { reps?: number }[]).reduce((s, x) => s + (x?.reps || 0), 0)
-  return typeof value === 'number' ? value : null
-}
-
-export function isDone(metric: BalanceMetric, value: unknown): boolean {
-  if (value === null || value === undefined) return false
-  if (metric.type === 'boolean') return value === true
-  if (metric.type === 'multiselect') return Array.isArray(value) && value.length > 0
-  if (metric.type === 'number' || metric.type === 'sets') {
-    const n = numeric(metric, value)
-    if (n == null) return false
-    const goal = metric.goal_value ?? 0
-    if (metric.goal_direction === 'at_most') return n > 0 && n < goal
-    return n >= goal
-  }
-  return false
+// Правило «выполнено» — одно на весь Дашборд (lib/metrics.ts, включая «N подходов в день», миграция 041): баланс, журнал баллов и
+// кольца не должны расходиться. dateStr обязателен для ПРОШЛЫХ дней — прошлое не пересчитываем.
+export function isDone(metric: BalanceMetric, value: unknown, dateStr?: string): boolean {
+  return isMetricDone(metric as unknown as Metric, value as never, dateStr)
 }
 
 export function calcBalance(
@@ -36,7 +25,7 @@ export function calcBalance(
   const byDay: Record<string, Record<string, unknown>> = {}
   for (const v of values) (byDay[v.date] ||= {})[v.metric_id] = v.value
   let daily = 0
-  for (const d of Object.keys(byDay)) for (const m of metrics) if (isDone(m, byDay[d][m.id])) daily++
+  for (const d of Object.keys(byDay)) for (const m of metrics) if (isDone(m, byDay[d][m.id], d)) daily++
   const total =
     daily +
     doneGoals.reduce((s, g) => s + (g.points ?? 5), 0) +

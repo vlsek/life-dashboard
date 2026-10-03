@@ -26,7 +26,7 @@ const metricRows = computed(() => {
   const vals = props.ctx.byDate[props.dateStr] || {}
   return props.ctx.metrics.map((m) => {
     const v = vals[m.id]
-    const done = isMetricDone(m, v)
+    const done = isMetricDone(m, v, props.dateStr)
     const expected = metricExpectedOn(m, props.dateStr)
     const sc = metricSchedule(m)
     return {

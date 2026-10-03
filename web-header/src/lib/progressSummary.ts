@@ -73,7 +73,7 @@ export function daySummary(
   const bonus: BonusItem[] = []
   if (settings.includeMetrics) {
     for (const m of metrics) {
-      const isDone = isMetricDone(m, byMetricToday[m.id] as any)
+      const isDone = isMetricDone(m, byMetricToday[m.id] as any, dateStr)
       if (metricSchedule(m)?.type === 'at_most') continue
       if (!metricCountsInDay(m, dateStr, isDone)) continue
       items.push({ kind: 'metric', name: m.name, weight: 1, doneWeight: isDone ? 1 : 0 })
@@ -98,7 +98,7 @@ export function weekSummary(
     for (const dateStr of pastOrToday) {
       const byMetric = valuesByDate[dateStr] || {}
       for (const m of metrics) {
-        const isDone = isMetricDone(m, byMetric[m.id] as any)
+        const isDone = isMetricDone(m, byMetric[m.id] as any, dateStr)
         const sc = metricSchedule(m)
         if (sc?.type === 'weekly' || sc?.type === 'at_most') {
           if (isDone) weeklyDoneCount[m.id] = (weeklyDoneCount[m.id] || 0) + 1

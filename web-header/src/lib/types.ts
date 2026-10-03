@@ -24,6 +24,15 @@ export interface Metric {
   // Поля ниже нужны блоку «Управление метриками» (multiselect/sets и режим ввода числа)
   options?: MetricOption[] | null
   input_mode?: 'set' | 'add' | null
+  // Миграция 041: журнал планового числа подходов в день [{ from, n }] по возрастанию дат (n = null — параметр снят с этой даты).
+  // С даты from метрика-подходы выполнена при n и более подходах (и объёме goal_value, если задан); ДО первой записи — по прежнему
+  // правилу. Прошлые дни не пересчитываются (решение владельца 2026-10-03). Копия логики из web-dashboard/src/lib/metrics.ts
+  planned_sets_log?: PlannedSetsEntry[] | null
+}
+
+export interface PlannedSetsEntry {
+  from: string
+  n: number | null
 }
 
 export interface MetricOption {

@@ -50,7 +50,7 @@ export function dayStats(ctx: HistoryContext, dateStr: string): StatResult {
   if (s.includeMetrics) {
     const vals = ctx.byDate[dateStr] || {}
     for (const m of ctx.metrics) {
-      const isDone = isMetricDone(m, vals[m.id])
+      const isDone = isMetricDone(m, vals[m.id], dateStr)
       if (metricSchedule(m)?.type === 'at_most') continue // не дневной пункт — считается в неделе
       if (!metricCountsInDay(m, dateStr, isDone)) continue
       total++
@@ -91,7 +91,7 @@ export function weekStats(ctx: HistoryContext, mondayStr: string): StatResult | 
     for (const d of days) {
       const vals = ctx.byDate[d] || {}
       for (const m of ctx.metrics) {
-        const isDone = isMetricDone(m, vals[m.id])
+        const isDone = isMetricDone(m, vals[m.id], d)
         const sc = metricSchedule(m)
         if (sc?.type === 'weekly' || sc?.type === 'at_most') {
           if (isDone) weeklyDone[m.id] = (weeklyDone[m.id] || 0) + 1

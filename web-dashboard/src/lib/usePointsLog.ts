@@ -19,7 +19,7 @@ export function usePointsLog(userId: string) {
     const today = todayStr()
     const from = addDaysIso(today, -(LOG_DAYS - 1))
     const [metricsRes, valuesRes, goalsRes, booksRes, shopRes] = await Promise.all([
-      sb.from('metrics').select('id, name, icon, type, goal_value, goal_direction, position').eq('user_id', userId).eq('active', true).order('position'),
+      sb.from('metrics').select('*').eq('user_id', userId).eq('active', true).order('position'),
       sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId).gte('date', from).lte('date', today),
       sb.from('goals').select('name, points, done_date').eq('user_id', userId).eq('done', true).gte('done_date', from).lte('done_date', today),
       sb.from('books').select('title, points, done_date').eq('user_id', userId).eq('status', 'done').gte('done_date', from).lte('done_date', today),
