@@ -7,11 +7,14 @@ import { t } from '../lib/i18n'
 // (логика — lib/waterReminder.ts), закрывается крестиком. Цвет — синий воды (--water-line), не акцент темы.
 const props = defineProps<{ ml: number; goal: number }>()
 const emit = defineEmits<{ dismiss: [] }>()
-const left = computed(() => Math.max(0, Math.round(props.goal - props.ml)))
+// Числа в тексте всегда конечные и неотрицательные: NaN/отрицательное значение никогда не попадает на экран.
+// «Осталось» — округлённая РАЗНОСТЬ (а не разность округлённых): 1999,6 из 2000,4 даёт «осталось 1 мл», как и раньше.
+const fin = (n: number) => (Number.isFinite(n) && n > 0 ? n : 0)
+const left = computed(() => Math.max(0, Math.round(fin(props.goal) - fin(props.ml))))
 const text = computed(() =>
   t('water_reminder_text')
-    .replace('{ml}', String(Math.round(props.ml)))
-    .replace('{goal}', String(Math.round(props.goal)))
+    .replace('{ml}', String(Math.round(fin(props.ml))))
+    .replace('{goal}', String(Math.round(fin(props.goal))))
     .replace('{left}', String(left.value)),
 )
 </script>
