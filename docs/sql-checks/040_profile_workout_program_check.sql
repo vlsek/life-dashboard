@@ -1,4 +1,4 @@
--- Проверка migrations/039_profile_workout_program.sql (Supabase -> SQL Editor). Только чтение. Запускать ПОСЛЕ применения миграции.
+-- Проверка migrations/040_profile_workout_program.sql (Supabase -> SQL Editor). Только чтение. Запускать ПОСЛЕ применения миграции.
 
 -- 1) Колонка создана: должна вернуться 1 строка (data_type = jsonb).
 select column_name, data_type from information_schema.columns

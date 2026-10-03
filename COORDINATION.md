@@ -78,7 +78,7 @@ BACKLOG 19:06 «Новый раздел «Достижения»» (решени
 ### Агент 7
 По порядку очереди (2026-10-03 10:34): BACKLOG 3.3 «Прогрессивные программы», ОСТАТОК (пп. 1 «Связь упражнений с мышцами» сверила — закрыт, сделал агент 4). Пилот Workouts: «Начать программу» в окне
 шаблонов, карточка активной программы (неделя N из M, нагрузка недели, отметка пройденных недель, подсказка текущей недели по дате старта). Хранение: `profiles.workout_program` (миграция
-`039_profile_workout_program.sql` + sql-check, применяет владелец) с запасным `localStorage` — по образцу `favorites.ts`. Файлы: `web-workouts/src/lib/program.ts`, `programSync.ts`, `components/ProgramCard.vue`,
+`040_profile_workout_program.sql` + sql-check, применяет владелец; номер 039 занят агентом 6 под `user_achievements`, свою переименовала 10-03 после потери контекста) с запасным `localStorage` — по образцу `favorites.ts`. Файлы: `web-workouts/src/lib/program.ts`, `programSync.ts`, `components/ProgramCard.vue`,
 `TemplatesModal.vue`, `App.vue`, i18n, тесты; пересборка `workouts/`. НЕ входит: программы из нескольких упражнений. С: 2026-10-03 10:34.
 
 ## Бэклог
