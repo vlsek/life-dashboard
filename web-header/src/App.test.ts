@@ -341,15 +341,15 @@ describe('глобальные настройки (BACKLOG 6.2)', () => {
     await flushPromises()
     await openSettings(w)
     const rows = () => w.findAll('[data-test="layout-row"]').map((r) => r.find('.gh-block-text div').text())
-    expect(rows()).toEqual(['Графики', 'Профиль', 'Дневные метрики и планы'].map((x) => expect.stringContaining(x.split(' ')[0])))
+    expect(rows()).toEqual(['Графики', 'Профиль', 'Дневные метрики и планы', 'Виджеты'].map((x) => expect.stringContaining(x.split(' ')[0])))
     await w.findAll('[data-test="layout-row"]')[0].find('[data-test="down"]').trigger('click')
     await flushPromises()
     const saved = db.writes.filter((x) => x.table === 'profiles')
-    expect(saved.at(-1)!.payload).toMatchObject({ user_id: 'u1', dashboard_layout: [{ key: 'profile', visible: true }, { key: 'charts', visible: true }, { key: 'daily', visible: true }] })
+    expect(saved.at(-1)!.payload).toMatchObject({ user_id: 'u1', dashboard_layout: [{ key: 'profile', visible: true }, { key: 'charts', visible: true }, { key: 'daily', visible: true }, { key: 'widgets', visible: true }] })
     expect(w.find('[data-test="layout-saved"]').exists()).toBe(true)
     await w.findAll('[data-test="layout-row"]')[2].find('[data-test="toggle"]').trigger('click')
     await flushPromises()
-    expect(db.writes.filter((x) => x.table === 'profiles').at(-1)!.payload).toMatchObject({ dashboard_layout: [{}, {}, { key: 'daily', visible: false }] })
+    expect(db.writes.filter((x) => x.table === 'profiles').at(-1)!.payload).toMatchObject({ dashboard_layout: [{}, {}, { key: 'daily', visible: false }, {}] })
     w.unmount()
   })
 
@@ -465,9 +465,27 @@ describe('раскладка блоков в глобальных настрой
     await flushPromises()
     expect(db.writes.filter((x) => x.table === 'profiles').at(-1)!.payload).toMatchObject({
       user_id: 'u1',
-      dashboard_layout: [{ key: 'charts', visible: true }, { key: 'profile', visible: true }, { key: 'daily', visible: true }],
+      dashboard_layout: [{ key: 'charts', visible: true }, { key: 'profile', visible: true }, { key: 'daily', visible: true }, { key: 'widgets', visible: true }],
     })
     expect(w.find('[data-test="layout-saved"]').exists()).toBe(true)
+    w.unmount()
+  })
+
+  // BACKLOG 388: выбор виджетов лежит в `config` элемента `widgets` — сохранение из шапки не должно его стирать
+  it('сохранение раскладки из шапки не стирает выбранные виджеты главной (config блока «Виджеты»)', async () => {
+    const widgets = { key: 'widgets', visible: true, config: { skills: ['s1', 's2'], savings: 'item-1' } }
+    setup({ metrics: [habit], profiles: [{ dashboard_layout: [{ key: 'profile', visible: true }, { key: 'charts', visible: true }, { key: 'daily', visible: true }, widgets] }] })
+    const w = mount(App)
+    await flushPromises()
+    await w.find('[data-test="panel-open"]').trigger('click')
+    await w.find('[data-test="panel-settings"]').trigger('click')
+    await flushPromises()
+    expect(w.findAll('[data-test="layout-row"]')).toHaveLength(4)
+    await w.findAll('[data-test="layout-row"]')[0].find('[data-test="down"]').trigger('click')
+    await flushPromises()
+    expect(db.writes.filter((x) => x.table === 'profiles').at(-1)!.payload).toMatchObject({
+      dashboard_layout: [{ key: 'charts' }, { key: 'profile' }, { key: 'daily' }, widgets],
+    })
     w.unmount()
   })
 })

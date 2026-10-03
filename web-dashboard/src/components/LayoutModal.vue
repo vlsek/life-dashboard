@@ -3,12 +3,12 @@ import EmojiText from './EmojiText.vue'
 import { computed, ref } from 'vue'
 import BlockOrderList from './BlockOrderList.vue'
 import { t } from '../lib/i18n'
-import { withSavingsWidget, type DashboardBlockKey, type LayoutItem } from '../lib/layout'
-import type { ShopOption } from '../lib/savingsWidget'
+import { MAX_WIDGET_SKILLS, withWidgetConfig, type DashboardBlockKey, type LayoutItem } from '../lib/layout'
+import type { WidgetOptions } from '../lib/widgets'
 import { celebrationsEnabled, setCelebrationsEnabled } from '../lib/useStreakCelebration'
 import { setMotionOff, systemReducedMotion, userMotionOff } from '../lib/motion'
 
-const props = defineProps<{ initial: LayoutItem[]; error?: string; shopItems?: ShopOption[] }>()
+const props = defineProps<{ initial: LayoutItem[]; error?: string; widgetOptions?: WidgetOptions }>()
 const emit = defineEmits<{ close: []; save: [LayoutItem[]] }>()
 
 const local = ref<LayoutItem[]>(props.initial.map((i) => ({ ...i })))
@@ -36,17 +36,33 @@ const labels = computed<Record<DashboardBlockKey, { title: string; desc: string 
   widgets: { title: t('dash_block_widgets'), desc: t('dash_layout_desc_widgets') },
 }))
 
-// Виджеты на главной (BACKLOG 9, решение владельца: выбор галочками в этом окне). Сейчас один — «Коплю на товар»: галочка + выбор товара.
-const savingsId = computed(() => local.value.find((i) => i.key === 'widgets')?.widgets?.savings ?? '')
+// Виджеты на главной (BACKLOG 388, решение владельца: выбор галочками в этом окне, новых кнопок не вводим).
+// «Навыки» — галочка на виджет и галочки на навыки; «Коплю на товар» — галочка и выбор товара.
+const widgetsCfg = computed(() => local.value.find((i) => i.key === 'widgets')?.config)
+const skillIds = computed(() => widgetsCfg.value?.skills ?? [])
+const skillsOn = computed(() => skillIds.value.length > 0)
+const skillOptions = computed(() => props.widgetOptions?.skills ?? [])
+function onSkillsToggle(e: Event) {
+  const on = (e.target as HTMLInputElement).checked
+  const first = skillOptions.value.find((o) => !o.mastered) ?? skillOptions.value[0]
+  local.value = withWidgetConfig(local.value, { skills: on && first ? [first.id] : [] })
+}
+function onSkillPick(id: string, e: Event) {
+  const on = (e.target as HTMLInputElement).checked
+  const next = on ? [...skillIds.value, id] : skillIds.value.filter((x) => x !== id)
+  local.value = withWidgetConfig(local.value, { skills: next })
+}
+const skillLimitReached = computed(() => skillIds.value.length >= MAX_WIDGET_SKILLS)
+
+const savingsId = computed(() => widgetsCfg.value?.savings ?? '')
 const savingsOn = computed(() => savingsId.value !== '')
-const options = computed(() => props.shopItems ?? [])
+const shopOptions = computed(() => props.widgetOptions?.shop ?? [])
 function onSavingsToggle(e: Event) {
   const on = (e.target as HTMLInputElement).checked
-  local.value = withSavingsWidget(local.value, on ? (options.value[0]?.id ?? null) : null)
+  local.value = withWidgetConfig(local.value, { savings: on ? (shopOptions.value[0]?.id ?? null) : null })
 }
 function onSavingsPick(e: Event) {
-  const id = (e.target as HTMLSelectElement).value
-  local.value = withSavingsWidget(local.value, id || null)
+  local.value = withWidgetConfig(local.value, { savings: (e.target as HTMLSelectElement).value || null })
 }
 </script>
 
@@ -61,16 +77,30 @@ function onSavingsPick(e: Event) {
       <div class="mt-4" data-test="widgets-setting">
         <div class="text-sm font-medium">{{ t('dash_widgets_setting') }}</div>
         <p class="dim mb-1 text-xs">{{ t('dash_widgets_setting_hint') }}</p>
+
         <label class="flex items-center gap-2 text-sm">
-          <input type="checkbox" :checked="savingsOn" :disabled="!savingsOn && options.length === 0" data-test="savings-toggle" @change="onSavingsToggle" />
+          <input type="checkbox" :checked="skillsOn" :disabled="!skillsOn && skillOptions.length === 0" data-test="skills-toggle" @change="onSkillsToggle" />
+          {{ t('dash_widget_skills') }}
+        </label>
+        <p v-if="!skillsOn && skillOptions.length === 0" class="dim mt-1 text-xs" data-test="skills-none">{{ t('dash_widget_skills_none') }} <a href="/skills/" style="color: var(--accent)">{{ t('dash_widget_skills_all') }}</a></p>
+        <div v-if="skillsOn" class="mt-1 ml-6 flex flex-col gap-1" data-test="skills-pick-list">
+          <label v-for="o in skillOptions" :key="o.id" class="flex items-center gap-2 text-sm">
+            <input type="checkbox" :checked="skillIds.includes(o.id)" :disabled="(o.mastered && !skillIds.includes(o.id)) || (skillLimitReached && !skillIds.includes(o.id))" data-test="skills-pick" :data-id="o.id" @change="onSkillPick(o.id, $event)" />
+            <span class="min-w-0 truncate">{{ o.name }}</span>
+            <span v-if="o.mastered" class="dim flex-none text-xs">{{ t('dash_widget_skills_mastered') }}</span>
+          </label>
+        </div>
+
+        <label class="mt-2 flex items-center gap-2 text-sm">
+          <input type="checkbox" :checked="savingsOn" :disabled="!savingsOn && shopOptions.length === 0" data-test="savings-toggle" @change="onSavingsToggle" />
           {{ t('dash_widget_savings') }}
         </label>
-        <p v-if="!savingsOn && options.length === 0" class="dim mt-1 text-xs" data-test="savings-none">{{ t('dash_widget_savings_none') }} <a href="/shop/" style="color: var(--accent)">{{ t('dash_widget_savings_shop') }}</a></p>
+        <p v-if="!savingsOn && shopOptions.length === 0" class="dim mt-1 text-xs" data-test="savings-none">{{ t('dash_widget_savings_none') }} <a href="/shop/" style="color: var(--accent)">{{ t('dash_widget_savings_shop') }}</a></p>
         <label v-if="savingsOn" class="mt-2 flex items-center gap-2 text-sm">
           <span class="dim flex-none">{{ t('dash_widget_savings_pick') }}</span>
           <select class="min-w-0 flex-1 rounded-lg border px-2 py-1.5" style="border-color: var(--border); background: var(--bg); color: var(--text)" :value="savingsId" data-test="savings-pick" @change="onSavingsPick">
-            <option v-if="!options.some((o) => o.id === savingsId)" :value="savingsId" disabled>{{ t('dash_widget_savings_choose') }}</option>
-            <option v-for="o in options" :key="o.id" :value="o.id">{{ o.name }} · {{ o.cost }}</option>
+            <option v-if="!shopOptions.some((o) => o.id === savingsId)" :value="savingsId" disabled>{{ t('dash_widget_savings_choose') }}</option>
+            <option v-for="o in shopOptions" :key="o.id" :value="o.id">{{ o.name }} · {{ o.cost }}</option>
           </select>
         </label>
       </div>

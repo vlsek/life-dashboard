@@ -32,6 +32,7 @@ const blockLabels = computed<Record<DashboardBlockKey, { title: string; desc: st
   profile: { title: t('dash_block_profile'), desc: t('dash_layout_desc_profile') },
   charts: { title: t('dash_charts_h2'), desc: t('dash_layout_desc_charts') },
   daily: { title: t('dash_block_daily'), desc: t('dash_layout_desc_daily') },
+  widgets: { title: t('dash_block_widgets'), desc: t('dash_layout_desc_widgets') },
 }))
 
 function onTheme(e: Event) {

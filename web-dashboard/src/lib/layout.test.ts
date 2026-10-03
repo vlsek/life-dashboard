@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { defaultLayout, hasWidgets, isBlockShown, moveBlock, normalizeLayout, toggleBlock, visibleKeys, widgetsConfig, withSavingsWidget } from './layout'
+import { defaultLayout, hasWidgets, isBlockShown, moveBlock, normalizeLayout, toggleBlock, visibleKeys, widgetsConfig, withWidgetConfig, MAX_WIDGET_SKILLS } from './layout'
 
 describe('normalizeLayout (порт normalizeDashboardLayout из dashboard.js)', () => {
   it('пусто/мусор → раскладка по умолчанию, всё видно', () => {
@@ -64,46 +64,64 @@ describe('moveBlock / toggleBlock / visibleKeys', () => {
   })
 })
 
-// Блок «Виджеты» и его конфиг в раскладке (BACKLOG 9, решение владельца 2026-10-03)
+// Блок «Виджеты» и его конфиг в раскладке (BACKLOG 388, решение владельца 2026-10-03; формат `config` — как задумал агент 4)
 describe('виджеты в раскладке', () => {
-  it('widgetsConfig оставляет только известное непустое: savings — строка-id', () => {
+  const W = (l: ReturnType<typeof defaultLayout>) => l.find((i) => i.key === 'widgets')!
+
+  it('widgetsConfig оставляет только известное непустое: skills — уникальные id, savings — строка-id', () => {
     expect(widgetsConfig({ savings: 'abc' })).toEqual({ savings: 'abc' })
-    for (const v of [null, undefined, 5, 'x', {}, { savings: '' }, { savings: 7 }, { other: 1 }]) expect(widgetsConfig(v)).toBeUndefined()
+    expect(widgetsConfig({ skills: ['a', 'b', 'a', '', 5, null] })).toEqual({ skills: ['a', 'b'] })
+    expect(widgetsConfig({ skills: ['a'], savings: 'x', junk: 1 })).toEqual({ skills: ['a'], savings: 'x' })
+    for (const v of [null, undefined, 5, 'x', {}, { savings: '' }, { savings: 7 }, { skills: [] }, { skills: 'a' }, { other: 1 }]) expect(widgetsConfig(v)).toBeUndefined()
   })
 
-  it('normalizeLayout сохраняет конфиг блока «Виджеты» и не пускает его в чужие блоки', () => {
+  it('навыков не больше MAX_WIDGET_SKILLS', () => {
+    const many = Array.from({ length: MAX_WIDGET_SKILLS + 5 }, (_, k) => 's' + k)
+    expect(widgetsConfig({ skills: many })!.skills).toHaveLength(MAX_WIDGET_SKILLS)
+  })
+
+  it('normalizeLayout сохраняет config блока «Виджеты» и не пускает его в чужие блоки', () => {
     const out = normalizeLayout([
-      { key: 'widgets', visible: true, widgets: { savings: 'item-1', junk: 1 } },
-      { key: 'profile', visible: true, widgets: { savings: 'x' } },
+      { key: 'widgets', visible: true, config: { savings: 'item-1', skills: ['s1'], junk: 1 } },
+      { key: 'profile', visible: true, config: { savings: 'x' } },
     ])
-    expect(out[0]).toEqual({ key: 'widgets', visible: true, widgets: { savings: 'item-1' } })
+    expect(out[0]).toEqual({ key: 'widgets', visible: true, config: { skills: ['s1'], savings: 'item-1' } })
     expect(out.find((i) => i.key === 'profile')).toEqual({ key: 'profile', visible: true })
   })
 
   it('hasWidgets / isBlockShown: «Виджеты» показаны только при выборе виджета; остальные блоки — по visible', () => {
     expect(hasWidgets({ key: 'widgets', visible: true })).toBe(false)
-    expect(hasWidgets({ key: 'widgets', visible: true, widgets: { savings: 'a' } })).toBe(true)
+    expect(hasWidgets({ key: 'widgets', visible: true, config: { savings: 'a' } })).toBe(true)
     expect(isBlockShown({ key: 'widgets', visible: true })).toBe(false)
-    expect(isBlockShown({ key: 'widgets', visible: false, widgets: { savings: 'a' } })).toBe(false)
-    expect(isBlockShown({ key: 'widgets', visible: true, widgets: { savings: 'a' } })).toBe(true)
+    expect(isBlockShown({ key: 'widgets', visible: false, config: { savings: 'a' } })).toBe(false)
+    expect(isBlockShown({ key: 'widgets', visible: true, config: { skills: ['s'] } })).toBe(true)
     expect(isBlockShown({ key: 'daily', visible: true })).toBe(true)
     expect(isBlockShown({ key: 'daily', visible: false })).toBe(false)
   })
 
-  it('withSavingsWidget включает и выключает виджет, не трогая остальное и не мутируя исходник', () => {
+  it('withWidgetConfig включает/выключает виджеты по отдельности, не мутирует исходник и не трогает другие блоки', () => {
     const base = defaultLayout()
-    const on = withSavingsWidget(base, 'item-1')
-    expect(on.find((i) => i.key === 'widgets')).toEqual({ key: 'widgets', visible: true, widgets: { savings: 'item-1' } })
-    expect(on.filter((i) => i.key !== 'widgets').every((i) => !('widgets' in i))).toBe(true)
-    expect(base.find((i) => i.key === 'widgets')).toEqual({ key: 'widgets', visible: true })
-    const off = withSavingsWidget(on, null)
-    expect(off.find((i) => i.key === 'widgets')).toEqual({ key: 'widgets', visible: true })
-    expect(hasWidgets(off.find((i) => i.key === 'widgets')!)).toBe(false)
+    const sk = withWidgetConfig(base, { skills: ['s1', 's2', 's1'] })
+    expect(W(sk)).toEqual({ key: 'widgets', visible: true, config: { skills: ['s1', 's2'] } })
+    const both = withWidgetConfig(sk, { savings: 'item-1' })
+    expect(W(both).config).toEqual({ skills: ['s1', 's2'], savings: 'item-1' })
+    expect(W(withWidgetConfig(both, { skills: [] })).config).toEqual({ savings: 'item-1' })
+    const none = withWidgetConfig(withWidgetConfig(both, { skills: [] }), { savings: null })
+    expect(W(none)).toEqual({ key: 'widgets', visible: true })
+    expect(W(base)).toEqual({ key: 'widgets', visible: true })
+    expect(both.filter((i) => i.key !== 'widgets').every((i) => !('config' in i))).toBe(true)
   })
 
-  it('moveBlock и toggleBlock не теряют конфиг виджетов', () => {
-    const l = withSavingsWidget(defaultLayout(), 'item-1')
-    expect(moveBlock(l, 3, -1).find((i) => i.key === 'widgets')!.widgets).toEqual({ savings: 'item-1' })
-    expect(toggleBlock(l, 3).find((i) => i.key === 'widgets')).toEqual({ key: 'widgets', visible: false, widgets: { savings: 'item-1' } })
+  it('выбор виджета включает скрытый блок «Виджеты»; пустой выбор видимость не меняет', () => {
+    const hidden = toggleBlock(defaultLayout(), 3)
+    expect(W(hidden).visible).toBe(false)
+    expect(W(withWidgetConfig(hidden, { savings: 'a' })).visible).toBe(true)
+    expect(W(withWidgetConfig(hidden, { skills: [] })).visible).toBe(false)
+  })
+
+  it('moveBlock и toggleBlock не теряют config', () => {
+    const l = withWidgetConfig(defaultLayout(), { savings: 'item-1' })
+    expect(moveBlock(l, 3, -1).find((i) => i.key === 'widgets')!.config).toEqual({ savings: 'item-1' })
+    expect(toggleBlock(l, 3).find((i) => i.key === 'widgets')).toEqual({ key: 'widgets', visible: false, config: { savings: 'item-1' } })
   })
 })

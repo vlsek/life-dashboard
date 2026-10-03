@@ -38,7 +38,7 @@ import { useStreakCelebration } from './lib/useStreakCelebration'
 import { useLayout } from './lib/useLayout'
 import { useBlockDrag } from './lib/blockDrag'
 import { hasWidgets, isBlockShown, type LayoutItem } from './lib/layout'
-import { loadOpenShopItems, type ShopOption } from './lib/savingsWidget'
+import { loadWidgetOptions, type WidgetOptions } from './lib/widgets'
 import { progressPercent } from './lib/progress'
 import { t } from './lib/i18n'
 import type { StreakItem } from './lib/streaks'
@@ -101,10 +101,10 @@ const { drag: blockDrag, onDown: dragDown, onMove: dragMove, onUp: dragUp, onCan
 const visibleBlockCount = computed(() => layout.value.filter(blockShown).length)
 const blockTitles = computed<Record<string, string>>(() => ({ profile: t('dash_block_profile'), charts: t('dash_charts_h2'), daily: t('dash_block_daily'), widgets: t('dash_block_widgets') }))
 const dragItems = computed(() => layout.value.filter(blockShown).map((i: LayoutItem) => ({ key: i.key, title: blockTitles.value[i.key] })))
-// окно раскладки: товары магазина для виджета «Коплю на товар» читаются при открытии
-const shopOptions = ref<ShopOption[]>([])
+// окно раскладки: навыки и товары магазина для выбора виджетов читаются при открытии
+const widgetOptions = ref<WidgetOptions>({ skills: [], shop: [] })
 async function openLayoutModal() {
-  if (auth.value.status === 'ready') shopOptions.value = await loadOpenShopItems(auth.value.userId)
+  if (auth.value.status === 'ready') widgetOptions.value = await loadWidgetOptions(auth.value.userId)
   showLayoutModal.value = true
 }
 const profileCollapsed = ref(false)
@@ -242,7 +242,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
             </template>
 
             <template v-else-if="item.key === 'widgets'">
-              <WidgetsSection v-if="hasWidgets(item)" :user-id="auth.userId" :config="item.widgets!" @shown="widgetsShown = $event">
+              <WidgetsSection v-if="hasWidgets(item)" :user-id="auth.userId" :config="item.config!" @shown="widgetsShown = $event">
                 <template v-if="visibleBlockCount > 1" #actions>
                   <BlockDragHandle :block-key="'widgets'" @down="dragDown" @move="dragMove" @up="dragUp" @cancel="dragCancel" @key="dragKey" />
                 </template>
@@ -313,7 +313,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
       </template>
     </template>
 
-    <LayoutModal v-if="showLayoutModal" :initial="layout" :error="layoutError" :shop-items="shopOptions" @close="showLayoutModal = false" @save="onSaveLayout" />
+    <LayoutModal v-if="showLayoutModal" :initial="layout" :error="layoutError" :widget-options="widgetOptions" @close="showLayoutModal = false" @save="onSaveLayout" />
     <ProgressSummaryModal
       v-if="summaryKind && summaries"
       :kind="summaryKind"

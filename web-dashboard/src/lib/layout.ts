@@ -4,29 +4,37 @@
 export const DASHBOARD_BLOCK_KEYS = ['profile', 'charts', 'daily', 'widgets'] as const
 export type DashboardBlockKey = (typeof DASHBOARD_BLOCK_KEYS)[number]
 
-// Выбранные виджеты блока «Виджеты» (BACKLOG 9, решение владельца 2026-10-03: три виджета, выбор галочками в окне раскладки).
-// Хранятся прямо в элементе раскладки `widgets` (profiles.dashboard_layout, миграция не нужна). Сейчас: `savings` — id товара магазина,
-// на который копит человек («Коплю на товар»). Классика (заморожена) незнакомые ключи отбрасывает — для неё блока «Виджеты» просто нет.
+// Выбранные виджеты блока «Виджеты» (BACKLOG 388, решение владельца 2026-10-03: три виджета, выбор галочками в окне раскладки).
+// Хранятся прямо в элементе раскладки `widgets` в поле `config` (profiles.dashboard_layout, миграция не нужна):
+// `skills` — id навыков виджета «Навыки», `savings` — id товара магазина виджета «Коплю на товар». Классика (заморожена) незнакомые
+// ключи отбрасывает — для неё блока «Виджеты» просто нет. Копия этого файла лежит в web-header/ — менять ВМЕСТЕ.
 export interface WidgetsConfig {
+  skills?: string[]
   savings?: string
 }
 
 export interface LayoutItem {
   key: DashboardBlockKey
   visible: boolean
-  widgets?: WidgetsConfig
+  config?: WidgetsConfig
 }
+
+export const MAX_WIDGET_SKILLS = 12
 
 export function widgetsConfig(raw: unknown): WidgetsConfig | undefined {
   if (!raw || typeof raw !== 'object') return undefined
-  const savings = (raw as { savings?: unknown }).savings
+  const { skills, savings } = raw as { skills?: unknown; savings?: unknown }
   const cfg: WidgetsConfig = {}
+  if (Array.isArray(skills)) {
+    const ids = [...new Set(skills.filter((x): x is string => typeof x === 'string' && x.length > 0))].slice(0, MAX_WIDGET_SKILLS)
+    if (ids.length > 0) cfg.skills = ids
+  }
   if (typeof savings === 'string' && savings.length > 0) cfg.savings = savings
   return Object.keys(cfg).length > 0 ? cfg : undefined
 }
 
 export function hasWidgets(item: LayoutItem): boolean {
-  return !!item.widgets && Object.keys(item.widgets).length > 0
+  return !!item.config && Object.keys(item.config).length > 0
 }
 
 // Блок «показан»: включён и (для «Виджетов») выбран хотя бы один виджет — «если ни одного виджета не выбрано, блока нет вообще».
@@ -35,16 +43,28 @@ export function isBlockShown(item: LayoutItem): boolean {
   return item.visible && (item.key !== 'widgets' || hasWidgets(item))
 }
 
-// Новая раскладка с включённым/выключенным виджетом «Коплю на товар» (itemId = null — выключить). Остальное не меняется.
-export function withSavingsWidget(layout: LayoutItem[], itemId: string | null): LayoutItem[] {
+// Новая раскладка с изменённым выбором виджетов: patch.skills = [] / patch.savings = null — выключить виджет. Остальное не меняется.
+// Когда выбран хотя бы один виджет, блок «Виджеты» включается (иначе выбор в окне раскладки ничего бы не показал).
+export function withWidgetConfig(layout: LayoutItem[], patch: { skills?: string[]; savings?: string | null }): LayoutItem[] {
   return layout.map((it) => {
-    if (it.key !== 'widgets') return { ...it, ...(it.widgets ? { widgets: { ...it.widgets } } : {}) }
-    const next: WidgetsConfig = { ...(it.widgets || {}) }
-    if (itemId) next.savings = itemId
-    else delete next.savings
-    const { widgets: _drop, ...rest } = it
-    void _drop
-    return Object.keys(next).length > 0 ? { ...rest, widgets: next } : { ...rest }
+    const copy: LayoutItem = { ...it }
+    if (it.config) copy.config = { ...it.config, ...(it.config.skills ? { skills: [...it.config.skills] } : {}) }
+    if (it.key !== 'widgets') return copy
+    const next: WidgetsConfig = { ...(copy.config || {}) }
+    if (patch.skills !== undefined) {
+      if (patch.skills.length > 0) next.skills = [...new Set(patch.skills)].slice(0, MAX_WIDGET_SKILLS)
+      else delete next.skills
+    }
+    if (patch.savings !== undefined) {
+      if (patch.savings) next.savings = patch.savings
+      else delete next.savings
+    }
+    delete copy.config
+    if (Object.keys(next).length > 0) {
+      copy.config = next
+      copy.visible = true
+    }
+    return copy
   })
 }
 
@@ -61,8 +81,8 @@ export function normalizeLayout(saved: unknown): LayoutItem[] {
       const key = item && (item as { key?: unknown }).key
       if (typeof key === 'string' && (DASHBOARD_BLOCK_KEYS as readonly string[]).includes(key) && !seen.has(key)) {
         const entry: LayoutItem = { key: key as DashboardBlockKey, visible: (item as { visible?: unknown }).visible !== false }
-        const widgets = key === 'widgets' ? widgetsConfig((item as { widgets?: unknown }).widgets) : undefined
-        if (widgets) entry.widgets = widgets
+        const config = key === 'widgets' ? widgetsConfig((item as { config?: unknown }).config) : undefined
+        if (config) entry.config = config
         layout.push(entry)
         seen.add(key)
       }
