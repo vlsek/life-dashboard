@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { sb } from './supabase'
 import { exerciseBilateralField, exerciseDurationField } from './workouts'
 import { unitToSave } from './weightUnit'
+import { renameMuscleOverride, setMuscleOverride } from './muscles'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry } from './types'
 
 export type AuthState =
@@ -71,6 +72,8 @@ export function useWorkouts() {
       value_label: res.value_label?.trim() || defaultValueLabel,
     })
     if (error) throw error
+    // Свои группы мышц (BACKLOG 22 «12:33»): только после успешной записи, по названию; undefined — не трогаем
+    if (res.muscles !== undefined) setMuscleOverride(res.name, res.muscles)
     // Длительность/билатеральность для новой записи — отдельным апдейтом, аналогично
     // streak_import у метрик: сначала вставляем базовую строку, потом узнаём, есть ли у
     // неё эти колонки (мигрирована ли база), и патчим при необходимости.
@@ -107,6 +110,9 @@ export function useWorkouts() {
       })
       .eq('id', existing.id)
     if (error) throw error
+    // Переименование не должно терять свою привязку к мышцам; затем применяем выбор из формы (undefined — не менять)
+    renameMuscleOverride(existing.name, res.name.trim())
+    if (res.muscles !== undefined) setMuscleOverride(res.name, res.muscles)
     await reload()
   }
 

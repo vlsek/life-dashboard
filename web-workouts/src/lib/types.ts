@@ -1,3 +1,4 @@
+import type { MuscleId } from './muscles'
 export interface WorkoutSet {
   reps: number | null
   weight: number | null
@@ -38,6 +39,8 @@ export interface ExerciseFormInput {
   unit: string
   tracks_duration: boolean
   bilateral: boolean
+  // Свои группы мышц для карты мышц (BACKLOG 22 «12:33»): undefined — не менять, [] — убрать свою привязку (снова авто), список — задать.
+  muscles?: MuscleId[]
 }
 
 export interface EntryFormInput {

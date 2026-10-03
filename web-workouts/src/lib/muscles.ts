@@ -83,8 +83,84 @@ export function ruleForExercise(name: string): ExerciseRule | null {
   return EXERCISE_REFERENCE.find((r) => r.keys.some((k) => n.includes(k))) ?? null
 }
 
+// ---- Своя привязка пользователя (BACKLOG 22 «12:33 — упражнение: дополнительно отметить группы мышц из списка для схемы») ----
+// Для упражнений, которых нет в справочнике: человек сам отмечает группы в форме упражнения. Колонки в БД под это нет, поэтому
+// (запасной вариант из формулировки пункта) хранится в localStorage на устройстве: { «нормализованное название» → [группы] }.
+// Ключ — название, а не id: упражнения в БД — свободный текст, а id у только что созданного упражнения ещё неизвестен.
+// Своя привязка ПЕРЕКРЫВАЕТ автоматическую по ключевым словам; пустая — то же, что «не задано» (снова работает авто).
+export const MUSCLE_OVERRIDES_KEY = 'workouts_muscle_overrides'
+type OverrideStore = Record<string, MuscleId[]>
+let cacheRaw: string | null | undefined
+let cacheVal: OverrideStore = {}
+
+function readOverrides(): OverrideStore {
+  let raw: string | null = null
+  try {
+    raw = localStorage.getItem(MUSCLE_OVERRIDES_KEY)
+  } catch {
+    return {}
+  }
+  if (raw === cacheRaw) return cacheVal
+  const out: OverrideStore = {}
+  try {
+    const data = raw ? JSON.parse(raw) : null
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      for (const [k, v] of Object.entries(data)) {
+        if (!Array.isArray(v)) continue
+        const ms = [...new Set(v.filter((m): m is MuscleId => MUSCLE_IDS.includes(m as MuscleId)))]
+        if (ms.length) out[k] = ms // чужие/устаревшие id отбрасываем, пустое не храним
+      }
+    }
+  } catch {
+    /* битый JSON — считаем, что своей привязки нет */
+  }
+  cacheRaw = raw
+  cacheVal = out
+  return out
+}
+
+function writeOverrides(store: OverrideStore): void {
+  try {
+    const raw = Object.keys(store).length ? JSON.stringify(store) : null
+    if (raw === null) localStorage.removeItem(MUSCLE_OVERRIDES_KEY)
+    else localStorage.setItem(MUSCLE_OVERRIDES_KEY, raw)
+  } catch {
+    /* хранилище недоступно — привязка просто не сохранится, приложение не страдает */
+  }
+}
+
+const overrideKey = (name: string): string => normalizeName(name).trim()
+
+export function getMuscleOverride(name: string): MuscleId[] | null {
+  const v = readOverrides()[overrideKey(name)]
+  return v ? [...v] : null
+}
+
+// null / undefined / [] — убрать свою привязку (снова работает автоматическая).
+export function setMuscleOverride(name: string, muscles: readonly MuscleId[] | null | undefined): void {
+  const key = overrideKey(name)
+  if (!key) return
+  const store = { ...readOverrides() }
+  const ms = [...new Set((muscles ?? []).filter((m) => MUSCLE_IDS.includes(m)))]
+  if (ms.length) store[key] = ms
+  else delete store[key]
+  writeOverrides(store)
+}
+
+// Переименование упражнения не должно терять привязку.
+export function renameMuscleOverride(oldName: string, newName: string): void {
+  const from = overrideKey(oldName)
+  const to = overrideKey(newName)
+  if (!from || !to || from === to) return
+  const store = { ...readOverrides() }
+  if (!store[from]) return
+  store[to] = store[from]
+  delete store[from]
+  writeOverrides(store)
+}
+
 export function musclesForExercise(name: string): MuscleId[] {
-  return ruleForExercise(name)?.muscles ?? []
+  return getMuscleOverride(name) ?? ruleForExercise(name)?.muscles ?? []
 }
 
 export function referenceFor(muscle: MuscleId): ExerciseRule[] {

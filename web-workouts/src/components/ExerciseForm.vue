@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { t } from '../lib/i18n'
+import { t, type DictKey } from '../lib/i18n'
+import { MUSCLE_IDS, getMuscleOverride, ruleForExercise, type MuscleId } from '../lib/muscles'
 import { defaultWeightUnit, isWeightUnit, rememberWeightUnit } from '../lib/weightUnit'
 import { valueLabelOptions } from '../lib/valueLabels'
 import Icon from './Icon.vue'
@@ -40,6 +41,19 @@ const customUnit = ref(unitPresets.includes(startUnit) ? '' : startUnit)
 const chosenUnit = computed(() => (unitChoice.value === OTHER ? customUnit.value.trim() : unitChoice.value) || defaultWeightUnit())
 const tracksDuration = ref(props.existing?.tracks_duration ?? false)
 const bilateral = ref(props.existing?.bilateral ?? false)
+// Группы мышц (BACKLOG 22 «12:33»): по умолчанию пусто — работает автоматическое распознавание по названию; отметка
+// задаёт свою привязку для карты мышц (хранится по названию на устройстве, см. lib/muscles.ts). Нужна для упражнений вне справочника.
+const muscles = ref<MuscleId[]>(props.existing ? (getMuscleOverride(props.existing.name) ?? []) : [])
+function toggleMuscle(m: MuscleId) {
+  muscles.value = muscles.value.includes(m) ? muscles.value.filter((x) => x !== m) : [...muscles.value, m]
+}
+const muscleLabel = (m: MuscleId) => t(`workouts_muscle_${m}` as DictKey)
+const autoMuscles = computed(() => ruleForExercise(name.value)?.muscles ?? [])
+const muscleHint = computed(() => {
+  if (muscles.value.length) return t('workouts_muscles_pick_custom')
+  if (autoMuscles.value.length) return t('workouts_muscles_pick_auto') + ' ' + autoMuscles.value.map(muscleLabel).join(', ')
+  return name.value.trim() ? t('workouts_muscles_pick_none') : ''
+})
 
 const showNewCatInput = computed(() => catSelect.value === '__new__')
 
@@ -61,6 +75,7 @@ function onSubmit() {
     unit: unitOut,
     tracks_duration: tracksDuration.value,
     bilateral: bilateral.value,
+    muscles: muscles.value,
   })
 }
 </script>
@@ -120,6 +135,38 @@ function onSubmit() {
           {{ t('workouts_field_bilateral') }}
         </label>
         <p class="-mt-2 text-xs" style="color: var(--text-dim)">{{ t('workouts_field_bilateral_hint') }}</p>
+        <div class="flex flex-col gap-1.5 text-sm" data-testid="muscles-field">
+          <span>{{ t('workouts_muscles_pick_label') }}</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button
+              v-for="m in MUSCLE_IDS"
+              :key="m"
+              type="button"
+              class="rounded-full border px-2.5 py-1 text-xs"
+              :style="
+                muscles.includes(m)
+                  ? 'border-color: var(--accent); background: var(--accent); color: var(--accent-text)'
+                  : 'border-color: var(--border); background: var(--bg); color: var(--text)'
+              "
+              :aria-pressed="muscles.includes(m)"
+              :data-testid="`muscle-${m}`"
+              @click="toggleMuscle(m)"
+            >
+              {{ muscleLabel(m) }}
+            </button>
+          </div>
+          <p v-if="muscleHint" class="text-xs" style="color: var(--text-dim)" data-testid="muscles-hint">{{ muscleHint }}</p>
+          <button
+            v-if="muscles.length"
+            type="button"
+            class="self-start text-xs underline"
+            style="color: var(--text-dim)"
+            data-testid="muscles-clear"
+            @click="muscles = []"
+          >
+            {{ t('workouts_muscles_pick_clear') }}
+          </button>
+        </div>
 
         <div v-if="tracksWeight === 'yes'" class="flex flex-col gap-1 text-sm" data-testid="unit-row">
           {{ t('workouts_weight_unit_label') }}

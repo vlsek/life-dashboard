@@ -93,6 +93,8 @@ describe('ExerciseForm: единица веса — по умолчанию кг
 const h = vi.hoisted(() => ({ inserted: null as any, updated: null as any }))
 vi.mock('./lib/supabase', () => ({
   sb: {
+    // useWorkouts() при создании вызывает init() → getSession(); вечно ожидающий промис = «сессия ещё грузится» (без редиректа и шума)
+    auth: { getSession: () => new Promise(() => {}) },
     from: () => ({
       insert: (row: any) => ((h.inserted = row), Promise.resolve({ error: null })),
       update: (row: any) => ((h.updated = row), { eq: () => Promise.resolve({ error: null }) }),
