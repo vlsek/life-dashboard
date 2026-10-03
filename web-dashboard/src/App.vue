@@ -23,7 +23,8 @@ import InstallBanner from './components/InstallBanner.vue'
 import ProfileSection from './components/ProfileSection.vue'
 import DailyMetricsSection from './components/DailyMetricsSection.vue'
 import LayoutModal from './components/LayoutModal.vue'
-import ReorderPanel from './components/ReorderPanel.vue'
+import BlockDragHandle from './components/BlockDragHandle.vue'
+import BlockDragOverlay from './components/BlockDragOverlay.vue'
 import Icon from './components/Icon.vue'
 import SectionHeading from './components/SectionHeading.vue'
 import { vCollapse } from './lib/collapseMotion'
@@ -34,6 +35,7 @@ import { usePlanReminders } from './lib/usePlanReminders'
 import { useDashboard } from './lib/useDashboard'
 import { useStreakCelebration } from './lib/useStreakCelebration'
 import { useLayout } from './lib/useLayout'
+import { useBlockDrag } from './lib/blockDrag'
 import type { LayoutItem } from './lib/layout'
 import { progressPercent } from './lib/progress'
 import { t } from './lib/i18n'
@@ -76,22 +78,24 @@ const showAllStreaks = ref(false)
 const showProgressSettings = ref(false)
 const summaryKind = ref<'day' | 'week' | null>(null)
 const showLayoutModal = ref(false)
-// Режим «Изменить порядок» прямо на странице (BACKLOG 22, 11:53): блоки сворачиваются в список карточек, порядок пишется сразу
-const reorderMode = ref(false)
-const reorderDraft = ref<LayoutItem[]>([])
-const reorderSaved = ref(false)
-function startReorder() {
-  reorderDraft.value = layout.value.map((i) => ({ ...i }))
-  reorderSaved.value = false
-  reorderMode.value = true
-}
-async function onReorder(next: LayoutItem[]) {
+// Перетаскивание блоков прямо на главной (пожелание владельца, 2026-10-03): ручка ☰ в заголовке каждого видимого блока, поверх страницы
+// на время жеста — компактные карточки блоков (lib/blockDrag.ts, BlockDragOverlay.vue). Порядок меняется на экране сразу,
+// запись в БД — следом; при сбое записи возвращаем прежний порядок и показываем ошибку.
+const blockMoveError = ref('')
+async function onBlockMove(next: LayoutItem[]) {
   if (auth.value.status !== 'ready') return
-  const prev = reorderDraft.value
-  reorderDraft.value = next
-  reorderSaved.value = await saveLayout(auth.value.userId, next)
-  if (!reorderSaved.value) reorderDraft.value = prev
+  const prev = layout.value
+  blockMoveError.value = ''
+  layout.value = next
+  if (!(await saveLayout(auth.value.userId, next))) {
+    layout.value = prev
+    blockMoveError.value = layoutError.value
+  }
 }
+const { drag: blockDrag, onDown: dragDown, onMove: dragMove, onUp: dragUp, onCancel: dragCancel, onKey: dragKey } = useBlockDrag(() => layout.value, onBlockMove)
+const visibleBlockCount = computed(() => layout.value.filter((i: LayoutItem) => i.visible).length)
+const blockTitles = computed<Record<string, string>>(() => ({ profile: t('dash_block_profile'), charts: t('dash_charts_h2'), daily: t('dash_block_daily') }))
+const dragItems = computed(() => layout.value.filter((i: LayoutItem) => i.visible).map((i: LayoutItem) => ({ key: i.key, title: blockTitles.value[i.key] })))
 const profileCollapsed = ref(false)
 const chartsCollapsed = ref(false)
 // пока ни один график не построен (нет данных/мало данных) — блок «Графики» свёрнут по умолчанию (BACKLOG 17); явный выбор пользователя сильнее
@@ -156,6 +160,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
 <template>
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
   <PointsFloat />
+  <BlockDragOverlay v-if="blockDrag" :items="dragItems" :drag="blockDrag" />
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
     <div class="mb-3 flex items-center gap-2">
@@ -171,19 +176,6 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
         @click="showLayoutModal = true"
       >
         <Icon name="gear" />
-      </button>
-      <button
-        v-if="auth.status === 'ready' && layoutLoaded"
-        type="button"
-        class="rounded-lg border px-2.5 py-1.5"
-        :style="{ borderColor: 'var(--border)', background: reorderMode ? 'var(--accent)' : 'var(--bg)', color: reorderMode ? 'var(--accent-text)' : 'var(--text)' }"
-        data-test="reorder-btn"
-        :title="t('dash_reorder_btn')"
-        :aria-label="t('dash_reorder_btn')"
-        :aria-pressed="reorderMode"
-        @click="reorderMode ? (reorderMode = false) : startReorder()"
-      >
-        <Icon name="list" />
       </button>
     </div>
 
@@ -206,13 +198,17 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
       <HeaderProgressBadge v-if="weekRingHeader" kind="week" v-bind="weekRingHeader" @click="summaryKind = 'week'" />
       <WaterSection :user-id="auth.userId" />
 
-      <ReorderPanel v-if="layoutLoaded && reorderMode" :model-value="reorderDraft" :error="layoutError" :saved="reorderSaved" @update:model-value="onReorder" @done="reorderMode = false" />
+      <p v-if="blockMoveError" class="mb-2 text-sm" style="color: #d6336c" data-test="block-move-error">{{ t('dash_layout_save_error') }}{{ blockMoveError }}</p>
 
-      <template v-else-if="layoutLoaded">
+      <template v-if="layoutLoaded">
         <template v-for="item in layout" :key="item.key">
           <template v-if="item.visible">
             <template v-if="item.key === 'profile'">
-              <SectionHeading v-model:collapsed="profileCollapsed" :title="stripEmoji(t('dash_block_profile'))" storage-key="profile" />
+              <SectionHeading v-model:collapsed="profileCollapsed" :title="stripEmoji(t('dash_block_profile'))" storage-key="profile">
+                <template v-if="visibleBlockCount > 1" #actions>
+                  <BlockDragHandle :block-key="'profile'" @down="dragDown" @move="dragMove" @up="dragUp" @cancel="dragCancel" @key="dragKey" />
+                </template>
+              </SectionHeading>
               <div v-collapse="!profileCollapsed">
                 <ProfileSection
                   :user-id="auth.userId"
@@ -229,12 +225,17 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
             <template v-else-if="item.key === 'daily'">
               <div class="mb-4 flex flex-wrap items-center gap-2">
                 <MetricsManagerSection :user-id="auth.userId" @changed="init" />
+                <BlockDragHandle class="ml-auto" :block-key="'daily'" @down="dragDown" @move="dragMove" @up="dragUp" @cancel="dragCancel" @key="dragKey" v-if="visibleBlockCount > 1" />
               </div>
               <DailyMetricsSection :user-id="auth.userId" :metric-streaks="metricStreaks" />
             </template>
 
             <template v-else-if="item.key === 'charts'">
-              <SectionHeading v-model:collapsed="chartsCollapsed" :title="stripEmoji(t('dash_charts_h2'))" storage-key="charts" :default-collapsed="chartsDefaultCollapsed" />
+              <SectionHeading v-model:collapsed="chartsCollapsed" :title="stripEmoji(t('dash_charts_h2'))" storage-key="charts" :default-collapsed="chartsDefaultCollapsed">
+                <template v-if="visibleBlockCount > 1" #actions>
+                  <BlockDragHandle :block-key="'charts'" @down="dragDown" @move="dragMove" @up="dragUp" @cancel="dragCancel" @key="dragKey" />
+                </template>
+              </SectionHeading>
               <div v-collapse="!chartsCollapsed" class="mb-5">
                 <ChartsSection :user-id="auth.userId" :metric-streaks="metricStreaks" @state="chartsState = $event" />
               </div>

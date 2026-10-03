@@ -44,5 +44,7 @@ function toggle() {
   >
     <h2 class="text-lg font-semibold"><EmojiText :text="title" /></h2>
     <CollapseChevron :collapsed="collapsed" />
+    <!-- слот под ручку перетаскивания блока (BlockDragHandle): клик/клавиши внутри не сворачивают секцию -->
+    <span v-if="$slots.actions" class="ml-auto flex items-center" @click.stop @keydown.stop><slot name="actions" /></span>
   </div>
 </template>
