@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.37";
+const SITE_VERSION = "2.38";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.38", date: "2026-10-03 12:45", changes: [
+        "Тренировки: группы мышц, которые ты отметил у упражнения, теперь синхронизируются между устройствами. Отметил на телефоне — на компьютере упражнение уже на карте мышц; сброс на одном устройстве действует на всех. Привязки, отмеченные раньше на этом устройстве, один раз загрузятся автоматически. Работает после обновления базы данных, до этого всё остаётся как раньше — на одном устройстве",
+    ]},
     { version: "2.37", date: "2026-10-03 12:33", changes: [
         "Дашборд: в блоке «Дневные метрики» каждый параметр (число, галочка, выбор из вариантов) теперь лежит в своей мини-плашке с тонкой рамкой — несколько параметров подряд больше не сливаются. На графиках метрик рядом с названием появился огонёк серии с числом дней (приглушённый, если сегодня серия ещё не засчитана) — такой же, как у метрики в дневных метриках",
     ]},
@@ -1313,6 +1316,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.38", date: "2026-10-03 12:45", changes: [
+        "Workouts: the muscle groups you mark on an exercise now sync between devices. Mark them on your phone and the exercise is already on the muscle map on your computer; resetting on one device applies everywhere. Links marked earlier on this device are uploaded once automatically. Works after the database update; until then everything stays as before — on one device",
+    ]},
     { version: "2.37", date: "2026-10-03 12:33", changes: [
         "Dashboard: in the \"Daily metrics\" block every parameter (number, checkbox, choice of options) now sits in its own mini plate with a thin border — several parameters in a row no longer blend together. Metric charts now show the streak flame with the day count next to the title (dimmed if today is not counted yet), the same as the metric in daily metrics",
     ]},
