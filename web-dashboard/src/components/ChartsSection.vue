@@ -12,10 +12,17 @@ import { effectivePeriod, loadOwnPeriod } from '../lib/chartPeriods'
 import { PRESET_LABEL_KEYS, classifyPeriod, formatRange, monthLabel } from '../lib/periodNav'
 import { filterPointsWithFallback, loadPeriodState, savePeriodState, type PeriodState } from '../lib/chart'
 import { getLang, t } from '../lib/i18n'
+import type { MetricStreakInfo } from '../lib/metricStreaks'
 
 // Блок «Графики»: серии параметров тела, «баллы за день» и числовых метрик; выбор/порядок/цели
 // (profiles.dashboard_charts), период общий + свой у каждого графика, правка значений из графика.
-const props = defineProps<{ userId: string | null }>()
+const props = defineProps<{ userId: string | null; metricStreaks?: Record<string, MetricStreakInfo> | null }>()
+
+// Серия метрики рядом с названием графика (BACKLOG 23, 14:42). Ключ серии графика метрики — `metric:<id>`; у остальных графиков
+// (вес и параметры тела) серий нет.
+function streakFor(key: string): MetricStreakInfo | null {
+  return key.startsWith('metric:') ? (props.metricStreaks?.[key.slice('metric:'.length)] ?? null) : null
+}
 // state: данные блока загружены, и есть ли хотя бы один ПОСТРОЕННЫЙ график (≥2 точек за окно). Дашборд по этому сигналу сворачивает
 // пустой блок «Графики» по умолчанию, чтобы он не занимал место впустую (BACKLOG 17, 07:20).
 const emit = defineEmits<{ state: [s: { loaded: boolean; hasChart: boolean }] }>()
@@ -134,6 +141,7 @@ function onPeriodApplied() {
           :icon="series[entry.key].icon"
           :points="pointsFor(entry.key)"
           :variations="series[entry.key].variations"
+          :streak="streakFor(entry.key)"
           :note="noteFor(entry.key)"
           :unit="series[entry.key].unit"
           :color="series[entry.key].color"

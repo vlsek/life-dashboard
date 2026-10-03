@@ -65,40 +65,41 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
       <p v-if="!loaded" class="dim text-sm">{{ t('loading_ellipsis') }}</p>
 
       <template v-else>
+        <!-- BACKLOG 23 (13:25): каждый параметр — в своей мини-плашке, иначе несколько подряд сливаются в одну массу -->
         <div v-if="numbers.length > 0" class="field-grid">
-          <NumberMetricField
-            v-for="m in numbers"
-            :key="date + m.id"
+          <div v-for="m in numbers" :key="date + m.id" class="metric-plate" data-test="metric-plate">
+            <NumberMetricField
+              :metric="m"
+              :value="numberValue(m.id)"
+              :flashed="!!flashed[m.id]"
+              :remaining="isRemaining(m, date, pending[m.id])"
+              :streak="props.metricStreaks?.[m.id]"
+              @set="setNumber(m, $event)"
+              @add="addToNumber(m, $event)"
+              @fix="fixTotal(m, $event)"
+            />
+          </div>
+        </div>
+
+        <div v-for="m in booleans" :key="date + m.id" class="metric-plate metric-plate-stack" data-test="metric-plate">
+          <BooleanMetricRow
             :metric="m"
-            :value="numberValue(m.id)"
-            :flashed="!!flashed[m.id]"
+            :checked="!!pending[m.id]"
             :remaining="isRemaining(m, date, pending[m.id])"
             :streak="props.metricStreaks?.[m.id]"
-            @set="setNumber(m, $event)"
-            @add="addToNumber(m, $event)"
-            @fix="fixTotal(m, $event)"
+            @toggle="setBoolean(m, $event)"
           />
         </div>
 
-        <BooleanMetricRow
-          v-for="m in booleans"
-          :key="date + m.id"
-          :metric="m"
-          :checked="!!pending[m.id]"
-          :remaining="isRemaining(m, date, pending[m.id])"
+        <div v-for="m in multiselects" :key="date + m.id" class="metric-plate metric-plate-stack" data-test="metric-plate">
+          <MultiselectMetric
+            :metric="m"
+            :selected="selectedOf(m.id)"
+            :remaining="isRemaining(m, date, pending[m.id])"
             :streak="props.metricStreaks?.[m.id]"
-          @toggle="setBoolean(m, $event)"
-        />
-
-        <MultiselectMetric
-          v-for="m in multiselects"
-          :key="date + m.id"
-          :metric="m"
-          :selected="selectedOf(m.id)"
-          :remaining="isRemaining(m, date, pending[m.id])"
-            :streak="props.metricStreaks?.[m.id]"
-          @toggle="toggleOpt(m, $event)"
-        />
+            @toggle="toggleOpt(m, $event)"
+          />
+        </div>
 
         <UsefulTodayList :items="items" @add="addItem" @remove="removeItem" />
 
@@ -134,7 +135,25 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
 .field-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 14px;
-  margin-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+/* Мини-плашка параметра (BACKLOG 23, 13:25): чуть другой оттенок, чем у блока, своя тонкая рамка и скругление — параметры не
+   сливаются; смесь с цветом текста темы читается и на светлых, и на тёмных темах (слабее, чем у вложенной карточки «Подходы»).
+   Плашка — на обёртке, а не на корне компонента: у булевых/мультивыбора свой .metric-remaining с padding-left и акцентной полоской. */
+.metric-plate {
+  min-width: 0;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--text) 4%, var(--bg-card));
+  border: 1px solid color-mix(in srgb, var(--text) 11%, var(--border));
+  border-radius: 10px;
+}
+.metric-plate-stack {
+  margin-bottom: 8px;
+}
+/* у вложенных компонентов свои нижние отступы (для списка без плашек) — внутри плашки они лишние */
+.metric-plate :deep(.row),
+.metric-plate :deep(.wrap) {
+  margin-bottom: 0;
 }
 </style>

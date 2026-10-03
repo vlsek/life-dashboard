@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { prepareChartSeries, type ChartPoint } from '../lib/chart'
+import MetricStreakBadge from './MetricStreakBadge.vue'
 import { buildLegend, describeShares, escapeXml, hasNamedVariations, pieSlices } from '../lib/variationChart'
+import type { MetricStreakInfo } from '../lib/metricStreaks'
 import type { VariationShare } from '../lib/variationChart'
 import { t } from '../lib/i18n'
 import MetricIcon from './MetricIcon.vue'
@@ -17,8 +19,9 @@ const props = withDefaults(
     goalLabel?: string | null
     note?: string | null // пояснение под графиком (например, «период расширен»)
     variations?: string[] | null // метрики-подходы: стабильный порядок особенностей (от него цвета точек и легенды)
+    streak?: MetricStreakInfo | null // серия метрики: огонёк с числом рядом с названием графика (BACKLOG 23, 14:42)
   }>(),
-  { title: '', icon: null, unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null, note: null, variations: null },
+  { title: '', icon: null, unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null, note: null, variations: null, streak: null },
 )
 
 const prepared = computed<ChartPoint[]>(() => prepareChartSeries(props.points))
@@ -126,7 +129,7 @@ const fallbackText = computed(() => {
 
 <template>
   <div>
-    <h4 v-if="title" class="mb-1.5 font-medium"><MetricIcon v-if="icon" :icon="icon" extra-style="margin-right:0.35em;" />{{ title }}</h4>
+    <h4 v-if="title" class="mb-1.5 font-medium"><MetricIcon v-if="icon" :icon="icon" extra-style="margin-right:0.35em;" />{{ title }}<MetricStreakBadge v-if="streak" :info="streak" /></h4>
     <template v-if="innerSvg">
       <svg viewBox="0 0 620 160" width="100%" :height="160" v-html="innerSvg"></svg>
       <ul v-if="legend.length" class="m-0 mt-1 flex list-none flex-wrap gap-x-3 gap-y-1 p-0 text-xs" data-test="chart-legend" :aria-label="t('chart_legend_aria')">

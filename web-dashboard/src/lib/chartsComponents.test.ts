@@ -139,6 +139,38 @@ describe('ChartsSection', () => {
     expect(none.emitted('state')!.at(-1)).toEqual([{ loaded: true, hasChart: false }])
     none.unmount()
   })
+  // BACKLOG 23 (14:42): огонёк серии рядом с названием графика метрики
+  it('показывает огонёк серии у графика метрики, у которой есть серия, и не показывает у остальных', async () => {
+    state.series.value = {
+      ...state.series.value,
+      'metric:m1': { label: 'Отжимания', unit: '', color: 'var(--accent)', points: [{ date: '2026-01-01', y: 5 }, { date: '2026-01-02', y: 6 }] },
+      'metric:m2': { label: 'Шаги', unit: '', color: 'var(--accent)', points: [{ date: '2026-01-01', y: 5 }, { date: '2026-01-02', y: 6 }] },
+    }
+    state.entries.value = [{ key: 'body:w', goal: null }, { key: 'metric:m1', goal: null }, { key: 'metric:m2', goal: null }]
+    const { default: ChartsSection } = await import('../components/ChartsSection.vue')
+    const w = mount(ChartsSection, { props: { userId: 'u1', metricStreaks: { m1: { streak: 12, todayCounted: true } } } })
+    await flushPromises()
+    const charts = w.findAll('[data-test="chart"]')
+    expect(charts).toHaveLength(3)
+    expect(charts[0].find('[data-test="metric-streak"]').exists()).toBe(false) // вес — серий нет
+    expect(charts[1].find('[data-test="metric-streak"]').text()).toContain('12')
+    expect(charts[2].find('[data-test="metric-streak"]').exists()).toBe(false) // у шагов серии нет
+    w.unmount()
+  })
+  it('огонёк серии на графике приглушён, если серия ещё не засчитана сегодня; без карты серий — графики как раньше', async () => {
+    state.series.value = { 'metric:m1': { label: 'Отжимания', unit: '', color: 'var(--accent)', points: [{ date: '2026-01-01', y: 5 }, { date: '2026-01-02', y: 6 }] } }
+    state.entries.value = [{ key: 'metric:m1', goal: null }]
+    const { default: ChartsSection } = await import('../components/ChartsSection.vue')
+    const dim = mount(ChartsSection, { props: { userId: 'u1', metricStreaks: { m1: { streak: 4, todayCounted: false } } } })
+    await flushPromises()
+    expect(dim.find('[data-test="metric-streak"]').classes()).toContain('unlit')
+    dim.unmount()
+    const none = mount(ChartsSection, { props: { userId: 'u1' } })
+    await flushPromises()
+    expect(none.find('[data-test="metric-streak"]').exists()).toBe(false)
+    expect(none.findAll('[data-test="chart"]')).toHaveLength(1)
+    none.unmount()
+  })
   it('рисует только графики с данными; правка значений есть у параметра тела, но не у «баллов»', async () => {
     const { default: ChartsSection } = await import('../components/ChartsSection.vue')
     const w = mount(ChartsSection, { props: { userId: 'u1' } })
@@ -279,5 +311,30 @@ describe('ChartBlock: variations', () => {
   it('shows colours of "no variation" sets in grey', () => {
     const w = mountBlock(pts([{ label: 'classic', reps: 5 }, { label: null, reps: 5 }], [{ label: 'classic', reps: 5 }]))
     expect(w.find('[data-test="pie-point"]').html()).toContain('#9aa0a6')
+  })
+})
+
+// BACKLOG 23 (14:42): огонёк серии в заголовке ChartBlock
+describe('ChartBlock: streak flame', () => {
+  const pts = [{ date: '2026-09-01', y: 5 }, { date: '2026-09-02', y: 6 }]
+  it('shows the flame badge with the number next to the title when the metric has a streak', () => {
+    const w = mount(ChartBlock, { props: { title: 'Push-ups', points: pts, streak: { streak: 9, todayCounted: true } } })
+    const badge = w.find('h4 [data-test="metric-streak"]')
+    expect(badge.exists()).toBe(true)
+    expect(badge.text()).toContain('9')
+    expect(badge.classes()).not.toContain('unlit')
+  })
+  it('weekly streaks show the week unit', () => {
+    const w = mount(ChartBlock, { props: { title: 'Gym', points: pts, streak: { streak: 3, unit: 'w', todayCounted: true } } })
+    expect(w.find('[data-test="metric-streak"]').text()).toMatch(/3\s*\S+/)
+    expect(w.find('[data-test="metric-streak"]').text().length).toBeGreaterThan(1)
+  })
+  it('no streak → no badge; the title and chart stay as before', () => {
+    const w = mount(ChartBlock, { props: { title: 'Weight', points: pts } })
+    expect(w.find('[data-test="metric-streak"]').exists()).toBe(false)
+    expect(w.find('h4').text()).toBe('Weight')
+    expect(w.find('svg').exists()).toBe(true)
+    const nul = mount(ChartBlock, { props: { title: 'Weight', points: pts, streak: null } })
+    expect(nul.find('[data-test="metric-streak"]').exists()).toBe(false)
   })
 })

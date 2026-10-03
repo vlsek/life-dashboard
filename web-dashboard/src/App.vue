@@ -236,7 +236,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
             <template v-else-if="item.key === 'charts'">
               <SectionHeading v-model:collapsed="chartsCollapsed" :title="stripEmoji(t('dash_charts_h2'))" storage-key="charts" :default-collapsed="chartsDefaultCollapsed" />
               <div v-collapse="!chartsCollapsed" class="mb-5">
-                <ChartsSection :user-id="auth.userId" @state="chartsState = $event" />
+                <ChartsSection :user-id="auth.userId" :metric-streaks="metricStreaks" @state="chartsState = $event" />
               </div>
             </template>
           </template>
