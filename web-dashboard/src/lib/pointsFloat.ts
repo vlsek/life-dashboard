@@ -17,9 +17,9 @@ export interface PointsFloatDetail {
 }
 
 // Сколько баллов даёт/отнимает правка значения метрики. 0 — анимировать нечего.
-export function pointsDelta(metric: Metric, before: MetricValue | undefined, after: MetricValue | undefined): number {
-  const was = isMetricDone(metric, before ?? null)
-  const now = isMetricDone(metric, after ?? null)
+export function pointsDelta(metric: Metric, before: MetricValue | undefined, after: MetricValue | undefined, dateStr?: string): number {
+  const was = isMetricDone(metric, before ?? null, dateStr)
+  const now = isMetricDone(metric, after ?? null, dateStr)
   if (was === now) return 0
   return now ? 1 : -1
 }

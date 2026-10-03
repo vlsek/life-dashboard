@@ -50,7 +50,7 @@ export function computeDayProgressPure(
 
   if (settings.includeMetrics) {
     for (const m of metrics) {
-      const isDone = isMetricDone(m, byMetricToday[m.id] as any)
+      const isDone = isMetricDone(m, byMetricToday[m.id] as any, dateStr)
       if (metricSchedule(m)?.type === 'at_most') continue // не дневной пункт — считается в неделе
       if (!metricCountsInDay(m, dateStr, isDone)) continue // сегодня по расписанию не нужна — не штрафуем
       total++
@@ -106,7 +106,7 @@ export function computeWeekProgressPure(
     for (const dateStr of pastOrToday) {
       const byMetric = valuesByDate[dateStr] || {}
       for (const m of metrics) {
-        const isDone = isMetricDone(m, byMetric[m.id] as any)
+        const isDone = isMetricDone(m, byMetric[m.id] as any, dateStr)
         const sc = metricSchedule(m)
         if (sc?.type === 'weekly' || sc?.type === 'at_most') {
           if (isDone) weeklyDoneCount[m.id] = (weeklyDoneCount[m.id] || 0) + 1

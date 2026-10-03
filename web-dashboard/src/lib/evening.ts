@@ -17,7 +17,7 @@ export function isEveningTime(now: Date, hour: number = EVENING_HOUR): boolean {
 // подсветки «ещё осталось» в карточке дня (isRemaining в daily.ts): «N раз в неделю» и
 // «не чаще N» к конкретному дню не привязаны и сюда не попадают.
 export function remainingMetricsToday(metrics: Metric[], valueByMetric: Record<string, MetricValue>, dateStr: string): Metric[] {
-  return metrics.filter((m) => metricExpectedOn(m, dateStr) && !isMetricDone(m, valueByMetric[m.id]))
+  return metrics.filter((m) => metricExpectedOn(m, dateStr) && !isMetricDone(m, valueByMetric[m.id], dateStr))
 }
 
 // Показывать ли плашку: уже вечер, есть что доделывать, и сегодня её ещё не закрывали.

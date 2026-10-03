@@ -66,7 +66,7 @@ export function useSets() {
       error.value = null
       // подход засчитывается в «идеальный день»/кольца — пересчитать стрики; в графике точка = сумма повторений
       notifyDataChanged({ source: 'sets', metricId: m.id, date, value: sets.reduce((sum, s) => sum + (s?.reps || 0), 0) })
-      emitPointsFloat(pointsDelta(m, before as unknown as MetricValue, sets as unknown as MetricValue)) // BACKLOG 14, 11:11
+      emitPointsFloat(pointsDelta(m, before as unknown as MetricValue, sets as unknown as MetricValue, date || undefined)) // BACKLOG 14, 11:11
     }
   }
 

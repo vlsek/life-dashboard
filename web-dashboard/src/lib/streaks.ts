@@ -125,7 +125,7 @@ export function computeStreakItemsPure(
     const perfectDays = new Set(
       Object.keys(byDay).filter((d) => {
         const exp = expectedOn(d)
-        return exp.length > 0 && exp.every((m) => isMetricDone(m, byDay[d][m.id] as any))
+        return exp.length > 0 && exp.every((m) => isMetricDone(m, byDay[d][m.id] as any, d))
       }),
     )
     const isSkip = (d: string) => expectedOn(d).length === 0
@@ -140,7 +140,7 @@ export function computeStreakItemsPure(
 
   // серия по каждой метрике отдельно
   for (const m of metrics || []) {
-    const doneDays = new Set(Object.keys(byDay).filter((d) => isMetricDone(m, byDay[d][m.id] as any)))
+    const doneDays = new Set(Object.keys(byDay).filter((d) => isMetricDone(m, byDay[d][m.id] as any, d)))
     const sched = metricSchedule(m)
     if (sched?.type === 'weekly') {
       const w = computeWeeklyStreak([...doneDays], sched.min, today)

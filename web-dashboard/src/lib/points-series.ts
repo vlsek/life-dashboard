@@ -17,7 +17,7 @@ export function pointsPerDaySeries(metrics: Metric[], values: DailyValueRow[]): 
   const days = Object.keys(byDay).sort()
   return days.map((d) => {
     let pts = 0
-    for (const m of metrics) if (isMetricDone(m, byDay[d][m.id])) pts++
+    for (const m of metrics) if (isMetricDone(m, byDay[d][m.id], d)) pts++
     return { date: d, y: pts }
   })
 }

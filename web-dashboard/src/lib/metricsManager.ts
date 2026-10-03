@@ -1,6 +1,7 @@
 import { todayStr } from './date'
 import { findWaterMetric } from './water'
-import type { GoalDirection, Metric, MetricOption, MetricType, Schedule } from './types'
+import { currentPlannedSets, plannedSetsLog } from './metrics'
+import type { GoalDirection, Metric, MetricOption, MetricType, PlannedSetsEntry, Schedule } from './types'
 
 // Портировано из блока «Настройка метрик» в dashboard.js (openMetricFormModal/addMetric/
 // editMetric/parseOptionsRaw/scheduleFields/streakImportFields) — только чистая логика,
@@ -24,6 +25,7 @@ export interface MetricFormValues {
   atMostMax: number
   streakImportDays: string // строка, потому что пустое поле ≠ 0
   countStreak: boolean // миграция 031: считать ли серию по метрике
+  plannedSets: string // миграция 041: «сколько подходов планируется в день» (только sets); пусто = не задано
   trackOnly: boolean // «просто записывать значение»: без цели, расписания и серии (только number)
 }
 
@@ -107,7 +109,7 @@ export function effectiveForm(f: MetricFormValues): MetricFormValues {
 
 // Какие поля формы активны — по типу (fieldsEnabledForType) и по режиму «просто записывать значение»:
 // при «да» цель, расписание, серия и импорт серии отключаются; единица измерения остаётся (вес — «кг»).
-export function fieldsEnabledForForm(f: Pick<MetricFormValues, 'type' | 'trackOnly'>) {
+export function fieldsEnabledForForm(f: Pick<MetricFormValues, 'type' | 'trackOnly'> & Partial<Pick<MetricFormValues, 'goalDirection'>>) {
   const byType = fieldsEnabledForType(f.type)
   const track = f.trackOnly && f.type === 'number'
   return {
@@ -119,6 +121,7 @@ export function fieldsEnabledForForm(f: Pick<MetricFormValues, 'type' | 'trackOn
     schedule: !track,
     countStreak: !track,
     streakImport: !track,
+    plannedSets: f.type === 'sets' && f.goalDirection !== 'at_most', // «не более» — другой смысл, плана подходов нет
   }
 }
 
@@ -139,6 +142,7 @@ export function emptyForm(): MetricFormValues {
     atMostMax: 2,
     streakImportDays: '',
     countStreak: true,
+    plannedSets: '',
     trackOnly: false,
   }
 }
@@ -161,6 +165,7 @@ export function formFromMetric(m: Metric): MetricFormValues {
     atMostMax: s?.type === 'at_most' ? s.max : 2,
     streakImportDays: m.streak_import_days != null ? String(m.streak_import_days) : '',
     countStreak: m.count_streak !== false,
+    plannedSets: currentPlannedSets(m) != null ? String(currentPlannedSets(m)) : '',
     trackOnly: isTrackOnlyMetric(m),
   }
 }
@@ -183,6 +188,32 @@ export function countStreakFields(f: MetricFormValues, existing: Metric | null):
   const value = effectiveForm(f).countStreak
   if (!value || (existing && 'count_streak' in existing)) return { count_streak: value }
   return {}
+}
+
+// Миграция 041: плановое число подходов в день (1..50) из поля формы; пусто/мусор → null.
+export function parsePlannedSets(raw: string | number | null | undefined): number | null {
+  if (raw == null || String(raw).trim() === '') return null
+  const n = Math.floor(Number(raw))
+  return Number.isFinite(n) && n >= 1 ? Math.min(50, n) : null
+}
+
+// Журнал планового числа подходов (миграция 041). Пишем ТОЛЬКО при изменении значения: к журналу добавляется запись «с сегодняшнего
+// дня», старые записи и все прошлые дни остаются как были — баланс не «прыгает» ни при включении, ни при смене числа (решение
+// владельца 2026-10-03). Без колонки (у существующей метрики нет ключа planned_sets_log) — ничего не пишем: поле в форме скрыто.
+export function plannedSetsFields(
+  f: MetricFormValues,
+  existing: Metric | null,
+  today: string = todayStr(),
+): { planned_sets_log?: PlannedSetsEntry[] } {
+  if (existing && !('planned_sets_log' in existing)) return {}
+  const ef = effectiveForm(f)
+  const n = ef.type === 'sets' && ef.goalDirection !== 'at_most' ? parsePlannedSets(ef.plannedSets) : null
+  const log = existing ? plannedSetsLog(existing) : []
+  const current = log.length ? log[log.length - 1].n : null
+  if (n === (current != null && current >= 1 ? current : null)) return {}
+  const next = log.filter((e) => e.from !== today) // правка в тот же день заменяет запись, а не плодит новую
+  next.push({ from: today, n })
+  return { planned_sets_log: next.slice(-100) }
 }
 
 // Портировано из streakImportFields(): импорт стрика (миграция 026) — «уже было N дней».
@@ -217,12 +248,12 @@ function commonFields(f: MetricFormValues, categoryId: string | null) {
 
 export function buildInsertRow(form: MetricFormValues, userId: string, position: number, categoryId: string | null) {
   const f = effectiveForm(form)
-  return { user_id: userId, ...commonFields(f, categoryId), position, active: true, ...scheduleFields(f, null), ...countStreakFields(f, null) }
+  return { user_id: userId, ...commonFields(f, categoryId), position, active: true, ...scheduleFields(f, null), ...countStreakFields(f, null), ...plannedSetsFields(f, null) }
 }
 
 export function buildUpdateRow(form: MetricFormValues, existing: Metric, categoryId: string | null) {
   const f = effectiveForm(form)
-  return { ...commonFields(f, categoryId), ...scheduleFields(f, existing), ...countStreakFields(f, existing), ...streakImportFields(f, existing) }
+  return { ...commonFields(f, categoryId), ...scheduleFields(f, existing), ...countStreakFields(f, existing), ...streakImportFields(f, existing), ...plannedSetsFields(f, existing) }
 }
 
 // Позиция новой метрики — максимум существующих + 1 (пусто → 0).

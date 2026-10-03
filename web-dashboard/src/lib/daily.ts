@@ -61,13 +61,13 @@ export function valueToSave(m: Metric, pending: PendingValues): MetricValue {
 
 // Подсветка "ещё осталось сделать": метрика нужна в этот день по расписанию и не выполнена.
 export function isRemaining(m: Metric, dateStr: string, value: MetricValue): boolean {
-  return metricExpectedOn(m, dateStr) && !isMetricDone(m, value)
+  return metricExpectedOn(m, dateStr) && !isMetricDone(m, value, dateStr)
 }
 
 // "Баллы за день": сколько метрик выполнено из общего числа (считаются все активные метрики).
-export function dayScore(metrics: Metric[], pending: PendingValues): { points: number; total: number } {
+export function dayScore(metrics: Metric[], pending: PendingValues, dateStr?: string): { points: number; total: number } {
   let points = 0
-  for (const m of metrics) if (isMetricDone(m, pending[m.id])) points++
+  for (const m of metrics) if (isMetricDone(m, pending[m.id], dateStr)) points++
   return { points, total: metrics.length }
 }
 

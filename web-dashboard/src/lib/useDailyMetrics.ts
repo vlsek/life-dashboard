@@ -47,7 +47,7 @@ export function useDailyMetrics() {
   const numbers = computed(() => owned.value.filter((m) => m.type === 'number'))
   const multiselects = computed(() => owned.value.filter((m) => m.type === 'multiselect'))
 
-  const score = computed(() => dayScore(metrics.value, { ...external.value, ...pending.value }))
+  const score = computed(() => dayScore(metrics.value, { ...external.value, ...pending.value }, date || undefined))
 
   async function fetchValues(uid: string, dateStr: string): Promise<Record<string, MetricValue> | string> {
     const { data, error: err } = await sb.from('daily_values').select('metric_id, value').eq('user_id', uid).eq('date', dateStr)
@@ -123,7 +123,7 @@ export function useDailyMetrics() {
     error.value = null
     flash(m.id)
     notifyDataChanged({ source: 'day', metricId: m.id, date, value: typeof value === 'number' ? value : null })
-    emitPointsFloat(pointsDelta(m, before, value))
+    emitPointsFloat(pointsDelta(m, before, value, date || undefined))
     return true
   }
 

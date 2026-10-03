@@ -73,7 +73,7 @@ function summary(m: Metric): string {
         <button class="secondary" @click="emit('close')">{{ t('dash_close_btn') }}</button>
       </div>
 
-      <MetricFormModal v-if="formOpen" :existing="editing" :categories="categories" :error="error" @close="formOpen = false" @save="onSave" />
+      <MetricFormModal v-if="formOpen" :existing="editing" :categories="categories" :error="error" :planned-sets-available="metrics.some((m) => 'planned_sets_log' in m)" @close="formOpen = false" @save="onSave" />
     </div>
   </div>
 </template>

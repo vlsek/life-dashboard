@@ -9,12 +9,14 @@ import type { Metric } from '../lib/types'
 import { stripEmoji } from '../lib/emojiText'
 
 // Портировано из openMetricFormModal() в dashboard.js.
-const props = defineProps<{ existing: Metric | null; categories: MetricCategory[]; error?: string | null }>()
+const props = defineProps<{ existing: Metric | null; categories: MetricCategory[]; error?: string | null; plannedSetsAvailable?: boolean }>()
 const emit = defineEmits<{ close: []; save: [form: MetricFormValues] }>()
 
 const form = ref<MetricFormValues>(props.existing ? formFromMetric(props.existing) : emptyForm())
 const enabled = computed(() => fieldsEnabledForForm(form.value))
 const weekdayNames = computed(() => t('dash_weekdays_short').split(','))
+// Миграция 041: поле «подходов в день» показываем только если колонка есть (у метрики есть ключ planned_sets_log или он есть у других)
+const plannedSetsShown = computed(() => (props.existing ? 'planned_sets_log' in props.existing : !!props.plannedSetsAvailable) && enabled.value.plannedSets)
 
 // Смена типа на boolean очищает цель/единицу/варианты, как в оригинале
 watch(
@@ -91,6 +93,12 @@ const dim = (on: boolean) => ({ opacity: on ? 1 : 0.4 })
         <option value="set">{{ t('dash_metric_input_mode_set') }}</option>
         <option value="add">{{ t('dash_metric_input_mode_add') }}</option>
       </select>
+
+      <template v-if="plannedSetsShown">
+        <label class="mt-2 block text-sm">{{ t('dash_metric_planned_sets') }}</label>
+        <input :value="form.plannedSets" type="number" min="1" max="50" step="1" inputmode="numeric" class="w-full" data-test="planned-sets" @input="form.plannedSets = ($event.target as HTMLInputElement).value" />
+        <p class="dim mt-1 text-xs">{{ t('dash_metric_planned_sets_hint') }}</p>
+      </template>
 
       <label class="mt-2 block text-sm" :style="dim(enabled.schedule)">{{ t('dash_metric_field_schedule') }}</label>
       <select v-model="form.scheduleKind" class="w-full" :disabled="!enabled.schedule" :style="dim(enabled.schedule)">
