@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.47";
+const SITE_VERSION = "2.48";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.48", date: "2026-10-03 20:31", changes: [
+        "Новый раздел «Достижения» (первый срез, адрес /achievements/): 19 стартовых значков — первые шаги (галочка, вес, цель, навык, книга, тренировка), серии «идеальных дней» 5/10/30/100, накопленные баллы 100/500/1000, 10 и 50 дней с тренировкой, 1 и 5 завершённых челленджей, 10 целей, 5 книг. Открытые — цветные с датой, закрытые — тусклые с условием и полоской прогресса. Открытое остаётся открытым, даже если число потом уменьшилось; достижения, выполненные до появления раздела, открываются без даты. Пока владелец не применил миграцию 039, открытые значки хранятся на устройстве — ничего не ломается. Пункт в боковом меню, окно-поздравление и награды-предметы из «Кастомизации» — следующими шагами",
+    ]},
     { version: "2.47", date: "2026-10-03 20:12", changes: [
         "Челленджи: значения дней можно брать из тренировок. В «Источнике значений» (форма челленджа) теперь есть группа «Упражнения из тренировок»: выберите упражнение — для каждого дня без ручной записи будет подставлена сумма повторов по всем подходам этого упражнения (несколько записей за день складываются). Ручная запись за день всегда главнее, дни до старта челленджа не меняются. На карточке появилась пометка «из тренировок». Нужна миграция 042: пока владелец её не применил, выбор упражнений скрыт и всё работает как раньше",
     ]},
@@ -1343,6 +1346,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.48", date: "2026-10-03 20:31", changes: [
+        "New Achievements section (first slice, at /achievements/): 19 starter badges - first steps (tick, weight, goal, skill, book, workout), perfect-days streaks of 5/10/30/100, total points 100/500/1000, 10 and 50 workout days, 1 and 5 completed challenges, 10 goals, 5 books. Unlocked ones are colored with a date, locked ones are dimmed with the condition and a progress bar. An unlocked badge stays unlocked even if the number later drops; achievements already met before the section appeared unlock without a date. Until the owner applies migration 039, unlocked badges are kept on the device - nothing breaks. The side-menu entry, the congratulation window and reward items from Customization come in the next steps",
+    ]},
     { version: "2.47", date: "2026-10-03 20:12", changes: [
         "Challenges: daily values can now come from your workouts. The \"Source of values\" field in the challenge form has a new \"Workout exercises\" group: pick an exercise and every day without a manual entry takes the sum of reps over all sets of that exercise (several entries on one day add up). A manual entry for a day always wins, and days before the challenge start are not touched. Cards show a \"from workouts\" badge. Needs migration 042; until the owner applies it the exercise choice stays hidden and everything works as before",
     ]},
