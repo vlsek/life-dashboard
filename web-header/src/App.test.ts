@@ -568,6 +568,10 @@ describe('«Избранное»: сердечко в шапке (BACKLOG 6.2)',
     expect(heart.exists()).toBe(true)
     expect(heart.attributes('aria-pressed')).toBe('false')
     expect(heart.find('svg').attributes('data-state')).toBe('off')
+    // BACKLOG 🐞 14:40: сердечко видно — внутри кнопки svg с контуром сердца; у не-избранного контур цветом текста (не тусклым серым)
+    expect(heart.find('svg path').attributes('d')).toMatch(/^M12 20\.4/)
+    expect(heart.find('svg path').attributes('style')).toMatch(/fill:\s*none/)
+    expect(heart.find('svg path').attributes('style')).toMatch(/stroke:\s*var\(--text/)
     await heart.trigger('click')
     await flushPromises()
     expect(localStorage.getItem('favorite_pages')).toBe('["goals"]')
@@ -575,6 +579,7 @@ describe('«Избранное»: сердечко в шапке (BACKLOG 6.2)',
     expect(db.writes.filter((x) => x.table === 'profiles').at(-1)!.payload).toEqual({ user_id: 'u1', favorite_pages: ['goals'] })
     expect(w.find('[data-test="favorite-heart"]').attributes('aria-pressed')).toBe('true')
     expect(w.find('[data-test="favorite-heart"] svg').attributes('data-state')).toBe('on')
+    expect(w.find('[data-test="favorite-heart"] svg path').attributes('style')).toMatch(/fill:\s*var\(--accent/) // залито цветом темы
     w.unmount()
   })
 

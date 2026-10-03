@@ -191,15 +191,15 @@ onUnmounted(() => {
       type="button"
       class="qn-toggle"
       :class="{ 'qn-open': quickNavOpen }"
-      :aria-label="t('nav_more')"
-      :title="t('nav_more')"
+      :aria-label="t('nav_favorites')"
+      :title="t('nav_favorites')"
       :aria-expanded="quickNavOpen"
       aria-controls="quick-nav"
       data-testid="quicknav-toggle"
       @click="quickNavOpen = !quickNavOpen"
     >
-      <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M7 4l6 6-6 6" />
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true" data-test="qn-heart">
+        <path d="M12 20.4l-1.3-1.2C6 14.9 3 12.2 3 8.9 3 6.3 5 4.3 7.6 4.3c1.5 0 2.9.7 3.8 1.8l.6.8.6-.8c.9-1.1 2.3-1.8 3.8-1.8C19 4.3 21 6.3 21 8.9c0 3.3-3 6-7.7 10.3L12 20.4z" />
       </svg>
     </button>
     <Transition name="qn">
@@ -361,15 +361,16 @@ onUnmounted(() => {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
-.qn-toggle svg {
-  transition: transform 0.2s ease;
+.qn-toggle svg path {
+  transition: fill 0.2s ease;
 }
 .qn-toggle.qn-open {
   color: var(--accent);
   border-color: var(--accent);
 }
-.qn-toggle.qn-open svg {
-  transform: rotate(180deg);
+/* сердечко: контур — список избранного закрыт, залито цветом темы — открыт (раньше был шеврон, который при открытии поворачивался) */
+.qn-toggle.qn-open svg path {
+  fill: currentColor;
 }
 .qn-list {
   display: flex;

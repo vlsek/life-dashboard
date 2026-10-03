@@ -132,3 +132,26 @@ describe('AppShell: боковое меню — профиль наверху, �
     w.unmount()
   })
 })
+
+// BACKLOG 🐞 «14:40 — кнопка «Избранное» наверху пустая: просто пустой кружок, а просили с сердечком».
+// Круглая кнопка быстрой навигации рисовала только маленький шеврон — теперь в ней сердечко (контур — список закрыт, залито — открыт).
+describe('AppShell: значок кнопки быстрой навигации — сердечко', () => {
+  it('в круглой кнопке есть svg-сердечко (путь контура сердца), а не пустой кружок и не шеврон; подпись «Избранное»', async () => {
+    const w = await mountShell()
+    const btn = w.find('[data-testid="quicknav-toggle"]')
+    const heart = btn.find('[data-test="qn-heart"]')
+    expect(heart.exists()).toBe(true)
+    expect(heart.find('path').attributes('d')).toMatch(/^M12 20\.4/) // контур сердца; у прежнего шеврона путь был «M7 4l6 6-6 6»
+    expect(btn.attributes('aria-label')).toMatch(/^(Favorites|Избранное)$/)
+    expect(btn.attributes('title')).toBe(btn.attributes('aria-label'))
+    w.unmount()
+  })
+
+  it('при открытии кнопка получает qn-open (заливка сердечка цветом темы через CSS), сам значок остаётся на месте', async () => {
+    const w = await mountShell()
+    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
+    expect(w.find('[data-testid="quicknav-toggle"]').classes()).toContain('qn-open')
+    expect(w.find('[data-test="qn-heart"]').exists()).toBe(true)
+    w.unmount()
+  })
+})
