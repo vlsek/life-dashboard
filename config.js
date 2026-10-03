@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.53";
+const SITE_VERSION = "2.54";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.54", date: "2026-10-04 02:51", changes: [
+        "Дашборд: блок «Виджеты» на главной. В окне «Настроить дашборд» появился раздел «Виджеты на главной» с галочками. Виджет «Навыки»: отметьте нужные навыки, и на главной у каждого будет полоса прогресса и кнопка «+шаг» (как в разделе Навыков); на 100% навык освоен, очки начисляются с анимацией «+N». Виджет «Коплю на товар»: выберите товар магазина, и на главной появится полоса «баллы / цена» с подсказкой, сколько баллов не хватает, и ссылкой в магазин. Если ни один виджет не выбран, блока нет вообще; блок можно переставлять, как остальные",
+    ]},
     { version: "2.53", date: "2026-10-04 02:33", changes: [
         "Сообщество: друзья и подписки теперь карточками (аватар, имя, серия и баллы за выбранный период, кнопки действий справа), заявки в друзья — тем же видом. Данные берутся из лидерборда, SQL не нужен; скрытым из лидерборда баллы не показываются."
     ]},
@@ -1363,6 +1366,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.54", date: "2026-10-04 02:51", changes: [
+        "Dashboard: a Widgets block on the main page. The \"Customize dashboard\" window has a new \"Widgets on the main page\" section with tick boxes. The Skills widget: tick the skills you want and each one gets a progress bar and a step button on the main page, like in the Skills section; at 100% the skill is mastered and the points arrive with the +N animation. The Saving for an item widget: pick a shop item and the main page shows a points-to-price bar, how many points are still missing and a link to the shop. With no widget picked the block does not appear at all; it can be reordered like the other blocks",
+    ]},
     { version: "2.53", date: "2026-10-04 02:33", changes: [
         "Community: friends and follows are now cards (avatar, name, streak and points for the selected period, action buttons on the right); friend requests use the same look. Data comes from the leaderboard, no SQL needed; people hidden from the leaderboard show no points."
     ]},
