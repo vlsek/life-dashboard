@@ -7,6 +7,7 @@ const labels = {
   profile: { title: 'Профиль', desc: 'д1' },
   charts: { title: 'Графики', desc: 'д2' },
   daily: { title: 'Дневные', desc: 'д3' },
+  widgets: { title: 'Виджеты', desc: 'д4' },
 }
 const items = (): LayoutItem[] => [
   { key: 'profile', visible: true },

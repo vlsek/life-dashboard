@@ -4,8 +4,7 @@ import { todayStr } from './date'
 import { t } from './i18n'
 import { fetchAllRows } from './fetchAll'
 import { BODY_PARAMS_CHANGED, BODY_VALUES_CHANGED } from './useCharts'
-import { calcBalance, type BalanceMetric, type BalanceValueRow } from './balance'
-import { withWaterGoal } from './waterGoal'
+import { loadBalance as loadBalanceFor } from './loadBalance'
 import { avatarPath, paramStats, validateBirthdate, type BodyParam, type BodyParamForm, type BodyValue, type ProfileRow } from './profile'
 
 // Отдельный композабл блока «Профиль» (не трогает useDashboard.ts — параллельная работа
@@ -42,30 +41,11 @@ export function useProfile() {
     values.value = res.rows
   }
 
-  // Баланс: те же 6 источников, что у дашборда и магазина; daily_values читается постранично.
+  // Баланс: те же 6 источников, что у дашборда и магазина (lib/loadBalance.ts — общий запрос с виджетом «Коплю на товар»).
   async function loadBalance() {
-    const [metricsRes, valuesRes, goalsRes, skillsRes, booksRes, redeemedRes] = await Promise.all([
-      sb.from('metrics').select('id, name, icon, type, goal_value, goal_direction, position').eq('user_id', userId).eq('active', true),
-      fetchAllRows<BalanceValueRow>((from, to) => sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId).order('date').order('metric_id').range(from, to)),
-      sb.from('goals').select('points').eq('user_id', userId).eq('done', true),
-      sb.from('skills').select('points').eq('user_id', userId).eq('mastered', true),
-      sb.from('books').select('points').eq('user_id', userId).eq('status', 'done'),
-      sb.from('shop_items').select('cost').eq('user_id', userId).eq('redeemed', true),
-    ])
-    const err = metricsRes.error?.message || valuesRes.error || goalsRes.error?.message || skillsRes.error?.message || booksRes.error?.message || redeemedRes.error?.message
-    if (err) {
-      error.value = err
-      return
-    }
-    balance.value = calcBalance(
-      // вода — по эффективной норме, а не по пустому goal_value (migrations/033)
-      await withWaterGoal(userId, (metricsRes.data || []) as (BalanceMetric & { name?: string | null; icon?: string | null; position?: number | null })[]),
-      valuesRes.rows,
-      goalsRes.data || [],
-      skillsRes.data || [],
-      booksRes.data || [],
-      (redeemedRes.data || []).map((r: { cost: number | null }) => r.cost),
-    ).balance
+    const res = await loadBalanceFor(userId)
+    if (res.ok) balance.value = res.balance
+    else error.value = res.error
   }
 
   async function init(uid: string) {

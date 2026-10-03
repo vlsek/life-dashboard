@@ -26,8 +26,12 @@ export function cardMids(top: number, count: number): number[] {
 }
 
 // Перенос ВИДИМОГО блока fromVisible → toVisible: в списке остаются на своих местах скрытые блоки, переставляются только видимые.
-export function reorderVisible(layout: LayoutItem[], fromVisible: number, toVisible: number): LayoutItem[] {
-  const slots = layout.map((it, i) => (it.visible ? i : -1)).filter((i) => i >= 0)
+// «Видимый» = isShown (по умолчанию visible; App добавляет условие для блока «Виджеты»: выбран хотя бы один виджет).
+export type ShownFn = (item: LayoutItem) => boolean
+const byVisible: ShownFn = (it) => it.visible
+
+export function reorderVisible(layout: LayoutItem[], fromVisible: number, toVisible: number, isShown: ShownFn = byVisible): LayoutItem[] {
+  const slots = layout.map((it, i) => (isShown(it) ? i : -1)).filter((i) => i >= 0)
   const next = layout.map((it) => ({ ...it }))
   if (fromVisible === toVisible || fromVisible < 0 || toVisible < 0 || fromVisible >= slots.length || toVisible >= slots.length) return next
   const moved = moveTo(
@@ -53,14 +57,14 @@ export interface BlockDragState {
 
 // Жест. getLayout — текущая раскладка, commit — применить новую (родитель обновляет экран сразу и пишет в БД).
 // onDown/onMove/onUp/onCancel вешаются на ручку (pointer events + pointer capture: жест не теряется, когда палец ушёл с ручки).
-export function useBlockDrag(getLayout: () => LayoutItem[], commit: (next: LayoutItem[]) => void, viewportH: () => number = () => window.innerHeight) {
+export function useBlockDrag(getLayout: () => LayoutItem[], commit: (next: LayoutItem[]) => void, viewportH: () => number = () => window.innerHeight, isShown: ShownFn = byVisible) {
   const drag = ref<BlockDragState | null>(null)
   let handleEl: HTMLElement | null = null
   let pointerId: number | null = null
 
   function onDown(e: PointerEvent, key: DashboardBlockKey) {
     if (e.button !== undefined && e.button > 0) return // только основная кнопка / касание
-    const vis = getLayout().filter((i) => i.visible)
+    const vis = getLayout().filter(isShown)
     const from = vis.findIndex((i) => i.key === key)
     if (from < 0 || vis.length < 2) return
     const top = overlayTop(e.clientY, from, vis.length, viewportH())
@@ -90,17 +94,17 @@ export function useBlockDrag(getLayout: () => LayoutItem[], commit: (next: Layou
     if (handleEl && pointerId !== null) handleEl.releasePointerCapture?.(pointerId)
     handleEl = null
     pointerId = null
-    if (apply && d.to !== d.from) commit(reorderVisible(getLayout(), d.from, d.to))
+    if (apply && d.to !== d.from) commit(reorderVisible(getLayout(), d.from, d.to, isShown))
   }
 
   // Клавиатура на ручке: стрелки двигают блок на одну позицию среди видимых.
   function onKey(e: KeyboardEvent, key: DashboardBlockKey) {
     const dir = e.key === 'ArrowUp' ? -1 : e.key === 'ArrowDown' ? 1 : 0
     if (!dir) return
-    const from = getLayout().filter((i) => i.visible).findIndex((i) => i.key === key)
+    const from = getLayout().filter(isShown).findIndex((i) => i.key === key)
     if (from < 0) return
     e.preventDefault()
-    const next = reorderVisible(getLayout(), from, from + dir)
+    const next = reorderVisible(getLayout(), from, from + dir, isShown)
     if (next.some((it, i) => it.key !== getLayout()[i].key)) commit(next)
   }
 
