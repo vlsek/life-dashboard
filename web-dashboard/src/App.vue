@@ -23,6 +23,7 @@ import InstallBanner from './components/InstallBanner.vue'
 import ProfileSection from './components/ProfileSection.vue'
 import DailyMetricsSection from './components/DailyMetricsSection.vue'
 import LayoutModal from './components/LayoutModal.vue'
+import WidgetsSection from './components/WidgetsSection.vue'
 import BlockDragHandle from './components/BlockDragHandle.vue'
 import BlockDragOverlay from './components/BlockDragOverlay.vue'
 import Icon from './components/Icon.vue'
@@ -36,7 +37,8 @@ import { useDashboard } from './lib/useDashboard'
 import { useStreakCelebration } from './lib/useStreakCelebration'
 import { useLayout } from './lib/useLayout'
 import { useBlockDrag } from './lib/blockDrag'
-import type { LayoutItem } from './lib/layout'
+import { hasWidgets, isBlockShown, type LayoutItem } from './lib/layout'
+import { loadOpenShopItems, type ShopOption } from './lib/savingsWidget'
 import { progressPercent } from './lib/progress'
 import { t } from './lib/i18n'
 import type { StreakItem } from './lib/streaks'
@@ -92,10 +94,19 @@ async function onBlockMove(next: LayoutItem[]) {
     blockMoveError.value = layoutError.value
   }
 }
-const { drag: blockDrag, onDown: dragDown, onMove: dragMove, onUp: dragUp, onCancel: dragCancel, onKey: dragKey } = useBlockDrag(() => layout.value, onBlockMove)
-const visibleBlockCount = computed(() => layout.value.filter((i: LayoutItem) => i.visible).length)
-const blockTitles = computed<Record<string, string>>(() => ({ profile: t('dash_block_profile'), charts: t('dash_charts_h2'), daily: t('dash_block_daily') }))
-const dragItems = computed(() => layout.value.filter((i: LayoutItem) => i.visible).map((i: LayoutItem) => ({ key: i.key, title: blockTitles.value[i.key] })))
+// Блок «Виджеты» участвует в перетаскивании, только когда он реально на экране: выбран виджет и тот загрузился (WidgetsSection → `shown`)
+const widgetsShown = ref(false)
+const blockShown = (i: LayoutItem) => isBlockShown(i) && (i.key !== 'widgets' || widgetsShown.value)
+const { drag: blockDrag, onDown: dragDown, onMove: dragMove, onUp: dragUp, onCancel: dragCancel, onKey: dragKey } = useBlockDrag(() => layout.value, onBlockMove, () => window.innerHeight, blockShown)
+const visibleBlockCount = computed(() => layout.value.filter(blockShown).length)
+const blockTitles = computed<Record<string, string>>(() => ({ profile: t('dash_block_profile'), charts: t('dash_charts_h2'), daily: t('dash_block_daily'), widgets: t('dash_block_widgets') }))
+const dragItems = computed(() => layout.value.filter(blockShown).map((i: LayoutItem) => ({ key: i.key, title: blockTitles.value[i.key] })))
+// окно раскладки: товары магазина для виджета «Коплю на товар» читаются при открытии
+const shopOptions = ref<ShopOption[]>([])
+async function openLayoutModal() {
+  if (auth.value.status === 'ready') shopOptions.value = await loadOpenShopItems(auth.value.userId)
+  showLayoutModal.value = true
+}
 const profileCollapsed = ref(false)
 const chartsCollapsed = ref(false)
 // пока ни один график не построен (нет данных/мало данных) — блок «Графики» свёрнут по умолчанию (BACKLOG 17); явный выбор пользователя сильнее
@@ -173,7 +184,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
         data-test="customize-btn"
         :title="t('dash_customize_btn')"
         :aria-label="t('dash_customize_btn')"
-        @click="showLayoutModal = true"
+        @click="openLayoutModal"
       >
         <Icon name="gear" />
       </button>
@@ -228,6 +239,14 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
                 <BlockDragHandle class="ml-auto" :block-key="'daily'" @down="dragDown" @move="dragMove" @up="dragUp" @cancel="dragCancel" @key="dragKey" v-if="visibleBlockCount > 1" />
               </div>
               <DailyMetricsSection :user-id="auth.userId" :metric-streaks="metricStreaks" />
+            </template>
+
+            <template v-else-if="item.key === 'widgets'">
+              <WidgetsSection v-if="hasWidgets(item)" :user-id="auth.userId" :config="item.widgets!" @shown="widgetsShown = $event">
+                <template v-if="visibleBlockCount > 1" #actions>
+                  <BlockDragHandle :block-key="'widgets'" @down="dragDown" @move="dragMove" @up="dragUp" @cancel="dragCancel" @key="dragKey" />
+                </template>
+              </WidgetsSection>
             </template>
 
             <template v-else-if="item.key === 'charts'">
@@ -294,7 +313,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
       </template>
     </template>
 
-    <LayoutModal v-if="showLayoutModal" :initial="layout" :error="layoutError" @close="showLayoutModal = false" @save="onSaveLayout" />
+    <LayoutModal v-if="showLayoutModal" :initial="layout" :error="layoutError" :shop-items="shopOptions" @close="showLayoutModal = false" @save="onSaveLayout" />
     <ProgressSummaryModal
       v-if="summaryKind && summaries"
       :kind="summaryKind"

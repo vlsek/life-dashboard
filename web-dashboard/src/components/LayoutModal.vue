@@ -3,11 +3,12 @@ import EmojiText from './EmojiText.vue'
 import { computed, ref } from 'vue'
 import BlockOrderList from './BlockOrderList.vue'
 import { t } from '../lib/i18n'
-import type { DashboardBlockKey, LayoutItem } from '../lib/layout'
+import { withSavingsWidget, type DashboardBlockKey, type LayoutItem } from '../lib/layout'
+import type { ShopOption } from '../lib/savingsWidget'
 import { celebrationsEnabled, setCelebrationsEnabled } from '../lib/useStreakCelebration'
 import { setMotionOff, systemReducedMotion, userMotionOff } from '../lib/motion'
 
-const props = defineProps<{ initial: LayoutItem[]; error?: string }>()
+const props = defineProps<{ initial: LayoutItem[]; error?: string; shopItems?: ShopOption[] }>()
 const emit = defineEmits<{ close: []; save: [LayoutItem[]] }>()
 
 const local = ref<LayoutItem[]>(props.initial.map((i) => ({ ...i })))
@@ -32,7 +33,21 @@ const labels = computed<Record<DashboardBlockKey, { title: string; desc: string 
   profile: { title: t('dash_block_profile'), desc: t('dash_layout_desc_profile') },
   charts: { title: t('dash_charts_h2'), desc: t('dash_layout_desc_charts') },
   daily: { title: t('dash_block_daily'), desc: t('dash_layout_desc_daily') },
+  widgets: { title: t('dash_block_widgets'), desc: t('dash_layout_desc_widgets') },
 }))
+
+// Виджеты на главной (BACKLOG 9, решение владельца: выбор галочками в этом окне). Сейчас один — «Коплю на товар»: галочка + выбор товара.
+const savingsId = computed(() => local.value.find((i) => i.key === 'widgets')?.widgets?.savings ?? '')
+const savingsOn = computed(() => savingsId.value !== '')
+const options = computed(() => props.shopItems ?? [])
+function onSavingsToggle(e: Event) {
+  const on = (e.target as HTMLInputElement).checked
+  local.value = withSavingsWidget(local.value, on ? (options.value[0]?.id ?? null) : null)
+}
+function onSavingsPick(e: Event) {
+  const id = (e.target as HTMLSelectElement).value
+  local.value = withSavingsWidget(local.value, id || null)
+}
 </script>
 
 <template>
@@ -42,6 +57,23 @@ const labels = computed<Record<DashboardBlockKey, { title: string; desc: string 
       <p class="dim mb-3 text-sm">{{ t('dash_layout_hint') }}</p>
 
       <BlockOrderList v-model="local" :labels="labels" />
+
+      <div class="mt-4" data-test="widgets-setting">
+        <div class="text-sm font-medium">{{ t('dash_widgets_setting') }}</div>
+        <p class="dim mb-1 text-xs">{{ t('dash_widgets_setting_hint') }}</p>
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" :checked="savingsOn" :disabled="!savingsOn && options.length === 0" data-test="savings-toggle" @change="onSavingsToggle" />
+          {{ t('dash_widget_savings') }}
+        </label>
+        <p v-if="!savingsOn && options.length === 0" class="dim mt-1 text-xs" data-test="savings-none">{{ t('dash_widget_savings_none') }} <a href="/shop/" style="color: var(--accent)">{{ t('dash_widget_savings_shop') }}</a></p>
+        <label v-if="savingsOn" class="mt-2 flex items-center gap-2 text-sm">
+          <span class="dim flex-none">{{ t('dash_widget_savings_pick') }}</span>
+          <select class="min-w-0 flex-1 rounded-lg border px-2 py-1.5" style="border-color: var(--border); background: var(--bg); color: var(--text)" :value="savingsId" data-test="savings-pick" @change="onSavingsPick">
+            <option v-if="!options.some((o) => o.id === savingsId)" :value="savingsId" disabled>{{ t('dash_widget_savings_choose') }}</option>
+            <option v-for="o in options" :key="o.id" :value="o.id">{{ o.name }} · {{ o.cost }}</option>
+          </select>
+        </label>
+      </div>
 
       <div class="mt-3">
         <label class="flex items-center gap-2 text-sm">

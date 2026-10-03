@@ -74,9 +74,9 @@ describe('BlockDragOverlay', () => {
 
 describe('App.vue: ручки на странице, режим «Изменить порядок» убран', () => {
   const src: string = readFileSync('src/App.vue', 'utf-8')
-  it('ручка есть у каждого из трёх блоков и показывается, только когда видимых блоков больше одного', () => {
-    for (const k of ['profile', 'charts', 'daily']) expect(src).toContain(`:block-key="'${k}'"`)
-    expect(src.match(/visibleBlockCount > 1/g)!.length).toBe(3)
+  it('ручка есть у каждого из четырёх блоков и показывается, только когда видимых блоков больше одного', () => {
+    for (const k of ['profile', 'charts', 'daily', 'widgets']) expect(src).toContain(`:block-key="'${k}'"`)
+    expect(src.match(/visibleBlockCount > 1/g)!.length).toBe(4)
   })
   it('слой перетаскивания подключён, старой кнопки режима и панели нет', () => {
     expect(src).toContain('<BlockDragOverlay v-if="blockDrag"')

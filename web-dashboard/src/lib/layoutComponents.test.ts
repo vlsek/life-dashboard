@@ -40,7 +40,7 @@ describe('useLayout', () => {
     expect(api.loaded.value).toBe(false)
     await api.load('u1')
     expect(api.loaded.value).toBe(true)
-    expect(api.layout.value.map((i) => i.key)).toEqual(['profile', 'charts', 'daily'])
+    expect(api.layout.value.map((i) => i.key)).toEqual(['profile', 'charts', 'daily', 'widgets'])
   })
 
   it('load: читает сохранённый порядок и скрытые блоки (общий формат с классикой)', async () => {
@@ -51,6 +51,7 @@ describe('useLayout', () => {
       { key: 'daily', visible: true },
       { key: 'profile', visible: false },
       { key: 'charts', visible: true },
+      { key: 'widgets', visible: true },
     ])
   })
 
