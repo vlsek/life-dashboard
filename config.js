@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.36";
+const SITE_VERSION = "2.37";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.37", date: "2026-10-03 12:33", changes: [
+        "Дашборд: в блоке «Дневные метрики» каждый параметр (число, галочка, выбор из вариантов) теперь лежит в своей мини-плашке с тонкой рамкой — несколько параметров подряд больше не сливаются. На графиках метрик рядом с названием появился огонёк серии с числом дней (приглушённый, если сегодня серия ещё не засчитана) — такой же, как у метрики в дневных метриках",
+    ]},
     { version: "2.36", date: "2026-10-03 06:44", changes: [
         "Дашборд: режим «Изменить порядок блоков» прямо на главной. Новая кнопка рядом с ⚙️ в заголовке сворачивает тяжёлые блоки в компактный список карточек — Профиль, Графики, Дневные метрики и планы. Блок берётся за ручку ☰ и переносится пальцем или мышью (стрелки ↑/↓ и переключатель видимости рядом); порядок сохраняется сразу, «Готово» возвращает обычный вид страницы. Тот же код перетаскивания, что в окне раскладки и в «Глобальных настройках»",
     ]},
@@ -1310,6 +1313,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.37", date: "2026-10-03 12:33", changes: [
+        "Dashboard: in the \"Daily metrics\" block every parameter (number, checkbox, choice of options) now sits in its own mini plate with a thin border — several parameters in a row no longer blend together. Metric charts now show the streak flame with the day count next to the title (dimmed if today is not counted yet), the same as the metric in daily metrics",
+    ]},
     { version: "2.36", date: "2026-10-03 06:44", changes: [
         "Dashboard: a Reorder blocks mode right on the main page. A new button next to the ⚙️ in the header folds the heavy blocks into a compact list of cards — Profile, Charts, Daily metrics and plans. Take a block by the ☰ handle and move it with a finger or the mouse (the ↑/↓ arrows and the visibility switch are next to it); the order is saved at once, and Done brings back the normal page. The same drag code as in the layout window and in Global settings",
     ]},

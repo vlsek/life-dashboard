@@ -1,6 +1,13 @@
 {
-  "version": "2.36",
+  "version": "2.37",
   "en": [
+    {
+      "version": "2.37",
+      "date": "2026-10-03 12:33",
+      "changes": [
+        "Dashboard: in the \"Daily metrics\" block every parameter (number, checkbox, choice of options) now sits in its own mini plate with a thin border — several parameters in a row no longer blend together. Metric charts now show the streak flame with the day count next to the title (dimmed if today is not counted yet), the same as the metric in daily metrics"
+      ]
+    },
     {
       "version": "2.36",
       "date": "2026-10-03 06:44",
@@ -1711,6 +1718,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.37",
+      "date": "2026-10-03 12:33",
+      "changes": [
+        "Дашборд: в блоке «Дневные метрики» каждый параметр (число, галочка, выбор из вариантов) теперь лежит в своей мини-плашке с тонкой рамкой — несколько параметров подряд больше не сливаются. На графиках метрик рядом с названием появился огонёк серии с числом дней (приглушённый, если сегодня серия ещё не засчитана) — такой же, как у метрики в дневных метриках"
+      ]
+    },
     {
       "version": "2.36",
       "date": "2026-10-03 06:44",
