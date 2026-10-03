@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.34";
+const SITE_VERSION = "2.35";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.35", date: "2026-10-03 06:33", changes: [
+        "Правая панель: свайп справа налево теперь можно начинать не только у самого края, а с правой половины экрана — вплоть до середины. Чтобы не мешать обычным касаниям и прокрутке, вне узкой зоны у края жест строже: нужно провести дальше и почти строго горизонтально; на графиках, ползунках, полях ввода и горизонтально прокручиваемых блоках он не срабатывает",
+        "Исправлено: пока открыто левое боковое меню или правая панель, страница под ними больше не прокручивается вверх-вниз. Прокрутка возвращается, когда закрыты обе шторки",
+    ]},
     { version: "2.34", date: "2026-10-03 03:12", changes: [
         "Заставка загрузки с горящим огоньком теперь на всех страницах нового сайта (Цели, Навыки, История, Календарь, Магазин, Челленджи, Сообщество, Вехи, Языки, Аккаунт, Тренировки, вход и онбординг), а не только на Дашборде. Раньше, пока страница грузилась, был пустой экран — теперь огонёк в цвете вашей темы виден с первого кадра и сам сменяется страницей. Вариант заставки (живое пламя, огненный круг, классика) общий и берётся из того же выбора, что на Дашборде; движение выключается «уменьшением движения» в системе и переключателем «Отключить все анимации»",
     ]},
@@ -1303,6 +1307,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.35", date: "2026-10-03 06:33", changes: [
+        "Right panel: the right-to-left swipe can now start not only at the very edge but from the right half of the screen, up to the middle. So it does not interfere with ordinary taps and scrolling, the gesture is stricter outside the narrow edge zone: you need to swipe further and almost strictly horizontally; it is ignored on charts, sliders, inputs and horizontally scrollable blocks",
+        "Fixed: while the left side menu or the right panel is open, the page underneath no longer scrolls up and down. Scrolling comes back once both drawers are closed",
+    ]},
     { version: "2.34", date: "2026-10-03 03:12", changes: [
         "The loading splash with the burning flame is now on every page of the new site (Goals, Skills, History, Calendar, Shop, Challenges, Community, Milestones, Languages, Account, Workouts, login and onboarding), not only on the Dashboard. Before, there was a blank screen while a page was loading — now a flame in your theme colour is visible from the first frame and is replaced by the page by itself. The splash variant (living flame, fire ring, classic) is shared with the Dashboard choice; motion is switched off by the system \"reduce motion\" setting and by the \"Turn off all animations\" switch",
     ]},

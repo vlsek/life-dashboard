@@ -155,3 +155,40 @@ describe('AppShell: значок кнопки быстрой навигации 
     w.unmount()
   })
 })
+
+describe('AppShell: пока левая шторка открыта, страница под ней не прокручивается (BACKLOG 23:01)', () => {
+  async function mountOpen() {
+    const { default: AppShell } = await import('./AppShell.vue')
+    document.documentElement.style.overflow = ''
+    document.documentElement.removeAttribute('data-lock-left')
+    document.documentElement.removeAttribute('data-lock-right')
+    return mount(AppShell, { props: { userEmail: null }, attachTo: document.body })
+  }
+  const burger = (w: Awaited<ReturnType<typeof mountOpen>>) => w.find('button[aria-label]')
+
+  it('открытие шторки блокирует прокрутку <html>, закрытие по затемнению — возвращает; у затемнения нет жеста прокрутки', async () => {
+    const w = await mountOpen()
+    await burger(w).trigger('click')
+    expect(document.documentElement.style.overflow).toBe('hidden')
+    expect(document.documentElement.hasAttribute('data-lock-left')).toBe(true)
+    const overlay = w.find('[data-testid="sidebar-overlay"]')
+    expect(overlay.attributes('style')).toContain('touch-action: none')
+    await overlay.trigger('click')
+    expect(document.documentElement.style.overflow).toBe('')
+    expect(document.documentElement.hasAttribute('data-lock-left')).toBe(false)
+    w.unmount()
+  })
+
+  it('если открыта и правая панель (атрибут data-lock-right), закрытие левой шторки прокрутку не возвращает; при размонтировании блокировка снимается', async () => {
+    const w = await mountOpen()
+    document.documentElement.setAttribute('data-lock-right', '')
+    await burger(w).trigger('click')
+    await w.find('[data-testid="sidebar-overlay"]').trigger('click')
+    expect(document.documentElement.style.overflow).toBe('hidden')
+    document.documentElement.removeAttribute('data-lock-right')
+    await burger(w).trigger('click')
+    w.unmount()
+    expect(document.documentElement.hasAttribute('data-lock-left')).toBe(false)
+    expect(document.documentElement.style.overflow).toBe('')
+  })
+})

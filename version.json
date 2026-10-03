@@ -1,6 +1,14 @@
 {
-  "version": "2.34",
+  "version": "2.35",
   "en": [
+    {
+      "version": "2.35",
+      "date": "2026-10-03 06:33",
+      "changes": [
+        "Right panel: the right-to-left swipe can now start not only at the very edge but from the right half of the screen, up to the middle. So it does not interfere with ordinary taps and scrolling, the gesture is stricter outside the narrow edge zone: you need to swipe further and almost strictly horizontally; it is ignored on charts, sliders, inputs and horizontally scrollable blocks",
+        "Fixed: while the left side menu or the right panel is open, the page underneath no longer scrolls up and down. Scrolling comes back once both drawers are closed"
+      ]
+    },
     {
       "version": "2.34",
       "date": "2026-10-03 03:12",
@@ -1696,6 +1704,14 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.35",
+      "date": "2026-10-03 06:33",
+      "changes": [
+        "Правая панель: свайп справа налево теперь можно начинать не только у самого края, а с правой половины экрана — вплоть до середины. Чтобы не мешать обычным касаниям и прокрутке, вне узкой зоны у края жест строже: нужно провести дальше и почти строго горизонтально; на графиках, ползунках, полях ввода и горизонтально прокручиваемых блоках он не срабатывает",
+        "Исправлено: пока открыто левое боковое меню или правая панель, страница под ними больше не прокручивается вверх-вниз. Прокрутка возвращается, когда закрыты обе шторки"
+      ]
+    },
     {
       "version": "2.34",
       "date": "2026-10-03 03:12",
