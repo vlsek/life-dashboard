@@ -115,7 +115,7 @@ async function onDeleteBook(b: Book) {
             style="background: transparent; color: var(--text); border-color: var(--border)"
             @click="openAddSkill(s.name)"
           >
-            {{ s.icon }} {{ s.name }} +
+            <EmojiText :text="`${s.icon} ${s.name}`" /> +
           </button>
         </div>
 

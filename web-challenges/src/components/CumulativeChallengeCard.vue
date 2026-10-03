@@ -37,7 +37,7 @@ const placeholder = computed(() =>
 <template>
   <div class="card mb-3.5">
     <div class="flex flex-wrap items-center gap-2">
-      <strong>{{ challenge.icon }} {{ challenge.title }}</strong>
+      <strong><EmojiText :text="`${challenge.icon} ${challenge.title}`" /></strong>
       <button class="secondary ml-auto px-2 py-0.5" :title="t('ch_edit_btn')" :aria-label="t('ch_edit_btn')" data-testid="edit-challenge" @click="emit('edit', challenge)"><Icon name="edit" /></button>
       <button class="danger px-2 py-0.5" @click="emit('abandon', challenge)"><Icon name="trash" /></button>
     </div>

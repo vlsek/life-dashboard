@@ -76,7 +76,7 @@ function dotStyle(d: { i: number; isFuture: boolean; done: boolean; isToday: boo
 <template>
   <div class="card mb-3.5">
     <div class="flex flex-wrap items-center gap-2">
-      <strong>{{ challenge.icon }} {{ challenge.title }}</strong>
+      <strong><EmojiText :text="`${challenge.icon} ${challenge.title}`" /></strong>
       <span v-if="challenge.source_metric_id" class="dim rounded-full border px-2 py-0.5 text-xs" style="border-color: var(--border)" data-testid="source-badge">
         ↻ {{ t('ch_source_badge') }}{{ sourceName ? ' · ' + sourceName : '' }}
       </span>

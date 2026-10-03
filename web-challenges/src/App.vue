@@ -126,7 +126,7 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
         <h2 class="mb-2 mt-6 text-base font-medium"><EmojiText :text="t('ch_completed_h2')" /></h2>
         <p v-if="completed.length === 0" class="dim">{{ t('ch_no_completed') }}</p>
         <div v-for="ch in completed" :key="ch.id" class="card mb-2">
-          <strong>{{ ch.icon }} {{ ch.title }}</strong>
+          <strong><EmojiText :text="`${ch.icon} ${ch.title}`" /></strong>
           <span class="dim text-sm"> — {{ fmtRu((ch.completed_at ? localDateOfTimestamp(ch.completed_at) : '') || ch.start_date) }}</span>
         </div>
       </template>

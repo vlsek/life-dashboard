@@ -19,7 +19,7 @@ const templates = challengeTemplates()
         class="card mb-2.5 cursor-pointer"
         @click="emit('select', tpl)"
       >
-        <strong>{{ tpl.icon }} {{ tpl.title }}</strong>
+        <strong><EmojiText :text="`${tpl.icon} ${tpl.title}`" /></strong>
         <div class="dim mt-1 text-sm">{{ tpl.description }}</div>
       </div>
 

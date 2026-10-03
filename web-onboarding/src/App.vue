@@ -227,7 +227,7 @@ const usecaseCards: { value: Usecase; title: 'onb_usecase_goals' | 'onb_usecase_
         <div class="mb-3 rounded-lg border p-2.5" style="border-color: var(--border)" data-test="metrics-recommended">
           <label v-for="m in groups.recommended" :key="m.key" class="mb-2 flex items-start gap-2 font-normal last:mb-0">
             <input type="checkbox" class="mt-0.5" :data-metric="m.key" :checked="selectedKeys.has(m.key)" @change="toggleMetric(m.key, ($event.target as HTMLInputElement).checked)" />
-            <span>{{ m.icon }} <strong>{{ m.name }}</strong> <span class="dim text-sm">— {{ metricDescription(m, descLabels) }}</span></span>
+            <span><EmojiText :text="m.icon ?? ''" /> <strong>{{ m.name }}</strong> <span class="dim text-sm">— {{ metricDescription(m, descLabels) }}</span></span>
           </label>
         </div>
         <template v-if="groups.other.length">
@@ -237,7 +237,7 @@ const usecaseCards: { value: Usecase; title: 'onb_usecase_goals' | 'onb_usecase_
           <div v-if="otherOpen" class="mb-3 rounded-lg border p-2.5" style="border-color: var(--border)" data-test="metrics-other">
             <label v-for="m in groups.other" :key="m.key" class="mb-2 flex items-start gap-2 font-normal last:mb-0">
               <input type="checkbox" class="mt-0.5" :data-metric="m.key" :checked="selectedKeys.has(m.key)" @change="toggleMetric(m.key, ($event.target as HTMLInputElement).checked)" />
-              <span>{{ m.icon }} <strong>{{ m.name }}</strong> <span class="dim text-sm">— {{ metricDescription(m, descLabels) }}</span></span>
+              <span><EmojiText :text="m.icon ?? ''" /> <strong>{{ m.name }}</strong> <span class="dim text-sm">— {{ metricDescription(m, descLabels) }}</span></span>
             </label>
           </div>
         </template>
