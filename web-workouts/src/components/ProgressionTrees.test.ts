@@ -74,3 +74,33 @@ describe('ProgressionTrees', () => {
     expect(step(w, 'pushup_diamond').text()).toContain('goal 15 reps')
   })
 })
+
+describe('ProgressionTrees: ступени на время', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  it('планка: цель и лучший подход подписаны «сек», у отжиманий остаётся «повт.»', async () => {
+    localStorage.setItem('site_lang', 'ru')
+    const w = await openTrees([en('e1', '2026-09-20', [20])], [ex('e1', 'Планка на коленях'), ex('e2', 'Отжимания с колен')])
+    const knee = step(w, 'plank_knees')
+    expect(knee.attributes('data-status')).toBe('current')
+    expect(knee.text()).toContain('цель 30 сек')
+    expect(knee.text()).toContain('20 / 30 сек')
+    expect(step(w, 'pushup_knees').text()).toContain('цель 15 повт.')
+    expect(w.find('[data-chain="plank"] [data-testid="chain-count"]').text()).toBe('0/4')
+  })
+
+  it('пройденная ступень планки: счётчик цепочки растёт до 1/4', async () => {
+    localStorage.setItem('site_lang', 'ru')
+    const w = await openTrees([en('e1', '2026-09-20', [45])], [ex('e1', 'Планка на коленях')])
+    expect(step(w, 'plank_knees').attributes('data-status')).toBe('done')
+    expect(w.find('[data-chain="plank"] [data-testid="chain-count"]').text()).toBe('1/4')
+  })
+
+  it('EN: подпись «sec»', async () => {
+    localStorage.setItem('site_lang', 'en')
+    const w = await openTrees([], [])
+    expect(step(w, 'plank_regular').text()).toContain('goal 60 sec')
+  })
+})

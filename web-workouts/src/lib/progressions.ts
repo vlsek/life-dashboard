@@ -4,8 +4,9 @@ import type { Exercise, WorkoutEntry } from './types'
 // Деревья прогрессии упражнений (BACKLOG 3.3, первый срез). Каждая цепочка — ступени от лёгкой к
 // сложной; ступень «пройдена», когда в ОДНОМ подходе набрано не меньше `goal` повторений.
 // Ступени сопоставляются с упражнениями пользователя по названию (RU/EN), как и карта мышц —
-// колонок в БД под это нет. Только повторения: в подходах `duration` хранится в минутах
-// (для бега/кардио), поэтому ступени «на время» (планка) сюда не входят.
+// колонок в БД под это нет. Цель — число в поле «повторения» подхода. Ступени «на время» (планка) устроены так же:
+// секунды пишутся в то же поле (как в типовых программах, `valueLabel: Seconds`), а `unit: 'sec'` меняет лишь подпись.
+// Поле `duration` подхода (минуты, для бега/кардио) здесь не используется.
 
 export interface ProgressionStep {
   id: string
@@ -17,6 +18,8 @@ export interface ProgressionStep {
   req: string[][]
   not?: string[]
   goal: number
+  // Единица цели: 'reps' (по умолчанию) или 'sec' (удержание, секунды). На подсчёт не влияет, только на подпись.
+  unit?: 'reps' | 'sec'
 }
 
 export interface ProgressionChain {
@@ -98,6 +101,25 @@ export const PROGRESSIONS: ProgressionChain[] = [
       { id: 'core_leg_raise', ru: 'Подъёмы ног лёжа', en: 'Lying leg raises', req: [['подъем ног', 'подъемы ног', 'leg raise']], not: ['вис', 'hang'], goal: 20 },
       { id: 'core_hang_knee', ru: 'Подъёмы коленей в висе', en: 'Hanging knee raises', req: [['вис', 'hang'], ['колен', 'knee']], goal: 15 },
       { id: 'core_hang_leg', ru: 'Подъёмы ног в висе', en: 'Hanging leg raises', req: [['вис', 'hang'], ['ног', 'leg']], not: ['колен', 'knee'], goal: 12 },
+    ],
+  },
+  {
+    id: 'plank',
+    ru: 'Планка (на время)',
+    en: 'Plank (hold time)',
+    steps: [
+      { id: 'plank_knees', ru: 'Планка на коленях', en: 'Knee plank', req: [['планк', 'plank'], ['колен', 'knee']], goal: 30, unit: 'sec' },
+      {
+        id: 'plank_regular',
+        ru: 'Планка',
+        en: 'Plank',
+        req: [['планк', 'plank']],
+        not: ['колен', 'knee', 'боков', 'side', 'подъем', 'raise', 'lift', 'одной', 'one-arm', 'one arm'],
+        goal: 60,
+        unit: 'sec',
+      },
+      { id: 'plank_side', ru: 'Боковая планка', en: 'Side plank', req: [['планк', 'plank'], ['боков', 'side']], goal: 45, unit: 'sec' },
+      { id: 'plank_lift', ru: 'Планка с подъёмом ноги', en: 'Plank with leg lift', req: [['планк', 'plank'], ['подъем', 'leg raise', 'leg lift']], not: ['боков', 'side'], goal: 30, unit: 'sec' },
     ],
   },
   {

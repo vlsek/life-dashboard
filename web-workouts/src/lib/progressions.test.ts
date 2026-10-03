@@ -134,3 +134,36 @@ describe('chainState', () => {
     expect(chainDoneCount(s)).toBe(5)
   })
 })
+
+describe('ступени на время: цепочка «Планка» (BACKLOG 182, срез «на время»)', () => {
+  it('каждый вариант планки попадает ровно в свою ступень', () => {
+    expect(stepOf('plank', 'Планка на коленях')).toBe('plank_knees')
+    expect(stepOf('plank', 'Knee plank')).toBe('plank_knees')
+    expect(stepOf('plank', 'Планка')).toBe('plank_regular')
+    expect(stepOf('plank', 'Plank')).toBe('plank_regular')
+    expect(stepOf('plank', 'Боковая планка')).toBe('plank_side')
+    expect(stepOf('plank', 'Side plank')).toBe('plank_side')
+    expect(stepOf('plank', 'Планка с подъёмом ноги')).toBe('plank_lift')
+    expect(stepOf('plank', 'Plank leg lift')).toBe('plank_lift')
+  })
+  it('посторонние упражнения в цепочку планки не попадают', () => {
+    expect(stepOf('plank', 'Скручивания')).toBeNull()
+    expect(stepOf('plank', 'Подъёмы ног в висе')).toBeNull()
+  })
+  it('у ступеней планки единица — секунды, у остальных цепочек единицы нет (повторения по умолчанию)', () => {
+    expect(chain('plank').steps.every((s) => s.unit === 'sec')).toBe(true)
+    expect(PROGRESSIONS.filter((c) => c.id !== 'plank').every((c) => c.steps.every((s) => s.unit === undefined))).toBe(true)
+  })
+  it('секунды из поля «повторения» закрывают ступень: 60 с планки — пройдена, следующая текущая', () => {
+    const exs = [{ id: 'p', name: 'Планка' }, { id: 'sp', name: 'Боковая планка' }] as Exercise[]
+    const entries = [
+      { id: 'a', exercise_id: 'p', date: '2026-09-01', sets: [{ reps: 40, weight: null, time: null, duration: null, side: null }, { reps: 60, weight: null, time: null, duration: null, side: null }], notes: null },
+      { id: 'b', exercise_id: 'sp', date: '2026-09-02', sets: [{ reps: 20, weight: null, time: null, duration: null, side: null }], notes: null },
+    ] as WorkoutEntry[]
+    const st = chainState(chain('plank'), exs, entries, '2026-09-30')
+    expect(st.find((s) => s.step.id === 'plank_knees')?.status).toBe('current') // коленная ступень первая и без записей
+    expect(st.find((s) => s.step.id === 'plank_regular')?.status).toBe('done')
+    expect(st.find((s) => s.step.id === 'plank_side')?.status).toBe('progress')
+    expect(chainDoneCount(st)).toBe(1)
+  })
+})

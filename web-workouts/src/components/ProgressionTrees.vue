@@ -47,6 +47,7 @@ const STATUS_KEY: Record<StepStatus, DictKey> = {
   progress: 'workouts_prog_progress',
   locked: 'workouts_prog_locked',
 }
+const unitLabel = (s: StepState) => t(s.step.unit === 'sec' ? 'workouts_prog_sec' : 'workouts_prog_reps')
 function pct(s: StepState): number {
   return Math.min(100, Math.round((s.best / s.step.goal) * 100))
 }
@@ -93,7 +94,7 @@ function pct(s: StepState): number {
             <div class="flex items-center gap-2">
               <span :title="t(STATUS_KEY[s.status])" :style="{ color: s.status === 'done' ? 'var(--success)' : 'var(--text)' }" aria-hidden="true">{{ ICON[s.status] }}</span>
               <span class="flex-1">{{ label(s) }}</span>
-              <span class="text-[0.8em]" style="color: var(--text-dim)">{{ t('workouts_prog_goal') }} {{ s.step.goal }} {{ t('workouts_prog_reps') }}</span>
+              <span class="text-[0.8em]" style="color: var(--text-dim)">{{ t('workouts_prog_goal') }} {{ s.step.goal }} {{ unitLabel(s) }}</span>
             </div>
 
             <template v-if="s.status === 'current' || s.status === 'progress'">
@@ -101,7 +102,7 @@ function pct(s: StepState): number {
                 <span class="h-1.5 flex-1 overflow-hidden rounded" style="background: var(--border)">
                   <span class="block h-full rounded" style="background: var(--accent)" :style="{ width: pct(s) + '%' }" data-testid="step-bar"></span>
                 </span>
-                <span>{{ t('workouts_prog_best') }}: {{ s.best }} / {{ s.step.goal }}</span>
+                <span>{{ t('workouts_prog_best') }}: {{ s.best }} / {{ s.step.goal }} {{ unitLabel(s) }}</span>
               </div>
               <div class="mt-1.5">
                 <button
