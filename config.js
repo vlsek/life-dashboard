@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.30";
+const SITE_VERSION = "2.31";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.31", date: "2026-10-03 05:27", changes: [
+        "Вода: плашка-напоминалка «Пора выпить воды» теперь пропадает сразу, как только вы добавили воду (раньше — только когда была выпита вся норма), а числа в ней обновляются мгновенно из записи воды в шапке или правой панели. Вода, добавленная за другую дату, сегодняшнюю плашку не гасит. Числа в плашке стали защищены: вместо пустых, отрицательных или нечисловых значений показывается 0, а «осталось» никогда не уходит в минус",
+    ]},
     { version: "2.30", date: "2026-10-03 01:49", changes: [
         "Серия в Сообществе и лидерборде больше не обнуляется из-за незавершённого сегодняшнего дня: если вчера всё было сделано, а сегодня внесена лишь часть метрик, серия считается со вчерашнего дня, а не показывается как 0. Нужна миграция 037 в Supabase; без неё всё работает как раньше",
     ]},
@@ -1291,6 +1294,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.31", date: "2026-10-03 05:27", changes: [
+        "Water: the \"Time for some water\" reminder now disappears as soon as you add water (before, only when the whole goal was reached), and its numbers update instantly from the water entry in the header or the right panel. Water added for another date does not dismiss today's reminder. The numbers are now guarded: empty, negative or non-numeric values show as 0, and \"left\" never goes negative",
+    ]},
     { version: "2.30", date: "2026-10-03 01:49", changes: [
         "The streak in Community and the leaderboard no longer resets because of today being unfinished: if everything was done yesterday and only some metrics are filled in today, the streak is counted from yesterday instead of showing 0. Requires migration 037 in Supabase; without it everything works as before",
     ]},
