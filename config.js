@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.38";
+const SITE_VERSION = "2.39";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.39", date: "2026-10-03 12:57", changes: [
+        "Эмодзи → иконки: значки шаблонов челленджей (каталог, карточки и список), предложенных навыков и подсказок в онбординге теперь рисуются единым набором иконок, а не цветными эмодзи. Для «Холодного душа», «Без сахара», «Выучить слов», «Слепой печати», «Мостика», «Свиста», «Шпагата», «Жонглирования», «Стойки на руках» и дыхания подобраны близкие по смыслу иконки. Всё, что уже сохранено у тебя, не меняется",
+    ]},
     { version: "2.38", date: "2026-10-03 12:45", changes: [
         "Тренировки: группы мышц, которые ты отметил у упражнения, теперь синхронизируются между устройствами. Отметил на телефоне — на компьютере упражнение уже на карте мышц; сброс на одном устройстве действует на всех. Привязки, отмеченные раньше на этом устройстве, один раз загрузятся автоматически. Работает после обновления базы данных, до этого всё остаётся как раньше — на одном устройстве",
     ]},
@@ -1316,6 +1319,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.39", date: "2026-10-03 12:57", changes: [
+        "Emoji → icons: the icons of challenge templates (catalog, cards and list), suggested skills and onboarding hints are now drawn with the single icon set instead of colourful emoji. Close-in-meaning icons were picked for Cold shower, No sugar, Learn words, Touch typing, Bridge, Whistling, Splits, Juggling, Handstand and breathing. Nothing you already saved changes",
+    ]},
     { version: "2.38", date: "2026-10-03 12:45", changes: [
         "Workouts: the muscle groups you mark on an exercise now sync between devices. Mark them on your phone and the exercise is already on the muscle map on your computer; resetting on one device applies everywhere. Links marked earlier on this device are uploaded once automatically. Works after the database update; until then everything stays as before — on one device",
     ]},

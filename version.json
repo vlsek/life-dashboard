@@ -1,6 +1,13 @@
 {
-  "version": "2.38",
+  "version": "2.39",
   "en": [
+    {
+      "version": "2.39",
+      "date": "2026-10-03 12:57",
+      "changes": [
+        "Emoji → icons: the icons of challenge templates (catalog, cards and list), suggested skills and onboarding hints are now drawn with the single icon set instead of colourful emoji. Close-in-meaning icons were picked for Cold shower, No sugar, Learn words, Touch typing, Bridge, Whistling, Splits, Juggling, Handstand and breathing. Nothing you already saved changes"
+      ]
+    },
     {
       "version": "2.38",
       "date": "2026-10-03 12:45",
@@ -1725,6 +1732,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.39",
+      "date": "2026-10-03 12:57",
+      "changes": [
+        "Эмодзи → иконки: значки шаблонов челленджей (каталог, карточки и список), предложенных навыков и подсказок в онбординге теперь рисуются единым набором иконок, а не цветными эмодзи. Для «Холодного душа», «Без сахара», «Выучить слов», «Слепой печати», «Мостика», «Свиста», «Шпагата», «Жонглирования», «Стойки на руках» и дыхания подобраны близкие по смыслу иконки. Всё, что уже сохранено у тебя, не меняется"
+      ]
+    },
     {
       "version": "2.38",
       "date": "2026-10-03 12:45",
