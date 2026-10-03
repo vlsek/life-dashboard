@@ -1,6 +1,13 @@
 {
-  "version": "2.50",
+  "version": "2.51",
   "en": [
+    {
+      "version": "2.51",
+      "date": "2026-10-04 02:15",
+      "changes": [
+        "Planned sets per day: server-side streaks, points and the leaderboard now judge \"done\" by the same rule as the pages (migration 044), so streaks, category points and the balance agree everywhere. Each day is judged by the rule in force that day: past days and points already earned do not change. Once migrations 041 and 044 are applied, the \"Planned sets per day\" field in the sets metric form can be filled in. Without the migrations everything works as before"
+      ]
+    },
     {
       "version": "2.50",
       "date": "2026-10-04 02:07",
@@ -1811,6 +1818,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.51",
+      "date": "2026-10-04 02:15",
+      "changes": [
+        "Подходы в день по плану: серверные серии, баллы и лидерборд теперь считают «выполнено» по тому же правилу, что и страницы (миграция 044), поэтому серии, очки категорий и баланс совпадают везде. Каждый день считается по правилу, действовавшему в этот день: прошлые дни и уже набранные очки не меняются. После применения миграций 041 и 044 параметр «Подходов в день по плану» в форме метрики-подходов можно заполнять. Без миграций всё работает как раньше"
+      ]
+    },
     {
       "version": "2.50",
       "date": "2026-10-04 02:07",

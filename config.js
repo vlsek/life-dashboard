@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.50";
+const SITE_VERSION = "2.51";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.51", date: "2026-10-04 02:15", changes: [
+        "Подходы в день по плану: серверные серии, баллы и лидерборд теперь считают «выполнено» по тому же правилу, что и страницы (миграция 044), поэтому серии, очки категорий и баланс совпадают везде. Каждый день считается по правилу, действовавшему в этот день: прошлые дни и уже набранные очки не меняются. После применения миграций 041 и 044 параметр «Подходов в день по плану» в форме метрики-подходов можно заполнять. Без миграций всё работает как раньше",
+    ]},
     { version: "2.50", date: "2026-10-04 02:07", changes: [
         "Подходы в день по плану: правило «N подходов» теперь учитывается не только на Дашборде, но и в шапке, Истории, Магазине и в балансе и журнале баллов профиля — кольца, баллы и История не расходятся. Каждый день считается по правилу, действовавшему в этот день: прошлые дни и уже начисленные баллы не пересчитываются. Поле в форме метрики по-прежнему появляется после применения миграции 041; серии и баллы на сервере — следующим шагом",
     ]},
@@ -1354,6 +1357,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.51", date: "2026-10-04 02:15", changes: [
+        "Planned sets per day: server-side streaks, points and the leaderboard now judge \"done\" by the same rule as the pages (migration 044), so streaks, category points and the balance agree everywhere. Each day is judged by the rule in force that day: past days and points already earned do not change. Once migrations 041 and 044 are applied, the \"Planned sets per day\" field in the sets metric form can be filled in. Without the migrations everything works as before",
+    ]},
     { version: "2.50", date: "2026-10-04 02:07", changes: [
         "Planned sets per day: the \"N sets\" rule now applies not only on the Dashboard but also in the header, History, Shop and in the profile balance and points log, so rings, points and History agree. Each day is judged by the rule that was in force that day: past days and points already earned are not recalculated. The metric form field still appears once migration 041 is applied; server-side streaks and points come next",
     ]},
