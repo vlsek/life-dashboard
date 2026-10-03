@@ -69,7 +69,8 @@ async function onSaveDay(items: PlannedItem[]) {
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
-    <div class="mb-3 flex items-center justify-between">
+    <!-- no-edge-swipe (левая шторка) и data-no-swipe (правая панель шапки): свайп по календарю не должен выдвигать боковые плашки (BACKLOG 25, 07:38) -->
+    <div class="no-edge-swipe mb-3 flex items-center justify-between" data-no-swipe data-test="cal-head">
       <button class="secondary" @click="prevMonth">‹</button>
       <h1 class="text-lg font-semibold">{{ monthLabel }}</h1>
       <button class="secondary" @click="nextMonth">›</button>
@@ -81,7 +82,7 @@ async function onSaveDay(items: PlannedItem[]) {
     <p v-if="auth.status === 'loading'" class="dim">…</p>
     <p v-else-if="error" class="dim">{{ t('comm_load_error') }} {{ error }}</p>
 
-    <div v-else class="cal-grid grid grid-cols-7 gap-1">
+    <div v-else class="cal-grid no-edge-swipe grid grid-cols-7 gap-1" data-no-swipe data-test="cal-grid">
       <div v-for="w in WEEKDAYS" :key="w" class="cal-weekday text-center text-xs font-medium">{{ w }}</div>
       <template v-for="(cell, idx) in grid" :key="idx">
         <div v-if="!cell" class="cal-cell cal-empty"></div>
