@@ -124,6 +124,13 @@ export function exerciseBilateralField(bilateral: boolean, existing: Exercise | 
   return existing && 'bilateral' in existing ? { bilateral: bilateral } : {}
 }
 
+// Миграция 038 (workout_exercises.muscle_groups): тот же приём — шлём поле только если оно уже есть у существующей строки,
+// иначе апдейт упадёт на базе без миграции. Пустой список → NULL («своей привязки нет», снова работает автоопределение).
+export function exerciseMusclesField(muscles: readonly string[] | undefined, existing: Exercise | null): { muscle_groups?: string[] | null } {
+  if (muscles === undefined || !existing || !('muscle_groups' in existing)) return {}
+  return { muscle_groups: muscles.length ? [...muscles] : null }
+}
+
 // Порт очистки подходов перед сохранением (см. okBtn.onclick в openEntryModal): выкидывает
 // пустые строки, приводит числовые поля к number|null.
 export function cleanSets(sets: WorkoutSet[]): WorkoutSet[] {

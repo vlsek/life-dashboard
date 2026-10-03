@@ -81,10 +81,19 @@ vi.mock('./lib/supabase', () => ({
   sb: {
     // useWorkouts() при создании вызывает init() → getSession(); вечно ожидающий промис = «сессия ещё грузится» (без редиректа и шума)
     auth: { getSession: () => new Promise(() => {}) },
-    from: () => ({
-      insert: () => Promise.resolve({ error: h.fail ? { message: 'boom' } : null }),
-      update: () => ({ eq: () => Promise.resolve({ error: h.fail ? { message: 'boom' } : null }) }),
-    }),
+    from: () => {
+      // addExercise с группами мышц перечитывает созданную строку (select('*')…maybeSingle) — отдаём «строки нет» (колонки в базе не проверяем здесь)
+      const chain: Record<string, unknown> = {
+        select: () => chain,
+        eq: () => chain,
+        order: () => chain,
+        limit: () => chain,
+        maybeSingle: () => Promise.resolve({ data: null, error: null }),
+        insert: () => Promise.resolve({ error: h.fail ? { message: 'boom' } : null }),
+        update: () => ({ eq: () => Promise.resolve({ error: h.fail ? { message: 'boom' } : null }) }),
+      }
+      return chain
+    },
   },
 }))
 const input = (o: Partial<ExerciseFormInput>): ExerciseFormInput => ({ name: 'Wall angels', category: '', tracks_weight: 'no', value_label: '', unit: '', tracks_duration: false, bilateral: false, ...o })

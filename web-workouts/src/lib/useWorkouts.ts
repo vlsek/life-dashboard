@@ -1,8 +1,9 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
-import { exerciseBilateralField, exerciseDurationField } from './workouts'
+import { exerciseBilateralField, exerciseDurationField, exerciseMusclesField } from './workouts'
 import { unitToSave } from './weightUnit'
-import { renameMuscleOverride, setMuscleOverride } from './muscles'
+import { getMuscleOverride, renameMuscleOverride, setMuscleOverride } from './muscles'
+import { planMuscleSync, type SyncRow } from './muscleSync'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry } from './types'
 
 export type AuthState =
@@ -52,6 +53,34 @@ export function useWorkouts() {
     loadError.value = null
     exercises.value = (ex || []) as Exercise[]
     entries.value = (en || []) as WorkoutEntry[]
+    await syncMuscleGroups(exercises.value)
+  }
+
+  // Свои группы мышц между устройствами (миграция 038, BACKLOG 22 «12:33»): БД → локальный слой muscles.ts; при первом проходе
+  // устройства — локальные привязки (из v2.32) однократно в БД. Без колонки (миграция не применена) ничего не делает.
+  const MUSCLES_SYNCED_KEY = 'workouts_muscle_groups_synced'
+  async function syncMuscleGroups(rows: Exercise[]) {
+    let uploaded = false
+    try {
+      uploaded = localStorage.getItem(MUSCLES_SYNCED_KEY) === '1'
+    } catch {
+      /* без хранилища считаем, что проход первый */
+    }
+    const plan = planMuscleSync(rows as unknown as SyncRow[], getMuscleOverride, uploaded)
+    if (!plan.hasColumn) return
+    let allOk = true
+    for (const u of plan.toUpload) {
+      const { error } = await sb.from('workout_exercises').update({ muscle_groups: u.muscles }).eq('id', u.id)
+      if (error) allOk = false
+    }
+    for (const a of plan.apply) setMuscleOverride(a.name, a.muscles)
+    if (allOk && !uploaded) {
+      try {
+        localStorage.setItem(MUSCLES_SYNCED_KEY, '1')
+      } catch {
+        /* не запомнили — следующий проход повторит однократную загрузку, это безопасно */
+      }
+    }
   }
 
   async function reload() {
@@ -77,19 +106,20 @@ export function useWorkouts() {
     // Длительность/билатеральность для новой записи — отдельным апдейтом, аналогично
     // streak_import у метрик: сначала вставляем базовую строку, потом узнаём, есть ли у
     // неё эти колонки (мигрирована ли база), и патчим при необходимости.
-    if (res.tracks_duration || res.bilateral) {
+    if (res.tracks_duration || res.bilateral || res.muscles?.length) {
       const { data: created } = await sb
         .from('workout_exercises')
-        .select('id, tracks_duration, bilateral')
+        .select('*') // целиком: так видно, какие из необязательных колонок (027/028/038) в базе уже есть
         .eq('user_id', userId)
         .eq('name', res.name.trim())
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle()
       if (created) {
-        const patch: Record<string, boolean> = {}
+        const patch: Record<string, boolean | string[]> = {}
         if (res.tracks_duration && 'tracks_duration' in created) patch.tracks_duration = true
         if (res.bilateral && 'bilateral' in created) patch.bilateral = true
+        if (res.muscles?.length && 'muscle_groups' in created) patch.muscle_groups = [...res.muscles]
         if (Object.keys(patch).length) await sb.from('workout_exercises').update(patch).eq('id', created.id)
       }
     }
@@ -107,6 +137,7 @@ export function useWorkouts() {
         value_label: res.value_label?.trim() || defaultValueLabel,
         ...exerciseDurationField(res.tracks_duration, existing),
         ...exerciseBilateralField(res.bilateral, existing),
+        ...exerciseMusclesField(res.muscles, existing),
       })
       .eq('id', existing.id)
     if (error) throw error

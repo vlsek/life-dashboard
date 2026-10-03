@@ -19,6 +19,8 @@ export interface Exercise {
   // Появились в миграциях 027/028 — у старых записей может отсутствовать поле целиком.
   tracks_duration?: boolean
   bilateral?: boolean
+  // Миграция 038: свои группы мышц (id как на карте мышц); NULL — своей привязки нет. Поля может не быть, пока миграция не применена.
+  muscle_groups?: string[] | null
   created_at: string
 }
 
