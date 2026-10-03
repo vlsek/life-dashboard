@@ -63,7 +63,7 @@ BACKLOG 4.2/13, ВТОРОЙ СРЕЗ «подходов в день по пла
 — свободен —
 
 ### Агент 4
-— свободен —
+По порядку очереди (после сброса контекста): BACKLOG 90–93 «Замена эмодзи на SVG», ОСТАТОК — пилот шапки `web-header/` и вода: `RightPanel`, `SettingsModal`, `WaterModal`, `App.vue` (💧 ⚙️ 🏋️ ↶ ✎ → `EmojiText`; копия `emojiText.ts` + `EmojiText.vue` + иконок из Дашборда), плюс 💧/⚙️ в `title` у `WaterSection`/`WaterBadge`/`web-header/App.vue` и заголовок `dash_day_progress_settings_title` — через `stripEmoji`. ТРОГАЮ: `web-header/src/{components,App.vue,lib/{icons,emojiText,i18n}}`, `web-dashboard/src/components/{WaterSection,WaterBadge}.vue` (только `title`), тесты, пересборка `header-widgets/` и `dashboard/`, `config.js`, ROADMAP, BACKLOG. НЕ трогаю: `web-header/src/lib/{types,metrics,progress,progressSummary}.ts` (агент 1), `useWater*`, SQL. С: 2026-10-03 19:51.
 
 ### Агент 5
 — свободен —
