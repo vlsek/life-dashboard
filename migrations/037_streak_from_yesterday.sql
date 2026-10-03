@@ -2,7 +2,7 @@
 -- Серия в Сообществе/лидерборде не должна обнуляться из-за незавершённого сегодняшнего дня (BACKLOG 22.1, серверная часть).
 --
 -- ДЕФЕКТ. calc_perfect_streak и calc_category_streak считали серию «от сегодня», как только за сегодня есть ЛЮБАЯ запись
--- (migrations/005, 018, 023, 030). Стоило внести одну метрику за сегодня — серия начиналась с сегодняшнего дня, а он ещё
+-- (migrations/005, 018, 023, 030, 033). Стоило внести одну метрику за сегодня — серия начиналась с сегодняшнего дня, а он ещё
 -- не «идеальный», и она обрывалась на нём: 0 вместо реальной серии «со вчера». На главной это выглядело как пропавший
 -- (вместо пунктирного) огонёк, в Сообществе — как внезапно обнулившаяся серия.
 --
@@ -10,7 +10,9 @@
 -- нет ни одной выполненной), он не обрывает серию, а просто пропускается: серия считается от вчерашнего дня. Как только
 -- сегодня засчитан — он входит в серию. Вчерашний и более ранние пропуски по-прежнему обрывают серию.
 --
--- Только create or replace: сигнатуры и права не менялись, «сегодня» — по поясу пользователя (user_today, миграция 030).
+-- Только create or replace: сигнатуры и права не менялись, «сегодня» — по поясу пользователя (user_today, миграция 030),
+-- цель метрики без значения — эффективная (metric_null_goal, миграция 033: норма воды). Определения взяты из 033, меняется
+-- только обработка сегодняшнего дня.
 -- Проверка: docs/sql-checks/037_streak_from_yesterday_check.sql.
 
 create or replace function calc_perfect_streak(target_user uuid)
@@ -25,6 +27,7 @@ begin
   if not exists (select 1 from metrics where user_id = target_user and active = true) then
     return 0;
   end if;
+
 
   loop
     exit when iterations >= 3650;
@@ -52,9 +55,9 @@ begin
             when m.type = 'boolean' then (dv.value = 'true'::jsonb)
             when m.type = 'multiselect' then (jsonb_array_length(dv.value) > 0)
             when m.type in ('number', 'sets') and m.goal_direction = 'at_most'
-              then (metric_numeric_value(m.type, dv.value) > 0 and metric_numeric_value(m.type, dv.value) < coalesce(m.goal_value,0))
+              then (metric_numeric_value(m.type, dv.value) > 0 and metric_numeric_value(m.type, dv.value) < coalesce(m.goal_value, metric_null_goal(m.id, m.user_id, m.type, m.name, m.icon)))
             when m.type in ('number', 'sets')
-              then (metric_numeric_value(m.type, dv.value) >= coalesce(m.goal_value,0))
+              then (metric_numeric_value(m.type, dv.value) >= coalesce(m.goal_value, metric_null_goal(m.id, m.user_id, m.type, m.name, m.icon)))
             else false
           end
         )
@@ -91,6 +94,7 @@ begin
   select id into cat_id from metric_categories where key = cat_key;
   if cat_id is null then return 0; end if;
 
+
   loop
     exit when iterations >= 3650;
     iterations := iterations + 1;
@@ -115,9 +119,9 @@ begin
           when m.type = 'boolean' then (dv.value = 'true'::jsonb)
           when m.type = 'multiselect' then (jsonb_array_length(dv.value) > 0)
           when m.type in ('number', 'sets') and m.goal_direction = 'at_most'
-            then (metric_numeric_value(m.type, dv.value) > 0 and metric_numeric_value(m.type, dv.value) < coalesce(m.goal_value,0))
+            then (metric_numeric_value(m.type, dv.value) > 0 and metric_numeric_value(m.type, dv.value) < coalesce(m.goal_value, metric_null_goal(m.id, m.user_id, m.type, m.name, m.icon)))
           when m.type in ('number', 'sets')
-            then (metric_numeric_value(m.type, dv.value) >= coalesce(m.goal_value,0))
+            then (metric_numeric_value(m.type, dv.value) >= coalesce(m.goal_value, metric_null_goal(m.id, m.user_id, m.type, m.name, m.icon)))
           else false
         end
       )
