@@ -1,14 +1,14 @@
 import { sb } from './supabase'
 
 // Вода «выполнена» по ЭФФЕКТИВНОЙ норме (решение владельца 2026-10-01, вариант «б»; SQL — migrations/033_water_effective_norm.sql).
-// Если у метрики воды `goal_value` не задан, её норма — авто-норма (вес × 30 мл, без веса 2000), а не 0: иначе балл за воду
+// Если у метрики воды `goal_value` не задан, её норма — авто-норма (вес × 26 мл, без веса 1800; v2.49 — с поправкой на воду из еды), а не 0: иначе балл за воду
 // давало любое записанное значение, даже 100 мл. Правило здесь — зеркало SQL-функций is_water_like / is_weight_like /
 // water_auto_norm_ml / metric_null_goal; менять их нужно ВМЕСТЕ. Чистые функции без сети/DOM; сетевой вход — withWaterGoal().
 // Как пользоваться: после загрузки метрик для подсчёта «выполнено»/баллов/колец пропустить их через withWaterGoal(userId, metrics).
 // НЕ применять к метрикам, которые редактируются формой (Управление метриками): иначе в goal_value «запишется» авто-норма.
 
-export const WATER_ML_PER_KG = 30
-export const WATER_DEFAULT_ML = 2000
+export const WATER_ML_PER_KG = 26
+export const WATER_DEFAULT_ML = 1800
 
 export interface GoalMetric {
   id: string
@@ -42,19 +42,20 @@ export function findWaterNumberMetric<T extends GoalMetric>(metrics: T[]): T | u
   return water[0]
 }
 
-// round(вес × 30); нет веса или 0 → null. Умножаем через ×3000/100, чтобы 70,05 × 30 = 2101,5 не «плыло» из-за float (SQL считает numeric точно).
+// round(вес × 26); нет веса или 0 → null. Умножаем через ×3000/100, чтобы 70,05 × 26 = 1821,3 не «плыло» из-за float (SQL считает numeric точно).
 export function autoNormFromWeight(weightKg: number | null | undefined): number | null {
   if (!weightKg) return null
   return Math.round(Math.round(weightKg * WATER_ML_PER_KG * 100) / 100)
 }
 
 // --- Рост в формуле (BACKLOG 17, просьба владельца 2026-10-01) ---
-// Общепринятый клинический подход: суточная потребность во ВСЕЙ жидкости ≈ 1500 мл на м² поверхности тела (maintenance fluid),
-// а площадь поверхности — по формуле Мостеллера BSA = √(рост[см] × вес[кг] / 3600) (Mosteller, NEJM 1987). Около 20% воды человек
-// получает с едой (оценка IOM/EFSA), поэтому «питьевая» норма = BSA × 1500 × 0.8 = BSA × 1200 мл. Округляем до 10 мл.
-// Пример: 70 кг, 175 см → BSA 1,84 м² → 2210 мл. Без роста (или рост вне 100–250 см) — прежний расчёт вес × 30.
-// SQL-зеркало: migrations/034_water_norm_height.sql (water_auto_norm_ml) — править ВМЕСТЕ.
-export const WATER_ML_PER_M2 = 1200
+// Норма — это ПИТЬЁ, без воды из еды (супы, фрукты, овощи и т. д. сюда НЕ входят; решение владельца 2026-10-03, v2.49).
+// Площадь поверхности тела — по формуле Мостеллера BSA = √(рост[см] × вес[кг] / 3600) (Mosteller, NEJM 1987). Суточная потребность во ВСЕЙ воде
+// ≈ 1250 мл на м² (ориентир EFSA: ≈2,0 л женщинам и ≈2,5 л мужчинам при BSA 1,6–1,9 м²), около 20% её приходит с едой,
+// поэтому «питьевая» норма = BSA × 1250 × 0.8 = BSA × 1000 мл. Округляем до 10 мл. (До v2.49 было 1200 мл/м² от клинических 1500 мл/м².)
+// Пример: 70 кг, 175 см → BSA 1,84 м² → 1840 мл. Без роста (или рост вне 100–250 см) — вес × 26 мл (= вес × 32,5 всей воды × 0.8), без веса — 1800.
+// SQL-зеркало: migrations/043_water_norm_food.sql (water_auto_norm_ml, metric_null_goal) — править ВМЕСТЕ.
+export const WATER_ML_PER_M2 = 1000
 export const HEIGHT_MIN_CM = 100
 export const HEIGHT_MAX_CM = 250
 

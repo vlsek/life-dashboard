@@ -13,9 +13,9 @@ describe('линия цели воды на графике', () => {
   it('без подстановки у воды с пустой нормой линии нет (было)', () => {
     expect(goalOf([water()], 'metric:w')).toBeNull()
   })
-  it('с эффективной нормой: по весу и росту, без веса — 2000; ручная норма и другие метрики не меняются', () => {
+  it('с эффективной нормой: по весу и росту, без веса — 1800; ручная норма и другие метрики не меняются', () => {
     expect(goalOf(applyWaterGoal([water(), pushups], autoNormFromBody(80, 180)), 'metric:w')).toBe(autoNormFromBody(80, 180))
-    expect(goalOf(applyWaterGoal([water(), pushups], null), 'metric:w')).toBe(2000)
+    expect(goalOf(applyWaterGoal([water(), pushups], null), 'metric:w')).toBe(1800)
     expect(goalOf(applyWaterGoal([water(1500), pushups], 2400), 'metric:w')).toBe(1500)
     expect(goalOf(applyWaterGoal([water(), pushups], 2400), 'metric:p')).toBe(50)
   })

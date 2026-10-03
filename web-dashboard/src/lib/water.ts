@@ -26,15 +26,15 @@ export function findWeightParam(params: BodyParameter[]): BodyParameter | undefi
   return params.find((p) => metricIconKey(p.icon) === 'scale' || /вес|weight/i.test(p.name || ''))
 }
 
-// Портировано из getAutoWaterNormMl(): грубая формула 30мл на кг веса.
+// Портировано из getAutoWaterNormMl(): грубая формула 26 мл на кг веса (питьё без воды из еды, v2.49).
 export function autoNormMlFromWeight(weightKg: number): number {
-  return Math.round(weightKg * 30)
+  return Math.round(weightKg * 26)
 }
 
-// Итоговая цель на день: ручная (metric.goal_value), иначе авто по весу, иначе дефолт 2000 —
+// Итоговая цель на день: ручная (metric.goal_value), иначе авто по весу, иначе дефолт 1800 —
 // портировано из `metric.goal_value ?? (await getAutoWaterNormMl()) ?? 2000` в renderWaterBadge().
 export function effectiveNormMl(goalValue: number | null | undefined, autoNormMl: number | null): number {
-  return goalValue ?? autoNormMl ?? 2000
+  return goalValue ?? autoNormMl ?? 1800
 }
 
 // Портировано из `Math.max(0, current + deltaMl)` в addWaterMl() — суточное значение не уходит

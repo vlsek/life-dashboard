@@ -76,10 +76,10 @@ describe('isWaterLike / isWeightLike — зеркало SQL is_water_like / is_w
 })
 
 describe('autoNormFromWeight', () => {
-  it('вес × 30, округление как в SQL numeric (x,5 вверх); нет веса или 0 → null', () => {
-    expect(autoNormFromWeight(80)).toBe(2400)
-    expect(autoNormFromWeight(65.4)).toBe(1962)
-    expect(autoNormFromWeight(70.05)).toBe(2102) // 2101,5 → 2102, а не 2101 из-за float
+  it('вес × 26, округление как в SQL numeric (x,5 вверх); нет веса или 0 → null', () => {
+    expect(autoNormFromWeight(80)).toBe(2080)
+    expect(autoNormFromWeight(65.4)).toBe(1700)
+    expect(autoNormFromWeight(70.25)).toBe(1827) // 1826,5 → 1827 (x,5 вверх, как SQL numeric)
     expect(autoNormFromWeight(0)).toBeNull()
     expect(autoNormFromWeight(null)).toBeNull()
     expect(autoNormFromWeight(undefined)).toBeNull()
@@ -101,9 +101,9 @@ describe('findWaterNumberMetric', () => {
 })
 
 describe('applyWaterGoal', () => {
-  it('пустая норма → авто-норма; без веса → 2000', () => {
+  it('пустая норма → авто-норма; без веса → 1800', () => {
     expect(applyWaterGoal([metric()], 2400)[0].goal_value).toBe(2400)
-    expect(applyWaterGoal([metric()], null)[0].goal_value).toBe(2000)
+    expect(applyWaterGoal([metric()], null)[0].goal_value).toBe(1800)
   })
   it('заданная норма (даже ручная) главнее — массив возвращается как есть', () => {
     const list = [metric({ goal_value: 1500 })]
@@ -129,25 +129,25 @@ describe('loadAutoNormMl / withWaterGoal (сеть)', () => {
     expect(await withWaterGoal('u', none)).toBe(none)
     expect(h.calls).toEqual([])
   })
-  it('пустая норма: читает параметр веса и его последнее значение → вес × 30', async () => {
+  it('пустая норма: читает параметр веса и его последнее значение → вес × 26', async () => {
     h.params = [{ id: 'p1', name: 'Вес', icon: 'svg:scale', position: 0 }]
     h.values = [{ value: 80 }]
     const out = await withWaterGoal('u', [metric()])
-    expect(out[0].goal_value).toBe(2400)
+    expect(out[0].goal_value).toBe(2080)
     expect(h.calls).toEqual(['body_parameters', 'body_parameter_values', 'profiles'])
   })
-  it('нет параметра веса / вес 0 / ошибка сети → 2000, ошибка не кэшируется', async () => {
-    expect((await withWaterGoal('u', [metric()]))[0].goal_value).toBe(2000)
+  it('нет параметра веса / вес 0 / ошибка сети → 1800, ошибка не кэшируется', async () => {
+    expect((await withWaterGoal('u', [metric()]))[0].goal_value).toBe(1800)
     resetWaterGoalCache()
     h.params = [{ id: 'p1', name: 'Weight', icon: null, position: 0 }]
     h.values = [{ value: 0 }]
-    expect((await withWaterGoal('u', [metric()]))[0].goal_value).toBe(2000)
+    expect((await withWaterGoal('u', [metric()]))[0].goal_value).toBe(1800)
     resetWaterGoalCache()
     h.fail = true
-    expect((await withWaterGoal('u', [metric()]))[0].goal_value).toBe(2000)
+    expect((await withWaterGoal('u', [metric()]))[0].goal_value).toBe(1800)
     h.fail = false
     h.values = [{ value: 70 }]
-    expect((await withWaterGoal('u', [metric()]))[0].goal_value).toBe(2100) // не залип на ошибке
+    expect((await withWaterGoal('u', [metric()]))[0].goal_value).toBe(1820) // не залип на ошибке
   })
   it('кэш: повторные загрузки подряд ходят в сеть один раз; событие изменения данных сбрасывает кэш', async () => {
     h.params = [{ id: 'p1', name: 'Вес', icon: 'svg:scale', position: 0 }]
@@ -163,24 +163,24 @@ describe('loadAutoNormMl / withWaterGoal (сеть)', () => {
 })
 
 describe('рост в авто-норме (BACKLOG 17; SQL: migrations/034)', () => {
-  it('есть рост в профиле → норма по площади поверхности тела: 70 кг, 175 см → 2210', async () => {
+  it('есть рост в профиле → норма по площади поверхности тела: 70 кг, 175 см → 1840', async () => {
     h.params = [{ id: 'p1', name: 'Вес', icon: 'svg:scale', position: 0 }]
     h.values = [{ value: 70 }]
     h.profile = { height: 175 }
-    expect(await loadAutoNormMl('u')).toBe(2210)
-    expect(autoNormFromBody(70, 175)).toBe(2210)
+    expect(await loadAutoNormMl('u')).toBe(1840)
+    expect(autoNormFromBody(70, 175)).toBe(1840)
   })
 
-  it('профиля/роста нет или рост неправдоподобен → вес × 30, как раньше', async () => {
+  it('профиля/роста нет или рост неправдоподобен → вес × 26', async () => {
     h.params = [{ id: 'p1', name: 'Вес', icon: 'svg:scale', position: 0 }]
     h.values = [{ value: 70 }]
-    expect(await loadAutoNormMl('u')).toBe(2100)
+    expect(await loadAutoNormMl('u')).toBe(1820)
     resetWaterGoalCache()
     h.profile = { height: 17 }
-    expect(await loadAutoNormMl('u')).toBe(2100)
+    expect(await loadAutoNormMl('u')).toBe(1820)
     resetWaterGoalCache()
     h.profile = { height: null }
-    expect(await loadAutoNormMl('u')).toBe(2100)
+    expect(await loadAutoNormMl('u')).toBe(1820)
   })
 
   it('нет веса — норма не считается, рост не запрашивается', async () => {

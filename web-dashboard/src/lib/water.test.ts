@@ -55,9 +55,9 @@ describe('findWeightParam', () => {
 })
 
 describe('autoNormMlFromWeight', () => {
-  it('applies the ~30ml per kg rule, rounded', () => {
-    expect(autoNormMlFromWeight(70)).toBe(2100)
-    expect(autoNormMlFromWeight(65.4)).toBe(1962)
+  it('applies the ~26ml per kg rule (drinking water, food share already taken off), rounded', () => {
+    expect(autoNormMlFromWeight(70)).toBe(1820)
+    expect(autoNormMlFromWeight(65.4)).toBe(1700)
   })
 })
 
@@ -69,8 +69,8 @@ describe('effectiveNormMl', () => {
     expect(effectiveNormMl(null, 2100)).toBe(2100)
     expect(effectiveNormMl(undefined, 2100)).toBe(2100)
   })
-  it('falls back to 2000 when neither is available', () => {
-    expect(effectiveNormMl(null, null)).toBe(2000)
+  it('falls back to 1800 when neither is available', () => {
+    expect(effectiveNormMl(null, null)).toBe(1800)
   })
 })
 

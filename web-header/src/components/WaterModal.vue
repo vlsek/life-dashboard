@@ -137,12 +137,18 @@ function autoExplanation(): string {
   return fmt('dash_water_info_auto_weight', { weight: w, norm: props.autoNormMl })
 }
 
+// Справка о норме — встроенная плашка под подписью (раньше был системный alert); повторный клик по «i» скрывает её.
+const infoText = ref('')
 function showInfo() {
-  const text =
+  if (infoText.value) {
+    infoText.value = ''
+    return
+  }
+  const main =
     props.metric.goal_value != null
       ? `${t('dash_water_info_manual')}${props.autoNormMl ? `\n\n${fmt('dash_water_info_would', { norm: props.autoNormMl })}` : ''}`
       : `${autoExplanation()}\n\n${t('dash_water_info_editable')}`
-  alert(text)
+  infoText.value = `${main}\n\n${t('dash_water_info_food')}`
 }
 
 const heightInput = ref<number | string>(props.heightCm ?? '')
@@ -227,6 +233,7 @@ function saveHeightClick() {
         {{ t('dash_water_goal_label') }}
         <button type="button" class="gh-btn" style="width: 20px; height: 20px; padding: 0; border-radius: 50%; font-size: 12px" @click="showInfo">i</button>
       </label>
+      <p v-if="infoText" data-test="water-info" style="margin: 8px 0 0; padding: 10px; border: 1px solid rgba(128, 128, 128, 0.35); border-radius: 8px; font-size: 12px; white-space: pre-line">{{ infoText }}</p>
       <input v-model.number="goalInput" type="number" class="gh-input" style="margin-top: 4px" />
       <p class="gh-dim" style="margin: 4px 0 0; font-size: 12px">{{ goalHint }}</p>
       <div class="gh-row" style="margin-top: 8px">

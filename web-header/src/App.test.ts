@@ -397,7 +397,7 @@ describe('норма воды: справка и «Считать автомат
     await openWater(w)
     const btn = w.find('[data-test="auto-goal"]')
     expect(btn.exists()).toBe(true)
-    expect(btn.text()).toContain('2100')
+    expect(btn.text()).toContain('1820')
     await btn.trigger('click')
     await flushPromises()
     const upd = db.writes.find((x) => x.table === 'metrics' && x.op === 'update')!
@@ -416,17 +416,20 @@ describe('норма воды: справка и «Считать автомат
     w.unmount()
   })
 
-  it('справка (i): при зафиксированной норме честно говорит «зафиксирована» и показывает, что дал бы расчёт по весу; при авто — «рассчитана по весу»', async () => {
-    const alerts: string[] = []
-    vi.stubGlobal('alert', (m: string) => alerts.push(m))
+  it('справка (i): встроенная плашка; при зафиксированной норме честно говорит «зафиксирована» и показывает, что дал бы расчёт по весу; при авто — «рассчитана по весу»; везде — что вода из еды не входит', async () => {
+    const info = (w: ReturnType<typeof mount>) => w.find('[data-test="water-info"]')
     setup({ metrics: [manual], body_parameters: [weightParam], body_parameter_values: [{ parameter_id: 'bp', value: 70, date: today }] })
     let w = mount(App)
     await flushPromises()
     await openWater(w)
+    expect(info(w).exists()).toBe(false)
     await w.find('.gh-modal button[style*="border-radius: 50%"]').trigger('click')
-    expect(alerts[0]).toContain('зафиксирована')
-    expect(alerts[0]).not.toContain('вручную по заданию')
-    expect(alerts[0]).toContain('Автоматический расчёт дал бы: 2100')
+    expect(info(w).text()).toContain('зафиксирована')
+    expect(info(w).text()).not.toContain('вручную по заданию')
+    expect(info(w).text()).toContain('Автоматический расчёт дал бы: 1820')
+    expect(info(w).text()).toContain('вода из еды')
+    await w.find('.gh-modal button[style*="border-radius: 50%"]').trigger('click')
+    expect(info(w).exists()).toBe(false)
     w.unmount()
 
     setup({ metrics: [auto], body_parameters: [weightParam], body_parameter_values: [{ parameter_id: 'bp', value: 70, date: today }] })
@@ -434,11 +437,11 @@ describe('норма воды: справка и «Считать автомат
     await flushPromises()
     await openWater(w)
     await w.find('.gh-modal button[style*="border-radius: 50%"]').trigger('click')
-    expect(alerts[1]).toContain('Рассчитана автоматически')
-    expect(alerts[1]).toContain('70 кг × 30 мл = 2100') // роста нет → прежняя формула
-    expect(alerts[1]).toContain('Укажите рост')
+    expect(info(w).text()).toContain('Рассчитана автоматически')
+    expect(info(w).text()).toContain('70 кг × 26 мл = 1820') // роста нет → формула по весу
+    expect(info(w).text()).toContain('Укажите рост')
+    expect(info(w).text()).toContain('Считается только то, что вы пьёте')
     w.unmount()
-    vi.unstubAllGlobals()
   })
 })
 

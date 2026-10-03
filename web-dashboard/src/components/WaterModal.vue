@@ -145,12 +145,18 @@ function autoExplanation(): string {
   return fmt('dash_water_info_auto_weight', { weight: w, norm: props.autoNormMl })
 }
 
+// Справка о норме — встроенная плашка под подписью (раньше был системный alert); повторный клик по «i» скрывает её.
+const infoText = ref('')
 function showInfo() {
-  const text =
+  if (infoText.value) {
+    infoText.value = ''
+    return
+  }
+  const main =
     props.metric.goal_value != null
       ? `${t('dash_water_info_manual')}${props.autoNormMl ? `\n\n${fmt('dash_water_info_would', { norm: props.autoNormMl })}` : ''}`
       : `${autoExplanation()}\n\n${t('dash_water_info_editable')}`
-  alert(text)
+  infoText.value = `${main}\n\n${t('dash_water_info_food')}`
 }
 
 const heightInput = ref<number | string>(props.heightCm ?? '')
@@ -241,6 +247,7 @@ function saveHeightClick() {
           </button>
         </span>
       </label>
+      <p v-if="infoText" data-test="water-info" class="mt-2 whitespace-pre-line rounded-lg border p-2.5 text-xs" style="border-color: var(--border, rgba(128, 128, 128, 0.35))">{{ infoText }}</p>
       <input v-model.number="goalInput" type="number" class="w-full" />
       <p class="dim mt-1 text-xs">{{ goalHint }}</p>
       <button type="button" class="secondary mt-2" data-test="change-goal" @click="saveGoal">{{ t('dash_water_goal_save_btn') }}</button>
