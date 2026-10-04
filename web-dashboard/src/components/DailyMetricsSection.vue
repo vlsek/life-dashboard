@@ -101,8 +101,6 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
           />
         </div>
 
-        <UsefulTodayList :items="items" @add="addItem" @remove="removeItem" />
-
         <div class="flex items-center gap-3">
           <button type="button" :disabled="saving" @click="onSaveDay">{{ saving ? t('dash_saving_btn') : t('dash_save_day_btn') }}</button>
           <span v-if="savedMsg" class="text-sm" style="color: var(--success)">{{ t('dash_day_saved_toast') }}</span>
@@ -117,6 +115,10 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
     <div class="mt-4">
       <SetsSection :user-id="userId" :date="date" :metric-streaks="props.metricStreaks" />
     </div>
+
+    <!-- BACKLOG 23:00: «Что полезного сделал за день» — свёрнутым по умолчанию и в самом низу блока ежедневных метрик.
+         Пункты пишутся сразу при добавлении (persistItems), поэтому отдельно от кнопки «Сохранить день» это безопасно. -->
+    <UsefulTodayList v-if="loaded" :items="items" @add="addItem" @remove="removeItem" />
     </div>
     <PlannedSection :user-id="userId" :date="date" />
   </section>

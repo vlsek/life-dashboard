@@ -1,6 +1,13 @@
 {
-  "version": "2.58",
+  "version": "2.59",
   "en": [
+    {
+      "version": "2.59",
+      "date": "2026-10-04 03:39",
+      "changes": [
+        "Dashboard: What you got done today is now collapsed by default and sits at the very bottom of the Daily metrics block (after Sets). The title shows how many items the selected day has; tap it to expand. Your expanded/collapsed choice is remembered. Items are still saved right when you add them"
+      ]
+    },
     {
       "version": "2.58",
       "date": "2026-10-04 03:34",
@@ -1867,6 +1874,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.59",
+      "date": "2026-10-04 03:39",
+      "changes": [
+        "Дашборд: «Что полезного сделал за день» теперь по умолчанию свёрнут и стоит в самом низу блока «Ежедневные метрики» (после «Подходов»). В заголовке видно, сколько пунктов за выбранный день; нажмите на заголовок, чтобы раскрыть. Выбор «раскрыт/свёрнут» запоминается. Пункты по-прежнему сохраняются сразу при добавлении"
+      ]
+    },
     {
       "version": "2.58",
       "date": "2026-10-04 03:34",

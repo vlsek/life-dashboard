@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.58";
+const SITE_VERSION = "2.59";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.59", date: "2026-10-04 03:39", changes: [
+        "Дашборд: «Что полезного сделал за день» теперь по умолчанию свёрнут и стоит в самом низу блока «Ежедневные метрики» (после «Подходов»). В заголовке видно, сколько пунктов за выбранный день; нажмите на заголовок, чтобы раскрыть. Выбор «раскрыт/свёрнут» запоминается. Пункты по-прежнему сохраняются сразу при добавлении",
+    ]},
     { version: "2.58", date: "2026-10-04 03:34", changes: [
         "Огонёк слева сверху теперь живой на всех страницах, а не только на Дашборде: те же языки пламени, цвет берётся от акцента выбранной темы, анимация гаснет при «уменьшить движение» и при общем выключателе анимаций. В окне входа над заголовком тоже горит живое пламя в цвете темы",
     ]},
@@ -1378,6 +1381,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.59", date: "2026-10-04 03:39", changes: [
+        "Dashboard: What you got done today is now collapsed by default and sits at the very bottom of the Daily metrics block (after Sets). The title shows how many items the selected day has; tap it to expand. Your expanded/collapsed choice is remembered. Items are still saved right when you add them",
+    ]},
     { version: "2.58", date: "2026-10-04 03:34", changes: [
         "The flame in the top-left corner is now alive on every page, not just the Dashboard: the same flame tongues, coloured by the accent of the selected theme, and it stops with reduced motion or the global animations switch. The sign-in window also shows a living flame in the theme colour above the title",
     ]},
