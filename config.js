@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.84";
+const SITE_VERSION = "2.85";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.85", date: "2026-10-04 04:20", changes: [
+        "Сообщество: рамки аватарок других людей. Купленную в «Кастомизации» рамку теперь видят в подиуме, списке лидерборда, карточках друзей и блоке «Сегодня» — у тех, кто виден в лидерборде. Рамка показывается, только если предмет действительно открыт. Нужна миграция 049; без неё чужих рамок нет, остальное работает."
+    ]},
     { version: "2.84", date: "2026-10-04 03:55", changes: [
         "Новый раздел «Кастомизация» (первый срез, адрес /customization/, пункт меню на всех страницах после «Достижений»): рамки аватарки. «За баллы» — неоновая (100) и «Аврора» (150): покупаются с баланса, цена списывается как покупка в магазине; «За достижения» — золотая рамка в награду за 30 идеальных дней подряд. Купленное можно надеть и снять; рамка видна на аватаре в левом меню и в шапке «Сообщества». Нужна миграция 048; без неё страница открывается как витрина с подсказкой, покупок нет."
     ]},
@@ -1458,6 +1461,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.85", date: "2026-10-04 04:20", changes: [
+        "Community: avatar frames of other people. A frame bought in Customization is now seen on the podium, in the leaderboard list, on friend cards and in the Today block - for people visible on the leaderboard. A frame shows only if the item is really unlocked. Needs migration 049; without it other people's frames are not shown and everything else works."
+    ]},
     { version: "2.84", date: "2026-10-04 03:55", changes: [
         "New Customization section (first slice, at /customization/, a menu item on every page after Achievements): avatar frames. For points - Neon (100) and Aurora (150): bought from your balance, the price is deducted like a shop purchase; for achievements - the Golden frame as a reward for 30 perfect days in a row. Bought frames can be worn and taken off; the frame shows on your avatar in the side menu and in the Community header. Needs migration 048; without it the page opens as a showcase with a hint and no purchases."
     ]},

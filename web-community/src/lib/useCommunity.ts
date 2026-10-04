@@ -33,6 +33,9 @@ export function useCommunity() {
   // значки достижений: userId → ключи (RPC get_public_badges, миграция 047); нет функции — пусто, остальное работает
   const badges = ref<Map<string, string[]>>(new Map())
   const badgesApi = ref(true)
+  // рамки аватарок: userId → ключ рамки (RPC get_public_frames, миграция 049); нет функции — без рамок у других, остальное работает
+  const frames = ref<Map<string, string>>(new Map())
+  const framesApi = ref(true)
   const today = ref<TodayActivityRow[]>([])
   const todayError = ref<string | null>(null)
   const profile = ref<PublicProfile | null>(null)
@@ -63,7 +66,7 @@ export function useCommunity() {
   async function reload() {
     if (auth.value.status !== 'ready') return
     const userId = auth.value.userId
-    await Promise.all([loadFriends(userId), loadLeaderboard(), loadBadges(), loadToday(), loadOwnProfile(userId)])
+    await Promise.all([loadFriends(userId), loadLeaderboard(), loadBadges(), loadFrames(), loadToday(), loadOwnProfile(userId)])
   }
 
   async function loadFriends(userId: string) {
@@ -124,6 +127,19 @@ export function useCommunity() {
       return
     }
     badges.value = badgesByUser((data || []) as BadgeRow[])
+  }
+
+  async function loadFrames() {
+    if (!framesApi.value) return
+    const { data, error } = await sb.rpc('get_public_frames')
+    if (error) {
+      framesApi.value = false
+      frames.value = new Map()
+      return
+    }
+    const m = new Map<string, string>()
+    for (const r of (data || []) as { user_id: string; frame: string | null }[]) if (r.frame && frameShadow(r.frame)) m.set(r.user_id, r.frame)
+    frames.value = m
   }
 
   async function setPeriod(next: Period) {
@@ -214,7 +230,7 @@ export function useCommunity() {
 
   return {
     auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
-    leaderboard, leaderboardError, period, periodApi, badges, myFrame, today, todayError, profile,
+    leaderboard, leaderboardError, period, periodApi, badges, frames, myFrame, today, todayError, profile,
     init, reload, setPeriod, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
   }
 }

@@ -5,12 +5,12 @@ import BadgeStrip from './BadgeStrip.vue'
 import { formatPoints } from '../lib/leaderboardView'
 import type { FriendStats } from '../lib/friendCards'
 // Карточка человека в блоке «Друзья»: аватар, имя, пометка (заявка) или баллы/серия; слот — кнопки действий.
-defineProps<{ name: string; avatarUrl: string | null; note?: string; stats?: FriendStats | null; badges?: string[] }>()
+defineProps<{ name: string; avatarUrl: string | null; note?: string; stats?: FriendStats | null; badges?: string[]; frame?: string | null }>()
 </script>
 
 <template>
   <div class="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1.5 rounded-lg border p-2.5" style="border-color: var(--border)" data-testid="friend-card">
-    <Avatar :name="name" :url="avatarUrl" :size="40" />
+    <Avatar :name="name" :url="avatarUrl" :size="40" :frame="frame" />
     <div class="min-w-[7rem] flex-1">
       <p class="m-0 truncate text-sm font-medium">{{ name }} <BadgeStrip :keys="badges" :max="2" :size="16" /></p>
       <p v-if="note" class="dim m-0 text-xs">{{ note }}</p>

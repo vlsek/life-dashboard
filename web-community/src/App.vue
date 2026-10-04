@@ -20,7 +20,7 @@ import { PERIODS, formatPoints, myPlace, podiumSlots, restRows, type Period } fr
 
 const {
   auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
-  leaderboard, leaderboardError, period, periodApi, badges, myFrame, today, todayError, profile,
+  leaderboard, leaderboardError, period, periodApi, badges, frames, myFrame, today, todayError, profile,
   init, setPeriod, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
 } = useCommunity()
 onMounted(init)
@@ -184,11 +184,11 @@ async function onSaveProfile(name: string, visible: boolean) {
       <p v-if="leaderboardError" class="dim mb-5">{{ t('comm_load_error') }} {{ leaderboardError }}</p>
       <p v-else-if="visibleLeaderboard.length === 0" class="dim mb-5">{{ t('comm_empty') }}</p>
       <template v-else>
-        <Podium :slots="podium" :my-id="myId" :badges="badges" class="mb-3" />
+        <Podium :slots="podium" :my-id="myId" :badges="badges" :frames="frames" class="mb-3" />
         <div v-if="rest.length" class="card mb-5 rounded-lg border px-3.5 py-1" style="border-color: var(--border)">
           <div v-for="r in rest" :key="r.row.user_id" class="flex items-center gap-3 border-b py-2.5 last:border-0" style="border-color: var(--border)">
             <span class="dim w-7 text-sm">#{{ r.rank }}</span>
-            <Avatar :name="r.row.display_name" :url="r.row.avatar_url" :size="32" />
+            <Avatar :name="r.row.display_name" :url="r.row.avatar_url" :size="32" :frame="frames.get(r.row.user_id)" />
             <span class="min-w-0 flex-1 truncate" :style="r.row.user_id === myId ? 'font-weight:bold;color:var(--accent)' : ''">
               {{ r.row.display_name }}
               <BadgeStrip :keys="badges.get(r.row.user_id)" :max="3" :size="16" class="ml-1" />
@@ -206,7 +206,7 @@ async function onSaveProfile(name: string, visible: boolean) {
         <p v-if="todayError" class="dim">{{ t('comm_load_error') }} {{ todayError }}</p>
         <p v-else-if="visibleToday.length === 0" class="dim">{{ t('comm_empty') }}</p>
         <div v-for="row in visibleToday" :key="row.user_id" class="flex gap-3 border-b py-2.5 last:border-0" style="border-color: var(--border)">
-          <Avatar :name="row.display_name" :url="row.avatar_url" :size="40" />
+          <Avatar :name="row.display_name" :url="row.avatar_url" :size="40" :frame="frames.get(row.user_id)" />
           <div>
             <strong :style="row.user_id === myId ? 'color:var(--accent)' : ''">{{ row.display_name }}</strong>
             <span class="dim"> — {{ row.today_points }} <Icon name="star" /> {{ t('comm_today_word') }}</span>
@@ -240,7 +240,7 @@ async function onSaveProfile(name: string, visible: boolean) {
         <div v-if="acceptedProfiles.length > 0" class="mb-3">
           <p class="dim mb-1.5 text-sm">{{ t('comm_friends_sub') }}</p>
           <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr))">
-            <FriendCard v-for="p in acceptedProfiles" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)" :badges="badges.get(p.user_id)">
+            <FriendCard v-for="p in acceptedProfiles" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)" :badges="badges.get(p.user_id)" :frame="frames.get(p.user_id)">
               <button class="secondary px-1.5 py-0" :title="t('comm_friend_remove_title')" @click="onRemoveFriend(p.user_id)"><Icon name="x" /></button>
             </FriendCard>
           </div>
@@ -249,7 +249,7 @@ async function onSaveProfile(name: string, visible: boolean) {
         <div v-if="followProfiles.length > 0" class="mb-3">
           <p v-if="friendsApi" class="dim mb-1.5 text-sm">{{ t('comm_following_sub') }}</p>
           <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr))">
-            <FriendCard v-for="p in followProfiles" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)" :badges="badges.get(p.user_id)">
+            <FriendCard v-for="p in followProfiles" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)" :badges="badges.get(p.user_id)" :frame="frames.get(p.user_id)">
               <button class="secondary px-1.5 py-0" @click="onUnfollow(p.user_id)"><Icon name="x" /></button>
             </FriendCard>
           </div>

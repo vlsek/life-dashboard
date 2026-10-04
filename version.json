@@ -1,6 +1,13 @@
 {
-  "version": "2.84",
+  "version": "2.85",
   "en": [
+    {
+      "version": "2.85",
+      "date": "2026-10-04 04:20",
+      "changes": [
+        "Community: avatar frames of other people. A frame bought in Customization is now seen on the podium, in the leaderboard list, on friend cards and in the Today block - for people visible on the leaderboard. A frame shows only if the item is really unlocked. Needs migration 049; without it other people's frames are not shown and everything else works."
+      ]
+    },
     {
       "version": "2.84",
       "date": "2026-10-04 03:55",
@@ -2051,6 +2058,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.85",
+      "date": "2026-10-04 04:20",
+      "changes": [
+        "Сообщество: рамки аватарок других людей. Купленную в «Кастомизации» рамку теперь видят в подиуме, списке лидерборда, карточках друзей и блоке «Сегодня» — у тех, кто виден в лидерборде. Рамка показывается, только если предмет действительно открыт. Нужна миграция 049; без неё чужих рамок нет, остальное работает."
+      ]
+    },
     {
       "version": "2.84",
       "date": "2026-10-04 03:55",
