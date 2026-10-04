@@ -1,6 +1,13 @@
 {
-  "version": "2.56",
+  "version": "2.57",
   "en": [
+    {
+      "version": "2.57",
+      "date": "2026-10-04 03:18",
+      "changes": [
+        "Shop: two views to choose from. Showcase has a pinned balance with totals, filter chips (All / Can buy / Saving up / My purchases) with counts and a grid of cards with picture, price, progress and a button. List with piggy bank shows the balance with a progress bar toward the nearest goal (Saving for: ...), sections Can buy now and Saving up, and a collapsed My purchases. The view switch sits above the balance and your choice is remembered on this device. Buying, editing and deleting work in both views as before"
+      ]
+    },
     {
       "version": "2.56",
       "date": "2026-10-04 03:11",
@@ -1853,6 +1860,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.57",
+      "date": "2026-10-04 03:18",
+      "changes": [
+        "Магазин: два вида на выбор. «Витрина» — закреплённый баланс с итогами, чипы-фильтры «Все / Можно купить / Копится / Мои покупки» с количеством и сетка карточек с картинкой, ценой, прогрессом и кнопкой. «Список с копилкой» — баланс с полосой прогресса к ближайшей цели («Копите на: …»), разделы «Можно купить сейчас» и «Копится» и свёрнутые «Мои покупки». Переключатель вида — над балансом, выбор запоминается на устройстве. Покупка, правка и удаление работают в обоих видах как раньше"
+      ]
+    },
     {
       "version": "2.56",
       "date": "2026-10-04 03:11",

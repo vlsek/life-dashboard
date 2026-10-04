@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.56";
+const SITE_VERSION = "2.57";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.57", date: "2026-10-04 03:18", changes: [
+        "Магазин: два вида на выбор. «Витрина» — закреплённый баланс с итогами, чипы-фильтры «Все / Можно купить / Копится / Мои покупки» с количеством и сетка карточек с картинкой, ценой, прогрессом и кнопкой. «Список с копилкой» — баланс с полосой прогресса к ближайшей цели («Копите на: …»), разделы «Можно купить сейчас» и «Копится» и свёрнутые «Мои покупки». Переключатель вида — над балансом, выбор запоминается на устройстве. Покупка, правка и удаление работают в обоих видах как раньше",
+    ]},
     { version: "2.56", date: "2026-10-04 03:11", changes: [
         "Вода: когда норма выполнена на 100% и больше, стакан в шапке сайта (на всех страницах) и стакан на странице Дашборда становятся золотыми: золотой контур, мягкое свечение и блик, который проходит по воде. Если вы выключили анимации или в системе включено «уменьшить движение», остаётся только золотой контур",
     ]},
@@ -1372,6 +1375,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.57", date: "2026-10-04 03:18", changes: [
+        "Shop: two views to choose from. Showcase has a pinned balance with totals, filter chips (All / Can buy / Saving up / My purchases) with counts and a grid of cards with picture, price, progress and a button. List with piggy bank shows the balance with a progress bar toward the nearest goal (Saving for: ...), sections Can buy now and Saving up, and a collapsed My purchases. The view switch sits above the balance and your choice is remembered on this device. Buying, editing and deleting work in both views as before",
+    ]},
     { version: "2.56", date: "2026-10-04 03:11", changes: [
         "Water: once you reach 100% of your goal or more, the glass in the site header (on every page) and the glass on the Dashboard page turn gold: a golden outline, a soft glow and a shine passing over the water. If you turned animations off or your system asks for reduced motion, only the golden outline stays",
     ]},
