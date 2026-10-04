@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.92";
+const SITE_VERSION = "2.93";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.93", date: "2026-10-04 18:40", changes: [
+        "Галочки в чекбоксах читаются на всех темах: на светлых акцентах (Светлая, Monet, Nord, Mocha, AMOLED, High contrast) галочка теперь тёмная — белая на них почти не была видна. Для будущих тем это проверяет тест: если у новой темы светлый акцент, а тёмной галочки нет, он подскажет. «Достижения»: накопленные баллы теперь считаются с дробными долями за подходы (как в Магазине и на Дашборде), поэтому значки «Первая сотня», «Пятьсот» и «Тысяча» открываются по тому же числу баллов, которое видно в шапке",
+    ]},
     { version: "2.92", date: "2026-10-04 18:10", changes: [
         "Новые темы оформления: теперь их 11. К прежним Dark, Monet, Light и Pink добавились «Mint» (мятно-зелёная светлая), «Sepia» (тёплая бумага), «Solarized Light», «Nord», «Catppuccin Mocha», «AMOLED» (чисто чёрная, экономит батарею на OLED) и «Высокий контраст» (для лучшей читаемости). Выбор — в списке тем в боковой панели на любой странице. Цвета подобраны с проверкой контраста текста, акцента и воды; огонёк, вода и золотой стакан подстраиваются под выбранную тему",
     ]},
@@ -1483,6 +1486,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.93", date: "2026-10-04 18:40", changes: [
+        "Checkbox ticks are readable on every theme: on light accents (Light, Monet, Nord, Mocha, AMOLED, High contrast) the tick is now dark - white was barely visible on them. A test now checks this for future themes: if a new theme has a light accent and no dark tick, it will say so. Achievements: total points now include the fractional shares for sets (as in the Shop and on the Dashboard), so the First hundred, Five hundred and The thousand badges unlock at the same points number you see in the header",
+    ]},
     { version: "2.92", date: "2026-10-04 18:10", changes: [
         "New color themes: there are now 11. Besides Dark, Monet, Light and Pink you can pick Mint (light green), Sepia (warm paper), Solarized Light, Nord, Catppuccin Mocha, AMOLED (pure black, saves battery on OLED screens) and High contrast (easier to read). Choose in the theme list in the side panel on any page. Colors were checked for text, accent and water contrast; the flame, water and the golden glass follow the selected theme",
     ]},

@@ -36,6 +36,9 @@ export interface Metric {
 export interface PlannedSetsEntry {
   from: string
   n: number | null
+  // Дробные баллы за подходы (миграция 045, v2.69+): запись, созданная формой начиная с этого релиза. Записи без флага — как раньше
+  // (балл только за полностью выполненную метрику): прошлые дни не пересчитываются. Копия правила — в SQL (metric_partial_points)
+  frac?: boolean
 }
 
 export interface MetricOption {

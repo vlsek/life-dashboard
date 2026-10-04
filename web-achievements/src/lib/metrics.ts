@@ -18,13 +18,14 @@ export function setsCount(value: MetricValue): number {
   return (value as { reps?: number; time?: string }[]).filter((s) => (s?.reps || 0) > 0 || !!s?.time).length
 }
 
-// Журнал планового числа подходов: только корректные записи, по возрастанию дат (из БД может прийти что угодно).
+// Журнал планового числа подходов: только корректные записи, по возрастанию дат (из БД может прийти что угодно). Флаг frac сохраняется
+// только когда он строго true (строка "true" флагом не считается — как в SQL planned_sets_frac_on).
 export function plannedSetsLog(metric: Pick<Metric, 'planned_sets_log'>): PlannedSetsEntry[] {
   const raw = metric?.planned_sets_log
   if (!Array.isArray(raw)) return []
   return raw
     .filter((e) => e && typeof e.from === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(e.from))
-    .map((e) => ({ from: e.from, n: e.n == null ? null : Math.floor(Number(e.n)) }))
+    .map((e): PlannedSetsEntry => ({ from: e.from, n: e.n == null ? null : Math.floor(Number(e.n)), ...(e.frac === true ? { frac: true } : {}) }))
     .sort((a, b) => (a.from < b.from ? -1 : a.from > b.from ? 1 : 0))
 }
 
@@ -35,17 +36,31 @@ export function currentPlannedSets(metric: Pick<Metric, 'planned_sets_log'>): nu
   return n != null && Number.isFinite(n) && n >= 1 ? n : null
 }
 
-// Плановое число подходов на ДЕНЬ dateStr или null, если правило в этот день не действовало: не тип sets, направление
-// «не более» (там смысл другой), до первой записи журнала либо параметр снят. Без dateStr — действующее сейчас значение.
-export function plannedSetsFor(metric: Pick<Metric, 'type' | 'goal_direction' | 'planned_sets_log'>, dateStr?: string): number | null {
+// Запись журнала, действовавшая в ДЕНЬ dateStr (последняя с from <= dateStr; без dateStr — последняя), или null. Для метрик не-sets и
+// направления «не более» правило подходов не применяется вовсе.
+function plannedSetsEntryFor(metric: Pick<Metric, 'type' | 'goal_direction' | 'planned_sets_log'>, dateStr?: string): PlannedSetsEntry | null {
   if (metric.type !== 'sets' || metric.goal_direction === 'at_most') return null
-  const log = plannedSetsLog(metric)
-  let n: number | null = null
-  for (const e of log) {
+  let entry: PlannedSetsEntry | null = null
+  for (const e of plannedSetsLog(metric)) {
     if (dateStr && e.from > dateStr) break
-    n = e.n
+    entry = e
   }
-  return n != null && Number.isFinite(n) && n >= 1 ? n : null
+  return entry
+}
+
+const validN = (n: number | null | undefined): n is number => n != null && Number.isFinite(n) && n >= 1
+
+// Плановое число подходов на ДЕНЬ dateStr или null, если правило в этот день не действовало: не тип sets, направление «не более»,
+// до первой записи журнала либо параметр снят. Без dateStr — действующее сейчас значение.
+export function plannedSetsFor(metric: Pick<Metric, 'type' | 'goal_direction' | 'planned_sets_log'>, dateStr?: string): number | null {
+  const e = plannedSetsEntryFor(metric, dateStr)
+  return e && validN(e.n) ? e.n : null
+}
+
+// То же число, но ТОЛЬКО если запись журнала в силе помечена frac: дробные баллы (миграция 045) действуют по записям с флагом.
+export function plannedSetsFracFor(metric: Pick<Metric, 'type' | 'goal_direction' | 'planned_sets_log'>, dateStr?: string): number | null {
+  const e = plannedSetsEntryFor(metric, dateStr)
+  return e && e.frac === true && validN(e.n) ? e.n : null
 }
 
 // dateStr — день, к которому относится значение. Для сегодняшнего/текущего значения можно не передавать; при подсчёте
@@ -66,6 +81,22 @@ export function isMetricDone(metric: Metric, value: MetricValue, dateStr?: strin
   }
   return false
 }
+
+// БАЛЛЫ метрики за день — в ДЕСЯТЫХ долях (целое число), чтобы суммы не копили ошибку плавающей точки: баллы = десятые / 10.
+// Выполнена — 10 (1 балл). Не выполнена — только у метрики-подходов с планом N и флагом frac на эту дату: round(10·подходов/N) десятых,
+// «половина вверх» целочисленно (20·подходов + N) / (2·N), потолок 9 (1 балл — лишь за полностью выполненную). Иначе 0.
+// ТОЧНАЯ КОПИЯ SQL metric_partial_points (миграция 045); оба считают целыми числами и совпадают на любой паре «подходов × N».
+export function metricDayPointsTenths(metric: Metric, value: MetricValue, dateStr?: string): number {
+  if (isMetricDone(metric, value, dateStr)) return 10
+  const n = plannedSetsFracFor(metric, dateStr)
+  if (n == null) return 0
+  return Math.min(9, Math.floor((20 * setsCount(value) + n) / (2 * n)))
+}
+
+export const metricDayPoints = (metric: Metric, value: MetricValue, dateStr?: string): number => metricDayPointsTenths(metric, value, dateStr) / 10
+
+// Баллы к показу: одно знак после запятой, без хвоста плавающей точки (12.299999999999999 → 12.3).
+export const roundPoints = (x: number): number => Math.round(x * 10) / 10
 
 // Расписание метрики (см. migrations/021) — на входе то, что реально лежит в БД (может быть
 // "грязным"/устаревшим форматом), на выходе — нормализованная форма или null ("каждый день").

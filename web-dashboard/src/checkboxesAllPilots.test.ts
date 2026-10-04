@@ -21,7 +21,6 @@ describe('чекбоксы в стиле сайта на каждой стран
       const css = read(`${ROOT}/${pilot}/src/style.css`)
       expect(css).toMatch(/input\[type='checkbox'\]\s*\{[^}]*appearance:\s*none/)
       expect(css).toMatch(/input\[type='checkbox'\]:checked\s*\{[^}]*background-color:\s*var\(--accent\)/)
-      expect(css).toMatch(/html\.theme-monet input\[type='checkbox'\]:checked/)
       expect(css).toMatch(/input\[type='checkbox'\]:focus-visible/)
       expect(css).toMatch(/input\[type='checkbox'\]:disabled/)
       // размер 17px и accent-color для радио задаёт общее правило — оно должно остаться рядом
@@ -39,4 +38,42 @@ describe('чекбоксы в стиле сайта на каждой стран
       expect(css).toMatch(/input\[type=["']?checkbox["']?\]:checked\{[^}]*background-color:var\(--accent\)/)
     })
   }
+
+  // Галочка по умолчанию БЕЛАЯ. У тем со светлым акцентом (Monet, Nord, Mocha, AMOLED, High contrast …) она не читается, поэтому у них
+  // галочка тёмная. Какие темы «светлые по акценту», считаем не списком в тесте, а по корневому style.css (там все темы сайта):
+  // добавили тему со светлым акцентом и забыли тёмную галочку — тест упадёт с названием темы.
+  describe('галочка читается на акценте каждой темы', () => {
+    const rootCss = read(`${ROOT}/style.css`)
+    const lum = (hex: string): number => {
+      const h = hex.replace('#', '')
+      const full = h.length === 3 ? h.split('').map((c: string) => c + c).join('') : h
+      const [r, g, b] = [0, 2, 4].map((i: number) => parseInt(full.slice(i, i + 2), 16) / 255).map((c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b
+    }
+    const contrastWithWhite = (hex: string): number => 1.05 / (lum(hex) + 0.05)
+    const themes: { name: string; accent: string }[] = []
+    for (const m of rootCss.matchAll(/html\.theme-(\w+)\s*\{([^}]*)\}/g)) {
+      const accent = /--accent:\s*(#[0-9a-fA-F]{3,6})/.exec(m[2])
+      if (accent) themes.push({ name: m[1], accent: accent[1] })
+    }
+
+    it('в корневом style.css нашлись темы (тест не пустой)', () => {
+      expect(themes.length).toBeGreaterThanOrEqual(11)
+    })
+
+    for (const pilot of pilots) {
+      it(`${pilot}: у каждой темы с акцентом, где белая галочка < 3:1, есть тёмная галочка`, () => {
+        const css = read(`${ROOT}/${pilot}/src/style.css`)
+        // блок «html.theme-…, html.theme-… input[type='checkbox']:checked { background-image … }»
+        const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
+        const darkThemes: string[] = m ? [...m[1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1]) : []
+        const needDark = themes.filter((t) => contrastWithWhite(t.accent) < 3).map((t) => t.name)
+        const missing = needDark.filter((name: string) => !darkThemes.includes(name))
+        expect(missing, `темы со светлым акцентом без тёмной галочки в ${pilot}/src/style.css (добавьте их в список html.theme-… input[type='checkbox']:checked)`).toEqual([])
+        // и наоборот: тёмная галочка на ТЁМНОМ акценте была бы нечитаема
+        const wrong = darkThemes.filter((name: string) => !needDark.includes(name))
+        expect(wrong, 'тёмная галочка у темы, где белая и так читается').toEqual([])
+      })
+    }
+  })
 })

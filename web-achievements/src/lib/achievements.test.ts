@@ -237,3 +237,64 @@ describe('groupStates', () => {
     expect(g.find((x) => x.group === 'books')!.unlockedCount).toBe(0)
   })
 })
+
+describe('баллы с дробными долями за подходы (миграция 045, как в web-shop/web-dashboard)', () => {
+  const sets = (n: number, reps = 5) => Array.from({ length: n }, () => ({ reps }))
+  const withPlan = (frac: boolean) =>
+    metric({ id: 's', type: 'sets', goal_value: 1, planned_sets_log: [{ from: d(1), n: 4, ...(frac ? { frac: true } : {}) }] as never })
+  const base = (m: Metric, values: ReturnType<typeof rows>) => ({
+    metrics: [m],
+    values,
+    doneGoals: [],
+    masteredSkills: [],
+    doneBooks: [],
+    weightEntries: 0,
+    workoutDates: [],
+    challengesDone: 0,
+    today: new Date('2026-10-12T12:00:00'),
+  })
+
+  it('план 4 подхода, с флагом frac: 4 подхода = 1 балл, 3 подхода = 0,8 (round(10·3/4)=8 десятых), 2 = 0,5, 1 = 0,3', () => {
+    const v = [{ date: d(1), metric_id: 's', value: sets(4) as never }, { date: d(2), metric_id: 's', value: sets(3) as never }, { date: d(3), metric_id: 's', value: sets(2) as never }, { date: d(4), metric_id: 's', value: sets(1) as never }]
+    const c = computeCounters(base(withPlan(true), v))
+    // 10 + 8 + 5 + 3 = 26 десятых; «половина вверх»: 10·1/4 = 2,5 → 3
+    expect(c.pointsTotal).toBe(2.6)
+    expect(c.metricDone).toBe(1) // выполненным считается только полностью сделанный день
+  })
+
+  it('без флага frac недобор ничего не даёт (как раньше): только полностью выполненный день = 1 балл', () => {
+    const v = [{ date: d(1), metric_id: 's', value: sets(4) as never }, { date: d(2), metric_id: 's', value: sets(3) as never }]
+    expect(computeCounters(base(withPlan(false), v)).pointsTotal).toBe(1)
+  })
+
+  it('потолок недобора — 0,9: 7 подходов из 8 дают round(8,75)=9 десятых, а не 1 балл', () => {
+    const m = metric({ id: 's', type: 'sets', goal_value: 1, planned_sets_log: [{ from: d(1), n: 8, frac: true }] as never })
+    const c = computeCounters(base(m, [{ date: d(1), metric_id: 's', value: sets(7) as never }]))
+    expect(c.pointsTotal).toBe(0.9)
+  })
+
+  it('дни до даты записи журнала не получают долей; пустые заготовки подходов (без повторов и времени) не считаются', () => {
+    // цель по объёму 100 повторений: ни один из этих дней не «выполнен» обычным способом, баллы дают только доли
+    const m = metric({ id: 's', type: 'sets', goal_value: 100, planned_sets_log: [{ from: d(5), n: 4, frac: true }] as never })
+    const v = [
+      { date: d(3), metric_id: 's', value: sets(2) as never }, // до даты правила долей нет — 0
+      { date: d(5), metric_id: 's', value: [{ reps: 5 }, { reps: 0 }, { reps: 0 }] as never }, // один настоящий подход из 4 → 3 десятых
+    ]
+    expect(computeCounters(base(m, v)).pointsTotal).toBe(0.3)
+  })
+
+  it('доли складываются без хвоста плавающей точки и с баллами целей: 0,3 + 0,3 + 0,3 + цель 5 = 5,9', () => {
+    const m = withPlan(true)
+    const v = [d(1), d(2), d(3)].map((date) => ({ date, metric_id: 's', value: sets(1) as never }))
+    const c = computeCounters({ ...base(m, v), doneGoals: [{ points: null }] })
+    expect(c.pointsTotal).toBe(5.9)
+  })
+
+  it('99,9 балла — это ещё НЕ «Первая сотня»: порог 100 достигается только целыми 100', () => {
+    const near = evaluate({ ...ZERO, pointsTotal: 99.9 }).find((x) => x.def.key === 'points_100')!
+    expect(near.met).toBe(false)
+    expect(near.progress).toBeCloseTo(0.999)
+    expect(evaluate({ ...ZERO, pointsTotal: 100 }).find((x) => x.def.key === 'points_100')!.met).toBe(true)
+  })
+})
+

@@ -2,7 +2,7 @@
 // Здесь НЕТ сети, DOM и localStorage — загрузка данных и хранение открытых достижений в useAchievements.ts.
 // Награды первого среза — значки; предметы из «Кастомизации» и поздравляющее окно — следующими срезами.
 import { addDays, fmtDate } from './date'
-import { isMetricDone, metricExpectedOn } from './metrics'
+import { isMetricDone, metricDayPointsTenths, metricExpectedOn } from './metrics'
 import type { Metric, MetricValue, PointsRow } from './types'
 
 // Какие числа считаем по данным пользователя. Достижение = «счётчик >= порог».
@@ -167,9 +167,18 @@ export function bestPerfectStreak(metrics: Metric[], byDay: Record<string, Recor
 export function computeCounters(input: CounterInput): Counters {
   const byDay = groupByDay(input.values)
   let metricDone = 0
-  for (const d of Object.keys(byDay)) for (const m of input.metrics) if (isMetricDone(m, byDay[d][m.id], d)) metricDone++
+  // Баллы метрик считаем в ДЕСЯТЫХ долях целыми и делим один раз в конце (как calcTotalPoints в web-shop/web-dashboard): выполненная
+  // метрика-день — 10, у метрики-подходов с планом и флагом frac (миграция 045) недобор даёт 1…9 десятых. Хвоста плавающей точки нет.
+  let dailyTenths = 0
+  for (const d of Object.keys(byDay)) {
+    for (const m of input.metrics) {
+      if (isMetricDone(m, byDay[d][m.id], d)) metricDone++
+      dailyTenths += metricDayPointsTenths(m, byDay[d][m.id], d)
+    }
+  }
   const sum = (rows: PointsRow[], fallback: number) => rows.reduce((s, r) => s + (r.points ?? fallback), 0)
-  const pointsTotal = metricDone + sum(input.doneGoals, 5) + sum(input.masteredSkills, 10) + sum(input.doneBooks, 10)
+  const otherPoints = sum(input.doneGoals, 5) + sum(input.masteredSkills, 10) + sum(input.doneBooks, 10)
+  const pointsTotal = (dailyTenths + Math.round(otherPoints * 10)) / 10
   return {
     streakBest: bestPerfectStreak(input.metrics, byDay, input.today),
     pointsTotal,
