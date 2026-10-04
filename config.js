@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.86";
+const SITE_VERSION = "2.87";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.87", date: "2026-10-04 17:18", changes: [
+        "Исправлено: в Тренировках, Языках и Истории при ошибке сохранения или загрузки вместо непонятной надписи «[object Object]» теперь показывается настоящий текст ошибки, например «new row violates row-level security policy». Так проще понять, что пошло не так, и сообщить об этом",
+    ]},
     { version: "2.86", date: "2026-10-04 05:05", changes: [
         "Имя профиля теперь обязательно. На первом шаге знакомства появилось поле «Как вас зовут» (без имени нельзя пойти дальше и нельзя нажать «Пропустить»): друзья видят имя в «Сообществе» вместо «Пользователь …». Если вы вошли через Google, имя подставляется из аккаунта (можно изменить), а аватарка берётся оттуда же, если своей ещё нет. У тех, кто зарегистрирован раньше и имени не задал, при входе через Google имя и аватарка подставятся один раз сами; своё имя и свою аватарку не перезаписываем. Правки только в приложении, миграция не нужна."
     ]},
@@ -1464,6 +1467,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.87", date: "2026-10-04 17:18", changes: [
+        "Fixed: in Workouts, Languages and History, when saving or loading fails, the real error text is now shown instead of the unhelpful \"[object Object]\", for example \"new row violates row-level security policy\". It is easier to tell what went wrong and to report it",
+    ]},
     { version: "2.86", date: "2026-10-04 05:05", changes: [
         "A profile name is now required. The first onboarding step has a new \"What is your name\" field (you cannot continue or press Skip without it): friends see the name in Community instead of \"User ...\". If you signed in with Google, the name is filled in from the account (you can change it) and the avatar is taken from there too if you have none. For people who registered earlier without a name, signing in with Google fills in the name and avatar once; your own name and avatar are never overwritten. App-only change, no migration needed."
     ]},

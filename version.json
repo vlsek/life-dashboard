@@ -1,6 +1,13 @@
 {
-  "version": "2.86",
+  "version": "2.87",
   "en": [
+    {
+      "version": "2.87",
+      "date": "2026-10-04 17:18",
+      "changes": [
+        "Fixed: in Workouts, Languages and History, when saving or loading fails, the real error text is now shown instead of the unhelpful \"[object Object]\", for example \"new row violates row-level security policy\". It is easier to tell what went wrong and to report it"
+      ]
+    },
     {
       "version": "2.86",
       "date": "2026-10-04 05:05",
@@ -2065,6 +2072,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.87",
+      "date": "2026-10-04 17:18",
+      "changes": [
+        "Исправлено: в Тренировках, Языках и Истории при ошибке сохранения или загрузки вместо непонятной надписи «[object Object]» теперь показывается настоящий текст ошибки, например «new row violates row-level security policy». Так проще понять, что пошло не так, и сообщить об этом"
+      ]
+    },
     {
       "version": "2.86",
       "date": "2026-10-04 05:05",
