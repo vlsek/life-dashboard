@@ -1,6 +1,13 @@
 {
-  "version": "2.67",
+  "version": "2.68",
   "en": [
+    {
+      "version": "2.68",
+      "date": "2026-10-04 04:41",
+      "changes": [
+        "Dashboard, Charts block: the \"Configure charts\" button and the period picker of the first chart now share one row — settings on the left, period on the right (each used to take its own row). While there are no charts, the settings button sits alone on the left. The other charts keep their period on the right"
+      ]
+    },
     {
       "version": "2.67",
       "date": "2026-10-04 04:38",
@@ -1931,6 +1938,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.68",
+      "date": "2026-10-04 04:41",
+      "changes": [
+        "Дашборд, блок «Графики»: кнопка «Настроить графики» и выбор периода первого графика теперь в одной строке — настройка слева, период справа (раньше каждая занимала свою строку). Пока графиков нет, кнопка настройки стоит одна, слева. У остальных графиков период по-прежнему справа"
+      ]
+    },
     {
       "version": "2.67",
       "date": "2026-10-04 04:38",

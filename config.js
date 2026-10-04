@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.67";
+const SITE_VERSION = "2.68";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.68", date: "2026-10-04 04:41", changes: [
+        "Дашборд, блок «Графики»: кнопка «Настроить графики» и выбор периода первого графика теперь в одной строке — настройка слева, период справа (раньше каждая занимала свою строку). Пока графиков нет, кнопка настройки стоит одна, слева. У остальных графиков период по-прежнему справа",
+    ]},
     { version: "2.67", date: "2026-10-04 04:38", changes: [
         "История: свайп по месяцу и сетке дней больше не выдвигает боковые плашки — как в Календаре, защищены и левое меню, и правая панель (раньше правая панель всё равно выезжала). Смена месяца свайпом по сетке работает как прежде",
     ]},
@@ -1406,6 +1409,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.68", date: "2026-10-04 04:41", changes: [
+        "Dashboard, Charts block: the \"Configure charts\" button and the period picker of the first chart now share one row — settings on the left, period on the right (each used to take its own row). While there are no charts, the settings button sits alone on the left. The other charts keep their period on the right",
+    ]},
     { version: "2.67", date: "2026-10-04 04:38", changes: [
         "History: swiping across the month and the day grid no longer pulls out the side panels — as in the Calendar, both the left menu and the right panel are protected (the right panel used to slide out anyway). Changing the month by swiping the grid works as before",
     ]},
