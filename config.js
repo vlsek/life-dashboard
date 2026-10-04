@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.71";
+const SITE_VERSION = "2.72";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.72", date: "2026-10-04 09:59", changes: [
+        "Тренировки: типовые упражнения и их разновидности выбираются из списка. В форме упражнения для нового упражнения можно выбрать типовое (отжимания, подтягивания, приседания, выпады, планка, скручивания, жим лёжа, становая тяга и другие), а ниже появляется список разновидностей: у отжиманий, например, алмазные, широкие, обычным хватом, лучника, с хлопком. Разновидность дописывается к названию. Если нужной нет, допишите свою в название руками; при смене разновидности остальное написанное не стирается",
+    ]},
     { version: "2.71", date: "2026-10-04 09:52", changes: [
         "Дашборд: виджет «Изучение языков» в блоке «Виджеты» на главной. Включается галочкой в окне «Настроить дашборд», там же выбирается язык или «Все языки». На главной всегда перед глазами первые 5 слов, которые вы ещё не выучили, дальше список прокручивается внутри виджета. Нажмите на слово, чтобы увидеть перевод и пример. «Знаю» уводит слово вниз очереди (на этом устройстве), «Выучил» отмечает слово выученным в разделе «Языки»",
     ]},
@@ -1418,6 +1421,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.72", date: "2026-10-04 09:59", changes: [
+        "Workouts: typical exercises and their variations are picked from a list. For a new exercise the form lets you choose a typical one (push-ups, pull-ups, squats, lunges, plank, crunches, bench press, deadlift and more), and a list of variations appears below: for push-ups, for example, diamond, wide, standard, archer, clap. The variation is added to the name. If the one you need is missing, type your own word into the name; changing the variation does not erase anything else you wrote",
+    ]},
     { version: "2.71", date: "2026-10-04 09:52", changes: [
         "Dashboard: a Learning languages widget in the Widgets block on the main page. Turn it on with a tick box in the \"Customize dashboard\" window, where you also pick a language or \"All languages\". The main page always keeps the first 5 words you have not learned yet in front of you, and the list scrolls inside the widget. Tap a word to see its translation and example. \"Know it\" moves the word down the queue (on this device); \"Learned\" marks it learned in the Languages section",
     ]},
