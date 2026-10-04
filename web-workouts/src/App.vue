@@ -4,9 +4,10 @@ import { useWorkouts } from './lib/useWorkouts'
 import { defaultWeightUnit } from './lib/weightUnit'
 import { isKnownCategory, sortCategoryKeys } from './lib/workouts'
 import { readWarmupDismissed, shouldShowWarmup, writeWarmupDismissed } from './lib/warmup'
-import { todayStr } from './lib/date'
+import { nowHHMM, todayStr } from './lib/date'
 import { getLang, t } from './lib/i18n'
 import { showToast } from './lib/toast'
+import { appendCopiedSet, removeLastSet } from './lib/quickSet'
 import AppShell from './components/AppShell.vue'
 import ExerciseCard from './components/ExerciseCard.vue'
 import WarmupReminder from './components/WarmupReminder.vue'
@@ -147,6 +148,27 @@ async function onSaveEntry(res: EntryFormInput) {
     console.error(e)
   }
 }
+
+// «+ подход» / «− подход» прямо из таблицы записей (BACKLOG 590): правим подходы сегодняшней записи без окна; пока запись
+// сохраняется, кнопки этой записи отключены (двойной тап не добавит два подхода)
+const quickBusyId = ref<string | null>(null)
+async function quickSets(entry: WorkoutEntry, change: (sets: WorkoutEntry['sets']) => { sets: WorkoutEntry['sets']; count: number } | null, toastKey: 'workouts_toast_set_added' | 'workouts_toast_set_removed') {
+  if (quickBusyId.value) return
+  const res = change(entry.sets ?? [])
+  if (!res) return
+  quickBusyId.value = entry.id
+  try {
+    await wk.editEntry(entry.id, { date: entry.date, sets: res.sets, notes: entry.notes })
+    showToast(t(toastKey).replace('{n}', String(res.count)))
+  } catch (e) {
+    showToast(t('workouts_toast_save_error') + errMsg(e), 'error')
+    console.error(e)
+  } finally {
+    quickBusyId.value = null
+  }
+}
+const onAddSet = (entry: WorkoutEntry) => quickSets(entry, (sets) => appendCopiedSet(sets, nowHHMM()), 'workouts_toast_set_added')
+const onRemoveLastSet = (entry: WorkoutEntry) => quickSets(entry, removeLastSet, 'workouts_toast_set_removed')
 
 async function onDeleteEntry(entry: WorkoutEntry) {
   if (!confirm(t('workouts_confirm_delete_entry'))) return
@@ -325,6 +347,9 @@ function onToggleProgramWeek(week: number) {
             @delete-exercise="onDeleteExercise(ex)"
             @edit-entry="(e) => (entryForm = { exercise: ex, existing: e })"
             @delete-entry="onDeleteEntry"
+            :busy-entry-id="quickBusyId"
+            @add-set="onAddSet"
+            @remove-last-set="onRemoveLastSet"
           />
         </div>
       </section>

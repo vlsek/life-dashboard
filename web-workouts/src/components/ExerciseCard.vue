@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
-import { fmtRu } from '../lib/date'
+import { fmtRu, todayStr } from '../lib/date'
+import { setCount } from '../lib/quickSet'
 import { bestPaceRecord, bestSetRecord, formatSets } from '../lib/workouts'
 import { defaultWeightUnit } from '../lib/weightUnit'
 import Icon from './Icon.vue'
@@ -14,13 +15,15 @@ import EmojiText from './EmojiText.vue'
 
 // Порт renderExerciseCard() из workouts.js — заголовок с кнопками, рекомендованная схема,
 // личные рекорды (по сторонам для билатеральных), мини-график прогресса, таблица записей.
-const props = defineProps<{ exercise: Exercise; entries: WorkoutEntry[] }>()
+const props = defineProps<{ exercise: Exercise; entries: WorkoutEntry[]; busyEntryId?: string | null }>()
 const emit = defineEmits<{
   addEntry: []
   editExercise: []
   deleteExercise: []
   editEntry: [WorkoutEntry]
   deleteEntry: [WorkoutEntry]
+  addSet: [WorkoutEntry]
+  removeLastSet: [WorkoutEntry]
 }>()
 
 interface RecordLine {
@@ -58,6 +61,11 @@ function toggleCollapsed() {
   collapsed.value = !collapsed.value
   writeExerciseCollapsed(props.exercise.id, collapsed.value)
 }
+
+// «+ подход» / «− подход» прямо в таблице (BACKLOG 590): только у сегодняшней записи, у которой уже есть первый подход
+const today = todayStr()
+const canQuick = (e: WorkoutEntry) => e.date === today && (e.sets?.length ?? 0) > 0
+const canRemove = (e: WorkoutEntry) => setCount(e.sets ?? []) > 1
 
 const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date.localeCompare(a.date)))
 </script>
@@ -113,6 +121,31 @@ const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date
             <td class="whitespace-nowrap py-1.5 pr-3 align-top">{{ fmtRu(e.date) }}</td>
             <td class="py-1.5 pr-3 align-top">
               {{ formatSets(e.sets, exercise, t('workouts_per_hour'), t('workouts_duration_unit'), defaultWeightUnit()) }}
+              <div v-if="canQuick(e)" class="mt-1 flex gap-1.5" data-testid="quick-set-row">
+                <button
+                  type="button"
+                  class="rounded-lg border px-2.5 py-1 text-xs"
+                  style="border-color: var(--border); background: var(--bg); color: var(--text)"
+                  :disabled="busyEntryId === e.id"
+                  :aria-label="t('workouts_quick_add_set_aria')"
+                  data-testid="quick-add-set"
+                  @click="emit('addSet', e)"
+                >
+                  {{ t('workouts_quick_add_set') }}
+                </button>
+                <button
+                  v-if="canRemove(e)"
+                  type="button"
+                  class="rounded-lg border px-2.5 py-1 text-xs"
+                  style="border-color: var(--border); background: var(--bg); color: var(--text-dim)"
+                  :disabled="busyEntryId === e.id"
+                  :aria-label="t('workouts_quick_remove_set_aria')"
+                  data-testid="quick-remove-set"
+                  @click="emit('removeLastSet', e)"
+                >
+                  {{ t('workouts_quick_remove_set') }}
+                </button>
+              </div>
             </td>
             <td class="py-1.5 pr-3 align-top" style="color: var(--text-dim)">{{ e.notes || '' }}</td>
             <td class="whitespace-nowrap py-1.5 text-right align-top">
