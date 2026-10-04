@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useWorkouts } from './lib/useWorkouts'
 import { defaultWeightUnit } from './lib/weightUnit'
 import { isKnownCategory, sortCategoryKeys } from './lib/workouts'
 import { readWarmupDismissed, shouldShowWarmup, writeWarmupDismissed } from './lib/warmup'
 import { todayStr } from './lib/date'
-import { t } from './lib/i18n'
+import { getLang, t } from './lib/i18n'
 import { showToast } from './lib/toast'
 import AppShell from './components/AppShell.vue'
 import ExerciseCard from './components/ExerciseCard.vue'
@@ -16,6 +16,10 @@ import ProgressionTrees from './components/ProgressionTrees.vue'
 import ExerciseForm from './components/ExerciseForm.vue'
 import EntryForm from './components/EntryForm.vue'
 import TemplatesModal from './components/TemplatesModal.vue'
+import ProgramCard from './components/ProgramCard.vue'
+import { PROGRAM_EVENT, readProgram, startProgram, toggleWeekDone, writeProgram, type ActiveProgram } from './lib/program'
+import { saveProgramToProfile, syncProgramFromProfile } from './lib/programSync'
+import { workoutTemplates } from './lib/templates'
 import Toast from './components/Toast.vue'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry, WorkoutTemplate } from './lib/types'
 import CollapseChevron from './components/CollapseChevron.vue'
@@ -154,9 +158,8 @@ async function onDeleteEntry(entry: WorkoutEntry) {
   }
 }
 
-async function onApplyTemplate(tpl: WorkoutTemplate) {
-  if (auth.value.status !== 'ready') return
-  const rows = tpl.days.flatMap((day) =>
+function templateRows(tpl: WorkoutTemplate) {
+  return tpl.days.flatMap((day) =>
     day.exercises.map((ex) => ({
       name: ex.name,
       category: day.label,
@@ -166,6 +169,11 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
       defaultUnit: defaultUnit(),
     })),
   )
+}
+
+async function onApplyTemplate(tpl: WorkoutTemplate) {
+  if (auth.value.status !== 'ready') return
+  const rows = templateRows(tpl)
   try {
     const added = await wk.applyTemplateExercises(auth.value.userId, rows)
     templatesOpen.value = false
@@ -175,6 +183,59 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
     showToast(t('workouts_toast_save_error') + errMsg(e), 'error')
     console.error(e)
   }
+}
+
+// ---- активная программа (BACKLOG 3.3) ----
+// Хранится в profiles.workout_program (миграция 040) и в localStorage; текущую неделю карточка считает по дате старта.
+const activeProgram = ref<ActiveProgram | null>(readProgram())
+const activeTemplate = computed(() => (activeProgram.value ? (workoutTemplates(getLang()).find((x) => x.id === activeProgram.value!.templateId && x.weeks?.length) ?? null) : null))
+
+function onProgramChanged(e: Event) {
+  activeProgram.value = (e as CustomEvent<ActiveProgram | null>).detail ?? null
+}
+window.addEventListener(PROGRAM_EVENT, onProgramChanged)
+onBeforeUnmount(() => window.removeEventListener(PROGRAM_EVENT, onProgramChanged))
+
+watch(
+  () => auth.value.status,
+  async (status) => {
+    if (status !== 'ready' || auth.value.status !== 'ready') return
+    try {
+      activeProgram.value = await syncProgramFromProfile(auth.value.userId)
+    } catch (e) {
+      console.error(e)
+    }
+  },
+  { immediate: true },
+)
+
+async function setProgram(next: ActiveProgram | null) {
+  writeProgram(next)
+  activeProgram.value = next
+  if (auth.value.status === 'ready') {
+    try {
+      await saveProgramToProfile(auth.value.userId, next)
+    } catch (e) {
+      console.error(e) // без колонки/сети программа остаётся на этом устройстве
+    }
+  }
+}
+
+async function onStartProgram(tpl: WorkoutTemplate) {
+  if (auth.value.status !== 'ready') return
+  try {
+    await wk.applyTemplateExercises(auth.value.userId, templateRows(tpl))
+    await setProgram(startProgram(tpl.id))
+    templatesOpen.value = false
+    showToast(t('workouts_program_started_toast'))
+  } catch (e) {
+    showToast(t('workouts_toast_save_error') + errMsg(e), 'error')
+    console.error(e)
+  }
+}
+
+function onToggleProgramWeek(week: number) {
+  if (activeProgram.value) void setProgram(toggleWeekDone(activeProgram.value, week))
 }
 </script>
 
@@ -211,6 +272,14 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
         {{ t('workouts_toast_save_error') }}{{ loadError }} — {{ t('workouts_migration_hint') }}
       </p>
       <p v-else-if="exercises.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('workouts_empty') }}</p>
+
+      <ProgramCard
+        v-if="activeProgram && activeTemplate"
+        :program="activeProgram"
+        :template="activeTemplate"
+        @toggle-week="onToggleProgramWeek"
+        @finish="setProgram(null)"
+      />
 
       <WarmupReminder v-if="showWarmup" @dismiss="dismissWarmup" />
 
@@ -264,6 +333,6 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
 
   <ExerciseForm v-if="exerciseForm" :existing="exerciseForm.existing" @close="exerciseForm = null" @save="onSaveExercise" />
   <EntryForm v-if="entryForm" :exercise="entryForm.exercise" :existing="entryForm.existing" @close="entryForm = null" @save="onSaveEntry" />
-  <TemplatesModal v-if="templatesOpen" @close="templatesOpen = false" @apply="onApplyTemplate" />
+  <TemplatesModal v-if="templatesOpen" :active-title="activeTemplate?.title ?? null" @close="templatesOpen = false" @apply="onApplyTemplate" @start="onStartProgram" />
   <Toast />
 </template>

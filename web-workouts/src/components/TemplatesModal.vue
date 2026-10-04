@@ -7,7 +7,9 @@ import EmojiText from './EmojiText.vue'
 
 // Порт openTemplatesModal() из workouts.js: список типовых программ → предпросмотр
 // (по дням) → "Добавить в мои упражнения". Само добавление делает родитель (save).
-const emit = defineEmits<{ close: []; apply: [WorkoutTemplate] }>()
+const emit = defineEmits<{ close: []; apply: [WorkoutTemplate]; start: [WorkoutTemplate] }>()
+// activeTitle — название программы, которая идёт сейчас (новый «Старт» её заменит; показываем предупреждение).
+const props = defineProps<{ activeTitle?: string | null }>()
 
 const templates = workoutTemplates(getLang())
 const selected = ref<WorkoutTemplate | null>(null)
@@ -59,10 +61,29 @@ const selected = ref<WorkoutTemplate | null>(null)
             </li>
           </ul>
         </div>
+        <div v-if="selected.weeks?.length" class="mt-3 rounded-xl border p-3" style="border-color: var(--border); background: var(--bg)" data-testid="program-start-box">
+          <p class="mb-2 text-[0.85em]" style="color: var(--text-dim)">{{ t('workouts_program_start_hint') }}</p>
+          <p v-if="props.activeTitle" class="mb-2 text-[0.85em]" data-testid="program-replace-note">
+            {{ t('workouts_program_replace_note').replace('{title}', props.activeTitle) }}
+          </p>
+          <button
+            type="button"
+            class="rounded-lg px-4 py-2 text-sm font-medium"
+            style="background: var(--accent); color: var(--accent-text)"
+            data-testid="program-start"
+            @click="emit('start', selected)"
+          >
+            {{ t('workouts_program_start_btn') }}
+          </button>
+        </div>
         <button
           type="button"
-          class="mt-2.5 rounded-lg px-4 py-2 text-sm"
-          style="background: var(--accent); color: var(--accent-text)"
+          class="mt-2.5 rounded-lg border px-4 py-2 text-sm"
+          :style="
+            selected.weeks?.length
+              ? 'border-color: var(--border); background: var(--bg); color: var(--text)'
+              : 'border-color: transparent; background: var(--accent); color: var(--accent-text)'
+          "
           @click="emit('apply', selected)"
         >
           {{ t('workouts_templates_apply_btn') }}
