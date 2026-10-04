@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.80";
+const SITE_VERSION = "2.81";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.81", date: "2026-10-04 12:20", changes: [
+        "Аудит оформления, третий срез: чекбоксы (галочки в формах и настройках) на всех страницах стали такими же, как на Дашборде, вместо родного белого квадрата — тёмный фон и рамка в цвет текста, отмеченный заливается цветом темы с галочкой (для темы Monet — тёмная галочка, чтобы читалась на светлом акценте), у выбранного с клавиатуры — контур, у недоступного — приглушённый. Только оформление, поведение и размеры прежние",
+    ]},
     { version: "2.80", date: "2026-10-04 12:10", changes: [
         "Аудит оформления, второй срез. (1) Выпадающие списки (язык и тема в меню, категории, разновидности упражнений, периоды и др.) получили единую аккуратную стрелку в цветах темы вместо системной «из 2000-х» — на 15 страницах; цвета, рамки и размеры списков остались прежними. (2) Удаление упражнения и записи в «Тренировках» теперь спрашивает подтверждение тем же окном в стиле сайта, а не системным окном браузера. Системные окна остались только при вводе своего количества воды — следующим срезом",
     ]},
@@ -1445,6 +1448,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.81", date: "2026-10-04 12:20", changes: [
+        "Look audit, third slice: checkboxes (the ticks in forms and settings) on every page now match the Dashboard instead of the native white square - dark background and a border in the text color, the checked one is filled with the theme color and a tick (a dark tick on the Monet theme so it reads on the light accent), a keyboard-focused one gets an outline, a disabled one is dimmed. Look only; behavior and sizes are unchanged",
+    ]},
     { version: "2.80", date: "2026-10-04 12:10", changes: [
         "Look audit, second slice. (1) Drop-down lists (language and theme in the menu, categories, exercise variations, periods and others) now have one neat arrow in the theme colors instead of the old system one, on 15 pages; the colors, borders and sizes of the lists stay as they were. (2) Deleting an exercise or an entry in Workouts now asks for confirmation with the same site-styled window instead of the browser system box. System boxes remain only when typing a custom water amount - next slice",
     ]},

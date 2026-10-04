@@ -1,6 +1,13 @@
 {
-  "version": "2.80",
+  "version": "2.81",
   "en": [
+    {
+      "version": "2.81",
+      "date": "2026-10-04 12:20",
+      "changes": [
+        "Look audit, third slice: checkboxes (the ticks in forms and settings) on every page now match the Dashboard instead of the native white square - dark background and a border in the text color, the checked one is filled with the theme color and a tick (a dark tick on the Monet theme so it reads on the light accent), a keyboard-focused one gets an outline, a disabled one is dimmed. Look only; behavior and sizes are unchanged"
+      ]
+    },
     {
       "version": "2.80",
       "date": "2026-10-04 12:10",
@@ -2022,6 +2029,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.81",
+      "date": "2026-10-04 12:20",
+      "changes": [
+        "Аудит оформления, третий срез: чекбоксы (галочки в формах и настройках) на всех страницах стали такими же, как на Дашборде, вместо родного белого квадрата — тёмный фон и рамка в цвет текста, отмеченный заливается цветом темы с галочкой (для темы Monet — тёмная галочка, чтобы читалась на светлом акценте), у выбранного с клавиатуры — контур, у недоступного — приглушённый. Только оформление, поведение и размеры прежние"
+      ]
+    },
     {
       "version": "2.80",
       "date": "2026-10-04 12:10",
