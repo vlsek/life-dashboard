@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.81";
+const SITE_VERSION = "2.82";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.82", date: "2026-10-04 12:38", changes: [
+        "Дашборд: рекорды. Под названием каждого графика метрики и графика «баллы за день», а также у числовых метрик и метрик-подходов в «Дневных метриках» теперь строка «Рекорд: лучшее значение · дата» — наибольшее значение за один день за всё время (для подходов — сумма повторений). Рекорд обновляется сразу, как только вы его побили. У параметров тела (вес, талия и т. п.) рекорда нет — там непонятно, что считать лучшим",
+        "Рекорды включены по умолчанию; выключаются галочкой «Показывать рекорды» в окне «Настроить Дашборд» (применяется сразу)",
+    ]},
     { version: "2.81", date: "2026-10-04 12:20", changes: [
         "Аудит оформления, третий срез: чекбоксы (галочки в формах и настройках) на всех страницах стали такими же, как на Дашборде, вместо родного белого квадрата — тёмный фон и рамка в цвет текста, отмеченный заливается цветом темы с галочкой (для темы Monet — тёмная галочка, чтобы читалась на светлом акценте), у выбранного с клавиатуры — контур, у недоступного — приглушённый. Только оформление, поведение и размеры прежние",
     ]},
@@ -1448,6 +1452,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.82", date: "2026-10-04 12:38", changes: [
+        "Dashboard: records. Under the title of every metric chart and the \"points per day\" chart, and on number metrics and sets metrics in the Daily metrics, there is now a \"Record: best value · date\" line — the highest value for a single day of all time (for sets, the total reps). A record updates the moment you beat it. Body parameters (weight, waist and so on) have no record — it is unclear which value counts as the best",
+        "Records are on by default; switch them off with the \"Show records\" checkbox in the \"Customize Dashboard\" window (applies at once)",
+    ]},
     { version: "2.81", date: "2026-10-04 12:20", changes: [
         "Look audit, third slice: checkboxes (the ticks in forms and settings) on every page now match the Dashboard instead of the native white square - dark background and a border in the text color, the checked one is filled with the theme color and a tick (a dark tick on the Monet theme so it reads on the light accent), a keyboard-focused one gets an outline, a disabled one is dimmed. Look only; behavior and sizes are unchanged",
     ]},

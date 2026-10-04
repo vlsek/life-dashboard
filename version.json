@@ -1,6 +1,14 @@
 {
-  "version": "2.81",
+  "version": "2.82",
   "en": [
+    {
+      "version": "2.82",
+      "date": "2026-10-04 12:38",
+      "changes": [
+        "Dashboard: records. Under the title of every metric chart and the \"points per day\" chart, and on number metrics and sets metrics in the Daily metrics, there is now a \"Record: best value · date\" line — the highest value for a single day of all time (for sets, the total reps). A record updates the moment you beat it. Body parameters (weight, waist and so on) have no record — it is unclear which value counts as the best",
+        "Records are on by default; switch them off with the \"Show records\" checkbox in the \"Customize Dashboard\" window (applies at once)"
+      ]
+    },
     {
       "version": "2.81",
       "date": "2026-10-04 12:20",
@@ -2029,6 +2037,14 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.82",
+      "date": "2026-10-04 12:38",
+      "changes": [
+        "Дашборд: рекорды. Под названием каждого графика метрики и графика «баллы за день», а также у числовых метрик и метрик-подходов в «Дневных метриках» теперь строка «Рекорд: лучшее значение · дата» — наибольшее значение за один день за всё время (для подходов — сумма повторений). Рекорд обновляется сразу, как только вы его побили. У параметров тела (вес, талия и т. п.) рекорда нет — там непонятно, что считать лучшим",
+        "Рекорды включены по умолчанию; выключаются галочкой «Показывать рекорды» в окне «Настроить Дашборд» (применяется сразу)"
+      ]
+    },
     {
       "version": "2.81",
       "date": "2026-10-04 12:20",
