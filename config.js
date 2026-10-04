@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.87";
+const SITE_VERSION = "2.88";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.88", date: "2026-10-04 17:30", changes: [
+        "Вода: «+ Своё» больше не открывает системное окно браузера. Поле для своего количества появляется прямо в окне воды, на Дашборде и в шапке любой страницы: введите миллилитры и нажмите «Добавить» (или Enter), Esc закрывает поле. Если число не подходит (меньше 1 или больше 20000), под полем появляется подсказка и ничего не записывается",
+    ]},
     { version: "2.87", date: "2026-10-04 17:18", changes: [
         "Исправлено: в Тренировках, Языках и Истории при ошибке сохранения или загрузки вместо непонятной надписи «[object Object]» теперь показывается настоящий текст ошибки, например «new row violates row-level security policy». Так проще понять, что пошло не так, и сообщить об этом",
     ]},
@@ -1467,6 +1470,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.88", date: "2026-10-04 17:30", changes: [
+        "Water: \"+ Custom\" no longer opens the browser's system dialog. The field for your own amount appears right in the water window, on the Dashboard and in the header of any page: type the millilitres and press \"Add\" (or Enter), Esc closes the field. If the number does not fit (below 1 or above 20000), a hint appears under the field and nothing is saved",
+    ]},
     { version: "2.87", date: "2026-10-04 17:18", changes: [
         "Fixed: in Workouts, Languages and History, when saving or loading fails, the real error text is now shown instead of the unhelpful \"[object Object]\", for example \"new row violates row-level security policy\". It is easier to tell what went wrong and to report it",
     ]},

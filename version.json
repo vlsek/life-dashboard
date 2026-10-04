@@ -1,6 +1,13 @@
 {
-  "version": "2.87",
+  "version": "2.88",
   "en": [
+    {
+      "version": "2.88",
+      "date": "2026-10-04 17:30",
+      "changes": [
+        "Water: \"+ Custom\" no longer opens the browser's system dialog. The field for your own amount appears right in the water window, on the Dashboard and in the header of any page: type the millilitres and press \"Add\" (or Enter), Esc closes the field. If the number does not fit (below 1 or above 20000), a hint appears under the field and nothing is saved"
+      ]
+    },
     {
       "version": "2.87",
       "date": "2026-10-04 17:18",
@@ -2072,6 +2079,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.88",
+      "date": "2026-10-04 17:30",
+      "changes": [
+        "Вода: «+ Своё» больше не открывает системное окно браузера. Поле для своего количества появляется прямо в окне воды, на Дашборде и в шапке любой страницы: введите миллилитры и нажмите «Добавить» (или Enter), Esc закрывает поле. Если число не подходит (меньше 1 или больше 20000), под полем появляется подсказка и ничего не записывается"
+      ]
+    },
     {
       "version": "2.87",
       "date": "2026-10-04 17:18",
