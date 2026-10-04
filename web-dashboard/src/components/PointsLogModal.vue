@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import MetricIcon from './MetricIcon.vue'
-import { t, type DictKey } from '../lib/i18n'
+import { getLang, t, type DictKey } from '../lib/i18n'
+import { formatPoints, formatPointsDelta } from '../lib/pointsFloat'
 import { usePointsLog } from '../lib/usePointsLog'
 import { parseIso } from '../lib/date'
 import { RECENT_LIMIT, incomeRows, purchaseRows } from '../lib/pointsLog'
@@ -43,7 +44,8 @@ const rest = computed(() => income.value.slice(RECENT_LIMIT))
 // есть что разворачивать: ещё начисления за неделю или покупки
 const canExpand = computed(() => rest.value.length > 0 || purchases.value.length > 0)
 // типографский минус (как в итогах «потрачено −N»), а не дефис
-const sign = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : String(n))
+// (дробные баллы — с локальным разделителем: «+0,3» / «+0.3»; формат тот же, что у всплывающей анимации)
+const sign = (n: number) => (n === 0 ? '0' : formatPointsDelta(n, getLang()))
 </script>
 
 <template>
@@ -52,7 +54,7 @@ const sign = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : Str
       <h3>{{ t('dash_points_title') }}</h3>
 
       <p v-if="balance != null" class="mb-2 flex items-center gap-1 font-bold">
-        <CoinIcon /> {{ balance }} <span class="dim text-sm font-normal">— {{ t('dash_points_balance') }}</span>
+        <CoinIcon /> {{ formatPoints(balance, getLang()) }} <span class="dim text-sm font-normal">— {{ t('dash_points_balance') }}</span>
       </p>
 
       <p v-if="loading && !log" class="dim text-sm">{{ t('dash_points_loading') }}</p>
@@ -62,7 +64,7 @@ const sign = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : Str
         <p class="mb-2 text-sm" data-test="points-totals">
           {{ t('dash_points_today') }}: <strong>{{ sign(log.earnedToday) }}</strong> ·
           {{ t('dash_points_week') }}: <strong>{{ sign(log.earnedWeek) }}</strong>
-          <template v-if="log.spentWeek > 0"> · {{ t('dash_points_spent') }}: <strong>−{{ log.spentWeek }}</strong></template>
+          <template v-if="log.spentWeek > 0"> · {{ t('dash_points_spent') }}: <strong>−{{ formatPoints(log.spentWeek, getLang()) }}</strong></template>
         </p>
 
         <div class="overflow-y-auto" style="max-height: 55vh" data-test="points-list">

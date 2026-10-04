@@ -200,6 +200,8 @@ export function parsePlannedSets(raw: string | number | null | undefined): numbe
 // Журнал планового числа подходов (миграция 041). Пишем ТОЛЬКО при изменении значения: к журналу добавляется запись «с сегодняшнего
 // дня», старые записи и все прошлые дни остаются как были — баланс не «прыгает» ни при включении, ни при смене числа (решение
 // владельца 2026-10-03). Без колонки (у существующей метрики нет ключа planned_sets_log) — ничего не пишем: поле в форме скрыто.
+// Новые записи получают frac: true — с этого дня за подходы идут ДРОБНЫЕ баллы (миграция 045, v2.69). Запись прежнего формата (без
+// frac), если метрику сохранили с тем же числом, «обновляется» новой записью с сегодняшнего дня; прошлые дни остаются по-старому.
 export function plannedSetsFields(
   f: MetricFormValues,
   existing: Metric | null,
@@ -209,10 +211,11 @@ export function plannedSetsFields(
   const ef = effectiveForm(f)
   const n = ef.type === 'sets' && ef.goalDirection !== 'at_most' ? parsePlannedSets(ef.plannedSets) : null
   const log = existing ? plannedSetsLog(existing) : []
-  const current = log.length ? log[log.length - 1].n : null
-  if (n === (current != null && current >= 1 ? current : null)) return {}
+  const last = log.length ? log[log.length - 1] : null
+  const current = last && last.n != null && last.n >= 1 ? last.n : null
+  if (n === current && (n === null || last?.frac === true)) return {}
   const next = log.filter((e) => e.from !== today) // правка в тот же день заменяет запись, а не плодит новую
-  next.push({ from: today, n })
+  next.push(n == null ? { from: today, n: null } : { from: today, n, frac: true })
   return { planned_sets_log: next.slice(-100) }
 }
 

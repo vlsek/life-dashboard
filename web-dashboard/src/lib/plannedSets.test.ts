@@ -21,6 +21,8 @@ function sets(o: Partial<Metric> = {}): Metric {
 const rep = (n: number) => ({ reps: n })
 const three = [rep(10), rep(10), rep(10)]
 const log = (...e: [string, number | null][]): PlannedSetsEntry[] => e.map(([from, n]) => ({ from, n }))
+// запись, созданная формой с v2.69: дробные баллы за подходы (миграция 045)
+const fl = (from: string, n: number | null): PlannedSetsEntry => ({ from, n, frac: true })
 
 describe('setsCount', () => {
   it('counts sets with reps or time, not empty placeholders', () => {
@@ -129,19 +131,21 @@ describe('form: parsePlannedSets / fieldsEnabledForForm / plannedSetsFields', ()
     expect(fieldsEnabledForForm({ type: 'number', trackOnly: false }).plannedSets).toBe(false)
   })
   it('a new metric gets a one-entry log starting today; unset writes nothing', () => {
-    expect(plannedSetsFields(f, null, '2026-10-03')).toEqual({ planned_sets_log: log(['2026-10-03', 3]) })
+    expect(plannedSetsFields(f, null, '2026-10-03')).toEqual({ planned_sets_log: [fl('2026-10-03', 3)] })
     expect(plannedSetsFields({ ...f, plannedSets: '' }, null, '2026-10-03')).toEqual({})
   })
   it('existing metric: unchanged value writes nothing, changed value appends an entry and keeps history', () => {
-    const existing = sets({ planned_sets_log: log(['2026-10-01', 3]) })
+    const existing = sets({ planned_sets_log: [fl('2026-10-01', 3)] })
     expect(plannedSetsFields(f, existing, '2026-10-10')).toEqual({})
-    expect(plannedSetsFields({ ...f, plannedSets: '4' }, existing, '2026-10-10')).toEqual({ planned_sets_log: log(['2026-10-01', 3], ['2026-10-10', 4]) })
+    expect(plannedSetsFields({ ...f, plannedSets: '4' }, existing, '2026-10-10')).toEqual({ planned_sets_log: [fl('2026-10-01', 3), fl('2026-10-10', 4)] })
     // снятие параметра — запись с null (прошлое остаётся)
-    expect(plannedSetsFields({ ...f, plannedSets: '' }, existing, '2026-10-10')).toEqual({ planned_sets_log: log(['2026-10-01', 3], ['2026-10-10', null]) })
+    expect(plannedSetsFields({ ...f, plannedSets: '' }, existing, '2026-10-10')).toEqual({ planned_sets_log: [fl('2026-10-01', 3), { from: '2026-10-10', n: null }] })
+    // параметра нет и не было — ничего не пишем
+    expect(plannedSetsFields({ ...f, plannedSets: '' }, sets({ planned_sets_log: null }), '2026-10-10')).toEqual({})
   })
   it('a second edit on the same day replaces that day\'s entry instead of piling up', () => {
-    const existing = sets({ planned_sets_log: log(['2026-10-01', 3], ['2026-10-10', 4]) })
-    expect(plannedSetsFields({ ...f, plannedSets: '5' }, existing, '2026-10-10')).toEqual({ planned_sets_log: log(['2026-10-01', 3], ['2026-10-10', 5]) })
+    const existing = sets({ planned_sets_log: [fl('2026-10-01', 3), fl('2026-10-10', 4)] })
+    expect(plannedSetsFields({ ...f, plannedSets: '5' }, existing, '2026-10-10')).toEqual({ planned_sets_log: [fl('2026-10-01', 3), fl('2026-10-10', 5)] })
   })
   it('without the column (migration 041 not applied) nothing is ever written', () => {
     expect(plannedSetsFields(f, sets())).toEqual({})
@@ -149,12 +153,12 @@ describe('form: parsePlannedSets / fieldsEnabledForForm / plannedSetsFields', ()
   })
   it('switching the type away from sets clears the parameter; the form shows the current value', () => {
     const existing = sets({ planned_sets_log: log(['2026-10-01', 3]) })
-    expect(plannedSetsFields({ ...f, type: 'number' }, existing, '2026-10-10')).toEqual({ planned_sets_log: log(['2026-10-01', 3], ['2026-10-10', null]) })
+    expect(plannedSetsFields({ ...f, type: 'number' }, existing, '2026-10-10')).toEqual({ planned_sets_log: [...log(['2026-10-01', 3]), { from: '2026-10-10', n: null }] })
     expect(formFromMetric(existing).plannedSets).toBe('3')
     expect(formFromMetric(sets()).plannedSets).toBe('')
   })
   it('insert/update rows carry the log', () => {
-    expect(buildInsertRow(f, 'u1', 0, null).planned_sets_log).toEqual(log([expect.any(String) as any, 3]))
+    expect(buildInsertRow(f, 'u1', 0, null).planned_sets_log).toEqual([{ from: expect.any(String), n: 3, frac: true }])
     expect(buildUpdateRow({ ...f, plannedSets: '4' }, sets({ planned_sets_log: null }), null).planned_sets_log).toHaveLength(1)
   })
 })
@@ -199,5 +203,17 @@ describe('MetricFormModal: planned sets field', () => {
     await nextTick()
     expect(w.find(field).exists()).toBe(true)
     w.unmount()
+  })
+})
+
+describe('legacy entries (v2.43–2.51, no frac) and the upgrade to fractional points', () => {
+  const f = { ...emptyForm(), name: 'X', type: 'sets' as const, plannedSets: '3' }
+  it('saving the metric with the same N turns a legacy entry into a fractional one from today; history stays', () => {
+    const legacy = sets({ planned_sets_log: log(['2026-10-01', 3]) })
+    expect(plannedSetsFields(f, legacy, '2026-10-10')).toEqual({ planned_sets_log: [...log(['2026-10-01', 3]), fl('2026-10-10', 3)] })
+  })
+  it('an unchanged fractional entry or an absent parameter writes nothing', () => {
+    expect(plannedSetsFields(f, sets({ planned_sets_log: [fl('2026-10-01', 3)] }), '2026-10-10')).toEqual({})
+    expect(plannedSetsFields({ ...f, plannedSets: '' }, sets({ planned_sets_log: log(['2026-10-01', 3], ['2026-10-05', null]) }), '2026-10-10')).toEqual({})
   })
 })

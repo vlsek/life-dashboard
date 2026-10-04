@@ -1,4 +1,4 @@
-import { isMetricDone } from './metrics'
+import { metricDayPointsTenths } from './metrics'
 import type { Metric, DailyValueRow } from './types'
 import type { ChartPoint } from './chart'
 
@@ -16,8 +16,8 @@ export function pointsPerDaySeries(metrics: Metric[], values: DailyValueRow[]): 
   }
   const days = Object.keys(byDay).sort()
   return days.map((d) => {
-    let pts = 0
-    for (const m of metrics) if (isMetricDone(m, byDay[d][m.id], d)) pts++
-    return { date: d, y: pts }
+    let tenths = 0 // десятые доли баллов (дробные за подходы — миграция 045); делим один раз, без хвоста плавающей точки
+    for (const m of metrics) tenths += metricDayPointsTenths(m, byDay[d][m.id], d)
+    return { date: d, y: tenths / 10 }
   })
 }

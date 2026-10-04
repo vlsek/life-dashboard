@@ -1,4 +1,4 @@
-import { isMetricDone } from './metrics'
+import { metricDayPointsTenths } from './metrics'
 import type { Metric, MetricValue } from './types'
 
 // Анимация «+N / −N с монетой» при получении/потере баллов (BACKLOG 14, 11:11, агент 4).
@@ -9,6 +9,7 @@ import type { Metric, MetricValue } from './types'
 //
 // Правило начисления — то же, что в balance.ts/pointsLog.ts: +1 за каждую выполненную метрику дня. Значит, метрика перешла
 // «не выполнена → выполнена» = +1, обратно = −1, остальные переходы баллов не меняют (например, число 3 → 5 при цели 10).
+// У метрики-подходов с планом и дробными баллами (миграция 045) дельта — разница долей: +0,3 за первый подход из 4, +0,2 за второй…
 
 export const POINTS_FLOAT = 'dashboard:points-float'
 
@@ -18,10 +19,8 @@ export interface PointsFloatDetail {
 
 // Сколько баллов даёт/отнимает правка значения метрики. 0 — анимировать нечего.
 export function pointsDelta(metric: Metric, before: MetricValue | undefined, after: MetricValue | undefined, dateStr?: string): number {
-  const was = isMetricDone(metric, before ?? null, dateStr)
-  const now = isMetricDone(metric, after ?? null, dateStr)
-  if (was === now) return 0
-  return now ? 1 : -1
+  // десятые доли: целая разность делится один раз — без плавающей точки (0,3, а не 0,30000000000000004)
+  return (metricDayPointsTenths(metric, after ?? null, dateStr) - metricDayPointsTenths(metric, before ?? null, dateStr)) / 10
 }
 
 // «+1» / «−1» (настоящий минус U+2212, а не дефис — он не склеивается с цифрой и одинаковой ширины с плюсом);
@@ -30,6 +29,12 @@ export function formatPointsDelta(delta: number, lang: string = 'en'): string {
   if (!Number.isFinite(delta) || delta === 0) return ''
   const abs = new Intl.NumberFormat(lang, { maximumFractionDigits: 2 }).format(Math.abs(delta))
   return (delta > 0 ? '+' : '\u2212') + abs
+}
+
+// Сумма баллов к показу (баланс, итоги): до одного знака после запятой, с локальным разделителем: «12,3» (ru) / «12.3» (en); целые без хвоста.
+export function formatPoints(n: number, lang: string = 'en'): string {
+  if (!Number.isFinite(n)) return ''
+  return new Intl.NumberFormat(lang, { maximumFractionDigits: 1 }).format(n)
 }
 
 // Послать анимацию. Не бросает и ничего не делает при delta = 0 / NaN — вызывающему не нужно проверять самому.

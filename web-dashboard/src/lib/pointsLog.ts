@@ -1,8 +1,10 @@
-import { isDone, type BalanceMetric, type BalanceValueRow } from './balance'
+import { dayPointsTenths, type BalanceMetric, type BalanceValueRow } from './balance'
+import { roundPoints } from './metrics'
 import { addDaysIso } from './date'
 
 // Журнал баллов за последние дни (BACKLOG 7.1 «Клик по баллам на главной»): за что начислено сегодня и за неделю.
-// Правила начисления — ровно те же, что в calcBalance() (lib/balance.ts): +1 за каждую выполненную метрику дня,
+// Правила начисления — ровно те же, что в calcBalance() (lib/balance.ts): +1 за каждую выполненную метрику дня (у метрики-подходов с планом
+// и дробными баллами — доля: +0,3 за 1 подход из 4; миграция 045),
 // у цели — её points (по умолчанию 5), у прочитанной книги — points (по умолчанию 10); покупка в магазине — минус cost.
 // Навыки (+10 при освоении) даты не хранят, поэтому в журнал по дням не попадают — только в общий баланс.
 // Только чистая логика, без DOM и сети (сеть — в usePointsLog.ts).
@@ -60,21 +62,22 @@ export function buildPointsLog(
   const list: PointsDay[] = dates.map((date) => {
     const entries: PointsEntry[] = []
     for (const m of metrics) {
-      if (isDone(m, byDay[date]?.[m.id], date)) entries.push({ kind: 'metric', label: m.name, icon: m.icon, points: 1 })
+      const tenths = dayPointsTenths(m, byDay[date]?.[m.id], date)
+      if (tenths > 0) entries.push({ kind: 'metric', label: m.name, icon: m.icon, points: tenths / 10 })
     }
     for (const g of goals) if (g.done_date === date) entries.push({ kind: 'goal', label: g.name, icon: null, points: g.points ?? 5 })
     for (const b of books) if (b.done_date === date) entries.push({ kind: 'book', label: b.title, icon: null, points: b.points ?? 10 })
     for (const p of purchases) if (p.redeemed_date === date) entries.push({ kind: 'spent', label: p.name, icon: null, points: -(p.cost ?? 0) })
-    const earned = entries.filter((e) => e.points > 0).reduce((s, e) => s + e.points, 0)
-    const spent = -entries.filter((e) => e.points < 0).reduce((s, e) => s + e.points, 0)
+    const earned = roundPoints(entries.filter((e) => e.points > 0).reduce((s, e) => s + e.points, 0))
+    const spent = roundPoints(-entries.filter((e) => e.points < 0).reduce((s, e) => s + e.points, 0))
     return { date, entries, earned, spent }
   })
 
   return {
     days: list,
     earnedToday: list[0]?.earned ?? 0,
-    earnedWeek: list.reduce((s, d) => s + d.earned, 0),
-    spentWeek: list.reduce((s, d) => s + d.spent, 0),
+    earnedWeek: roundPoints(list.reduce((s, d) => s + d.earned, 0)),
+    spentWeek: roundPoints(list.reduce((s, d) => s + d.spent, 0)),
   }
 }
 
