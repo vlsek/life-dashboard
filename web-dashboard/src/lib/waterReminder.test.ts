@@ -69,3 +69,33 @@ describe('storage helpers', () => {
     expect(remindersOff()).toBe(true)
   })
 })
+
+describe('shouldRemindWater: время последнего добавления воды (BACKLOG 771)', () => {
+  const HOUR = 60 * 60 * 1000
+  const now = at(14)
+  const water = (agoMs: number) => ({ ...base, now, lastWaterMs: now.getTime() - agoMs })
+  it('меньше 3 часов с последней добавки — не напоминаем', () => {
+    expect(shouldRemindWater(water(10 * 60 * 1000))).toBe(false)
+    expect(shouldRemindWater(water(3 * HOUR - 1))).toBe(false)
+  })
+  it('3 часа и больше — напоминаем', () => {
+    expect(shouldRemindWater(water(3 * HOUR))).toBe(true)
+    expect(shouldRemindWater(water(8 * HOUR))).toBe(true)
+  })
+  it('нет данных о добавках (null / undefined / не число) — правило не применяется', () => {
+    expect(shouldRemindWater({ ...base, now, lastWaterMs: null })).toBe(true)
+    expect(shouldRemindWater({ ...base, now })).toBe(true)
+    expect(shouldRemindWater({ ...base, now, lastWaterMs: Number.NaN })).toBe(true)
+  })
+  it('время в будущем (часы перевели назад) не блокирует напоминание', () => {
+    expect(shouldRemindWater({ ...base, now, lastWaterMs: now.getTime() + HOUR })).toBe(true)
+  })
+  it('оба правила работают вместе: давно пили, но плашку показывали час назад — не напоминаем', () => {
+    expect(shouldRemindWater({ ...base, now, lastShownMs: now.getTime() - HOUR, lastWaterMs: now.getTime() - 5 * HOUR })).toBe(false)
+  })
+  it('тихие часы, норма и выключатель сильнее: даже давняя добавка не включает плашку', () => {
+    expect(shouldRemindWater({ ...base, now: at(23), lastWaterMs: at(23).getTime() - 9 * HOUR })).toBe(false)
+    expect(shouldRemindWater({ ...water(9 * HOUR), ml: 2000 })).toBe(false)
+    expect(shouldRemindWater({ ...water(9 * HOUR), off: true })).toBe(false)
+  })
+})

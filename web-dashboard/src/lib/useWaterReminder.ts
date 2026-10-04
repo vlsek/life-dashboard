@@ -5,6 +5,7 @@ import { DATA_CHANGED } from './events'
 import type { DataChangedDetail } from './events'
 import { findWaterNumberMetric, withWaterGoal } from './waterGoal'
 import { readLastShown, remindersOff, shouldRemindWater, writeLastShown } from './waterReminder'
+import { dayLogEntries, loadStacks } from './waterUndo'
 import type { Metric } from './types'
 
 // Плашка-напоминание о воде (BACKLOG 18.5). Решение «показывать ли» принимается РОВНО ОДИН РАЗ — при открытии страницы
@@ -17,6 +18,27 @@ import type { Metric } from './types'
 export function toMl(raw: unknown): number {
   const n = typeof raw === 'number' ? raw : typeof raw === 'string' && raw.trim() !== '' ? Number(raw) : NaN
   return Number.isFinite(n) && n > 0 ? n : 0
+}
+
+// Время последнего добавления воды (мс). Сначала журнал в аккаунте (water_log, миграция 036: виден со всех устройств, только записи
+// с плюсом), затем запись этого устройства из стека «Отменить» за сегодня. Нет таблицы / нет записей / сбой — null: тогда работает
+// прежнее правило, плашка не пропадает из-за недоступного журнала (BACKLOG 771).
+export async function lastWaterAddMs(userId: string, today: string): Promise<number | null> {
+  let best: number | null = null
+  try {
+    const { data, error } = await sb.from('water_log').select('drank_at').eq('user_id', userId).gt('delta_ml', 0).order('drank_at', { ascending: false }).limit(1)
+    const at = !error && Array.isArray(data) && data[0] ? Date.parse((data[0] as { drank_at?: string }).drank_at ?? '') : NaN
+    if (Number.isFinite(at)) best = at
+  } catch {
+    /* журнала нет — смотрим запись устройства */
+  }
+  try {
+    const own = dayLogEntries(loadStacks(userId, today)[today]).find((e) => e.next > e.prev)
+    if (own && (best === null || own.at > best)) best = own.at
+  } catch {
+    /* localStorage недоступен */
+  }
+  return best
 }
 
 export function useWaterReminder() {
@@ -52,7 +74,8 @@ export function useWaterReminder() {
       if (!decided) {
         decided = true
         const now = new Date()
-        if (shouldRemindWater({ now, lastShownMs: readLastShown(), ml: state.ml, goal: state.goal, off: remindersOff() })) {
+        const lastWaterMs = await lastWaterAddMs(userId, todayStr())
+        if (shouldRemindWater({ now, lastShownMs: readLastShown(), ml: state.ml, goal: state.goal, off: remindersOff(), lastWaterMs })) {
           visible.value = true
           mlAtShow = state.ml
           writeLastShown(now.getTime())

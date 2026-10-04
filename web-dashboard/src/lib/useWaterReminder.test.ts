@@ -13,7 +13,7 @@ vi.mock('./supabase', () => {
       if (h.fail) return { data: null, error: { message: 'boom' } }
       return { data: h.tables[table] ?? [], error: null }
     }
-    for (const m of ['select', 'eq', 'order', 'limit']) b[m] = () => b
+    for (const m of ['select', 'eq', 'gt', 'order', 'limit']) b[m] = () => b
     b.maybeSingle = async () => {
       const r = rows()
       return { data: r.data ? (r.data as Row[])[0] ?? null : null, error: r.error }
@@ -31,6 +31,8 @@ vi.mock('./waterGoal', async (orig) => {
 import { toMl, useWaterReminder } from './useWaterReminder'
 import { DATA_CHANGED } from './events'
 import { WATER_REMINDER_LAST_KEY, WATER_REMINDER_OFF_KEY } from './waterReminder'
+import { saveStack } from './waterUndo'
+import { todayStr } from './date'
 
 const water = { id: 'w1', user_id: 'u', name: 'Вода', icon: '💧', type: 'number', goal_value: 2000, goal_direction: 'at_least', active: true }
 
@@ -283,5 +285,82 @@ describe('toMl', () => {
   })
   it('turns everything else into 0', () => {
     for (const bad of [null, undefined, NaN, Infinity, -1, '', '  ', 'abc', {}, [], true]) expect(toMl(bad)).toBe(0)
+  })
+})
+
+// BACKLOG 771: «напоминание — не раньше чем через 3 часа после последнего добавления воды»
+describe('useWaterReminder: время последнего добавления воды', () => {
+  const HOUR = 60 * 60 * 1000
+  const iso = (msAgo: number) => new Date(noon.getTime() - msAgo).toISOString()
+  beforeEach(() => {
+    localStorage.clear()
+    h.fail = false
+    h.calls = 0
+    h.tables = { metrics: [water], daily_values: [{ value: 700 }] }
+    vi.useFakeTimers()
+    vi.setSystemTime(noon)
+  })
+
+  it('воду добавили час назад (журнал в аккаунте) — плашки нет, и показ не «тратится»', async () => {
+    h.tables.water_log = [{ drank_at: iso(1 * HOUR) }]
+    const r = useWaterReminder()
+    await r.load('u')
+    expect(r.visible.value).toBe(false)
+    expect(localStorage.getItem(WATER_REMINDER_LAST_KEY)).toBeNull()
+  })
+
+  it('последняя добавка была 4 часа назад — плашка показывается', async () => {
+    h.tables.water_log = [{ drank_at: iso(4 * HOUR) }]
+    const r = useWaterReminder()
+    await r.load('u')
+    expect(r.visible.value).toBe(true)
+  })
+
+  it('ровно 3 часа с последней добавки — уже можно напомнить', async () => {
+    h.tables.water_log = [{ drank_at: iso(3 * HOUR) }]
+    const r = useWaterReminder()
+    await r.load('u')
+    expect(r.visible.value).toBe(true)
+  })
+
+  it('журнала нет или он пуст (миграция 036 не применена / воды ещё не было) — правило как раньше: плашка показывается', async () => {
+    delete h.tables.water_log
+    const a = useWaterReminder()
+    await a.load('u')
+    expect(a.visible.value).toBe(true)
+    localStorage.clear()
+    h.tables.water_log = []
+    const b = useWaterReminder()
+    await b.load('u')
+    expect(b.visible.value).toBe(true)
+  })
+
+  it('журнала в аккаунте нет, но запись этого устройства свежая (+200 мл полчаса назад) — плашки нет', async () => {
+    saveStack('u', todayStr(), [{ prev: 500, next: 700, at: noon.getTime() - 30 * 60 * 1000 }])
+    const r = useWaterReminder()
+    await r.load('u')
+    expect(r.visible.value).toBe(false)
+  })
+
+  it('правка суммы вниз (минус) не считается «добавлением воды»', async () => {
+    saveStack('u', todayStr(), [{ prev: 900, next: 700, at: noon.getTime() - 30 * 60 * 1000 }])
+    const r = useWaterReminder()
+    await r.load('u')
+    expect(r.visible.value).toBe(true)
+  })
+
+  it('берётся самая свежая из двух отметок: старая в журнале, свежая на устройстве — плашки нет', async () => {
+    h.tables.water_log = [{ drank_at: iso(5 * HOUR) }]
+    saveStack('u', todayStr(), [{ prev: 500, next: 700, at: noon.getTime() - 20 * 60 * 1000 }])
+    const r = useWaterReminder()
+    await r.load('u')
+    expect(r.visible.value).toBe(false)
+  })
+
+  it('запись «из будущего» (время выбрано вручную / часы переведены назад) плашку не блокирует навсегда', async () => {
+    h.tables.water_log = [{ drank_at: new Date(noon.getTime() + 2 * HOUR).toISOString() }]
+    const r = useWaterReminder()
+    await r.load('u')
+    expect(r.visible.value).toBe(true)
   })
 })

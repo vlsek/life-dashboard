@@ -1,6 +1,8 @@
 // BACKLOG 18.5: «напоминание выпить воды — каждые 3 часа и только при открытии приложения». Никаких push-уведомлений и
 // фоновых таймеров: плашка может появиться только в момент, когда человек открыл страницу, и не чаще раза в 3 часа
 // (время последнего показа лежит в localStorage и общее для всех вкладок и страниц сайта). Ночью не беспокоим.
+// BACKLOG 771 (владелец): «не раньше чем через 3 часа после последнего добавления воды» — если воду добавляли меньше 3 часов назад,
+// плашка не появляется (lastWaterMs). Оба правила работают вместе: и 3 часа с последней добавки, и 3 часа с прошлого показа.
 export const WATER_REMINDER_INTERVAL_MS = 3 * 60 * 60 * 1000
 export const WATER_REMINDER_OFF_KEY = 'water_reminders_off' // '1' — выключено в настройках (окно в правой панели)
 export const WATER_REMINDER_LAST_KEY = 'water_reminder_last' // метка времени (мс) последнего показа
@@ -18,13 +20,19 @@ export interface WaterReminderInput {
   ml: number // выпито сегодня
   goal: number | null | undefined // эффективная норма, мл
   off: boolean
+  lastWaterMs?: number | null // когда в последний раз добавляли воду (мс); нет данных — правило не применяется
 }
 
-export function shouldRemindWater({ now, lastShownMs, ml, goal, off }: WaterReminderInput): boolean {
+export function shouldRemindWater({ now, lastShownMs, ml, goal, off, lastWaterMs }: WaterReminderInput): boolean {
   if (off) return false
   if (!goal || goal <= 0) return false // нет воды-метрики или нормы — напоминать не о чем
   if (ml >= goal) return false // норма выпита
   if (isQuietHour(now)) return false
+  if (lastWaterMs != null && Number.isFinite(lastWaterMs)) {
+    const sinceWater = now.getTime() - lastWaterMs
+    // sinceWater < 0 — запись «из будущего» (часы переведены назад или время выбрано вручную): правило не применяем, как и для lastShownMs
+    if (sinceWater >= 0 && sinceWater < WATER_REMINDER_INTERVAL_MS) return false
+  }
   if (lastShownMs != null && Number.isFinite(lastShownMs)) {
     const passed = now.getTime() - lastShownMs
     // passed < 0 — часы переведены назад: считаем, что показ был «давно», чтобы напоминание не пропало навсегда
