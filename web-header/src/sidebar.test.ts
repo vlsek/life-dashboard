@@ -97,6 +97,22 @@ describe('верх левого бокового меню (BACKLOG 6.2)', () => 
   })
 })
 
+describe('слой «+N / −N» шапки (BACKLOG 469)', () => {
+  it('на обычной странице слой есть, на Дашборде (panelOnly) нет — там свой слой, иначе анимация задвоится', async () => {
+    setup({ display_name: 'Анна' })
+    const w1 = mount(App, { attachTo: document.body })
+    await flushPromises()
+    expect(document.querySelectorAll('[data-test="points-float-layer"]').length).toBe(1)
+    w1.unmount()
+    setup({ display_name: 'Анна' })
+    history.replaceState(null, '', '/dashboard/')
+    const w2 = mount(App, { attachTo: document.body, props: { panelOnly: true } })
+    await flushPromises()
+    expect(document.querySelectorAll('[data-test="points-float-layer"]').length).toBe(0)
+    w2.unmount()
+  })
+})
+
 describe('прогресс дня и недели в меню — опция (BACKLOG 2.3)', () => {
   it('по умолчанию выключен', async () => {
     setup({ display_name: 'Анна' })

@@ -17,6 +17,7 @@ import RightPanel, { type GaugeData } from './components/RightPanel.vue'
 import SettingsModal from './components/SettingsModal.vue'
 import FavoriteHeart from './components/FavoriteHeart.vue'
 import SidebarTop from './components/SidebarTop.vue'
+import PointsFloat from './components/PointsFloat.vue'
 import { useSidebarProfile } from './lib/sidebarProfile'
 import { sidebarProgress } from './lib/prefs'
 import { pageKeyFor, readFavorites, saveFavoritesToProfile, syncFavoritesFromProfile, toggleFavorite, writeFavorites } from './lib/favorites'
@@ -159,6 +160,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
         @open-summary="(k) => (summaryKind = k)"
       />
     </Teleport>
+    <PointsFloat v-if="!props.panelOnly" />
     <FavoriteHeart v-if="pageKey && !props.panelOnly" :active="isFavorite" @toggle="onToggleFavorite" />
     <template v-if="!props.panelOnly">
       <WaterGlass v-if="waterVisible" :today-ml="todayMl" :norm-ml="normMl" :title="`${todayMl} / ${normMl} ${unitLabel}`" @click="waterOpen = true" />

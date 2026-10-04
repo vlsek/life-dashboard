@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.68";
+const SITE_VERSION = "2.69";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.69", date: "2026-10-04 02:58", changes: [
+        "Вода, записанная из окна шапки (на любой странице, кроме Дашборда), теперь тоже показывает анимацию «+1 / −1» с монетой у места нажатия — когда набрана норма воды или снята отметка. На Дашборде анимация не задвоилась: там слой остался один."
+    ]},
     { version: "2.68", date: "2026-10-04 04:41", changes: [
         "Дашборд, блок «Графики»: кнопка «Настроить графики» и выбор периода первого графика теперь в одной строке — настройка слева, период справа (раньше каждая занимала свою строку). Пока графиков нет, кнопка настройки стоит одна, слева. У остальных графиков период по-прежнему справа",
     ]},
@@ -1409,6 +1412,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.69", date: "2026-10-04 02:58", changes: [
+        "Water logged from the header window (on any page except the Dashboard) now shows the \"+1 / \u22121\" coin animation at the tap point when the water norm is reached or taken back. On the Dashboard it is not doubled: there is still a single layer."
+    ]},
     { version: "2.68", date: "2026-10-04 04:41", changes: [
         "Dashboard, Charts block: the \"Configure charts\" button and the period picker of the first chart now share one row — settings on the left, period on the right (each used to take its own row). While there are no charts, the settings button sits alone on the left. The other charts keep their period on the right",
     ]},

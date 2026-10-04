@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue'
 import { sb } from './supabase'
 import { notifyDataChanged } from './events'
+import { emitPointsFloat, pointsDelta } from './pointsFloat'
 import { fmtDate, todayStr } from './date'
 import { t } from './i18n'
 import { effectiveNormMl, findWaterMetric, findWeightParam, nextWaterValue } from './water'
@@ -140,7 +141,7 @@ export function useWater() {
 
   // Единая запись значения дня (добавление, правка суммы, отмена). Возвращает записанное значение или null, если запись в БД не
   // удалась (тогда UI не показывает «сохранилось»). `record` — запоминать ли шаг для «Отменить» (сама отмена себя не запоминает).
-  // Копия логики из web-dashboard/src/lib/useWater.ts (BACKLOG 12), без анимации баллов: слоя PointsFloat в шапке нет.
+  // Копия логики из web-dashboard/src/lib/useWater.ts (BACKLOG 12); анимация баллов — слой PointsFloat шапки (BACKLOG 469).
   async function writeDay(dateStr: string, current: number, next: number, record = true, drankAt?: number, kind: WaterLogKind = 'add'): Promise<number | null> {
     if (!metric.value) return null
     const { error: upErr } = await sb
@@ -159,6 +160,8 @@ export function useWater() {
       void enqueueLog(() => insertLog(dateStr, current, next, kind, at))
     }
     notifyDataChanged({ source: 'water', metricId: metric.value.id, date: dateStr, value: next })
+    // «+1 / −1 с монетой» (BACKLOG 469): балл за воду — по эффективной норме (как в Дашборде), только если статус «выполнено» сменился.
+    emitPointsFloat(pointsDelta({ ...metric.value, goal_value: normMl.value }, current, next))
     return next
   }
 
