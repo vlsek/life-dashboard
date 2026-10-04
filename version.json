@@ -1,6 +1,13 @@
 {
-  "version": "2.64",
+  "version": "2.65",
   "en": [
+    {
+      "version": "2.65",
+      "date": "2026-10-04 04:33",
+      "changes": [
+        "The \"Day done\" label is now \"Day progress\" — on the day ring in the header and right panel, in the Dashboard tooltip and in the title of the day summary window"
+      ]
+    },
     {
       "version": "2.64",
       "date": "2026-10-04 04:25",
@@ -1910,6 +1917,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.65",
+      "date": "2026-10-04 04:33",
+      "changes": [
+        "Подпись «День сделан» заменена на «Прогресс дня» — в кольце дня в шапке и правой панели, в подсказке на Дашборде и в заголовке окна со сводкой дня"
+      ]
+    },
     {
       "version": "2.64",
       "date": "2026-10-04 04:25",

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.64";
+const SITE_VERSION = "2.65";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.65", date: "2026-10-04 04:33", changes: [
+        "Подпись «День сделан» заменена на «Прогресс дня» — в кольце дня в шапке и правой панели, в подсказке на Дашборде и в заголовке окна со сводкой дня",
+    ]},
     { version: "2.64", date: "2026-10-04 04:25", changes: [
         "Тренировки: у прогрессивных программ («Отжимания: 6 недель», «Подтягивания: 6 недель») появилась кнопка «Начать программу» — она добавляет упражнения и запускает программу с сегодняшнего дня. На странице появляется карточка активной программы: «Неделя N из M» и нагрузка этой недели (считается по дате старта), список недель с отметкой «пройдена», полоска прогресса и завершение программы (в два шага, без системного окна). Новая программа заменяет текущую — окно шаблонов предупреждает об этом",
         "Активная программа запоминается в профиле и подтягивается на другое устройство; завершённая на одном устройстве не «воскресает» на другом. Для синхронизации нужна миграция 040 (владелец применяет в Supabase SQL Editor); до неё программа работает, но только на этом устройстве",
@@ -1397,6 +1400,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.65", date: "2026-10-04 04:33", changes: [
+        "The \"Day done\" label is now \"Day progress\" — on the day ring in the header and right panel, in the Dashboard tooltip and in the title of the day summary window",
+    ]},
     { version: "2.64", date: "2026-10-04 04:25", changes: [
         "Workouts: progressive programs (\"Push-ups: 6 weeks\", \"Pull-ups: 6 weeks\") now have a \"Start program\" button — it adds the exercises and starts the program from today. The page shows an active program card: \"Week N of M\" with this week's load (worked out from the start date), the list of weeks with a \"completed\" mark, a progress bar and an end-program action (two steps, no system dialog). A new program replaces the current one — the templates window warns about it",
         "The active program is saved in your profile and follows you to another device; a program ended on one device does not come back on another. Syncing needs migration 040 (the owner applies it in the Supabase SQL Editor); until then the program works on this device only",
