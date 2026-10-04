@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.70";
+const SITE_VERSION = "2.71";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.71", date: "2026-10-04 09:52", changes: [
+        "Дашборд: виджет «Изучение языков» в блоке «Виджеты» на главной. Включается галочкой в окне «Настроить дашборд», там же выбирается язык или «Все языки». На главной всегда перед глазами первые 5 слов, которые вы ещё не выучили, дальше список прокручивается внутри виджета. Нажмите на слово, чтобы увидеть перевод и пример. «Знаю» уводит слово вниз очереди (на этом устройстве), «Выучил» отмечает слово выученным в разделе «Языки»",
+    ]},
     { version: "2.70", date: "2026-10-04 03:10", changes: [
         "Сообщество: значки достижений рядом с именем — в шапке (до 5), на подиуме, в списке лидерборда и в карточках друзей (до 2–3 самых ценных и «+N»). Показываются свои значки и значки тех, кто виден в лидерборде (нужна миграция 047; без неё значков просто нет, остальное работает). Починена вёрстка на телефоне: кнопка профиля стала компактной, у заявки в друзья «Принять» и «Отклонить» помещаются в строку, карточки переносят кнопки вниз на узком экране."
     ]},
@@ -1415,6 +1418,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.71", date: "2026-10-04 09:52", changes: [
+        "Dashboard: a Learning languages widget in the Widgets block on the main page. Turn it on with a tick box in the \"Customize dashboard\" window, where you also pick a language or \"All languages\". The main page always keeps the first 5 words you have not learned yet in front of you, and the list scrolls inside the widget. Tap a word to see its translation and example. \"Know it\" moves the word down the queue (on this device); \"Learned\" marks it learned in the Languages section",
+    ]},
     { version: "2.70", date: "2026-10-04 03:10", changes: [
         "Community: achievement badges next to names \u2014 in the profile header (up to 5), on the podium, in the leaderboard list and on friend cards (the 2\u20133 most valuable plus \"+N\"). You see your own badges and those of people visible on the leaderboard (needs migration 047; without it there are simply no badges and everything else works). Phone layout fixed: the profile button is compact, \"Accept\" and \"Decline\" on a friend request fit on the line, cards wrap their buttons on narrow screens."
     ]},

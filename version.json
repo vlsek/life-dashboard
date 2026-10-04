@@ -1,6 +1,13 @@
 {
-  "version": "2.70",
+  "version": "2.71",
   "en": [
+    {
+      "version": "2.71",
+      "date": "2026-10-04 09:52",
+      "changes": [
+        "Dashboard: a Learning languages widget in the Widgets block on the main page. Turn it on with a tick box in the \"Customize dashboard\" window, where you also pick a language or \"All languages\". The main page always keeps the first 5 words you have not learned yet in front of you, and the list scrolls inside the widget. Tap a word to see its translation and example. \"Know it\" moves the word down the queue (on this device); \"Learned\" marks it learned in the Languages section"
+      ]
+    },
     {
       "version": "2.70",
       "date": "2026-10-04 03:10",
@@ -1952,6 +1959,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.71",
+      "date": "2026-10-04 09:52",
+      "changes": [
+        "Дашборд: виджет «Изучение языков» в блоке «Виджеты» на главной. Включается галочкой в окне «Настроить дашборд», там же выбирается язык или «Все языки». На главной всегда перед глазами первые 5 слов, которые вы ещё не выучили, дальше список прокручивается внутри виджета. Нажмите на слово, чтобы увидеть перевод и пример. «Знаю» уводит слово вниз очереди (на этом устройстве), «Выучил» отмечает слово выученным в разделе «Языки»"
+      ]
+    },
     {
       "version": "2.70",
       "date": "2026-10-04 03:10",
