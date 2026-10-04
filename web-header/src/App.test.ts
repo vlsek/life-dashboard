@@ -70,7 +70,7 @@ describe('глобальный хедер (App.vue)', () => {
     expect(w.find('[data-test="water-badge"]').exists()).toBe(true)
     expect(w.find('[data-kind="day"]').exists()).toBe(true)
     expect(w.find('[data-kind="week"]').exists()).toBe(true)
-    expect(w.find('[data-kind="day"]').attributes('title')).toContain('День сделан: 50% (1/2)')
+    expect(w.find('[data-kind="day"]').attributes('title')).toContain('Прогресс дня: 50% (1/2)')
     w.unmount()
   })
 
