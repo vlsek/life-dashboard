@@ -5,6 +5,13 @@ export const THEME_KEYS = {
   monet: 'theme_monet',
   light: 'theme_light',
   pink: 'theme_pink',
+  mint: 'theme_mint',
+  sepia: 'theme_sepia',
+  solarlight: 'theme_solarlight',
+  nord: 'theme_nord',
+  mocha: 'theme_mocha',
+  amoled: 'theme_amoled',
+  contrast: 'theme_contrast',
 } as const
 
 export type ThemeKey = keyof typeof THEME_KEYS
@@ -14,6 +21,13 @@ const THEME_BG_COLORS: Record<ThemeKey, string> = {
   monet: '#0d0703',
   light: '#f7f4ef',
   pink: '#fff0f5',
+  mint: '#effaf4',
+  sepia: '#f4ecd8',
+  solarlight: '#fdf6e3',
+  nord: '#2e3440',
+  mocha: '#1e1e2e',
+  amoled: '#000000',
+  contrast: '#000000',
 }
 
 export function getTheme(): ThemeKey {

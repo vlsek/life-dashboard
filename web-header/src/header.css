@@ -45,6 +45,27 @@ html.theme-light .gh-root { --water-top: #3f95e0; --water-bottom: #1560b8; --wat
 html.theme-pink .gh-root { --water-top: #3184d6; --water-bottom: #1359b0; --water-line: #1359b0; }
 .gh-root { --water-top: #63b3f5; --water-bottom: #2f86dc; --water-line: #4aa3ee; }
 
+/* themes-header:start (генерируется scripts/apply_themes.py) */
+html.theme-mint .gh-root { --water-top: #3f95e0; --water-bottom: #1560b8; --water-line: #1560b8; }
+html.theme-sepia .gh-root { --water-top: #3589d6; --water-bottom: #1157ac; --water-line: #1157ac; }
+html.theme-solarlight .gh-root { --water-top: #2f7fcf; --water-bottom: #0f4f9f; --water-line: #0f4f9f; }
+html.theme-nord .gh-root { --water-top: #7cc4ff; --water-bottom: #4a9be8; --water-line: #6bb6f5; }
+html.theme-mocha .gh-root { --water-top: #63b3f5; --water-bottom: #2f86dc; --water-line: #4aa3ee; }
+html.theme-amoled .gh-root { --water-top: #63b3f5; --water-bottom: #2f86dc; --water-line: #4aa3ee; }
+html.theme-contrast .gh-root { --water-top: #63b3f5; --water-bottom: #2f86dc; --water-line: #4aa3ee; }
+html.theme-nord .gh-root,
+html.theme-mocha .gh-root,
+html.theme-amoled .gh-root,
+html.theme-contrast .gh-root {
+  --water-gold: #f0b429;
+}
+html.theme-mint .gh-root,
+html.theme-sepia .gh-root,
+html.theme-solarlight .gh-root {
+  --water-gold: #b87900;
+}
+/* themes-header:end */
+
 /* Анимация «записалось» (вынесена из WaterSavedAnim.vue: scoped-стили отдельным css-файлом не подгрузились бы) */
 .water-saved {
   position: absolute;

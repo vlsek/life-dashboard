@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.91";
+const SITE_VERSION = "2.92";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.92", date: "2026-10-04 18:10", changes: [
+        "Новые темы оформления: теперь их 11. К прежним Dark, Monet, Light и Pink добавились «Mint» (мятно-зелёная светлая), «Sepia» (тёплая бумага), «Solarized Light», «Nord», «Catppuccin Mocha», «AMOLED» (чисто чёрная, экономит батарею на OLED) и «Высокий контраст» (для лучшей читаемости). Выбор — в списке тем в боковой панели на любой странице. Цвета подобраны с проверкой контраста текста, акцента и воды; огонёк, вода и золотой стакан подстраиваются под выбранную тему",
+    ]},
     { version: "2.91", date: "2026-10-04 17:52", changes: [
         "Дашборд: плашка «Итоги недели на подходе» стала нажимаемой — клик по ней открывает итог недели («сделано / не сделано» по метрикам). Ссылка «Сделай что-то из целей» по-прежнему ведёт в цели, а крестик закрывает плашку",
     ]},
@@ -1480,6 +1483,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.92", date: "2026-10-04 18:10", changes: [
+        "New color themes: there are now 11. Besides Dark, Monet, Light and Pink you can pick Mint (light green), Sepia (warm paper), Solarized Light, Nord, Catppuccin Mocha, AMOLED (pure black, saves battery on OLED screens) and High contrast (easier to read). Choose in the theme list in the side panel on any page. Colors were checked for text, accent and water contrast; the flame, water and the golden glass follow the selected theme",
+    ]},
     { version: "2.91", date: "2026-10-04 17:52", changes: [
         "Dashboard: the \"Weekend check-in\" banner is now clickable — a click opens the weekly summary (done / not done by metric). The \"Do something from your goals\" link still goes to Goals, and the cross closes the banner",
     ]},

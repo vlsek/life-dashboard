@@ -6,6 +6,7 @@
    до отрисовки Vue, чтобы не было "мигания" неверной темой. */
 /* Вода в стакане (BACKLOG 12): всегда голубая/синяя, но оттенок свой у каждой темы — на светлых темах темнее,
    чтобы держать контраст ≥ 3:1 с карточкой (проверяет water-theme.test.ts). Акцент темы для воды не используется. */
+/* themes:start (генерируется scripts/apply_themes.py из scripts/themes_data.py — не править руками) */
 html.theme-dark {
   --bg: #121212;
   --bg-card: #1e1e1e;
@@ -69,6 +70,127 @@ html.theme-pink {
   --water-bottom: #1359b0;
   --water-line: #1359b0;
 }
+
+html.theme-mint {
+  --bg: #effaf4;
+  --bg-card: #ffffff;
+  --border: #cde8d8;
+  --text: #17392b;
+  --text-dim: #4a7561;
+  --accent: #13805a;
+  --accent-text: #ffffff;
+  --success: #2b7d4f;
+  --danger: #c0392b;
+  --hist-ok: #3fa66b;
+  --water-top: #3f95e0;
+  --water-bottom: #1560b8;
+  --water-line: #1560b8;
+}
+
+html.theme-sepia {
+  --bg: #f4ecd8;
+  --bg-card: #fbf5e6;
+  --border: #dccfae;
+  --text: #433422;
+  --text-dim: #6f5b3d;
+  --accent: #9a5b13;
+  --accent-text: #ffffff;
+  --success: #4f7d34;
+  --danger: #b5432f;
+  --hist-ok: #5a8a3c;
+  --water-top: #3589d6;
+  --water-bottom: #1157ac;
+  --water-line: #1157ac;
+}
+
+html.theme-solarlight {
+  --bg: #fdf6e3;
+  --bg-card: #eee8d5;
+  --border: #d3cbb0;
+  --text: #33474f;
+  --text-dim: #586e75;
+  --accent: #1d6fa8;
+  --accent-text: #ffffff;
+  --success: #6b7a00;
+  --danger: #c0302d;
+  --hist-ok: #859900;
+  --water-top: #2f7fcf;
+  --water-bottom: #0f4f9f;
+  --water-line: #0f4f9f;
+}
+
+html.theme-nord {
+  --bg: #2e3440;
+  --bg-card: #3b4252;
+  --border: #4c566a;
+  --text: #eceff4;
+  --text-dim: #aab4c5;
+  --accent: #88c0d0;
+  --accent-text: #2e3440;
+  --success: #a3be8c;
+  --danger: #e07a84;
+  --hist-ok: #a3be8c;
+  --water-top: #7cc4ff;
+  --water-bottom: #4a9be8;
+  --water-line: #6bb6f5;
+}
+
+html.theme-mocha {
+  --bg: #1e1e2e;
+  --bg-card: #313244;
+  --border: #45475a;
+  --text: #cdd6f4;
+  --text-dim: #a6adc8;
+  --accent: #cba6f7;
+  --accent-text: #1e1e2e;
+  --success: #a6e3a1;
+  --danger: #f38ba8;
+  --hist-ok: #a6e3a1;
+  --water-top: #63b3f5;
+  --water-bottom: #2f86dc;
+  --water-line: #4aa3ee;
+}
+
+html.theme-amoled {
+  --bg: #000000;
+  --bg-card: #0d0d0d;
+  --border: #262626;
+  --text: #f2f2f2;
+  --text-dim: #9a9a9a;
+  --accent: #4ea1ff;
+  --accent-text: #000000;
+  --success: #4caf6a;
+  --danger: #ff6b6b;
+  --hist-ok: #3fa66b;
+  --water-top: #63b3f5;
+  --water-bottom: #2f86dc;
+  --water-line: #4aa3ee;
+}
+
+html.theme-contrast {
+  --bg: #000000;
+  --bg-card: #0a0a0a;
+  --border: #ffffff;
+  --text: #ffffff;
+  --text-dim: #d6d6d6;
+  --accent: #ffd60a;
+  --accent-text: #000000;
+  --success: #5cff8a;
+  --danger: #ff8080;
+  --hist-ok: #5cff8a;
+  --water-top: #63b3f5;
+  --water-bottom: #2f86dc;
+  --water-line: #4aa3ee;
+}
+/* themes:end */
+/* themes-scheme */
+html.theme-nord,
+html.theme-mocha,
+html.theme-amoled,
+html.theme-contrast { color-scheme: dark; }
+html.theme-mint,
+html.theme-sepia,
+html.theme-solarlight { color-scheme: light; }
 
 html,
 body,
@@ -645,14 +767,23 @@ html[data-motion='off'] *::after {
 /* Стакан при ≥100% нормы (BACKLOG 💧 2.1 «Состояние 100%»): контур становится золотым (токен по теме: яркий на тёмных,
    тёмно-золотой на светлых — чтобы читался на фоне), вокруг мягкое свечение, по воде проходит блик. Работает в
    WaterBadge.vue (шапка Дашборда). Анимации гасятся prefers-reduced-motion и «отключить все анимации». */
+/* themes-gold:start (генерируется scripts/apply_themes.py) */
 html.theme-dark,
-html.theme-monet {
+html.theme-monet,
+html.theme-nord,
+html.theme-mocha,
+html.theme-amoled,
+html.theme-contrast {
   --water-gold: #f0b429;
 }
 html.theme-light,
-html.theme-pink {
+html.theme-pink,
+html.theme-mint,
+html.theme-sepia,
+html.theme-solarlight {
   --water-gold: #b87900;
 }
+/* themes-gold:end */
 .water-glass-full {
   filter: drop-shadow(0 0 3px color-mix(in srgb, var(--water-gold) 60%, transparent));
   animation: water-glow 2.8s ease-in-out infinite;

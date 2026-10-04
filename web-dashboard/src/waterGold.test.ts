@@ -44,9 +44,11 @@ describe('стакан в шапке: состояние 100% (BACKLOG 💧 2.1)
 })
 
 describe('стили золотого стакана', () => {
-  it('токен --water-gold задан для всех четырёх тем (тёмные — яркий, светлые — тёмно-золотой)', () => {
-    expect(css).toMatch(/html\.theme-dark,\s*html\.theme-monet\s*\{[^}]*--water-gold:\s*#[0-9a-f]{6}/i)
-    expect(css).toMatch(/html\.theme-light,\s*html\.theme-pink\s*\{[^}]*--water-gold:\s*#[0-9a-f]{6}/i)
+  it('токен --water-gold задан для каждой темы (тёмные — яркий, светлые — тёмно-золотой); группы селекторов генерирует apply_themes.py', () => {
+    // селекторы тем идут группами через запятую, поэтому ищем «html.theme-<ключ>» где угодно в списке перед { ... }
+    const gold = (k: string, hex: string) => new RegExp(`html\\.theme-${k}\\b[^{}]*\\{[^}]*--water-gold:\\s*${hex}`, 'i')
+    for (const k of ['dark', 'monet']) expect(css, k).toMatch(gold(k, '#f0b429'))
+    for (const k of ['light', 'pink']) expect(css, k).toMatch(gold(k, '#b87900'))
   })
 
   it('есть анимации блика и свечения, и они отключаются при «уменьшить движение»', () => {
