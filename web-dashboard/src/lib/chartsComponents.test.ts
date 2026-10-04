@@ -15,6 +15,18 @@ const series: Record<string, ChartSeries> = {
 const PERIOD = { range: 'days10' as const, from: null, to: null }
 
 describe('ChartsConfigModal', () => {
+  // BACKLOG 853: «что такое общий период — непонятно»: подпись и подсказка объясняют, что период применяется ко всем графикам
+  it('общий период подписан «Период для всех графиков» и снабжён подсказкой про свой период у графика', () => {
+    localStorage.setItem('site_lang', 'ru')
+    const w = mount(ChartsConfigModal, { props: { series, entries: [{ key: 'points', goal: null }], period: PERIOD } })
+    expect(w.find('[data-test="period-all-label"]').text()).toBe('Период для всех графиков')
+    expect(w.find('[data-test="period-all-hint"]').text()).toContain('свой период')
+    localStorage.setItem('site_lang', 'en')
+    const e = mount(ChartsConfigModal, { props: { series, entries: [{ key: 'points', goal: null }], period: PERIOD } })
+    expect(e.find('[data-test="period-all-label"]').text()).toBe('Period for all charts')
+    expect(e.find('[data-test="period-all-hint"]').text()).toContain('own period')
+    localStorage.removeItem('site_lang')
+  })
   it('порядок, цель и удаление отражаются в эмитимом результате', async () => {
     const w = mount(ChartsConfigModal, { props: { series, entries: [{ key: 'body:w', goal: null }, { key: 'points', goal: null }], period: PERIOD } })
     await w.findAll('[data-test="down"]')[0].trigger('click') // вес вниз → баллы, вес
@@ -57,6 +69,21 @@ describe('ChartPeriodModal', () => {
     await w.find('[data-test="save"]').trigger('click')
     expect(JSON.parse(localStorage.getItem('dash_period_chart:body:w')!)).toMatchObject({ range: 'days10' })
     expect(w.emitted('applied')).toHaveLength(1)
+  })
+  // BACKLOG 853: подсказки и кнопка сброса говорят «период для всех графиков», а не туманный «общий период»
+  it('подсказки и кнопка сброса: «для всех графиков» / «Как у всех графиков»', async () => {
+    localStorage.setItem('site_lang', 'ru')
+    const a = mount(ChartPeriodModal, { props: { seriesKey: 'body:w', shared: PERIOD } })
+    expect(a.text()).toContain('период, заданный для всех графиков')
+    expect(a.text()).not.toContain('общий период')
+    localStorage.setItem('dash_period_chart:body:w', JSON.stringify({ range: 'month', from: null, to: null }))
+    const b = mount(ChartPeriodModal, { props: { seriesKey: 'body:w', shared: PERIOD } })
+    expect(b.find('[data-test="reset"]').text()).toBe('Как у всех графиков')
+    expect(b.text()).toContain('не зависит от периода «для всех графиков»')
+    localStorage.setItem('site_lang', 'en')
+    const c = mount(ChartPeriodModal, { props: { seriesKey: 'body:w', shared: PERIOD } })
+    expect(c.find('[data-test="reset"]').text()).toBe('Same as all charts')
+    localStorage.removeItem('site_lang')
   })
   it('со своим периодом — есть сброс, он удаляет ключ', async () => {
     localStorage.setItem('dash_period_chart:body:w', JSON.stringify({ range: 'month', from: null, to: null }))
