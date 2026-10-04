@@ -4,6 +4,8 @@ export type GoalDirection = 'at_least' | 'at_most'
 export interface PlannedSetsEntry {
   from: string
   n: number | null
+  // Дробные баллы за подходы (миграция 045, v2.69+): запись, созданная формой метрики в Дашборде с этого релиза; без флага — как раньше
+  frac?: boolean
 }
 
 export interface Metric {

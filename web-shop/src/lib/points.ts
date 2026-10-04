@@ -16,29 +16,42 @@ export function setsCount(value: MetricValue): number {
   return (value as { reps?: number; time?: string | null }[]).filter((s) => (s?.reps || 0) > 0 || !!s?.time).length
 }
 
-// Журнал планового числа подходов: только корректные записи, по возрастанию дат (из БД может прийти что угодно).
+// Журнал планового числа подходов: только корректные записи, по возрастанию дат (из БД может прийти что угодно). Флаг frac — только строго true.
 export function plannedSetsLog(metric: { planned_sets_log?: PlannedSetsEntry[] | null }): PlannedSetsEntry[] {
   const raw = metric?.planned_sets_log
   if (!Array.isArray(raw)) return []
   return raw
     .filter((e) => e && typeof e.from === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(e.from))
-    .map((e) => ({ from: e.from, n: e.n == null ? null : Math.floor(Number(e.n)) }))
+    .map((e): PlannedSetsEntry => ({ from: e.from, n: e.n == null ? null : Math.floor(Number(e.n)), ...(e.frac === true ? { frac: true } : {}) }))
     .sort((a, b) => (a.from < b.from ? -1 : a.from > b.from ? 1 : 0))
 }
 
-// Плановое число подходов на ДЕНЬ dateStr или null, если правило в этот день не действовало: не тип sets, направление «не более»,
-// до первой записи журнала либо параметр снят. Без dateStr — действующее сейчас значение. (Копия из web-dashboard/src/lib/metrics.ts.)
-export function plannedSetsFor(
-  metric: { type: string; goal_direction?: string | null; planned_sets_log?: PlannedSetsEntry[] | null },
-  dateStr?: string,
-): number | null {
+type PlanMetric = { type: string; goal_direction?: string | null; planned_sets_log?: PlannedSetsEntry[] | null }
+
+// Запись журнала, действовавшая в ДЕНЬ dateStr (последняя с from <= dateStr; без dateStr — последняя), или null; для не-sets и «не более» — null.
+function plannedSetsEntryFor(metric: PlanMetric, dateStr?: string): PlannedSetsEntry | null {
   if (metric.type !== 'sets' || metric.goal_direction === 'at_most') return null
-  let n: number | null = null
+  let entry: PlannedSetsEntry | null = null
   for (const e of plannedSetsLog(metric)) {
     if (dateStr && e.from > dateStr) break
-    n = e.n
+    entry = e
   }
-  return n != null && Number.isFinite(n) && n >= 1 ? n : null
+  return entry
+}
+
+const validN = (n: number | null | undefined): n is number => n != null && Number.isFinite(n) && n >= 1
+
+// Плановое число подходов на ДЕНЬ dateStr или null, если правило в этот день не действовало: не тип sets, направление «не более»,
+// до первой записи журнала либо параметр снят. Без dateStr — действующее сейчас значение. (Копия из web-dashboard/src/lib/metrics.ts.)
+export function plannedSetsFor(metric: PlanMetric, dateStr?: string): number | null {
+  const e = plannedSetsEntryFor(metric, dateStr)
+  return e && validN(e.n) ? e.n : null
+}
+
+// То же число, но ТОЛЬКО если запись журнала в силе помечена frac: дробные баллы действуют по записям с флагом (миграция 045).
+export function plannedSetsFracFor(metric: PlanMetric, dateStr?: string): number | null {
+  const e = plannedSetsEntryFor(metric, dateStr)
+  return e && e.frac === true && validN(e.n) ? e.n : null
 }
 
 // dateStr — день, к которому относится значение. При подсчёте ПРОШЛЫХ дней (серии, неделя, История, баланс) обязательно передавать:
@@ -60,6 +73,16 @@ export function isMetricDone(metric: Metric, value: MetricValue, dateStr?: strin
   return false
 }
 
+// БАЛЛЫ метрики за день в ДЕСЯТЫХ долях (целое; 10 = 1 балл). Выполнена — 10; не выполнена — только у метрики-подходов с планом N и записью
+// журнала с frac на эту дату: round(10·подходов/N) десятых, «половина вверх» целочисленно (20·подходов + N) / (2·N), потолок 9. Иначе 0.
+// ТОЧНАЯ КОПИЯ web-dashboard/src/lib/metrics.ts и SQL metric_partial_points (миграция 045). Баланс не должен расходиться между страницами.
+export function metricDayPointsTenths(metric: Metric, value: MetricValue, dateStr?: string): number {
+  if (isMetricDone(metric, value, dateStr)) return 10
+  const n = plannedSetsFracFor(metric, dateStr)
+  if (n == null) return 0
+  return Math.min(9, Math.floor((20 * setsCount(value) + n) / (2 * n)))
+}
+
 // Портировано 1:1 из calcTotalPoints() в config.js: 1 балл за каждый выполненный день
 // метрики (по всем дням истории) + баллы за выполненные цели/освоенные навыки/дочитанные
 // книги. Вызывающий код (useBalance.ts) достаёт таблицы из Supabase, эта функция —
@@ -71,23 +94,22 @@ export function calcTotalPoints(activeMetrics: Metric[], allValues: DailyValue[]
     byDay[v.date][v.metric_id] = v.value
   }
 
-  let dailyPoints = 0
+  // Считаем в десятых долях целыми числами и делим один раз в конце: без хвоста плавающей точки (12.3, а не 12.299999999999999)
+  let dailyTenths = 0
   for (const dateStr of Object.keys(byDay)) {
-    for (const m of activeMetrics) {
-      if (isMetricDone(m, byDay[dateStr][m.id], dateStr)) dailyPoints++
-    }
+    for (const m of activeMetrics) dailyTenths += metricDayPointsTenths(m, byDay[dateStr][m.id], dateStr)
   }
 
   const goalPoints = doneGoals.reduce((sum, g) => sum + (g.points ?? 5), 0)
   const skillPoints = masteredSkills.reduce((sum, s) => sum + (s.points ?? 10), 0)
   const bookPoints = doneBooks.reduce((sum, b) => sum + (b.points ?? 10), 0)
 
-  return dailyPoints + goalPoints + skillPoints + bookPoints
+  return (dailyTenths + Math.round((goalPoints + skillPoints + bookPoints) * 10)) / 10
 }
 
 // Портировано из calcBalance() в config.js: total (см. выше) минус стоимость уже купленных
 // товаров магазина.
 export function calcBalanceFromTotals(total: number, redeemedItemCosts: number[]): { total: number; spent: number; balance: number } {
   const spent = redeemedItemCosts.reduce((sum, c) => sum + (c ?? 0), 0)
-  return { total, spent, balance: total - spent }
+  return { total, spent, balance: Math.round((total - spent) * 10) / 10 }
 }
