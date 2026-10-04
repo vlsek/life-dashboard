@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.82";
+const SITE_VERSION = "2.83";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.83", date: "2026-10-04 16:23", changes: [
+        "Дробные баллы за подходы: у метрики-подходов с «Подходов в день по плану» каждый подход теперь приносит долю балла (при плане 4: 1 подход = 0,3, 2 = 0,5, 3 = 0,8), целый балл — когда метрика выполнена полностью. Работает в балансе, журнале баллов, графике, всплывающем «+0,3», Магазине и (после миграции 045) в лидерборде и очках категорий. Правило действует только для записей плана, сохранённых с этой версии; прошлые дни и уже набранные баллы не пересчитываются. Остальные метрики считаются по-прежнему целыми баллами",
+    ]},
     { version: "2.82", date: "2026-10-04 12:38", changes: [
         "Дашборд: рекорды. Под названием каждого графика метрики и графика «баллы за день», а также у числовых метрик и метрик-подходов в «Дневных метриках» теперь строка «Рекорд: лучшее значение · дата» — наибольшее значение за один день за всё время (для подходов — сумма повторений). Рекорд обновляется сразу, как только вы его побили. У параметров тела (вес, талия и т. п.) рекорда нет — там непонятно, что считать лучшим",
         "Рекорды включены по умолчанию; выключаются галочкой «Показывать рекорды» в окне «Настроить Дашборд» (применяется сразу)",
@@ -1452,6 +1455,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.83", date: "2026-10-04 16:23", changes: [
+        "Fractional points for sets: for a sets metric with \"Planned sets per day\" every set now earns a share of a point (with a plan of 4: 1 set = 0.3, 2 = 0.5, 3 = 0.8), and the whole point comes once the metric is fully done. It works in the balance, the points log, the chart, the floating \"+0.3\", the Shop and (after migration 045) in the leaderboard and category points. The rule only applies to plans saved from this version on; past days and points already earned are not recalculated. Other metrics still use whole points",
+    ]},
     { version: "2.82", date: "2026-10-04 12:38", changes: [
         "Dashboard: records. Under the title of every metric chart and the \"points per day\" chart, and on number metrics and sets metrics in the Daily metrics, there is now a \"Record: best value · date\" line — the highest value for a single day of all time (for sets, the total reps). A record updates the moment you beat it. Body parameters (weight, waist and so on) have no record — it is unclear which value counts as the best",
         "Records are on by default; switch them off with the \"Show records\" checkbox in the \"Customize Dashboard\" window (applies at once)",
