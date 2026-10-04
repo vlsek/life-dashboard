@@ -162,7 +162,8 @@ function onTouchEnd(e: TouchEvent) {
       </template>
 
       <template v-else>
-        <div class="mb-3 flex items-center gap-2">
+        <!-- no-edge-swipe (левая шторка) и data-no-swipe (правая панель шапки): свайп по месяцу и сетке не должен выдвигать боковые плашки, как в Календаре -->
+        <div class="no-edge-swipe mb-3 flex items-center gap-2" data-no-swipe data-test="hist-head">
           <button
             type="button"
             class="rounded-lg border px-2.5 py-1.5"
@@ -207,7 +208,7 @@ function onTouchEnd(e: TouchEvent) {
           </div>
         </div>
 
-        <div class="no-edge-swipe mb-2 flex flex-col gap-1" @touchstart="onTouchStart" @touchend="onTouchEnd">
+        <div class="no-edge-swipe mb-2 flex flex-col gap-1" data-no-swipe data-test="hist-grid" @touchstart="onTouchStart" @touchend="onTouchEnd">
           <div class="grid gap-1" style="grid-template-columns: repeat(7, minmax(0, 1fr)) minmax(0, 1.05fr)">
             <div v-for="n in weekdayNames" :key="n" class="py-0.5 text-center text-[0.72em]" style="color: var(--text-dim)">{{ n }}</div>
             <div class="py-0.5 text-center text-[0.72em]" style="color: var(--text-dim)">{{ t('hist_week_col') }}</div>
