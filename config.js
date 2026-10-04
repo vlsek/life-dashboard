@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.69";
+const SITE_VERSION = "2.70";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.70", date: "2026-10-04 03:10", changes: [
+        "Сообщество: значки достижений рядом с именем — в шапке (до 5), на подиуме, в списке лидерборда и в карточках друзей (до 2–3 самых ценных и «+N»). Показываются свои значки и значки тех, кто виден в лидерборде (нужна миграция 047; без неё значков просто нет, остальное работает). Починена вёрстка на телефоне: кнопка профиля стала компактной, у заявки в друзья «Принять» и «Отклонить» помещаются в строку, карточки переносят кнопки вниз на узком экране."
+    ]},
     { version: "2.69", date: "2026-10-04 02:58", changes: [
         "Вода, записанная из окна шапки (на любой странице, кроме Дашборда), теперь тоже показывает анимацию «+1 / −1» с монетой у места нажатия — когда набрана норма воды или снята отметка. На Дашборде анимация не задвоилась: там слой остался один."
     ]},
@@ -1412,6 +1415,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.70", date: "2026-10-04 03:10", changes: [
+        "Community: achievement badges next to names \u2014 in the profile header (up to 5), on the podium, in the leaderboard list and on friend cards (the 2\u20133 most valuable plus \"+N\"). You see your own badges and those of people visible on the leaderboard (needs migration 047; without it there are simply no badges and everything else works). Phone layout fixed: the profile button is compact, \"Accept\" and \"Decline\" on a friend request fit on the line, cards wrap their buttons on narrow screens."
+    ]},
     { version: "2.69", date: "2026-10-04 02:58", changes: [
         "Water logged from the header window (on any page except the Dashboard) now shows the \"+1 / \u22121\" coin animation at the tap point when the water norm is reached or taken back. On the Dashboard it is not doubled: there is still a single layer."
     ]},

@@ -108,7 +108,7 @@ describe('Community: friends UI', () => {
     await (buttonWith(w, 'Принять') ?? buttonWith(w, 'Accept'))!.trigger('click')
     await flushPromises()
     expect(h.calls.find((c) => c.fn === 'respond_friend_request')?.args).toEqual({ request_id: 'r1', accept: true })
-    await (buttonWith(w, 'Отклонить') ?? buttonWith(w, 'Decline'))!.trigger('click')
+    await w.find('button[title="Отклонить"], button[title="Decline"]').trigger('click')
     await flushPromises()
     expect(h.calls.filter((c) => c.fn === 'respond_friend_request').at(-1)?.args).toEqual({ request_id: 'r1', accept: false })
     w.unmount()

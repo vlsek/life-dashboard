@@ -73,3 +73,11 @@ export interface DailyValueRaw {
   date: string
   value: unknown
 }
+
+// Строка RPC get_public_badges() (миграция 047)
+export interface BadgeRow {
+  user_id: string
+  key: string
+  unlocked_at: string | null
+}
+

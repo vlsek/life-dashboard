@@ -3,7 +3,8 @@ import { sb } from './supabase'
 import { toFriendIdSet } from './community'
 import { mergeFriendScope, requestOutcome, toAcceptedIdSet, type FriendRequestOutcome } from './friends'
 import type { Period } from './leaderboardView'
-import type { FollowedProfile, FriendRequestRow, LeaderboardRow, TodayActivityRow, PublicProfile } from './types'
+import { badgesByUser } from './badges'
+import type { BadgeRow, FollowedProfile, FriendRequestRow, LeaderboardRow, TodayActivityRow, PublicProfile } from './types'
 
 export type AuthState =
   | { status: 'loading' }
@@ -28,6 +29,9 @@ export function useCommunity() {
   // период лидерборда; periodApi=false — миграция 046 не применена: переключатель скрыт, всё как раньше («всё время»)
   const period = ref<Period>('all')
   const periodApi = ref(true)
+  // значки достижений: userId → ключи (RPC get_public_badges, миграция 047); нет функции — пусто, остальное работает
+  const badges = ref<Map<string, string[]>>(new Map())
+  const badgesApi = ref(true)
   const today = ref<TodayActivityRow[]>([])
   const todayError = ref<string | null>(null)
   const profile = ref<PublicProfile | null>(null)
@@ -57,7 +61,7 @@ export function useCommunity() {
   async function reload() {
     if (auth.value.status !== 'ready') return
     const userId = auth.value.userId
-    await Promise.all([loadFriends(userId), loadLeaderboard(), loadToday(), loadOwnProfile(userId)])
+    await Promise.all([loadFriends(userId), loadLeaderboard(), loadBadges(), loadToday(), loadOwnProfile(userId)])
   }
 
   async function loadFriends(userId: string) {
@@ -107,6 +111,17 @@ export function useCommunity() {
     }
     leaderboardError.value = null
     leaderboard.value = (data || []) as LeaderboardRow[]
+  }
+
+  async function loadBadges() {
+    if (!badgesApi.value) return
+    const { data, error } = await sb.rpc('get_public_badges')
+    if (error) {
+      badgesApi.value = false
+      badges.value = new Map()
+      return
+    }
+    badges.value = badgesByUser((data || []) as BadgeRow[])
   }
 
   async function setPeriod(next: Period) {
@@ -192,7 +207,7 @@ export function useCommunity() {
 
   return {
     auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
-    leaderboard, leaderboardError, period, periodApi, today, todayError, profile,
+    leaderboard, leaderboardError, period, periodApi, badges, today, todayError, profile,
     init, reload, setPeriod, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
   }
 }
