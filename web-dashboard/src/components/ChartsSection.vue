@@ -149,6 +149,7 @@ function onPeriodApplied() {
           :icon="series[entry.key].icon"
           :points="pointsFor(entry.key)"
           :variations="series[entry.key].variations"
+          :variation-records="series[entry.key].variationRecords"
           :streak="streakFor(entry.key)"
           :record="recordFor(entry.key)"
           :note="noteFor(entry.key)"

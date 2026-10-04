@@ -389,6 +389,53 @@ describe('ChartBlock: variations', () => {
     expect(items[0].find('[data-test="legend-today"]').text()).toContain('today')
     expect(items[1].find('[data-test="legend-today"]').text()).toContain('8')
   })
+  // BACKLOG 952: рядом с каждым типом подхода «рекорд: N» — максимум повторений в одном подходе за всё время
+  const recPoints = [
+    { date: '2026-09-01', y: 80, shares: [{ label: 'classic', reps: 50 }, { label: 'diamond', reps: 30 }] },
+    { date: '2026-09-02', y: 28, shares: [{ label: 'classic', reps: 20 }, { label: 'diamond', reps: 8 }] },
+  ]
+  const variationRecords = [{ label: 'classic', y: 25, date: '2026-08-10' }, { label: 'diamond', y: 12, date: '2026-09-01' }]
+  it('legend shows the single-set record next to each variation (all time, not the period total)', () => {
+    localStorage.setItem('site_lang', 'ru')
+    const w = mount(ChartBlock, { props: { title: 'Push-ups', points: recPoints, variations: ['classic', 'diamond'], today: '2026-09-02', variationRecords } })
+    const items = w.findAll('[data-test="legend-item"]')
+    expect(items[0].find('[data-test="legend-record"]').text()).toBe('· рекорд 25')
+    expect(items[1].find('[data-test="legend-record"]').text()).toBe('· рекорд 12')
+    expect(items[0].text()).toContain('70') // сумма за период остаётся
+    localStorage.removeItem('site_lang')
+  })
+  it('legend record: no record for a variation — nothing is drawn; no records at all — legend as before', () => {
+    const w = mount(ChartBlock, { props: { title: 'P', points: recPoints, variations: ['classic', 'diamond'], today: '2026-09-02', variationRecords: [variationRecords[0]] } })
+    const items = w.findAll('[data-test="legend-item"]')
+    expect(items[0].find('[data-test="legend-record"]').exists()).toBe(true)
+    expect(items[1].find('[data-test="legend-record"]').exists()).toBe(false)
+    const none = mount(ChartBlock, { props: { title: 'P', points: recPoints, variations: ['classic', 'diamond'], today: '2026-09-02' } })
+    expect(none.find('[data-test="legend-record"]').exists()).toBe(false)
+  })
+  it('legend record for sets without a variation name is shown under «no variation»', () => {
+    localStorage.setItem('site_lang', 'en')
+    const points = [
+      { date: '2026-09-01', y: 20, shares: [{ label: 'classic', reps: 15 }, { label: null, reps: 5 }] },
+      { date: '2026-09-02', y: 12, shares: [{ label: 'classic', reps: 12 }] },
+    ]
+    const w = mount(ChartBlock, { props: { title: 'P', points, variations: ['classic'], today: '2026-09-02', variationRecords: [{ label: 'classic', y: 15, date: '2026-09-01' }, { label: null, y: 5, date: '2026-09-01' }] } })
+    expect(w.findAll('[data-test="legend-record"]').map((e) => e.text())).toEqual(['· record 15', '· record 5'])
+    localStorage.removeItem('site_lang')
+  })
+  it('the «records on charts» switch hides legend records at once and brings them back', async () => {
+    const w = mount(ChartBlock, { props: { title: 'P', points: recPoints, variations: ['classic', 'diamond'], today: '2026-09-02', variationRecords } })
+    expect(w.findAll('[data-test="legend-record"]')).toHaveLength(2)
+    const { setRecordsEnabled } = await import('../lib/records')
+    setRecordsEnabled(false, 'charts')
+    await w.vm.$nextTick()
+    expect(w.findAll('[data-test="legend-record"]')).toHaveLength(0)
+    setRecordsEnabled(false, 'metrics') // выключатель метрик легенду графика не трогает
+    setRecordsEnabled(true, 'charts')
+    await w.vm.$nextTick()
+    expect(w.findAll('[data-test="legend-record"]')).toHaveLength(2)
+    setRecordsEnabled(true, 'metrics')
+    w.unmount()
+  })
   it('legend shows 0 for today when nothing was done today', () => {
     const points = [
       { date: '2026-09-01', y: 50, shares: [{ label: 'classic', reps: 50 }] },

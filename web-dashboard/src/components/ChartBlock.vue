@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { prepareChartSeries, type ChartPoint } from '../lib/chart'
 import MetricStreakBadge from './MetricStreakBadge.vue'
 import { buildLegend, describeShares, escapeXml, hasNamedVariations, pieSlices } from '../lib/variationChart'
 import type { MetricStreakInfo } from '../lib/metricStreaks'
 import type { VariationShare } from '../lib/variationChart'
-import { t } from '../lib/i18n'
+import { getLang, t } from '../lib/i18n'
 import { todayStr } from '../lib/date'
 import MetricIcon from './MetricIcon.vue'
 import RecordBadge from './RecordBadge.vue'
-import type { RecordInfo } from '../lib/records'
+import { RECORDS_EVENT, formatRecordDate, formatRecordValue, recordsEnabled, type RecordInfo } from '../lib/records'
+import type { VariationRecord } from '../lib/variationChart'
 
 const props = withDefaults(
   defineProps<{
@@ -24,9 +25,10 @@ const props = withDefaults(
     variations?: string[] | null // метрики-подходы: стабильный порядок особенностей (от него цвета точек и легенды)
     streak?: MetricStreakInfo | null // серия метрики: огонёк с числом рядом с названием графика (BACKLOG 23, 14:42)
     record?: RecordInfo | null // рекорд графика за всё время (BACKLOG раздел 28); показывается под названием, если не выключен в настройках
+    variationRecords?: VariationRecord[] | null // рекорд за один подход по каждой особенности за всё время (BACKLOG 952); в легенде «рекорд: N»
     today?: string // «сегодня» для легенды (ISO); по умолчанию — реальная сегодняшняя дата, параметр нужен тестам
   }>(),
-  { title: '', icon: null, unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null, note: null, variations: null, streak: null, record: null, today: undefined },
+  { title: '', icon: null, unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null, note: null, variations: null, streak: null, record: null, variationRecords: null, today: undefined },
 )
 
 const prepared = computed<ChartPoint[]>(() => prepareChartSeries(props.points))
@@ -34,6 +36,21 @@ const prepared = computed<ChartPoint[]>(() => prepareChartSeries(props.points))
 const order = computed(() => props.variations ?? [])
 const colored = computed(() => hasNamedVariations(props.points))
 const legend = computed(() => (colored.value ? buildLegend(props.points, order.value, props.today ?? todayStr()) : []))
+// «рекорд: N» у каждой особенности в легенде (BACKLOG 952): максимум повторений в одном подходе за всё время; выключается тем же
+// выключателем «рекорды у графиков», что и строка рекорда под названием (реагирует сразу, без перезагрузки).
+const recordsOn = ref(recordsEnabled('charts'))
+const syncRecords = () => (recordsOn.value = recordsEnabled('charts'))
+onMounted(() => window.addEventListener(RECORDS_EVENT, syncRecords))
+onBeforeUnmount(() => window.removeEventListener(RECORDS_EVENT, syncRecords))
+const NONE_KEY = '\u0000none'
+const legendRecords = computed(() => {
+  const map = new Map<string, VariationRecord>()
+  if (recordsOn.value) for (const r of props.variationRecords ?? []) map.set(r.label ?? NONE_KEY, r)
+  return map
+})
+function legendRecord(label: string | null): VariationRecord | undefined {
+  return legendRecords.value.get(label ?? NONE_KEY)
+}
 const hasGaps = computed(() => prepared.value.some((p) => p.y == null) && prepared.value.some((p) => p.y != null))
 
 function fmtChartLabel(iso: string): string {
@@ -144,6 +161,7 @@ const fallbackText = computed(() => {
           {{ item.label ?? t('chart_legend_none') }}
           <span class="dim">· {{ item.reps }}</span>
           <span class="dim" data-test="legend-today">· {{ t('chart_legend_today') }} {{ item.today }}</span>
+          <span v-if="legendRecord(item.label)" class="dim" data-test="legend-record" :title="t('chart_legend_record_title') + ' · ' + formatRecordDate(legendRecord(item.label)!.date, getLang())">· {{ t('chart_legend_record') }} {{ formatRecordValue(legendRecord(item.label)!.y, getLang()) }}</span>
         </li>
       </ul>
       <p v-if="hasGaps" class="dim mt-0.5 text-xs">{{ t('chart_dashed_hint') }}</p>

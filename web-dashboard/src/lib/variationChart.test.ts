@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  NONE_COLOR, OTHER_COLOR, VARIATION_PALETTE, buildLegend, colorFor, dayShares, describeShares, escapeXml, hasNamedVariations, normalizeVariation, pieSlices, variationOrder,
+  NONE_COLOR, OTHER_COLOR, VARIATION_PALETTE, buildLegend, colorFor, dayShares, describeShares, escapeXml, hasNamedVariations, normalizeVariation, pieSlices, variationMaxima, variationOrder,
 } from './variationChart'
 
 const set = (reps: number | null, variation: string | null) => ({ reps, variation, time: null })
@@ -139,5 +139,30 @@ describe('legend and tooltip', () => {
   })
   it('escapes user text for SVG', () => {
     expect(escapeXml(`<img src=x onerror="a('b')">&`)).toBe('&lt;img src=x onerror=&quot;a(&#39;b&#39;)&quot;&gt;&amp;')
+  })
+})
+
+// BACKLOG 952: рекорд = максимум повторений в ОДНОМ подходе по каждой особенности (а не сумма за день)
+describe('variationMaxima', () => {
+  const day = (date: string, ...sets: ReturnType<typeof set>[]) => ({ date, value: sets })
+  it('берёт самый большой ОДИН подход каждого типа, а не сумму за день', () => {
+    const r = variationMaxima([day('2026-09-01', set(10, 'wide'), set(12, 'wide'), set(30, 'narrow')), day('2026-09-02', set(15, 'wide'))], ['wide', 'narrow'])
+    expect(r).toEqual([{ label: 'wide', y: 15, date: '2026-09-02' }, { label: 'narrow', y: 30, date: '2026-09-01' }])
+  })
+  it('при равных значениях — самая ранняя дата, в каком бы порядке ни пришли дни', () => {
+    const r = variationMaxima([day('2026-09-03', set(20, 'a')), day('2026-09-01', set(20, 'a')), day('2026-09-02', set(20, 'a'))], ['a'])
+    expect(r).toEqual([{ label: 'a', y: 20, date: '2026-09-01' }])
+  })
+  it('подходы без повторений и мусор не считаются; пробелы в названии не различают', () => {
+    expect(variationMaxima([day('2026-09-01', set(0, 'a'), set(null, 'a'))], ['a'])).toEqual([])
+    expect(variationMaxima([{ date: '2026-09-01', value: 'oops' }, { date: '2026-09-02', value: null }], [])).toEqual([])
+    expect(variationMaxima([day('2026-09-01', set(8, ' a '), set(9, 'a'))], ['a'])).toEqual([{ label: 'a', y: 9, date: '2026-09-01' }])
+  })
+  it('«без особенности» — отдельная строка в конце, неизвестные особенности — перед ней', () => {
+    const r = variationMaxima([day('2026-09-01', set(5, null), set(6, 'zzz'), set(7, 'a'))], ['a'])
+    expect(r.map((x) => x.label)).toEqual(['a', 'zzz', null])
+  })
+  it('нет дней — пусто', () => {
+    expect(variationMaxima([], ['a'])).toEqual([])
   })
 })

@@ -1,6 +1,6 @@
 import { metricNumericValue } from './metrics'
-import { dayShares, variationOrder } from './variationChart'
-import type { VariationShare } from './variationChart'
+import { dayShares, variationMaxima, variationOrder } from './variationChart'
+import type { VariationRecord, VariationShare } from './variationChart'
 import { pointsPerDaySeries } from './points-series'
 import { unitSuffix, type BodyParam, type BodyValue } from './profile'
 import type { Metric, DailyValueRow } from './types'
@@ -25,6 +25,7 @@ export interface ChartSeries {
   defaultGoal?: number | null
   type?: string // тип метрики (для 'sets' значения из графика не правятся)
   variations?: string[] // метрики-подходы: стабильный порядок особенностей по всей истории (от него зависят цвета)
+  variationRecords?: VariationRecord[] // метрики-подходы: рекорд за один подход по каждой особенности за всю историю (BACKLOG 952)
 }
 
 export interface ChartEntry {
@@ -62,7 +63,9 @@ export function buildSeries(bodyParams: BodyParam[], bodyValues: BodyValue[], me
 
   for (const m of metrics.filter((x) => x.type === 'number' || x.type === 'sets')) {
     // метрики-подходы: порядок особенностей по ВСЕЙ истории (а не по выбранному периоду) — цвета не прыгают при смене периода
-    const variations = m.type === 'sets' ? variationOrder(days.filter((d) => byDay[d][m.id] !== undefined).map((d) => ({ date: d, value: byDay[d][m.id] }))) : undefined
+    const setDays = m.type === 'sets' ? days.filter((d) => byDay[d][m.id] !== undefined).map((d) => ({ date: d, value: byDay[d][m.id] })) : []
+    const variations = m.type === 'sets' ? variationOrder(setDays) : undefined
+    const variationRecords = m.type === 'sets' ? variationMaxima(setDays, variations) : undefined
     series[`metric:${m.id}`] = {
       label: iconLabelText(m.icon, m.name),
       name: m.name,
@@ -71,6 +74,7 @@ export function buildSeries(bodyParams: BodyParam[], bodyValues: BodyValue[], me
       color: 'var(--accent)',
       type: m.type,
       ...(variations ? { variations } : {}),
+      ...(variationRecords && variationRecords.length ? { variationRecords } : {}),
       points: days
         .filter((d) => byDay[d][m.id] !== undefined)
         .map((d) => {

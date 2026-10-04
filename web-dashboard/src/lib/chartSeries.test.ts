@@ -173,4 +173,19 @@ describe('buildSeries: sets variations', () => {
     // «diamond» появилась 02.09 — даже если в окне графика только 03.09, цвета определяются по всей истории
     expect(s.variations!.indexOf('diamond')).toBe(1)
   })
+  // BACKLOG 952: рекорд за один подход по каждой особенности — за всю историю, а не сумма за день
+  it('adds the single-set record per variation over the whole history', () => {
+    const s = buildSeries([], [], [pushups], rows)['metric:push']
+    expect(s.variationRecords).toEqual([
+      { label: 'classic', y: 50, date: '2026-09-01' },
+      { label: 'diamond', y: 30, date: '2026-09-02' },
+      { label: null, y: 10, date: '2026-09-03' },
+    ])
+  })
+  it('does not add variationRecords to number metrics or to sets without any reps', () => {
+    const n = buildSeries([], [], [water], [{ date: '2026-09-01', metric_id: 'water', value: 1500 } as DailyValueRow])['metric:water']
+    expect(n.variationRecords).toBeUndefined()
+    const empty = buildSeries([], [], [pushups], [dv('2026-09-01', [set(0, 'classic')])])['metric:push']
+    expect(empty.variationRecords).toBeUndefined()
+  })
 })

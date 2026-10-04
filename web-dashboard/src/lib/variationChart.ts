@@ -147,3 +147,27 @@ export function describeShares(shares: VariationShare[], noneLabel: string): str
 export function escapeXml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
 }
+
+// BACKLOG 952 (владелец: «хочу рекорд — сколько максимум в подходе какого типа»): рекорд по каждой особенности — наибольшее число
+// повторений в ОДНОМ подходе этого типа за всё время (не сумма за день) и дата. Подходы без повторений не считаются; при равенстве —
+// самая ранняя дата (как у `bestRecord`). Порядок — по `order`, «без особенности» — в конце. Только чистая логика.
+export interface VariationRecord {
+  label: string | null
+  y: number
+  date: string
+}
+export function variationMaxima(days: { date: string; value: unknown }[], order: readonly string[] = []): VariationRecord[] {
+  const best = new Map<string | null, VariationRecord>()
+  for (const d of days) {
+    for (const s of normalizeSets(d.value)) {
+      const reps = s.reps ?? 0
+      if (!(reps > 0)) continue
+      const label = normalizeVariation(s.variation)
+      const cur = best.get(label)
+      if (!cur || reps > cur.y || (reps === cur.y && d.date < cur.date)) best.set(label, { label, y: reps, date: d.date })
+    }
+  }
+  const rank = (label: string | null) => (label === null ? Number.MAX_SAFE_INTEGER : order.indexOf(label) === -1 ? Number.MAX_SAFE_INTEGER - 1 : order.indexOf(label))
+  return [...best.values()].sort((a, b) => rank(a.label) - rank(b.label) || String(a.label).localeCompare(String(b.label)))
+}
+
