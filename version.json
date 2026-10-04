@@ -1,6 +1,13 @@
 {
-  "version": "2.90",
+  "version": "2.91",
   "en": [
+    {
+      "version": "2.91",
+      "date": "2026-10-04 17:52",
+      "changes": [
+        "Dashboard: the \"Weekend check-in\" banner is now clickable — a click opens the weekly summary (done / not done by metric). The \"Do something from your goals\" link still goes to Goals, and the cross closes the banner"
+      ]
+    },
     {
       "version": "2.90",
       "date": "2026-10-04 17:44",
@@ -2094,6 +2101,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.91",
+      "date": "2026-10-04 17:52",
+      "changes": [
+        "Дашборд: плашка «Итоги недели на подходе» стала нажимаемой — клик по ней открывает итог недели («сделано / не сделано» по метрикам). Ссылка «Сделай что-то из целей» по-прежнему ведёт в цели, а крестик закрывает плашку"
+      ]
+    },
     {
       "version": "2.90",
       "date": "2026-10-04 17:44",

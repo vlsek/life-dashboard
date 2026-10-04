@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.90";
+const SITE_VERSION = "2.91";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.91", date: "2026-10-04 17:52", changes: [
+        "Дашборд: плашка «Итоги недели на подходе» стала нажимаемой — клик по ней открывает итог недели («сделано / не сделано» по метрикам). Ссылка «Сделай что-то из целей» по-прежнему ведёт в цели, а крестик закрывает плашку",
+    ]},
     { version: "2.90", date: "2026-10-04 17:44", changes: [
         "Тренировки, карта мышц: под картой появился список «Когда тренировали каждую мышцу» — по каждой группе написано «сегодня», «вчера» или «N дн. назад» и дата, либо «ещё не тренировали». Давно не тренированные мышцы стоят сверху. В карточке выбранной мышцы то же самое: «Последний раз: вчера (29.09.2026)»",
     ]},
@@ -1477,6 +1480,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.91", date: "2026-10-04 17:52", changes: [
+        "Dashboard: the \"Weekend check-in\" banner is now clickable — a click opens the weekly summary (done / not done by metric). The \"Do something from your goals\" link still goes to Goals, and the cross closes the banner",
+    ]},
     { version: "2.90", date: "2026-10-04 17:44", changes: [
         "Workouts, muscle map: below the map there is a new list, \"When each muscle was last worked\" — every group shows \"today\", \"yesterday\" or \"N d ago\" with the date, or \"not yet\". Muscles you have not trained for the longest are at the top. The card of a selected muscle says the same: \"Last worked: yesterday (29.09.2026)\"",
     ]},
