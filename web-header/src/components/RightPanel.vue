@@ -2,7 +2,7 @@
 import EmojiText from './EmojiText.vue'
 import { computed, onBeforeUnmount, onMounted, watch } from 'vue'
 import { getLang, t } from '../lib/i18n'
-import { isCloseSwipe, isOpenSwipeFrom, isSwipeBlockedTarget, swipeZone, type Point, type SwipeZone } from '../lib/edgeSwipe'
+import { isCloseSwipe, isModalOpen, isOpenSwipeFrom, isSwipeBlockedTarget, swipeZone, type Point, type SwipeZone } from '../lib/edgeSwipe'
 import WaterGlass from './WaterGlass.vue'
 import WaterSavedAnim from './WaterSavedAnim.vue'
 import ProgressGauge from './ProgressGauge.vue'
@@ -44,7 +44,7 @@ function onTouchStart(e: TouchEvent) {
   }
   start = pt(e.touches[0])
   startZone = swipeZone(start, window.innerWidth)
-  startOpenCandidate = !props.open && startZone !== null && !isSwipeBlockedTarget(e.target)
+  startOpenCandidate = !props.open && startZone !== null && !isSwipeBlockedTarget(e.target) && !isModalOpen()
 }
 function onTouchMove(e: TouchEvent) {
   if (!start || !startOpenCandidate || props.open || !e.touches.length) return

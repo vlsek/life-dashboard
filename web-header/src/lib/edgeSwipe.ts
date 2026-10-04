@@ -84,3 +84,10 @@ export function isSwipeBlockedTarget(target: EventTarget | null): boolean {
   }
   return false
 }
+
+// BACKLOG «При активном всплывающем окне нельзя вызывать левую и правую шторки»: пока на странице есть окно, правая шторка не открывается
+// свайпом. Селектор общий с AppShell.vue всех пилотов (там левая шторка) — менять в обоих местах. Закрытие открытой шторки не затрагивается.
+export const MODAL_SELECTOR = '.modal-backdrop, .gh-backdrop, .logout-backdrop'
+export function isModalOpen(): boolean {
+  return document.querySelector(MODAL_SELECTOR) !== null
+}

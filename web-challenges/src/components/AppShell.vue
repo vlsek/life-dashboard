@@ -70,7 +70,15 @@ const bottomPages = pages.filter((p) => p.key === 'history')
 const quickPages = computed(() => pages.filter((p) => p.key !== 'dashboard' && favorites.value.includes(p.key)))
 onMounted(() => window.addEventListener('favorites:changed', syncFavorites))
 onUnmounted(() => window.removeEventListener('favorites:changed', syncFavorites))
+// BACKLOG «При активном всплывающем окне нельзя вызывать левую и правую шторки»: пока на странице есть окно (свои — `.modal-backdrop`, окно
+// выхода — `.logout-backdrop`, окна глобальной шапки — `.gh-backdrop`), шторки не открываются ни свайпом, ни кнопкой. Закрытие уже открытой
+// шторки это не затрагивает. Селектор общий с `web-header/src/lib/edgeSwipe.ts` (правая шторка) — менять в обоих местах.
+const MODAL_SELECTOR = '.modal-backdrop, .gh-backdrop, .logout-backdrop'
+function isModalOpen(): boolean {
+  return document.querySelector(MODAL_SELECTOR) !== null
+}
 function openSidebar() {
+  if (isModalOpen()) return
   sidebarOpen.value = true
 }
 function closeSidebar() {
@@ -128,7 +136,7 @@ function onTouchStart(e: TouchEvent) {
     return
   }
   const target = e.target as HTMLElement
-  if (target.closest('.no-edge-swipe')) {
+  if (target.closest('.no-edge-swipe') || isModalOpen()) {
     tracking = false
     return
   }

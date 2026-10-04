@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { isCloseSwipe, isLeftSwipe, isOpenSwipe, isOpenSwipeFrom, isSwipeBlockedTarget, isWideLeftSwipe, openZonePx, startsInOpenZone, swipeZone } from './edgeSwipe'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { isCloseSwipe, isLeftSwipe, isModalOpen, isOpenSwipe, isOpenSwipeFrom, isSwipeBlockedTarget, isWideLeftSwipe, openZonePx, startsInOpenZone, swipeZone } from './edgeSwipe'
 
 const W = 400
 
@@ -118,5 +118,33 @@ describe('свайп с середины экрана (BACKLOG 07:52)', () => {
     const c = document.createElement('canvas')
     document.body.appendChild(c)
     expect(isSwipeBlockedTarget(c)).toBe(true)
+  })
+})
+
+// BACKLOG «При активном всплывающем окне нельзя вызывать левую и правую шторки»
+describe('isModalOpen', () => {
+  afterEach(() => {
+    document.querySelectorAll('.modal-backdrop, .gh-backdrop, .logout-backdrop, .gh-panel-backdrop').forEach((e) => e.remove())
+  })
+  const add = (cls: string) => {
+    const el = document.createElement('div')
+    el.className = cls
+    document.body.appendChild(el)
+    return el
+  }
+  it('нет окон — false', () => {
+    expect(isModalOpen()).toBe(false)
+  })
+  it('любое из трёх окон — true, после закрытия снова false', () => {
+    for (const cls of ['modal-backdrop', 'gh-backdrop', 'logout-backdrop']) {
+      const el = add(cls)
+      expect(isModalOpen(), cls).toBe(true)
+      el.remove()
+      expect(isModalOpen(), cls).toBe(false)
+    }
+  })
+  it('подложка самой правой шторки (.gh-panel-backdrop) окном не считается', () => {
+    add('gh-panel-backdrop')
+    expect(isModalOpen()).toBe(false)
   })
 })
