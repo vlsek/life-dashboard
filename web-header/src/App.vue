@@ -45,7 +45,7 @@ onMounted(async () => {
   userId.value = uid
   userEmail.value = data.session?.user.email ?? null
   sidebarTarget.value = document.getElementById('sidebar-top')
-  void sideProfile.load(uid)
+  void sideProfile.load(uid, data.session?.user)
   await Promise.all([initProgress(uid), initWater(uid), syncFavoritesFromProfile(uid).then((l) => (favorites.value = l))])
   ready.value = true
 })

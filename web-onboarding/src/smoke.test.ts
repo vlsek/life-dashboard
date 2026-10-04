@@ -24,7 +24,8 @@ beforeEach(() => {
   vi.clearAllMocks()
   localStorage.clear()
   localStorage.setItem('site_lang', 'en')
-  getSession.mockResolvedValue({ data: { session: { user: { id: 'u1' } } } })
+  // по умолчанию вошли через Google: имя предзаполнено, поле «Имя» не мешает старым сценариям
+  getSession.mockResolvedValue({ data: { session: { user: { id: 'u1', user_metadata: { full_name: 'Test User', picture: 'https://lh3.googleusercontent.com/a/x' } } } } })
   profileMaybeSingle.mockResolvedValue({ data: { onboarded: false } })
   upsert.mockReturnValue({ select: async () => ({ data: [] }) })
   insert.mockImplementation(() => Object.assign(Promise.resolve({ error: null }), { select: async () => ({ data: [{ id: 'p1', name: 'Weight' }] }) }))
@@ -142,5 +143,80 @@ describe('onboarding page (step-by-step)', () => {
     expect(upsert).toHaveBeenCalledWith('profiles', expect.objectContaining({ user_id: 'u1', onboarded: true }))
     const metricsCall = insert.mock.calls.find((c) => c[0] === 'metrics')!
     expect((metricsCall[1] as { name: string }[]).map((r) => r.name)).toEqual(['Water', 'Workout'])
+  })
+})
+
+describe('имя профиля обязательно (BACKLOG 841) и подтягивается из Google (BACKLOG 766)', () => {
+  const next = async (w: ReturnType<typeof mount>) => {
+    await w.find('form').trigger('submit')
+    await flushPromises()
+  }
+  const noGoogle = () => getSession.mockResolvedValue({ data: { session: { user: { id: 'u1', user_metadata: {} } } } })
+
+  it('вход через Google: поле предзаполнено именем из аккаунта и подписано; можно сменить', async () => {
+    const w = mount(App)
+    await flushPromises()
+    expect((w.find('[data-test="name-input"]').element as HTMLInputElement).value).toBe('Test User')
+    expect(w.find('[data-test="name-from-google"]').exists()).toBe(true)
+    await w.find('[data-test="name-input"]').setValue('Аня')
+    expect(w.find('[data-test="name-from-google"]').exists()).toBe(false)
+  })
+
+  it('без Google имя пустое: «Далее» не пускает дальше и просит имя', async () => {
+    noGoogle()
+    const w = mount(App)
+    await flushPromises()
+    expect((w.find('[data-test="name-input"]').element as HTMLInputElement).value).toBe('')
+    await next(w)
+    expect(w.find('[data-test="step-usecase"]').exists()).toBe(true)
+    expect(w.text()).toContain('Enter a name')
+    await w.find('[data-test="name-input"]').setValue('   ')
+    await next(w)
+    expect(w.find('[data-test="step-usecase"]').exists()).toBe(true)
+    await w.find('[data-test="name-input"]').setValue('Аня')
+    await next(w)
+    expect(w.find('[data-test="step-about"]').exists()).toBe(true)
+  })
+
+  it('«Пропустить» без имени тоже не работает и в базу ничего не пишет', async () => {
+    noGoogle()
+    const w = mount(App)
+    await flushPromises()
+    await w.find('[data-test="skip"]').trigger('click')
+    await flushPromises()
+    expect(upsert).not.toHaveBeenCalled()
+    expect(w.text()).toContain('Enter a name')
+  })
+
+  it('«Пропустить» с именем сохраняет display_name и аватарку из Google', async () => {
+    upsert.mockReturnValue(Promise.resolve({ error: null }))
+    const w = mount(App)
+    await flushPromises()
+    await w.find('[data-test="name-input"]').setValue('  Аня   Иванова ')
+    await w.find('[data-test="skip"]').trigger('click')
+    await flushPromises()
+    expect(upsert).toHaveBeenCalledWith('profiles', { user_id: 'u1', display_name: 'Аня Иванова', avatar_url: 'https://lh3.googleusercontent.com/a/x', onboarded: true })
+  })
+
+  it('полное прохождение: имя уходит в профиль вместе с анкетой', async () => {
+    upsert.mockReturnValue(Promise.resolve({ error: null }))
+    const w = mount(App)
+    await flushPromises()
+    await w.find('[data-test="usecase-planner"]').trigger('click')
+    await next(w) // usecase -> about
+    await next(w) // Done
+    expect(upsert).toHaveBeenCalledWith('profiles', expect.objectContaining({ user_id: 'u1', display_name: 'Test User', onboarded: true }))
+  })
+
+  it('своё сохранённое имя приоритетнее Google, а своя аватарка не затирается', async () => {
+    profileMaybeSingle.mockResolvedValue({ data: { onboarded: false, display_name: 'Моё имя', avatar_url: 'https://example.com/mine.png' } })
+    upsert.mockReturnValue(Promise.resolve({ error: null }))
+    const w = mount(App)
+    await flushPromises()
+    expect((w.find('[data-test="name-input"]').element as HTMLInputElement).value).toBe('Моё имя')
+    expect(w.find('[data-test="name-from-google"]').exists()).toBe(false)
+    await w.find('[data-test="skip"]').trigger('click')
+    await flushPromises()
+    expect(upsert).toHaveBeenCalledWith('profiles', { user_id: 'u1', display_name: 'Моё имя', onboarded: true })
   })
 })

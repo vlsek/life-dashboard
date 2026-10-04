@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.85";
+const SITE_VERSION = "2.86";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.86", date: "2026-10-04 05:05", changes: [
+        "Имя профиля теперь обязательно. На первом шаге знакомства появилось поле «Как вас зовут» (без имени нельзя пойти дальше и нельзя нажать «Пропустить»): друзья видят имя в «Сообществе» вместо «Пользователь …». Если вы вошли через Google, имя подставляется из аккаунта (можно изменить), а аватарка берётся оттуда же, если своей ещё нет. У тех, кто зарегистрирован раньше и имени не задал, при входе через Google имя и аватарка подставятся один раз сами; своё имя и свою аватарку не перезаписываем. Правки только в приложении, миграция не нужна."
+    ]},
     { version: "2.85", date: "2026-10-04 04:20", changes: [
         "Сообщество: рамки аватарок других людей. Купленную в «Кастомизации» рамку теперь видят в подиуме, списке лидерборда, карточках друзей и блоке «Сегодня» — у тех, кто виден в лидерборде. Рамка показывается, только если предмет действительно открыт. Нужна миграция 049; без неё чужих рамок нет, остальное работает."
     ]},
@@ -1461,6 +1464,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.86", date: "2026-10-04 05:05", changes: [
+        "A profile name is now required. The first onboarding step has a new \"What is your name\" field (you cannot continue or press Skip without it): friends see the name in Community instead of \"User ...\". If you signed in with Google, the name is filled in from the account (you can change it) and the avatar is taken from there too if you have none. For people who registered earlier without a name, signing in with Google fills in the name and avatar once; your own name and avatar are never overwritten. App-only change, no migration needed."
+    ]},
     { version: "2.85", date: "2026-10-04 04:20", changes: [
         "Community: avatar frames of other people. A frame bought in Customization is now seen on the podium, in the leaderboard list, on friend cards and in the Today block - for people visible on the leaderboard. A frame shows only if the item is really unlocked. Needs migration 049; without it other people's frames are not shown and everything else works."
     ]},

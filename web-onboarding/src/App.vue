@@ -2,13 +2,14 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import LangThemeBar from './components/LangThemeBar.vue'
 import { useOnboarding } from './lib/useOnboarding'
+import { cleanName, NAME_MAX } from './lib/googleProfile'
 import { goalOptions, metricGroups, metricDescription, recommendedKeys, selectedMetrics, dayProgressSettingsFor, starterMetrics, bodyParamKeysFor, layoutFor, stepsFor } from './lib/onboardingData'
 import { todayStr } from './lib/date'
 import { t, getLang } from './lib/i18n'
 import type { GoalType, Usecase } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 
-const { auth, init, complete, skip } = useOnboarding()
+const { auth, google, savedName, init, complete, skip } = useOnboarding()
 onMounted(init)
 
 const lang = getLang()
@@ -20,6 +21,25 @@ const weight = ref('')
 const goalType = ref<GoalType>('lose_weight')
 const skillsRaw = ref('')
 const busy = ref(false)
+// Имя профиля — обязательно (BACKLOG 841): своё сохранённое > имя из Google > пусто. Пока человек сам не правил поле, оно следует за подсказкой.
+const nameInput = ref('')
+const nameTouched = ref(false)
+watch(
+  () => [savedName.value, google.value.name],
+  () => {
+    if (!nameTouched.value) nameInput.value = savedName.value ?? google.value.name ?? ''
+  },
+  { immediate: true },
+)
+const nameFromGoogle = computed(() => !nameTouched.value && !savedName.value && !!google.value.name && nameInput.value === google.value.name)
+function nameOk(): boolean {
+  if (!cleanName(nameInput.value)) {
+    errorMsg.value = t('onb_name_required')
+    return false
+  }
+  return true
+}
+const identity = () => ({ name: cleanName(nameInput.value), avatarFromGoogle: google.value.avatar })
 const errorMsg = ref('')
 const today = todayStr()
 
@@ -76,6 +96,7 @@ function goBack() {
 
 async function onNext() {
   if (auth.value.status !== 'ready') return
+  if (step.value === 'usecase' && !nameOk()) return
   if (step.value === 'about' && !birthdateOk()) return
   if (!isLast.value) {
     errorMsg.value = ''
@@ -87,6 +108,10 @@ async function onNext() {
 
 async function onSubmit() {
   if (auth.value.status !== 'ready') return
+  if (!nameOk()) {
+    stepIdx.value = steps.value.indexOf('usecase')
+    return
+  }
   if (!birthdateOk()) {
     stepIdx.value = steps.value.indexOf('about')
     return
@@ -105,7 +130,7 @@ async function onSubmit() {
     bodyParamKeys: bodyParamKeysFor(usecase.value, goal),
     layout: layoutFor(usecase.value),
   }
-  const res = await complete(auth.value.userId, answers, bodyParamLabels)
+  const res = await complete(auth.value.userId, answers, identity(), bodyParamLabels)
   if (!res.ok) {
     errorMsg.value = t('onb_save_form_error') + res.error.message + '\n\n' + t('onb_migration_hint_001b')
     busy.value = false
@@ -117,10 +142,14 @@ async function onSubmit() {
 
 async function onSkip() {
   if (auth.value.status !== 'ready') return
+  if (!nameOk()) {
+    stepIdx.value = steps.value.indexOf('usecase')
+    return
+  }
   busy.value = true
   errorMsg.value = ''
   saveDayProgressSettings('both')
-  const res = await skip(auth.value.userId, starterMetrics(lang))
+  const res = await skip(auth.value.userId, identity(), starterMetrics(lang))
   if (!res.ok) {
     errorMsg.value = t('dash_save_error_generic') + res.error.message + '\n\n' + t('onb_migration_hint_001')
     busy.value = false
@@ -155,6 +184,13 @@ const usecaseCards: { value: Usecase; title: 'onb_usecase_goals' | 'onb_usecase_
         ></span>
         <span class="dim ml-1 whitespace-nowrap text-xs" data-test="step-counter">{{ stepCounter }}</span>
       </div>
+
+      <!-- Имя профиля — обязательное, на первом шаге (BACKLOG 841); из Google предзаполняется (BACKLOG 766) -->
+      <label v-if="step === 'usecase'" class="mb-3.5 block" data-test="name-field">
+        {{ t('onb_field_name') }}
+        <input v-model="nameInput" type="text" :maxlength="NAME_MAX" autocomplete="name" :placeholder="t('onb_name_placeholder')" class="mt-1 w-full" data-test="name-input" @input="nameTouched = true; errorMsg = ''" />
+        <span v-if="nameFromGoogle" class="dim text-xs" data-test="name-from-google">{{ t('onb_name_from_google') }}</span>
+      </label>
 
       <!-- Шаг 1: сценарий -->
       <fieldset v-if="step === 'usecase'" class="mb-3.5 border-0 p-0" data-test="step-usecase">

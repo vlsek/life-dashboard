@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 
-const db = vi.hoisted(() => ({ session: { user: { id: 'u1', email: 'anna@example.com' } } as null | { user: { id: string; email: string } }, rows: {} as Record<string, unknown[]> }))
+const db = vi.hoisted(() => ({ session: { user: { id: 'u1', email: 'anna@example.com' } } as null | { user: { id: string; email: string; user_metadata?: Record<string, unknown> } }, rows: {} as Record<string, unknown[]>, upserts: [] as unknown[] }))
 vi.mock('./lib/supabase', () => {
   const chain = (table: string) => {
     const c: any = {
@@ -12,7 +12,7 @@ vi.mock('./lib/supabase', () => {
       limit: () => c,
       range: () => c,
       maybeSingle: () => Promise.resolve({ data: (db.rows[table] || [])[0] ?? null, error: null }),
-      upsert: () => Promise.resolve({ error: null }),
+      upsert: (p: unknown) => { db.upserts.push(p); return Promise.resolve({ error: null }) },
       update: () => ({ eq: () => Promise.resolve({ error: null }) }),
       then: (res: (v: unknown) => unknown) => Promise.resolve({ data: db.rows[table] || [], error: null }).then(res),
     }
@@ -39,6 +39,7 @@ beforeEach(() => {
   localStorage.setItem('site_lang', 'ru')
   history.replaceState(null, '', '/goals/')
   db.session = { user: { id: 'u1', email: 'anna@example.com' } }
+  db.upserts = []
   setSidebarProgress(false)
 })
 afterEach(() => {
@@ -93,6 +94,49 @@ describe('верх левого бокового меню (BACKLOG 6.2)', () => 
     const w = mount(App, { attachTo: document.body, props: { panelOnly: true } })
     await flushPromises()
     expect(document.querySelector('#sidebar-top [data-test="sidebar-name"]')).toBeTruthy()
+    w.unmount()
+  })
+})
+
+describe('имя и аватарка из Google для уже зарегистрированных (BACKLOG 766 + 841)', () => {
+  const google = { full_name: 'Аня Иванова', picture: 'https://lh3.googleusercontent.com/a/x' }
+  const nameUpserts = () => db.upserts.filter((u) => u && typeof u === 'object' && 'display_name' in (u as object))
+
+  it('пустое имя + вход через Google: имя и аватарка записываются и сразу видны в меню', async () => {
+    setup({ display_name: null, avatar_url: null })
+    db.session = { user: { id: 'u1', email: 'anna@example.com', user_metadata: google } }
+    const w = mount(App, { attachTo: document.body })
+    await flushPromises()
+    expect(nameUpserts()).toEqual([{ user_id: 'u1', display_name: 'Аня Иванова', avatar_url: 'https://lh3.googleusercontent.com/a/x' }])
+    expect(document.querySelector('[data-test="sidebar-name"]')?.textContent).toBe('Аня Иванова')
+    expect(document.querySelector('[data-test="sidebar-avatar"]')?.getAttribute('src')).toBe('https://lh3.googleusercontent.com/a/x')
+    w.unmount()
+  })
+
+  it('своё имя не перезаписывается, даже если вход через Google', async () => {
+    setup({ display_name: 'Анна', avatar_url: null })
+    db.session = { user: { id: 'u1', email: 'anna@example.com', user_metadata: google } }
+    const w = mount(App, { attachTo: document.body })
+    await flushPromises()
+    expect(nameUpserts()).toEqual([])
+    expect(document.querySelector('[data-test="sidebar-name"]')?.textContent).toBe('Анна')
+    w.unmount()
+  })
+
+  it('пустое имя, но своя аватарка есть: имя подставляется, аватарка остаётся своя', async () => {
+    setup({ display_name: null, avatar_url: 'https://cdn.example/mine.png' })
+    db.session = { user: { id: 'u1', email: 'anna@example.com', user_metadata: google } }
+    const w = mount(App, { attachTo: document.body })
+    await flushPromises()
+    expect(nameUpserts()).toEqual([{ user_id: 'u1', display_name: 'Аня Иванова' }])
+    w.unmount()
+  })
+
+  it('вход по почте (нет данных Google): ничего не пишем', async () => {
+    setup({ display_name: null, avatar_url: null })
+    const w = mount(App, { attachTo: document.body })
+    await flushPromises()
+    expect(nameUpserts()).toEqual([])
     w.unmount()
   })
 })
