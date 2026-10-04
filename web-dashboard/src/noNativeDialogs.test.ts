@@ -8,7 +8,6 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 // пилот надо ВЫНЕСТИ из списка (иначе тест подскажет), а новый нативный вызов в любом другом пилоте — падение.
 const ROOT = '..'
 const KNOWN: Record<string, string> = {
-  'web-workouts': 'confirm() при удалении упражнения/записи — страница в работе у другого агента (BACKLOG 3.3), перевести следующим срезом',
   'web-dashboard': 'prompt() «своё количество воды» в WaterModal — вместе с окном воды (поле ввода в окне вместо prompt)',
   'web-header': 'prompt() «своё количество воды» в WaterModal шапки — то же, отдельный бандл виджетов',
 }

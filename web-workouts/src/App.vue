@@ -26,6 +26,7 @@ import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry, Workout
 import CollapseChevron from './components/CollapseChevron.vue'
 import { vCollapse } from './lib/collapseMotion'
 import EmojiText from './components/EmojiText.vue'
+import { confirmDialog } from './lib/confirmDialog'
 
 // Порт workouts.js/html целиком: CRUD упражнений и записей (подходы), личные рекорды,
 // группировка по категориям со сворачиванием, каталог типовых программ, мини-график прогресса
@@ -126,7 +127,7 @@ async function onSaveExercise(res: ExerciseFormInput) {
 }
 
 async function onDeleteExercise(ex: Exercise) {
-  if (!confirm(t('workouts_confirm_delete_exercise').replace('{name}', ex.name))) return
+  if (!(await confirmDialog(t('workouts_confirm_delete_exercise').replace('{name}', ex.name)))) return
   try {
     await wk.deleteExercise(ex.id)
   } catch (e) {
@@ -171,7 +172,7 @@ const onAddSet = (entry: WorkoutEntry) => quickSets(entry, (sets) => appendCopie
 const onRemoveLastSet = (entry: WorkoutEntry) => quickSets(entry, removeLastSet, 'workouts_toast_set_removed')
 
 async function onDeleteEntry(entry: WorkoutEntry) {
-  if (!confirm(t('workouts_confirm_delete_entry'))) return
+  if (!(await confirmDialog(t('workouts_confirm_delete_entry')))) return
   try {
     await wk.deleteEntry(entry.id)
   } catch (e) {

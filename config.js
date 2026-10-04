@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.79";
+const SITE_VERSION = "2.80";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.80", date: "2026-10-04 12:10", changes: [
+        "Аудит оформления, второй срез. (1) Выпадающие списки (язык и тема в меню, категории, разновидности упражнений, периоды и др.) получили единую аккуратную стрелку в цветах темы вместо системной «из 2000-х» — на 15 страницах; цвета, рамки и размеры списков остались прежними. (2) Удаление упражнения и записи в «Тренировках» теперь спрашивает подтверждение тем же окном в стиле сайта, а не системным окном браузера. Системные окна остались только при вводе своего количества воды — следующим срезом",
+    ]},
     { version: "2.79", date: "2026-10-04 05:40", changes: [
         "Аудит оформления, первый срез. (1) В числовых полях (подходы, вес, цели, нормы и т. д.) пропали стрелки вверх/вниз «как из 2000-х» — вводить по-прежнему можно с клавиатуры, стрелками клавиатуры и колёсиком; на 15 страницах. (2) Вопросы «Удалить?» больше не выглядят как системное окно браузера: теперь это аккуратное окно в цветах темы с кнопками «Отмена» и «Удалить», Esc и нажатие на фон — отмена, фокус сразу на «Отмене», чтобы случайный Enter ничего не удалил. Сделано на страницах «Цели», «Навыки», «Вехи», «Английский», «Магазин», «Челленджи» (там же сообщение об ошибке сохранения вместо системного alert; подтверждение отказа от челленджа подписано «Бросить»). Удаление в «Тренировках» и ввод своего количества воды пока по-старому — следующим срезом",
     ]},
@@ -1442,6 +1445,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.80", date: "2026-10-04 12:10", changes: [
+        "Look audit, second slice. (1) Drop-down lists (language and theme in the menu, categories, exercise variations, periods and others) now have one neat arrow in the theme colors instead of the old system one, on 15 pages; the colors, borders and sizes of the lists stay as they were. (2) Deleting an exercise or an entry in Workouts now asks for confirmation with the same site-styled window instead of the browser system box. System boxes remain only when typing a custom water amount - next slice",
+    ]},
     { version: "2.79", date: "2026-10-04 05:40", changes: [
         "Look audit, first slice. (1) Number fields (sets, weight, goals, norms and so on) no longer show the old up/down arrows - you can still type, use the keyboard arrows and the mouse wheel; on 15 pages. (2) Delete questions no longer look like the browser system box: it is now a neat window in the theme colors with Cancel and Delete buttons, Esc or a tap on the backdrop cancels, and focus starts on Cancel so a stray Enter deletes nothing. Done on Goals, Skills, Milestones, English, Shop and Challenges (which also gets an in-page save-error message instead of the system alert; abandoning a challenge is labelled Abandon). Deleting in Workouts and typing a custom water amount still work the old way - next slice",
     ]},

@@ -186,3 +186,24 @@ input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+/* Нативные выпадающие списки (BACKLOG 567, «Аудит устаревшего оформления»): единая аккуратная стрелка в цветах темы вместо
+   системной «из 2000-х». Трогаем ТОЛЬКО стрелку (background-image/position/size/repeat) и отступ справа под неё; цвет фона,
+   рамка и текст остаются своими у каждого списка (у многих они заданы инлайн-стилем `background: …` — поэтому !important,
+   иначе шорткат сбросил бы картинку). Списки с multiple/size — это не выпадающие, их не трогаем. */
+select:not([multiple]):not([size]) {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-dim, currentColor) 50%),
+    linear-gradient(135deg, var(--text-dim, currentColor) 50%, transparent 50%) !important;
+  background-position:
+    calc(100% - 15px) 55%,
+    calc(100% - 10px) 55% !important;
+  background-size:
+    5px 5px,
+    5px 5px !important;
+  background-repeat: no-repeat !important;
+  padding-right: 1.75rem;
+  cursor: pointer;
+}
