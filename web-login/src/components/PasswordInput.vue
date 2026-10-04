@@ -21,7 +21,7 @@ const shown = ref(false)
     />
     <button
       type="button"
-      class="absolute right-2 top-1/2 -translate-y-1/2"
+      class="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer"
       style="color: var(--text-dim)"
       :aria-label="shown ? t('password_toggle_hide') : t('password_toggle_show')"
       @click="shown = !shown"

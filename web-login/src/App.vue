@@ -25,8 +25,8 @@ const tabStyle = (active: boolean) => ({
 
     <div class="w-full max-w-[360px] rounded-lg border p-4" style="border-color: var(--border); background: var(--bg-card)">
       <div class="mb-4 flex">
-        <button type="button" class="flex-1 bg-transparent py-2" :style="tabStyle(mode === 'login')" @click="setMode('login')">{{ t('tab_login') }}</button>
-        <button type="button" class="flex-1 bg-transparent py-2" :style="tabStyle(mode === 'register')" @click="setMode('register')">{{ t('tab_register') }}</button>
+        <button type="button" class="flex-1 cursor-pointer bg-transparent py-2" :style="tabStyle(mode === 'login')" @click="setMode('login')">{{ t('tab_login') }}</button>
+        <button type="button" class="flex-1 cursor-pointer bg-transparent py-2" :style="tabStyle(mode === 'register')" @click="setMode('register')">{{ t('tab_register') }}</button>
       </div>
 
       <form @submit.prevent="submit">
@@ -44,7 +44,13 @@ const tabStyle = (active: boolean) => ({
           {{ t('password_label') }}
           <div class="mt-1"><PasswordInput v-model="password" /></div>
         </label>
-        <button type="submit" class="mt-4 w-full rounded-lg py-2" :disabled="busy">{{ mode === 'login' ? t('login_btn') : t('register_btn') }}</button>
+        <button
+          type="submit"
+          class="mt-4 w-full cursor-pointer rounded-lg py-2 font-medium transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          style="background: var(--accent); color: var(--accent-text)"
+          data-test="login-submit"
+          :disabled="busy"
+        >{{ mode === 'login' ? t('login_btn') : t('register_btn') }}</button>
       </form>
 
       <div class="my-3.5 flex items-center gap-2 text-sm" style="color: var(--text-dim)">
@@ -55,7 +61,7 @@ const tabStyle = (active: boolean) => ({
 
       <button
         type="button"
-        class="flex w-full items-center justify-center gap-2.5 rounded-lg border bg-transparent py-2"
+        class="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg border bg-transparent py-2 hover:opacity-90"
         style="border-color: var(--border); color: var(--text)"
         @click="signInWithGoogle"
       >

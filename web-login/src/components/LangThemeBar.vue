@@ -22,7 +22,7 @@ function onThemeChange(e: Event) {
         v-for="l in (['en', 'ru'] as const)"
         :key="l"
         type="button"
-        class="rounded-lg border px-3 py-1 text-sm"
+        class="cursor-pointer rounded-lg border px-3 py-1 text-sm"
         :style="{
           borderColor: 'var(--border)',
           background: lang === l ? 'var(--accent)' : 'transparent',
