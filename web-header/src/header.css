@@ -174,3 +174,22 @@ html[data-motion="off"] .water-saved-check { stroke-dashoffset: 0; }
 @keyframes gh-pf-fade { 0% { opacity: 0; } 20% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .gh-pf { animation: gh-pf-fade 1.2s ease-out forwards; } }
 
+/* Анимированные рамки аватарки (BACKLOG 34, предметы Кастомизации frame_flame / frame_rainbow). Анимация перекрывает inline box-shadow;
+   без анимации остаётся статичный вид из customFrame.ts. Гасят prefers-reduced-motion и «отключить все анимации» (html data-motion off, правило выше). */
+@keyframes cust-frame-flame {
+  0% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #ff7a1a, 0 0 10px 2px rgba(255, 98, 20, 0.55); }
+  50% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #ffb02e, 0 0 18px 5px rgba(255, 69, 0, 0.75); }
+  100% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #ff5a1a, 0 0 12px 3px rgba(255, 140, 20, 0.6); }
+}
+@keyframes cust-frame-rainbow {
+  0% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #ff4f4f, 0 0 12px 2px rgba(255, 79, 79, 0.5); }
+  17% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #ffb02e, 0 0 12px 2px rgba(255, 176, 46, 0.5); }
+  34% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #ffe14f, 0 0 12px 2px rgba(255, 225, 79, 0.5); }
+  50% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #4fd17a, 0 0 12px 2px rgba(79, 209, 122, 0.5); }
+  67% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #4fd1ff, 0 0 12px 2px rgba(79, 209, 255, 0.5); }
+  84% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #8a7dff, 0 0 12px 2px rgba(138, 125, 255, 0.5); }
+  100% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #ff4f4f, 0 0 12px 2px rgba(255, 79, 79, 0.5); }
+}
+.cust-frame-flame { animation: cust-frame-flame 1.6s ease-in-out infinite alternate; }
+.cust-frame-rainbow { animation: cust-frame-rainbow 5s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .cust-frame-flame, .cust-frame-rainbow { animation: none; } }

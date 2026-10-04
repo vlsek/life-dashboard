@@ -155,6 +155,17 @@ describe('рамка аватарки в левом меню (BACKLOG 491)', () 
     expect((w2.find('[data-test="sidebar-initial"]').element as HTMLElement).style.boxShadow).toBe('')
     w1.unmount(); w2.unmount()
   })
+
+  it('анимированная рамка вешает CSS-класс анимации на аватар меню; статичная — нет', async () => {
+    const { mount: m } = await import('@vue/test-utils')
+    const SidebarTop = (await import('./components/SidebarTop.vue')).default
+    const common = { displayName: 'Анна', email: 'a@b.c', avatarUrl: null, showProgress: false, day: null, week: null }
+    const w1 = m(SidebarTop, { props: { ...common, avatarFrame: 'frame_flame' } })
+    expect(w1.find('[data-test="sidebar-initial"]').classes()).toContain('cust-frame-flame')
+    const w2 = m(SidebarTop, { props: { ...common, avatarFrame: 'frame_neon' } })
+    expect(w2.find('[data-test="sidebar-initial"]').classes().some((c) => c.startsWith('cust-frame'))).toBe(false)
+    w1.unmount(); w2.unmount()
+  })
 })
 
 describe('слой «+N / −N» шапки (BACKLOG 469)', () => {

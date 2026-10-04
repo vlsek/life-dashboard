@@ -29,7 +29,7 @@ vi.mock('./lib/supabase', () => {
         case 'get_leaderboard_period':
           return { data: [row('u1', 'Anna', 90), row('u2', 'Boris', 80), row('u3', 'Clara', 70), row('u4', 'Dmitry', 60), row('me', 'Me', 10)], error: null }
         case 'get_public_frames':
-          return h.framesError ? { data: null, error: { message: 'Could not find the function' } } : { data: [{ user_id: 'u2', frame: 'frame_neon' }, { user_id: 'u4', frame: 'frame_gold' }, { user_id: 'u3', frame: 'bogus_frame' }], error: null }
+          return h.framesError ? { data: null, error: { message: 'Could not find the function' } } : { data: [{ user_id: 'u2', frame: 'frame_neon' }, { user_id: 'u4', frame: 'frame_gold' }, { user_id: 'u3', frame: 'bogus_frame' }, { user_id: 'me', frame: 'frame_rainbow' }], error: null }
         default:
           return { data: [], error: null }
       }
@@ -68,6 +68,16 @@ describe('рамки чужих аватаров', () => {
     expect(w.find('[data-testid="podium"]').exists()).toBe(true)
     expect(w.html()).not.toContain('#ff4fa3')
     expect(w.html()).not.toContain('#e0b23c')
+    w.unmount()
+  })
+})
+
+describe('анимированные рамки в Сообществе', () => {
+  it('анимированная рамка получает CSS-класс анимации, статичная — нет', async () => {
+    const w = mount(App)
+    await flushPromises()
+    expect(w.find('.cust-frame-rainbow').exists()).toBe(true) // «я» в шапке профиля
+    expect(w.findAll('.cust-frame-flame, .cust-frame-rainbow').length).toBe(1)
     w.unmount()
   })
 })

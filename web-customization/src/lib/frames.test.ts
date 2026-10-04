@@ -16,3 +16,18 @@ describe('копии frames.ts совпадают (страж от расхож�
     expect(body(await readSrc('../../../web-community/src/lib/customFrame.ts'))).toBe(orig)
   })
 })
+
+describe('стили анимированных рамок есть везде, где рисуется аватар (страж)', () => {
+  it('в style.css Кастомизации и Сообщества и header.css шапки: keyframes, класс и отключение при reduced-motion', async () => {
+    const { FRAME_ANIMATIONS } = await import('./frames')
+    const files = ['./../style.css', '../../../web-community/src/style.css', '../../../web-header/src/header.css']
+    for (const f of files) {
+      const css = await readSrc(f)
+      for (const cls of Object.values(FRAME_ANIMATIONS)) {
+        expect(css, f + ' ' + cls).toContain('@keyframes ' + cls)
+        expect(css, f + ' ' + cls).toMatch(new RegExp('\\.' + cls + ' \\{ animation: ' + cls))
+      }
+      expect(css, f).toMatch(/prefers-reduced-motion: reduce\) \{ \.cust-frame-flame, \.cust-frame-rainbow \{ animation: none; \} \}/)
+    }
+  })
+})

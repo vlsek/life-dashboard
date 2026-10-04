@@ -71,3 +71,16 @@ describe('страница «Кастомизация»', () => {
     w.unmount()
   })
 })
+
+describe('анимированные рамки на странице', () => {
+  it('у огненной и радужной есть пометка «Анимированная» и класс анимации на превью; у неоновой нет', async () => {
+    const w = mount(App)
+    await flushPromises()
+    expect(w.find('[data-testid="item-frame_flame"] [data-testid="animated"]').exists()).toBe(true)
+    expect(w.find('[data-testid="item-frame_flame"] span.cust-frame-flame').exists()).toBe(true)
+    expect(w.find('[data-testid="item-frame_rainbow"] span.cust-frame-rainbow').exists()).toBe(true)
+    expect(w.find('[data-testid="item-frame_neon"] [data-testid="animated"]').exists()).toBe(false)
+    expect(w.find('[data-testid="item-frame_flame"]').attributes('data-status')).toBe('buyable')
+    w.unmount()
+  })
+})

@@ -23,6 +23,8 @@ export const ITEMS: readonly CustomItem[] = [
   { key: 'frame_neon', category: 'avatar_frame', source: 'points', tier: 'low' },
   { key: 'frame_aurora', category: 'avatar_frame', source: 'points', tier: 'mid' },
   { key: 'frame_gold', category: 'avatar_frame', source: 'achievement', achievement: 'streak_30' },
+  { key: 'frame_flame', category: 'avatar_frame', source: 'points', tier: 'high' },
+  { key: 'frame_rainbow', category: 'avatar_frame', source: 'points', tier: 'high' },
 ]
 
 export const itemByKey = (key: string): CustomItem | undefined => ITEMS.find((i) => i.key === key)

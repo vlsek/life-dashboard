@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.97";
+const SITE_VERSION = "2.98";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.98", date: "2026-10-04 20:40", changes: [
+        "Кастомизация: две анимированные рамки аватарки — «Огненная» (пламя пульсирует) и «Радужная» (цвет плавно переливается), по 250 баллов. Рамка движется на вашем аватаре в левом меню и в «Сообществе» у всех, кто её увидит; при «уменьшить движение» в системе или выключенных анимациях в настройках остаётся спокойный статичный вид. Заодно в значки «Сообщества» добавлено достижение «Мега продуктивность». Миграция не нужна."
+    ]},
     { version: "2.97", date: "2026-10-04 19:05", changes: [
         "Дашборд, «Дневные метрики»: кнопка «Сохранить день» и итог дня («Баллы») перенесены в самый низ блока — после последней метрики (после «Подходов»), а не посередине. Теперь очевидно, что это последний шаг",
     ]},
@@ -1498,6 +1501,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.98", date: "2026-10-04 20:40", changes: [
+        "Customization: two animated avatar frames - Flame (the fire pulses) and Rainbow (the colour smoothly cycles), 250 points each. The frame moves on your avatar in the side menu and in Community for everyone who sees it; with reduced motion in the system or animations turned off in settings it stays a calm static look. Also the Mega productivity achievement is added to Community badges. No migration needed."
+    ]},
     { version: "2.97", date: "2026-10-04 19:05", changes: [
         "Dashboard, Daily metrics: the \"Save day\" button and the day score are moved to the very bottom of the block — after the last metric (after \"Sets\") instead of the middle. It is now clear that it is the final step",
     ]},

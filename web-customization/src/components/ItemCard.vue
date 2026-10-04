@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { t } from '../lib/i18n'
-import { frameShadow } from '../lib/frames'
+import { frameClass, frameShadow } from '../lib/frames'
 import { priceOf, shortBy, type CustomItem, type ItemStatus } from '../lib/customization'
 import Icon from './Icon.vue'
 
@@ -19,10 +19,12 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
   <div class="flex flex-col items-center gap-2 rounded-xl border p-3 text-center" style="background: var(--bg-card); border-color: var(--border)" :data-testid="'item-' + item.key" :data-status="status">
     <span
       class="flex h-14 w-14 items-center justify-center rounded-full text-lg font-medium"
+      :class="frameClass(item.key)"
       :style="{ background: 'var(--accent)', color: 'var(--accent-text, #fff)', boxShadow: frameShadow(item.key), opacity: status === 'locked' || status === 'short' ? 0.55 : 1 }"
       aria-hidden="true"
     >A</span>
     <p class="m-0 text-sm font-medium">{{ name }}</p>
+    <p v-if="frameClass(item.key)" class="dim m-0 text-xs" data-testid="animated">{{ t('cust_animated') }}</p>
     <p v-if="item.source === 'achievement'" class="dim m-0 text-xs"><Icon name="medal" /> {{ t('cust_reward_for') }} «{{ reward }}»</p>
     <p v-else-if="status === 'owned' || status === 'selected'" class="dim m-0 text-xs">{{ t('cust_owned') }}</p>
 

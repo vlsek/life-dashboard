@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { t } from '../lib/i18n'
 import { profileLabel } from '../lib/sidebarProfile'
-import { frameShadow } from '../lib/customFrame'
+import { frameClass, frameShadow } from '../lib/customFrame'
 import DayWeekBadge from './DayWeekBadge.vue'
 
 // Верх левого бокового меню (BACKLOG 6.2): аватар, имя, почта — ссылка на Аккаунт; по опции «Прогресс в меню»
@@ -16,8 +16,8 @@ const label = computed(() => profileLabel(props.displayName, props.email))
 <template>
   <div class="gh-side" data-test="sidebar-top">
     <a href="/account/" class="gh-side-user" data-test="sidebar-user" :title="t('nav_account_title')">
-      <img v-if="avatarUrl" :src="avatarUrl" alt="" class="gh-side-avatar" :style="{ boxShadow: frameShadow(avatarFrame) }" data-test="sidebar-avatar" />
-      <span v-else class="gh-side-avatar gh-side-initial" :style="{ boxShadow: frameShadow(avatarFrame) }" data-test="sidebar-initial">{{ label.initial }}</span>
+      <img v-if="avatarUrl" :src="avatarUrl" alt="" class="gh-side-avatar" :class="frameClass(avatarFrame)" :style="{ boxShadow: frameShadow(avatarFrame) }" data-test="sidebar-avatar" />
+      <span v-else class="gh-side-avatar gh-side-initial" :class="frameClass(avatarFrame)" :style="{ boxShadow: frameShadow(avatarFrame) }" data-test="sidebar-initial">{{ label.initial }}</span>
       <span class="gh-side-text">
         <span class="gh-side-name" data-test="sidebar-name">{{ label.name }}</span>
         <span v-if="email && displayName" class="gh-dim gh-side-email">{{ email }}</span>

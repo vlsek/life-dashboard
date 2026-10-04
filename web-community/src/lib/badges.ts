@@ -30,6 +30,7 @@ export const BADGES: readonly BadgeDef[] = [
   { key: 'challenges_5', group: 'challenges', target: 5, icon: 'challenges' },
   { key: 'goals_10', group: 'goals', target: 10, icon: 'goals' },
   { key: 'books_5', group: 'books', target: 5, icon: 'book' },
+  { key: 'mega_productivity', group: 'weeks', target: 1, icon: 'pulse' },
 ]
 
 const BY_KEY = new Map(BADGES.map((b) => [b.key, b]))

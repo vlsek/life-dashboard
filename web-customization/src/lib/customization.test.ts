@@ -12,7 +12,7 @@ import {
   shortBy,
   type CustomState,
 } from './customization'
-import { FRAME_SHADOWS, frameShadow } from './frames'
+import { FRAME_ANIMATIONS, FRAME_SHADOWS, frameClass, frameShadow } from './frames'
 
 const st = (over: Partial<CustomState> = {}): CustomState => ({ unlocked: {}, selected: {}, balance: 0, achievements: new Set(), ...over })
 const neon = itemByKey('frame_neon')!
@@ -36,7 +36,7 @@ describe('реестр', () => {
     for (const i of ITEMS) expect(FRAME_SHADOWS[i.key], i.key).toBeTruthy()
   })
   it('itemsOf делит по источнику', () => {
-    expect(itemsOf('avatar_frame', 'points').map((i) => i.key)).toEqual(['frame_neon', 'frame_aurora'])
+    expect(itemsOf('avatar_frame', 'points').map((i) => i.key)).toEqual(['frame_neon', 'frame_aurora', 'frame_flame', 'frame_rainbow'])
     expect(itemsOf('avatar_frame', 'achievement').map((i) => i.key)).toEqual(['frame_gold'])
   })
 })
@@ -93,5 +93,25 @@ describe('frameShadow', () => {
     expect(frameShadow('nope')).toBe('')
     expect(frameShadow(null)).toBe('')
     expect(frameShadow(undefined)).toBe('')
+  })
+})
+
+describe('анимированные рамки (BACKLOG 34)', () => {
+  it('огненная и радужная — за баллы по высшему тарифу 250', () => {
+    for (const k of ['frame_flame', 'frame_rainbow']) {
+      const it = itemByKey(k)!
+      expect(it.source).toBe('points')
+      expect(priceOf(it)).toBe(250)
+    }
+  })
+  it('у анимированной есть класс, у статичной и неизвестной — нет', () => {
+    expect(frameClass('frame_flame')).toBe('cust-frame-flame')
+    expect(frameClass('frame_rainbow')).toBe('cust-frame-rainbow')
+    expect(frameClass('frame_neon')).toBe('')
+    expect(frameClass('nope')).toBe('')
+    expect(frameClass(null)).toBe('')
+  })
+  it('каждая анимация привязана к существующей рамке и имеет статичную тень', () => {
+    for (const k of Object.keys(FRAME_ANIMATIONS)) expect(FRAME_SHADOWS[k], k).toBeTruthy()
   })
 })
