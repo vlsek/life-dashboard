@@ -1,6 +1,13 @@
 {
-  "version": "2.96",
+  "version": "2.97",
   "en": [
+    {
+      "version": "2.97",
+      "date": "2026-10-04 19:05",
+      "changes": [
+        "Dashboard, Daily metrics: the \"Save day\" button and the day score are moved to the very bottom of the block — after the last metric (after \"Sets\") instead of the middle. It is now clear that it is the final step"
+      ]
+    },
     {
       "version": "2.96",
       "date": "2026-10-04 18:57",
@@ -2136,6 +2143,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.97",
+      "date": "2026-10-04 19:05",
+      "changes": [
+        "Дашборд, «Дневные метрики»: кнопка «Сохранить день» и итог дня («Баллы») перенесены в самый низ блока — после последней метрики (после «Подходов»), а не посередине. Теперь очевидно, что это последний шаг"
+      ]
+    },
     {
       "version": "2.96",
       "date": "2026-10-04 18:57",

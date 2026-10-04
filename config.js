@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.96";
+const SITE_VERSION = "2.97";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.97", date: "2026-10-04 19:05", changes: [
+        "Дашборд, «Дневные метрики»: кнопка «Сохранить день» и итог дня («Баллы») перенесены в самый низ блока — после последней метрики (после «Подходов»), а не посередине. Теперь очевидно, что это последний шаг",
+    ]},
     { version: "2.96", date: "2026-10-04 18:57", changes: [
         "Достижения: новое достижение «Мега продуктивность» (группа «Недели») — закончить неделю больше чем на 100%. Считаются закончившиеся недели (пн–вс) по тем же правилам, что кольцо недели: все пункты недели выполнены и сверху набран бонус за ⭐-пункты плана. Текущая неделя в зачёт не идёт — достижение откроется, когда неделя закончится. Если показ прогресса выключен в настройках, недели не считаются",
     ]},
@@ -1495,6 +1498,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.97", date: "2026-10-04 19:05", changes: [
+        "Dashboard, Daily metrics: the \"Save day\" button and the day score are moved to the very bottom of the block — after the last metric (after \"Sets\") instead of the middle. It is now clear that it is the final step",
+    ]},
     { version: "2.96", date: "2026-10-04 18:57", changes: [
         "Achievements: a new achievement \"Mega productivity\" (group \"Weeks\") — finish a week above 100%. Finished weeks (Mon–Sun) count, by the same rules as the week ring: every item of the week done plus a bonus from the starred (⭐) plan items on top. The current week does not count — the achievement unlocks once the week is over. If progress display is switched off in settings, weeks are not counted",
     ]},
