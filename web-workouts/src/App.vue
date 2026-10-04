@@ -27,6 +27,7 @@ import CollapseChevron from './components/CollapseChevron.vue'
 import { vCollapse } from './lib/collapseMotion'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
+import { errMsg } from './lib/errMsg'
 
 // Порт workouts.js/html целиком: CRUD упражнений и записей (подходы), личные рекорды,
 // группировка по категориям со сворачиванием, каталог типовых программ, мини-график прогресса
@@ -37,9 +38,6 @@ const { auth, exercises, entries, loadError, entriesFor } = wk
 const defaultUnit = () => defaultWeightUnit()
 const defaultValueLabel = () => t('workouts_default_value_label')
 
-function errMsg(e: unknown): string {
-  return e instanceof Error ? e.message : String(e)
-}
 // Порт showExerciseSaveError(): подсказка про миграции 027/028, если ошибка про эти поля.
 function saveErrorText(e: unknown): string {
   const m = errMsg(e)

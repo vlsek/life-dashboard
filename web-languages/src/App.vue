@@ -10,6 +10,7 @@ import Icon from './components/Icon.vue'
 import type { VocabWord, WordFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
+import { errMsg } from './lib/errMsg'
 
 const { auth, words, error, addWord, editWord, deleteWord, toggleLearned } = useVocab()
 
@@ -83,7 +84,7 @@ async function onSave(res: WordFormInput) {
     else await addWord(auth.value.userId, res)
     formOpen.value = false
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e)
+    const msg = errMsg(e)
     const hint = /lang/i.test(msg) ? ' — ' + t('eng_lang_migration_hint') : ''
     saveError.value = t('dash_save_error_generic') + msg + hint
   }
@@ -94,7 +95,7 @@ async function onDelete(id: string) {
   try {
     await deleteWord(id)
   } catch (e) {
-    saveError.value = t('dash_delete_error_generic') + (e instanceof Error ? e.message : String(e))
+    saveError.value = t('dash_delete_error_generic') + errMsg(e)
   }
 }
 </script>

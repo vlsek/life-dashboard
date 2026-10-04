@@ -144,13 +144,13 @@ describe('«+ подход» в таблице записей', () => {
     w.unmount()
   })
 
-  it('сбой записи — тост с ошибкой (общий текст пилота «Не удалось сохранить»), подходов не прибавилось', async () => {
+  it('сбой записи — тост с ошибкой (с текстом ошибки базы), подходов не прибавилось', async () => {
     h.updateError = { message: 'rls' }
     const w = await mountApp()
     await add(w).trigger('click')
     await flushPromises()
     await flushPromises()
-    expect(w.text()).toContain('Не удалось сохранить')
+    expect(w.text()).toContain('Не удалось сохранить: rls') // текст ошибки Supabase, а не «[object Object]»
     expect(w.text()).not.toContain('Подход 2 добавлен')
     expect(remove(w).exists()).toBe(false)
     w.unmount()
