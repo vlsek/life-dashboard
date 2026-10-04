@@ -16,10 +16,11 @@ export type CounterKey =
   | 'booksDone'
   | 'workoutDays' // дней, в которые есть хотя бы одна запись тренировки
   | 'challengesDone'
+  | 'megaWeeks' // закончено недель больше чем на 100% (пн–вс прошли целиком; см. weekProgress.ts)
 
 export type Counters = Record<CounterKey, number>
 
-export type GroupKey = 'streak' | 'points' | 'first' | 'workouts' | 'challenges' | 'goals' | 'books'
+export type GroupKey = 'streak' | 'points' | 'first' | 'workouts' | 'challenges' | 'goals' | 'books' | 'weeks'
 
 export interface AchievementDef {
   key: string
@@ -30,7 +31,7 @@ export interface AchievementDef {
 }
 
 // Порядок групп на странице.
-export const GROUP_ORDER: readonly GroupKey[] = ['first', 'streak', 'points', 'workouts', 'challenges', 'goals', 'books']
+export const GROUP_ORDER: readonly GroupKey[] = ['first', 'streak', 'points', 'workouts', 'challenges', 'goals', 'books', 'weeks']
 
 // Стартовый набор (~20), одобрен владельцем 2026-10-03. Пороги серий — как у поздравлений (DAY_THRESHOLDS в web-dashboard).
 export const ACHIEVEMENTS: readonly AchievementDef[] = [
@@ -53,6 +54,8 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   { key: 'challenges_5', group: 'challenges', counter: 'challengesDone', target: 5, icon: 'challenges' },
   { key: 'goals_10', group: 'goals', counter: 'goalsDone', target: 10, icon: 'goals' },
   { key: 'books_5', group: 'books', counter: 'booksDone', target: 5, icon: 'book' },
+  // «Мега продуктивность» (BACKLOG раздел 32, владелец 2026-10-04): закончить неделю более чем на 100% (нужен бонус ⭐ из плана)
+  { key: 'mega_productivity', group: 'weeks', counter: 'megaWeeks', target: 1, icon: 'pulse' },
 ]
 
 export interface AchievementState {
@@ -122,6 +125,7 @@ export interface CounterInput {
   weightEntries: number
   workoutDates: string[] // даты записей тренировок (повторы допустимы)
   challengesDone: number
+  megaWeeks?: number // считает weekProgress.countMegaWeeks (нужны заметки-планы и цели); не передан — 0
   today: Date
 }
 
@@ -189,6 +193,7 @@ export function computeCounters(input: CounterInput): Counters {
     booksDone: input.doneBooks.length,
     workoutDays: new Set(input.workoutDates).size,
     challengesDone: input.challengesDone,
+    megaWeeks: input.megaWeeks ?? 0,
   }
 }
 

@@ -5,7 +5,7 @@ import { ACHIEVEMENTS, BASELINE_KEY, evaluate, type Counters } from './lib/achie
 
 vi.mock('./lib/supabase', () => ({ logout: vi.fn(), sb: {} }))
 
-const ZERO: Counters = { streakBest: 0, pointsTotal: 0, metricDone: 0, weightEntries: 0, goalsDone: 0, skillsMastered: 0, booksDone: 0, workoutDays: 0, challengesDone: 0 }
+const ZERO: Counters = { streakBest: 0, pointsTotal: 0, metricDone: 0, weightEntries: 0, goalsDone: 0, skillsMastered: 0, booksDone: 0, workoutDays: 0, challengesDone: 0, megaWeeks: 0 }
 
 const hold = {
   auth: ref<unknown>({ status: 'ready', userId: 'u', userEmail: 'a@b.c' }),
@@ -38,11 +38,11 @@ async function mountApp() {
 }
 
 describe('страница «Достижения»', () => {
-  it('рисует все достижения реестра сгруппированно, счётчик «0 / 19», без записи про устройство при работе с таблицей', async () => {
+  it('рисует все достижения реестра сгруппированно, счётчик «0 / 20», без записи про устройство при работе с таблицей', async () => {
     const w = await mountApp()
     expect(w.findAll('[data-testid="achievement-card"]').length).toBe(ACHIEVEMENTS.length)
     expect(w.find('[data-testid="achievements-count"]').text()).toBe(`0 / ${ACHIEVEMENTS.length}`)
-    expect(w.findAll('section[data-group]').length).toBe(7)
+    expect(w.findAll('section[data-group]').length).toBe(8)
     expect(w.find('[data-testid="achievements-local-note"]').exists()).toBe(false)
     w.unmount()
   })

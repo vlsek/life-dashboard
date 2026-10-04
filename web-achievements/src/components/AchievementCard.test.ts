@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils'
 import AchievementCard from './AchievementCard.vue'
 import { ACHIEVEMENTS, evaluate, type Counters } from '../lib/achievements'
 
-const ZERO: Counters = { streakBest: 0, pointsTotal: 0, metricDone: 0, weightEntries: 0, goalsDone: 0, skillsMastered: 0, booksDone: 0, workoutDays: 0, challengesDone: 0 }
+const ZERO: Counters = { streakBest: 0, pointsTotal: 0, metricDone: 0, weightEntries: 0, goalsDone: 0, skillsMastered: 0, booksDone: 0, workoutDays: 0, challengesDone: 0, megaWeeks: 0 }
 const stateOf = (key: string, counters: Partial<Counters>) => evaluate({ ...ZERO, ...counters }).find((s) => s.def.key === key)!
 
 afterEach(() => localStorage.removeItem('site_lang'))
