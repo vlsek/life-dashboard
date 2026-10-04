@@ -1,6 +1,13 @@
 {
-  "version": "2.76",
+  "version": "2.77",
   "en": [
+    {
+      "version": "2.77",
+      "date": "2026-10-04 11:02",
+      "changes": [
+        "While a pop-up window is open, the left and right side menus no longer open, neither by swipe nor by button — before, a menu could be pulled out over the window. An already open menu closes as usual"
+      ]
+    },
     {
       "version": "2.76",
       "date": "2026-10-04 10:39",
@@ -1994,6 +2001,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.77",
+      "date": "2026-10-04 11:02",
+      "changes": [
+        "Пока на экране открыто всплывающее окно, левое и правое боковые меню не открываются ни свайпом, ни кнопкой — раньше меню можно было вытянуть поверх окна. Уже открытое меню закрывается как обычно"
+      ]
+    },
     {
       "version": "2.76",
       "date": "2026-10-04 10:39",

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.76";
+const SITE_VERSION = "2.77";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.77", date: "2026-10-04 11:02", changes: [
+        "Пока на экране открыто всплывающее окно, левое и правое боковые меню не открываются ни свайпом, ни кнопкой — раньше меню можно было вытянуть поверх окна. Уже открытое меню закрывается как обычно",
+    ]},
     { version: "2.76", date: "2026-10-04 10:39", changes: [
         "Графики метрик с подходами: в легенде под графиком у каждой особенности подхода теперь два числа — сколько повторений за показанный период и сколько за сегодня («· 60 · сегодня 20»). Если сегодня подходов не было, у особенности будет «сегодня 0»",
     ]},
@@ -1433,6 +1436,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.77", date: "2026-10-04 11:02", changes: [
+        "While a pop-up window is open, the left and right side menus no longer open, neither by swipe nor by button — before, a menu could be pulled out over the window. An already open menu closes as usual",
+    ]},
     { version: "2.76", date: "2026-10-04 10:39", changes: [
         "Charts of set metrics: the legend under a chart now shows two numbers for each set variation — reps over the shown period and reps today (60 · today 20). If you did no sets today, the variation shows today 0",
     ]},
