@@ -116,15 +116,17 @@ function onPeriodApplied() {
     <p v-if="error" class="dim text-sm">{{ t('comm_load_error') }} {{ error }}</p>
 
     <div v-else class="card">
-      <div class="mb-3.5 flex justify-end">
+      <!-- «Настроить графики» (слева) и выбор периода первого графика (справа) — в одной строке (BACKLOG раздел 28); пока графиков нет — кнопка одна -->
+      <div v-if="withData().length === 0" class="mb-3.5 flex justify-start" data-test="charts-head">
         <button type="button" class="secondary" data-test="configure" @click="((configError = null), (showConfig = true))"><EmojiText :text="t('dash_charts_configure_btn')" /></button>
       </div>
 
       <p v-if="entries.length === 0" class="dim">{{ t('dash_charts_empty') }}</p>
       <p v-else-if="withData().length === 0" class="dim">{{ t('dash_charts_no_data_yet') }}</p>
 
-      <div v-for="entry in withData()" :key="entry.key" class="mb-4" data-test="chart">
-        <div class="mb-0.5 flex justify-end">
+      <div v-for="(entry, i) in withData()" :key="entry.key" class="mb-4" data-test="chart">
+        <div class="mb-0.5 flex items-center gap-2" :class="i === 0 ? 'justify-between' : 'justify-end'" :data-test="i === 0 ? 'charts-head' : undefined">
+          <button v-if="i === 0" type="button" class="secondary" data-test="configure" @click="((configError = null), (showConfig = true))"><EmojiText :text="t('dash_charts_configure_btn')" /></button>
           <button
             type="button"
             class="secondary chart-period-btn"

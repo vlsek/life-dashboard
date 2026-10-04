@@ -237,6 +237,43 @@ describe('ChartsSection', () => {
     w.unmount()
   })
 
+  it('BACKLOG раздел 28: «Настроить графики» и период первого графика — в одной строке (настройка слева, период справа); у остальных графиков период справа', async () => {
+    const { default: ChartsSection } = await import('../components/ChartsSection.vue')
+    const pts = [{ date: '2026-01-01', y: 3 }, { date: '2026-01-02', y: 4 }]
+    state.series.value = { a: { label: 'A', unit: '', color: 'var(--accent)', points: pts }, b: { label: 'B', unit: '', color: 'var(--danger)', points: pts } }
+    state.entries.value = [{ key: 'a', goal: null }, { key: 'b', goal: null }]
+    const w = mount(ChartsSection, { props: { userId: 'u1' } })
+    await flushPromises()
+    const heads = w.findAll('[data-test="charts-head"]')
+    expect(heads).toHaveLength(1) // строка одна — в первом графике
+    const first = heads[0]
+    expect(first.find('[data-test="configure"]').exists()).toBe(true)
+    expect(first.find('[data-test="period-btn"]').exists()).toBe(true)
+    expect(first.classes()).toContain('justify-between')
+    const kids = first.findAll('button')
+    expect(kids[0].attributes('data-test')).toBe('configure') // слева
+    expect(kids[1].attributes('data-test')).toBe('period-btn') // справа
+    expect(w.findAll('[data-test="configure"]')).toHaveLength(1)
+    const second = w.findAll('[data-test="chart"]')[1]
+    expect(second.find('[data-test="configure"]').exists()).toBe(false)
+    expect(second.find('div.flex').classes()).toContain('justify-end')
+    w.unmount()
+  })
+
+  it('BACKLOG раздел 28: пока графиков нет, «Настроить графики» стоит одна, слева, и открывает настройки', async () => {
+    const { default: ChartsSection } = await import('../components/ChartsSection.vue')
+    state.series.value = {}
+    state.entries.value = []
+    const w = mount(ChartsSection, { props: { userId: 'u1' }, attachTo: document.body })
+    await flushPromises()
+    const head = w.find('[data-test="charts-head"]')
+    expect(head.classes()).toContain('justify-start')
+    expect(head.findAll('button')).toHaveLength(1)
+    await head.find('[data-test="configure"]').trigger('click')
+    expect(document.body.querySelector('.modal')).not.toBeNull()
+    w.unmount()
+  })
+
   it('BACKLOG 18.2: период «10 дней» с одной свежей записью не оставляет пустой график — показаны последние записи и пометка', async () => {
     const { default: ChartsSection } = await import('../components/ChartsSection.vue')
     localStorage.setItem('dash_period_dashboard', JSON.stringify({ range: 'days10', from: null, to: null }))
