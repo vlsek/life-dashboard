@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.100";
+const SITE_VERSION = "2.101";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.101", date: "2026-10-05 02:08", changes: [
+        "Графики подходов: в легенде под графиком рядом с каждым типом подхода (например, «широкий хват») теперь написан «рекорд» — сколько максимум повторений вы сделали в одном подходе этого типа за всё время. Суммы за период и за сегодня остались. Рекорд скрывается тем же выключателем «Показывать рекорды у графиков»",
+    ]},
     { version: "2.100", date: "2026-10-05 02:01", changes: [
         "Рекорды: теперь два отдельных выключателя. «Показывать рекорды у графиков» — в окне «Настроить графики», «Показывать рекорды у метрик» — в окне «Управление метриками». Общая галочка из «Настроить Дашборд» убрана. Если вы раньше выключили рекорды, они остаются выключенными в обоих местах, пока вы сами не включите нужное",
     ]},
@@ -1507,6 +1510,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.101", date: "2026-10-05 02:08", changes: [
+        "Sets charts: the legend under a chart now shows a \"record\" next to each set type (for example \"wide grip\") — the most reps you have done in a single set of that type, all time. The totals for the period and for today stay. The record hides with the same \"Show records on charts\" switch",
+    ]},
     { version: "2.100", date: "2026-10-05 02:01", changes: [
         "Records: there are now two separate switches. \"Show records on charts\" is in the \"Configure charts\" window and \"Show records on metrics\" is in the \"Manage metrics\" window. The shared checkbox in \"Customize dashboard\" is gone. If you had turned records off before, they stay off in both places until you switch the one you want back on",
     ]},

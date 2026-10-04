@@ -1,6 +1,13 @@
 {
-  "version": "2.100",
+  "version": "2.101",
   "en": [
+    {
+      "version": "2.101",
+      "date": "2026-10-05 02:08",
+      "changes": [
+        "Sets charts: the legend under a chart now shows a \"record\" next to each set type (for example \"wide grip\") — the most reps you have done in a single set of that type, all time. The totals for the period and for today stay. The record hides with the same \"Show records on charts\" switch"
+      ]
+    },
     {
       "version": "2.100",
       "date": "2026-10-05 02:01",
@@ -2164,6 +2171,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.101",
+      "date": "2026-10-05 02:08",
+      "changes": [
+        "Графики подходов: в легенде под графиком рядом с каждым типом подхода (например, «широкий хват») теперь написан «рекорд» — сколько максимум повторений вы сделали в одном подходе этого типа за всё время. Суммы за период и за сегодня остались. Рекорд скрывается тем же выключателем «Показывать рекорды у графиков»"
+      ]
+    },
     {
       "version": "2.100",
       "date": "2026-10-05 02:01",
