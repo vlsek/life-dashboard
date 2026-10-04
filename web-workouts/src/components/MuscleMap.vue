@@ -10,6 +10,8 @@ import {
   isStatsPeriod,
   isTrainedRecently,
   lastTrainedByMuscle,
+  lastTrainedRows,
+  daysAgo,
   periodStart,
   trainingDaysByMuscle,
   unmappedExercises,
@@ -45,6 +47,19 @@ function toggle() {
 const today = computed(() => props.today ?? todayStr())
 const last = computed(() => lastTrainedByMuscle(props.entries, props.exercises, today.value))
 const done = computed(() => new Set(MUSCLE_IDS.filter((m) => isTrainedRecently(last.value[m], today.value))))
+// «Когда тренировали»: по каждой мышце — сегодня / вчера / N дн. назад (+ дата) или «ещё не тренировали»; давно не тренированные сверху.
+const lastRows = computed(() => lastTrainedRows(props.entries, props.exercises, today.value, MUSCLE_IDS))
+function agoText(last: string | undefined | null): string {
+  const n = daysAgo(last ?? undefined, today.value)
+  if (n === null) return t('workouts_muscles_not_yet')
+  if (n === 0) return t('workouts_muscles_today')
+  if (n === 1) return t('workouts_muscles_yesterday')
+  return n + ' ' + t('workouts_muscles_days_ago')
+}
+function ruDate(iso: string): string {
+  const [y, m, d] = iso.split('-')
+  return `${d}.${m}.${y}`
+}
 const PERIOD_KEY = 'workouts_musclemap_period'
 function readPeriod(): StatsPeriod {
   try {
@@ -157,7 +172,9 @@ function shapeStyle(m: MuscleId) {
       <div v-if="selected" class="mt-3 rounded-lg border p-3 text-sm" style="border-color: var(--border); background: var(--bg)" data-testid="muscle-detail">
         <div class="font-bold">{{ muscleName(selected) }}</div>
         <div class="mb-2 text-[0.85em]" style="color: var(--text-dim)">
-          {{ t('workouts_muscles_last') }} {{ last[selected] ?? t('workouts_muscles_never') }}
+          {{ t('workouts_muscles_last') }}
+          <template v-if="last[selected]"><span data-testid="muscle-last-ago">{{ agoText(last[selected]) }}</span> ({{ ruDate(last[selected] as string) }})</template>
+          <template v-else>{{ t('workouts_muscles_never') }}</template>
         </div>
 
         <div class="mb-1 text-[0.85em] font-semibold">{{ t('workouts_muscles_my_ex') }}</div>
@@ -183,6 +200,15 @@ function shapeStyle(m: MuscleId) {
             <li v-for="s in suggestions" :key="s">{{ s }}</li>
           </ul>
         </template>
+      </div>
+
+      <div class="mt-4" data-testid="muscle-last-list">
+        <div class="mb-1 text-[0.85em] font-semibold">{{ t('workouts_muscles_when_title') }}</div>
+        <div v-for="r in lastRows" :key="r.muscle" class="flex items-baseline gap-2 py-0.5 text-[0.85em]" :data-muscle="r.muscle">
+          <span class="w-28 shrink-0 truncate">{{ muscleName(r.muscle) }}</span>
+          <span :style="{ color: r.last ? 'var(--text)' : 'var(--text-dim)' }" data-testid="muscle-last-row-ago">{{ agoText(r.last) }}</span>
+          <span v-if="r.last" class="ml-auto" style="color: var(--text-dim)">{{ ruDate(r.last) }}</span>
+        </div>
       </div>
 
       <div class="mt-4" data-testid="muscle-stats">

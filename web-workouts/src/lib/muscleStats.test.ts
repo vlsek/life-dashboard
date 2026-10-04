@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isTrainedRecently, lastTrainedByMuscle, trainingDaysByMuscle, unmappedExercises } from './muscleStats'
+import { daysAgo, isTrainedRecently, lastTrainedByMuscle, lastTrainedRows, trainingDaysByMuscle, unmappedExercises } from './muscleStats'
 
 const ex = [
   { id: 'bench', name: 'Жим лёжа' },
@@ -92,5 +92,52 @@ describe('untrainedMuscles', () => {
   it('пустая статистика — все группы; всё потренировано — пусто', () => {
     expect(untrainedMuscles([], MUSCLE_IDS)).toEqual([...MUSCLE_IDS])
     expect(untrainedMuscles(MUSCLE_IDS.map((muscle) => ({ muscle })), MUSCLE_IDS)).toEqual([])
+  })
+})
+
+describe('daysAgo — сколько дней назад тренировали (раздел 30)', () => {
+  it('сегодня — 0, вчера — 1, неделю назад — 7', () => {
+    expect(daysAgo('2026-09-30', TODAY)).toBe(0)
+    expect(daysAgo('2026-09-29', TODAY)).toBe(1)
+    expect(daysAgo('2026-09-23', TODAY)).toBe(7)
+  })
+  it('через границу месяца и года', () => {
+    expect(daysAgo('2026-08-31', TODAY)).toBe(30)
+    expect(daysAgo('2025-12-31', '2026-01-02')).toBe(2)
+  })
+  it('нет даты, дата из будущего или мусор — null', () => {
+    expect(daysAgo(undefined, TODAY)).toBeNull()
+    expect(daysAgo('2026-10-05', TODAY)).toBeNull()
+    expect(daysAgo('не дата', TODAY)).toBeNull()
+  })
+})
+
+describe('lastTrainedRows — строка по каждой мышце', () => {
+  const rows = lastTrainedRows([en('bench', '2026-09-29'), en('squat', '2026-09-20'), en('bench', '2026-09-10')], ex, TODAY, MUSCLE_IDS)
+  const row = (m: string) => rows.find((r) => r.muscle === m)!
+  it('есть строка для КАЖДОЙ мышцы, без повторов', () => {
+    expect(rows.map((r) => r.muscle).sort()).toEqual([...MUSCLE_IDS].sort())
+  })
+  it('у тренированных — последняя дата и «дней назад» (берётся самая свежая запись)', () => {
+    expect(row('chest')).toMatchObject({ last: '2026-09-29', ago: 1 })
+    expect(row('quads')).toMatchObject({ last: '2026-09-20', ago: 10 })
+  })
+  it('у нетренированных — null', () => {
+    expect(row('calves')).toMatchObject({ last: null, ago: null })
+  })
+  it('порядок: сначала «ещё не тренировали», затем давно не тренированные, свежие внизу', () => {
+    const idx = (m: string) => rows.findIndex((r) => r.muscle === m)
+    expect(idx('calves')).toBeLessThan(idx('quads'))
+    expect(idx('quads')).toBeLessThan(idx('chest'))
+    expect(rows[rows.length - 1].ago).toBe(1)
+  })
+  it('без записей все мышцы «ещё не тренировали», порядок как в справочнике', () => {
+    const empty = lastTrainedRows([], ex, TODAY, MUSCLE_IDS)
+    expect(empty.every((r) => r.last === null && r.ago === null)).toBe(true)
+    expect(empty.map((r) => r.muscle)).toEqual([...MUSCLE_IDS])
+  })
+  it('пустая запись (без подходов) и запись из будущего не считаются', () => {
+    const r = lastTrainedRows([en('bench', '2026-09-29', []), en('bench', '2026-10-05')], ex, TODAY, MUSCLE_IDS)
+    expect(r.find((x) => x.muscle === 'chest')).toMatchObject({ last: null, ago: null })
   })
 })

@@ -72,3 +72,36 @@ export function untrainedMuscles(stats: { muscle: MuscleId }[], all: readonly Mu
   const trained = new Set(stats.map((s) => s.muscle))
   return all.filter((m) => !trained.has(m))
 }
+
+// BACKLOG «Мышцы: по каждой мышце писать, когда её последний раз тренировали» (раздел 30). Сколько полных дней прошло с `last` до `today`
+// (оба — ISO-даты YYYY-MM-DD): 0 — сегодня, 1 — вчера. Дата из будущего или без значения — null.
+export function daysAgo(last: string | undefined, today: string): number | null {
+  if (!last) return null
+  const a = Date.parse(last + 'T00:00:00Z')
+  const b = Date.parse(today + 'T00:00:00Z')
+  if (!Number.isFinite(a) || !Number.isFinite(b) || a > b) return null
+  return Math.round((b - a) / 86400000)
+}
+
+export interface MuscleLastRow {
+  muscle: MuscleId
+  last: string | null // ISO-дата последней тренировки; null — ещё не тренировали
+  ago: number | null // дней назад (0 — сегодня); null — ещё не тренировали
+}
+
+// Строка по КАЖДОЙ мышце из `all` (в порядке `all`): когда последний раз была в работе. Порядок для показа — давно не тренированные сверху:
+// сначала «ещё не тренировали», затем по убыванию «дней назад»; при равенстве — исходный порядок.
+export function lastTrainedRows(entries: EntryLite[], exercises: ExLite[], today: string, all: readonly MuscleId[]): MuscleLastRow[] {
+  const last = lastTrainedByMuscle(entries, exercises, today)
+  const rows = all.map((muscle, i) => {
+    const l = last[muscle] ?? null
+    return { muscle, last: l, ago: daysAgo(l ?? undefined, today), i }
+  })
+  rows.sort((x, y) => {
+    const ax = x.ago === null ? Infinity : x.ago
+    const ay = y.ago === null ? Infinity : y.ago
+    return ay - ax || x.i - y.i
+  })
+  return rows.map(({ muscle, last: l, ago }) => ({ muscle, last: l, ago }))
+}
+
