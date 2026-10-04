@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.77";
+const SITE_VERSION = "2.78";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.78", date: "2026-10-04 11:31", changes: [
+        "Огонёк при загрузке теперь держится, пока страница не загрузится целиком: раньше он пропадал в момент появления первого каркаса, и блоки выползали один за другим. Теперь на всех страницах заставка висит, пока страница не смонтирована, нет незавершённых запросов и прошло полсекунды тишины (но не дольше 8 секунд, если что-то зависло). Затухание плавное; при выключенных анимациях заставка просто исчезает",
+    ]},
     { version: "2.77", date: "2026-10-04 11:02", changes: [
         "Пока на экране открыто всплывающее окно, левое и правое боковые меню не открываются ни свайпом, ни кнопкой — раньше меню можно было вытянуть поверх окна. Уже открытое меню закрывается как обычно",
     ]},
@@ -1436,6 +1439,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.78", date: "2026-10-04 11:31", changes: [
+        "The loading flame now stays until the page has fully loaded: before, it vanished as soon as the first frame appeared and blocks popped in one by one. On every page the splash now stays until the page is mounted, no requests are pending and half a second of quiet has passed (never longer than 8 seconds if something hangs). It fades out smoothly, or just disappears when animations are off",
+    ]},
     { version: "2.77", date: "2026-10-04 11:02", changes: [
         "While a pop-up window is open, the left and right side menus no longer open, neither by swipe nor by button — before, a menu could be pulled out over the window. An already open menu closes as usual",
     ]},

@@ -124,6 +124,67 @@
         </svg>
       </div>
     </div>
+    <!-- splash-hold:start (BACKLOG «Огонёк пропадает, а страница ещё не загрузилась»; ответ владельца 2026-10-04: держать заставку, пока страница не загрузится ЦЕЛИКОМ).
+     Канонический текст — scripts/splash-hold.snippet.html; в страницы его кладёт scripts/apply_splash_hold.py, руками не править. -->
+    <style>
+      .pre-overlay { position: fixed; inset: 0; z-index: 2147483000; min-height: 0; background: var(--bg, var(--pre-bg, #121212)); transition: opacity 0.25s ease; }
+      .pre-overlay.pre-out { opacity: 0; pointer-events: none; }
+      html[data-motion='off'] .pre-overlay { transition: none; }
+    </style>
+    <script>
+      // Статичная заставка внутри #app пропадает в момент монтирования Vue — раньше, чем придут данные, и блоки
+      // «выползают» по одному. Поэтому ставим её копию поверх страницы и снимаем, когда страница готова целиком:
+      // смонтирована, документ загружен (readyState=complete), нет незавершённых fetch и 500 мс тишины. Страховка — 8 с.
+      ;(function () {
+        var pre = document.querySelector('.pre-splash')
+        if (!pre || !document.body) return
+        var ov = pre.cloneNode(true)
+        ov.className = 'pre-splash pre-overlay'
+        ov.setAttribute('aria-hidden', 'true')
+        ov.setAttribute('data-test', 'pre-overlay')
+        document.body.appendChild(ov)
+
+        var QUIET_MS = 500
+        var MAX_MS = 8000
+        var started = Date.now()
+        var pending = 0
+        var quietFrom = 0
+        var nativeFetch = window.fetch
+        var wrapped = null
+        if (typeof nativeFetch === 'function') {
+          wrapped = function () {
+            pending++
+            var p = nativeFetch.apply(this, arguments)
+            var fin = function () {
+              pending = Math.max(0, pending - 1)
+              quietFrom = Date.now()
+            }
+            p.then(fin, fin)
+            return p
+          }
+          window.fetch = wrapped
+        }
+
+        var timer = setInterval(function () {
+          var now = Date.now()
+          var mounted = !document.querySelector('#app .pre-splash')
+          if (mounted && !quietFrom) quietFrom = now
+          var ready = mounted && document.readyState === 'complete' && pending === 0 && now - quietFrom >= QUIET_MS
+          if (ready || now - started >= MAX_MS) finish()
+        }, 100)
+
+        function finish() {
+          clearInterval(timer)
+          if (wrapped && window.fetch === wrapped) window.fetch = nativeFetch
+          var off = document.documentElement.getAttribute('data-motion') === 'off'
+          ov.classList.add('pre-out')
+          setTimeout(function () {
+            if (ov.parentNode) ov.parentNode.removeChild(ov)
+          }, off ? 0 : 300)
+        }
+      })()
+    </script>
+    <!-- splash-hold:end -->
     <script type="module" src="/src/main.ts"></script>
     <script>
       // Глобальный хедер (стакан воды и кольца дня/недели, BACKLOG 2.3) — отдельный бандл web-header/ → /header-widgets/.
