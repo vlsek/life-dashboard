@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import SetsCard from '../components/SetsCard.vue'
@@ -71,6 +71,58 @@ describe('SetsCard: огонёк серии и подложка у каждог�
 })
 
 describe('VariationCombo', () => {
+  // BACKLOG 326: подсказки-варианты «то есть, то нет»
+  const panelTexts = () => Array.from(document.body.querySelectorAll('.variation-panel span')).map((e) => e.textContent)
+  it('фокус в поле с уже выбранным вариантом показывает ВСЕ сохранённые варианты, а не только выбранный', async () => {
+    const w = mount(VariationCombo, { props: { modelValue: 'Wide grip', labels: ['Wide grip', 'Narrow', 'Diamond'] } })
+    await w.find('input').trigger('focus')
+    await nextTick()
+    expect(panelTexts()).toEqual(['Wide grip', 'Narrow', 'Diamond'])
+    w.unmount()
+  })
+  it('фокус в поле с произвольным текстом (его нет среди вариантов) тоже показывает список', async () => {
+    const w = mount(VariationCombo, { props: { modelValue: 'something new', labels: ['Wide grip', 'Narrow'] } })
+    await w.find('input').trigger('focus')
+    await nextTick()
+    expect(panelTexts()).toEqual(['Wide grip', 'Narrow'])
+    w.unmount()
+  })
+  it('когда человек печатает, список фильтруется по тексту; стёр текст — снова весь список', async () => {
+    const w = mount(VariationCombo, { props: { modelValue: null, labels: ['Wide grip', 'Narrow', 'Diamond'] } })
+    const input = w.find('input')
+    await input.trigger('focus')
+    await input.setValue('nar')
+    await nextTick()
+    expect(panelTexts()).toEqual(['Narrow'])
+    await input.setValue('')
+    await nextTick()
+    expect(panelTexts()).toEqual(['Wide grip', 'Narrow', 'Diamond'])
+    w.unmount()
+  })
+  it('быстрый повторный фокус после blur не закрывается старым таймером', async () => {
+    vi.useFakeTimers()
+    try {
+      const w = mount(VariationCombo, { props: { modelValue: null, labels: ['Wide grip'] } })
+      const input = w.find('input')
+      await input.trigger('focus')
+      await nextTick()
+      await input.trigger('blur')
+      vi.advanceTimersByTime(80) // меньше 150 мс — список ещё открыт
+      await input.trigger('focus') // быстрый повторный тап в поле
+      await nextTick()
+      vi.advanceTimersByTime(500) // старый таймер должен быть отменён
+      await nextTick()
+      expect(document.body.querySelector('.variation-panel')).not.toBeNull()
+      // обычный blur без повторного фокуса список по-прежнему закрывает
+      await input.trigger('blur')
+      vi.advanceTimersByTime(200)
+      await nextTick()
+      expect(document.body.querySelector('.variation-panel')).toBeNull()
+      w.unmount()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
   it('emits commit with the trimmed text on change', async () => {
     const w = mount(VariationCombo, { props: { modelValue: null, labels: ['Wide grip'] } })
     const input = w.find('input')

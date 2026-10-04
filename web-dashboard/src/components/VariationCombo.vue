@@ -57,10 +57,22 @@ watch(visible, async (v) => {
     place()
   }
 })
-onBeforeUnmount(() => listen(false))
+onBeforeUnmount(() => {
+  listen(false)
+  cancelClose()
+})
 
+// BACKLOG 326 (баг «подсказки то есть, то нет»): раньше и ввод, и фокус фильтровали список по тексту в поле. Поле с уже выбранным
+// вариантом при тапе показывало ОДИН пункт (его самого), а если текст не совпадал ни с чем — ничего. Теперь: фокус открывает ВЕСЬ список
+// сохранённых вариантов, а фильтр по тексту включается только когда человек печатает.
 function onInput() {
   showAll.value = false
+  open.value = true
+  place()
+}
+function onFocus() {
+  cancelClose()
+  showAll.value = true
   open.value = true
   place()
 }
@@ -72,9 +84,21 @@ function pick(label: string) {
 function onChange() {
   emit('commit', text.value.trim())
 }
-// небольшая задержка, чтобы клик по варианту успел сработать до закрытия списка
+// небольшая задержка, чтобы клик по варианту успел сработать до закрытия списка. Таймер запоминаем: быстрый повторный тап в поле
+// отменяет его — иначе старый таймер закрывал список, который только что открыл новый фокус (тоже «то есть, то нет»).
+let closeTimer: ReturnType<typeof setTimeout> | null = null
+function cancelClose() {
+  if (closeTimer !== null) {
+    clearTimeout(closeTimer)
+    closeTimer = null
+  }
+}
 function onBlur() {
-  setTimeout(() => (open.value = false), 150)
+  cancelClose()
+  closeTimer = setTimeout(() => {
+    closeTimer = null
+    open.value = false
+  }, 150)
 }
 function toggleAll() {
   if (open.value) {
@@ -96,7 +120,7 @@ function toggleAll() {
       class="min-w-0 flex-1"
       :placeholder="t('dash_sets_variation_placeholder')"
       @input="onInput"
-      @focus="onInput"
+      @focus="onFocus"
       @blur="onBlur"
       @change="onChange"
     />
