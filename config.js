@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.99";
+const SITE_VERSION = "2.100";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.100", date: "2026-10-05 02:01", changes: [
+        "Рекорды: теперь два отдельных выключателя. «Показывать рекорды у графиков» — в окне «Настроить графики», «Показывать рекорды у метрик» — в окне «Управление метриками». Общая галочка из «Настроить Дашборд» убрана. Если вы раньше выключили рекорды, они остаются выключенными в обоих местах, пока вы сами не включите нужное",
+    ]},
     { version: "2.99", date: "2026-10-04 21:10", changes: [
         "Кастомизация: три анимированные рамки аватарки в награду за достижения (не продаются). «Инферно» — за «Сотню дней» (100 идеальных дней подряд), «Импульс» — за «Мега продуктивность» (неделя выше 100%), «Королевская» — за «Тысячу» (1000 баллов). Открываются сами, когда получено достижение, и двигаются на аватаре в левом меню и в «Сообществе»; при «уменьшить движение» и выключенных анимациях остаётся статичный вид. Миграция не нужна."
     ]},
@@ -1504,6 +1507,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.100", date: "2026-10-05 02:01", changes: [
+        "Records: there are now two separate switches. \"Show records on charts\" is in the \"Configure charts\" window and \"Show records on metrics\" is in the \"Manage metrics\" window. The shared checkbox in \"Customize dashboard\" is gone. If you had turned records off before, they stay off in both places until you switch the one you want back on",
+    ]},
     { version: "2.99", date: "2026-10-04 21:10", changes: [
         "Customization: three animated avatar frames as achievement rewards (not for sale). Inferno - for 100 Days (100 perfect days in a row), Pulse - for Mega productivity (a week above 100%), Royal - for A thousand (1000 points). They unlock by themselves once the achievement is earned and move on your avatar in the side menu and in Community; with reduced motion or animations off they stay static. No migration needed."
     ]},

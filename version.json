@@ -1,6 +1,13 @@
 {
-  "version": "2.99",
+  "version": "2.100",
   "en": [
+    {
+      "version": "2.100",
+      "date": "2026-10-05 02:01",
+      "changes": [
+        "Records: there are now two separate switches. \"Show records on charts\" is in the \"Configure charts\" window and \"Show records on metrics\" is in the \"Manage metrics\" window. The shared checkbox in \"Customize dashboard\" is gone. If you had turned records off before, they stay off in both places until you switch the one you want back on"
+      ]
+    },
     {
       "version": "2.99",
       "date": "2026-10-04 21:10",
@@ -2157,6 +2164,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.100",
+      "date": "2026-10-05 02:01",
+      "changes": [
+        "Рекорды: теперь два отдельных выключателя. «Показывать рекорды у графиков» — в окне «Настроить графики», «Показывать рекорды у метрик» — в окне «Управление метриками». Общая галочка из «Настроить Дашборд» убрана. Если вы раньше выключили рекорды, они остаются выключенными в обоих местах, пока вы сами не включите нужное"
+      ]
+    },
     {
       "version": "2.99",
       "date": "2026-10-04 21:10",
