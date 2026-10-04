@@ -1,6 +1,13 @@
 {
-  "version": "2.54",
+  "version": "2.55",
   "en": [
+    {
+      "version": "2.55",
+      "date": "2026-10-04 03:04",
+      "changes": [
+        "Sets in Daily metrics: fixed the on-and-off variation hints (e.g. \"wide grip\"). When the field already holds a variation, tapping it now shows the whole list of saved variations instead of just the selected one, and the list still filters as you type. A quick second tap into the field no longer closes the list that just opened"
+      ]
+    },
     {
       "version": "2.54",
       "date": "2026-10-04 02:51",
@@ -1839,6 +1846,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.55",
+      "date": "2026-10-04 03:04",
+      "changes": [
+        "Подходы в Дневных метриках: исправлено «то есть, то нет» с подсказками-вариантами (например, «широкий хват»). Если в поле уже выбран вариант, тап по нему теперь показывает весь список сохранённых вариантов, а не только выбранный, а при вводе список по-прежнему фильтруется. Быстрый повторный тап в поле больше не закрывает только что открытый список"
+      ]
+    },
     {
       "version": "2.54",
       "date": "2026-10-04 02:51",
