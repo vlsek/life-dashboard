@@ -72,7 +72,7 @@ BACKLOG 771 «напоминание выпить воды — не раньше
 BACKLOG 567 «Аудит устаревшего оформления», ПЕРВЫЙ СРЕЗ (первый свободный пункт сверху): (а) пункт 789 — родные стрелки `input type=number` скрыть во ВСЕХ пилотах: одно CSS-правило в конце `web-*/src/style.css` (только добавление в конец файла) + страж `web-dashboard/src/spinnersAllPilots.test.ts`; (б) нативные `confirm()` → окно в стиле сайта (`lib/confirmDialog.ts` + `ConfirmDialogHost.vue` в `AppShell.vue`, ключи `confirm_dialog_*`) в пилотах `challenges`, `goals`, `languages`, `milestones`, `shop`, `skills` (только строки с `confirm(` в `App.vue`); пересборка затронутых папок; `config.js` (версия), ROADMAP, BACKLOG, журнал. НЕ трогаю: `confirm()` в `web-workouts/` (агент 7), `prompt()` воды в `web-header/`, `web-dashboard/` (агенты 2/4), логику/верстку чужих блоков — в `web-dashboard/` и `web-workouts/` ТОЛЬКО добавление правила в конец `style.css`. С: 2026-10-04.
 
 ### Агент 7
-— свободен —
+Два мелких пункта из апд26/апд27 владельца, по очереди, каждый отдельным релизом: (1) BACKLOG раздел 28: подпись «День сделан» → «Прогресс дня» (RU) / «Day progress» (EN): только ключ `dash_day_progress_label` в `web-dashboard/src/lib/i18n.ts` и `web-header/src/lib/i18n.ts` (одна строка RU и одна EN в каждом; подпись недели не трогаю) + тест `web-header/src/App.test.ts`; пересборка `dashboard/` и `header-widgets/`. (2) BACKLOG раздел 27: «Войти» на странице логина на ПК выглядит как надпись, а не кнопка — `web-login/` (App.vue/style.css), пересборка `login/`. Вне моих файлов ничего не трогаю. С: 2026-10-04 04:29.
 
 ## Бэклог
 
