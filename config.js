@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.59";
+const SITE_VERSION = "2.60";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.60", date: "2026-10-04 03:46", changes: [
+        "Дашборд: в блоке «Планы» появился переключатель дня «‹ дата ›» с чипом «Сегодня» — как у «Дневных метрик». Можно посмотреть и поправить, что было в планах вчера и раньше. Дата общая с «Дневными метриками»: листаете в одном блоке — день меняется в обоих. Напоминания о планах по прошлым дням не срабатывают, перенос незавершённого доступен только на сегодняшнем дне",
+    ]},
     { version: "2.59", date: "2026-10-04 03:39", changes: [
         "Дашборд: «Что полезного сделал за день» теперь по умолчанию свёрнут и стоит в самом низу блока «Ежедневные метрики» (после «Подходов»). В заголовке видно, сколько пунктов за выбранный день; нажмите на заголовок, чтобы раскрыть. Выбор «раскрыт/свёрнут» запоминается. Пункты по-прежнему сохраняются сразу при добавлении",
     ]},
@@ -1381,6 +1384,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.60", date: "2026-10-04 03:46", changes: [
+        "Dashboard: the Plans block now has a day switcher with a Today chip, like Daily metrics. You can look at and edit what was planned yesterday and earlier. The date is shared with Daily metrics: flip it in one block and both change. Plan reminders never fire for past days, and carrying over unfinished items is only offered on today",
+    ]},
     { version: "2.59", date: "2026-10-04 03:39", changes: [
         "Dashboard: What you got done today is now collapsed by default and sits at the very bottom of the Daily metrics block (after Sets). The title shows how many items the selected day has; tap it to expand. Your expanded/collapsed choice is remembered. Items are still saved right when you add them",
     ]},

@@ -120,7 +120,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
          Пункты пишутся сразу при добавлении (persistItems), поэтому отдельно от кнопки «Сохранить день» это безопасно. -->
     <UsefulTodayList v-if="loaded" :items="items" @add="addItem" @remove="removeItem" />
     </div>
-    <PlannedSection :user-id="userId" :date="date" />
+    <PlannedSection v-model:date="date" :user-id="userId" switchable />
   </section>
 </template>
 

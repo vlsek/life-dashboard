@@ -3,6 +3,7 @@ import EmojiText from './EmojiText.vue'
 import { computed, ref, watch } from 'vue'
 import Icon from './Icon.vue'
 import SectionHeading from './SectionHeading.vue'
+import DateStepper from './DateStepper.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import PlannedAddGoalModal from './PlannedAddGoalModal.vue'
 import PlannedCarryOverModal from './PlannedCarryOverModal.vue'
@@ -17,7 +18,10 @@ import { stripEmoji } from '../lib/emojiText'
 // перенос незавершённого за 7 дней. `date` — день плана (по умолчанию сегодня): когда карточка дня
 // появится в пилоте, этот компонент встраивается в неё с той же датой, что и дневные метрики.
 // Кнопка переноса — только для сегодняшнего дня, как в оригинале.
-const props = defineProps<{ userId: string | null; date?: string }>()
+// BACKLOG 07:51: в шапке блока своя «переключалка дня» (DateStepper), как у «Дневных метрик». Дата общая с родителем
+// (v-model:date): листаем здесь или там — меняются оба блока. Без родителя (нет слушателя) листание не показываем.
+const props = defineProps<{ userId: string | null; date?: string; switchable?: boolean }>()
+const emit = defineEmits<{ 'update:date': [value: string] }>()
 const day = computed(() => props.date ?? todayStr())
 const { planned, goals, loaded, error, load, addCustomItem, addGoalItem, removeItem, toggleItemBonus, setItemDone, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals } = usePlanned()
 
@@ -93,6 +97,7 @@ const collapsed = ref(false)
   <section v-if="loaded" class="mb-5" data-test="planned">
     <SectionHeading v-model:collapsed="collapsed" :title="stripEmoji(t('dash_planned_h2'))" storage-key="planned" />
     <div v-collapse="!collapsed" class="card">
+    <DateStepper v-if="switchable" :model-value="day" @update:model-value="emit('update:date', $event)" />
     <p class="dim mb-2.5 text-xs"><EmojiText :text="t('dash_planned_bonus_hint')" /></p>
 
     <p v-if="planned.length === 0" class="dim">{{ t('dash_planned_empty') }}</p>
