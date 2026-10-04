@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.62";
+const SITE_VERSION = "2.63";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.63", date: "2026-10-04 04:30", changes: [
+        "Магазин: объяснена идея. При первом заходе над товарами появляется плашка «Магазин заслуженного» — здесь не тратят деньги, а тратят сделанное: баллы зарабатываются привычками, тренировками, целями и сериями, а магазин нужен, чтобы позволять себе вещи, которые и хочется, и как будто лишние, без чувства вины. После «Понятно» остаётся короткая строка под заголовком со значком ⓘ, который открывает тот же текст. Запоминается на устройстве",
+    ]},
     { version: "2.62", date: "2026-10-04 04:20", changes: [
         "«Достижения»: при открытии нового значка появляется окно-поздравление — крупный значок, название, за что он дан и тёплая строка по теме (серии, баллы, тренировки, цели, книги). Если открылось сразу несколько — они листаются кнопкой «Дальше» («1 из 3»). Окно закрывается кнопкой, нажатием на фон или Esc; анимация отключается общим выключателем и системной настройкой «уменьшить движение». Достижения, выполненные до появления раздела, молча открываются без окна. Окно показывается при заходе на страницу «Достижения»",
     ]},
@@ -1390,6 +1393,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.63", date: "2026-10-04 04:30", changes: [
+        "Shop: the idea is now explained. On the first visit a card called The Earned Shop appears above the items - you do not spend money here, you spend what you have done: points are earned by habits, workouts, goals and streaks, and the shop lets you have things you want but feel you shouldn't, guilt-free. After Got it, a short line with an info icon stays under the heading and opens the same text. Remembered on the device",
+    ]},
     { version: "2.62", date: "2026-10-04 04:20", changes: [
         "Achievements: a congratulation window now appears when a new badge unlocks - a large badge, its name, what it was given for and a warm line by topic (streaks, points, workouts, goals, books). If several unlock at once they are paged with the Next button (1 of 3). The window closes with the button, a tap on the backdrop or Esc; the animation is turned off by the global switch and by the system reduce-motion setting. Achievements already met before the section appeared unlock silently without the window. The window is shown when you open the Achievements page",
     ]},

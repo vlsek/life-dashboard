@@ -1,6 +1,13 @@
 {
-  "version": "2.62",
+  "version": "2.63",
   "en": [
+    {
+      "version": "2.63",
+      "date": "2026-10-04 04:30",
+      "changes": [
+        "Shop: the idea is now explained. On the first visit a card called The Earned Shop appears above the items - you do not spend money here, you spend what you have done: points are earned by habits, workouts, goals and streaks, and the shop lets you have things you want but feel you shouldn't, guilt-free. After Got it, a short line with an info icon stays under the heading and opens the same text. Remembered on the device"
+      ]
+    },
     {
       "version": "2.62",
       "date": "2026-10-04 04:20",
@@ -1895,6 +1902,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.63",
+      "date": "2026-10-04 04:30",
+      "changes": [
+        "Магазин: объяснена идея. При первом заходе над товарами появляется плашка «Магазин заслуженного» — здесь не тратят деньги, а тратят сделанное: баллы зарабатываются привычками, тренировками, целями и сериями, а магазин нужен, чтобы позволять себе вещи, которые и хочется, и как будто лишние, без чувства вины. После «Понятно» остаётся короткая строка под заголовком со значком ⓘ, который открывает тот же текст. Запоминается на устройстве"
+      ]
+    },
     {
       "version": "2.62",
       "date": "2026-10-04 04:20",

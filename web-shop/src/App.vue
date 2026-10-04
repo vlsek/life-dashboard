@@ -5,6 +5,7 @@ import BalanceCard from './components/BalanceCard.vue'
 import ItemForm from './components/ItemForm.vue'
 import ShopCard from './components/ShopCard.vue'
 import ShopFilters from './components/ShopFilters.vue'
+import ShopIdea from './components/ShopIdea.vue'
 import ShopRow from './components/ShopRow.vue'
 import ViewSwitch from './components/ViewSwitch.vue'
 import { useShop } from './lib/useShop'
@@ -53,7 +54,7 @@ async function onUpload(file: File): Promise<string | null> {
 
   <main class="mx-auto max-w-4xl px-4 pb-16 pt-4">
     <h1 class="mb-1 text-xl font-semibold"><EmojiText :text="t('shop_h1')" /></h1>
-    <p class="dim mb-3 text-sm">{{ t('shop_intro') }}</p>
+    <ShopIdea />
 
     <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
       <button class="rounded-lg px-3 py-1.5 text-sm" data-testid="add-item" @click="formTarget = 'new'"><EmojiText :text="t('shop_add_item_btn')" /></button>
