@@ -1,6 +1,13 @@
 {
-  "version": "2.95",
+  "version": "2.96",
   "en": [
+    {
+      "version": "2.96",
+      "date": "2026-10-04 18:57",
+      "changes": [
+        "Achievements: a new achievement \"Mega productivity\" (group \"Weeks\") — finish a week above 100%. Finished weeks (Mon–Sun) count, by the same rules as the week ring: every item of the week done plus a bonus from the starred (⭐) plan items on top. The current week does not count — the achievement unlocks once the week is over. If progress display is switched off in settings, weeks are not counted"
+      ]
+    },
     {
       "version": "2.95",
       "date": "2026-10-04 18:53",
@@ -2129,6 +2136,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.96",
+      "date": "2026-10-04 18:57",
+      "changes": [
+        "Достижения: новое достижение «Мега продуктивность» (группа «Недели») — закончить неделю больше чем на 100%. Считаются закончившиеся недели (пн–вс) по тем же правилам, что кольцо недели: все пункты недели выполнены и сверху набран бонус за ⭐-пункты плана. Текущая неделя в зачёт не идёт — достижение откроется, когда неделя закончится. Если показ прогресса выключен в настройках, недели не считаются"
+      ]
+    },
     {
       "version": "2.95",
       "date": "2026-10-04 18:53",
