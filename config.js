@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.73";
+const SITE_VERSION = "2.74";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.74", date: "2026-10-04 10:13", changes: [
+        "Напоминание «выпить воды» теперь не появляется раньше чем через 3 часа после того, как вы в последний раз добавили воду (время берётся из журнала воды в аккаунте, а если его нет — из записей на этом устройстве). Прежние правила остаются: не чаще раза в 3 часа, не ночью, не при выполненной норме",
+    ]},
     { version: "2.73", date: "2026-10-04 10:08", changes: [
         "Тренировки: подходы можно добавлять прямо из таблицы записей, не открывая окон. После первого подхода в сегодняшней записи появляется кнопка «+ подход»: новый подход копирует значения предыдущего (для упражнений с левой и правой стороной копируется вся пара), время ставится текущее. Рядом кнопка «− подход» убирает последний, если их больше одного. Первый подход по-прежнему вносится окном записи",
     ]},
@@ -1424,6 +1427,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.74", date: "2026-10-04 10:13", changes: [
+        "The \"drink water\" reminder no longer shows up sooner than 3 hours after you last added water (the time comes from the water log in your account, or from entries on this device if there is none). The old rules stay: at most once every 3 hours, not at night, not once the goal is reached",
+    ]},
     { version: "2.73", date: "2026-10-04 10:08", changes: [
         "Workouts: sets can be added right from the entries table without opening any window. Once today's entry has a first set, a \"+ set\" button appears: the new set copies the values of the previous one (for exercises with a left and a right side the whole pair is copied) and gets the current time. Next to it a \"− set\" button removes the last set when there is more than one. The first set is still entered in the entry window",
     ]},
