@@ -75,6 +75,16 @@ describe('виджеты в раскладке', () => {
     for (const v of [null, undefined, 5, 'x', {}, { savings: '' }, { savings: 7 }, { skills: [] }, { skills: 'a' }, { other: 1 }]) expect(widgetsConfig(v)).toBeUndefined()
   })
 
+  it('languages: код языка или all (до 12 символов), остальное отбрасывается; withWidgetConfig включает и выключает', () => {
+    expect(widgetsConfig({ languages: 'de' })).toEqual({ languages: 'de' })
+    expect(widgetsConfig({ languages: 'all', savings: 'x' })).toEqual({ languages: 'all', savings: 'x' })
+    for (const v of [{ languages: '' }, { languages: 5 }, { languages: 'x'.repeat(13) }]) expect(widgetsConfig(v)).toBeUndefined()
+    const on = withWidgetConfig(defaultLayout(), { languages: 'en' })
+    expect(W(on)).toEqual({ key: 'widgets', visible: true, config: { languages: 'en' } })
+    expect(W(withWidgetConfig(on, { languages: null }))).toEqual({ key: 'widgets', visible: true })
+    expect(W(withWidgetConfig(on, { savings: 'a' })).config).toEqual({ languages: 'en', savings: 'a' })
+  })
+
   it('навыков не больше MAX_WIDGET_SKILLS', () => {
     const many = Array.from({ length: MAX_WIDGET_SKILLS + 5 }, (_, k) => 's' + k)
     expect(widgetsConfig({ skills: many })!.skills).toHaveLength(MAX_WIDGET_SKILLS)

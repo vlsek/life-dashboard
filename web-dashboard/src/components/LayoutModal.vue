@@ -37,7 +37,7 @@ const labels = computed<Record<DashboardBlockKey, { title: string; desc: string 
 }))
 
 // Виджеты на главной (BACKLOG 388, решение владельца: выбор галочками в этом окне, новых кнопок не вводим).
-// «Навыки» — галочка на виджет и галочки на навыки; «Коплю на товар» — галочка и выбор товара.
+// «Навыки» — галочка на виджет и галочки на навыки; «Коплю на товар» — галочка и выбор товара; «Изучение языков» — галочка и выбор набора слов.
 const widgetsCfg = computed(() => local.value.find((i) => i.key === 'widgets')?.config)
 const skillIds = computed(() => widgetsCfg.value?.skills ?? [])
 const skillsOn = computed(() => skillIds.value.length > 0)
@@ -60,6 +60,16 @@ const shopOptions = computed(() => props.widgetOptions?.shop ?? [])
 function onSavingsToggle(e: Event) {
   const on = (e.target as HTMLInputElement).checked
   local.value = withWidgetConfig(local.value, { savings: on ? (shopOptions.value[0]?.id ?? null) : null })
+}
+const langCode = computed(() => widgetsCfg.value?.languages ?? '')
+const langOn = computed(() => langCode.value !== '')
+const langOptions = computed(() => props.widgetOptions?.languages ?? [])
+function onLangToggle(e: Event) {
+  const on = (e.target as HTMLInputElement).checked
+  local.value = withWidgetConfig(local.value, { languages: on && langOptions.value.length > 0 ? 'all' : null })
+}
+function onLangPick(e: Event) {
+  local.value = withWidgetConfig(local.value, { languages: (e.target as HTMLSelectElement).value || null })
 }
 function onSavingsPick(e: Event) {
   local.value = withWidgetConfig(local.value, { savings: (e.target as HTMLSelectElement).value || null })
@@ -101,6 +111,19 @@ function onSavingsPick(e: Event) {
           <select class="min-w-0 flex-1 rounded-lg border px-2 py-1.5" style="border-color: var(--border); background: var(--bg); color: var(--text)" :value="savingsId" data-test="savings-pick" @change="onSavingsPick">
             <option v-if="!shopOptions.some((o) => o.id === savingsId)" :value="savingsId" disabled>{{ t('dash_widget_savings_choose') }}</option>
             <option v-for="o in shopOptions" :key="o.id" :value="o.id">{{ o.name }} · {{ o.cost }}</option>
+          </select>
+        </label>
+
+        <label class="mt-2 flex items-center gap-2 text-sm">
+          <input type="checkbox" :checked="langOn" :disabled="!langOn && langOptions.length === 0" data-test="lang-toggle" @change="onLangToggle" />
+          {{ t('dash_widget_lang') }}
+        </label>
+        <p v-if="!langOn && langOptions.length === 0" class="dim mt-1 text-xs" data-test="lang-none">{{ t('dash_widget_lang_none') }} <a href="/languages/" style="color: var(--accent)">{{ t('dash_widget_lang_link') }}</a></p>
+        <label v-if="langOn" class="mt-2 flex items-center gap-2 text-sm">
+          <span class="dim flex-none">{{ t('dash_widget_lang_pick') }}</span>
+          <select class="min-w-0 flex-1 rounded-lg border px-2 py-1.5" style="border-color: var(--border); background: var(--bg); color: var(--text)" :value="langCode" data-test="lang-pick" @change="onLangPick">
+            <option value="all">{{ t('dash_widget_lang_all') }}</option>
+            <option v-for="o in langOptions" :key="o.code" :value="o.code">{{ o.name }} · {{ o.count }}</option>
           </select>
         </label>
       </div>

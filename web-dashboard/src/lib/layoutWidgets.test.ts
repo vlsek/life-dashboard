@@ -10,7 +10,7 @@ const shop = [
   { id: 'a', name: 'Наушники', cost: 100, link: null },
   { id: 'b', name: 'Книга', cost: 40, link: null },
 ]
-const opts = { shop, skills: [{ id: 's1', name: 'Шпагат', mastered: false }, { id: 's2', name: 'Печать', mastered: false }, { id: 's3', name: 'Свист', mastered: true }] }
+const opts = { shop, languages: [{ code: 'en', name: 'English', count: 12 }, { code: 'de', name: 'Deutsch', count: 3 }], skills: [{ id: 's1', name: 'Шпагат', mastered: false }, { id: 's2', name: 'Печать', mastered: false }, { id: 's3', name: 'Свист', mastered: true }] }
 const savedWidgets = (w: ReturnType<typeof mount>): LayoutItem | undefined => (w.emitted('save')![0][0] as LayoutItem[]).find((i) => i.key === 'widgets')
 
 beforeEach(() => {
@@ -53,7 +53,7 @@ describe('LayoutModal: виджеты на главной', () => {
   })
 
   it('в магазине нет товаров — галочка отключена, подсказка со ссылкой в магазин', () => {
-    const w = mount(LayoutModal, { props: { initial: defaultLayout(), widgetOptions: { skills: [], shop: [] } } })
+    const w = mount(LayoutModal, { props: { initial: defaultLayout(), widgetOptions: { skills: [], shop: [], languages: [] } } })
     expect((w.find('[data-test="savings-toggle"]').element as HTMLInputElement).disabled).toBe(true)
     expect(w.find('[data-test="savings-none"]').text()).toContain('нет товаров')
     expect(w.find('[data-test="savings-none"] a').attributes('href')).toBe('/shop/')
@@ -113,7 +113,7 @@ describe('LayoutModal: виджет «Навыки»', () => {
   })
 
   it('навыков нет — галочка отключена, подсказка со ссылкой на раздел', () => {
-    const w = mount(LayoutModal, { props: { initial: defaultLayout(), widgetOptions: { skills: [], shop } } })
+    const w = mount(LayoutModal, { props: { initial: defaultLayout(), widgetOptions: { skills: [], shop, languages: [] } } })
     expect((w.find('[data-test="skills-toggle"]').element as HTMLInputElement).disabled).toBe(true)
     expect(w.find('[data-test="skills-none"] a').attributes('href')).toBe('/skills/')
     w.unmount()
@@ -125,6 +125,45 @@ describe('LayoutModal: виджет «Навыки»', () => {
     await w.find('[data-test="savings-toggle"]').setValue(true)
     await w.find('[data-test="save"]').trigger('click')
     expect(savedWidgets(w)!.config).toEqual({ skills: ['s1'], savings: 'a' })
+    w.unmount()
+  })
+})
+
+describe('LayoutModal: виджет «Изучение языков»', () => {
+  it('галочка включает виджет с набором «Все языки»; выбор языка и «Сохранить» кладут config.languages', async () => {
+    const w = mount(LayoutModal, { props: { initial: defaultLayout(), widgetOptions: opts } })
+    expect(w.find('[data-test="lang-pick"]').exists()).toBe(false)
+    await w.find('[data-test="lang-toggle"]').setValue(true)
+    expect((w.find('[data-test="lang-pick"]').element as HTMLSelectElement).value).toBe('all')
+    await w.find('[data-test="save"]').trigger('click')
+    expect(savedWidgets(w)).toEqual({ key: 'widgets', visible: true, config: { languages: 'all' } })
+    await w.find('[data-test="lang-pick"]').setValue('de')
+    await w.find('[data-test="save"]').trigger('click')
+    expect((w.emitted('save')![1][0] as LayoutItem[]).find((i) => i.key === 'widgets')!.config).toEqual({ languages: 'de' })
+    expect(w.find('[data-test="lang-pick"]').text()).toContain('Deutsch · 3')
+    w.unmount()
+  })
+
+  it('снятие галочки убирает виджет; слов нет — галочка отключена, подсказка со ссылкой на раздел', async () => {
+    const w = mount(LayoutModal, { props: { initial: withWidgetConfig(defaultLayout(), { languages: 'en' }), widgetOptions: opts } })
+    expect((w.find('[data-test="lang-toggle"]').element as HTMLInputElement).checked).toBe(true)
+    await w.find('[data-test="lang-toggle"]').setValue(false)
+    await w.find('[data-test="save"]').trigger('click')
+    expect(savedWidgets(w)).toEqual({ key: 'widgets', visible: true })
+    w.unmount()
+    const empty = mount(LayoutModal, { props: { initial: defaultLayout(), widgetOptions: { skills: [], shop: [], languages: [] } } })
+    expect((empty.find('[data-test="lang-toggle"]').element as HTMLInputElement).disabled).toBe(true)
+    expect(empty.find('[data-test="lang-none"] a').attributes('href')).toBe('/languages/')
+    empty.unmount()
+  })
+
+  it('три виджета выбираются независимо и сохраняются вместе', async () => {
+    const w = mount(LayoutModal, { props: { initial: defaultLayout(), widgetOptions: opts } })
+    await w.find('[data-test="skills-toggle"]').setValue(true)
+    await w.find('[data-test="savings-toggle"]').setValue(true)
+    await w.find('[data-test="lang-toggle"]').setValue(true)
+    await w.find('[data-test="save"]').trigger('click')
+    expect(savedWidgets(w)!.config).toEqual({ skills: ['s1'], savings: 'a', languages: 'all' })
     w.unmount()
   })
 })

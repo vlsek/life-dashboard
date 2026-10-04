@@ -102,7 +102,7 @@ const visibleBlockCount = computed(() => layout.value.filter(blockShown).length)
 const blockTitles = computed<Record<string, string>>(() => ({ profile: t('dash_block_profile'), charts: t('dash_charts_h2'), daily: t('dash_block_daily'), widgets: t('dash_block_widgets') }))
 const dragItems = computed(() => layout.value.filter(blockShown).map((i: LayoutItem) => ({ key: i.key, title: blockTitles.value[i.key] })))
 // окно раскладки: навыки и товары магазина для выбора виджетов читаются при открытии
-const widgetOptions = ref<WidgetOptions>({ skills: [], shop: [] })
+const widgetOptions = ref<WidgetOptions>({ skills: [], shop: [], languages: [] })
 async function openLayoutModal() {
   if (auth.value.status === 'ready') widgetOptions.value = await loadWidgetOptions(auth.value.userId)
   showLayoutModal.value = true

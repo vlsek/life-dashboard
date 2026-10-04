@@ -21,6 +21,7 @@ vi.mock('./supabase', () => ({
       }
       chain.in = () => Promise.resolve({ data: db.rows, error: db.selectError })
       chain.order = () => Promise.resolve({ data: db.all, error: null })
+      chain.limit = () => Promise.resolve({ data: [], error: null }) // loadWidgetOptions заодно читает языки словаря
       chain.update = (patch: unknown) => {
         ctx.upd = patch
         return chain
@@ -83,6 +84,7 @@ describe('loadSkillOptions / loadWidgetOptions', () => {
     expect(await loadSkillOptions('u1')).toEqual([{ id: 'a', name: 'А', mastered: true }, { id: 'b', name: 'Б', mastered: false }])
     const o = await loadWidgetOptions('u1')
     expect(o.skills).toHaveLength(2)
+    expect(o.languages).toEqual([])
   })
 })
 

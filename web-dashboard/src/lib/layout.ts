@@ -6,11 +6,13 @@ export type DashboardBlockKey = (typeof DASHBOARD_BLOCK_KEYS)[number]
 
 // Выбранные виджеты блока «Виджеты» (BACKLOG 388, решение владельца 2026-10-03: три виджета, выбор галочками в окне раскладки).
 // Хранятся прямо в элементе раскладки `widgets` в поле `config` (profiles.dashboard_layout, миграция не нужна):
-// `skills` — id навыков виджета «Навыки», `savings` — id товара магазина виджета «Коплю на товар». Классика (заморожена) незнакомые
+// `skills` — id навыков виджета «Навыки», `savings` — id товара магазина виджета «Коплю на товар», `languages` — набор слов виджета
+// «Изучение языков»: код языка словаря ('en', 'de', …) или 'all' (все языки). Классика (заморожена) незнакомые
 // ключи отбрасывает — для неё блока «Виджеты» просто нет. Копия этого файла лежит в web-header/ — менять ВМЕСТЕ.
 export interface WidgetsConfig {
   skills?: string[]
   savings?: string
+  languages?: string
 }
 
 export interface LayoutItem {
@@ -23,13 +25,14 @@ export const MAX_WIDGET_SKILLS = 12
 
 export function widgetsConfig(raw: unknown): WidgetsConfig | undefined {
   if (!raw || typeof raw !== 'object') return undefined
-  const { skills, savings } = raw as { skills?: unknown; savings?: unknown }
+  const { skills, savings, languages } = raw as { skills?: unknown; savings?: unknown; languages?: unknown }
   const cfg: WidgetsConfig = {}
   if (Array.isArray(skills)) {
     const ids = [...new Set(skills.filter((x): x is string => typeof x === 'string' && x.length > 0))].slice(0, MAX_WIDGET_SKILLS)
     if (ids.length > 0) cfg.skills = ids
   }
   if (typeof savings === 'string' && savings.length > 0) cfg.savings = savings
+  if (typeof languages === 'string' && languages.length > 0 && languages.length <= 12) cfg.languages = languages
   return Object.keys(cfg).length > 0 ? cfg : undefined
 }
 
@@ -45,7 +48,7 @@ export function isBlockShown(item: LayoutItem): boolean {
 
 // Новая раскладка с изменённым выбором виджетов: patch.skills = [] / patch.savings = null — выключить виджет. Остальное не меняется.
 // Когда выбран хотя бы один виджет, блок «Виджеты» включается (иначе выбор в окне раскладки ничего бы не показал).
-export function withWidgetConfig(layout: LayoutItem[], patch: { skills?: string[]; savings?: string | null }): LayoutItem[] {
+export function withWidgetConfig(layout: LayoutItem[], patch: { skills?: string[]; savings?: string | null; languages?: string | null }): LayoutItem[] {
   return layout.map((it) => {
     const copy: LayoutItem = { ...it }
     if (it.config) copy.config = { ...it.config, ...(it.config.skills ? { skills: [...it.config.skills] } : {}) }
@@ -58,6 +61,10 @@ export function withWidgetConfig(layout: LayoutItem[], patch: { skills?: string[
     if (patch.savings !== undefined) {
       if (patch.savings) next.savings = patch.savings
       else delete next.savings
+    }
+    if (patch.languages !== undefined) {
+      if (patch.languages) next.languages = patch.languages
+      else delete next.languages
     }
     delete copy.config
     if (Object.keys(next).length > 0) {
