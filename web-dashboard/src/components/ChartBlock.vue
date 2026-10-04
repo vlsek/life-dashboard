@@ -6,6 +6,7 @@ import { buildLegend, describeShares, escapeXml, hasNamedVariations, pieSlices }
 import type { MetricStreakInfo } from '../lib/metricStreaks'
 import type { VariationShare } from '../lib/variationChart'
 import { t } from '../lib/i18n'
+import { todayStr } from '../lib/date'
 import MetricIcon from './MetricIcon.vue'
 
 const props = withDefaults(
@@ -20,15 +21,16 @@ const props = withDefaults(
     note?: string | null // пояснение под графиком (например, «период расширен»)
     variations?: string[] | null // метрики-подходы: стабильный порядок особенностей (от него цвета точек и легенды)
     streak?: MetricStreakInfo | null // серия метрики: огонёк с числом рядом с названием графика (BACKLOG 23, 14:42)
+    today?: string // «сегодня» для легенды (ISO); по умолчанию — реальная сегодняшняя дата, параметр нужен тестам
   }>(),
-  { title: '', icon: null, unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null, note: null, variations: null, streak: null },
+  { title: '', icon: null, unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null, note: null, variations: null, streak: null, today: undefined },
 )
 
 const prepared = computed<ChartPoint[]>(() => prepareChartSeries(props.points))
 // «Цветные» точки и легенда (BACKLOG 19, 11:41) — только если у подходов есть особенности с названием; иначе график как прежде.
 const order = computed(() => props.variations ?? [])
 const colored = computed(() => hasNamedVariations(props.points))
-const legend = computed(() => (colored.value ? buildLegend(props.points, order.value) : []))
+const legend = computed(() => (colored.value ? buildLegend(props.points, order.value, props.today ?? todayStr()) : []))
 const hasGaps = computed(() => prepared.value.some((p) => p.y == null) && prepared.value.some((p) => p.y != null))
 
 function fmtChartLabel(iso: string): string {
@@ -137,6 +139,7 @@ const fallbackText = computed(() => {
           <span class="inline-block h-2.5 w-2.5 rounded-full" :style="{ background: item.color }" aria-hidden="true"></span>
           {{ item.label ?? t('chart_legend_none') }}
           <span class="dim">· {{ item.reps }}</span>
+          <span class="dim" data-test="legend-today">· {{ t('chart_legend_today') }} {{ item.today }}</span>
         </li>
       </ul>
       <p v-if="hasGaps" class="dim mt-0.5 text-xs">{{ t('chart_dashed_hint') }}</p>

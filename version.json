@@ -1,6 +1,13 @@
 {
-  "version": "2.75",
+  "version": "2.76",
   "en": [
+    {
+      "version": "2.76",
+      "date": "2026-10-04 10:39",
+      "changes": [
+        "Charts of set metrics: the legend under a chart now shows two numbers for each set variation — reps over the shown period and reps today (60 · today 20). If you did no sets today, the variation shows today 0"
+      ]
+    },
     {
       "version": "2.75",
       "date": "2026-10-04 10:34",
@@ -1987,6 +1994,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.76",
+      "date": "2026-10-04 10:39",
+      "changes": [
+        "Графики метрик с подходами: в легенде под графиком у каждой особенности подхода теперь два числа — сколько повторений за показанный период и сколько за сегодня («· 60 · сегодня 20»). Если сегодня подходов не было, у особенности будет «сегодня 0»"
+      ]
+    },
     {
       "version": "2.75",
       "date": "2026-10-04 10:34",

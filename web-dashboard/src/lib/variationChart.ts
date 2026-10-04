@@ -68,20 +68,26 @@ export function colorFor(label: string | null, order: readonly string[]): string
 export interface LegendItem {
   label: string | null
   color: string
-  reps: number
+  reps: number // сумма повторений за показанный период
+  today: number // сумма повторений за сегодняшний день (BACKLOG 22:02); 0, если сегодня нет в периоде или подходов не было
 }
 
-// Легенда: все особенности, встретившиеся в показанных точках, с суммой повторений за период — в стабильном порядке.
-export function buildLegend(points: { shares?: VariationShare[] }[], order: readonly string[]): LegendItem[] {
+// Легенда: все особенности, встретившиеся в показанных точках, с суммой повторений за период и за сегодня
+// (BACKLOG 22:02: «кроме общего числа — сколько за сегодня») — в стабильном порядке. `todayIso` — сегодняшняя дата ISO;
+// точки без даты или другого дня в «сегодня» не попадают.
+export function buildLegend(points: { date?: string; shares?: VariationShare[] }[], order: readonly string[], todayIso?: string): LegendItem[] {
   const sums = new Map<string | null, number>()
-  for (const p of points) for (const s of p.shares ?? []) sums.set(s.label, (sums.get(s.label) ?? 0) + s.reps)
+  const todaySums = new Map<string | null, number>()
+  for (const p of points) {
+    for (const s of p.shares ?? []) {
+      sums.set(s.label, (sums.get(s.label) ?? 0) + s.reps)
+      if (todayIso && p.date === todayIso) todaySums.set(s.label, (todaySums.get(s.label) ?? 0) + s.reps)
+    }
+  }
+  const rank = (label: string | null) => (label === null ? Number.MAX_SAFE_INTEGER : order.indexOf(label) === -1 ? Number.MAX_SAFE_INTEGER - 1 : order.indexOf(label))
   return [...sums.entries()]
-    .map(([label, reps]) => ({ label, color: colorFor(label, order), reps }))
-    .sort((a, b) => {
-      const ra = a.label === null ? Number.MAX_SAFE_INTEGER : order.indexOf(a.label) === -1 ? Number.MAX_SAFE_INTEGER - 1 : order.indexOf(a.label)
-      const rb = b.label === null ? Number.MAX_SAFE_INTEGER : order.indexOf(b.label) === -1 ? Number.MAX_SAFE_INTEGER - 1 : order.indexOf(b.label)
-      return ra - rb
-    })
+    .map(([label, reps]) => ({ label, color: colorFor(label, order), reps, today: todaySums.get(label) ?? 0 }))
+    .sort((a, b) => rank(a.label) - rank(b.label))
 }
 
 // Нужна ли «цветная» отрисовка: хоть где-то есть особенность с названием. Если у всех подходов особенности нет — график

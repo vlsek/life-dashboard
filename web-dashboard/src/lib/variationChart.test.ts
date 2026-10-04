@@ -101,10 +101,28 @@ describe('legend and tooltip', () => {
   ]
   it('sums reps per variation over the visible points, stable order, "no variation" last', () => {
     expect(buildLegend(points, order)).toEqual([
-      { label: 'classic', color: '#3b82f6', reps: 60 },
-      { label: 'diamond', color: '#ef4444', reps: 30 },
-      { label: null, color: NONE_COLOR, reps: 5 },
+      { label: 'classic', color: '#3b82f6', reps: 60, today: 0 },
+      { label: 'diamond', color: '#ef4444', reps: 30, today: 0 },
+      { label: null, color: NONE_COLOR, reps: 5, today: 0 },
     ])
+  })
+  it('adds today\'s reps per variation (BACKLOG 22:02): only the point of today counts, other days do not', () => {
+    const dated = [
+      { date: '2026-10-02', shares: [{ label: 'classic', reps: 50 }, { label: 'diamond', reps: 30 }] },
+      { date: '2026-10-03', shares: [{ label: 'classic', reps: 10 }, { label: null, reps: 5 }] },
+      { date: '2026-10-04', shares: [{ label: 'classic', reps: 20 }, { label: 'diamond', reps: 8 }] },
+      { date: '2026-10-05' },
+    ]
+    expect(buildLegend(dated, order, '2026-10-04').map((l) => [l.label, l.reps, l.today])).toEqual([
+      ['classic', 80, 20],
+      ['diamond', 38, 8],
+      [null, 5, 0],
+    ])
+  })
+  it('without a today date, or when today is outside the period, every today value is 0', () => {
+    const dated = [{ date: '2026-10-02', shares: [{ label: 'classic', reps: 50 }] }]
+    expect(buildLegend(dated, order).map((l) => l.today)).toEqual([0])
+    expect(buildLegend(dated, order, '2026-10-09').map((l) => l.today)).toEqual([0])
   })
   it('the colourful mode is on only when some variation has a name', () => {
     expect(hasNamedVariations(points)).toBe(true)

@@ -319,6 +319,27 @@ describe('ChartBlock: variations', () => {
     const swatches = w.findAll('[data-test="legend-item"] span.rounded-full').map((s) => (s.element as HTMLElement).style.background)
     expect(swatches[0]).toMatch(/#3b82f6|rgb\(59, 130, 246\)/)
   })
+  it('legend also shows how many reps of each variation were done today (BACKLOG 22:02)', () => {
+    const points = [
+      { date: '2026-09-01', y: 80, shares: [{ label: 'classic', reps: 50 }, { label: 'diamond', reps: 30 }] },
+      { date: '2026-09-02', y: 28, shares: [{ label: 'classic', reps: 20 }, { label: 'diamond', reps: 8 }] },
+    ]
+    const w = mount(ChartBlock, { props: { title: 'Push-ups', points, variations: ['classic', 'diamond'], today: '2026-09-02' } })
+    const items = w.findAll('[data-test="legend-item"]')
+    expect(items[0].text()).toContain('70')
+    expect(items[0].find('[data-test="legend-today"]').text()).toContain('20')
+    expect(items[0].find('[data-test="legend-today"]').text()).toContain('today')
+    expect(items[1].find('[data-test="legend-today"]').text()).toContain('8')
+  })
+  it('legend shows 0 for today when nothing was done today', () => {
+    const points = [
+      { date: '2026-09-01', y: 50, shares: [{ label: 'classic', reps: 50 }] },
+      { date: '2026-09-02', y: 40, shares: [{ label: 'classic', reps: 40 }] },
+      { date: '2026-09-03', y: null },
+    ]
+    const w = mount(ChartBlock, { props: { title: 'Push-ups', points, variations: ['classic'], today: '2026-09-03' } })
+    expect(w.find('[data-test="legend-today"]').text()).toBe('· today 0')
+  })
   it('puts a tooltip with the breakdown into each marker', () => {
     const w = mountBlock(pts([{ label: 'classic', reps: 50 }, { label: 'diamond', reps: 30 }], [{ label: 'classic', reps: 40 }]))
     const title = w.find('[data-test="pie-point"] title').text()

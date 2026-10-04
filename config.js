@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.75";
+const SITE_VERSION = "2.76";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.76", date: "2026-10-04 10:39", changes: [
+        "Графики метрик с подходами: в легенде под графиком у каждой особенности подхода теперь два числа — сколько повторений за показанный период и сколько за сегодня («· 60 · сегодня 20»). Если сегодня подходов не было, у особенности будет «сегодня 0»",
+    ]},
     { version: "2.75", date: "2026-10-04 10:34", changes: [
         "Дашборд, «Планы»: если вернуться в прошлый день и отметить цель выполненной, дата выполнения ставится именно того дня, а не сегодняшняя. На сегодняшнем дне всё как раньше; несделанное с прошлых дней по-прежнему подтягивается кнопкой переноса",
     ]},
@@ -1430,6 +1433,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.76", date: "2026-10-04 10:39", changes: [
+        "Charts of set metrics: the legend under a chart now shows two numbers for each set variation — reps over the shown period and reps today (60 · today 20). If you did no sets today, the variation shows today 0",
+    ]},
     { version: "2.75", date: "2026-10-04 10:34", changes: [
         "Dashboard, Plans: if you go back to a past day and tick a goal as done, its completion date is that day, not today. Today works as before, and unfinished items from earlier days are still carried over with the carry-over button",
     ]},
