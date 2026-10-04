@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.63";
+const SITE_VERSION = "2.64";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.64", date: "2026-10-04 04:25", changes: [
+        "Тренировки: у прогрессивных программ («Отжимания: 6 недель», «Подтягивания: 6 недель») появилась кнопка «Начать программу» — она добавляет упражнения и запускает программу с сегодняшнего дня. На странице появляется карточка активной программы: «Неделя N из M» и нагрузка этой недели (считается по дате старта), список недель с отметкой «пройдена», полоска прогресса и завершение программы (в два шага, без системного окна). Новая программа заменяет текущую — окно шаблонов предупреждает об этом",
+        "Активная программа запоминается в профиле и подтягивается на другое устройство; завершённая на одном устройстве не «воскресает» на другом. Для синхронизации нужна миграция 040 (владелец применяет в Supabase SQL Editor); до неё программа работает, но только на этом устройстве",
+    ]},
     { version: "2.63", date: "2026-10-04 04:30", changes: [
         "Магазин: объяснена идея. При первом заходе над товарами появляется плашка «Магазин заслуженного» — здесь не тратят деньги, а тратят сделанное: баллы зарабатываются привычками, тренировками, целями и сериями, а магазин нужен, чтобы позволять себе вещи, которые и хочется, и как будто лишние, без чувства вины. После «Понятно» остаётся короткая строка под заголовком со значком ⓘ, который открывает тот же текст. Запоминается на устройстве",
     ]},
@@ -1393,6 +1397,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.64", date: "2026-10-04 04:25", changes: [
+        "Workouts: progressive programs (\"Push-ups: 6 weeks\", \"Pull-ups: 6 weeks\") now have a \"Start program\" button — it adds the exercises and starts the program from today. The page shows an active program card: \"Week N of M\" with this week's load (worked out from the start date), the list of weeks with a \"completed\" mark, a progress bar and an end-program action (two steps, no system dialog). A new program replaces the current one — the templates window warns about it",
+        "The active program is saved in your profile and follows you to another device; a program ended on one device does not come back on another. Syncing needs migration 040 (the owner applies it in the Supabase SQL Editor); until then the program works on this device only",
+    ]},
     { version: "2.63", date: "2026-10-04 04:30", changes: [
         "Shop: the idea is now explained. On the first visit a card called The Earned Shop appears above the items - you do not spend money here, you spend what you have done: points are earned by habits, workouts, goals and streaks, and the shop lets you have things you want but feel you shouldn't, guilt-free. After Got it, a short line with an info icon stays under the heading and opens the same text. Remembered on the device",
     ]},

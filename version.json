@@ -1,6 +1,14 @@
 {
-  "version": "2.63",
+  "version": "2.64",
   "en": [
+    {
+      "version": "2.64",
+      "date": "2026-10-04 04:25",
+      "changes": [
+        "Workouts: progressive programs (\"Push-ups: 6 weeks\", \"Pull-ups: 6 weeks\") now have a \"Start program\" button — it adds the exercises and starts the program from today. The page shows an active program card: \"Week N of M\" with this week's load (worked out from the start date), the list of weeks with a \"completed\" mark, a progress bar and an end-program action (two steps, no system dialog). A new program replaces the current one — the templates window warns about it",
+        "The active program is saved in your profile and follows you to another device; a program ended on one device does not come back on another. Syncing needs migration 040 (the owner applies it in the Supabase SQL Editor); until then the program works on this device only"
+      ]
+    },
     {
       "version": "2.63",
       "date": "2026-10-04 04:30",
@@ -1902,6 +1910,14 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.64",
+      "date": "2026-10-04 04:25",
+      "changes": [
+        "Тренировки: у прогрессивных программ («Отжимания: 6 недель», «Подтягивания: 6 недель») появилась кнопка «Начать программу» — она добавляет упражнения и запускает программу с сегодняшнего дня. На странице появляется карточка активной программы: «Неделя N из M» и нагрузка этой недели (считается по дате старта), список недель с отметкой «пройдена», полоска прогресса и завершение программы (в два шага, без системного окна). Новая программа заменяет текущую — окно шаблонов предупреждает об этом",
+        "Активная программа запоминается в профиле и подтягивается на другое устройство; завершённая на одном устройстве не «воскресает» на другом. Для синхронизации нужна миграция 040 (владелец применяет в Supabase SQL Editor); до неё программа работает, но только на этом устройстве"
+      ]
+    },
     {
       "version": "2.63",
       "date": "2026-10-04 04:30",
