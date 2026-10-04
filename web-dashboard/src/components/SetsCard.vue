@@ -56,7 +56,7 @@ function onVariation(i: number, text: string) {
       <template v-if="summary">{{ summary.count }} {{ t('dash_sets_word') }} · {{ summary.reps }} {{ t('dash_sets_reps_word') }}</template>
       <template v-else>{{ t('dash_sets_empty') }}</template>
     </div>
-    <RecordBadge v-if="record" :record="record" :unit="' ' + t('dash_sets_reps_word')" class="mt-0.5" />
+    <RecordBadge v-if="record" kind="metrics" :record="record" :unit="' ' + t('dash_sets_reps_word')" class="mt-0.5" />
 
     <div v-collapse="open" class="mt-2">
       <div v-if="sets.length > 0" class="overflow-x-auto">

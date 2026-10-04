@@ -10,31 +10,50 @@ beforeEach(() => {
 
 describe('RecordBadge', () => {
   it('показывает «Рекорд: значение с единицей · дата»', () => {
-    const w = mount(RecordBadge, { props: { record: { y: 5200, date: '2026-09-12' }, unit: ' мл' } })
+    const w = mount(RecordBadge, { props: { record: { y: 5200, date: '2026-09-12' }, unit: ' мл', kind: 'metrics' } })
     const text = w.find('[data-test="record-text"]').text().replace(/\s/g, ' ')
     expect(text).toContain('Рекорд: 5 200 мл')
     expect(text).toMatch(/12 сент\.? 2026/)
   })
 
   it('рекорда нет — ничего не рисуется', () => {
-    expect(mount(RecordBadge, { props: { record: null } }).find('[data-test="record-badge"]').exists()).toBe(false)
-    expect(mount(RecordBadge, { props: { record: undefined } }).find('[data-test="record-badge"]').exists()).toBe(false)
+    expect(mount(RecordBadge, { props: { record: null, kind: 'metrics' } }).find('[data-test="record-badge"]').exists()).toBe(false)
+    expect(mount(RecordBadge, { props: { record: undefined, kind: 'metrics' } }).find('[data-test="record-badge"]').exists()).toBe(false)
   })
 
   it('выключатель: по умолчанию показан; выключили — исчезает сразу, включили — появляется снова', async () => {
-    const w = mount(RecordBadge, { props: { record: { y: 3, date: '2026-01-01' } } })
+    const w = mount(RecordBadge, { props: { record: { y: 3, date: '2026-01-01' }, kind: 'metrics' } })
     expect(w.find('[data-test="record-badge"]').exists()).toBe(true)
-    setRecordsEnabled(false)
+    setRecordsEnabled(false, 'metrics')
     await w.vm.$nextTick()
     expect(w.find('[data-test="record-badge"]').exists()).toBe(false)
-    setRecordsEnabled(true)
+    setRecordsEnabled(true, 'metrics')
     await w.vm.$nextTick()
     expect(w.find('[data-test="record-badge"]').exists()).toBe(true)
     w.unmount()
   })
 
-  it('выключено заранее (localStorage) — не показывается с самого начала', () => {
+  it('прежний общий выбор (localStorage site_records = off) скрывает рекорды с самого начала', () => {
     localStorage.setItem('site_records', 'off')
-    expect(mount(RecordBadge, { props: { record: { y: 3, date: '2026-01-01' } } }).find('[data-test="record-badge"]').exists()).toBe(false)
+    for (const kind of ['charts', 'metrics'] as const)
+      expect(mount(RecordBadge, { props: { record: { y: 3, date: '2026-01-01' }, kind } }).find('[data-test="record-badge"]').exists()).toBe(false)
+  })
+
+  // BACKLOG раздел 28, ответ владельца 2026-10-04: выключатели раздельные — у графиков и у метрик
+  it('выключили рекорды у графиков — у метрик они остаются, и наоборот', async () => {
+    const rec = { y: 3, date: '2026-01-01' }
+    const charts = mount(RecordBadge, { props: { record: rec, kind: 'charts' } })
+    const metrics = mount(RecordBadge, { props: { record: rec, kind: 'metrics' } })
+    setRecordsEnabled(false, 'charts')
+    await charts.vm.$nextTick()
+    expect(charts.find('[data-test="record-badge"]').exists()).toBe(false)
+    expect(metrics.find('[data-test="record-badge"]').exists()).toBe(true)
+    setRecordsEnabled(true, 'charts')
+    setRecordsEnabled(false, 'metrics')
+    await charts.vm.$nextTick()
+    expect(charts.find('[data-test="record-badge"]').exists()).toBe(true)
+    expect(metrics.find('[data-test="record-badge"]').exists()).toBe(false)
+    charts.unmount()
+    metrics.unmount()
   })
 })

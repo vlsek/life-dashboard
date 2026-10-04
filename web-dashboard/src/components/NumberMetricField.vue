@@ -70,7 +70,7 @@ function fixTotal() {
       <button type="button" class="add-btn" :title="t('dash_metric_add_btn_title')" @click="commit">+</button>
     </div>
     <input v-else v-model="text" type="number" step="any" placeholder="0" :class="{ 'saved-flash': flashed }" @change="commit" />
-    <RecordBadge v-if="record" :record="record" :unit="metric.unit ? ' ' + metric.unit : ''" class="mt-0.5" />
+    <RecordBadge v-if="record" kind="metrics" :record="record" :unit="metric.unit ? ' ' + metric.unit : ''" class="mt-0.5" />
   </div>
 </template>
 

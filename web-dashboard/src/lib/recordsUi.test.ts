@@ -3,6 +3,8 @@ import { mount } from '@vue/test-utils'
 import NumberMetricField from '../components/NumberMetricField.vue'
 import SetsCard from '../components/SetsCard.vue'
 import LayoutModal from '../components/LayoutModal.vue'
+import ChartsConfigModal from '../components/ChartsConfigModal.vue'
+import MetricsManagerModal from '../components/MetricsManagerModal.vue'
 import { recordsEnabled } from './records'
 import type { Metric } from './types'
 
@@ -30,21 +32,55 @@ describe('рекорды в «Дневных метриках» (BACKLOG раз�
   })
 })
 
-describe('окно «Настроить Дашборд»: галочка «Показывать рекорды»', () => {
-  it('по умолчанию отмечена; снятие выключает рекорды (localStorage), возврат — включает', async () => {
-    const w = mount(LayoutModal, { props: { initial: [] } })
-    const box = w.find('[data-test="records-toggle"]')
+describe('раздельные выключатели рекордов (ответ владельца 2026-10-04)', () => {
+  const chartsModal = () => mount(ChartsConfigModal, { props: { series: [], entries: [], period: { range: 'month', from: null, to: null } } as never })
+  const metricsModal = () => mount(MetricsManagerModal, { props: { metrics: [], categories: [], error: null } })
+
+  it('«Настроить графики»: галочка отмечена по умолчанию; снятие выключает рекорды ТОЛЬКО у графиков', async () => {
+    const w = chartsModal()
+    const box = w.find('[data-test="records-toggle-charts"]')
     expect((box.element as HTMLInputElement).checked).toBe(true)
     await box.setValue(false)
-    expect(recordsEnabled()).toBe(false)
-    expect(localStorage.getItem('site_records')).toBe('off')
+    expect(recordsEnabled('charts')).toBe(false)
+    expect(recordsEnabled('metrics')).toBe(true)
     await box.setValue(true)
-    expect(recordsEnabled()).toBe(true)
+    expect(recordsEnabled('charts')).toBe(true)
   })
 
-  it('если рекорды уже выключены — галочка снята при открытии окна', () => {
+  it('«Управление метриками»: галочка отмечена по умолчанию; снятие выключает рекорды ТОЛЬКО у метрик', async () => {
+    const w = metricsModal()
+    const box = w.find('[data-test="records-toggle-metrics"]')
+    expect((box.element as HTMLInputElement).checked).toBe(true)
+    await box.setValue(false)
+    expect(recordsEnabled('metrics')).toBe(false)
+    expect(recordsEnabled('charts')).toBe(true)
+    await box.setValue(true)
+    expect(recordsEnabled('metrics')).toBe(true)
+  })
+
+  it('выбор запоминается: окна открываются с уже выбранным состоянием', () => {
+    localStorage.setItem('site_records_charts', 'off')
+    localStorage.setItem('site_records_metrics', 'off')
+    expect((chartsModal().find('[data-test="records-toggle-charts"]').element as HTMLInputElement).checked).toBe(false)
+    expect((metricsModal().find('[data-test="records-toggle-metrics"]').element as HTMLInputElement).checked).toBe(false)
+  })
+
+  it('прежний общий выбор «выключено» отражается в обоих окнах', () => {
     localStorage.setItem('site_records', 'off')
+    expect((chartsModal().find('[data-test="records-toggle-charts"]').element as HTMLInputElement).checked).toBe(false)
+    expect((metricsModal().find('[data-test="records-toggle-metrics"]').element as HTMLInputElement).checked).toBe(false)
+  })
+
+  it('в «Настроить Дашборд» общей галочки рекордов больше нет', () => {
     const w = mount(LayoutModal, { props: { initial: [] } })
-    expect((w.find('[data-test="records-toggle"]').element as HTMLInputElement).checked).toBe(false)
+    expect(w.find('[data-test="records-toggle"]').exists()).toBe(false)
+  })
+
+  it('выключатель метрик скрывает рекорд у числовой метрики и у подходов, графики не затрагивает', async () => {
+    localStorage.setItem('site_records_metrics', 'off')
+    const num = mount(NumberMetricField, { props: { metric: water, value: 1500, record: { y: 3200, date: '2026-05-01' } } })
+    const sets = mount(SetsCard, { props: { metric: pushups, sets: [], record: { y: 120, date: '2026-05-01' } } })
+    expect(num.find('[data-test="record-badge"]').exists()).toBe(false)
+    expect(sets.find('[data-test="record-badge"]').exists()).toBe(false)
   })
 })

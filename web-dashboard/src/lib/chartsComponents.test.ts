@@ -320,10 +320,15 @@ describe('ChartsSection', () => {
     expect(water).toContain('100 мл')
     expect(charts[2].find('[data-test="record-text"]').text()).toContain('7')
     const { setRecordsEnabled } = await import('../lib/records')
-    setRecordsEnabled(false)
+    // раздельные выключатели (ответ владельца 2026-10-04): выключатель МЕТРИК графики не трогает
+    setRecordsEnabled(false, 'metrics')
+    await flushPromises()
+    expect(w.findAll('[data-test="record-badge"]')).toHaveLength(2)
+    setRecordsEnabled(true, 'metrics')
+    setRecordsEnabled(false, 'charts')
     await flushPromises()
     expect(w.findAll('[data-test="record-badge"]')).toHaveLength(0)
-    setRecordsEnabled(true)
+    setRecordsEnabled(true, 'charts')
     w.unmount()
   })
 

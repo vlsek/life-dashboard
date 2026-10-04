@@ -1,29 +1,36 @@
 // «Рекорды» (BACKLOG раздел 28): у каждого графика и каждой числовой метрики/метрики-подходов показываем лучшее значение
-// за всё время и дату. Выключатель — в окне «Настроить Дашборд»; по умолчанию ВКЛЮЧЕНО (в localStorage хранится только выбор «выключить»).
+// за всё время и дату. По ответу владельца (2026-10-04) выключатели РАЗДЕЛЬНЫЕ: у графиков — в окне «Настроить графики»,
+// у метрик — в окне «Управление метриками». По умолчанию ВКЛЮЧЕНО.
+// Хранение: `site_records_charts` / `site_records_metrics` = 'on' | 'off'. Прежний общий выбор `site_records` = 'off' (v2.82)
+// продолжает действовать на оба места, пока человек не тронул галочку этого места: тогда его явный выбор сильнее.
 export const RECORDS_KEY = 'site_records'
 export const RECORDS_EVENT = 'site-records:changed'
+export type RecordsKind = 'charts' | 'metrics'
+export const RECORDS_KEYS: Record<RecordsKind, string> = { charts: 'site_records_charts', metrics: 'site_records_metrics' }
 
 export interface RecordInfo {
   y: number
   date: string
 }
 
-export function recordsEnabled(): boolean {
+export function recordsEnabled(kind: RecordsKind): boolean {
   try {
-    return localStorage.getItem(RECORDS_KEY) !== 'off'
+    const own = localStorage.getItem(RECORDS_KEYS[kind])
+    if (own === 'on') return true
+    if (own === 'off') return false
+    return localStorage.getItem(RECORDS_KEY) !== 'off' // прежний общий выбор
   } catch {
     return true
   }
 }
 
-export function setRecordsEnabled(on: boolean): void {
+export function setRecordsEnabled(on: boolean, kind: RecordsKind): void {
   try {
-    if (on) localStorage.removeItem(RECORDS_KEY)
-    else localStorage.setItem(RECORDS_KEY, 'off')
+    localStorage.setItem(RECORDS_KEYS[kind], on ? 'on' : 'off')
   } catch {
     /* приватный режим: выбор не сохранится, но работает до перезагрузки */
   }
-  window.dispatchEvent(new CustomEvent(RECORDS_EVENT, { detail: on }))
+  window.dispatchEvent(new CustomEvent(RECORDS_EVENT, { detail: { kind, on } }))
 }
 
 // Рекорд — наибольшее значение больше нуля (нулевой «рекорд» ничего не говорит); при равных значениях — самая ранняя дата.

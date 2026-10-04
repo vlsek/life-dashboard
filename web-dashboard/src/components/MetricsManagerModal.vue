@@ -5,6 +5,7 @@ import MetricFormModal from './MetricFormModal.vue'
 import MetricIcon from './MetricIcon.vue'
 import Icon from './Icon.vue'
 import { t } from '../lib/i18n'
+import { recordsEnabled, setRecordsEnabled } from '../lib/records'
 import { goalSummary, scheduleSummary } from '../lib/metricsManager'
 import type { MetricFormValues } from '../lib/metricsManager'
 import type { MetricCategory } from '../lib/useMetricsManager'
@@ -19,6 +20,13 @@ const emit = defineEmits<{
   edit: [m: Metric, form: MetricFormValues, done: (ok: boolean) => void]
   remove: [m: Metric]
 }>()
+
+// Рекорды у метрик (BACKLOG раздел 28, ответ владельца): свой выключатель, применяется сразу
+const recordsOn = ref(recordsEnabled('metrics'))
+function onRecords(e: Event) {
+  recordsOn.value = (e.target as HTMLInputElement).checked
+  setRecordsEnabled(recordsOn.value, 'metrics')
+}
 
 const formOpen = ref(false)
 const editing = ref<Metric | null>(null)
@@ -51,6 +59,12 @@ function summary(m: Metric): string {
   <div class="modal-backdrop" @click.self="emit('close')">
     <div class="modal" style="max-width: 30rem">
       <h3><EmojiText :text="t('dash_metrics_manager_title')" /></h3>
+
+      <label class="mb-1 flex items-center gap-2 text-sm">
+        <input type="checkbox" :checked="recordsOn" data-test="records-toggle-metrics" @change="onRecords" />
+        {{ t('records_setting_metrics') }}
+      </label>
+      <p class="dim mb-3 text-xs">{{ t('records_setting_metrics_hint') }}</p>
 
       <p v-if="metrics.length === 0" class="dim">{{ t('dash_metrics_manager_empty') }}</p>
       <table v-else class="w-full text-sm">

@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { getLang, t } from '../lib/i18n'
-import { RECORDS_EVENT, formatRecordDate, formatRecordValue, recordsEnabled, type RecordInfo } from '../lib/records'
+import { RECORDS_EVENT, formatRecordDate, formatRecordValue, recordsEnabled, type RecordInfo, type RecordsKind } from '../lib/records'
 
 // «Рекорд: 5 200 мл · 12 сент. 2026» — лучшее значение за всё время (BACKLOG раздел 28). Сам скрывается, если человек
-// выключил рекорды в «Настроить Дашборд» (реагирует сразу, без перезагрузки) или рекорда ещё нет.
-const props = defineProps<{ record: RecordInfo | null | undefined; unit?: string }>()
-const on = ref(recordsEnabled())
-const sync = () => (on.value = recordsEnabled())
+// выключил рекорды для этого места — `kind`: 'charts' (окно «Настроить графики») или 'metrics' (окно «Управление метриками») —
+// (реагирует сразу, без перезагрузки) или рекорда ещё нет.
+const props = defineProps<{ record: RecordInfo | null | undefined; unit?: string; kind: RecordsKind }>()
+const on = ref(recordsEnabled(props.kind))
+const sync = () => (on.value = recordsEnabled(props.kind))
 onMounted(() => window.addEventListener(RECORDS_EVENT, sync))
 onBeforeUnmount(() => window.removeEventListener(RECORDS_EVENT, sync))
 

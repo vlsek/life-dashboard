@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { RECORDS_EVENT, RECORDS_KEY, bestRecord, formatRecordDate, formatRecordValue, mergeRecord, recordsEnabled, setRecordsEnabled } from './records'
+import { RECORDS_EVENT, RECORDS_KEY, RECORDS_KEYS, bestRecord, formatRecordDate, formatRecordValue, mergeRecord, recordsEnabled, setRecordsEnabled } from './records'
 
 beforeEach(() => localStorage.clear())
 
@@ -32,24 +32,39 @@ describe('mergeRecord', () => {
   })
 })
 
-describe('выключатель', () => {
-  it('по умолчанию включено; «выключить» хранится в localStorage; включить — снова убирает ключ', () => {
-    expect(recordsEnabled()).toBe(true)
-    setRecordsEnabled(false)
-    expect(localStorage.getItem(RECORDS_KEY)).toBe('off')
-    expect(recordsEnabled()).toBe(false)
-    setRecordsEnabled(true)
-    expect(localStorage.getItem(RECORDS_KEY)).toBeNull()
-    expect(recordsEnabled()).toBe(true)
+describe('выключатель (раздельный: графики / метрики)', () => {
+  it('по умолчанию оба включены; выбор хранится отдельно для каждого места как on/off', () => {
+    expect(recordsEnabled('charts')).toBe(true)
+    expect(recordsEnabled('metrics')).toBe(true)
+    setRecordsEnabled(false, 'charts')
+    expect(localStorage.getItem(RECORDS_KEYS.charts)).toBe('off')
+    expect(recordsEnabled('charts')).toBe(false)
+    expect(recordsEnabled('metrics')).toBe(true)
+    expect(localStorage.getItem(RECORDS_KEYS.metrics)).toBeNull()
+    setRecordsEnabled(true, 'charts')
+    expect(localStorage.getItem(RECORDS_KEYS.charts)).toBe('on')
+    expect(recordsEnabled('charts')).toBe(true)
   })
-  it('смена выбора будит слушателей события (бейджи скрываются сразу, без перезагрузки)', () => {
-    const seen: boolean[] = []
+  it('прежний общий выбор (site_records = off, v2.82) выключает оба места, пока человек не тронул галочку этого места', () => {
+    localStorage.setItem(RECORDS_KEY, 'off')
+    expect(recordsEnabled('charts')).toBe(false)
+    expect(recordsEnabled('metrics')).toBe(false)
+    setRecordsEnabled(true, 'charts') // явный выбор сильнее прежнего
+    expect(recordsEnabled('charts')).toBe(true)
+    expect(recordsEnabled('metrics')).toBe(false)
+  })
+  it('прежний общий выбор «включено» (ключа нет) ничего не выключает', () => {
+    expect(localStorage.getItem(RECORDS_KEY)).toBeNull()
+    expect(recordsEnabled('charts') && recordsEnabled('metrics')).toBe(true)
+  })
+  it('смена выбора будит слушателей события и сообщает, какое место и что выбрано', () => {
+    const seen: { kind: string; on: boolean }[] = []
     const on = ((e: CustomEvent) => seen.push(e.detail)) as unknown as EventListener
     window.addEventListener(RECORDS_EVENT, on)
-    setRecordsEnabled(false)
-    setRecordsEnabled(true)
+    setRecordsEnabled(false, 'metrics')
+    setRecordsEnabled(true, 'charts')
     window.removeEventListener(RECORDS_EVENT, on)
-    expect(seen).toEqual([false, true])
+    expect(seen).toEqual([{ kind: 'metrics', on: false }, { kind: 'charts', on: true }])
   })
 })
 

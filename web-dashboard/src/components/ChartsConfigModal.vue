@@ -5,6 +5,7 @@ import PeriodPicker from './PeriodPicker.vue'
 import Icon from './Icon.vue'
 import MetricIcon from './MetricIcon.vue'
 import { t } from '../lib/i18n'
+import { recordsEnabled, setRecordsEnabled } from '../lib/records'
 import { addableKeys, moveEntry, removeEntry, type ChartEntry, type ChartSeries } from '../lib/chartSeries'
 import type { PeriodState } from '../lib/chart'
 
@@ -14,6 +15,11 @@ const props = defineProps<{ series: Record<string, ChartSeries>; entries: ChartE
 const emit = defineEmits<{ close: []; save: [entries: ChartEntry[], period: PeriodState] }>()
 
 const order = ref<ChartEntry[]>(props.entries.map((e) => ({ ...e })))
+const recordsOn = ref(recordsEnabled('charts'))
+function onRecords(e: Event) {
+  recordsOn.value = (e.target as HTMLInputElement).checked
+  setRecordsEnabled(recordsOn.value, 'charts')
+}
 const localPeriod = reactive<PeriodState>({ ...props.period })
 const toAdd = ref('')
 const addable = computed(() => addableKeys(props.series, order.value))
@@ -37,6 +43,13 @@ function add() {
       <div class="dim mt-3 mb-1 text-sm" data-test="period-all-label">{{ t('dash_charts_period_all_label') }}</div>
       <PeriodPicker :state="localPeriod" @change="Object.assign(localPeriod, $event)" />
       <p class="dim mt-1 text-xs" data-test="period-all-hint">{{ t('dash_charts_period_hint') }}</p>
+
+      <!-- Рекорды у графиков (BACKLOG раздел 28, ответ владельца): свой выключатель, применяется сразу -->
+      <label class="mt-3 flex items-center gap-2 text-sm">
+        <input type="checkbox" :checked="recordsOn" data-test="records-toggle-charts" @change="onRecords" />
+        {{ t('records_setting_charts') }}
+      </label>
+      <p class="dim mt-1 text-xs">{{ t('records_setting_charts_hint') }}</p>
 
       <hr class="my-3" style="border: none; border-top: 1px solid var(--border)" />
       <p class="dim mb-2 text-xs">{{ t('dash_charts_goal_hint') }}</p>

@@ -135,7 +135,7 @@ const fallbackText = computed(() => {
 <template>
   <div>
     <h4 v-if="title" class="mb-1.5 font-medium"><MetricIcon v-if="icon" :icon="icon" extra-style="margin-right:0.35em;" />{{ title }}<MetricStreakBadge v-if="streak" :info="streak" /></h4>
-    <RecordBadge v-if="record" :record="record" :unit="unit" class="mb-1.5" />
+    <RecordBadge v-if="record" kind="charts" :record="record" :unit="unit" class="mb-1.5" />
     <template v-if="innerSvg">
       <svg viewBox="0 0 620 160" width="100%" :height="160" v-html="innerSvg"></svg>
       <ul v-if="legend.length" class="m-0 mt-1 flex list-none flex-wrap gap-x-3 gap-y-1 p-0 text-xs" data-test="chart-legend" :aria-label="t('chart_legend_aria')">
