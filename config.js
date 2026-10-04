@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.89";
+const SITE_VERSION = "2.90";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.90", date: "2026-10-04 17:44", changes: [
+        "Тренировки, карта мышц: под картой появился список «Когда тренировали каждую мышцу» — по каждой группе написано «сегодня», «вчера» или «N дн. назад» и дата, либо «ещё не тренировали». Давно не тренированные мышцы стоят сверху. В карточке выбранной мышцы то же самое: «Последний раз: вчера (29.09.2026)»",
+    ]},
     { version: "2.89", date: "2026-10-04 17:41", changes: [
         "Цели: раздел теперь называется просто «Цели», а кнопка — «Добавить». То же слово «цели» в коротком туре по сайту",
         "Графики: «общий период» переименован в «Период для всех графиков», под выбором периода в окне «Настроить графики» появилась подсказка, что у любого графика можно задать свой период. В окне периода отдельного графика кнопка теперь «Как у всех графиков»",
@@ -1474,6 +1477,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.90", date: "2026-10-04 17:44", changes: [
+        "Workouts, muscle map: below the map there is a new list, \"When each muscle was last worked\" — every group shows \"today\", \"yesterday\" or \"N d ago\" with the date, or \"not yet\". Muscles you have not trained for the longest are at the top. The card of a selected muscle says the same: \"Last worked: yesterday (29.09.2026)\"",
+    ]},
     { version: "2.89", date: "2026-10-04 17:41", changes: [
         "Goals: the section is now simply called \"Goals\" and the button says \"Add\". The short site tour uses the same word",
         "Charts: the \"shared period\" is now called \"Period for all charts\", and the \"Configure charts\" window has a hint under the period picker that any chart can have its own period. In a single chart's period window the button now reads \"Same as all charts\"",

@@ -1,6 +1,13 @@
 {
-  "version": "2.89",
+  "version": "2.90",
   "en": [
+    {
+      "version": "2.90",
+      "date": "2026-10-04 17:44",
+      "changes": [
+        "Workouts, muscle map: below the map there is a new list, \"When each muscle was last worked\" — every group shows \"today\", \"yesterday\" or \"N d ago\" with the date, or \"not yet\". Muscles you have not trained for the longest are at the top. The card of a selected muscle says the same: \"Last worked: yesterday (29.09.2026)\""
+      ]
+    },
     {
       "version": "2.89",
       "date": "2026-10-04 17:41",
@@ -2087,6 +2094,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.90",
+      "date": "2026-10-04 17:44",
+      "changes": [
+        "Тренировки, карта мышц: под картой появился список «Когда тренировали каждую мышцу» — по каждой группе написано «сегодня», «вчера» или «N дн. назад» и дата, либо «ещё не тренировали». Давно не тренированные мышцы стоят сверху. В карточке выбранной мышцы то же самое: «Последний раз: вчера (29.09.2026)»"
+      ]
+    },
     {
       "version": "2.89",
       "date": "2026-10-04 17:41",
