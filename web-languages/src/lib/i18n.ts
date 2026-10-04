@@ -48,13 +48,13 @@ const DICT = {
     tour_done: "Let's go!",
     tour_1_title: 'Welcome!',
     tour_1_text:
-      'This is your personal dashboard: one place for daily habits, long-term goals, skills, workouts and progress.\n\nA short tour — 7 quick steps. You can reopen it any time from the side menu ("How it works").',
+      'This is your personal dashboard: one place for daily habits, goals, skills, workouts and progress.\n\nA short tour — 7 quick steps. You can reopen it any time from the side menu ("How it works").',
     tour_2_title: 'Dashboard',
     tour_2_text:
       'Every day you tick off your daily metrics (yes/no, numbers, sets) and can add items to "Planned for today". The circle shows how much of the day is done (the History section shows every day and week as a calendar), the flame is your streak, and points are what you earn for completed things.\n\nThe ⚙️ icons next to blocks let you customize what is shown.',
     tour_3_title: 'Goals',
     tour_3_text:
-      "Long-term goals live in the Goals section. Split a big goal into stages, mark progress, and drop any goal into today's plan so it counts toward your day and week.",
+      "Your goals live in the Goals section. Split a big goal into stages, mark progress, and drop any goal into today's plan so it counts toward your day and week.",
     tour_4_title: 'Skills, workouts, English',
     tour_4_text:
       '🥋 Skills — things you are mastering, with progress and books.\n🏋️ Workouts — exercises and sets (reps, weight, time), plus ready-made programs.\n🌐 Languages — a vocabulary for any language you learn: add the words you meet, mark what you learned.',
@@ -151,13 +151,13 @@ const DICT = {
     tour_done: 'Поехали!',
     tour_1_title: 'Добро пожаловать!',
     tour_1_text:
-      'Это твой личный дашборд: в одном месте ежедневные привычки, долгосрочные цели, навыки, тренировки и прогресс.\n\nКороткий тур — 7 быстрых шагов. Открыть его снова можно в любой момент из бокового меню («Как пользоваться»).',
+      'Это твой личный дашборд: в одном месте ежедневные привычки, цели, навыки, тренировки и прогресс.\n\nКороткий тур — 7 быстрых шагов. Открыть его снова можно в любой момент из бокового меню («Как пользоваться»).',
     tour_2_title: 'Дашборд',
     tour_2_text:
       'Каждый день отмечаешь ежедневные метрики (да/нет, числа, подходы) и можешь добавлять пункты в «Запланировано на сегодня». Кружок показывает, насколько выполнен день (раздел «История» показывает каждый день и неделю календарём), огонёк — твоя серия, а баллы копятся за выполненное.\n\nИконки ⚙️ рядом с блоками позволяют настроить, что показывать.',
     tour_3_title: 'Цели',
     tour_3_text:
-      'Долгосрочные цели живут в разделе «Цели». Большую цель можно разбить на этапы, отмечать прогресс и закидывать в план на сегодня — тогда она идёт в счёт дня и недели.',
+      'Цели живут в разделе «Цели». Большую цель можно разбить на этапы, отмечать прогресс и закидывать в план на сегодня — тогда она идёт в счёт дня и недели.',
     tour_4_title: 'Навыки, тренировки, английский',
     tour_4_text:
       '🥋 Навыки — то, что осваиваешь, с прогрессом и книгами.\n🏋️ Тренировки — упражнения и подходы (повторения, вес, время), плюс готовые программы.\n🌐 Языки — словарь для любого изучаемого языка: добавляй слова, которые встретил, отмечай выученные.',

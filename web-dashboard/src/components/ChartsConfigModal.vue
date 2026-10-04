@@ -34,8 +34,9 @@ function add() {
       <h3><EmojiText :text="t('dash_charts_config_title')" /></h3>
       <p class="dim text-sm">{{ t('dash_charts_config_hint') }}</p>
 
-      <div class="dim mt-3 mb-1 text-sm">{{ t('dash_charts_period_label') }}</div>
+      <div class="dim mt-3 mb-1 text-sm" data-test="period-all-label">{{ t('dash_charts_period_all_label') }}</div>
       <PeriodPicker :state="localPeriod" @change="Object.assign(localPeriod, $event)" />
+      <p class="dim mt-1 text-xs" data-test="period-all-hint">{{ t('dash_charts_period_hint') }}</p>
 
       <hr class="my-3" style="border: none; border-top: 1px solid var(--border)" />
       <p class="dim mb-2 text-xs">{{ t('dash_charts_goal_hint') }}</p>

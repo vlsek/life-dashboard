@@ -48,13 +48,13 @@ const DICT = {
     tour_done: "Let's go!",
     tour_1_title: 'Welcome!',
     tour_1_text:
-      'This is your personal dashboard: one place for daily habits, long-term goals, skills, workouts and progress.\n\nA short tour — 7 quick steps. You can reopen it any time from the side menu ("How it works").',
+      'This is your personal dashboard: one place for daily habits, goals, skills, workouts and progress.\n\nA short tour — 7 quick steps. You can reopen it any time from the side menu ("How it works").',
     tour_2_title: 'Dashboard',
     tour_2_text:
       'Every day you tick off your daily metrics (yes/no, numbers, sets) and can add items to "Planned for today". The circle shows how much of the day is done (the History section shows every day and week as a calendar), the flame is your streak, and points are what you earn for completed things.\n\nThe ⚙️ icons next to blocks let you customize what is shown.',
     tour_3_title: 'Goals',
     tour_3_text:
-      "Long-term goals live in the Goals section. Split a big goal into stages, mark progress, and drop any goal into today's plan so it counts toward your day and week.",
+      "Your goals live in the Goals section. Split a big goal into stages, mark progress, and drop any goal into today's plan so it counts toward your day and week.",
     tour_4_title: 'Skills, workouts, English',
     tour_4_text:
       '🥋 Skills — things you are mastering, with progress and books.\n🏋️ Workouts — exercises and sets (reps, weight, time), plus ready-made programs.\n🌐 Languages — a vocabulary for any language you learn: add the words you meet, mark what you learned.',
@@ -209,9 +209,9 @@ const DICT = {
     chart_not_enough_data: "Not enough data for a chart yet (need at least 2 days).",
     dash_chart_period_btn_title: "Period for this chart",
     dash_chart_period_modal_title: "🗓️ Period for this chart",
-    dash_chart_period_is_custom_hint: "This chart has its own custom period, different from the shared one.",
-    dash_chart_period_uses_shared_hint: "Currently using the shared period from \"Configure charts\". Pick a range here to set a custom period just for this chart.",
-    dash_chart_period_reset_btn: "Use shared period",
+    dash_chart_period_is_custom_hint: "This chart has its own period and ignores the one set for all charts.",
+    dash_chart_period_uses_shared_hint: "This chart follows the period set for all charts (\"Configure charts\"). Pick a range here to give this chart its own period.",
+    dash_chart_period_reset_btn: "Same as all charts",
     dash_charts_configure_btn: "⚙️ Configure charts",
     changelog_title: "📋 What's new",
     changelog_empty: "No history yet.",
@@ -300,13 +300,13 @@ const DICT = {
     tour_done: 'Поехали!',
     tour_1_title: 'Добро пожаловать!',
     tour_1_text:
-      'Это твой личный дашборд: в одном месте ежедневные привычки, долгосрочные цели, навыки, тренировки и прогресс.\n\nКороткий тур — 7 быстрых шагов. Открыть его снова можно в любой момент из бокового меню («Как пользоваться»).',
+      'Это твой личный дашборд: в одном месте ежедневные привычки, цели, навыки, тренировки и прогресс.\n\nКороткий тур — 7 быстрых шагов. Открыть его снова можно в любой момент из бокового меню («Как пользоваться»).',
     tour_2_title: 'Дашборд',
     tour_2_text:
       'Каждый день отмечаешь ежедневные метрики (да/нет, числа, подходы) и можешь добавлять пункты в «Запланировано на сегодня». Кружок показывает, насколько выполнен день (раздел «История» показывает каждый день и неделю календарём), огонёк — твоя серия, а баллы копятся за выполненное.\n\nИконки ⚙️ рядом с блоками позволяют настроить, что показывать.',
     tour_3_title: 'Цели',
     tour_3_text:
-      'Долгосрочные цели живут в разделе «Цели». Большую цель можно разбить на этапы, отмечать прогресс и закидывать в план на сегодня — тогда она идёт в счёт дня и недели.',
+      'Цели живут в разделе «Цели». Большую цель можно разбить на этапы, отмечать прогресс и закидывать в план на сегодня — тогда она идёт в счёт дня и недели.',
     tour_4_title: 'Навыки, тренировки, английский',
     tour_4_text:
       '🥋 Навыки — то, что осваиваешь, с прогрессом и книгами.\n🏋️ Тренировки — упражнения и подходы (повторения, вес, время), плюс готовые программы.\n🌐 Языки — словарь для любого изучаемого языка: добавляй слова, которые встретил, отмечай выученные.',
@@ -461,9 +461,9 @@ const DICT = {
     chart_not_enough_data: "Пока маловато данных для графика (нужно от 2 дней).",
     dash_chart_period_btn_title: "Период для этого графика",
     dash_chart_period_modal_title: "🗓️ Период для этого графика",
-    dash_chart_period_is_custom_hint: "У этого графика свой период, отдельный от общего.",
-    dash_chart_period_uses_shared_hint: "Сейчас используется общий период из «Настроить графики». Выбери диапазон здесь, чтобы задать свой период именно для этого графика.",
-    dash_chart_period_reset_btn: "Использовать общий период",
+    dash_chart_period_is_custom_hint: "У этого графика свой период — он не зависит от периода «для всех графиков».",
+    dash_chart_period_uses_shared_hint: "Этот график показывается за период, заданный для всех графиков («Настроить графики»). Выбери диапазон здесь, чтобы у этого графика был свой период.",
+    dash_chart_period_reset_btn: "Как у всех графиков",
     dash_charts_configure_btn: "⚙️ Настроить графики",
     changelog_title: "📋 Что нового",
     changelog_empty: "История пока пуста.",
