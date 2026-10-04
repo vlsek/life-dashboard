@@ -1,14 +1,20 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import AchievementCard from './components/AchievementCard.vue'
+import AchievementUnlockedModal from './components/AchievementUnlockedModal.vue'
 import { useAchievements } from './lib/useAchievements'
 import { groupStates, isUnlocked } from './lib/achievements'
 import { groupTitle } from './lib/achievementText'
 import { t } from './lib/i18n'
 
-const { auth, states, unlocked, mode, error, loading, init } = useAchievements()
+const { auth, states, unlocked, newlyUnlocked, mode, error, loading, init } = useAchievements()
 onMounted(init)
+
+// Поздравление показываем один раз: после закрытия список очищается (в хранилище достижение уже записано, повторно не придёт).
+const celebrate = ref<string[]>([])
+watch(newlyUnlocked, (keys) => (celebrate.value = [...keys]), { immediate: true })
+const celebrateStates = computed(() => states.value.filter((s) => celebrate.value.includes(s.def.key)))
 
 const groups = computed(() => groupStates(states.value, unlocked.value))
 const total = computed(() => states.value.length)
@@ -59,4 +65,6 @@ const overallPercent = computed(() => (total.value ? Math.round((openCount.value
       </template>
     </template>
   </main>
+
+  <AchievementUnlockedModal v-if="!error && celebrateStates.length" :states="celebrateStates" @close="celebrate = []" />
 </template>

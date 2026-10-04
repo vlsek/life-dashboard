@@ -1,6 +1,13 @@
 {
-  "version": "2.61",
+  "version": "2.62",
   "en": [
+    {
+      "version": "2.62",
+      "date": "2026-10-04 04:20",
+      "changes": [
+        "Achievements: a congratulation window now appears when a new badge unlocks - a large badge, its name, what it was given for and a warm line by topic (streaks, points, workouts, goals, books). If several unlock at once they are paged with the Next button (1 of 3). The window closes with the button, a tap on the backdrop or Esc; the animation is turned off by the global switch and by the system reduce-motion setting. Achievements already met before the section appeared unlock silently without the window. The window is shown when you open the Achievements page"
+      ]
+    },
     {
       "version": "2.61",
       "date": "2026-10-04 04:05",
@@ -1888,6 +1895,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.62",
+      "date": "2026-10-04 04:20",
+      "changes": [
+        "«Достижения»: при открытии нового значка появляется окно-поздравление — крупный значок, название, за что он дан и тёплая строка по теме (серии, баллы, тренировки, цели, книги). Если открылось сразу несколько — они листаются кнопкой «Дальше» («1 из 3»). Окно закрывается кнопкой, нажатием на фон или Esc; анимация отключается общим выключателем и системной настройкой «уменьшить движение». Достижения, выполненные до появления раздела, молча открываются без окна. Окно показывается при заходе на страницу «Достижения»"
+      ]
+    },
     {
       "version": "2.61",
       "date": "2026-10-04 04:05",

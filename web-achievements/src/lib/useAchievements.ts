@@ -16,6 +16,7 @@ export function useAchievements() {
   const auth = ref<AuthState>({ status: 'loading' })
   const states = ref<AchievementState[]>([])
   const unlocked = ref<Unlocked>({})
+  const newlyUnlocked = ref<string[]>([]) // открыто именно сейчас (для поздравляющего окна)
   const counters = ref<Counters | null>(null)
   const mode = ref<StorageMode>('local')
   const error = ref<string | null>(null)
@@ -92,6 +93,7 @@ export function useAchievements() {
       const loaded = await loadUnlocked(userId)
       const rec = reconcile(st, { ...loaded.stored }, new Date().toISOString())
       unlocked.value = rec.unlocked
+      newlyUnlocked.value = rec.newlyUnlocked
       // дописываем новое и то, что раньше жило только на устройстве; сбой записи страницу не ломает
       mode.value = await saveUnlocked(userId, loaded.mode, { ...loaded.backfill, ...rec.added }, rec.unlocked)
     } catch (e) {
@@ -105,5 +107,5 @@ export function useAchievements() {
     if (auth.value.status === 'ready') await load(auth.value.userId)
   }
 
-  return { auth, states, unlocked, counters, mode, error, loading, init, reload }
+  return { auth, states, unlocked, newlyUnlocked, counters, mode, error, loading, init, reload }
 }

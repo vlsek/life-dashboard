@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.61";
+const SITE_VERSION = "2.62";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.62", date: "2026-10-04 04:20", changes: [
+        "«Достижения»: при открытии нового значка появляется окно-поздравление — крупный значок, название, за что он дан и тёплая строка по теме (серии, баллы, тренировки, цели, книги). Если открылось сразу несколько — они листаются кнопкой «Дальше» («1 из 3»). Окно закрывается кнопкой, нажатием на фон или Esc; анимация отключается общим выключателем и системной настройкой «уменьшить движение». Достижения, выполненные до появления раздела, молча открываются без окна. Окно показывается при заходе на страницу «Достижения»",
+    ]},
     { version: "2.61", date: "2026-10-04 04:05", changes: [
         "«Достижения» появились в боковом меню всех страниц (после «Магазина»): теперь раздел открывается одним нажатием, а не только по адресу /achievements/. Таблица значков уже применена владельцем, так что открытые значки сохраняются в аккаунте",
     ]},
@@ -1387,6 +1390,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.62", date: "2026-10-04 04:20", changes: [
+        "Achievements: a congratulation window now appears when a new badge unlocks - a large badge, its name, what it was given for and a warm line by topic (streaks, points, workouts, goals, books). If several unlock at once they are paged with the Next button (1 of 3). The window closes with the button, a tap on the backdrop or Esc; the animation is turned off by the global switch and by the system reduce-motion setting. Achievements already met before the section appeared unlock silently without the window. The window is shown when you open the Achievements page",
+    ]},
     { version: "2.61", date: "2026-10-04 04:05", changes: [
         "Achievements now appear in the side menu of every page (after Shop): the section opens with one tap instead of only by the /achievements/ address. The badges table has been applied by the owner, so unlocked badges are saved in the account",
     ]},

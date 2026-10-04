@@ -11,6 +11,7 @@ const hold = {
   auth: ref<unknown>({ status: 'ready', userId: 'u', userEmail: 'a@b.c' }),
   states: ref(evaluate(ZERO)),
   unlocked: ref<Record<string, string | null>>({}),
+  newlyUnlocked: ref<string[]>([]),
   mode: ref<'db' | 'local'>('db'),
   error: ref<string | null>(null),
   loading: ref(false),
@@ -22,6 +23,7 @@ beforeEach(() => {
   hold.auth.value = { status: 'ready', userId: 'u', userEmail: 'a@b.c' }
   hold.states.value = evaluate(ZERO)
   hold.unlocked.value = {}
+  hold.newlyUnlocked.value = []
   hold.mode.value = 'db'
   hold.error.value = null
   hold.loading.value = false
@@ -73,6 +75,37 @@ describe('страница «Достижения»', () => {
     hold.auth.value = { status: 'loading' }
     const w = await mountApp()
     expect(w.findAll('[data-testid="achievement-card"]').length).toBe(0)
+    w.unmount()
+  })
+
+  it('поздравление не показывается, если нового нет (в том числе при первом заходе, когда всё открывается задним числом)', async () => {
+    hold.states.value = evaluate({ ...ZERO, goalsDone: 1 })
+    hold.unlocked.value = { [BASELINE_KEY]: 'x', first_goal: null }
+    const w = await mountApp()
+    expect(w.find('[data-testid="achievement-unlocked"]').exists()).toBe(false)
+    w.unmount()
+  })
+
+  it('новое открытое достижение показывается окном-поздравлением; после закрытия окно пропадает', async () => {
+    hold.states.value = evaluate({ ...ZERO, goalsDone: 1, workoutDays: 1 })
+    hold.unlocked.value = { [BASELINE_KEY]: 'x', first_goal: null, first_workout: '2026-10-05T10:00:00.000Z' }
+    hold.newlyUnlocked.value = ['first_workout']
+    const w = await mountApp()
+    expect(w.find('[data-testid="achievement-unlocked"]').exists()).toBe(true)
+    expect(w.find('[data-testid="unlocked-name"]').text()).toBe('Первая тренировка')
+    expect(w.find('[data-testid="unlocked-counter"]').exists()).toBe(false)
+    await w.find('[data-testid="unlocked-next"]').trigger('click')
+    expect(w.find('[data-testid="achievement-unlocked"]').exists()).toBe(false)
+    expect(w.findAll('[data-testid="achievement-card"]').length).toBe(ACHIEVEMENTS.length) // страница на месте
+    w.unmount()
+  })
+
+  it('при ошибке загрузки поздравления нет', async () => {
+    hold.states.value = evaluate({ ...ZERO, goalsDone: 1 })
+    hold.newlyUnlocked.value = ['first_goal']
+    hold.error.value = 'boom'
+    const w = await mountApp()
+    expect(w.find('[data-testid="achievement-unlocked"]').exists()).toBe(false)
     w.unmount()
   })
 })
