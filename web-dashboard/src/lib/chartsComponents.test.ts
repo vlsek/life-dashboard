@@ -274,6 +274,32 @@ describe('ChartsSection', () => {
     w.unmount()
   })
 
+  it('BACKLOG раздел 28: у графиков метрик и «баллов» под названием рекорд за ВСЁ время (не за период); у параметров тела рекорда нет; выключатель скрывает', async () => {
+    const { default: ChartsSection } = await import('../components/ChartsSection.vue')
+    localStorage.setItem('dash_period_dashboard', JSON.stringify({ range: 'days7', from: null, to: null }))
+    state.series.value = {
+      'body:w': { label: 'Вес', unit: ' кг', color: 'var(--accent)', points: [{ date: '2020-01-01', y: 95 }, { date: '2020-01-02', y: 94 }] },
+      'metric:water': { label: 'Вода', unit: ' мл', color: 'var(--accent)', type: 'number', points: [{ date: '2020-01-01', y: 3100 }, { date: '2020-01-02', y: 1200 }] },
+      points: { label: 'Баллы', unit: '', color: 'var(--danger)', points: [{ date: '2020-01-01', y: 4 }, { date: '2020-01-02', y: 7 }] },
+    }
+    state.entries.value = [{ key: 'body:w', goal: null }, { key: 'metric:water', goal: null }, { key: 'points', goal: null }]
+    const w = mount(ChartsSection, { props: { userId: 'u1' } })
+    await flushPromises()
+    const charts = w.findAll('[data-test="chart"]')
+    expect(charts).toHaveLength(3)
+    expect(charts[0].find('[data-test="record-badge"]').exists()).toBe(false) // вес
+    const water = charts[1].find('[data-test="record-text"]').text().replace(/\s/g, ' ')
+    expect(water).toContain('3') // 3 100 мл — максимум за всю историю, хотя окно периода — 7 дней
+    expect(water).toContain('100 мл')
+    expect(charts[2].find('[data-test="record-text"]').text()).toContain('7')
+    const { setRecordsEnabled } = await import('../lib/records')
+    setRecordsEnabled(false)
+    await flushPromises()
+    expect(w.findAll('[data-test="record-badge"]')).toHaveLength(0)
+    setRecordsEnabled(true)
+    w.unmount()
+  })
+
   it('BACKLOG 18.2: период «10 дней» с одной свежей записью не оставляет пустой график — показаны последние записи и пометка', async () => {
     const { default: ChartsSection } = await import('../components/ChartsSection.vue')
     localStorage.setItem('dash_period_dashboard', JSON.stringify({ range: 'days10', from: null, to: null }))

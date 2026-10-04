@@ -7,6 +7,7 @@ import { MAX_WIDGET_SKILLS, withWidgetConfig, type DashboardBlockKey, type Layou
 import type { WidgetOptions } from '../lib/widgets'
 import { celebrationsEnabled, setCelebrationsEnabled } from '../lib/useStreakCelebration'
 import { setMotionOff, systemReducedMotion, userMotionOff } from '../lib/motion'
+import { recordsEnabled, setRecordsEnabled } from '../lib/records'
 
 const props = defineProps<{ initial: LayoutItem[]; error?: string; widgetOptions?: WidgetOptions }>()
 const emit = defineEmits<{ close: []; save: [LayoutItem[]] }>()
@@ -23,6 +24,11 @@ function onCelebrate(e: Event) {
 // «Отключить все анимации» (BACKLOG 16, 14:02): применяется сразу. Если анимации уже выключены системной
 // настройкой «уменьшить движение», переключатель включён и заблокирован — с пояснением, где это менять.
 const systemReduced = systemReducedMotion()
+const recordsOn = ref(recordsEnabled())
+function onRecords(e: Event) {
+  recordsOn.value = (e.target as HTMLInputElement).checked
+  setRecordsEnabled(recordsOn.value)
+}
 const motionOff = ref(userMotionOff() || systemReduced)
 function onMotion(e: Event) {
   motionOff.value = (e.target as HTMLInputElement).checked
@@ -134,6 +140,14 @@ function onSavingsPick(e: Event) {
           {{ t('dash_celebrate_setting') }}
         </label>
         <p class="dim mt-1 text-xs">{{ t('dash_celebrate_setting_hint') }}</p>
+      </div>
+
+      <div class="mt-3">
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" :checked="recordsOn" data-test="records-toggle" @change="onRecords" />
+          {{ t('records_setting') }}
+        </label>
+        <p class="dim mt-1 text-xs">{{ t('records_setting_hint') }}</p>
       </div>
 
       <div class="mt-3">

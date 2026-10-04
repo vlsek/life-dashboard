@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import Icon from './Icon.vue'
+import RecordBadge from './RecordBadge.vue'
+import type { RecordInfo } from '../lib/records'
 import MetricStreakBadge from './MetricStreakBadge.vue'
 import type { MetricStreakInfo } from '../lib/metricStreaks'
 import MetricIcon from './MetricIcon.vue'
@@ -17,6 +19,7 @@ const props = defineProps<{
   remaining?: boolean
   flashed?: boolean
   streak?: MetricStreakInfo | null
+  record?: RecordInfo | null // рекорд метрики за всё время (BACKLOG раздел 28)
 }>()
 const emit = defineEmits<{ set: [string]; add: [string]; fix: [string] }>()
 
@@ -67,6 +70,7 @@ function fixTotal() {
       <button type="button" class="add-btn" :title="t('dash_metric_add_btn_title')" @click="commit">+</button>
     </div>
     <input v-else v-model="text" type="number" step="any" placeholder="0" :class="{ 'saved-flash': flashed }" @change="commit" />
+    <RecordBadge v-if="record" :record="record" :unit="metric.unit ? ' ' + metric.unit : ''" class="mt-0.5" />
   </div>
 </template>
 

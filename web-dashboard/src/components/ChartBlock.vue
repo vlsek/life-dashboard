@@ -8,6 +8,8 @@ import type { VariationShare } from '../lib/variationChart'
 import { t } from '../lib/i18n'
 import { todayStr } from '../lib/date'
 import MetricIcon from './MetricIcon.vue'
+import RecordBadge from './RecordBadge.vue'
+import type { RecordInfo } from '../lib/records'
 
 const props = withDefaults(
   defineProps<{
@@ -21,9 +23,10 @@ const props = withDefaults(
     note?: string | null // пояснение под графиком (например, «период расширен»)
     variations?: string[] | null // метрики-подходы: стабильный порядок особенностей (от него цвета точек и легенды)
     streak?: MetricStreakInfo | null // серия метрики: огонёк с числом рядом с названием графика (BACKLOG 23, 14:42)
+    record?: RecordInfo | null // рекорд графика за всё время (BACKLOG раздел 28); показывается под названием, если не выключен в настройках
     today?: string // «сегодня» для легенды (ISO); по умолчанию — реальная сегодняшняя дата, параметр нужен тестам
   }>(),
-  { title: '', icon: null, unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null, note: null, variations: null, streak: null, today: undefined },
+  { title: '', icon: null, unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null, note: null, variations: null, streak: null, record: null, today: undefined },
 )
 
 const prepared = computed<ChartPoint[]>(() => prepareChartSeries(props.points))
@@ -132,6 +135,7 @@ const fallbackText = computed(() => {
 <template>
   <div>
     <h4 v-if="title" class="mb-1.5 font-medium"><MetricIcon v-if="icon" :icon="icon" extra-style="margin-right:0.35em;" />{{ title }}<MetricStreakBadge v-if="streak" :info="streak" /></h4>
+    <RecordBadge v-if="record" :record="record" :unit="unit" class="mb-1.5" />
     <template v-if="innerSvg">
       <svg viewBox="0 0 620 160" width="100%" :height="160" v-html="innerSvg"></svg>
       <ul v-if="legend.length" class="m-0 mt-1 flex list-none flex-wrap gap-x-3 gap-y-1 p-0 text-xs" data-test="chart-legend" :aria-label="t('chart_legend_aria')">

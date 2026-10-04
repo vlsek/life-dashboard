@@ -10,6 +10,7 @@ import DateStepper from './DateStepper.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import UsefulTodayList from './UsefulTodayList.vue'
 import { useDailyMetrics } from '../lib/useDailyMetrics'
+import { useMetricRecords } from '../lib/useMetricRecords'
 import { isRemaining } from '../lib/daily'
 import { todayStr } from '../lib/date'
 import { t } from '../lib/i18n'
@@ -31,6 +32,15 @@ const {
 } = useDailyMetrics()
 
 const props = defineProps<{ userId: string | null; metricStreaks?: Record<string, MetricStreakInfo> }>()
+// Рекорды числовых метрик и подходов за всё время (BACKLOG раздел 28) — под названием в плашке; выключаются в «Настроить Дашборд»
+const { records: metricRecords, init: initRecords } = useMetricRecords()
+watch(
+  () => props.userId,
+  (uid) => {
+    if (uid) void initRecords(uid)
+  },
+  { immediate: true },
+)
 watch(
   () => [props.userId, date.value] as const,
   ([uid, d]) => {
@@ -74,6 +84,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
               :flashed="!!flashed[m.id]"
               :remaining="isRemaining(m, date, pending[m.id])"
               :streak="props.metricStreaks?.[m.id]"
+              :record="metricRecords[m.id]"
               @set="setNumber(m, $event)"
               @add="addToNumber(m, $event)"
               @fix="fixTotal(m, $event)"
@@ -113,7 +124,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
     </div>
 
     <div class="mt-4">
-      <SetsSection :user-id="userId" :date="date" :metric-streaks="props.metricStreaks" />
+      <SetsSection :user-id="userId" :date="date" :metric-streaks="props.metricStreaks" :records="metricRecords" />
     </div>
 
     <!-- BACKLOG 23:00: «Что полезного сделал за день» — свёрнутым по умолчанию и в самом низу блока ежедневных метрик.

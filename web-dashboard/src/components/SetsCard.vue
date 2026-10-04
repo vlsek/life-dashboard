@@ -6,6 +6,8 @@ import MetricIcon from './MetricIcon.vue'
 import Icon from './Icon.vue'
 import MetricStreakBadge from './MetricStreakBadge.vue'
 import type { MetricStreakInfo } from '../lib/metricStreaks'
+import RecordBadge from './RecordBadge.vue'
+import type { RecordInfo } from '../lib/records'
 import CollapseChevron from './CollapseChevron.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import { t } from '../lib/i18n'
@@ -15,7 +17,7 @@ import type { Metric } from '../lib/types'
 
 // Портировано из renderSetsMetric() в dashboard.js. Презентационный компонент: сам ничего не
 // сохраняет, а на каждую правку отдаёт новый список подходов через change (родитель пишет в БД).
-const props = defineProps<{ metric: Metric; sets: SetRow[]; streak?: MetricStreakInfo | null }>()
+const props = defineProps<{ metric: Metric; sets: SetRow[]; streak?: MetricStreakInfo | null; record?: RecordInfo | null }>()
 const emit = defineEmits<{
   change: [sets: SetRow[]]
   remember: [text: string]
@@ -54,6 +56,7 @@ function onVariation(i: number, text: string) {
       <template v-if="summary">{{ summary.count }} {{ t('dash_sets_word') }} · {{ summary.reps }} {{ t('dash_sets_reps_word') }}</template>
       <template v-else>{{ t('dash_sets_empty') }}</template>
     </div>
+    <RecordBadge v-if="record" :record="record" :unit="' ' + t('dash_sets_reps_word')" class="mt-0.5" />
 
     <div v-collapse="open" class="mt-2">
       <div v-if="sets.length > 0" class="overflow-x-auto">

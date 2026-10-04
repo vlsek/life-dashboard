@@ -12,6 +12,7 @@ import { effectivePeriod, loadOwnPeriod } from '../lib/chartPeriods'
 import { PRESET_LABEL_KEYS, classifyPeriod, formatRange, monthLabel } from '../lib/periodNav'
 import { filterPointsWithFallback, loadPeriodState, savePeriodState, type PeriodState } from '../lib/chart'
 import { getLang, t } from '../lib/i18n'
+import { bestRecord } from '../lib/records'
 import type { MetricStreakInfo } from '../lib/metricStreaks'
 
 // Блок «Графики»: серии параметров тела, «баллы за день» и числовых метрик; выбор/порядок/цели
@@ -84,6 +85,11 @@ function periodChip(key: string): string {
   return formatRange(view.from, view.to, getLang())
 }
 
+// Рекорд графика за ВСЁ время (а не за выбранный период): метрики и «баллы за день»; у параметров тела (вес, талия…) непонятно, что лучше, — без рекорда.
+function recordFor(key: string) {
+  return key === 'points' || key.startsWith('metric:') ? bestRecord(series.value[key].points) : null
+}
+
 function goalFor(entry: ChartEntry) {
   const s = series.value[entry.key]
   const g = entryGoal(entry, s)
@@ -144,6 +150,7 @@ function onPeriodApplied() {
           :points="pointsFor(entry.key)"
           :variations="series[entry.key].variations"
           :streak="streakFor(entry.key)"
+          :record="recordFor(entry.key)"
           :note="noteFor(entry.key)"
           :unit="series[entry.key].unit"
           :color="series[entry.key].color"
