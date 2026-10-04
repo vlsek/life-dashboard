@@ -6,6 +6,7 @@ import { loadVersionInfo } from '../lib/version'
 import { getTheme, setTheme, THEME_KEYS, type ThemeKey } from '../lib/theme'
 import { logout } from '../lib/supabase'
 import ConfirmLogoutModal from './ConfirmLogoutModal.vue'
+import ConfirmDialogHost from './ConfirmDialogHost.vue'
 import { handleInstallClick, isStandaloneApp } from '../lib/install'
 import InstallModal from './InstallModal.vue'
 import WelcomeTourModal from './WelcomeTourModal.vue'
@@ -409,6 +410,7 @@ onUnmounted(() => {
   <AboutModal v-if="aboutOpen" @close="aboutOpen = false" />
   <ChangelogModal v-if="changelogOpen" @close="changelogOpen = false" />
   <ConfirmLogoutModal v-if="logoutConfirmOpen" @confirm="logout" @cancel="logoutConfirmOpen = false" />
+  <ConfirmDialogHost />
 </template>
 
 <style>

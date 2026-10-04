@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { ref } from 'vue'
 import type { ShopItem } from './lib/types'
 
@@ -118,15 +118,31 @@ describe('Магазин — вид «Список с копилкой»', () =>
     await w.findAll('[data-testid="buy-btn"]')[0].trigger('click')
     expect(h.buyItem).toHaveBeenCalledWith('movie')
   })
-  it('edit and delete work in both views (delete asks for confirmation)', async () => {
-    vi.stubGlobal('confirm', vi.fn(() => true))
+  it('edit and delete work in both views (delete asks for confirmation in the site-styled dialog, not the native one)', async () => {
+    const nativeConfirm = vi.fn(() => true)
+    vi.stubGlobal('confirm', nativeConfirm)
     const w = setup()
+    // подтвердили → удалено
     await w.findAll('[data-testid="delete-btn"]')[0].trigger('click')
-    expect(h.deleteItem).toHaveBeenCalled()
-    await w.find('[data-view="list"]').trigger('click')
+    expect(w.find('[data-test="confirm-dialog-text"]').text()).toBe('Удалить эту позицию?')
+    expect(h.deleteItem).not.toHaveBeenCalled() // пока человек не ответил — ничего не удалено
+    await w.find('[data-test="confirm-dialog-ok"]').trigger('click')
+    await flushPromises()
+    expect(h.deleteItem).toHaveBeenCalledTimes(1)
+    // отменили → не удалено
     h.deleteItem.mockReset()
     await w.findAll('[data-testid="delete-btn"]')[0].trigger('click')
-    expect(h.deleteItem).toHaveBeenCalled()
+    await w.find('[data-test="confirm-dialog-cancel"]').trigger('click')
+    await flushPromises()
+    expect(h.deleteItem).not.toHaveBeenCalled()
+    // то же в виде «Список с копилкой»
+    await w.find('[data-view="list"]').trigger('click')
+    await w.findAll('[data-testid="delete-btn"]')[0].trigger('click')
+    await w.find('[data-test="confirm-dialog-ok"]').trigger('click')
+    await flushPromises()
+    expect(h.deleteItem).toHaveBeenCalledTimes(1)
+    expect(nativeConfirm).not.toHaveBeenCalled()
+    w.unmount()
   })
 })
 

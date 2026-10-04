@@ -10,6 +10,7 @@ import { groupActiveByCategory, sortDone, pointsSummary } from './lib/goals'
 import { t } from './lib/i18n'
 import type { Goal, GoalFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
+import { confirmDialog } from './lib/confirmDialog'
 
 const { auth, items, error, init, addGoal, updateGoal, deleteGoal, toggleGoal, setStage } = useGoals()
 onMounted(init)
@@ -43,7 +44,7 @@ async function onSaveForm(res: GoalFormInput) {
 }
 
 async function onDelete(g: Goal) {
-  if (!confirm(t('goals_confirm_delete'))) return
+  if (!(await confirmDialog(t('goals_confirm_delete')))) return
   await deleteGoal(g.id)
 }
 </script>

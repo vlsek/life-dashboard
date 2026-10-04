@@ -13,6 +13,7 @@ import { suggestionsFor } from './lib/skills'
 import { t, getLang } from './lib/i18n'
 import type { Skill, SkillFormInput, Book, BookFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
+import { confirmDialog } from './lib/confirmDialog'
 
 const { auth, items: skills, error: skillsError, init, addSkill, updateSkill, deleteSkill, bumpProgress, toggleMastered } = useSkills()
 const { items: books, error: booksError, load: loadBooks, addBook, updateBook, deleteBook, toggleDone: toggleBookDone } = useBooks()
@@ -59,7 +60,7 @@ async function onSaveSkill(res: SkillFormInput) {
   }
 }
 async function onDeleteSkill(s: Skill) {
-  if (!confirm(t('skills_confirm_delete'))) return
+  if (!(await confirmDialog(t('skills_confirm_delete')))) return
   await deleteSkill(s.id)
 }
 
@@ -81,7 +82,7 @@ async function onSaveBook(res: BookFormInput) {
   }
 }
 async function onDeleteBook(b: Book) {
-  if (!confirm(t('skills_book_confirm_delete'))) return
+  if (!(await confirmDialog(t('skills_book_confirm_delete')))) return
   await deleteBook(b.id)
 }
 </script>

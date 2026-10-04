@@ -11,6 +11,7 @@ import { ref } from 'vue'
 import { localDateOfTimestamp } from './lib/date'
 import type { Challenge, ChallengeTemplate, CustomChallengeFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
+import { confirmDialog } from './lib/confirmDialog'
 
 const {
   auth,
@@ -66,12 +67,12 @@ async function onSaveEdit(res: CustomChallengeFormInput) {
     editing.value = null
   } catch {
     // форма остаётся открытой с введёнными значениями — можно повторить
-    alert(t('ch_edit_save_error'))
+    await confirmDialog(t('ch_edit_save_error'), { infoOnly: true })
   }
 }
 
 async function onAbandon(ch: Challenge) {
-  if (!confirm(t('ch_confirm_abandon'))) return
+  if (!(await confirmDialog(t('ch_confirm_abandon'), { okLabel: t('ch_abandon_ok') }))) return
   await abandonChallenge(ch)
 }
 async function onDeleteEntry(id: string) {

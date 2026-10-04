@@ -14,6 +14,7 @@ import { filterCounts, filterItems, savingGoal, splitItems, type ShopFilter } fr
 import { loadShopView, saveShopView } from './lib/shopView'
 import type { ShopItem, ShopItemFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
+import { confirmDialog } from './lib/confirmDialog'
 
 const { auth, items, balance, error, init, addItem, updateItem, buyItem, deleteItem, uploadImage } = useShop()
 onMounted(init)
@@ -40,7 +41,7 @@ async function onSaveForm(res: ShopItemFormInput) {
 }
 
 async function onDelete(item: ShopItem) {
-  if (!confirm(t('shop_confirm_delete'))) return
+  if (!(await confirmDialog(t('shop_confirm_delete')))) return
   await deleteItem(item.id)
 }
 

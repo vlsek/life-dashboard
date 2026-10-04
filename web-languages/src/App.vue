@@ -9,6 +9,7 @@ import DictionaryTabs from './components/DictionaryTabs.vue'
 import Icon from './components/Icon.vue'
 import type { VocabWord, WordFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
+import { confirmDialog } from './lib/confirmDialog'
 
 const { auth, words, error, addWord, editWord, deleteWord, toggleLearned } = useVocab()
 
@@ -89,7 +90,7 @@ async function onSave(res: WordFormInput) {
 }
 
 async function onDelete(id: string) {
-  if (!confirm(t('eng_confirm_delete'))) return
+  if (!(await confirmDialog(t('eng_confirm_delete')))) return
   try {
     await deleteWord(id)
   } catch (e) {

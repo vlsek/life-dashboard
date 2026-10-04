@@ -5,6 +5,7 @@ import { getLang, setLang, t, type DictKey } from '../lib/i18n'
 import { getTheme, setTheme, THEME_KEYS, type ThemeKey } from '../lib/theme'
 import { logout } from '../lib/supabase'
 import ConfirmLogoutModal from './ConfirmLogoutModal.vue'
+import ConfirmDialogHost from './ConfirmDialogHost.vue'
 import { loadVersionInfo } from '../lib/version'
 import Icon from './Icon.vue'
 import ChangelogModal from './ChangelogModal.vue'
@@ -355,6 +356,7 @@ onUnmounted(() => {
 
   <ChangelogModal v-if="changelogOpen" @close="changelogOpen = false" />
   <ConfirmLogoutModal v-if="logoutConfirmOpen" @confirm="logout" @cancel="logoutConfirmOpen = false" />
+  <ConfirmDialogHost />
 </template>
 
 <style>

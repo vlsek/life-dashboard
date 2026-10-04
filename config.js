@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.78";
+const SITE_VERSION = "2.79";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.79", date: "2026-10-04 05:40", changes: [
+        "Аудит оформления, первый срез. (1) В числовых полях (подходы, вес, цели, нормы и т. д.) пропали стрелки вверх/вниз «как из 2000-х» — вводить по-прежнему можно с клавиатуры, стрелками клавиатуры и колёсиком; на 15 страницах. (2) Вопросы «Удалить?» больше не выглядят как системное окно браузера: теперь это аккуратное окно в цветах темы с кнопками «Отмена» и «Удалить», Esc и нажатие на фон — отмена, фокус сразу на «Отмене», чтобы случайный Enter ничего не удалил. Сделано на страницах «Цели», «Навыки», «Вехи», «Английский», «Магазин», «Челленджи» (там же сообщение об ошибке сохранения вместо системного alert; подтверждение отказа от челленджа подписано «Бросить»). Удаление в «Тренировках» и ввод своего количества воды пока по-старому — следующим срезом",
+    ]},
     { version: "2.78", date: "2026-10-04 11:31", changes: [
         "Огонёк при загрузке теперь держится, пока страница не загрузится целиком: раньше он пропадал в момент появления первого каркаса, и блоки выползали один за другим. Теперь на всех страницах заставка висит, пока страница не смонтирована, нет незавершённых запросов и прошло полсекунды тишины (но не дольше 8 секунд, если что-то зависло). Затухание плавное; при выключенных анимациях заставка просто исчезает",
     ]},
@@ -1439,6 +1442,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.79", date: "2026-10-04 05:40", changes: [
+        "Look audit, first slice. (1) Number fields (sets, weight, goals, norms and so on) no longer show the old up/down arrows - you can still type, use the keyboard arrows and the mouse wheel; on 15 pages. (2) Delete questions no longer look like the browser system box: it is now a neat window in the theme colors with Cancel and Delete buttons, Esc or a tap on the backdrop cancels, and focus starts on Cancel so a stray Enter deletes nothing. Done on Goals, Skills, Milestones, English, Shop and Challenges (which also gets an in-page save-error message instead of the system alert; abandoning a challenge is labelled Abandon). Deleting in Workouts and typing a custom water amount still work the old way - next slice",
+    ]},
     { version: "2.78", date: "2026-10-04 11:31", changes: [
         "The loading flame now stays until the page has fully loaded: before, it vanished as soon as the first frame appeared and blocks popped in one by one. On every page the splash now stays until the page is mounted, no requests are pending and half a second of quiet has passed (never longer than 8 seconds if something hangs). It fades out smoothly, or just disappears when animations are off",
     ]},

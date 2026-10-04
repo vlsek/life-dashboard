@@ -10,6 +10,7 @@ import { t, locale } from './lib/i18n'
 import type { Milestone, MilestoneFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import Icon from './components/Icon.vue'
+import { confirmDialog } from './lib/confirmDialog'
 
 const { auth, items, error, init, addMilestone, updateMilestone, markDone, deleteMilestone } = useMilestones()
 onMounted(init)
@@ -124,7 +125,7 @@ async function onMarkDoneSubmit(res: { date: string; km: number | null; note: st
 }
 
 async function onDelete(m: Milestone) {
-  if (!confirm(t('ms_confirm_delete'))) return
+  if (!(await confirmDialog(t('ms_confirm_delete')))) return
   try {
     await deleteMilestone(m.id)
   } catch (e) {

@@ -96,3 +96,15 @@ html[data-motion='off'] *::after {
   transition: none !important;
   scroll-behavior: auto !important;
 }
+
+/* Нативные стрелки у input type=number (BACKLOG 567 / 789: «как из 2000-х»): скрыты. Вводить по-прежнему можно с клавиатуры,
+   стрелками вверх/вниз на клавиатуре и колёсиком; на телефоне родных стрелок и так нет. */
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
