@@ -7,6 +7,8 @@ import { valueLabelOptions } from '../lib/valueLabels'
 import Icon from './Icon.vue'
 import type { Exercise, ExerciseFormInput } from '../lib/types'
 import { stripEmoji } from '../lib/emojiText'
+import { VARIANT_BASES, applyVariant, baseForName, baseName, detectVariant, variantText } from '../lib/exerciseVariants'
+import { getLang } from '../lib/i18n'
 
 // Порт openExerciseFormModal() из workouts.js: имя, категория (фиксированный список +
 // "своя категория" текстом), вести вес да/нет, подпись значения, единица, доп. флаги
@@ -55,6 +57,24 @@ const muscleHint = computed(() => {
   return name.value.trim() ? t('workouts_muscles_pick_none') : ''
 })
 
+// Типовое упражнение и разновидность (BACKLOG 585): вместо ручного ввода — выбор из списка; разновидность — часть названия,
+// при смене остальное написанное не стирается (lib/exerciseVariants.ts). Своё слово по-прежнему можно вписать в название.
+const typical = computed(() => baseForName(name.value))
+const variantIndex = computed(() => (typical.value ? detectVariant(name.value, typical.value) : -1))
+const variantOptions = computed(() => (typical.value ? typical.value.variants.map((v, i) => ({ i, label: variantText(v, getLang()) })) : []))
+function onTypicalPick(e: Event) {
+  const id = (e.target as HTMLSelectElement).value
+  const b = VARIANT_BASES.find((x) => x.id === id)
+  if (b) name.value = baseName(b)
+  ;(e.target as HTMLSelectElement).value = ''
+  nameInput.value?.focus()
+}
+function onVariantPick(e: Event) {
+  if (!typical.value) return
+  const v = (e.target as HTMLSelectElement).value
+  name.value = applyVariant(name.value, typical.value, v === '' ? -1 : Number(v))
+}
+
 const showNewCatInput = computed(() => catSelect.value === '__new__')
 
 const nameInput = ref<HTMLInputElement | null>(null)
@@ -91,9 +111,28 @@ function onSubmit() {
           <input ref="nameInput" v-model="name" type="text" required class="modal-input" />
         </label>
 
+        <label v-if="!name.trim()" class="flex flex-col gap-1 text-sm" data-testid="typical-field">
+          {{ t('workouts_typical_label') }}
+          <select class="modal-input" data-testid="typical-select" @change="onTypicalPick">
+            <option value="">{{ t('workouts_typical_choose') }}</option>
+            <option v-for="b in VARIANT_BASES" :key="b.id" :value="b.id">{{ baseName(b) }}</option>
+          </select>
+        </label>
+
+        <div v-if="typical" class="flex flex-col gap-1 text-sm" data-testid="variant-field">
+          <label class="flex flex-col gap-1">
+            {{ t('workouts_variant_label') }}
+            <select :value="variantIndex < 0 ? '' : String(variantIndex)" class="modal-input" data-testid="variant-select" @change="onVariantPick">
+              <option value="">{{ t('workouts_variant_none') }}</option>
+              <option v-for="o in variantOptions" :key="o.i" :value="String(o.i)">{{ o.label }}</option>
+            </select>
+          </label>
+          <p class="text-xs" style="color: var(--text-dim)" data-testid="variant-hint">{{ t('workouts_variant_hint') }}</p>
+        </div>
+
         <label class="flex flex-col gap-1 text-sm">
           {{ t('workouts_field_category') }}
-          <select v-model="catSelect" class="modal-input">
+          <select v-model="catSelect" class="modal-input" data-testid="category-select">
             <option value="">{{ t('workouts_cat_none') }}</option>
             <option value="upper">{{ stripEmoji(t('workouts_cat_upper')) }}</option>
             <option value="lower">{{ stripEmoji(t('workouts_cat_lower')) }}</option>

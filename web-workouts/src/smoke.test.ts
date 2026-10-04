@@ -84,7 +84,7 @@ describe('ExerciseForm', () => {
 
   it('preselects "add my own category" for a legacy free-text category', () => {
     const wrapper = mount(ExerciseForm, { props: { existing: { ...exercise, category: 'Push Day' } } })
-    expect((wrapper.find('select').element as HTMLSelectElement).value).toBe('__new__')
+    expect((wrapper.find('[data-testid="category-select"]').element as HTMLSelectElement).value).toBe('__new__') // первым в форме может быть список разновидностей (BACKLOG 585)
     wrapper.unmount()
   })
 })
