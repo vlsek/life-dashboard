@@ -1,6 +1,13 @@
 {
-  "version": "2.66",
+  "version": "2.67",
   "en": [
+    {
+      "version": "2.67",
+      "date": "2026-10-04 04:38",
+      "changes": [
+        "History: swiping across the month and the day grid no longer pulls out the side panels — as in the Calendar, both the left menu and the right panel are protected (the right panel used to slide out anyway). Changing the month by swiping the grid works as before"
+      ]
+    },
     {
       "version": "2.66",
       "date": "2026-10-04 04:35",
@@ -1924,6 +1931,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.67",
+      "date": "2026-10-04 04:38",
+      "changes": [
+        "История: свайп по месяцу и сетке дней больше не выдвигает боковые плашки — как в Календаре, защищены и левое меню, и правая панель (раньше правая панель всё равно выезжала). Смена месяца свайпом по сетке работает как прежде"
+      ]
+    },
     {
       "version": "2.66",
       "date": "2026-10-04 04:35",
