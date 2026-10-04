@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.57";
+const SITE_VERSION = "2.58";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.58", date: "2026-10-04 03:34", changes: [
+        "Огонёк слева сверху теперь живой на всех страницах, а не только на Дашборде: те же языки пламени, цвет берётся от акцента выбранной темы, анимация гаснет при «уменьшить движение» и при общем выключателе анимаций. В окне входа над заголовком тоже горит живое пламя в цвете темы",
+    ]},
     { version: "2.57", date: "2026-10-04 03:18", changes: [
         "Магазин: два вида на выбор. «Витрина» — закреплённый баланс с итогами, чипы-фильтры «Все / Можно купить / Копится / Мои покупки» с количеством и сетка карточек с картинкой, ценой, прогрессом и кнопкой. «Список с копилкой» — баланс с полосой прогресса к ближайшей цели («Копите на: …»), разделы «Можно купить сейчас» и «Копится» и свёрнутые «Мои покупки». Переключатель вида — над балансом, выбор запоминается на устройстве. Покупка, правка и удаление работают в обоих видах как раньше",
     ]},
@@ -1375,6 +1378,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.58", date: "2026-10-04 03:34", changes: [
+        "The flame in the top-left corner is now alive on every page, not just the Dashboard: the same flame tongues, coloured by the accent of the selected theme, and it stops with reduced motion or the global animations switch. The sign-in window also shows a living flame in the theme colour above the title",
+    ]},
     { version: "2.57", date: "2026-10-04 03:18", changes: [
         "Shop: two views to choose from. Showcase has a pinned balance with totals, filter chips (All / Can buy / Saving up / My purchases) with counts and a grid of cards with picture, price, progress and a button. List with piggy bank shows the balance with a progress bar toward the nearest goal (Saving for: ...), sections Can buy now and Saving up, and a collapsed My purchases. The view switch sits above the balance and your choice is remembered on this device. Buying, editing and deleting work in both views as before",
     ]},

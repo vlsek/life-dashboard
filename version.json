@@ -1,6 +1,13 @@
 {
-  "version": "2.57",
+  "version": "2.58",
   "en": [
+    {
+      "version": "2.58",
+      "date": "2026-10-04 03:34",
+      "changes": [
+        "The flame in the top-left corner is now alive on every page, not just the Dashboard: the same flame tongues, coloured by the accent of the selected theme, and it stops with reduced motion or the global animations switch. The sign-in window also shows a living flame in the theme colour above the title"
+      ]
+    },
     {
       "version": "2.57",
       "date": "2026-10-04 03:18",
@@ -1860,6 +1867,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.58",
+      "date": "2026-10-04 03:34",
+      "changes": [
+        "Огонёк слева сверху теперь живой на всех страницах, а не только на Дашборде: те же языки пламени, цвет берётся от акцента выбранной темы, анимация гаснет при «уменьшить движение» и при общем выключателе анимаций. В окне входа над заголовком тоже горит живое пламя в цвете темы"
+      ]
+    },
     {
       "version": "2.57",
       "date": "2026-10-04 03:18",

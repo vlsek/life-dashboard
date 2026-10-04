@@ -5,6 +5,7 @@ import PasswordInput from './components/PasswordInput.vue'
 import { useLogin } from './lib/useLogin'
 import { t } from './lib/i18n'
 import EmojiText from './components/EmojiText.vue'
+import SplashFlameLive from './components/splash/SplashFlameLive.vue'
 
 const { mode, email, password, msg, busy, setMode, submit, signInWithGoogle, checkExistingSession } = useLogin()
 onMounted(checkExistingSession)
@@ -18,6 +19,8 @@ const tabStyle = (active: boolean) => ({
 <template>
   <main class="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-4 py-8">
     <LangThemeBar />
+    <!-- Живое пламя в цвете акцента выбранной темы (BACKLOG 746): тот же компонент и стили, что у заставки и логотипа в шапке -->
+    <SplashFlameLive :size="64" data-test="login-flame" class="mb-2" />
     <h1 class="mb-4 text-center text-2xl font-semibold"><EmojiText :text="t('login_title')" /></h1>
 
     <div class="w-full max-w-[360px] rounded-lg border p-4" style="border-color: var(--border); background: var(--bg-card)">

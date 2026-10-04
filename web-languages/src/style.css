@@ -96,3 +96,71 @@ html[data-motion='off'] *::after {
   transition: none !important;
   scroll-behavior: auto !important;
 }
+
+/* ── Живое пламя-логотип слева сверху в шапке (BACKLOG 688/746): копия .splash-live из Дашборда, только для маленького логотипа ── */
+.splash-live {
+  overflow: visible;
+  animation: splash-glow 2.4s ease-in-out infinite;
+}
+.splash-live .tongue {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.splash-live .tongue-c {
+  fill: var(--accent);
+  animation: tongue-c 1.3s ease-in-out infinite;
+}
+.splash-live .tongue-l {
+  fill: color-mix(in srgb, var(--accent) 78%, transparent);
+  animation: tongue-l 0.95s ease-in-out -0.3s infinite;
+}
+.splash-live .tongue-r {
+  fill: color-mix(in srgb, var(--accent) 78%, transparent);
+  animation: tongue-r 1.15s ease-in-out -0.7s infinite;
+}
+.splash-live .tongue-core {
+  fill: color-mix(in srgb, var(--accent) 35%, #ffffff);
+  animation: tongue-core 0.8s ease-in-out -0.2s infinite;
+}
+.splash-live .spark {
+  fill: color-mix(in srgb, var(--accent) 45%, #ffffff);
+  opacity: 0;
+  animation: spark-rise var(--d, 2s) ease-out var(--o, 0s) infinite;
+}
+@keyframes tongue-c {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  30% { transform: scale(0.96, 1.08) skewX(-4deg); }
+  65% { transform: scale(1.03, 0.95) skewX(3deg); }
+}
+@keyframes tongue-l {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  40% { transform: scale(0.9, 1.15) skewX(-7deg); }
+  75% { transform: scale(1.05, 0.9) skewX(4deg); }
+}
+@keyframes tongue-r {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  35% { transform: scale(0.92, 1.12) skewX(6deg); }
+  70% { transform: scale(1.06, 0.92) skewX(-4deg); }
+}
+@keyframes tongue-core {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(0.88, 1.12); }
+}
+@keyframes spark-rise {
+  0% { transform: translate(0, 0) scale(1); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(var(--dx, 0), -22px) scale(0.3); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .splash-live, .splash-live * { animation: none !important; }
+  .splash-live .spark { opacity: 0; }
+}
+/* общий выключатель анимаций (BACKLOG 16, «14:02»): <html data-motion="off"> */
+html[data-motion='off'] .splash-live,
+html[data-motion='off'] .splash-live * {
+  animation: none !important;
+}
+.splash-live.splash-live-sm {
+  animation: none;
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--accent) 50%, transparent));
+}
