@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import EmojiText from './EmojiText.vue'
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, nextTick } from 'vue'
 import { getLang, t } from '../lib/i18n'
 import { fmtDate } from '../lib/date'
 import { bodySurfaceAreaM2 } from '../lib/waterGoal'
@@ -61,10 +61,33 @@ function addMl(ml: number) {
   amountMl.value = Math.max(0, amountMl.value + ml)
 }
 
-function addCustom() {
-  const ml = parseInt(prompt(t('dash_water_add_custom_prompt')) || '', 10)
-  if (!ml || ml <= 0) return
+// «Своё количество»: поле ввода прямо в окне воды (раньше — системное окно prompt(), BACKLOG 573); как и правка суммы дня — Enter
+// добавляет, Esc закрывает, неверное число показывает подсказку и ничего не пишет. Копия правила окна воды Дашборда.
+const customOpen = ref(false)
+const customValue = ref('')
+const customError = ref(false)
+const customInput = ref<HTMLInputElement | null>(null)
+
+function toggleCustom() {
+  customOpen.value = !customOpen.value
+  customValue.value = ''
+  customError.value = false
+  if (customOpen.value) {
+    editing.value = false
+    void nextTick(() => customInput.value?.focus())
+  }
+}
+
+function submitCustom() {
+  const ml = Math.floor(Number(customValue.value))
+  if (!Number.isFinite(ml) || ml <= 0 || ml > MAX_DAY_ML) {
+    customError.value = true
+    return
+  }
   addMl(ml)
+  customOpen.value = false
+  customValue.value = ''
+  customError.value = false
 }
 
 // --- отмена последнего добавления и правка суммы за день (BACKLOG 12) ---
@@ -97,6 +120,7 @@ async function onUndo() {
 }
 
 function startEdit() {
+  customOpen.value = false
   editValue.value = String(amountMl.value)
   editError.value = false
   editing.value = true
@@ -179,7 +203,27 @@ function saveHeightClick() {
       <div class="gh-wrap">
         <button class="gh-btn" data-test="add-200" @click="addMl(200)">+ 200 {{ unitLabel }}</button>
         <button class="gh-btn" @click="addMl(1000)">+ 1 {{ getLang() === 'en' ? 'l' : 'л' }}</button>
-        <button class="gh-btn" @click="addCustom">{{ t('dash_water_add_custom_btn') }}</button>
+        <button class="gh-btn" data-test="add-custom" :aria-expanded="customOpen" @click="toggleCustom">{{ t('dash_water_add_custom_btn') }}</button>
+      </div>
+      <div v-if="customOpen" style="margin-top: 8px" data-test="custom-form">
+        <label class="gh-dim" style="display: block">{{ t('dash_water_add_custom_prompt') }}</label>
+        <input
+          ref="customInput"
+          v-model="customValue"
+          type="number"
+          inputmode="numeric"
+          min="1"
+          :max="MAX_DAY_ML"
+          class="gh-input"
+          data-test="custom-input"
+          @keydown.enter.prevent="submitCustom"
+          @keydown.esc.stop.prevent="customOpen = false"
+        />
+        <p v-if="customError" style="color: #d6336c; margin: 4px 0 0; font-size: 13px" data-test="custom-invalid">{{ t('dash_water_custom_invalid') }}</p>
+        <div class="gh-wrap" style="margin-top: 8px">
+          <button type="button" class="gh-btn" data-test="custom-add" @click="submitCustom">{{ t('dash_water_custom_add') }}</button>
+          <button type="button" class="gh-btn" data-test="custom-cancel" @click="customOpen = false">{{ t('dash_water_edit_cancel') }}</button>
+        </div>
       </div>
 
       <div v-if="undoLast || setTotal" class="gh-wrap" style="margin-top: 8px; align-items: center" data-test="water-day-tools">

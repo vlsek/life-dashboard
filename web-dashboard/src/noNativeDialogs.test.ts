@@ -4,13 +4,13 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 
 // «Страж» (BACKLOG 567, «Аудит устаревшего оформления»): нативные окна браузера confirm()/alert()/prompt() выглядят «из 2000-х»
 // и ломают тему. Вместо них — `confirmDialog` из lib/confirmDialog.ts (окно рисует ConfirmDialogHost в AppShell).
-// Пилоты из списка ниже ЕЩЁ содержат нативные вызовы — у каждого указано, почему; тест проверяет и это: когда вызов уберут,
+// Пилоты из списка KNOWN ЕЩЁ содержат нативные вызовы — у каждого указано, почему; тест проверяет и это: когда вызов уберут,
 // пилот надо ВЫНЕСТИ из списка (иначе тест подскажет), а новый нативный вызов в любом другом пилоте — падение.
 const ROOT = '..'
 const KNOWN: Record<string, string> = {
-  'web-dashboard': 'prompt() «своё количество воды» в WaterModal — вместе с окном воды (поле ввода в окне вместо prompt)',
-  'web-header': 'prompt() «своё количество воды» в WaterModal шапки — то же, отдельный бандл виджетов',
+  'web-dashboard': 'alert() ошибки создания категории и confirm() удаления метрики в lib/useMetricsManager.ts (+ ложное срабатывание на комментарий в lib/install.ts); prompt() воды убран в v2.88',
 }
+// Не ловится стражем (в регулярке перед именем не должно быть «.»): `window.prompt(` в lib/useMetricsManager.ts («новая категория») и components/NumberMetricField.vue («поправить итог») — тоже нативные окна, см. BACKLOG 573.
 const CALL = /(?<![\w.])(confirm|alert|prompt)\(/
 
 function files(dir: string): string[] {
