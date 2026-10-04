@@ -12,8 +12,12 @@ import type { Goal, GoalFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
 
-const { auth, items, error, init, addGoal, updateGoal, deleteGoal, toggleGoal, setStage } = useGoals()
+const { auth, items, error, init, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
 onMounted(init)
+
+function undoDone(g: Goal) {
+  return (g.stages ?? 1) > 1 ? stepGoal(g, -1) : toggleGoal(g)
+}
 
 const noCategory = computed(() => t('goals_no_category'))
 const active = computed(() => items.value.filter((g) => !g.done))
@@ -97,7 +101,20 @@ async function onDelete(g: Goal) {
             style="border-color: var(--border); background: var(--bg-card)"
             data-test="goal-done-row"
           >
-            <span class="goal-done-mark" aria-hidden="true"><Icon name="check" /></span>
+            <!-- Галочка выполненной цели — кнопка «снять отметку» (случайный тап по цели можно отменить): простая цель возвращается в активные,
+                 многоэтапная откатывается на один этап назад (иначе осталась бы «выполненной» с полным прогрессом). -->
+            <button
+              type="button"
+              role="checkbox"
+              aria-checked="true"
+              class="goal-done-mark goal-done-undo"
+              :title="t('goals_undo_done_aria')"
+              :aria-label="t('goals_undo_done_aria')"
+              data-test="goal-undo"
+              @click="undoDone(g)"
+            >
+              <Icon name="check" />
+            </button>
             <span class="done-text min-w-0 flex-1 break-words">{{ g.name }}</span>
             <span class="dim whitespace-nowrap text-xs">{{ fmtRu(g.done_date) }}</span>
             <button type="button" class="secondary icon-btn" :title="t('goals_edit_aria')" :aria-label="t('goals_edit_aria')" @click="formTarget = g"><Icon name="edit" /></button>
@@ -121,6 +138,15 @@ async function onDelete(g: Goal) {
   padding: 0;
   border-radius: 0.5rem;
   background: transparent;
+}
+.goal-done-undo {
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+.goal-done-undo:hover {
+  opacity: 0.7;
 }
 .goal-done-mark {
   display: inline-flex;
