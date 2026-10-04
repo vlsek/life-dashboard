@@ -17,7 +17,7 @@ const level = computed(() => glassLevel(pct.value))
 
 <template>
   <button type="button" :class="plain ? 'gh-plain' : 'gh-badge'" data-test="water-badge" :title="title" :aria-label="title" @click="emit('click')">
-    <svg :width="24 * (scale ?? 1)" :height="30 * (scale ?? 1)" viewBox="0 0 24 30" style="display: block" aria-hidden="true">
+    <svg :class="{ 'gh-glass-full': full }" :data-full="full ? '1' : '0'" :width="24 * (scale ?? 1)" :height="30 * (scale ?? 1)" viewBox="0 0 24 30" style="display: block" aria-hidden="true">
       <defs>
         <linearGradient :id="`${gid}-grad`" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" style="stop-color: var(--water-top)" />
@@ -28,9 +28,11 @@ const level = computed(() => glassLevel(pct.value))
       <g :clip-path="`url(#${gid}-clip)`">
         <rect x="0" y="0" width="24" height="30" style="fill: var(--text-dim, #999); fill-opacity: 0.07" />
         <path v-if="pct > 0" :d="`M0 ${level.levelY.toFixed(1)} q3 ${-level.waveAmp} 6 0 t6 0 t6 0 t6 0 V30 H0 Z`" :fill="`url(#${gid}-grad)`" />
+        <!-- 100% (BACKLOG 2.1): по воде проходит мягкий блик; анимация — в header.css (.gh-glass-sheen) -->
+        <path v-if="full" class="gh-glass-sheen" d="M-5 30L-1 0H3L-1 30Z" data-test="glass-sheen" />
       </g>
-      <path :d="GLASS" fill="none" :style="full ? 'stroke:var(--water-line)' : 'stroke:var(--text-dim, #999)'" stroke-width="1.6" stroke-linejoin="round" />
-      <ellipse cx="12" cy="5.3" rx="7.4" ry="1.25" fill="none" :style="full ? 'stroke:var(--water-line)' : 'stroke:var(--text-dim, #999)'" stroke-width="1.4" />
+      <path :d="GLASS" fill="none" :style="full ? 'stroke:var(--water-gold)' : 'stroke:var(--text-dim, #999)'" stroke-width="1.6" stroke-linejoin="round" data-test="glass-outline" />
+      <ellipse cx="12" cy="5.3" rx="7.4" ry="1.25" fill="none" :style="full ? 'stroke:var(--water-gold)' : 'stroke:var(--text-dim, #999)'" stroke-width="1.4" />
       <path d="M7.6 8.5l0.9 12.5" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.2" stroke-linecap="round" />
     </svg>
   </button>

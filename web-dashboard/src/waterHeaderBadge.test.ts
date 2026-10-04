@@ -86,3 +86,37 @@ describe('WaterSection: header placement', () => {
     w.unmount()
   })
 })
+
+// BACKLOG 113 «Состояние 100%» (остаток после v2.21): стакан в WaterSection (тот, что в шапке страницы Дашборда) тоже золотой при ≥100%.
+describe('WaterSection: стакан при 100% нормы', () => {
+  const glass = () => document.getElementById('topbar-right')!.querySelector('[data-test="water-glass"]')
+  async function mountWith(todayMl: number) {
+    state.metric = { id: 'm1' }
+    state.todayMl = todayMl
+    const w = mount(WaterSection, { props: { userId: 'u1' }, attachTo: document.body })
+    await w.vm.$nextTick()
+    return w
+  }
+  afterEach(() => {
+    state.todayMl = 500
+  })
+
+  it('ниже нормы: серый контур, без золотого класса и блика', async () => {
+    const w = await mountWith(1500)
+    expect(glass()!.classList.contains('water-glass-full')).toBe(false)
+    expect(glass()!.querySelector('[data-test="glass-sheen"]')).toBeNull()
+    expect(glass()!.querySelector('[data-test="glass-outline"]')!.getAttribute('style')).toContain('--text-dim')
+    w.unmount()
+  })
+
+  it('ровно 100% и перевыполнение: золотой контур и эллипс, класс свечения, блик по воде', async () => {
+    for (const ml of [2000, 2600]) {
+      const w = await mountWith(ml)
+      expect(glass()!.classList.contains('water-glass-full')).toBe(true)
+      expect(glass()!.querySelector('[data-test="glass-sheen"]')).not.toBeNull()
+      expect(glass()!.querySelector('[data-test="glass-outline"]')!.getAttribute('style')).toContain('--water-gold')
+      expect(glass()!.querySelector('ellipse')!.getAttribute('style')).toContain('--water-gold')
+      w.unmount()
+    }
+  })
+})
