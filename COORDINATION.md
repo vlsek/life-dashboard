@@ -69,8 +69,7 @@ BACKLOG 13 «Баллы за каждый подход», ЧЕТВЁРТЫЙ (п
 — свободен —
 
 ### Агент 6
-— свободен —
-(Сделано: «Достижения» v2.48/2.61/2.62; BACKLOG 26 «Магазин: описание идеи» v2.63; BACKLOG 567 «Аудит оформления», первый срез v2.79 — стрелки числовых полей скрыты, `confirm/alert` → `confirmDialog` в 6 пилотах. НЕ начато и ни за кем не закреплено: остаток 567 (см. подпункты в BACKLOG: `confirm()` в `web-workouts/`, `prompt()` воды, `<select>`, чекбоксы, date/time, таблицы); по «Достижениям» — выровнять `pointsTotal` с дробными баллами агента 1 (045 теперь в репозитории), показ поздравления вне страницы, награды-предметы.)
+BACKLOG 567 «Аудит устаревшего оформления», ВТОРОЙ СРЕЗ: (а) `confirm()` в `web-workouts/src/App.vue` (2 шт.) → `confirmDialog` (копия `lib/confirmDialog.ts` + `ConfirmDialogHost.vue` + строка в `AppShell.vue` + тест; пилот `workouts` убираю из KNOWN в `web-dashboard/src/noNativeDialogs.test.ts`); (б) нативные `<select>` (43) — единый вид: ОДНО CSS-правило в конце `web-*/src/style.css` (только добавление в конец файла; рамка, радиус, стрелка в цветах темы) + страж `web-dashboard/src/selectsAllPilots.test.ts`; пересборка затронутых папок; `config.js` (версия), ROADMAP, BACKLOG, журнал. НЕ трогаю: `prompt()` воды (`web-header/` агент 2, `web-dashboard/WaterModal.vue`), логику и верстку чужих блоков, в `web-dashboard/` — только конец `style.css`, тест-стражи и (если нужно) строку правила. С: 2026-10-04.
 
 ### Агент 7
 — свободен —
