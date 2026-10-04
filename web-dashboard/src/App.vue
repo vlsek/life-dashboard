@@ -199,6 +199,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
         :week-total-pct="weekProgress ? progressPercent(weekProgress) : 0"
         @dismiss-milestones="dismissMilestonesReminder"
         @dismiss-weekend="dismissWeekendReminder"
+        @open-week="summaryKind = 'week'"
       />
       <InstallBanner />
       <PlanReminderBanner :items="planReminders" @dismiss="dismissPlanReminder" />

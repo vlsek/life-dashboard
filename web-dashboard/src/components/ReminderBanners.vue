@@ -9,7 +9,7 @@ defineProps<{
   weekendReminderVisible: boolean
   weekTotalPct: number
 }>()
-const emit = defineEmits<{ dismissMilestones: []; dismissWeekend: [] }>()
+const emit = defineEmits<{ dismissMilestones: []; dismissWeekend: []; openWeek: [] }>()
 </script>
 
 <template>
@@ -29,13 +29,25 @@ const emit = defineEmits<{ dismissMilestones: []; dismissWeekend: [] }>()
     <button type="button" class="secondary px-2" @click="emit('dismissMilestones')"><Icon name="x" /></button>
   </div>
 
-  <div v-if="weekendReminderVisible" class="mb-3 flex items-center justify-between gap-3 rounded-lg border p-2.5" style="border-color: var(--accent); background: var(--bg-card)">
+  <!-- BACKLOG 781 (ответ владельца): клик по самой плашке открывает недельный итог «сделано / не сделано»; ссылка «Сделай что-то из целей» и «×» работают как раньше -->
+  <div
+    v-if="weekendReminderVisible"
+    class="mb-3 flex cursor-pointer items-center justify-between gap-3 rounded-lg border p-2.5"
+    style="border-color: var(--accent); background: var(--bg-card)"
+    role="button"
+    tabindex="0"
+    :aria-label="t('dash_week_reminder_open')"
+    data-test="week-reminder"
+    @click="emit('openWeek')"
+    @keydown.enter.self="emit('openWeek')"
+    @keydown.space.self.prevent="emit('openWeek')"
+  >
     <div class="text-sm">
       <strong><EmojiText :text="t('dash_week_reminder_title')" /></strong>
       <span class="dim" style="font-size: 0.9em"> · {{ t('dash_week_reminder_currently') }} {{ weekTotalPct }}%</span>
       <br />
-      <a href="/goals/" style="color: var(--accent); text-decoration: none; font-size: 0.9em">{{ t('dash_week_reminder_link') }}</a>
+      <a href="/goals/" style="color: var(--accent); text-decoration: none; font-size: 0.9em" data-test="week-reminder-link" @click.stop>{{ t('dash_week_reminder_link') }}</a>
     </div>
-    <button type="button" class="secondary px-2" @click="emit('dismissWeekend')"><Icon name="x" /></button>
+    <button type="button" class="secondary px-2" data-test="week-reminder-dismiss" :aria-label="t('dash_week_reminder_dismiss')" @click.stop="emit('dismissWeekend')"><Icon name="x" /></button>
   </div>
 </template>
