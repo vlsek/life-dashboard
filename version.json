@@ -1,6 +1,14 @@
 {
-  "version": "2.88",
+  "version": "2.89",
   "en": [
+    {
+      "version": "2.89",
+      "date": "2026-10-04 17:41",
+      "changes": [
+        "Goals: the section is now simply called \"Goals\" and the button says \"Add\". The short site tour uses the same word",
+        "Charts: the \"shared period\" is now called \"Period for all charts\", and the \"Configure charts\" window has a hint under the period picker that any chart can have its own period. In a single chart's period window the button now reads \"Same as all charts\""
+      ]
+    },
     {
       "version": "2.88",
       "date": "2026-10-04 17:30",
@@ -2079,6 +2087,14 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.89",
+      "date": "2026-10-04 17:41",
+      "changes": [
+        "Цели: раздел теперь называется просто «Цели», а кнопка — «Добавить». То же слово «цели» в коротком туре по сайту",
+        "Графики: «общий период» переименован в «Период для всех графиков», под выбором периода в окне «Настроить графики» появилась подсказка, что у любого графика можно задать свой период. В окне периода отдельного графика кнопка теперь «Как у всех графиков»"
+      ]
+    },
     {
       "version": "2.88",
       "date": "2026-10-04 17:30",

@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.88";
+const SITE_VERSION = "2.89";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.89", date: "2026-10-04 17:41", changes: [
+        "Цели: раздел теперь называется просто «Цели», а кнопка — «Добавить». То же слово «цели» в коротком туре по сайту",
+        "Графики: «общий период» переименован в «Период для всех графиков», под выбором периода в окне «Настроить графики» появилась подсказка, что у любого графика можно задать свой период. В окне периода отдельного графика кнопка теперь «Как у всех графиков»",
+    ]},
     { version: "2.88", date: "2026-10-04 17:30", changes: [
         "Вода: «+ Своё» больше не открывает системное окно браузера. Поле для своего количества появляется прямо в окне воды, на Дашборде и в шапке любой страницы: введите миллилитры и нажмите «Добавить» (или Enter), Esc закрывает поле. Если число не подходит (меньше 1 или больше 20000), под полем появляется подсказка и ничего не записывается",
     ]},
@@ -1470,6 +1474,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.89", date: "2026-10-04 17:41", changes: [
+        "Goals: the section is now simply called \"Goals\" and the button says \"Add\". The short site tour uses the same word",
+        "Charts: the \"shared period\" is now called \"Period for all charts\", and the \"Configure charts\" window has a hint under the period picker that any chart can have its own period. In a single chart's period window the button now reads \"Same as all charts\"",
+    ]},
     { version: "2.88", date: "2026-10-04 17:30", changes: [
         "Water: \"+ Custom\" no longer opens the browser's system dialog. The field for your own amount appears right in the water window, on the Dashboard and in the header of any page: type the millilitres and press \"Add\" (or Enter), Esc closes the field. If the number does not fit (below 1 or above 20000), a hint appears under the field and nothing is saved",
     ]},
