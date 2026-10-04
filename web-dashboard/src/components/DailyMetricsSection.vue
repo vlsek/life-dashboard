@@ -112,19 +112,24 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
           />
         </div>
 
-        <div class="flex items-center gap-3">
-          <button type="button" :disabled="saving" @click="onSaveDay">{{ saving ? t('dash_saving_btn') : t('dash_save_day_btn') }}</button>
-          <span v-if="savedMsg" class="text-sm" style="color: var(--success)">{{ t('dash_day_saved_toast') }}</span>
-        </div>
-
-        <div class="mt-3 rounded-lg border p-3" style="border-color: var(--border)">
-          <strong><EmojiText :text="t('dash_score_label')" /> {{ score.points }} / {{ score.total }}</strong>
-        </div>
       </template>
     </div>
 
     <div class="mt-4">
       <SetsSection :user-id="userId" :date="date" :metric-streaks="props.metricStreaks" :records="metricRecords" />
+    </div>
+
+    <!-- BACKLOG раздел 34: «Сохранить день» — в самом низу, после самой нижней метрики («Подходы»), а не посередине — так очевидно, что это
+         последний шаг. Подходы пишутся своими кнопками сразу и на эту кнопку не влияют. Итог дня («Баллы») стоит рядом с ней. -->
+    <div v-if="loaded" class="mt-4" data-test="save-day-bar">
+      <div class="flex items-center gap-3">
+        <button type="button" :disabled="saving" data-test="save-day" @click="onSaveDay">{{ saving ? t('dash_saving_btn') : t('dash_save_day_btn') }}</button>
+        <span v-if="savedMsg" class="text-sm" style="color: var(--success)">{{ t('dash_day_saved_toast') }}</span>
+      </div>
+
+      <div class="mt-3 rounded-lg border p-3" style="border-color: var(--border)">
+        <strong><EmojiText :text="t('dash_score_label')" /> {{ score.points }} / {{ score.total }}</strong>
+      </div>
     </div>
 
     <!-- BACKLOG 23:00: «Что полезного сделал за день» — свёрнутым по умолчанию и в самом низу блока ежедневных метрик.
