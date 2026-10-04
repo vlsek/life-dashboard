@@ -1,6 +1,13 @@
 {
-  "version": "2.65",
+  "version": "2.66",
   "en": [
+    {
+      "version": "2.66",
+      "date": "2026-10-04 04:35",
+      "changes": [
+        "Login page: the sign-in (and sign-up) button now looks like a button — filled with the theme colour, highlighted on hover and dimmed while signing in. The login/sign-up tabs, language picker, password reveal and the Google button now show a hand cursor on desktop"
+      ]
+    },
     {
       "version": "2.65",
       "date": "2026-10-04 04:33",
@@ -1917,6 +1924,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.66",
+      "date": "2026-10-04 04:35",
+      "changes": [
+        "Страница входа: «Войти» (и «Зарегистрироваться») теперь выглядит как кнопка — залита цветом темы, подсвечивается при наведении, а пока идёт вход, приглушена. У вкладок «Войти/Регистрация», выбора языка, показа пароля и кнопки Google на компьютере теперь курсор-рука"
+      ]
+    },
     {
       "version": "2.65",
       "date": "2026-10-04 04:33",

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.65";
+const SITE_VERSION = "2.66";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.66", date: "2026-10-04 04:35", changes: [
+        "Страница входа: «Войти» (и «Зарегистрироваться») теперь выглядит как кнопка — залита цветом темы, подсвечивается при наведении, а пока идёт вход, приглушена. У вкладок «Войти/Регистрация», выбора языка, показа пароля и кнопки Google на компьютере теперь курсор-рука",
+    ]},
     { version: "2.65", date: "2026-10-04 04:33", changes: [
         "Подпись «День сделан» заменена на «Прогресс дня» — в кольце дня в шапке и правой панели, в подсказке на Дашборде и в заголовке окна со сводкой дня",
     ]},
@@ -1400,6 +1403,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.66", date: "2026-10-04 04:35", changes: [
+        "Login page: the sign-in (and sign-up) button now looks like a button — filled with the theme colour, highlighted on hover and dimmed while signing in. The login/sign-up tabs, language picker, password reveal and the Google button now show a hand cursor on desktop",
+    ]},
     { version: "2.65", date: "2026-10-04 04:33", changes: [
         "The \"Day done\" label is now \"Day progress\" — on the day ring in the header and right panel, in the Dashboard tooltip and in the title of the day summary window",
     ]},
