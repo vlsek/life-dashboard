@@ -99,6 +99,21 @@ describe('PlannedSection: план на день', () => {
     expect(h.calls.some((c) => c.op === 'upsert')).toBe(false)
   })
 
+  it('цель, отмеченная в плане ПРОШЛОГО дня, получает дату выполнения того дня, а не сегодняшнюю (решение владельца 2026-10-04)', async () => {
+    h.noteData = { planned_goals: [{ type: 'goal', text: 'Одна' }] }
+    h.goalsData = [{ id: 'g9', name: 'Одна', stages: 1, done: false, current_stage: null }]
+    await mountSection('2026-09-20')
+    const cb = q('[data-test="goal-check"]') as HTMLInputElement
+    cb.checked = true
+    cb.dispatchEvent(new Event('change'))
+    await flushPromises()
+    expect(h.calls.find((c) => c.op === 'update')).toMatchObject({ table: 'goals', payload: { done: true, done_date: '2026-09-20' }, where: ['id', 'g9'] })
+    cb.checked = false
+    cb.dispatchEvent(new Event('change'))
+    await flushPromises()
+    expect(h.calls.filter((c) => c.op === 'update')[1].payload).toEqual({ done: false, done_date: null })
+  })
+
   it('чекбокс своего пункта и звёздочка «доп. пункт» сохраняются в плане', async () => {
     h.noteData = { planned_goals: [{ type: 'custom', text: 'Свой', done: false }] }
     await mountSection()

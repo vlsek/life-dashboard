@@ -112,7 +112,7 @@ const collapsed = ref(false)
             </template>
             <template v-else>
               <td>
-                <input v-if="goalRowKind(goalOf(item)) === 'single'" type="checkbox" :checked="!!goalOf(item)!.done" data-test="goal-check" @change="setGoalDone(goalOf(item)!, ($event.target as HTMLInputElement).checked, todayStr())" />
+                <input v-if="goalRowKind(goalOf(item)) === 'single'" type="checkbox" :checked="!!goalOf(item)!.done" data-test="goal-check" @change="setGoalDone(goalOf(item)!, ($event.target as HTMLInputElement).checked, day)" />
                 <span v-else class="dim">{{ stageLabel(goalOf(item)!) }}</span>
               </td>
               <td :class="{ 'line-through opacity-60': goalOf(item)!.done }">{{ item.text }}</td>

@@ -1,6 +1,13 @@
 {
-  "version": "2.74",
+  "version": "2.75",
   "en": [
+    {
+      "version": "2.75",
+      "date": "2026-10-04 10:34",
+      "changes": [
+        "Dashboard, Plans: if you go back to a past day and tick a goal as done, its completion date is that day, not today. Today works as before, and unfinished items from earlier days are still carried over with the carry-over button"
+      ]
+    },
     {
       "version": "2.74",
       "date": "2026-10-04 10:13",
@@ -1980,6 +1987,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.75",
+      "date": "2026-10-04 10:34",
+      "changes": [
+        "Дашборд, «Планы»: если вернуться в прошлый день и отметить цель выполненной, дата выполнения ставится именно того дня, а не сегодняшняя. На сегодняшнем дне всё как раньше; несделанное с прошлых дней по-прежнему подтягивается кнопкой переноса"
+      ]
+    },
     {
       "version": "2.74",
       "date": "2026-10-04 10:13",

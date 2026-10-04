@@ -83,12 +83,13 @@ export function usePlanned() {
   const setItemDone = (index: number, done: boolean) => persist(setCustomDone(planned.value, index, done))
   const setItemTime = (index: number, time: string | null) => persist(setTimeAt(planned.value, index, time))
 
-  // Отметка одноэтапной цели прямо из плана: пишется в саму цель (done + дата выполнения),
-  // как в оригинале — календарный день, на который смотрим, тут ни при чём (done_date = сегодня).
-  async function setGoalDone(goal: PlanGoal, done: boolean, todayIso: string): Promise<boolean> {
+  // Отметка одноэтапной цели прямо из плана: пишется в саму цель (done + дата выполнения).
+  // doneDate — день, чей план открыт (решение владельца 2026-10-04): отметили в плане вчерашнего дня — цель
+  // выполнена вчера; на сегодняшнем дне это то же самое «сегодня», что и раньше.
+  async function setGoalDone(goal: PlanGoal, done: boolean, doneDate: string): Promise<boolean> {
     const before = goal.done
     goals.value = goals.value.map((g) => (g.id === goal.id ? { ...g, done } : g))
-    const { error: e } = await sb.from('goals').update({ done, done_date: done ? todayIso : null }).eq('id', goal.id)
+    const { error: e } = await sb.from('goals').update({ done, done_date: done ? doneDate : null }).eq('id', goal.id)
     if (e) {
       goals.value = goals.value.map((g) => (g.id === goal.id ? { ...g, done: before } : g))
       error.value = t('dash_save_error_generic') + e.message
