@@ -1,6 +1,13 @@
 {
-  "version": "2.94",
+  "version": "2.95",
   "en": [
+    {
+      "version": "2.95",
+      "date": "2026-10-04 18:53",
+      "changes": [
+        "Goals: if you marked a goal as completed by accident, you can now undo it — the tick on every goal in the \"Completed goals\" list is now an \"Undo completion\" button. A simple goal goes straight back to the active ones; a multi-stage goal steps back by one stage"
+      ]
+    },
     {
       "version": "2.94",
       "date": "2026-10-04 18:55",
@@ -2122,6 +2129,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.95",
+      "date": "2026-10-04 18:53",
+      "changes": [
+        "Цели: если случайно отметили цель выполненной, теперь можно вернуть её обратно — у каждой цели в списке «Выполненные цели» галочка стала кнопкой «Снять отметку». Простая цель сразу возвращается в активные; многоэтапная откатывается на один этап назад"
+      ]
+    },
     {
       "version": "2.94",
       "date": "2026-10-04 18:55",

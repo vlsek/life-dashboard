@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.94";
+const SITE_VERSION = "2.95";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.95", date: "2026-10-04 18:53", changes: [
+        "Цели: если случайно отметили цель выполненной, теперь можно вернуть её обратно — у каждой цели в списке «Выполненные цели» галочка стала кнопкой «Снять отметку». Простая цель сразу возвращается в активные; многоэтапная откатывается на один этап назад",
+    ]},
     { version: "2.94", date: "2026-10-04 18:55", changes: [
         "Выбор периода графика и выбор даты оформлены в цвет акцента темы: рамки сегмента «7Д · 30Д · 90Д · 1Г · Всё», чипов «Неделя / Месяц / Свой период» и пилюли со стрелками — одного цвета вместо «чёрных»; выбранный чип отличается заливкой и цветом текста. То же — у переключателя даты в «Планах» и «Ежедневных метриках» (пилюля «‹ дата ›» общая). Если «чёрной» была другая рамка — пришлите скриншот, поправим точечно",
     ]},
@@ -1489,6 +1492,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.95", date: "2026-10-04 18:53", changes: [
+        "Goals: if you marked a goal as completed by accident, you can now undo it — the tick on every goal in the \"Completed goals\" list is now an \"Undo completion\" button. A simple goal goes straight back to the active ones; a multi-stage goal steps back by one stage",
+    ]},
     { version: "2.94", date: "2026-10-04 18:55", changes: [
         "The chart period picker and the date picker now use the theme accent colour: the frames of the 7D / 30D / 90D / 1Y / All segment, the Week / Month / Custom period chips and the arrow pill are one colour instead of black; the selected chip differs by a fill and text colour. The same goes for the date switcher in Plans and Daily metrics (the date pill is shared). If a different frame was the black one, send a screenshot and we will adjust it precisely",
     ]},
