@@ -508,7 +508,7 @@ html.theme-monet .splash-flame .fl-outer {
 .date-stepper-pill {
   display: inline-flex;
   align-items: center;
-  border: 1px solid var(--border);
+  border: 1px solid var(--accent); /* BACKLOG 33: рамка выбора даты/периода — акцент темы, а не «чёрная» var(--border) */
   border-radius: 999px;
   background: var(--bg-card);
   overflow: hidden;
@@ -579,7 +579,7 @@ html.theme-monet .splash-flame .fl-outer {
   width: 100%;
   gap: 2px;
   padding: 3px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--accent); /* BACKLOG 33: акцент темы */
   border-radius: 999px;
   background: var(--bg-card);
 }
@@ -601,7 +601,7 @@ html.theme-monet .splash-flame .fl-outer {
 .period-chip {
   min-height: 36px;
   padding: 0 14px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--accent); /* BACKLOG 33: рамки всех чипов — акцент темы; «выбран» отличается заливкой и цветом текста */
   border-radius: 999px;
   background: transparent;
   color: var(--text);
@@ -609,7 +609,7 @@ html.theme-monet .splash-flame .fl-outer {
 }
 .period-chip:hover,
 .period-chip:focus-visible { background: color-mix(in srgb, var(--accent) 14%, transparent); }
-.period-chip[aria-pressed='true'] { border-color: var(--accent); color: var(--accent); }
+.period-chip[aria-pressed='true'] { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); }
 .period-chip-custom { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; }
 .period-stepper { align-self: flex-start; }
 .period-stepper-label { cursor: default; min-width: 9rem; }

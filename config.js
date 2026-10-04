@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.93";
+const SITE_VERSION = "2.94";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.94", date: "2026-10-04 18:55", changes: [
+        "Выбор периода графика и выбор даты оформлены в цвет акцента темы: рамки сегмента «7Д · 30Д · 90Д · 1Г · Всё», чипов «Неделя / Месяц / Свой период» и пилюли со стрелками — одного цвета вместо «чёрных»; выбранный чип отличается заливкой и цветом текста. То же — у переключателя даты в «Планах» и «Ежедневных метриках» (пилюля «‹ дата ›» общая). Если «чёрной» была другая рамка — пришлите скриншот, поправим точечно",
+    ]},
     { version: "2.93", date: "2026-10-04 18:40", changes: [
         "Галочки в чекбоксах читаются на всех темах: на светлых акцентах (Светлая, Monet, Nord, Mocha, AMOLED, High contrast) галочка теперь тёмная — белая на них почти не была видна. Для будущих тем это проверяет тест: если у новой темы светлый акцент, а тёмной галочки нет, он подскажет. «Достижения»: накопленные баллы теперь считаются с дробными долями за подходы (как в Магазине и на Дашборде), поэтому значки «Первая сотня», «Пятьсот» и «Тысяча» открываются по тому же числу баллов, которое видно в шапке",
     ]},
@@ -1486,6 +1489,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.94", date: "2026-10-04 18:55", changes: [
+        "The chart period picker and the date picker now use the theme accent colour: the frames of the 7D / 30D / 90D / 1Y / All segment, the Week / Month / Custom period chips and the arrow pill are one colour instead of black; the selected chip differs by a fill and text colour. The same goes for the date switcher in Plans and Daily metrics (the date pill is shared). If a different frame was the black one, send a screenshot and we will adjust it precisely",
+    ]},
     { version: "2.93", date: "2026-10-04 18:40", changes: [
         "Checkbox ticks are readable on every theme: on light accents (Light, Monet, Nord, Mocha, AMOLED, High contrast) the tick is now dark - white was barely visible on them. A test now checks this for future themes: if a new theme has a light accent and no dark tick, it will say so. Achievements: total points now include the fractional shares for sets (as in the Shop and on the Dashboard), so the First hundred, Five hundred and The thousand badges unlock at the same points number you see in the header",
     ]},
