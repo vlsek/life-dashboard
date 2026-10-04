@@ -27,7 +27,9 @@ describe('стили анимированных рамок есть везде, 
         expect(css, f + ' ' + cls).toContain('@keyframes ' + cls)
         expect(css, f + ' ' + cls).toMatch(new RegExp('\\.' + cls + ' \\{ animation: ' + cls))
       }
-      expect(css, f).toMatch(/prefers-reduced-motion: reduce\) \{ \.cust-frame-flame, \.cust-frame-rainbow \{ animation: none; \} \}/)
+      // одно правило reduced-motion перечисляет ВСЕ анимированные классы
+      const list = Object.values(FRAME_ANIMATIONS).map((c) => '\\.' + c).join(', ')
+      expect(css, f).toContain('@media (prefers-reduced-motion: reduce) { ' + list.replace(/\\\./g, '.') + ' { animation: none; } }')
     }
   })
 })

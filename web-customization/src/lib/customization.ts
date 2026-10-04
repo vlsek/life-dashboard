@@ -25,6 +25,9 @@ export const ITEMS: readonly CustomItem[] = [
   { key: 'frame_gold', category: 'avatar_frame', source: 'achievement', achievement: 'streak_30' },
   { key: 'frame_flame', category: 'avatar_frame', source: 'points', tier: 'high' },
   { key: 'frame_rainbow', category: 'avatar_frame', source: 'points', tier: 'high' },
+  { key: 'frame_inferno', category: 'avatar_frame', source: 'achievement', achievement: 'streak_100' },
+  { key: 'frame_pulse', category: 'avatar_frame', source: 'achievement', achievement: 'mega_productivity' },
+  { key: 'frame_royal', category: 'avatar_frame', source: 'achievement', achievement: 'points_1000' },
 ]
 
 export const itemByKey = (key: string): CustomItem | undefined => ITEMS.find((i) => i.key === key)

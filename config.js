@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.98";
+const SITE_VERSION = "2.99";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.99", date: "2026-10-04 21:10", changes: [
+        "Кастомизация: три анимированные рамки аватарки в награду за достижения (не продаются). «Инферно» — за «Сотню дней» (100 идеальных дней подряд), «Импульс» — за «Мега продуктивность» (неделя выше 100%), «Королевская» — за «Тысячу» (1000 баллов). Открываются сами, когда получено достижение, и двигаются на аватаре в левом меню и в «Сообществе»; при «уменьшить движение» и выключенных анимациях остаётся статичный вид. Миграция не нужна."
+    ]},
     { version: "2.98", date: "2026-10-04 20:40", changes: [
         "Кастомизация: две анимированные рамки аватарки — «Огненная» (пламя пульсирует) и «Радужная» (цвет плавно переливается), по 250 баллов. Рамка движется на вашем аватаре в левом меню и в «Сообществе» у всех, кто её увидит; при «уменьшить движение» в системе или выключенных анимациях в настройках остаётся спокойный статичный вид. Заодно в значки «Сообщества» добавлено достижение «Мега продуктивность». Миграция не нужна."
     ]},
@@ -1501,6 +1504,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.99", date: "2026-10-04 21:10", changes: [
+        "Customization: three animated avatar frames as achievement rewards (not for sale). Inferno - for 100 Days (100 perfect days in a row), Pulse - for Mega productivity (a week above 100%), Royal - for A thousand (1000 points). They unlock by themselves once the achievement is earned and move on your avatar in the side menu and in Community; with reduced motion or animations off they stay static. No migration needed."
+    ]},
     { version: "2.98", date: "2026-10-04 20:40", changes: [
         "Customization: two animated avatar frames - Flame (the fire pulses) and Rainbow (the colour smoothly cycles), 250 points each. The frame moves on your avatar in the side menu and in Community for everyone who sees it; with reduced motion in the system or animations turned off in settings it stays a calm static look. Also the Mega productivity achievement is added to Community badges. No migration needed."
     ]},

@@ -1,6 +1,13 @@
 {
-  "version": "2.98",
+  "version": "2.99",
   "en": [
+    {
+      "version": "2.99",
+      "date": "2026-10-04 21:10",
+      "changes": [
+        "Customization: three animated avatar frames as achievement rewards (not for sale). Inferno - for 100 Days (100 perfect days in a row), Pulse - for Mega productivity (a week above 100%), Royal - for A thousand (1000 points). They unlock by themselves once the achievement is earned and move on your avatar in the side menu and in Community; with reduced motion or animations off they stay static. No migration needed."
+      ]
+    },
     {
       "version": "2.98",
       "date": "2026-10-04 20:40",
@@ -2150,6 +2157,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.99",
+      "date": "2026-10-04 21:10",
+      "changes": [
+        "Кастомизация: три анимированные рамки аватарки в награду за достижения (не продаются). «Инферно» — за «Сотню дней» (100 идеальных дней подряд), «Импульс» — за «Мега продуктивность» (неделя выше 100%), «Королевская» — за «Тысячу» (1000 баллов). Открываются сами, когда получено достижение, и двигаются на аватаре в левом меню и в «Сообществе»; при «уменьшить движение» и выключенных анимациях остаётся статичный вид. Миграция не нужна."
+      ]
+    },
     {
       "version": "2.98",
       "date": "2026-10-04 20:40",

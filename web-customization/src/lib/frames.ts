@@ -9,12 +9,19 @@ export const FRAME_SHADOWS: Record<string, string> = {
   // CSS-класс из frameClass() (keyframes `cust-frame-*` в style.css каждого пилота, где рисуется аватар).
   frame_flame: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #ff7a1a, 0 0 12px 3px rgba(255, 98, 20, 0.6)',
   frame_rainbow: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #8a7dff, 0 0 12px 2px rgba(138, 125, 255, 0.55)',
+  // Анимированные ЗА ДОСТИЖЕНИЯ (решение владельца 2026-10-04: «анимированные за достижения будет вообще круто»): не продаются.
+  frame_inferno: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #ff3b1a, 0 0 0 6px rgba(255, 74, 26, 0.35), 0 0 14px 3px rgba(255, 60, 20, 0.7)',
+  frame_pulse: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #3df0ff, 0 0 12px 2px rgba(61, 240, 255, 0.55)',
+  frame_royal: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #e0b23c, 0 0 14px 3px rgba(224, 178, 60, 0.6)',
 }
 
 // Какие рамки анимированы: ключ → имя CSS-класса с animation.
 export const FRAME_ANIMATIONS: Record<string, string> = {
   frame_flame: 'cust-frame-flame',
   frame_rainbow: 'cust-frame-rainbow',
+  frame_inferno: 'cust-frame-inferno',
+  frame_pulse: 'cust-frame-pulse',
+  frame_royal: 'cust-frame-royal',
 }
 
 // box-shadow для выбранной рамки; нет рамки или неизвестный ключ (предмет убрали из реестра) — пустая строка.

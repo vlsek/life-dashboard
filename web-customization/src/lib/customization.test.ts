@@ -13,6 +13,7 @@ import {
   type CustomState,
 } from './customization'
 import { FRAME_ANIMATIONS, FRAME_SHADOWS, frameClass, frameShadow } from './frames'
+import i18nRaw from './i18n.ts?raw'
 
 const st = (over: Partial<CustomState> = {}): CustomState => ({ unlocked: {}, selected: {}, balance: 0, achievements: new Set(), ...over })
 const neon = itemByKey('frame_neon')!
@@ -37,7 +38,7 @@ describe('реестр', () => {
   })
   it('itemsOf делит по источнику', () => {
     expect(itemsOf('avatar_frame', 'points').map((i) => i.key)).toEqual(['frame_neon', 'frame_aurora', 'frame_flame', 'frame_rainbow'])
-    expect(itemsOf('avatar_frame', 'achievement').map((i) => i.key)).toEqual(['frame_gold'])
+    expect(itemsOf('avatar_frame', 'achievement').map((i) => i.key)).toEqual(['frame_gold', 'frame_inferno', 'frame_pulse', 'frame_royal'])
   })
 })
 
@@ -113,5 +114,27 @@ describe('анимированные рамки (BACKLOG 34)', () => {
   })
   it('каждая анимация привязана к существующей рамке и имеет статичную тень', () => {
     for (const k of Object.keys(FRAME_ANIMATIONS)) expect(FRAME_SHADOWS[k], k).toBeTruthy()
+  })
+})
+
+describe('анимированные рамки за достижения (решение владельца 2026-10-04)', () => {
+  const rewards: [string, string][] = [['frame_inferno', 'streak_100'], ['frame_pulse', 'mega_productivity'], ['frame_royal', 'points_1000']]
+  it('три анимированные награды: не продаются, привязаны к своим достижениям', () => {
+    for (const [key, ach] of rewards) {
+      const it = itemByKey(key)!
+      expect(it.source, key).toBe('achievement')
+      expect(it.achievement, key).toBe(ach)
+      expect(priceOf(it), key).toBeNull()
+      expect(frameClass(key), key).toMatch(/^cust-frame-/)
+    }
+  })
+  it('достижение открывает свою награду, чужое — нет; купить за баллы нельзя', () => {
+    expect(achievementUnlocks(ITEMS, {}, new Set(['streak_100']))).toEqual(['frame_inferno'])
+    expect(achievementUnlocks(ITEMS, {}, new Set(['points_1000', 'mega_productivity']))).toEqual(['frame_pulse', 'frame_royal'])
+    expect(itemStatus(itemByKey('frame_inferno')!, st({ balance: 99999 }))).toBe('locked')
+  })
+  it('у каждой награды есть название достижения на обоих языках (для «Награда за достижение «…»»)', async () => {
+    const i18n = i18nRaw
+    for (const [, ach] of rewards) expect([...i18n.matchAll(new RegExp('cust_ach_' + ach + ':', 'g'))].length, ach).toBe(2)
   })
 })

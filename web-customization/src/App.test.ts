@@ -84,3 +84,19 @@ describe('анимированные рамки на странице', () => {
     w.unmount()
   })
 })
+
+describe('анимированные награды за достижения на странице', () => {
+  it('в разделе «За достижения» четыре рамки, три анимированные, все закрыты до получения достижения', async () => {
+    const w = mount(App)
+    await flushPromises()
+    const sec = w.find('[data-section="achievement"]')
+    expect(sec.findAll('[data-testid^="item-"]').length).toBe(4)
+    for (const k of ['frame_inferno', 'frame_pulse', 'frame_royal']) {
+      expect(sec.find(`[data-testid="item-${k}"] [data-testid="animated"]`).exists()).toBe(true)
+      expect(sec.find(`[data-testid="item-${k}"]`).attributes('data-status')).toBe('locked')
+    }
+    expect(sec.find('[data-testid="item-frame_gold"] [data-testid="animated"]').exists()).toBe(false)
+    expect(sec.text()).toContain('Сотня дней')
+    w.unmount()
+  })
+})

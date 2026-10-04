@@ -192,4 +192,21 @@ html[data-motion="off"] .water-saved-check { stroke-dashoffset: 0; }
 }
 .cust-frame-flame { animation: cust-frame-flame 1.6s ease-in-out infinite alternate; }
 .cust-frame-rainbow { animation: cust-frame-rainbow 5s linear infinite; }
-@media (prefers-reduced-motion: reduce) { .cust-frame-flame, .cust-frame-rainbow { animation: none; } }
+@keyframes cust-frame-inferno {
+  0% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #ff2d1a, 0 0 0 6px rgba(255, 74, 26, 0.3), 0 0 12px 3px rgba(255, 45, 26, 0.7); }
+  100% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #ffd24a, 0 0 0 7px rgba(255, 120, 0, 0.45), 0 0 22px 7px rgba(255, 120, 0, 0.85); }
+}
+@keyframes cust-frame-pulse {
+  0% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #3df0ff, 0 0 0 4px rgba(61, 240, 255, 0.6); }
+  70% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #3df0ff, 0 0 0 13px rgba(61, 240, 255, 0); }
+  100% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #3df0ff, 0 0 0 13px rgba(61, 240, 255, 0); }
+}
+@keyframes cust-frame-royal {
+  0% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #e0b23c, 0 0 14px 3px rgba(224, 178, 60, 0.6); }
+  50% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #fff3b0, 0 0 20px 5px rgba(255, 243, 176, 0.8); }
+  100% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #b98cff, 0 0 16px 4px rgba(185, 140, 255, 0.65); }
+}
+.cust-frame-inferno { animation: cust-frame-inferno 0.9s ease-in-out infinite alternate; }
+.cust-frame-pulse { animation: cust-frame-pulse 1.8s ease-out infinite; }
+.cust-frame-royal { animation: cust-frame-royal 3.2s ease-in-out infinite alternate; }
+@media (prefers-reduced-motion: reduce) { .cust-frame-flame, .cust-frame-rainbow, .cust-frame-inferno, .cust-frame-pulse, .cust-frame-royal { animation: none; } }
