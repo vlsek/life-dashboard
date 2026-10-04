@@ -1,0 +1,151 @@
+// Мини-словарь только для этой страницы — ровно те строки, что использует история
+// (i18n.js целиком не модульный, чтобы его импортировать). Тексты скопированы дословно.
+
+export function getLang(): 'en' | 'ru' {
+  // Ровно как getLang() в i18n.js: по умолчанию "en", если ключ не задан
+  try {
+    return (localStorage.getItem('site_lang') || 'en') === 'ru' ? 'ru' : 'en'
+  } catch {
+    return 'en'
+  }
+}
+
+const DICT = {
+  en: {
+    nav_open_menu: 'Open menu',
+    nav_more: 'More sections',
+    nav_favorites: 'Favorites',
+    nav_favorites_empty: 'Add pages to favorites with the heart at the top of a page',
+    nav_dashboard: '🏠 Dashboard',
+    nav_goals: '🎯 Goals',
+    nav_skills: '🥋 Skills',
+    nav_workouts: '🏋️ Workouts',
+    nav_challenges: '🏁 Challenges',
+    nav_english: '🌐 Languages',
+    nav_calendar: '🗓️ Calendar',
+    nav_milestones: '🚩 Milestones',
+    nav_shop: '🛍️ Shop',
+    nav_community: '🏆 Community',
+    nav_history: '🕘 History',
+    nav_account_title: 'Account',
+    theme_dark: '🌑 Dark',
+    theme_monet: '🎨 Monet',
+    theme_light: '☀️ Light',
+    theme_pink: '🌸 Pink',
+    logout: 'Log out',
+    comm_load_error: "Couldn't load:",
+    dash_close_btn: 'Close',
+    dash_save_error_generic: "Couldn't save: ",
+    dash_delete_error_generic: "Couldn't delete: ",
+    save: 'Save',
+    cancel: 'Cancel',
+    nav_achievements: '🏅 Achievements',
+    nav_customization: '🎨 Customization',
+    cust_title: 'Customization',
+    cust_intro: 'Your look in one place: avatar frames today, more soon. Unlock items with points or as a reward for achievements, then pick what to wear.',
+    cust_balance: 'Points balance',
+    cust_balance_unknown: 'Balance unavailable',
+    cust_sec_points: 'For points',
+    cust_sec_achievements: 'For achievements',
+    cust_sec_points_hint: 'Bought with points from your balance. The price is deducted like a shop purchase.',
+    cust_sec_achievements_hint: 'Not for sale: unlocked automatically when you earn the achievement.',
+    cust_cat_avatar_frame: 'Avatar frames',
+    cust_soon: 'Coming next: water glass skins, progress ring styles, streak flame effects, themes, icon sets and block collapse styles.',
+    cust_item_frame_neon: 'Neon frame',
+    cust_item_frame_aurora: 'Aurora frame',
+    cust_item_frame_gold: 'Golden frame',
+    cust_ach_streak_30: 'Month on fire',
+    cust_reward_for: 'Reward for the achievement',
+    cust_buy: 'Buy for {n}',
+    cust_short: 'Need {n} more',
+    cust_select: 'Wear',
+    cust_selected: 'Worn',
+    cust_unselect: 'Take off',
+    cust_owned: 'Unlocked',
+    cust_locked: 'Locked',
+    cust_buy_error: "Couldn't complete the purchase: ",
+    cust_select_error: "Couldn't save the choice: ",
+    cust_need_migration: 'The customization table is not set up yet. Apply migration 048 in Supabase (SQL editor) to unlock and wear items.',
+    cust_shop_prefix: 'Customization:',
+    close: "Close",
+    changelog_title: "📋 What's new",
+    changelog_empty: "No history yet.",
+  },
+  ru: {
+    nav_open_menu: 'Открыть меню',
+    nav_more: 'Остальные разделы',
+    nav_favorites: 'Избранное',
+    nav_favorites_empty: 'Добавьте страницы в избранное — сердечком вверху страницы',
+    nav_dashboard: '🏠 Дашборд',
+    nav_goals: '🎯 Цели',
+    nav_skills: '🥋 Навыки',
+    nav_workouts: '🏋️ Тренировки',
+    nav_challenges: '🏁 Челленджи',
+    nav_english: '🌐 Языки',
+    nav_calendar: '🗓️ Календарь',
+    nav_milestones: '🚩 Вехи',
+    nav_shop: '🛍️ Магазин',
+    nav_community: '🏆 Сообщество',
+    nav_history: '🕘 История',
+    nav_account_title: 'Аккаунт',
+    theme_dark: '🌑 Тёмная',
+    theme_monet: '🎨 Monet',
+    theme_light: '☀️ Светлая',
+    theme_pink: '🌸 Розовая',
+    logout: 'Выйти',
+    comm_load_error: 'Не удалось загрузить:',
+    dash_close_btn: 'Закрыть',
+    dash_save_error_generic: 'Не удалось сохранить: ',
+    dash_delete_error_generic: 'Не удалось удалить: ',
+    save: 'Сохранить',
+    cancel: 'Отмена',
+    nav_achievements: '🏅 Достижения',
+    nav_customization: '🎨 Кастомизация',
+    cust_title: 'Кастомизация',
+    cust_intro: 'Ваш внешний вид в одном месте: пока рамки аватарки, скоро больше. Открывайте предметы за баллы или в награду за достижения и выбирайте, что носить.',
+    cust_balance: 'Баланс баллов',
+    cust_balance_unknown: 'Баланс недоступен',
+    cust_sec_points: 'За баллы',
+    cust_sec_achievements: 'За достижения',
+    cust_sec_points_hint: 'Покупаются за баллы с вашего баланса. Цена списывается как покупка в магазине.',
+    cust_sec_achievements_hint: 'Не продаются: открываются сами, когда вы получаете достижение.',
+    cust_cat_avatar_frame: 'Рамки аватарки',
+    cust_soon: 'Дальше: скины стакана воды, стили колец прогресса, эффекты пламени серии, темы, наборы иконок и вид сворачивания блоков.',
+    cust_item_frame_neon: 'Неоновая рамка',
+    cust_item_frame_aurora: 'Рамка «Аврора»',
+    cust_item_frame_gold: 'Золотая рамка',
+    cust_ach_streak_30: 'Месяц в огне',
+    cust_reward_for: 'Награда за достижение',
+    cust_buy: 'Купить за {n}',
+    cust_short: 'Не хватает {n}',
+    cust_select: 'Надеть',
+    cust_selected: 'Надета',
+    cust_unselect: 'Снять',
+    cust_owned: 'Открыто',
+    cust_locked: 'Закрыто',
+    cust_buy_error: 'Не удалось совершить покупку: ',
+    cust_select_error: 'Не удалось сохранить выбор: ',
+    cust_need_migration: 'Таблица кастомизации ещё не создана. Примените миграцию 048 в Supabase (SQL-редактор), чтобы открывать и надевать предметы.',
+    cust_shop_prefix: 'Кастомизация:',
+    close: "Закрыть",
+    changelog_title: "📋 Что нового",
+    changelog_empty: "История пока пуста.",
+  },
+} as const
+
+export type DictKey = keyof (typeof DICT)['ru']
+
+export function t(key: DictKey): string {
+  return DICT[getLang()][key]
+}
+
+export function setLang(lang: 'en' | 'ru') {
+  // Как и на остальном сайте: большая часть контента рендерится JS-ом, простой и
+  // надёжный способ переключить язык везде — перезагрузить страницу.
+  localStorage.setItem('site_lang', lang)
+  location.reload()
+}
+
+export function locale(): string {
+  return getLang() === 'en' ? 'en-US' : 'ru-RU'
+}

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.83";
+const SITE_VERSION = "2.84";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.84", date: "2026-10-04 03:55", changes: [
+        "Новый раздел «Кастомизация» (первый срез, адрес /customization/, пункт меню на всех страницах после «Достижений»): рамки аватарки. «За баллы» — неоновая (100) и «Аврора» (150): покупаются с баланса, цена списывается как покупка в магазине; «За достижения» — золотая рамка в награду за 30 идеальных дней подряд. Купленное можно надеть и снять; рамка видна на аватаре в левом меню и в шапке «Сообщества». Нужна миграция 048; без неё страница открывается как витрина с подсказкой, покупок нет."
+    ]},
     { version: "2.83", date: "2026-10-04 16:23", changes: [
         "Дробные баллы за подходы: у метрики-подходов с «Подходов в день по плану» каждый подход теперь приносит долю балла (при плане 4: 1 подход = 0,3, 2 = 0,5, 3 = 0,8), целый балл — когда метрика выполнена полностью. Работает в балансе, журнале баллов, графике, всплывающем «+0,3», Магазине и (после миграции 045) в лидерборде и очках категорий. Правило действует только для записей плана, сохранённых с этой версии; прошлые дни и уже набранные баллы не пересчитываются. Остальные метрики считаются по-прежнему целыми баллами",
     ]},
@@ -1455,6 +1458,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.84", date: "2026-10-04 03:55", changes: [
+        "New Customization section (first slice, at /customization/, a menu item on every page after Achievements): avatar frames. For points - Neon (100) and Aurora (150): bought from your balance, the price is deducted like a shop purchase; for achievements - the Golden frame as a reward for 30 perfect days in a row. Bought frames can be worn and taken off; the frame shows on your avatar in the side menu and in the Community header. Needs migration 048; without it the page opens as a showcase with a hint and no purchases."
+    ]},
     { version: "2.83", date: "2026-10-04 16:23", changes: [
         "Fractional points for sets: for a sets metric with \"Planned sets per day\" every set now earns a share of a point (with a plan of 4: 1 set = 0.3, 2 = 0.5, 3 = 0.8), and the whole point comes once the metric is fully done. It works in the balance, the points log, the chart, the floating \"+0.3\", the Shop and (after migration 045) in the leaderboard and category points. The rule only applies to plans saved from this version on; past days and points already earned are not recalculated. Other metrics still use whole points",
     ]},

@@ -4,6 +4,7 @@ import { toFriendIdSet } from './community'
 import { mergeFriendScope, requestOutcome, toAcceptedIdSet, type FriendRequestOutcome } from './friends'
 import type { Period } from './leaderboardView'
 import { badgesByUser } from './badges'
+import { frameShadow } from './customFrame'
 import type { BadgeRow, FollowedProfile, FriendRequestRow, LeaderboardRow, TodayActivityRow, PublicProfile } from './types'
 
 export type AuthState =
@@ -35,6 +36,7 @@ export function useCommunity() {
   const today = ref<TodayActivityRow[]>([])
   const todayError = ref<string | null>(null)
   const profile = ref<PublicProfile | null>(null)
+  const myFrame = ref<string | null>(null) // выбранная рамка аватарки (BACKLOG 491, миграция 048); нет колонки — без рамки
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -142,6 +144,11 @@ export function useCommunity() {
   async function loadOwnProfile(userId: string) {
     const { data } = await sb.from('profiles').select('display_name, leaderboard_visible').eq('user_id', userId).maybeSingle()
     profile.value = (data as PublicProfile) || { display_name: null, leaderboard_visible: true }
+    // рамка — отдельным запросом: без миграции 048 имя и настройка видимости всё равно загрузятся
+    const fr = await sb.from('profiles').select('customization').eq('user_id', userId).maybeSingle()
+    const cz = (fr.error ? null : (fr.data as { customization?: Record<string, unknown> | null } | null)?.customization) || null
+    const key = cz && typeof cz.avatar_frame === 'string' ? cz.avatar_frame : null
+    myFrame.value = key && frameShadow(key) ? key : null
   }
 
   async function unfollow(userId: string, followedId: string) {
@@ -207,7 +214,7 @@ export function useCommunity() {
 
   return {
     auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
-    leaderboard, leaderboardError, period, periodApi, badges, today, todayError, profile,
+    leaderboard, leaderboardError, period, periodApi, badges, myFrame, today, todayError, profile,
     init, reload, setPeriod, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
   }
 }

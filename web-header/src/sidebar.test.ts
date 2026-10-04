@@ -97,6 +97,22 @@ describe('верх левого бокового меню (BACKLOG 6.2)', () => 
   })
 })
 
+describe('рамка аватарки в левом меню (BACKLOG 491)', () => {
+  it('выбранная рамка рисуется тенью на кружке аватара; без рамки — без тени', async () => {
+    const { frameShadow } = await import('./lib/customFrame')
+    expect(frameShadow('frame_neon')).toContain('#ff4fa3')
+    expect(frameShadow('nope')).toBe('')
+    const { mount: m } = await import('@vue/test-utils')
+    const SidebarTop = (await import('./components/SidebarTop.vue')).default
+    const common = { displayName: 'Анна', email: 'a@b.c', avatarUrl: null, showProgress: false, day: null, week: null }
+    const w1 = m(SidebarTop, { props: { ...common, avatarFrame: 'frame_gold' } })
+    expect((w1.find('[data-test="sidebar-initial"]').element as HTMLElement).style.boxShadow).toContain('#e0b23c')
+    const w2 = m(SidebarTop, { props: { ...common, avatarFrame: null } })
+    expect((w2.find('[data-test="sidebar-initial"]').element as HTMLElement).style.boxShadow).toBe('')
+    w1.unmount(); w2.unmount()
+  })
+})
+
 describe('слой «+N / −N» шапки (BACKLOG 469)', () => {
   it('на обычной странице слой есть, на Дашборде (panelOnly) нет — там свой слой, иначе анимация задвоится', async () => {
     setup({ display_name: 'Анна' })

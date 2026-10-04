@@ -20,7 +20,7 @@ import { PERIODS, formatPoints, myPlace, podiumSlots, restRows, type Period } fr
 
 const {
   auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
-  leaderboard, leaderboardError, period, periodApi, badges, today, todayError, profile,
+  leaderboard, leaderboardError, period, periodApi, badges, myFrame, today, todayError, profile,
   init, setPeriod, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
 } = useCommunity()
 onMounted(init)
@@ -166,6 +166,7 @@ async function onSaveProfile(name: string, visible: boolean) {
       :streak="myPlaceAll?.row.perfect_streak ?? 0"
       :rank="myPlaceAll?.rank ?? null"
       :badges="badges.get(myId)"
+      :frame="myFrame"
       @edit="showProfileModal = true"
     />
 

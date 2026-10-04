@@ -154,6 +154,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
         :display-name="sideProfile.displayName.value"
         :email="userEmail"
         :avatar-url="sideProfile.avatarUrl.value"
+        :avatar-frame="sideProfile.avatarFrame.value"
         :show-progress="sidebarProgress"
         :day="dayRing"
         :week="weekRing"

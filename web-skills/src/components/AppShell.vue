@@ -37,6 +37,7 @@ const pages: NavPage[] = [
   { href: '/milestones/', key: 'milestones', labelKey: 'nav_milestones', icon: 'milestones' },
   { href: '/shop/', key: 'shop', labelKey: 'nav_shop', icon: 'shop' },
   { href: '/achievements/', key: 'achievements', labelKey: 'nav_achievements', icon: 'medal' },
+  { href: '/customization/', key: 'customization', labelKey: 'nav_customization', icon: 'paintbrush' },
   { href: '/community/', key: 'community', labelKey: 'nav_community', icon: 'community' },
   { href: '/history/', key: 'history', labelKey: 'nav_history', icon: 'history' },
 ]
