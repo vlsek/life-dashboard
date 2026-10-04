@@ -1,6 +1,13 @@
 {
-  "version": "2.55",
+  "version": "2.56",
   "en": [
+    {
+      "version": "2.56",
+      "date": "2026-10-04 03:11",
+      "changes": [
+        "Water: once you reach 100% of your goal or more, the glass in the site header (on every page) and the glass on the Dashboard page turn gold: a golden outline, a soft glow and a shine passing over the water. If you turned animations off or your system asks for reduced motion, only the golden outline stays"
+      ]
+    },
     {
       "version": "2.55",
       "date": "2026-10-04 03:04",
@@ -1846,6 +1853,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.56",
+      "date": "2026-10-04 03:11",
+      "changes": [
+        "Вода: когда норма выполнена на 100% и больше, стакан в шапке сайта (на всех страницах) и стакан на странице Дашборда становятся золотыми: золотой контур, мягкое свечение и блик, который проходит по воде. Если вы выключили анимации или в системе включено «уменьшить движение», остаётся только золотой контур"
+      ]
+    },
     {
       "version": "2.55",
       "date": "2026-10-04 03:04",

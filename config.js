@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.55";
+const SITE_VERSION = "2.56";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.56", date: "2026-10-04 03:11", changes: [
+        "Вода: когда норма выполнена на 100% и больше, стакан в шапке сайта (на всех страницах) и стакан на странице Дашборда становятся золотыми: золотой контур, мягкое свечение и блик, который проходит по воде. Если вы выключили анимации или в системе включено «уменьшить движение», остаётся только золотой контур",
+    ]},
     { version: "2.55", date: "2026-10-04 03:04", changes: [
         "Подходы в Дневных метриках: исправлено «то есть, то нет» с подсказками-вариантами (например, «широкий хват»). Если в поле уже выбран вариант, тап по нему теперь показывает весь список сохранённых вариантов, а не только выбранный, а при вводе список по-прежнему фильтруется. Быстрый повторный тап в поле больше не закрывает только что открытый список",
     ]},
@@ -1369,6 +1372,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.56", date: "2026-10-04 03:11", changes: [
+        "Water: once you reach 100% of your goal or more, the glass in the site header (on every page) and the glass on the Dashboard page turn gold: a golden outline, a soft glow and a shine passing over the water. If you turned animations off or your system asks for reduced motion, only the golden outline stays",
+    ]},
     { version: "2.55", date: "2026-10-04 03:04", changes: [
         "Sets in Daily metrics: fixed the on-and-off variation hints (e.g. \"wide grip\"). When the field already holds a variation, tapping it now shows the whole list of saved variations instead of just the selected one, and the list still filters as you type. A quick second tap into the field no longer closes the list that just opened",
     ]},
