@@ -1,6 +1,13 @@
 {
-  "version": "2.72",
+  "version": "2.73",
   "en": [
+    {
+      "version": "2.73",
+      "date": "2026-10-04 10:08",
+      "changes": [
+        "Workouts: sets can be added right from the entries table without opening any window. Once today's entry has a first set, a \"+ set\" button appears: the new set copies the values of the previous one (for exercises with a left and a right side the whole pair is copied) and gets the current time. Next to it a \"− set\" button removes the last set when there is more than one. The first set is still entered in the entry window"
+      ]
+    },
     {
       "version": "2.72",
       "date": "2026-10-04 09:59",
@@ -1966,6 +1973,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.73",
+      "date": "2026-10-04 10:08",
+      "changes": [
+        "Тренировки: подходы можно добавлять прямо из таблицы записей, не открывая окон. После первого подхода в сегодняшней записи появляется кнопка «+ подход»: новый подход копирует значения предыдущего (для упражнений с левой и правой стороной копируется вся пара), время ставится текущее. Рядом кнопка «− подход» убирает последний, если их больше одного. Первый подход по-прежнему вносится окном записи"
+      ]
+    },
     {
       "version": "2.72",
       "date": "2026-10-04 09:59",

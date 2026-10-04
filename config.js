@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.72";
+const SITE_VERSION = "2.73";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.73", date: "2026-10-04 10:08", changes: [
+        "Тренировки: подходы можно добавлять прямо из таблицы записей, не открывая окон. После первого подхода в сегодняшней записи появляется кнопка «+ подход»: новый подход копирует значения предыдущего (для упражнений с левой и правой стороной копируется вся пара), время ставится текущее. Рядом кнопка «− подход» убирает последний, если их больше одного. Первый подход по-прежнему вносится окном записи",
+    ]},
     { version: "2.72", date: "2026-10-04 09:59", changes: [
         "Тренировки: типовые упражнения и их разновидности выбираются из списка. В форме упражнения для нового упражнения можно выбрать типовое (отжимания, подтягивания, приседания, выпады, планка, скручивания, жим лёжа, становая тяга и другие), а ниже появляется список разновидностей: у отжиманий, например, алмазные, широкие, обычным хватом, лучника, с хлопком. Разновидность дописывается к названию. Если нужной нет, допишите свою в название руками; при смене разновидности остальное написанное не стирается",
     ]},
@@ -1421,6 +1424,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.73", date: "2026-10-04 10:08", changes: [
+        "Workouts: sets can be added right from the entries table without opening any window. Once today's entry has a first set, a \"+ set\" button appears: the new set copies the values of the previous one (for exercises with a left and a right side the whole pair is copied) and gets the current time. Next to it a \"− set\" button removes the last set when there is more than one. The first set is still entered in the entry window",
+    ]},
     { version: "2.72", date: "2026-10-04 09:59", changes: [
         "Workouts: typical exercises and their variations are picked from a list. For a new exercise the form lets you choose a typical one (push-ups, pull-ups, squats, lunges, plank, crunches, bench press, deadlift and more), and a list of variations appears below: for push-ups, for example, diamond, wide, standard, archer, clap. The variation is added to the name. If the one you need is missing, type your own word into the name; changing the variation does not erase anything else you wrote",
     ]},
