@@ -1,6 +1,13 @@
 {
-  "version": "2.60",
+  "version": "2.61",
   "en": [
+    {
+      "version": "2.61",
+      "date": "2026-10-04 04:05",
+      "changes": [
+        "Achievements now appear in the side menu of every page (after Shop): the section opens with one tap instead of only by the /achievements/ address. The badges table has been applied by the owner, so unlocked badges are saved in the account"
+      ]
+    },
     {
       "version": "2.60",
       "date": "2026-10-04 03:46",
@@ -1881,6 +1888,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.61",
+      "date": "2026-10-04 04:05",
+      "changes": [
+        "«Достижения» появились в боковом меню всех страниц (после «Магазина»): теперь раздел открывается одним нажатием, а не только по адресу /achievements/. Таблица значков уже применена владельцем, так что открытые значки сохраняются в аккаунте"
+      ]
+    },
     {
       "version": "2.60",
       "date": "2026-10-04 03:46",

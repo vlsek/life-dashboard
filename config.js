@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.60";
+const SITE_VERSION = "2.61";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.61", date: "2026-10-04 04:05", changes: [
+        "«Достижения» появились в боковом меню всех страниц (после «Магазина»): теперь раздел открывается одним нажатием, а не только по адресу /achievements/. Таблица значков уже применена владельцем, так что открытые значки сохраняются в аккаунте",
+    ]},
     { version: "2.60", date: "2026-10-04 03:46", changes: [
         "Дашборд: в блоке «Планы» появился переключатель дня «‹ дата ›» с чипом «Сегодня» — как у «Дневных метрик». Можно посмотреть и поправить, что было в планах вчера и раньше. Дата общая с «Дневными метриками»: листаете в одном блоке — день меняется в обоих. Напоминания о планах по прошлым дням не срабатывают, перенос незавершённого доступен только на сегодняшнем дне",
     ]},
@@ -1384,6 +1387,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.61", date: "2026-10-04 04:05", changes: [
+        "Achievements now appear in the side menu of every page (after Shop): the section opens with one tap instead of only by the /achievements/ address. The badges table has been applied by the owner, so unlocked badges are saved in the account",
+    ]},
     { version: "2.60", date: "2026-10-04 03:46", changes: [
         "Dashboard: the Plans block now has a day switcher with a Today chip, like Daily metrics. You can look at and edit what was planned yesterday and earlier. The date is shared with Daily metrics: flip it in one block and both change. Plan reminders never fire for past days, and carrying over unfinished items is only offered on today",
     ]},
