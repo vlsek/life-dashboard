@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.08";
+const SITE_VERSION = "3.09";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.09", date: "2026-10-05 10:36", changes: [
+        "Дашборд: окно «Идеальный день!». Когда сегодняшний день становится идеальным (выполнено всё, что нужно на сегодня), один раз в день появляется окно-поздравление. Оно показывает, сколько идеальных дней у вас всего, выдаёт достижение, если такого ещё нет, а если следующее достижение ещё копится, пишет прогресс: сколько идеальных дней осталось и полоса. В «Достижениях» появилась группа «Идеальные дни»: «Идеальный старт» (1 день), «Идеальный десяток» (10), «Идеальный месяц» (30) и «Идеальная сотня» (100); считаются все идеальные дни, не обязательно подряд. Окно выключается так же, как поздравления за серии (кнопка «Больше не показывать»), и не мешает им: если в этот день вы получаете поздравление за серию, сначала оно, затем это",
+    ]},
     { version: "3.08", date: "2026-10-05 01:55", changes: [
         "Подходы: подсказка в поле «особенность» сокращена до «Особенность» (раньше «особенность (необязательно) — напр. положение рук» не влезала в поле). В английской версии — «Variation». Миграция не нужна."
     ]},
@@ -1531,6 +1534,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.09", date: "2026-10-05 10:36", changes: [
+        "Dashboard: a \"Perfect day!\" window. When today becomes a perfect day (everything you had to do today is done), a congratulation window appears once a day. It shows how many perfect days you have in total, gives you the achievement if you do not have it yet, and if the next achievement is still being collected it shows the progress: how many perfect days are left and a bar. Achievements has a new \"Perfect days\" group: \"Perfect start\" (1 day), \"Perfect ten\" (10), \"Perfect month\" (30) and \"Perfect hundred\" (100); all perfect days count, not only in a row. The window is turned off the same way as the streak congratulations (the \"Don't show these again\" button) and does not get in their way: if you also get a streak congratulation that day, it comes first, then this one",
+    ]},
     { version: "3.08", date: "2026-10-05 01:55", changes: [
         "Sets: the hint in the variation field is shortened to \"Variation\" (it used to read \"variation (optional) - e.g. hand position\" and did not fit the field). Russian version: \"Особенность\". No migration needed."
     ]},
