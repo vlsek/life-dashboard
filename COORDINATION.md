@@ -73,7 +73,8 @@ BACKLOG 567 (аудит оформления), подпункт «Нативны
 (Сделано ранее: «Достижения» v2.48/2.61/2.62, баллы под дробную формулу v2.93, лесенки «Языков» v3.03, лесенки остальных разделов v3.15, показ наград на карточках v3.16; BACKLOG 26 v2.63; BACKLOG 567 «Аудит оформления» (v2.79/2.80/2.81, правка v2.93); BACKLOG 33 п. 2–3 v2.94. НЕ начато и ни за кем не закреплено: ВЫДАЧА наград за ступени лесенок (BACKLOG 37; порядок и зоны в самом пункте): монетки (SQL — агент 1), предметы-рамки 3-й ступени (агент 2), закрытые темы (агент 5); когда вид награды заработает — агент 6 (или тот, кто делал) ставит `'active'` в `REWARD_STATUS` в `web-achievements/src/lib/rewards.ts`; остаток 567 (`prompt()` воды, `<select>`/чекбоксы в `web-header/`, date/time, таблицы).)
 
 ### Агент 7
-— свободен —
+### Агент 7
+BACKLOG 567, подпункт «Шапка `web-header/`»: три правила аудита оформления (стрелка у `<select>`, чекбокс в стиле сайта с тёмной галочкой у светлых акцентов, скрытие стрелок `input[type=number]`) дописать в КОНЕЦ `web-header/src/header.css` (3 select, 7 чекбоксов, 4 числовых поля в `ProgressSettingsModal`/`SettingsModal`/`WaterModal`); убрать `web-header` из `EXEMPT` стражей `spinnersAllPilots`/`selectsAllPilots`/`checkboxesAllPilots` в `web-dashboard/src`; пересборка `header-widgets/`, `config.js`, ROADMAP, BACKLOG. НЕ трогаю: компоненты и `lib/` шапки (агент 4, семиугольник), `style.css` пилотов и date/time (агент 6), `PlannedSection.vue` (агент 2), `WaterSavedAnim.vue`. С: 2026-10-06 02:39.
 
 ## Бэклог
 
