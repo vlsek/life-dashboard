@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { sb } from './supabase'
 import { fetchAllRows } from './fetchAll'
 import { withWaterGoal, isWeightLike } from './waterGoal'
-import { ACHIEVEMENTS, computeCounters, evaluate, reconcile, type AchievementState, type Counters, type Unlocked, type ValueRow } from './achievements'
+import { ACHIEVEMENTS, computeCounters, countMilestoneMarks, evaluate, reconcile, type AchievementState, type Counters, type Unlocked, type ValueRow } from './achievements'
 import { loadUnlocked, saveUnlocked, type StorageMode } from './achievementStore'
 import { countMegaWeeks, getDayProgressSettings, type GoalLite, type PlannedItem } from './weekProgress'
 import type { Metric, PointsRow } from './types'
@@ -57,7 +57,7 @@ export function useAchievements() {
   async function load(userId: string) {
     loading.value = true
     try {
-      const [metricsRes, valuesRes, goalsRes, skillsRes, booksRes, workoutsRes, challengesRes, weightCount, notesRes, allGoalsRes, wordsAddedRes, wordsLearnedRes] = await Promise.all([
+      const [metricsRes, valuesRes, goalsRes, skillsRes, booksRes, workoutsRes, challengesRes, weightCount, notesRes, allGoalsRes, wordsAddedRes, wordsLearnedRes, milestonesRes] = await Promise.all([
         sb.from('metrics').select('*').eq('user_id', userId).eq('active', true),
         // постранично: Supabase отдаёт максимум 1000 строк за запрос, иначе счётчики считались бы по обрезанной истории
         fetchAllRows<ValueRow>((from, to) => sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId).order('date').order('metric_id').range(from, to)),
@@ -73,6 +73,8 @@ export function useAchievements() {
         // «Языки»: считаем строки на стороне базы (head + count), без выкачивания слов. Ошибка (нет таблицы/сети) — count = null → 0.
         sb.from('vocabulary').select('id', { count: 'exact', head: true }).eq('user_id', userId),
         sb.from('vocabulary').select('id', { count: 'exact', head: true }).eq('user_id', userId).eq('learned', true),
+        // «Вехи»: история отметок и признак «выполнена» (ошибка/нет таблицы — 0)
+        sb.from('milestones').select('history, done').eq('user_id', userId),
       ])
       const err = metricsRes.error?.message || valuesRes.error || goalsRes.error?.message || skillsRes.error?.message || booksRes.error?.message || workoutsRes.error
       if (err) {
@@ -93,6 +95,7 @@ export function useAchievements() {
         challengesDone: (challengesRes.data || []).length, // нет таблицы челленджей/ошибка — просто 0
         wordsAdded: wordsAddedRes.count ?? 0,
         wordsLearned: wordsLearnedRes.count ?? 0,
+        milestonesDone: milestonesRes.error ? 0 : countMilestoneMarks((milestonesRes.data || []) as { history?: unknown[] | null; done?: boolean | null }[]),
         // ошибка заметок/целей не ломает страницу — недель выше 100% тогда 0 (открытые достижения не пропадают)
         megaWeeks: notesRes.error || allGoalsRes.error ? 0 : countMegaWeeks({ metrics, values: valuesRes.rows, planned: notesRes.rows, goals: (allGoalsRes.data || []) as GoalLite[], settings: getDayProgressSettings(), today: new Date() }),
         today: new Date(),

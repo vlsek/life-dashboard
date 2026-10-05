@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
 import { mount, flushPromises } from '@vue/test-utils'
-import { ACHIEVEMENTS, BASELINE_KEY, evaluate, type Counters } from './lib/achievements'
+import { ACHIEVEMENTS, GROUP_ORDER, BASELINE_KEY, evaluate, type Counters } from './lib/achievements'
 
 vi.mock('./lib/supabase', () => ({ logout: vi.fn(), sb: {} }))
 
-const ZERO: Counters = { streakBest: 0, perfectDays: 0, pointsTotal: 0, metricDone: 0, weightEntries: 0, goalsDone: 0, skillsMastered: 0, booksDone: 0, workoutDays: 0, challengesDone: 0, megaWeeks: 0, wordsAdded: 0, wordsLearned: 0 }
+const ZERO: Counters = { streakBest: 0, perfectDays: 0, pointsTotal: 0, metricDone: 0, weightEntries: 0, goalsDone: 0, skillsMastered: 0, booksDone: 0, workoutDays: 0, challengesDone: 0, megaWeeks: 0, wordsAdded: 0, wordsLearned: 0, milestonesDone: 0 }
 
 const hold = {
   auth: ref<unknown>({ status: 'ready', userId: 'u', userEmail: 'a@b.c' }),
@@ -48,7 +48,7 @@ describe('страница «Достижения»', () => {
     await openAll(w)
     expect(w.findAll('[data-testid="achievement-card"]').length).toBe(ACHIEVEMENTS.length)
     expect(w.find('[data-testid="achievements-count"]').text()).toBe(`0 / ${ACHIEVEMENTS.length}`)
-    expect(w.findAll('section[data-group]').length).toBe(11)
+    expect(w.findAll('section[data-group]').length).toBe(13)
     expect(w.find('[data-testid="achievements-local-note"]').exists()).toBe(false)
     w.unmount()
   })
@@ -103,7 +103,7 @@ describe('страница «Достижения»', () => {
     expect(w.find('[data-testid="unlocked-counter"]').exists()).toBe(false)
     await w.find('[data-testid="unlocked-next"]').trigger('click')
     expect(w.find('[data-testid="achievement-unlocked"]').exists()).toBe(false)
-    expect(w.findAll('section[data-group]').length).toBe(11) // страница на месте
+    expect(w.findAll('section[data-group]').length).toBe(GROUP_ORDER.length) // страница на месте
     w.unmount()
   })
 
@@ -118,12 +118,12 @@ describe('страница «Достижения»', () => {
 })
 
 describe('категории свёрнуты по умолчанию (BACKLOG 38)', () => {
-  it('при заходе все 11 категорий свёрнуты: видны заголовки и счётчики, карточек нет', async () => {
+  it('при заходе все категории (по числу групп реестра) свёрнуты: видны заголовки и счётчики, карточек нет', async () => {
     hold.states.value = evaluate({ ...ZERO, goalsDone: 1 })
     hold.unlocked.value = { [BASELINE_KEY]: 'x', first_goal: null }
     const w = await mountApp()
     const sections = w.findAll('section[data-group]')
-    expect(sections.length).toBe(11)
+    expect(sections.length).toBe(GROUP_ORDER.length)
     for (const sec of sections) {
       expect(sec.attributes('data-open')).toBe('false')
       expect(sec.find('[data-testid="group-toggle"]').attributes('aria-expanded')).toBe('false')

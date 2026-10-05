@@ -5,6 +5,7 @@ import {
   GROUP_ORDER,
   bestPerfectStreak,
   computeCounters,
+  countMilestoneMarks,
   countPerfectDays,
   evaluate,
   groupStates,
@@ -44,6 +45,7 @@ const ZERO: Counters = {
   megaWeeks: 0,
   wordsAdded: 0,
   wordsLearned: 0,
+  milestonesDone: 0,
 }
 
 // 2026-10-05 — понедельник
@@ -52,7 +54,7 @@ const rows = (metricId: string, days: number[], value: unknown = true) => days.m
 
 describe('реестр достижений', () => {
   it('около 20 стартовых, ключи уникальны, группы известны, пороги положительные', () => {
-    expect(ACHIEVEMENTS.length).toBe(32)
+    expect(ACHIEVEMENTS.length).toBe(47)
     expect(new Set(ACHIEVEMENTS.map((a) => a.key)).size).toBe(ACHIEVEMENTS.length)
     for (const a of ACHIEVEMENTS) {
       expect(GROUP_ORDER).toContain(a.group)
@@ -61,14 +63,10 @@ describe('реестр достижений', () => {
     }
   })
 
-  it('набор владельца: серии 5/10/30/100, баллы 100/500/1000, 10 и 50 тренировок, 1 и 5 челленджей, 10 целей, 5 книг', () => {
+  it('серии 5/10/30/100 и баллы 100/500/1000 — набор владельца 2026-10-03 (лесенки остальных разделов проверяются ниже)', () => {
     const by = (c: string) => ACHIEVEMENTS.filter((a) => a.counter === c).map((a) => a.target)
     expect(by('streakBest')).toEqual([5, 10, 30, 100])
     expect(by('pointsTotal')).toEqual([100, 500, 1000])
-    expect(by('challengesDone')).toEqual([1, 5])
-    expect(by('goalsDone')).toEqual([1, 10])
-    expect(by('booksDone')).toEqual([1, 5])
-    expect(by('workoutDays')).toEqual([1, 10, 50])
   })
 
   it('ключ не содержит служебного префикса', () => {
@@ -326,13 +324,13 @@ describe('лесенки «Языков» (BACKLOG раздел 37)', () => {
 
   it('без слов (не передано) счётчики равны 0, а выученных не может быть больше добавленных ни в одной ступени сразу', () => {
     const c = computeCounters({ metrics: [], values: [], doneGoals: [], masteredSkills: [], doneBooks: [], weightEntries: 0, workoutDates: [], challengesDone: 0, today: new Date('2026-10-12T12:00:00') })
-    expect(c).toMatchObject({ wordsAdded: 0, wordsLearned: 0 })
+    expect(c).toMatchObject({ wordsAdded: 0, wordsLearned: 0, milestonesDone: 0 })
     expect(evaluate(c).filter((s) => s.def.group.startsWith('words_') && s.met)).toEqual([])
   })
 
-  it('группы «Языков» стоят после «Книг» и перед «Неделями» (порядок страницы)', () => {
+  it('группы «Языков» стоят после «Вех» и перед «Неделями» (порядок страницы)', () => {
     const order = [...GROUP_ORDER]
-    expect(order.indexOf('words_added')).toBe(order.indexOf('books') + 1)
+    expect(order.indexOf('words_added')).toBe(order.indexOf('milestones') + 1)
     expect(order.indexOf('words_learned')).toBe(order.indexOf('words_added') + 1)
     expect(order.indexOf('weeks')).toBeGreaterThan(order.indexOf('words_learned'))
   })
@@ -397,3 +395,54 @@ describe('лесенка «Идеальные дни»', () => {
     expect(r.added.perfect_days_1).toBe('2026-10-05T10:00:00Z')
   })
 })
+
+// Владелец одобрил пороги 2026-10-05: у каждого раздела лесенка из 4 ступеней. Ключи ранее выпущенных значков не менялись.
+describe('лесенки остальных разделов (пороги одобрены владельцем)', () => {
+  const ladder = (counter: string) => ACHIEVEMENTS.filter((a) => a.counter === counter).map((a) => a.target)
+
+  it.each([
+    ['goalsDone', [1, 10, 25, 50]],
+    ['skillsMastered', [1, 5, 10, 25]],
+    ['booksDone', [1, 5, 10, 25]],
+    ['challengesDone', [1, 5, 10, 25]],
+    ['milestonesDone', [1, 5, 10, 25]],
+    ['wordsAdded', [10, 25, 50, 100]],
+    ['wordsLearned', [10, 25, 50, 100]],
+  ])('%s: ступени %j', (counter, expected) => {
+    expect(ladder(counter as string)).toEqual(expected)
+  })
+
+  it('тренировки: 1 (первая) + 10 / 50 / 100 / 250 дней', () => {
+    expect(ladder('workoutDays')).toEqual([1, 10, 50, 100, 250])
+  })
+
+  it('ранее выпущенные ключи на месте и с прежними порогами (на них ссылаются user_achievements и награды)', () => {
+    const t = (k: string) => ACHIEVEMENTS.find((a) => a.key === k)?.target
+    expect([t('first_goal'), t('goals_10'), t('first_skill'), t('first_book'), t('books_5'), t('challenges_1'), t('challenges_5'), t('workouts_10'), t('workouts_50'), t('streak_100'), t('points_1000')]).toEqual([1, 10, 1, 1, 5, 1, 5, 10, 50, 100, 1000])
+  })
+
+  it('каждый значок раздела в своей группе, ключи уникальны', () => {
+    expect(new Set(ACHIEVEMENTS.map((a) => a.key)).size).toBe(ACHIEVEMENTS.length)
+    expect(ACHIEVEMENTS.filter((a) => a.group === 'skills').map((a) => a.key)).toEqual(['skills_5', 'skills_10', 'skills_25'])
+    expect(ACHIEVEMENTS.filter((a) => a.group === 'milestones').map((a) => a.key)).toEqual(['milestones_1', 'milestones_5', 'milestones_10', 'milestones_25'])
+  })
+})
+
+describe('countMilestoneMarks', () => {
+  it('по каждой вехе — большее из «записей в истории» и «выполнена»; разовая выполненная веха без истории = 1', () => {
+    expect(countMilestoneMarks([{ history: [{}, {}, {}], done: false }, { history: [], done: true }, { history: [{}], done: true }, { history: [], done: false }])).toBe(3 + 1 + 1 + 0)
+  })
+  it('пустые и странные значения не ломают подсчёт', () => {
+    expect(countMilestoneMarks([])).toBe(0)
+    expect(countMilestoneMarks([{ history: null, done: null }, {}])).toBe(0)
+    expect(countMilestoneMarks(undefined as never)).toBe(0)
+  })
+  it('попадает в счётчики и открывает «Веха взята» / «Пять вех»', () => {
+    const c = computeCounters({ metrics: [], values: [], doneGoals: [], masteredSkills: [], doneBooks: [], weightEntries: 0, workoutDates: [], challengesDone: 0, milestonesDone: 6, today: new Date('2026-10-12T12:00:00') })
+    expect(c.milestonesDone).toBe(6)
+    const met = evaluate(c).filter((s) => s.met).map((s) => s.def.key)
+    expect(met).toEqual(expect.arrayContaining(['milestones_1', 'milestones_5']))
+    expect(met).not.toContain('milestones_10')
+  })
+})
+

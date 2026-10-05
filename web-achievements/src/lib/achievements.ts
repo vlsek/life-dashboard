@@ -20,10 +20,11 @@ export type CounterKey =
   | 'megaWeeks' // закончено недель больше чем на 100% (пн–вс прошли целиком; см. weekProgress.ts)
   | 'wordsAdded' // слов в «Языках» (vocabulary): всего добавлено, все языки вместе
   | 'wordsLearned' // слов в «Языках» с отметкой «выучено» (vocabulary.learned = true)
+  | 'milestonesDone' // отметок выполнения вех (по каждой вехе — большее из «записей в истории» и «выполнена»; см. countMilestoneMarks)
 
 export type Counters = Record<CounterKey, number>
 
-export type GroupKey = 'streak' | 'perfect' | 'points' | 'first' | 'workouts' | 'challenges' | 'goals' | 'books' | 'weeks' | 'words_added' | 'words_learned'
+export type GroupKey = 'streak' | 'perfect' | 'points' | 'first' | 'workouts' | 'challenges' | 'goals' | 'books' | 'weeks' | 'words_added' | 'words_learned' | 'skills' | 'milestones'
 
 export interface AchievementDef {
   key: string
@@ -34,7 +35,7 @@ export interface AchievementDef {
 }
 
 // Порядок групп на странице.
-export const GROUP_ORDER: readonly GroupKey[] = ['first', 'streak', 'perfect', 'points', 'workouts', 'challenges', 'goals', 'books', 'words_added', 'words_learned', 'weeks']
+export const GROUP_ORDER: readonly GroupKey[] = ['first', 'streak', 'perfect', 'points', 'workouts', 'challenges', 'goals', 'skills', 'books', 'milestones', 'words_added', 'words_learned', 'weeks']
 
 // Лесенка достижений одного раздела: четыре ступени с ключами <префикс>_<порог>. Ключи НЕ менять после релиза (на них ссылаются
 // записи user_achievements и награды «Кастомизации»).
@@ -71,6 +72,14 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   // «Языки» (BACKLOG раздел 37, владелец 2026-10-04): достижения должны побуждать пользоваться ВСЕМИ разделами — у каждого раздела
   // «лесенка» из 4 ступеней по возрастанию сложности. Пока только значки (награды: монетки / предметы / тема — следующими срезами).
   // Остальные разделы добавляются «по аналогии»: счётчик в CounterKey + загрузка в useAchievements + одна лесенка makeLadder ниже.
+  // Лесенки остальных разделов (владелец одобрил пороги 2026-10-05). У каждого раздела ровно 4 ступени: уже выпущенные значки
+  // (first_*, goals_10, books_5, challenges_1/5, workouts_10/50) остаются с прежними ключами, недостающие добавлены ниже.
+  ...makeLadder('goals', 'goals', 'goalsDone', 'goals', [25, 50]), // с first_goal (1) и goals_10: 1 / 10 / 25 / 50
+  ...makeLadder('skills', 'skills', 'skillsMastered', 'skills', [5, 10, 25]), // с first_skill (1): 1 / 5 / 10 / 25
+  ...makeLadder('books', 'books', 'booksDone', 'book', [10, 25]), // с first_book (1) и books_5: 1 / 5 / 10 / 25
+  ...makeLadder('challenges', 'challenges', 'challengesDone', 'challenges', [10, 25]), // с challenges_1/5: 1 / 5 / 10 / 25
+  ...makeLadder('workouts', 'workouts', 'workoutDays', 'dumbbell', [100, 250]), // с workouts_10/50: 10 / 50 / 100 / 250 (+ first_workout)
+  ...makeLadder('milestones', 'milestones', 'milestonesDone', 'milestones', [1, 5, 10, 25]),
   ...makeLadder('words', 'words_added', 'wordsAdded', 'english', [10, 25, 50, 100]),
   ...makeLadder('learned', 'words_learned', 'wordsLearned', 'brain', [10, 25, 50, 100]),
 ]
@@ -145,6 +154,7 @@ export interface CounterInput {
   megaWeeks?: number // считает weekProgress.countMegaWeeks (нужны заметки-планы и цели); не передан — 0
   wordsAdded?: number // «Языки»: слов добавлено (не передан — 0)
   wordsLearned?: number // «Языки»: слов выучено (не передан — 0)
+  milestonesDone?: number // «Вехи»: отметок выполнения (считает countMilestoneMarks; не передан — 0)
   today: Date
 }
 
@@ -203,6 +213,12 @@ export function bestPerfectStreak(metrics: Metric[], byDay: Record<string, Recor
   return best
 }
 
+// «Вехи»: у веха есть история отметок (history) и признак «выполнена» (done, у разовых). Считаем события, а не вехи: по каждой вехе —
+// большее из «записей в истории» и «выполнена» (разовая веха с done=true и пустой историей — одна отметка; не удваиваем, если и то и другое).
+export function countMilestoneMarks(rows: { history?: unknown[] | null; done?: boolean | null }[]): number {
+  return (rows || []).reduce((n, r) => n + Math.max(Array.isArray(r.history) ? r.history.length : 0, r.done ? 1 : 0), 0)
+}
+
 export function computeCounters(input: CounterInput): Counters {
   const byDay = groupByDay(input.values)
   let metricDone = 0
@@ -232,6 +248,7 @@ export function computeCounters(input: CounterInput): Counters {
     megaWeeks: input.megaWeeks ?? 0,
     wordsAdded: input.wordsAdded ?? 0,
     wordsLearned: input.wordsLearned ?? 0,
+    milestonesDone: input.milestonesDone ?? 0,
   }
 }
 
