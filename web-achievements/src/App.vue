@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import AchievementCard from './components/AchievementCard.vue'
 import AchievementUnlockedModal from './components/AchievementUnlockedModal.vue'
+import CollapseChevron from './components/CollapseChevron.vue'
 import { useAchievements } from './lib/useAchievements'
 import { groupStates, isUnlocked } from './lib/achievements'
 import { groupTitle } from './lib/achievementText'
@@ -17,6 +18,16 @@ watch(newlyUnlocked, (keys) => (celebrate.value = [...keys]), { immediate: true 
 const celebrateStates = computed(() => states.value.filter((s) => celebrate.value.includes(s.def.key)))
 
 const groups = computed(() => groupStates(states.value, unlocked.value))
+
+// Категории по умолчанию СВЁРНУТЫ (BACKLOG 38, решение владельца 2026-10-05); раскрытое не запоминаем — при каждом заходе снова свёрнуто.
+const expanded = ref<Set<string>>(new Set())
+const isOpen = (group: string) => expanded.value.has(group)
+function toggle(group: string) {
+  const next = new Set(expanded.value)
+  if (next.has(group)) next.delete(group)
+  else next.add(group)
+  expanded.value = next
+}
 const total = computed(() => states.value.length)
 const openCount = computed(() => states.value.filter((s) => isUnlocked(s.def.key, unlocked.value)).length)
 const overallPercent = computed(() => (total.value ? Math.round((openCount.value / total.value) * 100) : 0))
@@ -45,12 +56,13 @@ const overallPercent = computed(() => (total.value ? Math.round((openCount.value
           </div>
         </div>
 
-        <section v-for="g in groups" :key="g.group" class="mb-6" :data-group="g.group">
-          <h2 class="mb-2 flex items-baseline justify-between text-base font-medium">
-            <span>{{ groupTitle(g.group) }}</span>
+        <section v-for="g in groups" :key="g.group" class="mb-4" :data-group="g.group" :data-open="String(isOpen(g.group))">
+          <button type="button" class="collapse-head mb-2 flex items-center gap-2 text-base font-medium" :aria-expanded="isOpen(g.group)" :aria-controls="'grp-' + g.group" data-testid="group-toggle" @click="toggle(g.group)">
+            <CollapseChevron :collapsed="!isOpen(g.group)" />
+            <span class="flex-1">{{ groupTitle(g.group) }}</span>
             <span class="dim text-xs">{{ g.unlockedCount }} / {{ g.items.length }}</span>
-          </h2>
-          <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          </button>
+          <div v-if="isOpen(g.group)" :id="'grp-' + g.group" class="grid grid-cols-2 gap-3 sm:grid-cols-3" data-testid="group-body">
             <AchievementCard
               v-for="s in g.items"
               :key="s.def.key"

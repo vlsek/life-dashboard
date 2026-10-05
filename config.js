@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.06";
+const SITE_VERSION = "3.07";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.07", date: "2026-10-05 01:30", changes: [
+        "Достижения: категории теперь по умолчанию свёрнуты — видны названия и счётчики «получено / всего», общий счётчик сверху остался. Нажмите на категорию, чтобы развернуть, ещё раз — свернуть. Раскрытое не запоминается: при следующем заходе снова свёрнуто. Миграция не нужна."
+    ]},
     { version: "3.06", date: "2026-10-05 00:40", changes: [
         "Сообщество: если у вас не указано имя (регистрировались раньше), сверху появляется мягкая плашка «Укажите имя» — друзья видят имя вместо «Пользователь …». Имя обязательно и в окне «Публичный профиль»: пустое больше не сохраняется (до 40 символов, лишние пробелы убираются). Миграция не нужна."
     ]},
@@ -1525,6 +1528,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.07", date: "2026-10-05 01:30", changes: [
+        "Achievements: categories are now collapsed by default - you see the names and the \"earned / total\" counters, the overall counter on top stays. Tap a category to expand it, tap again to collapse. What you expand is not remembered: next time it is collapsed again. No migration needed."
+    ]},
     { version: "3.06", date: "2026-10-05 00:40", changes: [
         "Community: if you have no name set (you registered earlier), a soft \"Add your name\" card appears at the top - friends see the name instead of \"User ...\". The name is also required in the \"Public profile\" window: an empty one is no longer saved (up to 40 characters, extra spaces are trimmed). No migration needed."
     ]},
