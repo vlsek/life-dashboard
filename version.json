@@ -1,6 +1,13 @@
 {
-  "version": "3.23",
+  "version": "3.24",
   "en": [
+    {
+      "version": "3.24",
+      "date": "2026-10-06 02:35",
+      "changes": [
+        "Water: the \"saved\" animation (the glass filling up) is visible again. It was drawn inside the scrollable water window and, after pressing \"+200 / +1000\" further down, ended up outside the visible area; it now appears at the centre of the screen above the window and does not block taps. With animations switched off the glass shows already filled and the tick is visible"
+      ]
+    },
     {
       "version": "3.23",
       "date": "2026-10-06 02:17",
@@ -2325,6 +2332,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.24",
+      "date": "2026-10-06 02:35",
+      "changes": [
+        "Вода: анимация «записалось» (стакан наполняется) снова видна. Она рисовалась внутри прокручиваемого окна воды и при нажатии «+200 / +1000» ниже по окну оказывалась за пределами видимого; теперь показывается по центру экрана поверх окна и не мешает нажатиям. При выключенных анимациях стакан сразу показывается наполненным, а галочка видна"
+      ]
+    },
     {
       "version": "3.23",
       "date": "2026-10-06 02:17",

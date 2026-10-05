@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.23";
+const SITE_VERSION = "3.24";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.24", date: "2026-10-06 02:35", changes: [
+        "Вода: анимация «записалось» (стакан наполняется) снова видна. Она рисовалась внутри прокручиваемого окна воды и при нажатии «+200 / +1000» ниже по окну оказывалась за пределами видимого; теперь показывается по центру экрана поверх окна и не мешает нажатиям. При выключенных анимациях стакан сразу показывается наполненным, а галочка видна",
+    ]},
     { version: "3.23", date: "2026-10-06 02:17", changes: [
         "Цели: список ваших категорий теперь запоминается и не пропадает, даже если вы удалили или закрыли все цели с этой категорией. Новая категория сохраняется в список при сохранении цели. Нужна миграция 050 в Supabase (без неё всё работает как раньше: список берётся из ваших целей)",
     ]},
@@ -1576,6 +1579,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.24", date: "2026-10-06 02:35", changes: [
+        "Water: the \"saved\" animation (the glass filling up) is visible again. It was drawn inside the scrollable water window and, after pressing \"+200 / +1000\" further down, ended up outside the visible area; it now appears at the centre of the screen above the window and does not block taps. With animations switched off the glass shows already filled and the tick is visible",
+    ]},
     { version: "3.23", date: "2026-10-06 02:17", changes: [
         "Goals: your list of categories is now remembered and no longer disappears when you delete or complete every goal with that category. A new category is added to the list when you save a goal. Needs migration 050 in Supabase (without it everything works as before: the list comes from your goals)",
     ]},
