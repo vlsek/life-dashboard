@@ -15,7 +15,7 @@ import Avatar from './components/Avatar.vue'
 import Podium from './components/Podium.vue'
 import BadgeStrip from './components/BadgeStrip.vue'
 import ProfileHeader from './components/ProfileHeader.vue'
-import { friendStats } from './lib/friendCards'
+import { enrichFromLeaderboard, friendStats } from './lib/friendCards'
 import { PERIODS, formatPoints, myPlace, podiumSlots, restRows, type Period } from './lib/leaderboardView'
 
 const {
@@ -35,7 +35,10 @@ const visibleLeaderboard = computed(() => leaderboardRows(leaderboard.value, myI
 const visibleToday = computed(() => todayRows(today.value, myId.value, scope.value, friendIds.value))
 const incomingRequests = computed(() => splitRequests(requests.value).incoming)
 const outgoingRequests = computed(() => splitRequests(requests.value).outgoing)
-const hasAnyFriendItems = computed(() => requests.value.length + acceptedProfiles.value.length + followProfiles.value.length > 0)
+// карточки друзей с именем/аватаром из лидерборда, если сам профиль не прочитался (см. friendCards.ts)
+const friendCards = computed(() => enrichFromLeaderboard(acceptedProfiles.value, leaderboard.value))
+const followCards = computed(() => enrichFromLeaderboard(followProfiles.value, leaderboard.value))
+const hasAnyFriendItems = computed(() => requests.value.length + friendCards.value.length + followCards.value.length > 0)
 
 const podium = computed(() => podiumSlots(visibleLeaderboard.value))
 const rest = computed(() => restRows(visibleLeaderboard.value))
@@ -237,19 +240,19 @@ async function onSaveProfile(name: string, visible: boolean) {
           </div>
         </div>
 
-        <div v-if="acceptedProfiles.length > 0" class="mb-3">
+        <div v-if="friendCards.length > 0" class="mb-3">
           <p class="dim mb-1.5 text-sm">{{ t('comm_friends_sub') }}</p>
           <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr))">
-            <FriendCard v-for="p in acceptedProfiles" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)" :badges="badges.get(p.user_id)" :frame="frames.get(p.user_id)">
+            <FriendCard v-for="p in friendCards" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)" :badges="badges.get(p.user_id)" :frame="frames.get(p.user_id)">
               <button class="secondary px-1.5 py-0" :title="t('comm_friend_remove_title')" @click="onRemoveFriend(p.user_id)"><Icon name="x" /></button>
             </FriendCard>
           </div>
         </div>
 
-        <div v-if="followProfiles.length > 0" class="mb-3">
+        <div v-if="followCards.length > 0" class="mb-3">
           <p v-if="friendsApi" class="dim mb-1.5 text-sm">{{ t('comm_following_sub') }}</p>
           <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr))">
-            <FriendCard v-for="p in followProfiles" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)" :badges="badges.get(p.user_id)" :frame="frames.get(p.user_id)">
+            <FriendCard v-for="p in followCards" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)" :badges="badges.get(p.user_id)" :frame="frames.get(p.user_id)">
               <button class="secondary px-1.5 py-0" @click="onUnfollow(p.user_id)"><Icon name="x" /></button>
             </FriendCard>
           </div>

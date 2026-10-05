@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { withFallbackProfiles } from './friendCards'
 import { sb } from './supabase'
 import { toFriendIdSet } from './community'
 import { mergeFriendScope, requestOutcome, toAcceptedIdSet, type FriendRequestOutcome } from './friends'
@@ -93,7 +94,8 @@ export function useCommunity() {
       return
     }
     const { data: profiles } = await sb.from('profiles').select('user_id, display_name, avatar_url').in('user_id', ids)
-    const all = (profiles || []) as FollowedProfile[]
+    // не вернулись профили (права, ошибка, удалён) — всё равно показываем карточку, иначе «Друзья» врёт про «ни на кого не подписан»
+    const all = withFallbackProfiles(ids, (profiles || []) as FollowedProfile[])
     followProfiles.value = all.filter((p) => followIds.value.has(p.user_id))
     acceptedProfiles.value = all.filter((p) => acceptedIds.value.has(p.user_id))
   }
