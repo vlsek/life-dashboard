@@ -1,6 +1,13 @@
 {
-  "version": "3.16",
+  "version": "3.17",
   "en": [
+    {
+      "version": "3.17",
+      "date": "2026-10-05 12:06",
+      "changes": [
+        "Calendar: a plan typed into the field and saved with \"Save\" is now added — it used to land in the day only after pressing \"+\". An empty field still adds nothing and \"Cancel\" saves nothing"
+      ]
+    },
     {
       "version": "3.16",
       "date": "2026-10-05 12:10",
@@ -2276,6 +2283,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.17",
+      "date": "2026-10-05 12:06",
+      "changes": [
+        "Календарь: план, написанный в поле и сохранённый кнопкой «Сохранить», теперь добавляется — раньше он попадал в день только после нажатия «+». Пустое поле по-прежнему ничего не добавляет, «Отмена» ничего не сохраняет"
+      ]
+    },
     {
       "version": "3.16",
       "date": "2026-10-05 12:10",

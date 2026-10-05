@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.16";
+const SITE_VERSION = "3.17";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.17", date: "2026-10-05 12:06", changes: [
+        "Календарь: план, написанный в поле и сохранённый кнопкой «Сохранить», теперь добавляется — раньше он попадал в день только после нажатия «+». Пустое поле по-прежнему ничего не добавляет, «Отмена» ничего не сохраняет",
+    ]},
     { version: "3.16", date: "2026-10-05 12:10", changes: [
         "«Достижения»: на каждом значке теперь видно, что полагается за ступень. Первые две ступени лесенки — монетки (20 и 50), третья — рамка аватарки своего раздела, четвёртая — тема оформления (за слова — «Сепия» и «Nord», за книги — «Catppuccin Mocha», за тренировки — «AMOLED», за цели — «Solarized Light», за навыки — «Mint»; у челленджей и вех пока редкая анимированная рамка). Строка видна на карточке значка и в окне-поздравлении. Пока награды не выдаются, подпись честная — «Награда (скоро)»; выдача монеток, рамок и закрытых тем подключается следующими шагами. Исходные темы и «Высокий контраст» за достижения закрываться не будут",
     ]},
@@ -1555,6 +1558,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.17", date: "2026-10-05 12:06", changes: [
+        "Calendar: a plan typed into the field and saved with \"Save\" is now added — it used to land in the day only after pressing \"+\". An empty field still adds nothing and \"Cancel\" saves nothing",
+    ]},
     { version: "3.16", date: "2026-10-05 12:10", changes: [
         "Achievements: every badge now shows what the step gives. The first two steps of a ladder give coins (20 and 50), the third an avatar frame of its section, the fourth a theme (words - Sepia and Nord, books - Catppuccin Mocha, workouts - AMOLED, goals - Solarized Light, skills - Mint; challenges and milestones get a rare animated frame for now). The line shows on the badge card and in the congratulation window. While rewards are not given out yet, the label is honest - Reward (coming soon); handing out coins, frames and locked themes is connected in the next steps. The original themes and High contrast will never be locked behind achievements",
     ]},
