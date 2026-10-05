@@ -6,6 +6,7 @@ import NumberMetricField from './NumberMetricField.vue'
 import SetsSection from './SetsSection.vue'
 import PlannedSection from './PlannedSection.vue'
 import SectionHeading from './SectionHeading.vue'
+import SavedTick from './SavedTick.vue'
 import DateStepper from './DateStepper.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import UsefulTodayList from './UsefulTodayList.vue'
@@ -77,7 +78,8 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
       <template v-else>
         <!-- BACKLOG 23 (13:25): каждый параметр — в своей мини-плашке, иначе несколько подряд сливаются в одну массу -->
         <div v-if="numbers.length > 0" class="field-grid">
-          <div v-for="m in numbers" :key="date + m.id" class="metric-plate" data-test="metric-plate">
+          <div v-for="m in numbers" :key="date + m.id" class="metric-plate" :class="{ 'metric-plate-saved': !!flashed[m.id] }" data-test="metric-plate">
+            <SavedTick :show="!!flashed[m.id]" />
             <NumberMetricField
               :metric="m"
               :value="numberValue(m.id)"
@@ -92,7 +94,8 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
           </div>
         </div>
 
-        <div v-for="m in booleans" :key="date + m.id" class="metric-plate metric-plate-stack" data-test="metric-plate">
+        <div v-for="m in booleans" :key="date + m.id" class="metric-plate metric-plate-stack" :class="{ 'metric-plate-saved': !!flashed[m.id] }" data-test="metric-plate">
+          <SavedTick :show="!!flashed[m.id]" />
           <BooleanMetricRow
             :metric="m"
             :checked="!!pending[m.id]"
@@ -102,7 +105,8 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
           />
         </div>
 
-        <div v-for="m in multiselects" :key="date + m.id" class="metric-plate metric-plate-stack" data-test="metric-plate">
+        <div v-for="m in multiselects" :key="date + m.id" class="metric-plate metric-plate-stack" :class="{ 'metric-plate-saved': !!flashed[m.id] }" data-test="metric-plate">
+          <SavedTick :show="!!flashed[m.id]" />
           <MultiselectMetric
             :metric="m"
             :selected="selectedOf(m.id)"
@@ -160,6 +164,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
    сливаются; смесь с цветом текста темы читается и на светлых, и на тёмных темах (слабее, чем у вложенной карточки «Подходы»).
    Плашка — на обёртке, а не на корне компонента: у булевых/мультивыбора свой .metric-remaining с padding-left и акцентной полоской. */
 .metric-plate {
+  position: relative; /* для галочки «сохранено» в углу (SavedTick) */
   min-width: 0;
   padding: 10px 12px;
   background: color-mix(in srgb, var(--text) 4%, var(--bg-card));
@@ -169,6 +174,19 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
 .metric-plate-stack {
   margin-bottom: 8px;
 }
+/* BACKLOG 23:25: после подтверждённой записи плашка коротко вспыхивает мягкой зелёной рамкой (вместе с галочкой в углу) */
+.metric-plate-saved {
+  animation: metric-plate-saved 0.9s ease-out;
+}
+@keyframes metric-plate-saved {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--success) 55%, transparent); border-color: var(--success); }
+  60% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--success) 0%, transparent); border-color: var(--success); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .metric-plate-saved { animation: none; border-color: var(--success); }
+}
+:global(html[data-motion='off']) .metric-plate-saved { animation: none; border-color: var(--success); }
 /* у вложенных компонентов свои нижние отступы (для списка без плашек) — внутри плашки они лишние */
 .metric-plate :deep(.row),
 .metric-plate :deep(.wrap) {

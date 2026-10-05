@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.12";
+const SITE_VERSION = "3.13";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.13", date: "2026-10-05 11:29", changes: [
+        "Дашборд, «Ежедневные метрики»: после того как значение сохранилось, плашка метрики коротко вспыхивает мягкой зелёной рамкой, а в её углу появляется маленькая галочка и гаснет — так понятно, что внесено. Раньше сигнал был только у числовых полей (зеленела рамка), теперь он есть и у флажков, и у метрик с выбором. Если запись не удалась, галочки не будет. При «уменьшить движение» и выключенных анимациях вспышка не двигается, остаётся статичная зелёная рамка",
+    ]},
     { version: "3.12", date: "2026-10-05 11:21", changes: [
         "Графики метрик с подходами: цвета особенностей теперь зависят от темы оформления. У каждой из 11 тем своя палитра из восьми цветов: первая особенность — оттенок акцента темы, остальные подобраны так, чтобы различаться между собой (в том числе для дальтоников) и хорошо читаться на карточке именно этой темы; «без особенности» и «остальные» — нейтральные серые. При смене темы цвета на графиках и в легенде меняются сразу, а у конкретной особенности цвет по-прежнему не прыгает между днями",
     ]},
@@ -1543,6 +1546,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.13", date: "2026-10-05 11:29", changes: [
+        "Dashboard, Daily metrics: once a value is saved, its plate briefly flashes a soft green border and a small check mark appears in the corner and fades, so you can tell it went through. Before, only number fields gave a signal (the border turned green); now checkboxes and choice metrics do too. If saving fails there is no check mark. With reduced motion or animations switched off nothing moves, you just get a static green border",
+    ]},
     { version: "3.12", date: "2026-10-05 11:21", changes: [
         "Charts of set metrics: variation colours now follow the colour theme. Each of the 11 themes has its own palette of eight colours: the first variation is a shade of the theme accent, the rest are picked to stay apart from each other (also for colour-blind people) and to read well on that theme's card; no variation and other are neutral greys. Switching the theme recolours the charts and the legend at once, while a given variation keeps its colour across days",
     ]},
