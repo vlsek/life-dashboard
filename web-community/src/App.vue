@@ -3,6 +3,8 @@ import { computed, onMounted, ref } from 'vue'
 import AppShell from './components/AppShell.vue'
 import Icon from './components/Icon.vue'
 import ProfileModal from './components/ProfileModal.vue'
+import NameNudge from './components/NameNudge.vue'
+import { needsName } from './lib/profileName'
 import CategorySection from './components/CategorySection.vue'
 import FriendCard from './components/FriendCard.vue'
 import { useCommunity } from './lib/useCommunity'
@@ -140,6 +142,11 @@ async function onRemoveFriend(otherUserId: string) {
 }
 
 const showProfileModal = ref(false)
+// Нет имени у собственного профиля — мягкая плашка «Укажите имя» (BACKLOG 841)
+const showNameNudge = computed(() => auth.value.status === 'ready' && needsName(profile.value))
+async function onSaveName(name: string) {
+  await onSaveProfile(name, profile.value?.leaderboard_visible !== false)
+}
 async function onSaveProfile(name: string, visible: boolean) {
   if (auth.value.status !== 'ready') return
   try {
@@ -160,6 +167,8 @@ async function onSaveProfile(name: string, visible: boolean) {
     <div class="card mb-5 rounded-lg border p-3.5 text-sm" style="border-color: var(--border)">
       <p class="dim m-0">{{ t('comm_privacy_1') }}</p>
     </div>
+
+    <NameNudge v-if="showNameNudge" @save="onSaveName" />
 
     <ProfileHeader
       v-if="auth.status === 'ready'"

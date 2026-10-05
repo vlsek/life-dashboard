@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.105";
+const SITE_VERSION = "2.106";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.106", date: "2026-10-05 00:40", changes: [
+        "Сообщество: если у вас не указано имя (регистрировались раньше), сверху появляется мягкая плашка «Укажите имя» — друзья видят имя вместо «Пользователь …». Имя обязательно и в окне «Публичный профиль»: пустое больше не сохраняется (до 40 символов, лишние пробелы убираются). Миграция не нужна."
+    ]},
     { version: "2.105", date: "2026-10-05 07:22", changes: [
         "Цели: кнопка «Сохранить» в форме цели больше не молчит. Если не введено название — под полем появляется подсказка; если запись не удалась (нет интернета, сбой сервера) — в форме остаётся понятный текст, а введённое не пропадает; повторный тап пока идёт запись не создаёт вторую цель. Технические подробности ошибки (адрес сервера, названия таблиц) пользователю больше не показываются",
     ]},
@@ -1522,6 +1525,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.106", date: "2026-10-05 00:40", changes: [
+        "Community: if you have no name set (you registered earlier), a soft \"Add your name\" card appears at the top - friends see the name instead of \"User ...\". The name is also required in the \"Public profile\" window: an empty one is no longer saved (up to 40 characters, extra spaces are trimmed). No migration needed."
+    ]},
     { version: "2.105", date: "2026-10-05 07:22", changes: [
         "Goals: the Save button in the goal form no longer stays silent. If the name is empty, a hint appears under the field; if saving fails (no internet, server error), a clear message stays in the form and what you typed is kept; tapping again while saving does not create a second goal. Technical error details (server address, table names) are no longer shown to the user",
     ]},

@@ -2,12 +2,23 @@
 import { ref } from 'vue'
 import { t } from '../lib/i18n'
 import type { PublicProfile } from '../lib/types'
+import { NAME_MAX, cleanProfileName } from '../lib/profileName'
 
 const props = defineProps<{ initial: PublicProfile }>()
 const emit = defineEmits<{ close: []; save: [name: string, visible: boolean] }>()
 
 const name = ref(props.initial.display_name ?? '')
 const visible = ref(props.initial.leaderboard_visible !== false)
+// Имя обязательно (BACKLOG 841): пустое не сохраняем
+const nameError = ref(false)
+function onSave() {
+  const clean = cleanProfileName(name.value)
+  if (!clean) {
+    nameError.value = true
+    return
+  }
+  emit('save', clean, visible.value)
+}
 </script>
 
 <template>
@@ -16,7 +27,8 @@ const visible = ref(props.initial.leaderboard_visible !== false)
       <h3>{{ t('comm_public_profile_title') }}</h3>
 
       <label class="mt-2 block text-sm">{{ t('comm_display_name_label') }}</label>
-      <input v-model="name" type="text" class="w-full" />
+      <input v-model="name" type="text" :maxlength="NAME_MAX" class="w-full" data-testid="profile-name-input" @input="nameError = false" />
+      <p v-if="nameError" class="mb-0 mt-1 text-xs" style="color: var(--danger)" data-testid="profile-name-error">{{ t('comm_name_required') }}</p>
 
       <label class="mt-3.5 flex items-center gap-2 text-sm">
         <input v-model="visible" type="checkbox" />
@@ -26,7 +38,7 @@ const visible = ref(props.initial.leaderboard_visible !== false)
 
       <div class="modal-actions">
         <button class="secondary" @click="emit('close')">{{ t('cancel') }}</button>
-        <button @click="emit('save', name, visible)">{{ t('save') }}</button>
+        <button data-testid="profile-save" @click="onSave">{{ t('save') }}</button>
       </div>
     </div>
   </div>

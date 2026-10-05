@@ -1,6 +1,13 @@
 {
-  "version": "2.105",
+  "version": "2.106",
   "en": [
+    {
+      "version": "2.106",
+      "date": "2026-10-05 00:40",
+      "changes": [
+        "Community: if you have no name set (you registered earlier), a soft \"Add your name\" card appears at the top - friends see the name instead of \"User ...\". The name is also required in the \"Public profile\" window: an empty one is no longer saved (up to 40 characters, extra spaces are trimmed). No migration needed."
+      ]
+    },
     {
       "version": "2.105",
       "date": "2026-10-05 07:22",
@@ -2199,6 +2206,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.106",
+      "date": "2026-10-05 00:40",
+      "changes": [
+        "Сообщество: если у вас не указано имя (регистрировались раньше), сверху появляется мягкая плашка «Укажите имя» — друзья видят имя вместо «Пользователь …». Имя обязательно и в окне «Публичный профиль»: пустое больше не сохраняется (до 40 символов, лишние пробелы убираются). Миграция не нужна."
+      ]
+    },
     {
       "version": "2.105",
       "date": "2026-10-05 07:22",
