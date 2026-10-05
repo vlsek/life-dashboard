@@ -13,13 +13,17 @@ const tpl = (f: string): string => {
 const withoutEmojiText = (t: string) => t.replace(/<EmojiText[\s\S]*?\/>/g, '')
 
 describe('вода: эмодзи → SVG (Дашборд)', () => {
-  it('WaterModal: 💧 ↶ ✎ только внутри <EmojiText>, сырых нет (✓ — типографика, остаётся текстом по правилу KEEP)', () => {
+  it('WaterModal: 💧 ✎ только внутри <EmojiText>, сырых нет (✓ — типографика, остаётся текстом по правилу KEEP)', () => {
     const t = tpl('WaterModal')
     const rest = withoutEmojiText(t)
-    for (const g of ['💧', '↶', '✎']) {
+    for (const g of ['💧', '✎']) {
       expect(t, g).toContain(g) // глифы остались — но только как текст для EmojiText
       expect(rest, g).not.toContain(g)
     }
+  })
+
+  it('WaterModal: «отменить» — собственная SVG-стрелка, сырого ↶ в шаблоне нет (v3.18, компактная кнопка)', () => {
+    expect(tpl('WaterModal')).not.toContain('↶')
   })
 
   it('глифы 💧 ↶ ✎ из окна воды EmojiText рисует как SVG; ✓ остаётся текстом', () => {

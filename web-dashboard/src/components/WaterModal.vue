@@ -236,8 +236,18 @@ function saveHeightClick() {
       </div>
 
       <div v-if="undoLast || setTotal" class="mt-2 flex flex-wrap items-center gap-2" data-test="water-day-tools">
-        <button v-if="undoLast" type="button" class="secondary" data-test="undo-last" :disabled="!undoAvailable || busy" @click="onUndo">
-          <EmojiText :text="'↶ ' + t('dash_water_undo_btn')" />
+        <!-- «Отменить последнее добавление» — компактная иконка-стрелка с подсказкой, а не большая кнопка (BACKLOG раздел 30) -->
+        <button
+          v-if="undoLast"
+          type="button"
+          class="secondary"
+          data-test="undo-last"
+          :title="t('dash_water_undo_btn')"
+          :aria-label="t('dash_water_undo_btn')"
+          :disabled="!undoAvailable || busy"
+          @click="onUndo"
+        >
+          <svg viewBox="0 0 24 24" width="1.1em" height="1.1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5" /><path d="M4 9h10a6 6 0 0 1 0 12h-3" /></svg>
         </button>
         <button
           v-if="setTotal"
@@ -300,7 +310,17 @@ function saveHeightClick() {
         {{ t('dash_water_height_label') }}
         <div class="mt-1 flex gap-2">
           <input v-model="heightInput" type="number" min="100" max="250" class="w-full" data-test="height-input" />
-          <button type="button" class="secondary" data-test="save-height" @click="saveHeightClick">{{ t('dash_water_height_save') }}</button>
+          <!-- «Сохранить рост» — маленькая иконка-галочка с подсказкой вместо широкой кнопки (BACKLOG раздел 30) -->
+          <button
+            type="button"
+            class="secondary shrink-0"
+            data-test="save-height"
+            :title="t('dash_water_height_save')"
+            :aria-label="t('dash_water_height_save')"
+            @click="saveHeightClick"
+          >
+            <svg viewBox="0 0 24 24" width="1.1em" height="1.1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7.5" /></svg>
+          </button>
         </div>
       </label>
       <p v-if="heightError" class="mt-1 text-xs" style="color: #d6336c" data-test="height-error">{{ t('dash_water_height_invalid') }}</p>
