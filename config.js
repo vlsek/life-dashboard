@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.14";
+const SITE_VERSION = "3.15";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.15", date: "2026-10-05 07:20", changes: [
+        "«Достижения» побуждают пользоваться всеми разделами: у каждого теперь лесенка из четырёх ступеней. Цели — 1 / 10 / 25 / 50, навыки — 1 / 5 / 10 / 25, книги — 1 / 5 / 10 / 25, челленджи — 1 / 5 / 10 / 25, тренировки — 10 / 50 / 100 / 250 дней (и первая тренировка), новые «Вехи» — 1 / 5 / 10 / 25 отмеченных, «Языки» — как раньше. Всего 47 значков вместе с сериями, идеальными днями и баллами. Уже открытые значки остались как были. Награды за ступени (монетки, предметы, а за самую трудную ступень — тема) — следующими шагами",
+    ]},
     { version: "3.14", date: "2026-10-05 11:45", changes: [
         "Дашборд, блок «Подходы»: после того как подходы сохранились, карточка метрики коротко вспыхивает мягкой зелёной рамкой, а рядом с кнопкой сворачивания появляется маленькая галочка и гаснет — так же, как в «Ежедневных метриках». Если запись не удалась, галочки не будет. При «уменьшить движение» и выключенных анимациях вспышка не двигается",
     ]},
@@ -1549,6 +1552,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.15", date: "2026-10-05 07:20", changes: [
+        "Achievements now encourage using every section: each has a four-step ladder. Goals - 1 / 10 / 25 / 50, skills - 1 / 5 / 10 / 25, books - 1 / 5 / 10 / 25, challenges - 1 / 5 / 10 / 25, workouts - 10 / 50 / 100 / 250 days (plus the first workout), the new Milestones - 1 / 5 / 10 / 25 marked, Languages - as before. 47 badges in total with the streaks, perfect days and points. Badges you already unlocked stay as they were. Rewards for the steps (coins, items, and a theme for the hardest step) come next",
+    ]},
     { version: "3.14", date: "2026-10-05 11:45", changes: [
         "Dashboard, Sets block: once your sets are saved, the metric card briefly flashes a soft green border and a small check mark appears next to the collapse button and fades, just like in Daily metrics. If saving fails there is no check mark. With reduced motion or animations switched off nothing moves",
     ]},
