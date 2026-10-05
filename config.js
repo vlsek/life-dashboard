@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.18";
+const SITE_VERSION = "3.19";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.19", date: "2026-10-05 13:29", changes: [
+        "Понятные сообщения об ошибках на Дашборде: когда что-то не удалось (удаление метрики, сохранение, загрузка, фото), вместо технического текста с адресом сервера теперь короткая фраза — «Нет связи с сервером, проверь интернет», «Это нельзя изменить, пока оно используется», «Не получилось удалить, попробуй ещё раз» и т. п. Подробности остались только в консоли для разработчика",
+    ]},
     { version: "3.18", date: "2026-10-05 12:13", changes: [
         "Вода: в окне воды (на Дашборде и в шапке) большая кнопка «Отменить последнее добавление» стала компактной иконкой-стрелкой, а широкая кнопка «Сохранить рост» — маленькой иконкой-галочкой рядом с полем. Названия остались в подсказках при наведении и для экранных читалок; работают кнопки как прежде",
     ]},
@@ -1561,6 +1564,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.19", date: "2026-10-05 13:29", changes: [
+        "Clear error messages on the Dashboard: when something fails (deleting a metric, saving, loading, uploading a photo), a short plain sentence is shown instead of technical text with the server address — \"No connection to the server, check your internet\", \"This can't be changed while it is in use\", \"Could not delete, please try again\", and so on. Details stay in the developer console only",
+    ]},
     { version: "3.18", date: "2026-10-05 12:13", changes: [
         "Water: in the water window (on the Dashboard and in the header) the large \"Undo last add\" button is now a compact arrow icon, and the wide \"Save height\" button is a small tick icon next to the field. The names stay in the hover tooltips and for screen readers; the buttons work as before",
     ]},
