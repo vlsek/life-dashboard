@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import Icon from './Icon.vue'
 import RecordBadge from './RecordBadge.vue'
 import type { RecordInfo } from '../lib/records'
@@ -44,9 +44,25 @@ function commit() {
   }
 }
 
+// Поправить итог за сегодня: поле прямо в карточке метрики вместо системного prompt() (BACKLOG 573). Enter — сохранить, Esc — закрыть.
+const fixing = ref(false)
+const fixText = ref('')
+const fixInput = ref<HTMLInputElement | null>(null)
+
 function fixTotal() {
-  const raw = window.prompt(t('dash_metric_fix_total_prompt'), String(props.value ?? 0))
-  if (raw !== null) emit('fix', raw)
+  fixing.value = !fixing.value
+  if (fixing.value) {
+    fixText.value = String(props.value ?? 0)
+    void nextTick(() => {
+      fixInput.value?.focus()
+      fixInput.value?.select()
+    })
+  }
+}
+
+function submitFix() {
+  emit('fix', String(fixText.value)) // type=number даёт число — родителю по-прежнему уходит строка, как от prompt()
+  fixing.value = false
 }
 </script>
 
@@ -62,6 +78,14 @@ function fixTotal() {
       <button type="button" class="secondary fix-btn" :title="t('dash_metric_fix_total_title')" @click="fixTotal">
         <Icon name="edit" />
       </button>
+    </div>
+    <div v-if="isAddMode && fixing" class="mt-1" data-test="fix-total-form">
+      <label class="block text-sm">{{ t('dash_metric_fix_total_prompt') }}</label>
+      <input ref="fixInput" v-model="fixText" type="number" inputmode="decimal" class="w-full" data-test="fix-total-input" @keydown.enter.prevent="submitFix" @keydown.esc.stop.prevent="fixing = false" />
+      <div class="mt-1 flex gap-2">
+        <button type="button" class="secondary" data-test="fix-total-save" @click="submitFix">{{ t('dash_water_edit_save') }}</button>
+        <button type="button" class="secondary" data-test="fix-total-cancel" @click="fixing = false">{{ t('dash_water_edit_cancel') }}</button>
+      </div>
     </div>
     <div v-else class="spacer"></div>
 

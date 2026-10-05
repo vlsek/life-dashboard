@@ -18,6 +18,7 @@ import { calcAge, formatAge, formatDelta, unitSuffix, type BodyParam, type BodyP
 import { getLang, t } from '../lib/i18n'
 import { formatPoints } from '../lib/pointsFloat'
 import CoinIcon from './CoinIcon.vue'
+import { confirmDialog } from '../lib/confirmDialog'
 
 // Единственная точка подключения блока «Профиль» в App.vue: аватар (загрузка фото), возраст
 // (дата рождения), динамика параметров тела, баланс баллов, управление параметрами тела.
@@ -93,7 +94,7 @@ async function onSaveParam(form: BodyParamForm) {
 }
 
 async function onRemoveParam(p: BodyParam) {
-  if (!window.confirm(t('dash_body_param_delete_confirm').replace('{name}', p.name))) return
+  if (!(await confirmDialog(t('dash_body_param_delete_confirm').replace('{name}', p.name)))) return
   const err = await deleteParam(p.id)
   if (err) error.value = err
 }

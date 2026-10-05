@@ -19,6 +19,9 @@ vi.mock('./supabase', () => ({
   },
 }))
 
+// Подтверждение удаления — окно сайта (confirmDialog), а не системное confirm() (BACKLOG 573)
+vi.mock('./confirmDialog', () => ({ confirmDialog: vi.fn(async () => true) }))
+
 import { useMetricsManager } from './useMetricsManager'
 import type { Metric } from './types'
 
@@ -29,7 +32,6 @@ beforeEach(() => {
   localStorage.setItem('site_lang', 'ru')
   h.deleteError = null
   h.loadError = null
-  vi.stubGlobal('confirm', () => true)
   vi.spyOn(console, 'error').mockImplementation(() => {})
 })
 afterEach(() => {

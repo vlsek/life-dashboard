@@ -18,6 +18,7 @@ export interface MetricFormValues {
   unit: string
   optionsRaw: string
   categoryId: string // '' — без категории, '__new__' — создать новую
+  newCategory: string // название новой категории (только при categoryId = '__new__'; раньше спрашивалось системным prompt(), BACKLOG 573)
   inputMode: 'set' | 'add'
   scheduleKind: ScheduleKind
   days: number[] // 0 = воскресенье, как Date.getDay()
@@ -135,6 +136,7 @@ export function emptyForm(): MetricFormValues {
     unit: '',
     optionsRaw: '',
     categoryId: '',
+    newCategory: '',
     inputMode: 'set',
     scheduleKind: 'daily',
     days: [1, 2, 3, 4, 5],
@@ -158,6 +160,7 @@ export function formFromMetric(m: Metric): MetricFormValues {
     unit: m.unit ?? '',
     optionsRaw: optionsToRaw(m.options),
     categoryId: m.category_id ?? '',
+    newCategory: '',
     inputMode: m.input_mode ?? 'set',
     scheduleKind: scheduleKindOf(s),
     days: s?.type === 'days' ? [...s.days] : [1, 2, 3, 4, 5],

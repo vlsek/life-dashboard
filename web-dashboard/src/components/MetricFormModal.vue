@@ -139,6 +139,10 @@ const dim = (on: boolean) => ({ opacity: on ? 1 : 0.4 })
         <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.label_ru }} / {{ c.label_en }}</option>
         <option value="__new__">{{ stripEmoji(t('dash_category_new')) }}</option>
       </select>
+      <template v-if="form.categoryId === '__new__'">
+        <label class="mt-2 block text-sm">{{ t('dash_new_category_prompt') }}</label>
+        <input v-model="form.newCategory" type="text" class="w-full" maxlength="60" data-test="new-category-input" />
+      </template>
 
       <label class="mt-2 flex items-center gap-2 text-sm" :style="dim(enabled.countStreak)">
         <input

@@ -4,6 +4,7 @@ import { todayStr } from './date'
 import { t } from './i18n'
 import { effectiveForm, buildInsertRow, buildUpdateRow, categoryKeyFor, nextPosition } from './metricsManager'
 import type { MetricFormValues } from './metricsManager'
+import { confirmDialog } from './confirmDialog'
 import type { Metric } from './types'
 import { friendlyError } from './friendlyError'
 
@@ -47,26 +48,29 @@ export function useMetricsManager(onChanged?: () => void) {
     return friendlyError(err) + hint
   }
 
-  // '__new__' → спросить название и создать категорию (портировано из resolveCategoryId()).
-  async function resolveCategoryId(raw: string): Promise<string | null> {
-    if (!raw) return null
-    if (raw !== '__new__') return raw
-    const label = window.prompt(t('dash_new_category_prompt'))
-    if (!label?.trim()) return null
+  // '__new__' → создать категорию с названием из поля формы (раньше — системный prompt(), BACKLOG 573). Пустое название — без категории;
+  // не получилось создать — метрику НЕ сохраняем и показываем ошибку (раньше alert() и метрика молча сохранялась без категории).
+  async function resolveCategoryId(raw: string, newLabel: string): Promise<{ ok: boolean; id: string | null }> {
+    if (!raw) return { ok: true, id: null }
+    if (raw !== '__new__') return { ok: true, id: raw }
+    const label = newLabel.trim()
+    if (!label) return { ok: true, id: null }
     const { data, error: err } = await sb
       .from('metric_categories')
-      .insert({ key: categoryKeyFor(label), label_en: label.trim(), label_ru: label.trim(), created_by: userId })
+      .insert({ key: categoryKeyFor(label), label_en: label, label_ru: label, created_by: userId })
       .select()
       .single()
     if (err) {
-      alert(friendlyError(err))
-      return null
+      error.value = t('dash_category_create_error') + friendlyError(err)
+      return { ok: false, id: null }
     }
-    return (data as MetricCategory).id
+    return { ok: true, id: (data as MetricCategory).id }
   }
 
   async function addMetric(form: MetricFormValues): Promise<boolean> {
-    const categoryId = await resolveCategoryId(form.categoryId)
+    const cat = await resolveCategoryId(form.categoryId, form.newCategory)
+    if (!cat.ok) return false
+    const categoryId = cat.id
     const position = nextPosition(metrics.value)
     const { error: err } = await sb.from('metrics').insert(buildInsertRow(form, userId, position, categoryId))
     if (err) {
@@ -96,7 +100,9 @@ export function useMetricsManager(onChanged?: () => void) {
   }
 
   async function editMetric(existing: Metric, form: MetricFormValues): Promise<boolean> {
-    const categoryId = await resolveCategoryId(form.categoryId)
+    const cat = await resolveCategoryId(form.categoryId, form.newCategory)
+    if (!cat.ok) return false
+    const categoryId = cat.id
     const { error: err } = await sb.from('metrics').update(buildUpdateRow(form, existing, categoryId)).eq('id', existing.id)
     if (err) {
       error.value = saveErrorText(err)
@@ -109,7 +115,7 @@ export function useMetricsManager(onChanged?: () => void) {
   }
 
   async function deleteMetric(m: Metric): Promise<boolean> {
-    if (!confirm(t('dash_delete_metric_confirm').replace('{name}', m.name))) return false
+    if (!(await confirmDialog(t('dash_delete_metric_confirm').replace('{name}', m.name)))) return false
     const { error: err } = await sb.from('metrics').delete().eq('id', m.id)
     if (err) {
       error.value = friendlyError(err, 'delete')

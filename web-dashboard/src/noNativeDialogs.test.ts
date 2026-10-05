@@ -4,14 +4,13 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 
 // «Страж» (BACKLOG 567, «Аудит устаревшего оформления»): нативные окна браузера confirm()/alert()/prompt() выглядят «из 2000-х»
 // и ломают тему. Вместо них — `confirmDialog` из lib/confirmDialog.ts (окно рисует ConfirmDialogHost в AppShell).
-// Пилоты из списка KNOWN ЕЩЁ содержат нативные вызовы — у каждого указано, почему; тест проверяет и это: когда вызов уберут,
-// пилот надо ВЫНЕСТИ из списка (иначе тест подскажет), а новый нативный вызов в любом другом пилоте — падение.
+// Пилоты из списка KNOWN (сейчас пуст) могли бы ещё содержать нативные вызовы — у каждого указано, почему; тест проверяет и это:
+// когда вызов уберут, пилот надо ВЫНЕСТИ из списка (иначе тест подскажет), а новый нативный вызов в любом другом пилоте — падение.
 const ROOT = '..'
-const KNOWN: Record<string, string> = {
-  'web-dashboard': 'alert() ошибки создания категории и confirm() удаления метрики в lib/useMetricsManager.ts (+ ложное срабатывание на комментарий в lib/install.ts); prompt() воды убран в v2.88',
-}
-// Не ловится стражем (в регулярке перед именем не должно быть «.»): `window.prompt(` в lib/useMetricsManager.ts («новая категория») и components/NumberMetricField.vue («поправить итог») — тоже нативные окна, см. BACKLOG 573.
-const CALL = /(?<![\w.])(confirm|alert|prompt)\(/
+const KNOWN: Record<string, string> = {} // нативных окон не осталось нигде (последние в web-dashboard убраны в v3.20)
+// Ловит и `window.confirm(` / `window.alert(` / `window.prompt(` (раньше пропускались: перед именем не должно было быть «.»), но не
+// методы вроде `deferredPrompt.prompt()`. Хвостовой комментарий строки (` // …`) не считается кодом.
+const CALL = /(?<![\w.])(?:window\.)?(confirm|alert|prompt)\(/
 
 function files(dir: string): string[] {
   const out: string[] = []
@@ -28,7 +27,7 @@ function nativeCalls(pilot: string): string[] {
     ;(readFileSync(f, 'utf-8') as string).split('\n').forEach((line: string, i: number) => {
       const t = line.trim()
       if (t.startsWith('//') || t.startsWith('*') || t.startsWith('/*')) return
-      if (CALL.test(line)) hits.push(`${f}:${i + 1}: ${t}`)
+      if (CALL.test(line.replace(/\s\/\/.*$/, ''))) hits.push(`${f}:${i + 1}: ${t}`)
     })
   }
   return hits

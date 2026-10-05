@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import SplashFlameLive from './splash/SplashFlameLive.vue'
 import ConfirmLogoutModal from './ConfirmLogoutModal.vue'
+import ConfirmDialogHost from './ConfirmDialogHost.vue'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { getLang, setLang, t, type DictKey } from '../lib/i18n'
 import { FAVORITE_THEMES_EVENT, getTheme, setTheme, THEME_KEYS, visibleThemes, type ThemeKey } from '../lib/theme'
@@ -367,6 +368,7 @@ onUnmounted(() => {
 
   <ChangelogModal v-if="changelogOpen" @close="changelogOpen = false" />
   <ConfirmLogoutModal v-if="logoutConfirmOpen" @confirm="logout" @cancel="logoutConfirmOpen = false" />
+  <ConfirmDialogHost />
 </template>
 
 <style>
