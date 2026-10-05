@@ -53,4 +53,18 @@ describe('AchievementCard', () => {
     }
     expect(ACHIEVEMENTS.length).toBeGreaterThan(0)
   })
+
+  it('награда за ступень: у «Десять выучено» — монетки со «скоро»; у значка без награды (серия) строки нет; у открытого строка тоже на месте', () => {
+    localStorage.setItem('site_lang', 'ru')
+    const w = mount(AchievementCard, { props: { state: stateOf('learned_10', { wordsLearned: 3 }), unlocked: false, unlockedAt: null } })
+    expect(w.find('[data-testid="achievement-reward"]').text()).toBe('Награда (скоро): 20 монет')
+    expect(w.find('[data-testid="achievement-reward"] svg').exists()).toBe(true)
+
+    const w2 = mount(AchievementCard, { props: { state: stateOf('streak_5', { streakBest: 2 }), unlocked: false, unlockedAt: null } })
+    expect(w2.find('[data-testid="achievement-reward"]').exists()).toBe(false)
+
+    const w3 = mount(AchievementCard, { props: { state: stateOf('words_100', { wordsAdded: 120 }), unlocked: true, unlockedAt: null } })
+    expect(w3.find('[data-testid="achievement-reward"]').text()).toBe('Награда (скоро): тема «Сепия»')
+  })
 })
+

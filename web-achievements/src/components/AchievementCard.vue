@@ -2,13 +2,16 @@
 import { computed } from 'vue'
 import Icon from './Icon.vue'
 import { locale, t } from '../lib/i18n'
-import { achievementCondition, achievementTitle } from '../lib/achievementText'
+import { achievementCondition, achievementTitle, rewardText } from '../lib/achievementText'
+import { rewardFor, rewardIcon } from '../lib/rewards'
 import type { AchievementState } from '../lib/achievements'
 
 // Одна карточка достижения: открытое — цветное (значок в акцентном кружке, дата), закрытое — тусклое (замок, условие, прогресс-бар).
 const props = defineProps<{ state: AchievementState; unlocked: boolean; unlockedAt: string | null }>()
 
 const title = computed(() => achievementTitle(props.state.def))
+// Награда за ступень (rewards.ts): подпись «скоро», пока награда не выдаётся по-настоящему
+const reward = computed(() => rewardFor(props.state.def.key))
 const condition = computed(() => achievementCondition(props.state.def))
 const shownValue = computed(() => Math.min(props.state.value, props.state.def.target))
 const percent = computed(() => Math.round(props.state.progress * 100))
@@ -35,6 +38,10 @@ const when = computed(() => {
     </div>
     <div class="mt-2 text-sm font-medium leading-tight">{{ title }}</div>
     <div class="dim mt-1 text-xs leading-snug">{{ condition }}</div>
+    <div v-if="reward" class="ach-reward mt-1 flex items-center justify-center gap-1 text-xs leading-snug" data-testid="achievement-reward">
+      <Icon :name="rewardIcon(reward)" />
+      <span>{{ rewardText(reward) }}</span>
+    </div>
 
     <template v-if="unlocked">
       <div class="ach-when mt-2 text-xs" data-testid="achievement-when">{{ when }}</div>
@@ -82,6 +89,12 @@ const when = computed(() => {
 }
 .ach-when {
   color: var(--accent);
+}
+.ach-reward {
+  color: var(--text-dim);
+}
+.ach-unlocked .ach-reward {
+  color: var(--text);
 }
 .ach-bar {
   background: color-mix(in srgb, var(--text-dim) 25%, transparent);

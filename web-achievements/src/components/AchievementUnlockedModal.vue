@@ -3,7 +3,8 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import Icon from './Icon.vue'
 import { t } from '../lib/i18n'
 import type { DictKey } from '../lib/i18n'
-import { achievementCondition, achievementTitle } from '../lib/achievementText'
+import { achievementCondition, achievementTitle, rewardText } from '../lib/achievementText'
+import { rewardFor, rewardIcon } from '../lib/rewards'
 import type { AchievementState } from '../lib/achievements'
 
 // Поздравление «Новое достижение» (BACKLOG 19:06, по образцу StreakMilestoneModal Дашборда): значок крупно, название, за что,
@@ -18,6 +19,7 @@ const many = computed(() => props.states.length > 1)
 const isLast = computed(() => index.value >= props.states.length - 1)
 const title = computed(() => (many.value ? t('ach_new_title_many') : t('ach_new_title')))
 const counter = computed(() => t('ach_new_counter').replace('{i}', String(index.value + 1)).replace('{n}', String(props.states.length)))
+const reward = computed(() => (current.value ? rewardFor(current.value.def.key) : null))
 const message = computed(() => (current.value ? t(('ach_new_msg_' + current.value.def.group) as DictKey) : ''))
 
 function advance() {
@@ -59,6 +61,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
       <div class="mt-3 text-xl font-bold" style="color: var(--accent)" data-testid="unlocked-name">{{ achievementTitle(current.def) }}</div>
       <div class="dim mt-0.5 text-sm" data-testid="unlocked-condition">{{ achievementCondition(current.def) }}</div>
       <p class="mt-3 text-sm" data-testid="unlocked-message">{{ message }}</p>
+      <div v-if="reward" class="mt-2 flex items-center justify-center gap-1 text-sm" style="color: var(--accent)" data-testid="unlocked-reward">
+        <Icon :name="rewardIcon(reward)" />
+        <span>{{ rewardText(reward) }}</span>
+      </div>
       <div v-if="many" class="dim mt-2 text-xs" data-testid="unlocked-counter">{{ counter }}</div>
 
       <button ref="button" type="button" class="mt-4 w-full rounded-lg px-4 py-2" style="background: var(--accent); color: var(--accent-text)" data-testid="unlocked-next" @click="advance">

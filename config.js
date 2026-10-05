@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.15";
+const SITE_VERSION = "3.16";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.16", date: "2026-10-05 12:10", changes: [
+        "«Достижения»: на каждом значке теперь видно, что полагается за ступень. Первые две ступени лесенки — монетки (20 и 50), третья — рамка аватарки своего раздела, четвёртая — тема оформления (за слова — «Сепия» и «Nord», за книги — «Catppuccin Mocha», за тренировки — «AMOLED», за цели — «Solarized Light», за навыки — «Mint»; у челленджей и вех пока редкая анимированная рамка). Строка видна на карточке значка и в окне-поздравлении. Пока награды не выдаются, подпись честная — «Награда (скоро)»; выдача монеток, рамок и закрытых тем подключается следующими шагами. Исходные темы и «Высокий контраст» за достижения закрываться не будут",
+    ]},
     { version: "3.15", date: "2026-10-05 07:20", changes: [
         "«Достижения» побуждают пользоваться всеми разделами: у каждого теперь лесенка из четырёх ступеней. Цели — 1 / 10 / 25 / 50, навыки — 1 / 5 / 10 / 25, книги — 1 / 5 / 10 / 25, челленджи — 1 / 5 / 10 / 25, тренировки — 10 / 50 / 100 / 250 дней (и первая тренировка), новые «Вехи» — 1 / 5 / 10 / 25 отмеченных, «Языки» — как раньше. Всего 47 значков вместе с сериями, идеальными днями и баллами. Уже открытые значки остались как были. Награды за ступени (монетки, предметы, а за самую трудную ступень — тема) — следующими шагами",
     ]},
@@ -1552,6 +1555,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.16", date: "2026-10-05 12:10", changes: [
+        "Achievements: every badge now shows what the step gives. The first two steps of a ladder give coins (20 and 50), the third an avatar frame of its section, the fourth a theme (words - Sepia and Nord, books - Catppuccin Mocha, workouts - AMOLED, goals - Solarized Light, skills - Mint; challenges and milestones get a rare animated frame for now). The line shows on the badge card and in the congratulation window. While rewards are not given out yet, the label is honest - Reward (coming soon); handing out coins, frames and locked themes is connected in the next steps. The original themes and High contrast will never be locked behind achievements",
+    ]},
     { version: "3.15", date: "2026-10-05 07:20", changes: [
         "Achievements now encourage using every section: each has a four-step ladder. Goals - 1 / 10 / 25 / 50, skills - 1 / 5 / 10 / 25, books - 1 / 5 / 10 / 25, challenges - 1 / 5 / 10 / 25, workouts - 10 / 50 / 100 / 250 days (plus the first workout), the new Milestones - 1 / 5 / 10 / 25 marked, Languages - as before. 47 badges in total with the streaks, perfect days and points. Badges you already unlocked stay as they were. Rewards for the steps (coins, items, and a theme for the hardest step) come next",
     ]},
