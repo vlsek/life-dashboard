@@ -1,7 +1,6 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
 import { addDaysIso } from './date'
-import { t } from './i18n'
 import { notifyDataChanged } from './events'
 import {
   CARRY_OVER_DAYS,
@@ -22,6 +21,7 @@ import {
   type PlannedEntry,
 } from './planned'
 
+import { friendlyError } from './friendlyError'
 // Композабл блока «Планы» (раньше «Цели на сегодня») (план на день). Портировано из renderPlanned()/
 // openCarryOverModal() в dashboard.js. load(userId, date) — после auth 'ready' и при смене даты.
 // После КАЖДОЙ записи шлёт dashboard:data-changed — кольца дня/недели и стрики пересчитает useDashboard.
@@ -42,7 +42,7 @@ export function usePlanned() {
       sb.from('goals').select('id, name, stages, done, current_stage').eq('user_id', uid),
     ])
     const err = noteRes.error?.message || goalsRes.error?.message
-    error.value = err ? t('dash_save_error_generic') + err : null
+    error.value = err ? friendlyError(err, 'load') : null
     planned.value = normalizePlanned(noteRes.data?.planned_goals)
     saved = planned.value
     version++ // ответ на загрузку новее любых незавершённых откатов предыдущей даты
@@ -64,7 +64,7 @@ export function usePlanned() {
       const { error: e } = await sb.from('daily_notes').upsert({ user_id: userId, date, planned_goals: next }, { onConflict: 'user_id,date' })
       if (e) {
         if (mine === version) planned.value = saved // откат, только если поверх не легла более новая правка
-        error.value = t('dash_save_error_generic') + e.message
+        error.value = friendlyError(e)
         return false
       }
       saved = next
@@ -92,7 +92,7 @@ export function usePlanned() {
     const { error: e } = await sb.from('goals').update({ done, done_date: done ? doneDate : null }).eq('id', goal.id)
     if (e) {
       goals.value = goals.value.map((g) => (g.id === goal.id ? { ...g, done: before } : g))
-      error.value = t('dash_save_error_generic') + e.message
+      error.value = friendlyError(e)
       return false
     }
     error.value = null
@@ -109,7 +109,7 @@ export function usePlanned() {
       .gte('date', addDaysIso(date, -CARRY_OVER_DAYS))
       .lt('date', date)
     if (e) {
-      error.value = t('dash_save_error_generic') + e.message
+      error.value = friendlyError(e)
       return []
     }
     return carryOverCandidates((data || []) as PlanNote[], date, planned.value)

@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { sb } from './supabase'
 import { defaultLayout, normalizeLayout, type LayoutItem } from './layout'
 
+import { friendlyError } from './friendlyError'
 // Отдельный composable (как useReminders/useEveningReminder): свой лёгкий запрос profiles.dashboard_layout,
 // не часть useDashboard.ts. Если колонки нет (миграция 015 не применена) или запрос упал — работаем с
 // раскладкой по умолчанию, страница не ломается. Сохранение — upsert по user_id, как в классике.
@@ -20,7 +21,7 @@ export function useLayout() {
     saveError.value = ''
     const { error } = await sb.from('profiles').upsert({ user_id: userId, dashboard_layout: next })
     if (error) {
-      saveError.value = error.message
+      saveError.value = friendlyError(error)
       return false
     }
     layout.value = next

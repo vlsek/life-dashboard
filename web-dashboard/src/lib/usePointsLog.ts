@@ -6,6 +6,7 @@ import type { LogBook, LogGoal, LogMetric, LogPurchase, PointsLog } from './poin
 import type { BalanceValueRow } from './balance'
 import { withWaterGoal } from './waterGoal'
 
+import { friendlyError } from './friendlyError'
 // Данные окна «За что начислены баллы»: читаются при открытии окна (не при загрузке Дашборда) и только
 // за последние LOG_DAYS дней — лёгкие запросы, без постраничной выборки всего daily_values.
 export function usePointsLog(userId: string) {
@@ -27,7 +28,7 @@ export function usePointsLog(userId: string) {
     ])
     const err = metricsRes.error || valuesRes.error || goalsRes.error || booksRes.error || shopRes.error
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err, 'load')
       log.value = null
     } else {
       log.value = buildPointsLog(

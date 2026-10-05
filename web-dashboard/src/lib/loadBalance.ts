@@ -3,6 +3,7 @@ import { fetchAllRows } from './fetchAll'
 import { calcBalance, type BalanceMetric, type BalanceValueRow } from './balance'
 import { withWaterGoal } from './waterGoal'
 
+import { friendlyError } from './friendlyError'
 // Загрузка баланса баллов (те же 6 источников, что у дашборда и магазина; daily_values — постранично). Вынесено из useProfile.ts,
 // чтобы блок «Профиль» и виджет «Коплю на товар» не читали всю историю дважды: пока запрос для пользователя идёт, второй
 // вызов получает тот же промис. Готовый результат НЕ кэшируется — следующий вызов читает свежие данные.
@@ -20,7 +21,7 @@ async function fetchBalance(userId: string): Promise<BalanceResult> {
     sb.from('shop_items').select('cost').eq('user_id', userId).eq('redeemed', true),
   ])
   const err = metricsRes.error?.message || valuesRes.error || goalsRes.error?.message || skillsRes.error?.message || booksRes.error?.message || redeemedRes.error?.message
-  if (err) return { ok: false, error: String(err) }
+  if (err) return { ok: false, error: friendlyError(err, 'load') }
   const balance = calcBalance(
     // вода — по эффективной норме, а не по пустому goal_value (migrations/033)
     await withWaterGoal(userId, (metricsRes.data || []) as (BalanceMetric & { name?: string | null; icon?: string | null; position?: number | null })[]),

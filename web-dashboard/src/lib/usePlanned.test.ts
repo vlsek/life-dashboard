@@ -134,7 +134,8 @@ describe('usePlanned', () => {
     h.upsertImpl = () => Promise.resolve({ error: { message: 'boom' } })
     expect(await api.removeItem(0)).toBe(false)
     expect(api.planned.value).toHaveLength(2)
-    expect(api.error.value).toContain('boom')
+    expect(api.error.value).toBeTruthy() // понятный текст, без сырого «boom»
+    expect(api.error.value).not.toContain('boom')
     expect(events).toEqual([])
     wrapper.unmount()
   })
@@ -179,7 +180,8 @@ describe('usePlanned', () => {
     h.goalUpdateError = { message: 'nope' }
     expect(await api.setGoalDone(api.goals.value[0], true, '2026-09-28')).toBe(false)
     expect(api.goals.value[0].done).toBe(false)
-    expect(api.error.value).toContain('nope')
+    expect(api.error.value).toBeTruthy()
+    expect(api.error.value).not.toContain('nope')
     wrapper.unmount()
   })
 

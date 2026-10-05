@@ -11,6 +11,7 @@ import { syncUserTimezone } from './timezone'
 import { withWaterGoal } from './waterGoal'
 import type { Metric } from './types'
 
+import { friendlyError } from './friendlyError'
 export type AuthState =
   | { status: 'loading' }
   | { status: 'redirecting' }
@@ -96,7 +97,7 @@ export function useDashboard() {
     ])
     const firstError = metricsRes.error?.message || valuesRes.error || notesRes.error || goalsRes.error?.message
     if (firstError) {
-      loadError.value = firstError
+      loadError.value = friendlyError(firstError, 'load')
       return
     }
     loadError.value = null

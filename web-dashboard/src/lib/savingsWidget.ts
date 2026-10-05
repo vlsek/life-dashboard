@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { sb } from './supabase'
 import { loadBalance } from './loadBalance'
 
+import { friendlyError } from './friendlyError'
 // Виджет «Коплю на товар» на главной (BACKLOG «Виджет «коплю на товар»», одобрено владельцем 2026-10-03; делается первым из трёх виджетов).
 // Выбранный товар — id в раскладке (`widgets.savings`, lib/layout.ts); сам товар и баланс читаются из БД. Если товар куплен или удалён,
 // виджета нет (состояние 'empty'), а при отсутствии виджетов нет и блока.
@@ -52,7 +53,7 @@ export function useSavingsWidget() {
     error.value = ''
     const [itemRes, balRes] = await Promise.all([sb.from('shop_items').select(COLS).eq('user_id', userId).eq('id', itemId).maybeSingle(), loadBalance(userId)])
     if (itemRes.error) {
-      error.value = itemRes.error.message
+      error.value = friendlyError(itemRes.error, 'load')
       state.value = 'error'
       return
     }

@@ -1,8 +1,8 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
 import { emitPointsFloat } from './pointsFloat'
-import { t } from './i18n'
 
+import { friendlyError } from './friendlyError'
 // Виджет «Навыки» на главной (BACKLOG 391, владелец 2026-10-03: «любой навык можно добавить на главную и отмечать прогресс»).
 // Механизм — КОПИЯ раздела Навыков (web-skills/src/lib/useSkills.ts: bumpProgress, completionDelta; правило пилотов — копировать, не
 // импортировать): ±шаг% в границах 0..100, на 100% навык освоен (+очки, пусто → 10), откат ниже 100% снимает освоение (−очки).
@@ -69,7 +69,7 @@ export function useSkillsWidget() {
     error.value = ''
     const { data, error: err } = await sb.from('skills').select(COLS).eq('user_id', uid).in('id', ids)
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err, 'load')
       state.value = 'error'
       return
     }
@@ -95,7 +95,7 @@ export function useSkillsWidget() {
     busy.value = rest
     if (err) {
       skills.value = skills.value.map((s) => (s.id === id ? before : s))
-      error.value = t('dash_widget_skills_error') + err.message
+      error.value = friendlyError(err)
       return
     }
     emitPointsFloat(skillDelta(before.mastered, mastered, before.points))

@@ -77,6 +77,7 @@ describe('useProfile.init', () => {
     expect(p.loaded.value).toBe(true) // блок показан
     expect(p.params.value).toHaveLength(1)
     expect(p.balance.value).toBeNull() // монета не рисуется без баланса
-    expect(p.error.value).toBe('boom')
+    expect(p.error.value).toBeTruthy() // понятный текст вместо сырого «boom»
+    expect(p.error.value).not.toBe('boom')
   })
 })

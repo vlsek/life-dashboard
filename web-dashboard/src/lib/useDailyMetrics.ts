@@ -16,6 +16,7 @@ import {
 } from './daily'
 import type { Metric, MetricValue } from './types'
 
+import { friendlyError } from './friendlyError'
 // Блок «Дневные метрики» (boolean / number / multiselect + «Что полезного сделал за день»).
 // Портировано из renderDay() в dashboard.js. Отдельный composable — как useWater/useSets/
 // usePlanned: несколько людей переносят разные блоки одновременно, свои файлы меньше шансов
@@ -51,7 +52,7 @@ export function useDailyMetrics() {
 
   async function fetchValues(uid: string, dateStr: string): Promise<Record<string, MetricValue> | string> {
     const { data, error: err } = await sb.from('daily_values').select('metric_id, value').eq('user_id', uid).eq('date', dateStr)
-    if (err) return err.message
+    if (err) return friendlyError(err, 'load')
     const byMetric: Record<string, MetricValue> = {}
     for (const v of (data || []) as { metric_id: string; value: MetricValue }[]) byMetric[v.metric_id] = v.value
     return byMetric
@@ -70,7 +71,7 @@ export function useDailyMetrics() {
     ])
     if (token !== loadToken) return // пока грузили, день уже сменился
     if (metricsRes.error || typeof values === 'string' || noteRes.error) {
-      error.value = metricsRes.error?.message ?? (typeof values === 'string' ? values : noteRes.error!.message)
+      error.value = metricsRes.error ? friendlyError(metricsRes.error, 'load') : typeof values === 'string' ? values : friendlyError(noteRes.error, 'load')
       loaded.value = true
       return
     }
@@ -117,7 +118,7 @@ export function useDailyMetrics() {
       .from('daily_values')
       .upsert({ user_id: userId, date, metric_id: m.id, value }, { onConflict: 'user_id,date,metric_id' })
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err)
       return false
     }
     error.value = null
@@ -178,13 +179,13 @@ export function useDailyMetrics() {
       .eq('date', date)
       .select('date')
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err)
       return false
     }
     if (!data || data.length === 0) {
       const { error: insErr } = await sb.from('daily_notes').insert({ user_id: userId, date, items: next, planned_goals: [] })
       if (insErr) {
-        error.value = insErr.message
+        error.value = friendlyError(insErr)
         return false
       }
     }
@@ -207,7 +208,7 @@ export function useDailyMetrics() {
     if (rows.length > 0) {
       const { error: err } = await sb.from('daily_values').upsert(rows, { onConflict: 'user_id,date,metric_id' })
       if (err) {
-        error.value = err.message
+        error.value = friendlyError(err)
         ok = false
       }
     }

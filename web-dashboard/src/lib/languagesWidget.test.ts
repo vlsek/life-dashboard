@@ -162,7 +162,10 @@ describe('LanguagesWidget', () => {
     await c.findAll('[data-test="lang-learned"]')[0].trigger('click')
     await flushPromises()
     expect(c.findAll('[data-test="lang-item"]')).toHaveLength(6)
-    expect(c.find('[data-test="lang-error"]').text()).toContain('Не удалось сохранить: rls')
+    // понятный текст, без сырого сообщения базы (BACKLOG 35: ошибки без технических подробностей)
+    const langErr = c.find('[data-test="lang-error"]').text()
+    expect(langErr).toContain('Не получилось сохранить')
+    expect(langErr).not.toContain('rls')
     c.unmount()
   })
 

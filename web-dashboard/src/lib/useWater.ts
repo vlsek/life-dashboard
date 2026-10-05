@@ -23,6 +23,7 @@ import {
 } from './waterLog'
 import type { Metric } from './types'
 
+import { friendlyError } from './friendlyError'
 // Отдельный композабл для блока «Вода» (не трогает useDashboard.ts/loadStreaks — минимизирует
 // пересечение с другими блоками, которые переносятся параллельно, см. ROADMAP.md). Вызывать
 // init(userId) после того, как useDashboard() определил auth.status === 'ready'.
@@ -86,7 +87,7 @@ export function useWater() {
     if (h == null) return false
     const { error: err } = await sb.from('profiles').upsert({ user_id: userId, height: h })
     if (err) {
-      saveError.value = t('dash_save_error_generic') + err.message
+      saveError.value = friendlyError(err)
       return false
     }
     saveError.value = null
@@ -100,7 +101,7 @@ export function useWater() {
     undoStacks.value = loadStacks(uid, todayStr())
     const { data: metrics, error: err } = await sb.from('metrics').select('*').eq('user_id', userId).eq('active', true)
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err, 'load')
       loaded.value = true
       return
     }
@@ -147,7 +148,7 @@ export function useWater() {
       .from('daily_values')
       .upsert({ user_id: userId, metric_id: metric.value.id, date: dateStr, value: next }, { onConflict: 'user_id,date,metric_id' })
     if (upErr) {
-      saveError.value = t('dash_save_error_generic') + upErr.message
+      saveError.value = friendlyError(upErr)
       return null
     }
     saveError.value = null
@@ -288,7 +289,7 @@ export function useWater() {
     if (!metric.value) return false
     const { error: err } = await sb.from('metrics').update({ goal_value: ml }).eq('id', metric.value.id)
     if (err) {
-      saveError.value = t('dash_save_error_generic') + err.message
+      saveError.value = friendlyError(err)
       return false
     }
     saveError.value = null
@@ -306,7 +307,7 @@ export function useWater() {
       .select()
       .single()
     if (err) {
-      error.value = t('dash_save_error_generic') + err.message
+      error.value = friendlyError(err)
       return
     }
     metric.value = data as Metric
@@ -318,7 +319,7 @@ export function useWater() {
     if (!metric.value) return false
     const { error: err } = await sb.from('metrics').update({ goal_value: null }).eq('id', metric.value.id)
     if (err) {
-      saveError.value = t('dash_save_error_generic') + err.message
+      saveError.value = friendlyError(err)
       return false
     }
     saveError.value = null

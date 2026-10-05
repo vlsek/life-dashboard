@@ -42,7 +42,8 @@ describe('PointsLogModal', () => {
     h.fail = true
     const w = mount(PointsLogModal, { props: { userId: 'u1', balance: 5 } })
     await flushPromises()
-    expect(w.text()).toContain('boom')
+    expect(w.text()).toMatch(/Could not load|Не получилось загрузить/) // понятный текст
+    expect(w.text()).not.toContain('boom')
     expect(w.find('[data-test="points-totals"]').exists()).toBe(false)
     w.unmount()
   })

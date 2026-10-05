@@ -8,6 +8,7 @@ import { addableKeys, buildSeries, parseEditedValue, parseKey, resolveEntries, u
 import type { BodyParam, BodyValue } from './profile'
 import type { Metric, DailyValueRow } from './types'
 
+import { friendlyError } from './friendlyError'
 // События между независимыми блоками страницы (Профиль ↔ Графики): у каждого свой композабл,
 // общего стора нет (см. ROADMAP.md — блоки не должны цепляться друг за друга), поэтому
 // «данные тела изменились» передаётся браузерным событием (detail.source — кто изменил, чтобы
@@ -35,7 +36,7 @@ export function useCharts() {
     ])
     const err = paramsRes.error?.message || bodyRes.error || metricsRes.error?.message || valuesRes.error
     if (err) {
-      error.value = err
+      error.value = friendlyError(err, 'load')
       loaded.value = true
       return
     }
@@ -55,7 +56,7 @@ export function useCharts() {
   // Сохранить выбор/порядок/цели. Возвращает текст ошибки или null.
   async function saveEntries(order: ChartEntry[]): Promise<string | null> {
     const { error: e } = await sb.from('profiles').upsert({ user_id: userId, dashboard_charts: order })
-    if (e) return t('dash_charts_save_error') + e.message + '\n\n' + t('dash_charts_save_error_hint')
+    if (e) return friendlyError(e) + '\n\n' + t('dash_charts_save_error_hint')
     entries.value = order.filter((o) => series.value[o.key])
     return null
   }
@@ -72,7 +73,7 @@ export function useCharts() {
       if (value == null) return null
       ;({ error: e } = await sb.from('body_parameter_values').upsert({ user_id: userId, date, parameter_id: id, value }, { onConflict: 'user_id,date,parameter_id' }))
     }
-    if (e) return t('dash_save_error_generic') + e.message
+    if (e) return friendlyError(e)
     const s = series.value[key]
     if (s) series.value = { ...series.value, [key]: { ...s, points: upsertPoint(s.points, date, value) } }
     if (prefix === 'body') window.dispatchEvent(new CustomEvent(BODY_VALUES_CHANGED, { detail: { source: 'charts' } }))

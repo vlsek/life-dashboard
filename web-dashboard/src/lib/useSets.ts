@@ -7,6 +7,7 @@ import { forgetVariationOptions, normalizeSets, rememberVariationOptions } from 
 import type { SetRow } from './setsBlock'
 import type { Metric, MetricValue } from './types'
 
+import { friendlyError } from './friendlyError'
 // Композабл блока «Подходы» (метрики типа sets) — отдельно от useDashboard.ts, чтобы не пересекаться
 // с другими блоками (см. ROADMAP.md). Блок 6 («дневные метрики») может использовать его же
 // или только SetsCard.vue, отдавая ему свои данные.
@@ -29,7 +30,7 @@ export function useSets() {
       .eq('type', 'sets')
       .order('position')
     if (mErr) {
-      error.value = mErr.message
+      error.value = friendlyError(mErr, 'load')
       loaded.value = true
       return
     }
@@ -44,7 +45,7 @@ export function useSets() {
         .eq('user_id', uid)
         .eq('date', dateStr)
         .in('metric_id', ids)
-      if (vErr) error.value = vErr.message
+      if (vErr) error.value = friendlyError(vErr, 'load')
       else error.value = null
       ;(vals || []).forEach((v: { metric_id: string; value: unknown }) => (byMetric[v.metric_id] = normalizeSets(v.value)))
     } else {
@@ -61,7 +62,7 @@ export function useSets() {
     const { error: err } = await sb
       .from('daily_values')
       .upsert({ user_id: userId, date, metric_id: m.id, value: sets }, { onConflict: 'user_id,date,metric_id' })
-    if (err) error.value = t('dash_metric_save_error') + m.name + '»: ' + err.message
+    if (err) error.value = t('dash_metric_save_error') + m.name + '»: ' + friendlyError(err)
     else {
       error.value = null
       // подход засчитывается в «идеальный день»/кольца — пересчитать стрики; в графике точка = сумма повторений
@@ -86,7 +87,7 @@ export function useSets() {
     const options = forgetVariationOptions(m, label)
     const { error: err } = await sb.from('metrics').update({ options }).eq('id', m.id)
     if (err) {
-      error.value = t('dash_save_error_generic') + err.message
+      error.value = friendlyError(err)
       return
     }
     patchMetric(m.id, options)

@@ -79,7 +79,8 @@ describe('useLayout', () => {
     await api.load('u1')
     const before = api.layout.value
     expect(await api.save('u1', [{ key: 'charts', visible: false }, { key: 'profile', visible: true }, { key: 'daily', visible: true }])).toBe(false)
-    expect(api.saveError.value).toBe('denied')
+    expect(api.saveError.value.length).toBeGreaterThan(5) // понятный текст вместо сырого «denied»
+    expect(api.saveError.value).not.toContain('denied')
     expect(api.layout.value).toBe(before)
   })
 })

@@ -5,6 +5,7 @@ import { t } from './i18n'
 import { effectiveForm, buildInsertRow, buildUpdateRow, categoryKeyFor, nextPosition } from './metricsManager'
 import type { MetricFormValues } from './metricsManager'
 import type { Metric } from './types'
+import { friendlyError } from './friendlyError'
 
 export interface MetricCategory {
   id: string
@@ -27,7 +28,7 @@ export function useMetricsManager(onChanged?: () => void) {
       sb.from('metric_categories').select('*').order('label_ru'),
     ])
     if (mRes.error) {
-      error.value = mRes.error.message
+      error.value = friendlyError(mRes.error, 'load')
       return
     }
     error.value = null
@@ -36,12 +37,14 @@ export function useMetricsManager(onChanged?: () => void) {
   }
 
   // Подсказка про миграции — портировано из showMetricSaveError().
-  function saveErrorText(message: string): string {
+  // Текст ошибки сохранения: понятная фраза + (если ошибка про отсутствующую колонку) подсказка про миграцию. Сырое сообщение Supabase не показываем.
+  function saveErrorText(err: { message?: unknown }): string {
+    const message = String(err?.message ?? '')
     const hint = /schedule/i.test(message) ? ' — ' + t('dash_schedule_migration_hint')
       : /streak_import/i.test(message) ? ' — ' + t('dash_streak_import_migration_hint')
       : /count_streak/i.test(message) ? ' — ' + t('dash_count_streak_migration_hint')
       : /planned_sets/i.test(message) ? ' — ' + t('dash_planned_sets_migration_hint') : ''
-    return t('dash_save_error_generic') + message + hint
+    return friendlyError(err) + hint
   }
 
   // '__new__' → спросить название и создать категорию (портировано из resolveCategoryId()).
@@ -56,7 +59,7 @@ export function useMetricsManager(onChanged?: () => void) {
       .select()
       .single()
     if (err) {
-      alert(t('dash_category_create_error') + err.message)
+      alert(friendlyError(err))
       return null
     }
     return (data as MetricCategory).id
@@ -67,7 +70,7 @@ export function useMetricsManager(onChanged?: () => void) {
     const position = nextPosition(metrics.value)
     const { error: err } = await sb.from('metrics').insert(buildInsertRow(form, userId, position, categoryId))
     if (err) {
-      error.value = saveErrorText(err.message)
+      error.value = saveErrorText(err)
       return false
     }
     // Импорт стрика для новой метрики — отдельным update (до insert колонок ещё не видно)
@@ -96,7 +99,7 @@ export function useMetricsManager(onChanged?: () => void) {
     const categoryId = await resolveCategoryId(form.categoryId)
     const { error: err } = await sb.from('metrics').update(buildUpdateRow(form, existing, categoryId)).eq('id', existing.id)
     if (err) {
-      error.value = saveErrorText(err.message)
+      error.value = saveErrorText(err)
       return false
     }
     error.value = null
@@ -109,7 +112,7 @@ export function useMetricsManager(onChanged?: () => void) {
     if (!confirm(t('dash_delete_metric_confirm').replace('{name}', m.name))) return false
     const { error: err } = await sb.from('metrics').delete().eq('id', m.id)
     if (err) {
-      error.value = t('dash_delete_error_generic') + err.message
+      error.value = friendlyError(err, 'delete')
       return false
     }
     error.value = null

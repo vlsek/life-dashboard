@@ -7,6 +7,7 @@ import { BODY_PARAMS_CHANGED, BODY_VALUES_CHANGED } from './useCharts'
 import { loadBalance as loadBalanceFor } from './loadBalance'
 import { avatarPath, paramStats, validateBirthdate, type BodyParam, type BodyParamForm, type BodyValue, type ProfileRow } from './profile'
 
+import { friendlyError } from './friendlyError'
 // Отдельный композабл блока «Профиль» (не трогает useDashboard.ts — параллельная работа
 // нескольких агентов, см. ROADMAP.md). Портировано из loadProfileInner()/uploadAvatar()/
 // add/edit/deleteBodyParameter() в dashboard.js. Вызывать init(userId) после auth 'ready'.
@@ -23,13 +24,13 @@ export function useProfile() {
 
   async function loadProfileRow() {
     const { data, error: e } = await sb.from('profiles').select('avatar_url, birthdate, goal_type').eq('user_id', userId).maybeSingle()
-    if (e) error.value = e.message
+    if (e) error.value = friendlyError(e, 'load')
     profile.value = (data as ProfileRow | null) ?? { avatar_url: null, birthdate: null, goal_type: null }
   }
 
   async function loadParams() {
     const { data, error: e } = await sb.from('body_parameters').select('id, name, icon, unit, position').eq('user_id', userId).eq('active', true).order('position')
-    if (e) error.value = e.message
+    if (e) error.value = friendlyError(e, 'load')
     params.value = (data || []) as BodyParam[]
   }
 
@@ -64,14 +65,14 @@ export function useProfile() {
     const path = avatarPath(userId, file.name)
     const { error: upErr } = await sb.storage.from('avatars').upload(path, file, { upsert: true })
     if (upErr) {
-      error.value = t('dash_avatar_upload_error') + upErr.message
+      error.value = friendlyError(upErr, 'upload')
       return false
     }
     const { data } = sb.storage.from('avatars').getPublicUrl(path)
     const url = data.publicUrl + '?t=' + Date.now() // ломаем кэш браузера при замене фото
     const { error: e } = await sb.from('profiles').upsert({ user_id: userId, avatar_url: url })
     if (e) {
-      error.value = t('dash_save_error_generic') + e.message
+      error.value = friendlyError(e)
       return false
     }
     await loadProfileRow()
@@ -83,7 +84,7 @@ export function useProfile() {
     const check = validateBirthdate(value, todayStr())
     if (check === 'range') return t('dash_birthdate_range_error')
     const { error: e } = await sb.from('profiles').upsert({ user_id: userId, birthdate: value || null })
-    if (e) return t('dash_save_error_generic') + e.message
+    if (e) return friendlyError(e)
     await loadProfileRow()
     return null
   }
@@ -98,7 +99,7 @@ export function useProfile() {
       position: params.value.length,
       active: true,
     })
-    if (e) return t('dash_save_error_generic') + e.message
+    if (e) return friendlyError(e)
     await loadParams()
     notifyParams()
     return null
@@ -107,7 +108,7 @@ export function useProfile() {
   async function updateParam(id: string, form: BodyParamForm): Promise<string | null> {
     if (!form.name.trim()) return null
     const { error: e } = await sb.from('body_parameters').update({ name: form.name.trim(), icon: form.icon || 'svg:ruler', unit: form.unit }).eq('id', id)
-    if (e) return t('dash_save_error_generic') + e.message
+    if (e) return friendlyError(e)
     await loadParams()
     notifyParams()
     return null
@@ -115,7 +116,7 @@ export function useProfile() {
 
   async function deleteParam(id: string): Promise<string | null> {
     const { error: e } = await sb.from('body_parameters').delete().eq('id', id)
-    if (e) return t('dash_delete_error_generic') + e.message
+    if (e) return friendlyError(e, 'delete')
     await Promise.all([loadParams(), loadValues()])
     notifyParams()
     return null
@@ -125,7 +126,7 @@ export function useProfile() {
   // «дневные метрики» (ввод параметров тела в дне); после записи профиль показывает свежую цифру.
   async function saveBodyValue(parameterId: string, date: string, value: number): Promise<string | null> {
     const { error: e } = await sb.from('body_parameter_values').upsert({ user_id: userId, date, parameter_id: parameterId, value }, { onConflict: 'user_id,date,parameter_id' })
-    if (e) return t('dash_save_error_generic') + e.message
+    if (e) return friendlyError(e)
     await loadValues()
     window.dispatchEvent(new CustomEvent(BODY_VALUES_CHANGED, { detail: { source: 'profile' } }))
     return null

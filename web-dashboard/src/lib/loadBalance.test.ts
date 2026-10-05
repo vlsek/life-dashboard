@@ -45,6 +45,8 @@ describe('loadBalance', () => {
     calls.fail = true
     const res = await loadBalance('u1')
     expect(res.ok).toBe(false)
-    expect((res as { error: string }).error).toContain('boom')
+    const loadErr = (res as { error: string }).error
+    expect(loadErr.length).toBeGreaterThan(5) // понятный текст, а не сырое «boom»
+    expect(loadErr).not.toContain('boom')
   })
 })

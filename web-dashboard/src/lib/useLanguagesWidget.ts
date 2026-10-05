@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
-import { t } from './i18n'
 
+import { friendlyError } from './friendlyError'
 // Виджет «Изучение языков» на главной (BACKLOG 390, владелец 2026-10-03: «верхние 5 слов всегда перед глазами, чтобы человек мог их
 // постоянно повторять, со скроллером — если что, листнуть ниже»; разрешено сделать лучше). Данные — слова раздела Языков (таблица
 // `vocabulary`, КОПИЯ правил web-languages: язык слова — `lang`, пусто = английский; `learned` — выучено). Миграции нет: набор слов —
@@ -106,7 +106,7 @@ export function useLanguagesWidget() {
     error.value = ''
     const { data, error: err } = await sb.from('vocabulary').select('*').eq('user_id', uid).eq('learned', false).order('created_at', { ascending: false }).limit(QUEUE_LIMIT)
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err, 'load')
       state.value = 'error'
       return
     }
@@ -137,7 +137,7 @@ export function useLanguagesWidget() {
     busy.value = rest
     if (err) {
       words.value = before
-      error.value = t('dash_widget_lang_error') + err.message
+      error.value = friendlyError(err)
       return
     }
     if (words.value.length === 0) state.value = 'empty'
