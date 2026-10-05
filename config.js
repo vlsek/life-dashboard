@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.24";
+const SITE_VERSION = "3.25";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.25", date: "2026-10-06 02:38", changes: [
+        "Цели и профиль: после того как запись подтвердилась, в углу появляется маленькая галочка «Сохранено» и рамка мягко вспыхивает (меньше секунды). Это на карточке цели (выполнить, этап, правка), в строке выполненной цели и в блоке профиля (фото, дата рождения, параметры тела). Если сохранить не вышло, галочки нет. При выключенных анимациях и «уменьшении движения» галочка просто стоит без движения. Миграция не нужна",
+    ]},
     { version: "3.24", date: "2026-10-06 02:35", changes: [
         "Вода: анимация «записалось» (стакан наполняется) снова видна. Она рисовалась внутри прокручиваемого окна воды и при нажатии «+200 / +1000» ниже по окну оказывалась за пределами видимого; теперь показывается по центру экрана поверх окна и не мешает нажатиям. При выключенных анимациях стакан сразу показывается наполненным, а галочка видна",
     ]},
@@ -1579,6 +1582,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.25", date: "2026-10-06 02:38", changes: [
+        "Goals and profile: once a save is confirmed, a small \"Saved\" tick appears in the corner and the border flashes softly (under a second). It shows on a goal card (complete, stage, edit), on a completed-goal row and in the profile block (photo, birthdate, body parameters). If saving failed, there is no tick. With animations turned off or reduced motion, the tick just stays still. No migration needed",
+    ]},
     { version: "3.24", date: "2026-10-06 02:35", changes: [
         "Water: the \"saved\" animation (the glass filling up) is visible again. It was drawn inside the scrollable water window and, after pressing \"+200 / +1000\" further down, ended up outside the visible area; it now appears at the centre of the screen above the window and does not block taps. With animations switched off the glass shows already filled and the tick is visible",
     ]},
