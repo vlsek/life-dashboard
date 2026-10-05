@@ -8,6 +8,7 @@ import type { Metric, MetricValue, PointsRow } from './types'
 // Какие числа считаем по данным пользователя. Достижение = «счётчик >= порог».
 export type CounterKey =
   | 'streakBest' // лучшая серия «идеальных дней» (в днях)
+  | 'perfectDays' // сколько ВСЕГО было «идеальных дней» (не подряд; BACKLOG раздел 36, владелец 2026-10-04)
   | 'pointsTotal' // накоплено баллов за всё время (не баланс: потраченное в магазине не вычитается)
   | 'metricDone' // сколько раз отмечена метрика (то же число, что даёт 1 балл за выполненную метрику-день)
   | 'weightEntries' // записей веса
@@ -22,7 +23,7 @@ export type CounterKey =
 
 export type Counters = Record<CounterKey, number>
 
-export type GroupKey = 'streak' | 'points' | 'first' | 'workouts' | 'challenges' | 'goals' | 'books' | 'weeks' | 'words_added' | 'words_learned'
+export type GroupKey = 'streak' | 'perfect' | 'points' | 'first' | 'workouts' | 'challenges' | 'goals' | 'books' | 'weeks' | 'words_added' | 'words_learned'
 
 export interface AchievementDef {
   key: string
@@ -33,7 +34,7 @@ export interface AchievementDef {
 }
 
 // Порядок групп на странице.
-export const GROUP_ORDER: readonly GroupKey[] = ['first', 'streak', 'points', 'workouts', 'challenges', 'goals', 'books', 'words_added', 'words_learned', 'weeks']
+export const GROUP_ORDER: readonly GroupKey[] = ['first', 'streak', 'perfect', 'points', 'workouts', 'challenges', 'goals', 'books', 'words_added', 'words_learned', 'weeks']
 
 // Лесенка достижений одного раздела: четыре ступени с ключами <префикс>_<порог>. Ключи НЕ менять после релиза (на них ссылаются
 // записи user_achievements и награды «Кастомизации»).
@@ -53,6 +54,9 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   { key: 'streak_10', group: 'streak', counter: 'streakBest', target: 10, icon: 'flame' },
   { key: 'streak_30', group: 'streak', counter: 'streakBest', target: 30, icon: 'flame' },
   { key: 'streak_100', group: 'streak', counter: 'streakBest', target: 100, icon: 'flame' },
+  // «Идеальные дни» (BACKLOG раздел 36): в идеальный день Дашборд показывает окно-поздравление и сам выдаёт эти достижения
+  // (web-dashboard/src/lib/perfectDay.ts — КОПИЯ порогов; тест perfectDayDashboard.test.ts сверяет оба списка). Ключи perfect_days_<порог>.
+  ...makeLadder('perfect_days', 'perfect', 'perfectDays', 'done', [1, 10, 30, 100]),
   { key: 'points_100', group: 'points', counter: 'pointsTotal', target: 100, icon: 'coin' },
   { key: 'points_500', group: 'points', counter: 'pointsTotal', target: 500, icon: 'coin' },
   { key: 'points_1000', group: 'points', counter: 'pointsTotal', target: 1000, icon: 'coin' },
@@ -150,6 +154,22 @@ function groupByDay(values: ValueRow[]): Record<string, Record<string, MetricVal
   return byDay
 }
 
+// Сколько ВСЕГО было идеальных дней (не подряд) — те же правила, что у серии (bestPerfectStreak/computeStreakItemsPure): метрики с
+// count_streak=false не участвуют; день без обязательных по расписанию метрик не считается; день после сегодня не считается.
+// Сегодняшний день считается, когда он уже идеальный (незавершённый просто не прибавляет). Копия: web-dashboard/src/lib/perfectDay.ts.
+export function countPerfectDays(metrics: Metric[], byDay: Record<string, Record<string, MetricValue>>, today: Date): number {
+  const ms = (metrics || []).filter((m) => m.count_streak !== false)
+  if (!ms.length) return 0
+  const todayStr = fmtDate(today)
+  let n = 0
+  for (const d of Object.keys(byDay)) {
+    if (d > todayStr) continue
+    const exp = ms.filter((m) => metricExpectedOn(m, d))
+    if (exp.length > 0 && exp.every((m) => isMetricDone(m, byDay[d]?.[m.id], d))) n++
+  }
+  return n
+}
+
 // Лучшая серия «идеальных дней» за всю историю — по тем же правилам, что серия на Дашборде (computeStreakItemsPure):
 // метрики с count_streak=false не участвуют; день без обязательных по расписанию метрик серию не рвёт и не считается.
 // Незавершённый СЕГОДНЯ не обнуляет серию (смотрим по дням до сегодняшнего включительно, но сегодняшний неполный пропускаем).
@@ -200,6 +220,7 @@ export function computeCounters(input: CounterInput): Counters {
   const pointsTotal = (dailyTenths + Math.round(otherPoints * 10)) / 10
   return {
     streakBest: bestPerfectStreak(input.metrics, byDay, input.today),
+    perfectDays: countPerfectDays(input.metrics, byDay, input.today),
     pointsTotal,
     metricDone,
     weightEntries: input.weightEntries,

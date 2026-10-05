@@ -18,6 +18,7 @@ import WaterReminderBanner from './components/WaterReminderBanner.vue'
 import SplashLoader from './components/SplashLoader.vue'
 import PointsFloat from './components/PointsFloat.vue'
 import StreakMilestoneModal from './components/StreakMilestoneModal.vue'
+import PerfectDayModal from './components/PerfectDayModal.vue'
 import PlanReminderBanner from './components/PlanReminderBanner.vue'
 import InstallBanner from './components/InstallBanner.vue'
 import ProfileSection from './components/ProfileSection.vue'
@@ -35,6 +36,7 @@ import { useWaterReminder } from './lib/useWaterReminder'
 import { usePlanReminders } from './lib/usePlanReminders'
 import { useDashboard } from './lib/useDashboard'
 import { useStreakCelebration } from './lib/useStreakCelebration'
+import { usePerfectDay } from './lib/usePerfectDay'
 import { useLayout } from './lib/useLayout'
 import { useBlockDrag } from './lib/blockDrag'
 import { hasWidgets, isBlockShown, type LayoutItem } from './lib/layout'
@@ -53,11 +55,17 @@ import { stripEmoji } from './lib/emojiText'
 // с общей выбранной датой (см. DailyMetricsSection.vue). Раскладка блоков (показать/скрыть/переставить) —
 // lib/layout.ts + useLayout.ts + LayoutModal.vue, колонка profiles.dashboard_layout общая с классикой.
 
-const { auth, streaks, dayProgress, weekProgress, summaries, progressSettings, loadError, init, saveProgressSettings } = useDashboard()
+const { auth, streaks, perfectInfo, dayProgress, weekProgress, summaries, progressSettings, loadError, init, saveProgressSettings } = useDashboard()
 // Поздравление за серию (BACKLOG 13): один раз на порог 5/10/30/…, выключается в плашке или в ⚙ «Настроить Дашборд»
 const { pending: milestone, close: closeMilestone, disable: disableMilestone } = useStreakCelebration(
   () => (auth.value.status === 'ready' ? auth.value.userId : null),
   streaks,
+)
+// Окно «Идеальный день!» (BACKLOG раздел 36): поздравляет, выдаёт достижение «Идеальных дней» и пишет прогресс до следующего;
+// раз в день, не одновременно с поздравлением за серию (дождётся его закрытия)
+const { pending: perfectPopup, close: closePerfect, disable: disablePerfect } = usePerfectDay(
+  () => (auth.value.status === 'ready' ? auth.value.userId : null),
+  perfectInfo,
 )
 const { items: eveningItems, visible: eveningVisible, load: loadEveningReminder, dismiss: dismissEveningReminder } = useEveningReminder()
 const { visible: waterReminderVisible, ml: waterReminderMl, goal: waterReminderGoal, load: loadWaterReminder, dismiss: dismissWaterReminder } = useWaterReminder()
@@ -324,6 +332,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
     />
     <ProgressSettingsModal v-if="showProgressSettings" :initial="progressSettings" @close="showProgressSettings = false" @save="onSaveProgressSettings" />
     <StreakMilestoneModal v-if="milestone" :milestone="milestone" @close="closeMilestone" @disable="disableMilestone" />
+    <PerfectDayModal v-else-if="perfectPopup" :popup="perfectPopup" @close="closePerfect" @disable="disablePerfect" />
   </main>
 </template>
 

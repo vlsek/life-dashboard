@@ -5,6 +5,7 @@ import {
   GROUP_ORDER,
   bestPerfectStreak,
   computeCounters,
+  countPerfectDays,
   evaluate,
   groupStates,
   isUnlocked,
@@ -31,6 +32,7 @@ function metric(over: Partial<Metric> & { id: string }): Metric {
 
 const ZERO: Counters = {
   streakBest: 0,
+  perfectDays: 0,
   pointsTotal: 0,
   metricDone: 0,
   weightEntries: 0,
@@ -50,7 +52,7 @@ const rows = (metricId: string, days: number[], value: unknown = true) => days.m
 
 describe('реестр достижений', () => {
   it('около 20 стартовых, ключи уникальны, группы известны, пороги положительные', () => {
-    expect(ACHIEVEMENTS.length).toBe(28)
+    expect(ACHIEVEMENTS.length).toBe(32)
     expect(new Set(ACHIEVEMENTS.map((a) => a.key)).size).toBe(ACHIEVEMENTS.length)
     for (const a of ACHIEVEMENTS) {
       expect(GROUP_ORDER).toContain(a.group)
@@ -336,3 +338,62 @@ describe('лесенки «Языков» (BACKLOG раздел 37)', () => {
   })
 })
 
+
+// «Идеальные дни» (BACKLOG раздел 36, владелец 2026-10-04): сколько всего было идеальных дней и лесенка достижений
+describe('countPerfectDays', () => {
+  const today = new Date('2026-10-05T12:00:00')
+  const a = metric({ id: 'a' })
+  const b = metric({ id: 'b' })
+  const byDay = (...days: [number, Record<string, unknown>][]) => Object.fromEntries(days.map(([n, v]) => [d(n), v])) as never
+
+  it('считает дни, где выполнено всё обязательное, НЕ подряд', () => {
+    const bd = byDay([1, { a: true, b: true }], [2, { a: true }], [3, { a: true, b: true }], [5, { a: true, b: true }])
+    expect(countPerfectDays([a, b], bd, today)).toBe(3)
+    expect(bestPerfectStreak([a, b], bd, today)).toBe(1) // серия подряд — другое число
+  })
+  it('сегодняшний неполный день не прибавляет, завершённый — прибавляет', () => {
+    expect(countPerfectDays([a, b], byDay([5, { a: true }]), today)).toBe(0)
+    expect(countPerfectDays([a, b], byDay([5, { a: true, b: true }]), today)).toBe(1)
+  })
+  it('дни после сегодня и метрики с count_streak=false не учитываются', () => {
+    expect(countPerfectDays([a], byDay([6, { a: true }], [7, { a: true }]), today)).toBe(0)
+    const weight = metric({ id: 'w', count_streak: false } as never)
+    expect(countPerfectDays([a, weight], byDay([1, { a: true }]), today)).toBe(1)
+    expect(countPerfectDays([weight], byDay([1, { w: true }]), today)).toBe(0)
+  })
+  it('нет метрик или нет истории — 0', () => {
+    expect(countPerfectDays([], byDay([1, { a: true }]), today)).toBe(0)
+    expect(countPerfectDays([a], {} as never, today)).toBe(0)
+  })
+  it('computeCounters отдаёт perfectDays', () => {
+    const c = computeCounters({ metrics: [a], values: rows('a', [1, 2, 4]), doneGoals: [], masteredSkills: [], doneBooks: [], weightEntries: 0, workoutDates: [], challengesDone: 0, today })
+    expect(c.perfectDays).toBe(3)
+  })
+})
+
+describe('лесенка «Идеальные дни»', () => {
+  const ladder = ACHIEVEMENTS.filter((x) => x.group === 'perfect')
+  it('четыре ступени 1/10/30/100 с ключами perfect_days_<порог> по счётчику perfectDays', () => {
+    expect(ladder.map((x) => [x.key, x.target, x.counter])).toEqual([
+      ['perfect_days_1', 1, 'perfectDays'],
+      ['perfect_days_10', 10, 'perfectDays'],
+      ['perfect_days_30', 30, 'perfectDays'],
+      ['perfect_days_100', 100, 'perfectDays'],
+    ])
+  })
+  it('группа стоит в порядке групп сразу после серий', () => {
+    const i = GROUP_ORDER.indexOf('streak')
+    expect(GROUP_ORDER[i + 1]).toBe('perfect')
+  })
+  it('открывается по общему числу идеальных дней: 12 дней — открыты 1 и 10, 30 ещё нет', () => {
+    const states = evaluate({ ...ZERO, perfectDays: 12 })
+    const met = states.filter((s) => s.def.group === 'perfect' && s.met).map((s) => s.def.key)
+    expect(met).toEqual(['perfect_days_1', 'perfect_days_10'])
+  })
+  it('при повторном заходе (после первого) новое достижение получает дату и попадает в newlyUnlocked', () => {
+    const states = evaluate({ ...ZERO, perfectDays: 1 })
+    const r = reconcile(states, { [BASELINE_KEY]: '2026-10-01T00:00:00Z' }, '2026-10-05T10:00:00Z')
+    expect(r.newlyUnlocked).toContain('perfect_days_1')
+    expect(r.added.perfect_days_1).toBe('2026-10-05T10:00:00Z')
+  })
+})

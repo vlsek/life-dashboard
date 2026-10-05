@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils'
 import AchievementUnlockedModal from './AchievementUnlockedModal.vue'
 import { evaluate, GROUP_ORDER, type Counters } from '../lib/achievements'
 
-const ZERO: Counters = { streakBest: 0, pointsTotal: 0, metricDone: 0, weightEntries: 0, goalsDone: 0, skillsMastered: 0, booksDone: 0, workoutDays: 0, challengesDone: 0, megaWeeks: 0, wordsAdded: 0, wordsLearned: 0 }
+const ZERO: Counters = { streakBest: 0, perfectDays: 0, pointsTotal: 0, metricDone: 0, weightEntries: 0, goalsDone: 0, skillsMastered: 0, booksDone: 0, workoutDays: 0, challengesDone: 0, megaWeeks: 0, wordsAdded: 0, wordsLearned: 0 }
 const pick = (...keys: string[]) => evaluate({ ...ZERO, streakBest: 100, goalsDone: 10, booksDone: 5 }).filter((s) => keys.includes(s.def.key))
 
 beforeEach(() => localStorage.setItem('site_lang', 'ru'))
@@ -65,7 +65,7 @@ describe('AchievementUnlockedModal', () => {
   it('у каждой группы есть своя тёплая строка на обоих языках', () => {
     for (const lang of ['ru', 'en']) {
       localStorage.setItem('site_lang', lang)
-      const all = evaluate({ streakBest: 1000, pointsTotal: 5000, metricDone: 9, weightEntries: 1, goalsDone: 99, skillsMastered: 1, booksDone: 99, workoutDays: 99, challengesDone: 99, megaWeeks: 9, wordsAdded: 999, wordsLearned: 999 })
+      const all = evaluate({ streakBest: 1000, perfectDays: 1000, pointsTotal: 5000, metricDone: 9, weightEntries: 1, goalsDone: 99, skillsMastered: 1, booksDone: 99, workoutDays: 99, challengesDone: 99, megaWeeks: 9, wordsAdded: 999, wordsLearned: 999 })
       for (const g of GROUP_ORDER) {
         const s = all.find((x) => x.def.group === g)!
         const w = mount(AchievementUnlockedModal, { props: { states: [s] }, attachTo: document.body })

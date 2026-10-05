@@ -12,6 +12,8 @@ import { withWaterGoal } from './waterGoal'
 import type { Metric } from './types'
 
 import { friendlyError } from './friendlyError'
+import { countPerfectDays, isPerfectToday } from './perfectDay'
+import type { PerfectDayInfo } from './perfectDay'
 export type AuthState =
   | { status: 'loading' }
   | { status: 'redirecting' }
@@ -20,6 +22,7 @@ export type AuthState =
 export function useDashboard() {
   const auth = ref<AuthState>({ status: 'loading' })
   const streaks = ref<StreakItem[]>([])
+  const perfectInfo = ref<PerfectDayInfo | null>(null) // для окна «Идеальный день!» (usePerfectDay.ts)
   const dayProgress = ref<ProgressResult | null>(null)
   const weekProgress = ref<ProgressResult | null>(null)
   // Сводка по клику на кольцо (что сделано/осталось/сколько %): считается из тех же данных, что и кольца.
@@ -124,6 +127,8 @@ export function useDashboard() {
     const settings = getDayProgressSettings()
     progressSettings.value = settings
     const today = todayStr()
+    // «идеальный день» для окна-поздравления (BACKLOG раздел 36): сегодня идеальный ли и сколько всего идеальных дней
+    perfectInfo.value = { date: today, todayPerfect: isPerfectToday(metrics, byDay[today] as Record<string, unknown> | undefined, today), count: countPerfectDays(metrics, byDay, new Date()) }
     dayProgress.value = computeDayProgressPure(
       settings,
       metrics,
@@ -149,7 +154,7 @@ export function useDashboard() {
     if (currentUserId) await loadAll(currentUserId)
   }
 
-  return { auth, streaks, dayProgress, weekProgress, summaries, progressSettings, loadError, init, refresh, saveProgressSettings }
+  return { auth, streaks, perfectInfo, dayProgress, weekProgress, summaries, progressSettings, loadError, init, refresh, saveProgressSettings }
 }
 
 export { fmtDate }
