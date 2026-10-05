@@ -1,6 +1,13 @@
 {
-  "version": "2.104",
+  "version": "2.105",
   "en": [
+    {
+      "version": "2.105",
+      "date": "2026-10-05 07:22",
+      "changes": [
+        "Goals: the Save button in the goal form no longer stays silent. If the name is empty, a hint appears under the field; if saving fails (no internet, server error), a clear message stays in the form and what you typed is kept; tapping again while saving does not create a second goal. Technical error details (server address, table names) are no longer shown to the user"
+      ]
+    },
     {
       "version": "2.104",
       "date": "2026-10-05 05:01",
@@ -2192,6 +2199,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.105",
+      "date": "2026-10-05 07:22",
+      "changes": [
+        "Цели: кнопка «Сохранить» в форме цели больше не молчит. Если не введено название — под полем появляется подсказка; если запись не удалась (нет интернета, сбой сервера) — в форме остаётся понятный текст, а введённое не пропадает; повторный тап пока идёт запись не создаёт вторую цель. Технические подробности ошибки (адрес сервера, названия таблиц) пользователю больше не показываются"
+      ]
+    },
     {
       "version": "2.104",
       "date": "2026-10-05 05:01",

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.104";
+const SITE_VERSION = "2.105";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.105", date: "2026-10-05 07:22", changes: [
+        "Цели: кнопка «Сохранить» в форме цели больше не молчит. Если не введено название — под полем появляется подсказка; если запись не удалась (нет интернета, сбой сервера) — в форме остаётся понятный текст, а введённое не пропадает; повторный тап пока идёт запись не создаёт вторую цель. Технические подробности ошибки (адрес сервера, названия таблиц) пользователю больше не показываются",
+    ]},
     { version: "2.104", date: "2026-10-05 05:01", changes: [
         "Сообщество, «Друзья»: исправлена подпись «Пока ни на кого не подписан», которая появлялась, хотя подписки и друзья есть. Если профиль друга не удалось прочитать, у него теперь всё равно есть карточка — с именем и аватаром из лидерборда, а при их отсутствии — «Без имени» с крестиком, чтобы убрать. Подпись показывается, только когда подписок и друзей действительно нет",
     ]},
@@ -1519,6 +1522,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.105", date: "2026-10-05 07:22", changes: [
+        "Goals: the Save button in the goal form no longer stays silent. If the name is empty, a hint appears under the field; if saving fails (no internet, server error), a clear message stays in the form and what you typed is kept; tapping again while saving does not create a second goal. Technical error details (server address, table names) are no longer shown to the user",
+    ]},
     { version: "2.104", date: "2026-10-05 05:01", changes: [
         "Community, Friends: fixed the \"Not following anyone yet\" line that appeared even though you have follows and friends. If a friend's profile could not be read, they now still get a card — with the name and avatar from the leaderboard, or \"No name\" with a remove button if those are missing. The line only shows when there really are no follows and friends",
     ]},
