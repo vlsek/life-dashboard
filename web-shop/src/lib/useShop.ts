@@ -5,6 +5,11 @@ import { todayStr } from './date'
 import { calcTotalPoints, calcBalanceFromTotals } from './points'
 import type { DailyValue, GoalRow, SkillRow, BookRow, Metric, ShopItem, ShopItemFormInput } from './types'
 import { withWaterGoal } from './waterGoal'
+import { prepareImage, safeExt } from './imageResize'
+import { errorKind } from './friendlyError'
+
+// Пауза перед повторной попыткой загрузки фото при сетевом сбое (мс).
+export const UPLOAD_RETRY_MS = 800
 
 export type AuthState =
   | { status: 'loading' }
@@ -107,11 +112,19 @@ export function useShop() {
     await reload()
   }
 
-  // Портировано из uploadShopImage() в config.js/shop.js.
+  // Портировано из uploadShopImage() в config.js/shop.js; дальше доработано (BACKLOG раздел 35 🐞 «failed to fetch» при добавлении фото):
+  // фото сжимается перед загрузкой (несколько МБ с телефона на мобильной сети обрываются), расширение берётся безопасное (раньше —
+  // последний кусок имени файла как есть, с пробелами и кириллицей), при сетевом сбое — одна повторная попытка.
   async function uploadImage(userId: string, file: File): Promise<string | null> {
-    const ext = file.name.split('.').pop()
-    const path = `${userId}/${Date.now()}.${ext}`
-    const { error: err } = await sb.storage.from('shop-images').upload(path, file)
+    const prepared = await prepareImage(file)
+    const path = `${userId}/${Date.now()}.${safeExt(prepared.type, prepared.name)}`
+    const opts = { contentType: prepared.type || undefined }
+    let { error: err } = await sb.storage.from('shop-images').upload(path, prepared, opts)
+    if (err && errorKind(err) === 'network') {
+      await new Promise((r) => setTimeout(r, UPLOAD_RETRY_MS))
+      // первая попытка могла дойти частично — перезаписываем тот же путь
+      ;({ error: err } = await sb.storage.from('shop-images').upload(path, prepared, { ...opts, upsert: true }))
+    }
     if (err) throw err
     const { data } = sb.storage.from('shop-images').getPublicUrl(path)
     return data.publicUrl

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { t } from '../lib/i18n'
+import { friendlyError } from '../lib/friendlyError'
 import type { ShopItem, ShopItemFormInput } from '../lib/types'
 
 const props = defineProps<{ existing: ShopItem | null; uploadImage: (file: File) => Promise<string | null> }>()
@@ -14,7 +15,8 @@ const uploading = ref(false)
 const uploadError = ref<string | null>(null)
 
 async function onFileChange(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0]
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
   if (!file) return
   uploading.value = true
   uploadError.value = null
@@ -22,9 +24,11 @@ async function onFileChange(e: Event) {
     const url = await props.uploadImage(file)
     if (url) imageUrl.value = url
   } catch (err) {
-    uploadError.value = t('shop_upload_error') + (err instanceof Error ? err.message : String(err))
+    // Понятный текст вместо сырого «Failed to fetch» / адреса Supabase; подробности — в консоль
+    uploadError.value = friendlyError(err, 'upload')
   } finally {
     uploading.value = false
+    input.value = '' // чтобы повторный выбор того же файла снова запускал загрузку
   }
 }
 
@@ -51,8 +55,8 @@ function save() {
       <label class="mt-2 block text-sm">{{ t('shop_field_image') }}</label>
       <input v-model="imageUrl" type="text" class="w-full" placeholder="https://..." />
       <input type="file" accept="image/*" class="mt-2 block text-sm" @change="onFileChange" />
-      <p v-if="uploading" class="dim mt-1 text-xs">…</p>
-      <p v-if="uploadError" class="mt-1 text-xs" style="color: var(--danger)">{{ uploadError }}</p>
+      <p v-if="uploading" class="dim mt-1 text-xs" data-test="shop-uploading">{{ t('shop_uploading') }}</p>
+      <p v-if="uploadError" class="mt-1 text-xs" style="color: var(--danger)" role="alert" data-test="shop-upload-error">{{ uploadError }}</p>
       <img v-if="imageUrl" :src="imageUrl" class="mt-2 max-h-32 max-w-full rounded-lg object-cover" />
 
       <div class="modal-actions">
