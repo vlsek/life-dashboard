@@ -14,7 +14,7 @@ import re
 import sys
 
 sys.path.insert(0, 'scripts')
-from themes_data import NEW, P  # noqa: E402
+from themes_data import NEW, P, chart_palette  # noqa: E402
 
 KEYS = list(P)
 OLD4 = ['dark', 'monet', 'light', 'pink']
@@ -37,7 +37,12 @@ def rw(path, fn):
 
 def block(k):
     v = P[k][3]
-    return 'html.theme-%s {\n%s\n}\n' % (k, '\n'.join('  --%s: %s;' % (n, v[a]) for n, a in VARS))
+    lines = ['  --%s: %s;' % (n, v[a]) for n, a in VARS]
+    # палитра диаграмм особенностей подхода (BACKLOG 13:55): --chart-1…8, --chart-none, --chart-other
+    pal = chart_palette(k)
+    lines += ['  --chart-%d: %s;' % (i + 1, c) for i, c in enumerate(pal['c'])]
+    lines += ['  --chart-none: %s;' % pal['none'], '  --chart-other: %s;' % pal['other']]
+    return 'html.theme-%s {\n%s\n}\n' % (k, '\n'.join(lines))
 
 
 def region(keys):

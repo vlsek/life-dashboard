@@ -19,6 +19,16 @@ html.theme-dark {
   --water-top: #63b3f5;
   --water-bottom: #2f86dc;
   --water-line: #4aa3ee;
+  --chart-1: #5b8def;
+  --chart-2: #eb685c;
+  --chart-3: #e9b54e;
+  --chart-4: #49e999;
+  --chart-5: #af5ceb;
+  --chart-6: #72e3ee;
+  --chart-7: #eb5caf;
+  --chart-8: #eb5ceb;
+  --chart-none: #9aa0a6;
+  --chart-other: #666a6f;
 }
 
 html.theme-monet {
@@ -35,6 +45,16 @@ html.theme-monet {
   --water-top: #63b3f5;
   --water-bottom: #2f86dc;
   --water-line: #4aa3ee;
+  --chart-1: #f2a93c;
+  --chart-2: #5c97eb;
+  --chart-3: #eb685c;
+  --chart-4: #49e999;
+  --chart-5: #af5ceb;
+  --chart-6: #72e3ee;
+  --chart-7: #eb5caf;
+  --chart-8: #685ceb;
+  --chart-none: #9aa0a6;
+  --chart-other: #616569;
 }
 
 html.theme-light {
@@ -51,6 +71,16 @@ html.theme-light {
   --water-top: #3f95e0;
   --water-bottom: #1560b8;
   --water-line: #1560b8;
+  --chart-1: #ca7524;
+  --chart-2: #1d5aaf;
+  --chart-3: #199a5a;
+  --chart-4: #721daf;
+  --chart-5: #1b9ba7;
+  --chart-6: #af1d72;
+  --chart-7: #291daf;
+  --chart-8: #949418;
+  --chart-none: #6b7280;
+  --chart-other: #9095a0;
 }
 
 html.theme-pink {
@@ -67,6 +97,16 @@ html.theme-pink {
   --water-top: #3184d6;
   --water-bottom: #1359b0;
   --water-line: #1359b0;
+  --chart-1: #ff084e;
+  --chart-2: #1d5aaf;
+  --chart-3: #a0731a;
+  --chart-4: #189155;
+  --chart-5: #721daf;
+  --chart-6: #188b95;
+  --chart-7: #291daf;
+  --chart-8: #af291d;
+  --chart-none: #6b7280;
+  --chart-other: #7f8592;
 }
 
 html.theme-mint {
@@ -83,6 +123,16 @@ html.theme-mint {
   --water-top: #3f95e0;
   --water-bottom: #1560b8;
   --water-line: #1560b8;
+  --chart-1: #13805a;
+  --chart-2: #1d5aaf;
+  --chart-3: #af291d;
+  --chart-4: #a0731a;
+  --chart-5: #721daf;
+  --chart-6: #af1d72;
+  --chart-7: #291daf;
+  --chart-8: #1ba527;
+  --chart-none: #6b7280;
+  --chart-other: #9095a0;
 }
 
 html.theme-sepia {
@@ -99,6 +149,16 @@ html.theme-sepia {
   --water-top: #3589d6;
   --water-bottom: #1157ac;
   --water-line: #1157ac;
+  --chart-1: #9a5b13;
+  --chart-2: #1d5aaf;
+  --chart-3: #199a5a;
+  --chart-4: #721daf;
+  --chart-5: #1a939e;
+  --chart-6: #af1d72;
+  --chart-7: #291daf;
+  --chart-8: #af291d;
+  --chart-none: #6b7280;
+  --chart-other: #858a97;
 }
 
 html.theme-solarlight {
@@ -115,6 +175,16 @@ html.theme-solarlight {
   --water-top: #2f7fcf;
   --water-bottom: #0f4f9f;
   --water-line: #0f4f9f;
+  --chart-1: #1d6fa8;
+  --chart-2: #af291d;
+  --chart-3: #a0731a;
+  --chart-4: #189155;
+  --chart-5: #721daf;
+  --chart-6: #af1d72;
+  --chart-7: #291daf;
+  --chart-8: #af1daf;
+  --chart-none: #6b7280;
+  --chart-other: #7f8592;
 }
 
 html.theme-nord {
@@ -131,6 +201,16 @@ html.theme-nord {
   --water-top: #7cc4ff;
   --water-bottom: #4a9be8;
   --water-line: #6bb6f5;
+  --chart-1: #88c0d0;
+  --chart-2: #ec7065;
+  --chart-3: #e9b54e;
+  --chart-4: #49e999;
+  --chart-5: #bc77ee;
+  --chart-6: #eb5caf;
+  --chart-7: #9289f1;
+  --chart-8: #5c97eb;
+  --chart-none: #9aa0a6;
+  --chart-other: #898e93;
 }
 
 html.theme-mocha {
@@ -147,6 +227,16 @@ html.theme-mocha {
   --water-top: #63b3f5;
   --water-bottom: #2f86dc;
   --water-line: #4aa3ee;
+  --chart-1: #cba6f7;
+  --chart-2: #5c97eb;
+  --chart-3: #eb685c;
+  --chart-4: #e9b54e;
+  --chart-5: #49e999;
+  --chart-6: #72e3ee;
+  --chart-7: #eb5caf;
+  --chart-8: #eb5ceb;
+  --chart-none: #9aa0a6;
+  --chart-other: #797f84;
 }
 
 html.theme-amoled {
@@ -163,6 +253,16 @@ html.theme-amoled {
   --water-top: #63b3f5;
   --water-bottom: #2f86dc;
   --water-line: #4aa3ee;
+  --chart-1: #4ea1ff;
+  --chart-2: #eb685c;
+  --chart-3: #e9b54e;
+  --chart-4: #49e999;
+  --chart-5: #af5ceb;
+  --chart-6: #eb5caf;
+  --chart-7: #685ceb;
+  --chart-8: #72e3ee;
+  --chart-none: #9aa0a6;
+  --chart-other: #5c6064;
 }
 
 html.theme-contrast {
@@ -179,6 +279,16 @@ html.theme-contrast {
   --water-top: #63b3f5;
   --water-bottom: #2f86dc;
   --water-line: #4aa3ee;
+  --chart-1: #ffd60a;
+  --chart-2: #5c97eb;
+  --chart-3: #eb685c;
+  --chart-4: #49e999;
+  --chart-5: #af5ceb;
+  --chart-6: #72e3ee;
+  --chart-7: #eb5caf;
+  --chart-8: #685ceb;
+  --chart-none: #9aa0a6;
+  --chart-other: #5c6064;
 }
 /* themes:end */
 /* themes-scheme */

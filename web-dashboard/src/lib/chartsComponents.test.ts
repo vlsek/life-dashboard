@@ -364,7 +364,7 @@ describe('ChartBlock: variations', () => {
     expect(markers[0].findAll('path')).toHaveLength(3)
     expect(markers[0].findAll('circle')).toHaveLength(0)
     expect(markers[1].findAll('path')).toHaveLength(0)
-    expect(markers[1].find('circle').attributes('fill')).toBe('#3b82f6')
+    expect(markers[1].find('circle').attributes('fill')).toBe('var(--chart-1, #3b82f6)')
   })
   it('shows a legend under the chart: colour, variation, total reps over the period', () => {
     const w = mountBlock(pts([{ label: 'classic', reps: 50 }, { label: 'diamond', reps: 30 }], [{ label: 'classic', reps: 10 }, { label: null, reps: 5 }]))
@@ -375,7 +375,7 @@ describe('ChartBlock: variations', () => {
     expect(items[1]).toContain('diamond')
     expect(items[2]).toContain('5')
     const swatches = w.findAll('[data-test="legend-item"] span.rounded-full').map((s) => (s.element as HTMLElement).style.background)
-    expect(swatches[0]).toMatch(/#3b82f6|rgb\(59, 130, 246\)/)
+    expect(swatches[0]).toMatch(/--chart-1|#3b82f6|rgb\(59, 130, 246\)/)
   })
   it('legend also shows how many reps of each variation were done today (BACKLOG 22:02)', () => {
     const points = [

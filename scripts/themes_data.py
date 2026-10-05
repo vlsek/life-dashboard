@@ -25,3 +25,87 @@ P={
  'contrast':('dark','◐ High contrast','◐ Высокий контраст',dict(bg='#000000',card='#0a0a0a',border='#ffffff',text='#ffffff',dim='#d6d6d6',accent='#ffd60a',at='#000000',ok='#5cff8a',bad='#ff8080',hist='#5cff8a',**DARK_W)),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
+
+
+# ---------------------------------------------------------------------------------------------------------------------------
+# Палитра диаграмм особенностей подхода по теме (BACKLOG 13:55). Токены темы --chart-1…--chart-8, --chart-none, --chart-other.
+# Правила: первая особенность — акцент темы; остальные семь — оттенки разных тонов (синий, красный, янтарь, зелёный, фиолет, циан,
+# розовый, пурпур) без тона, слишком близкого к акценту; светлота подбирается под тему, чтобы контраст с карточкой был ≥ 3:1;
+# цвета различимы между собой (ΔE по CIE76: первые четыре особенности ≥ 25, любые две из восьми ≥ 14 — проверяет web-dashboard/src/themes.test.ts).
+# ---------------------------------------------------------------------------------------------------------------------------
+import colorsys as _cs
+import math as _m
+
+_HUES = [215, 5, 40, 150, 275, 185, 325]
+_RESERVE = [300, 245, 125, 20, 60]
+
+
+def _rgb(h):
+    return [int(h[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+
+
+def _hex(r):
+    return '#%02x%02x%02x' % tuple(round(max(0, min(1, v)) * 255) for v in r)
+
+
+def _lum(h):
+    c = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in _rgb(h)]
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+
+
+def _cr(a, b):
+    x, y = sorted((_lum(a), _lum(b)), reverse=True)
+    return (x + 0.05) / (y + 0.05)
+
+
+def _hue(h):
+    return _cs.rgb_to_hls(*_rgb(h))[0] * 360
+
+
+def _hd(a, b):
+    d = abs(a - b) % 360
+    return min(d, 360 - d)
+
+
+def _fit(hex_color, kind, card, floor=3.2):
+    """Сдвигает светлоту до контраста с карточкой >= floor, не меняя тон и насыщенность."""
+    h, l, s = _cs.rgb_to_hls(*_rgb(hex_color))
+    step = 0.02 if kind == 'dark' else -0.02
+    for _ in range(45):
+        c = _hex(_cs.hls_to_rgb(h, l, s))
+        if _cr(c, card) >= floor:
+            return c
+        l = max(0.0, min(1.0, l + step))
+    return _hex(_cs.hls_to_rgb(h, l, s))
+
+
+# Сдвиг светлоты по тону: соседние по кругу оттенки (янтарь/лайм/зелёный, циан/синий) иначе сливаются на светлых темах.
+_L_SHIFT = {85: 0.10, 40: -0.03, 185: 0.05, 150: -0.04, 125: 0.08, 60: 0.08}
+
+
+def _tone(hue, kind, card):
+    s, l = (0.78, 0.64) if kind == 'dark' else (0.72, 0.40)
+    l += _L_SHIFT.get(hue, 0) * (1 if kind == 'dark' else 1.2)
+    return _fit(_hex(_cs.hls_to_rgb(hue / 360, l, s)), kind, card)
+
+
+def _mix(a, b, t):
+    ra, rb = _rgb(a), _rgb(b)
+    return _hex([ra[i] * (1 - t) + rb[i] * t for i in range(3)])
+
+
+def chart_palette(key):
+    """-> {'c': [8 hex], 'none': hex, 'other': hex} для темы key."""
+    kind, _, _, v = P[key]
+    card, acc = v['card'], v['accent']
+    ah = _hue(acc)
+    tones = []
+    for gap in (28, 20, 12):  # сначала строгий зазор по тону, при нехватке цветов — мягче (всегда нужно ровно 7 + акцент)
+        for h in _HUES + _RESERVE:
+            if len(tones) < 7 and h not in tones and _hd(h, ah) >= gap and all(_hd(h, t) >= gap for t in tones):
+                tones.append(h)
+    cols = [_fit(acc, kind, card)] + [_tone(h, kind, card) for h in tones]
+    # «без особенности» и «остальные» — нейтральные серые (не оттенки темы, чтобы не путались с цветными особенностями)
+    none = _fit('#9aa0a6' if kind == 'dark' else '#6b7280', kind, card, 3.2)
+    other = _fit(_mix(none, '#000000' if kind == 'dark' else '#ffffff', 0.4), kind, card, 3.0)
+    return {'c': cols, 'none': none, 'other': other}

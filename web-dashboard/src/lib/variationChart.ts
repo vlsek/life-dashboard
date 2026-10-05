@@ -10,10 +10,16 @@ export interface VariationShare {
   reps: number
 }
 
-// Различимые цвета (синий — первая особенность, красный — вторая, как в примере владельца); читаются на светлых и тёмных темах.
-export const VARIATION_PALETTE: readonly string[] = ['#3b82f6', '#ef4444', '#f59e0b', '#10b981', '#a855f7', '#06b6d4', '#ec4899', '#84cc16']
-export const NONE_COLOR = '#9aa0a6' // подходы без особенности
-export const OTHER_COLOR = '#6b7280' // особенностей больше, чем цветов в палитре — хвост
+// Цвета особенностей зависят от темы оформления (BACKLOG 13:55): каждая тема задаёт токены --chart-1…--chart-8, --chart-none и
+// --chart-other (scripts/themes_data.py -> style.css; первая особенность — акцент темы, остальные различимы между собой и
+// читаются на карточке темы, контраст >= 3:1). Здесь отдаём `var(--chart-N, <запасной hex>)`: смена темы перекрашивает графики сразу,
+// а вне темы (тесты, нестандартная страница) работает запасная палитра. var() в атрибутах fill/stroke SVG и в style браузеры понимают.
+export const VARIATION_PALETTE: readonly string[] = ['#3b82f6', '#ef4444', '#f59e0b', '#10b981', '#a855f7', '#06b6d4', '#ec4899', '#84cc16'] // запасные значения
+export const NONE_FALLBACK = '#9aa0a6' // подходы без особенности
+export const OTHER_FALLBACK = '#6b7280' // особенностей больше, чем цветов в палитре — хвост
+export const chartVar = (index: number): string => `var(--chart-${index + 1}, ${VARIATION_PALETTE[index]})`
+export const NONE_COLOR = `var(--chart-none, ${NONE_FALLBACK})`
+export const OTHER_COLOR = `var(--chart-other, ${OTHER_FALLBACK})`
 
 // Название особенности как ключ: пробелы по краям не различают, пусто = «без особенности».
 export function normalizeVariation(v: string | null | undefined): string | null {
@@ -62,7 +68,7 @@ export function colorFor(label: string | null, order: readonly string[]): string
   if (label === null) return NONE_COLOR
   const i = order.indexOf(label)
   if (i === -1) return OTHER_COLOR
-  return i < VARIATION_PALETTE.length ? VARIATION_PALETTE[i] : OTHER_COLOR
+  return i < VARIATION_PALETTE.length ? chartVar(i) : OTHER_COLOR
 }
 
 export interface LegendItem {

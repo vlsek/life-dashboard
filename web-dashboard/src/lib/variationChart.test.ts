@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  NONE_COLOR, OTHER_COLOR, VARIATION_PALETTE, buildLegend, colorFor, dayShares, describeShares, escapeXml, hasNamedVariations, normalizeVariation, pieSlices, variationMaxima, variationOrder,
+  NONE_COLOR, OTHER_COLOR, buildLegend, chartVar, colorFor, dayShares, describeShares, escapeXml, hasNamedVariations, normalizeVariation, pieSlices, variationMaxima, variationOrder,
 } from './variationChart'
 
 const set = (reps: number | null, variation: string | null) => ({ reps, variation, time: null })
@@ -44,16 +44,16 @@ describe('variationOrder / colorFor', () => {
     const after = variationOrder([...days, { date: '2026-10-01', value: [set(5, 'new one')] }])
     expect(after.slice(0, before.length)).toEqual(before)
     expect(colorFor('classic', after)).toBe(colorFor('classic', before))
-    expect(colorFor('new one', after)).toBe(VARIATION_PALETTE[3])
+    expect(colorFor('new one', after)).toBe(chartVar(3))
   })
   it('first is blue and second red; none is grey; unknown or overflowing ones are "other"', () => {
     const order = ['a', 'b']
-    expect(colorFor('a', order)).toBe('#3b82f6')
-    expect(colorFor('b', order)).toBe('#ef4444')
+    expect(colorFor('a', order)).toBe(chartVar(0))
+    expect(colorFor('b', order)).toBe(chartVar(1))
     expect(colorFor(null, order)).toBe(NONE_COLOR)
     expect(colorFor('missing', order)).toBe(OTHER_COLOR)
     const many = Array.from({ length: 10 }, (_, i) => 'v' + i)
-    expect(colorFor('v7', many)).toBe(VARIATION_PALETTE[7])
+    expect(colorFor('v7', many)).toBe(chartVar(7))
     expect(colorFor('v8', many)).toBe(OTHER_COLOR)
   })
   it('ignores sets without reps when building the order', () => {
@@ -65,7 +65,7 @@ describe('pieSlices', () => {
   const order = ['a', 'b', 'c']
   it('one variation is a solid circle of its colour', () => {
     const s = pieSlices([{ label: 'a', reps: 100 }], order, 10, 10, 6)
-    expect(s).toEqual([{ color: '#3b82f6', label: 'a', reps: 100, full: true, path: '' }])
+    expect(s).toEqual([{ color: chartVar(0), label: 'a', reps: 100, full: true, path: '' }])
   })
   it('several variations are sectors proportional to reps and start from the top', () => {
     const s = pieSlices([{ label: 'a', reps: 50 }, { label: 'b', reps: 30 }, { label: 'c', reps: 20 }], order, 0, 0, 10)
@@ -73,7 +73,7 @@ describe('pieSlices', () => {
     expect(s.every((x) => !x.full)).toBe(true)
     expect(s[0].path.startsWith('M0 0 L0 -10 A10 10 0 0 1')).toBe(true) // старт сверху
     expect(s[0].path).toContain('0 0 1 ') // 50 % — ровно полукруг: large-arc = 0
-    expect(s.map((x) => x.color)).toEqual(['#3b82f6', '#ef4444', '#f59e0b'])
+    expect(s.map((x) => x.color)).toEqual([chartVar(0), chartVar(1), chartVar(2)])
   })
   it('a sector over half of the circle uses the large-arc flag', () => {
     const s = pieSlices([{ label: 'a', reps: 70 }, { label: 'b', reps: 30 }], order, 0, 0, 10)
@@ -101,8 +101,8 @@ describe('legend and tooltip', () => {
   ]
   it('sums reps per variation over the visible points, stable order, "no variation" last', () => {
     expect(buildLegend(points, order)).toEqual([
-      { label: 'classic', color: '#3b82f6', reps: 60, today: 0 },
-      { label: 'diamond', color: '#ef4444', reps: 30, today: 0 },
+      { label: 'classic', color: chartVar(0), reps: 60, today: 0 },
+      { label: 'diamond', color: chartVar(1), reps: 30, today: 0 },
       { label: null, color: NONE_COLOR, reps: 5, today: 0 },
     ])
   })

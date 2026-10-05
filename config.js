@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.11";
+const SITE_VERSION = "3.12";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.12", date: "2026-10-05 11:21", changes: [
+        "Графики метрик с подходами: цвета особенностей теперь зависят от темы оформления. У каждой из 11 тем своя палитра из восьми цветов: первая особенность — оттенок акцента темы, остальные подобраны так, чтобы различаться между собой (в том числе для дальтоников) и хорошо читаться на карточке именно этой темы; «без особенности» и «остальные» — нейтральные серые. При смене темы цвета на графиках и в легенде меняются сразу, а у конкретной особенности цвет по-прежнему не прыгает между днями",
+    ]},
     { version: "3.11", date: "2026-10-05 10:56", changes: [
         "Цели: категорию теперь не нужно каждый раз печатать — в форме цели есть список ваших категорий (самые частые сверху), пункт «Без категории» и «+ Новая категория…». Список собирается из ваших целей, в том числе выполненных, так что всё, что вы вводили раньше, уже в нём",
     ]},
@@ -1540,6 +1543,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.12", date: "2026-10-05 11:21", changes: [
+        "Charts of set metrics: variation colours now follow the colour theme. Each of the 11 themes has its own palette of eight colours: the first variation is a shade of the theme accent, the rest are picked to stay apart from each other (also for colour-blind people) and to read well on that theme's card; no variation and other are neutral greys. Switching the theme recolours the charts and the legend at once, while a given variation keeps its colour across days",
+    ]},
     { version: "3.11", date: "2026-10-05 10:56", changes: [
         "Goals: you no longer have to type a category each time — the goal form has a list of your categories (most used first), a \"No category\" item and \"+ New category…\". The list is built from your goals, including completed ones, so everything you typed before is already in it",
     ]},
