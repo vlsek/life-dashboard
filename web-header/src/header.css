@@ -68,12 +68,15 @@ html.theme-solarlight .gh-root {
 
 /* Анимация «записалось» (вынесена из WaterSavedAnim.vue: scoped-стили отдельным css-файлом не подгрузились бы) */
 .water-saved {
-  position: absolute;
+  /* fixed, а не absolute внутри окна: окно воды выше 85vh и прокручивается — абсолютный оверлей оставался наверху прокручиваемой области,
+     и при нажатии «+200 / +1000» ниже по окну стакан с анимацией был за пределами видимого (BACKLOG раздел 30, 🐞). По центру экрана виден всегда. */
+  position: fixed;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 5;
+  z-index: 2100; /* выше затемнения окон шапки (.gh-backdrop — 2000) */
+  pointer-events: none; /* не перехватывает нажатия: класс pointer-events-none из Tailwind в бандле шапки не существует */
 }
 .water-saved svg {
   filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.25));

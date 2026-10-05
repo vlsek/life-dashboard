@@ -41,12 +41,15 @@ const GLASS = 'M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3.2L4.6 5
 
 <style scoped>
 .water-saved {
-  position: absolute;
+  /* fixed, а не absolute внутри окна: окно воды выше 85vh и прокручивается — абсолютный оверлей оставался наверху прокручиваемой области,
+     и при нажатии «+200 / +1000» ниже по окну стакан с анимацией был за пределами видимого (BACKLOG раздел 30, 🐞). По центру экрана виден всегда. */
+  position: fixed;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 5;
+  z-index: 70; /* выше затемнения окна (.modal-backdrop — 50) */
+  pointer-events: none; /* не перехватывает нажатия, пока играет */
 }
 .water-saved svg {
   filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.25));
@@ -80,6 +83,10 @@ const GLASS = 'M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3.2L4.6 5
 @keyframes water-saved-draw {
   to { stroke-dashoffset: 0; }
 }
+/* «Отключить все анимации» (<html data-motion="off">, style.css гасит все animation): без этого вода стояла бы полной, а галочка так и
+   оставалась невидимой (она «рисуется» именно анимацией) — как и в шапке (header.css), показываем итоговое состояние сразу */
+html[data-motion='off'] .water-saved-fill { transform: translateY(12%); }
+html[data-motion='off'] .water-saved-check { stroke-dashoffset: 0; }
 @media (prefers-reduced-motion: reduce) {
   .water-saved-fill { animation: none; transform: translateY(12%); }
   .water-saved-check { animation: none; stroke-dashoffset: 0; }
