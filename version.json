@@ -1,6 +1,13 @@
 {
-  "version": "3.09",
+  "version": "3.10",
   "en": [
+    {
+      "version": "3.10",
+      "date": "2026-10-05 10:48",
+      "changes": [
+        "Profile: the number of earned coins now changes right away when you tick a metric, add water or do a set — no page refresh needed. A second or two later it is checked against the database and corrected if needed"
+      ]
+    },
     {
       "version": "3.09",
       "date": "2026-10-05 10:36",
@@ -2227,6 +2234,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.10",
+      "date": "2026-10-05 10:48",
+      "changes": [
+        "Профиль: число заработанных монет теперь меняется сразу, как только вы отметили метрику, добавили воду или сделали подход, — без обновления страницы. Через секунду-другую оно сверяется с базой и при необходимости уточняется"
+      ]
+    },
     {
       "version": "3.09",
       "date": "2026-10-05 10:36",
