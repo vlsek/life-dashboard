@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.07";
+const SITE_VERSION = "3.08";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.08", date: "2026-10-05 01:55", changes: [
+        "Подходы: подсказка в поле «особенность» сокращена до «Особенность» (раньше «особенность (необязательно) — напр. положение рук» не влезала в поле). В английской версии — «Variation». Миграция не нужна."
+    ]},
     { version: "3.07", date: "2026-10-05 01:30", changes: [
         "Достижения: категории теперь по умолчанию свёрнуты — видны названия и счётчики «получено / всего», общий счётчик сверху остался. Нажмите на категорию, чтобы развернуть, ещё раз — свернуть. Раскрытое не запоминается: при следующем заходе снова свёрнуто. Миграция не нужна."
     ]},
@@ -1528,6 +1531,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.08", date: "2026-10-05 01:55", changes: [
+        "Sets: the hint in the variation field is shortened to \"Variation\" (it used to read \"variation (optional) - e.g. hand position\" and did not fit the field). Russian version: \"Особенность\". No migration needed."
+    ]},
     { version: "3.07", date: "2026-10-05 01:30", changes: [
         "Achievements: categories are now collapsed by default - you see the names and the \"earned / total\" counters, the overall counter on top stays. Tap a category to expand it, tap again to collapse. What you expand is not remembered: next time it is collapsed again. No migration needed."
     ]},

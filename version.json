@@ -1,6 +1,13 @@
 {
-  "version": "3.07",
+  "version": "3.08",
   "en": [
+    {
+      "version": "3.08",
+      "date": "2026-10-05 01:55",
+      "changes": [
+        "Sets: the hint in the variation field is shortened to \"Variation\" (it used to read \"variation (optional) - e.g. hand position\" and did not fit the field). Russian version: \"Особенность\". No migration needed."
+      ]
+    },
     {
       "version": "3.07",
       "date": "2026-10-05 01:30",
@@ -2213,6 +2220,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.08",
+      "date": "2026-10-05 01:55",
+      "changes": [
+        "Подходы: подсказка в поле «особенность» сокращена до «Особенность» (раньше «особенность (необязательно) — напр. положение рук» не влезала в поле). В английской версии — «Variation». Миграция не нужна."
+      ]
+    },
     {
       "version": "3.07",
       "date": "2026-10-05 01:30",

@@ -175,3 +175,18 @@ describe('VariationCombo', () => {
     w.unmount()
   })
 })
+
+describe('подсказка в поле «особенность» (BACKLOG 38)', () => {
+  it('короткая: RU «Особенность», EN «Variation» — без «необязательно» и примера, чтобы влезала в поле', () => {
+    for (const [lang, expected] of [['ru', 'Особенность'], ['en', 'Variation']] as const) {
+      localStorage.setItem('site_lang', lang)
+      const w = mount(VariationCombo, { props: { modelValue: null, labels: ['Wide grip'] } })
+      const ph = w.find('input').attributes('placeholder')
+      expect(ph).toBe(expected)
+      expect(ph).not.toMatch(/необязательно|optional|напр|e\.g\./i)
+      w.unmount()
+    }
+    localStorage.setItem('site_lang', 'ru')
+  })
+})
+
