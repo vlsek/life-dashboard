@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.21";
+const SITE_VERSION = "3.22";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.22", date: "2026-10-06 02:12", changes: [
+        "Дашборд: больше нет системных окон браузера. Удаление метрики и параметра тела теперь спрашивает окно в стиле сайта. Название новой категории метрики вводится в поле прямо в форме метрики (если категорию создать не получилось, метрика не сохраняется и показана ошибка, а не молча без категории). «Поправить итог» у метрики-счётчика открывает поле в самой карточке: Enter сохраняет, Esc закрывает",
+    ]},
     { version: "3.21", date: "2026-10-05 15:50", changes: [
         "Дашборд: настройки метрик теперь значком-шестерёнкой справа от заголовка «Ежедневные метрики» — нажмите, чтобы добавить, изменить или убрать метрику. Отдельная кнопка «Метрики дня» над блоком убрана; ручка перетаскивания блока стоит рядом с шестерёнкой, как у остальных блоков. Миграция не нужна."
     ]},
@@ -1570,6 +1573,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.22", date: "2026-10-06 02:12", changes: [
+        "Dashboard: no more system browser dialogs. Deleting a metric or a body parameter now asks with a window in the site style. The name of a new metric category is typed in a field right in the metric form (if the category cannot be created, the metric is not saved and an error is shown instead of silently saving it without a category). \"Fix the total\" on a counter metric opens a field in the card itself: Enter saves, Esc closes",
+    ]},
     { version: "3.21", date: "2026-10-05 15:50", changes: [
         "Dashboard: metric settings are now a gear icon to the right of the \"Daily metrics\" heading - tap it to add, edit or remove a metric. The separate \"Daily metrics\" button above the block is gone; the block drag handle sits next to the gear, like on the other blocks. No migration needed."
     ]},
