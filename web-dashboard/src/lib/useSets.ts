@@ -16,6 +16,15 @@ export function useSets() {
   const setsByMetric = ref<Record<string, SetRow[]>>({})
   const error = ref<string | null>(null)
   const loaded = ref(false)
+  // «значение сохранено» (BACKLOG 780/815): id метрики на ~0,9 с после ПОДТВЕРЖДЁННОЙ записи подходов
+  const flashed = ref<Record<string, boolean>>({})
+  function flash(id: string) {
+    flashed.value = { ...flashed.value, [id]: true }
+    setTimeout(() => {
+      const { [id]: _drop, ...rest } = flashed.value
+      flashed.value = rest
+    }, 900)
+  }
   let userId = ''
   let date = ''
 
@@ -65,6 +74,7 @@ export function useSets() {
     if (err) error.value = t('dash_metric_save_error') + m.name + '»: ' + friendlyError(err)
     else {
       error.value = null
+      flash(m.id)
       // подход засчитывается в «идеальный день»/кольца — пересчитать стрики; в графике точка = сумма повторений
       notifyDataChanged({ source: 'sets', metricId: m.id, date, value: sets.reduce((sum, s) => sum + (s?.reps || 0), 0) })
       emitPointsFloat(pointsDelta(m, before as unknown as MetricValue, sets as unknown as MetricValue, date || undefined)) // BACKLOG 14, 11:11
@@ -93,5 +103,5 @@ export function useSets() {
     patchMetric(m.id, options)
   }
 
-  return { metrics, setsByMetric, error, loaded, load, saveSets, rememberVariation, forgetVariation }
+  return { metrics, setsByMetric, error, loaded, flashed, load, saveSets, rememberVariation, forgetVariation }
 }

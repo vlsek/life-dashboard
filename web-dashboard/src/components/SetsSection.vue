@@ -12,7 +12,7 @@ import type { RecordInfo } from '../lib/records'
 // добавит блок 6 (дневные метрики), передав сюда date.
 const props = withDefaults(defineProps<{ userId: string | null; date?: string; metricStreaks?: Record<string, MetricStreakInfo>; records?: Record<string, RecordInfo> }>(), { date: () => todayStr() })
 
-const { metrics, setsByMetric, error, loaded, load, saveSets, rememberVariation, forgetVariation } = useSets()
+const { metrics, setsByMetric, error, loaded, flashed, load, saveSets, rememberVariation, forgetVariation } = useSets()
 
 watch(
   () => [props.userId, props.date] as const,
@@ -33,6 +33,7 @@ watch(
       :sets="setsByMetric[m.id] || []"
       :streak="props.metricStreaks?.[m.id]"
       :record="props.records?.[m.id]"
+      :saved="!!flashed[m.id]"
       @change="saveSets(m, $event)"
       @remember="rememberVariation(m, $event)"
       @forget="forgetVariation(m, $event)"

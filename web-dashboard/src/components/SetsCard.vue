@@ -9,6 +9,7 @@ import type { MetricStreakInfo } from '../lib/metricStreaks'
 import RecordBadge from './RecordBadge.vue'
 import type { RecordInfo } from '../lib/records'
 import CollapseChevron from './CollapseChevron.vue'
+import SavedTick from './SavedTick.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import { t } from '../lib/i18n'
 import { newSet, parseReps, parseTime, parseVariation, removeSet, setsSummary, updateSet, variationLabels } from '../lib/setsBlock'
@@ -17,7 +18,8 @@ import type { Metric } from '../lib/types'
 
 // Портировано из renderSetsMetric() в dashboard.js. Презентационный компонент: сам ничего не
 // сохраняет, а на каждую правку отдаёт новый список подходов через change (родитель пишет в БД).
-const props = defineProps<{ metric: Metric; sets: SetRow[]; streak?: MetricStreakInfo | null; record?: RecordInfo | null }>()
+// saved — подходы только что записаны (подтверждённая запись): вспышка рамки карточки и галочка рядом с кнопкой сворачивания (BACKLOG 780/815)
+const props = defineProps<{ metric: Metric; sets: SetRow[]; streak?: MetricStreakInfo | null; record?: RecordInfo | null; saved?: boolean }>()
 const emit = defineEmits<{
   change: [sets: SetRow[]]
   remember: [text: string]
@@ -46,7 +48,8 @@ function onVariation(i: number, text: string) {
 </script>
 
 <template>
-  <div class="card mb-3.5" :data-metric-id="metric.id">
+  <div class="card relative mb-3.5" :class="{ 'sets-saved': saved }" :data-metric-id="metric.id">
+    <SavedTick :show="!!saved" class="sets-tick" />
     <div class="flex items-center gap-2">
       <strong><MetricIcon :icon="metric.icon" /> {{ metric.name }}</strong><MetricStreakBadge v-if="streak" :info="streak" />
       <button type="button" class="secondary ml-auto" style="padding: 4px 8px; line-height: 0" :aria-expanded="open" :title="open ? t('dash_collapse_btn') : t('dash_expand_btn')" data-test="sets-toggle" @click="open = !open"><CollapseChevron :collapsed="!open" /></button>
@@ -84,3 +87,18 @@ function onVariation(i: number, text: string) {
     </div>
   </div>
 </template>
+
+<style scoped>
+/* галочка — левее кнопки сворачивания, чтобы не закрывать её */
+.card .sets-tick { top: 14px; right: 52px; }
+.sets-saved { animation: sets-saved 0.9s ease-out; }
+@keyframes sets-saved {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--success) 55%, transparent); border-color: var(--success); }
+  60% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--success) 0%, transparent); border-color: var(--success); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sets-saved { animation: none; border-color: var(--success); }
+}
+:global(html[data-motion='off']) .sets-saved { animation: none; border-color: var(--success); }
+</style>

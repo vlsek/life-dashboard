@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.13";
+const SITE_VERSION = "3.14";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.14", date: "2026-10-05 11:45", changes: [
+        "Дашборд, блок «Подходы»: после того как подходы сохранились, карточка метрики коротко вспыхивает мягкой зелёной рамкой, а рядом с кнопкой сворачивания появляется маленькая галочка и гаснет — так же, как в «Ежедневных метриках». Если запись не удалась, галочки не будет. При «уменьшить движение» и выключенных анимациях вспышка не двигается",
+    ]},
     { version: "3.13", date: "2026-10-05 11:29", changes: [
         "Дашборд, «Ежедневные метрики»: после того как значение сохранилось, плашка метрики коротко вспыхивает мягкой зелёной рамкой, а в её углу появляется маленькая галочка и гаснет — так понятно, что внесено. Раньше сигнал был только у числовых полей (зеленела рамка), теперь он есть и у флажков, и у метрик с выбором. Если запись не удалась, галочки не будет. При «уменьшить движение» и выключенных анимациях вспышка не двигается, остаётся статичная зелёная рамка",
     ]},
@@ -1546,6 +1549,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.14", date: "2026-10-05 11:45", changes: [
+        "Dashboard, Sets block: once your sets are saved, the metric card briefly flashes a soft green border and a small check mark appears next to the collapse button and fades, just like in Daily metrics. If saving fails there is no check mark. With reduced motion or animations switched off nothing moves",
+    ]},
     { version: "3.13", date: "2026-10-05 11:29", changes: [
         "Dashboard, Daily metrics: once a value is saved, its plate briefly flashes a soft green border and a small check mark appears in the corner and fades, so you can tell it went through. Before, only number fields gave a signal (the border turned green); now checkboxes and choice metrics do too. If saving fails there is no check mark. With reduced motion or animations switched off nothing moves, you just get a static green border",
     ]},
