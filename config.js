@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.103";
+const SITE_VERSION = "2.104";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.104", date: "2026-10-05 05:01", changes: [
+        "Сообщество, «Друзья»: исправлена подпись «Пока ни на кого не подписан», которая появлялась, хотя подписки и друзья есть. Если профиль друга не удалось прочитать, у него теперь всё равно есть карточка — с именем и аватаром из лидерборда, а при их отсутствии — «Без имени» с крестиком, чтобы убрать. Подпись показывается, только когда подписок и друзей действительно нет",
+    ]},
     { version: "2.103", date: "2026-10-05 05:00", changes: [
         "«Достижения» побуждают пользоваться «Языками»: две новые лесенки по четыре ступени — «Добавлено слов» (10, 25, 50, 100) и «Выучено слов» (10, 25, 50, 100). Слова считаются по всем языкам вместе, «выучено» — по отметке у слова. У каждой ступени есть прогресс-полоска, при открытии — окно-поздравление. Это первый срез: награды за ступени (монетки для «Кастомизации», предметы, а за самую трудную — тема) и такие же лесенки для остальных разделов — следующими шагами, как только владелец подтвердит, какие награды за какие ступени",
     ]},
@@ -1516,6 +1519,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.104", date: "2026-10-05 05:01", changes: [
+        "Community, Friends: fixed the \"Not following anyone yet\" line that appeared even though you have follows and friends. If a friend's profile could not be read, they now still get a card — with the name and avatar from the leaderboard, or \"No name\" with a remove button if those are missing. The line only shows when there really are no follows and friends",
+    ]},
     { version: "2.103", date: "2026-10-05 05:00", changes: [
         "Achievements now encourage using Languages: two new four-step ladders - Words added (10, 25, 50, 100) and Words learned (10, 25, 50, 100). Words are counted across all languages together, learned by the mark on the word. Every step has a progress bar and a congratulation window when it unlocks. This is the first slice: rewards for the steps (coins for Customization, items, and a theme for the hardest) and the same ladders for the other sections come next, once the owner confirms which rewards go to which steps",
     ]},

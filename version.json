@@ -1,6 +1,13 @@
 {
-  "version": "2.103",
+  "version": "2.104",
   "en": [
+    {
+      "version": "2.104",
+      "date": "2026-10-05 05:01",
+      "changes": [
+        "Community, Friends: fixed the \"Not following anyone yet\" line that appeared even though you have follows and friends. If a friend's profile could not be read, they now still get a card — with the name and avatar from the leaderboard, or \"No name\" with a remove button if those are missing. The line only shows when there really are no follows and friends"
+      ]
+    },
     {
       "version": "2.103",
       "date": "2026-10-05 05:00",
@@ -2185,6 +2192,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.104",
+      "date": "2026-10-05 05:01",
+      "changes": [
+        "Сообщество, «Друзья»: исправлена подпись «Пока ни на кого не подписан», которая появлялась, хотя подписки и друзья есть. Если профиль друга не удалось прочитать, у него теперь всё равно есть карточка — с именем и аватаром из лидерборда, а при их отсутствии — «Без имени» с крестиком, чтобы убрать. Подпись показывается, только когда подписок и друзей действительно нет"
+      ]
+    },
     {
       "version": "2.103",
       "date": "2026-10-05 05:00",
