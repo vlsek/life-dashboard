@@ -55,6 +55,18 @@ data = {
 assert data["en"] and data["ru"], "parsed changelog is empty — regex likely out of sync with config.js format"
 assert data["en"][0]["version"] == data["version"], "topmost CHANGELOG_EN entry doesn't match SITE_VERSION"
 
+# Формат версии X.YY (BACKLOG, решение владельца 2026-10-05): минор — РОВНО две цифры, после 2.99 идёт 3.00 (НЕ 2.100 и НЕ 3.7).
+# Скрипты бампа должны делать f"{мажор}.{минор + 1:02d}" и при 99 переходить на следующий мажор. Ломается — релиз не собирается.
+VERSION_RE = re.compile(r"^\d+\.\d{2}$")
+def _key(v):
+    a, b = v.split(".")
+    return (int(a), int(b))
+for lang in ("en", "ru"):
+    versions = [e["version"] for e in data[lang]]
+    bad = [v for v in [data["version"]] + versions if not VERSION_RE.match(v)]
+    assert not bad, f"bad version format {sorted(set(bad))}: need X.YY (two-digit minor; after 2.99 comes 3.00, not 2.100)"
+    assert versions == sorted(set(versions), key=_key, reverse=True), f"CHANGELOG_{lang.upper()} versions must be unique and strictly descending (newest on top)"
+
 out = ROOT / "version.json"
 out.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 print(f"wrote {out} — version {data['version']}, {len(data['en'])} EN / {len(data['ru'])} RU entries")
