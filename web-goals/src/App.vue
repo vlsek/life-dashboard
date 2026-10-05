@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import GoalCard from './components/GoalCard.vue'
 import GoalForm from './components/GoalForm.vue'
@@ -7,7 +7,8 @@ import Icon from './components/Icon.vue'
 import PointsFloat from './components/PointsFloat.vue'
 import { useGoals } from './lib/useGoals'
 import { groupActiveByCategory, sortDone, pointsSummary } from './lib/goals'
-import { savedCategories } from './lib/categories'
+import { mergeCategories, savedCategories } from './lib/categories'
+import { useGoalCategories } from './lib/useGoalCategories'
 import { t } from './lib/i18n'
 import type { Goal, GoalFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
@@ -27,7 +28,16 @@ const done = computed(() => sortDone(items.value.filter((g) => g.done)))
 const grouped = computed(() => groupActiveByCategory(active.value, noCategory.value))
 // Свои категории для выбора в форме цели (BACKLOG раздел 35): из ВСЕХ целей, в том числе выполненных; «Без категории» на обоих языках не в счёт.
 const noCategoryLabels = ['Без категории', 'No category', noCategory.value]
-const myCategories = computed(() => savedCategories(items.value, noCategoryLabels))
+// + сохранённый список из таблицы goal_categories (миграция 050): категория не пропадает, когда последнюю цель с ней удалили.
+const goalCats = useGoalCategories()
+watch(
+  () => auth.value.status,
+  (st) => {
+    if (st === 'ready') void goalCats.load((auth.value as { userId: string }).userId)
+  },
+  { immediate: true },
+)
+const myCategories = computed(() => mergeCategories(savedCategories(items.value, noCategoryLabels), goalCats.saved.value, noCategoryLabels))
 const summary = computed(() => pointsSummary(items.value))
 const loadError = computed(() => (error.value ? friendlyError({ message: error.value }) : ''))
 
@@ -51,6 +61,7 @@ async function onSaveForm(res: GoalFormInput) {
   const target = formTarget.value
   if (target === 'new') await addGoal((auth.value as { userId: string }).userId, res, noCategory.value)
   else if (target) await updateGoal(target, res, noCategory.value)
+  void goalCats.ensure(res.category ?? '', noCategoryLabels) // новая категория запоминается в списке; сбой записи цель не задевает
   formTarget.value = null
 }
 

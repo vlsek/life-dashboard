@@ -40,3 +40,29 @@ export function matchCategory(value: string, saved: string[], noCategoryLabels: 
   if (!key || noCategoryLabels.some((l) => categoryKey(l) === key)) return ''
   return saved.find((s) => categoryKey(s) === key) ?? null
 }
+
+// Итоговый список для выбора в форме цели (миграция 050, BACKLOG раздел 35): сначала категории, которыми человек пользуется
+// (из целей, частые сверху — `derived`), затем сохранённые, у которых сейчас нет ни одной цели (`stored`, в порядке списка).
+// Одинаковые без учёта регистра и пробелов не повторяются; «Без категории» не попадает.
+export function mergeCategories(derived: string[], stored: string[], noCategoryLabels: string[] = []): string[] {
+  const skip = new Set(noCategoryLabels.map(categoryKey).filter(Boolean))
+  const seen = new Set<string>()
+  const out: string[] = []
+  for (const name of [...derived, ...stored]) {
+    const clean = (name ?? '').trim().replace(/\s+/g, ' ')
+    const key = categoryKey(clean)
+    if (!key || skip.has(key) || seen.has(key)) continue
+    seen.add(key)
+    out.push(clean)
+  }
+  return out
+}
+
+// Нужно ли записать категорию в сохранённый список: непустая, не «Без категории» и ещё не записана (без учёта регистра).
+export function needsSaving(name: string, stored: string[], noCategoryLabels: string[] = []): boolean {
+  const key = categoryKey(name)
+  if (!key || key.length > 40) return false
+  if (noCategoryLabels.some((l) => categoryKey(l) === key)) return false
+  return !stored.some((s) => categoryKey(s) === key)
+}
+
