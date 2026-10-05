@@ -94,7 +94,8 @@ describe('одинаково во всех пилотах', () => {
     expect(ts).toBe(read('web-dashboard/src/lib/theme.ts'))
     expect(region(read(`${dir}/src/style.css`))).toBe(region(css))
     const i18n = read(`${dir}/src/lib/i18n.ts`)
-    for (const k of NEW) expect(i18n.match(new RegExp(`theme_${k}:`, 'g')), `${dir} theme_${k}`).toHaveLength(2)
+    // (?<![A-Za-z0-9_]) — ключ считается целиком: иначе «ach_reward_theme_mint:» (награды-темы в достижениях) засчитывается как «theme_mint:»
+    for (const k of NEW) expect(i18n.match(new RegExp(`(?<![A-Za-z0-9_])theme_${k}:`, 'g')), `${dir} theme_${k}`).toHaveLength(2)
     const html = read(`${dir}/index.html`)
     for (const k of KEYS) {
       expect(html, `${dir} bg ${k}`).toMatch(new RegExp(`var bg = \\{[^}]*\\b${k}: '#`))
@@ -118,7 +119,7 @@ describe('шапка и общий сайт', () => {
       expect(hcss, k).toMatch(new RegExp(`html\\.theme-${k} \\.gh-root[,\\s][^}]*--water-gold`))
     }
     const hi18n = read('web-header/src/lib/i18n.ts')
-    for (const k of NEW) expect(hi18n.match(new RegExp(`theme_${k}:`, 'g')), k).toHaveLength(2)
+    for (const k of NEW) expect(hi18n.match(new RegExp(`(?<![A-Za-z0-9_])theme_${k}:`, 'g')), k).toHaveLength(2)
   })
 
   it('общий сайт: ключи в theme.js и подписи в i18n.js, блоки в корневом style.css', () => {
@@ -128,7 +129,7 @@ describe('шапка и общий сайт', () => {
     for (const k of NEW) {
       expect(js, k).toContain(`${k}: "theme_${k}"`)
       expect(js, k).toContain(`${k}: "${vars(k)['bg']}"`)
-      expect(rootI18n.match(new RegExp(`theme_${k}:`, 'g')), k).toHaveLength(2)
+      expect(rootI18n.match(new RegExp(`(?<![A-Za-z0-9_])theme_${k}:`, 'g')), k).toHaveLength(2)
       expect(rootCss, k).toContain(`html.theme-${k} {`)
     }
   })

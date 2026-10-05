@@ -6,7 +6,6 @@ import StreakFlame from './components/StreakFlame.vue'
 import MetricIcon from './components/MetricIcon.vue'
 import WaterSection from './components/WaterSection.vue'
 import ChartsSection from './components/ChartsSection.vue'
-import MetricsManagerSection from './components/MetricsManagerSection.vue'
 import HeaderProgressBadge from './components/HeaderProgressBadge.vue'
 import { dayRingTarget, weekRingTarget } from './lib/ringPlacement'
 import type { RingData } from './lib/ringPlacement'
@@ -243,11 +242,11 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
             </template>
 
             <template v-else-if="item.key === 'daily'">
-              <div class="mb-4 flex flex-wrap items-center gap-2">
-                <MetricsManagerSection :user-id="auth.userId" @changed="init" />
-                <BlockDragHandle class="ml-auto" :block-key="'daily'" @down="dragDown" @move="dragMove" @up="dragUp" @cancel="dragCancel" @key="dragKey" v-if="visibleBlockCount > 1" />
-              </div>
-              <DailyMetricsSection :user-id="auth.userId" :metric-streaks="metricStreaks" />
+              <DailyMetricsSection :user-id="auth.userId" :metric-streaks="metricStreaks" @metrics-changed="init">
+                <template v-if="visibleBlockCount > 1" #actions>
+                  <BlockDragHandle :block-key="'daily'" @down="dragDown" @move="dragMove" @up="dragUp" @cancel="dragCancel" @key="dragKey" />
+                </template>
+              </DailyMetricsSection>
             </template>
 
             <template v-else-if="item.key === 'widgets'">

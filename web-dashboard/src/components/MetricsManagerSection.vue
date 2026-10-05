@@ -4,13 +4,16 @@ import MetricsManagerModal from './MetricsManagerModal.vue'
 import { useMetricsManager } from '../lib/useMetricsManager'
 import { t } from '../lib/i18n'
 import { withoutWater } from '../lib/metricsManager'
+import { stripEmoji } from '../lib/emojiText'
 import type { MetricFormValues } from '../lib/metricsManager'
 import type { Metric } from '../lib/types'
 import EmojiText from './EmojiText.vue'
+import Icon from './Icon.vue'
 
 // Единственная точка подключения блока «Управление метриками» в App.vue: кнопка + модалка.
 // onChanged — родитель может перечитать данные дашборда после правки метрик.
-const props = defineProps<{ userId: string | null }>()
+// icon — компактная шестерёнка (в заголовке «Ежедневных метрик», BACKLOG 38); без неё — прежняя кнопка с подписью «Метрики дня»
+const props = defineProps<{ userId: string | null; icon?: boolean }>()
 const emit = defineEmits<{ changed: [] }>()
 
 const { metrics, categories, error, load, addMetric, editMetric, deleteMetric } = useMetricsManager(() => emit('changed'))
@@ -39,7 +42,16 @@ async function onEdit(m: Metric, form: MetricFormValues, done: (ok: boolean) => 
 </script>
 
 <template>
-  <button type="button" class="secondary inline-flex items-center gap-1.5" @click="openModal">
+  <button
+    v-if="icon"
+    type="button"
+    class="secondary inline-flex items-center justify-center px-2 py-1"
+    :title="stripEmoji(t('dash_metrics_manager_title'))"
+    :aria-label="stripEmoji(t('dash_metrics_manager_title'))"
+    data-test="metrics-manager-gear"
+    @click="openModal"
+  ><Icon name="gear" /></button>
+  <button v-else type="button" class="secondary inline-flex items-center gap-1.5" @click="openModal">
     <EmojiText :text="t('dash_metrics_manager_title')" />
   </button>
   <MetricsManagerModal

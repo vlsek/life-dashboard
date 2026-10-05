@@ -6,6 +6,7 @@ import NumberMetricField from './NumberMetricField.vue'
 import SetsSection from './SetsSection.vue'
 import PlannedSection from './PlannedSection.vue'
 import SectionHeading from './SectionHeading.vue'
+import MetricsManagerSection from './MetricsManagerSection.vue'
 import SavedTick from './SavedTick.vue'
 import DateStepper from './DateStepper.vue'
 import { vCollapse } from '../lib/collapseMotion'
@@ -33,6 +34,8 @@ const {
 } = useDailyMetrics()
 
 const props = defineProps<{ userId: string | null; metricStreaks?: Record<string, MetricStreakInfo> }>()
+// metricsChanged — после правки списка метрик (шестерёнка в заголовке) родитель перечитывает данные Дашборда
+const emit = defineEmits<{ metricsChanged: [] }>()
 // Рекорды числовых метрик и подходов за всё время (BACKLOG раздел 28) — под названием в плашке; выключаются в «Настроить Дашборд»
 const { records: metricRecords, init: initRecords } = useMetricRecords()
 watch(
@@ -66,7 +69,16 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
 
 <template>
   <section class="mb-5">
-    <SectionHeading v-model:collapsed="collapsed" :title="stripEmoji(t('dash_daily_h2'))" storage-key="daily" />
+    <SectionHeading v-model:collapsed="collapsed" :title="stripEmoji(t('dash_daily_h2'))" storage-key="daily">
+      <!-- BACKLOG 38 (апд37): шестерёнка настроек метрик — справа от заголовка (раньше — отдельная кнопка «Метрики дня» над блоком);
+           за ней — ручка перетаскивания блока, если родитель передал слот -->
+      <template #actions>
+        <span class="flex items-center gap-2">
+          <MetricsManagerSection icon :user-id="userId" @changed="emit('metricsChanged')" />
+          <slot name="actions" />
+        </span>
+      </template>
+    </SectionHeading>
 
     <div v-collapse="!collapsed">
     <DateStepper v-model="date" />

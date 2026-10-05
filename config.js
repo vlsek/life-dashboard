@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.20";
+const SITE_VERSION = "3.21";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.21", date: "2026-10-05 15:50", changes: [
+        "Дашборд: настройки метрик теперь значком-шестерёнкой справа от заголовка «Ежедневные метрики» — нажмите, чтобы добавить, изменить или убрать метрику. Отдельная кнопка «Метрики дня» над блоком убрана; ручка перетаскивания блока стоит рядом с шестерёнкой, как у остальных блоков. Миграция не нужна."
+    ]},
     { version: "3.20", date: "2026-10-05 13:34", changes: [
         "Желания в Магазине: фото теперь загружается надёжнее. Перед отправкой оно уменьшается и сжимается (фото с телефона в несколько мегабайт превращается примерно в 200–500 КБ), при обрыве связи загрузка автоматически повторяется один раз, а если всё же не вышло — вместо «Failed to fetch» с адресом сервера показывается понятная фраза «Нет связи с сервером, проверь интернет». Пока идёт загрузка, видно «Загружаю…»",
     ]},
@@ -1567,6 +1570,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.21", date: "2026-10-05 15:50", changes: [
+        "Dashboard: metric settings are now a gear icon to the right of the \"Daily metrics\" heading - tap it to add, edit or remove a metric. The separate \"Daily metrics\" button above the block is gone; the block drag handle sits next to the gear, like on the other blocks. No migration needed."
+    ]},
     { version: "3.20", date: "2026-10-05 13:34", changes: [
         "Shop wishes: photo upload is now more reliable. Before sending, the photo is downscaled and compressed (a multi-megabyte phone photo becomes roughly 200–500 KB), the upload is retried once automatically if the connection drops, and if it still fails a clear sentence — \"No connection to the server, check your internet\" — is shown instead of \"Failed to fetch\" with the server address. \"Uploading…\" is shown while it works",
     ]},

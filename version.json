@@ -1,6 +1,13 @@
 {
-  "version": "3.20",
+  "version": "3.21",
   "en": [
+    {
+      "version": "3.21",
+      "date": "2026-10-05 15:50",
+      "changes": [
+        "Dashboard: metric settings are now a gear icon to the right of the \"Daily metrics\" heading - tap it to add, edit or remove a metric. The separate \"Daily metrics\" button above the block is gone; the block drag handle sits next to the gear, like on the other blocks. No migration needed."
+      ]
+    },
     {
       "version": "3.20",
       "date": "2026-10-05 13:34",
@@ -2304,6 +2311,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.21",
+      "date": "2026-10-05 15:50",
+      "changes": [
+        "Дашборд: настройки метрик теперь значком-шестерёнкой справа от заголовка «Ежедневные метрики» — нажмите, чтобы добавить, изменить или убрать метрику. Отдельная кнопка «Метрики дня» над блоком убрана; ручка перетаскивания блока стоит рядом с шестерёнкой, как у остальных блоков. Миграция не нужна."
+      ]
+    },
     {
       "version": "3.20",
       "date": "2026-10-05 13:34",
