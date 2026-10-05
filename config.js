@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.17";
+const SITE_VERSION = "3.18";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.18", date: "2026-10-05 12:13", changes: [
+        "Вода: в окне воды (на Дашборде и в шапке) большая кнопка «Отменить последнее добавление» стала компактной иконкой-стрелкой, а широкая кнопка «Сохранить рост» — маленькой иконкой-галочкой рядом с полем. Названия остались в подсказках при наведении и для экранных читалок; работают кнопки как прежде",
+    ]},
     { version: "3.17", date: "2026-10-05 12:06", changes: [
         "Календарь: план, написанный в поле и сохранённый кнопкой «Сохранить», теперь добавляется — раньше он попадал в день только после нажатия «+». Пустое поле по-прежнему ничего не добавляет, «Отмена» ничего не сохраняет",
     ]},
@@ -1558,6 +1561,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.18", date: "2026-10-05 12:13", changes: [
+        "Water: in the water window (on the Dashboard and in the header) the large \"Undo last add\" button is now a compact arrow icon, and the wide \"Save height\" button is a small tick icon next to the field. The names stay in the hover tooltips and for screen readers; the buttons work as before",
+    ]},
     { version: "3.17", date: "2026-10-05 12:06", changes: [
         "Calendar: a plan typed into the field and saved with \"Save\" is now added — it used to land in the day only after pressing \"+\". An empty field still adds nothing and \"Cancel\" saves nothing",
     ]},
