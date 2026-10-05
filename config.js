@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.102";
+const SITE_VERSION = "2.103";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.103", date: "2026-10-05 05:00", changes: [
+        "«Достижения» побуждают пользоваться «Языками»: две новые лесенки по четыре ступени — «Добавлено слов» (10, 25, 50, 100) и «Выучено слов» (10, 25, 50, 100). Слова считаются по всем языкам вместе, «выучено» — по отметке у слова. У каждой ступени есть прогресс-полоска, при открытии — окно-поздравление. Это первый срез: награды за ступени (монетки для «Кастомизации», предметы, а за самую трудную — тема) и такие же лесенки для остальных разделов — следующими шагами, как только владелец подтвердит, какие награды за какие ступени",
+    ]},
     { version: "2.102", date: "2026-10-05 03:51", changes: [
         "Темы переехали в «Кастомизацию»: там все 11 тем с образцом-диаграммой в их цветах, кнопкой «Применить» и сердечком «любимая». Отметьте до 4 любимых — только они остаются в выпадающем списке тем бокового меню (по умолчанию прежние четыре; текущая тема в списке есть всегда). Сам раздел «Кастомизация» теперь в самом низу бокового меню, под чертой, после «Истории»",
     ]},
@@ -1513,6 +1516,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.103", date: "2026-10-05 05:00", changes: [
+        "Achievements now encourage using Languages: two new four-step ladders - Words added (10, 25, 50, 100) and Words learned (10, 25, 50, 100). Words are counted across all languages together, learned by the mark on the word. Every step has a progress bar and a congratulation window when it unlocks. This is the first slice: rewards for the steps (coins for Customization, items, and a theme for the hardest) and the same ladders for the other sections come next, once the owner confirms which rewards go to which steps",
+    ]},
     { version: "2.102", date: "2026-10-05 03:51", changes: [
         "Themes moved into Customization: all 11 themes are there with a mini-chart sample in their colors, an Apply button and a favorite heart. Mark up to 4 favorites: only they stay in the theme dropdown of the side menu (the previous four by default; the current theme is always listed). The Customization section itself now sits at the very bottom of the side menu, below the divider, after History",
     ]},

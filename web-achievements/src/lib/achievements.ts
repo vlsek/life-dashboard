@@ -17,10 +17,12 @@ export type CounterKey =
   | 'workoutDays' // дней, в которые есть хотя бы одна запись тренировки
   | 'challengesDone'
   | 'megaWeeks' // закончено недель больше чем на 100% (пн–вс прошли целиком; см. weekProgress.ts)
+  | 'wordsAdded' // слов в «Языках» (vocabulary): всего добавлено, все языки вместе
+  | 'wordsLearned' // слов в «Языках» с отметкой «выучено» (vocabulary.learned = true)
 
 export type Counters = Record<CounterKey, number>
 
-export type GroupKey = 'streak' | 'points' | 'first' | 'workouts' | 'challenges' | 'goals' | 'books' | 'weeks'
+export type GroupKey = 'streak' | 'points' | 'first' | 'workouts' | 'challenges' | 'goals' | 'books' | 'weeks' | 'words_added' | 'words_learned'
 
 export interface AchievementDef {
   key: string
@@ -31,7 +33,13 @@ export interface AchievementDef {
 }
 
 // Порядок групп на странице.
-export const GROUP_ORDER: readonly GroupKey[] = ['first', 'streak', 'points', 'workouts', 'challenges', 'goals', 'books', 'weeks']
+export const GROUP_ORDER: readonly GroupKey[] = ['first', 'streak', 'points', 'workouts', 'challenges', 'goals', 'books', 'words_added', 'words_learned', 'weeks']
+
+// Лесенка достижений одного раздела: четыре ступени с ключами <префикс>_<порог>. Ключи НЕ менять после релиза (на них ссылаются
+// записи user_achievements и награды «Кастомизации»).
+function makeLadder(prefix: string, group: GroupKey, counter: CounterKey, icon: string, targets: readonly number[]): AchievementDef[] {
+  return targets.map((target) => ({ key: `${prefix}_${target}`, group, counter, target, icon }))
+}
 
 // Стартовый набор (~20), одобрен владельцем 2026-10-03. Пороги серий — как у поздравлений (DAY_THRESHOLDS в web-dashboard).
 export const ACHIEVEMENTS: readonly AchievementDef[] = [
@@ -56,6 +64,11 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   { key: 'books_5', group: 'books', counter: 'booksDone', target: 5, icon: 'book' },
   // «Мега продуктивность» (BACKLOG раздел 32, владелец 2026-10-04): закончить неделю более чем на 100% (нужен бонус ⭐ из плана)
   { key: 'mega_productivity', group: 'weeks', counter: 'megaWeeks', target: 1, icon: 'pulse' },
+  // «Языки» (BACKLOG раздел 37, владелец 2026-10-04): достижения должны побуждать пользоваться ВСЕМИ разделами — у каждого раздела
+  // «лесенка» из 4 ступеней по возрастанию сложности. Пока только значки (награды: монетки / предметы / тема — следующими срезами).
+  // Остальные разделы добавляются «по аналогии»: счётчик в CounterKey + загрузка в useAchievements + одна лесенка makeLadder ниже.
+  ...makeLadder('words', 'words_added', 'wordsAdded', 'english', [10, 25, 50, 100]),
+  ...makeLadder('learned', 'words_learned', 'wordsLearned', 'brain', [10, 25, 50, 100]),
 ]
 
 export interface AchievementState {
@@ -126,6 +139,8 @@ export interface CounterInput {
   workoutDates: string[] // даты записей тренировок (повторы допустимы)
   challengesDone: number
   megaWeeks?: number // считает weekProgress.countMegaWeeks (нужны заметки-планы и цели); не передан — 0
+  wordsAdded?: number // «Языки»: слов добавлено (не передан — 0)
+  wordsLearned?: number // «Языки»: слов выучено (не передан — 0)
   today: Date
 }
 
@@ -194,6 +209,8 @@ export function computeCounters(input: CounterInput): Counters {
     workoutDays: new Set(input.workoutDates).size,
     challengesDone: input.challengesDone,
     megaWeeks: input.megaWeeks ?? 0,
+    wordsAdded: input.wordsAdded ?? 0,
+    wordsLearned: input.wordsLearned ?? 0,
   }
 }
 

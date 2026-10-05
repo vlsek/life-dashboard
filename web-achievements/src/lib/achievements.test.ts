@@ -40,6 +40,8 @@ const ZERO: Counters = {
   workoutDays: 0,
   challengesDone: 0,
   megaWeeks: 0,
+  wordsAdded: 0,
+  wordsLearned: 0,
 }
 
 // 2026-10-05 — понедельник
@@ -48,7 +50,7 @@ const rows = (metricId: string, days: number[], value: unknown = true) => days.m
 
 describe('реестр достижений', () => {
   it('около 20 стартовых, ключи уникальны, группы известны, пороги положительные', () => {
-    expect(ACHIEVEMENTS.length).toBe(20)
+    expect(ACHIEVEMENTS.length).toBe(28)
     expect(new Set(ACHIEVEMENTS.map((a) => a.key)).size).toBe(ACHIEVEMENTS.length)
     for (const a of ACHIEVEMENTS) {
       expect(GROUP_ORDER).toContain(a.group)
@@ -296,6 +298,41 @@ describe('баллы с дробными долями за подходы (ми�
     expect(near.met).toBe(false)
     expect(near.progress).toBeCloseTo(0.999)
     expect(evaluate({ ...ZERO, pointsTotal: 100 }).find((x) => x.def.key === 'points_100')!.met).toBe(true)
+  })
+})
+
+describe('лесенки «Языков» (BACKLOG раздел 37)', () => {
+  const byCounter = (c: string) => ACHIEVEMENTS.filter((a) => a.counter === c)
+
+  it('две лесенки по 4 ступени 10/25/50/100 — «добавлено слов» и «выучено слов», ключи words_N / learned_N', () => {
+    expect(byCounter('wordsAdded').map((a) => [a.key, a.target])).toEqual([['words_10', 10], ['words_25', 25], ['words_50', 50], ['words_100', 100]])
+    expect(byCounter('wordsLearned').map((a) => [a.key, a.target])).toEqual([['learned_10', 10], ['learned_25', 25], ['learned_50', 50], ['learned_100', 100]])
+    expect(byCounter('wordsAdded').every((a) => a.group === 'words_added')).toBe(true)
+    expect(byCounter('wordsLearned').every((a) => a.group === 'words_learned')).toBe(true)
+  })
+
+  it('ступени открываются по порядку: 30 добавленных и 12 выученных → words_10/25 и learned_10; words_50 и learned_25 — нет', () => {
+    const c = computeCounters({ metrics: [], values: [], doneGoals: [], masteredSkills: [], doneBooks: [], weightEntries: 0, workoutDates: [], challengesDone: 0, wordsAdded: 30, wordsLearned: 12, today: new Date('2026-10-12T12:00:00') })
+    expect(c).toMatchObject({ wordsAdded: 30, wordsLearned: 12 })
+    const met = evaluate(c).filter((s) => s.met).map((s) => s.def.key)
+    expect(met).toEqual(expect.arrayContaining(['words_10', 'words_25', 'learned_10']))
+    expect(met).not.toContain('words_50')
+    expect(met).not.toContain('learned_25')
+    const w50 = evaluate(c).find((s) => s.def.key === 'words_50')!
+    expect(w50.progress).toBeCloseTo(0.6)
+  })
+
+  it('без слов (не передано) счётчики равны 0, а выученных не может быть больше добавленных ни в одной ступени сразу', () => {
+    const c = computeCounters({ metrics: [], values: [], doneGoals: [], masteredSkills: [], doneBooks: [], weightEntries: 0, workoutDates: [], challengesDone: 0, today: new Date('2026-10-12T12:00:00') })
+    expect(c).toMatchObject({ wordsAdded: 0, wordsLearned: 0 })
+    expect(evaluate(c).filter((s) => s.def.group.startsWith('words_') && s.met)).toEqual([])
+  })
+
+  it('группы «Языков» стоят после «Книг» и перед «Неделями» (порядок страницы)', () => {
+    const order = [...GROUP_ORDER]
+    expect(order.indexOf('words_added')).toBe(order.indexOf('books') + 1)
+    expect(order.indexOf('words_learned')).toBe(order.indexOf('words_added') + 1)
+    expect(order.indexOf('weeks')).toBeGreaterThan(order.indexOf('words_learned'))
   })
 })
 
