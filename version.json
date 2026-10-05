@@ -1,6 +1,13 @@
 {
-  "version": "3.19",
+  "version": "3.20",
   "en": [
+    {
+      "version": "3.20",
+      "date": "2026-10-05 13:34",
+      "changes": [
+        "Shop wishes: photo upload is now more reliable. Before sending, the photo is downscaled and compressed (a multi-megabyte phone photo becomes roughly 200–500 KB), the upload is retried once automatically if the connection drops, and if it still fails a clear sentence — \"No connection to the server, check your internet\" — is shown instead of \"Failed to fetch\" with the server address. \"Uploading…\" is shown while it works"
+      ]
+    },
     {
       "version": "3.19",
       "date": "2026-10-05 13:29",
@@ -2297,6 +2304,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.20",
+      "date": "2026-10-05 13:34",
+      "changes": [
+        "Желания в Магазине: фото теперь загружается надёжнее. Перед отправкой оно уменьшается и сжимается (фото с телефона в несколько мегабайт превращается примерно в 200–500 КБ), при обрыве связи загрузка автоматически повторяется один раз, а если всё же не вышло — вместо «Failed to fetch» с адресом сервера показывается понятная фраза «Нет связи с сервером, проверь интернет». Пока идёт загрузка, видно «Загружаю…»"
+      ]
+    },
     {
       "version": "3.19",
       "date": "2026-10-05 13:29",

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.19";
+const SITE_VERSION = "3.20";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.20", date: "2026-10-05 13:34", changes: [
+        "Желания в Магазине: фото теперь загружается надёжнее. Перед отправкой оно уменьшается и сжимается (фото с телефона в несколько мегабайт превращается примерно в 200–500 КБ), при обрыве связи загрузка автоматически повторяется один раз, а если всё же не вышло — вместо «Failed to fetch» с адресом сервера показывается понятная фраза «Нет связи с сервером, проверь интернет». Пока идёт загрузка, видно «Загружаю…»",
+    ]},
     { version: "3.19", date: "2026-10-05 13:29", changes: [
         "Понятные сообщения об ошибках на Дашборде: когда что-то не удалось (удаление метрики, сохранение, загрузка, фото), вместо технического текста с адресом сервера теперь короткая фраза — «Нет связи с сервером, проверь интернет», «Это нельзя изменить, пока оно используется», «Не получилось удалить, попробуй ещё раз» и т. п. Подробности остались только в консоли для разработчика",
     ]},
@@ -1564,6 +1567,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.20", date: "2026-10-05 13:34", changes: [
+        "Shop wishes: photo upload is now more reliable. Before sending, the photo is downscaled and compressed (a multi-megabyte phone photo becomes roughly 200–500 KB), the upload is retried once automatically if the connection drops, and if it still fails a clear sentence — \"No connection to the server, check your internet\" — is shown instead of \"Failed to fetch\" with the server address. \"Uploading…\" is shown while it works",
+    ]},
     { version: "3.19", date: "2026-10-05 13:29", changes: [
         "Clear error messages on the Dashboard: when something fails (deleting a metric, saving, loading, uploading a photo), a short plain sentence is shown instead of technical text with the server address — \"No connection to the server, check your internet\", \"This can't be changed while it is in use\", \"Could not delete, please try again\", and so on. Details stay in the developer console only",
     ]},
