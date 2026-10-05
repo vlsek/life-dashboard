@@ -1,6 +1,13 @@
 {
-  "version": "3.10",
+  "version": "3.11",
   "en": [
+    {
+      "version": "3.11",
+      "date": "2026-10-05 10:56",
+      "changes": [
+        "Goals: you no longer have to type a category each time — the goal form has a list of your categories (most used first), a \"No category\" item and \"+ New category…\". The list is built from your goals, including completed ones, so everything you typed before is already in it"
+      ]
+    },
     {
       "version": "3.10",
       "date": "2026-10-05 10:48",
@@ -2234,6 +2241,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.11",
+      "date": "2026-10-05 10:56",
+      "changes": [
+        "Цели: категорию теперь не нужно каждый раз печатать — в форме цели есть список ваших категорий (самые частые сверху), пункт «Без категории» и «+ Новая категория…». Список собирается из ваших целей, в том числе выполненных, так что всё, что вы вводили раньше, уже в нём"
+      ]
+    },
     {
       "version": "3.10",
       "date": "2026-10-05 10:48",

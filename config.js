@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.10";
+const SITE_VERSION = "3.11";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.11", date: "2026-10-05 10:56", changes: [
+        "Цели: категорию теперь не нужно каждый раз печатать — в форме цели есть список ваших категорий (самые частые сверху), пункт «Без категории» и «+ Новая категория…». Список собирается из ваших целей, в том числе выполненных, так что всё, что вы вводили раньше, уже в нём",
+    ]},
     { version: "3.10", date: "2026-10-05 10:48", changes: [
         "Профиль: число заработанных монет теперь меняется сразу, как только вы отметили метрику, добавили воду или сделали подход, — без обновления страницы. Через секунду-другую оно сверяется с базой и при необходимости уточняется",
     ]},
@@ -1537,6 +1540,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.11", date: "2026-10-05 10:56", changes: [
+        "Goals: you no longer have to type a category each time — the goal form has a list of your categories (most used first), a \"No category\" item and \"+ New category…\". The list is built from your goals, including completed ones, so everything you typed before is already in it",
+    ]},
     { version: "3.10", date: "2026-10-05 10:48", changes: [
         "Profile: the number of earned coins now changes right away when you tick a metric, add water or do a set — no page refresh needed. A second or two later it is checked against the database and corrected if needed",
     ]},
