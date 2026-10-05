@@ -11,6 +11,7 @@ import { t } from './lib/i18n'
 import type { Goal, GoalFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
+import { friendlyError } from './lib/friendlyError'
 
 const { auth, items, error, init, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
 onMounted(init)
@@ -24,6 +25,7 @@ const active = computed(() => items.value.filter((g) => !g.done))
 const done = computed(() => sortDone(items.value.filter((g) => g.done)))
 const grouped = computed(() => groupActiveByCategory(active.value, noCategory.value))
 const summary = computed(() => pointsSummary(items.value))
+const loadError = computed(() => (error.value ? friendlyError({ message: error.value }) : ''))
 
 function fmtRu(iso: string | null): string {
   if (!iso) return ''
@@ -40,6 +42,7 @@ const formInitial = computed<GoalFormInput>(() => {
   }
   return { name: '', points: 5, category: '', stages: 1, difficulty: null, deadline: '' }
 })
+// Ошибка записи НЕ глотается здесь: она летит в GoalForm, который покажет понятный текст и оставит форму открытой.
 async function onSaveForm(res: GoalFormInput) {
   const target = formTarget.value
   if (target === 'new') await addGoal((auth.value as { userId: string }).userId, res, noCategory.value)
@@ -60,13 +63,13 @@ async function onDelete(g: Goal) {
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
     <div class="mb-4 flex items-center justify-between">
       <h1 class="text-xl font-semibold"><EmojiText :text="t('goals_h1')" /></h1>
-      <button class="rounded-lg px-3 py-1.5 text-sm" @click="formTarget = 'new'"><EmojiText :text="t('goals_add_btn')" /></button>
+      <button class="rounded-lg px-3 py-1.5 text-sm" data-test="goal-add" @click="formTarget = 'new'"><EmojiText :text="t('goals_add_btn')" /></button>
     </div>
 
     <p v-if="auth.status === 'loading'" class="dim">…</p>
 
     <template v-else-if="auth.status === 'ready'">
-      <p v-if="error" class="dim">{{ t('comm_load_error') }} {{ error }}</p>
+      <p v-if="error" class="dim">{{ t('comm_load_error') }} {{ loadError }}</p>
 
       <template v-else>
         <p v-if="active.length === 0" class="dim">{{ t('goals_no_active') }}</p>
@@ -124,7 +127,7 @@ async function onDelete(g: Goal) {
       </template>
     </template>
 
-    <GoalForm v-if="formTarget" :is-edit="formTarget !== 'new'" :initial="formInitial" @close="formTarget = null" @save="onSaveForm" />
+    <GoalForm v-if="formTarget" :is-edit="formTarget !== 'new'" :initial="formInitial" :submit="onSaveForm" @close="formTarget = null" />
   </main>
 </template>
 
