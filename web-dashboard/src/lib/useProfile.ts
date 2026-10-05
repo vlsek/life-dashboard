@@ -1,10 +1,12 @@
-import { computed, ref } from 'vue'
+import { computed, getCurrentInstance, onBeforeUnmount, ref } from 'vue'
 import { sb } from './supabase'
 import { todayStr } from './date'
 import { t } from './i18n'
 import { fetchAllRows } from './fetchAll'
 import { BODY_PARAMS_CHANGED, BODY_VALUES_CHANGED } from './useCharts'
 import { loadBalance as loadBalanceFor } from './loadBalance'
+import { DATA_CHANGED } from './events'
+import { POINTS_FLOAT, type PointsFloatDetail } from './pointsFloat'
 import { avatarPath, paramStats, validateBirthdate, type BodyParam, type BodyParamForm, type BodyValue, type ProfileRow } from './profile'
 
 import { friendlyError } from './friendlyError'
@@ -49,9 +51,60 @@ export function useProfile() {
     else error.value = res.error
   }
 
+  // BACKLOG раздел 35 «Профиль: заработанные монеты — сразу, без обновления страницы». Баланс в блоке «Профиль» раньше считался один раз
+  // при загрузке. Теперь: (1) МГНОВЕННО — событие «+N / −N баллов» (то же, что рисует анимацию с монетой) сразу меняет число; дробные
+  // баллы считаются в десятых долях, без «0,30000000000000004»; (2) через RECONCILE_MS после последнего изменения данных (DATA_CHANGED —
+  // вода, подходы, правка из графика, план) баланс пересчитывается по базе и заменяет «оценку»: ошибка округления или чужая правка не
+  // копятся. Устаревший ответ (пришёл после более нового запроса) отбрасывается.
+  const RECONCILE_MS = 1200
+  let reconcileTimer: ReturnType<typeof setTimeout> | null = null
+  let balanceSeq = 0
+  let listening = false
+
+  function onPoints(e: Event) {
+    const delta = (e as CustomEvent<PointsFloatDetail>).detail?.delta
+    if (typeof delta !== 'number' || !Number.isFinite(delta) || balance.value == null) return
+    balance.value = Math.round((balance.value + delta) * 10) / 10
+  }
+
+  async function reconcile() {
+    if (!userId) return
+    const seq = ++balanceSeq
+    const res = await loadBalanceFor(userId)
+    if (seq !== balanceSeq) return // пока шёл запрос, пришёл новый — этот ответ уже устарел
+    if (res.ok) balance.value = res.balance
+  }
+
+  function onDataChanged() {
+    if (reconcileTimer !== null) clearTimeout(reconcileTimer)
+    reconcileTimer = setTimeout(() => {
+      reconcileTimer = null
+      void reconcile()
+    }, RECONCILE_MS)
+  }
+
+  function stopListening() {
+    if (!listening) return
+    listening = false
+    window.removeEventListener(POINTS_FLOAT, onPoints)
+    window.removeEventListener(DATA_CHANGED, onDataChanged)
+    if (reconcileTimer !== null) clearTimeout(reconcileTimer)
+    reconcileTimer = null
+    balanceSeq++ // ответ, который ещё в пути, больше никому не нужен
+  }
+
+  function startListening() {
+    if (listening) return
+    listening = true
+    window.addEventListener(POINTS_FLOAT, onPoints)
+    window.addEventListener(DATA_CHANGED, onDataChanged)
+    if (getCurrentInstance()) onBeforeUnmount(stopListening)
+  }
+
   async function init(uid: string) {
     userId = uid
     error.value = null
+    startListening()
     // Блок «Профиль» (аватар, возраст, параметры тела) показываем, как только готовы лёгкие данные: баланс считается по ВСЕЙ
     // истории `daily_values` (постранично) и раньше задерживал весь блок (BACKLOG 6 «Оптимизация блоков»). Монета с баллами
     // у блока и так появляется отдельно (`v-if="balance != null"`). Промис init по-прежнему ждёт и баланс — как и раньше.
@@ -142,5 +195,5 @@ export function useProfile() {
     await loadValues()
   }
 
-  return { profile, params, values, stats, balance, loaded, error, init, uploadAvatar, saveBirthdate, addParam, updateParam, deleteParam, saveBodyValue, refreshValues }
+  return { profile, params, values, stats, balance, loaded, error, init, stopListening, uploadAvatar, saveBirthdate, addParam, updateParam, deleteParam, saveBodyValue, refreshValues }
 }
