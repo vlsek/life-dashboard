@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "2.101";
+const SITE_VERSION = "2.102";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "2.102", date: "2026-10-05 03:51", changes: [
+        "Темы переехали в «Кастомизацию»: там все 11 тем с образцом-диаграммой в их цветах, кнопкой «Применить» и сердечком «любимая». Отметьте до 4 любимых — только они остаются в выпадающем списке тем бокового меню (по умолчанию прежние четыре; текущая тема в списке есть всегда). Сам раздел «Кастомизация» теперь в самом низу бокового меню, под чертой, после «Истории»",
+    ]},
     { version: "2.101", date: "2026-10-05 02:08", changes: [
         "Графики подходов: в легенде под графиком рядом с каждым типом подхода (например, «широкий хват») теперь написан «рекорд» — сколько максимум повторений вы сделали в одном подходе этого типа за всё время. Суммы за период и за сегодня остались. Рекорд скрывается тем же выключателем «Показывать рекорды у графиков»",
     ]},
@@ -1510,6 +1513,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "2.102", date: "2026-10-05 03:51", changes: [
+        "Themes moved into Customization: all 11 themes are there with a mini-chart sample in their colors, an Apply button and a favorite heart. Mark up to 4 favorites: only they stay in the theme dropdown of the side menu (the previous four by default; the current theme is always listed). The Customization section itself now sits at the very bottom of the side menu, below the divider, after History",
+    ]},
     { version: "2.101", date: "2026-10-05 02:08", changes: [
         "Sets charts: the legend under a chart now shows a \"record\" next to each set type (for example \"wide grip\") — the most reps you have done in a single set of that type, all time. The totals for the period and for today stay. The record hides with the same \"Show records on charts\" switch",
     ]},

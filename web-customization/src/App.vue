@@ -3,12 +3,19 @@ import { computed, onMounted } from 'vue'
 import AppShell from './components/AppShell.vue'
 import ItemCard from './components/ItemCard.vue'
 import Icon from './components/Icon.vue'
+import ThemeCard from './components/ThemeCard.vue'
+import { useFavoriteThemes } from './lib/useFavoriteThemes'
+import { THEME_KEYS, type ThemeKey } from './lib/theme'
 import { useCustomization } from './lib/useCustomization'
 import { CATEGORY_ORDER, itemsOf } from './lib/customization'
 import { t } from './lib/i18n'
 
 const { auth, balance, apiMissing, loading, error, actionError, busyKey, statusOf, init, buy, choose } = useCustomization()
 onMounted(init)
+
+// Темы: все бесплатные, до 4 «любимых» попадают в выпадающий список тем бокового меню (решение владельца 2026-10-04)
+const themes = useFavoriteThemes()
+const themeKeys = Object.keys(THEME_KEYS) as ThemeKey[]
 
 const sections = computed(() =>
   (['points', 'achievement'] as const).map((source) => ({
@@ -41,6 +48,24 @@ const sections = computed(() =>
 
         <p v-if="apiMissing" class="mb-4 text-sm" style="color: var(--danger)" data-testid="need-migration">{{ t('cust_need_migration') }}</p>
         <p v-if="actionError" class="mb-3 text-sm" style="color: var(--danger)" data-testid="action-error">{{ actionError }}</p>
+
+        <section class="mb-6" data-section="themes">
+          <h2 class="mb-0.5 text-base font-medium">{{ t('cust_sec_themes') }}</h2>
+          <p class="dim mb-1 text-xs">{{ t('cust_sec_themes_hint') }}</p>
+          <p class="dim mb-2 text-xs" data-testid="fav-count">{{ t('cust_theme_fav_count').replace('{n}', String(themes.favorites.value.length)).replace('{max}', String(themes.max)) }}</p>
+          <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr))">
+            <ThemeCard
+              v-for="k in themeKeys"
+              :key="k"
+              :theme-key="k"
+              :active="themes.current.value === k"
+              :favorite="themes.isFavorite(k)"
+              :can-toggle="themes.canToggle(k)"
+              @apply="themes.apply(k)"
+              @toggle-favorite="themes.toggleFavorite(k)"
+            />
+          </div>
+        </section>
 
         <section v-for="s in sections" :key="s.source" class="mb-6" :data-section="s.source">
           <h2 class="mb-0.5 text-base font-medium">{{ s.source === 'points' ? t('cust_sec_points') : t('cust_sec_achievements') }}</h2>

@@ -24,3 +24,7 @@ web-login/node_modules
 web-login/dist
 web-onboarding/node_modules
 web-onboarding/dist
+
+# Python
+__pycache__/
+*.pyc

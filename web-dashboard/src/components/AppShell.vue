@@ -3,7 +3,7 @@ import SplashFlameLive from './splash/SplashFlameLive.vue'
 import ConfirmLogoutModal from './ConfirmLogoutModal.vue'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { getLang, setLang, t, type DictKey } from '../lib/i18n'
-import { getTheme, setTheme, THEME_KEYS, type ThemeKey } from '../lib/theme'
+import { FAVORITE_THEMES_EVENT, getTheme, setTheme, THEME_KEYS, visibleThemes, type ThemeKey } from '../lib/theme'
 import { logout } from '../lib/supabase'
 import { loadVersionInfo } from '../lib/version'
 import Icon from './Icon.vue'
@@ -66,8 +66,10 @@ function readFavorites(): string[] {
 const favorites = ref<string[]>(readFavorites())
 const syncFavorites = () => (favorites.value = readFavorites())
 // Боковое меню (BACKLOG 6.2): основные страницы, затем разделитель и «История» в самом низу (перед «Аккаунтом»)
-const sidebarPages = pages.filter((p) => p.key !== 'history')
-const bottomPages = pages.filter((p) => p.key === 'history')
+// «Кастомизация» — в самом низу меню, под разделителем, после «Истории» (решение владельца 2026-10-04: «в самый низ за черту»)
+const BOTTOM_KEYS = ['history', 'customization']
+const sidebarPages = pages.filter((p) => !BOTTOM_KEYS.includes(p.key))
+const bottomPages = BOTTOM_KEYS.map((k) => pages.find((p) => p.key === k)).filter((p): p is NavPage => !!p)
 const quickPages = computed(() => pages.filter((p) => p.key !== 'dashboard' && favorites.value.includes(p.key)))
 onMounted(() => window.addEventListener('favorites:changed', syncFavorites))
 onUnmounted(() => window.removeEventListener('favorites:changed', syncFavorites))
@@ -114,6 +116,15 @@ function onThemeChange(e: Event) {
   themeVal.value = v
   setTheme(v)
 }
+// Список тем — только любимые (отмечаются в «Кастомизации», максимум 4); активная тема остаётся в списке всегда.
+const favTick = ref(0)
+const themeOptions = computed(() => {
+  void favTick.value
+  return visibleThemes(themeVal.value)
+})
+const syncFavThemes = () => favTick.value++
+onMounted(() => window.addEventListener(FAVORITE_THEMES_EVENT, syncFavThemes))
+onUnmounted(() => window.removeEventListener(FAVORITE_THEMES_EVENT, syncFavThemes))
 const lang = getLang()
 
 // Свайп открытия/закрытия — тот же порог и та же "центральная зона" для открытия,
@@ -319,7 +330,7 @@ onUnmounted(() => {
       :value="themeVal"
       @change="onThemeChange"
     >
-      <option v-for="(labelKey, key) in THEME_KEYS" :key="key" :value="key">{{ t(labelKey as DictKey) }}</option>
+      <option v-for="key in themeOptions" :key="key" :value="key">{{ t(THEME_KEYS[key] as DictKey) }}</option>
     </select>
 
     <button

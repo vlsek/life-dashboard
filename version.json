@@ -1,6 +1,13 @@
 {
-  "version": "2.101",
+  "version": "2.102",
   "en": [
+    {
+      "version": "2.102",
+      "date": "2026-10-05 03:51",
+      "changes": [
+        "Themes moved into Customization: all 11 themes are there with a mini-chart sample in their colors, an Apply button and a favorite heart. Mark up to 4 favorites: only they stay in the theme dropdown of the side menu (the previous four by default; the current theme is always listed). The Customization section itself now sits at the very bottom of the side menu, below the divider, after History"
+      ]
+    },
     {
       "version": "2.101",
       "date": "2026-10-05 02:08",
@@ -2171,6 +2178,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "2.102",
+      "date": "2026-10-05 03:51",
+      "changes": [
+        "Темы переехали в «Кастомизацию»: там все 11 тем с образцом-диаграммой в их цветах, кнопкой «Применить» и сердечком «любимая». Отметьте до 4 любимых — только они остаются в выпадающем списке тем бокового меню (по умолчанию прежние четыре; текущая тема в списке есть всегда). Сам раздел «Кастомизация» теперь в самом низу бокового меню, под чертой, после «Истории»"
+      ]
+    },
     {
       "version": "2.101",
       "date": "2026-10-05 02:08",

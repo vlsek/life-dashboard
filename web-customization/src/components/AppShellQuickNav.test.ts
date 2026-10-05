@@ -117,13 +117,16 @@ describe('AppShell: боковое меню — профиль наверху, �
     w.unmount()
   })
 
-  it('«История» отделена разделителем и стоит в самом низу списка страниц — сразу перед «Аккаунтом»; в основной части её нет', async () => {
+  it('«История» отделена разделителем и стоит внизу списка, за ней «Кастомизация» (самый низ) и «Аккаунт»; в основной части их нет', async () => {
     const w = await mountWithEmail()
     const links = navLinks(w)
     const hist = links.indexOf('/history/')
     expect(hist).toBeGreaterThan(-1)
     expect(links.filter((h) => h === '/history/')).toHaveLength(1)
-    expect(links[hist + 1]).toBe('/account/')
+    expect(links[hist + 1]).toBe('/customization/') // решение владельца 2026-10-04: «Кастомизация» — в самом низу меню, за чертой
+    expect(links[hist + 2]).toBe('/account/')
+    expect(links.filter((h) => h === '/customization/')).toHaveLength(1)
+    expect(links.indexOf('/community/')).toBeLessThan(links.indexOf('/customization/'))
     expect(links.indexOf('/community/')).toBeLessThan(hist)
     // разделитель между основными страницами и «Историей»
     const nav = w.find('nav').element
