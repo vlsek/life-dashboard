@@ -3,15 +3,22 @@ import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { friendlyError } from '../lib/friendlyError'
 import type { Difficulty, GoalFormInput } from '../lib/types'
+import { matchCategory } from '../lib/categories'
 
 // submit — запись цели (родитель добавляет/правит и закрывает форму при успехе). Ошибка записи показывается ПОД полями (форма остаётся
 // открытой, введённое не пропадает); пока идёт запись, «Сохранить» заблокирована — двойной тап не создаёт две цели.
-const props = defineProps<{ isEdit: boolean; initial: GoalFormInput; submit: (res: GoalFormInput) => Promise<void> }>()
+const props = withDefaults(defineProps<{ isEdit: boolean; initial: GoalFormInput; submit: (res: GoalFormInput) => Promise<void>; categories?: string[]; noCategoryLabels?: string[] }>(), { categories: () => [], noCategoryLabels: () => [] })
 const emit = defineEmits<{ close: [] }>()
 
 const name = ref(props.initial.name)
 const points = ref(props.initial.points)
-const category = ref(props.initial.category)
+// Категория: выбор из СВОИХ категорий (BACKLOG раздел 35) + «Новая категория…» + «Без категории». Если у редактируемой цели категории нет
+// в списке (старые данные), она показывается как новая — в поле, текст не теряется.
+const NEW = '\u0000new'
+const picked = matchCategory(props.initial.category, props.categories, props.noCategoryLabels)
+const categoryChoice = ref<string>(picked === null ? NEW : picked)
+const newCategory = ref(picked === null ? props.initial.category.trim() : '')
+const category = computed(() => (categoryChoice.value === NEW ? newCategory.value.trim() : categoryChoice.value))
 const stages = ref(props.initial.stages)
 const difficulty = ref<Difficulty>(props.initial.difficulty)
 const deadline = ref(props.initial.deadline)
@@ -59,7 +66,12 @@ async function save() {
       <input v-model.number="points" type="number" class="w-full" />
 
       <label class="mt-2 block text-sm">{{ t('goals_field_category') }}</label>
-      <input v-model="category" type="text" class="w-full" />
+      <select v-model="categoryChoice" class="w-full" data-test="goal-category-select">
+        <option value="">{{ t('goals_no_category') }}</option>
+        <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
+        <option :value="NEW">{{ t('goals_cat_new') }}</option>
+      </select>
+      <input v-if="categoryChoice === NEW" v-model="newCategory" type="text" class="mt-1 w-full" :placeholder="t('goals_cat_new_placeholder')" maxlength="40" data-test="goal-category-new" />
 
       <label class="mt-2 block text-sm">{{ t('goals_field_stages') }}</label>
       <input v-model.number="stages" type="number" min="1" class="w-full" />

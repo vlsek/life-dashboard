@@ -7,6 +7,7 @@ import Icon from './components/Icon.vue'
 import PointsFloat from './components/PointsFloat.vue'
 import { useGoals } from './lib/useGoals'
 import { groupActiveByCategory, sortDone, pointsSummary } from './lib/goals'
+import { savedCategories } from './lib/categories'
 import { t } from './lib/i18n'
 import type { Goal, GoalFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
@@ -24,6 +25,9 @@ const noCategory = computed(() => t('goals_no_category'))
 const active = computed(() => items.value.filter((g) => !g.done))
 const done = computed(() => sortDone(items.value.filter((g) => g.done)))
 const grouped = computed(() => groupActiveByCategory(active.value, noCategory.value))
+// Свои категории для выбора в форме цели (BACKLOG раздел 35): из ВСЕХ целей, в том числе выполненных; «Без категории» на обоих языках не в счёт.
+const noCategoryLabels = ['Без категории', 'No category', noCategory.value]
+const myCategories = computed(() => savedCategories(items.value, noCategoryLabels))
 const summary = computed(() => pointsSummary(items.value))
 const loadError = computed(() => (error.value ? friendlyError({ message: error.value }) : ''))
 
@@ -127,7 +131,7 @@ async function onDelete(g: Goal) {
       </template>
     </template>
 
-    <GoalForm v-if="formTarget" :is-edit="formTarget !== 'new'" :initial="formInitial" :submit="onSaveForm" @close="formTarget = null" />
+    <GoalForm v-if="formTarget" :is-edit="formTarget !== 'new'" :initial="formInitial" :categories="myCategories" :no-category-labels="noCategoryLabels" :submit="onSaveForm" @close="formTarget = null" />
   </main>
 </template>
 
