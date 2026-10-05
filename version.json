@@ -1,6 +1,13 @@
 {
-  "version": "3.22",
+  "version": "3.23",
   "en": [
+    {
+      "version": "3.23",
+      "date": "2026-10-06 02:17",
+      "changes": [
+        "Goals: your list of categories is now remembered and no longer disappears when you delete or complete every goal with that category. A new category is added to the list when you save a goal. Needs migration 050 in Supabase (without it everything works as before: the list comes from your goals)"
+      ]
+    },
     {
       "version": "3.22",
       "date": "2026-10-06 02:12",
@@ -2318,6 +2325,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.23",
+      "date": "2026-10-06 02:17",
+      "changes": [
+        "Цели: список ваших категорий теперь запоминается и не пропадает, даже если вы удалили или закрыли все цели с этой категорией. Новая категория сохраняется в список при сохранении цели. Нужна миграция 050 в Supabase (без неё всё работает как раньше: список берётся из ваших целей)"
+      ]
+    },
     {
       "version": "3.22",
       "date": "2026-10-06 02:12",
