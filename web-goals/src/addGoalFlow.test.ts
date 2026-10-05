@@ -11,6 +11,7 @@ vi.mock('./lib/useGoals', () => ({
     auth: ref({ status: 'ready', userId: 'u1', userEmail: 'a@b.c' }),
     items: ref([]),
     error: ref(null),
+    flashed: ref({}),
     init: () => {},
     addGoal: api.addGoal,
     updateGoal: vi.fn(),

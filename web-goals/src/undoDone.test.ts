@@ -13,6 +13,7 @@ vi.mock('./lib/useGoals', () => ({
     auth: ref({ status: 'ready', userId: 'u', userEmail: 'a@b.c' }),
     items: state.items,
     error: ref(null),
+    flashed: ref({}),
     init: () => {},
     addGoal: vi.fn(),
     updateGoal: vi.fn(),

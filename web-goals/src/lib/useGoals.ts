@@ -19,6 +19,16 @@ export function useGoals() {
   const auth = ref<AuthState>({ status: 'loading' })
   const items = ref<Goal[]>([])
   const error = ref<string | null>(null)
+  // id целей, у которых только что подтвердилась запись: на ~0,9 с показываем галочку «сохранено» (BACKLOG 23:25 / 815, срез 3)
+  const flashed = ref<Record<string, boolean>>({})
+
+  function flash(id: string) {
+    flashed.value = { ...flashed.value, [id]: true }
+    setTimeout(() => {
+      const { [id]: _drop, ...rest } = flashed.value
+      flashed.value = rest
+    }, 900)
+  }
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -70,6 +80,7 @@ export function useGoals() {
     // правка числа этапов может сама закрыть/открыть многоэтапную цель (patch.done) — баллы идут по новым очкам цели
     if (typeof patch.done === 'boolean') emitPointsFloat(completionDelta(!!existing.done, patch.done, res.points || GOAL_DEFAULT_POINTS, GOAL_DEFAULT_POINTS))
     await reload()
+    flash(existing.id)
   }
 
   async function deleteGoal(id: string) {
@@ -84,6 +95,7 @@ export function useGoals() {
     if (err) throw err
     emitPointsFloat(completionDelta(!!g.done, done, g.points, GOAL_DEFAULT_POINTS))
     await reload()
+    flash(g.id)
   }
 
   async function stepGoal(g: Goal, delta: number) {
@@ -92,6 +104,7 @@ export function useGoals() {
     if (err) throw err
     emitPointsFloat(completionDelta(!!g.done, done, g.points, GOAL_DEFAULT_POINTS))
     await reload()
+    flash(g.id)
   }
 
   // Выставить прогресс многоэтапной цели сразу до этапа `target` (тап по этапу в карточке, BACKLOG 7.1)
@@ -101,7 +114,8 @@ export function useGoals() {
     if (err) throw err
     emitPointsFloat(completionDelta(!!g.done, done, g.points, GOAL_DEFAULT_POINTS))
     await reload()
+    flash(g.id)
   }
 
-  return { auth, items, error, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage }
+  return { auth, items, error, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage }
 }

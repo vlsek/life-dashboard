@@ -18,6 +18,7 @@ import { calcAge, formatAge, formatDelta, unitSuffix, type BodyParam, type BodyP
 import { getLang, t } from '../lib/i18n'
 import { formatPoints } from '../lib/pointsFloat'
 import CoinIcon from './CoinIcon.vue'
+import SavedTick from './SavedTick.vue'
 import { confirmDialog } from '../lib/confirmDialog'
 
 // Единственная точка подключения блока «Профиль» в App.vue: аватар (загрузка фото), возраст
@@ -73,30 +74,48 @@ const showPoints = ref(false)
 const formFor = ref<BodyParam | 'new' | null>(null)
 const modalError = ref<string | null>(null)
 
+// Галочка «сохранено» в углу блока после ПОДТВЕРЖДЁННОЙ записи (аватар, дата рождения, параметры тела) — BACKLOG 23:25 / 815, срез 3.
+const savedTick = ref(false)
+let savedTimer: ReturnType<typeof setTimeout> | undefined
+function flashSaved() {
+  savedTick.value = true
+  clearTimeout(savedTimer)
+  savedTimer = setTimeout(() => (savedTick.value = false), 900)
+}
+onBeforeUnmount(() => clearTimeout(savedTimer))
+
 const age = computed(() => (profile.value?.birthdate ? formatAge(calcAge(profile.value.birthdate), getLang()) : null))
 const toneColor = { success: 'var(--success)', danger: 'var(--danger)', neutral: 'var(--text)' } as const
 
 async function onFile(e: Event) {
   const f = (e.target as HTMLInputElement).files?.[0]
-  if (f) await uploadAvatar(f)
+  if (f && (await uploadAvatar(f))) flashSaved()
   if (fileInput.value) fileInput.value.value = ''
 }
 
 async function onSaveBirthdate(value: string) {
   modalError.value = await saveBirthdate(value)
-  if (!modalError.value) showBirthdate.value = false
+  if (!modalError.value) {
+    showBirthdate.value = false
+    flashSaved()
+  }
 }
 
 async function onSaveParam(form: BodyParamForm) {
   const err = formFor.value === 'new' ? await addParam(form) : await updateParam((formFor.value as BodyParam).id, form)
   modalError.value = err
-  if (!err) formFor.value = null
+  if (!err) {
+    const wrote = !!form.name.trim() // пустое имя ничего не пишет — обещать нечего
+    formFor.value = null
+    if (wrote) flashSaved()
+  }
 }
 
 async function onRemoveParam(p: BodyParam) {
   if (!(await confirmDialog(t('dash_body_param_delete_confirm').replace('{name}', p.name)))) return
   const err = await deleteParam(p.id)
   if (err) error.value = err
+  else flashSaved()
 }
 
 function openForm(p: BodyParam | 'new') {
@@ -106,7 +125,8 @@ function openForm(p: BodyParam | 'new') {
 </script>
 
 <template>
-  <section v-if="loaded" class="mb-4 flex flex-col gap-2 rounded-lg border p-3" style="border-color: var(--border); background: var(--bg-card)">
+  <section v-if="loaded" class="relative mb-4 flex flex-col gap-2 rounded-lg border p-3" style="border-color: var(--border); background: var(--bg-card)">
+    <SavedTick :show="savedTick" />
     <!-- Строка 1 (BACKLOG 7.2): главное — аватар с кольцом дня, кольцо недели, возраст; справа стрик и баллы.
          На очень узком экране правая группа переносится под левую, но не ломает остальное. -->
     <div class="flex w-full flex-wrap items-center gap-x-3 gap-y-2" data-test="profile-top-row">

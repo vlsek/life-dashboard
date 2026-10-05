@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import GoalCard from './components/GoalCard.vue'
 import GoalForm from './components/GoalForm.vue'
+import SavedTick from './components/SavedTick.vue'
 import Icon from './components/Icon.vue'
 import PointsFloat from './components/PointsFloat.vue'
 import { useGoals } from './lib/useGoals'
@@ -15,7 +16,7 @@ import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
 import { friendlyError } from './lib/friendlyError'
 
-const { auth, items, error, init, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
+const { auth, items, error, flashed, init, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
 onMounted(init)
 
 function undoDone(g: Goal) {
@@ -99,6 +100,7 @@ async function onDelete(g: Goal) {
               v-for="g in list"
               :key="g.id"
               :goal="g"
+              :saved="!!flashed[g.id]"
               @toggle="toggleGoal(g)"
               @stage="setStage(g, $event)"
               @edit="formTarget = g"
@@ -115,10 +117,11 @@ async function onDelete(g: Goal) {
           <li
             v-for="g in done"
             :key="g.id"
-            class="flex items-center gap-2 rounded-xl border px-3 py-2"
+            class="relative flex items-center gap-2 rounded-xl border px-3 py-2"
             style="border-color: var(--border); background: var(--bg-card)"
             data-test="goal-done-row"
           >
+            <SavedTick :show="!!flashed[g.id]" />
             <!-- Галочка выполненной цели — кнопка «снять отметку» (случайный тап по цели можно отменить): простая цель возвращается в активные,
                  многоэтапная откатывается на один этап назад (иначе осталась бы «выполненной» с полным прогрессом). -->
             <button

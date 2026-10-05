@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import CoinIcon from './CoinIcon.vue'
 import Icon from './Icon.vue'
+import SavedTick from './SavedTick.vue'
 import { deadlineLevel, stagePercent, stageProgress, stageTapTarget } from '../lib/goals'
 import { t } from '../lib/i18n'
 import type { Goal } from '../lib/types'
@@ -10,7 +11,7 @@ import type { Goal } from '../lib/types'
 // Простая цель — круглая галочка. Многоэтапная — сегментированный прогресс (по сегменту на этап, а при >12 этапах — полоса),
 // «2/5 · 40 %», кнопка «следующий этап» и раскрывающийся список этапов: тап по этапу выставляет прогресс до него,
 // повторный тап по последнему выполненному — откат. Данные те же (`stages`, `current_stage`), миграция не нужна.
-const props = defineProps<{ goal: Goal }>()
+const props = defineProps<{ goal: Goal; saved?: boolean }>()
 const emit = defineEmits<{ toggle: []; stage: [target: number]; edit: []; delete: [] }>()
 
 const stages = computed(() => props.goal.stages ?? 1)
@@ -48,7 +49,8 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
 </script>
 
 <template>
-  <article class="goal-card rounded-xl border p-3" style="border-color: var(--border); background: var(--bg-card)" data-test="goal-card">
+  <article class="goal-card relative rounded-xl border p-3" :class="{ 'goal-card-saved': saved }" style="border-color: var(--border); background: var(--bg-card)" data-test="goal-card">
+    <SavedTick :show="!!saved" />
     <div class="flex items-start gap-3">
       <!-- простая цель: круглая галочка -->
       <button
@@ -148,6 +150,18 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
 </template>
 
 <style scoped>
+.goal-card-saved {
+  animation: goal-card-saved 0.9s ease-out;
+}
+@keyframes goal-card-saved {
+  0% { border-color: var(--success); box-shadow: 0 0 0 0 var(--success); }
+  30% { border-color: var(--success); box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 35%, transparent); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .goal-card-saved { animation: none; border-color: var(--success) !important; }
+}
+:global(html[data-motion='off']) .goal-card-saved { animation: none; border-color: var(--success) !important; }
 .goal-check {
   display: inline-flex;
   align-items: center;
