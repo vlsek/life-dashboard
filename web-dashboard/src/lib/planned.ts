@@ -19,6 +19,7 @@ export interface PlanGoal {
   stages: number | null
   done: boolean
   current_stage: number | null
+  done_date?: string | null // день выполнения (для блока «выполнено из целей», BACKLOG 1078)
 }
 
 export interface PlanNote {
@@ -88,6 +89,13 @@ export function setCustomDone(planned: PlannedEntry[], index: number, done: bool
 export function goalOptions(goals: PlanGoal[], planned: PlannedEntry[]): PlanGoal[] {
   const taken = new Set(planned.filter((p) => p.type === 'goal').map((p) => p.text))
   return goals.filter((g) => !g.done && !taken.has(g.name))
+}
+
+// Цели, отмеченные выполненными именно в этот день (done_date = day) и которых нет среди пунктов-целей плана этого дня:
+// они иначе нигде не видны на главной — из выбора выпали (выполнены), в плане их не было (BACKLOG 1078). Порядок — как в списке целей.
+export function doneOnDay(goals: PlanGoal[], planned: PlannedEntry[], day: string): PlanGoal[] {
+  const taken = new Set(planned.filter((p) => p.type === 'goal').map((p) => p.text))
+  return goals.filter((g) => g.done && g.done_date === day && !taken.has(g.name))
 }
 
 // Как рисовать пункт-цель: 'missing' — цель удалена; 'single' — одноэтапная (чекбокс);

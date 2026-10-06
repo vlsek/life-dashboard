@@ -10,7 +10,7 @@ import PlannedCarryOverModal from './PlannedCarryOverModal.vue'
 import PlannedNewGoalModal from './PlannedNewGoalModal.vue'
 import { ensureCategory, loadMyCategories, type GoalFormInput } from '../lib/newGoal'
 import { usePlanned } from '../lib/usePlanned'
-import { goalRowKind, stageLabel, type CarryCandidate, type PlanGoal, type PlannedEntry } from '../lib/planned'
+import { doneOnDay, goalRowKind, stageLabel, type CarryCandidate, type PlanGoal, type PlannedEntry } from '../lib/planned'
 import { todayStr } from '../lib/date'
 import { t } from '../lib/i18n'
 import { notifyPermission, requestNotifyPermission, type NotifyPermission } from '../lib/browserNotify'
@@ -47,6 +47,7 @@ const notice = ref<string | null>(null)
 const goalPicker = ref<PlanGoal[] | null>(null)
 const carryCandidates = ref<CarryCandidate[] | null>(null)
 
+const doneGoals = computed(() => doneOnDay(goals.value, planned.value, day.value))
 const goalOf = (item: PlannedEntry) => goals.value.find((g) => g.name === item.text)
 
 // «Добавить» с пустым планом (BACKLOG 38, апд37): поле подсвечивается, получает фокус и слегка «встряхивается», как у незаполненного обязательного поля.
@@ -193,6 +194,17 @@ const collapsed = ref(false)
         </tr>
       </tbody>
     </table>
+
+    <!-- BACKLOG 1078: цели, выполненные в этот день, но не стоявшие в плане, — чтобы выполненное не пропадало с главной -->
+    <div v-if="doneGoals.length" class="mt-2" data-test="done-goals">
+      <p class="dim mb-1 text-xs">{{ t('dash_planned_done_goals_h') }}</p>
+      <ul class="m-0 flex list-none flex-col gap-1 p-0 text-sm">
+        <li v-for="g in doneGoals" :key="g.id" class="flex items-center gap-2" data-test="done-goal">
+          <span style="color: var(--success)" aria-hidden="true">✓</span>
+          <span class="line-through opacity-60">{{ g.name }}</span>
+        </li>
+      </ul>
+    </div>
 
     <div class="mt-2 flex flex-wrap gap-2">
       <input ref="textInput" v-model="newText" type="text" class="min-w-40 flex-1" :class="{ 'plan-invalid': emptyInvalid, 'plan-shake': shaking }" :aria-invalid="emptyInvalid ? 'true' : undefined" :placeholder="t('dash_planned_custom_placeholder')" data-test="custom-input" @input="emptyInvalid = false" @keydown.enter.prevent="addCustom" />

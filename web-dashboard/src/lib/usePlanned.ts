@@ -40,7 +40,7 @@ export function usePlanned() {
     date = dateStr
     const [noteRes, goalsRes] = await Promise.all([
       sb.from('daily_notes').select('planned_goals').eq('user_id', uid).eq('date', dateStr).maybeSingle(),
-      sb.from('goals').select('id, name, stages, done, current_stage').eq('user_id', uid),
+      sb.from('goals').select('id, name, stages, done, current_stage, done_date').eq('user_id', uid),
     ])
     const err = noteRes.error?.message || goalsRes.error?.message
     error.value = err ? friendlyError(err, 'load') : null
@@ -89,10 +89,11 @@ export function usePlanned() {
   // выполнена вчера; на сегодняшнем дне это то же самое «сегодня», что и раньше.
   async function setGoalDone(goal: PlanGoal, done: boolean, doneDate: string): Promise<boolean> {
     const before = goal.done
-    goals.value = goals.value.map((g) => (g.id === goal.id ? { ...g, done } : g))
+    const beforeDate = goal.done_date ?? null
+    goals.value = goals.value.map((g) => (g.id === goal.id ? { ...g, done, done_date: done ? doneDate : null } : g))
     const { error: e } = await sb.from('goals').update({ done, done_date: done ? doneDate : null }).eq('id', goal.id)
     if (e) {
-      goals.value = goals.value.map((g) => (g.id === goal.id ? { ...g, done: before } : g))
+      goals.value = goals.value.map((g) => (g.id === goal.id ? { ...g, done: before, done_date: beforeDate } : g))
       error.value = friendlyError(e)
       return false
     }
