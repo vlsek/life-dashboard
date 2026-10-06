@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.39";
+const SITE_VERSION = "3.40";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.40", date: "2026-10-06 15:08", changes: [
+        "Дашборд, подходы: у каждого параметра подхода — время, повторы, особенность — теперь своя подложка-плашка с зазором между ними (раньше все три сливались в одну общую плашку без разделителей); номер подхода и кнопка «удалить» без плашки, при вводе рамка плашки в цвет акцента.",
+        "Дашборд, окна и формы: у ВСЕХ полей ввода и списков появилась подложка (фон и рамка) — раньше она была только у текстовых полей, а «Значение цели X», «Подходов в день по плану», время, дата, выпадающие списки и многострочные поля сливались с фоном окна и не читались как редактируемые. Без миграций."
+    ]},
     { version: "3.39", date: "2026-10-06 14:42", changes: [
         "Исправлено: окно «серия уже N дней» больше не всплывает снова на каждом новом устройстве или браузере. Раньше сайт помнил, какие поздравления уже показаны, только на самом устройстве, и при первом запуске на новом поздравлял с лучшей серией заново. Теперь на новом устройстве (и после очистки данных браузера) уже достигнутые серии запоминаются молча, а поздравление приходит только за следующий новый порог. В приватном режиме поздравлений нет совсем, чтобы они не повторялись при каждом визите. Миграция не нужна."
     ]},
@@ -1624,6 +1628,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.40", date: "2026-10-06 15:08", changes: [
+        "Dashboard, sets: each parameter of a set - time, reps, variation - now has its own plate with a gap between them (they used to merge into one shared plate with no dividers); the set number and the delete button have no plate, and the plate border turns accent-colored while typing.",
+        "Dashboard, windows and forms: ALL input fields and dropdowns now have a plate (background and border) - it used to exist only for text fields, so \"Goal value X\", \"Sets per day planned\", time, date, dropdowns and multi-line fields blended into the window background and did not look editable. No migration needed."
+    ]},
     { version: "3.39", date: "2026-10-06 14:42", changes: [
         "Fixed: the \"streak of N days\" pop-up no longer comes back on every new device or browser. The site only remembered which congratulations were already shown on the device itself, and on the first launch on a new one it congratulated your best streak again. Now on a new device (or after clearing browser data) streaks you already reached are remembered silently, and a pop-up appears only for the next new threshold. In private mode there are no pop-ups at all, so they do not repeat on every visit. No migration needed."
     ]},

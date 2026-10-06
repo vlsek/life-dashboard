@@ -1,6 +1,14 @@
 {
-  "version": "3.39",
+  "version": "3.40",
   "en": [
+    {
+      "version": "3.40",
+      "date": "2026-10-06 15:08",
+      "changes": [
+        "Dashboard, sets: each parameter of a set - time, reps, variation - now has its own plate with a gap between them (they used to merge into one shared plate with no dividers); the set number and the delete button have no plate, and the plate border turns accent-colored while typing.",
+        "Dashboard, windows and forms: ALL input fields and dropdowns now have a plate (background and border) - it used to exist only for text fields, so \"Goal value X\", \"Sets per day planned\", time, date, dropdowns and multi-line fields blended into the window background and did not look editable. No migration needed."
+      ]
+    },
     {
       "version": "3.39",
       "date": "2026-10-06 14:42",
@@ -2437,6 +2445,14 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.40",
+      "date": "2026-10-06 15:08",
+      "changes": [
+        "Дашборд, подходы: у каждого параметра подхода — время, повторы, особенность — теперь своя подложка-плашка с зазором между ними (раньше все три сливались в одну общую плашку без разделителей); номер подхода и кнопка «удалить» без плашки, при вводе рамка плашки в цвет акцента.",
+        "Дашборд, окна и формы: у ВСЕХ полей ввода и списков появилась подложка (фон и рамка) — раньше она была только у текстовых полей, а «Значение цели X», «Подходов в день по плану», время, дата, выпадающие списки и многострочные поля сливались с фоном окна и не читались как редактируемые. Без миграций."
+      ]
+    },
     {
       "version": "3.39",
       "date": "2026-10-06 14:42",
