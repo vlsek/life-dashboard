@@ -3,12 +3,14 @@ import { computed } from 'vue'
 import { t } from '../lib/i18n'
 import { THEME_KEYS, type ThemeKey } from '../lib/theme'
 import { THEME_PREVIEW } from '../lib/themePreview'
+import { RARITY_COLOR, rarityOfTheme } from '../lib/rarity'
 import EmojiText from './EmojiText.vue'
 
 // Карточка темы: превью (цвета самой темы, независимо от выбранной сейчас), название, «Применить» и сердечко «любимая».
 const props = defineProps<{ themeKey: ThemeKey; active: boolean; favorite: boolean; canToggle: boolean }>()
 const emit = defineEmits<{ apply: []; toggleFavorite: [] }>()
 
+const rarity = computed(() => rarityOfTheme(props.themeKey))
 const pv = computed(() => THEME_PREVIEW[props.themeKey])
 const label = computed(() => t(THEME_KEYS[props.themeKey] as never))
 const favLabel = computed(() => (props.favorite ? t('cust_theme_fav_remove') : props.canToggle ? t('cust_theme_fav_add') : t('cust_theme_fav_limit')))
@@ -17,10 +19,11 @@ const favLabel = computed(() => (props.favorite ? t('cust_theme_fav_remove') : p
 <template>
   <div
     class="flex flex-col gap-2 rounded-xl border p-3"
-    :style="{ background: 'var(--bg-card)', borderColor: active ? 'var(--accent)' : 'var(--border)' }"
+    :style="{ background: 'var(--bg-card)', borderColor: active ? 'var(--accent)' : 'var(--border)', boxShadow: 'inset 0 3px 0 ' + RARITY_COLOR[rarity] }"
     :data-testid="'theme-' + themeKey"
     :data-active="active"
     :data-favorite="favorite"
+    :data-rarity="rarity"
   >
     <!-- Образец темы (BACKLOG 944): мини-диаграмма в основных цветах самой темы — карточка, акцент (кольцо прогресса),
          успех и вода (столбики), текст (подписи). Цвета берутся из THEME_PREVIEW, а не из выбранной сейчас темы. -->

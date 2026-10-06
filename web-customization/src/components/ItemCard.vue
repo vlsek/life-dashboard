@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { t } from '../lib/i18n'
 import { frameClass, frameShadow } from '../lib/frames'
+import { RARITY_COLOR, rarityOfItem } from '../lib/rarity'
 import { priceOf, shortBy, type CustomItem, type ItemStatus } from '../lib/customization'
 import Icon from './Icon.vue'
 
@@ -9,6 +10,7 @@ import Icon from './Icon.vue'
 const props = defineProps<{ item: CustomItem; status: ItemStatus; balance: number | null; busy: boolean; disabled: boolean }>()
 const emit = defineEmits<{ buy: []; choose: []; unchoose: [] }>()
 
+const rarity = computed(() => rarityOfItem(props.item.key))
 const name = computed(() => t(('cust_item_' + props.item.key) as never))
 const price = computed(() => priceOf(props.item))
 const missing = computed(() => shortBy(props.item, props.balance))
@@ -16,7 +18,12 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-2 rounded-xl border p-3 text-center" style="background: var(--bg-card); border-color: var(--border)" :data-testid="'item-' + item.key" :data-status="status">
+  <div class="flex flex-col items-center gap-2 rounded-xl border p-3 text-center" 
+    :style="{ background: 'var(--bg-card)', borderColor: 'var(--border)', boxShadow: 'inset 0 3px 0 ' + RARITY_COLOR[rarity] }"
+    :data-testid="'item-' + item.key"
+    :data-status="status"
+    :data-rarity="rarity"
+  >
     <span
       class="flex h-14 w-14 items-center justify-center rounded-full text-lg font-medium"
       :class="frameClass(item.key)"

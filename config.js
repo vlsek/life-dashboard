@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.35";
+const SITE_VERSION = "3.36";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.36", date: "2026-10-06 10:39", changes: [
+        "Кастомизация: темы и рамки аватарки разложены по редкости, как в играх: обычные, редкие, эпические, легендарные. Чем сложнее получить предмет и чем он эффектнее, тем выше редкость; у карточки сверху цветная полоска редкости. Каждую группу можно свернуть нажатием на её название, свёрнутое запоминается. У рамок в заголовке группы видно, сколько уже открыто (например, 1/3). Темы пока по-прежнему все бесплатные",
+    ]},
     { version: "3.35", date: "2026-10-06 10:26", changes: [
         "Шапка и боковая панель: выпадающие списки, галочки и числовые поля в окнах настроек, прогресса и воды оформлены так же, как на остальных страницах (стрелка списка в цвете темы, галочка в цвете акцента, у числовых полей нет родных стрелок). Раньше шапка полагалась на стили страницы, теперь эти правила есть и в самой шапке",
     ]},
@@ -1612,6 +1615,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.36", date: "2026-10-06 10:39", changes: [
+        "Customization: themes and avatar frames are now sorted by rarity, like in games: common, rare, epic, legendary. The harder an item is to get and the more striking it is, the rarer it is; each card has a coloured rarity stripe on top. Tap a group title to collapse it; collapsed groups are remembered. For frames the group title shows how many you have already unlocked (for example 1/3). All themes are still free for now",
+    ]},
     { version: "3.35", date: "2026-10-06 10:26", changes: [
         "Header and side panel: dropdowns, checkboxes and number fields in the settings, progress and water windows now look like everywhere else on the site (theme-coloured dropdown arrow, accent-coloured check, no native spinner arrows on number fields). The header used to rely on the page's styles; the rules are now part of the header itself",
     ]},

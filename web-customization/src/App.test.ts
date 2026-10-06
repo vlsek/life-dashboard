@@ -33,11 +33,10 @@ beforeEach(() => {
 })
 
 describe('страница «Кастомизация»', () => {
-  it('два раздела («За баллы», «За достижения»), баланс и карточки рамок', async () => {
+  it('раздел «Рамки аватарки» (группы по редкости), баланс и карточки рамок', async () => {
     const w = mount(App)
     await flushPromises()
-    expect(w.find('[data-section="points"]').exists()).toBe(true)
-    expect(w.find('[data-section="achievement"]').exists()).toBe(true)
+    expect(w.find('[data-section="avatar_frame"]').exists()).toBe(true)
     expect(w.find('[data-testid="balance"]').text()).toContain('250')
     expect(w.find('[data-testid="item-frame_neon"]').attributes('data-status')).toBe('buyable')
     expect(w.find('[data-testid="item-frame_gold"]').attributes('data-status')).toBe('locked')
@@ -86,11 +85,12 @@ describe('анимированные рамки на странице', () => {
 })
 
 describe('анимированные награды за достижения на странице', () => {
-  it('в разделе «За достижения» четыре рамки, три анимированные, все закрыты до получения достижения', async () => {
+  it('четыре рамки-награды (три анимированные) закрыты до получения достижения', async () => {
     const w = mount(App)
     await flushPromises()
-    const sec = w.find('[data-section="achievement"]')
-    expect(sec.findAll('[data-testid^="item-"]').length).toBe(4)
+    const sec = w.find('[data-section="avatar_frame"]')
+    const rewards = ['frame_gold', 'frame_inferno', 'frame_pulse', 'frame_royal']
+    expect(rewards.filter((k) => sec.find(`[data-testid="item-${k}"]`).exists())).toEqual(rewards)
     for (const k of ['frame_inferno', 'frame_pulse', 'frame_royal']) {
       expect(sec.find(`[data-testid="item-${k}"] [data-testid="animated"]`).exists()).toBe(true)
       expect(sec.find(`[data-testid="item-${k}"]`).attributes('data-status')).toBe('locked')

@@ -68,7 +68,7 @@ describe('страница «Кастомизация»: раздел «Темы
     const w = mount(App)
     await flushPromises()
     const html = w.html()
-    expect(html.indexOf('data-section="themes"')).toBeLessThan(html.indexOf('data-section="points"'))
+    expect(html.indexOf('data-section="themes"')).toBeLessThan(html.indexOf('data-section="avatar_frame"'))
   })
 
   it('«Применить» включает тему: класс на <html>, localStorage, у карточки пометка «Применена»', async () => {
