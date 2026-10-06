@@ -252,7 +252,7 @@ onUnmounted(() => {
       data-testid="quicknav-toggle"
       @click="quickNavOpen = !quickNavOpen"
     >
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true" data-test="qn-heart">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true" data-test="qn-heart">
         <path d="M12 20.4l-1.3-1.2C6 14.9 3 12.2 3 8.9 3 6.3 5 4.3 7.6 4.3c1.5 0 2.9.7 3.8 1.8l.6.8.6-.8c.9-1.1 2.3-1.8 3.8-1.8C19 4.3 21 6.3 21 8.9c0 3.3-3 6-7.7 10.3L12 20.4z" />
       </svg>
     </button>
@@ -434,12 +434,19 @@ onUnmounted(() => {
   width: 32px;
   height: 32px;
   flex-shrink: 0;
+  /* БЕЗ внутренних отступов: глобальный отступ кнопок .375rem .9rem (слой base) оставлял на сердечко ~1 px, оно сжималось, и кнопка выглядела пустым кругом (BACKLOG раздел 42, 8:54) */
+  padding: 0;
   border-radius: 9999px;
   border: 1px solid var(--border);
   background: transparent;
-  color: var(--text-dim);
+  color: var(--text);
   cursor: pointer;
   transition: color 0.2s ease, border-color 0.2s ease;
+}
+/* сердечко — фиксированного размера, не сжимается flex-контейнером */
+.qn-toggle svg {
+  flex: none;
+  display: block;
 }
 .qn-toggle:hover {
   color: var(--text);
