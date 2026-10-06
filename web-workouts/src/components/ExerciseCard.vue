@@ -87,6 +87,9 @@ const calories = computed(() => estimateExerciseCalories(props.entries, props.ex
         <CollapseChevron :collapsed="collapsed" />
       </button>
       <h3 class="m-0 flex-1 font-bold">{{ exercise.name }}</h3>
+      <span v-if="calories" class="rounded-full border px-2 py-1 text-xs" style="border-color: var(--border); color: var(--text-dim)" data-testid="exercise-calories">
+        🔥 ≈ {{ calories.kcal }} {{ t('workouts_kcal') }}
+      </span>
       <button
         type="button"
         class="rounded-lg border px-3 py-1.5 text-sm"
@@ -114,10 +117,6 @@ const calories = computed(() => estimateExerciseCalories(props.entries, props.ex
     </div>
 
     <ExerciseChart :exercise="exercise" :entries="entries" />
-
-    <div v-if="calories" class="mb-2 text-sm" style="color: var(--text-dim)" data-testid="exercise-calories">
-      🔥 ≈ {{ calories.kcal }} {{ t('workouts_kcal') }} · {{ t('workouts_calorie_estimate') }}
-    </div>
 
     <p v-if="entries.length === 0" class="mt-2 text-sm" style="color: var(--text-dim)">{{ t('workouts_no_entries') }}</p>
     <div v-else class="mt-2 overflow-x-auto">
