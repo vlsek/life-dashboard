@@ -41,7 +41,7 @@ const arcFilter = computed(() => (fr.value?.glow ? `drop-shadow(0 0 3px ${fr.val
           </linearGradient>
         </defs>
         <circle cx="26" cy="26" r="24" fill="none" stroke="var(--border)" stroke-width="3" />
-        <circle cx="26" cy="26" r="24" fill="none" :stroke="arcStroke" :style="arcFilter ? { filter: arcFilter } : undefined" stroke-width="3" stroke-linecap="round" :stroke-dasharray="geo.circumference" :stroke-dashoffset="geo.offsetBase" data-test="avatar-ring-arc" />
+        <circle cx="26" cy="26" r="24" fill="none" :stroke="arcStroke" :class="fr?.anim" :style="arcFilter ? { filter: arcFilter } : undefined" stroke-width="3" stroke-linecap="round" :stroke-dasharray="geo.circumference" :stroke-dashoffset="geo.offsetBase" data-test="avatar-ring-arc" />
         <circle v-if="ring.bonusPct > 0" cx="26" cy="26" r="24" fill="none" class="ring-bonus" stroke-width="3" stroke-linecap="round" :stroke-dasharray="geo.circumference" :stroke-dashoffset="geo.offsetBonus" />
       </svg>
 

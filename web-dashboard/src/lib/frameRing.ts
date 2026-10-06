@@ -5,17 +5,18 @@
 export interface FrameRingStyle {
   stops: string[] // один цвет — сплошная дуга, несколько — градиент вдоль дуги
   glow: string | null // свечение (drop-shadow), если у рамки оно есть
+  anim: string | null // CSS-класс анимации дуги (keyframes в style.css) у анимированных рамок; null — дуга статична (BACKLOG 43.3)
 }
 
 const RING: Record<string, FrameRingStyle> = {
-  frame_neon: { stops: ['#ff4fa3'], glow: 'rgba(255, 79, 163, 0.6)' },
-  frame_aurora: { stops: ['#4fd1ff', '#8a7dff'], glow: null },
-  frame_gold: { stops: ['#e0b23c'], glow: 'rgba(224, 178, 60, 0.6)' },
-  frame_flame: { stops: ['#ff7a1a'], glow: 'rgba(255, 98, 20, 0.6)' },
-  frame_rainbow: { stops: ['#ff4f4f', '#ffd23c', '#4fe08a', '#4fd1ff', '#8a7dff'], glow: null },
-  frame_inferno: { stops: ['#ff3b1a'], glow: 'rgba(255, 60, 20, 0.7)' },
-  frame_pulse: { stops: ['#3df0ff'], glow: 'rgba(61, 240, 255, 0.55)' },
-  frame_royal: { stops: ['#e0b23c'], glow: 'rgba(224, 178, 60, 0.6)' },
+  frame_neon: { stops: ['#ff4fa3'], glow: 'rgba(255, 79, 163, 0.6)', anim: null },
+  frame_aurora: { stops: ['#4fd1ff', '#8a7dff'], glow: null, anim: null },
+  frame_gold: { stops: ['#e0b23c'], glow: 'rgba(224, 178, 60, 0.6)', anim: null },
+  frame_flame: { stops: ['#ff7a1a'], glow: 'rgba(255, 98, 20, 0.6)', anim: 'ring-frame-flame' },
+  frame_rainbow: { stops: ['#ff4f4f', '#ffd23c', '#4fe08a', '#4fd1ff', '#8a7dff'], glow: null, anim: 'ring-frame-rainbow' },
+  frame_inferno: { stops: ['#ff3b1a'], glow: 'rgba(255, 60, 20, 0.7)', anim: 'ring-frame-inferno' },
+  frame_pulse: { stops: ['#3df0ff'], glow: 'rgba(61, 240, 255, 0.55)', anim: 'ring-frame-pulse' },
+  frame_royal: { stops: ['#e0b23c'], glow: 'rgba(224, 178, 60, 0.6)', anim: 'ring-frame-royal' },
 }
 
 export const FRAME_RING_KEYS = Object.keys(RING)

@@ -63,3 +63,37 @@ describe('AvatarProgress: проп frame', () => {
     expect(w.find('[data-test="avatar-ring"]').exists()).toBe(false)
   })
 })
+
+describe('анимация дуги у анимированных рамок (BACKLOG 43.3)', () => {
+  const frames: string = readFileSync('../web-customization/src/lib/frames.ts', 'utf-8')
+  const css: string = readFileSync('src/style.css', 'utf-8')
+  const animated = [...frames.slice(frames.indexOf('FRAME_ANIMATIONS')).matchAll(/^\s+(frame_\w+): 'cust-frame-/gm)].map((m) => m[1])
+  it('анимированы ровно те рамки, что и в Кастомизации (FRAME_ANIMATIONS)', () => {
+    expect(animated.length).toBeGreaterThan(0)
+    expect(FRAME_RING_KEYS.filter((k) => frameRing(k)!.anim).sort()).toEqual([...animated].sort())
+  })
+  it('для каждого класса есть keyframes и правило, а reduced-motion гасит все', () => {
+    for (const k of animated) {
+      const cls = frameRing(k)!.anim!
+      expect(css, cls).toContain(`@keyframes ${cls}`)
+      expect(css, cls).toContain(`.${cls} { animation: ${cls} `)
+      const m = css.match(/@media \(prefers-reduced-motion: reduce\) \{\s*\.ring-frame-flame[^}]*\{[^}]*animation: none/)
+      expect(m, 'reduced-motion').not.toBeNull()
+      expect(m![0], cls).toContain(`.${cls}`)
+    }
+  })
+  it('статичные рамки без анимации (неон, аврора, золото)', () => {
+    for (const k of ['frame_neon', 'frame_aurora', 'frame_gold']) expect(frameRing(k)!.anim).toBeNull()
+  })
+  it('дуга получает класс анимации; рамка сменилась на статичную — класс уходит', async () => {
+    const w = mount(AvatarProgress, { props: { avatarUrl: null, ring, frame: 'frame_flame' } })
+    const arc = () => w.find('[data-test="avatar-ring-arc"]')
+    expect(arc().classes()).toContain('ring-frame-flame')
+    await w.setProps({ frame: 'frame_gold' })
+    expect(arc().classes().some((c) => c.startsWith('ring-frame-'))).toBe(false)
+    await w.setProps({ frame: 'frame_rainbow' })
+    expect(arc().classes()).toContain('ring-frame-rainbow')
+    expect(arc().attributes('stroke')).toBe('url(#avatar-ring-grad)')
+  })
+})
+

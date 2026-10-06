@@ -1019,3 +1019,38 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
   background-color: color-mix(in srgb, var(--accent) 22%, transparent);
 }
+
+/* Анимация дуги прогресса дня вокруг аватарки у анимированных рамок (BACKLOG 43.3): повторяет характер cust-frame-* из Кастомизации,
+   но для SVG-дуги (stroke + filter). Класс берётся из frameRing.ts (поле anim); страж frameRing.test.ts сверяет его с FRAME_ANIMATIONS.
+   Без анимации остаётся статичный вид (цвет рамки и свечение); гасят prefers-reduced-motion и html[data-motion='off'] (общее правило выше). */
+@keyframes ring-frame-flame {
+  0% { stroke: #ff7a1a; filter: drop-shadow(0 0 2px rgba(255, 98, 20, 0.55)); }
+  50% { stroke: #ffb02e; filter: drop-shadow(0 0 6px rgba(255, 69, 0, 0.8)); }
+  100% { stroke: #ff5a1a; filter: drop-shadow(0 0 3px rgba(255, 140, 20, 0.6)); }
+}
+@keyframes ring-frame-rainbow {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+@keyframes ring-frame-inferno {
+  0% { stroke: #ff2d1a; filter: drop-shadow(0 0 3px rgba(255, 45, 26, 0.7)); }
+  100% { stroke: #ffd24a; filter: drop-shadow(0 0 8px rgba(255, 120, 0, 0.9)); }
+}
+@keyframes ring-frame-pulse {
+  0% { filter: drop-shadow(0 0 1px rgba(61, 240, 255, 0.9)); }
+  70% { filter: drop-shadow(0 0 9px rgba(61, 240, 255, 0)); }
+  100% { filter: drop-shadow(0 0 9px rgba(61, 240, 255, 0)); }
+}
+@keyframes ring-frame-royal {
+  0% { stroke: #e0b23c; filter: drop-shadow(0 0 3px rgba(224, 178, 60, 0.6)); }
+  50% { stroke: #fff3b0; filter: drop-shadow(0 0 6px rgba(255, 243, 176, 0.85)); }
+  100% { stroke: #b98cff; filter: drop-shadow(0 0 4px rgba(185, 140, 255, 0.7)); }
+}
+.ring-frame-flame { animation: ring-frame-flame 1.6s ease-in-out infinite alternate; }
+.ring-frame-rainbow { animation: ring-frame-rainbow 5s linear infinite; }
+.ring-frame-inferno { animation: ring-frame-inferno 0.9s ease-in-out infinite alternate; }
+.ring-frame-pulse { animation: ring-frame-pulse 1.8s ease-out infinite; }
+.ring-frame-royal { animation: ring-frame-royal 3.2s ease-in-out infinite alternate; }
+@media (prefers-reduced-motion: reduce) {
+  .ring-frame-flame, .ring-frame-rainbow, .ring-frame-inferno, .ring-frame-pulse, .ring-frame-royal { animation: none; }
+}

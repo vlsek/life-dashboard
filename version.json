@@ -1,6 +1,13 @@
 {
-  "version": "3.49",
+  "version": "3.50",
   "en": [
+    {
+      "version": "3.50",
+      "date": "2026-10-07 00:14",
+      "changes": [
+        "Dashboard: for animated frames (Flame, Rainbow, Inferno, Pulse, Royal) the day progress ring around the avatar is now animated too: flame flickers, rainbow shimmers through its colours, inferno blazes, pulse pulses, royal shifts between gold and violet. With reduced motion or all animations turned off the ring stays static. No migration needed"
+      ]
+    },
     {
       "version": "3.49",
       "date": "2026-10-07 00:06",
@@ -2508,6 +2515,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.50",
+      "date": "2026-10-07 00:14",
+      "changes": [
+        "Дашборд: у анимированных рамок («Огонь», «Радуга», «Инферно», «Пульс», «Королевская») кольцо прогресса дня вокруг аватарки теперь тоже анимировано: огонь мерцает, радуга переливается, инферно пышет, пульс пульсирует, королевская переливается золотом и фиолетовым. При «уменьшить движение» и «отключить все анимации» кольцо остаётся статичным. Миграция не нужна"
+      ]
+    },
     {
       "version": "3.49",
       "date": "2026-10-07 00:06",

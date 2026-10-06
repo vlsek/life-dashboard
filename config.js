@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.49";
+const SITE_VERSION = "3.50";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.50", date: "2026-10-07 00:14", changes: [
+        "Дашборд: у анимированных рамок («Огонь», «Радуга», «Инферно», «Пульс», «Королевская») кольцо прогресса дня вокруг аватарки теперь тоже анимировано: огонь мерцает, радуга переливается, инферно пышет, пульс пульсирует, королевская переливается золотом и фиолетовым. При «уменьшить движение» и «отключить все анимации» кольцо остаётся статичным. Миграция не нужна",
+    ]},
     { version: "3.49", date: "2026-10-07 00:06", changes: [
         "Рамка аватарки: (1) на Дашборде кольцо прогресса дня вокруг аватарки теперь рисуется стилем выбранной рамки: цветом рамки, со свечением, а у «Авроры» и «Радуги» градиентом. Без выбранной рамки кольцо прежнее. (2) Надеть или снять рамку на странице «Кастомизация» теперь можно без обновления страницы: рамка сразу меняется в левом меню, а на Дашборде (в том числе в другой открытой вкладке) сразу перекрашивается кольцо. Миграция не нужна",
     ]},
@@ -1655,6 +1658,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.50", date: "2026-10-07 00:14", changes: [
+        "Dashboard: for animated frames (Flame, Rainbow, Inferno, Pulse, Royal) the day progress ring around the avatar is now animated too: flame flickers, rainbow shimmers through its colours, inferno blazes, pulse pulses, royal shifts between gold and violet. With reduced motion or all animations turned off the ring stays static. No migration needed",
+    ]},
     { version: "3.49", date: "2026-10-07 00:06", changes: [
         "Avatar frame: (1) on the Dashboard, the day progress ring around the avatar is now drawn in the style of the selected frame: its colour, with a glow, and as a gradient for Aurora and Rainbow. Without a selected frame the ring stays as before. (2) Putting on or taking off a frame on the Customization page no longer needs a page refresh: the frame changes at once in the left menu, and on the Dashboard (including another open tab) the ring is recoloured at once. No migration needed",
     ]},
