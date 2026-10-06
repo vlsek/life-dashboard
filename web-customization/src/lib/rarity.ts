@@ -35,6 +35,7 @@ export const ITEM_RARITY: Record<string, Rarity> = {
   frame_pulse: 'epic',
   frame_royal: 'epic',
   frame_inferno: 'legendary',
+  collapse_accordion: 'uncommon', // как другие предметы за средний тариф (150)
 }
 
 // Темы. Исходные четыре и «Высокий контраст» (доступность — прятать за наградой нельзя) — обычные. Остальные шесть — «закрываемые»

@@ -5,6 +5,7 @@ import Icon from './Icon.vue'
 import CollapseChevron from './CollapseChevron.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import { hasStoredCollapsed, readCollapsed, writeCollapsed } from '../lib/collapsed'
+import { useAccordionMember } from '../lib/useCollapseStyle'
 import { t } from '../lib/i18n'
 
 // Порт блока «Что полезного сделал за день» из renderDay(): список произвольных пунктов дня
@@ -18,10 +19,21 @@ const STORAGE_KEY = 'useful_today'
 const collapsed = ref(hasStoredCollapsed(STORAGE_KEY) ? readCollapsed(STORAGE_KEY) : true)
 const count = computed(() => props.items.length)
 
+// «Аккордеон» (BACKLOG 498): раскрыли другой блок — этот сворачивается
+const announceOpened = useAccordionMember(
+  STORAGE_KEY,
+  () => collapsed.value,
+  () => {
+    collapsed.value = true
+    writeCollapsed(STORAGE_KEY, true)
+  },
+)
+
 function toggle() {
   const next = !collapsed.value
   collapsed.value = next
   writeCollapsed(STORAGE_KEY, next)
+  if (!next) announceOpened()
 }
 
 const text = ref('')

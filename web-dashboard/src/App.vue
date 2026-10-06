@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import EmojiText from './components/EmojiText.vue'
 import { onMounted, ref, computed } from 'vue'
+import { loadCollapseStyle } from './lib/useCollapseStyle'
 import AppShell from './components/AppShell.vue'
 import StreakFlame from './components/StreakFlame.vue'
 import MetricIcon from './components/MetricIcon.vue'
@@ -85,6 +86,7 @@ onMounted(async () => {
     void loadEveningReminder(auth.value.userId)
     void loadWaterReminder(auth.value.userId)
     void loadPlanReminders(auth.value.userId)
+ void loadCollapseStyle(auth.value.userId) // вид сворачивания блоков из «Кастомизации» (BACKLOG 498); до ответа — кэш
     if (weekProgress.value) checkWeekendReminder(progressPercent(weekProgress.value))
   }
 })

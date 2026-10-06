@@ -2,6 +2,7 @@
 import { onMounted, watch } from 'vue'
 import { t } from '../lib/i18n'
 import { hasStoredCollapsed, readCollapsed, writeCollapsed } from '../lib/collapsed'
+import { useAccordionMember } from '../lib/useCollapseStyle'
 import CollapseChevron from './CollapseChevron.vue'
 import EmojiText from './EmojiText.vue'
 
@@ -22,11 +23,22 @@ watch(
   },
 )
 
+// «Аккордеон» (BACKLOG 498, предмет «Кастомизации»): раскрыли другой блок — этот сворачивается. При базовом шевроне ничего не происходит.
+const announceOpened = useAccordionMember(
+  props.storageKey,
+  () => collapsed.value,
+  () => {
+    collapsed.value = true
+    writeCollapsed(props.storageKey, true)
+  },
+)
+
 function toggle() {
   // при v-model от родителя collapsed.value обновится только после его перерисовки — пишем вычисленное значение
   const next = !collapsed.value
   collapsed.value = next
   writeCollapsed(props.storageKey, next)
+  if (!next) announceOpened()
 }
 </script>
 

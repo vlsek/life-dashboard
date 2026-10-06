@@ -1,8 +1,8 @@
 // Реестр «Кастомизации» (BACKLOG 491, решение владельца 2026-10-03) и чистая логика: статусы предметов, цены, разбор сохранённого.
 // Здесь НЕТ сети и DOM — загрузка и запись в useCustomization.ts. Предметы добавляются по одному за итерацию (рамки аватарки — первый).
 
-export type Category = 'avatar_frame'
-export const CATEGORY_ORDER: readonly Category[] = ['avatar_frame']
+export type Category = 'avatar_frame' | 'collapse_style'
+export const CATEGORY_ORDER: readonly Category[] = ['avatar_frame', 'collapse_style']
 
 // Цены — три уровня, ВСЕ в одном месте (решение владельца): поменять число здесь — поменяется везде.
 export const PRICE_TIERS = { low: 100, mid: 150, high: 250 } as const
@@ -28,6 +28,8 @@ export const ITEMS: readonly CustomItem[] = [
   { key: 'frame_inferno', category: 'avatar_frame', source: 'achievement', achievement: 'streak_100' },
   { key: 'frame_pulse', category: 'avatar_frame', source: 'achievement', achievement: 'mega_productivity' },
   { key: 'frame_royal', category: 'avatar_frame', source: 'achievement', achievement: 'points_1000' },
+  // Вид сворачивания блоков (BACKLOG 498): базовый шеврон бесплатен у всех (это «ничего не выбрано»); «аккордеон» — 150 (владелец 2026-10-03)
+  { key: 'collapse_accordion', category: 'collapse_style', source: 'points', tier: 'mid' },
 ]
 
 export const itemByKey = (key: string): CustomItem | undefined => ITEMS.find((i) => i.key === key)

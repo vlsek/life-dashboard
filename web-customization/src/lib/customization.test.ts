@@ -34,7 +34,7 @@ describe('реестр', () => {
     expect(PRICE_TIERS).toEqual({ low: 100, mid: 150, high: 250 })
   })
   it('у каждого предмета есть рамка в frames.ts', () => {
-    for (const i of ITEMS) expect(FRAME_SHADOWS[i.key], i.key).toBeTruthy()
+    for (const i of ITEMS.filter((x) => x.category === 'avatar_frame')) expect(FRAME_SHADOWS[i.key], i.key).toBeTruthy()
   })
   it('itemsOf делит по источнику', () => {
     expect(itemsOf('avatar_frame', 'points').map((i) => i.key)).toEqual(['frame_neon', 'frame_aurora', 'frame_flame', 'frame_rainbow'])
