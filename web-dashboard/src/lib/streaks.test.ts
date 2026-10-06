@@ -5,6 +5,7 @@ import {
   computeWeeklyStreak,
   computeAtMostWeeklyStreak,
   computeStreakItemsPure,
+  atMostStartWeek,
   weekStartStr,
 } from './streaks'
 import type { Metric } from './types'
@@ -280,3 +281,58 @@ describe('computeStreakItemsPure: today not counted yet (dashed flame)', () => {
     expect(item).toMatchObject({ streak: 12, todayCounted: false })
   })
 })
+
+// BACKLOG 40 (апд39): новая метрика «не чаще 2 раз в неделю» сразу показывала «12 недель подряд»
+describe('серия «не чаще N раз в неделю»: недели до создания метрики не считаются', () => {
+  const today = D('2026-10-06') // вторник; неделя с 2026-10-05
+  // у пользователя давняя история по ДРУГОЙ метрике (12+ недель назад), а эту добавили сегодня
+  const history: Record<string, Record<string, unknown>> = {
+    '2026-07-01': { other: true },
+    '2026-08-15': { other: true },
+    '2026-10-05': { other: true },
+  }
+  const noNotes = new Set<string>()
+  const atMost = (extra: Partial<Metric> = {}) => metric({ id: 'new', type: 'boolean', schedule: { type: 'at_most', max: 2 } as Metric['schedule'], ...extra })
+  const weeks = (items: ReturnType<typeof computeStreakItemsPure>) => items.find((i) => i.kind === 'metric' && i.metric?.id === 'new')
+
+  it('только что созданная метрика: серия 1 неделя, а не «12 недель подряд»', () => {
+    const items = computeStreakItemsPure([atMost({ created_at: '2026-10-06T07:00:00Z' })], history, noNotes, today)
+    const it = weeks(items)
+    expect(it?.unit).toBe('w')
+    expect(it?.streak).toBe(1)
+  })
+
+  it('метрика создана 3 недели назад и ни разу не нарушена — 4 недели (3 прошлые + текущая)', () => {
+    const items = computeStreakItemsPure([atMost({ created_at: '2026-09-15T10:00:00Z' })], history, noNotes, today)
+    expect(weeks(items)?.streak).toBe(4)
+  })
+
+  it('метрика создана давно, лимит нарушен 3 недели назад — серия 2 (текущая + 2 прошлые), дальше не идём', () => {
+    const byDay: Record<string, Record<string, unknown>> = { ...history }
+    for (const d of ['2026-09-14', '2026-09-15', '2026-09-16']) byDay[d] = { new: true } // 3 выполнения за неделю с 14.09 при лимите 2
+    const items = computeStreakItemsPure([atMost({ created_at: '2026-06-01T00:00:00Z' })], byDay, noNotes, today)
+    expect(weeks(items)?.streak).toBe(3) // недели 21.09, 28.09 + текущая; неделя 14.09 нарушена
+  })
+
+  it('записи внесены задним числом раньше даты создания — граница по первой записи', () => {
+    const byDay: Record<string, Record<string, unknown>> = { ...history, '2026-09-01': { new: true } }
+    const items = computeStreakItemsPure([atMost({ created_at: '2026-10-06T07:00:00Z' })], byDay, noNotes, today)
+    expect(weeks(items)?.streak).toBe(6) // недели с 31.08 по 28.09 (5) + текущая
+  })
+
+  it('нет created_at и нет записей — только текущая неделя (не недели жизни аккаунта)', () => {
+    const items = computeStreakItemsPure([atMost()], history, noNotes, today)
+    expect(weeks(items)?.streak).toBe(1)
+  })
+})
+
+describe('atMostStartWeek', () => {
+  it('самая ранняя из недели создания и недели первой записи; без данных — текущая неделя', () => {
+    expect(atMostStartWeek({ created_at: '2026-09-17T12:00:00Z' }, new Set(), '2026-10-06')).toBe('2026-09-14')
+    expect(atMostStartWeek({ created_at: '2026-09-17T12:00:00Z' }, new Set(['2026-08-20']), '2026-10-06')).toBe('2026-08-17')
+    expect(atMostStartWeek({}, new Set(['2026-09-30']), '2026-10-06')).toBe('2026-09-28')
+    expect(atMostStartWeek({}, new Set(), '2026-10-06')).toBe('2026-10-05')
+    expect(atMostStartWeek({ created_at: 'не дата' }, new Set(), '2026-10-06')).toBe('2026-10-05')
+  })
+})
+

@@ -19,6 +19,8 @@ export interface Metric {
   schedule: Schedule
   category_id: string | null
   position: number
+  // Когда метрику создали (metrics.created_at, timestamptz): серия «не чаще N раз в неделю» не идёт раньше этой недели (BACKLOG 40)
+  created_at?: string | null
   streak_import_days?: number | null
   streak_import_date?: string | null
   // Миграция 031: false — серию по метрике не считаем и в «идеальный день» она не входит (вес и т.п.)

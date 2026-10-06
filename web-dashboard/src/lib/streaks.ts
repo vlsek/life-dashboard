@@ -81,6 +81,20 @@ export function computeAtMostWeeklyStreak(
 
 export { weekStartStr }
 
+// С какой недели считать серию «не чаще N раз в неделю» у ЭТОЙ метрики (BACKLOG 40, 🐞 «12 недель подряд» у только что добавленной метрики).
+// Раньше границей служили самые ранние данные пользователя по ЛЮБОЙ метрике: у новой метрики недели до её создания (0 выполнений ≤ лимит)
+// засчитывались как успешные, и серия сразу набирала недели жизни аккаунта. Теперь граница — неделя создания метрики или неделя её первой записи
+// (что раньше: данные могли быть внесены задним числом); нет ни того ни другого — только текущая неделя.
+export function atMostStartWeek(m: { created_at?: string | null }, doneDays: Set<string>, todayStr: string): string {
+  const candidates: string[] = []
+  if (m.created_at) {
+    const created = new Date(m.created_at)
+    if (!Number.isNaN(created.getTime())) candidates.push(weekStartStr(fmtDate(created)))
+  }
+  if (doneDays.size) candidates.push(weekStartStr([...doneDays].sort()[0]))
+  return candidates.sort()[0] ?? weekStartStr(todayStr)
+}
+
 // ---- Сборка списка стриков (computeStreakItems в dashboard.js) ----
 // Разделено на чистую часть (принимает уже загруженные данные) — тестируется без сети — и
 // тонкую async-обёртку в useDashboard.ts, которая делает запросы и icon/name достаёт из Metric
@@ -110,8 +124,6 @@ export function computeStreakItemsPure(
   // серии начинали считаться с сегодняшнего дня, обнулялись и пропадали из списка (а заметка, наоборот, недосчитывалась на день).
   const yesterday = addDays(today, -1)
   const startFor = (counted: boolean) => (counted ? today : yesterday)
-  const earliestDate = Object.keys(byDay).length ? Object.keys(byDay).sort()[0] : todayStr3
-  const earliestWeekStart = weekStartStr(earliestDate)
 
   const items: StreakItem[] = []
 
@@ -153,7 +165,7 @@ export function computeStreakItemsPure(
         const k = weekStartStr(d)
         counts[k] = (counts[k] || 0) + 1
       })
-      const w = computeAtMostWeeklyStreak(counts, sched.max, today, earliestWeekStart)
+      const w = computeAtMostWeeklyStreak(counts, sched.max, today, atMostStartWeek(m, doneDays, todayStr3))
       if (w.streak > 0) items.push({ kind: 'metric', metric: m, streak: w.streak, unit: 'w', todayCounted: !w.atRisk })
       continue
     }

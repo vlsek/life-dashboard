@@ -1,6 +1,13 @@
 {
-  "version": "3.36",
+  "version": "3.37",
   "en": [
+    {
+      "version": "3.37",
+      "date": "2026-10-06 11:50",
+      "changes": [
+        "Streaks: for an \"at most N times a week\" metric the streak is now counted from the week the metric was created (or its first entry), not from the account's first data. Before, a freshly added metric instantly showed \"12 weeks in a row\" because the weeks before it existed counted as \"limit not exceeded\". No migration needed."
+      ]
+    },
     {
       "version": "3.36",
       "date": "2026-10-06 10:39",
@@ -2416,6 +2423,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.37",
+      "date": "2026-10-06 11:50",
+      "changes": [
+        "Серии: у метрики «не чаще N раз в неделю» серия теперь считается с недели её создания (или первой записи), а не с первых данных аккаунта. Раньше только что добавленная метрика сразу показывала «12 недель подряд», потому что недели до её появления засчитывались как «лимит не превышен». Миграция не нужна."
+      ]
+    },
     {
       "version": "3.36",
       "date": "2026-10-06 10:39",

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.36";
+const SITE_VERSION = "3.37";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.37", date: "2026-10-06 11:50", changes: [
+        "Серии: у метрики «не чаще N раз в неделю» серия теперь считается с недели её создания (или первой записи), а не с первых данных аккаунта. Раньше только что добавленная метрика сразу показывала «12 недель подряд», потому что недели до её появления засчитывались как «лимит не превышен». Миграция не нужна."
+    ]},
     { version: "3.36", date: "2026-10-06 10:39", changes: [
         "Кастомизация: темы и рамки аватарки разложены по редкости, как в играх: обычные, редкие, эпические, легендарные. Чем сложнее получить предмет и чем он эффектнее, тем выше редкость; у карточки сверху цветная полоска редкости. Каждую группу можно свернуть нажатием на её название, свёрнутое запоминается. У рамок в заголовке группы видно, сколько уже открыто (например, 1/3). Темы пока по-прежнему все бесплатные",
     ]},
@@ -1615,6 +1618,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.37", date: "2026-10-06 11:50", changes: [
+        "Streaks: for an \"at most N times a week\" metric the streak is now counted from the week the metric was created (or its first entry), not from the account's first data. Before, a freshly added metric instantly showed \"12 weeks in a row\" because the weeks before it existed counted as \"limit not exceeded\". No migration needed."
+    ]},
     { version: "3.36", date: "2026-10-06 10:39", changes: [
         "Customization: themes and avatar frames are now sorted by rarity, like in games: common, rare, epic, legendary. The harder an item is to get and the more striking it is, the rarer it is; each card has a coloured rarity stripe on top. Tap a group title to collapse it; collapsed groups are remembered. For frames the group title shows how many you have already unlocked (for example 1/3). All themes are still free for now",
     ]},
