@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { t, getLang } from '../lib/i18n'
-import type { PlannedItem } from '../lib/types'
+import type { GoalDeadline, PlannedItem } from '../lib/types'
 import EmojiText from './EmojiText.vue'
+import Icon from './Icon.vue'
 
-const props = defineProps<{ dateStr: string; initial: PlannedItem[] }>()
+const props = defineProps<{ dateStr: string; initial: PlannedItem[]; deadlines?: GoalDeadline[] }>()
 const emit = defineEmits<{ close: []; save: [items: PlannedItem[]] }>()
 
 const items = ref<PlannedItem[]>(props.initial.map((p) => ({ ...p })))
@@ -39,6 +40,15 @@ function save() {
   <div class="modal-backdrop" @click.self="emit('close')">
     <div class="modal">
       <h3>{{ fmtHeader(props.dateStr) }}</h3>
+
+      <!-- цели, у которых срок выпадает на этот день (BACKLOG 940): только чтение, правятся в «Целях» -->
+      <div v-if="deadlines?.length" class="mb-2" data-test="day-deadlines">
+        <p class="dim mb-1 text-xs">{{ t('cal_deadlines_h') }}</p>
+        <div v-for="g in deadlines" :key="g.id" class="flex items-center gap-2 py-0.5 text-sm" data-test="day-deadline">
+          <Icon name="goals" />
+          <span :class="{ 'line-through opacity-60': g.done }">{{ g.name }}</span>
+        </div>
+      </div>
 
       <p v-if="items.length === 0" class="dim">{{ t('cal_empty') }}</p>
       <div v-for="(item, idx) in items" :key="idx" class="flex items-center gap-2 py-1">

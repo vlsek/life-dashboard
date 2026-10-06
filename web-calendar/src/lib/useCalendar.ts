@@ -1,8 +1,8 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
 import { fmtDate } from './date'
-import { normalizePlanned } from './calendar'
-import type { PlannedItem } from './types'
+import { groupDeadlines, normalizePlanned } from './calendar'
+import type { GoalDeadline, PlannedItem } from './types'
 
 export type AuthState =
   | { status: 'loading' }
@@ -14,6 +14,7 @@ export type AuthState =
 export function useCalendar() {
   const auth = ref<AuthState>({ status: 'loading' })
   const byDate = ref<Record<string, PlannedItem[]>>({})
+  const deadlines = ref<Record<string, GoalDeadline[]>>({})
   const error = ref<string | null>(null)
 
   async function init() {
@@ -40,7 +41,11 @@ export function useCalendar() {
   async function loadMonth(userId: string, year: number, month: number) {
     const from = fmtDate(new Date(year, month, 1))
     const to = fmtDate(new Date(year, month + 1, 0))
-    const { data, error: err } = await sb.from('daily_notes').select('date, planned_goals').eq('user_id', userId).gte('date', from).lte('date', to)
+    const [notesRes, goalsRes] = await Promise.all([
+      sb.from('daily_notes').select('date, planned_goals').eq('user_id', userId).gte('date', from).lte('date', to),
+      sb.from('goals').select('id, name, done, deadline').eq('user_id', userId).gte('deadline', from).lte('deadline', to),
+    ])
+    const { data, error: err } = notesRes
     if (err) {
       error.value = err.message
       return
@@ -49,6 +54,8 @@ export function useCalendar() {
     const next: Record<string, PlannedItem[]> = {}
     for (const n of data || []) next[n.date] = normalizePlanned(n.planned_goals)
     byDate.value = next
+    // ошибка чтения целей календарь не ломает: просто нет маркеров сроков
+    deadlines.value = goalsRes.error ? {} : groupDeadlines(goalsRes.data)
   }
 
   async function savePlanned(userId: string, dateStr: string, planned: PlannedItem[]) {
@@ -57,5 +64,5 @@ export function useCalendar() {
     byDate.value = { ...byDate.value, [dateStr]: planned }
   }
 
-  return { auth, byDate, error, init, loadMonth, savePlanned }
+  return { auth, byDate, deadlines, error, init, loadMonth, savePlanned }
 }

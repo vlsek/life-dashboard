@@ -49,6 +49,8 @@ const DICT = {
     cal_plan_for: '📌 Plan for',
     cal_empty: 'Nothing here yet.',
     cal_goal_suffix: 'goal',
+    cal_deadline_title: 'Goal deadline',
+    cal_deadlines_h: 'Goals due this day:',
     cal_new_item_placeholder: 'New plan item…',
     cal_hint:
       "This is your plan for the day — it'll show up in \"📌 Today's goals\" on the dashboard. Goals from the Goals section aren't added here, only your own items.",
@@ -102,6 +104,8 @@ const DICT = {
     cal_plan_for: '📌 План на',
     cal_empty: 'Пока пусто.',
     cal_goal_suffix: 'цель',
+    cal_deadline_title: 'Срок цели',
+    cal_deadlines_h: 'Цели со сроком на этот день:',
     cal_new_item_placeholder: 'Новый пункт плана…',
     cal_hint:
       'Это план на день — попадёт в «📌 Цели на сегодня» на дашборде. Отдельные цели из раздела «Цели» сюда не добавляются, только свои пункты.',

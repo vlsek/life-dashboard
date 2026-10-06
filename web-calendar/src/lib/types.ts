@@ -15,9 +15,17 @@ export interface DailyNote {
   planned_goals: RawPlannedItem[] | null
 }
 
+// Цель со сроком (goals.deadline) — показывается в календаре на день срока (BACKLOG 940, часть 1); только чтение.
+export interface GoalDeadline {
+  id: string
+  name: string
+  done: boolean
+}
+
 export interface CalendarCell {
   day: number
   dateStr: string
   isToday: boolean
   planned: PlannedItem[]
+  deadlines: GoalDeadline[]
 }

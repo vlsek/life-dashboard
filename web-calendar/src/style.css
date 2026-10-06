@@ -358,6 +358,13 @@ body {
 .cal-cell.cal-empty {
   border: none;
 }
+.cal-deadline {
+  color: var(--accent);
+  font-weight: 600;
+}
+.cal-deadline-done {
+  opacity: 0.5;
+}
 .cal-today {
   border-color: var(--accent) !important;
 }

@@ -3,13 +3,13 @@ import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import DayModal from './components/DayModal.vue'
 import { useCalendar } from './lib/useCalendar'
-import { buildMonthGrid, doneCount } from './lib/calendar'
+import { buildMonthGrid, doneCount, openDeadlines } from './lib/calendar'
 import { todayStr } from './lib/date'
 import { t, getLang } from './lib/i18n'
 import type { PlannedItem } from './lib/types'
 import Icon from './components/Icon.vue'
 
-const { auth, byDate, error, init, loadMonth, savePlanned } = useCalendar()
+const { auth, byDate, deadlines, error, init, loadMonth, savePlanned } = useCalendar()
 
 const viewDate = ref(new Date())
 viewDate.value.setDate(1)
@@ -25,7 +25,7 @@ const MONTH_NAMES = computed(() =>
 const monthLabel = computed(() => `${MONTH_NAMES.value[viewDate.value.getMonth()]} ${viewDate.value.getFullYear()}`)
 
 const today = todayStr()
-const grid = computed(() => buildMonthGrid(viewDate.value.getFullYear(), viewDate.value.getMonth(), byDate.value, today))
+const grid = computed(() => buildMonthGrid(viewDate.value.getFullYear(), viewDate.value.getMonth(), byDate.value, today, deadlines.value))
 
 async function reloadMonth() {
   if (auth.value.status !== 'ready') return
@@ -93,6 +93,9 @@ async function onSaveDay(items: PlannedItem[]) {
           @click="openDay(cell.dateStr)"
         >
           <div class="cal-num text-sm">{{ cell.day }}</div>
+          <div v-if="cell.deadlines.length" class="cal-deadline mt-1 text-xs" :class="{ 'cal-deadline-done': openDeadlines(cell.deadlines) === 0 }" :title="t('cal_deadline_title')" data-test="cal-deadline">
+            <Icon name="goals" /> {{ cell.deadlines.length }}
+          </div>
           <div v-if="cell.planned.length" class="cal-badge mt-1 text-xs">
             <template v-if="doneCount(cell.planned).done === doneCount(cell.planned).total"><Icon name="done" /></template>
             <template v-else><Icon name="pin" /> {{ doneCount(cell.planned).done }}/{{ doneCount(cell.planned).total }}</template>
@@ -105,6 +108,7 @@ async function onSaveDay(items: PlannedItem[]) {
       v-if="openDate"
       :date-str="openDate"
       :initial="byDate[openDate] || []"
+      :deadlines="deadlines[openDate] || []"
       @close="openDate = null"
       @save="onSaveDay"
     />
