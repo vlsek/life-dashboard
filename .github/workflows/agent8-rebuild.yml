@@ -1,0 +1,67 @@
+name: agent8-rebuild-calendar-workouts
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web-calendar/**'
+      - 'web-workouts/**'
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            web-calendar/package-lock.json
+            web-workouts/package-lock.json
+      - name: Install calendar deps
+        run: npm ci
+        working-directory: web-calendar
+      - name: Install workouts deps
+        run: npm ci
+        working-directory: web-workouts
+      - name: Test calendar
+        run: npm test
+        working-directory: web-calendar
+      - name: Test workouts
+        run: npm test
+        working-directory: web-workouts
+      - name: Build and publish generated assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            (cd web-calendar && npm run build)
+            (cd web-workouts && npm run build)
+
+            git add calendar workouts
+            if git diff --cached --quiet; then
+              echo "Generated assets are already current."
+              exit 0
+            fi
+
+            git commit -m "build: publish calendar and workouts fixes"
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "main moved while building; retrying from latest main"
+          done
+
+          echo "Could not publish generated assets after 3 attempts" >&2
+          exit 1
