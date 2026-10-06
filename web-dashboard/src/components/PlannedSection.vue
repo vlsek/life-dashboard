@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import EmojiText from './EmojiText.vue'
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import Icon from './Icon.vue'
 import SectionHeading from './SectionHeading.vue'
 import DateStepper from './DateStepper.vue'
@@ -47,9 +47,30 @@ const carryCandidates = ref<CarryCandidate[] | null>(null)
 
 const goalOf = (item: PlannedEntry) => goals.value.find((g) => g.name === item.text)
 
+// «Добавить» с пустым планом (BACKLOG 38, апд37): поле подсвечивается, получает фокус и слегка «встряхивается», как у незаполненного обязательного поля.
+// emptyInvalid держится, пока человек не начнёт печатать; встряска короткая (≈300 мс), при «уменьшить движение» и «отключить анимации» — только подсветка.
+const textInput = ref<HTMLInputElement | null>(null)
+const emptyInvalid = ref(false)
+const shaking = ref(false)
+let shakeTimer: ReturnType<typeof setTimeout> | undefined
+async function flagEmptyPlan() {
+  emptyInvalid.value = true
+  shaking.value = false
+  await nextTick()
+  textInput.value?.focus()
+  void textInput.value?.offsetWidth // перезапуск анимации при повторном нажатии
+  shaking.value = true
+  clearTimeout(shakeTimer)
+  shakeTimer = setTimeout(() => (shaking.value = false), 350)
+}
+
 async function addCustom() {
   const text = newText.value
-  if (!text.trim()) return
+  if (!text.trim()) {
+    await flagEmptyPlan()
+    return
+  }
+  emptyInvalid.value = false
   const time = newTime.value || null
   const done = newDone.value
   newText.value = ''
@@ -149,7 +170,7 @@ const collapsed = ref(false)
     </table>
 
     <div class="mt-2 flex flex-wrap gap-2">
-      <input v-model="newText" type="text" class="min-w-40 flex-1" :placeholder="t('dash_planned_custom_placeholder')" data-test="custom-input" @keydown.enter.prevent="addCustom" />
+      <input ref="textInput" v-model="newText" type="text" class="min-w-40 flex-1" :class="{ 'plan-invalid': emptyInvalid, 'plan-shake': shaking }" :aria-invalid="emptyInvalid ? 'true' : undefined" :placeholder="t('dash_planned_custom_placeholder')" data-test="custom-input" @input="emptyInvalid = false" @keydown.enter.prevent="addCustom" />
       <input v-model="newTime" type="time" class="plan-time" :title="t('plan_time_label')" data-test="new-time" />
       <label class="inline-flex items-center gap-1 text-sm" :title="t('dash_planned_done_already_title')">
         <input v-model="newDone" type="checkbox" data-test="new-done" />
@@ -178,6 +199,27 @@ const collapsed = ref(false)
 <style scoped>
 .plan-time {
   width: 7.5rem;
+}
+/* Пустой план при «Добавить» (BACKLOG 38): красная рамка + короткая встряска. Без движения при prefers-reduced-motion и data-motion="off" — остаётся подсветка. */
+.plan-invalid {
+  border-color: var(--danger, #e5484d);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--danger, #e5484d) 28%, transparent);
+}
+.plan-shake {
+  animation: plan-shake 0.3s ease-in-out;
+}
+@keyframes plan-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .plan-shake { animation: none; }
+}
+:global(html[data-motion='off']) .plan-shake {
+  animation: none;
 }
 /* Отступ между чекбоксом и текстом плана (BACKLOG 14, 11:08): чекбокс стоит в своей ячейке таблицы. */
 [data-test='item'] > td:first-child {

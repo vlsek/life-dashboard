@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.25";
+const SITE_VERSION = "3.26";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.26", date: "2026-10-06 08:55", changes: [
+        "Планы: если нажать «Добавить» с пустым полем плана, поле подсвечивается красной рамкой, получает фокус и слегка «встряхивается» — как у незаполненного обязательного поля. Подсветка уходит, как только начнёте печатать. При «уменьшить движение» в системе и выключенных анимациях встряски нет, остаётся подсветка. Enter в пустом поле ведёт себя так же. Миграция не нужна."
+    ]},
     { version: "3.25", date: "2026-10-06 02:38", changes: [
         "Цели и профиль: после того как запись подтвердилась, в углу появляется маленькая галочка «Сохранено» и рамка мягко вспыхивает (меньше секунды). Это на карточке цели (выполнить, этап, правка), в строке выполненной цели и в блоке профиля (фото, дата рождения, параметры тела). Если сохранить не вышло, галочки нет. При выключенных анимациях и «уменьшении движения» галочка просто стоит без движения. Миграция не нужна",
     ]},
@@ -1582,6 +1585,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.26", date: "2026-10-06 08:55", changes: [
+        "Plans: pressing \"Add\" with an empty plan field highlights the field with a red border, focuses it and gives it a short shake - like a required field left empty. The highlight goes away as soon as you start typing. With reduced motion in the system or animations turned off there is no shake, only the highlight. Enter in an empty field behaves the same. No migration needed."
+    ]},
     { version: "3.25", date: "2026-10-06 02:38", changes: [
         "Goals and profile: once a save is confirmed, a small \"Saved\" tick appears in the corner and the border flashes softly (under a second). It shows on a goal card (complete, stage, edit), on a completed-goal row and in the profile block (photo, birthdate, body parameters). If saving failed, there is no tick. With animations turned off or reduced motion, the tick just stays still. No migration needed",
     ]},

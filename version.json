@@ -1,6 +1,13 @@
 {
-  "version": "3.25",
+  "version": "3.26",
   "en": [
+    {
+      "version": "3.26",
+      "date": "2026-10-06 08:55",
+      "changes": [
+        "Plans: pressing \"Add\" with an empty plan field highlights the field with a red border, focuses it and gives it a short shake - like a required field left empty. The highlight goes away as soon as you start typing. With reduced motion in the system or animations turned off there is no shake, only the highlight. Enter in an empty field behaves the same. No migration needed."
+      ]
+    },
     {
       "version": "3.25",
       "date": "2026-10-06 02:38",
@@ -2339,6 +2346,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.26",
+      "date": "2026-10-06 08:55",
+      "changes": [
+        "Планы: если нажать «Добавить» с пустым полем плана, поле подсвечивается красной рамкой, получает фокус и слегка «встряхивается» — как у незаполненного обязательного поля. Подсветка уходит, как только начнёте печатать. При «уменьшить движение» в системе и выключенных анимациях встряски нет, остаётся подсветка. Enter в пустом поле ведёт себя так же. Миграция не нужна."
+      ]
+    },
     {
       "version": "3.25",
       "date": "2026-10-06 02:38",
