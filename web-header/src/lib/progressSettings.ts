@@ -1,5 +1,7 @@
 export type DayPlace = 'avatar' | 'header' | 'off'
 export type WeekPlace = 'profile' | 'header' | 'off'
+// Вид недели в шапке и правой панели: семиугольник (сторона = день недели) или прежний (квадрат / дуга).
+export type WeekShape = 'heptagon' | 'classic'
 
 export interface DayProgressSettings {
   enabled: boolean
@@ -7,6 +9,7 @@ export interface DayProgressSettings {
   includeMetrics: boolean
   dayPlace: DayPlace
   weekPlace: WeekPlace
+  weekShape: WeekShape
 }
 
 export const BONUS_PCT_PER_ITEM = 20
@@ -25,6 +28,7 @@ const DEFAULTS: DayProgressSettings = {
   includeMetrics: true,
   dayPlace: 'avatar',
   weekPlace: 'profile',
+  weekShape: 'heptagon',
 }
 
 export function getDayProgressSettings(): DayProgressSettings {
@@ -46,7 +50,8 @@ export function getDayProgressSettings(): DayProgressSettings {
       }
     }
     delete saved.displayMode
-    return { ...DEFAULTS, ...saved }
+    const weekShape: WeekShape = saved.weekShape === 'classic' ? 'classic' : 'heptagon'
+    return { ...DEFAULTS, ...saved, weekShape }
   } catch {
     return DEFAULTS
   }

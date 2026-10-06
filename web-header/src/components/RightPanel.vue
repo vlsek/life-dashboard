@@ -7,6 +7,8 @@ import WaterGlass from './WaterGlass.vue'
 import WaterSavedAnim from './WaterSavedAnim.vue'
 import ProgressGauge from './ProgressGauge.vue'
 import MuscleMiniMap from './MuscleMiniMap.vue'
+import type { WeekDaySegment } from '../lib/progress'
+import type { WeekShape } from '../lib/progressSettings'
 import type { MuscleId } from '../lib/muscles'
 
 // Выдвижная правая панель (BACKLOG 6.2): спидометры дня/недели и стакан воды с быстрым добавлением. Открывается
@@ -16,6 +18,8 @@ export interface GaugeData {
   bonusPct: number
   totalPct: number
   detail: string
+  shape?: WeekShape
+  days?: WeekDaySegment[] | null
 }
 const props = defineProps<{
   open: boolean

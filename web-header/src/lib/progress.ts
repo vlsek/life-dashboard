@@ -151,3 +151,53 @@ export function progressPercent(p: ProgressResult): number {
   const basePct = p.total > 0 ? p.done / p.total : 0
   return Math.round(basePct * 100 + p.bonusPct)
 }
+
+// Прогресс КАЖДОГО дня недели — для семиугольника (сторона = день). Будущие дни пустые, прошлые считаются своей датой
+// теми же правилами, что и «день» (computeDayProgressPure). `fill` — доля выполненного дня 0..1, `bonus` — золото ⭐ 0..1.
+export interface WeekDaySegment {
+  date: string
+  state: 'past' | 'today' | 'future'
+  done: number
+  total: number
+  fill: number
+  bonus: number
+  pct: number // итог дня в процентах (с бонусом), как в кольце дня
+}
+
+export function computeWeekDaySegments(
+  settings: DayProgressSettings,
+  metrics: Metric[],
+  valuesByDate: Record<string, Record<string, unknown>>,
+  weekDates: string[],
+  today: string,
+  plannedByDate: Record<string, PlannedItem[]>,
+  allGoals: GoalLite[],
+): WeekDaySegment[] | null {
+  if (!settings.enabled) return null
+  return weekDates.map((date) => {
+    if (date > today) return { date, state: 'future', done: 0, total: 0, fill: 0, bonus: 0, pct: 0 }
+    const r = computeDayProgressPure(settings, metrics, valuesByDate[date] || {}, date, plannedByDate[date] || [], allGoals)
+    const p: ProgressResult = r ?? { done: 0, total: 0, bonusPct: 0 }
+    return {
+      date,
+      state: date === today ? 'today' : 'past',
+      done: p.done,
+      total: p.total,
+      fill: p.total > 0 ? Math.min(1, p.done / p.total) : 0,
+      bonus: Math.min(1, p.bonusPct / 100),
+      pct: progressPercent(p),
+    }
+  })
+}
+
+// Подпись для скринридера: «Пн 100 %, Вт 60 %, …» (будущие дни — без процента). `weekdays` — строка «Вс,Пн,…,Сб» из i18n.
+export function weekDaysAriaLabel(days: WeekDaySegment[], weekdays: string): string {
+  const names = weekdays.split(',')
+  return days
+    .map((d) => {
+      const [y, m, dd] = d.date.split('-').map(Number)
+      const name = names[new Date(y, m - 1, dd).getDay()] ?? d.date
+      return d.state === 'future' ? name : `${name} ${d.pct} %`
+    })
+    .join(', ')
+}

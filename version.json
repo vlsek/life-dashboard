@@ -1,6 +1,13 @@
 {
-  "version": "3.28",
+  "version": "3.29",
   "en": [
+    {
+      "version": "3.29",
+      "date": "2026-10-06 09:05",
+      "changes": [
+        "Header: the week is now a heptagon - each of the 7 sides fills by how complete ITS OWN day is (Mon to Sun). Past days are counted by their own date, future days are dimmed, today is thicker, and a gold line shows that day's bonus star. The overall week percentage stays as the number inside. Same in the header badge, the left menu and the right drawer. Screen readers hear \"Mon 100 %, Tue 60 % ...\". The old look (square and arc) is kept: a \"Week shape\" switch in the progress settings (gear in the right drawer), heptagon by default. The Dashboard keeps this choice. No migration needed."
+      ]
+    },
     {
       "version": "3.28",
       "date": "2026-10-06 08:33",
@@ -2360,6 +2367,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.29",
+      "date": "2026-10-06 09:05",
+      "changes": [
+        "Шапка: неделя теперь семиугольник — у каждой из 7 сторон своя заливка по выполненности СВОЕГО дня (пн…вс). Прошлые дни считаются своей датой, будущие тусклые, сегодняшний толще, золотая полоска — бонус ⭐ того дня. Общий процент недели остаётся числом внутри. Так и в значке шапки, и в меню слева, и в правой шторке. Скринридер читает «Пн 100 %, Вт 60 % …». Прежний вид (квадрат и дуга) сохранён: переключатель «Вид недели» в настройках прогресса (шестерёнка в правой шторке), по умолчанию семиугольник. Дашборд сохраняет этот выбор. Без миграций."
+      ]
+    },
     {
       "version": "3.28",
       "date": "2026-10-06 08:33",

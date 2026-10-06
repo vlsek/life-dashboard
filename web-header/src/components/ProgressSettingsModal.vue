@@ -14,9 +14,10 @@ const includePlanned = ref(props.initial.includePlanned)
 const includeMetrics = ref(props.initial.includeMetrics)
 const dayPlace = ref(props.initial.dayPlace)
 const weekPlace = ref(props.initial.weekPlace)
+const weekShape = ref(props.initial.weekShape)
 
 function onSave() {
-  emit('save', { enabled: enabled.value, includePlanned: includePlanned.value, includeMetrics: includeMetrics.value, dayPlace: dayPlace.value, weekPlace: weekPlace.value })
+  emit('save', { enabled: enabled.value, includePlanned: includePlanned.value, includeMetrics: includeMetrics.value, dayPlace: dayPlace.value, weekPlace: weekPlace.value, weekShape: weekShape.value })
 }
 </script>
 
@@ -42,6 +43,14 @@ function onSave() {
           <option value="profile">{{ t('dash_place_profile') }}</option>
           <option value="header">{{ t('dash_place_header') }}</option>
           <option value="off">{{ t('dash_place_off') }}</option>
+        </select>
+      </label>
+
+      <label class="gh-field">
+        <span class="gh-dim" style="font-size: 12px">{{ t('hdr_week_shape_label') }}</span>
+        <select v-model="weekShape" class="gh-input" data-test="week-shape">
+          <option value="heptagon">{{ t('hdr_week_shape_heptagon') }}</option>
+          <option value="classic">{{ t('hdr_week_shape_classic') }}</option>
         </select>
       </label>
 

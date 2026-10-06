@@ -35,7 +35,7 @@ const sideProfile = useSidebarProfile()
 const sidebarTarget = ref<HTMLElement | null>(null)
 const ready = ref(false)
 
-const { day, week, summaries, settings, init: initProgress, saveSettings } = useHeaderProgress()
+const { day, week, weekDays, summaries, settings, init: initProgress, saveSettings } = useHeaderProgress()
 const { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded: waterLoaded, error: waterError, saveError, init: initWater, addMl, setTotal, undoLast, canUndo, dayLog, loadDayLog, getMlForDate, saveGoal, resetGoalToAuto } = useWater()
 
 onMounted(async () => {
@@ -65,7 +65,7 @@ function ring(p: NonNullable<typeof day.value>, label: string) {
   }
 }
 const dayRing = computed(() => (day.value && showDay.value ? ring(day.value, t('dash_day_progress_label')) : null))
-const weekRing = computed(() => (week.value && showWeek.value ? ring(week.value, t('dash_week_progress_label')) : null))
+const weekRing = computed(() => (week.value && showWeek.value ? { ...ring(week.value, t('dash_week_progress_label')), shape: settings.value.weekShape, days: weekDays.value } : null))
 
 const unitLabel = computed(() => (getLang() === 'en' ? 'ml' : 'мл'))
 const waterVisible = computed(() => waterLoaded.value && !waterError.value && !!metric.value)
@@ -135,7 +135,7 @@ const gauge = (p: NonNullable<typeof day.value>): GaugeData => {
   return { basePct: r.basePct, bonusPct: r.bonusPct, totalPct: r.totalPct, detail: `${p.done}/${p.total}${p.bonusPct > 0 ? ' +' + p.bonusPct + '% ⭐' : ''}` }
 }
 const panelDay = computed(() => (day.value && showDay.value ? gauge(day.value) : null))
-const panelWeek = computed(() => (week.value && showWeek.value ? gauge(week.value) : null))
+const panelWeek = computed(() => (week.value && showWeek.value ? { ...gauge(week.value), shape: settings.value.weekShape, days: weekDays.value } : null))
 const panelWater = computed(() => (waterVisible.value ? { todayMl: todayMl.value, normMl: normMl.value } : null))
 async function onPanelAddWater(ml: number) {
   await onAdd(ml, todayStr())

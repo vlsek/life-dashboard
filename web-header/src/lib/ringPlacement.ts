@@ -55,3 +55,47 @@ export function squareGeometry(side: number, rx: number, basePct: number, bonusP
     offsetBonus: perimeter * (1 - Math.min(1, bonusPct / 100)),
   }
 }
+
+export interface HeptagonSegment {
+  x1: number // начало стороны (с небольшим зазором от вершины)
+  y1: number
+  x2: number // конец стороны
+  y2: number
+  fx: number // конец заливки базы (доля выполненного дня)
+  fy: number
+  bx: number // конец золотой полоски бонуса ⭐
+  by: number
+}
+
+// Семиугольник недели, разрезанный на 7 сторон = 7 дней (пн…вс). Первая вершина — сверху, обход по часовой, значит
+// понедельник — первая сторона справа от верхней вершины. У каждой стороны свой зазор `gap` (доля стороны) у обеих
+// вершин, чтобы дни читались отдельными отрезками, а заливка стороны идёт от её начала к концу пропорционально
+// `fills[i]` (0..1). `bonus[i]` (0..1) — золотая полоска бонуса того же дня.
+// Чистая копия геометрии Дашборда (ProgressRing/heptagonGeometry) с разбивкой по сторонам.
+export const WEEK_SIDES = 7
+export function heptagonSegments(center: number, radius: number, fills: number[], bonus: number[] = [], gap = 0.06): HeptagonSegment[] {
+  const v = (i: number): [number, number] => {
+    const a = -Math.PI / 2 + (2 * Math.PI * (i % WEEK_SIDES)) / WEEK_SIDES
+    return [center + radius * Math.cos(a), center + radius * Math.sin(a)]
+  }
+  const clamp = (x: number) => Math.min(1, Math.max(0, Number.isFinite(x) ? x : 0))
+  const out: HeptagonSegment[] = []
+  for (let i = 0; i < WEEK_SIDES; i++) {
+    const [ax, ay] = v(i)
+    const [bx, by] = v(i + 1)
+    const dx = bx - ax
+    const dy = by - ay
+    const x1 = ax + dx * gap
+    const y1 = ay + dy * gap
+    const x2 = ax + dx * (1 - gap)
+    const y2 = ay + dy * (1 - gap)
+    const f = clamp(fills[i] ?? 0)
+    const g = clamp(bonus[i] ?? 0)
+    out.push({
+      x1, y1, x2, y2,
+      fx: x1 + (x2 - x1) * f, fy: y1 + (y2 - y1) * f,
+      bx: x1 + (x2 - x1) * g, by: y1 + (y2 - y1) * g,
+    })
+  }
+  return out
+}

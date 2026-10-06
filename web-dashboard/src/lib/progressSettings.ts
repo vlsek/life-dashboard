@@ -53,5 +53,12 @@ export function getDayProgressSettings(): DayProgressSettings {
 }
 
 export function setDayProgressSettings(s: DayProgressSettings) {
-  localStorage.setItem('day_progress_settings', JSON.stringify(s))
+  // Поле `weekShape` (вид недели в шапке) принадлежит глобальному хедеру; Дашборд его не знает, но и стирать не должен.
+  let weekShape: unknown
+  try {
+    weekShape = JSON.parse(localStorage.getItem('day_progress_settings') || '{}')?.weekShape
+  } catch {
+    weekShape = undefined
+  }
+  localStorage.setItem('day_progress_settings', JSON.stringify(weekShape ? { ...s, weekShape } : s))
 }

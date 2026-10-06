@@ -3,11 +3,13 @@ import { computed } from 'vue'
 import { t } from '../lib/i18n'
 import { profileLabel } from '../lib/sidebarProfile'
 import { frameClass, frameShadow } from '../lib/customFrame'
+import type { WeekDaySegment } from '../lib/progress'
+import type { WeekShape } from '../lib/progressSettings'
 import DayWeekBadge from './DayWeekBadge.vue'
 
 // Верх левого бокового меню (BACKLOG 6.2): аватар, имя, почта — ссылка на Аккаунт; по опции «Прогресс в меню»
 // (BACKLOG 2.3) — кольца дня и недели с процентами (клик — сводка). Рисуется Teleport'ом в #sidebar-top из AppShell.
-interface Ring { basePct: number; bonusPct: number; totalPct: number; title: string }
+interface Ring { basePct: number; bonusPct: number; totalPct: number; title: string; shape?: WeekShape; days?: WeekDaySegment[] | null }
 const props = defineProps<{ displayName: string | null; email: string | null; avatarUrl: string | null; avatarFrame?: string | null; showProgress: boolean; day: Ring | null; week: Ring | null }>()
 const emit = defineEmits<{ 'open-summary': [kind: 'day' | 'week'] }>()
 const label = computed(() => profileLabel(props.displayName, props.email))

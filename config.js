@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.28";
+const SITE_VERSION = "3.29";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.29", date: "2026-10-06 09:05", changes: [
+        "Шапка: неделя теперь семиугольник — у каждой из 7 сторон своя заливка по выполненности СВОЕГО дня (пн…вс). Прошлые дни считаются своей датой, будущие тусклые, сегодняшний толще, золотая полоска — бонус ⭐ того дня. Общий процент недели остаётся числом внутри. Так и в значке шапки, и в меню слева, и в правой шторке. Скринридер читает «Пн 100 %, Вт 60 % …». Прежний вид (квадрат и дуга) сохранён: переключатель «Вид недели» в настройках прогресса (шестерёнка в правой шторке), по умолчанию семиугольник. Дашборд сохраняет этот выбор. Без миграций."
+    ]},
     { version: "3.28", date: "2026-10-06 08:33", changes: [
         "Планы: кнопка «Новая цель» рядом с «Добавить из целей». Открывается то же окно, что в разделе «Цели»: название, баллы, категория (из ваших категорий или новая), число этапов, сложность и дедлайн. Цель создаётся в «Целях» и сразу встаёт в план открытого дня; если рядом с «Добавить» задано время — оно уйдёт в пункт плана. Если записать цель не вышло, окно остаётся открытым с понятным текстом, введённое не пропадает. Миграция не нужна (список категорий использует таблицу из 050, если она есть)."
     ]},
@@ -1591,6 +1594,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.29", date: "2026-10-06 09:05", changes: [
+        "Header: the week is now a heptagon - each of the 7 sides fills by how complete ITS OWN day is (Mon to Sun). Past days are counted by their own date, future days are dimmed, today is thicker, and a gold line shows that day's bonus star. The overall week percentage stays as the number inside. Same in the header badge, the left menu and the right drawer. Screen readers hear \"Mon 100 %, Tue 60 % ...\". The old look (square and arc) is kept: a \"Week shape\" switch in the progress settings (gear in the right drawer), heptagon by default. The Dashboard keeps this choice. No migration needed."
+    ]},
     { version: "3.28", date: "2026-10-06 08:33", changes: [
         "Plans: a \"New goal\" button next to \"Add from goals\". It opens the same window as the Goals page: name, points, category (one of yours or a new one), number of stages, difficulty and deadline. The goal is created in Goals and goes straight into the plan of the open day; if a time is set next to \"Add\", it goes into the plan item. If the goal could not be saved, the window stays open with a clear message and nothing you typed is lost. No migration needed (the category list uses the table from 050 when it exists)."
     ]},

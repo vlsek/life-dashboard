@@ -2,7 +2,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { sb } from './supabase'
 import { fetchAllRows } from './fetchAll'
 import { todayStr } from './date'
-import { computeDayProgressPure, computeWeekProgressPure, getWeekDates, type GoalLite, type PlannedItem, type ProgressResult } from './progress'
+import { computeDayProgressPure, computeWeekDaySegments, computeWeekProgressPure, getWeekDates, type GoalLite, type PlannedItem, type ProgressResult, type WeekDaySegment } from './progress'
 import { daySummary, weekSummary, type ProgressSummary } from './progressSummary'
 import { getDayProgressSettings, setDayProgressSettings, type DayProgressSettings } from './progressSettings'
 import { DATA_CHANGED } from './events'
@@ -15,6 +15,7 @@ import { withWaterGoal } from './waterGoal'
 export function useHeaderProgress() {
   const day = ref<ProgressResult | null>(null)
   const week = ref<ProgressResult | null>(null)
+  const weekDays = ref<WeekDaySegment[] | null>(null)
   const summaries = ref<{ day: ProgressSummary; week: ProgressSummary } | null>(null)
   const settings = ref<DayProgressSettings>(getDayProgressSettings())
   let userId: string | null = null
@@ -68,6 +69,10 @@ export function useHeaderProgress() {
     const plannedByDate: Record<string, PlannedItem[]> = {}
     for (const d of pastOrToday) plannedByDate[d] = planned[d] || []
     week.value = computeWeekProgressPure(s, metrics, byDay, pastOrToday, plannedByDate, allGoals)
+    const weekDates = getWeekDates(new Date())
+    const plannedWeek: Record<string, PlannedItem[]> = {}
+    for (const d of weekDates) plannedWeek[d] = planned[d] || []
+    weekDays.value = computeWeekDaySegments(s, metrics, byDay, weekDates, today, plannedWeek, allGoals)
     summaries.value = {
       day: daySummary(s, metrics, byDay[today] || {}, today, planned[today] || [], allGoals),
       week: weekSummary(s, metrics, byDay, pastOrToday, plannedByDate, allGoals),
@@ -98,5 +103,5 @@ export function useHeaderProgress() {
     await load()
   }
 
-  return { day, week, summaries, settings, init, saveSettings }
+  return { day, week, weekDays, summaries, settings, init, saveSettings }
 }
