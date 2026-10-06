@@ -173,3 +173,24 @@ describe('покупка и выбор', () => {
     expect(Object.keys(c.unlocked.value)).toEqual(['frame_neon'])
   })
 })
+
+describe('надеть/снять рамку — без обновления страницы (BACKLOG 43, 9:41)', () => {
+  it('после успешной записи сообщает новый выбор; при ошибке записи — молчит', async () => {
+    const { onCustomizationChanged } = await import('./customizationEvents')
+    const got: unknown[] = []
+    const off = onCustomizationChanged((d) => got.push(d))
+    setup({ total: 500, owned: [{ item_key: 'frame_neon' }] })
+    const c = useCustomization()
+    await c.init()
+    expect(await c.choose('avatar_frame', 'frame_neon')).toBe(true)
+    expect(got).toContainEqual({ avatar_frame: 'frame_neon' })
+    expect(await c.choose('avatar_frame', null)).toBe(true)
+    expect(got).toContainEqual({ avatar_frame: null })
+    const n = got.length
+    h.fail = new Set(['update:profiles', 'upsert:profiles'])
+    await c.choose('avatar_frame', 'frame_neon')
+    expect(got.length).toBe(n)
+    off()
+  })
+})
+

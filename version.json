@@ -1,6 +1,13 @@
 {
-  "version": "3.48",
+  "version": "3.49",
   "en": [
+    {
+      "version": "3.49",
+      "date": "2026-10-07 00:06",
+      "changes": [
+        "Avatar frame: (1) on the Dashboard, the day progress ring around the avatar is now drawn in the style of the selected frame: its colour, with a glow, and as a gradient for Aurora and Rainbow. Without a selected frame the ring stays as before. (2) Putting on or taking off a frame on the Customization page no longer needs a page refresh: the frame changes at once in the left menu, and on the Dashboard (including another open tab) the ring is recoloured at once. No migration needed"
+      ]
+    },
     {
       "version": "3.48",
       "date": "2026-10-06 20:40",
@@ -2501,6 +2508,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.49",
+      "date": "2026-10-07 00:06",
+      "changes": [
+        "Рамка аватарки: (1) на Дашборде кольцо прогресса дня вокруг аватарки теперь рисуется стилем выбранной рамки: цветом рамки, со свечением, а у «Авроры» и «Радуги» градиентом. Без выбранной рамки кольцо прежнее. (2) Надеть или снять рамку на странице «Кастомизация» теперь можно без обновления страницы: рамка сразу меняется в левом меню, а на Дашборде (в том числе в другой открытой вкладке) сразу перекрашивается кольцо. Миграция не нужна"
+      ]
+    },
     {
       "version": "3.48",
       "date": "2026-10-06 20:40",

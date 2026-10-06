@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.48";
+const SITE_VERSION = "3.49";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.49", date: "2026-10-07 00:06", changes: [
+        "Рамка аватарки: (1) на Дашборде кольцо прогресса дня вокруг аватарки теперь рисуется стилем выбранной рамки: цветом рамки, со свечением, а у «Авроры» и «Радуги» градиентом. Без выбранной рамки кольцо прежнее. (2) Надеть или снять рамку на странице «Кастомизация» теперь можно без обновления страницы: рамка сразу меняется в левом меню, а на Дашборде (в том числе в другой открытой вкладке) сразу перекрашивается кольцо. Миграция не нужна",
+    ]},
     { version: "3.48", date: "2026-10-06 20:40", changes: [
         "Кнопка «Избранное» в шапке больше не пустой круг: сердечко снова видно. Причина — внутренние отступы кнопки сжимали значок почти до нуля; убрали отступы, сделали значок крупнее (20 px) и контур ярче (цветом текста, а не приглушённым). Исправлено на всех страницах сразу. Без миграций."
     ]},
@@ -1652,6 +1655,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.49", date: "2026-10-07 00:06", changes: [
+        "Avatar frame: (1) on the Dashboard, the day progress ring around the avatar is now drawn in the style of the selected frame: its colour, with a glow, and as a gradient for Aurora and Rainbow. Without a selected frame the ring stays as before. (2) Putting on or taking off a frame on the Customization page no longer needs a page refresh: the frame changes at once in the left menu, and on the Dashboard (including another open tab) the ring is recoloured at once. No migration needed",
+    ]},
     { version: "3.48", date: "2026-10-06 20:40", changes: [
         "The Favorites button in the header is no longer an empty circle: the heart is visible again. The cause was the button's inner padding squeezing the icon to almost nothing; the padding is gone, the icon is larger (20 px) and the outline brighter (text color instead of muted). Fixed on all pages at once. No migration needed."
     ]},
