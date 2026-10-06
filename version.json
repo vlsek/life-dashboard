@@ -1,6 +1,13 @@
 {
-  "version": "3.43",
+  "version": "3.44",
   "en": [
+    {
+      "version": "3.44",
+      "date": "2026-10-06 19:40",
+      "changes": [
+        "The muscle map has been redrawn in a more anatomical style using lightweight SVG contours while preserving muscle highlighting and selection."
+      ]
+    },
     {
       "version": "3.43",
       "date": "2026-10-06 19:20",
@@ -2466,6 +2473,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.44",
+      "date": "2026-10-06 19:40",
+      "changes": [
+        "Карта мышц перерисована в более анатомичном стиле: вместо простых прямоугольников и эллипсов используются лёгкие SVG-контуры групп мышц, при этом подсветка и выбор мышц сохранены."
+      ]
+    },
     {
       "version": "3.43",
       "date": "2026-10-06 19:20",
