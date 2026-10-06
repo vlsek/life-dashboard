@@ -227,6 +227,7 @@ const DICT = {
     workouts_muscles_front: "Front",
     workouts_muscles_back: "Back",
     workouts_muscles_legend_done: "Worked (4 days)",
+    workouts_muscles_head_study: "Study in the last 4 days",
     workouts_muscles_legend_idle: "Not worked",
     workouts_muscles_last: "Last worked:",
     workouts_muscles_never: "No records yet",
