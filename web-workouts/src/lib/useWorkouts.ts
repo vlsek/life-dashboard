@@ -72,29 +72,63 @@ export function useWorkouts() {
     if (Number.isFinite(value) && value > 0) bodyWeightKg.value = value
   }
 
-  // Учёба для головы на карте мышц: категория metric_categories.key = study и выполненная
-  // метрика за один из последних 4 дней. Если категории/метрик нет, карта остаётся нейтральной.
+  // Учёба для головы на карте мышц. Пользователь может выбрать как встроенную
+  // категорию study, так и свою категорию с подписью вроде «Учёба и работа».
+  // Поэтому ищем не только key=study, но и учебные ключи/подписи.
   async function loadStudyRecent(userId: string) {
     studyRecent.value = false
     const since = new Date()
     since.setDate(since.getDate() - 3)
     const sinceIso = since.toISOString().slice(0, 10)
-    const { data: category } = await sb.from('metric_categories').select('id').eq('key', 'study').maybeSingle()
-    if (!category?.id) return
-    const { data: metrics } = await sb.from('metrics').select('id, type, goal_value, goal_direction, planned_sets_log, schedule').eq('user_id', userId).eq('active', true).eq('category_id', category.id)
+
+    const { data: categories } = await sb.from('metric_categories').select('id, key, label_ru, label_en')
+    const studyCategoryIds = (categories || [])
+      .filter((cat) => {
+        const hay = [cat.key, cat.label_ru, cat.label_en].map((v) => String(v || '').toLowerCase()).join(' ')
+        return cat.key === 'study' || /study|learn|уч[её]б/u.test(hay)
+      })
+      .map((cat) => cat.id)
+    if (!studyCategoryIds.length) return
+
+    const { data: metrics } = await sb
+      .from('metrics')
+      .select('id, type, goal_value, goal_direction, category_id')
+      .eq('user_id', userId)
+      .eq('active', true)
+      .in('category_id', studyCategoryIds)
     if (!metrics?.length) return
+
     const ids = metrics.map((m) => m.id)
-    const { data: values } = await sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId).in('metric_id', ids).gte('date', sinceIso).order('date', { ascending: false })
+    const { data: values } = await sb
+      .from('daily_values')
+      .select('date, metric_id, value')
+      .eq('user_id', userId)
+      .in('metric_id', ids)
+      .gte('date', sinceIso)
+      .order('date', { ascending: false })
     if (!values?.length) return
+
     const metricById = new Map(metrics.map((m) => [m.id, m]))
     for (const row of values) {
       const m = metricById.get(row.metric_id)
       if (!m) continue
       const value = row.value as any
-      const done = m.type === 'boolean' ? value === true
-        : m.type === 'multiselect' ? Array.isArray(value) && value.length > 0
-        : typeof value === 'number' && (m.goal_direction === 'at_most' ? value > 0 && value < (m.goal_value ?? Infinity) : value >= (m.goal_value ?? 0))
-      if (done) { studyRecent.value = true; return }
+      let done = false
+      if (m.type === 'boolean') done = value === true
+      else if (m.type === 'multiselect') done = Array.isArray(value) && value.length > 0
+      else if (m.type === 'sets') {
+        const numeric = Array.isArray(value) ? value.reduce((sum: number, s: any) => sum + (Number(s?.reps) || 0), 0) : 0
+        const goal = Number(m.goal_value) || 0
+        done = m.goal_direction === 'at_most' ? numeric > 0 && numeric < goal : numeric > 0 && (goal <= 0 || numeric >= goal)
+      } else {
+        const numeric = typeof value === 'number' ? value : Number(value)
+        const goal = Number(m.goal_value) || 0
+        done = Number.isFinite(numeric) && (m.goal_direction === 'at_most' ? numeric > 0 && numeric < goal : numeric > 0 && (goal <= 0 || numeric >= goal))
+      }
+      if (done) {
+        studyRecent.value = true
+        return
+      }
     }
   }
 
