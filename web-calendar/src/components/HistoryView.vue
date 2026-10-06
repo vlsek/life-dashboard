@@ -1,11 +1,11 @@
 <script setup lang="ts">
 
 import { computed, ref } from 'vue'
-import { useAuthAndData } from '../history/lib/useHistoryData'
-import { addDaysIso, fmtDate, mondayOf, parseIso } from '../history/lib/date'
-import { dayStats, hasData, weekStats } from '../history/lib/stats'
-import type { HistoryContext } from '../history/lib/stats'
-import { locale, t } from '../history/lib/i18n'
+import { useAuthAndData } from '../../web-history/src/lib/useHistoryData'
+import { addDaysIso, fmtDate, mondayOf, parseIso } from '../../web-history/src/lib/date'
+import { dayStats, hasData, weekStats } from '../../web-history/src/lib/stats'
+import type { HistoryContext } from '../../web-history/src/lib/stats'
+import { locale, t } from '../../web-history/src/lib/i18n'
 import DayDetailModal from '../../web-history/src/components/DayDetailModal.vue'
 import EmojiText from '../../web-history/src/components/EmojiText.vue'
 
