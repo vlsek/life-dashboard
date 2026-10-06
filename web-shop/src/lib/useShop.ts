@@ -21,7 +21,7 @@ export type AuthState =
 export function useShop() {
   const auth = ref<AuthState>({ status: 'loading' })
   const items = ref<ShopItem[]>([])
-  const balance = ref<{ total: number; spent: number; balance: number } | null>(null)
+  const balance = ref<{ total: number; spent: number; bonus?: number; balance: number } | null>(null)
   const error = ref<string | null>(null)
 
   async function init() {
@@ -49,7 +49,7 @@ export function useShop() {
   // Портировано из calcTotalPoints()/calcBalance() в config.js — 5 запросов, как в
   // оригинале (дашборд и магазин считают баланс совершенно одинаково).
   async function loadBalance(userId: string) {
-    const [metricsRes, valuesRes, goalsRes, skillsRes, booksRes, redeemedRes] = await Promise.all([
+    const [metricsRes, valuesRes, goalsRes, skillsRes, booksRes, redeemedRes, bonusRes] = await Promise.all([
       sb.from('metrics').select('*').eq('user_id', userId).eq('active', true),
       // постранично: Supabase отдаёт максимум 1000 строк за запрос, иначе баланс считался бы по обрезанной истории
       fetchAllRows<DailyValue>((from, to) => sb.from('daily_values').select('*').eq('user_id', userId).order('date').order('metric_id').range(from, to)),
@@ -57,6 +57,8 @@ export function useShop() {
       sb.from('skills').select('*').eq('user_id', userId).eq('mastered', true),
       sb.from('books').select('*').eq('user_id', userId).eq('status', 'done'),
       sb.from('shop_items').select('cost').eq('user_id', userId).eq('redeemed', true),
+      // Бонусные монеты за достижения (миграция 051). Нет таблицы / ошибка запроса — бонус 0, баланс не ломаем.
+      sb.from('achievement_bonuses').select('coins').eq('user_id', userId),
     ])
     const err = metricsRes.error?.message || valuesRes.error || goalsRes.error?.message || skillsRes.error?.message || booksRes.error?.message || redeemedRes.error?.message
     if (err) {
@@ -71,7 +73,11 @@ export function useShop() {
       (skillsRes.data || []) as SkillRow[],
       (booksRes.data || []) as BookRow[],
     )
-    balance.value = calcBalanceFromTotals(total, (redeemedRes.data || []).map((r) => r.cost))
+    balance.value = calcBalanceFromTotals(
+      total,
+      (redeemedRes.data || []).map((r) => r.cost),
+      bonusRes?.error ? [] : ((bonusRes?.data || []) as { coins: number | string | null }[]).map((r) => (r.coins == null ? null : Number(r.coins))),
+    )
   }
 
   async function loadItems(userId: string) {

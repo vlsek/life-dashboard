@@ -44,7 +44,7 @@ describe('shop: fractional points (copy of the dashboard rule)', () => {
     const seven = plan(7)
     const ten = Array.from({ length: 10 }, (_, i) => ({ date: `2026-10-${String(10 + i).padStart(2, '0')}`, metric_id: 'm1', value: reps(1) })) as any
     expect(calcTotalPoints([seven], ten, [], [], [])).toBe(1) // десять раз по 0,1 — ровно 1
-    expect(calcBalanceFromTotals(6.8, [2])).toEqual({ total: 6.8, spent: 2, balance: 4.8 })
+    expect(calcBalanceFromTotals(6.8, [2])).toEqual({ total: 6.8, spent: 2, bonus: 0, balance: 4.8 })
     // старое правило: целые, как раньше
     expect(calcTotalPoints([sets()], values, [], [], [])).toBe(3)
   })

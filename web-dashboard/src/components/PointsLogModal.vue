@@ -23,6 +23,7 @@ const KIND: Record<PointsEntry['kind'], DictKey> = {
   metric: 'dash_points_kind_metric',
   goal: 'dash_points_kind_goal',
   book: 'dash_points_kind_book',
+  bonus: 'dash_points_kind_bonus',
   spent: 'dash_points_kind_spent',
 }
 
@@ -74,8 +75,8 @@ const sign = (n: number) => (n === 0 ? '0' : formatPointsDelta(n, getLang()))
             <li v-for="(e, k) in recent" :key="'r' + k" class="flex items-center justify-between gap-2 py-0.5" data-test="points-row">
               <span class="min-w-0 flex-1 truncate">
                 <MetricIcon v-if="e.kind === 'metric'" :icon="e.icon" />
-                {{ e.label }}
-                <span class="dim text-xs">· {{ dayLabel(e.date) }}<template v-if="e.kind !== 'metric'"> · {{ t(KIND[e.kind]) }}</template></span>
+                {{ e.kind === 'bonus' ? t('dash_points_kind_bonus') : e.label }}
+                <span class="dim text-xs">· {{ dayLabel(e.date) }}<template v-if="e.kind !== 'metric' && e.kind !== 'bonus'"> · {{ t(KIND[e.kind]) }}</template></span>
               </span>
               <span class="whitespace-nowrap" style="color: var(--success)">{{ sign(e.points) }}</span>
             </li>
@@ -86,8 +87,8 @@ const sign = (n: number) => (n === 0 ? '0' : formatPointsDelta(n, getLang()))
               <li v-for="(e, k) in rest" :key="'m' + k" class="flex items-center justify-between gap-2 py-0.5" data-test="points-row-more">
                 <span class="min-w-0 flex-1 truncate">
                   <MetricIcon v-if="e.kind === 'metric'" :icon="e.icon" />
-                  {{ e.label }}
-                  <span class="dim text-xs">· {{ dayLabel(e.date) }}<template v-if="e.kind !== 'metric'"> · {{ t(KIND[e.kind]) }}</template></span>
+                  {{ e.kind === 'bonus' ? t('dash_points_kind_bonus') : e.label }}
+                  <span class="dim text-xs">· {{ dayLabel(e.date) }}<template v-if="e.kind !== 'metric' && e.kind !== 'bonus'"> · {{ t(KIND[e.kind]) }}</template></span>
                 </span>
                 <span class="whitespace-nowrap" style="color: var(--success)">{{ sign(e.points) }}</span>
               </li>

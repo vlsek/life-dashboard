@@ -1,6 +1,6 @@
 import { dayPointsTenths, type BalanceMetric, type BalanceValueRow } from './balance'
 import { roundPoints } from './metrics'
-import { addDaysIso } from './date'
+import { addDaysIso, fmtDate } from './date'
 
 // Журнал баллов за последние дни (BACKLOG 7.1 «Клик по баллам на главной»): за что начислено сегодня и за неделю.
 // Правила начисления — ровно те же, что в calcBalance() (lib/balance.ts): +1 за каждую выполненную метрику дня (у метрики-подходов с планом
@@ -17,7 +17,9 @@ export interface LogGoal { name: string; points: number | null; done_date: strin
 export interface LogBook { title: string; points: number | null; done_date: string | null }
 export interface LogPurchase { name: string; cost: number | null; redeemed_date: string | null }
 
-export type PointsKind = 'metric' | 'goal' | 'book' | 'spent'
+export interface LogBonus { key: string; coins: number | string | null; granted_at: string }
+
+export type PointsKind = 'metric' | 'goal' | 'book' | 'bonus' | 'spent'
 export interface PointsEntry {
   kind: PointsKind
   label: string
@@ -53,6 +55,8 @@ export function buildPointsLog(
   books: LogBook[],
   purchases: LogPurchase[],
   days: number = LOG_DAYS,
+  // Бонусные монеты за достижения (миграция 051): строка «награда» на день выдачи (по местному времени), чтобы итоги окна сходились с балансом.
+  bonuses: LogBonus[] = [],
 ): PointsLog {
   const dates = windowDates(today, days)
   const inWindow = new Set(dates)
@@ -67,6 +71,10 @@ export function buildPointsLog(
     }
     for (const g of goals) if (g.done_date === date) entries.push({ kind: 'goal', label: g.name, icon: null, points: g.points ?? 5 })
     for (const b of books) if (b.done_date === date) entries.push({ kind: 'book', label: b.title, icon: null, points: b.points ?? 10 })
+    for (const b of bonuses) {
+      const coins = Number(b.coins)
+      if (Number.isFinite(coins) && coins > 0 && fmtDate(new Date(b.granted_at)) === date) entries.push({ kind: 'bonus', label: b.key, icon: null, points: coins })
+    }
     for (const p of purchases) if (p.redeemed_date === date) entries.push({ kind: 'spent', label: p.name, icon: null, points: -(p.cost ?? 0) })
     const earned = roundPoints(entries.filter((e) => e.points > 0).reduce((s, e) => s + e.points, 0))
     const spent = roundPoints(-entries.filter((e) => e.points < 0).reduce((s, e) => s + e.points, 0))

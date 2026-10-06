@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { sb } from './supabase'
 import { todayStr, addDaysIso } from './date'
 import { buildPointsLog, LOG_DAYS } from './pointsLog'
-import type { LogBook, LogGoal, LogMetric, LogPurchase, PointsLog } from './pointsLog'
+import type { LogBonus, LogBook, LogGoal, LogMetric, LogPurchase, PointsLog } from './pointsLog'
 import type { BalanceValueRow } from './balance'
 import { withWaterGoal } from './waterGoal'
 
@@ -19,12 +19,14 @@ export function usePointsLog(userId: string) {
     error.value = null
     const today = todayStr()
     const from = addDaysIso(today, -(LOG_DAYS - 1))
-    const [metricsRes, valuesRes, goalsRes, booksRes, shopRes] = await Promise.all([
+    const [metricsRes, valuesRes, goalsRes, booksRes, shopRes, bonusRes] = await Promise.all([
       sb.from('metrics').select('*').eq('user_id', userId).eq('active', true).order('position'),
       sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId).gte('date', from).lte('date', today),
       sb.from('goals').select('name, points, done_date').eq('user_id', userId).eq('done', true).gte('done_date', from).lte('done_date', today),
       sb.from('books').select('title, points, done_date').eq('user_id', userId).eq('status', 'done').gte('done_date', from).lte('done_date', today),
       sb.from('shop_items').select('name, cost, redeemed_date').eq('user_id', userId).eq('redeemed', true).gte('redeemed_date', from).lte('redeemed_date', today),
+      // Бонусы за достижения (миграция 051): нет таблицы / ошибка — просто без строк «награда». Берём с запасом по времени (границы суток — по местной дате)
+      sb.from('achievement_bonuses').select('key, coins, granted_at').eq('user_id', userId).gte('granted_at', addDaysIso(from, -1)),
     ])
     const err = metricsRes.error || valuesRes.error || goalsRes.error || booksRes.error || shopRes.error
     if (err) {
@@ -38,6 +40,8 @@ export function usePointsLog(userId: string) {
         (goalsRes.data || []) as LogGoal[],
         (booksRes.data || []) as LogBook[],
         (shopRes.data || []) as LogPurchase[],
+        LOG_DAYS,
+        bonusRes?.error ? [] : ((bonusRes?.data || []) as LogBonus[]),
       )
     }
     loading.value = false

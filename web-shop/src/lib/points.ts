@@ -109,7 +109,17 @@ export function calcTotalPoints(activeMetrics: Metric[], allValues: DailyValue[]
 
 // Портировано из calcBalance() в config.js: total (см. выше) минус стоимость уже купленных
 // товаров магазина.
-export function calcBalanceFromTotals(total: number, redeemedItemCosts: number[]): { total: number; spent: number; balance: number } {
+//
+// bonusCoins — бонусные монеты за достижения (миграция 051, BACKLOG раздел 37). Здесь «заработано всего» ВКЛЮЧАЕТ награды (на карточке баланса
+// «заработано − потрачено = баланс» должно сходиться), а само число бонуса отдельно в `bonus`. В «накоплено баллов» для значков и в лидерборд бонус
+// НЕ входит — там считается только total из calcTotalPoints() / SQL (не эта функция).
+export function calcBalanceFromTotals(
+  total: number,
+  redeemedItemCosts: number[],
+  bonusCoins: (number | null)[] = [],
+): { total: number; spent: number; bonus: number; balance: number } {
   const spent = redeemedItemCosts.reduce((sum, c) => sum + (c ?? 0), 0)
-  return { total, spent, balance: Math.round((total - spent) * 10) / 10 }
+  const bonusTenths = bonusCoins.reduce<number>((s, c) => s + Math.round((c ?? 0) * 10), 0)
+  const earnedTenths = Math.round(total * 10) + bonusTenths
+  return { total: earnedTenths / 10, spent, bonus: bonusTenths / 10, balance: (earnedTenths - Math.round(spent * 10)) / 10 }
 }

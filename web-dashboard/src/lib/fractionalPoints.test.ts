@@ -100,7 +100,7 @@ describe('sums are exact: balance, points log, chart series, animation delta', (
   ]
   it('calcBalance adds tenths and prints no floating-point tail (1 + 0.5 + 0.3 = 1.8, goals +5)', () => {
     expect(calcBalance([bm], values, [], [], [], []).total).toBe(1.8)
-    expect(calcBalance([bm], values, [{ points: null }], [], [], [2])).toEqual({ total: 6.8, spent: 2, balance: 4.8 })
+    expect(calcBalance([bm], values, [{ points: null }], [], [], [2])).toEqual({ total: 6.8, spent: 2, bonus: 0, balance: 4.8 })
     // сумма 0,1 десять раз — ровно 1, а не 0,9999999999999999
     const tenTimes = Array.from({ length: 10 }, (_, i) => ({ date: `2026-10-${String(10 + i).padStart(2, '0')}`, metric_id: 'm1', value: reps(1) }))
     const seven: BalanceMetric & { planned_sets_log: PlannedSetsEntry[] } = { ...bm, planned_sets_log: [fl('2026-10-01', 7)] }

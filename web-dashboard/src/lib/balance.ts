@@ -26,7 +26,10 @@ export function calcBalance(
   masteredSkills: { points: number | null }[],
   doneBooks: { points: number | null }[],
   redeemedCosts: (number | null)[],
-): { total: number; spent: number; balance: number } {
+  // Бонусные монеты за достижения (миграция 051, BACKLOG раздел 37): ВХОДЯТ в баланс, но НЕ в «накоплено» (total) — иначе награда сама
+  // открывала бы значки «100/500/1000 баллов» и поднимала рейтинг. Баланс = накоплено + бонус − потрачено.
+  bonusCoins: (number | null)[] = [],
+): { total: number; spent: number; bonus: number; balance: number } {
   const byDay: Record<string, Record<string, unknown>> = {}
   for (const v of values) (byDay[v.date] ||= {})[v.metric_id] = v.value
   // Считаем в десятых долях целыми числами и делим один раз в конце — без хвоста плавающей точки (12.3, а не 12.299999999999999)
@@ -38,5 +41,6 @@ export function calcBalance(
     doneBooks.reduce((s, b) => s + (b.points ?? 10), 0)
   const spent = redeemedCosts.reduce<number>((s, c) => s + (c ?? 0), 0)
   const totalTenths = dailyTenths + Math.round(otherPoints * 10)
-  return { total: totalTenths / 10, spent, balance: (totalTenths - Math.round(spent * 10)) / 10 }
+  const bonusTenths = bonusCoins.reduce<number>((s, c) => s + Math.round((c ?? 0) * 10), 0)
+  return { total: totalTenths / 10, spent, bonus: bonusTenths / 10, balance: (totalTenths + bonusTenths - Math.round(spent * 10)) / 10 }
 }

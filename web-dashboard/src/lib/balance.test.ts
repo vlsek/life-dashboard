@@ -29,7 +29,7 @@ describe('calcBalance (вручную: дни 2 + цели 3+5 + навыки 10
       { date: '2026-09-02', metric_id: 'n', value: 4 },
     ]
     const r = calcBalance([bool, num], values, [{ points: 3 }, { points: null }], [{ points: null }], [{ points: 2 }], [10, null])
-    expect(r).toEqual({ total: 22, spent: 10, balance: 12 })
+    expect(r).toEqual({ total: 22, spent: 10, bonus: 0, balance: 12 })
   })
   it('пустые данные — ноль', () => {
     expect(calcBalance([], [], [], [], [], []).balance).toBe(0)
