@@ -23,7 +23,7 @@ import CollapseChevron from './CollapseChevron.vue'
 
 // Карта мышц (BACKLOG 3.2, первый срез): зелёные — мышцы, задействованные за последние 4 дня,
 // серые — нет. Клик по мышце — её упражнения (свои с кнопкой «Добавить запись» + подсказки из справочника).
-const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string }>()
+const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string; studyRecent?: boolean }>()
 const emit = defineEmits<{ 'add-entry': [exercise: Exercise] }>()
 
 const OPEN_KEY = 'workouts_musclemap_open'
@@ -143,7 +143,7 @@ function shapeStyle(m: MuscleId) {
       <div class="flex flex-wrap justify-center gap-4">
         <figure v-for="v in views" :key="v.key" class="m-0 text-center">
           <svg viewBox="0 0 100 190" class="h-64 w-32" role="group" :aria-label="t(v.label)">
-            <circle cx="50" cy="14" r="9" fill="none" stroke="var(--border)" stroke-width="1.2" />
+            <circle cx="50" cy="14" r="9" :fill="props.studyRecent ? 'var(--success)' : 'none'" :fill-opacity="props.studyRecent ? 0.9 : 1" :stroke="props.studyRecent ? 'var(--success)' : 'var(--border)'" stroke-width="1.2" data-testid="muscle-head" />
             <rect x="36" y="33" width="28" height="60" rx="8" fill="none" stroke="var(--border)" stroke-width="1" />
             <g
               v-for="(s, i) in v.shapes"
@@ -163,6 +163,8 @@ function shapeStyle(m: MuscleId) {
           <figcaption class="text-[0.8em]" style="color: var(--text-dim)">{{ t(v.label) }}</figcaption>
         </figure>
       </div>
+
+      <div v-if="studyRecent" class="mt-2 text-center text-[0.8em]" style="color: var(--success)" data-testid="muscle-head-study">{{ t('workouts_muscles_head_study') }}</div>
 
       <div class="mt-2 flex flex-wrap justify-center gap-4 text-[0.8em]" style="color: var(--text-dim)">
         <span><span style="color: var(--success)">■</span> {{ t('workouts_muscles_legend_done') }}</span>
