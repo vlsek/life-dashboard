@@ -7,6 +7,8 @@ import DateStepper from './DateStepper.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import PlannedAddGoalModal from './PlannedAddGoalModal.vue'
 import PlannedCarryOverModal from './PlannedCarryOverModal.vue'
+import PlannedNewGoalModal from './PlannedNewGoalModal.vue'
+import { ensureCategory, loadMyCategories, type GoalFormInput } from '../lib/newGoal'
 import { usePlanned } from '../lib/usePlanned'
 import { goalRowKind, stageLabel, type CarryCandidate, type PlanGoal, type PlannedEntry } from '../lib/planned'
 import { todayStr } from '../lib/date'
@@ -23,7 +25,7 @@ import { stripEmoji } from '../lib/emojiText'
 const props = defineProps<{ userId: string | null; date?: string; switchable?: boolean }>()
 const emit = defineEmits<{ 'update:date': [value: string] }>()
 const day = computed(() => props.date ?? todayStr())
-const { planned, goals, loaded, error, load, addCustomItem, addGoalItem, removeItem, toggleItemBonus, setItemDone, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals } = usePlanned()
+const { planned, goals, loaded, error, load, addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals } = usePlanned()
 
 watch(
   [() => props.userId, day],
@@ -95,6 +97,29 @@ async function pickGoal(name: string) {
   const time = newTime.value || null
   newTime.value = ''
   await addGoalItem(name, time)
+}
+
+// «Новая цель» (BACKLOG раздел 38): то же окно, что в «Целях» (название, баллы, категория, этапы, сложность, дедлайн). Цель создаётся в «Целях»
+// и сразу встаёт в план открытого дня; время из поля рядом с «Добавить» уходит в пункт плана (как у цели из списка).
+const newGoalOpen = ref(false)
+const myCategories = ref<string[]>([])
+let storedCategories: string[] = []
+const noCategoryLabels = () => ['Без категории', 'No category', t('goals_no_category')]
+async function openNewGoal() {
+  notice.value = null
+  if (props.userId) {
+    const found = await loadMyCategories(props.userId, noCategoryLabels())
+    myCategories.value = found.list
+    storedCategories = found.stored
+  }
+  newGoalOpen.value = true
+}
+async function submitNewGoal(res: GoalFormInput) {
+  const time = newTime.value || null
+  await createGoalInPlan(res, t('goals_no_category'), time) // ошибка записи цели летит в окно
+  newTime.value = ''
+  newGoalOpen.value = false
+  if (props.userId) void ensureCategory(props.userId, res.category ?? '', storedCategories, noCategoryLabels()) // новая категория запоминается; сбой цель не задевает
 }
 
 async function openCarryOver() {
@@ -178,6 +203,7 @@ const collapsed = ref(false)
       </label>
       <button type="button" class="secondary" data-test="add-custom" @click="addCustom"><EmojiText :text="t('add_btn')" /></button>
       <button type="button" data-test="add-goal" @click="openGoalPicker"><EmojiText :text="t('dash_planned_add_from_goals_btn')" /></button>
+      <button type="button" data-test="new-goal" @click="openNewGoal"><EmojiText :text="t('dash_planned_new_goal_btn')" /></button>
     </div>
 
     <button v-if="day === todayStr()" type="button" class="secondary mt-2" data-test="carry" @click="openCarryOver"><EmojiText :text="t('dash_planned_carry_over_btn')" /></button>
@@ -193,6 +219,7 @@ const collapsed = ref(false)
   </section>
 
   <PlannedAddGoalModal v-if="goalPicker" :goals="goalPicker" @close="goalPicker = null" @pick="pickGoal" />
+  <PlannedNewGoalModal v-if="newGoalOpen" :categories="myCategories" :no-category-labels="noCategoryLabels()" :submit="submitNewGoal" @close="newGoalOpen = false" />
   <PlannedCarryOverModal v-if="carryCandidates" :candidates="carryCandidates" @close="carryCandidates = null" @add="addCarried" />
 </template>
 

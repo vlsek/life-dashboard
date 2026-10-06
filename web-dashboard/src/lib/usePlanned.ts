@@ -22,6 +22,7 @@ import {
 } from './planned'
 
 import { friendlyError } from './friendlyError'
+import { createGoal, type GoalFormInput } from './newGoal'
 // Композабл блока «Планы» (раньше «Цели на сегодня») (план на день). Портировано из renderPlanned()/
 // openCarryOverModal() в dashboard.js. load(userId, date) — после auth 'ready' и при смене даты.
 // После КАЖДОЙ записи шлёт dashboard:data-changed — кольца дня/недели и стрики пересчитает useDashboard.
@@ -115,11 +116,20 @@ export function usePlanned() {
     return carryOverCandidates((data || []) as PlanNote[], date, planned.value)
   }
 
+  // Новая цель с главной (BACKLOG раздел 38): сначала запись самой цели (её ошибка летит в окно — форма остаётся открытой), потом постановка в план
+  // открытого дня (ошибка плана показывается в блоке, как у остальных правок). Возвращает, встала ли цель в план.
+  async function createGoalInPlan(res: GoalFormInput, noCategoryLabel: string, time?: string | null): Promise<boolean> {
+    const created = await createGoal(userId, res, noCategoryLabel)
+    goals.value = [...goals.value, created]
+    notifyDataChanged({ source: 'plan', date }) // цель появилась в «Целях» — кольца и счётчики пересчитаются
+    return addGoalItem(created.name, time)
+  }
+
   const carryOver = (items: CarriedItem[]) => persist(appendCarried(planned.value, items))
   const availableGoals = () => goalOptions(goals.value, planned.value)
 
   return {
     planned, goals, loaded, error, notice, load,
-    addCustomItem, addGoalItem, removeItem, toggleItemBonus, setItemDone, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals,
+    addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals,
   }
 }

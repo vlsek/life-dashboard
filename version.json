@@ -1,6 +1,13 @@
 {
-  "version": "3.27",
+  "version": "3.28",
   "en": [
+    {
+      "version": "3.28",
+      "date": "2026-10-06 08:33",
+      "changes": [
+        "Plans: a \"New goal\" button next to \"Add from goals\". It opens the same window as the Goals page: name, points, category (one of yours or a new one), number of stages, difficulty and deadline. The goal is created in Goals and goes straight into the plan of the open day; if a time is set next to \"Add\", it goes into the plan item. If the goal could not be saved, the window stays open with a clear message and nothing you typed is lost. No migration needed (the category list uses the table from 050 when it exists)."
+      ]
+    },
     {
       "version": "3.27",
       "date": "2026-10-06 10:25",
@@ -2353,6 +2360,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.28",
+      "date": "2026-10-06 08:33",
+      "changes": [
+        "Планы: кнопка «Новая цель» рядом с «Добавить из целей». Открывается то же окно, что в разделе «Цели»: название, баллы, категория (из ваших категорий или новая), число этапов, сложность и дедлайн. Цель создаётся в «Целях» и сразу встаёт в план открытого дня; если рядом с «Добавить» задано время — оно уйдёт в пункт плана. Если записать цель не вышло, окно остаётся открытым с понятным текстом, введённое не пропадает. Миграция не нужна (список категорий использует таблицу из 050, если она есть)."
+      ]
+    },
     {
       "version": "3.27",
       "date": "2026-10-06 10:25",

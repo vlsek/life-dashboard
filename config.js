@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.27";
+const SITE_VERSION = "3.28";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.28", date: "2026-10-06 08:33", changes: [
+        "Планы: кнопка «Новая цель» рядом с «Добавить из целей». Открывается то же окно, что в разделе «Цели»: название, баллы, категория (из ваших категорий или новая), число этапов, сложность и дедлайн. Цель создаётся в «Целях» и сразу встаёт в план открытого дня; если рядом с «Добавить» задано время — оно уйдёт в пункт плана. Если записать цель не вышло, окно остаётся открытым с понятным текстом, введённое не пропадает. Миграция не нужна (список категорий использует таблицу из 050, если она есть)."
+    ]},
     { version: "3.27", date: "2026-10-06 10:25", changes: [
         "Дашборд: новые метрики теперь появляются сразу. После добавления, правки или удаления метрики через шестерёнку блок «Ежедневные метрики», блок «Подходы» и графики сами перечитывают список — обновлять страницу не нужно (раньше новая метрика была видна только после перезагрузки). Миграция не нужна."
     ]},
@@ -1588,6 +1591,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.28", date: "2026-10-06 08:33", changes: [
+        "Plans: a \"New goal\" button next to \"Add from goals\". It opens the same window as the Goals page: name, points, category (one of yours or a new one), number of stages, difficulty and deadline. The goal is created in Goals and goes straight into the plan of the open day; if a time is set next to \"Add\", it goes into the plan item. If the goal could not be saved, the window stays open with a clear message and nothing you typed is lost. No migration needed (the category list uses the table from 050 when it exists)."
+    ]},
     { version: "3.27", date: "2026-10-06 10:25", changes: [
         "Dashboard: new metrics now appear right away. After you add, edit or delete a metric through the gear, the Daily metrics block, the Sets block and the charts re-read their list by themselves - no page refresh needed (before, a new metric showed up only after a reload). No migration needed."
     ]},
