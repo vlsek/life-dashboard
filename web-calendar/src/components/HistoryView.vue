@@ -5,7 +5,7 @@ import { useAuthAndData } from '../../web-history/src/lib/useHistoryData'
 import { addDaysIso, fmtDate, mondayOf, parseIso } from '../../web-history/src/lib/date'
 import { dayStats, hasData, weekStats } from '../../web-history/src/lib/stats'
 import type { HistoryContext } from '../../web-history/src/lib/stats'
-import { locale, t } from '../../web-history/src/lib/i18n'
+import { locale, t } from '../lib/i18n'
 import DayDetailModal from '../../web-history/src/components/DayDetailModal.vue'
 import EmojiText from '../../web-history/src/components/EmojiText.vue'
 
