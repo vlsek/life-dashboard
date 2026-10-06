@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.47";
+const SITE_VERSION = "3.48";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.48", date: "2026-10-06 20:40", changes: [
+        "Кнопка «Избранное» в шапке больше не пустой круг: сердечко снова видно. Причина — внутренние отступы кнопки сжимали значок почти до нуля; убрали отступы, сделали значок крупнее (20 px) и контур ярче (цветом текста, а не приглушённым). Исправлено на всех страницах сразу. Без миграций."
+    ]},
     { version: "3.47", date: "2026-10-06 23:10", changes: [
         "Дашборд, «Графики»: порядок графиков в окне настройки теперь можно менять перетаскиванием — берёте график за ручку ☰ и тянете вверх или вниз (пальцем или мышью), остальные расступаются. Кнопки ↑/↓ остались (удобно с клавиатуры и когда нужен точный сдвиг на одну позицию) и стали в том же оформлении, что в «Раскладке» блоков; на краях списка недоступная стрелка затемнена. Цели у графиков при перестановке остаются со своими графиками. Порядок сохраняется кнопкой «Сохранить», как и остальные настройки окна."
     ]},
@@ -1649,6 +1652,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.48", date: "2026-10-06 20:40", changes: [
+        "The Favorites button in the header is no longer an empty circle: the heart is visible again. The cause was the button's inner padding squeezing the icon to almost nothing; the padding is gone, the icon is larger (20 px) and the outline brighter (text color instead of muted). Fixed on all pages at once. No migration needed."
+    ]},
     { version: "3.47", date: "2026-10-06 23:10", changes: [
         "Dashboard, Charts: you can now reorder charts in the settings window by dragging - grab a chart by its handle and move it up or down (finger or mouse), the others make room. The up/down buttons stay (handy with a keyboard and for an exact one-step move) and now look the same as in the block Layout; a disabled arrow at the end of the list is dimmed. A chart keeps its own goal when you move it. The order is saved with the Save button like the rest of the window."
     ]},
