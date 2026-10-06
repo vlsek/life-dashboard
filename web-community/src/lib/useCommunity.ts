@@ -5,8 +5,9 @@ import { toFriendIdSet } from './community'
 import { mergeFriendScope, requestOutcome, toAcceptedIdSet, type FriendRequestOutcome } from './friends'
 import type { Period } from './leaderboardView'
 import { badgesByUser } from './badges'
+import { normalizeFeedPick } from './achievementFeed'
 import { frameShadow } from './customFrame'
-import type { BadgeRow, FollowedProfile, FriendRequestRow, LeaderboardRow, TodayActivityRow, PublicProfile } from './types'
+import type { BadgeRow, FeedRow, FollowedProfile, FriendRequestRow, LeaderboardRow, TodayActivityRow, PublicProfile } from './types'
 
 export type AuthState =
   | { status: 'loading' }
@@ -34,6 +35,11 @@ export function useCommunity() {
   // значки достижений: userId → ключи (RPC get_public_badges, миграция 047); нет функции — пусто, остальное работает
   const badges = ref<Map<string, string[]>>(new Map())
   const badgesApi = ref(true)
+  // лента достижений (BACKLOG 395, миграция 052): события по выбранным значкам; нет функции/колонки — блок и выбор скрыты, остальное работает
+  const feed = ref<FeedRow[]>([])
+  const feedApi = ref(true)
+  const myFeedPick = ref<string[]>([])
+  const feedPickApi = ref(true)
   // рамки аватарок: userId → ключ рамки (RPC get_public_frames, миграция 049); нет функции — без рамок у других, остальное работает
   const frames = ref<Map<string, string>>(new Map())
   const framesApi = ref(true)
@@ -67,7 +73,7 @@ export function useCommunity() {
   async function reload() {
     if (auth.value.status !== 'ready') return
     const userId = auth.value.userId
-    await Promise.all([loadFriends(userId), loadLeaderboard(), loadBadges(), loadFrames(), loadToday(), loadOwnProfile(userId)])
+    await Promise.all([loadFriends(userId), loadLeaderboard(), loadBadges(), loadFeed(), loadFrames(), loadToday(), loadOwnProfile(userId)])
   }
 
   async function loadFriends(userId: string) {
@@ -131,6 +137,17 @@ export function useCommunity() {
     badges.value = badgesByUser((data || []) as BadgeRow[])
   }
 
+  async function loadFeed() {
+    if (!feedApi.value) return
+    const { data, error } = await sb.rpc('get_achievement_feed', { p_days: 30, p_limit: 50 })
+    if (error) {
+      feedApi.value = false
+      feed.value = []
+      return
+    }
+    feed.value = (data || []) as FeedRow[]
+  }
+
   async function loadFrames() {
     if (!framesApi.value) return
     const { data, error } = await sb.rpc('get_public_frames')
@@ -167,6 +184,16 @@ export function useCommunity() {
     const cz = (fr.error ? null : (fr.data as { customization?: Record<string, unknown> | null } | null)?.customization) || null
     const key = cz && typeof cz.avatar_frame === 'string' ? cz.avatar_frame : null
     myFrame.value = key && frameShadow(key) ? key : null
+    // выбор для ленты — тоже отдельным запросом: без миграции 052 профиль всё равно загрузится
+    if (feedPickApi.value) {
+      const fp = await sb.from('profiles').select('feed_achievements').eq('user_id', userId).maybeSingle()
+      if (fp.error) {
+        feedPickApi.value = false
+        myFeedPick.value = []
+      } else {
+        myFeedPick.value = normalizeFeedPick((fp.data as { feed_achievements?: unknown } | null)?.feed_achievements)
+      }
+    }
   }
 
   async function unfollow(userId: string, followedId: string) {
@@ -230,9 +257,19 @@ export function useCommunity() {
     await reload()
   }
 
+  // Сохранить выбор для ленты (до 5 ключей; ограничение есть и в БД). Выбор не затрагивает имя и видимость профиля.
+  async function saveFeedPick(userId: string, keys: string[]) {
+    const clean = normalizeFeedPick(keys)
+    const { error } = await sb.from('profiles').upsert({ user_id: userId, feed_achievements: clean })
+    if (error) throw error
+    myFeedPick.value = clean
+    await loadFeed()
+  }
+
   return {
     auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
     leaderboard, leaderboardError, period, periodApi, badges, frames, myFrame, today, todayError, profile,
+    feed, feedApi, myFeedPick, feedPickApi, saveFeedPick,
     init, reload, setPeriod, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
   }
 }

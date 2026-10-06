@@ -3,15 +3,17 @@ import Avatar from './Avatar.vue'
 import Icon from './Icon.vue'
 import BadgeStrip from './BadgeStrip.vue'
 import { formatPoints } from '../lib/leaderboardView'
+import { t } from '../lib/i18n'
 import type { FriendStats } from '../lib/friendCards'
 // Карточка человека в блоке «Друзья»: аватар, имя, пометка (заявка) или баллы/серия; слот — кнопки действий.
-defineProps<{ name: string; avatarUrl: string | null; note?: string; stats?: FriendStats | null; badges?: string[]; frame?: string | null }>()
+defineProps<{ name: string; avatarUrl: string | null; note?: string; stats?: FriendStats | null; badges?: string[]; frame?: string | null; openable?: boolean }>()
+const emit = defineEmits<{ open: [] }>()
 </script>
 
 <template>
   <div class="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1.5 rounded-lg border p-2.5" style="border-color: var(--border)" data-testid="friend-card">
-    <Avatar :name="name" :url="avatarUrl" :size="40" :frame="frame" />
-    <div class="min-w-[7rem] flex-1">
+    <Avatar :class="{ 'cursor-pointer': openable }" :name="name" :url="avatarUrl" :size="40" :frame="frame" @click="openable && emit('open')" />
+    <div class="min-w-[7rem] flex-1" :class="{ 'cursor-pointer': openable }" :role="openable ? 'button' : undefined" :tabindex="openable ? 0 : undefined" :title="openable ? t('comm_profile_open') : undefined" :data-testid="openable ? 'friend-open' : undefined" @click="openable && emit('open')" @keydown.enter="openable && emit('open')">
       <p class="m-0 truncate text-sm font-medium">{{ name }} <BadgeStrip :keys="badges" :max="2" :size="16" /></p>
       <p v-if="note" class="dim m-0 text-xs">{{ note }}</p>
       <p v-else-if="stats" class="dim m-0 text-xs">

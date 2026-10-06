@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.51";
+const SITE_VERSION = "3.52";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.52", date: "2026-10-07 00:26", changes: [
+        "Сообщество: новая «Лента достижений» — кто и какое достижение недавно открыл. Каждый сам выбирает, какие из своих достижений показывать в ленте (не больше 5): окно профиля → «Что показывать в ленте». Нажмите на человека в ленте, на подиуме, в списке или среди друзей — раскроется его профиль со всеми открытыми достижениями (если профиль публичный). Заодно в Сообществе теперь видны значки всех лесенок достижений (цели, навыки, книги, вехи, слова, идеальные дни и др.) — раньше часть значков там не показывалась",
+    ]},
     { version: "3.51", date: "2026-10-07 00:20", changes: [
         "Дашборд, блок «Планы»: когда запись подтвердилась (добавили или убрали пункт плана, отметили пункт или цель выполненной), в углу карточки на секунду появляется галочка «Сохранено». Если сохранить не вышло, галочки нет. При выключенных анимациях и «уменьшении движения» галочка просто стоит без движения. Миграция не нужна",
     ]},
@@ -1661,6 +1664,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.52", date: "2026-10-07 00:26", changes: [
+        "Community: new “Achievements feed” — who unlocked which achievement recently. Everyone chooses which of their achievements appear in the feed (up to 5): profile window → “Show in the feed”. Tap a person in the feed, on the podium, in the list or among friends to open their profile with all unlocked achievements (if the profile is public). Community now also shows badges from every achievement ladder (goals, skills, books, milestones, words, perfect days and more) — some badges were missing there before",
+    ]},
     { version: "3.51", date: "2026-10-07 00:20", changes: [
         "Dashboard, Plans block: once a save is confirmed (a plan item was added or removed, an item or goal was marked as done), a small \"Saved\" tick appears in the corner of the card for a second. If saving failed, there is no tick. With animations turned off or reduced motion, the tick just stays still. No migration needed",
     ]},

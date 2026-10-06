@@ -2,15 +2,17 @@
 import Avatar from './Avatar.vue'
 import BadgeStrip from './BadgeStrip.vue'
 import { formatPoints, type PodiumSlot } from '../lib/leaderboardView'
+import { t } from '../lib/i18n'
 // Подиум топ-3: первое место по центру и выше всех. Свою карточку обводим цветом акцента.
 defineProps<{ slots: PodiumSlot[]; myId: string; badges?: Map<string, string[]>; frames?: Map<string, string> }>()
+const emit = defineEmits<{ open: [userId: string] }>()
 const medalColors = ['#e0b23c', '#b9c2cc', '#c98a4e']
 const heights = [108, 84, 64]
 </script>
 
 <template>
   <div class="grid items-end gap-2.5" :style="{ gridTemplateColumns: `repeat(${slots.length}, minmax(0, 1fr))` }" data-testid="podium">
-    <div v-for="s in slots" :key="s.row.user_id" class="text-center" :data-rank="s.rank">
+    <div v-for="s in slots" :key="s.row.user_id" class="cursor-pointer text-center" :data-rank="s.rank" role="button" tabindex="0" :title="t('comm_profile_open')" @click="emit('open', s.row.user_id)" @keydown.enter="emit('open', s.row.user_id)">
       <div class="mb-1.5 flex justify-center">
         <Avatar :name="s.row.display_name" :url="s.row.avatar_url" :size="s.rank === 1 ? 52 : 44" :frame="frames?.get(s.row.user_id)" :style="s.row.user_id === myId ? 'outline: 2px solid var(--accent); outline-offset: 2px' : ''" />
       </div>

@@ -81,3 +81,11 @@ export interface BadgeRow {
   unlocked_at: string | null
 }
 
+// Строка RPC get_achievement_feed() (миграция 052): открытое достижение из тех, что человек выбрал показывать в ленте
+export interface FeedRow {
+  user_id: string
+  display_name: string | null
+  avatar_url: string | null
+  key: string
+  unlocked_at: string
+}

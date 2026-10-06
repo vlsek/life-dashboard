@@ -21,6 +21,6 @@ defineEmits<{ edit: [] }>()
         <span v-if="rank !== null"> · {{ t('comm_rank_word') }} #{{ rank }}</span>
       </p>
     </div>
-    <button class="secondary flex-shrink-0 px-2 py-1 text-sm" :title="t('comm_public_profile_btn').replace(/^\S+\s/u, '')" :aria-label="t('comm_profile_short')" @click="$emit('edit')"><Icon name="gear" /> {{ t('comm_profile_short') }}</button>
+    <button class="secondary flex-shrink-0 px-2 py-1 text-sm" :title="t('comm_public_profile_btn').replace(/^\S+\s/u, '')" :aria-label="t('comm_profile_short')" data-testid="profile-edit" @click="$emit('edit')"><Icon name="gear" /> {{ t('comm_profile_short') }}</button>
   </div>
 </template>

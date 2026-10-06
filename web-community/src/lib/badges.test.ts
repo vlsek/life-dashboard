@@ -11,12 +11,22 @@ import { ICON_PATHS } from './icons'
 const row = (user_id: string, key: string) => ({ user_id, key, unlocked_at: null })
 
 describe('реестр значков', () => {
-  it('ключи совпадают с реестром страницы «Достижения» (страж от расхождения копий)', async () => {
-    const achievementsSrc = await readSrc('../../../web-achievements/src/lib/achievements.ts')
-    const keys = [...achievementsSrc.matchAll(/\{ key: '(\w+)', group: '\w+', counter: '\w+', target: (\d+), icon: '(\w+)' \}/g)]
-    expect(keys.map((m) => m[1])).toEqual(BADGES.map((b) => b.key))
-    expect(keys.map((m) => Number(m[2]))).toEqual(BADGES.map((b) => b.target))
-    expect(keys.map((m) => m[3])).toEqual(BADGES.map((b) => b.icon))
+  it('ключи, группы, пороги и иконки совпадают с реестром страницы «Достижения» (страж от расхождения копий; лесенки makeLadder тоже)', async () => {
+    const src = await readSrc('../../../web-achievements/src/lib/achievements.ts')
+    // Явные записи реестра…
+    const literal = [...src.matchAll(/\{ key: '(\w+)', group: '(\w+)', counter: '\w+', target: (\d+), icon: '(\w+)' \}/g)].map((m) => ({
+      index: m.index ?? 0, key: m[1], group: m[2], target: Number(m[3]), icon: m[4],
+    }))
+    // …и лесенки `...makeLadder('префикс', 'группа', 'счётчик', 'иконка', [пороги])` (ключ = префикс_порог); порядок — как в файле
+    const ladders = [...src.matchAll(/\.\.\.makeLadder\('(\w+)', '(\w+)', '\w+', '(\w+)', \[([\d, ]+)\]\)/g)].flatMap((m) =>
+      m[4].split(',').map((n) => ({ index: m.index ?? 0, key: `${m[1]}_${n.trim()}`, group: m[2], target: Number(n), icon: m[3] })),
+    )
+    const expected = [...literal, ...ladders].sort((a, b) => a.index - b.index)
+    expect(expected.length, 'реестр «Достижений» не разобрался').toBeGreaterThanOrEqual(40)
+    expect(BADGES.map((b) => b.key)).toEqual(expected.map((e) => e.key))
+    expect(BADGES.map((b) => b.group)).toEqual(expected.map((e) => e.group))
+    expect(BADGES.map((b) => b.target)).toEqual(expected.map((e) => e.target))
+    expect(BADGES.map((b) => b.icon)).toEqual(expected.map((e) => e.icon))
   })
   it('у каждого значка есть иконка в Сообществе', () => {
     for (const b of BADGES) expect((ICON_PATHS as Record<string, string>)[b.icon], b.key).toBeTruthy()

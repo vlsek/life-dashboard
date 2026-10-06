@@ -3,6 +3,9 @@ import { computed, onMounted, ref } from 'vue'
 import AppShell from './components/AppShell.vue'
 import Icon from './components/Icon.vue'
 import ProfileModal from './components/ProfileModal.vue'
+import AchievementFeed from './components/AchievementFeed.vue'
+import PublicProfileModal from './components/PublicProfileModal.vue'
+import { feedRows } from './lib/achievementFeed'
 import NameNudge from './components/NameNudge.vue'
 import { needsName } from './lib/profileName'
 import CategorySection from './components/CategorySection.vue'
@@ -23,6 +26,7 @@ import { PERIODS, formatPoints, myPlace, podiumSlots, restRows, type Period } fr
 const {
   auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
   leaderboard, leaderboardError, period, periodApi, badges, frames, myFrame, today, todayError, profile,
+  feed, feedApi, myFeedPick, feedPickApi, saveFeedPick,
   init, setPeriod, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
 } = useCommunity()
 onMounted(init)
@@ -35,6 +39,7 @@ const followMsg = ref<{ text: string; error: boolean } | null>(null)
 const myId = computed(() => (auth.value.status === 'ready' ? auth.value.userId : ''))
 const visibleLeaderboard = computed(() => leaderboardRows(leaderboard.value, myId.value, scope.value, friendIds.value))
 const visibleToday = computed(() => todayRows(today.value, myId.value, scope.value, friendIds.value))
+const visibleFeed = computed(() => feedRows(feed.value, myId.value, scope.value, friendIds.value))
 const incomingRequests = computed(() => splitRequests(requests.value).incoming)
 const outgoingRequests = computed(() => splitRequests(requests.value).outgoing)
 // карточки друзей с именем/аватаром из лидерборда, если сам профиль не прочитался (см. friendCards.ts)
@@ -147,15 +152,41 @@ const showNameNudge = computed(() => auth.value.status === 'ready' && needsName(
 async function onSaveName(name: string) {
   await onSaveProfile(name, profile.value?.leaderboard_visible !== false)
 }
-async function onSaveProfile(name: string, visible: boolean) {
+async function onSaveProfile(name: string, visible: boolean, feedPick?: string[]) {
   if (auth.value.status !== 'ready') return
   try {
     await saveProfile(auth.value.userId, normalizeDisplayName(name), visible)
   } catch (err) {
     followMsg.value = { text: t('dash_save_error_generic') + (err instanceof Error ? err.message : String(err)), error: true }
   }
+  // выбор для ленты — отдельной записью и только если изменился (без миграции 052 имя и видимость сохраняются как раньше)
+  if (feedPick && feedPickApi.value && feedPick.join('|') !== myFeedPick.value.join('|')) {
+    try {
+      await saveFeedPick(auth.value.userId, feedPick)
+    } catch (err) {
+      followMsg.value = { text: t('comm_feed_pick_error') + (err instanceof Error ? err.message : String(err)), error: true }
+    }
+  }
   showProfileModal.value = false
 }
+
+// Раскрытый профиль (BACKLOG 395): все открытые достижения человека; имя/аватар/баллы — из лидерборда, друзей или ленты
+const openedProfileId = ref<string | null>(null)
+const openedProfile = computed(() => {
+  const id = openedProfileId.value
+  if (!id) return null
+  const lb = leaderboard.value.find((r) => r.user_id === id)
+  const friend = [...acceptedProfiles.value, ...followProfiles.value].find((p) => p.user_id === id)
+  const ev = feed.value.find((r) => r.user_id === id)
+  return {
+    name: lb?.display_name || friend?.display_name || ev?.display_name || t('comm_no_name'),
+    avatarUrl: lb?.avatar_url ?? friend?.avatar_url ?? ev?.avatar_url ?? null,
+    frame: id === myId.value ? myFrame.value : (frames.value.get(id) ?? null),
+    keys: badges.value.get(id) ?? [],
+    points: lb ? lb.total_points : null,
+    streak: lb?.perfect_streak ?? 0,
+  }
+})
 </script>
 
 <template>
@@ -196,9 +227,9 @@ async function onSaveProfile(name: string, visible: boolean) {
       <p v-if="leaderboardError" class="dim mb-5">{{ t('comm_load_error') }} {{ leaderboardError }}</p>
       <p v-else-if="visibleLeaderboard.length === 0" class="dim mb-5">{{ t('comm_empty') }}</p>
       <template v-else>
-        <Podium :slots="podium" :my-id="myId" :badges="badges" :frames="frames" class="mb-3" />
+        <Podium :slots="podium" :my-id="myId" :badges="badges" :frames="frames" class="mb-3" @open="openedProfileId = $event" />
         <div v-if="rest.length" class="card mb-5 rounded-lg border px-3.5 py-1" style="border-color: var(--border)">
-          <div v-for="r in rest" :key="r.row.user_id" class="flex items-center gap-3 border-b py-2.5 last:border-0" style="border-color: var(--border)">
+          <div v-for="r in rest" :key="r.row.user_id" class="flex cursor-pointer items-center gap-3 border-b py-2.5 last:border-0" style="border-color: var(--border)" role="button" tabindex="0" :title="t('comm_profile_open')" data-testid="rest-row" @click="openedProfileId = r.row.user_id" @keydown.enter="openedProfileId = r.row.user_id">
             <span class="dim w-7 text-sm">#{{ r.rank }}</span>
             <Avatar :name="r.row.display_name" :url="r.row.avatar_url" :size="32" :frame="frames.get(r.row.user_id)" />
             <span class="min-w-0 flex-1 truncate" :style="r.row.user_id === myId ? 'font-weight:bold;color:var(--accent)' : ''">
@@ -230,6 +261,15 @@ async function onSaveProfile(name: string, visible: boolean) {
         </div>
       </div>
 
+      <!-- Лента достижений (миграция 052): только то, что люди сами выбрали показывать -->
+      <template v-if="feedApi">
+        <h2 class="mb-2 text-lg font-medium"><EmojiText :text="t('comm_feed_h2')" /></h2>
+        <div class="card mb-5 rounded-lg border p-3.5" style="border-color: var(--border)">
+          <AchievementFeed :rows="visibleFeed" :my-id="myId" :frames="frames" @open="openedProfileId = $event" />
+          <p class="dim mb-0 mt-2 text-xs">{{ t('comm_feed_hint') }}</p>
+        </div>
+      </template>
+
       <!-- Друзья -->
       <h2 class="mb-2 text-lg font-medium"><EmojiText :text="t('comm_friends_h2')" /></h2>
       <div class="card mb-5 rounded-lg border p-3.5" style="border-color: var(--border)">
@@ -252,7 +292,7 @@ async function onSaveProfile(name: string, visible: boolean) {
         <div v-if="friendCards.length > 0" class="mb-3">
           <p class="dim mb-1.5 text-sm">{{ t('comm_friends_sub') }}</p>
           <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr))">
-            <FriendCard v-for="p in friendCards" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)" :badges="badges.get(p.user_id)" :frame="frames.get(p.user_id)">
+            <FriendCard v-for="p in friendCards" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)" :badges="badges.get(p.user_id)" :frame="frames.get(p.user_id)" openable @open="openedProfileId = p.user_id">
               <button class="secondary px-1.5 py-0" :title="t('comm_friend_remove_title')" @click="onRemoveFriend(p.user_id)"><Icon name="x" /></button>
             </FriendCard>
           </div>
@@ -261,7 +301,7 @@ async function onSaveProfile(name: string, visible: boolean) {
         <div v-if="followCards.length > 0" class="mb-3">
           <p v-if="friendsApi" class="dim mb-1.5 text-sm">{{ t('comm_following_sub') }}</p>
           <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr))">
-            <FriendCard v-for="p in followCards" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)" :badges="badges.get(p.user_id)" :frame="frames.get(p.user_id)">
+            <FriendCard v-for="p in followCards" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)" :badges="badges.get(p.user_id)" :frame="frames.get(p.user_id)" openable @open="openedProfileId = p.user_id">
               <button class="secondary px-1.5 py-0" @click="onUnfollow(p.user_id)"><Icon name="x" /></button>
             </FriendCard>
           </div>
@@ -282,6 +322,24 @@ async function onSaveProfile(name: string, visible: boolean) {
       </div>
     </template>
 
-    <ProfileModal v-if="showProfileModal && profile" :initial="profile" @close="showProfileModal = false" @save="onSaveProfile" />
+    <ProfileModal
+      v-if="showProfileModal && profile"
+      :initial="profile"
+      :unlocked="badges.get(myId) ?? []"
+      :feed-pick="myFeedPick"
+      :feed-api="feedApi && feedPickApi"
+      @close="showProfileModal = false"
+      @save="onSaveProfile"
+    />
+    <PublicProfileModal
+      v-if="openedProfile"
+      :name="openedProfile.name"
+      :avatar-url="openedProfile.avatarUrl"
+      :frame="openedProfile.frame"
+      :keys="openedProfile.keys"
+      :points="openedProfile.points"
+      :streak="openedProfile.streak"
+      @close="openedProfileId = null"
+    />
   </main>
 </template>
