@@ -144,7 +144,15 @@ function shapeStyle(m: MuscleId) {
         <figure v-for="v in views" :key="v.key" class="m-0 text-center">
           <svg viewBox="0 0 100 190" class="h-64 w-32" role="group" :aria-label="t(v.label)">
             <circle cx="50" cy="14" r="9" :fill="props.studyRecent ? 'var(--success)' : 'none'" :fill-opacity="props.studyRecent ? 0.9 : 1" :stroke="props.studyRecent ? 'var(--success)' : 'var(--border)'" stroke-width="1.2" data-testid="muscle-head" />
-            <rect x="36" y="33" width="28" height="60" rx="8" fill="none" stroke="var(--border)" stroke-width="1" />
+            <path
+              d="M46 24 C42 27 40 31 39 35 C31 36 25 40 22 47 C19 55 18 65 17 77 L14 96 C14 101 17 103 20 100 L25 79 L28 67 L31 92 C33 101 34 108 33 118 L31 151 L34 181 L43 181 L47 145 L50 119 L53 145 L57 181 L66 181 L69 151 L67 118 C66 108 67 101 69 92 L72 67 L75 79 L80 100 C83 103 86 101 86 96 L83 77 C82 65 81 55 78 47 C75 40 69 36 61 35 C60 31 58 27 54 24 Z"
+              fill="none"
+              stroke="var(--border)"
+              stroke-width="1.2"
+              stroke-linejoin="round"
+              data-testid="body-outline"
+            />
+            <path v-if="v.key === 'back'" d="M50 35 L50 112" fill="none" stroke="var(--border)" stroke-width="0.7" stroke-dasharray="2 3" opacity="0.65" />
             <g
               v-for="(s, i) in v.shapes"
               :key="v.key + i"
