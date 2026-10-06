@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.31";
+const SITE_VERSION = "3.32";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.32", date: "2026-10-06 09:37", changes: [
+        "Календарь: срок цели теперь виден в календаре. В ячейке дня, на который выпадает срок цели, появляется значок мишени с числом целей (если все они выполнены, значок бледнее), а в окне дня сверху показан список «Цели со сроком на этот день» (выполненные зачёркнуты). Менять цели по-прежнему нужно в разделе «Цели». Виджет календаря на главной ждёт вашего решения. Миграция не нужна",
+    ]},
     { version: "3.31", date: "2026-10-06 09:31", changes: [
         "Дашборд, блок «Планы»: цели, которые вы отметили выполненными в этот день, но которых не было в плане, теперь не пропадают с главной. Под списком плана показывается строка «Цели, выполненные в этот день (их не было в плане)». Цель, уже стоящая в плане, не дублируется. Миграция не нужна",
     ]},
@@ -1600,6 +1603,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.32", date: "2026-10-06 09:37", changes: [
+        "Calendar: a goal's deadline now shows up in the calendar. The day cell with a deadline gets a target icon with the number of goals (paler when all of them are done), and the day window lists \"Goals due this day\" at the top (completed ones struck through). Goals are still edited in the Goals section. The calendar widget for the home page is waiting for your decision. No migration needed",
+    ]},
     { version: "3.31", date: "2026-10-06 09:31", changes: [
         "Dashboard, Plans block: goals you marked as completed on that day but that were not in the plan no longer disappear from the home page. A \"Goals completed this day (not in the plan)\" list is shown under the plan. A goal already in the plan is not duplicated. No migration needed",
     ]},
