@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { metricIconKey } from '../../../web-history/src/lib/icons'
+import { metricIconKey } from '../lib/icons'
 import Icon from './Icon.vue'
 
 // Порт iconHtml(icon, style) из config.js: метрика хранит либо эмодзи, либо
