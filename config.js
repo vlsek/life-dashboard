@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.41";
+const SITE_VERSION = "3.42";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.42", date: "2026-10-06 18:45", changes: [
+        "Календарь и История объединены в один раздел: на странице /calendar/ появился переключатель «Календарь / История», а старый адрес /history/ теперь открывает Историю в этом же разделе. Без миграции.",
+    ]},
     { version: "3.41", date: "2026-10-06 15:35", changes: [
         "Редкость наград: добавлен пятый уровень «необычные» (обычные, необычные, редкие, эпические, легендарные). В «Достижениях» у награды за ступень теперь видна её редкость: цветная полоска сверху карточки и метка под строкой награды, то же в окне «Новое достижение»",
     ]},
@@ -1631,6 +1634,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.42", date: "2026-10-06 18:45", changes: [
+        "Calendar and History are now one section: /calendar/ has a Calendar / History switch, while the old /history/ address opens History in the same section. No migration.",
+    ]},
     { version: "3.41", date: "2026-10-06 15:35", changes: [
         "Reward rarity: a fifth level, uncommon, was added (common, uncommon, rare, epic, legendary). In Achievements, a step reward now shows its rarity: a coloured stripe on top of the card and a label under the reward line, also in the New achievement window",
     ]},
