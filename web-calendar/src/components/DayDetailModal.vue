@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { HistoryContext } from '../lib/historyStats'
-import { dayStats, hasData, plannedItemDone, plannedOf } from '../../../web-history/src/lib/stats'
+import { dayStats, hasData, plannedItemDone, plannedOf } from '../lib/historyStats'
 import { isMetricDone, metricExpectedOn, metricSchedule } from '../lib/historyMetrics'
 import type { Metric, MetricValue, SetEntry } from '../lib/historyTypes'
 import { locale, t } from '../lib/i18n'
