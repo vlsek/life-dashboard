@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref } from 'vue'
 import EmojiText from './EmojiText.vue'
 import { t } from '../lib/i18n'
-import { dropIndex, moveTo, rowShift } from '../lib/dragReorder'
+import { moveTo } from '../lib/dragReorder'
+import { useRowDrag } from '../lib/useRowDrag'
 import { toggleBlock, type DashboardBlockKey, type LayoutItem } from '../lib/layout'
 import Icon from './Icon.vue'
 
@@ -11,79 +11,21 @@ import Icon from './Icon.vue'
 const props = defineProps<{ modelValue: LayoutItem[]; labels: Record<DashboardBlockKey, { title: string; desc: string }> }>()
 const emit = defineEmits<{ 'update:modelValue': [LayoutItem[]] }>()
 
-const rows = ref<HTMLElement[]>([])
-const drag = ref<{ from: number; to: number; dy: number; mids: number[]; heights: number[]; startY: number; step: number } | null>(null)
-let handleEl: HTMLElement | null = null
-let pointerId: number | null = null
+const { setListEl, drag, dragging, onDown, onMove, onUp, onCancel, onKey, rowStyle } = useRowDrag(
+  () => props.modelValue,
+  (next) => emit('update:modelValue', next),
+)
 
 function commit(next: LayoutItem[]) {
   emit('update:modelValue', next)
 }
-
-function onDown(e: PointerEvent, index: number) {
-  if (e.button !== undefined && e.button > 0) return // только основная кнопка / касание
-  const els = rows.value.filter(Boolean)
-  const rects = els.map((el) => el.getBoundingClientRect())
-  const gap = rects.length > 1 ? Math.max(0, rects[1].top - rects[0].bottom) : 0
-  drag.value = {
-    from: index,
-    to: index,
-    dy: 0,
-    startY: e.clientY,
-    mids: rects.map((r) => r.top + r.height / 2),
-    heights: rects.map((r) => r.height),
-    step: (rects[index]?.height ?? 0) + gap,
-  }
-  handleEl = e.currentTarget as HTMLElement
-  pointerId = e.pointerId ?? null
-  if (pointerId !== null) handleEl.setPointerCapture?.(pointerId)
-}
-
-function onMove(e: PointerEvent) {
-  const d = drag.value
-  if (!d) return
-  d.dy = e.clientY - d.startY
-  d.to = dropIndex(d.mids, d.from, d.mids[d.from] + d.dy)
-}
-
-function finish(apply: boolean) {
-  const d = drag.value
-  if (!d) return
-  drag.value = null
-  if (handleEl && pointerId !== null) handleEl.releasePointerCapture?.(pointerId)
-  handleEl = null
-  pointerId = null
-  if (apply && d.to !== d.from) commit(moveTo(props.modelValue, d.from, d.to))
-}
-const onUp = () => finish(true)
-const onCancel = () => finish(false)
-
-// Клавиатура на ручке: стрелки двигают на одну позицию
-function onKey(e: KeyboardEvent, index: number) {
-  const dir = e.key === 'ArrowUp' ? -1 : e.key === 'ArrowDown' ? 1 : 0
-  if (!dir) return
-  e.preventDefault()
-  commit(moveTo(props.modelValue, index, index + dir))
-}
-
-function rowStyle(j: number) {
-  const d = drag.value
-  if (!d) return {}
-  if (j === d.from) return { transform: `translateY(${d.dy}px)`, zIndex: 2, boxShadow: '0 8px 22px rgba(0,0,0,0.35)', transition: 'none', cursor: 'grabbing' }
-  const shift = rowShift(j, d.from, d.to, d.step)
-  return { transform: shift ? `translateY(${shift}px)` : undefined, transition: 'transform 0.15s ease' }
-}
-
-const dragging = computed(() => drag.value !== null)
-onBeforeUnmount(() => finish(false))
 </script>
 
 <template>
-  <div class="flex flex-col gap-2" :style="{ userSelect: dragging ? 'none' : undefined }" data-test="block-list">
+  <div :ref="setListEl" class="flex flex-col gap-2" :style="{ userSelect: dragging ? 'none' : undefined }" data-test="block-list">
     <div
       v-for="(item, i) in modelValue"
       :key="item.key"
-      :ref="(el) => (rows[i] = el as HTMLElement)"
       class="relative flex items-center gap-2 rounded-xl border p-2.5"
       :class="{ 'is-dragging': drag?.from === i }"
       :style="{ borderColor: 'var(--border)', background: 'var(--bg)', ...rowStyle(i) }"

@@ -7,6 +7,7 @@ import MetricIcon from './MetricIcon.vue'
 import { t } from '../lib/i18n'
 import { recordsEnabled, setRecordsEnabled } from '../lib/records'
 import { addableKeys, moveEntry, removeEntry, type ChartEntry, type ChartSeries } from '../lib/chartSeries'
+import { useRowDrag } from '../lib/useRowDrag'
 import type { PeriodState } from '../lib/chart'
 
 // Портировано из openChartsConfigModal() в dashboard.js: общий период, список выбранных графиков
@@ -21,6 +22,15 @@ function onRecords(e: Event) {
   setRecordsEnabled(recordsOn.value, 'charts')
 }
 const localPeriod = reactive<PeriodState>({ ...props.period })
+// Порядок графиков: перетаскивание строки за ручку ☰ (тот же жест, что в «Раскладке» блоков — lib/useRowDrag) + кнопки ↑/↓ в том же оформлении
+// (клавиатура, телефон, точный сдвиг без жеста). Любой способ меняет один и тот же список `order`; сохранение — по «Сохранить», как у остального окна.
+const { setListEl, drag, dragging, onDown, onMove, onUp, onCancel, onKey, rowStyle } = useRowDrag(
+  () => order.value,
+  (next) => {
+    order.value = next
+  },
+)
+const arrowStyle = { borderColor: 'var(--border)', background: 'var(--bg-card)', color: 'var(--text)' }
 const toAdd = ref('')
 const addable = computed(() => addableKeys(props.series, order.value))
 
@@ -54,7 +64,28 @@ function add() {
       <hr class="my-3" style="border: none; border-top: 1px solid var(--border)" />
       <p class="dim mb-2 text-xs">{{ t('dash_charts_goal_hint') }}</p>
 
-      <div v-for="(entry, i) in order" :key="entry.key" class="flex flex-wrap items-center gap-1.5 py-1" data-test="entry">
+      <div :ref="setListEl" class="flex flex-col gap-2" :style="{ userSelect: dragging ? 'none' : undefined }" data-test="entries-list">
+      <div
+        v-for="(entry, i) in order"
+        :key="entry.key"
+        class="relative flex flex-wrap items-center gap-1.5 rounded-xl border p-2"
+        :class="{ 'is-dragging': drag?.from === i }"
+        :style="{ borderColor: 'var(--border)', background: 'var(--bg)', ...rowStyle(i) }"
+        data-test="entry"
+      >
+        <button
+          type="button"
+          class="grid h-9 w-8 flex-none cursor-grab place-items-center rounded-lg text-lg leading-none"
+          style="touch-action: none; background: transparent; border: none; color: var(--text-dim)"
+          data-test="drag-handle"
+          :aria-label="t('dash_layout_drag')"
+          :title="t('dash_layout_drag')"
+          @pointerdown.prevent="onDown($event, i)"
+          @pointermove="onMove"
+          @pointerup="onUp"
+          @pointercancel="onCancel"
+          @keydown="onKey($event, i)"
+        ><Icon name="menu" /></button>
         <span class="min-w-28 flex-1"><MetricIcon v-if="series[entry.key]?.icon" :icon="series[entry.key].icon" extra-style="margin-right:0.35em;" />{{ series[entry.key]?.name ?? series[entry.key]?.label ?? entry.key }}</span>
         <input
           type="number"
@@ -65,9 +96,10 @@ function add() {
           :value="entry.goal ?? ''"
           @change="setGoal(entry, ($event.target as HTMLInputElement).value)"
         />
-        <button type="button" class="secondary px-2" data-test="up" @click="order = moveEntry(order, i, -1)">↑</button>
-        <button type="button" class="secondary px-2" data-test="down" @click="order = moveEntry(order, i, 1)">↓</button>
+        <button type="button" class="rounded-md border px-2 py-1 text-sm" :style="arrowStyle" data-test="up" :disabled="i === 0" :aria-label="t('dash_layout_up')" @click="order = moveEntry(order, i, -1)">↑</button>
+        <button type="button" class="rounded-md border px-2 py-1 text-sm" :style="arrowStyle" data-test="down" :disabled="i === order.length - 1" :aria-label="t('dash_layout_down')" @click="order = moveEntry(order, i, 1)">↓</button>
         <button type="button" class="danger px-2" data-test="remove" @click="order = removeEntry(order, entry.key)"><Icon name="x" /></button>
+      </div>
       </div>
 
       <template v-if="addable.length">
