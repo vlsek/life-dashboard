@@ -1,10 +1,9 @@
 <script setup lang="ts">
-
 import { computed, ref } from 'vue'
-import { useAuthAndData } from '../../../web-history/src/lib/useHistoryData'
-import { addDaysIso, fmtDate, mondayOf, parseIso } from '../../../web-history/src/lib/date'
-import { dayStats, hasData, weekStats } from '../../../web-history/src/lib/stats'
-import type { HistoryContext } from '../../../web-history/src/lib/stats'
+import { useAuthAndData } from '../lib/useHistoryData'
+import { addDaysIso, fmtDate, mondayOf, parseIso } from '../lib/date'
+import { dayStats, hasData, weekStats } from '../lib/historyStats'
+import type { HistoryContext } from '../lib/historyStats'
 import { locale, t } from '../lib/i18n'
 import DayDetailModal from './DayDetailModal.vue'
 import EmojiText from './EmojiText.vue'
@@ -159,3 +158,120 @@ function onTouchEnd(e: TouchEvent) {
       <template v-if="!ctx.firstDate">
         <p class="text-sm" style="color: var(--text-dim)">{{ t('hist_no_data') }}</p>
       </template>
+
+      <template v-else>
+        <!-- no-edge-swipe (левая шторка) и data-no-swipe (правая панель шапки): свайп по месяцу и сетке не должен выдвигать боковые плашки, как в Календаре -->
+        <div class="no-edge-swipe mb-3 flex items-center gap-2" data-no-swipe data-test="hist-head">
+          <button
+            type="button"
+            class="rounded-lg border px-2.5 py-1.5"
+            style="border-color: var(--border); background: var(--bg-card); color: var(--text)"
+            @click="shiftMonth(-1)"
+          >
+            ‹
+          </button>
+          <div class="flex-1 text-center font-bold">{{ monthTitle }}</div>
+          <button
+            type="button"
+            class="rounded-lg border px-2.5 py-1.5 disabled:opacity-40"
+            style="border-color: var(--border); background: var(--bg-card); color: var(--text)"
+            :disabled="nextDisabled"
+            @click="shiftMonth(1)"
+          >
+            ›
+          </button>
+          <button
+            type="button"
+            class="rounded-lg border px-3 py-1.5 text-sm"
+            style="border-color: var(--border); background: var(--bg-card); color: var(--text)"
+            @click="goToday"
+          >
+            {{ t('hist_today_btn') }}
+          </button>
+        </div>
+
+        <div class="mb-3 grid grid-cols-3 gap-2">
+          <div
+            v-for="s in [
+              [monthGrid.avg == null ? '—' : monthGrid.avg + '%', t('hist_stat_avg')],
+              [String(monthGrid.perfect), t('hist_stat_perfect')],
+              [String(monthGrid.trackedDays), t('hist_stat_days')],
+            ]"
+            :key="s[1]"
+            class="rounded-xl border p-2 text-center"
+            style="border-color: var(--border); background: var(--bg-card)"
+          >
+            <div class="text-xl font-bold">{{ s[0] }}</div>
+            <div class="text-[0.7em]" style="color: var(--text-dim)">{{ s[1] }}</div>
+          </div>
+        </div>
+
+        <div class="no-edge-swipe mb-2 flex flex-col gap-1" data-no-swipe data-test="hist-grid" @touchstart="onTouchStart" @touchend="onTouchEnd">
+          <div class="grid gap-1" style="grid-template-columns: repeat(7, minmax(0, 1fr)) minmax(0, 1.05fr)">
+            <div v-for="n in weekdayNames" :key="n" class="py-0.5 text-center text-[0.72em]" style="color: var(--text-dim)">{{ n }}</div>
+            <div class="py-0.5 text-center text-[0.72em]" style="color: var(--text-dim)">{{ t('hist_week_col') }}</div>
+          </div>
+
+          <div v-for="(row, ri) in monthGrid.rows" :key="ri" class="grid gap-1" style="grid-template-columns: repeat(7, minmax(0, 1fr)) minmax(0, 1.05fr)">
+            <button
+              v-for="cell in row"
+              :key="cell.key"
+              type="button"
+              class="relative flex min-h-11 flex-col items-start justify-between overflow-hidden rounded-lg border p-1 text-left"
+              :class="[
+                cell.dateStr ? 'cursor-pointer' : 'cursor-default border-transparent',
+                cell.isToday ? 'outline outline-2 -outline-offset-2' : '',
+                cell.isFuture || cell.hasNoData ? 'opacity-50' : '',
+                cell.over ? 'shadow-[inset_0_0_0_2px_#e0a93b]' : '',
+              ]"
+              :style="{
+                aspectRatio: '1 / 1.1',
+                borderColor: cell.dateStr ? 'var(--border)' : 'transparent',
+                background: cell.hasStats
+                  ? `linear-gradient(to top, var(--hist-ok) ${cell.fill}%, var(--bg-card) ${cell.fill}%)`
+                  : 'var(--bg-card)',
+                outlineColor: cell.isToday ? 'var(--accent)' : undefined,
+                color: cell.hasStats && cell.fill >= 55 ? '#fff' : 'var(--text)',
+                textShadow: cell.hasStats && cell.fill >= 55 ? '0 1px 2px rgba(0,0,0,0.4)' : undefined,
+              }"
+              :disabled="!cell.dateStr"
+              @click="cell.dateStr && (selectedDate = cell.dateStr)"
+            >
+              <span v-if="cell.dayNum" class="text-[0.78em] font-semibold">{{ cell.dayNum }}</span>
+              <span v-if="cell.hasStats" class="self-end text-[0.68em] font-semibold">{{ cell.pct }}%</span>
+            </button>
+
+            <div
+              class="flex items-center justify-center rounded-lg border"
+              :style="{
+                borderColor: 'var(--border)',
+                background:
+                  monthGrid.weekPct.get(ri) != null
+                    ? `linear-gradient(to top, var(--accent) ${Math.min(100, monthGrid.weekPct.get(ri)!)}%, var(--bg-card) ${Math.min(100, monthGrid.weekPct.get(ri)!)}%)`
+                    : 'var(--bg-card)',
+                color: monthGrid.weekPct.get(ri) != null && monthGrid.weekPct.get(ri)! >= 55 ? 'var(--accent-text)' : 'var(--text)',
+              }"
+            >
+              <span v-if="monthGrid.weekPct.get(ri) != null" class="text-[0.68em] font-semibold">{{ monthGrid.weekPct.get(ri) }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="mb-2 mt-6 text-lg font-bold"><EmojiText :text="t('hist_weeks_h2')" /></h2>
+        <p v-if="recentWeeks.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('hist_no_data') }}</p>
+        <div v-for="w in recentWeeks" :key="w.label" class="my-2 flex items-center gap-2.5">
+          <div class="w-[124px] shrink-0 text-sm">{{ w.label }}</div>
+          <div class="h-2.5 flex-1 overflow-hidden rounded-md border" style="border-color: var(--border); background: var(--bg-card)">
+            <div
+              class="h-full rounded-md transition-[width]"
+              :style="{ width: Math.min(100, w.pct) + '%', background: w.pct >= 100 ? 'var(--hist-ok)' : 'var(--accent)' }"
+            ></div>
+          </div>
+          <div class="w-11 shrink-0 text-right text-sm font-semibold">{{ w.pct }}%</div>
+        </div>
+      </template>
+    </template>
+
+    <DayDetailModal v-if="selectedDate && ctx" :ctx="ctx as HistoryContext" :date-str="selectedDate" @close="selectedDate = null" />
+  </section>
+</template>
