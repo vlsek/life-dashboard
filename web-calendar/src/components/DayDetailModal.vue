@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { HistoryContext } from '../../../web-history/src/lib/stats'
+import type { HistoryContext } from '../lib/historyStats'
 import { dayStats, hasData, plannedItemDone, plannedOf } from '../../../web-history/src/lib/stats'
-import { isMetricDone, metricExpectedOn, metricSchedule } from '../../../web-history/src/lib/metrics'
-import type { Metric, MetricValue, SetEntry } from '../../../web-history/src/lib/types'
-import { locale, t } from '../../../web-history/src/lib/i18n'
+import { isMetricDone, metricExpectedOn, metricSchedule } from '../lib/historyMetrics'
+import type { Metric, MetricValue, SetEntry } from '../lib/historyTypes'
+import { locale, t } from '../lib/i18n'
 import MetricIcon from './MetricIcon.vue'
 import Icon from './Icon.vue'
 
