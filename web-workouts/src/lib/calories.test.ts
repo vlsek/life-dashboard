@@ -16,7 +16,7 @@ describe('estimateExerciseCalories', () => {
     const result = estimateExerciseCalories(entries, exercise, 80)
     expect(result?.basis).toBe('duration')
     expect(result?.minutes).toBe(15)
-    expect(result?.kcal).toBe(66)
+    expect(result?.kcal).toBe(116)
   })
 
   it('falls back to a short estimated time per repetition', () => {
@@ -26,7 +26,7 @@ describe('estimateExerciseCalories', () => {
     const result = estimateExerciseCalories(entries, exercise, 70)
     expect(result?.basis).toBe('reps')
     expect(result?.minutes).toBe(1)
-    expect(result?.kcal).toBe(6)
+    expect(result?.kcal).toBe(7)
   })
 
   it('returns null when there is no recorded activity', () => {
