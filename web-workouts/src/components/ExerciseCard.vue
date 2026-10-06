@@ -5,6 +5,7 @@ import { fmtRu, todayStr } from '../lib/date'
 import { setCount } from '../lib/quickSet'
 import { bestPaceRecord, bestSetRecord, formatSets } from '../lib/workouts'
 import { defaultWeightUnit } from '../lib/weightUnit'
+import { estimateExerciseCalories } from '../lib/calories'
 import Icon from './Icon.vue'
 import ExerciseChart from './ExerciseChart.vue'
 import { readExerciseCollapsed, writeExerciseCollapsed } from '../lib/exerciseCollapse'
@@ -15,7 +16,7 @@ import EmojiText from './EmojiText.vue'
 
 // Порт renderExerciseCard() из workouts.js — заголовок с кнопками, рекомендованная схема,
 // личные рекорды (по сторонам для билатеральных), мини-график прогресса, таблица записей.
-const props = defineProps<{ exercise: Exercise; entries: WorkoutEntry[]; busyEntryId?: string | null }>()
+const props = defineProps<{ exercise: Exercise; entries: WorkoutEntry[]; busyEntryId?: string | null; bodyWeightKg?: number }>()
 const emit = defineEmits<{
   addEntry: []
   editExercise: []
@@ -68,6 +69,7 @@ const canQuick = (e: WorkoutEntry) => e.date === today && (e.sets?.length ?? 0) 
 const canRemove = (e: WorkoutEntry) => setCount(e.sets ?? []) > 1
 
 const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date.localeCompare(a.date)))
+const calories = computed(() => estimateExerciseCalories(props.entries, props.exercise, props.bodyWeightKg ?? 70))
 </script>
 
 <template>
@@ -112,6 +114,10 @@ const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date
     </div>
 
     <ExerciseChart :exercise="exercise" :entries="entries" />
+
+    <div v-if="calories" class="mb-2 text-sm" style="color: var(--text-dim)" data-testid="exercise-calories">
+      🔥 ≈ {{ calories.kcal }} {{ t('workouts_kcal') }} · {{ t('workouts_calorie_estimate') }}
+    </div>
 
     <p v-if="entries.length === 0" class="mt-2 text-sm" style="color: var(--text-dim)">{{ t('workouts_no_entries') }}</p>
     <div v-else class="mt-2 overflow-x-auto">
