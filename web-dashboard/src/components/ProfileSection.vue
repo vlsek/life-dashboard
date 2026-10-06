@@ -7,6 +7,7 @@ import BodyParamFormModal from './BodyParamFormModal.vue'
 import BodyParamsModal from './BodyParamsModal.vue'
 import PointsLogModal from './PointsLogModal.vue'
 import AvatarProgress from './AvatarProgress.vue'
+import { useAvatarFrame } from '../lib/useAvatarFrame'
 import ProgressRing from './ProgressRing.vue'
 import StreakFlame from './StreakFlame.vue'
 import { streakDays } from '../lib/streakFlameTier'
@@ -51,11 +52,15 @@ const streakTitle = computed(() => {
   return top.todayCounted ? ((props.streakCount ?? 0) > 1 ? `${streakLabel(top)} — ${t('dash_streak_more_hint')}` : streakLabel(top)) : t('dash_streak_at_risk_warning')
 })
 const { profile, params, stats, balance, loaded, error, init, uploadAvatar, saveBirthdate, addParam, updateParam, deleteParam, refreshValues } = useProfile()
+const { frame: avatarFrame, load: loadAvatarFrame } = useAvatarFrame()
 
 watch(
   () => props.userId,
   (uid) => {
-    if (uid) init(uid)
+    if (uid) {
+      init(uid)
+      void loadAvatarFrame(uid)
+    }
   },
   { immediate: true },
 )
@@ -130,7 +135,7 @@ function openForm(p: BodyParam | 'new') {
     <!-- Строка 1 (BACKLOG 7.2): главное — аватар с кольцом дня, кольцо недели, возраст; справа стрик и баллы.
          На очень узком экране правая группа переносится под левую, но не ломает остальное. -->
     <div class="flex w-full flex-wrap items-center gap-x-3 gap-y-2" data-test="profile-top-row">
-      <AvatarProgress :avatar-url="profile?.avatar_url" :ring="day ?? null" @pick="fileInput?.click()" @settings="emit('progress-settings', 'day')" />
+      <AvatarProgress :avatar-url="profile?.avatar_url" :ring="day ?? null" :frame="avatarFrame" @pick="fileInput?.click()" @settings="emit('progress-settings', 'day')" />
       <input ref="fileInput" type="file" accept="image/*" class="hidden" data-test="avatar-input" @change="onFile" />
 
       <ProgressRing

@@ -1,0 +1,26 @@
+// Цвета выбранной рамки аватарки для кольца прогресса дня на Дашборде (BACKLOG раздел 43, 9:40): «если куплена рамка и включено
+// отображение прогресса дня вокруг аватарки — прогресс рисуется стилем рамки». Сама рамка — box-shadow (FRAME_SHADOWS в
+// web-customization/src/lib/frames.ts), а кольцо — SVG-дуга, поэтому здесь отдельная таблица: цвета дуги и свечение.
+// Страж frameRing.test.ts сверяет ключи и основной цвет с таблицей рамок: добавили рамку — добавь строку и сюда.
+export interface FrameRingStyle {
+  stops: string[] // один цвет — сплошная дуга, несколько — градиент вдоль дуги
+  glow: string | null // свечение (drop-shadow), если у рамки оно есть
+}
+
+const RING: Record<string, FrameRingStyle> = {
+  frame_neon: { stops: ['#ff4fa3'], glow: 'rgba(255, 79, 163, 0.6)' },
+  frame_aurora: { stops: ['#4fd1ff', '#8a7dff'], glow: null },
+  frame_gold: { stops: ['#e0b23c'], glow: 'rgba(224, 178, 60, 0.6)' },
+  frame_flame: { stops: ['#ff7a1a'], glow: 'rgba(255, 98, 20, 0.6)' },
+  frame_rainbow: { stops: ['#ff4f4f', '#ffd23c', '#4fe08a', '#4fd1ff', '#8a7dff'], glow: null },
+  frame_inferno: { stops: ['#ff3b1a'], glow: 'rgba(255, 60, 20, 0.7)' },
+  frame_pulse: { stops: ['#3df0ff'], glow: 'rgba(61, 240, 255, 0.55)' },
+  frame_royal: { stops: ['#e0b23c'], glow: 'rgba(224, 178, 60, 0.6)' },
+}
+
+export const FRAME_RING_KEYS = Object.keys(RING)
+
+// Стиль дуги для ключа рамки; нет рамки или неизвестный ключ (предмет убрали из реестра) — null, кольцо остаётся обычным.
+export function frameRing(key: string | null | undefined): FrameRingStyle | null {
+  return (key && RING[key]) || null
+}

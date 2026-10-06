@@ -17,6 +17,7 @@ import {
   type Source,
   type Unlocked,
 } from './customization'
+import { notifyCustomizationChanged } from './customizationEvents'
 
 export type AuthState =
   | { status: 'loading' }
@@ -171,6 +172,7 @@ export function useCustomization() {
       const { error: err } = await sb.from('profiles').update({ customization: next }).eq('user_id', auth.value.userId)
       if (err) throw new Error(err.message)
       selected.value = next
+      notifyCustomizationChanged({ avatar_frame: next.avatar_frame ?? null }) // 9:41: левое меню и Дашборд меняют рамку без обновления
       return true
     } catch (e) {
       actionError.value = t('cust_select_error') + (e as Error).message
