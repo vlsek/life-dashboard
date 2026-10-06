@@ -3,7 +3,8 @@ import { computed } from 'vue'
 import Icon from './Icon.vue'
 import { locale, t } from '../lib/i18n'
 import { achievementCondition, achievementTitle, rewardText } from '../lib/achievementText'
-import { rewardFor, rewardIcon } from '../lib/rewards'
+import { RARITY_COLOR, rewardFor, rewardIcon, rewardRarity } from '../lib/rewards'
+import type { DictKey } from '../lib/i18n'
 import type { AchievementState } from '../lib/achievements'
 
 // Одна карточка достижения: открытое — цветное (значок в акцентном кружке, дата), закрытое — тусклое (замок, условие, прогресс-бар).
@@ -12,6 +13,7 @@ const props = defineProps<{ state: AchievementState; unlocked: boolean; unlocked
 const title = computed(() => achievementTitle(props.state.def))
 // Награда за ступень (rewards.ts): подпись «скоро», пока награда не выдаётся по-настоящему
 const reward = computed(() => rewardFor(props.state.def.key))
+const rarity = computed(() => (reward.value ? rewardRarity(props.state.def.key) : null))
 const condition = computed(() => achievementCondition(props.state.def))
 const shownValue = computed(() => Math.min(props.state.value, props.state.def.target))
 const percent = computed(() => Math.round(props.state.progress * 100))
@@ -30,6 +32,7 @@ const when = computed(() => {
     :class="unlocked ? 'ach-unlocked' : 'ach-locked'"
     :data-state="unlocked ? 'unlocked' : 'locked'"
     :data-key="state.def.key"
+    :style="rarity ? { boxShadow: 'inset 0 3px 0 ' + RARITY_COLOR[rarity] } : undefined"
     data-testid="achievement-card"
   >
     <div class="ach-badge relative flex h-14 w-14 items-center justify-center rounded-full text-2xl">
@@ -41,6 +44,10 @@ const when = computed(() => {
     <div v-if="reward" class="ach-reward mt-1 flex items-center justify-center gap-1 text-xs leading-snug" data-testid="achievement-reward">
       <Icon :name="rewardIcon(reward)" />
       <span>{{ rewardText(reward) }}</span>
+    </div>
+    <div v-if="rarity" class="ach-rarity dim mt-0.5 flex items-center justify-center gap-1 text-xs" :data-rarity="rarity" data-testid="achievement-rarity">
+      <span class="ach-rarity-dot" :style="{ background: RARITY_COLOR[rarity] }" aria-hidden="true"></span>
+      <span>{{ t(('ach_rarity_' + rarity) as DictKey) }}</span>
     </div>
 
     <template v-if="unlocked">
@@ -63,6 +70,12 @@ const when = computed(() => {
 </template>
 
 <style scoped>
+.ach-rarity-dot {
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+}
 .ach-card {
   background: var(--bg-card);
   border-color: var(--border);

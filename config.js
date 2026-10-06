@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.40";
+const SITE_VERSION = "3.41";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.41", date: "2026-10-06 15:35", changes: [
+        "Редкость наград: добавлен пятый уровень «необычные» (обычные, необычные, редкие, эпические, легендарные). В «Достижениях» у награды за ступень теперь видна её редкость: цветная полоска сверху карточки и метка под строкой награды, то же в окне «Новое достижение»",
+    ]},
     { version: "3.40", date: "2026-10-06 15:08", changes: [
         "Дашборд, подходы: у каждого параметра подхода — время, повторы, особенность — теперь своя подложка-плашка с зазором между ними (раньше все три сливались в одну общую плашку без разделителей); номер подхода и кнопка «удалить» без плашки, при вводе рамка плашки в цвет акцента.",
         "Дашборд, окна и формы: у ВСЕХ полей ввода и списков появилась подложка (фон и рамка) — раньше она была только у текстовых полей, а «Значение цели X», «Подходов в день по плану», время, дата, выпадающие списки и многострочные поля сливались с фоном окна и не читались как редактируемые. Без миграций."
@@ -1628,6 +1631,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.41", date: "2026-10-06 15:35", changes: [
+        "Reward rarity: a fifth level, uncommon, was added (common, uncommon, rare, epic, legendary). In Achievements, a step reward now shows its rarity: a coloured stripe on top of the card and a label under the reward line, also in the New achievement window",
+    ]},
     { version: "3.40", date: "2026-10-06 15:08", changes: [
         "Dashboard, sets: each parameter of a set - time, reps, variation - now has its own plate with a gap between them (they used to merge into one shared plate with no dividers); the set number and the delete button have no plate, and the plate border turns accent-colored while typing.",
         "Dashboard, windows and forms: ALL input fields and dropdowns now have a plate (background and border) - it used to exist only for text fields, so \"Goal value X\", \"Sets per day planned\", time, date, dropdowns and multi-line fields blended into the window background and did not look editable. No migration needed."

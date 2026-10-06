@@ -86,8 +86,9 @@ describe('страница: группы по редкости и сворачи
     const w = mount(App)
     await flushPromises()
     const order = (sel: string) => w.findAll(`${sel} [data-rarity][data-collapsed]`).map((g) => g.attributes('data-rarity'))
-    expect(order('[data-section="themes"]')).toEqual(['common', 'rare', 'epic', 'legendary'])
-    expect(order('[data-section="avatar_frame"]')).toEqual(['common', 'rare', 'epic', 'legendary'])
+    expect(order('[data-section="themes"]')).toEqual(['common', 'uncommon', 'rare', 'epic', 'legendary'])
+    expect(order('[data-section="avatar_frame"]')).toEqual(['common', 'uncommon', 'rare', 'epic', 'legendary'])
+    expect(w.find('[data-testid="rarity-themes:uncommon"]').text()).toContain('Необычные')
     expect(w.find('[data-testid="rarity-themes:common"]').text()).toContain('Обычные')
     expect(w.find('[data-testid="rarity-hint"]').text()).toContain('Награды разложены по редкости')
     // карточка в нужной группе и помечена редкостью
@@ -102,7 +103,8 @@ describe('страница: группы по редкости и сворачи
     await flushPromises()
     expect(w.find('[data-testid="rarity-themes:common"] [data-testid="rarity-count"]').text()).toBe('5')
     expect(w.find('[data-testid="rarity-avatar_frame:common"] [data-testid="rarity-count"]').text()).toBe('0/1')
-    expect(w.find('[data-testid="rarity-avatar_frame:epic"] [data-testid="rarity-count"]').text()).toBe('0/3')
+    expect(w.find('[data-testid="rarity-avatar_frame:rare"] [data-testid="rarity-count"]').text()).toBe('0/3')
+    expect(w.find('[data-testid="rarity-avatar_frame:epic"] [data-testid="rarity-count"]').text()).toBe('0/2')
     w.unmount()
   })
 
@@ -139,9 +141,9 @@ describe('страница: группы по редкости и сворачи
   it('свёрнутая группа не теряет кнопки: карточки остаются в DOM, «Применить» работает после разворота', async () => {
     const w = mount(App)
     await flushPromises()
-    await w.find('[data-testid="rarity-themes:rare"] [data-testid="rarity-toggle"]').trigger('click')
+    await w.find('[data-testid="rarity-themes:uncommon"] [data-testid="rarity-toggle"]').trigger('click')
     expect(w.find('[data-testid="theme-mint"] [data-testid="apply"]').exists()).toBe(true)
-    await w.find('[data-testid="rarity-themes:rare"] [data-testid="rarity-toggle"]').trigger('click')
+    await w.find('[data-testid="rarity-themes:uncommon"] [data-testid="rarity-toggle"]').trigger('click')
     await w.find('[data-testid="theme-mint"] [data-testid="apply"]').trigger('click')
     expect(document.documentElement.classList.contains('theme-mint')).toBe(true)
     w.unmount()

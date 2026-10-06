@@ -4,7 +4,7 @@ import Icon from './Icon.vue'
 import { t } from '../lib/i18n'
 import type { DictKey } from '../lib/i18n'
 import { achievementCondition, achievementTitle, rewardText } from '../lib/achievementText'
-import { rewardFor, rewardIcon } from '../lib/rewards'
+import { RARITY_COLOR, rewardFor, rewardIcon, rewardRarity } from '../lib/rewards'
 import type { AchievementState } from '../lib/achievements'
 
 // Поздравление «Новое достижение» (BACKLOG 19:06, по образцу StreakMilestoneModal Дашборда): значок крупно, название, за что,
@@ -20,6 +20,7 @@ const isLast = computed(() => index.value >= props.states.length - 1)
 const title = computed(() => (many.value ? t('ach_new_title_many') : t('ach_new_title')))
 const counter = computed(() => t('ach_new_counter').replace('{i}', String(index.value + 1)).replace('{n}', String(props.states.length)))
 const reward = computed(() => (current.value ? rewardFor(current.value.def.key) : null))
+const rarity = computed(() => (reward.value && current.value ? rewardRarity(current.value.def.key) : null))
 const message = computed(() => (current.value ? t(('ach_new_msg_' + current.value.def.group) as DictKey) : ''))
 
 function advance() {
@@ -64,6 +65,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
       <div v-if="reward" class="mt-2 flex items-center justify-center gap-1 text-sm" style="color: var(--accent)" data-testid="unlocked-reward">
         <Icon :name="rewardIcon(reward)" />
         <span>{{ rewardText(reward) }}</span>
+      </div>
+      <div v-if="rarity" class="dim mt-0.5 flex items-center justify-center gap-1 text-xs" :data-rarity="rarity" data-testid="unlocked-rarity">
+        <span class="inline-block h-2 w-2 rounded-full" :style="{ background: RARITY_COLOR[rarity] }" aria-hidden="true"></span>
+        <span>{{ t(('ach_rarity_' + rarity) as DictKey) }}</span>
       </div>
       <div v-if="many" class="dim mt-2 text-xs" data-testid="unlocked-counter">{{ counter }}</div>
 

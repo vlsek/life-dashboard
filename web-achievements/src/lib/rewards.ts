@@ -23,6 +23,27 @@ export const COINS_STEP_2 = 50
 // с web-customization (DEFAULT_FAVORITE_THEMES) и с корневым style.css (темы, которых нет на сайте, не принимаются).
 export const LOCKABLE_THEMES = ['mint', 'sepia', 'solarlight', 'nord', 'mocha', 'amoled'] as const
 
+// Редкость награды (BACKLOG 39; владелец 2026-10-06: показывать в «Достижениях»). Уровни и цвета — ТЕ ЖЕ, что в
+// `web-customization/src/lib/rarity.ts` (сверяет `rewardRarity.test.ts`). Правило: ступень 1 (20 монет) — обычная, ступень 2 (50 монет) —
+// необычная, ступень 3 (рамка раздела) — редкая, ступень 4 — по теме (таблица ниже) или эпическая у «редкой рамки» челленджей и вех.
+export const RARITIES = ['common', 'uncommon', 'rare', 'epic', 'legendary'] as const
+export type Rarity = (typeof RARITIES)[number]
+export const RARITY_COLOR: Record<Rarity, string> = {
+  common: '#8b95a1',
+  uncommon: '#3fb97a',
+  rare: '#3b9cff',
+  epic: '#b266ff',
+  legendary: '#f5a623',
+}
+export const THEME_REWARD_RARITY: Record<(typeof LOCKABLE_THEMES)[number], Rarity> = {
+  mint: 'uncommon',
+  sepia: 'uncommon',
+  solarlight: 'rare',
+  nord: 'rare',
+  mocha: 'epic',
+  amoled: 'legendary',
+}
+
 type Ladder = { steps: [string, string, string, string]; item: string; finale: { theme: string } | { item: string } }
 
 // Лесенки: ступени 1–2 → монетки, 3 → рамка своего раздела, 4 → тема (темы хватает на 6 из 8 лесенок; «челленджи» и «вехи» пока получают
@@ -50,6 +71,23 @@ function build(): Record<string, Reward> {
 }
 
 export const REWARDS: Record<string, Reward> = build()
+
+function buildRarity(): Record<string, Rarity> {
+  const out: Record<string, Rarity> = {}
+  for (const l of Object.values(LADDERS)) {
+    out[l.steps[0]] = 'common'
+    out[l.steps[1]] = 'uncommon'
+    out[l.steps[2]] = 'rare'
+    out[l.steps[3]] = 'theme' in l.finale ? THEME_REWARD_RARITY[l.finale.theme as (typeof LOCKABLE_THEMES)[number]] : 'epic'
+  }
+  return out
+}
+
+export const REWARD_RARITY: Record<string, Rarity> = buildRarity()
+
+export function rewardRarity(achievementKey: string): Rarity | null {
+  return REWARD_RARITY[achievementKey] ?? null
+}
 
 export function rewardFor(achievementKey: string): Reward | null {
   return REWARDS[achievementKey] ?? null

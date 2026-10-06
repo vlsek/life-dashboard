@@ -1,6 +1,13 @@
 {
-  "version": "3.40",
+  "version": "3.41",
   "en": [
+    {
+      "version": "3.41",
+      "date": "2026-10-06 15:35",
+      "changes": [
+        "Reward rarity: a fifth level, uncommon, was added (common, uncommon, rare, epic, legendary). In Achievements, a step reward now shows its rarity: a coloured stripe on top of the card and a label under the reward line, also in the New achievement window"
+      ]
+    },
     {
       "version": "3.40",
       "date": "2026-10-06 15:08",
@@ -2445,6 +2452,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.41",
+      "date": "2026-10-06 15:35",
+      "changes": [
+        "Редкость наград: добавлен пятый уровень «необычные» (обычные, необычные, редкие, эпические, легендарные). В «Достижениях» у награды за ступень теперь видна её редкость: цветная полоска сверху карточки и метка под строкой награды, то же в окне «Новое достижение»"
+      ]
+    },
     {
       "version": "3.40",
       "date": "2026-10-06 15:08",
