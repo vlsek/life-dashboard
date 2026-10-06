@@ -17,6 +17,7 @@ export function useWorkouts() {
   const entries = ref<WorkoutEntry[]>([])
   const loadError = ref<string | null>(null)
   const studyRecent = ref(false)
+  const bodyWeightKg = ref(70)
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -55,7 +56,20 @@ export function useWorkouts() {
     exercises.value = (ex || []) as Exercise[]
     entries.value = (en || []) as WorkoutEntry[]
     await syncMuscleGroups(exercises.value)
-    await loadStudyRecent(userId)
+    await Promise.all([loadStudyRecent(userId), loadBodyWeight(userId)])
+  }
+
+
+  async function loadBodyWeight(userId: string) {
+    const { data: params } = await sb.from('body_parameters').select('id, name, unit').eq('user_id', userId).eq('active', true)
+    const weightParam = (params || []).find((p) => {
+      const name = String(p.name || '').toLowerCase()
+      return name.includes('вес') || name.includes('weight')
+    })
+    if (!weightParam?.id) return
+    const { data } = await sb.from('body_parameter_values').select('value').eq('user_id', userId).eq('parameter_id', weightParam.id).order('date', { ascending: false }).limit(1).maybeSingle()
+    const value = Number(data?.value)
+    if (Number.isFinite(value) && value > 0) bodyWeightKg.value = value
   }
 
   // Учёба для головы на карте мышц: категория metric_categories.key = study и выполненная
@@ -240,6 +254,7 @@ export function useWorkouts() {
     entries,
     loadError,
     studyRecent,
+    bodyWeightKg,
     entriesFor,
     addExercise,
     editExercise,
