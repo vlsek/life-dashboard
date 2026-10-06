@@ -33,7 +33,7 @@ import { errMsg } from './lib/errMsg'
 // группировка по категориям со сворачиванием, каталог типовых программ, мини-график прогресса
 // на каждом упражнении (ExerciseChart в ExerciseCard) и общий график объёма тренировок.
 const wk = useWorkouts()
-const { auth, exercises, entries, loadError, studyRecent, entriesFor } = wk
+const { auth, exercises, entries, loadError, studyRecent, bodyWeightKg, entriesFor } = wk
 
 const defaultUnit = () => defaultWeightUnit()
 const defaultValueLabel = () => t('workouts_default_value_label')
@@ -342,6 +342,7 @@ function onToggleProgramWeek(week: number) {
             :key="ex.id"
             :exercise="ex"
             :entries="entriesFor(ex.id)"
+            :body-weight-kg="bodyWeightKg"
             @add-entry="entryForm = { exercise: ex, existing: null }"
             @edit-exercise="exerciseForm = { existing: ex }"
             @delete-exercise="onDeleteExercise(ex)"
