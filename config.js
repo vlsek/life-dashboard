@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.44";
+const SITE_VERSION = "3.45";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.45", date: "2026-10-06 20:20", changes: [
+        "В карточке упражнения появилась ориентировочная оценка потраченных калорий. Расчёт использует последний вес из Профиля и длительность подходов либо оценочное время по повторениям.",
+    ]},
     { version: "3.44", date: "2026-10-06 19:40", changes: [
         "Карта мышц перерисована в более анатомичном стиле: вместо простых прямоугольников и эллипсов используются лёгкие SVG-контуры групп мышц, при этом подсветка и выбор мышц сохранены.",
     ]},
@@ -1640,6 +1643,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.45", date: "2026-10-06 20:20", changes: [
+        "Exercise cards now show an estimated calorie burn using the latest Profile weight and recorded duration, or estimated time from repetitions.",
+    ]},
     { version: "3.44", date: "2026-10-06 19:40", changes: [
         "The muscle map has been redrawn in a more anatomical style using lightweight SVG contours while preserving muscle highlighting and selection.",
     ]},
