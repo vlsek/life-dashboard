@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.52";
+const SITE_VERSION = "3.53";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.53", date: "2026-10-07 00:43", changes: [
+        "Кастомизация: новый товар «Аккордеон» (150 баллов) — вид сворачивания блоков. Раскрываете один блок на Дашборде — остальные сворачиваются сами. Базовый шеврон остаётся бесплатным у всех, вернуть его можно кнопкой «Выбрано · снять». В «Кастомизации» появился раздел «Вид сворачивания блоков» с картинкой-превью. Пока работает на Дашборде, Workouts — следующим обновлением",
+    ]},
     { version: "3.52", date: "2026-10-07 00:26", changes: [
         "Сообщество: новая «Лента достижений» — кто и какое достижение недавно открыл. Каждый сам выбирает, какие из своих достижений показывать в ленте (не больше 5): окно профиля → «Что показывать в ленте». Нажмите на человека в ленте, на подиуме, в списке или среди друзей — раскроется его профиль со всеми открытыми достижениями (если профиль публичный). Заодно в Сообществе теперь видны значки всех лесенок достижений (цели, навыки, книги, вехи, слова, идеальные дни и др.) — раньше часть значков там не показывалась",
     ]},
@@ -1664,6 +1667,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.53", date: "2026-10-07 00:43", changes: [
+        "Customization: new “Accordion” item (150 points) — a block collapse style. Open one block on the Dashboard and the others fold up on their own. The basic chevron stays free for everyone; you can go back to it with “Selected · unselect”. Customization now has a “Block collapse style” section with a preview picture. It works on the Dashboard for now, Workouts comes in the next update",
+    ]},
     { version: "3.52", date: "2026-10-07 00:26", changes: [
         "Community: new “Achievements feed” — who unlocked which achievement recently. Everyone chooses which of their achievements appear in the feed (up to 5): profile window → “Show in the feed”. Tap a person in the feed, on the podium, in the list or among friends to open their profile with all unlocked achievements (if the profile is public). Community now also shows badges from every achievement ladder (goals, skills, books, milestones, words, perfect days and more) — some badges were missing there before",
     ]},

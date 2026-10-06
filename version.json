@@ -1,6 +1,13 @@
 {
-  "version": "3.52",
+  "version": "3.53",
   "en": [
+    {
+      "version": "3.53",
+      "date": "2026-10-07 00:43",
+      "changes": [
+        "Customization: new “Accordion” item (150 points) — a block collapse style. Open one block on the Dashboard and the others fold up on their own. The basic chevron stays free for everyone; you can go back to it with “Selected · unselect”. Customization now has a “Block collapse style” section with a preview picture. It works on the Dashboard for now, Workouts comes in the next update"
+      ]
+    },
     {
       "version": "3.52",
       "date": "2026-10-07 00:26",
@@ -2529,6 +2536,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.53",
+      "date": "2026-10-07 00:43",
+      "changes": [
+        "Кастомизация: новый товар «Аккордеон» (150 баллов) — вид сворачивания блоков. Раскрываете один блок на Дашборде — остальные сворачиваются сами. Базовый шеврон остаётся бесплатным у всех, вернуть его можно кнопкой «Выбрано · снять». В «Кастомизации» появился раздел «Вид сворачивания блоков» с картинкой-превью. Пока работает на Дашборде, Workouts — следующим обновлением"
+      ]
+    },
     {
       "version": "3.52",
       "date": "2026-10-07 00:26",
