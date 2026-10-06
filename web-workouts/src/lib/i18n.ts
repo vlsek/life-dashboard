@@ -492,6 +492,7 @@ const DICT = {
     workouts_muscles_front: "Спереди",
     workouts_muscles_back: "Сзади",
     workouts_muscles_legend_done: "Задействована (4 дня)",
+    workouts_muscles_head_study: "Учёба за последние 4 дня",
     workouts_muscles_legend_idle: "Не задействована",
     workouts_muscles_last: "Последний раз:",
     workouts_muscles_never: "Записей пока нет",
