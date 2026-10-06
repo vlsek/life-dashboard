@@ -93,3 +93,10 @@ export function parseSelected(raw: unknown): Selected {
 export function itemsOf(category: Category, source: 'points' | 'achievement'): CustomItem[] {
   return ITEMS.filter((i) => i.category === category && i.source === source)
 }
+
+// Баланс монет для покупок в «Кастомизации»: набрано баллов (та же функция, что у лидерборда, БЕЗ бонуса) + бонусные монеты за достижения (миграция 051,
+// BACKLOG раздел 37) − потрачено в магазине. Считаем в десятых долях целыми числами — без хвоста плавающей точки.
+export function composeBalance(earned: number, spent: number, bonusCoins: (number | string | null)[] = []): number {
+  const bonusTenths = bonusCoins.reduce<number>((s, c) => s + (c == null || !Number.isFinite(Number(c)) ? 0 : Math.round(Number(c) * 10)), 0)
+  return (Math.round(earned * 10) + bonusTenths - Math.round(spent * 10)) / 10
+}

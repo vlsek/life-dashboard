@@ -5,6 +5,7 @@ import { t } from './i18n'
 import {
   ITEMS,
   achievementUnlocks,
+  composeBalance,
   itemByKey,
   itemStatus,
   nextSelected,
@@ -62,17 +63,23 @@ export function useCustomization() {
     await load(userId)
   }
 
-  // Баланс = всего набрано баллов (та же функция, что у лидерборда: метрики + цели + навыки + книги, с дробными) минус потраченное в магазине.
+  // Баланс = всего набрано баллов (та же функция, что у лидерборда: метрики + цели + навыки + книги, с дробными) + бонусные монеты за достижения
+  // (миграция 051; в лидерборд они НЕ входят, поэтому добавляются здесь явно) − потраченное в магазине.
   async function loadBalance(userId: string): Promise<number | null> {
     let res = await sb.rpc('get_leaderboard_period', { range_key: 'all' })
     if (res.error) res = await sb.rpc('get_leaderboard')
     if (res.error) return null
     const mine = ((res.data || []) as { user_id: string; total_points: number | string }[]).find((r) => r.user_id === userId)
     if (!mine) return null
-    const spentRes = await sb.from('shop_items').select('cost').eq('user_id', userId).eq('redeemed', true)
+    const [spentRes, bonusRes] = await Promise.all([
+      sb.from('shop_items').select('cost').eq('user_id', userId).eq('redeemed', true),
+      // нет таблицы (миграция 051 не применена) / ошибка запроса — бонус 0, баланс не ломаем
+      sb.from('achievement_bonuses').select('coins').eq('user_id', userId),
+    ])
     if (spentRes.error) return null
     const spent = ((spentRes.data || []) as { cost: number | null }[]).reduce((s, r) => s + (r.cost ?? 0), 0)
-    return Math.round((Number(mine.total_points) - spent) * 10) / 10
+    const bonus = bonusRes?.error ? [] : ((bonusRes?.data || []) as { coins: number | string | null }[]).map((r) => r.coins)
+    return composeBalance(Number(mine.total_points), spent, bonus)
   }
 
   async function load(userId: string) {

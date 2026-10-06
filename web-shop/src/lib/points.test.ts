@@ -74,9 +74,9 @@ describe('calcTotalPoints', () => {
 
 describe('calcBalanceFromTotals', () => {
   it('balance = total - sum of redeemed item costs', () => {
-    expect(calcBalanceFromTotals(100, [30, 15])).toEqual({ total: 100, spent: 45, balance: 55 })
+    expect(calcBalanceFromTotals(100, [30, 15])).toEqual({ total: 100, spent: 45, bonus: 0, balance: 55 })
   })
   it('handles no redeemed items', () => {
-    expect(calcBalanceFromTotals(50, [])).toEqual({ total: 50, spent: 0, balance: 50 })
+    expect(calcBalanceFromTotals(50, [])).toEqual({ total: 50, spent: 0, bonus: 0, balance: 50 })
   })
 })
