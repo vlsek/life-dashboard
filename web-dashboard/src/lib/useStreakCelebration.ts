@@ -46,6 +46,7 @@ export function saveShown(userId: string, state: ShownState): void {
 }
 
 // Следит за списком серий Дашборда: при каждом пересчёте (загрузка страницы, отметка метрики) решает, не пора ли поздравить.
+// Первый запуск на устройстве (нет сохранённого состояния) ничего не показывает, только запоминает достигнутое — см. findPending.
 export function useStreakCelebration(getUserId: () => string | null, streaks: Ref<StreakItem[]>) {
   const pending = ref<Milestone | null>(null)
 

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.38";
+const SITE_VERSION = "3.39";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.39", date: "2026-10-06 14:42", changes: [
+        "Исправлено: окно «серия уже N дней» больше не всплывает снова на каждом новом устройстве или браузере. Раньше сайт помнил, какие поздравления уже показаны, только на самом устройстве, и при первом запуске на новом поздравлял с лучшей серией заново. Теперь на новом устройстве (и после очистки данных браузера) уже достигнутые серии запоминаются молча, а поздравление приходит только за следующий новый порог. В приватном режиме поздравлений нет совсем, чтобы они не повторялись при каждом визите. Миграция не нужна."
+    ]},
     { version: "3.38", date: "2026-10-06 14:28", changes: [
         "Цели: баллы за цель больше не вводятся вручную — их задаёт сложность: лёгкая 5, средняя 10, сложная 15 (если сложность не задана — 5). В форме цели, в разделе «Цели» и в окне «Новая цель» на главной поля «Баллы» нет, под сложностью показано, сколько баллов получится. Уже созданные цели с другими баллами не пересчитываются: при правке их баллы остаются, пока вы не смените сложность. Миграция не нужна."
     ]},
@@ -1621,6 +1624,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.39", date: "2026-10-06 14:42", changes: [
+        "Fixed: the \"streak of N days\" pop-up no longer comes back on every new device or browser. The site only remembered which congratulations were already shown on the device itself, and on the first launch on a new one it congratulated your best streak again. Now on a new device (or after clearing browser data) streaks you already reached are remembered silently, and a pop-up appears only for the next new threshold. In private mode there are no pop-ups at all, so they do not repeat on every visit. No migration needed."
+    ]},
     { version: "3.38", date: "2026-10-06 14:28", changes: [
         "Goals: points for a goal are no longer typed in by hand - difficulty sets them: easy 5, medium 10, hard 15 (5 when difficulty is not set). The goal form on the Goals page and the New goal window on the home page have no Points field; under Difficulty you see how many points the goal will give. Goals you already created with other points are not recalculated: when you edit one, its points stay until you change the difficulty. No migration needed."
     ]},

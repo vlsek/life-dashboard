@@ -1,6 +1,13 @@
 {
-  "version": "3.38",
+  "version": "3.39",
   "en": [
+    {
+      "version": "3.39",
+      "date": "2026-10-06 14:42",
+      "changes": [
+        "Fixed: the \"streak of N days\" pop-up no longer comes back on every new device or browser. The site only remembered which congratulations were already shown on the device itself, and on the first launch on a new one it congratulated your best streak again. Now on a new device (or after clearing browser data) streaks you already reached are remembered silently, and a pop-up appears only for the next new threshold. In private mode there are no pop-ups at all, so they do not repeat on every visit. No migration needed."
+      ]
+    },
     {
       "version": "3.38",
       "date": "2026-10-06 14:28",
@@ -2430,6 +2437,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.39",
+      "date": "2026-10-06 14:42",
+      "changes": [
+        "Исправлено: окно «серия уже N дней» больше не всплывает снова на каждом новом устройстве или браузере. Раньше сайт помнил, какие поздравления уже показаны, только на самом устройстве, и при первом запуске на новом поздравлял с лучшей серией заново. Теперь на новом устройстве (и после очистки данных браузера) уже достигнутые серии запоминаются молча, а поздравление приходит только за следующий новый порог. В приватном режиме поздравлений нет совсем, чтобы они не повторялись при каждом визите. Миграция не нужна."
+      ]
+    },
     {
       "version": "3.38",
       "date": "2026-10-06 14:28",

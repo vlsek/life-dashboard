@@ -83,6 +83,43 @@ describe('useStreakCelebration', () => {
     expect(c.pending.value).toBeNull()
     expect(celebrationsEnabled()).toBe(false)
   })
+  it('a NEW device (nothing in localStorage) does not congratulate an old 30-day streak; only a later threshold does', async () => {
+    const streaks = ref<StreakItem[]>([])
+    const c = useStreakCelebration(() => 'u1', streaks)
+    streaks.value = [perfect(34)]
+    await nextTick()
+    expect(c.pending.value).toBeNull() // раньше здесь всплывало «30 дней подряд» на каждом новом устройстве
+    expect(loadShown('u1')).toEqual({ perfect_days: [5, 10, 30] })
+    // «ещё один новый браузер» / очистка данных: то же самое
+    localStorage.clear()
+    const again = useStreakCelebration(() => 'u1', ref([perfect(35)]))
+    again.evaluate()
+    expect(again.pending.value).toBeNull()
+    // а настоящий новый порог после этого поздравляется
+    localStorage.clear()
+    const real = ref<StreakItem[]>([])
+    const c2 = useStreakCelebration(() => 'u1', real)
+    real.value = [perfect(34)]
+    await nextTick()
+    real.value = [perfect(50)]
+    await nextTick()
+    expect(c2.pending.value).toMatchObject({ key: 'perfect_days', threshold: 50 })
+  })
+  it('storage unavailable (private mode): no pop-ups at all instead of a pop-up on every visit', async () => {
+    const orig = Storage.prototype.getItem
+    Storage.prototype.getItem = () => {
+      throw new Error('denied')
+    }
+    try {
+      const streaks = ref<StreakItem[]>([])
+      const c = useStreakCelebration(() => 'u1', streaks)
+      streaks.value = [perfect(34)]
+      await nextTick()
+      expect(c.pending.value).toBeNull()
+    } finally {
+      Storage.prototype.getItem = orig
+    }
+  })
   it('does not stack: while a pop-up is open no second one replaces it', async () => {
     saveShown('u1', {})
     const streaks = ref<StreakItem[]>([])

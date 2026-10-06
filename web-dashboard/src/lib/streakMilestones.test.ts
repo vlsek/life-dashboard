@@ -25,13 +25,21 @@ describe('thresholds', () => {
 })
 
 describe('findPending', () => {
-  it('first run: celebrates only the best one and silently marks every reached threshold', () => {
+  it('first run on a device: shows NOTHING, silently marks every reached threshold (BACKLOG: the "30 days" pop-up came back on every new device)', () => {
     const items = [perfect(11), metricItem('a', 40), note(6)]
     const r = findPending(null, items)
-    expect(r.milestone).toMatchObject({ key: 'metric:a', threshold: 30, unit: 'd', kind: 'metric', metricName: 'Run' })
+    expect(r.milestone).toBeNull()
     expect(r.nextShown).toEqual({ perfect_days: [5, 10], 'metric:a': [5, 10, 30], note_filled: [5] })
-    // следующий запуск уже ничего не показывает
+    // следующий запуск тоже ничего не показывает, а новый порог после этого — поздравляется как обычно
     expect(findPending(r.nextShown, items).milestone).toBeNull()
+    const later = findPending(r.nextShown, [perfect(11), metricItem('a', 50), note(6)])
+    expect(later.milestone).toMatchObject({ key: 'metric:a', threshold: 50 })
+  })
+  it('first run with no streak reached saves an empty state, so the next threshold is celebrated normally', () => {
+    const r = findPending(null, [perfect(3), metricItem('a', 2)])
+    expect(r.milestone).toBeNull()
+    expect(r.nextShown).toEqual({})
+    expect(findPending(r.nextShown, [perfect(5), metricItem('a', 2)]).milestone).toMatchObject({ key: 'perfect_days', threshold: 5 })
   })
   it('shows nothing when no threshold is reached', () => {
     const r = findPending({}, [perfect(3), metricItem('a', 4)])
@@ -61,7 +69,7 @@ describe('findPending', () => {
   })
   it('ties are broken: perfect days, then metrics, then the daily note', () => {
     const r = findPending({}, [note(5), metricItem('a', 5), perfect(5)].map((i) => i))
-    // первый запуск показывает лучшую одну
+    // состояние уже есть (не первый запуск) — показывается лучшая одна
     expect(r.milestone?.kind).toBe('perfect_days')
     const r2 = findPending({ perfect_days: [] }, [note(5), metricItem('a', 5)])
     expect(r2.milestone?.kind).toBe('metric')

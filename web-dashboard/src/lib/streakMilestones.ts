@@ -60,8 +60,11 @@ export interface PendingResult {
 
 // Выбор плашки. Показываем не больше ОДНОЙ за раз — самый высокий порог из ещё не показанных.
 //  • обычный запуск: помечаем показанными пороги только выбранной серии (остальные дождутся своей очереди);
-//  • первый запуск (shown === null) или плашки выключены (silent): все достигнутые пороги помечаются показанными молча,
-//    чтобы не обрушить на человека поздравления за все старые серии разом; при первом запуске показываем лучшую одну.
+//  • первый запуск на устройстве (shown === null) или плашки выключены (silent): все достигнутые пороги помечаются показанными МОЛЧА,
+//    плашки нет. 🐞 BACKLOG («серия уже 30 дней» всплывает слишком часто): «что показано» хранится только в localStorage устройства, и
+//    раньше первый запуск поздравлял лучшую серию — то есть заново на каждом новом браузере/устройстве, после очистки данных и в приватном режиме.
+//    Серия, которая уже была до этого запуска, не «новая»; поздравляются только пороги, достигнутые ПОСЛЕ того, как состояние сохранилось
+//    (оно сохраняется при первой же загрузке серий, поэтому у нового пользователя первые пороги поздравляются как обычно).
 export function findPending(shown: ShownState | null, items: StreakItem[], opts: { silent?: boolean } = {}): PendingResult {
   const firstRun = shown === null
   const base = reconcileShown(shown ?? {}, items)
@@ -82,7 +85,7 @@ export function findPending(shown: ShownState | null, items: StreakItem[], opts:
 
   if (opts.silent || firstRun) cands.forEach(markAll)
 
-  if (opts.silent || !cands.length) return { milestone: null, nextShown }
+  if (opts.silent || firstRun || !cands.length) return { milestone: null, nextShown }
 
   cands.sort(
     (a, b) =>
@@ -91,7 +94,7 @@ export function findPending(shown: ShownState | null, items: StreakItem[], opts:
       b.item.streak - a.item.streak,
   )
   const top = cands[0]
-  if (!firstRun) markAll(top)
+  markAll(top)
   return {
     milestone: {
       key: top.key,
