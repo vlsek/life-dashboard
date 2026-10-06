@@ -550,3 +550,32 @@ input[type='checkbox']:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Нативные поля даты и времени (BACKLOG 567, «Аудит устаревшего оформления»): единый вид вместо системного «из 2000-х».
+   (1) color-scheme для четырёх исходных тем: в пилотах он задан только у новых тем (блок `themes-scheme` выше), без него на тёмной
+   теме значок календаря и всплывающий пикер остаются светлыми. (2) Значок календаря/часов — спокойный, при наведении подсвечивается
+   акцентом темы. Фон, рамку и размеры поля правило НЕ трогает (у каждого поля свои классы); прозрачный input внутри DateStepper
+   (opacity: 0) от правила не меняется. Источник — `scripts/apply_date_time_css.py`. */
+/* date-time-fields */
+html.theme-dark,
+html.theme-monet { color-scheme: dark; }
+html.theme-light,
+html.theme-pink { color-scheme: light; }
+input[type='date'],
+input[type='time'] {
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+}
+input[type='date']::-webkit-calendar-picker-indicator,
+input[type='time']::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  border-radius: 6px;
+  padding: 3px;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+input[type='date']::-webkit-calendar-picker-indicator:hover,
+input[type='time']::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  background-color: color-mix(in srgb, var(--accent) 22%, transparent);
+}

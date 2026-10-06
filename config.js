@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.33";
+const SITE_VERSION = "3.34";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.34", date: "2026-10-06 10:10", changes: [
+        "Оформление: поля даты и времени (дата рождения, период в истории, срок цели, дата отметки в вехах и тренировках, время подхода и напоминания) на всех страницах получили единый вид — значок календаря/часов спокойный, при наведении подсвечивается акцентом темы. На тёмных темах всплывающий выбор даты и значок теперь тёмные (раньше были светлыми и плохо читались), на светлых — светлые. Шапка (вода) пока не затронута",
+    ]},
     { version: "3.33", date: "2026-10-06 09:45", changes: [
         "Дашборд: новый виджет «Календарь». Он показывает текущий месяц и отмечает дни, в которых есть план (●, пустой кружок ○, если всё выполнено) и сроки целей (◆). Стрелками можно листать месяцы, ссылка «Открыть календарь» ведёт в раздел «Календарь». Включается галочкой «Календарь» в окне настройки дашборда, в блоке виджетов, рядом с «Изучением языков» и «Навыками». Миграция не нужна",
     ]},
@@ -1606,6 +1609,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.34", date: "2026-10-06 10:10", changes: [
+        "Look and feel: date and time fields (birth date, history period, goal deadline, check-in date in milestones and workouts, set time and reminder time) now share one style on every page — a calm calendar/clock icon that lights up in the theme accent on hover. On dark themes the date picker popup and icon are now dark (they used to be light and hard to read), on light themes they stay light. The header (water) is not covered yet",
+    ]},
     { version: "3.33", date: "2026-10-06 09:45", changes: [
         "Dashboard: a new \"Calendar\" widget. It shows the current month and marks the days that have a plan (●, an empty circle ○ when everything is done) and goal deadlines (◆). Use the arrows to browse months; the \"Open calendar\" link leads to the Calendar section. Turn it on with the \"Calendar\" checkbox in the dashboard settings window, in the widgets block, next to \"Learning languages\" and \"Skills\". No migration needed",
     ]},
