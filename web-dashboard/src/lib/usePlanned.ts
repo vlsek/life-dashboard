@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { getCurrentScope, onScopeDispose, ref } from 'vue'
 import { sb } from './supabase'
 import { addDaysIso } from './date'
 import { notifyDataChanged } from './events'
@@ -32,6 +32,15 @@ export function usePlanned() {
   const loaded = ref(false)
   const error = ref<string | null>(null)
   const notice = ref<string | null>(null) // информационное сообщение (в оригинале — тост)
+  // Галочка «сохранено» на ~0,9 с после ПОДТВЕРЖДЁННОЙ записи плана или отметки цели (BACKLOG 784/819, срез 4); при ошибке не включается.
+  const savedTick = ref(false)
+  let savedTimer: ReturnType<typeof setTimeout> | undefined
+  function flashSaved() {
+    savedTick.value = true
+    clearTimeout(savedTimer)
+    savedTimer = setTimeout(() => (savedTick.value = false), 900)
+  }
+  if (getCurrentScope()) onScopeDispose(() => clearTimeout(savedTimer))
   let userId = ''
   let date = ''
 
@@ -71,6 +80,7 @@ export function usePlanned() {
       saved = next
       error.value = null
       notifyDataChanged({ source: 'plan', date })
+      flashSaved()
       return true
     })
     chain = run.catch(() => undefined)
@@ -99,6 +109,7 @@ export function usePlanned() {
     }
     error.value = null
     notifyDataChanged({ source: 'plan', date })
+    flashSaved()
     return true
   }
 
@@ -130,7 +141,7 @@ export function usePlanned() {
   const availableGoals = () => goalOptions(goals.value, planned.value)
 
   return {
-    planned, goals, loaded, error, notice, load,
+    planned, goals, loaded, error, notice, savedTick, load,
     addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals,
   }
 }
