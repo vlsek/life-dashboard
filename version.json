@@ -1,6 +1,13 @@
 {
-  "version": "3.50",
+  "version": "3.51",
   "en": [
+    {
+      "version": "3.51",
+      "date": "2026-10-07 00:20",
+      "changes": [
+        "Dashboard, Plans block: once a save is confirmed (a plan item was added or removed, an item or goal was marked as done), a small \"Saved\" tick appears in the corner of the card for a second. If saving failed, there is no tick. With animations turned off or reduced motion, the tick just stays still. No migration needed"
+      ]
+    },
     {
       "version": "3.50",
       "date": "2026-10-07 00:14",
@@ -2515,6 +2522,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.51",
+      "date": "2026-10-07 00:20",
+      "changes": [
+        "Дашборд, блок «Планы»: когда запись подтвердилась (добавили или убрали пункт плана, отметили пункт или цель выполненной), в углу карточки на секунду появляется галочка «Сохранено». Если сохранить не вышло, галочки нет. При выключенных анимациях и «уменьшении движения» галочка просто стоит без движения. Миграция не нужна"
+      ]
+    },
     {
       "version": "3.50",
       "date": "2026-10-07 00:14",

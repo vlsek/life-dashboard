@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.50";
+const SITE_VERSION = "3.51";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.51", date: "2026-10-07 00:20", changes: [
+        "Дашборд, блок «Планы»: когда запись подтвердилась (добавили или убрали пункт плана, отметили пункт или цель выполненной), в углу карточки на секунду появляется галочка «Сохранено». Если сохранить не вышло, галочки нет. При выключенных анимациях и «уменьшении движения» галочка просто стоит без движения. Миграция не нужна",
+    ]},
     { version: "3.50", date: "2026-10-07 00:14", changes: [
         "Дашборд: у анимированных рамок («Огонь», «Радуга», «Инферно», «Пульс», «Королевская») кольцо прогресса дня вокруг аватарки теперь тоже анимировано: огонь мерцает, радуга переливается, инферно пышет, пульс пульсирует, королевская переливается золотом и фиолетовым. При «уменьшить движение» и «отключить все анимации» кольцо остаётся статичным. Миграция не нужна",
     ]},
@@ -1658,6 +1661,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.51", date: "2026-10-07 00:20", changes: [
+        "Dashboard, Plans block: once a save is confirmed (a plan item was added or removed, an item or goal was marked as done), a small \"Saved\" tick appears in the corner of the card for a second. If saving failed, there is no tick. With animations turned off or reduced motion, the tick just stays still. No migration needed",
+    ]},
     { version: "3.50", date: "2026-10-07 00:14", changes: [
         "Dashboard: for animated frames (Flame, Rainbow, Inferno, Pulse, Royal) the day progress ring around the avatar is now animated too: flame flickers, rainbow shimmers through its colours, inferno blazes, pulse pulses, royal shifts between gold and violet. With reduced motion or all animations turned off the ring stays static. No migration needed",
     ]},
