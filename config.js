@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.29";
+const SITE_VERSION = "3.30";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.30", date: "2026-10-06 09:12", changes: [
+        "Дашборд, профиль: неделя тоже семиугольник по дням — каждая из 7 сторон заливается по выполненности СВОЕГО дня (пн…вс), как в шапке: прошлые дни своей датой, будущие тусклые, сегодняшний толще, золотая полоска — бонус ⭐ дня, общий процент внутри. Скринридер читает «Пн 100 %, Вт 60 % …». В настройках прогресса появился выбор «Вид недели»: семиугольник по дням (по умолчанию) или прежний круг. Выбор общий с шапкой. Без миграций."
+    ]},
     { version: "3.29", date: "2026-10-06 09:05", changes: [
         "Шапка: неделя теперь семиугольник — у каждой из 7 сторон своя заливка по выполненности СВОЕГО дня (пн…вс). Прошлые дни считаются своей датой, будущие тусклые, сегодняшний толще, золотая полоска — бонус ⭐ того дня. Общий процент недели остаётся числом внутри. Так и в значке шапки, и в меню слева, и в правой шторке. Скринридер читает «Пн 100 %, Вт 60 % …». Прежний вид (квадрат и дуга) сохранён: переключатель «Вид недели» в настройках прогресса (шестерёнка в правой шторке), по умолчанию семиугольник. Дашборд сохраняет этот выбор. Без миграций."
     ]},
@@ -1594,6 +1597,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.30", date: "2026-10-06 09:12", changes: [
+        "Dashboard profile: the week is a per-day heptagon too - each of the 7 sides fills by how complete ITS OWN day is (Mon to Sun), like in the header: past days by their own date, future days dimmed, today thicker, a gold line for that day's bonus star, the overall percentage inside. Screen readers hear \"Mon 100 %, Tue 60 % ...\". The progress settings got a \"Week shape\" choice: per-day heptagon (default) or the old circle. The choice is shared with the header. No migration needed."
+    ]},
     { version: "3.29", date: "2026-10-06 09:05", changes: [
         "Header: the week is now a heptagon - each of the 7 sides fills by how complete ITS OWN day is (Mon to Sun). Past days are counted by their own date, future days are dimmed, today is thicker, and a gold line shows that day's bonus star. The overall week percentage stays as the number inside. Same in the header badge, the left menu and the right drawer. Screen readers hear \"Mon 100 %, Tue 60 % ...\". The old look (square and arc) is kept: a \"Week shape\" switch in the progress settings (gear in the right drawer), heptagon by default. The Dashboard keeps this choice. No migration needed."
     ]},
