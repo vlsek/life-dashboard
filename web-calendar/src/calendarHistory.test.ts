@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { readFileSync } from 'node:fs'
 
 vi.mock('./lib/useCalendar', () => ({
   useCalendar: () => ({
@@ -41,5 +42,11 @@ describe('unified Calendar / History view', () => {
     const wrapper = mount(App)
     expect(wrapper.find('[data-test="history-view"]').exists()).toBe(true)
     wrapper.unmount()
+  })
+  it('keeps the History implementation complete and local to the Calendar pilot', () => {
+    const source = readFileSync('src/components/HistoryView.vue', 'utf8')
+    expect(source).toContain('data-test="hist-grid"')
+    expect(source).toContain('<DayDetailModal')
+    expect(source).not.toContain('web-history/src')
   })
 })
