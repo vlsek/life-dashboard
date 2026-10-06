@@ -63,7 +63,7 @@ describe('AppShell: «Избранное» в списке по шеврону (
     localStorage.setItem('favorite_pages', JSON.stringify(['shop', 'history']))
     const w = await mountShell()
     await w.find('[data-testid="quicknav-toggle"]').trigger('click')
-    expect(chips(w)).toEqual(['/shop/', '/history/'])
+    expect(chips(w)).toEqual(['/shop/'])
     expect(w.findAll('nav a[href="/goals/"]').length).toBe(1)
     w.unmount()
   })
@@ -117,21 +117,18 @@ describe('AppShell: боковое меню — профиль наверху, �
     w.unmount()
   })
 
-  it('«История» отделена разделителем и стоит внизу списка, за ней «Кастомизация» (самый низ) и «Аккаунт»; в основной части их нет', async () => {
+  it('«Кастомизация» отделена разделителем и стоит внизу списка, за ней «Аккаунт»; отдельной «Истории» больше нет', async () => {
     const w = await mountWithEmail()
     const links = navLinks(w)
-    const hist = links.indexOf('/history/')
-    expect(hist).toBeGreaterThan(-1)
-    expect(links.filter((h) => h === '/history/')).toHaveLength(1)
-    expect(links[hist + 1]).toBe('/customization/') // решение владельца 2026-10-04: «Кастомизация» — в самом низу меню, за чертой
-    expect(links[hist + 2]).toBe('/account/')
+    expect(links.filter((h) => h === '/history/')).toHaveLength(0)
+    const customization = links.indexOf('/customization/')
+    expect(customization).toBeGreaterThan(-1)
+    expect(links[customization + 1]).toBe('/account/')
     expect(links.filter((h) => h === '/customization/')).toHaveLength(1)
-    expect(links.indexOf('/community/')).toBeLessThan(links.indexOf('/customization/'))
-    expect(links.indexOf('/community/')).toBeLessThan(hist)
-    // разделитель между основными страницами и «Историей»
+    expect(links.indexOf('/community/')).toBeLessThan(customization)
     const nav = w.find('nav').element
-    const histEl = nav.querySelector('a[href="/history/"]')!
-    expect((histEl.previousElementSibling as HTMLElement).className).toContain('border-t')
+    const customizationEl = nav.querySelector('a[href="/customization/"]')!
+    expect((customizationEl.previousElementSibling as HTMLElement).className).toContain('border-t')
     w.unmount()
   })
 })
