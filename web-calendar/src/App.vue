@@ -8,8 +8,19 @@ import { todayStr } from './lib/date'
 import { t, getLang } from './lib/i18n'
 import type { PlannedItem } from './lib/types'
 import Icon from './components/Icon.vue'
+import HistoryView from './components/HistoryView.vue'
 
 const { auth, byDate, deadlines, error, init, loadMonth, savePlanned } = useCalendar()
+
+const initialView = new URLSearchParams(window.location.search).get('view') === 'history' ? 'history' : 'calendar'
+const view = ref<'calendar' | 'history'>(initialView)
+function setView(next: 'calendar' | 'history') {
+  view.value = next
+  const url = new URL(window.location.href)
+  if (next === 'history') url.searchParams.set('view', 'history')
+  else url.searchParams.delete('view')
+  window.history.replaceState({}, '', url)
+}
 
 const viewDate = ref(new Date())
 viewDate.value.setDate(1)
@@ -69,6 +80,15 @@ async function onSaveDay(items: PlannedItem[]) {
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
+    <div class="mb-4 flex rounded-xl border p-1" style="border-color: var(--border); background: var(--bg-card)" data-test="calendar-history-tabs">
+      <button type="button" class="flex-1 rounded-lg px-3 py-2 text-sm font-medium" :style="{ background: view === 'calendar' ? 'var(--accent)' : 'transparent', color: view === 'calendar' ? 'var(--accent-text)' : 'var(--text)' }" data-test="calendar-tab" @click="setView('calendar')">{{ t('cal_title') }}</button>
+      <button type="button" class="flex-1 rounded-lg px-3 py-2 text-sm font-medium" :style="{ background: view === 'history' ? 'var(--accent)' : 'transparent', color: view === 'history' ? 'var(--accent-text)' : 'var(--text)' }" data-test="history-tab" @click="setView('history')">{{ t('hist_title') }}</button>
+    </div>
+
+    <template v-if="view === 'history'">
+      <HistoryView />
+    </template>
+    <template v-else>
     <!-- no-edge-swipe (левая шторка) и data-no-swipe (правая панель шапки): свайп по календарю не должен выдвигать боковые плашки (BACKLOG 25, 07:38) -->
     <div class="no-edge-swipe mb-3 flex items-center justify-between" data-no-swipe data-test="cal-head">
       <button class="secondary" @click="prevMonth">‹</button>
@@ -112,5 +132,6 @@ async function onSaveDay(items: PlannedItem[]) {
       @close="openDate = null"
       @save="onSaveDay"
     />
+    </template>
   </main>
 </template>
