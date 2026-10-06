@@ -6,11 +6,21 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs'
 // Правило обязано быть в style.css КАЖДОЙ страницы пилота и в собранном css. Важна деталь: у многих списков фон задан инлайн
 // шорткатом `background: …`, который сбрасывает картинку, — поэтому у свойств стрелки обязателен !important, а цвет фона,
 // рамку и текст правило НЕ трогает (иначе перебило бы оформление, заданное самим списком).
-// web-header — отдельный бандл виджетов без общего style.css (его три списка — вместе с владельцем шапки).
+// web-header проверяется тоже (BACKLOG 567, агент 7): исходник — web-header/src/header.css, собранное — header-widgets/header.js.
 const ROOT = '..'
-const EXEMPT = ['web-header']
 const read = (path: string): string => readFileSync(path, 'utf-8')
-const pilots: string[] = (readdirSync(ROOT) as string[]).filter((d: string) => /^web-/.test(d) && !EXEMPT.includes(d) && existsSync(`${ROOT}/${d}/src/style.css`))
+// Шапка (web-header) — отдельный бандл: исходник правил — src/header.css, собранное — header-widgets/header.js (CSS вшит строкой).
+const srcCssPath = (pilot: string): string => (pilot === 'web-header' ? `${ROOT}/web-header/src/header.css` : `${ROOT}/${pilot}/src/style.css`)
+const pilots: string[] = (readdirSync(ROOT) as string[]).filter((d: string) => /^web-/.test(d) && existsSync(srcCssPath(d)))
+const readBuilt = (pilot: string): string | null => {
+  if (pilot === 'web-header') return existsSync(`${ROOT}/header-widgets/header.js`) ? read(`${ROOT}/header-widgets/header.js`) : null
+  const built = `${ROOT}/${pilot.replace(/^web-/, '')}/assets`
+  if (!existsSync(built)) return null // страница ещё не собрана
+  return (readdirSync(built) as string[])
+    .filter((f: string) => f.endsWith('.css'))
+    .map((f: string) => read(`${built}/${f}`))
+    .join('\n')
+}
 
 function ruleBody(css: string): string {
   const i = css.search(/select:not\(\[multiple\]\)/)
@@ -25,7 +35,7 @@ describe('единая стрелка у выпадающих списков н�
 
   for (const pilot of pilots) {
     it(`${pilot}: правило есть в style.css, стрелка с !important, фон/рамка/цвет не заданы`, () => {
-      const body = ruleBody(read(`${ROOT}/${pilot}/src/style.css`))
+      const body = ruleBody(read(srcCssPath(pilot)))
       expect(body, 'нет правила select:not([multiple]):not([size])').not.toBe('')
       expect(body).toMatch(/:not\(\[size\]\)/) // списки с size/multiple — не выпадающие
       expect(body).toMatch(/background-image:[^;]*linear-gradient[^;]*!important/)
@@ -36,12 +46,8 @@ describe('единая стрелка у выпадающих списков н�
     })
 
     it(`${pilot}: правило есть в СОБРАННОМ css (то, что реально раздаётся)`, () => {
-      const built = `${ROOT}/${pilot.replace(/^web-/, '')}/assets`
-      if (!existsSync(built)) return
-      const css: string = (readdirSync(built) as string[])
-        .filter((f: string) => f.endsWith('.css'))
-        .map((f: string) => read(`${built}/${f}`))
-        .join('\n')
+      const css = readBuilt(pilot)
+      if (css === null) return
       expect(css, 'в собранном css нет правила для select — пересоберите пилот (npm run build)').toMatch(/select:not\(\[multiple\]\)[^{]*\{[^}]*linear-gradient/)
     })
   }

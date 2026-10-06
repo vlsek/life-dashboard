@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.34";
+const SITE_VERSION = "3.35";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.35", date: "2026-10-06 10:26", changes: [
+        "Шапка и боковая панель: выпадающие списки, галочки и числовые поля в окнах настроек, прогресса и воды оформлены так же, как на остальных страницах (стрелка списка в цвете темы, галочка в цвете акцента, у числовых полей нет родных стрелок). Раньше шапка полагалась на стили страницы, теперь эти правила есть и в самой шапке",
+    ]},
     { version: "3.34", date: "2026-10-06 10:10", changes: [
         "Оформление: поля даты и времени (дата рождения, период в истории, срок цели, дата отметки в вехах и тренировках, время подхода и напоминания) на всех страницах получили единый вид — значок календаря/часов спокойный, при наведении подсвечивается акцентом темы. На тёмных темах всплывающий выбор даты и значок теперь тёмные (раньше были светлыми и плохо читались), на светлых — светлые. Шапка (вода) пока не затронута",
     ]},
@@ -1609,6 +1612,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.35", date: "2026-10-06 10:26", changes: [
+        "Header and side panel: dropdowns, checkboxes and number fields in the settings, progress and water windows now look like everywhere else on the site (theme-coloured dropdown arrow, accent-coloured check, no native spinner arrows on number fields). The header used to rely on the page's styles; the rules are now part of the header itself",
+    ]},
     { version: "3.34", date: "2026-10-06 10:10", changes: [
         "Look and feel: date and time fields (birth date, history period, goal deadline, check-in date in milestones and workouts, set time and reminder time) now share one style on every page — a calm calendar/clock icon that lights up in the theme accent on hover. On dark themes the date picker popup and icon are now dark (they used to be light and hard to read), on light themes they stay light. The header (water) is not covered yet",
     ]},
