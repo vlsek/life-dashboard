@@ -4,13 +4,14 @@ import { todayStr } from './date'
 import { googleProfile, type GoogleProfile } from './googleProfile'
 import type { BodyParamKey, MetricTemplate, OnboardingAnswers } from './types'
 
-// Имя профиля (обязательное) и аватарка из Google (только если в профиле своей ещё нет — не затираем).
+// Имя профиля (обязательное) и аватарка: выбранное животное (BACKLOG раздел 29) или фото из Google (оно подставляется, только если в профиле своей
+// ещё нет — не затираем); null — аватарку не трогаем.
 export interface Identity {
   name: string
-  avatarFromGoogle: string | null
+  avatarUrl: string | null
 }
 function identityRow(i: Identity): { display_name: string; avatar_url?: string } {
-  return i.avatarFromGoogle ? { display_name: i.name, avatar_url: i.avatarFromGoogle } : { display_name: i.name }
+  return i.avatarUrl ? { display_name: i.name, avatar_url: i.avatarUrl } : { display_name: i.name }
 }
 
 export type AuthState = { status: 'loading' } | { status: 'redirecting' } | { status: 'ready'; userId: string }

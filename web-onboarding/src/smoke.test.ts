@@ -18,6 +18,7 @@ vi.mock('./lib/supabase', () => ({
   },
 }))
 
+import { ANIMALS } from './lib/animalAvatars'
 import App from './App.vue'
 
 beforeEach(() => {
@@ -220,3 +221,70 @@ describe('имя профиля обязательно (BACKLOG 841) и подт
     expect(upsert).toHaveBeenCalledWith('profiles', { user_id: 'u1', display_name: 'Моё имя', onboarded: true })
   })
 })
+
+describe('аватарка при регистрации: фото из Google или одно из 20 животных (BACKLOG раздел 29)', () => {
+  const animal = (key: string) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent((ANIMALS.find((a) => a.key === key) as { svg: string }).svg)}`
+
+  it('на первом шаге есть выбор из 20 животных и фото Google; по умолчанию выбрано фото Google', async () => {
+    const w = mount(App)
+    await flushPromises()
+    expect(w.find('[data-test="avatar-picker"]').exists()).toBe(true)
+    expect(w.findAll('[data-test^="avatar-"]').filter((b) => b.attributes('role') === 'radio')).toHaveLength(21) // 20 + Google
+    expect(w.find('[data-test="avatar-google"]').attributes('aria-checked')).toBe('true')
+  })
+
+  it('без Google выбора фото нет, только животные (20)', async () => {
+    getSession.mockResolvedValue({ data: { session: { user: { id: 'u1', user_metadata: {} } } } })
+    const w = mount(App)
+    await flushPromises()
+    expect(w.find('[data-test="avatar-google"]').exists()).toBe(false)
+    expect(w.findAll('[role="radio"]')).toHaveLength(20)
+  })
+
+  it('выбранное животное записывается в avatar_url вместо фото Google', async () => {
+    upsert.mockReturnValue(Promise.resolve({ error: null }))
+    const w = mount(App)
+    await flushPromises()
+    await w.find('[data-test="avatar-fox"]').trigger('click')
+    expect(w.find('[data-test="avatar-fox"]').attributes('aria-checked')).toBe('true')
+    expect(w.find('[data-test="avatar-google"]').attributes('aria-checked')).toBe('false')
+    await w.find('[data-test="skip"]').trigger('click')
+    await flushPromises()
+    expect(upsert).toHaveBeenCalledWith('profiles', { user_id: 'u1', display_name: 'Test User', avatar_url: animal('fox'), onboarded: true })
+  })
+
+  it('повторный клик снимает выбор — возвращается фото Google', async () => {
+    upsert.mockReturnValue(Promise.resolve({ error: null }))
+    const w = mount(App)
+    await flushPromises()
+    await w.find('[data-test="avatar-owl"]').trigger('click')
+    await w.find('[data-test="avatar-owl"]').trigger('click')
+    expect(w.find('[data-test="avatar-google"]').attributes('aria-checked')).toBe('true')
+    await w.find('[data-test="skip"]').trigger('click')
+    await flushPromises()
+    expect(upsert).toHaveBeenCalledWith('profiles', { user_id: 'u1', display_name: 'Test User', avatar_url: 'https://lh3.googleusercontent.com/a/x', onboarded: true })
+  })
+
+  it('без Google и без выбора аватарку не трогаем (avatar_url не пишется)', async () => {
+    getSession.mockResolvedValue({ data: { session: { user: { id: 'u1', user_metadata: { full_name: 'Аня' } } } } })
+    upsert.mockReturnValue(Promise.resolve({ error: null }))
+    const w = mount(App)
+    await flushPromises()
+    await w.find('[data-test="skip"]').trigger('click')
+    await flushPromises()
+    expect(upsert).toHaveBeenCalledWith('profiles', { user_id: 'u1', display_name: 'Аня', onboarded: true })
+  })
+
+  it('своя аватарка в профиле не затирается, пока человек не выбрал животное сам', async () => {
+    profileMaybeSingle.mockResolvedValue({ data: { onboarded: false, display_name: 'Моё имя', avatar_url: 'https://example.com/mine.png' } })
+    upsert.mockReturnValue(Promise.resolve({ error: null }))
+    const w = mount(App)
+    await flushPromises()
+    expect(w.find('[data-test="avatar-google"]').exists()).toBe(false) // фото Google не предлагаем — своё уже есть
+    await w.find('[data-test="avatar-panda"]').trigger('click')
+    await w.find('[data-test="skip"]').trigger('click')
+    await flushPromises()
+    expect(upsert).toHaveBeenCalledWith('profiles', { user_id: 'u1', display_name: 'Моё имя', avatar_url: animal('panda'), onboarded: true })
+  })
+})
+

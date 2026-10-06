@@ -3,6 +3,8 @@ import { computed, onMounted, ref, watch } from 'vue'
 import LangThemeBar from './components/LangThemeBar.vue'
 import { useOnboarding } from './lib/useOnboarding'
 import { cleanName, NAME_MAX } from './lib/googleProfile'
+import { animalAvatarUrl } from './lib/animalAvatars'
+import AvatarPicker from './components/AvatarPicker.vue'
 import { goalOptions, metricGroups, metricDescription, recommendedKeys, selectedMetrics, dayProgressSettingsFor, starterMetrics, bodyParamKeysFor, layoutFor, stepsFor } from './lib/onboardingData'
 import { todayStr } from './lib/date'
 import { t, getLang } from './lib/i18n'
@@ -39,7 +41,9 @@ function nameOk(): boolean {
   }
   return true
 }
-const identity = () => ({ name: cleanName(nameInput.value), avatarFromGoogle: google.value.avatar })
+// Аватарка: выбранное животное (раздел 29) приоритетнее фото Google; не выбрано — фото Google (если своей аватарки в профиле ещё нет), иначе не трогаем
+const animalChoice = ref<string | null>(null)
+const identity = () => ({ name: cleanName(nameInput.value), avatarUrl: (animalChoice.value ? animalAvatarUrl(animalChoice.value) : null) ?? google.value.avatar })
 const errorMsg = ref('')
 const today = todayStr()
 
@@ -191,6 +195,8 @@ const usecaseCards: { value: Usecase; title: 'onb_usecase_goals' | 'onb_usecase_
         <input v-model="nameInput" type="text" :maxlength="NAME_MAX" autocomplete="name" :placeholder="t('onb_name_placeholder')" class="mt-1 w-full" data-test="name-input" @input="nameTouched = true; errorMsg = ''" />
         <span v-if="nameFromGoogle" class="dim text-xs" data-test="name-from-google">{{ t('onb_name_from_google') }}</span>
       </label>
+
+      <AvatarPicker v-if="step === 'usecase'" v-model="animalChoice" :google-avatar="google.avatar" />
 
       <!-- Шаг 1: сценарий -->
       <fieldset v-if="step === 'usecase'" class="mb-3.5 border-0 p-0" data-test="step-usecase">

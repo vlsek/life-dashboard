@@ -1,6 +1,13 @@
 {
-  "version": "3.45",
+  "version": "3.46",
   "en": [
+    {
+      "version": "3.46",
+      "date": "2026-10-06 22:30",
+      "changes": [
+        "Sign-up: you can pick an avatar from 20 drawn animals (cat, fox, panda, owl, penguin and more - one style, two colours). If you signed in with Google you can keep your account photo or pick an animal; you can also skip it - you get a circle with your initials. The chosen animal shows everywhere your avatar is shown. No migration needed."
+      ]
+    },
     {
       "version": "3.45",
       "date": "2026-10-06 20:20",
@@ -2480,6 +2487,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.46",
+      "date": "2026-10-06 22:30",
+      "changes": [
+        "Регистрация: можно выбрать аватарку из 20 нарисованных животных (кот, лиса, панда, сова, пингвин и другие — один стиль, два цвета). Если вошли через Google, можно оставить фото из аккаунта или выбрать животное; можно не выбирать — будет круг с инициалами. Выбранное животное видно везде, где показывается ваша аватарка. Миграция не нужна."
+      ]
+    },
     {
       "version": "3.45",
       "date": "2026-10-06 20:20",

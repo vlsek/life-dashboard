@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.45";
+const SITE_VERSION = "3.46";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.46", date: "2026-10-06 22:30", changes: [
+        "Регистрация: можно выбрать аватарку из 20 нарисованных животных (кот, лиса, панда, сова, пингвин и другие — один стиль, два цвета). Если вошли через Google, можно оставить фото из аккаунта или выбрать животное; можно не выбирать — будет круг с инициалами. Выбранное животное видно везде, где показывается ваша аватарка. Миграция не нужна."
+    ]},
     { version: "3.45", date: "2026-10-06 20:20", changes: [
         "В карточке упражнения появилась ориентировочная оценка потраченных калорий. Расчёт использует последний вес из Профиля и длительность подходов либо оценочное время по повторениям.",
     ]},
@@ -1643,6 +1646,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.46", date: "2026-10-06 22:30", changes: [
+        "Sign-up: you can pick an avatar from 20 drawn animals (cat, fox, panda, owl, penguin and more - one style, two colours). If you signed in with Google you can keep your account photo or pick an animal; you can also skip it - you get a circle with your initials. The chosen animal shows everywhere your avatar is shown. No migration needed."
+    ]},
     { version: "3.45", date: "2026-10-06 20:20", changes: [
         "Exercise cards now show an estimated calorie burn using the latest Profile weight and recorded duration, or estimated time from repetitions.",
     ]},
