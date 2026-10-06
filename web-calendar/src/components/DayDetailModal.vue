@@ -6,7 +6,7 @@ import { isMetricDone, metricExpectedOn, metricSchedule } from '../../../web-his
 import type { Metric, MetricValue, SetEntry } from '../../../web-history/src/lib/types'
 import { locale, t } from '../../../web-history/src/lib/i18n'
 import MetricIcon from './MetricIcon.vue'
-import Icon from '../../web-calendar/src/components/Icon.vue'
+import Icon from './Icon.vue'
 
 const props = defineProps<{ ctx: HistoryContext; dateStr: string }>()
 const emit = defineEmits<{ close: [] }>()
