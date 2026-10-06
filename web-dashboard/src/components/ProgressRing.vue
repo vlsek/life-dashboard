@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { heptagonGeometry } from '../lib/ringPlacement'
+import { heptagonGeometry, heptagonSegments } from '../lib/ringPlacement'
+import { weekDaysAriaLabel, type WeekDaySegment } from '../lib/progress'
+import { t } from '../lib/i18n'
 
 // Один компонент на оба случая (день/неделя) — отличаются только радиусом/размером и тем,
 // что вызывающий код передаёт готовые проценты. Портировано из renderDayProgressRing() и
@@ -15,6 +17,7 @@ const props = defineProps<{
   title: string
   label?: string // подпись под кольцом (например "Неделя") — если не задана, не рисуется
   shape?: 'circle' | 'heptagon' // heptagon — кольцо недели: 7 сторон = 7 дней (BACKLOG 2.3), линия толще
+  days?: WeekDaySegment[] | null // у heptagon: прогресс каждого дня → каждая сторона заливается по СВОЕМУ дню (BACKLOG 17:05); нет — общий процент по периметру
 }>()
 
 const r = computed(() => (props.size ?? 52) / 2 - 2)
@@ -24,14 +27,30 @@ const bonusFraction = computed(() => Math.min(1, props.bonusPct / 100))
 const offsetBonus = computed(() => circumference.value * (1 - bonusFraction.value))
 const center = computed(() => (props.size ?? 52) / 2)
 const isHeptagon = computed(() => props.shape === 'heptagon')
+const perDay = computed(() => isHeptagon.value && props.days?.length === 7)
+const segs = computed(() =>
+  perDay.value && props.days
+    ? heptagonSegments(center.value, center.value - 3, props.days.map((d) => d.fill), props.days.map((d) => d.bonus))
+    : [],
+)
+const segWidth = (i: number) => (props.days?.[i]?.state === 'today' ? 6 : 4.5)
+// скринридер: итог + каждый день недели («Пн 100 %, Вт 60 % …»)
+const aria = computed(() => (perDay.value && props.days ? `${props.title}. ${weekDaysAriaLabel(props.days, t('dash_summary_weekdays'))}` : props.title))
 const hept = computed(() => heptagonGeometry(center.value, center.value - 3, props.basePct, props.bonusPct))
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-0.5 cursor-pointer" :title="title">
+  <div class="flex flex-col items-center gap-0.5 cursor-pointer" :title="title" :aria-label="aria">
     <div class="relative" :style="{ width: (size ?? 52) + 'px', height: (size ?? 52) + 'px' }">
       <svg :width="size ?? 52" :height="size ?? 52" :viewBox="`0 0 ${size ?? 52} ${size ?? 52}`" :style="isHeptagon ? '' : 'transform: rotate(-90deg)'" :data-shape="isHeptagon ? 'heptagon' : 'circle'" data-test="progress-ring-svg">
-        <template v-if="isHeptagon">
+        <template v-if="perDay">
+          <template v-for="(s, i) in segs" :key="i">
+            <line :x1="s.x1" :y1="s.y1" :x2="s.x2" :y2="s.y2" stroke="var(--border)" :stroke-width="segWidth(i)" :opacity="days![i].state === 'future' ? 0.35 : 1" :data-day="days![i].date" :data-state="days![i].state" data-test="week-seg-track" />
+            <line v-if="days![i].fill > 0" :x1="s.x1" :y1="s.y1" :x2="s.fx" :y2="s.fy" stroke="var(--accent)" :stroke-width="segWidth(i)" data-test="week-seg-fill" />
+            <line v-if="days![i].bonus > 0" :x1="s.x1" :y1="s.y1" :x2="s.bx" :y2="s.by" class="ring-bonus" :stroke-width="Math.max(1.5, segWidth(i) * 0.45)" data-test="week-seg-bonus" />
+          </template>
+        </template>
+        <template v-else-if="isHeptagon">
           <polygon :points="hept.points" fill="none" stroke="var(--border)" stroke-width="4.5" stroke-linejoin="round" data-test="hept-track" />
           <polygon :points="hept.points" fill="none" stroke="var(--accent)" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round" :stroke-dasharray="hept.perimeter" :stroke-dashoffset="hept.offsetBase" data-test="hept-base" />
           <polygon v-if="bonusPct > 0" :points="hept.points" fill="none" class="ring-bonus" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round" :stroke-dasharray="hept.perimeter" :stroke-dashoffset="hept.offsetBonus" data-test="hept-bonus" />

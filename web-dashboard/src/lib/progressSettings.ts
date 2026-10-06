@@ -1,5 +1,7 @@
 export type DayPlace = 'avatar' | 'header' | 'off'
 export type WeekPlace = 'profile' | 'header' | 'off'
+// Вид недели (общий ключ с глобальным хедером): семиугольник — сторона = день недели; «прежний» — в Дашборде круг, в шапке квадрат/дуга.
+export type WeekShape = 'heptagon' | 'classic'
 
 export interface DayProgressSettings {
   enabled: boolean
@@ -7,6 +9,7 @@ export interface DayProgressSettings {
   includeMetrics: boolean
   dayPlace: DayPlace
   weekPlace: WeekPlace
+  weekShape?: WeekShape // нет в старых настройках → семиугольник
 }
 
 export const BONUS_PCT_PER_ITEM = 20
@@ -25,6 +28,7 @@ const DEFAULTS: DayProgressSettings = {
   includeMetrics: true,
   dayPlace: 'avatar',
   weekPlace: 'profile',
+  weekShape: 'heptagon',
 }
 
 export function getDayProgressSettings(): DayProgressSettings {
@@ -46,19 +50,20 @@ export function getDayProgressSettings(): DayProgressSettings {
       }
     }
     delete saved.displayMode
-    return { ...DEFAULTS, ...saved }
+    const weekShape: WeekShape = saved.weekShape === 'classic' ? 'classic' : 'heptagon'
+    return { ...DEFAULTS, ...saved, weekShape }
   } catch {
     return DEFAULTS
   }
 }
 
 export function setDayProgressSettings(s: DayProgressSettings) {
-  // Поле `weekShape` (вид недели в шапке) принадлежит глобальному хедеру; Дашборд его не знает, но и стирать не должен.
+  // Вид недели (`weekShape`) выбирают и в шапке, и здесь; если вызывающий код его не передал — не стираем выбранное.
   let weekShape: unknown
   try {
     weekShape = JSON.parse(localStorage.getItem('day_progress_settings') || '{}')?.weekShape
   } catch {
     weekShape = undefined
   }
-  localStorage.setItem('day_progress_settings', JSON.stringify(weekShape ? { ...s, weekShape } : s))
+  localStorage.setItem('day_progress_settings', JSON.stringify(weekShape ? { weekShape, ...s } : s))
 }

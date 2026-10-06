@@ -54,7 +54,7 @@ import { stripEmoji } from './lib/emojiText'
 // с общей выбранной датой (см. DailyMetricsSection.vue). Раскладка блоков (показать/скрыть/переставить) —
 // lib/layout.ts + useLayout.ts + LayoutModal.vue, колонка profiles.dashboard_layout общая с классикой.
 
-const { auth, streaks, perfectInfo, dayProgress, weekProgress, summaries, progressSettings, loadError, init, saveProgressSettings } = useDashboard()
+const { auth, streaks, perfectInfo, dayProgress, weekProgress, weekDays, summaries, progressSettings, loadError, init, saveProgressSettings } = useDashboard()
 // Список метрик изменили через шестерёнку «Ежедневных метрик» (BACKLOG 40): перечитываем общие данные и просим графики пересобраться
 const metricsRev = ref(0)
 async function onMetricsChanged() {
@@ -161,7 +161,9 @@ const dayRing = computed<RingData | null>(() =>
   hasDayData.value ? { basePct: dayBase.value, bonusPct: dayProgress.value!.bonusPct, totalPct: dayPct.value, title: dayTitle.value } : null,
 )
 const weekRing = computed<RingData | null>(() =>
-  hasWeekData.value ? { basePct: weekBase.value, bonusPct: weekProgress.value!.bonusPct, totalPct: weekPct.value, title: weekTitle.value } : null,
+  hasWeekData.value
+    ? { basePct: weekBase.value, bonusPct: weekProgress.value!.bonusPct, totalPct: weekPct.value, title: weekTitle.value, shape: progressSettings.value.weekShape ?? 'heptagon', days: weekDays.value }
+    : null,
 )
 // Если блок «Профиль» скрыт в раскладке, кольцам «вокруг аватарки»/«в профиле» некуда встать — показываем их бейджем в шапке.
 const profileVisible = computed(() => layout.value.some((i: LayoutItem) => i.key === 'profile' && i.visible))

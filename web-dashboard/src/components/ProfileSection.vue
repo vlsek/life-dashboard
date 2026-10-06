@@ -141,7 +141,8 @@ function openForm(p: BodyParam | 'new') {
         :title="week.title"
         :label="t('dash_week_progress_label')"
         :size="48"
-        shape="heptagon"
+        :shape="week.shape === 'classic' ? 'circle' : 'heptagon'"
+        :days="week.days"
         @click="emit('progress-settings', 'week')"
       />
 

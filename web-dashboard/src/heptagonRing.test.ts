@@ -84,11 +84,11 @@ describe('ProgressRing: форма кольца', () => {
 })
 
 describe('ProfileSection использует семиугольник для недели', () => {
-  it('исходник передаёт shape="heptagon" кольцу недели, а кольцо дня (аватар) не трогает', async () => {
+  it('исходник выбирает форму кольца недели (семиугольник / круг по настройке) и отдаёт ему дни; кольцо дня (аватар) не трогает', async () => {
     // @ts-ignore — в проекте нет типов node, а vitest выполняется в node (как в StreakFlameTheme.test.ts).
     const { readFileSync } = await import('node:fs')
     const src: string = readFileSync('src/components/ProfileSection.vue', 'utf-8')
-    expect(src).toMatch(/<ProgressRing[\s\S]*?shape="heptagon"[\s\S]*?\/>/)
+    expect(src).toMatch(/<ProgressRing[\s\S]*?:shape="week\.shape === 'classic' \? 'circle' : 'heptagon'"[\s\S]*?:days="week\.days"[\s\S]*?\/>/)
     expect(src).not.toMatch(/<AvatarProgress[^>]*shape=/)
   })
 })

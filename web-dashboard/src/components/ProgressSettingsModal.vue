@@ -12,6 +12,7 @@ const includePlanned = ref(props.initial.includePlanned)
 const includeMetrics = ref(props.initial.includeMetrics)
 const dayPlace = ref(props.initial.dayPlace)
 const weekPlace = ref(props.initial.weekPlace)
+const weekShape = ref(props.initial.weekShape ?? 'heptagon')
 
 function onSave() {
   emit('save', {
@@ -20,6 +21,7 @@ function onSave() {
     includeMetrics: includeMetrics.value,
     dayPlace: dayPlace.value,
     weekPlace: weekPlace.value,
+    weekShape: weekShape.value,
   })
 }
 </script>
@@ -49,6 +51,14 @@ function onSave() {
             <option value="profile">{{ t('dash_place_profile') }}</option>
             <option value="header">{{ t('dash_place_header') }}</option>
             <option value="off">{{ t('dash_place_off') }}</option>
+          </select>
+        </label>
+
+        <label class="flex flex-col gap-1">
+          <span class="dim text-xs">{{ t('dash_week_shape_label') }}</span>
+          <select v-model="weekShape" class="modal-input" data-test="week-shape">
+            <option value="heptagon">{{ t('dash_week_shape_heptagon') }}</option>
+            <option value="classic">{{ t('dash_week_shape_classic') }}</option>
           </select>
         </label>
       </div>

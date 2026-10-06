@@ -3,7 +3,7 @@ import { sb } from './supabase'
 import { fetchAllRows } from './fetchAll'
 import { fmtDate, todayStr } from './date'
 import { computeStreakItemsPure, type StreakItem } from './streaks'
-import { computeDayProgressPure, computeWeekProgressPure, getWeekDates, type ProgressResult, type PlannedItem, type GoalLite } from './progress'
+import { computeDayProgressPure, computeWeekDaySegments, computeWeekProgressPure, getWeekDates, type WeekDaySegment, type ProgressResult, type PlannedItem, type GoalLite } from './progress'
 import { daySummary, weekSummary, type ProgressSummary } from './progressSummary'
 import { getDayProgressSettings, setDayProgressSettings, type DayProgressSettings } from './progressSettings'
 import { DATA_CHANGED } from './events'
@@ -25,6 +25,7 @@ export function useDashboard() {
   const perfectInfo = ref<PerfectDayInfo | null>(null) // для окна «Идеальный день!» (usePerfectDay.ts)
   const dayProgress = ref<ProgressResult | null>(null)
   const weekProgress = ref<ProgressResult | null>(null)
+  const weekDays = ref<WeekDaySegment[] | null>(null) // по-дневной прогресс недели для семиугольника в профиле
   // Сводка по клику на кольцо (что сделано/осталось/сколько %): считается из тех же данных, что и кольца.
   const summaries = ref<{ day: ProgressSummary; week: ProgressSummary } | null>(null)
   const progressSettings = ref<DayProgressSettings>(getDayProgressSettings())
@@ -143,6 +144,9 @@ export function useDashboard() {
     const plannedByDate: Record<string, PlannedItem[]> = {}
     for (const d of pastOrToday) plannedByDate[d] = notesByDate[d]?.planned_goals || []
     weekProgress.value = computeWeekProgressPure(settings, metrics, byDay, pastOrToday, plannedByDate, allGoals)
+    const plannedWeek: Record<string, PlannedItem[]> = {}
+    for (const d of weekDates) plannedWeek[d] = notesByDate[d]?.planned_goals || []
+    weekDays.value = computeWeekDaySegments(settings, metrics, byDay, weekDates, today, plannedWeek, allGoals)
     summaries.value = {
       day: daySummary(settings, metrics, byDay[today] || {}, today, notesByDate[today]?.planned_goals || [], allGoals),
       week: weekSummary(settings, metrics, byDay, pastOrToday, plannedByDate, allGoals),
@@ -154,7 +158,7 @@ export function useDashboard() {
     if (currentUserId) await loadAll(currentUserId)
   }
 
-  return { auth, streaks, perfectInfo, dayProgress, weekProgress, summaries, progressSettings, loadError, init, refresh, saveProgressSettings }
+  return { auth, streaks, perfectInfo, dayProgress, weekProgress, weekDays, summaries, progressSettings, loadError, init, refresh, saveProgressSettings }
 }
 
 export { fmtDate }
