@@ -13,6 +13,7 @@ export interface WidgetsConfig {
   skills?: string[]
   savings?: string
   languages?: string
+  calendar?: boolean // виджет «Календарь» (BACKLOG 940, часть 2): месяц с отметками планов и сроков целей
 }
 
 export interface LayoutItem {
@@ -25,7 +26,7 @@ export const MAX_WIDGET_SKILLS = 12
 
 export function widgetsConfig(raw: unknown): WidgetsConfig | undefined {
   if (!raw || typeof raw !== 'object') return undefined
-  const { skills, savings, languages } = raw as { skills?: unknown; savings?: unknown; languages?: unknown }
+  const { skills, savings, languages, calendar } = raw as { skills?: unknown; savings?: unknown; languages?: unknown; calendar?: unknown }
   const cfg: WidgetsConfig = {}
   if (Array.isArray(skills)) {
     const ids = [...new Set(skills.filter((x): x is string => typeof x === 'string' && x.length > 0))].slice(0, MAX_WIDGET_SKILLS)
@@ -33,6 +34,7 @@ export function widgetsConfig(raw: unknown): WidgetsConfig | undefined {
   }
   if (typeof savings === 'string' && savings.length > 0) cfg.savings = savings
   if (typeof languages === 'string' && languages.length > 0 && languages.length <= 12) cfg.languages = languages
+  if (calendar === true) cfg.calendar = true
   return Object.keys(cfg).length > 0 ? cfg : undefined
 }
 
@@ -48,7 +50,7 @@ export function isBlockShown(item: LayoutItem): boolean {
 
 // Новая раскладка с изменённым выбором виджетов: patch.skills = [] / patch.savings = null — выключить виджет. Остальное не меняется.
 // Когда выбран хотя бы один виджет, блок «Виджеты» включается (иначе выбор в окне раскладки ничего бы не показал).
-export function withWidgetConfig(layout: LayoutItem[], patch: { skills?: string[]; savings?: string | null; languages?: string | null }): LayoutItem[] {
+export function withWidgetConfig(layout: LayoutItem[], patch: { skills?: string[]; savings?: string | null; languages?: string | null; calendar?: boolean }): LayoutItem[] {
   return layout.map((it) => {
     const copy: LayoutItem = { ...it }
     if (it.config) copy.config = { ...it.config, ...(it.config.skills ? { skills: [...it.config.skills] } : {}) }
@@ -65,6 +67,10 @@ export function withWidgetConfig(layout: LayoutItem[], patch: { skills?: string[
     if (patch.languages !== undefined) {
       if (patch.languages) next.languages = patch.languages
       else delete next.languages
+    }
+    if (patch.calendar !== undefined) {
+      if (patch.calendar) next.calendar = true
+      else delete next.calendar
     }
     delete copy.config
     if (Object.keys(next).length > 0) {

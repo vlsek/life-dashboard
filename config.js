@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.32";
+const SITE_VERSION = "3.33";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.33", date: "2026-10-06 09:45", changes: [
+        "Дашборд: новый виджет «Календарь». Он показывает текущий месяц и отмечает дни, в которых есть план (●, пустой кружок ○, если всё выполнено) и сроки целей (◆). Стрелками можно листать месяцы, ссылка «Открыть календарь» ведёт в раздел «Календарь». Включается галочкой «Календарь» в окне настройки дашборда, в блоке виджетов, рядом с «Изучением языков» и «Навыками». Миграция не нужна",
+    ]},
     { version: "3.32", date: "2026-10-06 09:37", changes: [
         "Календарь: срок цели теперь виден в календаре. В ячейке дня, на который выпадает срок цели, появляется значок мишени с числом целей (если все они выполнены, значок бледнее), а в окне дня сверху показан список «Цели со сроком на этот день» (выполненные зачёркнуты). Менять цели по-прежнему нужно в разделе «Цели». Виджет календаря на главной ждёт вашего решения. Миграция не нужна",
     ]},
@@ -1603,6 +1606,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.33", date: "2026-10-06 09:45", changes: [
+        "Dashboard: a new \"Calendar\" widget. It shows the current month and marks the days that have a plan (●, an empty circle ○ when everything is done) and goal deadlines (◆). Use the arrows to browse months; the \"Open calendar\" link leads to the Calendar section. Turn it on with the \"Calendar\" checkbox in the dashboard settings window, in the widgets block, next to \"Learning languages\" and \"Skills\". No migration needed",
+    ]},
     { version: "3.32", date: "2026-10-06 09:37", changes: [
         "Calendar: a goal's deadline now shows up in the calendar. The day cell with a deadline gets a target icon with the number of goals (paler when all of them are done), and the day window lists \"Goals due this day\" at the top (completed ones struck through). Goals are still edited in the Goals section. The calendar widget for the home page is waiting for your decision. No migration needed",
     ]},

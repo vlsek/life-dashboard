@@ -71,6 +71,10 @@ function onLangToggle(e: Event) {
 function onLangPick(e: Event) {
   local.value = withWidgetConfig(local.value, { languages: (e.target as HTMLSelectElement).value || null })
 }
+const calendarOn = computed(() => !!widgetsCfg.value?.calendar)
+function onCalendarToggle(e: Event) {
+  local.value = withWidgetConfig(local.value, { calendar: (e.target as HTMLInputElement).checked })
+}
 function onSavingsPick(e: Event) {
   local.value = withWidgetConfig(local.value, { savings: (e.target as HTMLSelectElement).value || null })
 }
@@ -125,6 +129,11 @@ function onSavingsPick(e: Event) {
             <option value="all">{{ t('dash_widget_lang_all') }}</option>
             <option v-for="o in langOptions" :key="o.code" :value="o.code">{{ o.name }} · {{ o.count }}</option>
           </select>
+        </label>
+
+        <label class="mt-2 flex items-center gap-2 text-sm">
+          <input type="checkbox" :checked="calendarOn" data-test="calendar-toggle" @change="onCalendarToggle" />
+          {{ t('dash_widget_calendar') }}
         </label>
       </div>
 
