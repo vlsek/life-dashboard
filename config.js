@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.30";
+const SITE_VERSION = "3.31";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.31", date: "2026-10-06 09:31", changes: [
+        "Дашборд, блок «Планы»: цели, которые вы отметили выполненными в этот день, но которых не было в плане, теперь не пропадают с главной. Под списком плана показывается строка «Цели, выполненные в этот день (их не было в плане)». Цель, уже стоящая в плане, не дублируется. Миграция не нужна",
+    ]},
     { version: "3.30", date: "2026-10-06 09:12", changes: [
         "Дашборд, профиль: неделя тоже семиугольник по дням — каждая из 7 сторон заливается по выполненности СВОЕГО дня (пн…вс), как в шапке: прошлые дни своей датой, будущие тусклые, сегодняшний толще, золотая полоска — бонус ⭐ дня, общий процент внутри. Скринридер читает «Пн 100 %, Вт 60 % …». В настройках прогресса появился выбор «Вид недели»: семиугольник по дням (по умолчанию) или прежний круг. Выбор общий с шапкой. Без миграций."
     ]},
@@ -1597,6 +1600,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.31", date: "2026-10-06 09:31", changes: [
+        "Dashboard, Plans block: goals you marked as completed on that day but that were not in the plan no longer disappear from the home page. A \"Goals completed this day (not in the plan)\" list is shown under the plan. A goal already in the plan is not duplicated. No migration needed",
+    ]},
     { version: "3.30", date: "2026-10-06 09:12", changes: [
         "Dashboard profile: the week is a per-day heptagon too - each of the 7 sides fills by how complete ITS OWN day is (Mon to Sun), like in the header: past days by their own date, future days dimmed, today thicker, a gold line for that day's bonus star, the overall percentage inside. Screen readers hear \"Mon 100 %, Tue 60 % ...\". The progress settings got a \"Week shape\" choice: per-day heptagon (default) or the old circle. The choice is shared with the header. No migration needed."
     ]},

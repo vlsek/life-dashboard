@@ -1,6 +1,13 @@
 {
-  "version": "3.30",
+  "version": "3.31",
   "en": [
+    {
+      "version": "3.31",
+      "date": "2026-10-06 09:31",
+      "changes": [
+        "Dashboard, Plans block: goals you marked as completed on that day but that were not in the plan no longer disappear from the home page. A \"Goals completed this day (not in the plan)\" list is shown under the plan. A goal already in the plan is not duplicated. No migration needed"
+      ]
+    },
     {
       "version": "3.30",
       "date": "2026-10-06 09:12",
@@ -2374,6 +2381,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.31",
+      "date": "2026-10-06 09:31",
+      "changes": [
+        "Дашборд, блок «Планы»: цели, которые вы отметили выполненными в этот день, но которых не было в плане, теперь не пропадают с главной. Под списком плана показывается строка «Цели, выполненные в этот день (их не было в плане)». Цель, уже стоящая в плане, не дублируется. Миграция не нужна"
+      ]
+    },
     {
       "version": "3.30",
       "date": "2026-10-06 09:12",
