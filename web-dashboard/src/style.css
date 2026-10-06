@@ -515,13 +515,34 @@ html[data-motion='off'] .streak-live * { animation: none !important; }
   max-height: 85vh;
   overflow-y: auto;
 }
-.modal input[type='text'] {
+/* Подложка у ВСЕХ полей ввода и списков в окнах (BACKLOG раздел 42, 9:05): раньше рамку и фон имел только текст, а число
+   («значение цели X», «подходов в день по плану»), время, дата, список и многострочное поле сливались с фоном окна. */
+.modal input[type='text'],
+.modal input[type='number'],
+.modal input[type='time'],
+.modal input[type='date'],
+.modal input[type='email'],
+.modal input[type='password'],
+.modal input[type='url'],
+.modal input[type='search'],
+.modal input[type='tel'],
+.modal select,
+.modal textarea {
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 0.5rem;
   padding: 0.375rem 0.6rem;
   color: var(--text);
   font: inherit;
+}
+.modal select {
+  padding-right: 1.9rem; /* место под стрелку списка */
+}
+.modal input:focus-visible,
+.modal select:focus-visible,
+.modal textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 .modal-actions {
   display: flex;
@@ -858,27 +879,34 @@ html[data-motion='off'] *::after {
   filter: drop-shadow(0 0 3px color-mix(in srgb, var(--accent) 50%, transparent));
 }
 
-/* Подходы (SetsCard.vue, BACKLOG 18.4 «подложка у каждого подхода»): каждая строка подхода — своя «подложка»-карточка,
-   а не голая строка таблицы. Фон — цвет страницы (темнее/светлее карточки метрики), рамка — как у остальных карточек. */
+/* Подходы (SetsCard.vue, BACKLOG 18.4 «подложка у каждого подхода» + раздел 42, 9:06): у КАЖДОГО параметра подхода — время, повторы,
+   особенность — своя подложка-плашка (как в старой версии), между плашками зазор; номер подхода и кнопка «удалить» — без плашки.
+   Фон — цвет страницы (темнее/светлее карточки метрики), рамка — как у остальных карточек; при фокусе рамка в акценте. */
 .sets-table {
   border-collapse: separate;
-  border-spacing: 0 6px;
+  border-spacing: 6px 6px;
+  margin-left: -6px; /* крайний зазор не сдвигает таблицу относительно текста карточки */
 }
 .sets-table td {
+  padding: 0;
+}
+.sets-table td.set-plate {
   background: var(--bg);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  padding: 6px 4px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px 8px;
 }
-.sets-table td:first-child {
-  border-left: 1px solid var(--border);
-  border-radius: 10px 0 0 10px;
-  padding-left: 10px;
+.sets-table td.set-plate:focus-within {
+  border-color: var(--accent);
 }
-.sets-table td:last-child {
-  border-right: 1px solid var(--border);
-  border-radius: 0 10px 10px 0;
-  padding-right: 8px;
+/* внутри плашки сами поля — без второй рамки и фона (иначе плашка в плашке) */
+.sets-table td.set-plate input {
+  background: transparent;
+  border: 0;
+  outline: none;
+  padding: 2px 0;
+  color: var(--text);
+  font: inherit;
 }
 
 /* Стакан при ≥100% нормы (BACKLOG 💧 2.1 «Состояние 100%»): контур становится золотым (токен по теме: яркий на тёмных,

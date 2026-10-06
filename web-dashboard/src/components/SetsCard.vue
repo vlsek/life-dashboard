@@ -66,17 +66,17 @@ function onVariation(i: number, text: string) {
         <table class="sets-table w-full text-sm" data-test="sets-table">
           <tbody>
             <tr v-for="(s, i) in sets" :key="i" class="align-middle" data-test="set-row">
-              <td class="py-1 pr-2">{{ i + 1 }}</td>
-              <td class="py-1 pr-2">
+              <td class="dim pl-2 pr-1">{{ i + 1 }}</td>
+              <td class="set-plate" data-test="set-plate-time">
                 <input type="time" :value="s.time ?? ''" :title="t('sets_time_title')" style="width: 96px" @change="onTime(i, $event)" />
               </td>
-              <td class="py-1 pr-2">
+              <td class="set-plate" data-test="set-plate-reps">
                 <input type="number" step="any" :value="s.reps ?? ''" :placeholder="t('dash_sets_reps_placeholder')" style="width: 70px" @change="onReps(i, $event)" />
               </td>
-              <td class="py-1 pr-2">
+              <td class="set-plate" data-test="set-plate-variation">
                 <VariationCombo :model-value="s.variation" :labels="labels" @commit="onVariation(i, $event)" @forget="emit('forget', $event)" />
               </td>
-              <td class="py-1">
+              <td>
                 <button type="button" class="danger" style="padding: 2px 8px" @click="emit('change', removeSet(sets, i))"><Icon name="x" /></button>
               </td>
             </tr>

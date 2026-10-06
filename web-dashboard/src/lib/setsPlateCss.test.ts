@@ -10,11 +10,22 @@ async function readStyle(): Promise<string> {
 }
 
 describe('style.css: подложка у каждого подхода (BACKLOG 18.4)', () => {
-  it('defines .sets-table with a plate per cell row', async () => {
+  it('defines .sets-table with a separate plate per parameter cell (раздел 42, 9:06)', async () => {
     const css = await readStyle()
-    expect(css).toMatch(/\.sets-table\s*\{[^}]*border-spacing:/)
-    expect(css).toMatch(/\.sets-table td\s*\{[^}]*background:\s*var\(--bg\)/)
-    expect(css).toMatch(/\.sets-table td:first-child\s*\{[^}]*border-radius/)
-    expect(css).toMatch(/\.sets-table td:last-child\s*\{[^}]*border-radius/)
+    expect(css).toMatch(/\.sets-table\s*\{[^}]*border-spacing:\s*\d+px\s+\d+px/) // зазор и по горизонтали — плашки не слипаются
+    expect(css).toMatch(/\.sets-table td\.set-plate\s*\{[^}]*background:\s*var\(--bg\)[^}]*border:\s*1px solid var\(--border\)[^}]*border-radius:\s*10px/)
+    expect(css).toMatch(/\.sets-table td\.set-plate:focus-within\s*\{[^}]*border-color:\s*var\(--accent\)/)
+    expect(css).toMatch(/\.sets-table td\.set-plate input\s*\{[^}]*border:\s*0/) // без плашки в плашке
+    // старая «одна общая плашка на всю строку» (скругление только у крайних ячеек) не должна вернуться
+    expect(css).not.toMatch(/\.sets-table td:first-child\s*\{/)
+    expect(css).not.toMatch(/\.sets-table td:last-child\s*\{/)
+  })
+})
+
+describe('style.css: подложка у всех полей ввода и списков в окнах (раздел 42, 9:05)', () => {
+  it.each(["input[type='number']", "input[type='time']", "input[type='date']", 'select', 'textarea', "input[type='text']"])('.modal %s имеет рамку и фон', async (sel) => {
+    const css = await readStyle()
+    const rule = css.match(/(\.modal [^{}]*)\{[^}]*background:\s*var\(--bg\)[^}]*border:\s*1px solid var\(--border\)[^}]*\}/g) ?? []
+    expect(rule.some((r) => r.includes('.modal ' + sel))).toBe(true)
   })
 })

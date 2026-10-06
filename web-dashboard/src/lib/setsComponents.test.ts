@@ -68,6 +68,18 @@ describe('SetsCard: огонёк серии и подложка у каждог�
     expect(table.findAll('[data-test="set-row"]')).toHaveLength(3)
     w.unmount()
   })
+  it('у каждого параметра подхода — своя подложка: время, повторы, особенность (раздел 42, 9:06)', () => {
+    const w = mount(SetsCard, { props: { metric: metric(), sets: [row({ reps: 10 }), row({ reps: 12 })] } })
+    for (const r of w.findAll('[data-test="set-row"]')) {
+      const plates = r.findAll('td.set-plate')
+      expect(plates).toHaveLength(3)
+      expect(plates[0].find('input[type="time"]').exists()).toBe(true)
+      expect(plates[1].find('input[type="number"]').exists()).toBe(true)
+      expect(plates[2].find('input[type="text"]').exists()).toBe(true)
+      expect(r.find('td button.danger').element.closest('td')!.classList.contains('set-plate')).toBe(false) // «удалить» — без плашки
+    }
+    w.unmount()
+  })
 })
 
 describe('VariationCombo', () => {
