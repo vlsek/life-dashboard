@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.42";
+const SITE_VERSION = "3.43";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.43", date: "2026-10-06 19:20", changes: [
+        "На карте мышц голова теперь подсвечивается зелёным, если за последние 4 дня выполнена учебная метрика из категории study.",
+    ]},
     { version: "3.42", date: "2026-10-06 18:45", changes: [
         "Календарь и История объединены в один раздел: на странице /calendar/ появился переключатель «Календарь / История», а старый адрес /history/ теперь открывает Историю в этом же разделе. Без миграции.",
     ]},
@@ -1634,6 +1637,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.43", date: "2026-10-06 19:20", changes: [
+        "The muscle map head now lights green when a study metric from the study category was completed within the last 4 days.",
+    ]},
     { version: "3.42", date: "2026-10-06 18:45", changes: [
         "Calendar and History are now one section: /calendar/ has a Calendar / History switch, while the old /history/ address opens History in the same section. No migration.",
     ]},
