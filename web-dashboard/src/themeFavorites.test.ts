@@ -92,7 +92,8 @@ describe('одинаково во всех страницах пилота', () 
   })
   it.each(dirs)('%s: любимые темы в списке и «Кастомизация» под разделителем', (dir: string) => {
     const src: string = readFileSync(`../${dir}/src/components/AppShell.vue`, 'utf-8')
-    expect(src).toContain("const BOTTOM_KEYS = ['history', 'customization']")
+    // в календаре владелец сам убрал дублирующий пункт «История» (коммит 9c21287, 2026-10-06 18:28): там внизу только «Кастомизация»
+    expect(src).toContain(dir === 'web-calendar' ? "const BOTTOM_KEYS = ['customization']" : "const BOTTOM_KEYS = ['history', 'customization']")
     expect(src).toContain('<option v-for="key in themeOptions"')
     expect(src).toContain('visibleThemes(themeVal.value)')
     expect(src).toContain('FAVORITE_THEMES_EVENT')
