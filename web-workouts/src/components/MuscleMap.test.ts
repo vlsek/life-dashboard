@@ -20,6 +20,22 @@ async function openMap(entries: WorkoutEntry[], exercises: Exercise[]) {
 const zone = (w: ReturnType<typeof mount>, m: string) => w.find(`[data-muscle="${m}"]`)
 
 describe('MuscleMap', () => {
+  it('голова зелёная, когда учёба была за последние 4 дня', async () => {
+    const w = mount(MuscleMap, { props: { entries: [], exercises: [bench], today: TODAY, studyRecent: true } })
+    await w.find('[data-testid="muscle-map-toggle"]').trigger('click')
+    const head = w.find('[data-testid="muscle-head"]')
+    expect(head.attributes('fill')).toBe('var(--success)')
+    expect(w.find('[data-testid="muscle-head-study"]').exists()).toBe(true)
+  })
+
+  it('голова нейтральная без недавней учёбы', async () => {
+    const w = mount(MuscleMap, { props: { entries: [], exercises: [bench], today: TODAY, studyRecent: false } })
+    await w.find('[data-testid="muscle-map-toggle"]').trigger('click')
+    expect(w.find('[data-testid="muscle-head"]').attributes('fill')).toBe('none')
+    expect(w.find('[data-testid="muscle-head-study"]').exists()).toBe(false)
+  })
+
+
   beforeEach(() => {
     localStorage.clear()
     localStorage.setItem('site_lang', 'ru')
