@@ -36,6 +36,17 @@ const {
 const props = defineProps<{ userId: string | null; metricStreaks?: Record<string, MetricStreakInfo> }>()
 // metricsChanged — после правки списка метрик (шестерёнка в заголовке) родитель перечитывает данные Дашборда
 const emit = defineEmits<{ metricsChanged: [] }>()
+// После добавления/правки/удаления метрики перечитываем СВОЙ список (BACKLOG 40: «новые метрики не появляются без обновления страницы»),
+// даём «Подходам» сигнал перечитать свой, затем сообщаем родителю (общие данные Дашборда и графики).
+const rev = ref(0)
+async function onMetricsChanged() {
+  rev.value++
+  if (props.userId) {
+    await load(props.userId, date.value)
+    void initRecords(props.userId)
+  }
+  emit('metricsChanged')
+}
 // Рекорды числовых метрик и подходов за всё время (BACKLOG раздел 28) — под названием в плашке; выключаются в «Настроить Дашборд»
 const { records: metricRecords, init: initRecords } = useMetricRecords()
 watch(
@@ -74,7 +85,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
            за ней — ручка перетаскивания блока, если родитель передал слот -->
       <template #actions>
         <span class="flex items-center gap-2">
-          <MetricsManagerSection icon :user-id="userId" @changed="emit('metricsChanged')" />
+          <MetricsManagerSection icon :user-id="userId" @changed="onMetricsChanged" />
           <slot name="actions" />
         </span>
       </template>
@@ -132,7 +143,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
     </div>
 
     <div class="mt-4">
-      <SetsSection :user-id="userId" :date="date" :metric-streaks="props.metricStreaks" :records="metricRecords" />
+      <SetsSection :user-id="userId" :date="date" :metric-streaks="props.metricStreaks" :records="metricRecords" :reload-key="rev" />
     </div>
 
     <!-- BACKLOG раздел 34: «Сохранить день» — в самом низу, после самой нижней метрики («Подходы»), а не посередине — так очевидно, что это

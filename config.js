@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.26";
+const SITE_VERSION = "3.27";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.27", date: "2026-10-06 10:25", changes: [
+        "Дашборд: новые метрики теперь появляются сразу. После добавления, правки или удаления метрики через шестерёнку блок «Ежедневные метрики», блок «Подходы» и графики сами перечитывают список — обновлять страницу не нужно (раньше новая метрика была видна только после перезагрузки). Миграция не нужна."
+    ]},
     { version: "3.26", date: "2026-10-06 08:55", changes: [
         "Планы: если нажать «Добавить» с пустым полем плана, поле подсвечивается красной рамкой, получает фокус и слегка «встряхивается» — как у незаполненного обязательного поля. Подсветка уходит, как только начнёте печатать. При «уменьшить движение» в системе и выключенных анимациях встряски нет, остаётся подсветка. Enter в пустом поле ведёт себя так же. Миграция не нужна."
     ]},
@@ -1585,6 +1588,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.27", date: "2026-10-06 10:25", changes: [
+        "Dashboard: new metrics now appear right away. After you add, edit or delete a metric through the gear, the Daily metrics block, the Sets block and the charts re-read their list by themselves - no page refresh needed (before, a new metric showed up only after a reload). No migration needed."
+    ]},
     { version: "3.26", date: "2026-10-06 08:55", changes: [
         "Plans: pressing \"Add\" with an empty plan field highlights the field with a red border, focuses it and gives it a short shake - like a required field left empty. The highlight goes away as soon as you start typing. With reduced motion in the system or animations turned off there is no shake, only the highlight. Enter in an empty field behaves the same. No migration needed."
     ]},

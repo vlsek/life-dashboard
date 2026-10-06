@@ -55,9 +55,10 @@ describe('шестерёнка в заголовке «Ежедневные ме
     w.unmount()
   })
 
-  it('после правки метрик блок сообщает родителю (metricsChanged), чтобы Дашборд перечитал данные', () => {
+  it('после правки метрик блок сообщает родителю (metricsChanged), чтобы Дашборд перечитал данные', async () => {
     const w = mountSection()
-    h.mgr.onChanged()
+    await h.mgr.onChanged()
+    await flushPromises()
     expect(w.emitted('metricsChanged')).toHaveLength(1)
     w.unmount()
   })
@@ -75,3 +76,35 @@ describe('MetricsManagerSection: режимы', () => {
     b.unmount()
   })
 })
+
+describe('новые метрики появляются без обновления страницы (BACKLOG 40)', () => {
+  const sets = { name: 'SetsSection', props: ['userId', 'date', 'metricStreaks', 'records', 'reloadKey'], template: '<div data-test="sets-stub" />' }
+  const mountWithSets = () => mount(DailyMetricsSection, { props: { userId: 'u1' }, global: { stubs: { SetsSection: sets, PlannedSection: true } } })
+
+  it('после правки списка метрик блок сам перечитывает метрики за выбранный день, а потом сообщает родителю', async () => {
+    const w = mountWithSets()
+    await flushPromises()
+    expect(h.state.load).toHaveBeenCalledTimes(1)
+    await h.mgr.onChanged()
+    await flushPromises()
+    expect(h.state.load).toHaveBeenCalledTimes(2)
+    expect(h.state.load.mock.calls[1][0]).toBe('u1')
+    expect(w.emitted('metricsChanged')).toHaveLength(1)
+    w.unmount()
+  })
+
+  it('«Подходам» уходит новый reloadKey на каждую правку (новая метрика типа «подходы» появляется сразу)', async () => {
+    const w = mountWithSets()
+    await flushPromises()
+    const stub = () => w.findComponent({ name: 'SetsSection' })
+    expect(stub().props('reloadKey')).toBe(0)
+    await h.mgr.onChanged()
+    await flushPromises()
+    expect(stub().props('reloadKey')).toBe(1)
+    await h.mgr.onChanged()
+    await flushPromises()
+    expect(stub().props('reloadKey')).toBe(2)
+    w.unmount()
+  })
+})
+

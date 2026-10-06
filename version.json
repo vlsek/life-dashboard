@@ -1,6 +1,13 @@
 {
-  "version": "3.26",
+  "version": "3.27",
   "en": [
+    {
+      "version": "3.27",
+      "date": "2026-10-06 10:25",
+      "changes": [
+        "Dashboard: new metrics now appear right away. After you add, edit or delete a metric through the gear, the Daily metrics block, the Sets block and the charts re-read their list by themselves - no page refresh needed (before, a new metric showed up only after a reload). No migration needed."
+      ]
+    },
     {
       "version": "3.26",
       "date": "2026-10-06 08:55",
@@ -2346,6 +2353,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.27",
+      "date": "2026-10-06 10:25",
+      "changes": [
+        "Дашборд: новые метрики теперь появляются сразу. После добавления, правки или удаления метрики через шестерёнку блок «Ежедневные метрики», блок «Подходы» и графики сами перечитывают список — обновлять страницу не нужно (раньше новая метрика была видна только после перезагрузки). Миграция не нужна."
+      ]
+    },
     {
       "version": "3.26",
       "date": "2026-10-06 08:55",

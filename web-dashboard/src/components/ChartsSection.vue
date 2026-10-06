@@ -17,7 +17,7 @@ import type { MetricStreakInfo } from '../lib/metricStreaks'
 
 // Блок «Графики»: серии параметров тела, «баллы за день» и числовых метрик; выбор/порядок/цели
 // (profiles.dashboard_charts), период общий + свой у каждого графика, правка значений из графика.
-const props = defineProps<{ userId: string | null; metricStreaks?: Record<string, MetricStreakInfo> | null }>()
+const props = defineProps<{ userId: string | null; metricStreaks?: Record<string, MetricStreakInfo> | null; reloadKey?: number }>()
 
 // Серия метрики рядом с названием графика (BACKLOG 23, 14:42). Ключ серии графика метрики — `metric:<id>`; у остальных графиков
 // (вес и параметры тела) серий нет.
@@ -35,6 +35,14 @@ watch(
     if (uid) init(uid)
   },
   { immediate: true },
+)
+
+// Изменили список метрик (BACKLOG 40) — графики надо пересобрать: у новой метрики появляется свой график без обновления страницы
+watch(
+  () => props.reloadKey,
+  (_n, o) => {
+    if (o !== undefined && props.userId) reload()
+  },
 )
 
 // Профиль добавил/изменил/удалил параметр тела (или записал значение) — серии надо пересобрать.

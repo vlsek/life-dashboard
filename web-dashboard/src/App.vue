@@ -55,6 +55,12 @@ import { stripEmoji } from './lib/emojiText'
 // lib/layout.ts + useLayout.ts + LayoutModal.vue, колонка profiles.dashboard_layout общая с классикой.
 
 const { auth, streaks, perfectInfo, dayProgress, weekProgress, summaries, progressSettings, loadError, init, saveProgressSettings } = useDashboard()
+// Список метрик изменили через шестерёнку «Ежедневных метрик» (BACKLOG 40): перечитываем общие данные и просим графики пересобраться
+const metricsRev = ref(0)
+async function onMetricsChanged() {
+  metricsRev.value++
+  await init()
+}
 // Поздравление за серию (BACKLOG 13): один раз на порог 5/10/30/…, выключается в плашке или в ⚙ «Настроить Дашборд»
 const { pending: milestone, close: closeMilestone, disable: disableMilestone } = useStreakCelebration(
   () => (auth.value.status === 'ready' ? auth.value.userId : null),
@@ -242,7 +248,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
             </template>
 
             <template v-else-if="item.key === 'daily'">
-              <DailyMetricsSection :user-id="auth.userId" :metric-streaks="metricStreaks" @metrics-changed="init">
+              <DailyMetricsSection :user-id="auth.userId" :metric-streaks="metricStreaks" @metrics-changed="onMetricsChanged">
                 <template v-if="visibleBlockCount > 1" #actions>
                   <BlockDragHandle :block-key="'daily'" @down="dragDown" @move="dragMove" @up="dragUp" @cancel="dragCancel" @key="dragKey" />
                 </template>
@@ -264,7 +270,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
                 </template>
               </SectionHeading>
               <div v-collapse="!chartsCollapsed" class="mb-5">
-                <ChartsSection :user-id="auth.userId" :metric-streaks="metricStreaks" @state="chartsState = $event" />
+                <ChartsSection :user-id="auth.userId" :metric-streaks="metricStreaks" :reload-key="metricsRev" @state="chartsState = $event" />
               </div>
             </template>
           </template>
