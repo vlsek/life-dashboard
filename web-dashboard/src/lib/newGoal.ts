@@ -9,7 +9,6 @@ export type Difficulty = 'easy' | 'medium' | 'hard' | null
 // Значения формы добавления цели (до сборки в строку для базы).
 export interface GoalFormInput {
   name: string
-  points: number
   category: string
   stages: number
   difficulty: Difficulty
@@ -79,6 +78,14 @@ export function needsSaving(name: string, stored: string[], noCategoryLabels: st
   return !stored.some((s) => categoryKey(s) === key)
 }
 
+// Баллы цели по сложности (решение владельца 2026-10-06, BACKLOG разделы 35/40): вручную не вводятся. Лёгкая 5, средняя 10, сложная 15;
+// сложность не задана — 5. Копия из web-goals/src/lib/goals.ts (там же pointsAfterEdit для правки — здесь только создание).
+export const DEFAULT_GOAL_POINTS = 5
+export const DIFFICULTY_POINTS = { easy: 5, medium: 10, hard: 15 } as const
+export function pointsForDifficulty(difficulty: Difficulty): number {
+  return difficulty ? DIFFICULTY_POINTS[difficulty] : DEFAULT_GOAL_POINTS
+}
+
 // Дедлайн/сложность пишем в базу только если заданы — так работает и до применения миграции 020 (как goalExtraFields() в web-goals для новой цели).
 export function goalExtraFields(res: Pick<GoalFormInput, 'deadline' | 'difficulty'>): { deadline?: string | null; difficulty?: Difficulty } {
   const extra: { deadline?: string | null; difficulty?: Difficulty } = {}
@@ -91,7 +98,7 @@ export function goalExtraFields(res: Pick<GoalFormInput, 'deadline' | 'difficult
 export function buildInsertRow(res: GoalFormInput, noCategoryLabel: string) {
   return {
     name: res.name.trim(),
-    points: res.points || 5,
+    points: pointsForDifficulty(res.difficulty),
     category: (res.category || noCategoryLabel).trim(),
     stages: Math.max(1, res.stages || 1),
     current_stage: 0,

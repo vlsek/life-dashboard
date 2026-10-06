@@ -78,7 +78,7 @@ export function useGoals() {
     const { error: err } = await sb.from('goals').update(patch).eq('id', existing.id)
     if (err) throw err
     // правка числа этапов может сама закрыть/открыть многоэтапную цель (patch.done) — баллы идут по новым очкам цели
-    if (typeof patch.done === 'boolean') emitPointsFloat(completionDelta(!!existing.done, patch.done, res.points || GOAL_DEFAULT_POINTS, GOAL_DEFAULT_POINTS))
+    if (typeof patch.done === 'boolean') emitPointsFloat(completionDelta(!!existing.done, patch.done, Number(patch.points) || GOAL_DEFAULT_POINTS, GOAL_DEFAULT_POINTS))
     await reload()
     flash(existing.id)
   }

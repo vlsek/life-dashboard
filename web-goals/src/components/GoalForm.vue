@@ -2,16 +2,16 @@
 import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { friendlyError } from '../lib/friendlyError'
-import type { Difficulty, GoalFormInput } from '../lib/types'
+import type { Difficulty, GoalFormInitial, GoalFormInput } from '../lib/types'
 import { matchCategory } from '../lib/categories'
+import { pointsAfterEdit } from '../lib/goals'
 
 // submit — запись цели (родитель добавляет/правит и закрывает форму при успехе). Ошибка записи показывается ПОД полями (форма остаётся
 // открытой, введённое не пропадает); пока идёт запись, «Сохранить» заблокирована — двойной тап не создаёт две цели.
-const props = withDefaults(defineProps<{ isEdit: boolean; initial: GoalFormInput; submit: (res: GoalFormInput) => Promise<void>; categories?: string[]; noCategoryLabels?: string[] }>(), { categories: () => [], noCategoryLabels: () => [] })
+const props = withDefaults(defineProps<{ isEdit: boolean; initial: GoalFormInitial; submit: (res: GoalFormInput) => Promise<void>; categories?: string[]; noCategoryLabels?: string[] }>(), { categories: () => [], noCategoryLabels: () => [] })
 const emit = defineEmits<{ close: [] }>()
 
 const name = ref(props.initial.name)
-const points = ref(props.initial.points)
 // Категория: выбор из СВОИХ категорий (BACKLOG раздел 35) + «Новая категория…» + «Без категории». Если у редактируемой цели категории нет
 // в списке (старые данные), она показывается как новая — в поле, текст не теряется.
 const NEW = '\u0000new'
@@ -22,6 +22,8 @@ const category = computed(() => (categoryChoice.value === NEW ? newCategory.valu
 const stages = ref(props.initial.stages)
 const difficulty = ref<Difficulty>(props.initial.difficulty)
 const deadline = ref(props.initial.deadline)
+// Баллы не вводятся, а следуют за сложностью (BACKLOG разделы 35/40); у старой цели с другими баллами они остаются, пока сложность не сменят.
+const shownPoints = computed(() => pointsAfterEdit(difficulty.value, { points: props.initial.points, difficulty: props.initial.difficulty }))
 
 const saving = ref(false)
 const nameMissing = ref(false)
@@ -40,7 +42,6 @@ async function save() {
   try {
     await props.submit({
       name: name.value,
-      points: points.value,
       category: category.value,
       stages: stages.value,
       difficulty: difficulty.value,
@@ -62,9 +63,6 @@ async function save() {
       <label class="mt-2 block text-sm">{{ t('goals_field_name') }}</label>
       <input v-model="name" type="text" class="w-full" :aria-invalid="nameMissing" @input="nameMissing = false" />
 
-      <label class="mt-2 block text-sm">{{ t('goals_field_points') }}</label>
-      <input v-model.number="points" type="number" class="w-full" />
-
       <label class="mt-2 block text-sm">{{ t('goals_field_category') }}</label>
       <select v-model="categoryChoice" class="w-full" data-test="goal-category-select">
         <option value="">{{ t('goals_no_category') }}</option>
@@ -83,6 +81,7 @@ async function save() {
         <option value="medium">{{ t('goals_diff_medium') }}</option>
         <option value="hard">{{ t('goals_diff_hard') }}</option>
       </select>
+      <p class="dim mt-1 text-xs" data-test="goal-points-auto">{{ t('goals_points_auto').replace('{n}', String(shownPoints)) }}</p>
 
       <label class="mt-2 block text-sm">{{ t('goals_field_deadline') }}</label>
       <input v-model="deadline" type="date" class="w-full" />

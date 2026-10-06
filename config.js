@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.37";
+const SITE_VERSION = "3.38";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.38", date: "2026-10-06 14:28", changes: [
+        "Цели: баллы за цель больше не вводятся вручную — их задаёт сложность: лёгкая 5, средняя 10, сложная 15 (если сложность не задана — 5). В форме цели, в разделе «Цели» и в окне «Новая цель» на главной поля «Баллы» нет, под сложностью показано, сколько баллов получится. Уже созданные цели с другими баллами не пересчитываются: при правке их баллы остаются, пока вы не смените сложность. Миграция не нужна."
+    ]},
     { version: "3.37", date: "2026-10-06 11:50", changes: [
         "Серии: у метрики «не чаще N раз в неделю» серия теперь считается с недели её создания (или первой записи), а не с первых данных аккаунта. Раньше только что добавленная метрика сразу показывала «12 недель подряд», потому что недели до её появления засчитывались как «лимит не превышен». Миграция не нужна."
     ]},
@@ -1618,6 +1621,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.38", date: "2026-10-06 14:28", changes: [
+        "Goals: points for a goal are no longer typed in by hand - difficulty sets them: easy 5, medium 10, hard 15 (5 when difficulty is not set). The goal form on the Goals page and the New goal window on the home page have no Points field; under Difficulty you see how many points the goal will give. Goals you already created with other points are not recalculated: when you edit one, its points stay until you change the difficulty. No migration needed."
+    ]},
     { version: "3.37", date: "2026-10-06 11:50", changes: [
         "Streaks: for an \"at most N times a week\" metric the streak is now counted from the week the metric was created (or its first entry), not from the account's first data. Before, a freshly added metric instantly showed \"12 weeks in a row\" because the weeks before it existed counted as \"limit not exceeded\". No migration needed."
     ]},

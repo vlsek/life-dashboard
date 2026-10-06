@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { friendlyError } from '../lib/friendlyError'
-import { matchCategory, type Difficulty, type GoalFormInput } from '../lib/newGoal'
+import { matchCategory, pointsForDifficulty, type Difficulty, type GoalFormInput } from '../lib/newGoal'
 
 // BACKLOG раздел 38: новая цель с главной — ТО ЖЕ окно, что в «Целях» (копия web-goals/src/components/GoalForm.vue для добавления; поля, порядок и
 // подписи те же, ключи goals_*). submit — запись цели + постановка в план (родитель); ошибка показывается ПОД полями, форма остаётся открытой,
@@ -11,7 +11,6 @@ const props = withDefaults(defineProps<{ submit: (res: GoalFormInput) => Promise
 const emit = defineEmits<{ close: [] }>()
 
 const name = ref('')
-const points = ref(5)
 const NEW = '\u0000new'
 const categoryChoice = ref<string>(matchCategory('', props.categories, props.noCategoryLabels) ?? '')
 const newCategory = ref('')
@@ -19,6 +18,8 @@ const category = computed(() => (categoryChoice.value === NEW ? newCategory.valu
 const stages = ref(1)
 const difficulty = ref<Difficulty>(null)
 const deadline = ref('')
+// Баллы не вводятся, а следуют за сложностью (BACKLOG разделы 35/40) — как в «Целях».
+const shownPoints = computed(() => pointsForDifficulty(difficulty.value))
 
 const saving = ref(false)
 const nameMissing = ref(false)
@@ -37,7 +38,6 @@ async function save() {
   try {
     await props.submit({
       name: name.value,
-      points: points.value,
       category: category.value,
       stages: stages.value,
       difficulty: difficulty.value,
@@ -59,9 +59,6 @@ async function save() {
       <label class="mt-2 block text-sm">{{ t('goals_field_name') }}</label>
       <input v-model="name" type="text" class="w-full" :aria-invalid="nameMissing" data-test="new-goal-name" @input="nameMissing = false" />
 
-      <label class="mt-2 block text-sm">{{ t('goals_field_points') }}</label>
-      <input v-model.number="points" type="number" class="w-full" data-test="new-goal-points" />
-
       <label class="mt-2 block text-sm">{{ t('goals_field_category') }}</label>
       <select v-model="categoryChoice" class="w-full" data-test="goal-category-select">
         <option value="">{{ t('goals_no_category') }}</option>
@@ -80,6 +77,7 @@ async function save() {
         <option value="medium">{{ t('goals_diff_medium') }}</option>
         <option value="hard">{{ t('goals_diff_hard') }}</option>
       </select>
+      <p class="dim mt-1 text-xs" data-test="goal-points-auto">{{ t('goals_points_auto').replace('{n}', String(shownPoints)) }}</p>
 
       <label class="mt-2 block text-sm">{{ t('goals_field_deadline') }}</label>
       <input v-model="deadline" type="date" class="w-full" />

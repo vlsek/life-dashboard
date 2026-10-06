@@ -28,6 +28,13 @@ describe('копия логики категорий и строки цели с
   it.each(['categoryKey', 'savedCategories', 'matchCategory', 'mergeCategories', 'needsSaving'])('%s — тот же код', (fn) => {
     expect(body(myCode, fn)).toBe(body(theirCats, fn))
   })
+  it('шкала баллов по сложности — тот же код и числа (лёгкая 5, средняя 10, сложная 15)', () => {
+    expect(body(myCode, 'pointsForDifficulty')).toBe(body(theirGoals, 'pointsForDifficulty'))
+    for (const line of ['export const DEFAULT_GOAL_POINTS = 5', 'export const DIFFICULTY_POINTS = { easy: 5, medium: 10, hard: 15 } as const']) {
+      expect(myCode).toContain(line)
+      expect(theirGoals).toContain(line)
+    }
+  })
   it('buildInsertRow — тот же код (у новой цели goalExtraFields без «существующей»)', () => {
     expect(body(myCode, 'buildInsertRow')).toBe(body(theirGoals, 'buildInsertRow').replace('goalExtraFields(res, null)', 'goalExtraFields(res)'))
   })
@@ -37,7 +44,11 @@ describe('копия логики категорий и строки цели с
     expect(mine.goalExtraFields({ deadline: '2026-10-20', difficulty: 'easy' })).toEqual({ deadline: '2026-10-20', difficulty: 'easy' })
   })
   it('значения по умолчанию в строке: баллы 5, этапов не меньше 1, подпись «Без категории»', () => {
-    expect(mine.buildInsertRow({ name: ' A ', points: 0, category: '', stages: 0, difficulty: null, deadline: '' }, 'Без категории')).toEqual({ name: 'A', points: 5, category: 'Без категории', stages: 1, current_stage: 0, done: false })
+    expect(mine.buildInsertRow({ name: ' A ', category: '', stages: 0, difficulty: null, deadline: '' }, 'Без категории')).toEqual({ name: 'A', points: 5, category: 'Без категории', stages: 1, current_stage: 0, done: false })
+  })
+  it('баллы строки — по сложности, число этапов их не умножает', () => {
+    const row = (difficulty: mine.GoalFormInput['difficulty']) => mine.buildInsertRow({ name: 'A', category: '', stages: 4, difficulty, deadline: '' }, 'Без категории').points
+    expect([row('easy'), row('medium'), row('hard'), row(null)]).toEqual([5, 10, 15, 5])
   })
 })
 
@@ -55,10 +66,12 @@ describe('копия окна совпадает с GoalForm.vue из web-goals'
     for (const frag of ['type="number" min="1"', 'maxlength="40"', 'type="date"', 'const NEW = \'\\u0000new\'']) expect(mineSrc).toContain(frag)
     for (const frag of ['type="number" min="1"', 'maxlength="40"', 'type="date"', 'const NEW = \'\\u0000new\'']) expect(theirs).toContain(frag)
   })
-  it('значения по умолчанию новой цели те же, что у формы «Новая цель» в web-goals (баллы 5, 1 этап)', () => {
+  it('значения по умолчанию новой цели те же, что у формы «Новая цель» в web-goals (1 этап, сложность не задана); поля «Баллы» нет ни там, ни здесь', () => {
     expect(read('../web-goals/src/App.vue')).toContain("return { name: '', points: 5, category: '', stages: 1, difficulty: null, deadline: '' }")
-    expect(mineSrc).toContain('const points = ref(5)')
     expect(mineSrc).toContain('const stages = ref(1)')
+    expect(mineSrc).toContain('const difficulty = ref<Difficulty>(null)')
+    expect(mineSrc).not.toContain('goals_field_points')
+    expect(theirs).not.toContain('goals_field_points')
   })
 })
 
@@ -66,7 +79,7 @@ describe('подписи окна совпадают с web-goals на обои�
   const theirs = read('../web-goals/src/lib/i18n.ts')
   const mineSrc = read('src/lib/i18n.ts')
   const pick = (src: string, key: string): string[] => [...src.matchAll(new RegExp(`^\\s*${key}: ('[^\\n]*'|"[^\\n]*"),\\s*$`, 'gm'))].map((m) => m[1].slice(1, -1))
-  const KEYS = ['goals_new_title', 'goals_form_name_required', 'goals_field_name', 'goals_field_points', 'goals_field_category', 'goals_field_stages', 'goals_no_category', 'goals_cat_new', 'goals_cat_new_placeholder', 'goals_field_difficulty', 'goals_diff_none', 'goals_diff_easy', 'goals_diff_medium', 'goals_diff_hard', 'goals_field_deadline']
+  const KEYS = ['goals_new_title', 'goals_form_name_required', 'goals_field_name', 'goals_field_category', 'goals_field_stages', 'goals_no_category', 'goals_cat_new', 'goals_cat_new_placeholder', 'goals_field_difficulty', 'goals_diff_none', 'goals_diff_easy', 'goals_diff_medium', 'goals_diff_hard', 'goals_points_auto', 'goals_field_deadline']
   it.each(KEYS)('%s — EN и RU как в «Целях»', (key) => {
     const a = pick(mineSrc, key)
     const b = pick(theirs, key)

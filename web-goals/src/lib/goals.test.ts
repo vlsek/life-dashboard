@@ -14,6 +14,8 @@ import {
   stagePercent,
   stageProgress,
   MAX_SEGMENTS,
+  pointsForDifficulty,
+  pointsAfterEdit,
 } from './goals'
 import type { Goal } from './types'
 
@@ -79,7 +81,7 @@ describe('goalExtraFields', () => {
 
 describe('buildInsertRow', () => {
   it('defaults points to 5, stages to at least 1, category to the no-category label', () => {
-    const row = buildInsertRow({ name: '  Прочитать книгу  ', points: 0, category: '', stages: 0, difficulty: null, deadline: '' }, 'Без категории')
+    const row = buildInsertRow({ name: '  Прочитать книгу  ', category: '', stages: 0, difficulty: null, deadline: '' }, 'Без категории')
     expect(row).toEqual({
       name: 'Прочитать книгу',
       points: 5,
@@ -94,21 +96,21 @@ describe('buildInsertRow', () => {
 describe('buildUpdateRow', () => {
   it('clamps current_stage down when stages shrinks below it', () => {
     const existing = goal({ stages: 5, current_stage: 4 })
-    const row = buildUpdateRow({ name: 'G', points: 5, category: 'Быт', stages: 2, difficulty: null, deadline: '' }, existing, 'Без категории')
+    const row = buildUpdateRow({ name: 'G', category: 'Быт', stages: 2, difficulty: null, deadline: '' }, existing, 'Без категории')
     expect(row.current_stage).toBe(2)
     expect(row.done).toBe(true) // current_stage clamped to stages -> считается выполненной
   })
 
   it('recomputes done for multi-stage goals based on current progress vs new stages', () => {
     const existing = goal({ stages: 3, current_stage: 2 })
-    const row = buildUpdateRow({ name: 'G', points: 5, category: 'Быт', stages: 5, difficulty: null, deadline: '' }, existing, 'Без категории')
+    const row = buildUpdateRow({ name: 'G', category: 'Быт', stages: 5, difficulty: null, deadline: '' }, existing, 'Без категории')
     expect(row.current_stage).toBeUndefined() // не подрезаем, если прогресс всё ещё меньше нового stages
     expect(row.done).toBe(false)
   })
 
   it('does not touch done for single-stage goals (toggleGoal handles that instead)', () => {
     const existing = goal({ stages: 1, current_stage: 0 })
-    const row = buildUpdateRow({ name: 'G', points: 5, category: 'Быт', stages: 1, difficulty: null, deadline: '' }, existing, 'Без категории')
+    const row = buildUpdateRow({ name: 'G', category: 'Быт', stages: 1, difficulty: null, deadline: '' }, existing, 'Без категории')
     expect(row.done).toBeUndefined()
   })
 })
@@ -211,5 +213,40 @@ describe('stagePercent / stageProgress', () => {
   })
   it('never fills more than the total', () => {
     expect(stageProgress(9, 4)).toEqual({ mode: 'segments', filled: 4, total: 4 })
+  })
+})
+
+// BACKLOG разделы 35/40 (решение владельца 2026-10-06): баллы не вводятся, а считаются по сложности — лёгкая 5, средняя 10, сложная 15.
+describe('баллы по сложности', () => {
+  it('pointsForDifficulty: 5 / 10 / 15, не задана — 5', () => {
+    expect(pointsForDifficulty('easy')).toBe(5)
+    expect(pointsForDifficulty('medium')).toBe(10)
+    expect(pointsForDifficulty('hard')).toBe(15)
+    expect(pointsForDifficulty(null)).toBe(5)
+  })
+  it('новая цель: баллы только по сложности, количество этапов их не умножает', () => {
+    const base = { name: 'G', category: '', stages: 4, deadline: '' }
+    expect(buildInsertRow({ ...base, difficulty: 'hard' }, 'Без категории').points).toBe(15)
+    expect(buildInsertRow({ ...base, difficulty: 'medium' }, 'Без категории').points).toBe(10)
+    expect(buildInsertRow({ ...base, difficulty: 'easy' }, 'Без категории').points).toBe(5)
+    expect(buildInsertRow({ ...base, difficulty: null }, 'Без категории').points).toBe(5)
+  })
+  it('поле points, пришедшее снаружи (старый клиент, ручной ввод), в строку не попадает', () => {
+    const row = buildInsertRow({ name: 'G', category: '', stages: 1, difficulty: null, deadline: '', points: 9999 } as never, 'Без категории')
+    expect(row.points).toBe(5)
+  })
+  it('правка: пока сложность не менялась, прежние баллы остаются (старая цель на 50 не пересчитывается задним числом)', () => {
+    const legacy = goal({ points: 50, difficulty: null })
+    expect(buildUpdateRow({ name: 'G', category: 'Быт', stages: 1, difficulty: null, deadline: '' }, legacy, 'Без категории').points).toBe(50)
+    const legacyHard = goal({ points: 30, difficulty: 'hard' })
+    expect(buildUpdateRow({ name: 'G', category: 'Быт', stages: 1, difficulty: 'hard', deadline: '' }, legacyHard, 'Без категории').points).toBe(30)
+  })
+  it('правка: сменили сложность — баллы по шкале', () => {
+    const legacy = goal({ points: 50, difficulty: null })
+    expect(buildUpdateRow({ name: 'G', category: 'Быт', stages: 1, difficulty: 'medium', deadline: '' }, legacy, 'Без категории').points).toBe(10)
+    expect(buildUpdateRow({ name: 'G', category: 'Быт', stages: 1, difficulty: null, deadline: '' }, goal({ points: 15, difficulty: 'hard' }), 'Без категории').points).toBe(5)
+  })
+  it('pointsAfterEdit: нет сохранённых баллов — 5', () => {
+    expect(pointsAfterEdit(null, { points: undefined, difficulty: undefined })).toBe(5)
   })
 })

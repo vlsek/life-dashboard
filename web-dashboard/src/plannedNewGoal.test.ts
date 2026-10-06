@@ -78,7 +78,8 @@ describe('«Планы»: «Новая цель»', () => {
     await openModal(w)
     expect(modal()).not.toBeNull()
     const labels = [...document.body.querySelectorAll('.modal label')].map((l) => l.textContent)
-    expect(labels).toEqual(['Название', 'Баллы за выполнение', 'Категория', 'Количество этапов (1 = обычная галочка)', 'Сложность', 'Дедлайн (необязательно)'])
+    expect(document.body.querySelector('[data-test="new-goal-points"]')).toBeNull() // баллов вручную нет (BACKLOG 35/40)
+    expect(labels).toEqual(['Название', 'Категория', 'Количество этапов (1 = обычная галочка)', 'Сложность', 'Дедлайн (необязательно)'])
     w.unmount()
   })
 
@@ -116,16 +117,18 @@ describe('«Планы»: «Новая цель»', () => {
     const name = document.body.querySelector('[data-test="new-goal-name"]') as HTMLInputElement
     name.value = '  Пробежка  '
     name.dispatchEvent(new Event('input'))
-    const pts = document.body.querySelector('[data-test="new-goal-points"]') as HTMLInputElement
-    pts.value = '10'
-    pts.dispatchEvent(new Event('input'))
+    const diff = [...document.body.querySelectorAll('.modal select')][1] as HTMLSelectElement
+    diff.value = 'medium'
+    diff.dispatchEvent(new Event('change'))
+    await flushPromises()
+    expect(document.body.querySelector('[data-test="goal-points-auto"]')?.textContent).toContain('Баллы за выполнение: 10')
     const sel = document.body.querySelector('[data-test="goal-category-select"]') as HTMLSelectElement
     sel.value = 'Спорт'
     sel.dispatchEvent(new Event('change'))
     await flushPromises()
     ;(document.body.querySelector('[data-test="goal-form-save"]') as HTMLElement).click()
     await flushPromises()
-    expect(h.goalInserts).toEqual([{ user_id: 'u1', name: 'Пробежка', points: 10, category: 'Спорт', stages: 1, current_stage: 0, done: false }])
+    expect(h.goalInserts).toEqual([{ user_id: 'u1', name: 'Пробежка', points: 10, category: 'Спорт', stages: 1, current_stage: 0, done: false, difficulty: 'medium' }])
     expect(h.upserts.at(-1)).toMatchObject({ user_id: 'u1', date: '2026-10-06', planned_goals: [{ type: 'goal', text: 'Пробежка' }] })
     expect(modal()).toBeNull()
     // «Спорт» есть в целях, но не в сохранённом списке (миграция 050) — как в «Целях», запоминается там (position = сколько уже сохранено)

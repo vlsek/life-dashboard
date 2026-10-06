@@ -38,11 +38,26 @@ export function goalExtraFields(res: Pick<GoalFormInput, 'deadline' | 'difficult
   return extra
 }
 
+// Баллы цели по сложности (решение владельца 2026-10-06, BACKLOG разделы 35/40): вручную не вводятся. Лёгкая 5, средняя 10, сложная 15;
+// сложность не задана — 5 (как раньше по умолчанию). Умножения на число этапов нет (не решено). Копия в web-dashboard/src/lib/newGoal.ts.
+export const DEFAULT_GOAL_POINTS = 5
+export const DIFFICULTY_POINTS = { easy: 5, medium: 10, hard: 15 } as const
+export function pointsForDifficulty(difficulty: Difficulty): number {
+  return difficulty ? DIFFICULTY_POINTS[difficulty] : DEFAULT_GOAL_POINTS
+}
+
+// Баллы при правке цели: пока сложность не менялась, остаются прежними (старые цели с другими баллами НЕ пересчитываются задним числом);
+// сменили сложность — по шкале выше. Для новой цели (баллы 5, сложность «не задана») даёт то же, что pointsForDifficulty().
+export function pointsAfterEdit(difficulty: Difficulty, existing: { points: number | null | undefined; difficulty: Difficulty | undefined }): number {
+  if ((difficulty ?? null) === (existing.difficulty ?? null)) return existing.points ?? DEFAULT_GOAL_POINTS
+  return pointsForDifficulty(difficulty)
+}
+
 // Патч для insert новой цели. Портировано из addGoal().
 export function buildInsertRow(res: GoalFormInput, noCategoryLabel: string) {
   return {
     name: res.name.trim(),
-    points: res.points || 5,
+    points: pointsForDifficulty(res.difficulty),
     category: (res.category || noCategoryLabel).trim(),
     stages: Math.max(1, res.stages || 1),
     current_stage: 0,
@@ -58,7 +73,7 @@ export function buildUpdateRow(res: GoalFormInput, existing: Goal, noCategoryLab
   const stages = Math.max(1, res.stages || 1)
   const patch: Record<string, unknown> = {
     name: res.name.trim(),
-    points: res.points || 5,
+    points: pointsAfterEdit(res.difficulty, existing),
     category: (res.category || noCategoryLabel).trim(),
     stages,
     ...goalExtraFields(res, existing),

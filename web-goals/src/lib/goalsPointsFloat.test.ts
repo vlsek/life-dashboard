@@ -66,13 +66,19 @@ describe('цели: баллы-анимация', () => {
     expect(got).toEqual([8, -8])
   })
 
-  it('правка числа этапов закрыла цель сама → +points (по очкам из формы); правка без смены статуса — тишина', async () => {
+  it('правка числа этапов закрыла цель сама → +баллы цели (прежние, пока сложность не менялась); правка без смены статуса — тишина', async () => {
     const { updateGoal } = useGoals()
-    const form = (o: Partial<any> = {}): any => ({ name: 'G', points: 12, category: '', stages: 2, difficulty: null, deadline: '', ...o })
-    await updateGoal(goal({ stages: 3, current_stage: 2 }), form({ stages: 2 }), 'none') // 2 из 2 → закрыта
+    const form = (o: Partial<any> = {}): any => ({ name: 'G', category: '', stages: 2, difficulty: null, deadline: '', ...o })
+    await updateGoal(goal({ stages: 3, current_stage: 2, points: 12 }), form({ stages: 2 }), 'none') // 2 из 2 → закрыта
     expect(got).toEqual([12])
-    await updateGoal(goal({ stages: 3, current_stage: 1 }), form({ stages: 3 }), 'none') // всё ещё открыта
+    await updateGoal(goal({ stages: 3, current_stage: 1, points: 12 }), form({ stages: 3 }), 'none') // всё ещё открыта
     expect(got).toEqual([12])
+  })
+
+  it('правка закрыла цель и одновременно сменила сложность → +баллы по новой сложности (BACKLOG 35/40)', async () => {
+    const { updateGoal } = useGoals()
+    await updateGoal(goal({ stages: 3, current_stage: 2, points: 5, difficulty: null }), { name: 'G', category: '', stages: 2, difficulty: 'hard', deadline: '' } as any, 'none')
+    expect(got).toEqual([15])
   })
 
   it('ошибка записи в БД — анимации нет, ошибка пробрасывается', async () => {

@@ -11,7 +11,7 @@ import { groupActiveByCategory, sortDone, pointsSummary } from './lib/goals'
 import { mergeCategories, savedCategories } from './lib/categories'
 import { useGoalCategories } from './lib/useGoalCategories'
 import { t } from './lib/i18n'
-import type { Goal, GoalFormInput } from './lib/types'
+import type { Goal, GoalFormInitial, GoalFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
 import { friendlyError } from './lib/friendlyError'
@@ -50,7 +50,7 @@ function fmtRu(iso: string | null): string {
 
 // Форма добавления/редактирования
 const formTarget = ref<Goal | 'new' | null>(null)
-const formInitial = computed<GoalFormInput>(() => {
+const formInitial = computed<GoalFormInitial>(() => {
   const g = formTarget.value
   if (g && g !== 'new') {
     return { name: g.name, points: g.points ?? 5, category: g.category, stages: g.stages ?? 1, difficulty: g.difficulty, deadline: g.deadline ?? '' }

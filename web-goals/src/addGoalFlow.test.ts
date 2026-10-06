@@ -45,7 +45,8 @@ describe('добавление цели', () => {
     expect(api.addGoal).toHaveBeenCalledTimes(1)
     const [userId, res] = api.addGoal.mock.calls[0]
     expect(userId).toBe('u1')
-    expect(res).toMatchObject({ name: 'Выучить 500 слов', points: 5, stages: 1 })
+    expect(res).toMatchObject({ name: 'Выучить 500 слов', stages: 1 })
+    expect(res).not.toHaveProperty('points') // баллы не вводятся: их выставляет buildInsertRow по сложности (BACKLOG 35/40)
     expect(w.find('.modal-backdrop').exists()).toBe(false)
     w.unmount()
   })
