@@ -16,6 +16,7 @@ export function useWorkouts() {
   const exercises = ref<Exercise[]>([])
   const entries = ref<WorkoutEntry[]>([])
   const loadError = ref<string | null>(null)
+  const studyRecent = ref(false)
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -54,6 +55,33 @@ export function useWorkouts() {
     exercises.value = (ex || []) as Exercise[]
     entries.value = (en || []) as WorkoutEntry[]
     await syncMuscleGroups(exercises.value)
+    await loadStudyRecent(userId)
+  }
+
+  // Учёба для головы на карте мышц: категория metric_categories.key = study и выполненная
+  // метрика за один из последних 4 дней. Если категории/метрик нет, карта остаётся нейтральной.
+  async function loadStudyRecent(userId: string) {
+    studyRecent.value = false
+    const since = new Date()
+    since.setDate(since.getDate() - 3)
+    const sinceIso = since.toISOString().slice(0, 10)
+    const { data: category } = await sb.from('metric_categories').select('id').eq('key', 'study').maybeSingle()
+    if (!category?.id) return
+    const { data: metrics } = await sb.from('metrics').select('id, type, goal_value, goal_direction, planned_sets_log, schedule').eq('user_id', userId).eq('active', true).eq('category_id', category.id)
+    if (!metrics?.length) return
+    const ids = metrics.map((m) => m.id)
+    const { data: values } = await sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId).in('metric_id', ids).gte('date', sinceIso).order('date', { ascending: false })
+    if (!values?.length) return
+    const metricById = new Map(metrics.map((m) => [m.id, m]))
+    for (const row of values) {
+      const m = metricById.get(row.metric_id)
+      if (!m) continue
+      const value = row.value as any
+      const done = m.type === 'boolean' ? value === true
+        : m.type === 'multiselect' ? Array.isArray(value) && value.length > 0
+        : typeof value === 'number' && (m.goal_direction === 'at_most' ? value > 0 && value < (m.goal_value ?? Infinity) : value >= (m.goal_value ?? 0))
+      if (done) { studyRecent.value = true; return }
+    }
   }
 
   // Свои группы мышц между устройствами (миграция 038, BACKLOG 22 «12:33»): БД → локальный слой muscles.ts; при первом проходе
@@ -211,6 +239,7 @@ export function useWorkouts() {
     exercises,
     entries,
     loadError,
+    studyRecent,
     entriesFor,
     addExercise,
     editExercise,
