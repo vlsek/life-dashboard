@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.65";
+const SITE_VERSION = "3.66";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.66", date: "2026-10-07 09:14", changes: [
+        "Рекорд за подход у карточки метрики: в «Дневных метриках» под карточкой метрики-подходов появилась строка «Рекорд за подход» — наибольшее число повторений в одном подходе по каждой особенности за всё время (например, «Алмазные 10 · Классика 25»). Если у метрики нет особенностей, показывается одно число. Наведи на значение — увидишь дату рекорда. Под графиком такой рекорд уже был. Строку можно скрыть тем же выключателем «Показывать рекорды у метрик»",
+    ]},
     { version: "3.65", date: "2026-10-07 09:02", changes: [
         "Понятные ошибки в шапке и на странице входа: вместо технического текста (адрес сервера, имена таблиц, «TypeError: Failed to fetch», «(код 400)») показывается понятная фраза, например «Нет связи с сервером. Проверь интернет и попробуй ещё раз». Это окно воды (сохранение нормы, роста и значения за день), окно «Настройки» (сохранение раскладки), вход и регистрация. Понятные ответы входа вроде «Invalid login credentials» остаются как были. Сообщество и онбординг доделают отдельно",
     ]},
@@ -1704,6 +1707,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.66", date: "2026-10-07 09:14", changes: [
+        "Best single set on the metric card: in “Daily metrics”, under a sets metric, there is now a “Best single set” line — the most reps in one set for each variation, all time (for example, “Diamond 10 · Classic 25”). If the metric has no variations, one number is shown. Hover a value to see the date of the record. The same record already appeared under the chart. You can hide the line with the same “Show records on metrics” switch"
+    ]},
     { version: "3.65", date: "2026-10-07 09:02", changes: [
         "Plain error messages in the header and on the sign-in page: instead of technical text (server address, table names, “TypeError: Failed to fetch”, “(code 400)”) you now see a clear sentence, for example “No connection to the server. Check your internet and try again”. This covers the water window (saving the goal, height and the day’s value), the Settings window (saving the layout), sign-in and sign-up. Clear sign-in replies such as “Invalid login credentials” stay as they were. Community and onboarding will follow separately",
     ]},

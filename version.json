@@ -1,6 +1,13 @@
 {
-  "version": "3.65",
+  "version": "3.66",
   "en": [
+    {
+      "version": "3.66",
+      "date": "2026-10-07 09:14",
+      "changes": [
+        "Best single set on the metric card: in “Daily metrics”, under a sets metric, there is now a “Best single set” line — the most reps in one set for each variation, all time (for example, “Diamond 10 · Classic 25”). If the metric has no variations, one number is shown. Hover a value to see the date of the record. The same record already appeared under the chart. You can hide the line with the same “Show records on metrics” switch"
+      ]
+    },
     {
       "version": "3.65",
       "date": "2026-10-07 09:02",
@@ -2621,6 +2628,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.66",
+      "date": "2026-10-07 09:14",
+      "changes": [
+        "Рекорд за подход у карточки метрики: в «Дневных метриках» под карточкой метрики-подходов появилась строка «Рекорд за подход» — наибольшее число повторений в одном подходе по каждой особенности за всё время (например, «Алмазные 10 · Классика 25»). Если у метрики нет особенностей, показывается одно число. Наведи на значение — увидишь дату рекорда. Под графиком такой рекорд уже был. Строку можно скрыть тем же выключателем «Показывать рекорды у метрик»"
+      ]
+    },
     {
       "version": "3.65",
       "date": "2026-10-07 09:02",
