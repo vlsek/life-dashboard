@@ -1,6 +1,13 @@
 {
-  "version": "3.60",
+  "version": "3.61",
   "en": [
+    {
+      "version": "3.61",
+      "date": "2026-10-07 06:53",
+      "changes": [
+        "Workouts: the “Accordion” from Customization now works here too. Open a category and the other categories, the muscle map and the progression trees fold up; open an exercise and the other exercises of the same category fold up while the category stays open. With the basic chevron nothing changes"
+      ]
+    },
     {
       "version": "3.60",
       "date": "2026-10-07 06:31",
@@ -2585,6 +2592,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.61",
+      "date": "2026-10-07 06:53",
+      "changes": [
+        "Тренировки: «Аккордеон» из Кастомизации теперь работает и здесь. Раскрываете категорию — остальные категории, карта мышц и деревья прогрессии сворачиваются; раскрываете упражнение — сворачиваются другие упражнения этой же категории, сама категория остаётся открытой. С базовым шевроном всё как раньше"
+      ]
+    },
     {
       "version": "3.60",
       "date": "2026-10-07 06:31",

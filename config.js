@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.60";
+const SITE_VERSION = "3.61";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.61", date: "2026-10-07 06:53", changes: [
+        "Тренировки: «Аккордеон» из Кастомизации теперь работает и здесь. Раскрываете категорию — остальные категории, карта мышц и деревья прогрессии сворачиваются; раскрываете упражнение — сворачиваются другие упражнения этой же категории, сама категория остаётся открытой. С базовым шевроном всё как раньше",
+    ]},
     { version: "3.60", date: "2026-10-07 06:31", changes: [
         "Ошибки: на страницах «Магазин», «Изучение языков», «Навыки», «Тренировки» и «Аккаунт» при сбое загрузки, сохранения или удаления теперь показывается понятный текст («Нет связи с сервером…», «Нет доступа…», «Не получилось сохранить…») вместо технической строки с адресом сервера и именами таблиц. В «Аккаунте» понятные сообщения входа (например, про совпадение нового пароля со старым) остаются как были. Остальные страницы (Сообщество, шапка, вход, регистрация) будут следующими. Миграция не нужна",
     ]},
@@ -1688,6 +1691,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.61", date: "2026-10-07 06:53", changes: [
+        "Workouts: the “Accordion” from Customization now works here too. Open a category and the other categories, the muscle map and the progression trees fold up; open an exercise and the other exercises of the same category fold up while the category stays open. With the basic chevron nothing changes",
+    ]},
     { version: "3.60", date: "2026-10-07 06:31", changes: [
         "Errors: on the Shop, Language learning, Skills, Workouts and Account pages a failed load, save or delete now shows a clear message (\"No connection to the server…\", \"No access…\", \"Could not save…\") instead of a technical line with the server address and table names. On Account the readable sign-in messages (for example, the new password matching the old one) stay as they were. The other pages (Community, header, sign-in, sign-up) come next. No migration needed",
     ]},
