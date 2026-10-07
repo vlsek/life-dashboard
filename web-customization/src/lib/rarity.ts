@@ -35,6 +35,17 @@ export const ITEM_RARITY: Record<string, Rarity> = {
   frame_pulse: 'epic',
   frame_royal: 'epic',
   frame_inferno: 'legendary',
+  // рамки-награды лесенок «Достижений»: 3-я ступень — редкие, 4-я у челленджей и вех (анимированные «редкие») — эпические
+  frame_ink: 'rare',
+  frame_neuron: 'rare',
+  frame_target: 'rare',
+  frame_gear: 'rare',
+  frame_bookmark: 'rare',
+  frame_steel: 'rare',
+  frame_cup: 'rare',
+  frame_beacon: 'rare',
+  frame_rare_challenges: 'epic',
+  frame_rare_milestones: 'epic',
   collapse_accordion: 'uncommon', // как другие предметы за средний тариф (150)
 }
 

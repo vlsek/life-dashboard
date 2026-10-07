@@ -1051,6 +1051,18 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
 .ring-frame-inferno { animation: ring-frame-inferno 0.9s ease-in-out infinite alternate; }
 .ring-frame-pulse { animation: ring-frame-pulse 1.8s ease-out infinite; }
 .ring-frame-royal { animation: ring-frame-royal 3.2s ease-in-out infinite alternate; }
+@keyframes ring-frame-victory {
+  0% { stroke: #2ecc71; filter: drop-shadow(0 0 3px rgba(46, 204, 113, 0.6)); }
+  50% { stroke: #ffd24a; filter: drop-shadow(0 0 7px rgba(255, 210, 74, 0.85)); }
+  100% { stroke: #8dffb8; filter: drop-shadow(0 0 4px rgba(141, 255, 184, 0.7)); }
+}
+@keyframes ring-frame-course {
+  0% { stroke: #2aa7ff; filter: drop-shadow(0 0 2px rgba(42, 167, 255, 0.6)); }
+  60% { stroke: #7fe0ff; filter: drop-shadow(0 0 8px rgba(127, 224, 255, 0.85)); }
+  100% { stroke: #2aa7ff; filter: drop-shadow(0 0 2px rgba(42, 167, 255, 0.6)); }
+}
+.ring-frame-victory { animation: ring-frame-victory 2.4s ease-in-out infinite alternate; }
+.ring-frame-course { animation: ring-frame-course 2.2s ease-out infinite; }
 @media (prefers-reduced-motion: reduce) {
-  .ring-frame-flame, .ring-frame-rainbow, .ring-frame-inferno, .ring-frame-pulse, .ring-frame-royal { animation: none; }
+  .ring-frame-flame, .ring-frame-rainbow, .ring-frame-inferno, .ring-frame-pulse, .ring-frame-royal, .ring-frame-victory, .ring-frame-course { animation: none; }
 }

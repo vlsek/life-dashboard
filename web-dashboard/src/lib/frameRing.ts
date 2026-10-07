@@ -17,6 +17,16 @@ const RING: Record<string, FrameRingStyle> = {
   frame_inferno: { stops: ['#ff3b1a'], glow: 'rgba(255, 60, 20, 0.7)', anim: 'ring-frame-inferno' },
   frame_pulse: { stops: ['#3df0ff'], glow: 'rgba(61, 240, 255, 0.55)', anim: 'ring-frame-pulse' },
   frame_royal: { stops: ['#e0b23c'], glow: 'rgba(224, 178, 60, 0.6)', anim: 'ring-frame-royal' },
+  frame_ink: { stops: ['#2b3a67', '#8fa3d9'], glow: null, anim: null },
+  frame_neuron: { stops: ['#a46bff', '#ff7ad9'], glow: 'rgba(164, 107, 255, 0.5)', anim: null },
+  frame_target: { stops: ['#e5383b'], glow: null, anim: null },
+  frame_gear: { stops: ['#8a97a8', '#b8c3d1'], glow: null, anim: null },
+  frame_bookmark: { stops: ['#8c2f39', '#d9b36a'], glow: null, anim: null },
+  frame_steel: { stops: ['#4b5563', '#9ca3af'], glow: 'rgba(75, 85, 99, 0.5)', anim: null },
+  frame_cup: { stops: ['#f2a900', '#c26a00'], glow: 'rgba(242, 169, 0, 0.5)', anim: null },
+  frame_beacon: { stops: ['#1f4fa8', '#ffe27a'], glow: 'rgba(255, 226, 122, 0.6)', anim: null },
+  frame_rare_challenges: { stops: ['#2ecc71'], glow: 'rgba(46, 204, 113, 0.6)', anim: 'ring-frame-victory' },
+  frame_rare_milestones: { stops: ['#2aa7ff'], glow: 'rgba(42, 167, 255, 0.6)', anim: 'ring-frame-course' },
 }
 
 export const FRAME_RING_KEYS = Object.keys(RING)

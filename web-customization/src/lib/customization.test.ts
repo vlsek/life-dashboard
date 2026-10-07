@@ -38,7 +38,7 @@ describe('реестр', () => {
   })
   it('itemsOf делит по источнику', () => {
     expect(itemsOf('avatar_frame', 'points').map((i) => i.key)).toEqual(['frame_neon', 'frame_aurora', 'frame_flame', 'frame_rainbow'])
-    expect(itemsOf('avatar_frame', 'achievement').map((i) => i.key)).toEqual(['frame_gold', 'frame_inferno', 'frame_pulse', 'frame_royal'])
+    expect(itemsOf('avatar_frame', 'achievement').map((i) => i.key)).toEqual(['frame_gold', 'frame_inferno', 'frame_pulse', 'frame_royal', 'frame_ink', 'frame_neuron', 'frame_target', 'frame_gear', 'frame_bookmark', 'frame_steel', 'frame_cup', 'frame_beacon', 'frame_rare_challenges', 'frame_rare_milestones'])
   })
 })
 

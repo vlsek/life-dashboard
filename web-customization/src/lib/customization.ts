@@ -28,6 +28,18 @@ export const ITEMS: readonly CustomItem[] = [
   { key: 'frame_inferno', category: 'avatar_frame', source: 'achievement', achievement: 'streak_100' },
   { key: 'frame_pulse', category: 'avatar_frame', source: 'achievement', achievement: 'mega_productivity' },
   { key: 'frame_royal', category: 'avatar_frame', source: 'achievement', achievement: 'points_1000' },
+  // Рамки-награды лесенок «Достижений» (BACKLOG 37, шаг 2): 3-я ступень каждой лесенки — статичная рамка, 4-я у челленджей и вех — «редкая
+  // анимированная». Ключи и достижения сверяет тест web-achievements/src/lib/rewards.test.ts (реестр наград ⇔ этот реестр).
+  { key: 'frame_ink', category: 'avatar_frame', source: 'achievement', achievement: 'words_50' },
+  { key: 'frame_neuron', category: 'avatar_frame', source: 'achievement', achievement: 'learned_50' },
+  { key: 'frame_target', category: 'avatar_frame', source: 'achievement', achievement: 'goals_25' },
+  { key: 'frame_gear', category: 'avatar_frame', source: 'achievement', achievement: 'skills_10' },
+  { key: 'frame_bookmark', category: 'avatar_frame', source: 'achievement', achievement: 'books_10' },
+  { key: 'frame_steel', category: 'avatar_frame', source: 'achievement', achievement: 'workouts_100' },
+  { key: 'frame_cup', category: 'avatar_frame', source: 'achievement', achievement: 'challenges_10' },
+  { key: 'frame_beacon', category: 'avatar_frame', source: 'achievement', achievement: 'milestones_10' },
+  { key: 'frame_rare_challenges', category: 'avatar_frame', source: 'achievement', achievement: 'challenges_25' },
+  { key: 'frame_rare_milestones', category: 'avatar_frame', source: 'achievement', achievement: 'milestones_25' },
   // Вид сворачивания блоков (BACKLOG 498): базовый шеврон бесплатен у всех (это «ничего не выбрано»); «аккордеон» — 150 (владелец 2026-10-03)
   { key: 'collapse_accordion', category: 'collapse_style', source: 'points', tier: 'mid' },
 ]

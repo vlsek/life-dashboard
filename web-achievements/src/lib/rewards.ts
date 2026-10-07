@@ -11,7 +11,7 @@ export type Reward = { kind: 'coins'; amount: number } | { kind: 'item'; key: st
 
 export const REWARD_STATUS: Record<RewardKind, RewardStatus> = {
   coins: 'active', // v3.64: монетки выдаются при загрузке «Достижений» (coinBonuses.ts → таблица achievement_bonuses, миграция 051)
-  item: 'planned',
+  item: 'active', // v3.73: рамки-награды есть в реестре «Кастомизации» и выдаются (achievementUnlocks при заходе на страницу)
   theme: 'active', // v3.42: темы-награды выдаются — закрытая тема открывается наградой (замок: scripts/themes_data.py UNLOCK, theme.ts пилотов)
 }
 

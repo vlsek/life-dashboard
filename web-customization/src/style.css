@@ -586,7 +586,19 @@ input[type='checkbox']:disabled {
 .cust-frame-inferno { animation: cust-frame-inferno 0.9s ease-in-out infinite alternate; }
 .cust-frame-pulse { animation: cust-frame-pulse 1.8s ease-out infinite; }
 .cust-frame-royal { animation: cust-frame-royal 3.2s ease-in-out infinite alternate; }
-@media (prefers-reduced-motion: reduce) { .cust-frame-flame, .cust-frame-rainbow, .cust-frame-inferno, .cust-frame-pulse, .cust-frame-royal { animation: none; } }
+@keyframes cust-frame-victory {
+  0% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #2ecc71, 0 0 12px 3px rgba(46, 204, 113, 0.55); }
+  50% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #ffd24a, 0 0 20px 6px rgba(255, 210, 74, 0.8); }
+  100% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #8dffb8, 0 0 14px 4px rgba(141, 255, 184, 0.65); }
+}
+@keyframes cust-frame-course {
+  0% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #2aa7ff, 0 0 0 6px rgba(42, 167, 255, 0.4), 0 0 12px 3px rgba(42, 167, 255, 0.55); }
+  60% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #7fe0ff, 0 0 0 12px rgba(42, 167, 255, 0), 0 0 18px 5px rgba(127, 224, 255, 0.75); }
+  100% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #2aa7ff, 0 0 0 12px rgba(42, 167, 255, 0), 0 0 12px 3px rgba(42, 167, 255, 0.55); }
+}
+.cust-frame-victory { animation: cust-frame-victory 2.4s ease-in-out infinite alternate; }
+.cust-frame-course { animation: cust-frame-course 2.2s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) { .cust-frame-flame, .cust-frame-rainbow, .cust-frame-inferno, .cust-frame-pulse, .cust-frame-royal, .cust-frame-victory, .cust-frame-course { animation: none; } }
 
 /* Нативные поля даты и времени (BACKLOG 567, «Аудит устаревшего оформления»): единый вид вместо системного «из 2000-х».
    (1) color-scheme для четырёх исходных тем: в пилотах он задан только у новых тем (блок `themes-scheme` выше), без него на тёмной

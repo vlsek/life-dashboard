@@ -33,3 +33,30 @@ describe('стили анимированных рамок есть везде, 
     }
   })
 })
+
+describe('рамки-награды лесенок: каждая нарисована и подписана (страж)', () => {
+  const NEW = ['frame_ink', 'frame_neuron', 'frame_target', 'frame_gear', 'frame_bookmark', 'frame_steel', 'frame_cup', 'frame_beacon', 'frame_rare_challenges', 'frame_rare_milestones']
+  it('у каждой есть тень (кольцо 4px цвета) и названия RU/EN и «за достижение» RU/EN', async () => {
+    const { FRAME_SHADOWS } = await import('./frames')
+    const i18n = await readSrc('./i18n.ts')
+    const { ITEMS } = await import('./customization')
+    for (const k of NEW) {
+      expect(FRAME_SHADOWS[k], k).toMatch(/0 0 0 4px #[0-9a-f]{6}/i)
+      expect([...i18n.matchAll(new RegExp('cust_item_' + k + ':', 'g'))].length, 'название ' + k).toBe(2)
+      const ach = ITEMS.find((i) => i.key === k)!.achievement!
+      expect([...i18n.matchAll(new RegExp('cust_ach_' + ach + ':', 'g'))].length, 'достижение ' + ach).toBe(2)
+    }
+  })
+  it('анимированы ровно две «редкие» (victory, course), остальные новые — статичные', async () => {
+    const { FRAME_ANIMATIONS } = await import('./frames')
+    expect(FRAME_ANIMATIONS.frame_rare_challenges).toBe('cust-frame-victory')
+    expect(FRAME_ANIMATIONS.frame_rare_milestones).toBe('cust-frame-course')
+    for (const k of NEW.filter((x) => !x.startsWith('frame_rare_'))) expect(FRAME_ANIMATIONS[k], k).toBeUndefined()
+  })
+  it('рамки различимы: у новых нет двух одинаковых теней, и ни одна не повторяет старую', async () => {
+    const { FRAME_SHADOWS } = await import('./frames')
+    const all = Object.entries(FRAME_SHADOWS)
+    expect(new Set(all.map(([, s]) => s)).size - 0).toBeGreaterThanOrEqual(all.length - 1) // допускается один старый дубль (золотая/королевская)
+    for (const k of NEW) expect(all.filter(([, s]) => s === FRAME_SHADOWS[k]).length, k).toBe(1)
+  })
+})

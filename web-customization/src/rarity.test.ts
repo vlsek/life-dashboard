@@ -103,8 +103,8 @@ describe('страница: группы по редкости и сворачи
     await flushPromises()
     expect(w.find('[data-testid="rarity-themes:common"] [data-testid="rarity-count"]').text()).toBe('5/5')
     expect(w.find('[data-testid="rarity-avatar_frame:common"] [data-testid="rarity-count"]').text()).toBe('0/1')
-    expect(w.find('[data-testid="rarity-avatar_frame:rare"] [data-testid="rarity-count"]').text()).toBe('0/3')
-    expect(w.find('[data-testid="rarity-avatar_frame:epic"] [data-testid="rarity-count"]').text()).toBe('0/2')
+    expect(w.find('[data-testid="rarity-avatar_frame:rare"] [data-testid="rarity-count"]').text()).toBe('0/11')
+    expect(w.find('[data-testid="rarity-avatar_frame:epic"] [data-testid="rarity-count"]').text()).toBe('0/4')
     w.unmount()
   })
 
@@ -169,6 +169,33 @@ describe('страница: группы по редкости и сворачи
     expect(w.findAll('[data-collapsed="true"]')).toHaveLength(0)
     localStorage.setItem(COLLAPSED_KEY, '[1,null,"themes:epic",{}]')
     expect(readCollapsed()).toEqual(['themes:epic'])
+    w.unmount()
+  })
+})
+
+describe('рамки-награды лесенок «Достижений» (BACKLOG 37, шаг 2)', () => {
+  const LADDER_STATIC = ['frame_ink', 'frame_neuron', 'frame_target', 'frame_gear', 'frame_bookmark', 'frame_steel', 'frame_cup', 'frame_beacon']
+  const LADDER_RARE = ['frame_rare_challenges', 'frame_rare_milestones']
+  it('восемь рамок 3-й ступени — редкие, две «редкие анимированные» 4-й ступени — эпические', () => {
+    for (const k of LADDER_STATIC) expect(rarityOfItem(k), k).toBe('rare')
+    for (const k of LADDER_RARE) expect(rarityOfItem(k), k).toBe('epic')
+  })
+  it('все десять — награды за достижения (не продаются), есть в реестре', () => {
+    for (const k of [...LADDER_STATIC, ...LADDER_RARE]) {
+      const it = ITEMS.find((i) => i.key === k)
+      expect(it, k).toBeTruthy()
+      expect(it!.source, k).toBe('achievement')
+      expect(it!.achievement, k).toBeTruthy()
+    }
+  })
+  it('на странице они лежат в своих группах редкости и закрыты до получения достижения', async () => {
+    const w = mount(App)
+    await flushPromises()
+    for (const k of LADDER_STATIC) {
+      expect(w.find(`[data-testid="rarity-avatar_frame:rare"] [data-testid="item-${k}"]`).exists(), k).toBe(true)
+      expect(w.find(`[data-testid="item-${k}"]`).attributes('data-status'), k).toBe('locked')
+    }
+    for (const k of LADDER_RARE) expect(w.find(`[data-testid="rarity-avatar_frame:epic"] [data-testid="item-${k}"]`).exists(), k).toBe(true)
     w.unmount()
   })
 })

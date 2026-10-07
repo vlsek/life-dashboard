@@ -81,8 +81,8 @@ describe('защита тем: нельзя закрыть исходные те
 })
 
 describe('показ награды', () => {
-  it('выдаются монетки и темы (active); рамки пока «скоро»', () => {
-    expect(REWARD_STATUS).toEqual({ coins: 'active', item: 'planned', theme: 'active' })
+  it('выдаются монетки, рамки и темы (всё active)', () => {
+    expect(REWARD_STATUS).toEqual({ coins: 'active', item: 'active', theme: 'active' })
     localStorage.setItem('site_lang', 'ru')
     expect(rewardText(REWARDS.words_10)).toBe('Награда: 20 монет')
     expect(rewardText(REWARDS.words_100)).toBe('Награда: тема «Сепия»')
@@ -107,10 +107,11 @@ describe('показ награды', () => {
 
   it('примеры RU/EN: предмет и тема', () => {
     localStorage.setItem('site_lang', 'ru')
-    expect(rewardText(REWARDS.words_50)).toBe('Награда (скоро): рамка «Чернильная»')
+    expect(rewardText(REWARDS.words_50)).toBe('Награда: рамка «Чернильная»')
     expect(rewardText(REWARDS.words_100)).toBe('Награда: тема «Сепия»')
     localStorage.setItem('site_lang', 'en')
-    expect(rewardText(REWARDS.words_50)).toBe('Reward (coming soon): frame “Ink”')
+    expect(rewardText(REWARDS.words_50)).toBe('Reward: frame “Ink”')
+    expect(rewardText(REWARDS.words_50, 'planned')).toBe('Reward (coming soon): frame “Ink”') // подпись «скоро» осталась для будущих наград
     expect(rewardText(REWARDS.books_25, 'active')).toBe('Reward: theme “Orchid”')
     localStorage.setItem('site_lang', 'ru')
     expect(rewardText(REWARDS.books_25)).toBe('Награда: тема «Орхидея»')
@@ -149,5 +150,27 @@ describe('замок тем-наград (v3.42): карта THEME_UNLOCK сов
 
   it('закрытая тема не может быть ни одной из «всегда открытых»', () => {
     for (const t of ['dark', 'monet', 'light', 'pink', 'contrast']) expect(Object.keys(ladderMap()), t).not.toContain(t)
+  })
+})
+
+describe('рамки-награды (v3.73): реестр наград ⇔ реестр «Кастомизации»', () => {
+  // Реестр предметов Кастомизации (источник — web-customization/src/lib/customization.ts): ключ рамки → достижение, за которое она выдаётся.
+  const custMap = (): Record<string, string> => {
+    const src = read('../web-customization/src/lib/customization.ts')
+    return Object.fromEntries([...src.matchAll(/key: '(frame_\w+)', category: 'avatar_frame', source: 'achievement', achievement: '(\w+)'/g)].map((m) => [m[1], m[2]]))
+  }
+  const rewardItems = (): Record<string, string> =>
+    Object.fromEntries(Object.entries(REWARDS).filter(([, r]) => r.kind === 'item').map(([ach, r]) => [(r as { key: string }).key, ach]))
+
+  it('каждая рамка-награда лесенки есть в реестре Кастомизации и выдаётся за то же достижение', () => {
+    const rw = rewardItems()
+    expect(Object.keys(rw)).toHaveLength(Object.keys(LADDERS).length + 2) // по рамке на лесенку + две финальные «редкие» (челленджи, вехи)
+    const cust = custMap()
+    for (const [frame, ach] of Object.entries(rw)) expect(cust[frame], frame + ' отсутствует в customization.ts или выдаётся за другое достижение').toBe(ach)
+  })
+
+  it('статус «рамки выдаются» включён только вместе с реестром (нет рамки без записи в Кастомизации)', () => {
+    expect(REWARD_STATUS.item).toBe('active')
+    for (const frame of Object.keys(rewardItems())) expect(custMap()[frame], frame).toBeTruthy()
   })
 })
