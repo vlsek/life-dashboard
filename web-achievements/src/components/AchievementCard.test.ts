@@ -64,7 +64,7 @@ describe('AchievementCard', () => {
     expect(w2.find('[data-testid="achievement-reward"]').exists()).toBe(false)
 
     const w3 = mount(AchievementCard, { props: { state: stateOf('words_100', { wordsAdded: 120 }), unlocked: true, unlockedAt: null } })
-    expect(w3.find('[data-testid="achievement-reward"]').text()).toBe('Награда (скоро): тема «Сепия»')
+    expect(w3.find('[data-testid="achievement-reward"]').text()).toBe('Награда: тема «Сепия»') // темы выдаются (v3.42), монеты и рамки пока «скоро»
   })
 })
 

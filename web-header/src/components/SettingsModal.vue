@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import EmojiText from './EmojiText.vue'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
 import type { DashboardBlockKey, LayoutItem } from '../lib/layout'
 import BlockOrderList from './BlockOrderList.vue'
+import { UNLOCKED_THEMES_EVENT, isThemeLocked } from '../lib/themeUnlock'
 import { useLayout } from '../lib/useLayout'
 import { THEME_KEYS, celebrationsEnabled, setSidebarProgress, sidebarProgress, getTheme, setCelebrationsEnabled, setLangAndReload, setMotionOff, setTheme, setWaterRemindersEnabled, systemReducedMotion, userMotionOff, waterRemindersEnabled, type ThemeKey } from '../lib/prefs'
 
@@ -15,6 +16,15 @@ const emit = defineEmits<{ close: []; 'open-progress-settings': []; 'open-water'
 
 const lang = getLang()
 const theme = ref<ThemeKey>(getTheme())
+// Список тем: закрытые темы-награды (ещё не заслуженные) не показываем; уже включённая тема остаётся в списке всегда (отнимать её нельзя).
+const unlockTick = ref(0)
+const themeOptions = computed(() => {
+  void unlockTick.value
+  return (Object.keys(THEME_KEYS) as ThemeKey[]).filter((k) => k === theme.value || !isThemeLocked(k))
+})
+const onUnlockedThemes = () => unlockTick.value++
+onMounted(() => window.addEventListener(UNLOCKED_THEMES_EVENT, onUnlockedThemes))
+onUnmounted(() => window.removeEventListener(UNLOCKED_THEMES_EVENT, onUnlockedThemes))
 const systemReduced = systemReducedMotion()
 const motionOff = ref(userMotionOff() || systemReduced)
 const celebrate = ref(celebrationsEnabled())
@@ -77,7 +87,7 @@ async function changeLayout(next: LayoutItem[]) {
       <label class="gh-field">
         <span class="gh-dim" style="font-size: 12px">{{ t('hdr_settings_theme') }}</span>
         <select class="gh-input" :value="theme" data-test="theme-select" @change="onTheme">
-          <option v-for="(labelKey, key) in THEME_KEYS" :key="key" :value="key">{{ t(labelKey as DictKey) }}</option>
+          <option v-for="key in themeOptions" :key="key" :value="key">{{ t(THEME_KEYS[key] as DictKey) }}</option>
         </select>
       </label>
 

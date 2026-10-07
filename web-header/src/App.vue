@@ -20,6 +20,7 @@ import SidebarTop from './components/SidebarTop.vue'
 import PointsFloat from './components/PointsFloat.vue'
 import { useSidebarProfile } from './lib/sidebarProfile'
 import { sidebarProgress } from './lib/prefs'
+import { syncUnlockedThemes } from './lib/syncUnlockedThemes'
 import { pageKeyFor, readFavorites, saveFavoritesToProfile, syncFavoritesFromProfile, toggleFavorite, writeFavorites } from './lib/favorites'
 
 // panelOnly — режим для Дашборда: своя шапка (стакан, кольца) там уже есть, поэтому бандл даёт только правую панель.
@@ -46,6 +47,7 @@ onMounted(async () => {
   userEmail.value = data.session?.user.email ?? null
   sidebarTarget.value = document.getElementById('sidebar-top')
   void sideProfile.load(uid, data.session?.user)
+  void syncUnlockedThemes(uid) // какие темы-награды открыты (замок тем, v3.42)
   await Promise.all([initProgress(uid), initWater(uid), syncFavoritesFromProfile(uid).then((l) => (favorites.value = l))])
   ready.value = true
 })

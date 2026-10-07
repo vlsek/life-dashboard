@@ -14,7 +14,7 @@ import re
 import sys
 
 sys.path.insert(0, 'scripts')
-from themes_data import NEW, P, chart_palette  # noqa: E402
+from themes_data import NEW, P, UNLOCK, chart_palette  # noqa: E402
 
 KEYS = list(P)
 OLD4 = ['dark', 'monet', 'light', 'pink']
@@ -97,6 +97,56 @@ def pilot_css(t):
     return t
 
 
+UNLOCK_TS = r"""
+// «Темы-награды» (решение владельца 2026-10-06): часть тем закрыта и открывается НАГРАДОЙ за достижение (THEME_UNLOCK: тема → ключ
+// достижения; остальные темы открыты всегда). Какие темы открыты, страница сама не знает: список «открытых» ставит шапка при каждой
+// загрузке (запрос к user_achievements), а также «Кастомизация»; хранится на устройстве. Нет данных → закрытые остаются закрытыми.
+// Закрытая тема, которая УЖЕ включена у человека, остаётся включённой (в списке активная тема есть всегда): отнимать её нельзя.
+export const THEME_UNLOCK: Partial<Record<ThemeKey, string>> = __UNLOCK_MAP__
+export const UNLOCKED_THEMES_KEY = 'unlocked_themes'
+export const UNLOCKED_THEMES_EVENT = 'unlocked-themes:changed'
+
+export function sanitizeUnlockedThemes(raw: unknown): ThemeKey[] {
+  const list = Array.isArray(raw) ? raw : []
+  return [...new Set(list)].filter((k): k is ThemeKey => typeof k === 'string' && k in THEME_UNLOCK)
+}
+
+export function readUnlockedThemes(): ThemeKey[] {
+  try {
+    return sanitizeUnlockedThemes(JSON.parse(localStorage.getItem(UNLOCKED_THEMES_KEY) || '[]'))
+  } catch {
+    return []
+  }
+}
+
+// Записывает список и сообщает странице, только если он изменился (чтобы список тем не «мигал» при каждой синхронизации).
+export function writeUnlockedThemes(keys: unknown): ThemeKey[] {
+  const clean = sanitizeUnlockedThemes(keys)
+  const before = readUnlockedThemes()
+  const same = before.length === clean.length && clean.every((k) => before.includes(k))
+  try {
+    localStorage.setItem(UNLOCKED_THEMES_KEY, JSON.stringify(clean))
+  } catch {
+    /* хранилище недоступно — список открытых не запомнится */
+  }
+  if (!same) window.dispatchEvent(new Event(UNLOCKED_THEMES_EVENT))
+  return clean
+}
+
+export function isThemeLocked(key: ThemeKey, unlocked: ThemeKey[] = readUnlockedThemes()): boolean {
+  return key in THEME_UNLOCK && !unlocked.includes(key)
+}
+
+// Какие закрытые темы открыты при данном наборе полученных достижений.
+export function unlockedThemesFromAchievements(earned: Iterable<string>): ThemeKey[] {
+  const have = new Set(earned)
+  return (Object.keys(THEME_UNLOCK) as ThemeKey[]).filter((k) => have.has(THEME_UNLOCK[k] as string))
+}
+"""
+UNLOCK_MAP = "{ " + ", ".join("%s: '%s'" % (k, v) for k, v in UNLOCK.items()) + " }"
+UNLOCK_BLOCK = UNLOCK_TS.replace("__UNLOCK_MAP__", UNLOCK_MAP)
+
+
 FAV_START = '/* favorites:start (генерируется scripts/apply_themes.py — не править руками) */'
 FAV_END = '/* favorites:end */'
 FAV_BLOCK = FAV_START + """
@@ -136,12 +186,15 @@ export function writeFavoriteThemes(keys: ThemeKey[]): ThemeKey[] {
   return clean
 }
 
-// Что показывать в выпадающем списке: любимые в их порядке + активная тема, если её среди любимых нет (иначе select «потеряет» значение).
+// Что показывать в выпадающем списке: любимые в их порядке (закрытые темы пропускаются) + активная тема, если её среди них нет
+// (иначе select «потеряет» значение).
 export function visibleThemes(active: ThemeKey): ThemeKey[] {
-  const fav = readFavoriteThemes()
+  const unlocked = readUnlockedThemes()
+  const open = readFavoriteThemes().filter((k) => !isThemeLocked(k, unlocked))
+  const fav = open.length ? open : [...DEFAULT_FAVORITE_THEMES]
   return fav.includes(active) ? fav : [...fav, active]
 }
-""" + FAV_END + '\n'
+""" + UNLOCK_BLOCK + FAV_END + '\n'
 
 
 def theme_ts(t):
@@ -173,9 +226,22 @@ def i18n_ts(t, q="'", ind='    ', sep=','):
         lines = ''.join('\n%stheme_%s: %s%s%s%s' % (ind, k, q, P[k][idx], q, sep) for k in NEW)
         return t[:e] + lines + t[e:]
     if t.count('theme_mint:') >= 2:
-        return t
+        return relabel(t, q)
     t = add(t, "theme_pink: %s🌸 Pink%s" % (q, q), 1)
     t = add(t, "theme_pink: %s🌸 Розовая%s" % (q, q), 2)
+    return t
+
+
+def relabel(t, q):
+    """Подписи уже добавленных тем приводит к themes_data.py (переименование темы без смены ключа). В файле подпись каждой темы
+    встречается дважды: первая запись — EN, вторая — RU."""
+    for k in KEYS:
+        rx = re.compile(r'((?<![A-Za-z0-9_])theme_%s: %s)([^%s\n]*)(%s)' % (k, q, q, q))  # не трогать ach_reward_theme_<ключ> и т.п.
+        found = list(rx.finditer(t))
+        if len(found) != 2:
+            continue
+        labels = iter((P[k][1], P[k][2]))
+        t = rx.sub(lambda m: m.group(1) + next(labels) + m.group(3), t)
     return t
 
 
@@ -245,8 +311,25 @@ onUnmounted(() => window.removeEventListener(FAVORITE_THEMES_EVENT, syncFavTheme
     return t
 
 
+def app_shell_unlock(t):
+    """Боковое меню перерисовывает список тем и при открытии темы-награды (шапка узнаёт об этом после загрузки страницы)."""
+    t = app_shell(t)
+    if 'UNLOCKED_THEMES_EVENT' in t:
+        return t
+    for old, new in (
+        ('import { FAVORITE_THEMES_EVENT, ', 'import { FAVORITE_THEMES_EVENT, UNLOCKED_THEMES_EVENT, '),
+        ('onMounted(() => window.addEventListener(FAVORITE_THEMES_EVENT, syncFavThemes))',
+         'onMounted(() => {\n  window.addEventListener(FAVORITE_THEMES_EVENT, syncFavThemes)\n  window.addEventListener(UNLOCKED_THEMES_EVENT, syncFavThemes)\n})'),
+        ('onUnmounted(() => window.removeEventListener(FAVORITE_THEMES_EVENT, syncFavThemes))',
+         'onUnmounted(() => {\n  window.removeEventListener(FAVORITE_THEMES_EVENT, syncFavThemes)\n  window.removeEventListener(UNLOCKED_THEMES_EVENT, syncFavThemes)\n})'),
+    ):
+        assert old in t, old
+        t = t.replace(old, new, 1)
+    return t
+
+
 for f in sorted(glob.glob('web-*/src/components/AppShell.vue')):
-    rw(f, app_shell)
+    rw(f, app_shell_unlock)
 
 # ---------- шапка ----------
 def header_css(t):
@@ -274,6 +357,20 @@ rw('web-header/src/header.css', header_css)
 rw('web-header/src/lib/prefs.ts', header_prefs)
 rw('web-header/src/lib/i18n.ts', i18n_ts)
 
+
+# Замки тем-наград в шапке: файл целиком генерируется (те же функции и карта, что в theme.ts пилотов); окно «Настройки» шапки берёт отсюда
+# isThemeLocked, а App.vue шапки — unlockedThemesFromAchievements/writeUnlockedThemes при синхронизации с user_achievements.
+HEADER_UNLOCK = ("// ГЕНЕРИРУЕТСЯ scripts/apply_themes.py из scripts/themes_data.py (UNLOCK) — не править руками.\n"
+                 "import type { ThemeKey } from './prefs'\n" + UNLOCK_BLOCK)
+_hp = 'web-header/src/lib/themeUnlock.ts'
+try:
+    _old = open(_hp, encoding='utf-8').read()
+except FileNotFoundError:
+    _old = None
+if _old != HEADER_UNLOCK:
+    open(_hp, 'w', encoding='utf-8').write(HEADER_UNLOCK)
+    changed.append(_hp)
+
 write_preview()
 
 # ---------- общий сайт: только добавление ----------
@@ -287,7 +384,7 @@ def root_theme_js(t):
 
 def root_i18n_js(t):
     if 'theme_mint' in t:
-        return t
+        return relabel(t, '"')
     for anchor, idx in (('        theme_pink: "🌸 Pink",', 1), ('        theme_pink: "🌸 Розовая",', 2)):
         assert anchor in t
         t = t.replace(anchor, anchor + ''.join('\n        theme_%s: "%s",' % (k, P[k][idx]) for k in NEW), 1)

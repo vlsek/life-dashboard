@@ -12,7 +12,7 @@ export type Reward = { kind: 'coins'; amount: number } | { kind: 'item'; key: st
 export const REWARD_STATUS: Record<RewardKind, RewardStatus> = {
   coins: 'planned',
   item: 'planned',
-  theme: 'planned',
+  theme: 'active', // v3.42: темы-награды выдаются — закрытая тема открывается наградой (замок: scripts/themes_data.py UNLOCK, theme.ts пилотов)
 }
 
 export const COINS_STEP_1 = 20

@@ -20,11 +20,17 @@ P={
  'sepia':('light','📜 Sepia','📜 Сепия',dict(bg='#f4ecd8',card='#fbf5e6',border='#dccfae',text='#433422',dim='#6f5b3d',accent='#9a5b13',at='#ffffff',ok='#4f7d34',bad='#b5432f',hist='#5a8a3c',**SEPIA_W)),
  'solarlight':('light','🌞 Solarized Light','🌞 Solarized Light',dict(bg='#fdf6e3',card='#eee8d5',border='#d3cbb0',text='#33474f',dim='#586e75',accent='#1d6fa8',at='#ffffff',ok='#6b7a00',bad='#c0302d',hist='#859900',**SOLAR_W)),
  'nord':('dark','❄️ Nord','❄️ Nord',dict(bg='#2e3440',card='#3b4252',border='#4c566a',text='#eceff4',dim='#aab4c5',accent='#88c0d0',at='#2e3440',ok='#a3be8c',bad='#e07a84',hist='#a3be8c',**NORD_W)),
- 'mocha':('dark','☕ Catppuccin Mocha','☕ Catppuccin Mocha',dict(bg='#1e1e2e',card='#313244',border='#45475a',text='#cdd6f4',dim='#a6adc8',accent='#cba6f7',at='#1e1e2e',ok='#a6e3a1',bad='#f38ba8',hist='#a6e3a1',**DARK_W)),
+ 'mocha':('dark','✨ Orchid','✨ Орхидея',dict(bg='#1e1e2e',card='#313244',border='#45475a',text='#cdd6f4',dim='#a6adc8',accent='#cba6f7',at='#1e1e2e',ok='#a6e3a1',bad='#f38ba8',hist='#a6e3a1',**DARK_W)),
  'amoled':('dark','⚫ AMOLED','⚫ AMOLED (чёрная)',dict(bg='#000000',card='#0d0d0d',border='#262626',text='#f2f2f2',dim='#9a9a9a',accent='#4ea1ff',at='#000000',ok='#4caf6a',bad='#ff6b6b',hist='#3fa66b',**DARK_W)),
  'contrast':('dark','◐ High contrast','◐ Высокий контраст',dict(bg='#000000',card='#0a0a0a',border='#ffffff',text='#ffffff',dim='#d6d6d6',accent='#ffd60a',at='#000000',ok='#5cff8a',bad='#ff8080',hist='#5cff8a',**DARK_W)),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
+
+# Темы-награды (решение владельца 2026-10-06): тема → ключ достижения, НАГРАДОЙ за которое она открывается (4-я, самая трудная ступень
+# лесенки в web-achievements/src/lib/rewards.ts; согласованность сверяет тест rewards.test.ts). Остальные темы (исходные четыре и
+# «Высокий контраст» — доступность) открыты всегда. Ключ темы (mocha) остаётся прежним: он хранится у людей в localStorage; меняется только подпись.
+UNLOCK = {'mint': 'skills_25', 'sepia': 'words_100', 'solarlight': 'goals_50', 'nord': 'learned_100', 'mocha': 'books_25', 'amoled': 'workouts_250'}
+assert all(k in P for k in UNLOCK)
 
 
 # ---------------------------------------------------------------------------------------------------------------------------

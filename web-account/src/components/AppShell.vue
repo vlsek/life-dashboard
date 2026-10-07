@@ -3,7 +3,7 @@ import SplashFlameLive from './splash/SplashFlameLive.vue'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { getLang, setLang, t, type DictKey } from '../lib/i18n'
 import { loadVersionInfo } from '../lib/version'
-import { FAVORITE_THEMES_EVENT, getTheme, setTheme, THEME_KEYS, visibleThemes, type ThemeKey } from '../lib/theme'
+import { FAVORITE_THEMES_EVENT, UNLOCKED_THEMES_EVENT, getTheme, setTheme, THEME_KEYS, visibleThemes, type ThemeKey } from '../lib/theme'
 import { logout } from '../lib/supabase'
 import ConfirmLogoutModal from './ConfirmLogoutModal.vue'
 import { handleInstallClick, isStandaloneApp } from '../lib/install'
@@ -144,8 +144,14 @@ const themeOptions = computed(() => {
   return visibleThemes(themeVal.value)
 })
 const syncFavThemes = () => favTick.value++
-onMounted(() => window.addEventListener(FAVORITE_THEMES_EVENT, syncFavThemes))
-onUnmounted(() => window.removeEventListener(FAVORITE_THEMES_EVENT, syncFavThemes))
+onMounted(() => {
+  window.addEventListener(FAVORITE_THEMES_EVENT, syncFavThemes)
+  window.addEventListener(UNLOCKED_THEMES_EVENT, syncFavThemes)
+})
+onUnmounted(() => {
+  window.removeEventListener(FAVORITE_THEMES_EVENT, syncFavThemes)
+  window.removeEventListener(UNLOCKED_THEMES_EVENT, syncFavThemes)
+})
 const lang = getLang()
 
 // Свайп открытия/закрытия — тот же порог и та же "центральная зона" для открытия,

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 // @ts-ignore — в проекте нет типов node, а vitest выполняется в node (как в стражах web-dashboard).
-import { readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { ACHIEVEMENTS } from './achievements'
 import { COINS_STEP_1, COINS_STEP_2, LADDERS, LOCKABLE_THEMES, REWARDS, REWARD_STATUS, rewardFor, rewardIcon } from './rewards'
 import { rewardText } from './achievementText'
@@ -81,10 +81,11 @@ describe('защита тем: нельзя закрыть исходные те
 })
 
 describe('показ награды', () => {
-  it('пока награды не выдаются (REWARD_STATUS = planned) — везде «скоро», а не «Награда:»', () => {
-    for (const k of Object.keys(REWARD_STATUS)) expect(REWARD_STATUS[k as keyof typeof REWARD_STATUS], k).toBe('planned')
+  it('выдаются только темы (REWARD_STATUS.theme = active); монеты и рамки пока «скоро»', () => {
+    expect(REWARD_STATUS).toEqual({ coins: 'planned', item: 'planned', theme: 'active' })
     localStorage.setItem('site_lang', 'ru')
     expect(rewardText(REWARDS.words_10)).toBe('Награда (скоро): 20 монет')
+    expect(rewardText(REWARDS.words_100)).toBe('Награда: тема «Сепия»')
   })
 
   it('переключатель статуса: active → «Награда: …» без «скоро»', () => {
@@ -107,13 +108,46 @@ describe('показ награды', () => {
   it('примеры RU/EN: предмет и тема', () => {
     localStorage.setItem('site_lang', 'ru')
     expect(rewardText(REWARDS.words_50)).toBe('Награда (скоро): рамка «Чернильная»')
-    expect(rewardText(REWARDS.words_100)).toBe('Награда (скоро): тема «Сепия»')
+    expect(rewardText(REWARDS.words_100)).toBe('Награда: тема «Сепия»')
     localStorage.setItem('site_lang', 'en')
     expect(rewardText(REWARDS.words_50)).toBe('Reward (coming soon): frame “Ink”')
-    expect(rewardText(REWARDS.books_25, 'active')).toBe('Reward: theme “Catppuccin Mocha”')
+    expect(rewardText(REWARDS.books_25, 'active')).toBe('Reward: theme “Orchid”')
+    localStorage.setItem('site_lang', 'ru')
+    expect(rewardText(REWARDS.books_25)).toBe('Награда: тема «Орхидея»')
   })
 
   it('иконка по виду награды', () => {
     expect([rewardIcon(REWARDS.words_10), rewardIcon(REWARDS.words_50), rewardIcon(REWARDS.words_100)]).toEqual(['coin', 'sparkles', 'paintbrush'])
+  })
+})
+
+describe('замок тем-наград (v3.42): карта THEME_UNLOCK совпадает с лесенками во ВСЕХ пилотах и в шапке', () => {
+  // Что на самом деле выдают лесенки: тема → ключ достижения, на котором она лежит.
+  const ladderMap = (): Record<string, string> =>
+    Object.fromEntries(Object.entries(REWARDS).filter(([, r]) => r.kind === 'theme').map(([ach, r]) => [(r as { key: string }).key, ach]))
+
+  const mapIn = (src: string): Record<string, string> => {
+    const m = /export const THEME_UNLOCK[^=]*=\s*\{([^}]*)\}/.exec(src)
+    expect(m, 'не нашёл THEME_UNLOCK').not.toBeNull()
+    return Object.fromEntries([...m![1].matchAll(/(\w+):\s*'(\w+)'/g)].map((x) => [x[1], x[2]]))
+  }
+
+  it('карта замков = темы-награды лесенок (и ровно шесть закрыты)', () => {
+    const expected = ladderMap()
+    expect(Object.keys(expected).sort()).toEqual([...LOCKABLE_THEMES].sort())
+    expect(mapIn(read('../web-customization/src/lib/theme.ts'))).toEqual(expected)
+  })
+
+  it('одна и та же карта в theme.ts каждого пилота и в themeUnlock.ts шапки', () => {
+    const expected = ladderMap()
+    const dirs = (readdirSync('..') as string[]).filter((d: string) => /^web-/.test(d))
+    const files = dirs.map((d: string) => `../${d}/src/lib/theme.ts`).filter((f: string) => existsSync(f))
+    expect(files.length).toBeGreaterThanOrEqual(15)
+    for (const f of files) expect(mapIn(read(f)), f).toEqual(expected)
+    expect(mapIn(read('../web-header/src/lib/themeUnlock.ts'))).toEqual(expected)
+  })
+
+  it('закрытая тема не может быть ни одной из «всегда открытых»', () => {
+    for (const t of ['dark', 'monet', 'light', 'pink', 'contrast']) expect(Object.keys(ladderMap()), t).not.toContain(t)
   })
 })

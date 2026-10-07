@@ -30,6 +30,7 @@ describe('AppShell: выбор темы только из любимых', () =>
 
   it('в списке только отмеченные любимые', async () => {
     localStorage.setItem('site_theme', 'mint') // активная тема сама входит в список, поэтому берём любимую
+    localStorage.setItem('unlocked_themes', JSON.stringify(['mint', 'nord', 'amoled'])) // темы-награды открыты (v3.42)
     localStorage.setItem('favorite_themes', JSON.stringify(['mint', 'nord', 'amoled', 'contrast']))
     const w = await mountShell()
     expect(options(w)).toEqual(['mint', 'nord', 'amoled', 'contrast'])
@@ -47,6 +48,7 @@ describe('AppShell: выбор темы только из любимых', () =>
 
   it('смена любимых в «Кастомизации» (событие) сразу обновляет список', async () => {
     const w = await mountShell()
+    localStorage.setItem('unlocked_themes', JSON.stringify(['mocha']))
     localStorage.setItem('favorite_themes', JSON.stringify(['mocha', 'dark']))
     window.dispatchEvent(new Event('favorite-themes:changed'))
     await w.vm.$nextTick()
@@ -55,6 +57,7 @@ describe('AppShell: выбор темы только из любимых', () =>
   })
 
   it('выбор темы из списка применяет её', async () => {
+    localStorage.setItem('unlocked_themes', JSON.stringify(['mint']))
     localStorage.setItem('favorite_themes', JSON.stringify(['dark', 'mint']))
     const w = await mountShell()
     const sel = w.find('nav select')
@@ -62,6 +65,34 @@ describe('AppShell: выбор темы только из любимых', () =>
     await sel.trigger('change')
     expect(localStorage.getItem('site_theme')).toBe('mint')
     expect(document.documentElement.classList.contains('theme-mint')).toBe(true)
+    w.unmount()
+  })
+})
+
+describe('AppShell: замок тем-наград (v3.42)', () => {
+  it('закрытая тема-награда, отмеченная любимой, в списке не показывается, пока не открыта', async () => {
+    localStorage.setItem('favorite_themes', JSON.stringify(['dark', 'mint', 'nord', 'light']))
+    const w = await mountShell()
+    expect(options(w)).toEqual(['dark', 'light'])
+    w.unmount()
+  })
+
+  it('открытие темы (событие от шапки) сразу добавляет её в список', async () => {
+    localStorage.setItem('favorite_themes', JSON.stringify(['dark', 'mint', 'light']))
+    const w = await mountShell()
+    expect(options(w)).toEqual(['dark', 'light'])
+    localStorage.setItem('unlocked_themes', JSON.stringify(['mint']))
+    window.dispatchEvent(new Event('unlocked-themes:changed'))
+    await w.vm.$nextTick()
+    expect(options(w)).toEqual(['dark', 'mint', 'light'])
+    w.unmount()
+  })
+
+  it('уже включённая закрытая тема остаётся в списке и выбрана в select', async () => {
+    localStorage.setItem('site_theme', 'amoled')
+    const w = await mountShell()
+    expect(options(w)).toContain('amoled')
+    expect((w.find('nav select').element as HTMLSelectElement).value).toBe('amoled')
     w.unmount()
   })
 })
@@ -98,6 +129,7 @@ describe('одинаково во всех страницах пилота', () 
     expect(src).toContain('<option v-for="key in themeOptions"')
     expect(src).toContain('visibleThemes(themeVal.value)')
     expect(src).toContain('FAVORITE_THEMES_EVENT')
+    expect(src).toContain('UNLOCKED_THEMES_EVENT') // меню перерисуется, когда шапка откроет тему-награду
     expect(src).not.toContain('in THEME_KEYS"')
     expect(readFileSync(`../${dir}/src/lib/theme.ts`, 'utf-8')).toBe(readFileSync('src/lib/theme.ts', 'utf-8'))
   })

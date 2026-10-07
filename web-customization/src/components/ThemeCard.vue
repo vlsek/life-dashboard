@@ -6,8 +6,9 @@ import { THEME_PREVIEW } from '../lib/themePreview'
 import { RARITY_COLOR, rarityOfTheme } from '../lib/rarity'
 import EmojiText from './EmojiText.vue'
 
-// Карточка темы: превью (цвета самой темы, независимо от выбранной сейчас), название, «Применить» и сердечко «любимая».
-const props = defineProps<{ themeKey: ThemeKey; active: boolean; favorite: boolean; canToggle: boolean }>()
+// Карточка темы: превью (цвета самой темы, независимо от выбранной сейчас), название, «Применить» и сердечко «любимая». Закрытая тема-награда
+// (v3.42): образец виден, но «Применить» и сердечка нет — вместо них замок и «Награда за «…»».
+const props = defineProps<{ themeKey: ThemeKey; active: boolean; favorite: boolean; canToggle: boolean; locked?: boolean; unlockText?: string }>()
 const emit = defineEmits<{ apply: []; toggleFavorite: [] }>()
 
 const rarity = computed(() => rarityOfTheme(props.themeKey))
@@ -23,11 +24,12 @@ const favLabel = computed(() => (props.favorite ? t('cust_theme_fav_remove') : p
     :data-testid="'theme-' + themeKey"
     :data-active="active"
     :data-favorite="favorite"
+    :data-locked="!!locked"
     :data-rarity="rarity"
   >
     <!-- Образец темы (BACKLOG 944): мини-диаграмма в основных цветах самой темы — карточка, акцент (кольцо прогресса),
          успех и вода (столбики), текст (подписи). Цвета берутся из THEME_PREVIEW, а не из выбранной сейчас темы. -->
-    <svg viewBox="0 0 120 56" class="w-full rounded-lg" :style="{ background: pv.bg, border: '1px solid ' + pv.card }" role="img" :aria-label="label" data-testid="theme-preview">
+    <svg viewBox="0 0 120 56" class="w-full rounded-lg" :style="{ background: pv.bg, border: '1px solid ' + pv.card, opacity: locked ? 0.55 : 1 }" role="img" :aria-label="label" data-testid="theme-preview">
       <rect x="6" y="6" width="108" height="44" rx="6" :fill="pv.card" />
       <circle cx="32" cy="28" r="13" fill="none" :stroke="pv.text" stroke-opacity="0.18" stroke-width="5" />
       <circle cx="32" cy="28" r="13" fill="none" :stroke="pv.accent" stroke-width="5" stroke-linecap="round" stroke-dasharray="52 82" transform="rotate(-90 32 28)" data-testid="preview-ring" />
@@ -39,6 +41,7 @@ const favLabel = computed(() => (props.favorite ? t('cust_theme_fav_remove') : p
     <div class="flex items-center justify-between gap-1">
       <p class="m-0 text-sm font-medium"><EmojiText :text="label" /></p>
       <button
+        v-if="!locked"
         type="button"
         class="secondary px-1.5 py-1"
         :style="{ color: favorite ? 'var(--accent)' : 'var(--text-dim)', opacity: !favorite && !canToggle ? 0.45 : 1 }"
@@ -54,7 +57,17 @@ const favLabel = computed(() => (props.favorite ? t('cust_theme_fav_remove') : p
         </svg>
       </button>
     </div>
-    <button v-if="!active" type="button" class="px-3 py-1 text-sm" data-testid="apply" @click="emit('apply')">{{ t('cust_theme_apply') }}</button>
+    <div v-if="locked && !active" class="dim flex flex-col items-center gap-0.5 text-center text-xs" data-testid="theme-locked">
+      <span class="inline-flex items-center gap-1 font-medium" style="color: var(--text)">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="5" y="11" width="14" height="9" rx="2" />
+          <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+        </svg>
+        {{ t('cust_theme_locked') }}
+      </span>
+      <span data-testid="theme-unlock-text">{{ unlockText }}</span>
+    </div>
+    <button v-else-if="!active" type="button" class="px-3 py-1 text-sm" data-testid="apply" @click="emit('apply')">{{ t('cust_theme_apply') }}</button>
     <p v-else class="dim m-0 text-center text-xs" data-testid="applied">{{ t('cust_theme_active') }}</p>
   </div>
 </template>

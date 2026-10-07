@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import ItemCard from './components/ItemCard.vue'
 import Icon from './components/Icon.vue'
@@ -11,12 +11,27 @@ import { useFavoriteThemes } from './lib/useFavoriteThemes'
 import { useCustomization } from './lib/useCustomization'
 import { CATEGORY_ORDER, ITEMS } from './lib/customization'
 import { t } from './lib/i18n'
+import { THEME_UNLOCK, type ThemeKey } from './lib/theme'
 
-const { auth, balance, apiMissing, loading, error, actionError, busyKey, statusOf, init, buy, choose } = useCustomization()
+const { auth, balance, achievements, apiMissing, loading, error, actionError, busyKey, statusOf, init, buy, choose } = useCustomization()
 onMounted(init)
 
-// Темы: все бесплатные, до 4 «любимых» попадают в выпадающий список тем бокового меню (решение владельца 2026-10-04)
+// Темы: до 4 «любимых» попадают в выпадающий список тем бокового меню (решение владельца 2026-10-04). С v3.42 шесть тем — награды за
+// достижения (решение владельца 2026-10-06): закрытая тема видна с образцом, но не применяется, пока не получено достижение.
 const themes = useFavoriteThemes()
+// Список открытых тем обновляем ТОЛЬКО после успешной загрузки достижений (иначе пустой список до загрузки закрыл бы заслуженное).
+watch(
+  [loading, achievements],
+  () => {
+    if (auth.value.status === 'ready' && !loading.value && !error.value) themes.setUnlocksFromAchievements(achievements.value)
+  },
+  { immediate: true },
+)
+const unlockText = (k: ThemeKey): string => {
+  const ach = THEME_UNLOCK[k]
+  return ach ? t('cust_theme_reward_for').replace('{name}', t(('cust_ach_' + ach) as never)) : ''
+}
+const themeOwned = (keys: ThemeKey[]): number => keys.filter((k) => !themes.isLocked(k)).length
 
 // Редкость (BACKLOG 39): и темы, и предметы разложены по группам «обычные … легендарные»; каждая группа сворачивается, состояние помним.
 const { isCollapsed, toggle } = useCollapsed()
@@ -63,7 +78,7 @@ const categories = computed(() =>
           <h2 class="mb-0.5 text-base font-medium">{{ t('cust_sec_themes') }}</h2>
           <p class="dim mb-1 text-xs">{{ t('cust_sec_themes_hint') }}</p>
           <p class="dim mb-2 text-xs" data-testid="fav-count">{{ t('cust_theme_fav_count').replace('{n}', String(themes.favorites.value.length)).replace('{max}', String(themes.max)) }}</p>
-          <RarityGroup v-for="g in themeBuckets" :key="g.rarity" :id="'themes:' + g.rarity" :rarity="g.rarity" :total="g.items.length" :collapsed="isCollapsed('themes:' + g.rarity)" @toggle="toggle('themes:' + g.rarity)">
+          <RarityGroup v-for="g in themeBuckets" :key="g.rarity" :id="'themes:' + g.rarity" :rarity="g.rarity" :total="g.items.length" :owned="themeOwned(g.items)" :collapsed="isCollapsed('themes:' + g.rarity)" @toggle="toggle('themes:' + g.rarity)">
             <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr))">
               <ThemeCard
                 v-for="k in g.items"
@@ -72,6 +87,8 @@ const categories = computed(() =>
                 :active="themes.current.value === k"
                 :favorite="themes.isFavorite(k)"
                 :can-toggle="themes.canToggle(k)"
+                :locked="themes.isLocked(k)"
+                :unlock-text="unlockText(k)"
                 @apply="themes.apply(k)"
                 @toggle-favorite="themes.toggleFavorite(k)"
               />

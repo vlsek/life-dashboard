@@ -55,4 +55,11 @@ def main() -> int:
 
 
 if __name__ == '__main__':
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except BrokenPipeError:  # вывод обрезали `| head` — это не ошибка
+        try:
+            sys.stdout.close()
+        except Exception:
+            pass
+        raise SystemExit(0)
