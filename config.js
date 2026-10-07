@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.67";
+const SITE_VERSION = "3.68";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.68", date: "2026-10-07 12:51", changes: [
+        "Метрики, форма создания и правки: оставлено только основное — название, иконка, тип, «просто записывать значение», цель и единица (для типа «Выбор» ещё и варианты). Всё остальное убрано в сворачиваемый блок «Дополнительно»: направление цели, как вводить значения, расписание, категория, серия и её импорт, план подходов в день и особенности для «Подходов». Блок по умолчанию свёрнут; рядом с названием показано, сколько настроек в нём изменено, а при правке метрики с нестандартными настройками он раскрывается сам. Подписи сокращены (убрали длинные пояснения «только для …»). Всё работает как раньше — свёрнутые настройки просто остаются по умолчанию. Миграция не нужна."
+    ]},
     { version: "3.67", date: "2026-10-07 12:31", changes: [
         "Метрики, форма метрики: варианты для типа «Выбор» и особенности для типа «Подходы» теперь вводятся списком, а не одной строкой «ключ:Метка, ключ:Метка». У каждого варианта своё поле «Название», кнопки ↑/↓ и ✕, перетаскивание за ручку ☰ и кнопка «+ Вариант» (в новой строке можно нажать Enter, чтобы сразу добавить следующий). Ключи придумывать не нужно, а подписи теперь могут содержать запятые и двоеточия. У уже сохранённых вариантов ключ не меняется, поэтому прежние отметки остаются на месте. Миграция не нужна."
     ]},
@@ -1710,6 +1713,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.68", date: "2026-10-07 12:51", changes: [
+        "Metrics, create/edit form: only the essentials stay in view - name, icon, type, \"just record a value\", goal and unit (plus the options for the Choice type). Everything else moved into a collapsible \"More options\" block: goal direction, how values are entered, schedule, category, streak and its import, planned sets per day and variations for Sets. The block is collapsed by default; next to its title you see how many settings inside are changed, and when you edit a metric with non-default settings it opens by itself. Labels are shorter (long \"only for ...\" explanations are gone). Everything works as before - collapsed settings simply keep their defaults. No migration needed."
+    ]},
     { version: "3.67", date: "2026-10-07 12:31", changes: [
         "Metrics, metric form: options for the Choice type and variations for the Sets type are now entered as a list instead of a single \"key:Label, key:Label\" line. Every option has its own Name field, up/down and remove buttons, drag by the handle and a \"+ Option\" button (press Enter in a row to add the next one right away). You no longer have to invent keys, and names may now contain commas and colons. The key of an already saved option does not change, so earlier entries stay in place. No migration needed."
     ]},
