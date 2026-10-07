@@ -10,6 +10,7 @@ import { todayStr } from './lib/date'
 import { t, getLang } from './lib/i18n'
 import type { GoalType, Usecase } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
+import { friendlyError } from './lib/friendlyError'
 
 const { auth, google, savedName, init, complete, skip } = useOnboarding()
 onMounted(init)
@@ -136,11 +137,11 @@ async function onSubmit() {
   }
   const res = await complete(auth.value.userId, answers, identity(), bodyParamLabels)
   if (!res.ok) {
-    errorMsg.value = t('onb_save_form_error') + res.error.message + '\n\n' + t('onb_migration_hint_001b')
+    errorMsg.value = friendlyError(res.error, 'save') + '\n\n' + t('onb_migration_hint_001b')
     busy.value = false
     return
   }
-  if (res.seedError) errorMsg.value = t('onb_form_saved_metrics_failed') + res.seedError.message
+  if (res.seedError) errorMsg.value = t('onb_form_saved_metrics_failed') + friendlyError(res.seedError, 'save')
   window.location.href = '/dashboard/'
 }
 
@@ -155,11 +156,11 @@ async function onSkip() {
   saveDayProgressSettings('both')
   const res = await skip(auth.value.userId, identity(), starterMetrics(lang))
   if (!res.ok) {
-    errorMsg.value = t('dash_save_error_generic') + res.error.message + '\n\n' + t('onb_migration_hint_001')
+    errorMsg.value = friendlyError(res.error, 'save') + '\n\n' + t('onb_migration_hint_001')
     busy.value = false
     return
   }
-  if (res.seedError) errorMsg.value = t('onb_profile_saved_metrics_failed') + res.seedError.message
+  if (res.seedError) errorMsg.value = t('onb_profile_saved_metrics_failed') + friendlyError(res.seedError, 'save')
   window.location.href = '/dashboard/'
 }
 
