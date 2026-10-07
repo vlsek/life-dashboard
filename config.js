@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.73";
+const SITE_VERSION = "3.74";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.74", date: "2026-10-07 14:12", changes: [
+        "Кастомизация: новый товар «Карточка со сводкой» (250 баллов) — вид сворачивания блоков. Свёрнутый блок показывает справа от заголовка короткую строку итога: у «Метрик за день» — «Баллы 4 / 9», у «Планов» — «Выполнено 2 из 5», у «Виджетов» — сколько их показано, в «Тренировках» у категории — «Упражнений: N», у упражнения — его рекорд. Выбирается в «Кастомизации» вместо «Аккордеона» (одновременно один вид), снять — вернуться к базовому шеврону. Блоки без осмысленного итога выглядят как обычно",
+    ]},
     { version: "3.73", date: "2026-10-07 13:57", changes: [
         "Рамки-награды: появились десять новых рамок аватарки, которые выдаются за достижения. За третью ступень каждой лесенки: «Чернильная» (слова), «Нейрон» (выученное), «Мишень» (цели), «Шестерёнка» (навыки), «Закладка» (книги), «Сталь» (тренировки), «Кубок» (челленджи), «Маяк» (вехи). За финал челленджей и вех, «Неудержимый» и «Всё по плану», две редкие анимированные рамки: «Победная» и «Курс». Рамка откроется сама, когда вы зайдёте в «Кастомизацию» после получения достижения; в «Достижениях» награда теперь без пометки «скоро». Новые рамки видны и в боковом меню, и в Сообществе, и вокруг кольца прогресса дня на Дашборде. В группах редкости они стоят среди редких и эпических",
     ]},
@@ -1728,6 +1731,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.74", date: "2026-10-07 14:12", changes: [
+        "Customization: new “Summary card” item (250 points) — a block collapse style. A folded block shows a short summary line to the right of its title: “Points 4 / 9” for Daily metrics, “Done 2 of 5” for Plans, the number of shown Widgets, in Workouts “Exercises: N” for a category and the record for an exercise. Pick it in Customization instead of “Accordion” (one style at a time); unselect to return to the basic chevron. Blocks without a meaningful summary look as usual",
+    ]},
     { version: "3.73", date: "2026-10-07 13:57", changes: [
         "Reward frames: ten new avatar frames are awarded for achievements. For the third step of each ladder: Ink (words), Neuron (learned), Target (goals), Gear (skills), Bookmark (books), Steel (workouts), Cup (challenges), Beacon (milestones). For the final step of challenges and milestones, “Unstoppable” and “On schedule”, two rare animated frames: Victory and Course. A frame unlocks by itself when you open Customization after earning the achievement; in Achievements the reward no longer says “coming soon”. The new frames also show in the side menu, in the Community and around the day-progress ring on the Dashboard. In the rarity groups they sit among the rare and epic ones",
     ]},
