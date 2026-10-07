@@ -1,6 +1,13 @@
 {
-  "version": "3.61",
+  "version": "3.62",
   "en": [
+    {
+      "version": "3.62",
+      "date": "2026-10-07 07:01",
+      "changes": [
+        "Tidy-up: the “Streak celebrations” and “Turn off all animations” switches are removed from the “Customize Dashboard” window — they stay in “Global settings”, where they belong (one setting, one place). The layout window now shows a short hint instead"
+      ]
+    },
     {
       "version": "3.61",
       "date": "2026-10-07 06:53",
@@ -2592,6 +2599,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.62",
+      "date": "2026-10-07 07:01",
+      "changes": [
+        "Порядок: выключатели «Поздравления за серии» и «Отключить все анимации» убраны из окна «Настроить Дашборд» — они остаются в «Глобальных настройках», где их и стоит искать (одна настройка в одном месте). В окне раскладки вместо них короткая подсказка"
+      ]
+    },
     {
       "version": "3.61",
       "date": "2026-10-07 06:53",

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.61";
+const SITE_VERSION = "3.62";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.62", date: "2026-10-07 07:01", changes: [
+        "Порядок: выключатели «Поздравления за серии» и «Отключить все анимации» убраны из окна «Настроить Дашборд» — они остаются в «Глобальных настройках», где их и стоит искать (одна настройка в одном месте). В окне раскладки вместо них короткая подсказка",
+    ]},
     { version: "3.61", date: "2026-10-07 06:53", changes: [
         "Тренировки: «Аккордеон» из Кастомизации теперь работает и здесь. Раскрываете категорию — остальные категории, карта мышц и деревья прогрессии сворачиваются; раскрываете упражнение — сворачиваются другие упражнения этой же категории, сама категория остаётся открытой. С базовым шевроном всё как раньше",
     ]},
@@ -1691,6 +1694,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.62", date: "2026-10-07 07:01", changes: [
+        "Tidy-up: the “Streak celebrations” and “Turn off all animations” switches are removed from the “Customize Dashboard” window — they stay in “Global settings”, where they belong (one setting, one place). The layout window now shows a short hint instead",
+    ]},
     { version: "3.61", date: "2026-10-07 06:53", changes: [
         "Workouts: the “Accordion” from Customization now works here too. Open a category and the other categories, the muscle map and the progression trees fold up; open an exercise and the other exercises of the same category fold up while the category stays open. With the basic chevron nothing changes",
     ]},
