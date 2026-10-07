@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.71";
+const SITE_VERSION = "3.72";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.72", date: "2026-10-07 13:37", changes: [
+        "Магазин: (1) подсказка о том, как устроен магазин, переименована в «Лавку наград», а её текст переписан под настоящую механику: баллы за привычки, тренировки, цели и серии, бонусные монетки за достижения; темы и рамки аватарки продаются отдельно, в «Кастомизации». (2) В списке «Мои покупки» больше не показываются предметы, купленные в «Кастомизации» (например, рамка «Аврора»): в магазине только магазинные покупки. Баланс по-прежнему учитывает все покупки, поэтому баллы не меняются. Миграция не нужна",
+    ]},
     { version: "3.71", date: "2026-10-07 13:26", changes: [
         "Ошибки: при сбое в анкете первого входа (сохранение анкеты, профиля, создание метрик) и при загрузке данных для шапки теперь показывается понятный текст вместо технической строки с адресом сервера и именами таблиц. Подсказки про применение миграций остаются отдельной строкой. На этом пункт про технические ошибки закрыт для всех страниц сайта. Миграция не нужна",
     ]},
@@ -1722,6 +1725,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.72", date: "2026-10-07 13:37", changes: [
+        "Shop: (1) the hint about how the shop works is renamed to \"The Rewards Stall\" and its text is rewritten to match the real mechanics: points for habits, workouts, goals and streaks, bonus coins for achievements; themes and avatar frames are sold separately, in Customization. (2) The \"My purchases\" list no longer shows items bought in Customization (for example the Aurora frame): the shop shows only shop purchases. The balance still counts every purchase, so your points do not change. No migration needed",
+    ]},
     { version: "3.71", date: "2026-10-07 13:26", changes: [
         "Errors: when something fails in the first-sign-in questionnaire (saving the form, the profile, creating metrics) and when loading data for the header, a clear message is now shown instead of a technical line with the server address and table names. Migration hints stay as a separate line. This closes the item about technical errors for every page of the site. No migration needed",
     ]},

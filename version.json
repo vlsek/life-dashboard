@@ -1,6 +1,13 @@
 {
-  "version": "3.71",
+  "version": "3.72",
   "en": [
+    {
+      "version": "3.72",
+      "date": "2026-10-07 13:37",
+      "changes": [
+        "Shop: (1) the hint about how the shop works is renamed to \"The Rewards Stall\" and its text is rewritten to match the real mechanics: points for habits, workouts, goals and streaks, bonus coins for achievements; themes and avatar frames are sold separately, in Customization. (2) The \"My purchases\" list no longer shows items bought in Customization (for example the Aurora frame): the shop shows only shop purchases. The balance still counts every purchase, so your points do not change. No migration needed"
+      ]
+    },
     {
       "version": "3.71",
       "date": "2026-10-07 13:26",
@@ -2663,6 +2670,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.72",
+      "date": "2026-10-07 13:37",
+      "changes": [
+        "Магазин: (1) подсказка о том, как устроен магазин, переименована в «Лавку наград», а её текст переписан под настоящую механику: баллы за привычки, тренировки, цели и серии, бонусные монетки за достижения; темы и рамки аватарки продаются отдельно, в «Кастомизации». (2) В списке «Мои покупки» больше не показываются предметы, купленные в «Кастомизации» (например, рамка «Аврора»): в магазине только магазинные покупки. Баланс по-прежнему учитывает все покупки, поэтому баллы не меняются. Миграция не нужна"
+      ]
+    },
     {
       "version": "3.71",
       "date": "2026-10-07 13:26",
