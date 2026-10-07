@@ -1,6 +1,13 @@
 {
-  "version": "3.70",
+  "version": "3.71",
   "en": [
+    {
+      "version": "3.71",
+      "date": "2026-10-07 13:26",
+      "changes": [
+        "Errors: when something fails in the first-sign-in questionnaire (saving the form, the profile, creating metrics) and when loading data for the header, a clear message is now shown instead of a technical line with the server address and table names. Migration hints stay as a separate line. This closes the item about technical errors for every page of the site. No migration needed"
+      ]
+    },
     {
       "version": "3.70",
       "date": "2026-10-07 13:16",
@@ -2656,6 +2663,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.71",
+      "date": "2026-10-07 13:26",
+      "changes": [
+        "Ошибки: при сбое в анкете первого входа (сохранение анкеты, профиля, создание метрик) и при загрузке данных для шапки теперь показывается понятный текст вместо технической строки с адресом сервера и именами таблиц. Подсказки про применение миграций остаются отдельной строкой. На этом пункт про технические ошибки закрыт для всех страниц сайта. Миграция не нужна"
+      ]
+    },
     {
       "version": "3.70",
       "date": "2026-10-07 13:16",

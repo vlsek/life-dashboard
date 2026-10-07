@@ -8,6 +8,7 @@ import { grantCoinBonuses, type CoinBonus } from './coinBonuses'
 import { REWARD_STATUS } from './rewards'
 import { countMegaWeeks, getDayProgressSettings, type GoalLite, type PlannedItem } from './weekProgress'
 import type { Metric, PointsRow } from './types'
+import { friendlyError } from './friendlyError'
 
 export type AuthState =
   | { status: 'loading' }
@@ -81,7 +82,7 @@ export function useAchievements() {
       ])
       const err = metricsRes.error?.message || valuesRes.error || goalsRes.error?.message || skillsRes.error?.message || booksRes.error?.message || workoutsRes.error
       if (err) {
-        error.value = err
+        error.value = friendlyError(err, 'load')
         return
       }
       error.value = null
@@ -116,7 +117,7 @@ export function useAchievements() {
       // монетки за открытые значки (ступени 1 и 2): один раз на значок, задним числом тоже; сбой выдачи страницу не ломает
       if (REWARD_STATUS.coins === 'active') grantedCoins.value = (await grantCoinBonuses(sb as unknown as Parameters<typeof grantCoinBonuses>[0], userId, Object.keys(rec.unlocked))).granted
     } catch (e) {
-      error.value = (e as Error).message
+      error.value = friendlyError(e, 'load')
     } finally {
       loading.value = false
     }

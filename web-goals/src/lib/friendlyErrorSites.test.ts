@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
 
 // BACKLOG 942 🐞: показ ошибок загрузки идёт через friendlyError — текст драйвера, адрес Supabase и имена таблиц до человека не доходят.
-describe('milestones: ошибки загрузки показываются через friendlyError', () => {
-  for (const f of ['src/lib/useMilestones.ts', 'src/App.vue'] as string[]) {
+describe('goals: ошибки загрузки показываются через friendlyError', () => {
+  for (const f of ['src/lib/useGoals.ts'] as string[]) {
     it(f, () => {
       const src: string = readFileSync(f, 'utf-8')
       expect(src).toContain('friendlyError(')

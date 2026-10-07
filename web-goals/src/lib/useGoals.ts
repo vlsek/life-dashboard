@@ -4,6 +4,7 @@ import { todayStr } from './date'
 import { buildInsertRow, buildUpdateRow, stageResult, stepStage } from './goals'
 import type { Goal, GoalFormInput } from './types'
 import { completionDelta, emitPointsFloat } from './pointsFloat'
+import { friendlyError } from './friendlyError'
 
 // Очки цели по умолчанию — как в балансе (balance.ts / web-shop points.ts): пусто → 5
 const GOAL_DEFAULT_POINTS = 5
@@ -55,7 +56,7 @@ export function useGoals() {
   async function load(userId: string) {
     const { data, error: err } = await sb.from('goals').select('*').eq('user_id', userId).order('created_at')
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err, 'load')
       return
     }
     error.value = null

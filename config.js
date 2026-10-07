@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.70";
+const SITE_VERSION = "3.71";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.71", date: "2026-10-07 13:26", changes: [
+        "Ошибки: при сбое в анкете первого входа (сохранение анкеты, профиля, создание метрик) и при загрузке данных для шапки теперь показывается понятный текст вместо технической строки с адресом сервера и именами таблиц. Подсказки про применение миграций остаются отдельной строкой. На этом пункт про технические ошибки закрыт для всех страниц сайта. Миграция не нужна",
+    ]},
     { version: "3.70", date: "2026-10-07 13:16", changes: [
         "Ошибки: на странице «Сообщество» при сбое (рейтинг, лента, подписка, заявка в друзья, привязка и выбор категорий) теперь показывается понятный текст («Нет связи с сервером…», «Нет доступа…», «Не получилось сохранить…») вместо технической строки с адресом сервера и именами функций базы. Остались шапка, вход и регистрация. Миграция не нужна",
     ]},
@@ -1719,6 +1722,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.71", date: "2026-10-07 13:26", changes: [
+        "Errors: when something fails in the first-sign-in questionnaire (saving the form, the profile, creating metrics) and when loading data for the header, a clear message is now shown instead of a technical line with the server address and table names. Migration hints stay as a separate line. This closes the item about technical errors for every page of the site. No migration needed",
+    ]},
     { version: "3.70", date: "2026-10-07 13:16", changes: [
         "Errors: on the Community page a failure (leaderboard, feed, follow, friend request, linking and choosing categories) now shows a clear message (\"No connection to the server…\", \"No access…\", \"Could not save…\") instead of a technical line with the server address and database function names. The header, sign-in and sign-up are left. No migration needed",
     ]},

@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 
 // BACKLOG 942 🐞: показ ошибок загрузки идёт через friendlyError — текст драйвера, адрес Supabase и имена таблиц до человека не доходят.
 describe('achievements: ошибки загрузки показываются через friendlyError', () => {
-  for (const f of ['src/lib/fetchAll.ts'] as string[]) {
+  for (const f of ['src/lib/fetchAll.ts', 'src/lib/useAchievements.ts'] as string[]) {
     it(f, () => {
       const src: string = readFileSync(f, 'utf-8')
       expect(src).toContain('friendlyError(')

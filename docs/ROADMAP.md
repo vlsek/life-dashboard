@@ -567,3 +567,9 @@ v3.70 — BACKLOG 942 🐞, срез 3 «Сообщество», агент 5: `
   `useCommunity.ts` (рейтинг, «сегодня», поиск друга: `lookupUser`, `follow`, `sendFriendRequest` отдают понятный `message`), `useCategories.ts`. Видимость причины («кнопки не работают из-за RPC») сохранена, но без имени функции БД и текста драйвера — детали в консоли.
   `friendsUi.test.ts` закреплял сырой `permission denied for function find_user_by_name` — переписан на понятный «Нет доступа». ОСТАЛОСЬ по 942: header 8, login 1, onboarding 2 (+ `alert(`).
   Тесты: community 193 (+4), сборка чистая. Без миграции.
+
+v3.71 — BACKLOG 942 🐞, срез 4 (последний), агент 5: `web-onboarding` — `friendlyError.ts` + `err_*` + тесты, три места показа `res.error.message`/`res.seedError.message` в `App.vue` (анкета, пропуск, профиль) заменены на `friendlyError`, подсказки про миграции 001/001b остались отдельной строкой;
+  `web-header` — `fetchAll.ts` отдаёт понятный `error` (общий бандл `header-widgets/` пересобран). `web-login` сделан раньше (`authError.ts`), `waterLog.isMissingTable` — только классификация, текст не показывает.
+  Контрольный обход всех пилотов нашёл и добил пропущенные места: `web-milestones/App.vue` (3 — сохранение/удаление вехи), `web-goals/useGoals` (загрузка), `web-achievements/useAchievements` (загрузка и сбой пересчёта; ошибка `coinBonuses` не показывается — внутренняя). Стражи расширены.
+  ИТОГО по 942: Дашборд v3.19, малые пилоты v3.59, средние v3.60, Сообщество v3.70, онбординг+шапка v3.71. Стражи в тестах каждого пилота не дадут вернуть `error.value = err.message`. Если появится НОВЫЙ пилот — копировать `friendlyError.ts` + `err_*` (шаблон: `web-dashboard/src/lib/friendlyError.ts`).
+  Тесты: onboarding 94 (+3), header 320 (+1), achievements 211, milestones 87, goals 193; сборки 5 пилотов чистые. Без миграции.

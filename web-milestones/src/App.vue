@@ -11,6 +11,7 @@ import type { Milestone, MilestoneFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import Icon from './components/Icon.vue'
 import { confirmDialog } from './lib/confirmDialog'
+import { friendlyError } from './lib/friendlyError'
 
 const { auth, items, error, init, addMilestone, updateMilestone, markDone, deleteMilestone } = useMilestones()
 onMounted(init)
@@ -98,7 +99,7 @@ async function onFormSubmit(input: MilestoneFormInput) {
       await updateMilestone(target.id, row)
     }
   } catch (e) {
-    saveError.value = t('dash_save_error_generic') + (e as Error).message
+    saveError.value = friendlyError(e, 'save')
   }
 }
 
@@ -120,7 +121,7 @@ async function onMarkDoneSubmit(res: { date: string; km: number | null; note: st
   try {
     await markDone(m, res.date, res.km, res.note)
   } catch (e) {
-    saveError.value = t('dash_save_error_generic') + (e as Error).message
+    saveError.value = friendlyError(e, 'save')
   }
 }
 
@@ -129,7 +130,7 @@ async function onDelete(m: Milestone) {
   try {
     await deleteMilestone(m.id)
   } catch (e) {
-    saveError.value = t('dash_delete_error_generic') + (e as Error).message
+    saveError.value = friendlyError(e, 'delete')
   }
 }
 
