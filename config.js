@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.55";
+const SITE_VERSION = "3.56";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.56", date: "2026-10-07 05:22", changes: [
+        "Вода: (1) в правой шторке (на всех страницах) в блоке воды появляется кнопка «Отменить последнее» — она видна, когда есть что отменять (например, после нажатия «+ 200»), и убирает последнее добавление так же, как в окне воды. (2) В окне воды в журнале «Записи за день» у каждой записи есть крестик ✕ — можно удалить любую запись, не только последнюю: сумма за день уменьшится на её значение, а остальные записи и кнопка «Отменить» продолжат работать по порядку. Сумма не уходит ниже нуля. Миграция не нужна."
+    ]},
     { version: "3.55", date: "2026-10-07 02:10", changes: [
         "Меню: пункт «История» убран из бокового меню на всех страницах — история теперь внутри раздела «Календарь» (переключатель «Календарь / История»). Старая ссылка /history/ по-прежнему ведёт туда. Нижний блок меню теперь: «Кастомизация» и «Аккаунт». Миграция не нужна."
     ]},
@@ -1673,6 +1676,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.56", date: "2026-10-07 05:22", changes: [
+        "Water: (1) the right-hand panel (on every page) now has an \"Undo last\" button in the water block - it shows up when there is something to undo (for example right after tapping \"+ 200\") and removes the last addition just like in the water window. (2) In the water window, every entry in the \"Entries for the day\" log has a cross - you can delete any entry, not only the last one: the day total goes down by its amount, and the remaining entries and the Undo button keep working in order. The total never goes below zero. No migration needed."
+    ]},
     { version: "3.55", date: "2026-10-07 02:10", changes: [
         "Menu: the History item is removed from the side menu on every page - history now lives inside the Calendar section (the Calendar / History switch). The old /history/ link still leads there. The bottom block of the menu is now: Customization and Account. No migration needed."
     ]},
