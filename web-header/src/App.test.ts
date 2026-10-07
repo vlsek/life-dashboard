@@ -6,7 +6,7 @@ const db = vi.hoisted(() => ({
   session: { user: { id: 'u1' } } as null | { user: { id: string } },
   rows: {} as Record<string, unknown[]>,
   writes: [] as { table: string; op: string; payload: unknown }[],
-  upsertError: null as null | { message: string },
+  upsertError: null as null | { message: string; code?: string },
 }))
 vi.mock('./lib/supabase', () => {
   const chain = (table: string) => {
@@ -126,14 +126,15 @@ describe('глобальный хедер (App.vue)', () => {
   })
 
   it('ошибка записи воды показывается в окне (а стакан из шапки не пропадает)', async () => {
-    db.upsertError = { message: 'нет связи' }
+    db.upsertError = { message: 'TypeError: Failed to fetch (https://abcd1234.supabase.co/rest/v1/daily_values)' }
     setup({ metrics: [waterMetric], daily_values: [] })
     const w = mount(App)
     await flushPromises()
     await w.find('[data-test="water-badge"]').trigger('click')
     await w.find('[data-test="add-200"]').trigger('click')
     await flushPromises()
-    expect(w.find('[data-test="water-save-error"]').text()).toContain('нет связи')
+    expect(w.find('[data-test="water-save-error"]').text()).toContain('Нет связи с сервером')
+    expect(w.find('[data-test="water-save-error"]').text()).not.toMatch(/supabase|https?:|daily_values|fetch|TypeError/i) // BACKLOG 942: сырой текст драйвера до человека не доходит
     expect(w.find('[data-test="water-badge"]').exists()).toBe(true)
     w.unmount()
   })
@@ -354,14 +355,15 @@ describe('глобальные настройки (BACKLOG 6.2)', () => {
   })
 
   it('ошибка сохранения раскладки показывается, порядок откатывается', async () => {
-    db.upsertError = { message: 'нет доступа' }
+    db.upsertError = { code: '42501', message: 'new row violates row-level security policy for table "profiles"' }
     setup({ metrics: [habit], profiles: [{ dashboard_layout: null }] })
     const w = mount(App)
     await flushPromises()
     await openSettings(w)
     await w.findAll('[data-test="layout-row"]')[0].find('[data-test="down"]').trigger('click')
     await flushPromises()
-    expect(w.find('[data-test="layout-error"]').text()).toContain('нет доступа')
+    expect(w.find('[data-test="layout-error"]').text()).toContain('Нет доступа')
+    expect(w.find('[data-test="layout-error"]').text()).not.toMatch(/row-level|profiles|violates/i) // BACKLOG 942
     expect(w.findAll('[data-test="layout-row"]')[0].text()).toContain('Профиль')
     w.unmount()
   })

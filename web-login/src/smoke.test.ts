@@ -39,7 +39,7 @@ describe('login page', () => {
     expect(signInWithPassword).not.toHaveBeenCalled()
   })
 
-  it('shows the Supabase error message when sign-in fails', async () => {
+  it('keeps the human Supabase Auth message when sign-in fails', async () => {
     signInWithPassword.mockResolvedValue({ error: { message: 'Invalid login credentials', status: 400 } })
     const w = mount(App)
     await flushPromises()
@@ -47,7 +47,20 @@ describe('login page', () => {
     await w.find('input[type=password]').setValue('secret')
     await w.find('form').trigger('submit')
     await flushPromises()
-    expect(w.text()).toContain('Error: Invalid login credentials (code 400)')
+    expect(w.text()).toContain('Error: Invalid login credentials')
+    expect(w.text()).not.toContain('code 400') // BACKLOG 942: технический код ответа не показываем
+  })
+
+  it('network failure on sign-in shows a plain message, not the raw driver text (BACKLOG 942)', async () => {
+    signInWithPassword.mockRejectedValue(new TypeError('Failed to fetch (https://abcd1234.supabase.co/auth/v1/token)'))
+    const w = mount(App)
+    await flushPromises()
+    await w.find('input[type=email]').setValue('a@b.c')
+    await w.find('input[type=password]').setValue('secret')
+    await w.find('form').trigger('submit')
+    await flushPromises()
+    expect(w.text()).toContain('No connection to the server')
+    expect(w.text()).not.toMatch(/supabase|TypeError|Failed to fetch|https?:/i)
   })
 
   it('tells the user to check email when sign-up returns no session', async () => {

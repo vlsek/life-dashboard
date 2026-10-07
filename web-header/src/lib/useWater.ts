@@ -3,7 +3,7 @@ import { sb } from './supabase'
 import { notifyDataChanged } from './events'
 import { emitPointsFloat, pointsDelta } from './pointsFloat'
 import { fmtDate, todayStr } from './date'
-import { t } from './i18n'
+import { friendlyError } from './friendlyError'
 import { effectiveNormMl, findWaterMetric, findWeightParam, nextWaterValue } from './water'
 import { createWriteQueue } from './writeQueue'
 import { autoNormFromBody, validHeightCm, resetWaterGoalCache } from './waterGoal'
@@ -86,7 +86,7 @@ export function useWater() {
     if (h == null) return false
     const { error: err } = await sb.from('profiles').upsert({ user_id: userId, height: h })
     if (err) {
-      saveError.value = t('dash_save_error_generic') + err.message
+      saveError.value = friendlyError(err, 'save')
       return false
     }
     saveError.value = null
@@ -100,7 +100,7 @@ export function useWater() {
     undoStacks.value = loadStacks(uid, todayStr())
     const { data: metrics, error: err } = await sb.from('metrics').select('*').eq('user_id', userId).eq('active', true)
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err, 'load')
       loaded.value = true
       return
     }
@@ -148,7 +148,7 @@ export function useWater() {
       .from('daily_values')
       .upsert({ user_id: userId, metric_id: metric.value.id, date: dateStr, value: next }, { onConflict: 'user_id,date,metric_id' })
     if (upErr) {
-      saveError.value = t('dash_save_error_generic') + upErr.message
+      saveError.value = friendlyError(upErr, 'save')
       return null
     }
     saveError.value = null
@@ -307,7 +307,7 @@ export function useWater() {
     if (!metric.value) return false
     const { error: err } = await sb.from('metrics').update({ goal_value: ml }).eq('id', metric.value.id)
     if (err) {
-      saveError.value = t('dash_save_error_generic') + err.message
+      saveError.value = friendlyError(err, 'save')
       return false
     }
     saveError.value = null
@@ -320,7 +320,7 @@ export function useWater() {
     if (!metric.value) return false
     const { error: err } = await sb.from('metrics').update({ goal_value: null }).eq('id', metric.value.id)
     if (err) {
-      saveError.value = t('dash_save_error_generic') + err.message
+      saveError.value = friendlyError(err, 'save')
       return false
     }
     saveError.value = null

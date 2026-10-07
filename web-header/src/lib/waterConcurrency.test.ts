@@ -164,7 +164,8 @@ describe('useWater: сбой записи', () => {
     expect(await p).toBeNull()
     expect(w.todayMl.value).toBe(0)
     expect(db.store[D]).toBeUndefined()
-    expect(w.saveError.value).toContain('boom')
+    expect(w.saveError.value).toContain('Could not save') // понятный текст (BACKLOG 942)
+    expect(w.saveError.value).not.toContain('boom') // сырой текст драйвера не показываем
     // очередь не заклинило: следующее нажатие работает
     expect(await w.addMl(200, D)).toBe(200)
     expect(w.todayMl.value).toBe(200)

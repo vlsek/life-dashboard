@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
+import { friendlyError } from './friendlyError'
 import { defaultLayout, normalizeLayout, type LayoutItem } from './layout'
 
 // Отдельный composable (как useReminders/useEveningReminder): свой лёгкий запрос profiles.dashboard_layout,
@@ -20,7 +21,7 @@ export function useLayout() {
     saveError.value = ''
     const { error } = await sb.from('profiles').upsert({ user_id: userId, dashboard_layout: next })
     if (error) {
-      saveError.value = error.message
+      saveError.value = friendlyError(error, 'save')
       return false
     }
     layout.value = next

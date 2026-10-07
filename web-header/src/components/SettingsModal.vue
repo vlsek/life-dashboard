@@ -119,7 +119,7 @@ async function changeLayout(next: LayoutItem[]) {
       <p class="gh-dim" style="margin: 0 0 4px; font-size: 12px">{{ t('dash_layout_hint') }}</p>
       <BlockOrderList v-if="loaded" :model-value="local" :labels="blockLabels" data-test="layout-list" @update:model-value="changeLayout" />
       <p v-if="layoutSaved" style="color: var(--accent, #6c8cff); margin: 0" data-test="layout-saved">✓ {{ t('hdr_settings_layout_saved') }}</p>
-      <p v-if="saveError" style="color: #d6336c; margin: 0" data-test="layout-error">{{ t('dash_layout_save_error') }}{{ saveError }}</p>
+      <p v-if="saveError" style="color: #d6336c; margin: 0" data-test="layout-error">{{ saveError }}</p>
 
       <h4 style="margin-top: 16px"><EmojiText :text="'💧 ' + t('hdr_settings_water')" /></h4>
       <button type="button" class="gh-btn" data-test="open-water" @click="emit('open-water')">{{ t('hdr_settings_water_btn') }}</button>

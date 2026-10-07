@@ -1,12 +1,11 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
-import { describeError } from './auth'
+import { authErrorText } from './authError'
 import { postAuthTarget, ROUTES } from './routes'
 import { t } from './i18n'
 
 export type Mode = 'login' | 'register'
 
-const labels = () => ({ unknownError: t('login_unknown_error'), errorCode: t('login_error_code'), unknownErrorConsole: t('login_unknown_error_console') })
 
 // Порт логики login.js: вход по паролю, регистрация, вход через Google, и общий
 // redirectAfterAuth() — онбординг пройден → дашборд, иначе → онбординг.
@@ -50,21 +49,21 @@ export function useLogin() {
       if (mode.value === 'login') {
         const { error } = await sb.auth.signInWithPassword({ email: e, password: p })
         if (error) {
-          msg.value = t('login_error_prefix') + describeError(error, labels())
+          msg.value = t('login_error_prefix') + authErrorText(error)
           return
         }
         await redirectAfterAuth()
       } else {
         const { data, error } = await sb.auth.signUp({ email: e, password: p })
         if (error) {
-          msg.value = t('login_error_prefix') + describeError(error, labels())
+          msg.value = t('login_error_prefix') + authErrorText(error)
           return
         }
         if (data.session) window.location.href = ROUTES.onboarding
         else msg.value = t('login_signup_check_email')
       }
     } catch (err) {
-      msg.value = t('login_network_error_prefix') + describeError(err, labels())
+      msg.value = authErrorText(err)
     } finally {
       busy.value = false
     }
@@ -75,7 +74,7 @@ export function useLogin() {
     // ВАЖНО: этот адрес должен быть в списке разрешённых Redirect URLs проекта Supabase
     // (Authentication → URL Configuration), иначе Supabase вернёт на Site URL.
     const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + ROUTES.oauthReturn } })
-    if (error) msg.value = t('login_error_prefix') + describeError(error, labels())
+    if (error) msg.value = t('login_error_prefix') + authErrorText(error)
     // при успехе браузер сразу уходит на Google; возврат обработает checkExistingSession()
   }
 
