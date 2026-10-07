@@ -16,7 +16,7 @@ export interface MetricFormValues {
   goalDirection: GoalDirection
   goalValue: number
   unit: string
-  optionsRaw: string
+  options: OptionDraft[] // варианты «Выбора» / особенности «Подходов» списком (раньше — строка `ключ:Метка, ключ:Метка`)
   categoryId: string // '' — без категории, '__new__' — создать новую
   newCategory: string // название новой категории (только при categoryId = '__new__'; раньше спрашивалось системным prompt(), BACKLOG 573)
   inputMode: 'set' | 'add'
@@ -32,20 +32,41 @@ export interface MetricFormValues {
 
 export const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0] as const
 
-export function parseOptionsRaw(raw: string | null | undefined): MetricOption[] {
-  if (!raw?.trim()) return []
-  return raw
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean)
-    .map((pair) => {
-      const [key, ...rest] = pair.split(':')
-      return { key: key.trim(), label: rest.join(':').trim() || key.trim() }
-    })
+// Вариант в форме. `id` — только для v-for и перетаскивания (в базу не уходит); `key` — ключ, под которым значение хранится в данных: у сохранённого
+// варианта он НЕ меняется при правке подписи (иначе перестали бы совпадать записанные значения), у нового пуст и назначается при сохранении.
+export interface OptionDraft {
+  id: number
+  key: string
+  label: string
 }
 
-export function optionsToRaw(options: MetricOption[] | null | undefined): string {
-  return (options || []).map((o) => `${o.key}:${o.label}`).join(', ')
+let draftSeq = 0
+export function newOptionDraft(label = '', key = ''): OptionDraft {
+  return { id: ++draftSeq, key, label }
+}
+
+export function draftsFromOptions(options: MetricOption[] | null | undefined): OptionDraft[] {
+  return (options || []).map((o) => newOptionDraft(o.label || o.key, o.key))
+}
+
+// Ключ нового варианта — сама подпись (так же, как у «Подходов»: rememberVariationOptions кладёт { key: текст, label: текст }); при совпадении с уже занятым
+// ключом добавляется « 2», « 3»…
+export function uniqueOptionKey(label: string, taken: ReadonlySet<string>): string {
+  if (!taken.has(label)) return label
+  let n = 2
+  while (taken.has(`${label} ${n}`)) n++
+  return `${label} ${n}`
+}
+
+// Список для базы: пустые подписи отбрасываются, подпись чистится от лишних пробелов, у новых вариантов появляется ключ; порядок как в списке.
+export function optionsFromDrafts(drafts: OptionDraft[] | null | undefined): MetricOption[] {
+  const list = (drafts || []).map((d) => ({ key: d.key, label: d.label.trim().replace(/\s+/g, ' ') })).filter((d) => d.label)
+  const taken = new Set(list.map((d) => d.key).filter(Boolean)) // ключи сохранённых вариантов заняты в первую очередь
+  return list.map((d) => {
+    const key = d.key || uniqueOptionKey(d.label, taken)
+    taken.add(key)
+    return { key, label: d.label }
+  })
 }
 
 // Расписание из значений формы. «days» с 0 или 7 выбранными днями = «каждый день» (null).
@@ -91,7 +112,7 @@ export function fieldsEnabledForType(type: MetricType) {
 
 // При смене типа на boolean цель/единица/варианты очищаются (как в оригинале).
 export function clearedForBoolean(f: MetricFormValues): MetricFormValues {
-  return { ...f, goalValue: 0, unit: '', optionsRaw: '' }
+  return { ...f, goalValue: 0, unit: '', options: [] }
 }
 
 // «Просто записывать значение» (BACKLOG 14, 11:15): числовая метрика без цели, расписания и серии — вес, замеры.
@@ -134,7 +155,7 @@ export function emptyForm(): MetricFormValues {
     goalDirection: 'at_least',
     goalValue: 0,
     unit: '',
-    optionsRaw: '',
+    options: [],
     categoryId: '',
     newCategory: '',
     inputMode: 'set',
@@ -158,7 +179,7 @@ export function formFromMetric(m: Metric): MetricFormValues {
     goalDirection: m.goal_direction ?? 'at_least',
     goalValue: m.goal_value ?? 0,
     unit: m.unit ?? '',
-    optionsRaw: optionsToRaw(m.options),
+    options: draftsFromOptions(m.options),
     categoryId: m.category_id ?? '',
     newCategory: '',
     inputMode: m.input_mode ?? 'set',
@@ -246,7 +267,7 @@ function commonFields(f: MetricFormValues, categoryId: string | null) {
     goal_direction: f.goalDirection,
     goal_value: Number.isFinite(f.goalValue) ? f.goalValue : 0,
     unit: f.unit,
-    options: parseOptionsRaw(f.optionsRaw),
+    options: optionsFromDrafts(f.options),
     category_id: categoryId,
     input_mode: f.inputMode,
   }
