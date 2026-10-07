@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.53";
+const SITE_VERSION = "3.54";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.54", date: "2026-10-07 04:32", changes: [
+        "Бонусные монетки за достижения (подготовка): баланс в Профиле, Магазине и Кастомизации теперь умеет учитывать монетки-награды — они прибавляются к балансу и покрывают покупки, но не входят в «накоплено баллов» и в таблицу лидеров. В журнале баллов награда показывается отдельной строкой «Награда за достижение». Сами награды начнут выдаваться за значки в следующих версиях; пока ничего не меняется. Для работы нужна миграция 051",
+    ]},
     { version: "3.53", date: "2026-10-07 00:43", changes: [
         "Кастомизация: новый товар «Аккордеон» (150 баллов) — вид сворачивания блоков. Раскрываете один блок на Дашборде — остальные сворачиваются сами. Базовый шеврон остаётся бесплатным у всех, вернуть его можно кнопкой «Выбрано · снять». В «Кастомизации» появился раздел «Вид сворачивания блоков» с картинкой-превью. Пока работает на Дашборде, Workouts — следующим обновлением",
     ]},
@@ -1667,6 +1670,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.54", date: "2026-10-07 04:32", changes: [
+        "Bonus coins for achievements (groundwork): the balance in Profile, Shop and Customization can now include coin rewards — they are added to the balance and cover purchases, but are not part of \"points earned\" or the leaderboard. The points log shows a reward as a separate \"Achievement reward\" row. The rewards themselves will start being granted for badges in following versions; nothing changes yet. Migration 051 is required",
+    ]},
     { version: "3.53", date: "2026-10-07 00:43", changes: [
         "Customization: new “Accordion” item (150 points) — a block collapse style. Open one block on the Dashboard and the others fold up on their own. The basic chevron stays free for everyone; you can go back to it with “Selected · unselect”. Customization now has a “Block collapse style” section with a preview picture. It works on the Dashboard for now, Workouts comes in the next update",
     ]},

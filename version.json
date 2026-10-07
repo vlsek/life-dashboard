@@ -1,6 +1,13 @@
 {
-  "version": "3.53",
+  "version": "3.54",
   "en": [
+    {
+      "version": "3.54",
+      "date": "2026-10-07 04:32",
+      "changes": [
+        "Bonus coins for achievements (groundwork): the balance in Profile, Shop and Customization can now include coin rewards — they are added to the balance and cover purchases, but are not part of \"points earned\" or the leaderboard. The points log shows a reward as a separate \"Achievement reward\" row. The rewards themselves will start being granted for badges in following versions; nothing changes yet. Migration 051 is required"
+      ]
+    },
     {
       "version": "3.53",
       "date": "2026-10-07 00:43",
@@ -2536,6 +2543,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.54",
+      "date": "2026-10-07 04:32",
+      "changes": [
+        "Бонусные монетки за достижения (подготовка): баланс в Профиле, Магазине и Кастомизации теперь умеет учитывать монетки-награды — они прибавляются к балансу и покрывают покупки, но не входят в «накоплено баллов» и в таблицу лидеров. В журнале баллов награда показывается отдельной строкой «Награда за достижение». Сами награды начнут выдаваться за значки в следующих версиях; пока ничего не меняется. Для работы нужна миграция 051"
+      ]
+    },
     {
       "version": "3.53",
       "date": "2026-10-07 00:43",
