@@ -7,9 +7,12 @@ import { sb } from './supabase'
 export const FAVORITES_KEY = 'favorite_pages'
 export const FAVORITES_EVENT = 'favorites:changed'
 
-// путь страницы → ключ в AppShell.pages. Дашборд (главная) и служебные страницы (Аккаунт, вход, онбординг, админка) в избранное
-// не добавляются; порядок ключей — порядок страниц в боковом меню.
+// путь страницы → ключ в AppShell.pages. В избранное можно добавить ЛЮБУЮ страницу из бокового меню, включая главную (Дашборд),
+// «Достижения» и «Кастомизацию» (раньше их тут не было, и на этих страницах сердечка в шапке не было — BACKLOG 44.15). «История»
+// убрана из меню (44.14, её заменил «Календарь»), служебные страницы (Аккаунт, вход, онбординг, админка) в меню нет и в избранное
+// не добавляются. Порядок ключей — порядок страниц в боковом меню.
 const PAGE_KEYS: Record<string, string> = {
+  dashboard: 'dashboard',
   goals: 'goals',
   skills: 'skills',
   workouts: 'workouts',
@@ -18,8 +21,9 @@ const PAGE_KEYS: Record<string, string> = {
   calendar: 'calendar',
   milestones: 'milestones',
   shop: 'shop',
+  achievements: 'achievements',
+  customization: 'customization',
   community: 'community',
-  history: 'history',
 }
 export const FAVORITABLE_KEYS = Object.values(PAGE_KEYS)
 

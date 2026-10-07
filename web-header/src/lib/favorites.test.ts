@@ -13,7 +13,7 @@ vi.mock('./supabase', () => ({
   },
 }))
 
-import { FAVORITES_EVENT, normalizeFavorites, pageKeyFor, readFavorites, saveFavoritesToProfile, syncFavoritesFromProfile, toggleFavorite, writeFavorites } from './favorites'
+import { FAVORITABLE_KEYS, FAVORITES_EVENT, normalizeFavorites, pageKeyFor, readFavorites, saveFavoritesToProfile, syncFavoritesFromProfile, toggleFavorite, writeFavorites } from './favorites'
 
 beforeEach(() => {
   localStorage.clear()
@@ -31,8 +31,16 @@ describe('pageKeyFor', () => {
     expect(pageKeyFor('/languages/')).toBe('english')
     expect(pageKeyFor('/shop/')).toBe('shop')
   })
-  it('Дашборд, Аккаунт, служебные и неизвестные страницы — без сердечка', () => {
-    for (const p of ['/dashboard/', '/account/', '/login/', '/onboarding/', '/admin.html', '/legacy/goals.html', '/', '/nope/']) expect(pageKeyFor(p)).toBeNull()
+  it('главная, «Достижения» и «Кастомизация» — тоже со своим сердечком (BACKLOG 44.15)', () => {
+    expect(pageKeyFor('/dashboard/')).toBe('dashboard')
+    expect(pageKeyFor('/achievements/')).toBe('achievements')
+    expect(pageKeyFor('/customization/')).toBe('customization')
+  })
+  it('Аккаунт, служебные, «История» (убрана из меню, 44.14), legacy и неизвестные страницы — без сердечка', () => {
+    for (const p of ['/account/', '/login/', '/onboarding/', '/admin.html', '/history/', '/legacy/goals.html', '/', '/nope/']) expect(pageKeyFor(p)).toBeNull()
+  })
+  it('ключи избранного = страницы бокового меню в порядке меню', () => {
+    expect(FAVORITABLE_KEYS).toEqual(['dashboard', 'goals', 'skills', 'workouts', 'challenges', 'english', 'calendar', 'milestones', 'shop', 'achievements', 'customization', 'community'])
   })
 })
 
@@ -47,7 +55,9 @@ describe('нормализация и переключение', () => {
     expect(toggleFavorite(src, 'shop')).toEqual(['goals', 'shop'])
     expect(toggleFavorite(src, 'goals')).toEqual([])
     expect(src).toEqual(['goals'])
-    expect(toggleFavorite([], 'dashboard')).toEqual([]) // не избираемая страница отсекается
+    expect(toggleFavorite([], 'dashboard')).toEqual(['dashboard']) // главная теперь избираемая (44.15)
+    expect(toggleFavorite([], 'account')).toEqual([]) // не избираемая страница отсекается
+    expect(toggleFavorite([], 'history')).toEqual([]) // «История» убрана из меню (44.14)
   })
 })
 
@@ -69,9 +79,9 @@ describe('localStorage и событие', () => {
 describe('синхронизация с профилем (миграция 035)', () => {
   it('в профиле есть список → он главнее: пишется в localStorage', async () => {
     localStorage.setItem('favorite_pages', '["goals"]')
-    db.row = { favorite_pages: ['shop', 'history'] }
-    expect(await syncFavoritesFromProfile('u1')).toEqual(['shop', 'history'])
-    expect(readFavorites()).toEqual(['shop', 'history'])
+    db.row = { favorite_pages: ['shop', 'community'] }
+    expect(await syncFavoritesFromProfile('u1')).toEqual(['shop', 'community'])
+    expect(readFavorites()).toEqual(['shop', 'community'])
     expect(db.upserts).toEqual([])
   })
   it('в профиле пусто (null), а на устройстве уже выбрано — локальный список уезжает в профиль', async () => {
