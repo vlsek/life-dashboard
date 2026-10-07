@@ -9,6 +9,7 @@ import { loadPeriodState, savePeriodState, type PeriodState } from '../lib/chart
 import { t } from '../lib/i18n'
 import type { CategoryMode, CategoryRange, Scope } from '../lib/types'
 import EmojiText from './EmojiText.vue'
+import { friendlyError } from '../lib/friendlyError'
 
 const props = defineProps<{ userId: string; scope: Scope; friendIds: Set<string> }>()
 
@@ -67,7 +68,7 @@ async function onLink() {
     linkMsg.value = { text: t('comm_link_success_toast'), error: false }
     await refresh()
   } catch (err) {
-    linkMsg.value = { text: t('comm_link_error') + (err instanceof Error ? err.message : String(err)), error: true }
+    linkMsg.value = { text: t('comm_link_error') + friendlyError(err, 'save'), error: true }
   }
 }
 

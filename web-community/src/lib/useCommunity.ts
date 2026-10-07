@@ -8,6 +8,7 @@ import { badgesByUser } from './badges'
 import { normalizeFeedPick } from './achievementFeed'
 import { frameShadow } from './customFrame'
 import type { BadgeRow, FeedRow, FollowedProfile, FriendRequestRow, LeaderboardRow, TodayActivityRow, PublicProfile } from './types'
+import { friendlyError } from './friendlyError'
 
 export type AuthState =
   | { status: 'loading' }
@@ -119,7 +120,7 @@ export function useCommunity() {
     }
     const { data, error } = await sb.rpc('get_leaderboard')
     if (error) {
-      leaderboardError.value = error.message
+      leaderboardError.value = friendlyError(error, 'load')
       return
     }
     leaderboardError.value = null
@@ -169,7 +170,7 @@ export function useCommunity() {
   async function loadToday() {
     const { data, error } = await sb.rpc('get_today_activity')
     if (error) {
-      todayError.value = error.message
+      todayError.value = friendlyError(error, 'load')
       return
     }
     todayError.value = null
@@ -209,7 +210,7 @@ export function useCommunity() {
     const { data: foundId, error } = isEmail ? await sb.rpc('find_user_by_email', { lookup_email: query }) : await sb.rpc('find_user_by_name', { lookup_name: query })
     // Ошибка самого запроса (нет функции в БД, права, сеть) — НЕ «пользователь не найден»: иначе
     // причина, почему кнопки «не работают», остаётся невидимой. «Не найден» — только чистый пустой ответ.
-    if (error) return { ok: false, reason: 'error', message: error.message }
+    if (error) return { ok: false, reason: 'error', message: friendlyError(error, 'load') }
     if (!foundId) return { ok: false, reason: 'not_found' }
     if (foundId === userId) return { ok: false, reason: 'thats_you' }
     return { ok: true, id: foundId as string }
@@ -219,7 +220,7 @@ export function useCommunity() {
     const found = await lookupUser(userId, query)
     if (!found.ok) return found
     const { error: insErr } = await sb.from('follows').insert({ follower_id: userId, followed_id: found.id })
-    if (insErr) return { ok: false, reason: 'error', message: insErr.message }
+    if (insErr) return { ok: false, reason: 'error', message: friendlyError(insErr, 'save') }
     await reload()
     return { ok: true }
   }
@@ -233,7 +234,7 @@ export function useCommunity() {
     if (!found.ok) return found
     if (acceptedIds.value.has(found.id)) return { ok: true, outcome: 'already' }
     const { data, error } = await sb.rpc('send_friend_request', { target: found.id })
-    if (error) return { ok: false, reason: 'error', message: error.message }
+    if (error) return { ok: false, reason: 'error', message: friendlyError(error, 'save') }
     await reload()
     return { ok: true, outcome: requestOutcome(data as { status?: string } | null) }
   }

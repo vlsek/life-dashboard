@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { sb } from './supabase'
 import { withWaterGoal } from './waterGoal'
 import type { CategoryLeaderboardRow, CategoryRange, DailyValueRaw, MetricCategory, NumberMetric } from './types'
+import { friendlyError } from './friendlyError'
 
 export type OwnState =
   | { status: 'idle' }
@@ -29,7 +30,7 @@ export function useCategories() {
     const { data, error: err } = await sb.rpc('get_category_leaderboard', { cat_key: catKey, range_key: range })
     rowsLoading.value = false
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err, 'load')
       rows.value = []
       return
     }

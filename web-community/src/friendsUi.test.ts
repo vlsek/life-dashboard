@@ -155,14 +155,17 @@ describe('Community: friends UI', () => {
     w.unmount()
   })
 
-  it('a failing lookup RPC shows the real error (not \"not found\") and does not lock the buttons', async () => {
+  it('a failing lookup RPC shows a clear error (not \"not found\") and does not lock the buttons', async () => {
     h.lookupError = true
     const w = await mountApp()
     await w.find('input[type=\"text\"]').setValue('ann')
     const add = () => (buttonWith(w, 'В друзья') ?? buttonWith(w, 'Add friend'))!
     await add().trigger('click')
     await flushPromises()
-    expect(w.text()).toContain('permission denied for function find_user_by_name')
+    // BACKLOG 942: причина видна, но понятным текстом — без имени функции БД и текста драйвера
+    expect(w.text()).toMatch(/Нет доступа\. Войди заново и повтори\.|No access\. Sign in again and retry\./)
+    expect(w.text()).not.toContain('find_user_by_name')
+    expect(w.text()).not.toContain('permission denied')
     expect(w.text()).not.toMatch(/не найден|No user found/)
     expect(add().attributes('disabled')).toBeUndefined()
     w.unmount()

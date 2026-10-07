@@ -22,6 +22,7 @@ import BadgeStrip from './components/BadgeStrip.vue'
 import ProfileHeader from './components/ProfileHeader.vue'
 import { enrichFromLeaderboard, friendStats } from './lib/friendCards'
 import { PERIODS, formatPoints, myPlace, podiumSlots, restRows, type Period } from './lib/leaderboardView'
+import { friendlyError } from './lib/friendlyError'
 
 const {
   auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
@@ -62,7 +63,7 @@ async function onUnfollow(followedId: string) {
   try {
     await unfollow(auth.value.userId, followedId)
   } catch (err) {
-    followMsg.value = { text: t('dash_delete_error_generic') + (err instanceof Error ? err.message : String(err)), error: true }
+    followMsg.value = { text: friendlyError(err, 'delete'), error: true }
   }
 }
 
@@ -80,7 +81,7 @@ async function onFollow() {
   try {
     res = await follow(auth.value.userId, query)
   } catch (err) {
-    res = { ok: false, reason: 'error', message: err instanceof Error ? err.message : String(err) }
+    res = { ok: false, reason: 'error', message: friendlyError(err, 'save') }
   } finally {
     followBusy.value = false
   }
@@ -110,7 +111,7 @@ async function onAddFriend() {
   try {
     res = await sendFriendRequest(auth.value.userId, query)
   } catch (err) {
-    res = { ok: false, reason: 'error', message: err instanceof Error ? err.message : String(err) }
+    res = { ok: false, reason: 'error', message: friendlyError(err, 'save') }
   } finally {
     followBusy.value = false
   }
@@ -133,7 +134,7 @@ async function onRespond(requestId: string, accept: boolean) {
     await respondToRequest(requestId, accept)
     if (accept) followMsg.value = { text: t('comm_friend_now_friends_toast'), error: false }
   } catch (err) {
-    followMsg.value = { text: t('comm_friend_action_error') + (err instanceof Error ? err.message : String(err)), error: true }
+    followMsg.value = { text: t('comm_friend_action_error') + friendlyError(err, 'save'), error: true }
   }
 }
 
@@ -142,7 +143,7 @@ async function onRemoveFriend(otherUserId: string) {
   try {
     await removeFriend(otherUserId)
   } catch (err) {
-    followMsg.value = { text: t('comm_friend_action_error') + (err instanceof Error ? err.message : String(err)), error: true }
+    followMsg.value = { text: t('comm_friend_action_error') + friendlyError(err, 'save'), error: true }
   }
 }
 
@@ -157,14 +158,14 @@ async function onSaveProfile(name: string, visible: boolean, feedPick?: string[]
   try {
     await saveProfile(auth.value.userId, normalizeDisplayName(name), visible)
   } catch (err) {
-    followMsg.value = { text: t('dash_save_error_generic') + (err instanceof Error ? err.message : String(err)), error: true }
+    followMsg.value = { text: friendlyError(err, 'save'), error: true }
   }
   // выбор для ленты — отдельной записью и только если изменился (без миграции 052 имя и видимость сохраняются как раньше)
   if (feedPick && feedPickApi.value && feedPick.join('|') !== myFeedPick.value.join('|')) {
     try {
       await saveFeedPick(auth.value.userId, feedPick)
     } catch (err) {
-      followMsg.value = { text: t('comm_feed_pick_error') + (err instanceof Error ? err.message : String(err)), error: true }
+      followMsg.value = { text: t('comm_feed_pick_error') + friendlyError(err, 'save'), error: true }
     }
   }
   showProfileModal.value = false
