@@ -11,6 +11,9 @@ import { ref } from 'vue'
 import { localDateOfTimestamp } from './lib/date'
 import type { Challenge, ChallengeTemplate, CustomChallengeFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
+import ChallengeDoneModal from './components/ChallengeDoneModal.vue'
+import { doneSummary, type DoneSummary } from './lib/challengeDone'
+import { todayStr } from './lib/date'
 import { confirmDialog } from './lib/confirmDialog'
 
 const {
@@ -71,6 +74,18 @@ async function onSaveEdit(res: CustomChallengeFormInput) {
   }
 }
 
+// Завершение челленджа: после подтверждённой записи — поздравляющее окно (BACKLOG 642); при ошибке — сообщение, окна нет.
+const celebrate = ref<{ ch: Challenge; summary: DoneSummary; doneCount: number } | null>(null)
+async function onMarkCompleted(ch: Challenge) {
+  const summary = doneSummary(ch, entriesFor(ch), todayStr())
+  try {
+    const doneCount = await markCompleted(ch)
+    celebrate.value = { ch, summary, doneCount }
+  } catch {
+    await confirmDialog(t('ch_complete_error'), { infoOnly: true })
+  }
+}
+
 async function onAbandon(ch: Challenge) {
   if (!(await confirmDialog(t('ch_confirm_abandon'), { okLabel: t('ch_abandon_ok') }))) return
   await abandonChallenge(ch)
@@ -110,7 +125,7 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
             :entries="entriesFor(ch)"
             @abandon="onAbandon"
             @edit="editing = $event"
-            @mark-completed="markCompleted"
+            @mark-completed="onMarkCompleted"
             @add-entry="addCumulativeEntry"
             @delete-entry="onDeleteEntry"
           />
@@ -121,7 +136,7 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
             :source-name="ch.source_exercise_id ? sourceExerciseName(ch) : sourceMetricName(ch)"
             @abandon="onAbandon"
             @edit="editing = $event"
-            @mark-completed="markCompleted"
+            @mark-completed="onMarkCompleted"
             @set-day="onSetDay"
           />
         </template>
@@ -135,6 +150,7 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
       </template>
     </template>
 
+    <ChallengeDoneModal v-if="celebrate" :challenge="celebrate.ch" :summary="celebrate.summary" :done-count="celebrate.doneCount" @close="celebrate = null" />
     <CatalogModal v-if="catalogOpen" @close="catalogOpen = false" @select="onSelectTemplate" />
     <CustomChallengeForm v-if="customFormOpen" :metrics="metrics" :exercises="exercises" @close="customFormOpen = false" @save="onSaveCustom" />
     <CustomChallengeForm v-if="editing" :key="editing.id" :challenge="editing" :metrics="metrics" :exercises="exercises" @close="editing = null" @save="onSaveEdit" />

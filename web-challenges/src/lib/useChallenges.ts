@@ -224,10 +224,12 @@ export function useChallenges() {
     await reload()
   }
 
-  async function markCompleted(ch: Challenge) {
+  // Возвращает, сколько челленджей завершено теперь (для поздравления: номер по счёту и шаг лесенки достижений, BACKLOG 642).
+  async function markCompleted(ch: Challenge): Promise<number> {
     const { error: err } = await sb.from('challenge_instances').update({ completed: true, completed_at: new Date().toISOString() }).eq('id', ch.id)
     if (err) throw err
     await reload()
+    return instances.value.filter((c) => c.completed).length
   }
 
   // Правка полей существующего челленджа (тип и дата старта не меняются — см. buildUpdateFromForm).
