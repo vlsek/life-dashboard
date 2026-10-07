@@ -9,6 +9,7 @@ import { estimateExerciseCalories } from '../lib/calories'
 import Icon from './Icon.vue'
 import ExerciseChart from './ExerciseChart.vue'
 import { readExerciseCollapsed, writeExerciseCollapsed } from '../lib/exerciseCollapse'
+import { useAccordionMember } from '../lib/useCollapseStyle'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 import CollapseChevron from './CollapseChevron.vue'
 import { vCollapse } from '../lib/collapseMotion'
@@ -58,9 +59,20 @@ const records = computed<RecordLine[]>(() => {
 
 // Свёрнутое упражнение показывает только заголовок с кнопками; состояние помним по id.
 const collapsed = ref(readExerciseCollapsed(props.exercise.id))
+// «Аккордеон» (BACKLOG 498): раскрыли другое упражнение ТОЙ ЖЕ категории — это сворачивается (категория при этом остаётся раскрытой: у упражнений своя группа).
+const announceOpened = useAccordionMember(
+  'ex:' + props.exercise.id,
+  () => collapsed.value,
+  () => {
+    collapsed.value = true
+    writeExerciseCollapsed(props.exercise.id, true)
+  },
+  'ex:' + (props.exercise.category?.trim() || ''),
+)
 function toggleCollapsed() {
   collapsed.value = !collapsed.value
   writeExerciseCollapsed(props.exercise.id, collapsed.value)
+  if (!collapsed.value) announceOpened()
 }
 
 // «+ подход» / «− подход» прямо в таблице (BACKLOG 590): только у сегодняшней записи, у которой уже есть первый подход

@@ -5,6 +5,7 @@ import { todayStr } from '../lib/date'
 import { chainDoneCount, chainState, PROGRESSIONS, type StepState, type StepStatus } from '../lib/progressions'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 import CollapseChevron from './CollapseChevron.vue'
+import { useAccordionMember } from '../lib/useCollapseStyle'
 
 // Деревья прогрессии (BACKLOG 3.3, первый срез): цепочки ступеней от лёгкого к сложному.
 // Ступень пройдена, когда в одном подходе набрана её цель (повторения). Данные — только из
@@ -21,6 +22,19 @@ function readOpen(): boolean {
   }
 }
 const open = ref(readOpen())
+// «Аккордеон» (BACKLOG 498): раскрыли другой блок страницы (категорию, карту мышц, деревья) — этот сворачивается
+const announceOpened = useAccordionMember(
+  'block:progressions',
+  () => !open.value,
+  () => {
+    open.value = false
+    try {
+      localStorage.setItem(OPEN_KEY, '0')
+    } catch {
+      /* состояние блока не критично */
+    }
+  },
+)
 function toggle() {
   open.value = !open.value
   try {
@@ -28,6 +42,7 @@ function toggle() {
   } catch {
     /* состояние блока не критично */
   }
+  if (open.value) announceOpened()
 }
 
 const lang = getLang()

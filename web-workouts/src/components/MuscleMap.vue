@@ -20,6 +20,7 @@ import {
 } from '../lib/muscleStats'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 import CollapseChevron from './CollapseChevron.vue'
+import { useAccordionMember } from '../lib/useCollapseStyle'
 
 // Карта мышц (BACKLOG 3.2, первый срез): зелёные — мышцы, задействованные за последние 4 дня,
 // серые — нет. Клик по мышце — её упражнения (свои с кнопкой «Добавить запись» + подсказки из справочника).
@@ -35,6 +36,19 @@ function readOpen(): boolean {
   }
 }
 const open = ref(readOpen())
+// «Аккордеон» (BACKLOG 498): раскрыли другой блок страницы (категорию, карту мышц, деревья) — этот сворачивается
+const announceOpened = useAccordionMember(
+  'block:muscle_map',
+  () => !open.value,
+  () => {
+    open.value = false
+    try {
+      localStorage.setItem(OPEN_KEY, '0')
+    } catch {
+      /* состояние блока не критично */
+    }
+  },
+)
 function toggle() {
   open.value = !open.value
   try {
@@ -42,6 +56,7 @@ function toggle() {
   } catch {
     /* состояние блока не критично */
   }
+  if (open.value) announceOpened()
 }
 
 const today = computed(() => props.today ?? todayStr())

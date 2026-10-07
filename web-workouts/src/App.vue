@@ -24,6 +24,7 @@ import { workoutTemplates } from './lib/templates'
 import Toast from './components/Toast.vue'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry, WorkoutTemplate } from './lib/types'
 import CollapseChevron from './components/CollapseChevron.vue'
+import { loadCollapseStyle, useAccordionGroup, ACCORDION_PAGE } from './lib/useCollapseStyle'
 import { vCollapse } from './lib/collapseMotion'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
@@ -81,6 +82,19 @@ function isCollapsed(key: string): boolean {
   }
   return collapsed.value[key]
 }
+// «Аккордеон» (BACKLOG 498): раскрыли категорию — остальные категории сворачиваются (карту мышц и деревья сворачивают они сами, это ту же группу «страница»).
+// Ключи событий категорий — с префиксом `cat:`, чтобы не пересекаться с блоками страницы.
+const announceOpened = useAccordionGroup(ACCORDION_PAGE, (openedKey) => {
+  for (const k of Object.keys(collapsed.value)) {
+    if ('cat:' + k === openedKey || collapsed.value[k]) continue
+    collapsed.value[k] = true
+    try {
+      localStorage.setItem(lsKey(k), '1')
+    } catch {
+      /* ignore */
+    }
+  }
+})
 function toggleCollapsed(key: string) {
   const next = !isCollapsed(key)
   collapsed.value[key] = next
@@ -89,6 +103,7 @@ function toggleCollapsed(key: string) {
   } catch {
     /* ignore */
   }
+  if (!next) announceOpened('cat:' + key)
 }
 
 // ---- напоминание о разминке ----
@@ -222,6 +237,7 @@ watch(
   () => auth.value.status,
   async (status) => {
     if (status !== 'ready' || auth.value.status !== 'ready') return
+    void loadCollapseStyle(auth.value.userId) // вид сворачивания блоков из «Кастомизации» (BACKLOG 498); до ответа — кэш
     try {
       activeProgram.value = await syncProgramFromProfile(auth.value.userId)
     } catch (e) {
