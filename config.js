@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.72";
+const SITE_VERSION = "3.73";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.73", date: "2026-10-07 13:57", changes: [
+        "Рамки-награды: появились десять новых рамок аватарки, которые выдаются за достижения. За третью ступень каждой лесенки: «Чернильная» (слова), «Нейрон» (выученное), «Мишень» (цели), «Шестерёнка» (навыки), «Закладка» (книги), «Сталь» (тренировки), «Кубок» (челленджи), «Маяк» (вехи). За финал челленджей и вех, «Неудержимый» и «Всё по плану», две редкие анимированные рамки: «Победная» и «Курс». Рамка откроется сама, когда вы зайдёте в «Кастомизацию» после получения достижения; в «Достижениях» награда теперь без пометки «скоро». Новые рамки видны и в боковом меню, и в Сообществе, и вокруг кольца прогресса дня на Дашборде. В группах редкости они стоят среди редких и эпических",
+    ]},
     { version: "3.72", date: "2026-10-07 13:37", changes: [
         "Магазин: (1) подсказка о том, как устроен магазин, переименована в «Лавку наград», а её текст переписан под настоящую механику: баллы за привычки, тренировки, цели и серии, бонусные монетки за достижения; темы и рамки аватарки продаются отдельно, в «Кастомизации». (2) В списке «Мои покупки» больше не показываются предметы, купленные в «Кастомизации» (например, рамка «Аврора»): в магазине только магазинные покупки. Баланс по-прежнему учитывает все покупки, поэтому баллы не меняются. Миграция не нужна",
     ]},
@@ -1725,6 +1728,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.73", date: "2026-10-07 13:57", changes: [
+        "Reward frames: ten new avatar frames are awarded for achievements. For the third step of each ladder: Ink (words), Neuron (learned), Target (goals), Gear (skills), Bookmark (books), Steel (workouts), Cup (challenges), Beacon (milestones). For the final step of challenges and milestones, “Unstoppable” and “On schedule”, two rare animated frames: Victory and Course. A frame unlocks by itself when you open Customization after earning the achievement; in Achievements the reward no longer says “coming soon”. The new frames also show in the side menu, in the Community and around the day-progress ring on the Dashboard. In the rarity groups they sit among the rare and epic ones",
+    ]},
     { version: "3.72", date: "2026-10-07 13:37", changes: [
         "Shop: (1) the hint about how the shop works is renamed to \"The Rewards Stall\" and its text is rewritten to match the real mechanics: points for habits, workouts, goals and streaks, bonus coins for achievements; themes and avatar frames are sold separately, in Customization. (2) The \"My purchases\" list no longer shows items bought in Customization (for example the Aurora frame): the shop shows only shop purchases. The balance still counts every purchase, so your points do not change. No migration needed",
     ]},

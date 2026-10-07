@@ -1,6 +1,13 @@
 {
-  "version": "3.72",
+  "version": "3.73",
   "en": [
+    {
+      "version": "3.73",
+      "date": "2026-10-07 13:57",
+      "changes": [
+        "Reward frames: ten new avatar frames are awarded for achievements. For the third step of each ladder: Ink (words), Neuron (learned), Target (goals), Gear (skills), Bookmark (books), Steel (workouts), Cup (challenges), Beacon (milestones). For the final step of challenges and milestones, “Unstoppable” and “On schedule”, two rare animated frames: Victory and Course. A frame unlocks by itself when you open Customization after earning the achievement; in Achievements the reward no longer says “coming soon”. The new frames also show in the side menu, in the Community and around the day-progress ring on the Dashboard. In the rarity groups they sit among the rare and epic ones"
+      ]
+    },
     {
       "version": "3.72",
       "date": "2026-10-07 13:37",
@@ -2670,6 +2677,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.73",
+      "date": "2026-10-07 13:57",
+      "changes": [
+        "Рамки-награды: появились десять новых рамок аватарки, которые выдаются за достижения. За третью ступень каждой лесенки: «Чернильная» (слова), «Нейрон» (выученное), «Мишень» (цели), «Шестерёнка» (навыки), «Закладка» (книги), «Сталь» (тренировки), «Кубок» (челленджи), «Маяк» (вехи). За финал челленджей и вех, «Неудержимый» и «Всё по плану», две редкие анимированные рамки: «Победная» и «Курс». Рамка откроется сама, когда вы зайдёте в «Кастомизацию» после получения достижения; в «Достижениях» награда теперь без пометки «скоро». Новые рамки видны и в боковом меню, и в Сообществе, и вокруг кольца прогресса дня на Дашборде. В группах редкости они стоят среди редких и эпических"
+      ]
+    },
     {
       "version": "3.72",
       "date": "2026-10-07 13:37",
