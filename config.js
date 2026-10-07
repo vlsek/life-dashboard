@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.68";
+const SITE_VERSION = "3.69";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.69", date: "2026-10-07 00:20", changes: [
+        "Тренировки ↔ метрики дня: упражнение можно связать с метрикой дня — подходы вводятся ОДИН раз, в «Тренировках», а значение метрики на Дашборде заполняется само (баллы, серии и цели считаются как обычно). В карточке упражнения появилась кнопка-ссылка «Связать с метрикой дня»: выбрать уже заведённую метрику (типа «Подходы» или «Число») или создать новую, можно отвязать. Подходы, уже введённые в метрику сегодня, переносятся в запись тренировки — ничего не теряется, прошлые дни остаются как были. В карточке упражнения видно «В метриках дня · сегодня: N из цели». На Дашборде связанная метрика — только для чтения со ссылкой «Открыть «Тренировки»». ТРЕБУЕТ миграцию 054 (без неё всё работает как раньше, кнопки связи нет)."
+    ]},
     { version: "3.68", date: "2026-10-07 12:51", changes: [
         "Метрики, форма создания и правки: оставлено только основное — название, иконка, тип, «просто записывать значение», цель и единица (для типа «Выбор» ещё и варианты). Всё остальное убрано в сворачиваемый блок «Дополнительно»: направление цели, как вводить значения, расписание, категория, серия и её импорт, план подходов в день и особенности для «Подходов». Блок по умолчанию свёрнут; рядом с названием показано, сколько настроек в нём изменено, а при правке метрики с нестандартными настройками он раскрывается сам. Подписи сокращены (убрали длинные пояснения «только для …»). Всё работает как раньше — свёрнутые настройки просто остаются по умолчанию. Миграция не нужна."
     ]},
@@ -1713,6 +1716,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.69", date: "2026-10-07 00:20", changes: [
+        "Workouts and daily metrics: an exercise can now be linked to a daily metric - sets are entered ONCE, in Workouts, and the metric value on the Dashboard fills in automatically (points, streaks and goals count as usual). The exercise card has a new link button \"Link to a daily metric\": pick an existing metric (type Sets or Number) or create a new one, and you can unlink it. Sets already entered in the metric today are moved into a workout entry - nothing is lost, past days stay as they were. The exercise card shows \"In daily metrics - today: N of goal\". On the Dashboard a linked metric is read-only with an \"Open Workouts\" link. REQUIRES migration 054 (without it everything works as before and the link button is hidden)."
+    ]},
     { version: "3.68", date: "2026-10-07 12:51", changes: [
         "Metrics, create/edit form: only the essentials stay in view - name, icon, type, \"just record a value\", goal and unit (plus the options for the Choice type). Everything else moved into a collapsible \"More options\" block: goal direction, how values are entered, schedule, category, streak and its import, planned sets per day and variations for Sets. The block is collapsed by default; next to its title you see how many settings inside are changed, and when you edit a metric with non-default settings it opens by itself. Labels are shorter (long \"only for ...\" explanations are gone). Everything works as before - collapsed settings simply keep their defaults. No migration needed."
     ]},
