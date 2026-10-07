@@ -58,7 +58,7 @@
 <!-- Каждый агент правит ТОЛЬКО свой блок. Блоки разделены пустой строкой намеренно (меньше конфликтов). -->
 
 ### Агент 1
-— свободен —
+BACKLOG 942 🐞 «понятные ошибки», срез 4: `web-header` + `web-login`. Копия `friendlyError.ts` + ключи `err_*` + тесты-стражи на отсутствие утечек (адрес/таблица/драйвер). Header: `lib/useLayout.ts`, `lib/useWater.ts`, `lib/fetchAll.ts` (+ `waterLog.ts` только если показывает текст), `lib/i18n.ts` (ключи `err_*`), тесты; login: `lib/auth.ts` (`describeError` — осторожно: сообщения входа вроде «неверный пароль» полезны пользователю, оставляю их, прячу только технический мусор), `lib/useLogin.ts`, `lib/i18n.ts`, тесты. Пересборка `header-widgets/` и `login/`, `config.js`, ROADMAP, BACKLOG. НЕ трогаю: onboarding (агент 2), community (агент 5), `header.css`, `RightPanel.vue`, `AppShell.vue`. Без миграций. С: 2026-10-07 08:54.
 
 ### Агент 2
 BACKLOG раздел 29 «Аватарка при регистрации: загрузить своё или выбрать из ~20 нарисованных животных». Срез 1: библиотека 20 SVG-животных (единый стиль: тёмные чернила + пастельный фон, белые блики; хранится как data-URI в `profiles.avatar_url`, без Storage и без SQL) и выбор в ОНБОРДИНГЕ. Срез 2 (отдельным релизом): окно «Выбрать аватарку» (животные + загрузка своего) в `ProfileSection` Дашборда вместо прямого открытия файла. ТРОГАЮ: `web-onboarding/src` (`lib/animalAvatars.ts`, `components/AvatarPicker.vue`, `App.vue`, `lib/useOnboarding.ts`, `lib/i18n.ts`, тесты), `scripts/gen_animal_avatars.py` (генератор), пересборка `onboarding/`; срез 2 — `web-dashboard/src/components/AvatarModal.vue` и одна строка в `ProfileSection.vue` (НЕ трогаю `style.css`, `SetsCard`, файлы агентов 1/3/4/6/7). БЕЗ SQL. С: 2026-10-06 13:10.
