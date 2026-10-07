@@ -12,7 +12,7 @@ import { getLang, t } from '../lib/i18n'
 // страницы с текстовой подписью — так было на пилоте раньше и расходилось с ванильным сайтом.
 const props = defineProps<{ userId: string | null }>()
 
-const { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, dayLog, loadDayLog, getMlForDate, saveGoal, resetGoalToAuto, createWaterMetric } = useWater()
+const { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, removeLogEntry, canUndo, dayLog, loadDayLog, getMlForDate, saveGoal, resetGoalToAuto, createWaterMetric } = useWater()
 
 watch(
   () => props.userId,
@@ -43,6 +43,12 @@ async function onAdd(ml: number, dateStr: string, drankAt?: number) {
 // Отмена последнего добавления и правка суммы за день (BACKLOG 12): та же «записалось»-анимация после подтверждённой записи
 async function onUndo(dateStr: string) {
   const v = await undoLast(dateStr)
+  if (v !== null) savedTick.value++
+  return v
+}
+// «Крестик» у записи журнала (BACKLOG 23:17): та же «записалось»-анимация после подтверждённой записи
+async function onRemoveEntry(dateStr: string, id: string) {
+  const v = await removeLogEntry(dateStr, id)
   if (v !== null) savedTick.value++
   return v
 }
@@ -137,6 +143,7 @@ const GLASS_OUTLINE = 'M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3
     :save-error="saveError"
     :can-undo="canUndo"
     :undo-last="onUndo"
+    :remove-entry="onRemoveEntry"
     :set-total="onSetTotal"
     :day-log="dayLog"
     :load-day-log="loadDayLog"

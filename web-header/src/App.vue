@@ -36,7 +36,7 @@ const sidebarTarget = ref<HTMLElement | null>(null)
 const ready = ref(false)
 
 const { day, week, weekDays, summaries, settings, init: initProgress, saveSettings } = useHeaderProgress()
-const { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded: waterLoaded, error: waterError, saveError, init: initWater, addMl, setTotal, undoLast, canUndo, dayLog, loadDayLog, getMlForDate, saveGoal, resetGoalToAuto } = useWater()
+const { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded: waterLoaded, error: waterError, saveError, init: initWater, addMl, setTotal, undoLast, removeLogEntry, canUndo, dayLog, loadDayLog, getMlForDate, saveGoal, resetGoalToAuto } = useWater()
 
 onMounted(async () => {
   const { data } = await sb.auth.getSession()
@@ -105,6 +105,16 @@ async function onUndo(dateStr: string) {
   const v = await undoLast(dateStr)
   if (v !== null) savedTick.value++
   return v
+}
+// «Крестик» у записи журнала (BACKLOG 23:17) и «Отменить последнее» в правой шторке (BACKLOG 08:55): та же «записалось»-анимация
+async function onRemoveEntry(dateStr: string, id: string) {
+  const v = await removeLogEntry(dateStr, id)
+  if (v !== null) savedTick.value++
+  return v
+}
+const panelCanUndoWater = computed(() => canUndo(todayStr(), todayMl.value))
+async function onPanelUndoWater() {
+  await onUndo(todayStr())
 }
 async function onSetTotal(ml: number, dateStr: string) {
   const v = await setTotal(ml, dateStr)
@@ -180,11 +190,13 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
       :day="panelDay"
       :week="panelWeek"
       :water="panelWater"
+      :can-undo-water="panelCanUndoWater"
       :saved-tick="savedTick"
       :muscles="panelMuscles"
       @open-summary="(k) => { panelOpen = false; summaryKind = k }"
       @open-water="waterOpen = true"
       @add-water="onPanelAddWater"
+      @undo-water="onPanelUndoWater"
       @open-settings="panelOpen = false; globalSettingsOpen = true"
     />
     <SettingsModal
@@ -211,6 +223,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
       :save-error="saveError"
       :can-undo="canUndo"
       :undo-last="onUndo"
+      :remove-entry="onRemoveEntry"
       :set-total="onSetTotal"
       :day-log="dayLog"
       :load-day-log="loadDayLog"

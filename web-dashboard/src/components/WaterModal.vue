@@ -26,6 +26,8 @@ const props = defineProps<{
   // «Отменить последнее добавление» и правка суммы за день (BACKLOG 12). Необязательные: без них блок не показывается.
   canUndo?: (dateStr: string, currentMl: number) => boolean
   undoLast?: (dateStr: string) => Promise<number | null>
+  // «Крестик» у записи журнала (BACKLOG 23:17): удалить именно эту запись; возвращает сумму дня после удаления или null. Необязательный.
+  removeEntry?: (dateStr: string, id: string) => Promise<number | null>
   setTotal?: (ml: number, dateStr: string) => Promise<number | null>
   // Журнал воды за дату со временем (BACKLOG 2.2): из БД (water_log) или, пока таблицы нет, записи этого устройства. Необязательные.
   dayLog?: (dateStr: string) => DayLogView
@@ -117,6 +119,14 @@ const undoAvailable = computed(() => !!props.canUndo && props.canUndo(dateStr.va
 const editing = ref(false)
 const editValue = ref('')
 const editError = ref(false)
+
+async function onRemoveRow(id: string) {
+  if (!props.removeEntry || busy.value) return
+  busy.value = true
+  const v = await props.removeEntry(dateStr.value, id)
+  if (v !== null) amountMl.value = v
+  busy.value = false
+}
 
 async function onUndo() {
   if (!props.undoLast || busy.value || !undoAvailable.value) return
@@ -287,6 +297,17 @@ function saveHeightClick() {
           <li v-for="r in logRows" :key="r.id" class="flex items-center gap-3 py-0.5" data-test="water-log-row">
             <span class="dim tabular-nums">{{ r.time }}</span>
             <span class="tabular-nums" :style="r.delta.startsWith('\u2212') ? 'color: var(--danger)' : ''">{{ r.delta }} {{ unitLabel }}</span>
+            <button
+              v-if="removeEntry"
+              type="button"
+              class="secondary ml-auto"
+              style="width: 1.75rem; height: 1.75rem; padding: 0; border-radius: 9999px; line-height: 1"
+              data-test="water-log-remove"
+              :title="t('dash_water_log_remove')"
+              :aria-label="t('dash_water_log_remove')"
+              :disabled="busy"
+              @click="onRemoveRow(r.id)"
+            >✕</button>
           </li>
         </ul>
         <p class="dim m-0 mt-1 text-xs">{{ logView.source === 'server' ? t('dash_water_log_note_server') : t('dash_water_log_note') }}</p>

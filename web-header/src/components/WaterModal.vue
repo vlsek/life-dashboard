@@ -27,6 +27,8 @@ const props = defineProps<{
   // «Отменить последнее добавление» и правка суммы за день (BACKLOG 12; копия из Дашборда). Необязательные: без них блок не показывается.
   canUndo?: (dateStr: string, currentMl: number) => boolean
   undoLast?: (dateStr: string) => Promise<number | null>
+  // «Крестик» у записи журнала (BACKLOG 23:17): удалить именно эту запись; возвращает сумму дня после удаления или null. Необязательный.
+  removeEntry?: (dateStr: string, id: string) => Promise<number | null>
   setTotal?: (ml: number, dateStr: string) => Promise<number | null>
   // Журнал воды за дату со временем (BACKLOG 2.2): из БД (water_log) или, пока таблицы нет, записи этого устройства. Необязательные.
   dayLog?: (dateStr: string) => DayLogView
@@ -115,6 +117,14 @@ async function onUndo() {
   if (!props.undoLast || busy.value || !undoAvailable.value) return
   busy.value = true
   const v = await props.undoLast(dateStr.value)
+  if (v !== null) amountMl.value = v
+  busy.value = false
+}
+
+async function onRemoveRow(id: string) {
+  if (!props.removeEntry || busy.value) return
+  busy.value = true
+  const v = await props.removeEntry(dateStr.value, id)
   if (v !== null) amountMl.value = v
   busy.value = false
 }
@@ -278,6 +288,17 @@ function saveHeightClick() {
           <li v-for="r in logRows" :key="r.id" style="display: flex; gap: 12px; padding: 2px 0" data-test="water-log-row">
             <span class="gh-dim" style="font-variant-numeric: tabular-nums">{{ r.time }}</span>
             <span :style="'font-variant-numeric: tabular-nums;' + (r.delta.startsWith('\u2212') ? ' color: #d6336c' : '')">{{ r.delta }} {{ unitLabel }}</span>
+            <button
+              v-if="removeEntry"
+              type="button"
+              class="gh-btn"
+              style="margin-left: auto; width: 24px; height: 24px; padding: 0; border-radius: 50%; font-size: 12px; line-height: 1"
+              data-test="water-log-remove"
+              :title="t('dash_water_log_remove')"
+              :aria-label="t('dash_water_log_remove')"
+              :disabled="busy"
+              @click="onRemoveRow(r.id)"
+            >✕</button>
           </li>
         </ul>
         <p class="gh-dim" style="margin: 4px 0 0; font-size: 12px">{{ logView.source === 'server' ? t('dash_water_log_note_server') : t('dash_water_log_note') }}</p>

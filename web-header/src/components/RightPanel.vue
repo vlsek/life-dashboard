@@ -26,10 +26,11 @@ const props = defineProps<{
   day: GaugeData | null
   week: GaugeData | null
   water: { todayMl: number; normMl: number } | null
+  canUndoWater?: boolean // есть что отменить в воде за сегодня (BACKLOG 08:55): тогда в блоке воды появляется «Отменить последнее»
   savedTick: number
   muscles?: { done: Set<MuscleId>; last: Partial<Record<MuscleId, string>> } | null // null/не передано — блока мышц нет (нет упражнений)
 }>()
-const emit = defineEmits<{ 'update:open': [boolean]; 'open-summary': [kind: 'day' | 'week']; 'open-water': []; 'add-water': [ml: number]; 'open-settings': [] }>()
+const emit = defineEmits<{ 'update:open': [boolean]; 'open-summary': [kind: 'day' | 'week']; 'open-water': []; 'add-water': [ml: number]; 'undo-water': []; 'open-settings': [] }>()
 
 const unit = computed(() => (getLang() === 'en' ? 'ml' : 'мл'))
 const waterPct = computed(() => (props.water && props.water.normMl > 0 ? Math.min(100, Math.round((props.water.todayMl / props.water.normMl) * 100)) : 0))
@@ -131,6 +132,18 @@ onBeforeUnmount(() => applyScrollLock(false))
       <div class="gh-wrap" style="margin-top: 10px">
         <button type="button" class="gh-btn" data-test="panel-add-200" @click="emit('add-water', 200)">+ 200 {{ unit }}</button>
         <button type="button" class="gh-btn" data-test="panel-add-500" @click="emit('add-water', 500)">+ 500 {{ unit }}</button>
+        <button
+          v-if="canUndoWater"
+          type="button"
+          class="gh-btn"
+          data-test="panel-undo"
+          :title="t('dash_water_undo_btn')"
+          :aria-label="t('dash_water_undo_btn')"
+          @click="emit('undo-water')"
+        >
+          <svg viewBox="0 0 24 24" width="1.1em" height="1.1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align: -0.18em"><path d="M9 14 4 9l5-5" /><path d="M4 9h10a6 6 0 0 1 0 12h-3" /></svg>
+          {{ t('hdr_panel_water_undo') }}
+        </button>
         <button type="button" class="gh-btn" data-test="panel-water-details" @click="emit('open-water')">{{ t('hdr_panel_details') }}</button>
       </div>
     </section>
