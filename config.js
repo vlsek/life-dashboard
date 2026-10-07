@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.66";
+const SITE_VERSION = "3.67";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.67", date: "2026-10-07 12:31", changes: [
+        "Метрики, форма метрики: варианты для типа «Выбор» и особенности для типа «Подходы» теперь вводятся списком, а не одной строкой «ключ:Метка, ключ:Метка». У каждого варианта своё поле «Название», кнопки ↑/↓ и ✕, перетаскивание за ручку ☰ и кнопка «+ Вариант» (в новой строке можно нажать Enter, чтобы сразу добавить следующий). Ключи придумывать не нужно, а подписи теперь могут содержать запятые и двоеточия. У уже сохранённых вариантов ключ не меняется, поэтому прежние отметки остаются на месте. Миграция не нужна."
+    ]},
     { version: "3.66", date: "2026-10-07 09:14", changes: [
         "Рекорд за подход у карточки метрики: в «Дневных метриках» под карточкой метрики-подходов появилась строка «Рекорд за подход» — наибольшее число повторений в одном подходе по каждой особенности за всё время (например, «Алмазные 10 · Классика 25»). Если у метрики нет особенностей, показывается одно число. Наведи на значение — увидишь дату рекорда. Под графиком такой рекорд уже был. Строку можно скрыть тем же выключателем «Показывать рекорды у метрик»",
     ]},
@@ -1707,6 +1710,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.67", date: "2026-10-07 12:31", changes: [
+        "Metrics, metric form: options for the Choice type and variations for the Sets type are now entered as a list instead of a single \"key:Label, key:Label\" line. Every option has its own Name field, up/down and remove buttons, drag by the handle and a \"+ Option\" button (press Enter in a row to add the next one right away). You no longer have to invent keys, and names may now contain commas and colons. The key of an already saved option does not change, so earlier entries stay in place. No migration needed."
+    ]},
     { version: "3.66", date: "2026-10-07 09:14", changes: [
         "Best single set on the metric card: in “Daily metrics”, under a sets metric, there is now a “Best single set” line — the most reps in one set for each variation, all time (for example, “Diamond 10 · Classic 25”). If the metric has no variations, one number is shown. Hover a value to see the date of the record. The same record already appeared under the chart. You can hide the line with the same “Show records on metrics” switch"
     ]},
