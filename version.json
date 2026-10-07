@@ -1,6 +1,13 @@
 {
-  "version": "3.64",
+  "version": "3.65",
   "en": [
+    {
+      "version": "3.65",
+      "date": "2026-10-07 09:02",
+      "changes": [
+        "Plain error messages in the header and on the sign-in page: instead of technical text (server address, table names, “TypeError: Failed to fetch”, “(code 400)”) you now see a clear sentence, for example “No connection to the server. Check your internet and try again”. This covers the water window (saving the goal, height and the day’s value), the Settings window (saving the layout), sign-in and sign-up. Clear sign-in replies such as “Invalid login credentials” stay as they were. Community and onboarding will follow separately"
+      ]
+    },
     {
       "version": "3.64",
       "date": "2026-10-07 07:36",
@@ -2614,6 +2621,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.65",
+      "date": "2026-10-07 09:02",
+      "changes": [
+        "Понятные ошибки в шапке и на странице входа: вместо технического текста (адрес сервера, имена таблиц, «TypeError: Failed to fetch», «(код 400)») показывается понятная фраза, например «Нет связи с сервером. Проверь интернет и попробуй ещё раз». Это окно воды (сохранение нормы, роста и значения за день), окно «Настройки» (сохранение раскладки), вход и регистрация. Понятные ответы входа вроде «Invalid login credentials» остаются как были. Сообщество и онбординг доделают отдельно"
+      ]
+    },
     {
       "version": "3.64",
       "date": "2026-10-07 07:36",

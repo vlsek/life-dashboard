@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.64";
+const SITE_VERSION = "3.65";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.65", date: "2026-10-07 09:02", changes: [
+        "Понятные ошибки в шапке и на странице входа: вместо технического текста (адрес сервера, имена таблиц, «TypeError: Failed to fetch», «(код 400)») показывается понятная фраза, например «Нет связи с сервером. Проверь интернет и попробуй ещё раз». Это окно воды (сохранение нормы, роста и значения за день), окно «Настройки» (сохранение раскладки), вход и регистрация. Понятные ответы входа вроде «Invalid login credentials» остаются как были. Сообщество и онбординг доделают отдельно",
+    ]},
     { version: "3.64", date: "2026-10-07 07:36", changes: [
         "Достижения: бонусные монетки теперь выдаются. За первые две ступени каждой лесенки (например, «Десять выучено» и «Двадцать пять выучено») на баланс приходит 20 и 50 монет, один раз за значок. Если значки были открыты раньше, монетки за них начислятся при ближайшем заходе на страницу «Достижения». Баланс в Дашборде, Магазине и Кастомизации уже учитывает такие монеты; на счётчик баллов и рейтинг они не влияют",
     ]},
@@ -1701,6 +1704,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.65", date: "2026-10-07 09:02", changes: [
+        "Plain error messages in the header and on the sign-in page: instead of technical text (server address, table names, “TypeError: Failed to fetch”, “(code 400)”) you now see a clear sentence, for example “No connection to the server. Check your internet and try again”. This covers the water window (saving the goal, height and the day’s value), the Settings window (saving the layout), sign-in and sign-up. Clear sign-in replies such as “Invalid login credentials” stay as they were. Community and onboarding will follow separately",
+    ]},
     { version: "3.64", date: "2026-10-07 07:36", changes: [
         "Achievements: bonus coins are now awarded. The first two steps of each ladder (for example, “Ten learned” and “Twenty-five learned”) give 20 and 50 coins to your balance, once per badge. If you unlocked badges earlier, the coins for them are added the next time you open the Achievements page. The balance in the Dashboard, Shop and Customization already includes these coins; they do not affect the points counter or the leaderboard",
     ]},
