@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.63";
+const SITE_VERSION = "3.64";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.64", date: "2026-10-07 07:36", changes: [
+        "Достижения: бонусные монетки теперь выдаются. За первые две ступени каждой лесенки (например, «Десять выучено» и «Двадцать пять выучено») на баланс приходит 20 и 50 монет, один раз за значок. Если значки были открыты раньше, монетки за них начислятся при ближайшем заходе на страницу «Достижения». Баланс в Дашборде, Магазине и Кастомизации уже учитывает такие монеты; на счётчик баллов и рейтинг они не влияют",
+    ]},
     { version: "3.63", date: "2026-10-07 07:30", changes: [
         "Темы-награды: шесть тем (Mint, Sepia, Solarized Light, Nord, Орхидея, AMOLED) теперь открываются наградой за достижение: Человек-оркестр, Сотня слов, Полсотни целей, Сотня в голове, Своя библиотека, Атлет. Пока достижения нет, на странице «Кастомизация» у темы виден образец, замок и подсказка «Награда за …», а в списках тем меню и настроек её нет. Если такая тема у вас уже включена, она остаётся включённой. Пять остальных тем открыты всегда",
         "Тема Catppuccin Mocha переименована в «Орхидея» (Orchid): у неё сиреневые и розово-фиолетовые цвета, прежнее имя вводило в заблуждение. Ваш выбор не слетит",
@@ -1698,6 +1701,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.64", date: "2026-10-07 07:36", changes: [
+        "Achievements: bonus coins are now awarded. The first two steps of each ladder (for example, “Ten learned” and “Twenty-five learned”) give 20 and 50 coins to your balance, once per badge. If you unlocked badges earlier, the coins for them are added the next time you open the Achievements page. The balance in the Dashboard, Shop and Customization already includes these coins; they do not affect the points counter or the leaderboard",
+    ]},
     { version: "3.63", date: "2026-10-07 07:30", changes: [
         "Reward themes: six themes (Mint, Sepia, Solarized Light, Nord, Orchid, AMOLED) now unlock as a reward for an achievement: One-person band, A hundred words, Fifty goals, A hundred in the head, Own library, Athlete. Until you earn it, the theme shows a preview, a lock and a “Reward for …” hint on the Customization page, and is absent from the theme lists in the menu and settings. If you already use such a theme, it stays on. The other five themes are always open",
         "The Catppuccin Mocha theme is now called Orchid: its colours are lilac and pink-violet, so the old name was misleading. Your choice is kept",

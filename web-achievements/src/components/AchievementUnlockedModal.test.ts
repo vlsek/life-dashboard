@@ -77,9 +77,9 @@ describe('AchievementUnlockedModal', () => {
     }
   })
 
-  it('в окне-поздравлении показана награда ступени (со «скоро»); у значка без награды строки нет', () => {
+  it('в окне-поздравлении показана награда ступени (монетки выдаются, без «скоро»); у значка без награды строки нет', () => {
     const w = mount(AchievementUnlockedModal, { props: { states: pick('goals_10') }, attachTo: document.body })
-    expect(w.find('[data-testid="unlocked-reward"]').text()).toBe('Награда (скоро): 50 монет')
+    expect(w.find('[data-testid="unlocked-reward"]').text()).toBe('Награда: 50 монет')
     w.unmount()
     const w2 = mount(AchievementUnlockedModal, { props: { states: pick('streak_30') }, attachTo: document.body })
     expect(w2.find('[data-testid="unlocked-reward"]').exists()).toBe(false)

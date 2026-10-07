@@ -1,6 +1,13 @@
 {
-  "version": "3.63",
+  "version": "3.64",
   "en": [
+    {
+      "version": "3.64",
+      "date": "2026-10-07 07:36",
+      "changes": [
+        "Achievements: bonus coins are now awarded. The first two steps of each ladder (for example, “Ten learned” and “Twenty-five learned”) give 20 and 50 coins to your balance, once per badge. If you unlocked badges earlier, the coins for them are added the next time you open the Achievements page. The balance in the Dashboard, Shop and Customization already includes these coins; they do not affect the points counter or the leaderboard"
+      ]
+    },
     {
       "version": "3.63",
       "date": "2026-10-07 07:30",
@@ -2607,6 +2614,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.64",
+      "date": "2026-10-07 07:36",
+      "changes": [
+        "Достижения: бонусные монетки теперь выдаются. За первые две ступени каждой лесенки (например, «Десять выучено» и «Двадцать пять выучено») на баланс приходит 20 и 50 монет, один раз за значок. Если значки были открыты раньше, монетки за них начислятся при ближайшем заходе на страницу «Достижения». Баланс в Дашборде, Магазине и Кастомизации уже учитывает такие монеты; на счётчик баллов и рейтинг они не влияют"
+      ]
+    },
     {
       "version": "3.63",
       "date": "2026-10-07 07:30",

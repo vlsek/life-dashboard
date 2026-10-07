@@ -81,10 +81,10 @@ describe('защита тем: нельзя закрыть исходные те
 })
 
 describe('показ награды', () => {
-  it('выдаются только темы (REWARD_STATUS.theme = active); монеты и рамки пока «скоро»', () => {
-    expect(REWARD_STATUS).toEqual({ coins: 'planned', item: 'planned', theme: 'active' })
+  it('выдаются монетки и темы (active); рамки пока «скоро»', () => {
+    expect(REWARD_STATUS).toEqual({ coins: 'active', item: 'planned', theme: 'active' })
     localStorage.setItem('site_lang', 'ru')
-    expect(rewardText(REWARDS.words_10)).toBe('Награда (скоро): 20 монет')
+    expect(rewardText(REWARDS.words_10)).toBe('Награда: 20 монет')
     expect(rewardText(REWARDS.words_100)).toBe('Награда: тема «Сепия»')
   })
 

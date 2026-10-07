@@ -17,7 +17,7 @@ afterEach(() => {
 describe('редкость награды на карточке достижения (BACKLOG 39)', () => {
   it('показывает метку редкости отдельно от строки награды (текст строки награды не меняется)', () => {
     const w = mount(AchievementCard, { props: { state: stateOf('learned_10'), unlocked: false, unlockedAt: null } })
-    expect(w.find('[data-testid="achievement-reward"]').text()).toBe('Награда (скоро): 20 монет')
+    expect(w.find('[data-testid="achievement-reward"]').text()).toBe('Награда: 20 монет')
     expect(w.find('[data-testid="achievement-rarity"]').text()).toBe('Обычная')
     expect(w.find('[data-testid="achievement-rarity"]').attributes('data-rarity')).toBe('common')
   })
@@ -49,7 +49,7 @@ describe('редкость награды на карточке достижен
 describe('редкость награды в окне «Новое достижение»', () => {
   it('метка редкости под строкой награды; у достижения без награды её нет; при «Дальше» меняется', async () => {
     const w = mount(AchievementUnlockedModal, { props: { states: [stateOf('learned_10'), stateOf('workouts_250'), stateOf('streak_30')] }, attachTo: document.body })
-    expect(w.find('[data-testid="unlocked-reward"]').text()).toBe('Награда (скоро): 20 монет')
+    expect(w.find('[data-testid="unlocked-reward"]').text()).toBe('Награда: 20 монет')
     expect(w.find('[data-testid="unlocked-rarity"]').text()).toBe('Обычная')
     await w.find('[data-testid="unlocked-next"]').trigger('click')
     expect(w.find('[data-testid="unlocked-rarity"]').text()).toBe('Легендарная')

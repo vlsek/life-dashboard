@@ -4,6 +4,8 @@ import { fetchAllRows } from './fetchAll'
 import { withWaterGoal, isWeightLike } from './waterGoal'
 import { ACHIEVEMENTS, computeCounters, countMilestoneMarks, evaluate, reconcile, type AchievementState, type Counters, type Unlocked, type ValueRow } from './achievements'
 import { loadUnlocked, saveUnlocked, type StorageMode } from './achievementStore'
+import { grantCoinBonuses, type CoinBonus } from './coinBonuses'
+import { REWARD_STATUS } from './rewards'
 import { countMegaWeeks, getDayProgressSettings, type GoalLite, type PlannedItem } from './weekProgress'
 import type { Metric, PointsRow } from './types'
 
@@ -18,6 +20,7 @@ export function useAchievements() {
   const states = ref<AchievementState[]>([])
   const unlocked = ref<Unlocked>({})
   const newlyUnlocked = ref<string[]>([]) // открыто именно сейчас (для поздравляющего окна)
+  const grantedCoins = ref<CoinBonus[]>([]) // бонусные монетки, выданные именно сейчас (в том числе «задним числом»)
   const counters = ref<Counters | null>(null)
   const mode = ref<StorageMode>('local')
   const error = ref<string | null>(null)
@@ -110,6 +113,8 @@ export function useAchievements() {
       newlyUnlocked.value = rec.newlyUnlocked
       // дописываем новое и то, что раньше жило только на устройстве; сбой записи страницу не ломает
       mode.value = await saveUnlocked(userId, loaded.mode, { ...loaded.backfill, ...rec.added }, rec.unlocked)
+      // монетки за открытые значки (ступени 1 и 2): один раз на значок, задним числом тоже; сбой выдачи страницу не ломает
+      if (REWARD_STATUS.coins === 'active') grantedCoins.value = (await grantCoinBonuses(sb as unknown as Parameters<typeof grantCoinBonuses>[0], userId, Object.keys(rec.unlocked))).granted
     } catch (e) {
       error.value = (e as Error).message
     } finally {
@@ -121,5 +126,5 @@ export function useAchievements() {
     if (auth.value.status === 'ready') await load(auth.value.userId)
   }
 
-  return { auth, states, unlocked, newlyUnlocked, counters, mode, error, loading, init, reload }
+  return { auth, states, unlocked, newlyUnlocked, grantedCoins, counters, mode, error, loading, init, reload }
 }
