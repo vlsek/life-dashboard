@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.59";
+const SITE_VERSION = "3.60";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.60", date: "2026-10-07 06:31", changes: [
+        "Ошибки: на страницах «Магазин», «Изучение языков», «Навыки», «Тренировки» и «Аккаунт» при сбое загрузки, сохранения или удаления теперь показывается понятный текст («Нет связи с сервером…», «Нет доступа…», «Не получилось сохранить…») вместо технической строки с адресом сервера и именами таблиц. В «Аккаунте» понятные сообщения входа (например, про совпадение нового пароля со старым) остаются как были. Остальные страницы (Сообщество, шапка, вход, регистрация) будут следующими. Миграция не нужна",
+    ]},
     { version: "3.59", date: "2026-10-07 06:15", changes: [
         "Ошибки: на страницах «Календарь», «История», «Челленджи», «Вехи», «Достижения» и «Кастомизация» при сбое загрузки, покупки или сохранения выбора теперь показывается понятный текст («Нет связи с сервером…», «Нет доступа…», «Не получилось загрузить данные…») вместо технической строки с адресом сервера и именами таблиц. Подробности по-прежнему пишутся в консоль браузера. Остальные страницы (Сообщество, Магазин, Навыки, Языки, Тренировки, Аккаунт и др.) будут следующими. Миграция не нужна",
     ]},
@@ -1685,6 +1688,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.60", date: "2026-10-07 06:31", changes: [
+        "Errors: on the Shop, Language learning, Skills, Workouts and Account pages a failed load, save or delete now shows a clear message (\"No connection to the server…\", \"No access…\", \"Could not save…\") instead of a technical line with the server address and table names. On Account the readable sign-in messages (for example, the new password matching the old one) stay as they were. The other pages (Community, header, sign-in, sign-up) come next. No migration needed",
+    ]},
     { version: "3.59", date: "2026-10-07 06:15", changes: [
         "Errors: on the Calendar, History, Challenges, Milestones, Achievements and Customization pages a failed load, purchase or saving of a choice now shows a clear message (\"No connection to the server…\", \"No access…\", \"Could not load the data…\") instead of a technical line with the server address and table names. Details are still written to the browser console. The other pages (Community, Shop, Skills, Languages, Workouts, Account and others) come next. No migration needed",
     ]},

@@ -525,3 +525,9 @@ v3.59 — BACKLOG 942 🐞 «понятные ошибки вместо адре
   (страж: в файлах-загрузчиках нет `error.value = err.message`) в `web-calendar`, `web-history`, `web-challenges`, `web-milestones`, `web-achievements`, `web-customization`. Заменено: `useCalendar`/`useHistoryData`/`useChallenges`/`useMilestones` (ошибка загрузки), `fetchAll.ts` (achievements, customization),
   `useCustomization` (загрузка, покупка, выбор — раньше к «Не удалось…» дописывался сырой `message`). Теперь `errMsg`/`historyErrMsg` в `useHistoryData` не используются (файлы остались). ОСТАЛОСЬ по 942: community 13, header 8, languages 5, shop 5, account 4, skills 4, workouts 4,
   login 1, onboarding 2 (+ `alert(`) — отдельными срезами. Тесты: calendar 107, history 114, challenges 184, milestones 86, achievements 193, customization 143; сборки 6 пилотов чистые. Без миграции.
+
+v3.60 — BACKLOG 942 🐞, срез 2 «средние пилоты», агент 5: `friendlyError.ts` + `err_*` + `friendlyError.test.ts` + `friendlyErrorSites.test.ts` в `web-languages`, `web-skills`, `web-workouts`, `web-account` (в `web-shop` файл уже был — добавлен показ в `useShop` и `fetchAll`).
+  Заменено: `useVocab`, `useSkills`, `useBooks` (загрузка), `useShop`/`fetchAll` (магазин), `App.vue` languages (сохранение/удаление слова) и workouts (6 тостов + `saveErrorText`): текст драйвера не показывается,
+  но подсказки про миграции (`/lang/`, `/tracks_duration/`, `/bilateral/`) по-прежнему определяются по сырому тексту. `web-account`: `lib/authError.ts` — понятное сообщение Supabase Auth остаётся, сеть/доступ/технический текст (адрес, таблица, драйвер) заменяются.
+  Старые тесты shop (`fetchAll.test.ts`) и workouts (`quickSetApp.test.ts`) закрепляли сырой текст — обновлены. ОСТАЛОСЬ по 942: community 13, header 8, login 1, onboarding 2 (+ `alert(`).
+  Тесты: shop 170, languages 111, skills 114, workouts 380, account 94; сборки 5 пилотов чистые. Без миграции.
