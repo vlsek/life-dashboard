@@ -7,7 +7,7 @@ vi.mock('../lib/supabase', () => ({ logout: vi.fn() }))
 beforeEach(() => {
   vi.resetModules()
   // по умолчанию избранными считаем все страницы меню — прежние проверки списка остаются в силе (BACKLOG 6.2)
-  localStorage.setItem('favorite_pages', JSON.stringify(['goals', 'skills', 'workouts', 'challenges', 'english', 'calendar', 'milestones', 'shop', 'achievements', 'community', 'history']))
+  localStorage.setItem('favorite_pages', JSON.stringify(['goals', 'skills', 'workouts', 'challenges', 'english', 'calendar', 'milestones', 'shop', 'achievements', 'community']))
   globalThis.fetch = vi.fn(async () => new Response(JSON.stringify({ version: '1.00', en: [], ru: [] }))) as unknown as typeof fetch
 })
 
@@ -60,10 +60,10 @@ describe('AppShell: «Избранное» в списке по шеврону (
   const chips = (w: Awaited<ReturnType<typeof mountShell>>) => w.find('[data-testid="quicknav-list"]').findAll('a').map((a) => a.attributes('href'))
 
   it('в списке только избранные страницы; остальные в сайдбаре остаются', async () => {
-    localStorage.setItem('favorite_pages', JSON.stringify(['shop', 'history']))
+    localStorage.setItem('favorite_pages', JSON.stringify(['shop', 'calendar']))
     const w = await mountShell()
     await w.find('[data-testid="quicknav-toggle"]').trigger('click')
-    expect(chips(w)).toEqual(['/shop/', '/history/'])
+    expect(chips(w)).toEqual(['/calendar/', '/shop/']) // порядок как в боковом меню
     expect(w.findAll('nav a[href="/goals/"]').length).toBe(1)
     w.unmount()
   })
@@ -117,21 +117,19 @@ describe('AppShell: боковое меню — профиль наверху, �
     w.unmount()
   })
 
-  it('«История» отделена разделителем и стоит внизу списка, за ней «Кастомизация» (самый низ) и «Аккаунт»; в основной части их нет', async () => {
+  it('«Кастомизация» отделена разделителем и стоит в самом низу меню, за ней «Аккаунт»; в основной части её нет; «Истории» в меню нет (объединена с «Календарём»)', async () => {
     const w = await mountWithEmail()
     const links = navLinks(w)
-    const hist = links.indexOf('/history/')
-    expect(hist).toBeGreaterThan(-1)
-    expect(links.filter((h) => h === '/history/')).toHaveLength(1)
-    expect(links[hist + 1]).toBe('/customization/') // решение владельца 2026-10-04: «Кастомизация» — в самом низу меню, за чертой
-    expect(links[hist + 2]).toBe('/account/')
+    const cust = links.indexOf('/customization/')
+    expect(cust).toBeGreaterThan(-1)
     expect(links.filter((h) => h === '/customization/')).toHaveLength(1)
-    expect(links.indexOf('/community/')).toBeLessThan(links.indexOf('/customization/'))
-    expect(links.indexOf('/community/')).toBeLessThan(hist)
-    // разделитель между основными страницами и «Историей»
+    expect(links[cust + 1]).toBe('/account/') // решение владельца 2026-10-04: «Кастомизация» — в самом низу меню, за чертой
+    expect(links.indexOf('/community/')).toBeLessThan(cust)
+    expect(links.filter((h) => h === '/history/')).toHaveLength(0) // решение владельца 2026-10-06: «История» — внутри «Календаря», отдельного пункта нет
+    // разделитель между основными страницами и нижним блоком
     const nav = w.find('nav').element
-    const histEl = nav.querySelector('a[href="/history/"]')!
-    expect((histEl.previousElementSibling as HTMLElement).className).toContain('border-t')
+    const custEl = nav.querySelector('a[href="/customization/"]')!
+    expect((custEl.previousElementSibling as HTMLElement).className).toContain('border-t')
     w.unmount()
   })
 })

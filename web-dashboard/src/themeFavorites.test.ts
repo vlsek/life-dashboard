@@ -67,7 +67,7 @@ describe('AppShell: выбор темы только из любимых', () =>
 })
 
 describe('AppShell: «Кастомизация» под разделителем', () => {
-  it('ссылка стоит после первой черты-разделителя, вместе с «Историей»; выше неё её нет', async () => {
+  it('ссылка стоит после первой черты-разделителя, в самом низу меню; выше неё её нет; «Истории» в меню нет (объединена с «Календарём»)', async () => {
     const w = await mountShell()
     const nav = w.find('nav')
     const children = Array.from(nav.element.children) as HTMLElement[]
@@ -75,10 +75,9 @@ describe('AppShell: «Кастомизация» под разделителем
     expect(firstDivider).toBeGreaterThan(0)
     const hrefs = children.map((c) => (c.tagName === 'A' ? c.getAttribute('href') : null))
     const custom = hrefs.indexOf('/customization/')
-    const history = hrefs.indexOf('/history/')
     expect(custom).toBeGreaterThan(firstDivider)
-    expect(history).toBeGreaterThan(firstDivider)
-    expect(custom).toBe(history + 1) // в самом низу, сразу за «Историей»
+    expect(hrefs).not.toContain('/history/')
+    expect(hrefs.slice(custom + 1).filter((h) => h === '/customization/')).toHaveLength(0) // «Кастомизация» одна и в самом низу
     expect(hrefs.slice(0, firstDivider)).not.toContain('/customization/')
     expect(hrefs.slice(0, firstDivider)).toContain('/achievements/')
     w.unmount()
@@ -93,7 +92,9 @@ describe('одинаково во всех страницах пилота', () 
   it.each(dirs)('%s: любимые темы в списке и «Кастомизация» под разделителем', (dir: string) => {
     const src: string = readFileSync(`../${dir}/src/components/AppShell.vue`, 'utf-8')
     // в календаре владелец сам убрал дублирующий пункт «История» (коммит 9c21287, 2026-10-06 18:28): там внизу только «Кастомизация»
-    expect(src).toContain(dir === 'web-calendar' ? "const BOTTOM_KEYS = ['customization']" : "const BOTTOM_KEYS = ['history', 'customization']")
+    // «История» объединена с «Календарём» (решение владельца 2026-10-06): в нижнем блоке меню у ВСЕХ страниц только «Кастомизация»
+    expect(src).toContain("const BOTTOM_KEYS = ['customization']")
+    expect(src).not.toContain("key: 'history'")
     expect(src).toContain('<option v-for="key in themeOptions"')
     expect(src).toContain('visibleThemes(themeVal.value)')
     expect(src).toContain('FAVORITE_THEMES_EVENT')

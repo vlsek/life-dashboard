@@ -60,13 +60,12 @@ const pages: NavPage[] = [
   { href: '/achievements/', key: 'achievements', labelKey: 'nav_achievements', icon: 'medal' },
   { href: '/customization/', key: 'customization', labelKey: 'nav_customization', icon: 'paintbrush' },
   { href: '/community/', key: 'community', labelKey: 'nav_community', icon: 'community' },
-  { href: '/history/', key: 'history', labelKey: 'nav_history', icon: 'history' },
 ]
-const active = 'history'
+const active = 'calendar'
 // Ссылка на классическую (legacy) версию ЭТОЙ страницы — одна, неприметная, внизу меню.
 // Страница переезжает в /legacy/ (фаза 2) — обновить значение здесь (HANDOFF, шаг 6);
 // scripts/check_nav_links.py проверяет, что адрес существует.
-const classicHref = '/legacy/history.html'
+const classicHref = '/legacy/calendar.html'
 function plainLabel(key: DictKey): string {
   return t(key).replace(/^[^\p{L}\p{N}]+/u, '')
 }
@@ -89,7 +88,7 @@ const favorites = ref<string[]>(readFavorites())
 const syncFavorites = () => (favorites.value = readFavorites())
 // Боковое меню (BACKLOG 6.2): основные страницы, затем разделитель и «История» в самом низу (перед «Аккаунтом»)
 // «Кастомизация» — в самом низу меню, под разделителем, после «Истории» (решение владельца 2026-10-04: «в самый низ за черту»)
-const BOTTOM_KEYS = ['history', 'customization']
+const BOTTOM_KEYS = ['customization']
 const sidebarPages = pages.filter((p) => !BOTTOM_KEYS.includes(p.key))
 const bottomPages = BOTTOM_KEYS.map((k) => pages.find((p) => p.key === k)).filter((p): p is NavPage => !!p)
 const quickPages = computed(() => pages.filter((p) => p.key !== 'dashboard' && favorites.value.includes(p.key)))

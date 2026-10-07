@@ -11,13 +11,13 @@ beforeEach(() => {
 })
 
 describe('AppShell: ссылка на legacy', () => {
-  it('показывает legacy-history с адресом классической версии и без плашки пилота', async () => {
+  it('страница-редирект «История» показывает ссылку на классический Календарь (История объединена с Календарём) и без плашки пилота', async () => {
     const { default: AppShell } = await import('./AppShell.vue')
     const w = mount(AppShell, { props: { userEmail: null } })
     const link = w.find('[data-test="legacy-link"]')
     expect(link.exists()).toBe(true)
-    expect(link.text()).toBe('legacy-history')
-    expect(link.attributes('href')).toBe('/legacy/history.html')
+    expect(link.text()).toBe('legacy-calendar')
+    expect(link.attributes('href')).toBe('/legacy/calendar.html')
     expect(w.text()).not.toMatch(/pilot|пилот/i)
     w.unmount()
   })

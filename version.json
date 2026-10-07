@@ -1,6 +1,13 @@
 {
-  "version": "3.54",
+  "version": "3.55",
   "en": [
+    {
+      "version": "3.55",
+      "date": "2026-10-07 02:10",
+      "changes": [
+        "Menu: the History item is removed from the side menu on every page - history now lives inside the Calendar section (the Calendar / History switch). The old /history/ link still leads there. The bottom block of the menu is now: Customization and Account. No migration needed."
+      ]
+    },
     {
       "version": "3.54",
       "date": "2026-10-07 04:32",
@@ -2543,6 +2550,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.55",
+      "date": "2026-10-07 02:10",
+      "changes": [
+        "Меню: пункт «История» убран из бокового меню на всех страницах — история теперь внутри раздела «Календарь» (переключатель «Календарь / История»). Старая ссылка /history/ по-прежнему ведёт туда. Нижний блок меню теперь: «Кастомизация» и «Аккаунт». Миграция не нужна."
+      ]
+    },
     {
       "version": "3.54",
       "date": "2026-10-07 04:32",

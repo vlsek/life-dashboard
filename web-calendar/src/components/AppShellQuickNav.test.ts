@@ -7,7 +7,7 @@ vi.mock('../lib/supabase', () => ({ logout: vi.fn() }))
 beforeEach(() => {
   vi.resetModules()
   // по умолчанию избранными считаем все страницы меню — прежние проверки списка остаются в силе (BACKLOG 6.2)
-  localStorage.setItem('favorite_pages', JSON.stringify(['goals', 'skills', 'workouts', 'challenges', 'english', 'calendar', 'milestones', 'shop', 'achievements', 'community', 'history']))
+  localStorage.setItem('favorite_pages', JSON.stringify(['goals', 'skills', 'workouts', 'challenges', 'english', 'calendar', 'milestones', 'shop', 'achievements', 'community']))
   globalThis.fetch = vi.fn(async () => new Response(JSON.stringify({ version: '1.00', en: [], ru: [] }))) as unknown as typeof fetch
 })
 
@@ -60,7 +60,7 @@ describe('AppShell: «Избранное» в списке по шеврону (
   const chips = (w: Awaited<ReturnType<typeof mountShell>>) => w.find('[data-testid="quicknav-list"]').findAll('a').map((a) => a.attributes('href'))
 
   it('в списке только избранные страницы; остальные в сайдбаре остаются', async () => {
-    localStorage.setItem('favorite_pages', JSON.stringify(['shop', 'history']))
+    localStorage.setItem('favorite_pages', JSON.stringify(['shop', 'history'])) // 'history' — пункта в меню больше нет: неизвестный ключ отбрасывается
     const w = await mountShell()
     await w.find('[data-testid="quicknav-toggle"]').trigger('click')
     expect(chips(w)).toEqual(['/shop/'])

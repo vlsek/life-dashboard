@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.54";
+const SITE_VERSION = "3.55";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.55", date: "2026-10-07 02:10", changes: [
+        "Меню: пункт «История» убран из бокового меню на всех страницах — история теперь внутри раздела «Календарь» (переключатель «Календарь / История»). Старая ссылка /history/ по-прежнему ведёт туда. Нижний блок меню теперь: «Кастомизация» и «Аккаунт». Миграция не нужна."
+    ]},
     { version: "3.54", date: "2026-10-07 04:32", changes: [
         "Бонусные монетки за достижения (подготовка): баланс в Профиле, Магазине и Кастомизации теперь умеет учитывать монетки-награды — они прибавляются к балансу и покрывают покупки, но не входят в «накоплено баллов» и в таблицу лидеров. В журнале баллов награда показывается отдельной строкой «Награда за достижение». Сами награды начнут выдаваться за значки в следующих версиях; пока ничего не меняется. Для работы нужна миграция 051",
     ]},
@@ -1670,6 +1673,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.55", date: "2026-10-07 02:10", changes: [
+        "Menu: the History item is removed from the side menu on every page - history now lives inside the Calendar section (the Calendar / History switch). The old /history/ link still leads there. The bottom block of the menu is now: Customization and Account. No migration needed."
+    ]},
     { version: "3.54", date: "2026-10-07 04:32", changes: [
         "Bonus coins for achievements (groundwork): the balance in Profile, Shop and Customization can now include coin rewards — they are added to the balance and cover purchases, but are not part of \"points earned\" or the leaderboard. The points log shows a reward as a separate \"Achievement reward\" row. The rewards themselves will start being granted for badges in following versions; nothing changes yet. Migration 051 is required",
     ]},
