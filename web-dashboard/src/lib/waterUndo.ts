@@ -87,6 +87,29 @@ export function dayLogEntries(stack: UndoEntry[] | undefined): (UndoEntry & { at
   return (stack ?? []).filter((e): e is UndoEntry & { at: number } => typeof e.at === 'number').reverse()
 }
 
+// --- удаление ОДНОЙ записи журнала («крестик», BACKLOG 23:17) ---
+
+// Записи стека ПОСЛЕ удалённой сдвигаются на её изменение (delta), чтобы цепочка «Отменить» осталась согласованной с новой суммой дня;
+// ниже нуля значение не уходит (правка суммы могла дать и минус).
+const shiftMl = (x: number, delta: number) => Math.max(0, x - delta)
+
+// Какая запись стека соответствует строке журнала: по id строки БД, а у записей до таблицы / только этого устройства — по времени и изменению.
+export function stackIndexOfRow(stack: UndoEntry[], row: { id: string; at: number; delta: number }): number {
+  const byId = stack.findIndex((e) => !!e.logId && e.logId === row.id)
+  if (byId >= 0) return byId
+  return stack.findIndex((e) => e.at === row.at && e.next - e.prev === row.delta)
+}
+
+// Стек после удаления записи `row` и сумма дня после удаления. Если записи в стеке нет (добавлена с другого устройства) — сдвигаются записи,
+// сделанные позже неё по времени. Возвращает также индекс удалённой записи (-1, если её в стеке не было).
+export function removeRowFromStack(stack: UndoEntry[], row: { id: string; at: number; delta: number }, currentMl: number): { stack: UndoEntry[]; total: number; index: number } {
+  const index = stackIndexOfRow(stack, row)
+  const total = Math.min(MAX_DAY_ML, shiftMl(currentMl, row.delta))
+  const shift = (e: UndoEntry): UndoEntry => ({ ...e, prev: shiftMl(e.prev, row.delta), next: shiftMl(e.next, row.delta) })
+  if (index >= 0) return { stack: [...stack.slice(0, index), ...stack.slice(index + 1).map(shift)], total, index }
+  return { stack: stack.map((e) => (typeof e.at === 'number' && e.at > row.at ? shift(e) : e)), total, index }
+}
+
 // --- localStorage ---
 
 // Все стеки пользователя за последние UNDO_KEEP_DAYS дней (старые удаляет).

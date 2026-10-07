@@ -7,7 +7,7 @@ import { t } from './i18n'
 import { effectiveNormMl, findWaterMetric, findWeightParam, nextWaterValue } from './water'
 import { createWriteQueue } from './writeQueue'
 import { autoNormFromBody, validHeightCm, resetWaterGoalCache } from './waterGoal'
-import { canUndo as stackCanUndo, loadStacks, pushEntry, saveStack, type UndoEntry } from './waterUndo'
+import { canUndo as stackCanUndo, loadStacks, pushEntry, removeRowFromStack, saveStack, type UndoEntry } from './waterUndo'
 import {
   LOG_VIEW_LIMIT,
   buildLogInsert,
@@ -279,6 +279,25 @@ export function useWater() {
     })
   }
 
+  // «Крестик» у записи журнала (BACKLOG 23:17): удалить ИМЕННО эту запись. Сумма дня уменьшается на её изменение (не ниже 0), следующие шаги
+  // «Отменить» сдвигаются на то же число (removeRowFromStack), строка water_log удаляется (у записи только этого устройства она просто
+  // пропадает из стека). Идёт в очереди записей, как добавление и отмена. Возвращает сумму дня после удаления или null (записи нет / не записалось).
+  async function removeLogEntry(dateStr: string, rowId: string): Promise<number | null> {
+    if (!metric.value) return null
+    return writeQueue.run(async () => {
+      await logTail // запись журнала могла ещё не закончиться: нужен id строки
+      const row = dayLog(dateStr).rows.find((r) => r.id === rowId)
+      if (!row) return null
+      const current = await getMlForDate(dateStr)
+      const { stack: nextStack, total } = removeRowFromStack(undoStacks.value[dateStr] ?? [], row, current)
+      const res = total === current ? current : await writeDay(dateStr, current, total, false)
+      if (res === null) return null
+      setStack(dateStr, nextStack)
+      if (!rowId.startsWith('local:')) void enqueueLog(() => deleteLog(dateStr, rowId))
+      return res
+    })
+  }
+
   // Для окна воды: доступна ли отмена для даты при показанной сейчас сумме.
   function canUndo(dateStr: string, currentMl: number): boolean {
     return stackCanUndo(undoStacks.value[dateStr], currentMl)
@@ -309,5 +328,5 @@ export function useWater() {
     return true
   }
 
-  return { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, canUndo, dayLog, loadDayLog, flushLog: () => logTail, getMlForDate, saveGoal, resetGoalToAuto }
+  return { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded, error, saveError, init, addMl, setTotal, undoLast, removeLogEntry, canUndo, dayLog, loadDayLog, flushLog: () => logTail, getMlForDate, saveGoal, resetGoalToAuto }
 }
