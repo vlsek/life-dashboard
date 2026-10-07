@@ -184,15 +184,22 @@ describe('форма метрики: варианты списком', () => {
     w.unmount()
   })
 
-  it('для числовой метрики блок вариантов приглушён и недоступен; при смене типа на «Подходы» подписи — про особенности', async () => {
+  it('варианты видны только там, где нужны: у числа и «да/нет» блока нет, у «Выбора» — на виду, у «Подходов» — в «Дополнительно»', async () => {
     const w = mount(MetricFormModal, { props: { existing: null, categories: [] } })
-    expect(w.find('[data-test="options-editor"]').attributes('style')).toContain('opacity: 0.4')
-    expect(w.find('[data-test="option-add"]').attributes('disabled')).toBeDefined()
+    expect(w.find('[data-test="options-editor"]').exists()).toBe(false) // число
+    await w.find('select').setValue('multiselect')
+    await nextTick()
+    expect(w.find('[data-test="options-editor"]').exists()).toBe(true)
+    expect(w.find('[data-test="advanced-block"] [data-test="options-editor"]').exists()).toBe(false)
+    expect(w.text()).toContain('Варианты (только для «Выбор»)')
     await w.find('select').setValue('sets')
     await nextTick()
-    expect(w.find('[data-test="option-add"]').attributes('disabled')).toBeUndefined()
+    expect(w.find('[data-test="advanced-block"] [data-test="options-editor"]').exists()).toBe(true)
     expect(w.find('[data-test="option-add"]').text()).toBe('+ Особенность')
     expect(w.text()).toContain('Сохранённые особенности (тип «Подходы», необязательно)')
+    await w.find('select').setValue('boolean')
+    await nextTick()
+    expect(w.find('[data-test="options-editor"]').exists()).toBe(false)
     w.unmount()
   })
 

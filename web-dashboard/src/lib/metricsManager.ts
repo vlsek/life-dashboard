@@ -147,6 +147,23 @@ export function fieldsEnabledForForm(f: Pick<MetricFormValues, 'type' | 'trackOn
   }
 }
 
+// Сколько полей в блоке «Дополнительно» отличаются от значений по умолчанию (BACKLOG «Форма метрики: слишком много всего»). Считаются только поля, которые
+// для текущего типа действуют (у «просто значения» серия и расписание выключены — это не «нестандартное»). Нужно, чтобы блок раскрывался сам при правке
+// метрики с настройками и чтобы у свёрнутого блока было видно, что внутри что-то изменено.
+export function countAdvancedChanges(f: MetricFormValues): number {
+  const en = fieldsEnabledForForm(f)
+  let n = 0
+  if (en.goal && f.goalDirection !== 'at_least') n++
+  if (en.inputMode && f.inputMode !== 'set') n++
+  if (en.schedule && f.scheduleKind !== 'daily') n++
+  if (f.categoryId !== '') n++
+  if (en.countStreak && !f.countStreak) n++
+  if (en.streakImport && f.countStreak && f.streakImportDays.trim() !== '') n++
+  if (en.plannedSets && f.plannedSets.trim() !== '') n++
+  if (f.type === 'sets' && f.options.length > 0) n++ // особенности «Подходов» лежат в «Дополнительно»
+  return n
+}
+
 export function emptyForm(): MetricFormValues {
   return {
     name: '',

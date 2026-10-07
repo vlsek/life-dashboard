@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
-  newOptionDraft, draftsFromOptions, optionsFromDrafts, uniqueOptionKey, buildSchedule, scheduleSummary, fieldsEnabledForType, clearedForBoolean,
+  newOptionDraft, draftsFromOptions, optionsFromDrafts, uniqueOptionKey, countAdvancedChanges, buildSchedule, scheduleSummary, fieldsEnabledForType, clearedForBoolean,
   emptyForm, formFromMetric, scheduleFields, streakImportFields, buildInsertRow, buildUpdateRow,
   nextPosition, categoryKeyFor, goalSummary, withoutWater,
   isTrackOnlyMetric, effectiveForm, fieldsEnabledForForm, countStreakFields,
@@ -255,5 +255,42 @@ describe('track-only mode / count_streak', () => {
     expect(goalSummary(weight(), 'yes', 'multi', 'value only')).toBe('value only, kg')
     expect(goalSummary(metric({ goal_value: 5, goal_direction: 'at_least', unit: 'km' }), 'yes', 'multi', 'value only')).toBe('≥ 5 km')
     expect(goalSummary(weight(), 'yes', 'multi')).toBe('≥ 0 kg') // без подписи — как раньше
+  })
+})
+
+// BACKLOG «Форма метрики: слишком много всего»: сколько настроек в «Дополнительно» отличаются от умолчаний (по ним блок раскрывается сам)
+describe('countAdvancedChanges', () => {
+  const base = () => emptyForm()
+  it('форма по умолчанию — 0', () => {
+    expect(countAdvancedChanges(base())).toBe(0)
+  })
+  it('каждая нестандартная настройка даёт +1', () => {
+    expect(countAdvancedChanges({ ...base(), goalDirection: 'at_most' })).toBe(1)
+    expect(countAdvancedChanges({ ...base(), inputMode: 'add' })).toBe(1)
+    expect(countAdvancedChanges({ ...base(), scheduleKind: 'weekly' })).toBe(1)
+    expect(countAdvancedChanges({ ...base(), categoryId: 'c1' })).toBe(1)
+    expect(countAdvancedChanges({ ...base(), categoryId: '__new__' })).toBe(1)
+    expect(countAdvancedChanges({ ...base(), countStreak: false })).toBe(1)
+    expect(countAdvancedChanges({ ...base(), streakImportDays: '12' })).toBe(1)
+    expect(countAdvancedChanges({ ...base(), goalDirection: 'at_most', inputMode: 'add', categoryId: 'c1', scheduleKind: 'days' })).toBe(4)
+  })
+  it('«просто записывать значение»: выключенные серия, расписание, цель не считаются «нестандартными»', () => {
+    const f = { ...base(), trackOnly: true, countStreak: false, scheduleKind: 'weekly' as const, goalDirection: 'at_most' as const }
+    expect(countAdvancedChanges(f)).toBe(0)
+    expect(countAdvancedChanges({ ...f, categoryId: 'c1' })).toBe(1) // категория по-прежнему действует
+  })
+  it('импорт серии не считается, если серия выключена', () => {
+    expect(countAdvancedChanges({ ...base(), countStreak: false, streakImportDays: '5' })).toBe(1) // только сама галочка
+  })
+  it('у «Подходов» особенности и план подходов в день лежат в «Дополнительно» и считаются', () => {
+    const sets = { ...base(), type: 'sets' as const }
+    expect(countAdvancedChanges(sets)).toBe(0)
+    expect(countAdvancedChanges({ ...sets, options: [newOptionDraft('классические')] })).toBe(1)
+    expect(countAdvancedChanges({ ...sets, plannedSets: '3' })).toBe(1)
+    expect(countAdvancedChanges({ ...sets, goalDirection: 'at_most', plannedSets: '3' })).toBe(1) // «не более»: плана подходов нет
+  })
+  it('у «Выбора» варианты на виду — в «Дополнительно» не считаются; у «да/нет» направление цели и режим ввода не действуют', () => {
+    expect(countAdvancedChanges({ ...base(), type: 'multiselect', options: [newOptionDraft('a')] })).toBe(0)
+    expect(countAdvancedChanges({ ...base(), type: 'boolean', goalDirection: 'at_most', inputMode: 'add' })).toBe(0)
   })
 })

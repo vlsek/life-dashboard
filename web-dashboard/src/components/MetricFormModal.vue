@@ -3,7 +3,7 @@ import { computed, ref, watch } from 'vue'
 import IconPicker from './IconPicker.vue'
 import MetricOptionsEditor from './MetricOptionsEditor.vue'
 import { t } from '../lib/i18n'
-import { WEEK_ORDER, clearedForBoolean, emptyForm, fieldsEnabledForForm, formFromMetric } from '../lib/metricsManager'
+import { WEEK_ORDER, clearedForBoolean, countAdvancedChanges, emptyForm, fieldsEnabledForForm, formFromMetric } from '../lib/metricsManager'
 import type { MetricFormValues } from '../lib/metricsManager'
 import type { MetricCategory } from '../lib/useMetricsManager'
 import type { Metric } from '../lib/types'
@@ -15,6 +15,9 @@ const emit = defineEmits<{ close: []; save: [form: MetricFormValues] }>()
 
 const form = ref<MetricFormValues>(props.existing ? formFromMetric(props.existing) : emptyForm())
 const enabled = computed(() => fieldsEnabledForForm(form.value))
+// «Дополнительно» свёрнуто по умолчанию (BACKLOG «Форма метрики: слишком много всего»); при правке метрики с нестандартными настройками раскрыто сразу
+const advancedChanged = computed(() => countAdvancedChanges(form.value))
+const advancedOpen = ref(!!props.existing && advancedChanged.value > 0)
 const weekdayNames = computed(() => t('dash_weekdays_short').split(','))
 // Миграция 041: поле «подходов в день» показываем только если колонка есть (у метрики есть ключ planned_sets_log или он есть у других)
 const plannedSetsShown = computed(() => (props.existing ? 'planned_sets_log' in props.existing : !!props.plannedSetsAvailable) && enabled.value.plannedSets)
@@ -72,22 +75,46 @@ const dim = (on: boolean) => ({ opacity: on ? 1 : 0.4 })
         <p class="dim mt-1 text-xs">{{ t('dash_metric_track_only_hint') }}</p>
       </div>
 
+      <div class="mt-2 grid grid-cols-2 gap-2" data-test="goal-row">
+        <div>
+          <label class="block text-sm" :style="dim(enabled.goal)">{{ t('dash_metric_field_goal_value') }}</label>
+          <input v-model.number="form.goalValue" type="number" class="w-full" :disabled="!enabled.goal" :style="dim(enabled.goal)" />
+        </div>
+        <div>
+          <label class="block text-sm" :style="dim(enabled.unit)">{{ t('dash_metric_field_unit') }}</label>
+          <input v-model="form.unit" type="text" class="w-full" :disabled="!enabled.unit" :style="dim(enabled.unit)" />
+        </div>
+      </div>
+
+      <!-- Варианты «Выбора» — основное; особенности «Подходов» необязательны и лежат в «Дополнительно» -->
+      <template v-if="form.type === 'multiselect'">
+        <label class="mt-2 block text-sm">{{ t('dash_metric_field_options') }}</label>
+        <MetricOptionsEditor v-model="form.options" />
+      </template>
+
+      <button
+        type="button"
+        class="secondary mt-3 flex w-full items-center justify-between"
+        data-test="advanced-toggle"
+        :aria-expanded="advancedOpen"
+        aria-controls="metric-advanced"
+        @click="advancedOpen = !advancedOpen"
+      >
+        <span>{{ t('dash_metric_advanced') }}<span v-if="advancedChanged" class="dim" data-test="advanced-count"> · {{ advancedChanged }}</span></span>
+        <svg viewBox="0 0 24 24" width="1.1em" height="1.1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" :style="{ transform: advancedOpen ? 'rotate(180deg)' : undefined, transition: 'transform 0.15s ease' }"><path d="m6 9 6 6 6-6" /></svg>
+      </button>
+
+      <div v-show="advancedOpen" id="metric-advanced" data-test="advanced-block">
       <label class="mt-2 block text-sm" :style="dim(enabled.goal)">{{ t('dash_metric_field_goal_dir') }}</label>
       <select v-model="form.goalDirection" class="w-full" :disabled="!enabled.goal" :style="dim(enabled.goal)">
         <option value="at_least">{{ t('dash_goal_dir_at_least') }}</option>
         <option value="at_most">{{ t('dash_goal_dir_at_most') }}</option>
       </select>
 
-      <label class="mt-2 block text-sm" :style="dim(enabled.goal)">{{ t('dash_metric_field_goal_value') }}</label>
-      <input v-model.number="form.goalValue" type="number" class="w-full" :disabled="!enabled.goal" :style="dim(enabled.goal)" />
-
-      <label class="mt-2 block text-sm" :style="dim(enabled.unit)">{{ t('dash_metric_field_unit') }}</label>
-      <input v-model="form.unit" type="text" class="w-full" :disabled="!enabled.unit" :style="dim(enabled.unit)" />
-
-      <label class="mt-2 block text-sm" :style="dim(enabled.options)">
-        {{ form.type === 'sets' ? t('dash_metric_field_variations') : t('dash_metric_field_options') }}
-      </label>
-      <MetricOptionsEditor v-model="form.options" :disabled="!enabled.options" :sets="form.type === 'sets'" />
+      <template v-if="form.type === 'sets'">
+        <label class="mt-2 block text-sm">{{ t('dash_metric_field_variations') }}</label>
+        <MetricOptionsEditor v-model="form.options" sets />
+      </template>
 
       <label class="mt-2 block text-sm" :style="dim(enabled.inputMode)">{{ t('dash_metric_field_input_mode') }}</label>
       <select v-model="form.inputMode" class="w-full" :disabled="!enabled.inputMode" :style="dim(enabled.inputMode)">
@@ -170,6 +197,7 @@ const dim = (on: boolean) => ({ opacity: on ? 1 : 0.4 })
       <p class="dim mt-1 text-xs">
         {{ existing?.streak_import_date ? `${t('dash_streak_import_hint_set')} ${existing.streak_import_date.split('-').reverse().join('.')}` : t('dash_streak_import_hint_new') }}
       </p>
+      </div>
 
       <p v-if="error" class="mt-2 text-sm" style="color: var(--danger)">{{ error }}</p>
 
