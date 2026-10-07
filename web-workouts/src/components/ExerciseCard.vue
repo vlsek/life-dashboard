@@ -11,16 +11,18 @@ import ExerciseChart from './ExerciseChart.vue'
 import { readExerciseCollapsed, writeExerciseCollapsed } from '../lib/exerciseCollapse'
 import { useAccordionMember } from '../lib/useCollapseStyle'
 import type { Exercise, WorkoutEntry } from '../lib/types'
+import { setsOfDay, totalReps, type LinkedMetric } from '../lib/metricLink'
 import CollapseChevron from './CollapseChevron.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import EmojiText from './EmojiText.vue'
 
 // Порт renderExerciseCard() из workouts.js — заголовок с кнопками, рекомендованная схема,
 // личные рекорды (по сторонам для билатеральных), мини-график прогресса, таблица записей.
-const props = defineProps<{ exercise: Exercise; entries: WorkoutEntry[]; busyEntryId?: string | null; bodyWeightKg?: number }>()
+const props = defineProps<{ exercise: Exercise; entries: WorkoutEntry[]; busyEntryId?: string | null; bodyWeightKg?: number; linkedMetrics?: LinkedMetric[]; linkSupported?: boolean }>()
 const emit = defineEmits<{
   addEntry: []
   editExercise: []
+  linkMetric: []
   deleteExercise: []
   editEntry: [WorkoutEntry]
   deleteEntry: [WorkoutEntry]
@@ -55,6 +57,15 @@ const records = computed<RecordLine[]>(() => {
     push('zap', t('workouts_record_pace_label'), bestPaceRecord(props.entries, ex, perHour, durUnit))
   }
   return out
+})
+
+// Связь с метриками дня (миграция 054): строка «В метриках дня · сегодня: X [из N]» — подходы вводятся один раз, здесь.
+const todayTotal = computed(() => totalReps(setsOfDay(props.entries, props.exercise.id, todayStr())))
+const metricChip = computed(() => {
+  const m = props.linkedMetrics?.[0]
+  if (!m) return null
+  const goal = m.goal_value
+  return (goal ? t('workouts_ml_chip_goal').replace('{goal}', String(goal)) : t('workouts_ml_chip')).replace('{n}', String(todayTotal.value))
 })
 
 // Свёрнутое упражнение показывает только заголовок с кнопками; состояние помним по id.
@@ -110,12 +121,28 @@ const calories = computed(() => estimateExerciseCalories(props.entries, props.ex
       >
         <EmojiText :text="t('workouts_add_entry_btn')" />
       </button>
+      <button
+        v-if="linkSupported"
+        type="button"
+        class="rounded-lg border px-2.5 py-1.5"
+        style="border-color: var(--border); color: var(--text)"
+        :title="t('workouts_ml_btn_title')"
+        :aria-label="t('workouts_ml_btn_title')"
+        data-testid="exercise-link-metric"
+        @click="emit('linkMetric')"
+      >
+        <Icon name="link" />
+      </button>
       <button type="button" class="rounded-lg border px-2.5 py-1.5" style="border-color: var(--border); color: var(--text)" @click="emit('editExercise')">
         <Icon name="edit" />
       </button>
       <button type="button" class="rounded-lg border px-2.5 py-1.5" style="border-color: var(--border); color: var(--danger, #e05555)" @click="emit('deleteExercise')">
         <Icon name="trash" />
       </button>
+    </div>
+
+    <div v-if="metricChip" class="mb-2 text-[0.85em]" style="color: var(--text-dim)" data-testid="exercise-metric-chip">
+      <EmojiText :text="metricChip" />
     </div>
 
     <div v-collapse="!collapsed" data-testid="exercise-body">

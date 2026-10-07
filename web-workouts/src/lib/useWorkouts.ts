@@ -4,6 +4,8 @@ import { exerciseBilateralField, exerciseDurationField, exerciseMusclesField } f
 import { unitToSave } from './weightUnit'
 import { getMuscleOverride, renameMuscleOverride, setMuscleOverride } from './muscles'
 import { planMuscleSync, type SyncRow } from './muscleSync'
+import { createLinkedMetric, linkMetric, loadMetricLinks, syncLinkedMetrics, unlinkMetric, type LinkedMetric } from './metricLink'
+import { todayStr } from './date'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry } from './types'
 
 export type AuthState =
@@ -18,6 +20,8 @@ export function useWorkouts() {
   const loadError = ref<string | null>(null)
   const studyRecent = ref(false)
   const bodyWeightKg = ref(70)
+  // Метрики дня и их связь с упражнениями (миграция 054). supported=false — колонки нет, раздел работает как раньше.
+  const metricLinks = ref<{ supported: boolean; metrics: LinkedMetric[] }>({ supported: false, metrics: [] })
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -56,7 +60,7 @@ export function useWorkouts() {
     exercises.value = (ex || []) as Exercise[]
     entries.value = (en || []) as WorkoutEntry[]
     await syncMuscleGroups(exercises.value)
-    await Promise.all([loadStudyRecent(userId), loadBodyWeight(userId)])
+    await Promise.all([loadStudyRecent(userId), loadBodyWeight(userId), loadLinks(userId)])
   }
 
 
@@ -159,6 +163,23 @@ export function useWorkouts() {
     }
   }
 
+  async function loadLinks(userId: string) {
+    metricLinks.value = await loadMetricLinks(userId)
+  }
+
+  // Зеркало: после правки записей пересчитать значение связанных метрик за даты (ошибка зеркала не должна ронять сохранение тренировки).
+  async function mirror(exerciseId: string, dates: string[]) {
+    const a = auth.value
+    if (a.status !== 'ready' || !metricLinks.value.supported) return
+    if (!metricLinks.value.metrics.some((m) => m.source_exercise_id === exerciseId)) return
+    try {
+      const failed = await syncLinkedMetrics(a.userId, exerciseId, metricLinks.value.metrics, entries.value, dates)
+      if (failed) console.warn('metric mirror: failed writes', failed)
+    } catch (e) {
+      console.warn('metric mirror failed', e)
+    }
+  }
+
   async function reload() {
     if (auth.value.status === 'ready') await load(auth.value.userId)
   }
@@ -239,18 +260,51 @@ export function useWorkouts() {
     })
     if (error) throw error
     await reload()
+    await mirror(exerciseId, [res.date])
   }
 
   async function editEntry(entryId: string, res: EntryFormInput) {
+    const old = entries.value.find((e) => e.id === entryId)
     const { error } = await sb.from('workout_entries').update({ date: res.date, sets: res.sets, notes: res.notes }).eq('id', entryId)
     if (error) throw error
     await reload()
+    if (old) await mirror(old.exercise_id, [old.date, res.date])
   }
 
   async function deleteEntry(id: string) {
+    const old = entries.value.find((e) => e.id === id)
     const { error } = await sb.from('workout_entries').delete().eq('id', id)
     if (error) throw error
     await reload()
+    if (old) await mirror(old.exercise_id, [old.date])
+  }
+
+  // ---- связь с метриками дня (BACKLOG 19/30; миграция 054) ----
+  // Прошлые дни не трогаем (значения метрики остаются как были); пересчитываем только сегодня — после переноса сегодняшних ручных подходов в тренировку.
+  async function linkExerciseMetric(exercise: Exercise, metric: LinkedMetric): Promise<{ imported: boolean }> {
+    const a = auth.value
+    if (a.status !== 'ready') return { imported: false }
+    const res = await linkMetric(a.userId, exercise.id, metric, todayStr(), entries.value)
+    await reload()
+    await loadLinks(a.userId)
+    await mirror(exercise.id, [todayStr()])
+    return res
+  }
+
+  async function unlinkExerciseMetric(metricId: string) {
+    const a = auth.value
+    if (a.status !== 'ready') return
+    await unlinkMetric(a.userId, metricId)
+    await loadLinks(a.userId)
+  }
+
+  async function createMetricForExercise(exercise: Exercise) {
+    const a = auth.value
+    if (a.status !== 'ready') return
+    const pos = metricLinks.value.metrics.reduce((mx, m) => Math.max(mx, m.position ?? 0), 0) + 1 // в конец списка метрик
+    await createLinkedMetric(a.userId, exercise.id, exercise.name, pos)
+    await loadLinks(a.userId)
+    await mirror(exercise.id, [todayStr()])
   }
 
   async function applyTemplateExercises(
@@ -289,6 +343,10 @@ export function useWorkouts() {
     loadError,
     studyRecent,
     bodyWeightKg,
+    metricLinks,
+    linkExerciseMetric,
+    unlinkExerciseMetric,
+    createMetricForExercise,
     entriesFor,
     addExercise,
     editExercise,

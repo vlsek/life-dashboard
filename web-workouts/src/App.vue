@@ -16,6 +16,7 @@ import MuscleMap from './components/MuscleMap.vue'
 import ProgressionTrees from './components/ProgressionTrees.vue'
 import ExerciseForm from './components/ExerciseForm.vue'
 import EntryForm from './components/EntryForm.vue'
+import MetricLinkModal from './components/MetricLinkModal.vue'
 import TemplatesModal from './components/TemplatesModal.vue'
 import ProgramCard from './components/ProgramCard.vue'
 import { PROGRAM_EVENT, readProgram, startProgram, toggleWeekDone, writeProgram, type ActiveProgram } from './lib/program'
@@ -23,6 +24,7 @@ import { saveProgramToProfile, syncProgramFromProfile } from './lib/programSync'
 import { workoutTemplates } from './lib/templates'
 import Toast from './components/Toast.vue'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry, WorkoutTemplate } from './lib/types'
+import type { LinkedMetric } from './lib/metricLink'
 import CollapseChevron from './components/CollapseChevron.vue'
 import { loadCollapseStyle, useAccordionGroup, ACCORDION_PAGE } from './lib/useCollapseStyle'
 import { vCollapse } from './lib/collapseMotion'
@@ -35,7 +37,7 @@ import { friendlyError } from './lib/friendlyError'
 // группировка по категориям со сворачиванием, каталог типовых программ, мини-график прогресса
 // на каждом упражнении (ExerciseChart в ExerciseCard) и общий график объёма тренировок.
 const wk = useWorkouts()
-const { auth, exercises, entries, loadError, studyRecent, bodyWeightKg, entriesFor } = wk
+const { auth, exercises, entries, loadError, studyRecent, bodyWeightKg, entriesFor, metricLinks } = wk
 
 const defaultUnit = () => defaultWeightUnit()
 const defaultValueLabel = () => t('workouts_default_value_label')
@@ -125,6 +127,30 @@ function dismissWarmup() {
 // ---- формы ----
 const exerciseForm = ref<{ existing: Exercise | null } | null>(null)
 const entryForm = ref<{ exercise: Exercise; existing: WorkoutEntry | null } | null>(null)
+// Связь упражнения с метриками дня (BACKLOG 19/30, миграция 054)
+const linkModal = ref<Exercise | null>(null)
+const linkBusy = ref(false)
+const linkedFor = (exId: string) => metricLinks.value.metrics.filter((m) => m.source_exercise_id === exId)
+async function runLink(action: () => Promise<string | void>) {
+  if (linkBusy.value) return
+  linkBusy.value = true
+  try {
+    const toast = await action()
+    if (toast) showToast(toast)
+  } catch (e) {
+    showToast(t('workouts_toast_save_error') + errMsg(e), 'error')
+    console.error(e)
+  } finally {
+    linkBusy.value = false
+  }
+}
+const onLinkMetric = (m: LinkedMetric) =>
+  runLink(async () => {
+    const res = await wk.linkExerciseMetric(linkModal.value!, m)
+    return t(res.imported ? 'workouts_ml_toast_imported' : 'workouts_ml_toast_linked')
+  })
+const onUnlinkMetric = (m: LinkedMetric) => runLink(async () => (await wk.unlinkExerciseMetric(m.id), t('workouts_ml_toast_unlinked')))
+const onCreateMetric = () => runLink(async () => (await wk.createMetricForExercise(linkModal.value!), t('workouts_ml_toast_created')))
 const templatesOpen = ref(false)
 
 async function onSaveExercise(res: ExerciseFormInput) {
@@ -360,7 +386,10 @@ function onToggleProgramWeek(week: number) {
             :exercise="ex"
             :entries="entriesFor(ex.id)"
             :body-weight-kg="bodyWeightKg"
+            :linked-metrics="linkedFor(ex.id)"
+            :link-supported="metricLinks.supported"
             @add-entry="entryForm = { exercise: ex, existing: null }"
+            @link-metric="linkModal = ex"
             @edit-exercise="exerciseForm = { existing: ex }"
             @delete-exercise="onDeleteExercise(ex)"
             @edit-entry="(e) => (entryForm = { exercise: ex, existing: e })"
@@ -375,6 +404,7 @@ function onToggleProgramWeek(week: number) {
   </main>
 
   <ExerciseForm v-if="exerciseForm" :existing="exerciseForm.existing" @close="exerciseForm = null" @save="onSaveExercise" />
+  <MetricLinkModal v-if="linkModal" :exercise="linkModal" :metrics="metricLinks.metrics" :supported="metricLinks.supported" :busy="linkBusy" @close="linkModal = null" @link="onLinkMetric" @unlink="onUnlinkMetric" @create="onCreateMetric" />
   <EntryForm v-if="entryForm" :exercise="entryForm.exercise" :existing="entryForm.existing" @close="entryForm = null" @save="onSaveEntry" />
   <TemplatesModal v-if="templatesOpen" :active-title="activeTemplate?.title ?? null" @close="templatesOpen = false" @apply="onApplyTemplate" @start="onStartProgram" />
   <Toast />
