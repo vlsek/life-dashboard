@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.69";
+const SITE_VERSION = "3.70";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.70", date: "2026-10-07 13:16", changes: [
+        "Ошибки: на странице «Сообщество» при сбое (рейтинг, лента, подписка, заявка в друзья, привязка и выбор категорий) теперь показывается понятный текст («Нет связи с сервером…», «Нет доступа…», «Не получилось сохранить…») вместо технической строки с адресом сервера и именами функций базы. Остались шапка, вход и регистрация. Миграция не нужна",
+    ]},
     { version: "3.69", date: "2026-10-07 00:20", changes: [
         "Тренировки ↔ метрики дня: упражнение можно связать с метрикой дня — подходы вводятся ОДИН раз, в «Тренировках», а значение метрики на Дашборде заполняется само (баллы, серии и цели считаются как обычно). В карточке упражнения появилась кнопка-ссылка «Связать с метрикой дня»: выбрать уже заведённую метрику (типа «Подходы» или «Число») или создать новую, можно отвязать. Подходы, уже введённые в метрику сегодня, переносятся в запись тренировки — ничего не теряется, прошлые дни остаются как были. В карточке упражнения видно «В метриках дня · сегодня: N из цели». На Дашборде связанная метрика — только для чтения со ссылкой «Открыть «Тренировки»». ТРЕБУЕТ миграцию 054 (без неё всё работает как раньше, кнопки связи нет)."
     ]},
@@ -1716,6 +1719,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.70", date: "2026-10-07 13:16", changes: [
+        "Errors: on the Community page a failure (leaderboard, feed, follow, friend request, linking and choosing categories) now shows a clear message (\"No connection to the server…\", \"No access…\", \"Could not save…\") instead of a technical line with the server address and database function names. The header, sign-in and sign-up are left. No migration needed",
+    ]},
     { version: "3.69", date: "2026-10-07 00:20", changes: [
         "Workouts and daily metrics: an exercise can now be linked to a daily metric - sets are entered ONCE, in Workouts, and the metric value on the Dashboard fills in automatically (points, streaks and goals count as usual). The exercise card has a new link button \"Link to a daily metric\": pick an existing metric (type Sets or Number) or create a new one, and you can unlink it. Sets already entered in the metric today are moved into a workout entry - nothing is lost, past days stay as they were. The exercise card shows \"In daily metrics - today: N of goal\". On the Dashboard a linked metric is read-only with an \"Open Workouts\" link. REQUIRES migration 054 (without it everything works as before and the link button is hidden)."
     ]},

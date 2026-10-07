@@ -1,6 +1,13 @@
 {
-  "version": "3.69",
+  "version": "3.70",
   "en": [
+    {
+      "version": "3.70",
+      "date": "2026-10-07 13:16",
+      "changes": [
+        "Errors: on the Community page a failure (leaderboard, feed, follow, friend request, linking and choosing categories) now shows a clear message (\"No connection to the server…\", \"No access…\", \"Could not save…\") instead of a technical line with the server address and database function names. The header, sign-in and sign-up are left. No migration needed"
+      ]
+    },
     {
       "version": "3.69",
       "date": "2026-10-07 00:20",
@@ -2649,6 +2656,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.70",
+      "date": "2026-10-07 13:16",
+      "changes": [
+        "Ошибки: на странице «Сообщество» при сбое (рейтинг, лента, подписка, заявка в друзья, привязка и выбор категорий) теперь показывается понятный текст («Нет связи с сервером…», «Нет доступа…», «Не получилось сохранить…») вместо технической строки с адресом сервера и именами функций базы. Остались шапка, вход и регистрация. Миграция не нужна"
+      ]
+    },
     {
       "version": "3.69",
       "date": "2026-10-07 00:20",
