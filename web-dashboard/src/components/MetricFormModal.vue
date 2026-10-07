@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import IconPicker from './IconPicker.vue'
+import MetricOptionsEditor from './MetricOptionsEditor.vue'
 import { t } from '../lib/i18n'
 import { WEEK_ORDER, clearedForBoolean, emptyForm, fieldsEnabledForForm, formFromMetric } from '../lib/metricsManager'
 import type { MetricFormValues } from '../lib/metricsManager'
@@ -86,7 +87,7 @@ const dim = (on: boolean) => ({ opacity: on ? 1 : 0.4 })
       <label class="mt-2 block text-sm" :style="dim(enabled.options)">
         {{ form.type === 'sets' ? t('dash_metric_field_variations') : t('dash_metric_field_options') }}
       </label>
-      <input v-model="form.optionsRaw" type="text" class="w-full" :disabled="!enabled.options" :style="dim(enabled.options)" />
+      <MetricOptionsEditor v-model="form.options" :disabled="!enabled.options" :sets="form.type === 'sets'" />
 
       <label class="mt-2 block text-sm" :style="dim(enabled.inputMode)">{{ t('dash_metric_field_input_mode') }}</label>
       <select v-model="form.inputMode" class="w-full" :disabled="!enabled.inputMode" :style="dim(enabled.inputMode)">

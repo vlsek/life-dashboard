@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
-  parseOptionsRaw, optionsToRaw, buildSchedule, scheduleSummary, fieldsEnabledForType, clearedForBoolean,
+  newOptionDraft, draftsFromOptions, optionsFromDrafts, uniqueOptionKey, buildSchedule, scheduleSummary, fieldsEnabledForType, clearedForBoolean,
   emptyForm, formFromMetric, scheduleFields, streakImportFields, buildInsertRow, buildUpdateRow,
   nextPosition, categoryKeyFor, goalSummary, withoutWater,
   isTrackOnlyMetric, effectiveForm, fieldsEnabledForForm, countStreakFields,
@@ -14,21 +14,41 @@ function metric(o: Partial<Metric> = {}): Metric {
   }
 }
 
-describe('parseOptionsRaw / optionsToRaw', () => {
-  it('parses key:label pairs, falling back to key as label', () => {
-    expect(parseOptionsRaw('a:Alpha, b , c:With:colon')).toEqual([
-      { key: 'a', label: 'Alpha' }, { key: 'b', label: 'b' }, { key: 'c', label: 'With:colon' },
+describe('варианты метрики списком: draftsFromOptions / optionsFromDrafts', () => {
+  it('сохранённые варианты открываются в форме с подписями и своими ключами', () => {
+    const d = draftsFromOptions([{ key: 'a', label: 'Alpha' }, { key: 'b', label: '' }])
+    expect(d.map((x) => [x.key, x.label])).toEqual([['a', 'Alpha'], ['b', 'b']]) // нет подписи — показываем ключ
+    expect(draftsFromOptions(null)).toEqual([])
+    expect(new Set(d.map((x) => x.id)).size).toBe(2) // у каждой строки свой id (для v-for и перетаскивания)
+  })
+  it('у нового варианта ключ — сама подпись (как у «Подходов»), в базу уходит только { key, label }', () => {
+    expect(optionsFromDrafts([newOptionDraft('Классические'), newOptionDraft('Алмазные')])).toEqual([
+      { key: 'Классические', label: 'Классические' },
+      { key: 'Алмазные', label: 'Алмазные' },
     ])
   })
-  it('returns [] for empty/blank input', () => {
-    expect(parseOptionsRaw('')).toEqual([])
-    expect(parseOptionsRaw('  ')).toEqual([])
-    expect(parseOptionsRaw(null)).toEqual([])
+  it('подпись с запятой и двоеточием работает (раньше ломала разбор строки «ключ:Метка, …»)', () => {
+    expect(optionsFromDrafts([newOptionDraft('Утро, до еды: 1 таблетка')])).toEqual([{ key: 'Утро, до еды: 1 таблетка', label: 'Утро, до еды: 1 таблетка' }])
   })
-  it('round-trips through optionsToRaw', () => {
-    const raw = 'a:Alpha, b:Beta'
-    expect(optionsToRaw(parseOptionsRaw(raw))).toBe(raw)
-    expect(optionsToRaw(null)).toBe('')
+  it('ключ сохранённого варианта НЕ меняется при правке подписи — записанные значения остаются на месте', () => {
+    const d = draftsFromOptions([{ key: 'a', label: 'Alpha' }])
+    d[0].label = 'Alpha plus'
+    expect(optionsFromDrafts(d)).toEqual([{ key: 'a', label: 'Alpha plus' }])
+  })
+  it('пустые подписи отбрасываются, пробелы чистятся, порядок как в списке', () => {
+    const d = [newOptionDraft('  Б  в '), newOptionDraft('   '), newOptionDraft(''), newOptionDraft('А')]
+    expect(optionsFromDrafts(d)).toEqual([{ key: 'Б в', label: 'Б в' }, { key: 'А', label: 'А' }])
+  })
+  it('одинаковые подписи получают разные ключи; ключи сохранённых вариантов заняты в первую очередь', () => {
+    expect(optionsFromDrafts([newOptionDraft('Да'), newOptionDraft('Да'), newOptionDraft('Да')]).map((o) => o.key)).toEqual(['Да', 'Да 2', 'Да 3'])
+    const saved = newOptionDraft('Старый', 'Нов') // сохранённый вариант с ключом «Нов»
+    expect(optionsFromDrafts([newOptionDraft('Нов'), saved]).map((o) => o.key)).toEqual(['Нов 2', 'Нов'])
+    expect(uniqueOptionKey('x', new Set(['x', 'x 2']))).toBe('x 3')
+    expect(uniqueOptionKey('y', new Set())).toBe('y')
+  })
+  it('пустой список и null → []', () => {
+    expect(optionsFromDrafts([])).toEqual([])
+    expect(optionsFromDrafts(null)).toEqual([])
   })
 })
 
@@ -68,8 +88,8 @@ describe('fieldsEnabledForType / clearedForBoolean', () => {
     expect(fieldsEnabledForType('sets')).toEqual({ goal: true, inputMode: false, options: true })
   })
   it('clears goal/unit/options when switching to boolean', () => {
-    const f = { ...emptyForm(), goalValue: 5, unit: 'km', optionsRaw: 'a:b' }
-    expect(clearedForBoolean(f)).toMatchObject({ goalValue: 0, unit: '', optionsRaw: '' })
+    const f = { ...emptyForm(), goalValue: 5, unit: 'km', options: [newOptionDraft('b', 'a')] }
+    expect(clearedForBoolean(f)).toMatchObject({ goalValue: 0, unit: '', options: [] })
   })
 })
 
@@ -115,7 +135,7 @@ describe('streakImportFields', () => {
 
 describe('buildInsertRow / buildUpdateRow', () => {
   it('builds an insert row with trimmed name, parsed options, position and active', () => {
-    const form = { ...emptyForm(), name: '  Water ', type: 'multiselect' as const, optionsRaw: 'a:A, b:B', unit: 'ml' }
+    const form = { ...emptyForm(), name: '  Water ', type: 'multiselect' as const, options: [newOptionDraft('A', 'a'), newOptionDraft('B', 'b')], unit: 'ml' }
     const row = buildInsertRow(form, 'u1', 3, 'cat1')
     expect(row).toMatchObject({ user_id: 'u1', name: 'Water', type: 'multiselect', position: 3, active: true,
       category_id: 'cat1', options: [{ key: 'a', label: 'A' }, { key: 'b', label: 'B' }] })
