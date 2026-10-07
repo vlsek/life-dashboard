@@ -23,6 +23,8 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{ set: [string]; add: [string]; fix: [string] }>()
 
+// Метрика ведётся из упражнения «Тренировок» (миграция 054): значение за день пишет раздел «Тренировки», здесь только чтение
+const linked = !!props.metric.source_exercise_id
 const isAddMode = props.metric.input_mode === 'add'
 const text = ref(isAddMode ? '' : props.value === undefined ? '' : String(props.value))
 
@@ -73,6 +75,14 @@ function submitFix() {
       <MetricStreakBadge v-if="streak" :info="streak" />
     </div>
 
+    <template v-if="linked">
+      <div class="total-row"><span class="total" data-test="number-linked-total">{{ t('dash_metric_current_total') }} {{ value ?? 0 }}</span></div>
+      <p class="dim text-xs" data-test="number-linked-hint">
+        {{ t('dash_metric_linked_hint') }}
+        <a href="/workouts/" class="underline" data-test="number-linked-open">{{ t('dash_metric_linked_open') }}</a>
+      </p>
+    </template>
+    <template v-else>
     <div v-if="isAddMode" class="total-row">
       <span class="total">{{ t('dash_metric_current_total') }} {{ value ?? 0 }}</span>
       <button type="button" class="secondary fix-btn" :title="t('dash_metric_fix_total_title')" @click="fixTotal">
@@ -94,6 +104,7 @@ function submitFix() {
       <button type="button" class="add-btn" :title="t('dash_metric_add_btn_title')" @click="commit">+</button>
     </div>
     <input v-else v-model="text" type="number" step="any" placeholder="0" :class="{ 'saved-flash': flashed }" @change="commit" />
+    </template>
     <RecordBadge v-if="record" kind="metrics" :record="record" :unit="metric.unit ? ' ' + metric.unit : ''" class="mt-0.5" />
   </div>
 </template>

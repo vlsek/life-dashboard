@@ -138,7 +138,7 @@ async function runLink(action: () => Promise<string | void>) {
     const toast = await action()
     if (toast) showToast(toast)
   } catch (e) {
-    showToast(t('workouts_toast_save_error') + errMsg(e), 'error')
+    showToast(friendlyError(e, 'save'), 'error')
     console.error(e)
   } finally {
     linkBusy.value = false

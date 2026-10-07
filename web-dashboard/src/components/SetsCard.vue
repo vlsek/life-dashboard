@@ -27,6 +27,8 @@ const emit = defineEmits<{
 }>()
 
 // если за день уже что-то есть — сразу развёрнуто, иначе свёрнуто
+// Метрика ведётся из упражнения «Тренировок» (миграция 054): здесь только чтение, подходы вводятся один раз — в «Тренировках»
+const linked = computed(() => !!props.metric.source_exercise_id)
 const open = ref(props.sets.length > 0)
 const summary = computed(() => setsSummary(props.sets))
 const labels = computed(() => variationLabels(props.metric))
@@ -61,7 +63,24 @@ function onVariation(i: number, text: string) {
     </div>
     <RecordBadge v-if="record" kind="metrics" :record="record" :unit="' ' + t('dash_sets_reps_word')" class="mt-0.5" />
 
-    <div v-collapse="open" class="mt-2">
+    <div v-if="linked" v-collapse="open" class="mt-2" data-test="sets-linked">
+      <div v-if="sets.length > 0" class="overflow-x-auto">
+        <table class="sets-table w-full text-sm" data-test="sets-table-readonly">
+          <tbody>
+            <tr v-for="(s, i) in sets" :key="i" class="align-middle" data-test="set-row-readonly">
+              <td class="dim pl-2 pr-1">{{ i + 1 }}</td>
+              <td class="set-plate"><span class="dim">{{ s.time ?? '—' }}</span></td>
+              <td class="set-plate"><strong>{{ s.reps ?? '—' }}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="dim mt-1 text-sm" data-test="sets-linked-hint">
+        {{ t('dash_metric_linked_hint') }}
+        <a href="/workouts/" class="underline" data-test="sets-linked-open">{{ t('dash_metric_linked_open') }}</a>
+      </p>
+    </div>
+    <div v-else v-collapse="open" class="mt-2">
       <div v-if="sets.length > 0" class="overflow-x-auto">
         <table class="sets-table w-full text-sm" data-test="sets-table">
           <tbody>
