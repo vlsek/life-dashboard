@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { plannedSummary } from '../lib/collapseSummaries'
 import EmojiText from './EmojiText.vue'
 import { computed, nextTick, ref, watch } from 'vue'
 import Icon from './Icon.vue'
@@ -49,6 +50,8 @@ const goalPicker = ref<PlanGoal[] | null>(null)
 const carryCandidates = ref<CarryCandidate[] | null>(null)
 
 const doneGoals = computed(() => doneOnDay(goals.value, planned.value, day.value))
+// «Карточка со сводкой» (BACKLOG 498 срез 3): «Выполнено N из M» у свёрнутого блока
+const plannedSummaryText = computed(() => plannedSummary(planned.value, goals.value))
 const goalOf = (item: PlannedEntry) => goals.value.find((g) => g.name === item.text)
 
 // «Добавить» с пустым планом (BACKLOG 38, апд37): поле подсвечивается, получает фокус и слегка «встряхивается», как у незаполненного обязательного поля.
@@ -143,7 +146,7 @@ const collapsed = ref(false)
 
 <template>
   <section v-if="loaded" class="mb-5" data-test="planned">
-    <SectionHeading v-model:collapsed="collapsed" :title="stripEmoji(t('dash_planned_h2'))" storage-key="planned" />
+    <SectionHeading v-model:collapsed="collapsed" :title="stripEmoji(t('dash_planned_h2'))" storage-key="planned" :summary="plannedSummaryText" />
     <div v-collapse="!collapsed" class="card relative">
     <SavedTick :show="savedTick" />
     <DateStepper v-if="switchable" :model-value="day" @update:model-value="emit('update:date', $event)" />

@@ -521,3 +521,21 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
   background-color: color-mix(in srgb, var(--accent) 22%, transparent);
 }
+
+/* Вид сворачивания «карточка со сводкой» (BACKLOG 498 срез 3): итог свёрнутого блока справа от заголовка (компонент CollapseSummary,
+   показывается только при выбранном виде «сводка», свёрнутом блоке и непустом тексте). Источник — одинаковый блок в web-dashboard и web-workouts. */
+.collapse-summary {
+  margin-left: auto;
+  min-width: 0;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 2px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  font-weight: 500;
+}

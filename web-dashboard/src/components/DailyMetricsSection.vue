@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { pointsSummary } from '../lib/collapseSummaries'
 import EmojiText from './EmojiText.vue'
 import BooleanMetricRow from './BooleanMetricRow.vue'
 import MultiselectMetric from './MultiselectMetric.vue'
@@ -16,7 +17,7 @@ import { useMetricRecords } from '../lib/useMetricRecords'
 import { isRemaining } from '../lib/daily'
 import { todayStr } from '../lib/date'
 import { t } from '../lib/i18n'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { MetricStreakInfo } from '../lib/metricStreaks'
 import { stripEmoji } from '../lib/emojiText'
 
@@ -74,13 +75,15 @@ async function onSaveDay() {
 }
 
 const collapsed = ref(false)
+// «Карточка со сводкой» (BACKLOG 498 срез 3): «Баллы N / M» — те же баллы за день, что внутри блока
+const dailySummary = computed(() => pointsSummary(score.value.points, score.value.total))
 const numberValue = (id: string) => pending.value[id] as number | undefined
 const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.value[id] as string[]) : [])
 </script>
 
 <template>
   <section class="mb-5">
-    <SectionHeading v-model:collapsed="collapsed" :title="stripEmoji(t('dash_daily_h2'))" storage-key="daily">
+    <SectionHeading v-model:collapsed="collapsed" :title="stripEmoji(t('dash_daily_h2'))" storage-key="daily" :summary="dailySummary">
       <!-- BACKLOG 38 (апд37): шестерёнка настроек метрик — справа от заголовка (раньше — отдельная кнопка «Метрики дня» над блоком);
            за ней — ручка перетаскивания блока, если родитель передал слот -->
       <template #actions>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { widgetsSummary } from '../lib/collapseSummaries'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
 import SavingsWidget from './SavingsWidget.vue'
@@ -20,13 +21,18 @@ const shown = computed(() => {
   const c = props.config
   return (!!c.skills?.length && states.value.skills === 'ready') || (!!c.savings && states.value.savings === 'ready') || (!!c.languages && states.value.languages === 'ready') || (!!c.calendar && states.value.calendar === 'ready')
 })
+// «Карточка со сводкой» (BACKLOG 498 срез 3): сколько виджетов сейчас показано
+const widgetCount = computed(() => {
+  const c = props.config
+  return [!!c.skills?.length && states.value.skills === 'ready', !!c.savings && states.value.savings === 'ready', !!c.languages && states.value.languages === 'ready', !!c.calendar && states.value.calendar === 'ready'].filter(Boolean).length
+})
 watch(shown, (v) => emit('shown', v), { immediate: true })
 onBeforeUnmount(() => emit('shown', false))
 </script>
 
 <template>
   <section v-show="shown" data-test="widgets-section">
-    <SectionHeading v-model:collapsed="collapsed" :title="t('dash_block_widgets')" storage-key="widgets">
+    <SectionHeading v-model:collapsed="collapsed" :title="t('dash_block_widgets')" storage-key="widgets" :summary="widgetsSummary(widgetCount)">
       <template v-if="$slots.actions" #actions><slot name="actions" /></template>
     </SectionHeading>
     <div v-show="!collapsed" class="mb-5 flex flex-col gap-3">

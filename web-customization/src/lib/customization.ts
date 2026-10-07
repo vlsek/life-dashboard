@@ -42,6 +42,8 @@ export const ITEMS: readonly CustomItem[] = [
   { key: 'frame_rare_milestones', category: 'avatar_frame', source: 'achievement', achievement: 'milestones_25' },
   // Вид сворачивания блоков (BACKLOG 498): базовый шеврон бесплатен у всех (это «ничего не выбрано»); «аккордеон» — 150 (владелец 2026-10-03)
   { key: 'collapse_accordion', category: 'collapse_style', source: 'points', tier: 'mid' },
+  // «Карточка со сводкой» (BACKLOG 498 срез 3): свёрнутый блок показывает справа от заголовка короткую строку итога; высокий тариф = 250 (владелец 2026-10-03)
+  { key: 'collapse_summary', category: 'collapse_style', source: 'points', tier: 'high' },
 ]
 
 export const itemByKey = (key: string): CustomItem | undefined => ITEMS.find((i) => i.key === key)

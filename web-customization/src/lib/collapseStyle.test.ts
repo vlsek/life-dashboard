@@ -21,6 +21,22 @@ describe('вид сворачивания: предмет в реестре', ()
     expect(t('cust_item_collapse_accordion')).toBe('Accordion')
     expect(t('cust_cat_collapse_style').length).toBeGreaterThan(3)
   })
+  it('предмет «карточка со сводкой» — за баллы по высокому тарифу (250), редкость «редкий», названия на обоих языках', () => {
+    const it0 = itemByKey('collapse_summary')
+    expect(it0).toMatchObject({ category: 'collapse_style', source: 'points', tier: 'high' })
+    expect(priceOf(it0!)).toBe(250)
+    expect(rarityOfItem('collapse_summary')).toBe('rare')
+    localStorage.setItem('site_lang', 'ru')
+    expect(t('cust_item_collapse_summary')).toBe('Карточка со сводкой')
+    localStorage.setItem('site_lang', 'en')
+    expect(t('cust_item_collapse_summary')).toBe('Summary card')
+    expect(t('cust_item_collapse_summary_desc').length).toBeGreaterThan(10)
+  })
+  it('в категории выбирается ОДИН вид: «сводка» заменяет «аккордеон» и наоборот', () => {
+    const unlocked = { collapse_accordion: { source: 'points' as const, unlockedAt: null }, collapse_summary: { source: 'points' as const, unlockedAt: null } }
+    expect(nextSelected({ collapse_style: 'collapse_accordion' }, 'collapse_style', 'collapse_summary', unlocked)).toEqual({ collapse_style: 'collapse_summary' })
+    expect(nextSelected({ collapse_style: 'collapse_summary' }, 'collapse_style', 'collapse_accordion', unlocked)).toEqual({ collapse_style: 'collapse_accordion' })
+  })
   it('каждый предмет этой категории надевается в своей категории и снимается', () => {
     const unlocked = { collapse_accordion: { source: 'points' as const, unlockedAt: null } }
     expect(nextSelected({}, 'collapse_style', 'collapse_accordion', unlocked)).toEqual({ collapse_style: 'collapse_accordion' })

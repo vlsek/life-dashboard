@@ -26,6 +26,7 @@ import Toast from './components/Toast.vue'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry, WorkoutTemplate } from './lib/types'
 import type { LinkedMetric } from './lib/metricLink'
 import CollapseChevron from './components/CollapseChevron.vue'
+import CollapseSummary from './components/CollapseSummary.vue'
 import { loadCollapseStyle, useAccordionGroup, ACCORDION_PAGE } from './lib/useCollapseStyle'
 import { vCollapse } from './lib/collapseMotion'
 import EmojiText from './components/EmojiText.vue'
@@ -97,6 +98,7 @@ const announceOpened = useAccordionGroup(ACCORDION_PAGE, (openedKey) => {
     }
   }
 })
+const groupSummary = (n: number): string => (n > 0 ? t('workouts_collapse_exercises').replace('{n}', String(n)) : '')
 function toggleCollapsed(key: string) {
   const next = !isCollapsed(key)
   collapsed.value[key] = next
@@ -378,6 +380,8 @@ function onToggleProgramWeek(week: number) {
         >
           <h3 class="m-0 font-bold">{{ g.label }}</h3>
           <CollapseChevron :collapsed="isCollapsed(g.key)" />
+          <!-- «карточка со сводкой» (BACKLOG 498 срез 3): сколько упражнений в свёрнутой категории -->
+          <CollapseSummary :text="groupSummary(g.items.length)" :collapsed="isCollapsed(g.key)" />
         </div>
         <div v-collapse="!isCollapsed(g.key)">
           <ExerciseCard

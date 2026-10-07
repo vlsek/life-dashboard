@@ -47,6 +47,7 @@ export const ITEM_RARITY: Record<string, Rarity> = {
   frame_rare_challenges: 'epic',
   frame_rare_milestones: 'epic',
   collapse_accordion: 'uncommon', // как другие предметы за средний тариф (150)
+  collapse_summary: 'rare', // как другие предметы за высокий тариф (250)
 }
 
 // Темы. Исходные четыре и «Высокий контраст» (доступность — прятать за наградой нельзя) — обычные. Остальные шесть — «закрываемые»

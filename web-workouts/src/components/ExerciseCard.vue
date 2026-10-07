@@ -13,6 +13,7 @@ import { useAccordionMember } from '../lib/useCollapseStyle'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 import { setsOfDay, totalReps, type LinkedMetric } from '../lib/metricLink'
 import CollapseChevron from './CollapseChevron.vue'
+import CollapseSummary from './CollapseSummary.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import EmojiText from './EmojiText.vue'
 
@@ -93,6 +94,11 @@ const canRemove = (e: WorkoutEntry) => setCount(e.sets ?? []) > 1
 
 const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date.localeCompare(a.date)))
 const calories = computed(() => estimateExerciseCalories(props.entries, props.exercise, props.bodyWeightKg ?? 70))
+// «Карточка со сводкой» (BACKLOG 498 срез 3): у свёрнутого упражнения — его первый рекорд («Рекорд 8 × 80 кг»); без записей плашки нет
+const collapsedSummary = computed(() => {
+  const r = records.value[0]
+  return r ? `${r.label} ${r.text}` : ''
+})
 </script>
 
 <template>
@@ -110,6 +116,7 @@ const calories = computed(() => estimateExerciseCalories(props.entries, props.ex
         <CollapseChevron :collapsed="collapsed" />
       </button>
       <h3 class="m-0 flex-1 font-bold">{{ exercise.name }}</h3>
+      <CollapseSummary :text="collapsedSummary" :collapsed="collapsed" />
       <span v-if="calories" class="rounded-full border px-2 py-1 text-xs" style="border-color: var(--border); color: var(--text-dim)" data-testid="exercise-calories">
         🔥 ≈ {{ calories.kcal }} {{ t('workouts_kcal') }}
       </span>

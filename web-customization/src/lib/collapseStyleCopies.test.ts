@@ -16,4 +16,16 @@ describe('collapseStyle: копии в пилотах', () => {
   it('useCollapseStyle.ts одинаков в web-dashboard и web-workouts (менять вместе)', () => {
     expect(read('../web-workouts/src/lib/useCollapseStyle.ts')).toBe(read('../web-dashboard/src/lib/useCollapseStyle.ts'))
   })
+  it('CollapseSummary.vue («карточка со сводкой») одинаков в web-dashboard и web-workouts', () => {
+    expect(read('../web-workouts/src/components/CollapseSummary.vue')).toBe(read('../web-dashboard/src/components/CollapseSummary.vue'))
+  })
+  it('CSS-блок .collapse-summary одинаков в style.css обоих пилотов (от своего комментария до конца файла)', () => {
+    const block = (p: string): string => {
+      const css = read(p)
+      const i = css.indexOf('/* Вид сворачивания «карточка со сводкой»')
+      expect(i, p + ': нет блока').toBeGreaterThan(-1)
+      return css.slice(i)
+    }
+    expect(block('../web-workouts/src/style.css')).toBe(block('../web-dashboard/src/style.css'))
+  })
 })
