@@ -5,29 +5,11 @@ import BlockOrderList from './BlockOrderList.vue'
 import { t } from '../lib/i18n'
 import { MAX_WIDGET_SKILLS, withWidgetConfig, type DashboardBlockKey, type LayoutItem } from '../lib/layout'
 import type { WidgetOptions } from '../lib/widgets'
-import { celebrationsEnabled, setCelebrationsEnabled } from '../lib/useStreakCelebration'
-import { setMotionOff, systemReducedMotion, userMotionOff } from '../lib/motion'
 
 const props = defineProps<{ initial: LayoutItem[]; error?: string; widgetOptions?: WidgetOptions }>()
 const emit = defineEmits<{ close: []; save: [LayoutItem[]] }>()
 
 const local = ref<LayoutItem[]>(props.initial.map((i) => ({ ...i })))
-
-// Поздравления за серии (BACKLOG 13): пока нет «Глобальных настроек» — выключатель живёт здесь, применяется сразу (localStorage)
-const celebrate = ref(celebrationsEnabled())
-function onCelebrate(e: Event) {
-  celebrate.value = (e.target as HTMLInputElement).checked
-  setCelebrationsEnabled(celebrate.value)
-}
-
-// «Отключить все анимации» (BACKLOG 16, 14:02): применяется сразу. Если анимации уже выключены системной
-// настройкой «уменьшить движение», переключатель включён и заблокирован — с пояснением, где это менять.
-const systemReduced = systemReducedMotion()
-const motionOff = ref(userMotionOff() || systemReduced)
-function onMotion(e: Event) {
-  motionOff.value = (e.target as HTMLInputElement).checked
-  setMotionOff(motionOff.value)
-}
 
 const labels = computed<Record<DashboardBlockKey, { title: string; desc: string }>>(() => ({
   profile: { title: t('dash_block_profile'), desc: t('dash_layout_desc_profile') },
@@ -137,21 +119,8 @@ function onSavingsPick(e: Event) {
         </label>
       </div>
 
-      <div class="mt-3">
-        <label class="flex items-center gap-2 text-sm">
-          <input type="checkbox" :checked="celebrate" data-test="celebrate-toggle" @change="onCelebrate" />
-          {{ t('dash_celebrate_setting') }}
-        </label>
-        <p class="dim mt-1 text-xs">{{ t('dash_celebrate_setting_hint') }}</p>
-      </div>
-
-      <div class="mt-3">
-        <label class="flex items-center gap-2 text-sm">
-          <input type="checkbox" :checked="motionOff" :disabled="systemReduced" data-test="motion-toggle" @change="onMotion" />
-          {{ t('motion_off_setting') }}
-        </label>
-        <p class="dim mt-1 text-xs" data-test="motion-hint">{{ systemReduced ? t('motion_off_system_hint') : t('motion_off_setting_hint') }}</p>
-      </div>
+      <!-- BACKLOG 513: «поздравления за серии» и «отключить все анимации» переехали в «Глобальные настройки» (шапка); здесь только указатель -->
+      <p class="dim mt-3 text-xs" data-test="settings-moved-hint">{{ t('dash_layout_settings_moved_hint') }}</p>
 
       <p v-if="error" class="mt-2 text-sm" style="color: #d6336c" data-test="layout-error">{{ t('dash_layout_save_error') }}{{ error }}</p>
 

@@ -68,38 +68,21 @@ describe('lib/motion', () => {
   })
 })
 
-describe('LayoutModal: переключатель «Отключить все анимации»', () => {
+describe('LayoutModal: дубль выключателей убран (BACKLOG 513)', () => {
   const mk = () => mount(LayoutModal, { props: { initial: defaultLayout() } })
 
-  it('выключен по умолчанию; клик включает и сразу применяет флаг, повторный клик возвращает', async () => {
+  it('«Отключить все анимации» и «Поздравления за серии» живут в «Глобальных настройках» (шапка), здесь их больше нет', () => {
     const w = mk()
-    const cb = w.find('[data-test="motion-toggle"]')
-    expect((cb.element as HTMLInputElement).checked).toBe(false)
-    expect(w.text()).toContain('Отключить все анимации')
-    await cb.setValue(true)
-    expect(root().getAttribute('data-motion')).toBe('off')
-    expect(localStorage.getItem(MOTION_KEY)).toBe('off')
-    await cb.setValue(false)
-    expect(root().hasAttribute('data-motion')).toBe(false)
+    expect(w.find('[data-test="motion-toggle"]').exists()).toBe(false)
+    expect(w.find('[data-test="celebrate-toggle"]').exists()).toBe(false)
+    expect(w.text()).not.toContain('Отключить все анимации')
+    w.unmount()
   })
 
-  it('уже выбрано раньше — открывается отмеченным', () => {
-    localStorage.setItem(MOTION_KEY, 'off')
-    expect((mk().find('[data-test="motion-toggle"]').element as HTMLInputElement).checked).toBe(true)
-  })
-
-  it('при системном «уменьшить движение»: отмечен, заблокирован, с пояснением; выбор не пишется', () => {
-    mockSystemReduce(true)
+  it('вместо них — подсказка, куда они переехали', () => {
     const w = mk()
-    const cb = w.find('[data-test="motion-toggle"]')
-    expect((cb.element as HTMLInputElement).checked).toBe(true)
-    expect(cb.attributes('disabled')).toBeDefined()
-    expect(w.find('[data-test="motion-hint"]').text()).toContain('уменьшить движение')
-    expect(localStorage.getItem(MOTION_KEY)).toBeNull()
-  })
-
-  it('соседний переключатель поздравлений за серии не затронут', () => {
-    expect(mk().find('[data-test="celebrate-toggle"]').exists()).toBe(true)
+    expect(w.find('[data-test="settings-moved-hint"]').text()).toContain('Глобальных настройках')
+    w.unmount()
   })
 })
 

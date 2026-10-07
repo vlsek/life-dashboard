@@ -4,7 +4,6 @@ import { mount } from '@vue/test-utils'
 import { celebrationsEnabled, loadShown, saveShown, setCelebrationsEnabled, useStreakCelebration } from './useStreakCelebration'
 import StreakMilestoneModal from '../components/StreakMilestoneModal.vue'
 import modalSource from '../components/StreakMilestoneModal.vue?raw'
-import LayoutModal from '../components/LayoutModal.vue'
 import type { StreakItem } from './streaks'
 import type { Milestone } from './streakMilestones'
 
@@ -161,18 +160,5 @@ describe('StreakMilestoneModal', () => {
     expect(block).toContain('.celebrate-flame')
     expect(block).toContain('animation: none')
     expect(block).toMatch(/\.celebrate-ring\s*\{\s*display:\s*none/)
-  })
-})
-
-describe('LayoutModal celebrations switch', () => {
-  it('reflects and changes the stored setting immediately', async () => {
-    const w = mount(LayoutModal, { props: { initial: [{ key: 'profile', visible: true }, { key: 'charts', visible: true }, { key: 'daily', visible: true }] as any } })
-    const box = w.find('[data-test="celebrate-toggle"]')
-    expect((box.element as HTMLInputElement).checked).toBe(true)
-    await box.setValue(false)
-    expect(celebrationsEnabled()).toBe(false)
-    await box.setValue(true)
-    expect(celebrationsEnabled()).toBe(true)
-    w.unmount()
   })
 })
