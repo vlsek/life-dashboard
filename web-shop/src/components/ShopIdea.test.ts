@@ -13,10 +13,10 @@ afterEach(() => {
 describe('ShopIdea: описание идеи магазина', () => {
   it('первый заход: плашка с названием и полным текстом, короткой строки и значка ⓘ пока нет', () => {
     const w = mount(ShopIdea, { attachTo: document.body })
-    expect(w.find('[data-testid="idea-banner-title"]').text()).toBe('Магазин заслуженного')
+    expect(w.find('[data-testid="idea-banner-title"]').text()).toBe('Лавка наград')
     const text = w.find('[data-testid="idea-banner-text"]').text()
     expect(text).toContain('без чувства вины')
-    expect(text).toContain('ты это заслужил')
+    expect(text).toContain('Кастомизация')
     expect(w.find('[data-testid="idea-short-line"]').exists()).toBe(false)
     expect(w.find('[data-testid="idea-info"]').exists()).toBe(false)
     w.unmount()
@@ -26,8 +26,8 @@ describe('ShopIdea: описание идеи магазина', () => {
     const w = mount(ShopIdea, { attachTo: document.body })
     await w.find('[data-testid="idea-dismiss"]').trigger('click')
     expect(w.find('[data-testid="idea-banner"]').exists()).toBe(false)
-    expect(w.find('[data-testid="idea-short"]').text()).toBe('Здесь не тратят деньги — здесь тратят сделанное. Каждый балл — это день, в котором ты постарался.')
-    expect(w.find('[data-testid="idea-info"]').attributes('aria-label')).toBe('Как устроен магазин')
+    expect(w.find('[data-testid="idea-short"]').text()).toBe('Здесь не деньги, а баллы, которые ты заработал сам. Накопил — купил то, что разрешаешь себе.')
+    expect(w.find('[data-testid="idea-info"]').attributes('aria-label')).toBe('Как устроена лавка')
     expect(localStorage.getItem(SHOP_IDEA_SEEN_KEY)).toBe('1')
     w.unmount()
   })
@@ -47,8 +47,8 @@ describe('ShopIdea: описание идеи магазина', () => {
 
     await w.find('[data-testid="idea-info"]').trigger('click')
     expect(w.find('[role="dialog"]').attributes('aria-modal')).toBe('true')
-    expect(w.find('[data-testid="idea-modal-title"]').text()).toBe('Магазин заслуженного')
-    expect(w.find('[data-testid="idea-modal-text"]').text()).toContain('Накопил — купил.')
+    expect(w.find('[data-testid="idea-modal-title"]').text()).toBe('Лавка наград')
+    expect(w.find('[data-testid="idea-modal-text"]').text()).toContain('накопи нужную сумму и купи')
 
     await w.find('[data-testid="idea-modal"]').trigger('click')
     expect(w.find('[data-testid="idea-modal"]').exists()).toBe(true)
@@ -70,10 +70,10 @@ describe('ShopIdea: описание идеи магазина', () => {
   it('английская версия: название, короткая и полная строки на месте', async () => {
     localStorage.setItem('site_lang', 'en')
     const w = mount(ShopIdea, { attachTo: document.body })
-    expect(w.find('[data-testid="idea-banner-title"]').text()).toBe('The Earned Shop')
+    expect(w.find('[data-testid="idea-banner-title"]').text()).toBe('The Rewards Stall')
     expect(w.find('[data-testid="idea-banner-text"]').text()).toContain('guilt-free')
     await w.find('[data-testid="idea-dismiss"]').trigger('click')
-    expect(w.find('[data-testid="idea-short"]').text()).toBe("No money here — you spend what you've done. Every point is a day you showed up.")
+    expect(w.find('[data-testid="idea-short"]').text()).toBe('No money here — you spend points you earned yourself. Save up, then buy what you allow yourself.')
     expect(w.find('[data-testid="idea-dismiss"]').exists()).toBe(false)
     w.unmount()
   })

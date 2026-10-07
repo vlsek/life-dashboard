@@ -7,6 +7,7 @@ import type { DailyValue, GoalRow, SkillRow, BookRow, Metric, ShopItem, ShopItem
 import { withWaterGoal } from './waterGoal'
 import { prepareImage, safeExt } from './imageResize'
 import { errorKind, friendlyError } from './friendlyError'
+import { isCustomizationPurchase } from './customizationPurchase'
 
 // Пауза перед повторной попыткой загрузки фото при сетевом сбое (мс).
 export const UPLOAD_RETRY_MS = 800
@@ -86,7 +87,8 @@ export function useShop() {
       error.value = friendlyError(err, 'load')
       return
     }
-    items.value = (data || []) as ShopItem[]
+    // покупки «Кастомизации» лежат в той же таблице — в списке магазина их не показываем (баланс их учитывает отдельно, в loadBalance)
+    items.value = ((data || []) as ShopItem[]).filter((it) => !isCustomizationPurchase(it.name))
   }
 
   async function reload() {

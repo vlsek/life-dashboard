@@ -31,7 +31,7 @@ beforeEach(() => {
 })
 
 describe('Магазин: описание идеи на странице', () => {
-  it('новый человек видит плашку «Магазин заслуженного», витрина с товаром при этом на месте', () => {
+  it('новый человек видит плашку «Лавка наград», витрина с товаром при этом на месте', () => {
     const w = setup()
     expect(w.find('[data-testid="idea-banner"]').exists()).toBe(true)
     expect(w.find('[data-testid="grid-view"]').exists()).toBe(true)
