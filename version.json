@@ -1,6 +1,13 @@
 {
-  "version": "3.57",
+  "version": "3.58",
   "en": [
+    {
+      "version": "3.58",
+      "date": "2026-10-07 05:50",
+      "changes": [
+        "Challenges: when you mark a challenge as completed, a congratulation window opens: an animated trophy, the result (days done or amount collected) and the number of the completed challenge. When the number of completed challenges reaches 1, 5, 10 or 25, the window tells you about the unlocked achievement from the Challenges group, with a link to the Achievements page. If marking failed, an error message is shown and there is no window. With animations turned off or reduced motion the window is static. No migration needed"
+      ]
+    },
     {
       "version": "3.57",
       "date": "2026-10-06 21:55",
@@ -2564,6 +2571,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.58",
+      "date": "2026-10-07 05:50",
+      "changes": [
+        "Челленджи: когда вы отмечаете челлендж завершённым, открывается поздравляющее окно: кубок с анимацией, итог (сколько дней выполнено или сколько собрано) и номер завершённого челленджа по счёту. Если число завершённых дошло до 1, 5, 10 или 25, окно сообщает об открытом достижении из группы «Челленджи» со ссылкой на страницу «Достижения». Если отметить не получилось, показывается сообщение об ошибке, окна нет. При выключенных анимациях и «уменьшении движения» окно статичное. Миграция не нужна"
+      ]
+    },
     {
       "version": "3.57",
       "date": "2026-10-06 21:55",
