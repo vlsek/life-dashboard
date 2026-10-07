@@ -3,6 +3,7 @@ import { sb } from './supabase'
 import { todayStr } from './date'
 import type { Book, BookFormInput } from './types'
 import { completionDelta, emitPointsFloat } from './pointsFloat'
+import { friendlyError } from './friendlyError'
 
 // Очки книги по умолчанию — как в балансе: пусто → 10
 const BOOK_DEFAULT_POINTS = 10
@@ -19,7 +20,7 @@ export function useBooks() {
     currentUserId = userId
     const { data, error: err } = await sb.from('books').select('*').eq('user_id', userId).order('created_at')
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err, 'load')
       return
     }
     error.value = null

@@ -3,6 +3,7 @@ import { sb } from './supabase'
 import { buildSkillRow } from './skills'
 import type { Skill, SkillFormInput } from './types'
 import { completionDelta, emitPointsFloat } from './pointsFloat'
+import { friendlyError } from './friendlyError'
 
 // Очки навыка по умолчанию — как в балансе: пусто → 10
 const SKILL_DEFAULT_POINTS = 10
@@ -44,7 +45,7 @@ export function useSkills() {
   async function load(userId: string) {
     const { data, error: err } = await sb.from('skills').select('*').eq('user_id', userId).order('created_at')
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err, 'load')
       return
     }
     error.value = null

@@ -28,6 +28,7 @@ import { vCollapse } from './lib/collapseMotion'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
 import { errMsg } from './lib/errMsg'
+import { friendlyError } from './lib/friendlyError'
 
 // Порт workouts.js/html целиком: CRUD упражнений и записей (подходы), личные рекорды,
 // группировка по категориям со сворачиванием, каталог типовых программ, мини-график прогресса
@@ -40,13 +41,13 @@ const defaultValueLabel = () => t('workouts_default_value_label')
 
 // Порт showExerciseSaveError(): подсказка про миграции 027/028, если ошибка про эти поля.
 function saveErrorText(e: unknown): string {
-  const m = errMsg(e)
+  const m = errMsg(e) // только для подсказок про миграции: сам текст драйвера не показываем
   const hint = /tracks_duration/i.test(m)
     ? ' — ' + t('workouts_duration_migration_hint')
     : /bilateral/i.test(m)
       ? ' — ' + t('workouts_bilateral_migration_hint')
       : ''
-  return t('workouts_toast_save_error') + m + hint
+  return friendlyError(e, 'save') + hint
 }
 
 // ---- группировка по категориям ----
@@ -129,7 +130,7 @@ async function onDeleteExercise(ex: Exercise) {
   try {
     await wk.deleteExercise(ex.id)
   } catch (e) {
-    showToast(t('workouts_toast_save_error') + errMsg(e), 'error')
+    showToast(friendlyError(e, 'save'), 'error')
     console.error(e)
   }
 }
@@ -143,7 +144,7 @@ async function onSaveEntry(res: EntryFormInput) {
     entryForm.value = null
     showToast(t('workouts_toast_saved'))
   } catch (e) {
-    showToast(t('workouts_toast_save_error') + errMsg(e), 'error')
+    showToast(friendlyError(e, 'save'), 'error')
     console.error(e)
   }
 }
@@ -160,7 +161,7 @@ async function quickSets(entry: WorkoutEntry, change: (sets: WorkoutEntry['sets'
     await wk.editEntry(entry.id, { date: entry.date, sets: res.sets, notes: entry.notes })
     showToast(t(toastKey).replace('{n}', String(res.count)))
   } catch (e) {
-    showToast(t('workouts_toast_save_error') + errMsg(e), 'error')
+    showToast(friendlyError(e, 'save'), 'error')
     console.error(e)
   } finally {
     quickBusyId.value = null
@@ -174,7 +175,7 @@ async function onDeleteEntry(entry: WorkoutEntry) {
   try {
     await wk.deleteEntry(entry.id)
   } catch (e) {
-    showToast(t('workouts_toast_save_error') + errMsg(e), 'error')
+    showToast(friendlyError(e, 'save'), 'error')
     console.error(e)
   }
 }
@@ -201,7 +202,7 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
     if (added === 0) showToast(t('workouts_templates_all_exist'))
     else showToast(t('workouts_templates_applied_toast').replace('{n}', String(added)))
   } catch (e) {
-    showToast(t('workouts_toast_save_error') + errMsg(e), 'error')
+    showToast(friendlyError(e, 'save'), 'error')
     console.error(e)
   }
 }
@@ -250,7 +251,7 @@ async function onStartProgram(tpl: WorkoutTemplate) {
     templatesOpen.value = false
     showToast(t('workouts_program_started_toast'))
   } catch (e) {
-    showToast(t('workouts_toast_save_error') + errMsg(e), 'error')
+    showToast(friendlyError(e, 'save'), 'error')
     console.error(e)
   }
 }

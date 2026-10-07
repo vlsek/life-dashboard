@@ -1,4 +1,5 @@
 import { sb } from './supabase'
+import { authErrorText } from './authError'
 
 // Смена пароля со старым паролем. Supabase updateUser({password}) старый пароль не спрашивает, поэтому
 // проверяем его сами: повторный вход signInWithPassword(email, старый) — если не вошли, старый пароль неверный.
@@ -34,11 +35,11 @@ export async function submitPasswordChange(i: PasswordChangeInput): Promise<Pass
     if (signInError) {
       // неверные данные Supabase отдаёт как 400 / invalid_credentials; всё остальное (сеть, лимиты) — обычная ошибка
       const wrong = signInError.status === 400 || (signInError as { code?: string }).code === 'invalid_credentials'
-      return wrong ? { ok: false, reason: 'wrong_old' } : { ok: false, reason: 'error', message: signInError.message }
+      return wrong ? { ok: false, reason: 'wrong_old' } : { ok: false, reason: 'error', message: authErrorText(signInError) }
     }
   }
 
   const { error } = await sb.auth.updateUser({ password: i.newPassword })
-  if (error) return { ok: false, reason: 'error', message: error.message }
+  if (error) return { ok: false, reason: 'error', message: authErrorText(error) }
   return { ok: true }
 }

@@ -9,6 +9,7 @@ import PasswordModal from './components/PasswordModal.vue'
 import Icon from './components/Icon.vue'
 import Toast from './components/Toast.vue'
 import EmojiText from './components/EmojiText.vue'
+import { authErrorText } from './lib/authError'
 
 // Порт account.js/account.html: смена пароля, смена почты, привязка Google-аккаунта.
 // Данных, кроме сессии, странице не нужно — useAuth() вместо полного useAuthAndData().
@@ -56,7 +57,7 @@ async function changeEmail() {
   emailMsg.value = t('dash_saving_btn')
   const { error } = await sb.auth.updateUser({ email: v })
   if (error) {
-    emailMsg.value = t('acc_error_prefix') + error.message
+    emailMsg.value = t('acc_error_prefix') + authErrorText(error)
     return
   }
   emailMsg.value = ''
@@ -71,7 +72,7 @@ const googleError = ref('')
 async function refreshGoogleLinkStatus() {
   const { data, error } = await sb.auth.getUserIdentities()
   if (error) {
-    googleError.value = t('acc_error_prefix') + error.message
+    googleError.value = t('acc_error_prefix') + authErrorText(error)
     return
   }
   const identities = data?.identities || []
@@ -91,7 +92,7 @@ async function linkGoogle() {
     provider: 'google',
     options: { redirectTo: window.location.origin + '/account/' },
   })
-  if (error) googleError.value = t('acc_error_prefix') + error.message
+  if (error) googleError.value = t('acc_error_prefix') + authErrorText(error)
   // при успехе браузер уводит на Google и возвращает обратно на эту же страницу
 }
 

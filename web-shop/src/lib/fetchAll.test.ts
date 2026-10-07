@@ -19,6 +19,6 @@ describe('fetchAllRows (баланс магазина не должен обре
     const page = vi.fn(async (from: number) => (from === 0 ? { data: Array.from({ length: 1000 }, () => ({})), error: null } : { data: null, error: { message: 'boom' } }))
     const { rows, error } = await fetchAllRows(page)
     expect(rows).toHaveLength(1000)
-    expect(error).toBe('boom')
+    expect(error).toBe('Could not load the data. Refresh the page and try again.') // понятный текст, а не сырое «boom» (BACKLOG 942)
   })
 })

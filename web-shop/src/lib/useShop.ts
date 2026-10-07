@@ -6,7 +6,7 @@ import { calcTotalPoints, calcBalanceFromTotals } from './points'
 import type { DailyValue, GoalRow, SkillRow, BookRow, Metric, ShopItem, ShopItemFormInput } from './types'
 import { withWaterGoal } from './waterGoal'
 import { prepareImage, safeExt } from './imageResize'
-import { errorKind } from './friendlyError'
+import { errorKind, friendlyError } from './friendlyError'
 
 // Пауза перед повторной попыткой загрузки фото при сетевом сбое (мс).
 export const UPLOAD_RETRY_MS = 800
@@ -83,7 +83,7 @@ export function useShop() {
   async function loadItems(userId: string) {
     const { data, error: err } = await sb.from('shop_items').select('*').eq('user_id', userId).order('cost')
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err, 'load')
       return
     }
     items.value = (data || []) as ShopItem[]

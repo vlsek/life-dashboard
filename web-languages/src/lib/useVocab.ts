@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
 import type { VocabWord, WordFormInput } from './types'
+import { friendlyError } from './friendlyError'
 
 // Тот же паттерн session/onboarded redirect, что и в useSkills.ts/useGoals.ts —
 // портировано из requireAuth()/requireOnboarded() в config.js.
@@ -43,7 +44,7 @@ export function useVocab() {
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err, 'load')
       return
     }
     error.value = null
