@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { sb } from './supabase'
 import type { Milestone } from './types'
 import { addInterval } from './milestones'
+import { friendlyError } from './friendlyError'
 
 export type AuthState =
   | { status: 'loading' }
@@ -40,7 +41,7 @@ export function useMilestones() {
   async function load(userId: string) {
     const { data, error: err } = await sb.from('milestones').select('*').eq('user_id', userId).order('created_at')
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err, 'load')
       return
     }
     error.value = null

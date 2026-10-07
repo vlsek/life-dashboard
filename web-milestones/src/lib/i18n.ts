@@ -12,6 +12,14 @@ export function getLang(): 'en' | 'ru' {
 
 const DICT = {
   en: {
+    err_network: 'No connection to the server. Check your internet and try again.',
+    err_forbidden: 'No access. Sign in again and retry.',
+    err_in_use: "This can't be changed while it is in use.",
+    err_validation: 'Please check the entered values.',
+    err_generic_save: 'Could not save. Please try again.',
+    err_generic_delete: 'Could not delete. Please try again.',
+    err_generic_load: 'Could not load the data. Refresh the page and try again.',
+    err_generic_upload: 'Could not upload the file. Please try again.',
     nav_open_menu: 'Open menu',
     nav_more: 'More sections',
     nav_favorites: 'Favorites',
@@ -100,6 +108,14 @@ const DICT = {
     changelog_empty: "No history yet.",
   },
   ru: {
+    err_network: 'Нет связи с сервером. Проверь интернет и попробуй ещё раз.',
+    err_forbidden: 'Нет доступа. Войди заново и повтори.',
+    err_in_use: 'Это нельзя изменить, пока оно используется.',
+    err_validation: 'Проверь введённые значения.',
+    err_generic_save: 'Не получилось сохранить. Попробуй ещё раз.',
+    err_generic_delete: 'Не получилось удалить. Попробуй ещё раз.',
+    err_generic_load: 'Не получилось загрузить данные. Обнови страницу и попробуй ещё раз.',
+    err_generic_upload: 'Не получилось загрузить файл. Попробуй ещё раз.',
     nav_open_menu: 'Открыть меню',
     nav_more: 'Остальные разделы',
     nav_favorites: 'Избранное',

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.58";
+const SITE_VERSION = "3.59";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.59", date: "2026-10-07 06:15", changes: [
+        "Ошибки: на страницах «Календарь», «История», «Челленджи», «Вехи», «Достижения» и «Кастомизация» при сбое загрузки, покупки или сохранения выбора теперь показывается понятный текст («Нет связи с сервером…», «Нет доступа…», «Не получилось загрузить данные…») вместо технической строки с адресом сервера и именами таблиц. Подробности по-прежнему пишутся в консоль браузера. Остальные страницы (Сообщество, Магазин, Навыки, Языки, Тренировки, Аккаунт и др.) будут следующими. Миграция не нужна",
+    ]},
     { version: "3.58", date: "2026-10-07 05:50", changes: [
         "Челленджи: когда вы отмечаете челлендж завершённым, открывается поздравляющее окно: кубок с анимацией, итог (сколько дней выполнено или сколько собрано) и номер завершённого челленджа по счёту. Если число завершённых дошло до 1, 5, 10 или 25, окно сообщает об открытом достижении из группы «Челленджи» со ссылкой на страницу «Достижения». Если отметить не получилось, показывается сообщение об ошибке, окна нет. При выключенных анимациях и «уменьшении движения» окно статичное. Миграция не нужна",
     ]},
@@ -1682,6 +1685,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.59", date: "2026-10-07 06:15", changes: [
+        "Errors: on the Calendar, History, Challenges, Milestones, Achievements and Customization pages a failed load, purchase or saving of a choice now shows a clear message (\"No connection to the server…\", \"No access…\", \"Could not load the data…\") instead of a technical line with the server address and table names. Details are still written to the browser console. The other pages (Community, Shop, Skills, Languages, Workouts, Account and others) come next. No migration needed",
+    ]},
     { version: "3.58", date: "2026-10-07 05:50", changes: [
         "Challenges: when you mark a challenge as completed, a congratulation window opens: an animated trophy, the result (days done or amount collected) and the number of the completed challenge. When the number of completed challenges reaches 1, 5, 10 or 25, the window tells you about the unlocked achievement from the Challenges group, with a link to the Achievements page. If marking failed, an error message is shown and there is no window. With animations turned off or reduced motion the window is static. No migration needed",
     ]},

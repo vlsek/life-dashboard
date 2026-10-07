@@ -3,6 +3,7 @@ import { sb } from './supabase'
 import { todayStr } from './date'
 import { buildInsertCustom, buildInsertFromTemplate, buildUpdateFromForm, exerciseRepsByDate, mergeMetricValues, metricValueToNumber } from './challenges'
 import type { Challenge, ChallengeEntry, ChallengeTemplate, CustomChallengeFormInput, SourceExercise, SourceMetric } from './types'
+import { friendlyError } from './friendlyError'
 
 export type AuthState =
   | { status: 'loading' }
@@ -52,7 +53,7 @@ export function useChallenges() {
       .eq('active', true)
       .order('created_at')
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err, 'load')
       return
     }
     error.value = null

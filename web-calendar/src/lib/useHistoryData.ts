@@ -4,7 +4,7 @@ import type { HistoryContext } from './historyStats'
 import type { DailyNote, DayProgressSettings, Metric, MetricValue } from './historyTypes'
 import { fmtDate, todayStr } from './date'
 import { withWaterGoal } from './historyWaterGoal'
-import { errMsg } from './historyErrMsg'
+import { friendlyError } from './friendlyError'
 
 // Те же ключ и формат, что у getDayProgressSettings() в config.js — читаем настройки,
 // сохранённые на этом же устройстве через основной сайт.
@@ -112,7 +112,7 @@ export function useAuthAndData() {
         today: todayStr(),
       }
     } catch (e) {
-      error.value = errMsg(e)
+      error.value = friendlyError(e, 'load')
     }
   }
 

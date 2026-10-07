@@ -3,6 +3,7 @@ import { sb } from './supabase'
 import { fmtDate } from './date'
 import { groupDeadlines, normalizePlanned } from './calendar'
 import type { GoalDeadline, PlannedItem } from './types'
+import { friendlyError } from './friendlyError'
 
 export type AuthState =
   | { status: 'loading' }
@@ -47,7 +48,7 @@ export function useCalendar() {
     ])
     const { data, error: err } = notesRes
     if (err) {
-      error.value = err.message
+      error.value = friendlyError(err, 'load')
       return
     }
     error.value = null

@@ -1,6 +1,13 @@
 {
-  "version": "3.58",
+  "version": "3.59",
   "en": [
+    {
+      "version": "3.59",
+      "date": "2026-10-07 06:15",
+      "changes": [
+        "Errors: on the Calendar, History, Challenges, Milestones, Achievements and Customization pages a failed load, purchase or saving of a choice now shows a clear message (\"No connection to the server…\", \"No access…\", \"Could not load the data…\") instead of a technical line with the server address and table names. Details are still written to the browser console. The other pages (Community, Shop, Skills, Languages, Workouts, Account and others) come next. No migration needed"
+      ]
+    },
     {
       "version": "3.58",
       "date": "2026-10-07 05:50",
@@ -2571,6 +2578,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.59",
+      "date": "2026-10-07 06:15",
+      "changes": [
+        "Ошибки: на страницах «Календарь», «История», «Челленджи», «Вехи», «Достижения» и «Кастомизация» при сбое загрузки, покупки или сохранения выбора теперь показывается понятный текст («Нет связи с сервером…», «Нет доступа…», «Не получилось загрузить данные…») вместо технической строки с адресом сервера и именами таблиц. Подробности по-прежнему пишутся в консоль браузера. Остальные страницы (Сообщество, Магазин, Навыки, Языки, Тренировки, Аккаунт и др.) будут следующими. Миграция не нужна"
+      ]
+    },
     {
       "version": "3.58",
       "date": "2026-10-07 05:50",

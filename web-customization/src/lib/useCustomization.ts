@@ -19,6 +19,7 @@ import {
   type Unlocked,
 } from './customization'
 import { notifyCustomizationChanged } from './customizationEvents'
+import { friendlyError } from './friendlyError'
 
 export type AuthState =
   | { status: 'loading' }
@@ -111,7 +112,7 @@ export function useCustomization() {
       await syncAchievementRewards(userId)
       error.value = null
     } catch (e) {
-      error.value = (e as Error).message
+      error.value = friendlyError(e, 'load')
     } finally {
       loading.value = false
     }
@@ -156,7 +157,7 @@ export function useCustomization() {
       balance.value = balance.value == null ? null : Math.round((balance.value - price) * 10) / 10
       return true
     } catch (e) {
-      actionError.value = t('cust_buy_error') + (e as Error).message
+      actionError.value = t('cust_buy_error') + friendlyError(e, 'save')
       return false
     } finally {
       busyKey.value = null
@@ -178,7 +179,7 @@ export function useCustomization() {
       writeCachedCollapseStyle(parseCollapseStyle(next.collapse_style)) // вид сворачивания: страницы применяют его по кэшу, не дожидаясь сети (BACKLOG 498)
       return true
     } catch (e) {
-      actionError.value = t('cust_select_error') + (e as Error).message
+      actionError.value = t('cust_select_error') + friendlyError(e, 'save')
       return false
     } finally {
       busyKey.value = null
