@@ -1,6 +1,13 @@
 {
-  "version": "3.56",
+  "version": "3.57",
   "en": [
+    {
+      "version": "3.57",
+      "date": "2026-10-06 21:55",
+      "changes": [
+        "Header: the \"add this page to favorites\" heart is now on ALL pages of the side menu - it used to be missing on the main page, Achievements and Customization. These pages can now be added to favorites and opened from the favorites list. History (removed from the menu) is no longer among the favorites pages. No migration needed."
+      ]
+    },
     {
       "version": "3.56",
       "date": "2026-10-07 05:22",
@@ -2557,6 +2564,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.57",
+      "date": "2026-10-06 21:55",
+      "changes": [
+        "Шапка: сердечко «добавить страницу в избранное» теперь есть на ВСЕХ страницах бокового меню — раньше его не было на главной, в «Достижениях» и в «Кастомизации». Эти страницы теперь можно добавить в избранное и открыть из списка избранного. «История» (убранная из меню) больше не числится среди страниц избранного. Без миграций."
+      ]
+    },
     {
       "version": "3.56",
       "date": "2026-10-07 05:22",
