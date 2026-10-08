@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.77";
+const SITE_VERSION = "3.78";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.78", date: "2026-10-08 05:30", changes: [
+        "Сердечки в шапке разведены: «Избранное» (круглая кнопка с сердцем, открывает список быстрых ссылок) теперь ТОЛЬКО на главной, а сердечко «добавить эту страницу в избранное» — на всех остальных страницах и не на главной (раньше на каждой странице было по два). На главную страницу в избранное добавить нельзя — она и есть вход в избранное.",
+        "Прогресс недели семиугольником переделан: снова цельный аккуратный контур со скруглёнными углами, как был раньше, но заливается ПО ГРАНЯМ — каждая из 7 граней показывает выполненность своего дня (пн…вс). Сегодняшняя грань на дорожке светлее, будущие дни — пустая дорожка, бонус ⭐ дня — тонкая золотая линия (на мелком значке в шапке не рисуется). Один вид в шапке, профиле Дашборда и правой шторке. Без миграций."
+    ]},
     { version: "3.77", date: "2026-10-07 08:40", changes: [
         "Календарь: вкладка «Календарь» теперь рисует ту же сетку, что и «История» — день залит по выполненному прогрессу, внизу ячейки процент, справа колонка недели с её процентом, сверху статистика месяца (средний процент, идеальные дни, дни с данными). Планы и сроки целей остались: на дне — значок плана («сделано/всего» или галочка, если всё выполнено) и число целей со сроком; нажатие на день по-прежнему открывает форму планов. Листать месяцы вперёд можно, как раньше. Вкладка «История» не изменилась. Миграция не нужна."
     ]},
@@ -1740,6 +1744,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.78", date: "2026-10-08 05:30", changes: [
+        "Header hearts separated: \"Favorites\" (the round button with a heart that opens the quick links list) is now ONLY on the main page, while the \"add this page to favorites\" heart is on every other page and not on the main one (there used to be two on every page). The main page cannot be added to favorites - it is the entry to them.",
+        "The weekly progress heptagon is redone: again a solid, neat outline with rounded corners like before, but it fills BY FACE - each of the 7 faces shows how complete its own day is (Mon to Sun). Today's face is lighter on the track, future days are an empty track, a day's bonus star is a thin gold line (not drawn on the small header badge). One look in the header, the Dashboard profile and the right drawer. No migration needed."
+    ]},
     { version: "3.77", date: "2026-10-07 08:40", changes: [
         "Calendar: the Calendar tab now draws the same grid as History - a day is filled by its progress, the percentage sits at the bottom of the cell, a week column with its percentage is on the right, and month statistics (average, perfect days, days with data) are on top. Plans and goal deadlines stay: a day shows a plan badge (done/total, or a tick when everything is done) and the number of goals due; tapping a day still opens the plans form. You can still browse months ahead. The History tab is unchanged. No migration needed."
     ]},
