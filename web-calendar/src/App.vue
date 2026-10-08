@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import AppShell from './components/AppShell.vue'
 import DayModal from './components/DayModal.vue'
 import { useCalendar } from './lib/useCalendar'
-import { buildMonthGrid, doneCount, openDeadlines } from './lib/calendar'
-import { todayStr } from './lib/date'
-import { t, getLang } from './lib/i18n'
+import { t } from './lib/i18n'
 import type { PlannedItem } from './lib/types'
-import Icon from './components/Icon.vue'
 import HistoryView from './components/HistoryView.vue'
 
-const { auth, byDate, deadlines, error, init, loadMonth, savePlanned } = useCalendar()
+const { auth, byDate, deadlines, init, loadMonth, savePlanned } = useCalendar()
 
 const initialView = new URLSearchParams(window.location.search).get('view') === 'history' ? 'history' : 'calendar'
 const view = ref<'calendar' | 'history'>(initialView)
@@ -22,48 +19,24 @@ function setView(next: 'calendar' | 'history') {
   window.history.replaceState({}, '', url)
 }
 
-const viewDate = ref(new Date())
-viewDate.value.setDate(1)
-
-const WEEKDAYS = computed(() =>
-  getLang() === 'en' ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] : ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
-)
-const MONTH_NAMES = computed(() =>
-  getLang() === 'en'
-    ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-    : ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
-)
-const monthLabel = computed(() => `${MONTH_NAMES.value[viewDate.value.getMonth()]} ${viewDate.value.getFullYear()}`)
-
-const today = todayStr()
-const grid = computed(() => buildMonthGrid(viewDate.value.getFullYear(), viewDate.value.getMonth(), byDate.value, today, deadlines.value))
-
+// Сетка вкладки «Календарь» — та же, что в «Истории» (HistoryView, mode="calendar", BACKLOG 44.8): сама листает месяцы и сообщает, какой месяц показан,
+// а планы и дедлайны целей этого месяца подгружаются здесь (useCalendar).
+const shownYear = ref(new Date().getFullYear())
+const shownMonth = ref(new Date().getMonth())
 async function reloadMonth() {
   if (auth.value.status !== 'ready') return
-  await loadMonth(auth.value.userId, viewDate.value.getFullYear(), viewDate.value.getMonth())
+  await loadMonth(auth.value.userId, shownYear.value, shownMonth.value)
+}
+function onMonthChange(year: number, month: number) {
+  shownYear.value = year
+  shownMonth.value = month
+  void reloadMonth()
 }
 
 onMounted(async () => {
   await init()
   await reloadMonth()
 })
-watch(viewDate, reloadMonth, { deep: false })
-
-function prevMonth() {
-  const d = new Date(viewDate.value)
-  d.setMonth(d.getMonth() - 1)
-  viewDate.value = d
-}
-function nextMonth() {
-  const d = new Date(viewDate.value)
-  d.setMonth(d.getMonth() + 1)
-  viewDate.value = d
-}
-function goToday() {
-  const d = new Date()
-  d.setDate(1)
-  viewDate.value = d
-}
 
 const openDate = ref<string | null>(null)
 function openDay(dateStr: string) {
@@ -89,40 +62,9 @@ async function onSaveDay(items: PlannedItem[]) {
       <HistoryView />
     </template>
     <template v-else>
-    <!-- no-edge-swipe (левая шторка) и data-no-swipe (правая панель шапки): свайп по календарю не должен выдвигать боковые плашки (BACKLOG 25, 07:38) -->
-    <div class="no-edge-swipe mb-3 flex items-center justify-between" data-no-swipe data-test="cal-head">
-      <button class="secondary" @click="prevMonth">‹</button>
-      <h1 class="text-lg font-semibold">{{ monthLabel }}</h1>
-      <button class="secondary" @click="nextMonth">›</button>
-    </div>
-    <div class="mb-3 flex justify-center">
-      <button class="secondary" @click="goToday">{{ t('cal_today_btn') }}</button>
-    </div>
-
-    <p v-if="auth.status === 'loading'" class="dim">…</p>
-    <p v-else-if="error" class="dim">{{ t('comm_load_error') }} {{ error }}</p>
-
-    <div v-else class="cal-grid no-edge-swipe grid grid-cols-7 gap-1" data-no-swipe data-test="cal-grid">
-      <div v-for="w in WEEKDAYS" :key="w" class="cal-weekday text-center text-xs font-medium">{{ w }}</div>
-      <template v-for="(cell, idx) in grid" :key="idx">
-        <div v-if="!cell" class="cal-cell cal-empty"></div>
-        <div
-          v-else
-          class="cal-cell relative cursor-pointer rounded border p-1.5"
-          :class="{ 'cal-today border-2': cell.isToday }"
-          @click="openDay(cell.dateStr)"
-        >
-          <div class="cal-num text-sm">{{ cell.day }}</div>
-          <div v-if="cell.deadlines.length" class="cal-deadline mt-1 text-xs" :class="{ 'cal-deadline-done': openDeadlines(cell.deadlines) === 0 }" :title="t('cal_deadline_title')" data-test="cal-deadline">
-            <Icon name="goals" /> {{ cell.deadlines.length }}
-          </div>
-          <div v-if="cell.planned.length" class="cal-badge mt-1 text-xs">
-            <template v-if="doneCount(cell.planned).done === doneCount(cell.planned).total"><Icon name="done" /></template>
-            <template v-else><Icon name="pin" /> {{ doneCount(cell.planned).done }}/{{ doneCount(cell.planned).total }}</template>
-          </div>
-        </div>
-      </template>
-    </div>
+    <!-- Сетка «Календаря» = сетка «Истории» (заливка дня по прогрессу, %, колонка недели, статистика месяца) + бейджи планов и дедлайнов целей;
+         свайп по сетке и шапке месяца не выдвигает боковые плашки (внутри HistoryView — no-edge-swipe / data-no-swipe) -->
+    <HistoryView mode="calendar" :planned="byDate" :deadlines="deadlines" data-test="calendar-grid-view" @select-day="openDay" @month-change="onMonthChange" />
 
     <DayModal
       v-if="openDate"

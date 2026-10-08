@@ -44,7 +44,8 @@ describe('buildMonthGrid + сроки целей', () => {
 })
 
 describe('разметка', () => {
-  const app: string = readFileSync('src/App.vue', 'utf-8')
+  // бейджи дедлайнов рисует общая сетка HistoryView (режим calendar, BACKLOG 44.8)
+  const app: string = readFileSync('src/components/HistoryView.vue', 'utf-8')
   const modal: string = readFileSync('src/components/DayModal.vue', 'utf-8')
   const loader: string = readFileSync('src/lib/useCalendar.ts', 'utf-8')
   it('ячейка с целями получает маркер; выполненные — приглушённый класс', () => {

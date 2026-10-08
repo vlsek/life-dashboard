@@ -1,6 +1,13 @@
 {
-  "version": "3.76",
+  "version": "3.77",
   "en": [
+    {
+      "version": "3.77",
+      "date": "2026-10-07 08:40",
+      "changes": [
+        "Calendar: the Calendar tab now draws the same grid as History - a day is filled by its progress, the percentage sits at the bottom of the cell, a week column with its percentage is on the right, and month statistics (average, perfect days, days with data) are on top. Plans and goal deadlines stay: a day shows a plan badge (done/total, or a tick when everything is done) and the number of goals due; tapping a day still opens the plans form. You can still browse months ahead. The History tab is unchanged. No migration needed."
+      ]
+    },
     {
       "version": "3.76",
       "date": "2026-10-08 00:57",
@@ -2698,6 +2705,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.77",
+      "date": "2026-10-07 08:40",
+      "changes": [
+        "Календарь: вкладка «Календарь» теперь рисует ту же сетку, что и «История» — день залит по выполненному прогрессу, внизу ячейки процент, справа колонка недели с её процентом, сверху статистика месяца (средний процент, идеальные дни, дни с данными). Планы и сроки целей остались: на дне — значок плана («сделано/всего» или галочка, если всё выполнено) и число целей со сроком; нажатие на день по-прежнему открывает форму планов. Листать месяцы вперёд можно, как раньше. Вкладка «История» не изменилась. Миграция не нужна."
+      ]
+    },
     {
       "version": "3.76",
       "date": "2026-10-08 00:57",

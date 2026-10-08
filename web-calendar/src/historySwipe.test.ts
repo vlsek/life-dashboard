@@ -51,6 +51,6 @@ describe('история в календаре: свайп не выдвигае
   it('кнопки месяца и выбор дня на месте (разметка не потеряла обработчики)', () => {
     expect(view).toContain('@click="shiftMonth(-1)"')
     expect(view).toContain('@click="shiftMonth(1)"')
-    expect(view).toContain('@click="cell.dateStr && (selectedDate = cell.dateStr)"')
+    expect(view).toContain('@click="onCellClick(cell.dateStr)"') // в «Истории» клик открывает итоги дня (selectedDate), в «Календаре» — событие наверх
   })
 })

@@ -4,25 +4,27 @@ import { readFileSync } from 'node:fs'
 
 // BACKLOG 25, «07:38 — свайп по календарю: чтобы не вылезали плашки слева и справа». Левая шторка (AppShell.vue) пропускает жест,
 // если палец лёг внутрь .no-edge-swipe; правая панель шапки (web-header, isSwipeBlockedTarget) — внутрь [data-no-swipe].
+// Сетка вкладки «Календарь» теперь та же, что у «Истории» — компонент HistoryView в режиме calendar (BACKLOG 44.8): разметку свайпа читаем оттуда.
 const app: string = readFileSync('src/App.vue', 'utf-8')
+const view: string = readFileSync('src/components/HistoryView.vue', 'utf-8')
 const shell: string = readFileSync('src/components/AppShell.vue', 'utf-8')
 
 const tag = (testId: string): string => {
-  const i = app.indexOf(`data-test="${testId}"`)
+  const i = view.indexOf(`data-test="${testId}"`)
   expect(i, testId).toBeGreaterThan(-1)
-  return app.slice(app.lastIndexOf('<div', i), app.indexOf('>', i) + 1)
+  return view.slice(view.lastIndexOf('<div', i), view.indexOf('>', i) + 1)
 }
 
 describe('календарь: свайп не выдвигает боковые плашки', () => {
   it('сетка месяца помечена и для левой шторки (.no-edge-swipe), и для правой панели (data-no-swipe)', () => {
-    const grid = tag('cal-grid')
+    const grid = tag('hist-grid')
     expect(grid).toContain('no-edge-swipe')
     expect(grid).toContain('data-no-swipe')
-    expect(grid).toContain('cal-grid')
+    expect(app).toContain('mode="calendar"') // вкладка «Календарь» рисует именно эту сетку
   })
 
   it('строка выбора месяца (‹ месяц ›) помечена так же — свайп по ней тоже не открывает плашки', () => {
-    const head = tag('cal-head')
+    const head = tag('hist-head')
     expect(head).toContain('no-edge-swipe')
     expect(head).toContain('data-no-swipe')
   })
@@ -48,8 +50,10 @@ describe('календарь: свайп не выдвигает боковые 
   })
 
   it('клик по дню и кнопки месяца на месте (разметка не потеряла обработчики)', () => {
-    expect(app).toContain('@click="openDay(cell.dateStr)"')
-    expect(app).toContain('@click="prevMonth"')
-    expect(app).toContain('@click="nextMonth"')
+    expect(app).toContain('@select-day="openDay"') // клик по дню в «Календаре» открывает форму планов
+    expect(app).toContain('@month-change="onMonthChange"') // смена месяца подгружает планы и цели нового месяца
+    expect(view).toContain('@click="onCellClick(cell.dateStr)"')
+    expect(view).toContain('@click="shiftMonth(-1)"')
+    expect(view).toContain('@click="shiftMonth(1)"')
   })
 })

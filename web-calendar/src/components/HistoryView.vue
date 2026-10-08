@@ -7,6 +7,17 @@ import type { HistoryContext } from '../lib/historyStats'
 import { locale, t } from '../lib/i18n'
 import DayDetailModal from './DayDetailModal.vue'
 import EmojiText from './EmojiText.vue'
+import Icon from './Icon.vue'
+import { doneCount, openDeadlines } from '../lib/calendar'
+import type { GoalDeadline, PlannedItem } from '../lib/types'
+
+// Две роли одной сетки (BACKLOG 44.8, просьба владельца 2026-10-07: «календарь в Истории реализован лучше»):
+//  · mode='history' (по умолчанию) — как раньше: клик по дню открывает итоги дня, заголовок и список недель, будущие месяцы недоступны;
+//  · mode='calendar' — вкладка «Календарь»: та же сетка (заливка по прогрессу, %, колонка недели, статистика месяца), плюс бейджи планов и
+//    дедлайнов целей на днях; клик по дню отдаёт дату наверх (там открывается форма планов), будущие месяцы доступны, месяц сообщается наверх.
+const props = defineProps<{ mode?: 'history' | 'calendar'; planned?: Record<string, PlannedItem[]>; deadlines?: Record<string, GoalDeadline[]> }>()
+const emit = defineEmits<{ selectDay: [dateStr: string]; monthChange: [year: number, month: number] }>()
+const isCalendar = computed(() => props.mode === 'calendar')
 
 const { auth, ctx, error } = useAuthAndData()
 
@@ -23,19 +34,40 @@ const monthTitle = computed(() => {
 })
 
 const isCurrentMonth = computed(() => viewYear.value === now.getFullYear() && viewMonth.value === now.getMonth())
+// В «Истории» вперёд листать нельзя (данных ещё нет); в «Календаре» можно — планы ставят наперёд
 const nextDisabled = computed(
-  () => isCurrentMonth.value || viewYear.value > now.getFullYear() || (viewYear.value === now.getFullYear() && viewMonth.value >= now.getMonth()),
+  () => !isCalendar.value && (isCurrentMonth.value || viewYear.value > now.getFullYear() || (viewYear.value === now.getFullYear() && viewMonth.value >= now.getMonth())),
 )
 
 function shiftMonth(delta: number) {
   const d = new Date(viewYear.value, viewMonth.value + delta, 1)
-  if (d.getFullYear() > now.getFullYear() || (d.getFullYear() === now.getFullYear() && d.getMonth() > now.getMonth())) return
+  if (!isCalendar.value && (d.getFullYear() > now.getFullYear() || (d.getFullYear() === now.getFullYear() && d.getMonth() > now.getMonth()))) return
   viewYear.value = d.getFullYear()
   viewMonth.value = d.getMonth()
+  emit('monthChange', viewYear.value, viewMonth.value)
 }
 function goToday() {
   viewYear.value = now.getFullYear()
   viewMonth.value = now.getMonth()
+  emit('monthChange', viewYear.value, viewMonth.value)
+}
+
+// Бейджи «Календаря» на ячейке: планы дня (✓ если всё выполнено, иначе 📌 сделано/всего) и дедлайны целей (число; приглушены, когда все закрыты)
+function planBadge(dateStr: string | null) {
+  const items = dateStr ? props.planned?.[dateStr] : undefined
+  if (!items || !items.length) return null
+  const c = doneCount(items)
+  return { done: c.done, total: c.total, all: c.done === c.total }
+}
+function deadlineBadge(dateStr: string | null) {
+  const list = dateStr ? props.deadlines?.[dateStr] : undefined
+  if (!list || !list.length) return null
+  return { count: list.length, allDone: openDeadlines(list) === 0 }
+}
+function onCellClick(dateStr: string | null) {
+  if (!dateStr) return
+  if (isCalendar.value) emit('selectDay', dateStr)
+  else selectedDate.value = dateStr
 }
 
 interface DayCell {
@@ -147,15 +179,17 @@ function onTouchEnd(e: TouchEvent) {
 
 <template>
   <section class="pt-1">
-    <h1 class="mb-1 text-xl font-bold"><EmojiText :text="t('hist_h1')" /></h1>
-    <p class="mb-4 text-sm" style="color: var(--text-dim)">{{ t('hist_intro') }}</p>
+    <template v-if="!isCalendar">
+      <h1 class="mb-1 text-xl font-bold"><EmojiText :text="t('hist_h1')" /></h1>
+      <p class="mb-4 text-sm" style="color: var(--text-dim)">{{ t('hist_intro') }}</p>
+    </template>
 
     <p v-if="error" class="mb-3 text-sm" style="color: var(--danger)">{{ error }}</p>
 
     <div v-if="auth.status === 'loading' || auth.status === 'redirecting'" class="text-sm" style="color: var(--text-dim)">…</div>
 
     <template v-else-if="ctx">
-      <template v-if="!ctx.firstDate">
+      <template v-if="!ctx.firstDate && !isCalendar">
         <p class="text-sm" style="color: var(--text-dim)">{{ t('hist_no_data') }}</p>
       </template>
 
@@ -235,9 +269,14 @@ function onTouchEnd(e: TouchEvent) {
                 textShadow: cell.hasStats && cell.fill >= 55 ? '0 1px 2px rgba(0,0,0,0.4)' : undefined,
               }"
               :disabled="!cell.dateStr"
-              @click="cell.dateStr && (selectedDate = cell.dateStr)"
+              :data-date="cell.dateStr ?? undefined"
+              @click="onCellClick(cell.dateStr)"
             >
               <span v-if="cell.dayNum" class="text-[0.78em] font-semibold">{{ cell.dayNum }}</span>
+              <span v-if="isCalendar && (planBadge(cell.dateStr) || deadlineBadge(cell.dateStr))" class="absolute right-0.5 top-0.5 flex flex-col items-end gap-px text-[0.6em] leading-none">
+                <span v-if="deadlineBadge(cell.dateStr)" class="cal-deadline" :class="{ 'cal-deadline-done': deadlineBadge(cell.dateStr)!.allDone }" :title="t('cal_deadline_title')" data-test="cal-deadline"><Icon name="goals" />{{ deadlineBadge(cell.dateStr)!.count }}</span>
+                <span v-if="planBadge(cell.dateStr)" class="cal-badge" data-test="cal-badge"><template v-if="planBadge(cell.dateStr)!.all"><Icon name="done" /></template><template v-else><Icon name="pin" />{{ planBadge(cell.dateStr)!.done }}/{{ planBadge(cell.dateStr)!.total }}</template></span>
+              </span>
               <span v-if="cell.hasStats" class="self-end text-[0.68em] font-semibold">{{ cell.pct }}%</span>
             </button>
 
@@ -257,9 +296,9 @@ function onTouchEnd(e: TouchEvent) {
           </div>
         </div>
 
-        <h2 class="mb-2 mt-6 text-lg font-bold"><EmojiText :text="t('hist_weeks_h2')" /></h2>
-        <p v-if="recentWeeks.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('hist_no_data') }}</p>
-        <div v-for="w in recentWeeks" :key="w.label" class="my-2 flex items-center gap-2.5">
+        <h2 v-if="!isCalendar" class="mb-2 mt-6 text-lg font-bold"><EmojiText :text="t('hist_weeks_h2')" /></h2>
+        <p v-if="!isCalendar && recentWeeks.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('hist_no_data') }}</p>
+        <div v-for="w in (isCalendar ? [] : recentWeeks)" :key="w.label" class="my-2 flex items-center gap-2.5">
           <div class="w-[124px] shrink-0 text-sm">{{ w.label }}</div>
           <div class="h-2.5 flex-1 overflow-hidden rounded-md border" style="border-color: var(--border); background: var(--bg-card)">
             <div

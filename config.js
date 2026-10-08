@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.76";
+const SITE_VERSION = "3.77";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.77", date: "2026-10-07 08:40", changes: [
+        "Календарь: вкладка «Календарь» теперь рисует ту же сетку, что и «История» — день залит по выполненному прогрессу, внизу ячейки процент, справа колонка недели с её процентом, сверху статистика месяца (средний процент, идеальные дни, дни с данными). Планы и сроки целей остались: на дне — значок плана («сделано/всего» или галочка, если всё выполнено) и число целей со сроком; нажатие на день по-прежнему открывает форму планов. Листать месяцы вперёд можно, как раньше. Вкладка «История» не изменилась. Миграция не нужна."
+    ]},
     { version: "3.76", date: "2026-10-08 00:57", changes: [
         "В «Кастомизации» появился переключатель видимости: над витриной три кнопки — «Получено», «За достижения», «За монеты». Включай и выключай их как удобно: например, скрой всё, что уже получено, и смотри только то, к чему ещё стремиться, или оставь только предметы за монеты. Рядом с названием каждой кнопки — сколько в группе предметов и тем. Выбор запоминается на этом устройстве. Счётчики «открыто/всего» у групп редкости не меняются, чтобы прогресс оставался честным",
     ]},
@@ -1737,6 +1740,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.77", date: "2026-10-07 08:40", changes: [
+        "Calendar: the Calendar tab now draws the same grid as History - a day is filled by its progress, the percentage sits at the bottom of the cell, a week column with its percentage is on the right, and month statistics (average, perfect days, days with data) are on top. Plans and goal deadlines stay: a day shows a plan badge (done/total, or a tick when everything is done) and the number of goals due; tapping a day still opens the plans form. You can still browse months ahead. The History tab is unchanged. No migration needed."
+    ]},
     { version: "3.76", date: "2026-10-08 00:57", changes: [
         "“Customization” now has a visibility switch: three buttons above the showcase — “Owned”, “For achievements” and “For coins”. Turn them on and off as you like: for example, hide everything you already have and look only at what is still ahead, or keep just the items you buy with coins. Next to each button’s name is how many items and themes are in that group. Your choice is remembered on this device. The “unlocked/total” counters on the rarity groups do not change, so your progress stays honest"
     ]},
