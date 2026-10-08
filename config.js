@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.78";
+const SITE_VERSION = "3.79";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.79", date: "2026-10-08 04:57", changes: [
+        "Цели: уведомление о скорой просрочке. Если у цели срок сегодня и она ещё не выполнена, то с 19:00 (за 5 часов до конца дня) при открытии Дашборда появляется плашка «Скоро просрочка цели» с названиями (до трёх, остальные «и ещё N»), ссылкой «К целям» и кнопкой закрыть на день. Кнопка «Не напоминать» отключает плашку, а включить её обратно можно галочкой «Напоминать о целях со сроком сегодня» на странице «Цели». Пока это только плашка в приложении, без push-уведомлений на телефон. Миграция не нужна",
+    ]},
     { version: "3.78", date: "2026-10-08 05:30", changes: [
         "Сердечки в шапке разведены: «Избранное» (круглая кнопка с сердцем, открывает список быстрых ссылок) теперь ТОЛЬКО на главной, а сердечко «добавить эту страницу в избранное» — на всех остальных страницах и не на главной (раньше на каждой странице было по два). На главную страницу в избранное добавить нельзя — она и есть вход в избранное.",
         "Прогресс недели семиугольником переделан: снова цельный аккуратный контур со скруглёнными углами, как был раньше, но заливается ПО ГРАНЯМ — каждая из 7 граней показывает выполненность своего дня (пн…вс). Сегодняшняя грань на дорожке светлее, будущие дни — пустая дорожка, бонус ⭐ дня — тонкая золотая линия (на мелком значке в шапке не рисуется). Один вид в шапке, профиле Дашборда и правой шторке. Без миграций."
@@ -1744,6 +1747,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.79", date: "2026-10-08 04:57", changes: [
+        "Goals: a notice about an almost overdue goal. If a goal is due today and not done yet, from 7 pm (5 hours before the end of the day) a \"A goal is almost overdue\" banner appears when you open the Dashboard, with the goal names (up to three, the rest as \"and more\"), an \"Open goals\" link and a button to dismiss it for the day. \"Don't remind me\" turns the banner off, and you can turn it back on with the \"Remind me about goals due today\" checkbox on the Goals page. For now it is only an in-app banner, with no phone push notifications. No migration needed",
+    ]},
     { version: "3.78", date: "2026-10-08 05:30", changes: [
         "Header hearts separated: \"Favorites\" (the round button with a heart that opens the quick links list) is now ONLY on the main page, while the \"add this page to favorites\" heart is on every other page and not on the main one (there used to be two on every page). The main page cannot be added to favorites - it is the entry to them.",
         "The weekly progress heptagon is redone: again a solid, neat outline with rounded corners like before, but it fills BY FACE - each of the 7 faces shows how complete its own day is (Mon to Sun). Today's face is lighter on the track, future days are an empty track, a day's bonus star is a thin gold line (not drawn on the small header badge). One look in the header, the Dashboard profile and the right drawer. No migration needed."

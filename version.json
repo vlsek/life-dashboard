@@ -1,6 +1,13 @@
 {
-  "version": "3.78",
+  "version": "3.79",
   "en": [
+    {
+      "version": "3.79",
+      "date": "2026-10-08 04:57",
+      "changes": [
+        "Goals: a notice about an almost overdue goal. If a goal is due today and not done yet, from 7 pm (5 hours before the end of the day) a \"A goal is almost overdue\" banner appears when you open the Dashboard, with the goal names (up to three, the rest as \"and more\"), an \"Open goals\" link and a button to dismiss it for the day. \"Don't remind me\" turns the banner off, and you can turn it back on with the \"Remind me about goals due today\" checkbox on the Goals page. For now it is only an in-app banner, with no phone push notifications. No migration needed"
+      ]
+    },
     {
       "version": "3.78",
       "date": "2026-10-08 05:30",
@@ -2713,6 +2720,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.79",
+      "date": "2026-10-08 04:57",
+      "changes": [
+        "Цели: уведомление о скорой просрочке. Если у цели срок сегодня и она ещё не выполнена, то с 19:00 (за 5 часов до конца дня) при открытии Дашборда появляется плашка «Скоро просрочка цели» с названиями (до трёх, остальные «и ещё N»), ссылкой «К целям» и кнопкой закрыть на день. Кнопка «Не напоминать» отключает плашку, а включить её обратно можно галочкой «Напоминать о целях со сроком сегодня» на странице «Цели». Пока это только плашка в приложении, без push-уведомлений на телефон. Миграция не нужна"
+      ]
+    },
     {
       "version": "3.78",
       "date": "2026-10-08 05:30",

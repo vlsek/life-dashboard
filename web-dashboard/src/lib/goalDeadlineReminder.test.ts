@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { flushPromises, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { defineComponent } from 'vue'
 import {
   DEADLINE_REMINDER_DISMISS_KEY,
