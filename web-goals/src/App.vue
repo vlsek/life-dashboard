@@ -15,6 +15,7 @@ import type { Goal, GoalFormInitial, GoalFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
 import { friendlyError } from './lib/friendlyError'
+import { isDeadlineReminderEnabled, setDeadlineReminderEnabled } from './lib/deadlineReminderSetting'
 
 const { auth, items, error, flashed, init, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
 onMounted(init)
@@ -40,6 +41,11 @@ watch(
 )
 const myCategories = computed(() => mergeCategories(savedCategories(items.value, noCategoryLabels), goalCats.saved.value, noCategoryLabels))
 const summary = computed(() => pointsSummary(items.value))
+const remindEnabled = ref(isDeadlineReminderEnabled())
+function onRemindToggle(e: Event) {
+  remindEnabled.value = (e.target as HTMLInputElement).checked
+  setDeadlineReminderEnabled(remindEnabled.value)
+}
 const loadError = computed(() => (error.value ? friendlyError({ message: error.value }) : ''))
 
 function fmtRu(iso: string | null): string {
@@ -81,6 +87,11 @@ async function onDelete(g: Goal) {
       <h1 class="text-xl font-semibold"><EmojiText :text="t('goals_h1')" /></h1>
       <button class="rounded-lg px-3 py-1.5 text-sm" data-test="goal-add" @click="formTarget = 'new'"><EmojiText :text="t('goals_add_btn')" /></button>
     </div>
+
+    <label class="dim mb-3 flex items-center gap-2 text-xs" data-test="deadline-remind">
+      <input type="checkbox" :checked="remindEnabled" data-test="deadline-remind-toggle" @change="onRemindToggle" />
+      {{ t('goals_deadline_remind') }}
+    </label>
 
     <p v-if="auth.status === 'loading'" class="dim">…</p>
 

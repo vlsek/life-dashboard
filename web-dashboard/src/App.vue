@@ -32,6 +32,8 @@ import SectionHeading from './components/SectionHeading.vue'
 import { vCollapse } from './lib/collapseMotion'
 import { useReminders } from './lib/useReminders'
 import { useEveningReminder } from './lib/useEveningReminder'
+import { useDeadlineReminder } from './lib/useDeadlineReminder'
+import GoalDeadlineBanner from './components/GoalDeadlineBanner.vue'
 import { useWaterReminder } from './lib/useWaterReminder'
 import { usePlanReminders } from './lib/usePlanReminders'
 import { useDashboard } from './lib/useDashboard'
@@ -74,6 +76,7 @@ const { pending: perfectPopup, close: closePerfect, disable: disablePerfect } = 
   perfectInfo,
 )
 const { items: eveningItems, visible: eveningVisible, load: loadEveningReminder, dismiss: dismissEveningReminder } = useEveningReminder()
+const { goals: deadlineGoals, visible: deadlineVisible, load: loadDeadlineReminder, dismiss: dismissDeadlineReminder, disable: disableDeadlineReminder } = useDeadlineReminder()
 const { visible: waterReminderVisible, ml: waterReminderMl, goal: waterReminderGoal, load: loadWaterReminder, dismiss: dismissWaterReminder } = useWaterReminder()
 const { layout, loaded: layoutLoaded, saveError: layoutError, load: loadLayout, save: saveLayout } = useLayout()
 const { visible: planReminders, load: loadPlanReminders, dismiss: dismissPlanReminder } = usePlanReminders()
@@ -84,6 +87,7 @@ onMounted(async () => {
     await loadLayout(auth.value.userId)
     await loadMilestonesReminder(auth.value.userId)
     void loadEveningReminder(auth.value.userId)
+    void loadDeadlineReminder(auth.value.userId)
     void loadWaterReminder(auth.value.userId)
     void loadPlanReminders(auth.value.userId)
  void loadCollapseStyle(auth.value.userId) // вид сворачивания блоков из «Кастомизации» (BACKLOG 498); до ответа — кэш
@@ -221,6 +225,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
       <InstallBanner />
       <PlanReminderBanner :items="planReminders" @dismiss="dismissPlanReminder" />
       <WaterReminderBanner v-if="waterReminderVisible" :ml="waterReminderMl" :goal="waterReminderGoal" @dismiss="dismissWaterReminder" />
+      <GoalDeadlineBanner v-if="deadlineVisible" :goals="deadlineGoals" @dismiss="dismissDeadlineReminder" @disable="disableDeadlineReminder" />
       <EveningReminderBanner v-if="eveningVisible" :items="eveningItems" @dismiss="dismissEveningReminder" />
 
       <HeaderProgressBadge v-if="dayRingHeader" kind="day" v-bind="dayRingHeader" @click="summaryKind = 'day'" />
