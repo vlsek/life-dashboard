@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.84";
+const SITE_VERSION = "3.85";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.85", date: "2026-10-08 11:14", changes: [
+        "Усилена защита прав доступа: добавлена серверная проверка, из-за которой изменить свои права в приложении больше нельзя (нужна миграция 059 — применяет владелец). Также составлен аудит безопасности покупок в Кастомизации и Магазине с планом следующих шагов",
+    ]},
     { version: "3.84", date: "2026-10-08 10:34", changes: [
         "Метрики: у метрики-галочки появилась необязательная заметка. В форме метрики (тип «галочка») есть переключатель «Спрашивать, что делал(а)»: когда метрика отмечена, под ней появляется поле «Что делал(а)?» (например, что учил), текст сохраняется по Enter или при выходе из поля и не влияет на баллы и серии. Новая «Учёба» при первом входе теперь создаётся не с минутами, а простой галочкой «Учёба» с заметкой. У уже заведённых метрик ничего не меняется, включить заметку можно вручную. Нужна миграция 058 (колонки заметки); без неё всё работает как раньше, поле просто скрыто",
     ]},
@@ -1762,6 +1765,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.85", date: "2026-10-08 11:14", changes: [
+        "Stronger access protection: a server-side check now stops anyone from changing their own permissions inside the app (needs migration 059 — applied by the owner). A security audit of purchases in Customization and the Shop was also written, with a plan for the next steps",
+    ]},
     { version: "3.84", date: "2026-10-08 10:34", changes: [
         "Metrics: a tick-box metric can now have an optional note. In the metric form (tick type) there is an \"Ask what I did\" switch: when the metric is ticked, a \"What did you do?\" field appears under it (for example what you studied); the text is saved on Enter or when you leave the field and does not affect points or streaks. The new \"Study\" metric created at first sign-in is now a plain tick with a note instead of minutes. Existing metrics are unchanged; you can turn the note on by hand. Migration 058 is needed (the note columns); without it everything works as before and the field is simply hidden",
     ]},

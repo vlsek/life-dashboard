@@ -1,6 +1,13 @@
 {
-  "version": "3.84",
+  "version": "3.85",
   "en": [
+    {
+      "version": "3.85",
+      "date": "2026-10-08 11:14",
+      "changes": [
+        "Stronger access protection: a server-side check now stops anyone from changing their own permissions inside the app (needs migration 059 — applied by the owner). A security audit of purchases in Customization and the Shop was also written, with a plan for the next steps"
+      ]
+    },
     {
       "version": "3.84",
       "date": "2026-10-08 10:34",
@@ -2755,6 +2762,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.85",
+      "date": "2026-10-08 11:14",
+      "changes": [
+        "Усилена защита прав доступа: добавлена серверная проверка, из-за которой изменить свои права в приложении больше нельзя (нужна миграция 059 — применяет владелец). Также составлен аудит безопасности покупок в Кастомизации и Магазине с планом следующих шагов"
+      ]
+    },
     {
       "version": "3.84",
       "date": "2026-10-08 10:34",
