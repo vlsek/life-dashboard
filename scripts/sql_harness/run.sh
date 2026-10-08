@@ -20,7 +20,7 @@ do $$ begin
 end $$;
 create extension if not exists pgcrypto;
 create schema if not exists auth;
-create table auth.users (id uuid primary key default gen_random_uuid(), email text, raw_user_meta_data jsonb default '{}'::jsonb);
+create table auth.users (id uuid primary key default gen_random_uuid(), email text, raw_user_meta_data jsonb default '{}'::jsonb, created_at timestamptz default now());
 create or replace function auth.uid() returns uuid language sql stable as $f$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $f$;
 create or replace function auth.role() returns text language sql stable as $f$ select 'authenticated'::text $f$;
 create schema if not exists storage;
