@@ -186,6 +186,9 @@ const openedProfile = computed(() => {
     keys: badges.value.get(id) ?? [],
     points: lb ? lb.total_points : null,
     streak: lb?.perfect_streak ?? 0,
+    userId: id,
+    // сводка (миграция 056) доступна для друзей и для себя
+    isFriend: id === myId.value || acceptedProfiles.value.some((p) => p.user_id === id),
   }
 })
 </script>
@@ -340,6 +343,8 @@ const openedProfile = computed(() => {
       :keys="openedProfile.keys"
       :points="openedProfile.points"
       :streak="openedProfile.streak"
+      :user-id="openedProfile.userId"
+      :is-friend="openedProfile.isFriend"
       @close="openedProfileId = null"
     />
   </main>
