@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.83";
+const SITE_VERSION = "3.84";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.84", date: "2026-10-08 10:34", changes: [
+        "Метрики: у метрики-галочки появилась необязательная заметка. В форме метрики (тип «галочка») есть переключатель «Спрашивать, что делал(а)»: когда метрика отмечена, под ней появляется поле «Что делал(а)?» (например, что учил), текст сохраняется по Enter или при выходе из поля и не влияет на баллы и серии. Новая «Учёба» при первом входе теперь создаётся не с минутами, а простой галочкой «Учёба» с заметкой. У уже заведённых метрик ничего не меняется, включить заметку можно вручную. Нужна миграция 058 (колонки заметки); без неё всё работает как раньше, поле просто скрыто",
+    ]},
     { version: "3.83", date: "2026-10-08 10:29", changes: [
         "Вода: новая анимация «записалось». Вместо плоского прямоугольника в большом стакане теперь стеклянный стакан, в котором поднимается живая вода с бегущей волной и пузырьками, а в углу появляется галочка. Есть три варианта: «Волна» (спокойная, по умолчанию), «Капли» и «Рябь». Выбрать и сразу посмотреть можно в «Настройках» (шестерёнка в шапке) → «Анимация воды». При «Отключить анимации» или системном «уменьшить движение» показывается готовая картинка без движения",
     ]},
@@ -1759,6 +1762,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.84", date: "2026-10-08 10:34", changes: [
+        "Metrics: a tick-box metric can now have an optional note. In the metric form (tick type) there is an \"Ask what I did\" switch: when the metric is ticked, a \"What did you do?\" field appears under it (for example what you studied); the text is saved on Enter or when you leave the field and does not affect points or streaks. The new \"Study\" metric created at first sign-in is now a plain tick with a note instead of minutes. Existing metrics are unchanged; you can turn the note on by hand. Migration 058 is needed (the note columns); without it everything works as before and the field is simply hidden",
+    ]},
     { version: "3.83", date: "2026-10-08 10:29", changes: [
         "Water: a new “saved” animation. Instead of a flat rectangle in a big glass there is now a glassy tumbler where live water rises with a drifting wave and bubbles, and a checkmark badge pops in at the corner. Three variants: Wave (calm, the default), Drops and Ripples. You can pick one and preview it right away in Settings (the gear in the header) → Water animation. With “Turn off animations” or the system “reduce motion” the finished picture is shown without movement",
     ]},
