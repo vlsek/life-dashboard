@@ -44,7 +44,8 @@ export function useMetricsManager(onChanged?: () => void) {
     const hint = /schedule/i.test(message) ? ' — ' + t('dash_schedule_migration_hint')
       : /streak_import/i.test(message) ? ' — ' + t('dash_streak_import_migration_hint')
       : /count_streak/i.test(message) ? ' — ' + t('dash_count_streak_migration_hint')
-      : /planned_sets/i.test(message) ? ' — ' + t('dash_planned_sets_migration_hint') : ''
+      : /planned_sets/i.test(message) ? ' — ' + t('dash_planned_sets_migration_hint')
+      : /ask_note/i.test(message) ? ' — ' + t('dash_ask_note_migration_hint') : ''
     return friendlyError(err) + hint
   }
 

@@ -59,9 +59,14 @@ export function useOnboarding() {
       unit: m.unit ?? '',
       options: m.options ?? [],
       position: i,
+      ...(m.ask_note ? { ask_note: true } : {}),
     }))
     const { error: err } = await sb.from('metrics').insert(rows)
-    return err
+    if (!err || !list.some((m) => m.ask_note)) return err
+    // Без миграции 058 колонки ask_note нет — создаём метрики без неё (заметка просто не будет спрашиваться), а не оставляем человека без метрик
+    if (!/ask_note/i.test(String((err as { message?: unknown }).message ?? ''))) return err
+    const plain = await sb.from('metrics').insert(rows.map(({ ask_note: _drop, ...rest }) => rest))
+    return plain.error
   }
 
   // Портировано из completeOnboarding() в onboarding.js.

@@ -37,6 +37,7 @@ export function useDailyMetrics() {
   const loaded = ref(false)
   const saving = ref(false)
   const flashed = ref<Record<string, boolean>>({})
+  const notes = ref<Record<string, string>>({}) // заметки к отметкам за выбранный день (миграция 058)
 
   let userId = ''
   let date = ''
@@ -85,7 +86,38 @@ export function useDailyMetrics() {
     pending.value = initialPending(all.filter((m) => mine.has(m.id)), values)
     external.value = initialPending(all.filter((m) => !mine.has(m.id)), values)
     items.value = Array.isArray(noteRes.data?.items) ? (noteRes.data!.items as string[]) : []
+    notes.value = await fetchNotes(uid, dateStr)
+    if (token !== loadToken) return
     loaded.value = true
+  }
+
+  // Заметки к отметкам (миграция 058, BACKLOG 867): отдельный запрос, чтобы без миграции (нет колонки note) дашборд грузился как раньше —
+  // сбой чтения заметок молча даёт пустой список.
+  async function fetchNotes(uid: string, dateStr: string): Promise<Record<string, string>> {
+    const { data, error: err } = await sb.from('daily_values').select('metric_id, note').eq('user_id', uid).eq('date', dateStr)
+    if (err) return {}
+    const out: Record<string, string> = {}
+    for (const r of (data || []) as { metric_id: string; note: string | null }[]) if (r.note) out[r.metric_id] = r.note
+    return out
+  }
+
+  // Сохранить заметку к уже отмеченной метрике-галочке. Пустая строка стирает заметку. Значение метрики (value) не меняем — шлём то, что
+  // сейчас отмечено; баллы и серии заметка не затрагивает.
+  async function setNote(m: Metric, raw: string) {
+    const text = raw.trim().slice(0, 500)
+    if ((notes.value[m.id] ?? '') === text) return true
+    const { error: err } = await sb
+      .from('daily_values')
+      .upsert({ user_id: userId, date, metric_id: m.id, value: !!pending.value[m.id], note: text === '' ? null : text }, { onConflict: 'user_id,date,metric_id' })
+    if (err) {
+      error.value = friendlyError(err, 'save')
+      return false
+    }
+    error.value = null
+    const { [m.id]: _drop, ...rest } = notes.value
+    notes.value = text === '' ? rest : { ...rest, [m.id]: text }
+    flash(m.id)
+    return true
   }
 
   // «Баллы за день» читают и подходы, и воду — их сохраняют соседние блоки (SetsSection/
@@ -223,6 +255,6 @@ export function useDailyMetrics() {
 
   return {
     metrics, booleans, numbers, multiselects, pending, items, score, error, loaded, saving, flashed,
-    load, setBoolean, setNumber, addToNumber, fixTotal, toggleOpt, addItem, removeItem, saveDay,
+    load, setBoolean, setNote, setNumber, addToNumber, fixTotal, toggleOpt, addItem, removeItem, saveDay, notes,
   }
 }

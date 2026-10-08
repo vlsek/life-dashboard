@@ -22,7 +22,7 @@ function setup(loaded = true) {
     error: ref(null),
     loaded: ref(loaded),
     saving: ref(false),
-    flashed: ref({}),
+    flashed: ref({}), notes: ref({}),
     load: vi.fn(), setBoolean: vi.fn(), setNumber: vi.fn(), addToNumber: vi.fn(), fixTotal: vi.fn(), toggleOpt: vi.fn(), addItem: vi.fn(), removeItem: vi.fn(),
     saveDay: vi.fn(async () => true),
   }

@@ -17,6 +17,7 @@ export interface MetricTemplate {
   goal_direction?: GoalDirection
   unit?: string
   options?: MultiselectOption[]
+  ask_note?: boolean // миграция 058: спрашивать необязательную заметку к отметке («что учил/изучил»), BACKLOG 867
 }
 
 export type BodyParamKey = 'weight' | 'fat' | 'muscle' | 'water'

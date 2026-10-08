@@ -31,7 +31,7 @@ import { stripEmoji } from '../lib/emojiText'
 const date = ref(todayStr())
 const {
   booleans, numbers, multiselects, pending, items, score, error, loaded, saving, flashed,
-  load, setBoolean, setNumber, addToNumber, fixTotal, toggleOpt, addItem, removeItem, saveDay,
+  load, setBoolean, setNote, setNumber, addToNumber, fixTotal, toggleOpt, addItem, removeItem, saveDay, notes,
 } = useDailyMetrics()
 
 const props = defineProps<{ userId: string | null; metricStreaks?: Record<string, MetricStreakInfo> }>()
@@ -127,7 +127,9 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
             :checked="!!pending[m.id]"
             :remaining="isRemaining(m, date, pending[m.id])"
             :streak="props.metricStreaks?.[m.id]"
+            :note="notes[m.id] ?? ''"
             @toggle="setBoolean(m, $event)"
+            @note="setNote(m, $event)"
           />
         </div>
 

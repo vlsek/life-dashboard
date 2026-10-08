@@ -22,7 +22,7 @@ function setup(opts: { numbers?: any[]; booleans?: any[]; multiselects?: any[]; 
     error: ref(null),
     loaded: ref(true),
     saving: ref(false),
-    flashed: ref({}),
+    flashed: ref({}), notes: ref({}),
     // у каждой функции свой мок: общий давал бы лишние вызовы (load вызывается при монтировании)
     load: vi.fn(), setBoolean: vi.fn(), setNumber: vi.fn(), addToNumber: vi.fn(), fixTotal: vi.fn(), toggleOpt: vi.fn(), addItem: vi.fn(), removeItem: vi.fn(), saveDay: vi.fn(async () => true),
   }

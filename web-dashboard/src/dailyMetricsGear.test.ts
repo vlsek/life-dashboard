@@ -15,7 +15,7 @@ beforeEach(() => {
   localStorage.setItem('site_lang', 'ru')
   h.state = {
     booleans: ref([]), numbers: ref([]), multiselects: ref([]), pending: ref({}), items: ref([]), score: ref({ points: 0, total: 0 }),
-    error: ref(null), loaded: ref(true), saving: ref(false), flashed: ref({}),
+    error: ref(null), loaded: ref(true), saving: ref(false), flashed: ref({}), notes: ref({}),
     load: vi.fn(), setBoolean: vi.fn(), setNumber: vi.fn(), addToNumber: vi.fn(), fixTotal: vi.fn(), toggleOpt: vi.fn(), addItem: vi.fn(), removeItem: vi.fn(), saveDay: vi.fn(),
   }
 })

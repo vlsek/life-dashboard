@@ -34,6 +34,8 @@ export interface Metric {
   // только для чтения, чтобы подходы не вводились дважды (BACKLOG 19/30). null/нет — метрика ведётся вручную.
   source_exercise_id?: string | null
   // Поля ниже нужны блоку «Управление метриками» (multiselect/sets и режим ввода числа)
+  // Миграция 058: спрашивать необязательную заметку к отметке («что учил/изучил»); только для метрик-галочек (BACKLOG 867)
+  ask_note?: boolean | null
   options?: MetricOption[] | null
   input_mode?: 'set' | 'add' | null
 }
@@ -60,4 +62,5 @@ export interface DailyValueRow {
   date: string
   metric_id: string
   value: MetricValue
+  note?: string | null // миграция 058
 }

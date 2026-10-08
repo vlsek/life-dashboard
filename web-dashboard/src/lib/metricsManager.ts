@@ -28,6 +28,7 @@ export interface MetricFormValues {
   countStreak: boolean // миграция 031: считать ли серию по метрике
   plannedSets: string // миграция 041: «сколько подходов планируется в день» (только sets); пусто = не задано
   trackOnly: boolean // «просто записывать значение»: без цели, расписания и серии (только number)
+  askNote: boolean // миграция 058: спрашивать необязательную заметку к отметке (только «галочка»), BACKLOG 867
 }
 
 export const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0] as const
@@ -184,6 +185,7 @@ export function emptyForm(): MetricFormValues {
     countStreak: true,
     plannedSets: '',
     trackOnly: false,
+    askNote: false,
   }
 }
 
@@ -208,6 +210,7 @@ export function formFromMetric(m: Metric): MetricFormValues {
     countStreak: m.count_streak !== false,
     plannedSets: currentPlannedSets(m) != null ? String(currentPlannedSets(m)) : '',
     trackOnly: isTrackOnlyMetric(m),
+    askNote: m.ask_note === true,
   }
 }
 
@@ -228,6 +231,14 @@ export function scheduleFields(f: MetricFormValues, existing: Metric | null): { 
 export function countStreakFields(f: MetricFormValues, existing: Metric | null): { count_streak?: boolean } {
   const value = effectiveForm(f).countStreak
   if (!value || (existing && 'count_streak' in existing)) return { count_streak: value }
+  return {}
+}
+
+// Миграция 058: «спрашивать заметку» пишем, если включено и тип «галочка» (иначе без колонки получим понятную ошибку с подсказкой) или колонка
+// у метрики уже есть — так правка метрик работает и до применения миграции (по образцу countStreakFields()). Для других типов — всегда false.
+export function askNoteFields(f: MetricFormValues, existing: Metric | null): { ask_note?: boolean } {
+  const value = f.type === 'boolean' && f.askNote
+  if (value || (existing && 'ask_note' in existing)) return { ask_note: value }
   return {}
 }
 
@@ -292,12 +303,12 @@ function commonFields(f: MetricFormValues, categoryId: string | null) {
 
 export function buildInsertRow(form: MetricFormValues, userId: string, position: number, categoryId: string | null) {
   const f = effectiveForm(form)
-  return { user_id: userId, ...commonFields(f, categoryId), position, active: true, ...scheduleFields(f, null), ...countStreakFields(f, null), ...plannedSetsFields(f, null) }
+  return { user_id: userId, ...commonFields(f, categoryId), position, active: true, ...scheduleFields(f, null), ...countStreakFields(f, null), ...askNoteFields(f, null), ...plannedSetsFields(f, null) }
 }
 
 export function buildUpdateRow(form: MetricFormValues, existing: Metric, categoryId: string | null) {
   const f = effectiveForm(form)
-  return { ...commonFields(f, categoryId), ...scheduleFields(f, existing), ...countStreakFields(f, existing), ...streakImportFields(f, existing), ...plannedSetsFields(f, existing) }
+  return { ...commonFields(f, categoryId), ...scheduleFields(f, existing), ...countStreakFields(f, existing), ...askNoteFields(f, existing), ...streakImportFields(f, existing), ...plannedSetsFields(f, existing) }
 }
 
 // Позиция новой метрики — максимум существующих + 1 (пусто → 0).

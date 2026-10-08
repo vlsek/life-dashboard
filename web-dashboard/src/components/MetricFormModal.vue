@@ -172,6 +172,14 @@ const dim = (on: boolean) => ({ opacity: on ? 1 : 0.4 })
         <input v-model="form.newCategory" type="text" class="w-full" maxlength="60" data-test="new-category-input" />
       </template>
 
+      <template v-if="form.type === 'boolean'">
+        <label class="mt-2 flex items-center gap-2 text-sm">
+          <input type="checkbox" data-test="ask-note" :checked="form.askNote" @change="form.askNote = ($event.target as HTMLInputElement).checked" />
+          {{ t('dash_metric_ask_note') }}
+        </label>
+        <p class="dim mt-1 text-xs">{{ t('dash_metric_ask_note_hint') }}</p>
+      </template>
+
       <label class="mt-2 flex items-center gap-2 text-sm" :style="dim(enabled.countStreak)">
         <input
           type="checkbox"

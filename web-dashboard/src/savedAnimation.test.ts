@@ -18,7 +18,7 @@ const multiselects = [m({ id: 'x1', name: 'Mood', type: 'multiselect', options: 
 function setup(flashed: Record<string, boolean> = {}) {
   h.state = {
     booleans: ref(booleans), numbers: ref(numbers), multiselects: ref(multiselects), pending: ref({}), items: ref([]), score: ref({ points: 0, total: 0 }),
-    error: ref(null), loaded: ref(true), saving: ref(false), flashed: ref(flashed),
+    error: ref(null), loaded: ref(true), saving: ref(false), flashed: ref(flashed), notes: ref({}),
     load: vi.fn(), setBoolean: vi.fn(), setNumber: vi.fn(), addToNumber: vi.fn(), fixTotal: vi.fn(), toggleOpt: vi.fn(), addItem: vi.fn(), removeItem: vi.fn(), saveDay: vi.fn(async () => true),
   }
   return mount(DailyMetricsSection, { props: { userId: 'u1' }, global: { stubs: { SetsSection: true, PlannedSection: true } } })
