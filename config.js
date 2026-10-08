@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.79";
+const SITE_VERSION = "3.80";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.80", date: "2026-10-08 06:12", changes: [
+        "Страница проверки установки приложения (/pwa-check): открой её в браузере, где не появляется значок «Установить» в адресной строке, подожди несколько секунд — она сама проверит безопасное соединение, манифест, иконки, стартовую страницу и service worker, дождётся ответа браузера и покажет, что именно мешает (например, приложение уже установлено, установка была отклонена или открыт гостевой режим). Если браузер разрешит установку, появится кнопка «Установить приложение». Результат копируется одной кнопкой — его можно прислать нам",
+    ]},
     { version: "3.79", date: "2026-10-08 04:57", changes: [
         "Цели: уведомление о скорой просрочке. Если у цели срок сегодня и она ещё не выполнена, то с 19:00 (за 5 часов до конца дня) при открытии Дашборда появляется плашка «Скоро просрочка цели» с названиями (до трёх, остальные «и ещё N»), ссылкой «К целям» и кнопкой закрыть на день. Кнопка «Не напоминать» отключает плашку, а включить её обратно можно галочкой «Напоминать о целях со сроком сегодня» на странице «Цели». Пока это только плашка в приложении, без push-уведомлений на телефон. Миграция не нужна",
     ]},
@@ -1747,6 +1750,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.80", date: "2026-10-08 06:12", changes: [
+        "App install check page (/pwa-check): open it in a browser where the “Install” icon does not appear in the address bar and wait a few seconds — it checks the secure connection, manifest, icons, start page and service worker, waits for the browser’s answer and shows what exactly is in the way (for example, the app is already installed, the install prompt was dismissed, or a guest window is open). If the browser allows installing, an “Install the app” button appears. The result can be copied with one button and sent to us",
+    ]},
     { version: "3.79", date: "2026-10-08 04:57", changes: [
         "Goals: a notice about an almost overdue goal. If a goal is due today and not done yet, from 7 pm (5 hours before the end of the day) a \"A goal is almost overdue\" banner appears when you open the Dashboard, with the goal names (up to three, the rest as \"and more\"), an \"Open goals\" link and a button to dismiss it for the day. \"Don't remind me\" turns the banner off, and you can turn it back on with the \"Remind me about goals due today\" checkbox on the Goals page. For now it is only an in-app banner, with no phone push notifications. No migration needed",
     ]},

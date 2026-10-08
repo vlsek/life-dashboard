@@ -1,6 +1,13 @@
 {
-  "version": "3.79",
+  "version": "3.80",
   "en": [
+    {
+      "version": "3.80",
+      "date": "2026-10-08 06:12",
+      "changes": [
+        "App install check page (/pwa-check): open it in a browser where the “Install” icon does not appear in the address bar and wait a few seconds — it checks the secure connection, manifest, icons, start page and service worker, waits for the browser’s answer and shows what exactly is in the way (for example, the app is already installed, the install prompt was dismissed, or a guest window is open). If the browser allows installing, an “Install the app” button appears. The result can be copied with one button and sent to us"
+      ]
+    },
     {
       "version": "3.79",
       "date": "2026-10-08 04:57",
@@ -2720,6 +2727,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.80",
+      "date": "2026-10-08 06:12",
+      "changes": [
+        "Страница проверки установки приложения (/pwa-check): открой её в браузере, где не появляется значок «Установить» в адресной строке, подожди несколько секунд — она сама проверит безопасное соединение, манифест, иконки, стартовую страницу и service worker, дождётся ответа браузера и покажет, что именно мешает (например, приложение уже установлено, установка была отклонена или открыт гостевой режим). Если браузер разрешит установку, появится кнопка «Установить приложение». Результат копируется одной кнопкой — его можно прислать нам"
+      ]
+    },
     {
       "version": "3.79",
       "date": "2026-10-08 04:57",
