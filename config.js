@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.80";
+const SITE_VERSION = "3.81";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.81", date: "2026-10-08 06:45", changes: [
+        "Сообщество: клик по другу (и по себе) открывает сводку, а не только достижения. Видно: с какой даты человек с нами и сколько дней, с какой даты вы друзья, баллы за неделю и за всё время, серия идеальных дней, сколько целей выполнено, сколько дней из последних 30 были активными, любимое упражнение, а ниже — все открытые достижения. Если человек скрыл себя из сообщества, показаны только имя, аватар и даты. ТРЕБУЕТ миграцию 056 (без неё окно работает как раньше)."
+    ]},
     { version: "3.80", date: "2026-10-08 06:12", changes: [
         "Страница проверки установки приложения (/pwa-check): открой её в браузере, где не появляется значок «Установить» в адресной строке, подожди несколько секунд — она сама проверит безопасное соединение, манифест, иконки, стартовую страницу и service worker, дождётся ответа браузера и покажет, что именно мешает (например, приложение уже установлено, установка была отклонена или открыт гостевой режим). Если браузер разрешит установку, появится кнопка «Установить приложение». Результат копируется одной кнопкой — его можно прислать нам",
     ]},
@@ -1750,6 +1753,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.81", date: "2026-10-08 06:45", changes: [
+        "Community: clicking a friend (or yourself) opens a summary, not just achievements. You can see: since when the person has been with us and for how many days, since when you have been friends, points for the week and in total, the perfect-day streak, how many goals are done, how many of the last 30 days were active, the favorite exercise, and below all unlocked achievements. If a person hid themselves from the community, only the name, avatar and dates are shown. REQUIRES migration 056 (without it the window works as before)."
+    ]},
     { version: "3.80", date: "2026-10-08 06:12", changes: [
         "App install check page (/pwa-check): open it in a browser where the “Install” icon does not appear in the address bar and wait a few seconds — it checks the secure connection, manifest, icons, start page and service worker, waits for the browser’s answer and shows what exactly is in the way (for example, the app is already installed, the install prompt was dismissed, or a guest window is open). If the browser allows installing, an “Install the app” button appears. The result can be copied with one button and sent to us",
     ]},

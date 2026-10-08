@@ -1,6 +1,13 @@
 {
-  "version": "3.80",
+  "version": "3.81",
   "en": [
+    {
+      "version": "3.81",
+      "date": "2026-10-08 06:45",
+      "changes": [
+        "Community: clicking a friend (or yourself) opens a summary, not just achievements. You can see: since when the person has been with us and for how many days, since when you have been friends, points for the week and in total, the perfect-day streak, how many goals are done, how many of the last 30 days were active, the favorite exercise, and below all unlocked achievements. If a person hid themselves from the community, only the name, avatar and dates are shown. REQUIRES migration 056 (without it the window works as before)."
+      ]
+    },
     {
       "version": "3.80",
       "date": "2026-10-08 06:12",
@@ -2727,6 +2734,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.81",
+      "date": "2026-10-08 06:45",
+      "changes": [
+        "Сообщество: клик по другу (и по себе) открывает сводку, а не только достижения. Видно: с какой даты человек с нами и сколько дней, с какой даты вы друзья, баллы за неделю и за всё время, серия идеальных дней, сколько целей выполнено, сколько дней из последних 30 были активными, любимое упражнение, а ниже — все открытые достижения. Если человек скрыл себя из сообщества, показаны только имя, аватар и даты. ТРЕБУЕТ миграцию 056 (без неё окно работает как раньше)."
+      ]
+    },
     {
       "version": "3.80",
       "date": "2026-10-08 06:12",
