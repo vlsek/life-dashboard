@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.87";
+const SITE_VERSION = "3.88";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.88", date: "2026-10-09 05:04", changes: [
+        "Вода: в настройках (⚙️) появился выключатель «Отслеживать воду» — для тех, кто не хочет отмечать, сколько пьёт. Если выключить: пропадают стакан в шапке, блок воды в правой панели, окно воды и блок «Вода» на главной, перестают приходить напоминания о воде, а вода больше не учитывается в кольцах дня и недели, «идеальных днях», сериях и «баллах за день». Ничего не удаляется: прошлые записи воды, баллы за неё в балансе и достижения остаются, а при включении всё возвращается. Выбор хранится в профиле (нужна миграция 055; без неё всё работает как раньше, а при попытке выключить покажется понятная ошибка)."
+    ]},
     { version: "3.87", date: "2026-10-09 01:59", changes: [
         "Покупки в «Кастомизации» стали надёжнее: покупка и выдача наград теперь выполняются на сервере одной операцией, цена и баланс проверяются там же, а повторное нажатие или вторая вкладка не спишут баллы дважды (нужна миграция 060 — применяет владелец; до её применения всё работает как раньше)",
     ]},
@@ -1771,6 +1774,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.88", date: "2026-10-09 05:04", changes: [
+        "Water: the settings window now has a \"Track water\" switch for people who do not want to log what they drink. When it is off: the glass in the header, the water block in the right panel, the water window and the Water block on the home page disappear, water reminders stop, and water no longer counts in the day and week rings, perfect days, streaks and daily points. Nothing is deleted: past water entries, the points for them in your balance and achievements stay, and everything comes back when you turn it on again. The choice is stored in your profile (migration 055 is needed; without it everything works as before and trying to turn it off shows a clear error)."
+    ]},
     { version: "3.87", date: "2026-10-09 01:59", changes: [
         "Purchases in “Customization” are more reliable: buying and receiving rewards now run on the server as a single operation, the price and balance are checked there, and a double tap or a second tab will not charge you twice (needs migration 060 — applied by the owner; until then everything works as before)",
     ]},
