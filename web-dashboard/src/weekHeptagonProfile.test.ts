@@ -40,11 +40,12 @@ const base = { basePct: 0.5, bonusPct: 0, totalPct: 50, title: 'Неделя: 50
 describe('ProgressRing недели: стороны по дням', () => {
   it('7 сторон, заливка только у дней с прогрессом, бонус золотом, подпись для скринридера', () => {
     const w = mount(ProgressRing, { props: { ...base, size: 48, shape: 'heptagon', days } })
-    expect(w.findAll('[data-test="week-seg-track"]')).toHaveLength(7)
+    expect(w.find('[data-test="week-track"]').element.tagName.toLowerCase()).toBe('polygon') // цельный контур, как у прежнего кольца (45.3)
+    expect(w.findAll('g[data-day]')).toHaveLength(7)
     expect(w.findAll('[data-test="week-seg-fill"]')).toHaveLength(2) // пн и вт; сегодня 0 из 1 базовых
     expect(w.findAll('[data-test="week-seg-bonus"]')).toHaveLength(1)
     expect(w.findAll('[data-state="future"]')).toHaveLength(4)
-    expect(w.find('[data-state="today"]').attributes('stroke-width')).toBe('6')
+    expect(w.findAll('[data-test="week-seg-today"]')).toHaveLength(1) // сегодняшняя грань светлее
     expect(w.find('[data-test="hept-track"]').exists()).toBe(false)
     expect(w.attributes('aria-label')).toMatch(/100 %, \w+ 50 %, \w+ 20 %, \w+, \w+, \w+, \w+$/)
   })
@@ -53,7 +54,7 @@ describe('ProgressRing недели: стороны по дням', () => {
     expect(mount(ProgressRing, { props: { ...base, shape: 'heptagon', days: days.slice(0, 3) } }).find('[data-test="hept-track"]').exists()).toBe(true)
     const circle = mount(ProgressRing, { props: { ...base, days } })
     expect(circle.find('circle').exists()).toBe(true)
-    expect(circle.find('[data-test="week-seg-track"]').exists()).toBe(false)
+    expect(circle.find('[data-test="week-track"]').exists()).toBe(false)
   })
 })
 

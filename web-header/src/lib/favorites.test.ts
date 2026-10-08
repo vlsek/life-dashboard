@@ -31,16 +31,15 @@ describe('pageKeyFor', () => {
     expect(pageKeyFor('/languages/')).toBe('english')
     expect(pageKeyFor('/shop/')).toBe('shop')
   })
-  it('главная, «Достижения» и «Кастомизация» — тоже со своим сердечком (BACKLOG 44.15)', () => {
-    expect(pageKeyFor('/dashboard/')).toBe('dashboard')
+  it('«Достижения» и «Кастомизация» — со своим сердечком (BACKLOG 44.15)', () => {
     expect(pageKeyFor('/achievements/')).toBe('achievements')
     expect(pageKeyFor('/customization/')).toBe('customization')
   })
-  it('Аккаунт, служебные, «История» (убрана из меню, 44.14), legacy и неизвестные страницы — без сердечка', () => {
-    for (const p of ['/account/', '/login/', '/onboarding/', '/admin.html', '/history/', '/legacy/goals.html', '/', '/nope/']) expect(pageKeyFor(p)).toBeNull()
+  it('главная (вход в избранное, 45.1), Аккаунт, служебные, «История» (убрана из меню, 44.14), legacy и неизвестные страницы — без сердечка «добавить»', () => {
+    for (const p of ['/dashboard/', '/account/', '/login/', '/onboarding/', '/admin.html', '/history/', '/legacy/goals.html', '/', '/nope/']) expect(pageKeyFor(p)).toBeNull()
   })
-  it('ключи избранного = страницы бокового меню в порядке меню', () => {
-    expect(FAVORITABLE_KEYS).toEqual(['dashboard', 'goals', 'skills', 'workouts', 'challenges', 'english', 'calendar', 'milestones', 'shop', 'achievements', 'customization', 'community'])
+  it('ключи избранного = страницы бокового меню в порядке меню, без главной', () => {
+    expect(FAVORITABLE_KEYS).toEqual(['goals', 'skills', 'workouts', 'challenges', 'english', 'calendar', 'milestones', 'shop', 'achievements', 'customization', 'community'])
   })
 })
 
@@ -55,7 +54,7 @@ describe('нормализация и переключение', () => {
     expect(toggleFavorite(src, 'shop')).toEqual(['goals', 'shop'])
     expect(toggleFavorite(src, 'goals')).toEqual([])
     expect(src).toEqual(['goals'])
-    expect(toggleFavorite([], 'dashboard')).toEqual(['dashboard']) // главная теперь избираемая (44.15)
+    expect(toggleFavorite([], 'dashboard')).toEqual([]) // главная — вход в избранное, сама в него не добавляется (45.1)
     expect(toggleFavorite([], 'account')).toEqual([]) // не избираемая страница отсекается
     expect(toggleFavorite([], 'history')).toEqual([]) // «История» убрана из меню (44.14)
   })

@@ -618,20 +618,13 @@ describe('«Избранное»: сердечко в шапке (BACKLOG 6.2)',
     w.unmount()
   })
 
-  it('на Дашборде (panelOnly) сердечко есть и работает (BACKLOG 44.15), а в Аккаунте и на неизвестных страницах его нет; список из профиля синхронизируется', async () => {
+  it('на Дашборде (panelOnly) сердечка «добавить в избранное» нет (BACKLOG 45.1 — там левое сердечко со списком), а список из профиля синхронизируется; в Аккаунте и на неизвестных страницах сердечка тоже нет', async () => {
     setup({ metrics: [habit], profiles: [{ favorite_pages: ['shop'] }] })
     at('/dashboard/')
     const dash = mount(App, { props: { panelOnly: true } })
     await flushPromises()
-    const heart = dash.find('[data-test="favorite-heart"]')
-    expect(heart.exists()).toBe(true)
-    expect(heart.attributes('aria-pressed')).toBe('false')
+    expect(dash.find('[data-test="favorite-heart"]').exists()).toBe(false)
     expect(localStorage.getItem('favorite_pages')).toBe('["shop"]')
-    await heart.trigger('click')
-    expect(localStorage.getItem('favorite_pages')).toBe('["dashboard","shop"]')
-    expect(dash.find('[data-test="favorite-heart"]').attributes('aria-pressed')).toBe('true')
-    // в режиме «только панель» остальных значков шапки (стакан) по-прежнему нет — они есть в собственной шапке Дашборда
-    expect(dash.find('[data-test="water-badge"]').exists()).toBe(false)
     dash.unmount()
     for (const p of ['/account/', '/nope/']) {
       at(p)

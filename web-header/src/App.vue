@@ -174,7 +174,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
       />
     </Teleport>
     <PointsFloat v-if="!props.panelOnly" />
-    <FavoriteHeart v-if="pageKey" :active="isFavorite" @toggle="onToggleFavorite" />
+    <FavoriteHeart v-if="pageKey && !props.panelOnly" :active="isFavorite" @toggle="onToggleFavorite" />
     <template v-if="!props.panelOnly">
       <WaterGlass v-if="waterVisible" :today-ml="todayMl" :norm-ml="normMl" :title="`${todayMl} / ${normMl} ${unitLabel}`" @click="waterOpen = true" />
       <DayWeekBadge v-if="dayRing" kind="day" v-bind="dayRing" @click="summaryKind = 'day'" />

@@ -15,8 +15,11 @@ describe('вид недели', () => {
   it('бейдж: семиугольник по умолчанию — 7 сторон, залиты только дни с прогрессом, aria с днями', () => {
     const w = mount(DayWeekBadge, { props: { kind: 'week', ...base, days } })
     expect(w.find('[data-test="week-heptagon"]').exists()).toBe(true)
-    expect(w.findAll('line[data-day]')).toHaveLength(7)
+    expect(w.find('[data-test="week-track"]').element.tagName.toLowerCase()).toBe('polygon') // цельный контур, не отрезки (45.3)
+    expect(w.findAll('g[data-day]')).toHaveLength(7)
     expect(w.findAll('[data-test="week-seg-fill"]')).toHaveLength(3)
+    expect(w.findAll('[data-test="week-seg-today"]')).toHaveLength(1) // сегодняшняя грань светлее
+    expect(w.findAll('[data-state="future"]')).toHaveLength(4)
     expect(w.find('button').attributes('aria-label')).toMatch(/100 %, \w+ 60 %, \w+ 20 %, \w+, \w+, \w+, \w+$/)
   })
   it('бейдж: «прежний» вид, день и нет данных по дням — как раньше (квадрат/круг)', () => {

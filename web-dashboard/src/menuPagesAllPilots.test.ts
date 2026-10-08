@@ -21,10 +21,10 @@ describe('боковое меню и избранное', () => {
     expect(first).not.toContain('history')
     for (const d of pilots) expect(menuKeys(d), d).toEqual(first)
   })
-  it('у КАЖДОЙ страницы меню есть сердечко «в избранное» (ключи в web-header/favorites.ts), в том же порядке', () => {
+  it('у КАЖДОЙ страницы меню, кроме главной, есть сердечко «в избранное» (ключи в web-header/favorites.ts), в том же порядке', () => {
     const fav: string = readFileSync('../web-header/src/lib/favorites.ts', 'utf-8')
     const a = fav.indexOf('const PAGE_KEYS')
     const values = [...fav.slice(a, fav.indexOf('\n}', a)).matchAll(/:\s*'([a-z]+)'/g)].map((m) => m[1])
-    expect(values).toEqual(menuKeys(pilots[0]))
+    expect(values).toEqual(menuKeys(pilots[0]).filter((k) => k !== 'dashboard')) // главная — вход в избранное, сама не добавляется (45.1)
   })
 })

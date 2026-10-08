@@ -16,92 +16,16 @@ async function mountShell() {
   return mount(AppShell, { props: { userEmail: null }, attachTo: document.body })
 }
 
-describe('AppShell: быстрые ссылки', () => {
-  it('кнопка закрыта по умолчанию: aria-expanded=false, списка нет, текста «>>>» нет', async () => {
+describe('AppShell: «Избранное» (левое сердечко со списком) — только на главной (BACKLOG 45.1)', () => {
+  it('на странице раздела кнопки «Избранное» и списка быстрых ссылок нет — здесь только правое сердечко «в избранное» из шапки', async () => {
     const w = await mountShell()
-    const btn = w.find('[data-testid="quicknav-toggle"]')
-    expect(btn.attributes('aria-expanded')).toBe('false')
-    expect(btn.attributes('aria-controls')).toBe('quick-nav')
+    expect(w.find('[data-testid="quicknav-toggle"]').exists()).toBe(false)
     expect(w.find('[data-testid="quicknav-list"]').exists()).toBe(false)
-    expect(btn.text()).not.toContain('>')
-    expect(btn.find('svg').exists()).toBe(true)
-    w.unmount()
-  })
-
-  it('клик раскрывает ссылки на остальные разделы; текущий раздел выделен; Дашборд в списке нет', async () => {
-    const w = await mountShell()
-    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
-    expect(w.find('[data-testid="quicknav-toggle"]').attributes('aria-expanded')).toBe('true')
-    const list = w.find('[data-testid="quicknav-list"]')
-    expect(list.attributes('id')).toBe('quick-nav')
-    const links = list.findAll('a')
-    expect(links.length).toBeGreaterThanOrEqual(10)
-    expect(links.some((a) => a.attributes('href') === '/dashboard/')).toBe(false)
-    expect(list.findAll('.qn-chip-active').length).toBe(0) // Аккаунта нет среди быстрых ссылок — выделять нечего
-    w.unmount()
-  })
-
-  it('повторный клик и клавиша Esc закрывают список', async () => {
-    const w = await mountShell()
-    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
-    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
-    expect(w.find('[data-testid="quicknav-list"]').exists()).toBe(false)
-    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
-    expect(w.find('[data-testid="quicknav-list"]').exists()).toBe(true)
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
-    await w.vm.$nextTick()
-    expect(w.find('[data-testid="quicknav-list"]').exists()).toBe(false)
-    expect(w.find('[data-testid="quicknav-toggle"]').attributes('aria-expanded')).toBe('false')
+    expect(w.find('[data-test="qn-heart"]').exists()).toBe(false)
     w.unmount()
   })
 })
 
-describe('AppShell: «Избранное» в списке по шеврону (BACKLOG 6.2)', () => {
-  const chips = (w: Awaited<ReturnType<typeof mountShell>>) => w.find('[data-testid="quicknav-list"]').findAll('a').map((a) => a.attributes('href'))
-
-  it('в списке только избранные страницы; остальные в сайдбаре остаются', async () => {
-    localStorage.setItem('favorite_pages', JSON.stringify(['shop', 'calendar']))
-    const w = await mountShell()
-    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
-    expect(chips(w)).toEqual(['/calendar/', '/shop/']) // порядок как в боковом меню
-    expect(w.findAll('nav a[href="/goals/"]').length).toBe(1)
-    w.unmount()
-  })
-
-  it('избранного нет — вместо чипов подсказка про сердечко', async () => {
-    localStorage.removeItem('favorite_pages')
-    const w = await mountShell()
-    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
-    expect(chips(w)).toEqual([])
-    expect(w.find('[data-testid="quicknav-empty"]').text().length).toBeGreaterThan(5)
-    w.unmount()
-  })
-
-  it('мусор в localStorage и неизвестные ключи не ломают список; Дашборд даже в избранном в нём не появляется', async () => {
-    localStorage.setItem('favorite_pages', '{oops')
-    let w = await mountShell()
-    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
-    expect(chips(w)).toEqual([])
-    w.unmount()
-    localStorage.setItem('favorite_pages', JSON.stringify(['dashboard', 'nope', 'shop']))
-    w = await mountShell()
-    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
-    expect(chips(w)).toEqual(['/shop/'])
-    w.unmount()
-  })
-
-  it('событие favorites:changed (сердечко в шапке) обновляет открытый список сразу', async () => {
-    localStorage.setItem('favorite_pages', JSON.stringify(['shop']))
-    const w = await mountShell()
-    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
-    expect(chips(w)).toEqual(['/shop/'])
-    localStorage.setItem('favorite_pages', JSON.stringify(['shop', 'goals']))
-    window.dispatchEvent(new CustomEvent('favorites:changed'))
-    await w.vm.$nextTick()
-    expect(chips(w)).toEqual(['/goals/', '/shop/'])
-    w.unmount()
-  })
-})
 
 describe('AppShell: боковое меню — профиль наверху, «История» внизу (BACKLOG 6.2)', () => {
   async function mountWithEmail() {
@@ -136,26 +60,6 @@ describe('AppShell: боковое меню — профиль наверху, �
 
 // BACKLOG 🐞 «14:40 — кнопка «Избранное» наверху пустая: просто пустой кружок, а просили с сердечком».
 // Круглая кнопка быстрой навигации рисовала только маленький шеврон — теперь в ней сердечко (контур — список закрыт, залито — открыт).
-describe('AppShell: значок кнопки быстрой навигации — сердечко', () => {
-  it('в круглой кнопке есть svg-сердечко (путь контура сердца), а не пустой кружок и не шеврон; подпись «Избранное»', async () => {
-    const w = await mountShell()
-    const btn = w.find('[data-testid="quicknav-toggle"]')
-    const heart = btn.find('[data-test="qn-heart"]')
-    expect(heart.exists()).toBe(true)
-    expect(heart.find('path').attributes('d')).toMatch(/^M12 20\.4/) // контур сердца; у прежнего шеврона путь был «M7 4l6 6-6 6»
-    expect(btn.attributes('aria-label')).toMatch(/^(Favorites|Избранное)$/)
-    expect(btn.attributes('title')).toBe(btn.attributes('aria-label'))
-    w.unmount()
-  })
-
-  it('при открытии кнопка получает qn-open (заливка сердечка цветом темы через CSS), сам значок остаётся на месте', async () => {
-    const w = await mountShell()
-    await w.find('[data-testid="quicknav-toggle"]').trigger('click')
-    expect(w.find('[data-testid="quicknav-toggle"]').classes()).toContain('qn-open')
-    expect(w.find('[data-test="qn-heart"]').exists()).toBe(true)
-    w.unmount()
-  })
-})
 
 describe('AppShell: пока левая шторка открыта, страница под ней не прокручивается (BACKLOG 23:01)', () => {
   async function mountOpen() {

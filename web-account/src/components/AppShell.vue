@@ -62,6 +62,8 @@ const pages: NavPage[] = [
   { href: '/community/', key: 'community', labelKey: 'nav_community', icon: 'community' },
 ]
 const active: string = 'account'
+// «Избранное» — левое сердечко со списком быстрых ссылок — ТОЛЬКО на главной (BACKLOG 45.1); на остальных страницах — только правое сердечко «добавить страницу в избранное» из шапки
+const isHome = String(active) === 'dashboard'
 // Ссылка на классическую (legacy) версию ЭТОЙ страницы — одна, неприметная, внизу меню.
 // Страница переезжает в /legacy/ (фаза 2) — обновить значение здесь (HANDOFF, шаг 6);
 // scripts/check_nav_links.py проверяет, что адрес существует.
@@ -246,6 +248,7 @@ onUnmounted(() => {
     <a href="/dashboard/" class="flex h-10 w-10 items-center justify-center rounded-lg" :title="plainLabel('nav_dashboard')">
       <SplashFlameLive :size="30" :sparks="false" data-test="brand-flame" />
     </a>
+    <template v-if="isHome">
     <button
       type="button"
       class="qn-toggle"
@@ -276,6 +279,7 @@ onUnmounted(() => {
         <span v-if="!quickPages.length" class="qn-empty" data-testid="quicknav-empty">{{ t('nav_favorites_empty') }}</span>
       </div>
     </Transition>
+    </template>
     <div class="ml-auto flex items-center gap-1.5" id="topbar-right"></div>
   </div>
 

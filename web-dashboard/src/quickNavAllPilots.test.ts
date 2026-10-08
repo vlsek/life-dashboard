@@ -36,4 +36,12 @@ describe('кнопка «Избранное» (.qn-toggle) во всех пил�
     const first = block(pilots[0])
     for (const d of pilots) expect(block(d), d).toBe(first)
   })
+  it.each(pilots)('%s: левое сердечко со списком — только на главной (BACKLOG 45.1)', (d: string) => {
+    const s = src(d)
+    const active = s.match(/const active(?:: string)? = '([a-z]+)'/)![1]
+    expect(s).toMatch(/const isHome = String\(active\) === 'dashboard'/)
+    expect(s).toMatch(/<template v-if="isHome">\s*<button\s+type="button"\s+class="qn-toggle"/)
+    expect(s).toMatch(/<\/Transition>\s*<\/template>/)
+    expect(active === 'dashboard').toBe(d === 'web-dashboard')
+  })
 })
