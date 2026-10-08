@@ -66,7 +66,7 @@ html.theme-solarlight .gh-root {
 }
 /* themes-header:end */
 
-/* Анимация «записалось» (вынесена из WaterSavedAnim.vue: scoped-стили отдельным css-файлом не подгрузились бы) */
+/* Анимация «записалось» (вынесена из WaterSavedAnim.vue: scoped-стили отдельным css-файлом не подгрузились бы; BACKLOG 44.21 — современная, 3 варианта) */
 .water-saved {
   /* fixed, а не absolute внутри окна: окно воды выше 85vh и прокручивается — абсолютный оверлей оставался наверху прокручиваемой области,
      и при нажатии «+200 / +1000» ниже по окну стакан с анимацией был за пределами видимого (BACKLOG раздел 30, 🐞). По центру экрана виден всегда. */
@@ -79,21 +79,53 @@ html.theme-solarlight .gh-root {
   pointer-events: none; /* не перехватывает нажатия: класс pointer-events-none из Tailwind в бандле шапки не существует */
 }
 .water-saved svg {
-  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.25));
-  background: var(--bg-card, #1e1e1e);
-  border-radius: 16px;
-  padding: 10px 14px;
+  overflow: visible;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.22));
+  background: color-mix(in srgb, var(--bg-card, #1e1e1e) 92%, transparent);
+  border: 1px solid color-mix(in srgb, var(--water-line) 38%, transparent);
+  border-radius: 22px;
+  padding: 14px 18px;
   box-sizing: content-box;
 }
+/* БАЗОВЫЕ стили — это ИТОГОВОЕ состояние (вода на месте, бейдж виден): анимации только вводят его, поэтому при «Отключить анимации»
+   (там animation: none !important) и prefers-reduced-motion человек видит готовую картинку. Пузырьки, капли и круги без анимации скрыты. */
 .water-saved-fill {
   transform-origin: 50% 100%;
-  animation: water-saved-rise 0.7s ease-out forwards;
+  animation: water-saved-rise 0.85s cubic-bezier(0.2, 0.9, 0.25, 1.04) both;
 }
+.ws-wave { animation: water-saved-drift 1.7s linear infinite; }
+.ws-wave-back { opacity: 0.5; animation: water-saved-drift-back 2.3s linear infinite; }
+.ws-bubble { opacity: 0; animation: water-saved-bubble 0.95s ease-out both; }
+.ws-b-1 { animation-delay: 0.3s; }
+.ws-b-2 { animation-delay: 0.45s; }
+.ws-b-3 { animation-delay: 0.6s; }
+.ws-ripple { opacity: 0; transform-box: fill-box; transform-origin: center; animation: water-saved-ripple 1s ease-out 0.55s both; }
+.ws-ripple-2 { animation-delay: 0.75s; }
+.ws-drop { opacity: 0; animation: water-saved-drop 0.5s ease-in both; }
+.ws-d-1 { animation-delay: 0.05s; }
+.ws-d-2 { animation-delay: 0.12s; }
+.ws-d-3 { animation-delay: 0.19s; }
+.water-saved-badge { transform-box: fill-box; transform-origin: center; animation: water-saved-pop 0.38s cubic-bezier(0.3, 1.6, 0.5, 1) 0.7s both; }
 .water-saved-check {
   stroke-dasharray: 20;
   stroke-dashoffset: 20;
-  animation: water-saved-draw 0.4s ease-out 0.55s forwards;
+  animation: water-saved-draw 0.35s ease-out 0.85s forwards;
 }
+/* Варианты (выбор — lib/waterAnim.ts): wave — по умолчанию; в нём капель и второго круга нет */
+.water-saved[data-variant="wave"] .ws-drop, .water-saved[data-variant="wave"] .ws-ripple-2 { display: none; }
+/* drops: капли падают в стакан, вода поднимается следом */
+.water-saved[data-variant="drops"] .ws-bubble, .water-saved[data-variant="drops"] .ws-ripple-2 { display: none; }
+.water-saved[data-variant="drops"] .water-saved-fill { animation-delay: 0.35s; animation-duration: 0.55s; }
+.water-saved[data-variant="drops"] .ws-ripple { animation-delay: 0.75s; }
+.water-saved[data-variant="drops"] .water-saved-badge { animation-delay: 0.85s; }
+.water-saved[data-variant="drops"] .water-saved-check { animation-delay: 1s; }
+/* ripple: быстрый подъём и два круга по воде */
+.water-saved[data-variant="ripple"] .ws-bubble, .water-saved[data-variant="ripple"] .ws-drop { display: none; }
+.water-saved[data-variant="ripple"] .water-saved-fill { animation-duration: 0.45s; }
+.water-saved[data-variant="ripple"] .ws-ripple { animation-delay: 0.3s; }
+.water-saved[data-variant="ripple"] .ws-ripple-2 { animation-delay: 0.5s; }
+.water-saved[data-variant="ripple"] .water-saved-badge { animation-delay: 0.5s; }
+.water-saved[data-variant="ripple"] .water-saved-check { animation-delay: 0.65s; }
 .water-saved-enter-active,
 .water-saved-leave-active {
   transition: opacity 0.25s ease, transform 0.25s ease;
@@ -101,17 +133,46 @@ html.theme-solarlight .gh-root {
 .water-saved-enter-from,
 .water-saved-leave-to {
   opacity: 0;
-  transform: scale(0.85);
+  transform: scale(0.92);
 }
 @keyframes water-saved-rise {
-  from { transform: translateY(100%); }
-  to { transform: translateY(12%); }
+  from { transform: translateY(22px); }
+  to { transform: translateY(0); }
+}
+@keyframes water-saved-drift {
+  to { transform: translateX(-12px); }
+}
+@keyframes water-saved-drift-back {
+  from { transform: translateX(-12px); }
+  to { transform: translateX(0); }
+}
+@keyframes water-saved-bubble {
+  0% { opacity: 0; transform: translateY(0); }
+  25% { opacity: 0.7; }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+@keyframes water-saved-ripple {
+  0% { opacity: 0.75; transform: scale(0.35); }
+  100% { opacity: 0; transform: scale(1.7); }
+}
+@keyframes water-saved-drop {
+  0% { opacity: 0; transform: translateY(-2px); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(15px); }
+}
+@keyframes water-saved-pop {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: scale(1); }
 }
 @keyframes water-saved-draw {
   to { stroke-dashoffset: 0; }
 }
+/* «Отключить все анимации» (html[data-motion="off"]): показываем итог сразу — вода на месте, галочка нарисована */
+html[data-motion="off"] .water-saved-fill { transform: none; }
+html[data-motion="off"] .water-saved-check { stroke-dashoffset: 0; }
 @media (prefers-reduced-motion: reduce) {
-  .water-saved-fill { animation: none; transform: translateY(12%); }
+  .water-saved-fill, .ws-wave, .ws-wave-back, .water-saved-badge { animation: none; }
+  .ws-bubble, .ws-drop, .ws-ripple { display: none; }
   .water-saved-check { animation: none; stroke-dashoffset: 0; }
   .water-saved-enter-active, .water-saved-leave-active { transition: opacity 0.2s ease; }
   .water-saved-enter-from, .water-saved-leave-to { transform: none; }
@@ -133,8 +194,6 @@ html.theme-solarlight .gh-root {
 /* Глобальный выключатель анимаций (BACKLOG 16, Дашборд: localStorage `site_motion` = 'off' → <html data-motion="off">) */
 html[data-motion="off"] .gh-root *, html[data-motion="off"] .gh-root, html[data-motion="off"] .gh-panel, html[data-motion="off"] .gh-panel-backdrop { animation: none !important; transition: none !important; }
 html[data-motion="off"] .gh-glass-sheen { opacity: 0; }
-html[data-motion="off"] .water-saved-fill { transform: translateY(12%); }
-html[data-motion="off"] .water-saved-check { stroke-dashoffset: 0; }
 
 /* Список блоков Дашборда с перетаскиванием (BlockOrderList.vue) */
 .gh-blocks { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }

@@ -5,6 +5,8 @@ import { getLang, t, type DictKey } from '../lib/i18n'
 import type { DashboardBlockKey, LayoutItem } from '../lib/layout'
 import BlockOrderList from './BlockOrderList.vue'
 import { UNLOCKED_THEMES_EVENT, isThemeLocked } from '../lib/themeUnlock'
+import WaterSavedAnim from './WaterSavedAnim.vue'
+import { WATER_ANIMS, getWaterAnim, sanitizeWaterAnim, setWaterAnim, type WaterAnim } from '../lib/waterAnim'
 import { useLayout } from '../lib/useLayout'
 import { THEME_KEYS, celebrationsEnabled, setSidebarProgress, sidebarProgress, getTheme, setCelebrationsEnabled, setLangAndReload, setMotionOff, setTheme, setWaterRemindersEnabled, systemReducedMotion, userMotionOff, waterRemindersEnabled, type ThemeKey } from '../lib/prefs'
 
@@ -17,6 +19,14 @@ const emit = defineEmits<{ close: []; 'open-progress-settings': []; 'open-water'
 const lang = getLang()
 const theme = ref<ThemeKey>(getTheme())
 // Список тем: закрытые темы-награды (ещё не заслуженные) не показываем; уже включённая тема остаётся в списке всегда (отнимать её нельзя).
+// Анимация «записалось» при добавлении воды (BACKLOG 44.21): выбор варианта и кнопка «Показать» (проиграть сразу, не добавляя воду).
+const waterAnim = ref<WaterAnim>(getWaterAnim())
+const animPreviewTick = ref(0)
+const onWaterAnim = (e: Event) => {
+  waterAnim.value = sanitizeWaterAnim((e.target as HTMLSelectElement).value)
+  setWaterAnim(waterAnim.value)
+  animPreviewTick.value++ // сразу показываем выбранную
+}
 const unlockTick = ref(0)
 const themeOptions = computed(() => {
   void unlockTick.value
@@ -106,7 +116,18 @@ async function changeLayout(next: LayoutItem[]) {
         <input type="checkbox" :checked="waterReminders" data-test="water-reminders" @change="onWaterReminders" />
         {{ t('water_reminders_setting') }}
       </label>
-      <p class="gh-dim" style="margin: 2px 0 0 24px; font-size: 12px">{{ t('water_reminders_setting_hint') }}</p>
+      <p class="gh-dim" style="margin: 2px 0 8px 24px; font-size: 12px">{{ t('water_reminders_setting_hint') }}</p>
+      <label class="gh-field">
+        <span class="gh-dim" style="font-size: 12px">{{ t('hdr_water_anim') }}</span>
+        <span style="display: flex; gap: 8px; align-items: center">
+          <select class="gh-input" style="flex: 1" :value="waterAnim" data-test="water-anim-select" @change="onWaterAnim">
+            <option v-for="a in WATER_ANIMS" :key="a" :value="a">{{ t(('hdr_water_anim_' + a) as DictKey) }}</option>
+          </select>
+          <button type="button" class="gh-btn" data-test="water-anim-preview" @click="animPreviewTick++">{{ t('hdr_water_anim_preview') }}</button>
+        </span>
+      </label>
+      <p class="gh-dim" style="margin: 2px 0 0 0; font-size: 12px">{{ t('hdr_water_anim_hint') }}</p>
+      <WaterSavedAnim :tick="animPreviewTick" />
 
       <h4 style="margin-top: 16px">{{ t('hdr_settings_progress') }}</h4>
       <button type="button" class="gh-btn" data-test="open-progress" @click="emit('open-progress-settings')">{{ t('hdr_settings_progress_btn') }}</button>

@@ -40,7 +40,7 @@ describe('анимация «записалось» (стакан наполня
   })
 
   it('при «Отключить все анимации» вода сразу на итоговом уровне, а галочка видна (как в шапке)', () => {
-    expect(css).toMatch(/html\[data-motion='off'\] \.water-saved-fill\s*\{[^}]*translateY\(12%\)/)
+    expect(css).toMatch(/html\[data-motion='off'\] \.water-saved-fill\s*\{[^}]*transform:\s*none/) // вода на месте сразу (v3.79: уровень задан волной, а не 12%)
     expect(css).toMatch(/html\[data-motion='off'\] \.water-saved-check\s*\{[^}]*stroke-dashoffset:\s*0/)
   })
 })
