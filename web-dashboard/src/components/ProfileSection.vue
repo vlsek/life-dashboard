@@ -5,6 +5,7 @@ import MetricIcon from './MetricIcon.vue'
 import BirthdateModal from './BirthdateModal.vue'
 import BodyParamFormModal from './BodyParamFormModal.vue'
 import BodyParamsModal from './BodyParamsModal.vue'
+import ParamQuickEdit from './ParamQuickEdit.vue'
 import PointsLogModal from './PointsLogModal.vue'
 import AvatarProgress from './AvatarProgress.vue'
 import { useAvatarFrame } from '../lib/useAvatarFrame'
@@ -14,6 +15,8 @@ import { streakDays } from '../lib/streakFlameTier'
 import type { RingData } from '../lib/ringPlacement'
 import type { StreakItem } from '../lib/streaks'
 import { useProfile } from '../lib/useProfile'
+import { findWeightParam } from '../lib/water'
+import { todayStr } from '../lib/date'
 import { BODY_VALUES_CHANGED } from '../lib/useCharts'
 import { calcAge, formatAge, formatDelta, unitSuffix, type BodyParam, type BodyParamForm } from '../lib/profile'
 import { getLang, t } from '../lib/i18n'
@@ -51,7 +54,7 @@ const streakTitle = computed(() => {
   if (!top) return ''
   return top.todayCounted ? ((props.streakCount ?? 0) > 1 ? `${streakLabel(top)} — ${t('dash_streak_more_hint')}` : streakLabel(top)) : t('dash_streak_at_risk_warning')
 })
-const { profile, params, stats, balance, loaded, error, init, uploadAvatar, saveBirthdate, addParam, updateParam, deleteParam, refreshValues } = useProfile()
+const { profile, params, stats, balance, loaded, error, init, uploadAvatar, saveBirthdate, addParam, updateParam, deleteParam, saveBodyValue, refreshValues } = useProfile()
 const { frame: avatarFrame, load: loadAvatarFrame } = useAvatarFrame()
 
 watch(
@@ -123,6 +126,29 @@ async function onRemoveParam(p: BodyParam) {
   else flashSaved()
 }
 
+// Быстрая правка веса прямо в строке профиля (BACKLOG 46.1): значение за СЕГОДНЯ, запись — тем же `saveBodyValue`, что и везде
+// (upsert по пользователю/дню/параметру — второй раз за день перезаписывает, а не дублирует); после неё пересчитываются график, норма воды и калории.
+const weightParam = computed(() => findWeightParam(params.value as never) as BodyParam | undefined)
+const weightStat = computed(() => stats.value.find((s) => s.param.id === weightParam.value?.id) ?? null)
+const editingWeight = ref(false)
+const savingWeight = ref(false)
+const weightError = ref<string | null>(null)
+function startWeightEdit() {
+  weightError.value = null
+  editingWeight.value = true
+}
+async function onSaveWeight(value: number) {
+  const p = weightParam.value
+  if (!p || savingWeight.value) return
+  savingWeight.value = true
+  weightError.value = await saveBodyValue(p.id, todayStr(), value)
+  savingWeight.value = false
+  if (!weightError.value) {
+    editingWeight.value = false
+    flashSaved()
+  }
+}
+
 function openForm(p: BodyParam | 'new') {
   modalError.value = null
   formFor.value = p
@@ -191,8 +217,21 @@ function openForm(p: BodyParam | 'new') {
     <!-- Строка 2: параметры тела — сколько бы их ни было, переносятся по ширине; длинное название не выталкивает вёрстку. -->
     <div class="flex w-full flex-wrap items-center gap-x-4 gap-y-1 text-sm" data-test="profile-params-row">
       <div v-for="s in stats" :key="s.param.id" class="min-w-0 max-w-full break-words" data-test="param-stat">
-        <MetricIcon :icon="s.param.icon" extra-style="margin-right:0.3em;" />{{ s.param.name }}: {{ s.latest }}{{ unitSuffix(s.param.unit) }}
-        <span v-if="formatDelta(s.sinceFirst)" :style="{ color: toneColor[s.tone] }">({{ formatDelta(s.sinceFirst) }}{{ unitSuffix(s.param.unit) }})</span>
+        <MetricIcon :icon="s.param.icon" extra-style="margin-right:0.3em;" />{{ s.param.name }}:
+        <template v-if="editingWeight && s.param.id === weightParam?.id">
+          <ParamQuickEdit :initial="s.latest" :unit="s.param.unit" :saving="savingWeight" :error="weightError" @save="onSaveWeight" @cancel="editingWeight = false" />
+        </template>
+        <template v-else>
+          {{ s.latest }}{{ unitSuffix(s.param.unit) }}
+          <span v-if="formatDelta(s.sinceFirst)" :style="{ color: toneColor[s.tone] }">({{ formatDelta(s.sinceFirst) }}{{ unitSuffix(s.param.unit) }})</span>
+          <button v-if="s.param.id === weightParam?.id" type="button" class="secondary ml-1 px-1 text-xs" :title="t('dash_param_quick_edit')" :aria-label="t('dash_param_quick_edit')" data-test="weight-edit-btn" @click="startWeightEdit"><Icon name="edit" /></button>
+        </template>
+      </div>
+      <!-- Параметр «вес» заведён, но значений ещё нет — тоже даём внести первое прямо здесь. -->
+      <div v-if="weightParam && !weightStat" class="min-w-0 max-w-full break-words" data-test="weight-empty">
+        <MetricIcon :icon="weightParam.icon" extra-style="margin-right:0.3em;" />{{ weightParam.name }}:
+        <ParamQuickEdit v-if="editingWeight" :initial="null" :unit="weightParam.unit" :saving="savingWeight" :error="weightError" @save="onSaveWeight" @cancel="editingWeight = false" />
+        <button v-else type="button" class="secondary ml-1 px-1 text-xs" :title="t('dash_param_quick_edit')" :aria-label="t('dash_param_quick_edit')" data-test="weight-edit-btn" @click="startWeightEdit"><Icon name="edit" /></button>
       </div>
 
       <button type="button" class="secondary shrink-0 px-2 text-xs" :title="t('dash_body_params_title')" data-test="params-btn" @click="showParams = true"><Icon name="ruler" /></button>
