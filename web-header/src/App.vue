@@ -7,6 +7,7 @@ import { todayStr } from './lib/date'
 import { dayRingTarget, weekRingTarget } from './lib/ringPlacement'
 import { useHeaderProgress } from './lib/useHeaderProgress'
 import { useWater } from './lib/useWater'
+import { ensureTrackWater, trackWater } from './lib/waterTracking'
 import { useMuscles } from './lib/useMuscles'
 import DayWeekBadge from './components/DayWeekBadge.vue'
 import WaterGlass from './components/WaterGlass.vue'
@@ -48,6 +49,7 @@ onMounted(async () => {
   sidebarTarget.value = document.getElementById('sidebar-top')
   void sideProfile.load(uid, data.session?.user)
   void syncUnlockedThemes(uid) // какие темы-награды открыты (замок тем, v3.42)
+  void ensureTrackWater(uid) // «Отслеживать воду» (BACKLOG 932): сначала из кэша устройства — стакан не мигает
   await Promise.all([initProgress(uid), initWater(uid), syncFavoritesFromProfile(uid).then((l) => (favorites.value = l))])
   ready.value = true
 })
@@ -70,9 +72,13 @@ const dayRing = computed(() => (day.value && showDay.value ? ring(day.value, t('
 const weekRing = computed(() => (week.value && showWeek.value ? { ...ring(week.value, t('dash_week_progress_label')), shape: settings.value.weekShape, days: weekDays.value } : null))
 
 const unitLabel = computed(() => (getLang() === 'en' ? 'ml' : 'мл'))
-const waterVisible = computed(() => waterLoaded.value && !waterError.value && !!metric.value)
+// «Отслеживать воду» выключено (BACKLOG 932) — ни стакана, ни блока воды в правой панели, ни окна воды
+const waterVisible = computed(() => trackWater.value && waterLoaded.value && !waterError.value && !!metric.value)
 
 const waterOpen = ref(false)
+watch(trackWater, (on) => {
+  if (!on) waterOpen.value = false // выключили, пока окно воды было открыто
+})
 const panelOpen = ref(false)
 const globalSettingsOpen = ref(false)
 // «Избранное»: сердечко есть только на страницах из бокового меню (не на Дашборде/служебных); на Дашборде бандл лишь синхронизирует список

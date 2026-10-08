@@ -4,6 +4,7 @@ import { todayStr } from './date'
 import { DATA_CHANGED } from './events'
 import { remainingMetricsToday, shouldShowEveningReminder } from './evening'
 import { withWaterGoal } from './waterGoal'
+import { dropWaterIfOff, ensureTrackWater } from './waterTracking'
 import type { Metric, MetricValue } from './types'
 
 export const EVENING_DISMISS_KEY = 'evening_reminder_dismissed'
@@ -41,7 +42,8 @@ export function useEveningReminder() {
     if (metricsRes.error || valuesRes.error) return // напоминание — вспомогательное: молча ничего не показываем
     const values: Record<string, MetricValue> = {}
     for (const v of (valuesRes.data || []) as { metric_id: string; value: MetricValue }[]) values[v.metric_id] = v.value
-    const metricList = await withWaterGoal(userId, (metricsRes.data || []) as Metric[])
+    // «Отслеживать воду» выключено (BACKLOG 932) — вода не попадает в «ещё не сделано сегодня»
+    const metricList = dropWaterIfOff(await withWaterGoal(userId, (metricsRes.data || []) as Metric[]), await ensureTrackWater(userId))
     if (token !== loadToken) return
     items.value = remainingMetricsToday(metricList, values, today).map((metric) => ({
       metric,

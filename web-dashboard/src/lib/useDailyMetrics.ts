@@ -2,6 +2,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { sb } from './supabase'
 import { findWaterMetric } from './water'
 import { withWaterGoal } from './waterGoal'
+import { dropWaterIfOff, ensureTrackWater } from './waterTracking'
 import { DATA_CHANGED, notifyDataChanged, type DataChangedDetail } from './events'
 import { emitPointsFloat, pointsDelta } from './pointsFloat'
 import {
@@ -78,7 +79,8 @@ export function useDailyMetrics() {
     }
     error.value = null
     // «Баллы за день» считают воду по эффективной норме (migrations/033); сама вода сохраняется в WaterSection
-    const all = await withWaterGoal(uid, (metricsRes.data || []) as Metric[])
+    // «Отслеживать воду» выключено (BACKLOG 932) — воды нет и в «баллах за день»
+    const all = dropWaterIfOff(await withWaterGoal(uid, (metricsRes.data || []) as Metric[]), await ensureTrackWater(uid))
     if (token !== loadToken) return
     metrics.value = all
     const w = findWaterMetric(all)

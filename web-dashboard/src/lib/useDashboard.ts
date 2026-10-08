@@ -9,6 +9,7 @@ import { getDayProgressSettings, setDayProgressSettings, type DayProgressSetting
 import { DATA_CHANGED } from './events'
 import { syncUserTimezone } from './timezone'
 import { withWaterGoal } from './waterGoal'
+import { dropWaterIfOff, ensureTrackWater } from './waterTracking'
 import type { Metric } from './types'
 
 import { friendlyError } from './friendlyError'
@@ -107,7 +108,8 @@ export function useDashboard() {
     loadError.value = null
 
     // вода «выполнена» по эффективной норме, а не по пустому goal_value (migrations/033)
-    const metrics = await withWaterGoal(userId, (metricsRes.data || []) as Metric[])
+    // «Отслеживать воду» выключено (BACKLOG 932) — воды нет в кольцах, сериях и «идеальных днях»; баланс и журнал баллов (loadBalance/usePointsLog) считаются отдельно и прошлую воду сохраняют
+    const metrics = dropWaterIfOff(await withWaterGoal(userId, (metricsRes.data || []) as Metric[]), await ensureTrackWater(userId))
     const byDay: Record<string, Record<string, unknown>> = {}
     for (const v of valuesRes.rows) {
       ;(byDay[v.date] ||= {})[v.metric_id] = v.value

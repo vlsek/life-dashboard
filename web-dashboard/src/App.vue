@@ -35,6 +35,7 @@ import { useEveningReminder } from './lib/useEveningReminder'
 import { useDeadlineReminder } from './lib/useDeadlineReminder'
 import GoalDeadlineBanner from './components/GoalDeadlineBanner.vue'
 import { useWaterReminder } from './lib/useWaterReminder'
+import { trackWater } from './lib/waterTracking'
 import { usePlanReminders } from './lib/usePlanReminders'
 import { useDashboard } from './lib/useDashboard'
 import { useStreakCelebration } from './lib/useStreakCelebration'
@@ -224,13 +225,14 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
       />
       <InstallBanner />
       <PlanReminderBanner :items="planReminders" @dismiss="dismissPlanReminder" />
-      <WaterReminderBanner v-if="waterReminderVisible" :ml="waterReminderMl" :goal="waterReminderGoal" @dismiss="dismissWaterReminder" />
+      <WaterReminderBanner v-if="trackWater && waterReminderVisible" :ml="waterReminderMl" :goal="waterReminderGoal" @dismiss="dismissWaterReminder" />
       <GoalDeadlineBanner v-if="deadlineVisible" :goals="deadlineGoals" @dismiss="dismissDeadlineReminder" @disable="disableDeadlineReminder" />
+
       <EveningReminderBanner v-if="eveningVisible" :items="eveningItems" @dismiss="dismissEveningReminder" />
 
       <HeaderProgressBadge v-if="dayRingHeader" kind="day" v-bind="dayRingHeader" @click="summaryKind = 'day'" />
       <HeaderProgressBadge v-if="weekRingHeader" kind="week" v-bind="weekRingHeader" @click="summaryKind = 'week'" />
-      <WaterSection :user-id="auth.userId" />
+      <WaterSection v-if="trackWater" :user-id="auth.userId" />
 
       <p v-if="blockMoveError" class="mb-2 text-sm" style="color: #d6336c" data-test="block-move-error">{{ t('dash_layout_save_error') }}{{ blockMoveError }}</p>
 

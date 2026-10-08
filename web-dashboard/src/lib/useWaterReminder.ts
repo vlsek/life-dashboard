@@ -6,6 +6,7 @@ import type { DataChangedDetail } from './events'
 import { findWaterNumberMetric, withWaterGoal } from './waterGoal'
 import { readLastShown, remindersOff, shouldRemindWater, writeLastShown } from './waterReminder'
 import { dayLogEntries, loadStacks } from './waterUndo'
+import { ensureTrackWater } from './waterTracking'
 import type { Metric } from './types'
 
 // Плашка-напоминание о воде (BACKLOG 18.5). Решение «показывать ли» принимается РОВНО ОДИН РАЗ — при открытии страницы
@@ -67,6 +68,12 @@ export function useWaterReminder() {
     if (uid) userId = uid
     if (!userId) return
     try {
+      // «Отслеживать воду» выключено (BACKLOG 932): напоминаний нет, а решение этой сессии считаем принятым — включив воду посреди сессии, плашку сразу не получаешь
+      if (!(await ensureTrackWater(userId))) {
+        decided = true
+        visible.value = false
+        return
+      }
       const state = await read()
       if (!state) return // вспомогательная функция: при ошибке молча ничего не показываем (и решение не тратим)
       ml.value = state.ml

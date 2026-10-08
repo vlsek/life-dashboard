@@ -8,6 +8,8 @@ import { UNLOCKED_THEMES_EVENT, isThemeLocked } from '../lib/themeUnlock'
 import WaterSavedAnim from './WaterSavedAnim.vue'
 import { WATER_ANIMS, getWaterAnim, sanitizeWaterAnim, setWaterAnim, type WaterAnim } from '../lib/waterAnim'
 import { useLayout } from '../lib/useLayout'
+import { friendlyError } from '../lib/friendlyError'
+import { ensureTrackWater, saveTrackWater, trackWater } from '../lib/waterTracking'
 import { THEME_KEYS, celebrationsEnabled, setSidebarProgress, sidebarProgress, getTheme, setCelebrationsEnabled, setLangAndReload, setMotionOff, setTheme, setWaterRemindersEnabled, systemReducedMotion, userMotionOff, waterRemindersEnabled, type ThemeKey } from '../lib/prefs'
 
 // «Глобальные настройки» (BACKLOG 6.2): единое окно со всеми настройками, которые раньше были разбросаны по страницам
@@ -39,6 +41,22 @@ const systemReduced = systemReducedMotion()
 const motionOff = ref(userMotionOff() || systemReduced)
 const celebrate = ref(celebrationsEnabled())
 const waterReminders = ref(waterRemindersEnabled())
+// «Отслеживать воду» (BACKLOG 932): флаг в профиле; при выключении прячутся стакан, окно воды, напоминания и учёт воды в кольцах/сериях (прошлое остаётся)
+const waterSaving = ref(false)
+const waterToggleError = ref<string | null>(null)
+async function onTrackWater(e: Event) {
+  const input = e.target as HTMLInputElement
+  const next = input.checked
+  waterToggleError.value = null
+  waterSaving.value = true
+  const res = await saveTrackWater(props.userId, next)
+  waterSaving.value = false
+  if (!res.ok) {
+    input.checked = !next // не записалось — выключатель возвращается, объясняем причину
+    waterToggleError.value = friendlyError(res.error, 'save')
+  }
+}
+onMounted(() => void ensureTrackWater(props.userId))
 
 const { layout, loaded, saveError, load, save } = useLayout()
 const local = ref<LayoutItem[]>([])
@@ -112,22 +130,24 @@ async function changeLayout(next: LayoutItem[]) {
         {{ t('dash_celebrate_setting') }}
       </label>
       <p class="gh-dim" style="margin: 2px 0 8px 24px; font-size: 12px">{{ t('dash_celebrate_setting_hint') }}</p>
-      <label class="gh-check">
-        <input type="checkbox" :checked="waterReminders" data-test="water-reminders" @change="onWaterReminders" />
-        {{ t('water_reminders_setting') }}
-      </label>
-      <p class="gh-dim" style="margin: 2px 0 8px 24px; font-size: 12px">{{ t('water_reminders_setting_hint') }}</p>
-      <label class="gh-field">
-        <span class="gh-dim" style="font-size: 12px">{{ t('hdr_water_anim') }}</span>
-        <span style="display: flex; gap: 8px; align-items: center">
-          <select class="gh-input" style="flex: 1" :value="waterAnim" data-test="water-anim-select" @change="onWaterAnim">
-            <option v-for="a in WATER_ANIMS" :key="a" :value="a">{{ t(('hdr_water_anim_' + a) as DictKey) }}</option>
-          </select>
-          <button type="button" class="gh-btn" data-test="water-anim-preview" @click="animPreviewTick++">{{ t('hdr_water_anim_preview') }}</button>
-        </span>
-      </label>
-      <p class="gh-dim" style="margin: 2px 0 0 0; font-size: 12px">{{ t('hdr_water_anim_hint') }}</p>
-      <WaterSavedAnim :tick="animPreviewTick" />
+      <template v-if="trackWater">
+        <label class="gh-check">
+          <input type="checkbox" :checked="waterReminders" data-test="water-reminders" @change="onWaterReminders" />
+          {{ t('water_reminders_setting') }}
+        </label>
+        <p class="gh-dim" style="margin: 2px 0 8px 24px; font-size: 12px">{{ t('water_reminders_setting_hint') }}</p>
+        <label class="gh-field">
+          <span class="gh-dim" style="font-size: 12px">{{ t('hdr_water_anim') }}</span>
+          <span style="display: flex; gap: 8px; align-items: center">
+            <select class="gh-input" style="flex: 1" :value="waterAnim" data-test="water-anim-select" @change="onWaterAnim">
+              <option v-for="a in WATER_ANIMS" :key="a" :value="a">{{ t(('hdr_water_anim_' + a) as DictKey) }}</option>
+            </select>
+            <button type="button" class="gh-btn" data-test="water-anim-preview" @click="animPreviewTick++">{{ t('hdr_water_anim_preview') }}</button>
+          </span>
+        </label>
+        <p class="gh-dim" style="margin: 2px 0 0 0; font-size: 12px">{{ t('hdr_water_anim_hint') }}</p>
+        <WaterSavedAnim :tick="animPreviewTick" />
+      </template>
 
       <h4 style="margin-top: 16px">{{ t('hdr_settings_progress') }}</h4>
       <button type="button" class="gh-btn" data-test="open-progress" @click="emit('open-progress-settings')">{{ t('hdr_settings_progress_btn') }}</button>
@@ -143,7 +163,13 @@ async function changeLayout(next: LayoutItem[]) {
       <p v-if="saveError" style="color: #d6336c; margin: 0" data-test="layout-error">{{ saveError }}</p>
 
       <h4 style="margin-top: 16px"><EmojiText :text="'💧 ' + t('hdr_settings_water')" /></h4>
-      <button type="button" class="gh-btn" data-test="open-water" @click="emit('open-water')">{{ t('hdr_settings_water_btn') }}</button>
+      <label class="gh-check">
+        <input type="checkbox" :checked="trackWater" :disabled="waterSaving" data-test="track-water" @change="onTrackWater" />
+        {{ t('water_tracking_setting') }}
+      </label>
+      <p class="gh-dim" style="margin: 2px 0 8px 24px; font-size: 12px">{{ t('water_tracking_setting_hint') }}</p>
+      <p v-if="waterToggleError" style="color: #d6336c; margin: 0 0 8px" role="alert" data-test="track-water-error">{{ waterToggleError }}</p>
+      <button v-if="trackWater" type="button" class="gh-btn" data-test="open-water" @click="emit('open-water')">{{ t('hdr_settings_water_btn') }}</button>
 
       <h4 style="margin-top: 16px">{{ t('hdr_settings_account') }}</h4>
       <a href="/account/" class="gh-btn" style="display: inline-block; text-decoration: none" data-test="account-link">{{ t('hdr_settings_account_link') }}</a>
