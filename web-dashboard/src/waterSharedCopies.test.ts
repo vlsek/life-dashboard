@@ -8,11 +8,12 @@ import { readFileSync } from 'node:fs'
 const read = (p: string): string => readFileSync(p, 'utf-8')
 
 describe('общий код воды совпадает между web-dashboard и web-header', () => {
-  it.each(['waterUndo.ts', 'waterLog.ts', 'water.ts'])('lib/%s — файл в файл', (name: string) => {
+  it.each(['waterUndo.ts', 'waterLog.ts', 'water.ts', 'waterTracking.ts'])('lib/%s — файл в файл', (name: string) => {
     expect(read(`src/lib/${name}`)).toBe(read(`../web-header/src/lib/${name}`))
   })
   it('тесты общей логики журнала воды тоже одинаковые (иначе одну из копий перестали бы проверять)', () => {
     expect(read('src/lib/waterRemoveEntry.test.ts')).toBe(read('../web-header/src/lib/waterRemoveEntry.test.ts'))
+    expect(read('src/lib/waterTracking.test.ts')).toBe(read('../web-header/src/lib/waterTracking.test.ts'))
     expect(read('src/components/WaterModalRemove.test.ts')).toBe(read('../web-header/src/components/WaterModalRemove.test.ts'))
   })
 })
