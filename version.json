@@ -1,6 +1,13 @@
 {
-  "version": "3.75",
+  "version": "3.76",
   "en": [
+    {
+      "version": "3.76",
+      "date": "2026-10-08 00:57",
+      "changes": [
+        "“Customization” now has a visibility switch: three buttons above the showcase — “Owned”, “For achievements” and “For coins”. Turn them on and off as you like: for example, hide everything you already have and look only at what is still ahead, or keep just the items you buy with coins. Next to each button’s name is how many items and themes are in that group. Your choice is remembered on this device. The “unlocked/total” counters on the rarity groups do not change, so your progress stays honest"
+      ]
+    },
     {
       "version": "3.75",
       "date": "2026-10-08 00:48",
@@ -2691,6 +2698,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.76",
+      "date": "2026-10-08 00:57",
+      "changes": [
+        "В «Кастомизации» появился переключатель видимости: над витриной три кнопки — «Получено», «За достижения», «За монеты». Включай и выключай их как удобно: например, скрой всё, что уже получено, и смотри только то, к чему ещё стремиться, или оставь только предметы за монеты. Рядом с названием каждой кнопки — сколько в группе предметов и тем. Выбор запоминается на этом устройстве. Счётчики «открыто/всего» у групп редкости не меняются, чтобы прогресс оставался честным"
+      ]
+    },
     {
       "version": "3.75",
       "date": "2026-10-08 00:48",

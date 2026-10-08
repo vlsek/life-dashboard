@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.75";
+const SITE_VERSION = "3.76";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.76", date: "2026-10-08 00:57", changes: [
+        "В «Кастомизации» появился переключатель видимости: над витриной три кнопки — «Получено», «За достижения», «За монеты». Включай и выключай их как удобно: например, скрой всё, что уже получено, и смотри только то, к чему ещё стремиться, или оставь только предметы за монеты. Рядом с названием каждой кнопки — сколько в группе предметов и тем. Выбор запоминается на этом устройстве. Счётчики «открыто/всего» у групп редкости не меняются, чтобы прогресс оставался честным",
+    ]},
     { version: "3.75", date: "2026-10-08 00:48", changes: [
         "Вес можно менять прямо в блоке «Профиль»: рядом с весом появился карандаш. Нажми, впиши новое значение за сегодня (подойдут и запятая, и точка) и жми Enter или ✓; Esc или ✕ — отмена. Второй раз за тот же день значение просто заменяется, дублей не будет. После сохранения пересчитываются график, норма воды и калории тренировок. Если параметр «Вес» уже заведён, но значений ещё нет, внести первое можно там же",
     ]},
@@ -1734,6 +1737,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.76", date: "2026-10-08 00:57", changes: [
+        "“Customization” now has a visibility switch: three buttons above the showcase — “Owned”, “For achievements” and “For coins”. Turn them on and off as you like: for example, hide everything you already have and look only at what is still ahead, or keep just the items you buy with coins. Next to each button’s name is how many items and themes are in that group. Your choice is remembered on this device. The “unlocked/total” counters on the rarity groups do not change, so your progress stays honest"
+    ]},
     { version: "3.75", date: "2026-10-08 00:48", changes: [
         "You can now change your weight right in the Profile block: there is a pencil next to the weight. Tap it, type today’s new value (a comma or a dot both work) and press Enter or ✓; Esc or ✕ cancels. Saving a second time on the same day simply replaces the value, so there are no duplicates. After saving, the chart, the water goal and workout calories are recalculated. If the “Weight” parameter exists but has no values yet, you can enter the first one in the same place"
     ]},
