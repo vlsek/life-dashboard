@@ -55,6 +55,11 @@ export interface ShopItem {
   image_url: string | null
   redeemed: boolean
   redeemed_date: string | null
+  // миграция 057 («огоньки стриков»): цена в огоньках и архив старых вещей с ценой в монетах; в режиме огоньков `cost` — уже в огоньках
+  cost_sparks?: number | null
+  archived?: boolean
+  // купленная ДО перехода вещь: её `cost` — в монетах (история), показываем с иконкой монеты
+  legacy_coins?: boolean
 }
 
 export interface ShopItemFormInput {

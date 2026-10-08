@@ -3,11 +3,19 @@
 // Вид спереди: круглый диск на всю клетку, ребристый кант (насечки `coin-rim`), внутренний бортик `coin-ring`, блик `coin-shine` и огонёк-тиснение
 // в центре, который слегка мерцает (keyframes flame-flicker из style.css); при prefers-reduced-motion — статичный. Цвета — из темы (style.css).
 // Размер 1em и вертикальная посадка — как у <Icon>, поэтому заменяет <Icon name="coin" /> один в один.
-defineProps<{ extraStyle?: string }>()
+import { computed } from 'vue'
+import Icon from './Icon.vue'
+import { sparksMode } from '../lib/sparks'
+
+// Режим огоньков (миграция 057, BACKLOG 46.3): валюта Магазина — огоньки, иконка — огонёк цвета темы. `forceCoin` — для вещей, купленных ДО перехода (их цена в монетах).
+const props = defineProps<{ extraStyle?: string; forceCoin?: boolean }>()
+const spark = computed(() => sparksMode.value && !props.forceCoin)
 </script>
 
 <template>
+  <Icon v-if="spark" name="flame" :extra-style="'color: var(--accent);' + (extraStyle ?? '')" data-test="spark-icon" />
   <svg
+    v-else
     class="coin-icon inline-block h-[1em] w-[1em] shrink-0 align-[-0.15em]"
     viewBox="0 0 24 24"
     fill="none"

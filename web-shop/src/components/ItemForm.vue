@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { t } from '../lib/i18n'
 import { friendlyError } from '../lib/friendlyError'
+import { DEFAULT_SPARKS_COST, rubPerSpark, rubToSparks, sparksMode } from '../lib/sparks'
 import type { ShopItem, ShopItemFormInput } from '../lib/types'
 
 const props = defineProps<{ existing: ShopItem | null; uploadImage: (file: File) => Promise<string | null> }>()
@@ -9,7 +10,13 @@ const emit = defineEmits<{ close: []; save: [res: ShopItemFormInput] }>()
 
 const name = ref(props.existing?.name ?? '')
 const link = ref(props.existing?.link ?? '')
-const cost = ref(props.existing?.cost ?? 100)
+const cost = ref(props.existing?.cost ?? (sparksMode.value ? DEFAULT_SPARKS_COST : 100))
+// Калькулятор (режим огоньков): цена в рублях → огоньки по курсу из настроек; поле цены можно поправить вручную
+const rub = ref<number | null>(null)
+function onRub() {
+  const n = rubToSparks(Number(rub.value))
+  if (n > 0) cost.value = n
+}
 const imageUrl = ref<string | null>(props.existing?.image_url ?? null)
 const uploading = ref(false)
 const uploadError = ref<string | null>(null)
@@ -49,8 +56,13 @@ function save() {
       <label class="mt-2 block text-sm">{{ t('shop_field_link') }}</label>
       <input v-model="link" type="text" class="w-full" placeholder="https://..." />
 
-      <label class="mt-2 block text-sm">{{ t('shop_field_cost') }}</label>
-      <input v-model.number="cost" type="number" class="w-full" />
+      <label class="mt-2 block text-sm">{{ sparksMode ? t('shop_field_cost_sparks') : t('shop_field_cost') }}</label>
+      <input v-model.number="cost" type="number" class="w-full" data-testid="cost-input" />
+      <div v-if="sparksMode" class="mt-1.5 flex flex-wrap items-center gap-2 text-sm" data-testid="calc-row">
+        <label class="dim">{{ t('shop_calc_label') }}</label>
+        <input v-model.number="rub" type="number" min="0" class="w-28" placeholder="₽" data-testid="rub-input" @input="onRub" />
+        <span class="dim text-xs">{{ t('shop_calc_hint').replace('{rate}', String(rubPerSpark)) }}</span>
+      </div>
 
       <label class="mt-2 block text-sm">{{ t('shop_field_image') }}</label>
       <input v-model="imageUrl" type="text" class="w-full" placeholder="https://..." />

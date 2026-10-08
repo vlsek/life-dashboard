@@ -8,6 +8,8 @@ import { withWaterGoal } from './waterGoal'
 import { prepareImage, safeExt } from './imageResize'
 import { errorKind, friendlyError } from './friendlyError'
 import { isCustomizationPurchase } from './customizationPurchase'
+import { DEFAULT_RUB_PER_SPARK, DEFAULT_SPARKS_COST, coinsToSparksSuggestion, parseSparksRow, purchaseErrorKey, rubPerSpark, sparksMode } from './sparks'
+import { t } from './i18n'
 
 // Пауза перед повторной попыткой загрузки фото при сетевом сбое (мс).
 export const UPLOAD_RETRY_MS = 800
@@ -22,6 +24,8 @@ export type AuthState =
 export function useShop() {
   const auth = ref<AuthState>({ status: 'loading' })
   const items = ref<ShopItem[]>([])
+  // старые вещи с ценой в монетах, ещё не купленные (миграция 057 архивирует их, не удаляет) — можно перенести в огоньки
+  const archived = ref<ShopItem[]>([])
   const balance = ref<{ total: number; spent: number; bonus?: number; balance: number } | null>(null)
   const error = ref<string | null>(null)
 
@@ -44,7 +48,35 @@ export function useShop() {
     }
 
     auth.value = { status: 'ready', userId, userEmail }
-    await Promise.all([loadBalance(userId), loadItems(userId)])
+    // Режим огоньков: миграция 057 применена, если работает sync_streak_sparks() (она же начисляет и возвращает баланс). Иначе — монеты, как раньше.
+    sparksMode.value = await syncSparks()
+    if (sparksMode.value) await loadRubRate()
+    await Promise.all([sparksMode.value ? Promise.resolve() : loadBalance(userId), loadItems(userId)])
+  }
+
+  // Начислить огоньки за сделанное (сегодня и вчера) и получить баланс — одним вызовом.
+  async function syncSparks(): Promise<boolean> {
+    try {
+      const { data, error: err } = await sb.rpc('sync_streak_sparks')
+      if (err) return false
+      const row = parseSparksRow(data)
+      if (!row) return false
+      balance.value = { total: row.total, spent: row.spent, balance: row.balance }
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  // Подсказка курса для калькулятора цены (sparks_config.rub_per_spark); нет таблицы/ошибка — значение по умолчанию.
+  async function loadRubRate() {
+    try {
+      const { data, error: err } = await sb.from('sparks_config').select('num').eq('key', 'rub_per_spark').maybeSingle()
+      const n = Number((data as { num?: unknown } | null)?.num)
+      rubPerSpark.value = !err && Number.isFinite(n) && n > 0 ? n : DEFAULT_RUB_PER_SPARK
+    } catch {
+      rubPerSpark.value = DEFAULT_RUB_PER_SPARK
+    }
   }
 
   // Портировано из calcTotalPoints()/calcBalance() в config.js — 5 запросов, как в
@@ -88,28 +120,69 @@ export function useShop() {
       return
     }
     // покупки «Кастомизации» лежат в той же таблице — в списке магазина их не показываем (баланс их учитывает отдельно, в loadBalance)
-    items.value = ((data || []) as ShopItem[]).filter((it) => !isCustomizationPurchase(it.name))
+    const rows = ((data || []) as ShopItem[]).filter((it) => !isCustomizationPurchase(it.name))
+    if (!sparksMode.value) {
+      items.value = rows
+      archived.value = []
+      return
+    }
+    // Режим огоньков: вещи за огоньки показываем с ценой в огоньках (`cost` ← `cost_sparks`), чтобы карточки, фильтры и копилка работали как есть;
+    // купленное раньше за монеты — историей с иконкой монеты; невыкупленное за монеты — в архив.
+    const view: ShopItem[] = []
+    const old: ShopItem[] = []
+    for (const it of rows) {
+      if (it.cost_sparks != null) view.push({ ...it, cost: it.cost_sparks })
+      else if (it.redeemed) view.push({ ...it, legacy_coins: true })
+      else old.push(it)
+    }
+    items.value = view.sort((a, b) => a.cost - b.cost)
+    archived.value = old
   }
 
   async function reload() {
     if (auth.value.status !== 'ready') return
+    if (sparksMode.value) {
+      await Promise.all([syncSparks(), loadItems(auth.value.userId)])
+      return
+    }
     await Promise.all([loadBalance(auth.value.userId), loadItems(auth.value.userId)])
   }
 
   async function addItem(userId: string, res: ShopItemFormInput) {
-    const { error: err } = await sb.from('shop_items').insert({ user_id: userId, name: res.name.trim(), link: res.link.trim() || null, cost: res.cost || 100, image_url: res.image_url, redeemed: false })
+    const base = { user_id: userId, name: res.name.trim(), link: res.link.trim() || null, image_url: res.image_url, redeemed: false }
+    // в режиме огоньков цена хранится в cost_sparks, а cost = 0 — расчёт монет на других страницах не затрагивается
+    const row = sparksMode.value ? { ...base, cost: 0, cost_sparks: res.cost > 0 ? Math.round(res.cost) : DEFAULT_SPARKS_COST } : { ...base, cost: res.cost || 100 }
+    const { error: err } = await sb.from('shop_items').insert(row)
     if (err) throw err
     await reload()
   }
 
   async function updateItem(id: string, res: ShopItemFormInput) {
-    const { error: err } = await sb.from('shop_items').update({ name: res.name.trim(), link: res.link.trim() || null, cost: res.cost || 100, image_url: res.image_url }).eq('id', id)
+    const base = { name: res.name.trim(), link: res.link.trim() || null, image_url: res.image_url }
+    const row = sparksMode.value ? { ...base, cost: 0, cost_sparks: res.cost > 0 ? Math.round(res.cost) : DEFAULT_SPARKS_COST } : { ...base, cost: res.cost || 100 }
+    const { error: err } = await sb.from('shop_items').update(row).eq('id', id)
     if (err) throw err
     await reload()
   }
 
   async function buyItem(id: string) {
     const { error: err } = await sb.from('shop_items').update({ redeemed: true, redeemed_date: todayStr() }).eq('id', id)
+    if (err) {
+      // защита в БД (миграция 057): нельзя потратить больше огоньков, чем накоплено — показываем понятный текст, а не код ошибки
+      const key = purchaseErrorKey(err)
+      if (key) {
+        await reload()
+        throw new Error(t(key))
+      }
+      throw err
+    }
+    await reload()
+  }
+
+  // Перенос старой вещи из архива (цена была в монетах) в огоньки: новая цена, архив снимается. Старые вещи НЕ удаляются (решение владельца).
+  async function transferArchived(id: string, sparksCost: number) {
+    const price = Math.max(1, Math.round(sparksCost || coinsToSparksSuggestion(archived.value.find((a) => a.id === id)?.cost ?? 0)))
+    const { error: err } = await sb.from('shop_items').update({ cost: 0, cost_sparks: price, archived: false }).eq('id', id)
     if (err) throw err
     await reload()
   }
@@ -138,5 +211,5 @@ export function useShop() {
     return data.publicUrl
   }
 
-  return { auth, items, balance, error, init, addItem, updateItem, buyItem, deleteItem, uploadImage }
+  return { auth, items, archived, balance, error, init, addItem, updateItem, buyItem, transferArchived, deleteItem, uploadImage }
 }

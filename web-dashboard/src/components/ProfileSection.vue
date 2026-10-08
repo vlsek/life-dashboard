@@ -22,6 +22,7 @@ import { calcAge, formatAge, formatDelta, unitSuffix, type BodyParam, type BodyP
 import { getLang, t } from '../lib/i18n'
 import { formatPoints } from '../lib/pointsFloat'
 import CoinIcon from './CoinIcon.vue'
+import SparksBalance from './SparksBalance.vue'
 import SavedTick from './SavedTick.vue'
 import { confirmDialog } from '../lib/confirmDialog'
 
@@ -211,6 +212,7 @@ function openForm(p: BodyParam | 'new') {
         >
           <CoinIcon /> {{ formatPoints(balance, getLang()) }}
         </button>
+        <SparksBalance />
       </div>
     </div>
 

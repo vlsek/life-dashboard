@@ -34,7 +34,7 @@ const saving = computed(() => !props.item.redeemed && !p.value.canBuy)
     </div>
 
     <div class="shrink-0 text-right">
-      <div class="inline-flex items-center gap-1 text-sm font-medium">{{ item.cost }} <CoinIcon /></div>
+      <div class="inline-flex items-center gap-1 text-sm font-medium">{{ item.cost }} <CoinIcon :force-coin="item.legacy_coins" /></div>
       <div v-if="saving" class="dim text-xs" data-testid="row-left">{{ t('shop_left') }} {{ p.missing }}</div>
     </div>
 

@@ -7,6 +7,8 @@ import ShopCard from './components/ShopCard.vue'
 import ShopFilters from './components/ShopFilters.vue'
 import ShopIdea from './components/ShopIdea.vue'
 import ShopRow from './components/ShopRow.vue'
+import ArchivedRow from './components/ArchivedRow.vue'
+import { sparksMode } from './lib/sparks'
 import ViewSwitch from './components/ViewSwitch.vue'
 import { useShop } from './lib/useShop'
 import { t } from './lib/i18n'
@@ -16,7 +18,7 @@ import type { ShopItem, ShopItemFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
 
-const { auth, items, balance, error, init, addItem, updateItem, buyItem, deleteItem, uploadImage } = useShop()
+const { auth, items, archived, balance, error, init, addItem, updateItem, buyItem, transferArchived, deleteItem, uploadImage } = useShop()
 onMounted(init)
 
 // Вид страницы (BACKLOG 392): «Витрина» или «Список с копилкой», запоминается на устройстве.
@@ -24,6 +26,27 @@ const view = ref(loadShopView())
 watch(view, saveShopView)
 const filter = ref<ShopFilter>('all')
 const boughtOpen = ref(false)
+const archiveOpen = ref(false)
+// пока в магазине пусто, архив раскрыт сам — иначе человек после перехода видит пустую страницу и не знает, куда делись вещи
+const archiveShown = computed(() => archiveOpen.value || items.value.length === 0)
+// Ошибка действия (покупка/перенос): в режиме огоньков БД не даст потратить больше накопленного — показываем понятный текст
+const actionError = ref<string | null>(null)
+async function onBuy(id: string) {
+  actionError.value = null
+  try {
+    await buyItem(id)
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : String(e)
+  }
+}
+async function onTransfer(id: string, sparks: number) {
+  actionError.value = null
+  try {
+    await transferArchived(id, sparks)
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : String(e)
+  }
+}
 
 const have = computed(() => balance.value?.balance ?? null)
 const counts = computed(() => filterCounts(items.value, have.value))
@@ -54,7 +77,7 @@ async function onUpload(file: File): Promise<string | null> {
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
 
   <main class="mx-auto max-w-4xl px-4 pb-16 pt-4">
-    <h1 class="mb-1 text-xl font-semibold"><EmojiText :text="t('shop_h1')" /></h1>
+    <h1 class="mb-1 text-xl font-semibold"><EmojiText :text="sparksMode ? t('shop_h1_sparks') : t('shop_h1')" /></h1>
     <ShopIdea />
 
     <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -64,15 +87,16 @@ async function onUpload(file: File): Promise<string | null> {
 
     <BalanceCard :balance="balance" :variant="view" :goal="goal" />
 
+    <p v-if="actionError" class="mb-2 text-sm" style="color: var(--danger)" role="alert" data-testid="action-error">{{ actionError }}</p>
     <p v-if="error" class="dim">{{ t('comm_load_error') }} {{ error }}</p>
     <p v-else-if="items.length === 0" class="dim">{{ t('shop_list_empty') }}</p>
 
     <!-- Витрина: чипы-фильтры и сетка карточек -->
     <template v-else-if="view === 'grid'">
       <ShopFilters v-model="filter" :counts="counts" />
-      <p v-if="shown.length === 0" class="dim text-sm" data-testid="empty-filter">{{ filter === 'affordable' ? t('shop_empty_affordable') : t('shop_empty_filter') }}</p>
+      <p v-if="shown.length === 0" class="dim text-sm" data-testid="empty-filter">{{ filter === 'affordable' ? (sparksMode ? t('shop_empty_affordable_sparks') : t('shop_empty_affordable')) : t('shop_empty_filter') }}</p>
       <div v-else class="grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-3" data-testid="grid-view">
-        <ShopCard v-for="item in shown" :key="item.id" :item="item" :balance="have" @buy="buyItem" @edit="formTarget = $event" @remove="onDelete" />
+        <ShopCard v-for="item in shown" :key="item.id" :item="item" :balance="have" @buy="onBuy" @edit="formTarget = $event" @remove="onDelete" />
       </div>
     </template>
 
@@ -81,13 +105,13 @@ async function onUpload(file: File): Promise<string | null> {
       <section v-if="groups.affordable.length" data-testid="section-affordable">
         <h2 class="dim mb-1.5 text-sm font-medium">{{ t('shop_section_affordable') }}</h2>
         <div class="flex flex-col gap-1.5">
-          <ShopRow v-for="item in groups.affordable" :key="item.id" :item="item" :balance="have" @buy="buyItem" @edit="formTarget = $event" @remove="onDelete" />
+          <ShopRow v-for="item in groups.affordable" :key="item.id" :item="item" :balance="have" @buy="onBuy" @edit="formTarget = $event" @remove="onDelete" />
         </div>
       </section>
       <section v-if="groups.saving.length" data-testid="section-saving">
         <h2 class="dim mb-1.5 text-sm font-medium">{{ t('shop_section_saving') }}</h2>
         <div class="flex flex-col gap-1.5">
-          <ShopRow v-for="item in groups.saving" :key="item.id" :item="item" :balance="have" @buy="buyItem" @edit="formTarget = $event" @remove="onDelete" />
+          <ShopRow v-for="item in groups.saving" :key="item.id" :item="item" :balance="have" @buy="onBuy" @edit="formTarget = $event" @remove="onDelete" />
         </div>
       </section>
       <p v-if="!groups.affordable.length && !groups.saving.length" class="dim text-sm">{{ t('shop_empty_filter') }}</p>
@@ -103,10 +127,28 @@ async function onUpload(file: File): Promise<string | null> {
           <span aria-hidden="true">{{ boughtOpen ? '▴' : '▾' }}</span>
         </button>
         <div v-if="boughtOpen" class="mt-1.5 flex flex-col gap-1.5">
-          <ShopRow v-for="item in groups.bought" :key="item.id" :item="item" :balance="have" @buy="buyItem" @edit="formTarget = $event" @remove="onDelete" />
+          <ShopRow v-for="item in groups.bought" :key="item.id" :item="item" :balance="have" @buy="onBuy" @edit="formTarget = $event" @remove="onDelete" />
         </div>
       </section>
     </div>
+
+    <!-- Архив (миграция 057): старые вещи с ценой в монетах; задать цену в огоньках — вернуть в магазин. Не удаляются. -->
+    <section v-if="sparksMode && archived.length" class="mt-4" data-testid="archive-section">
+      <button
+        type="button"
+        class="secondary flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm"
+        :aria-expanded="archiveShown"
+        data-testid="archive-toggle"
+        @click="archiveOpen = !archiveOpen"
+      >
+        <span>{{ t('shop_archive_title') }} ({{ archived.length }})</span>
+        <span aria-hidden="true">{{ archiveShown ? '▴' : '▾' }}</span>
+      </button>
+      <div v-if="archiveShown" class="mt-1.5 flex flex-col gap-1.5">
+        <p class="dim m-0 text-sm">{{ t('shop_archive_hint') }}</p>
+        <ArchivedRow v-for="a in archived" :key="a.id" :item="a" @transfer="onTransfer" />
+      </div>
+    </section>
 
     <ItemForm v-if="formTarget" :existing="formTarget === 'new' ? null : formTarget" :upload-image="onUpload" @close="formTarget = null" @save="onSaveForm" />
   </main>

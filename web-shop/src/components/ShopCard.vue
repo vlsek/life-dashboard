@@ -23,7 +23,7 @@ const emit = defineEmits<{ buy: [id: string]; edit: [item: ShopItem]; remove: [i
       <a v-if="item.link" :href="item.link" target="_blank" rel="noopener" style="color: inherit" class="inline-flex items-center gap-1">{{ item.name }} <Icon name="link" /></a>
       <template v-else>{{ item.name }}</template>
     </div>
-    <div class="inline-flex items-center gap-1 font-medium">{{ item.cost }} <CoinIcon /></div>
+    <div class="inline-flex items-center gap-1 font-medium">{{ item.cost }} <CoinIcon :force-coin="item.legacy_coins" /></div>
     <ItemProgressBar v-if="!item.redeemed && balance !== null" :cost="item.cost" :balance="balance" />
 
     <div class="mt-2">
