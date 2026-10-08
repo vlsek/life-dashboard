@@ -1,6 +1,13 @@
 {
-  "version": "3.82",
+  "version": "3.83",
   "en": [
+    {
+      "version": "3.83",
+      "date": "2026-10-08 10:29",
+      "changes": [
+        "Water: a new “saved” animation. Instead of a flat rectangle in a big glass there is now a glassy tumbler where live water rises with a drifting wave and bubbles, and a checkmark badge pops in at the corner. Three variants: Wave (calm, the default), Drops and Ripples. You can pick one and preview it right away in Settings (the gear in the header) → Water animation. With “Turn off animations” or the system “reduce motion” the finished picture is shown without movement"
+      ]
+    },
     {
       "version": "3.82",
       "date": "2026-10-08 10:05",
@@ -2741,6 +2748,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.83",
+      "date": "2026-10-08 10:29",
+      "changes": [
+        "Вода: новая анимация «записалось». Вместо плоского прямоугольника в большом стакане теперь стеклянный стакан, в котором поднимается живая вода с бегущей волной и пузырьками, а в углу появляется галочка. Есть три варианта: «Волна» (спокойная, по умолчанию), «Капли» и «Рябь». Выбрать и сразу посмотреть можно в «Настройках» (шестерёнка в шапке) → «Анимация воды». При «Отключить анимации» или системном «уменьшить движение» показывается готовая картинка без движения"
+      ]
+    },
     {
       "version": "3.82",
       "date": "2026-10-08 10:05",

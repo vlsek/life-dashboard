@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.82";
+const SITE_VERSION = "3.83";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.83", date: "2026-10-08 10:29", changes: [
+        "Вода: новая анимация «записалось». Вместо плоского прямоугольника в большом стакане теперь стеклянный стакан, в котором поднимается живая вода с бегущей волной и пузырьками, а в углу появляется галочка. Есть три варианта: «Волна» (спокойная, по умолчанию), «Капли» и «Рябь». Выбрать и сразу посмотреть можно в «Настройках» (шестерёнка в шапке) → «Анимация воды». При «Отключить анимации» или системном «уменьшить движение» показывается готовая картинка без движения",
+    ]},
     { version: "3.82", date: "2026-10-08 10:05", changes: [
         "Магазин: новая валюта — «огоньки стриков». За каждую выполненную в день метрику с включённой серией даётся +1 огонёк (не больше 10 в день), огоньки не сгорают, счёт начинается с нуля. Вещи-желания в Магазине покупаются за огоньки, цену можно посчитать из рублей. Старые вещи с ценой в монетах не пропали — они в «Архиве» Магазина: задайте цену в огоньках, и вещь вернётся в магазин. Баланс огоньков виден в профиле на Дашборде рядом с монетами. Кастомизация, как и раньше, — за монеты и достижения",
     ]},
@@ -1756,6 +1759,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.83", date: "2026-10-08 10:29", changes: [
+        "Water: a new “saved” animation. Instead of a flat rectangle in a big glass there is now a glassy tumbler where live water rises with a drifting wave and bubbles, and a checkmark badge pops in at the corner. Three variants: Wave (calm, the default), Drops and Ripples. You can pick one and preview it right away in Settings (the gear in the header) → Water animation. With “Turn off animations” or the system “reduce motion” the finished picture is shown without movement",
+    ]},
     { version: "3.82", date: "2026-10-08 10:05", changes: [
         "Shop: a new currency — “streak sparks”. Every streak metric you complete in a day earns +1 spark (up to 10 a day); sparks never expire and counting starts from zero. Shop wishes are now bought with sparks, and you can work out the price from rubles. Old items priced in coins are not gone — they are in the Shop “Archive”: set a price in sparks and the item returns to the shop. Your sparks balance is shown in the Dashboard profile next to coins. Customization is still bought with coins and achievements",
     ]},
