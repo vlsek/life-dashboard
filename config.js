@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.74";
+const SITE_VERSION = "3.75";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.75", date: "2026-10-08 00:48", changes: [
+        "Вес можно менять прямо в блоке «Профиль»: рядом с весом появился карандаш. Нажми, впиши новое значение за сегодня (подойдут и запятая, и точка) и жми Enter или ✓; Esc или ✕ — отмена. Второй раз за тот же день значение просто заменяется, дублей не будет. После сохранения пересчитываются график, норма воды и калории тренировок. Если параметр «Вес» уже заведён, но значений ещё нет, внести первое можно там же",
+    ]},
     { version: "3.74", date: "2026-10-07 14:12", changes: [
         "Кастомизация: новый товар «Карточка со сводкой» (250 баллов) — вид сворачивания блоков. Свёрнутый блок показывает справа от заголовка короткую строку итога: у «Метрик за день» — «Баллы 4 / 9», у «Планов» — «Выполнено 2 из 5», у «Виджетов» — сколько их показано, в «Тренировках» у категории — «Упражнений: N», у упражнения — его рекорд. Выбирается в «Кастомизации» вместо «Аккордеона» (одновременно один вид), снять — вернуться к базовому шеврону. Блоки без осмысленного итога выглядят как обычно",
     ]},
@@ -1731,6 +1734,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.75", date: "2026-10-08 00:48", changes: [
+        "You can now change your weight right in the Profile block: there is a pencil next to the weight. Tap it, type today’s new value (a comma or a dot both work) and press Enter or ✓; Esc or ✕ cancels. Saving a second time on the same day simply replaces the value, so there are no duplicates. After saving, the chart, the water goal and workout calories are recalculated. If the “Weight” parameter exists but has no values yet, you can enter the first one in the same place"
+    ]},
     { version: "3.74", date: "2026-10-07 14:12", changes: [
         "Customization: new “Summary card” item (250 points) — a block collapse style. A folded block shows a short summary line to the right of its title: “Points 4 / 9” for Daily metrics, “Done 2 of 5” for Plans, the number of shown Widgets, in Workouts “Exercises: N” for a category and the record for an exercise. Pick it in Customization instead of “Accordion” (one style at a time); unselect to return to the basic chevron. Blocks without a meaningful summary look as usual",
     ]},
