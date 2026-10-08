@@ -5,6 +5,8 @@ import ItemCard from './components/ItemCard.vue'
 import Icon from './components/Icon.vue'
 import ThemeCard from './components/ThemeCard.vue'
 import RarityGroup from './components/RarityGroup.vue'
+import VisibilityChips from './components/VisibilityChips.vue'
+import { groupOfItem, groupOfTheme, useVisibility, type VisGroup } from './lib/useVisibility'
 import { useCollapsed } from './lib/useCollapsed'
 import { itemGroups, themeGroups } from './lib/rarity'
 import { useFavoriteThemes } from './lib/useFavoriteThemes'
@@ -47,6 +49,24 @@ const categories = computed(() =>
     })),
   })).filter((c) => c.groups.length),
 )
+
+// Переключатель видимости (BACKLOG 47.1): каждая тема и предмет — ровно в одной группе; прячем только показ карточек, а счётчики
+// «открыто/всего» у групп редкости остаются честными (по всей витрине).
+const vis = useVisibility()
+const themeGroup = (k: ThemeKey): VisGroup => groupOfTheme(themes.isLocked(k))
+const visibleCategories = computed(() =>
+  categories.value
+    .map((c) => ({ ...c, groups: c.groups.map((g) => ({ ...g, shown: g.items.filter((i) => vis.isVisible(groupOfItem(i, statusOf(i.key)))) })).filter((g) => g.shown.length) }))
+    .filter((c) => c.groups.length),
+)
+const visibleThemeBuckets = computed(() => themeBuckets.map((g) => ({ ...g, shown: g.items.filter((k) => vis.isVisible(themeGroup(k))) })).filter((g) => g.shown.length))
+const visCounts = computed(() => {
+  const n: Record<VisGroup, number> = { owned: 0, achievement: 0, coins: 0 }
+  for (const g of themeBuckets) for (const k of g.items) n[themeGroup(k)]++
+  for (const c of categories.value) for (const g of c.groups) for (const i of g.items) n[groupOfItem(i, statusOf(i.key))]++
+  return n
+})
+const nothingShown = computed(() => !visibleThemeBuckets.value.length && !visibleCategories.value.length)
 </script>
 
 <template>
@@ -74,14 +94,17 @@ const categories = computed(() =>
         <p v-if="apiMissing" class="mb-4 text-sm" style="color: var(--danger)" data-testid="need-migration">{{ t('cust_need_migration') }}</p>
         <p v-if="actionError" class="mb-3 text-sm" style="color: var(--danger)" data-testid="action-error">{{ actionError }}</p>
 
-        <section class="mb-6" data-section="themes">
+        <VisibilityChips :state="vis.state.value" :counts="visCounts" @toggle="vis.toggle" />
+        <p v-if="nothingShown" class="dim mb-4 text-sm" data-testid="vis-empty">{{ vis.noneVisible.value ? t('cust_vis_empty_none') : t('cust_vis_empty') }}</p>
+
+        <section v-if="visibleThemeBuckets.length" class="mb-6" data-section="themes">
           <h2 class="mb-0.5 text-base font-medium">{{ t('cust_sec_themes') }}</h2>
           <p class="dim mb-1 text-xs">{{ t('cust_sec_themes_hint') }}</p>
           <p class="dim mb-2 text-xs" data-testid="fav-count">{{ t('cust_theme_fav_count').replace('{n}', String(themes.favorites.value.length)).replace('{max}', String(themes.max)) }}</p>
-          <RarityGroup v-for="g in themeBuckets" :key="g.rarity" :id="'themes:' + g.rarity" :rarity="g.rarity" :total="g.items.length" :owned="themeOwned(g.items)" :collapsed="isCollapsed('themes:' + g.rarity)" @toggle="toggle('themes:' + g.rarity)">
+          <RarityGroup v-for="g in visibleThemeBuckets" :key="g.rarity" :id="'themes:' + g.rarity" :rarity="g.rarity" :total="g.items.length" :owned="themeOwned(g.items)" :collapsed="isCollapsed('themes:' + g.rarity)" @toggle="toggle('themes:' + g.rarity)">
             <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr))">
               <ThemeCard
-                v-for="k in g.items"
+                v-for="k in g.shown"
                 :key="k"
                 :theme-key="k"
                 :active="themes.current.value === k"
@@ -96,7 +119,7 @@ const categories = computed(() =>
           </RarityGroup>
         </section>
 
-        <section v-for="c in categories" :key="c.category" class="mb-6" :data-section="c.category">
+        <section v-for="c in visibleCategories" :key="c.category" class="mb-6" :data-section="c.category">
           <h2 class="mb-0.5 text-base font-medium">{{ t(('cust_cat_' + c.category) as never) }}</h2>
           <p class="dim mb-2 text-xs">{{ t('cust_cat_hint') }}</p>
           <RarityGroup
@@ -111,7 +134,7 @@ const categories = computed(() =>
           >
             <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr))">
               <ItemCard
-                v-for="it in g.items"
+                v-for="it in g.shown"
                 :key="it.key"
                 :item="it"
                 :status="statusOf(it.key)"
