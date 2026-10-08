@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { sb } from './supabase'
 import { todayStr } from './date'
 import { t } from './i18n'
-import { effectiveForm, buildInsertRow, buildUpdateRow, categoryKeyFor, nextPosition } from './metricsManager'
+import { effectiveForm, buildInsertRow, buildUpdateRow, canLinkExercise, categoryKeyFor, nextPosition } from './metricsManager'
 import type { MetricFormValues } from './metricsManager'
 import { confirmDialog } from './confirmDialog'
 import type { Metric } from './types'
@@ -19,14 +19,16 @@ export interface MetricCategory {
 export function useMetricsManager(onChanged?: () => void) {
   const metrics = ref<Metric[]>([])
   const categories = ref<MetricCategory[]>([])
+  const exercises = ref<{ id: string; name: string }[]>([]) // упражнения «Тренировок» для связи с метрикой (миграция 054)
   const error = ref<string | null>(null)
   let userId = ''
 
   async function load(uid: string) {
     userId = uid
-    const [mRes, cRes] = await Promise.all([
+    const [mRes, cRes, eRes] = await Promise.all([
       sb.from('metrics').select('*').eq('user_id', uid).eq('active', true).order('position'),
       sb.from('metric_categories').select('*').order('label_ru'),
+      sb.from('workout_exercises').select('id, name').eq('user_id', uid).order('name'),
     ])
     if (mRes.error) {
       error.value = friendlyError(mRes.error, 'load')
@@ -35,6 +37,7 @@ export function useMetricsManager(onChanged?: () => void) {
     error.value = null
     metrics.value = (mRes.data || []) as Metric[]
     categories.value = (cRes.data || []) as MetricCategory[]
+    exercises.value = ((eRes && eRes.data) || []) as { id: string; name: string }[] // нет упражнений/ошибка — просто пустой список, метрики это не ломает
   }
 
   // Подсказка про миграции — портировано из showMetricSaveError().
@@ -45,7 +48,8 @@ export function useMetricsManager(onChanged?: () => void) {
       : /streak_import/i.test(message) ? ' — ' + t('dash_streak_import_migration_hint')
       : /count_streak/i.test(message) ? ' — ' + t('dash_count_streak_migration_hint')
       : /planned_sets/i.test(message) ? ' — ' + t('dash_planned_sets_migration_hint')
-      : /ask_note/i.test(message) ? ' — ' + t('dash_ask_note_migration_hint') : ''
+      : /ask_note/i.test(message) ? ' — ' + t('dash_ask_note_migration_hint')
+      : /source_exercise/i.test(message) ? ' — ' + t('dash_exercise_link_migration_hint') : ''
     return friendlyError(err) + hint
   }
 
@@ -73,7 +77,23 @@ export function useMetricsManager(onChanged?: () => void) {
     if (!cat.ok) return false
     const categoryId = cat.id
     const position = nextPosition(metrics.value)
-    const { error: err } = await sb.from('metrics').insert(buildInsertRow(form, userId, position, categoryId))
+    // Связь с упражнением «Тренировок» (BACKLOG 19, срез 2; миграция 054): существующее упражнение или новое — оно создаётся первым, до метрики
+    let exerciseId: string | null = null
+    if (canLinkExercise(form) && form.exerciseLink) {
+      if (form.exerciseLink === '__new__') {
+        const { data: ex, error: exErr } = await sb
+          .from('workout_exercises')
+          .insert({ user_id: userId, name: form.name.trim(), category: null, unit: 'кг', tracks_weight: false, value_label: 'Повторения' })
+          .select('id')
+          .single()
+        if (exErr || !ex) {
+          error.value = friendlyError(exErr, 'save')
+          return false
+        }
+        exerciseId = (ex as { id: string }).id
+      } else exerciseId = form.exerciseLink
+    }
+    const { error: err } = await sb.from('metrics').insert(buildInsertRow(form, userId, position, categoryId, exerciseId))
     if (err) {
       error.value = saveErrorText(err)
       return false
@@ -128,5 +148,5 @@ export function useMetricsManager(onChanged?: () => void) {
     return true
   }
 
-  return { metrics, categories, error, load, addMetric, editMetric, deleteMetric }
+  return { metrics, categories, exercises, error, load, addMetric, editMetric, deleteMetric }
 }

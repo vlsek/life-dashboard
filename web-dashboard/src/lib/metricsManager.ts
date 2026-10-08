@@ -29,6 +29,7 @@ export interface MetricFormValues {
   plannedSets: string // миграция 041: «сколько подходов планируется в день» (только sets); пусто = не задано
   trackOnly: boolean // «просто записывать значение»: без цели, расписания и серии (только number)
   askNote: boolean // миграция 058: спрашивать необязательную заметку к отметке (только «галочка»), BACKLOG 867
+  exerciseLink: string // миграция 054: '' — вводить вручную, '__new__' — создать упражнение в «Тренировках», иначе id упражнения (BACKLOG 19, срез 2)
 }
 
 export const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0] as const
@@ -186,6 +187,7 @@ export function emptyForm(): MetricFormValues {
     plannedSets: '',
     trackOnly: false,
     askNote: false,
+    exerciseLink: '',
   }
 }
 
@@ -211,6 +213,7 @@ export function formFromMetric(m: Metric): MetricFormValues {
     plannedSets: currentPlannedSets(m) != null ? String(currentPlannedSets(m)) : '',
     trackOnly: isTrackOnlyMetric(m),
     askNote: m.ask_note === true,
+    exerciseLink: m.source_exercise_id ?? '',
   }
 }
 
@@ -301,9 +304,21 @@ function commonFields(f: MetricFormValues, categoryId: string | null) {
   }
 }
 
-export function buildInsertRow(form: MetricFormValues, userId: string, position: number, categoryId: string | null) {
+export function buildInsertRow(form: MetricFormValues, userId: string, position: number, categoryId: string | null, exerciseId: string | null = null) {
   const f = effectiveForm(form)
-  return { user_id: userId, ...commonFields(f, categoryId), position, active: true, ...scheduleFields(f, null), ...countStreakFields(f, null), ...askNoteFields(f, null), ...plannedSetsFields(f, null) }
+  // Связь с упражнением (миграция 054) кладём ТОЛЬКО когда она есть: без неё колонки может не быть, и обычная метрика обязана сохраняться как раньше
+  return { user_id: userId, ...commonFields(f, categoryId), position, active: true, ...scheduleFields(f, null), ...countStreakFields(f, null), ...askNoteFields(f, null), ...plannedSetsFields(f, null), ...(exerciseId ? { source_exercise_id: exerciseId } : {}) }
+}
+
+// Можно ли связать метрику с упражнением «Тренировок»: только «Подходы» и «Число» (не «просто значение» вроде веса тела).
+export function canLinkExercise(f: Pick<MetricFormValues, 'type' | 'trackOnly'>): boolean {
+  return (f.type === 'sets' || f.type === 'number') && !f.trackOnly
+}
+
+// Колонка source_exercise_id есть, если она видна хотя бы у одной метрики (select * отдаёт все колонки); метрик ещё нет — считаем, что есть,
+// а если её нет на самом деле, сохранение подскажет про миграцию 054 (так же, как planned_sets_log у миграции 041).
+export function exerciseLinkAvailable(metrics: { [k: string]: unknown }[]): boolean {
+  return metrics.length === 0 || metrics.some((m) => 'source_exercise_id' in m)
 }
 
 export function buildUpdateRow(form: MetricFormValues, existing: Metric, categoryId: string | null) {
