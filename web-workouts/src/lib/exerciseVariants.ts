@@ -211,3 +211,46 @@ export function applyVariant(name: string, base: VariantBase, index: number): st
   if (hasCyrillic(stem)) return stem + ' ' + v.ru
   return v.pre ? v.en + ' ' + lowerFirst(stem) : stem + ' ' + v.en
 }
+
+// ЗНАЧЕНИЯ ПО УМОЛЧАНИЮ типового упражнения (BACKLOG 1046, владелец 2026-10-05: «если выбираем типовое упражнение — пусть все остальные поля
+// автоматом заполняет»). Подставляются в форму нового упражнения при выборе типового (и при смене разновидности), но только в поля, которые
+// человек сам не менял; потом любое можно изменить. Мышцы здесь не нужны: карта мышц подбирает их по названию сама (lib/muscles.ts).
+// Правило «с весом»: вес записываем там, где его обычно добавляют (штанга, гантели, гири); у упражнений «на своём весе» — нет.
+export interface ExerciseDefaults {
+  category: 'upper' | 'lower' | 'fullbody'
+  tracksWeight: boolean
+  label: 'reps' | 'seconds' // «Что считаем?»: повторения или секунды (планка)
+  tracksDuration: boolean
+  bilateral: boolean
+}
+
+export const TYPICAL_DEFAULTS: Record<string, ExerciseDefaults> = {
+  dips: { category: 'upper', tracksWeight: false, label: 'reps', tracksDuration: false, bilateral: false },
+  pushup: { category: 'upper', tracksWeight: false, label: 'reps', tracksDuration: false, bilateral: false },
+  pullup: { category: 'upper', tracksWeight: false, label: 'reps', tracksDuration: false, bilateral: false },
+  squat: { category: 'lower', tracksWeight: true, label: 'reps', tracksDuration: false, bilateral: false },
+  lunge: { category: 'lower', tracksWeight: true, label: 'reps', tracksDuration: false, bilateral: false },
+  plank: { category: 'fullbody', tracksWeight: false, label: 'seconds', tracksDuration: false, bilateral: false },
+  crunch: { category: 'fullbody', tracksWeight: false, label: 'reps', tracksDuration: false, bilateral: false },
+  bench: { category: 'upper', tracksWeight: true, label: 'reps', tracksDuration: false, bilateral: false },
+  deadlift: { category: 'lower', tracksWeight: true, label: 'reps', tracksDuration: false, bilateral: false },
+  glute_bridge: { category: 'lower', tracksWeight: false, label: 'reps', tracksDuration: false, bilateral: false },
+  biceps_curl: { category: 'upper', tracksWeight: true, label: 'reps', tracksDuration: false, bilateral: false },
+}
+
+// Что меняет сама разновидность: с отягощением / штангой / гантелями / гирей — вес записываем; на одной руке / ноге — Л/П отдельно.
+const WEIGHTED = /отягощ|штанг|гантел|кубков|^(weighted|barbell|dumbbell|goblet)$/i
+const ONE_SIDED = /одной|^(one-arm|single-leg)$/i
+
+export function variantFlags(v: Variant | undefined): { weighted: boolean; oneSided: boolean } {
+  if (!v) return { weighted: false, oneSided: false }
+  const texts = [v.ru, v.en]
+  return { weighted: texts.some((x) => WEIGHTED.test(x)), oneSided: texts.some((x) => ONE_SIDED.test(x)) }
+}
+
+// Итоговые значения для типового упражнения и выбранной разновидности (индекс < 0 — без разновидности).
+export function typicalDefaults(base: VariantBase, variantIndex: number): ExerciseDefaults {
+  const d = TYPICAL_DEFAULTS[base.id]
+  const f = variantFlags(variantIndex >= 0 ? base.variants[variantIndex] : undefined)
+  return { ...d, tracksWeight: d.tracksWeight || f.weighted, bilateral: d.bilateral || f.oneSided }
+}

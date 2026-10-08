@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { t, type DictKey } from '../lib/i18n'
 import { MUSCLE_IDS, getMuscleOverride, ruleForExercise, type MuscleId } from '../lib/muscles'
 import { defaultWeightUnit, isWeightUnit, rememberWeightUnit } from '../lib/weightUnit'
@@ -7,7 +7,7 @@ import { valueLabelOptions } from '../lib/valueLabels'
 import Icon from './Icon.vue'
 import type { Exercise, ExerciseFormInput } from '../lib/types'
 import { stripEmoji } from '../lib/emojiText'
-import { VARIANT_BASES, applyVariant, baseForName, baseName, detectVariant, variantText } from '../lib/exerciseVariants'
+import { VARIANT_BASES, applyVariant, baseForName, baseName, detectVariant, typicalDefaults, variantText } from '../lib/exerciseVariants'
 import { getLang } from '../lib/i18n'
 
 // Порт openExerciseFormModal() из workouts.js: имя, категория (фиксированный список +
@@ -62,10 +62,29 @@ const muscleHint = computed(() => {
 const typical = computed(() => baseForName(name.value))
 const variantIndex = computed(() => (typical.value ? detectVariant(name.value, typical.value) : -1))
 const variantOptions = computed(() => (typical.value ? typical.value.variants.map((v, i) => ({ i, label: variantText(v, getLang()) })) : []))
+// Автозаполнение (BACKLOG 1046): при выборе типового упражнения (и смене разновидности) в НОВОМ упражнении подставляем категорию,
+// «с весом/без», «что считаем», длительность и Л/П — но только в поля, которые человек сам не менял (`touched`); дальше всё можно изменить.
+// У существующего упражнения ничего не подставляем: правка не должна молча менять сохранённое.
+const touched = reactive(new Set<string>())
+const autofilled = ref(false)
+const touch = (field: string) => touched.add(field)
+function applyTypicalDefaults() {
+  if (props.existing || !typical.value) return
+  const d = typicalDefaults(typical.value, variantIndex.value)
+  if (!touched.has('category')) catSelect.value = d.category
+  if (!touched.has('weight')) tracksWeight.value = d.tracksWeight ? 'yes' : 'no'
+  if (!touched.has('label')) labelChoice.value = t(d.label === 'seconds' ? 'workouts_value_preset_seconds' : 'workouts_value_preset_reps')
+  if (!touched.has('duration')) tracksDuration.value = d.tracksDuration
+  if (!touched.has('bilateral')) bilateral.value = d.bilateral
+  autofilled.value = true
+}
 function onTypicalPick(e: Event) {
   const id = (e.target as HTMLSelectElement).value
   const b = VARIANT_BASES.find((x) => x.id === id)
-  if (b) name.value = baseName(b)
+  if (b) {
+    name.value = baseName(b)
+    applyTypicalDefaults()
+  }
   ;(e.target as HTMLSelectElement).value = ''
   nameInput.value?.focus()
 }
@@ -73,6 +92,7 @@ function onVariantPick(e: Event) {
   if (!typical.value) return
   const v = (e.target as HTMLSelectElement).value
   name.value = applyVariant(name.value, typical.value, v === '' ? -1 : Number(v))
+  applyTypicalDefaults()
 }
 
 const showNewCatInput = computed(() => catSelect.value === '__new__')
@@ -128,11 +148,12 @@ function onSubmit() {
             </select>
           </label>
           <p class="text-xs" style="color: var(--text-dim)" data-testid="variant-hint">{{ t('workouts_variant_hint') }}</p>
+          <p v-if="autofilled && !existing" class="text-xs" style="color: var(--text-dim)" data-testid="typical-autofill-hint">{{ t('workouts_typical_filled') }}</p>
         </div>
 
         <label class="flex flex-col gap-1 text-sm">
           {{ t('workouts_field_category') }}
-          <select v-model="catSelect" class="modal-input" data-testid="category-select">
+          <select v-model="catSelect" class="modal-input" data-testid="category-select" @change="touch('category')">
             <option value="">{{ t('workouts_cat_none') }}</option>
             <option value="upper">{{ stripEmoji(t('workouts_cat_upper')) }}</option>
             <option value="lower">{{ stripEmoji(t('workouts_cat_lower')) }}</option>
@@ -148,7 +169,7 @@ function onSubmit() {
 
         <label class="flex flex-col gap-1 text-sm">
           {{ t('workouts_field_tracks_weight') }}
-          <select v-model="tracksWeight" class="modal-input">
+          <select v-model="tracksWeight" class="modal-input" data-testid="tracks-weight-select" @change="touch('weight')">
             <option value="yes">{{ t('workouts_tracks_weight_yes') }}</option>
             <option value="no">{{ t('workouts_tracks_weight_no') }}</option>
           </select>
@@ -156,7 +177,7 @@ function onSubmit() {
 
         <label class="flex flex-col gap-1 text-sm">
           {{ t('workouts_field_value_label') }}
-          <select v-model="labelChoice" class="modal-input" data-testid="value-label-select">
+          <select v-model="labelChoice" class="modal-input" data-testid="value-label-select" @change="touch('label')">
             <option v-for="o in labelOptions" :key="o" :value="o">{{ o }}</option>
             <option :value="OTHER_LABEL">{{ t('workouts_value_other') }}</option>
           </select>
@@ -164,13 +185,13 @@ function onSubmit() {
         <input v-if="labelChoice === OTHER_LABEL" v-model="customLabel" type="text" maxlength="24" class="modal-input -mt-1" data-testid="value-label-custom" :placeholder="t('workouts_field_value_label')" />
 
         <label class="flex items-center gap-2 text-sm">
-          <input v-model="tracksDuration" type="checkbox" />
+          <input v-model="tracksDuration" type="checkbox" data-testid="tracks-duration" @change="touch('duration')" />
           {{ t('workouts_field_tracks_duration') }}
         </label>
         <p class="-mt-2 text-xs" style="color: var(--text-dim)">{{ t('workouts_field_tracks_duration_hint') }}</p>
 
         <label class="flex items-center gap-2 text-sm">
-          <input v-model="bilateral" type="checkbox" />
+          <input v-model="bilateral" type="checkbox" data-testid="bilateral" @change="touch('bilateral')" />
           {{ t('workouts_field_bilateral') }}
         </label>
         <p class="-mt-2 text-xs" style="color: var(--text-dim)">{{ t('workouts_field_bilateral_hint') }}</p>
