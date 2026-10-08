@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.81";
+const SITE_VERSION = "3.82";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.82", date: "2026-10-08 10:05", changes: [
+        "Магазин: новая валюта — «огоньки стриков». За каждую выполненную в день метрику с включённой серией даётся +1 огонёк (не больше 10 в день), огоньки не сгорают, счёт начинается с нуля. Вещи-желания в Магазине покупаются за огоньки, цену можно посчитать из рублей. Старые вещи с ценой в монетах не пропали — они в «Архиве» Магазина: задайте цену в огоньках, и вещь вернётся в магазин. Баланс огоньков виден в профиле на Дашборде рядом с монетами. Кастомизация, как и раньше, — за монеты и достижения",
+    ]},
     { version: "3.81", date: "2026-10-08 06:45", changes: [
         "Сообщество: клик по другу (и по себе) открывает сводку, а не только достижения. Видно: с какой даты человек с нами и сколько дней, с какой даты вы друзья, баллы за неделю и за всё время, серия идеальных дней, сколько целей выполнено, сколько дней из последних 30 были активными, любимое упражнение, а ниже — все открытые достижения. Если человек скрыл себя из сообщества, показаны только имя, аватар и даты. ТРЕБУЕТ миграцию 056 (без неё окно работает как раньше)."
     ]},
@@ -1753,6 +1756,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.82", date: "2026-10-08 10:05", changes: [
+        "Shop: a new currency — “streak sparks”. Every streak metric you complete in a day earns +1 spark (up to 10 a day); sparks never expire and counting starts from zero. Shop wishes are now bought with sparks, and you can work out the price from rubles. Old items priced in coins are not gone — they are in the Shop “Archive”: set a price in sparks and the item returns to the shop. Your sparks balance is shown in the Dashboard profile next to coins. Customization is still bought with coins and achievements",
+    ]},
     { version: "3.81", date: "2026-10-08 06:45", changes: [
         "Community: clicking a friend (or yourself) opens a summary, not just achievements. You can see: since when the person has been with us and for how many days, since when you have been friends, points for the week and in total, the perfect-day streak, how many goals are done, how many of the last 30 days were active, the favorite exercise, and below all unlocked achievements. If a person hid themselves from the community, only the name, avatar and dates are shown. REQUIRES migration 056 (without it the window works as before)."
     ]},
