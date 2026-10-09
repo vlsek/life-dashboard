@@ -155,8 +155,8 @@ const fallbackText = computed(() => {
     <RecordBadge v-if="record" kind="charts" :record="record" :unit="unit" class="mb-1.5" />
     <template v-if="innerSvg">
       <svg viewBox="0 0 620 160" width="100%" :height="160" v-html="innerSvg"></svg>
-      <ul v-if="legend.length" class="m-0 mt-1 flex list-none flex-wrap gap-x-3 gap-y-1 p-0 text-xs" data-test="chart-legend" :aria-label="t('chart_legend_aria')">
-        <li v-for="(item, i) in legend" :key="i" class="flex items-center gap-1" data-test="legend-item">
+      <ul v-if="legend.length" class="m-0 mt-1.5 flex list-none flex-col gap-y-1.5 p-0 text-xs" data-test="chart-legend" :aria-label="t('chart_legend_aria')">
+        <li v-for="(item, i) in legend" :key="i" class="flex flex-wrap items-center gap-x-1 gap-y-0.5" data-test="legend-item">
           <span class="inline-block h-2.5 w-2.5 rounded-full" :style="{ background: item.color }" aria-hidden="true"></span>
           {{ item.label ?? t('chart_legend_none') }}
           <span class="dim">· {{ item.reps }}</span>

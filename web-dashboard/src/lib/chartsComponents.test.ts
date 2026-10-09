@@ -377,6 +377,13 @@ describe('ChartBlock: variations', () => {
     const swatches = w.findAll('[data-test="legend-item"] span.rounded-full').map((s) => (s.element as HTMLElement).style.background)
     expect(swatches[0]).toMatch(/--chart-1|#3b82f6|rgb\(59, 130, 246\)/)
   })
+  it('legend lists every parameter on its own line (BACKLOG 48.5): a column, not a wrapping row', () => {
+    const w = mountBlock(pts([{ label: "classic", reps: 50 }, { label: "diamond", reps: 30 }], [{ label: "classic", reps: 10 }]))
+    const ul = w.find('[data-test="chart-legend"]')
+    expect(ul.classes()).toContain('flex-col')
+    expect(ul.classes()).not.toContain('flex-wrap')
+  })
+
   it('legend also shows how many reps of each variation were done today (BACKLOG 22:02)', () => {
     const points = [
       { date: '2026-09-01', y: 80, shares: [{ label: 'classic', reps: 50 }, { label: 'diamond', reps: 30 }] },
