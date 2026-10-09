@@ -1,6 +1,13 @@
 {
-  "version": "4.15",
+  "version": "4.16",
   "en": [
+    {
+      "version": "4.16",
+      "date": "2026-10-09 22:03",
+      "changes": [
+        "Themes: 12 new themes are added and unlocked right away, no achievements needed. Dark: Dracula, Gruvbox, Tokyo Night, Forest, Ocean, Sunset, Twilight, Neon. Light: Lavender, Sky, Peach, Graphite. They show up in the Settings window, in Customization (in the Common group) and in the favourite themes list. Text, accents, water and chart colours of each are chosen with a contrast margin. No migration needed"
+      ]
+    },
     {
       "version": "4.15",
       "date": "2026-10-09 22:40",
@@ -2972,6 +2979,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.16",
+      "date": "2026-10-09 22:03",
+      "changes": [
+        "Темы оформления: добавлено 12 новых тем, которые открыты сразу, без достижений. Тёмные: «Дракула», «Gruvbox», «Ночной Токио», «Лес», «Океан», «Закат», «Сумерки», «Неон». Светлые: «Лаванда», «Небо», «Персик», «Графит». Они появились в окне «Настройки», в разделе «Кастомизация» (в группе «Обычные») и в списке любимых тем. Тексты, акценты, цвета воды и диаграмм у каждой подобраны с запасом по контрасту. Миграция не нужна"
+      ]
+    },
     {
       "version": "4.15",
       "date": "2026-10-09 22:40",

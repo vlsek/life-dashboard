@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.15";
+const SITE_VERSION = "4.16";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.16", date: "2026-10-09 22:03", changes: [
+        "Темы оформления: добавлено 12 новых тем, которые открыты сразу, без достижений. Тёмные: «Дракула», «Gruvbox», «Ночной Токио», «Лес», «Океан», «Закат», «Сумерки», «Неон». Светлые: «Лаванда», «Небо», «Персик», «Графит». Они появились в окне «Настройки», в разделе «Кастомизация» (в группе «Обычные») и в списке любимых тем. Тексты, акценты, цвета воды и диаграмм у каждой подобраны с запасом по контрасту. Миграция не нужна",
+    ]},
     { version: "4.15", date: "2026-10-09 22:40", changes: [
         "Вернул обучение и «О создателе»: в боковом меню всех страниц снова есть пункты «Установить приложение», «Как пользоваться» и «О создателе» (раньше они остались только в Аккаунте, Истории и Языках). Приветственный тур теперь сам открывается один раз сразу после первичной настройки — раньше новый онбординг ставил флаг, а читал его только старый дашборд. Без миграций."
     ]},
@@ -1855,6 +1858,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.16", date: "2026-10-09 22:03", changes: [
+        "Themes: 12 new themes are added and unlocked right away, no achievements needed. Dark: Dracula, Gruvbox, Tokyo Night, Forest, Ocean, Sunset, Twilight, Neon. Light: Lavender, Sky, Peach, Graphite. They show up in the Settings window, in Customization (in the Common group) and in the favourite themes list. Text, accents, water and chart colours of each are chosen with a contrast margin. No migration needed",
+    ]},
     { version: "4.15", date: "2026-10-09 22:40", changes: [
         "Brought back the tour and “About the creator”: the side menu of every page again has “Install app”, “How it works” and “About the creator” (they had stayed only in Account, History and Languages). The welcome tour now opens by itself once right after the first-time setup — the new onboarding set the flag but only the old dashboard read it. No migrations."
     ]},
