@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.95";
+const SITE_VERSION = "3.96";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.96", date: "2026-10-09 10:28", changes: [
+        "Достижения: у каждого достижения теперь свой грейд (обычное, необычное, редкое, эпическое, легендарное) и своя иконка. Значок меняет форму по грейду: круг, круг с кольцом, шестиугольник, звезда и солнце с лучами; эпические и легендарные светятся. Закрытые достижения показывают ту же форму пунктиром, так что видно, какой грейд ждёт. Лесенки больше не из одинаковых значков: у «Месяца в огне», «Сотни дней» и «Разгорается» разные иконки. В окне «Новое достижение» тоже показаны форма и грейд. Редкость награды подписана отдельно: «Редкость награды: …»",
+    ]},
     { version: "3.95", date: "2026-10-09 10:26", changes: [
         "Друзья смогут ставить друг другу цели и задачи на день: на сервере готово хранение предложений, принятие и отклонение, лимит предложений в день (его задаёт получатель), уведомление отправителю о выполнении. Пока это не видно в интерфейсе — плашки «Вам предложили цель» будут в следующем обновлении",
     ]},
@@ -1795,6 +1798,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.96", date: "2026-10-09 10:28", changes: [
+        "Achievements: every achievement now has its own grade (common, uncommon, rare, epic, legendary) and its own icon. The badge changes shape with the grade: a circle, a circle with a ring, a hexagon, a star and a sunburst; epic and legendary ones glow. Locked achievements show the same shape dashed, so you can see which grade is waiting. Ladders no longer repeat the same icon: “Month on fire”, “100 days” and “Warming up” each look different. The “New achievement” window shows the shape and the grade too. The rarity of the reward is labelled separately: “Reward rarity: …”",
+    ]},
     { version: "3.95", date: "2026-10-09 10:26", changes: [
         "Friends will be able to set goals and daily tasks for each other: the server side is ready - storing invites, accept and decline, a per-day invite limit (set by the recipient), and a completion notice for the sender. Not visible in the interface yet - the 'You were offered a goal' cards come in the next update",
     ]},

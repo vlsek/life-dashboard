@@ -1,6 +1,13 @@
 {
-  "version": "3.95",
+  "version": "3.96",
   "en": [
+    {
+      "version": "3.96",
+      "date": "2026-10-09 10:28",
+      "changes": [
+        "Achievements: every achievement now has its own grade (common, uncommon, rare, epic, legendary) and its own icon. The badge changes shape with the grade: a circle, a circle with a ring, a hexagon, a star and a sunburst; epic and legendary ones glow. Locked achievements show the same shape dashed, so you can see which grade is waiting. Ladders no longer repeat the same icon: “Month on fire”, “100 days” and “Warming up” each look different. The “New achievement” window shows the shape and the grade too. The rarity of the reward is labelled separately: “Reward rarity: …”"
+      ]
+    },
     {
       "version": "3.95",
       "date": "2026-10-09 10:26",
@@ -2832,6 +2839,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.96",
+      "date": "2026-10-09 10:28",
+      "changes": [
+        "Достижения: у каждого достижения теперь свой грейд (обычное, необычное, редкое, эпическое, легендарное) и своя иконка. Значок меняет форму по грейду: круг, круг с кольцом, шестиугольник, звезда и солнце с лучами; эпические и легендарные светятся. Закрытые достижения показывают ту же форму пунктиром, так что видно, какой грейд ждёт. Лесенки больше не из одинаковых значков: у «Месяца в огне», «Сотни дней» и «Разгорается» разные иконки. В окне «Новое достижение» тоже показаны форма и грейд. Редкость награды подписана отдельно: «Редкость награды: …»"
+      ]
+    },
     {
       "version": "3.95",
       "date": "2026-10-09 10:26",
