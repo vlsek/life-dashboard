@@ -5,6 +5,7 @@ import GradeBadge from './GradeBadge.vue'
 import { gradeOf } from '../lib/grade'
 import { locale, t } from '../lib/i18n'
 import { achievementCondition, achievementTitle, rewardText } from '../lib/achievementText'
+import { remaining } from '../lib/showcase'
 import { RARITY_COLOR, rewardFor, rewardIcon, rewardRarity } from '../lib/rewards'
 import type { DictKey } from '../lib/i18n'
 import type { AchievementState } from '../lib/achievements'
@@ -80,6 +81,7 @@ const when = computed(() => {
         <div class="ach-bar-fill h-full rounded-full" :style="{ width: percent + '%' }"></div>
       </div>
       <div class="dim mt-1 text-xs" data-testid="achievement-progress">{{ shownValue }} / {{ state.def.target }}</div>
+      <div class="dim text-xs" data-testid="achievement-left">{{ t('ach_left').replace('{n}', String(remaining(state))) }}</div>
     </template>
   </div>
 </template>

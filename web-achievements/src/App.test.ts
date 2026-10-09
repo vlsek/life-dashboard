@@ -157,5 +157,27 @@ describe('категории свёрнуты по умолчанию (BACKLOG 3
     expect(texts.some((t) => /1 \/ \d+/.test(t))).toBe(true)
     w.unmount()
   })
-})
 
+  it('витрина «Недавно открытые» и «Ближе всего»; на закрытой карточке есть «осталось N»', async () => {
+    const w0 = ACHIEVEMENTS.filter((a) => a.counter === 'wordsAdded').sort((a, b) => a.target - b.target)
+    hold.states.value = evaluate({ ...ZERO, wordsAdded: Math.max(1, Math.floor(w0[0].target / 2)) })
+    hold.unlocked.value = { [ACHIEVEMENTS[0].key]: '2026-10-05T10:00:00Z' }
+    const w = await mountApp()
+    expect(w.find('[data-testid="showcase-recent"]').exists()).toBe(true)
+    expect(w.find('[data-testid="showcase-recent"] [data-key="' + ACHIEVEMENTS[0].key + '"]').exists()).toBe(true)
+    expect(w.find('[data-testid="showcase-next"] [data-testid="showcase-left"]').text()).toMatch(/осталось \d+/)
+    await openAll(w)
+    expect(w.find('[data-testid="achievement-left"]').text()).toMatch(/осталось \d+/)
+  })
+
+  it('фильтр по грейду: остаются карточки выбранного грейда, группы раскрываются сами, «Все» возвращает', async () => {
+    const w = await mountApp()
+    expect(w.findAll('[data-testid="achievement-card"]').length).toBe(0) // свёрнуто
+    await w.find('[data-testid="grade-chip"][data-grade="epic"]').trigger('click')
+    const cards = w.findAll('[data-testid="achievement-card"]')
+    expect(cards.length).toBeGreaterThan(0)
+    expect(cards.every((c) => c.attributes('data-grade') === 'epic')).toBe(true)
+    await w.find('[data-testid="grade-chip"][data-grade="all"]').trigger('click')
+    expect(w.findAll('[data-testid="achievement-card"]').length).toBe(0)
+  })
+})

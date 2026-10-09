@@ -3,11 +3,15 @@ import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import AchievementCard from './components/AchievementCard.vue'
 import AchievementUnlockedModal from './components/AchievementUnlockedModal.vue'
+import AchievementShowcase from './components/AchievementShowcase.vue'
 import CollapseChevron from './components/CollapseChevron.vue'
 import { useAchievements } from './lib/useAchievements'
 import { groupStates, isUnlocked } from './lib/achievements'
 import { groupTitle } from './lib/achievementText'
+import { filterGroups, type GradeFilter } from './lib/showcase'
+import { RARITIES, RARITY_COLOR } from './lib/rewards'
 import { t } from './lib/i18n'
+import type { DictKey } from './lib/i18n'
 
 const { auth, states, unlocked, newlyUnlocked, mode, error, loading, init } = useAchievements()
 onMounted(init)
@@ -17,11 +21,13 @@ const celebrate = ref<string[]>([])
 watch(newlyUnlocked, (keys) => (celebrate.value = [...keys]), { immediate: true })
 const celebrateStates = computed(() => states.value.filter((s) => celebrate.value.includes(s.def.key)))
 
-const groups = computed(() => groupStates(states.value, unlocked.value))
+// Фильтр по грейду (BACKLOG 44.12, срез 2): при выбранном грейде показываем только подходящие карточки, группы раскрыты сами
+const gradeFilter = ref<GradeFilter>('all')
+const groups = computed(() => filterGroups(groupStates(states.value, unlocked.value), unlocked.value, gradeFilter.value))
 
 // Категории по умолчанию СВЁРНУТЫ (BACKLOG 38, решение владельца 2026-10-05); раскрытое не запоминаем — при каждом заходе снова свёрнуто.
 const expanded = ref<Set<string>>(new Set())
-const isOpen = (group: string) => expanded.value.has(group)
+const isOpen = (group: string) => gradeFilter.value !== 'all' || expanded.value.has(group)
 function toggle(group: string) {
   const next = new Set(expanded.value)
   if (next.has(group)) next.delete(group)
@@ -56,6 +62,16 @@ const overallPercent = computed(() => (total.value ? Math.round((openCount.value
           </div>
         </div>
 
+        <AchievementShowcase :states="states" :unlocked="unlocked" />
+
+        <div class="mb-4 flex flex-wrap items-center gap-2" role="group" :aria-label="t('ach_filter_label')" data-testid="grade-filter">
+          <button type="button" class="grade-chip rounded-full border px-3 py-1 text-xs" :class="{ 'grade-chip-on': gradeFilter === 'all' }" :aria-pressed="gradeFilter === 'all'" data-testid="grade-chip" data-grade="all" @click="gradeFilter = 'all'">{{ t('ach_filter_all') }}</button>
+          <button v-for="r in RARITIES" :key="r" type="button" class="grade-chip flex items-center gap-1 rounded-full border px-3 py-1 text-xs" :class="{ 'grade-chip-on': gradeFilter === r }" :aria-pressed="gradeFilter === r" data-testid="grade-chip" :data-grade="r" @click="gradeFilter = r">
+            <span class="inline-block h-2 w-2 rounded-full" :style="{ background: RARITY_COLOR[r] }" aria-hidden="true"></span>{{ t(('ach_grade_' + r) as DictKey) }}
+          </button>
+        </div>
+        <p v-if="!groups.length" class="dim text-sm" data-testid="grade-filter-empty">{{ t('ach_filter_empty') }}</p>
+
         <section v-for="g in groups" :key="g.group" class="mb-4" :data-group="g.group" :data-open="String(isOpen(g.group))">
           <button type="button" class="collapse-head mb-2 flex items-center gap-2 text-base font-medium" :aria-expanded="isOpen(g.group)" :aria-controls="'grp-' + g.group" data-testid="group-toggle" @click="toggle(g.group)">
             <CollapseChevron :collapsed="!isOpen(g.group)" />
@@ -80,3 +96,15 @@ const overallPercent = computed(() => (total.value ? Math.round((openCount.value
 
   <AchievementUnlockedModal v-if="!error && celebrateStates.length" :states="celebrateStates" @close="celebrate = []" />
 </template>
+
+<style scoped>
+.grade-chip {
+  background: var(--bg-card);
+  border-color: var(--border);
+  color: var(--text);
+}
+.grade-chip-on {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+</style>
