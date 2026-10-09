@@ -1,6 +1,13 @@
 {
-  "version": "3.85",
+  "version": "3.86",
   "en": [
+    {
+      "version": "3.86",
+      "date": "2026-10-09 04:55",
+      "changes": [
+        "Workouts: when you add an exercise, picking a “Typical exercise” now fills in the other fields for you. For example, “Squats” sets Lower body, Weight — yes, Count — repetitions, and “Plank” sets Full body, Weight — no, Seconds. Choosing a variant like “Weighted” or “Barbell” turns weight on, and “One-arm” or “Single-leg” turns on the Left/Right option. Anything you changed yourself is not overwritten, and every field can still be edited after it is filled. Existing exercises are not changed when you edit them. Muscle groups are matched by name, as before"
+      ]
+    },
     {
       "version": "3.85",
       "date": "2026-10-08 11:14",
@@ -2762,6 +2769,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.86",
+      "date": "2026-10-09 04:55",
+      "changes": [
+        "Тренировки: при добавлении упражнения выбор «Типового упражнения» теперь сам заполняет остальные поля. Например, для «Приседаний» ставится «Низ», «Вес — да», «Что считаем — повторения», а для «Планки» «Фулбади», «Вес — нет», «Секунды». Если выбрать разновидность «с отягощением» или «со штангой», включится вес, а у «на одной руке» и «на одной ноге» отметка Л/П. Всё, что вы изменили сами, не перезаписывается, и любое поле можно поправить после подстановки. У уже созданных упражнений при правке ничего не меняется. Группы мышц подбираются по названию, как и раньше"
+      ]
+    },
     {
       "version": "3.85",
       "date": "2026-10-08 11:14",

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.85";
+const SITE_VERSION = "3.86";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.86", date: "2026-10-09 04:55", changes: [
+        "Тренировки: при добавлении упражнения выбор «Типового упражнения» теперь сам заполняет остальные поля. Например, для «Приседаний» ставится «Низ», «Вес — да», «Что считаем — повторения», а для «Планки» «Фулбади», «Вес — нет», «Секунды». Если выбрать разновидность «с отягощением» или «со штангой», включится вес, а у «на одной руке» и «на одной ноге» отметка Л/П. Всё, что вы изменили сами, не перезаписывается, и любое поле можно поправить после подстановки. У уже созданных упражнений при правке ничего не меняется. Группы мышц подбираются по названию, как и раньше",
+    ]},
     { version: "3.85", date: "2026-10-08 11:14", changes: [
         "Усилена защита прав доступа: добавлена серверная проверка, из-за которой изменить свои права в приложении больше нельзя (нужна миграция 059 — применяет владелец). Также составлен аудит безопасности покупок в Кастомизации и Магазине с планом следующих шагов",
     ]},
@@ -1765,6 +1768,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.86", date: "2026-10-09 04:55", changes: [
+        "Workouts: when you add an exercise, picking a “Typical exercise” now fills in the other fields for you. For example, “Squats” sets Lower body, Weight — yes, Count — repetitions, and “Plank” sets Full body, Weight — no, Seconds. Choosing a variant like “Weighted” or “Barbell” turns weight on, and “One-arm” or “Single-leg” turns on the Left/Right option. Anything you changed yourself is not overwritten, and every field can still be edited after it is filled. Existing exercises are not changed when you edit them. Muscle groups are matched by name, as before",
+    ]},
     { version: "3.85", date: "2026-10-08 11:14", changes: [
         "Stronger access protection: a server-side check now stops anyone from changing their own permissions inside the app (needs migration 059 — applied by the owner). A security audit of purchases in Customization and the Shop was also written, with a plan for the next steps",
     ]},
