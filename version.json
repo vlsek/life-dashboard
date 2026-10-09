@@ -1,6 +1,13 @@
 {
-  "version": "4.12",
+  "version": "4.13",
   "en": [
+    {
+      "version": "4.13",
+      "date": "2026-10-09 21:44",
+      "changes": [
+        "New morning “Yesterday” prompt: on the first open of a new day the Dashboard lists metrics you did not complete yesterday — those whose streak the gap would break come first. For each you can “Skip the day” (the day does not count and the streak stays alive) or “Keep as is”. The prompt appears once a day and can be turned off in Global settings. Skipped days are respected in all streaks, achievements, History and Calendar. Only yesterday and today can be skipped"
+      ]
+    },
     {
       "version": "4.12",
       "date": "2026-10-09 21:43",
@@ -2951,6 +2958,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.13",
+      "date": "2026-10-09 21:44",
+      "changes": [
+        "Новое утреннее окно «Вчера»: при первом открытии нового дня Дашборд показывает метрики, которые не были выполнены вчера, — сверху те, чью серию вчерашний пробел оборвёт. У каждой можно «Пропустить день» (день не учитывается, серия не рвётся) или «Оставить» как есть. Окно появляется раз в день и выключается в «Глобальных настройках». Пропущенные дни учитываются во всех сериях, достижениях, истории и календаре. Пропустить можно только вчера и сегодня"
+      ]
+    },
     {
       "version": "4.12",
       "date": "2026-10-09 21:43",

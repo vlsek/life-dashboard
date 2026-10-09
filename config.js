@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.12";
+const SITE_VERSION = "4.13";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.13", date: "2026-10-09 21:44", changes: [
+        "Новое утреннее окно «Вчера»: при первом открытии нового дня Дашборд показывает метрики, которые не были выполнены вчера, — сверху те, чью серию вчерашний пробел оборвёт. У каждой можно «Пропустить день» (день не учитывается, серия не рвётся) или «Оставить» как есть. Окно появляется раз в день и выключается в «Глобальных настройках». Пропущенные дни учитываются во всех сериях, достижениях, истории и календаре. Пропустить можно только вчера и сегодня",
+    ]},
     { version: "4.12", date: "2026-10-09 21:43", changes: [
         "Тренировки: у упражнения, связанного с метрикой дня, рядом со строкой про метрику появилось кольцо «подходов сегодня из N» — N берётся из плана «Подходов в день» этой метрики (с учётом даты). Когда план выполнен, кольцо становится зелёным. Нет плана — кольца нет",
     ]},
@@ -1846,6 +1849,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.13", date: "2026-10-09 21:44", changes: [
+        "New morning “Yesterday” prompt: on the first open of a new day the Dashboard lists metrics you did not complete yesterday — those whose streak the gap would break come first. For each you can “Skip the day” (the day does not count and the streak stays alive) or “Keep as is”. The prompt appears once a day and can be turned off in Global settings. Skipped days are respected in all streaks, achievements, History and Calendar. Only yesterday and today can be skipped",
+    ]},
     { version: "4.12", date: "2026-10-09 21:43", changes: [
         "Workouts: an exercise linked to a daily metric now shows a ring of sets today out of N next to the metric line - N comes from that metric's Sets per day plan (by date). The ring turns green when the plan is done. No plan - no ring",
     ]},
