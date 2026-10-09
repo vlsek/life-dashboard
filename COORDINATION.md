@@ -58,7 +58,7 @@
 <!-- Каждый агент правит ТОЛЬКО свой блок. Блоки разделены пустой строкой намеренно (меньше конфликтов). -->
 
 ### Агент 1
-— свободен —
+BACKLOG 48.4 «Магазин: убрать «было N монет» у архивных вещей» (просьба владельца 2026-10-08, прямое «выбирай любую сам»). БЕЗ SQL. ТРОГАЮ ТОЛЬКО `web-shop/src`: `components/ArchivedRow.vue`, `lib/i18n.ts` (ключ `shop_archive_old_price`), тесты (`sparksShop.test.ts` и др., где проверяется строка); пересборка `shop/`, `config.js`, ROADMAP, BACKLOG. НЕ трогаю другие пилоты и SQL. С: 2026-10-09 10:35.
 
 ### Агент 2
 BACKLOG раздел 29 «Аватарка при регистрации: загрузить своё или выбрать из ~20 нарисованных животных». Срез 1: библиотека 20 SVG-животных (единый стиль: тёмные чернила + пастельный фон, белые блики; хранится как data-URI в `profiles.avatar_url`, без Storage и без SQL) и выбор в ОНБОРДИНГЕ. Срез 2 (отдельным релизом): окно «Выбрать аватарку» (животные + загрузка своего) в `ProfileSection` Дашборда вместо прямого открытия файла. ТРОГАЮ: `web-onboarding/src` (`lib/animalAvatars.ts`, `components/AvatarPicker.vue`, `App.vue`, `lib/useOnboarding.ts`, `lib/i18n.ts`, тесты), `scripts/gen_animal_avatars.py` (генератор), пересборка `onboarding/`; срез 2 — `web-dashboard/src/components/AvatarModal.vue` и одна строка в `ProfileSection.vue` (НЕ трогаю `style.css`, `SetsCard`, файлы агентов 1/3/4/6/7). БЕЗ SQL. С: 2026-10-06 13:10.
