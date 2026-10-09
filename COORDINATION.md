@@ -67,7 +67,7 @@
 <!-- Каждый агент правит ТОЛЬКО свой блок. Блоки разделены пустой строкой намеренно (меньше конфликтов). -->
 
 ### Агент 1
-— свободен —
+BACKLOG «Аватарка в левой шторке должна быть на всех страницах» (разбор агента 7, гипотеза 1: блок профиля рисуется только после `ready`, а `ready` ставится после `await Promise.all(initProgress, initWater, syncFavorites…)` — исключение любого из них оставляет `ready=false`, и весь блок, включая аватар, не появляется). БЕЗ SQL. ТРОГАЮ ТОЛЬКО `web-header/src/App.vue` (`onMounted`: `allSettled`; шаблон: блок профиля в шторке больше не ждёт `ready`) + НОВЫЙ тест рядом (`sidebarReady.test.ts`), пересборка `header-widgets/`, `config.js`, ROADMAP, BACKLOG. НЕ трогаю остальные файлы web-header. С: 2026-10-09 21:40.
 
 ### Агент 2
 BACKLOG раздел 29 «Аватарка при регистрации: загрузить своё или выбрать из ~20 нарисованных животных». Срез 1: библиотека 20 SVG-животных (единый стиль: тёмные чернила + пастельный фон, белые блики; хранится как data-URI в `profiles.avatar_url`, без Storage и без SQL) и выбор в ОНБОРДИНГЕ. Срез 2 (отдельным релизом): окно «Выбрать аватарку» (животные + загрузка своего) в `ProfileSection` Дашборда вместо прямого открытия файла. ТРОГАЮ: `web-onboarding/src` (`lib/animalAvatars.ts`, `components/AvatarPicker.vue`, `App.vue`, `lib/useOnboarding.ts`, `lib/i18n.ts`, тесты), `scripts/gen_animal_avatars.py` (генератор), пересборка `onboarding/`; срез 2 — `web-dashboard/src/components/AvatarModal.vue` и одна строка в `ProfileSection.vue` (НЕ трогаю `style.css`, `SetsCard`, файлы агентов 1/3/4/6/7). БЕЗ SQL. С: 2026-10-06 13:10.
