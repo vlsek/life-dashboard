@@ -12,6 +12,7 @@ import CollapseChevron from './CollapseChevron.vue'
 import SavedTick from './SavedTick.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import { t } from '../lib/i18n'
+import { parseQuickReps } from '../lib/linkedSets'
 import { newSet, parseReps, parseTime, parseVariation, removeSet, setsSummary, updateSet, variationLabels } from '../lib/setsBlock'
 import type { SetRow } from '../lib/setsBlock'
 import type { Metric } from '../lib/types'
@@ -24,6 +25,7 @@ const emit = defineEmits<{
   change: [sets: SetRow[]]
   remember: [text: string]
   forget: [label: string]
+  quickAdd: [reps: number]
 }>()
 
 // если за день уже что-то есть — сразу развёрнуто, иначе свёрнуто
@@ -32,6 +34,16 @@ const linked = computed(() => !!props.metric.source_exercise_id)
 const open = ref(props.sets.length > 0)
 const summary = computed(() => setsSummary(props.sets))
 const labels = computed(() => variationLabels(props.metric))
+
+// Быстрый ввод для связанной метрики (BACKLOG 44.5а «насквозь»): подход уходит в «Тренировки», метрика пересчитывается оттуда
+const quickReps = ref('')
+const quickValid = computed(() => parseQuickReps(quickReps.value) !== null)
+function quickAdd() {
+  const n = parseQuickReps(quickReps.value)
+  if (n === null) return
+  emit('quickAdd', n)
+  quickReps.value = ''
+}
 
 function add() {
   open.value = true
@@ -74,6 +86,20 @@ function onVariation(i: number, text: string) {
             </tr>
           </tbody>
         </table>
+      </div>
+      <div class="mt-2 flex items-center gap-2" data-test="sets-quick">
+        <input
+          v-model="quickReps"
+          type="number"
+          step="any"
+          min="0"
+          inputmode="decimal"
+          :placeholder="t('dash_linked_quick_placeholder')"
+          style="width: 90px"
+          data-test="sets-quick-reps"
+          @keydown.enter.prevent="quickAdd"
+        />
+        <button type="button" :disabled="!quickValid" data-test="sets-quick-add" @click="quickAdd">{{ t('dash_linked_quick_add') }}</button>
       </div>
       <p class="dim mt-1 text-sm" data-test="sets-linked-hint">
         {{ t('dash_metric_linked_hint') }}

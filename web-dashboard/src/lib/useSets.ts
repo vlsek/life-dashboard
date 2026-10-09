@@ -4,6 +4,7 @@ import { t } from './i18n'
 import { notifyDataChanged } from './events'
 import { emitPointsFloat, pointsDelta } from './pointsFloat'
 import { forgetVariationOptions, normalizeSets, rememberVariationOptions } from './setsBlock'
+import { appendEntrySet, mirrorSets, newEntrySet } from './linkedSets'
 import type { SetRow } from './setsBlock'
 import type { Metric, MetricValue } from './types'
 
@@ -81,6 +82,48 @@ export function useSets() {
     }
   }
 
+  // Быстрый ввод подхода для метрики, связанной с упражнением (BACKLOG 44.5а «насквозь»): сначала запись «Тренировок» за сегодня (источник правды),
+  // потом пересчёт значения метрики из всех записей упражнения за день. Ошибка на любом шаге — понятный текст, ничего не «досчитываем» втихую.
+  async function addLinkedSet(m: Metric, reps: number): Promise<boolean> {
+    const exerciseId = m.source_exercise_id
+    if (!exerciseId || !userId || !date) return false
+    const before = setsByMetric.value[m.id]
+    const { data: today, error: rErr } = await sb
+      .from('workout_entries')
+      .select('id, sets')
+      .eq('user_id', userId)
+      .eq('exercise_id', exerciseId)
+      .eq('date', date)
+      .order('created_at', { ascending: true })
+    if (rErr) {
+      error.value = t('dash_metric_save_error') + m.name + '»: ' + friendlyError(rErr)
+      return false
+    }
+    const set = newEntrySet(reps)
+    const rows = (today || []) as { id: string; sets: unknown }[]
+    const target = rows[rows.length - 1] // дописываем в последнюю запись дня; нет записи — создаём
+    const w = target
+      ? await sb.from('workout_entries').update({ sets: appendEntrySet(target.sets, set) }).eq('id', target.id)
+      : await sb.from('workout_entries').insert({ user_id: userId, exercise_id: exerciseId, date, notes: null, sets: [set] })
+    if (w.error) {
+      error.value = t('dash_metric_save_error') + m.name + '»: ' + friendlyError(w.error)
+      return false
+    }
+    const all = rows.map((r) => (r === target ? { sets: appendEntrySet(r.sets, set) } : { sets: r.sets })).concat(target ? [] : [{ sets: [set] }])
+    const value = mirrorSets(all)
+    setsByMetric.value = { ...setsByMetric.value, [m.id]: value }
+    const { error: err } = await sb.from('daily_values').upsert({ user_id: userId, date, metric_id: m.id, value }, { onConflict: 'user_id,date,metric_id' })
+    if (err) {
+      error.value = t('dash_metric_save_error') + m.name + '»: ' + friendlyError(err)
+      return false
+    }
+    error.value = null
+    flash(m.id)
+    notifyDataChanged({ source: 'sets', metricId: m.id, date, value: value.reduce((sum, s) => sum + (s?.reps || 0), 0) })
+    emitPointsFloat(pointsDelta(m, before as unknown as MetricValue, value as unknown as MetricValue, date || undefined))
+    return true
+  }
+
   function patchMetric(id: string, options: Metric['options']) {
     metrics.value = metrics.value.map((m) => (m.id === id ? { ...m, options } : m))
   }
@@ -103,5 +146,5 @@ export function useSets() {
     patchMetric(m.id, options)
   }
 
-  return { metrics, setsByMetric, error, loaded, flashed, load, saveSets, rememberVariation, forgetVariation }
+  return { metrics, setsByMetric, error, loaded, flashed, load, saveSets, addLinkedSet, rememberVariation, forgetVariation }
 }

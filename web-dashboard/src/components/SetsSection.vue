@@ -14,7 +14,7 @@ import type { RecordInfo } from '../lib/records'
 // добавит блок 6 (дневные метрики), передав сюда date.
 const props = withDefaults(defineProps<{ userId: string | null; date?: string; metricStreaks?: Record<string, MetricStreakInfo>; records?: Record<string, RecordInfo>; reloadKey?: number }>(), { date: () => todayStr() })
 
-const { metrics, setsByMetric, error, loaded, flashed, load, saveSets, rememberVariation, forgetVariation } = useSets()
+const { metrics, setsByMetric, error, loaded, flashed, load, saveSets, addLinkedSet, rememberVariation, forgetVariation } = useSets()
 
 // reloadKey растёт, когда список метрик изменили (шестерёнка «Ежедневных метрик», BACKLOG 40): новый тип «подходы» должен появиться без обновления страницы
 watch(
@@ -55,6 +55,7 @@ watch(
       :record="props.records?.[m.id]"
       :saved="!!flashed[m.id]"
       @change="saveSets(m, $event)"
+      @quick-add="addLinkedSet(m, $event)"
       @remember="rememberVariation(m, $event)"
       @forget="forgetVariation(m, $event)"
     />
