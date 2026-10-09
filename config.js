@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.13";
+const SITE_VERSION = "4.14";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.14", date: "2026-10-09 18:44", changes: [
+        "Сообщество → «Сравнение»: категория выбрана сразу и запоминается (не пустой экран); период и метрика («по сумме / по баллам / по серии») — две понятные строки с подсказкой; в списке одно главное число вместо четырёх колонок (остальное мелким под именем), сверху «Вы на N месте из M». Без миграций."
+    ]},
     { version: "4.13", date: "2026-10-09 21:44", changes: [
         "Новое утреннее окно «Вчера»: при первом открытии нового дня Дашборд показывает метрики, которые не были выполнены вчера, — сверху те, чью серию вчерашний пробел оборвёт. У каждой можно «Пропустить день» (день не учитывается, серия не рвётся) или «Оставить» как есть. Окно появляется раз в день и выключается в «Глобальных настройках». Пропущенные дни учитываются во всех сериях, достижениях, истории и календаре. Пропустить можно только вчера и сегодня",
     ]},
@@ -1849,6 +1852,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.14", date: "2026-10-09 18:44", changes: [
+        "Community → Compare: a category is picked right away and remembered (no more empty screen); period and metric (by total / points / streak) are two clear rows with a hint; the list shows one main number instead of four columns (the rest small under the name) with \"You are #N of M\" on top. No migrations."
+    ]},
     { version: "4.13", date: "2026-10-09 21:44", changes: [
         "New morning “Yesterday” prompt: on the first open of a new day the Dashboard lists metrics you did not complete yesterday — those whose streak the gap would break come first. For each you can “Skip the day” (the day does not count and the streak stays alive) or “Keep as is”. The prompt appears once a day and can be turned off in Global settings. Skipped days are respected in all streaks, achievements, History and Calendar. Only yesterday and today can be skipped",
     ]},

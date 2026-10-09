@@ -1,6 +1,13 @@
 {
-  "version": "4.13",
+  "version": "4.14",
   "en": [
+    {
+      "version": "4.14",
+      "date": "2026-10-09 18:44",
+      "changes": [
+        "Community → Compare: a category is picked right away and remembered (no more empty screen); period and metric (by total / points / streak) are two clear rows with a hint; the list shows one main number instead of four columns (the rest small under the name) with \"You are #N of M\" on top. No migrations."
+      ]
+    },
     {
       "version": "4.13",
       "date": "2026-10-09 21:44",
@@ -2958,6 +2965,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.14",
+      "date": "2026-10-09 18:44",
+      "changes": [
+        "Сообщество → «Сравнение»: категория выбрана сразу и запоминается (не пустой экран); период и метрика («по сумме / по баллам / по серии») — две понятные строки с подсказкой; в списке одно главное число вместо четырёх колонок (остальное мелким под именем), сверху «Вы на N месте из M». Без миграций."
+      ]
+    },
     {
       "version": "4.13",
       "date": "2026-10-09 21:44",
