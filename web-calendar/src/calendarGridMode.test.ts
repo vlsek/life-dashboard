@@ -72,15 +72,44 @@ describe('сетка в режиме «Календарь»', () => {
     w.unmount()
   })
 
-  it('у дней с данными заливка и процент из «Истории»; колонка недели и статистика месяца на месте', async () => {
+  it('в «Календаре» прогресса дня нет: ни заливки, ни процентов, ни колонки недели, ни статистики месяца (48.1); сетка из 7 колонок', async () => {
     h.hasData = true
-    const w = mountCal()
+    const w = mountCal('calendar')
+    await flushPromises()
+    const c10 = w.find(`[data-date="${day(10)}"]`)
+    expect(c10.text()).not.toContain('%')
+    expect(c10.text()).toBe('10') // только число дня
+    expect(c10.attributes('style')).not.toContain('--hist-ok')
+    expect(c10.classes().join(' ')).not.toContain('e0a93b') // золотой обводки «больше 100%» нет
+    expect(w.find('[data-test="hist-weekcol"]').exists()).toBe(false)
+    expect(w.find('[data-test="hist-stats"]').exists()).toBe(false)
+    expect(w.text()).not.toContain('Нед.')
+    expect(w.text()).not.toContain('70%')
+    expect(w.find('[data-test="hist-grid"]').html()).toContain('repeat(7, minmax(0, 1fr));')
+    w.unmount()
+  })
+
+  it('в «Истории» прогресс на месте: заливка и процент дня, колонка недели с процентом, статистика месяца, сетка из 8 колонок', async () => {
+    h.hasData = true
+    const w = mountCal('history')
     await flushPromises()
     const c10 = w.find(`[data-date="${day(10)}"]`)
     expect(c10.text()).toContain('120%')
     expect(c10.attributes('style')).toContain('linear-gradient')
-    expect(w.text()).toContain('Нед.') // заголовок колонки недели
-    expect(w.text()).toContain('70%') // процент недели
+    expect(w.findAll('[data-test="hist-weekcol"]').length).toBeGreaterThan(3)
+    expect(w.find('[data-test="hist-stats"]').exists()).toBe(true)
+    expect(w.text()).toContain('Нед.')
+    expect(w.text()).toContain('70%')
+    expect(w.find('[data-test="hist-grid"]').html()).toContain('minmax(0, 1.05fr)')
+    w.unmount()
+  })
+
+  it('бейджи планов и дедлайнов в «Календаре» остаются и при наличии данных истории', async () => {
+    h.hasData = true
+    const w = mountCal('calendar')
+    await flushPromises()
+    expect(w.find(`[data-date="${day(5)}"] [data-test="cal-badge"]`).text()).toBe('1/2')
+    expect(w.find(`[data-date="${day(7)}"] [data-test="cal-deadline"]`).text()).toBe('2')
     w.unmount()
   })
 

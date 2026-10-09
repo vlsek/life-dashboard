@@ -1,6 +1,13 @@
 {
-  "version": "4.08",
+  "version": "4.09",
   "en": [
+    {
+      "version": "4.09",
+      "date": "2026-10-09 10:20",
+      "changes": [
+        "Calendar: the Calendar tab now shows only plans and goal deadlines - the day progress (fill, percentage, week column, month statistics) is visible only on the History tab. The Calendar tab grid has seven weekday columns as before, with plan and goal badges on the days. No migration needed."
+      ]
+    },
     {
       "version": "4.08",
       "date": "2026-10-09 22:15",
@@ -2923,6 +2930,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.09",
+      "date": "2026-10-09 10:20",
+      "changes": [
+        "Календарь: во вкладке «Календарь» остались только планы и сроки целей — прогресс дня (заливка, процент, колонка недели, статистика месяца) теперь виден только во вкладке «История». Сетка вкладки «Календарь» — семь колонок по дням недели, как раньше, с бейджами планов и целей на днях. Миграция не нужна."
+      ]
+    },
     {
       "version": "4.08",
       "date": "2026-10-09 22:15",

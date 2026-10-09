@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.08";
+const SITE_VERSION = "4.09";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.09", date: "2026-10-09 10:20", changes: [
+        "Календарь: во вкладке «Календарь» остались только планы и сроки целей — прогресс дня (заливка, процент, колонка недели, статистика месяца) теперь виден только во вкладке «История». Сетка вкладки «Календарь» — семь колонок по дням недели, как раньше, с бейджами планов и целей на днях. Миграция не нужна."
+    ]},
     { version: "4.08", date: "2026-10-09 22:15", changes: [
         "Левое меню: аватарка и имя теперь показываются на каждой странице сразу, не дожидаясь воды, прогресса и избранного. Раньше, если один из этих запросов сбоил или долго грузился, блок профиля в шторке мог не появиться вовсе, а вместе с ним пропадали и значки шапки. Кольца дня и недели в меню по-прежнему появляются, когда придут данные",
     ]},
@@ -1834,6 +1837,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.09", date: "2026-10-09 10:20", changes: [
+        "Calendar: the Calendar tab now shows only plans and goal deadlines - the day progress (fill, percentage, week column, month statistics) is visible only on the History tab. The Calendar tab grid has seven weekday columns as before, with plan and goal badges on the days. No migration needed."
+    ]},
     { version: "4.08", date: "2026-10-09 22:15", changes: [
         "Side menu: your avatar and name now show on every page right away, without waiting for water, progress and favorites. Before, if one of those requests failed or loaded slowly, the profile block in the menu could be missing entirely, and the header icons disappeared with it. The day and week rings in the menu still appear once their data arrives",
     ]},

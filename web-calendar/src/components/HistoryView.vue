@@ -13,11 +13,15 @@ import type { GoalDeadline, PlannedItem } from '../lib/types'
 
 // Две роли одной сетки (BACKLOG 44.8, просьба владельца 2026-10-07: «календарь в Истории реализован лучше»):
 //  · mode='history' (по умолчанию) — как раньше: клик по дню открывает итоги дня, заголовок и список недель, будущие месяцы недоступны;
-//  · mode='calendar' — вкладка «Календарь»: та же сетка (заливка по прогрессу, %, колонка недели, статистика месяца), плюс бейджи планов и
+//  · mode='calendar' — вкладка «Календарь»: та же сетка БЕЗ прогресса дня (48.1: только планы), с бейджами планов и
 //    дедлайнов целей на днях; клик по дню отдаёт дату наверх (там открывается форма планов), будущие месяцы доступны, месяц сообщается наверх.
 const props = defineProps<{ mode?: 'history' | 'calendar'; planned?: Record<string, PlannedItem[]>; deadlines?: Record<string, GoalDeadline[]> }>()
 const emit = defineEmits<{ selectDay: [dateStr: string]; monthChange: [year: number, month: number] }>()
 const isCalendar = computed(() => props.mode === 'calendar')
+// BACKLOG 48.1 (владелец 2026-10-08: «в обычном календаре не надо показывать прогресс дня, только во вкладке календаря история; в обычном только планы»):
+// прогресс дня (заливка, %, золотая обводка >100%, колонка недели, статистика месяца) — ТОЛЬКО во вкладке «История»; в «Календаре» остаются планы и дедлайны.
+const showProgress = computed(() => !isCalendar.value)
+const gridCols = computed(() => (isCalendar.value ? 'repeat(7, minmax(0, 1fr))' : 'repeat(7, minmax(0, 1fr)) minmax(0, 1.05fr)'))
 
 const { auth, ctx, error } = useAuthAndData()
 
@@ -224,7 +228,7 @@ function onTouchEnd(e: TouchEvent) {
           </button>
         </div>
 
-        <div class="mb-3 grid grid-cols-3 gap-2">
+        <div v-if="!isCalendar" class="mb-3 grid grid-cols-3 gap-2" data-test="hist-stats">
           <div
             v-for="s in [
               [monthGrid.avg == null ? '—' : monthGrid.avg + '%', t('hist_stat_avg')],
@@ -241,12 +245,12 @@ function onTouchEnd(e: TouchEvent) {
         </div>
 
         <div class="no-edge-swipe mb-2 flex flex-col gap-1" data-no-swipe data-test="hist-grid" @touchstart="onTouchStart" @touchend="onTouchEnd">
-          <div class="grid gap-1" style="grid-template-columns: repeat(7, minmax(0, 1fr)) minmax(0, 1.05fr)">
+          <div class="grid gap-1" :style="{ gridTemplateColumns: gridCols }">
             <div v-for="n in weekdayNames" :key="n" class="py-0.5 text-center text-[0.72em]" style="color: var(--text-dim)">{{ n }}</div>
-            <div class="py-0.5 text-center text-[0.72em]" style="color: var(--text-dim)">{{ t('hist_week_col') }}</div>
+            <div v-if="!isCalendar" class="py-0.5 text-center text-[0.72em]" style="color: var(--text-dim)">{{ t('hist_week_col') }}</div>
           </div>
 
-          <div v-for="(row, ri) in monthGrid.rows" :key="ri" class="grid gap-1" style="grid-template-columns: repeat(7, minmax(0, 1fr)) minmax(0, 1.05fr)">
+          <div v-for="(row, ri) in monthGrid.rows" :key="ri" class="grid gap-1" :style="{ gridTemplateColumns: gridCols }">
             <button
               v-for="cell in row"
               :key="cell.key"
@@ -255,18 +259,18 @@ function onTouchEnd(e: TouchEvent) {
               :class="[
                 cell.dateStr ? 'cursor-pointer' : 'cursor-default border-transparent',
                 cell.isToday ? 'outline outline-2 -outline-offset-2' : '',
-                cell.isFuture || cell.hasNoData ? 'opacity-50' : '',
-                cell.over ? 'shadow-[inset_0_0_0_2px_#e0a93b]' : '',
+                !isCalendar && (cell.isFuture || cell.hasNoData) ? 'opacity-50' : '',
+                showProgress && cell.over ? 'shadow-[inset_0_0_0_2px_#e0a93b]' : '',
               ]"
               :style="{
                 aspectRatio: '1 / 1.1',
                 borderColor: cell.dateStr ? 'var(--border)' : 'transparent',
-                background: cell.hasStats
+                background: showProgress && cell.hasStats
                   ? `linear-gradient(to top, var(--hist-ok) ${cell.fill}%, var(--bg-card) ${cell.fill}%)`
                   : 'var(--bg-card)',
                 outlineColor: cell.isToday ? 'var(--accent)' : undefined,
-                color: cell.hasStats && cell.fill >= 55 ? '#fff' : 'var(--text)',
-                textShadow: cell.hasStats && cell.fill >= 55 ? '0 1px 2px rgba(0,0,0,0.4)' : undefined,
+                color: showProgress && cell.hasStats && cell.fill >= 55 ? '#fff' : 'var(--text)',
+                textShadow: showProgress && cell.hasStats && cell.fill >= 55 ? '0 1px 2px rgba(0,0,0,0.4)' : undefined,
               }"
               :disabled="!cell.dateStr"
               :data-date="cell.dateStr ?? undefined"
@@ -277,11 +281,13 @@ function onTouchEnd(e: TouchEvent) {
                 <span v-if="deadlineBadge(cell.dateStr)" class="cal-deadline" :class="{ 'cal-deadline-done': deadlineBadge(cell.dateStr)!.allDone }" :title="t('cal_deadline_title')" data-test="cal-deadline"><Icon name="goals" />{{ deadlineBadge(cell.dateStr)!.count }}</span>
                 <span v-if="planBadge(cell.dateStr)" class="cal-badge" data-test="cal-badge"><template v-if="planBadge(cell.dateStr)!.all"><Icon name="done" /></template><template v-else><Icon name="pin" />{{ planBadge(cell.dateStr)!.done }}/{{ planBadge(cell.dateStr)!.total }}</template></span>
               </span>
-              <span v-if="cell.hasStats" class="self-end text-[0.68em] font-semibold">{{ cell.pct }}%</span>
+              <span v-if="showProgress && cell.hasStats" class="self-end text-[0.68em] font-semibold">{{ cell.pct }}%</span>
             </button>
 
             <div
+              v-if="!isCalendar"
               class="flex items-center justify-center rounded-lg border"
+              data-test="hist-weekcol"
               :style="{
                 borderColor: 'var(--border)',
                 background:
