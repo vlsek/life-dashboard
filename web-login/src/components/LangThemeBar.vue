@@ -1,23 +1,22 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { getLang, setLang, t, type DictKey } from '../lib/i18n'
-import { getTheme, setTheme, THEME_KEYS, type ThemeKey } from '../lib/theme'
+import { getTheme, setTheme, LOGIN_THEMES, type ThemeKey } from '../lib/theme'
 
-// Порт renderLangSwitcher()/renderThemeSwitcher() из config.js для страниц без сайдбара
-// (вход, онбординг): кнопки RU/EN + выбор темы в одну строку над формой.
+// Вход (BACKLOG 49.8): вместо выпадашки из 23 тем — язык и два переключателя «Светлая / Тёмная».
+// Весь остальной выбор тем — в «Кастомизации» после входа. Если у человека уже выбрана другая тема, ни одна кнопка не подсвечена.
 const lang = getLang()
 const themeVal = ref<ThemeKey>(getTheme())
 
-function onThemeChange(e: Event) {
-  const v = (e.target as HTMLSelectElement).value as ThemeKey
-  themeVal.value = v
-  setTheme(v)
+function pickTheme(k: ThemeKey) {
+  themeVal.value = k
+  setTheme(k)
 }
 </script>
 
 <template>
-  <div class="mb-3.5 flex items-center justify-center gap-2">
-    <div class="flex gap-1.5">
+  <div class="mb-3.5 flex items-center justify-center gap-2" data-testid="lang-theme-bar">
+    <div class="flex gap-1.5" data-testid="lang-switch">
       <button
         v-for="l in (['en', 'ru'] as const)"
         :key="l"
@@ -33,13 +32,23 @@ function onThemeChange(e: Event) {
         {{ l.toUpperCase() }}
       </button>
     </div>
-    <select
-      class="rounded-lg border px-2 py-1 text-sm"
-      style="background: var(--bg); color: var(--text); border-color: var(--border)"
-      :value="themeVal"
-      @change="onThemeChange"
-    >
-      <option v-for="(labelKey, key) in THEME_KEYS" :key="key" :value="key">{{ t(labelKey as DictKey) }}</option>
-    </select>
+    <div class="flex gap-1.5" role="group" :aria-label="t('theme_label' as DictKey)" data-testid="theme-switch">
+      <button
+        v-for="k in LOGIN_THEMES"
+        :key="k"
+        type="button"
+        class="cursor-pointer rounded-lg border px-3 py-1 text-sm"
+        :aria-pressed="themeVal === k"
+        :data-theme-btn="k"
+        :style="{
+          borderColor: 'var(--border)',
+          background: themeVal === k ? 'var(--accent)' : 'transparent',
+          color: themeVal === k ? 'var(--accent-text)' : 'var(--text)',
+        }"
+        @click="pickTheme(k)"
+      >
+        {{ t(('theme_' + k) as DictKey) }}
+      </button>
+    </div>
   </div>
 </template>

@@ -28,6 +28,9 @@ export const THEME_KEYS = {
 
 export type ThemeKey = keyof typeof THEME_KEYS
 
+// На странице входа предлагаем только светлую и тёмную (BACKLOG 49.8); остальные темы — в «Кастомизации» после входа
+export const LOGIN_THEMES = ['light', 'dark'] as const satisfies readonly ThemeKey[]
+
 const THEME_BG_COLORS: Record<ThemeKey, string> = {
   dark: '#121212',
   monet: '#0d0703',
