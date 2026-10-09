@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.00";
+const SITE_VERSION = "4.01";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.01", date: "2026-10-09 12:00", changes: [
+        "Дашборд: подсчёт под графиком метрики-подходов (цвет особенности, всего за период, сегодня, рекорд) теперь столбиком — каждая особенность на своей строке, а не всё подряд. Без миграций."
+    ]},
     { version: "4.00", date: "2026-10-09 10:40", changes: [
         "Сообщество: в окне профиля друга появилась кнопка «Предложить цель или задачу». Можно предложить цель (этапы, сложность, срок) или задачу на нужный день; друг увидит плашку с «Принять» и «Отклонить», а ты узнаешь, когда он ответит и когда выполнит. Баллы за цель зависят от сложности — подарить баллы нельзя; друг сам ограничивает, сколько предложений в день принимает. Заработает после применения обновления базы",
     ]},
@@ -1810,6 +1813,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.01", date: "2026-10-09 12:00", changes: [
+        "Dashboard: the totals under a sets-metric chart (variation colour, total for the period, today, record) are now a column — each variation on its own line instead of one run-on row. No migrations."
+    ]},
     { version: "4.00", date: "2026-10-09 10:40", changes: [
         "Community: a friend's profile window now has an Offer a goal or task button. You can offer a goal (stages, difficulty, deadline) or a task for a chosen day; your friend gets a card with Accept and Decline, and you learn when they answer and when they finish it. Goal points depend on difficulty - you cannot give points; your friend limits how many offers per day they accept. Works after the database update is applied",
     ]},

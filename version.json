@@ -1,6 +1,13 @@
 {
-  "version": "4.00",
+  "version": "4.01",
   "en": [
+    {
+      "version": "4.01",
+      "date": "2026-10-09 12:00",
+      "changes": [
+        "Dashboard: the totals under a sets-metric chart (variation colour, total for the period, today, record) are now a column — each variation on its own line instead of one run-on row. No migrations."
+      ]
+    },
     {
       "version": "4.00",
       "date": "2026-10-09 10:40",
@@ -2867,6 +2874,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.01",
+      "date": "2026-10-09 12:00",
+      "changes": [
+        "Дашборд: подсчёт под графиком метрики-подходов (цвет особенности, всего за период, сегодня, рекорд) теперь столбиком — каждая особенность на своей строке, а не всё подряд. Без миграций."
+      ]
+    },
     {
       "version": "4.00",
       "date": "2026-10-09 10:40",
