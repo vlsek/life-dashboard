@@ -174,6 +174,14 @@ async function changeLayout(next: LayoutItem[]) {
       <h4 style="margin-top: 16px">{{ t('hdr_settings_account') }}</h4>
       <a href="/account/" class="gh-btn" style="display: inline-block; text-decoration: none" data-test="account-link">{{ t('hdr_settings_account_link') }}</a>
 
+      <!-- BACKLOG 49.7: «О проекте / О создателе» на всех страницах (раньше окно было только в меню трёх пилотов) -->
+      <h4 style="margin-top: 16px"><EmojiText :text="'👤 ' + t('hdr_settings_about')" /></h4>
+      <p style="margin: 0 0 8px; font-size: 13px; line-height: 1.5" data-test="about-text">{{ t('hdr_about_creator_text') }}</p>
+      <a href="https://portfolio.orneryhero.workers.dev/" target="_blank" rel="noopener" class="gh-btn" style="display: inline-block; text-decoration: none" data-test="about-resume">{{ t('hdr_about_resume') }}</a>
+      <p class="gh-dim" style="margin: 8px 0 0; font-size: 12px" data-test="about-feedback">
+        {{ t('hdr_about_feedback') }} Telegram: <a href="https://t.me/vsekorolev" target="_blank" rel="noopener" style="color: var(--accent, #6c8cff)">@vsekorolev</a>
+      </p>
+
       <div class="gh-actions"><button type="button" class="gh-btn gh-btn-primary" @click="emit('close')">{{ t('close') }}</button></div>
     </div>
   </div>

@@ -368,6 +368,20 @@ describe('глобальные настройки (BACKLOG 6.2)', () => {
     w.unmount()
   })
 
+  it('в общих настройках есть «О проекте»: текст, «Резюме» (портфолио, новая вкладка) и связь в Telegram — на любой странице с шапкой (BACKLOG 49.7)', async () => {
+    setup({ metrics: [habit] })
+    const w = mount(App)
+    await flushPromises()
+    await openSettings(w)
+    expect(w.find('[data-test="about-text"]').text()).toContain('Life Dashboard')
+    const resume = w.find('[data-test="about-resume"]')
+    expect(resume.attributes('href')).toBe('https://portfolio.orneryhero.workers.dev/')
+    expect(resume.attributes('target')).toBe('_blank')
+    expect(resume.attributes('rel')).toContain('noopener')
+    expect(w.find('[data-test="about-feedback"] a').attributes('href')).toBe('https://t.me/vsekorolev')
+    w.unmount()
+  })
+
   it('кнопки «Настроить…» (прогресс) и «Дневная норма…» (вода) открывают соответствующие окна, ссылка на Аккаунт ведёт на /account/', async () => {
     setup({ metrics: [water, habit] })
     const w = mount(App)
