@@ -4,6 +4,7 @@ import Icon from './Icon.vue'
 import { badgeDef } from '../lib/badges'
 import { formatPoints } from '../lib/leaderboardView'
 import { onMounted, ref, computed } from 'vue'
+import OfferGoalForm from './OfferGoalForm.vue'
 import { t } from '../lib/i18n'
 import { daysSince, fetchFriendSummary, fmtSummaryDate, type FriendSummary } from '../lib/friendSummary'
 
@@ -27,6 +28,13 @@ onMounted(async () => {
     summaryState.value = 'ok'
   } else summaryState.value = res.status
 })
+// Предложить другу цель или задачу (миграция 063): только друзьям; после отправки форма закрывается и показывается подтверждение.
+const offerOpen = ref(false)
+const offerSent = ref(false)
+function onOfferSent() {
+  offerOpen.value = false
+  offerSent.value = true
+}
 const dates = computed(() => {
   const s = summary.value
   if (!s) return []
@@ -81,6 +89,12 @@ const tiles = computed(() => {
             <div class="dim text-xs">{{ tile.label }}</div>
           </div>
         </div>
+      </template>
+
+      <template v-if="isFriend && userId">
+        <p v-if="offerSent" class="m-0 mt-3 text-sm" data-testid="offer-sent">{{ t('comm_offer_sent') }}</p>
+        <button v-if="!offerOpen" type="button" class="secondary mt-3" data-testid="offer-open" @click="((offerOpen = true), (offerSent = false))">{{ t('comm_offer_btn') }}</button>
+        <OfferGoalForm v-else :friend-id="userId" :friend-name="name" @sent="onOfferSent" @cancel="offerOpen = false" />
       </template>
 
       <h4 class="mb-1 mt-4 text-sm font-medium">{{ t('comm_badges_title') }}<span v-if="keys.length" class="dim font-normal"> · {{ t('comm_profile_unlocked') }} {{ keys.length }}</span></h4>
