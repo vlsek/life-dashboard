@@ -1,6 +1,13 @@
 {
-  "version": "3.98",
+  "version": "3.99",
   "en": [
+    {
+      "version": "3.99",
+      "date": "2026-10-09 11:35",
+      "changes": [
+        "The period picker for charts now looks the same everywhere. The new look (7D · 30D · 90D · 1Y · All, “Week” and “Month” with arrows to page through, the chosen dates shown, borders in your theme color) used to exist only on the Dashboard, while charts in “Workouts” and “Community” kept the old row of buttons. Now they all share it. Periods you saved earlier keep working. In the muscle statistics, the 7 / 30 / 90 days buttons also got a border in the theme color"
+      ]
+    },
     {
       "version": "3.98",
       "date": "2026-10-09 10:31",
@@ -2853,6 +2860,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.99",
+      "date": "2026-10-09 11:35",
+      "changes": [
+        "Выбор периода у графиков теперь везде одинаковый. Раньше новый вид (7Д · 30Д · 90Д · 1Г · Всё, «Неделя» и «Месяц» со стрелками листания, подпись выбранных дат, рамки в цвете вашей темы) был только на Дашборде, а у графиков в «Тренировках» и «Сообществе» оставался старый ряд кнопок. Теперь и там то же самое. Сохранённые раньше периоды продолжают работать. В статистике мышц кнопки 7 / 30 / 90 дней тоже получили рамку в цвете темы"
+      ]
+    },
     {
       "version": "3.98",
       "date": "2026-10-09 10:31",

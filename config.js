@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.98";
+const SITE_VERSION = "3.99";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.99", date: "2026-10-09 11:35", changes: [
+        "Выбор периода у графиков теперь везде одинаковый. Раньше новый вид (7Д · 30Д · 90Д · 1Г · Всё, «Неделя» и «Месяц» со стрелками листания, подпись выбранных дат, рамки в цвете вашей темы) был только на Дашборде, а у графиков в «Тренировках» и «Сообществе» оставался старый ряд кнопок. Теперь и там то же самое. Сохранённые раньше периоды продолжают работать. В статистике мышц кнопки 7 / 30 / 90 дней тоже получили рамку в цвете темы",
+    ]},
     { version: "3.98", date: "2026-10-09 10:31", changes: [
         "Цели: если друг предложил тебе цель или задачу на день, над списком появляется плашка с кнопками «Принять» и «Отклонить»; принятая цель сразу попадает в список (баллы — по сложности), задача — в план дня на нужную дату. Если ты сам предлагал, придёт отметка, что друг принял, отклонил или выполнил. Появится после применения обновления базы; формы «Предложить» у друга пока нет — она в следующем обновлении",
     ]},
@@ -1804,6 +1807,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.99", date: "2026-10-09 11:35", changes: [
+        "The period picker for charts now looks the same everywhere. The new look (7D · 30D · 90D · 1Y · All, “Week” and “Month” with arrows to page through, the chosen dates shown, borders in your theme color) used to exist only on the Dashboard, while charts in “Workouts” and “Community” kept the old row of buttons. Now they all share it. Periods you saved earlier keep working. In the muscle statistics, the 7 / 30 / 90 days buttons also got a border in the theme color",
+    ]},
     { version: "3.98", date: "2026-10-09 10:31", changes: [
         "Goals: when a friend offers you a goal or a daily task, a card with Accept and Decline buttons appears above the list; an accepted goal lands in the list right away (points by difficulty), a task goes into the day plan for its date. If you made the offer, you get a note when the friend accepts, declines or completes it. Shows up after the database update is applied; the Offer form on a friend is not there yet - it comes in the next update",
     ]},
