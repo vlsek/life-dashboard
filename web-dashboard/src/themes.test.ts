@@ -7,7 +7,8 @@ import { THEME_KEYS } from './lib/theme'
 // раскатка — scripts/apply_themes.py. Здесь проверяем результат: полный набор переменных, контраст (WCAG) и одинаковость во всех пилотах.
 const read = (p: string): string => readFileSync('../' + p, 'utf-8')
 const OLD = ['dark', 'monet', 'light', 'pink']
-const NEW = ['mint', 'sepia', 'solarlight', 'nord', 'mocha', 'amoled', 'contrast']
+// BACKLOG 45.4: к исходным одиннадцати добавлены ещё двенадцать тем (8 тёмных и 4 светлых), открытых всегда
+const NEW = ['mint', 'sepia', 'solarlight', 'nord', 'mocha', 'amoled', 'contrast', 'dracula', 'gruvbox', 'tokyonight', 'forest', 'ocean', 'sunset', 'twilight', 'neon', 'lavender', 'sky', 'peach', 'graphite']
 const KEYS = Object.keys(THEME_KEYS)
 const css = read('web-dashboard/src/style.css')
 
@@ -33,7 +34,7 @@ const isBlue = (hex: string): boolean => {
 const pilots: string[] = readdirSync('..').filter((d: string) => d.startsWith('web-') && existsSync(`../${d}/src/lib/theme.ts`))
 
 describe('набор тем', () => {
-  it('11 тем: четыре прежних первыми, потом Mint и классика', () => {
+  it('23 темы: четыре прежних первыми, потом Mint, классика и двенадцать новых', () => {
     expect(KEYS).toEqual([...OLD, ...NEW])
     expect(Object.values(THEME_KEYS)).toEqual(KEYS.map((k) => 'theme_' + k))
   })

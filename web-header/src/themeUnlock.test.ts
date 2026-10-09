@@ -118,9 +118,9 @@ describe('«Настройки» шапки: список тем', () => {
     return w
   }
 
-  it('пока ничего не заслужено: только пять открытых тем', async () => {
+  it('пока ничего не заслужено: только открытые темы (пять исходных и двенадцать новых), без тем-наград', async () => {
     const w = await open()
-    expect(options(w)).toEqual(['dark', 'monet', 'light', 'pink', 'contrast'])
+    expect(options(w)).toEqual(['dark', 'monet', 'light', 'pink', 'contrast', 'dracula', 'gruvbox', 'tokyonight', 'forest', 'ocean', 'sunset', 'twilight', 'neon', 'lavender', 'sky', 'peach', 'graphite'])
     w.unmount()
   })
 

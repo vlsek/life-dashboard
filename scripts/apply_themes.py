@@ -226,9 +226,28 @@ def i18n_ts(t, q="'", ind='    ', sep=','):
         lines = ''.join('\n%stheme_%s: %s%s%s%s' % (ind, k, q, P[k][idx], q, sep) for k in NEW)
         return t[:e] + lines + t[e:]
     if t.count('theme_mint:') >= 2:
-        return relabel(t, q)
+        return add_missing(relabel(t, q), q, ind, sep)
     t = add(t, "theme_pink: %s🌸 Pink%s" % (q, q), 1)
     t = add(t, "theme_pink: %s🌸 Розовая%s" % (q, q), 2)
+    return t
+
+
+def add_missing(t, q, ind, sep):
+    """Дописывает подписи тем, которых в файле ещё нет (темы, добавленные ПОСЛЕ первой раскатки — BACKLOG 45.4). Подпись вставляется сразу после
+    подписи предыдущей по порядку темы: в файле каждая подпись встречается дважды — первая запись EN, вторая RU."""
+    rx_of = lambda k: re.compile(r'(?<![A-Za-z0-9_])theme_%s: %s[^%s\n]*%s%s' % (k, q, q, q, re.escape(sep)))
+    for i, k in enumerate(KEYS):
+        if i == 0 or len(rx_of(k).findall(t)) >= 2:
+            continue
+        if rx_of(k).search(t):
+            continue  # одна из двух записей уже есть — необычный файл, не трогаем
+        prev = KEYS[i - 1]
+        found = list(rx_of(prev).finditer(t))
+        if len(found) != 2:
+            raise SystemExit('apply_themes: не нашёл по две подписи темы %s для вставки после неё темы %s' % (prev, k))
+        for idx, m in ((2, found[1]), (1, found[0])):  # с конца, чтобы смещения не сбивались
+            line = '\n%stheme_%s: %s%s%s%s' % (ind, k, q, P[k][idx], q, sep)
+            t = t[:m.end()] + line + t[m.end():]
     return t
 
 
@@ -376,6 +395,16 @@ write_preview()
 # ---------- общий сайт: только добавление ----------
 def root_theme_js(t):
     if 'mint:' in t:
+        # темы, добавленные ПОСЛЕ первой раскатки (BACKLOG 45.4): дописываем недостающие ключи после предыдущей по порядку темы
+        for i, k in enumerate(KEYS):
+            if i == 0 or re.search(r'^    %s: \"theme_%s\",$' % (k, k), t, re.M):
+                continue
+            prev = KEYS[i - 1]
+            m1 = re.search(r'^    %s: \"theme_%s\",\n' % (prev, prev), t, re.M)
+            m2 = re.search(r'^    %s: \"#[0-9a-fA-F]{6}\",\n' % prev, t, re.M)
+            assert m1 and m2, 'theme.js: нет опорной темы ' + prev
+            t = t[:m2.end()] + '    %s: \"%s\",\n' % (k, P[k][3]['bg']) + t[m2.end():]
+            t = t[:m1.end()] + '    %s: \"theme_%s\",\n' % (k, k) + t[m1.end():]
         return t
     t = t.replace('    pink: "theme_pink",\n', '    pink: "theme_pink",\n' + ''.join('    %s: "theme_%s",\n' % (k, k) for k in NEW), 1)
     t = t.replace('    pink: "#fff0f5",\n', '    pink: "#fff0f5",\n' + ''.join('    %s: "%s",\n' % (k, P[k][3]['bg']) for k in NEW), 1)
@@ -384,7 +413,16 @@ def root_theme_js(t):
 
 def root_i18n_js(t):
     if 'theme_mint' in t:
-        return relabel(t, '"')
+        t = relabel(t, '"')
+        for i, k in enumerate(KEYS):
+            if i == 0 or len(re.findall(r'(?<![A-Za-z0-9_])theme_%s: \"' % k, t)) >= 2:
+                continue
+            prev = KEYS[i - 1]
+            found = list(re.finditer(r'(?<![A-Za-z0-9_])theme_%s: \"[^\"\n]*\",' % prev, t))
+            assert len(found) == 2, 'i18n.js: нет двух подписей опорной темы ' + prev
+            for idx, m in ((2, found[1]), (1, found[0])):
+                t = t[:m.end()] + '\n        theme_%s: \"%s\",' % (k, P[k][idx]) + t[m.end():]
+        return t
     for anchor, idx in (('        theme_pink: "🌸 Pink",', 1), ('        theme_pink: "🌸 Розовая",', 2)):
         assert anchor in t
         t = t.replace(anchor, anchor + ''.join('\n        theme_%s: "%s",' % (k, P[k][idx]) for k in NEW), 1)

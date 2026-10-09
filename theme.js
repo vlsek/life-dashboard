@@ -10,6 +10,18 @@ const THEME_KEYS = {
     mocha: "theme_mocha",
     amoled: "theme_amoled",
     contrast: "theme_contrast",
+    dracula: "theme_dracula",
+    gruvbox: "theme_gruvbox",
+    tokyonight: "theme_tokyonight",
+    forest: "theme_forest",
+    ocean: "theme_ocean",
+    sunset: "theme_sunset",
+    twilight: "theme_twilight",
+    neon: "theme_neon",
+    lavender: "theme_lavender",
+    sky: "theme_sky",
+    peach: "theme_peach",
+    graphite: "theme_graphite",
 };
 
 // Цвета фона по темам — держим в синхронизации с --bg из style.css
@@ -25,6 +37,18 @@ const THEME_BG_COLORS = {
     mocha: "#1e1e2e",
     amoled: "#000000",
     contrast: "#000000",
+    dracula: "#282a36",
+    gruvbox: "#282828",
+    tokyonight: "#1a1b26",
+    forest: "#0f1a14",
+    ocean: "#0a1622",
+    sunset: "#1c1014",
+    twilight: "#150f25",
+    neon: "#0b0f14",
+    lavender: "#f5f0ff",
+    sky: "#eef6fd",
+    peach: "#fff3ea",
+    graphite: "#eceff1",
 };
 
 function getTheme() {

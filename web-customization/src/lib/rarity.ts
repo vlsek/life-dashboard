@@ -76,6 +76,19 @@ export const THEME_RARITY: Record<ThemeKey, Rarity> = {
   nord: 'rare',
   mocha: 'epic',
   amoled: 'legendary',
+  // BACKLOG 45.4: двенадцать новых тем открыты всегда (не награды), поэтому все обычные; станут наградой — поднять редкость и добавить в UNLOCK
+  dracula: 'common',
+  gruvbox: 'common',
+  tokyonight: 'common',
+  forest: 'common',
+  ocean: 'common',
+  sunset: 'common',
+  twilight: 'common',
+  neon: 'common',
+  lavender: 'common',
+  sky: 'common',
+  peach: 'common',
+  graphite: 'common',
 }
 
 export const rarityOfItem = (key: string): Rarity => ITEM_RARITY[key] ?? 'common'

@@ -23,6 +23,19 @@ P={
  'mocha':('dark','✨ Orchid','✨ Орхидея',dict(bg='#1e1e2e',card='#313244',border='#45475a',text='#cdd6f4',dim='#a6adc8',accent='#cba6f7',at='#1e1e2e',ok='#a6e3a1',bad='#f38ba8',hist='#a6e3a1',**DARK_W)),
  'amoled':('dark','⚫ AMOLED','⚫ AMOLED (чёрная)',dict(bg='#000000',card='#0d0d0d',border='#262626',text='#f2f2f2',dim='#9a9a9a',accent='#4ea1ff',at='#000000',ok='#4caf6a',bad='#ff6b6b',hist='#3fa66b',**DARK_W)),
  'contrast':('dark','◐ High contrast','◐ Высокий контраст',dict(bg='#000000',card='#0a0a0a',border='#ffffff',text='#ffffff',dim='#d6d6d6',accent='#ffd60a',at='#000000',ok='#5cff8a',bad='#ff8080',hist='#5cff8a',**DARK_W)),
+ # --- BACKLOG 45.4: 12 новых тем (8 тёмных + 4 светлых), открыты всегда (в UNLOCK не входят) ---
+ 'dracula':('dark','🧛 Dracula','🧛 Дракула',dict(bg='#282a36',card='#343746',border='#4b4f66',text='#f8f8f2',dim='#b9bcd6',accent='#bd93f9',at='#1e1f29',ok='#50fa7b',bad='#ff6e6e',hist='#50fa7b',**DARK_W)),
+ 'gruvbox':('dark','🍂 Gruvbox','🍂 Gruvbox',dict(bg='#282828',card='#3c3836',border='#504945',text='#ebdbb2',dim='#bdae93',accent='#fabd2f',at='#282828',ok='#b8bb26',bad='#fb4934',hist='#b8bb26',**DARK_W)),
+ 'tokyonight':('dark','🌃 Tokyo Night','🌃 Ночной Токио',dict(bg='#1a1b26',card='#24283b',border='#3b4261',text='#c0caf5',dim='#9aa5ce',accent='#7aa2f7',at='#1a1b26',ok='#9ece6a',bad='#f7768e',hist='#9ece6a',**DARK_W)),
+ 'forest':('dark','🌲 Forest','🌲 Лес',dict(bg='#0f1a14',card='#17261d',border='#2a4535',text='#d8ecdf',dim='#93b8a1',accent='#4cc38a',at='#0f1a14',ok='#6fd08c',bad='#e8776b',hist='#4cc38a',**DARK_W)),
+ 'ocean':('dark','🌊 Ocean','🌊 Океан',dict(bg='#0a1622',card='#112334',border='#1f3a52',text='#d6e8f7',dim='#8fb0cc',accent='#3fb6e8',at='#0a1622',ok='#5fcf9a',bad='#ef7b7b',hist='#4cc38a',**DARK_W)),
+ 'sunset':('dark','🌇 Sunset','🌇 Закат',dict(bg='#1c1014',card='#2a181e',border='#4a2a33',text='#fbe3d6',dim='#d0a090',accent='#ff7a59',at='#1c1014',ok='#8fcf7a',bad='#ff6b7a',hist='#8fcf7a',**DARK_W)),
+ 'twilight':('dark','🔮 Twilight','🔮 Сумерки',dict(bg='#150f25',card='#1f1736',border='#372a5c',text='#e8e0ff',dim='#a99bd1',accent='#a78bfa',at='#150f25',ok='#7ee0a8',bad='#ff7b9c',hist='#7ee0a8',**DARK_W)),
+ 'neon':('dark','🟢 Neon','🟢 Неон',dict(bg='#0b0f14',card='#121a22',border='#1f3340',text='#d7f5ee',dim='#86b3a8',accent='#00e5a8',at='#04120d',ok='#3df08f',bad='#ff5c7a',hist='#3df08f',**DARK_W)),
+ 'lavender':('light','💜 Lavender','💜 Лаванда',dict(bg='#f5f0ff',card='#ffffff',border='#ddd0f5',text='#2e1f4a',dim='#6a5594',accent='#7c4dff',at='#ffffff',ok='#2e8b57',bad='#c0392b',hist='#3fa66b',**LIGHT_W)),
+ 'sky':('light','🌤️ Sky','🌤️ Небо',dict(bg='#eef6fd',card='#ffffff',border='#cfe2f3',text='#12304a',dim='#46688a',accent='#1478c9',at='#ffffff',ok='#2f8f5b',bad='#c0392b',hist='#3fa66b',**LIGHT_W)),
+ 'peach':('light','🍑 Peach','🍑 Персик',dict(bg='#fff3ea',card='#ffffff',border='#f5d5bf',text='#4a2a14',dim='#85593a',accent='#c0451a',at='#ffffff',ok='#3f8f55',bad='#b8342b',hist='#3fa66b',**LIGHT_W)),
+ 'graphite':('light','🪨 Graphite','🪨 Графит',dict(bg='#eceff1',card='#ffffff',border='#cfd8dc',text='#263238',dim='#55707f',accent='#00796b',at='#ffffff',ok='#2e7d4f',bad='#c62828',hist='#3fa66b',**LIGHT_W)),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
 
