@@ -5,7 +5,7 @@ import { fmtRu, todayStr } from '../lib/date'
 import { setCount } from '../lib/quickSet'
 import { bestPaceRecord, bestSetRecord, formatSets } from '../lib/workouts'
 import { defaultWeightUnit } from '../lib/weightUnit'
-import { estimateExerciseCalories } from '../lib/calories'
+import { estimateExerciseCalories, hasCalorieActivity, validWeightKg } from '../lib/calories'
 import Icon from './Icon.vue'
 import ExerciseChart from './ExerciseChart.vue'
 import { readExerciseCollapsed, writeExerciseCollapsed } from '../lib/exerciseCollapse'
@@ -19,7 +19,7 @@ import EmojiText from './EmojiText.vue'
 
 // Порт renderExerciseCard() из workouts.js — заголовок с кнопками, рекомендованная схема,
 // личные рекорды (по сторонам для билатеральных), мини-график прогресса, таблица записей.
-const props = defineProps<{ exercise: Exercise; entries: WorkoutEntry[]; busyEntryId?: string | null; bodyWeightKg?: number; linkedMetrics?: LinkedMetric[]; linkSupported?: boolean }>()
+const props = defineProps<{ exercise: Exercise; entries: WorkoutEntry[]; busyEntryId?: string | null; bodyWeightKg?: number | null; linkedMetrics?: LinkedMetric[]; linkSupported?: boolean }>()
 const emit = defineEmits<{
   addEntry: []
   editExercise: []
@@ -93,7 +93,9 @@ const canQuick = (e: WorkoutEntry) => e.date === today && (e.sets?.length ?? 0) 
 const canRemove = (e: WorkoutEntry) => setCount(e.sets ?? []) > 1
 
 const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date.localeCompare(a.date)))
-const calories = computed(() => estimateExerciseCalories(props.entries, props.exercise, props.bodyWeightKg ?? 70))
+const calories = computed(() => estimateExerciseCalories(props.entries, props.exercise, props.bodyWeightKg))
+// Есть что считать, но вес не задан в метриках тела — вместо выдуманного числа показываем подсказку.
+const needsWeight = computed(() => !validWeightKg(props.bodyWeightKg) && hasCalorieActivity(props.entries))
 // «Карточка со сводкой» (BACKLOG 498 срез 3): у свёрнутого упражнения — его первый рекорд («Рекорд 8 × 80 кг»); без записей плашки нет
 const collapsedSummary = computed(() => {
   const r = records.value[0]
@@ -119,6 +121,9 @@ const collapsedSummary = computed(() => {
       <CollapseSummary :text="collapsedSummary" :collapsed="collapsed" />
       <span v-if="calories" class="rounded-full border px-2 py-1 text-xs" style="border-color: var(--border); color: var(--text-dim)" data-testid="exercise-calories">
         🔥 ≈ {{ calories.kcal }} {{ t('workouts_kcal') }}
+      </span>
+      <span v-else-if="needsWeight" class="rounded-full border px-2 py-1 text-xs" style="border-color: var(--border); color: var(--text-dim)" data-testid="exercise-calories-need-weight">
+        🔥 {{ t('workouts_kcal_need_weight') }}
       </span>
       <button
         type="button"

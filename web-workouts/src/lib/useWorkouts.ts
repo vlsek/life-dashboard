@@ -19,7 +19,8 @@ export function useWorkouts() {
   const entries = ref<WorkoutEntry[]>([])
   const loadError = ref<string | null>(null)
   const studyRecent = ref(false)
-  const bodyWeightKg = ref(70)
+  // null = вес не задан в метриках тела: калории не считаем (раньше молча подставляли 70 кг)
+  const bodyWeightKg = ref<number | null>(null)
   // Метрики дня и их связь с упражнениями (миграция 054). supported=false — колонки нет, раздел работает как раньше.
   const metricLinks = ref<{ supported: boolean; metrics: LinkedMetric[] }>({ supported: false, metrics: [] })
 
@@ -72,7 +73,9 @@ export function useWorkouts() {
     })
     if (!weightParam?.id) return
     const { data } = await sb.from('body_parameter_values').select('value').eq('user_id', userId).eq('parameter_id', weightParam.id).order('date', { ascending: false }).limit(1).maybeSingle()
-    const value = Number(data?.value)
+    const raw = Number(data?.value)
+    const inPounds = /lb|фунт/i.test(String(weightParam.unit || ''))
+    const value = inPounds ? raw * 0.45359237 : raw
     if (Number.isFinite(value) && value > 0) bodyWeightKg.value = value
   }
 
