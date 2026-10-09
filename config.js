@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.06";
+const SITE_VERSION = "4.07";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.07", date: "2026-10-09 21:55", changes: [
+        "Челленджи: у каждого активного челленджа появилось кольцо прогресса с процентом, а у ежедневных — значки «🔥 Серия N» (дни подряд; невыполненный сегодня день серию не рвёт) и «осталось N дней». Без миграций."
+    ]},
     { version: "4.06", date: "2026-10-09 21:30", changes: [
         "Тренировки: исправлен подсчёт калорий. Раньше, если вес не был указан, молча брались 70 кг — теперь вместо выдуманного числа показывается подсказка «укажи вес в метриках тела». Силовые подходы без записанной длительности считаются с учётом отдыха между подходами (раньше расход занижался примерно вдвое: 10 подходов по 10 повторов давали ~33 ккал, теперь ~64). Вес в фунтах переводится в килограммы. Цифра по-прежнему ориентировочная («≈»)",
     ]},
@@ -1828,6 +1831,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.07", date: "2026-10-09 21:55", changes: [
+        "Challenges: every active challenge now has a progress ring with a percentage, and daily ones show “🔥 Streak N” (days in a row; a not-yet-done today does not break it) and “N days left” badges. No migrations."
+    ]},
     { version: "4.06", date: "2026-10-09 21:30", changes: [
         "Workouts: calorie estimate fixed. Before, a missing weight silently meant 70 kg - now a hint Add your weight in body metrics is shown instead of an invented number. Strength sets without a recorded duration now include rest between sets (the burn was about halved before: 10 sets of 10 reps gave ~33 kcal, now ~64). Weight in pounds is converted to kilograms. The number is still approximate (shown with ≈)",
     ]},
