@@ -17,7 +17,7 @@ vi.mock('./lib/supabase', () => {
     return c
   }
   return {
-    sb: { auth: { getSession: () => Promise.resolve({ data: { session: { user: { id: 'u1', email: 'a@b.c' } } } }) }, from: chain, rpc: () => Promise.resolve({ data: [{ user_id: 'u1', total_points: h.total }], error: null }) },
+    sb: { auth: { getSession: () => Promise.resolve({ data: { session: { user: { id: 'u1', email: 'a@b.c' } } } }) }, from: chain, rpc: (name: string) => Promise.resolve(name === 'buy_customization' || name === 'claim_achievement_items' ? { data: null, error: { code: 'PGRST202', message: 'Could not find the function public.' + name } } : { data: [{ user_id: 'u1', total_points: h.total }], error: null }) },
     logout: vi.fn(),
   }
 })

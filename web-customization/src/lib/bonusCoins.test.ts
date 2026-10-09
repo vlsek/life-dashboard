@@ -24,7 +24,7 @@ vi.mock('./supabase', () => {
     }
     return c
   }
-  return { sb: { auth: { getSession: () => Promise.resolve({ data: { session: h.session } }) }, from: chain, rpc: (name: string) => Promise.resolve(h.rpc[name] ?? { data: null, error: { message: 'no rpc' } }) } }
+  return { sb: { auth: { getSession: () => Promise.resolve({ data: { session: h.session } }) }, from: chain, rpc: (name: string) => Promise.resolve(h.rpc[name] ?? { data: null, error: { code: 'PGRST202', message: 'Could not find the function public.' + name } }) } }
 })
 
 import { useCustomization } from './useCustomization'

@@ -4,9 +4,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 const h = vi.hoisted(() => ({
   session: { user: { id: 'u1', email: 'a@b.c' } } as { user: { id: string; email: string } } | null,
   rows: {} as Record<string, any[]>,
-  rpc: {} as Record<string, { data?: any; error?: { message: string } | null }>,
+  rpc: {} as Record<string, { data?: any; error?: { code?: string; message: string } | null }>,
   fail: new Set<string>(),
   calls: [] as { op: string; table: string; payload?: any }[],
+  rpcCalls: [] as { name: string; args?: any }[],
 }))
 vi.mock('./supabase', () => {
   const chain = (table: string) => {
@@ -24,7 +25,7 @@ vi.mock('./supabase', () => {
     }
     return c
   }
-  return { sb: { auth: { getSession: () => Promise.resolve({ data: { session: h.session } }) }, from: chain, rpc: (name: string) => Promise.resolve(h.rpc[name] ?? { data: null, error: { message: 'no rpc' } }) } }
+  return { sb: { auth: { getSession: () => Promise.resolve({ data: { session: h.session } }) }, from: chain, rpc: (name: string, args?: any) => { h.rpcCalls.push({ name, args }); return Promise.resolve(h.rpc[name] ?? { data: null, error: { code: 'PGRST202', message: 'Could not find the function public.' + name } }) } } }
 })
 
 import { useCustomization } from './useCustomization'
@@ -39,6 +40,7 @@ function setup(over: { total?: number; spent?: number; owned?: any[]; selected?:
   h.rpc = { get_leaderboard_period: { data: [{ user_id: 'u1', total_points: over.total ?? 250 }, { user_id: 'other', total_points: 9999 }], error: null } }
   h.fail = new Set()
   h.calls = []
+  h.rpcCalls = []
 }
 
 beforeEach(() => {

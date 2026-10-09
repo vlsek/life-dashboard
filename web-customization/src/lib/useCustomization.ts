@@ -29,6 +29,12 @@ export type AuthState =
 // Данные и действия страницы «Кастомизация» (BACKLOG 491). Хранение: user_customizations (открытое) + profiles.customization
 // (выбранное), миграция 048. Покупка за баллы = открытие предмета + строка «выкупленного» товара в shop_items с ценой, поэтому баланс
 // в Магазине и на Дашборде уменьшается сам, без правок их кода. Нет таблицы (048 не применена) — страница показывает витрину без покупок.
+// Нет серверной функции (миграция ещё не применена): PostgREST отвечает PGRST202, Postgres — 42883.
+export function isFunctionMissing(err: { code?: string; message?: string } | null | undefined): boolean {
+  if (!err) return false
+  return err.code === 'PGRST202' || err.code === '42883' || /could not find the function/i.test(err.message ?? '')
+}
+
 export function useCustomization() {
   const auth = ref<AuthState>({ status: 'loading' })
   const unlocked = ref<Unlocked>({})
@@ -119,18 +125,28 @@ export function useCustomization() {
   }
 
   // Получено достижение с наградой-предметом — предмет открывается сам (источник «achievement»).
+  // Миграция 060: выдаёт сервер (`claim_achievement_items` — только предметы из каталога и только по значку из каталога, повтор безопасен).
+  // Пока миграция не применена, функции нет — работает прежний путь прямой записью (после 060 прямая запись клиенту закрыта).
   async function syncAchievementRewards(userId: string) {
     const keys = achievementUnlocks(ITEMS, unlocked.value, achievements.value)
     if (!keys.length) return
-    const { error: err } = await sb.from('user_customizations').upsert(keys.map((k) => ({ user_id: userId, item_key: k, source: 'achievement' })), { onConflict: 'user_id,item_key' })
-    if (err) return // не записалось — попробуем при следующем заходе
+    const rpc = await sb.rpc('claim_achievement_items')
+    let granted: string[]
+    if (!rpc.error) {
+      granted = ((rpc.data || []) as string[]).filter((k) => keys.includes(k))
+    } else if (isFunctionMissing(rpc.error)) {
+      const { error: err } = await sb.from('user_customizations').upsert(keys.map((k) => ({ user_id: userId, item_key: k, source: 'achievement' })), { onConflict: 'user_id,item_key' })
+      if (err) return // не записалось — попробуем при следующем заходе
+      granted = keys
+    } else return
     const now = new Date().toISOString()
     const next = { ...unlocked.value }
-    for (const k of keys) next[k] = { source: 'achievement', unlockedAt: now }
+    for (const k of granted) next[k] = { source: 'achievement', unlockedAt: now }
     unlocked.value = next
   }
 
-  // Покупка: сначала открываем предмет, потом списываем баллы (строка выкупленного товара в магазине). Не списалось — откатываем открытие.
+  // Покупка (миграция 060): всё делает сервер одной транзакцией — цену берёт из своего каталога, баланс считает сам, предмет и списание пишет вместе.
+  // Клиентская цена — только для подписи. Пока миграция не применена, работает прежний двухшаговый путь (`buyLegacy`).
   async function buy(key: string): Promise<boolean> {
     actionError.value = null
     const item = itemByKey(key)
@@ -139,6 +155,31 @@ export function useCustomization() {
     const price = priceOf(item)!
     const userId = auth.value.userId
     busyKey.value = key
+    try {
+      const label = `${t('cust_shop_prefix')} ${t(('cust_item_' + key) as never)}`
+      const rpc = await sb.rpc('buy_customization', { p_item_key: key, p_label: label })
+      if (!rpc.error) {
+        const row = ((rpc.data || []) as { spent: number; new_balance: number | string }[])[0]
+        unlocked.value = { ...unlocked.value, [key]: { source: 'points', unlockedAt: new Date().toISOString() } }
+        // баланс — тот, что посчитал сервер (а не «минус цена»): расхождение с клиентом исключено
+        balance.value = row ? Number(row.new_balance) : balance.value == null ? null : Math.round((balance.value - price) * 10) / 10
+        return true
+      }
+      if (!isFunctionMissing(rpc.error)) {
+        if (rpc.error.code === '23505') await load(userId) // уже куплено с другой вкладки — просто показываем актуальное
+        throw new Error(rpc.error.message)
+      }
+      return await buyLegacy(userId, key, price)
+    } catch (e) {
+      actionError.value = t('cust_buy_error') + friendlyError(e, 'save')
+      return false
+    } finally {
+      busyKey.value = null
+    }
+  }
+
+  // Прежний путь до миграции 060: сначала открываем предмет, потом списываем баллы (строка выкупленного товара в магазине). Не списалось — откатываем открытие.
+  async function buyLegacy(userId: string, key: string, price: number): Promise<boolean> {
     try {
       const ins = await sb.from('user_customizations').insert({ user_id: userId, item_key: key, source: 'points' })
       if (ins.error) throw new Error(ins.error.message)
@@ -159,8 +200,6 @@ export function useCustomization() {
     } catch (e) {
       actionError.value = t('cust_buy_error') + friendlyError(e, 'save')
       return false
-    } finally {
-      busyKey.value = null
     }
   }
 
