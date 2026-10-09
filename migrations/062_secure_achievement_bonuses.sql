@@ -51,6 +51,7 @@ on conflict (key) do update set coins = excluded.coins;
 create or replace function claim_achievement_bonuses()
 returns table (key text, coins numeric)
 language plpgsql security definer set search_path = public as $$
+#variable_conflict use_column
 declare
   v_user uuid := auth.uid();
 begin
