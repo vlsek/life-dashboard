@@ -112,7 +112,9 @@ export function metricSchedule(m: Pick<Metric, 'schedule'>): Schedule {
 }
 
 // Нужно ли выполнять метрику именно в этот день (для weekly/at_most — нет, не привязаны к дню)
-export function metricExpectedOn(m: Pick<Metric, 'schedule'>, dateStr: string): boolean {
+export function metricExpectedOn(m: Pick<Metric, 'schedule' | 'skipped_days'>, dateStr: string): boolean {
+  // пропущенный день (BACKLOG 47.3): метрика в эту дату «не нужна» — как день вне расписания; если всё же выполнена, это бонус (см. metricCountsInDay)
+  if (m.skipped_days?.includes(dateStr)) return false
   const s = metricSchedule(m)
   if (!s) return true
   if (s.type === 'days') return s.days.includes(weekdayOf(dateStr))

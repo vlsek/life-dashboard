@@ -17,6 +17,8 @@ export interface Metric {
   goal_value: number | null
   goal_direction: GoalDirection | null
   schedule: Schedule
+  // пропущенные дни (BACKLOG 47.3, миграция 061): метрика в эти даты «не нужна» — серию не рвёт и не растит
+  skipped_days?: string[] | null
   category_id: string | null
   position: number
   // Когда метрику создали (metrics.created_at, timestamptz): серия «не чаще N раз в неделю» не идёт раньше этой недели (BACKLOG 40)

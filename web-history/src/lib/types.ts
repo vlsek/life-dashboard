@@ -28,6 +28,8 @@ export interface Metric {
   goal_direction?: GoalDirection
   options?: MetricOption[] | null
   schedule?: MetricSchedule | null
+  // пропущенные дни (BACKLOG 47.3, миграция 061): метрика в эти даты «не нужна» — серию не рвёт и не растит
+  skipped_days?: string[] | null
   // Миграция 041: журнал планового числа подходов в день [{ from, n }] по возрастанию дат (n = null — параметр снят с этой даты).
   // С даты from метрика-подходы выполнена при n и более подходах (и объёме goal_value, если задан); ДО первой записи — по прежнему
   // правилу. Прошлые дни не пересчитываются (решение владельца 2026-10-03). Копия логики из web-dashboard/src/lib/metrics.ts
