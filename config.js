@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.86";
+const SITE_VERSION = "3.87";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.87", date: "2026-10-09 01:59", changes: [
+        "Покупки в «Кастомизации» стали надёжнее: покупка и выдача наград теперь выполняются на сервере одной операцией, цена и баланс проверяются там же, а повторное нажатие или вторая вкладка не спишут баллы дважды (нужна миграция 060 — применяет владелец; до её применения всё работает как раньше)",
+    ]},
     { version: "3.86", date: "2026-10-09 04:55", changes: [
         "Тренировки: при добавлении упражнения выбор «Типового упражнения» теперь сам заполняет остальные поля. Например, для «Приседаний» ставится «Низ», «Вес — да», «Что считаем — повторения», а для «Планки» «Фулбади», «Вес — нет», «Секунды». Если выбрать разновидность «с отягощением» или «со штангой», включится вес, а у «на одной руке» и «на одной ноге» отметка Л/П. Всё, что вы изменили сами, не перезаписывается, и любое поле можно поправить после подстановки. У уже созданных упражнений при правке ничего не меняется. Группы мышц подбираются по названию, как и раньше",
     ]},
@@ -1768,6 +1771,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.87", date: "2026-10-09 01:59", changes: [
+        "Purchases in “Customization” are more reliable: buying and receiving rewards now run on the server as a single operation, the price and balance are checked there, and a double tap or a second tab will not charge you twice (needs migration 060 — applied by the owner; until then everything works as before)",
+    ]},
     { version: "3.86", date: "2026-10-09 04:55", changes: [
         "Workouts: when you add an exercise, picking a “Typical exercise” now fills in the other fields for you. For example, “Squats” sets Lower body, Weight — yes, Count — repetitions, and “Plank” sets Full body, Weight — no, Seconds. Choosing a variant like “Weighted” or “Barbell” turns weight on, and “One-arm” or “Single-leg” turns on the Left/Right option. Anything you changed yourself is not overwritten, and every field can still be edited after it is filled. Existing exercises are not changed when you edit them. Muscle groups are matched by name, as before",
     ]},
