@@ -8,6 +8,7 @@ import Icon from './components/Icon.vue'
 import PointsFloat from './components/PointsFloat.vue'
 import GoalInvites from './components/GoalInvites.vue'
 import { useGoalInvites, incomingPending, outgoingNotices } from './lib/goalInvites'
+import { limitChoices, loadInviteLimit, saveInviteLimit } from './lib/inviteLimit'
 import { useGoals } from './lib/useGoals'
 import { groupActiveByCategory, sortDone, pointsSummary } from './lib/goals'
 import { mergeCategories, savedCategories } from './lib/categories'
@@ -26,10 +27,28 @@ onMounted(init)
 const invites = useGoalInvites(reload)
 const incomingInvites = computed(() => incomingPending(invites.rows.value))
 const inviteNotices = computed(() => outgoingNotices(invites.rows.value))
+// Настройка «сколько предложений в день принимаю» (profiles.goal_invites_per_day, миграция 063): нет колонки — не показываем.
+const inviteLimit = ref<number | null>(null)
+const inviteLimitError = ref(false)
+const inviteLimitOptions = computed(() => (inviteLimit.value === null ? [] : limitChoices(inviteLimit.value)))
+async function onInviteLimitChange(e: Event) {
+  const next = Number((e.target as HTMLSelectElement).value)
+  const prev = inviteLimit.value
+  if (auth.value.status !== 'ready' || prev === null) return
+  inviteLimit.value = next
+  inviteLimitError.value = false
+  if (!(await saveInviteLimit(auth.value.userId, next))) {
+    inviteLimit.value = prev
+    inviteLimitError.value = true
+  }
+}
 watch(
   () => auth.value.status,
-  (st) => {
-    if (st === 'ready') void invites.load()
+  async (st) => {
+    if (st !== 'ready') return
+    void invites.load()
+    const r = await loadInviteLimit((auth.value as { userId: string }).userId)
+    inviteLimit.value = r.status === 'ok' ? r.value : null
   },
   { immediate: true },
 )
@@ -106,6 +125,17 @@ async function onDelete(g: Goal) {
       <input type="checkbox" :checked="remindEnabled" data-test="deadline-remind-toggle" @change="onRemindToggle" />
       {{ t('goals_deadline_remind') }}
     </label>
+
+    <div v-if="inviteLimit !== null" class="mb-3" data-test="invite-limit">
+      <label class="dim flex flex-wrap items-center gap-2 text-xs">
+        {{ t('inv_limit_label') }}
+        <select :value="inviteLimit" data-test="invite-limit-select" @change="onInviteLimitChange">
+          <option v-for="n in inviteLimitOptions" :key="n" :value="n">{{ n === 0 ? t('inv_limit_none') : n }}</option>
+        </select>
+      </label>
+      <p class="dim m-0 mt-1 text-xs">{{ t('inv_limit_hint') }}</p>
+      <p v-if="inviteLimitError" class="m-0 mt-1 text-xs" style="color: var(--danger, #e5484d)" role="alert" data-test="invite-limit-error">{{ t('inv_limit_error') }}</p>
+    </div>
 
     <p v-if="auth.status === 'loading'" class="dim">…</p>
 
