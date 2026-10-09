@@ -11,7 +11,8 @@ import ExerciseChart from './ExerciseChart.vue'
 import { readExerciseCollapsed, writeExerciseCollapsed } from '../lib/exerciseCollapse'
 import { useAccordionMember } from '../lib/useCollapseStyle'
 import type { Exercise, WorkoutEntry } from '../lib/types'
-import { setsOfDay, totalReps, type LinkedMetric } from '../lib/metricLink'
+import { plannedSetsOn, setsOfDay, totalReps, type LinkedMetric } from '../lib/metricLink'
+import SetsRing from './SetsRing.vue'
 import CollapseChevron from './CollapseChevron.vue'
 import CollapseSummary from './CollapseSummary.vue'
 import { vCollapse } from '../lib/collapseMotion'
@@ -62,6 +63,12 @@ const records = computed<RecordLine[]>(() => {
 
 // Связь с метриками дня (миграция 054): строка «В метриках дня · сегодня: X [из N]» — подходы вводятся один раз, здесь.
 const todayTotal = computed(() => totalReps(setsOfDay(props.entries, props.exercise.id, todayStr())))
+// Кольцо подходов: есть связанная метрика с планом «N подходов в день» (с учётом даты) — показываем сделано/N.
+const setsToday = computed(() => setsOfDay(props.entries, props.exercise.id, todayStr()).length)
+const plannedToday = computed(() => {
+  const m = props.linkedMetrics?.[0]
+  return m ? plannedSetsOn(m.planned_sets_log, todayStr()) : null
+})
 const metricChip = computed(() => {
   const m = props.linkedMetrics?.[0]
   if (!m) return null
@@ -153,7 +160,8 @@ const collapsedSummary = computed(() => {
       </button>
     </div>
 
-    <div v-if="metricChip" class="mb-2 text-[0.85em]" style="color: var(--text-dim)" data-testid="exercise-metric-chip">
+    <div v-if="metricChip" class="mb-2 flex items-center gap-2 text-[0.85em]" style="color: var(--text-dim)" data-testid="exercise-metric-chip">
+      <SetsRing v-if="plannedToday" :done="setsToday" :planned="plannedToday" />
       <EmojiText :text="metricChip" />
     </div>
 

@@ -20,9 +20,25 @@ export interface LinkedMetric {
   goal_value: number | null
   source_exercise_id: string | null
   position?: number
+  // «Подходов в день по плану» (миграция 041): журнал [{from:'ГГГГ-ММ-ДД', n:число|null}] по возрастанию дат; нет колонки/плана — undefined/null
+  planned_sets_log?: unknown
 }
 
 export const LINKABLE_TYPES = ['sets', 'number']
+
+// Плановое число подходов на дату: последняя запись журнала с from <= date (прошлое по прежнему правилу, как на Дашборде). n=null или мусор — плана нет.
+export function plannedSetsOn(log: unknown, date: string): number | null {
+  if (!Array.isArray(log)) return null
+  let best: { from: string; n: unknown } | null = null
+  for (const e of log) {
+    if (!e || typeof e !== 'object') continue
+    const from = (e as { from?: unknown }).from
+    if (typeof from !== 'string' || from > date) continue
+    if (!best || from >= best.from) best = { from, n: (e as { n?: unknown }).n }
+  }
+  const n = best?.n
+  return typeof n === 'number' && Number.isInteger(n) && n > 0 ? n : null
+}
 
 // Подходы упражнения за дату — из всех записей этого дня, по порядку времени (подходы без времени — в порядке записи, после тех, что со временем).
 export function setsOfDay(entries: WorkoutEntry[], exerciseId: string, date: string): WorkoutSet[] {
@@ -77,14 +93,12 @@ export function isMissingColumn(err: unknown): boolean {
 
 // Метрики, связанные с упражнениями. Нет колонки (миграция не применена) → { supported: false }, раздел работает как раньше.
 export async function loadMetricLinks(userId: string): Promise<{ supported: boolean; metrics: LinkedMetric[] }> {
-  const { data, error } = await sb
-    .from('metrics')
-    .select('id, name, icon, type, goal_value, source_exercise_id, position')
-    .eq('user_id', userId)
-    .eq('active', true)
-    .order('position')
-  if (error) return { supported: false, metrics: [] } // нет колонки (миграция 054 не применена) или метрики недоступны — раздел работает как раньше
-  return { supported: true, metrics: (data || []) as LinkedMetric[] }
+  const q = (cols: string) => sb.from('metrics').select(cols).eq('user_id', userId).eq('active', true).order('position')
+  // Сначала с планом подходов (041); нет этой колонки — без неё, кольца просто не будет (связь с метриками от этого не страдает).
+  let res = await q('id, name, icon, type, goal_value, source_exercise_id, position, planned_sets_log')
+  if (res.error) res = await q('id, name, icon, type, goal_value, source_exercise_id, position')
+  if (res.error) return { supported: false, metrics: [] } // нет колонки (миграция 054 не применена) или метрики недоступны — раздел работает как раньше
+  return { supported: true, metrics: (res.data || []) as unknown as LinkedMetric[] }
 }
 
 // Пересчитать значение связанных метрик за даты по ТЕКУЩИМ записям (вызывать после reload). Ошибки не бросает наружу — запись тренировки
