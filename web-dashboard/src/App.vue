@@ -14,6 +14,7 @@ import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import ProgressSummaryModal from './components/ProgressSummaryModal.vue'
 import ReminderBanners from './components/ReminderBanners.vue'
 import EveningReminderBanner from './components/EveningReminderBanner.vue'
+import SkipYesterdayModal from './components/SkipYesterdayModal.vue'
 import WaterReminderBanner from './components/WaterReminderBanner.vue'
 import SplashLoader from './components/SplashLoader.vue'
 import PointsFloat from './components/PointsFloat.vue'
@@ -32,6 +33,7 @@ import SectionHeading from './components/SectionHeading.vue'
 import { vCollapse } from './lib/collapseMotion'
 import { useReminders } from './lib/useReminders'
 import { useEveningReminder } from './lib/useEveningReminder'
+import { useSkipYesterday } from './lib/useSkipYesterday'
 import { useDeadlineReminder } from './lib/useDeadlineReminder'
 import GoalDeadlineBanner from './components/GoalDeadlineBanner.vue'
 import { useWaterReminder } from './lib/useWaterReminder'
@@ -77,6 +79,8 @@ const { pending: perfectPopup, close: closePerfect, disable: disablePerfect } = 
   perfectInfo,
 )
 const { items: eveningItems, visible: eveningVisible, load: loadEveningReminder, dismiss: dismissEveningReminder } = useEveningReminder()
+// окно «пропустить вчерашние невыполненные» (BACKLOG 47.3): раз в день при первом открытии, выключатель — в «Глобальных настройках»
+const { items: skipItems, visible: skipVisible, error: skipError, load: loadSkipYesterday, skip: skipMetricDay, keep: keepMetricDay, close: closeSkipPrompt } = useSkipYesterday()
 const { goals: deadlineGoals, visible: deadlineVisible, load: loadDeadlineReminder, dismiss: dismissDeadlineReminder, disable: disableDeadlineReminder } = useDeadlineReminder()
 const { visible: waterReminderVisible, ml: waterReminderMl, goal: waterReminderGoal, load: loadWaterReminder, dismiss: dismissWaterReminder } = useWaterReminder()
 const { layout, loaded: layoutLoaded, saveError: layoutError, load: loadLayout, save: saveLayout } = useLayout()
@@ -88,6 +92,7 @@ onMounted(async () => {
     await loadLayout(auth.value.userId)
     await loadMilestonesReminder(auth.value.userId)
     void loadEveningReminder(auth.value.userId)
+    void loadSkipYesterday(auth.value.userId)
     void loadDeadlineReminder(auth.value.userId)
     void loadWaterReminder(auth.value.userId)
     void loadPlanReminders(auth.value.userId)
@@ -347,6 +352,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
       @settings="summaryKind = null; showProgressSettings = true"
     />
     <ProgressSettingsModal v-if="showProgressSettings" :initial="progressSettings" @close="showProgressSettings = false" @save="onSaveProgressSettings" />
+    <SkipYesterdayModal v-if="skipVisible" :items="skipItems" :error="skipError" @skip="skipMetricDay" @keep="keepMetricDay" @close="closeSkipPrompt" />
     <StreakMilestoneModal v-if="milestone" :milestone="milestone" @close="closeMilestone" @disable="disableMilestone" />
     <PerfectDayModal v-else-if="perfectPopup" :popup="perfectPopup" @close="closePerfect" @disable="disablePerfect" />
   </main>
