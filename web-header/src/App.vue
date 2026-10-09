@@ -50,7 +50,9 @@ onMounted(async () => {
   void sideProfile.load(uid, data.session?.user)
   void syncUnlockedThemes(uid) // какие темы-награды открыты (замок тем, v3.42)
   void ensureTrackWater(uid) // «Отслеживать воду» (BACKLOG 932): сначала из кэша устройства — стакан не мигает
-  await Promise.all([initProgress(uid), initWater(uid), syncFavoritesFromProfile(uid).then((l) => (favorites.value = l))])
+  // allSettled, а не all: сбой одного запроса (вода, прогресс, избранное) не должен оставлять `ready = false` — иначе пропадает всё,
+  // что за ним, а раньше вместе с ним и блок профиля в шторке («аватарки нет на странице», BACKLOG: разбор агента 7, гипотеза 1)
+  await Promise.allSettled([initProgress(uid), initWater(uid), syncFavoritesFromProfile(uid).then((l) => (favorites.value = l))])
   ready.value = true
 })
 
@@ -166,7 +168,8 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
 </script>
 
 <template>
-  <div v-if="ready && userId" class="gh-root" data-test="header-widgets">
+  <div v-if="userId" class="gh-root" data-test="header-widgets">
+    <!-- блок профиля в шторке (аватар, имя) не ждёт `ready`: он грузится своим запросом; кольца в нём появятся, когда придёт прогресс -->
     <Teleport v-if="sidebarTarget" :to="sidebarTarget">
       <SidebarTop
         :display-name="sideProfile.displayName.value"
@@ -179,6 +182,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
         @open-summary="(k) => (summaryKind = k)"
       />
     </Teleport>
+    <template v-if="ready">
     <PointsFloat v-if="!props.panelOnly" />
     <FavoriteHeart v-if="pageKey && !props.panelOnly" :active="isFavorite" @toggle="onToggleFavorite" />
     <template v-if="!props.panelOnly">
@@ -248,5 +252,6 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
       @settings="summaryKind = null; settingsOpen = true"
     />
     <ProgressSettingsModal v-if="settingsOpen" :initial="settings" @close="settingsOpen = false" @save="onSaveSettings" />
+    </template>
   </div>
 </template>
