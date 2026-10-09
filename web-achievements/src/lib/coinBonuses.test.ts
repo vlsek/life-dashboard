@@ -1,11 +1,19 @@
 import { describe, expect, it } from 'vitest'
-import { coinBonusesDue, grantCoinBonuses } from './coinBonuses'
+import { coinBonusesDue, grantCoinBonuses, isFunctionMissing } from './coinBonuses'
 import { COINS_STEP_1, COINS_STEP_2, LADDERS, REWARDS, REWARD_STATUS } from './rewards'
 
 // Заглушка клиента: что уже выдано, ошибки, и запись всех вызовов.
-function fakeClient(opts: { have?: string[]; selectError?: string; upsertError?: string; boom?: boolean } = {}) {
-  const calls = { selects: [] as unknown[], upserts: [] as { rows: any[]; opts: any }[] }
+// По умолчанию серверной функции нет (миграция 062 не применена) → работает прежний путь; `rpc` — поведение серверной функции.
+type RpcOpt = { data?: unknown; error?: { message: string; code?: string }; boom?: boolean }
+function fakeClient(opts: { have?: string[]; selectError?: string; upsertError?: string; boom?: boolean; rpc?: RpcOpt } = {}) {
+  const calls = { selects: [] as unknown[], upserts: [] as { rows: any[]; opts: any }[], rpcs: [] as string[] }
   const client = {
+    rpc(fn: string) {
+      calls.rpcs.push(fn)
+      if (opts.rpc?.boom) throw new Error('сеть упала (rpc)')
+      if (opts.rpc) return Promise.resolve({ data: opts.rpc.data ?? null, error: opts.rpc.error ?? null })
+      return Promise.resolve({ data: null, error: { code: 'PGRST202', message: 'Could not find the function public.claim_achievement_bonuses without parameters in the schema cache' } })
+    },
     from(table: string) {
       return {
         select(cols: string) {
@@ -52,7 +60,7 @@ describe('что причитается (coinBonusesDue)', () => {
   })
 })
 
-describe('выдача (grantCoinBonuses)', () => {
+describe('выдача (grantCoinBonuses), прежний путь — функции 062 ещё нет', () => {
   it('выдаёт недостающее ОДНИМ upsert: onConflict user_id,key + ignoreDuplicates, user_id и суммы из реестра', async () => {
     const [a, b] = [stepKeys(0)[0], stepKeys(1)[1]]
     const { client, calls } = fakeClient()
@@ -119,5 +127,71 @@ describe('выдача (grantCoinBonuses)', () => {
     const r = await grantCoinBonuses(f.client, 'u1', stepKeys(0))
     expect(r.granted).toEqual([])
     expect(r.error).toContain('сеть')
+  })
+})
+
+describe('выдача через серверную функцию (миграция 062)', () => {
+  const [a, b] = [stepKeys(0)[0], stepKeys(1)[1]]
+
+  it('зовёт только claim_achievement_bonuses, сумму и ключи берёт из ответа сервера, прямой записи нет', async () => {
+    const f = fakeClient({ rpc: { data: [{ key: a, coins: '20.0' }, { key: b, coins: 50 }] } })
+    const r = await grantCoinBonuses(f.client, 'u1', [a, b])
+    expect(r).toEqual({ granted: [{ key: a, coins: 20 }, { key: b, coins: 50 }], error: null })
+    expect(f.calls.rpcs).toEqual(['claim_achievement_bonuses'])
+    expect(f.calls.selects).toHaveLength(0)
+    expect(f.calls.upserts).toHaveLength(0)
+  })
+
+  it('сервер вернул пусто (уже выдано) — granted пуст, без ошибки и без отката на прежний путь', async () => {
+    const f = fakeClient({ rpc: { data: [] } })
+    expect(await grantCoinBonuses(f.client, 'u1', [a])).toEqual({ granted: [], error: null })
+    expect(f.calls.upserts).toHaveLength(0)
+    expect(f.calls.selects).toHaveLength(0)
+  })
+
+  it('мусор в ответе (не массив, нет ключа, не число, ноль) отбрасывается', async () => {
+    const f1 = fakeClient({ rpc: { data: { key: a, coins: 20 } } })
+    expect((await grantCoinBonuses(f1.client, 'u1', [a])).granted).toEqual([])
+    const f2 = fakeClient({ rpc: { data: [{ coins: 20 }, { key: a, coins: 'много' }, { key: b, coins: 0 }, { key: a, coins: 20 }] } })
+    expect((await grantCoinBonuses(f2.client, 'u1', [a])).granted).toEqual([{ key: a, coins: 20 }])
+  })
+
+  it('ошибка функции (не «функции нет»): ничего не выдаём, причина в error, прямой записи НЕТ (иначе обошли бы защиту)', async () => {
+    const f = fakeClient({ rpc: { error: { message: 'Нужно войти в аккаунт', code: '28000' } } })
+    const r = await grantCoinBonuses(f.client, 'u1', [a])
+    expect(r).toEqual({ granted: [], error: 'Нужно войти в аккаунт' })
+    expect(f.calls.upserts).toHaveLength(0)
+    expect(f.calls.selects).toHaveLength(0)
+  })
+
+  it('падение сети в rpc: не падаем', async () => {
+    const f = fakeClient({ rpc: { boom: true } })
+    const r = await grantCoinBonuses(f.client, 'u1', [a])
+    expect(r.granted).toEqual([])
+    expect(r.error).toContain('сеть')
+  })
+
+  it('нечего выдавать — функция не вызывается', async () => {
+    const f = fakeClient({ rpc: { data: [] } })
+    await grantCoinBonuses(f.client, 'u1', stepKeys(3))
+    await grantCoinBonuses(f.client, 'u1', [])
+    expect(f.calls.rpcs).toHaveLength(0)
+  })
+
+  it('прежний путь включается ТОЛЬКО при «функции нет» (PGRST202 / 42883 / текст), на другие ошибки — нет', () => {
+    expect(isFunctionMissing({ code: 'PGRST202' })).toBe(true)
+    expect(isFunctionMissing({ code: '42883' })).toBe(true)
+    expect(isFunctionMissing({ message: 'Could not find the function public.x' })).toBe(true)
+    expect(isFunctionMissing({ code: '28000', message: 'Нужно войти в аккаунт' })).toBe(false)
+    expect(isFunctionMissing({ code: '42501', message: 'permission denied for table achievement_bonuses' })).toBe(false)
+    expect(isFunctionMissing(null)).toBe(false)
+  })
+
+  it('функции нет: монеты всё равно выдаются прежним путём (до применения 062 ничего не ломается)', async () => {
+    const f = fakeClient()
+    const r = await grantCoinBonuses(f.client, 'u1', [a])
+    expect(r.granted).toEqual([{ key: a, coins: 20 }])
+    expect(f.calls.rpcs).toEqual(['claim_achievement_bonuses'])
+    expect(f.calls.upserts).toHaveLength(1)
   })
 })
