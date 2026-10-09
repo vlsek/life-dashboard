@@ -1,6 +1,13 @@
 {
-  "version": "3.99",
+  "version": "4.00",
   "en": [
+    {
+      "version": "4.00",
+      "date": "2026-10-09 10:40",
+      "changes": [
+        "Community: a friend's profile window now has an Offer a goal or task button. You can offer a goal (stages, difficulty, deadline) or a task for a chosen day; your friend gets a card with Accept and Decline, and you learn when they answer and when they finish it. Goal points depend on difficulty - you cannot give points; your friend limits how many offers per day they accept. Works after the database update is applied"
+      ]
+    },
     {
       "version": "3.99",
       "date": "2026-10-09 11:35",
@@ -2860,6 +2867,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.00",
+      "date": "2026-10-09 10:40",
+      "changes": [
+        "Сообщество: в окне профиля друга появилась кнопка «Предложить цель или задачу». Можно предложить цель (этапы, сложность, срок) или задачу на нужный день; друг увидит плашку с «Принять» и «Отклонить», а ты узнаешь, когда он ответит и когда выполнит. Баллы за цель зависят от сложности — подарить баллы нельзя; друг сам ограничивает, сколько предложений в день принимает. Заработает после применения обновления базы"
+      ]
+    },
     {
       "version": "3.99",
       "date": "2026-10-09 11:35",

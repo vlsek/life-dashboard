@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.99";
+const SITE_VERSION = "4.00";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.00", date: "2026-10-09 10:40", changes: [
+        "Сообщество: в окне профиля друга появилась кнопка «Предложить цель или задачу». Можно предложить цель (этапы, сложность, срок) или задачу на нужный день; друг увидит плашку с «Принять» и «Отклонить», а ты узнаешь, когда он ответит и когда выполнит. Баллы за цель зависят от сложности — подарить баллы нельзя; друг сам ограничивает, сколько предложений в день принимает. Заработает после применения обновления базы",
+    ]},
     { version: "3.99", date: "2026-10-09 11:35", changes: [
         "Выбор периода у графиков теперь везде одинаковый. Раньше новый вид (7Д · 30Д · 90Д · 1Г · Всё, «Неделя» и «Месяц» со стрелками листания, подпись выбранных дат, рамки в цвете вашей темы) был только на Дашборде, а у графиков в «Тренировках» и «Сообществе» оставался старый ряд кнопок. Теперь и там то же самое. Сохранённые раньше периоды продолжают работать. В статистике мышц кнопки 7 / 30 / 90 дней тоже получили рамку в цвете темы",
     ]},
@@ -1807,6 +1810,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.00", date: "2026-10-09 10:40", changes: [
+        "Community: a friend's profile window now has an Offer a goal or task button. You can offer a goal (stages, difficulty, deadline) or a task for a chosen day; your friend gets a card with Accept and Decline, and you learn when they answer and when they finish it. Goal points depend on difficulty - you cannot give points; your friend limits how many offers per day they accept. Works after the database update is applied",
+    ]},
     { version: "3.99", date: "2026-10-09 11:35", changes: [
         "The period picker for charts now looks the same everywhere. The new look (7D · 30D · 90D · 1Y · All, “Week” and “Month” with arrows to page through, the chosen dates shown, borders in your theme color) used to exist only on the Dashboard, while charts in “Workouts” and “Community” kept the old row of buttons. Now they all share it. Periods you saved earlier keep working. In the muscle statistics, the 7 / 30 / 90 days buttons also got a border in the theme color",
     ]},
