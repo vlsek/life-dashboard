@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.02";
+const SITE_VERSION = "4.03";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.03", date: "2026-10-09 15:32", changes: [
+        "Цели: в настройках раздела можно выбрать, сколько предложений целей и задач от друзей ты готов получать в день — от «никаких» до 50 (по умолчанию 10). Лишние предложения друзьям просто не отправятся. Появится после применения обновления базы",
+    ]},
     { version: "4.02", date: "2026-10-09 12:20", changes: [
         "Навыки: секции «Быстрые идеи», «В процессе», «Освоенные» и книги сворачиваются плавно, у каждой счётчик, состояние запоминается на устройстве. Когда навыков в процессе больше трёх, появляются поиск и сортировка (сначала новые / по прогрессу / по названию). Без миграций."
     ]},
@@ -1816,6 +1819,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.03", date: "2026-10-09 15:32", changes: [
+        "Goals: you can now choose how many goal and task offers from friends you are willing to get per day - from none up to 50 (10 by default). Extra offers are simply not sent to your friends. Shows up after the database update is applied",
+    ]},
     { version: "4.02", date: "2026-10-09 12:20", changes: [
         "Skills: the “Quick ideas”, “In progress”, “Mastered” and books sections now collapse smoothly with a counter, and the state is remembered on the device. With more than three skills in progress, search and sorting (newest / by progress / by name) appear. No migrations."
     ]},

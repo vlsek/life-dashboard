@@ -1,6 +1,13 @@
 {
-  "version": "4.02",
+  "version": "4.03",
   "en": [
+    {
+      "version": "4.03",
+      "date": "2026-10-09 15:32",
+      "changes": [
+        "Goals: you can now choose how many goal and task offers from friends you are willing to get per day - from none up to 50 (10 by default). Extra offers are simply not sent to your friends. Shows up after the database update is applied"
+      ]
+    },
     {
       "version": "4.02",
       "date": "2026-10-09 12:20",
@@ -2881,6 +2888,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.03",
+      "date": "2026-10-09 15:32",
+      "changes": [
+        "Цели: в настройках раздела можно выбрать, сколько предложений целей и задач от друзей ты готов получать в день — от «никаких» до 50 (по умолчанию 10). Лишние предложения друзьям просто не отправятся. Появится после применения обновления базы"
+      ]
+    },
     {
       "version": "4.02",
       "date": "2026-10-09 12:20",
