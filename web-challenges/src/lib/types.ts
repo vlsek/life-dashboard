@@ -35,8 +35,11 @@ export interface ChallengeEntry {
   created_at: string
 }
 
+export type TemplateCategory = 'sport' | 'health' | 'mind' | 'life'
+
 export interface ChallengeTemplate {
   id: string
+  category?: TemplateCategory
   icon: string
   title: string
   description: string
