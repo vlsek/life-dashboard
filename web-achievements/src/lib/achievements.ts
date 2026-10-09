@@ -2,6 +2,7 @@
 // Здесь НЕТ сети, DOM и localStorage — загрузка данных и хранение открытых достижений в useAchievements.ts.
 // Награды первого среза — значки; предметы из «Кастомизации» и поздравляющее окно — следующими срезами.
 import { addDays, fmtDate } from './date'
+import { ICON_BY_KEY } from './grade'
 import { isMetricDone, metricDayPointsTenths, metricExpectedOn } from './metrics'
 import type { Metric, MetricValue, PointsRow } from './types'
 
@@ -44,7 +45,8 @@ function makeLadder(prefix: string, group: GroupKey, counter: CounterKey, icon: 
 }
 
 // Стартовый набор (~20), одобрен владельцем 2026-10-03. Пороги серий — как у поздравлений (DAY_THRESHOLDS в web-dashboard).
-export const ACHIEVEMENTS: readonly AchievementDef[] = [
+// Иконка у каждого достижения своя (lib/grade.ts, BACKLOG 44.12): значение `icon` в записях ниже — запасное (группа), тест требует запись в ICON_BY_KEY.
+const BASE_ACHIEVEMENTS: readonly AchievementDef[] = [
   { key: 'first_metric', group: 'first', counter: 'metricDone', target: 1, icon: 'done' },
   { key: 'first_weight', group: 'first', counter: 'weightEntries', target: 1, icon: 'scale' },
   { key: 'first_goal', group: 'first', counter: 'goalsDone', target: 1, icon: 'goals' },
@@ -83,6 +85,8 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   ...makeLadder('words', 'words_added', 'wordsAdded', 'english', [10, 25, 50, 100]),
   ...makeLadder('learned', 'words_learned', 'wordsLearned', 'brain', [10, 25, 50, 100]),
 ]
+
+export const ACHIEVEMENTS: readonly AchievementDef[] = BASE_ACHIEVEMENTS.map((d) => ({ ...d, icon: ICON_BY_KEY[d.key] ?? d.icon }))
 
 export interface AchievementState {
   def: AchievementDef

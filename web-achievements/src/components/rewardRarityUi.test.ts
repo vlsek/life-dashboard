@@ -18,31 +18,31 @@ describe('редкость награды на карточке достижен
   it('показывает метку редкости отдельно от строки награды (текст строки награды не меняется)', () => {
     const w = mount(AchievementCard, { props: { state: stateOf('learned_10'), unlocked: false, unlockedAt: null } })
     expect(w.find('[data-testid="achievement-reward"]').text()).toBe('Награда: 20 монет')
-    expect(w.find('[data-testid="achievement-rarity"]').text()).toBe('Обычная')
+    expect(w.find('[data-testid="achievement-rarity"]').text()).toBe('Редкость награды: Обычная')
     expect(w.find('[data-testid="achievement-rarity"]').attributes('data-rarity')).toBe('common')
   })
 
   it('ступени одной лесенки идут по возрастанию: обычная → необычная → редкая → по теме', () => {
     const label = (key: string) => mount(AchievementCard, { props: { state: stateOf(key), unlocked: false, unlockedAt: null } }).find('[data-testid="achievement-rarity"]').text()
-    expect(['words_10', 'words_25', 'words_50', 'words_100'].map(label)).toEqual(['Обычная', 'Необычная', 'Редкая', 'Необычная'])
-    expect(label('workouts_250')).toBe('Легендарная')
-    expect(label('books_25')).toBe('Эпическая')
-    expect(label('challenges_25')).toBe('Эпическая')
+    expect(['words_10', 'words_25', 'words_50', 'words_100'].map(label)).toEqual(['Редкость награды: Обычная', 'Редкость награды: Необычная', 'Редкость награды: Редкая', 'Редкость награды: Необычная'])
+    expect(label('workouts_250')).toBe('Редкость награды: Легендарная')
+    expect(label('books_25')).toBe('Редкость награды: Эпическая')
+    expect(label('challenges_25')).toBe('Редкость награды: Эпическая')
   })
 
-  it('цветная полоска карточки — цвет редкости; у значка без награды ни метки, ни полоски', () => {
+  it('полоска карточки — цвет ГРЕЙДА достижения (v3.87), а метки редкости награды у значка без награды нет', () => {
     const w = mount(AchievementCard, { props: { state: stateOf('workouts_250'), unlocked: true, unlockedAt: null } })
     expect(w.find('[data-testid="achievement-card"]').attributes('style')).toContain('inset 0 3px 0')
     expect(RARITY_COLOR.legendary).toMatch(/^#[0-9a-f]{6}$/i)
     const none = mount(AchievementCard, { props: { state: stateOf('streak_5'), unlocked: false, unlockedAt: null } })
     expect(none.find('[data-testid="achievement-rarity"]').exists()).toBe(false)
-    expect(none.find('[data-testid="achievement-card"]').attributes('style') ?? '').not.toContain('inset')
+    expect(none.find('[data-testid="achievement-card"]').attributes('style') ?? '').toContain('inset 0 3px 0') // полоска грейда есть у каждой карточки
   })
 
   it('английская подпись', () => {
     localStorage.setItem('site_lang', 'en')
     const w = mount(AchievementCard, { props: { state: stateOf('books_25'), unlocked: false, unlockedAt: null } })
-    expect(w.find('[data-testid="achievement-rarity"]').text()).toBe('Epic')
+    expect(w.find('[data-testid="achievement-rarity"]').text()).toBe('Reward rarity: Epic')
   })
 })
 
@@ -50,9 +50,9 @@ describe('редкость награды в окне «Новое достиж�
   it('метка редкости под строкой награды; у достижения без награды её нет; при «Дальше» меняется', async () => {
     const w = mount(AchievementUnlockedModal, { props: { states: [stateOf('learned_10'), stateOf('workouts_250'), stateOf('streak_30')] }, attachTo: document.body })
     expect(w.find('[data-testid="unlocked-reward"]').text()).toBe('Награда: 20 монет')
-    expect(w.find('[data-testid="unlocked-rarity"]').text()).toBe('Обычная')
+    expect(w.find('[data-testid="unlocked-rarity"]').text()).toBe('Редкость награды: Обычная')
     await w.find('[data-testid="unlocked-next"]').trigger('click')
-    expect(w.find('[data-testid="unlocked-rarity"]').text()).toBe('Легендарная')
+    expect(w.find('[data-testid="unlocked-rarity"]').text()).toBe('Редкость награды: Легендарная')
     await w.find('[data-testid="unlocked-next"]').trigger('click')
     expect(w.find('[data-testid="unlocked-reward"]').exists()).toBe(false)
     expect(w.find('[data-testid="unlocked-rarity"]').exists()).toBe(false)

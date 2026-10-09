@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Icon from './Icon.vue'
+import GradeBadge from './GradeBadge.vue'
+import { gradeOf } from '../lib/grade'
 import { locale, t } from '../lib/i18n'
 import { achievementCondition, achievementTitle, rewardText } from '../lib/achievementText'
 import { RARITY_COLOR, rewardFor, rewardIcon, rewardRarity } from '../lib/rewards'
@@ -11,6 +13,14 @@ import type { AchievementState } from '../lib/achievements'
 const props = defineProps<{ state: AchievementState; unlocked: boolean; unlockedAt: string | null }>()
 
 const title = computed(() => achievementTitle(props.state.def))
+// ГРЕЙД самого достижения (BACKLOG 44.12; lib/grade.ts) — задаёт форму значка, полоску и свечение карточки. Редкость НАГРАДЫ (ниже, rarity) — отдельная.
+const grade = computed(() => gradeOf(props.state.def.key))
+const gradeColor = computed(() => RARITY_COLOR[grade.value])
+const cardStyle = computed(() => {
+  const c = gradeColor.value
+  const glow = props.unlocked && (grade.value === 'epic' || grade.value === 'legendary') ? `, 0 0 14px color-mix(in srgb, ${c} 28%, transparent)` : ''
+  return { boxShadow: `inset 0 3px 0 ${c}${glow}`, borderColor: props.unlocked ? c : undefined }
+})
 // Награда за ступень (rewards.ts): подпись «скоро», пока награда не выдаётся по-настоящему
 const reward = computed(() => rewardFor(props.state.def.key))
 const rarity = computed(() => (reward.value ? rewardRarity(props.state.def.key) : null))
@@ -32,12 +42,17 @@ const when = computed(() => {
     :class="unlocked ? 'ach-unlocked' : 'ach-locked'"
     :data-state="unlocked ? 'unlocked' : 'locked'"
     :data-key="state.def.key"
-    :style="rarity ? { boxShadow: 'inset 0 3px 0 ' + RARITY_COLOR[rarity] } : undefined"
+    :style="cardStyle"
+    :data-grade="grade"
     data-testid="achievement-card"
   >
-    <div class="ach-badge relative flex h-14 w-14 items-center justify-center rounded-full text-2xl">
-      <Icon :name="state.def.icon" />
+    <div class="relative inline-flex">
+      <GradeBadge :grade="grade" :icon="state.def.icon" :unlocked="unlocked" :size="56" />
       <span v-if="!unlocked" class="ach-lock absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-[11px]" aria-hidden="true"><Icon name="lock" /></span>
+    </div>
+    <div class="ach-grade mt-1.5 flex items-center justify-center gap-1 text-[11px] font-medium uppercase tracking-wide" :class="{ dim: !unlocked }" :style="unlocked ? { color: gradeColor } : undefined" :data-grade="grade" data-testid="achievement-grade">
+      <span class="ach-rarity-dot" :style="{ background: gradeColor }" aria-hidden="true"></span>
+      <span>{{ t(('ach_grade_' + grade) as DictKey) }}</span>
     </div>
     <div class="mt-2 text-sm font-medium leading-tight">{{ title }}</div>
     <div class="dim mt-1 text-xs leading-snug">{{ condition }}</div>
@@ -47,7 +62,7 @@ const when = computed(() => {
     </div>
     <div v-if="rarity" class="ach-rarity dim mt-0.5 flex items-center justify-center gap-1 text-xs" :data-rarity="rarity" data-testid="achievement-rarity">
       <span class="ach-rarity-dot" :style="{ background: RARITY_COLOR[rarity] }" aria-hidden="true"></span>
-      <span>{{ t(('ach_rarity_' + rarity) as DictKey) }}</span>
+      <span>{{ t('ach_reward_rarity').replace('{r}', t(('ach_rarity_' + rarity) as DictKey)) }}</span>
     </div>
 
     <template v-if="unlocked">
@@ -80,10 +95,6 @@ const when = computed(() => {
   background: var(--bg-card);
   border-color: var(--border);
 }
-.ach-badge {
-  border: 2px dashed var(--border);
-  color: var(--text-dim);
-}
 .ach-lock {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -91,14 +102,6 @@ const when = computed(() => {
 }
 .ach-locked {
   opacity: 0.7;
-}
-.ach-unlocked {
-  border-color: var(--accent);
-}
-.ach-unlocked .ach-badge {
-  border: 2px solid var(--accent);
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 16%, transparent);
 }
 .ach-when {
   color: var(--accent);

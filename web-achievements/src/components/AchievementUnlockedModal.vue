@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import Icon from './Icon.vue'
+import GradeBadge from './GradeBadge.vue'
+import { gradeOf } from '../lib/grade'
 import { t } from '../lib/i18n'
 import type { DictKey } from '../lib/i18n'
 import { achievementCondition, achievementTitle, rewardText } from '../lib/achievementText'
@@ -21,6 +23,7 @@ const title = computed(() => (many.value ? t('ach_new_title_many') : t('ach_new_
 const counter = computed(() => t('ach_new_counter').replace('{i}', String(index.value + 1)).replace('{n}', String(props.states.length)))
 const reward = computed(() => (current.value ? rewardFor(current.value.def.key) : null))
 const rarity = computed(() => (reward.value && current.value ? rewardRarity(current.value.def.key) : null))
+const grade = computed(() => (current.value ? gradeOf(current.value.def.key) : 'common'))
 const message = computed(() => (current.value ? t(('ach_new_msg_' + current.value.def.group) as DictKey) : ''))
 
 function advance() {
@@ -51,15 +54,16 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     >
       <div class="dim text-xs" data-testid="unlocked-title">{{ title }}</div>
 
-      <div class="unlock-badge-wrap mt-3">
+      <div class="unlock-badge-wrap mt-3" :style="{ '--g': RARITY_COLOR[grade] }">
         <span class="unlock-ring" aria-hidden="true"></span>
         <span class="unlock-ring unlock-ring-2" aria-hidden="true"></span>
-        <div class="unlock-badge flex h-24 w-24 items-center justify-center rounded-full text-5xl" :key="current.def.key" data-testid="unlocked-badge">
-          <Icon :name="current.def.icon" />
+        <div class="unlock-badge" :key="current.def.key" :data-grade="grade" data-testid="unlocked-badge">
+          <GradeBadge :grade="grade" :icon="current.def.icon" :unlocked="true" :size="96" />
         </div>
       </div>
 
       <div class="mt-3 text-xl font-bold" style="color: var(--accent)" data-testid="unlocked-name">{{ achievementTitle(current.def) }}</div>
+      <div class="mt-0.5 text-xs font-medium uppercase tracking-wide" :style="{ color: RARITY_COLOR[grade] }" :data-grade="grade" data-testid="unlocked-grade">{{ t(('ach_grade_' + grade) as DictKey) }}</div>
       <div class="dim mt-0.5 text-sm" data-testid="unlocked-condition">{{ achievementCondition(current.def) }}</div>
       <p class="mt-3 text-sm" data-testid="unlocked-message">{{ message }}</p>
       <div v-if="reward" class="mt-2 flex items-center justify-center gap-1 text-sm" style="color: var(--accent)" data-testid="unlocked-reward">
@@ -68,7 +72,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
       </div>
       <div v-if="rarity" class="dim mt-0.5 flex items-center justify-center gap-1 text-xs" :data-rarity="rarity" data-testid="unlocked-rarity">
         <span class="inline-block h-2 w-2 rounded-full" :style="{ background: RARITY_COLOR[rarity] }" aria-hidden="true"></span>
-        <span>{{ t(('ach_rarity_' + rarity) as DictKey) }}</span>
+        <span>{{ t('ach_reward_rarity').replace('{r}', t(('ach_rarity_' + rarity) as DictKey)) }}</span>
       </div>
       <div v-if="many" class="dim mt-2 text-xs" data-testid="unlocked-counter">{{ counter }}</div>
 
@@ -93,17 +97,14 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 }
 .unlock-badge {
   position: relative;
-  border: 3px solid var(--accent);
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 16%, transparent);
-  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 60%, transparent));
+  display: inline-flex;
   animation: unlock-stamp 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
 }
 .unlock-ring {
   position: absolute;
   inset: 8px;
   border-radius: 9999px;
-  border: 2px solid var(--accent);
+  border: 2px solid var(--g, var(--accent));
   opacity: 0;
   animation: unlock-ring 1.6s ease-out 0.4s 2 both;
 }
