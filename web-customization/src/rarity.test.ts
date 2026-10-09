@@ -31,6 +31,7 @@ import App from './App.vue'
 beforeEach(() => {
   localStorage.clear()
   localStorage.setItem('site_lang', 'ru')
+  localStorage.setItem('site_theme', 'dark') // тесты исходят из тёмной; светлая по умолчанию — в themeDefaultAllPilots.test.ts
   h.total = 250
   globalThis.fetch = vi.fn(async () => new Response(JSON.stringify({ version: '1.00', en: [], ru: [] }))) as unknown as typeof fetch
 })

@@ -28,7 +28,7 @@ function write(key: string, value: string | null) {
 
 export function getTheme(): ThemeKey {
   const v = read('site_theme')
-  return v && v in THEME_KEYS ? (v as ThemeKey) : 'dark'
+  return v && v in THEME_KEYS ? (v as ThemeKey) : 'light'
 }
 export function setTheme(theme: ThemeKey) {
   write('site_theme', theme)

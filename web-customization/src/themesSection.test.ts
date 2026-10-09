@@ -27,6 +27,7 @@ import { FAVORITE_THEMES_KEY, UNLOCKED_THEMES_KEY, getTheme, readFavoriteThemes,
 beforeEach(() => {
   localStorage.clear()
   localStorage.setItem('site_lang', 'ru')
+  localStorage.setItem('site_theme', 'dark') // тесты исходят из тёмной; светлая по умолчанию — в themeDefaultAllPilots.test.ts
   document.documentElement.className = 'theme-dark'
   h.total = 250
   h.owned = []

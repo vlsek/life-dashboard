@@ -5,7 +5,7 @@
     <script>
       (function () {
         try {
-          var t = localStorage.getItem('site_theme') || 'dark'
+          var t = localStorage.getItem('site_theme') || 'light'
           document.documentElement.className = 'theme-' + t
           var bg = { dark: '#121212', monet: '#0d0703', light: '#f7f4ef', pink: '#fff0f5', mint: '#effaf4', sepia: '#f4ecd8', solarlight: '#fdf6e3', nord: '#2e3440', mocha: '#1e1e2e', amoled: '#000000', contrast: '#000000', dracula: '#282a36', gruvbox: '#282828', tokyonight: '#1a1b26', forest: '#0f1a14', ocean: '#0a1622', sunset: '#1c1014', twilight: '#150f25', neon: '#0b0f14', lavender: '#f5f0ff', sky: '#eef6fd', peach: '#fff3ea', graphite: '#eceff1' }[t]
           // цвет огонька заставки по теме (акценты из style.css; CSS-переменных бандла ещё нет)

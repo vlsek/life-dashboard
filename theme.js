@@ -52,7 +52,7 @@ const THEME_BG_COLORS = {
 };
 
 function getTheme() {
-    return localStorage.getItem("site_theme") || "dark";
+    return localStorage.getItem("site_theme") || "light";
 }
 
 function setTheme(theme) {

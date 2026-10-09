@@ -59,7 +59,7 @@ const THEME_BG_COLORS: Record<ThemeKey, string> = {
 
 export function getTheme(): ThemeKey {
   const v = localStorage.getItem('site_theme')
-  return v && v in THEME_KEYS ? (v as ThemeKey) : 'dark'
+  return v && v in THEME_KEYS ? (v as ThemeKey) : 'light'
 }
 
 export function setTheme(theme: ThemeKey) {

@@ -11,6 +11,7 @@ beforeEach(() => {
   vi.resetModules()
   localStorage.clear()
   localStorage.setItem('site_lang', 'ru')
+  localStorage.setItem('site_theme', 'dark') // тесты исходят из тёмной; светлая по умолчанию — в themeDefaultAllPilots.test.ts
   document.documentElement.className = 'theme-dark'
   globalThis.fetch = vi.fn(async () => new Response(JSON.stringify({ version: '1.00', en: [], ru: [] }))) as unknown as typeof fetch
 })
