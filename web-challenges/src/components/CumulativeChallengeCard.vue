@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { computeCumulativeStats } from '../lib/challenges'
 import Icon from './Icon.vue'
+import ProgressRing from './ProgressRing.vue'
 import type { Challenge, ChallengeEntry } from '../lib/types'
 import EmojiText from './EmojiText.vue'
 
@@ -42,7 +43,10 @@ const placeholder = computed(() =>
       <button class="danger px-2 py-0.5" @click="emit('abandon', challenge)"><Icon name="trash" /></button>
     </div>
 
-    <div class="dim my-1.5 text-sm">{{ stats.count }} / {{ stats.target }} {{ stats.itemWord }}</div>
+    <div class="my-2 flex items-center gap-3">
+      <ProgressRing :percent="stats.pct" :label="t('ch_ring_aria')" />
+      <div class="dim text-sm">{{ stats.count }} / {{ stats.target }} {{ stats.itemWord }}</div>
+    </div>
 
     <div class="mb-2.5 h-2 overflow-hidden rounded-md" style="background: var(--bg)">
       <div class="h-full" :style="{ background: 'var(--accent)', width: stats.pct + '%' }"></div>

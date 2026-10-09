@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { t } from '../lib/i18n'
-import { computeDailyStats, defaultDayIdx, hasAutoSource, isMetricEntry } from '../lib/challenges'
+import { getLang, t } from '../lib/i18n'
+import { computeDailyStats, currentStreak, defaultDayIdx, hasAutoSource, isMetricEntry } from '../lib/challenges'
+import { daysLabel } from '../lib/catalogMeta'
+import ProgressRing from './ProgressRing.vue'
 import { todayStr } from '../lib/date'
 import Icon from './Icon.vue'
 import type { Challenge, ChallengeEntry } from '../lib/types'
@@ -16,6 +18,9 @@ const emit = defineEmits<{
 }>()
 
 const stats = computed(() => computeDailyStats(props.challenge, props.entries, todayStr()))
+const percent = computed(() => (stats.value.duration ? (stats.value.completedCount / stats.value.duration) * 100 : 0))
+const streak = computed(() => currentStreak(stats.value.doneDays))
+const daysLeft = computed(() => Math.max(0, stats.value.duration - 1 - stats.value.todayIdx))
 
 // Выбранный день: null — по умолчанию (сегодня; после конца челленджа — последний день).
 // Клик по кружку прошедшего дня выбирает его — значение вносится/правится за этот день (BACKLOG 14, 11:28).
@@ -84,9 +89,18 @@ function dotStyle(d: { i: number; isFuture: boolean; done: boolean; isToday: boo
       <button class="danger px-2 py-0.5" @click="emit('abandon', challenge)"><Icon name="trash" /></button>
     </div>
 
-    <div class="dim my-1.5 text-sm">
-      {{ t('ch_day_label') }} {{ Math.min(stats.todayIdx + 1, stats.duration) }}/{{ stats.duration }} ·
-      {{ t('ch_completed_days') }} {{ stats.completedCount }}/{{ stats.duration }}
+    <div class="my-2 flex items-center gap-3">
+      <ProgressRing :percent="percent" :label="t('ch_ring_aria')" />
+      <div class="min-w-0">
+        <div class="dim text-sm">
+          {{ t('ch_day_label') }} {{ Math.min(stats.todayIdx + 1, stats.duration) }}/{{ stats.duration }} ·
+          {{ t('ch_completed_days') }} {{ stats.completedCount }}/{{ stats.duration }}
+        </div>
+        <div class="mt-1 flex flex-wrap gap-1.5 text-xs">
+          <span v-if="streak >= 2" class="chip" data-testid="streak-chip"><EmojiText text="🔥" /> {{ t('ch_streak_label') }} {{ streak }}</span>
+          <span v-if="!stats.isOver && daysLeft > 0" class="chip" data-testid="left-chip">{{ t('ch_left_label') }} {{ daysLabel(daysLeft, getLang()) }}</span>
+        </div>
+      </div>
     </div>
 
     <div class="mb-2.5 flex flex-wrap gap-[3px]">
@@ -139,3 +153,15 @@ function dotStyle(d: { i: number; isFuture: boolean; done: boolean; isToday: boo
     </template>
   </div>
 </template>
+
+<style scoped>
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  color: var(--text-dim);
+}
+</style>

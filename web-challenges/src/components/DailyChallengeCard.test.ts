@@ -93,3 +93,19 @@ describe('DailyChallengeCard — прошлые дни', () => {
     expect(w.emitted('edit')?.[0]).toEqual([c])
   })
 })
+
+describe('DailyChallengeCard — кольцо, серия, остаток (BACKLOG 44.6 срез 2)', () => {
+  it('кольцо показывает долю выполненных дней, серия считает дни подряд до сегодня, остаток — дни после сегодня', () => {
+    // выполнены дни 1 и 2 (индексы 1, 2), сегодня (индекс 3) ещё нет: серия 2 не рвётся; выполнено 2 из 7 = 29%
+    const w = mount(DailyChallengeCard, { props: { challenge: ch(), entries: [en(day(1), 20), en(day(2), 25)] } })
+    expect(w.find('[data-testid="progress-ring"]').attributes('data-percent')).toBe('29')
+    expect(w.find('[data-testid="streak-chip"]').text()).toContain('Серия 2')
+    expect(w.find('[data-testid="left-chip"]').text()).toContain('осталось 3 дня')
+  })
+
+  it('серия из одного дня и пустой челлендж — значка серии нет', () => {
+    const w = mount(DailyChallengeCard, { props: { challenge: ch(), entries: [en(day(2), 20)] } })
+    expect(w.find('[data-testid="streak-chip"]').exists()).toBe(false)
+    expect(w.find('[data-testid="progress-ring"]').attributes('data-percent')).toBe('14')
+  })
+})

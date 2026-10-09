@@ -98,6 +98,18 @@ export interface CumulativeStats {
   canComplete: boolean
 }
 
+// Серия выполненных дней подряд на сегодня (BACKLOG 44.6): считаем назад от сегодняшнего дня; если сегодня ещё не выполнен,
+// серия не рвётся (день не закончился) и считается от вчера. Будущие дни не в счёт.
+export function currentStreak(days: readonly Pick<DayDot, 'done' | 'isFuture' | 'isToday'>[]): number {
+  let i = days.findIndex((d) => d.isToday)
+  if (i < 0) i = days.reduce((last, d, k) => (d.isFuture ? last : k), -1) // челлендж закончился: от последнего дня
+  if (i < 0) return 0
+  if (!days[i].done && days[i].isToday) i--
+  let n = 0
+  for (; i >= 0 && days[i].done; i--) n++
+  return n
+}
+
 // Портировано из renderCumulativeChallengeCard() в challenges.js (только расчёт).
 export function computeCumulativeStats(ch: Pick<Challenge, 'target_count' | 'item_label'>, entries: ChallengeEntry[]): CumulativeStats {
   const count = entries.reduce((sum, e) => sum + (e.value || 0), 0)
