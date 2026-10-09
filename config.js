@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.96";
+const SITE_VERSION = "3.97";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.97", date: "2026-10-09 11:35", changes: [
+        "Тренировки → «Типовые программы»: новая программа из нескольких упражнений «Тело без железа: 6 недель» — отжимания, приседания и планка, у каждого упражнения своя нагрузка на каждую неделю (в последнюю неделю — контрольный максимум). В карточке активной программы видно, что делать на этой неделе по каждому упражнению; в предпросмотре — таблица по неделям. Без миграций, активная программа хранится как раньше."
+    ]},
     { version: "3.96", date: "2026-10-09 10:28", changes: [
         "Достижения: у каждого достижения теперь свой грейд (обычное, необычное, редкое, эпическое, легендарное) и своя иконка. Значок меняет форму по грейду: круг, круг с кольцом, шестиугольник, звезда и солнце с лучами; эпические и легендарные светятся. Закрытые достижения показывают ту же форму пунктиром, так что видно, какой грейд ждёт. Лесенки больше не из одинаковых значков: у «Месяца в огне», «Сотни дней» и «Разгорается» разные иконки. В окне «Новое достижение» тоже показаны форма и грейд. Редкость награды подписана отдельно: «Редкость награды: …»",
     ]},
@@ -1798,6 +1801,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.97", date: "2026-10-09 11:35", changes: [
+        "Workouts → “Ready-made programs”: a new multi-exercise program “Bodyweight: 6 weeks” — push-ups, squats and plank, each with its own load for every week (a max test in the final week). The active-program card shows what to do this week for each exercise; the preview has a week-by-week table. No migrations, the active program is stored as before."
+    ]},
     { version: "3.96", date: "2026-10-09 10:28", changes: [
         "Achievements: every achievement now has its own grade (common, uncommon, rare, epic, legendary) and its own icon. The badge changes shape with the grade: a circle, a circle with a ring, a hexagon, a star and a sunburst; epic and legendary ones glow. Locked achievements show the same shape dashed, so you can see which grade is waiting. Ladders no longer repeat the same icon: “Month on fire”, “100 days” and “Warming up” each look different. The “New achievement” window shows the shape and the grade too. The rarity of the reward is labelled separately: “Reward rarity: …”",
     ]},

@@ -1,6 +1,13 @@
 {
-  "version": "3.96",
+  "version": "3.97",
   "en": [
+    {
+      "version": "3.97",
+      "date": "2026-10-09 11:35",
+      "changes": [
+        "Workouts → “Ready-made programs”: a new multi-exercise program “Bodyweight: 6 weeks” — push-ups, squats and plank, each with its own load for every week (a max test in the final week). The active-program card shows what to do this week for each exercise; the preview has a week-by-week table. No migrations, the active program is stored as before."
+      ]
+    },
     {
       "version": "3.96",
       "date": "2026-10-09 10:28",
@@ -2839,6 +2846,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.97",
+      "date": "2026-10-09 11:35",
+      "changes": [
+        "Тренировки → «Типовые программы»: новая программа из нескольких упражнений «Тело без железа: 6 недель» — отжимания, приседания и планка, у каждого упражнения своя нагрузка на каждую неделю (в последнюю неделю — контрольный максимум). В карточке активной программы видно, что делать на этой неделе по каждому упражнению; в предпросмотре — таблица по неделям. Без миграций, активная программа хранится как раньше."
+      ]
+    },
     {
       "version": "3.96",
       "date": "2026-10-09 10:28",
