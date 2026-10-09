@@ -24,6 +24,15 @@ const showInSidebar = !isStandaloneApp() // вычисляется один ра
 const installModalOpen = ref(false)
 const tourOpen = ref(false)
 const aboutOpen = ref(false)
+// Тур «Как пользоваться» после онбординга (BACKLOG 49.4): онбординг ставит флаг tour_pending — показываем один раз на первой же странице.
+try {
+  if (localStorage.getItem('tour_pending')) {
+    localStorage.removeItem('tour_pending')
+    tourOpen.value = true
+  }
+} catch {
+  /* localStorage недоступен — тур можно открыть из меню */
+}
 async function onInstallClick() {
   const shown = await handleInstallClick()
   if (!shown) installModalOpen.value = true
@@ -380,6 +389,7 @@ onUnmounted(() => {
       type="button"
       class="mt-2 flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm"
       style="background: transparent; color: var(--text-dim)"
+      data-test="nav-install"
       @click="openInstall"
     >
       <Icon name="download" />
@@ -389,6 +399,7 @@ onUnmounted(() => {
       type="button"
       class="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm"
       style="background: transparent; color: var(--text-dim)"
+      data-test="nav-tour"
       @click="openTour"
     >
       <Icon name="help" />
@@ -398,6 +409,7 @@ onUnmounted(() => {
       type="button"
       class="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm"
       style="background: transparent; color: var(--text-dim)"
+      data-test="nav-about"
       @click="openAbout"
     >
       <Icon name="info" />

@@ -7,6 +7,10 @@ import { getLang, setLang, t, type DictKey } from '../lib/i18n'
 import { FAVORITE_THEMES_EVENT, UNLOCKED_THEMES_EVENT, getTheme, setTheme, THEME_KEYS, visibleThemes, type ThemeKey } from '../lib/theme'
 import { logout } from '../lib/supabase'
 import { loadVersionInfo } from '../lib/version'
+import { promptInstall as handleInstallClick, isStandaloneApp } from '../lib/install'
+import InstallModal from './InstallModal.vue'
+import WelcomeTourModal from './WelcomeTourModal.vue'
+import AboutModal from './AboutModal.vue'
 import Icon from './Icon.vue'
 import ChangelogModal from './ChangelogModal.vue'
 
@@ -19,6 +23,37 @@ import ChangelogModal from './ChangelogModal.vue'
 // модалки/логика (beforeinstallprompt, приветственный тур), сделаю в одной из следующих
 // итераций переезда, если пилот приживётся.
 const props = defineProps<{ userEmail: string | null }>()
+
+// «Установить приложение» / «Как пользоваться» / «О создателе» — модалки как в account/history/languages (BACKLOG 49.4, 49.7).
+const showInSidebar = !isStandaloneApp()
+const installModalOpen = ref(false)
+const tourOpen = ref(false)
+const aboutOpen = ref(false)
+async function onInstallClick() {
+  const shown = await handleInstallClick()
+  if (!shown) installModalOpen.value = true
+}
+function openInstall() {
+  closeSidebar()
+  onInstallClick()
+}
+function openTour() {
+  closeSidebar()
+  tourOpen.value = true
+}
+function openAbout() {
+  closeSidebar()
+  aboutOpen.value = true
+}
+// Тур «Как пользоваться» после онбординга (BACKLOG 49.4): онбординг ставит флаг tour_pending — показываем один раз на первой же странице.
+try {
+  if (localStorage.getItem('tour_pending')) {
+    localStorage.removeItem('tour_pending')
+    tourOpen.value = true
+  }
+} catch {
+  /* localStorage недоступен — тур можно открыть из меню */
+}
 
 interface NavPage {
   href: string
@@ -344,6 +379,38 @@ onUnmounted(() => {
     </select>
 
     <button
+      v-if="showInSidebar"
+      type="button"
+      class="mt-2 flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm"
+      style="background: transparent; color: var(--text-dim)"
+      data-test="nav-install"
+      @click="openInstall"
+    >
+      <Icon name="download" />
+      {{ t('nav_install_app') }}
+    </button>
+    <button
+      type="button"
+      class="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm"
+      style="background: transparent; color: var(--text-dim)"
+      data-test="nav-tour"
+      @click="openTour"
+    >
+      <Icon name="help" />
+      {{ t('nav_tour') }}
+    </button>
+    <button
+      type="button"
+      class="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm"
+      style="background: transparent; color: var(--text-dim)"
+      data-test="nav-about"
+      @click="openAbout"
+    >
+      <Icon name="info" />
+      {{ t('nav_about') }}
+    </button>
+
+    <button
       v-if="props.userEmail"
       type="button"
       class="mt-2 truncate rounded-lg border px-3 py-2 text-left text-sm"
@@ -376,6 +443,9 @@ onUnmounted(() => {
   </nav>
 
   <ChangelogModal v-if="changelogOpen" @close="changelogOpen = false" />
+  <InstallModal v-if="installModalOpen" @close="installModalOpen = false" />
+  <WelcomeTourModal v-if="tourOpen" @close="tourOpen = false" />
+  <AboutModal v-if="aboutOpen" @close="aboutOpen = false" />
   <ConfirmLogoutModal v-if="logoutConfirmOpen" @confirm="logout" @cancel="logoutConfirmOpen = false" />
   <ConfirmDialogHost />
 </template>
