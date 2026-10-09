@@ -1,6 +1,13 @@
 {
-  "version": "3.90",
+  "version": "3.91",
   "en": [
+    {
+      "version": "3.91",
+      "date": "2026-10-09 10:25",
+      "changes": [
+        "Coins for achievements are now issued by the server: it takes the amount and the list of badges from its own catalog and pays only for badges you have unlocked, so you can no longer make up coins. Nothing changes for you: coins for unlocked badges arrive once, and reloading the page does not double them (needs migration 062 — applied by the owner; until then everything works as before)"
+      ]
+    },
     {
       "version": "3.90",
       "date": "2026-10-09 10:55",
@@ -2797,6 +2804,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.91",
+      "date": "2026-10-09 10:25",
+      "changes": [
+        "Монетки за достижения теперь выдаёт сервер: сумму и список значков он берёт из собственного каталога и платит только за открытые значки, так что придумать себе монеты нельзя. Для вас ничего не меняется: монеты за открытые значки приходят один раз, повторная загрузка страницы их не удваивает (нужна миграция 062 — применяет владелец; до её применения всё работает как раньше)"
+      ]
+    },
     {
       "version": "3.90",
       "date": "2026-10-09 10:55",

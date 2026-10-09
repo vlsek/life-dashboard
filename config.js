@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.90";
+const SITE_VERSION = "3.91";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.91", date: "2026-10-09 10:25", changes: [
+        "Монетки за достижения теперь выдаёт сервер: сумму и список значков он берёт из собственного каталога и платит только за открытые значки, так что придумать себе монеты нельзя. Для вас ничего не меняется: монеты за открытые значки приходят один раз, повторная загрузка страницы их не удваивает (нужна миграция 062 — применяет владелец; до её применения всё работает как раньше)",
+    ]},
     { version: "3.90", date: "2026-10-09 10:55", changes: [
         "Тренировки → «Деревья прогрессии»: цепочки ступеней теперь нарисованы деревом — у каждой ступени круглый узел (✓ пройдено, ▶ текущая, ◐ в процессе, 🔒 закрыта), узлы соединены линией: зелёная между пройденными, цветная к текущей ступени, пунктирная там, где путь ещё закрыт. Карточки ступеней, полоски и кнопки «Добавить запись» прежние. Без миграций."
     ]},
@@ -1780,6 +1783,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.91", date: "2026-10-09 10:25", changes: [
+        "Coins for achievements are now issued by the server: it takes the amount and the list of badges from its own catalog and pays only for badges you have unlocked, so you can no longer make up coins. Nothing changes for you: coins for unlocked badges arrive once, and reloading the page does not double them (needs migration 062 — applied by the owner; until then everything works as before)",
+    ]},
     { version: "3.90", date: "2026-10-09 10:55", changes: [
         "Workouts → “Exercise progressions”: step chains are now drawn as a tree — each step has a round node (✓ done, ▶ current, ◐ in progress, 🔒 locked) joined by a line: green between completed steps, accent towards the current step, dashed where the path is still locked. Step cards, progress bars and “Add record” buttons are unchanged. No migrations."
     ]},
