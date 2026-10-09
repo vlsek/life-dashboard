@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.97";
+const SITE_VERSION = "3.98";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.98", date: "2026-10-09 10:31", changes: [
+        "Цели: если друг предложил тебе цель или задачу на день, над списком появляется плашка с кнопками «Принять» и «Отклонить»; принятая цель сразу попадает в список (баллы — по сложности), задача — в план дня на нужную дату. Если ты сам предлагал, придёт отметка, что друг принял, отклонил или выполнил. Появится после применения обновления базы; формы «Предложить» у друга пока нет — она в следующем обновлении",
+    ]},
     { version: "3.97", date: "2026-10-09 11:35", changes: [
         "Тренировки → «Типовые программы»: новая программа из нескольких упражнений «Тело без железа: 6 недель» — отжимания, приседания и планка, у каждого упражнения своя нагрузка на каждую неделю (в последнюю неделю — контрольный максимум). В карточке активной программы видно, что делать на этой неделе по каждому упражнению; в предпросмотре — таблица по неделям. Без миграций, активная программа хранится как раньше."
     ]},
@@ -1801,6 +1804,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.98", date: "2026-10-09 10:31", changes: [
+        "Goals: when a friend offers you a goal or a daily task, a card with Accept and Decline buttons appears above the list; an accepted goal lands in the list right away (points by difficulty), a task goes into the day plan for its date. If you made the offer, you get a note when the friend accepts, declines or completes it. Shows up after the database update is applied; the Offer form on a friend is not there yet - it comes in the next update",
+    ]},
     { version: "3.97", date: "2026-10-09 11:35", changes: [
         "Workouts → “Ready-made programs”: a new multi-exercise program “Bodyweight: 6 weeks” — push-ups, squats and plank, each with its own load for every week (a max test in the final week). The active-program card shows what to do this week for each exercise; the preview has a week-by-week table. No migrations, the active program is stored as before."
     ]},

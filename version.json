@@ -1,6 +1,13 @@
 {
-  "version": "3.97",
+  "version": "3.98",
   "en": [
+    {
+      "version": "3.98",
+      "date": "2026-10-09 10:31",
+      "changes": [
+        "Goals: when a friend offers you a goal or a daily task, a card with Accept and Decline buttons appears above the list; an accepted goal lands in the list right away (points by difficulty), a task goes into the day plan for its date. If you made the offer, you get a note when the friend accepts, declines or completes it. Shows up after the database update is applied; the Offer form on a friend is not there yet - it comes in the next update"
+      ]
+    },
     {
       "version": "3.97",
       "date": "2026-10-09 11:35",
@@ -2846,6 +2853,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.98",
+      "date": "2026-10-09 10:31",
+      "changes": [
+        "Цели: если друг предложил тебе цель или задачу на день, над списком появляется плашка с кнопками «Принять» и «Отклонить»; принятая цель сразу попадает в список (баллы — по сложности), задача — в план дня на нужную дату. Если ты сам предлагал, придёт отметка, что друг принял, отклонил или выполнил. Появится после применения обновления базы; формы «Предложить» у друга пока нет — она в следующем обновлении"
+      ]
+    },
     {
       "version": "3.97",
       "date": "2026-10-09 11:35",
