@@ -1,6 +1,13 @@
 {
-  "version": "3.88",
+  "version": "3.89",
   "en": [
+    {
+      "version": "3.89",
+      "date": "2026-10-09 10:40",
+      "changes": [
+        "Daily metrics: when creating a Sets or Number metric you can now link it right away to an exercise from Workouts - pick an existing one or create a new exercise with the same name. Then sets are entered once, in Workouts, and the metric on the Dashboard fills in by itself. For an already linked metric the form shows which exercise it follows. REQUIRES migration 054 (without it the choice is hidden or saving hints at the migration)."
+      ]
+    },
     {
       "version": "3.88",
       "date": "2026-10-09 05:04",
@@ -2783,6 +2790,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.89",
+      "date": "2026-10-09 10:40",
+      "changes": [
+        "Метрики дня: при создании метрики «Подходы» или «Число» можно сразу связать её с упражнением из «Тренировок» — выбрать уже заведённое или создать новое упражнение с тем же названием. Тогда подходы вводятся один раз, в «Тренировках», а метрика на Дашборде заполняется сама. У уже связанной метрики в форме показано, с каким она упражнением. ТРЕБУЕТ миграцию 054 (без неё выбор не показывается или сохранение подскажет про миграцию)."
+      ]
+    },
     {
       "version": "3.88",
       "date": "2026-10-09 05:04",

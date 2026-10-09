@@ -16,7 +16,7 @@ import Icon from './Icon.vue'
 const props = defineProps<{ userId: string | null; icon?: boolean }>()
 const emit = defineEmits<{ changed: [] }>()
 
-const { metrics, categories, error, load, addMetric, editMetric, deleteMetric } = useMetricsManager(() => emit('changed'))
+const { metrics, categories, exercises, error, load, addMetric, editMetric, deleteMetric } = useMetricsManager(() => emit('changed'))
 const open = ref(false)
 // вода — отдельный блок, в менеджере метрик её нет (BACKLOG 7.1)
 const listed = computed(() => withoutWater(metrics.value))
@@ -58,6 +58,7 @@ async function onEdit(m: Metric, form: MetricFormValues, done: (ok: boolean) => 
     v-if="open"
     :metrics="listed"
     :categories="categories"
+    :exercises="exercises"
     :error="error"
     @close="open = false"
     @add="onAdd"

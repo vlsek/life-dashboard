@@ -3,17 +3,24 @@ import { computed, ref, watch } from 'vue'
 import IconPicker from './IconPicker.vue'
 import MetricOptionsEditor from './MetricOptionsEditor.vue'
 import { t } from '../lib/i18n'
-import { WEEK_ORDER, clearedForBoolean, countAdvancedChanges, emptyForm, fieldsEnabledForForm, formFromMetric } from '../lib/metricsManager'
+import { WEEK_ORDER, canLinkExercise, clearedForBoolean, countAdvancedChanges, emptyForm, fieldsEnabledForForm, formFromMetric } from '../lib/metricsManager'
 import type { MetricFormValues } from '../lib/metricsManager'
 import type { MetricCategory } from '../lib/useMetricsManager'
 import type { Metric } from '../lib/types'
 import { stripEmoji } from '../lib/emojiText'
 
 // Портировано из openMetricFormModal() в dashboard.js.
-const props = defineProps<{ existing: Metric | null; categories: MetricCategory[]; error?: string | null; plannedSetsAvailable?: boolean }>()
+const props = defineProps<{ existing: Metric | null; categories: MetricCategory[]; error?: string | null; plannedSetsAvailable?: boolean; exercises?: { id: string; name: string }[]; exerciseLinkAvailable?: boolean }>()
 const emit = defineEmits<{ close: []; save: [form: MetricFormValues] }>()
 
 const form = ref<MetricFormValues>(props.existing ? formFromMetric(props.existing) : emptyForm())
+// Связь с упражнением «Тренировок» (BACKLOG 19 «это упражнение?», миграция 054): выбор при СОЗДАНИИ метрики «Подходы»/«Число». У уже заведённой
+// метрики связь показывается текстом — менять её нужно в «Тренировках» (там же переносятся сегодняшние подходы без потерь).
+const linkChoiceShown = computed(() => !props.existing && !!props.exerciseLinkAvailable && canLinkExercise(form.value))
+const linkedExerciseName = computed(() => {
+  const id = props.existing?.source_exercise_id
+  return id ? (props.exercises ?? []).find((e) => e.id === id)?.name ?? '' : ''
+})
 const enabled = computed(() => fieldsEnabledForForm(form.value))
 // «Дополнительно» свёрнуто по умолчанию (BACKLOG «Форма метрики: слишком много всего»); при правке метрики с нестандартными настройками раскрыто сразу
 const advancedChanged = computed(() => countAdvancedChanges(form.value))
@@ -65,6 +72,20 @@ const dim = (on: boolean) => ({ opacity: on ? 1 : 0.4 })
         <option value="multiselect">{{ t('dash_metric_type_multiselect') }}</option>
         <option value="sets">{{ t('dash_metric_type_sets') }}</option>
       </select>
+
+      <!-- Связь с упражнением из «Тренировок»: подходы вводятся один раз (BACKLOG 19, срез 2) -->
+      <div v-if="linkChoiceShown" class="mt-2" data-test="exercise-link-block">
+        <label class="block text-sm">{{ t('dash_metric_exercise_link') }}</label>
+        <select v-model="form.exerciseLink" class="w-full" data-test="exercise-link">
+          <option value="">{{ t('dash_metric_exercise_none') }}</option>
+          <option v-if="form.name.trim()" value="__new__">{{ t('dash_metric_exercise_new').replace('{name}', form.name.trim()) }}</option>
+          <option v-for="ex in exercises" :key="ex.id" :value="ex.id">{{ ex.name }}</option>
+        </select>
+        <p v-if="form.exerciseLink" class="dim mt-1 text-xs" data-test="exercise-link-hint">{{ t('dash_metric_exercise_hint') }}</p>
+      </div>
+      <p v-else-if="existing?.source_exercise_id" class="dim mt-2 text-sm" data-test="exercise-linked-note">
+        {{ t('dash_metric_exercise_linked').replace('{name}', linkedExerciseName || '…') }}
+      </p>
 
       <!-- «Одной из первых»: переключатель режима. При «да» цель, расписание и серия неактивны (BACKLOG 14, 11:15) -->
       <div v-if="enabled.trackOnlyAvailable" class="mt-2" data-test="track-only-block">

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.88";
+const SITE_VERSION = "3.89";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.89", date: "2026-10-09 10:40", changes: [
+        "Метрики дня: при создании метрики «Подходы» или «Число» можно сразу связать её с упражнением из «Тренировок» — выбрать уже заведённое или создать новое упражнение с тем же названием. Тогда подходы вводятся один раз, в «Тренировках», а метрика на Дашборде заполняется сама. У уже связанной метрики в форме показано, с каким она упражнением. ТРЕБУЕТ миграцию 054 (без неё выбор не показывается или сохранение подскажет про миграцию)."
+    ]},
     { version: "3.88", date: "2026-10-09 05:04", changes: [
         "Вода: в настройках (⚙️) появился выключатель «Отслеживать воду» — для тех, кто не хочет отмечать, сколько пьёт. Если выключить: пропадают стакан в шапке, блок воды в правой панели, окно воды и блок «Вода» на главной, перестают приходить напоминания о воде, а вода больше не учитывается в кольцах дня и недели, «идеальных днях», сериях и «баллах за день». Ничего не удаляется: прошлые записи воды, баллы за неё в балансе и достижения остаются, а при включении всё возвращается. Выбор хранится в профиле (нужна миграция 055; без неё всё работает как раньше, а при попытке выключить покажется понятная ошибка)."
     ]},
@@ -1774,6 +1777,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.89", date: "2026-10-09 10:40", changes: [
+        "Daily metrics: when creating a Sets or Number metric you can now link it right away to an exercise from Workouts - pick an existing one or create a new exercise with the same name. Then sets are entered once, in Workouts, and the metric on the Dashboard fills in by itself. For an already linked metric the form shows which exercise it follows. REQUIRES migration 054 (without it the choice is hidden or saving hints at the migration)."
+    ]},
     { version: "3.88", date: "2026-10-09 05:04", changes: [
         "Water: the settings window now has a \"Track water\" switch for people who do not want to log what they drink. When it is off: the glass in the header, the water block in the right panel, the water window and the Water block on the home page disappear, water reminders stop, and water no longer counts in the day and week rings, perfect days, streaks and daily points. Nothing is deleted: past water entries, the points for them in your balance and achievements stay, and everything comes back when you turn it on again. The choice is stored in your profile (migration 055 is needed; without it everything works as before and trying to turn it off shows a clear error)."
     ]},

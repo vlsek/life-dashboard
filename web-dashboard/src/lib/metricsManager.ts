@@ -317,7 +317,7 @@ export function canLinkExercise(f: Pick<MetricFormValues, 'type' | 'trackOnly'>)
 
 // Колонка source_exercise_id есть, если она видна хотя бы у одной метрики (select * отдаёт все колонки); метрик ещё нет — считаем, что есть,
 // а если её нет на самом деле, сохранение подскажет про миграцию 054 (так же, как planned_sets_log у миграции 041).
-export function exerciseLinkAvailable(metrics: { [k: string]: unknown }[]): boolean {
+export function exerciseLinkAvailable(metrics: readonly object[]): boolean {
   return metrics.length === 0 || metrics.some((m) => 'source_exercise_id' in m)
 }
 

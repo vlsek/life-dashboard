@@ -9,11 +9,12 @@ import { recordsEnabled, setRecordsEnabled } from '../lib/records'
 import { goalSummary, scheduleSummary } from '../lib/metricsManager'
 import type { MetricFormValues } from '../lib/metricsManager'
 import type { MetricCategory } from '../lib/useMetricsManager'
+import { exerciseLinkAvailable } from '../lib/metricsManager'
 import type { Metric } from '../lib/types'
 
 // Портировано из openMetricsManagerModal() в dashboard.js: список метрик с правкой/удалением
 // и кнопкой добавления; форма открывается поверх.
-defineProps<{ metrics: Metric[]; categories: MetricCategory[]; error: string | null }>()
+defineProps<{ metrics: Metric[]; categories: MetricCategory[]; error: string | null; exercises?: { id: string; name: string }[] }>()
 const emit = defineEmits<{
   close: []
   add: [form: MetricFormValues, done: (ok: boolean) => void]
@@ -87,7 +88,7 @@ function summary(m: Metric): string {
         <button class="secondary" @click="emit('close')">{{ t('dash_close_btn') }}</button>
       </div>
 
-      <MetricFormModal v-if="formOpen" :existing="editing" :categories="categories" :error="error" :planned-sets-available="metrics.some((m) => 'planned_sets_log' in m)" @close="formOpen = false" @save="onSave" />
+      <MetricFormModal v-if="formOpen" :existing="editing" :categories="categories" :error="error" :planned-sets-available="metrics.some((m) => 'planned_sets_log' in m)" :exercises="exercises ?? []" :exercise-link-available="exerciseLinkAvailable(metrics)" @close="formOpen = false" @save="onSave" />
     </div>
   </div>
 </template>
