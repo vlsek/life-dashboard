@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import Icon from './components/Icon.vue'
 import ProfileModal from './components/ProfileModal.vue'
@@ -23,6 +23,8 @@ import ProfileHeader from './components/ProfileHeader.vue'
 import { enrichFromLeaderboard, friendStats } from './lib/friendCards'
 import { PERIODS, formatPoints, myPlace, podiumSlots, restRows, type Period } from './lib/leaderboardView'
 import { friendlyError } from './lib/friendlyError'
+import CommunityTabs from './components/CommunityTabs.vue'
+import { loadTab, saveTab, type TabKey } from './lib/tabs'
 
 const {
   auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
@@ -33,6 +35,9 @@ const {
 onMounted(init)
 
 const scope = ref<Scope>('everyone')
+// Вкладка страницы (BACKLOG 44.13): последняя открытая запоминается
+const tab = ref<TabKey>(loadTab())
+watch(tab, saveTab)
 const searchQuery = ref('')
 const followBusy = ref(false)
 const followMsg = ref<{ text: string; error: boolean } | null>(null)
@@ -218,16 +223,20 @@ const openedProfile = computed(() => {
     />
 
     <template v-if="auth.status === 'ready'">
-      <!-- Лидерборд: период + область, подиум топ-3, остальные списком -->
-      <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+      <CommunityTabs v-model="tab" :requests="incomingRequests.length" />
+
+      <!-- Область и период: общие для рейтинга, ленты и сравнения; на «Друзьях» не нужны -->
+      <div v-if="tab !== 'friends'" class="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div class="flex gap-2">
           <button :class="{ secondary: scope !== 'everyone' }" @click="scope = 'everyone'">{{ t('comm_scope_everyone') }}</button>
           <button :class="{ secondary: scope !== 'friends' }" @click="scope = 'friends'">{{ t('comm_scope_friends') }}</button>
         </div>
-        <div v-if="periodApi" class="flex gap-2" data-testid="period-switch">
+        <div v-if="tab === 'rating' && periodApi" class="flex gap-2" data-testid="period-switch">
           <button v-for="p in PERIODS" :key="p" :class="{ secondary: period !== p }" @click="setPeriod(p)">{{ periodLabels[p]() }}</button>
         </div>
       </div>
+
+      <div v-show="tab === 'rating'" data-testid="tab-rating">
       <p v-if="leaderboardError" class="dim mb-5">{{ t('comm_load_error') }} {{ leaderboardError }}</p>
       <p v-else-if="visibleLeaderboard.length === 0" class="dim mb-5">{{ t('comm_empty') }}</p>
       <template v-else>
@@ -246,7 +255,9 @@ const openedProfile = computed(() => {
         </div>
         <div v-else class="mb-5"></div>
       </template>
+      </div>
 
+      <div v-show="tab === 'feed'" data-testid="tab-feed">
       <!-- Сегодня -->
       <h2 class="mb-2 text-lg font-medium"><EmojiText :text="t('comm_today_h2')" /></h2>
       <div class="card mb-5 rounded-lg border p-3.5" style="border-color: var(--border)">
@@ -273,7 +284,9 @@ const openedProfile = computed(() => {
           <p class="dim mb-0 mt-2 text-xs">{{ t('comm_feed_hint') }}</p>
         </div>
       </template>
+      </div>
 
+      <div v-show="tab === 'friends'" data-testid="tab-friends">
       <!-- Друзья -->
       <h2 class="mb-2 text-lg font-medium"><EmojiText :text="t('comm_friends_h2')" /></h2>
       <div class="card mb-5 rounded-lg border p-3.5" style="border-color: var(--border)">
@@ -318,10 +331,10 @@ const openedProfile = computed(() => {
         </div>
         <p v-if="followMsg" class="mt-1.5 text-xs" :style="{ color: followMsg.error ? 'var(--danger)' : 'inherit' }">{{ followMsg.text }}</p>
       </div>
+      </div>
 
-      <!-- Сравнение по активности: свой композабл/компонент (useCategories.ts, CategorySection.vue),
-           график — общая инфраструктура из web-dashboard/ (chart.ts, ChartBlock, PeriodPicker) -->
-      <div>
+      <!-- Сравнение тяжёлое (запросы за период) — монтируется только когда открыта вкладка -->
+      <div v-if="tab === 'compare'" data-testid="tab-compare">
         <CategorySection :user-id="auth.userId" :scope="scope" :friend-ids="friendIds" />
       </div>
     </template>
