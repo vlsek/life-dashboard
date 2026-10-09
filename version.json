@@ -1,6 +1,13 @@
 {
-  "version": "4.16",
+  "version": "4.17",
   "en": [
+    {
+      "version": "4.17",
+      "date": "2026-10-09 23:35",
+      "changes": [
+        "Customization: tapping a locked theme (with a padlock) now opens a window that tells you how to get it: which achievement gives it and what it takes (for example, “Words added in Languages: 100”), with a button to go to “Achievements”"
+      ]
+    },
     {
       "version": "4.16",
       "date": "2026-10-09 22:03",
@@ -2979,6 +2986,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.17",
+      "date": "2026-10-09 23:35",
+      "changes": [
+        "Кастомизация: если нажать на закрытую тему (с замком), откроется окно, что нужно сделать, чтобы её получить: за какое достижение она даётся и что для него нужно (например, «Слов добавлено в «Языках»: 100»), с кнопкой перехода в «Достижения»"
+      ]
+    },
     {
       "version": "4.16",
       "date": "2026-10-09 22:03",

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.16";
+const SITE_VERSION = "4.17";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.17", date: "2026-10-09 23:35", changes: [
+        "Кастомизация: если нажать на закрытую тему (с замком), откроется окно, что нужно сделать, чтобы её получить: за какое достижение она даётся и что для него нужно (например, «Слов добавлено в «Языках»: 100»), с кнопкой перехода в «Достижения»",
+    ]},
     { version: "4.16", date: "2026-10-09 22:03", changes: [
         "Темы оформления: добавлено 12 новых тем, которые открыты сразу, без достижений. Тёмные: «Дракула», «Gruvbox», «Ночной Токио», «Лес», «Океан», «Закат», «Сумерки», «Неон». Светлые: «Лаванда», «Небо», «Персик», «Графит». Они появились в окне «Настройки», в разделе «Кастомизация» (в группе «Обычные») и в списке любимых тем. Тексты, акценты, цвета воды и диаграмм у каждой подобраны с запасом по контрасту. Миграция не нужна",
     ]},
@@ -1858,6 +1861,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.17", date: "2026-10-09 23:35", changes: [
+        "Customization: tapping a locked theme (with a padlock) now opens a window that tells you how to get it: which achievement gives it and what it takes (for example, “Words added in Languages: 100”), with a button to go to “Achievements”",
+    ]},
     { version: "4.16", date: "2026-10-09 22:03", changes: [
         "Themes: 12 new themes are added and unlocked right away, no achievements needed. Dark: Dracula, Gruvbox, Tokyo Night, Forest, Ocean, Sunset, Twilight, Neon. Light: Lavender, Sky, Peach, Graphite. They show up in the Settings window, in Customization (in the Common group) and in the favourite themes list. Text, accents, water and chart colours of each are chosen with a contrast margin. No migration needed",
     ]},
