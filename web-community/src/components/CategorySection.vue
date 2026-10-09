@@ -4,11 +4,12 @@ import ChartBlock from './ChartBlock.vue'
 import PeriodPicker from './PeriodPicker.vue'
 import Icon from './Icon.vue'
 import { useCategories } from '../lib/useCategories'
-import { categoryRows, categoryChartPoints, defaultGoalSum, categoryLabel } from '../lib/category'
+import { categoryRows, categoryChartPoints, defaultGoalSum, categoryLabel, modeValue, myCategoryPlace, initialCategoryKey, loadCategoryKey, saveCategoryKey } from '../lib/category'
 import { loadPeriodState, savePeriodState, type PeriodState } from '../lib/chart'
 import { t } from '../lib/i18n'
 import type { CategoryMode, CategoryRange, Scope } from '../lib/types'
 import EmojiText from './EmojiText.vue'
+import Avatar from './Avatar.vue'
 import { friendlyError } from '../lib/friendlyError'
 
 const props = defineProps<{ userId: string; scope: Scope; friendIds: Set<string> }>()
@@ -41,6 +42,13 @@ function onPeriodChange(next: PeriodState) {
 }
 
 const visibleRows = computed(() => categoryRows(rows.value, props.userId, props.scope, props.friendIds, mode.value))
+const myPlace = computed(() => myCategoryPlace(visibleRows.value, props.userId))
+const hintKey = computed(() => (mode.value === 'streak' ? 'comm_mode_hint_streak' : mode.value === 'points' ? 'comm_mode_hint_points' : 'comm_mode_hint_value'))
+// Главное значение строки: сумма / баллы / серия — зависит от выбранного режима (остальные — мелким под именем)
+function mainValue(row: Parameters<typeof modeValue>[0]): string {
+  const v = modeValue(row, mode.value)
+  return mode.value === 'streak' ? (v > 0 ? t('comm_streak_days').replace('{n}', String(v)) : '—') : String(v)
+}
 
 const chartPoints = computed(() => (own.value.status === 'ready' ? categoryChartPoints(own.value.values, period.range, period.from, period.to) : []))
 const chartGoal = computed(() => (own.value.status === 'ready' ? defaultGoalSum(own.value.metrics) : null))
@@ -77,7 +85,17 @@ function pickRange(r: CategoryRange) {
   refresh()
 }
 
-onMounted(loadCategories)
+function onCategoryChange() {
+  saveCategoryKey(catKey.value)
+  refresh()
+}
+
+// Сразу открыта запомненная (или первая) категория — не пустой экран «выбери категорию»
+onMounted(async () => {
+  await loadCategories()
+  catKey.value = initialCategoryKey(categories.value, loadCategoryKey())
+  if (catKey.value) await refresh()
+})
 </script>
 
 <template>
@@ -85,7 +103,7 @@ onMounted(loadCategories)
     <h2 class="mb-1 text-lg font-medium"><EmojiText :text="t('comm_category_h2')" /></h2>
     <p class="dim mb-2 text-sm">{{ t('comm_category_intro') }}</p>
 
-    <select v-model="catKey" class="mb-3 w-full" @change="refresh">
+    <select v-model="catKey" class="mb-3 w-full" data-testid="category-select" @change="onCategoryChange">
       <option value="">{{ t('comm_select_category') }}</option>
       <option v-for="c in categories" :key="c.key" :value="c.key">{{ categoryLabel(c) }}</option>
     </select>
@@ -94,40 +112,31 @@ onMounted(loadCategories)
       <p v-if="!catKey" class="dim">{{ t('comm_pick_category_above') }}</p>
 
       <template v-else>
-        <div class="mb-2 flex flex-wrap gap-1.5">
+        <div class="mb-2 flex flex-wrap gap-1.5" data-testid="category-ranges">
           <button v-for="[key, label] in rangeButtons" :key="key" :class="{ secondary: range !== key }" @click="pickRange(key)">{{ t(label as any) }}</button>
         </div>
-        <div class="mb-2.5 flex flex-wrap gap-1.5">
+        <div class="mb-1 flex flex-wrap gap-1.5" data-testid="category-modes">
           <button v-for="[key, label] in modeButtons" :key="key" :class="{ secondary: mode !== key }" @click="mode = key">{{ t(label as any) }}</button>
         </div>
+        <p class="dim mb-2.5 text-xs" data-testid="category-mode-hint">{{ t(hintKey as any) }}</p>
 
         <p v-if="rowsLoading" class="dim">…</p>
         <p v-else-if="error" class="dim">{{ t('comm_load_error') }} {{ error }}</p>
         <p v-else-if="visibleRows.length === 0" class="dim">{{ t('comm_nobody_tracking') }}</p>
-        <div v-else class="overflow-x-auto">
-          <table class="w-full">
-            <thead>
-              <tr class="dim text-left text-sm">
-                <th>#</th>
-                <th></th>
-                <th>{{ t('comm_th_name') }}</th>
-                <th>{{ t('comm_th_sum') }}</th>
-                <th>{{ t('comm_th_points') }}</th>
-                <th><Icon name="flame" /></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(row, i) in visibleRows" :key="row.user_id">
-                <td>#{{ i + 1 }}</td>
-                <td class="w-10"><img v-if="row.avatar_url" :src="row.avatar_url" class="h-8 w-8 rounded-full object-cover" /></td>
-                <td :style="row.user_id === userId ? 'font-weight:bold;color:var(--accent)' : ''">{{ row.display_name }}</td>
-                <td>{{ row.total_value }}</td>
-                <td>{{ row.category_points }} <Icon name="star" /></td>
-                <td>{{ row.category_streak > 0 ? row.category_streak : '—' }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <template v-else>
+          <p v-if="myPlace" class="mb-2 text-sm font-medium" style="color: var(--accent)" data-testid="category-my-place">{{ t('comm_my_place').replace('{n}', String(myPlace.rank)).replace('{m}', String(myPlace.total)) }}</p>
+          <div>
+            <div v-for="(row, i) in visibleRows" :key="row.user_id" class="flex items-center gap-3 border-b py-2 last:border-0" style="border-color: var(--border)" data-testid="category-row">
+              <span class="dim w-7 text-sm">#{{ i + 1 }}</span>
+              <Avatar :name="row.display_name" :url="row.avatar_url" :size="32" />
+              <div class="min-w-0 flex-1">
+                <div class="truncate" :style="row.user_id === userId ? 'font-weight:bold;color:var(--accent)' : ''">{{ row.display_name }}</div>
+                <div class="dim text-xs">{{ row.total_value }} · {{ row.category_points }} <Icon name="star" /> · <Icon name="flame" /> {{ row.category_streak > 0 ? row.category_streak : '—' }}</div>
+              </div>
+              <span class="font-medium" data-testid="category-main-value">{{ mainValue(row) }}</span>
+            </div>
+          </div>
+        </template>
       </template>
     </div>
 

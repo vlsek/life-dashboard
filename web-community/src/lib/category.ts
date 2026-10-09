@@ -31,3 +31,40 @@ export function defaultGoalSum(metrics: Pick<NumberMetric, 'goal_value'>[]): num
 export function categoryLabel(c: Pick<MetricCategory, 'label_ru' | 'label_en'>): string {
   return `${c.label_ru} / ${c.label_en}`
 }
+
+// ---- Срез 2 BACKLOG 44.13: одно главное значение вместо четырёх колонок, запоминание категории, «ваше место» ----
+
+export const CATEGORY_STORAGE_KEY = 'community_category'
+
+// Главное число строки — то, по чему идёт сортировка выбранного режима
+export function modeValue(row: Pick<CategoryLeaderboardRow, 'total_value' | 'category_points' | 'category_streak'>, mode: CategoryMode): number {
+  return mode === 'streak' ? row.category_streak : mode === 'points' ? row.category_points : row.total_value
+}
+
+// «Вы на N месте из M» по уже отфильтрованным и отсортированным строкам; null, если вас в списке нет
+export function myCategoryPlace(rows: Pick<CategoryLeaderboardRow, 'user_id'>[], myUserId: string): { rank: number; total: number } | null {
+  const i = rows.findIndex((r) => r.user_id === myUserId)
+  return i < 0 ? null : { rank: i + 1, total: rows.length }
+}
+
+// Какая категория открыта сразу: запомненная, если она ещё есть в списке, иначе первая; пустой список — ''.
+export function initialCategoryKey(categories: Pick<MetricCategory, 'key'>[], stored: string | null): string {
+  if (stored && categories.some((c) => c.key === stored)) return stored
+  return categories[0]?.key ?? ''
+}
+
+export function loadCategoryKey(): string | null {
+  try {
+    return localStorage.getItem(CATEGORY_STORAGE_KEY)
+  } catch {
+    return null
+  }
+}
+
+export function saveCategoryKey(key: string): void {
+  try {
+    localStorage.setItem(CATEGORY_STORAGE_KEY, key)
+  } catch {
+    /* хранилище недоступно — категория просто не запомнится */
+  }
+}
