@@ -71,7 +71,14 @@ export interface WorkoutTemplate {
   // схема первой недели (`days`), остальные недели показываются в предпросмотре шаблона.
   weeks?: WorkoutTemplateWeek[]
 }
+export interface WorkoutTemplateWeekItem {
+  name: string
+  scheme: string
+}
 export interface WorkoutTemplateWeek {
   label: string
+  // Краткая схема недели (для программы из одного упражнения — его схема; из нескольких — схемы через « · »)
   scheme: string
+  // Программа из нескольких упражнений: схема каждого упражнения на эту неделю (порядок = порядок упражнений в `days`)
+  items?: WorkoutTemplateWeekItem[]
 }

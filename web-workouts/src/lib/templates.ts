@@ -147,6 +147,30 @@ export const WORKOUT_TEMPLATES_RU: WorkoutTemplate[] = [
       { label: "Неделя 6", scheme: "3× максимум (контрольная неделя)" },
     ],
   },
+  {
+    id: "bodyweight_6w",
+    title: "Тело без железа: 6 недель",
+    goalTag: "Общая форма / свой вес",
+    meta: "3 тренировки в неделю через день · без оборудования · растёт нагрузка по каждому упражнению",
+    days: [
+      {
+        label: "Тело без железа: 6 недель",
+        exercises: [
+          { name: "Отжимания", tracksWeight: false, valueLabel: "Повторения", scheme: "3×8" },
+          { name: "Приседания", tracksWeight: false, valueLabel: "Повторения", scheme: "3×15" },
+          { name: "Планка", tracksWeight: false, valueLabel: "Секунды", scheme: "3×30 сек" },
+        ],
+      },
+    ],
+    weeks: [
+      { label: "Неделя 1", scheme: "3×8 · 3×15 · 3×30 сек", items: [{ name: "Отжимания", scheme: "3×8" }, { name: "Приседания", scheme: "3×15" }, { name: "Планка", scheme: "3×30 сек" }] },
+      { label: "Неделя 2", scheme: "3×10 · 3×18 · 3×35 сек", items: [{ name: "Отжимания", scheme: "3×10" }, { name: "Приседания", scheme: "3×18" }, { name: "Планка", scheme: "3×35 сек" }] },
+      { label: "Неделя 3", scheme: "4×10 · 4×18 · 3×40 сек", items: [{ name: "Отжимания", scheme: "4×10" }, { name: "Приседания", scheme: "4×18" }, { name: "Планка", scheme: "3×40 сек" }] },
+      { label: "Неделя 4", scheme: "4×12 · 4×20 · 3×45 сек", items: [{ name: "Отжимания", scheme: "4×12" }, { name: "Приседания", scheme: "4×20" }, { name: "Планка", scheme: "3×45 сек" }] },
+      { label: "Неделя 5", scheme: "4×15 · 4×25 · 3×50 сек", items: [{ name: "Отжимания", scheme: "4×15" }, { name: "Приседания", scheme: "4×25" }, { name: "Планка", scheme: "3×50 сек" }] },
+      { label: "Неделя 6", scheme: "3× макс · 3× макс · макс по времени", items: [{ name: "Отжимания", scheme: "3× макс" }, { name: "Приседания", scheme: "3× макс" }, { name: "Планка", scheme: "макс по времени" }] },
+    ],
+  },
 ]
 
 export const WORKOUT_TEMPLATES_EN: WorkoutTemplate[] = [
@@ -289,6 +313,30 @@ export const WORKOUT_TEMPLATES_EN: WorkoutTemplate[] = [
       { label: "Week 4", scheme: "4×4" },
       { label: "Week 5", scheme: "4×5" },
       { label: "Week 6", scheme: "3× max (test week)" },
+    ],
+  },
+  {
+    id: "bodyweight_6w",
+    title: "Bodyweight: 6 weeks",
+    goalTag: "General fitness / bodyweight",
+    meta: "3 sessions a week, every other day · no equipment · the load grows for every exercise",
+    days: [
+      {
+        label: "Bodyweight: 6-week program",
+        exercises: [
+          { name: "Push-ups", tracksWeight: false, valueLabel: "Reps", scheme: "3×8" },
+          { name: "Bodyweight Squats", tracksWeight: false, valueLabel: "Reps", scheme: "3×15" },
+          { name: "Plank", tracksWeight: false, valueLabel: "Seconds", scheme: "3×30 sec" },
+        ],
+      },
+    ],
+    weeks: [
+      { label: "Week 1", scheme: "3×8 · 3×15 · 3×30 sec", items: [{ name: "Push-ups", scheme: "3×8" }, { name: "Bodyweight Squats", scheme: "3×15" }, { name: "Plank", scheme: "3×30 sec" }] },
+      { label: "Week 2", scheme: "3×10 · 3×18 · 3×35 sec", items: [{ name: "Push-ups", scheme: "3×10" }, { name: "Bodyweight Squats", scheme: "3×18" }, { name: "Plank", scheme: "3×35 sec" }] },
+      { label: "Week 3", scheme: "4×10 · 4×18 · 3×40 sec", items: [{ name: "Push-ups", scheme: "4×10" }, { name: "Bodyweight Squats", scheme: "4×18" }, { name: "Plank", scheme: "3×40 sec" }] },
+      { label: "Week 4", scheme: "4×12 · 4×20 · 3×45 sec", items: [{ name: "Push-ups", scheme: "4×12" }, { name: "Bodyweight Squats", scheme: "4×20" }, { name: "Plank", scheme: "3×45 sec" }] },
+      { label: "Week 5", scheme: "4×15 · 4×25 · 3×50 sec", items: [{ name: "Push-ups", scheme: "4×15" }, { name: "Bodyweight Squats", scheme: "4×25" }, { name: "Plank", scheme: "3×50 sec" }] },
+      { label: "Week 6", scheme: "3× max · 3× max · max hold", items: [{ name: "Push-ups", scheme: "3× max" }, { name: "Bodyweight Squats", scheme: "3× max" }, { name: "Plank", scheme: "max hold" }] },
     ],
   },
 ]

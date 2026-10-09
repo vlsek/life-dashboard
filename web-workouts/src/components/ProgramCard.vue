@@ -55,7 +55,12 @@ function fill(key: Parameters<typeof t>[0], vars: Record<string, string | number
     <div v-if="status.state === 'finished'" class="mb-3 font-medium" data-testid="program-finished"><EmojiText :text="t('workouts_program_done_all')" /></div>
     <div v-else class="mb-3" data-testid="program-current">
       <div class="font-medium">
-        {{ fill('workouts_program_week_of', { n: status.weekIndex + 1, m: status.total }) }}<span v-if="current"> · {{ current.scheme }}</span>
+        {{ fill('workouts_program_week_of', { n: status.weekIndex + 1, m: status.total }) }}<span v-if="current && !current.items?.length"> · {{ current.scheme }}</span>
+      </div>
+      <div v-if="current?.items?.length" class="mt-1 text-[0.9em]" data-testid="program-items">
+        <div v-for="it in current.items" :key="it.name" class="flex justify-between gap-3">
+          <span>{{ it.name }}</span><span class="font-medium">{{ it.scheme }}</span>
+        </div>
       </div>
       <div class="text-[0.8em]" style="color: var(--text-dim)">{{ fill('workouts_program_days_left', { n: status.daysLeftInWeek }) }}</div>
     </div>
@@ -84,7 +89,7 @@ function fill(key: Parameters<typeof t>[0], vars: Record<string, string | number
         <span :style="{ fontWeight: status.state === 'active' && i === status.weekIndex ? '700' : '400', color: program.doneWeeks.includes(i) ? 'var(--text-dim)' : 'var(--text)' }">
           {{ w.label }}<span v-if="status.state === 'active' && i === status.weekIndex"> — {{ t('workouts_program_this_week') }}</span>
         </span>
-        <span class="ml-auto font-medium" style="color: var(--text-dim)">{{ w.scheme }}</span>
+        <span class="ml-auto text-right font-medium" style="color: var(--text-dim)" :data-testid="'program-week-scheme-' + i">{{ w.scheme }}</span>
       </li>
     </ul>
   </section>

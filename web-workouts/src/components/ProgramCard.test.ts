@@ -65,3 +65,27 @@ describe('ProgramCard: активная программа', () => {
     expect(w.emitted('finish')).toBeUndefined()
   })
 })
+
+describe('ProgramCard: программа из нескольких упражнений', () => {
+  const multi = workoutTemplates('ru').find((x) => x.id === 'bodyweight_6w')!
+
+  it('текущая неделя показывает схему каждого упражнения', () => {
+    const w = mount(ProgramCard, { props: { program: startProgram('bodyweight_6w', '2026-10-03'), template: multi, today: '2026-10-05' } })
+    const box = w.find('[data-testid="program-items"]')
+    expect(box.text()).toContain('Отжимания')
+    expect(box.text()).toContain('3×8')
+    expect(box.text()).toContain('Приседания')
+    expect(box.text()).toContain('3×15')
+    expect(box.text()).toContain('Планка')
+    // вторая неделя (8 дней от старта) — другие числа
+    const w2 = mount(ProgramCard, { props: { program: startProgram('bodyweight_6w', '2026-10-03'), template: multi, today: '2026-10-11' } })
+    expect(w2.find('[data-testid="program-current"]').text()).toContain('Неделя 2 из 6')
+    expect(w2.find('[data-testid="program-items"]').text()).toContain('3×18')
+    expect(w2.findAll('li')).toHaveLength(6)
+  })
+
+  it('у программы из одного упражнения блока по упражнениям нет', () => {
+    const w = mount(ProgramCard, { props: { program: startProgram('pushups_6w', '2026-10-03'), template: tpl, today: '2026-10-05' } })
+    expect(w.find('[data-testid="program-items"]').exists()).toBe(false)
+  })
+})

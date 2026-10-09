@@ -128,7 +128,7 @@ describe('TemplatesModal', () => {
   it('lists templates, previews one on click, and emits apply', async () => {
     const wrapper = mount(TemplatesModal)
     const cards = wrapper.findAll('.cursor-pointer')
-    expect(cards.length).toBe(6)
+    expect(cards.length).toBe(7)
     await cards[0].trigger('click')
     const applyBtn = wrapper.findAll('button').find((b) => /Add to my exercises|Добавить в мои упражнения/.test(b.text()))!
     await applyBtn.trigger('click')

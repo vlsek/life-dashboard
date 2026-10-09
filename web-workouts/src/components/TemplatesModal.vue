@@ -57,7 +57,10 @@ const selected = ref<WorkoutTemplate | null>(null)
           <ul class="m-0 list-none p-0">
             <li v-for="w in selected.weeks" :key="w.label" class="flex justify-between gap-3 border-t py-1 text-[0.9em]" style="border-color: var(--border)">
               <span style="color: var(--text-dim)">{{ w.label }}</span>
-              <span class="font-medium">{{ w.scheme }}</span>
+              <span v-if="w.items?.length" class="text-right" data-testid="template-week-items">
+                <span v-for="it in w.items" :key="it.name" class="block"><span style="color: var(--text-dim)">{{ it.name }}</span> <span class="font-medium">{{ it.scheme }}</span></span>
+              </span>
+              <span v-else class="font-medium">{{ w.scheme }}</span>
             </li>
           </ul>
         </div>
