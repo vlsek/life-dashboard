@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.91";
+const SITE_VERSION = "3.92";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.92", date: "2026-10-09 11:10", changes: [
+        "Тур «Как пользоваться» (Аккаунт, Языки): шаги теперь листаются с анимацией — при свайпе или кнопках «Далее»/«Назад» текст плавно выезжает с той стороны, в которую листаешь. При включённом «уменьшении движения» в системе анимации нет. Без миграций."
+    ]},
     { version: "3.91", date: "2026-10-09 10:25", changes: [
         "Монетки за достижения теперь выдаёт сервер: сумму и список значков он берёт из собственного каталога и платит только за открытые значки, так что придумать себе монеты нельзя. Для вас ничего не меняется: монеты за открытые значки приходят один раз, повторная загрузка страницы их не удваивает (нужна миграция 062 — применяет владелец; до её применения всё работает как раньше)",
     ]},
@@ -1783,6 +1786,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.92", date: "2026-10-09 11:10", changes: [
+        "“How to use” tour (Account, Languages): steps now slide in with an animation — on swipe or Next/Back the text glides in from the side you are paging towards. No animation when the system “reduce motion” setting is on. No migrations."
+    ]},
     { version: "3.91", date: "2026-10-09 10:25", changes: [
         "Coins for achievements are now issued by the server: it takes the amount and the list of badges from its own catalog and pays only for badges you have unlocked, so you can no longer make up coins. Nothing changes for you: coins for unlocked badges arrive once, and reloading the page does not double them (needs migration 062 — applied by the owner; until then everything works as before)",
     ]},

@@ -1,6 +1,13 @@
 {
-  "version": "3.91",
+  "version": "3.92",
   "en": [
+    {
+      "version": "3.92",
+      "date": "2026-10-09 11:10",
+      "changes": [
+        "“How to use” tour (Account, Languages): steps now slide in with an animation — on swipe or Next/Back the text glides in from the side you are paging towards. No animation when the system “reduce motion” setting is on. No migrations."
+      ]
+    },
     {
       "version": "3.91",
       "date": "2026-10-09 10:25",
@@ -2804,6 +2811,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.92",
+      "date": "2026-10-09 11:10",
+      "changes": [
+        "Тур «Как пользоваться» (Аккаунт, Языки): шаги теперь листаются с анимацией — при свайпе или кнопках «Далее»/«Назад» текст плавно выезжает с той стороны, в которую листаешь. При включённом «уменьшении движения» в системе анимации нет. Без миграций."
+      ]
+    },
     {
       "version": "3.91",
       "date": "2026-10-09 10:25",
