@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.09";
+const SITE_VERSION = "4.10";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.10", date: "2026-10-09 18:34", changes: [
+        "Сообщество: страница разложена по вкладкам — «Рейтинг», «Лента» (сегодня + достижения), «Друзья» (с числом входящих заявок) и «Сравнение». Область («Все» / «Только друзья») и период видны там, где они нужны; последняя открытая вкладка запоминается. Без миграций."
+    ]},
     { version: "4.09", date: "2026-10-09 10:20", changes: [
         "Календарь: во вкладке «Календарь» остались только планы и сроки целей — прогресс дня (заливка, процент, колонка недели, статистика месяца) теперь виден только во вкладке «История». Сетка вкладки «Календарь» — семь колонок по дням недели, как раньше, с бейджами планов и целей на днях. Миграция не нужна."
     ]},
@@ -1837,6 +1840,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.10", date: "2026-10-09 18:34", changes: [
+        "Community: the page is split into tabs — Ranking, Feed (today + achievements), Friends (with an incoming-requests count) and Compare. Scope (Everyone / Friends only) and period show only where they matter; the last opened tab is remembered. No migrations."
+    ]},
     { version: "4.09", date: "2026-10-09 10:20", changes: [
         "Calendar: the Calendar tab now shows only plans and goal deadlines - the day progress (fill, percentage, week column, month statistics) is visible only on the History tab. The Calendar tab grid has seven weekday columns as before, with plan and goal badges on the days. No migration needed."
     ]},

@@ -1,6 +1,13 @@
 {
-  "version": "4.09",
+  "version": "4.10",
   "en": [
+    {
+      "version": "4.10",
+      "date": "2026-10-09 18:34",
+      "changes": [
+        "Community: the page is split into tabs — Ranking, Feed (today + achievements), Friends (with an incoming-requests count) and Compare. Scope (Everyone / Friends only) and period show only where they matter; the last opened tab is remembered. No migrations."
+      ]
+    },
     {
       "version": "4.09",
       "date": "2026-10-09 10:20",
@@ -2930,6 +2937,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.10",
+      "date": "2026-10-09 18:34",
+      "changes": [
+        "Сообщество: страница разложена по вкладкам — «Рейтинг», «Лента» (сегодня + достижения), «Друзья» (с числом входящих заявок) и «Сравнение». Область («Все» / «Только друзья») и период видны там, где они нужны; последняя открытая вкладка запоминается. Без миграций."
+      ]
+    },
     {
       "version": "4.09",
       "date": "2026-10-09 10:20",
