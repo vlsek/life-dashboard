@@ -7,6 +7,9 @@ const h = vi.hoisted(() => ({
   have: [] as string[],
   selectError: false,
   upserts: [] as { table: string; rows: any[]; opts: any }[],
+  rpcCalls: [] as string[],
+  // серверная функция claim_achievement_bonuses (миграция 062): null — функции нет (прежний путь), иначе ответ сервера
+  rpcReply: null as null | { key: string; coins: number }[],
 }))
 
 vi.mock('./supabase', () => {
@@ -37,7 +40,12 @@ vi.mock('./supabase', () => {
     }
     return chain
   }
-  return { sb: { auth: { getSession: () => Promise.resolve({ data: { session: { user: { id: 'u1', email: 'a@b.c' } } } }) }, from }, logout: vi.fn() }
+  function rpc(fn: string) {
+    h.rpcCalls.push(fn)
+    if (h.rpcReply === null) return Promise.resolve({ data: null, error: { code: 'PGRST202', message: 'Could not find the function public.' + fn } })
+    return Promise.resolve({ data: h.rpcReply, error: null })
+  }
+  return { sb: { rpc, auth: { getSession: () => Promise.resolve({ data: { session: { user: { id: 'u1', email: 'a@b.c' } } } }) }, from }, logout: vi.fn() }
 })
 
 import { useAchievements } from './useAchievements'
@@ -47,9 +55,11 @@ beforeEach(() => {
   h.have = []
   h.selectError = false
   h.upserts = []
+  h.rpcCalls = []
+  h.rpcReply = null
 })
 
-describe('выдача монеток при загрузке «Достижений»', () => {
+describe('выдача монеток при загрузке «Достижений» (прежний путь: функции 062 ещё нет)', () => {
   it('открыт значок первой цели → один upsert в achievement_bonuses на 20 монеток; выданное видно в grantedCoins', async () => {
     const a = useAchievements()
     await a.init()
@@ -78,6 +88,29 @@ describe('выдача монеток при загрузке «Достижен
     await flushPromises()
     expect(a.error.value).toBeNull()
     expect(Object.keys(a.unlocked.value)).toContain('first_goal')
+    expect(a.grantedCoins.value).toEqual([])
+    expect(h.upserts.filter((u) => u.table === 'achievement_bonuses')).toHaveLength(0)
+  })
+})
+
+describe('выдача монеток при загрузке «Достижений» (серверная функция, миграция 062)', () => {
+  it('значок первой цели → вызов claim_achievement_bonuses, монеты из ответа сервера, прямой записи в таблицу нет', async () => {
+    h.rpcReply = [{ key: 'first_goal', coins: 20 }]
+    const a = useAchievements()
+    await a.init()
+    await flushPromises()
+    expect(a.error.value).toBeNull()
+    expect(h.rpcCalls).toEqual(['claim_achievement_bonuses'])
+    expect(h.upserts.filter((u) => u.table === 'achievement_bonuses')).toHaveLength(0)
+    expect(a.grantedCoins.value).toEqual([{ key: 'first_goal', coins: 20 }])
+  })
+
+  it('сервер ничего не выдал (уже получено): grantedCoins пуст, страница без ошибки', async () => {
+    h.rpcReply = []
+    const a = useAchievements()
+    await a.init()
+    await flushPromises()
+    expect(a.error.value).toBeNull()
     expect(a.grantedCoins.value).toEqual([])
     expect(h.upserts.filter((u) => u.table === 'achievement_bonuses')).toHaveLength(0)
   })
