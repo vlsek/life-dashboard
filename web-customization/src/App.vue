@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import ItemCard from './components/ItemCard.vue'
 import Icon from './components/Icon.vue'
 import ThemeCard from './components/ThemeCard.vue'
+import ThemeUnlockModal from './components/ThemeUnlockModal.vue'
 import RarityGroup from './components/RarityGroup.vue'
 import VisibilityChips from './components/VisibilityChips.vue'
 import { groupOfItem, groupOfTheme, useVisibility, type VisGroup } from './lib/useVisibility'
@@ -37,6 +38,7 @@ const themeOwned = (keys: ThemeKey[]): number => keys.filter((k) => !themes.isLo
 
 // Редкость (BACKLOG 39): и темы, и предметы разложены по группам «обычные … легендарные»; каждая группа сворачивается, состояние помним.
 const { isCollapsed, toggle } = useCollapsed()
+const unlockFor = ref<ThemeKey | null>(null) // тема, для которой открыто окно «как получить» (BACKLOG 49.10)
 const themeBuckets = themeGroups()
 
 // Раздел на категорию предметов (рамки аватарки …) → группы по редкости; «открыто» считаем по статусу предмета.
@@ -113,6 +115,7 @@ const nothingShown = computed(() => !visibleThemeBuckets.value.length && !visibl
                 :locked="themes.isLocked(k)"
                 :unlock-text="unlockText(k)"
                 @apply="themes.apply(k)"
+                @show-unlock="unlockFor = k"
                 @toggle-favorite="themes.toggleFavorite(k)"
               />
             </div>
@@ -152,5 +155,6 @@ const nothingShown = computed(() => !visibleThemeBuckets.value.length && !visibl
         <p class="dim text-xs">{{ t('cust_soon') }}</p>
       </template>
     </template>
+    <ThemeUnlockModal v-if="unlockFor" :theme-key="unlockFor" @close="unlockFor = null" />
   </main>
 </template>

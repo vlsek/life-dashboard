@@ -9,7 +9,7 @@ import EmojiText from './EmojiText.vue'
 // Карточка темы: превью (цвета самой темы, независимо от выбранной сейчас), название, «Применить» и сердечко «любимая». Закрытая тема-награда
 // (v3.42): образец виден, но «Применить» и сердечка нет — вместо них замок и «Награда за «…»».
 const props = defineProps<{ themeKey: ThemeKey; active: boolean; favorite: boolean; canToggle: boolean; locked?: boolean; unlockText?: string }>()
-const emit = defineEmits<{ apply: []; toggleFavorite: [] }>()
+const emit = defineEmits<{ apply: []; toggleFavorite: []; showUnlock: [] }>()
 
 const rarity = computed(() => rarityOfTheme(props.themeKey))
 const pv = computed(() => THEME_PREVIEW[props.themeKey])
@@ -57,7 +57,7 @@ const favLabel = computed(() => (props.favorite ? t('cust_theme_fav_remove') : p
         </svg>
       </button>
     </div>
-    <div v-if="locked && !active" class="dim flex flex-col items-center gap-0.5 text-center text-xs" data-testid="theme-locked">
+    <button v-if="locked && !active" type="button" class="dim flex flex-col items-center gap-0.5 rounded-lg border-0 bg-transparent p-1 text-center text-xs" style="cursor: pointer" :aria-label="t('cust_theme_unlock_open_aria')" data-testid="theme-locked" @click="emit('showUnlock')">
       <span class="inline-flex items-center gap-1 font-medium" style="color: var(--text)">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="5" y="11" width="14" height="9" rx="2" />
@@ -66,7 +66,8 @@ const favLabel = computed(() => (props.favorite ? t('cust_theme_fav_remove') : p
         {{ t('cust_theme_locked') }}
       </span>
       <span data-testid="theme-unlock-text">{{ unlockText }}</span>
-    </div>
+      <span class="underline" style="color: var(--accent)">{{ t('cust_theme_unlock_how') }}</span>
+    </button>
     <button v-else-if="!active" type="button" class="px-3 py-1 text-sm" data-testid="apply" @click="emit('apply')">{{ t('cust_theme_apply') }}</button>
     <p v-else class="dim m-0 text-center text-xs" data-testid="applied">{{ t('cust_theme_active') }}</p>
   </div>
