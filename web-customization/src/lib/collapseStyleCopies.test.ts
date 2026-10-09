@@ -19,15 +19,15 @@ describe('collapseStyle: копии в пилотах', () => {
   it('CollapseSummary.vue («карточка со сводкой») одинаков в web-dashboard и web-workouts', () => {
     expect(read('../web-workouts/src/components/CollapseSummary.vue')).toBe(read('../web-dashboard/src/components/CollapseSummary.vue'))
   })
-  it('CSS-правило .collapse-summary одинаково в style.css обоих пилотов (от своего комментария до конца самого правила — чужие дописки ниже не мешают)', () => {
+  it('CSS-блок .collapse-summary одинаков в style.css обоих пилотов (от своего комментария до следующего блока)', () => {
     const block = (p: string): string => {
       const css = read(p)
       const i = css.indexOf('/* Вид сворачивания «карточка со сводкой»')
       expect(i, p + ': нет блока').toBeGreaterThan(-1)
-      const start = css.indexOf('.collapse-summary {', i)
-      const end = css.indexOf('\n}\n', start)
-      expect(end, p + ': нет конца правила').toBeGreaterThan(start)
-      return css.slice(i, end + 3)
+      // блок кончается там, где начинается следующий независимый блок (раньше «до конца файла» — ломалось от любого CSS, дописанного после него:
+      // BACKLOG 48.8 добавил в конец workouts/style.css стили выбора периода)
+      const end = css.indexOf('/* Выбор периода у графиков', i)
+      return end > i ? css.slice(i, end).trimEnd() : css.slice(i).trimEnd()
     }
     expect(block('../web-workouts/src/style.css')).toBe(block('../web-dashboard/src/style.css'))
   })
