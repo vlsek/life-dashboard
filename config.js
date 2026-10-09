@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.17";
+const SITE_VERSION = "4.18";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.18", date: "2026-10-09 19:14", changes: [
+        "Страница входа: вместо выпадающего списка из 23 тем — два переключателя «Светлая / Тёмная» и язык. Остальные темы выбираются в «Кастомизации» после входа; уже выбранная тема не сбрасывается. Без миграций."
+    ]},
     { version: "4.17", date: "2026-10-09 23:35", changes: [
         "Кастомизация: если нажать на закрытую тему (с замком), откроется окно, что нужно сделать, чтобы её получить: за какое достижение она даётся и что для него нужно (например, «Слов добавлено в «Языках»: 100»), с кнопкой перехода в «Достижения»",
     ]},
@@ -1861,6 +1864,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.18", date: "2026-10-09 19:14", changes: [
+        "Sign-in page: instead of a 23-theme dropdown there are now two switches — Light / Dark — plus the language. All other themes are picked in Customization after signing in; an already chosen theme is kept. No migrations."
+    ]},
     { version: "4.17", date: "2026-10-09 23:35", changes: [
         "Customization: tapping a locked theme (with a padlock) now opens a window that tells you how to get it: which achievement gives it and what it takes (for example, “Words added in Languages: 100”), with a button to go to “Achievements”",
     ]},
