@@ -60,6 +60,10 @@ export function setMotionOff(off: boolean) {
 export const celebrationsEnabled = () => read('streak_celebrations_off') !== '1'
 export const setCelebrationsEnabled = (on: boolean) => write('streak_celebrations_off', on ? null : '1')
 
+// Окно «вчерашние невыполненные» утром (BACKLOG 47.3): ключ читает Дашборд (web-dashboard/lib/skipYesterday.ts, SKIP_OFF_KEY) — менять только вместе
+export const skipPromptEnabled = () => read('skip_prompt_off') !== '1'
+export const setSkipPromptEnabled = (on: boolean) => write('skip_prompt_off', on ? null : '1')
+
 export const waterRemindersEnabled = () => read('water_reminders_off') !== '1'
 export const setWaterRemindersEnabled = (on: boolean) => write('water_reminders_off', on ? null : '1')
 

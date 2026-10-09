@@ -10,7 +10,7 @@ import { WATER_ANIMS, getWaterAnim, sanitizeWaterAnim, setWaterAnim, type WaterA
 import { useLayout } from '../lib/useLayout'
 import { friendlyError } from '../lib/friendlyError'
 import { ensureTrackWater, saveTrackWater, trackWater } from '../lib/waterTracking'
-import { THEME_KEYS, celebrationsEnabled, setSidebarProgress, sidebarProgress, getTheme, setCelebrationsEnabled, setLangAndReload, setMotionOff, setTheme, setWaterRemindersEnabled, systemReducedMotion, userMotionOff, waterRemindersEnabled, type ThemeKey } from '../lib/prefs'
+import { THEME_KEYS, celebrationsEnabled, skipPromptEnabled, setSkipPromptEnabled, setSidebarProgress, sidebarProgress, getTheme, setCelebrationsEnabled, setLangAndReload, setMotionOff, setTheme, setWaterRemindersEnabled, systemReducedMotion, userMotionOff, waterRemindersEnabled, type ThemeKey } from '../lib/prefs'
 
 // «Глобальные настройки» (BACKLOG 6.2): единое окно со всеми настройками, которые раньше были разбросаны по страницам
 // (язык/тема — в боковом меню, анимации и поздравления — в окне раскладки Дашборда, прогресс — в окне прогресса...).
@@ -40,6 +40,7 @@ onUnmounted(() => window.removeEventListener(UNLOCKED_THEMES_EVENT, onUnlockedTh
 const systemReduced = systemReducedMotion()
 const motionOff = ref(userMotionOff() || systemReduced)
 const celebrate = ref(celebrationsEnabled())
+const skipPrompt = ref(skipPromptEnabled())
 const waterReminders = ref(waterRemindersEnabled())
 // «Отслеживать воду» (BACKLOG 932): флаг в профиле; при выключении прячутся стакан, окно воды, напоминания и учёт воды в кольцах/сериях (прошлое остаётся)
 const waterSaving = ref(false)
@@ -80,6 +81,10 @@ function onTheme(e: Event) {
 function onMotion(e: Event) {
   motionOff.value = (e.target as HTMLInputElement).checked
   setMotionOff(motionOff.value)
+}
+function onSkipPrompt(e: Event) {
+  skipPrompt.value = (e.target as HTMLInputElement).checked
+  setSkipPromptEnabled(skipPrompt.value)
 }
 function onCelebrate(e: Event) {
   celebrate.value = (e.target as HTMLInputElement).checked
@@ -130,6 +135,11 @@ async function changeLayout(next: LayoutItem[]) {
         {{ t('dash_celebrate_setting') }}
       </label>
       <p class="gh-dim" style="margin: 2px 0 8px 24px; font-size: 12px">{{ t('dash_celebrate_setting_hint') }}</p>
+      <label class="gh-check">
+        <input type="checkbox" :checked="skipPrompt" data-test="skip-prompt" @change="onSkipPrompt" />
+        {{ t('skip_prompt_setting') }}
+      </label>
+      <p class="gh-dim" style="margin: 2px 0 8px 24px; font-size: 12px">{{ t('skip_prompt_setting_hint') }}</p>
       <template v-if="trackWater">
         <label class="gh-check">
           <input type="checkbox" :checked="waterReminders" data-test="water-reminders" @change="onWaterReminders" />
