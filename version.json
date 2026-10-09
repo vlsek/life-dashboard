@@ -1,6 +1,13 @@
 {
-  "version": "4.11",
+  "version": "4.12",
   "en": [
+    {
+      "version": "4.12",
+      "date": "2026-10-09 21:43",
+      "changes": [
+        "Workouts: an exercise linked to a daily metric now shows a ring of sets today out of N next to the metric line - N comes from that metric's Sets per day plan (by date). The ring turns green when the plan is done. No plan - no ring"
+      ]
+    },
     {
       "version": "4.11",
       "date": "2026-10-09 22:55",
@@ -2944,6 +2951,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.12",
+      "date": "2026-10-09 21:43",
+      "changes": [
+        "Тренировки: у упражнения, связанного с метрикой дня, рядом со строкой про метрику появилось кольцо «подходов сегодня из N» — N берётся из плана «Подходов в день» этой метрики (с учётом даты). Когда план выполнен, кольцо становится зелёным. Нет плана — кольца нет"
+      ]
+    },
     {
       "version": "4.11",
       "date": "2026-10-09 22:55",

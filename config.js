@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.11";
+const SITE_VERSION = "4.12";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.12", date: "2026-10-09 21:43", changes: [
+        "Тренировки: у упражнения, связанного с метрикой дня, рядом со строкой про метрику появилось кольцо «подходов сегодня из N» — N берётся из плана «Подходов в день» этой метрики (с учётом даты). Когда план выполнен, кольцо становится зелёным. Нет плана — кольца нет",
+    ]},
     { version: "4.11", date: "2026-10-09 22:55", changes: [
         "«О проекте» вернулся на все страницы: в «Глобальных настройках» (кнопка панели справа вверху → шестерёнка) появился блок «О проекте» с коротким рассказом, кнопкой «Резюме» и связью в Telegram. Раньше окно «О создателе» было только в меню нескольких страниц",
     ]},
@@ -1843,6 +1846,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.12", date: "2026-10-09 21:43", changes: [
+        "Workouts: an exercise linked to a daily metric now shows a ring of sets today out of N next to the metric line - N comes from that metric's Sets per day plan (by date). The ring turns green when the plan is done. No plan - no ring",
+    ]},
     { version: "4.11", date: "2026-10-09 22:55", changes: [
         "“About the project” is back on every page: Global settings (the panel button at the top right → the gear) now has an “About the project” block with a short note, a “Resume” button and a Telegram contact. Before, the “About the creator” window was only in the menu of a few pages",
     ]},
