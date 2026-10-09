@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.10";
+const SITE_VERSION = "4.11";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.11", date: "2026-10-09 22:55", changes: [
+        "«О проекте» вернулся на все страницы: в «Глобальных настройках» (кнопка панели справа вверху → шестерёнка) появился блок «О проекте» с коротким рассказом, кнопкой «Резюме» и связью в Telegram. Раньше окно «О создателе» было только в меню нескольких страниц",
+    ]},
     { version: "4.10", date: "2026-10-09 18:34", changes: [
         "Сообщество: страница разложена по вкладкам — «Рейтинг», «Лента» (сегодня + достижения), «Друзья» (с числом входящих заявок) и «Сравнение». Область («Все» / «Только друзья») и период видны там, где они нужны; последняя открытая вкладка запоминается. Без миграций."
     ]},
@@ -1840,6 +1843,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.11", date: "2026-10-09 22:55", changes: [
+        "“About the project” is back on every page: Global settings (the panel button at the top right → the gear) now has an “About the project” block with a short note, a “Resume” button and a Telegram contact. Before, the “About the creator” window was only in the menu of a few pages",
+    ]},
     { version: "4.10", date: "2026-10-09 18:34", changes: [
         "Community: the page is split into tabs — Ranking, Feed (today + achievements), Friends (with an incoming-requests count) and Compare. Scope (Everyone / Friends only) and period show only where they matter; the last opened tab is remembered. No migrations."
     ]},
