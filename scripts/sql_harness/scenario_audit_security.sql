@@ -73,6 +73,15 @@ begin
   reset role;
   insert into res select '[ПОКУПКИ] нельзя «купить» без списания баллов', 1, blocked::int;
 
+  -- [ЗНАЧКИ-пробел] награда по подделанному значку: user_achievements пишет клиент (срез 6 аудита закроет серверной сверкой условий значков)
+  perform pg_temp.as_user(c);
+  begin
+    insert into user_achievements(user_id, key) values (c, 'streak_100');
+    perform claim_achievement_items();
+  exception when others then null; end;
+  reset role;
+  insert into res select '[ЗНАЧКИ-пробел] награда-предмет не выдаётся по подделанному значку', 1, (not exists (select 1 from user_customizations where user_id = c and item_key = 'frame_inferno'))::int;
+
   -- [ПОКУПКИ] бонусные монеты: произвольные ключи по 500
   perform pg_temp.as_user(a);
   begin
