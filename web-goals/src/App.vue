@@ -6,6 +6,8 @@ import GoalForm from './components/GoalForm.vue'
 import SavedTick from './components/SavedTick.vue'
 import Icon from './components/Icon.vue'
 import PointsFloat from './components/PointsFloat.vue'
+import GoalInvites from './components/GoalInvites.vue'
+import { useGoalInvites, incomingPending, outgoingNotices } from './lib/goalInvites'
 import { useGoals } from './lib/useGoals'
 import { groupActiveByCategory, sortDone, pointsSummary } from './lib/goals'
 import { mergeCategories, savedCategories } from './lib/categories'
@@ -17,8 +19,20 @@ import { confirmDialog } from './lib/confirmDialog'
 import { friendlyError } from './lib/friendlyError'
 import { isDeadlineReminderEnabled, setDeadlineReminderEnabled } from './lib/deadlineReminderSetting'
 
-const { auth, items, error, flashed, init, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
+const { auth, items, error, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
 onMounted(init)
+
+// Предложения целей и задач от друзей (миграция 063): грузим, когда вход выполнен; принятая цель сразу появляется в списке.
+const invites = useGoalInvites(reload)
+const incomingInvites = computed(() => incomingPending(invites.rows.value))
+const inviteNotices = computed(() => outgoingNotices(invites.rows.value))
+watch(
+  () => auth.value.status,
+  (st) => {
+    if (st === 'ready') void invites.load()
+  },
+  { immediate: true },
+)
 
 function undoDone(g: Goal) {
   return (g.stages ?? 1) > 1 ? stepGoal(g, -1) : toggleGoal(g)
@@ -97,6 +111,17 @@ async function onDelete(g: Goal) {
 
     <template v-else-if="auth.status === 'ready'">
       <p v-if="error" class="dim">{{ t('comm_load_error') }} {{ loadError }}</p>
+
+      <GoalInvites
+        v-if="invites.available.value"
+        :incoming="incomingInvites"
+        :notices="inviteNotices"
+        :busy-id="invites.busyId.value"
+        :error="invites.actionError.value"
+        @accept="invites.respond($event, true)"
+        @decline="invites.respond($event, false)"
+        @dismiss="invites.dismiss($event)"
+      />
 
       <template v-else>
         <p v-if="active.length === 0" class="dim">{{ t('goals_no_active') }}</p>
