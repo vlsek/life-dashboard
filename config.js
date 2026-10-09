@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.94";
+const SITE_VERSION = "3.95";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.95", date: "2026-10-09 10:26", changes: [
+        "Друзья смогут ставить друг другу цели и задачи на день: на сервере готово хранение предложений, принятие и отклонение, лимит предложений в день (его задаёт получатель), уведомление отправителю о выполнении. Пока это не видно в интерфейсе — плашки «Вам предложили цель» будут в следующем обновлении",
+    ]},
     { version: "3.94", date: "2026-10-09 10:50", changes: [
         "Магазин: в разделе со старыми вещами, которым ещё не назначена цена в огоньках, больше не пишется, сколько вещь стоила раньше в монетах. Остались название, поле цены (в нём по-прежнему стоит подсказанная цена) и кнопка переноса",
     ]},
@@ -1792,6 +1795,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.95", date: "2026-10-09 10:26", changes: [
+        "Friends will be able to set goals and daily tasks for each other: the server side is ready - storing invites, accept and decline, a per-day invite limit (set by the recipient), and a completion notice for the sender. Not visible in the interface yet - the 'You were offered a goal' cards come in the next update",
+    ]},
     { version: "3.94", date: "2026-10-09 10:50", changes: [
         "Shop: in the section with old items that have no spark price yet, we no longer show how many coins the item used to cost. You still see the name, the price field (still prefilled with a suggested price) and the transfer button",
     ]},

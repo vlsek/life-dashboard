@@ -1,6 +1,13 @@
 {
-  "version": "3.94",
+  "version": "3.95",
   "en": [
+    {
+      "version": "3.95",
+      "date": "2026-10-09 10:26",
+      "changes": [
+        "Friends will be able to set goals and daily tasks for each other: the server side is ready - storing invites, accept and decline, a per-day invite limit (set by the recipient), and a completion notice for the sender. Not visible in the interface yet - the 'You were offered a goal' cards come in the next update"
+      ]
+    },
     {
       "version": "3.94",
       "date": "2026-10-09 10:50",
@@ -2825,6 +2832,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.95",
+      "date": "2026-10-09 10:26",
+      "changes": [
+        "Друзья смогут ставить друг другу цели и задачи на день: на сервере готово хранение предложений, принятие и отклонение, лимит предложений в день (его задаёт получатель), уведомление отправителю о выполнении. Пока это не видно в интерфейсе — плашки «Вам предложили цель» будут в следующем обновлении"
+      ]
+    },
     {
       "version": "3.94",
       "date": "2026-10-09 10:50",
