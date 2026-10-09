@@ -1,6 +1,13 @@
 {
-  "version": "4.19",
+  "version": "4.20",
   "en": [
+    {
+      "version": "4.20",
+      "date": "2026-10-09 23:10",
+      "changes": [
+        "The light theme is now the default for people who have not picked a theme yet (it used to be dark). A chosen theme is kept as before — nothing changes for those who already picked one."
+      ]
+    },
     {
       "version": "4.19",
       "date": "2026-10-09 22:18",
@@ -3000,6 +3007,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.20",
+      "date": "2026-10-09 23:10",
+      "changes": [
+        "Светлая тема теперь открывается по умолчанию у тех, кто ещё не выбирал тему (раньше была тёмная). Выбранная тема сохраняется как и прежде — у тех, кто уже её выбрал, ничего не меняется."
+      ]
+    },
     {
       "version": "4.19",
       "date": "2026-10-09 22:18",
