@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.18";
+const SITE_VERSION = "4.19";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.19", date: "2026-10-09 22:18", changes: [
+        "Дашборд: у метрики-подходов, связанной с упражнением из «Тренировок», появилось поле «Повторы» и кнопка «+ подход». Подход, добавленный здесь, сразу записывается в «Тренировки» (в сегодняшнюю запись упражнения), а метрика пересчитывается по всем подходам дня — вводить дважды не нужно. Править и удалять подходы по-прежнему можно только в «Тренировках»",
+    ]},
     { version: "4.18", date: "2026-10-09 19:14", changes: [
         "Страница входа: вместо выпадающего списка из 23 тем — два переключателя «Светлая / Тёмная» и язык. Остальные темы выбираются в «Кастомизации» после входа; уже выбранная тема не сбрасывается. Без миграций."
     ]},
@@ -1864,6 +1867,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.19", date: "2026-10-09 22:18", changes: [
+        "Dashboard: a sets metric linked to a Workouts exercise now has a Reps field and a + set button. A set added here is written straight into Workouts (today's entry of that exercise) and the metric is recalculated from all of the day's sets - no double entry. Editing and deleting sets is still done in Workouts",
+    ]},
     { version: "4.18", date: "2026-10-09 19:14", changes: [
         "Sign-in page: instead of a 23-theme dropdown there are now two switches — Light / Dark — plus the language. All other themes are picked in Customization after signing in; an already chosen theme is kept. No migrations."
     ]},

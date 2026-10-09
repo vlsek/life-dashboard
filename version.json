@@ -1,6 +1,13 @@
 {
-  "version": "4.18",
+  "version": "4.19",
   "en": [
+    {
+      "version": "4.19",
+      "date": "2026-10-09 22:18",
+      "changes": [
+        "Dashboard: a sets metric linked to a Workouts exercise now has a Reps field and a + set button. A set added here is written straight into Workouts (today's entry of that exercise) and the metric is recalculated from all of the day's sets - no double entry. Editing and deleting sets is still done in Workouts"
+      ]
+    },
     {
       "version": "4.18",
       "date": "2026-10-09 19:14",
@@ -2993,6 +3000,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.19",
+      "date": "2026-10-09 22:18",
+      "changes": [
+        "Дашборд: у метрики-подходов, связанной с упражнением из «Тренировок», появилось поле «Повторы» и кнопка «+ подход». Подход, добавленный здесь, сразу записывается в «Тренировки» (в сегодняшнюю запись упражнения), а метрика пересчитывается по всем подходам дня — вводить дважды не нужно. Править и удалять подходы по-прежнему можно только в «Тренировках»"
+      ]
+    },
     {
       "version": "4.18",
       "date": "2026-10-09 19:14",
