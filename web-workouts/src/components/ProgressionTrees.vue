@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
 import { todayStr } from '../lib/date'
-import { chainDoneCount, chainState, PROGRESSIONS, type StepState, type StepStatus } from '../lib/progressions'
+import { chainDoneCount, chainState, linkState, PROGRESSIONS, type StepState, type StepStatus } from '../lib/progressions'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 import CollapseChevron from './CollapseChevron.vue'
 import { useAccordionMember } from '../lib/useCollapseStyle'
@@ -93,21 +93,27 @@ function pct(s: StepState): number {
           <span class="text-[0.8em]" style="color: var(--text-dim)" data-testid="chain-count">{{ c.done }}/{{ c.states.length }}</span>
         </div>
 
-        <ol class="m-0 list-none p-0">
+        <ol class="ptree m-0 list-none p-0" data-testid="ptree">
           <li
-            v-for="s in c.states"
+            v-for="(s, i) in c.states"
             :key="s.step.id"
-            class="mb-1 rounded-lg border px-2.5 py-1.5 text-sm"
+            class="ptree-row"
             :data-step="s.step.id"
             :data-status="s.status"
-            :style="{
-              borderColor: s.status === 'current' ? 'var(--accent)' : 'var(--border)',
-              background: 'var(--bg)',
-              opacity: s.status === 'locked' ? 0.55 : 1,
-            }"
           >
+            <div class="ptree-rail" aria-hidden="true">
+              <span class="ptree-node" :data-status="s.status" data-testid="step-node">{{ ICON[s.status] }}</span>
+              <span v-if="i < c.states.length - 1" class="ptree-link" :data-link="linkState(c.states, i)" data-testid="step-link"></span>
+            </div>
+            <div
+              class="ptree-card text-sm"
+              :style="{
+                borderColor: s.status === 'current' ? 'var(--accent)' : 'var(--border)',
+                opacity: s.status === 'locked' ? 0.55 : 1,
+              }"
+            >
             <div class="flex items-center gap-2">
-              <span :title="t(STATUS_KEY[s.status])" :style="{ color: s.status === 'done' ? 'var(--success)' : 'var(--text)' }" aria-hidden="true">{{ ICON[s.status] }}</span>
+              <span class="sr-only">{{ t(STATUS_KEY[s.status]) }}</span>
               <span class="flex-1">{{ label(s) }}</span>
               <span class="text-[0.8em]" style="color: var(--text-dim)">{{ t('workouts_prog_goal') }} {{ s.step.goal }} {{ unitLabel(s) }}</span>
             </div>
@@ -133,9 +139,82 @@ function pct(s: StepState): number {
                 <span v-else class="text-[0.8em]" style="color: var(--text-dim)" data-testid="step-no-ex">{{ t('workouts_prog_no_ex') }} «{{ label(s) }}»</span>
               </div>
             </template>
+            </div>
           </li>
         </ol>
       </div>
     </div>
   </section>
 </template>
+
+<style scoped>
+.ptree-row {
+  display: flex;
+  gap: 10px;
+}
+.ptree-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: none;
+  width: 28px;
+}
+.ptree-node {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.8em;
+  line-height: 1;
+}
+.ptree-node[data-status='done'] {
+  border-color: var(--success);
+  background: var(--success);
+  color: var(--bg);
+}
+.ptree-node[data-status='current'] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+.ptree-node[data-status='progress'] {
+  border-color: var(--accent);
+}
+.ptree-node[data-status='locked'] {
+  opacity: 0.55;
+}
+.ptree-link {
+  flex: 1;
+  width: 0;
+  min-height: 10px;
+  border-left: 2px dashed var(--border);
+}
+.ptree-link[data-link='open'] {
+  border-left: 2px solid var(--success);
+}
+.ptree-link[data-link='next'] {
+  border-left: 2px solid var(--accent);
+}
+.ptree-card {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+</style>

@@ -177,3 +177,14 @@ export function chainState(chain: ProgressionChain, exercises: Exercise[], entri
 export function chainDoneCount(states: StepState[]): number {
   return states.filter((s) => s.status === 'done').length
 }
+
+// Линия между ступенью i и i+1 в визуальном дереве: open — ступень i пройдена и путь дальше открыт,
+// (обе пройдены), next — i пройдена, а i+1 ещё нет (путь ведёт к текущей ступени), closed — i не пройдена, путь закрыт.
+export type LinkState = 'open' | 'next' | 'closed'
+export function linkState(states: StepState[], i: number): LinkState {
+  const from = states[i]
+  const to = states[i + 1]
+  if (!from || !to) return 'closed'
+  if (from.status === 'done') return to.status === 'done' ? 'open' : 'next'
+  return 'closed'
+}

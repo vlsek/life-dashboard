@@ -104,3 +104,30 @@ describe('ProgressionTrees: ступени на время', () => {
     expect(step(w, 'plank_regular').text()).toContain('goal 60 sec')
   })
 })
+
+describe('ProgressionTrees: визуальное дерево', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+  })
+
+  it('у каждой ступени есть узел, линий на одну меньше, чем ступеней', async () => {
+    const w = await openTrees([], [])
+    const chain = w.find('[data-chain="pushups"]')
+    expect(chain.findAll('[data-testid="step-node"]').length).toBe(5)
+    expect(chain.findAll('[data-testid="step-link"]').length).toBe(4)
+  })
+
+  it('узел и линия отражают статус: пройдено → линия к текущей «next», дальше «closed»', async () => {
+    const w = await openTrees([en('k', '2026-09-20', [16])], [ex('k', 'Отжимания с колен')])
+    const links = w.findAll('[data-chain="pushups"] [data-testid="step-link"]').map((l) => l.attributes('data-link'))
+    expect(links).toEqual(['next', 'closed', 'closed', 'closed'])
+    expect(step(w, 'pushup_knees').find('[data-testid="step-node"]').attributes('data-status')).toBe('done')
+    expect(step(w, 'pushup_regular').find('[data-testid="step-node"]').attributes('data-status')).toBe('current')
+  })
+
+  it('две пройденные подряд ступени соединены линией «open»', async () => {
+    const w = await openTrees([en('k', '2026-09-20', [16]), en('r', '2026-09-21', [30])], [ex('k', 'Отжимания с колен'), ex('r', 'Отжимания')])
+    expect(w.findAll('[data-chain="pushups"] [data-testid="step-link"]')[0].attributes('data-link')).toBe('open')
+  })
+})

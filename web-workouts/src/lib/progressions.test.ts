@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { chainDoneCount, chainState, matchesStep, PROGRESSIONS, type ProgressionChain } from './progressions'
+import { chainDoneCount, chainState, linkState, matchesStep, PROGRESSIONS, type ProgressionChain } from './progressions'
 import { musclesForExercise } from './muscles'
 import type { Exercise, WorkoutEntry } from './types'
+import type { StepState, StepStatus } from './progressions'
 
 const chain = (id: string) => PROGRESSIONS.find((c) => c.id === id) as ProgressionChain
 // В какую ступень цепочки попадает название (id ступени или null); при неоднозначности тест упадёт.
@@ -165,5 +166,16 @@ describe('ступени на время: цепочка «Планка» (BACKL
     expect(st.find((s) => s.step.id === 'plank_regular')?.status).toBe('done')
     expect(st.find((s) => s.step.id === 'plank_side')?.status).toBe('progress')
     expect(chainDoneCount(st)).toBe(1)
+  })
+})
+
+describe('linkState (линии визуального дерева)', () => {
+  const mk = (statuses: StepStatus[]): StepState[] => statuses.map((status, i) => ({ step: { id: 's' + i, ru: '', en: '', req: [], goal: 1 }, status, best: 0, exercises: [] }))
+  it('open / next / closed', () => {
+    const st = mk(['done', 'done', 'current', 'locked'])
+    expect([0, 1, 2].map((i) => linkState(st, i))).toEqual(['open', 'next', 'closed'])
+  })
+  it('за последней ступенью линии нет', () => {
+    expect(linkState(mk(['done']), 0)).toBe('closed')
   })
 })
