@@ -14,6 +14,8 @@ import { t, getLang } from './lib/i18n'
 import type { Skill, SkillFormInput, Book, BookFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
+import CollapsibleSection from './components/CollapsibleSection.vue'
+import { filterSkills, normalizeSort, sortSkills, SORT_KEY, type SkillSort } from './lib/skillsView'
 
 const { auth, items: skills, error: skillsError, init, addSkill, updateSkill, deleteSkill, bumpProgress, toggleMastered } = useSkills()
 const { items: books, error: booksError, load: loadBooks, addBook, updateBook, deleteBook, toggleDone: toggleBookDone } = useBooks()
@@ -25,6 +27,25 @@ watch(auth, (v) => {
 
 const active = computed(() => skills.value.filter((s) => !s.mastered))
 const mastered = computed(() => skills.value.filter((s) => s.mastered))
+
+// Поиск и сортировка навыков в процессе (BACKLOG 44.4); сортировка запоминается на устройстве
+function readSort(): SkillSort {
+  try {
+    return normalizeSort(localStorage.getItem(SORT_KEY))
+  } catch {
+    return 'new'
+  }
+}
+const sortMode = ref<SkillSort>(readSort())
+watch(sortMode, (v) => {
+  try {
+    localStorage.setItem(SORT_KEY, v)
+  } catch {
+    /* не критично */
+  }
+})
+const query = ref('')
+const shownActive = computed(() => sortSkills(filterSkills(active.value, query.value), sortMode.value))
 const suggestions = computed(() => suggestionsFor(getLang(), new Set(skills.value.map((s) => s.name))))
 
 const activeBooks = computed(() => books.value.filter((b) => b.status !== 'done'))
@@ -105,36 +126,49 @@ async function onDeleteBook(b: Book) {
       <p v-if="skillsError" class="dim">{{ t('comm_load_error') }} {{ skillsError }}</p>
 
       <template v-else>
-        <h3 class="mb-2 text-base font-medium"><EmojiText :text="t('skills_suggestions_h3')" /></h3>
-        <div class="mb-5 flex flex-wrap gap-2">
-          <p v-if="suggestions.length === 0" class="dim"><EmojiText :text="t('skills_all_suggestions_added')" /></p>
-          <button
-            v-for="s in suggestions"
-            :key="s.name"
-            type="button"
-            class="rounded-full border px-3 py-1 text-sm"
-            style="background: transparent; color: var(--text); border-color: var(--border)"
-            @click="openAddSkill(s.name)"
-          >
-            <EmojiText :text="`${s.icon} ${s.name}`" /> +
-          </button>
-        </div>
+        <CollapsibleSection id="ideas" :title="t('skills_suggestions_h3')" :count="suggestions.length">
+          <div class="flex flex-wrap gap-2">
+            <p v-if="suggestions.length === 0" class="dim"><EmojiText :text="t('skills_all_suggestions_added')" /></p>
+            <button
+              v-for="s in suggestions"
+              :key="s.name"
+              type="button"
+              class="rounded-full border px-3 py-1 text-sm"
+              style="background: transparent; color: var(--text); border-color: var(--border)"
+              @click="openAddSkill(s.name)"
+            >
+              <EmojiText :text="`${s.icon} ${s.name}`" /> +
+            </button>
+          </div>
+        </CollapsibleSection>
 
-        <h3 class="mb-2 text-base font-medium">{{ t('skills_active_h3') }}</h3>
-        <p v-if="active.length === 0" class="dim">{{ t('skills_none_active') }}</p>
-        <div v-else class="mb-6 flex flex-col gap-2">
-          <SkillCard
-            v-for="s in active"
-            :key="s.id"
-            :skill="s"
-            @bump="bumpProgress(s, $event)"
-            @mastered="toggleMastered(s)"
-            @edit="skillFormTarget = s"
-            @delete="onDeleteSkill(s)"
-          />
-        </div>
+        <CollapsibleSection id="active" :title="t('skills_active_h3')" :count="active.length">
+          <p v-if="active.length === 0" class="dim">{{ t('skills_none_active') }}</p>
+          <template v-else>
+            <div v-if="active.length > 3" class="mb-2 flex flex-wrap items-center gap-2" data-test="skills-tools">
+              <input v-model="query" type="search" class="min-w-0 flex-1 rounded-lg border px-3 py-1.5 text-sm" style="border-color: var(--border); background: var(--bg); color: var(--text)" :placeholder="t('skills_search_ph')" :aria-label="t('skills_search_ph')" data-test="skills-search" />
+              <select v-model="sortMode" class="rounded-lg border px-2 py-1.5 text-sm" style="border-color: var(--border); background: var(--bg); color: var(--text)" :aria-label="t('skills_sort_aria')" data-test="skills-sort">
+                <option value="new">{{ t('skills_sort_new') }}</option>
+                <option value="progress">{{ t('skills_sort_progress') }}</option>
+                <option value="name">{{ t('skills_sort_name') }}</option>
+              </select>
+            </div>
+            <p v-if="shownActive.length === 0" class="dim" data-test="skills-no-match">{{ t('skills_no_match') }}</p>
+            <div v-else class="flex flex-col gap-2">
+              <SkillCard
+                v-for="s in shownActive"
+                :key="s.id"
+                :skill="s"
+                @bump="bumpProgress(s, $event)"
+                @mastered="toggleMastered(s)"
+                @edit="skillFormTarget = s"
+                @delete="onDeleteSkill(s)"
+              />
+            </div>
+          </template>
+        </CollapsibleSection>
 
-        <h2 class="mb-2 text-base font-medium"><EmojiText :text="t('skills_mastered_h2')" /></h2>
+        <CollapsibleSection id="mastered" :title="t('skills_mastered_h2')" :count="mastered.length">
         <p v-if="mastered.length === 0" class="dim">{{ t('skills_none_mastered') }}</p>
         <table v-else class="w-full">
           <tbody>
@@ -148,6 +182,7 @@ async function onDeleteBook(b: Book) {
             </tr>
           </tbody>
         </table>
+        </CollapsibleSection>
       </template>
 
       <div class="my-6 border-t" style="border-color: var(--border)"></div>
@@ -161,7 +196,7 @@ async function onDeleteBook(b: Book) {
 
       <p v-if="booksError" class="dim">{{ t('comm_load_error') }} {{ booksError }}</p>
       <template v-else>
-        <h3 class="mb-2 text-base font-medium">{{ t('skills_books_to_read_h3') }}</h3>
+        <CollapsibleSection id="books_todo" :title="t('skills_books_to_read_h3')" :count="activeBooks.length">
         <p v-if="activeBooks.length === 0" class="dim">{{ t('skills_book_list_empty') }}</p>
         <table v-else class="mb-6 w-full">
           <tbody>
@@ -176,8 +211,9 @@ async function onDeleteBook(b: Book) {
             </tr>
           </tbody>
         </table>
+        </CollapsibleSection>
 
-        <h3 class="mb-2 text-base font-medium"><EmojiText :text="t('skills_books_done_h3')" /></h3>
+        <CollapsibleSection id="books_done" :title="t('skills_books_done_h3')" :count="doneBooks.length">
         <p v-if="doneBooks.length === 0" class="dim">{{ t('skills_book_none_read') }}</p>
         <table v-else class="w-full">
           <tbody>
@@ -193,6 +229,7 @@ async function onDeleteBook(b: Book) {
             </tr>
           </tbody>
         </table>
+        </CollapsibleSection>
       </template>
     </template>
 
