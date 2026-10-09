@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.07";
+const SITE_VERSION = "4.08";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.08", date: "2026-10-09 22:15", changes: [
+        "Левое меню: аватарка и имя теперь показываются на каждой странице сразу, не дожидаясь воды, прогресса и избранного. Раньше, если один из этих запросов сбоил или долго грузился, блок профиля в шторке мог не появиться вовсе, а вместе с ним пропадали и значки шапки. Кольца дня и недели в меню по-прежнему появляются, когда придут данные",
+    ]},
     { version: "4.07", date: "2026-10-09 21:55", changes: [
         "Челленджи: у каждого активного челленджа появилось кольцо прогресса с процентом, а у ежедневных — значки «🔥 Серия N» (дни подряд; невыполненный сегодня день серию не рвёт) и «осталось N дней». Без миграций."
     ]},
@@ -1831,6 +1834,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.08", date: "2026-10-09 22:15", changes: [
+        "Side menu: your avatar and name now show on every page right away, without waiting for water, progress and favorites. Before, if one of those requests failed or loaded slowly, the profile block in the menu could be missing entirely, and the header icons disappeared with it. The day and week rings in the menu still appear once their data arrives",
+    ]},
     { version: "4.07", date: "2026-10-09 21:55", changes: [
         "Challenges: every active challenge now has a progress ring with a percentage, and daily ones show “🔥 Streak N” (days in a row; a not-yet-done today does not break it) and “N days left” badges. No migrations."
     ]},
