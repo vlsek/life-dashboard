@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { t, type DictKey } from '../lib/i18n'
-import { BACK_SHAPES, FRONT_SHAPES, type MuscleShape } from '../lib/muscleShapes'
+import { BACK_SHAPES, BODY_OUTLINE, FRONT_SHAPES, type MuscleShape } from '../lib/muscleShapes'
 import type { MuscleId } from '../lib/muscles'
 
 // Компактная карта мышц для правой панели (BACKLOG 3.2): спереди и сзади, зелёные — мышцы, задействованные за последние
@@ -36,7 +36,7 @@ function shapeStyle(m: MuscleId) {
       <figure v-for="v in views" :key="v.key" style="margin: 0; text-align: center">
         <svg viewBox="0 0 100 190" width="96" height="182" role="group" :aria-label="t(v.label)">
           <circle cx="50" cy="14" r="9" fill="none" stroke="var(--border, #333)" stroke-width="1.2" />
-          <rect x="36" y="33" width="28" height="60" rx="8" fill="none" stroke="var(--border, #333)" stroke-width="1" />
+          <path :d="BODY_OUTLINE" fill="none" stroke="var(--border, #333)" stroke-width="1.2" stroke-linejoin="round" data-testid="body-outline" />
           <g
             v-for="(s, i) in v.shapes"
             :key="v.key + i"
