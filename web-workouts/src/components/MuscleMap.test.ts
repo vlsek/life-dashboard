@@ -115,6 +115,11 @@ describe('MuscleMap', () => {
       expect(daysOf(w)).toContain('2 дн.')
     })
 
+    it('рамки кнопок периода — акцент темы, а не var(--border) (BACKLOG 48.8)', async () => {
+      const w = await openMap(entries, [bench])
+      for (const p of [7, 30, 90]) expect(w.find(`[data-testid="muscle-period-${p}"]`).attributes('style')).toContain('border-color: var(--accent)')
+    })
+
     it('7 дней: только запись 2 дня назад; 90 дней: все три', async () => {
       const w = await openMap(entries, [bench])
       await w.find('[data-testid="muscle-period-7"]').trigger('click')

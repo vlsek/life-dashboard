@@ -246,7 +246,7 @@ function shapeStyle(m: MuscleId) {
               type="button"
               class="rounded-lg border px-2 py-0.5 text-[0.8em]"
               :style="{
-                borderColor: 'var(--border)',
+                borderColor: 'var(--accent)', // BACKLOG 48.8: рамки выбора периода — акцент темы, как у графиков
                 background: period === p ? 'var(--accent)' : 'transparent',
                 color: period === p ? 'var(--accent-text)' : 'var(--text)',
               }"
