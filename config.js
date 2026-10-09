@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.20";
+const SITE_VERSION = "4.21";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.21", date: "2026-10-09 19:29", changes: [
+        "Карта мышц: у фигуры исправлена шея — теперь она растёт из головы и плавно переходит в плечи (раньше голова висела над плоской «пирамидкой»). Правая плашка перестала рисовать старую «коробку»: там та же карта и те же контуры, что в разделе «Тренировки». Без миграций."
+    ]},
     { version: "4.20", date: "2026-10-09 23:10", changes: [
         "Светлая тема теперь открывается по умолчанию у тех, кто ещё не выбирал тему (раньше была тёмная). Выбранная тема сохраняется как и прежде — у тех, кто уже её выбрал, ничего не меняется."
     ]},
@@ -1870,6 +1873,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.21", date: "2026-10-09 19:29", changes: [
+        "Muscle map: the figure's neck is fixed — it now grows out of the head and blends into the shoulders (the head used to hover above a flat \"pyramid\"). The right panel no longer draws the old box: it uses the same map and outlines as the Workouts section. No migrations."
+    ]},
     { version: "4.20", date: "2026-10-09 23:10", changes: [
         "The light theme is now the default for people who have not picked a theme yet (it used to be dark). A chosen theme is kept as before — nothing changes for those who already picked one."
     ]},
