@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.89";
+const SITE_VERSION = "3.90";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.90", date: "2026-10-09 10:55", changes: [
+        "Тренировки → «Деревья прогрессии»: цепочки ступеней теперь нарисованы деревом — у каждой ступени круглый узел (✓ пройдено, ▶ текущая, ◐ в процессе, 🔒 закрыта), узлы соединены линией: зелёная между пройденными, цветная к текущей ступени, пунктирная там, где путь ещё закрыт. Карточки ступеней, полоски и кнопки «Добавить запись» прежние. Без миграций."
+    ]},
     { version: "3.89", date: "2026-10-09 10:40", changes: [
         "Метрики дня: при создании метрики «Подходы» или «Число» можно сразу связать её с упражнением из «Тренировок» — выбрать уже заведённое или создать новое упражнение с тем же названием. Тогда подходы вводятся один раз, в «Тренировках», а метрика на Дашборде заполняется сама. У уже связанной метрики в форме показано, с каким она упражнением. ТРЕБУЕТ миграцию 054 (без неё выбор не показывается или сохранение подскажет про миграцию)."
     ]},
@@ -1777,6 +1780,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.90", date: "2026-10-09 10:55", changes: [
+        "Workouts → “Exercise progressions”: step chains are now drawn as a tree — each step has a round node (✓ done, ▶ current, ◐ in progress, 🔒 locked) joined by a line: green between completed steps, accent towards the current step, dashed where the path is still locked. Step cards, progress bars and “Add record” buttons are unchanged. No migrations."
+    ]},
     { version: "3.89", date: "2026-10-09 10:40", changes: [
         "Daily metrics: when creating a Sets or Number metric you can now link it right away to an exercise from Workouts - pick an existing one or create a new exercise with the same name. Then sets are entered once, in Workouts, and the metric on the Dashboard fills in by itself. For an already linked metric the form shows which exercise it follows. REQUIRES migration 054 (without it the choice is hidden or saving hints at the migration)."
     ]},

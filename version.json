@@ -1,6 +1,13 @@
 {
-  "version": "3.89",
+  "version": "3.90",
   "en": [
+    {
+      "version": "3.90",
+      "date": "2026-10-09 10:55",
+      "changes": [
+        "Workouts → “Exercise progressions”: step chains are now drawn as a tree — each step has a round node (✓ done, ▶ current, ◐ in progress, 🔒 locked) joined by a line: green between completed steps, accent towards the current step, dashed where the path is still locked. Step cards, progress bars and “Add record” buttons are unchanged. No migrations."
+      ]
+    },
     {
       "version": "3.89",
       "date": "2026-10-09 10:40",
@@ -2790,6 +2797,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.90",
+      "date": "2026-10-09 10:55",
+      "changes": [
+        "Тренировки → «Деревья прогрессии»: цепочки ступеней теперь нарисованы деревом — у каждой ступени круглый узел (✓ пройдено, ▶ текущая, ◐ в процессе, 🔒 закрыта), узлы соединены линией: зелёная между пройденными, цветная к текущей ступени, пунктирная там, где путь ещё закрыт. Карточки ступеней, полоски и кнопки «Добавить запись» прежние. Без миграций."
+      ]
+    },
     {
       "version": "3.89",
       "date": "2026-10-09 10:40",
