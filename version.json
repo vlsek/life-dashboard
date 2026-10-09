@@ -1,6 +1,13 @@
 {
-  "version": "3.92",
+  "version": "3.93",
   "en": [
+    {
+      "version": "3.93",
+      "date": "2026-10-07 12:30",
+      "changes": [
+        "Customization: eight new avatar frames for coins - Mint, Sky, Graphite (100 each), Coral, Sunset, Breath (150 each), Comet and Glitch (250 each). Breath, Comet and Glitch are animated (static with reduced motion or animations off). The frames show on your avatar in the menu, in Community and in the day-progress ring on the Dashboard. About the project is now About the creator: a short paragraph and a Resume button. No migration needed."
+      ]
+    },
     {
       "version": "3.92",
       "date": "2026-10-09 11:10",
@@ -2811,6 +2818,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "3.93",
+      "date": "2026-10-07 12:30",
+      "changes": [
+        "Кастомизация: восемь новых рамок аватарки за монеты — «Мятная», «Небесная», «Графит» (по 100), «Коралловая», «Закат», «Дыхание» (по 150), «Комета» и «Глитч» (по 250). «Дыхание», «Комета» и «Глитч» анимированные (при «уменьшить движение» и выключенных анимациях — статичный вид). Рамки видны на аватаре в меню, в Сообществе и в кольце прогресса дня на Дашборде. «О проекте» теперь «О создателе»: короткий абзац и кнопка «Резюме». Миграция не нужна."
+      ]
+    },
     {
       "version": "3.92",
       "date": "2026-10-09 11:10",

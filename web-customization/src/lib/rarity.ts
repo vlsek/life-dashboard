@@ -46,6 +46,15 @@ export const ITEM_RARITY: Record<string, Rarity> = {
   frame_beacon: 'rare',
   frame_rare_challenges: 'epic',
   frame_rare_milestones: 'epic',
+  // рамки за монеты (46.2а): по уровню цены — 100 обычная, 150 необычная, 250 редкая
+  frame_mint: 'common',
+  frame_sky: 'common',
+  frame_graphite: 'common',
+  frame_coral: 'uncommon',
+  frame_sunset: 'uncommon',
+  frame_breath: 'uncommon',
+  frame_comet: 'rare',
+  frame_glitch: 'rare',
   collapse_accordion: 'uncommon', // как другие предметы за средний тариф (150)
   collapse_summary: 'rare', // как другие предметы за высокий тариф (250)
 }

@@ -1063,8 +1063,28 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
 }
 .ring-frame-victory { animation: ring-frame-victory 2.4s ease-in-out infinite alternate; }
 .ring-frame-course { animation: ring-frame-course 2.2s ease-out infinite; }
+/* Дуга для рамок за монеты, серия 46.2(а): дыхание (мягкое свечение), комета (свечение обходит дугу по кругу), глитч (резкие сдвиги цвета) */
+@keyframes ring-frame-breath {
+  0% { stroke: #2fd1c5; filter: drop-shadow(0 0 2px rgba(47, 209, 197, 0.3)); }
+  100% { stroke: #7ff3e9; filter: drop-shadow(0 0 8px rgba(47, 209, 197, 0.85)); }
+}
+@keyframes ring-frame-comet {
+  0% { filter: drop-shadow(4px -3px 3px rgba(124, 196, 255, 0.85)); }
+  25% { filter: drop-shadow(4px 3px 3px rgba(124, 196, 255, 0.85)); }
+  50% { filter: drop-shadow(-4px 3px 3px rgba(124, 196, 255, 0.85)); }
+  75% { filter: drop-shadow(-4px -3px 3px rgba(124, 196, 255, 0.85)); }
+  100% { filter: drop-shadow(4px -3px 3px rgba(124, 196, 255, 0.85)); }
+}
+@keyframes ring-frame-glitch {
+  0%, 18%, 54%, 100% { stroke: #00e5ff; filter: drop-shadow(2px 0 0 rgba(255, 0, 170, 0.8)); }
+  20%, 52% { stroke: #00e5ff; filter: drop-shadow(-3px 0 0 rgba(255, 0, 170, 0.8)); }
+  56% { stroke: #ff00aa; filter: drop-shadow(3px 0 0 rgba(0, 229, 255, 0.8)); }
+}
+.ring-frame-breath { animation: ring-frame-breath 3.2s ease-in-out infinite alternate; }
+.ring-frame-comet { animation: ring-frame-comet 2.4s linear infinite; }
+.ring-frame-glitch { animation: ring-frame-glitch 1.6s steps(1) infinite; }
 @media (prefers-reduced-motion: reduce) {
-  .ring-frame-flame, .ring-frame-rainbow, .ring-frame-inferno, .ring-frame-pulse, .ring-frame-royal, .ring-frame-victory, .ring-frame-course { animation: none; }
+  .ring-frame-flame, .ring-frame-rainbow, .ring-frame-inferno, .ring-frame-pulse, .ring-frame-royal, .ring-frame-victory, .ring-frame-course, .ring-frame-breath, .ring-frame-comet, .ring-frame-glitch { animation: none; }
 }
 
 /* Вид сворачивания «карточка со сводкой» (BACKLOG 498 срез 3): итог свёрнутого блока справа от заголовка (компонент CollapseSummary,

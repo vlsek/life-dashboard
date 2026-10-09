@@ -283,7 +283,27 @@ html[data-motion="off"] .gh-glass-sheen { opacity: 0; }
 }
 .cust-frame-victory { animation: cust-frame-victory 2.4s ease-in-out infinite alternate; }
 .cust-frame-course { animation: cust-frame-course 2.2s ease-out infinite; }
-@media (prefers-reduced-motion: reduce) { .cust-frame-flame, .cust-frame-rainbow, .cust-frame-inferno, .cust-frame-pulse, .cust-frame-royal, .cust-frame-victory, .cust-frame-course { animation: none; } }
+@keyframes cust-frame-breath {
+  0% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #2fd1c5, 0 0 8px 1px rgba(47, 209, 197, 0.3); }
+  100% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #7ff3e9, 0 0 22px 6px rgba(47, 209, 197, 0.8); }
+}
+@keyframes cust-frame-comet {
+  0% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #7cc4ff, 8px -6px 10px 1px rgba(124, 196, 255, 0.7); }
+  25% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #7cc4ff, 8px 6px 10px 1px rgba(124, 196, 255, 0.7); }
+  50% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #7cc4ff, -8px 6px 10px 1px rgba(124, 196, 255, 0.7); }
+  75% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #7cc4ff, -8px -6px 10px 1px rgba(124, 196, 255, 0.7); }
+  100% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #7cc4ff, 8px -6px 10px 1px rgba(124, 196, 255, 0.7); }
+}
+@keyframes cust-frame-glitch {
+  0%, 18%, 54%, 100% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #00e5ff, 2px 0 0 4px rgba(255, 0, 170, 0.8); }
+  20%, 52% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #00e5ff, -3px 0 0 4px rgba(255, 0, 170, 0.8); }
+  56% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #ff00aa, 3px 0 0 4px rgba(0, 229, 255, 0.8); }
+  58% { box-shadow: 0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #00e5ff, 0 0 0 4px rgba(255, 0, 170, 0.8); }
+}
+.cust-frame-breath { animation: cust-frame-breath 3.2s ease-in-out infinite alternate; }
+.cust-frame-comet { animation: cust-frame-comet 2.4s linear infinite; }
+.cust-frame-glitch { animation: cust-frame-glitch 1.6s steps(1) infinite; }
+@media (prefers-reduced-motion: reduce) { .cust-frame-flame, .cust-frame-rainbow, .cust-frame-inferno, .cust-frame-pulse, .cust-frame-royal, .cust-frame-victory, .cust-frame-course, .cust-frame-breath, .cust-frame-comet, .cust-frame-glitch { animation: none; } }
 
 /* ===== Аудит оформления (BACKLOG 567, агент 7): те же три правила, что в style.css страниц пилота. Бандл шапки вставляется <style> в документ
    страницы и на боевых страницах эти контролы уже красятся её style.css; здесь они продублированы, чтобы шапка не зависела от страницы

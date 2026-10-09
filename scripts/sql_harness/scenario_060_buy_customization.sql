@@ -74,7 +74,7 @@ begin
   select count(*) into n from customization_catalog;
   begin update customization_catalog set price = 1 where item_key = 'frame_flame'; exception when others then null; end;
   reset role;
-  insert into res select 'каталог читается (20 предметов)', 20, n;
+  insert into res select 'каталог читается (28 предметов: 20 из 060 + 8 рамок из 061)', 28, n;
   insert into res select 'цену в каталоге клиент поменять не может', 250, (select price from customization_catalog where item_key = 'frame_flame');
 
   insert into user_achievements(user_id, key) values (ach, 'streak_30'), (ach, 'no_such_badge');

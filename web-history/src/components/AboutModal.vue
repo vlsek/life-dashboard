@@ -10,10 +10,16 @@ defineEmits<{ close: [] }>()
     <div class="w-full max-w-md rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)">
       <h3 class="text-lg font-bold"><EmojiText :text="t('about_title')" /></h3>
 
-      <h4 class="mb-1.5 mt-3.5 font-semibold">{{ t('about_creator_title') }}</h4>
-      <p class="text-sm leading-relaxed">{{ t('about_creator_text') }}</p>
-      <p class="mt-2 text-sm">
-        <a href="https://portfolio.orneryhero.workers.dev/" target="_blank" rel="noopener" style="color: var(--accent)">
+      <p class="mt-3 text-sm leading-relaxed">{{ t('about_creator_text') }}</p>
+      <p class="mt-3 text-sm">
+        <a
+          href="https://portfolio.orneryhero.workers.dev/"
+          target="_blank"
+          rel="noopener"
+          class="inline-block rounded-lg border px-3 py-1.5 font-medium"
+          style="border-color: var(--accent); color: var(--accent)"
+          data-test="about-resume"
+        >
           {{ t('about_portfolio_link') }}
         </a>
       </p>

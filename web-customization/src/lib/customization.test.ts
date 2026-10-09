@@ -37,7 +37,7 @@ describe('реестр', () => {
     for (const i of ITEMS.filter((x) => x.category === 'avatar_frame')) expect(FRAME_SHADOWS[i.key], i.key).toBeTruthy()
   })
   it('itemsOf делит по источнику', () => {
-    expect(itemsOf('avatar_frame', 'points').map((i) => i.key)).toEqual(['frame_neon', 'frame_aurora', 'frame_flame', 'frame_rainbow'])
+    expect(itemsOf('avatar_frame', 'points').map((i) => i.key)).toEqual(['frame_neon', 'frame_aurora', 'frame_flame', 'frame_rainbow', 'frame_mint', 'frame_sky', 'frame_graphite', 'frame_coral', 'frame_sunset', 'frame_breath', 'frame_comet', 'frame_glitch'])
     expect(itemsOf('avatar_frame', 'achievement').map((i) => i.key)).toEqual(['frame_gold', 'frame_inferno', 'frame_pulse', 'frame_royal', 'frame_ink', 'frame_neuron', 'frame_target', 'frame_gear', 'frame_bookmark', 'frame_steel', 'frame_cup', 'frame_beacon', 'frame_rare_challenges', 'frame_rare_milestones'])
   })
 })
@@ -138,3 +138,24 @@ describe('анимированные рамки за достижения (ре�
     for (const [, ach] of rewards) expect([...i18n.matchAll(new RegExp('cust_ach_' + ach + ':', 'g'))].length, ach).toBe(2)
   })
 })
+
+describe('рамки за монеты, серия 46.2(а): много предметов за монеты, а не только за достижения', () => {
+  const NEW = ['frame_mint', 'frame_sky', 'frame_graphite', 'frame_coral', 'frame_sunset', 'frame_breath', 'frame_comet', 'frame_glitch']
+  it('8 новых рамок покупаются за монеты по тарифам 100/150/250', () => {
+    const price = (k: string) => priceOf(itemByKey(k)!)
+    expect(['frame_mint', 'frame_sky', 'frame_graphite'].map(price)).toEqual([100, 100, 100])
+    expect(['frame_coral', 'frame_sunset', 'frame_breath'].map(price)).toEqual([150, 150, 150])
+    expect(['frame_comet', 'frame_glitch'].map(price)).toEqual([250, 250])
+    for (const k of NEW) expect(itemByKey(k)!.source, k).toBe('points')
+  })
+  it('три из них анимированные (дыхание, комета, глитч), остальные статичные', () => {
+    expect(NEW.filter((k) => frameClass(k)).sort()).toEqual(['frame_breath', 'frame_comet', 'frame_glitch'])
+    for (const k of NEW) expect(frameShadow(k), k).toContain('0 0 0 2px')
+  })
+  it('монетных рамок теперь больше, чем рамок только за достижения (правило баланса владельца)', () => {
+    const frames = ITEMS.filter((i) => i.category === 'avatar_frame')
+    expect(frames.filter((i) => i.source === 'points').length).toBeGreaterThan(frames.filter((i) => i.source === 'achievement').length * 0.6)
+    expect(frames.filter((i) => i.source === 'points').length).toBe(12)
+  })
+})
+

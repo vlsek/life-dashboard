@@ -40,6 +40,15 @@ export const ITEMS: readonly CustomItem[] = [
   { key: 'frame_beacon', category: 'avatar_frame', source: 'achievement', achievement: 'milestones_10' },
   { key: 'frame_rare_challenges', category: 'avatar_frame', source: 'achievement', achievement: 'challenges_25' },
   { key: 'frame_rare_milestones', category: 'avatar_frame', source: 'achievement', achievement: 'milestones_25' },
+  // Рамки за монеты, серия 46.2(а): 3 за 100, 3 за 150 (одна анимированная), 2 за 250 (обе анимированные)
+  { key: 'frame_mint', category: 'avatar_frame', source: 'points', tier: 'low' },
+  { key: 'frame_sky', category: 'avatar_frame', source: 'points', tier: 'low' },
+  { key: 'frame_graphite', category: 'avatar_frame', source: 'points', tier: 'low' },
+  { key: 'frame_coral', category: 'avatar_frame', source: 'points', tier: 'mid' },
+  { key: 'frame_sunset', category: 'avatar_frame', source: 'points', tier: 'mid' },
+  { key: 'frame_breath', category: 'avatar_frame', source: 'points', tier: 'mid' },
+  { key: 'frame_comet', category: 'avatar_frame', source: 'points', tier: 'high' },
+  { key: 'frame_glitch', category: 'avatar_frame', source: 'points', tier: 'high' },
   // Вид сворачивания блоков (BACKLOG 498): базовый шеврон бесплатен у всех (это «ничего не выбрано»); «аккордеон» — 150 (владелец 2026-10-03)
   { key: 'collapse_accordion', category: 'collapse_style', source: 'points', tier: 'mid' },
   // «Карточка со сводкой» (BACKLOG 498 срез 3): свёрнутый блок показывает справа от заголовка короткую строку итога; высокий тариф = 250 (владелец 2026-10-03)

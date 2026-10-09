@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "3.92";
+const SITE_VERSION = "3.93";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "3.93", date: "2026-10-07 12:30", changes: [
+        "Кастомизация: восемь новых рамок аватарки за монеты — «Мятная», «Небесная», «Графит» (по 100), «Коралловая», «Закат», «Дыхание» (по 150), «Комета» и «Глитч» (по 250). «Дыхание», «Комета» и «Глитч» анимированные (при «уменьшить движение» и выключенных анимациях — статичный вид). Рамки видны на аватаре в меню, в Сообществе и в кольце прогресса дня на Дашборде. «О проекте» теперь «О создателе»: короткий абзац и кнопка «Резюме». Миграция не нужна."
+    ]},
     { version: "3.92", date: "2026-10-09 11:10", changes: [
         "Тур «Как пользоваться» (Аккаунт, Языки): шаги теперь листаются с анимацией — при свайпе или кнопках «Далее»/«Назад» текст плавно выезжает с той стороны, в которую листаешь. При включённом «уменьшении движения» в системе анимации нет. Без миграций."
     ]},
@@ -1786,6 +1789,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "3.93", date: "2026-10-07 12:30", changes: [
+        "Customization: eight new avatar frames for coins - Mint, Sky, Graphite (100 each), Coral, Sunset, Breath (150 each), Comet and Glitch (250 each). Breath, Comet and Glitch are animated (static with reduced motion or animations off). The frames show on your avatar in the menu, in Community and in the day-progress ring on the Dashboard. About the project is now About the creator: a short paragraph and a Resume button. No migration needed."
+    ]},
     { version: "3.92", date: "2026-10-09 11:10", changes: [
         "“How to use” tour (Account, Languages): steps now slide in with an animation — on swipe or Next/Back the text glides in from the side you are paging towards. No animation when the system “reduce motion” setting is on. No migrations."
     ]},

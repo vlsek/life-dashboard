@@ -27,6 +27,15 @@ const RING: Record<string, FrameRingStyle> = {
   frame_beacon: { stops: ['#1f4fa8', '#ffe27a'], glow: 'rgba(255, 226, 122, 0.6)', anim: null },
   frame_rare_challenges: { stops: ['#2ecc71'], glow: 'rgba(46, 204, 113, 0.6)', anim: 'ring-frame-victory' },
   frame_rare_milestones: { stops: ['#2aa7ff'], glow: 'rgba(42, 167, 255, 0.6)', anim: 'ring-frame-course' },
+  // рамки за монеты, серия 46.2(а)
+  frame_mint: { stops: ['#3ecf9a'], glow: null, anim: null },
+  frame_sky: { stops: ['#4aa8ff'], glow: 'rgba(74, 168, 255, 0.45)', anim: null },
+  frame_graphite: { stops: ['#3b4252', '#aab2c0'], glow: null, anim: null },
+  frame_coral: { stops: ['#ff7a6b'], glow: 'rgba(255, 122, 107, 0.5)', anim: null },
+  frame_sunset: { stops: ['#ff9a3c', '#ff4f8b'], glow: 'rgba(255, 79, 139, 0.4)', anim: null },
+  frame_breath: { stops: ['#2fd1c5'], glow: 'rgba(47, 209, 197, 0.5)', anim: 'ring-frame-breath' },
+  frame_comet: { stops: ['#7cc4ff'], glow: 'rgba(124, 196, 255, 0.65)', anim: 'ring-frame-comet' },
+  frame_glitch: { stops: ['#00e5ff'], glow: null, anim: 'ring-frame-glitch' },
 }
 
 export const FRAME_RING_KEYS = Object.keys(RING)
