@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.14";
+const SITE_VERSION = "4.15";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.15", date: "2026-10-09 22:40", changes: [
+        "Вернул обучение и «О создателе»: в боковом меню всех страниц снова есть пункты «Установить приложение», «Как пользоваться» и «О создателе» (раньше они остались только в Аккаунте, Истории и Языках). Приветственный тур теперь сам открывается один раз сразу после первичной настройки — раньше новый онбординг ставил флаг, а читал его только старый дашборд. Без миграций."
+    ]},
     { version: "4.14", date: "2026-10-09 18:44", changes: [
         "Сообщество → «Сравнение»: категория выбрана сразу и запоминается (не пустой экран); период и метрика («по сумме / по баллам / по серии») — две понятные строки с подсказкой; в списке одно главное число вместо четырёх колонок (остальное мелким под именем), сверху «Вы на N месте из M». Без миграций."
     ]},
@@ -1852,6 +1855,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.15", date: "2026-10-09 22:40", changes: [
+        "Brought back the tour and “About the creator”: the side menu of every page again has “Install app”, “How it works” and “About the creator” (they had stayed only in Account, History and Languages). The welcome tour now opens by itself once right after the first-time setup — the new onboarding set the flag but only the old dashboard read it. No migrations."
+    ]},
     { version: "4.14", date: "2026-10-09 18:44", changes: [
         "Community → Compare: a category is picked right away and remembered (no more empty screen); period and metric (by total / points / streak) are two clear rows with a hint; the list shows one main number instead of four columns (the rest small under the name) with \"You are #N of M\" on top. No migrations."
     ]},

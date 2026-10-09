@@ -1,6 +1,13 @@
 {
-  "version": "4.14",
+  "version": "4.15",
   "en": [
+    {
+      "version": "4.15",
+      "date": "2026-10-09 22:40",
+      "changes": [
+        "Brought back the tour and “About the creator”: the side menu of every page again has “Install app”, “How it works” and “About the creator” (they had stayed only in Account, History and Languages). The welcome tour now opens by itself once right after the first-time setup — the new onboarding set the flag but only the old dashboard read it. No migrations."
+      ]
+    },
     {
       "version": "4.14",
       "date": "2026-10-09 18:44",
@@ -2965,6 +2972,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.15",
+      "date": "2026-10-09 22:40",
+      "changes": [
+        "Вернул обучение и «О создателе»: в боковом меню всех страниц снова есть пункты «Установить приложение», «Как пользоваться» и «О создателе» (раньше они остались только в Аккаунте, Истории и Языках). Приветственный тур теперь сам открывается один раз сразу после первичной настройки — раньше новый онбординг ставил флаг, а читал его только старый дашборд. Без миграций."
+      ]
+    },
     {
       "version": "4.14",
       "date": "2026-10-09 18:44",
