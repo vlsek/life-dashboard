@@ -18,15 +18,22 @@ const TOUR_STEPS = [
 ] as const
 
 const step = ref(0)
+// Направление последнего перехода — от него зависит, с какой стороны выезжает шаг
+const dir = ref<'next' | 'back'>('next')
 function isLast(): boolean {
   return step.value === TOUR_STEPS.length - 1
 }
 function goBack() {
-  if (step.value > 0) step.value--
+  if (step.value > 0) {
+    dir.value = 'back'
+    step.value--
+  }
 }
 function goNext() {
-  if (!isLast()) step.value++
-  else emit('close')
+  if (!isLast()) {
+    dir.value = 'next'
+    step.value++
+  } else emit('close')
 }
 
 function onKey(e: KeyboardEvent) {
@@ -63,9 +70,15 @@ onUnmounted(() => document.removeEventListener('keydown', onKey))
     @touchend="onTouchEnd"
   >
     <div class="w-full max-w-md rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)">
-      <div class="mt-1 flex justify-center text-[2.2em]"><Icon :name="TOUR_STEPS[step].icon" /></div>
-      <h3 class="my-2 text-center text-lg font-bold">{{ t((TOUR_STEPS[step].key + '_title') as DictKey) }}</h3>
-      <p class="whitespace-pre-line text-center text-sm leading-relaxed">{{ t((TOUR_STEPS[step].key + '_text') as DictKey) }}</p>
+      <div class="tour-viewport" data-testid="tour-viewport">
+        <Transition :name="'tour-' + dir" mode="out-in">
+          <div :key="step" data-testid="tour-step">
+            <div class="mt-1 flex justify-center text-[2.2em]"><Icon :name="TOUR_STEPS[step].icon" /></div>
+            <h3 class="my-2 text-center text-lg font-bold">{{ t((TOUR_STEPS[step].key + '_title') as DictKey) }}</h3>
+            <p class="whitespace-pre-line text-center text-sm leading-relaxed">{{ t((TOUR_STEPS[step].key + '_text') as DictKey) }}</p>
+          </div>
+        </Transition>
+      </div>
 
       <div class="mb-1 mt-3.5 flex justify-center gap-1.5">
         <span
@@ -102,3 +115,35 @@ onUnmounted(() => document.removeEventListener('keydown', onKey))
     </div>
   </div>
 </template>
+
+<style scoped>
+.tour-viewport {
+  overflow: hidden;
+}
+.tour-next-enter-active,
+.tour-next-leave-active,
+.tour-back-enter-active,
+.tour-back-leave-active {
+  transition:
+    transform 0.18s ease,
+    opacity 0.18s ease;
+}
+.tour-next-leave-to,
+.tour-back-enter-from {
+  transform: translateX(-32px);
+  opacity: 0;
+}
+.tour-next-enter-from,
+.tour-back-leave-to {
+  transform: translateX(32px);
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tour-next-enter-active,
+  .tour-next-leave-active,
+  .tour-back-enter-active,
+  .tour-back-leave-active {
+    transition: none;
+  }
+}
+</style>
