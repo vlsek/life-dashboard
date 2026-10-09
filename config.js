@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.04";
+const SITE_VERSION = "4.05";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.05", date: "2026-10-09 12:37", changes: [
+        "Достижения: сверху две витрины — «Недавно открытые» и «Ближе всего к открытию» (с числом «осталось N»); на закрытых карточках тоже видно, сколько осталось до цели. Добавлен фильтр по грейду (обычное … легендарное): остаются только подходящие карточки, группы раскрываются сами. Без миграций."
+    ]},
     { version: "4.04", date: "2026-10-09 15:50", changes: [
         "Челленджи: каталог готовых челленджей вырос с 6 до 26 — спорт (10 000 шагов, приседания, планка +5 сек в день, растяжка…), здоровье (вода 2 л, сон до 23:00, без алкоголя…), ум (20 страниц в день, 5 слов в день, код каждый день, дневник…), быт и деньги (откладывать каждый день, уборка 10 минут). В окне каталога появились фильтры по категориям со счётчиками, а у каждой карточки — значки типа челленджа и срока или цели. Без миграций."
     ]},
@@ -1822,6 +1825,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.05", date: "2026-10-09 12:37", changes: [
+        "Achievements: two showcases on top — \"Recently unlocked\" and \"Closest to unlocking\" (with a \"N left\" count); locked cards now show how much is left too. New grade filter (common … legendary): only matching cards stay and groups open automatically. No migrations."
+    ]},
     { version: "4.04", date: "2026-10-09 15:50", changes: [
         "Challenges: the ready-made catalog grew from 6 to 26 — sport (10,000 steps, squats, plank +5 s a day, stretching…), health (2 L of water, in bed before 11 pm, no alcohol…), mind (20 pages a day, 5 words a day, code daily, journal…), home & money (save daily, 10-minute tidy). The catalog window now has category filters with counters, and every card shows badges for the challenge type and its length or target. No migrations."
     ]},

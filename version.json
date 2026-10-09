@@ -1,6 +1,13 @@
 {
-  "version": "4.04",
+  "version": "4.05",
   "en": [
+    {
+      "version": "4.05",
+      "date": "2026-10-09 12:37",
+      "changes": [
+        "Achievements: two showcases on top — \"Recently unlocked\" and \"Closest to unlocking\" (with a \"N left\" count); locked cards now show how much is left too. New grade filter (common … legendary): only matching cards stay and groups open automatically. No migrations."
+      ]
+    },
     {
       "version": "4.04",
       "date": "2026-10-09 15:50",
@@ -2895,6 +2902,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.05",
+      "date": "2026-10-09 12:37",
+      "changes": [
+        "Достижения: сверху две витрины — «Недавно открытые» и «Ближе всего к открытию» (с числом «осталось N»); на закрытых карточках тоже видно, сколько осталось до цели. Добавлен фильтр по грейду (обычное … легендарное): остаются только подходящие карточки, группы раскрываются сами. Без миграций."
+      ]
+    },
     {
       "version": "4.04",
       "date": "2026-10-09 15:50",
