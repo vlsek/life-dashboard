@@ -1,6 +1,13 @@
 {
-  "version": "4.61",
+  "version": "4.62",
   "en": [
+    {
+      "version": "4.62",
+      "date": "2026-10-10 18:45",
+      "changes": [
+        "New big theme Matrix Phosphor: black background, green terminal accent, sharp corners, monospace font across the interface, thin scanlines and snappy animations. Pick it in Customization or the header settings; open to everyone. With the system high-contrast setting on, the scanlines switch off by themselves"
+      ]
+    },
     {
       "version": "4.61",
       "date": "2026-10-10 15:20",
@@ -3294,6 +3301,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.62",
+      "date": "2026-10-10 18:45",
+      "changes": [
+        "Новая «большая» тема «Зелёный фосфор» (Matrix Phosphor): чёрный фон, зелёный терминальный акцент, острые углы, моноширинный шрифт во всём интерфейсе, тонкие строки развёртки (scanlines) и резкие анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем. При включённом в системе высоком контрасте строки развёртки отключаются сами"
+      ]
+    },
     {
       "version": "4.61",
       "date": "2026-10-10 15:20",

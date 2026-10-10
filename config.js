@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.61";
+const SITE_VERSION = "4.62";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.62", date: "2026-10-10 18:45", changes: [
+        "Новая «большая» тема «Зелёный фосфор» (Matrix Phosphor): чёрный фон, зелёный терминальный акцент, острые углы, моноширинный шрифт во всём интерфейсе, тонкие строки развёртки (scanlines) и резкие анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем. При включённом в системе высоком контрасте строки развёртки отключаются сами",
+    ]},
     { version: "4.61", date: "2026-10-10 15:20", changes: [
         "Тренировки: в окне «Добавить упражнение» появилась кнопка «Подобрать типовое упражнение по схеме тела». Зелёные мышцы вы тренировали за последние 4 дня, серые — нет; нажмите на нужные мышцы (или «Что я не тренировал») и выберите упражнение — название и поля подставятся сами."
     ]},
@@ -1993,6 +1996,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.62", date: "2026-10-10 18:45", changes: [
+        "New big theme Matrix Phosphor: black background, green terminal accent, sharp corners, monospace font across the interface, thin scanlines and snappy animations. Pick it in Customization or the header settings; open to everyone. With the system high-contrast setting on, the scanlines switch off by themselves",
+    ]},
     { version: "4.61", date: "2026-10-10 15:20", changes: [
         "Workouts: the Add exercise window has a new \"Pick a typical exercise by body diagram\" button. Green muscles were worked in the last 4 days, grey ones were not; tap the muscles you want (or \"What I haven't trained\") and choose an exercise — its name and fields are filled in for you."
     ]},
