@@ -628,6 +628,32 @@ html.theme-emerald {
   --chart-none: #9aa0a6;
   --chart-other: #666a6f;
 }
+
+html.theme-moonlight {
+  --bg: #0d081e;
+  --bg-card: #16102b;
+  --border: #3d2f6e;
+  --text: #ece6ff;
+  --text-dim: #a99dd6;
+  --accent: #ff007f;
+  --accent-text: #0d081e;
+  --success: #3df5a0;
+  --danger: #ff6b8a;
+  --hist-ok: #3df5a0;
+  --water-top: #4de8ff;
+  --water-bottom: #2a7fff;
+  --water-line: #00d2ff;
+  --chart-1: #ff007f;
+  --chart-2: #5c97eb;
+  --chart-3: #eb685c;
+  --chart-4: #e9b54e;
+  --chart-5: #49e999;
+  --chart-6: #af5ceb;
+  --chart-7: #72e3ee;
+  --chart-8: #685ceb;
+  --chart-none: #9aa0a6;
+  --chart-other: #616569;
+}
 /* themes:end */
 
 /* design-tokens:start (генерируется scripts/apply_themes.py — не править руками; BACKLOG 50.1а) */
@@ -664,7 +690,33 @@ html.theme-emerald .card, html.theme-emerald .modal, html.theme-emerald [style*=
 html.theme-emerald h1, html.theme-emerald h2, html.theme-emerald h3, html.theme-emerald h4 { font-family: var(--font-heading); letter-spacing: 0.01em; }
 @media (prefers-reduced-motion: reduce) {
   html.theme-emerald {
-  --default-transition-duration: 0s;
+    --default-transition-duration: 0s;
+  }
+}
+
+/* большая тема: moonlight */
+html.theme-moonlight {
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --shadow-active: 0 0 12px rgba(255, 0, 127, 0.55);
+  --bg-pattern: radial-gradient(circle at 1px 1px, rgba(167, 139, 250, 0.28) 1px, transparent 0);
+  --bg-pattern-size: 22px 22px;
+  --default-transition-duration: 0.25s;
+  --default-transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+html.theme-moonlight body { background-image: var(--bg-pattern); background-size: var(--bg-pattern-size); }
+html.theme-moonlight button:not(.secondary):not(.danger):not(:disabled), html.theme-moonlight input[type='checkbox']:checked, html.theme-moonlight input[type='radio']:checked { box-shadow: var(--shadow-active); }
+@media (prefers-contrast: more) {
+  html.theme-moonlight {
+    --shadow-active: none;
+    --bg-pattern: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-moonlight {
+    --default-transition-duration: 0s;
   }
 }
 /* design-tokens:end */
@@ -681,7 +733,8 @@ html.theme-ocean,
 html.theme-sunset,
 html.theme-twilight,
 html.theme-neon,
-html.theme-emerald { color-scheme: dark; }
+html.theme-emerald,
+html.theme-moonlight { color-scheme: dark; }
 html.theme-mint,
 html.theme-sepia,
 html.theme-solarlight,

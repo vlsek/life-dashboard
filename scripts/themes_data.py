@@ -38,6 +38,8 @@ P={
  'graphite':('light','🪨 Graphite','🪨 Графит',dict(bg='#eceff1',card='#ffffff',border='#cfd8dc',text='#263238',dim='#55707f',accent='#00796b',at='#ffffff',ok='#2e7d4f',bad='#c62828',hist='#3fa66b',**LIGHT_W)),
  # --- BACKLOG 50.1г: первая «большая тема» (оформление целиком, не только цвета; см. CHAR ниже) ---
  'emerald':('dark','🛰️ Emerald Obsidian','🛰️ Изумрудный обсидиан',dict(bg='#0b0f12',card='#121a1f',border='#2a3b42',text='#d9e8e3',dim='#8fa8a0',accent='#10b981',at='#04110c',ok='#34d399',bad='#f87171',hist='#10b981',**DARK_W)),
+ # --- BACKLOG 50.1б: вторая «большая тема» (синтвейв: неоновое свечение, сетка точек, мягкие углы) ---
+ 'moonlight':('dark','🌆 Moonlight Synth','🌆 Лунный синтвейв',dict(bg='#0d081e',card='#16102b',border='#3d2f6e',text='#ece6ff',dim='#a99dd6',accent='#ff007f',at='#0d081e',ok='#3df5a0',bad='#ff6b8a',hist='#3df5a0',wt='#4de8ff',wb='#2a7fff',wl='#00d2ff')),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
 
@@ -66,6 +68,31 @@ CHAR = {
             (['h1', 'h2', 'h3', 'h4'], 'font-family: var(--font-heading); letter-spacing: 0.01em;'),
         ],
         reduced='  --default-transition-duration: 0s;',
+    ),
+    # Синтвейв: мягкие углы, неоновое свечение активного (кнопки с заливкой, отмеченные галочки), фоновая сетка точек, пружинные Smooth-анимации.
+    # При `prefers-contrast: more` свечение и сетка выключаются (contrast).
+    'moonlight': dict(
+        tw='''  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --shadow-active: 0 0 12px rgba(255, 0, 127, 0.55);
+  --bg-pattern: radial-gradient(circle at 1px 1px, rgba(167, 139, 250, 0.28) 1px, transparent 0);
+  --bg-pattern-size: 22px 22px;
+  --default-transition-duration: 0.25s;
+  --default-transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);''',
+        root='''  --radius-card: 12px;
+  --radius-modal: 12px;
+  --radius-control: 10px;
+  --shadow-active: 0 0 12px rgba(255, 0, 127, 0.55);
+  --bg-pattern: radial-gradient(circle at 1px 1px, rgba(167, 139, 250, 0.28) 1px, transparent 0);
+  --bg-pattern-size: 22px 22px;''',
+        rules=[
+            (['body'], 'background-image: var(--bg-pattern); background-size: var(--bg-pattern-size);'),
+            (["button:not(.secondary):not(.danger):not(:disabled)", "input[type='checkbox']:checked", "input[type='radio']:checked"], 'box-shadow: var(--shadow-active);'),
+        ],
+        reduced='  --default-transition-duration: 0s;',
+        contrast='  --shadow-active: none;\n  --bg-pattern: none;',
     ),
 }
 assert all(k in P for k in CHAR)

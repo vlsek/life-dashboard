@@ -37,4 +37,5 @@ export const THEME_PREVIEW: Record<ThemeKey, ThemePreview> = {
   peach: { bg: '#fff3ea', card: '#ffffff', accent: '#c0451a', text: '#4a2a14', success: '#3f8f55', water: '#3f95e0', kind: 'light' },
   graphite: { bg: '#eceff1', card: '#ffffff', accent: '#00796b', text: '#263238', success: '#2e7d4f', water: '#3f95e0', kind: 'light' },
   emerald: { bg: '#0b0f12', card: '#121a1f', accent: '#10b981', text: '#d9e8e3', success: '#34d399', water: '#63b3f5', kind: 'dark' },
+  moonlight: { bg: '#0d081e', card: '#16102b', accent: '#ff007f', text: '#ece6ff', success: '#3df5a0', water: '#4de8ff', kind: 'dark' },
 }

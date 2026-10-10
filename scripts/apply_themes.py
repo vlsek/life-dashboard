@@ -40,8 +40,10 @@ def character_rules(tailwind):
         out.append('\n\n/* большая тема: %s */\n%s {\n%s\n}' % (k, sel, c['tw'] if tailwind else c['root']))
         for sels, body in c.get('rules') or []:
             out.append('\n' + ', '.join(sel + ' ' + x for x in sels) + ' { ' + body + ' }')
+        if c.get('contrast'):
+            out.append('\n@media (prefers-contrast: more) {\n  %s {\n%s\n  }\n}' % (sel, '\n'.join('    ' + x.strip() for x in c['contrast'].strip().split('\n'))))
         if tailwind and c.get('reduced'):
-            out.append('\n@media (prefers-reduced-motion: reduce) {\n  %s {\n  %s\n  }\n}' % (sel, c['reduced'].strip()))
+            out.append('\n@media (prefers-reduced-motion: reduce) {\n  %s {\n    %s\n  }\n}' % (sel, c['reduced'].strip()))
     return ''.join(out)
 
 

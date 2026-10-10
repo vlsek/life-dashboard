@@ -127,8 +127,48 @@ describe('большая тема emerald: характер', () => {
   it('при prefers-reduced-motion анимации темы мгновенные (только у Tailwind-страниц)', () => {
     for (const d of pilots) expect(read(d + '/src/style.css')).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-emerald \{\s*--default-transition-duration: 0s;/)
   })
-  it('в других темах значения не переопределены: нет блока характера ни у одной темы кроме emerald', () => {
-    const region = read('web-dashboard/src/style.css').match(REGION)![0]
-    expect((region.match(/\/\* большая тема: /g) || []).length).toBe(1)
+  it('блоки характера есть только у больших тем (emerald, moonlight) — остальные темы не переопределены', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight'])
+    }
+  })
+})
+
+// BACKLOG 50.1б: вторая «большая тема» Moonlight Synth — мягкие углы, неоновое свечение активного, сетка точек, пружинные анимации; при prefers-contrast: more свечение и сетка выключены.
+describe('большая тема moonlight: характер', () => {
+  const block = (css: string): string => {
+    const m = css.match(/\/\* большая тема: moonlight \*\/\nhtml\.theme-moonlight \{[^}]*\}/)
+    expect(m, 'нет блока характера').not.toBeNull()
+    return m![0]
+  }
+  for (const d of pilots) {
+    it(d + ': мягкие углы, свечение, сетка точек, пружинная анимация', () => {
+      const b = block(read(d + '/src/style.css'))
+      expect([decl(b, '--radius-md'), decl(b, '--radius-lg'), decl(b, '--radius-xl'), decl(b, '--radius-2xl')]).toEqual(['8px', '10px', '12px', '16px'])
+      expect(decl(b, '--shadow-active')).toContain('0 0 12px')
+      expect(decl(b, '--bg-pattern')).toContain('radial-gradient')
+      expect(decl(b, '--bg-pattern-size')).toBe('22px 22px')
+      expect(decl(b, '--default-transition-timing-function')).toBe('cubic-bezier(0.34, 1.56, 0.64, 1)')
+    })
+    it(d + ': при prefers-contrast: more свечение и сетка выключены; при prefers-reduced-motion — анимации мгновенные', () => {
+      const css = read(d + '/src/style.css')
+      expect(css).toMatch(/@media \(prefers-contrast: more\) \{\s*html\.theme-moonlight \{\s*--shadow-active: none;\s*--bg-pattern: none;/)
+      expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-moonlight \{\s*--default-transition-duration: 0s;/)
+    })
+  }
+  it('корень: углы и свечение через токены, сетка точек', () => {
+    const b = block(read('style.css'))
+    expect([decl(b, '--radius-card'), decl(b, '--radius-modal'), decl(b, '--radius-control')]).toEqual(['12px', '12px', '10px'])
+    expect(decl(b, '--shadow-active')).toContain('0 0 12px')
+    expect(decl(b, '--bg-pattern')).toContain('radial-gradient')
+  })
+  it('правила moonlight (сетка на body, свечение у кнопок с заливкой и отмеченных галочек) только под html.theme-moonlight', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      const rules = region.split('\n').filter((l) => /^html\.theme-moonlight .*\{ (background-image: var\(--bg-pattern\)|box-shadow: var\(--shadow-active\))/.test(l))
+      expect(rules.length, f).toBe(2)
+      for (const l of rules) for (const sel of l.split('{')[0].split(',')) expect(sel.trim(), f).toMatch(/^html\.theme-moonlight /)
+    }
   })
 })

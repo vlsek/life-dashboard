@@ -23,6 +23,7 @@ const THEME_KEYS = {
     peach: "theme_peach",
     graphite: "theme_graphite",
     emerald: "theme_emerald",
+    moonlight: "theme_moonlight",
 };
 
 // Цвета фона по темам — держим в синхронизации с --bg из style.css
@@ -51,6 +52,7 @@ const THEME_BG_COLORS = {
     peach: "#fff3ea",
     graphite: "#eceff1",
     emerald: "#0b0f12",
+    moonlight: "#0d081e",
 };
 
 function getTheme() {
