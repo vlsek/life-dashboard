@@ -42,9 +42,9 @@ const square = computed(() => squareGeometry(24, 6, props.basePct, props.bonusPc
         <template v-if="kind === 'day'">
           <template v-if="dayGaugeStyle === 'dashed'">
             <g v-for="(s, i) in daySegs" :key="i" data-test="day-seg">
-              <path :d="s.d" fill="none" stroke="var(--border)" stroke-width="3" stroke-linecap="round" />
-              <path v-if="s.base" :d="s.d" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" />
-              <path v-if="s.bonus" :d="s.d" fill="none" class="ring-bonus" stroke-width="1.4" stroke-linecap="round" />
+              <path :d="s.d" fill="none" stroke="var(--border)" stroke-width="3" />
+              <path v-if="s.base" :d="s.d" fill="none" stroke="var(--accent)" stroke-width="3" />
+              <path v-if="s.bonus" :d="s.d" fill="none" class="ring-bonus" stroke-width="1.4" />
             </g>
           </template>
           <template v-else>

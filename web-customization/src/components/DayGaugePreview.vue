@@ -8,7 +8,7 @@ const C = 2 * Math.PI * 22
 </script>
 
 <template>
-  <svg v-if="variant === 'dashed'" viewBox="0 0 56 56" width="56" height="56" fill="none" stroke-linecap="round" aria-hidden="true" style="transform: rotate(-90deg)">
+  <svg v-if="variant === 'dashed'" viewBox="0 0 56 56" width="56" height="56" fill="none" aria-hidden="true" style="transform: rotate(-90deg)">
     <g v-for="(s, i) in segs" :key="i">
       <path :d="s.d" stroke="var(--border)" stroke-width="4" />
       <path v-if="s.base" :d="s.d" stroke="var(--accent)" stroke-width="4" />

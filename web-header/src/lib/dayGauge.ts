@@ -52,7 +52,7 @@ export function daySegments(cx: number, cy: number, r: number, basePct: number, 
   const baseN = count(basePct)
   const bonusN = count(bonusPct / 100)
   const step = (2 * Math.PI) / n
-  const span = step * 0.68
+  const span = step * 0.62
   return Array.from({ length: n }, (_, i) => {
     const a0 = i * step + (step - span) / 2
     const a1 = a0 + span

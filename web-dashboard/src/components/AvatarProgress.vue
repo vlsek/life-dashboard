@@ -45,9 +45,9 @@ const segs = computed(() => (props.ring ? daySegments(26, 26, 24, props.ring.bas
         </defs>
         <template v-if="dayGaugeStyle === 'dashed'">
           <g v-for="(sg, i) in segs" :key="i" data-test="avatar-ring-seg">
-            <path :d="sg.d" fill="none" stroke="var(--border)" stroke-width="3" stroke-linecap="round" />
-            <path v-if="sg.base" :d="sg.d" fill="none" :stroke="arcStroke" :class="fr?.anim" :style="arcFilter ? { filter: arcFilter } : undefined" stroke-width="3" stroke-linecap="round" data-test="avatar-ring-arc" />
-            <path v-if="sg.bonus" :d="sg.d" fill="none" class="ring-bonus" stroke-width="1.4" stroke-linecap="round" />
+            <path :d="sg.d" fill="none" stroke="var(--border)" stroke-width="3" />
+            <path v-if="sg.base" :d="sg.d" fill="none" :stroke="arcStroke" :class="fr?.anim" :style="arcFilter ? { filter: arcFilter } : undefined" stroke-width="3" data-test="avatar-ring-arc" />
+            <path v-if="sg.bonus" :d="sg.d" fill="none" class="ring-bonus" stroke-width="1.4" />
           </g>
         </template>
         <template v-else>
