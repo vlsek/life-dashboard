@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.68";
+const SITE_VERSION = "4.69";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.69", date: "2026-10-10 23:59", changes: [
+        "Кастомизация: новый раздел «Спидометр недели» — вид недели теперь выбирается там, а не в «Настройках прогресса». Семиугольник по дням — бесплатный и по умолчанию, «Классическое кольцо» — 100 монет, «Семь столбиков» — 150. Один и тот же вид показывается везде: в шапке, в профиле Дашборда и на главной (исправлен баг, когда на главной была старая неделя, а на других страницах новая). Нужна миграция 067 (владелец применяет)."
+    ]},
     { version: "4.68", date: "2026-10-10 16:00", changes: [
         "Кастомизация: в карточке каждой «большой темы» (Emerald Obsidian, Moonlight Synth, Matrix Phosphor, Tokyo Nightfall) появился короткий список «Что меняет эта тема»: свои цвета, углы (острые/мягкие), пунктирные границы, моноширинный шрифт, неоновое свечение или мягкие тени и обводка активного, фон-сетка, линии развёртки, скорость анимаций. Список строится из тех же данных, по которым тема оформляется, поэтому не расходится с ней. У обычных тем списка нет. Без миграций."
     ]},
@@ -2014,6 +2017,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.69", date: "2026-10-10 23:59", changes: [
+        "Customization: new «Week gauge» section — the week look is now chosen there instead of Progress settings. Heptagon by days is free and default, «Classic ring» costs 100 coins, «Seven bars» 150. The same look is shown everywhere: header, Dashboard profile and the home page (fixes the bug where the home page showed the old week gauge and other pages the new one). Needs migration 067 (owner applies)."
+    ]},
     { version: "4.68", date: "2026-10-10 16:00", changes: [
         "Customization: every \"big theme\" card (Emerald Obsidian, Moonlight Synth, Matrix Phosphor, Tokyo Nightfall) now has a short \"What this theme changes\" list: own colors, corners (sharp/soft), dashed borders, monospace font, neon glow or soft shadows and an active-element outline, dot-grid background, scanlines, animation speed. The list is generated from the same data the theme is built from, so it cannot drift from the theme. Regular themes have no list. No migrations."
     ]},
