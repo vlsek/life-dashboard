@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { capFirst } from '../lib/exerciseNames'
 import { onMounted, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { nowHHMM, todayStr } from '../lib/date'
@@ -55,7 +56,7 @@ const unitLabel = () => props.exercise.unit || defaultWeightUnit()
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" @click.self="emit('close')">
     <div class="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)">
       <h3 class="mb-3 text-lg font-bold">
-        {{ existing ? t('workouts_edit_entry') : t('workouts_new_entry') }} — {{ exercise.name }}
+        {{ existing ? t('workouts_edit_entry') : t('workouts_new_entry') }} — {{ capFirst(exercise.name) }}
       </h3>
 
       <form class="flex flex-col gap-3" @submit.prevent="onSubmit">

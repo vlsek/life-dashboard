@@ -7,6 +7,7 @@ import { valueLabelOptions } from '../lib/valueLabels'
 import Icon from './Icon.vue'
 import type { Exercise, ExerciseFormInput } from '../lib/types'
 import { stripEmoji } from '../lib/emojiText'
+import { capFirst } from '../lib/exerciseNames'
 import { VARIANT_BASES, applyVariant, baseForName, baseName, detectVariant, typicalDefaults, variantText } from '../lib/exerciseVariants'
 import { getLang } from '../lib/i18n'
 
@@ -108,7 +109,7 @@ function onSubmit() {
   const unitOut = tracksWeight.value === 'yes' ? chosenUnit.value : keptRepUnit
   if (tracksWeight.value === 'yes') rememberWeightUnit(unitOut)
   emit('save', {
-    name: name.value.trim(),
+    name: capFirst(name.value),
     category,
     tracks_weight: tracksWeight.value,
     value_label: chosenLabel.value,

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { capFirst } from '../lib/exerciseNames'
 import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { fmtRu, todayStr } from '../lib/date'
@@ -145,7 +146,7 @@ const collapsedSummary = computed(() => {
       >
         <CollapseChevron :collapsed="collapsed" />
       </button>
-      <h3 class="m-0 flex-1 font-bold">{{ exercise.name }}</h3>
+      <h3 class="m-0 flex-1 font-bold">{{ capFirst(exercise.name) }}</h3>
       <CollapseSummary :text="collapsedSummary" :collapsed="collapsed" />
       <span v-if="calories" class="rounded-full border px-2 py-1 text-xs" style="border-color: var(--border); color: var(--text-dim)" data-testid="exercise-calories">
         🔥 ≈ {{ calories.kcal }} {{ t('workouts_kcal') }}

@@ -21,6 +21,7 @@ import {
 import { groupLastRows, muscleSessions, muscleVolume, trainingStrips, type Bucket } from '../lib/muscleHistory'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 import CollapseChevron from './CollapseChevron.vue'
+import { capFirst } from '../lib/exerciseNames'
 import { useAccordionMember } from '../lib/useCollapseStyle'
 
 // Карта мышц (BACKLOG 3.2, первый срез): зелёные — мышцы, задействованные за последние 4 дня,
@@ -238,7 +239,7 @@ function shapeStyle(m: MuscleId) {
         <p v-if="ownExercises.length === 0" class="m-0 mb-2 text-[0.85em]" style="color: var(--text-dim)">{{ t('workouts_muscles_no_own') }}</p>
         <ul v-else class="m-0 mb-2 list-none p-0">
           <li v-for="ex in ownExercises" :key="ex.id" class="flex items-center justify-between gap-2 py-1">
-            <span>{{ ex.name }}</span>
+            <span>{{ capFirst(ex.name) }}</span>
             <button
               type="button"
               class="rounded-lg border px-2 py-1 text-[0.8em]"
