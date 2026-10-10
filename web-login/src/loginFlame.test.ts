@@ -11,7 +11,7 @@ describe('окно входа: живое пламя (BACKLOG 746)', () => {
   it('компонент рисует языки пламени и искры в 64 px', () => {
     const w = mount(SplashFlameLive, { props: { size: 64 } })
     expect(w.find('svg').attributes('width')).toBe('64')
-    expect(w.findAll('.tongue')).toHaveLength(4)
+    expect(w.findAll('.flame-layer')).toHaveLength(3)
     expect(w.findAll('.spark').length).toBeGreaterThanOrEqual(3)
   })
   it('App.vue показывает пламя над заголовком', () => {
@@ -21,7 +21,7 @@ describe('окно входа: живое пламя (BACKLOG 746)', () => {
   it('цвет — акцент темы, есть пульсация свечения и выключатели анимаций', () => {
     expect(css).toContain('fill: var(--accent)')
     expect(css).toContain('@keyframes splash-glow')
-    expect(css).toContain('@keyframes tongue-c')
+    expect(css).toContain('@keyframes flame-morph-out')
     expect(css).toContain('prefers-reduced-motion')
     expect(css).toContain("html[data-motion='off'] .splash-live *")
   })

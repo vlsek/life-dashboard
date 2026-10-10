@@ -23,7 +23,7 @@ describe('SplashFlameLive: размер и искры', () => {
     expect(w.find('svg').attributes('height')).toBe('30')
     expect(w.findAll('.spark')).toHaveLength(0)
     expect(w.find('svg').classes()).toContain('splash-live-sm')
-    expect(w.findAll('.tongue')).toHaveLength(4) // языки пламени на месте — горит по-настоящему
+    expect(w.findAll('.flame-layer')).toHaveLength(3) // слои единого пламени на месте — горит по-настоящему
   })
 })
 

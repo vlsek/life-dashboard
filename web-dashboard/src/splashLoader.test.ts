@@ -49,15 +49,27 @@ describe('SplashLoader', () => {
 })
 
 describe('живое пламя: устройство', () => {
-  it('три языка пламени + сердцевина + искры; у языков РАЗНЫЕ анимации (а не один общий контур)', () => {
+  it('ОДНО пламя: три слоя (внешний, средний, сердцевина) в одной группе; контур морфится, слои идут с разной фазой', () => {
     const w = mount(SplashFlameLive)
-    expect(w.findAll('.tongue')).toHaveLength(4)
+    expect(w.findAll('.flame-body')).toHaveLength(1)
+    expect(w.findAll('.flame-layer')).toHaveLength(3)
     expect(w.findAll('.spark').length).toBeGreaterThanOrEqual(3)
-    for (const k of ['tongue-c', 'tongue-l', 'tongue-r', 'tongue-core']) {
-      expect(css).toMatch(new RegExp(`\\.splash-live \\.${k} \\{[^}]*animation: ${k} `))
-      expect(css).toContain(`@keyframes ${k}`)
+    expect(css).toMatch(/\.splash-live \.layer-outer \{[^}]*animation: flame-morph-out /)
+    expect(css).toMatch(/\.splash-live \.layer-mid \{[^}]*animation: flame-morph-out [^;]*-0\.5s/)
+    expect(css).toMatch(/\.splash-live \.layer-core \{[^}]*animation: flame-morph-core /)
+    for (const k of ['flame-morph-out', 'flame-morph-core', 'flame-sway', 'spark-rise']) expect(css).toContain(`@keyframes ${k}`)
+    // морфинг: в каждой анимации контура три формы с ОДИНАКОВОЙ структурой команд (иначе контур не перетекает)
+    for (const k of ['flame-morph-out', 'flame-morph-core']) {
+      const body = css.slice(css.indexOf(`@keyframes ${k}`), css.indexOf('}\n}', css.indexOf(`@keyframes ${k}`)))
+      const shapes = [...body.matchAll(/d: path\("([^"]+)"\)/g)].map((m) => m[1].replace(/[-\d.\s,]+/g, ''))
+      expect(shapes).toHaveLength(3)
+      expect(new Set(shapes).size).toBe(1)
     }
-    expect(css).toContain('@keyframes spark-rise')
+  })
+
+  it('старые языки (tongue-*) остались только для StreakFlame, у заставки их больше нет', () => {
+    expect(css).not.toMatch(/\.splash-live \.tongue/)
+    expect(css).toMatch(/\.streak-live \.tongue-c \{[^}]*animation: tongue-c /)
   })
 })
 

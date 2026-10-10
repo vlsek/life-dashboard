@@ -752,31 +752,47 @@ html[data-motion='off'] *::after {
   overflow: visible;
   animation: splash-glow 2.4s ease-in-out infinite;
 }
-.splash-live .tongue {
+/* splash-flame:start (генерирует scripts/apply_splash_flame.py — не править руками) */
+.splash-live .flame-body {
   transform-box: fill-box;
   transform-origin: 50% 100%;
+  animation: flame-sway 1.9s ease-in-out infinite;
 }
-.splash-live .tongue-c {
+.splash-live .flame-layer { transform-box: fill-box; transform-origin: 50% 100%; }
+.splash-live .layer-outer {
   fill: var(--accent);
-  animation: tongue-c 1.3s ease-in-out infinite;
+  animation: flame-morph-out 1.7s ease-in-out infinite;
 }
-.splash-live .tongue-l {
-  fill: color-mix(in srgb, var(--accent) 78%, transparent);
-  animation: tongue-l 0.95s ease-in-out -0.3s infinite;
+.splash-live .layer-mid {
+  fill: color-mix(in srgb, var(--accent) 60%, #ffffff);
+  transform: scale(0.7);
+  animation: flame-morph-out 1.3s ease-in-out -0.5s infinite;
 }
-.splash-live .tongue-r {
-  fill: color-mix(in srgb, var(--accent) 78%, transparent);
-  animation: tongue-r 1.15s ease-in-out -0.7s infinite;
-}
-.splash-live .tongue-core {
-  fill: color-mix(in srgb, var(--accent) 35%, #ffffff);
-  animation: tongue-core 0.8s ease-in-out -0.2s infinite;
+.splash-live .layer-core {
+  fill: color-mix(in srgb, var(--accent) 22%, #ffffff);
+  animation: flame-morph-core 1.1s ease-in-out -0.3s infinite;
 }
 .splash-live .spark {
   fill: color-mix(in srgb, var(--accent) 45%, #ffffff);
   opacity: 0;
   animation: spark-rise var(--d, 2s) ease-out var(--o, 0s) infinite;
 }
+@keyframes flame-sway {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  35% { transform: scale(0.98, 1.05) skewX(-2deg); }
+  70% { transform: scale(1.02, 0.97) skewX(2deg); }
+}
+@keyframes flame-morph-out {
+  0%, 100% { d: path("M32 3C34 13 46 21 46 37C46 49 40 58 32 58C24 58 18 49 18 37C18 29 24 25 26 17C28 21 30 21 31 15C31.5 10 31.8 7 32 3Z"); }
+  35% { d: path("M33 1C36 12 47 21 46 37C46 49 40 58 32 58C24 58 17 49 18 37C18 29 25 25 27 16C29 20 31 20 32 13C32.5 8 32.8 5 33 1Z"); }
+  70% { d: path("M31 5C32 14 45 22 46 37C46 49 40 58 32 58C24 58 19 49 18 37C18 30 23 26 25 18C27 22 29 22 30 16C30.4 11 30.8 8 31 5Z"); }
+}
+@keyframes flame-morph-core {
+  0%, 100% { d: path("M32 30C33 36 40 40 40 47C40 53 36 58 32 58C28 58 24 53 24 47C24 40 31 36 32 30Z"); }
+  35% { d: path("M33 27C34 34 40 40 40 47C40 53 36 58 32 58C28 58 24 53 24 47C24 40 30 35 33 27Z"); }
+  70% { d: path("M31 32C32 37 39 41 40 47C40 53 36 58 32 58C28 58 24 53 24 47C24 41 30 37 31 32Z"); }
+}
+/* splash-flame:end */
 @keyframes tongue-c {
   0%, 100% { transform: scale(1, 1) skewX(0deg); }
   30% { transform: scale(0.96, 1.08) skewX(-4deg); }
