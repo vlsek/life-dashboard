@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.59";
+const SITE_VERSION = "4.60";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.60", date: "2026-10-10 15:16", changes: [
+        "Кастомизация: новый раздел «Заставка загрузки» — выбор из четырёх вариантов с живым предпросмотром: «Живое пламя» (по умолчанию), «Три языка» (старое пламя), «Огненный круг» и «Классика». Все бесплатные; выбор запоминается и действует на всех страницах сайта со следующей загрузки. Без миграций."
+    ]},
     { version: "4.59", date: "2026-10-10 18:14", changes: [
         "Новая «большая» тема «Лунный синтвейв» (Moonlight Synth): тёмно-фиолетовый фон с сеткой точек, неоновое свечение у активных кнопок и галочек, мягкие углы и пружинные анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем. Если в системе включён высокий контраст, свечение и сетка отключаются сами",
     ]},
@@ -1987,6 +1990,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.60", date: "2026-10-10 15:16", changes: [
+        "Customization: a new \"Loading screen\" section — pick one of four variants with a live preview: \"Living flame\" (default), \"Three tongues\" (the old flame), \"Fire ring\" and \"Classic\". All are free; your choice is remembered and applies to every page of the site from the next load. No migrations."
+    ]},
     { version: "4.59", date: "2026-10-10 18:14", changes: [
         "New big theme Moonlight Synth: deep violet background with a dot grid, neon glow on active buttons and checkmarks, soft corners and springy animations. Pick it in Customization or the header settings; open to everyone. With the system high-contrast setting on, the glow and grid switch off by themselves",
     ]},
