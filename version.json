@@ -1,6 +1,13 @@
 {
-  "version": "4.69",
+  "version": "4.70",
   "en": [
+    {
+      "version": "4.70",
+      "date": "2026-10-10 21:08",
+      "changes": [
+        "Customization: a new \"Streak flame\" section — two free looks for the flame next to your streak on the Dashboard: \"Single flame\" (as now) and \"Three tongues\" (the earlier flame with sparks). The choice shows on the Dashboard from the next load."
+      ]
+    },
     {
       "version": "4.69",
       "date": "2026-10-10 23:59",
@@ -3350,6 +3357,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.70",
+      "date": "2026-10-10 21:08",
+      "changes": [
+        "Кастомизация: новая секция «Огонёк серии» — два бесплатных вида огонька рядом с серией дней на Дашборде: «Единое пламя» (как сейчас) и «Три языка» (прежнее пламя с искрами). Выбор виден на Дашборде со следующей загрузки."
+      ]
+    },
     {
       "version": "4.69",
       "date": "2026-10-10 23:59",

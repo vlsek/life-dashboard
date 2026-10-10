@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.69";
+const SITE_VERSION = "4.70";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.70", date: "2026-10-10 21:08", changes: [
+        "Кастомизация: новая секция «Огонёк серии» — два бесплатных вида огонька рядом с серией дней на Дашборде: «Единое пламя» (как сейчас) и «Три языка» (прежнее пламя с искрами). Выбор виден на Дашборде со следующей загрузки."
+    ]},
     { version: "4.69", date: "2026-10-10 23:59", changes: [
         "Кастомизация: новый раздел «Спидометр недели» — вид недели теперь выбирается там, а не в «Настройках прогресса». Семиугольник по дням — бесплатный и по умолчанию, «Классическое кольцо» — 100 монет, «Семь столбиков» — 150. Один и тот же вид показывается везде: в шапке, в профиле Дашборда и на главной (исправлен баг, когда на главной была старая неделя, а на других страницах новая). Нужна миграция 067 (владелец применяет)."
     ]},
@@ -2017,6 +2020,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.70", date: "2026-10-10 21:08", changes: [
+        "Customization: a new \"Streak flame\" section — two free looks for the flame next to your streak on the Dashboard: \"Single flame\" (as now) and \"Three tongues\" (the earlier flame with sparks). The choice shows on the Dashboard from the next load."
+    ]},
     { version: "4.69", date: "2026-10-10 23:59", changes: [
         "Customization: new «Week gauge» section — the week look is now chosen there instead of Progress settings. Heptagon by days is free and default, «Classic ring» costs 100 coins, «Seven bars» 150. The same look is shown everywhere: header, Dashboard profile and the home page (fixes the bug where the home page showed the old week gauge and other pages the new one). Needs migration 067 (owner applies)."
     ]},
