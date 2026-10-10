@@ -127,10 +127,10 @@ describe('большая тема emerald: характер', () => {
   it('при prefers-reduced-motion анимации темы мгновенные (только у Tailwind-страниц)', () => {
     for (const d of pilots) expect(read(d + '/src/style.css')).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-emerald \{\s*--default-transition-duration: 0s;/)
   })
-  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor) — остальные темы не переопределены', () => {
+  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall) — остальные темы не переопределены', () => {
     for (const f of files) {
       const region = read(f).match(REGION)![0]
-      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor'])
+      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall'])
     }
   })
 })
@@ -223,5 +223,49 @@ describe('тёмная галочка: список ведёт генерато�
     const names = [...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])
     expect(names).toContain('phosphor')
     expect(names).not.toContain('moonlight')
+  })
+})
+
+// BACKLOG 50.1в: четвёртая «большая тема» Tokyo Nightfall — мягкие тени, скругление 8px, лавандовая подсветка активных пунктов, гладкие анимации.
+describe('большая тема nightfall: характер', () => {
+  const block = (css: string): string => {
+    const m = css.match(/\/\* большая тема: nightfall \*\/\nhtml\.theme-nightfall \{[^}]*\}/)
+    expect(m, 'нет блока характера').not.toBeNull()
+    return m![0]
+  }
+  for (const d of pilots) {
+    it(d + ': скругление 8px, мягкая тень карточек, лавандовое кольцо активного, гладкая анимация', () => {
+      const css = read(d + '/src/style.css')
+      const b = block(css)
+      expect([decl(b, '--radius-md'), decl(b, '--radius-lg'), decl(b, '--radius-xl'), decl(b, '--radius-2xl')]).toEqual(['6px', '8px', '8px', '12px'])
+      expect(decl(b, '--shadow-card')).toContain('0 8px 28px')
+      expect(decl(b, '--shadow-active')).toContain('#bb9af7')
+      expect(decl(b, '--default-transition-timing-function')).toBe('cubic-bezier(0.25, 0.8, 0.25, 1)')
+      expect(css).toMatch(/@media \(prefers-contrast: more\) \{\s*html\.theme-nightfall \{\s*--shadow-card: none;\s*--shadow-active: 0 0 0 2px #bb9af7;/)
+      expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-nightfall \{\s*--default-transition-duration: 0s;/)
+    })
+  }
+  it('корень: 8px и те же тени через токены', () => {
+    const b = block(read('style.css'))
+    expect([decl(b, '--radius-card'), decl(b, '--radius-modal'), decl(b, '--radius-control')]).toEqual(['8px', '8px', '8px'])
+    expect(decl(b, '--shadow-card')).toContain('0 8px 28px')
+    expect(decl(b, '--shadow-active')).toContain('#bb9af7')
+  })
+  it('правила nightfall (тень карточек и подсветка активных пунктов) только под html.theme-nightfall', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      const lines = region.split('\n').filter((l) => /^html\.theme-nightfall .*\{ box-shadow: var\(--shadow-(card|active)\); \}/.test(l))
+      expect(lines.length, f).toBe(2)
+      for (const l of lines) for (const sel of l.split('{')[0].split(',')) expect(sel.trim(), f).toMatch(/^html\.theme-nightfall /)
+      const active = lines.find((l) => l.includes('aria-pressed'))!
+      for (const a of ['aria-pressed="true"', 'aria-selected="true"', 'aria-checked="true"', 'aria-current="page"']) expect(active, f).toContain(a)
+    }
+  })
+  it('цвета — «близнец» tokyonight, но граница заметнее (контраст к карточке выше), чтобы поля и кнопки читались', () => {
+    const css = read('web-dashboard/src/style.css')
+    const get = (key: string, name: string) => css.match(new RegExp('html\\.theme-' + key + ' \\{[^}]*--' + name + ':\\s*(#[0-9a-fA-F]{6})'))![1].toLowerCase()
+    expect(get('nightfall', 'bg')).toBe(get('tokyonight', 'bg'))
+    expect(get('nightfall', 'accent')).toBe(get('tokyonight', 'accent'))
+    expect(get('nightfall', 'border')).not.toBe(get('tokyonight', 'border'))
   })
 })

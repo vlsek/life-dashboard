@@ -42,6 +42,8 @@ P={
  'moonlight':('dark','🌆 Moonlight Synth','🌆 Лунный синтвейв',dict(bg='#0d081e',card='#16102b',border='#3d2f6e',text='#ece6ff',dim='#a99dd6',accent='#ff007f',at='#0d081e',ok='#3df5a0',bad='#ff6b8a',hist='#3df5a0',wt='#4de8ff',wb='#2a7fff',wl='#00d2ff')),
  # --- BACKLOG 50.1е: третья «большая тема» (ретро-терминал: зелёный фосфор на чёрном, острые углы, моноширинный шрифт, scanlines) ---
  'phosphor':('dark','📟 Matrix Phosphor','📟 Зелёный фосфор',dict(bg='#000000',card='#0d0d0d',border='#3a6b4a',text='#b8f5c8',dim='#6fbf8a',accent='#00ff66',at='#000000',ok='#5dff9a',bad='#ff6b6b',hist='#00ff66',wt='#5fd8ff',wb='#2a9fd8',wl='#3fc4f0')),
+ # --- BACKLOG 50.1в: четвёртая «большая тема» (кибер-Токио: мягкие тени, скругление 8px, лавандовая подсветка активного). Близнец цветовой tokyonight по краскам — отличается характером ---
+ 'nightfall':('dark','🌌 Tokyo Nightfall','🌌 Токийские сумерки',dict(bg='#1a1b26',card='#24283b',border='#414868',text='#c0caf5',dim='#9aa5ce',accent='#7aa2f7',at='#1a1b26',ok='#9ece6a',bad='#f7768e',hist='#9ece6a',**DARK_W)),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
 
@@ -118,6 +120,30 @@ CHAR = {
         ],
         reduced='  --default-transition-duration: 0s;',
         contrast='  --scanlines: none;',
+    ),
+    # Кибер-Токио: мягкие расплывчатые тени карточек и окон, среднее скругление 8px, аккуратная лавандовая подсветка активных пунктов
+    # (нажатые кнопки, выбранные вкладки, включённые переключатели), гладкие анимации. При `prefers-contrast: more` тень убирается,
+    # а лавандовое кольцо активного остаётся чёткой обводкой.
+    'nightfall': dict(
+        tw='''  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 8px;
+  --radius-2xl: 12px;
+  --shadow-card: 0 8px 28px rgba(0, 0, 0, 0.38);
+  --shadow-active: 0 0 0 1px #bb9af7, 0 6px 18px rgba(187, 154, 247, 0.22);
+  --default-transition-duration: 0.2s;
+  --default-transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);''',
+        root='''  --radius-card: 8px;
+  --radius-modal: 8px;
+  --radius-control: 8px;
+  --shadow-card: 0 8px 28px rgba(0, 0, 0, 0.38);
+  --shadow-active: 0 0 0 1px #bb9af7, 0 6px 18px rgba(187, 154, 247, 0.22);''',
+        rules=[
+            (['.card', '.modal', '[style*="var(--bg-card)"]'], 'box-shadow: var(--shadow-card);'),
+            (['[aria-pressed="true"]', '[aria-selected="true"]', '[aria-checked="true"]', '[aria-current="page"]'], 'box-shadow: var(--shadow-active);'),
+        ],
+        reduced='  --default-transition-duration: 0s;',
+        contrast='  --shadow-card: none;\n  --shadow-active: 0 0 0 2px #bb9af7;',
     ),
 }
 assert all(k in P for k in CHAR)

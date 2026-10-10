@@ -630,6 +630,32 @@ html.theme-phosphor {
   --chart-none: #9aa0a6;
   --chart-other: #5c6064;
 }
+
+html.theme-nightfall {
+  --bg: #1a1b26;
+  --bg-card: #24283b;
+  --border: #414868;
+  --text: #c0caf5;
+  --text-dim: #9aa5ce;
+  --accent: #7aa2f7;
+  --accent-text: #1a1b26;
+  --success: #9ece6a;
+  --danger: #f7768e;
+  --hist-ok: #9ece6a;
+  --water-top: #63b3f5;
+  --water-bottom: #2f86dc;
+  --water-line: #4aa3ee;
+  --chart-1: #7aa2f7;
+  --chart-2: #eb685c;
+  --chart-3: #e9b54e;
+  --chart-4: #49e999;
+  --chart-5: #af5ceb;
+  --chart-6: #72e3ee;
+  --chart-7: #eb5caf;
+  --chart-8: #eb5ceb;
+  --chart-none: #9aa0a6;
+  --chart-other: #707479;
+}
 html.theme-nord,
 html.theme-mocha,
 html.theme-amoled,
@@ -644,7 +670,8 @@ html.theme-twilight,
 html.theme-neon,
 html.theme-emerald,
 html.theme-moonlight,
-html.theme-phosphor { color-scheme: dark; }
+html.theme-phosphor,
+html.theme-nightfall { color-scheme: dark; }
 html.theme-mint,
 html.theme-sepia,
 html.theme-solarlight,
@@ -715,6 +742,23 @@ html.theme-phosphor body::after { content: ''; position: fixed; inset: 0; z-inde
 @media (prefers-contrast: more) {
   html.theme-phosphor {
     --scanlines: none;
+  }
+}
+
+/* большая тема: nightfall */
+html.theme-nightfall {
+  --radius-card: 8px;
+  --radius-modal: 8px;
+  --radius-control: 8px;
+  --shadow-card: 0 8px 28px rgba(0, 0, 0, 0.38);
+  --shadow-active: 0 0 0 1px #bb9af7, 0 6px 18px rgba(187, 154, 247, 0.22);
+}
+html.theme-nightfall .card, html.theme-nightfall .modal, html.theme-nightfall [style*="var(--bg-card)"] { box-shadow: var(--shadow-card); }
+html.theme-nightfall [aria-pressed="true"], html.theme-nightfall [aria-selected="true"], html.theme-nightfall [aria-checked="true"], html.theme-nightfall [aria-current="page"] { box-shadow: var(--shadow-active); }
+@media (prefers-contrast: more) {
+  html.theme-nightfall {
+    --shadow-card: none;
+    --shadow-active: 0 0 0 2px #bb9af7;
   }
 }
 /* design-tokens:end */

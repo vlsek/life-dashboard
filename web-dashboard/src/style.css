@@ -682,6 +682,32 @@ html.theme-phosphor {
   --chart-none: #9aa0a6;
   --chart-other: #5c6064;
 }
+
+html.theme-nightfall {
+  --bg: #1a1b26;
+  --bg-card: #24283b;
+  --border: #414868;
+  --text: #c0caf5;
+  --text-dim: #9aa5ce;
+  --accent: #7aa2f7;
+  --accent-text: #1a1b26;
+  --success: #9ece6a;
+  --danger: #f7768e;
+  --hist-ok: #9ece6a;
+  --water-top: #63b3f5;
+  --water-bottom: #2f86dc;
+  --water-line: #4aa3ee;
+  --chart-1: #7aa2f7;
+  --chart-2: #eb685c;
+  --chart-3: #e9b54e;
+  --chart-4: #49e999;
+  --chart-5: #af5ceb;
+  --chart-6: #72e3ee;
+  --chart-7: #eb5caf;
+  --chart-8: #eb5ceb;
+  --chart-none: #9aa0a6;
+  --chart-other: #707479;
+}
 /* themes:end */
 
 /* design-tokens:start (генерируется scripts/apply_themes.py — не править руками; BACKLOG 50.1а) */
@@ -771,6 +797,31 @@ html.theme-phosphor body::after { content: ''; position: fixed; inset: 0; z-inde
     --default-transition-duration: 0s;
   }
 }
+
+/* большая тема: nightfall */
+html.theme-nightfall {
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 8px;
+  --radius-2xl: 12px;
+  --shadow-card: 0 8px 28px rgba(0, 0, 0, 0.38);
+  --shadow-active: 0 0 0 1px #bb9af7, 0 6px 18px rgba(187, 154, 247, 0.22);
+  --default-transition-duration: 0.2s;
+  --default-transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+html.theme-nightfall .card, html.theme-nightfall .modal, html.theme-nightfall [style*="var(--bg-card)"] { box-shadow: var(--shadow-card); }
+html.theme-nightfall [aria-pressed="true"], html.theme-nightfall [aria-selected="true"], html.theme-nightfall [aria-checked="true"], html.theme-nightfall [aria-current="page"] { box-shadow: var(--shadow-active); }
+@media (prefers-contrast: more) {
+  html.theme-nightfall {
+    --shadow-card: none;
+    --shadow-active: 0 0 0 2px #bb9af7;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-nightfall {
+    --default-transition-duration: 0s;
+  }
+}
 /* design-tokens:end */
 /* themes-scheme */
 html.theme-nord,
@@ -787,7 +838,8 @@ html.theme-twilight,
 html.theme-neon,
 html.theme-emerald,
 html.theme-moonlight,
-html.theme-phosphor { color-scheme: dark; }
+html.theme-phosphor,
+html.theme-nightfall { color-scheme: dark; }
 html.theme-mint,
 html.theme-sepia,
 html.theme-solarlight,
@@ -874,7 +926,8 @@ html.theme-sunset input[type='checkbox']:checked,
 html.theme-twilight input[type='checkbox']:checked,
 html.theme-neon input[type='checkbox']:checked,
 html.theme-emerald input[type='checkbox']:checked,
-html.theme-phosphor input[type='checkbox']:checked {
+html.theme-phosphor input[type='checkbox']:checked,
+html.theme-nightfall input[type='checkbox']:checked {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.4l2.6 2.6L10 3.4' fill='none' stroke='%231c1108' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 input[type='checkbox']:focus-visible {
@@ -1476,7 +1529,8 @@ html.theme-twilight,
 html.theme-neon,
 html.theme-emerald,
 html.theme-moonlight,
-html.theme-phosphor {
+html.theme-phosphor,
+html.theme-nightfall {
   --water-gold: #f0b429;
 }
 html.theme-light,
