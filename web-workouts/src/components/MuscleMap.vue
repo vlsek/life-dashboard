@@ -18,6 +18,7 @@ import {
   untrainedMuscles,
   type StatsPeriod,
 } from '../lib/muscleStats'
+import { groupLastRows, muscleSessions, muscleVolume, trainingStrips, type Bucket } from '../lib/muscleHistory'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 import CollapseChevron from './CollapseChevron.vue'
 import { useAccordionMember } from '../lib/useCollapseStyle'
@@ -64,6 +65,12 @@ const last = computed(() => lastTrainedByMuscle(props.entries, props.exercises, 
 const done = computed(() => new Set(MUSCLE_IDS.filter((m) => isTrainedRecently(last.value[m], today.value))))
 // «Когда тренировали»: по каждой мышце — сегодня / вчера / N дн. назад (+ дата) или «ещё не тренировали»; давно не тренированные сверху.
 const lastRows = computed(() => lastTrainedRows(props.entries, props.exercises, today.value, MUSCLE_IDS))
+// BACKLOG 44.5г: группы по «свежести» + полоска последних 14 дней у каждой мышцы; «ещё не тренировали» — свёрнуто одной строкой чипов.
+const groups = computed(() => groupLastRows(lastRows.value))
+const strips = computed(() => trainingStrips(props.entries, props.exercises, today.value, MUSCLE_IDS))
+const showNever = ref(false)
+const BUCKET_TITLE: Record<Bucket, DictKey> = { stale: 'workouts_muscles_grp_stale', recent: 'workouts_muscles_grp_recent', fresh: 'workouts_muscles_grp_fresh', never: 'workouts_muscles_grp_never' }
+const stripLabel = (m: MuscleId) => t('workouts_muscles_strip_aria').replace('{n}', String(strips.value[m].filter(Boolean).length))
 function agoText(last: string | undefined | null): string {
   const n = daysAgo(last ?? undefined, today.value)
   if (n === null) return t('workouts_muscles_not_yet')
@@ -102,7 +109,14 @@ const unmapped = computed(() => unmappedExercises(props.exercises))
 const selected = ref<MuscleId | null>(null)
 function select(m: MuscleId) {
   selected.value = selected.value === m ? null : m
+  showAllSessions.value = false
 }
+// История выбранной мышцы: последние 5 тренировочных дней (+ «показать все») и нагрузка за 7 / 30 дней
+const SESSIONS_SHOWN = 5
+const showAllSessions = ref(false)
+const sessions = computed(() => (selected.value ? muscleSessions(props.entries, props.exercises, today.value, selected.value) : []))
+const sessionsShown = computed(() => (showAllSessions.value ? sessions.value : sessions.value.slice(0, SESSIONS_SHOWN)))
+const volumes = computed(() => [7, 30].map((d) => ({ d, v: muscleVolume(sessions.value, today.value, d) })))
 const muscleName = (m: MuscleId) => t(`workouts_muscle_${m}` as DictKey)
 
 const ownExercises = computed(() => {
@@ -202,6 +216,24 @@ function shapeStyle(m: MuscleId) {
           <template v-else>{{ t('workouts_muscles_never') }}</template>
         </div>
 
+        <template v-if="sessions.length">
+          <div class="mb-1 text-[0.85em] font-semibold">{{ t('workouts_muscles_volume_title') }}</div>
+          <div class="mb-2 flex flex-wrap gap-x-4 gap-y-0.5 text-[0.85em]" style="color: var(--text-dim)" data-testid="muscle-volume">
+            <span v-for="x in volumes" :key="x.d" :data-window="x.d">{{ x.d }} {{ t('workouts_muscles_days_suffix') }} — {{ t('workouts_muscles_vol_days') }}: {{ x.v.days }} · {{ t('workouts_muscles_vol_sets') }}: {{ x.v.sets }} · {{ t('workouts_muscles_vol_reps') }}: {{ x.v.reps }}</span>
+          </div>
+          <div class="mb-1 text-[0.85em] font-semibold">{{ t('workouts_muscles_sessions_title') }}</div>
+          <ul class="m-0 mb-1 list-none p-0 text-[0.85em]" data-testid="muscle-sessions">
+            <li v-for="s in sessionsShown" :key="s.date" class="flex items-baseline gap-2 py-0.5" data-testid="muscle-session">
+              <span class="shrink-0" style="color: var(--text-dim)">{{ ruDate(s.date) }}</span>
+              <span class="min-w-0 flex-1 truncate">{{ s.exercises.join(', ') }}</span>
+              <span class="shrink-0" style="color: var(--text-dim)">{{ s.sets }} {{ t('workouts_muscles_sets_short') }}</span>
+            </li>
+          </ul>
+          <button v-if="sessions.length > SESSIONS_SHOWN" type="button" class="never-toggle mb-2 text-[0.8em]" data-testid="muscle-sessions-more" @click="showAllSessions = !showAllSessions">
+            {{ showAllSessions ? t('workouts_muscles_sessions_less') : t('workouts_muscles_sessions_more').replace('{n}', String(sessions.length)) }}
+          </button>
+        </template>
+
         <div class="mb-1 text-[0.85em] font-semibold">{{ t('workouts_muscles_my_ex') }}</div>
         <p v-if="ownExercises.length === 0" class="m-0 mb-2 text-[0.85em]" style="color: var(--text-dim)">{{ t('workouts_muscles_no_own') }}</p>
         <ul v-else class="m-0 mb-2 list-none p-0">
@@ -229,11 +261,28 @@ function shapeStyle(m: MuscleId) {
 
       <div class="mt-4" data-testid="muscle-last-list">
         <div class="mb-1 text-[0.85em] font-semibold">{{ t('workouts_muscles_when_title') }}</div>
-        <div v-for="r in lastRows" :key="r.muscle" class="flex items-baseline gap-2 py-0.5 text-[0.85em]" :data-muscle="r.muscle">
-          <span class="w-28 shrink-0 truncate">{{ muscleName(r.muscle) }}</span>
-          <span :style="{ color: r.last ? 'var(--text)' : 'var(--text-dim)' }" data-testid="muscle-last-row-ago">{{ agoText(r.last) }}</span>
-          <span v-if="r.last" class="ml-auto" style="color: var(--text-dim)">{{ ruDate(r.last) }}</span>
-        </div>
+        <template v-for="g in groups" :key="g.bucket">
+          <!-- «Ещё не тренировали» — одной свёрнутой строкой: не засоряет список мышцами без записей -->
+          <div v-if="g.bucket === 'never'" class="mt-2" :data-bucket="g.bucket">
+            <button type="button" class="never-toggle text-[0.8em]" :aria-expanded="showNever" data-testid="muscle-never-toggle" @click="showNever = !showNever">
+              {{ t(BUCKET_TITLE.never) }} ({{ g.rows.length }}) <span aria-hidden="true">{{ showNever ? '▴' : '▾' }}</span>
+            </button>
+            <div v-show="showNever" class="mt-1 flex flex-wrap gap-1.5" data-testid="muscle-never-list">
+              <span v-for="r in g.rows" :key="r.muscle" :data-muscle="r.muscle" class="rounded-full border px-2 py-0.5 text-[0.8em]" style="border-color: var(--border); color: var(--text-dim)">{{ muscleName(r.muscle) }}</span>
+            </div>
+          </div>
+          <div v-else class="mt-2" :data-bucket="g.bucket">
+            <div class="text-[0.75em] font-semibold uppercase tracking-wide" style="color: var(--text-dim)" data-testid="muscle-bucket-title">{{ t(BUCKET_TITLE[g.bucket]) }}</div>
+            <div v-for="r in g.rows" :key="r.muscle" class="flex items-center gap-2 py-0.5 text-[0.85em]" :data-muscle="r.muscle">
+              <span class="w-28 shrink-0 truncate">{{ muscleName(r.muscle) }}</span>
+              <span class="flex shrink-0 gap-px" role="img" :aria-label="stripLabel(r.muscle)" data-testid="muscle-strip">
+                <span v-for="(on, i) in strips[r.muscle]" :key="i" class="inline-block h-3 w-1.5 rounded-sm" :style="{ background: on ? 'var(--success)' : 'var(--border)', opacity: on ? 1 : 0.6 }" :data-on="on"></span>
+              </span>
+              <span class="ml-auto whitespace-nowrap" style="color: var(--text)" data-testid="muscle-last-row-ago">{{ agoText(r.last) }}</span>
+              <span class="whitespace-nowrap" style="color: var(--text-dim)">{{ ruDate(r.last as string) }}</span>
+            </div>
+          </div>
+        </template>
       </div>
 
       <div class="mt-4" data-testid="muscle-stats">
@@ -274,3 +323,21 @@ function shapeStyle(m: MuscleId) {
     </div>
   </section>
 </template>
+
+<style scoped>
+/* Кнопка-ссылка «показать / скрыть»: сброс системного вида кнопки, фокус виден */
+.never-toggle {
+  all: unset;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-size: 0.8em;
+  cursor: pointer;
+  color: var(--text-dim);
+  text-decoration: underline dotted;
+}
+.never-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+</style>

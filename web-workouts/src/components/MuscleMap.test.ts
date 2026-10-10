@@ -8,6 +8,7 @@ const mk = (id: string, name: string): Exercise =>
 const bench = mk('bench', 'Жим лёжа')
 const squat = mk('squat', 'Приседания')
 const yoga = mk('yoga', 'Йога')
+const row = mk('row', 'Тяга штанги в наклоне')
 const entry = (exercise_id: string, date: string): WorkoutEntry =>
   ({ id: exercise_id + date, user_id: 'u', exercise_id, date, sets: [{ reps: 10, weight: 50, time: null, duration: null, side: null }], notes: null }) as WorkoutEntry
 
@@ -175,7 +176,9 @@ describe('MuscleMap: когда тренировали каждую мышцу',
     expect(rowText(w, 'chest')).toContain('вчера')
     expect(rowText(w, 'chest')).toContain('29.09.2026')
     expect(rowText(w, 'quads')).toContain('сегодня')
-    expect(rowText(w, 'calves')).toContain('ещё не тренировали')
+    // BACKLOG 44.5г: мышцы без записей — не строками, а свёрнутой строкой чипов под заголовком «Ещё не тренировали (N)»
+    expect(w.find('[data-testid="muscle-never-toggle"]').text()).toContain('Ещё не тренировали')
+    expect(w.find('[data-testid="muscle-never-list"] [data-muscle="calves"]').exists()).toBe(true)
     expect(w.findAll('[data-testid="muscle-last-list"] [data-muscle]').length).toBeGreaterThanOrEqual(10)
   })
 
@@ -185,11 +188,11 @@ describe('MuscleMap: когда тренировали каждую мышцу',
     expect(rowText(w, 'chest')).toContain('20.09.2026')
   })
 
-  it('давно не тренированные — сверху списка, свежие — внизу', async () => {
+  it('группы: давно не тренированные — сверху, затем свежие, «ещё не тренировали» — в конце', async () => {
     const w = await openMap([entry('bench', '2026-09-29'), entry('squat', '2026-09-20')], [bench, squat])
     const order = w.findAll('[data-testid="muscle-last-list"] [data-muscle]').map((r) => r.attributes('data-muscle'))
-    expect(order.indexOf('calves')).toBeLessThan(order.indexOf('quads'))
-    expect(order.indexOf('quads')).toBeLessThan(order.indexOf('chest'))
+    expect(order.indexOf('quads')).toBeLessThan(order.indexOf('chest')) // quads — 10 дн. назад («пора»), chest — вчера («свежие»)
+    expect(order.indexOf('chest')).toBeLessThan(order.indexOf('calves')) // calves — ни разу
   })
 
   it('в карточке выбранной мышцы — то же человеческое «вчера (дата)»; без записей — «Записей пока нет»', async () => {
@@ -205,7 +208,69 @@ describe('MuscleMap: когда тренировали каждую мышцу',
     localStorage.setItem('site_lang', 'en')
     const w = await openMap([entry('bench', '2026-09-29'), entry('bench', '2026-09-20')], [bench])
     expect(rowText(w, 'chest')).toContain('yesterday')
-    expect(rowText(w, 'calves')).toContain('not yet')
+    expect(w.find('[data-testid="muscle-never-toggle"]').text()).toContain('Not trained yet')
     expect(w.find('[data-testid="muscle-last-list"]').text()).toContain('When each muscle was last worked')
+  })
+})
+
+// BACKLOG 44.5г: группы по свежести, полоска 14 дней, история и нагрузка по выбранной мышце
+describe('MuscleMap: аккуратный список «когда тренировали»', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+  })
+  const bucketOfMuscle = (w: ReturnType<typeof mount>, m: string) => w.find(`[data-testid="muscle-last-list"] [data-muscle="${m}"]`).element.closest('[data-bucket]')?.getAttribute('data-bucket')
+
+  it('мышцы разложены по группам: свежие / на этой неделе / давно / ещё не тренировали', async () => {
+    const w = await openMap([entry('bench', '2026-09-29'), entry('squat', '2026-09-26'), entry('row', '2026-09-10')], [bench, squat, row])
+    expect(bucketOfMuscle(w, 'chest')).toBe('fresh')
+    expect(bucketOfMuscle(w, 'quads')).toBe('recent')
+    expect(bucketOfMuscle(w, 'calves')).toBe('never')
+    expect(w.findAll('[data-testid="muscle-bucket-title"]').map((x) => x.text())).toEqual(expect.arrayContaining(['Свежие (сегодня или вчера)', 'На этой неделе']))
+  })
+
+  it('«ещё не тренировали» свёрнуто по умолчанию и открывается кнопкой', async () => {
+    const w = await openMap([entry('bench', '2026-09-29')], [bench])
+    const list = () => w.find('[data-testid="muscle-never-list"]').element as HTMLElement
+    expect(list().style.display).toBe('none')
+    expect(w.find('[data-testid="muscle-never-toggle"]').attributes('aria-expanded')).toBe('false')
+    await w.find('[data-testid="muscle-never-toggle"]').trigger('click')
+    expect(list().style.display).not.toBe('none')
+    expect(w.find('[data-testid="muscle-never-toggle"]').attributes('aria-expanded')).toBe('true')
+  })
+
+  it('у мышцы с записями — полоска из 14 дней; последний элемент (сегодня) отмечен, если тренировали сегодня', async () => {
+    const w = await openMap([entry('bench', '2026-09-30'), entry('bench', '2026-09-28')], [bench])
+    const strip = w.find('[data-testid="muscle-last-list"] [data-muscle="chest"] [data-testid="muscle-strip"]')
+    const cells = strip.findAll('[data-on]')
+    expect(cells).toHaveLength(14)
+    expect(cells[13].attributes('data-on')).toBe('true')
+    expect(cells[11].attributes('data-on')).toBe('true')
+    expect(cells[12].attributes('data-on')).toBe('false')
+    expect(strip.attributes('aria-label')).toBe('В работе 2 из последних 14 дней')
+  })
+
+  it('в панели мышцы — нагрузка за 7 и 30 дней и последние тренировки (5 + «Показать все»)', async () => {
+    const dates = ['2026-09-29', '2026-09-27', '2026-09-25', '2026-09-23', '2026-09-21', '2026-09-19', '2026-09-17']
+    const w = await openMap(dates.map((d) => entry('bench', d)), [bench])
+    await zone(w, 'chest').trigger('click')
+    const vol = w.find('[data-testid="muscle-volume"]')
+    expect(vol.find('[data-window="7"]').text()).toContain('тренировок: 3') // 29, 27, 25 — окно 7 дней включает сегодня (с 24.09)
+    expect(vol.find('[data-window="7"]').text()).toContain('подходов: 3')
+    expect(vol.find('[data-window="30"]').text()).toContain('тренировок: 7')
+    expect(w.findAll('[data-testid="muscle-session"]')).toHaveLength(5)
+    await w.find('[data-testid="muscle-sessions-more"]').trigger('click')
+    expect(w.findAll('[data-testid="muscle-session"]')).toHaveLength(7)
+    expect(w.find('[data-testid="muscle-sessions-more"]').text()).toBe('Свернуть')
+  })
+
+  it('у мышцы без записей истории и нагрузки нет, «Показать все» не появляется при ≤5 днях; смена мышцы сворачивает список', async () => {
+    const w = await openMap([entry('bench', '2026-09-29'), entry('squat', '2026-09-28')], [bench, squat])
+    await zone(w, 'calves').trigger('click')
+    expect(w.find('[data-testid="muscle-volume"]').exists()).toBe(false)
+    expect(w.find('[data-testid="muscle-sessions"]').exists()).toBe(false)
+    await zone(w, 'chest').trigger('click')
+    expect(w.findAll('[data-testid="muscle-session"]')).toHaveLength(1)
+    expect(w.find('[data-testid="muscle-sessions-more"]').exists()).toBe(false)
   })
 })
