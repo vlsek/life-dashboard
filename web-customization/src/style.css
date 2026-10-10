@@ -898,6 +898,134 @@ html[data-motion='off'] *::after {
   70% { d: path("M30.6 32C32 37 41.8 41 43.2 47C43.2 53 37.6 58 32 58C26.4 58 20.8 53 20.8 47C20.8 41 29.2 37 30.6 32Z"); }
 }
 /* splash-flame:end */
+/* splash-picker:start (scripts/apply_splash_picker.py — не править руками) */
+.splash-flame {
+  transform-origin: 50% 90%;
+  animation:
+    flame-flicker 1.8s ease-in-out infinite,
+    splash-glow 2.4s ease-in-out infinite;
+}
+@keyframes flame-flicker {
+  0%,
+  100% {
+    transform: scale(1, 1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.05, 0.97) rotate(-1.5deg);
+  }
+  55% {
+    transform: scale(0.97, 1.05) rotate(1.2deg);
+  }
+  80% {
+    transform: scale(1.03, 1) rotate(-0.6deg);
+  }
+}
+.splash-flame .fl-outer {
+  fill: var(--accent);
+}
+.splash-flame .fl-inner {
+  fill: color-mix(in srgb, var(--accent) 40%, #ffffff);
+}
+html.theme-monet .splash-flame .fl-outer {
+  stroke: var(--accent);
+  stroke-width: 0.6;
+  stroke-opacity: 0.5;
+}
+.splash-ring .ring-base {
+  fill: none;
+  stroke: var(--accent);
+  stroke-opacity: 0.16;
+  stroke-width: 5;
+}
+.splash-ring .ring-spin,
+.splash-ring .ring-inner {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+}
+.splash-ring .ring-spin {
+  animation: ring-spin 1.2s linear infinite;
+}
+.splash-ring .arc {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linecap: round;
+}
+.splash-ring .arc-tail { stroke-width: 5; stroke-opacity: 0.3; stroke-dasharray: 78 110.5; }
+.splash-ring .arc-mid { stroke-width: 6; stroke-opacity: 0.65; stroke-dasharray: 52 136.5; stroke-dashoffset: -26; }
+.splash-ring .arc-head { stroke-width: 7; stroke: color-mix(in srgb, var(--accent) 55%, #ffffff); stroke-dasharray: 24 164.5; stroke-dashoffset: -54; }
+.splash-ring .ring-inner {
+  fill: none;
+  stroke: var(--accent);
+  stroke-opacity: 0.55;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 30 108.2;
+  animation: ring-spin 2.2s linear infinite reverse;
+}
+.splash-ring .ring-flame {
+  transform-box: fill-box;
+  transform-origin: 50% 90%;
+}
+.splash-ring .ring-flame .fl-outer { fill: var(--accent); }
+.splash-ring .ring-flame .fl-inner { fill: color-mix(in srgb, var(--accent) 40%, #ffffff); }
+.splash-ring .ring-flame { animation: flame-flicker 1.8s ease-in-out infinite; }
+@keyframes ring-spin {
+  to { transform: rotate(360deg); }
+}
+/* splash-tongues:start — вариант «Три языка» (старое пламя, BACKLOG 16); общие свечение/искры/«уменьшить движение» — через .splash-live */
+.splash-tongues .tongue {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.splash-tongues .tongue-c {
+  fill: var(--accent);
+  animation: tongue-c 1.3s ease-in-out infinite;
+}
+.splash-tongues .tongue-l {
+  fill: color-mix(in srgb, var(--accent) 78%, transparent);
+  animation: tongue-l 0.95s ease-in-out -0.3s infinite;
+}
+.splash-tongues .tongue-r {
+  fill: color-mix(in srgb, var(--accent) 78%, transparent);
+  animation: tongue-r 1.15s ease-in-out -0.7s infinite;
+}
+.splash-tongues .tongue-core {
+  fill: color-mix(in srgb, var(--accent) 35%, #ffffff);
+  animation: tongue-core 0.8s ease-in-out -0.2s infinite;
+}
+@keyframes tongue-l {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  40% { transform: scale(0.9, 1.15) skewX(-7deg); }
+  75% { transform: scale(1.05, 0.9) skewX(4deg); }
+}
+
+@keyframes tongue-r {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  35% { transform: scale(0.92, 1.12) skewX(6deg); }
+  70% { transform: scale(1.06, 0.92) skewX(-4deg); }
+}
+
+@keyframes tongue-c {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  30% { transform: scale(0.96, 1.08) skewX(-4deg); }
+  65% { transform: scale(1.03, 0.95) skewX(3deg); }
+}
+
+@keyframes tongue-core {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(0.88, 1.12); }
+}
+/* splash-tongues:end */
+.splash-ring { overflow: visible; animation: splash-glow 2.4s ease-in-out infinite; }
+.splash-flame { overflow: visible; }
+@media (prefers-reduced-motion: reduce) {
+  .splash-ring, .splash-ring *, .splash-tongues *, .splash-flame { animation: none !important; }
+}
+html[data-motion='off'] .splash-ring,
+html[data-motion='off'] .splash-ring *,
+html[data-motion='off'] .splash-tongues *,
+html[data-motion='off'] .splash-flame { animation: none !important; }
+/* splash-picker:end */
 @keyframes spark-rise {
   0% { transform: translate(0, 0) scale(1); opacity: 0; }
   15% { opacity: 1; }

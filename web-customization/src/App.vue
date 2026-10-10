@@ -5,6 +5,7 @@ import ItemCard from './components/ItemCard.vue'
 import Icon from './components/Icon.vue'
 import ThemeCard from './components/ThemeCard.vue'
 import ThemeUnlockModal from './components/ThemeUnlockModal.vue'
+import SplashPicker from './components/SplashPicker.vue'
 import RarityGroup from './components/RarityGroup.vue'
 import VisibilityChips from './components/VisibilityChips.vue'
 import { groupOfItem, groupOfTheme, useVisibility, type VisGroup } from './lib/useVisibility'
@@ -123,6 +124,11 @@ const nothingShown = computed(() => !visibleThemeBuckets.value.length && !visibl
               />
             </div>
           </RarityGroup>
+        </SectionGroup>
+
+        <!-- Заставка загрузки (BACKLOG 16, срез 2): 4 бесплатных варианта, выбор в localStorage -->
+        <SectionGroup id="splash" :title="t('cust_sec_splash')" :total="4" :owned="4" :collapsed="isCollapsed('section:splash')" @toggle="toggle('section:splash')">
+          <SplashPicker />
         </SectionGroup>
 
         <SectionGroup v-for="c in visibleCategories" :key="c.category" :id="c.category" :title="t(('cust_cat_' + c.category) as never)" :total="c.total" :owned="c.owned" :collapsed="isCollapsed('section:' + c.category)" @toggle="toggle('section:' + c.category)">
