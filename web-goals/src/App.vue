@@ -165,7 +165,8 @@ async function onDelete(g: Goal) {
         @dismiss="invites.dismiss($event)"
       />
 
-      <template v-else>
+      <!-- Приглашения друзей и список целей — независимо друг от друга (раньше `v-else` прятал весь список, когда миграция 063 применена). -->
+      <div data-test="goals-body">
         <p v-if="active.length === 0" class="dim">{{ t('goals_no_active') }}</p>
 
         <CollapsibleSection v-if="upcoming.length" id="upcoming" :title="t('goals_sec_upcoming')" :count="upcoming.length">
@@ -232,7 +233,7 @@ async function onDelete(g: Goal) {
             </li>
           </ul>
         </CollapsibleSection>
-      </template>
+      </div>
     </template>
 
     <GoalForm v-if="formTarget" :is-edit="formTarget !== 'new'" :initial="formInitial" :categories="myCategories" :no-category-labels="noCategoryLabels" :submit="onSaveForm" @close="formTarget = null" />
