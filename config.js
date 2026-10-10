@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.40";
+const SITE_VERSION = "4.41";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.41", date: "2026-10-10 09:25", changes: [
+        "Достижения: если вы только что создали аккаунт и сделали действия ещё до первого захода в раздел «Достижения», при первом заходе вы теперь увидите поздравление с наградой. Раньше такие достижения молча появлялись в списке."
+    ]},
     { version: "4.40", date: "2026-10-10 12:24", changes: [
         "В «Языках» появилась «Идиома дня»: пословица или устойчивое выражение (английский, немецкий, французский, испанский) с переводом и пояснением. Кнопка «Другая» листает подборку, «В мои слова» добавляет идиому в ваш словарь."
     ]},
@@ -1930,6 +1933,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.41", date: "2026-10-10 09:25", changes: [
+        "Achievements: if you just created your account and did things before first opening the Achievements section, you now see a congratulation with your reward on that first visit. Before, such achievements silently appeared in the list."
+    ]},
     { version: "4.40", date: "2026-10-10 12:24", changes: [
         "\"Idiom of the day\" is now in Languages: a proverb or set phrase (English, German, French, Spanish) with a translation and explanation. \"Another\" browses the collection and \"Add to my words\" puts the idiom into your dictionary."
     ]},

@@ -1,6 +1,13 @@
 {
-  "version": "4.40",
+  "version": "4.41",
   "en": [
+    {
+      "version": "4.41",
+      "date": "2026-10-10 09:25",
+      "changes": [
+        "Achievements: if you just created your account and did things before first opening the Achievements section, you now see a congratulation with your reward on that first visit. Before, such achievements silently appeared in the list."
+      ]
+    },
     {
       "version": "4.40",
       "date": "2026-10-10 12:24",
@@ -3147,6 +3154,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.41",
+      "date": "2026-10-10 09:25",
+      "changes": [
+        "Достижения: если вы только что создали аккаунт и сделали действия ещё до первого захода в раздел «Достижения», при первом заходе вы теперь увидите поздравление с наградой. Раньше такие достижения молча появлялись в списке."
+      ]
+    },
     {
       "version": "4.40",
       "date": "2026-10-10 12:24",
