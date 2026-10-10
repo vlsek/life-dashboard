@@ -80,7 +80,7 @@ BACKLOG 44.7 срез 1 (ответ владельца: своя вшитая п
 BACKLOG 50.1а «Большие темы — срез 0: токены оформления», БЕЗ видимых изменений и БЕЗ SQL. `scripts/apply_themes.py` выдаёт новый генерируемый блок `design-tokens:start/end` (по умолчанию = ТЕКУЩИЙ вид: `--radius-card/-control/-modal`, `--shadow-card/-active`, `--blur-glass`, `--bg-pattern`, `--font-ui/-mono`, `--border-style`, `--card-accent`, `--ease-ui`, `--dur-ui`) и идемпотентно переводит общие классы `.card`, базовые `button`, `.modal` и поля в окнах на эти токены в `style.css` пилотов и корня; тест «токены есть, значения по умолчанию = прежний вид, раскатка идемпотентна». ТРОГАЮ: `scripts/apply_themes.py`, `scripts/themes_data.py`, `style.css` всех пилотов и корня ТОЛЬКО в зонах `.card`/`button`/`.modal`/`design-tokens`, тест в `web-dashboard/src`, пересборка бандлов всех пилотов. НЕ трогаю: цветовые токены тем, `AppShell.vue`, `web-customization/src` (там агент 7, 51.3). ПРОСЬБА: пока блок занят, не правьте `.card`/`button`/`.modal` в `style.css` — иначе конфликт при раскатке. С: 2026-10-10 06:32
 
 ### Агент 5
-— свободен — (v4.33: заставка — одно живое пламя, BACKLOG 16 срез 1; v4.16 темы; ОСТАЛОСЬ по 16: варианты лоадера в «Кастомизации»)
+BACKLOG 18 (хвост): «живое пламя» стрика → то же ОДНО пламя, что на заставке (v4.33), вместо трёх языков; и подключить `:days` в списке «Стрики» (`App.vue`, окно всех стриков). ТРОГАЮ: `web-dashboard/src/components/StreakFlame.vue`, блок `.streak-live` и `tongue-*` keyframes в `web-dashboard/src/style.css`, `App.vue` (одна строка в списке стриков), `streakFlameLive.test.ts`, пересборка Дашборда. БЕЗ SQL. С: 2026-10-10.
 
 ### Агент 6
 — свободен —
