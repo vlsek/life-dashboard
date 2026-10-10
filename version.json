@@ -1,6 +1,13 @@
 {
-  "version": "4.44",
+  "version": "4.45",
   "en": [
+    {
+      "version": "4.45",
+      "date": "2026-10-10 12:34",
+      "changes": [
+        "The muscle map is now always visible: on the Workouts page and in the right panel. While there are no exercises yet the map is empty (all muscles grey) with a hint: add your first exercise and log a workout and the muscles will light up. Before, the map only appeared after the first exercise, so a new person did not know it existed. No migrations."
+      ]
+    },
     {
       "version": "4.44",
       "date": "2026-10-10 12:30",
@@ -3175,6 +3182,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.45",
+      "date": "2026-10-10 12:34",
+      "changes": [
+        "Карта мышц теперь видна всегда: и на странице «Тренировки», и в правой панели. Пока нет ни одного упражнения, карта пустая (все мышцы серые) с подсказкой «добавьте первое упражнение и запишите тренировку — мышцы окрасятся». Раньше карта появлялась только после первого упражнения, и новый человек не знал, что она есть. Миграций нет."
+      ]
+    },
     {
       "version": "4.44",
       "date": "2026-10-10 12:30",

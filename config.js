@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.44";
+const SITE_VERSION = "4.45";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.45", date: "2026-10-10 12:34", changes: [
+        "Карта мышц теперь видна всегда: и на странице «Тренировки», и в правой панели. Пока нет ни одного упражнения, карта пустая (все мышцы серые) с подсказкой «добавьте первое упражнение и запишите тренировку — мышцы окрасятся». Раньше карта появлялась только после первого упражнения, и новый человек не знал, что она есть. Миграций нет."
+    ]},
     { version: "4.44", date: "2026-10-10 12:30", changes: [
         "Внутри: подготовлена основа для «больших тем» оформления — скругления, тени, текстуры, границы и шрифт теперь можно менять темой, а не только цвета. Сейчас ничего не изменилось: значения по умолчанию совпадают с прежним видом сайта",
     ]},
@@ -1942,6 +1945,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.45", date: "2026-10-10 12:34", changes: [
+        "The muscle map is now always visible: on the Workouts page and in the right panel. While there are no exercises yet the map is empty (all muscles grey) with a hint: add your first exercise and log a workout and the muscles will light up. Before, the map only appeared after the first exercise, so a new person did not know it existed. No migrations."
+    ]},
     { version: "4.44", date: "2026-10-10 12:30", changes: [
         "Under the hood: groundwork for big appearance themes - corner radius, shadows, textures, borders and font can now be changed by a theme, not just colors. Nothing looks different yet: the defaults match the previous look of the site",
     ]},
