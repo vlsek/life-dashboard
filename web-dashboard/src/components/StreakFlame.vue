@@ -10,10 +10,14 @@
 // prefers-reduced-motion и общий выключатель анимаций (html[data-motion="off"]) гасят анимацию — пламя остаётся статичным.
 import { computed } from 'vue'
 import { streakFlameTier } from '../lib/streakFlameTier'
+import { readStreakFlameVariant } from '../lib/streakFlameVariant'
+import SplashFlameTongues from './splash/SplashFlameTongues.vue'
 
 const props = defineProps<{ lit: boolean; days?: number; size?: number }>()
 // size — сторона живого пламени в px (по умолчанию 22; у метрики со стриком — меньше, в строку названия)
 const tier = computed(() => (props.lit ? streakFlameTier(props.days) : 0))
+// Вид живого пламени (BACKLOG 44.18в): «единое пламя» (по умолчанию) или «три языка»; выбирается в «Кастомизации», читаем при показе
+const variant = readStreakFlameVariant()
 
 const SPARKS = [
   { cx: 25, cy: 14, r: 1.6, dx: '-5px', d: '2.1s', o: '0s' },
@@ -26,7 +30,7 @@ const sparks = computed(() => SPARKS.slice(0, tier.value >= 3 ? 4 : tier.value >
 
 <template>
   <svg
-    v-if="lit && tier > 0"
+    v-if="lit && tier > 0 && variant === 'flame'"
     class="streak-live"
     :data-tier="tier"
     viewBox="0 0 64 64"
@@ -51,6 +55,16 @@ const sparks = computed(() => SPARKS.slice(0, tier.value >= 3 ? 4 : tier.value >
       data-test="streak-spark"
     />
   </svg>
+  <!-- «Три языка» (44.18в): то же пламя заставки (SplashFlameTongues, у него размер задан атрибутами — переопределяем width/height);
+       ступень 1 (7+ дней) — без искр (правило .streak-tongues[data-tier='1'] .spark в style.css), ступени 2–3 (30+/100+) — с искрами -->
+  <SplashFlameTongues
+    v-else-if="lit && tier > 0"
+    class="streak-tongues"
+    :width="size ?? 22"
+    :height="size ?? 22"
+    :data-tier="tier"
+    data-test="streak-flame-tongues"
+  />
   <svg
     v-else-if="lit"
     class="streak-flame"

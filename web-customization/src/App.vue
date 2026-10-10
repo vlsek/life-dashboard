@@ -7,6 +7,7 @@ import ThemeCard from './components/ThemeCard.vue'
 import ThemeUnlockModal from './components/ThemeUnlockModal.vue'
 import SplashPicker from './components/SplashPicker.vue'
 import ChartMarkerPicker from './components/ChartMarkerPicker.vue'
+import StreakFlamePicker from './components/StreakFlamePicker.vue'
 import RarityGroup from './components/RarityGroup.vue'
 import VisibilityChips from './components/VisibilityChips.vue'
 import { groupOfItem, groupOfTheme, useVisibility, type VisGroup } from './lib/useVisibility'
@@ -135,6 +136,11 @@ const nothingShown = computed(() => !visibleThemeBuckets.value.length && !visibl
 
         <SectionGroup id="splash" :title="t('cust_sec_splash')" :total="4" :owned="4" :collapsed="isCollapsed('section:splash')" @toggle="toggle('section:splash')">
           <SplashPicker />
+        </SectionGroup>
+
+        <!-- Огонёк серии (BACKLOG 44.18в, срез 1): 2 бесплатных варианта, выбор в localStorage -->
+        <SectionGroup id="streakflame" :title="t('cust_sec_streakflame')" :total="2" :owned="2" :collapsed="isCollapsed('section:streakflame')" @toggle="toggle('section:streakflame')">
+          <StreakFlamePicker />
         </SectionGroup>
 
         <SectionGroup v-for="c in visibleCategories" :key="c.category" :id="c.category" :title="t(('cust_cat_' + c.category) as never)" :total="c.total" :owned="c.owned" :collapsed="isCollapsed('section:' + c.category)" @toggle="toggle('section:' + c.category)">

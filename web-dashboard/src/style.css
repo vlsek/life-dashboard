@@ -1400,6 +1400,8 @@ html.theme-monet .splash-flame .fl-outer {
   50% { transform: scale(0.88, 1.12); }
 }
 /* splash-tongues:end */
+/* Огонёк серии «три языка» (BACKLOG 44.18в): на ступени 1 (7+ дней) искр нет, на ступенях 2–3 они летят */
+.streak-tongues[data-tier='1'] .spark { display: none; }
 @keyframes spark-rise {
   0% { transform: translate(0, 0) scale(1); opacity: 0; }
   15% { opacity: 1; }
