@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.41";
+const SITE_VERSION = "4.42";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.42", date: "2026-10-10 09:28", changes: [
+        "Огонёк стрика в окне «Стрики» и на главной теперь тоже живое ОДНО пламя (как на заставке), а не три качающихся языка; в окне «Стрики» огонёк у каждой серии от 7 дней горит анимированно и становится ярче и с искрами на 30 и 100 днях. Для недельных серий — обычный огонёк. Без миграций."
+    ]},
     { version: "4.41", date: "2026-10-10 09:25", changes: [
         "Достижения: если вы только что создали аккаунт и сделали действия ещё до первого захода в раздел «Достижения», при первом заходе вы теперь увидите поздравление с наградой. Раньше такие достижения молча появлялись в списке."
     ]},
@@ -1933,6 +1936,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.42", date: "2026-10-10 09:28", changes: [
+        "The streak flame in the \"Streaks\" window and on the home page is now the same ONE living flame as on the loading screen instead of three swaying tongues; in the \"Streaks\" window every streak of 7+ days burns animated and gets brighter, with sparks, at 30 and 100 days. Weekly streaks keep the plain flame. No migrations."
+    ]},
     { version: "4.41", date: "2026-10-10 09:25", changes: [
         "Achievements: if you just created your account and did things before first opening the Achievements section, you now see a congratulation with your reward on that first visit. Before, such achievements silently appeared in the list."
     ]},
