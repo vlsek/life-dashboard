@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.37";
+const SITE_VERSION = "4.38";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.38", date: "2026-10-10 12:16", changes: [
+        "Исправление вида: пламя заставки и логотипа в шапке снова такой же ширины, как раньше (оно было заметно уже и казалось «сжатым»); карточка подсказки страницы («i» под шапкой) теперь по центру страницы, а не у правого края. Значок «i» остался справа. Миграций нет."
+    ]},
     { version: "4.37", date: "2026-10-10 12:01", changes: [
         "Настройки между устройствами: тема, язык, выключатель анимаций, избранные темы, поздравления за серии, окно «вчерашние невыполненные», напоминание про воду, пункт «Прогресс в меню» и настройки колец дня теперь запоминаются в аккаунте и подтягиваются на другом устройстве (новое устройство берёт настройки аккаунта; что изменили здесь — уходит в аккаунт). Нужна миграция 064 (её применяет владелец): пока её нет, всё работает как раньше, только на одном устройстве."
     ]},
@@ -1921,6 +1924,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.38", date: "2026-10-10 12:16", changes: [
+        "Look fix: the loader flame and the logo flame in the header are as wide as before again (they had become noticeably narrower and looked \"squeezed\"); the page hint card (the \"i\" strip under the top bar) is now centered on the page instead of hugging the right edge. The \"i\" icon stays on the right. No migrations."
+    ]},
     { version: "4.37", date: "2026-10-10 12:01", changes: [
         "Settings across devices: theme, language, the animations switch, favorite themes, streak celebrations, the \"yesterday's unfinished\" window, the water reminder, \"Progress in the menu\" and the day-ring settings are now saved to your account and pulled in on another device (a new device takes the account settings; what you change here goes to the account). Needs migration 064 (applied by the owner): until then everything works as before, on one device only."
     ]},
