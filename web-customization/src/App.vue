@@ -9,6 +9,7 @@ import RarityGroup from './components/RarityGroup.vue'
 import VisibilityChips from './components/VisibilityChips.vue'
 import { groupOfItem, groupOfTheme, useVisibility, type VisGroup } from './lib/useVisibility'
 import { useCollapsed } from './lib/useCollapsed'
+import SectionGroup from './components/SectionGroup.vue'
 import { itemGroups, themeGroups } from './lib/rarity'
 import { useFavoriteThemes } from './lib/useFavoriteThemes'
 import { useCustomization } from './lib/useCustomization'
@@ -43,14 +44,17 @@ const themeBuckets = themeGroups()
 
 // Раздел на категорию предметов (рамки аватарки …) → группы по редкости; «открыто» считаем по статусу предмета.
 const categories = computed(() =>
-  CATEGORY_ORDER.map((category) => ({
-    category,
-    groups: itemGroups(ITEMS.filter((i) => i.category === category)).map((g) => ({
+  CATEGORY_ORDER.map((category) => {
+    const groups = itemGroups(ITEMS.filter((i) => i.category === category)).map((g) => ({
       ...g,
       owned: g.items.filter((i) => ['owned', 'selected'].includes(statusOf(i.key))).length,
-    })),
-  })).filter((c) => c.groups.length),
+    }))
+    // Счётчик раздела «открыто/всего» (BACKLOG 51.3) — по всей витрине раздела, как и у групп редкости (фильтр видимости его не меняет)
+    return { category, groups, total: groups.reduce((n, g) => n + g.items.length, 0), owned: groups.reduce((n, g) => n + g.owned, 0) }
+  }).filter((c) => c.groups.length),
 )
+const themeTotal = themeBuckets.reduce((n, g) => n + g.items.length, 0)
+const themeOwnedTotal = computed(() => themeBuckets.reduce((n, g) => n + themeOwned(g.items), 0))
 
 // Переключатель видимости (BACKLOG 47.1): каждая тема и предмет — ровно в одной группе; прячем только показ карточек, а счётчики
 // «открыто/всего» у групп редкости остаются честными (по всей витрине).
@@ -99,8 +103,7 @@ const nothingShown = computed(() => !visibleThemeBuckets.value.length && !visibl
         <VisibilityChips :state="vis.state.value" :counts="visCounts" @toggle="vis.toggle" />
         <p v-if="nothingShown" class="dim mb-4 text-sm" data-testid="vis-empty">{{ vis.noneVisible.value ? t('cust_vis_empty_none') : t('cust_vis_empty') }}</p>
 
-        <section v-if="visibleThemeBuckets.length" class="mb-6" data-section="themes">
-          <h2 class="mb-0.5 text-base font-medium">{{ t('cust_sec_themes') }}</h2>
+        <SectionGroup v-if="visibleThemeBuckets.length" id="themes" :title="t('cust_sec_themes')" :total="themeTotal" :owned="themeOwnedTotal" :collapsed="isCollapsed('section:themes')" @toggle="toggle('section:themes')">
           <p class="dim mb-1 text-xs">{{ t('cust_sec_themes_hint') }}</p>
           <p class="dim mb-2 text-xs" data-testid="fav-count">{{ t('cust_theme_fav_count').replace('{n}', String(themes.favorites.value.length)).replace('{max}', String(themes.max)) }}</p>
           <RarityGroup v-for="g in visibleThemeBuckets" :key="g.rarity" :id="'themes:' + g.rarity" :rarity="g.rarity" :total="g.items.length" :owned="themeOwned(g.items)" :collapsed="isCollapsed('themes:' + g.rarity)" @toggle="toggle('themes:' + g.rarity)">
@@ -120,10 +123,9 @@ const nothingShown = computed(() => !visibleThemeBuckets.value.length && !visibl
               />
             </div>
           </RarityGroup>
-        </section>
+        </SectionGroup>
 
-        <section v-for="c in visibleCategories" :key="c.category" class="mb-6" :data-section="c.category">
-          <h2 class="mb-0.5 text-base font-medium">{{ t(('cust_cat_' + c.category) as never) }}</h2>
+        <SectionGroup v-for="c in visibleCategories" :key="c.category" :id="c.category" :title="t(('cust_cat_' + c.category) as never)" :total="c.total" :owned="c.owned" :collapsed="isCollapsed('section:' + c.category)" @toggle="toggle('section:' + c.category)">
           <p class="dim mb-2 text-xs">{{ t('cust_cat_hint') }}</p>
           <RarityGroup
             v-for="g in c.groups"
@@ -150,7 +152,7 @@ const nothingShown = computed(() => !visibleThemeBuckets.value.length && !visibl
               />
             </div>
           </RarityGroup>
-        </section>
+        </SectionGroup>
 
         <p class="dim text-xs">{{ t('cust_soon') }}</p>
       </template>
