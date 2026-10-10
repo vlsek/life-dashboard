@@ -8,6 +8,40 @@ async function deleteUser(u) {
     render();
 }
 
+// Режим отладки (BACKLOG 47.4, миграция 066): администратор включает его ТОЛЬКО себе. Переключает сервер — set_debug_mode проверяет is_admin;
+// сам режим ничего не выдаёт и не списывает: в «Кастомизации» появится «Примерить» (временный показ предмета без записи в базу).
+// Если миграция 066 ещё не применена, колонки нет — карточку просто не показываем.
+async function renderDebugCard(content) {
+    const { data, error } = await sb.from("profiles").select("debug_mode").eq("user_id", user.id).maybeSingle();
+    if (error || !data) { if (error) console.warn("debug_mode недоступен (миграция 066 не применена?)", error); return; }
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.testid = "debug-card";
+    const label = document.createElement("label");
+    label.style.cssText = "display:flex; align-items:center; gap:10px; cursor:pointer; font-weight:600;";
+    const box = document.createElement("input");
+    box.type = "checkbox";
+    box.id = "debug-mode-toggle";
+    box.checked = data.debug_mode === true;
+    label.appendChild(box);
+    label.appendChild(document.createTextNode(t("admin_debug_title")));
+    const hint = document.createElement("p");
+    hint.className = "dim";
+    hint.style.cssText = "font-size:0.85em; margin:6px 0 0;";
+    hint.textContent = t("admin_debug_hint");
+    box.onchange = async () => {
+        const want = box.checked;
+        box.disabled = true;
+        const { error: err } = await sb.rpc("set_debug_mode", { p_on: want });
+        box.disabled = false;
+        if (err) { box.checked = !want; showToast(t("admin_debug_error"), "error"); console.error(err); return; }
+        showToast(t(want ? "admin_debug_on_toast" : "admin_debug_off_toast"));
+    };
+    card.appendChild(label);
+    card.appendChild(hint);
+    content.appendChild(card);
+}
+
 async function render() {
     const content = document.getElementById("admin-content");
     const { data, error } = await sb.rpc("admin_list_users");
@@ -19,6 +53,7 @@ async function render() {
     }
 
     content.innerHTML = "";
+    await renderDebugCard(content);
     const card = document.createElement("div");
     card.className = "card";
     const table = document.createElement("table");

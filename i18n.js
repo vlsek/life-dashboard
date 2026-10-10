@@ -345,6 +345,11 @@ const translations = {
         admin_thats_you: "(that's you)",
         admin_title: "Admin",
         admin_h1: "🛠 Admin",
+        admin_debug_title: "Debug mode",
+        admin_debug_hint: "Debug mode for your account only: try on Customization items without paying — nothing is saved or charged, other users still see items as locked. The \"Try on\" button in Customization comes in the next update.",
+        admin_debug_on_toast: "Debug mode on ✓",
+        admin_debug_off_toast: "Debug mode off ✓",
+        admin_debug_error: "Couldn't change debug mode. Is migration 066 applied?",
 
         // shared: period picker + charts
         period_week: "This week",
@@ -1130,6 +1135,11 @@ const translations = {
         admin_thats_you: "(это ты)",
         admin_title: "Админка",
         admin_h1: "🛠 Админка",
+        admin_debug_title: "Режим отладки",
+        admin_debug_hint: "Режим отладки только для твоего аккаунта: примерка предметов Кастомизации без оплаты — ничего не сохраняется и не списывается, другие пользователи видят предметы закрытыми. Кнопка «Примерить» в Кастомизации появится в следующем обновлении.",
+        admin_debug_on_toast: "Режим отладки включён ✓",
+        admin_debug_off_toast: "Режим отладки выключен ✓",
+        admin_debug_error: "Не удалось изменить режим отладки. Применена ли миграция 066?",
 
         // shared: period picker + charts
         period_week: "Эта неделя",
