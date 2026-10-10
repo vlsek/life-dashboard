@@ -66,7 +66,9 @@ function toggle() {
   outline-offset: 2px;
 }
 .ph-card {
-  width: min(24rem, 100%);
+  align-self: center; /* по центру страницы, а не у правого края (владелец 2026-10-10) */
+  box-sizing: border-box;
+  width: min(36rem, 100%);
   margin-top: 0.4rem;
   padding: 0.9rem 1rem;
   border-radius: 0.9rem;
