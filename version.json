@@ -1,6 +1,13 @@
 {
-  "version": "4.25",
+  "version": "4.26",
   "en": [
+    {
+      "version": "4.26",
+      "date": "2026-10-10 06:45",
+      "changes": [
+        "Goals, Skills, Challenges, Workouts, Milestones and Languages now have a collapsible block at the bottom of the page: \"Achievements you can earn here\". It lists the achievement steps of that section (for example, goals completed 1 / 10 / 25 / 50), marks the ones you already have with a check and links to all achievements. Collapsed by default. Secret achievements are not shown in it. No migrations."
+      ]
+    },
     {
       "version": "4.25",
       "date": "2026-10-10 06:41",
@@ -3042,6 +3049,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.26",
+      "date": "2026-10-10 06:45",
+      "changes": [
+        "В разделах «Цели», «Навыки», «Челленджи», «Тренировки», «Вехи» и «Языки» внизу страницы появился сворачиваемый блок «Какие достижения тут можно получить»: ступени достижений этого раздела (например, выполнено целей 1 / 10 / 25 / 50), уже полученные отмечены галочкой, есть ссылка на все достижения. По умолчанию блок свёрнут. Секретные достижения в нём не показываются. Миграций нет."
+      ]
+    },
     {
       "version": "4.25",
       "date": "2026-10-10 06:41",

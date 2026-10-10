@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.25";
+const SITE_VERSION = "4.26";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.26", date: "2026-10-10 06:45", changes: [
+        "В разделах «Цели», «Навыки», «Челленджи», «Тренировки», «Вехи» и «Языки» внизу страницы появился сворачиваемый блок «Какие достижения тут можно получить»: ступени достижений этого раздела (например, выполнено целей 1 / 10 / 25 / 50), уже полученные отмечены галочкой, есть ссылка на все достижения. По умолчанию блок свёрнут. Секретные достижения в нём не показываются. Миграций нет."
+    ]},
     { version: "4.25", date: "2026-10-10 06:41", changes: [
         "Достижения: появились 10 СКРЫТЫХ достижений — их нет в списке и в счётчике «открыто N из M», они выдаются сами за особые дела (год серии, 200 идеальных дней, 5000 баллов, 1000 отметок, 100 записей веса, «Универсал» — по делу в каждом из 7 разделов, 3 недели мега-продуктивности, 500 слов, 500 тренировок, 100 отметок вех). Получили — появляется окно «Новое достижение», а найденные собираются в блоке «Секретные» внизу страницы (блока нет, пока ничего не найдено). Наград пока нет. Миграций нет."
     ]},
@@ -1885,6 +1888,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.26", date: "2026-10-10 06:45", changes: [
+        "Goals, Skills, Challenges, Workouts, Milestones and Languages now have a collapsible block at the bottom of the page: \"Achievements you can earn here\". It lists the achievement steps of that section (for example, goals completed 1 / 10 / 25 / 50), marks the ones you already have with a check and links to all achievements. Collapsed by default. Secret achievements are not shown in it. No migrations."
+    ]},
     { version: "4.25", date: "2026-10-10 06:41", changes: [
         "Achievements: 10 HIDDEN achievements — they are not in the list or the \"unlocked N of M\" counter and are granted automatically for special feats (a 365-day streak, 200 perfect days, 5000 points, 1000 marks, 100 weight entries, \"All-rounder\" — something done in each of 7 sections, 3 mega-productivity weeks, 500 words, 500 workouts, 100 milestone marks). On receipt the \"New achievement\" window appears and the found ones collect in a \"Secret\" block at the bottom of the page (hidden until something is found). No rewards yet. No migrations."
     ]},
