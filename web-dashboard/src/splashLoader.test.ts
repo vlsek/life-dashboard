@@ -67,8 +67,8 @@ describe('живое пламя: устройство', () => {
     }
   })
 
-  it('старых языков (tongue-*) нет нигде: ни у заставки, ни у пламени стрика', () => {
-    expect(css).not.toMatch(/tongue/)
+  it('у единого пламени (.splash-live) и у пламени стрика (.streak-live) нет старых языков; вариант «tongues» вправе иметь свои', () => {
+    expect(css).not.toMatch(/\.(?:splash|streak)-live \.tongue/)
     expect(css).toMatch(/\.streak-live \.layer-outer \{[^}]*animation: flame-morph-out /)
     expect(css).toMatch(/\.streak-live \.layer-core \{[^}]*animation: flame-morph-core /)
   })

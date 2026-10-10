@@ -137,7 +137,6 @@ for p in sorted(glob.glob('web-*/src/style.css')):
         if not m:
             continue
         t = t[:m.start()] + CSS + t[m.end():]
-    t = re.sub(r'@keyframes tongue-(?:l|r|c|core) \{\n(?:  [^\n]*\n)+\}\n', '', t)  # v4.39: языки больше нигде не используются
     put(p, t)
 
 for p in sorted(glob.glob('web-*/index.html')):
