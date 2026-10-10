@@ -68,18 +68,20 @@ function summary(m: Metric): string {
       <p class="dim mb-3 text-xs">{{ t('records_setting_metrics_hint') }}</p>
 
       <p v-if="metrics.length === 0" class="dim">{{ t('dash_metrics_manager_empty') }}</p>
-      <table v-else class="w-full text-sm">
-        <tbody>
-          <tr v-for="m in metrics" :key="m.id" class="align-middle">
-            <td class="py-1 pr-2"><MetricIcon :icon="m.icon" /> {{ m.name }}</td>
-            <td class="dim py-1 pr-2 text-xs">{{ summary(m) }}</td>
-            <td class="whitespace-nowrap py-1 text-right">
-              <button class="secondary mr-1 px-2 py-0.5" @click="openEdit(m)"><Icon name="edit" /></button>
-              <button class="danger px-2 py-0.5" @click="emit('remove', m)"><Icon name="trash" /></button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div v-else class="table-scroll overflow-x-auto" data-test="table-scroll">
+        <table class="w-full text-sm">
+          <tbody>
+            <tr v-for="m in metrics" :key="m.id" class="align-middle">
+              <td class="py-1 pr-2"><MetricIcon :icon="m.icon" /> {{ m.name }}</td>
+              <td class="dim py-1 pr-2 text-xs">{{ summary(m) }}</td>
+              <td class="whitespace-nowrap py-1 text-right">
+                <button class="secondary mr-1 px-2 py-0.5" @click="openEdit(m)"><Icon name="edit" /></button>
+                <button class="danger px-2 py-0.5" @click="emit('remove', m)"><Icon name="trash" /></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <p v-if="error && !formOpen" class="mt-2 text-sm" style="color: var(--danger)">{{ error }}</p>
 

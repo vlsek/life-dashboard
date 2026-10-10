@@ -59,7 +59,7 @@ const placeholder = computed(() =>
       <button class="secondary" @click="onAdd"><Icon name="plus" /></button>
     </div>
 
-    <div v-if="sortedEntries.length > 0" class="max-h-40 overflow-y-auto">
+    <div v-if="sortedEntries.length > 0" class="max-h-40 overflow-x-auto overflow-y-auto">
       <table class="w-full text-sm">
         <tbody>
           <tr v-for="e in sortedEntries" :key="e.id" class="align-top">

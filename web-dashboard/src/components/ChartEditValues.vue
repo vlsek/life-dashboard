@@ -24,7 +24,7 @@ async function onChange(p: SeriesPoint, e: Event) {
 <template>
   <div>
     <button type="button" class="secondary mt-1 px-2.5 py-0.5 text-sm" data-test="toggle" @click="open = !open"><EmojiText :text="t('dash_chart_edit_values_btn')" /></button>
-    <div v-if="open" class="mt-2 max-h-56 overflow-y-auto">
+    <div v-if="open" class="mt-2 max-h-56 overflow-x-auto overflow-y-auto">
       <table>
         <tbody>
           <!-- сначала недавние даты -->

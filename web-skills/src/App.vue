@@ -170,18 +170,20 @@ async function onDeleteBook(b: Book) {
 
         <CollapsibleSection id="mastered" :title="t('skills_mastered_h2')" :count="mastered.length">
         <p v-if="mastered.length === 0" class="dim">{{ t('skills_none_mastered') }}</p>
-        <table v-else class="w-full">
-          <tbody>
-            <tr v-for="s in mastered" :key="s.id" class="align-top">
-              <td class="done-text">{{ s.name }}</td>
-              <td class="whitespace-nowrap px-2 text-xs">{{ s.points ?? 10 }} <CoinIcon /></td>
-              <td class="whitespace-nowrap text-right">
-                <button class="secondary icon-btn" :title="t('skills_edit_aria')" :aria-label="t('skills_edit_aria')" @click="skillFormTarget = s"><Icon name="edit" /></button>
-                <button class="danger icon-btn ml-1" :title="t('skills_delete_aria')" :aria-label="t('skills_delete_aria')" @click="onDeleteSkill(s)"><Icon name="trash" /></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div v-else class="table-scroll overflow-x-auto" data-test="table-scroll">
+          <table class="w-full">
+            <tbody>
+              <tr v-for="s in mastered" :key="s.id" class="align-top">
+                <td class="done-text">{{ s.name }}</td>
+                <td class="whitespace-nowrap px-2 text-xs">{{ s.points ?? 10 }} <CoinIcon /></td>
+                <td class="whitespace-nowrap text-right">
+                  <button class="secondary icon-btn" :title="t('skills_edit_aria')" :aria-label="t('skills_edit_aria')" @click="skillFormTarget = s"><Icon name="edit" /></button>
+                  <button class="danger icon-btn ml-1" :title="t('skills_delete_aria')" :aria-label="t('skills_delete_aria')" @click="onDeleteSkill(s)"><Icon name="trash" /></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         </CollapsibleSection>
       </template>
 
@@ -198,37 +200,41 @@ async function onDeleteBook(b: Book) {
       <template v-else>
         <CollapsibleSection id="books_todo" :title="t('skills_books_to_read_h3')" :count="activeBooks.length">
         <p v-if="activeBooks.length === 0" class="dim">{{ t('skills_book_list_empty') }}</p>
-        <table v-else class="mb-6 w-full">
-          <tbody>
-            <tr v-for="b in activeBooks" :key="b.id" class="align-top">
-              <td class="px-1"><input type="checkbox" :checked="false" @change="toggleBookDone(b)" /></td>
-              <td>{{ b.author ? `${b.title} — ${b.author}` : b.title }}</td>
-              <td class="whitespace-nowrap px-2 text-xs">{{ b.points ?? 10 }} <CoinIcon /></td>
-              <td class="whitespace-nowrap text-right">
-                <button class="secondary icon-btn" :title="t('skills_edit_aria')" :aria-label="t('skills_edit_aria')" @click="bookFormTarget = b"><Icon name="edit" /></button>
-                <button class="danger icon-btn ml-1" :title="t('skills_delete_aria')" :aria-label="t('skills_delete_aria')" @click="onDeleteBook(b)"><Icon name="trash" /></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div v-else class="table-scroll overflow-x-auto" data-test="table-scroll">
+          <table class="mb-6 w-full">
+            <tbody>
+              <tr v-for="b in activeBooks" :key="b.id" class="align-top">
+                <td class="px-1"><input type="checkbox" :checked="false" @change="toggleBookDone(b)" /></td>
+                <td>{{ b.author ? `${b.title} — ${b.author}` : b.title }}</td>
+                <td class="whitespace-nowrap px-2 text-xs">{{ b.points ?? 10 }} <CoinIcon /></td>
+                <td class="whitespace-nowrap text-right">
+                  <button class="secondary icon-btn" :title="t('skills_edit_aria')" :aria-label="t('skills_edit_aria')" @click="bookFormTarget = b"><Icon name="edit" /></button>
+                  <button class="danger icon-btn ml-1" :title="t('skills_delete_aria')" :aria-label="t('skills_delete_aria')" @click="onDeleteBook(b)"><Icon name="trash" /></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         </CollapsibleSection>
 
         <CollapsibleSection id="books_done" :title="t('skills_books_done_h3')" :count="doneBooks.length">
         <p v-if="doneBooks.length === 0" class="dim">{{ t('skills_book_none_read') }}</p>
-        <table v-else class="w-full">
-          <tbody>
-            <tr v-for="b in doneBooks" :key="b.id" class="align-top">
-              <td class="px-1"><input type="checkbox" :checked="true" @change="toggleBookDone(b)" /></td>
-              <td class="done-text">{{ b.author ? `${b.title} — ${b.author}` : b.title }}</td>
-              <td class="whitespace-nowrap px-2 text-xs">{{ b.points ?? 10 }} <CoinIcon /></td>
-              <td class="dim whitespace-nowrap px-2 text-xs">{{ fmtRu(b.done_date) }}</td>
-              <td class="whitespace-nowrap text-right">
-                <button class="secondary icon-btn" :title="t('skills_edit_aria')" :aria-label="t('skills_edit_aria')" @click="bookFormTarget = b"><Icon name="edit" /></button>
-                <button class="danger icon-btn ml-1" :title="t('skills_delete_aria')" :aria-label="t('skills_delete_aria')" @click="onDeleteBook(b)"><Icon name="trash" /></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div v-else class="table-scroll overflow-x-auto" data-test="table-scroll">
+          <table class="w-full">
+            <tbody>
+              <tr v-for="b in doneBooks" :key="b.id" class="align-top">
+                <td class="px-1"><input type="checkbox" :checked="true" @change="toggleBookDone(b)" /></td>
+                <td class="done-text">{{ b.author ? `${b.title} — ${b.author}` : b.title }}</td>
+                <td class="whitespace-nowrap px-2 text-xs">{{ b.points ?? 10 }} <CoinIcon /></td>
+                <td class="dim whitespace-nowrap px-2 text-xs">{{ fmtRu(b.done_date) }}</td>
+                <td class="whitespace-nowrap text-right">
+                  <button class="secondary icon-btn" :title="t('skills_edit_aria')" :aria-label="t('skills_edit_aria')" @click="bookFormTarget = b"><Icon name="edit" /></button>
+                  <button class="danger icon-btn ml-1" :title="t('skills_delete_aria')" :aria-label="t('skills_delete_aria')" @click="onDeleteBook(b)"><Icon name="trash" /></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         </CollapsibleSection>
       </template>
     </template>

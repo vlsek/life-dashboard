@@ -31,15 +31,17 @@ function fmtKm(n: number | null): string {
       <h3 class="mb-3 text-lg font-bold">{{ t('ms_history_title') }} — {{ milestone.name }}</h3>
 
       <p v-if="rows.length === 0" class="dim">{{ t('ms_history_empty') }}</p>
-      <table v-else class="w-full text-sm">
-        <tbody>
-          <tr v-for="(h, i) in rows" :key="i" class="align-top">
-            <td class="py-1 pr-3 whitespace-nowrap">{{ fmtRu(h.date) }}</td>
-            <td class="dim py-1 pr-3 whitespace-nowrap">{{ fmtKm(h.km) }}</td>
-            <td class="dim py-1">{{ h.note || '' }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div v-else class="table-scroll overflow-x-auto" data-test="table-scroll">
+        <table class="w-full text-sm">
+          <tbody>
+            <tr v-for="(h, i) in rows" :key="i" class="align-top">
+              <td class="py-1 pr-3 whitespace-nowrap">{{ fmtRu(h.date) }}</td>
+              <td class="dim py-1 pr-3 whitespace-nowrap">{{ fmtKm(h.km) }}</td>
+              <td class="dim py-1">{{ h.note || '' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <div class="mt-4 flex justify-end">
         <button

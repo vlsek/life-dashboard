@@ -153,52 +153,54 @@ const collapsed = ref(false)
     <p class="dim mb-2.5 text-xs"><EmojiText :text="t('dash_planned_bonus_hint')" /></p>
 
     <p v-if="planned.length === 0" class="dim">{{ t('dash_planned_empty') }}</p>
-    <table v-else>
-      <tbody>
-        <tr v-for="(item, i) in planned" :key="i + item.text" data-test="item">
-          <template v-if="item.type === 'goal'">
-            <template v-if="goalRowKind(goalOf(item)) === 'missing'">
-              <td style="color: #e0a93b"><Icon name="alert" /></td>
-              <td>{{ item.text }}{{ t('dash_goal_deleted_suffix') }}</td>
-              <td></td>
+    <div v-else class="table-scroll overflow-x-auto" data-test="table-scroll">
+      <table>
+        <tbody>
+          <tr v-for="(item, i) in planned" :key="i + item.text" data-test="item">
+            <template v-if="item.type === 'goal'">
+              <template v-if="goalRowKind(goalOf(item)) === 'missing'">
+                <td style="color: #e0a93b"><Icon name="alert" /></td>
+                <td>{{ item.text }}{{ t('dash_goal_deleted_suffix') }}</td>
+                <td></td>
+              </template>
+              <template v-else>
+                <td>
+                  <input v-if="goalRowKind(goalOf(item)) === 'single'" type="checkbox" :checked="!!goalOf(item)!.done" data-test="goal-check" @change="setGoalDone(goalOf(item)!, ($event.target as HTMLInputElement).checked, day)" />
+                  <span v-else class="dim">{{ stageLabel(goalOf(item)!) }}</span>
+                </td>
+                <td :class="{ 'line-through opacity-60': goalOf(item)!.done }">{{ item.text }}</td>
+                <td>
+                  <button type="button" class="secondary px-2 py-0.5" :title="stripEmoji(t('dash_planned_bonus_toggle_title'))" data-test="bonus" @click="toggleItemBonus(i)">
+                    <Icon name="star" :extra-style="item.bonus ? 'color:#e0a93b; fill:#e0a93b;' : 'opacity:0.55;'" />
+                  </button>
+                </td>
+              </template>
             </template>
             <template v-else>
-              <td>
-                <input v-if="goalRowKind(goalOf(item)) === 'single'" type="checkbox" :checked="!!goalOf(item)!.done" data-test="goal-check" @change="setGoalDone(goalOf(item)!, ($event.target as HTMLInputElement).checked, day)" />
-                <span v-else class="dim">{{ stageLabel(goalOf(item)!) }}</span>
-              </td>
-              <td :class="{ 'line-through opacity-60': goalOf(item)!.done }">{{ item.text }}</td>
+              <td><input type="checkbox" :checked="!!item.done" data-test="custom-check" @change="setItemDone(i, ($event.target as HTMLInputElement).checked)" /></td>
+              <td :class="{ 'line-through opacity-60': item.done }">{{ item.text }}</td>
               <td>
                 <button type="button" class="secondary px-2 py-0.5" :title="stripEmoji(t('dash_planned_bonus_toggle_title'))" data-test="bonus" @click="toggleItemBonus(i)">
                   <Icon name="star" :extra-style="item.bonus ? 'color:#e0a93b; fill:#e0a93b;' : 'opacity:0.55;'" />
                 </button>
               </td>
             </template>
-          </template>
-          <template v-else>
-            <td><input type="checkbox" :checked="!!item.done" data-test="custom-check" @change="setItemDone(i, ($event.target as HTMLInputElement).checked)" /></td>
-            <td :class="{ 'line-through opacity-60': item.done }">{{ item.text }}</td>
             <td>
-              <button type="button" class="secondary px-2 py-0.5" :title="stripEmoji(t('dash_planned_bonus_toggle_title'))" data-test="bonus" @click="toggleItemBonus(i)">
-                <Icon name="star" :extra-style="item.bonus ? 'color:#e0a93b; fill:#e0a93b;' : 'opacity:0.55;'" />
-              </button>
+              <input
+                v-if="!(item.type === 'goal' && goalRowKind(goalOf(item)) === 'missing')"
+                type="time"
+                class="plan-time"
+                :value="item.time ?? ''"
+                :title="item.time ? t('plan_time_clear') : t('plan_time_set')"
+                data-test="time"
+                @change="onTimeChange(i, $event)"
+              />
             </td>
-          </template>
-          <td>
-            <input
-              v-if="!(item.type === 'goal' && goalRowKind(goalOf(item)) === 'missing')"
-              type="time"
-              class="plan-time"
-              :value="item.time ?? ''"
-              :title="item.time ? t('plan_time_clear') : t('plan_time_set')"
-              data-test="time"
-              @change="onTimeChange(i, $event)"
-            />
-          </td>
-          <td><button type="button" class="secondary px-2 py-0.5" data-test="remove" @click="removeItem(i)"><Icon name="x" /></button></td>
-        </tr>
-      </tbody>
-    </table>
+            <td><button type="button" class="secondary px-2 py-0.5" data-test="remove" @click="removeItem(i)"><Icon name="x" /></button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- BACKLOG 1078: цели, выполненные в этот день, но не стоявшие в плане, — чтобы выполненное не пропадало с главной -->
     <div v-if="doneGoals.length" class="mt-2" data-test="done-goals">

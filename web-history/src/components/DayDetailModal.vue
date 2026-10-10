@@ -91,22 +91,24 @@ const notes = computed<string[]>(() => {
 
         <template v-if="ctx.metrics.length">
           <h4 class="mb-1.5 mt-3 font-semibold">{{ t('hist_metrics_h') }}</h4>
-          <table class="w-full text-sm">
-            <tbody>
-              <tr v-for="r in metricRows" :key="r.metric.id">
-                <td class="w-[1%] pr-2 align-top">
-                  <span v-if="r.done" style="color: var(--hist-ok)">✓</span>
-                  <span v-else-if="r.expected" style="color: var(--text-dim); opacity: 0.6">✕</span>
-                  <span v-else style="color: var(--text-dim)">–</span>
-                </td>
-                <td class="py-1 align-top">
-                  <span class="inline-flex items-center gap-1"><MetricIcon :icon="r.metric.icon" /> {{ r.metric.name }}</span>
-                  <div v-if="r.offLabel" class="text-[0.75em]" style="color: var(--text-dim)">{{ r.offLabel }}</div>
-                </td>
-                <td class="whitespace-pre-line py-1 text-right align-top">{{ r.valueText }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-scroll overflow-x-auto" data-test="table-scroll">
+            <table class="w-full text-sm">
+              <tbody>
+                <tr v-for="r in metricRows" :key="r.metric.id">
+                  <td class="w-[1%] pr-2 align-top">
+                    <span v-if="r.done" style="color: var(--hist-ok)">✓</span>
+                    <span v-else-if="r.expected" style="color: var(--text-dim); opacity: 0.6">✕</span>
+                    <span v-else style="color: var(--text-dim)">–</span>
+                  </td>
+                  <td class="py-1 align-top">
+                    <span class="inline-flex items-center gap-1"><MetricIcon :icon="r.metric.icon" /> {{ r.metric.name }}</span>
+                    <div v-if="r.offLabel" class="text-[0.75em]" style="color: var(--text-dim)">{{ r.offLabel }}</div>
+                  </td>
+                  <td class="whitespace-pre-line py-1 text-right align-top">{{ r.valueText }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </template>
 
         <template v-if="plannedRows.length">
