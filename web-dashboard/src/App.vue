@@ -9,6 +9,7 @@ import WaterSection from './components/WaterSection.vue'
 import ChartsSection from './components/ChartsSection.vue'
 import HeaderProgressBadge from './components/HeaderProgressBadge.vue'
 import { syncWeekGauge, weekGaugeStyle } from './lib/useWeekGauge'
+import { syncDayGauge } from './lib/useDayGauge'
 import { dayRingTarget, weekRingTarget } from './lib/ringPlacement'
 import type { RingData } from './lib/ringPlacement'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
@@ -91,6 +92,7 @@ onMounted(async () => {
   await init()
   if (auth.value.status === 'ready') {
     void syncWeekGauge(auth.value.userId) // вид спидометра недели из «Кастомизации» (BACKLOG 53.2)
+    void syncDayGauge(auth.value.userId) // вид спидометра недели из «Кастомизации» (BACKLOG 53.2)
     await loadLayout(auth.value.userId)
     await loadMilestonesReminder(auth.value.userId)
     void loadEveningReminder(auth.value.userId)

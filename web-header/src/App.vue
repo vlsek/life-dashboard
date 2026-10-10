@@ -27,6 +27,7 @@ import { sidebarProgress } from './lib/prefs'
 import { syncUnlockedThemes } from './lib/syncUnlockedThemes'
 import { syncUiSettings } from './lib/uiSettingsSync'
 import { syncWeekGauge, weekGaugeStyle } from './lib/useWeekGauge'
+import { syncDayGauge } from './lib/useDayGauge'
 import { pageKeyFor, readFavorites, saveFavoritesToProfile, syncFavoritesFromProfile, toggleFavorite, writeFavorites } from './lib/favorites'
 
 // panelOnly — режим для Дашборда: своя шапка (стакан, кольца) там уже есть, поэтому бандл даёт только правую панель.
@@ -54,6 +55,7 @@ onMounted(async () => {
   sidebarTarget.value = document.getElementById('sidebar-top')
   void sideProfile.load(uid, data.session?.user)
   void syncWeekGauge(uid) // вид спидометра недели из «Кастомизации» (BACKLOG 53.2)
+  void syncDayGauge(uid) // вид спидометра недели из «Кастомизации» (BACKLOG 53.2)
   void syncUiSettings(uid) // настройки и оформление между устройствами (BACKLOG 48.3, миграция 064)
   void syncUnlockedThemes(uid) // какие темы-награды открыты (замок тем, v3.42)
   void ensureTrackWater(uid) // «Отслеживать воду» (BACKLOG 932): сначала из кэша устройства — стакан не мигает

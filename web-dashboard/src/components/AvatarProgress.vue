@@ -6,6 +6,8 @@ import type { RingData } from '../lib/ringPlacement'
 import { t } from '../lib/i18n'
 import { stripEmoji } from '../lib/emojiText'
 import { frameRing } from '../lib/frameRing'
+import { daySegments, DAY_GLOW_FILTER } from '../lib/dayGauge'
+import { dayGaugeStyle } from '../lib/useDayGauge'
 
 // Колонка аватарки: фото 44px внутри кольца прогресса дня 52px (пустое, если кольца нет), процент
 // под ней и шестерёнка настроек в углу — портировано из loadProfileInner() в dashboard.js.
@@ -17,7 +19,8 @@ const geo = computed(() => (props.ring ? circleGeometry(24, props.ring.basePct, 
 const fr = computed(() => frameRing(props.frame))
 const GRAD_ID = 'avatar-ring-grad'
 const arcStroke = computed(() => (!fr.value ? 'var(--accent)' : fr.value.stops.length > 1 ? `url(#${GRAD_ID})` : fr.value.stops[0]))
-const arcFilter = computed(() => (fr.value?.glow ? `drop-shadow(0 0 3px ${fr.value.glow})` : undefined))
+const arcFilter = computed(() => (fr.value?.glow ? `drop-shadow(0 0 3px ${fr.value.glow})` : dayGaugeStyle.value === 'glow' ? DAY_GLOW_FILTER : undefined)) // свечение вида «Кастомизации» уступает свечению рамки
+const segs = computed(() => (props.ring ? daySegments(26, 26, 24, props.ring.basePct, props.ring.bonusPct) : []))
 </script>
 
 <template>
@@ -40,9 +43,18 @@ const arcFilter = computed(() => (fr.value?.glow ? `drop-shadow(0 0 3px ${fr.val
             <stop v-for="(c, i) in fr.stops" :key="i" :offset="`${Math.round((i / (fr.stops.length - 1)) * 100)}%`" :stop-color="c" />
           </linearGradient>
         </defs>
-        <circle cx="26" cy="26" r="24" fill="none" stroke="var(--border)" stroke-width="3" />
-        <circle cx="26" cy="26" r="24" fill="none" :stroke="arcStroke" :class="fr?.anim" :style="arcFilter ? { filter: arcFilter } : undefined" stroke-width="3" stroke-linecap="round" :stroke-dasharray="geo.circumference" :stroke-dashoffset="geo.offsetBase" data-test="avatar-ring-arc" />
-        <circle v-if="ring.bonusPct > 0" cx="26" cy="26" r="24" fill="none" class="ring-bonus" stroke-width="3" stroke-linecap="round" :stroke-dasharray="geo.circumference" :stroke-dashoffset="geo.offsetBonus" />
+        <template v-if="dayGaugeStyle === 'dashed'">
+          <g v-for="(sg, i) in segs" :key="i" data-test="avatar-ring-seg">
+            <path :d="sg.d" fill="none" stroke="var(--border)" stroke-width="3" stroke-linecap="round" />
+            <path v-if="sg.base" :d="sg.d" fill="none" :stroke="arcStroke" :class="fr?.anim" :style="arcFilter ? { filter: arcFilter } : undefined" stroke-width="3" stroke-linecap="round" data-test="avatar-ring-arc" />
+            <path v-if="sg.bonus" :d="sg.d" fill="none" class="ring-bonus" stroke-width="1.4" stroke-linecap="round" />
+          </g>
+        </template>
+        <template v-else>
+          <circle cx="26" cy="26" r="24" fill="none" stroke="var(--border)" stroke-width="3" />
+          <circle cx="26" cy="26" r="24" fill="none" :stroke="arcStroke" :class="fr?.anim" :style="arcFilter ? { filter: arcFilter } : undefined" stroke-width="3" stroke-linecap="round" :stroke-dasharray="geo.circumference" :stroke-dashoffset="geo.offsetBase" data-test="avatar-ring-arc" />
+          <circle v-if="ring.bonusPct > 0" cx="26" cy="26" r="24" fill="none" class="ring-bonus" stroke-width="3" stroke-linecap="round" :stroke-dasharray="geo.circumference" :stroke-dashoffset="geo.offsetBonus" />
+        </template>
       </svg>
 
       <button

@@ -44,3 +44,15 @@ describe('weekGauge: копии в пилотах', () => {
   })
 })
 
+
+// BACKLOG 53.2 срез 2: вид спидометра дня — копии dayGauge.ts (три) и useDayGauge.ts (шапка и Дашборд).
+describe('dayGauge: копии в пилотах', () => {
+  it('dayGauge.ts одинаков в web-customization, web-header и web-dashboard (менять вместе)', () => {
+    const base = read('src/lib/dayGauge.ts')
+    expect(read('../web-header/src/lib/dayGauge.ts')).toBe(base)
+    expect(read('../web-dashboard/src/lib/dayGauge.ts')).toBe(base)
+  })
+  it('useDayGauge.ts одинаков в web-header и web-dashboard', () => {
+    expect(read('../web-dashboard/src/lib/useDayGauge.ts')).toBe(read('../web-header/src/lib/useDayGauge.ts'))
+  })
+})
