@@ -1,6 +1,13 @@
 {
-  "version": "4.22",
+  "version": "4.23",
   "en": [
+    {
+      "version": "4.23",
+      "date": "2026-10-10 03:37",
+      "changes": [
+        "Customization: every section (Themes, frames, glasses, etc.) now collapses — a header button with an \"owned/total\" counter; the state is remembered on this device. Rarity groups inside a section collapse separately. No migrations."
+      ]
+    },
     {
       "version": "4.22",
       "date": "2026-10-10 03:34",
@@ -3021,6 +3028,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.23",
+      "date": "2026-10-10 03:37",
+      "changes": [
+        "Кастомизация: каждый раздел (Темы, рамки, стаканы и т. д.) теперь сворачивается — заголовок-кнопка со счётчиком «открыто/всего»; состояние запоминается на этом устройстве. Группы по редкости внутри раздела сворачиваются отдельно. Без миграций."
+      ]
+    },
     {
       "version": "4.22",
       "date": "2026-10-10 03:34",

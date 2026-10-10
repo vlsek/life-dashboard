@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.22";
+const SITE_VERSION = "4.23";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.23", date: "2026-10-10 03:37", changes: [
+        "Кастомизация: каждый раздел (Темы, рамки, стаканы и т. д.) теперь сворачивается — заголовок-кнопка со счётчиком «открыто/всего»; состояние запоминается на этом устройстве. Группы по редкости внутри раздела сворачиваются отдельно. Без миграций."
+    ]},
     { version: "4.22", date: "2026-10-10 03:34", changes: [
         "Аватарка: по нажатию на фото в «Профиле» открывается окно «Выбрать аватарку» — 20 нарисованных животных (выбрал — аватарка сменилась сразу) или «Загрузить своё фото». Раньше нажатие сразу открывало выбор файла."
     ]},
@@ -1876,6 +1879,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.23", date: "2026-10-10 03:37", changes: [
+        "Customization: every section (Themes, frames, glasses, etc.) now collapses — a header button with an \"owned/total\" counter; the state is remembered on this device. Rarity groups inside a section collapse separately. No migrations."
+    ]},
     { version: "4.22", date: "2026-10-10 03:34", changes: [
         "Avatar: tapping your photo in the Profile block now opens a \"Choose an avatar\" window — 20 drawn animals (pick one and your avatar changes right away) or \"Upload my own photo\". Before, tapping went straight to the file picker."
     ]},
