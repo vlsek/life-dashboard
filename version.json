@@ -1,6 +1,13 @@
 {
-  "version": "4.39",
+  "version": "4.40",
   "en": [
+    {
+      "version": "4.40",
+      "date": "2026-10-10 12:24",
+      "changes": [
+        "\"Idiom of the day\" is now in Languages: a proverb or set phrase (English, German, French, Spanish) with a translation and explanation. \"Another\" browses the collection and \"Add to my words\" puts the idiom into your dictionary."
+      ]
+    },
     {
       "version": "4.39",
       "date": "2026-10-10 12:23",
@@ -3140,6 +3147,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.40",
+      "date": "2026-10-10 12:24",
+      "changes": [
+        "В «Языках» появилась «Идиома дня»: пословица или устойчивое выражение (английский, немецкий, французский, испанский) с переводом и пояснением. Кнопка «Другая» листает подборку, «В мои слова» добавляет идиому в ваш словарь."
+      ]
+    },
     {
       "version": "4.39",
       "date": "2026-10-10 12:23",
