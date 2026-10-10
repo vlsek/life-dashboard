@@ -4,7 +4,6 @@ import { mount } from '@vue/test-utils'
 import { readFileSync } from 'node:fs'
 import SplashLoader from './components/SplashLoader.vue'
 import SplashFlameLive from './components/splash/SplashFlameLive.vue'
-import SplashFlameTongues from './components/splash/SplashFlameTongues.vue'
 
 const html: string = readFileSync('index.html', 'utf-8')
 const css: string = readFileSync('src/style.css', 'utf-8')
