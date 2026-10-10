@@ -6,6 +6,7 @@ import Icon from './components/Icon.vue'
 import ThemeCard from './components/ThemeCard.vue'
 import ThemeUnlockModal from './components/ThemeUnlockModal.vue'
 import SplashPicker from './components/SplashPicker.vue'
+import ChartMarkerPicker from './components/ChartMarkerPicker.vue'
 import RarityGroup from './components/RarityGroup.vue'
 import VisibilityChips from './components/VisibilityChips.vue'
 import { groupOfItem, groupOfTheme, useVisibility, type VisGroup } from './lib/useVisibility'
@@ -127,6 +128,11 @@ const nothingShown = computed(() => !visibleThemeBuckets.value.length && !visibl
         </SectionGroup>
 
         <!-- Заставка загрузки (BACKLOG 16, срез 2): 4 бесплатных варианта, выбор в localStorage -->
+        <!-- Маркеры графиков (BACKLOG 13:54): 4 бесплатных стиля, выбор в localStorage -->
+        <SectionGroup id="chart-markers" :title="t('cust_sec_markers')" :total="4" :owned="4" :collapsed="isCollapsed('section:chart-markers')" @toggle="toggle('section:chart-markers')">
+          <ChartMarkerPicker />
+        </SectionGroup>
+
         <SectionGroup id="splash" :title="t('cust_sec_splash')" :total="4" :owned="4" :collapsed="isCollapsed('section:splash')" @toggle="toggle('section:splash')">
           <SplashPicker />
         </SectionGroup>

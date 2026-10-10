@@ -11,6 +11,7 @@ import MetricIcon from './MetricIcon.vue'
 import RecordBadge from './RecordBadge.vue'
 import { RECORDS_EVENT, formatRecordDate, formatRecordValue, recordsEnabled, type RecordInfo } from '../lib/records'
 import type { VariationRecord } from '../lib/variationChart'
+import { markerDefs, markerParts, nextMarkerUid, readChartMarker } from '../lib/chartMarker'
 
 const props = withDefaults(
   defineProps<{
@@ -60,17 +61,16 @@ function fmtChartLabel(iso: string): string {
 
 // Точка-«мини-круг»: сектора по долям особенностей (одна особенность — сплошной круг её цвета). Подсказка <title> —
 // «дд.мм: 50 классических · 30 алмазных · 20 на бицепс = 100»; названия — текст пользователя, поэтому экранируются.
+// Стиль маркеров-диаграмм (BACKLOG 13:54): выбирается в «Кастомизации» (localStorage `chart_marker`), по умолчанию — прежний плоский.
+const markerStyle = readChartMarker()
+const markerUid = nextMarkerUid()
+
 function pieMarker(x: number, y: number, label: string, shares: VariationShare[]): string {
   const slices = pieSlices(shares, order.value, x, y, 6.5)
   if (!slices.length) return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="${props.color}" />`
   const total = shares.reduce((n, s) => n + (s.reps > 0 ? s.reps : 0), 0)
   const tip = escapeXml(`${label}: ${describeShares(shares, t('chart_legend_none'))} = ${total}`)
-  const parts = slices.map((s) =>
-    s.full
-      ? `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6.5" fill="${s.color}" stroke="var(--bg-card)" stroke-width="1.5" />`
-      : `<path d="${s.path}" fill="${s.color}" stroke="var(--bg-card)" stroke-width="1" />`,
-  )
-  return `<g data-test="pie-point"><title>${tip}</title>${parts.join('')}</g>`
+  return `<g data-test="pie-point"><title>${tip}</title>${markerParts(markerStyle, slices, x, y, 6.5, markerUid)}</g>`
 }
 
 // Портировано 1:1 из svgLineChart() в config.js — строит только внутренность <svg>
@@ -102,7 +102,7 @@ const innerSvg = computed<string | null>(() => {
     shares: p.shares,
   }))
 
-  let svg = ''
+  let svg = colored.value ? markerDefs(markerStyle, markerUid) : ''
 
   if (props.goalValue != null) {
     const gy = h - pad - ((props.goalValue - min) / range) * (h - pad * 2)
