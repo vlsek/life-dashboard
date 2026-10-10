@@ -12,7 +12,7 @@ import { useGoalInvites, incomingPending, outgoingNotices } from './lib/goalInvi
 import { limitChoices, loadInviteLimit, saveInviteLimit } from './lib/inviteLimit'
 import { useGoals } from './lib/useGoals'
 import { deadlineLevel, groupActiveByCategory, sortDone, pointsSummary } from './lib/goals'
-import { upcomingDeadlines } from './lib/goalSections'
+import { categoryProgress, upcomingDeadlines } from './lib/goalSections'
 import { mergeCategories, savedCategories } from './lib/categories'
 import { useGoalCategories } from './lib/useGoalCategories'
 import { t } from './lib/i18n'
@@ -62,6 +62,7 @@ function undoDone(g: Goal) {
 const noCategory = computed(() => t('goals_no_category'))
 const active = computed(() => items.value.filter((g) => !g.done))
 const done = computed(() => sortDone(items.value.filter((g) => g.done)))
+const catProgress = computed(() => categoryProgress(items.value, noCategory.value))
 const upcoming = computed(() => upcomingDeadlines(active.value))
 function upcomingChip(g: Goal): string {
   const { level, days } = deadlineLevel(g.deadline)
@@ -182,7 +183,7 @@ async function onDelete(g: Goal) {
           </ul>
         </CollapsibleSection>
 
-        <CollapsibleSection v-for="[cat, list] in grouped" :id="'cat-' + cat" :key="cat" :title="cat" :count="list.length">
+        <CollapsibleSection v-for="[cat, list] in grouped" :id="'cat-' + cat" :key="cat" :title="cat" :count="list.length" :progress="catProgress[cat]">
           <div class="flex flex-col gap-2">
             <GoalCard
               v-for="g in list"

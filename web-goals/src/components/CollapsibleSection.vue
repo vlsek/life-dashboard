@@ -6,7 +6,7 @@ import { vCollapse } from '../lib/collapseMotion'
 
 // Сворачиваемая секция (BACKLOG 44.4): заголовок-кнопка с шевроном и счётчиком, тело сворачивается плавно (v-collapse,
 // тело остаётся в DOM). Состояние запоминается на устройстве по `id`; сбой localStorage не критичен.
-const props = withDefaults(defineProps<{ id: string; title: string; count?: number | null; defaultOpen?: boolean }>(), { count: null, defaultOpen: true })
+const props = withDefaults(defineProps<{ id: string; title: string; count?: number | null; defaultOpen?: boolean; progress?: { done: number; total: number } | null }>(), { count: null, defaultOpen: true, progress: null })
 
 const KEY = 'goals_section_' + props.id
 function read(): boolean {
@@ -33,6 +33,10 @@ function toggle() {
     <button type="button" class="sec-head" :aria-expanded="open" :data-test="'section-toggle-' + id" @click="toggle">
       <h3 class="m-0 text-base font-medium"><EmojiText :text="title" /></h3>
       <span v-if="count !== null" class="sec-count" data-test="section-count">{{ count }}</span>
+      <span v-if="progress && progress.total > 0" class="sec-progress" data-test="section-progress" :title="progress.done + ' / ' + progress.total">
+        <span class="sec-progress-bar" aria-hidden="true"><span class="sec-progress-fill" :style="{ width: Math.round((progress.done / progress.total) * 100) + '%' }"></span></span>
+        {{ progress.done }}/{{ progress.total }}
+      </span>
       <CollapseChevron :collapsed="!open" class="ml-auto" />
     </button>
     <div v-collapse="open" class="pt-2" :data-test="'section-body-' + id">
@@ -72,5 +76,24 @@ function toggle() {
   font-size: 0.75rem;
   line-height: 1.4rem;
   text-align: center;
+}
+.sec-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+.sec-progress-bar {
+  width: 3.5rem;
+  height: 0.35rem;
+  border-radius: 9999px;
+  background: var(--border);
+  overflow: hidden;
+}
+.sec-progress-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
 }
 </style>

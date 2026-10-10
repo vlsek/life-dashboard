@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { upcomingDeadlines } from './goalSections'
+import { categoryProgress, upcomingDeadlines } from './goalSections'
 import type { Goal } from './types'
 
 const g = (id: string, deadline: string | null, done = false): Goal => ({ id, user_id: 'u', name: id, points: 5, category: 'c', stages: 1, current_stage: 0, done, done_date: null, deadline, difficulty: null, created_at: '2026-01-01' }) as Goal
@@ -12,5 +12,14 @@ describe('«Ближайшие сроки» (BACKLOG 44.2)', () => {
   })
   it('окно настраивается', () => {
     expect(upcomingDeadlines([g('a', '2026-10-12'), g('b', '2026-10-20')], today, 3).map((x) => x.id)).toEqual(['a'])
+  })
+})
+
+describe('мини-прогресс категории (44.2, срез 2)', () => {
+  it('считает выполненные из всех целей категории; пустая категория → «Без категории»', () => {
+    const mk = (id: string, category: string, done: boolean) => ({ ...g(id, null, done), category }) as Goal
+    const p = categoryProgress([mk('a', 'Спорт', true), mk('b', 'Спорт', false), mk('c', 'Спорт', false), mk('d', '', true)], 'Без категории')
+    expect(p['Спорт']).toEqual({ done: 1, total: 3 })
+    expect(p['Без категории']).toEqual({ done: 1, total: 1 })
   })
 })

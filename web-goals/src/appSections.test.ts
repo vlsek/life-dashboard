@@ -73,4 +73,11 @@ describe('Цели: сворачиваемые подразделы', () => {
     expect(w2.get('[data-section="cat-Спорт"]').attributes('data-open')).toBe('false')
     w2.unmount()
   })
+
+  it('в заголовке категории — мини-прогресс «выполнено/всего» (выполненные цели считаются)', () => {
+    const w = mount(App)
+    expect(w.get('[data-section="cat-Спорт"] [data-test="section-progress"]').text()).toBe('1/2')
+    expect(w.get('[data-section="cat-Учёба"] [data-test="section-progress"]').text()).toBe('0/1')
+    w.unmount()
+  })
 })
