@@ -1,6 +1,13 @@
 {
-  "version": "4.49",
+  "version": "4.50",
   "en": [
+    {
+      "version": "4.50",
+      "date": "2026-10-10 12:52",
+      "changes": [
+        "Every category in Goals now shows a mini progress: a thin bar and \"done/total\" right in the section header."
+      ]
+    },
     {
       "version": "4.49",
       "date": "2026-10-10 09:48",
@@ -3210,6 +3217,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.50",
+      "date": "2026-10-10 12:52",
+      "changes": [
+        "В «Целях» у каждой категории появился мини-прогресс: тонкая полоска и «выполнено/всего» прямо в заголовке подраздела."
+      ]
+    },
     {
       "version": "4.49",
       "date": "2026-10-10 09:48",

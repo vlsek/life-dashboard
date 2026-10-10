@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.49";
+const SITE_VERSION = "4.50";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.50", date: "2026-10-10 12:52", changes: [
+        "В «Целях» у каждой категории появился мини-прогресс: тонкая полоска и «выполнено/всего» прямо в заголовке подраздела."
+    ]},
     { version: "4.49", date: "2026-10-10 09:48", changes: [
         "Огонёк у метрики со стриком в «Дневных метриках»: от 7 дней подряд (если сегодня уже засчитано) он теперь живое пламя, как у главного стрика, а не статичная иконка. Тема Emerald: галочка в чекбоксах стала тёмной и читается на светлом акценте. Без миграций."
     ]},
@@ -1957,6 +1960,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.50", date: "2026-10-10 12:52", changes: [
+        "Every category in Goals now shows a mini progress: a thin bar and \"done/total\" right in the section header."
+    ]},
     { version: "4.49", date: "2026-10-10 09:48", changes: [
         "The flame next to a metric with a streak in \"Daily metrics\": from 7 days in a row (when today is already counted) it is now the living flame, like the main streak, instead of a static icon. Emerald theme: the checkbox tick is now dark and readable on the light accent. No migrations."
     ]},
