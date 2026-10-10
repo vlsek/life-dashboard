@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.66";
+const SITE_VERSION = "4.67";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.67", date: "2026-10-10 21:01", changes: [
+        "Графики: кружки-мини-диаграммы у метрик с подходами теперь можно оформить по-новому. В «Кастомизации» новый раздел «Маркеры графиков» с четырьмя бесплатными стилями и живым предпросмотром: «Плоский (как раньше)» — по умолчанию, «Стекло», «Капля» и «Контур». График подхватывает выбор при следующем открытии страницы. Без миграций."
+    ]},
     { version: "4.66", date: "2026-10-11 00:01", changes: [
         "Новая «большая» тема «Токийские сумерки» (Tokyo Nightfall): глубокий ночной синий, мягкие расплывчатые тени карточек и окон, скругление 8 px, аккуратная лавандовая подсветка выбранных и нажатых пунктов и гладкие анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем. При включённом в системе высоком контрасте тени убираются, а лавандовая обводка выбранного остаётся чёткой",
     ]},
@@ -2008,6 +2011,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.67", date: "2026-10-10 21:01", changes: [
+        "Charts: the little pie-chart dots on metrics with sets can now look different. \"Customization\" has a new \"Chart markers\" section with four free styles and a live preview: \"Flat (classic)\" — the default, \"Glass\", \"Drop\" and \"Outline\". Charts pick your choice up the next time the page opens. No migrations."
+    ]},
     { version: "4.66", date: "2026-10-11 00:01", changes: [
         "New big theme Tokyo Nightfall: deep night blue, soft diffuse shadows on cards and windows, 8 px corners, a tidy lavender highlight on selected and pressed items and smooth animations. Pick it in Customization or the header settings; open to everyone. With the system high-contrast setting on, the shadows are removed and the lavender outline of the selected item stays crisp",
     ]},

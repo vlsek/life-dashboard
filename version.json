@@ -1,6 +1,13 @@
 {
-  "version": "4.66",
+  "version": "4.67",
   "en": [
+    {
+      "version": "4.67",
+      "date": "2026-10-10 21:01",
+      "changes": [
+        "Charts: the little pie-chart dots on metrics with sets can now look different. \"Customization\" has a new \"Chart markers\" section with four free styles and a live preview: \"Flat (classic)\" — the default, \"Glass\", \"Drop\" and \"Outline\". Charts pick your choice up the next time the page opens. No migrations."
+      ]
+    },
     {
       "version": "4.66",
       "date": "2026-10-11 00:01",
@@ -3329,6 +3336,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.67",
+      "date": "2026-10-10 21:01",
+      "changes": [
+        "Графики: кружки-мини-диаграммы у метрик с подходами теперь можно оформить по-новому. В «Кастомизации» новый раздел «Маркеры графиков» с четырьмя бесплатными стилями и живым предпросмотром: «Плоский (как раньше)» — по умолчанию, «Стекло», «Капля» и «Контур». График подхватывает выбор при следующем открытии страницы. Без миграций."
+      ]
+    },
     {
       "version": "4.66",
       "date": "2026-10-11 00:01",
