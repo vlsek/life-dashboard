@@ -12,6 +12,7 @@ import InstallModal from './InstallModal.vue'
 import WelcomeTourModal from './WelcomeTourModal.vue'
 import AboutModal from './AboutModal.vue'
 import Icon from './Icon.vue'
+import PageHint from './PageHint.vue'
 import ChangelogModal from './ChangelogModal.vue'
 
 // Порт шапки + выезжающего меню из renderNav() (config.js) на Vue. Копия компонента из
@@ -295,6 +296,7 @@ onUnmounted(() => {
     </Transition>
     </template>
     <div class="ml-auto flex items-center gap-1.5" id="topbar-right"></div>
+    <PageHint page="goals" :suppress="tourOpen" />
   </div>
 
   <div
