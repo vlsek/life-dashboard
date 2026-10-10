@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.27";
+const SITE_VERSION = "4.28";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.28", date: "2026-10-10 03:51", changes: [
+        "Аккаунт: новая карточка «Аватарка» — кнопка «Сменить аватарку» открывает окно с 20 нарисованными животными, фото из Google (если вы вошли через Google) и загрузкой своего фото (до 5 МБ). Аватарка в левом меню меняется сразу, без обновления страницы, — и когда её сменили на Дашборде."
+    ]},
     { version: "4.27", date: "2026-10-10 03:50", changes: [
         "Дашборд: в окне «Прогресс дня» (нажатие на кольцо дня) появилась кольцевая диаграмма по категориям метрик — у каждой категории своя дуга: длина = доля в дне, закраска = сколько выполнено; рядом легенда «сделано/всего · %». Метрики без категории и планы — отдельными группами. Если категория одна — диаграмма не показывается. Без миграций."
     ]},
@@ -1891,6 +1894,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.28", date: "2026-10-10 03:51", changes: [
+        "Account: a new \"Avatar\" card — the \"Change avatar\" button opens a window with 20 drawn animals, your Google photo (if you signed in with Google) and uploading your own photo (up to 5 MB). The avatar in the side menu updates right away, without reloading the page — also when you change it on the Dashboard."
+    ]},
     { version: "4.27", date: "2026-10-10 03:50", changes: [
         "Dashboard: the \"Day progress\" window (tap the day ring) now shows a donut chart by metric category — each category gets its own arc: length = its share of the day, fill = how much is done; a legend with \"done/total · %\" sits next to it. Metrics without a category and plans form separate groups. With a single category the chart is hidden. No migrations."
     ]},

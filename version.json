@@ -1,6 +1,13 @@
 {
-  "version": "4.27",
+  "version": "4.28",
   "en": [
+    {
+      "version": "4.28",
+      "date": "2026-10-10 03:51",
+      "changes": [
+        "Account: a new \"Avatar\" card — the \"Change avatar\" button opens a window with 20 drawn animals, your Google photo (if you signed in with Google) and uploading your own photo (up to 5 MB). The avatar in the side menu updates right away, without reloading the page — also when you change it on the Dashboard."
+      ]
+    },
     {
       "version": "4.27",
       "date": "2026-10-10 03:50",
@@ -3056,6 +3063,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.28",
+      "date": "2026-10-10 03:51",
+      "changes": [
+        "Аккаунт: новая карточка «Аватарка» — кнопка «Сменить аватарку» открывает окно с 20 нарисованными животными, фото из Google (если вы вошли через Google) и загрузкой своего фото (до 5 МБ). Аватарка в левом меню меняется сразу, без обновления страницы, — и когда её сменили на Дашборде."
+      ]
+    },
     {
       "version": "4.27",
       "date": "2026-10-10 03:50",
