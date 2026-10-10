@@ -291,8 +291,8 @@ onUnmounted(() => {
     </Transition>
     </template>
     <div class="ml-auto flex items-center gap-1.5" id="topbar-right"></div>
-    <PageHint page="history" :suppress="tourOpen" />
   </div>
+  <PageHint page="history" :suppress="tourOpen" />
 
   <div
     v-if="sidebarOpen"

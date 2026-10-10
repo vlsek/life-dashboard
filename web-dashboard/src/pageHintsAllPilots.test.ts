@@ -28,6 +28,15 @@ describe('подсказки страниц во всех пилотах', () =>
     }
   })
 
+  it('значок «i» стоит под шапкой, а не внутри неё (владелец: шапка и так загружена)', () => {
+    for (const p of pilots) {
+      const src = read(p, 'src/components/AppShell.vue')
+      const topbar = src.indexOf('id="topbar-right"')
+      const hint = src.indexOf('<PageHint')
+      expect(src.slice(topbar, hint), p).toMatch(/<\/div>\s*<\/div>\s*$/)
+    }
+  })
+
   it('у каждой страницы есть русский и английский текст с 3 советами', () => {
     for (const [page, v] of Object.entries(PAGE_HINTS)) {
       for (const lang of ['ru', 'en'] as const) {

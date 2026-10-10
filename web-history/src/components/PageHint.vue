@@ -39,17 +39,21 @@ function toggle() {
 </template>
 
 <style scoped>
+/* Полоска под шапкой (владелец: «не прям в хедере, он и так загружен»): значок «i» справа, подсказка раскрывается ниже в потоке страницы. */
 .ph-wrap {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 0.4rem 1rem 0;
 }
 .ph-btn {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 9999px;
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text-dim);
-  font: italic 700 0.85rem/1 Georgia, serif;
+  font: italic 700 0.8rem/1 Georgia, serif;
   cursor: pointer;
 }
 .ph-btn:hover,
@@ -62,17 +66,13 @@ function toggle() {
   outline-offset: 2px;
 }
 .ph-card {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 0.5rem);
-  z-index: 40;
-  width: min(20rem, calc(100vw - 2rem));
+  width: min(24rem, 100%);
+  margin-top: 0.4rem;
   padding: 0.9rem 1rem;
   border-radius: 0.9rem;
   border: 1px solid var(--border);
   background: var(--bg-card);
   color: var(--text);
-  box-shadow: 0 8px 24px rgb(0 0 0 / 0.25);
   font-size: 0.85rem;
   line-height: 1.4;
 }
