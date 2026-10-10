@@ -110,6 +110,17 @@ export type Unlocked = Record<string, string | null>
 // даты) от «позже» (новое достижение получает настоящую дату). В списках не показывается и не считается.
 export const BASELINE_KEY = '_baseline'
 
+// BACKLOG 52.1: «новый» аккаунт — создан не раньше NEW_ACCOUNT_DAYS дней назад. У такого человека первый заход в «Достижения» не
+// молчит (иначе, сделав действия ДО первого захода, он вообще не узнает, что получил достижения и награду); у старых аккаунтов
+// первый заход по-прежнему записывает историю молча, чтобы не высыпать всё сразу. Нет даты / не дата — считаем аккаунт старым.
+export const NEW_ACCOUNT_DAYS = 14
+export function isNewAccount(createdAt: string | null | undefined, now: Date, days = NEW_ACCOUNT_DAYS): boolean {
+  const t = createdAt ? Date.parse(createdAt) : NaN
+  if (!Number.isFinite(t)) return false
+  const age = now.getTime() - t
+  return age >= -60_000 && age < days * 24 * 3600 * 1000 // небольшой «минус» — разница часов устройства и сервера
+}
+
 export interface ReconcileResult {
   unlocked: Unlocked // полное состояние после слияния (то, что показывать)
   added: Record<string, string | null> // что НОВОГО нужно записать в хранилище (пусто — писать нечего)
@@ -117,14 +128,16 @@ export interface ReconcileResult {
 }
 
 // Открытое остаётся открытым навсегда: если счётчик потом упал (цель удалили, книгу вернули в «читаю»), значок не пропадает.
-export function reconcile(states: AchievementState[], stored: Unlocked, nowIso: string): ReconcileResult {
+// celebrateFirstVisit — первый заход тоже считается «сейчас»: выполненное получает настоящую дату и попадает в newlyUnlocked (поздравление).
+export function reconcile(states: AchievementState[], stored: Unlocked, nowIso: string, opts: { celebrateFirstVisit?: boolean } = {}): ReconcileResult {
   const firstVisit = !(BASELINE_KEY in stored)
+  const silent = firstVisit && !opts.celebrateFirstVisit
   const added: Record<string, string | null> = {}
   const newlyUnlocked: string[] = []
   if (firstVisit) added[BASELINE_KEY] = nowIso
   for (const s of states) {
     if (s.def.key in stored || !s.met) continue
-    if (firstVisit) {
+    if (silent) {
       added[s.def.key] = null
     } else {
       added[s.def.key] = nowIso

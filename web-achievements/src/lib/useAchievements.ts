@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { sb } from './supabase'
 import { fetchAllRows } from './fetchAll'
 import { withWaterGoal, isWeightLike } from './waterGoal'
-import { ACHIEVEMENTS, computeCounters, countMilestoneMarks, evaluate, reconcile, type AchievementState, type Counters, type Unlocked, type ValueRow } from './achievements'
+import { ACHIEVEMENTS, computeCounters, countMilestoneMarks, evaluate, isNewAccount, reconcile, type AchievementState, type Counters, type Unlocked, type ValueRow } from './achievements'
 import { evaluateHidden } from './hiddenAchievements'
 import { loadUnlocked, saveUnlocked, type StorageMode } from './achievementStore'
 import { grantCoinBonuses, type CoinBonus } from './coinBonuses'
@@ -28,6 +28,7 @@ export function useAchievements() {
   const mode = ref<StorageMode>('local')
   const error = ref<string | null>(null)
   const loading = ref(true)
+  let accountCreatedAt: string | null = null // дата создания аккаунта (auth) — от неё зависит, поздравлять ли при первом заходе
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -39,6 +40,7 @@ export function useAchievements() {
     }
     const userId = session.user.id
     const userEmail = session.user.email ?? null
+    accountCreatedAt = session.user.created_at ?? null
 
     const { data: profile } = await sb.from('profiles').select('onboarded').eq('user_id', userId).maybeSingle()
     if (!profile?.onboarded) {
@@ -113,7 +115,9 @@ export function useAchievements() {
       hiddenStates.value = hid
 
       const loaded = await loadUnlocked(userId)
-      const rec = reconcile([...st, ...hid], { ...loaded.stored }, new Date().toISOString())
+      const now = new Date()
+      // новый аккаунт поздравляем и при первом заходе (BACKLOG 52.1); старый — молча, как раньше
+      const rec = reconcile([...st, ...hid], { ...loaded.stored }, now.toISOString(), { celebrateFirstVisit: isNewAccount(accountCreatedAt, now) })
       unlocked.value = rec.unlocked
       newlyUnlocked.value = rec.newlyUnlocked
       // дописываем новое и то, что раньше жило только на устройстве; сбой записи страницу не ломает

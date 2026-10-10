@@ -11,6 +11,7 @@ import {
   groupStates,
   isUnlocked,
   reconcile,
+  isNewAccount,
   type Counters,
 } from './achievements'
 import type { Metric } from './types'
@@ -102,6 +103,22 @@ describe('reconcile', () => {
     expect(r.newlyUnlocked).toEqual([])
     expect(isUnlocked('first_goal', r.unlocked)).toBe(true)
     expect(isUnlocked(BASELINE_KEY, r.unlocked)).toBe(false)
+  })
+
+  it('первый заход НОВОГО аккаунта (celebrateFirstVisit): выполненное получает дату и идёт в поздравление', () => {
+    const st = evaluate({ ...ZERO, goalsDone: 1, booksDone: 1 })
+    const r = reconcile(st, {}, NOW, { celebrateFirstVisit: true })
+    expect(r.added).toEqual({ [BASELINE_KEY]: NOW, first_goal: NOW, first_book: NOW })
+    expect(r.newlyUnlocked.sort()).toEqual(['first_book', 'first_goal'])
+    expect(isUnlocked('first_goal', r.unlocked)).toBe(true)
+    expect(isUnlocked(BASELINE_KEY, r.unlocked)).toBe(false)
+  })
+
+  it('celebrateFirstVisit не влияет на повторные заходы (служебная запись уже есть)', () => {
+    const stored = { [BASELINE_KEY]: '2026-10-01T00:00:00.000Z' }
+    const r = reconcile(evaluate({ ...ZERO, goalsDone: 1 }), stored, NOW, { celebrateFirstVisit: true })
+    expect(r.newlyUnlocked).toEqual(['first_goal'])
+    expect(r.added).toEqual({ first_goal: NOW })
   })
 
   it('первый заход без выполненного: пишется только служебная запись', () => {
@@ -446,3 +463,19 @@ describe('countMilestoneMarks', () => {
   })
 })
 
+describe('isNewAccount (BACKLOG 52.1)', () => {
+  const NOW = new Date('2026-10-10T12:00:00.000Z')
+  it('создан сегодня / 13 дней назад — новый; 14 и больше — старый', () => {
+    expect(isNewAccount('2026-10-10T11:00:00.000Z', NOW)).toBe(true)
+    expect(isNewAccount('2026-09-27T12:00:01.000Z', NOW)).toBe(true)
+    expect(isNewAccount('2026-09-26T12:00:00.000Z', NOW)).toBe(false)
+    expect(isNewAccount('2025-01-01T00:00:00.000Z', NOW)).toBe(false)
+  })
+  it('нет даты / мусор — старый (молча, как раньше); небольшой «будущий» сдвиг часов допустим', () => {
+    expect(isNewAccount(null, NOW)).toBe(false)
+    expect(isNewAccount(undefined, NOW)).toBe(false)
+    expect(isNewAccount('вчера', NOW)).toBe(false)
+    expect(isNewAccount('2026-10-10T12:00:30.000Z', NOW)).toBe(true)
+    expect(isNewAccount('2026-10-11T12:00:00.000Z', NOW)).toBe(false)
+  })
+})
