@@ -1,6 +1,13 @@
 {
-  "version": "4.26",
+  "version": "4.27",
   "en": [
+    {
+      "version": "4.27",
+      "date": "2026-10-10 03:50",
+      "changes": [
+        "Dashboard: the \"Day progress\" window (tap the day ring) now shows a donut chart by metric category — each category gets its own arc: length = its share of the day, fill = how much is done; a legend with \"done/total · %\" sits next to it. Metrics without a category and plans form separate groups. With a single category the chart is hidden. No migrations."
+      ]
+    },
     {
       "version": "4.26",
       "date": "2026-10-10 06:45",
@@ -3049,6 +3056,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.27",
+      "date": "2026-10-10 03:50",
+      "changes": [
+        "Дашборд: в окне «Прогресс дня» (нажатие на кольцо дня) появилась кольцевая диаграмма по категориям метрик — у каждой категории своя дуга: длина = доля в дне, закраска = сколько выполнено; рядом легенда «сделано/всего · %». Метрики без категории и планы — отдельными группами. Если категория одна — диаграмма не показывается. Без миграций."
+      ]
+    },
     {
       "version": "4.26",
       "date": "2026-10-10 06:45",

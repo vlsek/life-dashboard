@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.26";
+const SITE_VERSION = "4.27";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.27", date: "2026-10-10 03:50", changes: [
+        "Дашборд: в окне «Прогресс дня» (нажатие на кольцо дня) появилась кольцевая диаграмма по категориям метрик — у каждой категории своя дуга: длина = доля в дне, закраска = сколько выполнено; рядом легенда «сделано/всего · %». Метрики без категории и планы — отдельными группами. Если категория одна — диаграмма не показывается. Без миграций."
+    ]},
     { version: "4.26", date: "2026-10-10 06:45", changes: [
         "В разделах «Цели», «Навыки», «Челленджи», «Тренировки», «Вехи» и «Языки» внизу страницы появился сворачиваемый блок «Какие достижения тут можно получить»: ступени достижений этого раздела (например, выполнено целей 1 / 10 / 25 / 50), уже полученные отмечены галочкой, есть ссылка на все достижения. По умолчанию блок свёрнут. Секретные достижения в нём не показываются. Миграций нет."
     ]},
@@ -1888,6 +1891,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.27", date: "2026-10-10 03:50", changes: [
+        "Dashboard: the \"Day progress\" window (tap the day ring) now shows a donut chart by metric category — each category gets its own arc: length = its share of the day, fill = how much is done; a legend with \"done/total · %\" sits next to it. Metrics without a category and plans form separate groups. With a single category the chart is hidden. No migrations."
+    ]},
     { version: "4.26", date: "2026-10-10 06:45", changes: [
         "Goals, Skills, Challenges, Workouts, Milestones and Languages now have a collapsible block at the bottom of the page: \"Achievements you can earn here\". It lists the achievement steps of that section (for example, goals completed 1 / 10 / 25 / 50), marks the ones you already have with a check and links to all achievements. Collapsed by default. Secret achievements are not shown in it. No migrations."
     ]},
