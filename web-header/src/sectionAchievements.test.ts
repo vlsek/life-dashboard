@@ -35,7 +35,8 @@ describe('копия лесенок разделов (BACKLOG 49.6)', () => {
     expect(sectionFor('/skills.html')).toBe('skills')
     expect(sectionFor('/languages/index.html')).toBe('languages')
     expect(sectionFor('/shop/')).toBeNull()
-    expect(sectionFor('/dashboard/')).toBeNull()
+    expect(sectionFor('/dashboard/')).toBe('dashboard')
+    expect(sectionFor('/account/')).toBeNull()
   })
 })
 
@@ -52,5 +53,17 @@ describe('SectionAchievements', () => {
     expect(steps[1].classes()).not.toContain('gh-secach-done')
     expect(steps[1].text()).toContain('Выполнено целей: 10')
     expect(w.get('a').attributes('href')).toBe('/achievements/')
+  })
+})
+
+describe('Дашборд (49.6 срез 2)', () => {
+  it('блок содержит серии, идеальные дни, баллы и мега-неделю; у каждой группы есть тексты ru/en', async () => {
+    localStorage.setItem('site_lang', 'ru')
+    expect(SECTION_LADDERS.dashboard.map((l) => l.group)).toEqual(['streak', 'perfect', 'points', 'weeks'])
+    const w = mount(SectionAchievements, { props: { section: 'dashboard', unlocked: new Set(['streak_5', 'points_100']) } })
+    expect(w.get('[data-test="secach-count"]').text()).toBe('2 / 12')
+    await w.get('[data-test="secach-toggle"]').trigger('click')
+    expect(w.text()).toContain('Лучшая серия: 30 дн.')
+    expect(w.text()).toContain('Закончить неделю больше чем на 100%')
   })
 })

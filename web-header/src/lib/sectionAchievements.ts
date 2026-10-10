@@ -14,6 +14,12 @@ export interface Ladder {
 const s = (key: string, target: number): LadderStep => ({ key, target })
 
 export const SECTION_LADDERS: Readonly<Record<string, readonly Ladder[]>> = {
+  dashboard: [
+    { group: 'streak', steps: [s('streak_5', 5), s('streak_10', 10), s('streak_30', 30), s('streak_100', 100)] },
+    { group: 'perfect', steps: [s('perfect_days_1', 1), s('perfect_days_10', 10), s('perfect_days_30', 30), s('perfect_days_100', 100)] },
+    { group: 'points', steps: [s('points_100', 100), s('points_500', 500), s('points_1000', 1000)] },
+    { group: 'weeks', steps: [s('mega_productivity', 1)] },
+  ],
   goals: [{ group: 'goals', steps: [s('first_goal', 1), s('goals_10', 10), s('goals_25', 25), s('goals_50', 50)] }],
   skills: [{ group: 'skills', steps: [s('first_skill', 1), s('skills_5', 5), s('skills_10', 10), s('skills_25', 25)] }],
   challenges: [{ group: 'challenges', steps: [s('challenges_1', 1), s('challenges_5', 5), s('challenges_10', 10), s('challenges_25', 25)] }],
