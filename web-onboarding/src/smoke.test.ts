@@ -39,6 +39,8 @@ describe('onboarding page (step-by-step)', () => {
     await flushPromises()
   }
   const next = async (w: ReturnType<typeof mount>) => {
+    const g = w.find('[data-test="gender-select"]')
+    if (g.exists() && (g.element as HTMLSelectElement).value === '') await g.setValue('male') // пол обязателен (54.5)
     await w.find('form').trigger('submit')
     await flushPromises()
   }
@@ -64,11 +66,13 @@ describe('onboarding page (step-by-step)', () => {
     await flushPromises()
     await next(w)
     expect(w.find('[data-test="step-about"]').exists()).toBe(true)
+    await w.find('[data-test=\"gender-select\"]').setValue('male') // пол обязателен (54.5)
     expect(w.text()).toContain('Height (cm)')
     await next(w)
     expect(w.find('[data-test="step-priority"]').exists()).toBe(true)
     await click(w, '[data-test="back"]')
     expect(w.find('[data-test="step-about"]').exists()).toBe(true)
+    await w.find('[data-test=\"gender-select\"]').setValue('male') // пол обязателен (54.5)
   })
 
   it('planner: only two steps, no height/weight, finishes after "about you" with no metrics and no body parameters', async () => {
@@ -133,6 +137,7 @@ describe('onboarding page (step-by-step)', () => {
     await next(w)
     expect(w.text()).toContain('Date of birth must be between')
     expect(w.find('[data-test="step-about"]').exists()).toBe(true)
+    await w.find('[data-test=\"gender-select\"]').setValue('male') // пол обязателен (54.5)
     expect(upsert).not.toHaveBeenCalled()
   })
 
@@ -149,6 +154,8 @@ describe('onboarding page (step-by-step)', () => {
 
 describe('имя профиля обязательно (BACKLOG 841) и подтягивается из Google (BACKLOG 766)', () => {
   const next = async (w: ReturnType<typeof mount>) => {
+    const g = w.find('[data-test="gender-select"]')
+    if (g.exists() && (g.element as HTMLSelectElement).value === '') await g.setValue('male') // пол обязателен (54.5)
     await w.find('form').trigger('submit')
     await flushPromises()
   }
@@ -177,6 +184,7 @@ describe('имя профиля обязательно (BACKLOG 841) и подт
     await w.find('[data-test="name-input"]').setValue('Аня')
     await next(w)
     expect(w.find('[data-test="step-about"]').exists()).toBe(true)
+    await w.find('[data-test=\"gender-select\"]').setValue('male') // пол обязателен (54.5)
   })
 
   it('«Пропустить» без имени тоже не работает и в базу ничего не пишет', async () => {
@@ -288,3 +296,22 @@ describe('аватарка при регистрации: фото из Google �
   })
 })
 
+describe('пол — обязательный выбор без значения по умолчанию (BACKLOG 54.5)', () => {
+  it('на шаге «О себе» пол не выбран, а «Далее» не пускает дальше без него', async () => {
+    const w = mount(App)
+    await flushPromises()
+    await w.find('form').trigger('submit')
+    await flushPromises()
+    expect(w.find('[data-test="step-about"]').exists()).toBe(true)
+    const sel = w.find('[data-test="gender-select"]')
+    expect((sel.element as HTMLSelectElement).value).toBe('')
+    await w.find('form').trigger('submit')
+    await flushPromises()
+    expect(w.find('[data-test="step-about"]').exists()).toBe(true)
+    expect(w.text()).toContain('Choose your gender')
+    await sel.setValue('female')
+    await w.find('form').trigger('submit')
+    await flushPromises()
+    expect(w.find('[data-test="step-about"]').exists()).toBe(false)
+  })
+})

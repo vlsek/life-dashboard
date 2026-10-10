@@ -2,7 +2,8 @@
 import { computed, ref } from 'vue'
 import { t, type DictKey } from '../lib/i18n'
 import { EXERCISE_REFERENCE, MUSCLE_IDS, musclesForExercise, type MuscleId } from '../lib/muscles'
-import { BACK_SHAPES, BODY_OUTLINE, FRONT_SHAPES, type MuscleShape } from '../lib/muscleShapes'
+import type { MuscleShape } from '../lib/muscleShapes'
+import { bodyGeometry, type BodyModel } from '../lib/bodyModel'
 import { VARIANT_BASES, baseForName, baseName } from '../lib/exerciseVariants'
 import { getLang } from '../lib/i18n'
 
@@ -11,7 +12,7 @@ import { getLang } from '../lib/i18n'
 // задействована, плюс упражнения из справочника карты мышц, для которых нет «типового» (напр. икры); нажатие шлёт наружу название и
 // id типового (если есть) — форма подставляет название и поля так же, как при выборе из списка.
 // recent — мышцы, тренированные за последние 4 дня (считает родитель из истории тренировок, без БД).
-const props = defineProps<{ recent: readonly MuscleId[] }>()
+const props = defineProps<{ recent: readonly MuscleId[]; model?: BodyModel }>()
 const emit = defineEmits<{ pick: [name: string, baseId: string | null]; close: [] }>()
 
 const selected = ref<MuscleId[]>([])
@@ -46,10 +47,11 @@ const suggestions = computed(() => {
   return catalog.filter((c) => musclesForExercise(c.name).some((m) => selected.value.includes(m)))
 })
 
-const views: { key: 'front' | 'back'; label: DictKey; shapes: MuscleShape[] }[] = [
-  { key: 'front', label: 'workouts_muscles_front', shapes: FRONT_SHAPES },
-  { key: 'back', label: 'workouts_muscles_back', shapes: BACK_SHAPES },
-]
+const geometry = computed(() => bodyGeometry(props.model ?? 'male'))
+const views = computed<{ key: 'front' | 'back'; label: DictKey; shapes: MuscleShape[] }[]>(() => [
+  { key: 'front', label: 'workouts_muscles_front', shapes: geometry.value.front },
+  { key: 'back', label: 'workouts_muscles_back', shapes: geometry.value.back },
+])
 function shapeStyle(m: MuscleId) {
   const isDone = recentSet.value.has(m)
   return {
@@ -70,7 +72,7 @@ function shapeStyle(m: MuscleId) {
       <figure v-for="v in views" :key="v.key" class="m-0 text-center">
         <svg viewBox="0 0 100 190" class="h-48 w-24" role="group" :aria-label="t(v.label)">
           <circle cx="50" cy="14" r="9" fill="none" stroke="var(--border)" stroke-width="1.2" />
-          <path :d="BODY_OUTLINE" fill="none" stroke="var(--border)" stroke-width="1.2" stroke-linejoin="round" />
+          <path :d="geometry.outline" fill="none" stroke="var(--border)" stroke-width="1.2" stroke-linejoin="round" />
           <g
             v-for="(s, i) in v.shapes"
             :key="v.key + i"

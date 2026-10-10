@@ -15,6 +15,8 @@ import ExerciseCard from './components/ExerciseCard.vue'
 import WarmupReminder from './components/WarmupReminder.vue'
 import OverviewChart from './components/OverviewChart.vue'
 import MuscleMap from './components/MuscleMap.vue'
+import { fetchProfileGender } from './lib/bodyGender'
+import { readBodyModelChoice, resolveBodyModel, writeBodyModelChoice, type BodyModel } from './lib/bodyModel'
 import ProgressionTrees from './components/ProgressionTrees.vue'
 import ExerciseForm from './components/ExerciseForm.vue'
 import EntryForm from './components/EntryForm.vue'
@@ -304,10 +306,20 @@ function onProgramChanged(e: Event) {
 window.addEventListener(PROGRAM_EVENT, onProgramChanged)
 onBeforeUnmount(() => window.removeEventListener(PROGRAM_EVENT, onProgramChanged))
 
+// Модель тела карты мышц (BACKLOG 54.5): явный выбор на устройстве, иначе пол из профиля, иначе мужская.
+const profileGender = ref<'male' | 'female' | null>(null)
+const modelChoice = ref<BodyModel | null>(readBodyModelChoice())
+const bodyModel = computed<BodyModel>(() => resolveBodyModel(modelChoice.value, profileGender.value))
+function setBodyModel(m: BodyModel) {
+  modelChoice.value = m
+  writeBodyModelChoice(m)
+}
+
 watch(
   () => auth.value.status,
   async (status) => {
     if (status !== 'ready' || auth.value.status !== 'ready') return
+    void fetchProfileGender(auth.value.userId).then((g) => (profileGender.value = g))
     void loadCollapseStyle(auth.value.userId) // вид сворачивания блоков из «Кастомизации» (BACKLOG 498); до ответа — кэш
     try {
       activeProgram.value = await syncProgramFromProfile(auth.value.userId)
@@ -399,8 +411,24 @@ function onToggleProgramWeek(week: number) {
       </div>
 
       <div v-show="pageTab === 'map'" data-testid="tab-map">
+        <div class="mb-3 flex items-center justify-center gap-1.5 text-sm" role="group" :aria-label="t('workouts_body_model')" data-testid="body-model-switch">
+          <span style="color: var(--text-dim)">{{ t('workouts_body_model') }}:</span>
+          <button
+            v-for="m in (['male', 'female'] as const)"
+            :key="m"
+            type="button"
+            class="rounded-full border px-3 py-1"
+            :aria-pressed="bodyModel === m"
+            :style="bodyModel === m ? 'border-color: var(--accent); color: var(--accent); background: transparent' : 'border-color: var(--border); color: var(--text-dim); background: transparent'"
+            :data-testid="'body-model-' + m"
+            @click="setBodyModel(m)"
+          >
+            {{ t(m === 'female' ? 'workouts_body_female' : 'workouts_body_male') }}
+          </button>
+        </div>
         <MuscleMap
           embedded
+          :model="bodyModel"
           :entries="entries"
           :exercises="exercises"
           :study-recent="studyRecent"
@@ -472,7 +500,7 @@ function onToggleProgramWeek(week: number) {
     </template>
   </main>
 
-  <ExerciseForm v-if="exerciseForm" :existing="exerciseForm.existing" :recent-muscles="recentMuscles" @close="exerciseForm = null" @save="onSaveExercise" />
+  <ExerciseForm v-if="exerciseForm" :existing="exerciseForm.existing" :recent-muscles="recentMuscles" :model="bodyModel" @close="exerciseForm = null" @save="onSaveExercise" />
   <MetricLinkModal v-if="linkModal" :exercise="linkModal" :metrics="metricLinks.metrics" :supported="metricLinks.supported" :busy="linkBusy" @close="linkModal = null" @link="onLinkMetric" @unlink="onUnlinkMetric" @create="onCreateMetric" />
   <EntryForm v-if="entryForm" :exercise="entryForm.exercise" :existing="entryForm.existing" @close="entryForm = null" @save="onSaveEntry" />
   <TemplatesModal v-if="templatesOpen" :active-title="activeTemplate?.title ?? null" @close="templatesOpen = false" @apply="onApplyTemplate" @start="onStartProgram" />

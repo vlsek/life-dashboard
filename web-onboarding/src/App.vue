@@ -17,7 +17,8 @@ onMounted(init)
 
 const lang = getLang()
 const usecase = ref<Usecase>('goals')
-const gender = ref<'male' | 'female'>('male')
+// Пол — обязательный выбор без значения по умолчанию (BACKLOG 54.5): от него зависит модель тела на карте мышц.
+const gender = ref<'' | 'male' | 'female'>('')
 const birthdate = ref('')
 const height = ref('')
 const weight = ref('')
@@ -85,6 +86,14 @@ function saveDayProgressSettings(u: Usecase) {
   }
 }
 
+function genderOk(): boolean {
+  if (gender.value !== 'male' && gender.value !== 'female') {
+    errorMsg.value = t('onb_gender_required')
+    return false
+  }
+  return true
+}
+
 function birthdateOk(): boolean {
   if (birthdate.value && (birthdate.value < '1900-01-01' || birthdate.value > today)) {
     errorMsg.value = t('dash_birthdate_range_error')
@@ -102,7 +111,7 @@ function goBack() {
 async function onNext() {
   if (auth.value.status !== 'ready') return
   if (step.value === 'usecase' && !nameOk()) return
-  if (step.value === 'about' && !birthdateOk()) return
+  if (step.value === 'about' && (!genderOk() || !birthdateOk())) return
   if (!isLast.value) {
     errorMsg.value = ''
     stepIdx.value += 1
@@ -117,7 +126,7 @@ async function onSubmit() {
     stepIdx.value = steps.value.indexOf('usecase')
     return
   }
-  if (!birthdateOk()) {
+  if (!genderOk() || !birthdateOk()) {
     stepIdx.value = steps.value.indexOf('about')
     return
   }
@@ -125,7 +134,7 @@ async function onSubmit() {
   saveDayProgressSettings(usecase.value)
   const goal = isPlanner.value ? null : goalType.value
   const answers = {
-    gender: gender.value,
+    gender: gender.value as 'male' | 'female',
     birthdate: birthdate.value || null,
     height: isPlanner.value ? null : height.value ? parseFloat(height.value) : null,
     weight: isPlanner.value ? null : weight.value ? parseFloat(weight.value) : null,
@@ -227,7 +236,8 @@ const usecaseCards: { value: Usecase; title: 'onb_usecase_goals' | 'onb_usecase_
         <p class="dim mb-3 text-sm">{{ t('onb_step_about_hint') }}</p>
         <label class="mb-3.5 block">
           {{ t('onb_field_gender') }}
-          <select v-model="gender" class="mt-1 w-full">
+          <select v-model="gender" class="mt-1 w-full" required data-test="gender-select">
+            <option value="" disabled>{{ t('onb_gender_choose') }}</option>
             <option value="male">{{ t('onb_gender_male') }}</option>
             <option value="female">{{ t('onb_gender_female') }}</option>
           </select>

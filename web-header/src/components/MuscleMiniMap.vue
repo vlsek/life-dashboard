@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { t, type DictKey } from '../lib/i18n'
-import { BACK_SHAPES, BODY_OUTLINE, FRONT_SHAPES, type MuscleShape } from '../lib/muscleShapes'
+import type { MuscleShape } from '../lib/muscleShapes'
+import { bodyGeometry, readBodyModelChoice, resolveBodyModel } from '../lib/bodyModel'
+import { sb } from '../lib/supabase'
 import type { MuscleId } from '../lib/muscles'
 
 // Компактная карта мышц для правой панели (BACKLOG 3.2): спереди и сзади, зелёные — мышцы, задействованные за последние
@@ -10,10 +12,24 @@ import type { MuscleId } from '../lib/muscles'
 const props = defineProps<{ done: Set<MuscleId>; last: Partial<Record<MuscleId, string>> }>()
 
 const selected = ref<MuscleId | null>(null)
-const views: { key: 'front' | 'back'; label: DictKey; shapes: MuscleShape[] }[] = [
-  { key: 'front', label: 'workouts_muscles_front', shapes: FRONT_SHAPES },
-  { key: 'back', label: 'workouts_muscles_back', shapes: BACK_SHAPES },
-]
+// Модель тела (BACKLOG 54.5): выбор из «Тренировок» (localStorage, общий origin) главнее, иначе пол из профиля, иначе мужская.
+const gender = ref<string | null>(null)
+onMounted(async () => {
+  try {
+    const { data: s } = await sb.auth.getSession()
+    const uid = s?.session?.user?.id
+    if (!uid) return
+    const { data, error } = await sb.from('profiles').select('gender').eq('user_id', uid).maybeSingle()
+    if (!error) gender.value = (data as { gender?: string | null } | null)?.gender ?? null
+  } catch {
+    /* без пола — мужская модель */
+  }
+})
+const geometry = computed(() => bodyGeometry(resolveBodyModel(readBodyModelChoice(), gender.value)))
+const views = computed<{ key: 'front' | 'back'; label: DictKey; shapes: MuscleShape[] }[]>(() => [
+  { key: 'front', label: 'workouts_muscles_front', shapes: geometry.value.front },
+  { key: 'back', label: 'workouts_muscles_back', shapes: geometry.value.back },
+])
 const name = (m: MuscleId) => t(`workouts_muscle_${m}` as DictKey)
 function select(m: MuscleId) {
   selected.value = selected.value === m ? null : m
@@ -36,7 +52,7 @@ function shapeStyle(m: MuscleId) {
       <figure v-for="v in views" :key="v.key" style="margin: 0; text-align: center">
         <svg viewBox="0 0 100 190" width="96" height="182" role="group" :aria-label="t(v.label)">
           <circle cx="50" cy="14" r="9" fill="none" stroke="var(--border, #333)" stroke-width="1.2" />
-          <path :d="BODY_OUTLINE" fill="none" stroke="var(--border, #333)" stroke-width="1.2" stroke-linejoin="round" data-testid="body-outline" />
+          <path :d="geometry.outline" fill="none" stroke="var(--border, #333)" stroke-width="1.2" stroke-linejoin="round" data-testid="body-outline" />
           <g
             v-for="(s, i) in v.shapes"
             :key="v.key + i"

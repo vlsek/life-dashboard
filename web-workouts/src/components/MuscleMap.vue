@@ -3,7 +3,8 @@ import { computed, ref } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
 import { todayStr } from '../lib/date'
 import { MUSCLE_IDS, referenceFor, ruleForExercise, type MuscleId } from '../lib/muscles'
-import { BACK_SHAPES, BODY_OUTLINE, FRONT_SHAPES, type MuscleShape } from '../lib/muscleShapes'
+import type { MuscleShape } from '../lib/muscleShapes'
+import { bodyGeometry, type BodyModel } from '../lib/bodyModel'
 import {
   DEFAULT_STATS_PERIOD,
   STATS_PERIODS,
@@ -27,7 +28,7 @@ import { useAccordionMember } from '../lib/useCollapseStyle'
 // Карта мышц (BACKLOG 3.2, первый срез): зелёные — мышцы, задействованные за последние 4 дня,
 // серые — нет. Клик по мышце — её упражнения (свои с кнопкой «Добавить запись» + подсказки из справочника).
 // `embedded` — карта лежит в своей вкладке «Карта мышц» (BACKLOG 54.2): заголовок-кнопка не нужна, тело всегда раскрыто, в аккордеон блоков не входит.
-const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string; studyRecent?: boolean; embedded?: boolean }>()
+const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string; studyRecent?: boolean; embedded?: boolean; model?: BodyModel }>()
 const emit = defineEmits<{ 'add-entry': [exercise: Exercise] }>()
 
 const OPEN_KEY = 'workouts_musclemap_open'
@@ -136,10 +137,11 @@ const suggestions = computed(() => {
     .map((r) => (lang === 'ru' ? r.ru : r.en))
 })
 
-const views: { key: 'front' | 'back'; label: DictKey; shapes: MuscleShape[] }[] = [
-  { key: 'front', label: 'workouts_muscles_front', shapes: FRONT_SHAPES },
-  { key: 'back', label: 'workouts_muscles_back', shapes: BACK_SHAPES },
-]
+const geometry = computed(() => bodyGeometry(props.model ?? 'male'))
+const views = computed<{ key: 'front' | 'back'; label: DictKey; shapes: MuscleShape[] }[]>(() => [
+  { key: 'front', label: 'workouts_muscles_front', shapes: geometry.value.front },
+  { key: 'back', label: 'workouts_muscles_back', shapes: geometry.value.back },
+])
 function shapeStyle(m: MuscleId) {
   const isDone = done.value.has(m)
   return {
@@ -177,7 +179,7 @@ function shapeStyle(m: MuscleId) {
           <svg viewBox="0 0 100 190" class="h-64 w-32" role="group" :aria-label="t(v.label)">
             <circle cx="50" cy="14" r="9" :fill="props.studyRecent ? 'var(--success)' : 'none'" :fill-opacity="props.studyRecent ? 0.9 : 1" :stroke="props.studyRecent ? 'var(--success)' : 'var(--border)'" stroke-width="1.2" data-testid="muscle-head" />
             <path
-              :d="BODY_OUTLINE"
+              :d="geometry.outline"
               fill="none"
               stroke="var(--border)"
               stroke-width="1.2"

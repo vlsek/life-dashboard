@@ -6,6 +6,7 @@ import { defaultWeightUnit, isWeightUnit, rememberWeightUnit } from '../lib/weig
 import { valueLabelOptions } from '../lib/valueLabels'
 import Icon from './Icon.vue'
 import ExercisePicker from './ExercisePicker.vue'
+import type { BodyModel } from '../lib/bodyModel'
 import type { Exercise, ExerciseFormInput } from '../lib/types'
 import { stripEmoji } from '../lib/emojiText'
 import { capFirst } from '../lib/exerciseNames'
@@ -15,7 +16,7 @@ import { getLang } from '../lib/i18n'
 // Порт openExerciseFormModal() из workouts.js: имя, категория (фиксированный список +
 // "своя категория" текстом), вести вес да/нет, подпись значения, единица, доп. флаги
 // длительности и билатеральности (Л/П).
-const props = defineProps<{ existing: Exercise | null; recentMuscles?: readonly MuscleId[] }>()
+const props = defineProps<{ existing: Exercise | null; recentMuscles?: readonly MuscleId[]; model?: BodyModel }>()
 const emit = defineEmits<{ close: []; save: [ExerciseFormInput] }>()
 
 const KNOWN_CATS = ['upper', 'lower', 'fullbody', 'custom']
@@ -147,7 +148,7 @@ function onSubmit() {
 
         <div v-if="!existing && !name.trim()" class="flex flex-col gap-2" data-testid="body-picker-field">
           <button v-if="!showBodyPicker" type="button" class="rounded-lg border px-3 py-1.5 text-sm" style="border-color: var(--border); color: var(--text)" data-testid="body-picker-open" @click="showBodyPicker = true">{{ t('workouts_pick_body_btn') }}</button>
-          <ExercisePicker v-else :recent="recentMuscles ?? []" @pick="onBodyPick" @close="showBodyPicker = false" />
+          <ExercisePicker v-else :recent="recentMuscles ?? []" :model="model" @pick="onBodyPick" @close="showBodyPicker = false" />
         </div>
 
         <label v-if="!name.trim()" class="flex flex-col gap-1 text-sm" data-testid="typical-field">
