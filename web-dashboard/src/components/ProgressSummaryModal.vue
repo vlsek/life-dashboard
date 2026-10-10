@@ -2,6 +2,7 @@
 import EmojiText from './EmojiText.vue'
 import { computed } from 'vue'
 import Icon from './Icon.vue'
+import CategoryDonut from './CategoryDonut.vue'
 import { t, type DictKey } from '../lib/i18n'
 import { isItemDone, itemSharePct, type ProgressSummary, type SummaryItem } from '../lib/progressSummary'
 import { stripEmoji } from '../lib/emojiText'
@@ -49,6 +50,8 @@ function share(i: SummaryItem, done: boolean): string {
         <span class="dim text-sm font-normal">{{ f('dash_summary_done_of', { done: String(summary.done), total: String(summary.total) }) }}</span>
       </p>
       <p v-if="summary.bonusPct > 0" class="dim -mt-2 mb-3 text-xs" data-test="summary-bonus-line">{{ f('dash_summary_bonus_line', { base: String(summary.basePct), bonus: String(summary.bonusPct) }) }}</p>
+
+      <CategoryDonut v-if="kind === 'day'" :items="summary.items" />
 
       <div class="overflow-y-auto text-sm">
         <p v-if="summary.total === 0" class="dim" data-test="summary-empty">{{ t('dash_summary_empty') }}</p>

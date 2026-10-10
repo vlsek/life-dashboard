@@ -1,6 +1,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { sb } from './supabase'
 import { fetchAllRows } from './fetchAll'
+import { getLang } from './i18n'
 import { fmtDate, todayStr } from './date'
 import { computeStreakItemsPure, type StreakItem } from './streaks'
 import { computeDayProgressPure, computeWeekDaySegments, computeWeekProgressPure, getWeekDates, type WeekDaySegment, type ProgressResult, type PlannedItem, type GoalLite } from './progress'
@@ -88,7 +89,7 @@ export function useDashboard() {
   // из computeStreakItems()/computeDayProgress()/computeWeekProgress() в dashboard.js, но с общим
   // fetch вместо трёх независимых.
   async function loadAll(userId: string) {
-    const [metricsRes, valuesRes, notesRes, goalsRes] = await Promise.all([
+    const [metricsRes, valuesRes, notesRes, goalsRes, catsRes] = await Promise.all([
       sb.from('metrics').select('*').eq('user_id', userId).eq('active', true).order('position'),
       // Supabase отдаёт максимум 1000 строк за запрос — без постраничного чтения у пользователя
       // с длинной историей стрики и прогресс считались бы по обрезанным данным.
@@ -99,6 +100,8 @@ export function useDashboard() {
         sb.from('daily_notes').select('date, items, planned_goals').eq('user_id', userId).order('date').range(from, to),
       ),
       sb.from('goals').select('name, stages, done, current_stage').eq('user_id', userId),
+      // названия категорий — только для диаграммы «по категориям» (BACKLOG 656 а); ошибка не мешает остальному
+      sb.from('metric_categories').select('id, label_ru, label_en'),
     ])
     const firstError = metricsRes.error?.message || valuesRes.error || notesRes.error || goalsRes.error?.message
     if (firstError) {
@@ -149,8 +152,12 @@ export function useDashboard() {
     const plannedWeek: Record<string, PlannedItem[]> = {}
     for (const d of weekDates) plannedWeek[d] = notesByDate[d]?.planned_goals || []
     weekDays.value = computeWeekDaySegments(settings, metrics, byDay, weekDates, today, plannedWeek, allGoals)
+    const categoryLabels: Record<string, string> = {}
+    for (const c of (catsRes?.data || []) as { id: string; label_ru: string; label_en: string }[]) {
+      categoryLabels[c.id] = (getLang() === 'ru' ? c.label_ru : c.label_en) || c.label_ru || c.label_en
+    }
     summaries.value = {
-      day: daySummary(settings, metrics, byDay[today] || {}, today, notesByDate[today]?.planned_goals || [], allGoals),
+      day: daySummary(settings, metrics, byDay[today] || {}, today, notesByDate[today]?.planned_goals || [], allGoals, categoryLabels),
       week: weekSummary(settings, metrics, byDay, pastOrToday, plannedByDate, allGoals),
     }
   }

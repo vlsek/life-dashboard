@@ -14,6 +14,7 @@ export interface SummaryItem {
   weight: number // сколько пунктов «веса» он даёт в знаменателе (обычно 1; «N раз в неделю» — N)
   doneWeight: number // сколько из этого выполнено
   note?: string // «2/3» для «N раз в неделю», «≤ 2» для «не чаще N»
+  category?: string // название категории метрики (для диаграммы «по категориям», BACKLOG 656 а); нет — без категории
 }
 
 export interface BonusItem {
@@ -68,6 +69,7 @@ export function daySummary(
   dateStr: string,
   planned: PlannedItem[],
   allGoals: GoalLite[],
+  categoryLabels: Record<string, string> = {},
 ): ProgressSummary {
   const items: SummaryItem[] = []
   const bonus: BonusItem[] = []
@@ -76,7 +78,7 @@ export function daySummary(
       const isDone = isMetricDone(m, byMetricToday[m.id] as any, dateStr)
       if (metricSchedule(m)?.type === 'at_most') continue
       if (!metricCountsInDay(m, dateStr, isDone)) continue
-      items.push({ kind: 'metric', name: m.name, weight: 1, doneWeight: isDone ? 1 : 0 })
+      items.push({ kind: 'metric', name: m.name, weight: 1, doneWeight: isDone ? 1 : 0, category: (m.category_id && categoryLabels[m.category_id]) || undefined })
     }
   }
   planItems(planned, allGoals, settings.includePlanned, undefined, items, bonus)
