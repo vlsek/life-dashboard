@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 // BACKLOG 44.17: смена аватара в «Аккаунте» — запись в profiles.avatar_url и сообщение в канал avatarEvents.
 const h = vi.hoisted(() => ({
   upserts: [] as unknown[], uploads: [] as { path: string }[], failUpsert: false, failUpload: false,
-  row: { avatar_url: null as string | null }, user: { user_metadata: { picture: 'https://lh3.googleusercontent.com/a/me' } } as unknown,
+  row: { avatar_url: null as string | null, customization: null as null | Record<string, unknown> }, user: { user_metadata: { picture: 'https://lh3.googleusercontent.com/a/me' } } as unknown,
 }))
 vi.mock('./supabase', () => ({
   sb: {
@@ -27,12 +27,14 @@ vi.mock('./supabase', () => ({
 
 import { animalAvatarUrl } from './animalAvatars'
 import { onAvatarChanged } from './avatarEvents'
+import { notifyCustomizationChanged } from './customizationEvents'
+import { effectScope } from 'vue'
 import { avatarPath, googleAvatarOf, MAX_PHOTO_BYTES, useAvatar } from './useAvatar'
 
 let seen: (string | null)[] = []
 let off: () => void
 beforeEach(() => {
-  h.upserts = []; h.uploads = []; h.failUpsert = false; h.failUpload = false; h.row = { avatar_url: null }
+  h.upserts = []; h.uploads = []; h.failUpsert = false; h.failUpload = false; h.row = { avatar_url: null, customization: null }
   seen = []
   off?.()
   off = onAvatarChanged((d) => seen.push(d.avatar_url))
@@ -46,7 +48,7 @@ async function ready() {
 
 describe('useAvatar', () => {
   it('load: текущий аватар из профиля и фото Google из аккаунта (только https)', async () => {
-    h.row = { avatar_url: 'https://x/y.png' }
+    h.row = { avatar_url: 'https://x/y.png', customization: null }
     const a = await ready()
     expect(a.avatarUrl.value).toBe('https://x/y.png')
     expect(a.googleAvatar.value).toBe('https://lh3.googleusercontent.com/a/me')
@@ -92,7 +94,7 @@ describe('useAvatar', () => {
     expect(seen).toEqual([])
   })
   it('сбой записи или загрузки — false, ошибка, канал молчит, прежний аватар остаётся', async () => {
-    h.row = { avatar_url: 'https://x/old.png' }
+    h.row = { avatar_url: 'https://x/old.png', customization: null }
     const a = await ready()
     h.failUpsert = true
     expect(await a.setAnimal('cat')).toBe(false)
@@ -103,3 +105,26 @@ describe('useAvatar', () => {
     expect(seen).toEqual([])
   })
 })
+
+describe('useAvatar: рамка аватарки (BACKLOG 502)', () => {
+  it('load берёт выбранную рамку из profiles.customization; неизвестный ключ и пусто — без рамки', async () => {
+    h.row = { avatar_url: null, customization: { avatar_frame: 'frame_gold' } }
+    expect((await ready()).frame.value).toBe('frame_gold')
+    h.row = { avatar_url: null, customization: { avatar_frame: 'frame_removed' } }
+    expect((await ready()).frame.value).toBeNull()
+    h.row = { avatar_url: null, customization: null }
+    expect((await ready()).frame.value).toBeNull()
+  })
+  it('надели / сняли рамку в «Кастомизации» — меняется сразу; после остановки области подписка снята', () => {
+    const scope = effectScope()
+    const a = scope.run(() => useAvatar())!
+    notifyCustomizationChanged({ avatar_frame: 'frame_neon' })
+    expect(a.frame.value).toBe('frame_neon')
+    notifyCustomizationChanged({ avatar_frame: null })
+    expect(a.frame.value).toBeNull()
+    scope.stop()
+    notifyCustomizationChanged({ avatar_frame: 'frame_neon' })
+    expect(a.frame.value).toBeNull()
+  })
+})
+

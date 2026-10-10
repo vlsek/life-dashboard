@@ -8,6 +8,7 @@ import AppShell from './components/AppShell.vue'
 import PasswordModal from './components/PasswordModal.vue'
 import AvatarModal from './components/AvatarModal.vue'
 import { useAvatar } from './lib/useAvatar'
+import { frameClass, frameShadow } from './lib/customFrame'
 import Icon from './components/Icon.vue'
 import Toast from './components/Toast.vue'
 import EmojiText from './components/EmojiText.vue'
@@ -130,8 +131,8 @@ const googleLinkedRest = computed(() => t('acc_google_linked').replace(/^\u2705\
 
     <template v-else>
       <div class="mb-4 flex items-center gap-3 rounded-xl border p-4" style="border-color: var(--border); background: var(--bg-card)" data-test="avatar-card">
-        <img v-if="avatar.avatarUrl.value" :src="avatar.avatarUrl.value" alt="" class="h-14 w-14 shrink-0 rounded-full object-cover" data-test="avatar-current" />
-        <div v-else class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-xl font-bold" style="background: var(--accent); color: var(--accent-text)" data-test="avatar-initial">{{ avatarInitial }}</div>
+        <img v-if="avatar.avatarUrl.value" :src="avatar.avatarUrl.value" alt="" class="h-14 w-14 shrink-0 rounded-full object-cover" :class="frameClass(avatar.frame.value)" :style="{ boxShadow: frameShadow(avatar.frame.value) }" data-test="avatar-current" />
+        <div v-else class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-xl font-bold" style="background: var(--accent); color: var(--accent-text)" :class="frameClass(avatar.frame.value)" :style="{ boxShadow: frameShadow(avatar.frame.value) }" data-test="avatar-initial">{{ avatarInitial }}</div>
         <div class="min-w-0 flex-1">
           <h3 class="mb-0.5 font-bold"><EmojiText :text="t('acc_avatar_h3')" /></h3>
           <p class="mb-2 text-sm" style="color: var(--text-dim)">{{ t('acc_avatar_hint') }}</p>

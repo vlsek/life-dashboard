@@ -2,7 +2,7 @@
 // Страница «Кастомизация» после успешной записи в profiles.customization сообщает новый выбор; левое меню (web-header) и Дашборд
 // (кольцо прогресса вокруг аватарки) подхватывают его сразу. window-событие — для блоков той же страницы, BroadcastChannel — для
 // других открытых вкладок (Дашборд/Сообщество в соседней вкладке). Пилоты изолированы, поэтому КОПИЯ лежит в web-customization,
-// web-header и web-dashboard (менять ВМЕСТЕ — страж customizationEvents.test.ts в web-customization сверяет файлы).
+// web-header, web-dashboard и web-account (менять ВМЕСТЕ — страж customizationEvents.test.ts в web-customization сверяет файлы).
 export const CUSTOMIZATION_CHANGED = 'customization:changed'
 const CHANNEL = 'life-customization'
 

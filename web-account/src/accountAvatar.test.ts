@@ -10,7 +10,7 @@ vi.mock('./lib/supabase', () => ({
     from: () => {
       const chain: any = {
         select: () => chain, eq: () => chain,
-        maybeSingle: async () => ({ data: { is_admin: false, avatar_url: null }, error: null }),
+        maybeSingle: async () => ({ data: { is_admin: false, avatar_url: null, customization: { avatar_frame: 'frame_flame' } }, error: null }),
         upsert: (row: unknown) => { h.upserts.push(row); return Promise.resolve({ error: null }) },
       }
       return chain
@@ -40,5 +40,13 @@ describe('Аккаунт: смена аватарки', () => {
     expect(h.upserts).toEqual([{ user_id: 'u1', avatar_url: animalAvatarUrl('fox') }])
     expect(w.find('[data-test="avatar-modal"]').exists()).toBe(false)
     expect(w.find('[data-test="avatar-current"]').attributes('src')).toBe(animalAvatarUrl('fox'))
+  })
+  it('выбранная рамка рисуется на карточке (в т.ч. анимированная), на кругу с буквой тоже', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, json: async () => ({}), text: async () => '' })))
+    const w = mount(App)
+    await flushPromises()
+    const el = w.find('[data-test="avatar-initial"]')
+    expect(el.classes()).toContain('cust-frame-flame')
+    expect(el.attributes('style')).toContain('box-shadow')
   })
 })

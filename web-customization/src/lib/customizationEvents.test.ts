@@ -5,10 +5,11 @@ import { notifyCustomizationChanged, onCustomizationChanged, parseCustomizationD
 
 // BACKLOG раздел 43, 9:41: надеть/снять рамку применяется без обновления страницы — общий канал событий.
 describe('customizationEvents: копии в пилотах', () => {
-  it('web-customization, web-header и web-dashboard держат ОДИНАКОВЫЙ файл (менять вместе)', () => {
+  it('web-customization, web-header, web-dashboard и web-account держат ОДИНАКОВЫЙ файл (менять вместе)', () => {
     const base: string = readFileSync('src/lib/customizationEvents.ts', 'utf-8')
     expect(readFileSync('../web-header/src/lib/customizationEvents.ts', 'utf-8')).toBe(base)
     expect(readFileSync('../web-dashboard/src/lib/customizationEvents.ts', 'utf-8')).toBe(base)
+    expect(readFileSync('../web-account/src/lib/customizationEvents.ts', 'utf-8')).toBe(base)
   })
 })
 

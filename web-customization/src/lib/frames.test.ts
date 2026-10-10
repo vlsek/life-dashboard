@@ -9,18 +9,19 @@ async function readSrc(rel: string): Promise<string> {
 const body = (s: string) => s.split('\n').filter((_l, i, a) => !a.slice(0, i + 1).every((x) => x.startsWith('//'))).join('\n').trim()
 
 describe('копии frames.ts совпадают (страж от расхождения)', () => {
-  it('web-header и web-community держат ту же таблицу и функцию, что страница «Кастомизация»', async () => {
+  it('web-header, web-community и web-account держат ту же таблицу и функцию, что страница «Кастомизация»', async () => {
     const orig = body(await readSrc('./frames.ts'))
     expect(orig).toContain('FRAME_SHADOWS')
     expect(body(await readSrc('../../../web-header/src/lib/customFrame.ts'))).toBe(orig)
     expect(body(await readSrc('../../../web-community/src/lib/customFrame.ts'))).toBe(orig)
+    expect(body(await readSrc('../../../web-account/src/lib/customFrame.ts'))).toBe(orig)
   })
 })
 
 describe('стили анимированных рамок есть везде, где рисуется аватар (страж)', () => {
-  it('в style.css Кастомизации и Сообщества и header.css шапки: keyframes, класс и отключение при reduced-motion', async () => {
+  it('в style.css Кастомизации, Сообщества и Аккаунта и header.css шапки: keyframes, класс и отключение при reduced-motion', async () => {
     const { FRAME_ANIMATIONS } = await import('./frames')
-    const files = ['./../style.css', '../../../web-community/src/style.css', '../../../web-header/src/header.css']
+    const files = ['./../style.css', '../../../web-community/src/style.css', '../../../web-header/src/header.css', '../../../web-account/src/style.css']
     for (const f of files) {
       const css = await readSrc(f)
       for (const cls of Object.values(FRAME_ANIMATIONS)) {
