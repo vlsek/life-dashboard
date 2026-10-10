@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.57";
+const SITE_VERSION = "4.58";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.58", date: "2026-10-10 18:09", changes: [
+        "В «Тренировках» названия упражнений теперь всегда с заглавной буквы: и при сохранении нового, и при показе старых (раньше часть была с маленькой, часть с большой)."
+    ]},
     { version: "4.57", date: "2026-10-10 18:06", changes: [
         "Исправлено: на главной (Дашборд) значок прогресса недели в верхней панели рисовался прежним «скруглённым квадратом», а на остальных страницах — семиугольником по дням. Теперь везде один вид (семиугольник; «классика» — по настройке). Миграций нет."
     ]},
@@ -1981,6 +1984,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.58", date: "2026-10-10 18:09", changes: [
+        "In Workouts, exercise names now always start with a capital letter: both when saving a new one and when showing old ones (some used to be lower-case)."
+    ]},
     { version: "4.57", date: "2026-10-10 18:06", changes: [
         "Fixed: on the main page (Dashboard) the week progress badge in the top bar was drawn as the old rounded square while other pages showed the by-day heptagon. Now every page uses the same look (heptagon; \"classic\" if chosen in settings). No migrations."
     ]},

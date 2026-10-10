@@ -1,6 +1,13 @@
 {
-  "version": "4.57",
+  "version": "4.58",
   "en": [
+    {
+      "version": "4.58",
+      "date": "2026-10-10 18:09",
+      "changes": [
+        "In Workouts, exercise names now always start with a capital letter: both when saving a new one and when showing old ones (some used to be lower-case)."
+      ]
+    },
     {
       "version": "4.57",
       "date": "2026-10-10 18:06",
@@ -3266,6 +3273,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.58",
+      "date": "2026-10-10 18:09",
+      "changes": [
+        "В «Тренировках» названия упражнений теперь всегда с заглавной буквы: и при сохранении нового, и при показе старых (раньше часть была с маленькой, часть с большой)."
+      ]
+    },
     {
       "version": "4.57",
       "date": "2026-10-10 18:06",
