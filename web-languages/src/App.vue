@@ -6,6 +6,8 @@ import { t } from './lib/i18n'
 import AppShell from './components/AppShell.vue'
 import WordForm from './components/WordForm.vue'
 import DictionaryTabs from './components/DictionaryTabs.vue'
+import IdiomCard from './components/IdiomCard.vue'
+import { hasIdioms } from './lib/idioms'
 import Icon from './components/Icon.vue'
 import type { VocabWord, WordFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
@@ -57,6 +59,22 @@ const filteredWords = computed(() =>
 )
 const activeWords = computed(() => filteredWords.value.filter((w) => !w.learned))
 const doneWords = computed(() => filteredWords.value.filter((w) => w.learned))
+
+// «Идиома дня» (44.7): на вкладке языка с подборкой — для него; на «Все» — для первого языка из вкладок, у которого она есть (иначе английский).
+const idiomLang = computed(() => {
+  if (effectiveFilter.value !== 'all') return hasIdioms(effectiveFilter.value) ? effectiveFilter.value : null
+  return tabs.value.map((tab) => tab.code).find(hasIdioms) ?? 'en'
+})
+const haveIdioms = computed(() => new Set(words.value.filter((w) => (w.lang || 'en') === idiomLang.value).map((w) => w.word.trim().toLowerCase())))
+async function onAddIdiom(p: { word: string; translation: string; example: string | null; lang: string }) {
+  if (auth.value.status !== 'ready') return
+  setLastLang(p.lang)
+  try {
+    await addWord(auth.value.userId, { word: p.word, translation: p.translation, example: p.example, lang: p.lang, translateTo: 'ru' })
+  } catch (e) {
+    saveError.value = friendlyError(e, 'save')
+  }
+}
 
 const formOpen = ref(false)
 const editing = ref<VocabWord | null>(null)
@@ -123,6 +141,7 @@ async function onDelete(id: string) {
         @add="onAddTab"
         @remove="onRemoveTab"
       />
+      <IdiomCard v-if="idiomLang" :lang="idiomLang" :have="haveIdioms" @add="onAddIdiom" />
       <p v-if="effectiveFilter !== 'all' && filteredWords.length === 0" class="mb-3 text-sm" style="color: var(--text-dim)" data-test="dictionary-empty">
         {{ t('eng_tab_empty') }}
       </p>
