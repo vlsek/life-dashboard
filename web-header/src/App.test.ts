@@ -259,13 +259,15 @@ describe('карта мышц в правой панели (BACKLOG 3.2)', () =>
     w.unmount()
   })
 
-  it('нет упражнений — блока мышц в панели нет', async () => {
+  it('нет упражнений — карта в панели всё равно есть: пустая, с подсказкой (BACKLOG 52.2)', async () => {
     setup({ metrics: [habit], workout_exercises: [], workout_entries: [] })
     const w = mount(App)
     await flushPromises()
     await w.find('[data-test="panel-open"]').trigger('click')
     await flushPromises()
-    expect(w.find('[data-test="panel-muscles"]').exists()).toBe(false)
+    expect(w.find('[data-test="panel-muscles"]').exists()).toBe(true)
+    expect(w.find('[data-test="panel-muscles-empty"]').exists()).toBe(true)
+    expect(w.find('[data-muscle="quads"]').attributes('data-state')).toBe('idle')
     w.unmount()
   })
 })

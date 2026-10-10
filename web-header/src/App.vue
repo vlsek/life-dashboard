@@ -101,7 +101,7 @@ const muscles = useMuscles()
 watch(panelOpen, (open) => {
   if (open && userId.value) void muscles.load(userId.value)
 })
-const panelMuscles = computed(() => (muscles.loaded.value && muscles.hasExercises.value ? { done: muscles.done.value, last: muscles.last.value } : null))
+const panelMuscles = computed(() => (muscles.loaded.value ? { done: muscles.done.value, last: muscles.last.value, empty: !muscles.hasExercises.value } : null))
 const summaryKind = ref<'day' | 'week' | null>(null)
 const settingsOpen = ref(false)
 

@@ -366,12 +366,12 @@ function onToggleProgramWeek(week: number) {
       <OverviewChart :entries="entries" />
 
       <MuscleMap
-        v-if="exercises.length > 0"
         :entries="entries"
         :exercises="exercises"
         :study-recent="studyRecent"
         @add-entry="(ex) => (entryForm = { exercise: ex, existing: null })"
       />
+      <p v-if="exercises.length === 0" class="-mt-2 mb-3 text-xs" style="color: var(--text-dim)" data-testid="muscles-empty-hint">{{ t('workouts_muscles_empty') }}</p>
 
       <ProgressionTrees
         v-if="exercises.length > 0"

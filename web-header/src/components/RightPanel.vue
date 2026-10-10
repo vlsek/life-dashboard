@@ -28,7 +28,7 @@ const props = defineProps<{
   water: { todayMl: number; normMl: number } | null
   canUndoWater?: boolean // есть что отменить в воде за сегодня (BACKLOG 08:55): тогда в блоке воды появляется «Отменить последнее»
   savedTick: number
-  muscles?: { done: Set<MuscleId>; last: Partial<Record<MuscleId, string>> } | null // null/не передано — блока мышц нет (нет упражнений)
+  muscles?: { done: Set<MuscleId>; last: Partial<Record<MuscleId, string>>; empty?: boolean } | null // null/не передано — блока мышц нет (данные ещё не загрузились); empty — упражнений ещё нет, карта пустая с подсказкой (BACKLOG 52.2)
 }>()
 const emit = defineEmits<{ 'update:open': [boolean]; 'open-summary': [kind: 'day' | 'week']; 'open-water': []; 'add-water': [ml: number]; 'undo-water': []; 'open-settings': [] }>()
 
@@ -150,6 +150,7 @@ onBeforeUnmount(() => applyScrollLock(false))
     <section v-if="muscles" class="gh-panel-water" style="margin-top: 12px" data-test="panel-muscles">
       <h4><EmojiText :text="'🏋️ ' + t('workouts_muscles_title')" /></h4>
       <MuscleMiniMap :done="muscles.done" :last="muscles.last" />
+      <p v-if="muscles.empty" class="gh-dim" style="margin: 6px 0 0; font-size: 12px" data-test="panel-muscles-empty">{{ t('hdr_muscles_empty') }}</p>
     </section>
   </aside>
 </template>
