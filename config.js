@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.64";
+const SITE_VERSION = "4.65";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.65", date: "2026-10-10 21:00", changes: [
+        "Админка: переключатель «Режим отладки» (только для администратора и только для себя) — основа для будущей «примерки» платных предметов Кастомизации без оплаты. Сам режим пока ничего не меняет в приложении; кнопка «Примерить» появится следующим обновлением. Серверная часть — миграция 066 (применяется владельцем). Для остальных пользователей ничего не меняется."
+    ]},
     { version: "4.64", date: "2026-10-10 23:59", changes: [
         "«Тренировки»: на странице появились вкладки «Упражнения» и «Карта мышц». Карта мышц переехала во вторую вкладку (без своей кнопки-заголовка), выбранная вкладка запоминается."
     ]},
@@ -2002,6 +2005,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.65", date: "2026-10-10 21:00", changes: [
+        "Admin: a \"Debug mode\" switch (administrator only, for yourself only) — the groundwork for a future \"try on\" of paid Customization items without paying. The mode itself changes nothing in the app yet; the \"Try on\" button comes in the next update. Server side: migration 066 (applied by the owner). Nothing changes for other users."
+    ]},
     { version: "4.64", date: "2026-10-10 23:59", changes: [
         "Workouts: the page now has two tabs, Exercises and Muscle map. The muscle map moved to the second tab (no header button of its own), and the chosen tab is remembered."
     ]},
