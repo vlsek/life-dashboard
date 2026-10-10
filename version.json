@@ -1,6 +1,13 @@
 {
-  "version": "4.46",
+  "version": "4.47",
   "en": [
+    {
+      "version": "4.47",
+      "date": "2026-10-10 12:40",
+      "changes": [
+        "New big theme Emerald Obsidian - not just colors but the whole look: sharp 2 px corners, dashed card borders, monospace headings and snappy animations. Pick it in Customization or the header settings; open to everyone"
+      ]
+    },
     {
       "version": "4.46",
       "date": "2026-10-10 12:38",
@@ -3189,6 +3196,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.47",
+      "date": "2026-10-10 12:40",
+      "changes": [
+        "Новая «большая» тема «Изумрудный обсидиан» (Emerald Obsidian) — не только цвета, а оформление целиком: строгие углы 2 px, пунктирные границы карточек, моноширинные заголовки и резкие анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем"
+      ]
+    },
     {
       "version": "4.46",
       "date": "2026-10-10 12:38",

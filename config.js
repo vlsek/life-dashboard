@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.46";
+const SITE_VERSION = "4.47";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.47", date: "2026-10-10 12:40", changes: [
+        "Новая «большая» тема «Изумрудный обсидиан» (Emerald Obsidian) — не только цвета, а оформление целиком: строгие углы 2 px, пунктирные границы карточек, моноширинные заголовки и резкие анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем",
+    ]},
     { version: "4.46", date: "2026-10-10 12:38", changes: [
         "В «Вехах» над списком появились вкладки-категорий (Все · Здоровье · Машина …) со счётчиками, а кнопка «Шаблоны» открывает каталог готовых вех: здоровье (осмотры — как ориентиры, уточняйте у врача), машина, дом, документы. Выбрали шаблон — форма откроется заполненной, останется указать, когда делали в последний раз."
     ]},
@@ -1948,6 +1951,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.47", date: "2026-10-10 12:40", changes: [
+        "New big theme Emerald Obsidian - not just colors but the whole look: sharp 2 px corners, dashed card borders, monospace headings and snappy animations. Pick it in Customization or the header settings; open to everyone",
+    ]},
     { version: "4.46", date: "2026-10-10 12:38", changes: [
         "Milestones now has category tabs above the list (All · Health · Car …) with counters, and the \"Templates\" button opens a catalog of ready-made milestones: health (check-ups as rough guides — ask your doctor), car, home, documents. Pick one and the form opens pre-filled; just set when it was last done."
     ]},
