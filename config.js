@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.29";
+const SITE_VERSION = "4.30";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.30", date: "2026-10-10 07:04", changes: [
+        "На каждой странице при первом заходе появляется короткая подсказка «что тут можно делать», а потом её можно открыть значком «i» в верхней панели справа. Показывается один раз на устройстве."
+    ]},
     { version: "4.29", date: "2026-10-10 03:55", changes: [
         "Тренировки → карта мышц: список «когда тренировали каждую мышцу» больше не простыня. Мышцы разложены по группам — «Пора потренировать», «На этой неделе», «Свежие» — у каждой полоска последних 14 дней; «Ещё не тренировали» свёрнуто в одну строку. В панели выбранной мышцы — нагрузка за 7 и 30 дней и последние тренировки (5 + «Показать все»). Без миграций."
     ]},
@@ -1897,6 +1900,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.30", date: "2026-10-10 07:04", changes: [
+        "Every page now shows a short \"what you can do here\" hint on your first visit, and you can reopen it with the \"i\" button at the right of the top bar. It is shown once per device."
+    ]},
     { version: "4.29", date: "2026-10-10 03:55", changes: [
         "Workouts → muscle map: the \"when each muscle was last worked\" list is no longer a wall of rows. Muscles are grouped — Time to train, This week, Fresh — each with a 14-day strip; \"Not trained yet\" is folded into one line. The selected-muscle panel shows the 7- and 30-day load and recent workouts (5 + \"Show all\"). No migrations."
     ]},
