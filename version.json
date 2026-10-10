@@ -1,6 +1,13 @@
 {
-  "version": "4.56",
+  "version": "4.57",
   "en": [
+    {
+      "version": "4.57",
+      "date": "2026-10-10 18:06",
+      "changes": [
+        "Fixed: on the main page (Dashboard) the week progress badge in the top bar was drawn as the old rounded square while other pages showed the by-day heptagon. Now every page uses the same look (heptagon; \"classic\" if chosen in settings). No migrations."
+      ]
+    },
     {
       "version": "4.56",
       "date": "2026-10-10 11:10",
@@ -3259,6 +3266,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.57",
+      "date": "2026-10-10 18:06",
+      "changes": [
+        "Исправлено: на главной (Дашборд) значок прогресса недели в верхней панели рисовался прежним «скруглённым квадратом», а на остальных страницах — семиугольником по дням. Теперь везде один вид (семиугольник; «классика» — по настройке). Миграций нет."
+      ]
+    },
     {
       "version": "4.56",
       "date": "2026-10-10 11:10",

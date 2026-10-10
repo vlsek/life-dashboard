@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.56";
+const SITE_VERSION = "4.57";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.57", date: "2026-10-10 18:06", changes: [
+        "Исправлено: на главной (Дашборд) значок прогресса недели в верхней панели рисовался прежним «скруглённым квадратом», а на остальных страницах — семиугольником по дням. Теперь везде один вид (семиугольник; «классика» — по настройке). Миграций нет."
+    ]},
     { version: "4.56", date: "2026-10-10 11:10", changes: [
         "История: над сеткой месяца появился блок «По категориям» — кольцо долей категорий метрик за выбранный месяц (дуга на категорию: длина — доля отслеженных дней, закраска — выполненное) и легенда «сделано/всего · %». Метрики без категории — отдельной группой; если категория одна, блок не показывается. Без миграций."
     ]},
@@ -1978,6 +1981,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.57", date: "2026-10-10 18:06", changes: [
+        "Fixed: on the main page (Dashboard) the week progress badge in the top bar was drawn as the old rounded square while other pages showed the by-day heptagon. Now every page uses the same look (heptagon; \"classic\" if chosen in settings). No migrations."
+    ]},
     { version: "4.56", date: "2026-10-10 11:10", changes: [
         "History: a \"By category\" block now sits above the month grid — a donut of metric categories for the selected month (one arc per category: length = its share of tracked days, fill = what was done) with a \"done/total · %\" legend. Metrics without a category form their own group; with a single category the block is hidden. No migrations."
     ]},
