@@ -1,6 +1,13 @@
 {
-  "version": "4.58",
+  "version": "4.59",
   "en": [
+    {
+      "version": "4.59",
+      "date": "2026-10-10 18:14",
+      "changes": [
+        "New big theme Moonlight Synth: deep violet background with a dot grid, neon glow on active buttons and checkmarks, soft corners and springy animations. Pick it in Customization or the header settings; open to everyone. With the system high-contrast setting on, the glow and grid switch off by themselves"
+      ]
+    },
     {
       "version": "4.58",
       "date": "2026-10-10 18:09",
@@ -3273,6 +3280,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.59",
+      "date": "2026-10-10 18:14",
+      "changes": [
+        "Новая «большая» тема «Лунный синтвейв» (Moonlight Synth): тёмно-фиолетовый фон с сеткой точек, неоновое свечение у активных кнопок и галочек, мягкие углы и пружинные анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем. Если в системе включён высокий контраст, свечение и сетка отключаются сами"
+      ]
+    },
     {
       "version": "4.58",
       "date": "2026-10-10 18:09",
