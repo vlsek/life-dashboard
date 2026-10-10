@@ -11,7 +11,8 @@
 import { computed } from 'vue'
 import { streakFlameTier } from '../lib/streakFlameTier'
 
-const props = defineProps<{ lit: boolean; days?: number }>()
+const props = defineProps<{ lit: boolean; days?: number; size?: number }>()
+// size — сторона живого пламени в px (по умолчанию 22; у метрики со стриком — меньше, в строку названия)
 const tier = computed(() => (props.lit ? streakFlameTier(props.days) : 0))
 
 const SPARKS = [
@@ -29,8 +30,8 @@ const sparks = computed(() => SPARKS.slice(0, tier.value >= 3 ? 4 : tier.value >
     class="streak-live"
     :data-tier="tier"
     viewBox="0 0 64 64"
-    width="22"
-    height="22"
+    :width="size ?? 22"
+    :height="size ?? 22"
     aria-hidden="true"
     data-test="streak-flame-live"
   >
