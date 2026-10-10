@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.36";
+const SITE_VERSION = "4.37";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.37", date: "2026-10-10 12:01", changes: [
+        "Настройки между устройствами: тема, язык, выключатель анимаций, избранные темы, поздравления за серии, окно «вчерашние невыполненные», напоминание про воду, пункт «Прогресс в меню» и настройки колец дня теперь запоминаются в аккаунте и подтягиваются на другом устройстве (новое устройство берёт настройки аккаунта; что изменили здесь — уходит в аккаунт). Нужна миграция 064 (её применяет владелец): пока её нет, всё работает как раньше, только на одном устройстве."
+    ]},
     { version: "4.36", date: "2026-10-10 07:32", changes: [
         "Значок «i» с подсказкой страницы убран из шапки (она и так загружена) и теперь стоит тонкой полоской наверху страницы, прямо под шапкой."
     ]},
@@ -1918,6 +1921,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.37", date: "2026-10-10 12:01", changes: [
+        "Settings across devices: theme, language, the animations switch, favorite themes, streak celebrations, the \"yesterday's unfinished\" window, the water reminder, \"Progress in the menu\" and the day-ring settings are now saved to your account and pulled in on another device (a new device takes the account settings; what you change here goes to the account). Needs migration 064 (applied by the owner): until then everything works as before, on one device only."
+    ]},
     { version: "4.36", date: "2026-10-10 07:32", changes: [
         "The \"i\" button with the page hint is no longer in the top bar (it is busy enough) — it now sits in a thin strip at the top of the page, right under it."
     ]},
