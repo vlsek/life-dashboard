@@ -40,7 +40,10 @@ describe('мини-карта в правой плашке рисует тот �
   })
   it('MuscleMiniMap использует BODY_OUTLINE, а не старую «коробку»', () => {
     const v: string = readFileSync('../web-header/src/components/MuscleMiniMap.vue', 'utf-8')
-    expect(v).toContain('BODY_OUTLINE')
+    // с 54.5 контур берётся через bodyGeometry(): мужская модель = BODY_OUTLINE, женская — тот же контур по профилю ширины
+    expect(v).toContain('bodyGeometry')
     expect(v).not.toContain('<rect x="36"')
+    const m: string = readFileSync('../web-header/src/lib/bodyModel.ts', 'utf-8')
+    expect(m).toContain('BODY_OUTLINE')
   })
 })
