@@ -4,6 +4,7 @@ import { mount } from '@vue/test-utils'
 import { readFileSync } from 'node:fs'
 import SplashLoader from './components/SplashLoader.vue'
 import SplashFlameLive from './components/splash/SplashFlameLive.vue'
+import SplashFlameTongues from './components/splash/SplashFlameTongues.vue'
 
 const html: string = readFileSync('index.html', 'utf-8')
 const css: string = readFileSync('src/style.css', 'utf-8')
@@ -77,9 +78,9 @@ describe('живое пламя: устройство', () => {
 describe('index.html: статичная заставка до загрузки бандла', () => {
   it('внутри #app, три варианта, цвет по теме, выбор по data-splash', () => {
     expect(html).toMatch(/<div id="app">\s*<div class="pre-splash"/)
-    for (const c of ['pre-flame', 'pre-ring', 'pre-classic']) expect(html).toContain(`class="${c}`)
+    for (const c of ['pre-flame', 'pre-ring', 'pre-classic', 'pre-tongues']) expect(html).toContain(`class="${c}`)
     expect(html).toContain("setAttribute('data-splash'")
-    expect(html).toContain("'classic', 'flame', 'ring'")
+    expect(html).toContain("'classic', 'flame', 'ring', 'tongues'")
     expect(html).toContain('--pre-accent')
   })
 
@@ -93,6 +94,7 @@ describe('index.html: статичная заставка до загрузки 
     }
     expect(pathsOf(section('pre-flame'))).toEqual(pathsOf(live))
     expect(pathsOf(section('pre-ring'))).toEqual(pathsOf(ring))
+    expect(pathsOf(section('pre-tongues'))).toEqual(pathsOf(readFileSync('src/components/splash/SplashFlameTongues.vue', 'utf-8')))
     expect(pathsOf(section('pre-classic'))).toEqual(pathsOf(loader))
     // и совпадают числа геометрии колец / искр
     for (const r of ['r="30"', 'r="22"']) {
@@ -133,5 +135,54 @@ describe('index.html: фон html следует за текущей темой 
   it('body по-прежнему красится var(--bg) в style.css, а у html/body/#app есть height: 100%', () => {
     expect(css).toMatch(/body \{[^}]*background: var\(--bg\)/)
     expect(css).toMatch(/html,\s*body,\s*#app \{\s*height: 100%;/)
+  })
+})
+
+describe('вариант «Три языка» (BACKLOG 16: старое пламя вернулось)', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+  })
+
+  it('SplashLoader с variant=tongues: три языка + сердцевина + 4 искры в одном svg.splash-live.splash-tongues', () => {
+    const w = mount(SplashLoader, { props: { variant: 'tongues' } })
+    expect(w.find('[data-test="splash"]').attributes('data-variant')).toBe('tongues')
+    const svg = w.find('svg.splash-live.splash-tongues')
+    expect(svg.exists()).toBe(true)
+    for (const c of ['tongue-l', 'tongue-r', 'tongue-c', 'tongue-core']) expect(svg.find(`.${c}`).exists(), c).toBe(true)
+    expect(svg.findAll('.spark')).toHaveLength(4)
+    expect(w.find('.flame-body').exists()).toBe(false) // это не единое пламя
+  })
+
+  it('выбор из хранилища и из адреса работает для tongues', () => {
+    localStorage.setItem('splash_variant', 'tongues')
+    expect(mount(SplashLoader).find('[data-test="splash"]').attributes('data-variant')).toBe('tongues')
+  })
+
+  it('CSS: языки с собственными скоростями и keyframes tongue-*, подчинены общему «уменьшить движение»', () => {
+    for (const [c, k] of [['tongue-c', 'tongue-c'], ['tongue-l', 'tongue-l'], ['tongue-r', 'tongue-r'], ['tongue-core', 'tongue-core']]) {
+      expect(css).toMatch(new RegExp(`\\.splash-tongues \\.${c} \\{[^}]*animation: ${k} `))
+      expect(css).toContain(`@keyframes ${k}`)
+    }
+    expect(css).toMatch(/\.splash-live, \.splash-ring, \.splash-live \*, \.splash-ring \* \{ animation: none !important; \}/)
+  })
+
+  it('статичная заставка: ВО ВСЕХ пилотах есть вариант tongues (разметка, стили, ключ в списке)', () => {
+    const dirs = ['dashboard', 'account', 'achievements', 'calendar', 'challenges', 'community', 'customization', 'goals', 'header', 'history', 'languages', 'login', 'milestones', 'onboarding', 'shop', 'skills', 'workouts']
+    let n = 0
+    for (const d of dirs) {
+      let h: string
+      try {
+        h = readFileSync(`../web-${d}/index.html`, 'utf-8')
+      } catch {
+        continue
+      }
+      if (!h.includes('pre-classic')) continue
+      n++
+      expect(h, d).toContain("'classic', 'flame', 'ring', 'tongues'")
+      expect(h, d).toContain('class="pre-tongues"')
+      expect(h, d).toContain("html[data-splash='tongues'] .pre-splash .pre-tongues { display: block; }")
+    }
+    expect(n).toBeGreaterThanOrEqual(15)
   })
 })

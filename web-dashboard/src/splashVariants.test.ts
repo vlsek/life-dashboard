@@ -15,8 +15,8 @@ describe('splashVariants: реестр', () => {
     localStorage.setItem('site_lang', 'ru')
   })
 
-  it('три варианта; старая «классика» на месте; по умолчанию — «живое пламя»', () => {
-    expect([...SPLASH_VARIANTS]).toEqual(['classic', 'flame', 'ring'])
+  it('четыре варианта; старая «классика» и «три языка» на месте; по умолчанию — «живое пламя»', () => {
+    expect([...SPLASH_VARIANTS]).toEqual(['classic', 'flame', 'ring', 'tongues'])
     expect(DEFAULT_SPLASH_VARIANT).toBe('flame')
   })
 
@@ -34,6 +34,7 @@ describe('splashVariants: реестр', () => {
 
   it('isSplashVariant принимает только известные ключи', () => {
     expect(isSplashVariant('ring')).toBe(true)
+    expect(isSplashVariant('tongues')).toBe(true)
     for (const bad of ['', 'Ring', 'fire', null, undefined, 1]) expect(isSplashVariant(bad)).toBe(false)
   })
 

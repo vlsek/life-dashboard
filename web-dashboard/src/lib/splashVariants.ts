@@ -1,9 +1,10 @@
 // Варианты заставки загрузки (BACKLOG 16, «огонёк при загрузке», 14:02/15:11/19:06): единый реестр —
 // из него потом возьмутся пункты раздела «Кастомизация» и товары магазина (раздел 15). Старые варианты
-// не удаляем (просьба владельца): «классика» (v1.70) осталась как есть.
+// не удаляем (просьба владельца): «классика» (v1.70) осталась как есть, а старое пламя из трёх языков вернулось
+// вариантом «tongues» (тот самый, что был до «живого пламени»).
 import type { DictKey } from './i18n'
 
-export const SPLASH_VARIANTS = ['classic', 'flame', 'ring'] as const
+export const SPLASH_VARIANTS = ['classic', 'flame', 'ring', 'tongues'] as const
 export type SplashVariant = (typeof SPLASH_VARIANTS)[number]
 
 // По умолчанию — «живое пламя» (владелец просил «чтобы прям горело»); меняется на решение владельца.
@@ -14,6 +15,7 @@ export const SPLASH_VARIANT_LABEL_KEYS: Record<SplashVariant, DictKey> = {
   classic: 'splash_variant_classic',
   flame: 'splash_variant_flame',
   ring: 'splash_variant_ring',
+  tongues: 'splash_variant_tongues',
 }
 
 export function isSplashVariant(v: unknown): v is SplashVariant {

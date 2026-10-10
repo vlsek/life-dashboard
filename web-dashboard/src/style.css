@@ -1198,6 +1198,50 @@ html.theme-monet .splash-flame .fl-outer {
   70% { d: path("M30.6 32C32 37 41.8 41 43.2 47C43.2 53 37.6 58 32 58C26.4 58 20.8 53 20.8 47C20.8 41 29.2 37 30.6 32Z"); }
 }
 /* splash-flame:end */
+/* splash-tongues:start — вариант «Три языка» (старое пламя, BACKLOG 16); общие свечение/искры/«уменьшить движение» — через .splash-live */
+.splash-tongues .tongue {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.splash-tongues .tongue-c {
+  fill: var(--accent);
+  animation: tongue-c 1.3s ease-in-out infinite;
+}
+.splash-tongues .tongue-l {
+  fill: color-mix(in srgb, var(--accent) 78%, transparent);
+  animation: tongue-l 0.95s ease-in-out -0.3s infinite;
+}
+.splash-tongues .tongue-r {
+  fill: color-mix(in srgb, var(--accent) 78%, transparent);
+  animation: tongue-r 1.15s ease-in-out -0.7s infinite;
+}
+.splash-tongues .tongue-core {
+  fill: color-mix(in srgb, var(--accent) 35%, #ffffff);
+  animation: tongue-core 0.8s ease-in-out -0.2s infinite;
+}
+@keyframes tongue-l {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  40% { transform: scale(0.9, 1.15) skewX(-7deg); }
+  75% { transform: scale(1.05, 0.9) skewX(4deg); }
+}
+
+@keyframes tongue-r {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  35% { transform: scale(0.92, 1.12) skewX(6deg); }
+  70% { transform: scale(1.06, 0.92) skewX(-4deg); }
+}
+
+@keyframes tongue-c {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  30% { transform: scale(0.96, 1.08) skewX(-4deg); }
+  65% { transform: scale(1.03, 0.95) skewX(3deg); }
+}
+
+@keyframes tongue-core {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(0.88, 1.12); }
+}
+/* splash-tongues:end */
 @keyframes spark-rise {
   0% { transform: translate(0, 0) scale(1); opacity: 0; }
   15% { opacity: 1; }
