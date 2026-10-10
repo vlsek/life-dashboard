@@ -8,6 +8,7 @@ import MetricIcon from './components/MetricIcon.vue'
 import WaterSection from './components/WaterSection.vue'
 import ChartsSection from './components/ChartsSection.vue'
 import HeaderProgressBadge from './components/HeaderProgressBadge.vue'
+import { syncWeekGauge, weekGaugeStyle } from './lib/useWeekGauge'
 import { dayRingTarget, weekRingTarget } from './lib/ringPlacement'
 import type { RingData } from './lib/ringPlacement'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
@@ -89,6 +90,7 @@ const { milestonesReminder, weekendReminderVisible, loadMilestonesReminder, dism
 onMounted(async () => {
   await init()
   if (auth.value.status === 'ready') {
+    void syncWeekGauge(auth.value.userId) // вид спидометра недели из «Кастомизации» (BACKLOG 53.2)
     await loadLayout(auth.value.userId)
     await loadMilestonesReminder(auth.value.userId)
     void loadEveningReminder(auth.value.userId)
@@ -174,7 +176,7 @@ const dayRing = computed<RingData | null>(() =>
 )
 const weekRing = computed<RingData | null>(() =>
   hasWeekData.value
-    ? { basePct: weekBase.value, bonusPct: weekProgress.value!.bonusPct, totalPct: weekPct.value, title: weekTitle.value, shape: progressSettings.value.weekShape ?? 'heptagon', days: weekDays.value }
+    ? { basePct: weekBase.value, bonusPct: weekProgress.value!.bonusPct, totalPct: weekPct.value, title: weekTitle.value, shape: weekGaugeStyle.value, days: weekDays.value }
     : null,
 )
 // Если блок «Профиль» скрыт в раскладке, кольцам «вокруг аватарки»/«в профиле» некуда встать — показываем их бейджем в шапке.

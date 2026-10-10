@@ -26,6 +26,7 @@ import { useSidebarProfile } from './lib/sidebarProfile'
 import { sidebarProgress } from './lib/prefs'
 import { syncUnlockedThemes } from './lib/syncUnlockedThemes'
 import { syncUiSettings } from './lib/uiSettingsSync'
+import { syncWeekGauge, weekGaugeStyle } from './lib/useWeekGauge'
 import { pageKeyFor, readFavorites, saveFavoritesToProfile, syncFavoritesFromProfile, toggleFavorite, writeFavorites } from './lib/favorites'
 
 // panelOnly — режим для Дашборда: своя шапка (стакан, кольца) там уже есть, поэтому бандл даёт только правую панель.
@@ -52,6 +53,7 @@ onMounted(async () => {
   userEmail.value = data.session?.user.email ?? null
   sidebarTarget.value = document.getElementById('sidebar-top')
   void sideProfile.load(uid, data.session?.user)
+  void syncWeekGauge(uid) // вид спидометра недели из «Кастомизации» (BACKLOG 53.2)
   void syncUiSettings(uid) // настройки и оформление между устройствами (BACKLOG 48.3, миграция 064)
   void syncUnlockedThemes(uid) // какие темы-награды открыты (замок тем, v3.42)
   void ensureTrackWater(uid) // «Отслеживать воду» (BACKLOG 932): сначала из кэша устройства — стакан не мигает
@@ -76,7 +78,7 @@ function ring(p: NonNullable<typeof day.value>, label: string) {
   }
 }
 const dayRing = computed(() => (day.value && showDay.value ? ring(day.value, t('dash_day_progress_label')) : null))
-const weekRing = computed(() => (week.value && showWeek.value ? { ...ring(week.value, t('dash_week_progress_label')), shape: settings.value.weekShape, days: weekDays.value } : null))
+const weekRing = computed(() => (week.value && showWeek.value ? { ...ring(week.value, t('dash_week_progress_label')), shape: weekGaugeStyle.value, days: weekDays.value } : null))
 
 const unitLabel = computed(() => (getLang() === 'en' ? 'ml' : 'мл'))
 // «Отслеживать воду» выключено (BACKLOG 932) — ни стакана, ни блока воды в правой панели, ни окна воды
@@ -189,7 +191,7 @@ const gauge = (p: NonNullable<typeof day.value>): GaugeData => {
   return { basePct: r.basePct, bonusPct: r.bonusPct, totalPct: r.totalPct, detail: `${p.done}/${p.total}${p.bonusPct > 0 ? ' +' + p.bonusPct + '% ⭐' : ''}` }
 }
 const panelDay = computed(() => (day.value && showDay.value ? gauge(day.value) : null))
-const panelWeek = computed(() => (week.value && showWeek.value ? { ...gauge(week.value), shape: settings.value.weekShape, days: weekDays.value } : null))
+const panelWeek = computed(() => (week.value && showWeek.value ? { ...gauge(week.value), shape: weekGaugeStyle.value, days: weekDays.value } : null))
 const panelWater = computed(() => (waterVisible.value ? { todayMl: todayMl.value, normMl: normMl.value } : null))
 async function onPanelAddWater(ml: number) {
   await onAdd(ml, todayStr())

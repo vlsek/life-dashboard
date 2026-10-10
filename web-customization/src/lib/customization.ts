@@ -1,8 +1,8 @@
 // Реестр «Кастомизации» (BACKLOG 491, решение владельца 2026-10-03) и чистая логика: статусы предметов, цены, разбор сохранённого.
 // Здесь НЕТ сети и DOM — загрузка и запись в useCustomization.ts. Предметы добавляются по одному за итерацию (рамки аватарки — первый).
 
-export type Category = 'avatar_frame' | 'collapse_style'
-export const CATEGORY_ORDER: readonly Category[] = ['avatar_frame', 'collapse_style']
+export type Category = 'avatar_frame' | 'collapse_style' | 'week_gauge'
+export const CATEGORY_ORDER: readonly Category[] = ['avatar_frame', 'collapse_style', 'week_gauge']
 
 // Цены — три уровня, ВСЕ в одном месте (решение владельца): поменять число здесь — поменяется везде.
 export const PRICE_TIERS = { low: 100, mid: 150, high: 250 } as const
@@ -53,6 +53,10 @@ export const ITEMS: readonly CustomItem[] = [
   { key: 'collapse_accordion', category: 'collapse_style', source: 'points', tier: 'mid' },
   // «Карточка со сводкой» (BACKLOG 498 срез 3): свёрнутый блок показывает справа от заголовка короткую строку итога; высокий тариф = 250 (владелец 2026-10-03)
   { key: 'collapse_summary', category: 'collapse_style', source: 'points', tier: 'high' },
+  // Вид спидометра недели (BACKLOG 53.2, срез 1; список и цены — на усмотрение агента 1 по разрешению владельца 2026-10-10): «семиугольник по дням» —
+  // у всех бесплатно (это «ничего не выбрано»), «классическое кольцо» — 100, «семь столбиков» — 150. Вид СПИДОМЕТРА ДНЯ — следующим срезом.
+  { key: 'week_classic', category: 'week_gauge', source: 'points', tier: 'low' },
+  { key: 'week_bars', category: 'week_gauge', source: 'points', tier: 'mid' },
 ]
 
 export const itemByKey = (key: string): CustomItem | undefined => ITEMS.find((i) => i.key === key)

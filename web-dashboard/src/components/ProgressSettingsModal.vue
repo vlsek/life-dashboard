@@ -54,13 +54,7 @@ function onSave() {
           </select>
         </label>
 
-        <label class="flex flex-col gap-1">
-          <span class="dim text-xs">{{ t('dash_week_shape_label') }}</span>
-          <select v-model="weekShape" class="modal-input" data-test="week-shape">
-            <option value="heptagon">{{ t('dash_week_shape_heptagon') }}</option>
-            <option value="classic">{{ t('dash_week_shape_classic') }}</option>
-          </select>
-        </label>
+        <p class="dim m-0 text-xs" data-test="week-shape-moved">{{ t('dash_week_shape_moved') }} <a href="/customization/" style="color: var(--accent)">{{ t('dash_week_shape_moved_link') }}</a></p>
       </div>
 
       <div class="mt-4 flex justify-end gap-2">

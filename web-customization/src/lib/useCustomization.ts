@@ -1,4 +1,5 @@
 import { parseCollapseStyle, writeCachedCollapseStyle } from './collapseStyle'
+import { parseWeekGauge, writeCachedWeekGauge } from './weekGauge'
 import { ref } from 'vue'
 import { sb } from './supabase'
 import { fmtDate } from './date'
@@ -115,6 +116,7 @@ export function useCustomization() {
       unlocked.value = map
       selected.value = parseSelected((profileRes.data as { customization?: unknown } | null)?.customization)
       writeCachedCollapseStyle(parseCollapseStyle(selected.value.collapse_style)) // выбор мог быть сделан на другом устройстве
+      writeCachedWeekGauge(parseWeekGauge(selected.value.week_gauge))
       await syncAchievementRewards(userId)
       error.value = null
     } catch (e) {
@@ -216,6 +218,7 @@ export function useCustomization() {
       selected.value = next
       notifyCustomizationChanged({ avatar_frame: next.avatar_frame ?? null }) // 9:41: левое меню и Дашборд меняют рамку без обновления
       writeCachedCollapseStyle(parseCollapseStyle(next.collapse_style)) // вид сворачивания: страницы применяют его по кэшу, не дожидаясь сети (BACKLOG 498)
+      writeCachedWeekGauge(parseWeekGauge(next.week_gauge)) // вид спидометра недели (53.2): шапка и Дашборд применяют его по кэшу
       return true
     } catch (e) {
       actionError.value = t('cust_select_error') + friendlyError(e, 'save')

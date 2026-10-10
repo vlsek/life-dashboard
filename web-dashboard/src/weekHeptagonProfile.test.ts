@@ -59,11 +59,10 @@ describe('ProgressRing недели: стороны по дням', () => {
 })
 
 describe('настройка «Вид недели» в Дашборде', () => {
-  it('в окне: по умолчанию семиугольник, выбор «Прежний (круг)» уходит в save', async () => {
-    const w = mount(ProgressSettingsModal, { props: { initial: S } })
-    const sel = w.find('[data-test="week-shape"]')
-    expect((sel.element as HTMLSelectElement).value).toBe('heptagon')
-    await sel.setValue('classic')
+  it('в окне вида недели больше нет: вместо него — подсказка и ссылка в «Кастомизацию» (BACKLOG 53.2); сохранённый вид проходит насквозь', async () => {
+    const w = mount(ProgressSettingsModal, { props: { initial: { ...S, weekShape: 'classic' } } })
+    expect(w.find('[data-test="week-shape"]').exists()).toBe(false)
+    expect(w.find('[data-test="week-shape-moved"] a').attributes('href')).toBe('/customization/')
     await w.find('button[style*="--accent"]').trigger('click')
     expect((w.emitted('save')![0][0] as DayProgressSettings).weekShape).toBe('classic')
   })

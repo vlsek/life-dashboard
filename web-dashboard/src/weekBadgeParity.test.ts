@@ -41,4 +41,9 @@ describe('значок недели в шапке Дашборда', () => {
     const norm = (s: string) => s.replace(/\/\/ КОПИЯ[^\n]*\n/g, '').trim()
     expect(norm(own)).toBe(norm(header))
   })
+  it('WeekBars.vue — копия файла общей шапки', () => {
+    const own = readFileSync('src/components/WeekBars.vue', 'utf8') as string
+    const header = readFileSync('../web-header/src/components/WeekBars.vue', 'utf8') as string
+    expect(own).toBe(header)
+  })
 })

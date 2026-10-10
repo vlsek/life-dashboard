@@ -9,7 +9,7 @@ export interface RingData {
   bonusPct: number
   totalPct: number
   title: string
-  shape?: 'heptagon' | 'classic' // только у недели: вид из настроек
+  shape?: 'heptagon' | 'classic' | 'bars' // только у недели: вид из настроек
   days?: WeekDaySegment[] | null // только у недели: прогресс каждого из 7 дней (сторона семиугольника = день)
 }
 

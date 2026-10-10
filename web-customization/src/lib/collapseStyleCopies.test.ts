@@ -34,3 +34,13 @@ describe('collapseStyle: копии в пилотах', () => {
     expect(block('../web-workouts/src/style.css')).toBe(block('../web-dashboard/src/style.css'))
   })
 })
+
+// BACKLOG 53.2: вид спидометра недели — то же самое, три копии (customization, header, dashboard).
+describe('weekGauge: копии в пилотах', () => {
+  it('weekGauge.ts одинаков в web-customization, web-header и web-dashboard (менять вместе)', () => {
+    const base = read('src/lib/weekGauge.ts')
+    expect(read('../web-header/src/lib/weekGauge.ts')).toBe(base)
+    expect(read('../web-dashboard/src/lib/weekGauge.ts')).toBe(base)
+  })
+})
+

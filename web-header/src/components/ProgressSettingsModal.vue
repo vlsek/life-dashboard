@@ -46,13 +46,7 @@ function onSave() {
         </select>
       </label>
 
-      <label class="gh-field">
-        <span class="gh-dim" style="font-size: 12px">{{ t('hdr_week_shape_label') }}</span>
-        <select v-model="weekShape" class="gh-input" data-test="week-shape">
-          <option value="heptagon">{{ t('hdr_week_shape_heptagon') }}</option>
-          <option value="classic">{{ t('hdr_week_shape_classic') }}</option>
-        </select>
-      </label>
+      <p class="gh-dim" style="font-size: 12px; margin: 0" data-test="week-shape-moved">{{ t('hdr_week_shape_moved') }} <a href="/customization/" style="color: var(--accent)">{{ t('hdr_week_shape_moved_link') }}</a></p>
 
       <div class="gh-actions">
         <button type="button" class="gh-btn" @click="emit('close')">{{ t('cancel') }}</button>
