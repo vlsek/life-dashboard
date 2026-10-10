@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.24";
+const SITE_VERSION = "4.25";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.25", date: "2026-10-10 06:41", changes: [
+        "Достижения: появились 10 СКРЫТЫХ достижений — их нет в списке и в счётчике «открыто N из M», они выдаются сами за особые дела (год серии, 200 идеальных дней, 5000 баллов, 1000 отметок, 100 записей веса, «Универсал» — по делу в каждом из 7 разделов, 3 недели мега-продуктивности, 500 слов, 500 тренировок, 100 отметок вех). Получили — появляется окно «Новое достижение», а найденные собираются в блоке «Секретные» внизу страницы (блока нет, пока ничего не найдено). Наград пока нет. Миграций нет."
+    ]},
     { version: "4.24", date: "2026-10-10 03:45", changes: [
         "Таблицы на телефоне: широкие таблицы (подходы, метрики, планы, вехи, навыки, книги, история вехи, день в Календаре/Истории, накопительный челлендж) теперь прокручиваются вбок внутри своей рамки и не раздвигают страницу. Без миграций."
     ]},
@@ -1882,6 +1885,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.25", date: "2026-10-10 06:41", changes: [
+        "Achievements: 10 HIDDEN achievements — they are not in the list or the \"unlocked N of M\" counter and are granted automatically for special feats (a 365-day streak, 200 perfect days, 5000 points, 1000 marks, 100 weight entries, \"All-rounder\" — something done in each of 7 sections, 3 mega-productivity weeks, 500 words, 500 workouts, 100 milestone marks). On receipt the \"New achievement\" window appears and the found ones collect in a \"Secret\" block at the bottom of the page (hidden until something is found). No rewards yet. No migrations."
+    ]},
     { version: "4.24", date: "2026-10-10 03:45", changes: [
         "Tables on phones: wide tables (sets, metrics, plans, milestones, skills, books, milestone history, day view in Calendar/History, cumulative challenge) now scroll sideways inside their own frame instead of stretching the page. No migrations."
     ]},
