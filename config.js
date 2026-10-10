@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.71";
+const SITE_VERSION = "4.72";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.72", date: "2026-10-11 00:40", changes: [
+        "Кастомизация: новый раздел «Спидометр прогресса дня» — вид кольца дня теперь тоже выбирается там. Обычное плавное кольцо — бесплатное и по умолчанию, «Пунктирное кольцо» (20 штрихов, зажигаются по одному) — 100 монет, «Кольцо со свечением» — 150. Выбранный вид показывают кольцо вокруг аватарки в Дашборде и бейдж дня в шапке на всех страницах (у рамки аватарки со своим свечением остаётся её свечение). Нужна миграция 068 (владелец применяет)."
+    ]},
     { version: "4.71", date: "2026-10-11 00:14", changes: [
         "Карта мышц: появилась женская модель тела (то же набор мышц, женские пропорции). Во вкладке «Карта мышц» — переключатель «Мужская / Женская»; по умолчанию берётся пол из профиля. Модель видна и на мини-карте в правой панели. В регистрации пол теперь обязательный выбор — без значения по умолчанию."
     ]},
@@ -2023,6 +2026,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.72", date: "2026-10-11 00:40", changes: [
+        "Customization: new «Day progress gauge» section — the day ring look is now chosen there too. The smooth ring is free and default, «Dashed ring» (20 dashes lighting up one by one) costs 100 coins, «Glowing ring» 150. The chosen look is shown by the ring around the avatar in the Dashboard and by the day badge in the header on every page (an avatar frame with its own glow keeps its glow). Needs migration 068 (owner applies)."
+    ]},
     { version: "4.71", date: "2026-10-11 00:14", changes: [
         "Muscle map: a female body model (same muscles, female proportions). The Muscle map tab has a Male / Female switch, defaulting to the gender from your profile. The model also shows on the mini-map in the right panel. In sign-up, gender is now a required choice with no default."
     ]},
