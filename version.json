@@ -1,6 +1,13 @@
 {
-  "version": "4.53",
+  "version": "4.54",
   "en": [
+    {
+      "version": "4.54",
+      "date": "2026-10-10 15:02",
+      "changes": [
+        "Security: a Customization purchase record can no longer be deleted or edited from the app to \"get coins back\" (migration 065; applied by the owner). Regular Shop wishes work as before. Nothing changes for you."
+      ]
+    },
     {
       "version": "4.53",
       "date": "2026-10-10 15:01",
@@ -3238,6 +3245,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.54",
+      "date": "2026-10-10 15:02",
+      "changes": [
+        "Безопасность: запись о покупке в «Кастомизации» больше нельзя удалить или изменить из приложения, чтобы «вернуть» потраченные монеты (миграция 065; применяется владельцем). Обычные желания Магазина работают как раньше. Для вас ничего не меняется."
+      ]
+    },
     {
       "version": "4.53",
       "date": "2026-10-10 15:01",

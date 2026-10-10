@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.53";
+const SITE_VERSION = "4.54";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.54", date: "2026-10-10 15:02", changes: [
+        "Безопасность: запись о покупке в «Кастомизации» больше нельзя удалить или изменить из приложения, чтобы «вернуть» потраченные монеты (миграция 065; применяется владельцем). Обычные желания Магазина работают как раньше. Для вас ничего не меняется."
+    ]},
     { version: "4.53", date: "2026-10-10 15:01", changes: [
         "Заставка загрузки: вернулось старое пламя из трёх языков с искрами, как было раньше, — теперь это отдельный вариант «Три языка». Посмотреть уже сейчас: добавьте ?splash=tongues к адресу любой страницы сайта (запомнится); выбор в «Кастомизации» появится следующим шагом. По умолчанию по-прежнему «Живое пламя». Без миграций."
     ]},
@@ -1969,6 +1972,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.54", date: "2026-10-10 15:02", changes: [
+        "Security: a Customization purchase record can no longer be deleted or edited from the app to \"get coins back\" (migration 065; applied by the owner). Regular Shop wishes work as before. Nothing changes for you."
+    ]},
     { version: "4.53", date: "2026-10-10 15:01", changes: [
         "Loading screen: the old three-tongue flame with sparks is back as it used to be — now a separate \"Three tongues\" variant. Try it now: add ?splash=tongues to the address of any page (it is remembered); the picker in \"Customization\" comes next. The default is still the \"Living flame\". No migrations."
     ]},
