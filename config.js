@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.60";
+const SITE_VERSION = "4.61";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.61", date: "2026-10-10 15:20", changes: [
+        "Тренировки: в окне «Добавить упражнение» появилась кнопка «Подобрать типовое упражнение по схеме тела». Зелёные мышцы вы тренировали за последние 4 дня, серые — нет; нажмите на нужные мышцы (или «Что я не тренировал») и выберите упражнение — название и поля подставятся сами."
+    ]},
     { version: "4.60", date: "2026-10-10 15:16", changes: [
         "Кастомизация: новый раздел «Заставка загрузки» — выбор из четырёх вариантов с живым предпросмотром: «Живое пламя» (по умолчанию), «Три языка» (старое пламя), «Огненный круг» и «Классика». Все бесплатные; выбор запоминается и действует на всех страницах сайта со следующей загрузки. Без миграций."
     ]},
@@ -1990,6 +1993,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.61", date: "2026-10-10 15:20", changes: [
+        "Workouts: the Add exercise window has a new \"Pick a typical exercise by body diagram\" button. Green muscles were worked in the last 4 days, grey ones were not; tap the muscles you want (or \"What I haven't trained\") and choose an exercise — its name and fields are filled in for you."
+    ]},
     { version: "4.60", date: "2026-10-10 15:16", changes: [
         "Customization: a new \"Loading screen\" section — pick one of four variants with a live preview: \"Living flame\" (default), \"Three tongues\" (the old flame), \"Fire ring\" and \"Classic\". All are free; your choice is remembered and applies to every page of the site from the next load. No migrations."
     ]},

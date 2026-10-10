@@ -1,6 +1,13 @@
 {
-  "version": "4.60",
+  "version": "4.61",
   "en": [
+    {
+      "version": "4.61",
+      "date": "2026-10-10 15:20",
+      "changes": [
+        "Workouts: the Add exercise window has a new \"Pick a typical exercise by body diagram\" button. Green muscles were worked in the last 4 days, grey ones were not; tap the muscles you want (or \"What I haven't trained\") and choose an exercise — its name and fields are filled in for you."
+      ]
+    },
     {
       "version": "4.60",
       "date": "2026-10-10 15:16",
@@ -3287,6 +3294,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.61",
+      "date": "2026-10-10 15:20",
+      "changes": [
+        "Тренировки: в окне «Добавить упражнение» появилась кнопка «Подобрать типовое упражнение по схеме тела». Зелёные мышцы вы тренировали за последние 4 дня, серые — нет; нажмите на нужные мышцы (или «Что я не тренировал») и выберите упражнение — название и поля подставятся сами."
+      ]
+    },
     {
       "version": "4.60",
       "date": "2026-10-10 15:16",
