@@ -1,6 +1,13 @@
 {
-  "version": "4.70",
+  "version": "4.71",
   "en": [
+    {
+      "version": "4.71",
+      "date": "2026-10-11 00:14",
+      "changes": [
+        "Muscle map: a female body model (same muscles, female proportions). The Muscle map tab has a Male / Female switch, defaulting to the gender from your profile. The model also shows on the mini-map in the right panel. In sign-up, gender is now a required choice with no default."
+      ]
+    },
     {
       "version": "4.70",
       "date": "2026-10-10 21:08",
@@ -3357,6 +3364,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.71",
+      "date": "2026-10-11 00:14",
+      "changes": [
+        "Карта мышц: появилась женская модель тела (то же набор мышц, женские пропорции). Во вкладке «Карта мышц» — переключатель «Мужская / Женская»; по умолчанию берётся пол из профиля. Модель видна и на мини-карте в правой панели. В регистрации пол теперь обязательный выбор — без значения по умолчанию."
+      ]
+    },
     {
       "version": "4.70",
       "date": "2026-10-10 21:08",
