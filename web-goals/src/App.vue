@@ -7,10 +7,12 @@ import SavedTick from './components/SavedTick.vue'
 import Icon from './components/Icon.vue'
 import PointsFloat from './components/PointsFloat.vue'
 import GoalInvites from './components/GoalInvites.vue'
+import CollapsibleSection from './components/CollapsibleSection.vue'
 import { useGoalInvites, incomingPending, outgoingNotices } from './lib/goalInvites'
 import { limitChoices, loadInviteLimit, saveInviteLimit } from './lib/inviteLimit'
 import { useGoals } from './lib/useGoals'
-import { groupActiveByCategory, sortDone, pointsSummary } from './lib/goals'
+import { deadlineLevel, groupActiveByCategory, sortDone, pointsSummary } from './lib/goals'
+import { upcomingDeadlines } from './lib/goalSections'
 import { mergeCategories, savedCategories } from './lib/categories'
 import { useGoalCategories } from './lib/useGoalCategories'
 import { t } from './lib/i18n'
@@ -60,6 +62,13 @@ function undoDone(g: Goal) {
 const noCategory = computed(() => t('goals_no_category'))
 const active = computed(() => items.value.filter((g) => !g.done))
 const done = computed(() => sortDone(items.value.filter((g) => g.done)))
+const upcoming = computed(() => upcomingDeadlines(active.value))
+function upcomingChip(g: Goal): string {
+  const { level, days } = deadlineLevel(g.deadline)
+  if (level === 'overdue' && days !== null) return `${t('goals_deadline_overdue')} ${-days} ${t('goals_days_short')}`
+  if (level === 'today') return t('goals_deadline_today')
+  return `${t('goals_deadline_until')} ${fmtRu(g.deadline)}`
+}
 const grouped = computed(() => groupActiveByCategory(active.value, noCategory.value))
 // Свои категории для выбора в форме цели (BACKLOG раздел 35): из ВСЕХ целей, в том числе выполненных; «Без категории» на обоих языках не в счёт.
 const noCategoryLabels = ['Без категории', 'No category', noCategory.value]
@@ -121,21 +130,23 @@ async function onDelete(g: Goal) {
       <button class="rounded-lg px-3 py-1.5 text-sm" data-test="goal-add" @click="formTarget = 'new'"><EmojiText :text="t('goals_add_btn')" /></button>
     </div>
 
-    <label class="dim mb-3 flex items-center gap-2 text-xs" data-test="deadline-remind">
-      <input type="checkbox" :checked="remindEnabled" data-test="deadline-remind-toggle" @change="onRemindToggle" />
-      {{ t('goals_deadline_remind') }}
-    </label>
-
-    <div v-if="inviteLimit !== null" class="mb-3" data-test="invite-limit">
-      <label class="dim flex flex-wrap items-center gap-2 text-xs">
-        {{ t('inv_limit_label') }}
-        <select :value="inviteLimit" data-test="invite-limit-select" @change="onInviteLimitChange">
-          <option v-for="n in inviteLimitOptions" :key="n" :value="n">{{ n === 0 ? t('inv_limit_none') : n }}</option>
-        </select>
+    <CollapsibleSection id="settings" :title="t('goals_sec_settings')" :default-open="false">
+      <label class="dim mb-3 flex items-center gap-2 text-xs" data-test="deadline-remind">
+        <input type="checkbox" :checked="remindEnabled" data-test="deadline-remind-toggle" @change="onRemindToggle" />
+        {{ t('goals_deadline_remind') }}
       </label>
-      <p class="dim m-0 mt-1 text-xs">{{ t('inv_limit_hint') }}</p>
-      <p v-if="inviteLimitError" class="m-0 mt-1 text-xs" style="color: var(--danger, #e5484d)" role="alert" data-test="invite-limit-error">{{ t('inv_limit_error') }}</p>
-    </div>
+
+      <div v-if="inviteLimit !== null" class="mb-3" data-test="invite-limit">
+        <label class="dim flex flex-wrap items-center gap-2 text-xs">
+          {{ t('inv_limit_label') }}
+          <select :value="inviteLimit" data-test="invite-limit-select" @change="onInviteLimitChange">
+            <option v-for="n in inviteLimitOptions" :key="n" :value="n">{{ n === 0 ? t('inv_limit_none') : n }}</option>
+          </select>
+        </label>
+        <p class="dim m-0 mt-1 text-xs">{{ t('inv_limit_hint') }}</p>
+        <p v-if="inviteLimitError" class="m-0 mt-1 text-xs" style="color: var(--danger, #e5484d)" role="alert" data-test="invite-limit-error">{{ t('inv_limit_error') }}</p>
+      </div>
+    </CollapsibleSection>
 
     <p v-if="auth.status === 'loading'" class="dim">…</p>
 
@@ -156,11 +167,22 @@ async function onDelete(g: Goal) {
       <template v-else>
         <p v-if="active.length === 0" class="dim">{{ t('goals_no_active') }}</p>
 
-        <div v-for="[cat, list] in grouped" :key="cat" class="mb-5">
-          <h3 class="mb-2 flex items-center gap-2 text-base font-medium">
-            {{ cat }}
-            <span class="dim text-xs font-normal">{{ list.length }}</span>
-          </h3>
+        <CollapsibleSection v-if="upcoming.length" id="upcoming" :title="t('goals_sec_upcoming')" :count="upcoming.length">
+          <ul class="m-0 flex list-none flex-col gap-1.5 p-0" data-test="goals-upcoming">
+            <li
+              v-for="g in upcoming"
+              :key="g.id"
+              class="flex items-center gap-2 rounded-xl border px-3 py-2 text-sm"
+              style="border-color: var(--border); background: var(--bg-card)"
+              data-test="goal-upcoming-row"
+            >
+              <span class="min-w-0 flex-1 break-words">{{ g.name }}</span>
+              <span class="whitespace-nowrap text-xs" :style="{ color: deadlineLevel(g.deadline).level === 'later' ? 'var(--text-dim)' : 'var(--danger, #d6336c)' }">{{ upcomingChip(g) }}</span>
+            </li>
+          </ul>
+        </CollapsibleSection>
+
+        <CollapsibleSection v-for="[cat, list] in grouped" :id="'cat-' + cat" :key="cat" :title="cat" :count="list.length">
           <div class="flex flex-col gap-2">
             <GoalCard
               v-for="g in list"
@@ -173,41 +195,42 @@ async function onDelete(g: Goal) {
               @delete="onDelete(g)"
             />
           </div>
-        </div>
+        </CollapsibleSection>
 
         <p class="dim text-sm">{{ t('goals_points_earned') }} {{ summary.earned }} / {{ summary.possible }}</p>
 
-        <h3 class="mb-2 mt-6 text-base font-medium"><EmojiText :text="t('goals_done_h2')" /></h3>
-        <p v-if="done.length === 0" class="dim">{{ t('goals_no_done') }}</p>
-        <ul v-else class="m-0 flex list-none flex-col gap-1.5 p-0" data-test="goals-done">
-          <li
-            v-for="g in done"
-            :key="g.id"
-            class="relative flex items-center gap-2 rounded-xl border px-3 py-2"
-            style="border-color: var(--border); background: var(--bg-card)"
-            data-test="goal-done-row"
-          >
-            <SavedTick :show="!!flashed[g.id]" />
-            <!-- Галочка выполненной цели — кнопка «снять отметку» (случайный тап по цели можно отменить): простая цель возвращается в активные,
-                 многоэтапная откатывается на один этап назад (иначе осталась бы «выполненной» с полным прогрессом). -->
-            <button
-              type="button"
-              role="checkbox"
-              aria-checked="true"
-              class="goal-done-mark goal-done-undo"
-              :title="t('goals_undo_done_aria')"
-              :aria-label="t('goals_undo_done_aria')"
-              data-test="goal-undo"
-              @click="undoDone(g)"
+        <CollapsibleSection id="done" :title="t('goals_done_h2')" :count="done.length" :default-open="false">
+          <p v-if="done.length === 0" class="dim">{{ t('goals_no_done') }}</p>
+          <ul v-else class="m-0 flex list-none flex-col gap-1.5 p-0" data-test="goals-done">
+            <li
+              v-for="g in done"
+              :key="g.id"
+              class="relative flex items-center gap-2 rounded-xl border px-3 py-2"
+              style="border-color: var(--border); background: var(--bg-card)"
+              data-test="goal-done-row"
             >
-              <Icon name="check" />
-            </button>
-            <span class="done-text min-w-0 flex-1 break-words">{{ g.name }}</span>
-            <span class="dim whitespace-nowrap text-xs">{{ fmtRu(g.done_date) }}</span>
-            <button type="button" class="secondary icon-btn" :title="t('goals_edit_aria')" :aria-label="t('goals_edit_aria')" @click="formTarget = g"><Icon name="edit" /></button>
-            <button type="button" class="danger icon-btn" :title="t('goals_delete_aria')" :aria-label="t('goals_delete_aria')" @click="onDelete(g)"><Icon name="trash" /></button>
-          </li>
-        </ul>
+              <SavedTick :show="!!flashed[g.id]" />
+              <!-- Галочка выполненной цели — кнопка «снять отметку» (случайный тап по цели можно отменить): простая цель возвращается в активные,
+                   многоэтапная откатывается на один этап назад (иначе осталась бы «выполненной» с полным прогрессом). -->
+              <button
+                type="button"
+                role="checkbox"
+                aria-checked="true"
+                class="goal-done-mark goal-done-undo"
+                :title="t('goals_undo_done_aria')"
+                :aria-label="t('goals_undo_done_aria')"
+                data-test="goal-undo"
+                @click="undoDone(g)"
+              >
+                <Icon name="check" />
+              </button>
+              <span class="done-text min-w-0 flex-1 break-words">{{ g.name }}</span>
+              <span class="dim whitespace-nowrap text-xs">{{ fmtRu(g.done_date) }}</span>
+              <button type="button" class="secondary icon-btn" :title="t('goals_edit_aria')" :aria-label="t('goals_edit_aria')" @click="formTarget = g"><Icon name="edit" /></button>
+              <button type="button" class="danger icon-btn" :title="t('goals_delete_aria')" :aria-label="t('goals_delete_aria')" @click="onDelete(g)"><Icon name="trash" /></button>
+            </li>
+          </ul>
+        </CollapsibleSection>
       </template>
     </template>
 
