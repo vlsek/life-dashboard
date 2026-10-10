@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.28";
+const SITE_VERSION = "4.29";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.29", date: "2026-10-10 03:55", changes: [
+        "Тренировки → карта мышц: список «когда тренировали каждую мышцу» больше не простыня. Мышцы разложены по группам — «Пора потренировать», «На этой неделе», «Свежие» — у каждой полоска последних 14 дней; «Ещё не тренировали» свёрнуто в одну строку. В панели выбранной мышцы — нагрузка за 7 и 30 дней и последние тренировки (5 + «Показать все»). Без миграций."
+    ]},
     { version: "4.28", date: "2026-10-10 03:51", changes: [
         "Аккаунт: новая карточка «Аватарка» — кнопка «Сменить аватарку» открывает окно с 20 нарисованными животными, фото из Google (если вы вошли через Google) и загрузкой своего фото (до 5 МБ). Аватарка в левом меню меняется сразу, без обновления страницы, — и когда её сменили на Дашборде."
     ]},
@@ -1894,6 +1897,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.29", date: "2026-10-10 03:55", changes: [
+        "Workouts → muscle map: the \"when each muscle was last worked\" list is no longer a wall of rows. Muscles are grouped — Time to train, This week, Fresh — each with a 14-day strip; \"Not trained yet\" is folded into one line. The selected-muscle panel shows the 7- and 30-day load and recent workouts (5 + \"Show all\"). No migrations."
+    ]},
     { version: "4.28", date: "2026-10-10 03:51", changes: [
         "Account: a new \"Avatar\" card — the \"Change avatar\" button opens a window with 20 drawn animals, your Google photo (if you signed in with Google) and uploading your own photo (up to 5 MB). The avatar in the side menu updates right away, without reloading the page — also when you change it on the Dashboard."
     ]},

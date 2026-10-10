@@ -1,6 +1,13 @@
 {
-  "version": "4.28",
+  "version": "4.29",
   "en": [
+    {
+      "version": "4.29",
+      "date": "2026-10-10 03:55",
+      "changes": [
+        "Workouts → muscle map: the \"when each muscle was last worked\" list is no longer a wall of rows. Muscles are grouped — Time to train, This week, Fresh — each with a 14-day strip; \"Not trained yet\" is folded into one line. The selected-muscle panel shows the 7- and 30-day load and recent workouts (5 + \"Show all\"). No migrations."
+      ]
+    },
     {
       "version": "4.28",
       "date": "2026-10-10 03:51",
@@ -3063,6 +3070,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.29",
+      "date": "2026-10-10 03:55",
+      "changes": [
+        "Тренировки → карта мышц: список «когда тренировали каждую мышцу» больше не простыня. Мышцы разложены по группам — «Пора потренировать», «На этой неделе», «Свежие» — у каждой полоска последних 14 дней; «Ещё не тренировали» свёрнуто в одну строку. В панели выбранной мышцы — нагрузка за 7 и 30 дней и последние тренировки (5 + «Показать все»). Без миграций."
+      ]
+    },
     {
       "version": "4.28",
       "date": "2026-10-10 03:51",
