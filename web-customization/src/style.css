@@ -654,6 +654,32 @@ html.theme-moonlight {
   --chart-none: #9aa0a6;
   --chart-other: #616569;
 }
+
+html.theme-phosphor {
+  --bg: #000000;
+  --bg-card: #0d0d0d;
+  --border: #3a6b4a;
+  --text: #b8f5c8;
+  --text-dim: #6fbf8a;
+  --accent: #00ff66;
+  --accent-text: #000000;
+  --success: #5dff9a;
+  --danger: #ff6b6b;
+  --hist-ok: #00ff66;
+  --water-top: #5fd8ff;
+  --water-bottom: #2a9fd8;
+  --water-line: #3fc4f0;
+  --chart-1: #00ff66;
+  --chart-2: #5c97eb;
+  --chart-3: #eb685c;
+  --chart-4: #e9b54e;
+  --chart-5: #af5ceb;
+  --chart-6: #72e3ee;
+  --chart-7: #eb5caf;
+  --chart-8: #685ceb;
+  --chart-none: #9aa0a6;
+  --chart-other: #5c6064;
+}
 /* themes:end */
 
 /* design-tokens:start (генерируется scripts/apply_themes.py — не править руками; BACKLOG 50.1а) */
@@ -719,6 +745,30 @@ html.theme-moonlight button:not(.secondary):not(.danger):not(:disabled), html.th
     --default-transition-duration: 0s;
   }
 }
+
+/* большая тема: phosphor */
+html.theme-phosphor {
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --font-heading: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --scanlines: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0, rgba(0, 0, 0, 0.22) 1px, transparent 1px, transparent 3px);
+  --default-transition-duration: 0.08s;
+  --default-transition-timing-function: cubic-bezier(0, 1, 0, 1);
+}
+html.theme-phosphor body, html.theme-phosphor button, html.theme-phosphor input, html.theme-phosphor select, html.theme-phosphor textarea { font-family: var(--font-heading); }
+html.theme-phosphor body::after { content: ''; position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; background-image: var(--scanlines); }
+@media (prefers-contrast: more) {
+  html.theme-phosphor {
+    --scanlines: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-phosphor {
+    --default-transition-duration: 0s;
+  }
+}
 /* design-tokens:end */
 /* themes-scheme */
 html.theme-nord,
@@ -734,7 +784,8 @@ html.theme-sunset,
 html.theme-twilight,
 html.theme-neon,
 html.theme-emerald,
-html.theme-moonlight { color-scheme: dark; }
+html.theme-moonlight,
+html.theme-phosphor { color-scheme: dark; }
 html.theme-mint,
 html.theme-sepia,
 html.theme-solarlight,
@@ -1108,6 +1159,7 @@ html.theme-light input[type='checkbox']:checked,
 html.theme-nord input[type='checkbox']:checked,
 html.theme-mocha input[type='checkbox']:checked,
 html.theme-amoled input[type='checkbox']:checked,
+html.theme-contrast input[type='checkbox']:checked,
 html.theme-dracula input[type='checkbox']:checked,
 html.theme-gruvbox input[type='checkbox']:checked,
 html.theme-tokyonight input[type='checkbox']:checked,
@@ -1116,8 +1168,8 @@ html.theme-ocean input[type='checkbox']:checked,
 html.theme-sunset input[type='checkbox']:checked,
 html.theme-twilight input[type='checkbox']:checked,
 html.theme-neon input[type='checkbox']:checked,
-html.theme-contrast input[type='checkbox']:checked,
-html.theme-emerald input[type='checkbox']:checked {
+html.theme-emerald input[type='checkbox']:checked,
+html.theme-phosphor input[type='checkbox']:checked {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.4l2.6 2.6L10 3.4' fill='none' stroke='%231c1108' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 input[type='checkbox']:focus-visible {

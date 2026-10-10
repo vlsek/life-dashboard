@@ -93,6 +93,8 @@ export const THEME_RARITY: Record<ThemeKey, Rarity> = {
   emerald: 'common',
   // BACKLOG 50.1б: вторая «большая тема» (Moonlight Synth) — тоже пока открыта всем
   moonlight: 'common',
+  // BACKLOG 50.1е: третья «большая тема» (Matrix Phosphor) — пока открыта всем
+  phosphor: 'common',
 }
 
 export const rarityOfItem = (key: string): Rarity => ITEM_RARITY[key] ?? 'common'

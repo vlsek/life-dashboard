@@ -102,7 +102,7 @@ describe('страница: группы по редкости и сворачи
   it('заголовок группы: «открыто/всего» у предметов и у тем', async () => {
     const w = mount(App)
     await flushPromises()
-    expect(w.find('[data-testid="rarity-themes:common"] [data-testid="rarity-count"]').text()).toBe('19/19') // пять исходных + двенадцать новых + две большие темы (BACKLOG 45.4), все обычные и открытые
+    expect(w.find('[data-testid="rarity-themes:common"] [data-testid="rarity-count"]').text()).toBe('20/20') // пять исходных + двенадцать новых + три большие темы (BACKLOG 45.4), все обычные и открытые
     expect(w.find('[data-testid="rarity-avatar_frame:common"] [data-testid="rarity-count"]').text()).toBe('0/4')
     expect(w.find('[data-testid="rarity-avatar_frame:rare"] [data-testid="rarity-count"]').text()).toBe('0/13')
     expect(w.find('[data-testid="rarity-avatar_frame:epic"] [data-testid="rarity-count"]').text()).toBe('0/4')

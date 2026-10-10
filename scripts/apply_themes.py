@@ -14,7 +14,7 @@ import re
 import sys
 
 sys.path.insert(0, 'scripts')
-from themes_data import CHAR, NEW, P, UNLOCK, chart_palette  # noqa: E402
+from themes_data import CHAR, NEW, P, UNLOCK, _lum, chart_palette  # noqa: E402
 
 KEYS = list(P)
 OLD4 = ['dark', 'monet', 'light', 'pink']
@@ -45,6 +45,20 @@ def character_rules(tailwind):
         if tailwind and c.get('reduced'):
             out.append('\n@media (prefers-reduced-motion: reduce) {\n  %s {\n    %s\n  }\n}' % (sel, c['reduced'].strip()))
     return ''.join(out)
+
+
+# ---------- список тёмной галочки (BACKLOG 567; теперь ведёт генератор, раньше правили вручную и новые темы роняли checkboxesAllPilots.test.ts) ----------
+def dark_check_themes():
+    """Темы, где БЕЛАЯ галочка на акценте < 3:1 (формула и порог — как в web-dashboard/src/checkboxesAllPilots.test.ts)."""
+    return [k for k, (_, _, _, v) in P.items() if 1.05 / (_lum(v['accent']) + 0.05) < 3]
+
+
+def dark_checks(t):
+    m = re.search(r"((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{", t)
+    if not m:
+        return t
+    lst = ',\n'.join("html.theme-%s input[type='checkbox']:checked" % k for k in dark_check_themes()) + ' '
+    return t[:m.start(1)] + lst + t[m.end(1):]
 
 
 def tokens_region(tailwind):
@@ -356,7 +370,7 @@ def index_html(t):
 
 for d in sorted(glob.glob('web-*')):
     if glob.glob(d + '/src/style.css') and glob.glob(d + '/src/lib/theme.ts'):
-        rw(d + '/src/style.css', lambda t: tokenize(pilot_css(t), True))
+        rw(d + '/src/style.css', lambda t: dark_checks(tokenize(pilot_css(t), True)))
         rw(d + '/src/lib/theme.ts', theme_ts)
         rw(d + '/src/lib/i18n.ts', i18n_ts)
         rw(d + '/index.html', index_html)
@@ -453,7 +467,7 @@ def header_prefs(t):
     return t
 
 
-rw('web-header/src/header.css', header_css)
+rw('web-header/src/header.css', lambda t: dark_checks(header_css(t)))
 rw('web-header/src/lib/prefs.ts', header_prefs)
 rw('web-header/src/lib/i18n.ts', i18n_ts)
 

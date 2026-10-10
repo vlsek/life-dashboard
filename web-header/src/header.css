@@ -67,6 +67,7 @@ html.theme-peach .gh-root { --water-top: #3f95e0; --water-bottom: #1560b8; --wat
 html.theme-graphite .gh-root { --water-top: #3f95e0; --water-bottom: #1560b8; --water-line: #1560b8; }
 html.theme-emerald .gh-root { --water-top: #63b3f5; --water-bottom: #2f86dc; --water-line: #4aa3ee; }
 html.theme-moonlight .gh-root { --water-top: #4de8ff; --water-bottom: #2a7fff; --water-line: #00d2ff; }
+html.theme-phosphor .gh-root { --water-top: #5fd8ff; --water-bottom: #2a9fd8; --water-line: #3fc4f0; }
 html.theme-nord .gh-root,
 html.theme-mocha .gh-root,
 html.theme-amoled .gh-root,
@@ -80,7 +81,8 @@ html.theme-sunset .gh-root,
 html.theme-twilight .gh-root,
 html.theme-neon .gh-root,
 html.theme-emerald .gh-root,
-html.theme-moonlight .gh-root {
+html.theme-moonlight .gh-root,
+html.theme-phosphor .gh-root {
   --water-gold: #f0b429;
 }
 html.theme-mint .gh-root,
@@ -376,6 +378,7 @@ html.theme-light input[type='checkbox']:checked,
 html.theme-nord input[type='checkbox']:checked,
 html.theme-mocha input[type='checkbox']:checked,
 html.theme-amoled input[type='checkbox']:checked,
+html.theme-contrast input[type='checkbox']:checked,
 html.theme-dracula input[type='checkbox']:checked,
 html.theme-gruvbox input[type='checkbox']:checked,
 html.theme-tokyonight input[type='checkbox']:checked,
@@ -384,8 +387,8 @@ html.theme-ocean input[type='checkbox']:checked,
 html.theme-sunset input[type='checkbox']:checked,
 html.theme-twilight input[type='checkbox']:checked,
 html.theme-neon input[type='checkbox']:checked,
-html.theme-contrast input[type='checkbox']:checked,
-html.theme-emerald input[type='checkbox']:checked {
+html.theme-emerald input[type='checkbox']:checked,
+html.theme-phosphor input[type='checkbox']:checked {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.4l2.6 2.6L10 3.4' fill='none' stroke='%231c1108' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 input[type='checkbox']:focus-visible {

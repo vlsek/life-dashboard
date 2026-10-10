@@ -38,4 +38,5 @@ export const THEME_PREVIEW: Record<ThemeKey, ThemePreview> = {
   graphite: { bg: '#eceff1', card: '#ffffff', accent: '#00796b', text: '#263238', success: '#2e7d4f', water: '#3f95e0', kind: 'light' },
   emerald: { bg: '#0b0f12', card: '#121a1f', accent: '#10b981', text: '#d9e8e3', success: '#34d399', water: '#63b3f5', kind: 'dark' },
   moonlight: { bg: '#0d081e', card: '#16102b', accent: '#ff007f', text: '#ece6ff', success: '#3df5a0', water: '#4de8ff', kind: 'dark' },
+  phosphor: { bg: '#000000', card: '#0d0d0d', accent: '#00ff66', text: '#b8f5c8', success: '#5dff9a', water: '#5fd8ff', kind: 'dark' },
 }

@@ -604,6 +604,32 @@ html.theme-moonlight {
   --chart-none: #9aa0a6;
   --chart-other: #616569;
 }
+
+html.theme-phosphor {
+  --bg: #000000;
+  --bg-card: #0d0d0d;
+  --border: #3a6b4a;
+  --text: #b8f5c8;
+  --text-dim: #6fbf8a;
+  --accent: #00ff66;
+  --accent-text: #000000;
+  --success: #5dff9a;
+  --danger: #ff6b6b;
+  --hist-ok: #00ff66;
+  --water-top: #5fd8ff;
+  --water-bottom: #2a9fd8;
+  --water-line: #3fc4f0;
+  --chart-1: #00ff66;
+  --chart-2: #5c97eb;
+  --chart-3: #eb685c;
+  --chart-4: #e9b54e;
+  --chart-5: #af5ceb;
+  --chart-6: #72e3ee;
+  --chart-7: #eb5caf;
+  --chart-8: #685ceb;
+  --chart-none: #9aa0a6;
+  --chart-other: #5c6064;
+}
 html.theme-nord,
 html.theme-mocha,
 html.theme-amoled,
@@ -617,7 +643,8 @@ html.theme-sunset,
 html.theme-twilight,
 html.theme-neon,
 html.theme-emerald,
-html.theme-moonlight { color-scheme: dark; }
+html.theme-moonlight,
+html.theme-phosphor { color-scheme: dark; }
 html.theme-mint,
 html.theme-sepia,
 html.theme-solarlight,
@@ -672,6 +699,22 @@ html.theme-moonlight button:not(.secondary):not(.danger):not(:disabled), html.th
   html.theme-moonlight {
     --shadow-active: none;
     --bg-pattern: none;
+  }
+}
+
+/* большая тема: phosphor */
+html.theme-phosphor {
+  --radius-card: 0px;
+  --radius-modal: 0px;
+  --radius-control: 0px;
+  --font-heading: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --scanlines: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0, rgba(0, 0, 0, 0.22) 1px, transparent 1px, transparent 3px);
+}
+html.theme-phosphor body, html.theme-phosphor button, html.theme-phosphor input, html.theme-phosphor select, html.theme-phosphor textarea { font-family: var(--font-heading); }
+html.theme-phosphor body::after { content: ''; position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; background-image: var(--scanlines); }
+@media (prefers-contrast: more) {
+  html.theme-phosphor {
+    --scanlines: none;
   }
 }
 /* design-tokens:end */

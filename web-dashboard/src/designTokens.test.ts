@@ -119,7 +119,7 @@ describe('большая тема emerald: характер', () => {
   it('правила характера работают ТОЛЬКО под html.theme-emerald (остальные темы не затронуты)', () => {
     for (const f of files) {
       const region = read(f).match(REGION)![0]
-      const rules = region.split('\n').filter((l) => /\{ border-style: var\(--border-style\); \}|\{ font-family: var\(--font-heading\)/.test(l))
+      const rules = region.split('\n').filter((l) => /\{ border-style: var\(--border-style\); \}|\{ font-family: var\(--font-heading\); letter-spacing/.test(l))
       expect(rules.length, f).toBeGreaterThanOrEqual(2)
       for (const l of rules) for (const sel of l.split('{')[0].split(',')) expect(sel.trim(), f).toMatch(/^html\.theme-emerald /)
     }
@@ -127,10 +127,10 @@ describe('большая тема emerald: характер', () => {
   it('при prefers-reduced-motion анимации темы мгновенные (только у Tailwind-страниц)', () => {
     for (const d of pilots) expect(read(d + '/src/style.css')).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-emerald \{\s*--default-transition-duration: 0s;/)
   })
-  it('блоки характера есть только у больших тем (emerald, moonlight) — остальные темы не переопределены', () => {
+  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor) — остальные темы не переопределены', () => {
     for (const f of files) {
       const region = read(f).match(REGION)![0]
-      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight'])
+      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor'])
     }
   })
 })
@@ -170,5 +170,58 @@ describe('большая тема moonlight: характер', () => {
       expect(rules.length, f).toBe(2)
       for (const l of rules) for (const sel of l.split('{')[0].split(',')) expect(sel.trim(), f).toMatch(/^html\.theme-moonlight /)
     }
+  })
+})
+
+// BACKLOG 50.1е: третья «большая тема» Matrix Phosphor — острые углы 0px, моноширинный шрифт во всём интерфейсе, scanlines, Snappy; при prefers-contrast: more scanlines выключены.
+describe('большая тема phosphor: характер', () => {
+  const block = (css: string): string => {
+    const m = css.match(/\/\* большая тема: phosphor \*\/\nhtml\.theme-phosphor \{[^}]*\}/)
+    expect(m, 'нет блока характера').not.toBeNull()
+    return m![0]
+  }
+  for (const d of pilots) {
+    it(d + ': радиусы 0, моноширинный шрифт, scanlines, резкая анимация', () => {
+      const css = read(d + '/src/style.css')
+      const b = block(css)
+      for (const r of ['--radius-md', '--radius-lg', '--radius-xl', '--radius-2xl']) expect(decl(b, r), d + r).toBe('0px')
+      expect(decl(b, '--font-heading')).toContain('monospace')
+      expect(decl(b, '--scanlines')).toContain('repeating-linear-gradient')
+      expect(decl(b, '--default-transition-timing-function')).toBe('cubic-bezier(0, 1, 0, 1)')
+      expect(css).toMatch(/@media \(prefers-contrast: more\) \{\s*html\.theme-phosphor \{\s*--scanlines: none;/)
+      expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-phosphor \{\s*--default-transition-duration: 0s;/)
+    })
+  }
+  it('корень: острые углы через токены, scanlines и шрифт', () => {
+    const b = block(read('style.css'))
+    expect([decl(b, '--radius-card'), decl(b, '--radius-modal'), decl(b, '--radius-control')]).toEqual(['0px', '0px', '0px'])
+    expect(decl(b, '--scanlines')).toContain('repeating-linear-gradient')
+    expect(decl(b, '--font-heading')).toContain('monospace')
+  })
+  it('слой scanlines не перехватывает нажатия и лежит поверх страницы; шрифт — на body и полях ввода; всё только под html.theme-phosphor', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      const lines = region.split('\n').filter((l) => l.startsWith('html.theme-phosphor ') && /\{ (content:|font-family:)/.test(l))
+      expect(lines.length, f).toBe(2)
+      const scan = lines.find((l) => l.includes('body::after'))!
+      expect(scan).toContain('pointer-events: none')
+      expect(scan).toContain('position: fixed')
+      const font = lines.find((l) => l.includes('textarea'))!
+      for (const el of ['body', 'button', 'input', 'select', 'textarea']) expect(font, f).toContain('html.theme-phosphor ' + el)
+    }
+  })
+})
+
+// Список тёмной галочки теперь ведёт apply_themes.py (раньше вручную): у каждой темы, где белая галочка на акценте < 3:1, он есть — в пилотах и в шапке.
+describe('тёмная галочка: список ведёт генератор', () => {
+  it('phosphor (светло-зелёный акцент) в списке тёмной галочки во всех пилотах и в шапке', () => {
+    for (const p of [...files.filter((f) => f !== 'style.css'), 'web-header/src/header.css']) expect(read(p), p).toContain("html.theme-phosphor input[type='checkbox']:checked")
+  })
+  it('moonlight (белая галочка 3.78:1 читается) в списке НЕ нужен', () => {
+    const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(read('web-dashboard/src/style.css'))
+    expect(m).not.toBeNull()
+    const names = [...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])
+    expect(names).toContain('phosphor')
+    expect(names).not.toContain('moonlight')
   })
 })

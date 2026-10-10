@@ -40,6 +40,8 @@ P={
  'emerald':('dark','🛰️ Emerald Obsidian','🛰️ Изумрудный обсидиан',dict(bg='#0b0f12',card='#121a1f',border='#2a3b42',text='#d9e8e3',dim='#8fa8a0',accent='#10b981',at='#04110c',ok='#34d399',bad='#f87171',hist='#10b981',**DARK_W)),
  # --- BACKLOG 50.1б: вторая «большая тема» (синтвейв: неоновое свечение, сетка точек, мягкие углы) ---
  'moonlight':('dark','🌆 Moonlight Synth','🌆 Лунный синтвейв',dict(bg='#0d081e',card='#16102b',border='#3d2f6e',text='#ece6ff',dim='#a99dd6',accent='#ff007f',at='#0d081e',ok='#3df5a0',bad='#ff6b8a',hist='#3df5a0',wt='#4de8ff',wb='#2a7fff',wl='#00d2ff')),
+ # --- BACKLOG 50.1е: третья «большая тема» (ретро-терминал: зелёный фосфор на чёрном, острые углы, моноширинный шрифт, scanlines) ---
+ 'phosphor':('dark','📟 Matrix Phosphor','📟 Зелёный фосфор',dict(bg='#000000',card='#0d0d0d',border='#3a6b4a',text='#b8f5c8',dim='#6fbf8a',accent='#00ff66',at='#000000',ok='#5dff9a',bad='#ff6b6b',hist='#00ff66',wt='#5fd8ff',wb='#2a9fd8',wl='#3fc4f0')),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
 
@@ -93,6 +95,29 @@ CHAR = {
         ],
         reduced='  --default-transition-duration: 0s;',
         contrast='  --shadow-active: none;\n  --bg-pattern: none;',
+    ),
+    # Ретро-терминал: острые углы 0px, моноширинный шрифт ВО ВСЁМ интерфейсе, scanlines (статичный полупрозрачный слой поверх страницы,
+    # не перехватывает нажатия; при `prefers-contrast: more` выключается), Snappy-анимации.
+    'phosphor': dict(
+        tw='''  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --font-heading: %s;
+  --scanlines: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0, rgba(0, 0, 0, 0.22) 1px, transparent 1px, transparent 3px);
+  --default-transition-duration: 0.08s;
+  --default-transition-timing-function: cubic-bezier(0, 1, 0, 1);''' % MONO,
+        root='''  --radius-card: 0px;
+  --radius-modal: 0px;
+  --radius-control: 0px;
+  --font-heading: %s;
+  --scanlines: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0, rgba(0, 0, 0, 0.22) 1px, transparent 1px, transparent 3px);''' % MONO,
+        rules=[
+            (['body', 'button', 'input', 'select', 'textarea'], 'font-family: var(--font-heading);'),
+            (['body::after'], "content: ''; position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; background-image: var(--scanlines);"),
+        ],
+        reduced='  --default-transition-duration: 0s;',
+        contrast='  --scanlines: none;',
     ),
 }
 assert all(k in P for k in CHAR)
