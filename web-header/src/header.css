@@ -424,3 +424,17 @@ select:not([multiple]):not([size]) {
   padding-right: 1.75rem;
   cursor: pointer;
 }
+
+/* BACKLOG 49.6: блок «Какие достижения тут можно получить» внизу страницы раздела */
+#gh-section-achievements { max-width: 48rem; margin: 0 auto; padding: 0 16px 40px; box-sizing: border-box; }
+.gh-secach { border: 1px solid var(--border, #333); border-radius: 12px; background: var(--bg-card, #1e1e1e); color: var(--text, #eee); font-size: 14px; }
+.gh-secach-head { display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 12px; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.gh-secach-title { flex: 1; font-weight: 500; }
+.gh-secach-count { color: var(--text-dim, #999); font-size: 12px; }
+.gh-secach-chev { display: inline-block; transition: transform 0.15s; }
+.gh-secach-open { transform: rotate(90deg); }
+.gh-secach-body { padding: 0 12px 12px; }
+.gh-secach-group { font-weight: 500; margin: 6px 0 4px; }
+.gh-secach-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; color: var(--text-dim, #999); }
+.gh-secach-done { color: var(--accent, #6aa9ff); }
+.gh-secach-link { display: inline-block; margin-top: 8px; color: var(--accent, #6aa9ff); text-decoration: none; }

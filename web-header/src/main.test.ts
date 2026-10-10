@@ -4,6 +4,13 @@ import { h } from 'vue'
 vi.mock('./App.vue', () => ({
   default: { props: ['panelOnly'], render() { return h('i', { 'data-panel-only': String(!!(this as any).panelOnly) }) } },
 }))
+const sess = { user: null as { id: string } | null, keys: [] as string[] }
+vi.mock('./lib/supabase', () => ({
+  sb: {
+    auth: { getSession: async () => ({ data: { session: sess.user ? { user: sess.user } : null } }) },
+    from: () => ({ select: () => ({ eq: () => ({ in: async () => ({ data: sess.keys.map((key) => ({ key })), error: null }) }) }) }),
+  },
+}))
 vi.mock('./header.css?inline', () => ({ default: '.gh-root{}' }))
 
 async function run(path: string) {
@@ -13,6 +20,8 @@ async function run(path: string) {
 }
 
 beforeEach(() => {
+  sess.user = null
+  sess.keys = []
   document.body.innerHTML = ''
   document.head.querySelectorAll('style').forEach((s) => s.remove())
 })
@@ -60,5 +69,26 @@ describe('main.ts — монтирование в #topbar-right', () => {
     document.body.innerHTML = '<div id="topbar-right"></div>'
     await run(path)
     expect(document.getElementById('global-header-widgets')).toBeNull()
+  })
+})
+
+describe('main.ts — блок «Какие достижения тут можно получить» (BACKLOG 49.6)', () => {
+  it('на странице раздела с сессией блок добавляется внизу, получено считается по user_achievements', async () => {
+    sess.user = { id: 'u' }
+    sess.keys = ['first_goal', 'goals_10']
+    await run('/goals/')
+    await new Promise((r) => setTimeout(r, 20))
+    const host = document.getElementById('gh-section-achievements')!
+    expect(host).toBeTruthy()
+    expect(host.querySelector('[data-test="secach-count"]')!.textContent).toBe('2 / 4')
+  })
+  it('без входа блока нет; на странице без раздела (Дашборд, Магазин) — тоже', async () => {
+    await run('/goals/')
+    await new Promise((r) => setTimeout(r, 20))
+    expect(document.getElementById('gh-section-achievements')).toBeNull()
+    sess.user = { id: 'u' }
+    await run('/shop/')
+    await new Promise((r) => setTimeout(r, 20))
+    expect(document.getElementById('gh-section-achievements')).toBeNull()
   })
 })
