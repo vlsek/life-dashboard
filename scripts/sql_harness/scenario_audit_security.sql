@@ -94,6 +94,8 @@ begin
   -- (отдельный пользователь e: в версии «до 057» жертва b уже удалена эксплойтом выше, и без этого сценарий падал на внешнем ключе)
   insert into user_customizations(user_id, item_key, source) values (e, 'frame_neon', 'points');
   insert into shop_items(user_id, name, cost, redeemed) values (e, 'Кастомизация: Неон', 50, true);
+  -- как серверная покупка (buy_customization) с 065: строка помечена; до 065 колонки нет — пометка пропускается и проверка остаётся красной
+  begin update shop_items set source = 'customization' where user_id = e and name = 'Кастомизация: Неон'; exception when undefined_column then null; end;
   perform pg_temp.as_user(e);
   begin delete from shop_items where user_id = e and name like 'Кастомизация%'; exception when others then null; end;
   reset role;
