@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.45";
+const SITE_VERSION = "4.46";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.46", date: "2026-10-10 12:38", changes: [
+        "В «Вехах» над списком появились вкладки-категорий (Все · Здоровье · Машина …) со счётчиками, а кнопка «Шаблоны» открывает каталог готовых вех: здоровье (осмотры — как ориентиры, уточняйте у врача), машина, дом, документы. Выбрали шаблон — форма откроется заполненной, останется указать, когда делали в последний раз."
+    ]},
     { version: "4.45", date: "2026-10-10 12:34", changes: [
         "Карта мышц теперь видна всегда: и на странице «Тренировки», и в правой панели. Пока нет ни одного упражнения, карта пустая (все мышцы серые) с подсказкой «добавьте первое упражнение и запишите тренировку — мышцы окрасятся». Раньше карта появлялась только после первого упражнения, и новый человек не знал, что она есть. Миграций нет."
     ]},
@@ -1945,6 +1948,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.46", date: "2026-10-10 12:38", changes: [
+        "Milestones now has category tabs above the list (All · Health · Car …) with counters, and the \"Templates\" button opens a catalog of ready-made milestones: health (check-ups as rough guides — ask your doctor), car, home, documents. Pick one and the form opens pre-filled; just set when it was last done."
+    ]},
     { version: "4.45", date: "2026-10-10 12:34", changes: [
         "The muscle map is now always visible: on the Workouts page and in the right panel. While there are no exercises yet the map is empty (all muscles grey) with a hint: add your first exercise and log a workout and the muscles will light up. Before, the map only appeared after the first exercise, so a new person did not know it existed. No migrations."
     ]},
