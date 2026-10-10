@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.35";
+const SITE_VERSION = "4.36";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.36", date: "2026-10-10 07:32", changes: [
+        "Значок «i» с подсказкой страницы убран из шапки (она и так загружена) и теперь стоит тонкой полоской наверху страницы, прямо под шапкой."
+    ]},
     { version: "4.35", date: "2026-10-10 04:32", changes: [
         "Телефон: на экранах до 640 px интерфейс стал компактнее на 12,5 % — уменьшились шрифты, отступы, кнопки и карточки на всех страницах, чтобы всё помещалось (в первую очередь «Цели»). На планшете и компьютере ничего не изменилось. Если нужно крупнее или мельче — степень меняется одной цифрой. Без миграций."
     ]},
@@ -1915,6 +1918,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.36", date: "2026-10-10 07:32", changes: [
+        "The \"i\" button with the page hint is no longer in the top bar (it is busy enough) — it now sits in a thin strip at the top of the page, right under it."
+    ]},
     { version: "4.35", date: "2026-10-10 04:32", changes: [
         "Phones: on screens up to 640 px the interface is 12.5% more compact — fonts, spacing, buttons and cards shrink on every page so more fits (Goals first). Tablets and desktops are unchanged. The amount is a single number if it needs to be larger or smaller. No migrations."
     ]},

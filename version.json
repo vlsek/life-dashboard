@@ -1,6 +1,13 @@
 {
-  "version": "4.35",
+  "version": "4.36",
   "en": [
+    {
+      "version": "4.36",
+      "date": "2026-10-10 07:32",
+      "changes": [
+        "The \"i\" button with the page hint is no longer in the top bar (it is busy enough) — it now sits in a thin strip at the top of the page, right under it."
+      ]
+    },
     {
       "version": "4.35",
       "date": "2026-10-10 04:32",
@@ -3112,6 +3119,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.36",
+      "date": "2026-10-10 07:32",
+      "changes": [
+        "Значок «i» с подсказкой страницы убран из шапки (она и так загружена) и теперь стоит тонкой полоской наверху страницы, прямо под шапкой."
+      ]
+    },
     {
       "version": "4.35",
       "date": "2026-10-10 04:32",
