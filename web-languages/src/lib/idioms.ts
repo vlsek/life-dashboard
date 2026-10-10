@@ -57,6 +57,30 @@ export const IDIOMS: Record<string, readonly Idiom[]> = {
     { text: 'Al mal tiempo, buena cara', ru: 'В трудный час не унывай', en: 'Keep a brave face in hard times' },
     { text: 'Poco a poco se va lejos', ru: 'Тише едешь — дальше будешь', en: 'Slow and steady goes far' },
   ],
+  it: [
+    { text: 'Chi va piano va sano e va lontano', ru: 'Тише едешь — дальше будешь', en: 'Slow and steady wins the race' },
+    { text: 'In bocca al lupo', ru: 'Ни пуха ни пера', en: 'Good luck (literally: into the wolf’s mouth)' },
+    { text: 'Non avere peli sulla lingua', ru: 'Говорить прямо, без обиняков', en: 'To speak bluntly' },
+    { text: 'Avere le mani in pasta', ru: 'Быть в курсе дел, приложить руку', en: 'To be involved in something' },
+    { text: 'Meglio tardi che mai', ru: 'Лучше поздно, чем никогда', en: 'Better late than never' },
+    { text: 'Dire pane al pane e vino al vino', ru: 'Называть вещи своими именами', en: 'To call a spade a spade' },
+    { text: 'Piove sul bagnato', ru: 'Беда не приходит одна', en: 'It never rains but it pours' },
+    { text: 'Costare un occhio della testa', ru: 'Стоить целое состояние', en: 'To cost an arm and a leg' },
+    { text: 'Prendere due piccioni con una fava', ru: 'Убить двух зайцев одним ударом', en: 'To kill two birds with one stone' },
+    { text: 'Chi dorme non piglia pesci', ru: 'Под лежачий камень вода не течёт', en: 'The sleeper catches no fish' },
+  ],
+  pt: [
+    { text: 'Água mole em pedra dura, tanto bate até que fura', ru: 'Капля камень точит', en: 'Constant effort wears down any obstacle' },
+    { text: 'Mais vale tarde do que nunca', ru: 'Лучше поздно, чем никогда', en: 'Better late than never' },
+    { text: 'Quem não arrisca, não petisca', ru: 'Кто не рискует, тот не пьёт шампанского', en: 'Nothing ventured, nothing gained' },
+    { text: 'Cada macaco no seu galho', ru: 'Каждому своё место', en: 'Everyone should stay in their own place' },
+    { text: 'Engolir sapos', ru: 'Глотать обиды, терпеть неприятное', en: 'To put up with unpleasant things' },
+    { text: 'Dar com a língua nos dentes', ru: 'Проболтаться', en: 'To let a secret slip' },
+    { text: 'Estar com a pulga atrás da orelha', ru: 'Заподозрить неладное', en: 'To be suspicious' },
+    { text: 'Ficar a ver navios', ru: 'Остаться ни с чем', en: 'To be left empty-handed' },
+    { text: 'Quem tem boca vai a Roma', ru: 'Язык до Киева доведёт', en: 'If you ask, you will find the way' },
+    { text: 'De grão em grão a galinha enche o papo', ru: 'По зёрнышку клюёт курочка', en: 'Little by little, it adds up' },
+  ],
 }
 
 export function idiomLangs(): string[] {

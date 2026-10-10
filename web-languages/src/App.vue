@@ -7,6 +7,7 @@ import AppShell from './components/AppShell.vue'
 import WordForm from './components/WordForm.vue'
 import DictionaryTabs from './components/DictionaryTabs.vue'
 import IdiomCard from './components/IdiomCard.vue'
+import ProgressRing from './components/ProgressRing.vue'
 import { hasIdioms } from './lib/idioms'
 import Icon from './components/Icon.vue'
 import type { VocabWord, WordFormInput } from './lib/types'
@@ -59,6 +60,7 @@ const filteredWords = computed(() =>
 )
 const activeWords = computed(() => filteredWords.value.filter((w) => !w.learned))
 const doneWords = computed(() => filteredWords.value.filter((w) => w.learned))
+const learnedPercent = computed(() => (filteredWords.value.length ? (doneWords.value.length / filteredWords.value.length) * 100 : 0))
 
 // «Идиома дня» (44.7): на вкладке языка с подборкой — для него; на «Все» — для первого языка из вкладок, у которого она есть (иначе английский).
 const idiomLang = computed(() => {
@@ -146,10 +148,13 @@ async function onDelete(id: string) {
         {{ t('eng_tab_empty') }}
       </p>
 
-      <div class="mb-4 flex justify-between rounded-xl border p-4 text-sm" style="border-color: var(--border); background: var(--bg-card)">
-        <div><EmojiText :text="t('eng_learning_label')" /> {{ activeWords.length }}</div>
-        <div><EmojiText :text="t('eng_learned_label')" /> {{ doneWords.length }}</div>
-        <div class="font-bold">{{ t('eng_total_label') }} {{ filteredWords.length }}</div>
+      <div class="mb-4 flex items-center gap-4 rounded-xl border p-4 text-sm" style="border-color: var(--border); background: var(--bg-card)" data-test="learn-stats">
+        <ProgressRing :percent="learnedPercent" :size="64" :label="t('eng_learned_label')" />
+        <div class="flex flex-1 flex-wrap justify-between gap-x-4 gap-y-1">
+          <div><EmojiText :text="t('eng_learning_label')" /> {{ activeWords.length }}</div>
+          <div><EmojiText :text="t('eng_learned_label')" /> {{ doneWords.length }}</div>
+          <div class="font-bold">{{ t('eng_total_label') }} {{ filteredWords.length }}</div>
+        </div>
       </div>
 
       <button

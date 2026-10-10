@@ -72,10 +72,41 @@ describe('Языки: идиома дня', () => {
     w.unmount()
   })
 
+  it('итальянский и португальский тоже есть в подборке', async () => {
+    for (const lang of ['it', 'pt']) {
+      h.words = [w1('1', 'x', lang)]
+      const w = await mountApp()
+      expect(w.find('[data-test="idiom-card"]').exists(), lang).toBe(true)
+      w.unmount()
+      localStorage.clear()
+      localStorage.setItem('site_lang', 'ru')
+    }
+  })
+
   it('на вкладке языка без подборки (японский) карточки нет', async () => {
     h.words = [w1('1', '猫', 'ja')]
     const w = await mountApp()
     expect(w.find('[data-test="idiom-card"]').exists()).toBe(false)
+    w.unmount()
+  })
+})
+
+describe('Языки: кольцо «выучено»', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+    h.inserted = []
+  })
+  it('процент выученных от всех слов выбранного словаря', async () => {
+    h.words = [w1('1', 'a', 'de'), { ...w1('2', 'b', 'de'), learned: true }, w1('3', 'c', 'de'), { ...w1('4', 'd', 'de'), learned: true }]
+    const w = await mountApp()
+    expect(w.get('[data-test="learn-stats"] [data-testid="progress-ring"]').attributes('data-percent')).toBe('50')
+    w.unmount()
+  })
+  it('нет слов — 0%, без деления на ноль', async () => {
+    h.words = []
+    const w = await mountApp()
+    expect(w.get('[data-testid="progress-ring"]').attributes('data-percent')).toBe('0')
     w.unmount()
   })
 })
