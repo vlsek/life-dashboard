@@ -961,3 +961,10 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
   background-color: color-mix(in srgb, var(--accent) 22%, transparent);
 }
+
+/* phone-scale:start (генерируется scripts/apply_phone_scale.py — не править руками; BACKLOG 863) */
+:root { --phone-scale: 87.5%; }
+@media (max-width: 640px) {
+  html { font-size: var(--phone-scale); }
+}
+/* phone-scale:end */

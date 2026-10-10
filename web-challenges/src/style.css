@@ -986,3 +986,10 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
 }
 html[data-motion='off'] .cd-trophy, html[data-motion='off'] .cd-ring { animation: none; }
 html[data-motion='off'] .cd-ring { display: none; }
+
+/* phone-scale:start (генерируется scripts/apply_phone_scale.py — не править руками; BACKLOG 863) */
+:root { --phone-scale: 87.5%; }
+@media (max-width: 640px) {
+  html { font-size: var(--phone-scale); }
+}
+/* phone-scale:end */

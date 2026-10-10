@@ -929,3 +929,10 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
 .cust-frame-comet { animation: cust-frame-comet 2.4s linear infinite; }
 .cust-frame-glitch { animation: cust-frame-glitch 1.6s steps(1) infinite; }
 @media (prefers-reduced-motion: reduce) { .cust-frame-flame, .cust-frame-rainbow, .cust-frame-inferno, .cust-frame-pulse, .cust-frame-royal, .cust-frame-victory, .cust-frame-course, .cust-frame-breath, .cust-frame-comet, .cust-frame-glitch { animation: none; } }
+
+/* phone-scale:start (генерируется scripts/apply_phone_scale.py — не править руками; BACKLOG 863) */
+:root { --phone-scale: 87.5%; }
+@media (max-width: 640px) {
+  html { font-size: var(--phone-scale); }
+}
+/* phone-scale:end */

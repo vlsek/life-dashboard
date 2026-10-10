@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.34";
+const SITE_VERSION = "4.35";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.35", date: "2026-10-10 04:32", changes: [
+        "Телефон: на экранах до 640 px интерфейс стал компактнее на 12,5 % — уменьшились шрифты, отступы, кнопки и карточки на всех страницах, чтобы всё помещалось (в первую очередь «Цели»). На планшете и компьютере ничего не изменилось. Если нужно крупнее или мельче — степень меняется одной цифрой. Без миграций."
+    ]},
     { version: "4.34", date: "2026-10-10 07:12", changes: [
         "На странице входа появился сворачиваемый блок «О проекте»: коротко о том, что это, ссылка на резюме и Telegram автора."
     ]},
@@ -1912,6 +1915,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.35", date: "2026-10-10 04:32", changes: [
+        "Phones: on screens up to 640 px the interface is 12.5% more compact — fonts, spacing, buttons and cards shrink on every page so more fits (Goals first). Tablets and desktops are unchanged. The amount is a single number if it needs to be larger or smaller. No migrations."
+    ]},
     { version: "4.34", date: "2026-10-10 07:12", changes: [
         "The sign-in page now has a collapsible \"About the project\" block: what this is in a nutshell, a link to the author's resume and Telegram."
     ]},
