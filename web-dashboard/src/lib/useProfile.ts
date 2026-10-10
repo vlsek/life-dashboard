@@ -1,5 +1,6 @@
 import { computed, getCurrentInstance, onBeforeUnmount, ref } from 'vue'
 import { sb } from './supabase'
+import { animalAvatarUrl } from './animalAvatars'
 import { todayStr } from './date'
 import { t } from './i18n'
 import { fetchAllRows } from './fetchAll'
@@ -132,6 +133,19 @@ export function useProfile() {
     return true
   }
 
+  // Аватарка-животное (BACKLOG раздел 29, срез 2): в profiles.avatar_url кладём готовый data-URI — ни Storage, ни SQL не нужны.
+  async function setAnimalAvatar(key: string): Promise<boolean> {
+    const url = animalAvatarUrl(key)
+    if (!url) return false
+    const { error: e } = await sb.from('profiles').upsert({ user_id: userId, avatar_url: url })
+    if (e) {
+      error.value = friendlyError(e)
+      return false
+    }
+    await loadProfileRow()
+    return true
+  }
+
   // Возвращает текст ошибки валидации/сохранения или null при успехе.
   async function saveBirthdate(value: string): Promise<string | null> {
     const check = validateBirthdate(value, todayStr())
@@ -195,5 +209,5 @@ export function useProfile() {
     await loadValues()
   }
 
-  return { profile, params, values, stats, balance, loaded, error, init, stopListening, uploadAvatar, saveBirthdate, addParam, updateParam, deleteParam, saveBodyValue, refreshValues }
+  return { profile, params, values, stats, balance, loaded, error, init, stopListening, uploadAvatar, setAnimalAvatar, saveBirthdate, addParam, updateParam, deleteParam, saveBodyValue, refreshValues }
 }

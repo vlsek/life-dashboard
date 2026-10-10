@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import Icon from './Icon.vue'
 import MetricIcon from './MetricIcon.vue'
 import BirthdateModal from './BirthdateModal.vue'
+import AvatarModal from './AvatarModal.vue'
 import BodyParamFormModal from './BodyParamFormModal.vue'
 import BodyParamsModal from './BodyParamsModal.vue'
 import ParamQuickEdit from './ParamQuickEdit.vue'
@@ -55,7 +56,7 @@ const streakTitle = computed(() => {
   if (!top) return ''
   return top.todayCounted ? ((props.streakCount ?? 0) > 1 ? `${streakLabel(top)} — ${t('dash_streak_more_hint')}` : streakLabel(top)) : t('dash_streak_at_risk_warning')
 })
-const { profile, params, stats, balance, loaded, error, init, uploadAvatar, saveBirthdate, addParam, updateParam, deleteParam, saveBodyValue, refreshValues } = useProfile()
+const { profile, params, stats, balance, loaded, error, init, uploadAvatar, setAnimalAvatar, saveBirthdate, addParam, updateParam, deleteParam, saveBodyValue, refreshValues } = useProfile()
 const { frame: avatarFrame, load: loadAvatarFrame } = useAvatarFrame()
 
 watch(
@@ -78,6 +79,8 @@ onBeforeUnmount(() => window.removeEventListener(BODY_VALUES_CHANGED, onBodyValu
 
 const fileInput = ref<HTMLInputElement | null>(null)
 const showBirthdate = ref(false)
+const showAvatar = ref(false)
+const avatarError = ref<string | null>(null)
 const showParams = ref(false)
 const showPoints = ref(false)
 const formFor = ref<BodyParam | 'new' | null>(null)
@@ -100,6 +103,19 @@ async function onFile(e: Event) {
   const f = (e.target as HTMLInputElement).files?.[0]
   if (f && (await uploadAvatar(f))) flashSaved()
   if (fileInput.value) fileInput.value.value = ''
+}
+
+async function onPickAnimal(key: string) {
+  avatarError.value = null
+  if (await setAnimalAvatar(key)) {
+    showAvatar.value = false
+    flashSaved()
+  } else avatarError.value = error.value
+}
+
+function onUploadOwn() {
+  showAvatar.value = false
+  fileInput.value?.click()
 }
 
 async function onSaveBirthdate(value: string) {
@@ -162,7 +178,7 @@ function openForm(p: BodyParam | 'new') {
     <!-- Строка 1 (BACKLOG 7.2): главное — аватар с кольцом дня, кольцо недели, возраст; справа стрик и баллы.
          На очень узком экране правая группа переносится под левую, но не ломает остальное. -->
     <div class="flex w-full flex-wrap items-center gap-x-3 gap-y-2" data-test="profile-top-row">
-      <AvatarProgress :avatar-url="profile?.avatar_url" :ring="day ?? null" :frame="avatarFrame" @pick="fileInput?.click()" @settings="emit('progress-settings', 'day')" />
+      <AvatarProgress :avatar-url="profile?.avatar_url" :ring="day ?? null" :frame="avatarFrame" @pick="avatarError = null; showAvatar = true" @settings="emit('progress-settings', 'day')" />
       <input ref="fileInput" type="file" accept="image/*" class="hidden" data-test="avatar-input" @change="onFile" />
 
       <ProgressRing
@@ -242,6 +258,7 @@ function openForm(p: BodyParam | 'new') {
     <p v-if="error" class="w-full text-sm" style="color: var(--danger)">{{ error }}</p>
   </section>
 
+  <AvatarModal v-if="showAvatar" :current="profile?.avatar_url ?? null" :error="avatarError" @close="showAvatar = false" @pick="onPickAnimal" @upload="onUploadOwn" />
   <BirthdateModal v-if="showBirthdate" :initial="profile?.birthdate ?? null" :error="modalError" @close="showBirthdate = false" @save="onSaveBirthdate" />
   <PointsLogModal v-if="showPoints && userId" :user-id="userId" :balance="balance" @close="showPoints = false" />
   <BodyParamsModal v-if="showParams" :params="params" @close="showParams = false" @add="openForm('new')" @edit="openForm" @remove="onRemoveParam" />
