@@ -10,7 +10,7 @@ export function achievementTitle(def: AchievementDef): string {
 }
 
 export function achievementCondition(def: AchievementDef): string {
-  if (def.group === 'first') return t(('ach_c_' + def.key) as DictKey)
+  if (def.group === 'first' || def.group === 'secret') return t(('ach_c_' + def.key) as DictKey)
   return t(('ach_cond_' + def.group) as DictKey).replace('{n}', String(def.target))
 }
 

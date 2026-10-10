@@ -25,7 +25,7 @@ export type CounterKey =
 
 export type Counters = Record<CounterKey, number>
 
-export type GroupKey = 'streak' | 'perfect' | 'points' | 'first' | 'workouts' | 'challenges' | 'goals' | 'books' | 'weeks' | 'words_added' | 'words_learned' | 'skills' | 'milestones'
+export type GroupKey = 'secret' | 'streak' | 'perfect' | 'points' | 'first' | 'workouts' | 'challenges' | 'goals' | 'books' | 'weeks' | 'words_added' | 'words_learned' | 'skills' | 'milestones'
 
 export interface AchievementDef {
   key: string

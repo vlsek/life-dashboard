@@ -3,6 +3,7 @@ import { sb } from './supabase'
 import { fetchAllRows } from './fetchAll'
 import { withWaterGoal, isWeightLike } from './waterGoal'
 import { ACHIEVEMENTS, computeCounters, countMilestoneMarks, evaluate, reconcile, type AchievementState, type Counters, type Unlocked, type ValueRow } from './achievements'
+import { evaluateHidden } from './hiddenAchievements'
 import { loadUnlocked, saveUnlocked, type StorageMode } from './achievementStore'
 import { grantCoinBonuses, type CoinBonus } from './coinBonuses'
 import { REWARD_STATUS } from './rewards'
@@ -19,6 +20,7 @@ export type AuthState =
 export function useAchievements() {
   const auth = ref<AuthState>({ status: 'loading' })
   const states = ref<AchievementState[]>([])
+  const hiddenStates = ref<AchievementState[]>([]) // секретные (BACKLOG 49.1): в общий список/счётчики не входят
   const unlocked = ref<Unlocked>({})
   const newlyUnlocked = ref<string[]>([]) // открыто именно сейчас (для поздравляющего окна)
   const grantedCoins = ref<CoinBonus[]>([]) // бонусные монетки, выданные именно сейчас (в том числе «задним числом»)
@@ -107,9 +109,11 @@ export function useAchievements() {
       counters.value = c
       const st = evaluate(c, ACHIEVEMENTS)
       states.value = st
+      const hid = evaluateHidden(c)
+      hiddenStates.value = hid
 
       const loaded = await loadUnlocked(userId)
-      const rec = reconcile(st, { ...loaded.stored }, new Date().toISOString())
+      const rec = reconcile([...st, ...hid], { ...loaded.stored }, new Date().toISOString())
       unlocked.value = rec.unlocked
       newlyUnlocked.value = rec.newlyUnlocked
       // дописываем новое и то, что раньше жило только на устройстве; сбой записи страницу не ломает
@@ -127,5 +131,5 @@ export function useAchievements() {
     if (auth.value.status === 'ready') await load(auth.value.userId)
   }
 
-  return { auth, states, unlocked, newlyUnlocked, grantedCoins, counters, mode, error, loading, init, reload }
+  return { auth, states, hiddenStates, unlocked, newlyUnlocked, grantedCoins, counters, mode, error, loading, init, reload }
 }

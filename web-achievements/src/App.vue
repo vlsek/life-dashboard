@@ -13,13 +13,13 @@ import { RARITIES, RARITY_COLOR } from './lib/rewards'
 import { t } from './lib/i18n'
 import type { DictKey } from './lib/i18n'
 
-const { auth, states, unlocked, newlyUnlocked, mode, error, loading, init } = useAchievements()
+const { auth, states, hiddenStates, unlocked, newlyUnlocked, mode, error, loading, init } = useAchievements()
 onMounted(init)
 
 // Поздравление показываем один раз: после закрытия список очищается (в хранилище достижение уже записано, повторно не придёт).
 const celebrate = ref<string[]>([])
 watch(newlyUnlocked, (keys) => (celebrate.value = [...keys]), { immediate: true })
-const celebrateStates = computed(() => states.value.filter((s) => celebrate.value.includes(s.def.key)))
+const celebrateStates = computed(() => [...states.value, ...hiddenStates.value].filter((s) => celebrate.value.includes(s.def.key)))
 
 // Фильтр по грейду (BACKLOG 44.12, срез 2): при выбранном грейде показываем только подходящие карточки, группы раскрыты сами
 const gradeFilter = ref<GradeFilter>('all')
@@ -34,6 +34,7 @@ function toggle(group: string) {
   else next.add(group)
   expanded.value = next
 }
+const foundSecret = computed(() => hiddenStates.value.filter((s) => isUnlocked(s.def.key, unlocked.value)))
 const total = computed(() => states.value.length)
 const openCount = computed(() => states.value.filter((s) => isUnlocked(s.def.key, unlocked.value)).length)
 const overallPercent = computed(() => (total.value ? Math.round((openCount.value / total.value) * 100) : 0))
@@ -86,6 +87,14 @@ const overallPercent = computed(() => (total.value ? Math.round((openCount.value
               :unlocked="isUnlocked(s.def.key, unlocked)"
               :unlocked-at="unlocked[s.def.key] ?? null"
             />
+          </div>
+        </section>
+
+        <section v-if="foundSecret.length" class="mb-4" data-testid="secret-block">
+          <h2 class="mb-1 text-base font-medium">{{ t('ach_secret_title') }} <span class="dim text-xs">{{ t('ach_secret_found').replace('{n}', String(foundSecret.length)) }}</span></h2>
+          <p class="dim mb-2 text-xs">{{ t('ach_secret_hint') }}</p>
+          <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <AchievementCard v-for="s in foundSecret" :key="s.def.key" :state="s" :unlocked="true" :unlocked-at="unlocked[s.def.key] ?? null" />
           </div>
         </section>
 

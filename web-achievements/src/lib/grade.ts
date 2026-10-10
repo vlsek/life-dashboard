@@ -55,7 +55,21 @@ export const GRADE: Record<string, Rarity> = {
   mega_productivity: 'epic',
 }
 
-export const gradeOf = (key: string): Rarity => GRADE[key] ?? 'common'
+// Грейд СКРЫТЫХ достижений (hiddenAchievements.ts, BACKLOG 49.1) — отдельно от GRADE: те таблицы описывают только видимые достижения (тесты сверяют их с реестром).
+export const HIDDEN_GRADE: Record<string, Rarity> = {
+  secret_year: 'legendary',
+  secret_perfect_200: 'legendary',
+  secret_points_5000: 'legendary',
+  secret_marks_1000: 'epic',
+  secret_weight_100: 'epic',
+  secret_all_rounder: 'epic',
+  secret_mega_3: 'epic',
+  secret_words_500: 'legendary',
+  secret_workouts_500: 'legendary',
+  secret_milestones_100: 'legendary',
+}
+
+export const gradeOf = (key: string): Rarity => GRADE[key] ?? HIDDEN_GRADE[key] ?? 'common'
 
 // Иконка КАЖДОГО достижения (имена из lib/icons.ts): внутри одной лесенки все разные, по смыслу ступени.
 export const ICON_BY_KEY: Record<string, string> = {

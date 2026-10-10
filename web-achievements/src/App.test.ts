@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
 import { mount, flushPromises } from '@vue/test-utils'
+import { evaluateHidden } from './lib/hiddenAchievements'
 import { ACHIEVEMENTS, GROUP_ORDER, BASELINE_KEY, evaluate, type Counters } from './lib/achievements'
 
 vi.mock('./lib/supabase', () => ({ logout: vi.fn(), sb: {} }))
@@ -10,6 +11,7 @@ const ZERO: Counters = { streakBest: 0, perfectDays: 0, pointsTotal: 0, metricDo
 const hold = {
   auth: ref<unknown>({ status: 'ready', userId: 'u', userEmail: 'a@b.c' }),
   states: ref(evaluate(ZERO)),
+  hiddenStates: ref(evaluateHidden(ZERO)),
   unlocked: ref<Record<string, string | null>>({}),
   newlyUnlocked: ref<string[]>([]),
   mode: ref<'db' | 'local'>('db'),
@@ -22,6 +24,7 @@ beforeEach(() => {
   localStorage.setItem('site_lang', 'ru')
   hold.auth.value = { status: 'ready', userId: 'u', userEmail: 'a@b.c' }
   hold.states.value = evaluate(ZERO)
+  hold.hiddenStates.value = evaluateHidden(ZERO)
   hold.unlocked.value = {}
   hold.newlyUnlocked.value = []
   hold.mode.value = 'db'
@@ -179,5 +182,32 @@ describe('категории свёрнуты по умолчанию (BACKLOG 3
     expect(cards.every((c) => c.attributes('data-grade') === 'epic')).toBe(true)
     await w.find('[data-testid="grade-chip"][data-grade="all"]').trigger('click')
     expect(w.findAll('[data-testid="achievement-card"]').length).toBe(0)
+  })
+})
+
+describe('секретные достижения (BACKLOG 49.1)', () => {
+  it('пока ни одно не найдено — страница о них молчит, и в счётчик они не входят', async () => {
+    const w = await mountApp()
+    expect(w.find('[data-testid="secret-block"]').exists()).toBe(false)
+    expect(w.find('[data-testid="achievements-count"]').text()).toBe(`0 / ${ACHIEVEMENTS.length}`)
+    w.unmount()
+  })
+  it('найденное показывается в блоке «Секретные»; ненайденные не видны', async () => {
+    hold.hiddenStates.value = evaluateHidden({ ...ZERO, streakBest: 400 })
+    hold.unlocked.value = { secret_year: '2026-10-10T00:00:00Z' }
+    const w = await mountApp()
+    const block = w.find('[data-testid="secret-block"]')
+    expect(block.exists()).toBe(true)
+    expect(block.findAll('[data-testid="achievement-card"]').length).toBe(1)
+    expect(block.text()).toContain('1')
+    w.unmount()
+  })
+  it('получение секретного показывает окно поздравления', async () => {
+    hold.hiddenStates.value = evaluateHidden({ ...ZERO, streakBest: 400 })
+    hold.unlocked.value = { secret_year: '2026-10-10T00:00:00Z' }
+    hold.newlyUnlocked.value = ['secret_year']
+    const w = await mountApp()
+    expect(w.find('[data-testid="achievement-unlocked"]').exists()).toBe(true)
+    w.unmount()
   })
 })
