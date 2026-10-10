@@ -1,6 +1,13 @@
 {
-  "version": "4.54",
+  "version": "4.55",
   "en": [
+    {
+      "version": "4.55",
+      "date": "2026-10-10 18:03",
+      "changes": [
+        "Fixed: the whole list of goals disappeared on the Goals page when friend invitations were enabled. The list is now always shown, with invitations above it."
+      ]
+    },
     {
       "version": "4.54",
       "date": "2026-10-10 15:02",
@@ -3245,6 +3252,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.55",
+      "date": "2026-10-10 18:03",
+      "changes": [
+        "Исправлено: на странице «Цели» пропадал весь список целей, когда были включены приглашения от друзей. Теперь список виден всегда, а приглашения показываются над ним."
+      ]
+    },
     {
       "version": "4.54",
       "date": "2026-10-10 15:02",

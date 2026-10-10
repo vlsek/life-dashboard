@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.54";
+const SITE_VERSION = "4.55";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.55", date: "2026-10-10 18:03", changes: [
+        "Исправлено: на странице «Цели» пропадал весь список целей, когда были включены приглашения от друзей. Теперь список виден всегда, а приглашения показываются над ним."
+    ]},
     { version: "4.54", date: "2026-10-10 15:02", changes: [
         "Безопасность: запись о покупке в «Кастомизации» больше нельзя удалить или изменить из приложения, чтобы «вернуть» потраченные монеты (миграция 065; применяется владельцем). Обычные желания Магазина работают как раньше. Для вас ничего не меняется."
     ]},
@@ -1972,6 +1975,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.55", date: "2026-10-10 18:03", changes: [
+        "Fixed: the whole list of goals disappeared on the Goals page when friend invitations were enabled. The list is now always shown, with invitations above it."
+    ]},
     { version: "4.54", date: "2026-10-10 15:02", changes: [
         "Security: a Customization purchase record can no longer be deleted or edited from the app to \"get coins back\" (migration 065; applied by the owner). Regular Shop wishes work as before. Nothing changes for you."
     ]},
