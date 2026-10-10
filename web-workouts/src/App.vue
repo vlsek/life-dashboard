@@ -192,6 +192,20 @@ async function onSaveEntry(res: EntryFormInput) {
   }
 }
 
+// Встроенное добавление записи из карточки упражнения (BACKLOG 44.5ж): сохраняем без окна; done(ok) сообщает строке, очищать ли поля
+async function onQuickAddEntry(exercise: Exercise, res: EntryFormInput, done: (ok: boolean) => void) {
+  if (auth.value.status !== 'ready') return done(false)
+  try {
+    await wk.addEntry(exercise.id, auth.value.userId, res)
+    showToast(t('workouts_toast_saved'))
+    done(true)
+  } catch (e) {
+    showToast(friendlyError(e, 'save'), 'error')
+    console.error(e)
+    done(false)
+  }
+}
+
 // «+ подход» / «− подход» прямо из таблицы записей (BACKLOG 590): правим подходы сегодняшней записи без окна; пока запись
 // сохраняется, кнопки этой записи отключены (двойной тап не добавит два подхода)
 const quickBusyId = ref<string | null>(null)
@@ -393,6 +407,7 @@ function onToggleProgramWeek(week: number) {
             :linked-metrics="linkedFor(ex.id)"
             :link-supported="metricLinks.supported"
             @add-entry="entryForm = { exercise: ex, existing: null }"
+            @quick-add-entry="(res, done) => onQuickAddEntry(ex, res, done)"
             @link-metric="linkModal = ex"
             @edit-exercise="exerciseForm = { existing: ex }"
             @delete-exercise="onDeleteExercise(ex)"

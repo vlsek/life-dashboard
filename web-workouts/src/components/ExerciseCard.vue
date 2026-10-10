@@ -3,6 +3,8 @@ import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { fmtRu, todayStr } from '../lib/date'
 import { setCount } from '../lib/quickSet'
+import { canInlineAdd } from '../lib/inlineEntry'
+import InlineEntryAdd from './InlineEntryAdd.vue'
 import { bestPaceRecord, bestSetRecord, formatSets } from '../lib/workouts'
 import { defaultWeightUnit } from '../lib/weightUnit'
 import { estimateExerciseCalories, hasCalorieActivity, validWeightKg } from '../lib/calories'
@@ -10,7 +12,7 @@ import Icon from './Icon.vue'
 import ExerciseChart from './ExerciseChart.vue'
 import { readExerciseCollapsed, writeExerciseCollapsed } from '../lib/exerciseCollapse'
 import { useAccordionMember } from '../lib/useCollapseStyle'
-import type { Exercise, WorkoutEntry } from '../lib/types'
+import type { EntryFormInput, Exercise, WorkoutEntry } from '../lib/types'
 import { plannedSetsOn, setsOfDay, totalReps, type LinkedMetric } from '../lib/metricLink'
 import SetsRing from './SetsRing.vue'
 import CollapseChevron from './CollapseChevron.vue'
@@ -23,6 +25,7 @@ import EmojiText from './EmojiText.vue'
 const props = defineProps<{ exercise: Exercise; entries: WorkoutEntry[]; busyEntryId?: string | null; bodyWeightKg?: number | null; linkedMetrics?: LinkedMetric[]; linkSupported?: boolean }>()
 const emit = defineEmits<{
   addEntry: []
+  quickAddEntry: [EntryFormInput, (ok: boolean) => void]
   editExercise: []
   linkMetric: []
   deleteExercise: []
@@ -99,6 +102,24 @@ const today = todayStr()
 const canQuick = (e: WorkoutEntry) => e.date === today && (e.sets?.length ?? 0) > 0
 const canRemove = (e: WorkoutEntry) => setCount(e.sets ?? []) > 1
 
+// «Добавить запись» (BACKLOG 44.5ж): у обычных упражнений раскрывает встроенную строку в карточке, окно — по «Подробно…»;
+// у упражнений с Л/П (пара ячеек) сразу окно, как раньше.
+const adding = ref(false)
+function onAddClick() {
+  if (canInlineAdd(props.exercise)) adding.value = !adding.value
+  else emit('addEntry')
+}
+function onInlineSave(res: EntryFormInput, done: (ok: boolean) => void) {
+  emit('quickAddEntry', res, (ok) => {
+    if (ok) adding.value = false
+    done(ok)
+  })
+}
+function onInlineDetail() {
+  adding.value = false
+  emit('addEntry')
+}
+
 const sortedEntries = computed(() => props.entries.slice().sort((a, b) => b.date.localeCompare(a.date)))
 const calories = computed(() => estimateExerciseCalories(props.entries, props.exercise, props.bodyWeightKg))
 // Есть что считать, но вес не задан в метриках тела — вместо выдуманного числа показываем подсказку.
@@ -136,7 +157,9 @@ const collapsedSummary = computed(() => {
         type="button"
         class="rounded-lg border px-3 py-1.5 text-sm"
         style="border-color: var(--border); background: var(--bg); color: var(--text)"
-        @click="emit('addEntry')"
+        :aria-expanded="canInlineAdd(exercise) ? adding : undefined"
+        data-testid="exercise-add-entry"
+        @click="onAddClick"
       >
         <EmojiText :text="t('workouts_add_entry_btn')" />
       </button>
@@ -159,6 +182,8 @@ const collapsedSummary = computed(() => {
         <Icon name="trash" />
       </button>
     </div>
+
+    <InlineEntryAdd v-if="adding" :exercise="exercise" @save="onInlineSave" @detail="onInlineDetail" @cancel="adding = false" />
 
     <div v-if="metricChip" class="mb-2 flex items-center gap-2 text-[0.85em]" style="color: var(--text-dim)" data-testid="exercise-metric-chip">
       <SetsRing v-if="plannedToday" :done="setsToday" :planned="plannedToday" />
