@@ -5,6 +5,7 @@ import { MUSCLE_IDS, getMuscleOverride, ruleForExercise, type MuscleId } from '.
 import { defaultWeightUnit, isWeightUnit, rememberWeightUnit } from '../lib/weightUnit'
 import { valueLabelOptions } from '../lib/valueLabels'
 import Icon from './Icon.vue'
+import ExercisePicker from './ExercisePicker.vue'
 import type { Exercise, ExerciseFormInput } from '../lib/types'
 import { stripEmoji } from '../lib/emojiText'
 import { capFirst } from '../lib/exerciseNames'
@@ -14,7 +15,7 @@ import { getLang } from '../lib/i18n'
 // Порт openExerciseFormModal() из workouts.js: имя, категория (фиксированный список +
 // "своя категория" текстом), вести вес да/нет, подпись значения, единица, доп. флаги
 // длительности и билатеральности (Л/П).
-const props = defineProps<{ existing: Exercise | null }>()
+const props = defineProps<{ existing: Exercise | null; recentMuscles?: readonly MuscleId[] }>()
 const emit = defineEmits<{ close: []; save: [ExerciseFormInput] }>()
 
 const KNOWN_CATS = ['upper', 'lower', 'fullbody', 'custom']
@@ -79,15 +80,27 @@ function applyTypicalDefaults() {
   if (!touched.has('bilateral')) bilateral.value = d.bilateral
   autofilled.value = true
 }
-function onTypicalPick(e: Event) {
-  const id = (e.target as HTMLSelectElement).value
+function pickTypicalBase(id: string) {
   const b = VARIANT_BASES.find((x) => x.id === id)
   if (b) {
     name.value = baseName(b)
     applyTypicalDefaults()
   }
-  ;(e.target as HTMLSelectElement).value = ''
   nameInput.value?.focus()
+}
+function onTypicalPick(e: Event) {
+  pickTypicalBase((e.target as HTMLSelectElement).value)
+  ;(e.target as HTMLSelectElement).value = ''
+}
+// BACKLOG 763: подбор типового упражнения по схеме тела (только для нового упражнения, пока название пустое)
+const showBodyPicker = ref(false)
+function onBodyPick(pickedName: string, baseId: string | null) {
+  if (baseId) pickTypicalBase(baseId)
+  else {
+    name.value = pickedName // нет «типового» двойника: подставляем только название; мышцы карта распознает по нему сама
+    nameInput.value?.focus()
+  }
+  showBodyPicker.value = false
 }
 function onVariantPick(e: Event) {
   if (!typical.value) return
@@ -131,6 +144,11 @@ function onSubmit() {
           {{ t('workouts_field_name') }}
           <input ref="nameInput" v-model="name" type="text" required class="modal-input" />
         </label>
+
+        <div v-if="!existing && !name.trim()" class="flex flex-col gap-2" data-testid="body-picker-field">
+          <button v-if="!showBodyPicker" type="button" class="rounded-lg border px-3 py-1.5 text-sm" style="border-color: var(--border); color: var(--text)" data-testid="body-picker-open" @click="showBodyPicker = true">{{ t('workouts_pick_body_btn') }}</button>
+          <ExercisePicker v-else :recent="recentMuscles ?? []" @pick="onBodyPick" @close="showBodyPicker = false" />
+        </div>
 
         <label v-if="!name.trim()" class="flex flex-col gap-1 text-sm" data-testid="typical-field">
           {{ t('workouts_typical_label') }}

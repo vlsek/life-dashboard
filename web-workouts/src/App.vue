@@ -5,6 +5,8 @@ import { defaultWeightUnit } from './lib/weightUnit'
 import { isKnownCategory, sortCategoryKeys } from './lib/workouts'
 import { readWarmupDismissed, shouldShowWarmup, writeWarmupDismissed } from './lib/warmup'
 import { nowHHMM, todayStr } from './lib/date'
+import { isTrainedRecently, lastTrainedByMuscle } from './lib/muscleStats'
+import { MUSCLE_IDS } from './lib/muscles'
 import { getLang, t } from './lib/i18n'
 import { showToast } from './lib/toast'
 import { appendCopiedSet, removeLastSet } from './lib/quickSet'
@@ -154,6 +156,13 @@ const onLinkMetric = (m: LinkedMetric) =>
 const onUnlinkMetric = (m: LinkedMetric) => runLink(async () => (await wk.unlinkExerciseMetric(m.id), t('workouts_ml_toast_unlinked')))
 const onCreateMetric = () => runLink(async () => (await wk.createMetricForExercise(linkModal.value!), t('workouts_ml_toast_created')))
 const templatesOpen = ref(false)
+
+// Мышцы, тренированные за последние 4 дня, — для подбора типового упражнения по схеме тела в форме «Добавить упражнение» (BACKLOG 763)
+const recentMuscles = computed(() => {
+  const day = todayStr()
+  const last = lastTrainedByMuscle(entries.value, exercises.value, day)
+  return MUSCLE_IDS.filter((m) => isTrainedRecently(last[m], day))
+})
 
 async function onSaveExercise(res: ExerciseFormInput) {
   if (auth.value.status !== 'ready' || !exerciseForm.value) return
@@ -422,7 +431,7 @@ function onToggleProgramWeek(week: number) {
     </template>
   </main>
 
-  <ExerciseForm v-if="exerciseForm" :existing="exerciseForm.existing" @close="exerciseForm = null" @save="onSaveExercise" />
+  <ExerciseForm v-if="exerciseForm" :existing="exerciseForm.existing" :recent-muscles="recentMuscles" @close="exerciseForm = null" @save="onSaveExercise" />
   <MetricLinkModal v-if="linkModal" :exercise="linkModal" :metrics="metricLinks.metrics" :supported="metricLinks.supported" :busy="linkBusy" @close="linkModal = null" @link="onLinkMetric" @unlink="onUnlinkMetric" @create="onCreateMetric" />
   <EntryForm v-if="entryForm" :exercise="entryForm.exercise" :existing="entryForm.existing" @close="entryForm = null" @save="onSaveEntry" />
   <TemplatesModal v-if="templatesOpen" :active-title="activeTemplate?.title ?? null" @close="templatesOpen = false" @apply="onApplyTemplate" @start="onStartProgram" />
