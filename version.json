@@ -1,6 +1,13 @@
 {
-  "version": "4.50",
+  "version": "4.51",
   "en": [
+    {
+      "version": "4.51",
+      "date": "2026-10-10 10:00",
+      "changes": [
+        "Icons: the 19 most dated icons were redrawn — run, walk, yoga, swim, stretch, boxing, jump rope, treadmill, skiing, bandage, broom, party popper, tree, snowflake, bird, fish, guitar, cake and lungs. Same stroke style with rounded ends, icon names unchanged, so metrics and goals keep their icons. No migrations."
+      ]
+    },
     {
       "version": "4.50",
       "date": "2026-10-10 12:52",
@@ -3217,6 +3224,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.51",
+      "date": "2026-10-10 10:00",
+      "changes": [
+        "Иконки: перерисованы 19 самых «старомодных» значков — бег, ходьба, йога, плавание, растяжка, бокс, скакалка, беговая дорожка, лыжи, пластырь, веник, хлопушка, ёлка, снежинка, птица, рыба, гитара, торт, лёгкие. Тот же штриховой стиль со скруглёнными концами, названия иконок прежние, метрики и цели ничего не теряют. Без миграций."
+      ]
+    },
     {
       "version": "4.50",
       "date": "2026-10-10 12:52",
