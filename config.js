@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.23";
+const SITE_VERSION = "4.24";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.24", date: "2026-10-10 03:45", changes: [
+        "Таблицы на телефоне: широкие таблицы (подходы, метрики, планы, вехи, навыки, книги, история вехи, день в Календаре/Истории, накопительный челлендж) теперь прокручиваются вбок внутри своей рамки и не раздвигают страницу. Без миграций."
+    ]},
     { version: "4.23", date: "2026-10-10 03:37", changes: [
         "Кастомизация: каждый раздел (Темы, рамки, стаканы и т. д.) теперь сворачивается — заголовок-кнопка со счётчиком «открыто/всего»; состояние запоминается на этом устройстве. Группы по редкости внутри раздела сворачиваются отдельно. Без миграций."
     ]},
@@ -1879,6 +1882,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.24", date: "2026-10-10 03:45", changes: [
+        "Tables on phones: wide tables (sets, metrics, plans, milestones, skills, books, milestone history, day view in Calendar/History, cumulative challenge) now scroll sideways inside their own frame instead of stretching the page. No migrations."
+    ]},
     { version: "4.23", date: "2026-10-10 03:37", changes: [
         "Customization: every section (Themes, frames, glasses, etc.) now collapses — a header button with an \"owned/total\" counter; the state is remembered on this device. Rarity groups inside a section collapse separately. No migrations."
     ]},

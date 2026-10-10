@@ -1,6 +1,13 @@
 {
-  "version": "4.23",
+  "version": "4.24",
   "en": [
+    {
+      "version": "4.24",
+      "date": "2026-10-10 03:45",
+      "changes": [
+        "Tables on phones: wide tables (sets, metrics, plans, milestones, skills, books, milestone history, day view in Calendar/History, cumulative challenge) now scroll sideways inside their own frame instead of stretching the page. No migrations."
+      ]
+    },
     {
       "version": "4.23",
       "date": "2026-10-10 03:37",
@@ -3028,6 +3035,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.24",
+      "date": "2026-10-10 03:45",
+      "changes": [
+        "Таблицы на телефоне: широкие таблицы (подходы, метрики, планы, вехи, навыки, книги, история вехи, день в Календаре/Истории, накопительный челлендж) теперь прокручиваются вбок внутри своей рамки и не раздвигают страницу. Без миграций."
+      ]
+    },
     {
       "version": "4.23",
       "date": "2026-10-10 03:37",
