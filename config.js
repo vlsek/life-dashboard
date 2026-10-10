@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.21";
+const SITE_VERSION = "4.22";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.22", date: "2026-10-10 03:34", changes: [
+        "Аватарка: по нажатию на фото в «Профиле» открывается окно «Выбрать аватарку» — 20 нарисованных животных (выбрал — аватарка сменилась сразу) или «Загрузить своё фото». Раньше нажатие сразу открывало выбор файла."
+    ]},
     { version: "4.21", date: "2026-10-09 19:29", changes: [
         "Карта мышц: у фигуры исправлена шея — теперь она растёт из головы и плавно переходит в плечи (раньше голова висела над плоской «пирамидкой»). Правая плашка перестала рисовать старую «коробку»: там та же карта и те же контуры, что в разделе «Тренировки». Без миграций."
     ]},
@@ -1873,6 +1876,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.22", date: "2026-10-10 03:34", changes: [
+        "Avatar: tapping your photo in the Profile block now opens a \"Choose an avatar\" window — 20 drawn animals (pick one and your avatar changes right away) or \"Upload my own photo\". Before, tapping went straight to the file picker."
+    ]},
     { version: "4.21", date: "2026-10-09 19:29", changes: [
         "Muscle map: the figure's neck is fixed — it now grows out of the head and blends into the shoulders (the head used to hover above a flat \"pyramid\"). The right panel no longer draws the old box: it uses the same map and outlines as the Workouts section. No migrations."
     ]},
