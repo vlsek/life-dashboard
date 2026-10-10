@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.63";
+const SITE_VERSION = "4.64";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.64", date: "2026-10-10 23:59", changes: [
+        "«Тренировки»: на странице появились вкладки «Упражнения» и «Карта мышц». Карта мышц переехала во вторую вкладку (без своей кнопки-заголовка), выбранная вкладка запоминается."
+    ]},
     { version: "4.63", date: "2026-10-10 14:50", changes: [
         "На страницах «Календарь», «Языки» и «Навыки» наверху (рядом с сердечком «в избранное») появилась кнопка «Добавить виджет этой страницы на главную»: одно нажатие — и виджет появляется на Дашборде в блоке «Виджеты» (календарь; все языки; навыки — до 12, незаконченные первыми). Если виджет уже на главной, кнопка показывает галочку и убирает его. Остальные виджеты не затрагиваются. Без миграций."
     ]},
@@ -1999,6 +2002,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.64", date: "2026-10-10 23:59", changes: [
+        "Workouts: the page now has two tabs, Exercises and Muscle map. The muscle map moved to the second tab (no header button of its own), and the chosen tab is remembered."
+    ]},
     { version: "4.63", date: "2026-10-10 14:50", changes: [
         "Calendar, Languages and Skills pages now have an \"Add this page's widget to the home page\" button at the top (next to the favorites heart): one tap puts the widget in the Widgets block on the Dashboard (calendar; all languages; skills — up to 12, unfinished first). If the widget is already on the home page, the button shows a check mark and removes it. Other widgets are untouched. No migrations."
     ]},

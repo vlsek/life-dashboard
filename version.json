@@ -1,6 +1,13 @@
 {
-  "version": "4.63",
+  "version": "4.64",
   "en": [
+    {
+      "version": "4.64",
+      "date": "2026-10-10 23:59",
+      "changes": [
+        "Workouts: the page now has two tabs, Exercises and Muscle map. The muscle map moved to the second tab (no header button of its own), and the chosen tab is remembered."
+      ]
+    },
     {
       "version": "4.63",
       "date": "2026-10-10 14:50",
@@ -3308,6 +3315,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.64",
+      "date": "2026-10-10 23:59",
+      "changes": [
+        "«Тренировки»: на странице появились вкладки «Упражнения» и «Карта мышц». Карта мышц переехала во вторую вкладку (без своей кнопки-заголовка), выбранная вкладка запоминается."
+      ]
+    },
     {
       "version": "4.63",
       "date": "2026-10-10 14:50",
