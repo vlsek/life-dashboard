@@ -1,6 +1,13 @@
 {
-  "version": "4.30",
+  "version": "4.31",
   "en": [
+    {
+      "version": "4.31",
+      "date": "2026-10-10 07:08",
+      "changes": [
+        "The \"Achievements you can earn here\" block is now on the Dashboard too: perfect-day streaks, perfect days, points and \"Mega productivity\" — with the steps you already have marked."
+      ]
+    },
     {
       "version": "4.30",
       "date": "2026-10-10 07:04",
@@ -3077,6 +3084,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.31",
+      "date": "2026-10-10 07:08",
+      "changes": [
+        "Блок «Какие достижения тут можно получить» появился и на Дашборде: серии идеальных дней, идеальные дни, баллы и «Мега продуктивность» — с отметкой уже полученных ступеней."
+      ]
+    },
     {
       "version": "4.30",
       "date": "2026-10-10 07:04",

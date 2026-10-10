@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.30";
+const SITE_VERSION = "4.31";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.31", date: "2026-10-10 07:08", changes: [
+        "Блок «Какие достижения тут можно получить» появился и на Дашборде: серии идеальных дней, идеальные дни, баллы и «Мега продуктивность» — с отметкой уже полученных ступеней."
+    ]},
     { version: "4.30", date: "2026-10-10 07:04", changes: [
         "На каждой странице при первом заходе появляется короткая подсказка «что тут можно делать», а потом её можно открыть значком «i» в верхней панели справа. Показывается один раз на устройстве."
     ]},
@@ -1900,6 +1903,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.31", date: "2026-10-10 07:08", changes: [
+        "The \"Achievements you can earn here\" block is now on the Dashboard too: perfect-day streaks, perfect days, points and \"Mega productivity\" — with the steps you already have marked."
+    ]},
     { version: "4.30", date: "2026-10-10 07:04", changes: [
         "Every page now shows a short \"what you can do here\" hint on your first visit, and you can reopen it with the \"i\" button at the right of the top bar. It is shown once per device."
     ]},
