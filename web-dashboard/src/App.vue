@@ -318,7 +318,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
                 >
                   <div class="flex items-center gap-1 text-lg font-bold">
                     {{ item.streak }}{{ item.unit === 'w' ? ' ' + t('dash_streak_unit_weeks') : '' }}
-                    <StreakFlame :lit="item.todayCounted" />
+                    <StreakFlame :lit="item.todayCounted" :days="item.unit === 'w' ? undefined : item.streak" />
                   </div>
                   <div class="dim flex items-center gap-1 text-xs">
                     <MetricIcon v-if="item.kind === 'metric'" :icon="item.metric?.icon" />

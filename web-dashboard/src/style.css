@@ -738,7 +738,7 @@ html.theme-monet .streak-flame .fl-outer {
   opacity: 0.75;
 }
 /* «Живое пламя» стрика ≥ 7 дней (BACKLOG 18, StreakFlame.vue + lib/streakFlameTier.ts): три языка пламени заставки
-   (keyframes tongue-* и spark-rise — общие со .splash-live), свечение и скорость растут со ступенью 1 → 2 (30 дн.) → 3 (100 дн.). */
+   (keyframes flame-morph-*, flame-sway и spark-rise — общие со .splash-live), свечение и скорость растут со ступенью 1 → 2 (30 дн.) → 3 (100 дн.). */
 .streak-live {
   overflow: visible;
   --glow: 3px;
@@ -748,14 +748,14 @@ html.theme-monet .streak-flame .fl-outer {
 }
 .streak-live[data-tier='2'] { --glow: 5px; --glow-a: 65%; --speed: 0.85; }
 .streak-live[data-tier='3'] { --glow: 7px; --glow-a: 78%; --speed: 0.7; }
-.streak-live .tongue { transform-box: fill-box; transform-origin: 50% 100%; }
-.streak-live .tongue-c { fill: var(--accent); animation: tongue-c calc(1.3s * var(--speed)) ease-in-out infinite; }
-.streak-live .tongue-l { fill: color-mix(in srgb, var(--accent) 78%, transparent); animation: tongue-l calc(0.95s * var(--speed)) ease-in-out -0.3s infinite; }
-.streak-live .tongue-r { fill: color-mix(in srgb, var(--accent) 78%, transparent); animation: tongue-r calc(1.15s * var(--speed)) ease-in-out -0.7s infinite; }
-.streak-live .tongue-core { fill: color-mix(in srgb, var(--accent) 35%, #ffffff); animation: tongue-core calc(0.8s * var(--speed)) ease-in-out -0.2s infinite; }
-.streak-live[data-tier='3'] .tongue-core { fill: color-mix(in srgb, var(--accent) 12%, #ffffff); }
+.streak-live .flame-body { transform-box: fill-box; transform-origin: 50% 100%; animation: flame-sway calc(1.9s * var(--speed)) ease-in-out infinite; }
+.streak-live .flame-layer { transform-box: fill-box; transform-origin: 50% 100%; }
+.streak-live .layer-outer { fill: var(--accent); animation: flame-morph-out calc(1.7s * var(--speed)) ease-in-out infinite; }
+.streak-live .layer-mid { fill: color-mix(in srgb, var(--accent) 60%, #ffffff); transform: scale(0.7); animation: flame-morph-out calc(1.3s * var(--speed)) ease-in-out -0.5s infinite; }
+.streak-live .layer-core { fill: color-mix(in srgb, var(--accent) 35%, #ffffff); animation: flame-morph-core calc(1.1s * var(--speed)) ease-in-out -0.3s infinite; }
+.streak-live[data-tier='3'] .layer-core { fill: color-mix(in srgb, var(--accent) 12%, #ffffff); }
 .streak-live .spark { fill: color-mix(in srgb, var(--accent) 45%, #ffffff); opacity: 0; animation: spark-rise var(--d, 2s) ease-out var(--o, 0s) infinite; }
-html.theme-monet .streak-live .tongue-c { stroke: var(--accent); stroke-width: 2; stroke-opacity: 0.5; }
+html.theme-monet .streak-live .layer-outer { stroke: var(--accent); stroke-width: 2; stroke-opacity: 0.5; }
 @media (prefers-reduced-motion: reduce) {
   .streak-live, .streak-live * { animation: none !important; }
   .streak-live .spark { opacity: 0; }
@@ -1129,25 +1129,6 @@ html.theme-monet .splash-flame .fl-outer {
   70% { d: path("M30.6 32C32 37 41.8 41 43.2 47C43.2 53 37.6 58 32 58C26.4 58 20.8 53 20.8 47C20.8 41 29.2 37 30.6 32Z"); }
 }
 /* splash-flame:end */
-@keyframes tongue-c {
-  0%, 100% { transform: scale(1, 1) skewX(0deg); }
-  30% { transform: scale(0.96, 1.08) skewX(-4deg); }
-  65% { transform: scale(1.03, 0.95) skewX(3deg); }
-}
-@keyframes tongue-l {
-  0%, 100% { transform: scale(1, 1) skewX(0deg); }
-  40% { transform: scale(0.9, 1.15) skewX(-7deg); }
-  75% { transform: scale(1.05, 0.9) skewX(4deg); }
-}
-@keyframes tongue-r {
-  0%, 100% { transform: scale(1, 1) skewX(0deg); }
-  35% { transform: scale(0.92, 1.12) skewX(6deg); }
-  70% { transform: scale(1.06, 0.92) skewX(-4deg); }
-}
-@keyframes tongue-core {
-  0%, 100% { transform: scale(1, 1); }
-  50% { transform: scale(0.88, 1.12); }
-}
 @keyframes spark-rise {
   0% { transform: translate(0, 0) scale(1); opacity: 0; }
   15% { opacity: 1; }

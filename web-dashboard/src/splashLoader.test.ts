@@ -67,9 +67,10 @@ describe('живое пламя: устройство', () => {
     }
   })
 
-  it('старые языки (tongue-*) остались только для StreakFlame, у заставки их больше нет', () => {
-    expect(css).not.toMatch(/\.splash-live \.tongue/)
-    expect(css).toMatch(/\.streak-live \.tongue-c \{[^}]*animation: tongue-c /)
+  it('старых языков (tongue-*) нет нигде: ни у заставки, ни у пламени стрика', () => {
+    expect(css).not.toMatch(/tongue/)
+    expect(css).toMatch(/\.streak-live \.layer-outer \{[^}]*animation: flame-morph-out /)
+    expect(css).toMatch(/\.streak-live \.layer-core \{[^}]*animation: flame-morph-core /)
   })
 })
 

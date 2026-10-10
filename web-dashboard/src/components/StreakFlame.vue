@@ -4,7 +4,7 @@
 // и STREAK_OUTLINE_ICON (unlit, пунктирный контур). Разметка путей скопирована дословно.
 //
 // «Живое пламя» (BACKLOG 18): если передан days и серия ≥ 7 дней, вместо обычного огонька рисуется пламя заставки
-// (splash/SplashFlameLive.vue: три языка + светлая сердцевина, те же keyframes tongue-*), а ступени 30 и 100 дней
+// (splash/SplashFlameLive.vue: ОДНО пламя — морфинг контура, два слоя и светлая сердцевина, те же keyframes flame-morph-*/flame-sway), а ступени 30 и 100 дней
 // делают его ярче и добавляют искры (lib/streakFlameTier.ts, стили .streak-live в style.css). Без days — как раньше.
 // Не засчитанный сегодня стрик остаётся тусклым пунктирным контуром на любой длине серии.
 // prefers-reduced-motion и общий выключатель анимаций (html[data-motion="off"]) гасят анимацию — пламя остаётся статичным.
@@ -34,10 +34,11 @@ const sparks = computed(() => SPARKS.slice(0, tier.value >= 3 ? 4 : tier.value >
     aria-hidden="true"
     data-test="streak-flame-live"
   >
-    <path class="tongue tongue-l" d="M17 22C20 31 11 36 11 44C11 52 18 57 25 57C18 52 22 44 24 38C21 33 18 29 17 22Z" />
-    <path class="tongue tongue-r" d="M47 22C44 31 53 36 53 44C53 52 46 57 39 57C46 52 42 44 40 38C43 33 46 29 47 22Z" />
-    <path class="tongue tongue-c" d="M32 3C34 13 46 21 46 37C46 49 40 58 32 58C24 58 18 49 18 37C18 29 24 25 26 17C28 21 30 21 31 15C31.5 10 31.8 7 32 3Z" />
-    <path class="tongue tongue-core" d="M32 30C33 36 40 40 40 47C40 53 36 58 32 58C28 58 24 53 24 47C24 40 31 36 32 30Z" />
+    <g class="flame-body">
+      <path class="flame-layer layer-outer" d="M32 3C34.8 13 51.6 21 51.6 37C51.6 49 43.2 58 32 58C20.8 58 12.4 49 12.4 37C12.4 29 20.8 25 23.6 17C26.4 21 29.2 21 30.6 15C31.3 10 31.72 7 32 3Z" />
+      <path class="flame-layer layer-mid" d="M32 3C34.8 13 51.6 21 51.6 37C51.6 49 43.2 58 32 58C20.8 58 12.4 49 12.4 37C12.4 29 20.8 25 23.6 17C26.4 21 29.2 21 30.6 15C31.3 10 31.72 7 32 3Z" />
+      <path class="flame-layer layer-core" d="M32 30C33.4 36 43.2 40 43.2 47C43.2 53 37.6 58 32 58C26.4 58 20.8 53 20.8 47C20.8 40 30.6 36 32 30Z" />
+    </g>
     <circle
       v-for="(sp, i) in sparks"
       :key="i"

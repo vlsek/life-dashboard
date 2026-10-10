@@ -720,25 +720,6 @@ html[data-motion='off'] *::after {
   70% { d: path("M30.6 32C32 37 41.8 41 43.2 47C43.2 53 37.6 58 32 58C26.4 58 20.8 53 20.8 47C20.8 41 29.2 37 30.6 32Z"); }
 }
 /* splash-flame:end */
-@keyframes tongue-c {
-  0%, 100% { transform: scale(1, 1) skewX(0deg); }
-  30% { transform: scale(0.96, 1.08) skewX(-4deg); }
-  65% { transform: scale(1.03, 0.95) skewX(3deg); }
-}
-@keyframes tongue-l {
-  0%, 100% { transform: scale(1, 1) skewX(0deg); }
-  40% { transform: scale(0.9, 1.15) skewX(-7deg); }
-  75% { transform: scale(1.05, 0.9) skewX(4deg); }
-}
-@keyframes tongue-r {
-  0%, 100% { transform: scale(1, 1) skewX(0deg); }
-  35% { transform: scale(0.92, 1.12) skewX(6deg); }
-  70% { transform: scale(1.06, 0.92) skewX(-4deg); }
-}
-@keyframes tongue-core {
-  0%, 100% { transform: scale(1, 1); }
-  50% { transform: scale(0.88, 1.12); }
-}
 @keyframes spark-rise {
   0% { transform: translate(0, 0) scale(1); opacity: 0; }
   15% { opacity: 1; }

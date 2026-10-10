@@ -40,11 +40,13 @@ describe('StreakFlame: «живое пламя» от 7 дней (BACKLOG 18)', 
     }
   })
 
-  it('7 дней — ступень 1: три языка + сердцевина, без искр', () => {
+  it('7 дней — ступень 1: единое пламя (три слоя в одной группе), без искр', () => {
     const w = mount(StreakFlame, { props: { lit: true, days: 7 } })
     expect(live(w).exists()).toBe(true)
     expect(live(w).attributes('data-tier')).toBe('1')
-    for (const cls of ['tongue-l', 'tongue-r', 'tongue-c', 'tongue-core']) expect(w.find(`.${cls}`).exists(), cls).toBe(true)
+    expect(w.findAll('.flame-body')).toHaveLength(1)
+    for (const cls of ['layer-outer', 'layer-mid', 'layer-core']) expect(w.find(`.${cls}`).exists(), cls).toBe(true)
+    expect(w.find('.tongue').exists()).toBe(false)
     expect(w.find('.streak-flame').exists()).toBe(false)
     expect(sparks(w)).toHaveLength(0)
     w.unmount()
@@ -130,5 +132,12 @@ describe('style.css: живое пламя уважает «уменьшить �
   it('есть три ступени свечения', () => {
     expect(css).toContain(".streak-live[data-tier='2']")
     expect(css).toContain(".streak-live[data-tier='3']")
+  })
+})
+
+describe('App.vue: окно «Стрики» — живое пламя по числу дней', () => {
+  it('в списке всех стриков огонёк получает :days (для недельных серий — нет)', () => {
+    const app = readFileSync('src/App.vue', 'utf-8')
+    expect(app).toMatch(/<StreakFlame :lit="item\.todayCounted" :days="item\.unit === 'w' \? undefined : item\.streak" \/>/)
   })
 })
