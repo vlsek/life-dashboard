@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.52";
+const SITE_VERSION = "4.53";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.53", date: "2026-10-10 15:01", changes: [
+        "Заставка загрузки: вернулось старое пламя из трёх языков с искрами, как было раньше, — теперь это отдельный вариант «Три языка». Посмотреть уже сейчас: добавьте ?splash=tongues к адресу любой страницы сайта (запомнится); выбор в «Кастомизации» появится следующим шагом. По умолчанию по-прежнему «Живое пламя». Без миграций."
+    ]},
     { version: "4.52", date: "2026-10-10 17:59", changes: [
         "В «Языках» в «Идиоме дня» появились итальянский и португальский, а строка со счётчиками слов стала карточкой с кольцом «выучено N%» выбранного словаря."
     ]},
@@ -1966,6 +1969,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.53", date: "2026-10-10 15:01", changes: [
+        "Loading screen: the old three-tongue flame with sparks is back as it used to be — now a separate \"Three tongues\" variant. Try it now: add ?splash=tongues to the address of any page (it is remembered); the picker in \"Customization\" comes next. The default is still the \"Living flame\". No migrations."
+    ]},
     { version: "4.52", date: "2026-10-10 17:59", changes: [
         "Languages: \"Idiom of the day\" now includes Italian and Portuguese, and the word counters became a card with a \"learned N%\" ring for the selected dictionary."
     ]},
