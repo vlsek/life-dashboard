@@ -94,3 +94,41 @@ describe('раскатка', () => {
     expect(out).toContain('изменено файлов: 0')
   })
 })
+
+// BACKLOG 50.1г: первая «большая тема» Emerald Obsidian — «характер» (скругление 2px, пунктир, моноширинные заголовки, Snappy) только под своим классом.
+describe('большая тема emerald: характер', () => {
+  const charBlock = (css: string): string => {
+    const m = css.match(/\/\* большая тема: emerald \*\/\nhtml\.theme-emerald \{[^}]*\}/)
+    expect(m, 'нет блока характера').not.toBeNull()
+    return m![0]
+  }
+  for (const d of pilots) {
+    it(d + ': 2px у всех радиусов Tailwind, пунктир, моноширинный шрифт, резкая анимация', () => {
+      const b = charBlock(read(d + '/src/style.css'))
+      for (const r of ['--radius-md', '--radius-lg', '--radius-xl', '--radius-2xl']) expect(decl(b, r), d + r).toBe('2px')
+      expect(decl(b, '--border-style')).toBe('dashed')
+      expect(decl(b, '--font-heading')).toContain('monospace')
+      expect(decl(b, '--default-transition-timing-function')).toBe('cubic-bezier(0, 1, 0, 1)')
+    })
+  }
+  it('корень (без Tailwind): те же скругления через токены', () => {
+    const b = charBlock(read('style.css'))
+    expect([decl(b, '--radius-card'), decl(b, '--radius-modal'), decl(b, '--radius-control')]).toEqual(['2px', '2px', '2px'])
+    expect(decl(b, '--border-style')).toBe('dashed')
+  })
+  it('правила характера работают ТОЛЬКО под html.theme-emerald (остальные темы не затронуты)', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      const rules = region.split('\n').filter((l) => /\{ border-style: var\(--border-style\); \}|\{ font-family: var\(--font-heading\)/.test(l))
+      expect(rules.length, f).toBeGreaterThanOrEqual(2)
+      for (const l of rules) for (const sel of l.split('{')[0].split(',')) expect(sel.trim(), f).toMatch(/^html\.theme-emerald /)
+    }
+  })
+  it('при prefers-reduced-motion анимации темы мгновенные (только у Tailwind-страниц)', () => {
+    for (const d of pilots) expect(read(d + '/src/style.css')).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-emerald \{\s*--default-transition-duration: 0s;/)
+  })
+  it('в других темах значения не переопределены: нет блока характера ни у одной темы кроме emerald', () => {
+    const region = read('web-dashboard/src/style.css').match(REGION)![0]
+    expect((region.match(/\/\* большая тема: /g) || []).length).toBe(1)
+  })
+})

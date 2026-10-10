@@ -14,7 +14,7 @@ import re
 import sys
 
 sys.path.insert(0, 'scripts')
-from themes_data import NEW, P, UNLOCK, chart_palette  # noqa: E402
+from themes_data import CHAR, NEW, P, UNLOCK, chart_palette  # noqa: E402
 
 KEYS = list(P)
 OLD4 = ['dark', 'monet', 'light', 'pink']
@@ -32,6 +32,19 @@ TOK_COMMENT = """/* «Характер» оформления (не цвета).
    Анимации и шрифт — тоже переменными Tailwind: `--default-transition-duration`, `--default-transition-timing-function`, `--font-sans`, `--font-mono`. */"""
 
 
+def character_rules(tailwind):
+    """«Характер» больших тем (CHAR в themes_data.py): блок `html.theme-<ключ>` + правила только под этой темой. Пусто, если больших тем нет."""
+    out = []
+    for k, c in CHAR.items():
+        sel = 'html.theme-' + k
+        out.append('\n\n/* большая тема: %s */\n%s {\n%s\n}' % (k, sel, c['tw'] if tailwind else c['root']))
+        for sels, body in c.get('rules') or []:
+            out.append('\n' + ', '.join(sel + ' ' + x for x in sels) + ' { ' + body + ' }')
+        if tailwind and c.get('reduced'):
+            out.append('\n@media (prefers-reduced-motion: reduce) {\n  %s {\n  %s\n  }\n}' % (sel, c['reduced'].strip()))
+    return ''.join(out)
+
+
 def tokens_region(tailwind):
     if tailwind:
         rad = ('  --radius-card: var(--radius-xl, 0.75rem);\n  --radius-modal: var(--radius-xl, 0.75rem);\n'
@@ -47,7 +60,7 @@ def tokens_region(tailwind):
             '  --border-style: solid; /* solid | dashed | dotted */\n'
             '  --card-accent: none; /* акцентная полоса слева у карточки */\n'
             '  --font-heading: inherit; /* шрифт заголовков и чисел (моноширинный у терминальных тем) */\n'
-            '}\n' + TOK_END)
+            '}' + character_rules(tailwind) + '\n' + TOK_END)
 
 
 def _swap_radius(rule, var, defaults):

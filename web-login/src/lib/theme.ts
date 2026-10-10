@@ -24,6 +24,7 @@ export const THEME_KEYS = {
   sky: 'theme_sky',
   peach: 'theme_peach',
   graphite: 'theme_graphite',
+  emerald: 'theme_emerald',
 } as const
 
 export type ThemeKey = keyof typeof THEME_KEYS
@@ -55,6 +56,7 @@ const THEME_BG_COLORS: Record<ThemeKey, string> = {
   sky: '#eef6fd',
   peach: '#fff3ea',
   graphite: '#eceff1',
+  emerald: '#0b0f12',
 }
 
 export function getTheme(): ThemeKey {

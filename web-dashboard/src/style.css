@@ -604,6 +604,32 @@ html.theme-graphite {
   --chart-none: #6b7280;
   --chart-other: #9095a0;
 }
+
+html.theme-emerald {
+  --bg: #0b0f12;
+  --bg-card: #121a1f;
+  --border: #2a3b42;
+  --text: #d9e8e3;
+  --text-dim: #8fa8a0;
+  --accent: #10b981;
+  --accent-text: #04110c;
+  --success: #34d399;
+  --danger: #f87171;
+  --hist-ok: #10b981;
+  --water-top: #63b3f5;
+  --water-bottom: #2f86dc;
+  --water-line: #4aa3ee;
+  --chart-1: #10b981;
+  --chart-2: #5c97eb;
+  --chart-3: #eb685c;
+  --chart-4: #e9b54e;
+  --chart-5: #af5ceb;
+  --chart-6: #eb5caf;
+  --chart-7: #685ceb;
+  --chart-8: #80ef89;
+  --chart-none: #9aa0a6;
+  --chart-other: #666a6f;
+}
 /* themes:end */
 
 /* design-tokens:start (генерируется scripts/apply_themes.py — не править руками; BACKLOG 50.1а) */
@@ -624,6 +650,25 @@ html.theme-graphite {
   --card-accent: none; /* акцентная полоса слева у карточки */
   --font-heading: inherit; /* шрифт заголовков и чисел (моноширинный у терминальных тем) */
 }
+
+/* большая тема: emerald */
+html.theme-emerald {
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --radius-2xl: 2px;
+  --border-style: dashed;
+  --font-heading: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --default-transition-duration: 0.1s;
+  --default-transition-timing-function: cubic-bezier(0, 1, 0, 1);
+}
+html.theme-emerald .card, html.theme-emerald .modal, html.theme-emerald [style*="var(--bg-card)"] { border-style: var(--border-style); }
+html.theme-emerald h1, html.theme-emerald h2, html.theme-emerald h3, html.theme-emerald h4 { font-family: var(--font-heading); letter-spacing: 0.01em; }
+@media (prefers-reduced-motion: reduce) {
+  html.theme-emerald {
+  --default-transition-duration: 0s;
+  }
+}
 /* design-tokens:end */
 /* themes-scheme */
 html.theme-nord,
@@ -637,7 +682,8 @@ html.theme-forest,
 html.theme-ocean,
 html.theme-sunset,
 html.theme-twilight,
-html.theme-neon { color-scheme: dark; }
+html.theme-neon,
+html.theme-emerald { color-scheme: dark; }
 html.theme-mint,
 html.theme-sepia,
 html.theme-solarlight,
@@ -1277,7 +1323,8 @@ html.theme-forest,
 html.theme-ocean,
 html.theme-sunset,
 html.theme-twilight,
-html.theme-neon {
+html.theme-neon,
+html.theme-emerald {
   --water-gold: #f0b429;
 }
 html.theme-light,

@@ -36,8 +36,39 @@ P={
  'sky':('light','🌤️ Sky','🌤️ Небо',dict(bg='#eef6fd',card='#ffffff',border='#cfe2f3',text='#12304a',dim='#46688a',accent='#1478c9',at='#ffffff',ok='#2f8f5b',bad='#c0392b',hist='#3fa66b',**LIGHT_W)),
  'peach':('light','🍑 Peach','🍑 Персик',dict(bg='#fff3ea',card='#ffffff',border='#f5d5bf',text='#4a2a14',dim='#85593a',accent='#c0451a',at='#ffffff',ok='#3f8f55',bad='#b8342b',hist='#3fa66b',**LIGHT_W)),
  'graphite':('light','🪨 Graphite','🪨 Графит',dict(bg='#eceff1',card='#ffffff',border='#cfd8dc',text='#263238',dim='#55707f',accent='#00796b',at='#ffffff',ok='#2e7d4f',bad='#c62828',hist='#3fa66b',**LIGHT_W)),
+ # --- BACKLOG 50.1г: первая «большая тема» (оформление целиком, не только цвета; см. CHAR ниже) ---
+ 'emerald':('dark','🛰️ Emerald Obsidian','🛰️ Изумрудный обсидиан',dict(bg='#0b0f12',card='#121a1f',border='#2a3b42',text='#d9e8e3',dim='#8fa8a0',accent='#10b981',at='#04110c',ok='#34d399',bad='#f87171',hist='#10b981',**DARK_W)),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
+
+# «Характер» больших тем (BACKLOG 50): переопределения токенов оформления и правила, действующие ТОЛЬКО под `html.theme-<ключ>`; остальные темы
+# не затрагиваются. tw — для Tailwind-страниц (пилоты), root — для корневого style.css без Tailwind. Скругление у Tailwind-страниц меняется
+# переменными `--radius-md/lg/xl/2xl` (их читают и утилиты `rounded-*`, и `.card`/`.modal`/кнопки), `rounded-full` (кольца, аватарки) остаётся круглым.
+MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace'
+CHAR = {
+    # Sci-Fi HUD: строгие углы 2px, пунктирные границы карточек, моноширинные заголовки, Snappy-анимации.
+    'emerald': dict(
+        tw='''  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --radius-2xl: 2px;
+  --border-style: dashed;
+  --font-heading: %s;
+  --default-transition-duration: 0.1s;
+  --default-transition-timing-function: cubic-bezier(0, 1, 0, 1);''' % MONO,
+        root='''  --radius-card: 2px;
+  --radius-modal: 2px;
+  --radius-control: 2px;
+  --border-style: dashed;
+  --font-heading: %s;''' % MONO,
+        rules=[
+            (['.card', '.modal', '[style*="var(--bg-card)"]'], 'border-style: var(--border-style);'),
+            (['h1', 'h2', 'h3', 'h4'], 'font-family: var(--font-heading); letter-spacing: 0.01em;'),
+        ],
+        reduced='  --default-transition-duration: 0s;',
+    ),
+}
+assert all(k in P for k in CHAR)
 
 # Темы-награды (решение владельца 2026-10-06): тема → ключ достижения, НАГРАДОЙ за которое она открывается (4-я, самая трудная ступень
 # лесенки в web-achievements/src/lib/rewards.ts; согласованность сверяет тест rewards.test.ts). Остальные темы (исходные четыре и

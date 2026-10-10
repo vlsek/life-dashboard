@@ -26,7 +26,9 @@ describe('collapseStyle: копии в пилотах', () => {
       expect(i, p + ': нет блока').toBeGreaterThan(-1)
       // блок кончается там, где начинается следующий независимый блок (раньше «до конца файла» — ломалось от любого CSS, дописанного после него:
       // BACKLOG 48.8 добавил в конец workouts/style.css стили выбора периода)
-      const end = css.indexOf('/* Выбор периода у графиков', i)
+      // и «phone-scale» (BACKLOG 863, генерируется scripts/apply_phone_scale.py и дописывается после этого блока в style.css пилотов)
+      const ends = ['/* Выбор периода у графиков', '/* phone-scale:start'].map((m) => css.indexOf(m, i)).filter((x) => x > i)
+      const end = ends.length ? Math.min(...ends) : -1
       return end > i ? css.slice(i, end).trimEnd() : css.slice(i).trimEnd()
     }
     expect(block('../web-workouts/src/style.css')).toBe(block('../web-dashboard/src/style.css'))

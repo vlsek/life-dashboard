@@ -22,6 +22,7 @@ const THEME_KEYS = {
     sky: "theme_sky",
     peach: "theme_peach",
     graphite: "theme_graphite",
+    emerald: "theme_emerald",
 };
 
 // Цвета фона по темам — держим в синхронизации с --bg из style.css
@@ -49,6 +50,7 @@ const THEME_BG_COLORS = {
     sky: "#eef6fd",
     peach: "#fff3ea",
     graphite: "#eceff1",
+    emerald: "#0b0f12",
 };
 
 function getTheme() {
