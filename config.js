@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.31";
+const SITE_VERSION = "4.32";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.32", date: "2026-10-10 04:09", changes: [
+        "Аккаунт: на карточке «Аватарка» теперь видна выбранная в «Кастомизации» рамка (в том числе анимированная); если надеть или снять рамку в соседней вкладке, карточка меняется сразу."
+    ]},
     { version: "4.31", date: "2026-10-10 07:08", changes: [
         "Блок «Какие достижения тут можно получить» появился и на Дашборде: серии идеальных дней, идеальные дни, баллы и «Мега продуктивность» — с отметкой уже полученных ступеней."
     ]},
@@ -1903,6 +1906,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.32", date: "2026-10-10 04:09", changes: [
+        "Account: the \"Avatar\" card now shows the frame you picked in Customization (animated ones too); if you put on or take off a frame in another tab, the card updates right away."
+    ]},
     { version: "4.31", date: "2026-10-10 07:08", changes: [
         "The \"Achievements you can earn here\" block is now on the Dashboard too: perfect-day streaks, perfect days, points and \"Mega productivity\" — with the steps you already have marked."
     ]},
