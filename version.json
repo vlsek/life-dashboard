@@ -1,6 +1,13 @@
 {
-  "version": "4.51",
+  "version": "4.52",
   "en": [
+    {
+      "version": "4.52",
+      "date": "2026-10-10 17:59",
+      "changes": [
+        "Languages: \"Idiom of the day\" now includes Italian and Portuguese, and the word counters became a card with a \"learned N%\" ring for the selected dictionary."
+      ]
+    },
     {
       "version": "4.51",
       "date": "2026-10-10 10:00",
@@ -3224,6 +3231,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.52",
+      "date": "2026-10-10 17:59",
+      "changes": [
+        "В «Языках» в «Идиоме дня» появились итальянский и португальский, а строка со счётчиками слов стала карточкой с кольцом «выучено N%» выбранного словаря."
+      ]
+    },
     {
       "version": "4.51",
       "date": "2026-10-10 10:00",

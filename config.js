@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.51";
+const SITE_VERSION = "4.52";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.52", date: "2026-10-10 17:59", changes: [
+        "В «Языках» в «Идиоме дня» появились итальянский и португальский, а строка со счётчиками слов стала карточкой с кольцом «выучено N%» выбранного словаря."
+    ]},
     { version: "4.51", date: "2026-10-10 10:00", changes: [
         "Иконки: перерисованы 19 самых «старомодных» значков — бег, ходьба, йога, плавание, растяжка, бокс, скакалка, беговая дорожка, лыжи, пластырь, веник, хлопушка, ёлка, снежинка, птица, рыба, гитара, торт, лёгкие. Тот же штриховой стиль со скруглёнными концами, названия иконок прежние, метрики и цели ничего не теряют. Без миграций."
     ]},
@@ -1963,6 +1966,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.52", date: "2026-10-10 17:59", changes: [
+        "Languages: \"Idiom of the day\" now includes Italian and Portuguese, and the word counters became a card with a \"learned N%\" ring for the selected dictionary."
+    ]},
     { version: "4.51", date: "2026-10-10 10:00", changes: [
         "Icons: the 19 most dated icons were redrawn — run, walk, yoga, swim, stretch, boxing, jump rope, treadmill, skiing, bandage, broom, party popper, tree, snowflake, bird, fish, guitar, cake and lungs. Same stroke style with rounded ends, icon names unchanged, so metrics and goals keep their icons. No migrations."
     ]},

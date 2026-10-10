@@ -98,9 +98,9 @@ describe('Языки: кольцо «выучено»', () => {
     h.inserted = []
   })
   it('процент выученных от всех слов выбранного словаря', async () => {
-    h.words = [w1('1', 'a', 'de'), { ...w1('2', 'b', 'de'), learned: true }, w1('3', 'c', 'de'), { ...w1('4', 'd', 'de'), learned: true }]
+    h.words = [w1('1', 'a', 'de'), { ...w1('2', 'b', 'de'), learned: true }, w1('3', 'c', 'de'), w1('4', 'd', 'de')]
     const w = await mountApp()
-    expect(w.get('[data-test="learn-stats"] [data-testid="progress-ring"]').attributes('data-percent')).toBe('50')
+    expect(w.get('[data-test="learn-stats"] [data-testid="progress-ring"]').attributes('data-percent')).toBe('25')
     w.unmount()
   })
   it('нет слов — 0%, без деления на ноль', async () => {
