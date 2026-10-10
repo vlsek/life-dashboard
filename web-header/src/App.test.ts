@@ -729,3 +729,55 @@ describe('свайп с середины экрана и блокировка п
     w.unmount()
   })
 })
+
+describe('«Добавить виджет этой страницы на главную» (BACKLOG 54.3)', () => {
+  const at = (path: string) => history.replaceState(null, '', path)
+  const layoutWrites = () => db.writes.filter((x) => x.table === 'profiles' && 'dashboard_layout' in (x.payload as object))
+
+  it('кнопка есть на Календаре, Языках и Навыках и нет на Целях, Магазине и Дашборде', async () => {
+    for (const [path, expected] of [['/calendar/', true], ['/languages/', true], ['/skills/', true], ['/goals/', false], ['/shop/', false], ['/dashboard/', false]] as const) {
+      at(path)
+      setup({ metrics: [habit], profiles: [{ dashboard_layout: null }] })
+      const w = mount(App)
+      await flushPromises()
+      expect(w.find('[data-test="page-widget"]').exists(), path).toBe(expected)
+      w.unmount()
+    }
+  })
+
+  it('клик на Календаре кладёт виджет в профиль (config.calendar) и меняет значок на «галочку»; повторный клик убирает', async () => {
+    at('/calendar/')
+    setup({ metrics: [habit], profiles: [{ dashboard_layout: null }] })
+    const w = mount(App)
+    await flushPromises()
+    const btn = () => w.find('[data-test="page-widget"]')
+    expect(btn().find('svg').attributes('data-state')).toBe('off')
+    await btn().trigger('click')
+    await flushPromises()
+    const added = layoutWrites().at(-1)!.payload as { user_id: string; dashboard_layout: { key: string; visible: boolean; config?: unknown }[] }
+    expect(added.user_id).toBe('u1')
+    const widgetsItem = added.dashboard_layout.find((i) => i.key === 'widgets')!
+    expect(widgetsItem.visible).toBe(true)
+    expect(widgetsItem.config).toEqual({ calendar: true })
+    expect(btn().find('svg').attributes('data-state')).toBe('on')
+    await btn().trigger('click')
+    await flushPromises()
+    const removed = layoutWrites().at(-1)!.payload as { dashboard_layout: { key: string; config?: unknown }[] }
+    expect(removed.dashboard_layout.find((i) => i.key === 'widgets')!.config).toBeUndefined()
+    expect(btn().find('svg').attributes('data-state')).toBe('off')
+    w.unmount()
+  })
+
+  it('уже добавленный виджет показывается «включённым» с первого кадра; на Языках набор — «все языки»', async () => {
+    at('/languages/')
+    setup({ metrics: [habit], profiles: [{ dashboard_layout: [{ key: 'profile', visible: true }, { key: 'widgets', visible: true, config: { calendar: true } }] }] })
+    const w = mount(App)
+    await flushPromises()
+    expect(w.find('[data-test="page-widget"] svg').attributes('data-state')).toBe('off') // календарь есть, языков нет
+    await w.find('[data-test="page-widget"]').trigger('click')
+    await flushPromises()
+    const cfg = (layoutWrites().at(-1)!.payload as { dashboard_layout: { key: string; config?: unknown }[] }).dashboard_layout.find((i) => i.key === 'widgets')!.config
+    expect(cfg).toEqual({ calendar: true, languages: 'all' })
+    w.unmount()
+  })
+})

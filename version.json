@@ -1,6 +1,13 @@
 {
-  "version": "4.62",
+  "version": "4.63",
   "en": [
+    {
+      "version": "4.63",
+      "date": "2026-10-10 14:50",
+      "changes": [
+        "Calendar, Languages and Skills pages now have an \"Add this page's widget to the home page\" button at the top (next to the favorites heart): one tap puts the widget in the Widgets block on the Dashboard (calendar; all languages; skills — up to 12, unfinished first). If the widget is already on the home page, the button shows a check mark and removes it. Other widgets are untouched. No migrations."
+      ]
+    },
     {
       "version": "4.62",
       "date": "2026-10-10 18:45",
@@ -3301,6 +3308,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.63",
+      "date": "2026-10-10 14:50",
+      "changes": [
+        "На страницах «Календарь», «Языки» и «Навыки» наверху (рядом с сердечком «в избранное») появилась кнопка «Добавить виджет этой страницы на главную»: одно нажатие — и виджет появляется на Дашборде в блоке «Виджеты» (календарь; все языки; навыки — до 12, незаконченные первыми). Если виджет уже на главной, кнопка показывает галочку и убирает его. Остальные виджеты не затрагиваются. Без миграций."
+      ]
+    },
     {
       "version": "4.62",
       "date": "2026-10-10 18:45",

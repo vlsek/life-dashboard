@@ -17,6 +17,9 @@ import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import RightPanel, { type GaugeData } from './components/RightPanel.vue'
 import SettingsModal from './components/SettingsModal.vue'
 import FavoriteHeart from './components/FavoriteHeart.vue'
+import PageWidgetButton from './components/PageWidgetButton.vue'
+import { useLayout } from './lib/useLayout'
+import { isWidgetOn, pageWidgetKind, widgetToggleLayout } from './lib/pageWidget'
 import SidebarTop from './components/SidebarTop.vue'
 import PointsFloat from './components/PointsFloat.vue'
 import { useSidebarProfile } from './lib/sidebarProfile'
@@ -95,6 +98,35 @@ function onToggleFavorite() {
   favorites.value = next
   writeFavorites(next)
   void saveFavoritesToProfile(userId.value, next)
+}
+// «Добавить виджет этой страницы на главную» (BACKLOG 54.3): кнопка только на страницах с виджетом Дашборда; раскладка грузится лениво, когда известен userId
+const widgetKind = pageWidgetKind(pageKey)
+const layoutApi = useLayout()
+const widgetBusy = ref(false)
+const widgetOn = computed(() => !!widgetKind && isWidgetOn(layoutApi.layout.value, widgetKind))
+watch(
+  userId,
+  (uid) => {
+    if (uid && widgetKind) void layoutApi.load(uid)
+  },
+  { immediate: true },
+)
+async function onToggleWidget() {
+  if (!widgetKind || !userId.value || widgetBusy.value || !layoutApi.loaded.value) return
+  widgetBusy.value = true
+  try {
+    const add = !widgetOn.value
+    let skillIds: string[] = []
+    if (add && widgetKind === 'skills') {
+      const { data } = await sb.from('skills').select('id, mastered').eq('user_id', userId.value).order('created_at')
+      const rows = (data || []) as { id: string; mastered?: boolean | null }[]
+      skillIds = [...rows.filter((r) => !r.mastered), ...rows.filter((r) => r.mastered)].map((r) => r.id)
+    }
+    const next = widgetToggleLayout(layoutApi.layout.value, widgetKind, add, skillIds)
+    if (next) await layoutApi.save(userId.value, next)
+  } finally {
+    widgetBusy.value = false
+  }
 }
 const muscles = useMuscles()
 // карта мышц грузится лениво: при каждом открытии панели (подходы могли добавить на другой странице)
@@ -187,6 +219,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
     <template v-if="ready">
     <PointsFloat v-if="!props.panelOnly" />
     <FavoriteHeart v-if="pageKey && !props.panelOnly" :active="isFavorite" @toggle="onToggleFavorite" />
+    <PageWidgetButton v-if="widgetKind && layoutApi.loaded.value && !props.panelOnly" :on="widgetOn" :busy="widgetBusy" @toggle="onToggleWidget" />
     <template v-if="!props.panelOnly">
       <WaterGlass v-if="waterVisible" :today-ml="todayMl" :norm-ml="normMl" :title="`${todayMl} / ${normMl} ${unitLabel}`" @click="waterOpen = true" />
       <DayWeekBadge v-if="dayRing" kind="day" v-bind="dayRing" @click="summaryKind = 'day'" />
