@@ -26,7 +26,8 @@ import { useAccordionMember } from '../lib/useCollapseStyle'
 
 // Карта мышц (BACKLOG 3.2, первый срез): зелёные — мышцы, задействованные за последние 4 дня,
 // серые — нет. Клик по мышце — её упражнения (свои с кнопкой «Добавить запись» + подсказки из справочника).
-const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string; studyRecent?: boolean }>()
+// `embedded` — карта лежит в своей вкладке «Карта мышц» (BACKLOG 54.2): заголовок-кнопка не нужна, тело всегда раскрыто, в аккордеон блоков не входит.
+const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string; studyRecent?: boolean; embedded?: boolean }>()
 const emit = defineEmits<{ 'add-entry': [exercise: Exercise] }>()
 
 const OPEN_KEY = 'workouts_musclemap_open'
@@ -154,6 +155,7 @@ function shapeStyle(m: MuscleId) {
 <template>
   <section class="mb-4 rounded-xl border p-3.5" style="border-color: var(--border); background: var(--bg-card)" data-testid="muscle-map">
     <div
+      v-if="!embedded"
       class="collapse-head flex items-center gap-2"
       role="button"
       tabindex="0"
@@ -167,7 +169,7 @@ function shapeStyle(m: MuscleId) {
       <CollapseChevron :collapsed="!open" />
     </div>
 
-    <div v-if="open" class="mt-3" data-testid="muscle-map-body">
+    <div v-if="embedded || open" :class="embedded ? '' : 'mt-3'" data-testid="muscle-map-body">
       <p class="m-0 mb-3 text-[0.85em]" style="color: var(--text-dim)">{{ t('workouts_muscles_hint') }}</p>
 
       <div class="flex flex-wrap justify-center gap-4">

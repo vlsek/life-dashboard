@@ -164,6 +164,26 @@ const recentMuscles = computed(() => {
   return MUSCLE_IDS.filter((m) => isTrainedRecently(last[m], day))
 })
 
+// Вкладки страницы (BACKLOG 54.2): «Упражнения» и «Карта мышц»; выбор помнится на устройстве.
+type PageTab = 'exercises' | 'map'
+const TAB_KEY = 'workouts_tab'
+function readTab(): PageTab {
+  try {
+    return localStorage.getItem(TAB_KEY) === 'map' ? 'map' : 'exercises'
+  } catch {
+    return 'exercises'
+  }
+}
+const pageTab = ref<PageTab>(readTab())
+function setTab(tab: PageTab) {
+  pageTab.value = tab
+  try {
+    localStorage.setItem(TAB_KEY, tab)
+  } catch {
+    /* выбор вкладки не критичен */
+  }
+}
+
 async function onSaveExercise(res: ExerciseFormInput) {
   if (auth.value.status !== 'ready' || !exerciseForm.value) return
   const existing = exerciseForm.value.existing
@@ -362,6 +382,34 @@ function onToggleProgramWeek(week: number) {
       </p>
       <p v-else-if="exercises.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('workouts_empty') }}</p>
 
+      <div class="mb-4 flex gap-1.5" role="tablist" data-testid="page-tabs">
+        <button
+          v-for="tab in (['exercises', 'map'] as const)"
+          :key="tab"
+          type="button"
+          role="tab"
+          class="rounded-full border px-4 py-1.5 text-sm"
+          :aria-selected="pageTab === tab"
+          :style="pageTab === tab ? 'border-color: var(--accent); color: var(--accent); background: transparent' : 'border-color: var(--border); color: var(--text-dim); background: transparent'"
+          :data-testid="'page-tab-' + tab"
+          @click="setTab(tab)"
+        >
+          {{ t(tab === 'map' ? 'workouts_tab_map' : 'workouts_tab_exercises') }}
+        </button>
+      </div>
+
+      <div v-show="pageTab === 'map'" data-testid="tab-map">
+        <MuscleMap
+          embedded
+          :entries="entries"
+          :exercises="exercises"
+          :study-recent="studyRecent"
+          @add-entry="(ex) => (entryForm = { exercise: ex, existing: null })"
+        />
+        <p v-if="exercises.length === 0" class="-mt-2 mb-3 text-xs" style="color: var(--text-dim)" data-testid="muscles-empty-hint">{{ t('workouts_muscles_empty') }}</p>
+      </div>
+
+      <div v-show="pageTab === 'exercises'" data-testid="tab-exercises">
       <ProgramCard
         v-if="activeProgram && activeTemplate"
         :program="activeProgram"
@@ -373,14 +421,6 @@ function onToggleProgramWeek(week: number) {
       <WarmupReminder v-if="showWarmup" @dismiss="dismissWarmup" />
 
       <OverviewChart :entries="entries" />
-
-      <MuscleMap
-        :entries="entries"
-        :exercises="exercises"
-        :study-recent="studyRecent"
-        @add-entry="(ex) => (entryForm = { exercise: ex, existing: null })"
-      />
-      <p v-if="exercises.length === 0" class="-mt-2 mb-3 text-xs" style="color: var(--text-dim)" data-testid="muscles-empty-hint">{{ t('workouts_muscles_empty') }}</p>
 
       <ProgressionTrees
         v-if="exercises.length > 0"
@@ -428,6 +468,7 @@ function onToggleProgramWeek(week: number) {
           />
         </div>
       </section>
+      </div>
     </template>
   </main>
 

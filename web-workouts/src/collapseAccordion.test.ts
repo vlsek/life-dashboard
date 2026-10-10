@@ -88,28 +88,25 @@ describe('Тренировки: аккордеон на категориях и 
     w.unmount()
   })
 
-  it('аккордеон: раскрытие категории сворачивает открытую карту мышц', async () => {
-    localStorage.setItem('workouts_musclemap_open', '1')
+  it('вкладки: по умолчанию «Упражнения», карта мышц во второй вкладке без кнопки-заголовка', async () => {
     const w = await mountApp()
-    const map = () => w.find('[data-testid="muscle-map-toggle"]')
-    expect(expanded(map())).toBe(true)
-    await groupToggle(w, 0).trigger('click')
-    await groupToggle(w, 0).trigger('click') // раскрыли категорию
-    await flushPromises()
-    expect(expanded(map())).toBe(false)
-    expect(localStorage.getItem('workouts_musclemap_open')).toBe('0')
+    expect(w.find('[data-testid="tab-exercises"]').attributes('style') ?? '').not.toContain('display: none')
+    expect(w.find('[data-testid="tab-map"]').attributes('style') ?? '').toContain('display: none')
+    expect(w.find('[data-testid="muscle-map-toggle"]').exists()).toBe(false)
+    expect(w.find('[data-testid="muscle-map-body"]').exists()).toBe(true)
     w.unmount()
   })
 
-  it('аккордеон: раскрытие карты мышц сворачивает категории', async () => {
-    localStorage.setItem('workouts_musclemap_open', '0')
+  it('вкладки: переключение на «Карту мышц» запоминается', async () => {
     const w = await mountApp()
-    const map = () => w.find('[data-testid="muscle-map-toggle"]')
-    await map().trigger('click') // раскрыли карту
-    await flushPromises()
-    expect(expanded(groupToggle(w, 0))).toBe(false)
-    expect(expanded(groupToggle(w, 1))).toBe(false)
+    await w.find('[data-testid="page-tab-map"]').trigger('click')
+    expect(w.find('[data-testid="tab-map"]').attributes('style') ?? '').not.toContain('display: none')
+    expect(w.find('[data-testid="tab-exercises"]').attributes('style') ?? '').toContain('display: none')
+    expect(localStorage.getItem('workouts_tab')).toBe('map')
     w.unmount()
+    const w2 = await mountApp()
+    expect(w2.find('[data-testid="page-tab-map"]').attributes('aria-selected')).toBe('true')
+    w2.unmount()
   })
 })
 
