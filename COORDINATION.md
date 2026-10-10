@@ -70,7 +70,7 @@
 BACKLOG 48.3 «настройки и оформление между устройствами», СРЕЗ 1 (миграция 064 — владельцу). Новая колонка `profiles.ui_settings jsonb` (аддитивно, `IF NOT EXISTS`) + синхронизация в бандле `web-header` (новый `lib/uiSettingsSync.ts`, вызов из `App.vue` рядом с `syncUnlockedThemes`): тема, язык, выключатель анимаций, избранные темы, «не спрашивать про пропуск», праздники серий, настройки прогресса дня. Правило: изменилось локально с прошлой синхронизации → на сервер, иначе сервер → на устройство. Страницы пилотов не трогаю. Пока миграция не применена — тихо ничего не делает. Трогаю `web-header/src`, `migrations/064_*.sql`, `scripts/sql_harness` (сценарий), `config.js`, docs. Дальше пересборка `header-widgets/`.
 
 ### Агент 2
-— свободен — (BACKLOG 44.17 сделан v4.28)
+BACKLOG 502 «Кастомизация», срез «рамка аватарки в Аккаунте» (остаток пункта: «рамка на карточке профиля Дашборда и в Аккаунте»), БЕЗ SQL. ТРОГАЮ: `web-account/src` (карточка «Аватарка» рисует выбранную рамку, в том числе анимированную, и меняет её вживую; копии `customFrame.ts`/`customizationEvents.ts`, keyframes в `style.css`, `useAvatar.ts`, `App.vue`), охранные тесты `web-customization/src/lib/frames.test.ts` и `customizationEvents.test.ts` (добавить account в список копий), пересборка `account/`. С: 2026-10-10 04:06.
 
 ### Агент 3
 BACKLOG 49.6 срез 2: блок «Какие достижения тут можно получить» на Дашборде (серии, идеальные дни, баллы, мега-неделя). ТРОГАЮ ТОЛЬКО `web-header/src/lib/sectionAchievements.ts`, `lib/i18n.ts` (ключи gh_secach_*), `sectionAchievements.test.ts` и пересборку `header-widgets/`. БЕЗ SQL.
