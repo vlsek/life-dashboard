@@ -1,6 +1,13 @@
 {
-  "version": "4.55",
+  "version": "4.56",
   "en": [
+    {
+      "version": "4.56",
+      "date": "2026-10-10 11:10",
+      "changes": [
+        "History: a \"By category\" block now sits above the month grid — a donut of metric categories for the selected month (one arc per category: length = its share of tracked days, fill = what was done) with a \"done/total · %\" legend. Metrics without a category form their own group; with a single category the block is hidden. No migrations."
+      ]
+    },
     {
       "version": "4.55",
       "date": "2026-10-10 18:03",
@@ -3252,6 +3259,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.56",
+      "date": "2026-10-10 11:10",
+      "changes": [
+        "История: над сеткой месяца появился блок «По категориям» — кольцо долей категорий метрик за выбранный месяц (дуга на категорию: длина — доля отслеженных дней, закраска — выполненное) и легенда «сделано/всего · %». Метрики без категории — отдельной группой; если категория одна, блок не показывается. Без миграций."
+      ]
+    },
     {
       "version": "4.55",
       "date": "2026-10-10 18:03",

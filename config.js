@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.55";
+const SITE_VERSION = "4.56";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.56", date: "2026-10-10 11:10", changes: [
+        "История: над сеткой месяца появился блок «По категориям» — кольцо долей категорий метрик за выбранный месяц (дуга на категорию: длина — доля отслеженных дней, закраска — выполненное) и легенда «сделано/всего · %». Метрики без категории — отдельной группой; если категория одна, блок не показывается. Без миграций."
+    ]},
     { version: "4.55", date: "2026-10-10 18:03", changes: [
         "Исправлено: на странице «Цели» пропадал весь список целей, когда были включены приглашения от друзей. Теперь список виден всегда, а приглашения показываются над ним."
     ]},
@@ -1975,6 +1978,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.56", date: "2026-10-10 11:10", changes: [
+        "History: a \"By category\" block now sits above the month grid — a donut of metric categories for the selected month (one arc per category: length = its share of tracked days, fill = what was done) with a \"done/total · %\" legend. Metrics without a category form their own group; with a single category the block is hidden. No migrations."
+    ]},
     { version: "4.55", date: "2026-10-10 18:03", changes: [
         "Fixed: the whole list of goals disappeared on the Goals page when friend invitations were enabled. The list is now always shown, with invitations above it."
     ]},

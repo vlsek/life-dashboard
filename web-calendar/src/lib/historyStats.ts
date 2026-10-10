@@ -15,6 +15,7 @@ export interface HistoryContext {
   byDate: Record<string, Record<string, MetricValue>>
   notesByDate: Record<string, DailyNote>
   goals: Goal[]
+  categories?: Record<string, string> // id категории → название (для диаграммы по категориям, BACKLOG 656 в)
   settings: DayProgressSettings
   firstDate: string | null
   today: string

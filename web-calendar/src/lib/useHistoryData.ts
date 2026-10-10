@@ -5,6 +5,7 @@ import type { DailyNote, DayProgressSettings, Metric, MetricValue } from './hist
 import { fmtDate, todayStr } from './date'
 import { withWaterGoal } from './historyWaterGoal'
 import { friendlyError } from './friendlyError'
+import { getLang } from './i18n'
 
 // Те же ключ и формат, что у getDayProgressSettings() в config.js — читаем настройки,
 // сохранённые на этом же устройстве через основной сайт.
@@ -102,11 +103,23 @@ export function useAuthAndData() {
         if (!firstDate || d < firstDate) firstDate = d
       }
 
+      // названия категорий — только для диаграммы по категориям (BACKLOG 656 в); сбой запроса не мешает истории
+      const categories: Record<string, string> = {}
+      try {
+        const catsRes = await sb.from('metric_categories').select('id, label_ru, label_en')
+        for (const c of (catsRes?.data || []) as { id: string; label_ru: string; label_en: string }[]) {
+          categories[c.id] = (getLang() === 'ru' ? c.label_ru : c.label_en) || c.label_ru || c.label_en
+        }
+      } catch {
+        /* без категорий — всё в «Без категории» */
+      }
+
       ctx.value = {
         metrics,
         byDate,
         notesByDate,
         goals: goalsRes.data || [],
+        categories,
         settings: getDayProgressSettings(),
         firstDate,
         today: todayStr(),

@@ -21,6 +21,7 @@ export interface PlannedSetsEntry {
 export interface Metric {
   id: string
   name: string
+  category_id?: string | null // категория метрики (BACKLOG 656 в: диаграмма долей по категориям в Истории)
   icon: string
   type: MetricType
   unit?: string | null

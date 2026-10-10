@@ -8,6 +8,7 @@ import { locale, t } from '../lib/i18n'
 import DayDetailModal from './DayDetailModal.vue'
 import EmojiText from './EmojiText.vue'
 import Icon from './Icon.vue'
+import MonthCategoryChart from './MonthCategoryChart.vue'
 import { doneCount, openDeadlines } from '../lib/calendar'
 import type { GoalDeadline, PlannedItem } from '../lib/types'
 
@@ -243,6 +244,8 @@ function onTouchEnd(e: TouchEvent) {
             <div class="text-[0.7em]" style="color: var(--text-dim)">{{ s[1] }}</div>
           </div>
         </div>
+
+        <MonthCategoryChart v-if="!isCalendar" :ctx="ctx as HistoryContext" :year="viewYear" :month="viewMonth" />
 
         <div class="no-edge-swipe mb-2 flex flex-col gap-1" data-no-swipe data-test="hist-grid" @touchstart="onTouchStart" @touchend="onTouchEnd">
           <div class="grid gap-1" :style="{ gridTemplateColumns: gridCols }">
