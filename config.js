@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.47";
+const SITE_VERSION = "4.48";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.48", date: "2026-10-10 12:44", changes: [
+        "Страница «Цели» стала аккуратнее: каждая категория — сворачиваемый подраздел со счётчиком, сверху «Ближайшие сроки» (просроченные и в ближайшие 14 дней), «Выполненные» и настройки раздела свёрнуты по умолчанию. Что свернули — запоминается."
+    ]},
     { version: "4.47", date: "2026-10-10 12:40", changes: [
         "Новая «большая» тема «Изумрудный обсидиан» (Emerald Obsidian) — не только цвета, а оформление целиком: строгие углы 2 px, пунктирные границы карточек, моноширинные заголовки и резкие анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем",
     ]},
@@ -1951,6 +1954,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.48", date: "2026-10-10 12:44", changes: [
+        "The Goals page is tidier: every category is a collapsible section with a counter, \"Upcoming deadlines\" (overdue and due within 14 days) sits on top, and \"Completed\" and the section settings are collapsed by default. What you collapse is remembered."
+    ]},
     { version: "4.47", date: "2026-10-10 12:40", changes: [
         "New big theme Emerald Obsidian - not just colors but the whole look: sharp 2 px corners, dashed card borders, monospace headings and snappy animations. Pick it in Customization or the header settings; open to everyone",
     ]},
