@@ -1,6 +1,13 @@
 {
-  "version": "4.67",
+  "version": "4.68",
   "en": [
+    {
+      "version": "4.68",
+      "date": "2026-10-10 16:00",
+      "changes": [
+        "Customization: every \"big theme\" card (Emerald Obsidian, Moonlight Synth, Matrix Phosphor, Tokyo Nightfall) now has a short \"What this theme changes\" list: own colors, corners (sharp/soft), dashed borders, monospace font, neon glow or soft shadows and an active-element outline, dot-grid background, scanlines, animation speed. The list is generated from the same data the theme is built from, so it cannot drift from the theme. Regular themes have no list. No migrations."
+      ]
+    },
     {
       "version": "4.67",
       "date": "2026-10-10 21:01",
@@ -3336,6 +3343,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.68",
+      "date": "2026-10-10 16:00",
+      "changes": [
+        "Кастомизация: в карточке каждой «большой темы» (Emerald Obsidian, Moonlight Synth, Matrix Phosphor, Tokyo Nightfall) появился короткий список «Что меняет эта тема»: свои цвета, углы (острые/мягкие), пунктирные границы, моноширинный шрифт, неоновое свечение или мягкие тени и обводка активного, фон-сетка, линии развёртки, скорость анимаций. Список строится из тех же данных, по которым тема оформляется, поэтому не расходится с ней. У обычных тем списка нет. Без миграций."
+      ]
+    },
     {
       "version": "4.67",
       "date": "2026-10-10 21:01",

@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { t } from '../lib/i18n'
 import { THEME_KEYS, type ThemeKey } from '../lib/theme'
 import { THEME_PREVIEW } from '../lib/themePreview'
+import { THEME_TRAITS } from '../lib/themeTraits'
 import { RARITY_COLOR, rarityOfTheme } from '../lib/rarity'
 import EmojiText from './EmojiText.vue'
 
@@ -14,6 +15,8 @@ const emit = defineEmits<{ apply: []; toggleFavorite: []; showUnlock: [] }>()
 const rarity = computed(() => rarityOfTheme(props.themeKey))
 const pv = computed(() => THEME_PREVIEW[props.themeKey])
 const label = computed(() => t(THEME_KEYS[props.themeKey] as never))
+// «Что меняет тема» (BACKLOG 55.1): только у больших тем; список выводится генератором из CHAR (themeTraits.ts), подписи — theme_trait_*
+const traits = computed(() => THEME_TRAITS[props.themeKey] ?? [])
 const favLabel = computed(() => (props.favorite ? t('cust_theme_fav_remove') : props.canToggle ? t('cust_theme_fav_add') : t('cust_theme_fav_limit')))
 </script>
 
@@ -57,6 +60,9 @@ const favLabel = computed(() => (props.favorite ? t('cust_theme_fav_remove') : p
         </svg>
       </button>
     </div>
+    <ul v-if="traits.length" class="dim m-0 list-disc pl-4 text-xs" :aria-label="t('cust_theme_traits_h')" data-testid="theme-traits">
+      <li v-for="x in traits" :key="x" :data-trait="x">{{ t(('theme_trait_' + x) as never) }}</li>
+    </ul>
     <button v-if="locked && !active" type="button" class="dim flex flex-col items-center gap-0.5 rounded-lg border-0 bg-transparent p-1 text-center text-xs" style="cursor: pointer" :aria-label="t('cust_theme_unlock_open_aria')" data-testid="theme-locked" @click="emit('showUnlock')">
       <span class="inline-flex items-center gap-1 font-medium" style="color: var(--text)">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

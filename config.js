@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.67";
+const SITE_VERSION = "4.68";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.68", date: "2026-10-10 16:00", changes: [
+        "Кастомизация: в карточке каждой «большой темы» (Emerald Obsidian, Moonlight Synth, Matrix Phosphor, Tokyo Nightfall) появился короткий список «Что меняет эта тема»: свои цвета, углы (острые/мягкие), пунктирные границы, моноширинный шрифт, неоновое свечение или мягкие тени и обводка активного, фон-сетка, линии развёртки, скорость анимаций. Список строится из тех же данных, по которым тема оформляется, поэтому не расходится с ней. У обычных тем списка нет. Без миграций."
+    ]},
     { version: "4.67", date: "2026-10-10 21:01", changes: [
         "Графики: кружки-мини-диаграммы у метрик с подходами теперь можно оформить по-новому. В «Кастомизации» новый раздел «Маркеры графиков» с четырьмя бесплатными стилями и живым предпросмотром: «Плоский (как раньше)» — по умолчанию, «Стекло», «Капля» и «Контур». График подхватывает выбор при следующем открытии страницы. Без миграций."
     ]},
@@ -2011,6 +2014,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.68", date: "2026-10-10 16:00", changes: [
+        "Customization: every \"big theme\" card (Emerald Obsidian, Moonlight Synth, Matrix Phosphor, Tokyo Nightfall) now has a short \"What this theme changes\" list: own colors, corners (sharp/soft), dashed borders, monospace font, neon glow or soft shadows and an active-element outline, dot-grid background, scanlines, animation speed. The list is generated from the same data the theme is built from, so it cannot drift from the theme. Regular themes have no list. No migrations."
+    ]},
     { version: "4.67", date: "2026-10-10 21:01", changes: [
         "Charts: the little pie-chart dots on metrics with sets can now look different. \"Customization\" has a new \"Chart markers\" section with four free styles and a live preview: \"Flat (classic)\" — the default, \"Glass\", \"Drop\" and \"Outline\". Charts pick your choice up the next time the page opens. No migrations."
     ]},

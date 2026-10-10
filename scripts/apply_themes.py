@@ -532,6 +532,70 @@ def root_css(t):
     return t[:m.end()] + '\n' + reg + '\n' + t[m.end():]
 
 
+# ---------- «что меняет большая тема» (BACKLOG 55.1) ----------
+# Список возможностей выводится из CHAR (токены и правила), а не пишется руками, поэтому описание в карточке темы не расходится с самой темой.
+# Подписи — в web-customization/src/lib/i18n.ts (ключи theme_trait_<имя>, RU+EN; страж-тест проверяет полноту).
+def traits_of(c):
+    tw, rules = c['tw'], c.get('rules', [])
+    out = ['palette']
+    m = re.search(r'--radius-md:\s*(\d+)px', tw)
+    if m:
+        r = int(m.group(1))
+        if r <= 2:
+            out.append('corners_sharp')
+        elif r >= 8:
+            out.append('corners_soft')
+    if re.search(r'--border-style:\s*dashed', tw):
+        out.append('dashed_borders')
+    if '--font-heading' in tw:
+        out.append('mono_all' if any('body' in sels and 'font-family' in css for sels, css in rules) else 'mono_headings')
+    if '--shadow-card' in tw:
+        out.append('soft_shadows')
+    m = re.search(r'--shadow-active:\s*([^;]+);', tw)
+    if m:
+        # «0 0 0 1px …» — кольцо-обводка у активного; иначе — расплывчатое неоновое свечение
+        out.append('active_outline' if m.group(1).strip().startswith('0 0 0 ') else 'neon_glow')
+    if '--bg-pattern' in tw:
+        out.append('dot_pattern')
+    if '--scanlines' in tw:
+        out.append('scanlines')
+    d = re.search(r'--default-transition-duration:\s*([\d.]+)s', tw)
+    if d:
+        v = float(d.group(1))
+        if 0 < v <= 0.12:
+            out.append('snappy_anim')
+        elif v >= 0.25:
+            out.append('bouncy_anim')
+        elif v >= 0.15:
+            out.append('smooth_anim')
+    return out
+
+
+def write_traits():
+    allt = []
+    for k in CHAR:
+        for x in traits_of(CHAR[k]):
+            if x not in allt:
+                allt.append(x)
+    body = "// ГЕНЕРИРУЕТСЯ scripts/apply_themes.py из CHAR (scripts/themes_data.py) — НЕ править руками (BACKLOG 55.1: что именно меняет большая тема).\n"
+    body += "export type ThemeTrait = %s\n\n" % ' | '.join("'%s'" % x for x in allt)
+    body += "// Большие темы и их возможности по порядку показа в карточке. Подписи: theme_trait_<имя> в i18n.ts.\n"
+    body += "export const THEME_TRAITS: Record<string, ThemeTrait[]> = {\n"
+    for k in CHAR:
+        body += "  %s: [%s],\n" % (k, ', '.join("'%s'" % x for x in traits_of(CHAR[k])))
+    body += "}\n"
+    path = 'web-customization/src/lib/themeTraits.ts'
+    try:
+        old = open(path, encoding='utf-8').read()
+    except FileNotFoundError:
+        old = None
+    if old != body:
+        open(path, 'w', encoding='utf-8').write(body)
+        changed.append(path)
+
+
+write_traits()
+
 rw('theme.js', root_theme_js)
 rw('i18n.js', root_i18n_js)
 rw('style.css', lambda t: tokenize(root_css(t), False))
