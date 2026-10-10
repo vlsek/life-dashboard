@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.32";
+const SITE_VERSION = "4.33";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.33", date: "2026-10-10 05:55", changes: [
+        "Заставка загрузки и логотип слева сверху: вместо трёх отдельных языков, качающихся влево-вправо, теперь ОДНО живое пламя — единый контур плавно перетекает между тремя формами, под ним два слоя глубины (внешний и светлая сердцевина), над ним поднимаются искры. Цвет по теме, на телефоне без нагрузки; при «Отключить анимации» и системном «уменьшить движение» пламя неподвижно. Варианты заставки в «Кастомизации» — следующим шагом. Без миграций."
+    ]},
     { version: "4.32", date: "2026-10-10 04:09", changes: [
         "Аккаунт: на карточке «Аватарка» теперь видна выбранная в «Кастомизации» рамка (в том числе анимированная); если надеть или снять рамку в соседней вкладке, карточка меняется сразу."
     ]},
@@ -1906,6 +1909,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.33", date: "2026-10-10 05:55", changes: [
+        "Loading screen and the top-left logo: instead of three separate tongues swaying left and right, there is now ONE living flame — a single outline that smoothly morphs between three shapes, with two depth layers (outer body and a bright core) and sparks rising above it. Theme-coloured and light on phones; with \"Turn off animations\" or the system \"reduce motion\" the flame stays still. Loading-screen variants in \"Customization\" come next. No migrations."
+    ]},
     { version: "4.32", date: "2026-10-10 04:09", changes: [
         "Account: the \"Avatar\" card now shows the frame you picked in Customization (animated ones too); if you put on or take off a frame in another tab, the card updates right away."
     ]},
