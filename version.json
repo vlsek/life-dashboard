@@ -1,6 +1,13 @@
 {
-  "version": "4.38",
+  "version": "4.39",
   "en": [
+    {
+      "version": "4.39",
+      "date": "2026-10-10 12:23",
+      "changes": [
+        "Removed the \"pilot on Vue\" wording from the browser tab titles on every page (Goals, Workouts, Shop, etc.): these pages stopped being a pilot long ago. No migrations."
+      ]
+    },
     {
       "version": "4.38",
       "date": "2026-10-10 12:16",
@@ -3133,6 +3140,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.39",
+      "date": "2026-10-10 12:23",
+      "changes": [
+        "Убрали надпись «пилот на Vue» из названий вкладок браузера на всех страницах (Цели, Тренировки, Магазин и т. д.): страницы давно не пилот. Миграций нет."
+      ]
+    },
     {
       "version": "4.38",
       "date": "2026-10-10 12:16",

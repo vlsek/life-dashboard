@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.38";
+const SITE_VERSION = "4.39";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.39", date: "2026-10-10 12:23", changes: [
+        "Убрали надпись «пилот на Vue» из названий вкладок браузера на всех страницах (Цели, Тренировки, Магазин и т. д.): страницы давно не пилот. Миграций нет."
+    ]},
     { version: "4.38", date: "2026-10-10 12:16", changes: [
         "Исправление вида: пламя заставки и логотипа в шапке снова такой же ширины, как раньше (оно было заметно уже и казалось «сжатым»); карточка подсказки страницы («i» под шапкой) теперь по центру страницы, а не у правого края. Значок «i» остался справа. Миграций нет."
     ]},
@@ -1924,6 +1927,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.39", date: "2026-10-10 12:23", changes: [
+        "Removed the \"pilot on Vue\" wording from the browser tab titles on every page (Goals, Workouts, Shop, etc.): these pages stopped being a pilot long ago. No migrations."
+    ]},
     { version: "4.38", date: "2026-10-10 12:16", changes: [
         "Look fix: the loader flame and the logo flame in the header are as wide as before again (they had become noticeably narrower and looked \"squeezed\"); the page hint card (the \"i\" strip under the top bar) is now centered on the page instead of hugging the right edge. The \"i\" icon stays on the right. No migrations."
     ]},
