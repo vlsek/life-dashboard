@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.48";
+const SITE_VERSION = "4.49";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.49", date: "2026-10-10 09:48", changes: [
+        "Огонёк у метрики со стриком в «Дневных метриках»: от 7 дней подряд (если сегодня уже засчитано) он теперь живое пламя, как у главного стрика, а не статичная иконка. Тема Emerald: галочка в чекбоксах стала тёмной и читается на светлом акценте. Без миграций."
+    ]},
     { version: "4.48", date: "2026-10-10 12:44", changes: [
         "Страница «Цели» стала аккуратнее: каждая категория — сворачиваемый подраздел со счётчиком, сверху «Ближайшие сроки» (просроченные и в ближайшие 14 дней), «Выполненные» и настройки раздела свёрнуты по умолчанию. Что свернули — запоминается."
     ]},
@@ -1954,6 +1957,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.49", date: "2026-10-10 09:48", changes: [
+        "The flame next to a metric with a streak in \"Daily metrics\": from 7 days in a row (when today is already counted) it is now the living flame, like the main streak, instead of a static icon. Emerald theme: the checkbox tick is now dark and readable on the light accent. No migrations."
+    ]},
     { version: "4.48", date: "2026-10-10 12:44", changes: [
         "The Goals page is tidier: every category is a collapsible section with a counter, \"Upcoming deadlines\" (overdue and due within 14 days) sits on top, and \"Completed\" and the section settings are collapsed by default. What you collapse is remembered."
     ]},
