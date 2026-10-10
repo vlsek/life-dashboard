@@ -1,6 +1,13 @@
 {
-  "version": "4.33",
+  "version": "4.34",
   "en": [
+    {
+      "version": "4.34",
+      "date": "2026-10-10 07:12",
+      "changes": [
+        "The sign-in page now has a collapsible \"About the project\" block: what this is in a nutshell, a link to the author's resume and Telegram."
+      ]
+    },
     {
       "version": "4.33",
       "date": "2026-10-10 05:55",
@@ -3098,6 +3105,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.34",
+      "date": "2026-10-10 07:12",
+      "changes": [
+        "На странице входа появился сворачиваемый блок «О проекте»: коротко о том, что это, ссылка на резюме и Telegram автора."
+      ]
+    },
     {
       "version": "4.33",
       "date": "2026-10-10 05:55",

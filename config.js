@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.33";
+const SITE_VERSION = "4.34";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.34", date: "2026-10-10 07:12", changes: [
+        "На странице входа появился сворачиваемый блок «О проекте»: коротко о том, что это, ссылка на резюме и Telegram автора."
+    ]},
     { version: "4.33", date: "2026-10-10 05:55", changes: [
         "Заставка загрузки и логотип слева сверху: вместо трёх отдельных языков, качающихся влево-вправо, теперь ОДНО живое пламя — единый контур плавно перетекает между тремя формами, под ним два слоя глубины (внешний и светлая сердцевина), над ним поднимаются искры. Цвет по теме, на телефоне без нагрузки; при «Отключить анимации» и системном «уменьшить движение» пламя неподвижно. Варианты заставки в «Кастомизации» — следующим шагом. Без миграций."
     ]},
@@ -1909,6 +1912,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.34", date: "2026-10-10 07:12", changes: [
+        "The sign-in page now has a collapsible \"About the project\" block: what this is in a nutshell, a link to the author's resume and Telegram."
+    ]},
     { version: "4.33", date: "2026-10-10 05:55", changes: [
         "Loading screen and the top-left logo: instead of three separate tongues swaying left and right, there is now ONE living flame — a single outline that smoothly morphs between three shapes, with two depth layers (outer body and a bright core) and sparks rising above it. Theme-coloured and light on phones; with \"Turn off animations\" or the system \"reduce motion\" the flame stays still. Loading-screen variants in \"Customization\" come next. No migrations."
     ]},
