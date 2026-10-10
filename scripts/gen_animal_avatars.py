@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Генератор 20 аватарок-животных (BACKLOG раздел 29, агент 2): единый стиль, два цвета — тёмные «чернила» и пастельный фон, плюс белые блики.
 
-Запуск:  python3 scripts/gen_animal_avatars.py   → пишет web-onboarding/src/lib/animalAvatars.ts и копию web-dashboard/src/lib/animalAvatars.ts.
+Запуск:  python3 scripts/gen_animal_avatars.py   → пишет web-onboarding/src/lib/animalAvatars.ts и копии web-dashboard/src/lib/animalAvatars.ts, web-account/src/lib/animalAvatars.ts.
 Чтобы поправить рисунок — менять фигуры здесь и перегенерировать (руками .ts не править). Порядок и ключи животных — часть данных
 (`profiles.avatar_url` хранит готовый data-URI, поэтому смена рисунка у уже выбравших не меняется; новый ключ добавлять в КОНЕЦ).
 """
@@ -48,7 +48,7 @@ NAMES_EN = {'cat': 'Cat', 'dog': 'Dog', 'fox': 'Fox', 'bear': 'Bear', 'panda': '
 TS_HEAD = """// СГЕНЕРИРОВАНО scripts/gen_animal_avatars.py — руками не править (BACKLOG раздел 29, агент 2).
 // 20 аватарок-животных в одном стиле: тёмные чернила + пастельный фон + белые блики. Выбор хранится в profiles.avatar_url как готовый data-URI
 // (без Storage и без SQL), поэтому любое место, которое рисует <img :src="avatar_url">, показывает его без изменений.
-// КОПИЯ лежит в web-dashboard/src/lib/animalAvatars.ts (окно выбора аватарки); страж — web-onboarding/src/animalAvatars.test.ts.
+// КОПИИ лежат в web-dashboard/src/lib/animalAvatars.ts (окно выбора аватарки) и web-account/src/lib/animalAvatars.ts («Аккаунт», 44.17); страж — web-onboarding/src/animalAvatars.test.ts.
 export interface AnimalAvatar {
   key: string
   ru: string
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     import os
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     text = ts().replace('"', '"')
-    for rel in ('web-onboarding/src/lib/animalAvatars.ts', 'web-dashboard/src/lib/animalAvatars.ts'):
+    for rel in ('web-onboarding/src/lib/animalAvatars.ts', 'web-dashboard/src/lib/animalAvatars.ts', 'web-account/src/lib/animalAvatars.ts'):
         with open(os.path.join(root, rel), 'w', encoding='utf-8') as f:
             f.write(text)
         print('wrote', rel)

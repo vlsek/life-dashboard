@@ -63,8 +63,9 @@ describe('библиотека аватарок-животных', () => {
     expect(animalLabel(cat, 'en')).toBe('Cat')
   })
 
-  it('копия в web-dashboard совпадает (страж: файл сгенерирован scripts/gen_animal_avatars.py)', async () => {
+  it('копии в web-dashboard и web-account совпадают (страж: файл сгенерирован scripts/gen_animal_avatars.py)', async () => {
     const mine = await readSrc('./lib/animalAvatars.ts')
     expect(await readSrc('../../web-dashboard/src/lib/animalAvatars.ts')).toBe(mine)
+    expect(await readSrc('../../web-account/src/lib/animalAvatars.ts')).toBe(mine)
   })
 })

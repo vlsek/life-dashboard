@@ -19,6 +19,7 @@ vi.mock('./supabase', () => ({
 vi.mock('./loadBalance', () => ({ loadBalance: vi.fn(() => Promise.resolve({ ok: true, balance: 0 })) }))
 
 import { animalAvatarUrl } from './animalAvatars'
+import { onAvatarChanged } from './avatarEvents'
 import { useProfile } from './useProfile'
 
 describe('useProfile.setAnimalAvatar', () => {
@@ -28,6 +29,18 @@ describe('useProfile.setAnimalAvatar', () => {
     await p.init('u1')
     expect(await p.setAnimalAvatar('panda')).toBe(true)
     expect(h.upserts).toEqual([{ user_id: 'u1', avatar_url: animalAvatarUrl('panda') }])
+  })
+  it('сообщает левому меню новый аватар (и не сообщает при сбое)', async () => {
+    const seen: (string | null)[] = []
+    const off = onAvatarChanged((d) => seen.push(d.avatar_url))
+    const p = useProfile()
+    await p.init('u1')
+    await p.setAnimalAvatar('fox')
+    expect(seen).toEqual([animalAvatarUrl('fox')])
+    h.fail = true
+    await p.setAnimalAvatar('cat')
+    expect(seen).toHaveLength(1)
+    off()
   })
   it('неизвестный ключ ничего не пишет', async () => {
     const p = useProfile()

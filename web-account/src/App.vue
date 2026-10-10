@@ -6,6 +6,8 @@ import { t } from './lib/i18n'
 import { showToast } from './lib/toast'
 import AppShell from './components/AppShell.vue'
 import PasswordModal from './components/PasswordModal.vue'
+import AvatarModal from './components/AvatarModal.vue'
+import { useAvatar } from './lib/useAvatar'
 import Icon from './components/Icon.vue'
 import Toast from './components/Toast.vue'
 import EmojiText from './components/EmojiText.vue'
@@ -31,6 +33,23 @@ watch(
   },
   { immediate: true },
 )
+
+// Аватар (BACKLOG 44.17): карточка с текущей картинкой и кнопкой «Сменить аватарку» → окно выбора (животные / Google / своё фото).
+const avatar = useAvatar()
+const showAvatarModal = ref(false)
+watch(
+  () => (auth.value.status === 'ready' ? auth.value.userId : null),
+  (userId) => {
+    if (userId) void avatar.load(userId)
+  },
+  { immediate: true },
+)
+async function afterAvatarSave(ok: boolean) {
+  if (!ok) return
+  showAvatarModal.value = false
+  showToast(t('acc_avatar_saved_toast'))
+}
+const avatarInitial = computed(() => ((auth.value.status === 'ready' ? auth.value.userEmail : '') || '?').trim()[0]?.toUpperCase() || '?')
 
 // Смена пароля — отдельное окно PasswordModal со старым паролем (BACKLOG 11). hasPassword = у аккаунта есть
 // identity 'email'; пока identities не загрузились (или запрос упал) считаем, что пароль есть — как в классике.
@@ -110,6 +129,16 @@ const googleLinkedRest = computed(() => t('acc_google_linked').replace(/^\u2705\
     <div v-if="auth.status === 'loading' || auth.status === 'redirecting'" class="text-sm" style="color: var(--text-dim)">…</div>
 
     <template v-else>
+      <div class="mb-4 flex items-center gap-3 rounded-xl border p-4" style="border-color: var(--border); background: var(--bg-card)" data-test="avatar-card">
+        <img v-if="avatar.avatarUrl.value" :src="avatar.avatarUrl.value" alt="" class="h-14 w-14 shrink-0 rounded-full object-cover" data-test="avatar-current" />
+        <div v-else class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-xl font-bold" style="background: var(--accent); color: var(--accent-text)" data-test="avatar-initial">{{ avatarInitial }}</div>
+        <div class="min-w-0 flex-1">
+          <h3 class="mb-0.5 font-bold"><EmojiText :text="t('acc_avatar_h3')" /></h3>
+          <p class="mb-2 text-sm" style="color: var(--text-dim)">{{ t('acc_avatar_hint') }}</p>
+          <button type="button" class="rounded-lg px-4 py-2 text-sm font-medium" style="background: var(--accent); color: var(--accent-text)" data-test="open-avatar" @click="avatar.error.value = null; showAvatarModal = true">{{ t('acc_avatar_change_btn') }}</button>
+        </div>
+      </div>
+
       <div class="mb-4 rounded-xl border p-4" style="border-color: var(--border); background: var(--bg-card)">
         <h3 class="mb-1 font-bold"><EmojiText :text="t('acc_change_password_h3')" /></h3>
         <p class="mb-3 text-sm" style="color: var(--text-dim)">{{ hasPassword ? t('acc_password_card_hint') : t('acc_password_none_hint') }}</p>
@@ -185,6 +214,17 @@ const googleLinkedRest = computed(() => t('acc_google_linked').replace(/^\u2705\
     :has-password="hasPassword"
     @close="showPasswordModal = false"
     @changed="onPasswordChanged"
+  />
+  <AvatarModal
+    v-if="showAvatarModal"
+    :current="avatar.avatarUrl.value"
+    :google-avatar="avatar.googleAvatar.value"
+    :error="avatar.error.value"
+    :busy="avatar.busy.value"
+    @close="showAvatarModal = false"
+    @pick="async (k) => afterAvatarSave(await avatar.setAnimal(k))"
+    @google="async () => afterAvatarSave(await avatar.setGoogle())"
+    @upload="async (f) => afterAvatarSave(await avatar.upload(f))"
   />
   <Toast />
 </template>

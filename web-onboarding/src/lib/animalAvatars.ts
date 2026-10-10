@@ -1,7 +1,7 @@
 // СГЕНЕРИРОВАНО scripts/gen_animal_avatars.py — руками не править (BACKLOG раздел 29, агент 2).
 // 20 аватарок-животных в одном стиле: тёмные чернила + пастельный фон + белые блики. Выбор хранится в profiles.avatar_url как готовый data-URI
 // (без Storage и без SQL), поэтому любое место, которое рисует <img :src="avatar_url">, показывает его без изменений.
-// КОПИЯ лежит в web-dashboard/src/lib/animalAvatars.ts (окно выбора аватарки); страж — web-onboarding/src/animalAvatars.test.ts.
+// КОПИИ лежат в web-dashboard/src/lib/animalAvatars.ts (окно выбора аватарки) и web-account/src/lib/animalAvatars.ts («Аккаунт», 44.17); страж — web-onboarding/src/animalAvatars.test.ts.
 export interface AnimalAvatar {
   key: string
   ru: string

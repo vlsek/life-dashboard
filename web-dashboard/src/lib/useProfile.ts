@@ -1,6 +1,7 @@
 import { computed, getCurrentInstance, onBeforeUnmount, ref } from 'vue'
 import { sb } from './supabase'
 import { animalAvatarUrl } from './animalAvatars'
+import { notifyAvatarChanged } from './avatarEvents'
 import { todayStr } from './date'
 import { t } from './i18n'
 import { fetchAllRows } from './fetchAll'
@@ -130,6 +131,7 @@ export function useProfile() {
       return false
     }
     await loadProfileRow()
+    notifyAvatarChanged({ avatar_url: url })
     return true
   }
 
@@ -143,6 +145,7 @@ export function useProfile() {
       return false
     }
     await loadProfileRow()
+    notifyAvatarChanged({ avatar_url: url })
     return true
   }
 

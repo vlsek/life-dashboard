@@ -3,6 +3,7 @@ import { sb } from './supabase'
 import { frameShadow } from './customFrame'
 import { googleProfile } from './googleProfile'
 import { onCustomizationChanged } from './customizationEvents'
+import { onAvatarChanged } from './avatarEvents'
 
 // Данные для блока профиля в левом меню (BACKLOG 6.2): имя и аватар из profiles. Почта приходит из сессии (App.vue).
 // Любая ошибка (нет колонки/сети) — просто остаёмся без имени и аватара: блок покажет почту и букву.
@@ -15,7 +16,11 @@ export function useSidebarProfile() {
   const off = onCustomizationChanged((d) => {
     avatarFrame.value = d.avatar_frame && frameShadow(d.avatar_frame) ? d.avatar_frame : null
   })
-  if (getCurrentScope()) onScopeDispose(off)
+  // BACKLOG 44.17: сменили аватар в «Аккаунте» / на Дашборде (или в соседней вкладке) — в левом меню он меняется сразу.
+  const offAvatar = onAvatarChanged((d) => {
+    avatarUrl.value = d.avatar_url
+  })
+  if (getCurrentScope()) onScopeDispose(() => { off(); offAvatar() })
 
   async function load(userId: string, authUser?: { user_metadata?: Record<string, unknown> | null } | null) {
     const { data, error } = await sb.from('profiles').select('display_name, avatar_url').eq('user_id', userId).maybeSingle()
