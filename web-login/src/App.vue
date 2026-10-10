@@ -77,6 +77,17 @@ const tabStyle = (active: boolean) => ({
       <p class="mt-2.5 text-sm" style="color: var(--text-dim)">{{ msg }}</p>
     </div>
 
+    <details class="mt-3 w-full max-w-[360px] text-sm" data-test="login-about">
+      <summary class="cursor-pointer text-center" style="color: var(--text-dim)" data-test="login-about-toggle">{{ t('login_about_title') }}</summary>
+      <div class="mt-2 rounded-lg border p-3 leading-relaxed" style="border-color: var(--border); background: var(--bg-card)">
+        <p>{{ t('login_about_text') }}</p>
+        <p class="mt-2">
+          <a href="https://portfolio.orneryhero.workers.dev/" target="_blank" rel="noopener" style="color: var(--accent)" data-test="login-about-resume">{{ t('login_about_resume') }}</a>
+          · <a href="https://t.me/vsekorolev" target="_blank" rel="noopener" style="color: var(--accent)">Telegram</a>
+        </p>
+      </div>
+    </details>
+
     <p class="mt-3 text-center"><a href="/legacy/login.html" class="text-[0.7em]" style="color: var(--text-dim); opacity: 0.55" data-test="legacy-link">legacy-login</a></p>
   </main>
 </template>
