@@ -4,9 +4,12 @@ import AppShell from './components/AppShell.vue'
 import MilestoneFormModal from './components/MilestoneFormModal.vue'
 import MarkDoneModal from './components/MarkDoneModal.vue'
 import HistoryModal from './components/HistoryModal.vue'
+import TemplatesModal from './components/TemplatesModal.vue'
+import { ALL_TAB, buildCategoryTabs, getSavedCategory, resolveCategory, saveCategory } from './lib/categoryTabs'
+import { templateDraft, type MilestoneTemplate } from './lib/milestoneTemplates'
 import { useMilestones } from './lib/useMilestones'
 import { buildRow, groupActiveByCategory, sortDone, summary, statusLevel } from './lib/milestones'
-import { t, locale } from './lib/i18n'
+import { getLang, t, locale } from './lib/i18n'
 import type { Milestone, MilestoneFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import Icon from './components/Icon.vue'
@@ -19,7 +22,15 @@ onMounted(init)
 const noCategory = computed(() => t('ms_no_category'))
 const active = computed(() => items.value.filter((m) => !m.done))
 const done = computed(() => sortDone(items.value.filter((m) => m.done)))
-const grouped = computed(() => groupActiveByCategory(active.value, noCategory.value))
+// Вкладки-категории (BACKLOG 44.9): «Все» + по группе; выбор помнится на устройстве.
+const tabs = computed(() => buildCategoryTabs(active.value, noCategory.value, t('ms_tab_all')))
+const selectedCat = ref(getSavedCategory())
+const effectiveCat = computed(() => resolveCategory(selectedCat.value, tabs.value))
+function pickCategory(key: string) {
+  selectedCat.value = key
+  saveCategory(key)
+}
+const grouped = computed(() => groupActiveByCategory(active.value, noCategory.value).filter(([cat]) => effectiveCat.value === ALL_TAB || cat === effectiveCat.value))
 const sum = computed(() => summary(active.value))
 
 function fmtRu(iso: string | null): string {
@@ -73,14 +84,25 @@ function nextKmText(m: Milestone): string | null {
 
 // ---- Форма создания/редактирования (все поля — см. MilestoneFormModal.vue) ----
 const formTarget = ref<Milestone | 'new' | null>(null)
+const formDraft = ref<Partial<MilestoneFormInput> | null>(null)
+const templatesOpen = ref(false)
+const haveTemplates = computed(() => new Set(items.value.map((m) => m.name.trim().toLowerCase())))
+function onPickTemplate(tpl: MilestoneTemplate) {
+  templatesOpen.value = false
+  saveError.value = null
+  formDraft.value = templateDraft(tpl, getLang())
+  formTarget.value = 'new'
+}
 const saveError = ref<string | null>(null)
 
 function openAddForm() {
   saveError.value = null
+  formDraft.value = null
   formTarget.value = 'new'
 }
 function openEditForm(m: Milestone) {
   saveError.value = null
+  formDraft.value = null
   formTarget.value = m
 }
 function closeForm() {
@@ -150,14 +172,12 @@ function closeHistory() {
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
     <div class="mb-4 flex items-center justify-between">
       <h1 class="text-xl font-semibold">{{ t('nav_milestones') }}</h1>
-      <button
-        v-if="auth.status === 'ready'"
-        class="rounded-lg px-3 py-1.5 text-sm"
-        style="background: var(--accent); color: var(--accent-text)"
-        @click="openAddForm"
-      >
-        <EmojiText :text="t('ms_add_btn')" />
-      </button>
+      <div v-if="auth.status === 'ready'" class="flex gap-2">
+        <button class="secondary rounded-lg px-3 py-1.5 text-sm" data-test="ms-templates-btn" @click="templatesOpen = true">{{ t('ms_templates_btn') }}</button>
+        <button class="rounded-lg px-3 py-1.5 text-sm" style="background: var(--accent); color: var(--accent-text)" @click="openAddForm">
+          <EmojiText :text="t('ms_add_btn')" />
+        </button>
+      </div>
     </div>
 
     <p v-if="auth.status === 'loading'" class="dim">…</p>
@@ -174,6 +194,22 @@ function closeHistory() {
         </p>
 
         <p v-if="active.length === 0" class="dim">{{ t('ms_no_active') }}</p>
+
+        <div v-if="tabs.length > 2" class="mb-4 flex flex-wrap gap-1.5" role="tablist" data-test="category-tabs">
+          <button
+            v-for="tab in tabs"
+            :key="tab.key"
+            type="button"
+            role="tab"
+            class="rounded-full border px-3 py-1 text-sm"
+            :aria-selected="effectiveCat === tab.key"
+            :style="effectiveCat === tab.key ? 'border-color: var(--accent); color: var(--accent)' : 'border-color: var(--border); color: var(--text-dim); background: transparent'"
+            :data-test="'cat-tab-' + tab.key"
+            @click="pickCategory(tab.key)"
+          >
+            {{ tab.label }} · {{ tab.count }}
+          </button>
+        </div>
 
         <div v-for="[cat, list] in grouped" :key="cat" class="mb-5">
           <h3 class="mb-2 text-base font-medium">{{ cat }}</h3>
@@ -233,9 +269,11 @@ function closeHistory() {
     <MilestoneFormModal
       v-if="formTarget"
       :existing="formTarget === 'new' ? null : formTarget"
+      :draft="formTarget === 'new' ? formDraft : null"
       @submit="onFormSubmit"
       @close="closeForm"
     />
+    <TemplatesModal v-if="templatesOpen" :have="haveTemplates" @pick="onPickTemplate" @close="templatesOpen = false" />
     <MarkDoneModal v-if="markDoneTarget" :milestone="markDoneTarget" @submit="onMarkDoneSubmit" @close="closeMarkDone" />
     <HistoryModal v-if="historyTarget" :milestone="historyTarget" @close="closeHistory" />
   </main>

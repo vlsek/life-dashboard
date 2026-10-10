@@ -4,19 +4,19 @@ import { todayStr } from '../lib/date'
 import { t } from '../lib/i18n'
 import type { IntervalUnit, Milestone, MilestoneFormInput } from '../lib/types'
 
-const props = defineProps<{ existing: Milestone | null }>()
+const props = defineProps<{ existing: Milestone | null; draft?: Partial<MilestoneFormInput> | null }>()
 const emit = defineEmits<{ submit: [MilestoneFormInput]; close: [] }>()
 
 // Поля 1:1 с openMilestoneForm() в milestones.js.
-const name = ref(props.existing?.name ?? '')
-const category = ref(props.existing?.category ?? '')
-const last_date = ref(props.existing?.last_date ?? '')
-const interval_value = ref(props.existing?.interval_value ?? 0)
-const interval_unit = ref<IntervalUnit>(props.existing?.interval_unit ?? 'month')
-const due_date = ref(props.existing?.due_date ?? '')
-const last_km = ref(props.existing?.last_km ?? 0)
-const interval_km = ref(props.existing?.interval_km ?? 0)
-const note = ref(props.existing?.note ?? '')
+const name = ref(props.existing?.name ?? props.draft?.name ?? '')
+const category = ref(props.existing?.category ?? props.draft?.category ?? '')
+const last_date = ref(props.existing?.last_date ?? props.draft?.last_date ?? '')
+const interval_value = ref(props.existing?.interval_value ?? props.draft?.interval_value ?? 0)
+const interval_unit = ref<IntervalUnit>(props.existing?.interval_unit ?? props.draft?.interval_unit ?? 'month')
+const due_date = ref(props.existing?.due_date ?? props.draft?.due_date ?? '')
+const last_km = ref(props.existing?.last_km ?? props.draft?.last_km ?? 0)
+const interval_km = ref(props.existing?.interval_km ?? props.draft?.interval_km ?? 0)
+const note = ref(props.existing?.note ?? props.draft?.note ?? '')
 
 const today = todayStr()
 const nameInput = ref<HTMLInputElement | null>(null)
