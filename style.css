@@ -573,6 +573,26 @@ html.theme-peach,
 html.theme-graphite { color-scheme: light; }
 /* themes:end */
 
+/* design-tokens:start (генерируется scripts/apply_themes.py — не править руками; BACKLOG 50.1а) */
+/* «Характер» оформления (не цвета). Значения по умолчанию ровно равны прежнему виду сайта; «большая тема» переопределяет их в своём
+   `html.theme-<ключ> { … }`. Скругления: у Tailwind-страниц `rounded-lg/xl/2xl/md` — это `var(--radius-lg/xl/2xl/md)`, поэтому тема меняет скругление
+   ВСЕХ карточек, кнопок и полей, переопределив эти переменные (запасные значения нужны: Tailwind не выдаёт неиспользуемые переменные).
+   Анимации и шрифт — тоже переменными Tailwind: `--default-transition-duration`, `--default-transition-timing-function`, `--font-sans`, `--font-mono`. */
+:root {
+  --radius-card: 12px;
+  --radius-modal: 12px;
+  --radius-control: 8px;
+  --shadow-card: none; /* тень карточек и окон: glow (0 0 12px …) или жёсткая (4px 4px 0 #000) */
+  --shadow-active: none; /* тень/свечение активного: кнопка, переключатель, выбранный пункт */
+  --blur-glass: none; /* backdrop-filter стеклянных поверхностей: blur(10px) */
+  --bg-pattern: none; /* фоновая текстура: сетка точек, scanlines, шум */
+  --bg-pattern-size: auto;
+  --border-style: solid; /* solid | dashed | dotted */
+  --card-accent: none; /* акцентная полоса слева у карточки */
+  --font-heading: inherit; /* шрифт заголовков и чисел (моноширинный у терминальных тем) */
+}
+/* design-tokens:end */
+
 * { box-sizing: border-box; }
 
 body {
@@ -810,9 +830,10 @@ h3 { font-size: 1.05em; margin-top: 20px; opacity: 0.9; }
 .card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: var(--radius-card);
     padding: 16px 20px;
     margin-bottom: 16px;
+    box-shadow: var(--shadow-card);
 }
 
 .stat-row {
@@ -830,7 +851,7 @@ button {
     color: var(--accent-text);
     border: none;
     padding: 8px 16px;
-    border-radius: 8px;
+    border-radius: var(--radius-control);
     cursor: pointer;
     font-size: 0.9em;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
@@ -1061,9 +1082,10 @@ th { font-size: 0.8em; color: var(--text-dim); font-weight: normal; }
     padding: 20px; box-sizing: border-box;
 }
 .modal {
-    background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-modal);
     padding: 20px; width: 340px; max-width: 90vw;
     max-height: 90vh; overflow-y: auto; box-sizing: border-box;
+  box-shadow: var(--shadow-card);
 }
 .modal label { display: block; margin-top: 12px; font-size: 0.85em; color: var(--text-dim); }
 .modal input, .modal select { width: 100%; margin-top: 4px; }

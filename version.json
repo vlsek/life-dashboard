@@ -1,6 +1,13 @@
 {
-  "version": "4.43",
+  "version": "4.44",
   "en": [
+    {
+      "version": "4.44",
+      "date": "2026-10-10 12:30",
+      "changes": [
+        "Under the hood: groundwork for big appearance themes - corner radius, shadows, textures, borders and font can now be changed by a theme, not just colors. Nothing looks different yet: the defaults match the previous look of the site"
+      ]
+    },
     {
       "version": "4.43",
       "date": "2026-10-10 09:29",
@@ -3168,6 +3175,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.44",
+      "date": "2026-10-10 12:30",
+      "changes": [
+        "Внутри: подготовлена основа для «больших тем» оформления — скругления, тени, текстуры, границы и шрифт теперь можно менять темой, а не только цвета. Сейчас ничего не изменилось: значения по умолчанию совпадают с прежним видом сайта"
+      ]
+    },
     {
       "version": "4.43",
       "date": "2026-10-10 09:29",

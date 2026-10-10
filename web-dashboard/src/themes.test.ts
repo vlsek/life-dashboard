@@ -91,7 +91,8 @@ describe('одинаково во всех пилотах', () => {
   })
 
   it.each(pilots)('%s: theme.ts, блоки тем, подписи и карты цветов', (dir: string) => {
-    const ts = read(`${dir}/src/lib/theme.ts`)
+    // web-login намеренно добавляет СВОЙ список LOGIN_THEMES (49.8: на входе только светлая/тёмная) — он не часть общей копии
+    const ts = read(`${dir}/src/lib/theme.ts`).replace(/\/\/ На странице входа[^\n]*\nexport const LOGIN_THEMES[^\n]*\n\n?/, '')
     expect(ts).toBe(read('web-dashboard/src/lib/theme.ts'))
     expect(region(read(`${dir}/src/style.css`))).toBe(region(css))
     const i18n = read(`${dir}/src/lib/i18n.ts`)

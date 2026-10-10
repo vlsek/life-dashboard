@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.43";
+const SITE_VERSION = "4.44";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.44", date: "2026-10-10 12:30", changes: [
+        "Внутри: подготовлена основа для «больших тем» оформления — скругления, тени, текстуры, границы и шрифт теперь можно менять темой, а не только цвета. Сейчас ничего не изменилось: значения по умолчанию совпадают с прежним видом сайта",
+    ]},
     { version: "4.43", date: "2026-10-10 09:29", changes: [
         "Тренировки: «Добавить запись» больше не открывает окно — в карточке упражнения раскрывается строка (повторы, вес или длительность, время подставляется). «Подробно…» открывает прежнее окно (другая дата, несколько подходов, заметка); у упражнений с левой/правой стороной по-прежнему окно. Без миграций."
     ]},
@@ -1939,6 +1942,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.44", date: "2026-10-10 12:30", changes: [
+        "Under the hood: groundwork for big appearance themes - corner radius, shadows, textures, borders and font can now be changed by a theme, not just colors. Nothing looks different yet: the defaults match the previous look of the site",
+    ]},
     { version: "4.43", date: "2026-10-10 09:29", changes: [
         "Workouts: \"Log entry\" no longer opens a window — a row unfolds right in the exercise card (reps, weight or duration; time is filled in). \"Details…\" opens the old window (other date, several sets, a note); exercises with left/right sides still use the window. No migrations."
     ]},

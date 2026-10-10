@@ -22,6 +22,72 @@ START = '/* themes:start (генерируется scripts/apply_themes.py из 
 END = '/* themes:end */'
 GOLD_START = '/* themes-gold:start (генерируется scripts/apply_themes.py) */'
 GOLD_END = '/* themes-gold:end */'
+
+# ---------- токены оформления (BACKLOG 50.1а, «большие темы», срез 0: БЕЗ видимых изменений) ----------
+TOK_START = '/* design-tokens:start (генерируется scripts/apply_themes.py — не править руками; BACKLOG 50.1а) */'
+TOK_END = '/* design-tokens:end */'
+TOK_COMMENT = """/* «Характер» оформления (не цвета). Значения по умолчанию ровно равны прежнему виду сайта; «большая тема» переопределяет их в своём
+   `html.theme-<ключ> { … }`. Скругления: у Tailwind-страниц `rounded-lg/xl/2xl/md` — это `var(--radius-lg/xl/2xl/md)`, поэтому тема меняет скругление
+   ВСЕХ карточек, кнопок и полей, переопределив эти переменные (запасные значения нужны: Tailwind не выдаёт неиспользуемые переменные).
+   Анимации и шрифт — тоже переменными Tailwind: `--default-transition-duration`, `--default-transition-timing-function`, `--font-sans`, `--font-mono`. */"""
+
+
+def tokens_region(tailwind):
+    if tailwind:
+        rad = ('  --radius-card: var(--radius-xl, 0.75rem);\n  --radius-modal: var(--radius-xl, 0.75rem);\n'
+               '  --radius-control: var(--radius-lg, 0.5rem);\n')
+    else:
+        rad = '  --radius-card: 12px;\n  --radius-modal: 12px;\n  --radius-control: 8px;\n'
+    return (TOK_START + '\n' + TOK_COMMENT + '\n:root {\n' + rad +
+            '  --shadow-card: none; /* тень карточек и окон: glow (0 0 12px …) или жёсткая (4px 4px 0 #000) */\n'
+            '  --shadow-active: none; /* тень/свечение активного: кнопка, переключатель, выбранный пункт */\n'
+            '  --blur-glass: none; /* backdrop-filter стеклянных поверхностей: blur(10px) */\n'
+            '  --bg-pattern: none; /* фоновая текстура: сетка точек, scanlines, шум */\n'
+            '  --bg-pattern-size: auto;\n'
+            '  --border-style: solid; /* solid | dashed | dotted */\n'
+            '  --card-accent: none; /* акцентная полоса слева у карточки */\n'
+            '  --font-heading: inherit; /* шрифт заголовков и чисел (моноширинный у терминальных тем) */\n'
+            '}\n' + TOK_END)
+
+
+def _swap_radius(rule, var, defaults):
+    """В тексте одного правила: border-radius со значением по умолчанию -> var(токен). Другие значения не трогаем."""
+    def sub(m):
+        return m.group(1) + 'border-radius: ' + var + ';' if m.group(2).strip() in defaults else m.group(0)
+    return re.sub(r'(\s)border-radius:\s*([^;]+);', sub, rule, count=1)
+
+
+def tokenize(t, tailwind):
+    reg = tokens_region(tailwind)
+    if TOK_START in t:
+        t = re.sub(re.escape(TOK_START) + r'.*?' + re.escape(TOK_END), lambda m: reg, t, count=1, flags=re.S)
+    else:
+        assert END in t, 'нет themes:end'
+        # после themes-gold / themes-scheme блоков, если они идут сразу за themes:end: проще и надёжнее — прямо за themes:end
+        t = t.replace(END, END + '\n\n' + reg, 1)
+
+    def rule_edit(t, head_re, fn):
+        m = re.search(head_re, t, re.S)
+        return t if not m else t[:m.start()] + fn(m.group(0)) + t[m.end():]
+
+    def add_shadow(rule):
+        if 'var(--shadow-card)' in rule:
+            return rule
+        ind = re.search(r'\n(\s*)border-radius:', rule)
+        ind = ind.group(1) if ind else '  '
+        return rule[:-1].rstrip('\n') + '\n' + ind + 'box-shadow: var(--shadow-card);\n}' if rule.endswith('}') else rule
+
+    rad_card = ('12px', '0.75rem')
+    t = rule_edit(t, r'\n\.card \{[^}]*\}', lambda r: add_shadow(_swap_radius(r, 'var(--radius-card)', rad_card)))
+    t = rule_edit(t, r'\n\.modal \{[^}]*\}', lambda r: add_shadow(_swap_radius(r, 'var(--radius-modal)', rad_card)))
+    ctl = ('0.5rem', '8px')
+    if tailwind:
+        t = rule_edit(t, r'@layer base \{\s*button \{[^}]*\}', lambda r: _swap_radius(r, 'var(--radius-control)', ctl))
+    else:
+        t = rule_edit(t, r'\nbutton \{[^}]*\}', lambda r: _swap_radius(r, 'var(--radius-control)', ctl))
+    t = rule_edit(t, r'\.modal textarea \{[^}]*\}', lambda r: _swap_radius(r, 'var(--radius-control)', ctl))
+    return t
+
 VARS = [('bg', 'bg'), ('bg-card', 'card'), ('border', 'border'), ('text', 'text'), ('text-dim', 'dim'), ('accent', 'accent'),
         ('accent-text', 'at'), ('success', 'ok'), ('danger', 'bad'), ('hist-ok', 'hist'), ('water-top', 'wt'), ('water-bottom', 'wb'), ('water-line', 'wl')]
 changed = []
@@ -275,7 +341,7 @@ def index_html(t):
 
 for d in sorted(glob.glob('web-*')):
     if glob.glob(d + '/src/style.css') and glob.glob(d + '/src/lib/theme.ts'):
-        rw(d + '/src/style.css', pilot_css)
+        rw(d + '/src/style.css', lambda t: tokenize(pilot_css(t), True))
         rw(d + '/src/lib/theme.ts', theme_ts)
         rw(d + '/src/lib/i18n.ts', i18n_ts)
         rw(d + '/index.html', index_html)
@@ -439,7 +505,7 @@ def root_css(t):
 
 rw('theme.js', root_theme_js)
 rw('i18n.js', root_i18n_js)
-rw('style.css', root_css)
+rw('style.css', lambda t: tokenize(root_css(t), False))
 print('изменено файлов:', len(changed))
 for c in changed:
     print(' ', c)

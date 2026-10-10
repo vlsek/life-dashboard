@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 
 // BACKLOG 44.5а «быстрый ввод насквозь»: подход, введённый на Дашборде для метрики, связанной с упражнением, уходит в «Тренировки»,
@@ -38,6 +38,9 @@ import type { Metric } from './lib/types'
 const metric = { id: 'm1', name: 'Отжимания', type: 'sets', icon: null, source_exercise_id: 'e1', goal_value: null, options: null } as unknown as Metric
 
 beforeEach(() => {
+  // Время подхода берётся из часов; без фиксации тест зависел от времени суток (ночью новый подход шёл бы РАНЬШЕ «08:00»)
+  vi.useFakeTimers({ toFake: ['Date'] })
+  vi.setSystemTime(new Date(2026, 9, 9, 12, 0, 0))
   localStorage.setItem('site_lang', 'ru')
   h.entries = []
   h.readError = null
@@ -45,6 +48,8 @@ beforeEach(() => {
   h.upsertError = null
   h.ops = []
 })
+
+afterEach(() => vi.useRealTimers())
 
 describe('linkedSets: чистые правила', () => {
   it('повторы: только положительное число, запятая допустима', () => {
