@@ -1,6 +1,13 @@
 {
-  "version": "4.42",
+  "version": "4.43",
   "en": [
+    {
+      "version": "4.43",
+      "date": "2026-10-10 09:29",
+      "changes": [
+        "Workouts: \"Log entry\" no longer opens a window — a row unfolds right in the exercise card (reps, weight or duration; time is filled in). \"Details…\" opens the old window (other date, several sets, a note); exercises with left/right sides still use the window. No migrations."
+      ]
+    },
     {
       "version": "4.42",
       "date": "2026-10-10 09:28",
@@ -3161,6 +3168,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.43",
+      "date": "2026-10-10 09:29",
+      "changes": [
+        "Тренировки: «Добавить запись» больше не открывает окно — в карточке упражнения раскрывается строка (повторы, вес или длительность, время подставляется). «Подробно…» открывает прежнее окно (другая дата, несколько подходов, заметка); у упражнений с левой/правой стороной по-прежнему окно. Без миграций."
+      ]
+    },
     {
       "version": "4.42",
       "date": "2026-10-10 09:28",

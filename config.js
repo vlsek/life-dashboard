@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.42";
+const SITE_VERSION = "4.43";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.43", date: "2026-10-10 09:29", changes: [
+        "Тренировки: «Добавить запись» больше не открывает окно — в карточке упражнения раскрывается строка (повторы, вес или длительность, время подставляется). «Подробно…» открывает прежнее окно (другая дата, несколько подходов, заметка); у упражнений с левой/правой стороной по-прежнему окно. Без миграций."
+    ]},
     { version: "4.42", date: "2026-10-10 09:28", changes: [
         "Огонёк стрика в окне «Стрики» и на главной теперь тоже живое ОДНО пламя (как на заставке), а не три качающихся языка; в окне «Стрики» огонёк у каждой серии от 7 дней горит анимированно и становится ярче и с искрами на 30 и 100 днях. Для недельных серий — обычный огонёк. Без миграций."
     ]},
@@ -1936,6 +1939,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.43", date: "2026-10-10 09:29", changes: [
+        "Workouts: \"Log entry\" no longer opens a window — a row unfolds right in the exercise card (reps, weight or duration; time is filled in). \"Details…\" opens the old window (other date, several sets, a note); exercises with left/right sides still use the window. No migrations."
+    ]},
     { version: "4.42", date: "2026-10-10 09:28", changes: [
         "The streak flame in the \"Streaks\" window and on the home page is now the same ONE living flame as on the loading screen instead of three swaying tongues; in the \"Streaks\" window every streak of 7+ days burns animated and gets brighter, with sparks, at 30 and 100 days. Weekly streaks keep the plain flame. No migrations."
     ]},
