@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.96";
+const SITE_VERSION = "4.97";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.97", date: "2026-10-11 10:21", changes: [
+        "Кастомизация, «Анимация воды»: у каждого варианта появилась своя кнопка «Показать» — она проигрывает именно эту анимацию (стакан наполняется по центру экрана), ничего не меняя в вашем выборе. Работает у «По теме» (показывает анимацию текущей темы), у шести бесплатных вариантов и у платных (дождь, прилив, искры) — можно посмотреть до покупки. Без миграций."
+    ]},
     { version: "4.96", date: "2026-10-11 13:11", changes: [
         "Поправки по результатам просмотра: у женской модели тела руки больше не ломаются (кисти шли наружу вместе с бёдрами), а искры в анимации воды стали золотыми — белые не были видны на светлой теме."
     ]},
@@ -2098,6 +2101,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.97", date: "2026-10-11 10:21", changes: [
+        "Customization, \"Water animation\": every variant now has its own \"Show\" button that plays exactly that animation (the glass fills in the middle of the screen) without changing your choice. It works for \"By theme\" (shows the current theme animation), the six free variants and the paid ones (rain, tide, sparkle) — so you can preview before buying. No migrations."
+    ]},
     { version: "4.96", date: "2026-10-11 13:11", changes: [
         "Fixes after a visual check: the female body model's arms no longer bend outward at the hands, and the sparkles in the water animation are now gold — the white ones were invisible on light themes."
     ]},

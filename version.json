@@ -1,6 +1,13 @@
 {
-  "version": "4.96",
+  "version": "4.97",
   "en": [
+    {
+      "version": "4.97",
+      "date": "2026-10-11 10:21",
+      "changes": [
+        "Customization, \"Water animation\": every variant now has its own \"Show\" button that plays exactly that animation (the glass fills in the middle of the screen) without changing your choice. It works for \"By theme\" (shows the current theme animation), the six free variants and the paid ones (rain, tide, sparkle) — so you can preview before buying. No migrations."
+      ]
+    },
     {
       "version": "4.96",
       "date": "2026-10-11 13:11",
@@ -3539,6 +3546,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.97",
+      "date": "2026-10-11 10:21",
+      "changes": [
+        "Кастомизация, «Анимация воды»: у каждого варианта появилась своя кнопка «Показать» — она проигрывает именно эту анимацию (стакан наполняется по центру экрана), ничего не меняя в вашем выборе. Работает у «По теме» (показывает анимацию текущей темы), у шести бесплатных вариантов и у платных (дождь, прилив, искры) — можно посмотреть до покупки. Без миграций."
+      ]
+    },
     {
       "version": "4.96",
       "date": "2026-10-11 13:11",
