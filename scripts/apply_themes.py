@@ -14,7 +14,7 @@ import re
 import sys
 
 sys.path.insert(0, 'scripts')
-from themes_data import CHAR, NEW, P, UNLOCK, _lum, chart_palette  # noqa: E402
+from themes_data import CHAR, NEW, P, THEME_WATER, UNLOCK, _lum, chart_palette  # noqa: E402
 
 KEYS = list(P)
 OLD4 = ['dark', 'monet', 'light', 'pink']
@@ -593,6 +593,26 @@ def write_traits():
         open(path, 'w', encoding='utf-8').write(body)
         changed.append(path)
 
+
+# ---------- анимация воды у больших тем (BACKLOG 55.5, срез 1) ----------
+def write_theme_water():
+    body = "// ГЕНЕРИРУЕТСЯ scripts/apply_themes.py из THEME_WATER (scripts/themes_data.py) — НЕ править руками (BACKLOG 55.5: анимация воды у большой темы).\n"
+    body += "// Копии лежат в web-header/src/lib и web-dashboard/src/lib (их читает waterAnim.ts: сохранённый выбор → вариант темы → волна).\n"
+    body += "export const THEME_WATER: Record<string, 'wave' | 'drops' | 'ripple'> = {\n"
+    for k, v in THEME_WATER.items():
+        body += "  %s: '%s',\n" % (k, v)
+    body += "}\n"
+    for path in ('web-header/src/lib/themeWater.ts', 'web-dashboard/src/lib/themeWater.ts'):
+        try:
+            old = open(path, encoding='utf-8').read()
+        except FileNotFoundError:
+            old = None
+        if old != body:
+            open(path, 'w', encoding='utf-8').write(body)
+            changed.append(path)
+
+
+write_theme_water()
 
 write_traits()
 

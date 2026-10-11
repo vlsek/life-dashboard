@@ -6,7 +6,7 @@ import type { DashboardBlockKey, LayoutItem } from '../lib/layout'
 import BlockOrderList from './BlockOrderList.vue'
 import { UNLOCKED_THEMES_EVENT, isThemeLocked } from '../lib/themeUnlock'
 import WaterSavedAnim from './WaterSavedAnim.vue'
-import { WATER_ANIMS, getWaterAnim, sanitizeWaterAnim, setWaterAnim, type WaterAnim } from '../lib/waterAnim'
+import { WATER_ANIMS, getWaterAnimChoice, sanitizeWaterAnim, setWaterAnim, type WaterAnim } from '../lib/waterAnim'
 import { useLayout } from '../lib/useLayout'
 import { friendlyError } from '../lib/friendlyError'
 import { ensureTrackWater, saveTrackWater, trackWater } from '../lib/waterTracking'
@@ -22,10 +22,11 @@ const lang = getLang()
 const theme = ref<ThemeKey>(getTheme())
 // Список тем: закрытые темы-награды (ещё не заслуженные) не показываем; уже включённая тема остаётся в списке всегда (отнимать её нельзя).
 // Анимация «записалось» при добавлении воды (BACKLOG 44.21): выбор варианта и кнопка «Показать» (проиграть сразу, не добавляя воду).
-const waterAnim = ref<WaterAnim>(getWaterAnim())
+const waterAnim = ref<WaterAnim | 'auto'>(getWaterAnimChoice()) // 'auto' — «по теме» (BACKLOG 55.5)
 const animPreviewTick = ref(0)
 const onWaterAnim = (e: Event) => {
-  waterAnim.value = sanitizeWaterAnim((e.target as HTMLSelectElement).value)
+  const v = (e.target as HTMLSelectElement).value
+  waterAnim.value = v === 'auto' ? 'auto' : sanitizeWaterAnim(v)
   setWaterAnim(waterAnim.value)
   animPreviewTick.value++ // сразу показываем выбранную
 }
@@ -150,6 +151,7 @@ async function changeLayout(next: LayoutItem[]) {
           <span class="gh-dim" style="font-size: 12px">{{ t('hdr_water_anim') }}</span>
           <span style="display: flex; gap: 8px; align-items: center">
             <select class="gh-input" style="flex: 1" :value="waterAnim" data-test="water-anim-select" @change="onWaterAnim">
+              <option value="auto">{{ t('hdr_water_anim_auto') }}</option>
               <option v-for="a in WATER_ANIMS" :key="a" :value="a">{{ t(('hdr_water_anim_' + a) as DictKey) }}</option>
             </select>
             <button type="button" class="gh-btn" data-test="water-anim-preview" @click="animPreviewTick++">{{ t('hdr_water_anim_preview') }}</button>

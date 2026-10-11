@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.75";
+const SITE_VERSION = "4.76";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.76", date: "2026-10-10 17:10", changes: [
+        "Анимация воды: у каждой «большой темы» теперь своя анимация «записалось» (Emerald Obsidian и Matrix Phosphor — расходящаяся рябь, Moonlight Synth — пружинящие капли, Tokyo Nightfall — спокойная волна). В «Настройках» шапки появился пункт «По теме» (он выбран по умолчанию): играет анимация текущей темы, на обычных темах — спокойная волна. Если выбрать вариант вручную, он всегда главнее темы. Без миграций."
+    ]},
     { version: "4.75", date: "2026-10-11 04:08", changes: [
         "Исправлено: если применить тему в разделе «Кастомизация», в выборе тем левого меню теперь сразу показывается новая тема, а не остаётся старая запись."
     ]},
@@ -2035,6 +2038,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.76", date: "2026-10-10 17:10", changes: [
+        "Water animation: every \"big theme\" now brings its own \"saved\" animation (Emerald Obsidian and Matrix Phosphor — expanding ripples, Moonlight Synth — bouncy drops, Tokyo Nightfall — a calm wave). The header Settings has a new \"By theme\" option (selected by default): the current theme's animation plays, on regular themes the calm wave. A variant picked by hand always wins over the theme. No migrations."
+    ]},
     { version: "4.75", date: "2026-10-11 04:08", changes: [
         "Fixed: after applying a theme in Customization, the theme picker in the left menu now shows the new theme right away instead of keeping the old entry."
     ]},

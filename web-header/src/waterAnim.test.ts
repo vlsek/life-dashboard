@@ -18,7 +18,8 @@ vi.mock('./lib/supabase', () => {
   return { sb: { auth: { getSession: () => Promise.resolve({ data: { session: { user: { id: 'u1' } } } }) }, from: chain } }
 })
 
-import { DEFAULT_WATER_ANIM, WATER_ANIMS, WATER_ANIM_KEY, getWaterAnim, sanitizeWaterAnim, setWaterAnim } from './lib/waterAnim'
+import { DEFAULT_WATER_ANIM, WATER_ANIMS, WATER_ANIM_KEY, getWaterAnim, getWaterAnimChoice, sanitizeWaterAnim, setWaterAnim } from './lib/waterAnim'
+import { THEME_WATER } from './lib/themeWater'
 import WaterSavedAnim from './components/WaterSavedAnim.vue'
 import SettingsModal from './components/SettingsModal.vue'
 
@@ -46,14 +47,19 @@ describe('выбор варианта (lib/waterAnim.ts)', () => {
     for (const bad of ['', 'wob', 5, null, undefined, {}]) expect(sanitizeWaterAnim(bad), String(bad)).toBe('wave')
     for (const ok of WATER_ANIMS) expect(sanitizeWaterAnim(ok)).toBe(ok)
   })
-  it('set/get: выбор запоминается; «по умолчанию» не засоряет хранилище', () => {
+  it('set/get: выбор запоминается явно (и «волна» тоже); «По теме» (auto) снимает выбор', () => {
     setWaterAnim('drops')
     expect(localStorage.getItem(WATER_ANIM_KEY)).toBe('drops')
     expect(getWaterAnim()).toBe('drops')
     setWaterAnim('wave')
+    expect(localStorage.getItem(WATER_ANIM_KEY)).toBe('wave') // явный выбор главнее темы, даже если он совпадает со значением по умолчанию
+    expect(getWaterAnimChoice()).toBe('wave')
+    setWaterAnim('auto')
     expect(localStorage.getItem(WATER_ANIM_KEY)).toBeNull()
+    expect(getWaterAnimChoice()).toBe('auto')
     localStorage.setItem(WATER_ANIM_KEY, 'не-вариант')
     expect(getWaterAnim()).toBe('wave')
+    expect(getWaterAnimChoice()).toBe('auto')
   })
   it('хранилище недоступно: не падает, остаётся значение по умолчанию', () => {
     const spy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
@@ -64,6 +70,44 @@ describe('выбор варианта (lib/waterAnim.ts)', () => {
   })
   it('копии lib одинаковы в шапке и Дашборде (страж)', () => {
     expect(read('src/lib/waterAnim.ts')).toBe(read('../web-dashboard/src/lib/waterAnim.ts'))
+  })
+})
+
+describe('анимация воды у большой темы (BACKLOG 55.5, срез 1)', () => {
+  const setTheme = (k: string | null) => {
+    document.documentElement.className = k ? `theme-${k}` : ''
+  }
+  afterEach(() => setTheme(null))
+
+  it('в THEME_WATER только настоящие варианты, и темы-ключи — большие темы из CHAR', () => {
+    for (const [k, v] of Object.entries(THEME_WATER)) expect((WATER_ANIMS as readonly string[]).includes(v), k).toBe(true)
+    const src = read('../scripts/themes_data.py')
+    const chars = [...src.slice(src.indexOf('\nCHAR = {'), src.indexOf('\nassert all(k in P for k in CHAR)')).matchAll(/^    '(\w+)': dict\(/gm)].map((m) => m[1])
+    for (const k of Object.keys(THEME_WATER)) expect(chars, k).toContain(k)
+    expect(new Set(Object.values(THEME_WATER)).size).toBeGreaterThanOrEqual(2) // темы действительно различаются
+  })
+  it('ничего не выбрано → играет вариант темы; обычная тема → волна', () => {
+    const [themed] = Object.entries(THEME_WATER).find(([, v]) => v !== 'wave')!
+    setTheme(themed)
+    expect(getWaterAnim()).toBe(THEME_WATER[themed])
+    expect(getWaterAnimChoice()).toBe('auto')
+    setTheme('dark')
+    expect(getWaterAnim()).toBe('wave')
+    setTheme(null)
+    expect(getWaterAnim()).toBe('wave')
+  })
+  it('ручной выбор главнее темы — и конкретный вариант, и явная «волна»', () => {
+    const [themed] = Object.entries(THEME_WATER).find(([, v]) => v !== 'wave')!
+    setTheme(themed)
+    setWaterAnim('wave')
+    expect(getWaterAnim()).toBe('wave')
+    setWaterAnim(THEME_WATER[themed] === 'drops' ? 'ripple' : 'drops')
+    expect(getWaterAnim()).not.toBe(THEME_WATER[themed])
+    setWaterAnim('auto')
+    expect(getWaterAnim()).toBe(THEME_WATER[themed])
+  })
+  it('копии themeWater.ts одинаковы в шапке и Дашборде (генерируются вместе)', () => {
+    expect(read('src/lib/themeWater.ts')).toBe(read('../web-dashboard/src/lib/themeWater.ts'))
   })
 })
 
@@ -166,12 +210,22 @@ describe('«Настройки»: анимация воды', () => {
     await flushPromises()
     return w
   }
-  it('список из трёх вариантов с подписями, по умолчанию «Волна (спокойная)»', async () => {
+  it('список: «По теме» и три варианта; по умолчанию выбрано «По теме» (на обычной теме играет волна)', async () => {
     const w = await open()
     const sel = w.find('[data-test="water-anim-select"]')
-    expect(sel.findAll('option').map((o) => o.attributes('value'))).toEqual(['wave', 'drops', 'ripple'])
-    expect((sel.element as HTMLSelectElement).value).toBe('wave')
+    expect(sel.findAll('option').map((o) => o.attributes('value'))).toEqual(['auto', 'wave', 'drops', 'ripple'])
+    expect((sel.element as HTMLSelectElement).value).toBe('auto')
+    expect(sel.find('option[value="auto"]').text()).toBe('По теме')
     expect(sel.find('option[value="wave"]').text()).toBe('Волна (спокойная)')
+    w.unmount()
+  })
+  it('«По теме» после ручного выбора снимает его; явная «волна» запоминается', async () => {
+    const w = await open()
+    const sel = w.find('[data-test="water-anim-select"]')
+    await sel.setValue('wave')
+    expect(localStorage.getItem(WATER_ANIM_KEY)).toBe('wave')
+    await sel.setValue('auto')
+    expect(localStorage.getItem(WATER_ANIM_KEY)).toBeNull()
     w.unmount()
   })
   it('выбор запоминается и сразу проигрывается выбранный вариант', async () => {
