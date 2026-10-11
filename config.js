@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.78";
+const SITE_VERSION = "4.79";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.79", date: "2026-10-11 07:13", changes: [
+        "«Кастомизация»: страница разбита на вкладки — Темы, Маркеры графиков, Заставка, Огонёк серии, Рамки аватарки, Спидометры и другие разделы; открыт один раздел за раз. Последняя вкладка «Все» возвращает прежнюю длинную ленту. Выбранная вкладка запоминается."
+    ]},
     { version: "4.78", date: "2026-10-11 04:12", changes: [
         "Тренировки: «Добавить запись» без окна теперь и на вкладке «Карта мышц» (блок «Ваши упражнения») и в деревьях прогрессии — строка раскрывается прямо под упражнением или ступенью. «Подробно…» открывает прежнее окно; у упражнений с левой/правой стороной по-прежнему окно. Без миграций."
     ]},
@@ -2044,6 +2047,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.79", date: "2026-10-11 07:13", changes: [
+        "Customization: the page is split into tabs — Themes, Chart markers, Loading screen, Streak flame, Avatar frames, Gauges and the other sections; one section is shown at a time. The last tab, All, brings back the old long list. The chosen tab is remembered."
+    ]},
     { version: "4.78", date: "2026-10-11 04:12", changes: [
         "Workouts: \"Log entry\" without a window now also works on the Muscle map tab (the \"Your exercises\" block) and in the progression trees — a row unfolds right under the exercise or step. \"Details…\" opens the old window; exercises with left/right sides still use the window. No migrations."
     ]},
