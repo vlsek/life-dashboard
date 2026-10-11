@@ -67,7 +67,7 @@
 <!-- Каждый агент правит ТОЛЬКО свой блок. Блоки разделены пустой строкой намеренно (меньше конфликтов). -->
 
 ### Агент 1
-— свободен —
+BACKLOG 56.1 / 53.2 срез 3 «ещё два вида спидометра дня» (владелец: «новые спидометры прогресса дня»). Предметы `day_ticks` («Циферблат», 150) и `day_gradient` («Градиентное кольцо», 250), миграция 071 (номер после fetch). Трогаю: `web-customization` (реестр, rarity, i18n, `DayGaugePreview.vue`, `dayGauge.ts`), `web-header` (`DayWeekBadge.vue`, `dayGauge.ts`), `web-dashboard` (`AvatarProgress.vue`, `HeaderProgressBadge.vue`, `dayGauge.ts`). Файлы тем/пламени/графиков не трогаю.
 
 ### Агент 2
 BACKLOG 48.2 «Профиль друга: онлайн / был N назад», СРЕЗ 1. МИГРАЦИЯ 069 (применяет владелец; до применения код молча ничего не показывает): `profiles.last_seen_at`, `profiles.show_online` (по умолчанию true — «скрыть, что я онлайн» = выключатель), RPC `touch_last_seen()` (не чаще раза в минуту) и `get_friends_presence()` (только друзья из `get_friend_ids()`, только у кого `show_online`). ТРОГАЮ: `migrations/069_last_seen.sql` + сценарий `scripts/sql_harness/scenario_069.sql`; `web-header/src` (новый `lib/presence.ts` — отметка раз в ~2 мин при открытой вкладке; выключатель «Показывать друзьям, что я в сети» в `components/SettingsModal.vue` + i18n); `web-community/src` (карточка друга и сводка друга: «онлайн» / «был(а) N назад», `lib/presence.ts` + i18n); тесты; пересборка `header-widgets/` и `community/`. Не трогаю чужое: у агента 1 шапка (`achievementWatcher.ts`, `main.ts` — я добавлю только свой вызов отдельной строкой), у агента 3 — `web-customization`. С: 2026-10-11 04:10.
