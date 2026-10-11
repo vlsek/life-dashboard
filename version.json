@@ -1,6 +1,13 @@
 {
-  "version": "4.82",
+  "version": "4.83",
   "en": [
+    {
+      "version": "4.83",
+      "date": "2026-10-11 07:26",
+      "changes": [
+        "Drink-saved animation: three new variants — Bubbles, Pour and Splash (six in total, all free). Customization has a new Water animation tab: pick a variant or By theme, and it plays right after you choose. The choice is shared with the header Settings."
+      ]
+    },
     {
       "version": "4.82",
       "date": "2026-10-11 08:30",
@@ -3441,6 +3448,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.83",
+      "date": "2026-10-11 07:26",
+      "changes": [
+        "Анимация «выпитое записалось»: три новых варианта — «Пузырьки», «Струя» и «Всплеск» (всего шесть, все бесплатные). В «Кастомизации» появилась вкладка «Анимация воды»: выбор варианта или «По теме», после выбора анимация сразу проигрывается. Выбор общий с «Настройками» шапки."
+      ]
+    },
     {
       "version": "4.82",
       "date": "2026-10-11 08:30",

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.82";
+const SITE_VERSION = "4.83";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.83", date: "2026-10-11 07:26", changes: [
+        "Анимация «выпитое записалось»: три новых варианта — «Пузырьки», «Струя» и «Всплеск» (всего шесть, все бесплатные). В «Кастомизации» появилась вкладка «Анимация воды»: выбор варианта или «По теме», после выбора анимация сразу проигрывается. Выбор общий с «Настройками» шапки."
+    ]},
     { version: "4.82", date: "2026-10-11 08:30", changes: [
         "Новый режим «Пауза: отпуск / болезнь» (Глобальные настройки → «Пауза»). Выберите «Отпуск» или «Болезнь» и последний день паузы — до 30 дней, начиная с сегодняшнего (задним числом включить нельзя). На эти дни серии и недельный прогресс замораживаются: серия не рвётся и не растёт, метрики не считаются пропущенными. В шапке появляется значок паузы (нажмите — настройки), закончить её можно досрочно в тех же настройках. Нужна миграция 070 (владелец применяет); пока её нет, раздел просто не показывается."
     ]},
@@ -2056,6 +2059,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.83", date: "2026-10-11 07:26", changes: [
+        "Drink-saved animation: three new variants — Bubbles, Pour and Splash (six in total, all free). Customization has a new Water animation tab: pick a variant or By theme, and it plays right after you choose. The choice is shared with the header Settings."
+    ]},
     { version: "4.82", date: "2026-10-11 08:30", changes: [
         "New «Pause: vacation / illness» mode (Global settings → «Pause»). Pick «Vacation» or «Illness» and the last day of the pause — up to 30 days, starting today (it cannot be backdated). For those days streaks and weekly progress freeze: a streak does not break and does not grow, and metrics are not counted as missed. A pause icon appears in the header (tap it for the settings); you can end the pause early in the same settings. Needs migration 070 (owner applies); without it the section is simply hidden."
     ]},
