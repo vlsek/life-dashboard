@@ -4,6 +4,8 @@ import App from './App.vue'
 import SectionAchievements from './components/SectionAchievements.vue'
 import { sb } from './lib/supabase'
 import { loadUnlockedKeys, sectionFor } from './lib/sectionAchievements'
+import AchievementToast from './components/AchievementToast.vue'
+import { startAchievementWatcher, WATCH_SKIP, type WatchItem } from './lib/achievementWatcher'
 
 // Точка входа глобального хедера (BACKLOG 2.3). Подключается на странице одним
 // <script type="module" src="/header-widgets/header.js"></script>. Ждёт, пока страница (Vue AppShell) нарисует
@@ -64,9 +66,45 @@ async function mountSectionAchievements() {
   }
 }
 
+// BACKLOG 52.1 срез 2: поздравление о новом достижении на любой странице (фоновая проверка + карточка внизу). Несколько подряд склеиваются в один список.
+let toastItems: WatchItem[] = []
+let toastApp: ReturnType<typeof createApp> | null = null
+function showAchievementToast(items: WatchItem[]) {
+  const seen = new Set(toastItems.map((i) => i.key))
+  toastItems = [...toastItems, ...items.filter((i) => !seen.has(i.key))]
+  toastApp?.unmount()
+  document.getElementById('gh-ach-toast')?.remove()
+  ensureStyle()
+  const host = document.createElement('div')
+  host.id = 'gh-ach-toast'
+  document.body.appendChild(host)
+  toastApp = createApp(AchievementToast, {
+    items: toastItems,
+    onClose: () => {
+      toastApp?.unmount()
+      toastApp = null
+      toastItems = []
+      host.remove()
+    },
+  })
+  toastApp.mount(host)
+}
+
+async function startWatcher() {
+  if (WATCH_SKIP.test(location.pathname)) return
+  try {
+    const { data } = await sb.auth.getSession()
+    if (!data.session) return
+    startAchievementWatcher(showAchievementToast)
+  } catch {
+    /* без поздравления на странице — не страшно */
+  }
+}
+
 function start() {
   if (SKIP.test(location.pathname)) return
   void mountSectionAchievements()
+  void startWatcher()
   const found = document.getElementById('topbar-right')
   if (found) return mount(found)
   // AppShell рисуется после загрузки данных страницы — ждём появления, но не вечно (30 с)

@@ -450,3 +450,15 @@ html.gh-has-secach #app { height: auto; min-height: 100%; }
 .gh-secach-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; color: var(--text-dim, #999); }
 .gh-secach-done { color: var(--accent, #6aa9ff); }
 .gh-secach-link { display: inline-block; margin-top: 8px; color: var(--accent, #6aa9ff); text-decoration: none; }
+
+/* Поздравление о новом достижении на любой странице (BACKLOG 52.1 срез 2) */
+.gh-achtoast { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 60; width: min(92vw, 340px); box-sizing: border-box; padding: 14px 16px; border: 1px solid var(--accent, #6c8cff); border-radius: 14px; background: var(--bg-card, #1e1e1e); color: var(--text, #eee); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5); text-align: center; animation: gh-achtoast-in 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+.gh-achtoast-x { position: absolute; top: 4px; right: 8px; background: none; border: 0; color: var(--text-dim, #999); font-size: 20px; line-height: 1; cursor: pointer; min-height: 0; padding: 4px; }
+.gh-achtoast-title { font-weight: 600; color: var(--accent, #6c8cff); margin-bottom: 6px; }
+.gh-achtoast-list { list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.gh-achtoast-name { display: block; font-weight: 500; }
+.gh-achtoast-reward { display: block; font-size: 12px; color: var(--text-dim, #999); }
+.gh-achtoast-open { display: inline-block; padding: 6px 14px; border-radius: 8px; background: var(--accent, #6c8cff); color: var(--accent-text, #fff); text-decoration: none; font-size: 14px; }
+@keyframes gh-achtoast-in { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+html[data-motion='off'] .gh-achtoast { animation: none; }
+@media (prefers-reduced-motion: reduce) { .gh-achtoast { animation: none; } }
