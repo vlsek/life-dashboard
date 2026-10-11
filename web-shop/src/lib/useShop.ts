@@ -28,6 +28,7 @@ export function useShop() {
   const archived = ref<ShopItem[]>([])
   const balance = ref<{ total: number; spent: number; bonus?: number; balance: number } | null>(null)
   const error = ref<string | null>(null)
+  const createdAt = ref<string | null>(null) // дата регистрации — для «справедливой цены» по среднему заработку (58.4)
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -39,6 +40,7 @@ export function useShop() {
     }
     const userId = session.user.id
     const userEmail = session.user.email ?? null
+    createdAt.value = session.user.created_at ?? null
 
     const { data: profile } = await sb.from('profiles').select('onboarded').eq('user_id', userId).maybeSingle()
     if (!profile?.onboarded) {
@@ -211,5 +213,5 @@ export function useShop() {
     return data.publicUrl
   }
 
-  return { auth, items, archived, balance, error, init, addItem, updateItem, buyItem, transferArchived, deleteItem, uploadImage }
+  return { auth, items, archived, balance, createdAt, error, init, addItem, updateItem, buyItem, transferArchived, deleteItem, uploadImage }
 }

@@ -3,9 +3,10 @@ import { ref } from 'vue'
 import { t } from '../lib/i18n'
 import { friendlyError } from '../lib/friendlyError'
 import { DEFAULT_SPARKS_COST, rubPerSpark, rubToSparks, sparksMode } from '../lib/sparks'
+import { SCALES, suggestPrice, type ScaleId } from '../lib/priceScale'
 import type { ShopItem, ShopItemFormInput } from '../lib/types'
 
-const props = defineProps<{ existing: ShopItem | null; uploadImage: (file: File) => Promise<string | null> }>()
+const props = defineProps<{ existing: ShopItem | null; uploadImage: (file: File) => Promise<string | null>; dailyRate?: number }>()
 const emit = defineEmits<{ close: []; save: [res: ShopItemFormInput] }>()
 
 const name = ref(props.existing?.name ?? '')
@@ -16,6 +17,12 @@ const rub = ref<number | null>(null)
 function onRub() {
   const n = rubToSparks(Number(rub.value))
   if (n > 0) cost.value = n
+}
+// Масштаб покупки (58.4): только у НОВОЙ вещи; выбор подставляет «справедливую» цену, которую можно поправить руками
+const scale = ref<ScaleId | null>(null)
+function pickScale(id: ScaleId) {
+  scale.value = id
+  cost.value = suggestPrice(id, props.dailyRate ?? 0)
 }
 const imageUrl = ref<string | null>(props.existing?.image_url ?? null)
 const uploading = ref(false)
@@ -55,6 +62,17 @@ function save() {
 
       <label class="mt-2 block text-sm">{{ t('shop_field_link') }}</label>
       <input v-model="link" type="text" class="w-full" placeholder="https://..." />
+
+      <div v-if="!props.existing" class="mt-2" data-testid="scale">
+        <label class="block text-sm">{{ t('shop_scale_label') }}</label>
+        <div class="mt-1 flex flex-col gap-1" role="radiogroup" :aria-label="t('shop_scale_label')">
+          <button v-for="s in SCALES" :key="s.id" type="button" role="radio" :aria-checked="scale === s.id" class="secondary flex items-center justify-between gap-2 px-2 py-1 text-left text-sm" :style="scale === s.id ? 'border-color: var(--accent); color: var(--accent)' : ''" :data-scale="s.id" data-testid="scale-step" @click="pickScale(s.id)">
+            <span><b>{{ t(('shop_scale_' + s.id) as 'shop_scale_tiny') }}</b> <span class="dim text-xs">— {{ t(('shop_scale_' + s.id + '_ex') as 'shop_scale_tiny_ex') }}</span></span>
+            <span class="dim whitespace-nowrap text-xs">{{ suggestPrice(s.id, props.dailyRate ?? 0) }}</span>
+          </button>
+        </div>
+        <p class="dim mb-0 mt-1 text-xs">{{ t('shop_scale_hint') }}</p>
+      </div>
 
       <label class="mt-2 block text-sm">{{ sparksMode ? t('shop_field_cost_sparks') : t('shop_field_cost') }}</label>
       <input v-model.number="cost" type="number" class="w-full" data-testid="cost-input" />

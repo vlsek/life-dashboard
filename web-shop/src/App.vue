@@ -9,6 +9,7 @@ import ShopIdea from './components/ShopIdea.vue'
 import ShopRow from './components/ShopRow.vue'
 import ArchivedRow from './components/ArchivedRow.vue'
 import { sparksMode } from './lib/sparks'
+import { dailyRate } from './lib/priceScale'
 import ViewSwitch from './components/ViewSwitch.vue'
 import { useShop } from './lib/useShop'
 import { t } from './lib/i18n'
@@ -18,7 +19,7 @@ import type { ShopItem, ShopItemFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
 
-const { auth, items, archived, balance, error, init, addItem, updateItem, buyItem, transferArchived, deleteItem, uploadImage } = useShop()
+const { auth, items, archived, balance, createdAt, error, init, addItem, updateItem, buyItem, transferArchived, deleteItem, uploadImage } = useShop()
 onMounted(init)
 
 // Вид страницы (BACKLOG 392): «Витрина» или «Список с копилкой», запоминается на устройстве.
@@ -150,6 +151,6 @@ async function onUpload(file: File): Promise<string | null> {
       </div>
     </section>
 
-    <ItemForm v-if="formTarget" :existing="formTarget === 'new' ? null : formTarget" :upload-image="onUpload" @close="formTarget = null" @save="onSaveForm" />
+    <ItemForm v-if="formTarget" :existing="formTarget === 'new' ? null : formTarget" :daily-rate="dailyRate(balance?.total, createdAt, sparksMode)" :upload-image="onUpload" @close="formTarget = null" @save="onSaveForm" />
   </main>
 </template>
