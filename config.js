@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.97";
+const SITE_VERSION = "4.98";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.98", date: "2026-10-11 13:27", changes: [
+        "Карта мышц: женская модель стала заметно женственнее — узкие плечи, тонкая талия, широкие бёдра, тоньше шея и руки. «Кастомизация»: у каждой анимации воды теперь живой пример — маленький стакан с повторяющейся анимацией, и в плитках раздела, и в карточках платных предметов."
+    ]},
     { version: "4.97", date: "2026-10-11 10:21", changes: [
         "Кастомизация, «Анимация воды»: у каждого варианта появилась своя кнопка «Показать» — она проигрывает именно эту анимацию (стакан наполняется по центру экрана), ничего не меняя в вашем выборе. Работает у «По теме» (показывает анимацию текущей темы), у шести бесплатных вариантов и у платных (дождь, прилив, искры) — можно посмотреть до покупки. Без миграций."
     ]},
@@ -2101,6 +2104,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.98", date: "2026-10-11 13:27", changes: [
+        "Muscle map: the female body model is now noticeably more feminine — narrow shoulders, a slim waist, wider hips, a slimmer neck and arms. Customization: every water animation now has a live example — a small glass replaying the animation, both in the section tiles and on the paid item cards."
+    ]},
     { version: "4.97", date: "2026-10-11 10:21", changes: [
         "Customization, \"Water animation\": every variant now has its own \"Show\" button that plays exactly that animation (the glass fills in the middle of the screen) without changing your choice. It works for \"By theme\" (shows the current theme animation), the six free variants and the paid ones (rain, tide, sparkle) — so you can preview before buying. No migrations."
     ]},

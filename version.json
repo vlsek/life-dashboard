@@ -1,6 +1,13 @@
 {
-  "version": "4.97",
+  "version": "4.98",
   "en": [
+    {
+      "version": "4.98",
+      "date": "2026-10-11 13:27",
+      "changes": [
+        "Muscle map: the female body model is now noticeably more feminine — narrow shoulders, a slim waist, wider hips, a slimmer neck and arms. Customization: every water animation now has a live example — a small glass replaying the animation, both in the section tiles and on the paid item cards."
+      ]
+    },
     {
       "version": "4.97",
       "date": "2026-10-11 10:21",
@@ -3546,6 +3553,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.98",
+      "date": "2026-10-11 13:27",
+      "changes": [
+        "Карта мышц: женская модель стала заметно женственнее — узкие плечи, тонкая талия, широкие бёдра, тоньше шея и руки. «Кастомизация»: у каждой анимации воды теперь живой пример — маленький стакан с повторяющейся анимацией, и в плитках раздела, и в карточках платных предметов."
+      ]
+    },
     {
       "version": "4.97",
       "date": "2026-10-11 10:21",
