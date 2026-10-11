@@ -41,4 +41,5 @@ export const THEME_PREVIEW: Record<ThemeKey, ThemePreview> = {
   phosphor: { bg: '#000000', card: '#0d0d0d', accent: '#00ff66', text: '#b8f5c8', success: '#5dff9a', water: '#5fd8ff', kind: 'dark' },
   nightfall: { bg: '#1a1b26', card: '#24283b', accent: '#7aa2f7', text: '#c0caf5', success: '#9ece6a', water: '#63b3f5', kind: 'dark' },
   velvet: { bg: '#1e1e2e', card: '#252536', accent: '#fab387', text: '#cdd6f4', success: '#a6e3a1', water: '#63b3f5', kind: 'dark' },
+  frost: { bg: '#2e3440', card: '#3b4252', accent: '#88c0d0', text: '#eceff4', success: '#a3be8c', water: '#7cc4ff', kind: 'dark' },
 }

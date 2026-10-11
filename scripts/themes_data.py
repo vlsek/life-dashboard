@@ -46,6 +46,8 @@ P={
  'nightfall':('dark','🌌 Tokyo Nightfall','🌌 Токийские сумерки',dict(bg='#1a1b26',card='#24283b',border='#414868',text='#c0caf5',dim='#9aa5ce',accent='#7aa2f7',at='#1a1b26',ok='#9ece6a',bad='#f7768e',hist='#9ece6a',**DARK_W)),
  # --- BACKLOG 50.1д: пятая «большая тема» (пастельный бархат: уютно, без свечения, крупные скругления). Сестра цветовой mocha («Орхидея») — персиковый акцент вместо лилового ---
  'velvet':('dark','🍑 Velvet Dusk','🍑 Бархатные сумерки',dict(bg='#1e1e2e',card='#252536',border='#4a4c63',text='#cdd6f4',dim='#a6adc8',accent='#fab387',at='#1e1e2e',ok='#a6e3a1',bad='#f38ba8',hist='#a6e3a1',**DARK_W)),
+ # --- BACKLOG 50.1ж: шестая «большая тема» (арктический минимализм: плоско, матово, высокий контраст). «Большая» сестра цветовой nord: красный алерта осветлён (исходный #bf616a давал 2.46:1), граница заметнее ---
+ 'frost':('dark','🧊 Nord Frost','🧊 Арктический иней',dict(bg='#2e3440',card='#3b4252',border='#667391',text='#eceff4',dim='#b8c2d4',accent='#88c0d0',at='#2e3440',ok='#a3be8c',bad='#e8838d',hist='#a3be8c',**NORD_W)),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
 
@@ -164,6 +166,33 @@ CHAR = {
   --shadow-card: none;
   --shadow-active: none;''',
         reduced='  --default-transition-duration: 0s;',
+    ),
+    # Арктический минимализм: плоские карточки БЕЗ теней, малые скругления, едва заметная матовая зернистость фона (крошечный data-URI тайл
+    # с feTurbulence — растеризуется один раз, не фильтр на весь экран; без `;` внутри, чтобы не ломать разбор токенов), гладкие анимации.
+    # При `prefers-contrast: more` зернистость выключается.
+    'frost': dict(
+        tw='''  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-2xl: 10px;
+  --shadow-card: none;
+  --shadow-active: none;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  --bg-pattern-size: 120px 120px;
+  --default-transition-duration: 0.18s;
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);''',
+        root='''  --radius-card: 8px;
+  --radius-modal: 8px;
+  --radius-control: 6px;
+  --shadow-card: none;
+  --shadow-active: none;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  --bg-pattern-size: 120px 120px;''',
+        rules=[
+            (['body'], 'background-image: var(--bg-pattern); background-size: var(--bg-pattern-size);'),
+        ],
+        reduced='  --default-transition-duration: 0s;',
+        contrast='  --bg-pattern: none;',
     ),
 }
 assert all(k in P for k in CHAR)

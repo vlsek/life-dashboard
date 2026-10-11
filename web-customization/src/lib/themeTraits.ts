@@ -8,4 +8,5 @@ export const THEME_TRAITS: Record<string, ThemeTrait[]> = {
   phosphor: ['palette', 'corners_sharp', 'mono_all', 'scanlines', 'snappy_anim'],
   nightfall: ['palette', 'soft_shadows', 'active_outline', 'smooth_anim'],
   velvet: ['palette', 'corners_soft', 'soft_shadows', 'neon_glow', 'bouncy_anim'],
+  frost: ['palette', 'soft_shadows', 'neon_glow', 'dot_pattern', 'smooth_anim'],
 }

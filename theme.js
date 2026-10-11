@@ -27,6 +27,7 @@ const THEME_KEYS = {
     phosphor: "theme_phosphor",
     nightfall: "theme_nightfall",
     velvet: "theme_velvet",
+    frost: "theme_frost",
 };
 
 // Цвета фона по темам — держим в синхронизации с --bg из style.css
@@ -59,6 +60,7 @@ const THEME_BG_COLORS = {
     phosphor: "#000000",
     nightfall: "#1a1b26",
     velvet: "#1e1e2e",
+    frost: "#2e3440",
 };
 
 function getTheme() {

@@ -682,6 +682,32 @@ html.theme-velvet {
   --chart-none: #9aa0a6;
   --chart-other: #707479;
 }
+
+html.theme-frost {
+  --bg: #2e3440;
+  --bg-card: #3b4252;
+  --border: #667391;
+  --text: #eceff4;
+  --text-dim: #b8c2d4;
+  --accent: #88c0d0;
+  --accent-text: #2e3440;
+  --success: #a3be8c;
+  --danger: #e8838d;
+  --hist-ok: #a3be8c;
+  --water-top: #7cc4ff;
+  --water-bottom: #4a9be8;
+  --water-line: #6bb6f5;
+  --chart-1: #88c0d0;
+  --chart-2: #ec7065;
+  --chart-3: #e9b54e;
+  --chart-4: #49e999;
+  --chart-5: #bc77ee;
+  --chart-6: #eb5caf;
+  --chart-7: #9289f1;
+  --chart-8: #5c97eb;
+  --chart-none: #9aa0a6;
+  --chart-other: #898e93;
+}
 html.theme-nord,
 html.theme-mocha,
 html.theme-amoled,
@@ -698,7 +724,8 @@ html.theme-emerald,
 html.theme-moonlight,
 html.theme-phosphor,
 html.theme-nightfall,
-html.theme-velvet { color-scheme: dark; }
+html.theme-velvet,
+html.theme-frost { color-scheme: dark; }
 html.theme-mint,
 html.theme-sepia,
 html.theme-solarlight,
@@ -796,6 +823,23 @@ html.theme-velvet {
   --radius-control: 12px;
   --shadow-card: none;
   --shadow-active: none;
+}
+
+/* большая тема: frost */
+html.theme-frost {
+  --radius-card: 8px;
+  --radius-modal: 8px;
+  --radius-control: 6px;
+  --shadow-card: none;
+  --shadow-active: none;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  --bg-pattern-size: 120px 120px;
+}
+html.theme-frost body { background-image: var(--bg-pattern); background-size: var(--bg-pattern-size); }
+@media (prefers-contrast: more) {
+  html.theme-frost {
+    --bg-pattern: none;
+  }
 }
 /* design-tokens:end */
 

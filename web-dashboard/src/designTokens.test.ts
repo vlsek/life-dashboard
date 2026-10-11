@@ -127,10 +127,10 @@ describe('большая тема emerald: характер', () => {
   it('при prefers-reduced-motion анимации темы мгновенные (только у Tailwind-страниц)', () => {
     for (const d of pilots) expect(read(d + '/src/style.css')).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-emerald \{\s*--default-transition-duration: 0s;/)
   })
-  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet) — остальные темы не переопределены', () => {
+  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost) — остальные темы не переопределены', () => {
     for (const f of files) {
       const region = read(f).match(REGION)![0]
-      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet'])
+      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost'])
     }
   })
 })
@@ -303,5 +303,56 @@ describe('большая тема velvet: характер', () => {
     const css = read('web-dashboard/src/style.css')
     const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
     expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).toContain('velvet')
+  })
+})
+
+// BACKLOG 50.1ж: шестая «большая тема» Nord Frost — плоско (без теней), малые скругления, едва заметная матовая зернистость, гладкие анимации.
+describe('большая тема frost: характер', () => {
+  const block = (css: string): string => {
+    const m = css.match(/\/\* большая тема: frost \*\/\nhtml\.theme-frost \{[^}]*\}/)
+    expect(m, 'нет блока характера').not.toBeNull()
+    return m![0]
+  }
+  for (const d of pilots) {
+    it(d + ': малые скругления, без теней, зернистость data-URI, гладкая анимация', () => {
+      const css = read(d + '/src/style.css')
+      const b = block(css)
+      expect([decl(b, '--radius-md'), decl(b, '--radius-lg'), decl(b, '--radius-xl'), decl(b, '--radius-2xl')]).toEqual(['4px', '6px', '8px', '10px'])
+      expect([decl(b, '--shadow-card'), decl(b, '--shadow-active')]).toEqual(['none', 'none'])
+      expect(decl(b, '--bg-pattern')).toContain('data:image/svg+xml')
+      expect(decl(b, '--bg-pattern-size')).toBe('120px 120px')
+      expect(decl(b, '--default-transition-timing-function')).toBe('cubic-bezier(0.4, 0, 0.2, 1)')
+      expect(css).toMatch(/@media \(prefers-contrast: more\) \{\s*html\.theme-frost \{\s*--bg-pattern: none;/)
+      expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-frost \{\s*--default-transition-duration: 0s;/)
+    })
+  }
+  it('корень: 8/8/6, без теней, зернистость', () => {
+    const b = block(read('style.css'))
+    expect([decl(b, '--radius-card'), decl(b, '--radius-modal'), decl(b, '--radius-control')]).toEqual(['8px', '8px', '6px'])
+    expect(decl(b, '--bg-pattern')).toContain('data:image/svg+xml')
+  })
+  it('тайл зернистости крошечный (< 2 КБ) и без «;» внутри — токен не ломается при разборе', () => {
+    const b = block(read('web-dashboard/src/style.css'))
+    const v = decl(b, '--bg-pattern')!
+    expect(v.length).toBeLessThan(2048)
+    expect(v).not.toContain(';')
+  })
+  it('правило одно: зернистость на body, только под html.theme-frost', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      const lines = region.split('\n').filter((l) => l.startsWith('html.theme-frost ') && l.includes('{ '))
+      expect(lines, f).toEqual(['html.theme-frost body { background-image: var(--bg-pattern); background-size: var(--bg-pattern-size); }'])
+    }
+  })
+  it('красный алерта осветлён: контраст к карточке ≥ 3:1 (исходный Nord #bf616a давал 2.46:1), граница заметнее, чем у nord', () => {
+    const css = read('web-dashboard/src/style.css')
+    const get = (key: string, name: string) => css.match(new RegExp('html\\.theme-' + key + ' \\{[^}]*--' + name + ':\\s*(#[0-9a-fA-F]{6})'))![1].toLowerCase()
+    const lum = (h: string) => {
+      const c = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((x) => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4))
+      return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+    }
+    const cr = (a: string, b: string) => (Math.max(lum(a), lum(b)) + 0.05) / (Math.min(lum(a), lum(b)) + 0.05)
+    expect(cr(get('frost', 'danger'), get('frost', 'bg-card'))).toBeGreaterThanOrEqual(3)
+    expect(cr(get('frost', 'border'), get('frost', 'bg-card'))).toBeGreaterThan(cr(get('nord', 'border'), get('nord', 'bg-card')))
   })
 })
