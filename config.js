@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.73";
+const SITE_VERSION = "4.74";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.74", date: "2026-10-11 07:07", changes: [
+        "Исправлено: блок «Какие достижения тут можно получить» внизу страницы больше не налезает на содержимое (подписи графиков) — теперь он идёт строго под ним."
+    ]},
     { version: "4.73", date: "2026-10-11 04:05", changes: [
         "Графики: подсказка по точке. Наведите мышь на график, коснитесь его пальцем или листайте стрелками на клавиатуре — появится пунктирное перекрестие, кольцо вокруг точки и плашка с датой и значением (у метрик с особенностями подходов — ещё с разбивкой по ним). Escape скрывает подсказку. Сам график выглядит как раньше. Без миграций."
     ]},
@@ -2029,6 +2032,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.74", date: "2026-10-11 07:07", changes: [
+        "Fixed: the “Achievements you can earn here” block at the bottom of a page no longer overlaps the page content (chart labels) — it now sits right below it."
+    ]},
     { version: "4.73", date: "2026-10-11 04:05", changes: [
         "Charts: a point tooltip. Hover a chart with the mouse, touch it, or use the arrow keys — a dashed crosshair, a ring around the point and a tag with the date and value appear (for metrics with set variations, also the breakdown). Escape hides it. The chart itself looks as before. No migrations."
     ]},
