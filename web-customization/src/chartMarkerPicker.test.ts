@@ -50,3 +50,48 @@ describe('ChartMarkerPicker: выбор стиля маркеров график
     expect(readFileSync('src/lib/chartMarker.ts', 'utf-8')).toBe(readFileSync('../web-dashboard/src/lib/chartMarker.ts', 'utf-8'))
   })
 })
+
+describe('ChartLinePicker: выбор стиля линии (BACKLOG 55.2 срез 3)', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+  })
+
+  it('внутри раздела графиков: три карточки, по умолчанию «Обычная»; у «с областью» есть градиент, у «обычной» — нет', () => {
+    const w = mount(ChartMarkerPicker)
+    expect(w.find('[data-testid="line-picker"]').exists()).toBe(true)
+    expect(w.findAll('[data-testid^="line-"][data-active]')).toHaveLength(3)
+    expect(w.find('[data-testid="line-line"]').attributes('data-active')).toBe('true')
+    expect(w.find('[data-testid="line-area"] svg').html()).toContain('linearGradient')
+    expect(w.find('[data-testid="line-line"] svg').html()).not.toContain('Gradient')
+    expect(w.find('[data-testid="line-smooth"] svg').html()).toContain('stroke-linecap')
+    expect(w.find('[data-testid="line-area"]').text()).toContain('Плавная с областью')
+  })
+
+  it('выбор «Плавная» запоминается в chart_line; кнопка выбранного отключена; маркеры не затронуты', async () => {
+    const w = mount(ChartMarkerPicker)
+    await w.find('[data-testid="line-smooth"] [data-testid="line-choose"]').trigger('click')
+    expect(localStorage.getItem('chart_line')).toBe('smooth')
+    expect(w.find('[data-testid="line-smooth"]').attributes('data-active')).toBe('true')
+    expect(w.find('[data-testid="line-smooth"] button').attributes('disabled')).toBeDefined()
+    expect(localStorage.getItem('chart_marker')).toBeNull()
+  })
+
+  it('без хранилища — сообщение, выбор не меняется', async () => {
+    const w = mount(ChartMarkerPicker)
+    const spy = vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
+      throw new Error('denied')
+    })
+    try {
+      await w.find('[data-testid="line-area"] [data-testid="line-choose"]').trigger('click')
+    } finally {
+      spy.mockRestore()
+    }
+    expect(w.find('[data-testid="line-save-error"]').exists()).toBe(true)
+    expect(w.find('[data-testid="line-line"]').attributes('data-active')).toBe('true')
+  })
+
+  it('библиотека линии — точная копия из Дашборда (править там, затем scripts/apply_chart_marker.py)', () => {
+    expect(readFileSync('src/lib/chartLine.ts', 'utf-8')).toBe(readFileSync('../web-dashboard/src/lib/chartLine.ts', 'utf-8'))
+  })
+})

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { CHART_MARKERS, markerDefs, markerParts, previewSlices, readChartMarker, writeChartMarker, type ChartMarker } from '../lib/chartMarker'
+import ChartLinePicker from './ChartLinePicker.vue'
 import { t } from '../lib/i18n'
 
 // Выбор стиля маркеров-мини-диаграмм на графиках (BACKLOG 13:54; владелец 2026-10-10: «мне все варианты нравятся, давай добавим
@@ -31,6 +32,7 @@ const preview = (v: ChartMarker): string => {
 
 <template>
   <div data-testid="marker-picker">
+    <h4 class="mb-1 text-sm font-semibold">{{ t('cust_sub_markers') }}</h4>
     <p class="dim mb-2 text-xs">{{ t('cust_sec_markers_hint') }}</p>
     <p v-if="!saved" class="mb-2 text-xs" style="color: var(--danger, #e5484d)" role="alert" data-testid="marker-save-error">{{ t('cust_splash_save_error') }}</p>
     <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr))">
@@ -57,5 +59,7 @@ const preview = (v: ChartMarker): string => {
         </button>
       </div>
     </div>
+    <h4 class="mb-1 mt-5 text-sm font-semibold">{{ t('cust_sub_lines') }}</h4>
+    <ChartLinePicker />
   </div>
 </template>

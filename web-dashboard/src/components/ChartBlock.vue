@@ -12,6 +12,7 @@ import RecordBadge from './RecordBadge.vue'
 import { RECORDS_EVENT, formatRecordDate, formatRecordValue, recordsEnabled, type RecordInfo } from '../lib/records'
 import type { VariationRecord } from '../lib/variationChart'
 import { markerDefs, markerParts, nextMarkerUid, readChartMarker } from '../lib/chartMarker'
+import { lineDefs, readChartLine, runParts, type Pt } from '../lib/chartLine'
 
 const props = withDefaults(
   defineProps<{
@@ -64,6 +65,8 @@ function fmtChartLabel(iso: string): string {
 // Стиль маркеров-диаграмм (BACKLOG 13:54): выбирается в «Кастомизации» (localStorage `chart_marker`), по умолчанию — прежний плоский.
 const markerStyle = readChartMarker()
 const markerUid = nextMarkerUid()
+// Стиль линии (55.2 срез 3): обычная (прежние отрезки, по умолчанию) · сглаженная · сглаженная с областью; `localStorage.chart_line`.
+const lineStyle = readChartLine()
 
 function pieMarker(x: number, y: number, label: string, shares: VariationShare[]): string {
   const slices = pieSlices(shares, order.value, x, y, 6.5)
@@ -113,7 +116,7 @@ const innerSvg = computed<string | null>(() => {
   if (!g) return null
   const { w, h, pad, min, range, coords } = g
 
-  let svg = colored.value ? markerDefs(markerStyle, markerUid) : ''
+  let svg = (colored.value ? markerDefs(markerStyle, markerUid) : '') + lineDefs(lineStyle, markerUid, props.color)
 
   if (props.goalValue != null) {
     const gy = h - pad - ((props.goalValue - min) / range) * (h - pad * 2)
@@ -125,18 +128,28 @@ const innerSvg = computed<string | null>(() => {
 
   let lastReal: { x: number; y: number } | null = null
   let gapBetween = false
+  let run: Pt[] = [] // участок без пропусков — для сглаженных стилей
+  const flushRun = () => {
+    svg += runParts(lineStyle, run, props.color, h - pad, markerUid)
+    run = []
+  }
   for (const c of coords) {
     if (c.y == null) {
       if (lastReal) gapBetween = true
       continue
     }
     if (lastReal) {
-      const dash = gapBetween ? ` stroke-dasharray="5,4"` : ''
-      svg += `<line x1="${lastReal.x.toFixed(1)}" y1="${lastReal.y.toFixed(1)}" x2="${c.x.toFixed(1)}" y2="${c.y.toFixed(1)}" stroke="${props.color}" stroke-width="2.5"${dash} opacity="${gapBetween ? 0.55 : 1}" />`
+      if (lineStyle === 'line' || gapBetween) {
+        const dash = gapBetween ? ` stroke-dasharray="5,4"` : ''
+        if (lineStyle !== 'line') flushRun() // участок закончился на пропуске: пунктирный мостик остаётся прямым, как раньше
+        svg += `<line x1="${lastReal.x.toFixed(1)}" y1="${lastReal.y.toFixed(1)}" x2="${c.x.toFixed(1)}" y2="${c.y.toFixed(1)}" stroke="${props.color}" stroke-width="2.5"${dash} opacity="${gapBetween ? 0.55 : 1}" />`
+      }
     }
+    if (lineStyle !== 'line') run.push([c.x, c.y])
     lastReal = { x: c.x, y: c.y }
     gapBetween = false
   }
+  if (lineStyle !== 'line') flushRun()
 
   const labelEvery = Math.max(1, Math.ceil(coords.filter((c) => c.y != null).length / 12))
   let shown = 0
