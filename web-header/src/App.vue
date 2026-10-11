@@ -29,6 +29,7 @@ import { syncUnlockedThemes } from './lib/syncUnlockedThemes'
 import { syncUiSettings } from './lib/uiSettingsSync'
 import { syncWeekGauge, weekGaugeStyle } from './lib/useWeekGauge'
 import { syncDayGauge } from './lib/useDayGauge'
+import { syncWaterItem } from './lib/waterItemSync'
 import { pageKeyFor, readFavorites, saveFavoritesToProfile, syncFavoritesFromProfile, toggleFavorite, writeFavorites } from './lib/favorites'
 
 // panelOnly — режим для Дашборда: своя шапка (стакан, кольца) там уже есть, поэтому бандл даёт только правую панель.
@@ -58,6 +59,7 @@ onMounted(async () => {
   void sideProfile.load(uid, data.session?.user)
   void syncWeekGauge(uid) // вид спидометра недели из «Кастомизации» (BACKLOG 53.2)
   void syncDayGauge(uid) // вид спидометра дня из «Кастомизации» (BACKLOG 53.2 срез 2)
+  void syncWaterItem(uid) // надетая платная анимация воды (BACKLOG 54.9)
   void loadPauseState(uid).then((r) => (pause.value = r.state)) // значок «пауза включена» (BACKLOG 48.7)
   void syncUiSettings(uid) // настройки и оформление между устройствами (BACKLOG 48.3, миграция 064)
   void syncUnlockedThemes(uid) // какие темы-награды открыты (замок тем, v3.42)

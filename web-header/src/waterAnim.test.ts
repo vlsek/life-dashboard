@@ -260,3 +260,27 @@ describe('новые варианты (BACKLOG 54.8): пузырьки, стру
     expect(css).toMatch(/\.ws-bx \{ display: none/)
   })
 })
+
+describe('платные анимации воды (BACKLOG 54.9)', () => {
+  it('надетый предмет главнее ручного выбора и темы; снятый — возвращает прежнее', async () => {
+    const m = await import('./lib/waterAnim')
+    expect(m.parseWaterItem('water_rain')).toBe('rain')
+    expect(m.parseWaterItem('water_tide')).toBe('tide')
+    expect(m.parseWaterItem('water_sparkle')).toBe('sparkle')
+    expect(m.parseWaterItem('wave')).toBeNull()
+    expect(m.parseWaterItem(null)).toBeNull()
+    m.setWaterAnim('drops')
+    expect(m.getWaterAnim()).toBe('drops')
+    m.writeCachedWaterItem('tide')
+    expect(m.getWaterAnim()).toBe('tide')
+    m.writeCachedWaterItem(null)
+    expect(m.getWaterAnim()).toBe('drops')
+    expect(m.WATER_ANIMS).not.toContain('rain') // платные не попадают в бесплатный выбор «Настроек»
+  })
+  it('в CSS есть правила для rain/tide/sparkle, а базовое состояние новых элементов скрыто (без анимации ничего лишнего)', () => {
+    for (const v of ['rain', 'tide', 'sparkle']) expect(css, v).toContain(`data-variant="${v}"`)
+    expect(css).toMatch(/\.ws-rd \{ display: none; opacity: 0; \}/)
+    expect(css).toMatch(/\.ws-spark \{ display: none; opacity: 0;/)
+    expect(css).toMatch(/\.ws-stream \{ display: none; opacity: 0;/)
+  })
+})

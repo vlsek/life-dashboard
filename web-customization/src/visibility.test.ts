@@ -47,7 +47,7 @@ const mountPage = async () => {
   await flushPromises()
   return w
 }
-const cards = (w: ReturnType<typeof mount>) => w.findAll('[data-testid^="item-"]').filter((n) => /^item-(frame|collapse|week|day)_/.test(n.attributes('data-testid') || ''))
+const cards = (w: ReturnType<typeof mount>) => w.findAll('[data-testid^="item-"]').filter((n) => /^item-(frame|collapse|week|day|water)_/.test(n.attributes('data-testid') || ''))
 const themeCards = (w: ReturnType<typeof mount>) => w.findAll('[data-section="themes"] [data-testid^="theme-"]').filter((n) => /^theme-[a-z]+$/.test(n.attributes('data-testid') || '') && n.attributes('data-locked') !== undefined)
 const lockedThemes = Object.keys(THEME_UNLOCK)
 const chip = (w: ReturnType<typeof mount>, g: string) => w.find(`[data-testid="vis-${g}"]`)

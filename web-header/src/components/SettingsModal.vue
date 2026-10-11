@@ -7,7 +7,7 @@ import BlockOrderList from './BlockOrderList.vue'
 import PauseSection from './PauseSection.vue'
 import { UNLOCKED_THEMES_EVENT, isThemeLocked } from '../lib/themeUnlock'
 import WaterSavedAnim from './WaterSavedAnim.vue'
-import { WATER_ANIMS, getWaterAnimChoice, sanitizeWaterAnim, setWaterAnim, type WaterAnim } from '../lib/waterAnim'
+import { WATER_ANIMS, getWaterAnimChoice, readCachedWaterItem, sanitizeWaterAnim, setWaterAnim, type WaterAnim } from '../lib/waterAnim'
 import { useLayout } from '../lib/useLayout'
 import { friendlyError } from '../lib/friendlyError'
 import { ensureTrackWater, saveTrackWater, trackWater } from '../lib/waterTracking'
@@ -23,6 +23,7 @@ const lang = getLang()
 const theme = ref<ThemeKey>(getTheme())
 // Список тем: закрытые темы-награды (ещё не заслуженные) не показываем; уже включённая тема остаётся в списке всегда (отнимать её нельзя).
 // Анимация «записалось» при добавлении воды (BACKLOG 44.21): выбор варианта и кнопка «Показать» (проиграть сразу, не добавляя воду).
+const waterItem = readCachedWaterItem() // надета платная анимация воды из «Кастомизации» — она главнее выбора ниже (BACKLOG 54.9)
 const waterAnim = ref<WaterAnim | 'auto'>(getWaterAnimChoice()) // 'auto' — «по теме» (BACKLOG 55.5)
 const animPreviewTick = ref(0)
 const onWaterAnim = (e: Event) => {
@@ -159,6 +160,7 @@ async function changeLayout(next: LayoutItem[]) {
           </span>
         </label>
         <p class="gh-dim" style="margin: 2px 0 0 0; font-size: 12px">{{ t('hdr_water_anim_hint') }}</p>
+        <p v-if="waterItem" class="gh-dim" style="margin: 4px 0 0 0; font-size: 12px; color: var(--accent, #6c8cff)" data-test="water-anim-item-on">{{ t('hdr_water_anim_item_on') }}</p>
         <WaterSavedAnim :tick="animPreviewTick" />
       </template>
 

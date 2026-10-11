@@ -44,5 +44,17 @@ describe('WaterAnimPicker', () => {
     expect(read('src/lib/waterAnim.ts')).toBe(read('../web-dashboard/src/lib/waterAnim.ts'))
     expect(read('src/lib/themeWater.ts')).toBe(read('../web-dashboard/src/lib/themeWater.ts'))
     expect(read('src/components/WaterSavedAnim.vue')).toBe(read('../web-dashboard/src/components/WaterSavedAnim.vue'))
+    expect(read('src/lib/waterAnim.ts')).toBe(read('../web-header/src/lib/waterAnim.ts'))
+    expect(read('../web-header/src/lib/waterItemSync.ts')).toBe(read('../web-dashboard/src/lib/waterItemSync.ts'))
+  })
+
+  it('надета платная анимация из магазина — в разделе выбора появляется пояснение «она главнее»', () => {
+    const w1 = mount(WaterAnimPicker)
+    expect(w1.find('[data-testid="wateranim-item-on"]').exists()).toBe(false)
+    w1.unmount()
+    localStorage.setItem('site_water_anim', 'rain')
+    const w2 = mount(WaterAnimPicker)
+    expect(w2.find('[data-testid="wateranim-item-on"]').exists()).toBe(true)
+    w2.unmount()
   })
 })

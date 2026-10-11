@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import WaterSavedAnim from './WaterSavedAnim.vue'
-import { WATER_ANIMS, getWaterAnimChoice, setWaterAnim, type WaterAnim } from '../lib/waterAnim'
+import { WATER_ANIMS, getWaterAnimChoice, readCachedWaterItem, setWaterAnim, type WaterAnim } from '../lib/waterAnim'
 import { t } from '../lib/i18n'
 
 // Выбор анимации «выпитое записалось» (BACKLOG 54.8): «По теме» (по умолчанию: вариант большой темы, на обычных — волна) или один из шести
@@ -9,6 +9,7 @@ import { t } from '../lib/i18n'
 // на всех страницах. После выбора анимация сразу проигрывается, чтобы увидеть, что получилось.
 const current = ref<WaterAnim | 'auto'>(getWaterAnimChoice())
 const tick = ref(0)
+const itemOn = readCachedWaterItem() !== null // надета платная анимация из магазина — она главнее этого выбора
 const options: (WaterAnim | 'auto')[] = ['auto', ...WATER_ANIMS]
 const label = (v: WaterAnim | 'auto'): string => t(('cust_wateranim_' + v) as never)
 const choose = (v: WaterAnim | 'auto') => {
@@ -22,6 +23,7 @@ const play = () => tick.value++
 <template>
   <div data-testid="wateranim-picker">
     <p class="dim mb-2 text-xs">{{ t('cust_sec_wateranim_hint') }}</p>
+    <p v-if="itemOn" class="mb-2 text-xs" style="color: var(--accent)" data-testid="wateranim-item-on">{{ t('cust_wateranim_item_on') }}</p>
     <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr))">
       <div
         v-for="v in options"
