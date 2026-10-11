@@ -16,10 +16,12 @@
           if (ac) document.documentElement.style.setProperty('--pre-accent', ac)
           // вариант заставки (та же логика, что readSplashVariant в src/lib/splashVariants.ts):
           // ?splash= в адресе → localStorage → 'flame' по умолчанию
+          // вариант заставки, идущий с большой темой (BACKLOG 55.5, срез 2; генерирует apply_themes.py из THEME_LOADER): запасной, если не выбран вручную
+          var tl = { emerald: 'ring', moonlight: 'tongues', phosphor: 'classic', nightfall: 'flame' }[t]
           var sv = ['classic', 'flame', 'ring', 'tongues']
           var q = new URLSearchParams(location.search).get('splash')
           var sp = sv.indexOf(q) >= 0 ? q : localStorage.getItem('splash_variant')
-          document.documentElement.setAttribute('data-splash', sv.indexOf(sp) >= 0 ? sp : 'flame')
+          document.documentElement.setAttribute('data-splash', sv.indexOf(sp) >= 0 ? sp : tl || 'flame')
           var m = document.querySelector('meta[name="theme-color"]')
           if (m && bg) m.setAttribute('content', bg)
         } catch (e) {}

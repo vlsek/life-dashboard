@@ -14,7 +14,7 @@ import re
 import sys
 
 sys.path.insert(0, 'scripts')
-from themes_data import CHAR, NEW, P, THEME_WATER, UNLOCK, _lum, chart_palette  # noqa: E402
+from themes_data import CHAR, NEW, P, THEME_LOADER, THEME_WATER, UNLOCK, _lum, chart_palette  # noqa: E402
 
 KEYS = list(P)
 OLD4 = ['dark', 'monet', 'light', 'pink']
@@ -365,6 +365,17 @@ def index_html(t):
     t, n1 = re.subn(r"var bg = \{[^}]*\}\[t\]", lambda m: 'var bg = ' + bg + '[t]', t, count=1)
     t, n2 = re.subn(r"var ac = \{[^}]*\}\[t\]", lambda m: 'var ac = ' + ac + '[t]', t, count=1)
     assert n1 == 1 and n2 == 1
+    # вариант заставки, идущий с большой темой (BACKLOG 55.5, срез 2): запасной, если вариант не выбран вручную
+    tl = '{ ' + ', '.join("%s: '%s'" % (k, v) for k, v in THEME_LOADER.items()) + ' }'
+    if 'var tl = ' in t:
+        t, n3 = re.subn(r"var tl = \{[^}]*\}\[t\]", lambda m: 'var tl = ' + tl + '[t]', t, count=1)
+        assert n3 == 1
+    else:
+        o1 = "          var sv = ['classic', 'flame', 'ring', 'tongues']\n"
+        o2 = "document.documentElement.setAttribute('data-splash', sv.indexOf(sp) >= 0 ? sp : 'flame')"
+        assert t.count(o1) == 1 and t.count(o2) == 1, 'index.html: нет опорных строк скрипта заставки'
+        t = t.replace(o1, "          // вариант заставки, идущий с большой темой (BACKLOG 55.5, срез 2; генерирует apply_themes.py из THEME_LOADER): запасной, если не выбран вручную\n          var tl = " + tl + "[t]\n" + o1, 1)
+        t = t.replace(o2, "document.documentElement.setAttribute('data-splash', sv.indexOf(sp) >= 0 ? sp : tl || 'flame')", 1)
     return t
 
 
@@ -613,6 +624,26 @@ def write_theme_water():
 
 
 write_theme_water()
+
+# ---------- заставка загрузки у больших тем (BACKLOG 55.5, срез 2) ----------
+def write_theme_loader():
+    body = "// ГЕНЕРИРУЕТСЯ scripts/apply_themes.py из THEME_LOADER (scripts/themes_data.py) — НЕ править руками (BACKLOG 55.5: заставка загрузки у большой темы).\n"
+    body += "// Копии лежат в web-dashboard/src/lib и web-customization/src/lib; то же значение вставлено в скрипт выбора заставки каждой web-*/index.html.\n"
+    body += "export const THEME_LOADER: Record<string, 'classic' | 'flame' | 'ring' | 'tongues'> = {\n"
+    for k, v in THEME_LOADER.items():
+        body += "  %s: '%s',\n" % (k, v)
+    body += "}\n"
+    for path in ('web-dashboard/src/lib/themeLoader.ts', 'web-customization/src/lib/themeLoader.ts'):
+        try:
+            old = open(path, encoding='utf-8').read()
+        except FileNotFoundError:
+            old = None
+        if old != body:
+            open(path, 'w', encoding='utf-8').write(body)
+            changed.append(path)
+
+
+write_theme_loader()
 
 write_traits()
 

@@ -204,6 +204,13 @@ assert all(k in P for k in CHAR)
 THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave'}
 assert all(k in CHAR for k in THEME_WATER) and all(v in ('wave', 'drops', 'ripple') for v in THEME_WATER.values())
 
+# Заставка загрузки (лоадер страниц) у больших тем (BACKLOG 55.5, срез 2): вариант из реестра SPLASH_VARIANTS (classic | flame | ring | tongues) — действует,
+# ЕСЛИ вариант не выбран вручную (ручной выбор и `?splash=` главнее). Тема без записи = «живое пламя». Генератор пишет `themeLoader.ts` и вставляет
+# запасной вариант в скрипт выбора заставки во всех web-*/index.html (статичная заставка берёт его до загрузки бандла). Подбор по характеру: HUD —
+# «кольцо» (скан), синтвейв — «три языка» (неоновое пламя), терминал — «классика» (простая), спокойная ночная — «живое пламя».
+THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame'}
+assert all(k in CHAR for k in THEME_LOADER) and all(v in ('classic', 'flame', 'ring', 'tongues') for v in THEME_LOADER.values())
+
 # Темы-награды (решение владельца 2026-10-06): тема → ключ достижения, НАГРАДОЙ за которое она открывается (4-я, самая трудная ступень
 # лесенки в web-achievements/src/lib/rewards.ts; согласованность сверяет тест rewards.test.ts). Остальные темы (исходные четыре и
 # «Высокий контраст» — доступность) открыты всегда. Ключ темы (mocha) остаётся прежним: он хранится у людей в localStorage; меняется только подпись.

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.88";
+const SITE_VERSION = "4.89";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.89", date: "2026-10-11 10:30", changes: [
+        "Заставка загрузки теперь идёт вместе с большой темой: Emerald Obsidian — «Огненный круг», Moonlight Synth — «Три языка», Matrix Phosphor — «Классика», Tokyo Nightfall — «Живое пламя». В «Кастомизации», в разделе заставок, появилась плитка «По теме» (выбрана по умолчанию) — она показывает, какая заставка играет сейчас. Если выбрать заставку вручную (или открыть страницу с ?splash=), она всегда главнее темы; на обычных темах по-прежнему «Живое пламя». Без миграций."
+    ]},
     { version: "4.88", date: "2026-10-11 09:52", changes: [
         "Сообщество: у друзей в карточке и в окне профиля теперь видно «в сети» или «был(а) в сети N назад». Показ можно отключить в «Настройках» → «Приватность»; видят только ваши друзья. Заработает после применения серверной миграции 069."
     ]},
@@ -2074,6 +2077,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.89", date: "2026-10-11 10:30", changes: [
+        "The page loader now comes with the big theme: Emerald Obsidian — \"Fire ring\", Moonlight Synth — \"Three tongues\", Matrix Phosphor — \"Classic\", Tokyo Nightfall — \"Living flame\". The loader section in Customization has a new \"By theme\" tile (selected by default) that shows which loader is playing now. A loader picked by hand (or a page opened with ?splash=) always wins over the theme; regular themes keep the \"Living flame\". No migrations."
+    ]},
     { version: "4.88", date: "2026-10-11 09:52", changes: [
         "Community: friends now show \"online\" or \"was online N ago\" on their card and in their profile window. You can turn it off in Settings → Privacy; only your friends can see it. It starts working once server migration 069 is applied."
     ]},

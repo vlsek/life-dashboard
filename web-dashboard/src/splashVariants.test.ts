@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
   DEFAULT_SPLASH_VARIANT,
   SPLASH_VARIANTS,
@@ -8,6 +8,7 @@ import {
   readSplashVariant,
 } from './lib/splashVariants'
 import { t } from './lib/i18n'
+import { THEME_LOADER } from './lib/themeLoader'
 
 describe('splashVariants: реестр', () => {
   beforeEach(() => {
@@ -52,5 +53,35 @@ describe('splashVariants: реестр', () => {
     expect(localStorage.getItem(SPLASH_VARIANT_KEY)).toBe('ring')
     expect(readSplashVariant('?splash=zzz')).toBe('ring') // осталось запомненное
     expect(readSplashVariant('?x=1&splash=flame')).toBe('flame')
+  })
+})
+
+// Заставка большой темы (BACKLOG 55.5, срез 2): не выбрано вручную → вариант темы; ручной выбор и ?splash= главнее.
+describe('splashVariants: заставка идёт вместе с большой темой', () => {
+  const setTheme = (k: string | null) => {
+    document.documentElement.className = k ? `theme-${k}` : ''
+  }
+  beforeEach(() => localStorage.clear())
+  afterEach(() => setTheme(null))
+
+  it('в THEME_LOADER только настоящие варианты', () => {
+    for (const [k, v] of Object.entries(THEME_LOADER)) expect(isSplashVariant(v), k).toBe(true)
+  })
+  it('ничего не выбрано: большая тема → её заставка, обычная тема и без темы → «живое пламя»', () => {
+    const [themed] = Object.entries(THEME_LOADER).find(([, v]) => v !== 'flame')!
+    setTheme(themed)
+    expect(readSplashVariant('')).toBe(THEME_LOADER[themed])
+    setTheme('dark')
+    expect(readSplashVariant('')).toBe('flame')
+    setTheme(null)
+    expect(readSplashVariant('')).toBe('flame')
+  })
+  it('ручной выбор и ?splash= главнее темы', () => {
+    const [themed] = Object.entries(THEME_LOADER).find(([, v]) => v !== 'flame')!
+    setTheme(themed)
+    localStorage.setItem(SPLASH_VARIANT_KEY, 'classic')
+    expect(readSplashVariant('')).toBe('classic')
+    localStorage.clear()
+    expect(readSplashVariant('?splash=tongues')).toBe('tongues')
   })
 })

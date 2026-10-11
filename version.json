@@ -1,6 +1,13 @@
 {
-  "version": "4.88",
+  "version": "4.89",
   "en": [
+    {
+      "version": "4.89",
+      "date": "2026-10-11 10:30",
+      "changes": [
+        "The page loader now comes with the big theme: Emerald Obsidian — \"Fire ring\", Moonlight Synth — \"Three tongues\", Matrix Phosphor — \"Classic\", Tokyo Nightfall — \"Living flame\". The loader section in Customization has a new \"By theme\" tile (selected by default) that shows which loader is playing now. A loader picked by hand (or a page opened with ?splash=) always wins over the theme; regular themes keep the \"Living flame\". No migrations."
+      ]
+    },
     {
       "version": "4.88",
       "date": "2026-10-11 09:52",
@@ -3483,6 +3490,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.89",
+      "date": "2026-10-11 10:30",
+      "changes": [
+        "Заставка загрузки теперь идёт вместе с большой темой: Emerald Obsidian — «Огненный круг», Moonlight Synth — «Три языка», Matrix Phosphor — «Классика», Tokyo Nightfall — «Живое пламя». В «Кастомизации», в разделе заставок, появилась плитка «По теме» (выбрана по умолчанию) — она показывает, какая заставка играет сейчас. Если выбрать заставку вручную (или открыть страницу с ?splash=), она всегда главнее темы; на обычных темах по-прежнему «Живое пламя». Без миграций."
+      ]
+    },
     {
       "version": "4.88",
       "date": "2026-10-11 09:52",
