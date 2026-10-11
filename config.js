@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.84";
+const SITE_VERSION = "4.85";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.85", date: "2026-10-11 04:29", changes: [
+        "Графики: анимация появления. В «Кастомизации» в разделе «Графики» новый выбор «Появление»: «Без анимации» (по умолчанию) или «Линия рисуется» — при открытии страницы линия вычерчивается слева направо, затем проявляются точки и подписи. При «уменьшить движение» в системе и при отключённых анимациях сайта график остаётся неподвижным. Бесплатно. Без миграций."
+    ]},
     { version: "4.84", date: "2026-10-11 07:28", changes: [
         "Новая «большая» тема «Арктический иней» (Nord Frost) — шестая и последняя из первой серии больших тем: холодный серо-синий, плоские карточки без теней, малые скругления, едва заметная матовая зернистость фона, высокий контраст текста и чёткий красный для предупреждений. Включается в «Кастомизации» и в настройках шапки; открыта всем. При включённом в системе высоком контрасте зернистость отключается сама",
     ]},
@@ -2062,6 +2065,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.85", date: "2026-10-11 04:29", changes: [
+        "Charts: appearance animation. In \"Customization\", in the \"Charts\" section, a new \"Appearance\" choice: \"No animation\" (default) or \"Line draws itself\" — when the page opens the line is drawn left to right, then the dots and labels fade in. With the system \"reduce motion\" or the site animations turned off the chart stays still. Free. No migrations."
+    ]},
     { version: "4.84", date: "2026-10-11 07:28", changes: [
         "New big theme Nord Frost - the sixth and last of the first series of big themes: cold slate blue, flat cards without shadows, small corners, a barely visible matte grain on the background, high text contrast and a clear red for warnings. Pick it in Customization or the header settings; open to everyone. With the system high-contrast setting on, the grain switches off by itself",
     ]},

@@ -1,6 +1,13 @@
 {
-  "version": "4.84",
+  "version": "4.85",
   "en": [
+    {
+      "version": "4.85",
+      "date": "2026-10-11 04:29",
+      "changes": [
+        "Charts: appearance animation. In \"Customization\", in the \"Charts\" section, a new \"Appearance\" choice: \"No animation\" (default) or \"Line draws itself\" — when the page opens the line is drawn left to right, then the dots and labels fade in. With the system \"reduce motion\" or the site animations turned off the chart stays still. Free. No migrations."
+      ]
+    },
     {
       "version": "4.84",
       "date": "2026-10-11 07:28",
@@ -3455,6 +3462,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.85",
+      "date": "2026-10-11 04:29",
+      "changes": [
+        "Графики: анимация появления. В «Кастомизации» в разделе «Графики» новый выбор «Появление»: «Без анимации» (по умолчанию) или «Линия рисуется» — при открытии страницы линия вычерчивается слева направо, затем проявляются точки и подписи. При «уменьшить движение» в системе и при отключённых анимациях сайта график остаётся неподвижным. Бесплатно. Без миграций."
+      ]
+    },
     {
       "version": "4.84",
       "date": "2026-10-11 07:28",
