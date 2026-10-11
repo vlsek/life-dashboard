@@ -1,6 +1,13 @@
 {
-  "version": "5.02",
+  "version": "5.03",
   "en": [
+    {
+      "version": "5.03",
+      "date": "2026-10-11 18:43",
+      "changes": [
+        "New light big theme Matcha Latte: a warm cream background, a matcha-green accent, large corners and soft fluffy shadows, as if the cards float above paper. Pick it in Customization or the header settings; open to everyone. The Simple look switch removes the shadows"
+      ]
+    },
     {
       "version": "5.02",
       "date": "2026-10-11 18:55",
@@ -3581,6 +3588,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.03",
+      "date": "2026-10-11 18:43",
+      "changes": [
+        "Новая светлая «большая» тема «Матча-латте» (Matcha Latte): тёплый кремовый фон, чайно-зелёный акцент, крупные скругления и мягкие «пушистые» тени, будто карточки парят над бумагой. Включается в «Кастомизации» и в настройках шапки; открыта всем. Выключатель «Простое оформление» убирает тени"
+      ]
+    },
     {
       "version": "5.02",
       "date": "2026-10-11 18:55",
