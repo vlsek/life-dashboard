@@ -32,6 +32,7 @@ import source from './App.vue?raw'
 beforeEach(() => {
   vi.restoreAllMocks() // в тесте про недоступное хранилище localStorage.setItem подменён
   localStorage.clear()
+  localStorage.setItem('cust_tab', 'all') // эти тесты про всю ленту разделов; вкладки — в pageTabs.test.ts (54.7)
   localStorage.setItem('site_lang', 'ru')
   document.documentElement.className = 'theme-dark'
   h.total = 250

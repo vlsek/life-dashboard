@@ -18,6 +18,7 @@ import { useFavoriteThemes } from './lib/useFavoriteThemes'
 import { useCustomization } from './lib/useCustomization'
 import { CATEGORY_ORDER, ITEMS } from './lib/customization'
 import { t } from './lib/i18n'
+import { ALL_TAB, readTab, resolveTab, showsSection, writeTab } from './lib/pageTabs'
 import { THEME_UNLOCK, type ThemeKey } from './lib/theme'
 
 const { auth, balance, achievements, apiMissing, loading, error, actionError, busyKey, statusOf, init, buy, choose } = useCustomization()
@@ -76,6 +77,22 @@ const visCounts = computed(() => {
   return n
 })
 const nothingShown = computed(() => !visibleThemeBuckets.value.length && !visibleCategories.value.length)
+
+// Вкладки (BACKLOG 54.7): по вкладке на раздел витрины; список строится из самих разделов, так что новый раздел получает вкладку сам.
+const tabChoice = ref<string | null>(readTab())
+const tabList = computed(() => [
+  ...(visibleThemeBuckets.value.length ? [{ id: 'themes', label: t('cust_sec_themes') }] : []),
+  { id: 'chart-markers', label: t('cust_sec_markers') },
+  { id: 'splash', label: t('cust_sec_splash') },
+  { id: 'streakflame', label: t('cust_sec_streakflame') },
+  ...visibleCategories.value.map((c) => ({ id: c.category as string, label: t(('cust_cat_' + c.category) as never) })),
+])
+const tab = computed(() => resolveTab(tabChoice.value, tabList.value.map((x) => x.id)))
+function setTab(id: string) {
+  tabChoice.value = id
+  writeTab(id)
+}
+const shownCategories = computed(() => visibleCategories.value.filter((c) => showsSection(tab.value, c.category)))
 </script>
 
 <template>
@@ -106,7 +123,23 @@ const nothingShown = computed(() => !visibleThemeBuckets.value.length && !visibl
         <VisibilityChips :state="vis.state.value" :counts="visCounts" @toggle="vis.toggle" />
         <p v-if="nothingShown" class="dim mb-4 text-sm" data-testid="vis-empty">{{ vis.noneVisible.value ? t('cust_vis_empty_none') : t('cust_vis_empty') }}</p>
 
-        <SectionGroup v-if="visibleThemeBuckets.length" id="themes" :title="t('cust_sec_themes')" :total="themeTotal" :owned="themeOwnedTotal" :collapsed="isCollapsed('section:themes')" @toggle="toggle('section:themes')">
+        <div class="mb-4 flex gap-1.5 overflow-x-auto pb-1" role="tablist" data-testid="cust-tabs">
+          <button
+            v-for="x in [...tabList, { id: ALL_TAB, label: t('cust_tab_all') }]"
+            :key="x.id"
+            type="button"
+            role="tab"
+            class="shrink-0 rounded-full border px-3.5 py-1.5 text-sm"
+            :aria-selected="tab === x.id"
+            :style="tab === x.id ? 'border-color: var(--accent); color: var(--accent); background: transparent' : 'border-color: var(--border); color: var(--text-dim); background: transparent'"
+            :data-testid="'cust-tab-' + x.id"
+            @click="setTab(x.id)"
+          >
+            {{ x.label }}
+          </button>
+        </div>
+
+        <SectionGroup v-if="visibleThemeBuckets.length && showsSection(tab, 'themes')" id="themes" :title="t('cust_sec_themes')" :total="themeTotal" :owned="themeOwnedTotal" :collapsed="isCollapsed('section:themes')" @toggle="toggle('section:themes')">
           <p class="dim mb-1 text-xs">{{ t('cust_sec_themes_hint') }}</p>
           <p class="dim mb-2 text-xs" data-testid="fav-count">{{ t('cust_theme_fav_count').replace('{n}', String(themes.favorites.value.length)).replace('{max}', String(themes.max)) }}</p>
           <RarityGroup v-for="g in visibleThemeBuckets" :key="g.rarity" :id="'themes:' + g.rarity" :rarity="g.rarity" :total="g.items.length" :owned="themeOwned(g.items)" :collapsed="isCollapsed('themes:' + g.rarity)" @toggle="toggle('themes:' + g.rarity)">
@@ -130,20 +163,20 @@ const nothingShown = computed(() => !visibleThemeBuckets.value.length && !visibl
 
         <!-- Заставка загрузки (BACKLOG 16, срез 2): 4 бесплатных варианта, выбор в localStorage -->
         <!-- Маркеры графиков (BACKLOG 13:54): 4 бесплатных стиля, выбор в localStorage -->
-        <SectionGroup id="chart-markers" :title="t('cust_sec_markers')" :total="4" :owned="4" :collapsed="isCollapsed('section:chart-markers')" @toggle="toggle('section:chart-markers')">
+        <SectionGroup v-if="showsSection(tab, 'chart-markers')" id="chart-markers" :title="t('cust_sec_markers')" :total="4" :owned="4" :collapsed="isCollapsed('section:chart-markers')" @toggle="toggle('section:chart-markers')">
           <ChartMarkerPicker />
         </SectionGroup>
 
-        <SectionGroup id="splash" :title="t('cust_sec_splash')" :total="4" :owned="4" :collapsed="isCollapsed('section:splash')" @toggle="toggle('section:splash')">
+        <SectionGroup v-if="showsSection(tab, 'splash')" id="splash" :title="t('cust_sec_splash')" :total="4" :owned="4" :collapsed="isCollapsed('section:splash')" @toggle="toggle('section:splash')">
           <SplashPicker />
         </SectionGroup>
 
         <!-- Огонёк серии (BACKLOG 44.18в, срез 1): 2 бесплатных варианта, выбор в localStorage -->
-        <SectionGroup id="streakflame" :title="t('cust_sec_streakflame')" :total="2" :owned="2" :collapsed="isCollapsed('section:streakflame')" @toggle="toggle('section:streakflame')">
+        <SectionGroup v-if="showsSection(tab, 'streakflame')" id="streakflame" :title="t('cust_sec_streakflame')" :total="2" :owned="2" :collapsed="isCollapsed('section:streakflame')" @toggle="toggle('section:streakflame')">
           <StreakFlamePicker />
         </SectionGroup>
 
-        <SectionGroup v-for="c in visibleCategories" :key="c.category" :id="c.category" :title="t(('cust_cat_' + c.category) as never)" :total="c.total" :owned="c.owned" :collapsed="isCollapsed('section:' + c.category)" @toggle="toggle('section:' + c.category)">
+        <SectionGroup v-for="c in shownCategories" :key="c.category" :id="c.category" :title="t(('cust_cat_' + c.category) as never)" :total="c.total" :owned="c.owned" :collapsed="isCollapsed('section:' + c.category)" @toggle="toggle('section:' + c.category)">
           <p class="dim mb-2 text-xs">{{ t('cust_cat_hint') }}</p>
           <RarityGroup
             v-for="g in c.groups"

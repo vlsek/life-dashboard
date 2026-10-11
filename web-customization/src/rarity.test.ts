@@ -30,6 +30,7 @@ import App from './App.vue'
 
 beforeEach(() => {
   localStorage.clear()
+  localStorage.setItem('cust_tab', 'all') // эти тесты про всю ленту разделов; вкладки — в pageTabs.test.ts (54.7)
   localStorage.setItem('site_lang', 'ru')
   localStorage.setItem('site_theme', 'dark') // тесты исходят из тёмной; светлая по умолчанию — в themeDefaultAllPilots.test.ts
   h.total = 250
