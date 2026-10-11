@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.83";
+const SITE_VERSION = "4.84";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.84", date: "2026-10-11 07:28", changes: [
+        "Новая «большая» тема «Арктический иней» (Nord Frost) — шестая и последняя из первой серии больших тем: холодный серо-синий, плоские карточки без теней, малые скругления, едва заметная матовая зернистость фона, высокий контраст текста и чёткий красный для предупреждений. Включается в «Кастомизации» и в настройках шапки; открыта всем. При включённом в системе высоком контрасте зернистость отключается сама",
+    ]},
     { version: "4.83", date: "2026-10-11 07:26", changes: [
         "Анимация «выпитое записалось»: три новых варианта — «Пузырьки», «Струя» и «Всплеск» (всего шесть, все бесплатные). В «Кастомизации» появилась вкладка «Анимация воды»: выбор варианта или «По теме», после выбора анимация сразу проигрывается. Выбор общий с «Настройками» шапки."
     ]},
@@ -2059,6 +2062,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.84", date: "2026-10-11 07:28", changes: [
+        "New big theme Nord Frost - the sixth and last of the first series of big themes: cold slate blue, flat cards without shadows, small corners, a barely visible matte grain on the background, high text contrast and a clear red for warnings. Pick it in Customization or the header settings; open to everyone. With the system high-contrast setting on, the grain switches off by itself",
+    ]},
     { version: "4.83", date: "2026-10-11 07:26", changes: [
         "Drink-saved animation: three new variants — Bubbles, Pour and Splash (six in total, all free). Customization has a new Water animation tab: pick a variant or By theme, and it plays right after you choose. The choice is shared with the header Settings."
     ]},
