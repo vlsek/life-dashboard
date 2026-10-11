@@ -67,7 +67,7 @@
 <!-- Каждый агент правит ТОЛЬКО свой блок. Блоки разделены пустой строкой намеренно (меньше конфликтов). -->
 
 ### Агент 1
-— свободен —
+BACKLOG 52.1 срез 2 «поздравление о новом достижении на ЛЮБОЙ странице», БЕЗ SQL. Идея: шапка (`web-header`, `main.ts` + `lib/achievementWatcher.ts` + `components/AchievementToast.vue`) раз в ~10 мин (и при открытии страницы) грузит скрытый iframe `/achievements/?bg=1`; страница «Достижения» в режиме `bg` сама делает загрузку/запись (`useAchievements`) и шлёт `postMessage` со списком новых (название+награда), шапка показывает окно/тост. Трогаю: `web-header/src/main.ts`, `lib/achievementWatcher.ts`, `components/AchievementToast.vue`, `header.css`, i18n шапки; `web-achievements/src/App.vue`/`main.ts` (режим `bg`, 1 новый файл `lib/bgMode.ts`). Дашборд/остальные пилоты не трогаю.
 
 ### Агент 2
 — свободен — (v4.70: огонёк серии — два вида в «Кастомизации», BACKLOG 44.18в срез 1)
