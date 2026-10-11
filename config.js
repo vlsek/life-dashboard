@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.13";
+const SITE_VERSION = "5.14";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.14", date: "2026-10-12 01:30", changes: [
+        "Магазин: при добавлении НОВОЙ покупки появился выбор «Насколько масштабная покупка?» с примерами — мелочь (кофе), небольшая (ужин в кафе), заметная (кроссовки), крупная (билет на концерт), очень крупная (отпуск). Выбор подставляет «справедливую» цену по вашему среднему заработку в день, цену по-прежнему можно поправить руками. БЕЗ SQL."
+    ]},
     { version: "5.13", date: "2026-10-11 21:27", changes: [
         "Графики: прогноз. В «Кастомизации», раздел «Графики», новый выбор «Прогноз»: «Без прогноза» (по умолчанию) или «Тренд на 3 дня» — график продолжается пунктиром на три дня вперёд по недавнему тренду, с пустым кружком и подписью «прогноз …» (повторения не уходят ниже нуля). Это не обещание, а куда ведёт тренд; показывается, когда есть хотя бы 4 дня с данными и последний из них свежий. Без миграций."
     ]},
@@ -2149,6 +2152,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.14", date: "2026-10-12 01:30", changes: [
+        "Shop: adding a NEW purchase now asks «How big is this purchase?» with examples — small treat (coffee), small (dinner at a café), notable (sneakers), big (concert ticket), very big (a holiday). Your pick fills in a «fair» price based on your average daily earnings; you can still edit the price. NO SQL."
+    ]},
     { version: "5.13", date: "2026-10-11 21:27", changes: [
         "Charts: forecast. In \"Customization\", the \"Charts\" section, a new \"Forecast\" choice: \"No forecast\" (default) or \"Trend for 3 days\" — the chart continues as a dotted line three days ahead along the recent trend, with an empty dot and a \"forecast ...\" label (reps never go below zero). It is not a promise, just where the trend leads; shown when there are at least 4 days with data and the last one is recent. No migrations."
     ]},
