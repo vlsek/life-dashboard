@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { BODY_OUTLINE, FRONT_SHAPES, BACK_SHAPES } from './lib/muscleShapes'
-import { FEMALE_BACK_SHAPES, FEMALE_FRONT_SHAPES, FEMALE_OUTLINE, bodyGeometry, feminizePath, resolveBodyModel, widthFactor } from './lib/bodyModel'
+import { FEMALE_BACK_SHAPES, FEMALE_FRONT_SHAPES, FEMALE_OUTLINE, bodyGeometry, factorAt, feminizePath, resolveBodyModel, widthFactor } from './lib/bodyModel'
 
 const nums = (d: string) => (d.match(/-?\d*\.?\d+/g) ?? []).map(Number)
 const xsAtY = (d: string, lo: number, hi: number) => {
@@ -56,5 +56,27 @@ describe('Женская модель тела (54.5)', () => {
   it('руки следуют за плечами, а не за бёдрами: кисти женской модели не шире мужских (иначе рука ломается)', () => {
     const maxDx = (d: string) => Math.max(...xsAtY(d, 90, 104).map((x) => Math.abs(x - 50)))
     expect(maxDx(FEMALE_OUTLINE)).toBeLessThanOrEqual(maxDx(BODY_OUTLINE))
+  })
+})
+
+describe('«более женственная» модель (BACKLOG 57.4)', () => {
+  const w = (d: string, lo: number, hi: number) => {
+    const xs = xsAtY(d, lo, hi)
+    return Math.max(...xs) - Math.min(...xs)
+  }
+  it('песочные часы: плечи уже, талия заметно уже мужской, бёдра шире', () => {
+    expect(w(FEMALE_OUTLINE, 36, 40)).toBeLessThan(w(BODY_OUTLINE, 36, 40) * 0.92)
+    expect(w(FEMALE_OUTLINE, 104, 112)).toBeGreaterThan(w(BODY_OUTLINE, 104, 112) * 1.1)
+    // мышцы живота (на талии) у женской модели уже: проверяем по ширине пресса
+    const abs = (shapes: typeof FEMALE_FRONT_SHAPES) => String(shapes.find((s) => s.muscle === 'abs')!.attrs.d)
+    expect(w(abs(FEMALE_FRONT_SHAPES), 55, 87)).toBeLessThan(w(abs(FRONT_SHAPES), 55, 87) * 0.9)
+  })
+  it('длинные прямые отрезки режутся на части, чтобы профиль ложился плавно (талия видна на боку)', () => {
+    const f = feminizePath('M30 60 L30 100')
+    expect((f.match(/L/g) ?? []).length).toBeGreaterThanOrEqual(6)
+  })
+  it('нет ступеньки у подмышки: коэффициент ширины меняется плавно вдоль x', () => {
+    const f = (x: number) => factorAt(x, 67)
+    for (let x = 14; x < 50; x += 1) expect(Math.abs(f(x) - f(x + 1))).toBeLessThan(0.06)
   })
 })

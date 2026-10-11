@@ -28,7 +28,20 @@ describe('WaterAnimPicker', () => {
     expect(localStorage.getItem(WATER_ANIM_KEY)).toBe('pour')
     expect(w.find('[data-testid="wateranim-pour"]').attributes('data-active')).toBe('true')
     await new Promise((r) => setTimeout(r, 30))
-    expect(document.querySelector('[data-test="water-saved"]')?.getAttribute('data-variant')).toBe('pour')
+    expect(document.querySelector('.water-saved:not(.water-saved-inline)')?.getAttribute('data-variant')).toBe('pour')
+    w.unmount()
+  })
+
+  it('у каждого варианта — живой зацикленный пример-превью именно этого варианта (57.2)', async () => {
+    const w = mount(WaterAnimPicker, { attachTo: document.body })
+    await new Promise((r) => setTimeout(r, 30))
+    for (const v of WATER_ANIMS) {
+      const ex = w.find(`[data-testid="wateranim-${v}"] [data-testid="wateranim-example"] .water-saved`)
+      expect(ex.exists(), v).toBe(true)
+      expect(ex.attributes('data-variant'), v).toBe(v)
+      expect(ex.classes()).toContain('water-saved-inline')
+    }
+    expect(document.querySelector('.water-saved:not(.water-saved-inline)')).toBeNull() // примеры — не оверлеи
     w.unmount()
   })
 
@@ -61,7 +74,7 @@ describe('WaterAnimPicker', () => {
 })
 
 describe('«Показать» у каждой анимации воды (BACKLOG 57.2)', () => {
-  const playing = (): string | null | undefined => document.querySelector('[data-test="water-saved"]')?.getAttribute('data-variant')
+  const playing = (): string | null | undefined => document.querySelector('.water-saved:not(.water-saved-inline)')?.getAttribute('data-variant')
   const wait = () => new Promise((r) => setTimeout(r, 30))
 
   it('у «По теме» и всех шести вариантов есть своя кнопка «Показать»', () => {

@@ -8,7 +8,6 @@ import Icon from './Icon.vue'
 import CollapsePreview from './CollapsePreview.vue'
 import WeekGaugePreview from './WeekGaugePreview.vue'
 import DayGaugePreview from './DayGaugePreview.vue'
-import WaterPreview from './WaterPreview.vue'
 import WaterSavedAnim from './WaterSavedAnim.vue'
 
 // Карточка предмета кастомизации: превью (круг-аватар с рамкой), название, условие/цена и одно действие по статусу.
@@ -46,7 +45,7 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
       <DayGaugePreview :variant="item.key === 'day_glow' ? 'glow' : item.key === 'day_ticks' ? 'ticks' : item.key === 'day_gradient' ? 'gradient' : 'dashed'" />
     </span>
     <span v-else-if="isWaterAnim" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="water-anim-preview">
-      <WaterPreview :variant="waterVariant" />
+      <WaterSavedAnim :tick="0" inline loop :demo="waterVariant" />
     </span>
     <span
       v-else

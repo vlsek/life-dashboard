@@ -3,26 +3,41 @@
 // живая вода (бегущая волна, пузырьки), в углу всплывает бейдж с галочкой. Запускается родителем через смену `tick` (после подтверждённой
 // записи в БД), сама гаснет через ~1.4 с. Три варианта (lib/waterAnim.ts, выбор — «Настройки» шапки): wave — спокойный, по умолчанию; drops —
 // капли падают в стакан; ripple — быстрый подъём и круги по воде. При prefers-reduced-motion и «Отключить анимации» — сразу итог без движения.
-import { ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { getWaterAnim, type WaterAnim } from '../lib/waterAnim'
 
-// demo — показать КОНКРЕТНЫЙ вариант (кнопка «Показать» в «Кастомизации», BACKLOG 57.2), не меняя сохранённый выбор
-const props = defineProps<{ tick: number; demo?: WaterAnim }>()
+// demo — показать КОНКРЕТНЫЙ вариант (кнопка «Показать» в «Кастомизации», BACKLOG 57.2), не меняя сохранённый выбор.
+// inline — маленький стакан прямо в плитке (не оверлей), не гаснет; loop — повторять анимацию по кругу (живой пример, 57.2 агента 3).
+const props = defineProps<{ tick: number; demo?: WaterAnim; inline?: boolean; loop?: boolean }>()
 const visible = ref(false)
-const variant = ref<WaterAnim>(getWaterAnim())
+const variant = ref<WaterAnim>(props.demo ?? getWaterAnim())
 let timer: ReturnType<typeof setTimeout> | undefined
+let loopTimer: ReturnType<typeof setInterval> | undefined
+
+function play() {
+  visible.value = false // перезапуск анимации при быстрых повторных нажатиях
+  variant.value = props.demo ?? getWaterAnim() // выбор из «Настроек» действует сразу, без перезагрузки
+  requestAnimationFrame(() => {
+    visible.value = true
+    clearTimeout(timer)
+    if (!props.inline) timer = setTimeout(() => (visible.value = false), 1400)
+  })
+}
+onMounted(() => {
+  if (!props.inline) return
+  play()
+  if (props.loop) loopTimer = setInterval(play, 3200)
+})
+onBeforeUnmount(() => {
+  clearTimeout(timer)
+  clearInterval(loopTimer)
+})
 
 watch(
   () => props.tick,
   (v, old) => {
     if (v === old || v <= 0) return
-    visible.value = false // перезапуск анимации при быстрых повторных нажатиях
-    variant.value = props.demo ?? getWaterAnim() // выбор из «Настроек» действует сразу, без перезагрузки
-    requestAnimationFrame(() => {
-      visible.value = true
-      clearTimeout(timer)
-      timer = setTimeout(() => (visible.value = false), 1400)
-    })
+    play()
   },
 )
 
@@ -36,7 +51,7 @@ const WAVE_BACK = 'q3 1.4 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0'
 
 <template>
   <Transition name="water-saved">
-    <div v-if="visible" class="water-saved pointer-events-none" :data-variant="variant" data-test="water-saved" role="status" aria-live="polite">
+    <div v-if="visible" class="water-saved pointer-events-none" :class="{ 'water-saved-inline': inline }" :data-variant="variant" data-test="water-saved" :role="inline ? undefined : 'status'" :aria-live="inline ? undefined : 'polite'" :aria-hidden="inline ? 'true' : undefined">
       <svg width="72" height="90" viewBox="0 0 24 30" aria-hidden="true">
         <defs>
           <clipPath :id="`${sid}-clip`"><path :d="GLASS" /></clipPath>
@@ -203,6 +218,9 @@ const WAVE_BACK = 'q3 1.4 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0'
 .water-saved[data-variant='sparkle'] .ws-bubble, .water-saved[data-variant='sparkle'] .ws-drop, .water-saved[data-variant='sparkle'] .ws-ripple-2 { display: none; }
 .water-saved[data-variant='sparkle'] .water-saved-badge { animation-delay: 0.9s; }
 .water-saved[data-variant='sparkle'] .water-saved-check { animation-delay: 1.05s; }
+/* Пример в плитке «Кастомизации» (BACKLOG 57.2): не оверлей, а маленький стакан, анимация повторяется */
+.water-saved.water-saved-inline { position: relative; inset: auto; z-index: auto; display: inline-flex; }
+.water-saved-inline svg { width: 44px; height: 55px; padding: 6px 8px; border-radius: 14px; box-shadow: none; filter: none; }
 .water-saved-enter-active,
 .water-saved-leave-active {
   transition: opacity 0.25s ease, transform 0.25s ease;

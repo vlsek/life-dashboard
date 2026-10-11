@@ -222,6 +222,9 @@ html.theme-graphite .gh-root {
 .water-saved[data-variant="sparkle"] .ws-bubble, .water-saved[data-variant="sparkle"] .ws-drop, .water-saved[data-variant="sparkle"] .ws-ripple-2 { display: none; }
 .water-saved[data-variant="sparkle"] .water-saved-badge { animation-delay: 0.9s; }
 .water-saved[data-variant="sparkle"] .water-saved-check { animation-delay: 1.05s; }
+/* Пример в плитке «Кастомизации» (BACKLOG 57.2): не оверлей, а маленький стакан, анимация повторяется */
+.water-saved.water-saved-inline { position: relative; inset: auto; z-index: auto; display: inline-flex; }
+.water-saved-inline svg { width: 44px; height: 55px; padding: 6px 8px; border-radius: 14px; box-shadow: none; filter: none; }
 .water-saved-enter-active,
 .water-saved-leave-active {
   transition: opacity 0.25s ease, transform 0.25s ease;

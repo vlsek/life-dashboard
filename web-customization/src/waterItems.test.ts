@@ -25,13 +25,15 @@ describe('предметы «Анимация воды»', () => {
     expect(parseSelected({ water_anim: 'water_tide' }).water_anim).toBe('water_tide')
     expect(parseSelected({ water_anim: 'day_glow' }).water_anim).toBeUndefined()
   })
-  it('карточка показывает превью воды и описание', () => {
+  it('карточка показывает живой пример анимации и описание', async () => {
     localStorage.setItem('site_lang', 'ru')
     for (const i of water) {
       const w = mount(ItemCard, { props: { item: i, status: 'locked', balance: 500, busy: false, disabled: false } })
       expect(w.find('[data-testid="water-anim-preview"]').exists(), i.key).toBe(true)
       expect(w.find('[data-testid="item-desc"]').text().length, i.key).toBeGreaterThan(10)
-      expect(w.find('[data-testid="water-preview-svg"]').attributes('data-variant')).toBe(WATER_ITEMS[i.key])
+      await new Promise((r) => setTimeout(r, 20))
+      expect(w.find('.water-saved-inline').attributes('data-variant')).toBe(WATER_ITEMS[i.key]) // живой пример (57.2)
+      w.unmount()
     }
   })
 })

@@ -52,6 +52,9 @@ const play = () => {
         :data-testid="'wateranim-' + v"
         :data-active="current === v"
       >
+        <div class="flex justify-center" data-testid="wateranim-example">
+          <WaterSavedAnim :tick="0" inline loop :demo="v === 'auto' ? autoVariant() : v" />
+        </div>
         <p class="m-0 text-sm font-medium">{{ label(v) }}</p>
         <p class="dim m-0 text-xs">{{ t(('cust_wateranim_' + v + '_hint') as never) }}</p>
         <button

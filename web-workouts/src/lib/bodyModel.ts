@@ -5,16 +5,19 @@ import { BACK_SHAPES, BODY_OUTLINE, FRONT_SHAPES, type MuscleShape } from './mus
 // а правка контуров мужской модели автоматически попадает и в женскую. Чистая логика, без сети.
 export type BodyModel = 'male' | 'female'
 
-// (y, коэффициент ширины относительно оси x = 50): шея и голова без изменений, плечи 0.9, талия 0.85, бёдра 1.14, ступни 1.
+// (y, коэффициент ширины относительно оси x = 50). «Песочные часы» (BACKLOG 57.4, владелец: «сделать более женственной»): шея тоньше, плечи
+// узкие (0.84), грудная клетка 0.78, талия самая тонкая (0.70), бёдра заметно шире (1.22), к ступням возвращаемся к 1.
 const WIDTH_PROFILE: [number, number][] = [
   [0, 1],
-  [30, 1],
-  [36, 0.9],
-  [47, 0.9],
-  [75, 0.85],
-  [88, 0.92],
-  [100, 1.14],
-  [118, 1.1],
+  [18, 1],
+  [24, 0.86],
+  [34, 0.84],
+  [47, 0.84],
+  [62, 0.78],
+  [76, 0.7],
+  [88, 0.88],
+  [100, 1.22],
+  [118, 1.16],
   [150, 1.04],
   [181, 1],
   [190, 1],
@@ -35,18 +38,50 @@ export function widthFactor(y: number): number {
 
 const round = (n: number) => Math.round(n * 100) / 100
 
-// Руки (дальше 20 единиц от оси на высоте плеч–кисти) идут за плечами, а не за бёдрами: иначе кисти уезжают наружу и рука ломается.
-const ARM_FACTOR = 0.9
-const isArm = (x: number, y: number) => Math.abs(x - 50) >= 20 && y >= 36 && y <= 104
+// Руки (дальше ~18–26 единиц от оси на высоте плеч–кисти) идут за плечами, а не за бёдрами: иначе кисти уезжают наружу и рука ломается.
+// Переход от профиля туловища к рукам плавный (без ступеньки у подмышки).
+const ARM_FACTOR = 0.84
+export function factorAt(x: number, y: number): number {
+  const base = widthFactor(y)
+  if (y < 36 || y > 104) return base
+  const w = Math.max(0, Math.min(1, (Math.abs(x - 50) - 18) / 8))
+  return base + (ARM_FACTOR - base) * w
+}
 
-// Путь состоит только из абсолютных команд M/L/C/Z — пересчитываем каждую пару (x, y).
+const fmtN = (n: number) => String(round(n))
+const warp = (x: number, y: number): [number, number] => [round(50 + (x - 50) * factorAt(x, y)), y]
+
+// Путь состоит только из абсолютных команд M/L/C/Z. Прямые отрезки (L) режем на куски по ~6 единиц высоты, иначе длинный бок туловища
+// переехал бы «одной линией» от плеча к бедру и талия не проявилась бы; кривые (C) пересчитываем по их точкам.
 export function feminizePath(d: string): string {
-  return d.replace(/(-?\d*\.?\d+)\s+(-?\d*\.?\d+)/g, (_, xs: string, ys: string) => {
-    const x = Number(xs)
-    const y = Number(ys)
-    const f = isArm(x, y) ? ARM_FACTOR : widthFactor(y)
-    return `${round(50 + (x - 50) * f)} ${y}`
-  })
+  const out: string[] = []
+  let cur: [number, number] | null = null
+  for (const m of d.matchAll(/([MLCZ])([^MLCZ]*)/g)) {
+    const cmd = m[1]
+    const n = (m[2].match(/-?\d*\.?\d+/g) ?? []).map(Number)
+    if (cmd === 'Z') {
+      out.push('Z')
+      continue
+    }
+    const pts: [number, number][] = []
+    for (let i = 0; i + 1 < n.length; i += 2) pts.push([n[i], n[i + 1]])
+    if (cmd === 'L' && cur) {
+      const parts: string[] = []
+      for (const [x1, y1] of pts) {
+        const steps = Math.max(1, Math.ceil(Math.abs(y1 - cur[1]) / 6))
+        for (let k = 1; k <= steps; k++) {
+          const [wx, wy] = warp(cur[0] + ((x1 - cur[0]) * k) / steps, cur[1] + ((y1 - cur[1]) * k) / steps)
+          parts.push(`L${fmtN(wx)} ${fmtN(wy)}`)
+        }
+        cur = [x1, y1]
+      }
+      out.push(parts.join(' '))
+      continue
+    }
+    out.push(cmd + pts.map(([x, y]) => warp(x, y).map(fmtN).join(' ')).join(' '))
+    if (pts.length) cur = pts[pts.length - 1]
+  }
+  return out.join(' ')
 }
 
 const feminizeShapes = (shapes: MuscleShape[]): MuscleShape[] =>
