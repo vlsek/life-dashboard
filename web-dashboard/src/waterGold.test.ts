@@ -21,7 +21,7 @@ describe('стакан в шапке: состояние 100% (BACKLOG 💧 2.1)
     expect(w.find('[data-test="water-glass"]').classes()).toContain('water-glass-full')
     expect(w.find('[data-test="glass-sheen"]').exists()).toBe(true)
     expect(w.find('[data-test="glass-outline"]').attributes('style')).toContain('--water-gold')
-    expect(w.find('ellipse').attributes('style')).toContain('--water-gold')
+    expect(w.find('[data-test="glass-line"]').attributes('style')).toContain('--water-gold')
   })
 
   it('перевыполнение (больше нормы) — то же золотое состояние', () => {

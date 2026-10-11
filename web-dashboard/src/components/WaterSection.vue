@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import WaterModal from './WaterModal.vue'
+import GlassSvg from './GlassSvg.vue'
 import { useWater } from '../lib/useWater'
-import { waterPct, glassLevel } from '../lib/water'
 import { getLang, t } from '../lib/i18n'
 
 // Единственная точка подключения блока «Вода» в App.vue — сама сеть спрятана здесь, чтобы у
@@ -76,9 +76,6 @@ async function onResetGoal() {
   }
 }
 
-const pct = computed(() => waterPct(todayMl.value, normMl.value))
-const full = computed(() => pct.value >= 1)
-const level = computed(() => glassLevel(pct.value))
 const unitLabel = computed(() => (getLang() === 'en' ? 'ml' : 'мл'))
 const GLASS_OUTLINE = 'M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3.2L4.6 5.3z'
 </script>
@@ -109,24 +106,7 @@ const GLASS_OUTLINE = 'M4.6 5.3h14.8l-1.5 17.8q-.25 3.2-3.4 3.2h-5q-3.15 0-3.4-3
       :title="`${todayMl} / ${normMl} ${unitLabel}`"
       @click="modalOpen = true"
     >
-      <svg class="water-glass" :class="{ 'water-glass-full': full }" width="24" height="30" viewBox="0 0 24 30" style="display: block" aria-hidden="true" data-test="water-glass">
-        <defs>
-          <linearGradient id="water-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" style="stop-color: var(--water-top)" />
-            <stop offset="1" style="stop-color: var(--water-bottom)" />
-          </linearGradient>
-          <clipPath id="water-glass-clip"><path :d="GLASS_OUTLINE" /></clipPath>
-        </defs>
-        <g clip-path="url(#water-glass-clip)">
-          <rect x="0" y="0" width="24" height="30" style="fill: var(--text-dim); fill-opacity: 0.07" />
-          <path v-if="pct > 0" :d="`M0 ${level.levelY.toFixed(1)} q3 ${-level.waveAmp} 6 0 t6 0 t6 0 t6 0 V30 H0 Z`" fill="url(#water-grad)" />
-          <!-- 100% (BACKLOG 2.1): по воде проходит мягкий блик; анимация — в style.css (.glass-sheen) -->
-          <path v-if="full" class="glass-sheen" d="M-5 30L-1 0H3L-1 30Z" data-test="glass-sheen" />
-        </g>
-        <path :d="GLASS_OUTLINE" fill="none" :style="full ? 'stroke:var(--water-gold)' : 'stroke:var(--text-dim)'" stroke-width="1.6" stroke-linejoin="round" data-test="glass-outline" />
-        <ellipse cx="12" cy="5.3" rx="7.4" ry="1.25" fill="none" :style="full ? 'stroke:var(--water-gold)' : 'stroke:var(--text-dim)'" stroke-width="1.4" />
-        <path d="M7.6 8.5l0.9 12.5" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.2" stroke-linecap="round" />
-      </svg>
+      <GlassSvg :today-ml="todayMl" :norm-ml="normMl" :width="24" :height="30" base-class="water-glass" full-class="water-glass-full" sheen-class="glass-sheen" />
     </button>
   </Teleport>
 

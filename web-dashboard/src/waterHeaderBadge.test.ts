@@ -115,7 +115,7 @@ describe('WaterSection: стакан при 100% нормы', () => {
       expect(glass()!.classList.contains('water-glass-full')).toBe(true)
       expect(glass()!.querySelector('[data-test="glass-sheen"]')).not.toBeNull()
       expect(glass()!.querySelector('[data-test="glass-outline"]')!.getAttribute('style')).toContain('--water-gold')
-      expect(glass()!.querySelector('ellipse')!.getAttribute('style')).toContain('--water-gold')
+      expect(glass()!.querySelector('[data-test="glass-line"]')!.getAttribute('style')).toContain('--water-gold')
       w.unmount()
     }
   })

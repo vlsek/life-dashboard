@@ -1,6 +1,7 @@
 import { parseCollapseStyle, writeCachedCollapseStyle } from './collapseStyle'
 import { parseWeekGauge, writeCachedWeekGauge } from './weekGauge'
 import { parseDayGauge, writeCachedDayGauge } from './dayGauge'
+import { parseWaterGlass, writeCachedWaterGlass } from './waterGlass'
 import { parseWaterItem, writeCachedWaterItem } from './waterAnim'
 import { ref } from 'vue'
 import { sb } from './supabase'
@@ -121,6 +122,7 @@ export function useCustomization() {
       writeCachedWeekGauge(parseWeekGauge(selected.value.week_gauge))
       writeCachedDayGauge(parseDayGauge(selected.value.day_gauge))
       writeCachedWaterItem(parseWaterItem(selected.value.water_anim)) // анимация воды (54.9)
+      writeCachedWaterGlass(parseWaterGlass(selected.value.water_glass)) // вид стакана (57.2б)
       await syncAchievementRewards(userId)
       error.value = null
     } catch (e) {
@@ -224,6 +226,7 @@ export function useCustomization() {
       writeCachedCollapseStyle(parseCollapseStyle(next.collapse_style)) // вид сворачивания: страницы применяют его по кэшу, не дожидаясь сети (BACKLOG 498)
       writeCachedDayGauge(parseDayGauge(next.day_gauge)) // вид спидометра дня (53.2 срез 2)
       writeCachedWaterItem(parseWaterItem(next.water_anim)) // анимация воды (54.9): шапка и Дашборд применяют её по кэшу
+      writeCachedWaterGlass(parseWaterGlass(next.water_glass)) // вид стакана воды (57.2б)
       writeCachedWeekGauge(parseWeekGauge(next.week_gauge)) // вид спидометра недели (53.2): шапка и Дашборд применяют его по кэшу
       return true
     } catch (e) {

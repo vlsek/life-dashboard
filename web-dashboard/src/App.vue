@@ -10,6 +10,7 @@ import ChartsSection from './components/ChartsSection.vue'
 import HeaderProgressBadge from './components/HeaderProgressBadge.vue'
 import { syncWeekGauge, weekGaugeStyle } from './lib/useWeekGauge'
 import { syncDayGauge } from './lib/useDayGauge'
+import { syncWaterGlass } from './lib/useWaterGlass'
 import { syncWaterItem } from './lib/waterItemSync'
 import { dayRingTarget, weekRingTarget } from './lib/ringPlacement'
 import type { RingData } from './lib/ringPlacement'
@@ -94,6 +95,7 @@ onMounted(async () => {
   if (auth.value.status === 'ready') {
     void syncWeekGauge(auth.value.userId) // вид спидометра недели из «Кастомизации» (BACKLOG 53.2)
     void syncWaterItem(auth.value.userId) // надетая платная анимация воды (BACKLOG 54.9)
+    void syncWaterGlass(auth.value.userId) // вид стакана воды из «Кастомизации» (BACKLOG 57.2)
     void syncDayGauge(auth.value.userId) // вид спидометра недели из «Кастомизации» (BACKLOG 53.2)
     await loadLayout(auth.value.userId)
     await loadMilestonesReminder(auth.value.userId)

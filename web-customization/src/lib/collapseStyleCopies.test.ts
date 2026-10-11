@@ -56,3 +56,19 @@ describe('dayGauge: копии в пилотах', () => {
     expect(read('../web-dashboard/src/lib/useDayGauge.ts')).toBe(read('../web-header/src/lib/useDayGauge.ts'))
   })
 })
+
+// BACKLOG 57.2б: вид стакана воды — копии waterGlass.ts (три), useWaterGlass.ts и GlassSvg.vue (шапка и Дашборд; у GlassSvg отличается только префикс id).
+describe('waterGlass: копии в пилотах', () => {
+  it('waterGlass.ts одинаков в web-customization, web-header и web-dashboard (менять вместе)', () => {
+    const base = read('src/lib/waterGlass.ts')
+    expect(read('../web-header/src/lib/waterGlass.ts')).toBe(base)
+    expect(read('../web-dashboard/src/lib/waterGlass.ts')).toBe(base)
+  })
+  it('useWaterGlass.ts одинаков в web-header и web-dashboard', () => {
+    expect(read('../web-dashboard/src/lib/useWaterGlass.ts')).toBe(read('../web-header/src/lib/useWaterGlass.ts'))
+  })
+  it('GlassSvg.vue в шапке и на Дашборде совпадает с точностью до префикса id', () => {
+    const norm = (s: string) => s.replace(/gh-glass-|dash-glass-/g, 'X-')
+    expect(norm(read('../web-dashboard/src/components/GlassSvg.vue'))).toBe(norm(read('../web-header/src/components/GlassSvg.vue')))
+  })
+})

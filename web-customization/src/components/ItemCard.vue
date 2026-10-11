@@ -9,6 +9,8 @@ import CollapsePreview from './CollapsePreview.vue'
 import WeekGaugePreview from './WeekGaugePreview.vue'
 import DayGaugePreview from './DayGaugePreview.vue'
 import WaterSavedAnim from './WaterSavedAnim.vue'
+import WaterGlassPreview from './WaterGlassPreview.vue'
+import { BY_ITEM } from '../lib/waterGlass'
 
 // Карточка предмета кастомизации: превью (круг-аватар с рамкой), название, условие/цена и одно действие по статусу.
 const props = defineProps<{ item: CustomItem; status: ItemStatus; balance: number | null; busy: boolean; disabled: boolean }>()
@@ -21,6 +23,7 @@ const missing = computed(() => shortBy(props.item, props.balance))
 const isCollapseStyle = computed(() => props.item.category === 'collapse_style')
 const isWeekGauge = computed(() => props.item.category === 'week_gauge')
 const isDayGauge = computed(() => props.item.category === 'day_gauge')
+const isWaterGlass = computed(() => props.item.category === 'water_glass')
 const isWaterAnim = computed(() => props.item.category === 'water_anim')
 const waterVariant = computed(() => (props.item.key === 'water_tide' ? 'tide' : props.item.key === 'water_sparkle' ? 'sparkle' : 'rain') as 'rain' | 'tide' | 'sparkle')
 // «Показать» у платной анимации воды (BACKLOG 57.2): играет ЭТУ анимацию до покупки/надевания, ничего не меняя
@@ -47,6 +50,9 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
     <span v-else-if="isWaterAnim" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="water-anim-preview">
       <WaterSavedAnim :tick="0" inline loop :demo="waterVariant" />
     </span>
+    <span v-else-if="isWaterGlass" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="water-glass-preview">
+      <WaterGlassPreview :style-key="BY_ITEM[item.key] ?? 'glass'" />
+    </span>
     <span
       v-else
       class="flex h-14 w-14 items-center justify-center rounded-full text-lg font-medium"
@@ -55,7 +61,7 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
       aria-hidden="true"
     >A</span>
     <p class="m-0 text-sm font-medium">{{ name }}</p>
-    <p v-if="isCollapseStyle || isWeekGauge || isDayGauge || isWaterAnim" class="dim m-0 text-xs" data-testid="item-desc">{{ t(('cust_item_' + item.key + '_desc') as never) }}</p>
+    <p v-if="isCollapseStyle || isWeekGauge || isDayGauge || isWaterAnim || isWaterGlass" class="dim m-0 text-xs" data-testid="item-desc">{{ t(('cust_item_' + item.key + '_desc') as never) }}</p>
     <template v-if="isWaterAnim">
       <button type="button" class="secondary px-2 py-1 text-xs" :aria-label="name + ': ' + t('cust_wateranim_show')" data-testid="water-demo" @click="demoTick++">{{ t('cust_wateranim_show') }}</button>
       <WaterSavedAnim :tick="demoTick" :demo="waterVariant" />

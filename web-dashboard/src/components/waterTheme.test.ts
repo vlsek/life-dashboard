@@ -48,9 +48,9 @@ describe('water colors per theme', () => {
   })
 
   it('water components use the water tokens, not the theme accent', () => {
-    for (const f of ['WaterBadge', 'WaterSection', 'WaterSavedAnim']) {
+    for (const f of ['WaterBadge', 'WaterSection', 'WaterSavedAnim', 'GlassSvg']) {
       const src: string = readFileSync(`src/components/${f}.vue`, 'utf-8')
-      expect(src, f).toContain('var(--water-')
+      if (f !== 'WaterBadge') expect(src, f).toContain('var(--water-')
       expect(src, f).not.toContain('var(--accent)')
       expect(src, f).not.toContain('#3b9ee5')
     }

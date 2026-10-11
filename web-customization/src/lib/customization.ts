@@ -1,8 +1,8 @@
 // Реестр «Кастомизации» (BACKLOG 491, решение владельца 2026-10-03) и чистая логика: статусы предметов, цены, разбор сохранённого.
 // Здесь НЕТ сети и DOM — загрузка и запись в useCustomization.ts. Предметы добавляются по одному за итерацию (рамки аватарки — первый).
 
-export type Category = 'avatar_frame' | 'collapse_style' | 'week_gauge' | 'day_gauge' | 'water_anim'
-export const CATEGORY_ORDER: readonly Category[] = ['avatar_frame', 'collapse_style', 'week_gauge', 'day_gauge', 'water_anim']
+export type Category = 'avatar_frame' | 'collapse_style' | 'week_gauge' | 'day_gauge' | 'water_anim' | 'water_glass'
+export const CATEGORY_ORDER: readonly Category[] = ['avatar_frame', 'collapse_style', 'week_gauge', 'day_gauge', 'water_anim', 'water_glass']
 
 // Цены — три уровня, ВСЕ в одном месте (решение владельца): поменять число здесь — поменяется везде.
 export const PRICE_TIERS = { low: 100, mid: 150, high: 250 } as const
@@ -67,6 +67,11 @@ export const ITEMS: readonly CustomItem[] = [
   { key: 'water_rain', category: 'water_anim', source: 'points', tier: 'low' },
   { key: 'water_tide', category: 'water_anim', source: 'points', tier: 'mid' },
   { key: 'water_sparkle', category: 'water_anim', source: 'points', tier: 'high' },
+  // Вид САМОГО стакана воды (BACKLOG 57.2б, уточнение владельца 13:14; агент 1): обычный стакан — у всех бесплатно, остальные — предметы.
+  { key: 'glass_mug', category: 'water_glass', source: 'points', tier: 'low' },
+  { key: 'glass_bottle', category: 'water_glass', source: 'points', tier: 'mid' },
+  { key: 'glass_flask', category: 'water_glass', source: 'points', tier: 'mid' },
+  { key: 'glass_goblet', category: 'water_glass', source: 'points', tier: 'high' },
 ]
 
 export const itemByKey = (key: string): CustomItem | undefined => ITEMS.find((i) => i.key === key)

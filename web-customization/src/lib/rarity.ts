@@ -63,6 +63,10 @@ export const ITEM_RARITY: Record<string, Rarity> = {
   day_glow: 'uncommon',
   day_ticks: 'uncommon', // 150
   day_gradient: 'rare', // 250
+  glass_mug: 'common', // 100
+  glass_bottle: 'uncommon', // 150
+  glass_flask: 'uncommon', // 150
+  glass_goblet: 'rare', // 250
   water_rain: 'common', // анимации воды (54.9): 100 → обычный, 150 → необычный, 250 → редкий
   water_tide: 'uncommon',
   water_sparkle: 'rare',
