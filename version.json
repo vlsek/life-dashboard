@@ -1,6 +1,13 @@
 {
-  "version": "5.18",
+  "version": "5.19",
   "en": [
+    {
+      "version": "5.19",
+      "date": "2026-10-12 01:02",
+      "changes": [
+        "Customization shop: two new week-progress gauges — Seven dots (around a circle, Monday on top) and Steps (a staircase of seven bars). They work in the header, the side panel and the dashboard; prices 100 and 150 coins."
+      ]
+    },
     {
       "version": "5.18",
       "date": "2026-10-12 00:54",
@@ -3693,6 +3700,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.19",
+      "date": "2026-10-12 01:02",
+      "changes": [
+        "Магазин «Кастомизации»: два новых вида спидометра прогресса недели — «Семь точек» (по кругу, понедельник сверху) и «Ступеньки» (лесенка из семи столбиков). Работают в шапке, в правой панели и на главной; цены 100 и 150 монет."
+      ]
+    },
     {
       "version": "5.18",
       "date": "2026-10-12 00:54",

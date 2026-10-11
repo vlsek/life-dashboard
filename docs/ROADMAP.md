@@ -132,3 +132,6 @@ v5.17 — 59.2 срез 1: новые модели тела мышц (агент
 
 v5.18 — 59.2 срез 2: раздел «Модель тела» в «Кастомизации» (агент 3). БЕЗ SQL.
   `BodyModelPicker.vue` (плитки с превью из `bodyGeometry`, «По полу профиля» = `clearBodyModelChoice`), секция `bodymodel` в группе «Оформление» (`pageTabs.ts`). В web-customization теперь третья копия `bodyModel.ts`/`muscleShapes.ts` + урезанный `muscles.ts` (страж `bodyModelCopies.test.ts` расширен). Тесты +3. Пересобран `customization/`. Платные модели предметами (миграция каталога) — отдельный срез, если владелец захочет.
+
+v5.19 — 59.3 новые виды спидометра недели «Семь точек» и «Ступеньки» (агент 3; по просьбе владельца — предметы, которых меньше всего). МИГРАЦИЯ 076 ждёт владельца.
+  `WeekAlt.vue` (×2 пилота, страж в `weekBadgeParity.test.ts`), `weekGauge.ts` ×3 (week_dots/week_steps, кэш `site_week_gauge`), бейдж шапки/панель/`HeaderProgressBadge`/`ProgressRing`; реестр `customization.ts` (low 100 / mid 150), rarity, i18n, превью в `WeekGaugePreview.vue`. Тесты `weekAlt.test.ts` (+8). Проверено скриншотами (32 и 104 px; обводка сегодняшней точки не обрезается). `migrations/076_catalog_week_gauge_more.sql`. Пересобраны `dashboard/`, `header-widgets/`, `customization/`.

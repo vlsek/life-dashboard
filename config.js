@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.18";
+const SITE_VERSION = "5.19";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.19", date: "2026-10-12 01:02", changes: [
+        "Магазин «Кастомизации»: два новых вида спидометра прогресса недели — «Семь точек» (по кругу, понедельник сверху) и «Ступеньки» (лесенка из семи столбиков). Работают в шапке, в правой панели и на главной; цены 100 и 150 монет."
+    ]},
     { version: "5.18", date: "2026-10-12 00:54", changes: [
         "«Кастомизация»: новый раздел «Модель тела» (вкладка «Оформление») — выбор фигуры для карты мышц: «По полу профиля», мужская, женская, атлетичная, стройная, плотная, с превью каждой. Выбор общий с «Тренировками» и мини-картой шапки."
     ]},
@@ -2164,6 +2167,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.19", date: "2026-10-12 01:02", changes: [
+        "Customization shop: two new week-progress gauges — Seven dots (around a circle, Monday on top) and Steps (a staircase of seven bars). They work in the header, the side panel and the dashboard; prices 100 and 150 coins."
+    ]},
     { version: "5.18", date: "2026-10-12 00:54", changes: [
         "Customization: a new Body model section (Look tab) — pick the figure for the muscle map: By profile gender, Male, Female, Athletic, Slim, Curvy, each with a preview. The choice is shared with Workouts and the header mini-map."
     ]},
