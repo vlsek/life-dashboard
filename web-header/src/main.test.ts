@@ -1,3 +1,5 @@
+// @ts-ignore — в проекте нет типов node, а vitest выполняется в node.
+import { readFileSync } from 'node:fs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 
@@ -81,6 +83,16 @@ describe('main.ts — блок «Какие достижения тут можн
     const host = document.getElementById('gh-section-achievements')!
     expect(host).toBeTruthy()
     expect(host.querySelector('[data-test="secach-count"]')!.textContent).toBe('2 / 4')
+  })
+  it('страница не держит #app на 100% высоты: блок идёт под контентом, а не поверх него (владелец 2026-10-11)', async () => {
+    sess.user = { id: 'u' }
+    sess.keys = []
+    document.documentElement.classList.remove('gh-has-secach')
+    await run('/goals/')
+    await new Promise((r) => setTimeout(r, 20))
+    expect(document.documentElement.classList.contains('gh-has-secach')).toBe(true)
+    const css: string = readFileSync('src/header.css', 'utf-8')
+    expect(css).toMatch(/html\.gh-has-secach #app \{ height: auto; min-height: 100%; \}/)
   })
   it('без входа блока нет; на странице без раздела (Дашборд, Магазин) — тоже', async () => {
     await run('/goals/')

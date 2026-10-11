@@ -437,6 +437,7 @@ select:not([multiple]):not([size]) {
 }
 
 /* BACKLOG 49.6: блок «Какие достижения тут можно получить» внизу страницы раздела */
+html.gh-has-secach #app { height: auto; min-height: 100%; }
 #gh-section-achievements { max-width: 48rem; margin: 0 auto; padding: 0 16px 40px; box-sizing: border-box; }
 .gh-secach { border: 1px solid var(--border, #333); border-radius: 12px; background: var(--bg-card, #1e1e1e); color: var(--text, #eee); font-size: 14px; }
 .gh-secach-head { display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 12px; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }

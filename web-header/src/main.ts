@@ -52,6 +52,9 @@ async function mountSectionAchievements() {
     const unlocked = await loadUnlockedKeys(userId, section)
     if (document.getElementById('gh-section-achievements')) return
     ensureStyle()
+    // Страницы задают `#app { height: 100% }`: контент выше экрана вылезает за этот блок, и наш блок (следующий после #app) ложится ПОВЕРХ него
+    // (владелец: «блок достижений поверх надписей графика»). Класс снимает фиксированную высоту — блок идёт строго под контентом.
+    document.documentElement.classList.add('gh-has-secach')
     const host = document.createElement('div')
     host.id = 'gh-section-achievements'
     document.body.appendChild(host)
