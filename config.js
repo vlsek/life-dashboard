@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.12";
+const SITE_VERSION = "5.13";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.13", date: "2026-10-11 21:27", changes: [
+        "Графики: прогноз. В «Кастомизации», раздел «Графики», новый выбор «Прогноз»: «Без прогноза» (по умолчанию) или «Тренд на 3 дня» — график продолжается пунктиром на три дня вперёд по недавнему тренду, с пустым кружком и подписью «прогноз …» (повторения не уходят ниже нуля). Это не обещание, а куда ведёт тренд; показывается, когда есть хотя бы 4 дня с данными и последний из них свежий. Без миграций."
+    ]},
     { version: "5.12", date: "2026-10-12 00:26", changes: [
         "Новая светлая «большая» тема «Неоновый день» (Cyberpunk Day): серебристый фон с микро-сеткой точек, белые карточки с тёмной рамкой и жёсткими тенями со смещением, ультрамариновый акцент, моноширинные заголовки, метки и кнопки, острые углы и резкие анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем. «Простое оформление» убирает сетку. Заодно в описании тем появились подписи «жёсткие тени со смещением» и «моноширинный шрифт в заголовках, метках и кнопках»",
     ]},
@@ -2146,6 +2149,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.13", date: "2026-10-11 21:27", changes: [
+        "Charts: forecast. In \"Customization\", the \"Charts\" section, a new \"Forecast\" choice: \"No forecast\" (default) or \"Trend for 3 days\" — the chart continues as a dotted line three days ahead along the recent trend, with an empty dot and a \"forecast ...\" label (reps never go below zero). It is not a promise, just where the trend leads; shown when there are at least 4 days with data and the last one is recent. No migrations."
+    ]},
     { version: "5.12", date: "2026-10-12 00:26", changes: [
         "New light big theme Cyberpunk Day: a silver background with a micro dot grid, white cards with a dark frame and hard offset shadows, an ultramarine accent, monospace headings, labels and buttons, sharp corners and snappy animations. Pick it in Customization or the header settings; open to everyone. The Simple look switch removes the grid. The theme description also gained the labels Hard offset shadows and Monospace font in headings, labels and buttons",
     ]},
