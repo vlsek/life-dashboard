@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.99";
+const SITE_VERSION = "5.00";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.00", date: "2026-10-11 15:28", changes: [
+        "Пламя «Три языка» стало медленнее и плавнее (в заставке при загрузке, в предпросмотре «Кастомизации» и в огоньке серии). У огонька серии скорость по-прежнему растёт со ступенью: чем длиннее серия, тем живее пламя."
+    ]},
     { version: "4.99", date: "2026-10-11 18:27", changes: [
         "Первая светлая «большая» тема «Альпийская бумага» (Paper Alpine): холодный молочно-белый фон, чистые белые карточки без теней, малые скругления, спокойный арктический голубой акцент и гладкие анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем. Заодно в описании тем («Что меняет эта тема») плоские темы теперь честно подписаны «плоские карточки без теней», а матовая зернистость — «матовая зернистость фона»",
     ]},
@@ -2107,6 +2110,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.00", date: "2026-10-11 15:28", changes: [
+        "The \"Three tongues\" flame is now slower and smoother (on the loading splash, in the Customization preview and in the streak flame). The streak flame still speeds up with the tier: the longer the streak, the livelier the flame."
+    ]},
     { version: "4.99", date: "2026-10-11 18:27", changes: [
         "The first light big theme, Paper Alpine: a cool milky-white background, clean white cards without shadows, small corners, a calm arctic-blue accent and smooth animations. Pick it in Customization or the header settings; open to everyone. Also, in the theme description (What this theme changes) flat themes are now honestly labeled Flat cards without shadows, and the matte grain is labeled Matte grain on the background",
     ]},
