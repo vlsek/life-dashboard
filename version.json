@@ -1,6 +1,13 @@
 {
-  "version": "5.11",
+  "version": "5.12",
   "en": [
+    {
+      "version": "5.12",
+      "date": "2026-10-12 00:26",
+      "changes": [
+        "New light big theme Cyberpunk Day: a silver background with a micro dot grid, white cards with a dark frame and hard offset shadows, an ultramarine accent, monospace headings, labels and buttons, sharp corners and snappy animations. Pick it in Customization or the header settings; open to everyone. The Simple look switch removes the grid. The theme description also gained the labels Hard offset shadows and Monospace font in headings, labels and buttons"
+      ]
+    },
     {
       "version": "5.11",
       "date": "2026-10-12 00:55",
@@ -3644,6 +3651,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.12",
+      "date": "2026-10-12 00:26",
+      "changes": [
+        "Новая светлая «большая» тема «Неоновый день» (Cyberpunk Day): серебристый фон с микро-сеткой точек, белые карточки с тёмной рамкой и жёсткими тенями со смещением, ультрамариновый акцент, моноширинные заголовки, метки и кнопки, острые углы и резкие анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем. «Простое оформление» убирает сетку. Заодно в описании тем появились подписи «жёсткие тени со смещением» и «моноширинный шрифт в заголовках, метках и кнопках»"
+      ]
+    },
     {
       "version": "5.11",
       "date": "2026-10-12 00:55",

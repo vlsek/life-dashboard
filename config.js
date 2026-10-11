@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.11";
+const SITE_VERSION = "5.12";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.12", date: "2026-10-12 00:26", changes: [
+        "Новая светлая «большая» тема «Неоновый день» (Cyberpunk Day): серебристый фон с микро-сеткой точек, белые карточки с тёмной рамкой и жёсткими тенями со смещением, ультрамариновый акцент, моноширинные заголовки, метки и кнопки, острые углы и резкие анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем. «Простое оформление» убирает сетку. Заодно в описании тем появились подписи «жёсткие тени со смещением» и «моноширинный шрифт в заголовках, метках и кнопках»",
+    ]},
     { version: "5.11", date: "2026-10-12 00:55", changes: [
         "Блок «Планы» на Дашборде стал проще: в основной строке только поле и «Добавить», три способа добавить («Добавить из целей», «Новая цель», «Незавершённое с прошлых дней») — отдельным рядом кнопок ниже; время, «Уже сделано», подсказка про ☆-бонус и уведомления убраны в свёрнутое «Дополнительно»; «Цели, выполненные в этот день» свёрнуты в одну строку. Ничего не удалено, все возможности на месте. БЕЗ SQL."
     ]},
@@ -2143,6 +2146,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.12", date: "2026-10-12 00:26", changes: [
+        "New light big theme Cyberpunk Day: a silver background with a micro dot grid, white cards with a dark frame and hard offset shadows, an ultramarine accent, monospace headings, labels and buttons, sharp corners and snappy animations. Pick it in Customization or the header settings; open to everyone. The Simple look switch removes the grid. The theme description also gained the labels Hard offset shadows and Monospace font in headings, labels and buttons",
+    ]},
     { version: "5.11", date: "2026-10-12 00:55", changes: [
         "The «Plans» block on the Dashboard is simpler: the main row has just the field and «Add», the three ways to add («Add from goals», «New goal», «Unfinished from earlier days») sit in a separate row of buttons below; time, «Already done», the ☆ bonus hint and notifications are tucked into a collapsed «More options»; «Goals completed that day» is collapsed to one line. Nothing was removed. NO SQL."
     ]},
