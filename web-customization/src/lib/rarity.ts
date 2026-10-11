@@ -61,6 +61,9 @@ export const ITEM_RARITY: Record<string, Rarity> = {
   week_bars: 'uncommon',
   day_dashed: 'common', // виды спидометра дня (53.2 срез 2): 100 → обычный, 150 → необычный
   day_glow: 'uncommon',
+  water_rain: 'common', // анимации воды (54.9): 100 → обычный, 150 → необычный, 250 → редкий
+  water_tide: 'uncommon',
+  water_sparkle: 'rare',
 }
 
 // Темы. Исходные четыре и «Высокий контраст» (доступность — прятать за наградой нельзя) — обычные. Остальные шесть — «закрываемые»

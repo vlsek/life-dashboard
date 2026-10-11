@@ -6,7 +6,34 @@ import { THEME_WATER } from './themeWater'
 
 export const WATER_ANIM_KEY = 'water_saved_anim'
 export const WATER_ANIMS = ['wave', 'drops', 'ripple', 'bubbles', 'pour', 'splash'] as const
-export type WaterAnim = (typeof WATER_ANIMS)[number]
+// Платные виды — предметы «Кастомизации» (BACKLOG 54.9, категория water_anim): купленный и надетый вид главнее и ручного выбора, и темы.
+// Кэш устройства `site_water_anim` пишет «Кастомизация» при выборе, шапка и Дашборд сверяются с профилем в фоне (waterItemSync.ts).
+export const PAID_WATER_ANIMS = ['rain', 'tide', 'sparkle'] as const
+export type PaidWaterAnim = (typeof PAID_WATER_ANIMS)[number]
+export type WaterAnim = (typeof WATER_ANIMS)[number] | PaidWaterAnim
+export const WATER_ITEM_KEY = 'site_water_anim'
+export const WATER_ITEMS: Record<string, PaidWaterAnim> = { water_rain: 'rain', water_tide: 'tide', water_sparkle: 'sparkle' }
+
+// Ключ предмета из profiles.customization.water_anim → вид; всё лишнее — «ничего не надето»
+export function parseWaterItem(raw: unknown): PaidWaterAnim | null {
+  return typeof raw === 'string' && Object.prototype.hasOwnProperty.call(WATER_ITEMS, raw) ? WATER_ITEMS[raw] : null
+}
+export function readCachedWaterItem(): PaidWaterAnim | null {
+  try {
+    const v = localStorage.getItem(WATER_ITEM_KEY)
+    return (PAID_WATER_ANIMS as readonly string[]).includes(v ?? '') ? (v as PaidWaterAnim) : null
+  } catch {
+    return null
+  }
+}
+export function writeCachedWaterItem(v: PaidWaterAnim | null): void {
+  try {
+    if (v) localStorage.setItem(WATER_ITEM_KEY, v)
+    else localStorage.removeItem(WATER_ITEM_KEY)
+  } catch {
+    /* нет localStorage — применится после загрузки профиля */
+  }
+}
 export const DEFAULT_WATER_ANIM: WaterAnim = 'wave' // самый спокойный
 
 export function sanitizeWaterAnim(v: unknown): WaterAnim {
@@ -37,8 +64,10 @@ export function getWaterAnimChoice(): WaterAnim | 'auto' {
   }
 }
 
-// Какая анимация играет: ручной выбор главнее, иначе вариант большой темы, иначе спокойная волна
+// Какая анимация играет: надетый платный предмет, затем ручной выбор, иначе вариант большой темы, иначе спокойная волна
 export function getWaterAnim(): WaterAnim {
+  const item = readCachedWaterItem()
+  if (item) return item
   const c = getWaterAnimChoice()
   return c === 'auto' ? (themeWaterAnim() ?? DEFAULT_WATER_ANIM) : c
 }

@@ -1,8 +1,8 @@
 // Реестр «Кастомизации» (BACKLOG 491, решение владельца 2026-10-03) и чистая логика: статусы предметов, цены, разбор сохранённого.
 // Здесь НЕТ сети и DOM — загрузка и запись в useCustomization.ts. Предметы добавляются по одному за итерацию (рамки аватарки — первый).
 
-export type Category = 'avatar_frame' | 'collapse_style' | 'week_gauge' | 'day_gauge'
-export const CATEGORY_ORDER: readonly Category[] = ['avatar_frame', 'collapse_style', 'week_gauge', 'day_gauge']
+export type Category = 'avatar_frame' | 'collapse_style' | 'week_gauge' | 'day_gauge' | 'water_anim'
+export const CATEGORY_ORDER: readonly Category[] = ['avatar_frame', 'collapse_style', 'week_gauge', 'day_gauge', 'water_anim']
 
 // Цены — три уровня, ВСЕ в одном месте (решение владельца): поменять число здесь — поменяется везде.
 export const PRICE_TIERS = { low: 100, mid: 150, high: 250 } as const
@@ -60,6 +60,10 @@ export const ITEMS: readonly CustomItem[] = [
   // Вид спидометра ДНЯ (BACKLOG 53.2, срез 2; на усмотрение агента 1): обычное кольцо — у всех бесплатно, «пунктирное кольцо» — 100, «кольцо со свечением» — 150.
   { key: 'day_dashed', category: 'day_gauge', source: 'points', tier: 'low' },
   { key: 'day_glow', category: 'day_gauge', source: 'points', tier: 'mid' },
+  // Анимация питья воды (BACKLOG 54.9, агент 3): три платных вида; бесплатные (волна, капли, рябь, пузырьки, струя, всплеск) — во вкладке «Анимация воды».
+  { key: 'water_rain', category: 'water_anim', source: 'points', tier: 'low' },
+  { key: 'water_tide', category: 'water_anim', source: 'points', tier: 'mid' },
+  { key: 'water_sparkle', category: 'water_anim', source: 'points', tier: 'high' },
 ]
 
 export const itemByKey = (key: string): CustomItem | undefined => ITEMS.find((i) => i.key === key)

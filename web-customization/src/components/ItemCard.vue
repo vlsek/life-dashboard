@@ -8,6 +8,7 @@ import Icon from './Icon.vue'
 import CollapsePreview from './CollapsePreview.vue'
 import WeekGaugePreview from './WeekGaugePreview.vue'
 import DayGaugePreview from './DayGaugePreview.vue'
+import WaterPreview from './WaterPreview.vue'
 
 // Карточка предмета кастомизации: превью (круг-аватар с рамкой), название, условие/цена и одно действие по статусу.
 const props = defineProps<{ item: CustomItem; status: ItemStatus; balance: number | null; busy: boolean; disabled: boolean }>()
@@ -20,6 +21,8 @@ const missing = computed(() => shortBy(props.item, props.balance))
 const isCollapseStyle = computed(() => props.item.category === 'collapse_style')
 const isWeekGauge = computed(() => props.item.category === 'week_gauge')
 const isDayGauge = computed(() => props.item.category === 'day_gauge')
+const isWaterAnim = computed(() => props.item.category === 'water_anim')
+const waterVariant = computed(() => (props.item.key === 'water_tide' ? 'tide' : props.item.key === 'water_sparkle' ? 'sparkle' : 'rain') as 'rain' | 'tide' | 'sparkle')
 const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.item.achievement) as never) : ''))
 </script>
 
@@ -39,6 +42,9 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
     <span v-else-if="isDayGauge" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="day-gauge-preview">
       <DayGaugePreview :variant="item.key === 'day_glow' ? 'glow' : 'dashed'" />
     </span>
+    <span v-else-if="isWaterAnim" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="water-anim-preview">
+      <WaterPreview :variant="waterVariant" />
+    </span>
     <span
       v-else
       class="flex h-14 w-14 items-center justify-center rounded-full text-lg font-medium"
@@ -47,7 +53,7 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
       aria-hidden="true"
     >A</span>
     <p class="m-0 text-sm font-medium">{{ name }}</p>
-    <p v-if="isCollapseStyle || isWeekGauge || isDayGauge" class="dim m-0 text-xs" data-testid="item-desc">{{ t(('cust_item_' + item.key + '_desc') as never) }}</p>
+    <p v-if="isCollapseStyle || isWeekGauge || isDayGauge || isWaterAnim" class="dim m-0 text-xs" data-testid="item-desc">{{ t(('cust_item_' + item.key + '_desc') as never) }}</p>
     <p v-if="frameClass(item.key)" class="dim m-0 text-xs" data-testid="animated">{{ t('cust_animated') }}</p>
     <p v-if="item.source === 'achievement'" class="dim m-0 text-xs"><Icon name="medal" /> {{ t('cust_reward_for') }} «{{ reward }}»</p>
     <p v-else-if="status === 'owned' || status === 'selected'" class="dim m-0 text-xs">{{ t('cust_owned') }}</p>

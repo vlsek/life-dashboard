@@ -58,6 +58,13 @@ const WAVE_BACK = 'q3 1.4 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0'
           </g>
         </g>
         <rect class="ws-stream" x="11.1" y="-6" width="1.8" height="17" rx="0.9" style="fill: var(--water-top)" />
+        <g class="ws-rain">
+          <line v-for="(x, i) in [7, 9.6, 12, 14.4, 17]" :key="i" :class="`ws-rd ws-rd-${i + 1}`" :x1="x" y1="-4" :x2="x" y2="-1.6" style="stroke: var(--water-top)" stroke-width="0.7" stroke-linecap="round" />
+        </g>
+        <path class="ws-spark ws-s-1" d="M3.2 6.6l.5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5-1.5-.5 1.5-.5z" fill="#fff" />
+        <path class="ws-spark ws-s-2" d="M21 12.4l.45 1.3 1.3.45-1.3.45-.45 1.3-.45-1.3-1.3-.45 1.3-.45z" fill="#fff" />
+        <path class="ws-spark ws-s-3" d="M12 -4.6l.55 1.6 1.6.55-1.6.55-.55 1.6-.55-1.6-1.6-.55 1.6-.55z" fill="#fff" />
+        <path class="ws-spark ws-s-4" d="M20.6 1.6l.4 1.2 1.2.4-1.2.4-.4 1.2-.4-1.2-1.2-.4 1.2-.4z" fill="#fff" />
         <ellipse class="ws-ripple" cx="12" cy="10.8" rx="5.5" ry="1.1" fill="none" style="stroke: var(--water-line)" stroke-width="0.5" />
         <ellipse class="ws-ripple ws-ripple-2" cx="12" cy="10.8" rx="5.5" ry="1.1" fill="none" style="stroke: var(--water-line)" stroke-width="0.4" />
         <path class="ws-drop ws-d-1" d="M9.4 -2.2q-1.1 1.7 0 2.7q1.1 -1 0 -2.7z" style="fill: var(--water-top)" />
@@ -136,7 +143,7 @@ const WAVE_BACK = 'q3 1.4 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0'
 .water-saved[data-variant='ripple'] .water-saved-badge { animation-delay: 0.5s; }
 .water-saved[data-variant='ripple'] .water-saved-check { animation-delay: 0.65s; }
 /* bubbles (54.8): пузырьки поднимаются со дна, вода набирается спокойно */
-.ws-stream { display: none; transform-box: fill-box; transform-origin: 50% 0; }
+.ws-stream { display: none; opacity: 0; transform-box: fill-box; transform-origin: 50% 0; }
 .ws-bx { display: none; }
 .water-saved[data-variant='bubbles'] .ws-drop, .water-saved[data-variant='bubbles'] .ws-ripple-2 { display: none; }
 .water-saved[data-variant='bubbles'] .ws-bx { display: initial; }
@@ -164,6 +171,37 @@ const WAVE_BACK = 'q3 1.4 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0'
 .water-saved[data-variant='splash'] .ws-ripple-2 { animation-delay: 0.45s; }
 .water-saved[data-variant='splash'] .water-saved-badge { animation-delay: 0.6s; }
 .water-saved[data-variant='splash'] .water-saved-check { animation-delay: 0.75s; }
+/* rain (54.9, платный «Дождь»): пять струек падают на воду, вода набирается на фоне */
+.ws-rd { display: none; opacity: 0; }
+.ws-spark { display: none; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.water-saved[data-variant='rain'] .ws-rd { display: initial; animation: water-saved-rain 0.6s ease-in both; }
+.water-saved[data-variant='rain'] .ws-rd-1 { animation-delay: 0.05s; }
+.water-saved[data-variant='rain'] .ws-rd-2 { animation-delay: 0.2s; }
+.water-saved[data-variant='rain'] .ws-rd-3 { animation-delay: 0.1s; }
+.water-saved[data-variant='rain'] .ws-rd-4 { animation-delay: 0.3s; }
+.water-saved[data-variant='rain'] .ws-rd-5 { animation-delay: 0.15s; }
+.water-saved[data-variant='rain'] .ws-bubble, .water-saved[data-variant='rain'] .ws-drop, .water-saved[data-variant='rain'] .ws-ripple-2 { display: none; }
+.water-saved[data-variant='rain'] .water-saved-fill { animation-delay: 0.3s; animation-duration: 0.7s; }
+.water-saved[data-variant='rain'] .ws-ripple { animation-delay: 0.8s; }
+.water-saved[data-variant='rain'] .water-saved-badge { animation-delay: 1s; }
+.water-saved[data-variant='rain'] .water-saved-check { animation-delay: 1.15s; }
+/* tide (54.9, платный «Прилив»): вода накатывает, перехлёстывает отметку и оседает; волна бежит быстрее */
+.water-saved[data-variant='tide'] .ws-bubble, .water-saved[data-variant='tide'] .ws-drop, .water-saved[data-variant='tide'] .ws-ripple-2 { display: none; }
+.water-saved[data-variant='tide'] .water-saved-fill { animation: water-saved-tide 1.1s ease-in-out both; }
+.water-saved[data-variant='tide'] .ws-wave { animation-duration: 0.9s; }
+.water-saved[data-variant='tide'] .ws-wave-back { animation-duration: 1.2s; }
+.water-saved[data-variant='tide'] .ws-ripple { animation-delay: 0.95s; }
+.water-saved[data-variant='tide'] .water-saved-badge { animation-delay: 1.05s; }
+.water-saved[data-variant='tide'] .water-saved-check { animation-delay: 1.2s; }
+/* sparkle (54.9, платный «Искры»): вода набирается и над ней вспыхивают искры */
+.water-saved[data-variant='sparkle'] .ws-spark { display: initial; animation: water-saved-spark 0.7s ease-in-out both; }
+.water-saved[data-variant='sparkle'] .ws-s-1 { animation-delay: 0.55s; }
+.water-saved[data-variant='sparkle'] .ws-s-2 { animation-delay: 0.7s; }
+.water-saved[data-variant='sparkle'] .ws-s-3 { animation-delay: 0.85s; }
+.water-saved[data-variant='sparkle'] .ws-s-4 { animation-delay: 1s; }
+.water-saved[data-variant='sparkle'] .ws-bubble, .water-saved[data-variant='sparkle'] .ws-drop, .water-saved[data-variant='sparkle'] .ws-ripple-2 { display: none; }
+.water-saved[data-variant='sparkle'] .water-saved-badge { animation-delay: 0.9s; }
+.water-saved[data-variant='sparkle'] .water-saved-check { animation-delay: 1.05s; }
 .water-saved-enter-active,
 .water-saved-leave-active {
   transition: opacity 0.25s ease, transform 0.25s ease;
@@ -213,6 +251,22 @@ const WAVE_BACK = 'q3 1.4 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0'
   0% { opacity: 0; transform: translate(0, 12px); }
   25% { opacity: 1; transform: translate(calc(var(--dx, 0px) * 0.5), 3px); }
   100% { opacity: 0; transform: translate(var(--dx, 0px), 14px); }
+}
+@keyframes water-saved-rain {
+  0% { opacity: 0; transform: translateY(0); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(14px); }
+}
+@keyframes water-saved-tide {
+  0% { transform: translateY(22px); }
+  60% { transform: translateY(-2.2px); }
+  80% { transform: translateY(0.8px); }
+  100% { transform: translateY(0); }
+}
+@keyframes water-saved-spark {
+  0% { opacity: 0; transform: scale(0.2) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(45deg); }
+  100% { opacity: 0; transform: scale(0.2) rotate(90deg); }
 }
 @keyframes water-saved-pop {
   from { opacity: 0; transform: scale(0); }
