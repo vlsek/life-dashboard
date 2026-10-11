@@ -20,7 +20,7 @@ import { fetchProfileGender } from './lib/bodyGender'
 import { useMeasurements } from './lib/useMeasurements'
 import MeasurementsSection from './components/MeasurementsSection.vue'
 import type { PartId } from './lib/measurements'
-import { readBodyModelChoice, resolveBodyModel, writeBodyModelChoice, type BodyModel } from './lib/bodyModel'
+import { BODY_MODELS, readBodyModelChoice, resolveBodyModel, writeBodyModelChoice, type BodyModel } from './lib/bodyModel'
 import ProgressionTrees from './components/ProgressionTrees.vue'
 import ExerciseForm from './components/ExerciseForm.vue'
 import EntryForm from './components/EntryForm.vue'
@@ -427,7 +427,7 @@ function onToggleProgramWeek(week: number) {
         <div class="mb-4 flex flex-wrap items-center gap-1.5 text-sm" role="group" :aria-label="t('workouts_body_model')" data-testid="body-model-switch">
           <span style="color: var(--text-dim)">{{ t('workouts_body_model') }}:</span>
           <button
-            v-for="m in (['male', 'female'] as const)"
+            v-for="m in BODY_MODELS"
             :key="m"
             type="button"
             class="rounded-full border px-3 py-1"
@@ -436,7 +436,7 @@ function onToggleProgramWeek(week: number) {
             :data-testid="'body-model-' + m"
             @click="setBodyModel(m)"
           >
-            {{ t(m === 'female' ? 'workouts_body_female' : 'workouts_body_male') }}
+            {{ t(('workouts_body_' + m) as never) }}
           </button>
         </div>
         <MuscleMap

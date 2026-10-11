@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { BODY_OUTLINE, FRONT_SHAPES, BACK_SHAPES } from './lib/muscleShapes'
-import { FEMALE_BACK_SHAPES, FEMALE_FRONT_SHAPES, FEMALE_OUTLINE, bodyGeometry, factorAt, feminizePath, resolveBodyModel, widthFactor } from './lib/bodyModel'
+import { BODY_MODELS, FEMALE_BACK_SHAPES, FEMALE_FRONT_SHAPES, FEMALE_OUTLINE, bodyGeometry, factorAt, feminizePath, resolveBodyModel, widthFactor } from './lib/bodyModel'
 
 const nums = (d: string) => (d.match(/-?\d*\.?\d+/g) ?? []).map(Number)
 const xsAtY = (d: string, lo: number, hi: number) => {
@@ -82,5 +82,27 @@ describe('«более женственная» модель (BACKLOG 57.4)', ()
   it('нет ступеньки у подмышки: коэффициент ширины меняется плавно вдоль x', () => {
     const f = (x: number) => factorAt(x, 67)
     for (let x = 14; x < 50; x += 1) expect(Math.abs(f(x) - f(x + 1))).toBeLessThan(0.06)
+  })
+})
+
+describe('новые модели тела (BACKLOG 59.2)', () => {
+  const torso = (d: string, lo: number, hi: number, cap = 40) => {
+    const xs = xsAtY(d, lo, hi).filter((x) => Math.abs(x - 50) <= cap)
+    return Math.max(...xs) - Math.min(...xs)
+  }
+  it('все пять моделей: один набор мышц, разные контуры, выбор сохраняется', () => {
+    expect(BODY_MODELS).toEqual(['male', 'female', 'athletic', 'slim', 'curvy'])
+    const outlines = new Set(BODY_MODELS.map((m) => bodyGeometry(m).outline))
+    expect(outlines.size).toBe(5)
+    for (const m of BODY_MODELS) {
+      expect(bodyGeometry(m).front.map((s) => s.muscle)).toEqual(FRONT_SHAPES.map((s) => s.muscle))
+      expect(resolveBodyModel(m, 'male')).toBe(m)
+    }
+    expect(resolveBodyModel('nope', 'female')).toBe('female')
+  })
+  it('атлетичная: плечи шире, талия уже; плотная: бёдра шире, чем у мужской', () => {
+    expect(torso(bodyGeometry('athletic').outline, 36, 44, 60)).toBeGreaterThan(torso(BODY_OUTLINE, 36, 44, 60))
+    expect(torso(bodyGeometry('curvy').outline, 104, 112, 24)).toBeGreaterThan(torso(BODY_OUTLINE, 104, 112, 24))
+    expect(torso(bodyGeometry('slim').outline, 104, 112, 24)).toBeLessThanOrEqual(torso(BODY_OUTLINE, 104, 112, 24))
   })
 })
