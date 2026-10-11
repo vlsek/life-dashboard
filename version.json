@@ -1,6 +1,13 @@
 {
-  "version": "4.99",
+  "version": "5.00",
   "en": [
+    {
+      "version": "5.00",
+      "date": "2026-10-11 15:28",
+      "changes": [
+        "The \"Three tongues\" flame is now slower and smoother (on the loading splash, in the Customization preview and in the streak flame). The streak flame still speeds up with the tier: the longer the streak, the livelier the flame."
+      ]
+    },
     {
       "version": "4.99",
       "date": "2026-10-11 18:27",
@@ -3560,6 +3567,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.00",
+      "date": "2026-10-11 15:28",
+      "changes": [
+        "Пламя «Три языка» стало медленнее и плавнее (в заставке при загрузке, в предпросмотре «Кастомизации» и в огоньке серии). У огонька серии скорость по-прежнему растёт со ступенью: чем длиннее серия, тем живее пламя."
+      ]
+    },
     {
       "version": "4.99",
       "date": "2026-10-11 18:27",
