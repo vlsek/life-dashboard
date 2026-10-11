@@ -57,6 +57,15 @@ export function setMotionOff(off: boolean) {
   else document.documentElement.removeAttribute('data-motion')
 }
 
+// «Простое оформление» (BACKLOG 50.1): без свечения, сеток, scanlines, зернистости и мягких теней у «больших» тем, независимо от настроек системы.
+// localStorage `site_simple` = 'on' → <html data-simple="on"> (до первой отрисовки ставит скрипт в <head> страниц; правила — в style.css, блок design-tokens).
+export const userSimpleLook = () => read('site_simple') === 'on'
+export function setSimpleLook(on: boolean) {
+  write('site_simple', on ? 'on' : null)
+  if (on) document.documentElement.setAttribute('data-simple', 'on')
+  else document.documentElement.removeAttribute('data-simple')
+}
+
 export const celebrationsEnabled = () => read('streak_celebrations_off') !== '1'
 export const setCelebrationsEnabled = (on: boolean) => write('streak_celebrations_off', on ? null : '1')
 

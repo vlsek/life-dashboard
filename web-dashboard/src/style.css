@@ -814,6 +814,10 @@ html.theme-moonlight {
 }
 html.theme-moonlight body { background-image: var(--bg-pattern); background-size: var(--bg-pattern-size); }
 html.theme-moonlight button:not(.secondary):not(.danger):not(:disabled), html.theme-moonlight input[type='checkbox']:checked, html.theme-moonlight input[type='radio']:checked { box-shadow: var(--shadow-active); }
+html[data-simple='on'].theme-moonlight {
+  --shadow-active: none;
+  --bg-pattern: none;
+}
 @media (prefers-contrast: more) {
   html.theme-moonlight {
     --shadow-active: none;
@@ -839,6 +843,9 @@ html.theme-phosphor {
 }
 html.theme-phosphor body, html.theme-phosphor button, html.theme-phosphor input, html.theme-phosphor select, html.theme-phosphor textarea { font-family: var(--font-heading); }
 html.theme-phosphor body::after { content: ''; position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; background-image: var(--scanlines); }
+html[data-simple='on'].theme-phosphor {
+  --scanlines: none;
+}
 @media (prefers-contrast: more) {
   html.theme-phosphor {
     --scanlines: none;
@@ -863,6 +870,10 @@ html.theme-nightfall {
 }
 html.theme-nightfall .card, html.theme-nightfall .modal, html.theme-nightfall [style*="var(--bg-card)"] { box-shadow: var(--shadow-card); }
 html.theme-nightfall [aria-pressed="true"], html.theme-nightfall [aria-selected="true"], html.theme-nightfall [aria-checked="true"], html.theme-nightfall [aria-current="page"] { box-shadow: var(--shadow-active); }
+html[data-simple='on'].theme-nightfall {
+  --shadow-card: none;
+  --shadow-active: 0 0 0 2px #bb9af7;
+}
 @media (prefers-contrast: more) {
   html.theme-nightfall {
     --shadow-card: none;
@@ -906,6 +917,9 @@ html.theme-frost {
   --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 html.theme-frost body { background-image: var(--bg-pattern); background-size: var(--bg-pattern-size); }
+html[data-simple='on'].theme-frost {
+  --bg-pattern: none;
+}
 @media (prefers-contrast: more) {
   html.theme-frost {
     --bg-pattern: none;

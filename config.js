@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.89";
+const SITE_VERSION = "4.90";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.90", date: "2026-10-11 12:56", changes: [
+        "Глобальные настройки → «Эффекты»: новый выключатель «Простое оформление». Он отключает свечение, сетки, строки развёртки, зернистость и мягкие тени больших тем (цвета остаются), независимо от настроек системы. Применяется сразу, запоминается и работает на всех страницах",
+    ]},
     { version: "4.89", date: "2026-10-11 10:30", changes: [
         "Заставка загрузки теперь идёт вместе с большой темой: Emerald Obsidian — «Огненный круг», Moonlight Synth — «Три языка», Matrix Phosphor — «Классика», Tokyo Nightfall — «Живое пламя». В «Кастомизации», в разделе заставок, появилась плитка «По теме» (выбрана по умолчанию) — она показывает, какая заставка играет сейчас. Если выбрать заставку вручную (или открыть страницу с ?splash=), она всегда главнее темы; на обычных темах по-прежнему «Живое пламя». Без миграций."
     ]},
@@ -2077,6 +2080,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.90", date: "2026-10-11 12:56", changes: [
+        "Global settings, Effects: a new Simple look switch. It turns off the glow, grids, scanlines, grain and soft shadows of the big themes (the colors stay), regardless of the system settings. It applies at once, is remembered and works on every page",
+    ]},
     { version: "4.89", date: "2026-10-11 10:30", changes: [
         "The page loader now comes with the big theme: Emerald Obsidian — \"Fire ring\", Moonlight Synth — \"Three tongues\", Matrix Phosphor — \"Classic\", Tokyo Nightfall — \"Living flame\". The loader section in Customization has a new \"By theme\" tile (selected by default) that shows which loader is playing now. A loader picked by hand (or a page opened with ?splash=) always wins over the theme; regular themes keep the \"Living flame\". No migrations."
     ]},

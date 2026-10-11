@@ -108,6 +108,12 @@
       @media (prefers-reduced-motion: reduce) { .pre-splash svg, .pre-splash svg * { animation: none !important; } }
       html[data-motion='off'] .pre-splash svg, html[data-motion='off'] .pre-splash svg * { animation: none !important; }
     </style>
+      <script>
+      // «Простое оформление» (BACKLOG 50.1): выбор человека → <html data-simple="on"> до первой отрисовки (правила — в src/style.css)
+      try {
+        if (localStorage.getItem('site_simple') === 'on') document.documentElement.setAttribute('data-simple', 'on')
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="app">

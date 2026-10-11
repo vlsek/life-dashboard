@@ -12,7 +12,7 @@ import { useLayout } from '../lib/useLayout'
 import { friendlyError } from '../lib/friendlyError'
 import { ensureTrackWater, saveTrackWater, trackWater } from '../lib/waterTracking'
 import { loadShowOnline, saveShowOnline } from '../lib/presenceSetting'
-import { THEME_KEYS, celebrationsEnabled, skipPromptEnabled, setSkipPromptEnabled, setSidebarProgress, sidebarProgress, getTheme, setCelebrationsEnabled, setLangAndReload, setMotionOff, setTheme, setWaterRemindersEnabled, systemReducedMotion, userMotionOff, waterRemindersEnabled, type ThemeKey } from '../lib/prefs'
+import { THEME_KEYS, celebrationsEnabled, skipPromptEnabled, setSkipPromptEnabled, setSidebarProgress, sidebarProgress, getTheme, setCelebrationsEnabled, setLangAndReload, setMotionOff, setSimpleLook, setTheme, setWaterRemindersEnabled, systemReducedMotion, userMotionOff, userSimpleLook, waterRemindersEnabled, type ThemeKey } from '../lib/prefs'
 
 // «Глобальные настройки» (BACKLOG 6.2): единое окно со всеми настройками, которые раньше были разбросаны по страницам
 // (язык/тема — в боковом меню, анимации и поздравления — в окне раскладки Дашборда, прогресс — в окне прогресса...).
@@ -43,6 +43,7 @@ onMounted(() => window.addEventListener(UNLOCKED_THEMES_EVENT, onUnlockedThemes)
 onUnmounted(() => window.removeEventListener(UNLOCKED_THEMES_EVENT, onUnlockedThemes))
 const systemReduced = systemReducedMotion()
 const motionOff = ref(userMotionOff() || systemReduced)
+const simpleLook = ref(userSimpleLook())
 const celebrate = ref(celebrationsEnabled())
 const skipPrompt = ref(skipPromptEnabled())
 const waterReminders = ref(waterRemindersEnabled())
@@ -102,6 +103,10 @@ function onTheme(e: Event) {
   theme.value = (e.target as HTMLSelectElement).value as ThemeKey
   setTheme(theme.value)
 }
+function onSimpleLook(e: Event) {
+  simpleLook.value = (e.target as HTMLInputElement).checked
+  setSimpleLook(simpleLook.value)
+}
 function onMotion(e: Event) {
   motionOff.value = (e.target as HTMLInputElement).checked
   setMotionOff(motionOff.value)
@@ -154,6 +159,11 @@ async function changeLayout(next: LayoutItem[]) {
         {{ t('motion_off_setting') }}
       </label>
       <p class="gh-dim" style="margin: 2px 0 8px 24px; font-size: 12px">{{ systemReduced ? t('motion_off_system_hint') : t('motion_off_setting_hint') }}</p>
+      <label class="gh-check">
+        <input type="checkbox" :checked="simpleLook" data-test="simple-look" @change="onSimpleLook" />
+        {{ t('simple_look_setting') }}
+      </label>
+      <p class="gh-dim" style="margin: 2px 0 8px 24px; font-size: 12px">{{ t('simple_look_setting_hint') }}</p>
       <label class="gh-check">
         <input type="checkbox" :checked="celebrate" data-test="celebrate" @change="onCelebrate" />
         {{ t('dash_celebrate_setting') }}

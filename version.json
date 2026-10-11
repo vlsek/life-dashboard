@@ -1,6 +1,13 @@
 {
-  "version": "4.89",
+  "version": "4.90",
   "en": [
+    {
+      "version": "4.90",
+      "date": "2026-10-11 12:56",
+      "changes": [
+        "Global settings, Effects: a new Simple look switch. It turns off the glow, grids, scanlines, grain and soft shadows of the big themes (the colors stay), regardless of the system settings. It applies at once, is remembered and works on every page"
+      ]
+    },
     {
       "version": "4.89",
       "date": "2026-10-11 10:30",
@@ -3490,6 +3497,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.90",
+      "date": "2026-10-11 12:56",
+      "changes": [
+        "Глобальные настройки → «Эффекты»: новый выключатель «Простое оформление». Он отключает свечение, сетки, строки развёртки, зернистость и мягкие тени больших тем (цвета остаются), независимо от настроек системы. Применяется сразу, запоминается и работает на всех страницах"
+      ]
+    },
     {
       "version": "4.89",
       "date": "2026-10-11 10:30",

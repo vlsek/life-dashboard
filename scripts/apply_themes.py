@@ -41,6 +41,9 @@ def character_rules(tailwind):
         for sels, body in c.get('rules') or []:
             out.append('\n' + ', '.join(sel + ' ' + x for x in sels) + ' { ' + body + ' }')
         if c.get('contrast'):
+            # то же, что при prefers-contrast: more, но по выбору человека («Простое оформление»): <html data-simple="on">
+            out.append("\nhtml[data-simple='on'].theme-%s {\n%s\n}" % (k, '\n'.join('  ' + x.strip() for x in c['contrast'].strip().split('\n'))))
+        if c.get('contrast'):
             out.append('\n@media (prefers-contrast: more) {\n  %s {\n%s\n  }\n}' % (sel, '\n'.join('    ' + x.strip() for x in c['contrast'].strip().split('\n'))))
         if tailwind and c.get('reduced'):
             out.append('\n@media (prefers-reduced-motion: reduce) {\n  %s {\n    %s\n  }\n}' % (sel, c['reduced'].strip()))
@@ -359,12 +362,24 @@ def relabel(t, q):
     return t
 
 
+SIMPLE_SCRIPT = """    <script>
+      // «Простое оформление» (BACKLOG 50.1): выбор человека → <html data-simple="on"> до первой отрисовки (правила — в src/style.css)
+      try {
+        if (localStorage.getItem('site_simple') === 'on') document.documentElement.setAttribute('data-simple', 'on')
+      } catch (e) {}
+    </script>
+  """
+
+
 def index_html(t):
     bg = '{ ' + ', '.join("%s: '%s'" % (k, P[k][3]['bg']) for k in KEYS) + ' }'
     ac = '{ ' + ', '.join("%s: '%s'" % (k, P[k][3]['accent']) for k in KEYS) + ' }'
     t, n1 = re.subn(r"var bg = \{[^}]*\}\[t\]", lambda m: 'var bg = ' + bg + '[t]', t, count=1)
     t, n2 = re.subn(r"var ac = \{[^}]*\}\[t\]", lambda m: 'var ac = ' + ac + '[t]', t, count=1)
     assert n1 == 1 and n2 == 1
+    # «Простое оформление» (BACKLOG 50.1): флаг на <html> до первой отрисовки, как у site_motion (правила — в design-tokens style.css)
+    if "site_simple" not in t:
+        t = t.replace('</head>', SIMPLE_SCRIPT + '</head>', 1)
     # вариант заставки, идущий с большой темой (BACKLOG 55.5, срез 2): запасной, если вариант не выбран вручную
     tl = '{ ' + ', '.join("%s: '%s'" % (k, v) for k, v in THEME_LOADER.items()) + ' }'
     if 'var tl = ' in t:
