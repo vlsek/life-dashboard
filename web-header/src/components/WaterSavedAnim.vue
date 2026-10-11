@@ -61,10 +61,10 @@ const WAVE_BACK = 'q3 1.4 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0'
         <g class="ws-rain">
           <line v-for="(x, i) in [7, 9.6, 12, 14.4, 17]" :key="i" :class="`ws-rd ws-rd-${i + 1}`" :x1="x" y1="-4" :x2="x" y2="-1.6" style="stroke: var(--water-top)" stroke-width="0.7" stroke-linecap="round" />
         </g>
-        <path class="ws-spark ws-s-1" d="M3.2 6.6l.5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5-1.5-.5 1.5-.5z" fill="#fff" />
-        <path class="ws-spark ws-s-2" d="M21 12.4l.45 1.3 1.3.45-1.3.45-.45 1.3-.45-1.3-1.3-.45 1.3-.45z" fill="#fff" />
-        <path class="ws-spark ws-s-3" d="M12 -4.6l.55 1.6 1.6.55-1.6.55-.55 1.6-.55-1.6-1.6-.55 1.6-.55z" fill="#fff" />
-        <path class="ws-spark ws-s-4" d="M20.6 1.6l.4 1.2 1.2.4-1.2.4-.4 1.2-.4-1.2-1.2-.4 1.2-.4z" fill="#fff" />
+        <path class="ws-spark ws-s-1" d="M3.2 6.6l.5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5-1.5-.5 1.5-.5z" fill="#f7c63a" stroke="#d99a00" stroke-width="0.25" />
+        <path class="ws-spark ws-s-2" d="M21 12.4l.45 1.3 1.3.45-1.3.45-.45 1.3-.45-1.3-1.3-.45 1.3-.45z" fill="#f7c63a" stroke="#d99a00" stroke-width="0.25" />
+        <path class="ws-spark ws-s-3" d="M12 -4.6l.55 1.6 1.6.55-1.6.55-.55 1.6-.55-1.6-1.6-.55 1.6-.55z" fill="#f7c63a" stroke="#d99a00" stroke-width="0.25" />
+        <path class="ws-spark ws-s-4" d="M20.6 1.6l.4 1.2 1.2.4-1.2.4-.4 1.2-.4-1.2-1.2-.4 1.2-.4z" fill="#f7c63a" stroke="#d99a00" stroke-width="0.25" />
         <ellipse class="ws-ripple" cx="12" cy="10.8" rx="5.5" ry="1.1" fill="none" style="stroke: var(--water-line)" stroke-width="0.5" />
         <ellipse class="ws-ripple ws-ripple-2" cx="12" cy="10.8" rx="5.5" ry="1.1" fill="none" style="stroke: var(--water-line)" stroke-width="0.4" />
         <path class="ws-drop ws-d-1" d="M9.4 -2.2q-1.1 1.7 0 2.7q1.1 -1 0 -2.7z" style="fill: var(--water-top)" />

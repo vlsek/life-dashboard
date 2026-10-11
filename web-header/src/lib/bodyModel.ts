@@ -35,12 +35,17 @@ export function widthFactor(y: number): number {
 
 const round = (n: number) => Math.round(n * 100) / 100
 
+// Руки (дальше 20 единиц от оси на высоте плеч–кисти) идут за плечами, а не за бёдрами: иначе кисти уезжают наружу и рука ломается.
+const ARM_FACTOR = 0.9
+const isArm = (x: number, y: number) => Math.abs(x - 50) >= 20 && y >= 36 && y <= 104
+
 // Путь состоит только из абсолютных команд M/L/C/Z — пересчитываем каждую пару (x, y).
 export function feminizePath(d: string): string {
   return d.replace(/(-?\d*\.?\d+)\s+(-?\d*\.?\d+)/g, (_, xs: string, ys: string) => {
     const x = Number(xs)
     const y = Number(ys)
-    return `${round(50 + (x - 50) * widthFactor(y))} ${y}`
+    const f = isArm(x, y) ? ARM_FACTOR : widthFactor(y)
+    return `${round(50 + (x - 50) * f)} ${y}`
   })
 }
 

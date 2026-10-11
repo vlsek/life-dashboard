@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.95";
+const SITE_VERSION = "4.96";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.96", date: "2026-10-11 13:11", changes: [
+        "Поправки по результатам просмотра: у женской модели тела руки больше не ломаются (кисти шли наружу вместе с бёдрами), а искры в анимации воды стали золотыми — белые не были видны на светлой теме."
+    ]},
     { version: "4.95", date: "2026-10-11 13:50", changes: [
         "Новым пользователям больше не показывается плашка «Итоги недели на подходе» в выходные: в первую неделю после регистрации подводить нечего. У остальных всё как раньше. БЕЗ SQL."
     ]},
@@ -2095,6 +2098,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.96", date: "2026-10-11 13:11", changes: [
+        "Fixes after a visual check: the female body model's arms no longer bend outward at the hands, and the sparkles in the water animation are now gold — the white ones were invisible on light themes."
+    ]},
     { version: "4.95", date: "2026-10-11 13:50", changes: [
         "New users no longer see the weekend «Weekly summary is coming» banner: there is nothing to sum up in the first week after sign-up. Everyone else sees it as before. NO SQL."
     ]},

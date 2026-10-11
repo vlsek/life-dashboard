@@ -1,6 +1,13 @@
 {
-  "version": "4.95",
+  "version": "4.96",
   "en": [
+    {
+      "version": "4.96",
+      "date": "2026-10-11 13:11",
+      "changes": [
+        "Fixes after a visual check: the female body model's arms no longer bend outward at the hands, and the sparkles in the water animation are now gold — the white ones were invisible on light themes."
+      ]
+    },
     {
       "version": "4.95",
       "date": "2026-10-11 13:50",
@@ -3532,6 +3539,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.96",
+      "date": "2026-10-11 13:11",
+      "changes": [
+        "Поправки по результатам просмотра: у женской модели тела руки больше не ломаются (кисти шли наружу вместе с бёдрами), а искры в анимации воды стали золотыми — белые не были видны на светлой теме."
+      ]
+    },
     {
       "version": "4.95",
       "date": "2026-10-11 13:50",

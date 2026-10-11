@@ -23,12 +23,12 @@ describe('Женская модель тела (54.5)', () => {
     expect(FEMALE_BACK_SHAPES.map((s) => s.muscle)).toEqual(BACK_SHAPES.map((s) => s.muscle))
   })
 
-  it('на уровне бёдер (y≈100) контур шире, на уровне талии (y≈75) уже', () => {
+  it('на уровне бёдер (y≈104–112) контур шире, на уровне талии (y≈75) уже', () => {
     const w = (d: string, lo: number, hi: number) => {
       const xs = xsAtY(d, lo, hi)
       return Math.max(...xs) - Math.min(...xs)
     }
-    expect(w(FEMALE_OUTLINE, 98, 102)).toBeGreaterThan(w(BODY_OUTLINE, 98, 102))
+    expect(w(FEMALE_OUTLINE, 104, 112)).toBeGreaterThan(w(BODY_OUTLINE, 104, 112))
     expect(w(FEMALE_OUTLINE, 73, 77)).toBeLessThan(w(BODY_OUTLINE, 73, 77))
   })
 
@@ -51,5 +51,10 @@ describe('Женская модель тела (54.5)', () => {
     expect(resolveBodyModel(null, 'female')).toBe('female')
     expect(resolveBodyModel(null, null)).toBe('male')
     expect(resolveBodyModel('junk', 'male')).toBe('male')
+  })
+
+  it('руки следуют за плечами, а не за бёдрами: кисти женской модели не шире мужских (иначе рука ломается)', () => {
+    const maxDx = (d: string) => Math.max(...xsAtY(d, 90, 104).map((x) => Math.abs(x - 50)))
+    expect(maxDx(FEMALE_OUTLINE)).toBeLessThanOrEqual(maxDx(BODY_OUTLINE))
   })
 })
