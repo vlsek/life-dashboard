@@ -150,8 +150,6 @@ const collapsed = ref(false)
     <div v-collapse="!collapsed" class="card relative">
     <SavedTick :show="savedTick" />
     <DateStepper v-if="switchable" :model-value="day" @update:model-value="emit('update:date', $event)" />
-    <p class="dim mb-2.5 text-xs"><EmojiText :text="t('dash_planned_bonus_hint')" /></p>
-
     <p v-if="planned.length === 0" class="dim">{{ t('dash_planned_empty') }}</p>
     <div v-else class="table-scroll overflow-x-auto" data-test="table-scroll">
       <table>
@@ -203,34 +201,42 @@ const collapsed = ref(false)
     </div>
 
     <!-- BACKLOG 1078: цели, выполненные в этот день, но не стоявшие в плане, — чтобы выполненное не пропадало с главной -->
-    <div v-if="doneGoals.length" class="mt-2" data-test="done-goals">
-      <p class="dim mb-1 text-xs">{{ t('dash_planned_done_goals_h') }}</p>
-      <ul class="m-0 flex list-none flex-col gap-1 p-0 text-sm">
+    <details v-if="doneGoals.length" class="mt-2" data-test="done-goals">
+      <summary class="dim cursor-pointer text-xs">{{ t('dash_planned_done_goals_h') }} {{ doneGoals.length }}</summary>
+      <ul class="m-0 mt-1 flex list-none flex-col gap-1 p-0 text-sm">
         <li v-for="g in doneGoals" :key="g.id" class="flex items-center gap-2" data-test="done-goal">
           <span style="color: var(--success)" aria-hidden="true">✓</span>
           <span class="line-through opacity-60">{{ g.name }}</span>
         </li>
       </ul>
-    </div>
+    </details>
 
-    <div class="mt-2 flex flex-wrap gap-2">
+    <div class="mt-2 flex flex-wrap gap-2" data-test="add-row">
       <input ref="textInput" v-model="newText" type="text" class="min-w-40 flex-1" :class="{ 'plan-invalid': emptyInvalid, 'plan-shake': shaking }" :aria-invalid="emptyInvalid ? 'true' : undefined" :placeholder="t('dash_planned_custom_placeholder')" data-test="custom-input" @input="emptyInvalid = false" @keydown.enter.prevent="addCustom" />
-      <input v-model="newTime" type="time" class="plan-time" :title="t('plan_time_label')" data-test="new-time" />
-      <label class="inline-flex items-center gap-1 text-sm" :title="t('dash_planned_done_already_title')">
-        <input v-model="newDone" type="checkbox" data-test="new-done" />
-        {{ t('dash_planned_done_already') }}
-      </label>
       <button type="button" class="secondary" data-test="add-custom" @click="addCustom"><EmojiText :text="t('add_btn')" /></button>
-      <button type="button" data-test="add-goal" @click="openGoalPicker"><EmojiText :text="t('dash_planned_add_from_goals_btn')" /></button>
-      <button type="button" data-test="new-goal" @click="openNewGoal"><EmojiText :text="t('dash_planned_new_goal_btn')" /></button>
+    </div>
+    <div class="mt-2 flex flex-wrap gap-2" data-test="add-links">
+      <button type="button" class="secondary" data-test="add-goal" @click="openGoalPicker"><EmojiText :text="t('dash_planned_add_from_goals_btn')" /></button>
+      <button type="button" class="secondary" data-test="new-goal" @click="openNewGoal"><EmojiText :text="t('dash_planned_new_goal_btn')" /></button>
+      <button v-if="day === todayStr()" type="button" class="secondary" data-test="carry" @click="openCarryOver"><EmojiText :text="t('dash_planned_carry_over_btn')" /></button>
     </div>
 
-    <button v-if="day === todayStr()" type="button" class="secondary mt-2" data-test="carry" @click="openCarryOver"><EmojiText :text="t('dash_planned_carry_over_btn')" /></button>
+    <details class="mt-2 text-sm" data-test="plan-more">
+      <summary class="dim cursor-pointer text-xs">{{ t('dash_planned_more') }}</summary>
+      <div class="mt-2 flex flex-wrap items-center gap-2">
+        <input v-model="newTime" type="time" class="plan-time" :title="t('plan_time_label')" data-test="new-time" />
+        <label class="inline-flex items-center gap-1 text-sm" :title="t('dash_planned_done_already_title')">
+          <input v-model="newDone" type="checkbox" data-test="new-done" />
+          {{ t('dash_planned_done_already') }}
+        </label>
+      </div>
+      <p class="dim mb-0 mt-2 text-xs"><EmojiText :text="t('dash_planned_bonus_hint')" /></p>
 
-    <div v-if="perm !== 'unsupported' && perm !== 'granted'" class="mt-2 text-sm" data-test="notify">
-      <button v-if="perm === 'default'" type="button" class="secondary" data-test="notify-enable" @click="enableNotifications"><EmojiText :text="t('plan_notify_enable_btn')" /></button>
-      <p class="dim mt-1 text-xs">{{ perm === 'denied' ? t('plan_notify_denied') : t('plan_notify_hint') }}</p>
-    </div>
+      <div v-if="perm !== 'unsupported' && perm !== 'granted'" class="mt-2 text-sm" data-test="notify">
+        <button v-if="perm === 'default'" type="button" class="secondary" data-test="notify-enable" @click="enableNotifications"><EmojiText :text="t('plan_notify_enable_btn')" /></button>
+        <p class="dim mt-1 text-xs">{{ perm === 'denied' ? t('plan_notify_denied') : t('plan_notify_hint') }}</p>
+      </div>
+    </details>
 
     <p v-if="notice" class="dim mt-2 text-sm" data-test="notice">{{ notice }}</p>
     <p v-if="error" class="mt-2 text-sm" style="color: var(--danger)" data-test="error">{{ error }}</p>
