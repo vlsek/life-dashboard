@@ -4,7 +4,6 @@ import { mount } from '@vue/test-utils'
 import { readFileSync } from 'node:fs'
 import WaterAnimPicker from './components/WaterAnimPicker.vue'
 import { WATER_ANIMS, WATER_ANIM_KEY } from './lib/waterAnim'
-import { THEME_WATER } from './lib/themeWater'
 
 // Выбор анимации воды в «Кастомизации» (BACKLOG 54.8): ключ общий с «Настройками» шапки, «По теме» снимает выбор, после выбора играет превью.
 const read = (p: string): string => readFileSync(p, 'utf-8')

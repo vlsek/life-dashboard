@@ -30,10 +30,6 @@ describe('Женская модель тела (54.5)', () => {
   })
 
   it('на уровне бёдер (y≈104–112) контур шире, на уровне талии (y≈75) уже', () => {
-    const w = (d: string, lo: number, hi: number) => {
-      const xs = xsAtY(d, lo, hi)
-      return Math.max(...xs) - Math.min(...xs)
-    }
     expect(torso(FEMALE_OUTLINE, 104, 112)).toBeGreaterThan(torso(BODY_OUTLINE, 104, 112))
     expect(torso(FEMALE_OUTLINE, 73, 77, 16)).toBeLessThan(torso(FEMALE_OUTLINE, 104, 112) * 0.7)
   })
