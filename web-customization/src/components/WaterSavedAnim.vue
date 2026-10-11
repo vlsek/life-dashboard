@@ -6,7 +6,8 @@
 import { ref, watch } from 'vue'
 import { getWaterAnim, type WaterAnim } from '../lib/waterAnim'
 
-const props = defineProps<{ tick: number }>()
+// demo — показать КОНКРЕТНЫЙ вариант (кнопка «Показать» в «Кастомизации», BACKLOG 57.2), не меняя сохранённый выбор
+const props = defineProps<{ tick: number; demo?: WaterAnim }>()
 const visible = ref(false)
 const variant = ref<WaterAnim>(getWaterAnim())
 let timer: ReturnType<typeof setTimeout> | undefined
@@ -16,7 +17,7 @@ watch(
   (v, old) => {
     if (v === old || v <= 0) return
     visible.value = false // перезапуск анимации при быстрых повторных нажатиях
-    variant.value = getWaterAnim() // выбор из «Настроек» действует сразу, без перезагрузки
+    variant.value = props.demo ?? getWaterAnim() // выбор из «Настроек» действует сразу, без перезагрузки
     requestAnimationFrame(() => {
       visible.value = true
       clearTimeout(timer)

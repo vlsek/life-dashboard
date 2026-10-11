@@ -35,3 +35,24 @@ describe('предметы «Анимация воды»', () => {
     }
   })
 })
+
+describe('«Показать» у платных анимаций воды (BACKLOG 57.2)', () => {
+  const wait = () => new Promise((r) => setTimeout(r, 30))
+  for (const [key, variant] of [['water_rain', 'rain'], ['water_tide', 'tide'], ['water_sparkle', 'sparkle']] as const) {
+    it(`${key}: кнопка «Показать» играет «${variant}» до покупки и ничего не покупает и не надевает`, async () => {
+      const item = ITEMS.find((i) => i.key === key)!
+      const w = mount(ItemCard, { props: { item, status: 'locked', balance: 0, busy: false, disabled: false }, attachTo: document.body })
+      await w.find('[data-testid="water-demo"]').trigger('click')
+      await wait()
+      expect(document.querySelector('[data-test="water-saved"]')?.getAttribute('data-variant')).toBe(variant)
+      expect(w.emitted('buy')).toBeUndefined()
+      expect(w.emitted('choose')).toBeUndefined()
+      w.unmount()
+    })
+  }
+  it('у карточек других категорий кнопки «Показать» нет', () => {
+    const item = ITEMS.find((i) => i.category === 'avatar_frame')!
+    const w = mount(ItemCard, { props: { item, status: 'locked', balance: 0, busy: false, disabled: false } })
+    expect(w.find('[data-testid="water-demo"]').exists()).toBe(false)
+  })
+})

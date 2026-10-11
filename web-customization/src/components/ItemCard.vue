@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { frameClass, frameShadow } from '../lib/frames'
 import { RARITY_COLOR, rarityOfItem } from '../lib/rarity'
@@ -9,6 +9,7 @@ import CollapsePreview from './CollapsePreview.vue'
 import WeekGaugePreview from './WeekGaugePreview.vue'
 import DayGaugePreview from './DayGaugePreview.vue'
 import WaterPreview from './WaterPreview.vue'
+import WaterSavedAnim from './WaterSavedAnim.vue'
 
 // Карточка предмета кастомизации: превью (круг-аватар с рамкой), название, условие/цена и одно действие по статусу.
 const props = defineProps<{ item: CustomItem; status: ItemStatus; balance: number | null; busy: boolean; disabled: boolean }>()
@@ -23,6 +24,8 @@ const isWeekGauge = computed(() => props.item.category === 'week_gauge')
 const isDayGauge = computed(() => props.item.category === 'day_gauge')
 const isWaterAnim = computed(() => props.item.category === 'water_anim')
 const waterVariant = computed(() => (props.item.key === 'water_tide' ? 'tide' : props.item.key === 'water_sparkle' ? 'sparkle' : 'rain') as 'rain' | 'tide' | 'sparkle')
+// «Показать» у платной анимации воды (BACKLOG 57.2): играет ЭТУ анимацию до покупки/надевания, ничего не меняя
+const demoTick = ref(0)
 const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.item.achievement) as never) : ''))
 </script>
 
@@ -54,6 +57,10 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
     >A</span>
     <p class="m-0 text-sm font-medium">{{ name }}</p>
     <p v-if="isCollapseStyle || isWeekGauge || isDayGauge || isWaterAnim" class="dim m-0 text-xs" data-testid="item-desc">{{ t(('cust_item_' + item.key + '_desc') as never) }}</p>
+    <template v-if="isWaterAnim">
+      <button type="button" class="secondary px-2 py-1 text-xs" :aria-label="name + ': ' + t('cust_wateranim_show')" data-testid="water-demo" @click="demoTick++">{{ t('cust_wateranim_show') }}</button>
+      <WaterSavedAnim :tick="demoTick" :demo="waterVariant" />
+    </template>
     <p v-if="frameClass(item.key)" class="dim m-0 text-xs" data-testid="animated">{{ t('cust_animated') }}</p>
     <p v-if="item.source === 'achievement'" class="dim m-0 text-xs"><Icon name="medal" /> {{ t('cust_reward_for') }} «{{ reward }}»</p>
     <p v-else-if="status === 'owned' || status === 'selected'" class="dim m-0 text-xs">{{ t('cust_owned') }}</p>

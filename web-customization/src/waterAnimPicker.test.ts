@@ -4,6 +4,7 @@ import { mount } from '@vue/test-utils'
 import { readFileSync } from 'node:fs'
 import WaterAnimPicker from './components/WaterAnimPicker.vue'
 import { WATER_ANIMS, WATER_ANIM_KEY } from './lib/waterAnim'
+import { THEME_WATER } from './lib/themeWater'
 
 // Выбор анимации воды в «Кастомизации» (BACKLOG 54.8): ключ общий с «Настройками» шапки, «По теме» снимает выбор, после выбора играет превью.
 const read = (p: string): string => readFileSync(p, 'utf-8')
@@ -56,5 +57,48 @@ describe('WaterAnimPicker', () => {
     const w2 = mount(WaterAnimPicker)
     expect(w2.find('[data-testid="wateranim-item-on"]').exists()).toBe(true)
     w2.unmount()
+  })
+})
+
+describe('«Показать» у каждой анимации воды (BACKLOG 57.2)', () => {
+  const playing = (): string | null | undefined => document.querySelector('[data-test="water-saved"]')?.getAttribute('data-variant')
+  const wait = () => new Promise((r) => setTimeout(r, 30))
+
+  it('у «По теме» и всех шести вариантов есть своя кнопка «Показать»', () => {
+    const w = mount(WaterAnimPicker)
+    for (const v of ['auto', ...WATER_ANIMS]) expect(w.find(`[data-testid="wateranim-${v}"] [data-testid="wateranim-show"]`).exists(), v).toBe(true)
+    expect(w.find('[data-testid="wateranim-pour"] [data-testid="wateranim-show"]').text()).toBe('Показать')
+    w.unmount()
+  })
+
+  it('«Показать» играет ИМЕННО этот вариант и НЕ меняет сохранённый выбор', async () => {
+    localStorage.setItem(WATER_ANIM_KEY, 'drops')
+    const w = mount(WaterAnimPicker, { attachTo: document.body })
+    await w.find('[data-testid="wateranim-splash"] [data-testid="wateranim-show"]').trigger('click')
+    await wait()
+    expect(playing()).toBe('splash')
+    expect(localStorage.getItem(WATER_ANIM_KEY)).toBe('drops')
+    expect(w.find('[data-testid="wateranim-drops"]').attributes('data-active')).toBe('true')
+    w.unmount()
+  })
+
+  it('«По теме» показывает вариант большой темы, а без темы — спокойную волну; общая кнопка играет текущий', async () => {
+    const w = mount(WaterAnimPicker, { attachTo: document.body })
+    await w.find('[data-testid="wateranim-auto"] [data-testid="wateranim-show"]').trigger('click')
+    await wait()
+    expect(playing()).toBe('wave')
+    document.documentElement.classList.add('theme-nightfall')
+    try {
+      await w.find('[data-testid="wateranim-auto"] [data-testid="wateranim-show"]').trigger('click')
+      await wait()
+      expect(playing()).toBe(THEME_WATER['nightfall'] ?? 'wave')
+    } finally {
+      document.documentElement.classList.remove('theme-nightfall')
+    }
+    localStorage.setItem(WATER_ANIM_KEY, 'ripple')
+    await w.find('[data-testid="wateranim-play"]').trigger('click')
+    await wait()
+    expect(playing()).toBe('ripple')
+    w.unmount()
   })
 })

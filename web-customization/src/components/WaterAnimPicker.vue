@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import WaterSavedAnim from './WaterSavedAnim.vue'
-import { WATER_ANIMS, getWaterAnimChoice, readCachedWaterItem, setWaterAnim, type WaterAnim } from '../lib/waterAnim'
+import { DEFAULT_WATER_ANIM, WATER_ANIMS, getWaterAnimChoice, readCachedWaterItem, setWaterAnim, type WaterAnim } from '../lib/waterAnim'
+import { THEME_WATER } from '../lib/themeWater'
 import { t } from '../lib/i18n'
 
 // Выбор анимации «выпитое записалось» (BACKLOG 54.8): «По теме» (по умолчанию: вариант большой темы, на обычных — волна) или один из шести
@@ -17,7 +18,25 @@ const choose = (v: WaterAnim | 'auto') => {
   current.value = v
   tick.value++
 }
-const play = () => tick.value++
+// «Показать» у каждого варианта (BACKLOG 57.2): проигрывает ИМЕННО его (демо), сохранённый выбор не меняется; общая кнопка ниже — как раньше, текущий.
+const demo = ref<WaterAnim | undefined>(undefined)
+// что значит «По теме» сейчас: вариант большой темы из класса theme-<ключ> на <html>, иначе спокойная волна
+const autoVariant = (): WaterAnim => {
+  for (const c of Array.from(document.documentElement.classList)) {
+    const m = /^theme-(\w+)$/.exec(c)
+    const v = m ? THEME_WATER[m[1]] : undefined
+    if (v) return v
+  }
+  return DEFAULT_WATER_ANIM
+}
+const show = (v: WaterAnim | 'auto') => {
+  demo.value = v === 'auto' ? autoVariant() : v
+  tick.value++
+}
+const play = () => {
+  demo.value = undefined
+  tick.value++
+}
 </script>
 
 <template>
@@ -46,9 +65,12 @@ const play = () => tick.value++
         >
           {{ current === v ? t('cust_splash_selected') : t('cust_splash_choose') }}
         </button>
+        <button type="button" class="secondary px-2 py-1 text-sm" :aria-label="label(v) + ': ' + t('cust_wateranim_show')" data-testid="wateranim-show" @click="show(v)">
+          {{ t('cust_wateranim_show') }}
+        </button>
       </div>
     </div>
     <button type="button" class="secondary mt-3 px-3 py-1 text-sm" data-testid="wateranim-play" @click="play">{{ t('cust_wateranim_play') }}</button>
-    <WaterSavedAnim :tick="tick" />
+    <WaterSavedAnim :tick="tick" :demo="demo" />
   </div>
 </template>
