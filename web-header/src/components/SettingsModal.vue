@@ -4,6 +4,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
 import type { DashboardBlockKey, LayoutItem } from '../lib/layout'
 import BlockOrderList from './BlockOrderList.vue'
+import PauseSection from './PauseSection.vue'
 import { UNLOCKED_THEMES_EVENT, isThemeLocked } from '../lib/themeUnlock'
 import WaterSavedAnim from './WaterSavedAnim.vue'
 import { WATER_ANIMS, getWaterAnimChoice, sanitizeWaterAnim, setWaterAnim, type WaterAnim } from '../lib/waterAnim'
@@ -167,6 +168,8 @@ async function changeLayout(next: LayoutItem[]) {
         <input type="checkbox" :checked="sidebarProgress" data-test="sidebar-progress-toggle" @change="setSidebarProgress(($event.target as HTMLInputElement).checked)" />
         {{ t('hdr_settings_sidebar_progress') }}
       </label>
+
+      <PauseSection :user-id="userId" />
 
       <h4 style="margin-top: 16px">{{ t('hdr_settings_dashboard') }}</h4>
       <p class="gh-dim" style="margin: 0 0 4px; font-size: 12px">{{ t('dash_layout_hint') }}</p>

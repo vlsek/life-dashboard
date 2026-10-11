@@ -16,6 +16,7 @@ import ProgressSummaryModal from './components/ProgressSummaryModal.vue'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import RightPanel, { type GaugeData } from './components/RightPanel.vue'
 import SettingsModal from './components/SettingsModal.vue'
+import { loadPauseState, type PauseState } from './lib/pause'
 import FavoriteHeart from './components/FavoriteHeart.vue'
 import PageWidgetButton from './components/PageWidgetButton.vue'
 import { useLayout } from './lib/useLayout'
@@ -42,6 +43,7 @@ const sideProfile = useSidebarProfile()
 // Левое меню (BACKLOG 6.2): блок профиля рисуем в #sidebar-top, который AppShell ставит первым в <nav>; нет якоря — ничего не делаем
 const sidebarTarget = ref<HTMLElement | null>(null)
 const ready = ref(false)
+const pause = ref<PauseState>(null) // идущая/запланированная пауза «отпуск / болезнь» (BACKLOG 48.7)
 
 const { day, week, weekDays, summaries, settings, init: initProgress, saveSettings } = useHeaderProgress()
 const { metric, normMl, autoNormMl, weightKg, heightCm, saveHeight, todayMl, loaded: waterLoaded, error: waterError, saveError, init: initWater, addMl, setTotal, undoLast, removeLogEntry, canUndo, dayLog, loadDayLog, getMlForDate, saveGoal, resetGoalToAuto } = useWater()
@@ -55,7 +57,8 @@ onMounted(async () => {
   sidebarTarget.value = document.getElementById('sidebar-top')
   void sideProfile.load(uid, data.session?.user)
   void syncWeekGauge(uid) // вид спидометра недели из «Кастомизации» (BACKLOG 53.2)
-  void syncDayGauge(uid) // вид спидометра недели из «Кастомизации» (BACKLOG 53.2)
+  void syncDayGauge(uid) // вид спидометра дня из «Кастомизации» (BACKLOG 53.2 срез 2)
+  void loadPauseState(uid).then((r) => (pause.value = r.state)) // значок «пауза включена» (BACKLOG 48.7)
   void syncUiSettings(uid) // настройки и оформление между устройствами (BACKLOG 48.3, миграция 064)
   void syncUnlockedThemes(uid) // какие темы-награды открыты (замок тем, v3.42)
   void ensureTrackWater(uid) // «Отслеживать воду» (BACKLOG 932): сначала из кэша устройства — стакан не мигает
@@ -224,6 +227,10 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
     <PointsFloat v-if="!props.panelOnly" />
     <FavoriteHeart v-if="pageKey && !props.panelOnly" :active="isFavorite" @toggle="onToggleFavorite" />
     <PageWidgetButton v-if="widgetKind && layoutApi.loaded.value && !props.panelOnly" :on="widgetOn" :busy="widgetBusy" @toggle="onToggleWidget" />
+    <!-- значок «пауза включена» виден и на Дашборде (BACKLOG 48.7) -->
+    <button v-if="pause?.status === 'active'" type="button" class="gh-badge" data-test="pause-badge" :title="t('hdr_pause_badge')" :aria-label="t('hdr_pause_badge')" @click="globalSettingsOpen = true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--accent, #6c8cff)" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2" /><rect x="14" y="5" width="4" height="14" rx="1.2" /></svg>
+    </button>
     <template v-if="!props.panelOnly">
       <WaterGlass v-if="waterVisible" :today-ml="todayMl" :norm-ml="normMl" :title="`${todayMl} / ${normMl} ${unitLabel}`" @click="waterOpen = true" />
       <DayWeekBadge v-if="dayRing" kind="day" v-bind="dayRing" @click="summaryKind = 'day'" />
