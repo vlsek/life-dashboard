@@ -291,7 +291,7 @@ const fallbackText = computed(() => {
 
 <template>
   <div>
-    <h4 v-if="title" class="mb-1.5 font-medium"><MetricIcon v-if="icon" :icon="icon" extra-style="margin-right:0.35em;" />{{ title }}<MetricStreakBadge v-if="streak" :info="streak" /></h4>
+    <h4 v-if="title" class="mb-1.5 text-base font-semibold"><MetricIcon v-if="icon" :icon="icon" extra-style="margin-right:0.35em;" />{{ title }}<MetricStreakBadge v-if="streak" :info="streak" /></h4>
     <RecordBadge v-if="record" kind="charts" :record="record" :unit="unit" class="mb-1.5" />
     <template v-if="innerSvg">
       <div class="relative" data-test="chart-wrap">

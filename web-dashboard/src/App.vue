@@ -307,7 +307,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
         <template v-if="streaks.length > 0">
           <div v-if="showAllStreaks" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" @click.self="showAllStreaks = false">
             <div class="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)">
-              <h3 class="mb-3 text-lg font-bold"><EmojiText :text="t('dash_streaks_h2')" /></h3>
+              <h3 class="mb-3 text-lg font-semibold"><EmojiText :text="t('dash_streaks_h2')" /></h3>
 
               <p
                 v-if="streaks.some((i) => !i.todayCounted)"
