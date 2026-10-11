@@ -354,3 +354,73 @@ describe('MuscleMap: встроенное добавление записи', ()
     expect(w.find('[data-testid="inline-entry"]').exists()).toBe(false)
   })
 })
+
+// BACKLOG 44.5г, срез 2: клик по строке списка открывает панель мышцы; график нагрузки по неделям
+describe('MuscleMap: клик по строке списка и график по неделям', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+  })
+  const row = (w: ReturnType<typeof mount>, m: string) => w.find(`[data-testid="muscle-row"][data-muscle="${m}"]`)
+  const detail = (w: ReturnType<typeof mount>) => w.find('[data-testid="muscle-detail"]')
+
+  it('клик по строке открывает панель именно этой мышцы; повторный клик её не закрывает; другая строка переключает', async () => {
+    const w = await openMap([entry('bench', '2026-09-29'), entry('squat', '2026-09-20')], [bench, squat])
+    expect(detail(w).exists()).toBe(false)
+    await row(w, 'chest').trigger('click')
+    expect(detail(w).exists()).toBe(true)
+    expect(detail(w).text()).toContain('Грудь')
+    expect(row(w, 'chest').attributes('aria-pressed')).toBe('true')
+    await row(w, 'chest').trigger('click')
+    expect(detail(w).exists()).toBe(true) // пришли из списка — не закрываем
+    await row(w, 'quads').trigger('click')
+    expect(detail(w).text()).toContain('Квадрицепс')
+    expect(row(w, 'chest').attributes('aria-pressed')).toBe('false')
+    expect(row(w, 'quads').attributes('aria-pressed')).toBe('true')
+  })
+
+  it('строка доступна с клавиатуры: role=button, tabindex, Enter и Пробел открывают панель', async () => {
+    const w = await openMap([entry('bench', '2026-09-29'), entry('squat', '2026-09-20')], [bench, squat])
+    expect(row(w, 'chest').attributes('role')).toBe('button')
+    expect(row(w, 'chest').attributes('tabindex')).toBe('0')
+    await row(w, 'chest').trigger('keydown', { key: 'Enter' })
+    expect(detail(w).text()).toContain('Грудь')
+    await row(w, 'quads').trigger('keydown', { key: ' ' })
+    expect(detail(w).text()).toContain('Квадрицепс')
+  })
+
+  it('чип «ещё не тренировали» — кнопка: открывает панель мышцы без записей (с подсказками «что можно делать»)', async () => {
+    const w = await openMap([entry('bench', '2026-09-29')], [bench])
+    await w.find('[data-testid="muscle-never-toggle"]').trigger('click')
+    const chip = w.find('[data-testid="muscle-chip"][data-muscle="calves"]')
+    expect(chip.element.tagName).toBe('BUTTON')
+    await chip.trigger('click')
+    expect(detail(w).text()).toContain('Икры')
+    expect(chip.attributes('aria-pressed')).toBe('true')
+    expect(w.find('[data-testid="muscle-weeks"]').exists()).toBe(false) // записей нет — графика нет
+  })
+
+  it('график по неделям: 8 столбиков от старой к новой, подходы по окнам, текущая неделя отмечена, сводка для скринридера', async () => {
+    const w = await openMap([entry('bench', '2026-09-30'), entry('bench', '2026-09-29'), entry('bench', '2026-09-20'), entry('bench', '2026-08-10')], [bench])
+    await row(w, 'chest').trigger('click')
+    const bars = w.findAll('[data-testid="muscle-week"]')
+    expect(bars).toHaveLength(8)
+    const sets = bars.map((b) => Number(b.attributes('data-sets')))
+    expect(sets[7]).toBe(2) // 24.09 – 30.09: 30.09 и 29.09
+    expect(sets[6]).toBe(1) // 17.09 – 23.09: 20.09
+    expect(sets.slice(0, 6).reduce((a, b) => a + b, 0)).toBe(1) // 10.08 попадает в окно 6 недель назад (10.08 – 16.08)
+    expect(bars[7].attributes('data-current')).toBe('true')
+    expect(bars[6].attributes('data-current')).toBe('false')
+    expect(w.find('[data-testid="muscle-weeks"]').attributes('aria-label')).toBe('Подходов по неделям, от старой к новой: ' + sets.join(', '))
+  })
+
+  it('самый высокий столбик занимает всю высоту, пустые недели — тонкая полоска', async () => {
+    const w = await openMap([entry('bench', '2026-09-30'), entry('bench', '2026-09-29'), entry('bench', '2026-09-20')], [bench])
+    await row(w, 'chest').trigger('click')
+    const bars = w.findAll('[data-testid="muscle-week"]')
+    const h = (i: number) => (bars[i].find('div').element as HTMLElement).style.height
+    expect(h(7)).toBe('100%')
+    expect(h(6)).toBe('50%')
+    expect(h(0)).toBe('2px')
+  })
+})

@@ -112,3 +112,33 @@ export function muscleVolume(sessions: MuscleSession[], today: string, windowDay
   }
   return v
 }
+
+// ---- Срез 2 (BACKLOG 44.5г): нагрузка по неделям для мини-графика в панели мышцы
+export const LOAD_WEEKS = 8
+
+export interface WeekLoad {
+  from: string // первый день окна (включительно)
+  to: string // последний день окна (включительно); у самой свежей недели — сегодня
+  days: number // тренировочных дней
+  sets: number
+  reps: number
+}
+
+// Окна по 7 дней, считая НАЗАД от сегодня (последнее окно заканчивается сегодня) — не зависит от того, с какого дня недели начинается неделя
+// в локали. Результат от старого к новому: именно так строится график слева направо.
+export function weeklyLoad(sessions: MuscleSession[], today: string, weeks = LOAD_WEEKS): WeekLoad[] {
+  const out: WeekLoad[] = []
+  for (let i = weeks - 1; i >= 0; i--) {
+    const to = addDaysIso(today, -7 * i)
+    const from = addDaysIso(to, -6)
+    const v: WeekLoad = { from, to, days: 0, sets: 0, reps: 0 }
+    for (const s of sessions) {
+      if (s.date < from || s.date > to) continue
+      v.days += 1
+      v.sets += s.sets
+      v.reps += s.reps
+    }
+    out.push(v)
+  }
+  return out
+}

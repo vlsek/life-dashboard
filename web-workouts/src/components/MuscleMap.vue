@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
 import { todayStr } from '../lib/date'
 import { MUSCLE_IDS, referenceFor, ruleForExercise, type MuscleId } from '../lib/muscles'
@@ -19,7 +19,7 @@ import {
   untrainedMuscles,
   type StatsPeriod,
 } from '../lib/muscleStats'
-import { groupLastRows, muscleSessions, muscleVolume, trainingStrips, type Bucket } from '../lib/muscleHistory'
+import { groupLastRows, muscleSessions, muscleVolume, trainingStrips, weeklyLoad, type Bucket } from '../lib/muscleHistory'
 import { canInlineAdd, todaySetCount } from '../lib/inlineEntry'
 import InlineEntryAdd from './InlineEntryAdd.vue'
 import type { EntryFormInput, Exercise, WorkoutEntry } from '../lib/types'
@@ -130,11 +130,25 @@ function select(m: MuscleId) {
   showAllSessions.value = false
   addingEx.value = null
 }
+// Клик по строке списка (и по чипу «ещё не тренировали») открывает панель ЭТОЙ мышцы — не переключает: повторный клик не закрывает ту, на которую
+// пришли из списка. Панель лежит выше списка — подводим к ней, если её не видно (в тестовой среде scrollIntoView нет).
+const detailEl = ref<HTMLElement | null>(null)
+function pickFromList(m: MuscleId) {
+  if (selected.value !== m) select(m)
+  void nextTick(() => {
+    const el = detailEl.value
+    if (el && typeof el.scrollIntoView === 'function') el.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+  })
+}
 // История выбранной мышцы: последние 5 тренировочных дней (+ «показать все») и нагрузка за 7 / 30 дней
 const SESSIONS_SHOWN = 5
 const showAllSessions = ref(false)
 const sessions = computed(() => (selected.value ? muscleSessions(props.entries, props.exercises, today.value, selected.value) : []))
 const sessionsShown = computed(() => (showAllSessions.value ? sessions.value : sessions.value.slice(0, SESSIONS_SHOWN)))
+// Нагрузка по неделям: подходы за каждые 7 дней, 8 недель (мини-график в панели и текстовая сводка для скринридеров)
+const weeks = computed(() => weeklyLoad(sessions.value, today.value))
+const weeksMax = computed(() => Math.max(1, ...weeks.value.map((w) => w.sets)))
+const weeksSummary = computed(() => t('workouts_muscles_weeks_aria').replace('{list}', weeks.value.map((w) => w.sets).join(', ')))
 const volumes = computed(() => [7, 30].map((d) => ({ d, v: muscleVolume(sessions.value, today.value, d) })))
 const muscleName = (m: MuscleId) => t(`workouts_muscle_${m}` as DictKey)
 
@@ -229,7 +243,7 @@ function shapeStyle(m: MuscleId) {
         <span><span style="opacity: 0.5">■</span> {{ t('workouts_muscles_legend_idle') }}</span>
       </div>
 
-      <div v-if="selected" class="mt-3 rounded-lg border p-3 text-sm" style="border-color: var(--border); background: var(--bg)" data-testid="muscle-detail">
+      <div v-if="selected" class="mt-3 rounded-lg border p-3 text-sm" style="border-color: var(--border); background: var(--bg)" data-testid="muscle-detail" ref="detailEl">
         <div class="font-bold">{{ muscleName(selected) }}</div>
         <div class="mb-2 text-[0.85em]" style="color: var(--text-dim)">
           {{ t('workouts_muscles_last') }}
@@ -241,6 +255,15 @@ function shapeStyle(m: MuscleId) {
           <div class="mb-1 text-[0.85em] font-semibold">{{ t('workouts_muscles_volume_title') }}</div>
           <div class="mb-2 flex flex-wrap gap-x-4 gap-y-0.5 text-[0.85em]" style="color: var(--text-dim)" data-testid="muscle-volume">
             <span v-for="x in volumes" :key="x.d" :data-window="x.d">{{ x.d }} {{ t('workouts_muscles_days_suffix') }} — {{ t('workouts_muscles_vol_days') }}: {{ x.v.days }} · {{ t('workouts_muscles_vol_sets') }}: {{ x.v.sets }} · {{ t('workouts_muscles_vol_reps') }}: {{ x.v.reps }}</span>
+          </div>
+          <div class="mb-1 text-[0.85em] font-semibold">{{ t('workouts_muscles_weeks_title') }}</div>
+          <div class="mb-2" data-testid="muscle-weeks" role="img" :aria-label="weeksSummary">
+            <div class="flex h-14 items-end gap-1">
+              <div v-for="(w, i) in weeks" :key="w.to" class="flex h-full flex-1 flex-col justify-end" :title="w.from + ' – ' + w.to + ': ' + w.sets" data-testid="muscle-week" :data-sets="w.sets" :data-current="i === weeks.length - 1">
+                <div class="rounded-sm" :style="{ height: w.sets ? Math.max(8, Math.round((w.sets / weeksMax) * 100)) + '%' : '2px', background: w.sets ? (i === weeks.length - 1 ? 'var(--success)' : 'var(--accent)') : 'var(--border)', opacity: w.sets ? 1 : 0.6 }"></div>
+              </div>
+            </div>
+            <div class="mt-0.5 flex justify-between text-[0.7em]" style="color: var(--text-dim)"><span>{{ t('workouts_muscles_weeks_ago').replace('{n}', String(weeks.length - 1)) }}</span><span>{{ t('workouts_muscles_weeks_now') }}</span></div>
           </div>
           <div class="mb-1 text-[0.85em] font-semibold">{{ t('workouts_muscles_sessions_title') }}</div>
           <ul class="m-0 mb-1 list-none p-0 text-[0.85em]" data-testid="muscle-sessions">
@@ -293,12 +316,12 @@ function shapeStyle(m: MuscleId) {
               {{ t(BUCKET_TITLE.never) }} ({{ g.rows.length }}) <span aria-hidden="true">{{ showNever ? '▴' : '▾' }}</span>
             </button>
             <div v-show="showNever" class="mt-1 flex flex-wrap gap-1.5" data-testid="muscle-never-list">
-              <span v-for="r in g.rows" :key="r.muscle" :data-muscle="r.muscle" class="rounded-full border px-2 py-0.5 text-[0.8em]" style="border-color: var(--border); color: var(--text-dim)">{{ muscleName(r.muscle) }}</span>
+              <button v-for="r in g.rows" :key="r.muscle" type="button" :data-muscle="r.muscle" class="chip-pick rounded-full border px-2 py-0.5 text-[0.8em]" :aria-pressed="selected === r.muscle" data-testid="muscle-chip" @click="pickFromList(r.muscle)">{{ muscleName(r.muscle) }}</button>
             </div>
           </div>
           <div v-else class="mt-2" :data-bucket="g.bucket">
             <div class="text-[0.75em] font-semibold uppercase tracking-wide" style="color: var(--text-dim)" data-testid="muscle-bucket-title">{{ t(BUCKET_TITLE[g.bucket]) }}</div>
-            <div v-for="r in g.rows" :key="r.muscle" class="flex items-center gap-2 py-0.5 text-[0.85em]" :data-muscle="r.muscle">
+            <div v-for="r in g.rows" :key="r.muscle" class="row-pick flex items-center gap-2 py-0.5 text-[0.85em]" :data-muscle="r.muscle" role="button" tabindex="0" :aria-pressed="selected === r.muscle" :aria-label="muscleName(r.muscle)" data-testid="muscle-row" @click="pickFromList(r.muscle)" @keydown.enter.prevent="pickFromList(r.muscle)" @keydown.space.prevent="pickFromList(r.muscle)">
               <span class="w-28 shrink-0 truncate">{{ muscleName(r.muscle) }}</span>
               <span class="flex shrink-0 gap-px" role="img" :aria-label="stripLabel(r.muscle)" data-testid="muscle-strip">
                 <span v-for="(on, i) in strips[r.muscle]" :key="i" class="inline-block h-3 w-1.5 rounded-sm" :style="{ background: on ? 'var(--success)' : 'var(--border)', opacity: on ? 1 : 0.6 }" :data-on="on"></span>
@@ -350,6 +373,27 @@ function shapeStyle(m: MuscleId) {
 </template>
 
 <style scoped>
+.row-pick {
+  cursor: pointer;
+  border-radius: 6px;
+}
+.row-pick:hover {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.row-pick:focus-visible,
+.chip-pick:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.chip-pick {
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-dim);
+}
+.chip-pick[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--text);
+}
 /* Кнопка-ссылка «показать / скрыть»: сброс системного вида кнопки, фокус виден */
 .never-toggle {
   all: unset;

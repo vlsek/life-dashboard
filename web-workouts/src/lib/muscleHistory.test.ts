@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { BUCKET_ORDER, bucketOf, groupLastRows, muscleSessions, muscleVolume, trainingStrips } from './muscleHistory'
+import { BUCKET_ORDER, LOAD_WEEKS, bucketOf, groupLastRows, muscleSessions, muscleVolume, trainingStrips, weeklyLoad } from './muscleHistory'
 import { lastTrainedRows } from './muscleStats'
 import { MUSCLE_IDS } from './muscles'
 
@@ -76,5 +76,34 @@ describe('muscleSessions / muscleVolume', () => {
     expect(muscleVolume(ses, TODAY, 7)).toEqual({ days: 1, sets: 3, reps: 23 })
     expect(muscleVolume(ses, TODAY, 30)).toEqual({ days: 2, sets: 5, reps: 35 })
     expect(muscleVolume(ses, TODAY, 1)).toEqual({ days: 0, sets: 0, reps: 0 })
+  })
+})
+
+describe('weeklyLoad', () => {
+  const ses = (date: string, sets: number, reps = 0) => ({ date, exercises: ['Жим лёжа'], sets, reps })
+  it('8 окон по 7 дней от старого к новому; последнее заканчивается сегодня', () => {
+    const w = weeklyLoad([], TODAY)
+    expect(w).toHaveLength(LOAD_WEEKS)
+    expect(w[LOAD_WEEKS - 1].to).toBe(TODAY)
+    expect(w[LOAD_WEEKS - 1].from).toBe('2026-09-24')
+    expect(w[LOAD_WEEKS - 2].to).toBe('2026-09-23')
+    // окна идут встык, без дыр и перекрытий
+    for (let i = 1; i < w.length; i++) {
+      const prevTo = new Date(w[i - 1].to + 'T00:00:00Z').getTime()
+      const from = new Date(w[i].from + 'T00:00:00Z').getTime()
+      expect(from - prevTo).toBe(86400000)
+    }
+    expect(w.every((x) => x.sets === 0 && x.days === 0)).toBe(true)
+  })
+  it('подходы, повторы и дни попадают в своё окно; границы включительные', () => {
+    const w = weeklyLoad([ses(TODAY, 3, 24), ses('2026-09-24', 2, 10), ses('2026-09-23', 4, 32), ses('2026-09-10', 5, 40)], TODAY)
+    expect(w[7]).toMatchObject({ days: 2, sets: 5, reps: 34 }) // 24.09 … 30.09
+    expect(w[6]).toMatchObject({ days: 1, sets: 4, reps: 32 }) // 17.09 … 23.09
+    expect(w[5]).toMatchObject({ from: '2026-09-10', to: '2026-09-16', days: 1, sets: 5, reps: 40 }) // граница окна включительна: 10.09 — первый день
+    expect(w[4].sets).toBe(0)
+  })
+  it('запись старше восьми недель и из будущего в график не попадает', () => {
+    const w = weeklyLoad([ses('2026-07-01', 9), ses('2026-10-05', 9)], TODAY)
+    expect(w.reduce((n, x) => n + x.sets, 0)).toBe(0)
   })
 })
