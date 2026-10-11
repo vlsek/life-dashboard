@@ -28,6 +28,7 @@ export const THEME_KEYS = {
   moonlight: 'theme_moonlight',
   phosphor: 'theme_phosphor',
   nightfall: 'theme_nightfall',
+  velvet: 'theme_velvet',
 } as const
 
 export type ThemeKey = keyof typeof THEME_KEYS
@@ -63,6 +64,7 @@ const THEME_BG_COLORS: Record<ThemeKey, string> = {
   moonlight: '#0d081e',
   phosphor: '#000000',
   nightfall: '#1a1b26',
+  velvet: '#1e1e2e',
 }
 
 export function getTheme(): ThemeKey {

@@ -101,6 +101,8 @@ export const THEME_RARITY: Record<ThemeKey, Rarity> = {
   phosphor: 'common',
   // BACKLOG 50.1в: четвёртая «большая тема» (Tokyo Nightfall) — пока открыта всем
   nightfall: 'common',
+  // BACKLOG 50.1д: пятая «большая тема» (Velvet Dusk) — пока открыта всем
+  velvet: 'common',
 }
 
 export const rarityOfItem = (key: string): Rarity => ITEM_RARITY[key] ?? 'common'

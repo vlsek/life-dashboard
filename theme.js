@@ -26,6 +26,7 @@ const THEME_KEYS = {
     moonlight: "theme_moonlight",
     phosphor: "theme_phosphor",
     nightfall: "theme_nightfall",
+    velvet: "theme_velvet",
 };
 
 // Цвета фона по темам — держим в синхронизации с --bg из style.css
@@ -57,6 +58,7 @@ const THEME_BG_COLORS = {
     moonlight: "#0d081e",
     phosphor: "#000000",
     nightfall: "#1a1b26",
+    velvet: "#1e1e2e",
 };
 
 function getTheme() {

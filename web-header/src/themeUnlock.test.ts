@@ -118,9 +118,9 @@ describe('«Настройки» шапки: список тем', () => {
     return w
   }
 
-  it('пока ничего не заслужено: только открытые темы (пять исходных, двенадцать новых и четыре большие темы), без тем-наград', async () => {
+  it('пока ничего не заслужено: только открытые темы (пять исходных, двенадцать новых и пять больших тем), без тем-наград', async () => {
     const w = await open()
-    expect(options(w)).toEqual(['dark', 'monet', 'light', 'pink', 'contrast', 'dracula', 'gruvbox', 'tokyonight', 'forest', 'ocean', 'sunset', 'twilight', 'neon', 'lavender', 'sky', 'peach', 'graphite', 'emerald', 'moonlight', 'phosphor', 'nightfall'])
+    expect(options(w)).toEqual(['dark', 'monet', 'light', 'pink', 'contrast', 'dracula', 'gruvbox', 'tokyonight', 'forest', 'ocean', 'sunset', 'twilight', 'neon', 'lavender', 'sky', 'peach', 'graphite', 'emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet'])
     w.unmount()
   })
 

@@ -127,10 +127,10 @@ describe('большая тема emerald: характер', () => {
   it('при prefers-reduced-motion анимации темы мгновенные (только у Tailwind-страниц)', () => {
     for (const d of pilots) expect(read(d + '/src/style.css')).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-emerald \{\s*--default-transition-duration: 0s;/)
   })
-  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall) — остальные темы не переопределены', () => {
+  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet) — остальные темы не переопределены', () => {
     for (const f of files) {
       const region = read(f).match(REGION)![0]
-      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall'])
+      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet'])
     }
   })
 })
@@ -267,5 +267,41 @@ describe('большая тема nightfall: характер', () => {
     expect(get('nightfall', 'bg')).toBe(get('tokyonight', 'bg'))
     expect(get('nightfall', 'accent')).toBe(get('tokyonight', 'accent'))
     expect(get('nightfall', 'border')).not.toBe(get('tokyonight', 'border'))
+  })
+})
+
+// BACKLOG 50.1д: пятая «большая тема» Velvet Dusk — без свечения и теней, крупные скругления 12–16px, плавные пружинные анимации.
+describe('большая тема velvet: характер', () => {
+  const block = (css: string): string => {
+    const m = css.match(/\/\* большая тема: velvet \*\/\nhtml\.theme-velvet \{[^}]*\}/)
+    expect(m, 'нет блока характера').not.toBeNull()
+    return m![0]
+  }
+  for (const d of pilots) {
+    it(d + ': крупные скругления, без теней и свечения, пружинная анимация', () => {
+      const css = read(d + '/src/style.css')
+      const b = block(css)
+      expect([decl(b, '--radius-md'), decl(b, '--radius-lg'), decl(b, '--radius-xl'), decl(b, '--radius-2xl')]).toEqual(['10px', '12px', '16px', '20px'])
+      expect(decl(b, '--shadow-card')).toBe('none')
+      expect(decl(b, '--shadow-active')).toBe('none')
+      expect(decl(b, '--default-transition-timing-function')).toBe('cubic-bezier(0.34, 1.56, 0.64, 1)')
+      expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-velvet \{\s*--default-transition-duration: 0s;/)
+    })
+  }
+  it('корень: 16/16/12 и без теней', () => {
+    const b = block(read('style.css'))
+    expect([decl(b, '--radius-card'), decl(b, '--radius-modal'), decl(b, '--radius-control')]).toEqual(['16px', '16px', '12px'])
+    expect([decl(b, '--shadow-card'), decl(b, '--shadow-active')]).toEqual(['none', 'none'])
+  })
+  it('у velvet НЕТ правил оформления (ни свечения, ни теней, ни текстур): только токены', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      expect(region.split('\n').filter((l) => l.startsWith('html.theme-velvet ') && l.includes('{ ')), f).toEqual([])
+    }
+  })
+  it('персиковый акцент светлый: тёмная галочка у velvet в автосписке, текст на акценте тёмный', () => {
+    const css = read('web-dashboard/src/style.css')
+    const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
+    expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).toContain('velvet')
   })
 })

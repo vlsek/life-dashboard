@@ -706,6 +706,32 @@ html.theme-nightfall {
   --chart-none: #9aa0a6;
   --chart-other: #707479;
 }
+
+html.theme-velvet {
+  --bg: #1e1e2e;
+  --bg-card: #252536;
+  --border: #4a4c63;
+  --text: #cdd6f4;
+  --text-dim: #a6adc8;
+  --accent: #fab387;
+  --accent-text: #1e1e2e;
+  --success: #a6e3a1;
+  --danger: #f38ba8;
+  --hist-ok: #a6e3a1;
+  --water-top: #63b3f5;
+  --water-bottom: #2f86dc;
+  --water-line: #4aa3ee;
+  --chart-1: #fab387;
+  --chart-2: #5c97eb;
+  --chart-3: #49e999;
+  --chart-4: #af5ceb;
+  --chart-5: #72e3ee;
+  --chart-6: #eb5caf;
+  --chart-7: #7065ec;
+  --chart-8: #efef80;
+  --chart-none: #9aa0a6;
+  --chart-other: #707479;
+}
 /* themes:end */
 
 /* design-tokens:start (генерируется scripts/apply_themes.py — не править руками; BACKLOG 50.1а) */
@@ -820,6 +846,23 @@ html.theme-nightfall [aria-pressed="true"], html.theme-nightfall [aria-selected=
     --default-transition-duration: 0s;
   }
 }
+
+/* большая тема: velvet */
+html.theme-velvet {
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --shadow-card: none;
+  --shadow-active: none;
+  --default-transition-duration: 0.3s;
+  --default-transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-velvet {
+    --default-transition-duration: 0s;
+  }
+}
 /* design-tokens:end */
 /* themes-scheme */
 html.theme-nord,
@@ -837,7 +880,8 @@ html.theme-neon,
 html.theme-emerald,
 html.theme-moonlight,
 html.theme-phosphor,
-html.theme-nightfall { color-scheme: dark; }
+html.theme-nightfall,
+html.theme-velvet { color-scheme: dark; }
 html.theme-mint,
 html.theme-sepia,
 html.theme-solarlight,
@@ -1094,7 +1138,8 @@ html.theme-twilight input[type='checkbox']:checked,
 html.theme-neon input[type='checkbox']:checked,
 html.theme-emerald input[type='checkbox']:checked,
 html.theme-phosphor input[type='checkbox']:checked,
-html.theme-nightfall input[type='checkbox']:checked {
+html.theme-nightfall input[type='checkbox']:checked,
+html.theme-velvet input[type='checkbox']:checked {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.4l2.6 2.6L10 3.4' fill='none' stroke='%231c1108' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 input[type='checkbox']:focus-visible {

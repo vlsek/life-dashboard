@@ -656,6 +656,32 @@ html.theme-nightfall {
   --chart-none: #9aa0a6;
   --chart-other: #707479;
 }
+
+html.theme-velvet {
+  --bg: #1e1e2e;
+  --bg-card: #252536;
+  --border: #4a4c63;
+  --text: #cdd6f4;
+  --text-dim: #a6adc8;
+  --accent: #fab387;
+  --accent-text: #1e1e2e;
+  --success: #a6e3a1;
+  --danger: #f38ba8;
+  --hist-ok: #a6e3a1;
+  --water-top: #63b3f5;
+  --water-bottom: #2f86dc;
+  --water-line: #4aa3ee;
+  --chart-1: #fab387;
+  --chart-2: #5c97eb;
+  --chart-3: #49e999;
+  --chart-4: #af5ceb;
+  --chart-5: #72e3ee;
+  --chart-6: #eb5caf;
+  --chart-7: #7065ec;
+  --chart-8: #efef80;
+  --chart-none: #9aa0a6;
+  --chart-other: #707479;
+}
 html.theme-nord,
 html.theme-mocha,
 html.theme-amoled,
@@ -671,7 +697,8 @@ html.theme-neon,
 html.theme-emerald,
 html.theme-moonlight,
 html.theme-phosphor,
-html.theme-nightfall { color-scheme: dark; }
+html.theme-nightfall,
+html.theme-velvet { color-scheme: dark; }
 html.theme-mint,
 html.theme-sepia,
 html.theme-solarlight,
@@ -760,6 +787,15 @@ html.theme-nightfall [aria-pressed="true"], html.theme-nightfall [aria-selected=
     --shadow-card: none;
     --shadow-active: 0 0 0 2px #bb9af7;
   }
+}
+
+/* большая тема: velvet */
+html.theme-velvet {
+  --radius-card: 16px;
+  --radius-modal: 16px;
+  --radius-control: 12px;
+  --shadow-card: none;
+  --shadow-active: none;
 }
 /* design-tokens:end */
 

@@ -44,6 +44,8 @@ P={
  'phosphor':('dark','📟 Matrix Phosphor','📟 Зелёный фосфор',dict(bg='#000000',card='#0d0d0d',border='#3a6b4a',text='#b8f5c8',dim='#6fbf8a',accent='#00ff66',at='#000000',ok='#5dff9a',bad='#ff6b6b',hist='#00ff66',wt='#5fd8ff',wb='#2a9fd8',wl='#3fc4f0')),
  # --- BACKLOG 50.1в: четвёртая «большая тема» (кибер-Токио: мягкие тени, скругление 8px, лавандовая подсветка активного). Близнец цветовой tokyonight по краскам — отличается характером ---
  'nightfall':('dark','🌌 Tokyo Nightfall','🌌 Токийские сумерки',dict(bg='#1a1b26',card='#24283b',border='#414868',text='#c0caf5',dim='#9aa5ce',accent='#7aa2f7',at='#1a1b26',ok='#9ece6a',bad='#f7768e',hist='#9ece6a',**DARK_W)),
+ # --- BACKLOG 50.1д: пятая «большая тема» (пастельный бархат: уютно, без свечения, крупные скругления). Сестра цветовой mocha («Орхидея») — персиковый акцент вместо лилового ---
+ 'velvet':('dark','🍑 Velvet Dusk','🍑 Бархатные сумерки',dict(bg='#1e1e2e',card='#252536',border='#4a4c63',text='#cdd6f4',dim='#a6adc8',accent='#fab387',at='#1e1e2e',ok='#a6e3a1',bad='#f38ba8',hist='#a6e3a1',**DARK_W)),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
 
@@ -144,6 +146,24 @@ CHAR = {
         ],
         reduced='  --default-transition-duration: 0s;',
         contrast='  --shadow-card: none;\n  --shadow-active: 0 0 0 2px #bb9af7;',
+    ),
+    # Пастельный бархат: уютная матовая тема. НИКАКОГО свечения и теней (токены оставлены `none`), увеличенные скругления 12-16px,
+    # плавные пружинные анимации. Отличие от остальных больших тем — именно «мягкость без эффектов».
+    'velvet': dict(
+        tw='''  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --shadow-card: none;
+  --shadow-active: none;
+  --default-transition-duration: 0.3s;
+  --default-transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);''',
+        root='''  --radius-card: 16px;
+  --radius-modal: 16px;
+  --radius-control: 12px;
+  --shadow-card: none;
+  --shadow-active: none;''',
+        reduced='  --default-transition-duration: 0s;',
     ),
 }
 assert all(k in P for k in CHAR)

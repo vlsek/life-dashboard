@@ -7,4 +7,5 @@ export const THEME_TRAITS: Record<string, ThemeTrait[]> = {
   moonlight: ['palette', 'corners_soft', 'neon_glow', 'dot_pattern', 'bouncy_anim'],
   phosphor: ['palette', 'corners_sharp', 'mono_all', 'scanlines', 'snappy_anim'],
   nightfall: ['palette', 'soft_shadows', 'active_outline', 'smooth_anim'],
+  velvet: ['palette', 'corners_soft', 'soft_shadows', 'neon_glow', 'bouncy_anim'],
 }
