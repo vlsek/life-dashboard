@@ -63,8 +63,37 @@ describe('ProgressionTrees', () => {
     expect(step(w, 'pushup_regular').find('[data-testid="step-add-entry"]').exists()).toBe(false)
     const w2 = await openTrees([en('k', '2026-09-20', [20])], [ex('k', 'Отжимания с колен'), pushups])
     expect(step(w2, 'pushup_regular').attributes('data-status')).toBe('current')
+    // BACKLOG 44.5ж: кнопка раскрывает встроенную строку под ступенью; окно — по «Подробно…»
     await step(w2, 'pushup_regular').find('[data-testid="step-add-entry"]').trigger('click')
+    expect(w2.emitted('add-entry')).toBeUndefined()
+    expect(step(w2, 'pushup_regular').find('[data-testid="inline-entry"]').exists()).toBe(true)
+    await step(w2, 'pushup_regular').find('[data-testid="inline-detail"]').trigger('click')
     expect(w2.emitted('add-entry')?.[0]).toEqual([pushups])
+    expect(w2.find('[data-testid="inline-entry"]').exists()).toBe(false)
+  })
+
+  it('BACKLOG 44.5ж: быстрая запись из ступени — quick-add-entry с упражнением; успех закрывает строку, ошибка оставляет значения', async () => {
+    const pushups = ex('r', 'Отжимания')
+    const w = await openTrees([en('k', '2026-09-20', [20])], [ex('k', 'Отжимания с колен'), pushups])
+    await step(w, 'pushup_regular').find('[data-testid="step-add-entry"]').trigger('click')
+    expect(step(w, 'pushup_regular').find('[data-testid="step-add-entry"]').attributes('aria-expanded')).toBe('true')
+    await w.find('[data-testid="inline-reps"]').setValue('9')
+    await w.find('form').trigger('submit')
+    const args = w.emitted('quick-add-entry')![0] as unknown[]
+    expect(args[0]).toEqual(pushups)
+    expect((args[1] as { sets: { reps: number }[] }).sets[0].reps).toBe(9)
+    ;(args[2] as (ok: boolean) => void)(false)
+    await w.vm.$nextTick()
+    expect(w.find('[data-testid="inline-entry"]').exists()).toBe(true)
+    await w.find('form').trigger('submit')
+    ;((w.emitted('quick-add-entry')![1] as unknown[])[2] as (ok: boolean) => void)(true)
+    await w.vm.$nextTick()
+    expect(w.find('[data-testid="inline-entry"]').exists()).toBe(false)
+    // повторный клик по кнопке сворачивает строку
+    await step(w, 'pushup_regular').find('[data-testid="step-add-entry"]').trigger('click')
+    expect(w.find('[data-testid="inline-entry"]').exists()).toBe(true)
+    await step(w, 'pushup_regular').find('[data-testid="step-add-entry"]').trigger('click')
+    expect(w.find('[data-testid="inline-entry"]').exists()).toBe(false)
   })
 
   it('английский язык: названия ступеней и подписи на английском', async () => {

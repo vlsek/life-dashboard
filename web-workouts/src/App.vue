@@ -433,6 +433,7 @@ function onToggleProgramWeek(week: number) {
           :exercises="exercises"
           :study-recent="studyRecent"
           @add-entry="(ex) => (entryForm = { exercise: ex, existing: null })"
+          @quick-add-entry="(ex, res, done) => onQuickAddEntry(ex, res, done)"
         />
         <p v-if="exercises.length === 0" class="-mt-2 mb-3 text-xs" style="color: var(--text-dim)" data-testid="muscles-empty-hint">{{ t('workouts_muscles_empty') }}</p>
       </div>
@@ -455,6 +456,7 @@ function onToggleProgramWeek(week: number) {
         :entries="entries"
         :exercises="exercises"
         @add-entry="(ex) => (entryForm = { exercise: ex, existing: null })"
+        @quick-add-entry="(ex, res, done) => onQuickAddEntry(ex, res, done)"
       />
 
       <section v-for="g in groups" :key="g.key">

@@ -71,8 +71,13 @@ describe('MuscleMap', () => {
     const sug = w.find('[data-testid="muscle-suggestions"]').text()
     expect(sug).not.toContain('Приседания')
     expect(sug).toContain('Жим ногами')
+    // BACKLOG 44.5ж: кнопка раскрывает встроенную строку; окно — только по «Подробно…»
     await w.find('[data-testid="muscle-add-entry"]').trigger('click')
+    expect(w.emitted('add-entry')).toBeUndefined()
+    expect(w.find('[data-testid="inline-entry"]').exists()).toBe(true)
+    await w.find('[data-testid="inline-detail"]').trigger('click')
     expect(w.emitted('add-entry')?.[0]).toEqual([squat])
+    expect(w.find('[data-testid="inline-entry"]').exists()).toBe(false)
   })
 
   it('если своих упражнений на мышцу нет — говорит об этом, но подсказывает из справочника', async () => {
@@ -272,5 +277,63 @@ describe('MuscleMap: аккуратный список «когда тренир
     await zone(w, 'chest').trigger('click')
     expect(w.findAll('[data-testid="muscle-session"]')).toHaveLength(1)
     expect(w.find('[data-testid="muscle-sessions-more"]').exists()).toBe(false)
+  })
+})
+
+// BACKLOG 44.5ж, срез 2: «Добавить запись» с карты мышц — встроенная строка под упражнением
+describe('MuscleMap: встроенное добавление записи', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+  })
+  const lunge = mk('lunge', 'Выпады')
+
+  it('строка раскрывается только под нажатым упражнением; повторный клик и смена мышцы закрывают её', async () => {
+    const w = await openMap([], [squat, lunge])
+    await zone(w, 'quads').trigger('click')
+    const btns = w.findAll('[data-testid="muscle-add-entry"]')
+    expect(btns.length).toBeGreaterThanOrEqual(2)
+    await btns[0].trigger('click')
+    expect(w.findAll('[data-testid="inline-entry"]')).toHaveLength(1)
+    await btns[1].trigger('click')
+    expect(w.findAll('[data-testid="inline-entry"]')).toHaveLength(1) // одна строка на панель: открыта другая
+    await w.findAll('[data-testid="muscle-add-entry"]')[1].trigger('click')
+    expect(w.find('[data-testid="inline-entry"]').exists()).toBe(false)
+    await w.findAll('[data-testid="muscle-add-entry"]')[0].trigger('click')
+    expect(w.find('[data-testid="inline-entry"]').exists()).toBe(true)
+    // смена мышцы закрывает строку: при возвращении на ту же мышцу старая строка не «всплывает» сама
+    await zone(w, 'chest').trigger('click')
+    await zone(w, 'quads').trigger('click')
+    expect(w.find('[data-testid="inline-entry"]').exists()).toBe(false)
+  })
+
+  it('сохранение отдаёт quick-add-entry с упражнением и записью; успех закрывает строку, ошибка оставляет значения', async () => {
+    const w = await openMap([], [squat])
+    await zone(w, 'quads').trigger('click')
+    await w.find('[data-testid="muscle-add-entry"]').trigger('click')
+    await w.find('[data-testid="inline-reps"]').setValue('12')
+    await w.find('form').trigger('submit')
+    const args = w.emitted('quick-add-entry')![0] as unknown[]
+    expect(args[0]).toEqual(squat)
+    expect((args[1] as { sets: { reps: number }[] }).sets[0].reps).toBe(12)
+    ;(args[2] as (ok: boolean) => void)(false)
+    await w.vm.$nextTick()
+    expect(w.find('[data-testid="inline-entry"]').exists()).toBe(true)
+    expect((w.find('[data-testid="inline-reps"]').element as HTMLInputElement).value).toBe('12')
+    await w.find('form').trigger('submit')
+    ;((w.emitted('quick-add-entry')![1] as unknown[])[2] as (ok: boolean) => void)(true)
+    await w.vm.$nextTick()
+    expect(w.find('[data-testid="inline-entry"]').exists()).toBe(false)
+  })
+
+  it('у упражнения с Л/П сразу окно (add-entry), строки нет', async () => {
+    const side = { ...squat, id: 'sq-lr', bilateral: true } as Exercise
+    const w = await openMap([], [side])
+    await zone(w, 'quads').trigger('click')
+    const btn = w.find('[data-testid="muscle-add-entry"]')
+    expect(btn.exists()).toBe(true)
+    await btn.trigger('click')
+    expect(w.emitted('add-entry')).toHaveLength(1)
+    expect(w.find('[data-testid="inline-entry"]').exists()).toBe(false)
   })
 })

@@ -20,7 +20,9 @@ import {
   type StatsPeriod,
 } from '../lib/muscleStats'
 import { groupLastRows, muscleSessions, muscleVolume, trainingStrips, type Bucket } from '../lib/muscleHistory'
-import type { Exercise, WorkoutEntry } from '../lib/types'
+import { canInlineAdd } from '../lib/inlineEntry'
+import InlineEntryAdd from './InlineEntryAdd.vue'
+import type { EntryFormInput, Exercise, WorkoutEntry } from '../lib/types'
 import CollapseChevron from './CollapseChevron.vue'
 import { capFirst } from '../lib/exerciseNames'
 import { useAccordionMember } from '../lib/useCollapseStyle'
@@ -29,7 +31,7 @@ import { useAccordionMember } from '../lib/useCollapseStyle'
 // серые — нет. Клик по мышце — её упражнения (свои с кнопкой «Добавить запись» + подсказки из справочника).
 // `embedded` — карта лежит в своей вкладке «Карта мышц» (BACKLOG 54.2): заголовок-кнопка не нужна, тело всегда раскрыто, в аккордеон блоков не входит.
 const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string; studyRecent?: boolean; embedded?: boolean; model?: BodyModel }>()
-const emit = defineEmits<{ 'add-entry': [exercise: Exercise] }>()
+const emit = defineEmits<{ 'add-entry': [exercise: Exercise]; 'quick-add-entry': [exercise: Exercise, input: EntryFormInput, done: (ok: boolean) => void] }>()
 
 const OPEN_KEY = 'workouts_musclemap_open'
 function readOpen(): boolean {
@@ -110,9 +112,26 @@ const maxDays = computed(() => Math.max(1, ...stats.value.map((s) => s.days)))
 const unmapped = computed(() => unmappedExercises(props.exercises))
 
 const selected = ref<MuscleId | null>(null)
+// «Добавить запись» в блоке «Ваши упражнения» (BACKLOG 44.5ж, срез 2): встроенная строка под упражнением, окно — по «Подробно…» и для Л/П
+const addingEx = ref<string | null>(null)
+function onAddClick(ex: Exercise) {
+  if (canInlineAdd(ex)) addingEx.value = addingEx.value === ex.id ? null : ex.id
+  else emit('add-entry', ex)
+}
+function onInlineSave(ex: Exercise, res: EntryFormInput, done: (ok: boolean) => void) {
+  emit('quick-add-entry', ex, res, (ok) => {
+    if (ok) addingEx.value = null
+    done(ok)
+  })
+}
+function onInlineDetail(ex: Exercise) {
+  addingEx.value = null
+  emit('add-entry', ex)
+}
 function select(m: MuscleId) {
   selected.value = selected.value === m ? null : m
   showAllSessions.value = false
+  addingEx.value = null
 }
 // История выбранной мышцы: последние 5 тренировочных дней (+ «показать все») и нагрузка за 7 / 30 дней
 const SESSIONS_SHOWN = 5
@@ -242,17 +261,21 @@ function shapeStyle(m: MuscleId) {
         <div class="mb-1 text-[0.85em] font-semibold">{{ t('workouts_muscles_my_ex') }}</div>
         <p v-if="ownExercises.length === 0" class="m-0 mb-2 text-[0.85em]" style="color: var(--text-dim)">{{ t('workouts_muscles_no_own') }}</p>
         <ul v-else class="m-0 mb-2 list-none p-0">
-          <li v-for="ex in ownExercises" :key="ex.id" class="flex items-center justify-between gap-2 py-1">
-            <span>{{ capFirst(ex.name) }}</span>
-            <button
-              type="button"
-              class="rounded-lg border px-2 py-1 text-[0.8em]"
-              style="border-color: var(--border); color: var(--text)"
-              data-testid="muscle-add-entry"
-              @click="emit('add-entry', ex)"
-            >
-              {{ t('workouts_muscles_add_entry') }}
-            </button>
+          <li v-for="ex in ownExercises" :key="ex.id" class="py-1">
+            <div class="flex items-center justify-between gap-2">
+              <span>{{ capFirst(ex.name) }}</span>
+              <button
+                type="button"
+                class="rounded-lg border px-2 py-1 text-[0.8em]"
+                style="border-color: var(--border); color: var(--text)"
+                data-testid="muscle-add-entry"
+                :aria-expanded="canInlineAdd(ex) ? addingEx === ex.id : undefined"
+                @click="onAddClick(ex)"
+              >
+                {{ t('workouts_muscles_add_entry') }}
+              </button>
+            </div>
+            <InlineEntryAdd v-if="addingEx === ex.id" class="mt-1.5" :exercise="ex" @save="(res, done) => onInlineSave(ex, res, done)" @detail="onInlineDetail(ex)" @cancel="addingEx = null" />
           </li>
         </ul>
 

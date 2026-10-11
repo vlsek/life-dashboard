@@ -3,7 +3,9 @@ import { computed, ref } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
 import { todayStr } from '../lib/date'
 import { chainDoneCount, chainState, linkState, PROGRESSIONS, type StepState, type StepStatus } from '../lib/progressions'
-import type { Exercise, WorkoutEntry } from '../lib/types'
+import { canInlineAdd } from '../lib/inlineEntry'
+import InlineEntryAdd from './InlineEntryAdd.vue'
+import type { EntryFormInput, Exercise, WorkoutEntry } from '../lib/types'
 import CollapseChevron from './CollapseChevron.vue'
 import { useAccordionMember } from '../lib/useCollapseStyle'
 
@@ -11,7 +13,7 @@ import { useAccordionMember } from '../lib/useCollapseStyle'
 // Ступень пройдена, когда в одном подходе набрана её цель (повторения). Данные — только из
 // уже загруженных упражнений и записей; своих деревьев и сохранения в БД пока нет.
 const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string }>()
-const emit = defineEmits<{ 'add-entry': [exercise: Exercise] }>()
+const emit = defineEmits<{ 'add-entry': [exercise: Exercise]; 'quick-add-entry': [exercise: Exercise, input: EntryFormInput, done: (ok: boolean) => void] }>()
 
 const OPEN_KEY = 'workouts_progressions_open'
 function readOpen(): boolean {
@@ -54,6 +56,24 @@ const chains = computed(() =>
   }),
 )
 
+// «Добавить запись» (BACKLOG 44.5ж, срез 2): у обычного упражнения раскрывается встроенная строка под кнопкой ступени, окно — по «Подробно…»;
+// у упражнений с Л/П сразу окно, как раньше.
+const addingStep = ref<string | null>(null)
+function onAdd(s: StepState) {
+  const ex = s.exercises[0]
+  if (canInlineAdd(ex)) addingStep.value = addingStep.value === s.step.id ? null : s.step.id
+  else emit('add-entry', ex)
+}
+function onInlineSave(ex: Exercise, res: EntryFormInput, done: (ok: boolean) => void) {
+  emit('quick-add-entry', ex, res, (ok) => {
+    if (ok) addingStep.value = null
+    done(ok)
+  })
+}
+function onInlineDetail(s: StepState) {
+  addingStep.value = null
+  emit('add-entry', s.exercises[0])
+}
 const label = (s: StepState) => (lang === 'ru' ? s.step.ru : s.step.en)
 const ICON: Record<StepStatus, string> = { done: '✓', current: '▶', progress: '◐', locked: '🔒' }
 const STATUS_KEY: Record<StepStatus, DictKey> = {
@@ -132,10 +152,12 @@ function pct(s: StepState): number {
                   class="rounded-lg border px-2 py-1 text-[0.8em]"
                   style="border-color: var(--border); color: var(--text)"
                   data-testid="step-add-entry"
-                  @click="emit('add-entry', s.exercises[0])"
+                  :aria-expanded="canInlineAdd(s.exercises[0]) ? addingStep === s.step.id : undefined"
+                  @click="onAdd(s)"
                 >
                   {{ t('workouts_prog_add_entry') }}
                 </button>
+                <InlineEntryAdd v-if="addingStep === s.step.id && s.exercises.length" class="mt-1.5" :exercise="s.exercises[0]" @save="(res, done) => onInlineSave(s.exercises[0], res, done)" @detail="onInlineDetail(s)" @cancel="addingStep = null" />
                 <span v-else class="text-[0.8em]" style="color: var(--text-dim)" data-testid="step-no-ex">{{ t('workouts_prog_no_ex') }} «{{ label(s) }}»</span>
               </div>
             </template>
