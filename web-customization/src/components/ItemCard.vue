@@ -40,7 +40,7 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
       <CollapsePreview :variant="item.key === 'collapse_summary' ? 'summary' : 'accordion'" />
     </span>
     <span v-else-if="isWeekGauge" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="week-gauge-preview">
-      <WeekGaugePreview :variant="item.key === 'week_bars' ? 'bars' : 'classic'" />
+      <WeekGaugePreview :variant="item.key === 'week_bars' ? 'bars' : item.key === 'week_dots' ? 'dots' : item.key === 'week_steps' ? 'steps' : 'classic'" />
     </span>
     <span v-else-if="isDayGauge" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="day-gauge-preview">
       <DayGaugePreview :variant="item.key === 'day_glow' ? 'glow' : item.key === 'day_ticks' ? 'ticks' : item.key === 'day_gradient' ? 'gradient' : 'dashed'" />

@@ -6,6 +6,7 @@ import { t } from '../lib/i18n'
 import type { WeekGaugeStyle } from '../lib/weekGauge'
 import WeekHeptagon from './WeekHeptagon.vue'
 import WeekBars from './WeekBars.vue'
+import WeekAlt from './WeekAlt.vue'
 import { daySegments, dayTicks, DAY_GLOW_FILTER, DAY_GRADIENT_STOPS } from '../lib/dayGauge'
 import { dayGaugeStyle } from '../lib/useDayGauge'
 
@@ -18,8 +19,9 @@ const circle = computed(() => circleGeometry(13, props.basePct, props.bonusPct))
 const sevenDays = computed(() => props.kind === 'week' && props.days?.length === 7)
 const hept = computed(() => sevenDays.value && (props.shape ?? 'heptagon') === 'heptagon')
 const bars = computed(() => sevenDays.value && props.shape === 'bars')
+const alt = computed(() => (sevenDays.value && (props.shape === 'dots' || props.shape === 'steps') ? props.shape : null))
 // скринридер: общий итог + каждый день недели («Пн 100 %, Вт 60 % …»)
-const aria = computed(() => ((hept.value || bars.value) && props.days ? `${props.title}. ${weekDaysAriaLabel(props.days, t('dash_summary_weekdays'))}` : props.title))
+const aria = computed(() => ((hept.value || bars.value || alt.value) && props.days ? `${props.title}. ${weekDaysAriaLabel(props.days, t('dash_summary_weekdays'))}` : props.title))
 const daySegs = computed(() => daySegments(16, 16, 13, props.basePct, props.bonusPct))
 // в бейдже штрихи снаружи кольца: внутри лежит процент
 const dayTickList = computed(() => dayTicks(16, 16, 18.4, props.basePct, 1.4))
@@ -30,6 +32,7 @@ const square = computed(() => squareGeometry(24, 6, props.basePct, props.bonusPc
   <button type="button" class="gh-badge" :data-kind="kind" :title="title" :aria-label="aria" @click="emit('click')">
     <WeekHeptagon v-if="hept && days" :days="days" :size="32" :radius="13.5" :stroke="3.2" />
     <WeekBars v-else-if="bars && days" :days="days" :size="32" :stroke="3" />
+    <WeekAlt v-else-if="alt && days" :days="days" :size="32" :variant="alt" />
     <svg v-else width="32" height="32" viewBox="0 0 32 32" style="transform: rotate(-90deg); display: block">
       <template v-if="kind === 'day'">
         <template v-if="dayGaugeStyle === 'dashed'">

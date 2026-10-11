@@ -4,6 +4,7 @@ import { heptagonGeometry, heptagonSegments } from '../lib/ringPlacement'
 import { weekDaysAriaLabel, type WeekDaySegment } from '../lib/progress'
 import { t } from '../lib/i18n'
 import WeekBars from './WeekBars.vue'
+import WeekAlt from './WeekAlt.vue'
 
 // Один компонент на оба случая (день/неделя) — отличаются только радиусом/размером и тем,
 // что вызывающий код передаёт готовые проценты. Портировано из renderDayProgressRing() и
@@ -17,7 +18,7 @@ const props = defineProps<{
   size?: number // размер SVG в px
   title: string
   label?: string // подпись под кольцом (например "Неделя") — если не задана, не рисуется
-  shape?: 'circle' | 'heptagon' | 'bars' // bars — «семь столбиков» (BACKLOG 53.2); heptagon — кольцо недели: 7 сторон = 7 дней (BACKLOG 2.3), линия толще
+  shape?: 'circle' | 'heptagon' | 'bars' | 'dots' | 'steps' // bars — «семь столбиков» (BACKLOG 53.2); heptagon — кольцо недели: 7 сторон = 7 дней (BACKLOG 2.3), линия толще
   days?: WeekDaySegment[] | null // у heptagon: прогресс каждого дня → каждая сторона заливается по СВОЕМУ дню (BACKLOG 17:05); нет — общий процент по периметру
 }>()
 
@@ -29,6 +30,7 @@ const offsetBonus = computed(() => circumference.value * (1 - bonusFraction.valu
 const center = computed(() => (props.size ?? 52) / 2)
 const isHeptagon = computed(() => props.shape === 'heptagon')
 const isBars = computed(() => props.shape === 'bars' && props.days?.length === 7)
+const altVariant = computed(() => ((props.shape === 'dots' || props.shape === 'steps') && props.days?.length === 7 ? props.shape : null))
 const perDay = computed(() => isHeptagon.value && props.days?.length === 7)
 const segs = computed(() =>
   perDay.value && props.days
@@ -47,6 +49,7 @@ const hept = computed(() => heptagonGeometry(center.value, center.value - 3, pro
   <div class="flex flex-col items-center gap-0.5 cursor-pointer" :title="title" :aria-label="aria">
     <div class="relative" :style="{ width: (size ?? 52) + 'px', height: (size ?? 52) + 'px' }">
       <WeekBars v-if="isBars && days" :days="days" :size="size ?? 52" :stroke="Math.max(3, Math.round((size ?? 52) / 11))" />
+      <WeekAlt v-else-if="altVariant && days" :days="days" :size="size ?? 52" :variant="altVariant" />
       <svg v-else :width="size ?? 52" :height="size ?? 52" :viewBox="`0 0 ${size ?? 52} ${size ?? 52}`" :style="isHeptagon ? '' : 'transform: rotate(-90deg)'" :data-shape="isHeptagon ? 'heptagon' : 'circle'" data-test="progress-ring-svg">
         <template v-if="perDay">
           <!-- цельный контур как у прежнего кольца недели; заливка по граням: грань = день, её заливка = выполненность этого дня (BACKLOG 45.3) -->

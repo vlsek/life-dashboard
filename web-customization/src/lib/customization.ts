@@ -57,6 +57,8 @@ export const ITEMS: readonly CustomItem[] = [
   // у всех бесплатно (это «ничего не выбрано»), «классическое кольцо» — 100, «семь столбиков» — 150. Вид СПИДОМЕТРА ДНЯ — следующим срезом.
   { key: 'week_classic', category: 'week_gauge', source: 'points', tier: 'low' },
   { key: 'week_bars', category: 'week_gauge', source: 'points', tier: 'mid' },
+  { key: 'week_dots', category: 'week_gauge', source: 'points', tier: 'low' },
+  { key: 'week_steps', category: 'week_gauge', source: 'points', tier: 'mid' },
   // Вид спидометра ДНЯ (BACKLOG 53.2, срез 2; на усмотрение агента 1): обычное кольцо — у всех бесплатно, «пунктирное кольцо» — 100, «кольцо со свечением» — 150.
   { key: 'day_dashed', category: 'day_gauge', source: 'points', tier: 'low' },
   { key: 'day_glow', category: 'day_gauge', source: 'points', tier: 'mid' },

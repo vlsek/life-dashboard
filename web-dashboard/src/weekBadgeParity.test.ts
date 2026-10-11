@@ -46,4 +46,9 @@ describe('значок недели в шапке Дашборда', () => {
     const header = readFileSync('../web-header/src/components/WeekBars.vue', 'utf8') as string
     expect(own).toBe(header)
   })
+  it('WeekAlt.vue — копия файла общей шапки (59.3: «Семь точек» и «Ступеньки»)', () => {
+    const own = readFileSync('src/components/WeekAlt.vue', 'utf8') as string
+    const header = readFileSync('../web-header/src/components/WeekAlt.vue', 'utf8') as string
+    expect(own).toBe(header)
+  })
 })

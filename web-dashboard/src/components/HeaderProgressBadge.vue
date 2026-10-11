@@ -4,13 +4,14 @@ import { circleGeometry, squareGeometry } from '../lib/ringPlacement'
 import type { WeekDaySegment } from '../lib/progress'
 import WeekHeptagon from './WeekHeptagon.vue'
 import WeekBars from './WeekBars.vue'
+import WeekAlt from './WeekAlt.vue'
 import { daySegments, dayTicks, DAY_GLOW_FILTER, DAY_GRADIENT_STOPS } from '../lib/dayGauge'
 import { dayGaugeStyle } from '../lib/useDayGauge'
 
 // Бейдж прогресса в шапке (режим "header") — рисуется в #topbar-right из AppShell через Teleport.
 // День — круг, неделя — скруглённый квадрат с пунктирной дорожкой, чтобы отличались с первого взгляда
 // (портировано из renderHeaderProgressBadge()/renderHeaderWeekBadge() в dashboard.js).
-const props = defineProps<{ kind: 'day' | 'week'; basePct: number; bonusPct: number; totalPct: number; title: string; shape?: 'heptagon' | 'classic' | 'bars'; days?: WeekDaySegment[] | null }>()
+const props = defineProps<{ kind: 'day' | 'week'; basePct: number; bonusPct: number; totalPct: number; title: string; shape?: 'heptagon' | 'classic' | 'bars' | 'dots' | 'steps'; days?: WeekDaySegment[] | null }>()
 const emit = defineEmits<{ click: [] }>()
 
 // цель Teleport должна уже быть в DOM — включаем бейдж после монтирования
@@ -22,6 +23,7 @@ const circle = computed(() => circleGeometry(13, props.basePct, props.bonusPct))
 const sevenDays = computed(() => props.kind === 'week' && props.days?.length === 7)
 const hept = computed(() => sevenDays.value && (props.shape ?? 'heptagon') === 'heptagon')
 const bars = computed(() => sevenDays.value && props.shape === 'bars')
+const alt = computed(() => (sevenDays.value && (props.shape === 'dots' || props.shape === 'steps') ? props.shape : null))
 const daySegs = computed(() => daySegments(16, 16, 13, props.basePct, props.bonusPct))
 // в бейдже штрихи снаружи кольца: внутри лежит процент
 const dayTickList = computed(() => dayTicks(16, 16, 18.4, props.basePct, 1.4))
@@ -40,6 +42,7 @@ const square = computed(() => squareGeometry(24, 6, props.basePct, props.bonusPc
     >
       <WeekHeptagon v-if="hept && days" :days="days" :size="32" :radius="13.5" :stroke="3.2" />
       <WeekBars v-else-if="bars && days" :days="days" :size="32" :stroke="3" />
+      <WeekAlt v-else-if="alt && days" :days="days" :size="32" :variant="alt" />
       <svg v-else width="32" height="32" viewBox="0 0 32 32" style="transform: rotate(-90deg); display: block">
         <template v-if="kind === 'day'">
           <template v-if="dayGaugeStyle === 'dashed'">
