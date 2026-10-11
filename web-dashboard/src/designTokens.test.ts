@@ -127,10 +127,10 @@ describe('большая тема emerald: характер', () => {
   it('при prefers-reduced-motion анимации темы мгновенные (только у Tailwind-страниц)', () => {
     for (const d of pilots) expect(read(d + '/src/style.css')).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-emerald \{\s*--default-transition-duration: 0s;/)
   })
-  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine, matcha) — остальные темы не переопределены', () => {
+  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine, matcha, cyberday) — остальные темы не переопределены', () => {
     for (const f of files) {
       const region = read(f).match(REGION)![0]
-      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha'])
+      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha', 'cyberday'])
     }
   })
 })
@@ -433,5 +433,56 @@ describe('большая тема matcha (светлая): характер', ()
     expect([get('bg'), get('bg-card'), get('accent')]).toEqual(['#f4f4f0', '#fffefb', '#4f7a5c'])
     const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
     expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).not.toContain('matcha')
+  })
+})
+
+// BACKLOG 57.7 (файл 1, тема 3): светлая Cyberpunk Day — жёсткие тени со смещением, острые углы 4px, моноширинные метки и кнопки, сетка точек, Snappy.
+describe('большая тема cyberday (светлая): характер', () => {
+  const block = (css: string): string => {
+    const m = css.match(/\/\* большая тема: cyberday \*\/\nhtml\.theme-cyberday \{[^}]*\}/)
+    expect(m, 'нет блока характера').not.toBeNull()
+    return m![0]
+  }
+  for (const d of pilots) {
+    it(d + ': жёсткие тени без размытия, острые углы, моноширинный шрифт, сетка, Snappy', () => {
+      const css = read(d + '/src/style.css')
+      const b = block(css)
+      expect([decl(b, '--radius-md'), decl(b, '--radius-lg'), decl(b, '--radius-xl'), decl(b, '--radius-2xl')]).toEqual(['3px', '4px', '4px', '6px'])
+      expect(decl(b, '--shadow-card')).toBe('3px 3px 0 #111111')
+      expect(decl(b, '--shadow-active')).toBe('2px 2px 0 #111111')
+      expect(decl(b, '--font-heading')).toContain('monospace')
+      expect(decl(b, '--bg-pattern')).toContain('radial-gradient')
+      expect(decl(b, '--default-transition-timing-function')).toBe('cubic-bezier(0, 1, 0, 1)')
+      expect(css).toMatch(/html\[data-simple='on'\]\.theme-cyberday \{\s*--bg-pattern: none;/)
+      expect(css).toMatch(/@media \(prefers-contrast: more\) \{\s*html\.theme-cyberday \{\s*--bg-pattern: none;/)
+      expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-cyberday \{\s*--default-transition-duration: 0s;/)
+    })
+  }
+  it('корень: углы 4px, те же жёсткие тени и шрифт', () => {
+    const b = block(read('style.css'))
+    expect([decl(b, '--radius-card'), decl(b, '--radius-modal'), decl(b, '--radius-control')]).toEqual(['4px', '4px', '4px'])
+    expect(decl(b, '--shadow-card')).toBe('3px 3px 0 #111111')
+    expect(decl(b, '--font-heading')).toContain('monospace')
+  })
+  it('тень у cyberday — настоящая «жёсткая»: смещение и НОЛЬ размытия (не расплывчатая)', () => {
+    const b = block(read('web-dashboard/src/style.css'))
+    for (const name of ['--shadow-card', '--shadow-active']) expect(decl(b, name), name).toMatch(/^-?\d+px -?\d+px 0 #[0-9a-f]{6}$/)
+  })
+  it('четыре правила только под html.theme-cyberday: сетка, тень карточек, тень кнопок с заливкой, моноширинный шрифт заголовков/меток/кнопок', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      const lines = region.split('\n').filter((l) => l.startsWith('html.theme-cyberday ') && l.includes('{ '))
+      expect(lines.length, f).toBe(4)
+      for (const l of lines) for (const sel of l.split('{')[0].split(',')) expect(sel.trim(), f).toMatch(/^html\.theme-cyberday /)
+      const font = lines.find((l) => l.includes('font-family'))!
+      for (const el of ['h1', 'h2', 'h3', 'h4', 'label', 'button']) expect(font, f).toContain('html.theme-cyberday ' + el)
+    }
+  })
+  it('светлая: серебристый фон, белые карточки, тёмная рамка, ультрамарин; белая галочка читается', () => {
+    const css = read('web-dashboard/src/style.css')
+    const get = (name: string) => css.match(new RegExp('html\\.theme-cyberday \\{[^}]*--' + name + ':\\s*(#[0-9a-fA-F]{6})'))![1].toLowerCase()
+    expect([get('bg'), get('bg-card'), get('border'), get('accent')]).toEqual(['#eef0f4', '#ffffff', '#2b2f3a', '#2563eb'])
+    const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
+    expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).not.toContain('cyberday')
   })
 })

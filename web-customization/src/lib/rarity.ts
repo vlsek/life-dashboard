@@ -118,6 +118,8 @@ export const THEME_RARITY: Record<ThemeKey, Rarity> = {
   alpine: 'common',
   // BACKLOG 57.7: вторая светлая «большая тема» (Matcha Latte) — пока открыта всем
   matcha: 'common',
+  // BACKLOG 57.7: третья светлая «большая тема» (Cyberpunk Day) — пока открыта всем
+  cyberday: 'common',
 }
 
 export const rarityOfItem = (key: string): Rarity => ITEM_RARITY[key] ?? 'common'

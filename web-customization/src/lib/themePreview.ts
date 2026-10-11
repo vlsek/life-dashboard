@@ -44,4 +44,5 @@ export const THEME_PREVIEW: Record<ThemeKey, ThemePreview> = {
   frost: { bg: '#2e3440', card: '#3b4252', accent: '#88c0d0', text: '#eceff4', success: '#a3be8c', water: '#7cc4ff', kind: 'dark' },
   alpine: { bg: '#f8f9fc', card: '#ffffff', accent: '#4c6f99', text: '#2e3440', success: '#3b7d57', water: '#3f95e0', kind: 'light' },
   matcha: { bg: '#f4f4f0', card: '#fffefb', accent: '#4f7a5c', text: '#33382f', success: '#3f7a4f', water: '#3f95e0', kind: 'light' },
+  cyberday: { bg: '#eef0f4', card: '#ffffff', accent: '#2563eb', text: '#111827', success: '#15803d', water: '#3f95e0', kind: 'light' },
 }

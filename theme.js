@@ -30,6 +30,7 @@ const THEME_KEYS = {
     frost: "theme_frost",
     alpine: "theme_alpine",
     matcha: "theme_matcha",
+    cyberday: "theme_cyberday",
 };
 
 // Цвета фона по темам — держим в синхронизации с --bg из style.css
@@ -65,6 +66,7 @@ const THEME_BG_COLORS = {
     frost: "#2e3440",
     alpine: "#f8f9fc",
     matcha: "#f4f4f0",
+    cyberday: "#eef0f4",
 };
 
 function getTheme() {

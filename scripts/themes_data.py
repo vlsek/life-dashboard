@@ -52,6 +52,8 @@ P={
  'alpine':('light','🏔️ Paper Alpine','🏔️ Альпийская бумага',dict(bg='#f8f9fc',card='#ffffff',border='#cfd6e4',text='#2e3440',dim='#5b6577',accent='#4c6f99',at='#ffffff',ok='#3b7d57',bad='#b4424d',hist='#4f9a6a',**LIGHT_W)),
  # --- BACKLOG 57.7 (файл 1, тема 2): Matcha Latte / Matcha & Cream — уютная органическая светлая (кремовый фон, чайно-зелёный акцент, карамельная вторая краска, пушистые тёплые тени) ---
  'matcha':('light','🍵 Matcha Latte','🍵 Матча-латте',dict(bg='#f4f4f0',card='#fffefb',border='#d9d6c8',text='#33382f',dim='#686d5e',accent='#4f7a5c',at='#ffffff',ok='#3f7a4f',bad='#b3402f',hist='#5f8a6c',**LIGHT_W)),
+ # --- BACKLOG 57.7 (файл 1, тема 3): Cyberpunk Day / Day Runner — светлый киберпанк (серебристый фон с точками, белые карточки с тёмной рамкой, ультрамарин, жёсткие тени, моноширинные метки) ---
+ 'cyberday':('light','⚡ Cyberpunk Day','⚡ Неоновый день',dict(bg='#eef0f4',card='#ffffff',border='#2b2f3a',text='#111827',dim='#4b5563',accent='#2563eb',at='#ffffff',ok='#15803d',bad='#be185d',hist='#16a34a',**LIGHT_W)),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
 
@@ -236,6 +238,38 @@ CHAR = {
         reduced='  --default-transition-duration: 0s;',
         contrast='  --shadow-card: none;',
     ),
+    # Светлый киберпанк: ЖЁСТКИЕ тени со смещением без размытия (ретро-интерфейсы), тёмная контрастная рамка, острые геометричные углы 4px,
+    # моноширинный шрифт в заголовках, метках и кнопках, микро-сетка точек на серебристом фоне, Snappy-анимации. «Простое оформление» и
+    # prefers-contrast: more убирают только сетку (жёсткая тень здесь — сам стиль, а не эффект, и к тому же даёт контраст).
+    'cyberday': dict(
+        tw='''  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
+  --radius-2xl: 6px;
+  --shadow-card: 3px 3px 0 #111111;
+  --shadow-active: 2px 2px 0 #111111;
+  --font-heading: %s;
+  --bg-pattern: radial-gradient(circle at 1px 1px, rgba(17, 24, 39, 0.16) 1px, transparent 0);
+  --bg-pattern-size: 14px 14px;
+  --default-transition-duration: 0.1s;
+  --default-transition-timing-function: cubic-bezier(0, 1, 0, 1);''' % MONO,
+        root='''  --radius-card: 4px;
+  --radius-modal: 4px;
+  --radius-control: 4px;
+  --shadow-card: 3px 3px 0 #111111;
+  --shadow-active: 2px 2px 0 #111111;
+  --font-heading: %s;
+  --bg-pattern: radial-gradient(circle at 1px 1px, rgba(17, 24, 39, 0.16) 1px, transparent 0);
+  --bg-pattern-size: 14px 14px;''' % MONO,
+        rules=[
+            (['body'], 'background-image: var(--bg-pattern); background-size: var(--bg-pattern-size);'),
+            (['.card', '.modal', '[style*="var(--bg-card)"]'], 'box-shadow: var(--shadow-card);'),
+            (["button:not(.secondary):not(.danger):not(:disabled)"], 'box-shadow: var(--shadow-active);'),
+            (['h1', 'h2', 'h3', 'h4', 'label', 'button'], 'font-family: var(--font-heading);'),
+        ],
+        reduced='  --default-transition-duration: 0s;',
+        contrast='  --bg-pattern: none;',
+    ),
 }
 assert all(k in P for k in CHAR)
 
@@ -243,14 +277,14 @@ assert all(k in P for k in CHAR)
 # вариант вручную в «Настройках» шапки (ручной выбор главнее). Словарь ОТДЕЛЬНО от CHAR; тема без записи = спокойная волна. Генератор apply_themes.py
 # пишет из него `themeWater.ts` в web-header и web-dashboard. Подбор по характеру темы: HUD и терминал — «рябь» (расходящиеся круги, как скан),
 # синтвейв — «капли» (пружинные), спокойная ночная — «волна».
-THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave', 'velvet': 'drops', 'frost': 'ripple', 'alpine': 'wave', 'matcha': 'drops'}
+THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave', 'velvet': 'drops', 'frost': 'ripple', 'alpine': 'wave', 'matcha': 'drops', 'cyberday': 'ripple'}
 assert all(k in CHAR for k in THEME_WATER) and all(v in ('wave', 'drops', 'ripple') for v in THEME_WATER.values())
 
 # Заставка загрузки (лоадер страниц) у больших тем (BACKLOG 55.5, срез 2): вариант из реестра SPLASH_VARIANTS (classic | flame | ring | tongues) — действует,
 # ЕСЛИ вариант не выбран вручную (ручной выбор и `?splash=` главнее). Тема без записи = «живое пламя». Генератор пишет `themeLoader.ts` и вставляет
 # запасной вариант в скрипт выбора заставки во всех web-*/index.html (статичная заставка берёт его до загрузки бандла). Подбор по характеру: HUD —
 # «кольцо» (скан), синтвейв — «три языка» (неоновое пламя), терминал — «классика» (простая), спокойная ночная — «живое пламя».
-THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame', 'velvet': 'flame', 'frost': 'ring', 'alpine': 'classic', 'matcha': 'flame'}
+THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame', 'velvet': 'flame', 'frost': 'ring', 'alpine': 'classic', 'matcha': 'flame', 'cyberday': 'tongues'}
 assert all(k in CHAR for k in THEME_LOADER) and all(v in ('classic', 'flame', 'ring', 'tongues') for v in THEME_LOADER.values())
 
 # Темы-награды (решение владельца 2026-10-06): тема → ключ достижения, НАГРАДОЙ за которое она открывается (4-я, самая трудная ступень

@@ -561,6 +561,11 @@ def root_css(t):
 # ---------- «что меняет большая тема» (BACKLOG 55.1) ----------
 # Список возможностей выводится из CHAR (токены и правила), а не пишется руками, поэтому описание в карточке темы не расходится с самой темой.
 # Подписи — в web-customization/src/lib/i18n.ts (ключи theme_trait_<имя>, RU+EN; страж-тест проверяет полноту).
+def is_hard_shadow(v):
+    """Жёсткая тень со смещением и БЕЗ размытия: `3px 3px 0 #111` (ретро/поп-арт)."""
+    return re.match(r'^-?\d+px -?\d+px 0(?:px)?(?:\s|$)', v) is not None
+
+
 def traits_of(c):
     tw, rules = c['tw'], c.get('rules', [])
     out = ['palette']
@@ -574,15 +579,28 @@ def traits_of(c):
     if re.search(r'--border-style:\s*dashed', tw):
         out.append('dashed_borders')
     if '--font-heading' in tw:
-        out.append('mono_all' if any('body' in sels and 'font-family' in css for sels, css in rules) else 'mono_headings')
+        if any('body' in sels and 'font-family' in css for sels, css in rules):
+            out.append('mono_all')
+        elif any(('button' in sels or 'label' in sels) and 'font-family' in css for sels, css in rules):
+            out.append('mono_labels')  # моноширинный шрифт ещё и у меток/кнопок, не только у заголовков
+        else:
+            out.append('mono_headings')
     m = re.search(r'--shadow-card:\s*([^;]+);', tw)
     if m:
         # `none` — плоские карточки (раньше такие темы ошибочно получали «мягкие тени»); иначе — тень карточек
-        out.append('flat_cards' if m.group(1).strip() == 'none' else 'soft_shadows')
+        v = m.group(1).strip()
+        out.append('flat_cards' if v == 'none' else 'hard_shadows' if is_hard_shadow(v) else 'soft_shadows')
     m = re.search(r'--shadow-active:\s*([^;]+);', tw)
     if m and m.group(1).strip() != 'none':
         # «0 0 0 1px …» — кольцо-обводка у активного; иначе — расплывчатое неоновое свечение
-        out.append('active_outline' if m.group(1).strip().startswith('0 0 0 ') else 'neon_glow')
+        v = m.group(1).strip()
+        if v.startswith('0 0 0 '):
+            out.append('active_outline')
+        elif is_hard_shadow(v):
+            if 'hard_shadows' not in out:
+                out.append('hard_shadows')
+        else:
+            out.append('neon_glow')
     m = re.search(r'--bg-pattern:\s*([^;]+);', tw)
     if m:
         # data-URI (SVG-шум) — матовая зернистость; градиент — узор из точек

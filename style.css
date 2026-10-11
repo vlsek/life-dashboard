@@ -760,6 +760,32 @@ html.theme-matcha {
   --chart-none: #6b7280;
   --chart-other: #8a909c;
 }
+
+html.theme-cyberday {
+  --bg: #eef0f4;
+  --bg-card: #ffffff;
+  --border: #2b2f3a;
+  --text: #111827;
+  --text-dim: #4b5563;
+  --accent: #2563eb;
+  --accent-text: #ffffff;
+  --success: #15803d;
+  --danger: #be185d;
+  --hist-ok: #16a34a;
+  --water-top: #3f95e0;
+  --water-bottom: #1560b8;
+  --water-line: #1560b8;
+  --chart-1: #2563eb;
+  --chart-2: #af291d;
+  --chart-3: #a0731a;
+  --chart-4: #199a5a;
+  --chart-5: #721daf;
+  --chart-6: #1b9ba7;
+  --chart-7: #af1d72;
+  --chart-8: #af1daf;
+  --chart-none: #6b7280;
+  --chart-other: #9095a0;
+}
 html.theme-nord,
 html.theme-mocha,
 html.theme-amoled,
@@ -786,7 +812,8 @@ html.theme-sky,
 html.theme-peach,
 html.theme-graphite,
 html.theme-alpine,
-html.theme-matcha { color-scheme: light; }
+html.theme-matcha,
+html.theme-cyberday { color-scheme: light; }
 /* themes:end */
 
 /* design-tokens:start (генерируется scripts/apply_themes.py — не править руками; BACKLOG 50.1а) */
@@ -933,6 +960,30 @@ html[data-simple='on'].theme-matcha {
 @media (prefers-contrast: more) {
   html.theme-matcha {
     --shadow-card: none;
+  }
+}
+
+/* большая тема: cyberday */
+html.theme-cyberday {
+  --radius-card: 4px;
+  --radius-modal: 4px;
+  --radius-control: 4px;
+  --shadow-card: 3px 3px 0 #111111;
+  --shadow-active: 2px 2px 0 #111111;
+  --font-heading: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --bg-pattern: radial-gradient(circle at 1px 1px, rgba(17, 24, 39, 0.16) 1px, transparent 0);
+  --bg-pattern-size: 14px 14px;
+}
+html.theme-cyberday body { background-image: var(--bg-pattern); background-size: var(--bg-pattern-size); }
+html.theme-cyberday .card, html.theme-cyberday .modal, html.theme-cyberday [style*="var(--bg-card)"] { box-shadow: var(--shadow-card); }
+html.theme-cyberday button:not(.secondary):not(.danger):not(:disabled) { box-shadow: var(--shadow-active); }
+html.theme-cyberday h1, html.theme-cyberday h2, html.theme-cyberday h3, html.theme-cyberday h4, html.theme-cyberday label, html.theme-cyberday button { font-family: var(--font-heading); }
+html[data-simple='on'].theme-cyberday {
+  --bg-pattern: none;
+}
+@media (prefers-contrast: more) {
+  html.theme-cyberday {
+    --bg-pattern: none;
   }
 }
 /* design-tokens:end */

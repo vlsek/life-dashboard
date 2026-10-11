@@ -77,3 +77,14 @@ describe('matcha (светлая «пушистая»)', () => {
     expect(THEME_TRAITS.matcha).toEqual(['palette', 'corners_soft', 'soft_shadows', 'smooth_anim'])
   })
 })
+
+describe('cyberday (светлый киберпанк): жёсткие тени и моноширинные метки', () => {
+  it('цвета, моноширинный шрифт у заголовков/меток/кнопок, жёсткие тени, сетка точек, резкая анимация — без «мягких теней» и «неонового свечения»', () => {
+    expect(THEME_TRAITS.cyberday).toEqual(['palette', 'mono_labels', 'hard_shadows', 'dot_pattern', 'snappy_anim'])
+    expect(THEME_TRAITS.cyberday).not.toContain('soft_shadows')
+    expect(THEME_TRAITS.cyberday).not.toContain('neon_glow')
+  })
+  it('у остальных тем «жёстких теней» нет, а у nightfall тени по-прежнему мягкие', () => {
+    for (const k of Object.keys(THEME_TRAITS)) if (k !== 'cyberday') expect(THEME_TRAITS[k], k).not.toContain('hard_shadows')
+  })
+})
