@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.07";
+const SITE_VERSION = "5.08";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.08", date: "2026-10-11 21:19", changes: [
+        "Достижения: у нового аккаунта (первые 14 дней) поздравление о новом достижении теперь приходит быстро — проверка на любой странице идёт примерно раз в полторы минуты, а не раз в 10 минут. Раньше первые действия (добавил цель, перешёл на другую страницу) оставались без уведомления, пока человек сам не открывал «Достижения». У остальных аккаунтов ничего не меняется. Без миграций."
+    ]},
     { version: "5.07", date: "2026-10-12 00:30", changes: [
         "«Тренировки» → «Карта мышц» → новый свёрнутый блок «Замеры тела»: по желанию вносите обхваты (шея, плечи, грудь, талия, бёдра, бицепсы, предплечья, бёдра/голени слева и справа) в сантиметрах с датой. Видно последнее значение и разницу с прошлым замером, по клику — история с мини-графиком и удалением. ТРЕБУЕТСЯ SQL: миграция 074 (до неё блок скрыт)."
     ]},
@@ -2131,6 +2134,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.08", date: "2026-10-11 21:19", changes: [
+        "Achievements: for a new account (first 14 days) the \"new achievement\" notification now arrives quickly — the check on any page runs about every 1.5 minutes instead of every 10. Before, the first actions (added a goal, moved to another page) stayed without a notification until the person opened Achievements themselves. Other accounts are unchanged. No migrations."
+    ]},
     { version: "5.07", date: "2026-10-12 00:30", changes: [
         "Workouts → Muscle map → a new collapsed «Body measurements» block: optionally log circumferences (neck, shoulders, chest, waist, hips, biceps, forearms, thighs and calves, left and right) in centimetres with a date. It shows the latest value and the change from the previous one; tap a part for its history with a mini chart and delete. SQL REQUIRED: migration 074 (the block is hidden until then)."
     ]},
