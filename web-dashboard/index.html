@@ -57,11 +57,13 @@
       /* splash-tongues:start (scripts/apply_splash_tongues.py) */
       html[data-splash='tongues'] .pre-splash .pre-flame { display: none; }
       html[data-splash='tongues'] .pre-splash .pre-tongues { display: block; }
+      /* скорость языков: 1 = как в оригинале (1.3 с), больше = медленнее (владелец 2026-10-11: «очень быстрая, ранее была медленная и приятная») */
+      .pre-tongues { --tongue-slow: 1.6; }
       .pre-tongues .tg { transform-box: fill-box; transform-origin: 50% 100%; }
-      .pre-tongues .tc { fill: var(--pre-accent, #5b8def); animation: pre-tc 1.3s ease-in-out infinite; }
-      .pre-tongues .tl { fill: color-mix(in srgb, var(--pre-accent, #5b8def) 78%, transparent); animation: pre-tl 0.95s ease-in-out -0.3s infinite; }
-      .pre-tongues .tr { fill: color-mix(in srgb, var(--pre-accent, #5b8def) 78%, transparent); animation: pre-tr 1.15s ease-in-out -0.7s infinite; }
-      .pre-tongues .tk { fill: color-mix(in srgb, var(--pre-accent, #5b8def) 35%, #fff); animation: pre-tk 0.8s ease-in-out -0.2s infinite; }
+      .pre-tongues .tc { fill: var(--pre-accent, #5b8def); animation: pre-tc calc(1.3s * var(--tongue-slow)) ease-in-out infinite; }
+      .pre-tongues .tl { fill: color-mix(in srgb, var(--pre-accent, #5b8def) 78%, transparent); animation: pre-tl calc(0.95s * var(--tongue-slow)) ease-in-out -0.3s infinite; }
+      .pre-tongues .tr { fill: color-mix(in srgb, var(--pre-accent, #5b8def) 78%, transparent); animation: pre-tr calc(1.15s * var(--tongue-slow)) ease-in-out -0.7s infinite; }
+      .pre-tongues .tk { fill: color-mix(in srgb, var(--pre-accent, #5b8def) 35%, #fff); animation: pre-tk calc(0.8s * var(--tongue-slow)) ease-in-out -0.2s infinite; }
       .pre-tongues .sp { fill: color-mix(in srgb, var(--pre-accent, #5b8def) 45%, #fff); opacity: 0; animation: pre-sp var(--d, 2s) ease-out var(--o, 0s) infinite; }
       @keyframes pre-tc { 0%, 100% { transform: scale(1, 1) skewX(0deg); } 30% { transform: scale(0.96, 1.08) skewX(-4deg); } 65% { transform: scale(1.03, 0.95) skewX(3deg); } }
       @keyframes pre-tl { 0%, 100% { transform: scale(1, 1) skewX(0deg); } 40% { transform: scale(0.9, 1.15) skewX(-7deg); } 75% { transform: scale(1.05, 0.9) skewX(4deg); } }

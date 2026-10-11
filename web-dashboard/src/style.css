@@ -1513,25 +1513,27 @@ html.theme-monet .splash-flame .fl-outer {
 }
 /* splash-flame:end */
 /* splash-tongues:start — вариант «Три языка» (старое пламя, BACKLOG 16); общие свечение/искры/«уменьшить движение» — через .splash-live */
+/* скорость языков: 1 = как в оригинале (1.3 с), больше = медленнее; одна ручка на все варианты (заставка, предпросмотр, огонёк серии) */
+.splash-tongues { --tongue-slow: 1.6; }
 .splash-tongues .tongue {
   transform-box: fill-box;
   transform-origin: 50% 100%;
 }
 .splash-tongues .tongue-c {
   fill: var(--accent);
-  animation: tongue-c 1.3s ease-in-out infinite;
+  animation: tongue-c calc(1.3s * var(--tongue-slow)) ease-in-out infinite;
 }
 .splash-tongues .tongue-l {
   fill: color-mix(in srgb, var(--accent) 78%, transparent);
-  animation: tongue-l 0.95s ease-in-out -0.3s infinite;
+  animation: tongue-l calc(0.95s * var(--tongue-slow)) ease-in-out -0.3s infinite;
 }
 .splash-tongues .tongue-r {
   fill: color-mix(in srgb, var(--accent) 78%, transparent);
-  animation: tongue-r 1.15s ease-in-out -0.7s infinite;
+  animation: tongue-r calc(1.15s * var(--tongue-slow)) ease-in-out -0.7s infinite;
 }
 .splash-tongues .tongue-core {
   fill: color-mix(in srgb, var(--accent) 35%, #ffffff);
-  animation: tongue-core 0.8s ease-in-out -0.2s infinite;
+  animation: tongue-core calc(0.8s * var(--tongue-slow)) ease-in-out -0.2s infinite;
 }
 @keyframes tongue-l {
   0%, 100% { transform: scale(1, 1) skewX(0deg); }
@@ -1558,6 +1560,14 @@ html.theme-monet .splash-flame .fl-outer {
 /* splash-tongues:end */
 /* Огонёк серии «три языка» (BACKLOG 44.18в): на ступени 1 (7+ дней) искр нет, на ступенях 2–3 они летят */
 .streak-tongues[data-tier='1'] .spark { display: none; }
+/* ... а скорость языков растёт со ступенью, как у прежнего пламени стрика: 7+ дней — самая плавная, 30+ — быстрее, 100+ — ещё быстрее */
+.streak-tongues { --tier-speed: 1; }
+.streak-tongues[data-tier='2'] { --tier-speed: 0.85; }
+.streak-tongues[data-tier='3'] { --tier-speed: 0.7; }
+.streak-tongues .tongue-c { animation-duration: calc(1.3s * var(--tongue-slow) * var(--tier-speed)); }
+.streak-tongues .tongue-l { animation-duration: calc(0.95s * var(--tongue-slow) * var(--tier-speed)); }
+.streak-tongues .tongue-r { animation-duration: calc(1.15s * var(--tongue-slow) * var(--tier-speed)); }
+.streak-tongues .tongue-core { animation-duration: calc(0.8s * var(--tongue-slow) * var(--tier-speed)); }
 @keyframes spark-rise {
   0% { transform: translate(0, 0) scale(1); opacity: 0; }
   15% { opacity: 1; }
