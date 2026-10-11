@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.90";
+const SITE_VERSION = "4.91";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.91", date: "2026-10-11 13:30", changes: [
+        "Кастомизация, «Спидометр прогресса дня»: два новых вида кольца дня. «Циферблат» (150 монет) — тонкое кольцо с двенадцатью часовыми штрихами, которые зажигаются по мере заполнения дня; «Градиентное кольцо» (250 монет) — дуга с плавным переходом от цвета акцента к золотому (у рамки аватарки остаются её цвета). Видны у аватарки в Дашборде и в бейдже дня в шапке. Нужна миграция 071 (владелец применяет)."
+    ]},
     { version: "4.90", date: "2026-10-11 12:56", changes: [
         "Глобальные настройки → «Эффекты»: новый выключатель «Простое оформление». Он отключает свечение, сетки, строки развёртки, зернистость и мягкие тени больших тем (цвета остаются), независимо от настроек системы. Применяется сразу, запоминается и работает на всех страницах",
     ]},
@@ -2080,6 +2083,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.91", date: "2026-10-11 13:30", changes: [
+        "Customization, «Day progress gauge»: two new day ring looks. «Dial» (150 coins) — a thin ring with twelve clock marks that light up as the day fills; «Gradient ring» (250 coins) — an arc fading from your accent colour to gold (an avatar frame keeps its own colours). Shown around the avatar in the Dashboard and in the day badge in the header. Needs migration 071 (owner applies)."
+    ]},
     { version: "4.90", date: "2026-10-11 12:56", changes: [
         "Global settings, Effects: a new Simple look switch. It turns off the glow, grids, scanlines, grain and soft shadows of the big themes (the colors stay), regardless of the system settings. It applies at once, is remembered and works on every page",
     ]},

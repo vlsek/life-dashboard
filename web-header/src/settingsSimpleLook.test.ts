@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 
 // BACKLOG 50.1: ручной переключатель «Простое оформление» в «Глобальных настройках» (раздел «Эффекты»): site_simple=on → <html data-simple="on">.

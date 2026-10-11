@@ -1,6 +1,13 @@
 {
-  "version": "4.90",
+  "version": "4.91",
   "en": [
+    {
+      "version": "4.91",
+      "date": "2026-10-11 13:30",
+      "changes": [
+        "Customization, «Day progress gauge»: two new day ring looks. «Dial» (150 coins) — a thin ring with twelve clock marks that light up as the day fills; «Gradient ring» (250 coins) — an arc fading from your accent colour to gold (an avatar frame keeps its own colours). Shown around the avatar in the Dashboard and in the day badge in the header. Needs migration 071 (owner applies)."
+      ]
+    },
     {
       "version": "4.90",
       "date": "2026-10-11 12:56",
@@ -3497,6 +3504,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.91",
+      "date": "2026-10-11 13:30",
+      "changes": [
+        "Кастомизация, «Спидометр прогресса дня»: два новых вида кольца дня. «Циферблат» (150 монет) — тонкое кольцо с двенадцатью часовыми штрихами, которые зажигаются по мере заполнения дня; «Градиентное кольцо» (250 монет) — дуга с плавным переходом от цвета акцента к золотому (у рамки аватарки остаются её цвета). Видны у аватарки в Дашборде и в бейдже дня в шапке. Нужна миграция 071 (владелец применяет)."
+      ]
+    },
     {
       "version": "4.90",
       "date": "2026-10-11 12:56",
