@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { usuallySkipped } from '../lib/genderTips'
 import { computed, nextTick, ref } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
 import { todayStr } from '../lib/date'
@@ -30,7 +31,7 @@ import { useAccordionMember } from '../lib/useCollapseStyle'
 // Карта мышц (BACKLOG 3.2, первый срез): зелёные — мышцы, задействованные за последние 4 дня,
 // серые — нет. Клик по мышце — её упражнения (свои с кнопкой «Добавить запись» + подсказки из справочника).
 // `embedded` — карта лежит в своей вкладке «Карта мышц» (BACKLOG 54.2): заголовок-кнопка не нужна, тело всегда раскрыто, в аккордеон блоков не входит.
-const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string; studyRecent?: boolean; embedded?: boolean; model?: BodyModel }>()
+const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string; studyRecent?: boolean; embedded?: boolean; model?: BodyModel; gender?: 'male' | 'female' | null }>()
 const emit = defineEmits<{ 'add-entry': [exercise: Exercise]; 'quick-add-entry': [exercise: Exercise, input: EntryFormInput, done: (ok: boolean) => void] }>()
 
 const OPEN_KEY = 'workouts_musclemap_open'
@@ -162,9 +163,11 @@ const suggestions = computed(() => {
   if (!m) return []
   const ownRuleIds = new Set(ownExercises.value.map((ex) => ruleForExercise(ex.name)?.id))
   const lang = getLang()
-  return referenceFor(m)
+  // 58.10: упражнения, которые данному полу обычно не нужны, — в конец списка и с мягкой пометкой (не запрет)
+  const list = referenceFor(m)
     .filter((r) => !ownRuleIds.has(r.id))
-    .map((r) => (lang === 'ru' ? r.ru : r.en))
+    .map((r) => ({ name: lang === 'ru' ? r.ru : r.en, skip: usuallySkipped(r.id, props.gender) }))
+  return [...list.filter((s) => !s.skip), ...list.filter((s) => s.skip)]
 })
 
 const geometry = computed(() => bodyGeometry(props.model ?? 'male'))
@@ -302,7 +305,7 @@ function shapeStyle(m: MuscleId) {
         <template v-if="suggestions.length">
           <div class="mb-1 text-[0.85em] font-semibold">{{ t('workouts_muscles_suggest') }}</div>
           <ul class="m-0 list-disc pl-5" style="color: var(--text-dim)" data-testid="muscle-suggestions">
-            <li v-for="s in suggestions" :key="s">{{ s }}</li>
+            <li v-for="s in suggestions" :key="s.name" :data-skip="s.skip ? '1' : undefined">{{ s.name }}<span v-if="s.skip" class="text-[0.85em]" data-testid="muscle-suggest-skip"> — {{ t('workouts_muscles_usually_skip') }}</span></li>
           </ul>
         </template>
       </div>

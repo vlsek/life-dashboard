@@ -437,6 +437,7 @@ function onToggleProgramWeek(week: number) {
         <MuscleMap
           embedded
           :model="bodyModel"
+          :gender="profileGender"
           :entries="entries"
           :exercises="exercises"
           :study-recent="studyRecent"
