@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.91";
+const SITE_VERSION = "4.92";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.92", date: "2026-10-11 10:02", changes: [
+        "Графики: доступность. У каждого графика теперь есть текстовая сводка («минимум, максимум, последнее») и таблица «дата — значение» для скринридеров и программ чтения с экрана; на экране они не видны и вид графика не меняется. Без миграций."
+    ]},
     { version: "4.91", date: "2026-10-11 13:30", changes: [
         "Кастомизация, «Спидометр прогресса дня»: два новых вида кольца дня. «Циферблат» (150 монет) — тонкое кольцо с двенадцатью часовыми штрихами, которые зажигаются по мере заполнения дня; «Градиентное кольцо» (250 монет) — дуга с плавным переходом от цвета акцента к золотому (у рамки аватарки остаются её цвета). Видны у аватарки в Дашборде и в бейдже дня в шапке. Нужна миграция 071 (владелец применяет)."
     ]},
@@ -2083,6 +2086,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.92", date: "2026-10-11 10:02", changes: [
+        "Charts: accessibility. Every chart now has a text summary (\"minimum, maximum, latest\") and a \"date — value\" table for screen readers; they are not visible on screen and the chart looks the same. No migrations."
+    ]},
     { version: "4.91", date: "2026-10-11 13:30", changes: [
         "Customization, «Day progress gauge»: two new day ring looks. «Dial» (150 coins) — a thin ring with twelve clock marks that light up as the day fills; «Gradient ring» (250 coins) — an arc fading from your accent colour to gold (an avatar frame keeps its own colours). Shown around the avatar in the Dashboard and in the day badge in the header. Needs migration 071 (owner applies)."
     ]},

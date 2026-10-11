@@ -1,6 +1,13 @@
 {
-  "version": "4.91",
+  "version": "4.92",
   "en": [
+    {
+      "version": "4.92",
+      "date": "2026-10-11 10:02",
+      "changes": [
+        "Charts: accessibility. Every chart now has a text summary (\"minimum, maximum, latest\") and a \"date — value\" table for screen readers; they are not visible on screen and the chart looks the same. No migrations."
+      ]
+    },
     {
       "version": "4.91",
       "date": "2026-10-11 13:30",
@@ -3504,6 +3511,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.92",
+      "date": "2026-10-11 10:02",
+      "changes": [
+        "Графики: доступность. У каждого графика теперь есть текстовая сводка («минимум, максимум, последнее») и таблица «дата — значение» для скринридеров и программ чтения с экрана; на экране они не видны и вид графика не меняется. Без миграций."
+      ]
+    },
     {
       "version": "4.91",
       "date": "2026-10-11 13:30",
