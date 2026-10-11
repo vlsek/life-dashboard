@@ -24,7 +24,18 @@ export function classifyMilestoneReminders(rows: { due_date: string }[], todaySt
   return { overdue, soon }
 }
 
-// Показывать баннер "недоделанная неделя" только по сб/вс и только если неделя ещё не на 100%.
-export function shouldShowWeekendReminder(dayOfWeek: number, weekTotalPct: number): boolean {
+// Новому пользователю (аккаунт младше 7 дней — первая неделя) «итоги недели» не нужны: подводить нечего (BACKLOG 57.5, владелец 2026-10-11: «для новых
+// пользователей не надо проводить итоги недели, а то это как-то глупо»). Нет даты создания — считаем аккаунт не новым, как и раньше.
+export const NEW_ACCOUNT_DAYS = 7
+export function isFirstWeekAccount(createdAt: string | null | undefined, now: Date = new Date()): boolean {
+  if (!createdAt) return false
+  const t = Date.parse(createdAt)
+  if (!Number.isFinite(t)) return false
+  return now.getTime() - t < NEW_ACCOUNT_DAYS * 86_400_000
+}
+
+// Показывать баннер "недоделанная неделя" только по сб/вс, только если неделя ещё не на 100% и только не в первую неделю аккаунта.
+export function shouldShowWeekendReminder(dayOfWeek: number, weekTotalPct: number, accountCreatedAt?: string | null, now: Date = new Date()): boolean {
+  if (isFirstWeekAccount(accountCreatedAt, now)) return false
   return (dayOfWeek === 0 || dayOfWeek === 6) && weekTotalPct < 100
 }

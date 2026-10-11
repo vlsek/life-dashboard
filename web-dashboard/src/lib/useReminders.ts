@@ -38,14 +38,20 @@ export function useReminders() {
     milestonesReminder.value = null
   }
 
-  function checkWeekendReminder(weekTotalPct: number) {
+  async function checkWeekendReminder(weekTotalPct: number) {
     const dismissedKey = 'week_reminder_dismissed:' + fmtDate(new Date())
     try {
       if (localStorage.getItem(dismissedKey)) return
     } catch {
       /* ignore */
     }
-    weekendReminderVisible.value = shouldShowWeekendReminder(new Date().getDay(), weekTotalPct)
+    let createdAt: string | null = null
+    try {
+      createdAt = (await sb.auth.getSession()).data.session?.user.created_at ?? null // дата создания аккаунта: в первую неделю итогов нет (BACKLOG 57.5)
+    } catch {
+      /* без даты — как раньше */
+    }
+    weekendReminderVisible.value = shouldShowWeekendReminder(new Date().getDay(), weekTotalPct, createdAt)
   }
 
   function dismissWeekendReminder() {

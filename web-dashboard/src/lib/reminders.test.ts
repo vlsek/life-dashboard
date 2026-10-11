@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { classifyMilestoneReminders, shouldShowWeekendReminder, soonDateFor } from './reminders'
+import { classifyMilestoneReminders, isFirstWeekAccount, shouldShowWeekendReminder, soonDateFor } from './reminders'
 
 describe('classifyMilestoneReminders', () => {
   it('splits rows into overdue (before today) and soon (today or later)', () => {
@@ -34,5 +34,24 @@ describe('soonDateFor', () => {
   })
   it('is a plain calendar +7 on an ordinary week', () => {
     expect(soonDateFor('2026-01-01')).toBe('2026-01-08')
+  })
+})
+
+// BACKLOG 57.5: новому пользователю (первая неделя аккаунта) итоги недели не показываем.
+describe('первая неделя аккаунта', () => {
+  const now = new Date('2026-10-11T12:00:00Z')
+  it('isFirstWeekAccount: младше 7 суток — да, ровно 7 и старше — нет, нет даты/мусор — нет', () => {
+    expect(isFirstWeekAccount('2026-10-10T12:00:00Z', now)).toBe(true)
+    expect(isFirstWeekAccount('2026-10-04T12:00:01Z', now)).toBe(true)
+    expect(isFirstWeekAccount('2026-10-04T12:00:00Z', now)).toBe(false)
+    expect(isFirstWeekAccount('2026-09-01T00:00:00Z', now)).toBe(false)
+    expect(isFirstWeekAccount(null, now)).toBe(false)
+    expect(isFirstWeekAccount(undefined, now)).toBe(false)
+    expect(isFirstWeekAccount('не дата', now)).toBe(false)
+  })
+  it('баннер выходного дня у нового аккаунта скрыт, у старого — как раньше', () => {
+    expect(shouldShowWeekendReminder(6, 40, '2026-10-08T00:00:00Z', now)).toBe(false)
+    expect(shouldShowWeekendReminder(6, 40, '2026-09-01T00:00:00Z', now)).toBe(true)
+    expect(shouldShowWeekendReminder(6, 40, null, now)).toBe(true)
   })
 })

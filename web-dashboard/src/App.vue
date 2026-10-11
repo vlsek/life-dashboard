@@ -103,7 +103,7 @@ onMounted(async () => {
     void loadWaterReminder(auth.value.userId)
     void loadPlanReminders(auth.value.userId)
  void loadCollapseStyle(auth.value.userId) // вид сворачивания блоков из «Кастомизации» (BACKLOG 498); до ответа — кэш
-    if (weekProgress.value) checkWeekendReminder(progressPercent(weekProgress.value))
+    if (weekProgress.value) void checkWeekendReminder(progressPercent(weekProgress.value))
   }
 })
 
