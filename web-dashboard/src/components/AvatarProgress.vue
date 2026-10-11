@@ -6,7 +6,7 @@ import type { RingData } from '../lib/ringPlacement'
 import { t } from '../lib/i18n'
 import { stripEmoji } from '../lib/emojiText'
 import { frameRing } from '../lib/frameRing'
-import { daySegments, DAY_GLOW_FILTER } from '../lib/dayGauge'
+import { daySegments, dayTicks, DAY_GLOW_FILTER, DAY_GRADIENT_STOPS } from '../lib/dayGauge'
 import { dayGaugeStyle } from '../lib/useDayGauge'
 
 // Колонка аватарки: фото 44px внутри кольца прогресса дня 52px (пустое, если кольца нет), процент
@@ -20,6 +20,8 @@ const fr = computed(() => frameRing(props.frame))
 const GRAD_ID = 'avatar-ring-grad'
 const arcStroke = computed(() => (!fr.value ? 'var(--accent)' : fr.value.stops.length > 1 ? `url(#${GRAD_ID})` : fr.value.stops[0]))
 const arcFilter = computed(() => (fr.value?.glow ? `drop-shadow(0 0 3px ${fr.value.glow})` : dayGaugeStyle.value === 'glow' ? DAY_GLOW_FILTER : undefined)) // свечение вида «Кастомизации» уступает свечению рамки
+const tickList = computed(() => (props.ring ? dayTicks(26, 26, 24, props.ring.basePct) : []))
+const gradOn = computed(() => dayGaugeStyle.value === 'gradient' && !fr.value) // рамка со своими цветами главнее
 const segs = computed(() => (props.ring ? daySegments(26, 26, 24, props.ring.basePct, props.ring.bonusPct) : []))
 </script>
 
@@ -51,9 +53,11 @@ const segs = computed(() => (props.ring ? daySegments(26, 26, 24, props.ring.bas
           </g>
         </template>
         <template v-else>
-          <circle cx="26" cy="26" r="24" fill="none" stroke="var(--border)" stroke-width="3" />
-          <circle cx="26" cy="26" r="24" fill="none" :stroke="arcStroke" :class="fr?.anim" :style="arcFilter ? { filter: arcFilter } : undefined" stroke-width="3" stroke-linecap="round" :stroke-dasharray="geo.circumference" :stroke-dashoffset="geo.offsetBase" data-test="avatar-ring-arc" />
-          <circle v-if="ring.bonusPct > 0" cx="26" cy="26" r="24" fill="none" class="ring-bonus" stroke-width="3" stroke-linecap="round" :stroke-dasharray="geo.circumference" :stroke-dashoffset="geo.offsetBonus" />
+          <defs v-if="gradOn"><linearGradient id="day-grad-a" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="52" y2="52"><stop offset="0%" :stop-color="DAY_GRADIENT_STOPS[0]" /><stop offset="100%" :stop-color="DAY_GRADIENT_STOPS[1]" /></linearGradient></defs>
+          <circle cx="26" cy="26" r="24" fill="none" stroke="var(--border)" :stroke-width="dayGaugeStyle === 'ticks' ? 1.6 : 3" />
+          <circle cx="26" cy="26" r="24" fill="none" :stroke="gradOn ? 'url(#day-grad-a)' : arcStroke" :class="fr?.anim" :style="arcFilter ? { filter: arcFilter } : undefined" :stroke-width="dayGaugeStyle === 'ticks' ? 2.4 : 3" stroke-linecap="round" :stroke-dasharray="geo.circumference" :stroke-dashoffset="geo.offsetBase" data-test="avatar-ring-arc" />
+          <circle v-if="ring.bonusPct > 0" cx="26" cy="26" r="24" fill="none" class="ring-bonus" :stroke-width="dayGaugeStyle === 'ticks' ? 2.4 : 3" stroke-linecap="round" :stroke-dasharray="geo.circumference" :stroke-dashoffset="geo.offsetBonus" />
+          <g v-if="dayGaugeStyle === 'ticks'" data-test="day-ticks"><line v-for="(tk, i) in tickList" :key="i" :x1="tk.x1" :y1="tk.y1" :x2="tk.x2" :y2="tk.y2" :stroke="tk.lit ? 'var(--accent)' : 'var(--border)'" stroke-width="1.4" /></g>
         </template>
       </svg>
 

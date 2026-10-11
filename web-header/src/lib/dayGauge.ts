@@ -3,11 +3,11 @@
 // Выбор лежит в profiles.customization.day_gauge (ключ предмета); страницы применяют его БЕЗ ожидания сети — через кэш в localStorage (как вид
 // недели): кэш пишет «Кастомизация» при выборе, шапка и Дашборд сверяются с профилем в фоне. Чистая логика (без Vue/сети).
 // Пилоты изолированы, поэтому файл ЕСТЬ в web-customization, web-header и web-dashboard (менять ВМЕСТЕ — страж в collapseStyleCopies.test.ts).
-export type DayGaugeStyle = 'ring' | 'dashed' | 'glow'
+export type DayGaugeStyle = 'ring' | 'dashed' | 'glow' | 'ticks' | 'gradient'
 
 export const DAY_GAUGE_CACHE_KEY = 'site_day_gauge'
 
-const BY_ITEM: Record<string, DayGaugeStyle> = { day_dashed: 'dashed', day_glow: 'glow' }
+const BY_ITEM: Record<string, DayGaugeStyle> = { day_dashed: 'dashed', day_glow: 'glow', day_ticks: 'ticks', day_gradient: 'gradient' }
 
 export function parseDayGauge(raw: unknown): DayGaugeStyle {
   return typeof raw === 'string' && Object.prototype.hasOwnProperty.call(BY_ITEM, raw) ? BY_ITEM[raw] : 'ring'
@@ -16,7 +16,7 @@ export function parseDayGauge(raw: unknown): DayGaugeStyle {
 export function readCachedDayGauge(): DayGaugeStyle {
   try {
     const v = localStorage.getItem(DAY_GAUGE_CACHE_KEY)
-    return v === 'dashed' || v === 'glow' ? v : 'ring'
+    return v === 'dashed' || v === 'glow' || v === 'ticks' || v === 'gradient' ? v : 'ring'
   } catch {
     return 'ring'
   }
@@ -60,3 +60,25 @@ export function daySegments(cx: number, cy: number, r: number, basePct: number, 
     return { d, base: i < baseN, bonus: i < bonusN }
   })
 }
+
+// «Циферблат»: тонкая дорожка и дуга прогресса + 12 коротких «часовых» штрихов внутри кольца (углы от 3 часов, кольцо крутят на −90°).
+export const DAY_TICKS = 12
+export interface DayTick {
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+  lit: boolean // штрих внутри пройденной части дуги
+}
+export function dayTicks(cx: number, cy: number, r: number, basePct: number, len = 3): DayTick[] {
+  const f = Math.max(0, Math.min(1, basePct))
+  return Array.from({ length: DAY_TICKS }, (_, i) => {
+    const a = (i / DAY_TICKS) * 2 * Math.PI
+    const c = Math.cos(a)
+    const s = Math.sin(a)
+    return { x1: cx + (r - 2.5) * c, y1: cy + (r - 2.5) * s, x2: cx + (r - 2.5 - len) * c, y2: cy + (r - 2.5 - len) * s, lit: i / DAY_TICKS < f - 1e-9 }
+  })
+}
+
+// «Градиентное кольцо»: дуга красится градиентом от акцента к золотому (цвет бонуса).
+export const DAY_GRADIENT_STOPS = ['var(--accent, #6c8cff)', '#f5b301'] as const
