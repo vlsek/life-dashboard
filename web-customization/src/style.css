@@ -1450,3 +1450,18 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   html { font-size: var(--phone-scale); }
 }
 /* phone-scale:end */
+
+/* splash-orbit:start — вариант «Орбита» (BACKLOG 56.1, scripts/apply_splash_orbit.py); цвет — акцент темы */
+.splash-orbit { overflow: visible; filter: drop-shadow(0 0 8px var(--accent)); }
+.splash-orbit .ob-track { fill: none; stroke: var(--accent); stroke-opacity: 0.22; stroke-width: 1.2; }
+.splash-orbit .ob-core { fill: var(--accent); transform-box: fill-box; transform-origin: 50% 50%; animation: ob-core 1.4s ease-in-out infinite; }
+.splash-orbit .ob-dot { fill: var(--accent); }
+.splash-orbit .ob-dim { fill: color-mix(in srgb, var(--accent) 60%, transparent); }
+.splash-orbit .ob-light { fill: color-mix(in srgb, var(--accent) 40%, #fff); }
+.splash-orbit .ob-o1 { transform-box: view-box; transform-origin: 50% 50%; animation: ob-spin 2.2s linear infinite; }
+.splash-orbit .ob-o2 { transform-box: view-box; transform-origin: 50% 50%; animation: ob-spin 1.3s linear infinite reverse; }
+@keyframes ob-spin { to { transform: rotate(360deg); } }
+@keyframes ob-core { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.35); opacity: 0.7; } }
+@media (prefers-reduced-motion: reduce) { .splash-orbit * { animation: none !important; } }
+html[data-motion='off'] .splash-orbit * { animation: none !important; }
+/* splash-orbit:end */

@@ -16,8 +16,8 @@ describe('splashVariants: реестр', () => {
     localStorage.setItem('site_lang', 'ru')
   })
 
-  it('четыре варианта; старая «классика» и «три языка» на месте; по умолчанию — «живое пламя»', () => {
-    expect([...SPLASH_VARIANTS]).toEqual(['classic', 'flame', 'ring', 'tongues'])
+  it('пять вариантов; старая «классика» и «три языка» на месте, «Орбита» добавлена; по умолчанию — «живое пламя»', () => {
+    expect([...SPLASH_VARIANTS]).toEqual(['classic', 'flame', 'ring', 'tongues', 'orbit'])
     expect(DEFAULT_SPLASH_VARIANT).toBe('flame')
   })
 

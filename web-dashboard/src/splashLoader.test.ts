@@ -39,6 +39,28 @@ describe('SplashLoader', () => {
     expect(w.find('.splash-ring .ring-flame .fl-outer').exists()).toBe(true)
   })
 
+  it('«Орбита» (BACKLOG 56.1): центр, два кольца-дорожки и две группы точек; фигуры совпадают со статичной заставкой index.html', () => {
+    const w = mount(SplashLoader, { props: { variant: 'orbit' } })
+    expect(w.find('[data-test="splash"]').attributes('data-variant')).toBe('orbit')
+    expect(w.find('svg.splash-orbit').exists()).toBe(true)
+    expect(w.findAll('.splash-orbit .ob-track')).toHaveLength(2)
+    expect(w.findAll('.splash-orbit .ob-o1, .splash-orbit .ob-o2')).toHaveLength(2)
+    expect(w.findAll('.splash-orbit .ob-dot').length).toBeGreaterThanOrEqual(4)
+    const shapes = (m: string) => [...m.matchAll(/<circle class="(ob-[\w -]+)" cx="(\d+)" cy="(\d+)" r="([\d.]+)"/g)].map((x) => x.slice(1).join(','))
+    const staticSvg = html.match(/<svg class="pre-orbit".*?<\/svg>/s)![0]
+    expect(shapes(w.html()).length).toBeGreaterThan(6)
+    expect(shapes(staticSvg)).toEqual(shapes(w.html()))
+  })
+
+  it('«Орбита»: стили есть и у компонента, и у статичной заставки; «уменьшить движение» и «Отключить анимации» выключают вращение', () => {
+    for (const s of ['.splash-orbit .ob-o1', '@keyframes ob-spin', '@keyframes ob-core']) expect(css, s).toContain(s)
+    expect(css).toMatch(/prefers-reduced-motion: reduce\) \{ \.splash-orbit \* \{ animation: none !important/)
+    expect(css).toContain("html[data-motion='off'] .splash-orbit *")
+    expect(html).toContain("html[data-splash='orbit'] .pre-splash .pre-orbit { display: block; }")
+    expect(html).toContain('@keyframes pre-ob-spin')
+    expect(html).toContain("'tongues', 'orbit']")
+  })
+
   it('вариант берётся из localStorage; английская подпись при EN', () => {
     localStorage.setItem('splash_variant', 'ring')
     localStorage.setItem('site_lang', 'en')

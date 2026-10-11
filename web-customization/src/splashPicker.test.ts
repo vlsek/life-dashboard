@@ -15,9 +15,9 @@ describe('SplashPicker: выбор заставки в «Кастомизаци�
     document.documentElement.removeAttribute('data-splash')
   })
 
-  it('пять карточек: «По теме» (по умолчанию, на обычной теме играет «Живое пламя») и четыре варианта; у каждой живой предпросмотр', () => {
+  it('шесть карточек: «По теме» (по умолчанию, на обычной теме играет «Живое пламя») и пять вариантов; у каждой живой предпросмотр', () => {
     const w = mount(SplashPicker)
-    expect(w.findAll('[data-testid^="splash-"][data-active]')).toHaveLength(5)
+    expect(w.findAll('[data-testid^="splash-"][data-active]')).toHaveLength(6)
     expect(w.find('[data-testid="splash-auto"]').attributes('data-active')).toBe('true')
     expect(w.find('[data-testid="splash-auto"]').text()).toContain('По теме')
     expect(w.find('[data-testid="splash-auto-now"]').text()).toContain('Живое пламя')
@@ -26,6 +26,8 @@ describe('SplashPicker: выбор заставки в «Кастомизаци�
     expect(w.find('[data-testid="splash-tongues"]').text()).toContain('Три языка')
     expect(w.find('[data-testid="splash-tongues"] svg.splash-tongues .tongue-c').exists()).toBe(true)
     expect(w.find('[data-testid="splash-ring"] svg.splash-ring').exists()).toBe(true)
+    expect(w.find('[data-testid="splash-orbit"] svg.splash-orbit .ob-core').exists()).toBe(true)
+    expect(w.find('[data-testid="splash-orbit"]').text()).toContain('Орбита')
     expect(w.find('[data-testid="splash-classic"] svg.splash-flame').exists()).toBe(true)
     expect(w.find('[data-testid="splash-flame"] svg.splash-live .flame-body').exists()).toBe(true)
   })
@@ -72,7 +74,7 @@ describe('SplashPicker: выбор заставки в «Кастомизаци�
   })
 
   it('CSS вариантов перенесён из Дашборда (три языка, круг, классика) и подчинён «уменьшить движение»', () => {
-    for (const s of ['.splash-tongues .tongue-c', '@keyframes tongue-core', '.splash-ring .ring-base', '@keyframes ring-spin', '.splash-flame .fl-outer', '@keyframes flame-flicker'])
+    for (const s of ['.splash-tongues .tongue-c', '@keyframes tongue-core', '.splash-ring .ring-base', '@keyframes ring-spin', '.splash-flame .fl-outer', '@keyframes flame-flicker', '.splash-orbit .ob-o1', '@keyframes ob-spin'])
       expect(css, s).toContain(s)
     expect(css).toMatch(/prefers-reduced-motion: reduce\) \{\s*\.splash-ring, \.splash-ring \*, \.splash-tongues \*/)
     expect(css).toContain("html[data-motion='off'] .splash-tongues *")
@@ -130,6 +132,8 @@ describe('заставка большой темы (BACKLOG 55.5, срез 2)', 
       const html: string = readFileSync(`../web-${d}/index.html`, 'utf-8')
       expect(html, d).toContain(`var tl = ${want}[t]`)
       expect(html, d).toContain("sv.indexOf(sp) >= 0 ? sp : tl || 'flame'")
+      expect(html, d).toContain("'tongues', 'orbit']") // «Орбита» (BACKLOG 56.1): ключ в списке вариантов скрипта выбора
+      expect(html, d).toContain('class="pre-orbit"')
     }
   })
 })

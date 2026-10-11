@@ -16,7 +16,7 @@
           // ?splash= в адресе → localStorage → 'flame' по умолчанию
           // вариант заставки, идущий с большой темой (BACKLOG 55.5, срез 2; генерирует apply_themes.py из THEME_LOADER): запасной, если не выбран вручную
           var tl = { emerald: 'ring', moonlight: 'tongues', phosphor: 'classic', nightfall: 'flame' }[t]
-          var sv = ['classic', 'flame', 'ring', 'tongues']
+          var sv = ['classic', 'flame', 'ring', 'tongues', 'orbit']
           var q = new URLSearchParams(location.search).get('splash')
           var sp = sv.indexOf(q) >= 0 ? q : localStorage.getItem('splash_variant')
           document.documentElement.setAttribute('data-splash', sv.indexOf(sp) >= 0 ? sp : tl || 'flame')
@@ -71,6 +71,19 @@
       @keyframes pre-tr { 0%, 100% { transform: scale(1, 1) skewX(0deg); } 35% { transform: scale(0.92, 1.12) skewX(6deg); } 70% { transform: scale(1.06, 0.92) skewX(-4deg); } }
       @keyframes pre-tk { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(0.88, 1.12); } }
       /* splash-tongues:end */
+      /* splash-orbit:start (scripts/apply_splash_orbit.py) */
+      html[data-splash='orbit'] .pre-splash .pre-flame { display: none; }
+      html[data-splash='orbit'] .pre-splash .pre-orbit { display: block; }
+      .pre-orbit .ob-track { fill: none; stroke: var(--pre-accent, #5b8def); stroke-opacity: 0.22; stroke-width: 1.2; }
+      .pre-orbit .ob-core { fill: var(--pre-accent, #5b8def); transform-box: fill-box; transform-origin: 50% 50%; animation: pre-ob-core 1.4s ease-in-out infinite; }
+      .pre-orbit .ob-dot { fill: var(--pre-accent, #5b8def); }
+      .pre-orbit .ob-dim { fill: color-mix(in srgb, var(--pre-accent, #5b8def) 60%, transparent); }
+      .pre-orbit .ob-light { fill: color-mix(in srgb, var(--pre-accent, #5b8def) 40%, #fff); }
+      .pre-orbit .ob-o1 { transform-box: view-box; transform-origin: 50% 50%; animation: pre-ob-spin 2.2s linear infinite; }
+      .pre-orbit .ob-o2 { transform-box: view-box; transform-origin: 50% 50%; animation: pre-ob-spin 1.3s linear infinite reverse; }
+      @keyframes pre-ob-spin { to { transform: rotate(360deg); } }
+      @keyframes pre-ob-core { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.35); opacity: 0.7; } }
+      /* splash-orbit:end */
       /* splash-flame:start */
       .pre-live .fb { transform-box: fill-box; transform-origin: 50% 100%; animation: pre-sway 1.9s ease-in-out infinite; }
       .pre-live .fl { transform-box: fill-box; transform-origin: 50% 100%; }
@@ -136,6 +149,20 @@
           <circle class="sp" cx="34" cy="10" r="1.1" style="--dx: 3px; --d: 1.7s; --o: -0.6s" />
           <circle class="sp" cx="41" cy="16" r="1.4" style="--dx: 6px; --d: 2.4s; --o: -1.2s" />
           <circle class="sp" cx="30" cy="12" r="0.9" style="--dx: -2px; --d: 1.9s; --o: -1.7s" />
+        </svg>
+        <svg class="pre-orbit" viewBox="0 0 64 64" width="80" height="80">
+          <circle class="ob-track" cx="32" cy="32" r="22" />
+          <circle class="ob-track" cx="32" cy="32" r="12" />
+          <circle class="ob-core" cx="32" cy="32" r="4.5" />
+          <g class="ob-o1">
+            <circle class="ob-dot" cx="32" cy="10" r="3" />
+            <circle class="ob-dot ob-dim" cx="51" cy="43" r="2.2" />
+            <circle class="ob-dot ob-dim" cx="13" cy="43" r="1.6" />
+          </g>
+          <g class="ob-o2">
+            <circle class="ob-dot ob-light" cx="32" cy="20" r="2" />
+            <circle class="ob-dot ob-dim" cx="32" cy="44" r="1.4" />
+          </g>
         </svg>
         <svg class="pre-ring" viewBox="0 0 80 80" width="88" height="88">
           <circle class="rb" cx="40" cy="40" r="30" />

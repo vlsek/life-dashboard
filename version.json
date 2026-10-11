@@ -1,6 +1,13 @@
 {
-  "version": "4.93",
+  "version": "4.94",
   "en": [
+    {
+      "version": "4.94",
+      "date": "2026-10-11 12:00",
+      "changes": [
+        "New page loader \"Orbit\": a softly pulsing core, two rings and dots running around them in opposite directions (the color follows the theme accent). Pick it in Customization in the loader section, or preview it by opening any page with ?splash=orbit. It is the fifth variant (next to Living flame, Three tongues, Fire ring and Classic), free for now; with reduce-motion and Disable animations the dots do not spin. No migrations."
+      ]
+    },
     {
       "version": "4.93",
       "date": "2026-10-11 10:05",
@@ -3518,6 +3525,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.94",
+      "date": "2026-10-11 12:00",
+      "changes": [
+        "Новая заставка загрузки «Орбита»: мягко пульсирующий центр, два кольца и точки, бегущие по ним в разные стороны (цвет — акцент темы). Выбрать её можно в «Кастомизации» в разделе заставок, а для предпросмотра — открыть любую страницу с ?splash=orbit. Это пятый вариант (рядом «Живое пламя», «Три языка», «Огненный круг», «Классика»), пока бесплатный; при «уменьшить движение» и «Отключить анимации» точки не вращаются. Без миграций."
+      ]
+    },
     {
       "version": "4.93",
       "date": "2026-10-11 10:05",

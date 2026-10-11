@@ -4,6 +4,7 @@ import SplashFlameLive from './splash/SplashFlameLive.vue'
 import SplashFlameTongues from './splash/SplashFlameTongues.vue'
 import SplashFireRing from './splash/SplashFireRing.vue'
 import SplashClassic from './splash/SplashClassic.vue'
+import SplashOrbit from './splash/SplashOrbit.vue'
 import { SPLASH_VARIANTS, readSplashChoice, readSplashVariant, writeSplashVariant, type SplashVariant } from '../lib/splashVariant'
 import { t } from '../lib/i18n'
 
@@ -42,6 +43,7 @@ const choose = (v: SplashVariant | 'auto') => {
           <SplashFlameLive v-if="shown(v) === 'flame'" :size="56" />
           <SplashFlameTongues v-else-if="shown(v) === 'tongues'" />
           <SplashFireRing v-else-if="shown(v) === 'ring'" />
+          <SplashOrbit v-else-if="shown(v) === 'orbit'" />
           <SplashClassic v-else />
         </div>
         <p class="m-0 text-sm font-medium">{{ v === 'auto' ? t('cust_splash_auto') : label(v) }}</p>
