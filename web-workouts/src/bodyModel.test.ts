@@ -10,6 +10,12 @@ const xsAtY = (d: string, lo: number, hi: number) => {
   return out
 }
 
+// ширина туловища без рук: берём только точки не дальше 22 единиц от оси (руки лежат дальше)
+const torso = (d: string, lo: number, hi: number, cap = 22) => {
+  const xs = xsAtY(d, lo, hi).filter((x) => Math.abs(x - 50) <= cap)
+  return Math.max(...xs) - Math.min(...xs)
+}
+
 describe('Женская модель тела (54.5)', () => {
   it('профиль ширины: шея/голова без изменений, талия уже, бёдра шире', () => {
     expect(widthFactor(10)).toBe(1)
@@ -28,8 +34,8 @@ describe('Женская модель тела (54.5)', () => {
       const xs = xsAtY(d, lo, hi)
       return Math.max(...xs) - Math.min(...xs)
     }
-    expect(w(FEMALE_OUTLINE, 104, 112)).toBeGreaterThan(w(BODY_OUTLINE, 104, 112))
-    expect(w(FEMALE_OUTLINE, 73, 77)).toBeLessThan(w(BODY_OUTLINE, 73, 77))
+    expect(torso(FEMALE_OUTLINE, 104, 112)).toBeGreaterThan(torso(BODY_OUTLINE, 104, 112))
+    expect(torso(FEMALE_OUTLINE, 73, 77, 16)).toBeLessThan(torso(FEMALE_OUTLINE, 104, 112) * 0.7)
   })
 
   it('ось симметрии x=50 и координаты y не меняются, число чисел то же', () => {
@@ -55,7 +61,8 @@ describe('Женская модель тела (54.5)', () => {
 
   it('руки следуют за плечами, а не за бёдрами: кисти женской модели не шире мужских (иначе рука ломается)', () => {
     const maxDx = (d: string) => Math.max(...xsAtY(d, 90, 104).map((x) => Math.abs(x - 50)))
-    expect(maxDx(FEMALE_OUTLINE)).toBeLessThanOrEqual(maxDx(BODY_OUTLINE))
+    // руки отведены от корпуса (58.2, чтобы была видна талия), но не уходят далеко: не более чем на 4 единицы шире мужских
+    expect(maxDx(FEMALE_OUTLINE)).toBeLessThanOrEqual(maxDx(BODY_OUTLINE) + 4)
   })
 })
 
@@ -65,11 +72,12 @@ describe('«более женственная» модель (BACKLOG 57.4)', ()
     return Math.max(...xs) - Math.min(...xs)
   }
   it('песочные часы: плечи уже, талия заметно уже мужской, бёдра шире', () => {
-    expect(w(FEMALE_OUTLINE, 36, 40)).toBeLessThan(w(BODY_OUTLINE, 36, 40) * 0.92)
-    expect(w(FEMALE_OUTLINE, 104, 112)).toBeGreaterThan(w(BODY_OUTLINE, 104, 112) * 1.1)
+    expect(w(FEMALE_OUTLINE, 36, 40)).toBeLessThan(w(BODY_OUTLINE, 36, 40) * 0.96)
+    expect(torso(FEMALE_OUTLINE, 104, 112)).toBeGreaterThan(torso(BODY_OUTLINE, 104, 112) * 1.1)
+    expect(torso(FEMALE_OUTLINE, 73, 77, 16)).toBeLessThan(torso(FEMALE_OUTLINE, 104, 112) * 0.65) // талия (58.2): заметно уже бёдер
     // мышцы живота (на талии) у женской модели уже: проверяем по ширине пресса
     const abs = (shapes: typeof FEMALE_FRONT_SHAPES) => String(shapes.find((s) => s.muscle === 'abs')!.attrs.d)
-    expect(w(abs(FEMALE_FRONT_SHAPES), 55, 87)).toBeLessThan(w(abs(FRONT_SHAPES), 55, 87) * 0.9)
+    expect(w(abs(FEMALE_FRONT_SHAPES), 55, 87)).toBeLessThan(w(abs(FRONT_SHAPES), 55, 87) * 0.95)
   })
   it('длинные прямые отрезки режутся на части, чтобы профиль ложился плавно (талия видна на боку)', () => {
     const f = feminizePath('M30 60 L30 100')

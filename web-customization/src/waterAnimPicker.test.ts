@@ -73,45 +73,16 @@ describe('WaterAnimPicker', () => {
   })
 })
 
-describe('«Показать» у каждой анимации воды (BACKLOG 57.2)', () => {
-  const playing = (): string | null | undefined => document.querySelector('.water-saved:not(.water-saved-inline)')?.getAttribute('data-variant')
-  const wait = () => new Promise((r) => setTimeout(r, 30))
-
-  it('у «По теме» и всех шести вариантов есть своя кнопка «Показать»', () => {
-    const w = mount(WaterAnimPicker)
-    for (const v of ['auto', ...WATER_ANIMS]) expect(w.find(`[data-testid="wateranim-${v}"] [data-testid="wateranim-show"]`).exists(), v).toBe(true)
-    expect(w.find('[data-testid="wateranim-pour"] [data-testid="wateranim-show"]').text()).toBe('Показать')
-    w.unmount()
-  })
-
-  it('«Показать» играет ИМЕННО этот вариант и НЕ меняет сохранённый выбор', async () => {
-    localStorage.setItem(WATER_ANIM_KEY, 'drops')
+describe('примеры анимаций воды идут сами, без кнопок «Показать» (BACKLOG 58.1)', () => {
+  it('у «По теме» и всех шести вариантов в плитке живой пример нужного варианта, кнопок показа/повтора нет', async () => {
     const w = mount(WaterAnimPicker, { attachTo: document.body })
-    await w.find('[data-testid="wateranim-splash"] [data-testid="wateranim-show"]').trigger('click')
-    await wait()
-    expect(playing()).toBe('splash')
-    expect(localStorage.getItem(WATER_ANIM_KEY)).toBe('drops')
-    expect(w.find('[data-testid="wateranim-drops"]').attributes('data-active')).toBe('true')
-    w.unmount()
-  })
-
-  it('«По теме» показывает вариант большой темы, а без темы — спокойную волну; общая кнопка играет текущий', async () => {
-    const w = mount(WaterAnimPicker, { attachTo: document.body })
-    await w.find('[data-testid="wateranim-auto"] [data-testid="wateranim-show"]').trigger('click')
-    await wait()
-    expect(playing()).toBe('wave')
-    document.documentElement.classList.add('theme-nightfall')
-    try {
-      await w.find('[data-testid="wateranim-auto"] [data-testid="wateranim-show"]').trigger('click')
-      await wait()
-      expect(playing()).toBe(THEME_WATER['nightfall'] ?? 'wave')
-    } finally {
-      document.documentElement.classList.remove('theme-nightfall')
+    await new Promise((r) => setTimeout(r, 30))
+    for (const v of WATER_ANIMS) {
+      expect(w.find(`[data-testid="wateranim-${v}"] .water-saved-inline`).attributes('data-variant'), v).toBe(v)
     }
-    localStorage.setItem(WATER_ANIM_KEY, 'ripple')
-    await w.find('[data-testid="wateranim-play"]').trigger('click')
-    await wait()
-    expect(playing()).toBe('ripple')
+    expect(w.find('[data-testid="wateranim-auto"] .water-saved-inline').exists()).toBe(true)
+    expect(w.find('[data-testid="wateranim-show"]').exists()).toBe(false)
+    expect(w.find('[data-testid="wateranim-play"]').exists()).toBe(false)
     w.unmount()
   })
 })

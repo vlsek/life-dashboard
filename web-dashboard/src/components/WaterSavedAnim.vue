@@ -26,7 +26,7 @@ function play() {
 onMounted(() => {
   if (!props.inline) return
   play()
-  if (props.loop) loopTimer = setInterval(play, 3200)
+  if (props.loop) loopTimer = setInterval(() => { if (!document.hidden) play() }, 3200)
 })
 onBeforeUnmount(() => {
   clearTimeout(timer)

@@ -10,14 +10,15 @@ export type BodyModel = 'male' | 'female'
 const WIDTH_PROFILE: [number, number][] = [
   [0, 1],
   [18, 1],
-  [24, 0.86],
-  [34, 0.84],
-  [47, 0.84],
-  [62, 0.78],
-  [76, 0.7],
-  [88, 0.88],
-  [100, 1.22],
-  [118, 1.16],
+  [24, 0.84],
+  [34, 0.8],
+  [47, 0.8],
+  [62, 0.72],
+  [76, 0.6],
+  [88, 0.95],
+  [100, 1.34],
+  [112, 1.3],
+  [130, 1.14],
   [150, 1.04],
   [181, 1],
   [190, 1],
@@ -40,7 +41,7 @@ const round = (n: number) => Math.round(n * 100) / 100
 
 // Руки (дальше ~18–26 единиц от оси на высоте плеч–кисти) идут за плечами, а не за бёдрами: иначе кисти уезжают наружу и рука ломается.
 // Переход от профиля туловища к рукам плавный (без ступеньки у подмышки).
-const ARM_FACTOR = 0.84
+const ARM_FACTOR = 0.8
 export function factorAt(x: number, y: number): number {
   const base = widthFactor(y)
   if (y < 36 || y > 104) return base
@@ -49,7 +50,13 @@ export function factorAt(x: number, y: number): number {
 }
 
 const fmtN = (n: number) => String(round(n))
-const warp = (x: number, y: number): [number, number] => [round(50 + (x - 50) * factorAt(x, y)), y]
+// Руки отводим от туловища (до ~10 единиц к кисти): иначе рука закрывает талию, и «песочные часы» не видны (BACKLOG 58.2).
+export function armSpread(x: number, y: number): number {
+  if (y < 36 || y > 104) return 0
+  const w = Math.max(0, Math.min(1, (Math.abs(x - 50) - 18) / 8))
+  return w * Math.max(0, Math.min(1, (y - 40) / 55)) * 10 * Math.sign(x - 50)
+}
+const warp = (x: number, y: number): [number, number] => [round(50 + (x - 50) * factorAt(x, y) + armSpread(x, y)), y]
 
 // Путь состоит только из абсолютных команд M/L/C/Z. Прямые отрезки (L) режем на куски по ~6 единиц высоты, иначе длинный бок туловища
 // переехал бы «одной линией» от плеча к бедру и талия не проявилась бы; кривые (C) пересчитываем по их точкам.

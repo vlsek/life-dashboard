@@ -18,8 +18,7 @@ const choose = (v: WaterAnim | 'auto') => {
   current.value = v
   tick.value++
 }
-// «Показать» у каждого варианта (BACKLOG 57.2): проигрывает ИМЕННО его (демо), сохранённый выбор не меняется; общая кнопка ниже — как раньше, текущий.
-const demo = ref<WaterAnim | undefined>(undefined)
+// Примеры в плитках идут сами по кругу (BACKLOG 58.1, как у огоньков стрика) — кнопок «Показать» нет.
 // что значит «По теме» сейчас: вариант большой темы из класса theme-<ключ> на <html>, иначе спокойная волна
 const autoVariant = (): WaterAnim => {
   for (const c of Array.from(document.documentElement.classList)) {
@@ -28,14 +27,6 @@ const autoVariant = (): WaterAnim => {
     if (v) return v
   }
   return DEFAULT_WATER_ANIM
-}
-const show = (v: WaterAnim | 'auto') => {
-  demo.value = v === 'auto' ? autoVariant() : v
-  tick.value++
-}
-const play = () => {
-  demo.value = undefined
-  tick.value++
 }
 </script>
 
@@ -68,12 +59,8 @@ const play = () => {
         >
           {{ current === v ? t('cust_splash_selected') : t('cust_splash_choose') }}
         </button>
-        <button type="button" class="secondary px-2 py-1 text-sm" :aria-label="label(v) + ': ' + t('cust_wateranim_show')" data-testid="wateranim-show" @click="show(v)">
-          {{ t('cust_wateranim_show') }}
-        </button>
       </div>
     </div>
-    <button type="button" class="secondary mt-3 px-3 py-1 text-sm" data-testid="wateranim-play" @click="play">{{ t('cust_wateranim_play') }}</button>
-    <WaterSavedAnim :tick="tick" :demo="demo" />
+    <WaterSavedAnim :tick="tick" />
   </div>
 </template>
