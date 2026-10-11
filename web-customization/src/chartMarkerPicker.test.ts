@@ -95,3 +95,35 @@ describe('ChartLinePicker: выбор стиля линии (BACKLOG 55.2 сре
     expect(readFileSync('src/lib/chartLine.ts', 'utf-8')).toBe(readFileSync('../web-dashboard/src/lib/chartLine.ts', 'utf-8'))
   })
 })
+
+describe('Анимация появления графика в «Кастомизации» (BACKLOG 55.2 срез 4)', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+  })
+
+  it('две карточки; по умолчанию «Без анимации»; выбор «Линия рисуется» пишет chart_anim и не трогает стиль линии', async () => {
+    const w = mount(ChartMarkerPicker)
+    expect(w.findAll('[data-testid^="anim-"][data-active]')).toHaveLength(2)
+    expect(w.find('[data-testid="anim-none"]').attributes('data-active')).toBe('true')
+    await w.find('[data-testid="anim-draw"] [data-testid="anim-choose"]').trigger('click')
+    expect(localStorage.getItem('chart_anim')).toBe('draw')
+    expect(w.find('[data-testid="anim-draw"]').attributes('data-active')).toBe('true')
+    expect(w.find('[data-testid="anim-draw"] button').attributes('disabled')).toBeDefined()
+    expect(localStorage.getItem('chart_line')).toBeNull()
+  })
+
+  it('без хранилища — сообщение, выбор не меняется', async () => {
+    const w = mount(ChartMarkerPicker)
+    const spy = vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
+      throw new Error('denied')
+    })
+    try {
+      await w.find('[data-testid="anim-draw"] [data-testid="anim-choose"]').trigger('click')
+    } finally {
+      spy.mockRestore()
+    }
+    expect(w.find('[data-testid="anim-save-error"]').exists()).toBe(true)
+    expect(w.find('[data-testid="anim-none"]').attributes('data-active')).toBe('true')
+  })
+})

@@ -87,8 +87,38 @@ export function runParts(style: ChartLine, run: Pt[], color: string, baseY: numb
   if (style === 'area') {
     const last = run[run.length - 1]
     const first = run[0]
-    g += `<path d="${d}L${n1(last[0])} ${n1(baseY)}L${n1(first[0])} ${n1(baseY)}Z" fill="url(#${uid}-ar)" stroke="none" />`
+    g += `<path d="${d}L${n1(last[0])} ${n1(baseY)}L${n1(first[0])} ${n1(baseY)}Z" class="ch-area" fill="url(#${uid}-ar)" stroke="none" />`
   }
-  g += `<path d="${d}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />`
+  g += `<path class="ch-line" pathLength="1" d="${d}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />`
   return g
+}
+
+// ── Анимация появления графика (55.2 срез 4) ─────────────────────────────────────────────────────────────────────────
+// «none» — по умолчанию (как раньше); «draw» — линия рисуется слева направо, затем проявляются область, точки и подписи.
+// Хранится в localStorage `chart_anim`; уважает «уменьшить движение» и «Отключить анимации» (правила в style.css Дашборда).
+export const CHART_ANIMS = ['none', 'draw'] as const
+export type ChartAnim = (typeof CHART_ANIMS)[number]
+export const DEFAULT_CHART_ANIM: ChartAnim = 'none'
+export const CHART_ANIM_KEY = 'chart_anim'
+
+export const isChartAnim = (v: unknown): v is ChartAnim => (CHART_ANIMS as readonly unknown[]).includes(v)
+
+export function readChartAnim(): ChartAnim {
+  try {
+    const stored = localStorage.getItem(CHART_ANIM_KEY)
+    if (isChartAnim(stored)) return stored
+  } catch {
+    /* нет localStorage — по умолчанию */
+  }
+  return DEFAULT_CHART_ANIM
+}
+
+// true, если выбор удалось запомнить.
+export function writeChartAnim(v: ChartAnim): boolean {
+  try {
+    localStorage.setItem(CHART_ANIM_KEY, v)
+    return true
+  } catch {
+    return false
+  }
 }

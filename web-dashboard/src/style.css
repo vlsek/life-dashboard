@@ -1829,3 +1829,20 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   html { font-size: var(--phone-scale); }
 }
 /* phone-scale:end */
+
+/* Анимация появления графика (BACKLOG 55.2 срез 4; выбирается в «Кастомизации», localStorage chart_anim): линия «рисуется» слева направо,
+   потом проявляются область, точки и подписи. По умолчанию выключена. Гасится при «уменьшить движение» и «Отключить анимации». */
+.chart-draw .ch-line { stroke-dasharray: 1; stroke-dashoffset: 1; animation: ch-draw 1s ease-out forwards; }
+.chart-draw .ch-area, .chart-draw .ch-bridge, .chart-draw circle, .chart-draw text, .chart-draw [data-test='pie-point'] { opacity: 0; animation: ch-fade 0.5s ease-out 0.7s forwards; }
+@keyframes ch-draw { to { stroke-dashoffset: 0; } }
+@keyframes ch-fade { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .chart-draw .ch-line { animation: none; stroke-dashoffset: 0; }
+  .chart-draw .ch-area, .chart-draw .ch-bridge, .chart-draw circle, .chart-draw text, .chart-draw [data-test='pie-point'] { animation: none; opacity: 1; }
+}
+html[data-motion='off'] .chart-draw .ch-line { animation: none; stroke-dashoffset: 0; }
+html[data-motion='off'] .chart-draw .ch-area,
+html[data-motion='off'] .chart-draw .ch-bridge,
+html[data-motion='off'] .chart-draw circle,
+html[data-motion='off'] .chart-draw text,
+html[data-motion='off'] .chart-draw [data-test='pie-point'] { animation: none; opacity: 1; }

@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { CHART_LINES, CHART_LINE_KEY, DEFAULT_CHART_LINE, lineDefs, monotonePath, readChartLine, runParts, writeChartLine, type Pt } from './chartLine'
+import { CHART_ANIMS, CHART_ANIM_KEY, CHART_LINES, CHART_LINE_KEY, DEFAULT_CHART_ANIM, DEFAULT_CHART_LINE, lineDefs, monotonePath, readChartAnim, readChartLine, runParts, writeChartAnim, writeChartLine, type Pt } from './chartLine'
+// @ts-ignore — в проекте нет типов node, а vitest выполняется в node
+import { readFileSync } from 'node:fs'
 import ChartBlock from '../components/ChartBlock.vue'
 
 // Разбор «M x y C c1x c1y c2x c2y x y …» в точки Безье.
@@ -109,5 +111,48 @@ describe('chartLine: стили линии графика (BACKLOG 55.2 срез
     localStorage.setItem(CHART_LINE_KEY, 'area')
     const ids = [mountChart([1, 3, 2]), mountChart([1, 3, 2])].map((w) => w.html().match(/id="(cm\d+-ar)"/)![1])
     expect(ids[0]).not.toBe(ids[1])
+  })
+})
+
+describe('анимация появления графика (BACKLOG 55.2 срез 4)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('два режима; по умолчанию «none»; мусор игнорируется; запись работает', () => {
+    expect([...CHART_ANIMS]).toEqual(['none', 'draw'])
+    expect(DEFAULT_CHART_ANIM).toBe('none')
+    expect(readChartAnim()).toBe('none')
+    localStorage.setItem(CHART_ANIM_KEY, 'bogus')
+    expect(readChartAnim()).toBe('none')
+    expect(writeChartAnim('draw')).toBe(true)
+    expect(readChartAnim()).toBe('draw')
+  })
+
+  it('ChartBlock по умолчанию БЕЗ класса анимации; с chart_anim=draw — класс chart-draw, линии с pathLength, мост через пропуск отдельным классом', () => {
+    const plain = mountChart([10, 14, null, 8, 12])
+    expect(plain.find('[data-test="chart-svg"]').classes()).not.toContain('chart-draw')
+    localStorage.setItem(CHART_ANIM_KEY, 'draw')
+    const w = mountChart([10, 14, null, 8, 12])
+    const svg = w.find('[data-test="chart-svg"]')
+    expect(svg.classes()).toContain('chart-draw')
+    expect(svg.findAll('.ch-line').length).toBeGreaterThanOrEqual(2)
+    expect(svg.html()).toContain('pathLength="1"')
+    expect(svg.findAll('.ch-bridge')).toHaveLength(1)
+  })
+
+  it('«сглаженная с областью» + draw: путь линии и область помечены для анимации', () => {
+    localStorage.setItem(CHART_LINE_KEY, 'area')
+    localStorage.setItem(CHART_ANIM_KEY, 'draw')
+    const svg = mountChart([10, 14, 8, 12]).find('[data-test="chart-svg"]')
+    expect(svg.find('path.ch-line').exists()).toBe(true)
+    expect(svg.find('path.ch-area').exists()).toBe(true)
+  })
+
+  it('CSS: линия рисуется через stroke-dashoffset, а при «уменьшить движение» и «Отключить анимации» всё видно сразу', () => {
+    const css: string = readFileSync('src/style.css', 'utf-8')
+    expect(css).toMatch(/\.chart-draw \.ch-line \{[^}]*stroke-dashoffset: 1; animation: ch-draw /)
+    expect(css).toContain('@keyframes ch-draw')
+    expect(css).toMatch(/prefers-reduced-motion: reduce\) \{\s*\.chart-draw \.ch-line \{ animation: none; stroke-dashoffset: 0; \}/)
+    expect(css).toMatch(/html\[data-motion='off'\] \.chart-draw \.ch-line \{ animation: none; stroke-dashoffset: 0; \}/)
+    expect(css).toMatch(/html\[data-motion='off'\] \.chart-draw text,/)
   })
 })

@@ -12,7 +12,7 @@ import RecordBadge from './RecordBadge.vue'
 import { RECORDS_EVENT, formatRecordDate, formatRecordValue, recordsEnabled, type RecordInfo } from '../lib/records'
 import type { VariationRecord } from '../lib/variationChart'
 import { markerDefs, markerParts, nextMarkerUid, readChartMarker } from '../lib/chartMarker'
-import { lineDefs, readChartLine, runParts, type Pt } from '../lib/chartLine'
+import { lineDefs, readChartAnim, readChartLine, runParts, type Pt } from '../lib/chartLine'
 
 const props = withDefaults(
   defineProps<{
@@ -67,6 +67,8 @@ const markerStyle = readChartMarker()
 const markerUid = nextMarkerUid()
 // Стиль линии (55.2 срез 3): обычная (прежние отрезки, по умолчанию) · сглаженная · сглаженная с областью; `localStorage.chart_line`.
 const lineStyle = readChartLine()
+// Анимация появления (55.2 срез 4): класс `chart-draw` на svg включает CSS из style.css; при «уменьшить движение»/«Отключить анимации» CSS её гасит.
+const drawAnim = readChartAnim() === 'draw'
 
 function pieMarker(x: number, y: number, label: string, shares: VariationShare[]): string {
   const slices = pieSlices(shares, order.value, x, y, 6.5)
@@ -142,7 +144,7 @@ const innerSvg = computed<string | null>(() => {
       if (lineStyle === 'line' || gapBetween) {
         const dash = gapBetween ? ` stroke-dasharray="5,4"` : ''
         if (lineStyle !== 'line') flushRun() // участок закончился на пропуске: пунктирный мостик остаётся прямым, как раньше
-        svg += `<line x1="${lastReal.x.toFixed(1)}" y1="${lastReal.y.toFixed(1)}" x2="${c.x.toFixed(1)}" y2="${c.y.toFixed(1)}" stroke="${props.color}" stroke-width="2.5"${dash} opacity="${gapBetween ? 0.55 : 1}" />`
+        svg += `<line class="${gapBetween ? 'ch-bridge' : 'ch-line'}"${gapBetween ? '' : ' pathLength="1"'} x1="${lastReal.x.toFixed(1)}" y1="${lastReal.y.toFixed(1)}" x2="${c.x.toFixed(1)}" y2="${c.y.toFixed(1)}" stroke="${props.color}" stroke-width="2.5"${dash} opacity="${gapBetween ? 0.55 : 1}" />`
       }
     }
     if (lineStyle !== 'line') run.push([c.x, c.y])
@@ -255,6 +257,7 @@ const fallbackText = computed(() => {
           style="touch-action: pan-y; outline-offset: 2px"
           :aria-label="title ? title + ': ' + t('chart_hover_hint') : t('chart_hover_hint')"
           data-test="chart-svg"
+          :class="{ 'chart-draw': drawAnim }"
           @pointermove="onPointer"
           @pointerdown="onPointer"
           @pointerleave="onLeave"

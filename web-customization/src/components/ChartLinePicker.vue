@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { CHART_LINES, lineDefs, readChartLine, runParts, writeChartLine, type ChartLine, type Pt } from '../lib/chartLine'
+import { CHART_ANIMS, CHART_LINES, lineDefs, readChartAnim, readChartLine, runParts, writeChartAnim, writeChartLine, type ChartAnim, type ChartLine, type Pt } from '../lib/chartLine'
 import { t } from '../lib/i18n'
 
 // Выбор стиля ЛИНИИ графика (BACKLOG 55.2 срез 3): обычная · сглаженная · сглаженная с областью. Бесплатно; localStorage `chart_line`;
@@ -11,6 +11,15 @@ const label = (v: ChartLine): string => t(('chart_line_' + v) as never)
 const choose = (v: ChartLine) => {
   saved.value = writeChartLine(v)
   if (saved.value) current.value = v
+}
+
+// Анимация появления (55.2 срез 4): «Без анимации» (по умолчанию) / «Линия рисуется». Гасится при «уменьшить движение» и «Отключить анимации».
+const anim = ref<ChartAnim>(readChartAnim())
+const animSaved = ref(true)
+const animLabel = (v: ChartAnim): string => t(('chart_anim_' + v) as never)
+const chooseAnim = (v: ChartAnim) => {
+  animSaved.value = writeChartAnim(v)
+  if (animSaved.value) anim.value = v
 }
 
 const SAMPLE: Pt[] = [[14, 36], [46, 14], [78, 32], [110, 18], [142, 40], [174, 20]]
@@ -54,6 +63,32 @@ const preview = (v: ChartLine): string => {
           @click="choose(v)"
         >
           {{ current === v ? t('cust_splash_selected') : t('cust_splash_choose') }}
+        </button>
+      </div>
+    </div>
+    <h4 class="mb-1 mt-5 text-sm font-semibold">{{ t('cust_sub_anim') }}</h4>
+    <p class="dim mb-2 text-xs">{{ t('cust_sec_anim_hint') }}</p>
+    <p v-if="!animSaved" class="mb-2 text-xs" style="color: var(--danger, #e5484d)" role="alert" data-testid="anim-save-error">{{ t('cust_splash_save_error') }}</p>
+    <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr))">
+      <div
+        v-for="v in CHART_ANIMS"
+        :key="v"
+        class="flex flex-col gap-2 rounded-xl border p-3"
+        :style="{ background: 'var(--bg-card)', borderColor: anim === v ? 'var(--accent)' : 'var(--border)' }"
+        :data-testid="'anim-' + v"
+        :data-active="anim === v"
+      >
+        <p class="m-0 text-sm font-medium">{{ animLabel(v) }}</p>
+        <button
+          type="button"
+          class="secondary px-2 py-1 text-sm"
+          :disabled="anim === v"
+          :aria-pressed="anim === v"
+          :aria-label="animLabel(v) + ': ' + (anim === v ? t('cust_splash_selected') : t('cust_splash_choose'))"
+          data-testid="anim-choose"
+          @click="chooseAnim(v)"
+        >
+          {{ anim === v ? t('cust_splash_selected') : t('cust_splash_choose') }}
         </button>
       </div>
     </div>
