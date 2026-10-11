@@ -144,6 +144,14 @@ export function readBodyModelChoice(): BodyModel | null {
     return null
   }
 }
+// «По полу профиля» (BACKLOG 59.2): убираем явный выбор — снова решает пол из профиля
+export function clearBodyModelChoice(): void {
+  try {
+    localStorage.removeItem(MODEL_KEY)
+  } catch {
+    /* выбор модели не критичен */
+  }
+}
 export function writeBodyModelChoice(m: BodyModel): void {
   try {
     localStorage.setItem(MODEL_KEY, m)

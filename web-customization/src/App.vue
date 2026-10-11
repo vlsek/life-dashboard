@@ -9,6 +9,7 @@ import SplashPicker from './components/SplashPicker.vue'
 import ChartMarkerPicker from './components/ChartMarkerPicker.vue'
 import StreakFlamePicker from './components/StreakFlamePicker.vue'
 import WaterAnimPicker from './components/WaterAnimPicker.vue'
+import BodyModelPicker from './components/BodyModelPicker.vue'
 import RarityGroup from './components/RarityGroup.vue'
 import VisibilityChips from './components/VisibilityChips.vue'
 import { groupOfItem, groupOfTheme, useVisibility, type VisGroup } from './lib/useVisibility'
@@ -88,6 +89,7 @@ const sectionIds = computed(() => [
   'splash',
   'streakflame',
   'wateranim',
+  'bodymodel',
   ...visibleCategories.value.map((c) => c.category as string),
 ])
 const tabList = computed(() => groupsFor(sectionIds.value).map((g) => ({ id: g as string, label: t(('cust_grp_' + g) as never) })))
@@ -183,6 +185,11 @@ const shownCategories = computed(() => visibleCategories.value.filter((c) => sho
         <!-- Анимация воды (BACKLOG 54.8): «По теме» + 6 бесплатных вариантов, выбор в localStorage (общий с «Настройками» шапки) -->
         <SectionGroup v-if="showsSection(tab, 'wateranim')" id="wateranim" :title="t('cust_sec_wateranim')" :total="7" :owned="7" :collapsed="isCollapsed('section:wateranim')" @toggle="toggle('section:wateranim')">
           <WaterAnimPicker />
+        </SectionGroup>
+
+        <!-- Модель тела карты мышц (BACKLOG 59.2 срез 2): «По полу» + 5 моделей, выбор в localStorage (общий с «Тренировками») -->
+        <SectionGroup v-if="showsSection(tab, 'bodymodel')" id="bodymodel" :title="t('cust_sec_bodymodel')" :total="5" :owned="5" :collapsed="isCollapsed('section:bodymodel')" @toggle="toggle('section:bodymodel')">
+          <BodyModelPicker />
         </SectionGroup>
 
         <SectionGroup v-for="c in shownCategories" :key="c.category" :id="c.category" :title="t(('cust_cat_' + c.category) as never)" :total="c.total" :owned="c.owned" :collapsed="isCollapsed('section:' + c.category)" @toggle="toggle('section:' + c.category)">

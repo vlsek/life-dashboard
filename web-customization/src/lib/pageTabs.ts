@@ -8,6 +8,7 @@ export const GROUP_ORDER: readonly GroupId[] = ['look', 'home', 'water', 'charts
 export const SECTION_GROUP: Readonly<Record<string, GroupId>> = {
   themes: 'look',
   avatar_frame: 'look',
+  bodymodel: 'look',
   collapse_style: 'home',
   week_gauge: 'home',
   day_gauge: 'home',
