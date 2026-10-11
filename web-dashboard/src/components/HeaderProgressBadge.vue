@@ -23,7 +23,8 @@ const sevenDays = computed(() => props.kind === 'week' && props.days?.length ===
 const hept = computed(() => sevenDays.value && (props.shape ?? 'heptagon') === 'heptagon')
 const bars = computed(() => sevenDays.value && props.shape === 'bars')
 const daySegs = computed(() => daySegments(16, 16, 13, props.basePct, props.bonusPct))
-const dayTickList = computed(() => dayTicks(16, 16, 13, props.basePct, 2))
+// в бейдже штрихи снаружи кольца: внутри лежит процент
+const dayTickList = computed(() => dayTicks(16, 16, 18.4, props.basePct, 1.4))
 const square = computed(() => squareGeometry(24, 6, props.basePct, props.bonusPct))
 </script>
 

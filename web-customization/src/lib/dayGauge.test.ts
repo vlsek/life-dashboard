@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest'
-import { DAY_GAUGE_CACHE_KEY, DAY_SEGMENTS, daySegments, parseDayGauge, readCachedDayGauge, writeCachedDayGauge } from './dayGauge'
+import { DAY_GAUGE_CACHE_KEY, DAY_SEGMENTS, DAY_TICKS, dayTicks, daySegments, parseDayGauge, readCachedDayGauge, writeCachedDayGauge } from './dayGauge'
 import { CATEGORY_ORDER, ITEMS, itemByKey, nextSelected, parseSelected, priceOf } from './customization'
 import { rarityOfItem } from './rarity'
 import { t } from './i18n'
@@ -11,14 +11,18 @@ describe('виды спидометра дня (53.2 срез 2)', () => {
     expect(CATEGORY_ORDER).toContain('day_gauge')
     expect(priceOf(itemByKey('day_dashed')!)).toBe(100)
     expect(priceOf(itemByKey('day_glow')!)).toBe(150)
-    expect(ITEMS.filter((i) => i.category === 'day_gauge')).toHaveLength(2)
+    expect(priceOf(itemByKey('day_ticks')!)).toBe(150)
+    expect(priceOf(itemByKey('day_gradient')!)).toBe(250)
+    expect(ITEMS.filter((i) => i.category === 'day_gauge')).toHaveLength(4)
+    expect(rarityOfItem('day_ticks')).toBe('uncommon')
+    expect(rarityOfItem('day_gradient')).toBe('rare')
     expect(rarityOfItem('day_dashed')).toBe('common')
     expect(rarityOfItem('day_glow')).toBe('uncommon')
   })
 
   it('есть названия и описания, категория названа', () => {
     expect(t('cust_cat_day_gauge').length).toBeGreaterThan(3)
-    for (const k of ['day_dashed', 'day_glow']) {
+    for (const k of ['day_dashed', 'day_glow', 'day_ticks', 'day_gradient']) {
       expect(t(('cust_item_' + k) as never)).not.toBe('cust_item_' + k)
       expect(t(('cust_item_' + k + '_desc') as never)).not.toBe('cust_item_' + k + '_desc')
     }
@@ -27,6 +31,8 @@ describe('виды спидометра дня (53.2 срез 2)', () => {
   it('разбор ключа: неизвестное и пустое — обычное кольцо', () => {
     expect(parseDayGauge('day_dashed')).toBe('dashed')
     expect(parseDayGauge('day_glow')).toBe('glow')
+    expect(parseDayGauge('day_ticks')).toBe('ticks')
+    expect(parseDayGauge('day_gradient')).toBe('gradient')
     expect(parseDayGauge('week_bars')).toBe('ring')
     expect(parseDayGauge(undefined)).toBe('ring')
     expect(parseDayGauge('toString')).toBe('ring')
@@ -58,5 +64,23 @@ describe('виды спидометра дня (53.2 срез 2)', () => {
     expect(lit(3)).toBe(20)
     expect(daySegments(26, 26, 24, 0.5, 40).filter((s) => s.bonus)).toHaveLength(8)
     expect(daySegments(26, 26, 24, 0.5, 0).every((s) => !s.bonus)).toBe(true)
+  })
+
+  it('кэш помнит «циферблат» и «градиент»', () => {
+    writeCachedDayGauge('ticks')
+    expect(readCachedDayGauge()).toBe('ticks')
+    writeCachedDayGauge('gradient')
+    expect(readCachedDayGauge()).toBe('gradient')
+  })
+
+  it('циферблат: 12 штрихов, горят те, что внутри пройденной доли', () => {
+    expect(dayTicks(16, 16, 13, 0.5)).toHaveLength(DAY_TICKS)
+    const lit = (b: number) => dayTicks(16, 16, 13, b).filter((t0) => t0.lit).length
+    expect(lit(0)).toBe(0)
+    expect(lit(0.5)).toBe(6)
+    expect(lit(1)).toBe(12)
+    expect(lit(5)).toBe(12)
+    const first = dayTicks(16, 16, 13, 1)[0]
+    expect(first.x1).toBeGreaterThan(first.x2) // штрих идёт внутрь кольца
   })
 })

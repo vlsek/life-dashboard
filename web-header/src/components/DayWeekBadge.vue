@@ -21,7 +21,8 @@ const bars = computed(() => sevenDays.value && props.shape === 'bars')
 // скринридер: общий итог + каждый день недели («Пн 100 %, Вт 60 % …»)
 const aria = computed(() => ((hept.value || bars.value) && props.days ? `${props.title}. ${weekDaysAriaLabel(props.days, t('dash_summary_weekdays'))}` : props.title))
 const daySegs = computed(() => daySegments(16, 16, 13, props.basePct, props.bonusPct))
-const dayTickList = computed(() => dayTicks(16, 16, 13, props.basePct, 2))
+// в бейдже штрихи снаружи кольца: внутри лежит процент
+const dayTickList = computed(() => dayTicks(16, 16, 18.4, props.basePct, 1.4))
 const square = computed(() => squareGeometry(24, 6, props.basePct, props.bonusPct))
 </script>
 

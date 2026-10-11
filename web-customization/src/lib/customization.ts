@@ -60,6 +60,9 @@ export const ITEMS: readonly CustomItem[] = [
   // Вид спидометра ДНЯ (BACKLOG 53.2, срез 2; на усмотрение агента 1): обычное кольцо — у всех бесплатно, «пунктирное кольцо» — 100, «кольцо со свечением» — 150.
   { key: 'day_dashed', category: 'day_gauge', source: 'points', tier: 'low' },
   { key: 'day_glow', category: 'day_gauge', source: 'points', tier: 'mid' },
+  // срез 3: «Циферблат» — 150, «Градиентное кольцо» — 250
+  { key: 'day_ticks', category: 'day_gauge', source: 'points', tier: 'mid' },
+  { key: 'day_gradient', category: 'day_gauge', source: 'points', tier: 'high' },
   // Анимация питья воды (BACKLOG 54.9, агент 3): три платных вида; бесплатные (волна, капли, рябь, пузырьки, струя, всплеск) — во вкладке «Анимация воды».
   { key: 'water_rain', category: 'water_anim', source: 'points', tier: 'low' },
   { key: 'water_tide', category: 'water_anim', source: 'points', tier: 'mid' },
