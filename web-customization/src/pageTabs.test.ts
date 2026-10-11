@@ -23,7 +23,8 @@ vi.mock('./lib/supabase', () => {
   }
 })
 import App from './App.vue'
-import { ALL_TAB, resolveTab, showsSection } from './lib/pageTabs'
+import { ALL_TAB, GROUP_ORDER, SECTION_GROUP, groupOfSection, groupsFor, migrateStoredTab, resolveTab, showsSection } from './lib/pageTabs'
+import { CATEGORY_ORDER } from './lib/customization'
 
 beforeEach(() => {
   localStorage.clear()
@@ -45,40 +46,74 @@ async function mountApp() {
 
 describe('вкладки: логика', () => {
   it('сохранённая вкладка, если она есть; иначе первая; «Все» всегда допустима', () => {
-    expect(resolveTab('splash', ['themes', 'splash'])).toBe('splash')
-    expect(resolveTab('gone', ['themes', 'splash'])).toBe('themes')
-    expect(resolveTab(null, ['themes', 'splash'])).toBe('themes')
-    expect(resolveTab(ALL_TAB, ['themes'])).toBe(ALL_TAB)
+    expect(resolveTab('loading', ['look', 'loading'])).toBe('loading')
+    expect(resolveTab('gone', ['look', 'loading'])).toBe('look')
+    expect(resolveTab(null, ['look', 'loading'])).toBe('look')
+    expect(resolveTab(ALL_TAB, ['look'])).toBe(ALL_TAB)
     expect(resolveTab(null, [])).toBe(ALL_TAB)
   })
-  it('раздел показывается на своей вкладке и на «Все», больше нигде', () => {
-    expect(showsSection('themes', 'themes')).toBe(true)
-    expect(showsSection('themes', 'splash')).toBe(false)
+  it('раздел показывается на вкладке своей группы и на «Все», больше нигде', () => {
+    expect(showsSection('look', 'themes')).toBe(true)
+    expect(showsSection('look', 'avatar_frame')).toBe(true)
+    expect(showsSection('look', 'splash')).toBe(false)
+    expect(showsSection('water', 'water_glass')).toBe(true)
     expect(showsSection(ALL_TAB, 'splash')).toBe(true)
+  })
+  it('страж 59.1: КАЖДАЯ категория каталога названа в SECTION_GROUP (новое не теряется в «Прочее» случайно)', () => {
+    for (const c of CATEGORY_ORDER) expect(SECTION_GROUP[c], c).toBeTruthy()
+    for (const g of Object.values(SECTION_GROUP)) expect(GROUP_ORDER).toContain(g)
+  })
+  it('неизвестный раздел → «Прочее»; группы идут в заданном порядке и без пустых', () => {
+    expect(groupOfSection('brand_new')).toBe('other')
+    expect(groupsFor(['splash', 'themes', 'brand_new', 'water_glass'])).toEqual(['look', 'water', 'loading', 'other'])
+    expect(groupsFor([])).toEqual([])
+  })
+  it('старое сохранённое значение (id раздела) переезжает в группу', () => {
+    expect(migrateStoredTab('splash')).toBe('loading')
+    expect(migrateStoredTab('day_gauge')).toBe('home')
+    expect(migrateStoredTab('water')).toBe('water')
+    expect(migrateStoredTab('all')).toBe('all')
+    expect(migrateStoredTab('мусор')).toBeNull()
+    expect(migrateStoredTab(null)).toBeNull()
   })
 })
 
 describe('Кастомизация: вкладки на странице', () => {
-  it('по умолчанию открыта первая вкладка «Темы»: видны темы, нет заставки и рамок', async () => {
+  it('по умолчанию открыта первая группа «Оформление»: темы и рамки, но нет заставки и спидометров', async () => {
     const w = await mountApp()
-    expect(w.find('[data-testid="cust-tab-themes"]').attributes('aria-selected')).toBe('true')
+    expect(w.find('[data-testid="cust-tab-look"]').attributes('aria-selected')).toBe('true')
     expect(w.find('#sg-themes').exists()).toBe(true)
+    expect(w.find('#sg-avatar_frame').exists()).toBe(true)
     expect(w.find('#sg-splash').exists()).toBe(false)
-    expect(w.find('#sg-avatar_frame').exists()).toBe(false)
+    expect(w.find('#sg-day_gauge').exists()).toBe(false)
     w.unmount()
   })
 
-  it('переключение на «Рамки аватарки» показывает только их и запоминается', async () => {
+  it('вкладок-групп немного (не больше шести + «Все»), а не по вкладке на раздел', async () => {
     const w = await mountApp()
-    await w.find('[data-testid="cust-tab-avatar_frame"]').trigger('click')
-    expect(w.find('#sg-avatar_frame').exists()).toBe(true)
+    expect(w.findAll('[data-testid^="cust-tab-"]').length).toBeLessThanOrEqual(GROUP_ORDER.length + 1)
+    w.unmount()
+  })
+
+  it('переключение на «Вода» показывает анимации и стакан и запоминается', async () => {
+    const w = await mountApp()
+    await w.find('[data-testid="cust-tab-water"]').trigger('click')
+    expect(w.find('#sg-wateranim').exists()).toBe(true)
+    expect(w.find('#sg-water_glass').exists()).toBe(true)
     expect(w.find('#sg-themes').exists()).toBe(false)
-    expect(localStorage.getItem('cust_tab')).toBe('avatar_frame')
+    expect(localStorage.getItem('cust_tab')).toBe('water')
     w.unmount()
     const w2 = await mountApp()
-    expect(w2.find('[data-testid="cust-tab-avatar_frame"]').attributes('aria-selected')).toBe('true')
-    expect(w2.find('#sg-avatar_frame').exists()).toBe(true)
+    expect(w2.find('[data-testid="cust-tab-water"]').attributes('aria-selected')).toBe('true')
     w2.unmount()
+  })
+
+  it('прежнее сохранённое значение «splash» открывает группу «Загрузка»', async () => {
+    localStorage.setItem('cust_tab', 'splash')
+    const w = await mountApp()
+    expect(w.find('[data-testid="cust-tab-loading"]').attributes('aria-selected')).toBe('true')
+    expect(w.find('#sg-splash').exists()).toBe(true)
+    w.unmount()
   })
 
   it('«Все» показывает все разделы сразу', async () => {

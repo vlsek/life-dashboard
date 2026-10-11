@@ -19,7 +19,7 @@ import { useFavoriteThemes } from './lib/useFavoriteThemes'
 import { useCustomization } from './lib/useCustomization'
 import { CATEGORY_ORDER, ITEMS } from './lib/customization'
 import { t } from './lib/i18n'
-import { ALL_TAB, readTab, resolveTab, showsSection, writeTab } from './lib/pageTabs'
+import { ALL_TAB, groupsFor, migrateStoredTab, readTab, resolveTab, showsSection, writeTab } from './lib/pageTabs'
 import { THEME_UNLOCK, type ThemeKey } from './lib/theme'
 
 const { auth, balance, achievements, apiMissing, loading, error, actionError, busyKey, statusOf, init, buy, choose } = useCustomization()
@@ -80,15 +80,17 @@ const visCounts = computed(() => {
 const nothingShown = computed(() => !visibleThemeBuckets.value.length && !visibleCategories.value.length)
 
 // Вкладки (BACKLOG 54.7): по вкладке на раздел витрины; список строится из самих разделов, так что новый раздел получает вкладку сам.
-const tabChoice = ref<string | null>(readTab())
-const tabList = computed(() => [
-  ...(visibleThemeBuckets.value.length ? [{ id: 'themes', label: t('cust_sec_themes') }] : []),
-  { id: 'chart-markers', label: t('cust_sec_markers') },
-  { id: 'splash', label: t('cust_sec_splash') },
-  { id: 'streakflame', label: t('cust_sec_streakflame') },
-  { id: 'wateranim', label: t('cust_sec_wateranim') },
-  ...visibleCategories.value.map((c) => ({ id: c.category as string, label: t(('cust_cat_' + c.category) as never) })),
+const tabChoice = ref<string | null>(migrateStoredTab(readTab()))
+// 59.1 срез 1: вкладки — группы по задаче; группа есть, пока в ней виден хоть один раздел (новый раздел без группы идёт в «Прочее»)
+const sectionIds = computed(() => [
+  ...(visibleThemeBuckets.value.length ? ['themes'] : []),
+  'chart-markers',
+  'splash',
+  'streakflame',
+  'wateranim',
+  ...visibleCategories.value.map((c) => c.category as string),
 ])
+const tabList = computed(() => groupsFor(sectionIds.value).map((g) => ({ id: g as string, label: t(('cust_grp_' + g) as never) })))
 const tab = computed(() => resolveTab(tabChoice.value, tabList.value.map((x) => x.id)))
 function setTab(id: string) {
   tabChoice.value = id
