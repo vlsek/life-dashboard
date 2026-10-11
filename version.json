@@ -1,6 +1,13 @@
 {
-  "version": "4.85",
+  "version": "4.86",
   "en": [
+    {
+      "version": "4.86",
+      "date": "2026-10-11 12:47",
+      "changes": [
+        "Customization: three paid drink-saved animations — Rain (100), Tide (150) and Sparkles (250). The equipped one plays when you log water in the header and on the Dashboard and overrides the free choice. Needs migration 072 (catalog prices)."
+      ]
+    },
     {
       "version": "4.85",
       "date": "2026-10-11 04:29",
@@ -3462,6 +3469,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.86",
+      "date": "2026-10-11 12:47",
+      "changes": [
+        "«Кастомизация»: три платные анимации питья воды — «Дождь» (100), «Прилив» (150) и «Искры» (250). Надетая анимация играет при записи выпитого в шапке и на Дашборде и главнее бесплатного выбора. Нужна миграция 072 (цены в каталоге)."
+      ]
+    },
     {
       "version": "4.85",
       "date": "2026-10-11 04:29",

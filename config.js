@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.85";
+const SITE_VERSION = "4.86";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.86", date: "2026-10-11 12:47", changes: [
+        "«Кастомизация»: три платные анимации питья воды — «Дождь» (100), «Прилив» (150) и «Искры» (250). Надетая анимация играет при записи выпитого в шапке и на Дашборде и главнее бесплатного выбора. Нужна миграция 072 (цены в каталоге)."
+    ]},
     { version: "4.85", date: "2026-10-11 04:29", changes: [
         "Графики: анимация появления. В «Кастомизации» в разделе «Графики» новый выбор «Появление»: «Без анимации» (по умолчанию) или «Линия рисуется» — при открытии страницы линия вычерчивается слева направо, затем проявляются точки и подписи. При «уменьшить движение» в системе и при отключённых анимациях сайта график остаётся неподвижным. Бесплатно. Без миграций."
     ]},
@@ -2065,6 +2068,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.86", date: "2026-10-11 12:47", changes: [
+        "Customization: three paid drink-saved animations — Rain (100), Tide (150) and Sparkles (250). The equipped one plays when you log water in the header and on the Dashboard and overrides the free choice. Needs migration 072 (catalog prices)."
+    ]},
     { version: "4.85", date: "2026-10-11 04:29", changes: [
         "Charts: appearance animation. In \"Customization\", in the \"Charts\" section, a new \"Appearance\" choice: \"No animation\" (default) or \"Line draws itself\" — when the page opens the line is drawn left to right, then the dots and labels fade in. With the system \"reduce motion\" or the site animations turned off the chart stays still. Free. No migrations."
     ]},
