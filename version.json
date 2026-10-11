@@ -1,6 +1,13 @@
 {
-  "version": "4.74",
+  "version": "4.75",
   "en": [
+    {
+      "version": "4.75",
+      "date": "2026-10-11 04:08",
+      "changes": [
+        "Fixed: after applying a theme in Customization, the theme picker in the left menu now shows the new theme right away instead of keeping the old entry."
+      ]
+    },
     {
       "version": "4.74",
       "date": "2026-10-11 07:07",
@@ -3385,6 +3392,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.75",
+      "date": "2026-10-11 04:08",
+      "changes": [
+        "Исправлено: если применить тему в разделе «Кастомизация», в выборе тем левого меню теперь сразу показывается новая тема, а не остаётся старая запись."
+      ]
+    },
     {
       "version": "4.74",
       "date": "2026-10-11 07:07",

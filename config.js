@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.74";
+const SITE_VERSION = "4.75";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.75", date: "2026-10-11 04:08", changes: [
+        "Исправлено: если применить тему в разделе «Кастомизация», в выборе тем левого меню теперь сразу показывается новая тема, а не остаётся старая запись."
+    ]},
     { version: "4.74", date: "2026-10-11 07:07", changes: [
         "Исправлено: блок «Какие достижения тут можно получить» внизу страницы больше не налезает на содержимое (подписи графиков) — теперь он идёт строго под ним."
     ]},
@@ -2032,6 +2035,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.75", date: "2026-10-11 04:08", changes: [
+        "Fixed: after applying a theme in Customization, the theme picker in the left menu now shows the new theme right away instead of keeping the old entry."
+    ]},
     { version: "4.74", date: "2026-10-11 07:07", changes: [
         "Fixed: the “Achievements you can earn here” block at the bottom of a page no longer overlaps the page content (chart labels) — it now sits right below it."
     ]},
