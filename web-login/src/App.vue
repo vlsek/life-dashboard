@@ -25,8 +25,8 @@ const tabStyle = (active: boolean) => ({
 
     <div class="w-full max-w-[360px] rounded-lg border p-4" style="border-color: var(--border); background: var(--bg-card)">
       <div class="mb-4 flex">
-        <button type="button" class="flex-1 cursor-pointer bg-transparent py-2" :style="tabStyle(mode === 'login')" @click="setMode('login')">{{ t('tab_login') }}</button>
-        <button type="button" class="flex-1 cursor-pointer bg-transparent py-2" :style="tabStyle(mode === 'register')" @click="setMode('register')">{{ t('tab_register') }}</button>
+        <button type="button" class="auth-tab flex-1 cursor-pointer bg-transparent" :style="tabStyle(mode === 'login')" @click="setMode('login')">{{ t('tab_login') }}</button>
+        <button type="button" class="auth-tab flex-1 cursor-pointer bg-transparent" :style="tabStyle(mode === 'register')" @click="setMode('register')">{{ t('tab_register') }}</button>
       </div>
 
       <form @submit.prevent="submit">
@@ -36,8 +36,11 @@ const tabStyle = (active: boolean) => ({
             v-model="email"
             type="email"
             autocomplete="email"
-            class="mt-1 w-full rounded-lg border px-2.5 py-1.5"
-            style="border-color: var(--border); background: var(--bg); color: var(--text)"
+            class="auth-input mt-1 w-full"
+            placeholder="name@example.com"
+            inputmode="email"
+            autocapitalize="off"
+            data-test="login-email"
           />
         </label>
         <label class="mt-3 block text-sm">
@@ -46,7 +49,7 @@ const tabStyle = (active: boolean) => ({
         </label>
         <button
           type="submit"
-          class="mt-4 w-full cursor-pointer rounded-lg py-2 font-medium transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          class="auth-btn mt-4 w-full cursor-pointer font-medium transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           style="background: var(--accent); color: var(--accent-text)"
           data-test="login-submit"
           :disabled="busy"
@@ -61,7 +64,7 @@ const tabStyle = (active: boolean) => ({
 
       <button
         type="button"
-        class="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg border bg-transparent py-2 hover:opacity-90"
+        class="auth-btn flex w-full cursor-pointer items-center justify-center gap-2.5 border bg-transparent hover:opacity-90"
         style="border-color: var(--border); color: var(--text)"
         @click="signInWithGoogle"
       >

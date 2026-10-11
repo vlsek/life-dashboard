@@ -1285,6 +1285,15 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   background-color: color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
+/* auth-form:start — поля и кнопки входа/регистрации (BACKLOG 58.5): видимая рамка и фокус, высота нажатия ≥ 44 px, шрифт 16 px (меньше — iOS приближает страницу при фокусе) */
+.auth-input { min-height: 46px; padding: 0 12px; font-size: 16px; border: 1.5px solid color-mix(in srgb, var(--text) 40%, var(--border)); border-radius: 10px; background: var(--bg); color: var(--text); }
+.auth-input::placeholder { color: var(--text-dim); opacity: 0.75; }
+.auth-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent); }
+.auth-btn { min-height: 48px; font-size: 16px; border-radius: 10px; }
+.auth-tab { min-height: 46px; font-size: 16px; }
+.auth-eye { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; }
+/* auth-form:end */
+
 /* phone-scale:start (генерируется scripts/apply_phone_scale.py — не править руками; BACKLOG 863) */
 :root { --phone-scale: 87.5%; }
 @media (max-width: 640px) {

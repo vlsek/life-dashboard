@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.05";
+const SITE_VERSION = "5.06";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.06", date: "2026-10-11 19:00", changes: [
+        "Вход и регистрация: поля ввода теперь выглядят как поля — заметная рамка (в светлой и тёмной теме), подсветка при фокусе, подсказка-образец в поле почты; поля выше (46 px), кнопки «Войти / Зарегистрироваться» и «Продолжить с Google» крупнее (48 px), вкладки удобнее нажимать, у «глаза» пароля большая область нажатия; шрифт в полях 16 px, чтобы телефон не приближал страницу при вводе. На узких экранах (проверено до 320 px) ничего не вылезает. Без миграций."
+    ]},
     { version: "5.05", date: "2026-10-11 18:48", changes: [
         "«Тренировки»: выровнены отступы — единый ритм внутри карточки упражнения (шапка, подсказки, рекорд, график, список записей), переключатель «Мужская / Женская» теперь слева, как остальные элементы."
     ]},
@@ -2125,6 +2128,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.06", date: "2026-10-11 19:00", changes: [
+        "Log in / Sign up: input fields now look like fields — a clearly visible border (light and dark themes), a focus highlight and an example hint in the email field; taller fields (46 px), bigger Log in / Sign up and Continue with Google buttons (48 px), easier-to-tap tabs and a large tap area for the password eye; 16 px text in the fields so phones do not zoom the page while typing. Nothing overflows on narrow screens (checked down to 320 px). No migrations."
+    ]},
     { version: "5.05", date: "2026-10-11 18:48", changes: [
         "Workouts: spacing evened out — one rhythm inside the exercise card (header, hints, record, chart, entries list); the Male / Female switch now sits on the left like the other controls."
     ]},

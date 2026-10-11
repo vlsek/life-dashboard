@@ -16,12 +16,13 @@ const shown = ref(false)
     <input
       v-model="value"
       :type="shown ? 'text' : 'password'"
-      class="w-full rounded-lg border px-2.5 py-1.5 pr-9 text-sm"
-      style="border-color: var(--border); background: var(--bg); color: var(--text)"
+      class="auth-input w-full pr-12"
+      autocomplete="current-password"
+      data-test="login-password"
     />
     <button
       type="button"
-      class="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer"
+      class="auth-eye absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer"
       style="color: var(--text-dim)"
       :aria-label="shown ? t('password_toggle_hide') : t('password_toggle_show')"
       @click="shown = !shown"
