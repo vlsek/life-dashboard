@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.80";
+const SITE_VERSION = "4.81";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.81", date: "2026-10-11 04:17", changes: [
+        "Графики: стили линии. В «Кастомизации» раздел «Маркеры графиков» стал разделом «Графики»: к маркерам добавился выбор линии — «Обычная (прямые)» как раньше, «Плавная» и «Плавная с областью» (мягкая градиентная заливка под линией). Плавная кривая не выходит выше или ниже реальных значений, пропуски по-прежнему показаны пунктиром. Бесплатно; график подхватывает выбор при следующем открытии страницы. Без миграций."
+    ]},
     { version: "4.80", date: "2026-10-11 07:14", changes: [
         "Новая «большая» тема «Бархатные сумерки» (Velvet Dusk): уютный тёмный грифельный фон с персиковым, розовым и бирюзовым, крупные скругления 12–16 px, плавные пружинные анимации и ни капли неонового свечения. Включается в «Кастомизации» и в настройках шапки; открыта всем",
     ]},
@@ -2050,6 +2053,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.81", date: "2026-10-11 04:17", changes: [
+        "Charts: line styles. In \"Customization\" the \"Chart markers\" section is now \"Charts\": besides markers you can pick the line — \"Classic (straight)\" as before, \"Smooth\" and \"Smooth with area\" (a soft gradient fill under the line). The smooth curve never goes above or below your real values, and gaps are still dashed. Free; charts pick your choice up the next time the page opens. No migrations."
+    ]},
     { version: "4.80", date: "2026-10-11 07:14", changes: [
         "New big theme Velvet Dusk: a cozy dark slate background with peach, pink and teal, large 12-16 px corners, smooth springy animations and not a drop of neon glow. Pick it in Customization or the header settings; open to everyone",
     ]},

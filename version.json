@@ -1,6 +1,13 @@
 {
-  "version": "4.80",
+  "version": "4.81",
   "en": [
+    {
+      "version": "4.81",
+      "date": "2026-10-11 04:17",
+      "changes": [
+        "Charts: line styles. In \"Customization\" the \"Chart markers\" section is now \"Charts\": besides markers you can pick the line — \"Classic (straight)\" as before, \"Smooth\" and \"Smooth with area\" (a soft gradient fill under the line). The smooth curve never goes above or below your real values, and gaps are still dashed. Free; charts pick your choice up the next time the page opens. No migrations."
+      ]
+    },
     {
       "version": "4.80",
       "date": "2026-10-11 07:14",
@@ -3427,6 +3434,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.81",
+      "date": "2026-10-11 04:17",
+      "changes": [
+        "Графики: стили линии. В «Кастомизации» раздел «Маркеры графиков» стал разделом «Графики»: к маркерам добавился выбор линии — «Обычная (прямые)» как раньше, «Плавная» и «Плавная с областью» (мягкая градиентная заливка под линией). Плавная кривая не выходит выше или ниже реальных значений, пропуски по-прежнему показаны пунктиром. Бесплатно; график подхватывает выбор при следующем открытии страницы. Без миграций."
+      ]
+    },
     {
       "version": "4.80",
       "date": "2026-10-11 07:14",
