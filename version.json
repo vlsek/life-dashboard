@@ -1,6 +1,13 @@
 {
-  "version": "4.81",
+  "version": "4.82",
   "en": [
+    {
+      "version": "4.82",
+      "date": "2026-10-11 08:30",
+      "changes": [
+        "New «Pause: vacation / illness» mode (Global settings → «Pause»). Pick «Vacation» or «Illness» and the last day of the pause — up to 30 days, starting today (it cannot be backdated). For those days streaks and weekly progress freeze: a streak does not break and does not grow, and metrics are not counted as missed. A pause icon appears in the header (tap it for the settings); you can end the pause early in the same settings. Needs migration 070 (owner applies); without it the section is simply hidden."
+      ]
+    },
     {
       "version": "4.81",
       "date": "2026-10-11 04:17",
@@ -3434,6 +3441,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.82",
+      "date": "2026-10-11 08:30",
+      "changes": [
+        "Новый режим «Пауза: отпуск / болезнь» (Глобальные настройки → «Пауза»). Выберите «Отпуск» или «Болезнь» и последний день паузы — до 30 дней, начиная с сегодняшнего (задним числом включить нельзя). На эти дни серии и недельный прогресс замораживаются: серия не рвётся и не растёт, метрики не считаются пропущенными. В шапке появляется значок паузы (нажмите — настройки), закончить её можно досрочно в тех же настройках. Нужна миграция 070 (владелец применяет); пока её нет, раздел просто не показывается."
+      ]
+    },
     {
       "version": "4.81",
       "date": "2026-10-11 04:17",

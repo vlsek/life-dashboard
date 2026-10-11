@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.81";
+const SITE_VERSION = "4.82";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.82", date: "2026-10-11 08:30", changes: [
+        "Новый режим «Пауза: отпуск / болезнь» (Глобальные настройки → «Пауза»). Выберите «Отпуск» или «Болезнь» и последний день паузы — до 30 дней, начиная с сегодняшнего (задним числом включить нельзя). На эти дни серии и недельный прогресс замораживаются: серия не рвётся и не растёт, метрики не считаются пропущенными. В шапке появляется значок паузы (нажмите — настройки), закончить её можно досрочно в тех же настройках. Нужна миграция 070 (владелец применяет); пока её нет, раздел просто не показывается."
+    ]},
     { version: "4.81", date: "2026-10-11 04:17", changes: [
         "Графики: стили линии. В «Кастомизации» раздел «Маркеры графиков» стал разделом «Графики»: к маркерам добавился выбор линии — «Обычная (прямые)» как раньше, «Плавная» и «Плавная с областью» (мягкая градиентная заливка под линией). Плавная кривая не выходит выше или ниже реальных значений, пропуски по-прежнему показаны пунктиром. Бесплатно; график подхватывает выбор при следующем открытии страницы. Без миграций."
     ]},
@@ -2053,6 +2056,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.82", date: "2026-10-11 08:30", changes: [
+        "New «Pause: vacation / illness» mode (Global settings → «Pause»). Pick «Vacation» or «Illness» and the last day of the pause — up to 30 days, starting today (it cannot be backdated). For those days streaks and weekly progress freeze: a streak does not break and does not grow, and metrics are not counted as missed. A pause icon appears in the header (tap it for the settings); you can end the pause early in the same settings. Needs migration 070 (owner applies); without it the section is simply hidden."
+    ]},
     { version: "4.81", date: "2026-10-11 04:17", changes: [
         "Charts: line styles. In \"Customization\" the \"Chart markers\" section is now \"Charts\": besides markers you can pick the line — \"Classic (straight)\" as before, \"Smooth\" and \"Smooth with area\" (a soft gradient fill under the line). The smooth curve never goes above or below your real values, and gaps are still dashed. Free; charts pick your choice up the next time the page opens. No migrations."
     ]},
