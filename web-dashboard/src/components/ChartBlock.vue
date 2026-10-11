@@ -75,14 +75,18 @@ function pieMarker(x: number, y: number, label: string, shares: VariationShare[]
 
 // Портировано 1:1 из svgLineChart() в config.js — строит только внутренность <svg>
 // (линии/точки/подписи), сама обёртка — в шаблоне ниже.
-const innerSvg = computed<string | null>(() => {
+const CH_W = 620
+const CH_H = 160
+const CH_PAD = 34
+
+// Геометрия графика: координаты точек (общие для рисунка и для подсказки с перекрестием, BACKLOG 55.2 срез 2).
+const geom = computed(() => {
   const points = prepared.value
   const withValues = points.filter((p) => p.y != null)
   if (withValues.length < 2) return null
-
-  const w = 620
-  const h = 160
-  const pad = 34
+  const w = CH_W
+  const h = CH_H
+  const pad = CH_PAD
   const values = withValues.map((p) => p.y as number)
   if (props.goalValue != null) values.push(props.goalValue)
   let min = Math.min(...values)
@@ -101,6 +105,13 @@ const innerSvg = computed<string | null>(() => {
     value: p.y,
     shares: p.shares,
   }))
+  return { w, h, pad, min, range, coords }
+})
+
+const innerSvg = computed<string | null>(() => {
+  const g = geom.value
+  if (!g) return null
+  const { w, h, pad, min, range, coords } = g
 
   let svg = colored.value ? markerDefs(markerStyle, markerUid) : ''
 
@@ -141,6 +152,73 @@ const innerSvg = computed<string | null>(() => {
   return svg
 })
 
+// ── Подсказка с перекрестием (BACKLOG 55.2 срез 2): наведение мышью, касание, стрелки на клавиатуре ──────────────
+// Рисуется отдельным слоем поверх графика (сам график не меняется): вертикальная линия, кольцо вокруг точки и плашка
+// со значением и датой (у метрик с «особенностями» — ещё разбивка по ним). Касание держит плашку 3,5 с.
+type Coord = NonNullable<typeof geom.value>['coords'][number]
+const chartEl = ref<SVGSVGElement | null>(null)
+const active = ref<number | null>(null)
+let hideTimer: ReturnType<typeof setTimeout> | null = null
+
+const realIdx = computed<number[]>(() => (geom.value ? geom.value.coords.flatMap((c, i) => (c.y != null ? [i] : [])) : []))
+const activeCoord = computed<(Coord & { y: number }) | null>(() => {
+  const c = geom.value && active.value != null ? geom.value.coords[active.value] : null
+  return c && c.y != null ? (c as Coord & { y: number }) : null
+})
+const tipText = computed(() => {
+  const c = activeCoord.value
+  if (!c) return ''
+  const extra = colored.value && c.shares && c.shares.length ? ` · ${describeShares(c.shares, t('chart_legend_none'))}` : ''
+  return `${c.label}: ${c.value}${props.unit || ''}${extra}`
+})
+const tipStyle = computed(() => {
+  const c = activeCoord.value
+  if (!c) return {}
+  const left = Math.min(86, Math.max(14, (c.x / CH_W) * 100))
+  const below = c.y < 46
+  return { left: left + '%', top: (c.y / CH_H) * 100 + '%', transform: below ? 'translate(-50%, 14px)' : 'translate(-50%, calc(-100% - 12px))' }
+})
+
+function nearestIndex(clientX: number): number | null {
+  const g = geom.value
+  const el = chartEl.value
+  if (!g || !el || !realIdx.value.length) return null
+  const r = el.getBoundingClientRect()
+  if (!r.width) return null
+  const x = ((clientX - r.left) / r.width) * CH_W
+  let best = realIdx.value[0]
+  for (const i of realIdx.value) if (Math.abs(g.coords[i].x - x) < Math.abs(g.coords[best].x - x)) best = i
+  return best
+}
+function clearHide() {
+  if (hideTimer) clearTimeout(hideTimer)
+  hideTimer = null
+}
+function onPointer(e: PointerEvent) {
+  clearHide()
+  active.value = nearestIndex(e.clientX)
+  if (e.pointerType === 'touch') hideTimer = setTimeout(() => (active.value = null), 3500)
+}
+function onLeave(e: PointerEvent) {
+  if (e.pointerType !== 'touch') active.value = null
+}
+function onKey(e: KeyboardEvent) {
+  const list = realIdx.value
+  if (!list.length) return
+  const pos = active.value == null ? -1 : list.indexOf(active.value)
+  let next: number | null | undefined
+  if (e.key === 'ArrowRight') next = list[Math.min(list.length - 1, pos + 1)]
+  else if (e.key === 'ArrowLeft') next = list[pos <= 0 ? 0 : pos - 1]
+  else if (e.key === 'Home') next = list[0]
+  else if (e.key === 'End') next = list[list.length - 1]
+  else if (e.key === 'Escape') next = null
+  else return
+  e.preventDefault()
+  clearHide()
+  active.value = next
+}
+onBeforeUnmount(clearHide)
+
 const fallbackText = computed(() => {
   const withValues = props.points.filter((p) => p.y != null)
   if (withValues.length === 0) return t('chart_not_enough_data') + ' ' + t('chart_no_data')
@@ -154,7 +232,38 @@ const fallbackText = computed(() => {
     <h4 v-if="title" class="mb-1.5 font-medium"><MetricIcon v-if="icon" :icon="icon" extra-style="margin-right:0.35em;" />{{ title }}<MetricStreakBadge v-if="streak" :info="streak" /></h4>
     <RecordBadge v-if="record" kind="charts" :record="record" :unit="unit" class="mb-1.5" />
     <template v-if="innerSvg">
-      <svg viewBox="0 0 620 160" width="100%" :height="160" v-html="innerSvg"></svg>
+      <div class="relative" data-test="chart-wrap">
+        <svg
+          ref="chartEl"
+          viewBox="0 0 620 160"
+          width="100%"
+          :height="160"
+          tabindex="0"
+          style="touch-action: pan-y; outline-offset: 2px"
+          :aria-label="title ? title + ': ' + t('chart_hover_hint') : t('chart_hover_hint')"
+          data-test="chart-svg"
+          @pointermove="onPointer"
+          @pointerdown="onPointer"
+          @pointerleave="onLeave"
+          @keydown="onKey"
+          @blur="active = null"
+          v-html="innerSvg"
+        ></svg>
+        <svg v-if="activeCoord" viewBox="0 0 620 160" width="100%" :height="160" class="pointer-events-none absolute left-0 top-0" aria-hidden="true" data-test="chart-cross">
+          <line :x1="activeCoord.x" y1="8" :x2="activeCoord.x" :y2="CH_H - 20" stroke="var(--text-dim)" stroke-width="1" stroke-dasharray="3,3" opacity=".75" />
+          <circle :cx="activeCoord.x" :cy="activeCoord.y" r="8.5" fill="none" stroke="var(--accent)" stroke-width="1.6" />
+        </svg>
+        <div
+          v-if="activeCoord"
+          class="pointer-events-none absolute z-10 whitespace-nowrap rounded-lg border px-2 py-1 text-xs shadow-md"
+          style="background: var(--bg-card); border-color: var(--border); color: var(--text)"
+          :style="tipStyle"
+          role="status"
+          data-test="chart-tip"
+        >
+          {{ tipText }}
+        </div>
+      </div>
       <ul v-if="legend.length" class="m-0 mt-1.5 flex list-none flex-col gap-y-1.5 p-0 text-xs" data-test="chart-legend" :aria-label="t('chart_legend_aria')">
         <li v-for="(item, i) in legend" :key="i" class="flex flex-wrap items-center gap-x-1 gap-y-0.5" data-test="legend-item">
           <span class="inline-block h-2.5 w-2.5 rounded-full" :style="{ background: item.color }" aria-hidden="true"></span>
