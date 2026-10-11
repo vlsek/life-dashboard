@@ -1,7 +1,9 @@
 import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
+// @ts-ignore — типов node в проекте нет, vitest работает в node
+import { readFileSync } from 'node:fs'
 import { mount } from '@vue/test-utils'
 import AchievementToast from './components/AchievementToast.vue'
-import { BG_MSG_DONE, BG_MSG_NEW, CHECK_EVERY_MS, WATCH_SKIP, isCheckDue, parseWatchMessage, startAchievementWatcher } from './lib/achievementWatcher'
+import { BG_MSG_DONE, BG_MSG_NEW, CHECK_EVERY_MS, WATCH_SKIP, YOUNG_ACCOUNT_DAYS, YOUNG_CHECK_EVERY_MS, checkEveryMs, isCheckDue, isYoungAccount, parseWatchMessage, startAchievementWatcher } from './lib/achievementWatcher'
 
 // BACKLOG 52.1 срез 2: поздравление о новом достижении на любой странице.
 describe('isCheckDue', () => {
@@ -93,5 +95,103 @@ describe('startAchievementWatcher', () => {
     expect(document.querySelector('iframe')).not.toBeNull()
     stop()
     expect(document.querySelector('iframe')).toBeNull()
+  })
+})
+
+// BACKLOG 58.12: у нового аккаунта проверка новых достижений чаще, иначе поздравление не приходило в первые минуты
+describe('isYoungAccount / checkEveryMs', () => {
+  const now = Date.parse('2026-10-11T12:00:00Z')
+  const ago = (ms: number) => new Date(now - ms).toISOString()
+  const DAY = 24 * 3600 * 1000
+  it('младше 14 дней — новый; ровно 14 дней и старше — нет', () => {
+    expect(isYoungAccount(ago(0), now)).toBe(true)
+    expect(isYoungAccount(ago(YOUNG_ACCOUNT_DAYS * DAY - 1000), now)).toBe(true)
+    expect(isYoungAccount(ago(YOUNG_ACCOUNT_DAYS * DAY), now)).toBe(false)
+    expect(isYoungAccount(ago(100 * DAY), now)).toBe(false)
+  })
+  it('небольшая разница часов (создан «в будущем» до минуты) терпим, больше — нет; нет даты / мусор — старый аккаунт', () => {
+    expect(isYoungAccount(ago(-30_000), now)).toBe(true)
+    expect(isYoungAccount(ago(-5 * 60_000), now)).toBe(false)
+    for (const bad of [null, undefined, '', 'вчера', 'NaN']) expect(isYoungAccount(bad as string | null | undefined, now)).toBe(false)
+  })
+  it('интервал: новый аккаунт — 90 с, остальные и без даты — 10 минут', () => {
+    expect(checkEveryMs(ago(DAY), now)).toBe(YOUNG_CHECK_EVERY_MS)
+    expect(checkEveryMs(ago(30 * DAY), now)).toBe(CHECK_EVERY_MS)
+    expect(checkEveryMs(null, now)).toBe(CHECK_EVERY_MS)
+    expect(YOUNG_CHECK_EVERY_MS).toBeLessThan(CHECK_EVERY_MS)
+    expect(YOUNG_CHECK_EVERY_MS).toBeLessThanOrEqual(3 * 60_000) // абсолютная граница: новый человек получает поздравление не позже чем через ~3 минуты
+  })
+})
+
+describe('startAchievementWatcher: новый и старый аккаунт', () => {
+  beforeEach(() => {
+    ;(window as unknown as { happyDOM?: { settings: { disableIframePageLoading: boolean } } }).happyDOM!.settings.disableIframePageLoading = true
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.useFakeTimers()
+    localStorage.clear()
+    document.body.innerHTML = ''
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.restoreAllMocks()
+  })
+  const finish = () => {
+    const frame = document.querySelector('iframe') as HTMLIFrameElement
+    window.dispatchEvent(new MessageEvent('message', { data: { type: BG_MSG_DONE }, origin: window.location.origin, source: frame.contentWindow as Window }))
+  }
+
+  it('новый аккаунт: следующая проверка примерно через 1,5–2 минуты, а не через 10 (первые действия не остаются без поздравления)', () => {
+    const created = new Date(Date.now() - 3600 * 1000).toISOString()
+    const stop = startAchievementWatcher(() => {}, { createdAt: created })
+    vi.advanceTimersByTime(4100)
+    expect(document.querySelector('iframe')).not.toBeNull() // первая проверка
+    finish()
+    expect(document.querySelector('iframe')).toBeNull()
+    const wait = waitForFrame(20 * 60_000)
+    expect(wait).toBeGreaterThanOrEqual(YOUNG_CHECK_EVERY_MS - 30_000)
+    expect(wait).toBeLessThanOrEqual(YOUNG_CHECK_EVERY_MS + 60_000)
+    expect(wait).toBeLessThanOrEqual(3 * 60_000 + 30_000) // и в любом случае не дольше ~3,5 минуты (а не 10)
+    stop()
+  })
+
+  // Шагаем по 30 с до появления iframe и возвращаем, сколько прошло (мс); нужна, чтобы не гадать с таймаутом самого iframe (90 с)
+  const waitForFrame = (maxMs: number): number => {
+    let elapsed = 0
+    while (elapsed < maxMs && !document.querySelector('iframe')) {
+      vi.advanceTimersByTime(30_000)
+      elapsed += 30_000
+    }
+    return document.querySelector('iframe') ? elapsed : -1
+  }
+
+  it.each([
+    ['старый аккаунт (60 дней)', () => new Date(Date.now() - 60 * 24 * 3600 * 1000).toISOString()],
+    ['аккаунт без даты', () => null],
+  ])('%s: следующая проверка не раньше чем через 10 минут', (_name, mkCreated) => {
+    const stop = startAchievementWatcher(() => {}, { createdAt: mkCreated() })
+    vi.advanceTimersByTime(4100)
+    expect(document.querySelector('iframe')).not.toBeNull() // первая проверка
+    finish()
+    const wait = waitForFrame(20 * 60_000)
+    expect(wait).toBeGreaterThanOrEqual(CHECK_EVERY_MS - 10_000) // не раньше ~10 минут
+    expect(wait).toBeLessThanOrEqual(CHECK_EVERY_MS + 60_000) // но и не «никогда»
+    stop()
+  })
+
+  it('пока предыдущая проверка не завершилась, вторую не запускаем (даже у нового аккаунта)', () => {
+    const created = new Date(Date.now() - 3600 * 1000).toISOString()
+    const stop = startAchievementWatcher(() => {}, { createdAt: created })
+    vi.advanceTimersByTime(4100)
+    expect(document.querySelectorAll('iframe')).toHaveLength(1)
+    vi.advanceTimersByTime(80_000) // iframe ещё не ответил (таймаут 90 с)
+    expect(document.querySelectorAll('iframe')).toHaveLength(1)
+    stop()
+  })
+})
+
+describe('main.ts передаёт дату создания аккаунта наблюдателю', () => {
+  it('без неё все аккаунты считались бы «старыми» и новый снова ждал бы по 10 минут', () => {
+    const src: string = readFileSync('src/main.ts', 'utf-8')
+    expect(src).toMatch(/startAchievementWatcher\(showAchievementToast, \{ createdAt: data\.session\.user\.created_at/)
   })
 })

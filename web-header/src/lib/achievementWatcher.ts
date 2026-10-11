@@ -7,11 +7,30 @@ export const BG_MSG_DONE = 'gh-ach-done'
 export const CHECK_KEY = 'gh_ach_check'
 export const CHECK_EVERY_MS = 10 * 60 * 1000
 export const IFRAME_TIMEOUT_MS = 90 * 1000
+// BACKLOG 58.12 («на новом аккаунте не было уведомления за получение достижения»): у НОВОГО аккаунта первые действия идут в первые минуты —
+// добавил цель, перешёл на другую страницу, — а общая пауза 10 минут между проверками означала, что поздравление не приходило вовсе, пока человек
+// не открывал «Достижения» сам. Поэтому у аккаунта младше YOUNG_ACCOUNT_DAYS проверяем каждые ~1,5 минуты (у остальных, как раньше, раз в 10 минут).
+// Срок и правило «младше» — те же, что у страницы «Достижения» (`isNewAccount`: первый заход нового аккаунта поздравляет, а не молчит).
+export const YOUNG_ACCOUNT_DAYS = 14
+export const YOUNG_CHECK_EVERY_MS = 90 * 1000
+export const TICK_MS = 30 * 1000
 
 export interface WatchItem {
   key: string
   title: string
   reward: string | null
+}
+
+export function isYoungAccount(createdAt: string | null | undefined, now: number, days = YOUNG_ACCOUNT_DAYS): boolean {
+  const c = createdAt ? Date.parse(createdAt) : NaN
+  if (!Number.isFinite(c)) return false // нет даты / не дата — считаем аккаунт старым (как на странице «Достижения»)
+  const age = now - c
+  return age >= -60_000 && age < days * 24 * 3600 * 1000 // небольшой «минус» — разница часов устройства и сервера
+}
+
+// Как часто проверять именно этот аккаунт.
+export function checkEveryMs(createdAt: string | null | undefined, now: number): number {
+  return isYoungAccount(createdAt, now) ? YOUNG_CHECK_EVERY_MS : CHECK_EVERY_MS
 }
 
 // Пора ли проверять: нет отметки, она из будущего (часы переведены) или давно — да.
@@ -57,7 +76,7 @@ function writeLast(now: number) {
 }
 
 // Запускает проверку и повторяет её, пока страница открыта и видна. onNew получает список новых достижений.
-export function startAchievementWatcher(onNew: (items: WatchItem[]) => void): () => void {
+export function startAchievementWatcher(onNew: (items: WatchItem[]) => void, opts: { createdAt?: string | null } = {}): () => void {
   let frame: HTMLIFrameElement | null = null
   let timer: ReturnType<typeof setTimeout> | null = null
 
@@ -79,7 +98,7 @@ export function startAchievementWatcher(onNew: (items: WatchItem[]) => void): ()
   const check = () => {
     if (frame || document.visibilityState === 'hidden') return
     const now = Date.now()
-    if (!isCheckDue(readLast(), now)) return
+    if (!isCheckDue(readLast(), now, checkEveryMs(opts.createdAt, now))) return
     writeLast(now)
     frame = document.createElement('iframe')
     frame.src = '/achievements/?bg=1'
@@ -92,7 +111,7 @@ export function startAchievementWatcher(onNew: (items: WatchItem[]) => void): ()
   }
 
   window.addEventListener('message', onMessage)
-  const interval = setInterval(check, 60 * 1000)
+  const interval = setInterval(check, TICK_MS)
   const onVisible = () => document.visibilityState === 'visible' && check()
   document.addEventListener('visibilitychange', onVisible)
   setTimeout(check, 4000) // не мешаем первой отрисовке страницы

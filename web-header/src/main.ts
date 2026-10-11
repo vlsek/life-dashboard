@@ -96,7 +96,7 @@ async function startWatcher() {
   try {
     const { data } = await sb.auth.getSession()
     if (!data.session) return
-    startAchievementWatcher(showAchievementToast)
+    startAchievementWatcher(showAchievementToast, { createdAt: data.session.user.created_at ?? null })
   } catch {
     /* без поздравления на странице — не страшно */
   }
