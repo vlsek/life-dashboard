@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.87";
+const SITE_VERSION = "4.88";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.88", date: "2026-10-11 09:52", changes: [
+        "Сообщество: у друзей в карточке и в окне профиля теперь видно «в сети» или «был(а) в сети N назад». Показ можно отключить в «Настройках» → «Приватность»; видят только ваши друзья. Заработает после применения серверной миграции 069."
+    ]},
     { version: "4.87", date: "2026-10-11 09:49", changes: [
         "Тренировки: «+ подход» прямо в строке добавления записи. Повторное «Добавить» за день теперь дописывает подход в сегодняшнюю запись упражнения, а не создаёт вторую запись за ту же дату (так было раньше). Строка остаётся открытой, помнит значения прошлого подхода, показывает «Сегодня: N подх.», а кнопка меняется на «+ подход». Закрыть — ✕ или Esc. Без миграций."
     ]},
@@ -2071,6 +2074,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.88", date: "2026-10-11 09:52", changes: [
+        "Community: friends now show \"online\" or \"was online N ago\" on their card and in their profile window. You can turn it off in Settings → Privacy; only your friends can see it. It starts working once server migration 069 is applied."
+    ]},
     { version: "4.87", date: "2026-10-11 09:49", changes: [
         "Workouts: \"+ set\" right in the add-entry row. Pressing Add again on the same day now appends a set to today's entry of that exercise instead of creating a second entry for the same date (as it did before). The row stays open, remembers the previous set's values, shows \"Today: N sets\", and the button becomes \"+ set\". Close with ✕ or Esc. No migrations."
     ]},

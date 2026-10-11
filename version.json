@@ -1,6 +1,13 @@
 {
-  "version": "4.87",
+  "version": "4.88",
   "en": [
+    {
+      "version": "4.88",
+      "date": "2026-10-11 09:52",
+      "changes": [
+        "Community: friends now show \"online\" or \"was online N ago\" on their card and in their profile window. You can turn it off in Settings → Privacy; only your friends can see it. It starts working once server migration 069 is applied."
+      ]
+    },
     {
       "version": "4.87",
       "date": "2026-10-11 09:49",
@@ -3476,6 +3483,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.88",
+      "date": "2026-10-11 09:52",
+      "changes": [
+        "Сообщество: у друзей в карточке и в окне профиля теперь видно «в сети» или «был(а) в сети N назад». Показ можно отключить в «Настройках» → «Приватность»; видят только ваши друзья. Заработает после применения серверной миграции 069."
+      ]
+    },
     {
       "version": "4.87",
       "date": "2026-10-11 09:49",
