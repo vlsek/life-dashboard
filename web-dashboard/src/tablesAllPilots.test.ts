@@ -4,6 +4,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 
 // «Страж» (BACKLOG 567, таблицы на телефоне): каждая <table> в .vue любой страницы пилота лежит в обёртке с
 // `overflow-x-auto` (в пределах 3 строк выше) — широкая таблица скроллится внутри себя, а не раздвигает страницу.
+// Исключение: обёртка `sr-only` — таблица данных графика для скринридеров (BACKLOG 55.2 срез 5): она скрыта (1×1 px) и страницу раздвинуть не может.
 const ROOT = '..'
 const pilots: string[] = (readdirSync(ROOT) as string[]).filter((d: string) => /^web-/.test(d) && existsSync(`${ROOT}/${d}/src`))
 
@@ -25,7 +26,7 @@ describe('таблицы во всех пилотах скроллятся вн�
       lines.forEach((l: string, i: number) => {
         if (/<table\b/.test(l)) {
           const above = lines.slice(Math.max(0, i - 3), i + 1).join('\n')
-          tables.push({ file: f, line: i + 1, ok: /overflow-x-auto/.test(above) })
+          tables.push({ file: f, line: i + 1, ok: /overflow-x-auto|\bsr-only\b/.test(above) })
         }
       })
     }

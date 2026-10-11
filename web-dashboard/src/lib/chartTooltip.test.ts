@@ -91,3 +91,40 @@ describe('ChartBlock: подсказка с перекрестием (BACKLOG 55
     expect(w.find('[data-test="chart-tip"]').text()).toContain('<b>x</b>')
   })
 })
+
+describe('ChartBlock: доступность — сводка и таблица данных (BACKLOG 55.2 срез 5)', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+  })
+
+  it('есть скрытая от глаз сводка «минимум, максимум, последнее» и график на неё ссылается', () => {
+    const w = mountChart()
+    const sum = w.find('[data-test="chart-summary"]')
+    expect(sum.classes()).toContain('sr-only')
+    expect(sum.text()).toBe('минимум 8 раз, максимум 14 раз, последнее 8 раз')
+    expect(w.find('[data-test="chart-svg"]').attributes('aria-describedby')).toBe(sum.attributes('id'))
+  })
+
+  it('таблица «дата — значение» только по дням с данными; пропуски в неё не попадают', () => {
+    const w = mountChart()
+    const rows = w.findAll('[data-test="chart-table"] tbody tr')
+    expect(rows).toHaveLength(3)
+    expect(rows[0].findAll('th, td').map((c) => c.text())).toEqual(['01.10', '10 раз'])
+    expect(rows[2].findAll('th, td').map((c) => c.text())).toEqual(['04.10', '8 раз'])
+    expect(w.find('[data-test="chart-table-wrap"]').classes()).toContain('sr-only')
+    expect(w.find('[data-test="chart-table"] caption').text()).toContain('Отжимания')
+    expect(w.findAll('[data-test="chart-table"] th[scope="col"]')).toHaveLength(2)
+  })
+
+  it('метрика с «особенностями»: в строке таблицы есть разбивка', () => {
+    const w = mountChart(withShares)
+    expect(w.find('[data-test="chart-table"] tbody tr').text()).toContain('алмазные')
+  })
+
+  it('нет данных — нет ни сводки, ни таблицы', () => {
+    const w = mount(ChartBlock, { props: { title: 'Отжимания', points: [{ date: '2026-10-01', y: null }, { date: '2026-10-02', y: null }], unit: ' раз', variations: [] } })
+    expect(w.find('[data-test="chart-summary"]').exists()).toBe(false)
+    expect(w.find('[data-test="chart-table"]').exists()).toBe(false)
+  })
+})
