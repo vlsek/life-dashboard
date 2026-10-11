@@ -17,6 +17,9 @@ import WarmupReminder from './components/WarmupReminder.vue'
 import OverviewChart from './components/OverviewChart.vue'
 import MuscleMap from './components/MuscleMap.vue'
 import { fetchProfileGender } from './lib/bodyGender'
+import { useMeasurements } from './lib/useMeasurements'
+import MeasurementsSection from './components/MeasurementsSection.vue'
+import type { PartId } from './lib/measurements'
 import { readBodyModelChoice, resolveBodyModel, writeBodyModelChoice, type BodyModel } from './lib/bodyModel'
 import ProgressionTrees from './components/ProgressionTrees.vue'
 import ExerciseForm from './components/ExerciseForm.vue'
@@ -43,6 +46,7 @@ import { friendlyError } from './lib/friendlyError'
 // группировка по категориям со сворачиванием, каталог типовых программ, мини-график прогресса
 // на каждом упражнении (ExerciseChart в ExerciseCard) и общий график объёма тренировок.
 const wk = useWorkouts()
+const meas = useMeasurements()
 const { auth, exercises, entries, loadError, studyRecent, bodyWeightKg, entriesFor, metricLinks } = wk
 
 const defaultUnit = () => defaultWeightUnit()
@@ -328,6 +332,7 @@ watch(
   async (status) => {
     if (status !== 'ready' || auth.value.status !== 'ready') return
     void fetchProfileGender(auth.value.userId).then((g) => (profileGender.value = g))
+    void meas.load(auth.value.userId) // замеры тела (57.1): нет таблицы (миграция 074) — блок скрыт
     void loadCollapseStyle(auth.value.userId) // вид сворачивания блоков из «Кастомизации» (BACKLOG 498); до ответа — кэш
     try {
       activeProgram.value = await syncProgramFromProfile(auth.value.userId)
@@ -445,6 +450,14 @@ function onToggleProgramWeek(week: number) {
           @quick-add-entry="(ex, res, done) => onQuickAddEntry(ex, res, done)"
         />
         <p v-if="exercises.length === 0" class="-mt-2 mb-3 text-xs" style="color: var(--text-dim)" data-testid="muscles-empty-hint">{{ t('workouts_muscles_empty') }}</p>
+        <MeasurementsSection
+          v-if="meas.supported.value && auth.status === 'ready'"
+          :rows="meas.rows.value"
+          :busy="meas.busy.value"
+          :error="meas.error.value"
+          @add="(part: PartId, date: string, v: number, done: (ok: boolean) => void) => auth.status === 'ready' && meas.add(auth.userId, part, date, v).then(done)"
+          @remove="(id: string) => auth.status === 'ready' && meas.remove(auth.userId, id)"
+        />
       </div>
 
       <div v-show="pageTab === 'exercises'" data-testid="tab-exercises">
