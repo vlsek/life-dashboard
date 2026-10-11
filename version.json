@@ -1,6 +1,13 @@
 {
-  "version": "5.10",
+  "version": "5.11",
   "en": [
+    {
+      "version": "5.11",
+      "date": "2026-10-12 00:55",
+      "changes": [
+        "The «Plans» block on the Dashboard is simpler: the main row has just the field and «Add», the three ways to add («Add from goals», «New goal», «Unfinished from earlier days») sit in a separate row of buttons below; time, «Already done», the ☆ bonus hint and notifications are tucked into a collapsed «More options»; «Goals completed that day» is collapsed to one line. Nothing was removed. NO SQL."
+      ]
+    },
     {
       "version": "5.10",
       "date": "2026-10-12 11:00",
@@ -3637,6 +3644,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.11",
+      "date": "2026-10-12 00:55",
+      "changes": [
+        "Блок «Планы» на Дашборде стал проще: в основной строке только поле и «Добавить», три способа добавить («Добавить из целей», «Новая цель», «Незавершённое с прошлых дней») — отдельным рядом кнопок ниже; время, «Уже сделано», подсказка про ☆-бонус и уведомления убраны в свёрнутое «Дополнительно»; «Цели, выполненные в этот день» свёрнуты в одну строку. Ничего не удалено, все возможности на месте. БЕЗ SQL."
+      ]
+    },
     {
       "version": "5.10",
       "date": "2026-10-12 11:00",

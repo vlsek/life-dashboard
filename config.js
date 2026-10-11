@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.10";
+const SITE_VERSION = "5.11";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.11", date: "2026-10-12 00:55", changes: [
+        "Блок «Планы» на Дашборде стал проще: в основной строке только поле и «Добавить», три способа добавить («Добавить из целей», «Новая цель», «Незавершённое с прошлых дней») — отдельным рядом кнопок ниже; время, «Уже сделано», подсказка про ☆-бонус и уведомления убраны в свёрнутое «Дополнительно»; «Цели, выполненные в этот день» свёрнуты в одну строку. Ничего не удалено, все возможности на месте. БЕЗ SQL."
+    ]},
     { version: "5.10", date: "2026-10-12 11:00", changes: [
         "Цели: поправлена вёрстка карточек. Заголовки теперь начинаются с одного отступа и у целей с процентом, и у простых целей с кружком; баллы переехали в строку чипов (сложность, срок, баллы), поэтому длинное название занимает до трёх строк вместо четырёх; кнопки «изменить» и «удалить» в углу карточки больше не отнимают ширину у чипов и прогресса; чипы не залезают под кнопки у коротких названий. Без миграций."
     ]},
@@ -2140,6 +2143,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.11", date: "2026-10-12 00:55", changes: [
+        "The «Plans» block on the Dashboard is simpler: the main row has just the field and «Add», the three ways to add («Add from goals», «New goal», «Unfinished from earlier days») sit in a separate row of buttons below; time, «Already done», the ☆ bonus hint and notifications are tucked into a collapsed «More options»; «Goals completed that day» is collapsed to one line. Nothing was removed. NO SQL."
+    ]},
     { version: "5.10", date: "2026-10-12 11:00", changes: [
         "Goals: card layout polished. Titles now start at the same indent for goals with a percent ring and simple goals with a circle; points moved into the chips row (difficulty, deadline, points) so a long name takes up to three lines instead of four; the edit and delete buttons in the card corner no longer take width from the chips and progress bar; chips no longer slide under the buttons for short names. No migrations."
     ]},
