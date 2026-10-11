@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.08";
+const SITE_VERSION = "5.09";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.09", date: "2026-10-12 00:21", changes: [
+        "Главная: кнопка «Сохранить день» стала крупной и современной, итог дня — таблеткой рядом; у плашки «Что полезного сделал за день» появилась подложка; одинаковый зазор между значком и текстом; убрана пустая «дыра» между нижним блоком и блоком достижений."
+    ]},
     { version: "5.08", date: "2026-10-11 21:19", changes: [
         "Достижения: у нового аккаунта (первые 14 дней) поздравление о новом достижении теперь приходит быстро — проверка на любой странице идёт примерно раз в полторы минуты, а не раз в 10 минут. Раньше первые действия (добавил цель, перешёл на другую страницу) оставались без уведомления, пока человек сам не открывал «Достижения». У остальных аккаунтов ничего не меняется. Без миграций."
     ]},
@@ -2134,6 +2137,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.09", date: "2026-10-12 00:21", changes: [
+        "Dashboard: the Save day button is now large and modern with the day score as a pill beside it; the What you got done today panel has a backing card; an even gap between icon and text; the empty hole between the last block and the achievements block is gone."
+    ]},
     { version: "5.08", date: "2026-10-11 21:19", changes: [
         "Achievements: for a new account (first 14 days) the \"new achievement\" notification now arrives quickly — the check on any page runs about every 1.5 minutes instead of every 10. Before, the first actions (added a goal, moved to another page) stayed without a notification until the person opened Achievements themselves. Other accounts are unchanged. No migrations."
     ]},

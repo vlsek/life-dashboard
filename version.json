@@ -1,6 +1,13 @@
 {
-  "version": "5.08",
+  "version": "5.09",
   "en": [
+    {
+      "version": "5.09",
+      "date": "2026-10-12 00:21",
+      "changes": [
+        "Dashboard: the Save day button is now large and modern with the day score as a pill beside it; the What you got done today panel has a backing card; an even gap between icon and text; the empty hole between the last block and the achievements block is gone."
+      ]
+    },
     {
       "version": "5.08",
       "date": "2026-10-11 21:19",
@@ -3623,6 +3630,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.09",
+      "date": "2026-10-12 00:21",
+      "changes": [
+        "Главная: кнопка «Сохранить день» стала крупной и современной, итог дня — таблеткой рядом; у плашки «Что полезного сделал за день» появилась подложка; одинаковый зазор между значком и текстом; убрана пустая «дыра» между нижним блоком и блоком достижений."
+      ]
+    },
     {
       "version": "5.08",
       "date": "2026-10-11 21:19",
