@@ -53,7 +53,7 @@ const state: { rows: PauseRow[] | null; rpc: ReturnType<typeof vi.fn> } = { rows
 vi.mock('./lib/supabase', () => ({
   sb: {
     from: () => ({ select: () => ({ eq: () => ({ order: () => ({ limit: async () => (state.rows ? { data: state.rows, error: null } : { data: null, error: { message: 'no table' } }) }) }) }) }),
-    rpc: (...a: unknown[]) => state.rpc(...a),
+    rpc: (...a: unknown[]) => (state.rpc as unknown as (...x: unknown[]) => Promise<unknown>)(...a),
   },
 }))
 
