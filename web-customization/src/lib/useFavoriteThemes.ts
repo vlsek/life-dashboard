@@ -17,6 +17,8 @@ import {
 
 // Темы в «Кастомизации» (решение владельца 2026-10-04): все темы бесплатны; человек применяет любую и отмечает до 4 «любимых» —
 // только они попадают в выпадающий список тем в боковом меню. Хранится на устройстве (localStorage), без сервера.
+import { notifyThemeApplied } from './themeEvents'
+
 export function useFavoriteThemes() {
   const current = ref<ThemeKey>(getTheme())
   const favorites = ref<ThemeKey[]>(readFavoriteThemes())
@@ -50,6 +52,7 @@ export function useFavoriteThemes() {
     if (isLocked(key)) return
     setTheme(key)
     current.value = key
+    notifyThemeApplied() // боковое меню перечитает активную тему (не оставит прежнюю запись в списке)
   }
 
   // Страница знает полученные достижения точнее всего: после загрузки обновляем список открытых тем (его же читают шапка и меню).

@@ -5,6 +5,7 @@ import { getLang, setLang, t, type DictKey } from '../lib/i18n'
 import { FAVORITE_THEMES_EVENT, UNLOCKED_THEMES_EVENT, getTheme, setTheme, THEME_KEYS, visibleThemes, type ThemeKey } from '../lib/theme'
 import { logout } from '../lib/supabase'
 import ConfirmLogoutModal from './ConfirmLogoutModal.vue'
+import { THEME_APPLIED_EVENT } from '../lib/themeEvents'
 import { loadVersionInfo } from '../lib/version'
 import { handleInstallClick, isStandaloneApp } from '../lib/install'
 import InstallModal from './InstallModal.vue'
@@ -160,13 +161,20 @@ const themeOptions = computed(() => {
   return visibleThemes(themeVal.value)
 })
 const syncFavThemes = () => favTick.value++
+// Тему применили карточками на странице (не этим выбором): перечитываем активную и пересобираем список — старой записи не остаётся
+const syncAppliedTheme = () => {
+  themeVal.value = getTheme()
+  favTick.value++
+}
 onMounted(() => {
   window.addEventListener(FAVORITE_THEMES_EVENT, syncFavThemes)
   window.addEventListener(UNLOCKED_THEMES_EVENT, syncFavThemes)
+  window.addEventListener(THEME_APPLIED_EVENT, syncAppliedTheme)
 })
 onUnmounted(() => {
   window.removeEventListener(FAVORITE_THEMES_EVENT, syncFavThemes)
   window.removeEventListener(UNLOCKED_THEMES_EVENT, syncFavThemes)
+  window.removeEventListener(THEME_APPLIED_EVENT, syncAppliedTheme)
 })
 const lang = getLang()
 
@@ -374,6 +382,7 @@ onUnmounted(() => {
       class="mx-1 mt-2 rounded-lg border px-2 py-1.5 text-sm"
       style="background: var(--bg); color: var(--text); border-color: var(--border)"
       :value="themeVal"
+      data-test="sidebar-theme-select"
       @change="onThemeChange"
     >
       <option v-for="key in themeOptions" :key="key" :value="key">{{ t(THEME_KEYS[key] as DictKey) }}</option>
