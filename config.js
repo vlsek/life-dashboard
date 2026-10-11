@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.14";
+const SITE_VERSION = "5.15";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.15", date: "2026-10-12 00:42", changes: [
+        "Главная: единая шкала шрифтов — заголовки разделов и подразделов одного размера и начертания (раньше «Стрики» были жирнее остальных, а заголовки графиков — без заданного размера)."
+    ]},
     { version: "5.14", date: "2026-10-12 01:30", changes: [
         "Магазин: при добавлении НОВОЙ покупки появился выбор «Насколько масштабная покупка?» с примерами — мелочь (кофе), небольшая (ужин в кафе), заметная (кроссовки), крупная (билет на концерт), очень крупная (отпуск). Выбор подставляет «справедливую» цену по вашему среднему заработку в день, цену по-прежнему можно поправить руками. БЕЗ SQL."
     ]},
@@ -2152,6 +2155,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.15", date: "2026-10-12 00:42", changes: [
+        "Dashboard: one type scale — section and sub-section headings share size and weight (Streaks used to be bolder, chart titles had no set size)."
+    ]},
     { version: "5.14", date: "2026-10-12 01:30", changes: [
         "Shop: adding a NEW purchase now asks «How big is this purchase?» with examples — small treat (coffee), small (dinner at a café), notable (sneakers), big (concert ticket), very big (a holiday). Your pick fills in a «fair» price based on your average daily earnings; you can still edit the price. NO SQL."
     ]},

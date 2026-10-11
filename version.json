@@ -1,6 +1,13 @@
 {
-  "version": "5.14",
+  "version": "5.15",
   "en": [
+    {
+      "version": "5.15",
+      "date": "2026-10-12 00:42",
+      "changes": [
+        "Dashboard: one type scale — section and sub-section headings share size and weight (Streaks used to be bolder, chart titles had no set size)."
+      ]
+    },
     {
       "version": "5.14",
       "date": "2026-10-12 01:30",
@@ -3665,6 +3672,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.15",
+      "date": "2026-10-12 00:42",
+      "changes": [
+        "Главная: единая шкала шрифтов — заголовки разделов и подразделов одного размера и начертания (раньше «Стрики» были жирнее остальных, а заголовки графиков — без заданного размера)."
+      ]
+    },
     {
       "version": "5.14",
       "date": "2026-10-12 01:30",
