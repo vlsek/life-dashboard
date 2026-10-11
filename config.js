@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.86";
+const SITE_VERSION = "4.87";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.87", date: "2026-10-11 09:49", changes: [
+        "Тренировки: «+ подход» прямо в строке добавления записи. Повторное «Добавить» за день теперь дописывает подход в сегодняшнюю запись упражнения, а не создаёт вторую запись за ту же дату (так было раньше). Строка остаётся открытой, помнит значения прошлого подхода, показывает «Сегодня: N подх.», а кнопка меняется на «+ подход». Закрыть — ✕ или Esc. Без миграций."
+    ]},
     { version: "4.86", date: "2026-10-11 12:47", changes: [
         "«Кастомизация»: три платные анимации питья воды — «Дождь» (100), «Прилив» (150) и «Искры» (250). Надетая анимация играет при записи выпитого в шапке и на Дашборде и главнее бесплатного выбора. Нужна миграция 072 (цены в каталоге)."
     ]},
@@ -2068,6 +2071,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.87", date: "2026-10-11 09:49", changes: [
+        "Workouts: \"+ set\" right in the add-entry row. Pressing Add again on the same day now appends a set to today's entry of that exercise instead of creating a second entry for the same date (as it did before). The row stays open, remembers the previous set's values, shows \"Today: N sets\", and the button becomes \"+ set\". Close with ✕ or Esc. No migrations."
+    ]},
     { version: "4.86", date: "2026-10-11 12:47", changes: [
         "Customization: three paid drink-saved animations — Rain (100), Tide (150) and Sparkles (250). The equipped one plays when you log water in the header and on the Dashboard and overrides the free choice. Needs migration 072 (catalog prices)."
     ]},

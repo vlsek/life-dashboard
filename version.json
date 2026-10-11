@@ -1,6 +1,13 @@
 {
-  "version": "4.86",
+  "version": "4.87",
   "en": [
+    {
+      "version": "4.87",
+      "date": "2026-10-11 09:49",
+      "changes": [
+        "Workouts: \"+ set\" right in the add-entry row. Pressing Add again on the same day now appends a set to today's entry of that exercise instead of creating a second entry for the same date (as it did before). The row stays open, remembers the previous set's values, shows \"Today: N sets\", and the button becomes \"+ set\". Close with ✕ or Esc. No migrations."
+      ]
+    },
     {
       "version": "4.86",
       "date": "2026-10-11 12:47",
@@ -3469,6 +3476,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.87",
+      "date": "2026-10-11 09:49",
+      "changes": [
+        "Тренировки: «+ подход» прямо в строке добавления записи. Повторное «Добавить» за день теперь дописывает подход в сегодняшнюю запись упражнения, а не создаёт вторую запись за ту же дату (так было раньше). Строка остаётся открытой, помнит значения прошлого подхода, показывает «Сегодня: N подх.», а кнопка меняется на «+ подход». Закрыть — ✕ или Esc. Без миграций."
+      ]
+    },
     {
       "version": "4.86",
       "date": "2026-10-11 12:47",
