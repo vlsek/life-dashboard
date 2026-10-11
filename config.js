@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.01";
+const SITE_VERSION = "5.02";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.02", date: "2026-10-11 18:55", changes: [
+        "«Тренировки» → карта мышц → «Что можно делать»: женщинам «Шраги» теперь в конце списка с мягкой пометкой «обычно женщинам не нужно» (раньше предлагались наравне с остальными). Это только подсказка: упражнение по-прежнему можно вести любое. Пол берётся из профиля; если он не указан, всё как раньше. БЕЗ SQL."
+    ]},
     { version: "5.01", date: "2026-10-11 18:40", changes: [
         "Новая категория «Кастомизации» — «Вид стакана воды»: кружка (100), бутылка (150), колба (150) и бокал (250) заменяют обычный стакан в значке воды шапки и на Дашборде, вода наполняет именно эту форму. Обычный стакан остаётся бесплатным. ТРЕБУЕТСЯ SQL: миграция 073 (цены; до неё покупка отвечает «неизвестный предмет»)."
     ]},
@@ -2113,6 +2116,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.02", date: "2026-10-11 18:55", changes: [
+        "Workouts → muscle map → «Suggested exercises»: for women «Shrugs» now sit at the end of the list with a soft note «usually not needed for women» (they used to be suggested like the rest). It is only a hint: you can still log any exercise. The gender comes from your profile; if it is not set, nothing changes. NO SQL."
+    ]},
     { version: "5.01", date: "2026-10-11 18:40", changes: [
         "New Customization category «Water glass shape»: mug (100), bottle (150), flask (150) and goblet (250) replace the plain glass in the water badge in the header and on the Dashboard; the water fills that very shape. The plain glass stays free. SQL REQUIRED: migration 073 (prices; until then buying answers «unknown item»)."
     ]},

@@ -1,6 +1,13 @@
 {
-  "version": "5.01",
+  "version": "5.02",
   "en": [
+    {
+      "version": "5.02",
+      "date": "2026-10-11 18:55",
+      "changes": [
+        "Workouts → muscle map → «Suggested exercises»: for women «Shrugs» now sit at the end of the list with a soft note «usually not needed for women» (they used to be suggested like the rest). It is only a hint: you can still log any exercise. The gender comes from your profile; if it is not set, nothing changes. NO SQL."
+      ]
+    },
     {
       "version": "5.01",
       "date": "2026-10-11 18:40",
@@ -3574,6 +3581,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.02",
+      "date": "2026-10-11 18:55",
+      "changes": [
+        "«Тренировки» → карта мышц → «Что можно делать»: женщинам «Шраги» теперь в конце списка с мягкой пометкой «обычно женщинам не нужно» (раньше предлагались наравне с остальными). Это только подсказка: упражнение по-прежнему можно вести любое. Пол берётся из профиля; если он не указан, всё как раньше. БЕЗ SQL."
+      ]
+    },
     {
       "version": "5.01",
       "date": "2026-10-11 18:40",
