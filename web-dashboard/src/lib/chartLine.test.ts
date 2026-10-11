@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { CHART_ANIMS, CHART_ANIM_KEY, CHART_LINES, CHART_LINE_KEY, DEFAULT_CHART_ANIM, DEFAULT_CHART_LINE, lineDefs, monotonePath, readChartAnim, readChartLine, runParts, writeChartAnim, writeChartLine, type Pt } from './chartLine'
+import { CHART_ANIMS, CHART_ANIM_KEY, CHART_FORECAST_KEY, CHART_FORECASTS, CHART_LINES, CHART_LINE_KEY, DEFAULT_CHART_ANIM, DEFAULT_CHART_FORECAST, DEFAULT_CHART_LINE, FORECAST_DAYS, addDaysIso, lineDefs, monotonePath, readChartAnim, readChartForecast, readChartLine, runParts, trendForecast, writeChartAnim, writeChartForecast, writeChartLine, type Pt } from './chartLine'
 // @ts-ignore — в проекте нет типов node, а vitest выполняется в node
 import { readFileSync } from 'node:fs'
 import ChartBlock from '../components/ChartBlock.vue'
@@ -154,5 +154,102 @@ describe('анимация появления графика (BACKLOG 55.2 ср�
     expect(css).toMatch(/prefers-reduced-motion: reduce\) \{\s*\.chart-draw \.ch-line \{ animation: none; stroke-dashoffset: 0; \}/)
     expect(css).toMatch(/html\[data-motion='off'\] \.chart-draw \.ch-line \{ animation: none; stroke-dashoffset: 0; \}/)
     expect(css).toMatch(/html\[data-motion='off'\] \.chart-draw text,/)
+  })
+})
+
+describe('прогноз вперёд (BACKLOG 55.2 срез 6)', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+  })
+  const line = (ys: number[]): Pt[] => ys.map((y, i) => [i, y])
+
+  it('два режима; по умолчанию «off»; мусор игнорируется; запись работает', () => {
+    expect([...CHART_FORECASTS]).toEqual(['off', 'trend'])
+    expect(DEFAULT_CHART_FORECAST).toBe('off')
+    expect(readChartForecast()).toBe('off')
+    localStorage.setItem(CHART_FORECAST_KEY, 'zzz')
+    expect(readChartForecast()).toBe('off')
+    expect(writeChartForecast('trend')).toBe(true)
+    expect(readChartForecast()).toBe('trend')
+    expect(FORECAST_DAYS).toBe(3)
+  })
+
+  it('точный линейный ряд продолжается точно, от последней реальной точки', () => {
+    expect(trendForecast(line([0, 2, 4, 6, 8, 10]), 5, 3)).toEqual([12, 14, 16])
+    expect(trendForecast(line([20, 18, 16, 14, 12]), 4, 3)).toEqual([10, 8, 6])
+  })
+
+  it('плоский ряд даёт плоский прогноз; шум не ломает расчёт', () => {
+    expect(trendForecast(line([5, 5, 5, 5, 5]), 4, 3)).toEqual([5, 5, 5])
+    const f = trendForecast(line([10, 12, 9, 13, 11, 14, 12, 15]), 7, 3)!
+    expect(f).toHaveLength(3)
+    expect(f[2]).toBeGreaterThan(f[0]) // восходящий тренд
+    expect(f[0]).toBeGreaterThan(15) // продолжается от последней точки вверх
+  })
+
+  it('неотрицательные данные не уходят в минус; данные с отрицательными значениями — уходят', () => {
+    expect(trendForecast(line([8, 6, 4, 2, 1]), 4, 3)!.every((v) => v >= 0)).toBe(true)
+    expect(trendForecast(line([8, 6, 4, 2, 1]), 4, 3)).toEqual([0, 0, 0])
+    expect(trendForecast(line([4, 2, 0, -2, -4]), 4, 3)).toEqual([-6, -8, -10])
+  })
+
+  it('дни с пропусками: шаг считается по номерам дней, а не по числу точек', () => {
+    expect(trendForecast([[0, 0], [2, 4], [4, 8], [6, 12]], 6, 3)).toEqual([14, 16, 18])
+  })
+
+  it('мало данных (<4 точек) или данные остыли (последняя точка старше 2 дней) — прогноза нет', () => {
+    expect(trendForecast(line([1, 2, 3]), 2, 3)).toBeNull()
+    expect(trendForecast(line([1, 2, 3, 4]), 6, 3)).toBeNull() // последняя точка — день 3, график до дня 6
+    expect(trendForecast(line([1, 2, 3, 4]), 5, 3)).not.toBeNull() // разрыв 2 дня — ещё можно
+  })
+
+  it('учитываются только последние 14 точек', () => {
+    const ys = [...Array(10).fill(100), ...line([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]).map(([, y]) => y)]
+    expect(trendForecast(line(ys), ys.length - 1, 3)).toEqual([14, 15, 16])
+  })
+
+  it('addDaysIso: переходы через конец месяца и года', () => {
+    expect(addDaysIso('2026-10-31', 1)).toBe('2026-11-01')
+    expect(addDaysIso('2026-12-31', 1)).toBe('2027-01-01')
+    expect(addDaysIso('2026-02-28', 1)).toBe('2026-03-01')
+  })
+
+  it('ChartBlock: по умолчанию прогноза нет', () => {
+    const html = mountChart([4, 6, 8, 10, 12]).find('[data-test="chart-svg"]').html()
+    expect(html).not.toContain('chart-forecast')
+    expect(html).not.toContain('прогноз')
+  })
+
+  it('ChartBlock с chart_forecast=trend: пунктир, пустой кружок и подпись «прогноз», шаг по X сжимается, сводка упоминает прогноз', () => {
+    const base = mountChart([4, 6, 8, 10, 12])
+    const x0 = Number(base.find('[data-test="chart-svg"] circle').attributes('cx'))
+    const x1base = Number(base.findAll('[data-test="chart-svg"] circle')[1].attributes('cx'))
+    localStorage.setItem(CHART_FORECAST_KEY, 'trend')
+    const w = mountChart([4, 6, 8, 10, 12])
+    const svg = w.find('[data-test="chart-svg"]')
+    expect(svg.find('polyline[data-test="chart-forecast"]').exists()).toBe(true)
+    expect(svg.html()).toContain('прогноз 18')
+    const dots = svg.findAll('circle')
+    expect(Number(dots[1].attributes('cx')) - Number(dots[0].attributes('cx'))).toBeLessThan(x1base - x0) // шаг уже: место под 3 дня прогноза
+    const pts = svg.find('polyline[data-test="chart-forecast"]').attributes('points')!.split(' ')
+    expect(pts).toHaveLength(4) // последняя реальная точка + 3 дня
+    expect(Math.max(...pts.map((p) => Number(p.split(',')[0])))).toBeLessThanOrEqual(586) // не выходит за поле графика
+    expect(w.find('[data-test="chart-summary"]').text()).toContain('прогноз')
+  })
+
+  it('ChartBlock с прогнозом: подсказка и клавиатура работают только по реальным точкам', async () => {
+    localStorage.setItem(CHART_FORECAST_KEY, 'trend')
+    const w = mountChart([4, 6, 8, 10, 12])
+    const svgEl = w.find('[data-test="chart-svg"]')
+    await svgEl.trigger('keydown', { key: 'End' })
+    expect(w.find('[data-test="chart-tip"]').text()).toContain(': 12')
+    await svgEl.trigger('keydown', { key: 'ArrowRight' })
+    expect(w.find('[data-test="chart-tip"]').text()).toContain(': 12') // дальше реальных точек не уходит
+  })
+
+  it('ChartBlock: мало точек — прогноза нет даже при включённой опции', () => {
+    localStorage.setItem(CHART_FORECAST_KEY, 'trend')
+    expect(mountChart([4, 6, 8]).find('[data-test="chart-svg"]').html()).not.toContain('chart-forecast')
   })
 })

@@ -127,3 +127,37 @@ describe('Анимация появления графика в «Кастоми
     expect(w.find('[data-testid="anim-none"]').attributes('data-active')).toBe('true')
   })
 })
+
+describe('Прогноз на графике в «Кастомизации» (BACKLOG 55.2 срез 6)', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+  })
+
+  it('две карточки; по умолчанию «Без прогноза»; выбор «Тренд на 3 дня» пишет chart_forecast и не трогает остальное', async () => {
+    const w = mount(ChartMarkerPicker)
+    expect(w.findAll('[data-testid^="forecast-"][data-active]')).toHaveLength(2)
+    expect(w.find('[data-testid="forecast-off"]').attributes('data-active')).toBe('true')
+    expect(w.find('[data-testid="forecast-trend"]').text()).toContain('Тренд на 3 дня')
+    await w.find('[data-testid="forecast-trend"] [data-testid="forecast-choose"]').trigger('click')
+    expect(localStorage.getItem('chart_forecast')).toBe('trend')
+    expect(w.find('[data-testid="forecast-trend"]').attributes('data-active')).toBe('true')
+    expect(w.find('[data-testid="forecast-trend"] button').attributes('disabled')).toBeDefined()
+    expect(localStorage.getItem('chart_line')).toBeNull()
+    expect(localStorage.getItem('chart_anim')).toBeNull()
+  })
+
+  it('без хранилища — сообщение, выбор не меняется', async () => {
+    const w = mount(ChartMarkerPicker)
+    const spy = vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
+      throw new Error('denied')
+    })
+    try {
+      await w.find('[data-testid="forecast-trend"] [data-testid="forecast-choose"]').trigger('click')
+    } finally {
+      spy.mockRestore()
+    }
+    expect(w.find('[data-testid="forecast-save-error"]').exists()).toBe(true)
+    expect(w.find('[data-testid="forecast-off"]').attributes('data-active')).toBe('true')
+  })
+})

@@ -122,3 +122,72 @@ export function writeChartAnim(v: ChartAnim): boolean {
     return false
   }
 }
+
+// ── Прогноз вперёд (55.2 срез 6) ─────────────────────────────────────────────────────────────────────────────────────
+// «off» — по умолчанию (как раньше); «trend» — от последней точки пунктиром на 3 дня вперёд по линейному тренду последних точек.
+// Это не предсказание, а продолжение тренда: график подписывает его «прогноз» и рисует приглушённым пунктиром с пустым кружком.
+export const CHART_FORECASTS = ['off', 'trend'] as const
+export type ChartForecast = (typeof CHART_FORECASTS)[number]
+export const DEFAULT_CHART_FORECAST: ChartForecast = 'off'
+export const CHART_FORECAST_KEY = 'chart_forecast'
+export const FORECAST_DAYS = 3
+
+export const isChartForecast = (v: unknown): v is ChartForecast => (CHART_FORECASTS as readonly unknown[]).includes(v)
+
+export function readChartForecast(): ChartForecast {
+  try {
+    const stored = localStorage.getItem(CHART_FORECAST_KEY)
+    if (isChartForecast(stored)) return stored
+  } catch {
+    /* нет localStorage — по умолчанию */
+  }
+  return DEFAULT_CHART_FORECAST
+}
+
+// true, если выбор удалось запомнить.
+export function writeChartForecast(v: ChartForecast): boolean {
+  try {
+    localStorage.setItem(CHART_FORECAST_KEY, v)
+    return true
+  } catch {
+    return false
+  }
+}
+
+// Прогноз на `steps` дней вперёд. pts — [номер дня, значение] только для дней с данными (по возрастанию), lastDay — номер последнего дня графика.
+// Наклон — метод наименьших квадратов по последним `window` точкам; значения продолжаются ОТ последней реальной точки (без скачка).
+// null — прогнозировать нечего: мало данных (<4 точек) или данные «остыли» (последняя точка старше maxGap дней).
+// Если все значения неотрицательны (повторения, граммы), прогноз не опускается ниже нуля.
+export function trendForecast(pts: Pt[], lastDay: number, steps: number, maxGap = 2, window = 14): number[] | null {
+  const recent = pts.slice(-window)
+  if (recent.length < 4) return null
+  const [lastX, lastY] = recent[recent.length - 1]
+  if (lastDay - lastX > maxGap) return null
+  const n = recent.length
+  let sx = 0
+  let sy = 0
+  let sxx = 0
+  let sxy = 0
+  for (const [x, y] of recent) {
+    sx += x
+    sy += y
+    sxx += x * x
+    sxy += x * y
+  }
+  const den = n * sxx - sx * sx
+  const slope = den === 0 ? 0 : (n * sxy - sx * sy) / den
+  const nonNegative = recent.every(([, y]) => y >= 0)
+  const out: number[] = []
+  for (let k = 1; k <= steps; k++) {
+    const y = lastY + slope * k
+    out.push(Math.round((nonNegative ? Math.max(0, y) : y) * 10) / 10)
+  }
+  return out
+}
+
+// Следующий день после даты «ГГГГ-ММ-ДД» (UTC, без часовых поясов).
+export function addDaysIso(date: string, days: number): string {
+  const d = new Date(date + 'T00:00:00Z')
+  d.setUTCDate(d.getUTCDate() + days)
+  return d.toISOString().slice(0, 10)
+}
