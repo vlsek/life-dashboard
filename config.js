@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.79";
+const SITE_VERSION = "4.80";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.80", date: "2026-10-11 07:14", changes: [
+        "Новая «большая» тема «Бархатные сумерки» (Velvet Dusk): уютный тёмный грифельный фон с персиковым, розовым и бирюзовым, крупные скругления 12–16 px, плавные пружинные анимации и ни капли неонового свечения. Включается в «Кастомизации» и в настройках шапки; открыта всем",
+    ]},
     { version: "4.79", date: "2026-10-11 07:13", changes: [
         "«Кастомизация»: страница разбита на вкладки — Темы, Маркеры графиков, Заставка, Огонёк серии, Рамки аватарки, Спидометры и другие разделы; открыт один раздел за раз. Последняя вкладка «Все» возвращает прежнюю длинную ленту. Выбранная вкладка запоминается."
     ]},
@@ -2047,6 +2050,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.80", date: "2026-10-11 07:14", changes: [
+        "New big theme Velvet Dusk: a cozy dark slate background with peach, pink and teal, large 12-16 px corners, smooth springy animations and not a drop of neon glow. Pick it in Customization or the header settings; open to everyone",
+    ]},
     { version: "4.79", date: "2026-10-11 07:13", changes: [
         "Customization: the page is split into tabs — Themes, Chart markers, Loading screen, Streak flame, Avatar frames, Gauges and the other sections; one section is shown at a time. The last tab, All, brings back the old long list. The chosen tab is remembered."
     ]},
