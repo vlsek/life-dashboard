@@ -52,32 +52,35 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
   <article class="goal-card relative rounded-xl border p-3" :class="{ 'goal-card-saved': saved }" style="border-color: var(--border); background: var(--bg-card)" data-test="goal-card">
     <SavedTick :show="!!saved" />
     <div class="flex items-start gap-3">
-      <!-- простая цель: круглая галочка -->
-      <button
-        v-if="!multi"
-        type="button"
-        role="checkbox"
-        :aria-checked="goal.done"
-        :aria-label="t('goals_mark_done_aria')"
-        class="goal-check mt-0.5 shrink-0"
-        :class="{ 'goal-check-on': goal.done }"
-        data-test="goal-check"
-        @click="emit('toggle')"
-      >
-        <Icon v-if="goal.done" name="check" />
-      </button>
-      <!-- многоэтапная: процент кольцом-цифрой -->
-      <div v-else class="goal-percent mt-0.5 shrink-0" data-test="goal-percent" aria-hidden="true">{{ percent }}%</div>
+      <!-- левая колонка фиксированной ширины (58.8): кружок простой цели и кольцо процента встают по центру одной колонки, заголовки всех карточек начинаются с одного отступа -->
+      <div class="goal-lead mt-0.5" data-test="goal-lead">
+        <!-- простая цель: круглая галочка -->
+        <button
+          v-if="!multi"
+          type="button"
+          role="checkbox"
+          :aria-checked="goal.done"
+          :aria-label="t('goals_mark_done_aria')"
+          class="goal-check shrink-0"
+          :class="{ 'goal-check-on': goal.done }"
+          data-test="goal-check"
+          @click="emit('toggle')"
+        >
+          <Icon v-if="goal.done" name="check" />
+        </button>
+        <!-- многоэтапная: процент кольцом-цифрой -->
+        <div v-else class="goal-percent shrink-0" data-test="goal-percent" aria-hidden="true">{{ percent }}%</div>
+      </div>
 
       <div class="min-w-0 flex-1">
-        <div class="flex items-start justify-between gap-2">
-          <h4 class="m-0 break-words text-base font-medium" :class="{ 'done-text line-through opacity-60': goal.done }" data-test="goal-name">{{ goal.name }}</h4>
-          <span class="whitespace-nowrap rounded-full border px-2 py-0.5 text-xs" style="border-color: var(--border)" data-test="goal-points">{{ goal.points ?? 5 }} <CoinIcon /></span>
-        </div>
+        <!-- отступ справа только у заголовка: под кнопками действий (в углу карточки), чипы и прогресс идут на всю ширину -->
+        <h4 class="goal-title m-0 break-words text-base font-medium" :class="{ 'done-text line-through opacity-60': goal.done }" data-test="goal-name">{{ goal.name }}</h4>
 
-        <div v-if="diffChip || deadlineChip" class="mt-1 flex flex-wrap gap-1.5 text-xs">
+        <!-- чипы: сложность и срок слева, баллы справа в той же строке (58.8: раньше баллы сжимали заголовок и оставляли пустоту справа) -->
+        <div class="mt-1 flex flex-wrap items-center gap-1.5 text-xs" data-test="goal-chips">
           <span v-if="diffChip" class="whitespace-nowrap rounded-full border px-2 py-0.5" :style="{ borderColor: diffChip.color, color: diffChip.color }" data-test="goal-diff">{{ diffChip.text }}</span>
           <span v-if="deadlineChip" class="whitespace-nowrap rounded-full border px-2 py-0.5" :style="{ borderColor: deadlineChip.color, color: deadlineChip.color }" data-test="goal-deadline">{{ deadlineChip.text }}</span>
+          <span class="ml-auto whitespace-nowrap rounded-full border px-2 py-0.5" style="border-color: var(--border)" data-test="goal-points">{{ goal.points ?? 5 }} <CoinIcon /></span>
         </div>
 
         <!-- прогресс этапов -->
@@ -122,7 +125,7 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
         </button>
       </div>
 
-      <div class="flex shrink-0 gap-0.5">
+      <div class="goal-actions flex gap-0.5" data-test="goal-actions">
         <button type="button" class="secondary" :style="iconBtn" :title="t('goals_edit_aria')" :aria-label="t('goals_edit_aria')" data-test="goal-edit" @click="emit('edit')"><Icon name="edit" /></button>
         <button type="button" class="danger" :style="iconBtn" :title="t('goals_delete_aria')" :aria-label="t('goals_delete_aria')" data-test="goal-delete" @click="emit('delete')"><Icon name="trash" /></button>
       </div>
@@ -150,6 +153,21 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
 </template>
 
 <style scoped>
+.goal-actions {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+.goal-title {
+  padding-right: 4.4rem;
+  min-height: 1.9rem; /* не ниже кнопок действий в углу: чипы под коротким заголовком не залезают под них */
+}
+.goal-lead {
+  display: flex;
+  width: 2.5rem;
+  flex-shrink: 0;
+  justify-content: center;
+}
 .goal-card-saved {
   animation: goal-card-saved 0.9s ease-out;
 }

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.09";
+const SITE_VERSION = "5.10";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.10", date: "2026-10-12 11:00", changes: [
+        "Цели: поправлена вёрстка карточек. Заголовки теперь начинаются с одного отступа и у целей с процентом, и у простых целей с кружком; баллы переехали в строку чипов (сложность, срок, баллы), поэтому длинное название занимает до трёх строк вместо четырёх; кнопки «изменить» и «удалить» в углу карточки больше не отнимают ширину у чипов и прогресса; чипы не залезают под кнопки у коротких названий. Без миграций."
+    ]},
     { version: "5.09", date: "2026-10-12 00:21", changes: [
         "Главная: кнопка «Сохранить день» стала крупной и современной, итог дня — таблеткой рядом; у плашки «Что полезного сделал за день» появилась подложка; одинаковый зазор между значком и текстом; убрана пустая «дыра» между нижним блоком и блоком достижений."
     ]},
@@ -2137,6 +2140,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.10", date: "2026-10-12 11:00", changes: [
+        "Goals: card layout polished. Titles now start at the same indent for goals with a percent ring and simple goals with a circle; points moved into the chips row (difficulty, deadline, points) so a long name takes up to three lines instead of four; the edit and delete buttons in the card corner no longer take width from the chips and progress bar; chips no longer slide under the buttons for short names. No migrations."
+    ]},
     { version: "5.09", date: "2026-10-12 00:21", changes: [
         "Dashboard: the Save day button is now large and modern with the day score as a pill beside it; the What you got done today panel has a backing card; an even gap between icon and text; the empty hole between the last block and the achievements block is gone."
     ]},
