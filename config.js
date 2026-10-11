@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.04";
+const SITE_VERSION = "5.05";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.05", date: "2026-10-11 18:48", changes: [
+        "«Тренировки»: выровнены отступы — единый ритм внутри карточки упражнения (шапка, подсказки, рекорд, график, список записей), переключатель «Мужская / Женская» теперь слева, как остальные элементы."
+    ]},
     { version: "5.04", date: "2026-10-11 18:45", changes: [
         "Карта мышц: женская модель стала по-настоящему женской — тонкая талия, широкие бёдра, узкие плечи, руки отведены от корпуса, чтобы талия была видна. «Кастомизация»: примеры анимаций воды идут сразу в плитках, как у огонька стрика, — кнопки «Показать» убраны."
     ]},
@@ -2122,6 +2125,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.05", date: "2026-10-11 18:48", changes: [
+        "Workouts: spacing evened out — one rhythm inside the exercise card (header, hints, record, chart, entries list); the Male / Female switch now sits on the left like the other controls."
+    ]},
     { version: "5.04", date: "2026-10-11 18:45", changes: [
         "Muscle map: the female body model is now truly feminine — a slim waist, wide hips, narrow shoulders, arms held away from the torso so the waist shows. Customization: water animation examples now play right in the tiles, like the streak flame — the Show buttons are gone."
     ]},

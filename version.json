@@ -1,6 +1,13 @@
 {
-  "version": "5.04",
+  "version": "5.05",
   "en": [
+    {
+      "version": "5.05",
+      "date": "2026-10-11 18:48",
+      "changes": [
+        "Workouts: spacing evened out — one rhythm inside the exercise card (header, hints, record, chart, entries list); the Male / Female switch now sits on the left like the other controls."
+      ]
+    },
     {
       "version": "5.04",
       "date": "2026-10-11 18:45",
@@ -3595,6 +3602,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.05",
+      "date": "2026-10-11 18:48",
+      "changes": [
+        "«Тренировки»: выровнены отступы — единый ритм внутри карточки упражнения (шапка, подсказки, рекорд, график, список записей), переключатель «Мужская / Женская» теперь слева, как остальные элементы."
+      ]
+    },
     {
       "version": "5.04",
       "date": "2026-10-11 18:45",
