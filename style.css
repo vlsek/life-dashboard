@@ -734,6 +734,32 @@ html.theme-alpine {
   --chart-none: #6b7280;
   --chart-other: #9095a0;
 }
+
+html.theme-matcha {
+  --bg: #f4f4f0;
+  --bg-card: #fffefb;
+  --border: #d9d6c8;
+  --text: #33382f;
+  --text-dim: #686d5e;
+  --accent: #4f7a5c;
+  --accent-text: #ffffff;
+  --success: #3f7a4f;
+  --danger: #b3402f;
+  --hist-ok: #5f8a6c;
+  --water-top: #3f95e0;
+  --water-bottom: #1560b8;
+  --water-line: #1560b8;
+  --chart-1: #4f7a5c;
+  --chart-2: #1d5aaf;
+  --chart-3: #af291d;
+  --chart-4: #a0731a;
+  --chart-5: #721daf;
+  --chart-6: #1b9ba7;
+  --chart-7: #af1d72;
+  --chart-8: #291daf;
+  --chart-none: #6b7280;
+  --chart-other: #8a909c;
+}
 html.theme-nord,
 html.theme-mocha,
 html.theme-amoled,
@@ -759,7 +785,8 @@ html.theme-lavender,
 html.theme-sky,
 html.theme-peach,
 html.theme-graphite,
-html.theme-alpine { color-scheme: light; }
+html.theme-alpine,
+html.theme-matcha { color-scheme: light; }
 /* themes:end */
 
 /* design-tokens:start (генерируется scripts/apply_themes.py — не править руками; BACKLOG 50.1а) */
@@ -890,6 +917,23 @@ html.theme-alpine {
   --radius-control: 6px;
   --shadow-card: none;
   --shadow-active: none;
+}
+
+/* большая тема: matcha */
+html.theme-matcha {
+  --radius-card: 16px;
+  --radius-modal: 16px;
+  --radius-control: 12px;
+  --shadow-card: 0 8px 28px rgba(110, 96, 60, 0.14);
+}
+html.theme-matcha .card, html.theme-matcha .modal, html.theme-matcha [style*="var(--bg-card)"] { box-shadow: var(--shadow-card); }
+html[data-simple='on'].theme-matcha {
+  --shadow-card: none;
+}
+@media (prefers-contrast: more) {
+  html.theme-matcha {
+    --shadow-card: none;
+  }
 }
 /* design-tokens:end */
 

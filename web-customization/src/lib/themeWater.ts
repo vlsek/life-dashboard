@@ -8,4 +8,5 @@ export const THEME_WATER: Record<string, 'wave' | 'drops' | 'ripple'> = {
   velvet: 'drops',
   frost: 'ripple',
   alpine: 'wave',
+  matcha: 'drops',
 }

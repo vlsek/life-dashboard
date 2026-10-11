@@ -28,6 +28,7 @@ describe('«Простое оформление»: CSS гасит эффекты
     phosphor: ['--scanlines: none;'],
     nightfall: ['--shadow-card: none;', '--shadow-active: 0 0 0 2px #bb9af7;'],
     frost: ['--bg-pattern: none;'],
+    matcha: ['--shadow-card: none;'], // светлая «пушистая»: рассеянная тёплая тень карточек (BACKLOG 57.7)
   }
   for (const f of [...pilots.map((d: string) => d + '/src/style.css'), 'style.css']) {
     it(f + ': блоки html[data-simple="on"].theme-* внутри design-tokens', () => {

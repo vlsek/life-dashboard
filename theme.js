@@ -29,6 +29,7 @@ const THEME_KEYS = {
     velvet: "theme_velvet",
     frost: "theme_frost",
     alpine: "theme_alpine",
+    matcha: "theme_matcha",
 };
 
 // Цвета фона по темам — держим в синхронизации с --bg из style.css
@@ -63,6 +64,7 @@ const THEME_BG_COLORS = {
     velvet: "#1e1e2e",
     frost: "#2e3440",
     alpine: "#f8f9fc",
+    matcha: "#f4f4f0",
 };
 
 function getTheme() {

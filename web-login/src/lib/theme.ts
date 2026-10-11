@@ -31,6 +31,7 @@ export const THEME_KEYS = {
   velvet: 'theme_velvet',
   frost: 'theme_frost',
   alpine: 'theme_alpine',
+  matcha: 'theme_matcha',
 } as const
 
 export type ThemeKey = keyof typeof THEME_KEYS
@@ -69,6 +70,7 @@ const THEME_BG_COLORS: Record<ThemeKey, string> = {
   velvet: '#1e1e2e',
   frost: '#2e3440',
   alpine: '#f8f9fc',
+  matcha: '#f4f4f0',
 }
 
 export function getTheme(): ThemeKey {

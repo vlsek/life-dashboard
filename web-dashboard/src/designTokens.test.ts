@@ -127,10 +127,10 @@ describe('большая тема emerald: характер', () => {
   it('при prefers-reduced-motion анимации темы мгновенные (только у Tailwind-страниц)', () => {
     for (const d of pilots) expect(read(d + '/src/style.css')).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-emerald \{\s*--default-transition-duration: 0s;/)
   })
-  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine) — остальные темы не переопределены', () => {
+  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine, matcha) — остальные темы не переопределены', () => {
     for (const f of files) {
       const region = read(f).match(REGION)![0]
-      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine'])
+      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha'])
     }
   })
 })
@@ -392,5 +392,46 @@ describe('большая тема alpine (светлая): характер', ()
     expect([get('bg'), get('bg-card'), get('accent')]).toEqual(['#f8f9fc', '#ffffff', '#4c6f99'])
     const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
     expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).not.toContain('alpine')
+  })
+})
+
+// BACKLOG 57.7 (файл 1, тема 2): светлая Matcha Latte — крупные скругления, «пушистые» тёплые тени карточек, гладкие анимации; «Простое оформление» тень убирает.
+describe('большая тема matcha (светлая): характер', () => {
+  const block = (css: string): string => {
+    const m = css.match(/\/\* большая тема: matcha \*\/\nhtml\.theme-matcha \{[^}]*\}/)
+    expect(m, 'нет блока характера').not.toBeNull()
+    return m![0]
+  }
+  for (const d of pilots) {
+    it(d + ': крупные скругления, рассеянная тёплая тень, гладкая анимация, отключение тени', () => {
+      const css = read(d + '/src/style.css')
+      const b = block(css)
+      expect([decl(b, '--radius-md'), decl(b, '--radius-lg'), decl(b, '--radius-xl'), decl(b, '--radius-2xl')]).toEqual(['10px', '12px', '16px', '20px'])
+      expect(decl(b, '--shadow-card')).toBe('0 8px 28px rgba(110, 96, 60, 0.14)')
+      expect(decl(b, '--default-transition-timing-function')).toBe('cubic-bezier(0.25, 0.8, 0.25, 1)')
+      expect(css).toMatch(/html\[data-simple='on'\]\.theme-matcha \{\s*--shadow-card: none;/)
+      expect(css).toMatch(/@media \(prefers-contrast: more\) \{\s*html\.theme-matcha \{\s*--shadow-card: none;/)
+      expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-matcha \{\s*--default-transition-duration: 0s;/)
+    })
+  }
+  it('корень: 16/16/12 и та же тень', () => {
+    const b = block(read('style.css'))
+    expect([decl(b, '--radius-card'), decl(b, '--radius-modal'), decl(b, '--radius-control')]).toEqual(['16px', '16px', '12px'])
+    expect(decl(b, '--shadow-card')).toBe('0 8px 28px rgba(110, 96, 60, 0.14)')
+  })
+  it('одно правило под html.theme-matcha: тень карточек (.card, .modal, инлайновый var(--bg-card))', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      expect(region.split('\n').filter((l) => l.startsWith('html.theme-matcha ') && l.includes('{ ')), f).toEqual([
+        'html.theme-matcha .card, html.theme-matcha .modal, html.theme-matcha [style*="var(--bg-card)"] { box-shadow: var(--shadow-card); }',
+      ])
+    }
+  })
+  it('светлая тёплая палитра: кремовый фон, тёплые белые карточки, чайно-зелёный акцент; белая галочка читается (в списке тёмной нет)', () => {
+    const css = read('web-dashboard/src/style.css')
+    const get = (name: string) => css.match(new RegExp('html\\.theme-matcha \\{[^}]*--' + name + ':\\s*(#[0-9a-fA-F]{6})'))![1].toLowerCase()
+    expect([get('bg'), get('bg-card'), get('accent')]).toEqual(['#f4f4f0', '#fffefb', '#4f7a5c'])
+    const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
+    expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).not.toContain('matcha')
   })
 })

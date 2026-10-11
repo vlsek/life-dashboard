@@ -43,4 +43,5 @@ export const THEME_PREVIEW: Record<ThemeKey, ThemePreview> = {
   velvet: { bg: '#1e1e2e', card: '#252536', accent: '#fab387', text: '#cdd6f4', success: '#a6e3a1', water: '#63b3f5', kind: 'dark' },
   frost: { bg: '#2e3440', card: '#3b4252', accent: '#88c0d0', text: '#eceff4', success: '#a3be8c', water: '#7cc4ff', kind: 'dark' },
   alpine: { bg: '#f8f9fc', card: '#ffffff', accent: '#4c6f99', text: '#2e3440', success: '#3b7d57', water: '#3f95e0', kind: 'light' },
+  matcha: { bg: '#f4f4f0', card: '#fffefb', accent: '#4f7a5c', text: '#33382f', success: '#3f7a4f', water: '#3f95e0', kind: 'light' },
 }

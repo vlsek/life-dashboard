@@ -71,3 +71,9 @@ describe('честные подписи: плоские карточки и зе
     expect(THEME_TRAITS.alpine).toEqual(['palette', 'flat_cards', 'smooth_anim'])
   })
 })
+
+describe('matcha (светлая «пушистая»)', () => {
+  it('цвета, мягкие скругления, мягкие тени, гладкая анимация — и без «плоских карточек»', () => {
+    expect(THEME_TRAITS.matcha).toEqual(['palette', 'corners_soft', 'soft_shadows', 'smooth_anim'])
+  })
+})

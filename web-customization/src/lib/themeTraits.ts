@@ -10,4 +10,5 @@ export const THEME_TRAITS: Record<string, ThemeTrait[]> = {
   velvet: ['palette', 'corners_soft', 'flat_cards', 'bouncy_anim'],
   frost: ['palette', 'flat_cards', 'grain', 'smooth_anim'],
   alpine: ['palette', 'flat_cards', 'smooth_anim'],
+  matcha: ['palette', 'corners_soft', 'soft_shadows', 'smooth_anim'],
 }

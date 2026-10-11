@@ -50,6 +50,8 @@ P={
  'frost':('dark','🧊 Nord Frost','🧊 Арктический иней',dict(bg='#2e3440',card='#3b4252',border='#667391',text='#eceff4',dim='#b8c2d4',accent='#88c0d0',at='#2e3440',ok='#a3be8c',bad='#e8838d',hist='#a3be8c',**NORD_W)),
  # --- BACKLOG 57.7 (файл 1, тема 1): первая СВЕТЛАЯ «большая тема» — Paper Alpine / Nord Light (скандинавский минимализм: холодный молочный фон, белые матовые карточки, без теней) ---
  'alpine':('light','🏔️ Paper Alpine','🏔️ Альпийская бумага',dict(bg='#f8f9fc',card='#ffffff',border='#cfd6e4',text='#2e3440',dim='#5b6577',accent='#4c6f99',at='#ffffff',ok='#3b7d57',bad='#b4424d',hist='#4f9a6a',**LIGHT_W)),
+ # --- BACKLOG 57.7 (файл 1, тема 2): Matcha Latte / Matcha & Cream — уютная органическая светлая (кремовый фон, чайно-зелёный акцент, карамельная вторая краска, пушистые тёплые тени) ---
+ 'matcha':('light','🍵 Matcha Latte','🍵 Матча-латте',dict(bg='#f4f4f0',card='#fffefb',border='#d9d6c8',text='#33382f',dim='#686d5e',accent='#4f7a5c',at='#ffffff',ok='#3f7a4f',bad='#b3402f',hist='#5f8a6c',**LIGHT_W)),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
 
@@ -214,6 +216,26 @@ CHAR = {
   --shadow-active: none;''',
         reduced='  --default-transition-duration: 0s;',
     ),
+    # Уютная органическая светлая тема: крупные скругления, «пушистые» рассеянные тёплые тени карточек (как будто парят над бумагой), гладкие анимации.
+    # По выбору «Простое оформление» (и при prefers-contrast: more) тень убирается.
+    'matcha': dict(
+        tw='''  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --shadow-card: 0 8px 28px rgba(110, 96, 60, 0.14);
+  --default-transition-duration: 0.2s;
+  --default-transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);''',
+        root='''  --radius-card: 16px;
+  --radius-modal: 16px;
+  --radius-control: 12px;
+  --shadow-card: 0 8px 28px rgba(110, 96, 60, 0.14);''',
+        rules=[
+            (['.card', '.modal', '[style*="var(--bg-card)"]'], 'box-shadow: var(--shadow-card);'),
+        ],
+        reduced='  --default-transition-duration: 0s;',
+        contrast='  --shadow-card: none;',
+    ),
 }
 assert all(k in P for k in CHAR)
 
@@ -221,14 +243,14 @@ assert all(k in P for k in CHAR)
 # вариант вручную в «Настройках» шапки (ручной выбор главнее). Словарь ОТДЕЛЬНО от CHAR; тема без записи = спокойная волна. Генератор apply_themes.py
 # пишет из него `themeWater.ts` в web-header и web-dashboard. Подбор по характеру темы: HUD и терминал — «рябь» (расходящиеся круги, как скан),
 # синтвейв — «капли» (пружинные), спокойная ночная — «волна».
-THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave', 'velvet': 'drops', 'frost': 'ripple', 'alpine': 'wave'}
+THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave', 'velvet': 'drops', 'frost': 'ripple', 'alpine': 'wave', 'matcha': 'drops'}
 assert all(k in CHAR for k in THEME_WATER) and all(v in ('wave', 'drops', 'ripple') for v in THEME_WATER.values())
 
 # Заставка загрузки (лоадер страниц) у больших тем (BACKLOG 55.5, срез 2): вариант из реестра SPLASH_VARIANTS (classic | flame | ring | tongues) — действует,
 # ЕСЛИ вариант не выбран вручную (ручной выбор и `?splash=` главнее). Тема без записи = «живое пламя». Генератор пишет `themeLoader.ts` и вставляет
 # запасной вариант в скрипт выбора заставки во всех web-*/index.html (статичная заставка берёт его до загрузки бандла). Подбор по характеру: HUD —
 # «кольцо» (скан), синтвейв — «три языка» (неоновое пламя), терминал — «классика» (простая), спокойная ночная — «живое пламя».
-THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame', 'velvet': 'flame', 'frost': 'ring', 'alpine': 'classic'}
+THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame', 'velvet': 'flame', 'frost': 'ring', 'alpine': 'classic', 'matcha': 'flame'}
 assert all(k in CHAR for k in THEME_LOADER) and all(v in ('classic', 'flame', 'ring', 'tongues') for v in THEME_LOADER.values())
 
 # Темы-награды (решение владельца 2026-10-06): тема → ключ достижения, НАГРАДОЙ за которое она открывается (4-я, самая трудная ступень

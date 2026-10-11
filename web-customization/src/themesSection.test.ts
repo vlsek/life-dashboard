@@ -69,11 +69,11 @@ describe('любимые темы: логика', () => {
 })
 
 describe('страница «Кастомизация»: раздел «Темы»', () => {
-  it('показывает все 30 тем, отмечены любимые по умолчанию, счётчик «4 из 4»', async () => {
+  it('показывает все 31 тему, отмечены любимые по умолчанию, счётчик «4 из 4»', async () => {
     const w = mount(App)
     await flushPromises()
     const cards = w.findAll('[data-section="themes"] [data-testid^="theme-"][data-active]')
-    expect(cards).toHaveLength(30)
+    expect(cards).toHaveLength(31)
     expect(w.findAll('[data-section="themes"] [data-favorite="true"]').map((c) => c.attributes('data-testid'))).toEqual(['theme-dark', 'theme-monet', 'theme-light', 'theme-pink'])
     expect(w.find('[data-testid="fav-count"]').text()).toBe('Любимых: 4 из 4')
     expect(w.find('[data-section="themes"]').text()).toContain('Шесть тем — награды за достижения')
@@ -217,7 +217,7 @@ describe('замок тем-наград (v3.42)', () => {
     h.ach = [{ key: 'skills_25' }]
     const w = mount(App)
     await flushPromises()
-    expect(w.find('[data-testid="rarity-themes:common"] [data-testid="rarity-count"]').text()).toBe('24/24')
+    expect(w.find('[data-testid="rarity-themes:common"] [data-testid="rarity-count"]').text()).toBe('25/25')
     expect(w.find('[data-testid="rarity-themes:uncommon"] [data-testid="rarity-count"]').text()).toBe('1/2')
     expect(w.find('[data-testid="rarity-themes:legendary"] [data-testid="rarity-count"]').text()).toBe('0/1')
     w.unmount()

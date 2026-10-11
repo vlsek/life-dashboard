@@ -8,4 +8,5 @@ export const THEME_LOADER: Record<string, 'classic' | 'flame' | 'ring' | 'tongue
   velvet: 'flame',
   frost: 'ring',
   alpine: 'classic',
+  matcha: 'flame',
 }
