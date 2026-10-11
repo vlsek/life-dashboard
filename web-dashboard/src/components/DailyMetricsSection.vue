@@ -154,14 +154,11 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
     <!-- BACKLOG раздел 34: «Сохранить день» — в самом низу, после самой нижней метрики («Подходы»), а не посередине — так очевидно, что это
          последний шаг. Подходы пишутся своими кнопками сразу и на эту кнопку не влияют. Итог дня («Баллы») стоит рядом с ней. -->
     <div v-if="loaded" class="mt-4" data-test="save-day-bar">
-      <div class="flex items-center gap-3">
-        <button type="button" :disabled="saving" data-test="save-day" @click="onSaveDay">{{ saving ? t('dash_saving_btn') : t('dash_save_day_btn') }}</button>
-        <span v-if="savedMsg" class="text-sm" style="color: var(--success)">{{ t('dash_day_saved_toast') }}</span>
+      <div class="save-row">
+        <button type="button" class="save-day-btn" :disabled="saving" data-test="save-day" @click="onSaveDay">{{ saving ? t('dash_saving_btn') : t('dash_save_day_btn') }}</button>
+        <span class="score-pill"><EmojiText :text="t('dash_score_label')" /> <strong>{{ score.points }} / {{ score.total }}</strong></span>
       </div>
-
-      <div class="mt-3 rounded-lg border p-3" style="border-color: var(--border)">
-        <strong><EmojiText :text="t('dash_score_label')" /> {{ score.points }} / {{ score.total }}</strong>
-      </div>
+      <p v-if="savedMsg" class="m-0 mt-2 text-sm" style="color: var(--success)">{{ t('dash_day_saved_toast') }}</p>
     </div>
 
     <!-- BACKLOG 23:00: «Что полезного сделал за день» — свёрнутым по умолчанию и в самом низу блока ежедневных метрик.
@@ -173,6 +170,14 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
 </template>
 
 <style scoped>
+/* «Сохранить день» (58.6): крупная акцентная кнопка с мягкой тенью вместо плоской; итог дня — таблеткой рядом, на телефоне кнопка во всю ширину */
+.save-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; }
+.save-day-btn { flex: 1 1 12rem; min-height: 46px; padding: 0 22px; border: 0; border-radius: 14px; font-weight: 600; font-size: 1rem; letter-spacing: 0.01em; box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 32%, transparent); transition: transform 0.12s, box-shadow 0.12s; }
+.save-day-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 20px color-mix(in srgb, var(--accent) 40%, transparent); }
+.save-day-btn:active:not(:disabled) { transform: translateY(0); box-shadow: 0 3px 8px color-mix(in srgb, var(--accent) 30%, transparent); }
+.score-pill :deep(.icon) { margin-inline-end: 0.15em; }
+.score-pill { display: inline-flex; align-items: center; gap: 6px; min-height: 46px; padding: 0 16px; border: 1px solid color-mix(in srgb, var(--text) 14%, var(--border)); border-radius: 14px; background: color-mix(in srgb, var(--text) 5%, var(--bg-card)); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { .save-day-btn { transition: none; } }
 /* Подложка у вложенных карточек (BACKLOG 16, 13:18): «Подходы» — это .card внутри внешнего .card блока,
    с тем же фоном, и сливались с ним. Вложенная карточка чуть темнее/светлее фона блока (смесь с цветом
    текста темы — читается и на светлых, и на тёмных темах) + собственная рамка и скругление. */

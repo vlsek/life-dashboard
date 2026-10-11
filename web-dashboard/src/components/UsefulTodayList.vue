@@ -77,8 +77,9 @@ function add() {
 </template>
 
 <style scoped>
-.wrap { margin: 14px 0 0; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; }
+.wrap { margin: 16px 0 0; padding: 12px 14px; border: 1px solid color-mix(in srgb, var(--text) 14%, var(--border)); border-radius: 12px; background: color-mix(in srgb, var(--text) 5%, var(--bg-card)); } /* подложка (58.6): плашка читается как карточка, как «Подходы» */
 .title { cursor: pointer; user-select: none; }
+.title :deep(.icon:not(:last-child)) { margin-inline-end: 0.15em; }
 .count { font-size: 0.9em; }
 .title + div { margin-top: 6px; }
 .empty { margin: 0 0 8px; font-size: 0.9em; }

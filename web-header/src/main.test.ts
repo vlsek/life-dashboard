@@ -92,7 +92,7 @@ describe('main.ts — блок «Какие достижения тут можн
     await new Promise((r) => setTimeout(r, 20))
     expect(document.documentElement.classList.contains('gh-has-secach')).toBe(true)
     const css: string = readFileSync('src/header.css', 'utf-8')
-    expect(css).toMatch(/html\.gh-has-secach #app \{ height: auto; min-height: 100%; \}/)
+    expect(css).toMatch(/html\.gh-has-secach #app \{ height: auto; min-height: 0; \}/)
   })
   it('без входа блока нет; на странице без раздела (Дашборд, Магазин) — тоже', async () => {
     await run('/goals/')

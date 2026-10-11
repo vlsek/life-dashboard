@@ -1983,3 +1983,6 @@ html[data-motion='off'] .chart-draw [data-test='pie-point'] { animation: none; o
 @media (prefers-reduced-motion: reduce) { .splash-orbit * { animation: none !important; } }
 html[data-motion='off'] .splash-orbit * { animation: none !important; }
 /* splash-orbit:end */
+
+/* Единый зазор иконка → текст (BACKLOG 58.6): у заголовков и обычных кнопок значок стоял вплотную к тексту. Только для значка с текстом после него; кнопки с gap-* и flex не трогаем. */
+:where(h1, h2, h3, h4, button:not(.flex):not([class*='gap-'])) > svg.icon:not(:last-child):not(:only-child) { margin-inline-end: 0.4em; }
