@@ -1,6 +1,13 @@
 {
-  "version": "4.77",
+  "version": "4.78",
   "en": [
+    {
+      "version": "4.78",
+      "date": "2026-10-11 04:12",
+      "changes": [
+        "Workouts: \"Log entry\" without a window now also works on the Muscle map tab (the \"Your exercises\" block) and in the progression trees — a row unfolds right under the exercise or step. \"Details…\" opens the old window; exercises with left/right sides still use the window. No migrations."
+      ]
+    },
     {
       "version": "4.77",
       "date": "2026-10-11 07:40",
@@ -3406,6 +3413,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.78",
+      "date": "2026-10-11 04:12",
+      "changes": [
+        "Тренировки: «Добавить запись» без окна теперь и на вкладке «Карта мышц» (блок «Ваши упражнения») и в деревьях прогрессии — строка раскрывается прямо под упражнением или ступенью. «Подробно…» открывает прежнее окно; у упражнений с левой/правой стороной по-прежнему окно. Без миграций."
+      ]
+    },
     {
       "version": "4.77",
       "date": "2026-10-11 07:40",

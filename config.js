@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.77";
+const SITE_VERSION = "4.78";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.78", date: "2026-10-11 04:12", changes: [
+        "Тренировки: «Добавить запись» без окна теперь и на вкладке «Карта мышц» (блок «Ваши упражнения») и в деревьях прогрессии — строка раскрывается прямо под упражнением или ступенью. «Подробно…» открывает прежнее окно; у упражнений с левой/правой стороной по-прежнему окно. Без миграций."
+    ]},
     { version: "4.77", date: "2026-10-11 07:40", changes: [
         "Достижения: теперь поздравление приходит на ЛЮБОЙ странице. Когда вы получаете новое достижение (например, закрыли первую цель), внизу экрана появляется карточка «Новое достижение — молодец!» с названием и наградой и кнопкой «Посмотреть»; если сразу несколько — одним списком. Раньше о новом достижении можно было узнать, только открыв страницу «Достижения». Проверка идёт незаметно в фоне при открытии страницы и дальше раз в 10 минут; повторно одно и то же достижение не поздравляется. БЕЗ SQL."
     ]},
@@ -2041,6 +2044,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.78", date: "2026-10-11 04:12", changes: [
+        "Workouts: \"Log entry\" without a window now also works on the Muscle map tab (the \"Your exercises\" block) and in the progression trees — a row unfolds right under the exercise or step. \"Details…\" opens the old window; exercises with left/right sides still use the window. No migrations."
+    ]},
     { version: "4.77", date: "2026-10-11 07:40", changes: [
         "Achievements: the congratulation now shows on ANY page. When you earn a new achievement (e.g. finish your first goal), a «New achievement — well done!» card with its name, reward and a «See it» button appears at the bottom of the screen; several at once come as one list. Before, you only learned about a new achievement by opening the Achievements page. The check runs quietly in the background when a page opens and then every 10 minutes; the same achievement is never congratulated twice. NO SQL."
     ]},
