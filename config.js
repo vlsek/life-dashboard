@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.72";
+const SITE_VERSION = "4.73";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.73", date: "2026-10-11 04:05", changes: [
+        "Графики: подсказка по точке. Наведите мышь на график, коснитесь его пальцем или листайте стрелками на клавиатуре — появится пунктирное перекрестие, кольцо вокруг точки и плашка с датой и значением (у метрик с особенностями подходов — ещё с разбивкой по ним). Escape скрывает подсказку. Сам график выглядит как раньше. Без миграций."
+    ]},
     { version: "4.72", date: "2026-10-11 00:40", changes: [
         "Кастомизация: новый раздел «Спидометр прогресса дня» — вид кольца дня теперь тоже выбирается там. Обычное плавное кольцо — бесплатное и по умолчанию, «Пунктирное кольцо» (20 штрихов, зажигаются по одному) — 100 монет, «Кольцо со свечением» — 150. Выбранный вид показывают кольцо вокруг аватарки в Дашборде и бейдж дня в шапке на всех страницах (у рамки аватарки со своим свечением остаётся её свечение). Нужна миграция 068 (владелец применяет)."
     ]},
@@ -2026,6 +2029,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.73", date: "2026-10-11 04:05", changes: [
+        "Charts: a point tooltip. Hover a chart with the mouse, touch it, or use the arrow keys — a dashed crosshair, a ring around the point and a tag with the date and value appear (for metrics with set variations, also the breakdown). Escape hides it. The chart itself looks as before. No migrations."
+    ]},
     { version: "4.72", date: "2026-10-11 00:40", changes: [
         "Customization: new «Day progress gauge» section — the day ring look is now chosen there too. The smooth ring is free and default, «Dashed ring» (20 dashes lighting up one by one) costs 100 coins, «Glowing ring» 150. The chosen look is shown by the ring around the avatar in the Dashboard and by the day badge in the header on every page (an avatar frame with its own glow keeps its glow). Needs migration 068 (owner applies)."
     ]},
