@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.98";
+const SITE_VERSION = "4.99";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.99", date: "2026-10-11 18:27", changes: [
+        "Первая светлая «большая» тема «Альпийская бумага» (Paper Alpine): холодный молочно-белый фон, чистые белые карточки без теней, малые скругления, спокойный арктический голубой акцент и гладкие анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем. Заодно в описании тем («Что меняет эта тема») плоские темы теперь честно подписаны «плоские карточки без теней», а матовая зернистость — «матовая зернистость фона»",
+    ]},
     { version: "4.98", date: "2026-10-11 13:27", changes: [
         "Карта мышц: женская модель стала заметно женственнее — узкие плечи, тонкая талия, широкие бёдра, тоньше шея и руки. «Кастомизация»: у каждой анимации воды теперь живой пример — маленький стакан с повторяющейся анимацией, и в плитках раздела, и в карточках платных предметов."
     ]},
@@ -2104,6 +2107,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.99", date: "2026-10-11 18:27", changes: [
+        "The first light big theme, Paper Alpine: a cool milky-white background, clean white cards without shadows, small corners, a calm arctic-blue accent and smooth animations. Pick it in Customization or the header settings; open to everyone. Also, in the theme description (What this theme changes) flat themes are now honestly labeled Flat cards without shadows, and the matte grain is labeled Matte grain on the background",
+    ]},
     { version: "4.98", date: "2026-10-11 13:27", changes: [
         "Muscle map: the female body model is now noticeably more feminine — narrow shoulders, a slim waist, wider hips, a slimmer neck and arms. Customization: every water animation now has a live example — a small glass replaying the animation, both in the section tiles and on the paid item cards."
     ]},

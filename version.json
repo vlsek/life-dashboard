@@ -1,6 +1,13 @@
 {
-  "version": "4.98",
+  "version": "4.99",
   "en": [
+    {
+      "version": "4.99",
+      "date": "2026-10-11 18:27",
+      "changes": [
+        "The first light big theme, Paper Alpine: a cool milky-white background, clean white cards without shadows, small corners, a calm arctic-blue accent and smooth animations. Pick it in Customization or the header settings; open to everyone. Also, in the theme description (What this theme changes) flat themes are now honestly labeled Flat cards without shadows, and the matte grain is labeled Matte grain on the background"
+      ]
+    },
     {
       "version": "4.98",
       "date": "2026-10-11 13:27",
@@ -3553,6 +3560,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.99",
+      "date": "2026-10-11 18:27",
+      "changes": [
+        "Первая светлая «большая» тема «Альпийская бумага» (Paper Alpine): холодный молочно-белый фон, чистые белые карточки без теней, малые скругления, спокойный арктический голубой акцент и гладкие анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем. Заодно в описании тем («Что меняет эта тема») плоские темы теперь честно подписаны «плоские карточки без теней», а матовая зернистость — «матовая зернистость фона»"
+      ]
+    },
     {
       "version": "4.98",
       "date": "2026-10-11 13:27",
