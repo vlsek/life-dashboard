@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.06";
+const SITE_VERSION = "5.07";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.07", date: "2026-10-12 00:30", changes: [
+        "«Тренировки» → «Карта мышц» → новый свёрнутый блок «Замеры тела»: по желанию вносите обхваты (шея, плечи, грудь, талия, бёдра, бицепсы, предплечья, бёдра/голени слева и справа) в сантиметрах с датой. Видно последнее значение и разницу с прошлым замером, по клику — история с мини-графиком и удалением. ТРЕБУЕТСЯ SQL: миграция 074 (до неё блок скрыт)."
+    ]},
     { version: "5.06", date: "2026-10-11 19:00", changes: [
         "Вход и регистрация: поля ввода теперь выглядят как поля — заметная рамка (в светлой и тёмной теме), подсветка при фокусе, подсказка-образец в поле почты; поля выше (46 px), кнопки «Войти / Зарегистрироваться» и «Продолжить с Google» крупнее (48 px), вкладки удобнее нажимать, у «глаза» пароля большая область нажатия; шрифт в полях 16 px, чтобы телефон не приближал страницу при вводе. На узких экранах (проверено до 320 px) ничего не вылезает. Без миграций."
     ]},
@@ -2128,6 +2131,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.07", date: "2026-10-12 00:30", changes: [
+        "Workouts → Muscle map → a new collapsed «Body measurements» block: optionally log circumferences (neck, shoulders, chest, waist, hips, biceps, forearms, thighs and calves, left and right) in centimetres with a date. It shows the latest value and the change from the previous one; tap a part for its history with a mini chart and delete. SQL REQUIRED: migration 074 (the block is hidden until then)."
+    ]},
     { version: "5.06", date: "2026-10-11 19:00", changes: [
         "Log in / Sign up: input fields now look like fields — a clearly visible border (light and dark themes), a focus highlight and an example hint in the email field; taller fields (46 px), bigger Log in / Sign up and Continue with Google buttons (48 px), easier-to-tap tabs and a large tap area for the password eye; 16 px text in the fields so phones do not zoom the page while typing. Nothing overflows on narrow screens (checked down to 320 px). No migrations."
     ]},

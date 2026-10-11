@@ -1,6 +1,13 @@
 {
-  "version": "5.06",
+  "version": "5.07",
   "en": [
+    {
+      "version": "5.07",
+      "date": "2026-10-12 00:30",
+      "changes": [
+        "Workouts → Muscle map → a new collapsed «Body measurements» block: optionally log circumferences (neck, shoulders, chest, waist, hips, biceps, forearms, thighs and calves, left and right) in centimetres with a date. It shows the latest value and the change from the previous one; tap a part for its history with a mini chart and delete. SQL REQUIRED: migration 074 (the block is hidden until then)."
+      ]
+    },
     {
       "version": "5.06",
       "date": "2026-10-11 19:00",
@@ -3609,6 +3616,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.07",
+      "date": "2026-10-12 00:30",
+      "changes": [
+        "«Тренировки» → «Карта мышц» → новый свёрнутый блок «Замеры тела»: по желанию вносите обхваты (шея, плечи, грудь, талия, бёдра, бицепсы, предплечья, бёдра/голени слева и справа) в сантиметрах с датой. Видно последнее значение и разницу с прошлым замером, по клику — история с мини-графиком и удалением. ТРЕБУЕТСЯ SQL: миграция 074 (до неё блок скрыт)."
+      ]
+    },
     {
       "version": "5.06",
       "date": "2026-10-11 19:00",
