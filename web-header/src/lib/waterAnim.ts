@@ -5,7 +5,7 @@
 import { THEME_WATER } from './themeWater'
 
 export const WATER_ANIM_KEY = 'water_saved_anim'
-export const WATER_ANIMS = ['wave', 'drops', 'ripple'] as const
+export const WATER_ANIMS = ['wave', 'drops', 'ripple', 'bubbles', 'pour', 'splash'] as const
 export type WaterAnim = (typeof WATER_ANIMS)[number]
 export const DEFAULT_WATER_ANIM: WaterAnim = 'wave' // самый спокойный
 

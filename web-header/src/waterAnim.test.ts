@@ -38,8 +38,8 @@ afterEach(() => {
 })
 
 describe('выбор варианта (lib/waterAnim.ts)', () => {
-  it('три варианта, по умолчанию самый спокойный — волна', () => {
-    expect([...WATER_ANIMS]).toEqual(['wave', 'drops', 'ripple'])
+  it('шесть вариантов, по умолчанию самый спокойный — волна', () => {
+    expect([...WATER_ANIMS]).toEqual(['wave', 'drops', 'ripple', 'bubbles', 'pour', 'splash'])
     expect(DEFAULT_WATER_ANIM).toBe('wave')
     expect(getWaterAnim()).toBe('wave')
   })
@@ -210,10 +210,10 @@ describe('«Настройки»: анимация воды', () => {
     await flushPromises()
     return w
   }
-  it('список: «По теме» и три варианта; по умолчанию выбрано «По теме» (на обычной теме играет волна)', async () => {
+  it('список: «По теме» и шесть вариантов; по умолчанию выбрано «По теме» (на обычной теме играет волна)', async () => {
     const w = await open()
     const sel = w.find('[data-test="water-anim-select"]')
-    expect(sel.findAll('option').map((o) => o.attributes('value'))).toEqual(['auto', 'wave', 'drops', 'ripple'])
+    expect(sel.findAll('option').map((o) => o.attributes('value'))).toEqual(['auto', 'wave', 'drops', 'ripple', 'bubbles', 'pour', 'splash'])
     expect((sel.element as HTMLSelectElement).value).toBe('auto')
     expect(sel.find('option[value="auto"]').text()).toBe('По теме')
     expect(sel.find('option[value="wave"]').text()).toBe('Волна (спокойная)')
@@ -244,5 +244,19 @@ describe('«Настройки»: анимация воды', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(w.find('[data-test="water-saved"]').attributes('data-variant')).toBe('ripple')
     w.unmount()
+  })
+})
+
+describe('новые варианты (BACKLOG 54.8): пузырьки, струя, всплеск', () => {
+  it('в шаблоне есть элементы для каждого варианта, а в CSS — правило, которое их показывает', () => {
+    const tpl = read('src/components/WaterSavedAnim.vue')
+    expect(tpl).toContain('ws-stream')
+    for (const b of ['ws-b-4', 'ws-b-5', 'ws-b-6']) expect(tpl, b).toContain(b)
+    expect(css).toMatch(/data-variant="pour"\] \.ws-stream \{ display: initial/)
+    expect(css).toMatch(/data-variant="bubbles"\] \.ws-bx \{ display: initial/)
+    expect(css).toMatch(/data-variant="splash"\] \.ws-drop \{ animation: water-saved-splash/)
+    // по умолчанию (wave/drops/ripple) струи и дополнительных пузырьков не видно
+    expect(css).toMatch(/\.ws-stream \{ display: none/)
+    expect(css).toMatch(/\.ws-bx \{ display: none/)
   })
 })

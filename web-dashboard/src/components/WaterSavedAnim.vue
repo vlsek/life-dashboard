@@ -52,8 +52,12 @@ const WAVE_BACK = 'q3 1.4 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0'
             <circle class="ws-bubble ws-b-1" cx="9" cy="23.5" r="0.7" fill="#fff" fill-opacity="0.6" />
             <circle class="ws-bubble ws-b-2" cx="13.4" cy="24.5" r="0.5" fill="#fff" fill-opacity="0.6" />
             <circle class="ws-bubble ws-b-3" cx="15.8" cy="23" r="0.8" fill="#fff" fill-opacity="0.6" />
+            <circle class="ws-bubble ws-bx ws-b-4" cx="11.2" cy="24.8" r="0.6" fill="#fff" fill-opacity="0.6" />
+            <circle class="ws-bubble ws-bx ws-b-5" cx="7.8" cy="22.2" r="0.45" fill="#fff" fill-opacity="0.6" />
+            <circle class="ws-bubble ws-bx ws-b-6" cx="14.6" cy="25.4" r="0.55" fill="#fff" fill-opacity="0.6" />
           </g>
         </g>
+        <rect class="ws-stream" x="11.1" y="-6" width="1.8" height="17" rx="0.9" style="fill: var(--water-top)" />
         <ellipse class="ws-ripple" cx="12" cy="10.8" rx="5.5" ry="1.1" fill="none" style="stroke: var(--water-line)" stroke-width="0.5" />
         <ellipse class="ws-ripple ws-ripple-2" cx="12" cy="10.8" rx="5.5" ry="1.1" fill="none" style="stroke: var(--water-line)" stroke-width="0.4" />
         <path class="ws-drop ws-d-1" d="M9.4 -2.2q-1.1 1.7 0 2.7q1.1 -1 0 -2.7z" style="fill: var(--water-top)" />
@@ -131,6 +135,35 @@ const WAVE_BACK = 'q3 1.4 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0'
 .water-saved[data-variant='ripple'] .ws-ripple-2 { animation-delay: 0.5s; }
 .water-saved[data-variant='ripple'] .water-saved-badge { animation-delay: 0.5s; }
 .water-saved[data-variant='ripple'] .water-saved-check { animation-delay: 0.65s; }
+/* bubbles (54.8): пузырьки поднимаются со дна, вода набирается спокойно */
+.ws-stream { display: none; transform-box: fill-box; transform-origin: 50% 0; }
+.ws-bx { display: none; }
+.water-saved[data-variant='bubbles'] .ws-drop, .water-saved[data-variant='bubbles'] .ws-ripple-2 { display: none; }
+.water-saved[data-variant='bubbles'] .ws-bx { display: initial; }
+.water-saved[data-variant='bubbles'] .ws-bubble { animation-name: water-saved-bubble-up; animation-duration: 1.1s; }
+.water-saved[data-variant='bubbles'] .ws-b-4 { animation-delay: 0.2s; }
+.water-saved[data-variant='bubbles'] .ws-b-5 { animation-delay: 0.38s; }
+.water-saved[data-variant='bubbles'] .ws-b-6 { animation-delay: 0.52s; }
+.water-saved[data-variant='bubbles'] .water-saved-badge { animation-delay: 0.8s; }
+.water-saved[data-variant='bubbles'] .water-saved-check { animation-delay: 0.95s; }
+/* pour (54.8): сверху льётся струя, потом стакан наполняется */
+.water-saved[data-variant='pour'] .ws-stream { display: initial; animation: water-saved-stream 0.9s ease-in-out both; }
+.water-saved[data-variant='pour'] .ws-bubble, .water-saved[data-variant='pour'] .ws-drop, .water-saved[data-variant='pour'] .ws-ripple-2 { display: none; }
+.water-saved[data-variant='pour'] .water-saved-fill { animation-delay: 0.25s; animation-duration: 0.7s; }
+.water-saved[data-variant='pour'] .ws-ripple { animation-delay: 0.85s; }
+.water-saved[data-variant='pour'] .water-saved-badge { animation-delay: 1s; }
+.water-saved[data-variant='pour'] .water-saved-check { animation-delay: 1.15s; }
+/* splash (54.8): резкий подъём и брызги в стороны */
+.water-saved[data-variant='splash'] .ws-bubble { display: none; }
+.water-saved[data-variant='splash'] .ws-drop { animation: water-saved-splash 0.7s ease-out both; animation-delay: 0.3s; }
+.water-saved[data-variant='splash'] .ws-d-1 { --dx: -8px; }
+.water-saved[data-variant='splash'] .ws-d-2 { --dx: 0px; }
+.water-saved[data-variant='splash'] .ws-d-3 { --dx: 8px; }
+.water-saved[data-variant='splash'] .water-saved-fill { animation-duration: 0.4s; }
+.water-saved[data-variant='splash'] .ws-ripple { animation-delay: 0.3s; }
+.water-saved[data-variant='splash'] .ws-ripple-2 { animation-delay: 0.45s; }
+.water-saved[data-variant='splash'] .water-saved-badge { animation-delay: 0.6s; }
+.water-saved[data-variant='splash'] .water-saved-check { animation-delay: 0.75s; }
 .water-saved-enter-active,
 .water-saved-leave-active {
   transition: opacity 0.25s ease, transform 0.25s ease;
@@ -164,6 +197,22 @@ const WAVE_BACK = 'q3 1.4 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0'
   0% { opacity: 0; transform: translateY(-2px); }
   20% { opacity: 1; }
   100% { opacity: 0; transform: translateY(15px); }
+}
+@keyframes water-saved-bubble-up {
+  0% { opacity: 0; transform: translateY(0); }
+  20% { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(-14px); }
+}
+@keyframes water-saved-stream {
+  0% { opacity: 1; transform: scaleY(0); }
+  30% { opacity: 1; transform: scaleY(1); }
+  80% { opacity: 1; transform: scaleY(1); }
+  100% { opacity: 0; transform: scaleY(1); }
+}
+@keyframes water-saved-splash {
+  0% { opacity: 0; transform: translate(0, 12px); }
+  25% { opacity: 1; transform: translate(calc(var(--dx, 0px) * 0.5), 3px); }
+  100% { opacity: 0; transform: translate(var(--dx, 0px), 14px); }
 }
 @keyframes water-saved-pop {
   from { opacity: 0; transform: scale(0); }

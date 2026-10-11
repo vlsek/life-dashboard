@@ -52,8 +52,12 @@ const WAVE_BACK = 'q3 1.4 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0'
             <circle class="ws-bubble ws-b-1" cx="9" cy="23.5" r="0.7" fill="#fff" fill-opacity="0.6" />
             <circle class="ws-bubble ws-b-2" cx="13.4" cy="24.5" r="0.5" fill="#fff" fill-opacity="0.6" />
             <circle class="ws-bubble ws-b-3" cx="15.8" cy="23" r="0.8" fill="#fff" fill-opacity="0.6" />
+            <circle class="ws-bubble ws-bx ws-b-4" cx="11.2" cy="24.8" r="0.6" fill="#fff" fill-opacity="0.6" />
+            <circle class="ws-bubble ws-bx ws-b-5" cx="7.8" cy="22.2" r="0.45" fill="#fff" fill-opacity="0.6" />
+            <circle class="ws-bubble ws-bx ws-b-6" cx="14.6" cy="25.4" r="0.55" fill="#fff" fill-opacity="0.6" />
           </g>
         </g>
+        <rect class="ws-stream" x="11.1" y="-6" width="1.8" height="17" rx="0.9" style="fill: var(--water-top)" />
         <ellipse class="ws-ripple" cx="12" cy="10.8" rx="5.5" ry="1.1" fill="none" style="stroke: var(--water-line)" stroke-width="0.5" />
         <ellipse class="ws-ripple ws-ripple-2" cx="12" cy="10.8" rx="5.5" ry="1.1" fill="none" style="stroke: var(--water-line)" stroke-width="0.4" />
         <path class="ws-drop ws-d-1" d="M9.4 -2.2q-1.1 1.7 0 2.7q1.1 -1 0 -2.7z" style="fill: var(--water-top)" />

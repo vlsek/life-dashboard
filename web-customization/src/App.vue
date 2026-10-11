@@ -8,6 +8,7 @@ import ThemeUnlockModal from './components/ThemeUnlockModal.vue'
 import SplashPicker from './components/SplashPicker.vue'
 import ChartMarkerPicker from './components/ChartMarkerPicker.vue'
 import StreakFlamePicker from './components/StreakFlamePicker.vue'
+import WaterAnimPicker from './components/WaterAnimPicker.vue'
 import RarityGroup from './components/RarityGroup.vue'
 import VisibilityChips from './components/VisibilityChips.vue'
 import { groupOfItem, groupOfTheme, useVisibility, type VisGroup } from './lib/useVisibility'
@@ -85,6 +86,7 @@ const tabList = computed(() => [
   { id: 'chart-markers', label: t('cust_sec_markers') },
   { id: 'splash', label: t('cust_sec_splash') },
   { id: 'streakflame', label: t('cust_sec_streakflame') },
+  { id: 'wateranim', label: t('cust_sec_wateranim') },
   ...visibleCategories.value.map((c) => ({ id: c.category as string, label: t(('cust_cat_' + c.category) as never) })),
 ])
 const tab = computed(() => resolveTab(tabChoice.value, tabList.value.map((x) => x.id)))
@@ -174,6 +176,11 @@ const shownCategories = computed(() => visibleCategories.value.filter((c) => sho
         <!-- Огонёк серии (BACKLOG 44.18в, срез 1): 2 бесплатных варианта, выбор в localStorage -->
         <SectionGroup v-if="showsSection(tab, 'streakflame')" id="streakflame" :title="t('cust_sec_streakflame')" :total="2" :owned="2" :collapsed="isCollapsed('section:streakflame')" @toggle="toggle('section:streakflame')">
           <StreakFlamePicker />
+        </SectionGroup>
+
+        <!-- Анимация воды (BACKLOG 54.8): «По теме» + 6 бесплатных вариантов, выбор в localStorage (общий с «Настройками» шапки) -->
+        <SectionGroup v-if="showsSection(tab, 'wateranim')" id="wateranim" :title="t('cust_sec_wateranim')" :total="7" :owned="7" :collapsed="isCollapsed('section:wateranim')" @toggle="toggle('section:wateranim')">
+          <WaterAnimPicker />
         </SectionGroup>
 
         <SectionGroup v-for="c in shownCategories" :key="c.category" :id="c.category" :title="t(('cust_cat_' + c.category) as never)" :total="c.total" :owned="c.owned" :collapsed="isCollapsed('section:' + c.category)" @toggle="toggle('section:' + c.category)">
