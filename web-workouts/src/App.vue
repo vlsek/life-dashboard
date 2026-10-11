@@ -419,7 +419,7 @@ function onToggleProgramWeek(week: number) {
       </div>
 
       <div v-show="pageTab === 'map'" data-testid="tab-map">
-        <div class="mb-3 flex items-center justify-center gap-1.5 text-sm" role="group" :aria-label="t('workouts_body_model')" data-testid="body-model-switch">
+        <div class="mb-4 flex flex-wrap items-center gap-1.5 text-sm" role="group" :aria-label="t('workouts_body_model')" data-testid="body-model-switch">
           <span style="color: var(--text-dim)">{{ t('workouts_body_model') }}:</span>
           <button
             v-for="m in (['male', 'female'] as const)"

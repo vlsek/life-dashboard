@@ -133,7 +133,7 @@ const collapsedSummary = computed(() => {
 
 <template>
   <div class="mb-3.5 rounded-xl border p-4" style="border-color: var(--border); background: var(--bg-card)">
-    <div class="mb-0.5 flex flex-wrap items-center gap-2">
+    <div class="mb-3 flex flex-wrap items-center gap-2">
       <button
         type="button"
         class="rounded-lg border px-1.5 py-1 leading-none"
@@ -185,25 +185,25 @@ const collapsedSummary = computed(() => {
 
     <InlineEntryAdd v-if="adding" :exercise="exercise" :today-sets="todaySets" @save="onInlineSave" @detail="onInlineDetail" @cancel="adding = false" />
 
-    <div v-if="metricChip" class="mb-2 flex items-center gap-2 text-[0.85em]" style="color: var(--text-dim)" data-testid="exercise-metric-chip">
+    <div v-if="metricChip" class="mb-2.5 flex items-center gap-2 text-[0.85em]" style="color: var(--text-dim)" data-testid="exercise-metric-chip">
       <SetsRing v-if="plannedToday" :done="setsToday" :planned="plannedToday" />
       <EmojiText :text="metricChip" />
     </div>
 
     <div v-collapse="!collapsed" data-testid="exercise-body">
-    <div v-if="exercise.suggested_scheme" class="mb-2 text-[0.85em]" style="color: var(--text-dim)">
+    <div v-if="exercise.suggested_scheme" class="mb-2.5 text-[0.85em]" style="color: var(--text-dim)">
       {{ t('workouts_suggested_scheme_label') }} {{ exercise.suggested_scheme }}
     </div>
 
-    <div v-for="(r, i) in records" :key="i" class="mb-1.5 flex items-center gap-1.5 text-[0.85em]" style="color: var(--text-dim)">
+    <div v-for="(r, i) in records" :key="i" class="mb-2.5 flex items-center gap-1.5 text-[0.85em]" style="color: var(--text-dim)">
       <Icon :name="r.icon" extra-style="color:#e0a93b; flex-shrink:0;" />
       {{ r.label }} {{ r.text }} <span style="opacity: 0.7">· {{ fmtRu(r.date) }}</span>
     </div>
 
     <ExerciseChart :exercise="exercise" :entries="entries" />
 
-    <p v-if="entries.length === 0" class="mt-2 text-sm" style="color: var(--text-dim)">{{ t('workouts_no_entries') }}</p>
-    <div v-else class="mt-2 overflow-x-auto">
+    <p v-if="entries.length === 0" class="mt-3 text-sm" style="color: var(--text-dim)">{{ t('workouts_no_entries') }}</p>
+    <div v-else class="mt-3 overflow-x-auto">
       <table class="w-full text-sm">
         <tbody>
           <tr v-for="e in sortedEntries" :key="e.id" class="border-b last:border-0" style="border-color: var(--border)">

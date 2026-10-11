@@ -100,10 +100,10 @@ const fallbackText = computed(() => {
 
 <template>
   <div>
-    <h4 v-if="title" class="mb-1.5 font-medium">{{ title }}</h4>
+    <h4 v-if="title" class="mb-2.5 font-medium">{{ title }}</h4>
     <template v-if="innerSvg">
       <svg viewBox="0 0 620 160" width="100%" :height="160" v-html="innerSvg"></svg>
-      <p v-if="hasGaps" class="dim mt-0.5 text-xs">{{ t('chart_dashed_hint') }}</p>
+      <p v-if="hasGaps" class="dim mt-1.5 text-xs">{{ t('chart_dashed_hint') }}</p>
     </template>
     <p v-else class="dim">{{ fallbackText }}</p>
   </div>
