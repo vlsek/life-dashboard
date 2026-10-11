@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.15";
+const SITE_VERSION = "5.16";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.16", date: "2026-10-12 02:10", changes: [
+        "«Кастомизация»: вместо 13 вкладок подряд — пять понятных групп по задаче: «Оформление» (темы, рамки), «Главная и прогресс» (спидометры дня и недели, огонёк серии, сворачивание блоков), «Вода» (анимации и вид стакана), «Графики», «Загрузка». Внутри группы всё как раньше, «Все» показывает всё сразу. Выбранное и купленное не затронуто. БЕЗ SQL."
+    ]},
     { version: "5.15", date: "2026-10-12 00:42", changes: [
         "Главная: единая шкала шрифтов — заголовки разделов и подразделов одного размера и начертания (раньше «Стрики» были жирнее остальных, а заголовки графиков — без заданного размера)."
     ]},
@@ -2155,6 +2158,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.16", date: "2026-10-12 02:10", changes: [
+        "Customization: instead of 13 tabs in a row there are now five task-based groups: «Look» (themes, frames), «Home & progress» (day and week gauges, streak flame, block collapsing), «Water» (animations and glass shape), «Charts», «Loading». Inside a group everything is as before; «All» shows everything at once. Your picks and purchases are untouched. NO SQL."
+    ]},
     { version: "5.15", date: "2026-10-12 00:42", changes: [
         "Dashboard: one type scale — section and sub-section headings share size and weight (Streaks used to be bolder, chart titles had no set size)."
     ]},
