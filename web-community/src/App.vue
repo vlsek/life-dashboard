@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import Icon from './components/Icon.vue'
 import ProfileModal from './components/ProfileModal.vue'
@@ -21,6 +21,7 @@ import Podium from './components/Podium.vue'
 import BadgeStrip from './components/BadgeStrip.vue'
 import ProfileHeader from './components/ProfileHeader.vue'
 import { enrichFromLeaderboard, friendStats } from './lib/friendCards'
+import { loadFriendsPresence, presenceLabel } from './lib/presence'
 import { PERIODS, formatPoints, myPlace, podiumSlots, restRows, type Period } from './lib/leaderboardView'
 import { friendlyError } from './lib/friendlyError'
 import CommunityTabs from './components/CommunityTabs.vue'
@@ -32,6 +33,22 @@ const {
   feed, feedApi, myFeedPick, feedPickApi, saveFeedPick,
   init, setPeriod, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
 } = useCommunity()
+// «В сети» / «был(а) N назад» у друзей (BACKLOG 48.2): отметки раз в минуту, пока страница открыта; подпись пересчитывается тем же тиком
+const presenceMap = ref<Map<string, string>>(new Map())
+const presenceNow = ref(new Date())
+const presenceFor = (userId: string | null | undefined) => (userId ? presenceLabel(presenceMap.value.get(userId), presenceNow.value) : null)
+let presenceTimer: ReturnType<typeof setInterval> | null = null
+async function refreshPresence() {
+  presenceMap.value = await loadFriendsPresence()
+  presenceNow.value = new Date()
+}
+onMounted(() => {
+  void refreshPresence()
+  presenceTimer = setInterval(() => void refreshPresence(), 60_000)
+})
+onUnmounted(() => {
+  if (presenceTimer) clearInterval(presenceTimer)
+})
 onMounted(init)
 
 const scope = ref<Scope>('everyone')
@@ -309,7 +326,7 @@ const openedProfile = computed(() => {
         <div v-if="friendCards.length > 0" class="mb-3">
           <p class="dim mb-1.5 text-sm">{{ t('comm_friends_sub') }}</p>
           <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr))">
-            <FriendCard v-for="p in friendCards" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)" :badges="badges.get(p.user_id)" :frame="frames.get(p.user_id)" openable @open="openedProfileId = p.user_id">
+            <FriendCard v-for="p in friendCards" :key="p.user_id" :name="friendDisplayName(p, t('comm_no_name'))" :avatar-url="p.avatar_url" :stats="friendStats(leaderboard, p.user_id)" :badges="badges.get(p.user_id)" :frame="frames.get(p.user_id)" :presence="presenceFor(p.user_id)" openable @open="openedProfileId = p.user_id">
               <button class="secondary px-1.5 py-0" :title="t('comm_friend_remove_title')" @click="onRemoveFriend(p.user_id)"><Icon name="x" /></button>
             </FriendCard>
           </div>
@@ -357,6 +374,7 @@ const openedProfile = computed(() => {
       :points="openedProfile.points"
       :streak="openedProfile.streak"
       :user-id="openedProfile.userId"
+      :presence="openedProfile.isFriend ? presenceFor(openedProfile.userId) : null"
       :is-friend="openedProfile.isFriend"
       @close="openedProfileId = null"
     />

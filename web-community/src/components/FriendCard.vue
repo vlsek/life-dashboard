@@ -5,8 +5,9 @@ import BadgeStrip from './BadgeStrip.vue'
 import { formatPoints } from '../lib/leaderboardView'
 import { t } from '../lib/i18n'
 import type { FriendStats } from '../lib/friendCards'
+import type { PresenceLabel } from '../lib/presence'
 // Карточка человека в блоке «Друзья»: аватар, имя, пометка (заявка) или баллы/серия; слот — кнопки действий.
-defineProps<{ name: string; avatarUrl: string | null; note?: string; stats?: FriendStats | null; badges?: string[]; frame?: string | null; openable?: boolean }>()
+defineProps<{ name: string; avatarUrl: string | null; note?: string; stats?: FriendStats | null; badges?: string[]; frame?: string | null; openable?: boolean; presence?: PresenceLabel | null }>()
 const emit = defineEmits<{ open: [] }>()
 </script>
 
@@ -18,6 +19,9 @@ const emit = defineEmits<{ open: [] }>()
       <p v-if="note" class="dim m-0 text-xs">{{ note }}</p>
       <p v-else-if="stats" class="dim m-0 text-xs">
         <span v-if="stats.streak > 0"><Icon name="flame" />{{ stats.streak }} · </span>{{ formatPoints(stats.points) }} <Icon name="star" />
+      </p>
+      <p v-if="presence" class="m-0 text-xs" :style="{ color: presence.online ? 'var(--success)' : 'var(--text-dim)' }" data-testid="friend-presence" :data-online="presence.online">
+        <span v-if="presence.online" aria-hidden="true">● </span>{{ presence.text }}
       </p>
     </div>
     <div class="ml-auto flex flex-shrink-0 gap-1.5"><slot /></div>

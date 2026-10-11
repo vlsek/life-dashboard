@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { PresenceLabel } from '../lib/presence'
 import Avatar from './Avatar.vue'
 import Icon from './Icon.vue'
 import { badgeDef } from '../lib/badges'
@@ -11,7 +12,7 @@ import { daysSince, fetchFriendSummary, fmtSummaryDate, type FriendSummary } fro
 // Раскрытый профиль (BACKLOG 395): ВСЕ открытые достижения человека — в ленте он показывает только выбранные (до 5).
 // Данные приходят из RPC get_public_badges (миграция 047): только для тех, кто виден в лидерборде («публичный профиль»);
 // у скрытого профиля достижений нет — показываем пояснение, а не пустую сетку.
-const props = defineProps<{ name: string; avatarUrl: string | null; frame?: string | null; keys: string[]; points: number | null; streak: number; userId?: string | null; isFriend?: boolean }>()
+const props = defineProps<{ name: string; avatarUrl: string | null; frame?: string | null; keys: string[]; points: number | null; streak: number; userId?: string | null; presence?: PresenceLabel | null; isFriend?: boolean }>()
 const emit = defineEmits<{ close: [] }>()
 const title = (key: string) => t(('comm_badge_' + key) as never)
 
@@ -79,6 +80,9 @@ const tiles = computed(() => {
       <p v-if="summaryState === 'loading'" class="dim m-0 mt-3 text-sm" data-testid="friend-summary-loading">{{ t('comm_summary_loading') }}</p>
       <p v-else-if="summaryState === 'error'" class="dim m-0 mt-3 text-sm" data-testid="friend-summary-error">{{ t('comm_summary_error') }}</p>
       <template v-else-if="summaryState === 'ok' && summary">
+        <p v-if="presence" class="mb-0 mt-3 text-sm" :style="{ color: presence.online ? 'var(--success)' : 'var(--text-dim)' }" data-testid="profile-presence" :data-online="presence.online">
+          <span v-if="presence.online" aria-hidden="true">● </span>{{ presence.text }}
+        </p>
         <div v-if="dates.length" class="mt-3 text-sm" data-testid="friend-summary-dates">
           <p v-for="d in dates" :key="d" class="dim m-0">{{ d }}</p>
         </div>

@@ -3,6 +3,7 @@ import css from './header.css?inline'
 import App from './App.vue'
 import SectionAchievements from './components/SectionAchievements.vue'
 import { sb } from './lib/supabase'
+import { startPresenceHeartbeat } from './lib/presence'
 import { loadUnlockedKeys, sectionFor } from './lib/sectionAchievements'
 import AchievementToast from './components/AchievementToast.vue'
 import { startAchievementWatcher, WATCH_SKIP, type WatchItem } from './lib/achievementWatcher'
@@ -101,10 +102,25 @@ async function startWatcher() {
   }
 }
 
+// BACKLOG 48.2: «был в сети» — отметка раз в ~2 минуты, пока вкладка открыта (только вошедшим; на login/onboarding/admin шапки нет)
+let presenceStarted = false
+async function startPresence() {
+  if (presenceStarted) return
+  try {
+    const { data } = await sb.auth.getSession()
+    if (!data.session) return
+    presenceStarted = true
+    startPresenceHeartbeat()
+  } catch {
+    /* без отметки — не страшно */
+  }
+}
+
 function start() {
   if (SKIP.test(location.pathname)) return
   void mountSectionAchievements()
   void startWatcher()
+  void startPresence()
   const found = document.getElementById('topbar-right')
   if (found) return mount(found)
   // AppShell рисуется после загрузки данных страницы — ждём появления, но не вечно (30 с)

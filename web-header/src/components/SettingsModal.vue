@@ -11,6 +11,7 @@ import { WATER_ANIMS, getWaterAnimChoice, readCachedWaterItem, sanitizeWaterAnim
 import { useLayout } from '../lib/useLayout'
 import { friendlyError } from '../lib/friendlyError'
 import { ensureTrackWater, saveTrackWater, trackWater } from '../lib/waterTracking'
+import { loadShowOnline, saveShowOnline } from '../lib/presenceSetting'
 import { THEME_KEYS, celebrationsEnabled, skipPromptEnabled, setSkipPromptEnabled, setSidebarProgress, sidebarProgress, getTheme, setCelebrationsEnabled, setLangAndReload, setMotionOff, setTheme, setWaterRemindersEnabled, systemReducedMotion, userMotionOff, waterRemindersEnabled, type ThemeKey } from '../lib/prefs'
 
 // «Глобальные настройки» (BACKLOG 6.2): единое окно со всеми настройками, которые раньше были разбросаны по страницам
@@ -60,7 +61,27 @@ async function onTrackWater(e: Event) {
     waterToggleError.value = friendlyError(res.error, 'save')
   }
 }
-onMounted(() => void ensureTrackWater(props.userId))
+// «Показывать друзьям, что я в сети» (BACKLOG 48.2): profiles.show_online, по умолчанию включено
+const showOnline = ref(true)
+const showOnlineSaving = ref(false)
+const showOnlineError = ref<string | null>(null)
+async function onShowOnline(e: Event) {
+  const input = e.target as HTMLInputElement
+  const next = input.checked
+  showOnlineError.value = null
+  showOnlineSaving.value = true
+  const res = await saveShowOnline(props.userId, next)
+  showOnlineSaving.value = false
+  if (res.ok) showOnline.value = next
+  else {
+    input.checked = !next // не записалось — выключатель возвращается
+    showOnlineError.value = friendlyError(res.error, 'save')
+  }
+}
+onMounted(() => {
+  void ensureTrackWater(props.userId)
+  void loadShowOnline(props.userId).then((v) => (showOnline.value = v))
+})
 
 const { layout, loaded, saveError, load, save } = useLayout()
 const local = ref<LayoutItem[]>([])
@@ -187,6 +208,14 @@ async function changeLayout(next: LayoutItem[]) {
       <p class="gh-dim" style="margin: 2px 0 8px 24px; font-size: 12px">{{ t('water_tracking_setting_hint') }}</p>
       <p v-if="waterToggleError" style="color: #d6336c; margin: 0 0 8px" role="alert" data-test="track-water-error">{{ waterToggleError }}</p>
       <button v-if="trackWater" type="button" class="gh-btn" data-test="open-water" @click="emit('open-water')">{{ t('hdr_settings_water_btn') }}</button>
+
+      <h4 style="margin-top: 16px">{{ t('hdr_settings_privacy') }}</h4>
+      <label class="gh-check">
+        <input type="checkbox" :checked="showOnline" :disabled="showOnlineSaving" data-test="show-online" @change="onShowOnline" />
+        {{ t('hdr_show_online_setting') }}
+      </label>
+      <p class="gh-dim" style="margin: 2px 0 8px 24px; font-size: 12px">{{ t('hdr_show_online_hint') }}</p>
+      <p v-if="showOnlineError" style="color: #d6336c; margin: 0 0 8px" role="alert" data-test="show-online-error">{{ showOnlineError }}</p>
 
       <h4 style="margin-top: 16px">{{ t('hdr_settings_account') }}</h4>
       <a href="/account/" class="gh-btn" style="display: inline-block; text-decoration: none" data-test="account-link">{{ t('hdr_settings_account_link') }}</a>
