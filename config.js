@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.92";
+const SITE_VERSION = "4.93";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.93", date: "2026-10-11 10:05", changes: [
+        "Тренировки → карта мышц: клик по строке списка «когда тренировали каждую мышцу» (и по мышце в «ещё не тренировали») открывает панель этой мышцы; строки доступны с клавиатуры. В панели — график «Подходов по неделям» за 8 недель (текущая неделя выделена) и текстовая сводка для скринридеров. Без миграций."
+    ]},
     { version: "4.92", date: "2026-10-11 10:02", changes: [
         "Графики: доступность. У каждого графика теперь есть текстовая сводка («минимум, максимум, последнее») и таблица «дата — значение» для скринридеров и программ чтения с экрана; на экране они не видны и вид графика не меняется. Без миграций."
     ]},
@@ -2086,6 +2089,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.93", date: "2026-10-11 10:05", changes: [
+        "Workouts → muscle map: clicking a row of the \"when each muscle was last worked\" list (or a muscle under \"Not trained yet\") opens that muscle's panel; rows work with the keyboard. The panel now has a \"Sets per week\" graph for 8 weeks (the current week is highlighted) and a text summary for screen readers. No migrations."
+    ]},
     { version: "4.92", date: "2026-10-11 10:02", changes: [
         "Charts: accessibility. Every chart now has a text summary (\"minimum, maximum, latest\") and a \"date — value\" table for screen readers; they are not visible on screen and the chart looks the same. No migrations."
     ]},
