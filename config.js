@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.00";
+const SITE_VERSION = "5.01";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.01", date: "2026-10-11 18:40", changes: [
+        "Новая категория «Кастомизации» — «Вид стакана воды»: кружка (100), бутылка (150), колба (150) и бокал (250) заменяют обычный стакан в значке воды шапки и на Дашборде, вода наполняет именно эту форму. Обычный стакан остаётся бесплатным. ТРЕБУЕТСЯ SQL: миграция 073 (цены; до неё покупка отвечает «неизвестный предмет»)."
+    ]},
     { version: "5.00", date: "2026-10-11 15:28", changes: [
         "Пламя «Три языка» стало медленнее и плавнее (в заставке при загрузке, в предпросмотре «Кастомизации» и в огоньке серии). У огонька серии скорость по-прежнему растёт со ступенью: чем длиннее серия, тем живее пламя."
     ]},
@@ -2110,6 +2113,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.01", date: "2026-10-11 18:40", changes: [
+        "New Customization category «Water glass shape»: mug (100), bottle (150), flask (150) and goblet (250) replace the plain glass in the water badge in the header and on the Dashboard; the water fills that very shape. The plain glass stays free. SQL REQUIRED: migration 073 (prices; until then buying answers «unknown item»)."
+    ]},
     { version: "5.00", date: "2026-10-11 15:28", changes: [
         "The \"Three tongues\" flame is now slower and smoother (on the loading splash, in the Customization preview and in the streak flame). The streak flame still speeds up with the tier: the longer the streak, the livelier the flame."
     ]},

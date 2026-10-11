@@ -1,6 +1,13 @@
 {
-  "version": "5.00",
+  "version": "5.01",
   "en": [
+    {
+      "version": "5.01",
+      "date": "2026-10-11 18:40",
+      "changes": [
+        "New Customization category «Water glass shape»: mug (100), bottle (150), flask (150) and goblet (250) replace the plain glass in the water badge in the header and on the Dashboard; the water fills that very shape. The plain glass stays free. SQL REQUIRED: migration 073 (prices; until then buying answers «unknown item»)."
+      ]
+    },
     {
       "version": "5.00",
       "date": "2026-10-11 15:28",
@@ -3567,6 +3574,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.01",
+      "date": "2026-10-11 18:40",
+      "changes": [
+        "Новая категория «Кастомизации» — «Вид стакана воды»: кружка (100), бутылка (150), колба (150) и бокал (250) заменяют обычный стакан в значке воды шапки и на Дашборде, вода наполняет именно эту форму. Обычный стакан остаётся бесплатным. ТРЕБУЕТСЯ SQL: миграция 073 (цены; до неё покупка отвечает «неизвестный предмет»)."
+      ]
+    },
     {
       "version": "5.00",
       "date": "2026-10-11 15:28",
