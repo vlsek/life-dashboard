@@ -110,6 +110,8 @@ export const THEME_RARITY: Record<ThemeKey, Rarity> = {
   velvet: 'common',
   // BACKLOG 50.1ж: шестая «большая тема» (Nord Frost) — пока открыта всем
   frost: 'common',
+  // BACKLOG 57.7: первая светлая «большая тема» (Paper Alpine) — пока открыта всем
+  alpine: 'common',
 }
 
 export const rarityOfItem = (key: string): Rarity => ITEM_RARITY[key] ?? 'common'

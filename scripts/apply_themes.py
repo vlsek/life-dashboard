@@ -575,14 +575,18 @@ def traits_of(c):
         out.append('dashed_borders')
     if '--font-heading' in tw:
         out.append('mono_all' if any('body' in sels and 'font-family' in css for sels, css in rules) else 'mono_headings')
-    if '--shadow-card' in tw:
-        out.append('soft_shadows')
-    m = re.search(r'--shadow-active:\s*([^;]+);', tw)
+    m = re.search(r'--shadow-card:\s*([^;]+);', tw)
     if m:
+        # `none` — плоские карточки (раньше такие темы ошибочно получали «мягкие тени»); иначе — тень карточек
+        out.append('flat_cards' if m.group(1).strip() == 'none' else 'soft_shadows')
+    m = re.search(r'--shadow-active:\s*([^;]+);', tw)
+    if m and m.group(1).strip() != 'none':
         # «0 0 0 1px …» — кольцо-обводка у активного; иначе — расплывчатое неоновое свечение
         out.append('active_outline' if m.group(1).strip().startswith('0 0 0 ') else 'neon_glow')
-    if '--bg-pattern' in tw:
-        out.append('dot_pattern')
+    m = re.search(r'--bg-pattern:\s*([^;]+);', tw)
+    if m:
+        # data-URI (SVG-шум) — матовая зернистость; градиент — узор из точек
+        out.append('grain' if 'data:image' in m.group(1) else 'dot_pattern')
     if '--scanlines' in tw:
         out.append('scanlines')
     d = re.search(r'--default-transition-duration:\s*([\d.]+)s', tw)
@@ -623,12 +627,12 @@ def write_traits():
 # ---------- анимация воды у больших тем (BACKLOG 55.5, срез 1) ----------
 def write_theme_water():
     body = "// ГЕНЕРИРУЕТСЯ scripts/apply_themes.py из THEME_WATER (scripts/themes_data.py) — НЕ править руками (BACKLOG 55.5: анимация воды у большой темы).\n"
-    body += "// Копии лежат в web-header/src/lib и web-dashboard/src/lib (их читает waterAnim.ts: сохранённый выбор → вариант темы → волна).\n"
+    body += "// Копии лежат в web-header/src/lib, web-dashboard/src/lib и web-customization/src/lib (их читает waterAnim.ts: сохранённый выбор → вариант темы → волна).\n"
     body += "export const THEME_WATER: Record<string, 'wave' | 'drops' | 'ripple'> = {\n"
     for k, v in THEME_WATER.items():
         body += "  %s: '%s',\n" % (k, v)
     body += "}\n"
-    for path in ('web-header/src/lib/themeWater.ts', 'web-dashboard/src/lib/themeWater.ts'):
+    for path in ('web-header/src/lib/themeWater.ts', 'web-dashboard/src/lib/themeWater.ts', 'web-customization/src/lib/themeWater.ts'):
         try:
             old = open(path, encoding='utf-8').read()
         except FileNotFoundError:

@@ -45,3 +45,29 @@ describe('описание большой темы (55.1)', () => {
     expect(plain.find('[data-testid="theme-traits"]').exists()).toBe(false)
   })
 })
+
+// BACKLOG 50.1/57.7: подписи «что меняет тема» должны говорить правду о плоских темах и о зернистости (раньше frost/velvet числились «с мягкими тенями»,
+// а зернистость называлась «сеткой из точек»).
+describe('честные подписи: плоские карточки и зернистость', () => {
+  it('темы с --shadow-card: none (velvet, frost, alpine) — «плоские карточки», а не «мягкие тени»; nightfall — настоящие тени', () => {
+    for (const k of ['velvet', 'frost', 'alpine']) {
+      expect(THEME_TRAITS[k], k).toContain('flat_cards')
+      expect(THEME_TRAITS[k], k).not.toContain('soft_shadows')
+    }
+    expect(THEME_TRAITS.nightfall).toContain('soft_shadows')
+    expect(THEME_TRAITS.nightfall).not.toContain('flat_cards')
+  })
+  it('«shadow-active: none» — не неоновое свечение (velvet, frost, alpine); у moonlight оно настоящее', () => {
+    for (const k of ['velvet', 'frost', 'alpine']) expect(THEME_TRAITS[k], k).not.toContain('neon_glow')
+    expect(THEME_TRAITS.moonlight).toContain('neon_glow')
+  })
+  it('зернистость frost — «grain», а не «сетка из точек»; у moonlight настоящая сетка', () => {
+    expect(THEME_TRAITS.frost).toContain('grain')
+    expect(THEME_TRAITS.frost).not.toContain('dot_pattern')
+    expect(THEME_TRAITS.moonlight).toContain('dot_pattern')
+    expect(THEME_TRAITS.moonlight).not.toContain('grain')
+  })
+  it('alpine: цвета, плоские карточки, гладкая анимация — и всё', () => {
+    expect(THEME_TRAITS.alpine).toEqual(['palette', 'flat_cards', 'smooth_anim'])
+  })
+})

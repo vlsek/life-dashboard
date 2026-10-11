@@ -48,6 +48,8 @@ P={
  'velvet':('dark','🍑 Velvet Dusk','🍑 Бархатные сумерки',dict(bg='#1e1e2e',card='#252536',border='#4a4c63',text='#cdd6f4',dim='#a6adc8',accent='#fab387',at='#1e1e2e',ok='#a6e3a1',bad='#f38ba8',hist='#a6e3a1',**DARK_W)),
  # --- BACKLOG 50.1ж: шестая «большая тема» (арктический минимализм: плоско, матово, высокий контраст). «Большая» сестра цветовой nord: красный алерта осветлён (исходный #bf616a давал 2.46:1), граница заметнее ---
  'frost':('dark','🧊 Nord Frost','🧊 Арктический иней',dict(bg='#2e3440',card='#3b4252',border='#667391',text='#eceff4',dim='#b8c2d4',accent='#88c0d0',at='#2e3440',ok='#a3be8c',bad='#e8838d',hist='#a3be8c',**NORD_W)),
+ # --- BACKLOG 57.7 (файл 1, тема 1): первая СВЕТЛАЯ «большая тема» — Paper Alpine / Nord Light (скандинавский минимализм: холодный молочный фон, белые матовые карточки, без теней) ---
+ 'alpine':('light','🏔️ Paper Alpine','🏔️ Альпийская бумага',dict(bg='#f8f9fc',card='#ffffff',border='#cfd6e4',text='#2e3440',dim='#5b6577',accent='#4c6f99',at='#ffffff',ok='#3b7d57',bad='#b4424d',hist='#4f9a6a',**LIGHT_W)),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
 
@@ -194,6 +196,24 @@ CHAR = {
         reduced='  --default-transition-duration: 0s;',
         contrast='  --bg-pattern: none;',
     ),
+    # Скандинавский минимализм (светлая): ПЛОСКО, без теней — глубина за счёт чистых контрастов и тонкого разделения плоскостей; малые скругления,
+    # гладкие анимации. Правил оформления нет (концепция — «ничего лишнего»), только токены.
+    'alpine': dict(
+        tw='''  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-2xl: 10px;
+  --shadow-card: none;
+  --shadow-active: none;
+  --default-transition-duration: 0.2s;
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);''',
+        root='''  --radius-card: 8px;
+  --radius-modal: 8px;
+  --radius-control: 6px;
+  --shadow-card: none;
+  --shadow-active: none;''',
+        reduced='  --default-transition-duration: 0s;',
+    ),
 }
 assert all(k in P for k in CHAR)
 
@@ -201,14 +221,14 @@ assert all(k in P for k in CHAR)
 # вариант вручную в «Настройках» шапки (ручной выбор главнее). Словарь ОТДЕЛЬНО от CHAR; тема без записи = спокойная волна. Генератор apply_themes.py
 # пишет из него `themeWater.ts` в web-header и web-dashboard. Подбор по характеру темы: HUD и терминал — «рябь» (расходящиеся круги, как скан),
 # синтвейв — «капли» (пружинные), спокойная ночная — «волна».
-THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave'}
+THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave', 'velvet': 'drops', 'frost': 'ripple', 'alpine': 'wave'}
 assert all(k in CHAR for k in THEME_WATER) and all(v in ('wave', 'drops', 'ripple') for v in THEME_WATER.values())
 
 # Заставка загрузки (лоадер страниц) у больших тем (BACKLOG 55.5, срез 2): вариант из реестра SPLASH_VARIANTS (classic | flame | ring | tongues) — действует,
 # ЕСЛИ вариант не выбран вручную (ручной выбор и `?splash=` главнее). Тема без записи = «живое пламя». Генератор пишет `themeLoader.ts` и вставляет
 # запасной вариант в скрипт выбора заставки во всех web-*/index.html (статичная заставка берёт его до загрузки бандла). Подбор по характеру: HUD —
 # «кольцо» (скан), синтвейв — «три языка» (неоновое пламя), терминал — «классика» (простая), спокойная ночная — «живое пламя».
-THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame'}
+THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame', 'velvet': 'flame', 'frost': 'ring', 'alpine': 'classic'}
 assert all(k in CHAR for k in THEME_LOADER) and all(v in ('classic', 'flame', 'ring', 'tongues') for v in THEME_LOADER.values())
 
 # Темы-награды (решение владельца 2026-10-06): тема → ключ достижения, НАГРАДОЙ за которое она открывается (4-я, самая трудная ступень

@@ -127,10 +127,10 @@ describe('большая тема emerald: характер', () => {
   it('при prefers-reduced-motion анимации темы мгновенные (только у Tailwind-страниц)', () => {
     for (const d of pilots) expect(read(d + '/src/style.css')).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-emerald \{\s*--default-transition-duration: 0s;/)
   })
-  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost) — остальные темы не переопределены', () => {
+  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine) — остальные темы не переопределены', () => {
     for (const f of files) {
       const region = read(f).match(REGION)![0]
-      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost'])
+      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine'])
     }
   })
 })
@@ -354,5 +354,43 @@ describe('большая тема frost: характер', () => {
     const cr = (a: string, b: string) => (Math.max(lum(a), lum(b)) + 0.05) / (Math.min(lum(a), lum(b)) + 0.05)
     expect(cr(get('frost', 'danger'), get('frost', 'bg-card'))).toBeGreaterThanOrEqual(3)
     expect(cr(get('frost', 'border'), get('frost', 'bg-card'))).toBeGreaterThan(cr(get('nord', 'border'), get('nord', 'bg-card')))
+  })
+})
+
+// BACKLOG 57.7 (файл 1, тема 1): первая СВЕТЛАЯ большая тема Paper Alpine / Nord Light — плоско, без теней, малые скругления, гладкие анимации; правил оформления нет.
+describe('большая тема alpine (светлая): характер', () => {
+  const block = (css: string): string => {
+    const m = css.match(/\/\* большая тема: alpine \*\/\nhtml\.theme-alpine \{[^}]*\}/)
+    expect(m, 'нет блока характера').not.toBeNull()
+    return m![0]
+  }
+  for (const d of pilots) {
+    it(d + ': малые скругления, без теней, гладкая анимация', () => {
+      const css = read(d + '/src/style.css')
+      const b = block(css)
+      expect([decl(b, '--radius-md'), decl(b, '--radius-lg'), decl(b, '--radius-xl'), decl(b, '--radius-2xl')]).toEqual(['4px', '6px', '8px', '10px'])
+      expect([decl(b, '--shadow-card'), decl(b, '--shadow-active')]).toEqual(['none', 'none'])
+      expect(decl(b, '--default-transition-timing-function')).toBe('cubic-bezier(0.4, 0, 0.2, 1)')
+      expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-alpine \{\s*--default-transition-duration: 0s;/)
+    })
+  }
+  it('корень: 8/8/6 и без теней', () => {
+    const b = block(read('style.css'))
+    expect([decl(b, '--radius-card'), decl(b, '--radius-modal'), decl(b, '--radius-control')]).toEqual(['8px', '8px', '6px'])
+    expect([decl(b, '--shadow-card'), decl(b, '--shadow-active')]).toEqual(['none', 'none'])
+  })
+  it('правил оформления у alpine нет и под «Простое оформление» блока нет (нечего отключать)', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      expect(region.split('\n').filter((l) => l.startsWith('html.theme-alpine ') && l.includes('{ ')), f).toEqual([])
+      expect(region, f).not.toContain("html[data-simple='on'].theme-alpine")
+    }
+  })
+  it('светлая: цвета (молочный фон, белые карточки, холодный акцент) и тёмный текст; белая галочка читается, в списке тёмной галочки темы нет', () => {
+    const css = read('web-dashboard/src/style.css')
+    const get = (name: string) => css.match(new RegExp('html\\.theme-alpine \\{[^}]*--' + name + ':\\s*(#[0-9a-fA-F]{6})'))![1].toLowerCase()
+    expect([get('bg'), get('bg-card'), get('accent')]).toEqual(['#f8f9fc', '#ffffff', '#4c6f99'])
+    const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
+    expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).not.toContain('alpine')
   })
 })

@@ -5,4 +5,7 @@ export const THEME_LOADER: Record<string, 'classic' | 'flame' | 'ring' | 'tongue
   moonlight: 'tongues',
   phosphor: 'classic',
   nightfall: 'flame',
+  velvet: 'flame',
+  frost: 'ring',
+  alpine: 'classic',
 }

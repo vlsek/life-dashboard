@@ -100,7 +100,7 @@ describe('«Кастомизация»: сворачиваемые раздел�
     const w = mount(App)
     await flushPromises()
     const [owned, total] = section(w, 'themes').find('[data-testid="section-count"]').text().split('/').map(Number)
-    expect(total).toBe(29)
+    expect(total).toBe(30)
     expect(owned).toBeGreaterThan(0)
     expect(owned).toBeLessThanOrEqual(total)
     w.unmount()

@@ -30,6 +30,7 @@ export const THEME_KEYS = {
   nightfall: 'theme_nightfall',
   velvet: 'theme_velvet',
   frost: 'theme_frost',
+  alpine: 'theme_alpine',
 } as const
 
 export type ThemeKey = keyof typeof THEME_KEYS
@@ -64,6 +65,7 @@ const THEME_BG_COLORS: Record<ThemeKey, string> = {
   nightfall: '#1a1b26',
   velvet: '#1e1e2e',
   frost: '#2e3440',
+  alpine: '#f8f9fc',
 }
 
 export function getTheme(): ThemeKey {

@@ -760,6 +760,32 @@ html.theme-frost {
   --chart-none: #9aa0a6;
   --chart-other: #898e93;
 }
+
+html.theme-alpine {
+  --bg: #f8f9fc;
+  --bg-card: #ffffff;
+  --border: #cfd6e4;
+  --text: #2e3440;
+  --text-dim: #5b6577;
+  --accent: #4c6f99;
+  --accent-text: #ffffff;
+  --success: #3b7d57;
+  --danger: #b4424d;
+  --hist-ok: #4f9a6a;
+  --water-top: #3f95e0;
+  --water-bottom: #1560b8;
+  --water-line: #1560b8;
+  --chart-1: #4c6f99;
+  --chart-2: #af291d;
+  --chart-3: #a0731a;
+  --chart-4: #199a5a;
+  --chart-5: #721daf;
+  --chart-6: #af1d72;
+  --chart-7: #291daf;
+  --chart-8: #1b9ba7;
+  --chart-none: #6b7280;
+  --chart-other: #9095a0;
+}
 /* themes:end */
 
 /* design-tokens:start (генерируется scripts/apply_themes.py — не править руками; BACKLOG 50.1а) */
@@ -930,6 +956,23 @@ html[data-simple='on'].theme-frost {
     --default-transition-duration: 0s;
   }
 }
+
+/* большая тема: alpine */
+html.theme-alpine {
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-2xl: 10px;
+  --shadow-card: none;
+  --shadow-active: none;
+  --default-transition-duration: 0.2s;
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-alpine {
+    --default-transition-duration: 0s;
+  }
+}
 /* design-tokens:end */
 /* themes-scheme */
 html.theme-nord,
@@ -956,7 +999,8 @@ html.theme-solarlight,
 html.theme-lavender,
 html.theme-sky,
 html.theme-peach,
-html.theme-graphite { color-scheme: light; }
+html.theme-graphite,
+html.theme-alpine { color-scheme: light; }
 
 html,
 body,
@@ -1657,7 +1701,8 @@ html.theme-solarlight,
 html.theme-lavender,
 html.theme-sky,
 html.theme-peach,
-html.theme-graphite {
+html.theme-graphite,
+html.theme-alpine {
   --water-gold: #b87900;
 }
 /* themes-gold:end */
