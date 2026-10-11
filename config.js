@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.76";
+const SITE_VERSION = "4.77";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.77", date: "2026-10-11 07:40", changes: [
+        "Достижения: теперь поздравление приходит на ЛЮБОЙ странице. Когда вы получаете новое достижение (например, закрыли первую цель), внизу экрана появляется карточка «Новое достижение — молодец!» с названием и наградой и кнопкой «Посмотреть»; если сразу несколько — одним списком. Раньше о новом достижении можно было узнать, только открыв страницу «Достижения». Проверка идёт незаметно в фоне при открытии страницы и дальше раз в 10 минут; повторно одно и то же достижение не поздравляется. БЕЗ SQL."
+    ]},
     { version: "4.76", date: "2026-10-10 17:10", changes: [
         "Анимация воды: у каждой «большой темы» теперь своя анимация «записалось» (Emerald Obsidian и Matrix Phosphor — расходящаяся рябь, Moonlight Synth — пружинящие капли, Tokyo Nightfall — спокойная волна). В «Настройках» шапки появился пункт «По теме» (он выбран по умолчанию): играет анимация текущей темы, на обычных темах — спокойная волна. Если выбрать вариант вручную, он всегда главнее темы. Без миграций."
     ]},
@@ -2038,6 +2041,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.77", date: "2026-10-11 07:40", changes: [
+        "Achievements: the congratulation now shows on ANY page. When you earn a new achievement (e.g. finish your first goal), a «New achievement — well done!» card with its name, reward and a «See it» button appears at the bottom of the screen; several at once come as one list. Before, you only learned about a new achievement by opening the Achievements page. The check runs quietly in the background when a page opens and then every 10 minutes; the same achievement is never congratulated twice. NO SQL."
+    ]},
     { version: "4.76", date: "2026-10-10 17:10", changes: [
         "Water animation: every \"big theme\" now brings its own \"saved\" animation (Emerald Obsidian and Matrix Phosphor — expanding ripples, Moonlight Synth — bouncy drops, Tokyo Nightfall — a calm wave). The header Settings has a new \"By theme\" option (selected by default): the current theme's animation plays, on regular themes the calm wave. A variant picked by hand always wins over the theme. No migrations."
     ]},

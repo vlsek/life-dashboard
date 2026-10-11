@@ -1,6 +1,13 @@
 {
-  "version": "4.76",
+  "version": "4.77",
   "en": [
+    {
+      "version": "4.77",
+      "date": "2026-10-11 07:40",
+      "changes": [
+        "Achievements: the congratulation now shows on ANY page. When you earn a new achievement (e.g. finish your first goal), a «New achievement — well done!» card with its name, reward and a «See it» button appears at the bottom of the screen; several at once come as one list. Before, you only learned about a new achievement by opening the Achievements page. The check runs quietly in the background when a page opens and then every 10 minutes; the same achievement is never congratulated twice. NO SQL."
+      ]
+    },
     {
       "version": "4.76",
       "date": "2026-10-10 17:10",
@@ -3399,6 +3406,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "4.77",
+      "date": "2026-10-11 07:40",
+      "changes": [
+        "Достижения: теперь поздравление приходит на ЛЮБОЙ странице. Когда вы получаете новое достижение (например, закрыли первую цель), внизу экрана появляется карточка «Новое достижение — молодец!» с названием и наградой и кнопкой «Посмотреть»; если сразу несколько — одним списком. Раньше о новом достижении можно было узнать, только открыв страницу «Достижения». Проверка идёт незаметно в фоне при открытии страницы и дальше раз в 10 минут; повторно одно и то же достижение не поздравляется. БЕЗ SQL."
+      ]
+    },
     {
       "version": "4.76",
       "date": "2026-10-10 17:10",
