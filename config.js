@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.03";
+const SITE_VERSION = "5.04";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.04", date: "2026-10-11 18:45", changes: [
+        "Карта мышц: женская модель стала по-настоящему женской — тонкая талия, широкие бёдра, узкие плечи, руки отведены от корпуса, чтобы талия была видна. «Кастомизация»: примеры анимаций воды идут сразу в плитках, как у огонька стрика, — кнопки «Показать» убраны."
+    ]},
     { version: "5.03", date: "2026-10-11 18:43", changes: [
         "Новая светлая «большая» тема «Матча-латте» (Matcha Latte): тёплый кремовый фон, чайно-зелёный акцент, крупные скругления и мягкие «пушистые» тени, будто карточки парят над бумагой. Включается в «Кастомизации» и в настройках шапки; открыта всем. Выключатель «Простое оформление» убирает тени",
     ]},
@@ -2119,6 +2122,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.04", date: "2026-10-11 18:45", changes: [
+        "Muscle map: the female body model is now truly feminine — a slim waist, wide hips, narrow shoulders, arms held away from the torso so the waist shows. Customization: water animation examples now play right in the tiles, like the streak flame — the Show buttons are gone."
+    ]},
     { version: "5.03", date: "2026-10-11 18:43", changes: [
         "New light big theme Matcha Latte: a warm cream background, a matcha-green accent, large corners and soft fluffy shadows, as if the cards float above paper. Pick it in Customization or the header settings; open to everyone. The Simple look switch removes the shadows",
     ]},
