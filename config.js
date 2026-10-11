@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.17";
+const SITE_VERSION = "5.18";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.18", date: "2026-10-12 00:54", changes: [
+        "«Кастомизация»: новый раздел «Модель тела» (вкладка «Оформление») — выбор фигуры для карты мышц: «По полу профиля», мужская, женская, атлетичная, стройная, плотная, с превью каждой. Выбор общий с «Тренировками» и мини-картой шапки."
+    ]},
     { version: "5.17", date: "2026-10-12 00:47", changes: [
         "Карта мышц: три новые модели тела — «Атлетичная», «Стройная» и «Плотная». Переключатель в «Тренировках» теперь на пять моделей (с «Мужской» и «Женской»), выбор запоминается и виден в мини-карте шапки."
     ]},
@@ -2161,6 +2164,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.18", date: "2026-10-12 00:54", changes: [
+        "Customization: a new Body model section (Look tab) — pick the figure for the muscle map: By profile gender, Male, Female, Athletic, Slim, Curvy, each with a preview. The choice is shared with Workouts and the header mini-map."
+    ]},
     { version: "5.17", date: "2026-10-12 00:47", changes: [
         "Muscle map: three new body models — Athletic, Slim and Curvy. The switch in Workouts now offers five models (with Male and Female); the choice is remembered and shown in the header mini-map."
     ]},

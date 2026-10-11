@@ -1,6 +1,13 @@
 {
-  "version": "5.17",
+  "version": "5.18",
   "en": [
+    {
+      "version": "5.18",
+      "date": "2026-10-12 00:54",
+      "changes": [
+        "Customization: a new Body model section (Look tab) — pick the figure for the muscle map: By profile gender, Male, Female, Athletic, Slim, Curvy, each with a preview. The choice is shared with Workouts and the header mini-map."
+      ]
+    },
     {
       "version": "5.17",
       "date": "2026-10-12 00:47",
@@ -3686,6 +3693,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.18",
+      "date": "2026-10-12 00:54",
+      "changes": [
+        "«Кастомизация»: новый раздел «Модель тела» (вкладка «Оформление») — выбор фигуры для карты мышц: «По полу профиля», мужская, женская, атлетичная, стройная, плотная, с превью каждой. Выбор общий с «Тренировками» и мини-картой шапки."
+      ]
+    },
     {
       "version": "5.17",
       "date": "2026-10-12 00:47",
