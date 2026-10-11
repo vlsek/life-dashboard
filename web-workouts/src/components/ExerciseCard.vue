@@ -4,7 +4,7 @@ import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { fmtRu, todayStr } from '../lib/date'
 import { setCount } from '../lib/quickSet'
-import { canInlineAdd } from '../lib/inlineEntry'
+import { canInlineAdd, todaySetCount } from '../lib/inlineEntry'
 import InlineEntryAdd from './InlineEntryAdd.vue'
 import { bestPaceRecord, bestSetRecord, formatSets } from '../lib/workouts'
 import { defaultWeightUnit } from '../lib/weightUnit'
@@ -106,15 +106,14 @@ const canRemove = (e: WorkoutEntry) => setCount(e.sets ?? []) > 1
 // «Добавить запись» (BACKLOG 44.5ж): у обычных упражнений раскрывает встроенную строку в карточке, окно — по «Подробно…»;
 // у упражнений с Л/П (пара ячеек) сразу окно, как раньше.
 const adding = ref(false)
+const todaySets = computed(() => todaySetCount(props.entries, props.exercise.id, todayStr()))
 function onAddClick() {
   if (canInlineAdd(props.exercise)) adding.value = !adding.value
   else emit('addEntry')
 }
+// Строка остаётся открытой после сохранения: подходов обычно несколько («+ подход»); закрывается ✕ / Esc / «Подробно…» / повторным кликом по кнопке
 function onInlineSave(res: EntryFormInput, done: (ok: boolean) => void) {
-  emit('quickAddEntry', res, (ok) => {
-    if (ok) adding.value = false
-    done(ok)
-  })
+  emit('quickAddEntry', res, done)
 }
 function onInlineDetail() {
   adding.value = false
@@ -184,7 +183,7 @@ const collapsedSummary = computed(() => {
       </button>
     </div>
 
-    <InlineEntryAdd v-if="adding" :exercise="exercise" @save="onInlineSave" @detail="onInlineDetail" @cancel="adding = false" />
+    <InlineEntryAdd v-if="adding" :exercise="exercise" :today-sets="todaySets" @save="onInlineSave" @detail="onInlineDetail" @cancel="adding = false" />
 
     <div v-if="metricChip" class="mb-2 flex items-center gap-2 text-[0.85em]" style="color: var(--text-dim)" data-testid="exercise-metric-chip">
       <SetsRing v-if="plannedToday" :done="setsToday" :planned="plannedToday" />

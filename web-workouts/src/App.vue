@@ -10,6 +10,7 @@ import { MUSCLE_IDS } from './lib/muscles'
 import { getLang, t } from './lib/i18n'
 import { showToast } from './lib/toast'
 import { appendCopiedSet, removeLastSet } from './lib/quickSet'
+import { planInlineSave } from './lib/inlineEntry'
 import AppShell from './components/AppShell.vue'
 import ExerciseCard from './components/ExerciseCard.vue'
 import WarmupReminder from './components/WarmupReminder.vue'
@@ -227,8 +228,15 @@ async function onSaveEntry(res: EntryFormInput) {
 async function onQuickAddEntry(exercise: Exercise, res: EntryFormInput, done: (ok: boolean) => void) {
   if (auth.value.status !== 'ready') return done(false)
   try {
-    await wk.addEntry(exercise.id, auth.value.userId, res)
-    showToast(t('workouts_toast_saved'))
+    // «+ подход» (BACKLOG 44.5ж, срез 3): если за эту дату запись упражнения уже есть — дописываем подход в неё, а не создаём вторую запись
+    const plan = planInlineSave(entries.value, exercise.id, res)
+    if (plan.kind === 'append') {
+      await wk.editEntry(plan.entryId, plan.input)
+      showToast(t('workouts_toast_set_added').replace('{n}', String(plan.count)))
+    } else {
+      await wk.addEntry(exercise.id, auth.value.userId, res)
+      showToast(t('workouts_toast_saved'))
+    }
     done(true)
   } catch (e) {
     showToast(friendlyError(e, 'save'), 'error')

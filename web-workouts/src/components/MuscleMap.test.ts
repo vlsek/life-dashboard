@@ -307,7 +307,7 @@ describe('MuscleMap: встроенное добавление записи', ()
     expect(w.find('[data-testid="inline-entry"]').exists()).toBe(false)
   })
 
-  it('сохранение отдаёт quick-add-entry с упражнением и записью; успех закрывает строку, ошибка оставляет значения', async () => {
+  it('сохранение отдаёт quick-add-entry с упражнением и записью; строка остаётся открытой со значениями и после успеха, и после ошибки', async () => {
     const w = await openMap([], [squat])
     await zone(w, 'quads').trigger('click')
     await w.find('[data-testid="muscle-add-entry"]').trigger('click')
@@ -323,7 +323,24 @@ describe('MuscleMap: встроенное добавление записи', ()
     await w.find('form').trigger('submit')
     ;((w.emitted('quick-add-entry')![1] as unknown[])[2] as (ok: boolean) => void)(true)
     await w.vm.$nextTick()
-    expect(w.find('[data-testid="inline-entry"]').exists()).toBe(false)
+    expect(w.find('[data-testid="inline-entry"]').exists()).toBe(true) // «+ подход»: строка не закрывается
+    expect((w.find('[data-testid="inline-reps"]').element as HTMLInputElement).value).toBe('12')
+  })
+
+  it('строка показывает «Сегодня: N подх.» и подпись «+ подход», если за сегодня уже есть запись; без неё — «Добавить»', async () => {
+    const w = await openMap([entry('squat', TODAY)], [squat])
+    await zone(w, 'quads').trigger('click')
+    await w.find('[data-testid="muscle-add-entry"]').trigger('click')
+    expect(w.find('[data-testid="inline-today"]').text()).toBe('Сегодня: 1 подх.')
+    expect(w.find('[data-testid="inline-save"]').text()).toBe('+ подход')
+    w.unmount()
+    localStorage.clear() // блок карты помнит «открыт» — второй показ должен снова раскрываться кликом, а не закрываться
+    localStorage.setItem('site_lang', 'ru')
+    const w2 = await openMap([entry('squat', '2026-09-20')], [squat])
+    await zone(w2, 'quads').trigger('click')
+    await w2.find('[data-testid="muscle-add-entry"]').trigger('click')
+    expect(w2.find('[data-testid="inline-today"]').exists()).toBe(false)
+    expect(w2.find('[data-testid="inline-save"]').text()).toBe('Добавить')
   })
 
   it('у упражнения с Л/П сразу окно (add-entry), строки нет', async () => {

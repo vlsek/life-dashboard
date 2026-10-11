@@ -8,7 +8,7 @@ import type { EntryFormInput, Exercise } from '../lib/types'
 
 // Встроенная строка «Добавить запись» в карточке упражнения (BACKLOG 44.5ж): повторы / вес / длительность на сегодня, время подставляется.
 // Окно (EntryForm) остаётся для «Подробно…»: другая дата, несколько подходов, заметка.
-const props = defineProps<{ exercise: Exercise }>()
+const props = defineProps<{ exercise: Exercise; todaySets?: number }>()
 const emit = defineEmits<{ save: [EntryFormInput, (ok: boolean) => void]; detail: []; cancel: [] }>()
 
 const form = ref(blankInlineForm())
@@ -25,9 +25,10 @@ function onSubmit() {
   const res = buildInlineEntry(props.exercise, form.value, todayStr(), nowHHMM())
   if (!res) return
   busy.value = true
+  // После успеха значения остаются (следующий подход обычно такой же) и фокус возвращается в «повторы»: «+ подход» — один тап
   emit('save', res, (ok) => {
     busy.value = false
-    if (ok) form.value = blankInlineForm()
+    if (ok) repsInput.value?.focus()
   })
 }
 </script>
@@ -53,8 +54,9 @@ function onSubmit() {
       <input v-model.number="form.weight" type="number" step="0.5" inputmode="decimal" class="inline-input" style="width: 100px" :placeholder="t('workouts_weight_placeholder') + ' (' + unitLabel() + ')'" data-testid="inline-weight" />
     </template>
     <button type="submit" class="rounded-lg px-3 py-1.5 text-sm" style="background: var(--accent); color: var(--accent-text)" :disabled="busy" data-testid="inline-save">
-      {{ t('workouts_inline_add') }}
+      {{ (todaySets ?? 0) > 0 ? t('workouts_inline_add_set') : t('workouts_inline_add') }}
     </button>
+    <span v-if="(todaySets ?? 0) > 0" class="text-[0.8em]" style="color: var(--text-dim)" data-testid="inline-today">{{ t('workouts_inline_today').replace('{n}', String(todaySets)) }}</span>
     <button type="button" class="rounded-lg border px-2.5 py-1.5 text-sm" style="border-color: var(--border); background: var(--bg); color: var(--text-dim)" data-testid="inline-detail" @click="emit('detail')">
       {{ t('workouts_inline_detail') }}
     </button>

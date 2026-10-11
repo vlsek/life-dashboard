@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
 import { todayStr } from '../lib/date'
 import { chainDoneCount, chainState, linkState, PROGRESSIONS, type StepState, type StepStatus } from '../lib/progressions'
-import { canInlineAdd } from '../lib/inlineEntry'
+import { canInlineAdd, todaySetCount } from '../lib/inlineEntry'
 import InlineEntryAdd from './InlineEntryAdd.vue'
 import type { EntryFormInput, Exercise, WorkoutEntry } from '../lib/types'
 import CollapseChevron from './CollapseChevron.vue'
@@ -65,10 +65,7 @@ function onAdd(s: StepState) {
   else emit('add-entry', ex)
 }
 function onInlineSave(ex: Exercise, res: EntryFormInput, done: (ok: boolean) => void) {
-  emit('quick-add-entry', ex, res, (ok) => {
-    if (ok) addingStep.value = null
-    done(ok)
-  })
+  emit('quick-add-entry', ex, res, done) // строка остаётся открытой: подходов обычно несколько
 }
 function onInlineDetail(s: StepState) {
   addingStep.value = null
@@ -157,7 +154,7 @@ function pct(s: StepState): number {
                 >
                   {{ t('workouts_prog_add_entry') }}
                 </button>
-                <InlineEntryAdd v-if="addingStep === s.step.id && s.exercises.length" class="mt-1.5" :exercise="s.exercises[0]" @save="(res, done) => onInlineSave(s.exercises[0], res, done)" @detail="onInlineDetail(s)" @cancel="addingStep = null" />
+                <InlineEntryAdd v-if="addingStep === s.step.id && s.exercises.length" class="mt-1.5" :exercise="s.exercises[0]" :today-sets="todaySetCount(entries, s.exercises[0].id, today)" @save="(res, done) => onInlineSave(s.exercises[0], res, done)" @detail="onInlineDetail(s)" @cancel="addingStep = null" />
                 <span v-else class="text-[0.8em]" style="color: var(--text-dim)" data-testid="step-no-ex">{{ t('workouts_prog_no_ex') }} «{{ label(s) }}»</span>
               </div>
             </template>

@@ -20,7 +20,7 @@ import {
   type StatsPeriod,
 } from '../lib/muscleStats'
 import { groupLastRows, muscleSessions, muscleVolume, trainingStrips, type Bucket } from '../lib/muscleHistory'
-import { canInlineAdd } from '../lib/inlineEntry'
+import { canInlineAdd, todaySetCount } from '../lib/inlineEntry'
 import InlineEntryAdd from './InlineEntryAdd.vue'
 import type { EntryFormInput, Exercise, WorkoutEntry } from '../lib/types'
 import CollapseChevron from './CollapseChevron.vue'
@@ -119,10 +119,7 @@ function onAddClick(ex: Exercise) {
   else emit('add-entry', ex)
 }
 function onInlineSave(ex: Exercise, res: EntryFormInput, done: (ok: boolean) => void) {
-  emit('quick-add-entry', ex, res, (ok) => {
-    if (ok) addingEx.value = null
-    done(ok)
-  })
+  emit('quick-add-entry', ex, res, done) // строка остаётся открытой: подходов обычно несколько
 }
 function onInlineDetail(ex: Exercise) {
   addingEx.value = null
@@ -275,7 +272,7 @@ function shapeStyle(m: MuscleId) {
                 {{ t('workouts_muscles_add_entry') }}
               </button>
             </div>
-            <InlineEntryAdd v-if="addingEx === ex.id" class="mt-1.5" :exercise="ex" @save="(res, done) => onInlineSave(ex, res, done)" @detail="onInlineDetail(ex)" @cancel="addingEx = null" />
+            <InlineEntryAdd v-if="addingEx === ex.id" class="mt-1.5" :exercise="ex" :today-sets="todaySetCount(entries, ex.id, today)" @save="(res, done) => onInlineSave(ex, res, done)" @detail="onInlineDetail(ex)" @cancel="addingEx = null" />
           </li>
         </ul>
 

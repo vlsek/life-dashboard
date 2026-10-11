@@ -38,7 +38,7 @@ describe('InlineEntryAdd: встроенная строка «Добавить �
     expect(res.notes).toBeNull()
   })
 
-  it('пока запись сохраняется, кнопка отключена (двойной тап не создаст две записи); успех очищает поля, ошибка — сохраняет', async () => {
+  it('пока запись сохраняется, кнопка отключена (двойной тап не создаст две записи); и успех, и ошибка сохраняют значения (следующий подход обычно такой же)', async () => {
     const w = mount(InlineEntryAdd, { props: { exercise: mk({}) } })
     await w.find('[data-testid="inline-reps"]').setValue('12')
     await w.find('form').trigger('submit')
@@ -53,7 +53,19 @@ describe('InlineEntryAdd: встроенная строка «Добавить �
     await w.find('form').trigger('submit')
     ;((w.emitted('save')![1] as unknown[])[1] as (ok: boolean) => void)(true)
     await w.vm.$nextTick()
-    expect((w.find('[data-testid="inline-reps"]').element as HTMLInputElement).value).toBe('')
+    expect((w.find('[data-testid="inline-reps"]').element as HTMLInputElement).value).toBe('12')
+    expect((w.find('[data-testid="inline-save"]').element as HTMLButtonElement).disabled).toBe(false)
+  })
+
+  it('«+ подход»: пока сегодня подходов нет — «Добавить» без счётчика; с подходами — «+ подход» и «Сегодня: N подх.»', async () => {
+    const a = mount(InlineEntryAdd, { props: { exercise: mk({}) } })
+    expect(a.find('[data-testid="inline-save"]').text()).toBe('Добавить')
+    expect(a.find('[data-testid="inline-today"]').exists()).toBe(false)
+    const b = mount(InlineEntryAdd, { props: { exercise: mk({}), todaySets: 3 } })
+    expect(b.find('[data-testid="inline-save"]').text()).toBe('+ подход')
+    expect(b.find('[data-testid="inline-today"]').text()).toBe('Сегодня: 3 подх.')
+    await b.setProps({ todaySets: 4 })
+    expect(b.find('[data-testid="inline-today"]').text()).toBe('Сегодня: 4 подх.')
   })
 
   it('«Подробно…» и «✕» — отдельные события', async () => {
@@ -86,7 +98,7 @@ describe('ExerciseCard: «Добавить запись» без окна', () =
     expect(w.find('[data-testid="inline-entry"]').exists()).toBe(false)
   })
 
-  it('«Подробно…» закрывает строку и просит окно; успешное сохранение закрывает строку и отдаёт quickAddEntry', async () => {
+  it('«Подробно…» закрывает строку и просит окно; успешное сохранение отдаёт quickAddEntry, а строка остаётся открытой для следующего подхода', async () => {
     const w = card(mk({}))
     await w.find('[data-testid="exercise-add-entry"]').trigger('click')
     await w.find('[data-testid="inline-detail"]').trigger('click')
@@ -99,7 +111,21 @@ describe('ExerciseCard: «Добавить запись» без окна', () =
     expect((args[0] as { sets: { reps: number }[] }).sets[0].reps).toBe(15)
     ;(args[1] as (ok: boolean) => void)(true)
     await w.vm.$nextTick()
+    expect(w.find('[data-testid="inline-entry"]').exists()).toBe(true)
+    // закрывается явно: ✕ или повторный клик по кнопке «Добавить запись»
+    await w.find('[data-testid="inline-cancel"]').trigger('click')
     expect(w.find('[data-testid="inline-entry"]').exists()).toBe(false)
+  })
+
+  it('счётчик «Сегодня: N» считается по записям упражнения за сегодня', async () => {
+    const today = new Date()
+    const iso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0')
+    const ex = mk({})
+    const entry = { id: 'e1', user_id: 'u', exercise_id: ex.id, date: iso, notes: null, sets: [{ reps: 10, weight: null, time: null, duration: null, side: null }, { reps: 9, weight: null, time: null, duration: null, side: null }] }
+    const w = mount(ExerciseCard, { props: { exercise: ex, entries: [entry] as never } })
+    await w.find('[data-testid="exercise-add-entry"]').trigger('click')
+    expect(w.find('[data-testid="inline-today"]').text()).toBe('Сегодня: 2 подх.')
+    expect(w.find('[data-testid="inline-save"]').text()).toBe('+ подход')
   })
 
   it('неудачное сохранение оставляет строку открытой с введёнными значениями', async () => {
