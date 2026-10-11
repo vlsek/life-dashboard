@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "4.94";
+const SITE_VERSION = "4.95";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "4.95", date: "2026-10-11 13:50", changes: [
+        "Новым пользователям больше не показывается плашка «Итоги недели на подходе» в выходные: в первую неделю после регистрации подводить нечего. У остальных всё как раньше. БЕЗ SQL."
+    ]},
     { version: "4.94", date: "2026-10-11 12:00", changes: [
         "Новая заставка загрузки «Орбита»: мягко пульсирующий центр, два кольца и точки, бегущие по ним в разные стороны (цвет — акцент темы). Выбрать её можно в «Кастомизации» в разделе заставок, а для предпросмотра — открыть любую страницу с ?splash=orbit. Это пятый вариант (рядом «Живое пламя», «Три языка», «Огненный круг», «Классика»), пока бесплатный; при «уменьшить движение» и «Отключить анимации» точки не вращаются. Без миграций."
     ]},
@@ -2092,6 +2095,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "4.95", date: "2026-10-11 13:50", changes: [
+        "New users no longer see the weekend «Weekly summary is coming» banner: there is nothing to sum up in the first week after sign-up. Everyone else sees it as before. NO SQL."
+    ]},
     { version: "4.94", date: "2026-10-11 12:00", changes: [
         "New page loader \"Orbit\": a softly pulsing core, two rings and dots running around them in opposite directions (the color follows the theme accent). Pick it in Customization in the loader section, or preview it by opening any page with ?splash=orbit. It is the fifth variant (next to Living flame, Three tongues, Fire ring and Classic), free for now; with reduce-motion and Disable animations the dots do not spin. No migrations."
     ]},
