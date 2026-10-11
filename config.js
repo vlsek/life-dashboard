@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.16";
+const SITE_VERSION = "5.17";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.17", date: "2026-10-12 00:47", changes: [
+        "Карта мышц: три новые модели тела — «Атлетичная», «Стройная» и «Плотная». Переключатель в «Тренировках» теперь на пять моделей (с «Мужской» и «Женской»), выбор запоминается и виден в мини-карте шапки."
+    ]},
     { version: "5.16", date: "2026-10-12 02:10", changes: [
         "«Кастомизация»: вместо 13 вкладок подряд — пять понятных групп по задаче: «Оформление» (темы, рамки), «Главная и прогресс» (спидометры дня и недели, огонёк серии, сворачивание блоков), «Вода» (анимации и вид стакана), «Графики», «Загрузка». Внутри группы всё как раньше, «Все» показывает всё сразу. Выбранное и купленное не затронуто. БЕЗ SQL."
     ]},
@@ -2158,6 +2161,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.17", date: "2026-10-12 00:47", changes: [
+        "Muscle map: three new body models — Athletic, Slim and Curvy. The switch in Workouts now offers five models (with Male and Female); the choice is remembered and shown in the header mini-map."
+    ]},
     { version: "5.16", date: "2026-10-12 02:10", changes: [
         "Customization: instead of 13 tabs in a row there are now five task-based groups: «Look» (themes, frames), «Home & progress» (day and week gauges, streak flame, block collapsing), «Water» (animations and glass shape), «Charts», «Loading». Inside a group everything is as before; «All» shows everything at once. Your picks and purchases are untouched. NO SQL."
     ]},

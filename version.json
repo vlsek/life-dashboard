@@ -1,6 +1,13 @@
 {
-  "version": "5.16",
+  "version": "5.17",
   "en": [
+    {
+      "version": "5.17",
+      "date": "2026-10-12 00:47",
+      "changes": [
+        "Muscle map: three new body models — Athletic, Slim and Curvy. The switch in Workouts now offers five models (with Male and Female); the choice is remembered and shown in the header mini-map."
+      ]
+    },
     {
       "version": "5.16",
       "date": "2026-10-12 02:10",
@@ -3679,6 +3686,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.17",
+      "date": "2026-10-12 00:47",
+      "changes": [
+        "Карта мышц: три новые модели тела — «Атлетичная», «Стройная» и «Плотная». Переключатель в «Тренировках» теперь на пять моделей (с «Мужской» и «Женской»), выбор запоминается и виден в мини-карте шапки."
+      ]
+    },
     {
       "version": "5.16",
       "date": "2026-10-12 02:10",
