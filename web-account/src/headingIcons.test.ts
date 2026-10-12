@@ -1,6 +1,8 @@
 // @ts-ignore — в проекте нет типов node, а vitest выполняется в node
 import { readFileSync, readdirSync, existsSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
+import { mount } from '@vue/test-utils'
+import EmojiText from './components/EmojiText.vue'
 import { splitEmojiText } from './lib/emojiText'
 
 // BACKLOG 58.9: значок у КАЖДОГО заголовка страницы (h1) и КАЖДОГО заголовка раздела; отступ значок→текст один на все пилоты.
@@ -94,19 +96,35 @@ describe('значок у заголовков разделов', () => {
 })
 
 describe('отступ значок→текст один на все пилоты', () => {
+  // БАГ (владелец «сделать везде пробелы от svg до заголовка», агент 6 видел значки вплотную): правило `.emoji-text-icon:last-child {margin-right: 0}`
+  // считало значок «последним», потому что текст после него — текстовый узел, а не элемент; отступ 0.35em обнулялся у ВСЕХ значков с текстом.
+  // Теперь нулевой отступ — только у значка в конце строки (класс --tail).
   const MARGIN = /\.emoji-text-icon\s*\{\s*margin-right:\s*0\.35em;\s*\}/
-  const LAST = /\.emoji-text-icon:last-child\s*\{\s*margin-right:\s*0;\s*\}/
-  it('margin-right 0.35em у значка, у последнего — 0: в EmojiText.vue (scoped) или, для шапки-виджета, в её глобальном header.css', () => {
+  const TAIL = /\.emoji-text-icon--tail\s*\{\s*margin-right:\s*0;\s*\}/
+
+  it('во всех пилотах: отступ 0.35em, --tail без отступа, :last-child не используется (EmojiText.vue или, у шапки-виджета, глобальный header.css)', () => {
     let checked = 0
     for (const pilot of pilots) {
       const f = `${ROOT}/${pilot}/src/components/EmojiText.vue`
       if (!existsSync(f)) continue
-      // шапка — виджет без scoped-стилей: правило лежит в header.css; во всех остальных — в самом компоненте
-      const css = pilot === 'web-header' ? readFileSync(`${ROOT}/${pilot}/src/header.css`, 'utf-8') : readFileSync(f, 'utf-8')
+      const vue = readFileSync(f, 'utf-8')
+      expect(vue, pilot + ': класс --tail вешается на значок без текста после него').toContain("'emoji-text-icon--tail': i === segments.length - 1")
+      const css = pilot === 'web-header' ? readFileSync(`${ROOT}/${pilot}/src/header.css`, 'utf-8') : vue
       expect(css, pilot + ': отступ значка').toMatch(MARGIN)
-      expect(css, pilot + ': у последнего значка без отступа').toMatch(LAST)
+      expect(css, pilot + ': --tail без отступа').toMatch(TAIL)
+      expect(css, pilot + ': :last-child обнулял отступ у значков с текстом').not.toMatch(/\.emoji-text-icon:last-child/)
       checked++
     }
     expect(checked).toBeGreaterThanOrEqual(15)
+  })
+
+  const tails = (text: string) => mount(EmojiText, { props: { text } }).findAll('.emoji-text-icon').map((w) => w.classes().includes('emoji-text-icon--tail'))
+  it('значок с текстом после него — БЕЗ --tail (отступ есть); значок в конце или единственный — с --tail', () => {
+    expect(tails('📌 Планы')).toEqual([false])
+    expect(tails('Планы 📌')).toEqual([true])
+    expect(tails('📌')).toEqual([true])
+    expect(tails('📌 Планы 🎯 Цели')).toEqual([false, false])
+    expect(tails('Цель 🎯')).toEqual([true])
+    expect(tails('Просто текст')).toEqual([])
   })
 })

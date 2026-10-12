@@ -384,7 +384,8 @@ html[data-motion="off"] .gh-glass-sheen { opacity: 0; }
 
 .gh-icon { display: inline-block; width: 1em; height: 1em; flex-shrink: 0; vertical-align: -0.15em; }
 .emoji-text-icon { margin-right: 0.35em; }
-.emoji-text-icon:last-child { margin-right: 0; }
+/* без отступа — только у значка, после которого нет текста; :last-child не годится: текст после значка — не элемент (BACKLOG 58.9) */
+.emoji-text-icon--tail { margin-right: 0; }
 
 /* «+N / −N с монетой» (BACKLOG 469): слой поверх страницы, не перехватывает клики. Копия стилей PointsFloat.vue Дашборда. */
 .gh-pf-layer { position: fixed; inset: 0; z-index: 70; pointer-events: none; overflow: hidden; }

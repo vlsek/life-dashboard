@@ -13,7 +13,7 @@ const segments = computed(() => splitEmojiText(props.text))
 <template>
   <span class="emoji-text" data-test="emoji-text"
     ><template v-for="(s, i) in segments" :key="i"
-      ><Icon v-if="s.kind === 'icon'" :name="s.name" class="emoji-text-icon" /><template v-else>{{ s.value }}</template></template
+      ><Icon v-if="s.kind === 'icon'" :name="s.name" class="emoji-text-icon" :class="{ 'emoji-text-icon--tail': i === segments.length - 1 }" /><template v-else>{{ s.value }}</template></template
     ></span
   >
 </template>
@@ -22,7 +22,9 @@ const segments = computed(() => splitEmojiText(props.text))
 .emoji-text-icon {
   margin-right: 0.35em;
 }
-.emoji-text-icon:last-child {
+/* у значка, после которого НЕТ текста (иконка в конце строки), отступа справа нет. Раньше тут стояло :last-child — оно считает только
+   элементы, а текст после значка — текстовый узел, поэтому значок с текстом тоже становился «последним» и оставался вплотную (BACKLOG 58.9) */
+.emoji-text-icon--tail {
   margin-right: 0;
 }
 </style>

@@ -13,7 +13,7 @@ const segments = computed(() => splitEmojiText(props.text))
 <template>
   <span class="emoji-text" data-test="emoji-text"
     ><template v-for="(s, i) in segments" :key="i"
-      ><Icon v-if="s.kind === 'icon'" :name="s.name" class="emoji-text-icon" /><template v-else>{{ s.value }}</template></template
+      ><Icon v-if="s.kind === 'icon'" :name="s.name" class="emoji-text-icon" :class="{ 'emoji-text-icon--tail': i === segments.length - 1 }" /><template v-else>{{ s.value }}</template></template
     ></span
   >
 </template>
