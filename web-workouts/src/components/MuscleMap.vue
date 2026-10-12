@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { usuallySkipped } from '../lib/genderTips'
+import EmojiText from './EmojiText.vue'
 import { computed, nextTick, ref } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
 import { todayStr } from '../lib/date'
@@ -200,7 +201,7 @@ function shapeStyle(m: MuscleId) {
       @keydown.enter.prevent="toggle"
       @keydown.space.prevent="toggle"
     >
-      <h3 class="m-0 font-bold">{{ t('workouts_muscles_title') }}</h3>
+      <h3 class="m-0 font-bold"><EmojiText :text="t('workouts_muscles_title')" /></h3>
       <CollapseChevron :collapsed="!open" />
     </div>
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
+import EmojiText from './components/EmojiText.vue'
 import AppShell from './components/AppShell.vue'
 import AchievementCard from './components/AchievementCard.vue'
 import AchievementUnlockedModal from './components/AchievementUnlockedModal.vue'
@@ -44,7 +45,7 @@ const overallPercent = computed(() => (total.value ? Math.round((openCount.value
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
-    <h1 class="mb-1 text-xl font-semibold">{{ t('ach_title') }}</h1>
+    <h1 class="mb-1 text-xl font-semibold"><EmojiText :text="t('ach_title')" /></h1>
     <p class="dim mb-4 text-sm">{{ t('ach_intro') }}</p>
 
     <p v-if="auth.status === 'loading' || (auth.status === 'ready' && loading && !states.length)" class="dim">…</p>
@@ -91,7 +92,7 @@ const overallPercent = computed(() => (total.value ? Math.round((openCount.value
         </section>
 
         <section v-if="foundSecret.length" class="mb-4" data-testid="secret-block">
-          <h2 class="mb-1 text-base font-medium">{{ t('ach_secret_title') }} <span class="dim text-xs">{{ t('ach_secret_found').replace('{n}', String(foundSecret.length)) }}</span></h2>
+          <h2 class="mb-1 text-base font-medium"><EmojiText :text="t('ach_secret_title')" /> <span class="dim text-xs">{{ t('ach_secret_found').replace('{n}', String(foundSecret.length)) }}</span></h2>
           <p class="dim mb-2 text-xs">{{ t('ach_secret_hint') }}</p>
           <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
             <AchievementCard v-for="s in foundSecret" :key="s.def.key" :state="s" :unlocked="true" :unlocked-at="unlocked[s.def.key] ?? null" />

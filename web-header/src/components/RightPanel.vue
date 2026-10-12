@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import EmojiText from './EmojiText.vue'
+import { stripEmoji } from '../lib/emojiText'
 import { computed, onBeforeUnmount, onMounted, watch } from 'vue'
 import { getLang, t } from '../lib/i18n'
 import { isCloseSwipe, isModalOpen, isOpenSwipeFrom, isSwipeBlockedTarget, swipeZone, type Point, type SwipeZone } from '../lib/edgeSwipe'
@@ -106,9 +107,9 @@ onBeforeUnmount(() => applyScrollLock(false))
 
 <template>
   <div v-if="open" class="gh-panel-backdrop" data-test="panel-backdrop" @click="emit('update:open', false)"></div>
-  <aside class="gh-panel" :class="{ 'gh-panel-open': open }" role="dialog" :aria-label="t('hdr_panel_title')" :aria-hidden="!open" data-test="right-panel">
+  <aside class="gh-panel" :class="{ 'gh-panel-open': open }" role="dialog" :aria-label="stripEmoji(t('hdr_panel_title'))" :aria-hidden="!open" data-test="right-panel">
     <div class="gh-row" style="margin-bottom: 12px">
-      <h3 style="flex: 1; margin: 0">{{ t('hdr_panel_title') }}</h3>
+      <h3 style="flex: 1; margin: 0"><EmojiText :text="t('hdr_panel_title')" /></h3>
       <button type="button" class="gh-btn gh-btn-icon" data-test="panel-settings" :title="t('hdr_settings_open')" :aria-label="t('hdr_settings_open')" @click="emit('open-settings')"><EmojiText text="⚙️" /></button>
       <button type="button" class="gh-btn gh-btn-icon" data-test="panel-close" :aria-label="t('close')" @click="emit('update:open', false)">✕</button>
     </div>

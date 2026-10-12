@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import EmojiText from './EmojiText.vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
 import { todayStr } from '../lib/date'
 import { chainDoneCount, chainState, linkState, PROGRESSIONS, type StepState, type StepStatus } from '../lib/progressions'
@@ -97,7 +98,7 @@ function pct(s: StepState): number {
       @keydown.enter.prevent="toggle"
       @keydown.space.prevent="toggle"
     >
-      <h3 class="m-0 font-bold">{{ t('workouts_prog_title') }}</h3>
+      <h3 class="m-0 font-bold"><EmojiText :text="t('workouts_prog_title')" /></h3>
       <CollapseChevron :collapsed="!open" />
     </div>
 

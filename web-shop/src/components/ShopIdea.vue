@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import EmojiText from './EmojiText.vue'
+import { stripEmoji } from '../lib/emojiText'
 import Icon from './Icon.vue'
 import { t } from '../lib/i18n'
 import { loadIdeaSeen, saveIdeaSeen } from '../lib/shopIdea'
@@ -26,7 +28,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   <div class="mb-3">
     <!-- Первый заход: полный текст -->
     <section v-if="!seen" class="rounded-xl border p-4" style="background: var(--bg-card); border-color: var(--accent)" data-testid="idea-banner">
-      <h2 class="mb-1 text-base font-semibold" data-testid="idea-banner-title">{{ t('shop_idea_title') }}</h2>
+      <h2 class="mb-1 text-base font-semibold" data-testid="idea-banner-title"><EmojiText :text="t('shop_idea_title')" /></h2>
       <p class="text-sm" data-testid="idea-banner-text">{{ sparksMode ? t('shop_idea_full_sparks') : t('shop_idea_full') }}</p>
       <button type="button" class="mt-3 rounded-lg px-4 py-1.5 text-sm" data-testid="idea-dismiss" @click="dismiss">{{ t('shop_idea_got_it') }}</button>
     </section>
@@ -48,8 +50,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     </p>
 
     <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4" data-testid="idea-backdrop" @click.self="open = false">
-      <div class="w-full max-w-sm rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)" role="dialog" aria-modal="true" :aria-label="t('shop_idea_title')" data-testid="idea-modal">
-        <h2 class="mb-2 text-lg font-semibold" data-testid="idea-modal-title">{{ t('shop_idea_title') }}</h2>
+      <div class="w-full max-w-sm rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)" role="dialog" aria-modal="true" :aria-label="stripEmoji(t('shop_idea_title'))" data-testid="idea-modal">
+        <h2 class="mb-2 text-lg font-semibold" data-testid="idea-modal-title">{{ stripEmoji(t('shop_idea_title')) }}</h2>
         <p class="text-sm" data-testid="idea-modal-text">{{ sparksMode ? t('shop_idea_full_sparks') : t('shop_idea_full') }}</p>
         <button type="button" class="mt-4 w-full rounded-lg px-4 py-2" data-testid="idea-close" @click="open = false">{{ t('close') }}</button>
       </div>

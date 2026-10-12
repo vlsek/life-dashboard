@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
+import EmojiText from './components/EmojiText.vue'
 import AppShell from './components/AppShell.vue'
 import ItemCard from './components/ItemCard.vue'
 import Icon from './components/Icon.vue'
@@ -105,7 +106,7 @@ const shownCategories = computed(() => visibleCategories.value.filter((c) => sho
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
-    <h1 class="mb-1 text-xl font-semibold">{{ t('cust_title') }}</h1>
+    <h1 class="mb-1 text-xl font-semibold"><EmojiText :text="t('cust_title')" /></h1>
     <p class="dim mb-2 text-sm">{{ t('cust_intro') }}</p>
     <p class="dim mb-4 text-xs" data-testid="rarity-hint">{{ t('cust_rarity_hint') }}</p>
 

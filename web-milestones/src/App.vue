@@ -171,7 +171,7 @@ function closeHistory() {
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
     <div class="mb-4 flex items-center justify-between">
-      <h1 class="text-xl font-semibold">{{ t('nav_milestones') }}</h1>
+      <h1 class="text-xl font-semibold"><EmojiText :text="t('nav_milestones')" /></h1>
       <div v-if="auth.status === 'ready'" class="flex gap-2">
         <button class="secondary rounded-lg px-3 py-1.5 text-sm" data-test="ms-templates-btn" @click="templatesOpen = true">{{ t('ms_templates_btn') }}</button>
         <button class="rounded-lg px-3 py-1.5 text-sm" style="background: var(--accent); color: var(--accent-text)" @click="openAddForm">

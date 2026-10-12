@@ -104,13 +104,13 @@ async function onUpload(file: File): Promise<string | null> {
     <!-- Список с копилкой: «можно купить сейчас», «копится», свёрнутые «мои покупки» -->
     <div v-else class="flex flex-col gap-4" data-testid="list-view">
       <section v-if="groups.affordable.length" data-testid="section-affordable">
-        <h2 class="dim mb-1.5 text-sm font-medium">{{ t('shop_section_affordable') }}</h2>
+        <h2 class="dim mb-1.5 text-sm font-medium"><EmojiText :text="t('shop_section_affordable')" /></h2>
         <div class="flex flex-col gap-1.5">
           <ShopRow v-for="item in groups.affordable" :key="item.id" :item="item" :balance="have" @buy="onBuy" @edit="formTarget = $event" @remove="onDelete" />
         </div>
       </section>
       <section v-if="groups.saving.length" data-testid="section-saving">
-        <h2 class="dim mb-1.5 text-sm font-medium">{{ t('shop_section_saving') }}</h2>
+        <h2 class="dim mb-1.5 text-sm font-medium"><EmojiText :text="t('shop_section_saving')" /></h2>
         <div class="flex flex-col gap-1.5">
           <ShopRow v-for="item in groups.saving" :key="item.id" :item="item" :balance="have" @buy="onBuy" @edit="formTarget = $event" @remove="onDelete" />
         </div>
