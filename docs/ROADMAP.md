@@ -150,3 +150,5 @@ v5.23 — BACKLOG 576 (аудит устаревшего оформления), 
 
 v5.24 — 59.4 ещё две платные анимации воды «Качка» и «Сияние» (агент 3; «предметы, которых меньше всего»). МИГРАЦИЯ 078 ждёт владельца.
   Только CSS: `WaterSavedAnim.vue` ×3 (+ `header.css`) — `sway`: качание стакана (`svg` rotate, origin снизу), `glow`: вспышка `drop-shadow` цвета воды; на итоговом состоянии (reduced-motion / «выкл. анимации») оба видны как обычный стакан. `waterAnim.ts` ×3, реестр (mid 150 / high 250), rarity, i18n, `ItemCard`; тесты `waterItems.test.ts` обновлены. Проверено скриншотами кадров. `migrations/078_catalog_water_anim_more.sql`. Пересобраны `dashboard/`, `header-widgets/`, `customization/`.
+
+v5.25 — BACKLOG 60.1 срез 1: серия по целям (агент 1). SQL: миграция 079 (`calc_goals_streak(user)`, `get_my_goals_streak()` → {current,best}; день = выполнена ≥1 цель по `done_date`; дни паузы 070 серию не рвут; проверено на PGlite, 7 сценариев). `web-goals`: `lib/goalsStreak.ts`, плашка в `App.vue`. Не сделано: огоньки/баллы за серию (решение владельца), показ в шапке и в «Достижениях», режим «все цели дня».

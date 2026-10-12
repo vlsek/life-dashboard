@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.24";
+const SITE_VERSION = "5.25";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.25", date: "2026-10-12 09:30", changes: [
+        "«Цели»: появилась серия «Серия по целям» — сколько дней подряд вы выполняете хотя бы одну цель (и лучшая серия). День без выполненной цели серию обрывает, сегодняшний день её не рвёт, пока он не закончился; дни паузы (отпуск/болезнь) серию не рвут. Огоньки и баллы за эту серию пока не начисляются. ТРЕБУЕТСЯ SQL: миграция 079 (до неё плашки нет)."
+    ]},
     { version: "5.24", date: "2026-10-12 08:17", changes: [
         "Магазин «Кастомизации»: две новые платные анимации воды — «Качка» (стакан покачивается, пока вода набирается; 150 монет) и «Сияние» (стакан вспыхивает мягким свечением; 250 монет)."
     ]},
@@ -2182,6 +2185,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.25", date: "2026-10-12 09:30", changes: [
+        "Goals: a new «Goals streak» shows how many days in a row you complete at least one goal (and your best streak). A day without a completed goal breaks it, today does not break it until the day is over, and pause days (vacation/illness) do not break it. No sparks or points are awarded for it yet. SQL REQUIRED: migration 079 (the line is absent until then)."
+    ]},
     { version: "5.24", date: "2026-10-12 08:17", changes: [
         "Customization shop: two new paid water animations — Sway (the glass rocks while the water rises; 150 coins) and Glow (the glass flares with a soft glow; 250 coins)."
     ]},
