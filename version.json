@@ -1,6 +1,13 @@
 {
-  "version": "5.30",
+  "version": "5.31",
   "en": [
+    {
+      "version": "5.31",
+      "date": "2026-10-12 10:39",
+      "changes": [
+        "Sign-in and sign-up: the Log in / Sign up switch is now real segmented buttons; the empty password field shows dots (so it is clear it is an input); a length hint sits under the password when signing up; an error or \"check your email\" shows right above the button instead of small grey text at the bottom; language and theme buttons are bigger for fingers. Password managers now offer a new password on sign-up. No migrations."
+      ]
+    },
     {
       "version": "5.30",
       "date": "2026-10-12 13:37",
@@ -3777,6 +3784,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.31",
+      "date": "2026-10-12 10:39",
+      "changes": [
+        "Вход и регистрация: переключатель «Вход / Регистрация» стал настоящими кнопками-сегментами; в пустом поле пароля видны точки (понятно, что это поле ввода); при регистрации под паролем подсказка про длину; ошибка или «проверь почту» показываются прямо над кнопкой, а не внизу мелким серым; кнопки языка и темы стали крупнее для пальца. Менеджеры паролей при регистрации предлагают новый пароль. Без миграций."
+      ]
+    },
     {
       "version": "5.30",
       "date": "2026-10-12 13:37",

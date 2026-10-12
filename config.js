@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.30";
+const SITE_VERSION = "5.31";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.31", date: "2026-10-12 10:39", changes: [
+        "Вход и регистрация: переключатель «Вход / Регистрация» стал настоящими кнопками-сегментами; в пустом поле пароля видны точки (понятно, что это поле ввода); при регистрации под паролем подсказка про длину; ошибка или «проверь почту» показываются прямо над кнопкой, а не внизу мелким серым; кнопки языка и темы стали крупнее для пальца. Менеджеры паролей при регистрации предлагают новый пароль. Без миграций."
+    ]},
     { version: "5.30", date: "2026-10-12 13:37", changes: [
         "Пятая светлая «большая» тема «Бизнес-стекло» (Executive Glass): светло-серый фон с мягкими цветными световыми пятнами, полупрозрачные стеклянные карточки и окна с размытием фона, индиго-акцент, графитовый текст и мягкая подсветка кнопок при наведении. Включается в «Кастомизации» и в настройках шапки; открыта всем. Если браузер не умеет размытие, остаются обычные карточки. Стекло отключается выключателем «Простое оформление», системными «высокий контраст» и «уменьшить прозрачность». Заодно в описании тем появились подписи «стеклянные панели» и «световые пятна на фоне»",
     ]},
@@ -2200,6 +2203,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.31", date: "2026-10-12 10:39", changes: [
+        "Sign-in and sign-up: the Log in / Sign up switch is now real segmented buttons; the empty password field shows dots (so it is clear it is an input); a length hint sits under the password when signing up; an error or \"check your email\" shows right above the button instead of small grey text at the bottom; language and theme buttons are bigger for fingers. Password managers now offer a new password on sign-up. No migrations."
+    ]},
     { version: "5.30", date: "2026-10-12 13:37", changes: [
         "The fifth light big theme, Executive Glass: a light gray background with soft colored light spots, translucent frosted-glass cards and windows that blur what is behind them, an indigo accent, graphite text and a gentle lift of buttons on hover. Pick it in Customization or the header settings; open to everyone. If the browser cannot blur, you get ordinary cards. The glass is switched off by the Simple look switch and by the system high-contrast and reduce-transparency settings. The theme description also gained the labels Frosted-glass panels and Colored light spots on the background",
     ]},
