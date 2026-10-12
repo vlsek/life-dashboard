@@ -1,6 +1,13 @@
 {
-  "version": "5.29",
+  "version": "5.30",
   "en": [
+    {
+      "version": "5.30",
+      "date": "2026-10-12 13:37",
+      "changes": [
+        "The fifth light big theme, Executive Glass: a light gray background with soft colored light spots, translucent frosted-glass cards and windows that blur what is behind them, an indigo accent, graphite text and a gentle lift of buttons on hover. Pick it in Customization or the header settings; open to everyone. If the browser cannot blur, you get ordinary cards. The glass is switched off by the Simple look switch and by the system high-contrast and reduce-transparency settings. The theme description also gained the labels Frosted-glass panels and Colored light spots on the background"
+      ]
+    },
     {
       "version": "5.29",
       "date": "2026-10-12 15:30",
@@ -3770,6 +3777,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.30",
+      "date": "2026-10-12 13:37",
+      "changes": [
+        "Пятая светлая «большая» тема «Бизнес-стекло» (Executive Glass): светло-серый фон с мягкими цветными световыми пятнами, полупрозрачные стеклянные карточки и окна с размытием фона, индиго-акцент, графитовый текст и мягкая подсветка кнопок при наведении. Включается в «Кастомизации» и в настройках шапки; открыта всем. Если браузер не умеет размытие, остаются обычные карточки. Стекло отключается выключателем «Простое оформление», системными «высокий контраст» и «уменьшить прозрачность». Заодно в описании тем появились подписи «стеклянные панели» и «световые пятна на фоне»"
+      ]
+    },
     {
       "version": "5.29",
       "date": "2026-10-12 15:30",

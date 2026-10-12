@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.29";
+const SITE_VERSION = "5.30";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.30", date: "2026-10-12 13:37", changes: [
+        "Пятая светлая «большая» тема «Бизнес-стекло» (Executive Glass): светло-серый фон с мягкими цветными световыми пятнами, полупрозрачные стеклянные карточки и окна с размытием фона, индиго-акцент, графитовый текст и мягкая подсветка кнопок при наведении. Включается в «Кастомизации» и в настройках шапки; открыта всем. Если браузер не умеет размытие, остаются обычные карточки. Стекло отключается выключателем «Простое оформление», системными «высокий контраст» и «уменьшить прозрачность». Заодно в описании тем появились подписи «стеклянные панели» и «световые пятна на фоне»",
+    ]},
     { version: "5.29", date: "2026-10-12 15:30", changes: [
         "Навыки и книги: поправлена вёрстка. В карточке навыка название теперь занимает всю ширину (не сжимается плашкой баллов и кнопками), полоса прогресса растянута на всю карточку, баллы переехали в нижнюю строку рядом с кнопками «−10% / +10%», а «изменить» и «удалить» в углу карточки. В списках «Освоенные навыки» и «Книги» название занимает свободное место, а баллы и кнопки выровнены по правому краю и по центру строки. Без миграций."
     ]},
@@ -2197,6 +2200,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.30", date: "2026-10-12 13:37", changes: [
+        "The fifth light big theme, Executive Glass: a light gray background with soft colored light spots, translucent frosted-glass cards and windows that blur what is behind them, an indigo accent, graphite text and a gentle lift of buttons on hover. Pick it in Customization or the header settings; open to everyone. If the browser cannot blur, you get ordinary cards. The glass is switched off by the Simple look switch and by the system high-contrast and reduce-transparency settings. The theme description also gained the labels Frosted-glass panels and Colored light spots on the background",
+    ]},
     { version: "5.29", date: "2026-10-12 15:30", changes: [
         "Skills and books: layout polished. In a skill card the name now takes the full width (no longer squeezed by the points pill and buttons), the progress bar spans the whole card, points moved to the bottom row next to the -10% / +10% buttons, and edit / delete sit in the card corner. In the Mastered skills and Books lists the name takes the free space while points and buttons are aligned to the right edge and the row center. No migrations."
     ]},
