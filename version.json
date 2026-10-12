@@ -1,6 +1,13 @@
 {
-  "version": "5.39",
+  "version": "5.40",
   "en": [
+    {
+      "version": "5.40",
+      "date": "2026-10-12 14:25",
+      "changes": [
+        "Customization: the Rainbow ring and Gradient ring items now have distinct previews (the rainbow used to show the plain gradient), and the “+” marker of the folding look is tidier."
+      ]
+    },
     {
       "version": "5.39",
       "date": "2026-10-12 14:21",
@@ -3840,6 +3847,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.40",
+      "date": "2026-10-12 14:25",
+      "changes": [
+        "Кастомизация: у предметов «Радужное кольцо» и «Градиентное кольцо» теперь разные превью (раньше у радуги показывался градиент), аккуратнее значок «+» у вида сворачивания."
+      ]
+    },
     {
       "version": "5.39",
       "date": "2026-10-12 14:21",

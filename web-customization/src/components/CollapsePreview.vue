@@ -12,11 +12,11 @@ defineProps<{ variant: 'accordion' | 'summary' | 'plus' | 'caret' }>()
     <path v-else-if="variant === 'caret'" d="M66 8h8l-4 5z" fill="currentColor" style="stroke: var(--accent); fill: var(--accent)" />
     <path v-else d="M66 8l4 4 4-4" style="stroke: var(--accent)" />
     <rect x="2" y="33" width="76" height="9" rx="4.5" opacity="0.7" />
-    <path v-if="variant === 'plus'" d="M66 37.5h8M70 33.5v8" opacity="0.7" />
+    <path v-if="variant === 'plus'" d="M67 37.5h6M70 34.5v6" opacity="0.7" />
     <path v-else-if="variant === 'caret'" d="M67 35h6l-3 4z" fill="currentColor" opacity="0.7" />
     <path v-else d="M66 37.5l4 3 4-3" opacity="0.7" />
     <rect x="2" y="46" width="76" height="9" rx="4.5" opacity="0.7" />
-    <path v-if="variant === 'plus'" d="M66 50.5h8M70 46.5v8" opacity="0.7" />
+    <path v-if="variant === 'plus'" d="M67 50.5h6M70 47.5v6" opacity="0.7" />
     <path v-else-if="variant === 'caret'" d="M67 48h6l-3 4z" fill="currentColor" opacity="0.7" />
     <path v-else d="M66 50.5l4 3 4-3" opacity="0.7" />
     <path v-if="variant === 'summary'" d="M42 37.5h16M42 50.5h12" opacity="0.7" />

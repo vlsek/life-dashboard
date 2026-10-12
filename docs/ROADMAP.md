@@ -191,3 +191,6 @@ v5.38 — BACKLOG 60.1 остаток (агент 1): лесенка дости�
 
 v5.39 — 59.4 продолжение: вид недели «Волна» (агент 3). МИГРАЦИЯ 083.
   `WeekGaugeStyle` + `wave` (weekGauge.ts ×3, progressSettings ×2, `WeekAlt.vue` ×2: высота столбика по синусоиде), ветвления в ProgressRing/HeaderProgressBadge/ProfileSection/ringPlacement/ProgressGauge/DayWeekBadge, реестр/редкость/i18n/превью, `migrations/083_catalog_week_wave.sql` (150). Пересобраны dashboard, header, customization.
+
+v5.40 — 59.4 продолжение: доводка превью новых предметов (агент 3). БЕЗ SQL.
+  Скриншот превью показал: у «Радуги» и «Градиентного кольца» один id градиента (`day-grad-prev`) → в одном документе побеждал первый; id теперь с суффиксом варианта. «+» в `CollapsePreview` уменьшен. Пересобран customization.

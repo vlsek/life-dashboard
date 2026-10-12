@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.39";
+const SITE_VERSION = "5.40";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.40", date: "2026-10-12 14:25", changes: [
+        "Кастомизация: у предметов «Радужное кольцо» и «Градиентное кольцо» теперь разные превью (раньше у радуги показывался градиент), аккуратнее значок «+» у вида сворачивания."
+    ]},
     { version: "5.39", date: "2026-10-12 14:21", changes: [
         "Кастомизация: новый вид спидометра недели — «Волна» (семь столбиков дугой, 150 баллов). Рисуется в шапке и на Дашборде."
     ]},
@@ -2227,6 +2230,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.40", date: "2026-10-12 14:25", changes: [
+        "Customization: the Rainbow ring and Gradient ring items now have distinct previews (the rainbow used to show the plain gradient), and the “+” marker of the folding look is tidier."
+    ]},
     { version: "5.39", date: "2026-10-12 14:21", changes: [
         "Customization: a new week-gauge look — Wave (seven bars forming an arch, 150 points). Shown in the header and on the Dashboard."
     ]},
