@@ -108,6 +108,7 @@ const overallPercent = computed(() => (total.value ? Math.round((openCount.value
 
 <style scoped>
 .grade-chip {
+  min-height: 1.75rem;
   background: var(--bg-card);
   border-color: var(--border);
   color: var(--text);

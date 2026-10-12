@@ -73,7 +73,7 @@ const activeTab = () => props.tabs.find((tab) => tab.code === props.active)
         type="button"
         data-test="tab-add"
         class="shrink-0 whitespace-nowrap rounded-full border border-dashed px-3 py-1 text-xs"
-        style="border-color: var(--border); color: var(--text-dim); background: transparent"
+        style="min-height: 2rem; border-color: var(--border); color: var(--text-dim); background: transparent"
         :title="t('eng_tab_add')"
         :aria-label="t('eng_tab_add')"
         @click="openPicker"

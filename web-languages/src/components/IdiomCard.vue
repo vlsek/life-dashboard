@@ -51,6 +51,8 @@ function add() {
   letter-spacing: 0.04em;
 }
 .idiom-other {
+  min-height: 2rem;
+  padding: 0.35rem 0.5rem;
   background: transparent;
   border: 0;
   color: var(--accent);
