@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.23";
+const SITE_VERSION = "5.24";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.24", date: "2026-10-12 08:17", changes: [
+        "Магазин «Кастомизации»: две новые платные анимации воды — «Качка» (стакан покачивается, пока вода набирается; 150 монет) и «Сияние» (стакан вспыхивает мягким свечением; 250 монет)."
+    ]},
     { version: "5.23", date: "2026-10-12 13:30", changes: [
         "«Языки» и «Челленджи»: у кольца прогресса (процент в центре) пропала чёрная прямоугольная рамка вокруг кольца — её рисовал случайно совпавший класс. Без миграций."
     ]},
@@ -2179,6 +2182,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.24", date: "2026-10-12 08:17", changes: [
+        "Customization shop: two new paid water animations — Sway (the glass rocks while the water rises; 150 coins) and Glow (the glass flares with a soft glow; 250 coins)."
+    ]},
     { version: "5.23", date: "2026-10-12 13:30", changes: [
         "Languages and Challenges: the progress ring (percent in the middle) no longer has a black rectangular frame around it — it was drawn by an accidentally matching class name. No migrations."
     ]},
