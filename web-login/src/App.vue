@@ -7,13 +7,9 @@ import { t } from './lib/i18n'
 import EmojiText from './components/EmojiText.vue'
 import SplashFlameLive from './components/splash/SplashFlameLive.vue'
 
-const { mode, email, password, msg, busy, setMode, submit, signInWithGoogle, checkExistingSession } = useLogin()
+const { mode, email, password, msg, msgKind, busy, setMode, submit, signInWithGoogle, checkExistingSession } = useLogin()
 onMounted(checkExistingSession)
 
-const tabStyle = (active: boolean) => ({
-  borderBottom: `2px solid ${active ? 'var(--accent)' : 'transparent'}`,
-  color: active ? 'var(--text)' : 'var(--text-dim)',
-})
 </script>
 
 <template>
@@ -24,35 +20,40 @@ const tabStyle = (active: boolean) => ({
     <h1 class="mb-4 text-center text-2xl font-semibold"><EmojiText :text="t('login_title')" /></h1>
 
     <div class="w-full max-w-[360px] rounded-lg border p-4" style="border-color: var(--border); background: var(--bg-card)">
-      <div class="mb-4 flex">
-        <button type="button" class="auth-tab flex-1 cursor-pointer bg-transparent" :style="tabStyle(mode === 'login')" @click="setMode('login')">{{ t('tab_login') }}</button>
-        <button type="button" class="auth-tab flex-1 cursor-pointer bg-transparent" :style="tabStyle(mode === 'register')" @click="setMode('register')">{{ t('tab_register') }}</button>
+      <!-- Переключатель «Вход / Регистрация» — сегментированный: активная вкладка выглядит нажатой кнопкой, а не просто подчёркнутым словом (BACKLOG 58.5) -->
+      <div class="auth-tabs mb-4" role="tablist" :aria-label="t('login_title')">
+        <button type="button" role="tab" class="auth-tab cursor-pointer" :class="{ 'auth-tab-on': mode === 'login' }" :aria-selected="mode === 'login'" data-test="tab-login" @click="setMode('login')">{{ t('tab_login') }}</button>
+        <button type="button" role="tab" class="auth-tab cursor-pointer" :class="{ 'auth-tab-on': mode === 'register' }" :aria-selected="mode === 'register'" data-test="tab-register" @click="setMode('register')">{{ t('tab_register') }}</button>
       </div>
 
       <form @submit.prevent="submit">
-        <label class="block text-sm">
-          {{ t('email_label') }}
+        <label class="block">
+          <span class="auth-label">{{ t('email_label') }}</span>
           <input
             v-model="email"
             type="email"
             autocomplete="email"
-            class="auth-input mt-1 w-full"
+            class="auth-input mt-1.5 w-full"
             placeholder="name@example.com"
             inputmode="email"
             autocapitalize="off"
             data-test="login-email"
           />
         </label>
-        <label class="mt-3 block text-sm">
-          {{ t('password_label') }}
-          <div class="mt-1"><PasswordInput v-model="password" /></div>
+        <label class="mt-3.5 block">
+          <span class="auth-label">{{ t('password_label') }}</span>
+          <div class="mt-1.5"><PasswordInput v-model="password" :autocomplete="mode === 'register' ? 'new-password' : 'current-password'" /></div>
+          <span v-if="mode === 'register'" class="auth-hint" data-test="password-hint">{{ t('password_hint_register') }}</span>
         </label>
+        <!-- Сообщение (ошибка / «подождите» / «проверь почту») — прямо над кнопкой, где его видно, а не внизу карточки под Google -->
+        <p v-if="msg" class="auth-msg" :class="'auth-msg-' + msgKind" :role="msgKind === 'error' ? 'alert' : 'status'" aria-live="polite" data-test="login-msg">{{ msg }}</p>
         <button
           type="submit"
-          class="auth-btn mt-4 w-full cursor-pointer font-medium transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          class="auth-btn mt-4 w-full cursor-pointer font-semibold transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           style="background: var(--accent); color: var(--accent-text)"
           data-test="login-submit"
           :disabled="busy"
+          :aria-busy="busy"
         >{{ mode === 'login' ? t('login_btn') : t('register_btn') }}</button>
       </form>
 
@@ -77,7 +78,6 @@ const tabStyle = (active: boolean) => ({
         {{ t('login_google_btn') }}
       </button>
 
-      <p class="mt-2.5 text-sm" style="color: var(--text-dim)">{{ msg }}</p>
     </div>
 
     <details class="mt-3 w-full max-w-[360px] text-sm" data-test="login-about">

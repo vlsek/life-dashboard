@@ -5,6 +5,8 @@ import { postAuthTarget, ROUTES } from './routes'
 import { t } from './i18n'
 
 export type Mode = 'login' | 'register'
+// Тип сообщения под формой (BACKLOG 58.5): ошибка — красным и сразу над кнопкой, остальное — спокойным цветом
+export type MsgKind = 'info' | 'error' | 'ok'
 
 
 // Порт логики login.js: вход по паролю, регистрация, вход через Google, и общий
@@ -14,6 +16,11 @@ export function useLogin() {
   const email = ref('')
   const password = ref('')
   const msg = ref('')
+  const msgKind = ref<MsgKind>('info')
+  const say = (text: string, kind: MsgKind = 'info') => {
+    msg.value = text
+    msgKind.value = kind
+  }
   const busy = ref(false)
 
   async function redirectAfterAuth() {
@@ -33,15 +40,15 @@ export function useLogin() {
 
   function setMode(next: Mode) {
     mode.value = next
-    msg.value = ''
+    say('')
   }
 
   async function submit() {
-    msg.value = t('login_please_wait')
+    say(t('login_please_wait'))
     const e = email.value.trim()
     const p = password.value
     if (!e || !p) {
-      msg.value = t('login_fill_fields')
+      say(t('login_fill_fields'), 'error')
       return
     }
     busy.value = true
@@ -49,34 +56,34 @@ export function useLogin() {
       if (mode.value === 'login') {
         const { error } = await sb.auth.signInWithPassword({ email: e, password: p })
         if (error) {
-          msg.value = t('login_error_prefix') + authErrorText(error)
+          say(t('login_error_prefix') + authErrorText(error), 'error')
           return
         }
         await redirectAfterAuth()
       } else {
         const { data, error } = await sb.auth.signUp({ email: e, password: p })
         if (error) {
-          msg.value = t('login_error_prefix') + authErrorText(error)
+          say(t('login_error_prefix') + authErrorText(error), 'error')
           return
         }
         if (data.session) window.location.href = ROUTES.onboarding
-        else msg.value = t('login_signup_check_email')
+        else say(t('login_signup_check_email'), 'ok')
       }
     } catch (err) {
-      msg.value = authErrorText(err)
+      say(authErrorText(err), 'error')
     } finally {
       busy.value = false
     }
   }
 
   async function signInWithGoogle() {
-    msg.value = t('login_please_wait')
+    say(t('login_please_wait'))
     // ВАЖНО: этот адрес должен быть в списке разрешённых Redirect URLs проекта Supabase
     // (Authentication → URL Configuration), иначе Supabase вернёт на Site URL.
     const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + ROUTES.oauthReturn } })
-    if (error) msg.value = t('login_error_prefix') + authErrorText(error)
+    if (error) say(t('login_error_prefix') + authErrorText(error), 'error')
     // при успехе браузер сразу уходит на Google; возврат обработает checkExistingSession()
   }
 
-  return { mode, email, password, msg, busy, setMode, submit, signInWithGoogle, checkExistingSession }
+  return { mode, email, password, msg, msgKind, busy, setMode, submit, signInWithGoogle, checkExistingSession }
 }

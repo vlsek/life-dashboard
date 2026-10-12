@@ -8,6 +8,8 @@ import { t } from '../lib/i18n'
 // ручной сборки DOM-обёртки. Иконки те же по смыслу (eye/eyeoff из общего icons.ts),
 // а не байт-в-байт те же EYE_ICON_OPEN/OFF константы — визуально эквивалентно.
 const value = defineModel<string>({ required: true })
+// BACKLOG 58.5: при регистрации менеджеры паролей должны предлагать НОВЫЙ пароль (new-password), при входе — сохранённый; точки в пустом поле показывают, что это поле ввода
+withDefaults(defineProps<{ autocomplete?: 'current-password' | 'new-password'; placeholder?: string }>(), { autocomplete: 'current-password', placeholder: '••••••••' })
 const shown = ref(false)
 </script>
 
@@ -17,7 +19,8 @@ const shown = ref(false)
       v-model="value"
       :type="shown ? 'text' : 'password'"
       class="auth-input w-full pr-12"
-      autocomplete="current-password"
+      :autocomplete="autocomplete"
+      :placeholder="placeholder"
       data-test="login-password"
     />
     <button

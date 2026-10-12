@@ -1472,7 +1472,18 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
 .auth-input::placeholder { color: var(--text-dim); opacity: 0.75; }
 .auth-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent); }
 .auth-btn { min-height: 48px; font-size: 16px; border-radius: 10px; }
-.auth-tab { min-height: 46px; font-size: 16px; }
+/* Вход / Регистрация (BACKLOG 58.5): сегментированный переключатель вместо подчёркнутых слов */
+.auth-tabs { display: flex; gap: 4px; padding: 4px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); }
+.auth-tab { flex: 1; min-height: 44px; font-size: 16px; border-radius: 9px; border: 1px solid transparent; background: transparent; color: var(--text-dim); font-weight: 500; }
+.auth-tab-on { background: var(--bg-card); color: var(--text); font-weight: 600; border-color: color-mix(in srgb, var(--text) 22%, var(--border)); box-shadow: 0 1px 3px color-mix(in srgb, var(--text) 18%, transparent); }
+.auth-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.auth-label { display: block; font-size: 0.9rem; font-weight: 500; color: var(--text); }
+.auth-hint { display: block; margin-top: 6px; font-size: 0.8rem; color: var(--text-dim); }
+.auth-msg { margin: 12px 0 0; padding: 10px 12px; border-radius: 10px; font-size: 0.9rem; line-height: 1.35; border: 1px solid var(--border); background: var(--bg); color: var(--text-dim); }
+.auth-msg-error { color: var(--danger, #e5484d); border-color: color-mix(in srgb, var(--danger, #e5484d) 55%, var(--border)); background: color-mix(in srgb, var(--danger, #e5484d) 10%, var(--bg)); }
+.auth-msg-ok { color: var(--text); border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); background: color-mix(in srgb, var(--accent) 10%, var(--bg)); }
+/* Язык и тема сверху: нормальная цель для пальца (≈40 px), а не 28 */
+.bar-btn { min-height: 40px; padding: 0 14px; }
 .auth-eye { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; }
 /* auth-form:end */
 

@@ -21,7 +21,7 @@ function pickTheme(k: ThemeKey) {
         v-for="l in (['en', 'ru'] as const)"
         :key="l"
         type="button"
-        class="cursor-pointer rounded-lg border px-3 py-1 text-sm"
+        class="bar-btn cursor-pointer rounded-lg border text-sm"
         :style="{
           borderColor: 'var(--border)',
           background: lang === l ? 'var(--accent)' : 'transparent',
@@ -37,7 +37,7 @@ function pickTheme(k: ThemeKey) {
         v-for="k in LOGIN_THEMES"
         :key="k"
         type="button"
-        class="cursor-pointer rounded-lg border px-3 py-1 text-sm"
+        class="bar-btn cursor-pointer rounded-lg border text-sm"
         :aria-pressed="themeVal === k"
         :data-theme-btn="k"
         :style="{
