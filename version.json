@@ -1,6 +1,13 @@
 {
-  "version": "5.32",
+  "version": "5.33",
   "en": [
+    {
+      "version": "5.33",
+      "date": "2026-10-12 14:00",
+      "changes": [
+        "All links to the old (classic) version of the pages are gone: the «legacy-…» link at the bottom of the side menu on every page and the unobtrusive links on the sign-in and onboarding pages. Old bookmarks keep working — the redirects to the new pages are still in place. NO SQL."
+      ]
+    },
     {
       "version": "5.32",
       "date": "2026-10-12 13:44",
@@ -3791,6 +3798,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.33",
+      "date": "2026-10-12 14:00",
+      "changes": [
+        "Убраны все ссылки на старую (классическую) версию страниц: «legacy-…» внизу бокового меню на каждой странице и неприметные ссылки на страницах входа и первичной настройки. Старые закладки продолжают работать — переадресация на новые страницы осталась. БЕЗ SQL."
+      ]
+    },
     {
       "version": "5.32",
       "date": "2026-10-12 13:44",

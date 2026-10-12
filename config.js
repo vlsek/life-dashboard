@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.32";
+const SITE_VERSION = "5.33";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.33", date: "2026-10-12 14:00", changes: [
+        "Убраны все ссылки на старую (классическую) версию страниц: «legacy-…» внизу бокового меню на каждой странице и неприметные ссылки на страницах входа и первичной настройки. Старые закладки продолжают работать — переадресация на новые страницы осталась. БЕЗ SQL."
+    ]},
     { version: "5.32", date: "2026-10-12 13:44", changes: [
         "Кастомизация: два новых вида сворачивания блоков — «Плюс/минус» и «Треугольник» (100 баллов каждый). Меняют только значок у заголовков блоков на Дашборде и в Тренировках."
     ]},
@@ -2206,6 +2209,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.33", date: "2026-10-12 14:00", changes: [
+        "All links to the old (classic) version of the pages are gone: the «legacy-…» link at the bottom of the side menu on every page and the unobtrusive links on the sign-in and onboarding pages. Old bookmarks keep working — the redirects to the new pages are still in place. NO SQL."
+    ]},
     { version: "5.32", date: "2026-10-12 13:44", changes: [
         "Customization: two new block-folding looks — Plus / minus and Triangle (100 points each). They only change the marker next to block titles on the Dashboard and in Workouts."
     ]},
