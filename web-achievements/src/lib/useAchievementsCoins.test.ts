@@ -41,6 +41,7 @@ vi.mock('./supabase', () => {
     return chain
   }
   function rpc(fn: string) {
+    if (fn === 'get_my_goals_streak') return Promise.resolve({ data: null, error: { message: 'нет функции' } }) // серия по целям (60.1) — не про монетки
     h.rpcCalls.push(fn)
     if (h.rpcReply === null) return Promise.resolve({ data: null, error: { code: 'PGRST202', message: 'Could not find the function public.' + fn } })
     return Promise.resolve({ data: h.rpcReply, error: null })

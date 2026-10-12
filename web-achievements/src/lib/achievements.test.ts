@@ -47,6 +47,7 @@ const ZERO: Counters = {
   wordsAdded: 0,
   wordsLearned: 0,
   milestonesDone: 0,
+  goalsStreakBest: 0,
 }
 
 // 2026-10-05 — понедельник
@@ -55,7 +56,7 @@ const rows = (metricId: string, days: number[], value: unknown = true) => days.m
 
 describe('реестр достижений', () => {
   it('около 20 стартовых, ключи уникальны, группы известны, пороги положительные', () => {
-    expect(ACHIEVEMENTS.length).toBe(47)
+    expect(ACHIEVEMENTS.length).toBe(51)
     expect(new Set(ACHIEVEMENTS.map((a) => a.key)).size).toBe(ACHIEVEMENTS.length)
     for (const a of ACHIEVEMENTS) {
       expect(GROUP_ORDER).toContain(a.group)

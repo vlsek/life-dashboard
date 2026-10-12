@@ -3,7 +3,7 @@ import { ACHIEVEMENTS, evaluate, groupStates, type Counters } from './achievemen
 import { closestLocked, filterGroups, recentUnlocked, remaining } from './showcase'
 import { gradeOf } from './grade'
 
-const ZERO: Counters = { streakBest: 0, perfectDays: 0, pointsTotal: 0, metricDone: 0, weightEntries: 0, goalsDone: 0, skillsMastered: 0, booksDone: 0, workoutDays: 0, challengesDone: 0, megaWeeks: 0, wordsAdded: 0, wordsLearned: 0, milestonesDone: 0 }
+const ZERO: Counters = { streakBest: 0, perfectDays: 0, pointsTotal: 0, metricDone: 0, weightEntries: 0, goalsDone: 0, skillsMastered: 0, booksDone: 0, workoutDays: 0, challengesDone: 0, megaWeeks: 0, wordsAdded: 0, wordsLearned: 0, milestonesDone: 0, goalsStreakBest: 0 }
 
 describe('витрина: последние', () => {
   it('новые сверху, без записей без даты и без не открытых, не больше лимита', () => {

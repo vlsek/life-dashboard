@@ -5,7 +5,7 @@ import AchievementUnlockedModal from './AchievementUnlockedModal.vue'
 import { evaluate, type Counters } from '../lib/achievements'
 import { RARITY_COLOR } from '../lib/rewards'
 
-const ZERO: Counters = { streakBest: 0, perfectDays: 0, pointsTotal: 0, metricDone: 0, weightEntries: 0, goalsDone: 0, skillsMastered: 0, booksDone: 0, workoutDays: 0, challengesDone: 0, megaWeeks: 0, wordsAdded: 0, wordsLearned: 0, milestonesDone: 0 }
+const ZERO: Counters = { streakBest: 0, perfectDays: 0, pointsTotal: 0, metricDone: 0, weightEntries: 0, goalsDone: 0, skillsMastered: 0, booksDone: 0, workoutDays: 0, challengesDone: 0, megaWeeks: 0, wordsAdded: 0, wordsLearned: 0, milestonesDone: 0, goalsStreakBest: 0 }
 const stateOf = (key: string) => evaluate({ ...ZERO }).find((s) => s.def.key === key)!
 
 beforeEach(() => localStorage.setItem('site_lang', 'ru'))

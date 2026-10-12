@@ -21,11 +21,12 @@ export type CounterKey =
   | 'megaWeeks' // закончено недель больше чем на 100% (пн–вс прошли целиком; см. weekProgress.ts)
   | 'wordsAdded' // слов в «Языках» (vocabulary): всего добавлено, все языки вместе
   | 'wordsLearned' // слов в «Языках» с отметкой «выучено» (vocabulary.learned = true)
+  | 'goalsStreakBest' // лучшая серия «дней с выполненной целью» (BACKLOG 60.1; RPC get_my_goals_streak, миграция 079)
   | 'milestonesDone' // отметок выполнения вех (по каждой вехе — большее из «записей в истории» и «выполнена»; см. countMilestoneMarks)
 
 export type Counters = Record<CounterKey, number>
 
-export type GroupKey = 'secret' | 'streak' | 'perfect' | 'points' | 'first' | 'workouts' | 'challenges' | 'goals' | 'books' | 'weeks' | 'words_added' | 'words_learned' | 'skills' | 'milestones'
+export type GroupKey = 'secret' | 'streak' | 'perfect' | 'points' | 'first' | 'workouts' | 'challenges' | 'goals' | 'books' | 'weeks' | 'words_added' | 'words_learned' | 'skills' | 'milestones' | 'goals_streak'
 
 export interface AchievementDef {
   key: string
@@ -36,7 +37,7 @@ export interface AchievementDef {
 }
 
 // Порядок групп на странице.
-export const GROUP_ORDER: readonly GroupKey[] = ['first', 'streak', 'perfect', 'points', 'workouts', 'challenges', 'goals', 'skills', 'books', 'milestones', 'words_added', 'words_learned', 'weeks']
+export const GROUP_ORDER: readonly GroupKey[] = ['first', 'streak', 'perfect', 'points', 'workouts', 'challenges', 'goals', 'goals_streak', 'skills', 'books', 'milestones', 'words_added', 'words_learned', 'weeks']
 
 // Лесенка достижений одного раздела: четыре ступени с ключами <префикс>_<порог>. Ключи НЕ менять после релиза (на них ссылаются
 // записи user_achievements и награды «Кастомизации»).
@@ -77,6 +78,7 @@ const BASE_ACHIEVEMENTS: readonly AchievementDef[] = [
   // Лесенки остальных разделов (владелец одобрил пороги 2026-10-05). У каждого раздела ровно 4 ступени: уже выпущенные значки
   // (first_*, goals_10, books_5, challenges_1/5, workouts_10/50) остаются с прежними ключами, недостающие добавлены ниже.
   ...makeLadder('goals', 'goals', 'goalsDone', 'goals', [25, 50]), // с first_goal (1) и goals_10: 1 / 10 / 25 / 50
+  ...makeLadder('goals_streak', 'goals_streak', 'goalsStreakBest', 'flame', [3, 7, 14, 30]), // серия по целям (BACKLOG 60.1); без наград: лесенки LADDERS в rewards.ts её не знают
   ...makeLadder('skills', 'skills', 'skillsMastered', 'skills', [5, 10, 25]), // с first_skill (1): 1 / 5 / 10 / 25
   ...makeLadder('books', 'books', 'booksDone', 'book', [10, 25]), // с first_book (1) и books_5: 1 / 5 / 10 / 25
   ...makeLadder('challenges', 'challenges', 'challengesDone', 'challenges', [10, 25]), // с challenges_1/5: 1 / 5 / 10 / 25
@@ -171,6 +173,7 @@ export interface CounterInput {
   megaWeeks?: number // считает weekProgress.countMegaWeeks (нужны заметки-планы и цели); не передан — 0
   wordsAdded?: number // «Языки»: слов добавлено (не передан — 0)
   wordsLearned?: number // «Языки»: слов выучено (не передан — 0)
+  goalsStreakBest?: number // «Серия по целям»: лучшая серия из RPC (не передан — 0)
   milestonesDone?: number // «Вехи»: отметок выполнения (считает countMilestoneMarks; не передан — 0)
   today: Date
 }
@@ -265,6 +268,7 @@ export function computeCounters(input: CounterInput): Counters {
     megaWeeks: input.megaWeeks ?? 0,
     wordsAdded: input.wordsAdded ?? 0,
     wordsLearned: input.wordsLearned ?? 0,
+    goalsStreakBest: input.goalsStreakBest ?? 0,
     milestonesDone: input.milestonesDone ?? 0,
   }
 }

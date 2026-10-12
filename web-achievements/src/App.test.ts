@@ -6,7 +6,7 @@ import { ACHIEVEMENTS, GROUP_ORDER, BASELINE_KEY, evaluate, type Counters } from
 
 vi.mock('./lib/supabase', () => ({ logout: vi.fn(), sb: {} }))
 
-const ZERO: Counters = { streakBest: 0, perfectDays: 0, pointsTotal: 0, metricDone: 0, weightEntries: 0, goalsDone: 0, skillsMastered: 0, booksDone: 0, workoutDays: 0, challengesDone: 0, megaWeeks: 0, wordsAdded: 0, wordsLearned: 0, milestonesDone: 0 }
+const ZERO: Counters = { streakBest: 0, perfectDays: 0, pointsTotal: 0, metricDone: 0, weightEntries: 0, goalsDone: 0, skillsMastered: 0, booksDone: 0, workoutDays: 0, challengesDone: 0, megaWeeks: 0, wordsAdded: 0, wordsLearned: 0, milestonesDone: 0, goalsStreakBest: 0 }
 
 const hold = {
   auth: ref<unknown>({ status: 'ready', userId: 'u', userEmail: 'a@b.c' }),
@@ -51,7 +51,7 @@ describe('страница «Достижения»', () => {
     await openAll(w)
     expect(w.findAll('[data-testid="achievement-card"]').length).toBe(ACHIEVEMENTS.length)
     expect(w.find('[data-testid="achievements-count"]').text()).toBe(`0 / ${ACHIEVEMENTS.length}`)
-    expect(w.findAll('section[data-group]').length).toBe(13)
+    expect(w.findAll('section[data-group]').length).toBe(14)
     expect(w.find('[data-testid="achievements-local-note"]').exists()).toBe(false)
     w.unmount()
   })

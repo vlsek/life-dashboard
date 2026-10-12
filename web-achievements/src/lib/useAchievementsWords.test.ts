@@ -43,7 +43,8 @@ vi.mock('./supabase', () => {
     }
     return chain
   }
-  return { sb: { auth: { getSession: () => Promise.resolve({ data: { session: { user: { id: 'u1', email: 'a@b.c' } } } }) }, from }, logout: vi.fn() }
+  const rpc = () => Promise.resolve({ data: null, error: { message: 'нет функции' } }) // get_my_goals_streak (60.1)
+  return { sb: { rpc, auth: { getSession: () => Promise.resolve({ data: { session: { user: { id: 'u1', email: 'a@b.c' } } } }) }, from }, logout: vi.fn() }
 })
 
 import { useAchievements } from './useAchievements'

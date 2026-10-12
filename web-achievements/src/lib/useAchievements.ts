@@ -65,7 +65,7 @@ export function useAchievements() {
   async function load(userId: string) {
     loading.value = true
     try {
-      const [metricsRes, valuesRes, goalsRes, skillsRes, booksRes, workoutsRes, challengesRes, weightCount, notesRes, allGoalsRes, wordsAddedRes, wordsLearnedRes, milestonesRes] = await Promise.all([
+      const [metricsRes, valuesRes, goalsRes, skillsRes, booksRes, workoutsRes, challengesRes, weightCount, notesRes, allGoalsRes, wordsAddedRes, wordsLearnedRes, milestonesRes, goalsStreakRes] = await Promise.all([
         sb.from('metrics').select('*').eq('user_id', userId).eq('active', true),
         // постранично: Supabase отдаёт максимум 1000 строк за запрос, иначе счётчики считались бы по обрезанной истории
         fetchAllRows<ValueRow>((from, to) => sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId).order('date').order('metric_id').range(from, to)),
@@ -83,6 +83,8 @@ export function useAchievements() {
         sb.from('vocabulary').select('id', { count: 'exact', head: true }).eq('user_id', userId).eq('learned', true),
         // «Вехи»: история отметок и признак «выполнена» (ошибка/нет таблицы — 0)
         sb.from('milestones').select('history, done').eq('user_id', userId),
+        // «Серия по целям» (BACKLOG 60.1): RPC миграции 079; нет функции/ошибка — 0 (открытые значки не пропадают)
+        sb.rpc('get_my_goals_streak'),
       ])
       const err = metricsRes.error?.message || valuesRes.error || goalsRes.error?.message || skillsRes.error?.message || booksRes.error?.message || workoutsRes.error
       if (err) {
@@ -103,6 +105,7 @@ export function useAchievements() {
         challengesDone: (challengesRes.data || []).length, // нет таблицы челленджей/ошибка — просто 0
         wordsAdded: wordsAddedRes.count ?? 0,
         wordsLearned: wordsLearnedRes.count ?? 0,
+        goalsStreakBest: goalsStreakRes.error ? 0 : Math.max(Number((goalsStreakRes.data as { current?: number; best?: number } | null)?.current) || 0, Number((goalsStreakRes.data as { best?: number } | null)?.best) || 0),
         milestonesDone: milestonesRes.error ? 0 : countMilestoneMarks((milestonesRes.data || []) as { history?: unknown[] | null; done?: boolean | null }[]),
         // ошибка заметок/целей не ломает страницу — недель выше 100% тогда 0 (открытые достижения не пропадают)
         megaWeeks: notesRes.error || allGoalsRes.error ? 0 : countMegaWeeks({ metrics, values: valuesRes.rows, planned: notesRes.rows, goals: (allGoalsRes.data || []) as GoalLite[], settings: getDayProgressSettings(), today: new Date() }),
