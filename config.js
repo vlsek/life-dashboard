@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.22";
+const SITE_VERSION = "5.23";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.23", date: "2026-10-12 13:30", changes: [
+        "«Языки» и «Челленджи»: у кольца прогресса (процент в центре) пропала чёрная прямоугольная рамка вокруг кольца — её рисовал случайно совпавший класс. Без миграций."
+    ]},
     { version: "5.22", date: "2026-10-12 05:14", changes: [
         "Настройки между устройствами, часть 2: кроме темы и языка теперь переезжают на другое устройство и расположение с видом — свёрнутые блоки на Дашборде, в «Целях» и «Навыках», периоды графиков, вкладки и фильтры («Тренировки», «Сообщество», «Кастомизация», «Магазин», «Языки»), избранные страницы, единица веса и модель тела. На новом устройстве страница один раз перезагружается, чтобы подхватить их. Одноразовые «закрыл подсказку» остаются на устройстве. Без новых миграций (нужна 064)."
     ]},
@@ -2176,6 +2179,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.23", date: "2026-10-12 13:30", changes: [
+        "Languages and Challenges: the progress ring (percent in the middle) no longer has a black rectangular frame around it — it was drawn by an accidentally matching class name. No migrations."
+    ]},
     { version: "5.22", date: "2026-10-12 05:14", changes: [
         "Settings across devices, part 2: besides theme and language, layout and view now follow you to another device — collapsed blocks on the Dashboard, Goals and Skills, chart periods, tabs and filters (Workouts, Community, Customization, Shop, Languages), favorite pages, weight unit and body model. On a new device the page reloads once to pick them up. One-off \"dismissed hint\" flags stay on the device. No new migrations (needs 064)."
     ]},

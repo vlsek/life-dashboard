@@ -1,6 +1,13 @@
 {
-  "version": "5.22",
+  "version": "5.23",
   "en": [
+    {
+      "version": "5.23",
+      "date": "2026-10-12 13:30",
+      "changes": [
+        "Languages and Challenges: the progress ring (percent in the middle) no longer has a black rectangular frame around it — it was drawn by an accidentally matching class name. No migrations."
+      ]
+    },
     {
       "version": "5.22",
       "date": "2026-10-12 05:14",
@@ -3721,6 +3728,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.23",
+      "date": "2026-10-12 13:30",
+      "changes": [
+        "«Языки» и «Челленджи»: у кольца прогресса (процент в центре) пропала чёрная прямоугольная рамка вокруг кольца — её рисовал случайно совпавший класс. Без миграций."
+      ]
+    },
     {
       "version": "5.22",
       "date": "2026-10-12 05:14",
