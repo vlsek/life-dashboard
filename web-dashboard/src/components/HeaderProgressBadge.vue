@@ -11,7 +11,7 @@ import { dayGaugeStyle } from '../lib/useDayGauge'
 // Бейдж прогресса в шапке (режим "header") — рисуется в #topbar-right из AppShell через Teleport.
 // День — круг, неделя — скруглённый квадрат с пунктирной дорожкой, чтобы отличались с первого взгляда
 // (портировано из renderHeaderProgressBadge()/renderHeaderWeekBadge() в dashboard.js).
-const props = defineProps<{ kind: 'day' | 'week'; basePct: number; bonusPct: number; totalPct: number; title: string; shape?: 'heptagon' | 'classic' | 'bars' | 'dots' | 'steps'; days?: WeekDaySegment[] | null }>()
+const props = defineProps<{ kind: 'day' | 'week'; basePct: number; bonusPct: number; totalPct: number; title: string; shape?: 'heptagon' | 'classic' | 'bars' | 'dots' | 'steps' | 'wave'; days?: WeekDaySegment[] | null }>()
 const emit = defineEmits<{ click: [] }>()
 
 // цель Teleport должна уже быть в DOM — включаем бейдж после монтирования
@@ -23,7 +23,7 @@ const circle = computed(() => circleGeometry(13, props.basePct, props.bonusPct))
 const sevenDays = computed(() => props.kind === 'week' && props.days?.length === 7)
 const hept = computed(() => sevenDays.value && (props.shape ?? 'heptagon') === 'heptagon')
 const bars = computed(() => sevenDays.value && props.shape === 'bars')
-const alt = computed(() => (sevenDays.value && (props.shape === 'dots' || props.shape === 'steps') ? props.shape : null))
+const alt = computed(() => (sevenDays.value && (props.shape === 'dots' || props.shape === 'steps' || props.shape === 'wave') ? props.shape : null))
 const daySegs = computed(() => daySegments(16, 16, 13, props.basePct, props.bonusPct))
 // в бейдже штрихи снаружи кольца: внутри лежит процент
 const dayTickList = computed(() => dayTicks(16, 16, 18.4, props.basePct, 1.4))

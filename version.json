@@ -1,6 +1,13 @@
 {
-  "version": "5.38",
+  "version": "5.39",
   "en": [
+    {
+      "version": "5.39",
+      "date": "2026-10-12 14:21",
+      "changes": [
+        "Customization: a new week-gauge look — Wave (seven bars forming an arch, 150 points). Shown in the header and on the Dashboard."
+      ]
+    },
     {
       "version": "5.38",
       "date": "2026-10-12 15:00",
@@ -3833,6 +3840,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.39",
+      "date": "2026-10-12 14:21",
+      "changes": [
+        "Кастомизация: новый вид спидометра недели — «Волна» (семь столбиков дугой, 150 баллов). Рисуется в шапке и на Дашборде."
+      ]
+    },
     {
       "version": "5.38",
       "date": "2026-10-12 15:00",

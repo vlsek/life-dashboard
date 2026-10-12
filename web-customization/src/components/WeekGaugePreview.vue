@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Мини-картинка «как это выглядит» для предметов «Спидометр прогресса недели» (BACKLOG 53.2): классическое кольцо и семь столбиков на примере недели
 // (пн–чт прошли, сегодня — пятница, дальше пусто). Только превью, настоящие виды рисуют шапка и Дашборд.
-defineProps<{ variant: 'classic' | 'bars' | 'dots' | 'steps' }>()
+defineProps<{ variant: 'classic' | 'bars' | 'dots' | 'steps' | 'wave' }>()
 const dotFill = [1, 0.7, 0.9, 0.5, 0.25, 0, 0]
 const dotPos = dotFill.map((_, i) => [28 + 20 * Math.cos(-Math.PI / 2 + (i * 2 * Math.PI) / 7), 28 + 20 * Math.sin(-Math.PI / 2 + (i * 2 * Math.PI) / 7)])
 const fills = [1, 0.7, 0.9, 0.5, 0.25, 0, 0]
@@ -25,6 +25,12 @@ const C = 2 * Math.PI * 22
       <rect :x="3 + i * 9.5" :y="52 - (16 + 36 * i / 6)" width="6" :height="16 + 36 * i / 6" rx="2" fill="var(--border)" />
       <rect v-if="f > 0" :x="3 + i * 9.5" :y="52 - (16 + 36 * i / 6) * f" width="6" :height="(16 + 36 * i / 6) * f" rx="2" fill="var(--accent)" />
       <rect v-if="i === 4" :x="1.5 + i * 9.5" :y="50.5 - (16 + 36 * i / 6)" width="9" :height="(16 + 36 * i / 6) + 3" rx="3" stroke="var(--text-dim)" stroke-width="1" />
+    </g>
+  </svg>
+  <svg v-else-if="variant === 'wave'" viewBox="0 0 70 56" width="70" height="56" fill="none" aria-hidden="true" data-testid="week-preview-wave">
+    <g v-for="(f, i) in dotFill" :key="i">
+      <rect :x="3 + i * 9.5" :y="52 - 52 * (0.4 + 0.6 * Math.sin(Math.PI * (i + 0.5) / 7))" width="6" :height="52 * (0.4 + 0.6 * Math.sin(Math.PI * (i + 0.5) / 7))" rx="2" fill="var(--border)" />
+      <rect v-if="f > 0" :x="3 + i * 9.5" :y="52 - 52 * (0.4 + 0.6 * Math.sin(Math.PI * (i + 0.5) / 7)) * f" width="6" :height="52 * (0.4 + 0.6 * Math.sin(Math.PI * (i + 0.5) / 7)) * f" rx="2" fill="var(--accent)" />
     </g>
   </svg>
   <svg v-else viewBox="0 0 70 56" width="70" height="56" fill="none" aria-hidden="true">

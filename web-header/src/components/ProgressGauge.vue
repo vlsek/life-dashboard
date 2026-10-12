@@ -22,7 +22,7 @@ const arc = full * SWEEP
 const sevenDays = computed(() => props.kind === 'week' && props.days?.length === 7)
 const hept = computed(() => sevenDays.value && (props.shape ?? 'heptagon') === 'heptagon')
 const bars = computed(() => sevenDays.value && props.shape === 'bars')
-const alt = computed(() => (sevenDays.value && (props.shape === 'dots' || props.shape === 'steps') ? props.shape : null))
+const alt = computed(() => (sevenDays.value && (props.shape === 'dots' || props.shape === 'steps' || props.shape === 'wave') ? props.shape : null))
 const aria = computed(() => ((hept.value || bars.value || alt.value) && props.days ? `${props.label}: ${props.totalPct}%. ${weekDaysAriaLabel(props.days, t('dash_summary_weekdays'))}` : `${props.label}: ${props.totalPct}%`))
 const baseLen = computed(() => arc * Math.min(1, Math.max(0, props.basePct)))
 const bonusLen = computed(() => arc * Math.min(1, Math.max(0, props.bonusPct / 100)))

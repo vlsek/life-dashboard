@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.38";
+const SITE_VERSION = "5.39";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.39", date: "2026-10-12 14:21", changes: [
+        "Кастомизация: новый вид спидометра недели — «Волна» (семь столбиков дугой, 150 баллов). Рисуется в шапке и на Дашборде."
+    ]},
     { version: "5.38", date: "2026-10-12 15:00", changes: [
         "Новые достижения «Серии по целям»: 3, 7, 14 и 30 дней подряд, когда выполнена хотя бы одна цель (серия считается так же, как плашка на странице «Цели»). Значки видны в «Достижениях» и в профилях в «Сообществе». Награды за них — позже. БЕЗ SQL (использует миграцию 079)."
     ]},
@@ -2224,6 +2227,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.39", date: "2026-10-12 14:21", changes: [
+        "Customization: a new week-gauge look — Wave (seven bars forming an arch, 150 points). Shown in the header and on the Dashboard."
+    ]},
     { version: "5.38", date: "2026-10-12 15:00", changes: [
         "New «Goal streaks» achievements: 3, 7, 14 and 30 days in a row with at least one goal completed (counted like the plate on the Goals page). The badges show in Achievements and on profiles in Community. Rewards for them come later. NO SQL (uses migration 079)."
     ]},

@@ -188,3 +188,6 @@ v5.37 — 59.4 продолжение: формы стакана воды «Та
   `WaterGlassStyle` + `tumbler|jar` (waterGlass.ts ×3; форма — данные, компоненты не менялись), реестр/редкость/i18n, `migrations/082_catalog_water_glass_more.sql` (100 и 150). Пересобраны dashboard, header, customization.
 
 v5.38 — BACKLOG 60.1 остаток (агент 1): лесенка достижений `goals_streak_3/7/14/30` (группа `goals_streak`, счётчик `goalsStreakBest` = max(current, best) из RPC `get_my_goals_streak`, миграция 079; ошибка RPC → 0). `web-achievements`: achievements.ts, grade.ts (редкость common…epic, иконки), i18n, useAchievements.ts; копия значков в `web-community` (badges.ts + i18n). Наград нет (LADDERS не тронут). БЕЗ SQL. Тест goalsStreakAchievements.test.ts; счётчики тестов обновлены (51 достижение, 14 групп).
+
+v5.39 — 59.4 продолжение: вид недели «Волна» (агент 3). МИГРАЦИЯ 083.
+  `WeekGaugeStyle` + `wave` (weekGauge.ts ×3, progressSettings ×2, `WeekAlt.vue` ×2: высота столбика по синусоиде), ветвления в ProgressRing/HeaderProgressBadge/ProfileSection/ringPlacement/ProgressGauge/DayWeekBadge, реестр/редкость/i18n/превью, `migrations/083_catalog_week_wave.sql` (150). Пересобраны dashboard, header, customization.

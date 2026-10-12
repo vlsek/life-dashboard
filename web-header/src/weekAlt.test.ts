@@ -12,6 +12,11 @@ const props = { kind: 'week' as const, basePct: 0.4, bonusPct: 0, totalPct: 40, 
 beforeEach(() => localStorage.clear())
 
 describe('разбор и кэш', () => {
+  it('week_wave → wave; кэш помнит', () => {
+    expect(parseWeekGauge('week_wave')).toBe('wave')
+    writeCachedWeekGauge('wave')
+    expect(readCachedWeekGauge()).toBe('wave')
+  })
   it('week_dots → dots, week_steps → steps; кэш помнит оба', () => {
     expect(parseWeekGauge('week_dots')).toBe('dots')
     expect(parseWeekGauge('week_steps')).toBe('steps')
@@ -49,7 +54,7 @@ describe('WeekAlt', () => {
 })
 
 describe('бейдж и панель шапки рисуют новые виды', () => {
-  for (const shape of ['dots', 'steps'] as const) {
+  for (const shape of ['dots', 'steps', 'wave'] as const) {
     it(`DayWeekBadge: ${shape}`, () => {
       const w = mount(DayWeekBadge, { props: { ...props, shape, days } })
       expect(w.find(`[data-test="week-${shape}"]`).exists()).toBe(true)
