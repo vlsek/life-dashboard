@@ -54,12 +54,15 @@ P={
  'matcha':('light','🍵 Matcha Latte','🍵 Матча-латте',dict(bg='#f4f4f0',card='#fffefb',border='#d9d6c8',text='#33382f',dim='#686d5e',accent='#4f7a5c',at='#ffffff',ok='#3f7a4f',bad='#b3402f',hist='#5f8a6c',**LIGHT_W)),
  # --- BACKLOG 57.7 (файл 1, тема 3): Cyberpunk Day / Day Runner — светлый киберпанк (серебристый фон с точками, белые карточки с тёмной рамкой, ультрамарин, жёсткие тени, моноширинные метки) ---
  'cyberday':('light','⚡ Cyberpunk Day','⚡ Неоновый день',dict(bg='#eef0f4',card='#ffffff',border='#2b2f3a',text='#111827',dim='#4b5563',accent='#2563eb',at='#ffffff',ok='#15803d',bad='#be185d',hist='#16a34a',**LIGHT_W)),
+ # --- BACKLOG 57.7 (файл 1, тема 4): Vintage Paper / Чернильная бумага — редакционная светлая (слоновая кость, чернильно-синий, терракотовый; пунктирные линии, контурные кнопки, засечки) ---
+ 'vintage':('light','📜 Vintage Paper','📜 Чернильная бумага',dict(bg='#fbfbfa',card='#ecebe4',border='#a9a699',text='#1e293b',dim='#586070',accent='#1e293b',at='#fbfbfa',ok='#3f6b45',bad='#c2410c',hist='#3f6b45',wt='#3f6f9a',wb='#2c5a85',wl='#35648f')),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
 
 # «Характер» больших тем (BACKLOG 50): переопределения токенов оформления и правила, действующие ТОЛЬКО под `html.theme-<ключ>`; остальные темы
 # не затрагиваются. tw — для Tailwind-страниц (пилоты), root — для корневого style.css без Tailwind. Скругление у Tailwind-страниц меняется
 # переменными `--radius-md/lg/xl/2xl` (их читают и утилиты `rounded-*`, и `.card`/`.modal`/кнопки), `rounded-full` (кольца, аватарки) остаётся круглым.
+SERIF = 'Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif'
 MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace'
 CHAR = {
     # Sci-Fi HUD: строгие углы 2px, пунктирные границы карточек, моноширинные заголовки, Snappy-анимации.
@@ -270,6 +273,34 @@ CHAR = {
         reduced='  --default-transition-duration: 0s;',
         contrast='  --bg-pattern: none;',
     ),
+    # Редакционная «чернильная бумага»: тонкие ПУНКТИРНЫЕ линии границ, ОТСУТСТВИЕ заливных кнопок (строгие контурные элементы — кольцо внутри,
+    # без изменения размеров), заголовки с засечками (классическая типографика), острые углы 2px, плоско, гладкие анимации. Эффектов нет —
+    # «Простое оформление» этой темой не затрагивается.
+    'vintage': dict(
+        tw='''  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 3px;
+  --radius-2xl: 4px;
+  --shadow-card: none;
+  --shadow-active: none;
+  --border-style: dashed;
+  --font-heading: %s;
+  --default-transition-duration: 0.2s;
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);''' % SERIF,
+        root='''  --radius-card: 3px;
+  --radius-modal: 3px;
+  --radius-control: 2px;
+  --shadow-card: none;
+  --shadow-active: none;
+  --border-style: dashed;
+  --font-heading: %s;''' % SERIF,
+        rules=[
+            (['.card', '.modal', '[style*="var(--bg-card)"]'], 'border-style: var(--border-style);'),
+            (['h1', 'h2', 'h3', 'h4'], 'font-family: var(--font-heading);'),
+            (["button:not(.secondary):not(.danger):not(:disabled)"], 'background: transparent; color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent);'),
+        ],
+        reduced='  --default-transition-duration: 0s;',
+    ),
 }
 assert all(k in P for k in CHAR)
 
@@ -277,14 +308,14 @@ assert all(k in P for k in CHAR)
 # вариант вручную в «Настройках» шапки (ручной выбор главнее). Словарь ОТДЕЛЬНО от CHAR; тема без записи = спокойная волна. Генератор apply_themes.py
 # пишет из него `themeWater.ts` в web-header и web-dashboard. Подбор по характеру темы: HUD и терминал — «рябь» (расходящиеся круги, как скан),
 # синтвейв — «капли» (пружинные), спокойная ночная — «волна».
-THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave', 'velvet': 'drops', 'frost': 'ripple', 'alpine': 'wave', 'matcha': 'drops', 'cyberday': 'ripple'}
+THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave', 'velvet': 'drops', 'frost': 'ripple', 'alpine': 'wave', 'matcha': 'drops', 'cyberday': 'ripple', 'vintage': 'wave'}
 assert all(k in CHAR for k in THEME_WATER) and all(v in ('wave', 'drops', 'ripple') for v in THEME_WATER.values())
 
 # Заставка загрузки (лоадер страниц) у больших тем (BACKLOG 55.5, срез 2): вариант из реестра SPLASH_VARIANTS (classic | flame | ring | tongues) — действует,
 # ЕСЛИ вариант не выбран вручную (ручной выбор и `?splash=` главнее). Тема без записи = «живое пламя». Генератор пишет `themeLoader.ts` и вставляет
 # запасной вариант в скрипт выбора заставки во всех web-*/index.html (статичная заставка берёт его до загрузки бандла). Подбор по характеру: HUD —
 # «кольцо» (скан), синтвейв — «три языка» (неоновое пламя), терминал — «классика» (простая), спокойная ночная — «живое пламя».
-THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame', 'velvet': 'flame', 'frost': 'ring', 'alpine': 'classic', 'matcha': 'flame', 'cyberday': 'tongues'}
+THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame', 'velvet': 'flame', 'frost': 'ring', 'alpine': 'classic', 'matcha': 'flame', 'cyberday': 'tongues', 'vintage': 'classic'}
 assert all(k in CHAR for k in THEME_LOADER) and all(v in ('classic', 'flame', 'ring', 'tongues') for v in THEME_LOADER.values())
 
 # Темы-награды (решение владельца 2026-10-06): тема → ключ достижения, НАГРАДОЙ за которое она открывается (4-я, самая трудная ступень

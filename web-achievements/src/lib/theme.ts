@@ -33,6 +33,7 @@ export const THEME_KEYS = {
   alpine: 'theme_alpine',
   matcha: 'theme_matcha',
   cyberday: 'theme_cyberday',
+  vintage: 'theme_vintage',
 } as const
 
 export type ThemeKey = keyof typeof THEME_KEYS
@@ -70,6 +71,7 @@ const THEME_BG_COLORS: Record<ThemeKey, string> = {
   alpine: '#f8f9fc',
   matcha: '#f4f4f0',
   cyberday: '#eef0f4',
+  vintage: '#fbfbfa',
 }
 
 export function getTheme(): ThemeKey {

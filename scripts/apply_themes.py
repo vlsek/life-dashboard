@@ -578,13 +578,18 @@ def traits_of(c):
             out.append('corners_soft')
     if re.search(r'--border-style:\s*dashed', tw):
         out.append('dashed_borders')
-    if '--font-heading' in tw:
+    mf = re.search(r'--font-heading:\s*([^;]+);', tw)
+    if mf and 'monospace' not in mf.group(1):
+        out.append('serif_headings')  # шрифт заголовков не моноширинный — с засечками (классическая типографика)
+    elif '--font-heading' in tw:
         if any('body' in sels and 'font-family' in css for sels, css in rules):
             out.append('mono_all')
         elif any(('button' in sels or 'label' in sels) and 'font-family' in css for sels, css in rules):
             out.append('mono_labels')  # моноширинный шрифт ещё и у меток/кнопок, не только у заголовков
         else:
             out.append('mono_headings')
+    if any(any(x.startswith('button') for x in sels) and 'background: transparent' in css for sels, css in rules):
+        out.append('outlined_buttons')  # кнопки с заливкой становятся контурными
     m = re.search(r'--shadow-card:\s*([^;]+);', tw)
     if m:
         # `none` — плоские карточки (раньше такие темы ошибочно получали «мягкие тени»); иначе — тень карточек

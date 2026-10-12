@@ -31,6 +31,7 @@ const THEME_KEYS = {
     alpine: "theme_alpine",
     matcha: "theme_matcha",
     cyberday: "theme_cyberday",
+    vintage: "theme_vintage",
 };
 
 // Цвета фона по темам — держим в синхронизации с --bg из style.css
@@ -67,6 +68,7 @@ const THEME_BG_COLORS = {
     alpine: "#f8f9fc",
     matcha: "#f4f4f0",
     cyberday: "#eef0f4",
+    vintage: "#fbfbfa",
 };
 
 function getTheme() {

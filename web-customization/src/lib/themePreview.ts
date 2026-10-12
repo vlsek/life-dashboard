@@ -45,4 +45,5 @@ export const THEME_PREVIEW: Record<ThemeKey, ThemePreview> = {
   alpine: { bg: '#f8f9fc', card: '#ffffff', accent: '#4c6f99', text: '#2e3440', success: '#3b7d57', water: '#3f95e0', kind: 'light' },
   matcha: { bg: '#f4f4f0', card: '#fffefb', accent: '#4f7a5c', text: '#33382f', success: '#3f7a4f', water: '#3f95e0', kind: 'light' },
   cyberday: { bg: '#eef0f4', card: '#ffffff', accent: '#2563eb', text: '#111827', success: '#15803d', water: '#3f95e0', kind: 'light' },
+  vintage: { bg: '#fbfbfa', card: '#ecebe4', accent: '#1e293b', text: '#1e293b', success: '#3f6b45', water: '#3f6f9a', kind: 'light' },
 }

@@ -10,4 +10,5 @@ export const THEME_LOADER: Record<string, 'classic' | 'flame' | 'ring' | 'tongue
   alpine: 'classic',
   matcha: 'flame',
   cyberday: 'tongues',
+  vintage: 'classic',
 }

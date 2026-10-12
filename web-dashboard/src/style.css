@@ -838,6 +838,32 @@ html.theme-cyberday {
   --chart-none: #6b7280;
   --chart-other: #9095a0;
 }
+
+html.theme-vintage {
+  --bg: #fbfbfa;
+  --bg-card: #ecebe4;
+  --border: #a9a699;
+  --text: #1e293b;
+  --text-dim: #586070;
+  --accent: #1e293b;
+  --accent-text: #fbfbfa;
+  --success: #3f6b45;
+  --danger: #c2410c;
+  --hist-ok: #3f6b45;
+  --water-top: #3f6f9a;
+  --water-bottom: #2c5a85;
+  --water-line: #35648f;
+  --chart-1: #1e293b;
+  --chart-2: #af291d;
+  --chart-3: #a0731a;
+  --chart-4: #189155;
+  --chart-5: #721daf;
+  --chart-6: #188b95;
+  --chart-7: #af1d72;
+  --chart-8: #af1daf;
+  --chart-none: #6b7280;
+  --chart-other: #7f8592;
+}
 /* themes:end */
 
 /* design-tokens:start (генерируется scripts/apply_themes.py — не править руками; BACKLOG 50.1а) */
@@ -1082,6 +1108,28 @@ html[data-simple='on'].theme-cyberday {
     --default-transition-duration: 0s;
   }
 }
+
+/* большая тема: vintage */
+html.theme-vintage {
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 3px;
+  --radius-2xl: 4px;
+  --shadow-card: none;
+  --shadow-active: none;
+  --border-style: dashed;
+  --font-heading: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
+  --default-transition-duration: 0.2s;
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+html.theme-vintage .card, html.theme-vintage .modal, html.theme-vintage [style*="var(--bg-card)"] { border-style: var(--border-style); }
+html.theme-vintage h1, html.theme-vintage h2, html.theme-vintage h3, html.theme-vintage h4 { font-family: var(--font-heading); }
+html.theme-vintage button:not(.secondary):not(.danger):not(:disabled) { background: transparent; color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+@media (prefers-reduced-motion: reduce) {
+  html.theme-vintage {
+    --default-transition-duration: 0s;
+  }
+}
 /* design-tokens:end */
 /* themes-scheme */
 html.theme-nord,
@@ -1111,7 +1159,8 @@ html.theme-peach,
 html.theme-graphite,
 html.theme-alpine,
 html.theme-matcha,
-html.theme-cyberday { color-scheme: light; }
+html.theme-cyberday,
+html.theme-vintage { color-scheme: light; }
 
 html,
 body,
@@ -1825,7 +1874,8 @@ html.theme-peach,
 html.theme-graphite,
 html.theme-alpine,
 html.theme-matcha,
-html.theme-cyberday {
+html.theme-cyberday,
+html.theme-vintage {
   --water-gold: #b87900;
 }
 /* themes-gold:end */

@@ -8,7 +8,7 @@ import { THEME_KEYS } from './lib/theme'
 const read = (p: string): string => readFileSync('../' + p, 'utf-8')
 const OLD = ['dark', 'monet', 'light', 'pink']
 // BACKLOG 45.4: к исходным одиннадцати добавлены ещё двенадцать тем (8 тёмных и 4 светлых), открытых всегда
-const NEW = ['mint', 'sepia', 'solarlight', 'nord', 'mocha', 'amoled', 'contrast', 'dracula', 'gruvbox', 'tokyonight', 'forest', 'ocean', 'sunset', 'twilight', 'neon', 'lavender', 'sky', 'peach', 'graphite', 'emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha', 'cyberday']
+const NEW = ['mint', 'sepia', 'solarlight', 'nord', 'mocha', 'amoled', 'contrast', 'dracula', 'gruvbox', 'tokyonight', 'forest', 'ocean', 'sunset', 'twilight', 'neon', 'lavender', 'sky', 'peach', 'graphite', 'emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha', 'cyberday', 'vintage']
 const KEYS = Object.keys(THEME_KEYS)
 const css = read('web-dashboard/src/style.css')
 
@@ -34,7 +34,7 @@ const isBlue = (hex: string): boolean => {
 const pilots: string[] = readdirSync('..').filter((d: string) => d.startsWith('web-') && existsSync(`../${d}/src/lib/theme.ts`))
 
 describe('набор тем', () => {
-  it('32 темы: четыре прежних первыми, потом Mint, классика, двенадцать новых, шесть «больших» тёмных (Emerald Obsidian, Moonlight Synth, Matrix Phosphor, Tokyo Nightfall, Velvet Dusk, Nord Frost) и три светлые «большие» (Paper Alpine, Matcha Latte, Cyberpunk Day)', () => {
+  it('33 темы: четыре прежних первыми, потом Mint, классика, двенадцать новых, шесть «больших» тёмных (Emerald Obsidian, Moonlight Synth, Matrix Phosphor, Tokyo Nightfall, Velvet Dusk, Nord Frost) и четыре светлые «большие» (Paper Alpine, Matcha Latte, Cyberpunk Day, Vintage Paper)', () => {
     expect(KEYS).toEqual([...OLD, ...NEW])
     expect(Object.values(THEME_KEYS)).toEqual(KEYS.map((k) => 'theme_' + k))
   })

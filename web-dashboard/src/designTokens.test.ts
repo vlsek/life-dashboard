@@ -119,18 +119,21 @@ describe('большая тема emerald: характер', () => {
   it('правила характера работают ТОЛЬКО под html.theme-emerald (остальные темы не затронуты)', () => {
     for (const f of files) {
       const region = read(f).match(REGION)![0]
-      const rules = region.split('\n').filter((l) => /\{ border-style: var\(--border-style\); \}|\{ font-family: var\(--font-heading\); letter-spacing/.test(l))
+      // такое же правило пунктира есть и у vintage — поэтому смотрим именно строки emerald и что в них нет чужих селекторов
+      const rules = region.split('\n').filter((l) => l.startsWith('html.theme-emerald ') && l.includes('{ '))
       expect(rules.length, f).toBeGreaterThanOrEqual(2)
       for (const l of rules) for (const sel of l.split('{')[0].split(',')) expect(sel.trim(), f).toMatch(/^html\.theme-emerald /)
+      expect(rules.some((l) => /\{ border-style: var\(--border-style\); \}/.test(l)), f).toBe(true)
+      expect(rules.some((l) => /\{ font-family: var\(--font-heading\); letter-spacing/.test(l)), f).toBe(true)
     }
   })
   it('при prefers-reduced-motion анимации темы мгновенные (только у Tailwind-страниц)', () => {
     for (const d of pilots) expect(read(d + '/src/style.css')).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-emerald \{\s*--default-transition-duration: 0s;/)
   })
-  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine, matcha, cyberday) — остальные темы не переопределены', () => {
+  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine, matcha, cyberday, vintage) — остальные темы не переопределены', () => {
     for (const f of files) {
       const region = read(f).match(REGION)![0]
-      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha', 'cyberday'])
+      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha', 'cyberday', 'vintage'])
     }
   })
 })
@@ -484,5 +487,60 @@ describe('большая тема cyberday (светлая): характер', 
     expect([get('bg'), get('bg-card'), get('border'), get('accent')]).toEqual(['#eef0f4', '#ffffff', '#2b2f3a', '#2563eb'])
     const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
     expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).not.toContain('cyberday')
+  })
+})
+
+// BACKLOG 57.7 (файл 1, тема 4): светлая Vintage Paper — пунктирные границы, КОНТУРНЫЕ кнопки без заливки, заголовки с засечками, острые углы, плоско.
+describe('большая тема vintage (светлая): характер', () => {
+  const block = (css: string): string => {
+    const m = css.match(/\/\* большая тема: vintage \*\/\nhtml\.theme-vintage \{[^}]*\}/)
+    expect(m, 'нет блока характера').not.toBeNull()
+    return m![0]
+  }
+  for (const d of pilots) {
+    it(d + ': острые углы, плоско, пунктир, шрифт с засечками, гладкая анимация', () => {
+      const css = read(d + '/src/style.css')
+      const b = block(css)
+      expect([decl(b, '--radius-md'), decl(b, '--radius-lg'), decl(b, '--radius-xl'), decl(b, '--radius-2xl')]).toEqual(['2px', '2px', '3px', '4px'])
+      expect([decl(b, '--shadow-card'), decl(b, '--shadow-active')]).toEqual(['none', 'none'])
+      expect(decl(b, '--border-style')).toBe('dashed')
+      expect(decl(b, '--font-heading')).toContain('serif')
+      expect(decl(b, '--font-heading')).not.toContain('monospace')
+      expect(decl(b, '--default-transition-timing-function')).toBe('cubic-bezier(0.4, 0, 0.2, 1)')
+      expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-vintage \{\s*--default-transition-duration: 0s;/)
+    })
+  }
+  it('корень: углы 3/3/2, пунктир и шрифт с засечками', () => {
+    const b = block(read('style.css'))
+    expect([decl(b, '--radius-card'), decl(b, '--radius-modal'), decl(b, '--radius-control')]).toEqual(['3px', '3px', '2px'])
+    expect(decl(b, '--border-style')).toBe('dashed')
+    expect(decl(b, '--font-heading')).toContain('serif')
+  })
+  it('три правила только под html.theme-vintage: пунктир карточек, шрифт заголовков, контурные кнопки (кольцо внутри, без смены размеров)', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      const lines = region.split('\n').filter((l) => l.startsWith('html.theme-vintage ') && l.includes('{ '))
+      expect(lines.length, f).toBe(3)
+      for (const l of lines) for (const sel of l.split('{')[0].split(',')) expect(sel.trim(), f).toMatch(/^html\.theme-vintage /)
+      const btn = lines.find((l) => l.includes('button'))!
+      expect(btn, f).toContain('background: transparent')
+      expect(btn, f).toContain('box-shadow: inset 0 0 0 1px var(--accent)')
+      expect(btn, f).not.toMatch(/\bborder:/) // не border: — иначе кнопки изменят размер
+      expect(btn, f).toContain(':not(.secondary):not(.danger):not(:disabled)')
+    }
+  })
+  it('под «Простое оформление» и prefers-contrast блока нет: эффектов у темы нет, нечего отключать', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      expect(region, f).not.toContain("html[data-simple='on'].theme-vintage")
+      expect(region, f).not.toMatch(/prefers-contrast: more\) \{\s*html\.theme-vintage/)
+    }
+  })
+  it('светлая: слоновая кость, тёплые плотные «страницы», чернильно-синий акцент, терракотовый для тревог; галочка белая', () => {
+    const css = read('web-dashboard/src/style.css')
+    const get = (name: string) => css.match(new RegExp('html\\.theme-vintage \\{[^}]*--' + name + ':\\s*(#[0-9a-fA-F]{6})'))![1].toLowerCase()
+    expect([get('bg'), get('bg-card'), get('accent'), get('danger')]).toEqual(['#fbfbfa', '#ecebe4', '#1e293b', '#c2410c'])
+    const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
+    expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).not.toContain('vintage')
   })
 })

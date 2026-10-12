@@ -88,3 +88,17 @@ describe('cyberday (светлый киберпанк): жёсткие тени 
     for (const k of Object.keys(THEME_TRAITS)) if (k !== 'cyberday') expect(THEME_TRAITS[k], k).not.toContain('hard_shadows')
   })
 })
+
+describe('vintage (редакционная «чернильная бумага»)', () => {
+  it('цвета, острые углы, пунктир, заголовки с засечками, контурные кнопки, плоские карточки, гладкая анимация; НЕ «моноширинные»', () => {
+    expect(THEME_TRAITS.vintage).toEqual(['palette', 'corners_sharp', 'dashed_borders', 'serif_headings', 'outlined_buttons', 'flat_cards', 'smooth_anim'])
+    expect(THEME_TRAITS.vintage).not.toContain('mono_headings')
+  })
+  it('«с засечками» и «контурные кнопки» — только у vintage; у emerald шрифт по-прежнему моноширинный', () => {
+    for (const k of Object.keys(THEME_TRAITS)) if (k !== 'vintage') {
+      expect(THEME_TRAITS[k], k).not.toContain('serif_headings')
+      expect(THEME_TRAITS[k], k).not.toContain('outlined_buttons')
+    }
+    expect(THEME_TRAITS.emerald).toContain('mono_headings')
+  })
+})
