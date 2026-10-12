@@ -1,6 +1,13 @@
 {
-  "version": "5.35",
+  "version": "5.36",
   "en": [
+    {
+      "version": "5.36",
+      "date": "2026-10-12 10:58",
+      "changes": [
+        "Headings: there is now always a gap between an icon and its text (icons used to sit flush against it — in headings, \"quick ideas\" chips and elsewhere), and page and section headings (Achievements, Customization, Shop, Goals, Skills, Workouts and others) got SVG icons where they were missing."
+      ]
+    },
     {
       "version": "5.35",
       "date": "2026-10-12 14:20",
@@ -3812,6 +3819,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.36",
+      "date": "2026-10-12 10:58",
+      "changes": [
+        "Заголовки: между значком и текстом теперь везде есть пробел (раньше значки стояли вплотную — в заголовках, чипах «быстрых идей» и других местах), а у заголовков страниц и разделов («Достижения», «Кастомизация», «Магазин», «Цели», «Навыки», «Тренировки» и др.) появились SVG-значки там, где их не было."
+      ]
+    },
     {
       "version": "5.35",
       "date": "2026-10-12 14:20",

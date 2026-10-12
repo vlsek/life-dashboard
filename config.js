@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.35";
+const SITE_VERSION = "5.36";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.36", date: "2026-10-12 10:58", changes: [
+        "Заголовки: между значком и текстом теперь везде есть пробел (раньше значки стояли вплотную — в заголовках, чипах «быстрых идей» и других местах), а у заголовков страниц и разделов («Достижения», «Кастомизация», «Магазин», «Цели», «Навыки», «Тренировки» и др.) появились SVG-значки там, где их не было."
+    ]},
     { version: "5.35", date: "2026-10-12 14:20", changes: [
         "Мелкие кнопки на телефоне стали удобнее для нажатия: «Другая» и «＋» (добавить словарь) в «Языках», фильтры-чипы редкости в «Достижениях». БЕЗ SQL."
     ]},
@@ -2215,6 +2218,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.36", date: "2026-10-12 10:58", changes: [
+        "Headings: there is now always a gap between an icon and its text (icons used to sit flush against it — in headings, \"quick ideas\" chips and elsewhere), and page and section headings (Achievements, Customization, Shop, Goals, Skills, Workouts and others) got SVG icons where they were missing."
+    ]},
     { version: "5.35", date: "2026-10-12 14:20", changes: [
         "Small buttons are easier to tap on phones: «Another» and «＋» (add dictionary) in Languages, the rarity filter chips in Achievements. NO SQL."
     ]},

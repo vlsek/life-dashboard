@@ -48,7 +48,7 @@ describe('значок у заголовков разделов', () => {
   // (файл, ключ) — заголовки разделов на странице; каждая строка i18n должна начинаться со значка, вывод — через EmojiText
   const SECTION_KEYS: Record<string, string[]> = {
     'web-achievements': ['ach_title', 'ach_secret_title', 'ach_recent_title', 'ach_next_title'],
-    'web-customization': ['cust_title', 'cust_sec_themes', 'cust_sec_markers', 'cust_sec_splash', 'cust_sec_streakflame', 'cust_sec_wateranim'],
+    'web-customization': ['cust_title', 'cust_sec_themes', 'cust_sec_markers', 'cust_sec_splash', 'cust_sec_streakflame', 'cust_sec_wateranim', 'cust_sec_bodymodel'],
     'web-shop': ['shop_section_affordable', 'shop_section_saving', 'shop_idea_title'],
     'web-goals': ['goals_sec_settings', 'goals_sec_upcoming'],
     'web-skills': ['skills_active_h3', 'skills_books_to_read_h3'],
