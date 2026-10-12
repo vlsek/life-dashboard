@@ -57,6 +57,8 @@ export const ITEM_RARITY: Record<string, Rarity> = {
   frame_glitch: 'rare',
   collapse_accordion: 'uncommon', // как другие предметы за средний тариф (150)
   collapse_summary: 'rare', // как другие предметы за высокий тариф (250)
+  collapse_plus: 'common', // низкий тариф (100)
+  collapse_caret: 'common',
   week_classic: 'common', // виды спидометра недели (53.2): 100 → обычный, 150 → необычный, как другие предметы тех же тарифов
   week_bars: 'uncommon',
   week_dots: 'common', // 59.3: новые виды недели — по тарифам 100/150

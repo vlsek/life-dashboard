@@ -1,6 +1,13 @@
 {
-  "version": "5.31",
+  "version": "5.32",
   "en": [
+    {
+      "version": "5.32",
+      "date": "2026-10-12 13:44",
+      "changes": [
+        "Customization: two new block-folding looks — Plus / minus and Triangle (100 points each). They only change the marker next to block titles on the Dashboard and in Workouts."
+      ]
+    },
     {
       "version": "5.31",
       "date": "2026-10-12 10:39",
@@ -3784,6 +3791,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.32",
+      "date": "2026-10-12 13:44",
+      "changes": [
+        "Кастомизация: два новых вида сворачивания блоков — «Плюс/минус» и «Треугольник» (100 баллов каждый). Меняют только значок у заголовков блоков на Дашборде и в Тренировках."
+      ]
+    },
     {
       "version": "5.31",
       "date": "2026-10-12 10:39",
