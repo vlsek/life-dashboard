@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.28";
+const SITE_VERSION = "5.29";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.29", date: "2026-10-12 15:30", changes: [
+        "Навыки и книги: поправлена вёрстка. В карточке навыка название теперь занимает всю ширину (не сжимается плашкой баллов и кнопками), полоса прогресса растянута на всю карточку, баллы переехали в нижнюю строку рядом с кнопками «−10% / +10%», а «изменить» и «удалить» в углу карточки. В списках «Освоенные навыки» и «Книги» название занимает свободное место, а баллы и кнопки выровнены по правому краю и по центру строки. Без миграций."
+    ]},
     { version: "5.28", date: "2026-10-12 10:33", changes: [
         "Графики: столбцы. В «Кастомизации», в разделе «Графики», новый выбор «Вид графика»: «Линия» (по умолчанию, как раньше) или «Столбцы» — по столбцу на каждый день с данными, от нуля, с закруглённой верхушкой. У метрик с особенностями подходов столбец составной: сегменты в цветах легенды. Линия цели рисуется поверх столбцов; подсказка, клавиатура и анимация появления работают, прогноза в столбцах нет. Без миграций."
     ]},
@@ -2194,6 +2197,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.29", date: "2026-10-12 15:30", changes: [
+        "Skills and books: layout polished. In a skill card the name now takes the full width (no longer squeezed by the points pill and buttons), the progress bar spans the whole card, points moved to the bottom row next to the -10% / +10% buttons, and edit / delete sit in the card corner. In the Mastered skills and Books lists the name takes the free space while points and buttons are aligned to the right edge and the row center. No migrations."
+    ]},
     { version: "5.28", date: "2026-10-12 10:33", changes: [
         "Charts: bars. In \"Customization\", the \"Charts\" section, a new \"Chart type\" choice: \"Line\" (default, as before) or \"Bars\" — one bar per day with data, growing from zero, with a rounded top. For metrics with set variations the bar is stacked: segments in the legend colours. The goal line is drawn over the bars; the tooltip, keyboard and appearance animation work, there is no forecast in bars. No migrations."
     ]},

@@ -174,9 +174,9 @@ async function onDeleteBook(b: Book) {
           <table class="w-full">
             <tbody>
               <tr v-for="s in mastered" :key="s.id" class="align-top">
-                <td class="done-text">{{ s.name }}</td>
-                <td class="whitespace-nowrap px-2 text-xs">{{ s.points ?? 10 }} <CoinIcon /></td>
-                <td class="whitespace-nowrap text-right">
+                <td class="done-text w-full py-1.5 pr-2">{{ s.name }}</td>
+                <td class="w-px whitespace-nowrap px-2 py-1.5 align-middle text-xs">{{ s.points ?? 10 }} <CoinIcon /></td>
+                <td class="w-px whitespace-nowrap py-1.5 text-right align-middle">
                   <button class="secondary icon-btn" :title="t('skills_edit_aria')" :aria-label="t('skills_edit_aria')" @click="skillFormTarget = s"><Icon name="edit" /></button>
                   <button class="danger icon-btn ml-1" :title="t('skills_delete_aria')" :aria-label="t('skills_delete_aria')" @click="onDeleteSkill(s)"><Icon name="trash" /></button>
                 </td>
@@ -204,10 +204,10 @@ async function onDeleteBook(b: Book) {
           <table class="mb-6 w-full">
             <tbody>
               <tr v-for="b in activeBooks" :key="b.id" class="align-top">
-                <td class="px-1"><input type="checkbox" :checked="false" @change="toggleBookDone(b)" /></td>
-                <td>{{ b.author ? `${b.title} — ${b.author}` : b.title }}</td>
-                <td class="whitespace-nowrap px-2 text-xs">{{ b.points ?? 10 }} <CoinIcon /></td>
-                <td class="whitespace-nowrap text-right">
+                <td class="px-1 py-1.5 align-middle"><input type="checkbox" :checked="false" @change="toggleBookDone(b)" /></td>
+                <td class="w-full py-1.5 pr-2">{{ b.author ? `${b.title} — ${b.author}` : b.title }}</td>
+                <td class="w-px whitespace-nowrap px-2 py-1.5 align-middle text-xs">{{ b.points ?? 10 }} <CoinIcon /></td>
+                <td class="w-px whitespace-nowrap py-1.5 text-right align-middle">
                   <button class="secondary icon-btn" :title="t('skills_edit_aria')" :aria-label="t('skills_edit_aria')" @click="bookFormTarget = b"><Icon name="edit" /></button>
                   <button class="danger icon-btn ml-1" :title="t('skills_delete_aria')" :aria-label="t('skills_delete_aria')" @click="onDeleteBook(b)"><Icon name="trash" /></button>
                 </td>
@@ -223,11 +223,11 @@ async function onDeleteBook(b: Book) {
           <table class="w-full">
             <tbody>
               <tr v-for="b in doneBooks" :key="b.id" class="align-top">
-                <td class="px-1"><input type="checkbox" :checked="true" @change="toggleBookDone(b)" /></td>
-                <td class="done-text">{{ b.author ? `${b.title} — ${b.author}` : b.title }}</td>
-                <td class="whitespace-nowrap px-2 text-xs">{{ b.points ?? 10 }} <CoinIcon /></td>
-                <td class="dim whitespace-nowrap px-2 text-xs">{{ fmtRu(b.done_date) }}</td>
-                <td class="whitespace-nowrap text-right">
+                <td class="px-1 py-1.5 align-middle"><input type="checkbox" :checked="true" @change="toggleBookDone(b)" /></td>
+                <td class="done-text w-full py-1.5 pr-2">{{ b.author ? `${b.title} — ${b.author}` : b.title }}</td>
+                <td class="w-px whitespace-nowrap px-2 py-1.5 align-middle text-xs">{{ b.points ?? 10 }} <CoinIcon /></td>
+                <td class="dim w-px whitespace-nowrap px-2 py-1.5 align-middle text-xs">{{ fmtRu(b.done_date) }}</td>
+                <td class="w-px whitespace-nowrap py-1.5 text-right align-middle">
                   <button class="secondary icon-btn" :title="t('skills_edit_aria')" :aria-label="t('skills_edit_aria')" @click="bookFormTarget = b"><Icon name="edit" /></button>
                   <button class="danger icon-btn ml-1" :title="t('skills_delete_aria')" :aria-label="t('skills_delete_aria')" @click="onDeleteBook(b)"><Icon name="trash" /></button>
                 </td>

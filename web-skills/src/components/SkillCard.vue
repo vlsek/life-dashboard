@@ -18,7 +18,7 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
 </script>
 
 <template>
-  <article class="rounded-xl border p-3" style="border-color: var(--border); background: var(--bg-card)" data-test="skill-card">
+  <article class="relative rounded-xl border p-3" style="border-color: var(--border); background: var(--bg-card)" data-test="skill-card">
     <div class="flex items-start gap-3">
       <button
         type="button"
@@ -31,12 +31,8 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
       ></button>
 
       <div class="min-w-0 flex-1">
-        <div class="flex items-start justify-between gap-2">
-          <h4 class="m-0 break-words text-base font-medium" data-test="skill-name">{{ skill.name }}</h4>
-          <span class="inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-xs" style="border-color: var(--border)" data-test="skill-points">
-            {{ skill.points ?? 10 }} <CoinIcon />
-          </span>
-        </div>
+        <!-- отступ справа только у заголовка: под кнопками действий (в углу карточки); полоса прогресса и нижняя строка идут на всю ширину (аудит 576, как в карточке цели 58.8) -->
+        <h4 class="skill-title m-0 break-words text-base font-medium" data-test="skill-name">{{ skill.name }}</h4>
 
         <div class="mt-2 flex items-center gap-2">
           <div
@@ -53,13 +49,16 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
           <span class="dim whitespace-nowrap text-xs" data-test="skill-percent">{{ pct }}%</span>
         </div>
 
-        <div class="mt-2 flex gap-1.5">
+        <div class="mt-2 flex items-center gap-1.5" data-test="skill-footer">
           <button type="button" class="secondary px-2 text-xs" :aria-label="t('skills_step_down_aria')" data-test="skill-down" @click="emit('bump', -1)">−{{ step }}%</button>
           <button type="button" class="secondary px-2 text-xs" :aria-label="t('skills_step_up_aria')" data-test="skill-up" @click="emit('bump', 1)">+{{ step }}%</button>
+          <span class="ml-auto inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-xs" style="border-color: var(--border)" data-test="skill-points">
+            {{ skill.points ?? 10 }} <CoinIcon />
+          </span>
         </div>
       </div>
 
-      <div class="flex shrink-0 gap-0.5">
+      <div class="skill-actions flex gap-0.5" data-test="skill-actions">
         <button type="button" class="secondary" :style="iconBtn" :title="t('skills_edit_aria')" :aria-label="t('skills_edit_aria')" data-test="skill-edit" @click="emit('edit')"><Icon name="edit" /></button>
         <button type="button" class="danger" :style="iconBtn" :title="t('skills_delete_aria')" :aria-label="t('skills_delete_aria')" data-test="skill-delete" @click="emit('delete')"><Icon name="trash" /></button>
       </div>
@@ -68,6 +67,15 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
 </template>
 
 <style scoped>
+.skill-actions {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+.skill-title {
+  padding-right: 4.4rem;
+  min-height: 1.9rem; /* не ниже кнопок действий в углу */
+}
 .skill-check {
   width: 1.65rem;
   height: 1.65rem;
