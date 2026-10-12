@@ -7,6 +7,7 @@ import { formatPoints } from '../lib/leaderboardView'
 import { onMounted, ref, computed } from 'vue'
 import OfferGoalForm from './OfferGoalForm.vue'
 import { t } from '../lib/i18n'
+import { fetchFriendWishlist, priceOf, type Wishlist } from '../lib/friendWishlist'
 import { daysSince, fetchFriendSummary, fmtSummaryDate, type FriendSummary } from '../lib/friendSummary'
 
 // Раскрытый профиль (BACKLOG 395): ВСЕ открытые достижения человека — в ленте он показывает только выбранные (до 5).
@@ -28,6 +29,13 @@ onMounted(async () => {
     summary.value = res.data
     summaryState.value = 'ok'
   } else summaryState.value = res.status
+})
+// Вишлист друга (BACKLOG 57.6, миграция 077): только просмотр; нет миграции или список пуст/скрыт — раздел не показываем (скрыт — одной строкой)
+const wishlist = ref<Wishlist | null>(null)
+onMounted(async () => {
+  if (!props.userId || !props.isFriend) return
+  const res = await fetchFriendWishlist(props.userId)
+  if (res.status === 'ok') wishlist.value = res.data
 })
 // Предложить другу цель или задачу (миграция 063): только друзьям; после отправки форма закрывается и показывается подтверждение.
 const offerOpen = ref(false)
@@ -94,6 +102,21 @@ const tiles = computed(() => {
           </div>
         </div>
       </template>
+
+      <details v-if="wishlist && !wishlist.hidden && wishlist.items.length" class="mt-3 text-sm" data-testid="friend-wishlist">
+        <summary class="cursor-pointer font-medium">{{ t('comm_wishlist_title') }} · {{ wishlist.items.length }}</summary>
+        <ul class="m-0 mt-2 flex list-none flex-col gap-2 p-0">
+          <li v-for="w in wishlist.items" :key="w.id" class="flex items-center gap-2" data-testid="wish-item">
+            <img v-if="w.image_url" :src="w.image_url" alt="" class="h-10 w-10 shrink-0 rounded-lg object-cover" loading="lazy" />
+            <span class="min-w-0 flex-1">
+              <a v-if="w.link" :href="w.link" target="_blank" rel="noopener noreferrer nofollow" class="truncate" data-testid="wish-link">{{ w.name }}</a>
+              <span v-else class="truncate">{{ w.name }}</span>
+            </span>
+            <span v-if="priceOf(w)" class="dim whitespace-nowrap text-xs" data-testid="wish-price">{{ priceOf(w)!.value }} {{ priceOf(w)!.sparks ? t('comm_wishlist_sparks') : t('comm_wishlist_points') }}</span>
+          </li>
+        </ul>
+        <p class="dim mb-0 mt-2 text-xs">{{ t('comm_wishlist_hint') }}</p>
+      </details>
 
       <template v-if="isFriend && userId">
         <p v-if="offerSent" class="m-0 mt-3 text-sm" data-testid="offer-sent">{{ t('comm_offer_sent') }}</p>
