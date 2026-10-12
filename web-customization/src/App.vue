@@ -13,7 +13,7 @@ import WaterAnimPicker from './components/WaterAnimPicker.vue'
 import BodyModelPicker from './components/BodyModelPicker.vue'
 import RarityGroup from './components/RarityGroup.vue'
 import VisibilityChips from './components/VisibilityChips.vue'
-import { groupOfItem, groupOfTheme, useVisibility, type VisGroup } from './lib/useVisibility'
+import { FREE_SECTIONS, FREE_SECTIONS_TOTAL, groupOfItem, groupOfTheme, useVisibility, type FreeSection, type VisGroup } from './lib/useVisibility'
 import { useCollapsed } from './lib/useCollapsed'
 import SectionGroup from './components/SectionGroup.vue'
 import { itemGroups, themeGroups } from './lib/rarity'
@@ -74,23 +74,20 @@ const visibleCategories = computed(() =>
 )
 const visibleThemeBuckets = computed(() => themeBuckets.map((g) => ({ ...g, shown: g.items.filter((k) => vis.isVisible(themeGroup(k))) })).filter((g) => g.shown.length))
 const visCounts = computed(() => {
-  const n: Record<VisGroup, number> = { owned: 0, achievement: 0, coins: 0 }
+  const n: Record<VisGroup, number> = { owned: FREE_SECTIONS_TOTAL, achievement: 0, coins: 0 } // бесплатные выборы — всегда «Получено»
   for (const g of themeBuckets) for (const k of g.items) n[themeGroup(k)]++
   for (const c of categories.value) for (const g of c.groups) for (const i of g.items) n[groupOfItem(i, statusOf(i.key))]++
   return n
 })
-const nothingShown = computed(() => !visibleThemeBuckets.value.length && !visibleCategories.value.length)
+const freeShown = computed(() => vis.isVisible('owned')) // бесплатные разделы-выборы (61.7) показываем вместе с «Получено»
+const nothingShown = computed(() => !visibleThemeBuckets.value.length && !visibleCategories.value.length && !freeShown.value)
 
 // Вкладки (BACKLOG 54.7): по вкладке на раздел витрины; список строится из самих разделов, так что новый раздел получает вкладку сам.
 const tabChoice = ref<string | null>(migrateStoredTab(readTab()))
 // 59.1 срез 1: вкладки — группы по задаче; группа есть, пока в ней виден хоть один раздел (новый раздел без группы идёт в «Прочее»)
 const sectionIds = computed(() => [
   ...(visibleThemeBuckets.value.length ? ['themes'] : []),
-  'chart-markers',
-  'splash',
-  'streakflame',
-  'wateranim',
-  'bodymodel',
+  ...(freeShown.value ? (Object.keys(FREE_SECTIONS) as FreeSection[]) : []),
   ...visibleCategories.value.map((c) => c.category as string),
 ])
 const tabList = computed(() => groupsFor(sectionIds.value).map((g) => ({ id: g as string, label: t(('cust_grp_' + g) as never) })))
@@ -170,26 +167,26 @@ const shownCategories = computed(() => visibleCategories.value.filter((c) => sho
 
         <!-- Заставка загрузки (BACKLOG 16, срез 2): 4 бесплатных варианта, выбор в localStorage -->
         <!-- Маркеры графиков (BACKLOG 13:54): 4 бесплатных стиля, выбор в localStorage -->
-        <SectionGroup v-if="showsSection(tab, 'chart-markers')" id="chart-markers" :title="t('cust_sec_markers')" :total="4" :owned="4" :collapsed="isCollapsed('section:chart-markers')" @toggle="toggle('section:chart-markers')">
+        <SectionGroup v-if="freeShown && showsSection(tab, 'chart-markers')" id="chart-markers" :title="t('cust_sec_markers')" :total="4" :owned="4" :collapsed="isCollapsed('section:chart-markers')" @toggle="toggle('section:chart-markers')">
           <ChartMarkerPicker />
         </SectionGroup>
 
-        <SectionGroup v-if="showsSection(tab, 'splash')" id="splash" :title="t('cust_sec_splash')" :total="4" :owned="4" :collapsed="isCollapsed('section:splash')" @toggle="toggle('section:splash')">
+        <SectionGroup v-if="freeShown && showsSection(tab, 'splash')" id="splash" :title="t('cust_sec_splash')" :total="4" :owned="4" :collapsed="isCollapsed('section:splash')" @toggle="toggle('section:splash')">
           <SplashPicker />
         </SectionGroup>
 
         <!-- Огонёк серии (BACKLOG 44.18в, срез 1): 2 бесплатных варианта, выбор в localStorage -->
-        <SectionGroup v-if="showsSection(tab, 'streakflame')" id="streakflame" :title="t('cust_sec_streakflame')" :total="2" :owned="2" :collapsed="isCollapsed('section:streakflame')" @toggle="toggle('section:streakflame')">
+        <SectionGroup v-if="freeShown && showsSection(tab, 'streakflame')" id="streakflame" :title="t('cust_sec_streakflame')" :total="2" :owned="2" :collapsed="isCollapsed('section:streakflame')" @toggle="toggle('section:streakflame')">
           <StreakFlamePicker />
         </SectionGroup>
 
         <!-- Анимация воды (BACKLOG 54.8): «По теме» + 6 бесплатных вариантов, выбор в localStorage (общий с «Настройками» шапки) -->
-        <SectionGroup v-if="showsSection(tab, 'wateranim')" id="wateranim" :title="t('cust_sec_wateranim')" :total="7" :owned="7" :collapsed="isCollapsed('section:wateranim')" @toggle="toggle('section:wateranim')">
+        <SectionGroup v-if="freeShown && showsSection(tab, 'wateranim')" id="wateranim" :title="t('cust_sec_wateranim')" :total="7" :owned="7" :collapsed="isCollapsed('section:wateranim')" @toggle="toggle('section:wateranim')">
           <WaterAnimPicker />
         </SectionGroup>
 
         <!-- Модель тела карты мышц (BACKLOG 59.2 срез 2): «По полу» + 5 моделей, выбор в localStorage (общий с «Тренировками») -->
-        <SectionGroup v-if="showsSection(tab, 'bodymodel')" id="bodymodel" :title="t('cust_sec_bodymodel')" :total="5" :owned="5" :collapsed="isCollapsed('section:bodymodel')" @toggle="toggle('section:bodymodel')">
+        <SectionGroup v-if="freeShown && showsSection(tab, 'bodymodel')" id="bodymodel" :title="t('cust_sec_bodymodel')" :total="5" :owned="5" :collapsed="isCollapsed('section:bodymodel')" @toggle="toggle('section:bodymodel')">
           <BodyModelPicker />
         </SectionGroup>
 

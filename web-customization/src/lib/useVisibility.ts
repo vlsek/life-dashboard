@@ -46,3 +46,11 @@ export function useVisibility() {
   const noneVisible = computed(() => VIS_GROUPS.every((g) => !state.value[g]))
   return { state, isVisible, toggle, noneVisible }
 }
+
+// Бесплатные разделы-выборы (маркеры графиков, заставка, огонёк, анимация воды, модель тела): все варианты уже «у человека», то есть
+// относятся к группе «Получено» (BACKLOG 61.7: раньше они игнорировали переключатели — при снятой «Получено» страница выглядела
+// непустой, а сообщение «ничего нет» всё равно показывалось). Число = сколько вариантов в разделе (то же, что `total` у раздела).
+export const FREE_SECTIONS = { 'chart-markers': 4, splash: 4, streakflame: 2, wateranim: 7, bodymodel: 5 } as const
+export type FreeSection = keyof typeof FREE_SECTIONS
+export const FREE_SECTION_IDS = Object.keys(FREE_SECTIONS) as FreeSection[]
+export const FREE_SECTIONS_TOTAL: number = FREE_SECTION_IDS.reduce((n, k) => n + FREE_SECTIONS[k], 0)

@@ -26,7 +26,7 @@ import App from './App.vue'
 import VisibilityChips from './components/VisibilityChips.vue'
 import { ITEMS } from './lib/customization'
 import { THEME_UNLOCK } from './lib/theme'
-import { VISIBILITY_KEY, allVisible, groupOfItem, groupOfTheme, readVisibility, useVisibility } from './lib/useVisibility'
+import { FREE_SECTIONS_TOTAL, FREE_SECTION_IDS, VISIBILITY_KEY, allVisible, groupOfItem, groupOfTheme, readVisibility, useVisibility } from './lib/useVisibility'
 import source from './App.vue?raw'
 
 beforeEach(() => {
@@ -123,10 +123,36 @@ describe('страница «Кастомизация»: фильтр видим
     const counts = w.findAll('[data-testid="vis-count"]').map((n) => Number(n.text()))
     const themes = themeCards(w).length
     expect(themes).toBe(34) // все 34 темы видны
-    expect(counts.reduce((a, b) => a + b, 0)).toBe(ITEMS.length + themes) // каждый предмет и каждая тема — ровно в одной группе
+    expect(counts.reduce((a, b) => a + b, 0)).toBe(ITEMS.length + themes + FREE_SECTIONS_TOTAL) // каждый предмет, тема и вариант бесплатных выборов — ровно в одной группе
     // за достижения: ещё не выданные рамки-награды + 6 закрытых тем; получено: 2 рамки + 5 открытых тем; за монеты: остальные платные
     expect(counts[1]).toBe(ITEMS.filter((i) => i.source === 'achievement' && i.key !== 'frame_gold').length + lockedThemes.length)
-    expect(counts[0]).toBe(2 + (themes - lockedThemes.length))
+    expect(counts[0]).toBe(2 + (themes - lockedThemes.length) + FREE_SECTIONS_TOTAL)
+    w.unmount()
+  })
+
+  it('61.7: бесплатные разделы-выборы (заставка, огонёк, вода, модель тела, маркеры) относятся к «Получено»: снял — пропали, включил — вернулись', async () => {
+    h.owned = owned
+    const w = await mountPage()
+    const present = () => FREE_SECTION_IDS.filter((id) => w.find(`[data-section="${id}"]`).exists())
+    await w.find('[data-testid="cust-tab-all"]').trigger('click')
+    await flushPromises()
+    expect(present()).toEqual(FREE_SECTION_IDS)
+    await chip(w, 'owned').trigger('click')
+    await flushPromises()
+    expect(present()).toEqual([])
+    await chip(w, 'owned').trigger('click')
+    await flushPromises()
+    expect(present()).toEqual(FREE_SECTION_IDS)
+    w.unmount()
+  })
+
+  it('61.7: все три выключены — страница пуста и сказано «ничего не показано» (бесплатные разделы тоже спрятаны)', async () => {
+    h.owned = owned
+    const w = await mountPage()
+    for (const g of ['owned', 'achievement', 'coins']) await chip(w, g).trigger('click')
+    await flushPromises()
+    expect(w.find('[data-testid="vis-empty"]').exists()).toBe(true)
+    for (const id of FREE_SECTION_IDS) expect(w.find(`[data-section="${id}"]`).exists()).toBe(false)
     w.unmount()
   })
 
