@@ -55,6 +55,13 @@ function toggle() {
   color: var(--text-dim);
   font: italic 700 0.8rem/1 Georgia, serif;
   cursor: pointer;
+  position: relative;
+}
+/* Зона нажатия ≥ 32 px (аудит 60.2): картинка не меняется, нажимаемая область шире значка */
+.ph-btn::after {
+  content: '';
+  position: absolute;
+  inset: -0.5rem;
 }
 .ph-btn:hover,
 .ph-btn[aria-expanded='true'] {
@@ -95,7 +102,7 @@ function toggle() {
   color: var(--accent);
   background: transparent;
   border-radius: 0.6rem;
-  padding: 0.3rem 0.8rem;
+  padding: 0.55rem 1rem;
   font-weight: 600;
   cursor: pointer;
 }
