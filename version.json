@@ -1,6 +1,13 @@
 {
-  "version": "5.40",
+  "version": "5.41",
   "en": [
+    {
+      "version": "5.41",
+      "date": "2026-10-12 14:39",
+      "changes": [
+        "Muscle map: instead of merely stretched body models there are now three with different proportions — Chibi (huge head, short legs), Long legs (small head) and Stocky. Pick them in Customization, Body model section, and in Workouts. The former Athletic, Slim and Curvy are gone; if you had picked one, the figure goes back to following your profile gender."
+      ]
+    },
     {
       "version": "5.40",
       "date": "2026-10-12 14:25",
@@ -3847,6 +3854,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.41",
+      "date": "2026-10-12 14:39",
+      "changes": [
+        "Карта мышц: вместо «растянутых» моделей тела — три с разными пропорциями: «Чиби» (огромная голова, короткие ноги), «Длинные ноги» (маленькая голова) и «Крепыш». Выбор — в «Кастомизации», раздел «Модель тела», и в «Тренировках». Прежние «атлетичная», «стройная» и «плотная» убраны; если вы выбирали их, фигура снова выбирается по полу профиля."
+      ]
+    },
     {
       "version": "5.40",
       "date": "2026-10-12 14:25",

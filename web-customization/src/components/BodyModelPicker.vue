@@ -29,7 +29,7 @@ function choose(v: BodyModel | 'auto') {
         :data-active="current === v"
       >
         <svg viewBox="0 0 100 190" class="h-28 w-auto" role="img" :aria-label="label(v)" data-testid="bodymodel-preview">
-          <circle cx="50" cy="14" r="9" fill="none" stroke="var(--text-dim)" stroke-width="1.6" />
+          <circle :cx="geo(v).head.cx" :cy="geo(v).head.cy" :r="geo(v).head.r" fill="none" stroke="var(--text-dim)" stroke-width="1.6" />
           <path :d="geo(v).outline" fill="none" stroke="var(--text-dim)" stroke-width="1.6" stroke-linejoin="round" />
           <path v-for="(s, i) in geo(v).front" :key="i" :d="String(s.attrs.d)" fill="var(--accent)" fill-opacity="0.45" />
         </svg>

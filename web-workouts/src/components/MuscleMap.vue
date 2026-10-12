@@ -211,7 +211,7 @@ function shapeStyle(m: MuscleId) {
       <div class="flex flex-wrap justify-center gap-4">
         <figure v-for="v in views" :key="v.key" class="m-0 text-center">
           <svg viewBox="0 0 100 190" class="h-64 w-32" role="group" :aria-label="t(v.label)">
-            <circle cx="50" cy="14" r="9" :fill="props.studyRecent ? 'var(--success)' : 'none'" :fill-opacity="props.studyRecent ? 0.9 : 1" :stroke="props.studyRecent ? 'var(--success)' : 'var(--border)'" stroke-width="1.2" data-testid="muscle-head" />
+            <circle :cx="geometry.head.cx" :cy="geometry.head.cy" :r="geometry.head.r" :fill="props.studyRecent ? 'var(--success)' : 'none'" :fill-opacity="props.studyRecent ? 0.9 : 1" :stroke="props.studyRecent ? 'var(--success)' : 'var(--border)'" stroke-width="1.2" data-testid="muscle-head" />
             <path
               :d="geometry.outline"
               fill="none"

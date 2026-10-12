@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.40";
+const SITE_VERSION = "5.41";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.41", date: "2026-10-12 14:39", changes: [
+        "Карта мышц: вместо «растянутых» моделей тела — три с разными пропорциями: «Чиби» (огромная голова, короткие ноги), «Длинные ноги» (маленькая голова) и «Крепыш». Выбор — в «Кастомизации», раздел «Модель тела», и в «Тренировках». Прежние «атлетичная», «стройная» и «плотная» убраны; если вы выбирали их, фигура снова выбирается по полу профиля."
+    ]},
     { version: "5.40", date: "2026-10-12 14:25", changes: [
         "Кастомизация: у предметов «Радужное кольцо» и «Градиентное кольцо» теперь разные превью (раньше у радуги показывался градиент), аккуратнее значок «+» у вида сворачивания."
     ]},
@@ -2230,6 +2233,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.41", date: "2026-10-12 14:39", changes: [
+        "Muscle map: instead of merely stretched body models there are now three with different proportions — Chibi (huge head, short legs), Long legs (small head) and Stocky. Pick them in Customization, Body model section, and in Workouts. The former Athletic, Slim and Curvy are gone; if you had picked one, the figure goes back to following your profile gender."
+    ]},
     { version: "5.40", date: "2026-10-12 14:25", changes: [
         "Customization: the Rainbow ring and Gradient ring items now have distinct previews (the rainbow used to show the plain gradient), and the “+” marker of the folding look is tidier."
     ]},

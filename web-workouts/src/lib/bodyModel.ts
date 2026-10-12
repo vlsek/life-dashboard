@@ -3,8 +3,8 @@ import { BACK_SHAPES, BODY_OUTLINE, FRONT_SHAPES, type MuscleShape } from './mus
 // Модель тела для карты мышц (BACKLOG 54.5): мужская (как была) и женская. Женская — не отдельный рисунок, а те же контуры,
 // пересчитанные по профилю ширины: плечи и талия уже, бёдра шире. Так набор мышц и их `data-muscle` совпадают у обеих моделей,
 // а правка контуров мужской модели автоматически попадает и в женскую. Чистая логика, без сети.
-export type BodyModel = 'male' | 'female' | 'athletic' | 'slim' | 'curvy'
-export const BODY_MODELS: BodyModel[] = ['male', 'female', 'athletic', 'slim', 'curvy']
+export type BodyModel = 'male' | 'female' | 'chibi' | 'leggy' | 'stocky'
+export const BODY_MODELS: BodyModel[] = ['male', 'female', 'chibi', 'leggy', 'stocky']
 export const isBodyModel = (v: unknown): v is BodyModel => typeof v === 'string' && (BODY_MODELS as string[]).includes(v)
 
 // Профиль модели: (y, коэффициент ширины относительно оси x = 50), коэффициент рук и на сколько единиц руки отведены от корпуса.
@@ -13,30 +13,12 @@ interface Profile {
   arm: number
   spread: number
 }
-const PROFILES: Record<Exclude<BodyModel, 'male'>, Profile> = {
+const PROFILES: Record<'female', Profile> = {
   // «Песочные часы» (58.2): плечи узкие, талия самая тонкая, бёдра заметно шире, руки отведены, чтобы талия была видна.
   female: {
     width: [[0, 1], [18, 1], [24, 0.84], [34, 0.8], [47, 0.8], [62, 0.72], [76, 0.6], [88, 0.95], [100, 1.34], [112, 1.3], [130, 1.14], [150, 1.04], [181, 1], [190, 1]],
     arm: 0.8,
     spread: 10,
-  },
-  // «Атлетичная» (59.2): широкие плечи и грудная клетка, V-образный торс, узкая талия, ноги крепкие.
-  athletic: {
-    width: [[0, 1], [18, 1], [24, 1.1], [34, 1.18], [47, 1.16], [62, 1.0], [76, 0.84], [88, 0.9], [100, 1.0], [112, 1.04], [130, 1.08], [150, 1.04], [181, 1], [190, 1]],
-    arm: 1.12,
-    spread: 5,
-  },
-  // «Стройная» (59.2): всё тоньше, без выраженных изгибов.
-  slim: {
-    width: [[0, 1], [18, 1], [24, 0.9], [34, 0.88], [47, 0.86], [62, 0.82], [76, 0.78], [88, 0.84], [100, 0.9], [112, 0.9], [130, 0.9], [150, 0.92], [181, 0.96], [190, 1]],
-    arm: 0.82,
-    spread: 6,
-  },
-  // «Плотная» (59.2): мягкие формы, широкие бёдра и ноги, плечи средние.
-  curvy: {
-    width: [[0, 1], [18, 1], [24, 0.92], [34, 0.95], [47, 0.96], [62, 0.9], [76, 0.82], [88, 1.0], [100, 1.45], [112, 1.42], [130, 1.3], [150, 1.12], [181, 1], [190, 1]],
-    arm: 0.92,
-    spread: 11,
   },
 }
 
@@ -52,7 +34,7 @@ const widthAt = (pts: [number, number][], y: number): number => {
   return pts[pts.length - 1][1]
 }
 
-export function widthFactor(y: number, model: Exclude<BodyModel, 'male'> = 'female'): number {
+export function widthFactor(y: number, model: 'female' = 'female'): number {
   return widthAt(PROFILES[model].width, y)
 }
 
@@ -60,7 +42,7 @@ const round = (n: number) => Math.round(n * 100) / 100
 
 // Руки (дальше ~18–26 единиц от оси на высоте плеч–кисти) идут за плечами, а не за бёдрами: иначе кисти уезжают наружу и рука ломается.
 // Переход от профиля туловища к рукам плавный (без ступеньки у подмышки).
-export function factorAt(x: number, y: number, model: Exclude<BodyModel, 'male'> = 'female'): number {
+export function factorAt(x: number, y: number, model: 'female' = 'female'): number {
   const base = widthFactor(y, model)
   if (y < 36 || y > 104) return base
   const w = Math.max(0, Math.min(1, (Math.abs(x - 50) - 18) / 8))
@@ -69,12 +51,58 @@ export function factorAt(x: number, y: number, model: Exclude<BodyModel, 'male'>
 
 const fmtN = (n: number) => String(round(n))
 // Руки отводим от корпуса: иначе рука закрывает талию, и форма не видна (BACKLOG 58.2).
-export function armSpread(x: number, y: number, model: Exclude<BodyModel, 'male'> = 'female'): number {
+export function armSpread(x: number, y: number, model: 'female' = 'female'): number {
   if (y < 36 || y > 104) return 0
   const w = Math.max(0, Math.min(1, (Math.abs(x - 50) - 18) / 8))
   return w * Math.max(0, Math.min(1, (y - 40) / 55)) * PROFILES[model].spread * Math.sign(x - 50)
 }
-const warp = (x: number, y: number, model: Exclude<BodyModel, 'male'>): [number, number] => [round(50 + (x - 50) * factorAt(x, y, model) + armSpread(x, y, model)), y]
+// ПРОПОРЦИИ (владелец 2026-10-12: «модели — просто растянутые/сжатые, хочу концептуально разные»): кроме ширины, меняем размер головы и
+// вертикальные пропорции (длина туловища и ног). Голова — окружность радиуса 9·head с верхом на y = 5; точки ниже шеи (y = 23 в мужской
+// модели) переносятся кусочно-линейной картой высот `ymap` [исходная y → новая y]; ноги всегда стоят на y = 181. xs — общий масштаб ширины.
+interface Proportions {
+  head: number
+  ymap: [number, number][]
+  xs: number
+}
+const HEAD_TOP = 5
+const HEAD_R = 9
+const HEAD_CY = 14
+const PROPORTIONS: Record<'chibi' | 'leggy' | 'stocky', Proportions> = {
+  // «Чиби»: огромная голова (почти треть роста), короткое туловище и совсем короткие ноги.
+  chibi: { head: 2, ymap: [[23, 41], [36, 52], [100, 122], [181, 181]], xs: 1.08 },
+  // «Длинные ноги»: маленькая голова, короткое туловище, ноги почти в 1,2 раза длиннее обычных.
+  leggy: { head: 0.8, ymap: [[23, 19.4], [36, 31], [100, 86], [181, 181]], xs: 0.92 },
+  // «Коренастый»: крупная голова, длинное широкое туловище, короткие крепкие ноги.
+  stocky: { head: 1.2, ymap: [[23, 26.6], [36, 39.5], [100, 108], [181, 181]], xs: 1.22 },
+}
+const headCy = (m: Proportions): number => HEAD_TOP + HEAD_R * m.head
+
+export interface HeadCircle {
+  cx: number
+  cy: number
+  r: number
+}
+export function headOf(model: BodyModel): HeadCircle {
+  if (model === 'male' || model === 'female') return { cx: 50, cy: HEAD_CY, r: HEAD_R }
+  const m = PROPORTIONS[model]
+  return { cx: 50, cy: round(headCy(m)), r: round(HEAD_R * m.head) }
+}
+
+const clamp01 = (n: number) => Math.max(0, Math.min(1, n))
+const mapY = (pts: [number, number][], y: number): number => {
+  for (let i = 1; i < pts.length; i++) {
+    if (y <= pts[i][0]) return pts[i - 1][1] + ((pts[i][1] - pts[i - 1][1]) * (y - pts[i - 1][0])) / (pts[i][0] - pts[i - 1][0])
+  }
+  return pts[pts.length - 1][1]
+}
+function warpProportions(x: number, y: number, m: Proportions): [number, number] {
+  const cy = headCy(m)
+  if (y <= 23) return [round(50 + (x - 50) * m.head), round(cy + (y - HEAD_CY) * m.head)] // голова и верх шеи — подобие вокруг центра головы
+  const xs = m.head + (m.xs - m.head) * clamp01((y - 22) / 10) // шея плавно переходит от масштаба головы к масштабу тела
+  return [round(50 + (x - 50) * xs), round(mapY(m.ymap, y))]
+}
+const warp = (x: number, y: number, model: Exclude<BodyModel, 'male'>): [number, number] =>
+  model === 'female' ? [round(50 + (x - 50) * factorAt(x, y, 'female') + armSpread(x, y, 'female')), y] : warpProportions(x, y, PROPORTIONS[model])
 
 // Путь состоит только из абсолютных команд M/L/C/Z. Прямые отрезки (L) режем на куски по ~6 единиц высоты, иначе длинный бок туловища
 // переехал бы «одной линией» от плеча к бедру и талия не проявилась бы; кривые (C) пересчитываем по их точкам.
@@ -117,6 +145,7 @@ export const FEMALE_FRONT_SHAPES = feminizeShapes(FRONT_SHAPES, 'female')
 export const FEMALE_BACK_SHAPES = feminizeShapes(BACK_SHAPES, 'female')
 
 export interface BodyGeometry {
+  head: HeadCircle // голова: у моделей с другими пропорциями она другого размера и на другой высоте
   outline: string
   front: MuscleShape[]
   back: MuscleShape[]
@@ -124,9 +153,9 @@ export interface BodyGeometry {
 
 const CACHE: Partial<Record<BodyModel, BodyGeometry>> = {}
 export function bodyGeometry(model: BodyModel): BodyGeometry {
-  if (model === 'male') return { outline: BODY_OUTLINE, front: FRONT_SHAPES, back: BACK_SHAPES }
-  if (model === 'female') return { outline: FEMALE_OUTLINE, front: FEMALE_FRONT_SHAPES, back: FEMALE_BACK_SHAPES }
-  return (CACHE[model] ??= { outline: feminizePath(BODY_OUTLINE, model), front: feminizeShapes(FRONT_SHAPES, model), back: feminizeShapes(BACK_SHAPES, model) })
+  if (model === 'male') return { head: headOf('male'), outline: BODY_OUTLINE, front: FRONT_SHAPES, back: BACK_SHAPES }
+  if (model === 'female') return { head: headOf('female'), outline: FEMALE_OUTLINE, front: FEMALE_FRONT_SHAPES, back: FEMALE_BACK_SHAPES }
+  return (CACHE[model] ??= { head: headOf(model), outline: feminizePath(BODY_OUTLINE, model), front: feminizeShapes(FRONT_SHAPES, model), back: feminizeShapes(BACK_SHAPES, model) })
 }
 
 // Какую модель показывать: явный выбор человека на этом устройстве главнее, потом пол из профиля, иначе мужская.

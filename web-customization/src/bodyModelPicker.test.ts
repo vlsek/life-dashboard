@@ -19,16 +19,16 @@ describe('BodyModelPicker', () => {
 
   it('выбор пишется в workouts_body_model, «По полу» его убирает', async () => {
     const w = mount(BodyModelPicker)
-    await w.find('[data-testid="bodymodel-athletic"] [data-testid="bodymodel-choose"]').trigger('click')
-    expect(localStorage.getItem('workouts_body_model')).toBe('athletic')
-    expect(w.find('[data-testid="bodymodel-athletic"]').attributes('data-active')).toBe('true')
+    await w.find('[data-testid="bodymodel-chibi"] [data-testid="bodymodel-choose"]').trigger('click')
+    expect(localStorage.getItem('workouts_body_model')).toBe('chibi')
+    expect(w.find('[data-testid="bodymodel-chibi"]').attributes('data-active')).toBe('true')
     await w.find('[data-testid="bodymodel-auto"] [data-testid="bodymodel-choose"]').trigger('click')
     expect(localStorage.getItem('workouts_body_model')).toBeNull()
   })
 
   it('запомненный выбор подсвечен при открытии', () => {
-    localStorage.setItem('workouts_body_model', 'curvy')
+    localStorage.setItem('workouts_body_model', 'stocky')
     const w = mount(BodyModelPicker)
-    expect(w.find('[data-testid="bodymodel-curvy"]').attributes('data-active')).toBe('true')
+    expect(w.find('[data-testid="bodymodel-stocky"]').attributes('data-active')).toBe('true')
   })
 })

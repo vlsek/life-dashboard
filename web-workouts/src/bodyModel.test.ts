@@ -86,12 +86,8 @@ describe('«более женственная» модель (BACKLOG 57.4)', ()
 })
 
 describe('новые модели тела (BACKLOG 59.2)', () => {
-  const torso = (d: string, lo: number, hi: number, cap = 40) => {
-    const xs = xsAtY(d, lo, hi).filter((x) => Math.abs(x - 50) <= cap)
-    return Math.max(...xs) - Math.min(...xs)
-  }
   it('все пять моделей: один набор мышц, разные контуры, выбор сохраняется', () => {
-    expect(BODY_MODELS).toEqual(['male', 'female', 'athletic', 'slim', 'curvy'])
+    expect(BODY_MODELS).toEqual(['male', 'female', 'chibi', 'leggy', 'stocky'])
     const outlines = new Set(BODY_MODELS.map((m) => bodyGeometry(m).outline))
     expect(outlines.size).toBe(5)
     for (const m of BODY_MODELS) {
@@ -100,9 +96,29 @@ describe('новые модели тела (BACKLOG 59.2)', () => {
     }
     expect(resolveBodyModel('nope', 'female')).toBe('female')
   })
-  it('атлетичная: плечи шире, талия уже; плотная: бёдра шире, чем у мужской', () => {
-    expect(torso(bodyGeometry('athletic').outline, 36, 44, 60)).toBeGreaterThan(torso(BODY_OUTLINE, 36, 44, 60))
-    expect(torso(bodyGeometry('curvy').outline, 104, 112, 24)).toBeGreaterThan(torso(BODY_OUTLINE, 104, 112, 24))
-    expect(torso(bodyGeometry('slim').outline, 104, 112, 24)).toBeLessThanOrEqual(torso(BODY_OUTLINE, 104, 112, 24))
+  it('концептуально разные пропорции (а не растянутые/сжатые): размер головы и длина ног', () => {
+    const head = (m: Parameters<typeof bodyGeometry>[0]) => bodyGeometry(m).head
+    expect(head('male')).toEqual({ cx: 50, cy: 14, r: 9 })
+    expect(head('chibi').r).toBeGreaterThan(head('male').r * 1.8) // огромная голова
+    expect(head('leggy').r).toBeLessThan(head('male').r * 0.9) // маленькая голова
+    for (const m of ['chibi', 'leggy', 'stocky'] as const) expect(head(m).cy - head(m).r).toBeCloseTo(5, 1) // макушка на одной высоте
+    // длина ног = от промежности (точка контура на оси x = 50, у мужской y = 119) до стоп (y = 181)
+    const legs = (m: Parameters<typeof bodyGeometry>[0]) => {
+      const n = (bodyGeometry(m).outline.match(/-?\d*\.?\d+/g) ?? []).map(Number)
+      for (let k = 0; k + 1 < n.length; k += 2) if (Math.abs(n[k] - 50) < 0.5 && n[k + 1] > 90) return 181 - n[k + 1]
+      return NaN
+    }
+    expect(legs('chibi')).toBeLessThan(legs('male') * 0.85)
+    expect(legs('leggy')).toBeGreaterThan(legs('male') * 1.1)
+    // стопы везде на одной высоте, шея и голова не разъезжаются: контур начинается на окружности головы
+    for (const m of ['chibi', 'leggy', 'stocky'] as const) {
+      const g = bodyGeometry(m)
+      const [x0, y0] = (g.outline.match(/-?\d*\.?\d+/g) ?? []).map(Number)
+      expect(Math.hypot(x0 - g.head.cx, y0 - g.head.cy)).toBeCloseTo(g.head.r, 0)
+      expect(Math.max(...(g.outline.match(/-?\d*\.?\d+/g) ?? []).map(Number).filter((_, i) => i % 2 === 1))).toBeCloseTo(181, 0)
+    }
+  })
+  it('старые выборы (атлетичная/стройная/плотная) больше не модели: возвращаемся к полу профиля', () => {
+    for (const old of ['athletic', 'slim', 'curvy']) expect(resolveBodyModel(old, 'female')).toBe('female')
   })
 })

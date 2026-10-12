@@ -51,7 +51,7 @@ function shapeStyle(m: MuscleId) {
     <div class="gh-wrap" style="justify-content: space-around">
       <figure v-for="v in views" :key="v.key" style="margin: 0; text-align: center">
         <svg viewBox="0 0 100 190" width="96" height="182" role="group" :aria-label="t(v.label)">
-          <circle cx="50" cy="14" r="9" fill="none" stroke="var(--border, #333)" stroke-width="1.2" />
+          <circle :cx="geometry.head.cx" :cy="geometry.head.cy" :r="geometry.head.r" fill="none" stroke="var(--border, #333)" stroke-width="1.2" />
           <path :d="geometry.outline" fill="none" stroke="var(--border, #333)" stroke-width="1.2" stroke-linejoin="round" data-testid="body-outline" />
           <g
             v-for="(s, i) in v.shapes"

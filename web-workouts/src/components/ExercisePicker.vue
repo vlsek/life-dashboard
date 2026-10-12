@@ -71,7 +71,7 @@ function shapeStyle(m: MuscleId) {
     <div class="flex flex-wrap justify-center gap-3">
       <figure v-for="v in views" :key="v.key" class="m-0 text-center">
         <svg viewBox="0 0 100 190" class="h-48 w-24" role="group" :aria-label="t(v.label)">
-          <circle cx="50" cy="14" r="9" fill="none" stroke="var(--border)" stroke-width="1.2" />
+          <circle :cx="geometry.head.cx" :cy="geometry.head.cy" :r="geometry.head.r" fill="none" stroke="var(--border)" stroke-width="1.2" />
           <path :d="geometry.outline" fill="none" stroke="var(--border)" stroke-width="1.2" stroke-linejoin="round" />
           <g
             v-for="(s, i) in v.shapes"
