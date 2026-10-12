@@ -2113,3 +2113,12 @@ html[data-motion='off'] .splash-orbit * { animation: none !important; }
 @media (prefers-reduced-motion: reduce) { .splash-bars *, .splash-pulse * { animation: none !important; } }
 html[data-motion='off'] .splash-bars *, html[data-motion='off'] .splash-pulse * { animation: none !important; }
 /* splash-more:end */
+
+/* Столбцы при включённой анимации появления (BACKLOG 55.2 срез 7): растут от основания, потом проявляются подписи (правила точек и подписей выше).
+   Гасится при «уменьшить движение» и «Отключить анимации» — столбцы видны сразу. */
+.chart-draw .ch-bar { transform-box: fill-box; transform-origin: 50% 100%; animation: ch-grow 0.8s ease-out both; }
+@keyframes ch-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .chart-draw .ch-bar { animation: none; }
+}
+html[data-motion='off'] .chart-draw .ch-bar { animation: none; }

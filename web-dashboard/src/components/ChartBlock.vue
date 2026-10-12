@@ -2,7 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { prepareChartSeries, type ChartPoint } from '../lib/chart'
 import MetricStreakBadge from './MetricStreakBadge.vue'
-import { buildLegend, describeShares, escapeXml, hasNamedVariations, pieSlices } from '../lib/variationChart'
+import { buildLegend, colorFor, describeShares, escapeXml, hasNamedVariations, pieSlices } from '../lib/variationChart'
 import type { MetricStreakInfo } from '../lib/metricStreaks'
 import type { VariationShare } from '../lib/variationChart'
 import { getLang, t } from '../lib/i18n'
@@ -12,7 +12,7 @@ import RecordBadge from './RecordBadge.vue'
 import { RECORDS_EVENT, formatRecordDate, formatRecordValue, recordsEnabled, type RecordInfo } from '../lib/records'
 import type { VariationRecord } from '../lib/variationChart'
 import { markerDefs, markerParts, nextMarkerUid, readChartMarker } from '../lib/chartMarker'
-import { FORECAST_DAYS, addDaysIso, lineDefs, readChartAnim, readChartForecast, readChartLine, runParts, trendForecast, type Pt } from '../lib/chartLine'
+import { FORECAST_DAYS, addDaysIso, barDefs, barPath, lineDefs, readChartAnim, readChartForecast, readChartKind, readChartLine, runParts, stackSpans, trendForecast, type Pt } from '../lib/chartLine'
 
 const props = withDefaults(
   defineProps<{
@@ -71,6 +71,8 @@ const lineStyle = readChartLine()
 const drawAnim = readChartAnim() === 'draw'
 // Прогноз вперёд (55.2 срез 6): `localStorage.chart_forecast` = trend → пунктир на 3 дня по линейному тренду; по умолчанию выключен.
 const forecastOn = readChartForecast() === 'trend'
+// Вид графика (55.2 срез 7): `localStorage.chart_kind` = bars → столбцы (с нуля, у метрик с особенностями — составные); по умолчанию линия. В столбцах прогноза нет.
+const barsOn = readChartKind() === 'bars'
 
 function pieMarker(x: number, y: number, label: string, shares: VariationShare[]): string {
   const slices = pieSlices(shares, order.value, x, y, 6.5)
@@ -97,7 +99,7 @@ const geom = computed(() => {
   const values = withValues.map((p) => p.y as number)
   if (props.goalValue != null) values.push(props.goalValue)
   // прогноз вперёд (необязательный): строится от последнего дня графика, учитывается в масштабе и сдвигает шаг по X
-  const fcValues = forecastOn
+  const fcValues = forecastOn && !barsOn
     ? trendForecast(
         points.flatMap((p, i) => (p.y != null ? [[i, p.y as number] as Pt] : [])),
         points.length - 1,
@@ -105,6 +107,7 @@ const geom = computed(() => {
       )
     : null
   if (fcValues) values.push(...fcValues)
+  if (barsOn) values.push(0) // столбцы растут от нуля: высота не должна врать
   let min = Math.min(...values)
   let max = Math.max(...values)
   if (min === max) {
@@ -127,6 +130,47 @@ const geom = computed(() => {
   return { w, h, pad, min, range, coords, fc }
 })
 
+// Столбцы (55.2 срез 7): по столбцу на день с данными, от нуля, скруглённая верхушка; у метрик с «особенностями» подходов — сегменты в цветах легенды.
+function barsSvg(g: NonNullable<typeof geom.value>): string {
+  const { w, h, pad, min, range, coords } = g
+  const yOf = (v: number) => h - pad - ((v - min) / range) * (h - pad * 2)
+  const yBase = yOf(0)
+  const stepX = coords.length > 1 ? coords[1].x - coords[0].x : w
+  const bw = Math.max(4, Math.min(34, stepX * 0.62))
+  let svg = ''
+  if (!(colored.value && coords.some((c) => c.shares && c.shares.length))) svg += barDefs(markerUid, props.color)
+  const labelEvery = Math.max(1, Math.ceil(coords.filter((c) => c.y != null).length / 12))
+  let shown = 0
+  for (const c of coords) {
+    if (c.y == null || c.value == null) continue
+    const top = Math.min(c.y, yBase)
+    const bottom = Math.max(c.y, yBase)
+    if (colored.value && c.shares && c.shares.length) {
+      const spans = stackSpans(c.shares.map((s) => s.reps), top, bottom)
+      const lastIdx = spans.map((s, i) => (s ? i : -1)).filter((i) => i >= 0).pop()
+      const tip = escapeXml(`${c.label}: ${describeShares(c.shares, t('chart_legend_none'))} = ${c.value}`)
+      svg += `<g class="ch-bar" data-test="bar-point"><title>${tip}</title>`
+      c.shares.forEach((s, i) => {
+        const sp = spans[i]
+        if (!sp) return
+        const d = i === lastIdx ? barPath(c.x, bw, sp[0], sp[1]) : barPath(c.x, bw, sp[0], sp[1], 0)
+        svg += `<path d="${d}" fill="${colorFor(s.label, order.value)}" stroke="var(--bg-card)" stroke-width="0.8" />`
+      })
+      svg += '</g>'
+    } else {
+      svg += `<path class="ch-bar" data-test="bar-point" d="${barPath(c.x, bw, top, bottom)}" fill="url(#${markerUid}-bar)" />`
+    }
+    if (shown % labelEvery === 0) {
+      svg += `<text x="${c.x.toFixed(1)}" y="${(top - 6).toFixed(1)}" font-size="11" fill="var(--text)" text-anchor="middle">${c.value}${props.unit || ''}</text>`
+      svg += `<text x="${c.x.toFixed(1)}" y="${h - 8}" font-size="10" fill="var(--text-dim)" text-anchor="middle">${c.label}</text>`
+    }
+    shown++
+  }
+  // нулевая линия (основание столбцов)
+  svg += `<line x1="${pad}" y1="${yBase.toFixed(1)}" x2="${(w - pad).toFixed(1)}" y2="${yBase.toFixed(1)}" stroke="var(--border)" stroke-width="1" />`
+  return svg
+}
+
 const innerSvg = computed<string | null>(() => {
   const g = geom.value
   if (!g) return null
@@ -134,13 +178,18 @@ const innerSvg = computed<string | null>(() => {
 
   let svg = (colored.value ? markerDefs(markerStyle, markerUid) : '') + lineDefs(lineStyle, markerUid, props.color)
 
+  let goal = '' // линия цели: у линейного графика рисуется под линией, у столбцов — поверх них (иначе подпись прячется за столбцом)
   if (props.goalValue != null) {
     const gy = h - pad - ((props.goalValue - min) / range) * (h - pad * 2)
-    svg += `<line x1="${pad}" y1="${gy.toFixed(1)}" x2="${(w - pad).toFixed(1)}" y2="${gy.toFixed(1)}" stroke="var(--text-dim)" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.85" />`
+    goal += `<line x1="${pad}" y1="${gy.toFixed(1)}" x2="${(w - pad).toFixed(1)}" y2="${gy.toFixed(1)}" stroke="var(--text-dim)" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.85" />`
     const goalText = props.goalLabel || `${props.goalValue}${props.unit || ''}`
     const goalTextY = gy < pad + 10 ? gy + 12 : gy - 5
-    svg += `<text x="${(w - pad).toFixed(1)}" y="${goalTextY.toFixed(1)}" font-size="10" fill="var(--text-dim)" text-anchor="end">${goalText}</text>`
+    goal += `<text x="${(w - pad).toFixed(1)}" y="${goalTextY.toFixed(1)}" font-size="10" fill="var(--text-dim)"${barsOn ? ' stroke="var(--bg-card)" stroke-width="3" paint-order="stroke"' : ''} text-anchor="end">${goalText}</text>`
   }
+
+  if (!barsOn) svg += goal
+
+  if (barsOn) return svg + barsSvg(g) + goal
 
   let lastReal: { x: number; y: number } | null = null
   let gapBetween = false

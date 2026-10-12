@@ -161,3 +161,43 @@ describe('Прогноз на графике в «Кастомизации» (BA
     expect(w.find('[data-testid="forecast-off"]').attributes('data-active')).toBe('true')
   })
 })
+
+describe('Вид графика «Линия / Столбцы» в «Кастомизации» (BACKLOG 55.2 срез 7)', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+  })
+
+  it('две карточки с живым предпросмотром; по умолчанию «Линия»; у «Столбцов» — скруглённые столбцы и нулевая линия', () => {
+    const w = mount(ChartMarkerPicker)
+    expect(w.findAll('[data-testid^="kind-"][data-active]')).toHaveLength(2)
+    expect(w.find('[data-testid="kind-line"]').attributes('data-active')).toBe('true')
+    expect(w.find('[data-testid="kind-bars"]').text()).toContain('Столбцы')
+    expect(w.find('[data-testid="kind-bars"] svg').findAll('path').length).toBe(6)
+    expect(w.find('[data-testid="kind-bars"] svg').html()).toContain('Q')
+    expect(w.find('[data-testid="kind-line"] svg').findAll('circle')).toHaveLength(6)
+  })
+
+  it('выбор «Столбцы» пишет chart_kind, не трогая остальные настройки графиков; кнопка выбранного отключена', async () => {
+    const w = mount(ChartMarkerPicker)
+    await w.find('[data-testid="kind-bars"] [data-testid="kind-choose"]').trigger('click')
+    expect(localStorage.getItem('chart_kind')).toBe('bars')
+    expect(w.find('[data-testid="kind-bars"]').attributes('data-active')).toBe('true')
+    expect(w.find('[data-testid="kind-bars"] button').attributes('disabled')).toBeDefined()
+    for (const k of ['chart_line', 'chart_marker', 'chart_anim', 'chart_forecast']) expect(localStorage.getItem(k), k).toBeNull()
+  })
+
+  it('без хранилища — сообщение, выбор не меняется', async () => {
+    const w = mount(ChartMarkerPicker)
+    const spy = vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
+      throw new Error('denied')
+    })
+    try {
+      await w.find('[data-testid="kind-bars"] [data-testid="kind-choose"]').trigger('click')
+    } finally {
+      spy.mockRestore()
+    }
+    expect(w.find('[data-testid="kind-save-error"]').exists()).toBe(true)
+    expect(w.find('[data-testid="kind-line"]').attributes('data-active')).toBe('true')
+  })
+})

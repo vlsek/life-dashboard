@@ -191,3 +191,64 @@ export function addDaysIso(date: string, days: number): string {
   d.setUTCDate(d.getUTCDate() + days)
   return d.toISOString().slice(0, 10)
 }
+
+// ── Вид графика: линия или столбцы (55.2 срез 7) ──────────────────────────────────────────────────────────────────────
+// «line» — по умолчанию (как раньше); «bars» — столбец на каждый день с данными: с нуля (чтобы высота не врала), скруглённая верхушка,
+// у метрик с «особенностями» подходов — составной столбец (сегменты в цветах легенды). Хранится в localStorage `chart_kind`.
+// В столбцах стили маркеров/линии/прогноза не применяются (маркеры-диаграммы заменяют сегменты, а линии и прогноза нет).
+export const CHART_KINDS = ['line', 'bars'] as const
+export type ChartKind = (typeof CHART_KINDS)[number]
+export const DEFAULT_CHART_KIND: ChartKind = 'line'
+export const CHART_KIND_KEY = 'chart_kind'
+
+export const isChartKind = (v: unknown): v is ChartKind => (CHART_KINDS as readonly unknown[]).includes(v)
+
+export function readChartKind(): ChartKind {
+  try {
+    const stored = localStorage.getItem(CHART_KIND_KEY)
+    if (isChartKind(stored)) return stored
+  } catch {
+    /* нет localStorage — по умолчанию */
+  }
+  return DEFAULT_CHART_KIND
+}
+
+// true, если выбор удалось запомнить.
+export function writeChartKind(v: ChartKind): boolean {
+  try {
+    localStorage.setItem(CHART_KIND_KEY, v)
+    return true
+  } catch {
+    return false
+  }
+}
+
+// Контур столбца со скруглёнными ВЕРХНИМИ углами: cx — центр, width — ширина, yTop/yBase — верх и низ (экранные Y, yTop < yBase).
+// r не больше половины ширины и высоты, поэтому низкий столбец не «разворачивается».
+export function barPath(cx: number, width: number, yTop: number, yBase: number, r = 4): string {
+  const x0 = cx - width / 2
+  const x1 = cx + width / 2
+  const rr = Math.max(0, Math.min(r, width / 2, yBase - yTop))
+  return `M${n1(x0)} ${n1(yBase)}V${n1(yTop + rr)}Q${n1(x0)} ${n1(yTop)} ${n1(x0 + rr)} ${n1(yTop)}H${n1(x1 - rr)}Q${n1(x1)} ${n1(yTop)} ${n1(x1)} ${n1(yTop + rr)}V${n1(yBase)}Z`
+}
+
+// Сегменты составного столбца снизу вверх: доли повторений → пары [верх, низ] в экранных Y между yTop и yBase.
+// Нулевые доли пропускаются; сумма высот равна полной высоте столбца.
+export function stackSpans(reps: number[], yTop: number, yBase: number): ([number, number] | null)[] {
+  const total = reps.reduce((a, v) => a + (v > 0 ? v : 0), 0)
+  if (total <= 0) return reps.map(() => null)
+  const height = yBase - yTop
+  let bottom = yBase
+  return reps.map((v) => {
+    if (!(v > 0)) return null
+    const top = bottom - (v / total) * height
+    const span: [number, number] = [top, bottom]
+    bottom = top
+    return span
+  })
+}
+
+// <defs> с вертикальным градиентом столбца (цвет → чуть светлее к низу) для одноцветных столбцов.
+export function barDefs(uid: string, color: string): string {
+  return `<defs><linearGradient id="${uid}-bar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity="1"/><stop offset="1" stop-color="${color}" stop-opacity=".62"/></linearGradient></defs>`
+}

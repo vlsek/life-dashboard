@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { CHART_ANIMS, CHART_ANIM_KEY, CHART_FORECAST_KEY, CHART_FORECASTS, CHART_LINES, CHART_LINE_KEY, DEFAULT_CHART_ANIM, DEFAULT_CHART_FORECAST, DEFAULT_CHART_LINE, FORECAST_DAYS, addDaysIso, lineDefs, monotonePath, readChartAnim, readChartForecast, readChartLine, runParts, trendForecast, writeChartAnim, writeChartForecast, writeChartLine, type Pt } from './chartLine'
+import { CHART_KIND_KEY, CHART_KINDS, DEFAULT_CHART_KIND, barPath, readChartKind, stackSpans, writeChartKind, CHART_ANIMS, CHART_ANIM_KEY, CHART_FORECAST_KEY, CHART_FORECASTS, CHART_LINES, CHART_LINE_KEY, DEFAULT_CHART_ANIM, DEFAULT_CHART_FORECAST, DEFAULT_CHART_LINE, FORECAST_DAYS, addDaysIso, lineDefs, monotonePath, readChartAnim, readChartForecast, readChartLine, runParts, trendForecast, writeChartAnim, writeChartForecast, writeChartLine, type Pt } from './chartLine'
 // @ts-ignore — в проекте нет типов node, а vitest выполняется в node
 import { readFileSync } from 'node:fs'
 import ChartBlock from '../components/ChartBlock.vue'
@@ -251,5 +251,123 @@ describe('прогноз вперёд (BACKLOG 55.2 срез 6)', () => {
   it('ChartBlock: мало точек — прогноза нет даже при включённой опции', () => {
     localStorage.setItem(CHART_FORECAST_KEY, 'trend')
     expect(mountChart([4, 6, 8]).find('[data-test="chart-svg"]').html()).not.toContain('chart-forecast')
+  })
+})
+
+describe('столбчатый вид графика (BACKLOG 55.2 срез 7)', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+  })
+  const barTop = (html: string): number[] => [...html.matchAll(/data-test="bar-point"[^>]*d="[^"]*?Q[\d.]+ ([\d.]+)/g)].map((m) => Number(m[1]))
+
+  it('два вида; по умолчанию «line»; мусор игнорируется; запись работает', () => {
+    expect([...CHART_KINDS]).toEqual(['line', 'bars'])
+    expect(DEFAULT_CHART_KIND).toBe('line')
+    expect(readChartKind()).toBe('line')
+    localStorage.setItem(CHART_KIND_KEY, 'pie')
+    expect(readChartKind()).toBe('line')
+    expect(writeChartKind('bars')).toBe(true)
+    expect(readChartKind()).toBe('bars')
+  })
+
+  it('barPath: скруглены только верхние углы; низкий столбец не разворачивается', () => {
+    expect(barPath(50, 20, 10, 60, 4)).toBe('M40 60V14Q40 10 44 10H56Q60 10 60 14V60Z')
+    expect(barPath(50, 20, 58, 60, 4)).toBe('M40 60V60Q40 58 42 58H58Q60 58 60 60V60Z') // высота 2 → радиус 2
+    expect(barPath(50, 6, 10, 60, 4)).toContain('Q47 10 50 10') // радиус не больше половины ширины
+  })
+
+  it('stackSpans: сегменты снизу вверх, сумма высот = высота столбца, нулевые пропущены', () => {
+    expect(stackSpans([2, 1, 1], 0, 40)).toEqual([[20, 40], [10, 20], [0, 10]])
+    expect(stackSpans([3, 0, 1], 0, 40)).toEqual([[10, 40], null, [0, 10]])
+    expect(stackSpans([0, 0], 0, 40)).toEqual([null, null])
+  })
+
+  it('по умолчанию столбцов нет; с chart_kind=bars — по столбцу на день с данными (пропуск без столбца)', () => {
+    expect(mountChart([4, 6, null, 8]).find('[data-test="chart-svg"]').findAll('[data-test="bar-point"]')).toHaveLength(0)
+    localStorage.setItem(CHART_KIND_KEY, 'bars')
+    const svg = mountChart([4, 6, null, 8]).find('[data-test="chart-svg"]')
+    expect(svg.findAll('[data-test="bar-point"]')).toHaveLength(3)
+    expect(svg.findAll('circle')).toHaveLength(0) // ни точек, ни линий
+    expect(svg.html()).not.toContain('stroke-linecap')
+  })
+
+  it('столбцы растут от НУЛЯ: ряд 100…110 не превращается в «башню против пенька»', () => {
+    localStorage.setItem(CHART_KIND_KEY, 'bars')
+    const w = mountChart([100, 105, 110, 102])
+    const html = w.find('[data-test="chart-svg"]').html()
+    const tops = barTop(html)
+    expect(tops).toHaveLength(4)
+    const base = Number(html.match(/data-test="bar-point"[^>]*d="M[\d.]+ ([\d.]+)/)![1])
+    const heights = tops.map((y) => base - y)
+    expect(Math.min(...heights) / Math.max(...heights)).toBeGreaterThan(0.85)
+    expect(base).toBeGreaterThan(100) // основание — нулевая линия ВНУТРИ поля графика (высота 160, нижний отступ 34), а не где-то за ним
+    expect(base).toBeLessThanOrEqual(126.5)
+    expect(tops[2]).toBeLessThan(tops[0]) // 110 выше 100
+  })
+
+  it('метрика с особенностями: составной столбец — сегмент на каждую особенность, цвета разные', () => {
+    localStorage.setItem(CHART_KIND_KEY, 'bars')
+    const w = mount(ChartBlock, {
+      props: {
+        title: 'Отжимания',
+        unit: ' раз',
+        variations: ['алмазные'],
+        points: [
+          { date: '2026-10-01', y: 10, shares: [{ label: null, reps: 6 }, { label: 'алмазные', reps: 4 }] },
+          { date: '2026-10-02', y: 12, shares: [{ label: 'алмазные', reps: 12 }] },
+        ],
+      },
+    })
+    const bars = w.findAll('[data-test="chart-svg"] g[data-test="bar-point"]')
+    expect(bars).toHaveLength(2)
+    const first = bars[0].findAll('path')
+    expect(first).toHaveLength(2)
+    expect(first[0].attributes('fill')).not.toBe(first[1].attributes('fill'))
+    expect(bars[1].findAll('path')).toHaveLength(1)
+    expect(bars[0].find('title').text()).toContain('алмазные')
+  })
+
+  it('в столбцах прогноза нет, даже если он включён; подсказка, клавиатура и таблица работают', async () => {
+    localStorage.setItem(CHART_KIND_KEY, 'bars')
+    localStorage.setItem(CHART_FORECAST_KEY, 'trend')
+    const w = mountChart([4, 6, 8, 10, 12])
+    expect(w.find('[data-test="chart-svg"]').html()).not.toContain('chart-forecast')
+    await w.find('[data-test="chart-svg"]').trigger('keydown', { key: 'End' })
+    expect(w.find('[data-test="chart-tip"]').text()).toContain(': 12')
+    expect(w.findAll('[data-test="chart-table"] tbody tr')).toHaveLength(5)
+    expect(w.find('[data-test="chart-summary"]').text()).not.toContain('прогноз')
+  })
+
+  it('анимация появления: у столбцов класс ch-bar, CSS растит от основания и гасится reduced-motion / «Отключить анимации»', () => {
+    localStorage.setItem(CHART_KIND_KEY, 'bars')
+    localStorage.setItem(CHART_ANIM_KEY, 'draw')
+    const svg = mountChart([4, 6, 8]).find('[data-test="chart-svg"]')
+    expect(svg.classes()).toContain('chart-draw')
+    expect(svg.find('.ch-bar').exists()).toBe(true)
+    const css: string = readFileSync('src/style.css', 'utf-8')
+    expect(css).toMatch(/\.chart-draw \.ch-bar \{[^}]*transform-origin: 50% 100%; animation: ch-grow /)
+    expect(css).toContain('@keyframes ch-grow')
+    expect(css).toMatch(/prefers-reduced-motion: reduce\) \{\s*\.chart-draw \.ch-bar \{ animation: none; \}/)
+    expect(css).toContain("html[data-motion='off'] .chart-draw .ch-bar { animation: none; }")
+  })
+})
+
+describe('столбцы и линия цели (BACKLOG 55.2 срез 7)', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+  })
+  const withGoal = () => mount(ChartBlock, { props: { title: 'T', unit: ' раз', goalValue: 8, goalLabel: 'цель 8', points: pts([4, 6, 8, 10]) } })
+
+  it('у линейного графика цель рисуется ДО линий, у столбцов — ПОСЛЕ них (поверх), с контуром у подписи', () => {
+    const line = withGoal().find('[data-test="chart-svg"]').html()
+    expect(line.indexOf('stroke-dasharray="5,4"')).toBeLessThan(line.indexOf('<circle'))
+    expect(line).not.toContain('paint-order')
+    localStorage.setItem(CHART_KIND_KEY, 'bars')
+    const bars = withGoal().find('[data-test="chart-svg"]').html()
+    expect(bars.indexOf('stroke-dasharray="5,4"')).toBeGreaterThan(bars.lastIndexOf('data-test="bar-point"'))
+    expect(bars).toMatch(/цель 8<\/text>/)
+    expect(bars).toContain('paint-order="stroke"')
   })
 })

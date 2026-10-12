@@ -59,7 +59,6 @@ const preview = (v: ChartMarker): string => {
         </button>
       </div>
     </div>
-    <h4 class="mb-1 mt-5 text-sm font-semibold">{{ t('cust_sub_lines') }}</h4>
-    <ChartLinePicker />
+    <ChartLinePicker class="mt-5" />
   </div>
 </template>
