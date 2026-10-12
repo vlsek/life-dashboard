@@ -25,7 +25,7 @@ const isWeekGauge = computed(() => props.item.category === 'week_gauge')
 const isDayGauge = computed(() => props.item.category === 'day_gauge')
 const isWaterGlass = computed(() => props.item.category === 'water_glass')
 const isWaterAnim = computed(() => props.item.category === 'water_anim')
-const waterVariant = computed(() => (props.item.key === 'water_tide' ? 'tide' : props.item.key === 'water_sparkle' ? 'sparkle' : 'rain') as 'rain' | 'tide' | 'sparkle')
+const waterVariant = computed(() => (props.item.key === 'water_tide' ? 'tide' : props.item.key === 'water_sparkle' ? 'sparkle' : props.item.key === 'water_sway' ? 'sway' : props.item.key === 'water_glow' ? 'glow' : 'rain') as 'rain' | 'tide' | 'sparkle' | 'sway' | 'glow')
 const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.item.achievement) as never) : ''))
 </script>
 

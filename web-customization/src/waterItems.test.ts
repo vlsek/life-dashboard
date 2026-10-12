@@ -9,13 +9,13 @@ import { WATER_ITEMS, parseWaterItem } from './lib/waterAnim'
 const water = ITEMS.filter((i) => i.category === 'water_anim')
 
 describe('предметы «Анимация воды»', () => {
-  it('три предмета за баллы по ступеням 100/150/250; категория есть в порядке разделов', () => {
-    expect(water.map((i) => i.key)).toEqual(['water_rain', 'water_tide', 'water_sparkle'])
-    expect(water.map(priceOf)).toEqual([100, 150, 250])
+  it('пять предметов за баллы по ступеням 100/150/250/150/250 (59.4: «Качка» и «Сияние»); категория есть в порядке разделов', () => {
+    expect(water.map((i) => i.key)).toEqual(['water_rain', 'water_tide', 'water_sparkle', 'water_sway', 'water_glow'])
+    expect(water.map(priceOf)).toEqual([100, 150, 250, 150, 250])
     expect(CATEGORY_ORDER).toContain('water_anim')
   })
   it('редкость растёт с ценой', () => {
-    expect(water.map((i) => rarityOfItem(i.key))).toEqual(['common', 'uncommon', 'rare'])
+    expect(water.map((i) => rarityOfItem(i.key))).toEqual(['common', 'uncommon', 'rare', 'uncommon', 'rare'])
   })
   it('вид из ключа предмета: каждый предмет реестра соответствует виду анимации', () => {
     for (const i of water) expect(parseWaterItem(i.key), i.key).toBe(WATER_ITEMS[i.key])
@@ -39,7 +39,7 @@ describe('предметы «Анимация воды»', () => {
 })
 
 describe('у платных анимаций воды нет кнопки «Показать» — пример идёт сам (BACKLOG 58.1)', () => {
-  for (const key of ['water_rain', 'water_tide', 'water_sparkle']) {
+  for (const key of ['water_rain', 'water_tide', 'water_sparkle', 'water_sway', 'water_glow']) {
     it(`${key}: живой пример есть, кнопки нет`, async () => {
       const item = ITEMS.find((i) => i.key === key)!
       const w = mount(ItemCard, { props: { item, status: 'locked', balance: 0, busy: false, disabled: false }, attachTo: document.body })

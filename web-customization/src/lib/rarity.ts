@@ -72,6 +72,8 @@ export const ITEM_RARITY: Record<string, Rarity> = {
   water_rain: 'common', // анимации воды (54.9): 100 → обычный, 150 → необычный, 250 → редкий
   water_tide: 'uncommon',
   water_sparkle: 'rare',
+  water_sway: 'uncommon', // 59.4: тарифы 150/250
+  water_glow: 'rare',
 }
 
 // Темы. Исходные четыре и «Высокий контраст» (доступность — прятать за наградой нельзя) — обычные. Остальные шесть — «закрываемые»

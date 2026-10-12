@@ -218,6 +218,19 @@ const WAVE_BACK = 'q3 1.4 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0'
 .water-saved[data-variant='sparkle'] .ws-bubble, .water-saved[data-variant='sparkle'] .ws-drop, .water-saved[data-variant='sparkle'] .ws-ripple-2 { display: none; }
 .water-saved[data-variant='sparkle'] .water-saved-badge { animation-delay: 0.9s; }
 .water-saved[data-variant='sparkle'] .water-saved-check { animation-delay: 1.05s; }
+/* sway (59.4, платный «Качка»): вода набирается, а стакан покачивается и успокаивается */
+.water-saved[data-variant='sway'] .ws-bubble, .water-saved[data-variant='sway'] .ws-drop, .water-saved[data-variant='sway'] .ws-ripple-2 { display: none; }
+.water-saved[data-variant='sway'] svg { transform-origin: 50% 100%; animation: water-saved-sway 1.5s ease-in-out both; }
+.water-saved[data-variant='sway'] .water-saved-fill { animation-duration: 0.7s; }
+.water-saved[data-variant='sway'] .ws-ripple { animation-delay: 0.6s; }
+.water-saved[data-variant='sway'] .water-saved-badge { animation-delay: 1s; }
+.water-saved[data-variant='sway'] .water-saved-check { animation-delay: 1.15s; }
+/* glow (59.4, платный «Сияние»): вода набирается и стакан вспыхивает мягким свечением цвета воды */
+.water-saved[data-variant='glow'] .ws-bubble, .water-saved[data-variant='glow'] .ws-drop, .water-saved[data-variant='glow'] .ws-ripple-2 { display: none; }
+.water-saved[data-variant='glow'] svg { animation: water-saved-glow 1.5s ease-in-out both; }
+.water-saved[data-variant='glow'] .ws-ripple { animation-delay: 0.6s; }
+.water-saved[data-variant='glow'] .water-saved-badge { animation-delay: 0.9s; }
+.water-saved[data-variant='glow'] .water-saved-check { animation-delay: 1.05s; }
 /* Пример в плитке «Кастомизации» (BACKLOG 57.2): не оверлей, а маленький стакан, анимация повторяется */
 .water-saved.water-saved-inline { position: relative; inset: auto; z-index: auto; display: inline-flex; }
 .water-saved-inline svg { width: 44px; height: 55px; padding: 6px 8px; border-radius: 14px; box-shadow: none; filter: none; }
@@ -281,6 +294,18 @@ const WAVE_BACK = 'q3 1.4 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0'
   60% { transform: translateY(-2.2px); }
   80% { transform: translateY(0.8px); }
   100% { transform: translateY(0); }
+}
+@keyframes water-saved-sway {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-7deg); }
+  50% { transform: rotate(5deg); }
+  72% { transform: rotate(-2.5deg); }
+  100% { transform: rotate(0deg); }
+}
+@keyframes water-saved-glow {
+  0% { filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.22)); }
+  45% { filter: drop-shadow(0 0 22px var(--water-line)) drop-shadow(0 0 8px var(--water-top)); }
+  100% { filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.22)); }
 }
 @keyframes water-saved-spark {
   0% { opacity: 0; transform: scale(0.2) rotate(0deg); }
