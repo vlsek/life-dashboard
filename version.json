@@ -1,6 +1,13 @@
 {
-  "version": "5.37",
+  "version": "5.38",
   "en": [
+    {
+      "version": "5.38",
+      "date": "2026-10-12 15:00",
+      "changes": [
+        "New «Goal streaks» achievements: 3, 7, 14 and 30 days in a row with at least one goal completed (counted like the plate on the Goals page). The badges show in Achievements and on profiles in Community. Rewards for them come later. NO SQL (uses migration 079)."
+      ]
+    },
     {
       "version": "5.37",
       "date": "2026-10-12 14:02",
@@ -3826,6 +3833,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.38",
+      "date": "2026-10-12 15:00",
+      "changes": [
+        "Новые достижения «Серии по целям»: 3, 7, 14 и 30 дней подряд, когда выполнена хотя бы одна цель (серия считается так же, как плашка на странице «Цели»). Значки видны в «Достижениях» и в профилях в «Сообществе». Награды за них — позже. БЕЗ SQL (использует миграцию 079)."
+      ]
+    },
     {
       "version": "5.37",
       "date": "2026-10-12 14:02",
