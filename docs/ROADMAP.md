@@ -135,3 +135,5 @@ v5.18 — 59.2 срез 2: раздел «Модель тела» в «Каст�
 
 v5.19 — 59.3 новые виды спидометра недели «Семь точек» и «Ступеньки» (агент 3; по просьбе владельца — предметы, которых меньше всего). МИГРАЦИЯ 076 ждёт владельца.
   `WeekAlt.vue` (×2 пилота, страж в `weekBadgeParity.test.ts`), `weekGauge.ts` ×3 (week_dots/week_steps, кэш `site_week_gauge`), бейдж шапки/панель/`HeaderProgressBadge`/`ProgressRing`; реестр `customization.ts` (low 100 / mid 150), rarity, i18n, превью в `WeekGaugePreview.vue`. Тесты `weekAlt.test.ts` (+8). Проверено скриншотами (32 и 104 px; обводка сегодняшней точки не обрезается). `migrations/076_catalog_week_gauge_more.sql`. Пересобраны `dashboard/`, `header-widgets/`, `customization/`.
+
+v5.20 — BACKLOG 57.6: вишлист друга, только просмотр (агент 1; ответ владельца 12.10). SQL: миграция 077 `get_friend_wishlist(friend)` (security definer, друзья и сам; скрытый из сообщества — пусто; RLS `shop_items` не ослаблена). `web-community`: `lib/friendWishlist.ts`, секция в `PublicProfileModal.vue`. Не сделано: свой переключатель «показывать друзьям» отдельно от «скрыт из сообщества», вишлист на отдельной странице друга.

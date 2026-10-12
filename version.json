@@ -1,6 +1,13 @@
 {
-  "version": "5.19",
+  "version": "5.20",
   "en": [
+    {
+      "version": "5.20",
+      "date": "2026-10-12 08:50",
+      "changes": [
+        "Community: a friend's profile window now has a collapsed «Wish list · N» — what the friend is saving up for in the shop (not yet bought, cheapest first): name with a link, picture and price. View only; gifts and transfers happen outside the app. People hidden from the community are not shown. SQL REQUIRED: migration 077 (the section is absent until then)."
+      ]
+    },
     {
       "version": "5.19",
       "date": "2026-10-12 01:02",
@@ -3700,6 +3707,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.20",
+      "date": "2026-10-12 08:50",
+      "changes": [
+        "«Сообщество»: в окне профиля друга появился свёрнутый список желаний «Список желаний · N» — то, на что друг копит в магазине (ещё не купленное, сначала дешёвое): название со ссылкой, картинка и цена. Только просмотр, подарки и переводы — вне приложения. Скрытые из сообщества не показываются. ТРЕБУЕТСЯ SQL: миграция 077 (до неё раздела нет)."
+      ]
+    },
     {
       "version": "5.19",
       "date": "2026-10-12 01:02",

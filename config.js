@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.19";
+const SITE_VERSION = "5.20";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.20", date: "2026-10-12 08:50", changes: [
+        "«Сообщество»: в окне профиля друга появился свёрнутый список желаний «Список желаний · N» — то, на что друг копит в магазине (ещё не купленное, сначала дешёвое): название со ссылкой, картинка и цена. Только просмотр, подарки и переводы — вне приложения. Скрытые из сообщества не показываются. ТРЕБУЕТСЯ SQL: миграция 077 (до неё раздела нет)."
+    ]},
     { version: "5.19", date: "2026-10-12 01:02", changes: [
         "Магазин «Кастомизации»: два новых вида спидометра прогресса недели — «Семь точек» (по кругу, понедельник сверху) и «Ступеньки» (лесенка из семи столбиков). Работают в шапке, в правой панели и на главной; цены 100 и 150 монет."
     ]},
@@ -2167,6 +2170,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.20", date: "2026-10-12 08:50", changes: [
+        "Community: a friend's profile window now has a collapsed «Wish list · N» — what the friend is saving up for in the shop (not yet bought, cheapest first): name with a link, picture and price. View only; gifts and transfers happen outside the app. People hidden from the community are not shown. SQL REQUIRED: migration 077 (the section is absent until then)."
+    ]},
     { version: "5.19", date: "2026-10-12 01:02", changes: [
         "Customization shop: two new week-progress gauges — Seven dots (around a circle, Monday on top) and Steps (a staircase of seven bars). They work in the header, the side panel and the dashboard; prices 100 and 150 coins."
     ]},
