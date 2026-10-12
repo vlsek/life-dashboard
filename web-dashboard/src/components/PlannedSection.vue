@@ -146,7 +146,7 @@ const collapsed = ref(false)
 
 <template>
   <section v-if="loaded" class="mb-5" data-test="planned">
-    <SectionHeading v-model:collapsed="collapsed" :title="stripEmoji(t('dash_planned_h2'))" storage-key="planned" :summary="plannedSummaryText" />
+    <SectionHeading v-model:collapsed="collapsed" :title="t('dash_planned_h2')" storage-key="planned" :summary="plannedSummaryText" />
     <div v-collapse="!collapsed" class="card relative">
     <SavedTick :show="savedTick" />
     <DateStepper v-if="switchable" :model-value="day" @update:model-value="emit('update:date', $event)" />

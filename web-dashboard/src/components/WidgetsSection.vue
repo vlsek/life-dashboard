@@ -32,7 +32,7 @@ onBeforeUnmount(() => emit('shown', false))
 
 <template>
   <section v-show="shown" data-test="widgets-section">
-    <SectionHeading v-model:collapsed="collapsed" :title="t('dash_block_widgets')" storage-key="widgets" :summary="widgetsSummary(widgetCount)">
+    <SectionHeading v-model:collapsed="collapsed" :title="'📊 ' + t('dash_block_widgets')" storage-key="widgets" :summary="widgetsSummary(widgetCount)">
       <template v-if="$slots.actions" #actions><slot name="actions" /></template>
     </SectionHeading>
     <div v-show="!collapsed" class="mb-5 flex flex-col gap-3">

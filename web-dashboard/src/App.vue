@@ -55,7 +55,6 @@ import { t } from './lib/i18n'
 import type { StreakItem } from './lib/streaks'
 import { metricStreakMap } from './lib/metricStreaks'
 import type { DayProgressSettings } from './lib/progressSettings'
-import { stripEmoji } from './lib/emojiText'
 
 // Дашборд переносится по частям (см. ROADMAP.md, тикет B-dashboard) — самая большая и
 // сложная страница сайта, над ней параллельно работают несколько агентов, каждый блок — свой
@@ -253,7 +252,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
         <template v-for="item in layout" :key="item.key">
           <template v-if="item.visible">
             <template v-if="item.key === 'profile'">
-              <SectionHeading v-model:collapsed="profileCollapsed" :title="stripEmoji(t('dash_block_profile'))" storage-key="profile">
+              <SectionHeading v-model:collapsed="profileCollapsed" :title="t('dash_block_profile')" storage-key="profile">
                 <template v-if="visibleBlockCount > 1" #actions>
                   <BlockDragHandle :block-key="'profile'" @down="dragDown" @move="dragMove" @up="dragUp" @cancel="dragCancel" @key="dragKey" />
                 </template>
@@ -288,7 +287,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
             </template>
 
             <template v-else-if="item.key === 'charts'">
-              <SectionHeading v-model:collapsed="chartsCollapsed" :title="stripEmoji(t('dash_charts_h2'))" storage-key="charts" :default-collapsed="chartsDefaultCollapsed">
+              <SectionHeading v-model:collapsed="chartsCollapsed" :title="t('dash_charts_h2')" storage-key="charts" :default-collapsed="chartsDefaultCollapsed">
                 <template v-if="visibleBlockCount > 1" #actions>
                   <BlockDragHandle :block-key="'charts'" @down="dragDown" @move="dragMove" @up="dragUp" @cancel="dragCancel" @key="dragKey" />
                 </template>
