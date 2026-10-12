@@ -1,6 +1,13 @@
 {
-  "version": "5.25",
+  "version": "5.26",
   "en": [
+    {
+      "version": "5.26",
+      "date": "2026-10-12 08:27",
+      "changes": [
+        "Loading screen: two new free variants — Equalizer (five bouncing bars) and Pulse (rings spreading in waves). Pick them in Customization, Loading section; the colour follows the theme accent."
+      ]
+    },
     {
       "version": "5.25",
       "date": "2026-10-12 09:30",
@@ -3742,6 +3749,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.26",
+      "date": "2026-10-12 08:27",
+      "changes": [
+        "Заставка загрузки: два новых бесплатных варианта — «Эквалайзер» (пять прыгающих столбиков) и «Пульс» (круги расходятся волнами). Выбор — в «Кастомизации», раздел «Загрузка»; цвет следует за акцентом темы."
+      ]
+    },
     {
       "version": "5.25",
       "date": "2026-10-12 09:30",
