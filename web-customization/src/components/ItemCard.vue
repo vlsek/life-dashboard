@@ -43,7 +43,7 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
       <WeekGaugePreview :variant="item.key === 'week_bars' ? 'bars' : item.key === 'week_dots' ? 'dots' : item.key === 'week_steps' ? 'steps' : 'classic'" />
     </span>
     <span v-else-if="isDayGauge" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="day-gauge-preview">
-      <DayGaugePreview :variant="item.key === 'day_glow' ? 'glow' : item.key === 'day_ticks' ? 'ticks' : item.key === 'day_gradient' ? 'gradient' : 'dashed'" />
+      <DayGaugePreview :variant="item.key === 'day_glow' ? 'glow' : item.key === 'day_ticks' ? 'ticks' : item.key === 'day_gradient' ? 'gradient' : item.key === 'day_thick' ? 'thick' : item.key === 'day_rainbow' ? 'rainbow' : 'dashed'" />
     </span>
     <span v-else-if="isWaterAnim" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="water-anim-preview">
       <WaterSavedAnim :tick="0" inline loop :demo="waterVariant" />

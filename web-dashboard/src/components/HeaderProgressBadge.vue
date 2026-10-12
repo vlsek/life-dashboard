@@ -5,7 +5,7 @@ import type { WeekDaySegment } from '../lib/progress'
 import WeekHeptagon from './WeekHeptagon.vue'
 import WeekBars from './WeekBars.vue'
 import WeekAlt from './WeekAlt.vue'
-import { daySegments, dayTicks, DAY_GLOW_FILTER, DAY_GRADIENT_STOPS } from '../lib/dayGauge'
+import { daySegments, dayTicks, DAY_GLOW_FILTER, dayRingWidths, dayGradientStops, dayUsesGradient } from '../lib/dayGauge'
 import { dayGaugeStyle } from '../lib/useDayGauge'
 
 // Бейдж прогресса в шапке (режим "header") — рисуется в #topbar-right из AppShell через Teleport.
@@ -53,10 +53,10 @@ const square = computed(() => squareGeometry(24, 6, props.basePct, props.bonusPc
             </g>
           </template>
           <template v-else>
-            <defs v-if="dayGaugeStyle === 'gradient'"><linearGradient id="day-grad-h" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="32" y2="32"><stop offset="0%" :stop-color="DAY_GRADIENT_STOPS[0]" /><stop offset="100%" :stop-color="DAY_GRADIENT_STOPS[1]" /></linearGradient></defs>
-            <circle cx="16" cy="16" r="13" fill="none" stroke="var(--border)" :stroke-width="dayGaugeStyle === 'ticks' ? 1.6 : 3" />
-            <circle cx="16" cy="16" r="13" fill="none" :stroke="dayGaugeStyle === 'gradient' ? 'url(#day-grad-h)' : 'var(--accent)'" :stroke-width="dayGaugeStyle === 'ticks' ? 2.4 : 3" stroke-linecap="round" :style="dayGaugeStyle === 'glow' ? { filter: DAY_GLOW_FILTER } : undefined" :stroke-dasharray="circle.circumference" :stroke-dashoffset="circle.offsetBase" />
-            <circle v-if="bonusPct > 0" cx="16" cy="16" r="13" fill="none" class="ring-bonus" :stroke-width="dayGaugeStyle === 'ticks' ? 2.4 : 3" stroke-linecap="round" :stroke-dasharray="circle.circumference" :stroke-dashoffset="circle.offsetBonus" />
+            <defs v-if="dayUsesGradient(dayGaugeStyle)"><linearGradient id="day-grad-h" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="32" y2="32"><stop v-for="(st, si) in dayGradientStops(dayGaugeStyle)" :key="si" :offset="st.offset" :stop-color="st.color" /></linearGradient></defs>
+            <circle cx="16" cy="16" r="13" fill="none" stroke="var(--border)" :stroke-width="dayRingWidths(dayGaugeStyle).track" />
+            <circle cx="16" cy="16" r="13" fill="none" :stroke="dayUsesGradient(dayGaugeStyle) ? 'url(#day-grad-h)' : 'var(--accent)'" :stroke-width="dayRingWidths(dayGaugeStyle).arc" stroke-linecap="round" :style="dayGaugeStyle === 'glow' ? { filter: DAY_GLOW_FILTER } : undefined" :stroke-dasharray="circle.circumference" :stroke-dashoffset="circle.offsetBase" />
+            <circle v-if="bonusPct > 0" cx="16" cy="16" r="13" fill="none" class="ring-bonus" :stroke-width="dayRingWidths(dayGaugeStyle).arc" stroke-linecap="round" :stroke-dasharray="circle.circumference" :stroke-dashoffset="circle.offsetBonus" />
             <g v-if="dayGaugeStyle === 'ticks'" data-test="day-ticks"><line v-for="(tk, i) in dayTickList" :key="i" :x1="tk.x1" :y1="tk.y1" :x2="tk.x2" :y2="tk.y2" :stroke="tk.lit ? 'var(--accent)' : 'var(--border)'" stroke-width="1.4" /></g>
           </template>
         </template>

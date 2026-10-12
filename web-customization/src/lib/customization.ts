@@ -67,6 +67,9 @@ export const ITEMS: readonly CustomItem[] = [
   // срез 3: «Циферблат» — 150, «Градиентное кольцо» — 250
   { key: 'day_ticks', category: 'day_gauge', source: 'points', tier: 'mid' },
   { key: 'day_gradient', category: 'day_gauge', source: 'points', tier: 'high' },
+  // срез 4 (агент 3): «Толстое кольцо» — 100, «Радуга» — 250
+  { key: 'day_thick', category: 'day_gauge', source: 'points', tier: 'low' },
+  { key: 'day_rainbow', category: 'day_gauge', source: 'points', tier: 'high' },
   // Анимация питья воды (BACKLOG 54.9, агент 3): три платных вида; бесплатные (волна, капли, рябь, пузырьки, струя, всплеск) — во вкладке «Анимация воды».
   { key: 'water_rain', category: 'water_anim', source: 'points', tier: 'low' },
   { key: 'water_tide', category: 'water_anim', source: 'points', tier: 'mid' },

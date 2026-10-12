@@ -1,6 +1,13 @@
 {
-  "version": "5.33",
+  "version": "5.34",
   "en": [
+    {
+      "version": "5.34",
+      "date": "2026-10-12 13:53",
+      "changes": [
+        "Customization: two new day-ring looks — Thick ring (100 points) and Rainbow ring (250 points). The ring changes in the header and on the Dashboard."
+      ]
+    },
     {
       "version": "5.33",
       "date": "2026-10-12 14:00",
@@ -3798,6 +3805,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.34",
+      "date": "2026-10-12 13:53",
+      "changes": [
+        "Кастомизация: два новых вида кольца дня — «Толстое кольцо» (100 баллов) и «Радужное кольцо» (250 баллов). Кольцо меняется в шапке и на Дашборде."
+      ]
+    },
     {
       "version": "5.33",
       "date": "2026-10-12 14:00",

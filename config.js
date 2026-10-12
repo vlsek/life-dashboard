@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.33";
+const SITE_VERSION = "5.34";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.34", date: "2026-10-12 13:53", changes: [
+        "Кастомизация: два новых вида кольца дня — «Толстое кольцо» (100 баллов) и «Радужное кольцо» (250 баллов). Кольцо меняется в шапке и на Дашборде."
+    ]},
     { version: "5.33", date: "2026-10-12 14:00", changes: [
         "Убраны все ссылки на старую (классическую) версию страниц: «legacy-…» внизу бокового меню на каждой странице и неприметные ссылки на страницах входа и первичной настройки. Старые закладки продолжают работать — переадресация на новые страницы осталась. БЕЗ SQL."
     ]},
@@ -2209,6 +2212,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.34", date: "2026-10-12 13:53", changes: [
+        "Customization: two new day-ring looks — Thick ring (100 points) and Rainbow ring (250 points). The ring changes in the header and on the Dashboard."
+    ]},
     { version: "5.33", date: "2026-10-12 14:00", changes: [
         "All links to the old (classic) version of the pages are gone: the «legacy-…» link at the bottom of the side menu on every page and the unobtrusive links on the sign-in and onboarding pages. Old bookmarks keep working — the redirects to the new pages are still in place. NO SQL."
     ]},

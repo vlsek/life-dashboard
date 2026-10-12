@@ -176,3 +176,6 @@ v5.32 — 59.4 продолжение: виды сворачивания «Пл�
   `CollapseStyle` + `plus|caret` (collapseStyle.ts ×3), `CollapseChevron.vue` ×2 рисует маркер по стилю (поведение как у базового), реестр/редкость/i18n/`CollapsePreview`, `migrations/080_catalog_collapse_more.sql` (по 100). Тест `collapseMarker.test.ts` ×2. Пересобраны dashboard, workouts, customization.
 
 v5.33 — BACKLOG 60.2 п.2: ссылки на старую версию убраны (агент 1). БЕЗ SQL. `AppShell.vue` ×14 (константа `classicHref` и ссылка внизу меню), `web-login`/`web-onboarding` `App.vue`; тест `AppShellLegacyLink.test.ts` ×14 теперь страж «ссылок на legacy нет», `noLegacyLink.test.ts` для входа/онбординга. НЕ удалены: папка `/legacy/`, заглушки-редиректы в корне, предзагрузка в `sw.js`, `scripts/gen_redirect_stubs.py` — их судьбу решает владелец (удалить папку целиком = старые закладки на `legacy/…` перестанут открываться).
+
+v5.34 — 59.4 продолжение: виды кольца дня «Толстое кольцо» и «Радуга» (агент 3). МИГРАЦИЯ 081.
+  `DayGaugeStyle` + `thick|rainbow` (dayGauge.ts ×3: `dayRingWidths`, `dayGradientStops`, `dayUsesGradient`), кольца в `AvatarProgress`/`HeaderProgressBadge`/`DayWeekBadge`, реестр/редкость/i18n/превью, `migrations/081_catalog_day_gauge_more.sql` (100 и 250). Пересобраны dashboard, header, customization.

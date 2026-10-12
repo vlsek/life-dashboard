@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest'
-import { DAY_GAUGE_CACHE_KEY, DAY_SEGMENTS, DAY_TICKS, dayTicks, daySegments, parseDayGauge, readCachedDayGauge, writeCachedDayGauge } from './dayGauge'
+import { DAY_GAUGE_CACHE_KEY, DAY_SEGMENTS, DAY_TICKS, dayTicks, daySegments, parseDayGauge, dayRingWidths, dayGradientStops, dayUsesGradient, readCachedDayGauge, writeCachedDayGauge } from './dayGauge'
 import { CATEGORY_ORDER, ITEMS, itemByKey, nextSelected, parseSelected, priceOf } from './customization'
 import { rarityOfItem } from './rarity'
 import { t } from './i18n'
@@ -13,7 +13,7 @@ describe('виды спидометра дня (53.2 срез 2)', () => {
     expect(priceOf(itemByKey('day_glow')!)).toBe(150)
     expect(priceOf(itemByKey('day_ticks')!)).toBe(150)
     expect(priceOf(itemByKey('day_gradient')!)).toBe(250)
-    expect(ITEMS.filter((i) => i.category === 'day_gauge')).toHaveLength(4)
+    expect(ITEMS.filter((i) => i.category === 'day_gauge')).toHaveLength(6)
     expect(rarityOfItem('day_ticks')).toBe('uncommon')
     expect(rarityOfItem('day_gradient')).toBe('rare')
     expect(rarityOfItem('day_dashed')).toBe('common')
@@ -82,5 +82,18 @@ describe('виды спидометра дня (53.2 срез 2)', () => {
     expect(lit(5)).toBe(12)
     const first = dayTicks(16, 16, 13, 1)[0]
     expect(first.x1).toBeGreaterThan(first.x2) // штрих идёт внутрь кольца
+  })
+
+  it('срез 4: «Толстое кольцо» и «Радуга» — предметы, виды, толщина и градиент', () => {
+    expect(priceOf(itemByKey('day_thick')!)).toBe(100)
+    expect(priceOf(itemByKey('day_rainbow')!)).toBe(250)
+    expect(parseDayGauge('day_thick')).toBe('thick')
+    expect(parseDayGauge('day_rainbow')).toBe('rainbow')
+    expect(dayRingWidths('thick').arc).toBeGreaterThan(dayRingWidths('ring').arc)
+    expect(dayRingWidths('ticks').arc).toBeLessThan(dayRingWidths('ring').arc)
+    expect(dayGradientStops('rainbow')).toHaveLength(4)
+    expect(dayGradientStops('rainbow')[3].offset).toBe('100%')
+    expect(dayGradientStops('gradient')).toHaveLength(2)
+    expect(dayUsesGradient('rainbow') && dayUsesGradient('gradient') && !dayUsesGradient('thick')).toBe(true)
   })
 })
