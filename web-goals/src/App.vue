@@ -11,11 +11,12 @@ import CollapsibleSection from './components/CollapsibleSection.vue'
 import { useGoalInvites, incomingPending, outgoingNotices } from './lib/goalInvites'
 import { limitChoices, loadInviteLimit, saveInviteLimit } from './lib/inviteLimit'
 import { useGoals } from './lib/useGoals'
+import { daysWord, useGoalsStreak } from './lib/goalsStreak'
 import { deadlineLevel, groupActiveByCategory, sortDone, pointsSummary } from './lib/goals'
 import { categoryProgress, upcomingDeadlines } from './lib/goalSections'
 import { mergeCategories, savedCategories } from './lib/categories'
 import { useGoalCategories } from './lib/useGoalCategories'
-import { t } from './lib/i18n'
+import { getLang, t } from './lib/i18n'
 import type { Goal, GoalFormInitial, GoalFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
@@ -24,6 +25,13 @@ import { isDeadlineReminderEnabled, setDeadlineReminderEnabled } from './lib/dea
 
 const { auth, items, error, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
 onMounted(init)
+
+// Серия по целям (BACKLOG 60.1, миграция 079): грузим при входе и после каждой отметки цели (число выполненных изменилось)
+const goalsStreak = useGoalsStreak()
+const doneCount = computed(() => items.value.filter((g) => g.done).length)
+watch([() => auth.value.status, doneCount], ([st]) => {
+  if (st === 'ready') void goalsStreak.load()
+})
 
 // Предложения целей и задач от друзей (миграция 063): грузим, когда вход выполнен; принятая цель сразу появляется в списке.
 const invites = useGoalInvites(reload)
@@ -130,6 +138,13 @@ async function onDelete(g: Goal) {
       <h1 class="text-xl font-semibold"><EmojiText :text="t('goals_h1')" /></h1>
       <button class="rounded-lg px-3 py-1.5 text-sm" data-test="goal-add" @click="formTarget = 'new'"><EmojiText :text="t('goals_add_btn')" /></button>
     </div>
+
+    <p v-if="goalsStreak.streak.value" class="dim mb-3 mt-0 text-sm" data-test="goals-streak">
+      <span aria-hidden="true">🔥</span>
+      {{ t('goals_streak_label') }}: <b style="color: var(--text)">{{ goalsStreak.streak.value.current }} {{ daysWord(goalsStreak.streak.value.current, getLang()) }}</b>
+      <span class="text-xs"> · {{ t('goals_streak_best') }} {{ goalsStreak.streak.value.best }}</span>
+      <span v-if="goalsStreak.streak.value.current === 0" class="block text-xs" data-test="goals-streak-hint">{{ t('goals_streak_hint') }}</span>
+    </p>
 
     <CollapsibleSection id="settings" :title="t('goals_sec_settings')" :default-open="false">
       <label class="dim mb-3 flex items-center gap-2 text-xs" data-test="deadline-remind">
