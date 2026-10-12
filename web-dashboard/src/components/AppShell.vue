@@ -79,10 +79,6 @@ const pages: NavPage[] = [
 const active = 'dashboard'
 // «Избранное» — левое сердечко со списком быстрых ссылок — ТОЛЬКО на главной (BACKLOG 45.1); на остальных страницах — только правое сердечко «добавить страницу в избранное» из шапки
 const isHome = String(active) === 'dashboard'
-// Ссылка на классическую (legacy) версию ЭТОЙ страницы — одна, неприметная, внизу меню.
-// Страница переезжает в /legacy/ (фаза 2) — обновить значение здесь (HANDOFF, шаг 6);
-// scripts/check_nav_links.py проверяет, что адрес существует.
-const classicHref = '/legacy/dashboard.html'
 function plainLabel(key: DictKey): string {
   return t(key).replace(/^[^\p{L}\p{N}]+/u, '')
 }
@@ -432,16 +428,6 @@ onUnmounted(() => {
     >
       v{{ version }}
     </button>
-
-    <a
-      v-if="classicHref"
-      :href="classicHref"
-      class="mt-auto pt-3 text-center text-[0.7em]"
-      style="color: var(--text-dim); opacity: 0.55"
-      data-test="legacy-link"
-    >
-      legacy-{{ active }}
-    </a>
   </nav>
 
   <ChangelogModal v-if="changelogOpen" @close="changelogOpen = false" />
