@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.21";
+const SITE_VERSION = "5.22";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.22", date: "2026-10-12 05:14", changes: [
+        "Настройки между устройствами, часть 2: кроме темы и языка теперь переезжают на другое устройство и расположение с видом — свёрнутые блоки на Дашборде, в «Целях» и «Навыках», периоды графиков, вкладки и фильтры («Тренировки», «Сообщество», «Кастомизация», «Магазин», «Языки»), избранные страницы, единица веса и модель тела. На новом устройстве страница один раз перезагружается, чтобы подхватить их. Одноразовые «закрыл подсказку» остаются на устройстве. Без новых миграций (нужна 064)."
+    ]},
     { version: "5.21", date: "2026-10-12 08:13", changes: [
         "Новая светлая «большая» тема «Чернильная бумага» (Vintage Paper): пергаментно-слоновый фон, чернильно-синий акцент и терракотовый для предупреждений, тонкие пунктирные границы, строгие контурные кнопки без заливки, заголовки с засечками (классическая типографика) и острые углы. Включается в «Кастомизации» и в настройках шапки; открыта всем. Заодно в описании тем появились подписи «заголовки с засечками» и «контурные кнопки без заливки»",
     ]},
@@ -2173,6 +2176,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.22", date: "2026-10-12 05:14", changes: [
+        "Settings across devices, part 2: besides theme and language, layout and view now follow you to another device — collapsed blocks on the Dashboard, Goals and Skills, chart periods, tabs and filters (Workouts, Community, Customization, Shop, Languages), favorite pages, weight unit and body model. On a new device the page reloads once to pick them up. One-off \"dismissed hint\" flags stay on the device. No new migrations (needs 064)."
+    ]},
     { version: "5.21", date: "2026-10-12 08:13", changes: [
         "New light big theme Vintage Paper: a parchment-ivory background, an ink-blue accent with terracotta for warnings, thin dashed borders, strict outlined buttons without a fill, serif headings (classic typography) and sharp corners. Pick it in Customization or the header settings; open to everyone. The theme description also gained the labels Serif headings and Outlined buttons without a fill",
     ]},

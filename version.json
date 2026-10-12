@@ -1,6 +1,13 @@
 {
-  "version": "5.21",
+  "version": "5.22",
   "en": [
+    {
+      "version": "5.22",
+      "date": "2026-10-12 05:14",
+      "changes": [
+        "Settings across devices, part 2: besides theme and language, layout and view now follow you to another device — collapsed blocks on the Dashboard, Goals and Skills, chart periods, tabs and filters (Workouts, Community, Customization, Shop, Languages), favorite pages, weight unit and body model. On a new device the page reloads once to pick them up. One-off \"dismissed hint\" flags stay on the device. No new migrations (needs 064)."
+      ]
+    },
     {
       "version": "5.21",
       "date": "2026-10-12 08:13",
@@ -3714,6 +3721,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.22",
+      "date": "2026-10-12 05:14",
+      "changes": [
+        "Настройки между устройствами, часть 2: кроме темы и языка теперь переезжают на другое устройство и расположение с видом — свёрнутые блоки на Дашборде, в «Целях» и «Навыках», периоды графиков, вкладки и фильтры («Тренировки», «Сообщество», «Кастомизация», «Магазин», «Языки»), избранные страницы, единица веса и модель тела. На новом устройстве страница один раз перезагружается, чтобы подхватить их. Одноразовые «закрыл подсказку» остаются на устройстве. Без новых миграций (нужна 064)."
+      ]
+    },
     {
       "version": "5.21",
       "date": "2026-10-12 08:13",
