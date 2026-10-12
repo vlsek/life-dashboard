@@ -1,6 +1,13 @@
 {
-  "version": "5.36",
+  "version": "5.37",
   "en": [
+    {
+      "version": "5.37",
+      "date": "2026-10-12 14:02",
+      "changes": [
+        "Customization: two new water-glass shapes — Tumbler (100 points) and Jar (150 points). They change the glass in the header and on the Dashboard."
+      ]
+    },
     {
       "version": "5.36",
       "date": "2026-10-12 10:58",
@@ -3819,6 +3826,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.37",
+      "date": "2026-10-12 14:02",
+      "changes": [
+        "Кастомизация: две новые формы стакана воды — «Тамблер» (100 баллов) и «Банка» (150 баллов). Меняют стакан в шапке и на Дашборде."
+      ]
+    },
     {
       "version": "5.36",
       "date": "2026-10-12 10:58",

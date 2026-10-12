@@ -3,11 +3,11 @@
 // Выбор лежит в profiles.customization.water_glass (ключ предмета); страницы применяют его БЕЗ ожидания сети — через кэш в localStorage
 // (как вид спидометра): кэш пишет «Кастомизация» при выборе, шапка и Дашборд сверяются с профилем в фоне. Чистая логика (без Vue/сети).
 // Пилоты изолированы, поэтому файл ЕСТЬ в web-customization, web-header и web-dashboard (менять ВМЕСТЕ — страж в collapseStyleCopies.test.ts).
-export type WaterGlassStyle = 'glass' | 'mug' | 'bottle' | 'flask' | 'goblet'
+export type WaterGlassStyle = 'glass' | 'mug' | 'bottle' | 'flask' | 'goblet' | 'tumbler' | 'jar'
 
 export const WATER_GLASS_CACHE_KEY = 'site_water_glass'
 
-export const BY_ITEM: Record<string, WaterGlassStyle> = { glass_mug: 'mug', glass_bottle: 'bottle', glass_flask: 'flask', glass_goblet: 'goblet' }
+export const BY_ITEM: Record<string, WaterGlassStyle> = { glass_mug: 'mug', glass_bottle: 'bottle', glass_flask: 'flask', glass_goblet: 'goblet', glass_tumbler: 'tumbler', glass_jar: 'jar' }
 
 export function parseWaterGlass(raw: unknown): WaterGlassStyle {
   return typeof raw === 'string' && Object.prototype.hasOwnProperty.call(BY_ITEM, raw) ? BY_ITEM[raw] : 'glass'
@@ -16,7 +16,7 @@ export function parseWaterGlass(raw: unknown): WaterGlassStyle {
 export function readCachedWaterGlass(): WaterGlassStyle {
   try {
     const v = localStorage.getItem(WATER_GLASS_CACHE_KEY)
-    return v === 'mug' || v === 'bottle' || v === 'flask' || v === 'goblet' ? v : 'glass'
+    return v === 'mug' || v === 'bottle' || v === 'flask' || v === 'goblet' || v === 'tumbler' || v === 'jar' ? v : 'glass'
   } catch {
     return 'glass'
   }
@@ -76,6 +76,20 @@ export const GLASS_SHAPES: Record<WaterGlassStyle, GlassShape> = {
     bottom: 14.4,
     lines: ['M6 3.6h12', 'M12 15v9.2', 'M8 26.4h8'], // ободок, ножка, основание
     shine: 'M8.2 6l0.4 3.2',
+  },
+  tumbler: {
+    body: 'M3.8 9h16.4l-1.2 14.6q-.2 2.4-2.6 2.4H7.6q-2.4 0-2.6-2.4L3.8 9z',
+    top: 10,
+    bottom: 24.6,
+    lines: ['M3.8 9a8.2 1.1 0 1 0 16.4 0a8.2 1.1 0 1 0 -16.4 0'], // ободок-эллипс (cx 12, rx 8.2, ry 1.1)
+    shine: 'M6.4 12l0.7 10',
+  },
+  jar: {
+    body: 'M5 8h14q1.5 0 1.5 1.5V24q0 3.2-3.2 3.2H6.7Q3.5 27.2 3.5 24V9.5Q3.5 8 5 8z',
+    top: 10.2,
+    bottom: 25.6,
+    lines: ['M5 3.6h14v3.2H5z', 'M4.6 6.8h14.8'], // крышка и горлышко
+    shine: 'M6.2 12l0.4 11',
   },
 }
 

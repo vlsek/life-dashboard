@@ -10,14 +10,14 @@ describe('вид стакана воды (57.2б)', () => {
   it('предметы: кружка 100, бутылка 150, колба 150, бокал 250; категория в порядке', () => {
     expect(CATEGORY_ORDER).toContain('water_glass')
     expect(['glass_mug', 'glass_bottle', 'glass_flask', 'glass_goblet'].map((k) => priceOf(itemByKey(k)!))).toEqual([100, 150, 150, 250])
-    expect(ITEMS.filter((i) => i.category === 'water_glass')).toHaveLength(4)
+    expect(ITEMS.filter((i) => i.category === 'water_glass')).toHaveLength(6)
     expect(rarityOfItem('glass_goblet')).toBe('rare')
   })
   it('разбор: неизвестное и пустое → обычный стакан', () => {
     expect(parseWaterGlass('glass_bottle')).toBe('bottle')
     expect(parseWaterGlass('nope')).toBe('glass')
     expect(parseWaterGlass(undefined)).toBe('glass')
-    expect(Object.keys(BY_ITEM)).toHaveLength(4)
+    expect(Object.keys(BY_ITEM)).toHaveLength(6)
   })
   it('кэш: запись и чтение; обычный стакан кэш очищает', () => {
     writeCachedWaterGlass('flask')
