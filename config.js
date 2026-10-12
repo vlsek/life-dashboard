@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.20";
+const SITE_VERSION = "5.21";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.21", date: "2026-10-12 08:13", changes: [
+        "Новая светлая «большая» тема «Чернильная бумага» (Vintage Paper): пергаментно-слоновый фон, чернильно-синий акцент и терракотовый для предупреждений, тонкие пунктирные границы, строгие контурные кнопки без заливки, заголовки с засечками (классическая типографика) и острые углы. Включается в «Кастомизации» и в настройках шапки; открыта всем. Заодно в описании тем появились подписи «заголовки с засечками» и «контурные кнопки без заливки»",
+    ]},
     { version: "5.20", date: "2026-10-12 08:50", changes: [
         "«Сообщество»: в окне профиля друга появился свёрнутый список желаний «Список желаний · N» — то, на что друг копит в магазине (ещё не купленное, сначала дешёвое): название со ссылкой, картинка и цена. Только просмотр, подарки и переводы — вне приложения. Скрытые из сообщества не показываются. ТРЕБУЕТСЯ SQL: миграция 077 (до неё раздела нет)."
     ]},
@@ -2170,6 +2173,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.21", date: "2026-10-12 08:13", changes: [
+        "New light big theme Vintage Paper: a parchment-ivory background, an ink-blue accent with terracotta for warnings, thin dashed borders, strict outlined buttons without a fill, serif headings (classic typography) and sharp corners. Pick it in Customization or the header settings; open to everyone. The theme description also gained the labels Serif headings and Outlined buttons without a fill",
+    ]},
     { version: "5.20", date: "2026-10-12 08:50", changes: [
         "Community: a friend's profile window now has a collapsed «Wish list · N» — what the friend is saving up for in the shop (not yet bought, cheapest first): name with a link, picture and price. View only; gifts and transfers happen outside the app. People hidden from the community are not shown. SQL REQUIRED: migration 077 (the section is absent until then)."
     ]},

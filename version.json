@@ -1,6 +1,13 @@
 {
-  "version": "5.20",
+  "version": "5.21",
   "en": [
+    {
+      "version": "5.21",
+      "date": "2026-10-12 08:13",
+      "changes": [
+        "New light big theme Vintage Paper: a parchment-ivory background, an ink-blue accent with terracotta for warnings, thin dashed borders, strict outlined buttons without a fill, serif headings (classic typography) and sharp corners. Pick it in Customization or the header settings; open to everyone. The theme description also gained the labels Serif headings and Outlined buttons without a fill"
+      ]
+    },
     {
       "version": "5.20",
       "date": "2026-10-12 08:50",
@@ -3707,6 +3714,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.21",
+      "date": "2026-10-12 08:13",
+      "changes": [
+        "Новая светлая «большая» тема «Чернильная бумага» (Vintage Paper): пергаментно-слоновый фон, чернильно-синий акцент и терракотовый для предупреждений, тонкие пунктирные границы, строгие контурные кнопки без заливки, заголовки с засечками (классическая типографика) и острые углы. Включается в «Кастомизации» и в настройках шапки; открыта всем. Заодно в описании тем появились подписи «заголовки с засечками» и «контурные кнопки без заливки»"
+      ]
+    },
     {
       "version": "5.20",
       "date": "2026-10-12 08:50",
