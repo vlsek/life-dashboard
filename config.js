@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.41";
+const SITE_VERSION = "5.42";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.42", date: "2026-10-12 20:30", changes: [
+        "«Кастомизация»: фильтры «Получено / За достижения / За монеты» теперь действуют и на бесплатные разделы (маркеры графиков, заставка, огонёк серии, анимация воды, модель тела): они относятся к «Получено» и прячутся вместе с ним. Раньше при выключенных фильтрах страница оставалась заполненной и одновременно писала «ничего нет». БЕЗ SQL."
+    ]},
     { version: "5.41", date: "2026-10-12 14:39", changes: [
         "Карта мышц: вместо «растянутых» моделей тела — три с разными пропорциями: «Чиби» (огромная голова, короткие ноги), «Длинные ноги» (маленькая голова) и «Крепыш». Выбор — в «Кастомизации», раздел «Модель тела», и в «Тренировках». Прежние «атлетичная», «стройная» и «плотная» убраны; если вы выбирали их, фигура снова выбирается по полу профиля."
     ]},
@@ -2233,6 +2236,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.42", date: "2026-10-12 20:30", changes: [
+        "Customization: the «Owned / For achievements / For coins» filters now also govern the free sections (chart markers, splash, streak flame, water animation, body model): they count as «Owned» and hide with it. Before, with the filters off the page stayed full while also saying there was nothing to show. NO SQL."
+    ]},
     { version: "5.41", date: "2026-10-12 14:39", changes: [
         "Muscle map: instead of merely stretched body models there are now three with different proportions — Chibi (huge head, short legs), Long legs (small head) and Stocky. Pick them in Customization, Body model section, and in Workouts. The former Athletic, Slim and Curvy are gone; if you had picked one, the figure goes back to following your profile gender."
     ]},

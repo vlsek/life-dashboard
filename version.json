@@ -1,6 +1,13 @@
 {
-  "version": "5.41",
+  "version": "5.42",
   "en": [
+    {
+      "version": "5.42",
+      "date": "2026-10-12 20:30",
+      "changes": [
+        "Customization: the «Owned / For achievements / For coins» filters now also govern the free sections (chart markers, splash, streak flame, water animation, body model): they count as «Owned» and hide with it. Before, with the filters off the page stayed full while also saying there was nothing to show. NO SQL."
+      ]
+    },
     {
       "version": "5.41",
       "date": "2026-10-12 14:39",
@@ -3854,6 +3861,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.42",
+      "date": "2026-10-12 20:30",
+      "changes": [
+        "«Кастомизация»: фильтры «Получено / За достижения / За монеты» теперь действуют и на бесплатные разделы (маркеры графиков, заставка, огонёк серии, анимация воды, модель тела): они относятся к «Получено» и прячутся вместе с ним. Раньше при выключенных фильтрах страница оставалась заполненной и одновременно писала «ничего нет». БЕЗ SQL."
+      ]
+    },
     {
       "version": "5.41",
       "date": "2026-10-12 14:39",
