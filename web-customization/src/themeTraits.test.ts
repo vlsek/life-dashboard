@@ -102,3 +102,17 @@ describe('vintage (редакционная «чернильная бумага�
     expect(THEME_TRAITS.emerald).toContain('mono_headings')
   })
 })
+
+describe('glass (бизнес-стекло)', () => {
+  it('цвета, мягкие скругления, мягкие тени, световые пятна на фоне, стеклянные панели, гладкая анимация', () => {
+    expect(THEME_TRAITS.glass).toEqual(['palette', 'corners_soft', 'soft_shadows', 'aurora_bg', 'glass_panels', 'smooth_anim'])
+  })
+  it('«стеклянные панели» и «световые пятна» — только у glass; у moonlight сетка из точек, а не «пятна»; у frost зернистость', () => {
+    for (const k of Object.keys(THEME_TRAITS)) if (k !== 'glass') {
+      expect(THEME_TRAITS[k], k).not.toContain('glass_panels')
+      expect(THEME_TRAITS[k], k).not.toContain('aurora_bg')
+    }
+    expect(THEME_TRAITS.moonlight).toContain('dot_pattern')
+    expect(THEME_TRAITS.frost).toContain('grain')
+  })
+})

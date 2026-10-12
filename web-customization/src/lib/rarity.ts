@@ -126,6 +126,8 @@ export const THEME_RARITY: Record<ThemeKey, Rarity> = {
   cyberday: 'common',
   // BACKLOG 57.7: четвёртая светлая «большая тема» (Vintage Paper) — пока открыта всем
   vintage: 'common',
+  // BACKLOG 57.7: пятая светлая «большая тема» (Executive Glass) — пока открыта всем
+  glass: 'common',
 }
 
 export const rarityOfItem = (key: string): Rarity => ITEM_RARITY[key] ?? 'common'

@@ -38,13 +38,18 @@ def character_rules(tailwind):
     for k, c in CHAR.items():
         sel = 'html.theme-' + k
         out.append('\n\n/* большая тема: %s */\n%s {\n%s\n}' % (k, sel, c['tw'] if tailwind else c['root']))
-        for sels, body in c.get('rules') or []:
-            out.append('\n' + ', '.join(sel + ' ' + x for x in sels) + ' { ' + body + ' }')
+        for r in c.get('rules') or []:
+            sels, body = r[0], r[1]
+            rule = ', '.join(sel + ' ' + x for x in sels) + ' { ' + body + ' }'
+            # третий элемент — условие @supports: правило применяется, только если браузер умеет (иначе тема остаётся с обычными непрозрачными карточками)
+            out.append('\n' + (r[2] + ' {\n  ' + rule + '\n}' if len(r) > 2 else rule))
         if c.get('contrast'):
             # то же, что при prefers-contrast: more, но по выбору человека («Простое оформление»): <html data-simple="on">
             out.append("\nhtml[data-simple='on'].theme-%s {\n%s\n}" % (k, '\n'.join('  ' + x.strip() for x in c['contrast'].strip().split('\n'))))
         if c.get('contrast'):
             out.append('\n@media (prefers-contrast: more) {\n  %s {\n%s\n  }\n}' % (sel, '\n'.join('    ' + x.strip() for x in c['contrast'].strip().split('\n'))))
+        if c.get('transparency'):
+            out.append('\n@media (prefers-reduced-transparency: reduce) {\n  %s {\n%s\n  }\n}' % (sel, '\n'.join('    ' + x.strip() for x in c['transparency'].strip().split('\n'))))
         if tailwind and c.get('reduced'):
             out.append('\n@media (prefers-reduced-motion: reduce) {\n  %s {\n    %s\n  }\n}' % (sel, c['reduced'].strip()))
     return ''.join(out)
@@ -567,7 +572,7 @@ def is_hard_shadow(v):
 
 
 def traits_of(c):
-    tw, rules = c['tw'], c.get('rules', [])
+    tw, rules = c['tw'], [r[:2] for r in c.get('rules', [])]
     out = ['palette']
     m = re.search(r'--radius-md:\s*(\d+)px', tw)
     if m:
@@ -609,7 +614,16 @@ def traits_of(c):
     m = re.search(r'--bg-pattern:\s*([^;]+);', tw)
     if m:
         # data-URI (SVG-шум) — матовая зернистость; градиент — узор из точек
-        out.append('grain' if 'data:image' in m.group(1) else 'dot_pattern')
+        sz = re.search(r'--bg-pattern-size:\s*([^;]+);', tw)
+        if 'data:image' in m.group(1):
+            out.append('grain')
+        elif sz and sz.group(1).strip() == 'auto':
+            out.append('aurora_bg')  # градиентные «световые пятна» на весь фон (без повторяющегося узора)
+        else:
+            out.append('dot_pattern')
+    mb = re.search(r'--blur-glass:\s*([^;]+);', tw)
+    if mb and mb.group(1).strip() != 'none':
+        out.append('glass_panels')
     if '--scanlines' in tw:
         out.append('scanlines')
     d = re.search(r'--default-transition-duration:\s*([\d.]+)s', tw)

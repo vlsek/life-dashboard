@@ -56,6 +56,8 @@ P={
  'cyberday':('light','⚡ Cyberpunk Day','⚡ Неоновый день',dict(bg='#eef0f4',card='#ffffff',border='#2b2f3a',text='#111827',dim='#4b5563',accent='#2563eb',at='#ffffff',ok='#15803d',bad='#be185d',hist='#16a34a',**LIGHT_W)),
  # --- BACKLOG 57.7 (файл 1, тема 4): Vintage Paper / Чернильная бумага — редакционная светлая (слоновая кость, чернильно-синий, терракотовый; пунктирные линии, контурные кнопки, засечки) ---
  'vintage':('light','📜 Vintage Paper','📜 Чернильная бумага',dict(bg='#fbfbfa',card='#ecebe4',border='#a9a699',text='#1e293b',dim='#586070',accent='#1e293b',at='#fbfbfa',ok='#3f6b45',bad='#c2410c',hist='#3f6b45',wt='#3f6f9a',wb='#2c5a85',wl='#35648f')),
+ # --- BACKLOG 57.7 (файл 1, тема 5): Obsidian Light / Executive Glass — бизнес-стекло (светло-серый градиент, полупрозрачные стеклянные карточки с размытием, индиго и графит) ---
+ 'glass':('light','🪟 Executive Glass','🪟 Бизнес-стекло',dict(bg='#f1f3f5',card='#ffffff',border='#c9ced8',text='#1f2933',dim='#566170',accent='#4f46e5',at='#ffffff',ok='#2f855a',bad='#c53030',hist='#4f46e5',**LIGHT_W)),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
 
@@ -301,6 +303,43 @@ CHAR = {
         ],
         reduced='  --default-transition-duration: 0s;',
     ),
+    # Бизнес-стекло: ПОЛУПРОЗРАЧНЫЕ карточки и окна с размытием фона (backdrop-filter: blur(12px)) поверх мягкого градиента из световых пятен, тени
+    # средней жёсткости, микро-подъём кнопок при наведении. Правило стекла стоит под @supports — без поддержки браузер покажет обычные непрозрачные
+    # карточки; прозрачность — `color-mix` с токеном --glass-alpha (80%), `!important` нужен, потому что у многих карточек фон задан инлайном.
+    # «Простое оформление», prefers-contrast: more и prefers-reduced-transparency: reduce убирают стекло, световые пятна и (кроме последнего) тень.
+    'glass': dict(
+        tw='''  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
+  --shadow-card: 0 4px 16px rgba(31, 41, 51, 0.1);
+  --blur-glass: blur(12px);
+  --glass-alpha: 80%;
+  --bg-pattern: radial-gradient(circle at 12% 8%, rgba(79, 70, 229, 0.14), transparent 42%), radial-gradient(circle at 88% 82%, rgba(14, 165, 233, 0.12), transparent 46%);
+  --bg-pattern-size: auto;
+  --default-transition-duration: 0.2s;
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);''',
+        root='''  --radius-card: 14px;
+  --radius-modal: 14px;
+  --radius-control: 10px;
+  --shadow-card: 0 4px 16px rgba(31, 41, 51, 0.1);
+  --blur-glass: blur(12px);
+  --glass-alpha: 80%;
+  --bg-pattern: radial-gradient(circle at 12% 8%, rgba(79, 70, 229, 0.14), transparent 42%), radial-gradient(circle at 88% 82%, rgba(14, 165, 233, 0.12), transparent 46%);
+  --bg-pattern-size: auto;''',
+        rules=[
+            (['body'], 'background-image: var(--bg-pattern); background-size: var(--bg-pattern-size);'),
+            (['.card', '.modal', '[style*="var(--bg-card)"]'], 'box-shadow: var(--shadow-card);'),
+            (['.card', '.modal', '[style*="var(--bg-card)"]'],
+             'background-color: color-mix(in srgb, var(--bg-card) var(--glass-alpha, 100%), transparent) !important; backdrop-filter: var(--blur-glass);',
+             '@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)))'),
+            (['button:not(:disabled)'], 'transition: transform var(--default-transition-duration, 0.2s) ease, box-shadow var(--default-transition-duration, 0.2s) ease;'),
+            (['button:not(:disabled):hover'], 'transform: translateY(-1px);'),
+        ],
+        reduced='  --default-transition-duration: 0s;',
+        contrast='  --blur-glass: none;\n  --bg-pattern: none;\n  --shadow-card: none;\n  --glass-alpha: 100%;',
+        transparency='  --blur-glass: none;\n  --glass-alpha: 100%;',
+    ),
 }
 assert all(k in P for k in CHAR)
 
@@ -308,14 +347,14 @@ assert all(k in P for k in CHAR)
 # вариант вручную в «Настройках» шапки (ручной выбор главнее). Словарь ОТДЕЛЬНО от CHAR; тема без записи = спокойная волна. Генератор apply_themes.py
 # пишет из него `themeWater.ts` в web-header и web-dashboard. Подбор по характеру темы: HUD и терминал — «рябь» (расходящиеся круги, как скан),
 # синтвейв — «капли» (пружинные), спокойная ночная — «волна».
-THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave', 'velvet': 'drops', 'frost': 'ripple', 'alpine': 'wave', 'matcha': 'drops', 'cyberday': 'ripple', 'vintage': 'wave'}
+THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave', 'velvet': 'drops', 'frost': 'ripple', 'alpine': 'wave', 'matcha': 'drops', 'cyberday': 'ripple', 'vintage': 'wave', 'glass': 'wave'}
 assert all(k in CHAR for k in THEME_WATER) and all(v in ('wave', 'drops', 'ripple') for v in THEME_WATER.values())
 
 # Заставка загрузки (лоадер страниц) у больших тем (BACKLOG 55.5, срез 2): вариант из реестра SPLASH_VARIANTS (classic | flame | ring | tongues) — действует,
 # ЕСЛИ вариант не выбран вручную (ручной выбор и `?splash=` главнее). Тема без записи = «живое пламя». Генератор пишет `themeLoader.ts` и вставляет
 # запасной вариант в скрипт выбора заставки во всех web-*/index.html (статичная заставка берёт его до загрузки бандла). Подбор по характеру: HUD —
 # «кольцо» (скан), синтвейв — «три языка» (неоновое пламя), терминал — «классика» (простая), спокойная ночная — «живое пламя».
-THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame', 'velvet': 'flame', 'frost': 'ring', 'alpine': 'classic', 'matcha': 'flame', 'cyberday': 'tongues', 'vintage': 'classic'}
+THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame', 'velvet': 'flame', 'frost': 'ring', 'alpine': 'classic', 'matcha': 'flame', 'cyberday': 'tongues', 'vintage': 'classic', 'glass': 'ring'}
 assert all(k in CHAR for k in THEME_LOADER) and all(v in ('classic', 'flame', 'ring', 'tongues') for v in THEME_LOADER.values())
 
 # Темы-награды (решение владельца 2026-10-06): тема → ключ достижения, НАГРАДОЙ за которое она открывается (4-я, самая трудная ступень

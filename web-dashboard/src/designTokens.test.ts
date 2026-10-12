@@ -130,10 +130,10 @@ describe('большая тема emerald: характер', () => {
   it('при prefers-reduced-motion анимации темы мгновенные (только у Tailwind-страниц)', () => {
     for (const d of pilots) expect(read(d + '/src/style.css')).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-emerald \{\s*--default-transition-duration: 0s;/)
   })
-  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine, matcha, cyberday, vintage) — остальные темы не переопределены', () => {
+  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine, matcha, cyberday, vintage, glass) — остальные темы не переопределены', () => {
     for (const f of files) {
       const region = read(f).match(REGION)![0]
-      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha', 'cyberday', 'vintage'])
+      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha', 'cyberday', 'vintage', 'glass'])
     }
   })
 })
@@ -543,4 +543,90 @@ describe('большая тема vintage (светлая): характер', (
     const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
     expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).not.toContain('vintage')
   })
+})
+
+// BACKLOG 57.7 (файл 1, тема 5): светлая Executive Glass — стеклянные полупрозрачные карточки с размытием; правило стекла под @supports, отключается тремя способами.
+describe('большая тема glass (светлая): характер', () => {
+  const block = (css: string): string => {
+    const m = css.match(/\/\* большая тема: glass \*\/\nhtml\.theme-glass \{[^}]*\}/)
+    expect(m, 'нет блока характера').not.toBeNull()
+    return m![0]
+  }
+  for (const d of pilots) {
+    it(d + ': размытие 12px, прозрачность 80%, световые пятна, тень средней жёсткости, скругления', () => {
+      const css = read(d + '/src/style.css')
+      const b = block(css)
+      expect(decl(b, '--blur-glass')).toBe('blur(12px)')
+      expect(decl(b, '--glass-alpha')).toBe('80%')
+      expect(decl(b, '--bg-pattern')).toContain('radial-gradient')
+      expect(decl(b, '--bg-pattern-size')).toBe('auto')
+      expect(decl(b, '--shadow-card')).toBe('0 4px 16px rgba(31, 41, 51, 0.1)')
+      expect([decl(b, '--radius-md'), decl(b, '--radius-lg'), decl(b, '--radius-xl'), decl(b, '--radius-2xl')]).toEqual(['8px', '10px', '14px', '18px'])
+      expect(css).toMatch(/@media \(prefers-reduced-transparency: reduce\) \{\s*html\.theme-glass \{\s*--blur-glass: none;\s*--glass-alpha: 100%;/)
+      expect(css).toMatch(/@media \(prefers-contrast: more\) \{\s*html\.theme-glass \{\s*--blur-glass: none;/)
+    })
+  }
+  it('корень: те же блюр, прозрачность и пятна; скругления 14/14/10', () => {
+    const b = block(read('style.css'))
+    expect(decl(b, '--blur-glass')).toBe('blur(12px)')
+    expect(decl(b, '--glass-alpha')).toBe('80%')
+    expect([decl(b, '--radius-card'), decl(b, '--radius-modal'), decl(b, '--radius-control')]).toEqual(['14px', '14px', '10px'])
+  })
+  it('правило стекла стоит ПОД @supports (без поддержки — обычные непрозрачные карточки), с -webkit-, color-mix и запасным 100%', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      const m = region.match(/@supports \(\(backdrop-filter: blur\(1px\)\) or \(-webkit-backdrop-filter: blur\(1px\)\)\) \{\n  (html\.theme-glass [^\n]*)\n\}/)
+      expect(m, f).not.toBeNull()
+      const rule = m![1]
+      for (const sel of ['.card', '.modal', '[style*="var(--bg-card)"]']) expect(rule, f).toContain('html.theme-glass ' + sel)
+      expect(rule, f).toContain('color-mix(in srgb, var(--bg-card) var(--glass-alpha, 100%), transparent) !important')
+      expect(rule, f).toContain('backdrop-filter: var(--blur-glass)')
+      // ручной `-webkit-` НЕЛЬЗЯ: сборка (Tailwind/lightningcss) сама добавляет префикс, а при ручном оставляла ТОЛЬКО префиксный вариант —
+      // Chromium его не понимает, и размытия не было (нашли в Chromium при проверке v5.2x)
+      expect(rule, f).not.toContain('-webkit-backdrop-filter')
+      // вне @supports никакого backdrop-filter у glass нет
+      const outside = region.replace(m![0], '')
+      expect(outside.split('\n').filter((l) => l.startsWith('html.theme-glass ') && l.includes('backdrop-filter')), f).toEqual([])
+    }
+  })
+  it('три способа отключить стекло дают одно и то же: «Простое оформление», высокий контраст, «уменьшить прозрачность» — размытие none и прозрачность 100%', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      const simple = region.match(/html\[data-simple='on'\]\.theme-glass \{([^}]*)\}/)![1]
+      const contrast = region.match(/prefers-contrast: more\) \{\s*html\.theme-glass \{([^}]*)\}/)![1]
+      const transp = region.match(/prefers-reduced-transparency: reduce\) \{\s*html\.theme-glass \{([^}]*)\}/)![1]
+      for (const blk of [simple, contrast, transp]) {
+        expect(blk, f).toContain('--blur-glass: none;')
+        expect(blk, f).toContain('--glass-alpha: 100%;')
+      }
+    }
+  })
+  it('микро-подъём кнопок при наведении использует длительность темы (при «уменьшить движение» = 0)', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      expect(region, f).toContain('html.theme-glass button:not(:disabled):hover { transform: translateY(-1px); }')
+      expect(region, f).toContain('transition: transform var(--default-transition-duration, 0.2s) ease')
+    }
+  })
+  it('светлая: светло-серый фон, белая карточка (под стекло — цвет задан HEX для контраста), индиго-акцент и графитовый текст; белая галочка читается', () => {
+    const css = read('web-dashboard/src/style.css')
+    const get = (name: string) => css.match(new RegExp('html\\.theme-glass \\{[^}]*--' + name + ':\\s*(#[0-9a-fA-F]{6})'))![1].toLowerCase()
+    expect([get('bg'), get('bg-card'), get('accent'), get('text')]).toEqual(['#f1f3f5', '#ffffff', '#4f46e5', '#1f2933'])
+    const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
+    expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).not.toContain('glass')
+  })
+})
+
+// Страж по СОБРАННОМУ CSS: в бандлах пилотов правило стекла обязано содержать и обычный `backdrop-filter`, и `-webkit-` (иначе в Chrome/Firefox нет размытия).
+describe('большая тема glass: собранный CSS', () => {
+  for (const dir of ['dashboard', 'goals', 'workouts', 'shop', 'customization']) {
+    it(dir + ': в бандле у стекла есть backdrop-filter и -webkit-backdrop-filter', () => {
+      const assets = readdirSync('../' + dir + '/assets').filter((n: string) => n.endsWith('.css'))
+      expect(assets.length).toBeGreaterThan(0)
+      const css = assets.map((n: string) => read(dir + '/assets/' + n)).join('\n')
+      const m = css.match(/html\.theme-glass \.card[^{]*\{[^}]*-webkit-backdrop-filter:var\(--blur-glass\)[^}]*\}/)
+      expect(m, 'нет правила стекла').not.toBeNull()
+      expect(m![0]).toMatch(/[{;]backdrop-filter:var\(--blur-glass\)/)
+    })
+  }
 })

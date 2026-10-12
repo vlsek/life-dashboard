@@ -812,6 +812,32 @@ html.theme-vintage {
   --chart-none: #6b7280;
   --chart-other: #7f8592;
 }
+
+html.theme-glass {
+  --bg: #f1f3f5;
+  --bg-card: #ffffff;
+  --border: #c9ced8;
+  --text: #1f2933;
+  --text-dim: #566170;
+  --accent: #4f46e5;
+  --accent-text: #ffffff;
+  --success: #2f855a;
+  --danger: #c53030;
+  --hist-ok: #4f46e5;
+  --water-top: #3f95e0;
+  --water-bottom: #1560b8;
+  --water-line: #1560b8;
+  --chart-1: #4f46e5;
+  --chart-2: #1d5aaf;
+  --chart-3: #af291d;
+  --chart-4: #a0731a;
+  --chart-5: #199a5a;
+  --chart-6: #721daf;
+  --chart-7: #1b9ba7;
+  --chart-8: #af1d72;
+  --chart-none: #6b7280;
+  --chart-other: #9095a0;
+}
 html.theme-nord,
 html.theme-mocha,
 html.theme-amoled,
@@ -840,7 +866,8 @@ html.theme-graphite,
 html.theme-alpine,
 html.theme-matcha,
 html.theme-cyberday,
-html.theme-vintage { color-scheme: light; }
+html.theme-vintage,
+html.theme-glass { color-scheme: light; }
 /* themes:end */
 
 /* design-tokens:start (генерируется scripts/apply_themes.py — не править руками; BACKLOG 50.1а) */
@@ -1027,6 +1054,45 @@ html.theme-vintage {
 html.theme-vintage .card, html.theme-vintage .modal, html.theme-vintage [style*="var(--bg-card)"] { border-style: var(--border-style); }
 html.theme-vintage h1, html.theme-vintage h2, html.theme-vintage h3, html.theme-vintage h4 { font-family: var(--font-heading); }
 html.theme-vintage button:not(.secondary):not(.danger):not(:disabled) { background: transparent; color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+
+/* большая тема: glass */
+html.theme-glass {
+  --radius-card: 14px;
+  --radius-modal: 14px;
+  --radius-control: 10px;
+  --shadow-card: 0 4px 16px rgba(31, 41, 51, 0.1);
+  --blur-glass: blur(12px);
+  --glass-alpha: 80%;
+  --bg-pattern: radial-gradient(circle at 12% 8%, rgba(79, 70, 229, 0.14), transparent 42%), radial-gradient(circle at 88% 82%, rgba(14, 165, 233, 0.12), transparent 46%);
+  --bg-pattern-size: auto;
+}
+html.theme-glass body { background-image: var(--bg-pattern); background-size: var(--bg-pattern-size); }
+html.theme-glass .card, html.theme-glass .modal, html.theme-glass [style*="var(--bg-card)"] { box-shadow: var(--shadow-card); }
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  html.theme-glass .card, html.theme-glass .modal, html.theme-glass [style*="var(--bg-card)"] { background-color: color-mix(in srgb, var(--bg-card) var(--glass-alpha, 100%), transparent) !important; backdrop-filter: var(--blur-glass); }
+}
+html.theme-glass button:not(:disabled) { transition: transform var(--default-transition-duration, 0.2s) ease, box-shadow var(--default-transition-duration, 0.2s) ease; }
+html.theme-glass button:not(:disabled):hover { transform: translateY(-1px); }
+html[data-simple='on'].theme-glass {
+  --blur-glass: none;
+  --bg-pattern: none;
+  --shadow-card: none;
+  --glass-alpha: 100%;
+}
+@media (prefers-contrast: more) {
+  html.theme-glass {
+    --blur-glass: none;
+    --bg-pattern: none;
+    --shadow-card: none;
+    --glass-alpha: 100%;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  html.theme-glass {
+    --blur-glass: none;
+    --glass-alpha: 100%;
+  }
+}
 /* design-tokens:end */
 
 * { box-sizing: border-box; }
