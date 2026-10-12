@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.34";
+const SITE_VERSION = "5.35";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.35", date: "2026-10-12 14:20", changes: [
+        "Мелкие кнопки на телефоне стали удобнее для нажатия: «Другая» и «＋» (добавить словарь) в «Языках», фильтры-чипы редкости в «Достижениях». БЕЗ SQL."
+    ]},
     { version: "5.34", date: "2026-10-12 13:53", changes: [
         "Кастомизация: два новых вида кольца дня — «Толстое кольцо» (100 баллов) и «Радужное кольцо» (250 баллов). Кольцо меняется в шапке и на Дашборде."
     ]},
@@ -2212,6 +2215,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.35", date: "2026-10-12 14:20", changes: [
+        "Small buttons are easier to tap on phones: «Another» and «＋» (add dictionary) in Languages, the rarity filter chips in Achievements. NO SQL."
+    ]},
     { version: "5.34", date: "2026-10-12 13:53", changes: [
         "Customization: two new day-ring looks — Thick ring (100 points) and Rainbow ring (250 points). The ring changes in the header and on the Dashboard."
     ]},

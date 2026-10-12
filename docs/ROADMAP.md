@@ -179,3 +179,5 @@ v5.33 — BACKLOG 60.2 п.2: ссылки на старую версию убр�
 
 v5.34 — 59.4 продолжение: виды кольца дня «Толстое кольцо» и «Радуга» (агент 3). МИГРАЦИЯ 081.
   `DayGaugeStyle` + `thick|rainbow` (dayGauge.ts ×3: `dayRingWidths`, `dayGradientStops`, `dayUsesGradient`), кольца в `AvatarProgress`/`HeaderProgressBadge`/`DayWeekBadge`, реестр/редкость/i18n/превью, `migrations/081_catalog_day_gauge_more.sql` (100 и 250). Пересобраны dashboard, header, customization.
+
+v5.35 — BACKLOG 60.2 п.4 (остаток аудита, агент 1): цели нажатия на телефоне — «Другая» и «＋» в `web-languages`, `.grade-chip` в `web-achievements` (min-height). БЕЗ SQL. Остаются: Дашборд (зона агента 3), единый минимум высоты кнопок.

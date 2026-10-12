@@ -1,6 +1,13 @@
 {
-  "version": "5.34",
+  "version": "5.35",
   "en": [
+    {
+      "version": "5.35",
+      "date": "2026-10-12 14:20",
+      "changes": [
+        "Small buttons are easier to tap on phones: «Another» and «＋» (add dictionary) in Languages, the rarity filter chips in Achievements. NO SQL."
+      ]
+    },
     {
       "version": "5.34",
       "date": "2026-10-12 13:53",
@@ -3805,6 +3812,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.35",
+      "date": "2026-10-12 14:20",
+      "changes": [
+        "Мелкие кнопки на телефоне стали удобнее для нажатия: «Другая» и «＋» (добавить словарь) в «Языках», фильтры-чипы редкости в «Достижениях». БЕЗ SQL."
+      ]
+    },
     {
       "version": "5.34",
       "date": "2026-10-12 13:53",
