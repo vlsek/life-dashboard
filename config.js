@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.27";
+const SITE_VERSION = "5.28";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.28", date: "2026-10-12 10:33", changes: [
+        "Графики: столбцы. В «Кастомизации», в разделе «Графики», новый выбор «Вид графика»: «Линия» (по умолчанию, как раньше) или «Столбцы» — по столбцу на каждый день с данными, от нуля, с закруглённой верхушкой. У метрик с особенностями подходов столбец составной: сегменты в цветах легенды. Линия цели рисуется поверх столбцов; подсказка, клавиатура и анимация появления работают, прогноза в столбцах нет. Без миграций."
+    ]},
     { version: "5.27", date: "2026-10-12 10:30", changes: [
         "Проверка страниц на телефоне: значок «i» («О странице») стал удобнее нажимать (область нажатия шире, вид прежний), кнопка «Понятно» в подсказке страницы — выше. Остальные страницы прогнаны автопроверкой: горизонтальной прокрутки, ошибок и пустых страниц нигде нет; отчёт — docs/FRONTEND_AUDIT.md. БЕЗ SQL."
     ]},
@@ -2191,6 +2194,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.28", date: "2026-10-12 10:33", changes: [
+        "Charts: bars. In \"Customization\", the \"Charts\" section, a new \"Chart type\" choice: \"Line\" (default, as before) or \"Bars\" — one bar per day with data, growing from zero, with a rounded top. For metrics with set variations the bar is stacked: segments in the legend colours. The goal line is drawn over the bars; the tooltip, keyboard and appearance animation work, there is no forecast in bars. No migrations."
+    ]},
     { version: "5.27", date: "2026-10-12 10:30", changes: [
         "Phone page check: the «i» («About this page») icon is easier to tap (a wider tap area, same look) and the «Got it» button in the page hint is taller. All pages were run through an automatic check: no horizontal scrolling, errors or blank pages anywhere; report in docs/FRONTEND_AUDIT.md. NO SQL."
     ]},
