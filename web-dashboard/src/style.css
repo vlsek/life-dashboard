@@ -2096,3 +2096,20 @@ html[data-motion='off'] .splash-orbit * { animation: none !important; }
 
 /* Единый зазор иконка → текст (BACKLOG 58.6): у заголовков и обычных кнопок значок стоял вплотную к тексту. Только для значка с текстом после него; кнопки с gap-* и flex не трогаем. */
 :where(h1, h2, h3, h4, button:not(.flex):not([class*='gap-'])) > svg.icon:not(:last-child):not(:only-child) { margin-inline-end: 0.4em; }
+
+/* splash-more:start — варианты «Эквалайзер» и «Пульс» (BACKLOG 56.1 срез 2, scripts/apply_splash_more.py); цвет — акцент темы */
+.splash-bars, .splash-pulse { overflow: visible; filter: drop-shadow(0 0 8px var(--accent)); }
+.splash-bars .eq-b { fill: var(--accent); transform-box: fill-box; transform-origin: 50% 100%; animation: eq-bounce 1s ease-in-out infinite; }
+.splash-bars .eq-b-2 { animation-delay: -0.25s; }
+.splash-bars .eq-b-3 { animation-delay: -0.5s; }
+.splash-bars .eq-b-4 { animation-delay: -0.15s; }
+.splash-bars .eq-b-5 { animation-delay: -0.4s; }
+.splash-pulse .pl-core { fill: var(--accent); transform-box: fill-box; transform-origin: 50% 50%; animation: pl-core 1.8s ease-in-out infinite; }
+.splash-pulse .pl-ring { fill: none; stroke: var(--accent); stroke-width: 1.6; transform-box: fill-box; transform-origin: 50% 50%; animation: pl-ring 1.8s ease-out infinite; }
+.splash-pulse .pl-r2 { animation-delay: -0.9s; }
+@keyframes eq-bounce { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+@keyframes pl-ring { 0% { transform: scale(0.5); opacity: 0.9; } 100% { transform: scale(2.8); opacity: 0; } }
+@keyframes pl-core { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+@media (prefers-reduced-motion: reduce) { .splash-bars *, .splash-pulse * { animation: none !important; } }
+html[data-motion='off'] .splash-bars *, html[data-motion='off'] .splash-pulse * { animation: none !important; }
+/* splash-more:end */

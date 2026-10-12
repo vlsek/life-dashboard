@@ -5,7 +5,7 @@
 import type { DictKey } from './i18n'
 import { THEME_LOADER } from './themeLoader'
 
-export const SPLASH_VARIANTS = ['classic', 'flame', 'ring', 'tongues', 'orbit'] as const
+export const SPLASH_VARIANTS = ['classic', 'flame', 'ring', 'tongues', 'orbit', 'bars', 'pulse'] as const
 export type SplashVariant = (typeof SPLASH_VARIANTS)[number]
 
 // По умолчанию — «живое пламя» (владелец просил «чтобы прям горело»); меняется на решение владельца.
@@ -18,6 +18,8 @@ export const SPLASH_VARIANT_LABEL_KEYS: Record<SplashVariant, DictKey> = {
   ring: 'splash_variant_ring',
   tongues: 'splash_variant_tongues',
   orbit: 'splash_variant_orbit',
+  bars: 'splash_variant_bars',
+  pulse: 'splash_variant_pulse',
 }
 
 export function isSplashVariant(v: unknown): v is SplashVariant {

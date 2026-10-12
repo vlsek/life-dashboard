@@ -18,7 +18,7 @@
           // ?splash= в адресе → localStorage → 'flame' по умолчанию
           // вариант заставки, идущий с большой темой (BACKLOG 55.5, срез 2; генерирует apply_themes.py из THEME_LOADER): запасной, если не выбран вручную
           var tl = { emerald: 'ring', moonlight: 'tongues', phosphor: 'classic', nightfall: 'flame', velvet: 'flame', frost: 'ring', alpine: 'classic', matcha: 'flame', cyberday: 'tongues', vintage: 'classic' }[t]
-          var sv = ['classic', 'flame', 'ring', 'tongues', 'orbit']
+          var sv = ['classic', 'flame', 'ring', 'tongues', 'orbit', 'bars', 'pulse']
           var q = new URLSearchParams(location.search).get('splash')
           var sp = sv.indexOf(q) >= 0 ? q : localStorage.getItem('splash_variant')
           document.documentElement.setAttribute('data-splash', sv.indexOf(sp) >= 0 ? sp : tl || 'flame')
@@ -83,6 +83,21 @@
       @keyframes pre-ob-spin { to { transform: rotate(360deg); } }
       @keyframes pre-ob-core { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.35); opacity: 0.7; } }
       /* splash-orbit:end */
+      /* splash-more:start (scripts/apply_splash_more.py) */
+      html[data-splash='bars'] .pre-splash .pre-flame, html[data-splash='pulse'] .pre-splash .pre-flame { display: none; }
+      html[data-splash='bars'] .pre-splash .pre-bars, html[data-splash='pulse'] .pre-splash .pre-pulse { display: block; }
+      .pre-bars .eq-b { fill: var(--pre-accent, #5b8def); transform-box: fill-box; transform-origin: 50% 100%; animation: pre-eq 1s ease-in-out infinite; }
+      .pre-bars .eq-b-2 { animation-delay: -0.25s; }
+      .pre-bars .eq-b-3 { animation-delay: -0.5s; }
+      .pre-bars .eq-b-4 { animation-delay: -0.15s; }
+      .pre-bars .eq-b-5 { animation-delay: -0.4s; }
+      .pre-pulse .pl-core { fill: var(--pre-accent, #5b8def); transform-box: fill-box; transform-origin: 50% 50%; animation: pre-pl-core 1.8s ease-in-out infinite; }
+      .pre-pulse .pl-ring { fill: none; stroke: var(--pre-accent, #5b8def); stroke-width: 1.6; transform-box: fill-box; transform-origin: 50% 50%; animation: pre-pl-ring 1.8s ease-out infinite; }
+      .pre-pulse .pl-r2 { animation-delay: -0.9s; }
+      @keyframes pre-eq { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+      @keyframes pre-pl-ring { 0% { transform: scale(0.5); opacity: 0.9; } 100% { transform: scale(2.8); opacity: 0; } }
+      @keyframes pre-pl-core { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+      /* splash-more:end */
       /* splash-flame:start */
       .pre-live .fb { transform-box: fill-box; transform-origin: 50% 100%; animation: pre-sway 1.9s ease-in-out infinite; }
       .pre-live .fl { transform-box: fill-box; transform-origin: 50% 100%; }
@@ -162,6 +177,18 @@
             <circle class="ob-dot ob-light" cx="32" cy="20" r="2" />
             <circle class="ob-dot ob-dim" cx="32" cy="44" r="1.4" />
           </g>
+        </svg>
+        <svg class="pre-bars" viewBox="0 0 64 64" width="80" height="80">
+          <rect class="eq-b eq-b-1" x="6.5" y="14" width="7" height="36" rx="3.5" />
+          <rect class="eq-b eq-b-2" x="18" y="14" width="7" height="36" rx="3.5" />
+          <rect class="eq-b eq-b-3" x="29.5" y="14" width="7" height="36" rx="3.5" />
+          <rect class="eq-b eq-b-4" x="41" y="14" width="7" height="36" rx="3.5" />
+          <rect class="eq-b eq-b-5" x="52.5" y="14" width="7" height="36" rx="3.5" />
+        </svg>
+        <svg class="pre-pulse" viewBox="0 0 64 64" width="80" height="80">
+          <circle class="pl-ring" cx="32" cy="32" r="10" />
+          <circle class="pl-ring pl-r2" cx="32" cy="32" r="10" />
+          <circle class="pl-core" cx="32" cy="32" r="5" />
         </svg>
         <svg class="pre-ring" viewBox="0 0 80 80" width="88" height="88">
           <circle class="rb" cx="40" cy="40" r="30" />

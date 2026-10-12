@@ -3,12 +3,14 @@ import SplashFlameLive from './splash/SplashFlameLive.vue'
 import SplashFireRing from './splash/SplashFireRing.vue'
 import SplashFlameTongues from './splash/SplashFlameTongues.vue'
 import SplashOrbit from './splash/SplashOrbit.vue'
+import SplashBars from './splash/SplashBars.vue'
+import SplashPulse from './splash/SplashPulse.vue'
 import { t } from '../lib/i18n'
 import { readSplashVariant, type SplashVariant } from '../lib/splashVariants'
 
 // Заставка на время фоновой подгрузки (BACKLOG 6.1 + 16): вариант выбирается реестром splashVariants.ts —
 // «живое пламя» (по умолчанию), «три языка» (старое пламя), «огненный круг», «орбита» (BACKLOG 56.1) или «классика» (контур с мерцанием, v1.70, не удалена).
-// Предпросмотр: добавить ?splash=ring | flame | tongues | orbit | classic к адресу (запоминается). role="status" — скринридер
+// Предпросмотр: добавить ?splash=ring | flame | tongues | orbit | bars | pulse | classic к адресу (запоминается). role="status" — скринридер
 // читает подпись; при prefers-reduced-motion и html[data-motion="off"] анимации выключены (style.css).
 // Статичная копия разметки лежит в index.html и видна до загрузки бандла — правишь здесь, поправь и там.
 const props = defineProps<{ variant?: SplashVariant }>()
@@ -21,6 +23,8 @@ const variant: SplashVariant = props.variant ?? readSplashVariant()
     <SplashFireRing v-else-if="variant === 'ring'" />
     <SplashFlameTongues v-else-if="variant === 'tongues'" />
     <SplashOrbit v-else-if="variant === 'orbit'" />
+    <SplashBars v-else-if="variant === 'bars'" />
+    <SplashPulse v-else-if="variant === 'pulse'" />
     <svg v-else class="splash-flame" viewBox="0 0 32 32" width="72" height="72" aria-hidden="true">
       <g transform="translate(16 16) scale(1.04) translate(-16 -16) translate(3.3 0.7)">
         <path

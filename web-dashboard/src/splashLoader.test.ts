@@ -58,7 +58,32 @@ describe('SplashLoader', () => {
     expect(css).toContain("html[data-motion='off'] .splash-orbit *")
     expect(html).toContain("html[data-splash='orbit'] .pre-splash .pre-orbit { display: block; }")
     expect(html).toContain('@keyframes pre-ob-spin')
-    expect(html).toContain("'tongues', 'orbit']")
+    expect(html).toContain("'tongues', 'orbit', 'bars', 'pulse']")
+  })
+
+  it('«Эквалайзер» и «Пульс» (BACKLOG 56.1 срез 2): фигуры компонента совпадают со статичной заставкой index.html', () => {
+    const bars = mount(SplashLoader, { props: { variant: 'bars' } })
+    expect(bars.find('[data-test="splash"]').attributes('data-variant')).toBe('bars')
+    expect(bars.findAll('.splash-bars .eq-b')).toHaveLength(5)
+    const rects = (m: string) => [...m.matchAll(/<rect class="(eq-b [\w-]+)" x="([\d.]+)" y="(\d+)" width="(\d+)" height="(\d+)" rx="([\d.]+)"/g)].map((x) => x.slice(1).join(','))
+    expect(rects(html.match(/<svg class="pre-bars".*?<\/svg>/s)![0])).toEqual(rects(bars.html()))
+    expect(rects(bars.html())).toHaveLength(5)
+    const pulse = mount(SplashLoader, { props: { variant: 'pulse' } })
+    expect(pulse.find('[data-test="splash"]').attributes('data-variant')).toBe('pulse')
+    expect(pulse.findAll('.splash-pulse .pl-ring')).toHaveLength(2)
+    expect(pulse.findAll('.splash-pulse .pl-core')).toHaveLength(1)
+    const circles = (m: string) => [...m.matchAll(/<circle class="(pl-[\w -]+)" cx="(\d+)" cy="(\d+)" r="([\d.]+)"/g)].map((x) => x.slice(1).join(','))
+    expect(circles(html.match(/<svg class="pre-pulse".*?<\/svg>/s)![0])).toEqual(circles(pulse.html()))
+    expect(circles(pulse.html())).toHaveLength(3)
+  })
+
+  it('«Эквалайзер» и «Пульс»: стили у компонента и у статичной заставки; «уменьшить движение» и «Отключить анимации» их выключают', () => {
+    for (const s of ['.splash-bars .eq-b', '@keyframes eq-bounce', '.splash-pulse .pl-ring', '@keyframes pl-ring']) expect(css, s).toContain(s)
+    expect(css).toMatch(/prefers-reduced-motion: reduce\) \{ \.splash-bars \*, \.splash-pulse \* \{ animation: none !important/)
+    expect(css).toContain("html[data-motion='off'] .splash-bars *")
+    expect(html).toContain("html[data-splash='bars'] .pre-splash .pre-bars")
+    expect(html).toContain('@keyframes pre-eq')
+    expect(html).toContain('@keyframes pre-pl-ring')
   })
 
   it('вариант берётся из localStorage; английская подпись при EN', () => {

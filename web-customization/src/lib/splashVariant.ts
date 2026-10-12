@@ -3,7 +3,7 @@
 // поэтому выбор действует везде. Тест splashPicker.test.ts следит, чтобы список вариантов совпадал с Дашбордом.
 import { THEME_LOADER } from './themeLoader'
 
-export const SPLASH_VARIANTS = ['classic', 'flame', 'ring', 'tongues', 'orbit'] as const
+export const SPLASH_VARIANTS = ['classic', 'flame', 'ring', 'tongues', 'orbit', 'bars', 'pulse'] as const
 export type SplashVariant = (typeof SPLASH_VARIANTS)[number]
 export const DEFAULT_SPLASH_VARIANT: SplashVariant = 'flame'
 export const SPLASH_VARIANT_KEY = 'splash_variant'

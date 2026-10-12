@@ -15,9 +15,9 @@ describe('SplashPicker: выбор заставки в «Кастомизаци�
     document.documentElement.removeAttribute('data-splash')
   })
 
-  it('шесть карточек: «По теме» (по умолчанию, на обычной теме играет «Живое пламя») и пять вариантов; у каждой живой предпросмотр', () => {
+  it('восемь карточек: «По теме» (по умолчанию, на обычной теме играет «Живое пламя») и семь вариантов; у каждой живой предпросмотр', () => {
     const w = mount(SplashPicker)
-    expect(w.findAll('[data-testid^="splash-"][data-active]')).toHaveLength(6)
+    expect(w.findAll('[data-testid^="splash-"][data-active]')).toHaveLength(8)
     expect(w.find('[data-testid="splash-auto"]').attributes('data-active')).toBe('true')
     expect(w.find('[data-testid="splash-auto"]').text()).toContain('По теме')
     expect(w.find('[data-testid="splash-auto-now"]').text()).toContain('Живое пламя')
@@ -28,6 +28,10 @@ describe('SplashPicker: выбор заставки в «Кастомизаци�
     expect(w.find('[data-testid="splash-ring"] svg.splash-ring').exists()).toBe(true)
     expect(w.find('[data-testid="splash-orbit"] svg.splash-orbit .ob-core').exists()).toBe(true)
     expect(w.find('[data-testid="splash-orbit"]').text()).toContain('Орбита')
+    expect(w.find('[data-testid="splash-bars"] svg.splash-bars .eq-b-5').exists()).toBe(true) // 56.1 срез 2
+    expect(w.find('[data-testid="splash-bars"]').text()).toContain('Эквалайзер')
+    expect(w.find('[data-testid="splash-pulse"] svg.splash-pulse .pl-core').exists()).toBe(true)
+    expect(w.find('[data-testid="splash-pulse"]').text()).toContain('Пульс')
     expect(w.find('[data-testid="splash-classic"] svg.splash-flame').exists()).toBe(true)
     expect(w.find('[data-testid="splash-flame"] svg.splash-live .flame-body').exists()).toBe(true)
   })
@@ -132,7 +136,7 @@ describe('заставка большой темы (BACKLOG 55.5, срез 2)', 
       const html: string = readFileSync(`../web-${d}/index.html`, 'utf-8')
       expect(html, d).toContain(`var tl = ${want}[t]`)
       expect(html, d).toContain("sv.indexOf(sp) >= 0 ? sp : tl || 'flame'")
-      expect(html, d).toContain("'tongues', 'orbit']") // «Орбита» (BACKLOG 56.1): ключ в списке вариантов скрипта выбора
+      expect(html, d).toContain("'tongues', 'orbit', 'bars', 'pulse']") // «Орбита» (BACKLOG 56.1): ключ в списке вариантов скрипта выбора
       expect(html, d).toContain('class="pre-orbit"')
     }
   })
