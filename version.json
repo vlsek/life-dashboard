@@ -1,6 +1,13 @@
 {
-  "version": "5.26",
+  "version": "5.27",
   "en": [
+    {
+      "version": "5.27",
+      "date": "2026-10-12 10:30",
+      "changes": [
+        "Phone page check: the «i» («About this page») icon is easier to tap (a wider tap area, same look) and the «Got it» button in the page hint is taller. All pages were run through an automatic check: no horizontal scrolling, errors or blank pages anywhere; report in docs/FRONTEND_AUDIT.md. NO SQL."
+      ]
+    },
     {
       "version": "5.26",
       "date": "2026-10-12 08:27",
@@ -3749,6 +3756,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.27",
+      "date": "2026-10-12 10:30",
+      "changes": [
+        "Проверка страниц на телефоне: значок «i» («О странице») стал удобнее нажимать (область нажатия шире, вид прежний), кнопка «Понятно» в подсказке страницы — выше. Остальные страницы прогнаны автопроверкой: горизонтальной прокрутки, ошибок и пустых страниц нигде нет; отчёт — docs/FRONTEND_AUDIT.md. БЕЗ SQL."
+      ]
+    },
     {
       "version": "5.26",
       "date": "2026-10-12 08:27",

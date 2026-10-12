@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.26";
+const SITE_VERSION = "5.27";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.27", date: "2026-10-12 10:30", changes: [
+        "Проверка страниц на телефоне: значок «i» («О странице») стал удобнее нажимать (область нажатия шире, вид прежний), кнопка «Понятно» в подсказке страницы — выше. Остальные страницы прогнаны автопроверкой: горизонтальной прокрутки, ошибок и пустых страниц нигде нет; отчёт — docs/FRONTEND_AUDIT.md. БЕЗ SQL."
+    ]},
     { version: "5.26", date: "2026-10-12 08:27", changes: [
         "Заставка загрузки: два новых бесплатных варианта — «Эквалайзер» (пять прыгающих столбиков) и «Пульс» (круги расходятся волнами). Выбор — в «Кастомизации», раздел «Загрузка»; цвет следует за акцентом темы."
     ]},
@@ -2188,6 +2191,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.27", date: "2026-10-12 10:30", changes: [
+        "Phone page check: the «i» («About this page») icon is easier to tap (a wider tap area, same look) and the «Got it» button in the page hint is taller. All pages were run through an automatic check: no horizontal scrolling, errors or blank pages anywhere; report in docs/FRONTEND_AUDIT.md. NO SQL."
+    ]},
     { version: "5.26", date: "2026-10-12 08:27", changes: [
         "Loading screen: two new free variants — Equalizer (five bouncing bars) and Pulse (rings spreading in waves). Pick them in Customization, Loading section; the colour follows the theme accent."
     ]},
