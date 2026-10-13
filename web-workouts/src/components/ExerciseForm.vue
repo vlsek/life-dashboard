@@ -112,6 +112,11 @@ function onVariantPick(e: Event) {
 
 const showNewCatInput = computed(() => catSelect.value === '__new__')
 
+// BACKLOG 62.2: у НОВОГО упражнения на виду только название, типовое/разновидность и «Сохранить» — категория, вес и единица, «что считаем»,
+// длительность, Л/П и мышцы свёрнуты под «Ещё» (значения по умолчанию или из автозаполнения по типовому уже стоят). При правке существующего — всё раскрыто.
+const showMore = ref(!!props.existing)
+const moreSummary = computed(() => `${chosenLabel.value} · ${tracksWeight.value === 'yes' ? chosenUnit.value : t('workouts_summary_no_weight')}`)
+
 const nameInput = ref<HTMLInputElement | null>(null)
 onMounted(() => nameInput.value?.focus())
 
@@ -171,6 +176,14 @@ function onSubmit() {
           <p v-if="autofilled && !existing" class="text-xs" style="color: var(--text-dim)" data-testid="typical-autofill-hint">{{ t('workouts_typical_filled') }}</p>
         </div>
 
+        <div v-if="!existing" class="flex flex-col gap-1 text-sm" data-testid="more-toggle-row">
+          <button type="button" class="self-start rounded-lg border px-3 py-1.5 text-sm" style="border-color: var(--border); background: var(--bg); color: var(--text)" :aria-expanded="showMore" data-testid="more-toggle" @click="showMore = !showMore">
+            {{ showMore ? t('workouts_form_less') : t('workouts_form_more') }}
+          </button>
+          <p v-if="!showMore" class="text-xs" style="color: var(--text-dim)" data-testid="more-summary">{{ moreSummary }}</p>
+        </div>
+
+        <div v-show="showMore" class="flex flex-col gap-3" data-testid="more-fields">
         <label class="flex flex-col gap-1 text-sm">
           {{ t('workouts_field_category') }}
           <select v-model="catSelect" class="modal-input" data-testid="category-select" @change="touch('category')">
@@ -273,6 +286,7 @@ function onSubmit() {
           </div>
         </div>
         <p v-else class="-mt-1 text-xs" style="color: var(--text-dim)" data-testid="unit-no-weight-hint">{{ t('workouts_reps_no_weight_hint') }}</p>
+        </div>
 
         <div class="mt-2 flex justify-end gap-2">
           <button
