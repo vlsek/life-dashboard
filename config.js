@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.44";
+const SITE_VERSION = "5.45";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.45", date: "2026-10-13 05:47", changes: [
+        "Графики: зона цели. Если у метрики есть цель, на графике можно включить мягкую зелёную полосу по ту сторону линии цели, где «хорошо»: для «не меньше X» — выше цели, для «меньше X» — ниже. Работает и у линии, и у столбцов; у параметров тела (без направления цели) полосы нет. Заодно раздел «Графики» в «Кастомизации» стал короче: три вкл/выкл-настройки (появление линии, прогноз, зона цели) собраны в один список «Дополнения» вместо трёх групп карточек. По умолчанию всё выключено. Без миграций."
+    ]},
     { version: "5.44", date: "2026-10-13 08:41", changes: [
         "Планы на день: пункты, которые вы добавили сами, теперь можно править (карандаш: название, время напоминания, время выполнения), а при отметке «сделано» на сегодняшнем дне рядом само появляется время выполнения; снимете галку — время уберётся."
     ]},
@@ -2242,6 +2245,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.45", date: "2026-10-13 05:47", changes: [
+        "Charts: goal zone. If a metric has a goal, you can turn on a soft green band on the \"good\" side of the goal line: for \"at least X\" above the goal, for \"less than X\" below it. It works for lines and bars; body parameters (no goal direction) get no band. The \"Charts\" section in \"Customization\" is also shorter: the three on/off settings (line animation, forecast, goal zone) are now one \"Extras\" list instead of three card groups. Everything is off by default. No migrations."
+    ]},
     { version: "5.44", date: "2026-10-13 08:41", changes: [
         "Day plan: items you added yourself can now be edited (pencil: title, reminder time, completion time), and ticking an item as done on today's plan stamps the completion time next to it; untick to clear it."
     ]},
