@@ -527,6 +527,8 @@ describe('большая тема vintage (светлая): характер', (
       expect(btn, f).toContain('box-shadow: inset 0 0 0 1px var(--accent)')
       expect(btn, f).not.toMatch(/\bborder:/) // не border: — иначе кнопки изменят размер
       expect(btn, f).toContain(':not(.secondary):not(.danger):not(:disabled)')
+      // 61.2: кнопка-заголовок «Какие достижения тут можно получить» лежит внутри рамки карточки — кольцо поверх рамки давало двойной рваный край
+      expect(btn, f).toContain(':not(.gh-secach-head)')
     }
   })
   it('под «Простое оформление» и prefers-contrast блока нет: эффектов у темы нет, нечего отключать', () => {
