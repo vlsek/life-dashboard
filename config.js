@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.51";
+const SITE_VERSION = "5.52";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.52", date: "2026-10-13 14:55", changes: [
+        "Дашборд: у метрики-«числа», связанной с упражнением из «Тренировок», теперь можно добавить подход прямо в «Дневных метриках» — поле «Повторы» и кнопка «+ подход», итог за день пересчитывается из всех подходов упражнения. Рядом с названием связанной метрики (числа и подходов) появилась подпись «из «Тренировок»». Без миграций."
+    ]},
     { version: "5.51", date: "2026-10-13 11:47", changes: [
         "«Цели»: у цели появился горизонт — «Сейчас», «В ближайшее время», «В ближайший месяц» или «В конкретный день» (тогда выбирается дата). Вверху списка переключатель «По категориям / По срокам»: во втором виде цели разложены по разделам-горизонтам; выбор запоминается на устройстве. Пока миграция 084 не применена, в форме доступны только «Сейчас» и «В конкретный день». Требует миграцию 084 для двух новых горизонтов.",
     ]},
@@ -2263,6 +2266,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.52", date: "2026-10-13 14:55", changes: [
+        "Dashboard: a number metric linked to a Workouts exercise now takes a set right in Daily metrics — a “Reps” field and a “+ set” button; the day total is recalculated from all sets of the exercise. Linked metrics (number and sets) also show a “from Workouts” label next to the name. No migrations."
+    ]},
     { version: "5.51", date: "2026-10-13 11:47", changes: [
         "Goals: each goal now has a horizon — Now, Soon, This month or On a specific day (pick a date). A new “By category / By time” switch above the list groups goals into horizon sections; your choice is remembered on this device. Until migration 084 is applied, the form offers only Now and On a specific day. Migration 084 is needed for the two new horizons.",
     ]},

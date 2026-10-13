@@ -1,6 +1,13 @@
 {
-  "version": "5.51",
+  "version": "5.52",
   "en": [
+    {
+      "version": "5.52",
+      "date": "2026-10-13 14:55",
+      "changes": [
+        "Dashboard: a number metric linked to a Workouts exercise now takes a set right in Daily metrics — a “Reps” field and a “+ set” button; the day total is recalculated from all sets of the exercise. Linked metrics (number and sets) also show a “from Workouts” label next to the name. No migrations."
+      ]
+    },
     {
       "version": "5.51",
       "date": "2026-10-13 11:47",
@@ -3924,6 +3931,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.52",
+      "date": "2026-10-13 14:55",
+      "changes": [
+        "Дашборд: у метрики-«числа», связанной с упражнением из «Тренировок», теперь можно добавить подход прямо в «Дневных метриках» — поле «Повторы» и кнопка «+ подход», итог за день пересчитывается из всех подходов упражнения. Рядом с названием связанной метрики (числа и подходов) появилась подпись «из «Тренировок»». Без миграций."
+      ]
+    },
     {
       "version": "5.51",
       "date": "2026-10-13 11:47",
