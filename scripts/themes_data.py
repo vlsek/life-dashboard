@@ -58,6 +58,8 @@ P={
  'vintage':('light','📜 Vintage Paper','📜 Чернильная бумага',dict(bg='#fbfbfa',card='#ecebe4',border='#a9a699',text='#1e293b',dim='#586070',accent='#1e293b',at='#fbfbfa',ok='#3f6b45',bad='#c2410c',hist='#3f6b45',wt='#3f6f9a',wb='#2c5a85',wl='#35648f')),
  # --- BACKLOG 57.7 (файл 1, тема 5): Obsidian Light / Executive Glass — бизнес-стекло (светло-серый градиент, полупрозрачные стеклянные карточки с размытием, индиго и графит) ---
  'glass':('light','🪟 Executive Glass','🪟 Бизнес-стекло',dict(bg='#f1f3f5',card='#ffffff',border='#c9ced8',text='#1f2933',dim='#566170',accent='#4f46e5',at='#ffffff',ok='#2f855a',bad='#c53030',hist='#4f46e5',**LIGHT_W)),
+ # --- BACKLOG 57.7 (файл 2, тема 1): Летний луг / Summer Meadow — солнечный летний день на природе (молочный белый с зеленоватым подтоном, травяной акцент, округлые формы) ---
+ 'meadow':('light','🌾 Summer Meadow','🌾 Летний луг',dict(bg='#f2f7f4',card='#ffffff',border='#a8cdb0',text='#1b3a28',dim='#4f6a58',accent='#2e7d32',at='#ffffff',ok='#2e7d32',bad='#c0392b',hist='#43a047',**LIGHT_W)),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
 
@@ -340,6 +342,31 @@ CHAR = {
         contrast='  --blur-glass: none;\n  --bg-pattern: none;\n  --shadow-card: none;\n  --glass-alpha: 100%;',
         transparency='  --blur-glass: none;\n  --glass-alpha: 100%;',
     ),
+    # Летний луг: округлые мягкие формы (12px), ЛЁГКИЕ зеленоватые тени, тёплое солнечное пятно в углу фона («тепло и простор»), гладкие анимации.
+    # «Простое оформление» и prefers-contrast: more убирают солнечное пятно и тень.
+    'meadow': dict(
+        tw='''  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --shadow-card: 0 2px 10px rgba(46, 125, 50, 0.1);
+  --bg-pattern: radial-gradient(circle at 100% 0%, rgba(251, 192, 45, 0.2), transparent 42%), radial-gradient(circle at 0% 100%, rgba(129, 199, 132, 0.18), transparent 40%);
+  --bg-pattern-size: auto;
+  --default-transition-duration: 0.2s;
+  --default-transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);''',
+        root='''  --radius-card: 12px;
+  --radius-modal: 12px;
+  --radius-control: 12px;
+  --shadow-card: 0 2px 10px rgba(46, 125, 50, 0.1);
+  --bg-pattern: radial-gradient(circle at 100% 0%, rgba(251, 192, 45, 0.2), transparent 42%), radial-gradient(circle at 0% 100%, rgba(129, 199, 132, 0.18), transparent 40%);
+  --bg-pattern-size: auto;''',
+        rules=[
+            (['body'], 'background-image: var(--bg-pattern); background-size: var(--bg-pattern-size);'),
+            (['.card', '.modal', '[style*="var(--bg-card)"]'], 'box-shadow: var(--shadow-card);'),
+        ],
+        reduced='  --default-transition-duration: 0s;',
+        contrast='  --bg-pattern: none;\n  --shadow-card: none;',
+    ),
 }
 assert all(k in P for k in CHAR)
 
@@ -347,14 +374,14 @@ assert all(k in P for k in CHAR)
 # вариант вручную в «Настройках» шапки (ручной выбор главнее). Словарь ОТДЕЛЬНО от CHAR; тема без записи = спокойная волна. Генератор apply_themes.py
 # пишет из него `themeWater.ts` в web-header и web-dashboard. Подбор по характеру темы: HUD и терминал — «рябь» (расходящиеся круги, как скан),
 # синтвейв — «капли» (пружинные), спокойная ночная — «волна».
-THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave', 'velvet': 'drops', 'frost': 'ripple', 'alpine': 'wave', 'matcha': 'drops', 'cyberday': 'ripple', 'vintage': 'wave', 'glass': 'wave'}
+THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave', 'velvet': 'drops', 'frost': 'ripple', 'alpine': 'wave', 'matcha': 'drops', 'cyberday': 'ripple', 'vintage': 'wave', 'glass': 'wave', 'meadow': 'ripple'}
 assert all(k in CHAR for k in THEME_WATER) and all(v in ('wave', 'drops', 'ripple') for v in THEME_WATER.values())
 
 # Заставка загрузки (лоадер страниц) у больших тем (BACKLOG 55.5, срез 2): вариант из реестра SPLASH_VARIANTS (classic | flame | ring | tongues) — действует,
 # ЕСЛИ вариант не выбран вручную (ручной выбор и `?splash=` главнее). Тема без записи = «живое пламя». Генератор пишет `themeLoader.ts` и вставляет
 # запасной вариант в скрипт выбора заставки во всех web-*/index.html (статичная заставка берёт его до загрузки бандла). Подбор по характеру: HUD —
 # «кольцо» (скан), синтвейв — «три языка» (неоновое пламя), терминал — «классика» (простая), спокойная ночная — «живое пламя».
-THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame', 'velvet': 'flame', 'frost': 'ring', 'alpine': 'classic', 'matcha': 'flame', 'cyberday': 'tongues', 'vintage': 'classic', 'glass': 'ring'}
+THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame', 'velvet': 'flame', 'frost': 'ring', 'alpine': 'classic', 'matcha': 'flame', 'cyberday': 'tongues', 'vintage': 'classic', 'glass': 'ring', 'meadow': 'flame'}
 assert all(k in CHAR for k in THEME_LOADER) and all(v in ('classic', 'flame', 'ring', 'tongues') for v in THEME_LOADER.values())
 
 # Темы-награды (решение владельца 2026-10-06): тема → ключ достижения, НАГРАДОЙ за которое она открывается (4-я, самая трудная ступень

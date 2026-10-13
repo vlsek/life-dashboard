@@ -14,4 +14,5 @@ export const THEME_TRAITS: Record<string, ThemeTrait[]> = {
   cyberday: ['palette', 'mono_labels', 'hard_shadows', 'dot_pattern', 'snappy_anim'],
   vintage: ['palette', 'corners_sharp', 'dashed_borders', 'serif_headings', 'outlined_buttons', 'flat_cards', 'smooth_anim'],
   glass: ['palette', 'corners_soft', 'soft_shadows', 'aurora_bg', 'glass_panels', 'smooth_anim'],
+  meadow: ['palette', 'corners_soft', 'soft_shadows', 'aurora_bg', 'smooth_anim'],
 }

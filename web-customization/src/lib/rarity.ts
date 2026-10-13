@@ -135,6 +135,8 @@ export const THEME_RARITY: Record<ThemeKey, Rarity> = {
   vintage: 'common',
   // BACKLOG 57.7: пятая светлая «большая тема» (Executive Glass) — пока открыта всем
   glass: 'common',
+  // BACKLOG 57.7 (файл 2): первая тематическая «большая тема» (Summer Meadow) — пока открыта всем
+  meadow: 'common',
 }
 
 export const rarityOfItem = (key: string): Rarity => ITEM_RARITY[key] ?? 'common'

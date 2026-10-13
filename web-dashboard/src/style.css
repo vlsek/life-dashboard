@@ -890,6 +890,32 @@ html.theme-glass {
   --chart-none: #6b7280;
   --chart-other: #9095a0;
 }
+
+html.theme-meadow {
+  --bg: #f2f7f4;
+  --bg-card: #ffffff;
+  --border: #a8cdb0;
+  --text: #1b3a28;
+  --text-dim: #4f6a58;
+  --accent: #2e7d32;
+  --accent-text: #ffffff;
+  --success: #2e7d32;
+  --danger: #c0392b;
+  --hist-ok: #43a047;
+  --water-top: #3f95e0;
+  --water-bottom: #1560b8;
+  --water-line: #1560b8;
+  --chart-1: #2e7d32;
+  --chart-2: #1d5aaf;
+  --chart-3: #af291d;
+  --chart-4: #a0731a;
+  --chart-5: #721daf;
+  --chart-6: #1b9ba7;
+  --chart-7: #af1d72;
+  --chart-8: #291daf;
+  --chart-none: #6b7280;
+  --chart-other: #9095a0;
+}
 /* themes:end */
 
 /* design-tokens:start (генерируется scripts/apply_themes.py — не править руками; BACKLOG 50.1а) */
@@ -1203,6 +1229,36 @@ html[data-simple='on'].theme-glass {
     --default-transition-duration: 0s;
   }
 }
+
+/* большая тема: meadow */
+html.theme-meadow {
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --shadow-card: 0 2px 10px rgba(46, 125, 50, 0.1);
+  --bg-pattern: radial-gradient(circle at 100% 0%, rgba(251, 192, 45, 0.2), transparent 42%), radial-gradient(circle at 0% 100%, rgba(129, 199, 132, 0.18), transparent 40%);
+  --bg-pattern-size: auto;
+  --default-transition-duration: 0.2s;
+  --default-transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+html.theme-meadow body { background-image: var(--bg-pattern); background-size: var(--bg-pattern-size); }
+html.theme-meadow .card, html.theme-meadow .modal, html.theme-meadow [style*="var(--bg-card)"] { box-shadow: var(--shadow-card); }
+html[data-simple='on'].theme-meadow {
+  --bg-pattern: none;
+  --shadow-card: none;
+}
+@media (prefers-contrast: more) {
+  html.theme-meadow {
+    --bg-pattern: none;
+    --shadow-card: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-meadow {
+    --default-transition-duration: 0s;
+  }
+}
 /* design-tokens:end */
 /* themes-scheme */
 html.theme-nord,
@@ -1234,7 +1290,8 @@ html.theme-alpine,
 html.theme-matcha,
 html.theme-cyberday,
 html.theme-vintage,
-html.theme-glass { color-scheme: light; }
+html.theme-glass,
+html.theme-meadow { color-scheme: light; }
 
 html,
 body,
@@ -1952,7 +2009,8 @@ html.theme-alpine,
 html.theme-matcha,
 html.theme-cyberday,
 html.theme-vintage,
-html.theme-glass {
+html.theme-glass,
+html.theme-meadow {
   --water-gold: #b87900;
 }
 /* themes-gold:end */

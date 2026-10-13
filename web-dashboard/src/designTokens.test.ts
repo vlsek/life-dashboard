@@ -130,10 +130,10 @@ describe('большая тема emerald: характер', () => {
   it('при prefers-reduced-motion анимации темы мгновенные (только у Tailwind-страниц)', () => {
     for (const d of pilots) expect(read(d + '/src/style.css')).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-emerald \{\s*--default-transition-duration: 0s;/)
   })
-  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine, matcha, cyberday, vintage, glass) — остальные темы не переопределены', () => {
+  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine, matcha, cyberday, vintage, glass, meadow) — остальные темы не переопределены', () => {
     for (const f of files) {
       const region = read(f).match(REGION)![0]
-      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha', 'cyberday', 'vintage', 'glass'])
+      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha', 'cyberday', 'vintage', 'glass', 'meadow'])
     }
   })
 })
@@ -629,4 +629,47 @@ describe('большая тема glass: собранный CSS', () => {
       expect(m![0]).toMatch(/[{;]backdrop-filter:var\(--blur-glass\)/)
     })
   }
+})
+
+// BACKLOG 57.7 (файл 2, тема 1): тематическая светлая Summer Meadow — округлые формы 12px, лёгкие зеленоватые тени, солнечное пятно в углу фона, гладкие анимации.
+describe('большая тема meadow (светлая тематическая): характер', () => {
+  const block = (css: string): string => {
+    const m = css.match(/\/\* большая тема: meadow \*\/\nhtml\.theme-meadow \{[^}]*\}/)
+    expect(m, 'нет блока характера').not.toBeNull()
+    return m![0]
+  }
+  for (const d of pilots) {
+    it(d + ': округлые формы, лёгкая зеленоватая тень, солнечное пятно, гладкая анимация, отключения', () => {
+      const css = read(d + '/src/style.css')
+      const b = block(css)
+      expect([decl(b, '--radius-md'), decl(b, '--radius-lg'), decl(b, '--radius-xl'), decl(b, '--radius-2xl')]).toEqual(['8px', '12px', '12px', '16px'])
+      expect(decl(b, '--shadow-card')).toBe('0 2px 10px rgba(46, 125, 50, 0.1)')
+      expect(decl(b, '--bg-pattern')).toContain('rgba(251, 192, 45')
+      expect(decl(b, '--bg-pattern-size')).toBe('auto')
+      expect(decl(b, '--default-transition-timing-function')).toBe('cubic-bezier(0.25, 0.8, 0.25, 1)')
+      expect(css).toMatch(/html\[data-simple='on'\]\.theme-meadow \{\s*--bg-pattern: none;\s*--shadow-card: none;/)
+      expect(css).toMatch(/@media \(prefers-contrast: more\) \{\s*html\.theme-meadow \{\s*--bg-pattern: none;\s*--shadow-card: none;/)
+      expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-meadow \{\s*--default-transition-duration: 0s;/)
+    })
+  }
+  it('корень: 12/12/12 и те же тень и пятно', () => {
+    const b = block(read('style.css'))
+    expect([decl(b, '--radius-card'), decl(b, '--radius-modal'), decl(b, '--radius-control')]).toEqual(['12px', '12px', '12px'])
+    expect(decl(b, '--shadow-card')).toBe('0 2px 10px rgba(46, 125, 50, 0.1)')
+  })
+  it('два правила только под html.theme-meadow: пятно на body и тень карточек', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      const lines = region.split('\n').filter((l) => l.startsWith('html.theme-meadow ') && l.includes('{ '))
+      expect(lines.length, f).toBe(2)
+      for (const l of lines) for (const sel of l.split('{')[0].split(',')) expect(sel.trim(), f).toMatch(/^html\.theme-meadow /)
+    }
+  })
+  it('светлая зеленоватая палитра: молочный фон, белые карточки, травяной акцент; белый текст на акценте ≥ 4.5:1, галочка белая', () => {
+    const css = read('web-dashboard/src/style.css')
+    const get = (name: string) => css.match(new RegExp('html\\.theme-meadow \\{[^}]*--' + name + ':\\s*(#[0-9a-fA-F]{6})'))![1].toLowerCase()
+    expect([get('bg'), get('bg-card'), get('accent')]).toEqual(['#f2f7f4', '#ffffff', '#2e7d32'])
+    const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
+    expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).not.toContain('meadow')
+  })
 })

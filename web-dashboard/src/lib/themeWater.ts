@@ -12,4 +12,5 @@ export const THEME_WATER: Record<string, 'wave' | 'drops' | 'ripple'> = {
   cyberday: 'ripple',
   vintage: 'wave',
   glass: 'wave',
+  meadow: 'ripple',
 }

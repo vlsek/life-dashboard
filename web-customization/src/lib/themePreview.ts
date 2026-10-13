@@ -47,4 +47,5 @@ export const THEME_PREVIEW: Record<ThemeKey, ThemePreview> = {
   cyberday: { bg: '#eef0f4', card: '#ffffff', accent: '#2563eb', text: '#111827', success: '#15803d', water: '#3f95e0', kind: 'light' },
   vintage: { bg: '#fbfbfa', card: '#ecebe4', accent: '#1e293b', text: '#1e293b', success: '#3f6b45', water: '#3f6f9a', kind: 'light' },
   glass: { bg: '#f1f3f5', card: '#ffffff', accent: '#4f46e5', text: '#1f2933', success: '#2f855a', water: '#3f95e0', kind: 'light' },
+  meadow: { bg: '#f2f7f4', card: '#ffffff', accent: '#2e7d32', text: '#1b3a28', success: '#2e7d32', water: '#3f95e0', kind: 'light' },
 }

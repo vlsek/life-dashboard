@@ -33,6 +33,7 @@ const THEME_KEYS = {
     cyberday: "theme_cyberday",
     vintage: "theme_vintage",
     glass: "theme_glass",
+    meadow: "theme_meadow",
 };
 
 // Цвета фона по темам — держим в синхронизации с --bg из style.css
@@ -71,6 +72,7 @@ const THEME_BG_COLORS = {
     cyberday: "#eef0f4",
     vintage: "#fbfbfa",
     glass: "#f1f3f5",
+    meadow: "#f2f7f4",
 };
 
 function getTheme() {

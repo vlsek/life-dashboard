@@ -35,6 +35,7 @@ export const THEME_KEYS = {
   cyberday: 'theme_cyberday',
   vintage: 'theme_vintage',
   glass: 'theme_glass',
+  meadow: 'theme_meadow',
 } as const
 
 export type ThemeKey = keyof typeof THEME_KEYS
@@ -77,6 +78,7 @@ const THEME_BG_COLORS: Record<ThemeKey, string> = {
   cyberday: '#eef0f4',
   vintage: '#fbfbfa',
   glass: '#f1f3f5',
+  meadow: '#f2f7f4',
 }
 
 export function getTheme(): ThemeKey {
