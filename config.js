@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.54";
+const SITE_VERSION = "5.55";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.55", date: "2026-10-13 15:30", changes: [
+        "Тема «Чернильная бумага»: у сворачиваемого блока «Какие достижения тут можно получить» внизу страниц больше нет двойной рваной пунктирной рамки — контурное кольцо темы теперь не ложится на безрамочную кнопку-заголовок. Остальные страницы в этой теме осмотрены в Chromium (телефон и десктоп): обрезанного текста не найдено. Без миграций.",
+    ]},
     { version: "5.54", date: "2026-10-13 15:01", changes: [
         "«Кастомизация»: в сводке «Сейчас выбрано» появилась строка «Линия графика» — одним взглядом видно вид графика (линия или столбцы), стиль линии и включённые дополнения (рисуется, прогноз, зона цели); тап ведёт к разделу «Графики». Без миграций."
     ]},
@@ -2272,6 +2275,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.55", date: "2026-10-13 15:30", changes: [
+        "Vintage Paper theme: the collapsible \"Which achievements you can get here\" block at the bottom of pages no longer has a double jagged dashed border — the theme's outline ring no longer lands on the borderless header button. The other pages in this theme were checked in Chromium (phone and desktop): no clipped text found. No migrations.",
+    ]},
     { version: "5.54", date: "2026-10-13 15:01", changes: [
         "Customization: the “Selected now” summary has a new “Chart line” row — chart kind (line or bars), line style and enabled extras (draws itself, forecast, goal zone) at a glance; tap it to jump to the Charts section. No migrations."
     ]},
