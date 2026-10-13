@@ -171,12 +171,16 @@ const recentMuscles = computed(() => {
   return MUSCLE_IDS.filter((m) => isTrainedRecently(last[m], day))
 })
 
-// Вкладки страницы (BACKLOG 54.2): «Упражнения» и «Карта мышц»; выбор помнится на устройстве.
-type PageTab = 'exercises' | 'map'
+// Вкладки страницы (BACKLOG 54.2, 44.5д): «Упражнения», «Карта мышц» и «Прогрессия» (общий график и деревья прогрессий — не блоком посреди упражнений);
+// выбор помнится на устройстве.
+type PageTab = 'exercises' | 'map' | 'progress'
+const PAGE_TABS = ['exercises', 'map', 'progress'] as const
+const TAB_LABEL: Record<PageTab, 'workouts_tab_exercises' | 'workouts_tab_map' | 'workouts_tab_progress'> = { exercises: 'workouts_tab_exercises', map: 'workouts_tab_map', progress: 'workouts_tab_progress' }
 const TAB_KEY = 'workouts_tab'
 function readTab(): PageTab {
   try {
-    return localStorage.getItem(TAB_KEY) === 'map' ? 'map' : 'exercises'
+    const v = localStorage.getItem(TAB_KEY)
+    return (PAGE_TABS as readonly string[]).includes(v ?? '') ? (v as PageTab) : 'exercises'
   } catch {
     return 'exercises'
   }
@@ -421,7 +425,7 @@ function onToggleProgramWeek(week: number) {
 
       <div class="mb-4 flex gap-1.5" role="tablist" data-testid="page-tabs">
         <button
-          v-for="tab in (['exercises', 'map'] as const)"
+          v-for="tab in PAGE_TABS"
           :key="tab"
           type="button"
           role="tab"
@@ -431,7 +435,7 @@ function onToggleProgramWeek(week: number) {
           :data-testid="'page-tab-' + tab"
           @click="setTab(tab)"
         >
-          {{ t(tab === 'map' ? 'workouts_tab_map' : 'workouts_tab_exercises') }}
+          {{ t(TAB_LABEL[tab]) }}
         </button>
       </div>
 
@@ -472,6 +476,19 @@ function onToggleProgramWeek(week: number) {
         />
       </div>
 
+      <div v-show="pageTab === 'progress'" data-testid="tab-progress">
+        <OverviewChart :entries="entries" />
+
+        <ProgressionTrees
+          v-if="exercises.length > 0"
+          :entries="entries"
+          :exercises="exercises"
+          @add-entry="(ex) => (entryForm = { exercise: ex, existing: null })"
+          @quick-add-entry="(ex, res, done) => onQuickAddEntry(ex, res, done)"
+        />
+        <p v-if="exercises.length === 0" class="text-sm" style="color: var(--text-dim)" data-testid="progress-empty-hint">{{ t('workouts_progress_empty') }}</p>
+      </div>
+
       <div v-show="pageTab === 'exercises'" data-testid="tab-exercises">
       <ProgramCard
         v-if="activeProgram && activeTemplate"
@@ -482,16 +499,6 @@ function onToggleProgramWeek(week: number) {
       />
 
       <WarmupReminder v-if="showWarmup" @dismiss="dismissWarmup" />
-
-      <OverviewChart :entries="entries" />
-
-      <ProgressionTrees
-        v-if="exercises.length > 0"
-        :entries="entries"
-        :exercises="exercises"
-        @add-entry="(ex) => (entryForm = { exercise: ex, existing: null })"
-        @quick-add-entry="(ex, res, done) => onQuickAddEntry(ex, res, done)"
-      />
 
       <section v-for="g in groups" :key="g.key">
         <div

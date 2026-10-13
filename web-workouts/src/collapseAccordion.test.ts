@@ -108,6 +108,32 @@ describe('Тренировки: аккордеон на категориях и 
     expect(w2.find('[data-testid="page-tab-map"]').attributes('aria-selected')).toBe('true')
     w2.unmount()
   })
+
+  // BACKLOG 44.5д: «Прогрессии» и общий график — отдельная вкладка, а не блок посреди упражнений
+  it('вкладка «Прогрессия»: три вкладки, общий график и деревья прогрессий лежат в ней, а не на «Упражнениях»', async () => {
+    const w = await mountApp()
+    expect(w.findAll('[data-testid^="page-tab-"]').map((b) => b.text())).toEqual(['Упражнения', 'Карта мышц', 'Прогрессия'])
+    const exTab = w.find('[data-testid="tab-exercises"]')
+    const prTab = w.find('[data-testid="tab-progress"]')
+    expect(prTab.attributes('style') ?? '').toContain('display: none')
+    expect(exTab.find('[data-testid="progressions"]').exists()).toBe(false)
+    expect(prTab.find('[data-testid="progressions"]').exists()).toBe(true)
+    await w.find('[data-testid="page-tab-progress"]').trigger('click')
+    expect(prTab.attributes('style') ?? '').not.toContain('display: none')
+    expect(exTab.attributes('style') ?? '').toContain('display: none')
+    expect(localStorage.getItem('workouts_tab')).toBe('progress')
+    w.unmount()
+    const w2 = await mountApp()
+    expect(w2.find('[data-testid="page-tab-progress"]').attributes('aria-selected')).toBe('true')
+    w2.unmount()
+  })
+
+  it('мусор в сохранённой вкладке — открываются «Упражнения»', async () => {
+    localStorage.setItem('workouts_tab', 'nonsense')
+    const w = await mountApp()
+    expect(w.find('[data-testid="page-tab-exercises"]').attributes('aria-selected')).toBe('true')
+    w.unmount()
+  })
 })
 
 describe('Тренировки: аккордеон на упражнениях внутри категории', () => {
