@@ -96,7 +96,10 @@ describe('PlannedSection: план на день', () => {
     cb.dispatchEvent(new Event('change'))
     await flushPromises()
     expect(h.calls.find((c) => c.op === 'update')).toMatchObject({ table: 'goals', payload: { done: true, done_date: todayStr() }, where: ['id', 'g9'] })
-    expect(h.calls.some((c) => c.op === 'upsert')).toBe(false)
+    // сама отметка — в цель; в план уходит только время выполнения (BACKLOG 61.4), сам пункт-цель не меняется
+    const ups = h.calls.filter((c) => c.op === 'upsert')
+    expect(ups).toHaveLength(1)
+    expect((ups[0].payload as { planned_goals: Array<Record<string, unknown>> }).planned_goals[0]).toMatchObject({ type: 'goal', text: 'Одна', doneAt: expect.stringMatching(/^\d\d:\d\d$/) })
   })
 
   it('цель, отмеченная в плане ПРОШЛОГО дня, получает дату выполнения того дня, а не сегодняшнюю (решение владельца 2026-10-04)', async () => {
@@ -121,10 +124,10 @@ describe('PlannedSection: план на день', () => {
     cb.checked = true
     cb.dispatchEvent(new Event('change'))
     await flushPromises()
-    expect(lastPlan()).toEqual([{ type: 'custom', text: 'Свой', done: true }])
+    expect(lastPlan()).toEqual([{ type: 'custom', text: 'Свой', done: true, doneAt: expect.stringMatching(/^\d\d:\d\d$/) }])
     q('[data-test="bonus"]')!.click()
     await flushPromises()
-    expect(lastPlan()).toEqual([{ type: 'custom', text: 'Свой', done: true, bonus: true }])
+    expect(lastPlan()).toEqual([{ type: 'custom', text: 'Свой', done: true, doneAt: expect.stringMatching(/^\d\d:\d\d$/), bonus: true }])
   })
 
   it('удаление пункта убирает именно его', async () => {

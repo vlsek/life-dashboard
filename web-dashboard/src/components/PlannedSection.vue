@@ -27,7 +27,7 @@ import { stripEmoji } from '../lib/emojiText'
 const props = defineProps<{ userId: string | null; date?: string; switchable?: boolean }>()
 const emit = defineEmits<{ 'update:date': [value: string] }>()
 const day = computed(() => props.date ?? todayStr())
-const { planned, goals, loaded, error, savedTick, load, addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals } = usePlanned()
+const { planned, goals, loaded, error, savedTick, load, addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals } = usePlanned()
 
 watch(
   [() => props.userId, day],
@@ -36,6 +36,25 @@ watch(
   },
   { immediate: true },
 )
+
+// Правка пункта, добавленного вручную (BACKLOG 61.3): открывается в строке таблицы, сохраняется целиком кнопкой «Сохранить»
+const editing = ref<number | null>(null)
+const editText = ref('')
+const editTime = ref('')
+const editDoneAt = ref('')
+function startEdit(i: number) {
+  const it = planned.value[i]
+  editing.value = i
+  editText.value = it.text
+  editTime.value = it.time ?? ''
+  editDoneAt.value = it.doneAt ?? ''
+}
+async function saveEdit() {
+  const i = editing.value
+  if (i === null || !editText.value.trim()) return
+  editing.value = null
+  await editItem(i, { text: editText.value, time: editTime.value || null, doneAt: editDoneAt.value || null })
+}
 
 const newText = ref('')
 const newTime = ref('')
@@ -166,7 +185,7 @@ const collapsed = ref(false)
                   <input v-if="goalRowKind(goalOf(item)) === 'single'" type="checkbox" :checked="!!goalOf(item)!.done" data-test="goal-check" @change="setGoalDone(goalOf(item)!, ($event.target as HTMLInputElement).checked, day)" />
                   <span v-else class="dim">{{ stageLabel(goalOf(item)!) }}</span>
                 </td>
-                <td :class="{ 'line-through opacity-60': goalOf(item)!.done }">{{ item.text }}</td>
+                <td :class="{ 'line-through opacity-60': goalOf(item)!.done }">{{ item.text }}<span v-if="goalOf(item)!.done && item.doneAt" class="dim ml-2 text-xs" :title="t('plan_done_at_title')" data-test="done-at">✓ {{ item.doneAt }}</span></td>
                 <td>
                   <button type="button" class="secondary px-2 py-0.5" :title="stripEmoji(t('dash_planned_bonus_toggle_title'))" data-test="bonus" @click="toggleItemBonus(i)">
                     <Icon name="star" :extra-style="item.bonus ? 'color:#e0a93b; fill:#e0a93b;' : 'opacity:0.55;'" />
@@ -176,12 +195,24 @@ const collapsed = ref(false)
             </template>
             <template v-else>
               <td><input type="checkbox" :checked="!!item.done" data-test="custom-check" @change="setItemDone(i, ($event.target as HTMLInputElement).checked)" /></td>
-              <td :class="{ 'line-through opacity-60': item.done }">{{ item.text }}</td>
-              <td>
-                <button type="button" class="secondary px-2 py-0.5" :title="stripEmoji(t('dash_planned_bonus_toggle_title'))" data-test="bonus" @click="toggleItemBonus(i)">
-                  <Icon name="star" :extra-style="item.bonus ? 'color:#e0a93b; fill:#e0a93b;' : 'opacity:0.55;'" />
-                </button>
+              <td v-if="editing === i" colspan="2" data-test="edit-row">
+                <div class="flex flex-wrap items-center gap-2">
+                  <input v-model="editText" type="text" class="min-w-40 flex-1" :aria-label="t('plan_edit_text')" data-test="edit-text" @keydown.enter.prevent="saveEdit" @keydown.esc.prevent="editing = null" />
+                  <input v-model="editTime" type="time" class="plan-time" :title="t('plan_time_label')" data-test="edit-time" />
+                  <label v-if="item.done" class="inline-flex items-center gap-1 text-xs dim">{{ t('plan_edit_done_at') }}<input v-model="editDoneAt" type="time" class="plan-time" data-test="edit-done-at" /></label>
+                  <button type="button" class="secondary px-2 py-0.5" :disabled="!editText.trim()" data-test="edit-save" @click="saveEdit">{{ t('plan_edit_save') }}</button>
+                  <button type="button" class="secondary px-2 py-0.5" data-test="edit-cancel" @click="editing = null">{{ t('plan_edit_cancel') }}</button>
+                </div>
               </td>
+              <template v-else>
+                <td :class="{ 'line-through opacity-60': item.done }">{{ item.text }}<span v-if="item.done && item.doneAt" class="dim ml-2 text-xs no-underline" :title="t('plan_done_at_title')" data-test="done-at">✓ {{ item.doneAt }}</span></td>
+                <td class="whitespace-nowrap">
+                  <button type="button" class="secondary px-2 py-0.5" :title="t('plan_edit_title')" :aria-label="t('plan_edit_title')" data-test="edit" @click="startEdit(i)"><Icon name="edit" /></button>
+                  <button type="button" class="secondary px-2 py-0.5" :title="stripEmoji(t('dash_planned_bonus_toggle_title'))" data-test="bonus" @click="toggleItemBonus(i)">
+                    <Icon name="star" :extra-style="item.bonus ? 'color:#e0a93b; fill:#e0a93b;' : 'opacity:0.55;'" />
+                  </button>
+                </td>
+              </template>
             </template>
             <td>
               <input

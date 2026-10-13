@@ -1,12 +1,15 @@
 import { getCurrentScope, onScopeDispose, ref } from 'vue'
 import { sb } from './supabase'
-import { addDaysIso } from './date'
+import { addDaysIso, todayStr } from './date'
 import { notifyDataChanged } from './events'
 import {
   CARRY_OVER_DAYS,
   addCustom,
   addGoal,
   appendCarried,
+  editCustom,
+  nowHHMM,
+  setDoneAt,
   carryOverCandidates,
   goalOptions,
   normalizePlanned,
@@ -91,7 +94,10 @@ export function usePlanned() {
   const addGoalItem = (name: string, time?: string | null) => persist(addGoal(planned.value, name, time))
   const removeItem = (index: number) => persist(removeAt(planned.value, index))
   const toggleItemBonus = (index: number) => persist(toggleBonus(planned.value, index))
-  const setItemDone = (index: number, done: boolean) => persist(setCustomDone(planned.value, index, done))
+  // Время выполнения ставится само (BACKLOG 61.4), но только когда открыт СЕГОДНЯШНИЙ день: отметка в плане прошлого дня «сейчас» была бы ложью.
+  const nowIfToday = () => (date === todayStr() ? nowHHMM() : null)
+  const setItemDone = (index: number, done: boolean) => persist(setCustomDone(planned.value, index, done, nowIfToday()))
+  const editItem = (index: number, patch: { text: string; time?: string | null; doneAt?: string | null }) => persist(editCustom(planned.value, index, patch))
   const setItemTime = (index: number, time: string | null) => persist(setTimeAt(planned.value, index, time))
 
   // Отметка одноэтапной цели прямо из плана: пишется в саму цель (done + дата выполнения).
@@ -110,6 +116,12 @@ export function usePlanned() {
     error.value = null
     notifyDataChanged({ source: 'plan', date })
     flashSaved()
+    // пункт-цель плана запоминает время отметки (снятие галки — убирает); ошибка записи плана сюда не влияет на саму цель
+    const idx = planned.value.findIndex((p) => p.type === 'goal' && p.text === goal.name)
+    if (idx >= 0) {
+      const at = done ? nowIfToday() : null
+      if (at !== null || planned.value[idx].doneAt) void persist(setDoneAt(planned.value, idx, at)) // лишней записи плана нет, если время ни ставить, ни снимать не надо
+    }
     return true
   }
 
@@ -142,6 +154,6 @@ export function usePlanned() {
 
   return {
     planned, goals, loaded, error, notice, savedTick, load,
-    addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals,
+    addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals,
   }
 }

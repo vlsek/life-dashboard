@@ -1,6 +1,13 @@
 {
-  "version": "5.43",
+  "version": "5.44",
   "en": [
+    {
+      "version": "5.44",
+      "date": "2026-10-13 08:41",
+      "changes": [
+        "Day plan: items you added yourself can now be edited (pencil: title, reminder time, completion time), and ticking an item as done on today's plan stamps the completion time next to it; untick to clear it."
+      ]
+    },
     {
       "version": "5.43",
       "date": "2026-10-12 17:30",
@@ -3868,6 +3875,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.44",
+      "date": "2026-10-13 08:41",
+      "changes": [
+        "Планы на день: пункты, которые вы добавили сами, теперь можно править (карандаш: название, время напоминания, время выполнения), а при отметке «сделано» на сегодняшнем дне рядом само появляется время выполнения; снимете галку — время уберётся."
+      ]
+    },
     {
       "version": "5.43",
       "date": "2026-10-12 17:30",

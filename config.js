@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.43";
+const SITE_VERSION = "5.44";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.44", date: "2026-10-13 08:41", changes: [
+        "Планы на день: пункты, которые вы добавили сами, теперь можно править (карандаш: название, время напоминания, время выполнения), а при отметке «сделано» на сегодняшнем дне рядом само появляется время выполнения; снимете галку — время уберётся."
+    ]},
     { version: "5.43", date: "2026-10-12 17:30", changes: [
         "«Вехи»: у выбранной вкладки категории (например, «Все · 3») снова виден текст — раньше он сливался с оранжевым фоном и плашка выглядела пустой. Названия вех больше не сжимаются кнопками справа: кнопки действий стали компактнее, название занимает свободное место, у строк появились отступы. Без миграций."
     ]},
@@ -2239,6 +2242,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.44", date: "2026-10-13 08:41", changes: [
+        "Day plan: items you added yourself can now be edited (pencil: title, reminder time, completion time), and ticking an item as done on today's plan stamps the completion time next to it; untick to clear it."
+    ]},
     { version: "5.43", date: "2026-10-12 17:30", changes: [
         "Milestones: the selected category tab (for example \"All · 3\") shows its text again — it used to blend into the orange background and look empty. Milestone names are no longer squeezed by the buttons on the right: action buttons are more compact, the name takes the free space and rows have vertical padding. No migrations."
     ]},

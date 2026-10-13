@@ -11,6 +11,7 @@ export interface PlannedEntry {
   done?: boolean // только у custom; у goal «выполнено» берётся из самой цели
   bonus?: boolean // доп. пункт: не в базовые 100%, при выполнении +% сверху
   time?: string // «HH:MM» — необязательное время напоминания (v1.20); классика поле не знает и не трогает
+  doneAt?: string // «HH:MM» — когда пункт отмечен выполненным (BACKLOG 61.4); ставится само при галке на сегодняшнем дне, снимается вместе с галкой
 }
 
 export interface PlanGoal {
@@ -81,8 +82,48 @@ export function toggleBonus(planned: PlannedEntry[], index: number): PlannedEntr
   return planned.map((p, i) => (i === index ? { ...p, bonus: !p.bonus } : p))
 }
 
-export function setCustomDone(planned: PlannedEntry[], index: number, done: boolean): PlannedEntry[] {
-  return planned.map((p, i) => (i === index ? { ...p, done } : p))
+// `nowTime` — «HH:MM» текущего времени: если передано (галка на сегодняшнем дне), пункт запоминает время выполнения;
+// снятие галки убирает `doneAt`; без `nowTime` (прошлые дни) время не ставится, а у уже отмеченного остаётся прежнее.
+export function setCustomDone(planned: PlannedEntry[], index: number, done: boolean, nowTime?: string | null): PlannedEntry[] {
+  return planned.map((p, i) => {
+    if (i !== index) return p
+    const { doneAt: _old, ...rest } = p
+    if (!done) return { ...rest, done }
+    if (isValidTime(nowTime)) return { ...rest, done, doneAt: nowTime }
+    return isValidTime(p.doneAt) ? { ...rest, done, doneAt: p.doneAt } : { ...rest, done }
+  })
+}
+
+// Время выполнения у пункта-цели плана (сама цель отмечается в `goals`, а плану нужно только запомнить час) и ручная правка: пусто — убрать.
+export function setDoneAt(planned: PlannedEntry[], index: number, time: string | null): PlannedEntry[] {
+  return planned.map((p, i) => {
+    if (i !== index) return p
+    const { doneAt: _old, ...rest } = p
+    return isValidTime(time) ? { ...rest, doneAt: time } : rest
+  })
+}
+
+// Правка пункта, добавленного вручную (BACKLOG 61.3): название, время напоминания и время выполнения. Пустое название — правка
+// отклоняется (возвращается тот же массив); у пунктов-целей название не меняется (оно — имя цели).
+export function editCustom(planned: PlannedEntry[], index: number, patch: { text: string; time?: string | null; doneAt?: string | null }): PlannedEntry[] {
+  const cur = planned[index]
+  const text = patch.text.trim()
+  if (!cur || cur.type === 'goal' || !text) return planned
+  return planned.map((p, i) => {
+    if (i !== index) return p
+    const { time: _t, doneAt: _d, ...rest } = p
+    const out: PlannedEntry = { ...rest, text }
+    const time = patch.time === undefined ? p.time : patch.time
+    const doneAt = patch.doneAt === undefined ? p.doneAt : patch.doneAt
+    if (isValidTime(time)) out.time = time
+    if (p.done && isValidTime(doneAt)) out.doneAt = doneAt
+    return out
+  })
+}
+
+// «HH:MM» текущего времени (локального) для времени выполнения.
+export function nowHHMM(d: Date = new Date()): string {
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
 
 // Цели, которые можно добавить в план: ещё не выполненные и ещё не в плане этого дня.
