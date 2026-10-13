@@ -82,4 +82,20 @@ describe('нативные поля даты/времени: единое офо
     const css = read(`${ROOT}/web-dashboard/src/style.css`)
     expect(css).toMatch(/\.date-stepper-input\s*\{[^}]*opacity:\s*0/)
   })
+
+  // BACKLOG 567 (остаток): поля даты/времени в шапке (`PauseSection`, `WaterModal`) оформляет то же правило, что и страницу, — шапка
+  // монтируется в обычный DOM (без Shadow DOM), поэтому глобальный блок `date-time-fields` пилота действует и на её `.gh-input`.
+  // Страж: (1) такие поля в шапке есть и это `.gh-input` (а не особый класс, на который правило не распространяется);
+  // (2) `header.css` не вводит СВОЕГО правила для значка календаря — иначе оформление разъедется со страницами.
+  it('поля даты/времени шапки наследуют правило страницы, а не своё', () => {
+    for (const f of ['PauseSection', 'WaterModal']) {
+      const vue = read(`${ROOT}/web-header/src/components/${f}.vue`)
+      const inputs: string[] = vue.match(/<input[^>]*type="(?:date|time)"[^>]*>/g) ?? []
+      expect(inputs.length, `в ${f}.vue нет date/time-полей — обновите страж`).toBeGreaterThan(0)
+      for (const i of inputs) expect(i).toContain('gh-input')
+    }
+    const hdr = read(`${ROOT}/web-header/src/header.css`)
+    expect(hdr).not.toMatch(/calendar-picker-indicator/)
+    expect(hdr).not.toMatch(/\.gh-input[^{]*\[type=['"]?(?:date|time)/)
+  })
 })
