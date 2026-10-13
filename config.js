@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.47";
+const SITE_VERSION = "5.48";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.48", date: "2026-10-13 08:59", changes: [
+        "Тема «Бизнес-стекло»: больше не ломается правая панель (спидометры и стакан воды) — раньше она вместо всего экрана занимала высоту верхней строки и не работала. Липкая верхняя строка теперь без размытия фона. Без миграций."
+    ]},
     { version: "5.47", date: "2026-10-13 08:54", changes: [
         "«Кастомизация»: вверху страницы блок «Сейчас выбрано» — одной сводкой видно, что включено в каждом разделе (тема, рамка, заставка, вода, модель тела и другие), сколько выбрано не по умолчанию; тап по строке ведёт к разделу. На вкладках групп появились счётчики «открыто/всего», а сама панель вкладок остаётся под шапкой при прокрутке",
     ]},
@@ -2251,6 +2254,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.48", date: "2026-10-13 08:59", changes: [
+        "Executive Glass theme: the right panel (gauges and water glass) no longer breaks — it used to shrink to the height of the top bar and stop working. The sticky top bar no longer gets the background blur. No migrations."
+    ]},
     { version: "5.47", date: "2026-10-13 08:54", changes: [
         "Customization: a new \"Selected now\" block at the top shows what is on in every section (theme, frame, loading screen, water, body model and more) and how many are not the default; tap a row to jump to its section. The group tabs now show owned/total counters, and the tab bar stays under the header while you scroll",
     ]},
