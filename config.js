@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.52";
+const SITE_VERSION = "5.53";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.53", date: "2026-10-13 14:58", changes: [
+        "Тренировки: «Прогрессии» и общий график вынесены в отдельную вкладку «Прогрессия» — на вкладке «Упражнения» остались программа, разминка и сами упражнения, без лишних блоков посередине",
+    ]},
     { version: "5.52", date: "2026-10-13 14:55", changes: [
         "Дашборд: у метрики-«числа», связанной с упражнением из «Тренировок», теперь можно добавить подход прямо в «Дневных метриках» — поле «Повторы» и кнопка «+ подход», итог за день пересчитывается из всех подходов упражнения. Рядом с названием связанной метрики (числа и подходов) появилась подпись «из «Тренировок»». Без миграций."
     ]},
@@ -2266,6 +2269,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.53", date: "2026-10-13 14:58", changes: [
+        "Workouts: progressions and the overall chart moved to their own \"Progress\" tab, so the Exercises tab keeps only the programme, the warm-up and the exercises themselves",
+    ]},
     { version: "5.52", date: "2026-10-13 14:55", changes: [
         "Dashboard: a number metric linked to a Workouts exercise now takes a set right in Daily metrics — a “Reps” field and a “+ set” button; the day total is recalculated from all sets of the exercise. Linked metrics (number and sets) also show a “from Workouts” label next to the name. No migrations."
     ]},

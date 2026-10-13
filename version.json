@@ -1,6 +1,13 @@
 {
-  "version": "5.52",
+  "version": "5.53",
   "en": [
+    {
+      "version": "5.53",
+      "date": "2026-10-13 14:58",
+      "changes": [
+        "Workouts: progressions and the overall chart moved to their own \"Progress\" tab, so the Exercises tab keeps only the programme, the warm-up and the exercises themselves"
+      ]
+    },
     {
       "version": "5.52",
       "date": "2026-10-13 14:55",
@@ -3931,6 +3938,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.53",
+      "date": "2026-10-13 14:58",
+      "changes": [
+        "Тренировки: «Прогрессии» и общий график вынесены в отдельную вкладку «Прогрессия» — на вкладке «Упражнения» остались программа, разминка и сами упражнения, без лишних блоков посередине"
+      ]
+    },
     {
       "version": "5.52",
       "date": "2026-10-13 14:55",
