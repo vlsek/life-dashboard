@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.46";
+const SITE_VERSION = "5.47";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.47", date: "2026-10-13 08:54", changes: [
+        "«Кастомизация»: вверху страницы блок «Сейчас выбрано» — одной сводкой видно, что включено в каждом разделе (тема, рамка, заставка, вода, модель тела и другие), сколько выбрано не по умолчанию; тап по строке ведёт к разделу. На вкладках групп появились счётчики «открыто/всего», а сама панель вкладок остаётся под шапкой при прокрутке",
+    ]},
     { version: "5.46", date: "2026-10-13 08:50", changes: [
         "Первая тематическая «большая» тема «Летний луг» (Summer Meadow): светлый молочный фон с зеленоватым подтоном и тёплым солнечным пятном в углу, травяной зелёный акцент, округлые формы, лёгкие зеленоватые тени карточек и гладкие анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем. Выключатель «Простое оформление» убирает солнечное пятно и тени",
     ]},
@@ -2248,6 +2251,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.47", date: "2026-10-13 08:54", changes: [
+        "Customization: a new \"Selected now\" block at the top shows what is on in every section (theme, frame, loading screen, water, body model and more) and how many are not the default; tap a row to jump to its section. The group tabs now show owned/total counters, and the tab bar stays under the header while you scroll",
+    ]},
     { version: "5.46", date: "2026-10-13 08:50", changes: [
         "The first themed big theme, Summer Meadow: a light milky background with a greenish undertone and a warm sun spot in the corner, a grass-green accent, rounded shapes, light greenish shadows on cards and smooth animations. Pick it in Customization or the header settings; open to everyone. The Simple look switch removes the sun spot and the shadows",
     ]},

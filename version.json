@@ -1,6 +1,13 @@
 {
-  "version": "5.46",
+  "version": "5.47",
   "en": [
+    {
+      "version": "5.47",
+      "date": "2026-10-13 08:54",
+      "changes": [
+        "Customization: a new \"Selected now\" block at the top shows what is on in every section (theme, frame, loading screen, water, body model and more) and how many are not the default; tap a row to jump to its section. The group tabs now show owned/total counters, and the tab bar stays under the header while you scroll"
+      ]
+    },
     {
       "version": "5.46",
       "date": "2026-10-13 08:50",
@@ -3889,6 +3896,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.47",
+      "date": "2026-10-13 08:54",
+      "changes": [
+        "«Кастомизация»: вверху страницы блок «Сейчас выбрано» — одной сводкой видно, что включено в каждом разделе (тема, рамка, заставка, вода, модель тела и другие), сколько выбрано не по умолчанию; тап по строке ведёт к разделу. На вкладках групп появились счётчики «открыто/всего», а сама панель вкладок остаётся под шапкой при прокрутке"
+      ]
+    },
     {
       "version": "5.46",
       "date": "2026-10-13 08:50",
