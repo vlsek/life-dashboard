@@ -24,7 +24,7 @@ import { confirmDialog } from './lib/confirmDialog'
 import { friendlyError } from './lib/friendlyError'
 import { isDeadlineReminderEnabled, setDeadlineReminderEnabled } from './lib/deadlineReminderSetting'
 
-const { auth, items, error, hasHorizon, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
+const { auth, items, error, hasHorizon, hasWeight, bodyWeight, logWeight, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
 onMounted(init)
 
 // Серия по целям (BACKLOG 60.1, миграция 079): грузим при входе и после каждой отметки цели (число выполненных изменилось)
@@ -118,7 +118,7 @@ const formTarget = ref<Goal | 'new' | null>(null)
 const formInitial = computed<GoalFormInitial>(() => {
   const g = formTarget.value
   if (g && g !== 'new') {
-    return { name: g.name, points: g.points ?? 5, category: g.category, stages: g.stages ?? 1, difficulty: g.difficulty, deadline: g.deadline ?? '', horizon: g.horizon ?? null }
+    return { name: g.name, points: g.points ?? 5, category: g.category, stages: g.stages ?? 1, difficulty: g.difficulty, deadline: g.deadline ?? '', horizon: g.horizon ?? null, weightMode: g.weight_mode ?? null, weightStart: g.weight_start ?? null, weightTarget: g.weight_target ?? null }
   }
   return { name: '', points: 5, category: '', stages: 1, difficulty: null, deadline: '' }
 })
@@ -216,7 +216,7 @@ async function onDelete(g: Goal) {
         <template v-if="view === 'horizon'">
           <CollapsibleSection v-for="[h, list] in horizonGroups" :id="'hor-' + h" :key="h" :title="t(HORIZON_KEYS[h])" :count="list.length" :data-test="'goals-hor-' + h">
             <div class="flex flex-col gap-2">
-              <GoalCard v-for="g in list" :key="g.id" :goal="g" :saved="!!flashed[g.id]" @toggle="toggleGoal(g)" @stage="setStage(g, $event)" @edit="formTarget = g" @delete="onDelete(g)" />
+              <GoalCard v-for="g in list" :key="g.id" :goal="g" :saved="!!flashed[g.id]" @toggle="toggleGoal(g)" @stage="setStage(g, $event)" :body-weight="bodyWeight" @weight="logWeight(g, $event)" @edit="formTarget = g" @delete="onDelete(g)" />
             </div>
           </CollapsibleSection>
         </template>
@@ -230,7 +230,7 @@ async function onDelete(g: Goal) {
               :goal="g"
               :saved="!!flashed[g.id]"
               @toggle="toggleGoal(g)"
-              @stage="setStage(g, $event)"
+              @stage="setStage(g, $event)" :body-weight="bodyWeight" @weight="logWeight(g, $event)"
               @edit="formTarget = g"
               @delete="onDelete(g)"
             />
@@ -275,7 +275,7 @@ async function onDelete(g: Goal) {
       </div>
     </template>
 
-    <GoalForm v-if="formTarget" :is-edit="formTarget !== 'new'" :initial="formInitial" :categories="myCategories" :no-category-labels="noCategoryLabels" :horizon-column="hasHorizon" :submit="onSaveForm" @close="formTarget = null" />
+    <GoalForm v-if="formTarget" :is-edit="formTarget !== 'new'" :initial="formInitial" :categories="myCategories" :no-category-labels="noCategoryLabels" :horizon-column="hasHorizon" :weight-column="hasWeight" :current-weight="bodyWeight" :submit="onSaveForm" @close="formTarget = null" />
   </main>
 </template>
 

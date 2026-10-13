@@ -1,9 +1,11 @@
 import type { Difficulty, Goal, GoalFormInput } from './types'
 import { horizonFields } from './horizons'
+import { weightFields } from './weightGoal'
 
 // opts.horizonColumn — есть ли в базе колонка goals.horizon (миграция 084); без неё горизонт сводится к сроку (см. horizons.ts).
 export interface GoalWriteOpts {
   horizonColumn?: boolean
+  weightColumn?: boolean // есть ли колонки goals.weight_* (миграция 085)
 }
 
 // Текстовый прогресс-бар из блоков — портировано 1:1 из bar() в goals.js.
@@ -65,11 +67,12 @@ export function buildInsertRow(res: GoalFormInput, noCategoryLabel: string, opts
     name: res.name.trim(),
     points: pointsForDifficulty(res.difficulty),
     category: (res.category || noCategoryLabel).trim(),
-    stages: Math.max(1, res.stages || 1),
+    stages: res.weightMode ? 1 : Math.max(1, res.stages || 1), // у цели на вес этапов нет: прогресс идёт по весу
     current_stage: 0,
     done: false,
     ...goalExtraFields(res, null),
     ...(res.horizon !== undefined || opts.horizonColumn ? horizonFields(res, !!opts.horizonColumn) : {}),
+    ...weightFields(res, !!opts.weightColumn),
   }
 }
 
@@ -77,7 +80,7 @@ export function buildInsertRow(res: GoalFormInput, noCategoryLabel: string, opts
 // меньше текущего прогресса, прогресс подрезается; done пересчитывается для
 // многоэтапных целей (для одноэтапных done трогает toggleGoal, не форма).
 export function buildUpdateRow(res: GoalFormInput, existing: Goal, noCategoryLabel: string, opts: GoalWriteOpts = {}) {
-  const stages = Math.max(1, res.stages || 1)
+  const stages = res.weightMode ? 1 : Math.max(1, res.stages || 1)
   const patch: Record<string, unknown> = {
     name: res.name.trim(),
     points: pointsAfterEdit(res.difficulty, existing),
@@ -85,6 +88,7 @@ export function buildUpdateRow(res: GoalFormInput, existing: Goal, noCategoryLab
     stages,
     ...goalExtraFields(res, existing),
     ...(res.horizon !== undefined || opts.horizonColumn ? horizonFields(res, !!opts.horizonColumn) : {}),
+    ...weightFields(res, !!opts.weightColumn),
   }
   if (existing.current_stage > stages) patch.current_stage = stages
   if (stages > 1) patch.done = (existing.current_stage ?? 0) >= stages

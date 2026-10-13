@@ -5,11 +5,12 @@ import { friendlyError } from '../lib/friendlyError'
 import type { Difficulty, GoalFormInitial, GoalFormInput } from '../lib/types'
 import { matchCategory } from '../lib/categories'
 import { pointsAfterEdit } from '../lib/goals'
+import { parseWeight, validateWeight, type WeightMode } from '../lib/weightGoal'
 import { HORIZON_KEYS, effectiveHorizon, horizonOptions, type Horizon } from '../lib/horizons'
 
 // submit — запись цели (родитель добавляет/правит и закрывает форму при успехе). Ошибка записи показывается ПОД полями (форма остаётся
 // открытой, введённое не пропадает); пока идёт запись, «Сохранить» заблокирована — двойной тап не создаёт две цели.
-const props = withDefaults(defineProps<{ isEdit: boolean; initial: GoalFormInitial; submit: (res: GoalFormInput) => Promise<void>; categories?: string[]; noCategoryLabels?: string[]; horizonColumn?: boolean }>(), { categories: () => [], noCategoryLabels: () => [], horizonColumn: false })
+const props = withDefaults(defineProps<{ isEdit: boolean; initial: GoalFormInitial; submit: (res: GoalFormInput) => Promise<void>; categories?: string[]; noCategoryLabels?: string[]; horizonColumn?: boolean; weightColumn?: boolean; currentWeight?: number | null }>(), { categories: () => [], noCategoryLabels: () => [], horizonColumn: false, weightColumn: false, currentWeight: null })
 const emit = defineEmits<{ close: [] }>()
 
 const name = ref(props.initial.name)
@@ -27,13 +28,22 @@ const deadline = ref(props.initial.deadline)
 const options = computed(() => horizonOptions(props.horizonColumn))
 const horizon = ref<Horizon>(effectiveHorizon({ deadline: props.initial.deadline, horizon: props.initial.horizon }))
 const dateMissing = ref(false)
+// Вид цели (BACKLOG 1085): обычная / «Сбросить вес» / «Набрать вес» (только если в базе есть колонки, миграция 085; у уже весовой цели — всегда).
+// Старт по умолчанию — последний вес тела; цель — в нужную сторону от старта.
+type Kind = 'plain' | WeightMode
+const kind = ref<Kind>(props.initial.weightMode ?? 'plain')
+const showKinds = computed(() => props.weightColumn || !!props.initial.weightMode)
+const fmtKg = (n: number | null | undefined): string => (n === null || n === undefined ? '' : String(n).replace('.', ','))
+const weightStart = ref(fmtKg(props.initial.weightStart ?? props.currentWeight))
+const weightTarget = ref(fmtKg(props.initial.weightTarget))
+const weightError = ref<string | null>(null)
 // Баллы не вводятся, а следуют за сложностью (BACKLOG разделы 35/40); у старой цели с другими баллами они остаются, пока сложность не сменят.
 const shownPoints = computed(() => pointsAfterEdit(difficulty.value, { points: props.initial.points, difficulty: props.initial.difficulty }))
 
 const saving = ref(false)
 const nameMissing = ref(false)
 const submitError = ref<string | null>(null)
-const errorText = computed(() => (nameMissing.value ? t('goals_form_name_required') : dateMissing.value ? t('goals_form_date_required') : submitError.value))
+const errorText = computed(() => (nameMissing.value ? t('goals_form_name_required') : dateMissing.value ? t('goals_form_date_required') : weightError.value ?? submitError.value))
 
 async function save() {
   if (saving.value) return
@@ -47,6 +57,16 @@ async function save() {
     return
   }
   dateMissing.value = false
+  const wStart = kind.value === 'plain' ? null : parseWeight(weightStart.value)
+  const wTarget = kind.value === 'plain' ? null : parseWeight(weightTarget.value)
+  if (kind.value !== 'plain') {
+    const check = validateWeight(kind.value, wStart, wTarget)
+    if (check !== 'ok') {
+      weightError.value = t(('goals_weight_err_' + check) as 'goals_weight_err_start')
+      return
+    }
+  }
+  weightError.value = null
   submitError.value = null
   saving.value = true
   try {
@@ -57,6 +77,7 @@ async function save() {
       difficulty: difficulty.value,
       deadline: horizon.value === 'day' ? deadline.value : '',
       horizon: horizon.value,
+      ...(kind.value === 'plain' ? {} : { weightMode: kind.value, weightStart: wStart, weightTarget: wTarget }), // у обычной цели ключей веса нет — weightFields() сам обнулит вес в базе
     })
   } catch (e) {
     submitError.value = friendlyError(e)
@@ -82,8 +103,26 @@ async function save() {
       </select>
       <input v-if="categoryChoice === NEW" v-model="newCategory" type="text" class="mt-1 w-full" :placeholder="t('goals_cat_new_placeholder')" maxlength="40" data-test="goal-category-new" />
 
-      <label class="mt-2 block text-sm">{{ t('goals_field_stages') }}</label>
-      <input v-model.number="stages" type="number" min="1" class="w-full" />
+      <template v-if="showKinds">
+        <label class="mt-2 block text-sm">{{ t('goals_field_kind') }}</label>
+        <select v-model="kind" class="w-full" data-test="goal-kind-select" @change="weightError = null">
+          <option value="plain">{{ t('goals_kind_plain') }}</option>
+          <option value="lose">{{ t('goals_kind_lose') }}</option>
+          <option value="gain">{{ t('goals_kind_gain') }}</option>
+        </select>
+      </template>
+
+      <template v-if="kind !== 'plain'">
+        <label class="mt-2 block text-sm">{{ t('goals_weight_start') }}</label>
+        <input v-model="weightStart" type="text" inputmode="decimal" class="w-full" data-test="goal-weight-start" @input="weightError = null" />
+        <label class="mt-2 block text-sm">{{ t('goals_weight_target') }}</label>
+        <input v-model="weightTarget" type="text" inputmode="decimal" class="w-full" data-test="goal-weight-target" @input="weightError = null" />
+        <p class="dim mt-1 text-xs">{{ t('goals_weight_hint') }}</p>
+      </template>
+      <template v-else>
+        <label class="mt-2 block text-sm">{{ t('goals_field_stages') }}</label>
+        <input v-model.number="stages" type="number" min="1" class="w-full" />
+      </template>
 
       <label class="mt-2 block text-sm">{{ t('goals_field_difficulty') }}</label>
       <select v-model="difficulty" class="w-full">

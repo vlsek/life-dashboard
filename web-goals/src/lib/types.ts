@@ -1,4 +1,5 @@
 import type { Horizon } from './horizons'
+import type { WeightMode } from './weightGoal'
 
 export type Difficulty = 'easy' | 'medium' | 'hard' | null
 
@@ -15,6 +16,9 @@ export interface Goal {
   deadline: string | null // ISO, опционально (миграция 020)
   difficulty: Difficulty
   horizon?: Horizon | null // миграция 084; нет колонки/значения — выводится из срока (effectiveHorizon)
+  weight_mode?: WeightMode | null // миграция 085: цель на вес («сбросить»/«набрать»); текущий вес — из body_stats
+  weight_start?: number | null
+  weight_target?: number | null
   created_at: string
 }
 
@@ -27,6 +31,9 @@ export interface GoalFormInput {
   difficulty: Difficulty
   deadline: string
   horizon?: Horizon | null
+  weightMode?: WeightMode | null // цель на вес (миграция 085); null/нет — обычная цель
+  weightStart?: number | null
+  weightTarget?: number | null
 }
 
 // Начальные значения формы: то же + текущие баллы цели (только для показа строки «Баллы: N»; в базу из формы не уходят).

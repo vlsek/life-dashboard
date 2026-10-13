@@ -6,13 +6,31 @@ import SavedTick from './SavedTick.vue'
 import { deadlineLevel, stagePercent, stageProgress, stageTapTarget } from '../lib/goals'
 import { t } from '../lib/i18n'
 import type { Goal } from '../lib/types'
+import { parseWeight, weightProgress, weightSpecOf } from '../lib/weightGoal'
 
 // Карточка цели (BACKLOG 7.1 «Многоступенчатые цели»): вместо строки таблицы с текстовой полоской «█░» и кнопками −/+.
 // Простая цель — круглая галочка. Многоэтапная — сегментированный прогресс (по сегменту на этап, а при >12 этапах — полоса),
 // «2/5 · 40 %», кнопка «следующий этап» и раскрывающийся список этапов: тап по этапу выставляет прогресс до него,
 // повторный тап по последнему выполненному — откат. Данные те же (`stages`, `current_stage`), миграция не нужна.
-const props = defineProps<{ goal: Goal; saved?: boolean }>()
-const emit = defineEmits<{ toggle: []; stage: [target: number]; edit: []; delete: [] }>()
+const props = defineProps<{ goal: Goal; saved?: boolean; bodyWeight?: number | null }>()
+const emit = defineEmits<{ toggle: []; stage: [target: number]; edit: []; delete: []; weight: [value: number] }>()
+
+// Цель на вес (BACKLOG 1085): прогресс считается от стартового веса к целевому по последнему измерению тела; в карточке — поле «Текущий вес»
+// и кнопка «Записать вес» (вес пишется в показатели тела за сегодня). Этапов у такой цели нет, кружок-галочка заменён процентом.
+const wSpec = computed(() => weightSpecOf(props.goal))
+const wProg = computed(() => (wSpec.value ? weightProgress(wSpec.value, props.bodyWeight ?? null) : null))
+const wInput = ref('')
+const wBad = ref(false)
+function logWeight() {
+  const v = parseWeight(wInput.value)
+  if (v === null) {
+    wBad.value = true
+    return
+  }
+  wBad.value = false
+  wInput.value = ''
+  emit('weight', v)
+}
 
 const stages = computed(() => props.goal.stages ?? 1)
 const multi = computed(() => stages.value > 1)
@@ -55,8 +73,9 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
       <!-- левая колонка фиксированной ширины (58.8): кружок простой цели и кольцо процента встают по центру одной колонки, заголовки всех карточек начинаются с одного отступа -->
       <div class="goal-lead mt-0.5" data-test="goal-lead">
         <!-- простая цель: круглая галочка -->
+        <div v-if="wProg" class="goal-percent shrink-0" data-test="goal-weight-percent" aria-hidden="true">{{ wProg.pct }}%</div>
         <button
-          v-if="!multi"
+          v-else-if="!multi"
           type="button"
           role="checkbox"
           :aria-checked="goal.done"
@@ -81,6 +100,24 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
           <span v-if="diffChip" class="whitespace-nowrap rounded-full border px-2 py-0.5" :style="{ borderColor: diffChip.color, color: diffChip.color }" data-test="goal-diff">{{ diffChip.text }}</span>
           <span v-if="deadlineChip" class="whitespace-nowrap rounded-full border px-2 py-0.5" :style="{ borderColor: deadlineChip.color, color: deadlineChip.color }" data-test="goal-deadline">{{ deadlineChip.text }}</span>
           <span class="ml-auto whitespace-nowrap rounded-full border px-2 py-0.5" style="border-color: var(--border)" data-test="goal-points">{{ goal.points ?? 5 }} <CoinIcon /></span>
+        </div>
+
+        <!-- цель на вес: полоса к целевому весу, «осталось N кг», ввод текущего веса -->
+        <div v-if="wProg && wSpec" class="mt-2" data-test="goal-weight">
+          <div class="goal-bar" role="progressbar" :aria-valuenow="wProg.pct" aria-valuemin="0" aria-valuemax="100">
+            <span class="goal-bar-fill" :style="{ width: wProg.pct + '%' }"></span>
+          </div>
+          <div class="dim mt-1 flex flex-wrap gap-x-3 text-xs">
+            <span data-test="goal-weight-range">{{ t('goals_weight_from_to').replace('{a}', String(wSpec.start)).replace('{b}', String(wSpec.target)) }}</span>
+            <span v-if="bodyWeight != null" data-test="goal-weight-current">{{ String(wProg.current).replace('.', ',') }} {{ t('goals_weight_unit') }}</span>
+            <span v-if="wProg.reached" data-test="goal-weight-reached">{{ t('goals_weight_reached') }}</span>
+            <span v-else data-test="goal-weight-left">{{ t('goals_weight_left').replace('{n}', String(wProg.left).replace('.', ',')) }}</span>
+          </div>
+          <div class="mt-2 flex items-center gap-2">
+            <input v-model="wInput" type="text" inputmode="decimal" class="min-w-0 flex-1" :placeholder="t('goals_weight_now')" :aria-label="t('goals_weight_now')" :aria-invalid="wBad" data-test="goal-weight-input" @input="wBad = false" @keyup.enter="logWeight" />
+            <button type="button" class="shrink-0" data-test="goal-weight-log" @click="logWeight">{{ t('goals_weight_log') }}</button>
+          </div>
+          <p v-if="wBad" class="mt-1 text-xs" style="color: var(--danger)" role="alert" data-test="goal-weight-bad">{{ t('goals_weight_bad') }}</p>
         </div>
 
         <!-- прогресс этапов -->
