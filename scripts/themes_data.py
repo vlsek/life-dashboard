@@ -332,7 +332,9 @@ CHAR = {
         rules=[
             (['body'], 'background-image: var(--bg-pattern); background-size: var(--bg-pattern-size);'),
             (['.card', '.modal', '[style*="var(--bg-card)"]'], 'box-shadow: var(--shadow-card);'),
-            (['.card', '.modal', '[style*="var(--bg-card)"]'],
+            # BACKLOG 61.5: липкая шапка (`.sticky`) тоже имеет inline-фон `var(--bg-card)`, но внутри неё лежат `position: fixed` слои (правая панель
+            # `.gh-panel`, `.gh-pf-layer`): `backdrop-filter` делает шапку их контейнером, и панель получала высоту шапки (60 px). Шапку из стекла исключаем.
+            (['.card', '.modal', '[style*="var(--bg-card)"]:not(.sticky)'],
              'background-color: color-mix(in srgb, var(--bg-card) var(--glass-alpha, 100%), transparent) !important; backdrop-filter: var(--blur-glass);',
              '@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)))'),
             (['button:not(:disabled)'], 'transition: transform var(--default-transition-duration, 0.2s) ease, box-shadow var(--default-transition-duration, 0.2s) ease;'),

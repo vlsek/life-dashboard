@@ -1198,7 +1198,7 @@ html.theme-glass {
 html.theme-glass body { background-image: var(--bg-pattern); background-size: var(--bg-pattern-size); }
 html.theme-glass .card, html.theme-glass .modal, html.theme-glass [style*="var(--bg-card)"] { box-shadow: var(--shadow-card); }
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  html.theme-glass .card, html.theme-glass .modal, html.theme-glass [style*="var(--bg-card)"] { background-color: color-mix(in srgb, var(--bg-card) var(--glass-alpha, 100%), transparent) !important; backdrop-filter: var(--blur-glass); }
+  html.theme-glass .card, html.theme-glass .modal, html.theme-glass [style*="var(--bg-card)"]:not(.sticky) { background-color: color-mix(in srgb, var(--bg-card) var(--glass-alpha, 100%), transparent) !important; backdrop-filter: var(--blur-glass); }
 }
 html.theme-glass button:not(:disabled) { transition: transform var(--default-transition-duration, 0.2s) ease, box-shadow var(--default-transition-duration, 0.2s) ease; }
 html.theme-glass button:not(:disabled):hover { transform: translateY(-1px); }
