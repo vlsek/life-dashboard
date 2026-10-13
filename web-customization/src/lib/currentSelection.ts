@@ -7,6 +7,7 @@ import type { StreakFlameVariant } from './streakFlameVariant'
 import type { WaterAnim } from './waterAnim'
 import type { BodyModel } from './bodyModel'
 import type { ChartMarker } from './chartMarker'
+import type { ChartAnim, ChartForecast, ChartGoalZone, ChartKind, ChartLine } from './chartLine'
 import type { ThemeKey } from './theme'
 
 export interface SelectionRow {
@@ -16,6 +17,10 @@ export interface SelectionRow {
   titleKey: string
   /** что показать справа: либо ключ перевода названия (`i18n`), либо «как есть» не бывает — названия всегда из словаря */
   valueKey: string
+  /** уникальный ключ строки, если у раздела их несколько (по умолчанию — `section`) */
+  key?: string
+  /** дополнительные значения через « · » (у строки «Линия графика»: прогноз, зона цели …) */
+  extraKeys?: string[]
   /** выбрано что-то своё (не вариант по умолчанию): такие строки подсвечиваем */
   custom: boolean
 }
@@ -30,6 +35,8 @@ export interface SelectionReaders {
   /** null — модель «по полу профиля» */
   bodyModel: BodyModel | null
   chartMarker: ChartMarker
+  /** вид, стиль линии и дополнения графиков (всё в localStorage, меняется в разделе «Графики») */
+  chart: { kind: ChartKind; line: ChartLine; anim: ChartAnim; forecast: ChartForecast; goalZone: ChartGoalZone }
 }
 
 const THEME_NAME_KEY = (k: ThemeKey): string => 'theme_' + k
@@ -52,6 +59,17 @@ export function selectionRows(r: SelectionReaders): SelectionRow[] {
   rows.push({ section: 'wateranim', titleKey: 'cust_sec_wateranim', valueKey: 'cust_wateranim_' + r.waterAnim, custom: r.waterAnim !== 'auto' })
   rows.push({ section: 'bodymodel', titleKey: 'cust_sec_bodymodel', valueKey: r.bodyModel ? 'cust_body_' + r.bodyModel : 'cust_body_auto', custom: r.bodyModel !== null })
   rows.push({ section: 'chart-markers', titleKey: 'cust_sec_markers', valueKey: 'chart_marker_' + r.chartMarker, custom: r.chartMarker !== 'flat' })
+  // «Линия графика» (61.6 срез 2, после настроек графиков 55.2): вид и стиль + включённые дополнения одной строкой. Тот же раздел «Графики», что и у маркеров.
+  const c = r.chart
+  const extras = [c.anim === 'draw' ? 'cust_now_chart_anim' : '', c.forecast === 'trend' ? 'cust_now_chart_forecast' : '', c.goalZone === 'on' ? 'cust_now_chart_goalzone' : ''].filter(Boolean)
+  rows.push({
+    section: 'chart-markers',
+    key: 'chart-line',
+    titleKey: 'cust_now_chart_line',
+    valueKey: c.kind === 'bars' ? 'chart_kind_bars' : 'chart_line_' + c.line,
+    extraKeys: extras,
+    custom: c.kind !== 'line' || c.line !== 'line' || extras.length > 0,
+  })
   return rows
 }
 

@@ -25,8 +25,8 @@ import App from './App.vue'
 import { customCount, selectionRows, type SelectionReaders } from './lib/currentSelection'
 import { groupCounts } from './lib/pageTabs'
 
-const base: SelectionReaders = { theme: 'dark', selected: {}, splash: 'auto', streakFlame: 'flame', waterAnim: 'auto', bodyModel: null, chartMarker: 'flat' }
-const byId = (rows: ReturnType<typeof selectionRows>, id: string) => rows.find((r) => r.section === id)!
+const base: SelectionReaders = { theme: 'dark', selected: {}, splash: 'auto', streakFlame: 'flame', waterAnim: 'auto', bodyModel: null, chartMarker: 'flat', chart: { kind: 'line', line: 'line', anim: 'none', forecast: 'off', goalZone: 'off' } }
+const byId = (rows: ReturnType<typeof selectionRows>, id: string) => rows.find((r) => (r.key ?? r.section) === id)!
 
 beforeEach(() => {
   localStorage.clear()
@@ -70,6 +70,32 @@ describe('selectionRows (61.6 срез 1)', () => {
       }
     }
     setLang('ru')
+  })
+})
+
+describe('строка «Линия графика» (61.6 срез 2)', () => {
+  const chart = (o: Partial<SelectionReaders['chart']>) => byId(selectionRows({ ...base, chart: { ...base.chart, ...o } }), 'chart-line')
+  it('по умолчанию — «Обычная», не подсвечена; раздел тот же, что у маркеров', () => {
+    const r = chart({})
+    expect(r).toMatchObject({ section: 'chart-markers', valueKey: 'chart_line_line', custom: false })
+    expect(r.extraKeys).toEqual([])
+  })
+  it('стиль линии, столбцы и дополнения собираются в одну строку и подсвечиваются', () => {
+    expect(chart({ line: 'area' })).toMatchObject({ valueKey: 'chart_line_area', custom: true })
+    expect(chart({ kind: 'bars', line: 'area' }).valueKey).toBe('chart_kind_bars')
+    expect(chart({ forecast: 'trend', goalZone: 'on', anim: 'draw' }).extraKeys).toEqual(['cust_now_chart_anim', 'cust_now_chart_forecast', 'cust_now_chart_goalzone'])
+    expect(chart({ goalZone: 'on' }).custom).toBe(true)
+  })
+  it('в сводке на странице: значения из localStorage показываются через « · »', async () => {
+    localStorage.setItem('chart_line', 'smooth')
+    localStorage.setItem('chart_forecast', 'trend')
+    const w = mount(App)
+    await flushPromises()
+    const row = w.find('[data-now="chart-line"]')
+    expect(row.exists()).toBe(true)
+    expect(row.text()).toContain('Линия графика')
+    expect(row.text()).toContain('Плавная')
+    expect(row.text()).toContain('прогноз')
   })
 })
 
