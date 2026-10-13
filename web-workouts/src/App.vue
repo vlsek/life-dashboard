@@ -22,6 +22,7 @@ import MeasurementsSection from './components/MeasurementsSection.vue'
 import type { PartId } from './lib/measurements'
 import { BODY_MODELS, readBodyModelChoice, resolveBodyModel, writeBodyModelChoice, type BodyModel } from './lib/bodyModel'
 import ProgressionTrees from './components/ProgressionTrees.vue'
+import GrowthList from './components/GrowthList.vue'
 import ExerciseForm from './components/ExerciseForm.vue'
 import EntryForm from './components/EntryForm.vue'
 import MetricLinkModal from './components/MetricLinkModal.vue'
@@ -477,6 +478,7 @@ function onToggleProgramWeek(week: number) {
       </div>
 
       <div v-show="pageTab === 'progress'" data-testid="tab-progress">
+        <GrowthList v-if="exercises.length > 0" :entries="entries" :exercises="exercises" />
         <OverviewChart :entries="entries" />
 
         <ProgressionTrees

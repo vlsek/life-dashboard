@@ -118,6 +118,7 @@ describe('Тренировки: аккордеон на категориях и 
     expect(prTab.attributes('style') ?? '').toContain('display: none')
     expect(exTab.find('[data-testid="progressions"]').exists()).toBe(false)
     expect(prTab.find('[data-testid="progressions"]').exists()).toBe(true)
+    expect(prTab.find('[data-testid="growth"]').exists()).toBe(true) // «Что растёт» — первым блоком вкладки
     await w.find('[data-testid="page-tab-progress"]').trigger('click')
     expect(prTab.attributes('style') ?? '').not.toContain('display: none')
     expect(exTab.attributes('style') ?? '').toContain('display: none')
