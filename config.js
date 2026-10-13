@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.45";
+const SITE_VERSION = "5.46";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.46", date: "2026-10-13 08:50", changes: [
+        "Первая тематическая «большая» тема «Летний луг» (Summer Meadow): светлый молочный фон с зеленоватым подтоном и тёплым солнечным пятном в углу, травяной зелёный акцент, округлые формы, лёгкие зеленоватые тени карточек и гладкие анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем. Выключатель «Простое оформление» убирает солнечное пятно и тени",
+    ]},
     { version: "5.45", date: "2026-10-13 05:47", changes: [
         "Графики: зона цели. Если у метрики есть цель, на графике можно включить мягкую зелёную полосу по ту сторону линии цели, где «хорошо»: для «не меньше X» — выше цели, для «меньше X» — ниже. Работает и у линии, и у столбцов; у параметров тела (без направления цели) полосы нет. Заодно раздел «Графики» в «Кастомизации» стал короче: три вкл/выкл-настройки (появление линии, прогноз, зона цели) собраны в один список «Дополнения» вместо трёх групп карточек. По умолчанию всё выключено. Без миграций."
     ]},
@@ -2245,6 +2248,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.46", date: "2026-10-13 08:50", changes: [
+        "The first themed big theme, Summer Meadow: a light milky background with a greenish undertone and a warm sun spot in the corner, a grass-green accent, rounded shapes, light greenish shadows on cards and smooth animations. Pick it in Customization or the header settings; open to everyone. The Simple look switch removes the sun spot and the shadows",
+    ]},
     { version: "5.45", date: "2026-10-13 05:47", changes: [
         "Charts: goal zone. If a metric has a goal, you can turn on a soft green band on the \"good\" side of the goal line: for \"at least X\" above the goal, for \"less than X\" below it. It works for lines and bars; body parameters (no goal direction) get no band. The \"Charts\" section in \"Customization\" is also shorter: the three on/off settings (line animation, forecast, goal zone) are now one \"Extras\" list instead of three card groups. Everything is off by default. No migrations."
     ]},

@@ -1,6 +1,13 @@
 {
-  "version": "5.45",
+  "version": "5.46",
   "en": [
+    {
+      "version": "5.46",
+      "date": "2026-10-13 08:50",
+      "changes": [
+        "The first themed big theme, Summer Meadow: a light milky background with a greenish undertone and a warm sun spot in the corner, a grass-green accent, rounded shapes, light greenish shadows on cards and smooth animations. Pick it in Customization or the header settings; open to everyone. The Simple look switch removes the sun spot and the shadows"
+      ]
+    },
     {
       "version": "5.45",
       "date": "2026-10-13 05:47",
@@ -3882,6 +3889,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.46",
+      "date": "2026-10-13 08:50",
+      "changes": [
+        "Первая тематическая «большая» тема «Летний луг» (Summer Meadow): светлый молочный фон с зеленоватым подтоном и тёплым солнечным пятном в углу, травяной зелёный акцент, округлые формы, лёгкие зеленоватые тени карточек и гладкие анимации. Включается в «Кастомизации» и в настройках шапки; открыта всем. Выключатель «Простое оформление» убирает солнечное пятно и тени"
+      ]
+    },
     {
       "version": "5.45",
       "date": "2026-10-13 05:47",
