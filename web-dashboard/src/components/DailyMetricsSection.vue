@@ -30,7 +30,7 @@ import type { MetricStreakInfo } from '../lib/metricStreaks'
 const date = ref(todayStr())
 const {
   booleans, numbers, multiselects, pending, items, score, error, loaded, saving, flashed,
-  load, setBoolean, setNote, setNumber, addToNumber, fixTotal, toggleOpt, addItem, removeItem, saveDay, notes,
+  load, setBoolean, setNote, setNumber, addToNumber, addLinkedReps, fixTotal, toggleOpt, addItem, removeItem, saveDay, notes,
 } = useDailyMetrics()
 
 const props = defineProps<{ userId: string | null; metricStreaks?: Record<string, MetricStreakInfo> }>()
@@ -115,6 +115,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
               @set="setNumber(m, $event)"
               @add="addToNumber(m, $event)"
               @fix="fixTotal(m, $event)"
+              @quick-add="addLinkedReps(m, $event)"
             />
           </div>
         </div>

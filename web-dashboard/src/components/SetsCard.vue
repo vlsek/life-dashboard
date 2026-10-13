@@ -65,7 +65,7 @@ function onVariation(i: number, text: string) {
   <div class="card relative mb-3.5" :class="{ 'sets-saved': saved }" :data-metric-id="metric.id">
     <SavedTick :show="!!saved" class="sets-tick" />
     <div class="flex items-center gap-2">
-      <strong><MetricIcon :icon="metric.icon" /> {{ metric.name }}</strong><MetricStreakBadge v-if="streak" :info="streak" />
+      <strong><MetricIcon :icon="metric.icon" /> {{ metric.name }}</strong><MetricStreakBadge v-if="streak" :info="streak" /><span v-if="linked" class="dim linked-badge" data-test="linked-badge">{{ t('dash_metric_linked_badge') }}</span>
       <button type="button" class="secondary ml-auto" style="padding: 4px 8px; line-height: 0" :aria-expanded="open" :title="open ? t('dash_collapse_btn') : t('dash_expand_btn')" data-test="sets-toggle" @click="open = !open"><CollapseChevron :collapsed="!open" /></button>
     </div>
 
@@ -134,6 +134,7 @@ function onVariation(i: number, text: string) {
 </template>
 
 <style scoped>
+.linked-badge { font-size: 0.7em; border: 1px solid var(--border); border-radius: 999px; padding: 0 6px; white-space: nowrap; }
 /* галочка — левее кнопки сворачивания, чтобы не закрывать её */
 .card .sets-tick { top: 14px; right: 52px; }
 .sets-saved { animation: sets-saved 0.9s ease-out; }

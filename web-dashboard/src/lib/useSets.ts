@@ -4,7 +4,8 @@ import { t } from './i18n'
 import { notifyDataChanged } from './events'
 import { emitPointsFloat, pointsDelta } from './pointsFloat'
 import { forgetVariationOptions, normalizeSets, rememberVariationOptions } from './setsBlock'
-import { appendEntrySet, mirrorSets, newEntrySet } from './linkedSets'
+import { mirrorSets } from './linkedSets'
+import { appendRepsToDay } from './linkedEntries'
 import type { SetRow } from './setsBlock'
 import type { Metric, MetricValue } from './types'
 
@@ -88,29 +89,12 @@ export function useSets() {
     const exerciseId = m.source_exercise_id
     if (!exerciseId || !userId || !date) return false
     const before = setsByMetric.value[m.id]
-    const { data: today, error: rErr } = await sb
-      .from('workout_entries')
-      .select('id, sets')
-      .eq('user_id', userId)
-      .eq('exercise_id', exerciseId)
-      .eq('date', date)
-      .order('created_at', { ascending: true })
-    if (rErr) {
-      error.value = t('dash_metric_save_error') + m.name + '»: ' + friendlyError(rErr)
+    const res = await appendRepsToDay(userId, date, exerciseId, reps)
+    if (res.error) {
+      error.value = t('dash_metric_save_error') + m.name + '»: ' + friendlyError(res.error)
       return false
     }
-    const set = newEntrySet(reps)
-    const rows = (today || []) as { id: string; sets: unknown }[]
-    const target = rows[rows.length - 1] // дописываем в последнюю запись дня; нет записи — создаём
-    const w = target
-      ? await sb.from('workout_entries').update({ sets: appendEntrySet(target.sets, set) }).eq('id', target.id)
-      : await sb.from('workout_entries').insert({ user_id: userId, exercise_id: exerciseId, date, notes: null, sets: [set] })
-    if (w.error) {
-      error.value = t('dash_metric_save_error') + m.name + '»: ' + friendlyError(w.error)
-      return false
-    }
-    const all = rows.map((r) => (r === target ? { sets: appendEntrySet(r.sets, set) } : { sets: r.sets })).concat(target ? [] : [{ sets: [set] }])
-    const value = mirrorSets(all)
+    const value = mirrorSets(res.rows)
     setsByMetric.value = { ...setsByMetric.value, [m.id]: value }
     const { error: err } = await sb.from('daily_values').upsert({ user_id: userId, date, metric_id: m.id, value }, { onConflict: 'user_id,date,metric_id' })
     if (err) {

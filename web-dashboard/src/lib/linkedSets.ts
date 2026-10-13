@@ -44,3 +44,13 @@ export function mirrorSets(entries: { sets?: unknown }[]): SetRow[] {
   })
   return normalizeSets(flat.map((x) => ({ reps: x.s.reps ?? null, variation: null, time: x.s.time ?? null })))
 }
+
+// Значение метрики-числа за день из записей упражнения: сумма повторов всех подходов (КОПИЯ metricValueFor('number') из web-workouts).
+export function sumReps(entries: { sets?: unknown }[]): number {
+  let sum = 0
+  for (const e of entries) {
+    if (!Array.isArray(e?.sets)) continue
+    for (const s of e.sets as Partial<EntrySet>[]) sum += s?.reps || 0
+  }
+  return sum
+}

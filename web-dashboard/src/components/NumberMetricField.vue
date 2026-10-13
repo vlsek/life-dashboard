@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import Icon from './Icon.vue'
 import RecordBadge from './RecordBadge.vue'
 import type { RecordInfo } from '../lib/records'
@@ -7,6 +7,7 @@ import MetricStreakBadge from './MetricStreakBadge.vue'
 import type { MetricStreakInfo } from '../lib/metricStreaks'
 import MetricIcon from './MetricIcon.vue'
 import { t } from '../lib/i18n'
+import { parseQuickReps } from '../lib/linkedSets'
 import type { Metric } from '../lib/types'
 
 // Порт блока `m.type === "number"` из renderDay() в dashboard.js. Два режима ввода:
@@ -21,7 +22,7 @@ const props = defineProps<{
   streak?: MetricStreakInfo | null
   record?: RecordInfo | null // рекорд метрики за всё время (BACKLOG раздел 28)
 }>()
-const emit = defineEmits<{ set: [string]; add: [string]; fix: [string] }>()
+const emit = defineEmits<{ set: [string]; add: [string]; fix: [string]; quickAdd: [reps: number] }>()
 
 // Метрика ведётся из упражнения «Тренировок» (миграция 054): значение за день пишет раздел «Тренировки», здесь только чтение
 const linked = !!props.metric.source_exercise_id
@@ -35,6 +36,16 @@ watch(
     if (!isAddMode) text.value = v === undefined ? '' : String(v)
   },
 )
+
+// Быстрый ввод для связанной метрики (BACKLOG 62.1): подход уходит в «Тренировки», итог за день пересчитывается оттуда
+const quickReps = ref('')
+const quickValid = computed(() => parseQuickReps(quickReps.value) !== null)
+function quickAdd() {
+  const n = parseQuickReps(quickReps.value)
+  if (n === null) return
+  emit('quickAdd', n)
+  quickReps.value = ''
+}
 
 function commit() {
   if (isAddMode) {
@@ -73,10 +84,15 @@ function submitFix() {
     <div class="label-row">
       <span class="dim label"><MetricIcon :icon="metric.icon" /> {{ metric.name }}{{ metric.unit ? ` (${metric.unit})` : '' }}</span>
       <MetricStreakBadge v-if="streak" :info="streak" />
+      <span v-if="linked" class="dim linked-badge" data-test="linked-badge">{{ t('dash_metric_linked_badge') }}</span>
     </div>
 
     <template v-if="linked">
       <div class="total-row"><span class="total" data-test="number-linked-total">{{ t('dash_metric_current_total') }} {{ value ?? 0 }}</span></div>
+      <div class="input-row" data-test="number-quick">
+        <input v-model="quickReps" type="number" step="any" min="0" inputmode="decimal" :placeholder="t('dash_linked_quick_placeholder')" data-test="number-quick-reps" @keydown.enter.prevent="quickAdd" />
+        <button type="button" class="add-btn" :disabled="!quickValid" data-test="number-quick-add" @click="quickAdd">{{ t('dash_linked_quick_add') }}</button>
+      </div>
       <p class="dim text-xs" data-test="number-linked-hint">
         {{ t('dash_metric_linked_hint') }}
         <a href="/workouts/" class="underline" data-test="number-linked-open">{{ t('dash_metric_linked_open') }}</a>
@@ -113,6 +129,7 @@ function submitFix() {
 .field { display: flex; flex-direction: column; gap: 4px; }
 .label-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .label { font-size: 0.85em; }
+.linked-badge { font-size: 0.7em; border: 1px solid var(--border); border-radius: 999px; padding: 0 6px; white-space: nowrap; }
 .total-row { display: flex; align-items: center; gap: 4px; height: 22px; }
 .total { font-size: 0.85em; font-weight: bold; white-space: nowrap; }
 /* невидимый выравниватель высоты, чтобы поля в сетке были на одном уровне */

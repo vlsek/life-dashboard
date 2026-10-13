@@ -15,6 +15,8 @@ import {
   valueToSave,
   type PendingValues,
 } from './daily'
+import { appendRepsToDay } from './linkedEntries'
+import { sumReps } from './linkedSets'
 import type { Metric, MetricValue } from './types'
 
 import { friendlyError } from './friendlyError'
@@ -194,6 +196,21 @@ export function useDailyMetrics() {
     return autoSave(m, fixed, before)
   }
 
+  // Быстрый ввод для метрики-числа, связанной с упражнением (BACKLOG 62.1): подход уходит в «Тренировки», значение дня = сумма повторов всех записей упражнения
+  async function addLinkedReps(m: Metric, reps: number) {
+    const exerciseId = m.source_exercise_id
+    if (!exerciseId || !userId || !date) return false
+    const res = await appendRepsToDay(userId, date, exerciseId, reps)
+    if (res.error) {
+      error.value = friendlyError(res.error)
+      return false
+    }
+    const before = pending.value[m.id]
+    const next = sumReps(res.rows)
+    pending.value = { ...pending.value, [m.id]: next }
+    return autoSave(m, next, before)
+  }
+
   async function toggleOpt(m: Metric, key: string) {
     const cur = Array.isArray(pending.value[m.id]) ? (pending.value[m.id] as string[]) : []
     const next = toggleOption(cur, key)
@@ -257,6 +274,6 @@ export function useDailyMetrics() {
 
   return {
     metrics, booleans, numbers, multiselects, pending, items, score, error, loaded, saving, flashed,
-    load, setBoolean, setNote, setNumber, addToNumber, fixTotal, toggleOpt, addItem, removeItem, saveDay, notes,
+    load, setBoolean, setNote, setNumber, addToNumber, addLinkedReps, fixTotal, toggleOpt, addItem, removeItem, saveDay, notes,
   }
 }
