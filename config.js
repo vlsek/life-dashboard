@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.53";
+const SITE_VERSION = "5.54";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.54", date: "2026-10-13 15:01", changes: [
+        "«Кастомизация»: в сводке «Сейчас выбрано» появилась строка «Линия графика» — одним взглядом видно вид графика (линия или столбцы), стиль линии и включённые дополнения (рисуется, прогноз, зона цели); тап ведёт к разделу «Графики». Без миграций."
+    ]},
     { version: "5.53", date: "2026-10-13 14:58", changes: [
         "Тренировки: «Прогрессии» и общий график вынесены в отдельную вкладку «Прогрессия» — на вкладке «Упражнения» остались программа, разминка и сами упражнения, без лишних блоков посередине",
     ]},
@@ -2269,6 +2272,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.54", date: "2026-10-13 15:01", changes: [
+        "Customization: the “Selected now” summary has a new “Chart line” row — chart kind (line or bars), line style and enabled extras (draws itself, forecast, goal zone) at a glance; tap it to jump to the Charts section. No migrations."
+    ]},
     { version: "5.53", date: "2026-10-13 14:58", changes: [
         "Workouts: progressions and the overall chart moved to their own \"Progress\" tab, so the Exercises tab keeps only the programme, the warm-up and the exercises themselves",
     ]},

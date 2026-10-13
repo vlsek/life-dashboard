@@ -1,6 +1,13 @@
 {
-  "version": "5.53",
+  "version": "5.54",
   "en": [
+    {
+      "version": "5.54",
+      "date": "2026-10-13 15:01",
+      "changes": [
+        "Customization: the “Selected now” summary has a new “Chart line” row — chart kind (line or bars), line style and enabled extras (draws itself, forecast, goal zone) at a glance; tap it to jump to the Charts section. No migrations."
+      ]
+    },
     {
       "version": "5.53",
       "date": "2026-10-13 14:58",
@@ -3938,6 +3945,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.54",
+      "date": "2026-10-13 15:01",
+      "changes": [
+        "«Кастомизация»: в сводке «Сейчас выбрано» появилась строка «Линия графика» — одним взглядом видно вид графика (линия или столбцы), стиль линии и включённые дополнения (рисуется, прогноз, зона цели); тап ведёт к разделу «Графики». Без миграций."
+      ]
+    },
     {
       "version": "5.53",
       "date": "2026-10-13 14:58",
