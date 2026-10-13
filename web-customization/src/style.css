@@ -1819,3 +1819,7 @@ html[data-motion='off'] .splash-orbit * { animation: none !important; }
 @media (prefers-reduced-motion: reduce) { .splash-bars *, .splash-pulse * { animation: none !important; } }
 html[data-motion='off'] .splash-bars *, html[data-motion='off'] .splash-pulse * { animation: none !important; }
 /* splash-more:end */
+
+/* «Кастомизация»: липкая панель вкладок групп (BACKLOG 61.6 срез 1) — остаётся под шапкой при прокрутке длинной ленты разделов; счётчик группы приглушён */
+.cust-tabs-bar { position: sticky; top: calc(3.8rem + 1px); z-index: 10; background: var(--bg); }
+.cust-tab-count { margin-left: 0.4rem; font-size: 0.75em; opacity: 0.7; }

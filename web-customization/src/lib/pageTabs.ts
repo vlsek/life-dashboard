@@ -60,3 +60,20 @@ export function resolveTab(stored: string | null, ids: readonly string[]): strin
 
 // Показывать ли раздел: открыта вкладка его группы или «Все».
 export const showsSection = (tab: string, id: string): boolean => tab === ALL_TAB || tab === groupOfSection(id)
+
+// Счётчик «открыто/всего» на вкладке группы (BACKLOG 61.6 срез 1): сумма по её разделам. Раздел без счётчика (total 0) в сумму не входит.
+export interface SectionCount {
+  id: string
+  owned: number
+  total: number
+}
+export function groupCounts(sections: readonly SectionCount[]): Record<string, { owned: number; total: number }> {
+  const out: Record<string, { owned: number; total: number }> = {}
+  for (const s of sections) {
+    const g = groupOfSection(s.id)
+    const cur = out[g] ?? (out[g] = { owned: 0, total: 0 })
+    cur.owned += s.owned
+    cur.total += s.total
+  }
+  return out
+}

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import EmojiText from './components/EmojiText.vue'
 import AppShell from './components/AppShell.vue'
 import ItemCard from './components/ItemCard.vue'
@@ -16,15 +16,22 @@ import VisibilityChips from './components/VisibilityChips.vue'
 import { FREE_SECTIONS, FREE_SECTIONS_TOTAL, groupOfItem, groupOfTheme, useVisibility, type FreeSection, type VisGroup } from './lib/useVisibility'
 import { useCollapsed } from './lib/useCollapsed'
 import SectionGroup from './components/SectionGroup.vue'
+import CurrentSelection from './components/CurrentSelection.vue'
+import { selectionRows } from './lib/currentSelection'
+import { readSplashChoice } from './lib/splashVariant'
+import { readStreakFlameVariant } from './lib/streakFlameVariant'
+import { getWaterAnimChoice } from './lib/waterAnim'
+import { readBodyModelChoice } from './lib/bodyModel'
+import { readChartMarker } from './lib/chartMarker'
 import { itemGroups, themeGroups } from './lib/rarity'
 import { useFavoriteThemes } from './lib/useFavoriteThemes'
 import { useCustomization } from './lib/useCustomization'
 import { CATEGORY_ORDER, ITEMS } from './lib/customization'
 import { t } from './lib/i18n'
-import { ALL_TAB, groupsFor, migrateStoredTab, readTab, resolveTab, showsSection, writeTab } from './lib/pageTabs'
+import { ALL_TAB, groupCounts, groupOfSection, groupsFor, migrateStoredTab, readTab, resolveTab, showsSection, writeTab } from './lib/pageTabs'
 import { THEME_UNLOCK, type ThemeKey } from './lib/theme'
 
-const { auth, balance, achievements, apiMissing, loading, error, actionError, busyKey, statusOf, init, buy, choose } = useCustomization()
+const { auth, balance, achievements, apiMissing, loading, error, actionError, busyKey, selected, statusOf, init, buy, choose } = useCustomization()
 onMounted(init)
 
 // Темы: до 4 «любимых» попадают в выпадающий список тем бокового меню (решение владельца 2026-10-04). С v3.42 шесть тем — награды за
@@ -90,19 +97,55 @@ const sectionIds = computed(() => [
   ...(freeShown.value ? (Object.keys(FREE_SECTIONS) as FreeSection[]) : []),
   ...visibleCategories.value.map((c) => c.category as string),
 ])
-const tabList = computed(() => groupsFor(sectionIds.value).map((g) => ({ id: g as string, label: t(('cust_grp_' + g) as never) })))
+// Счётчик «открыто/всего» на вкладке группы: темы и предметы — по статусу, бесплатные выборы — всегда полные (как у их разделов)
+const counts = computed(() =>
+  groupCounts([
+    ...(visibleThemeBuckets.value.length ? [{ id: 'themes', owned: themeOwnedTotal.value, total: themeTotal }] : []),
+    ...(freeShown.value ? (Object.keys(FREE_SECTIONS) as FreeSection[]).map((id) => ({ id: id as string, owned: FREE_SECTIONS[id], total: FREE_SECTIONS[id] })) : []),
+    ...visibleCategories.value.map((c) => ({ id: c.category as string, owned: c.owned, total: c.total })),
+  ]),
+)
+const tabList = computed(() =>
+  groupsFor(sectionIds.value).map((g) => {
+    const c = counts.value[g]
+    return { id: g as string, label: t(('cust_grp_' + g) as never), count: c ? c.owned + '/' + c.total : '' }
+  }),
+)
 const tab = computed(() => resolveTab(tabChoice.value, tabList.value.map((x) => x.id)))
 function setTab(id: string) {
   tabChoice.value = id
   writeTab(id)
 }
 const shownCategories = computed(() => visibleCategories.value.filter((c) => showsSection(tab.value, c.category)))
+
+// «Сейчас выбрано» (61.6 срез 1). Мелкие выборы (заставка, вода, модель тела …) лежат в localStorage и меняются внутри своих карточек, поэтому
+// сводку пересчитываем после любого клика по странице (`tick`), а не подписываемся на каждое хранилище по отдельности.
+const tick = ref(0)
+const bump = () => void nextTick(() => tick.value++)
+const nowRows = computed(() => {
+  void tick.value
+  return selectionRows({
+    theme: themes.current.value,
+    selected: selected.value,
+    splash: readSplashChoice(),
+    streakFlame: readStreakFlameVariant(),
+    waterAnim: getWaterAnimChoice(),
+    bodyModel: readBodyModelChoice(),
+    chartMarker: readChartMarker(),
+  })
+})
+// Тап по строке: открыть вкладку группы (если выбрана не «Все»), раскрыть раздел, прокрутить к нему
+function goToSection(id: string) {
+  if (tab.value !== ALL_TAB && tab.value !== groupOfSection(id)) setTab(groupOfSection(id))
+  if (isCollapsed('section:' + id)) toggle('section:' + id)
+  void nextTick(() => document.querySelector(`[data-section="${id}"]`)?.scrollIntoView?.({ behavior: 'smooth', block: 'start' }))
+}
 </script>
 
 <template>
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
 
-  <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
+  <main class="mx-auto max-w-3xl px-4 pb-16 pt-4" @click="bump">
     <h1 class="mb-1 text-xl font-semibold"><EmojiText :text="t('cust_title')" /></h1>
     <p class="dim mb-2 text-sm">{{ t('cust_intro') }}</p>
     <p class="dim mb-4 text-xs" data-testid="rarity-hint">{{ t('cust_rarity_hint') }}</p>
@@ -124,12 +167,14 @@ const shownCategories = computed(() => visibleCategories.value.filter((c) => sho
         <p v-if="apiMissing" class="mb-4 text-sm" style="color: var(--danger)" data-testid="need-migration">{{ t('cust_need_migration') }}</p>
         <p v-if="actionError" class="mb-3 text-sm" style="color: var(--danger)" data-testid="action-error">{{ actionError }}</p>
 
+        <CurrentSelection :rows="nowRows" :collapsed="isCollapsed('section:now')" @toggle="toggle('section:now')" @go="goToSection" />
+
         <VisibilityChips :state="vis.state.value" :counts="visCounts" @toggle="vis.toggle" />
         <p v-if="nothingShown" class="dim mb-4 text-sm" data-testid="vis-empty">{{ vis.noneVisible.value ? t('cust_vis_empty_none') : t('cust_vis_empty') }}</p>
 
-        <div class="mb-4 flex gap-1.5 overflow-x-auto pb-1" role="tablist" data-testid="cust-tabs">
+        <div class="cust-tabs-bar mb-4 flex gap-1.5 overflow-x-auto pb-1 pt-1" role="tablist" data-testid="cust-tabs">
           <button
-            v-for="x in [...tabList, { id: ALL_TAB, label: t('cust_tab_all') }]"
+            v-for="x in [...tabList, { id: ALL_TAB, label: t('cust_tab_all'), count: '' }]"
             :key="x.id"
             type="button"
             role="tab"
@@ -139,7 +184,7 @@ const shownCategories = computed(() => visibleCategories.value.filter((c) => sho
             :data-testid="'cust-tab-' + x.id"
             @click="setTab(x.id)"
           >
-            {{ x.label }}
+            {{ x.label }}<span v-if="x.count" class="cust-tab-count" data-testid="tab-count">{{ x.count }}</span>
           </button>
         </div>
 
