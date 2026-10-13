@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.49";
+const SITE_VERSION = "5.50";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.50", date: "2026-10-13 14:46", changes: [
+        "Тренировки: подходы сегодняшней записи теперь строками, как на главной. У каждого подхода своя строка (время, повторы, вес, длительность), значения правятся прямо в строке и сохраняются сразу, «+ подход» добавляет новую строку (копия прошлой), крестик убирает любую строку. Кнопка «− подход» ушла: её заменил крестик у строки",
+    ]},
     { version: "5.49", date: "2026-10-13 09:11", changes: [
         "«Тренировки»: новое упражнение добавляется без лишних вопросов — на виду название, типовое упражнение, разновидность и «Сохранить»; категория, вес и единица, «что считаем», длительность, Л/П и мышцы спрятаны под кнопкой «Ещё» (значения по умолчанию уже подставлены). При правке упражнения всё открыто, как раньше. Без миграций."
     ]},
@@ -2257,6 +2260,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.50", date: "2026-10-13 14:46", changes: [
+        "Workouts: the sets of today's entry are now rows, like on the main page. Every set has its own row (time, reps, weight, duration), values are edited right in the row and saved at once, \"+ set\" adds a new row (a copy of the last one), and the cross removes any row. The \"− set\" button is gone: the cross on a row replaces it",
+    ]},
     { version: "5.49", date: "2026-10-13 09:11", changes: [
         "Workouts: adding a new exercise no longer asks extra questions — only the name, typical exercise, variation and Save are visible; category, weight and unit, what to count, duration, left/right and muscles are tucked under “More” (defaults are already filled in). Editing an exercise shows everything, as before. No migrations."
     ]},

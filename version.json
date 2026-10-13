@@ -1,6 +1,13 @@
 {
-  "version": "5.49",
+  "version": "5.50",
   "en": [
+    {
+      "version": "5.50",
+      "date": "2026-10-13 14:46",
+      "changes": [
+        "Workouts: the sets of today's entry are now rows, like on the main page. Every set has its own row (time, reps, weight, duration), values are edited right in the row and saved at once, \"+ set\" adds a new row (a copy of the last one), and the cross removes any row. The \"− set\" button is gone: the cross on a row replaces it"
+      ]
+    },
     {
       "version": "5.49",
       "date": "2026-10-13 09:11",
@@ -3910,6 +3917,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.50",
+      "date": "2026-10-13 14:46",
+      "changes": [
+        "Тренировки: подходы сегодняшней записи теперь строками, как на главной. У каждого подхода своя строка (время, повторы, вес, длительность), значения правятся прямо в строке и сохраняются сразу, «+ подход» добавляет новую строку (копия прошлой), крестик убирает любую строку. Кнопка «− подход» ушла: её заменил крестик у строки"
+      ]
+    },
     {
       "version": "5.49",
       "date": "2026-10-13 09:11",
