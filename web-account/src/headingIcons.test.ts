@@ -8,7 +8,7 @@ import { splitEmojiText } from './lib/emojiText'
 // BACKLOG 58.9: значок у КАЖДОГО заголовка страницы (h1) и КАЖДОГО заголовка раздела; отступ значок→текст один на все пилоты.
 // Правило: строка i18n (RU и EN) начинается с эмодзи, у которого есть SVG (карта UI_EXTRA в lib/emojiText.ts), а выводится заголовок
 // через <EmojiText> (отступ задаёт сам компонент). БЕЗ значка намеренно: заголовки модальных окон и форм, названия данных (категория
-// вехи, упражнение, группа мышц, пользовательская категория цели). Дашборд ждёт агента 3 (58.6) — см. PENDING_DASHBOARD.
+// вехи, упражнение, группа мышц, пользовательская категория цели). Дашборд включён: агент 3 убрал stripEmoji из заголовков блоков (58.9 срез 2).
 const ROOT = '..'
 const pilots: string[] = readdirSync(ROOT).filter((d: string) => d.startsWith('web-') && existsSync(`${ROOT}/${d}/src`))
 const vueFiles = (pilot: string): string[] =>
@@ -20,9 +20,6 @@ function values(pilot: string, key: string): string[] {
   return [...i18n.matchAll(new RegExp('\\b' + key + "\\s*:\\s*(['\"])(.*?)\\1", 'g'))].map((m) => m[2])
 }
 const keyOf = (s: string): string | null => s.match(/t\('([a-z0-9_]+)'/)?.[1] ?? null
-
-// заголовки блоков Дашборда, где эмодзи ещё срезается stripEmoji (ждём агента 3, BACKLOG 58.6)
-const PENDING_DASHBOARD = ['SectionHeading', 'ReorderPanel']
 
 describe('значок у заголовков страниц (h1)', () => {
   for (const pilot of pilots) {
@@ -88,10 +85,21 @@ describe('значок у заголовков разделов', () => {
     for (const [f, re] of checks) expect(readFileSync(`${ROOT}/${f}`, 'utf-8'), f).toMatch(re)
   })
 
-  it('на Дашборде значки заголовков блоков пока срезаются — только в известных компонентах (PENDING, ждём агента 3)', () => {
-    const files = vueFiles('web-dashboard').filter((f) => readFileSync(`${ROOT}/${f}`, 'utf-8').includes('stripEmoji(t(\'dash_') && /<SectionHeading/.test(readFileSync(`${ROOT}/${f}`, 'utf-8')))
-    expect(files.length).toBeGreaterThan(0) // как появятся значки — удалить этот тест и PENDING_DASHBOARD, а Дашборд включить в общую проверку
-    expect(PENDING_DASHBOARD.length).toBe(2)
+  it('Дашборд: заголовки блоков со значком (RU и EN) и без stripEmoji в :title у SectionHeading', () => {
+    for (const key of ['dash_block_profile', 'dash_charts_h2', 'dash_daily_h2', 'dash_planned_h2']) {
+      const vals = values('web-dashboard', key)
+      expect(vals.length, key).toBeGreaterThanOrEqual(2)
+      for (const v of vals) expect(startsWithIcon(v), `web-dashboard: ${key} = «${v}»`).toBe(true)
+    }
+    // «Виджеты»: значок задан в самом заголовке (строка dash_block_widgets без эмодзи общая с окнами порядка/раскладки блоков)
+    const widgets = readFileSync(`${ROOT}/web-dashboard/src/components/WidgetsSection.vue`, 'utf-8')
+    const wm = widgets.match(/<SectionHeading\b[^>]*?:title="'([^']+) ' \+ t\('dash_block_widgets'\)"/)
+    expect(wm, 'у «Виджетов» заголовок вида \'📊 \' + t(...)').not.toBeNull()
+    expect(startsWithIcon(wm![1] + ' x'), 'эмодзи «Виджетов» имеет SVG').toBe(true)
+    for (const f of vueFiles('web-dashboard')) {
+      const src = readFileSync(`${ROOT}/${f}`, 'utf-8')
+      for (const m of src.matchAll(/<SectionHeading\b[^>]*?:title="([^"]+)"/g)) expect(m[1], f + ': значок заголовка блока не срезается').not.toContain('stripEmoji')
+    }
   })
 })
 
