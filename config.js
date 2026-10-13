@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.50";
+const SITE_VERSION = "5.51";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.51", date: "2026-10-13 11:47", changes: [
+        "«Цели»: у цели появился горизонт — «Сейчас», «В ближайшее время», «В ближайший месяц» или «В конкретный день» (тогда выбирается дата). Вверху списка переключатель «По категориям / По срокам»: во втором виде цели разложены по разделам-горизонтам; выбор запоминается на устройстве. Пока миграция 084 не применена, в форме доступны только «Сейчас» и «В конкретный день». Требует миграцию 084 для двух новых горизонтов.",
+    ]},
     { version: "5.50", date: "2026-10-13 14:46", changes: [
         "Тренировки: подходы сегодняшней записи теперь строками, как на главной. У каждого подхода своя строка (время, повторы, вес, длительность), значения правятся прямо в строке и сохраняются сразу, «+ подход» добавляет новую строку (копия прошлой), крестик убирает любую строку. Кнопка «− подход» ушла: её заменил крестик у строки",
     ]},
@@ -2260,6 +2263,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.51", date: "2026-10-13 11:47", changes: [
+        "Goals: each goal now has a horizon — Now, Soon, This month or On a specific day (pick a date). A new “By category / By time” switch above the list groups goals into horizon sections; your choice is remembered on this device. Until migration 084 is applied, the form offers only Now and On a specific day. Migration 084 is needed for the two new horizons.",
+    ]},
     { version: "5.50", date: "2026-10-13 14:46", changes: [
         "Workouts: the sets of today's entry are now rows, like on the main page. Every set has its own row (time, reps, weight, duration), values are edited right in the row and saved at once, \"+ set\" adds a new row (a copy of the last one), and the cross removes any row. The \"− set\" button is gone: the cross on a row replaces it",
     ]},
