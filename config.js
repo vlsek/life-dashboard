@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.48";
+const SITE_VERSION = "5.49";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.49", date: "2026-10-13 09:11", changes: [
+        "«Тренировки»: новое упражнение добавляется без лишних вопросов — на виду название, типовое упражнение, разновидность и «Сохранить»; категория, вес и единица, «что считаем», длительность, Л/П и мышцы спрятаны под кнопкой «Ещё» (значения по умолчанию уже подставлены). При правке упражнения всё открыто, как раньше. Без миграций."
+    ]},
     { version: "5.48", date: "2026-10-13 08:59", changes: [
         "Тема «Бизнес-стекло»: больше не ломается правая панель (спидометры и стакан воды) — раньше она вместо всего экрана занимала высоту верхней строки и не работала. Липкая верхняя строка теперь без размытия фона. Без миграций."
     ]},
@@ -2254,6 +2257,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.49", date: "2026-10-13 09:11", changes: [
+        "Workouts: adding a new exercise no longer asks extra questions — only the name, typical exercise, variation and Save are visible; category, weight and unit, what to count, duration, left/right and muscles are tucked under “More” (defaults are already filled in). Editing an exercise shows everything, as before. No migrations."
+    ]},
     { version: "5.48", date: "2026-10-13 08:59", changes: [
         "Executive Glass theme: the right panel (gauges and water glass) no longer breaks — it used to shrink to the height of the top bar and stop working. The sticky top bar no longer gets the background blur. No migrations."
     ]},
