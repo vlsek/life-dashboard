@@ -40,7 +40,7 @@ describe('ExerciseCard collapse', () => {
   })
 })
 
-// BACKLOG 590: «+ подход» / «− подход» прямо в таблице записей
+// BACKLOG 590 + 62.3: подходы строками и «+ подход» прямо в таблице записей
 describe('ExerciseCard: быстрые подходы', () => {
   beforeEach(() => {
     localStorage.clear()
@@ -53,26 +53,30 @@ describe('ExerciseCard: быстрые подходы', () => {
   const sets = (n: number) => Array.from({ length: n }, (_, i) => ({ reps: 10 + i, weight: null, time: '10:00', duration: null, side: null }))
   const entry = (over: Record<string, unknown> = {}) => ({ id: 'n1', user_id: 'u', exercise_id: 'ex1', date: today, sets: sets(1), notes: null, ...over }) as never
 
-  it('кнопки только у сегодняшней записи с подходами; «−» — когда подходов больше одного', () => {
+  it('подходы строками и «+ подход» — только у сегодняшней записи с подходами; × — когда подходов больше одного', () => {
     const w = mount(ExerciseCard, { props: { exercise, entries: [entry({ id: 'a' }), entry({ id: 'b', date: '2020-01-01', sets: sets(3) })] } })
     expect(w.findAll('[data-testid="quick-add-set"]')).toHaveLength(1)
-    expect(w.findAll('[data-testid="quick-remove-set"]')).toHaveLength(0)
+    expect(w.findAll('[data-testid="entry-set-row"]')).toHaveLength(1) // у прошлой записи подходы текстом, не строками
+    expect(w.findAll('[data-testid="entry-set-remove"]')).toHaveLength(0)
     w.unmount()
     const two = mount(ExerciseCard, { props: { exercise, entries: [entry({ sets: sets(2) })] } })
-    expect(two.find('[data-testid="quick-remove-set"]').exists()).toBe(true)
+    expect(two.findAll('[data-testid="entry-set-row"]')).toHaveLength(2)
+    expect(two.findAll('[data-testid="entry-set-remove"]')).toHaveLength(2)
     two.unmount()
   })
 
-  it('тап по кнопкам отправляет события с записью; пока запись сохраняется — кнопки отключены', async () => {
+  it('«+ подход» и правка строки отправляют события с записью; пока запись сохраняется — кнопки отключены', async () => {
     const e = entry({ sets: sets(2) })
     const w = mount(ExerciseCard, { props: { exercise, entries: [e] } })
     await w.find('[data-testid="quick-add-set"]').trigger('click')
-    await w.find('[data-testid="quick-remove-set"]').trigger('click')
     expect(w.emitted('addSet')![0][0]).toEqual(e)
-    expect(w.emitted('removeLastSet')![0][0]).toEqual(e)
+    await w.findAll('[data-testid="entry-set-remove"]')[0].trigger('click')
+    const [ent, next] = w.emitted('changeSets')![0] as [unknown, { reps: number }[]]
+    expect(ent).toEqual(e)
+    expect(next.map((x) => x.reps)).toEqual([11])
     await w.setProps({ busyEntryId: 'n1' })
     expect(w.find('[data-testid="quick-add-set"]').attributes('disabled')).toBeDefined()
-    expect(w.find('[data-testid="quick-remove-set"]').attributes('disabled')).toBeDefined()
+    expect(w.find('[data-testid="entry-set-remove"]').attributes('disabled')).toBeDefined()
     w.unmount()
   })
 
@@ -81,7 +85,7 @@ describe('ExerciseCard: быстрые подходы', () => {
     const w = mount(ExerciseCard, { props: { exercise, entries: [entry({ sets: sets(2) })] } })
     expect(w.find('[data-testid="quick-add-set"]').text()).toBe('+ set')
     expect(w.find('[data-testid="quick-add-set"]').attributes('aria-label')).toContain('copies the last')
-    expect(w.find('[data-testid="quick-remove-set"]').attributes('aria-label')).toContain('Remove the last set')
+    expect(w.find('[data-testid="entry-set-remove"]').attributes('aria-label')).toContain('Remove this set')
     w.unmount()
   })
 })

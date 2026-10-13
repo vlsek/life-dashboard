@@ -3,7 +3,6 @@ import { capFirst } from '../lib/exerciseNames'
 import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { fmtRu, todayStr } from '../lib/date'
-import { setCount } from '../lib/quickSet'
 import { canInlineAdd, todaySetCount } from '../lib/inlineEntry'
 import InlineEntryAdd from './InlineEntryAdd.vue'
 import { bestPaceRecord, bestSetRecord, formatSets } from '../lib/workouts'
@@ -13,9 +12,10 @@ import Icon from './Icon.vue'
 import ExerciseChart from './ExerciseChart.vue'
 import { readExerciseCollapsed, writeExerciseCollapsed } from '../lib/exerciseCollapse'
 import { useAccordionMember } from '../lib/useCollapseStyle'
-import type { EntryFormInput, Exercise, WorkoutEntry } from '../lib/types'
+import type { EntryFormInput, Exercise, WorkoutEntry, WorkoutSet } from '../lib/types'
 import { plannedSetsOn, setsOfDay, totalReps, type LinkedMetric } from '../lib/metricLink'
 import SetsRing from './SetsRing.vue'
+import EntrySets from './EntrySets.vue'
 import CollapseChevron from './CollapseChevron.vue'
 import CollapseSummary from './CollapseSummary.vue'
 import { vCollapse } from '../lib/collapseMotion'
@@ -33,7 +33,7 @@ const emit = defineEmits<{
   editEntry: [WorkoutEntry]
   deleteEntry: [WorkoutEntry]
   addSet: [WorkoutEntry]
-  removeLastSet: [WorkoutEntry]
+  changeSets: [WorkoutEntry, WorkoutSet[]]
 }>()
 
 interface RecordLine {
@@ -101,7 +101,6 @@ function toggleCollapsed() {
 // «+ подход» / «− подход» прямо в таблице (BACKLOG 590): только у сегодняшней записи, у которой уже есть первый подход
 const today = todayStr()
 const canQuick = (e: WorkoutEntry) => e.date === today && (e.sets?.length ?? 0) > 0
-const canRemove = (e: WorkoutEntry) => setCount(e.sets ?? []) > 1
 
 // «Добавить запись» (BACKLOG 44.5ж): у обычных упражнений раскрывает встроенную строку в карточке, окно — по «Подробно…»;
 // у упражнений с Л/П (пара ячеек) сразу окно, как раньше.
@@ -209,32 +208,9 @@ const collapsedSummary = computed(() => {
           <tr v-for="e in sortedEntries" :key="e.id" class="border-b last:border-0" style="border-color: var(--border)">
             <td class="whitespace-nowrap py-1.5 pr-3 align-top">{{ fmtRu(e.date) }}</td>
             <td class="py-1.5 pr-3 align-top">
-              {{ formatSets(e.sets, exercise, t('workouts_per_hour'), t('workouts_duration_unit'), defaultWeightUnit()) }}
-              <div v-if="canQuick(e)" class="mt-1 flex gap-1.5" data-testid="quick-set-row">
-                <button
-                  type="button"
-                  class="rounded-lg border px-2.5 py-1 text-xs"
-                  style="border-color: var(--border); background: var(--bg); color: var(--text)"
-                  :disabled="busyEntryId === e.id"
-                  :aria-label="t('workouts_quick_add_set_aria')"
-                  data-testid="quick-add-set"
-                  @click="emit('addSet', e)"
-                >
-                  {{ t('workouts_quick_add_set') }}
-                </button>
-                <button
-                  v-if="canRemove(e)"
-                  type="button"
-                  class="rounded-lg border px-2.5 py-1 text-xs"
-                  style="border-color: var(--border); background: var(--bg); color: var(--text-dim)"
-                  :disabled="busyEntryId === e.id"
-                  :aria-label="t('workouts_quick_remove_set_aria')"
-                  data-testid="quick-remove-set"
-                  @click="emit('removeLastSet', e)"
-                >
-                  {{ t('workouts_quick_remove_set') }}
-                </button>
-              </div>
+              <!-- Сегодняшняя запись — подходы строками, как на главной (BACKLOG 62.3): правка в строке, «+ подход» — новая строка -->
+              <EntrySets v-if="canQuick(e)" :exercise="exercise" :sets="e.sets ?? []" :busy="busyEntryId === e.id" @change="emit('changeSets', e, $event)" @add="emit('addSet', e)" />
+              <template v-else>{{ formatSets(e.sets, exercise, t('workouts_per_hour'), t('workouts_duration_unit'), defaultWeightUnit()) }}</template>
             </td>
             <td class="py-1.5 pr-3 align-top" style="color: var(--text-dim)">{{ e.notes || '' }}</td>
             <td class="whitespace-nowrap py-1.5 text-right align-top">

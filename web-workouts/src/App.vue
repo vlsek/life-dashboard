@@ -9,7 +9,7 @@ import { isTrainedRecently, lastTrainedByMuscle } from './lib/muscleStats'
 import { MUSCLE_IDS } from './lib/muscles'
 import { getLang, t } from './lib/i18n'
 import { showToast } from './lib/toast'
-import { appendCopiedSet, removeLastSet } from './lib/quickSet'
+import { appendCopiedSet } from './lib/quickSet'
 import { planInlineSave } from './lib/inlineEntry'
 import AppShell from './components/AppShell.vue'
 import ExerciseCard from './components/ExerciseCard.vue'
@@ -268,7 +268,19 @@ async function quickSets(entry: WorkoutEntry, change: (sets: WorkoutEntry['sets'
   }
 }
 const onAddSet = (entry: WorkoutEntry) => quickSets(entry, (sets) => appendCopiedSet(sets, nowHHMM()), 'workouts_toast_set_added')
-const onRemoveLastSet = (entry: WorkoutEntry) => quickSets(entry, removeLastSet, 'workouts_toast_set_removed')
+// Правка подходов строками (BACKLOG 62.3): сохраняем без окна и без тоста (на главной так же — тихо), ошибка показывается
+async function onChangeSets(entry: WorkoutEntry, sets: WorkoutEntry['sets']) {
+  if (quickBusyId.value) return
+  quickBusyId.value = entry.id
+  try {
+    await wk.editEntry(entry.id, { date: entry.date, sets, notes: entry.notes })
+  } catch (e) {
+    showToast(friendlyError(e, 'save'), 'error')
+    console.error(e)
+  } finally {
+    quickBusyId.value = null
+  }
+}
 
 async function onDeleteEntry(entry: WorkoutEntry) {
   if (!(await confirmDialog(t('workouts_confirm_delete_entry')))) return
@@ -516,7 +528,7 @@ function onToggleProgramWeek(week: number) {
             @delete-entry="onDeleteEntry"
             :busy-entry-id="quickBusyId"
             @add-set="onAddSet"
-            @remove-last-set="onRemoveLastSet"
+            @change-sets="onChangeSets"
           />
         </div>
       </section>

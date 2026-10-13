@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 
-// BACKLOG 590 «Добавлять подходы прямо из таблицы»: кнопки «+ подход» / «− подход» в строке сегодняшней записи, без окон
+// BACKLOG 590 + 62.3 «Подходы строками, как на главной»: у сегодняшней записи строка на подход, «+ подход» добавляет строку, × убирает, правка в строке — без окон
 const h = vi.hoisted(() => ({
   exercises: [] as Record<string, unknown>[],
   entries: [] as Record<string, unknown>[],
@@ -53,7 +53,8 @@ async function mountApp() {
   return w
 }
 const add = (w: ReturnType<typeof mount>) => w.find('[data-testid="quick-add-set"]')
-const remove = (w: ReturnType<typeof mount>) => w.find('[data-testid="quick-remove-set"]')
+const rowsOf = (w: ReturnType<typeof mount>) => w.findAll('[data-testid="entry-set-row"]')
+const remove = (w: ReturnType<typeof mount>, i = 0) => w.findAll('[data-testid="entry-set-remove"]')[i]
 
 beforeEach(() => {
   localStorage.clear()
@@ -66,11 +67,12 @@ beforeEach(() => {
 })
 
 describe('«+ подход» в таблице записей', () => {
-  it('у сегодняшней записи с подходом есть «+ подход»; «− подход» нет, пока подход один', async () => {
+  it('у сегодняшней записи с подходом есть «+ подход» и строка подхода; × нет, пока подход один', async () => {
     const w = await mountApp()
     expect(add(w).exists()).toBe(true)
     expect(add(w).text()).toBe('+ подход')
-    expect(remove(w).exists()).toBe(false)
+    expect(rowsOf(w)).toHaveLength(1)
+    expect(remove(w)).toBeUndefined()
     w.unmount()
   })
 
@@ -85,7 +87,7 @@ describe('«+ подход» в таблице записей', () => {
     w.unmount()
   })
 
-  it('тап добавляет подход, копируя прошлый, БЕЗ окна; запись обновляется, видна подсказка и «− подход»', async () => {
+  it('тап добавляет НОВУЮ СТРОКУ, копируя прошлый подход, БЕЗ окна; запись обновляется, видна подсказка и × у строк', async () => {
     h.exercises = [exercise({ tracks_weight: true, unit: 'kg' })]
     h.entries = [entry({ sets: [set(10, 20)] })]
     const w = await mountApp()
@@ -100,7 +102,8 @@ describe('«+ подход» в таблице записей', () => {
     expect(sets[1].time).toMatch(/^\d{2}:\d{2}$/)
     expect(h.updates[0].patch).toMatchObject({ date: todayStr(), notes: null })
     expect(w.text()).toContain('Подход 2 добавлен')
-    expect(remove(w).exists()).toBe(true)
+    expect(rowsOf(w)).toHaveLength(2)
+    expect(remove(w)).toBeDefined()
     w.unmount()
   })
 
@@ -116,19 +119,46 @@ describe('«+ подход» в таблице записей', () => {
     w.unmount()
   })
 
-  it('«− подход» убирает последний; на одном подходе кнопка исчезает', async () => {
+  it('× убирает строку; на одном подходе кнопка исчезает', async () => {
     h.entries = [entry({ sets: [set(12), set(10), set(8)] })]
     const w = await mountApp()
-    await remove(w).trigger('click')
+    expect(rowsOf(w)).toHaveLength(3)
+    await remove(w, 1).trigger('click') // убираем СРЕДНЮЮ строку, не последнюю
     await flushPromises()
     await flushPromises()
-    expect((h.updates[0].patch.sets as { reps: number }[]).map((s) => s.reps)).toEqual([12, 10])
-    expect(w.text()).toContain('Последний подход убран, осталось 2')
-    await remove(w).trigger('click')
+    expect((h.updates[0].patch.sets as { reps: number }[]).map((s) => s.reps)).toEqual([12, 8])
+    expect(rowsOf(w)).toHaveLength(2)
+    await remove(w, 0).trigger('click')
     await flushPromises()
     await flushPromises()
-    expect(remove(w).exists()).toBe(false)
+    expect(remove(w)).toBeUndefined()
     expect((h.updates.at(-1)!.patch.sets as unknown[]).length).toBe(1)
+    w.unmount()
+  })
+
+  it('правка повторов и веса в строке сохраняется сразу; очистка повторов возвращает прежнее значение', async () => {
+    h.exercises = [exercise({ tracks_weight: true, unit: 'kg' })]
+    h.entries = [entry({ sets: [set(10, 20), set(8, 20)] })]
+    const w = await mountApp()
+    const reps = w.findAll('[data-testid="entry-set-reps"]')
+    ;(reps[1].element as HTMLInputElement).value = '9'
+    await reps[1].trigger('change')
+    await flushPromises()
+    await flushPromises()
+    expect((h.updates[0].patch.sets as { reps: number; weight: number }[]).map((x) => [x.reps, x.weight])).toEqual([[10, 20], [9, 20]])
+    const weight = w.findAll('[data-testid="entry-set-weight"]')[0]
+    ;(weight.element as HTMLInputElement).value = '22,5'
+    await weight.trigger('change')
+    await flushPromises()
+    await flushPromises()
+    expect((h.updates.at(-1)!.patch.sets as { weight: number }[])[0].weight).toBe(22.5)
+    const n = h.updates.length
+    const first = w.findAll('[data-testid="entry-set-reps"]')[0]
+    ;(first.element as HTMLInputElement).value = ''
+    await first.trigger('change')
+    await flushPromises()
+    expect(h.updates).toHaveLength(n) // пустые повторы не сохраняем
+    expect((first.element as HTMLInputElement).value).toBe('10')
     w.unmount()
   })
 
@@ -153,7 +183,7 @@ describe('«+ подход» в таблице записей', () => {
     expect(w.text()).toContain('Не получилось сохранить. Попробуй ещё раз.') // понятный текст, а не «[object Object]» и не сырое «rls» (BACKLOG 942)
     expect(w.text()).not.toContain('rls')
     expect(w.text()).not.toContain('Подход 2 добавлен')
-    expect(remove(w).exists()).toBe(false)
+    expect(rowsOf(w)).toHaveLength(1)
     w.unmount()
   })
 })
