@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.42";
+const SITE_VERSION = "5.43";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.43", date: "2026-10-12 17:30", changes: [
+        "«Вехи»: у выбранной вкладки категории (например, «Все · 3») снова виден текст — раньше он сливался с оранжевым фоном и плашка выглядела пустой. Названия вех больше не сжимаются кнопками справа: кнопки действий стали компактнее, название занимает свободное место, у строк появились отступы. Без миграций."
+    ]},
     { version: "5.42", date: "2026-10-12 20:30", changes: [
         "«Кастомизация»: фильтры «Получено / За достижения / За монеты» теперь действуют и на бесплатные разделы (маркеры графиков, заставка, огонёк серии, анимация воды, модель тела): они относятся к «Получено» и прячутся вместе с ним. Раньше при выключенных фильтрах страница оставалась заполненной и одновременно писала «ничего нет». БЕЗ SQL."
     ]},
@@ -2236,6 +2239,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.43", date: "2026-10-12 17:30", changes: [
+        "Milestones: the selected category tab (for example \"All · 3\") shows its text again — it used to blend into the orange background and look empty. Milestone names are no longer squeezed by the buttons on the right: action buttons are more compact, the name takes the free space and rows have vertical padding. No migrations."
+    ]},
     { version: "5.42", date: "2026-10-12 20:30", changes: [
         "Customization: the «Owned / For achievements / For coins» filters now also govern the free sections (chart markers, splash, streak flame, water animation, body model): they count as «Owned» and hide with it. Before, with the filters off the page stayed full while also saying there was nothing to show. NO SQL."
     ]},

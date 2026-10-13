@@ -203,7 +203,7 @@ function closeHistory() {
             role="tab"
             class="rounded-full border px-3 py-1 text-sm"
             :aria-selected="effectiveCat === tab.key"
-            :style="effectiveCat === tab.key ? 'border-color: var(--accent); color: var(--accent)' : 'border-color: var(--border); color: var(--text-dim); background: transparent'"
+            :style="effectiveCat === tab.key ? 'border-color: var(--accent); background: var(--accent); color: var(--accent-text)' : 'border-color: var(--border); color: var(--text-dim); background: transparent'"
             :data-test="'cat-tab-' + tab.key"
             @click="pickCategory(tab.key)"
           >
@@ -217,10 +217,10 @@ function closeHistory() {
             <table class="w-full">
               <tbody>
                 <tr v-for="m in list" :key="m.id" class="align-top">
-                  <td class="w-8 pr-2">
-                    <button class="secondary" :title="t('ms_mark_done_btn')" @click="openMarkDone(m)">✓</button>
+                  <td class="w-px py-1.5 pr-2">
+                    <button class="secondary px-2" :title="t('ms_mark_done_btn')" @click="openMarkDone(m)">✓</button>
                   </td>
-                  <td>
+                  <td class="w-full py-1.5">
                     <div>{{ m.name }}</div>
                     <div class="mt-1 flex flex-wrap gap-1.5 text-xs">
                       <span
@@ -235,10 +235,10 @@ function closeHistory() {
                     </div>
                     <div v-if="m.note" class="dim mt-1 text-xs">{{ m.note }}</div>
                   </td>
-                  <td class="w-20 pl-2 text-right whitespace-nowrap">
-                    <button v-if="m.history?.length" class="secondary" :title="t('ms_history_title')" @click="openHistory(m)"><Icon name="history" /></button>
-                    <button class="secondary" :title="t('ms_edit_btn')" @click="openEditForm(m)"><Icon name="edit" /></button>
-                    <button class="danger" @click="onDelete(m)">✕</button>
+                  <td class="w-px py-1.5 pl-2 text-right whitespace-nowrap">
+                    <button v-if="m.history?.length" class="secondary px-2" :title="t('ms_history_title')" @click="openHistory(m)"><Icon name="history" /></button>
+                    <button class="secondary px-2" :title="t('ms_edit_btn')" @click="openEditForm(m)"><Icon name="edit" /></button>
+                    <button class="danger px-2" @click="onDelete(m)">✕</button>
                   </td>
                 </tr>
               </tbody>
@@ -252,12 +252,12 @@ function closeHistory() {
           <table class="w-full">
             <tbody>
               <tr v-for="m in done" :key="m.id" class="align-top">
-                <td class="done-text">{{ m.name }}</td>
-                <td class="dim text-xs">{{ fmtRu(m.last_date) }}{{ m.last_km ? ' · ' + fmtKmVal(m.last_km) : '' }}</td>
-                <td class="w-20 pl-2 text-right whitespace-nowrap">
-                  <button v-if="m.history?.length" class="secondary" :title="t('ms_history_title')" @click="openHistory(m)"><Icon name="history" /></button>
-                  <button class="secondary" :title="t('ms_edit_btn')" @click="openEditForm(m)"><Icon name="edit" /></button>
-                  <button class="danger" @click="onDelete(m)">✕</button>
+                <td class="done-text w-full py-1.5">{{ m.name }}</td>
+                <td class="dim whitespace-nowrap px-2 py-1.5 text-xs">{{ fmtRu(m.last_date) }}{{ m.last_km ? ' · ' + fmtKmVal(m.last_km) : '' }}</td>
+                <td class="w-px py-1.5 pl-2 text-right whitespace-nowrap">
+                  <button v-if="m.history?.length" class="secondary px-2" :title="t('ms_history_title')" @click="openHistory(m)"><Icon name="history" /></button>
+                  <button class="secondary px-2" :title="t('ms_edit_btn')" @click="openEditForm(m)"><Icon name="edit" /></button>
+                  <button class="danger px-2" @click="onDelete(m)">✕</button>
                 </td>
               </tr>
             </tbody>
