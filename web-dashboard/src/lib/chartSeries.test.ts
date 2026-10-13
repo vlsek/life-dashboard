@@ -58,6 +58,8 @@ describe('buildSeries', () => {
     expect(s['metric:water'].points).toEqual([{ date: '2026-01-01', y: 2000 }, { date: '2026-01-02', y: 1500 }])
     expect(s['metric:water'].unit).toBe(' мл')
     expect(s['metric:water'].defaultGoal).toBe(2000)
+    expect(s['metric:water'].goalDirection).toBe('at_least') // направление цели метрики — для необязательной зоны цели на графике (55.2 срез 8)
+    expect(s['points'].goalDirection).toBeUndefined() // у «баллов» направления нет
     expect(s['metric:water'].label).toBe('💧 Вода')
   })
   it('подходы: сумма повторений; пустой список даёт 0 (а не пропуск), тип запоминается', () => {

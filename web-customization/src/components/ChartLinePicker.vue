@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { CHART_ANIMS, CHART_FORECASTS, CHART_KINDS, CHART_LINES, barDefs, barPath, lineDefs, readChartAnim, readChartForecast, readChartKind, readChartLine, runParts, writeChartAnim, writeChartForecast, writeChartKind, writeChartLine, type ChartAnim, type ChartForecast, type ChartKind, type ChartLine, type Pt } from '../lib/chartLine'
+import { CHART_KINDS, CHART_LINES, barDefs, barPath, lineDefs, readChartAnim, readChartForecast, readChartGoalZone, readChartKind, readChartLine, runParts, writeChartAnim, writeChartForecast, writeChartGoalZone, writeChartKind, writeChartLine, type ChartKind, type ChartLine, type Pt } from '../lib/chartLine'
 import { t } from '../lib/i18n'
 
 // Выбор стиля ЛИНИИ графика (BACKLOG 55.2 срез 3): обычная · сглаженная · сглаженная с областью. Бесплатно; localStorage `chart_line`;
@@ -13,22 +13,21 @@ const choose = (v: ChartLine) => {
   if (saved.value) current.value = v
 }
 
-// Анимация появления (55.2 срез 4): «Без анимации» (по умолчанию) / «Линия рисуется». Гасится при «уменьшить движение» и «Отключить анимации».
-const anim = ref<ChartAnim>(readChartAnim())
-const animSaved = ref(true)
-const animLabel = (v: ChartAnim): string => t(('chart_anim_' + v) as never)
-const chooseAnim = (v: ChartAnim) => {
-  animSaved.value = writeChartAnim(v)
-  if (animSaved.value) anim.value = v
-}
-
-// Прогноз вперёд (55.2 срез 6): «Без прогноза» (по умолчанию) / «Тренд на 3 дня» — пунктир по линейному тренду последних точек.
-const forecast = ref<ChartForecast>(readChartForecast())
-const forecastSaved = ref(true)
-const forecastLabel = (v: ChartForecast): string => t(('chart_forecast_' + v) as never)
-const chooseForecast = (v: ChartForecast) => {
-  forecastSaved.value = writeChartForecast(v)
-  if (forecastSaved.value) forecast.value = v
+// «Дополнения» (55.2 срезы 4, 6, 8): три вкл/выкл-настройки одним списком переключателей вместо трёх групп карточек (раздел короче, 61.6).
+// Все выключены по умолчанию и независимы; каждая — свой ключ localStorage (chart_anim / chart_forecast / chart_goalzone).
+type ExtraKey = 'anim' | 'forecast' | 'goalzone'
+const EXTRAS: { key: ExtraKey; on: () => boolean; save: (v: boolean) => boolean }[] = [
+  { key: 'anim', on: () => readChartAnim() === 'draw', save: (v) => writeChartAnim(v ? 'draw' : 'none') },
+  { key: 'forecast', on: () => readChartForecast() === 'trend', save: (v) => writeChartForecast(v ? 'trend' : 'off') },
+  { key: 'goalzone', on: () => readChartGoalZone() === 'on', save: (v) => writeChartGoalZone(v ? 'on' : 'off') },
+]
+const extras = ref<Record<ExtraKey, boolean>>({ anim: EXTRAS[0].on(), forecast: EXTRAS[1].on(), goalzone: EXTRAS[2].on() })
+const extrasSaved = ref(true)
+const toggleExtra = (key: ExtraKey) => {
+  const e = EXTRAS.find((x) => x.key === key)!
+  const next = !extras.value[key]
+  extrasSaved.value = e.save(next)
+  if (extrasSaved.value) extras.value[key] = next
 }
 
 // Вид графика (55.2 срез 7): «Линия» (по умолчанию) / «Столбцы» — столбец на день с данными, от нуля; у метрик с особенностями подходов — составной.
@@ -126,57 +125,31 @@ const preview = (v: ChartLine): string => {
         </button>
       </div>
     </div>
-    <h4 class="mb-1 mt-5 text-sm font-semibold">{{ t('cust_sub_anim') }}</h4>
-    <p class="dim mb-2 text-xs">{{ t('cust_sec_anim_hint') }}</p>
-    <p v-if="!animSaved" class="mb-2 text-xs" style="color: var(--danger, #e5484d)" role="alert" data-testid="anim-save-error">{{ t('cust_splash_save_error') }}</p>
-    <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr))">
-      <div
-        v-for="v in CHART_ANIMS"
-        :key="v"
-        class="flex flex-col gap-2 rounded-xl border p-3"
-        :style="{ background: 'var(--bg-card)', borderColor: anim === v ? 'var(--accent)' : 'var(--border)' }"
-        :data-testid="'anim-' + v"
-        :data-active="anim === v"
+    <h4 class="mb-1 mt-5 text-sm font-semibold">{{ t('cust_sub_extras') }}</h4>
+    <p class="dim mb-2 text-xs">{{ t('cust_sec_extras_hint') }}</p>
+    <p v-if="!extrasSaved" class="mb-2 text-xs" style="color: var(--danger, #e5484d)" role="alert" data-testid="extras-save-error">{{ t('cust_splash_save_error') }}</p>
+    <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
+      <li
+        v-for="e in EXTRAS"
+        :key="e.key"
+        class="flex items-center justify-between gap-3 rounded-xl border px-3 py-2"
+        :style="{ background: 'var(--bg-card)', borderColor: extras[e.key] ? 'var(--accent)' : 'var(--border)' }"
+        :data-testid="'extra-' + e.key"
+        :data-active="extras[e.key]"
       >
-        <p class="m-0 text-sm font-medium">{{ animLabel(v) }}</p>
+        <span class="text-sm">{{ t(('chart_extra_' + e.key) as never) }}</span>
         <button
           type="button"
+          role="switch"
           class="secondary px-2 py-1 text-sm"
-          :disabled="anim === v"
-          :aria-pressed="anim === v"
-          :aria-label="animLabel(v) + ': ' + (anim === v ? t('cust_splash_selected') : t('cust_splash_choose'))"
-          data-testid="anim-choose"
-          @click="chooseAnim(v)"
+          :aria-checked="extras[e.key]"
+          :aria-label="t(('chart_extra_' + e.key) as never)"
+          data-testid="extra-toggle"
+          @click="toggleExtra(e.key)"
         >
-          {{ anim === v ? t('cust_splash_selected') : t('cust_splash_choose') }}
+          {{ extras[e.key] ? t('cust_extra_on') : t('cust_extra_off') }}
         </button>
-      </div>
-    </div>
-    <h4 class="mb-1 mt-5 text-sm font-semibold">{{ t('cust_sub_forecast') }}</h4>
-    <p class="dim mb-2 text-xs">{{ t('cust_sec_forecast_hint') }}</p>
-    <p v-if="!forecastSaved" class="mb-2 text-xs" style="color: var(--danger, #e5484d)" role="alert" data-testid="forecast-save-error">{{ t('cust_splash_save_error') }}</p>
-    <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr))">
-      <div
-        v-for="v in CHART_FORECASTS"
-        :key="v"
-        class="flex flex-col gap-2 rounded-xl border p-3"
-        :style="{ background: 'var(--bg-card)', borderColor: forecast === v ? 'var(--accent)' : 'var(--border)' }"
-        :data-testid="'forecast-' + v"
-        :data-active="forecast === v"
-      >
-        <p class="m-0 text-sm font-medium">{{ forecastLabel(v) }}</p>
-        <button
-          type="button"
-          class="secondary px-2 py-1 text-sm"
-          :disabled="forecast === v"
-          :aria-pressed="forecast === v"
-          :aria-label="forecastLabel(v) + ': ' + (forecast === v ? t('cust_splash_selected') : t('cust_splash_choose'))"
-          data-testid="forecast-choose"
-          @click="chooseForecast(v)"
-        >
-          {{ forecast === v ? t('cust_splash_selected') : t('cust_splash_choose') }}
-        </button>
-      </div>
-    </div>
+      </li>
+    </ul>
   </div>
 </template>

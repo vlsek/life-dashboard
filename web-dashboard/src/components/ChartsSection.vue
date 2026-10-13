@@ -165,6 +165,7 @@ function onPeriodApplied() {
           :color="series[entry.key].color"
           :goal-value="goalFor(entry).value"
           :goal-label="goalFor(entry).label"
+          :goal-direction="series[entry.key].goalDirection ?? null"
         />
         <ChartEditValues v-if="canEditValues(entry.key, series[entry.key].type) && pointsFor(entry.key).length" :points="pointsFor(entry.key)" :unit="series[entry.key].unit" :save="(d, raw) => saveValue(entry.key, d, raw)" />
       </div>

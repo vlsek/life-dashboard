@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { CHART_KIND_KEY, CHART_KINDS, DEFAULT_CHART_KIND, barPath, readChartKind, stackSpans, writeChartKind, CHART_ANIMS, CHART_ANIM_KEY, CHART_FORECAST_KEY, CHART_FORECASTS, CHART_LINES, CHART_LINE_KEY, DEFAULT_CHART_ANIM, DEFAULT_CHART_FORECAST, DEFAULT_CHART_LINE, FORECAST_DAYS, addDaysIso, lineDefs, monotonePath, readChartAnim, readChartForecast, readChartLine, runParts, trendForecast, writeChartAnim, writeChartForecast, writeChartLine, type Pt } from './chartLine'
+import { CHART_GOALZONE_KEY, CHART_GOALZONES, DEFAULT_CHART_GOALZONE, goalZoneSpan, readChartGoalZone, writeChartGoalZone, CHART_KIND_KEY, CHART_KINDS, DEFAULT_CHART_KIND, barPath, readChartKind, stackSpans, writeChartKind, CHART_ANIMS, CHART_ANIM_KEY, CHART_FORECAST_KEY, CHART_FORECASTS, CHART_LINES, CHART_LINE_KEY, DEFAULT_CHART_ANIM, DEFAULT_CHART_FORECAST, DEFAULT_CHART_LINE, FORECAST_DAYS, addDaysIso, lineDefs, monotonePath, readChartAnim, readChartForecast, readChartLine, runParts, trendForecast, writeChartAnim, writeChartForecast, writeChartLine, type Pt } from './chartLine'
 // @ts-ignore — в проекте нет типов node, а vitest выполняется в node
 import { readFileSync } from 'node:fs'
 import ChartBlock from '../components/ChartBlock.vue'
@@ -369,5 +369,69 @@ describe('столбцы и линия цели (BACKLOG 55.2 срез 7)', () =
     expect(bars.indexOf('stroke-dasharray="5,4"')).toBeGreaterThan(bars.lastIndexOf('data-test="bar-point"'))
     expect(bars).toMatch(/цель 8<\/text>/)
     expect(bars).toContain('paint-order="stroke"')
+  })
+})
+
+describe('зона цели (BACKLOG 55.2 срез 8)', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+  })
+  const goalChart = (dir: 'at_least' | 'at_most' | null, goal: number | null = 8) =>
+    mount(ChartBlock, { props: { title: 'T', unit: ' раз', goalValue: goal, goalLabel: goal != null ? 'цель' : null, goalDirection: dir, points: pts([4, 6, 8, 10]) } })
+  const zone = (w: ReturnType<typeof mount>) => w.find('[data-test="goal-zone"]')
+
+  it('два режима; по умолчанию «off»; мусор игнорируется; запись работает', () => {
+    expect([...CHART_GOALZONES]).toEqual(['off', 'on'])
+    expect(DEFAULT_CHART_GOALZONE).toBe('off')
+    expect(readChartGoalZone()).toBe('off')
+    localStorage.setItem(CHART_GOALZONE_KEY, 'zzz')
+    expect(readChartGoalZone()).toBe('off')
+    expect(writeChartGoalZone('on')).toBe(true)
+    expect(readChartGoalZone()).toBe('on')
+  })
+
+  it('goalZoneSpan: «не меньше» — выше цели, «меньше» — ниже; нет направления — нет зоны; цель вне поля обрезается', () => {
+    expect(goalZoneSpan(80, 'at_least', 34, 126)).toEqual([34, 80])
+    expect(goalZoneSpan(80, 'at_most', 34, 126)).toEqual([80, 126])
+    expect(goalZoneSpan(80, null, 34, 126)).toBeNull()
+    expect(goalZoneSpan(80, 'bogus', 34, 126)).toBeNull()
+    expect(goalZoneSpan(10, 'at_least', 34, 126)).toBeNull() // цель выше поля: «выше цели» — пусто
+    expect(goalZoneSpan(10, 'at_most', 34, 126)).toEqual([34, 126]) // «ниже цели» — всё поле
+    expect(goalZoneSpan(200, 'at_least', 34, 126)).toEqual([34, 126])
+  })
+
+  it('по умолчанию зоны нет даже при цели и направлении', () => {
+    expect(zone(goalChart('at_least')).exists()).toBe(false)
+  })
+
+  it('on + «не меньше»: полоса от верха поля до цели; «меньше»: от цели до низа; цвет мягкий зелёный', () => {
+    localStorage.setItem(CHART_GOALZONE_KEY, 'on')
+    const up = zone(goalChart('at_least'))
+    expect(up.exists()).toBe(true)
+    const upY = Number(up.attributes('y'))
+    const upH = Number(up.attributes('height'))
+    expect(upY).toBe(34)
+    const down = zone(goalChart('at_most'))
+    expect(Number(down.attributes('y'))).toBeCloseTo(upY + upH, 0) // нижняя зона начинается там, где кончается верхняя: у цели
+    expect(Number(down.attributes('y')) + Number(down.attributes('height'))).toBeCloseTo(126, 0)
+    expect(up.attributes('fill')).toBe('#4cc38a')
+    expect(Number(up.attributes('fill-opacity'))).toBeLessThan(0.2)
+  })
+
+  it('нет направления или нет цели — зоны нет, даже при включённой настройке', () => {
+    localStorage.setItem(CHART_GOALZONE_KEY, 'on')
+    expect(zone(goalChart(null)).exists()).toBe(false)
+    expect(zone(goalChart('at_least', null)).exists()).toBe(false)
+  })
+
+  it('зона рисуется ПОД линией и пунктиром цели; у столбцов — под столбцами', () => {
+    localStorage.setItem(CHART_GOALZONE_KEY, 'on')
+    const line = goalChart('at_least').find('[data-test="chart-svg"]').html()
+    expect(line.indexOf('goal-zone')).toBeLessThan(line.indexOf('stroke-dasharray="5,4"'))
+    expect(line.indexOf('goal-zone')).toBeLessThan(line.indexOf('<circle'))
+    localStorage.setItem(CHART_KIND_KEY, 'bars')
+    const bars = goalChart('at_least').find('[data-test="chart-svg"]').html()
+    expect(bars.indexOf('goal-zone')).toBeLessThan(bars.indexOf('data-test="bar-point"'))
   })
 })

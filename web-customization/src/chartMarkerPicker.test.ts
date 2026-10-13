@@ -96,69 +96,60 @@ describe('ChartLinePicker: выбор стиля линии (BACKLOG 55.2 сре
   })
 })
 
-describe('Анимация появления графика в «Кастомизации» (BACKLOG 55.2 срез 4)', () => {
+describe('«Дополнения» к графикам: появление, прогноз, зона цели (BACKLOG 55.2 срезы 4, 6, 8)', () => {
   beforeEach(() => {
     localStorage.clear()
     localStorage.setItem('site_lang', 'ru')
   })
+  const toggle = (w: ReturnType<typeof mount>, key: string) => w.find(`[data-testid="extra-${key}"] [data-testid="extra-toggle"]`)
 
-  it('две карточки; по умолчанию «Без анимации»; выбор «Линия рисуется» пишет chart_anim и не трогает стиль линии', async () => {
+  it('один список из трёх переключателей, все выключены по умолчанию; прежних групп карточек «Появление» и «Прогноз» нет', () => {
     const w = mount(ChartMarkerPicker)
-    expect(w.findAll('[data-testid^="anim-"][data-active]')).toHaveLength(2)
-    expect(w.find('[data-testid="anim-none"]').attributes('data-active')).toBe('true')
-    await w.find('[data-testid="anim-draw"] [data-testid="anim-choose"]').trigger('click')
+    expect(w.findAll('[data-testid^="extra-"][data-active]')).toHaveLength(3)
+    for (const k of ['anim', 'forecast', 'goalzone']) {
+      expect(w.find(`[data-testid="extra-${k}"]`).attributes('data-active')).toBe('false')
+      expect(toggle(w, k).attributes('role')).toBe('switch')
+      expect(toggle(w, k).attributes('aria-checked')).toBe('false')
+    }
+    expect(w.find('[data-testid="anim-none"]').exists()).toBe(false)
+    expect(w.find('[data-testid="forecast-off"]').exists()).toBe(false)
+    expect(w.text()).toContain('Зона цели')
+  })
+
+  it('каждый переключатель пишет СВОЙ ключ и не трогает остальные настройки графиков', async () => {
+    const w = mount(ChartMarkerPicker)
+    await toggle(w, 'anim').trigger('click')
     expect(localStorage.getItem('chart_anim')).toBe('draw')
-    expect(w.find('[data-testid="anim-draw"]').attributes('data-active')).toBe('true')
-    expect(w.find('[data-testid="anim-draw"] button').attributes('disabled')).toBeDefined()
-    expect(localStorage.getItem('chart_line')).toBeNull()
-  })
-
-  it('без хранилища — сообщение, выбор не меняется', async () => {
-    const w = mount(ChartMarkerPicker)
-    const spy = vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
-      throw new Error('denied')
-    })
-    try {
-      await w.find('[data-testid="anim-draw"] [data-testid="anim-choose"]').trigger('click')
-    } finally {
-      spy.mockRestore()
-    }
-    expect(w.find('[data-testid="anim-save-error"]').exists()).toBe(true)
-    expect(w.find('[data-testid="anim-none"]').attributes('data-active')).toBe('true')
-  })
-})
-
-describe('Прогноз на графике в «Кастомизации» (BACKLOG 55.2 срез 6)', () => {
-  beforeEach(() => {
-    localStorage.clear()
-    localStorage.setItem('site_lang', 'ru')
-  })
-
-  it('две карточки; по умолчанию «Без прогноза»; выбор «Тренд на 3 дня» пишет chart_forecast и не трогает остальное', async () => {
-    const w = mount(ChartMarkerPicker)
-    expect(w.findAll('[data-testid^="forecast-"][data-active]')).toHaveLength(2)
-    expect(w.find('[data-testid="forecast-off"]').attributes('data-active')).toBe('true')
-    expect(w.find('[data-testid="forecast-trend"]').text()).toContain('Тренд на 3 дня')
-    await w.find('[data-testid="forecast-trend"] [data-testid="forecast-choose"]').trigger('click')
+    await toggle(w, 'forecast').trigger('click')
     expect(localStorage.getItem('chart_forecast')).toBe('trend')
-    expect(w.find('[data-testid="forecast-trend"]').attributes('data-active')).toBe('true')
-    expect(w.find('[data-testid="forecast-trend"] button').attributes('disabled')).toBeDefined()
-    expect(localStorage.getItem('chart_line')).toBeNull()
-    expect(localStorage.getItem('chart_anim')).toBeNull()
+    await toggle(w, 'goalzone').trigger('click')
+    expect(localStorage.getItem('chart_goalzone')).toBe('on')
+    expect(toggle(w, 'goalzone').attributes('aria-checked')).toBe('true')
+    expect(w.find('[data-testid="extra-goalzone"]').attributes('data-active')).toBe('true')
+    for (const k of ['chart_line', 'chart_marker', 'chart_kind']) expect(localStorage.getItem(k), k).toBeNull()
   })
 
-  it('без хранилища — сообщение, выбор не меняется', async () => {
+  it('повторное нажатие выключает; сохранённое состояние подхватывается при открытии', async () => {
+    localStorage.setItem('chart_forecast', 'trend')
+    const w = mount(ChartMarkerPicker)
+    expect(toggle(w, 'forecast').attributes('aria-checked')).toBe('true')
+    await toggle(w, 'forecast').trigger('click')
+    expect(localStorage.getItem('chart_forecast')).toBe('off')
+    expect(toggle(w, 'forecast').attributes('aria-checked')).toBe('false')
+  })
+
+  it('без хранилища — сообщение, переключатель не меняется', async () => {
     const w = mount(ChartMarkerPicker)
     const spy = vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
       throw new Error('denied')
     })
     try {
-      await w.find('[data-testid="forecast-trend"] [data-testid="forecast-choose"]').trigger('click')
+      await toggle(w, 'goalzone').trigger('click')
     } finally {
       spy.mockRestore()
     }
-    expect(w.find('[data-testid="forecast-save-error"]').exists()).toBe(true)
-    expect(w.find('[data-testid="forecast-off"]').attributes('data-active')).toBe('true')
+    expect(w.find('[data-testid="extras-save-error"]').exists()).toBe(true)
+    expect(toggle(w, 'goalzone').attributes('aria-checked')).toBe('false')
   })
 })
 

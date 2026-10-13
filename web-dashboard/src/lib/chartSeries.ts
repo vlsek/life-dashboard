@@ -23,6 +23,7 @@ export interface ChartSeries {
   color: string
   points: SeriesPoint[]
   defaultGoal?: number | null
+  goalDirection?: 'at_least' | 'at_most' | null // направление цели метрики («не меньше X» / «меньше X»); у параметров тела нет — зоны цели нет
   type?: string // тип метрики (для 'sets' значения из графика не правятся)
   variations?: string[] // метрики-подходы: стабильный порядок особенностей по всей истории (от него зависят цвета)
   variationRecords?: VariationRecord[] // метрики-подходы: рекорд за один подход по каждой особенности за всю историю (BACKLOG 952)
@@ -85,6 +86,7 @@ export function buildSeries(bodyParams: BodyParam[], bodyValues: BodyValue[], me
         .filter((p) => p.y != null), // «подходы» с пустым/битым значением — пропускаем точку, а не рисуем дыру нулём
       // цель из самой метрики — линия-ориентир по умолчанию
       defaultGoal: m.goal_value ? m.goal_value : null,
+      goalDirection: m.goal_direction === 'at_least' || m.goal_direction === 'at_most' ? m.goal_direction : null,
     }
   }
   return series

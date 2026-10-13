@@ -12,7 +12,7 @@ import RecordBadge from './RecordBadge.vue'
 import { RECORDS_EVENT, formatRecordDate, formatRecordValue, recordsEnabled, type RecordInfo } from '../lib/records'
 import type { VariationRecord } from '../lib/variationChart'
 import { markerDefs, markerParts, nextMarkerUid, readChartMarker } from '../lib/chartMarker'
-import { FORECAST_DAYS, addDaysIso, barDefs, barPath, lineDefs, readChartAnim, readChartForecast, readChartKind, readChartLine, runParts, stackSpans, trendForecast, type Pt } from '../lib/chartLine'
+import { FORECAST_DAYS, addDaysIso, barDefs, barPath, goalZoneSpan, lineDefs, readChartAnim, readChartForecast, readChartGoalZone, readChartKind, readChartLine, runParts, stackSpans, trendForecast, type Pt } from '../lib/chartLine'
 
 const props = withDefaults(
   defineProps<{
@@ -23,6 +23,7 @@ const props = withDefaults(
     color?: string
     goalValue?: number | null
     goalLabel?: string | null
+    goalDirection?: 'at_least' | 'at_most' | null // направление цели метрики — для необязательной зоны цели
     note?: string | null // пояснение под графиком (например, «период расширен»)
     variations?: string[] | null // метрики-подходы: стабильный порядок особенностей (от него цвета точек и легенды)
     streak?: MetricStreakInfo | null // серия метрики: огонёк с числом рядом с названием графика (BACKLOG 23, 14:42)
@@ -30,7 +31,7 @@ const props = withDefaults(
     variationRecords?: VariationRecord[] | null // рекорд за один подход по каждой особенности за всё время (BACKLOG 952); в легенде «рекорд: N»
     today?: string // «сегодня» для легенды (ISO); по умолчанию — реальная сегодняшняя дата, параметр нужен тестам
   }>(),
-  { title: '', icon: null, unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null, note: null, variations: null, streak: null, record: null, variationRecords: null, today: undefined },
+  { title: '', icon: null, unit: '', color: 'var(--accent)', goalValue: null, goalLabel: null, goalDirection: null, note: null, variations: null, streak: null, record: null, variationRecords: null, today: undefined },
 )
 
 const prepared = computed<ChartPoint[]>(() => prepareChartSeries(props.points))
@@ -73,6 +74,8 @@ const drawAnim = readChartAnim() === 'draw'
 const forecastOn = readChartForecast() === 'trend'
 // Вид графика (55.2 срез 7): `localStorage.chart_kind` = bars → столбцы (с нуля, у метрик с особенностями — составные); по умолчанию линия. В столбцах прогноза нет.
 const barsOn = readChartKind() === 'bars'
+// Зона цели (55.2 срез 8): `localStorage.chart_goalzone` = on → мягкая полоса по ту сторону цели, где «хорошо» (по направлению цели метрики); по умолчанию выключена.
+const goalZoneOn = readChartGoalZone() === 'on'
 
 function pieMarker(x: number, y: number, label: string, shares: VariationShare[]): string {
   const slices = pieSlices(shares, order.value, x, y, 6.5)
@@ -177,6 +180,13 @@ const innerSvg = computed<string | null>(() => {
   const { w, h, pad, min, range, coords, fc } = g
 
   let svg = (colored.value ? markerDefs(markerStyle, markerUid) : '') + lineDefs(lineStyle, markerUid, props.color)
+
+  // зона цели (необязательная): мягкая полоса по ту сторону цели, где «хорошо»; рисуется ПЕРВОЙ — под линией/столбцами и пунктиром цели
+  if (props.goalValue != null && goalZoneOn) {
+    const gyz = h - pad - ((props.goalValue - min) / range) * (h - pad * 2)
+    const span = goalZoneSpan(gyz, props.goalDirection, pad, h - pad)
+    if (span) svg += `<rect data-test="goal-zone" x="${pad}" y="${span[0].toFixed(1)}" width="${(w - pad * 2).toFixed(1)}" height="${(span[1] - span[0]).toFixed(1)}" rx="3" fill="#4cc38a" fill-opacity="0.11" />`
+  }
 
   let goal = '' // линия цели: у линейного графика рисуется под линией, у столбцов — поверх них (иначе подпись прячется за столбцом)
   if (props.goalValue != null) {

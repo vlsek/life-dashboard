@@ -252,3 +252,42 @@ export function stackSpans(reps: number[], yTop: number, yBase: number): ([numbe
 export function barDefs(uid: string, color: string): string {
   return `<defs><linearGradient id="${uid}-bar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity="1"/><stop offset="1" stop-color="${color}" stop-opacity=".62"/></linearGradient></defs>`
 }
+
+// ── Зона цели (55.2 срез 8) ──────────────────────────────────────────────────────────────────────────────────────────
+// «off» — по умолчанию (как раньше, только пунктир цели); «on» — мягкая полоса по ту сторону цели, где «хорошо» (по направлению цели метрики:
+// «не меньше X» — выше цели, «меньше X» — ниже). У параметров тела направления нет — зоны нет. Хранится в localStorage `chart_goalzone`.
+export const CHART_GOALZONES = ['off', 'on'] as const
+export type ChartGoalZone = (typeof CHART_GOALZONES)[number]
+export const DEFAULT_CHART_GOALZONE: ChartGoalZone = 'off'
+export const CHART_GOALZONE_KEY = 'chart_goalzone'
+
+export const isChartGoalZone = (v: unknown): v is ChartGoalZone => (CHART_GOALZONES as readonly unknown[]).includes(v)
+
+export function readChartGoalZone(): ChartGoalZone {
+  try {
+    const stored = localStorage.getItem(CHART_GOALZONE_KEY)
+    if (isChartGoalZone(stored)) return stored
+  } catch {
+    /* нет localStorage — по умолчанию */
+  }
+  return DEFAULT_CHART_GOALZONE
+}
+
+// true, если выбор удалось запомнить.
+export function writeChartGoalZone(v: ChartGoalZone): boolean {
+  try {
+    localStorage.setItem(CHART_GOALZONE_KEY, v)
+    return true
+  } catch {
+    return false
+  }
+}
+
+// Прямоугольник зоны цели [верх, низ] в экранных Y внутри поля графика [plotTop, plotBottom]; null — зоны нет (нет направления или цели).
+// at_least: от верха поля до цели; at_most: от цели до низа поля. Цель за пределами поля обрезается; пустая зона — null.
+export function goalZoneSpan(goalY: number, direction: string | null | undefined, plotTop: number, plotBottom: number): [number, number] | null {
+  if (direction !== 'at_least' && direction !== 'at_most') return null
+  const g = Math.min(plotBottom, Math.max(plotTop, goalY))
+  const span: [number, number] = direction === 'at_least' ? [plotTop, g] : [g, plotBottom]
+  return span[1] - span[0] > 0.5 ? span : null
+}
