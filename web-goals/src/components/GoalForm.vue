@@ -5,10 +5,11 @@ import { friendlyError } from '../lib/friendlyError'
 import type { Difficulty, GoalFormInitial, GoalFormInput } from '../lib/types'
 import { matchCategory } from '../lib/categories'
 import { pointsAfterEdit } from '../lib/goals'
+import { HORIZON_KEYS, effectiveHorizon, horizonOptions, type Horizon } from '../lib/horizons'
 
 // submit — запись цели (родитель добавляет/правит и закрывает форму при успехе). Ошибка записи показывается ПОД полями (форма остаётся
 // открытой, введённое не пропадает); пока идёт запись, «Сохранить» заблокирована — двойной тап не создаёт две цели.
-const props = withDefaults(defineProps<{ isEdit: boolean; initial: GoalFormInitial; submit: (res: GoalFormInput) => Promise<void>; categories?: string[]; noCategoryLabels?: string[] }>(), { categories: () => [], noCategoryLabels: () => [] })
+const props = withDefaults(defineProps<{ isEdit: boolean; initial: GoalFormInitial; submit: (res: GoalFormInput) => Promise<void>; categories?: string[]; noCategoryLabels?: string[]; horizonColumn?: boolean }>(), { categories: () => [], noCategoryLabels: () => [], horizonColumn: false })
 const emit = defineEmits<{ close: [] }>()
 
 const name = ref(props.initial.name)
@@ -22,13 +23,17 @@ const category = computed(() => (categoryChoice.value === NEW ? newCategory.valu
 const stages = ref(props.initial.stages)
 const difficulty = ref<Difficulty>(props.initial.difficulty)
 const deadline = ref(props.initial.deadline)
+// Горизонт (BACKLOG 1048+1050): у старой цели выводится из срока; «В ближайшее время»/«В ближайший месяц» — только если в базе есть колонка (миграция 084).
+const options = computed(() => horizonOptions(props.horizonColumn))
+const horizon = ref<Horizon>(effectiveHorizon({ deadline: props.initial.deadline, horizon: props.initial.horizon }))
+const dateMissing = ref(false)
 // Баллы не вводятся, а следуют за сложностью (BACKLOG разделы 35/40); у старой цели с другими баллами они остаются, пока сложность не сменят.
 const shownPoints = computed(() => pointsAfterEdit(difficulty.value, { points: props.initial.points, difficulty: props.initial.difficulty }))
 
 const saving = ref(false)
 const nameMissing = ref(false)
 const submitError = ref<string | null>(null)
-const errorText = computed(() => (nameMissing.value ? t('goals_form_name_required') : submitError.value))
+const errorText = computed(() => (nameMissing.value ? t('goals_form_name_required') : dateMissing.value ? t('goals_form_date_required') : submitError.value))
 
 async function save() {
   if (saving.value) return
@@ -37,6 +42,11 @@ async function save() {
     return
   }
   nameMissing.value = false
+  if (horizon.value === 'day' && !deadline.value) {
+    dateMissing.value = true // «В конкретный день» без даты не сохраняем молча
+    return
+  }
+  dateMissing.value = false
   submitError.value = null
   saving.value = true
   try {
@@ -45,7 +55,8 @@ async function save() {
       category: category.value,
       stages: stages.value,
       difficulty: difficulty.value,
-      deadline: deadline.value,
+      deadline: horizon.value === 'day' ? deadline.value : '',
+      horizon: horizon.value,
     })
   } catch (e) {
     submitError.value = friendlyError(e)
@@ -83,8 +94,15 @@ async function save() {
       </select>
       <p class="dim mt-1 text-xs" data-test="goal-points-auto">{{ t('goals_points_auto').replace('{n}', String(shownPoints)) }}</p>
 
-      <label class="mt-2 block text-sm">{{ t('goals_field_deadline') }}</label>
-      <input v-model="deadline" type="date" class="w-full" />
+      <label class="mt-2 block text-sm">{{ t('goals_field_horizon') }}</label>
+      <select v-model="horizon" class="w-full" data-test="goal-horizon-select" @change="dateMissing = false">
+        <option v-for="h in options" :key="h" :value="h">{{ t(HORIZON_KEYS[h]) }}</option>
+      </select>
+
+      <template v-if="horizon === 'day'">
+        <label class="mt-2 block text-sm">{{ t('goals_field_date') }}</label>
+        <input v-model="deadline" type="date" class="w-full" data-test="goal-deadline" :aria-invalid="dateMissing" @input="dateMissing = false" />
+      </template>
 
       <p v-if="errorText" class="mt-3 text-sm" style="color: var(--danger)" role="alert" data-test="goal-form-error">{{ errorText }}</p>
 

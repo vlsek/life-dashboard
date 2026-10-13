@@ -1,3 +1,5 @@
+import type { Horizon } from './horizons'
+
 export type Difficulty = 'easy' | 'medium' | 'hard' | null
 
 export interface Goal {
@@ -12,6 +14,7 @@ export interface Goal {
   done_date: string | null // ISO
   deadline: string | null // ISO, опционально (миграция 020)
   difficulty: Difficulty
+  horizon?: Horizon | null // миграция 084; нет колонки/значения — выводится из срока (effectiveHorizon)
   created_at: string
 }
 
@@ -23,6 +26,7 @@ export interface GoalFormInput {
   stages: number
   difficulty: Difficulty
   deadline: string
+  horizon?: Horizon | null
 }
 
 // Начальные значения формы: то же + текущие баллы цели (только для показа строки «Баллы: N»; в базу из формы не уходят).

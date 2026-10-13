@@ -17,7 +17,7 @@ describe('форма цели: баллы по сложности', () => {
   it('поля «Баллы» нет — ни подписи, ни числового поля баллов', () => {
     const w = mountForm()
     const labels = w.findAll('label').map((l) => l.text())
-    expect(labels).toEqual(['Название', 'Категория', 'Количество этапов (1 = обычная галочка)', 'Сложность', 'Дедлайн (необязательно)'])
+    expect(labels).toEqual(['Название', 'Категория', 'Количество этапов (1 = обычная галочка)', 'Сложность', 'Когда']) // поле даты появляется только у «В конкретный день»
     expect(w.findAll('input[type="number"]')).toHaveLength(1) // только этапы
     w.unmount()
   })
@@ -50,7 +50,7 @@ describe('форма цели: баллы по сложности', () => {
     await Promise.resolve()
     expect(submit).toHaveBeenCalledTimes(1)
     const res = (submit.mock.calls[0] as unknown as [GoalFormInput])[0]
-    expect(res).toEqual({ name: 'Пробежать 10 км', category: '', stages: 1, difficulty: 'hard', deadline: '' })
+    expect(res).toEqual({ name: 'Пробежать 10 км', category: '', stages: 1, difficulty: 'hard', deadline: '', horizon: 'now' })
     expect(res).not.toHaveProperty('points')
     w.unmount()
   })

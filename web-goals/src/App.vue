@@ -14,6 +14,7 @@ import { useGoals } from './lib/useGoals'
 import { daysWord, useGoalsStreak } from './lib/goalsStreak'
 import { deadlineLevel, groupActiveByCategory, sortDone, pointsSummary } from './lib/goals'
 import { categoryProgress, upcomingDeadlines } from './lib/goalSections'
+import { HORIZON_KEYS, groupByHorizon, loadGoalsView, saveGoalsView, type GoalsView } from './lib/horizons'
 import { mergeCategories, savedCategories } from './lib/categories'
 import { useGoalCategories } from './lib/useGoalCategories'
 import { getLang, t } from './lib/i18n'
@@ -23,7 +24,7 @@ import { confirmDialog } from './lib/confirmDialog'
 import { friendlyError } from './lib/friendlyError'
 import { isDeadlineReminderEnabled, setDeadlineReminderEnabled } from './lib/deadlineReminderSetting'
 
-const { auth, items, error, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
+const { auth, items, error, hasHorizon, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
 onMounted(init)
 
 // Серия по целям (BACKLOG 60.1, миграция 079): грузим при входе и после каждой отметки цели (число выполненных изменилось)
@@ -79,6 +80,13 @@ function upcomingChip(g: Goal): string {
   return `${t('goals_deadline_until')} ${fmtRu(g.deadline)}`
 }
 const grouped = computed(() => groupActiveByCategory(active.value, noCategory.value))
+// Вид страницы (BACKLOG 1048+1050): «По категориям» (по умолчанию) / «По срокам» — разделы по горизонтам; выбор помнится на устройстве.
+const view = ref<GoalsView>(loadGoalsView())
+function setView(v: GoalsView) {
+  view.value = v
+  saveGoalsView(v)
+}
+const horizonGroups = computed(() => groupByHorizon(active.value))
 // Свои категории для выбора в форме цели (BACKLOG раздел 35): из ВСЕХ целей, в том числе выполненных; «Без категории» на обоих языках не в счёт.
 const noCategoryLabels = ['Без категории', 'No category', noCategory.value]
 // + сохранённый список из таблицы goal_categories (миграция 050): категория не пропадает, когда последнюю цель с ней удалили.
@@ -110,7 +118,7 @@ const formTarget = ref<Goal | 'new' | null>(null)
 const formInitial = computed<GoalFormInitial>(() => {
   const g = formTarget.value
   if (g && g !== 'new') {
-    return { name: g.name, points: g.points ?? 5, category: g.category, stages: g.stages ?? 1, difficulty: g.difficulty, deadline: g.deadline ?? '' }
+    return { name: g.name, points: g.points ?? 5, category: g.category, stages: g.stages ?? 1, difficulty: g.difficulty, deadline: g.deadline ?? '', horizon: g.horizon ?? null }
   }
   return { name: '', points: 5, category: '', stages: 1, difficulty: null, deadline: '' }
 })
@@ -184,7 +192,13 @@ async function onDelete(g: Goal) {
       <div data-test="goals-body">
         <p v-if="active.length === 0" class="dim">{{ t('goals_no_active') }}</p>
 
-        <CollapsibleSection v-if="upcoming.length" id="upcoming" :title="t('goals_sec_upcoming')" :count="upcoming.length">
+        <div v-if="active.length" class="mb-3 flex gap-2" role="group" :aria-label="t('goals_view_aria')" data-test="goals-view-switch">
+          <button v-for="v in (['category', 'horizon'] as const)" :key="v" type="button" class="rounded-lg px-3 py-1 text-sm" :class="{ secondary: view !== v }" :aria-pressed="view === v" :data-test="'goals-view-' + v" @click="setView(v)">
+            {{ t(v === 'category' ? 'goals_view_cat' : 'goals_view_hor') }}
+          </button>
+        </div>
+
+        <CollapsibleSection v-if="view === 'category' && upcoming.length" id="upcoming" :title="t('goals_sec_upcoming')" :count="upcoming.length">
           <ul class="m-0 flex list-none flex-col gap-1.5 p-0" data-test="goals-upcoming">
             <li
               v-for="g in upcoming"
@@ -199,6 +213,15 @@ async function onDelete(g: Goal) {
           </ul>
         </CollapsibleSection>
 
+        <template v-if="view === 'horizon'">
+          <CollapsibleSection v-for="[h, list] in horizonGroups" :id="'hor-' + h" :key="h" :title="t(HORIZON_KEYS[h])" :count="list.length" :data-test="'goals-hor-' + h">
+            <div class="flex flex-col gap-2">
+              <GoalCard v-for="g in list" :key="g.id" :goal="g" :saved="!!flashed[g.id]" @toggle="toggleGoal(g)" @stage="setStage(g, $event)" @edit="formTarget = g" @delete="onDelete(g)" />
+            </div>
+          </CollapsibleSection>
+        </template>
+
+        <template v-else>
         <CollapsibleSection v-for="[cat, list] in grouped" :id="'cat-' + cat" :key="cat" :title="cat" :count="list.length" :progress="catProgress[cat]">
           <div class="flex flex-col gap-2">
             <GoalCard
@@ -213,6 +236,7 @@ async function onDelete(g: Goal) {
             />
           </div>
         </CollapsibleSection>
+        </template>
 
         <p class="dim text-sm">{{ t('goals_points_earned') }} {{ summary.earned }} / {{ summary.possible }}</p>
 
@@ -251,7 +275,7 @@ async function onDelete(g: Goal) {
       </div>
     </template>
 
-    <GoalForm v-if="formTarget" :is-edit="formTarget !== 'new'" :initial="formInitial" :categories="myCategories" :no-category-labels="noCategoryLabels" :submit="onSaveForm" @close="formTarget = null" />
+    <GoalForm v-if="formTarget" :is-edit="formTarget !== 'new'" :initial="formInitial" :categories="myCategories" :no-category-labels="noCategoryLabels" :horizon-column="hasHorizon" :submit="onSaveForm" @close="formTarget = null" />
   </main>
 </template>
 

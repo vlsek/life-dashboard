@@ -19,6 +19,8 @@ export function useGoals() {
   const auth = ref<AuthState>({ status: 'loading' })
   const items = ref<Goal[]>([])
   const error = ref<string | null>(null)
+  // Есть ли колонка goals.horizon (миграция 084): определяем по загруженным целям, а у пустого списка — пробным запросом. Нет колонки — работаем как раньше.
+  const hasHorizon = ref(false)
   // id целей, у которых только что подтвердилась запись: на ~0,9 с показываем галочку «сохранено» (BACKLOG 23:25 / 815, срез 3)
   const flashed = ref<Record<string, boolean>>({})
 
@@ -60,6 +62,8 @@ export function useGoals() {
     }
     error.value = null
     items.value = (data || []) as Goal[]
+    if (items.value.length) hasHorizon.value = 'horizon' in items.value[0]
+    else hasHorizon.value = !(await sb.from('goals').select('horizon').limit(1)).error
   }
 
   async function reload() {
@@ -67,14 +71,14 @@ export function useGoals() {
   }
 
   async function addGoal(userId: string, res: GoalFormInput, noCategoryLabel: string) {
-    const row = buildInsertRow(res, noCategoryLabel)
+    const row = buildInsertRow(res, noCategoryLabel, { horizonColumn: hasHorizon.value })
     const { error: err } = await sb.from('goals').insert({ user_id: userId, ...row })
     if (err) throw err
     await reload()
   }
 
   async function updateGoal(existing: Goal, res: GoalFormInput, noCategoryLabel: string) {
-    const patch = buildUpdateRow(res, existing, noCategoryLabel)
+    const patch = buildUpdateRow(res, existing, noCategoryLabel, { horizonColumn: hasHorizon.value })
     const { error: err } = await sb.from('goals').update(patch).eq('id', existing.id)
     if (err) throw err
     // правка числа этапов может сама закрыть/открыть многоэтапную цель (patch.done) — баллы идут по новым очкам цели
@@ -117,5 +121,5 @@ export function useGoals() {
     flash(g.id)
   }
 
-  return { auth, items, error, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage }
+  return { auth, items, error, hasHorizon, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage }
 }
