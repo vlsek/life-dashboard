@@ -24,11 +24,11 @@ describe('effectiveHorizon', () => {
 })
 
 describe('groupByHorizon', () => {
-  it('только непустые разделы в порядке сейчас → скоро → месяц → день; день по дате, без даты в конец', () => {
-    const gs = [goal({ name: 'd2', deadline: '2026-12-01' }), goal({ name: 'm', horizon: 'month' }), goal({ name: 'n' }), goal({ name: 'd1', deadline: '2026-11-01' }), goal({ name: 'd0', horizon: 'day' })]
+  it('только непустые разделы в порядке сейчас → скоро → неделя → месяц → день; день по дате, без даты в конец', () => {
+    const gs = [goal({ name: 'd2', deadline: '2026-12-01' }), goal({ name: 'm', horizon: 'month' }), goal({ name: 'w', horizon: 'week' }), goal({ name: 'n' }), goal({ name: 'd1', deadline: '2026-11-01' }), goal({ name: 'd0', horizon: 'day' })]
     const r = groupByHorizon(gs)
-    expect(r.map(([h]) => h)).toEqual(['now', 'month', 'day'])
-    expect(r[2][1].map((g) => g.name)).toEqual(['d1', 'd2', 'd0'])
+    expect(r.map(([h]) => h)).toEqual(['now', 'week', 'month', 'day'])
+    expect(r[3][1].map((g) => g.name)).toEqual(['d1', 'd2', 'd0'])
   })
 })
 
@@ -40,7 +40,7 @@ describe('запись в базу', () => {
   })
   it('с колонкой: пишется horizon; «Скоро»/«Месяц» без срока', () => {
     expect(horizonFields({ horizon: 'soon', deadline: '2026-11-01' }, true)).toEqual({ horizon: 'soon', deadline: null })
-    expect(horizonOptions(true)).toEqual(['now', 'soon', 'month', 'day'])
+    expect(horizonOptions(true)).toEqual(['now', 'soon', 'week', 'month', 'day'])
     const row = buildInsertRow(form({ horizon: 'month' }), 'Без категории', { horizonColumn: true })
     expect(row).toMatchObject({ horizon: 'month' })
     expect(row).not.toHaveProperty('deadline') // у новой цели обнулять срок нечего
@@ -77,7 +77,7 @@ describe('форма цели: горизонт', () => {
     expect(w1.find('[data-test="goal-deadline"]').exists()).toBe(false)
     w1.unmount()
     const w2 = mountForm({ deadline: '2026-11-01' }, true)
-    expect(sel(w2).findAll('option')).toHaveLength(4)
+    expect(sel(w2).findAll('option')).toHaveLength(5)
     expect((sel(w2).element as HTMLSelectElement).value).toBe('day')
     expect(w2.find('[data-test="goal-deadline"]').exists()).toBe(true)
     w2.unmount()
@@ -97,6 +97,18 @@ describe('форма цели: горизонт', () => {
     await w.find('[data-test="goal-form-save"]').trigger('click')
     await Promise.resolve()
     expect((submit.mock.calls[1] as unknown as [GoalFormInput])[0]).toMatchObject({ horizon: 'month', deadline: '' })
+    w.unmount()
+  })
+  it('«На неделю» без миграции 086: база отклоняет значение — человеку говорят про миграцию, а не «проверьте данные»', async () => {
+    const submit = vi.fn(async () => {
+      throw { message: 'new row for relation "goals" violates check constraint "goals_horizon_check"', code: '23514' }
+    })
+    const w = mountForm({}, true, submit)
+    await sel(w).setValue('week')
+    await w.find('[data-test="goal-form-save"]').trigger('click')
+    await Promise.resolve()
+    await Promise.resolve()
+    expect(w.find('[data-test="goal-form-error"]').text()).toContain('086')
     w.unmount()
   })
 })

@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { monthGoalsFor, type PlanGoal, type PlannedEntry } from './lib/planned'
 
-// BACKLOG 1052 «Цели месяца на главной», срез 1: активные цели с горизонтом «В ближайший месяц», которых нет в плане, — под таблицей «Планов» (только сегодня).
+// BACKLOG 1052 «Цели недели и месяца на главной» (срез 1 — месяц, срез 2 — неделя, миграция 086): активные цели с горизонтом «В ближайший месяц», которых нет в плане, — под таблицей «Планов» (только сегодня).
 const g = (id: string, name: string, o: Partial<PlanGoal> = {}): PlanGoal => ({ id, name, stages: 1, done: false, current_stage: 0, ...o })
 const ids = (...x: string[]) => new Set(x)
 const TODAY = '2026-10-13'
@@ -23,7 +23,7 @@ describe('monthGoalsFor', () => {
   })
 })
 
-const h = vi.hoisted(() => ({ monthRows: [] as { id: string }[], monthError: null as null | { message: string }, goalUpdates: [] as Record<string, unknown>[], today: '' }))
+const h = vi.hoisted(() => ({ horizonsAsked: [] as unknown[], monthRows: [] as { id: string }[], monthError: null as null | { message: string }, weekRows: [] as { id: string }[], weekError: null as null | { message: string }, goalUpdates: [] as Record<string, unknown>[], today: '' }))
 vi.mock('./lib/supabase', () => ({
   sb: {
     from: (table: string) => {
@@ -37,7 +37,11 @@ vi.mock('./lib/supabase', () => ({
         limit: () => chain,
         maybeSingle: () => Promise.resolve({ data: null, error: null }),
         then: (res: (v: unknown) => unknown) => {
-          if (table === 'goals' && f.horizon === 'month') return Promise.resolve(h.monthError ? { data: null, error: h.monthError } : { data: h.monthRows, error: null }).then(res)
+          if (table === 'goals' && (f.horizon === 'month' || f.horizon === 'week')) {
+            h.horizonsAsked.push(f.horizon)
+            if (f.horizon === 'week') return Promise.resolve(h.weekError ? { data: null, error: h.weekError } : { data: h.weekRows, error: null }).then(res)
+            return Promise.resolve(h.monthError ? { data: null, error: h.monthError } : { data: h.monthRows, error: null }).then(res)
+          }
           if (table === 'goals')
             return Promise.resolve({
               data: [
@@ -62,6 +66,9 @@ import { todayStr } from './lib/date'
 
 beforeEach(() => {
   h.monthRows = [{ id: 'a' }, { id: 'b' }]
+  h.horizonsAsked = []
+  h.weekRows = []
+  h.weekError = null
   h.monthError = null
   h.goalUpdates = []
   localStorage.clear()
@@ -81,6 +88,22 @@ describe('«Планы»: блок «Цели месяца»', () => {
     expect(rows[0].find('[data-test="month-goal-check"]').exists()).toBe(true)
     expect(rows[1].find('[data-test="month-goal-check"]').exists()).toBe(false)
     w.unmount()
+  })
+  it('спрашиваются цели недели и месяца (миграции 086/084)', async () => {
+    const w = await mountPlanned()
+    expect([...h.horizonsAsked].sort()).toEqual(['month', 'week'])
+    w.unmount()
+  })
+  it('цели недели (086) тоже показываются; нет миграции 086 (ошибка запроса недели) — остаются цели месяца', async () => {
+    h.monthRows = [{ id: 'a' }]
+    h.weekRows = [{ id: 'c' }]
+    const w1 = await mountPlanned()
+    expect(w1.findAll('[data-test="month-goal"]').map((r) => r.text())).toEqual(['Прочитать книгу', 'Обычная цель'])
+    w1.unmount()
+    h.weekError = { message: 'column goals.horizon does not exist or check' }
+    const w2 = await mountPlanned()
+    expect(w2.findAll('[data-test="month-goal"]').map((r) => r.text())).toEqual(['Прочитать книгу'])
+    w2.unmount()
   })
   it('отметка пишется в саму цель и убирает её из списка месяца', async () => {
     const w = await mountPlanned()

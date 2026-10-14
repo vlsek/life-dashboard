@@ -80,7 +80,8 @@ async function save() {
       ...(kind.value === 'plain' ? {} : { weightMode: kind.value, weightStart: wStart, weightTarget: wTarget }), // у обычной цели ключей веса нет — weightFields() сам обнулит вес в базе
     })
   } catch (e) {
-    submitError.value = friendlyError(e)
+    // горизонт «На неделю» без миграции 086: база отклоняет значение проверкой goals_horizon_check — говорим, что делать, а не «проверьте данные»
+    submitError.value = /goals_horizon_check/.test(String((e as { message?: unknown } | null)?.message ?? '')) ? t('goals_horizon_need_086') : friendlyError(e)
   } finally {
     saving.value = false
   }

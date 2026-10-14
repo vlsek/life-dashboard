@@ -1,11 +1,11 @@
 import type { Goal } from './types'
 
 // Горизонты целей (BACKLOG 1048+1050, миграция 084). Порядок = порядок разделов в виде «По срокам».
-export type Horizon = 'now' | 'soon' | 'month' | 'day'
-export const HORIZONS: Horizon[] = ['now', 'soon', 'month', 'day']
+export type Horizon = 'now' | 'soon' | 'week' | 'month' | 'day'
+export const HORIZONS: Horizon[] = ['now', 'soon', 'week', 'month', 'day']
 
 // Ключи i18n названий горизонтов (литералами — t() принимает только известные ключи).
-export const HORIZON_KEYS = { now: 'goals_hor_now', soon: 'goals_hor_soon', month: 'goals_hor_month', day: 'goals_hor_day' } as const
+export const HORIZON_KEYS = { now: 'goals_hor_now', soon: 'goals_hor_soon', week: 'goals_hor_week', month: 'goals_hor_month', day: 'goals_hor_day' } as const
 
 export function isHorizon(v: unknown): v is Horizon {
   return typeof v === 'string' && (HORIZONS as string[]).includes(v)
@@ -17,7 +17,7 @@ export function effectiveHorizon(g: Pick<Goal, 'deadline'> & { horizon?: string 
   return g.deadline ? 'day' : 'now'
 }
 
-// Какие горизонты можно выбрать в форме: без колонки (миграция 084 не применена) — только те, что выражаются без неё.
+// Какие горизонты можно выбрать в форме: без колонки (миграция 084 не применена; «На неделю» — ещё и 086) — только те, что выражаются без неё.
 export function horizonOptions(hasColumn: boolean): Horizon[] {
   return hasColumn ? HORIZONS : ['now', 'day']
 }
@@ -41,7 +41,7 @@ function byDeadline(a: Goal, b: Goal): number {
 
 // Группы активных целей по горизонту (только непустые, в порядке HORIZONS). «В конкретный день» — по дате, остальные — по порядку создания.
 export function groupByHorizon(active: Goal[]): [Horizon, Goal[]][] {
-  const groups: Record<Horizon, Goal[]> = { now: [], soon: [], month: [], day: [] }
+  const groups: Record<Horizon, Goal[]> = { now: [], soon: [], week: [], month: [], day: [] }
   for (const g of active) groups[effectiveHorizon(g)].push(g)
   return HORIZONS.filter((h) => groups[h].length).map((h) => [h, h === 'day' ? groups[h].slice().sort(byDeadline) : groups[h]])
 }

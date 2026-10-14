@@ -33,7 +33,7 @@ import { createGoal, type GoalFormInput } from './newGoal'
 export function usePlanned() {
   const planned = ref<PlannedEntry[]>([])
   const goals = ref<PlanGoal[]>([])
-  // id целей с горизонтом «месяц» (миграция 084; нет колонки — запрос вернёт ошибку, и список просто пуст)
+  // id целей с горизонтом «неделя» и «месяц» (миграции 084/086; нет колонки — запрос вернёт ошибку, и список просто пуст)
   const monthIds = ref<Set<string>>(new Set())
   const loaded = ref(false)
   const error = ref<string | null>(null)
@@ -53,10 +53,11 @@ export function usePlanned() {
   async function load(uid: string, dateStr: string) {
     userId = uid
     date = dateStr
-    const [noteRes, goalsRes, monthRes] = await Promise.all([
+    const [noteRes, goalsRes, monthRes, weekRes] = await Promise.all([
       sb.from('daily_notes').select('planned_goals').eq('user_id', uid).eq('date', dateStr).maybeSingle(),
       sb.from('goals').select('id, name, stages, done, current_stage, done_date').eq('user_id', uid),
       sb.from('goals').select('id').eq('user_id', uid).eq('horizon', 'month').eq('done', false),
+      sb.from('goals').select('id').eq('user_id', uid).eq('horizon', 'week').eq('done', false), // миграция 086; нет её — ошибка, неделя просто пуста
     ])
     const err = noteRes.error?.message || goalsRes.error?.message
     error.value = err ? friendlyError(err, 'load') : null
@@ -64,7 +65,8 @@ export function usePlanned() {
     saved = planned.value
     version++ // ответ на загрузку новее любых незавершённых откатов предыдущей даты
     goals.value = (goalsRes.data || []) as PlanGoal[]
-    monthIds.value = new Set(monthRes?.error ? [] : ((monthRes?.data || []) as { id: string }[]).map((r) => r.id))
+    const idsOf = (r: { error?: unknown; data?: unknown } | undefined): string[] => (r?.error ? [] : ((r?.data || []) as { id: string }[]).map((x) => x.id))
+    monthIds.value = new Set([...idsOf(monthRes), ...idsOf(weekRes)])
     loaded.value = true
   }
 
