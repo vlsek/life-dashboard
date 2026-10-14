@@ -80,6 +80,7 @@ function writeLast(now: number) {
 }
 
 import { DATA_CHANGED } from './events'
+import { installWriteSignal, WRITE_SIGNAL } from './writeSignal'
 
 // Запускает проверку и повторяет её, пока страница открыта и видна. onNew получает список новых достижений.
 export function startAchievementWatcher(onNew: (items: WatchItem[]) => void, opts: { createdAt?: string | null } = {}): () => void {
@@ -128,12 +129,16 @@ export function startAchievementWatcher(onNew: (items: WatchItem[]) => void, opt
     }, ACTION_DELAY_MS)
   }
   window.addEventListener(DATA_CHANGED, onAction)
+  window.addEventListener(WRITE_SIGNAL, onAction)
+  const uninstallWrites = installWriteSignal()
   document.addEventListener('visibilitychange', onVisible)
   setTimeout(check, 4000) // не мешаем первой отрисовке страницы
   return () => {
     window.removeEventListener('message', onMessage)
     document.removeEventListener('visibilitychange', onVisible)
     window.removeEventListener(DATA_CHANGED, onAction)
+    window.removeEventListener(WRITE_SIGNAL, onAction)
+    uninstallWrites()
     if (actionTimer) clearTimeout(actionTimer)
     clearInterval(interval)
     cleanup()

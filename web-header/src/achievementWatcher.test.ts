@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 import { mount } from '@vue/test-utils'
 import AchievementToast from './components/AchievementToast.vue'
 import { DATA_CHANGED } from './lib/events'
+import { WRITE_SIGNAL } from './lib/writeSignal'
 import { ACTION_DELAY_MS, ACTION_MIN_GAP_MS, BG_MSG_DONE, BG_MSG_NEW, CHECK_EVERY_MS, WATCH_SKIP, YOUNG_ACCOUNT_DAYS, YOUNG_CHECK_EVERY_MS, checkEveryMs, isCheckDue, isYoungAccount, parseWatchMessage, startAchievementWatcher } from './lib/achievementWatcher'
 
 // BACKLOG 52.1 срез 2: поздравление о новом достижении на любой странице.
@@ -234,6 +235,16 @@ describe('проверка сразу после действия (52.1)', () =>
     act() // сразу после проверки
     vi.advanceTimersByTime(ACTION_DELAY_MS + 100)
     expect(document.querySelector('iframe')).toBeNull() // с прошлой проверки < 30 с
+    stop()
+  })
+  it('запись в базу на любой странице (сигнал шапки) тоже запускает проверку', () => {
+    const stop = startAchievementWatcher(() => {}, { createdAt: old() })
+    vi.advanceTimersByTime(4100)
+    finish()
+    vi.advanceTimersByTime(ACTION_MIN_GAP_MS + 1000)
+    window.dispatchEvent(new Event(WRITE_SIGNAL))
+    vi.advanceTimersByTime(ACTION_DELAY_MS + 100)
+    expect(document.querySelector('iframe')).not.toBeNull()
     stop()
   })
   it('после остановки наблюдателя действия ничего не запускают', () => {
