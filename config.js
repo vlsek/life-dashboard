@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.62";
+const SITE_VERSION = "5.63";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.63", date: "2026-10-14 02:33", changes: [
+        "«Планы» на главной: под таблицей на сегодняшнем дне появился список «Цели месяца» — активные цели с горизонтом «В ближайший месяц», которых ещё нет в плане. Одноэтапную цель можно отметить прямо там (отметка пишется в саму цель, выполненная переходит в «выполнено сегодня»), у многоэтапной видно «этап/этапов». В окне «Новая цель» на главной появилось поле «Когда», как в «Целях». Список виден, только если применена миграция 084.",
+    ]},
     { version: "5.62", date: "2026-10-14 05:37", changes: [
         "Графики: мини-график за 7 дней появился и в карточках метрик «Подходы» (сумма повторов по дням) — под той же настройкой «Мини-графики» в «Кастомизации → Графики → Дополнения» (по умолчанию выключено). Без миграций."
     ]},
@@ -2296,6 +2299,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.63", date: "2026-10-14 02:33", changes: [
+        "Plans on the home page: on today, a new “Goals for this month” list appears under the table — active goals with the “This month” horizon that are not in the plan yet. A single-step goal can be ticked right there (the tick is saved on the goal itself and it moves to “completed today”); a multi-stage goal shows its stage count. The “New goal” window on the home page now has the “When” field, like in Goals. The list appears only once migration 084 is applied.",
+    ]},
     { version: "5.62", date: "2026-10-14 05:37", changes: [
         "Charts: the 7-day mini chart now also appears in “Sets” metric cards (reps per day) — under the same “Mini charts” option in Customization → Charts → Extras (off by default). No migrations."
     ]},
