@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.58";
+const SITE_VERSION = "5.59";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.59", date: "2026-10-14 05:28", changes: [
+        "Графики: мини-графики за 7 дней в плашках числовых метрик «Дневных метрик» — крошечная линия под значением (пропуски дней разрывают линию). Включаются в «Кастомизации → Графики → Дополнения» (по умолчанию выключены, вид страницы не меняется); есть подпись для скринридера и строка в «Сейчас выбрано». Без миграций."
+    ]},
     { version: "5.58", date: "2026-10-14 05:26", changes: [
         "Тренировки, вкладка «Прогрессия»: блок «Серия по неделям» — сколько недель подряд (пн–вс) была хотя бы одна тренировка, лучшая серия, дни с тренировкой на этой неделе и 8 последних недель столбиками. Пустая текущая неделя серию не рвёт, пока не закончится",
     ]},
@@ -2283,6 +2286,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.59", date: "2026-10-14 05:28", changes: [
+        "Charts: 7-day mini charts in the number-metric plates of Daily metrics — a tiny line under the value (days without data break the line). Turn them on in Customization → Charts → Extras (off by default, the page looks the same); screen-reader label and a row in “Selected now” included. No migrations."
+    ]},
     { version: "5.58", date: "2026-10-14 05:26", changes: [
         "Workouts, Progress tab: a \"Weekly streak\" block — how many weeks in a row (Mon–Sun) had at least one workout, the best streak, training days this week and the last 8 weeks as bars. An empty current week does not break the streak until it ends",
     ]},
