@@ -21,7 +21,7 @@
 | `legacy/shop.html` | Магазин за баллы (классика; основная версия — `/shop/`) |
 | `legacy/community.html` | Общий лидерборд и лента активности |
 | `legacy/account.html` | Настройки аккаунта |
-| `admin.html` | Админка |
+| `admin.html` | Заглушка-редирект на `/admin/` (Админка на Vue: пилот `web-admin/`, классика — `legacy/admin.html`) |
 
 Общая логика (клиент Supabase, авторизация, модалки, навигация) — в `config.js`.
 Переводы (RU/EN) — в `i18n.js`. Тема оформления — в `theme.js`.

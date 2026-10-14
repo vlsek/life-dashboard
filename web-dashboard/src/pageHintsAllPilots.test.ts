@@ -4,9 +4,9 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { PAGE_HINTS } from './lib/pageHints'
 
 // Страж (BACKLOG 49.4): копии pageHints.ts / PageHint.vue одинаковы во всех пилотах; у каждой страницы есть подсказка на обоих языках;
-// каждый AppShell подключает значок «i» со своим ключом страницы.
+// каждый AppShell подключает значок «i» со своим ключом страницы. Исключение — web-admin (служебная страница владельца, BACKLOG 47.5): подсказки у неё нет.
 const root = '..'
-const pilots: string[] = (readdirSync(root) as string[]).filter((d: string) => d.startsWith('web-') && existsSync(`${root}/${d}/src/components/AppShell.vue`))
+const pilots: string[] = (readdirSync(root) as string[]).filter((d: string) => d.startsWith('web-') && d !== 'web-admin' && existsSync(`${root}/${d}/src/components/AppShell.vue`))
 const read = (p: string, f: string): string => readFileSync(`${root}/${p}/${f}`, 'utf8')
 
 describe('подсказки страниц во всех пилотах', () => {

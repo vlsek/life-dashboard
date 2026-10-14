@@ -4,6 +4,8 @@ web-history/dist
 
 web-milestones/node_modules
 web-milestones/dist
+web-admin/node_modules
+web-admin/dist
 web-calendar/node_modules
 web-calendar/dist
 web-goals/node_modules

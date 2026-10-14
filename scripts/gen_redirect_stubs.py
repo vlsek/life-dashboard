@@ -6,7 +6,7 @@
 (см. docs/HANDOFF.md), поэтому — обычный HTML: meta refresh (без JS) + location.replace (с сохранением
 ?query и #hash). Запуск: python3 scripts/gen_redirect_stubs.py — идемпотентен.
 
-Логин и Онбординг входят с v1.34 (этап A, docs/PHASE2_DECISIONS.md, раздел 2). Admin не переезжает (решение владельца).
+Логин и Онбординг входят с v1.34 (этап A, docs/PHASE2_DECISIONS.md, раздел 2). Admin переехал в v5.5x (BACKLOG 47.5, владелец подтвердил 2026-10-07): пилот web-admin/ → /admin/, классика — /legacy/admin.html.
 """
 import pathlib
 
@@ -28,6 +28,7 @@ STUBS = {
     "account.html": "/account/",
     "login.html": "/login/",
     "onboarding.html": "/onboarding/",
+    "admin.html": "/admin/",
 }
 
 TEMPLATE = """<!DOCTYPE html>

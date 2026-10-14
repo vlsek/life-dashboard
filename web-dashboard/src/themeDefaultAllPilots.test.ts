@@ -29,8 +29,8 @@ describe('тема по умолчанию — светлая во всех пи
     }
   })
 
-  it('общие theme.js и admin.html тоже: по умолчанию light', () => {
+  it('общие theme.js и legacy/admin.html тоже: по умолчанию light', () => {
     expect(read(`${ROOT}/theme.js`)).toContain('getItem("site_theme") || "light"')
-    expect(read(`${ROOT}/admin.html`)).toContain('getItem("site_theme")||"light"')
+    expect(read(`${ROOT}/legacy/admin.html`)).toContain('getItem("site_theme")||"light"')
   })
 })
