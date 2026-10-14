@@ -43,13 +43,13 @@ function onRemove(i: number) {
       <table class="w-full text-sm">
         <tbody>
           <tr v-for="(_, i) in rows" :key="i" class="align-middle" data-testid="entry-set-row">
-            <td class="pr-1.5" style="color: var(--text-dim)">{{ i + 1 }}</td>
-            <td class="pr-1.5 pb-1">
+            <td class="pr-1 text-xs" style="color: var(--text-dim)">{{ i + 1 }}</td>
+            <td class="pr-1 pb-1">
               <input type="time" :value="rows[i].time ?? ''" :title="t('sets_time_title')" class="es-input" style="width: 96px" data-testid="entry-set-time" @change="onTime(i, $event)" />
             </td>
-            <td class="pr-1.5 pb-1">
-              <div v-for="k in keysOf(i)" :key="k" class="mb-1 flex flex-wrap items-center gap-1.5 last:mb-0">
-                <span v-if="k !== 'P'" class="w-12 text-xs" style="color: var(--text-dim)">{{ sideLabel(k) }}</span>
+            <td class="pr-1 pb-1">
+              <div v-for="k in keysOf(i)" :key="k" class="mb-1 flex flex-nowrap items-center gap-1 last:mb-0">
+                <span v-if="k !== 'P'" class="w-4 shrink-0 text-xs" style="color: var(--text-dim)">{{ sideLabel(k) }}</span>
                 <input
                   type="number"
                   step="any"
@@ -58,12 +58,12 @@ function onRemove(i: number) {
                   :value="rows[i].cells[k]!.reps ?? ''"
                   :placeholder="exercise.tracks_weight ? t('workouts_reps_placeholder') : valueLabel()"
                   class="es-input"
-                  :style="{ width: exercise.tracks_weight ? '70px' : '110px' }"
+                  :style="{ width: exercise.tracks_weight ? '58px' : '96px' }"
                   data-testid="entry-set-reps"
                   @change="onCell(i, k, 'reps', $event)"
                 />
                 <template v-if="exercise.tracks_duration">
-                  <input type="number" step="any" min="0" inputmode="decimal" :value="rows[i].cells[k]!.duration ?? ''" :placeholder="t('workouts_duration_placeholder')" class="es-input" style="width: 70px" data-testid="entry-set-duration" @change="onCell(i, k, 'duration', $event)" />
+                  <input type="number" step="any" min="0" inputmode="decimal" :value="rows[i].cells[k]!.duration ?? ''" :placeholder="t('workouts_duration_placeholder')" class="es-input" style="width: 58px" data-testid="entry-set-duration" @change="onCell(i, k, 'duration', $event)" />
                 </template>
                 <template v-if="showWeight(i, k)">
                   <span style="color: var(--text-dim)">{{ exercise.tracks_weight ? '×' : '+' }}</span>
@@ -75,7 +75,7 @@ function onRemove(i: number) {
                     :value="rows[i].cells[k]!.weight ?? ''"
                     :placeholder="(exercise.tracks_weight ? t('workouts_weight_placeholder') : t('workouts_extra_weight_placeholder')) + ' (' + unitLabel() + ')'"
                     class="es-input"
-                    style="width: 100px"
+                    style="width: 76px"
                     data-testid="entry-set-weight"
                     @change="onCell(i, k, 'weight', $event)"
                   />
@@ -120,6 +120,7 @@ function onRemove(i: number) {
   background: var(--bg);
   color: var(--text);
   border-radius: 0.5rem;
-  padding: 0.3rem 0.5rem;
+  padding: 0.3rem 0.4rem;
+  min-width: 0;
 }
 </style>
