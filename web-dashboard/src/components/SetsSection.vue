@@ -12,7 +12,7 @@ import type { RecordInfo } from '../lib/records'
 // Единственная точка подключения блока «Подходы» в App.vue: сама грузит метрики типа sets и
 // значения за дату (по умолчанию сегодня) и автосохраняет каждую правку. Навигацию по дням
 // добавит блок 6 (дневные метрики), передав сюда date.
-const props = withDefaults(defineProps<{ userId: string | null; date?: string; metricStreaks?: Record<string, MetricStreakInfo>; records?: Record<string, RecordInfo>; reloadKey?: number }>(), { date: () => todayStr() })
+const props = withDefaults(defineProps<{ userId: string | null; date?: string; metricStreaks?: Record<string, MetricStreakInfo>; records?: Record<string, RecordInfo>; sparks?: Record<string, (number | null)[]>; reloadKey?: number }>(), { date: () => todayStr() })
 
 const { metrics, setsByMetric, error, loaded, flashed, load, saveSets, addLinkedSet, rememberVariation, forgetVariation } = useSets()
 
@@ -53,6 +53,7 @@ watch(
       :sets="setsByMetric[m.id] || []"
       :streak="props.metricStreaks?.[m.id]"
       :record="props.records?.[m.id]"
+      :spark="props.sparks?.[m.id]"
       :saved="!!flashed[m.id]"
       @change="saveSets(m, $event)"
       @quick-add="addLinkedSet(m, $event)"

@@ -149,7 +149,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
     </div>
 
     <div class="mt-4">
-      <SetsSection :user-id="userId" :date="date" :metric-streaks="props.metricStreaks" :records="metricRecords" :reload-key="rev" />
+      <SetsSection :user-id="userId" :date="date" :metric-streaks="props.metricStreaks" :records="metricRecords" :sparks="metricSparks" :reload-key="rev" />
     </div>
 
     <!-- BACKLOG раздел 34: «Сохранить день» — в самом низу, после самой нижней метрики («Подходы»), а не посередине — так очевидно, что это

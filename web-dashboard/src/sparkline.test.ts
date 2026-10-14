@@ -101,3 +101,15 @@ describe('useMetricRecords.sparks', () => {
     expect(api.sparks.value.w[6]).toBe(7)
   })
 })
+
+describe('SetsCard: мини-график метрики «подходы»', () => {
+  const sets = { id: 's', name: 'Отжимания', type: 'sets', icon: null, source_exercise_id: null, goal_value: null, options: null } as unknown as Metric
+  it('показывается только при включённой настройке и при наличии ряда', async () => {
+    const { default: SetsCard } = await import('./components/SetsCard.vue')
+    const mk = (spark?: (number | null)[]) => mount(SetsCard, { props: { metric: sets, sets: [], spark } })
+    expect(mk([1, 2, 3]).find('[data-test="metric-spark"]').exists()).toBe(false)
+    localStorage.setItem('chart_sparks', 'on')
+    expect(mk([1, 2, 3]).find('[data-test="metric-spark"]').exists()).toBe(true)
+    expect(mk().find('[data-test="metric-spark"]').exists()).toBe(false)
+  })
+})

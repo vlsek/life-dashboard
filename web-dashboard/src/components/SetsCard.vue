@@ -8,6 +8,8 @@ import MetricStreakBadge from './MetricStreakBadge.vue'
 import type { MetricStreakInfo } from '../lib/metricStreaks'
 import RecordBadge from './RecordBadge.vue'
 import type { RecordInfo } from '../lib/records'
+import MetricSpark from './MetricSpark.vue'
+import { readChartSparks } from '../lib/chartLine'
 import CollapseChevron from './CollapseChevron.vue'
 import SavedTick from './SavedTick.vue'
 import { vCollapse } from '../lib/collapseMotion'
@@ -20,7 +22,7 @@ import type { Metric } from '../lib/types'
 // Портировано из renderSetsMetric() в dashboard.js. Презентационный компонент: сам ничего не
 // сохраняет, а на каждую правку отдаёт новый список подходов через change (родитель пишет в БД).
 // saved — подходы только что записаны (подтверждённая запись): вспышка рамки карточки и галочка рядом с кнопкой сворачивания (BACKLOG 780/815)
-const props = defineProps<{ metric: Metric; sets: SetRow[]; streak?: MetricStreakInfo | null; record?: RecordInfo | null; saved?: boolean }>()
+const props = defineProps<{ metric: Metric; sets: SetRow[]; streak?: MetricStreakInfo | null; record?: RecordInfo | null; spark?: (number | null)[]; saved?: boolean }>()
 const emit = defineEmits<{
   change: [sets: SetRow[]]
   remember: [text: string]
@@ -73,6 +75,7 @@ function onVariation(i: number, text: string) {
       <template v-if="summary">{{ summary.count }} {{ t('dash_sets_word') }} · {{ summary.reps }} {{ t('dash_sets_reps_word') }}</template>
       <template v-else>{{ t('dash_sets_empty') }}</template>
     </div>
+    <MetricSpark v-if="spark && readChartSparks() === 'on'" :values="spark" :unit="' ' + t('dash_sets_reps_word')" />
     <RecordBadge v-if="record" kind="metrics" :record="record" :unit="' ' + t('dash_sets_reps_word')" class="mt-0.5" />
 
     <div v-if="linked" v-collapse="open" class="mt-2" data-test="sets-linked">
