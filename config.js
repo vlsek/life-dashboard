@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.67";
+const SITE_VERSION = "5.68";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.68", date: "2026-10-14 03:02", changes: [
+        "«Цели»: у цели появился горизонт «На неделю» (между «В ближайшее время» и «В ближайший месяц»), в виде «По срокам» для него свой раздел; пункт есть и в окне «Новая цель» на главной. На главной в «Планах» список теперь называется «Цели недели и месяца» и подтягивает цели обоих горизонтов, которых ещё нет в плане. Требует миграцию 086; без неё форма предложит «На неделю», но сохранить не даст и подскажет, что нужна миграция.",
+    ]},
     { version: "5.67", date: "2026-10-14 10:40", changes: [
         "Главная, «Планы»: в окне «Новая цель» появился «Тип цели» — «Сбросить вес» или «Набрать вес» (как в «Целях»): вес на старте подставляется из ваших последних измерений, укажите целевой. Цель на вес создаётся в «Целях» и сразу встаёт в план дня. Выбор типа виден после применения миграции 085, без неё окно работает как раньше."
     ]},
@@ -2311,6 +2314,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.68", date: "2026-10-14 03:02", changes: [
+        "Goals: a new “This week” horizon (between “Soon” and “This month”) with its own section in the “By time” view; it is also in the “New goal” window on the home page. On the home page the Plans list is now “Goals for this week and month” and pulls in goals of both horizons that are not in the plan yet. Needs migration 086; without it the form offers “This week” but will not save it and tells you the migration is needed.",
+    ]},
     { version: "5.67", date: "2026-10-14 10:40", changes: [
         "Home, Plans: the “New goal” window has a “Goal type” — “Lose weight” or “Gain weight” (as in Goals): the starting weight is filled in from your latest measurement, enter the target. A weight goal is created in Goals and added to the day plan right away. The type picker appears once migration 085 is applied; without it the window works as before."
     ]},

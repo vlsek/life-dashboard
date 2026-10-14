@@ -1,6 +1,13 @@
 {
-  "version": "5.67",
+  "version": "5.68",
   "en": [
+    {
+      "version": "5.68",
+      "date": "2026-10-14 03:02",
+      "changes": [
+        "Goals: a new “This week” horizon (between “Soon” and “This month”) with its own section in the “By time” view; it is also in the “New goal” window on the home page. On the home page the Plans list is now “Goals for this week and month” and pulls in goals of both horizons that are not in the plan yet. Needs migration 086; without it the form offers “This week” but will not save it and tells you the migration is needed."
+      ]
+    },
     {
       "version": "5.67",
       "date": "2026-10-14 10:40",
@@ -4036,6 +4043,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.68",
+      "date": "2026-10-14 03:02",
+      "changes": [
+        "«Цели»: у цели появился горизонт «На неделю» (между «В ближайшее время» и «В ближайший месяц»), в виде «По срокам» для него свой раздел; пункт есть и в окне «Новая цель» на главной. На главной в «Планах» список теперь называется «Цели недели и месяца» и подтягивает цели обоих горизонтов, которых ещё нет в плане. Требует миграцию 086; без неё форма предложит «На неделю», но сохранить не даст и подскажет, что нужна миграция."
+      ]
+    },
     {
       "version": "5.67",
       "date": "2026-10-14 10:40",
