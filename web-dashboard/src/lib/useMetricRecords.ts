@@ -21,7 +21,7 @@ export function useMetricRecords() {
   function onChanged(e: Event) {
     const d = (e as CustomEvent<DataChangedDetail>).detail
     if (!d?.metricId || !known.has(d.metricId)) return
-    if (dayMap[d.metricId] && typeof d.value === 'number') {
+    if (dayMap[d.metricId] && d.date && typeof d.value === 'number') {
       dayMap[d.metricId].set(d.date, d.value)
       sparks.value = { ...sparks.value, [d.metricId]: sparkWindow(dayMap[d.metricId], todayStr()) }
     }
