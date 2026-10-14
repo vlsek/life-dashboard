@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.60";
+const SITE_VERSION = "5.61";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.61", date: "2026-10-14 05:34", changes: [
+        "Изучение языков: карточка «Повторение» над списком слов — слово крупно, тап по карточке показывает перевод и пример, «Выучил» отмечает слово выученным, «Дальше» идёт к следующему по кругу. Работает по выбранной вкладке языка и показывает только невыученные слова",
+    ]},
     { version: "5.60", date: "2026-10-14 05:31", changes: [
         "Челленджи: лента завершённых — у каждого завершённого челленджа карточка с итогом («выполнено дней X из N» или «собрано X из N») и датой, новые сверху; над лентой — сколько всего завершено и сколько осталось до следующего достижения",
     ]},
@@ -2290,6 +2293,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.61", date: "2026-10-14 05:34", changes: [
+        "Language learning: a \"Review\" card above the word list — the word is shown big, tap the card to see the translation and the example, \"Learned\" marks the word as learned, \"Next\" goes to the next one in a loop. It follows the selected language tab and shows only words that are not learned yet",
+    ]},
     { version: "5.60", date: "2026-10-14 05:31", changes: [
         "Challenges: a feed of completed challenges — every completed challenge gets a card with its result (\"days done X of N\" or \"collected X of N\") and the date, newest first; above the feed you see how many are completed and how many are left to the next achievement",
     ]},
