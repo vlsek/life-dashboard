@@ -7,12 +7,12 @@ import { sb } from './supabase'
 export type Difficulty = 'easy' | 'medium' | 'hard' | null
 
 // Горизонт цели (BACKLOG 1048+1050, миграция 084) — копия из web-goals/src/lib/horizons.ts (только нужное для новой цели).
-export type Horizon = 'now' | 'soon' | 'month' | 'day'
-export const HORIZON_KEYS = { now: 'goals_hor_now', soon: 'goals_hor_soon', month: 'goals_hor_month', day: 'goals_hor_day' } as const
+export type Horizon = 'now' | 'soon' | 'week' | 'month' | 'day'
+export const HORIZON_KEYS = { now: 'goals_hor_now', soon: 'goals_hor_soon', week: 'goals_hor_week', month: 'goals_hor_month', day: 'goals_hor_day' } as const
 
 // Какие горизонты можно выбрать: без колонки (миграция 084 не применена) — только те, что выражаются без неё.
 export function horizonOptions(hasColumn: boolean): Horizon[] {
-  return hasColumn ? ['now', 'soon', 'month', 'day'] : ['now', 'day']
+  return hasColumn ? ['now', 'soon', 'week', 'month', 'day'] : ['now', 'day']
 }
 
 // Поля горизонта и срока для записи в базу. Срок хранится только у «В конкретный день»; колонка horizon пишется, только если она есть.

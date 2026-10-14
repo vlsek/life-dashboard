@@ -9,12 +9,12 @@ const mountModal = (p: { horizonColumn?: boolean; weightColumn?: boolean; curren
 const saved = (submit: ReturnType<typeof vi.fn>, i = 0) => (submit.mock.calls[i] as unknown as [GoalFormInput])[0]
 
 describe('«Новая цель» на главной: горизонт', () => {
-  it('без колонки — «Сейчас» и «В конкретный день»; с колонкой — четыре пункта', () => {
+  it('без колонки — «Сейчас» и «В конкретный день»; с колонкой — пять пунктов (с «На неделю»)', () => {
     const a = mountModal()
     expect(a.find('[data-test="goal-horizon-select"]').findAll('option')).toHaveLength(2)
     a.unmount()
     const b = mountModal({ horizonColumn: true })
-    expect(b.find('[data-test="goal-horizon-select"]').findAll('option')).toHaveLength(4)
+    expect(b.find('[data-test="goal-horizon-select"]').findAll('option')).toHaveLength(5)
     b.unmount()
   })
   it('«В конкретный день» без даты не сохраняется; с датой уходит deadline+horizon; «Сейчас» — без срока', async () => {

@@ -73,7 +73,8 @@ async function save() {
       ...(kind.value === 'plain' ? {} : { weightMode: kind.value, weightStart: wStart, weightTarget: wTarget }), // у обычной цели ключей веса нет
     })
   } catch (e) {
-    submitError.value = friendlyError(e)
+    // горизонт «На неделю» без миграции 086: база отклоняет значение проверкой goals_horizon_check — говорим, что делать
+    submitError.value = /goals_horizon_check/.test(String((e as { message?: unknown } | null)?.message ?? '')) ? t('goals_horizon_need_086') : friendlyError(e)
   } finally {
     saving.value = false
   }
