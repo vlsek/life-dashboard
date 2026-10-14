@@ -23,7 +23,7 @@ import { readStreakFlameVariant } from './lib/streakFlameVariant'
 import { getWaterAnimChoice } from './lib/waterAnim'
 import { readBodyModelChoice } from './lib/bodyModel'
 import { readChartMarker } from './lib/chartMarker'
-import { readChartAnim, readChartForecast, readChartGoalZone, readChartKind, readChartLine } from './lib/chartLine'
+import { readChartAnim, readChartForecast, readChartGoalZone, readChartKind, readChartLine, readChartSparks } from './lib/chartLine'
 import { itemGroups, themeGroups } from './lib/rarity'
 import { useFavoriteThemes } from './lib/useFavoriteThemes'
 import { useCustomization } from './lib/useCustomization'
@@ -133,7 +133,7 @@ const nowRows = computed(() => {
     waterAnim: getWaterAnimChoice(),
     bodyModel: readBodyModelChoice(),
     chartMarker: readChartMarker(),
-    chart: { kind: readChartKind(), line: readChartLine(), anim: readChartAnim(), forecast: readChartForecast(), goalZone: readChartGoalZone() },
+    chart: { kind: readChartKind(), line: readChartLine(), anim: readChartAnim(), forecast: readChartForecast(), goalZone: readChartGoalZone(), sparks: readChartSparks() },
   })
 })
 // Тап по строке: открыть вкладку группы (если выбрана не «Все»), раскрыть раздел, прокрутить к нему

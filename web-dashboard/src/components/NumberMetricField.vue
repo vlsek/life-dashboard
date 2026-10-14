@@ -3,6 +3,8 @@ import { computed, nextTick, ref, watch } from 'vue'
 import Icon from './Icon.vue'
 import RecordBadge from './RecordBadge.vue'
 import type { RecordInfo } from '../lib/records'
+import MetricSpark from './MetricSpark.vue'
+import { readChartSparks } from '../lib/chartLine'
 import MetricStreakBadge from './MetricStreakBadge.vue'
 import type { MetricStreakInfo } from '../lib/metricStreaks'
 import MetricIcon from './MetricIcon.vue'
@@ -20,6 +22,7 @@ const props = defineProps<{
   remaining?: boolean
   flashed?: boolean
   streak?: MetricStreakInfo | null
+  spark?: (number | null)[] // значения за 7 дней для мини-графика (55.2; показывается, если включён в «Кастомизации»)
   record?: RecordInfo | null // рекорд метрики за всё время (BACKLOG раздел 28)
 }>()
 const emit = defineEmits<{ set: [string]; add: [string]; fix: [string]; quickAdd: [reps: number] }>()
@@ -121,6 +124,7 @@ function submitFix() {
     </div>
     <input v-else v-model="text" type="number" step="any" placeholder="0" :class="{ 'saved-flash': flashed }" @change="commit" />
     </template>
+    <MetricSpark v-if="spark && readChartSparks() === 'on'" :values="spark" :unit="metric.unit ?? ''" />
     <RecordBadge v-if="record" kind="metrics" :record="record" :unit="metric.unit ? ' ' + metric.unit : ''" class="mt-0.5" />
   </div>
 </template>

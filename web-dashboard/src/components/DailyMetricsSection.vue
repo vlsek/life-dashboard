@@ -48,7 +48,7 @@ async function onMetricsChanged() {
   emit('metricsChanged')
 }
 // Рекорды числовых метрик и подходов за всё время (BACKLOG раздел 28) — под названием в плашке; выключаются в «Настроить Дашборд»
-const { records: metricRecords, init: initRecords } = useMetricRecords()
+const { records: metricRecords, sparks: metricSparks, init: initRecords } = useMetricRecords()
 watch(
   () => props.userId,
   (uid) => {
@@ -112,6 +112,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
               :remaining="isRemaining(m, date, pending[m.id])"
               :streak="props.metricStreaks?.[m.id]"
               :record="metricRecords[m.id]"
+              :spark="metricSparks[m.id]"
               @set="setNumber(m, $event)"
               @add="addToNumber(m, $event)"
               @fix="fixTotal(m, $event)"

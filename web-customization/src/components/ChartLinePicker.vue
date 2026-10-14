@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { CHART_KINDS, CHART_LINES, barDefs, barPath, lineDefs, readChartAnim, readChartForecast, readChartGoalZone, readChartKind, readChartLine, runParts, writeChartAnim, writeChartForecast, writeChartGoalZone, writeChartKind, writeChartLine, type ChartKind, type ChartLine, type Pt } from '../lib/chartLine'
+import { CHART_KINDS, CHART_LINES, barDefs, barPath, lineDefs, readChartAnim, readChartForecast, readChartGoalZone, readChartKind, readChartLine, readChartSparks, runParts, writeChartAnim, writeChartForecast, writeChartGoalZone, writeChartKind, writeChartLine, writeChartSparks, type ChartKind, type ChartLine, type Pt } from '../lib/chartLine'
 import { t } from '../lib/i18n'
 
 // Выбор стиля ЛИНИИ графика (BACKLOG 55.2 срез 3): обычная · сглаженная · сглаженная с областью. Бесплатно; localStorage `chart_line`;
@@ -13,15 +13,16 @@ const choose = (v: ChartLine) => {
   if (saved.value) current.value = v
 }
 
-// «Дополнения» (55.2 срезы 4, 6, 8): три вкл/выкл-настройки одним списком переключателей вместо трёх групп карточек (раздел короче, 61.6).
+// «Дополнения» (55.2 срезы 4, 6, 8, 9): четыре вкл/выкл-настройки одним списком переключателей вместо трёх групп карточек (раздел короче, 61.6).
 // Все выключены по умолчанию и независимы; каждая — свой ключ localStorage (chart_anim / chart_forecast / chart_goalzone).
-type ExtraKey = 'anim' | 'forecast' | 'goalzone'
+type ExtraKey = 'anim' | 'forecast' | 'goalzone' | 'sparks'
 const EXTRAS: { key: ExtraKey; on: () => boolean; save: (v: boolean) => boolean }[] = [
   { key: 'anim', on: () => readChartAnim() === 'draw', save: (v) => writeChartAnim(v ? 'draw' : 'none') },
   { key: 'forecast', on: () => readChartForecast() === 'trend', save: (v) => writeChartForecast(v ? 'trend' : 'off') },
   { key: 'goalzone', on: () => readChartGoalZone() === 'on', save: (v) => writeChartGoalZone(v ? 'on' : 'off') },
+  { key: 'sparks', on: () => readChartSparks() === 'on', save: (v) => writeChartSparks(v ? 'on' : 'off') },
 ]
-const extras = ref<Record<ExtraKey, boolean>>({ anim: EXTRAS[0].on(), forecast: EXTRAS[1].on(), goalzone: EXTRAS[2].on() })
+const extras = ref<Record<ExtraKey, boolean>>({ anim: EXTRAS[0].on(), forecast: EXTRAS[1].on(), goalzone: EXTRAS[2].on(), sparks: EXTRAS[3].on() })
 const extrasSaved = ref(true)
 const toggleExtra = (key: ExtraKey) => {
   const e = EXTRAS.find((x) => x.key === key)!

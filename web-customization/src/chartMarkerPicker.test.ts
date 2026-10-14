@@ -103,10 +103,10 @@ describe('«Дополнения» к графикам: появление, пр
   })
   const toggle = (w: ReturnType<typeof mount>, key: string) => w.find(`[data-testid="extra-${key}"] [data-testid="extra-toggle"]`)
 
-  it('один список из трёх переключателей, все выключены по умолчанию; прежних групп карточек «Появление» и «Прогноз» нет', () => {
+  it('один список из четырёх переключателей, все выключены по умолчанию; прежних групп карточек «Появление» и «Прогноз» нет', () => {
     const w = mount(ChartMarkerPicker)
-    expect(w.findAll('[data-testid^="extra-"][data-active]')).toHaveLength(3)
-    for (const k of ['anim', 'forecast', 'goalzone']) {
+    expect(w.findAll('[data-testid^="extra-"][data-active]')).toHaveLength(4)
+    for (const k of ['anim', 'forecast', 'goalzone', 'sparks']) {
       expect(w.find(`[data-testid="extra-${k}"]`).attributes('data-active')).toBe('false')
       expect(toggle(w, k).attributes('role')).toBe('switch')
       expect(toggle(w, k).attributes('aria-checked')).toBe('false')

@@ -291,3 +291,31 @@ export function goalZoneSpan(goalY: number, direction: string | null | undefined
   const span: [number, number] = direction === 'at_least' ? [plotTop, g] : [g, plotBottom]
   return span[1] - span[0] > 0.5 ? span : null
 }
+
+// Мини-спарклайны (55.2 последний срез): крошечный график за 7 дней под значением в плашках числовых метрик «Дневных метрик». «Дополнение», по умолчанию выключено.
+export const CHART_SPARKS = ['off', 'on'] as const
+export type ChartSparks = (typeof CHART_SPARKS)[number]
+export const DEFAULT_CHART_SPARKS: ChartSparks = 'off'
+export const CHART_SPARKS_KEY = 'chart_sparks'
+
+export const isChartSparks = (v: unknown): v is ChartSparks => (CHART_SPARKS as readonly unknown[]).includes(v)
+
+export function readChartSparks(): ChartSparks {
+  try {
+    const stored = localStorage.getItem(CHART_SPARKS_KEY)
+    if (isChartSparks(stored)) return stored
+  } catch {
+    /* нет localStorage — по умолчанию */
+  }
+  return DEFAULT_CHART_SPARKS
+}
+
+// true, если выбор удалось запомнить.
+export function writeChartSparks(v: ChartSparks): boolean {
+  try {
+    localStorage.setItem(CHART_SPARKS_KEY, v)
+    return true
+  } catch {
+    return false
+  }
+}

@@ -4,6 +4,8 @@ import { fetchAllRows } from './fetchAll'
 import { DATA_CHANGED, type DataChangedDetail } from './events'
 import { metricNumericValue } from './metrics'
 import { bestRecord, mergeRecord, type RecordInfo } from './records'
+import { sparkWindow } from './sparkline'
+import { todayStr } from './date'
 import type { DailyValueRow, Metric } from './types'
 
 // Рекорды числовых метрик и метрик-подходов за всё время (для «Дневных метрик»): наибольшее значение за день
@@ -11,11 +13,18 @@ import type { DailyValueRow, Metric } from './types'
 // Новая запись из любого блока страницы (событие DATA_CHANGED) обновляет рекорд сразу, без перезагрузки.
 export function useMetricRecords() {
   const records = ref<Record<string, RecordInfo>>({})
+  // 7 дней для мини-спарклайнов (55.2): из того же запроса, что и рекорды; метрика → (дата → значение)
+  const sparks = ref<Record<string, (number | null)[]>>({})
+  const dayMap: Record<string, Map<string, number | null>> = {}
   const known = new Set<string>()
 
   function onChanged(e: Event) {
     const d = (e as CustomEvent<DataChangedDetail>).detail
     if (!d?.metricId || !known.has(d.metricId)) return
+    if (dayMap[d.metricId] && typeof d.value === 'number') {
+      dayMap[d.metricId].set(d.date, d.value)
+      sparks.value = { ...sparks.value, [d.metricId]: sparkWindow(dayMap[d.metricId], todayStr()) }
+    }
     const next = mergeRecord(records.value[d.metricId], d.value, d.date)
     if (next && next !== records.value[d.metricId]) records.value = { ...records.value, [d.metricId]: next }
   }
@@ -41,6 +50,14 @@ export function useMetricRecords() {
       if (!m) continue
       ;(byMetric[m.id] ||= []).push({ date: row.date, y: metricNumericValue(m, row.value) })
     }
+    const outSparks: Record<string, (number | null)[]> = {}
+    for (const id of Object.keys(byMetric)) {
+      const map = new Map<string, number | null>(byMetric[id].map((p) => [p.date, p.y]))
+      for (const [dt, v] of dayMap[id] ?? []) if (v !== null) map.set(dt, v)
+      dayMap[id] = map
+      outSparks[id] = sparkWindow(map, todayStr())
+    }
+    sparks.value = outSparks
     const out: Record<string, RecordInfo> = {}
     for (const id of Object.keys(byMetric)) {
       const best = bestRecord(byMetric[id])
@@ -51,5 +68,5 @@ export function useMetricRecords() {
     records.value = out
   }
 
-  return { records, init }
+  return { records, sparks, init }
 }

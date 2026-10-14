@@ -7,7 +7,7 @@ import type { StreakFlameVariant } from './streakFlameVariant'
 import type { WaterAnim } from './waterAnim'
 import type { BodyModel } from './bodyModel'
 import type { ChartMarker } from './chartMarker'
-import type { ChartAnim, ChartForecast, ChartGoalZone, ChartKind, ChartLine } from './chartLine'
+import type { ChartAnim, ChartForecast, ChartGoalZone, ChartKind, ChartLine, ChartSparks } from './chartLine'
 import type { ThemeKey } from './theme'
 
 export interface SelectionRow {
@@ -36,7 +36,7 @@ export interface SelectionReaders {
   bodyModel: BodyModel | null
   chartMarker: ChartMarker
   /** вид, стиль линии и дополнения графиков (всё в localStorage, меняется в разделе «Графики») */
-  chart: { kind: ChartKind; line: ChartLine; anim: ChartAnim; forecast: ChartForecast; goalZone: ChartGoalZone }
+  chart: { kind: ChartKind; line: ChartLine; anim: ChartAnim; forecast: ChartForecast; goalZone: ChartGoalZone; sparks: ChartSparks }
 }
 
 const THEME_NAME_KEY = (k: ThemeKey): string => 'theme_' + k
@@ -61,7 +61,7 @@ export function selectionRows(r: SelectionReaders): SelectionRow[] {
   rows.push({ section: 'chart-markers', titleKey: 'cust_sec_markers', valueKey: 'chart_marker_' + r.chartMarker, custom: r.chartMarker !== 'flat' })
   // «Линия графика» (61.6 срез 2, после настроек графиков 55.2): вид и стиль + включённые дополнения одной строкой. Тот же раздел «Графики», что и у маркеров.
   const c = r.chart
-  const extras = [c.anim === 'draw' ? 'cust_now_chart_anim' : '', c.forecast === 'trend' ? 'cust_now_chart_forecast' : '', c.goalZone === 'on' ? 'cust_now_chart_goalzone' : ''].filter(Boolean)
+  const extras = [c.anim === 'draw' ? 'cust_now_chart_anim' : '', c.forecast === 'trend' ? 'cust_now_chart_forecast' : '', c.goalZone === 'on' ? 'cust_now_chart_goalzone' : '', c.sparks === 'on' ? 'cust_now_chart_sparks' : ''].filter(Boolean)
   rows.push({
     section: 'chart-markers',
     key: 'chart-line',

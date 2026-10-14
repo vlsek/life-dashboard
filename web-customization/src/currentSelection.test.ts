@@ -25,7 +25,7 @@ import App from './App.vue'
 import { customCount, selectionRows, type SelectionReaders } from './lib/currentSelection'
 import { groupCounts } from './lib/pageTabs'
 
-const base: SelectionReaders = { theme: 'dark', selected: {}, splash: 'auto', streakFlame: 'flame', waterAnim: 'auto', bodyModel: null, chartMarker: 'flat', chart: { kind: 'line', line: 'line', anim: 'none', forecast: 'off', goalZone: 'off' } }
+const base: SelectionReaders = { theme: 'dark', selected: {}, splash: 'auto', streakFlame: 'flame', waterAnim: 'auto', bodyModel: null, chartMarker: 'flat', chart: { kind: 'line', line: 'line', anim: 'none', forecast: 'off', goalZone: 'off', sparks: 'off' } }
 const byId = (rows: ReturnType<typeof selectionRows>, id: string) => rows.find((r) => (r.key ?? r.section) === id)!
 
 beforeEach(() => {
@@ -85,6 +85,7 @@ describe('строка «Линия графика» (61.6 срез 2)', () => {
     expect(chart({ kind: 'bars', line: 'area' }).valueKey).toBe('chart_kind_bars')
     expect(chart({ forecast: 'trend', goalZone: 'on', anim: 'draw' }).extraKeys).toEqual(['cust_now_chart_anim', 'cust_now_chart_forecast', 'cust_now_chart_goalzone'])
     expect(chart({ goalZone: 'on' }).custom).toBe(true)
+    expect(chart({ sparks: 'on' })).toMatchObject({ extraKeys: ['cust_now_chart_sparks'], custom: true })
   })
   it('в сводке на странице: значения из localStorage показываются через « · »', async () => {
     localStorage.setItem('chart_line', 'smooth')
