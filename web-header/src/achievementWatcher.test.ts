@@ -3,7 +3,8 @@ import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { mount } from '@vue/test-utils'
 import AchievementToast from './components/AchievementToast.vue'
-import { BG_MSG_DONE, BG_MSG_NEW, CHECK_EVERY_MS, WATCH_SKIP, YOUNG_ACCOUNT_DAYS, YOUNG_CHECK_EVERY_MS, checkEveryMs, isCheckDue, isYoungAccount, parseWatchMessage, startAchievementWatcher } from './lib/achievementWatcher'
+import { DATA_CHANGED } from './lib/events'
+import { ACTION_DELAY_MS, ACTION_MIN_GAP_MS, BG_MSG_DONE, BG_MSG_NEW, CHECK_EVERY_MS, WATCH_SKIP, YOUNG_ACCOUNT_DAYS, YOUNG_CHECK_EVERY_MS, checkEveryMs, isCheckDue, isYoungAccount, parseWatchMessage, startAchievementWatcher } from './lib/achievementWatcher'
 
 // BACKLOG 52.1 срез 2: поздравление о новом достижении на любой странице.
 describe('isCheckDue', () => {
@@ -186,6 +187,64 @@ describe('startAchievementWatcher: новый и старый аккаунт', (
     vi.advanceTimersByTime(80_000) // iframe ещё не ответил (таймаут 90 с)
     expect(document.querySelectorAll('iframe')).toHaveLength(1)
     stop()
+  })
+})
+
+describe('проверка сразу после действия (52.1)', () => {
+  beforeEach(() => {
+    ;(window as unknown as { happyDOM?: { settings: { disableIframePageLoading: boolean } } }).happyDOM!.settings.disableIframePageLoading = true
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.useFakeTimers()
+    localStorage.clear()
+    document.body.innerHTML = ''
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.restoreAllMocks()
+  })
+  const old = () => new Date(Date.now() - 60 * 24 * 3600 * 1000).toISOString()
+  const finish = () => {
+    const frame = document.querySelector('iframe') as HTMLIFrameElement
+    window.dispatchEvent(new MessageEvent('message', { data: { type: BG_MSG_DONE }, origin: window.location.origin, source: frame.contentWindow as Window }))
+  }
+  const act = () => window.dispatchEvent(new CustomEvent(DATA_CHANGED, { detail: { metricId: 'm', date: '2026-10-14', value: 1 } }))
+
+  it('действие запускает проверку через ~5 с, хотя обычный интервал (10 мин) не прошёл', () => {
+    const stop = startAchievementWatcher(() => {}, { createdAt: old() })
+    vi.advanceTimersByTime(4100)
+    finish() // первая плановая проверка прошла
+    vi.advanceTimersByTime(ACTION_MIN_GAP_MS + 1000)
+    expect(document.querySelector('iframe')).toBeNull()
+    act()
+    vi.advanceTimersByTime(ACTION_DELAY_MS - 100)
+    expect(document.querySelector('iframe')).toBeNull() // ждём 5 с
+    vi.advanceTimersByTime(200)
+    expect(document.querySelector('iframe')).not.toBeNull()
+    stop()
+  })
+  it('пачка действий — одна проверка; чаще раза в 30 с не проверяем', () => {
+    const stop = startAchievementWatcher(() => {}, { createdAt: old() })
+    vi.advanceTimersByTime(4100)
+    finish()
+    vi.advanceTimersByTime(ACTION_MIN_GAP_MS + 1000)
+    act(); act(); act()
+    vi.advanceTimersByTime(ACTION_DELAY_MS + 100)
+    expect(document.querySelectorAll('iframe')).toHaveLength(1)
+    finish()
+    act() // сразу после проверки
+    vi.advanceTimersByTime(ACTION_DELAY_MS + 100)
+    expect(document.querySelector('iframe')).toBeNull() // с прошлой проверки < 30 с
+    stop()
+  })
+  it('после остановки наблюдателя действия ничего не запускают', () => {
+    const stop = startAchievementWatcher(() => {}, { createdAt: old() })
+    vi.advanceTimersByTime(4100)
+    finish()
+    vi.advanceTimersByTime(ACTION_MIN_GAP_MS + 1000)
+    act()
+    stop()
+    vi.advanceTimersByTime(ACTION_DELAY_MS + 100)
+    expect(document.querySelector('iframe')).toBeNull()
   })
 })
 

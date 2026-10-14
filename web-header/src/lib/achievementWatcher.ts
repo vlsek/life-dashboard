@@ -14,6 +14,10 @@ export const IFRAME_TIMEOUT_MS = 90 * 1000
 export const YOUNG_ACCOUNT_DAYS = 14
 export const YOUNG_CHECK_EVERY_MS = 90 * 1000
 export const TICK_MS = 30 * 1000
+// «Сразу после действия» (52.1, остаток): событие записи данных на странице (DATA_CHANGED из Дашборда) запускает проверку через ACTION_DELAY_MS —
+// пачка быстрых правок = одна проверка — и не чаще раза в ACTION_MIN_GAP_MS, независимо от обычных интервалов выше.
+export const ACTION_DELAY_MS = 5 * 1000
+export const ACTION_MIN_GAP_MS = 30 * 1000
 
 export interface WatchItem {
   key: string
@@ -75,6 +79,8 @@ function writeLast(now: number) {
   }
 }
 
+import { DATA_CHANGED } from './events'
+
 // Запускает проверку и повторяет её, пока страница открыта и видна. onNew получает список новых достижений.
 export function startAchievementWatcher(onNew: (items: WatchItem[]) => void, opts: { createdAt?: string | null } = {}): () => void {
   let frame: HTMLIFrameElement | null = null
@@ -95,10 +101,10 @@ export function startAchievementWatcher(onNew: (items: WatchItem[]) => void, opt
     else cleanup()
   }
 
-  const check = () => {
+  const check = (every?: number) => {
     if (frame || document.visibilityState === 'hidden') return
     const now = Date.now()
-    if (!isCheckDue(readLast(), now, checkEveryMs(opts.createdAt, now))) return
+    if (!isCheckDue(readLast(), now, every ?? checkEveryMs(opts.createdAt, now))) return
     writeLast(now)
     frame = document.createElement('iframe')
     frame.src = '/achievements/?bg=1'
@@ -111,13 +117,24 @@ export function startAchievementWatcher(onNew: (items: WatchItem[]) => void, opt
   }
 
   window.addEventListener('message', onMessage)
-  const interval = setInterval(check, TICK_MS)
+  const interval = setInterval(() => check(), TICK_MS)
   const onVisible = () => document.visibilityState === 'visible' && check()
+  let actionTimer: ReturnType<typeof setTimeout> | null = null
+  const onAction = () => {
+    if (actionTimer) clearTimeout(actionTimer)
+    actionTimer = setTimeout(() => {
+      actionTimer = null
+      check(ACTION_MIN_GAP_MS)
+    }, ACTION_DELAY_MS)
+  }
+  window.addEventListener(DATA_CHANGED, onAction)
   document.addEventListener('visibilitychange', onVisible)
   setTimeout(check, 4000) // не мешаем первой отрисовке страницы
   return () => {
     window.removeEventListener('message', onMessage)
     document.removeEventListener('visibilitychange', onVisible)
+    window.removeEventListener(DATA_CHANGED, onAction)
+    if (actionTimer) clearTimeout(actionTimer)
     clearInterval(interval)
     cleanup()
   }
