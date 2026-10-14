@@ -8,11 +8,11 @@ import CumulativeChallengeCard from './components/CumulativeChallengeCard.vue'
 import { useChallenges } from './lib/useChallenges'
 import { t } from './lib/i18n'
 import { ref } from 'vue'
-import { localDateOfTimestamp } from './lib/date'
 import type { Challenge, ChallengeTemplate, CustomChallengeFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import ChallengeDoneModal from './components/ChallengeDoneModal.vue'
 import { doneSummary, type DoneSummary } from './lib/challengeDone'
+import CompletedFeed from './components/CompletedFeed.vue'
 import { todayStr } from './lib/date'
 import { confirmDialog } from './lib/confirmDialog'
 
@@ -44,11 +44,6 @@ const completed = computed(() => instances.value.filter((ch) => ch.completed))
 function entriesFor(ch: Challenge) {
   // для дневных челленджей с источником-метрикой подмешиваем значения метрики там, где ручной записи нет
   return ch.type.startsWith('daily') ? effectiveEntries(ch) : entriesByChallenge.value[ch.id] || []
-}
-
-function fmtRu(iso: string): string {
-  const [y, m, d] = iso.split('-')
-  return `${d}.${m}.${y}`
 }
 
 const catalogOpen = ref(false)
@@ -143,10 +138,7 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
 
         <h2 class="mb-2 mt-6 text-base font-medium"><EmojiText :text="t('ch_completed_h2')" /></h2>
         <p v-if="completed.length === 0" class="dim">{{ t('ch_no_completed') }}</p>
-        <div v-for="ch in completed" :key="ch.id" class="card mb-2">
-          <strong><EmojiText :text="`${ch.icon} ${ch.title}`" /></strong>
-          <span class="dim text-sm"> — {{ fmtRu((ch.completed_at ? localDateOfTimestamp(ch.completed_at) : '') || ch.start_date) }}</span>
-        </div>
+        <CompletedFeed v-else :items="completed" :entries-for="entriesFor" />
       </template>
     </template>
 

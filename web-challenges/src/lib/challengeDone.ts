@@ -10,6 +10,12 @@ export function ladderStep(doneCount: number): (typeof LADDER_STEPS)[number] | n
   return (LADDER_STEPS as readonly number[]).includes(doneCount) ? (doneCount as (typeof LADDER_STEPS)[number]) : null
 }
 
+// Сколько ещё завершённых челленджей до следующей ступени лесенки (для ленты завершённых); null — все ступени пройдены
+export function nextLadderStep(doneCount: number): { step: number; left: number } | null {
+  const step = LADDER_STEPS.find((x) => x > doneCount)
+  return step === undefined ? null : { step, left: step - doneCount }
+}
+
 export type DoneSummary = { kind: 'days'; done: number; total: number } | { kind: 'count'; count: number; target: number; itemWord: string }
 
 // Итог для окна: дневной — «выполнено дней X из N», накопительный — «собрано X из N».
