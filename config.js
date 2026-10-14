@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.59";
+const SITE_VERSION = "5.60";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.60", date: "2026-10-14 05:31", changes: [
+        "Челленджи: лента завершённых — у каждого завершённого челленджа карточка с итогом («выполнено дней X из N» или «собрано X из N») и датой, новые сверху; над лентой — сколько всего завершено и сколько осталось до следующего достижения",
+    ]},
     { version: "5.59", date: "2026-10-14 05:28", changes: [
         "Графики: мини-графики за 7 дней в плашках числовых метрик «Дневных метрик» — крошечная линия под значением (пропуски дней разрывают линию). Включаются в «Кастомизации → Графики → Дополнения» (по умолчанию выключены, вид страницы не меняется); есть подпись для скринридера и строка в «Сейчас выбрано». Без миграций."
     ]},
@@ -2287,6 +2290,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.60", date: "2026-10-14 05:31", changes: [
+        "Challenges: a feed of completed challenges — every completed challenge gets a card with its result (\"days done X of N\" or \"collected X of N\") and the date, newest first; above the feed you see how many are completed and how many are left to the next achievement",
+    ]},
     { version: "5.59", date: "2026-10-14 05:28", changes: [
         "Charts: 7-day mini charts in the number-metric plates of Daily metrics — a tiny line under the value (days without data break the line). Turn them on in Customization → Charts → Extras (off by default, the page looks the same); screen-reader label and a row in “Selected now” included. No migrations."
     ]},

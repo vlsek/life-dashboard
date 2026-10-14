@@ -1,6 +1,13 @@
 {
-  "version": "5.59",
+  "version": "5.60",
   "en": [
+    {
+      "version": "5.60",
+      "date": "2026-10-14 05:31",
+      "changes": [
+        "Challenges: a feed of completed challenges — every completed challenge gets a card with its result (\"days done X of N\" or \"collected X of N\") and the date, newest first; above the feed you see how many are completed and how many are left to the next achievement"
+      ]
+    },
     {
       "version": "5.59",
       "date": "2026-10-14 05:28",
@@ -3980,6 +3987,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.60",
+      "date": "2026-10-14 05:31",
+      "changes": [
+        "Челленджи: лента завершённых — у каждого завершённого челленджа карточка с итогом («выполнено дней X из N» или «собрано X из N») и датой, новые сверху; над лентой — сколько всего завершено и сколько осталось до следующего достижения"
+      ]
+    },
     {
       "version": "5.59",
       "date": "2026-10-14 05:28",
