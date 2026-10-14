@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.63";
+const SITE_VERSION = "5.64";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.64", date: "2026-10-14 05:41", changes: [
+        "Достижения: поздравление о новом достижении теперь приходит почти сразу после действия на странице (через ~5 секунд после записи данных, не чаще раза в 30 секунд), а не только по таймеру раз в 1,5–10 минут. Без миграций."
+    ]},
     { version: "5.63", date: "2026-10-14 02:33", changes: [
         "«Планы» на главной: под таблицей на сегодняшнем дне появился список «Цели месяца» — активные цели с горизонтом «В ближайший месяц», которых ещё нет в плане. Одноэтапную цель можно отметить прямо там (отметка пишется в саму цель, выполненная переходит в «выполнено сегодня»), у многоэтапной видно «этап/этапов». В окне «Новая цель» на главной появилось поле «Когда», как в «Целях». Список виден, только если применена миграция 084.",
     ]},
@@ -2299,6 +2302,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.64", date: "2026-10-14 05:41", changes: [
+        "Achievements: the “new achievement” congratulation now arrives almost right after an action on the page (about 5 seconds after data is saved, at most once per 30 seconds) instead of only on the 1.5–10 minute timer. No migrations."
+    ]},
     { version: "5.63", date: "2026-10-14 02:33", changes: [
         "Plans on the home page: on today, a new “Goals for this month” list appears under the table — active goals with the “This month” horizon that are not in the plan yet. A single-step goal can be ticked right there (the tick is saved on the goal itself and it moves to “completed today”); a multi-stage goal shows its stage count. The “New goal” window on the home page now has the “When” field, like in Goals. The list appears only once migration 084 is applied.",
     ]},

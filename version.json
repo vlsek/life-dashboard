@@ -1,6 +1,13 @@
 {
-  "version": "5.63",
+  "version": "5.64",
   "en": [
+    {
+      "version": "5.64",
+      "date": "2026-10-14 05:41",
+      "changes": [
+        "Achievements: the “new achievement” congratulation now arrives almost right after an action on the page (about 5 seconds after data is saved, at most once per 30 seconds) instead of only on the 1.5–10 minute timer. No migrations."
+      ]
+    },
     {
       "version": "5.63",
       "date": "2026-10-14 02:33",
@@ -4008,6 +4015,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.64",
+      "date": "2026-10-14 05:41",
+      "changes": [
+        "Достижения: поздравление о новом достижении теперь приходит почти сразу после действия на странице (через ~5 секунд после записи данных, не чаще раза в 30 секунд), а не только по таймеру раз в 1,5–10 минут. Без миграций."
+      ]
+    },
     {
       "version": "5.63",
       "date": "2026-10-14 02:33",
