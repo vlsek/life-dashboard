@@ -1,6 +1,13 @@
 {
-  "version": "5.64",
+  "version": "5.65",
   "en": [
+    {
+      "version": "5.65",
+      "date": "2026-10-14 10:20",
+      "changes": [
+        "Vintage Paper theme: borders no longer cut into letters. Buttons with no inner padding (the \"Currently selected\" rows in Customization, the points counter by the profile) got the theme's outline ring drawn right against the text, so the first and last letters sat under the line. Such buttons no longer get the ring. No migrations."
+      ]
+    },
     {
       "version": "5.64",
       "date": "2026-10-14 05:41",
@@ -4015,6 +4022,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.65",
+      "date": "2026-10-14 10:20",
+      "changes": [
+        "Тема «Чернильная бумага»: рамка больше не режет буквы. У кнопок без внутреннего отступа (строки «Сейчас выбрано» в Кастомизации, счётчик баллов у профиля) тема рисовала контурную рамку вплотную к тексту — первые и последние буквы оказывались под линией. Теперь такие кнопки без рамки-кольца. Без миграций."
+      ]
+    },
     {
       "version": "5.64",
       "date": "2026-10-14 05:41",

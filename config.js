@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.64";
+const SITE_VERSION = "5.65";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.65", date: "2026-10-14 10:20", changes: [
+        "Тема «Чернильная бумага»: рамка больше не режет буквы. У кнопок без внутреннего отступа (строки «Сейчас выбрано» в Кастомизации, счётчик баллов у профиля) тема рисовала контурную рамку вплотную к тексту — первые и последние буквы оказывались под линией. Теперь такие кнопки без рамки-кольца. Без миграций.",
+    ]},
     { version: "5.64", date: "2026-10-14 05:41", changes: [
         "Достижения: поздравление о новом достижении теперь приходит почти сразу после действия на странице (через ~5 секунд после записи данных, не чаще раза в 30 секунд), а не только по таймеру раз в 1,5–10 минут. Без миграций."
     ]},
@@ -2302,6 +2305,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.65", date: "2026-10-14 10:20", changes: [
+        "Vintage Paper theme: borders no longer cut into letters. Buttons with no inner padding (the \"Currently selected\" rows in Customization, the points counter by the profile) got the theme's outline ring drawn right against the text, so the first and last letters sat under the line. Such buttons no longer get the ring. No migrations.",
+    ]},
     { version: "5.64", date: "2026-10-14 05:41", changes: [
         "Achievements: the “new achievement” congratulation now arrives almost right after an action on the page (about 5 seconds after data is saved, at most once per 30 seconds) instead of only on the 1.5–10 minute timer. No migrations."
     ]},
