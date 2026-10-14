@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.55";
+const SITE_VERSION = "5.56";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.56", date: "2026-10-14 05:22", changes: [
+        "Тренировки, вкладка «Прогрессия»: новый блок «Что растёт» — по каждому упражнению видно, растёт ли оно, стоит или просело: лучший подход за последние 28 дней сравнивается с предыдущими 28 (изменение в процентах и «было → стало»). Новые упражнения помечены «новое»",
+    ]},
     { version: "5.55", date: "2026-10-13 15:30", changes: [
         "Тема «Чернильная бумага»: у сворачиваемого блока «Какие достижения тут можно получить» внизу страниц больше нет двойной рваной пунктирной рамки — контурное кольцо темы теперь не ложится на безрамочную кнопку-заголовок. Остальные страницы в этой теме осмотрены в Chromium (телефон и десктоп): обрезанного текста не найдено. Без миграций.",
     ]},
@@ -2275,6 +2278,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.56", date: "2026-10-14 05:22", changes: [
+        "Workouts, Progress tab: a new \"What is growing\" block shows for every exercise whether it is growing, flat or slipping: the best set of the last 28 days is compared with the previous 28 (change in percent and \"was → now\"). New exercises are marked \"new\"",
+    ]},
     { version: "5.55", date: "2026-10-13 15:30", changes: [
         "Vintage Paper theme: the collapsible \"Which achievements you can get here\" block at the bottom of pages no longer has a double jagged dashed border — the theme's outline ring no longer lands on the borderless header button. The other pages in this theme were checked in Chromium (phone and desktop): no clipped text found. No migrations.",
     ]},
