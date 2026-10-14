@@ -79,7 +79,7 @@ describe('«Планы»: «Новая цель»', () => {
     expect(modal()).not.toBeNull()
     const labels = [...document.body.querySelectorAll('.modal label')].map((l) => l.textContent)
     expect(document.body.querySelector('[data-test="new-goal-points"]')).toBeNull() // баллов вручную нет (BACKLOG 35/40)
-    expect(labels).toEqual(['Название', 'Категория', 'Количество этапов (1 = обычная галочка)', 'Сложность', 'Дедлайн (необязательно)'])
+    expect(labels).toEqual(['Название', 'Категория', 'Количество этапов (1 = обычная галочка)', 'Сложность', 'Когда'])
     w.unmount()
   })
 
@@ -173,6 +173,11 @@ describe('«Планы»: «Новая цель»', () => {
     const name = document.body.querySelector('[data-test="new-goal-name"]') as HTMLInputElement
     name.value = 'Йога'
     name.dispatchEvent(new Event('input'))
+    expect(document.body.querySelector('input[type="date"]')).toBeNull() // дата — только у «В конкретный день»
+    const hz = document.body.querySelector('[data-test="goal-horizon-select"]') as HTMLSelectElement
+    hz.value = 'day'
+    hz.dispatchEvent(new Event('change'))
+    await flushPromises()
     const dl = document.body.querySelector('input[type="date"]') as HTMLInputElement
     dl.value = '2026-10-20'
     dl.dispatchEvent(new Event('input'))
@@ -181,6 +186,7 @@ describe('«Планы»: «Новая цель»', () => {
     await flushPromises()
     expect(h.goalInserts[0]).toMatchObject({ name: 'Йога', deadline: '2026-10-20' })
     expect(h.goalInserts[0]).not.toHaveProperty('difficulty')
+    expect(h.goalInserts[0]).not.toHaveProperty('horizon') // нет колонки (в моке пробный запрос не проходит) — как до миграции 084
     expect(h.upserts.at(-1)).toMatchObject({ planned_goals: [{ type: 'goal', text: 'Йога', time: '18:30' }] })
     w.unmount()
   })

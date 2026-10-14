@@ -12,6 +12,7 @@ import {
   setDoneAt,
   carryOverCandidates,
   goalOptions,
+  monthGoalsFor,
   normalizePlanned,
   removeAt,
   setCustomDone,
@@ -32,6 +33,8 @@ import { createGoal, type GoalFormInput } from './newGoal'
 export function usePlanned() {
   const planned = ref<PlannedEntry[]>([])
   const goals = ref<PlanGoal[]>([])
+  // id целей с горизонтом «месяц» (миграция 084; нет колонки — запрос вернёт ошибку, и список просто пуст)
+  const monthIds = ref<Set<string>>(new Set())
   const loaded = ref(false)
   const error = ref<string | null>(null)
   const notice = ref<string | null>(null) // информационное сообщение (в оригинале — тост)
@@ -50,9 +53,10 @@ export function usePlanned() {
   async function load(uid: string, dateStr: string) {
     userId = uid
     date = dateStr
-    const [noteRes, goalsRes] = await Promise.all([
+    const [noteRes, goalsRes, monthRes] = await Promise.all([
       sb.from('daily_notes').select('planned_goals').eq('user_id', uid).eq('date', dateStr).maybeSingle(),
       sb.from('goals').select('id, name, stages, done, current_stage, done_date').eq('user_id', uid),
+      sb.from('goals').select('id').eq('user_id', uid).eq('horizon', 'month').eq('done', false),
     ])
     const err = noteRes.error?.message || goalsRes.error?.message
     error.value = err ? friendlyError(err, 'load') : null
@@ -60,6 +64,7 @@ export function usePlanned() {
     saved = planned.value
     version++ // ответ на загрузку новее любых незавершённых откатов предыдущей даты
     goals.value = (goalsRes.data || []) as PlanGoal[]
+    monthIds.value = new Set(monthRes?.error ? [] : ((monthRes?.data || []) as { id: string }[]).map((r) => r.id))
     loaded.value = true
   }
 
@@ -151,9 +156,10 @@ export function usePlanned() {
 
   const carryOver = (items: CarriedItem[]) => persist(appendCarried(planned.value, items))
   const availableGoals = () => goalOptions(goals.value, planned.value)
+  const monthGoals = () => monthGoalsFor(goals.value, monthIds.value, planned.value, date, todayStr())
 
   return {
     planned, goals, loaded, error, notice, savedTick, load,
-    addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals,
+    addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals,
   }
 }

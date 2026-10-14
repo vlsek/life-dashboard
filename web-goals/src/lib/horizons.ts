@@ -23,9 +23,11 @@ export function horizonOptions(hasColumn: boolean): Horizon[] {
 }
 
 // Поля горизонта и срока для записи в базу. Срок хранится только у «В конкретный день»; колонка horizon пишется, только если она есть.
-export function horizonFields(res: { horizon?: Horizon | null; deadline: string }, hasColumn: boolean): { horizon?: Horizon; deadline?: string | null } {
+// clearDeadline: при правке срок у не-«дня» обнуляется (null); у новой цели обнулять нечего — ключ не пишется.
+export function horizonFields(res: { horizon?: Horizon | null; deadline: string }, hasColumn: boolean, clearDeadline = true): { horizon?: Horizon; deadline?: string | null } {
   const h: Horizon = res.horizon ?? (res.deadline ? 'day' : 'now')
-  const out: { horizon?: Horizon; deadline?: string | null } = { deadline: h === 'day' ? res.deadline || null : null }
+  const out: { horizon?: Horizon; deadline?: string | null } = {}
+  if (h === 'day' ? res.deadline : clearDeadline) out.deadline = h === 'day' ? res.deadline || null : null
   if (hasColumn) out.horizon = h
   return out
 }

@@ -139,6 +139,14 @@ export function doneOnDay(goals: PlanGoal[], planned: PlannedEntry[], day: strin
   return goals.filter((g) => g.done && g.done_date === day && !taken.has(g.name))
 }
 
+// «Цели месяца» на главной (BACKLOG 1052): активные цели с горизонтом «В ближайший месяц» (monthIds — их id; пусто, если миграции 084 нет),
+// которых ещё нет среди пунктов-целей плана. Только на сегодняшнем дне: у прошлого/будущего дня «цели месяца» — не про этот день.
+export function monthGoalsFor(goals: PlanGoal[], monthIds: ReadonlySet<string>, planned: PlannedEntry[], day: string, today: string): PlanGoal[] {
+  if (day !== today || monthIds.size === 0) return []
+  const taken = new Set(planned.filter((p) => p.type === 'goal').map((p) => p.text))
+  return goals.filter((g) => !g.done && monthIds.has(g.id) && !taken.has(g.name))
+}
+
 // Как рисовать пункт-цель: 'missing' — цель удалена; 'single' — одноэтапная (чекбокс);
 // 'staged' — многоэтапная (только «этап/этапов», отметка идёт через раздел «Цели»).
 export type GoalRowKind = 'missing' | 'single' | 'staged'

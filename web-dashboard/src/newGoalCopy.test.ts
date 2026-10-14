@@ -79,7 +79,7 @@ describe('подписи окна совпадают с web-goals на обои�
   const theirs = read('../web-goals/src/lib/i18n.ts')
   const mineSrc = read('src/lib/i18n.ts')
   const pick = (src: string, key: string): string[] => [...src.matchAll(new RegExp(`^\\s*${key}: ('[^\\n]*'|"[^\\n]*"),\\s*$`, 'gm'))].map((m) => m[1].slice(1, -1))
-  const KEYS = ['goals_new_title', 'goals_form_name_required', 'goals_field_name', 'goals_field_category', 'goals_field_stages', 'goals_no_category', 'goals_cat_new', 'goals_cat_new_placeholder', 'goals_field_difficulty', 'goals_diff_none', 'goals_diff_easy', 'goals_diff_medium', 'goals_diff_hard', 'goals_points_auto', 'goals_field_deadline']
+  const KEYS = ['goals_new_title', 'goals_form_name_required', 'goals_field_name', 'goals_field_category', 'goals_field_stages', 'goals_no_category', 'goals_cat_new', 'goals_cat_new_placeholder', 'goals_field_difficulty', 'goals_diff_none', 'goals_diff_easy', 'goals_diff_medium', 'goals_diff_hard', 'goals_points_auto', 'goals_field_deadline', 'goals_field_horizon', 'goals_field_date', 'goals_hor_now', 'goals_hor_soon', 'goals_hor_month', 'goals_hor_day', 'goals_form_date_required']
   it.each(KEYS)('%s — EN и RU как в «Целях»', (key) => {
     const a = pick(mineSrc, key)
     const b = pick(theirs, key)

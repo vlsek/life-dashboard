@@ -10,7 +10,7 @@ import { vCollapse } from '../lib/collapseMotion'
 import PlannedAddGoalModal from './PlannedAddGoalModal.vue'
 import PlannedCarryOverModal from './PlannedCarryOverModal.vue'
 import PlannedNewGoalModal from './PlannedNewGoalModal.vue'
-import { ensureCategory, loadMyCategories, type GoalFormInput } from '../lib/newGoal'
+import { ensureCategory, hasHorizonColumn, loadMyCategories, type GoalFormInput } from '../lib/newGoal'
 import { usePlanned } from '../lib/usePlanned'
 import { doneOnDay, goalRowKind, stageLabel, type CarryCandidate, type PlanGoal, type PlannedEntry } from '../lib/planned'
 import { todayStr } from '../lib/date'
@@ -27,7 +27,7 @@ import { stripEmoji } from '../lib/emojiText'
 const props = defineProps<{ userId: string | null; date?: string; switchable?: boolean }>()
 const emit = defineEmits<{ 'update:date': [value: string] }>()
 const day = computed(() => props.date ?? todayStr())
-const { planned, goals, loaded, error, savedTick, load, addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals } = usePlanned()
+const { planned, goals, loaded, error, savedTick, load, addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals: monthGoalsOf } = usePlanned()
 
 watch(
   [() => props.userId, day],
@@ -68,6 +68,8 @@ const notice = ref<string | null>(null)
 const goalPicker = ref<PlanGoal[] | null>(null)
 const carryCandidates = ref<CarryCandidate[] | null>(null)
 
+// BACKLOG 1052: «Цели месяца» под таблицей (только сегодня); зависит от goals/planned, поэтому пересчитывается сама
+const monthGoalRows = computed(() => (goals.value, planned.value, monthGoalsOf()))
 const doneGoals = computed(() => doneOnDay(goals.value, planned.value, day.value))
 // «Карточка со сводкой» (BACKLOG 498 срез 3): «Выполнено N из M» у свёрнутого блока
 const plannedSummaryText = computed(() => plannedSummary(planned.value, goals.value))
@@ -126,6 +128,7 @@ async function pickGoal(name: string) {
 // «Новая цель» (BACKLOG раздел 38): то же окно, что в «Целях» (название, баллы, категория, этапы, сложность, дедлайн). Цель создаётся в «Целях»
 // и сразу встаёт в план открытого дня; время из поля рядом с «Добавить» уходит в пункт плана (как у цели из списка).
 const newGoalOpen = ref(false)
+const horizonColumn = ref(false) // есть ли колонка горизонта (миграция 084): без неё в окне только «Сейчас» и «В конкретный день»
 const myCategories = ref<string[]>([])
 let storedCategories: string[] = []
 const noCategoryLabels = () => ['Без категории', 'No category', t('goals_no_category')]
@@ -136,6 +139,7 @@ async function openNewGoal() {
     myCategories.value = found.list
     storedCategories = found.stored
   }
+  horizonColumn.value = await hasHorizonColumn()
   newGoalOpen.value = true
 }
 async function submitNewGoal(res: GoalFormInput) {
@@ -242,6 +246,18 @@ const collapsed = ref(false)
       </ul>
     </details>
 
+    <!-- BACKLOG 1052: цели с горизонтом «В ближайший месяц», которых нет в плане, — подтягиваются сами; отметка пишется в саму цель -->
+    <div v-if="monthGoalRows.length" class="mt-2" data-test="month-goals">
+      <p class="dim mb-1 text-xs">{{ t('dash_planned_month_goals_h') }}</p>
+      <ul class="m-0 flex list-none flex-col gap-1 p-0 text-sm">
+        <li v-for="g in monthGoalRows" :key="g.id" class="flex items-center gap-2" data-test="month-goal">
+          <input v-if="goalRowKind(g) === 'single'" type="checkbox" :checked="!!g.done" data-test="month-goal-check" @change="setGoalDone(g, ($event.target as HTMLInputElement).checked, day)" />
+          <span v-else class="dim text-xs">{{ stageLabel(g) }}</span>
+          <span class="min-w-0 flex-1 break-words">{{ g.name }}</span>
+        </li>
+      </ul>
+    </div>
+
     <div class="mt-2 flex flex-wrap gap-2" data-test="add-row">
       <input ref="textInput" v-model="newText" type="text" class="min-w-40 flex-1" :class="{ 'plan-invalid': emptyInvalid, 'plan-shake': shaking }" :aria-invalid="emptyInvalid ? 'true' : undefined" :placeholder="t('dash_planned_custom_placeholder')" data-test="custom-input" @input="emptyInvalid = false" @keydown.enter.prevent="addCustom" />
       <button type="button" class="secondary" data-test="add-custom" @click="addCustom"><EmojiText :text="t('add_btn')" /></button>
@@ -275,7 +291,7 @@ const collapsed = ref(false)
   </section>
 
   <PlannedAddGoalModal v-if="goalPicker" :goals="goalPicker" @close="goalPicker = null" @pick="pickGoal" />
-  <PlannedNewGoalModal v-if="newGoalOpen" :categories="myCategories" :no-category-labels="noCategoryLabels()" :submit="submitNewGoal" @close="newGoalOpen = false" />
+  <PlannedNewGoalModal v-if="newGoalOpen" :categories="myCategories" :no-category-labels="noCategoryLabels()" :horizon-column="horizonColumn" :submit="submitNewGoal" @close="newGoalOpen = false" />
   <PlannedCarryOverModal v-if="carryCandidates" :candidates="carryCandidates" @close="carryCandidates = null" @add="addCarried" />
 </template>
 

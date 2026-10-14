@@ -71,7 +71,7 @@ export function buildInsertRow(res: GoalFormInput, noCategoryLabel: string, opts
     current_stage: 0,
     done: false,
     ...goalExtraFields(res, null),
-    ...(res.horizon !== undefined || opts.horizonColumn ? horizonFields(res, !!opts.horizonColumn) : {}),
+    ...(res.horizon !== undefined || opts.horizonColumn ? horizonFields(res, !!opts.horizonColumn, false) : {}),
     ...weightFields(res, !!opts.weightColumn),
   }
 }

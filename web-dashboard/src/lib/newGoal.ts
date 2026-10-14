@@ -6,6 +6,39 @@ import { sb } from './supabase'
 
 export type Difficulty = 'easy' | 'medium' | 'hard' | null
 
+// Горизонт цели (BACKLOG 1048+1050, миграция 084) — копия из web-goals/src/lib/horizons.ts (только нужное для новой цели).
+export type Horizon = 'now' | 'soon' | 'month' | 'day'
+export const HORIZON_KEYS = { now: 'goals_hor_now', soon: 'goals_hor_soon', month: 'goals_hor_month', day: 'goals_hor_day' } as const
+
+// Какие горизонты можно выбрать: без колонки (миграция 084 не применена) — только те, что выражаются без неё.
+export function horizonOptions(hasColumn: boolean): Horizon[] {
+  return hasColumn ? ['now', 'soon', 'month', 'day'] : ['now', 'day']
+}
+
+// Поля горизонта и срока для записи в базу. Срок хранится только у «В конкретный день»; колонка horizon пишется, только если она есть.
+// clearDeadline: при правке срок у не-«дня» обнуляется (null); у новой цели обнулять нечего — ключ не пишется.
+export function horizonFields(res: { horizon?: Horizon | null; deadline: string }, hasColumn: boolean, clearDeadline = true): { horizon?: Horizon; deadline?: string | null } {
+  const h: Horizon = res.horizon ?? (res.deadline ? 'day' : 'now')
+  const out: { horizon?: Horizon; deadline?: string | null } = {}
+  if (h === 'day' ? res.deadline : clearDeadline) out.deadline = h === 'day' ? res.deadline || null : null
+  if (hasColumn) out.horizon = h
+  return out
+}
+
+// opts.horizonColumn — есть ли в базе колонка goals.horizon (миграция 084); без неё горизонт сводится к сроку.
+export interface GoalWriteOpts {
+  horizonColumn?: boolean
+}
+
+// Есть ли колонка goals.horizon: пробный запрос; ошибка (колонки нет) или сбой сети — считаем, что нет.
+export async function hasHorizonColumn(): Promise<boolean> {
+  try {
+    return !(await sb.from('goals').select('horizon').limit(1)).error
+  } catch {
+    return false
+  }
+}
+
 // Значения формы добавления цели (до сборки в строку для базы).
 export interface GoalFormInput {
   name: string
@@ -13,6 +46,7 @@ export interface GoalFormInput {
   stages: number
   difficulty: Difficulty
   deadline: string
+  horizon?: Horizon | null
 }
 
 // Созданная цель в том виде, в каком её держит блок «Планы» (PlanGoal).
@@ -95,7 +129,7 @@ export function goalExtraFields(res: Pick<GoalFormInput, 'deadline' | 'difficult
 }
 
 // Строка для insert новой цели (как buildInsertRow() в web-goals).
-export function buildInsertRow(res: GoalFormInput, noCategoryLabel: string) {
+export function buildInsertRow(res: GoalFormInput, noCategoryLabel: string, opts: GoalWriteOpts = {}) {
   return {
     name: res.name.trim(),
     points: pointsForDifficulty(res.difficulty),
@@ -104,6 +138,7 @@ export function buildInsertRow(res: GoalFormInput, noCategoryLabel: string) {
     current_stage: 0,
     done: false,
     ...goalExtraFields(res),
+    ...(res.horizon !== undefined || opts.horizonColumn ? horizonFields(res, !!opts.horizonColumn, false) : {}),
   }
 }
 
@@ -129,7 +164,7 @@ export async function loadMyCategories(userId: string, noCategoryLabels: string[
 
 // Записать новую цель. Ошибка летит наверх (окно покажет понятный текст и останется открытым).
 export async function createGoal(userId: string, res: GoalFormInput, noCategoryLabel: string): Promise<CreatedGoal> {
-  const row = buildInsertRow(res, noCategoryLabel)
+  const row = buildInsertRow(res, noCategoryLabel, { horizonColumn: await hasHorizonColumn() })
   const { data, error } = await sb.from('goals').insert({ user_id: userId, ...row }).select('id, name, stages, done, current_stage').single()
   if (error) throw error
   return data as CreatedGoal

@@ -42,7 +42,8 @@ describe('запись в базу', () => {
     expect(horizonFields({ horizon: 'soon', deadline: '2026-11-01' }, true)).toEqual({ horizon: 'soon', deadline: null })
     expect(horizonOptions(true)).toEqual(['now', 'soon', 'month', 'day'])
     const row = buildInsertRow(form({ horizon: 'month' }), 'Без категории', { horizonColumn: true })
-    expect(row).toMatchObject({ horizon: 'month', deadline: null })
+    expect(row).toMatchObject({ horizon: 'month' })
+    expect(row).not.toHaveProperty('deadline') // у новой цели обнулять срок нечего
     const patch = buildUpdateRow(form({ horizon: 'day', deadline: '2026-11-05' }), goal({ horizon: 'now' }), 'Без категории', { horizonColumn: true })
     expect(patch).toMatchObject({ horizon: 'day', deadline: '2026-11-05' })
   })
