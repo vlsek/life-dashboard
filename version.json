@@ -1,6 +1,13 @@
 {
-  "version": "5.57",
+  "version": "5.58",
   "en": [
+    {
+      "version": "5.58",
+      "date": "2026-10-14 05:26",
+      "changes": [
+        "Workouts, Progress tab: a \"Weekly streak\" block — how many weeks in a row (Mon–Sun) had at least one workout, the best streak, training days this week and the last 8 weeks as bars. An empty current week does not break the streak until it ends"
+      ]
+    },
     {
       "version": "5.57",
       "date": "2026-10-14 05:45",
@@ -3962,6 +3969,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.58",
+      "date": "2026-10-14 05:26",
+      "changes": [
+        "Тренировки, вкладка «Прогрессия»: блок «Серия по неделям» — сколько недель подряд (пн–вс) была хотя бы одна тренировка, лучшая серия, дни с тренировкой на этой неделе и 8 последних недель столбиками. Пустая текущая неделя серию не рвёт, пока не закончится"
+      ]
+    },
     {
       "version": "5.57",
       "date": "2026-10-14 05:45",

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.57";
+const SITE_VERSION = "5.58";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.58", date: "2026-10-14 05:26", changes: [
+        "Тренировки, вкладка «Прогрессия»: блок «Серия по неделям» — сколько недель подряд (пн–вс) была хотя бы одна тренировка, лучшая серия, дни с тренировкой на этой неделе и 8 последних недель столбиками. Пустая текущая неделя серию не рвёт, пока не закончится",
+    ]},
     { version: "5.57", date: "2026-10-14 05:45", changes: [
         "«Цели»: цель на вес. В форме цели появился «Тип цели»: «Сбросить вес» или «Набрать вес» — укажите вес на старте и целевой (на старте подставляется ваш последний вес). В карточке — процент пути, «осталось N кг» и поле «Текущий вес» с кнопкой «Записать вес»: вес сохраняется и в показателях тела за сегодня, а изменения веса там сразу видны в цели. Достигли цели — она закрывается сама и приносит баллы, вернули вес назад — открывается снова. Нужна миграция 085 (до неё выбор типа в форме не показывается). Обычные цели не меняются."
     { version: "5.56", date: "2026-10-14 05:22", changes: [
@@ -2280,6 +2283,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.58", date: "2026-10-14 05:26", changes: [
+        "Workouts, Progress tab: a \"Weekly streak\" block — how many weeks in a row (Mon–Sun) had at least one workout, the best streak, training days this week and the last 8 weeks as bars. An empty current week does not break the streak until it ends",
+    ]},
     { version: "5.57", date: "2026-10-14 05:45", changes: [
         "Goals: weight goals. The goal form has a new “Goal type”: “Lose weight” or “Gain weight” — enter the starting and target weight (the start defaults to your latest weight). The card shows how far along you are, “N kg left” and a “Current weight” field with a “Log weight” button: the weight is also saved to today’s body stats, and changes made there show up in the goal right away. Reaching the target closes the goal by itself and awards its points; moving the weight back reopens it. Needs migration 085 (until then the type picker is hidden). Regular goals are unchanged."
     { version: "5.56", date: "2026-10-14 05:22", changes: [
