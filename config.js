@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.66";
+const SITE_VERSION = "5.67";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.67", date: "2026-10-14 10:40", changes: [
+        "Главная, «Планы»: в окне «Новая цель» появился «Тип цели» — «Сбросить вес» или «Набрать вес» (как в «Целях»): вес на старте подставляется из ваших последних измерений, укажите целевой. Цель на вес создаётся в «Целях» и сразу встаёт в план дня. Выбор типа виден после применения миграции 085, без неё окно работает как раньше."
+    ]},
     { version: "5.66", date: "2026-10-14 05:46", changes: [
         "Достижения: поздравление о новом достижении приходит почти сразу после любого сохранения на любой странице (Цели, Тренировки, Навыки и т. д.), а не только после действий на Дашборде: шапка замечает успешную запись и через ~5 секунд запускает проверку (не чаще раза в 30 секунд). Без миграций."
     ]},
@@ -2308,6 +2311,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.67", date: "2026-10-14 10:40", changes: [
+        "Home, Plans: the “New goal” window has a “Goal type” — “Lose weight” or “Gain weight” (as in Goals): the starting weight is filled in from your latest measurement, enter the target. A weight goal is created in Goals and added to the day plan right away. The type picker appears once migration 085 is applied; without it the window works as before."
+    ]},
     { version: "5.66", date: "2026-10-14 05:46", changes: [
         "Achievements: the “new achievement” congratulation now arrives almost right after any save on any page (Goals, Workouts, Skills, etc.), not only after Dashboard actions: the header notices a successful write and starts the check about 5 seconds later (at most once per 30 seconds). No migrations."
     ]},
