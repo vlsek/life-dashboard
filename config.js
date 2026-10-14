@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.61";
+const SITE_VERSION = "5.62";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.62", date: "2026-10-14 05:37", changes: [
+        "Графики: мини-график за 7 дней появился и в карточках метрик «Подходы» (сумма повторов по дням) — под той же настройкой «Мини-графики» в «Кастомизации → Графики → Дополнения» (по умолчанию выключено). Без миграций."
+    ]},
     { version: "5.61", date: "2026-10-14 05:34", changes: [
         "Изучение языков: карточка «Повторение» над списком слов — слово крупно, тап по карточке показывает перевод и пример, «Выучил» отмечает слово выученным, «Дальше» идёт к следующему по кругу. Работает по выбранной вкладке языка и показывает только невыученные слова",
     ]},
@@ -2293,6 +2296,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.62", date: "2026-10-14 05:37", changes: [
+        "Charts: the 7-day mini chart now also appears in “Sets” metric cards (reps per day) — under the same “Mini charts” option in Customization → Charts → Extras (off by default). No migrations."
+    ]},
     { version: "5.61", date: "2026-10-14 05:34", changes: [
         "Language learning: a \"Review\" card above the word list — the word is shown big, tap the card to see the translation and the example, \"Learned\" marks the word as learned, \"Next\" goes to the next one in a loop. It follows the selected language tab and shows only words that are not learned yet",
     ]},

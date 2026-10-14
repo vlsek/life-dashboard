@@ -1,6 +1,13 @@
 {
-  "version": "5.61",
+  "version": "5.62",
   "en": [
+    {
+      "version": "5.62",
+      "date": "2026-10-14 05:37",
+      "changes": [
+        "Charts: the 7-day mini chart now also appears in “Sets” metric cards (reps per day) — under the same “Mini charts” option in Customization → Charts → Extras (off by default). No migrations."
+      ]
+    },
     {
       "version": "5.61",
       "date": "2026-10-14 05:34",
@@ -3994,6 +4001,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.62",
+      "date": "2026-10-14 05:37",
+      "changes": [
+        "Графики: мини-график за 7 дней появился и в карточках метрик «Подходы» (сумма повторов по дням) — под той же настройкой «Мини-графики» в «Кастомизации → Графики → Дополнения» (по умолчанию выключено). Без миграций."
+      ]
+    },
     {
       "version": "5.61",
       "date": "2026-10-14 05:34",
