@@ -33,8 +33,8 @@ describe('контур тела: шея', () => {
 })
 
 describe('мини-карта в правой плашке рисует тот же контур', () => {
-  it('muscleShapes.ts в web-header — точная копия web-workouts (контуры не расходятся)', () => {
-    const a: string = readFileSync('src/lib/muscleShapes.ts', 'utf-8')
+  it('muscleShapes.ts в web-header — точная копия общего shared/body-picker (контуры не расходятся)', () => {
+    const a: string = readFileSync('../shared/body-picker/muscleShapes.ts', 'utf-8')
     const b: string = readFileSync('../web-header/src/lib/muscleShapes.ts', 'utf-8')
     expect(b).toBe(a)
   })
