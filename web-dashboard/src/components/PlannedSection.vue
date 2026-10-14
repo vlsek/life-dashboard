@@ -10,7 +10,7 @@ import { vCollapse } from '../lib/collapseMotion'
 import PlannedAddGoalModal from './PlannedAddGoalModal.vue'
 import PlannedCarryOverModal from './PlannedCarryOverModal.vue'
 import PlannedNewGoalModal from './PlannedNewGoalModal.vue'
-import { ensureCategory, hasHorizonColumn, loadMyCategories, type GoalFormInput } from '../lib/newGoal'
+import { ensureCategory, hasHorizonColumn, hasWeightColumn, loadBodyWeight, loadMyCategories, type GoalFormInput } from '../lib/newGoal'
 import { usePlanned } from '../lib/usePlanned'
 import { doneOnDay, goalRowKind, stageLabel, type CarryCandidate, type PlanGoal, type PlannedEntry } from '../lib/planned'
 import { todayStr } from '../lib/date'
@@ -128,6 +128,8 @@ async function pickGoal(name: string) {
 // «Новая цель» (BACKLOG раздел 38): то же окно, что в «Целях» (название, баллы, категория, этапы, сложность, дедлайн). Цель создаётся в «Целях»
 // и сразу встаёт в план открытого дня; время из поля рядом с «Добавить» уходит в пункт плана (как у цели из списка).
 const newGoalOpen = ref(false)
+const weightColumn = ref(false) // есть ли колонки цели на вес (миграция 085): без них в окне нет выбора «Сбросить/Набрать вес»
+const bodyWeight = ref<number | null>(null) // последний вес тела — старт цели на вес по умолчанию
 const horizonColumn = ref(false) // есть ли колонка горизонта (миграция 084): без неё в окне только «Сейчас» и «В конкретный день»
 const myCategories = ref<string[]>([])
 let storedCategories: string[] = []
@@ -140,6 +142,8 @@ async function openNewGoal() {
     storedCategories = found.stored
   }
   horizonColumn.value = await hasHorizonColumn()
+  weightColumn.value = await hasWeightColumn()
+  bodyWeight.value = weightColumn.value && props.userId ? await loadBodyWeight(props.userId) : null
   newGoalOpen.value = true
 }
 async function submitNewGoal(res: GoalFormInput) {
@@ -291,7 +295,7 @@ const collapsed = ref(false)
   </section>
 
   <PlannedAddGoalModal v-if="goalPicker" :goals="goalPicker" @close="goalPicker = null" @pick="pickGoal" />
-  <PlannedNewGoalModal v-if="newGoalOpen" :categories="myCategories" :no-category-labels="noCategoryLabels()" :horizon-column="horizonColumn" :submit="submitNewGoal" @close="newGoalOpen = false" />
+  <PlannedNewGoalModal v-if="newGoalOpen" :categories="myCategories" :no-category-labels="noCategoryLabels()" :horizon-column="horizonColumn" :weight-column="weightColumn" :current-weight="bodyWeight" :submit="submitNewGoal" @close="newGoalOpen = false" />
   <PlannedCarryOverModal v-if="carryCandidates" :candidates="carryCandidates" @close="carryCandidates = null" @add="addCarried" />
 </template>
 

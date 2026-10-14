@@ -28,6 +28,7 @@ export function horizonFields(res: { horizon?: Horizon | null; deadline: string 
 // opts.horizonColumn — есть ли в базе колонка goals.horizon (миграция 084); без неё горизонт сводится к сроку.
 export interface GoalWriteOpts {
   horizonColumn?: boolean
+  weightColumn?: boolean // есть ли колонки goals.weight_* (миграция 085)
 }
 
 // Есть ли колонка goals.horizon: пробный запрос; ошибка (колонки нет) или сбой сети — считаем, что нет.
@@ -39,6 +40,53 @@ export async function hasHorizonColumn(): Promise<boolean> {
   }
 }
 
+// Цели на вес (BACKLOG 1085, миграция 085) — копия web-goals/src/lib/weightGoal.ts (разбор ввода, проверка, поля для базы).
+export type WeightMode = 'lose' | 'gain'
+export const WEIGHT_MIN = 20
+export const WEIGHT_MAX = 500
+
+export function parseWeight(v: string | number | null | undefined): number | null {
+  if (v === null || v === undefined || v === '') return null
+  const n = typeof v === 'number' ? v : Number(String(v).trim().replace(',', '.'))
+  if (!Number.isFinite(n) || n < WEIGHT_MIN || n > WEIGHT_MAX) return null
+  return Math.round(n * 10) / 10
+}
+
+export type WeightCheck = 'ok' | 'start' | 'target' | 'direction'
+
+export function validateWeight(mode: WeightMode, start: number | null, target: number | null): WeightCheck {
+  if (start === null) return 'start'
+  if (target === null) return 'target'
+  if (mode === 'lose' ? target >= start : target <= start) return 'direction'
+  return 'ok'
+}
+
+export function weightFields(res: Pick<GoalFormInput, 'weightMode' | 'weightStart' | 'weightTarget'>, column: boolean): { weight_mode?: WeightMode | null; weight_start?: number | null; weight_target?: number | null } {
+  if (!column) return {}
+  if (res.weightMode) return { weight_mode: res.weightMode, weight_start: res.weightStart ?? null, weight_target: res.weightTarget ?? null }
+  return { weight_mode: null, weight_start: null, weight_target: null }
+}
+
+// Есть ли колонки goals.weight_*: пробный запрос; ошибка или сбой сети — считаем, что нет (окно не покажет выбор «Сбросить/Набрать вес»).
+export async function hasWeightColumn(): Promise<boolean> {
+  try {
+    return !(await sb.from('goals').select('weight_mode').limit(1)).error
+  } catch {
+    return false
+  }
+}
+
+// Последнее измерение веса тела (body_stats.weight) — старт цели на вес по умолчанию. Нет записей / сбой — null (старт введут руками).
+export async function loadBodyWeight(userId: string): Promise<number | null> {
+  try {
+    const { data, error } = await sb.from('body_stats').select('weight').eq('user_id', userId).not('weight', 'is', null).order('date', { ascending: false }).limit(1)
+    const w = !error && data && data.length ? Number((data[0] as { weight: number | string }).weight) : NaN
+    return Number.isFinite(w) ? w : null
+  } catch {
+    return null
+  }
+}
+
 // Значения формы добавления цели (до сборки в строку для базы).
 export interface GoalFormInput {
   name: string
@@ -47,6 +95,9 @@ export interface GoalFormInput {
   difficulty: Difficulty
   deadline: string
   horizon?: Horizon | null
+  weightMode?: WeightMode | null // цель на вес (085); у обычной цели ключей веса нет
+  weightStart?: number | null
+  weightTarget?: number | null
 }
 
 // Созданная цель в том виде, в каком её держит блок «Планы» (PlanGoal).
@@ -134,11 +185,12 @@ export function buildInsertRow(res: GoalFormInput, noCategoryLabel: string, opts
     name: res.name.trim(),
     points: pointsForDifficulty(res.difficulty),
     category: (res.category || noCategoryLabel).trim(),
-    stages: Math.max(1, res.stages || 1),
+    stages: res.weightMode ? 1 : Math.max(1, res.stages || 1), // у цели на вес этапов нет: прогресс идёт по весу
     current_stage: 0,
     done: false,
     ...goalExtraFields(res),
     ...(res.horizon !== undefined || opts.horizonColumn ? horizonFields(res, !!opts.horizonColumn, false) : {}),
+    ...weightFields(res, !!opts.weightColumn),
   }
 }
 
@@ -164,7 +216,7 @@ export async function loadMyCategories(userId: string, noCategoryLabels: string[
 
 // Записать новую цель. Ошибка летит наверх (окно покажет понятный текст и останется открытым).
 export async function createGoal(userId: string, res: GoalFormInput, noCategoryLabel: string): Promise<CreatedGoal> {
-  const row = buildInsertRow(res, noCategoryLabel, { horizonColumn: await hasHorizonColumn() })
+  const row = buildInsertRow(res, noCategoryLabel, { horizonColumn: await hasHorizonColumn(), weightColumn: await hasWeightColumn() })
   const { data, error } = await sb.from('goals').insert({ user_id: userId, ...row }).select('id, name, stages, done, current_stage').single()
   if (error) throw error
   return data as CreatedGoal

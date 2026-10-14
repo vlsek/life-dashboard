@@ -38,6 +38,20 @@ describe('копия логики категорий и строки цели с
   it('buildInsertRow — тот же код (у новой цели goalExtraFields без «существующей»)', () => {
     expect(body(myCode, 'buildInsertRow')).toBe(body(theirGoals, 'buildInsertRow').replace('goalExtraFields(res, null)', 'goalExtraFields(res)'))
   })
+  it('цель на вес — тот же код, что в web-goals (parseWeight, validateWeight, weightFields) и те же границы 20–500', () => {
+    const theirW = read('../web-goals/src/lib/weightGoal.ts')
+    for (const fn of ['parseWeight', 'validateWeight', 'weightFields']) expect(body(myCode, fn)).toBe(body(theirW, fn))
+    for (const line of ['export const WEIGHT_MIN = 20', 'export const WEIGHT_MAX = 500']) {
+      expect(myCode).toContain(line)
+      expect(theirW).toContain(line)
+    }
+  })
+  it('вес в строке цели: с колонками пишется, без колонок — нет; обычная цель при колонках обнуляет вес; у цели на вес один этап', () => {
+    const w = { weightMode: 'lose' as const, weightStart: 90, weightTarget: 80 }
+    expect(mine.buildInsertRow({ name: 'A', category: '', stages: 5, difficulty: null, deadline: '', ...w }, 'Без', { weightColumn: true })).toMatchObject({ stages: 1, weight_mode: 'lose', weight_start: 90, weight_target: 80 })
+    expect(mine.buildInsertRow({ name: 'A', category: '', stages: 3, difficulty: null, deadline: '', ...w }, 'Без')).not.toHaveProperty('weight_mode')
+    expect(mine.buildInsertRow({ name: 'A', category: '', stages: 3, difficulty: null, deadline: '' }, 'Без', { weightColumn: true })).toMatchObject({ weight_mode: null, weight_start: null, weight_target: null })
+  })
   it('goalExtraFields для новой цели: дедлайн и сложность пишутся, только если заданы (как у web-goals при existing = null)', () => {
     expect(body(theirGoals, 'goalExtraFields')).toContain('if (res.deadline || hasCols) extra.deadline = res.deadline || null')
     expect(mine.goalExtraFields({ deadline: '', difficulty: null })).toEqual({})
@@ -79,7 +93,7 @@ describe('подписи окна совпадают с web-goals на обои�
   const theirs = read('../web-goals/src/lib/i18n.ts')
   const mineSrc = read('src/lib/i18n.ts')
   const pick = (src: string, key: string): string[] => [...src.matchAll(new RegExp(`^\\s*${key}: ('[^\\n]*'|"[^\\n]*"),\\s*$`, 'gm'))].map((m) => m[1].slice(1, -1))
-  const KEYS = ['goals_new_title', 'goals_form_name_required', 'goals_field_name', 'goals_field_category', 'goals_field_stages', 'goals_no_category', 'goals_cat_new', 'goals_cat_new_placeholder', 'goals_field_difficulty', 'goals_diff_none', 'goals_diff_easy', 'goals_diff_medium', 'goals_diff_hard', 'goals_points_auto', 'goals_field_deadline', 'goals_field_horizon', 'goals_field_date', 'goals_hor_now', 'goals_hor_soon', 'goals_hor_month', 'goals_hor_day', 'goals_form_date_required']
+  const KEYS = ['goals_new_title', 'goals_form_name_required', 'goals_field_name', 'goals_field_category', 'goals_field_stages', 'goals_no_category', 'goals_cat_new', 'goals_cat_new_placeholder', 'goals_field_difficulty', 'goals_diff_none', 'goals_diff_easy', 'goals_diff_medium', 'goals_diff_hard', 'goals_points_auto', 'goals_field_deadline', 'goals_field_horizon', 'goals_field_date', 'goals_hor_now', 'goals_hor_soon', 'goals_hor_month', 'goals_hor_day', 'goals_form_date_required', 'goals_field_kind', 'goals_kind_plain', 'goals_kind_lose', 'goals_kind_gain', 'goals_weight_start', 'goals_weight_target', 'goals_weight_hint', 'goals_weight_err_start', 'goals_weight_err_target', 'goals_weight_err_direction']
   it.each(KEYS)('%s — EN и RU как в «Целях»', (key) => {
     const a = pick(mineSrc, key)
     const b = pick(theirs, key)
