@@ -6,7 +6,9 @@ type ExLite = Pick<Exercise, 'id' | 'name'>
 type EntryLite = Pick<WorkoutEntry, 'exercise_id' | 'date' | 'sets'>
 
 // Окно «последние N дней» включает сегодняшний день: при N=4 это сегодня и три дня назад.
-export const RECENT_DAYS = 4
+// RECENT_DAYS, lastTrainedByMuscle и isTrainedRecently вынесены в общий модуль (BACKLOG 762 срез 2, вариант Б) — те же функции нужны Дашборду.
+import { lastTrainedByMuscle } from '../../../shared/body-picker/muscleRecency'
+export { RECENT_DAYS, lastTrainedByMuscle, isTrainedRecently } from '../../../shared/body-picker/muscleRecency'
 
 function musclesByExerciseId(exercises: ExLite[]): Map<string, MuscleId[]> {
   const m = new Map<string, MuscleId[]>()
@@ -17,22 +19,6 @@ function musclesByExerciseId(exercises: ExLite[]): Map<string, MuscleId[]> {
 // Пустая запись (без подходов) не считается тренировкой; даты из будущего — тоже.
 function realEntries(entries: EntryLite[], today: string): EntryLite[] {
   return entries.filter((e) => e.sets.length > 0 && e.date <= today)
-}
-
-export function lastTrainedByMuscle(entries: EntryLite[], exercises: ExLite[], today: string): Partial<Record<MuscleId, string>> {
-  const byEx = musclesByExerciseId(exercises)
-  const last: Partial<Record<MuscleId, string>> = {}
-  for (const e of realEntries(entries, today)) {
-    for (const m of byEx.get(e.exercise_id) ?? []) {
-      if (!last[m] || e.date > (last[m] as string)) last[m] = e.date
-    }
-  }
-  return last
-}
-
-export function isTrainedRecently(last: string | undefined, today: string, days = RECENT_DAYS): boolean {
-  if (!last) return false
-  return last >= addDaysIso(today, -(days - 1)) && last <= today
 }
 
 // Сколько РАЗНЫХ дней с даты `sinceIso` мышца была в работе; по убыванию, нули не выводятся.
