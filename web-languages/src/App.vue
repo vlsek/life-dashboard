@@ -7,6 +7,7 @@ import AppShell from './components/AppShell.vue'
 import WordForm from './components/WordForm.vue'
 import DictionaryTabs from './components/DictionaryTabs.vue'
 import IdiomCard from './components/IdiomCard.vue'
+import FlashCard from './components/FlashCard.vue'
 import ProgressRing from './components/ProgressRing.vue'
 import { hasIdioms } from './lib/idioms'
 import Icon from './components/Icon.vue'
@@ -147,6 +148,8 @@ async function onDelete(id: string) {
       <p v-if="effectiveFilter !== 'all' && filteredWords.length === 0" class="mb-3 text-sm" style="color: var(--text-dim)" data-test="dictionary-empty">
         {{ t('eng_tab_empty') }}
       </p>
+
+      <FlashCard :words="activeWords" @learned="toggleLearned" />
 
       <div class="mb-4 flex items-center gap-4 rounded-xl border p-4 text-sm" style="border-color: var(--border); background: var(--bg-card)" data-test="learn-stats">
         <ProgressRing :percent="learnedPercent" :size="64" :label="t('eng_learned_label')" />
