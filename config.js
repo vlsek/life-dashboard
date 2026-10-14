@@ -479,11 +479,13 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.56";
+const SITE_VERSION = "5.57";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.57", date: "2026-10-14 05:45", changes: [
+        "«Цели»: цель на вес. В форме цели появился «Тип цели»: «Сбросить вес» или «Набрать вес» — укажите вес на старте и целевой (на старте подставляется ваш последний вес). В карточке — процент пути, «осталось N кг» и поле «Текущий вес» с кнопкой «Записать вес»: вес сохраняется и в показателях тела за сегодня, а изменения веса там сразу видны в цели. Достигли цели — она закрывается сама и приносит баллы, вернули вес назад — открывается снова. Нужна миграция 085 (до неё выбор типа в форме не показывается). Обычные цели не меняются."
     { version: "5.56", date: "2026-10-14 05:22", changes: [
         "Тренировки, вкладка «Прогрессия»: новый блок «Что растёт» — по каждому упражнению видно, растёт ли оно, стоит или просело: лучший подход за последние 28 дней сравнивается с предыдущими 28 (изменение в процентах и «было → стало»). Новые упражнения помечены «новое»",
     ]},
@@ -2278,6 +2280,8 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.57", date: "2026-10-14 05:45", changes: [
+        "Goals: weight goals. The goal form has a new “Goal type”: “Lose weight” or “Gain weight” — enter the starting and target weight (the start defaults to your latest weight). The card shows how far along you are, “N kg left” and a “Current weight” field with a “Log weight” button: the weight is also saved to today’s body stats, and changes made there show up in the goal right away. Reaching the target closes the goal by itself and awards its points; moving the weight back reopens it. Needs migration 085 (until then the type picker is hidden). Regular goals are unchanged."
     { version: "5.56", date: "2026-10-14 05:22", changes: [
         "Workouts, Progress tab: a new \"What is growing\" block shows for every exercise whether it is growing, flat or slipping: the best set of the last 28 days is compared with the previous 28 (change in percent and \"was → now\"). New exercises are marked \"new\"",
     ]},
