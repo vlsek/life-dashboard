@@ -1350,10 +1350,15 @@ html.theme-glass,
 html.theme-meadow,
 html.theme-autumn { color-scheme: light; }
 
-html,
+/* Высота страницы — «не меньше экрана», а не «ровно экран» (BACKLOG 63.1): при height:100% контейнер #app кончался на первом экране,
+   и «липкая» шапка (sticky) уезжала вместе с прокруткой, как только листали ниже первой страницы (Page Down на ПК). */
+html {
+  min-height: 100%;
+}
+
 body,
 #app {
-  height: 100%;
+  min-height: 100vh;
 }
 
 body {
