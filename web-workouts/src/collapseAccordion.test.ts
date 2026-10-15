@@ -110,9 +110,9 @@ describe('Тренировки: аккордеон на категориях и 
   })
 
   // BACKLOG 44.5д: «Прогрессии» и общий график — отдельная вкладка, а не блок посреди упражнений
-  it('вкладка «Прогрессия»: три вкладки, общий график и деревья прогрессий лежат в ней, а не на «Упражнениях»', async () => {
+  it('вкладка «Прогрессия»: четыре вкладки, общий график и деревья прогрессий лежат в ней, а не на «Упражнениях»', async () => {
     const w = await mountApp()
-    expect(w.findAll('[data-testid^="page-tab-"]').map((b) => b.text())).toEqual(['Упражнения', 'Карта мышц', 'Прогрессия'])
+    expect(w.findAll('[data-testid^="page-tab-"]').map((b) => b.text())).toEqual(['Журнал', 'Карта мышц', 'Прогрессия', 'Упражнения'])
     const exTab = w.find('[data-testid="tab-exercises"]')
     const prTab = w.find('[data-testid="tab-progress"]')
     expect(prTab.attributes('style') ?? '').toContain('display: none')
@@ -127,6 +127,19 @@ describe('Тренировки: аккордеон на категориях и 
     const w2 = await mountApp()
     expect(w2.find('[data-testid="page-tab-progress"]').attributes('aria-selected')).toBe('true')
     w2.unmount()
+  })
+
+  // BACKLOG 44.5б срез 1: «Сегодня» над вкладками, «Журнал» — записи по дням
+  it('«Журнал»: вкладка с записями по дням, блок «Сегодня» стоит над вкладками', async () => {
+    const w = await mountApp()
+    const html = w.html()
+    expect(html.indexOf('data-testid="today-panel"')).toBeGreaterThan(-1)
+    expect(html.indexOf('data-testid="today-panel"')).toBeLessThan(html.indexOf('data-testid="page-tabs"'))
+    expect(w.find('[data-testid="tab-journal"]').attributes('style') ?? '').toContain('display: none')
+    await w.find('[data-testid="page-tab-journal"]').trigger('click')
+    expect(w.find('[data-testid="tab-journal"]').attributes('style') ?? '').not.toContain('display: none')
+    expect(localStorage.getItem('workouts_tab')).toBe('journal')
+    w.unmount()
   })
 
   it('мусор в сохранённой вкладке — открываются «Упражнения»', async () => {

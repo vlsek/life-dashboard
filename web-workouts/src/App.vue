@@ -24,6 +24,8 @@ import { BODY_MODELS, readBodyModelChoice, resolveBodyModel, writeBodyModelChoic
 import ProgressionTrees from './components/ProgressionTrees.vue'
 import GrowthList from './components/GrowthList.vue'
 import WeekStreak from './components/WeekStreak.vue'
+import TodayPanel from './components/TodayPanel.vue'
+import JournalList from './components/JournalList.vue'
 import ExerciseForm from './components/ExerciseForm.vue'
 import EntryForm from './components/EntryForm.vue'
 import MetricLinkModal from './components/MetricLinkModal.vue'
@@ -175,9 +177,9 @@ const recentMuscles = computed(() => {
 
 // Вкладки страницы (BACKLOG 54.2, 44.5д): «Упражнения», «Карта мышц» и «Прогрессия» (общий график и деревья прогрессий — не блоком посреди упражнений);
 // выбор помнится на устройстве.
-type PageTab = 'exercises' | 'map' | 'progress'
-const PAGE_TABS = ['exercises', 'map', 'progress'] as const
-const TAB_LABEL: Record<PageTab, 'workouts_tab_exercises' | 'workouts_tab_map' | 'workouts_tab_progress'> = { exercises: 'workouts_tab_exercises', map: 'workouts_tab_map', progress: 'workouts_tab_progress' }
+type PageTab = 'journal' | 'map' | 'progress' | 'exercises'
+const PAGE_TABS = ['journal', 'map', 'progress', 'exercises'] as const
+const TAB_LABEL: Record<PageTab, 'workouts_tab_journal' | 'workouts_tab_exercises' | 'workouts_tab_map' | 'workouts_tab_progress'> = { journal: 'workouts_tab_journal', exercises: 'workouts_tab_exercises', map: 'workouts_tab_map', progress: 'workouts_tab_progress' }
 const TAB_KEY = 'workouts_tab'
 function readTab(): PageTab {
   try {
@@ -425,7 +427,9 @@ function onToggleProgramWeek(week: number) {
       </p>
       <p v-else-if="exercises.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('workouts_empty') }}</p>
 
-      <div class="mb-4 flex gap-1.5" role="tablist" data-testid="page-tabs">
+      <TodayPanel v-if="exercises.length > 0" :entries="entries" :exercises="exercises" :busy-id="quickBusyId" @add-set="onAddSet" />
+
+      <div class="mb-4 flex flex-wrap gap-1.5" role="tablist" data-testid="page-tabs">
         <button
           v-for="tab in PAGE_TABS"
           :key="tab"
@@ -439,6 +443,10 @@ function onToggleProgramWeek(week: number) {
         >
           {{ t(TAB_LABEL[tab]) }}
         </button>
+      </div>
+
+      <div v-show="pageTab === 'journal'" data-testid="tab-journal">
+        <JournalList :entries="entries" :exercises="exercises" />
       </div>
 
       <div v-show="pageTab === 'map'" data-testid="tab-map">
