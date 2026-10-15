@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.75";
+const SITE_VERSION = "5.76";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.76", date: "2026-10-15 10:05", changes: [
+        "«Тренировки»: над вкладками появился блок «Сегодня» — что уже сделано за день и кнопка «+ подход» прямо в нём (копия последнего подхода). Новая вкладка «Журнал» показывает записи по дням, свежие сверху. Вкладки теперь идут так: «Журнал» · «Карта мышц» · «Прогрессия» · «Упражнения» (BACKLOG 44.5б, срез 1).",
+        "«Кастомизация», сворачивание блоков: два новых вида маркера по 100 баллов — «Точка» (закрашена у раскрытого блока, кольцо у свёрнутого) и «Двойная стрелка». Выбранный вид применяется на Дашборде и в Тренировках.",
+    ]},
     { version: "5.75", date: "2026-10-15 06:30", changes: [
         "«Планы» на главной: повторяющиеся пункты. В «Дополнительно» появилась кнопка «Повторяющиеся пункты…» — можно завести пункт с расписанием: каждый день, по выбранным дням недели или несколько раз в неделю (с необязательным временем). На сегодняшнем дне под таблицей показан список «Повторяющиеся на сегодня»: отметка ставит в план обычный выполненный пункт; «N раз в неделю» предлагается каждый день, пока за неделю не набрано N. Требует миграцию 087; без неё блока и кнопки нет, «Планы» работают как раньше.",
     ]},
@@ -2335,6 +2339,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.76", date: "2026-10-15 10:05", changes: [
+        "Workouts: a new “Today” block above the tabs shows what you have done today, with a “+ set” button right in it (copies the last set). The new “Journal” tab lists entries by day, newest first. Tabs now read: Journal · Muscle map · Progress · Exercises (BACKLOG 44.5b, slice 1).",
+        "Customization, block collapse: two new marker styles for 100 points each — “Dot” (solid when a block is open, a ring when folded) and “Double arrow”. The chosen style applies on the Dashboard and in Workouts.",
+    ]},
     { version: "5.75", date: "2026-10-15 06:30", changes: [
         "Plans on the home page: repeating items. Under “More” there is a new “Repeating items…” button — create an item with a schedule: every day, on chosen weekdays or several times a week (with an optional time). On today, a “Repeating today” list appears under the table: ticking an item puts a regular completed item into the plan; “N times a week” items are offered every day until N is reached for the week. Needs migration 087; without it the block and the button are hidden and Plans work as before.",
     ]},
