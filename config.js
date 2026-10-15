@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.73";
+const SITE_VERSION = "5.74";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.74", date: "2026-10-15 09:36", changes: [
+        "Кастомизация: режим отладки теперь что-то делает — у закрытых и платных предметов появилась кнопка «Примерить» (видна только администратору с включённым режимом, баннер сверху и «Сбросить примерку»). Примерка работает только на этом устройстве: ничего не покупается, не сохраняется на сервере и не видно другим, а после перезагрузки страницы исчезает. Без миграций (нужна 066 с режимом отладки)."
+    ]},
     { version: "5.73", date: "2026-10-15 10:30", changes: [
         "«Календарь»: в окне плана на день появилась кнопка «Итоги дня» — она открывает те же итоги, что клик по дню в «Истории» (кнопка видна у дней, за которые уже есть данные). Итоги открываются поверх окна, ваши недописанные планы остаются на месте."
     ]},
@@ -2329,6 +2332,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.74", date: "2026-10-15 09:36", changes: [
+        "Customization: debug mode now does something — locked and paid items get a “Try on” button (shown only to an admin with debug mode on, with a banner on top and “Reset try-on”). Try-on works on this device only: nothing is bought, saved on the server or visible to others, and it disappears when the page reloads. No migrations (needs 066 with debug mode)."
+    ]},
     { version: "5.73", date: "2026-10-15 10:30", changes: [
         "Calendar: the day plan window has a new “Day summary” button — it opens the same summary as tapping a day in History (shown for days that already have data). The summary opens on top of the window, and your unfinished plans stay as they were."
     ]},

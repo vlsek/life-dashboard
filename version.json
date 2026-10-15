@@ -1,6 +1,13 @@
 {
-  "version": "5.73",
+  "version": "5.74",
   "en": [
+    {
+      "version": "5.74",
+      "date": "2026-10-15 09:36",
+      "changes": [
+        "Customization: debug mode now does something — locked and paid items get a “Try on” button (shown only to an admin with debug mode on, with a banner on top and “Reset try-on”). Try-on works on this device only: nothing is bought, saved on the server or visible to others, and it disappears when the page reloads. No migrations (needs 066 with debug mode)."
+      ]
+    },
     {
       "version": "5.73",
       "date": "2026-10-15 10:30",
@@ -4078,6 +4085,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.74",
+      "date": "2026-10-15 09:36",
+      "changes": [
+        "Кастомизация: режим отладки теперь что-то делает — у закрытых и платных предметов появилась кнопка «Примерить» (видна только администратору с включённым режимом, баннер сверху и «Сбросить примерку»). Примерка работает только на этом устройстве: ничего не покупается, не сохраняется на сервере и не видно другим, а после перезагрузки страницы исчезает. Без миграций (нужна 066 с режимом отладки)."
+      ]
+    },
     {
       "version": "5.73",
       "date": "2026-10-15 10:30",
