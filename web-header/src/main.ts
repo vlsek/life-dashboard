@@ -6,6 +6,7 @@ import { sb } from './lib/supabase'
 import { startPresenceHeartbeat } from './lib/presence'
 import { loadUnlockedKeys, sectionFor } from './lib/sectionAchievements'
 import AchievementToast from './components/AchievementToast.vue'
+import { clearUnseen, hasUnseen, markUnseen, watchDot } from './lib/achievementDot'
 import { startAchievementWatcher, WATCH_SKIP, type WatchItem } from './lib/achievementWatcher'
 
 // Точка входа глобального хедера (BACKLOG 2.3). Подключается на странице одним
@@ -71,6 +72,9 @@ async function mountSectionAchievements() {
 let toastItems: WatchItem[] = []
 let toastApp: ReturnType<typeof createApp> | null = null
 function showAchievementToast(items: WatchItem[]) {
+  ensureStyle()
+  markUnseen() // красная точка у «Достижений» остаётся, когда карточку закрыли (52.1 срез 5)
+  watchDot()
   const seen = new Set(toastItems.map((i) => i.key))
   toastItems = [...toastItems, ...items.filter((i) => !seen.has(i.key))]
   toastApp?.unmount()
@@ -118,6 +122,12 @@ async function startPresence() {
 
 function start() {
   if (SKIP.test(location.pathname)) return
+  // «Достижения» открыты — точка больше не нужна; на остальных страницах держим её, пока она не снята (52.1 срез 5)
+  if (/^\/achievements(\/|\.html|$)/.test(location.pathname)) clearUnseen()
+  else if (hasUnseen()) {
+    ensureStyle()
+    watchDot()
+  }
   void mountSectionAchievements()
   void startWatcher()
   void startPresence()

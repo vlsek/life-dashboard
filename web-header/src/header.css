@@ -601,3 +601,4 @@ html.gh-has-secach #app { height: auto; min-height: 0; } /* 58.6: min-height:100
 @keyframes gh-achtoast-in { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
 html[data-motion='off'] .gh-achtoast { animation: none; }
 @media (prefers-reduced-motion: reduce) { .gh-achtoast { animation: none; } }
+.gh-ach-dot { display: inline-block; width: 8px; height: 8px; margin-left: 6px; border-radius: 50%; background: var(--danger, #e5484d); vertical-align: middle; flex: none; }
