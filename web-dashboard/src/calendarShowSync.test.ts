@@ -1,3 +1,4 @@
+// @ts-ignore — в проекте нет типов node; vitest выполняется в node (как в designTokens.test.ts)
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
