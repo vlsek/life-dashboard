@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.69";
+const SITE_VERSION = "5.70";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.70", date: "2026-10-15 09:19", changes: [
+        "Достижения: у пункта меню «Достижения» появилась красная точка, когда вы получили новое достижение, — она остаётся, даже если закрыть поздравление, и пропадает, как только вы откроете страницу «Достижения». Работает на всех страницах. Без миграций."
+    ]},
     { version: "5.69", date: "2026-10-15 09:18", changes: [
         "Тренировки: строки подходов на телефоне стали компактнее — повторы, вес и время помещаются в одну строку, а пары «Левая/Правая» не раздуваются втрое",
     ]},
@@ -2317,6 +2320,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.70", date: "2026-10-15 09:19", changes: [
+        "Achievements: the “Achievements” menu item now shows a red dot after you earn a new achievement — it stays even if you dismiss the congratulation and disappears once you open the Achievements page. Works on every page. No migrations."
+    ]},
     { version: "5.69", date: "2026-10-15 09:18", changes: [
         "Workouts: set rows are more compact on phones — reps, weight and time fit on one line, and Left/Right pairs no longer grow three times taller",
     ]},
