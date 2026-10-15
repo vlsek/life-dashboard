@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.72";
+const SITE_VERSION = "5.73";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.73", date: "2026-10-15 10:30", changes: [
+        "«Календарь»: в окне плана на день появилась кнопка «Итоги дня» — она открывает те же итоги, что клик по дню в «Истории» (кнопка видна у дней, за которые уже есть данные). Итоги открываются поверх окна, ваши недописанные планы остаются на месте."
+    ]},
     { version: "5.72", date: "2026-10-14 12:10", changes: [
         "«Календарь»: над сеткой месяца появилась строка «Показывать» — уберите лишнее. На вкладке «Календарь» можно скрыть планы и сроки целей, на вкладке «История» — прогресс дня, колонку недели, статистику месяца, диаграмму категорий и список недель. Сетка месяца остаётся всегда. Выбор запоминается в профиле и подхватывается на других устройствах."
     ]},
@@ -2326,6 +2329,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.73", date: "2026-10-15 10:30", changes: [
+        "Calendar: the day plan window has a new “Day summary” button — it opens the same summary as tapping a day in History (shown for days that already have data). The summary opens on top of the window, and your unfinished plans stay as they were."
+    ]},
     { version: "5.72", date: "2026-10-14 12:10", changes: [
         "Calendar: there is a new “Show” row above the month grid — hide what you do not need. On the Calendar tab you can hide plans and goal deadlines; on the History tab, day progress, the week column, month stats, the category chart and the weeks list. The month grid always stays. Your choice is saved to your profile and picked up on other devices."
     ]},

@@ -1,6 +1,13 @@
 {
-  "version": "5.72",
+  "version": "5.73",
   "en": [
+    {
+      "version": "5.73",
+      "date": "2026-10-15 10:30",
+      "changes": [
+        "Calendar: the day plan window has a new “Day summary” button — it opens the same summary as tapping a day in History (shown for days that already have data). The summary opens on top of the window, and your unfinished plans stay as they were."
+      ]
+    },
     {
       "version": "5.72",
       "date": "2026-10-14 12:10",
@@ -4071,6 +4078,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.73",
+      "date": "2026-10-15 10:30",
+      "changes": [
+        "«Календарь»: в окне плана на день появилась кнопка «Итоги дня» — она открывает те же итоги, что клик по дню в «Истории» (кнопка видна у дней, за которые уже есть данные). Итоги открываются поверх окна, ваши недописанные планы остаются на месте."
+      ]
+    },
     {
       "version": "5.72",
       "date": "2026-10-14 12:10",
