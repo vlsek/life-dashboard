@@ -19,4 +19,15 @@ describe('CollapseChevron: вид маркера', () => {
     expect(mount(CollapseChevron, { props: { collapsed: false } }).find('path').attributes('fill')).toBe('currentColor')
     collapseStyle.value = 'chevron'
   })
+  it('точка: закрашена у раскрытого блока, кольцо у свёрнутого', () => {
+    collapseStyle.value = 'dot'
+    expect(mount(CollapseChevron, { props: { collapsed: false } }).find('circle').attributes('fill')).toBe('currentColor')
+    expect(mount(CollapseChevron, { props: { collapsed: true } }).find('circle').attributes('fill')).toBe('none')
+    collapseStyle.value = 'chevron'
+  })
+  it('двойная стрелка: два штриха', () => {
+    collapseStyle.value = 'double'
+    expect(mount(CollapseChevron, { props: { collapsed: false } }).findAll('path')).toHaveLength(2)
+    collapseStyle.value = 'chevron'
+  })
 })

@@ -1325,7 +1325,7 @@ input[type='radio'] {
 .collapse-chevron { flex: none; color: var(--text-dim); transition: transform 0.2s ease, color 0.15s ease; }
 .collapse-chevron[data-collapsed="true"] { transform: rotate(-90deg); }
 /* «плюс/минус»: знак не вращается (плюс/минус сам показывает состояние) */
-.collapse-chevron[data-marker="plus"][data-collapsed="true"] { transform: none; }
+.collapse-chevron[data-marker="plus"][data-collapsed="true"], .collapse-chevron[data-marker="dot"][data-collapsed="true"] { transform: none; }
 .collapse-head { cursor: pointer; user-select: none; border-radius: 8px; padding: 2px 6px; margin-left: -6px; }
 .collapse-head:hover { background: var(--bg-card); }
 .collapse-head:hover .collapse-chevron { color: var(--text); }

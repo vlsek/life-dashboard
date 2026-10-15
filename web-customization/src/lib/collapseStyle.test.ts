@@ -70,3 +70,30 @@ describe('parseCollapseStyle / кэш', () => {
     expect(readCachedCollapseStyle()).toBe('chevron')
   })
 })
+
+describe('вид сворачивания: «Точка» и «Двойная стрелка»', () => {
+  it('предметы в реестре по низкому тарифу (100), редкость «обычный», названия и описания на двух языках', () => {
+    for (const key of ['collapse_dot', 'collapse_double']) {
+      const it0 = itemByKey(key)
+      expect(it0).toMatchObject({ category: 'collapse_style', source: 'points', tier: 'low' })
+      expect(priceOf(it0!)).toBe(100)
+      expect(rarityOfItem(key)).toBe('common')
+      for (const lang of ['ru', 'en']) {
+        localStorage.setItem('site_lang', lang)
+        expect(t(('cust_item_' + key) as never).length).toBeGreaterThan(2)
+        expect(t(('cust_item_' + key + '_desc') as never).length).toBeGreaterThan(10)
+      }
+    }
+  })
+  it('ключ предмета превращается в вид маркера', () => {
+    expect(parseCollapseStyle('collapse_dot')).toBe('dot')
+    expect(parseCollapseStyle('collapse_double')).toBe('double')
+  })
+  it('кэш помнит новые виды', () => {
+    writeCachedCollapseStyle('dot')
+    expect(readCachedCollapseStyle()).toBe('dot')
+    writeCachedCollapseStyle('double')
+    expect(readCachedCollapseStyle()).toBe('double')
+    writeCachedCollapseStyle('chevron')
+  })
+})
