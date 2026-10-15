@@ -1,6 +1,13 @@
 {
-  "version": "5.71",
+  "version": "5.72",
   "en": [
+    {
+      "version": "5.72",
+      "date": "2026-10-14 12:10",
+      "changes": [
+        "Calendar: there is a new “Show” row above the month grid — hide what you do not need. On the Calendar tab you can hide plans and goal deadlines; on the History tab, day progress, the week column, month stats, the category chart and the weeks list. The month grid always stays. Your choice is saved to your profile and picked up on other devices."
+      ]
+    },
     {
       "version": "5.71",
       "date": "2026-10-15 09:20",
@@ -4064,6 +4071,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.72",
+      "date": "2026-10-14 12:10",
+      "changes": [
+        "«Календарь»: над сеткой месяца появилась строка «Показывать» — уберите лишнее. На вкладке «Календарь» можно скрыть планы и сроки целей, на вкладке «История» — прогресс дня, колонку недели, статистику месяца, диаграмму категорий и список недель. Сетка месяца остаётся всегда. Выбор запоминается в профиле и подхватывается на других устройствах."
+      ]
+    },
     {
       "version": "5.71",
       "date": "2026-10-15 09:20",

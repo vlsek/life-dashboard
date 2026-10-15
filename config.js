@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.71";
+const SITE_VERSION = "5.72";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.72", date: "2026-10-14 12:10", changes: [
+        "«Календарь»: над сеткой месяца появилась строка «Показывать» — уберите лишнее. На вкладке «Календарь» можно скрыть планы и сроки целей, на вкладке «История» — прогресс дня, колонку недели, статистику месяца, диаграмму категорий и список недель. Сетка месяца остаётся всегда. Выбор запоминается в профиле и подхватывается на других устройствах."
+    ]},
     { version: "5.71", date: "2026-10-15 09:20", changes: [
         "Админка переехала на Vue (BACKLOG 47.5): страница /admin/ собрана как остальные — таблица пользователей (имя, e-mail, значок админа, дата регистрации; себя видно по «(это ты)», у себя удалить нельзя), удаление с окном подтверждения, переключатель «Режим отладки» и экран «нет доступа». Ошибки теперь человеческим текстом, без технических деталей. Старая страница осталась в /legacy/admin.html, адрес admin.html перенаправляет на новую. Без миграций."
     ]},
@@ -2323,6 +2326,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.72", date: "2026-10-14 12:10", changes: [
+        "Calendar: there is a new “Show” row above the month grid — hide what you do not need. On the Calendar tab you can hide plans and goal deadlines; on the History tab, day progress, the week column, month stats, the category chart and the weeks list. The month grid always stays. Your choice is saved to your profile and picked up on other devices."
+    ]},
     { version: "5.71", date: "2026-10-15 09:20", changes: [
         "Admin moved to Vue (BACKLOG 47.5): the /admin/ page is now built like the rest — a users table (name, email, admin badge, registration date; you are marked “(that's you)” and cannot delete yourself), deletion with a confirm dialog, the “Debug mode” switch and a “no access” screen. Errors are now in plain words, without technical details. The old page stays at /legacy/admin.html, and admin.html redirects to the new one. No migrations."
     ]},
