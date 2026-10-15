@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.68";
+const SITE_VERSION = "5.69";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.69", date: "2026-10-15 09:18", changes: [
+        "Тренировки: строки подходов на телефоне стали компактнее — повторы, вес и время помещаются в одну строку, а пары «Левая/Правая» не раздуваются втрое",
+    ]},
     { version: "5.68", date: "2026-10-14 03:02", changes: [
         "«Цели»: у цели появился горизонт «На неделю» (между «В ближайшее время» и «В ближайший месяц»), в виде «По срокам» для него свой раздел; пункт есть и в окне «Новая цель» на главной. На главной в «Планах» список теперь называется «Цели недели и месяца» и подтягивает цели обоих горизонтов, которых ещё нет в плане. Требует миграцию 086; без неё форма предложит «На неделю», но сохранить не даст и подскажет, что нужна миграция.",
     ]},
@@ -2314,6 +2317,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.69", date: "2026-10-15 09:18", changes: [
+        "Workouts: set rows are more compact on phones — reps, weight and time fit on one line, and Left/Right pairs no longer grow three times taller",
+    ]},
     { version: "5.68", date: "2026-10-14 03:02", changes: [
         "Goals: a new “This week” horizon (between “Soon” and “This month”) with its own section in the “By time” view; it is also in the “New goal” window on the home page. On the home page the Plans list is now “Goals for this week and month” and pulls in goals of both horizons that are not in the plan yet. Needs migration 086; without it the form offers “This week” but will not save it and tells you the migration is needed.",
     ]},

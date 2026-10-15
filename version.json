@@ -1,6 +1,13 @@
 {
-  "version": "5.68",
+  "version": "5.69",
   "en": [
+    {
+      "version": "5.69",
+      "date": "2026-10-15 09:18",
+      "changes": [
+        "Workouts: set rows are more compact on phones — reps, weight and time fit on one line, and Left/Right pairs no longer grow three times taller"
+      ]
+    },
     {
       "version": "5.68",
       "date": "2026-10-14 03:02",
@@ -4043,6 +4050,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.69",
+      "date": "2026-10-15 09:18",
+      "changes": [
+        "Тренировки: строки подходов на телефоне стали компактнее — повторы, вес и время помещаются в одну строку, а пары «Левая/Правая» не раздуваются втрое"
+      ]
+    },
     {
       "version": "5.68",
       "date": "2026-10-14 03:02",
