@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 import IconPicker from './IconPicker.vue'
 import MetricOptionsEditor from './MetricOptionsEditor.vue'
 import { t } from '../lib/i18n'
+import BodyPickerBlock from './BodyPickerBlock.vue'
 import { WEEK_ORDER, canLinkExercise, clearedForBoolean, countAdvancedChanges, emptyForm, fieldsEnabledForForm, formFromMetric } from '../lib/metricsManager'
 import type { MetricFormValues } from '../lib/metricsManager'
 import type { MetricCategory } from '../lib/useMetricsManager'
@@ -61,6 +62,7 @@ const dim = (on: boolean) => ({ opacity: on ? 1 : 0.4 })
 
       <label class="mt-2 block text-sm">{{ t('dash_metric_field_name') }}</label>
       <input v-model="form.name" type="text" class="w-full" autofocus />
+      <BodyPickerBlock v-if="!existing && exerciseLinkAvailable" :exercises="exercises ?? []" @pick="(n: string) => (form.name = n)" />
 
       <div class="dim mt-2 text-sm">{{ t('dash_metric_field_icon') }}</div>
       <IconPicker v-model="form.icon" />

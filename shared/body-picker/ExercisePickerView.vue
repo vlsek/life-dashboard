@@ -109,8 +109,8 @@ function shapeStyle(m: MuscleId) {
       <span><span style="opacity: 0.5">■</span> {{ labels.legendIdle }}</span>
     </div>
     <div class="mt-2 flex flex-wrap justify-center gap-2">
-      <button type="button" class="rounded-lg border px-2.5 py-1 text-xs" style="border-color: var(--border); color: var(--text)" data-testid="picker-untrained" @click="selectUntrained">{{ labels.untrained }}</button>
-      <button v-if="selected.length" type="button" class="rounded-lg border px-2.5 py-1 text-xs" style="border-color: var(--border); color: var(--text-dim)" data-testid="picker-clear" @click="selected = []">{{ labels.clear }}</button>
+      <button type="button" class="rounded-lg border px-2.5 py-1 text-xs" style="border-color: var(--border); background: transparent; color: var(--text)" data-testid="picker-untrained" @click="selectUntrained">{{ labels.untrained }}</button>
+      <button v-if="selected.length" type="button" class="rounded-lg border px-2.5 py-1 text-xs" style="border-color: var(--border); background: transparent; color: var(--text-dim)" data-testid="picker-clear" @click="selected = []">{{ labels.clear }}</button>
     </div>
     <div v-if="selected.length" class="mt-2" data-testid="picker-suggestions">
       <p class="mb-1 mt-0 text-xs" style="color: var(--text-dim)">{{ selected.map(muscleName).join(', ') }}</p>
