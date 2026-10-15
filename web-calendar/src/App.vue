@@ -41,6 +41,7 @@ onMounted(async () => {
 })
 
 // «Показывать …» (44.8 срез 2): что видно на вкладках; выключенное хранится в localStorage `calendar_show` и синхронизируется в профиль шапкой
+const grid = ref<InstanceType<typeof HistoryView> | null>(null) // сетка вкладки «Календарь»: знает, у каких дней есть итоги, и открывает их
 const show = ref(loadShow())
 function toggleShow(k: ShowKey) {
   show.value = { ...show.value, [k]: !show.value[k] }
@@ -75,13 +76,15 @@ async function onSaveDay(items: PlannedItem[]) {
     <template v-else>
     <!-- Сетка «Календаря» = сетка «Истории» (заливка дня по прогрессу, %, колонка недели, статистика месяца) + бейджи планов и дедлайнов целей;
          свайп по сетке и шапке месяца не выдвигает боковые плашки (внутри HistoryView — no-edge-swipe / data-no-swipe) -->
-    <HistoryView mode="calendar" :show="show" :planned="byDate" :deadlines="deadlines" data-test="calendar-grid-view" @select-day="openDay" @month-change="onMonthChange" />
+    <HistoryView ref="grid" mode="calendar" :show="show" :planned="byDate" :deadlines="deadlines" data-test="calendar-grid-view" @select-day="openDay" @month-change="onMonthChange" />
 
     <DayModal
       v-if="openDate"
       :date-str="openDate"
       :initial="byDate[openDate] || []"
       :deadlines="deadlines[openDate] || []"
+      :has-summary="!!grid?.hasSummary(openDate)"
+      @summary="grid?.openSummary(openDate)"
       @close="openDate = null"
       @save="onSaveDay"
     />

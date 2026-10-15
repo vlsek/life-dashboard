@@ -5,8 +5,8 @@ import type { GoalDeadline, PlannedItem } from '../lib/types'
 import EmojiText from './EmojiText.vue'
 import Icon from './Icon.vue'
 
-const props = defineProps<{ dateStr: string; initial: PlannedItem[]; deadlines?: GoalDeadline[] }>()
-const emit = defineEmits<{ close: []; save: [items: PlannedItem[]] }>()
+const props = defineProps<{ dateStr: string; initial: PlannedItem[]; deadlines?: GoalDeadline[]; hasSummary?: boolean }>()
+const emit = defineEmits<{ close: []; save: [items: PlannedItem[]]; summary: [] }>()
 
 const items = ref<PlannedItem[]>(props.initial.map((p) => ({ ...p })))
 const newText = ref('')
@@ -70,6 +70,9 @@ function save() {
         <button class="secondary" @click="addItem">+</button>
       </div>
       <p class="dim mt-1.5 text-xs"><EmojiText :text="t('cal_hint')" /></p>
+
+      <!-- итоги этого дня (как в «Истории») открываются поверх формы; правки планов при этом не теряются -->
+      <button v-if="hasSummary" type="button" class="secondary mt-2 w-full" data-test="day-summary-btn" @click="emit('summary')">{{ t('cal_day_summary') }}</button>
 
       <div class="modal-actions">
         <button class="secondary" @click="emit('close')">{{ t('cancel') }}</button>

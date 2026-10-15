@@ -171,6 +171,14 @@ const recentWeeks = computed(() => {
 
 const selectedDate = ref<string | null>(null)
 
+// «Итоги дня» из формы планов (44.8 срез 3): страница «Календаря» спрашивает, есть ли у дня итоги (день уже начался и в истории есть данные), и открывает их поверх формы
+defineExpose({
+  hasSummary: (dateStr: string): boolean => !!ctx.value && hasData(ctx.value as HistoryContext, dateStr),
+  openSummary: (dateStr: string): void => {
+    selectedDate.value = dateStr
+  },
+})
+
 // Свайп по календарю — предыдущий/следующий месяц
 let touchX: number | null = null
 let touchY: number | null = null
@@ -326,6 +334,9 @@ function onTouchEnd(e: TouchEvent) {
       </template>
     </template>
 
-    <DayDetailModal v-if="selectedDate && ctx" :ctx="ctx as HistoryContext" :date-str="selectedDate" @close="selectedDate = null" />
+    <!-- в «Календаре» итоги открываются поверх формы планов (она лежит выше в DOM) — поэтому окно переезжает в конец body; в «Истории» остаётся на месте -->
+    <Teleport to="body" :disabled="!isCalendar">
+      <DayDetailModal v-if="selectedDate && ctx" :ctx="ctx as HistoryContext" :date-str="selectedDate" @close="selectedDate = null" />
+    </Teleport>
   </section>
 </template>
