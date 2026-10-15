@@ -107,13 +107,19 @@ describe('glass (бизнес-стекло)', () => {
   it('цвета, мягкие скругления, мягкие тени, световые пятна на фоне, стеклянные панели, гладкая анимация', () => {
     expect(THEME_TRAITS.glass).toEqual(['palette', 'corners_soft', 'soft_shadows', 'aurora_bg', 'glass_panels', 'smooth_anim'])
   })
-  it('«стеклянные панели» — только у glass, «световые пятна» — у glass и meadow (солнечное пятно); у moonlight сетка из точек, а не «пятна»; у frost зернистость', () => {
+  it('«стеклянные панели» — только у glass, «световые пятна» — у glass, meadow (солнечное пятно) и autumn (листовые пятна); у moonlight сетка из точек, а не «пятна»; у frost зернистость', () => {
     for (const k of Object.keys(THEME_TRAITS)) {
       if (k !== 'glass') expect(THEME_TRAITS[k], k).not.toContain('glass_panels')
-      if (k !== 'glass' && k !== 'meadow') expect(THEME_TRAITS[k], k).not.toContain('aurora_bg')
+      if (k !== 'glass' && k !== 'meadow' && k !== 'autumn') expect(THEME_TRAITS[k], k).not.toContain('aurora_bg')
     }
     expect(THEME_TRAITS.moonlight).toContain('dot_pattern')
     expect(THEME_TRAITS.frost).toContain('grain')
+  })
+})
+
+describe('autumn (Осенняя, 55.3)', () => {
+  it('палитра, мягкие углы и тени, листовые пятна, гладкие анимации — как у «Летнего луга», без тяжёлых слоёв', () => {
+    expect(THEME_TRAITS.autumn).toEqual(['palette', 'corners_soft', 'soft_shadows', 'aurora_bg', 'smooth_anim'])
   })
 })
 

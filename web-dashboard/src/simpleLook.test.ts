@@ -31,6 +31,7 @@ describe('«Простое оформление»: CSS гасит эффекты
     matcha: ['--shadow-card: none;'], // светлая «пушистая»: рассеянная тёплая тень карточек (BACKLOG 57.7)
     cyberday: ['--bg-pattern: none;'], // светлый киберпанк: убирается только сетка точек, жёсткая тень — сам стиль
     meadow: ['--bg-pattern: none;', '--shadow-card: none;'], // летний луг: солнечное пятно и лёгкая тень (BACKLOG 57.7, файл 2)
+  autumn: ['--bg-pattern: none;', '--shadow-card: none;'], // осенняя: листовые пятна и тёплая тень (BACKLOG 55.3, срез 1)
     glass: ['--blur-glass: none;', '--bg-pattern: none;', '--shadow-card: none;', '--glass-alpha: 100%;'], // бизнес-стекло: без размытия, световых пятен, тени и прозрачности
   }
   for (const f of [...pilots.map((d: string) => d + '/src/style.css'), 'style.css']) {

@@ -13,4 +13,5 @@ export const THEME_LOADER: Record<string, 'classic' | 'flame' | 'ring' | 'tongue
   vintage: 'classic',
   glass: 'ring',
   meadow: 'flame',
+  autumn: 'flame',
 }

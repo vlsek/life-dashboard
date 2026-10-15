@@ -36,6 +36,7 @@ export const THEME_KEYS = {
   vintage: 'theme_vintage',
   glass: 'theme_glass',
   meadow: 'theme_meadow',
+  autumn: 'theme_autumn',
 } as const
 
 export type ThemeKey = keyof typeof THEME_KEYS
@@ -79,6 +80,7 @@ const THEME_BG_COLORS: Record<ThemeKey, string> = {
   vintage: '#fbfbfa',
   glass: '#f1f3f5',
   meadow: '#f2f7f4',
+  autumn: '#fbf3e8',
 }
 
 export function getTheme(): ThemeKey {

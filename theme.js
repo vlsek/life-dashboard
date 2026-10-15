@@ -34,6 +34,7 @@ const THEME_KEYS = {
     vintage: "theme_vintage",
     glass: "theme_glass",
     meadow: "theme_meadow",
+    autumn: "theme_autumn",
 };
 
 // Цвета фона по темам — держим в синхронизации с --bg из style.css
@@ -73,6 +74,7 @@ const THEME_BG_COLORS = {
     vintage: "#fbfbfa",
     glass: "#f1f3f5",
     meadow: "#f2f7f4",
+    autumn: "#fbf3e8",
 };
 
 function getTheme() {
