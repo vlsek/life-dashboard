@@ -140,6 +140,7 @@ export const THEME_RARITY: Record<ThemeKey, Rarity> = {
   // BACKLOG 57.7 (файл 2): первая тематическая «большая тема» (Summer Meadow) — пока открыта всем
   meadow: 'common',
   autumn: 'common',
+  sakura: 'common',
 }
 
 export const rarityOfItem = (key: string): Rarity => ITEM_RARITY[key] ?? 'common'

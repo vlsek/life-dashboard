@@ -16,4 +16,5 @@ export const THEME_TRAITS: Record<string, ThemeTrait[]> = {
   glass: ['palette', 'corners_soft', 'soft_shadows', 'aurora_bg', 'glass_panels', 'smooth_anim'],
   meadow: ['palette', 'corners_soft', 'soft_shadows', 'aurora_bg', 'smooth_anim'],
   autumn: ['palette', 'corners_soft', 'soft_shadows', 'aurora_bg', 'smooth_anim'],
+  sakura: ['palette', 'corners_soft', 'soft_shadows', 'aurora_bg', 'smooth_anim'],
 }

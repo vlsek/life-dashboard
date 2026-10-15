@@ -130,10 +130,10 @@ describe('большая тема emerald: характер', () => {
   it('при prefers-reduced-motion анимации темы мгновенные (только у Tailwind-страниц)', () => {
     for (const d of pilots) expect(read(d + '/src/style.css')).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-emerald \{\s*--default-transition-duration: 0s;/)
   })
-  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine, matcha, cyberday, vintage, glass, meadow, autumn) — остальные темы не переопределены', () => {
+  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine, matcha, cyberday, vintage, glass, meadow, autumn, sakura) — остальные темы не переопределены', () => {
     for (const f of files) {
       const region = read(f).match(REGION)![0]
-      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha', 'cyberday', 'vintage', 'glass', 'meadow', 'autumn'])
+      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha', 'cyberday', 'vintage', 'glass', 'meadow', 'autumn', 'sakura'])
     }
   })
 })
@@ -717,5 +717,47 @@ describe('большая тема autumn (светлая осенняя, 55.3): 
     expect([get('bg'), get('bg-card'), get('accent')]).toEqual(['#fbf3e8', '#fffaf2', '#b0471a'])
     const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
     expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).not.toContain('autumn')
+  })
+})
+
+describe('большая тема sakura (светлая сакура, 55.3): характер', () => {
+  const block = (css: string): string => {
+    const m = css.match(/\/\* большая тема: sakura \*\/\nhtml\.theme-sakura \{[^}]*\}/)
+    expect(m, 'нет блока характера').not.toBeNull()
+    return m![0]
+  }
+  for (const d of pilots) {
+    it(d + ': округлые формы, лёгкая тёплая тень, лепестковые пятна, гладкая анимация, отключения', () => {
+      const css = read(d + '/src/style.css')
+      const b = block(css)
+      expect([decl(b, '--radius-md'), decl(b, '--radius-lg'), decl(b, '--radius-xl'), decl(b, '--radius-2xl')]).toEqual(['10px', '14px', '16px', '20px'])
+      expect(decl(b, '--shadow-card')).toBe('0 2px 12px rgba(184, 50, 95, 0.12)')
+      expect(decl(b, '--bg-pattern')).toContain('rgba(244, 143, 177')
+      expect(decl(b, '--bg-pattern-size')).toBe('auto')
+      expect(decl(b, '--default-transition-timing-function')).toBe('cubic-bezier(0.25, 0.8, 0.25, 1)')
+      expect(css).toMatch(/html\[data-simple='on'\]\.theme-sakura \{\s*--bg-pattern: none;\s*--shadow-card: none;/)
+      expect(css).toMatch(/@media \(prefers-contrast: more\) \{\s*html\.theme-sakura \{\s*--bg-pattern: none;\s*--shadow-card: none;/)
+      expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-sakura \{\s*--default-transition-duration: 0s;/)
+    })
+  }
+  it('корень: 14/16/12 и та же тень', () => {
+    const b = block(read('style.css'))
+    expect([decl(b, '--radius-card'), decl(b, '--radius-modal'), decl(b, '--radius-control')]).toEqual(['14px', '16px', '12px'])
+    expect(decl(b, '--shadow-card')).toBe('0 2px 12px rgba(184, 50, 95, 0.12)')
+  })
+  it('два правила только под html.theme-sakura: пятна на body и тень карточек', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      const lines = region.split('\n').filter((l) => l.startsWith('html.theme-sakura ') && l.includes('{ '))
+      expect(lines.length, f).toBe(2)
+      for (const l of lines) for (const sel of l.split('{')[0].split(',')) expect(sel.trim(), f).toMatch(/^html\.theme-sakura /)
+    }
+  })
+  it('светлая тёплая палитра: молочно-розовый фон, почти белые карточки, малиновый акцент; белый текст на акценте ≥ 4.5:1, галочка белая', () => {
+    const css = read('web-dashboard/src/style.css')
+    const get = (name: string) => css.match(new RegExp('html\\.theme-sakura \\{[^}]*--' + name + ':\\s*(#[0-9a-fA-F]{6})'))![1].toLowerCase()
+    expect([get('bg'), get('bg-card'), get('accent')]).toEqual(['#fdf1f4', '#fffafb', '#b8325f'])
+    const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
+    expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).not.toContain('sakura')
   })
 })

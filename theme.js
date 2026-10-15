@@ -35,6 +35,7 @@ const THEME_KEYS = {
     glass: "theme_glass",
     meadow: "theme_meadow",
     autumn: "theme_autumn",
+    sakura: "theme_sakura",
 };
 
 // Цвета фона по темам — держим в синхронизации с --bg из style.css
@@ -75,6 +76,7 @@ const THEME_BG_COLORS = {
     glass: "#f1f3f5",
     meadow: "#f2f7f4",
     autumn: "#fbf3e8",
+    sakura: "#fdf1f4",
 };
 
 function getTheme() {

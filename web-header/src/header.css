@@ -78,6 +78,7 @@ html.theme-vintage .gh-root { --water-top: #3f6f9a; --water-bottom: #2c5a85; --w
 html.theme-glass .gh-root { --water-top: #3f95e0; --water-bottom: #1560b8; --water-line: #1560b8; }
 html.theme-meadow .gh-root { --water-top: #3f95e0; --water-bottom: #1560b8; --water-line: #1560b8; }
 html.theme-autumn .gh-root { --water-top: #3f95e0; --water-bottom: #1560b8; --water-line: #1560b8; }
+html.theme-sakura .gh-root { --water-top: #3f95e0; --water-bottom: #1560b8; --water-line: #1560b8; }
 html.theme-nord .gh-root,
 html.theme-mocha .gh-root,
 html.theme-amoled .gh-root,
@@ -111,7 +112,8 @@ html.theme-cyberday .gh-root,
 html.theme-vintage .gh-root,
 html.theme-glass .gh-root,
 html.theme-meadow .gh-root,
-html.theme-autumn .gh-root {
+html.theme-autumn .gh-root,
+html.theme-sakura .gh-root {
   --water-gold: #b87900;
 }
 /* themes-header:end */
