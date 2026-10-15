@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.70";
+const SITE_VERSION = "5.71";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.71", date: "2026-10-15 09:20", changes: [
+        "Админка переехала на Vue (BACKLOG 47.5): страница /admin/ собрана как остальные — таблица пользователей (имя, e-mail, значок админа, дата регистрации; себя видно по «(это ты)», у себя удалить нельзя), удаление с окном подтверждения, переключатель «Режим отладки» и экран «нет доступа». Ошибки теперь человеческим текстом, без технических деталей. Старая страница осталась в /legacy/admin.html, адрес admin.html перенаправляет на новую. Без миграций."
+    ]},
     { version: "5.70", date: "2026-10-15 09:19", changes: [
         "Достижения: у пункта меню «Достижения» появилась красная точка, когда вы получили новое достижение, — она остаётся, даже если закрыть поздравление, и пропадает, как только вы откроете страницу «Достижения». Работает на всех страницах. Без миграций."
     ]},
@@ -2320,6 +2323,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.71", date: "2026-10-15 09:20", changes: [
+        "Admin moved to Vue (BACKLOG 47.5): the /admin/ page is now built like the rest — a users table (name, email, admin badge, registration date; you are marked “(that's you)” and cannot delete yourself), deletion with a confirm dialog, the “Debug mode” switch and a “no access” screen. Errors are now in plain words, without technical details. The old page stays at /legacy/admin.html, and admin.html redirects to the new one. No migrations."
+    ]},
     { version: "5.70", date: "2026-10-15 09:19", changes: [
         "Achievements: the “Achievements” menu item now shows a red dot after you earn a new achievement — it stays even if you dismiss the congratulation and disappears once you open the Achievements page. Works on every page. No migrations."
     ]},
