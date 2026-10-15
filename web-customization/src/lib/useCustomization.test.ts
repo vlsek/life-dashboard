@@ -30,9 +30,9 @@ vi.mock('./supabase', () => {
 
 import { useCustomization } from './useCustomization'
 
-function setup(over: { total?: number; spent?: number; owned?: any[]; selected?: any; achievements?: string[] } = {}) {
+function setup(over: { total?: number; spent?: number; owned?: any[]; selected?: any; achievements?: string[]; debug?: boolean } = {}) {
   h.rows = {
-    profiles: [{ onboarded: true, customization: over.selected ?? {} }],
+    profiles: [{ onboarded: true, customization: over.selected ?? {}, debug_mode: over.debug }],
     user_customizations: over.owned ?? [],
     user_achievements: (over.achievements ?? []).map((key) => ({ key })),
     shop_items: over.spent ? [{ cost: over.spent }] : [],
@@ -196,3 +196,91 @@ describe('надеть/снять рамку — без обновления с�
   })
 })
 
+// 47.6 срез 5b: «Примерить» в режиме отладки — ТОЛЬКО на клиенте (отчёт docs/SECURITY_AUDIT_47_6.md): ничего не пишется на сервер, баланс и покупки не трогаются.
+describe('примерка (режим отладки)', () => {
+  const serverWrites = () => h.calls.filter((c) => c.op !== 'select')
+
+  it('режим отладки читается из profiles.debug_mode; нет значения (колонки нет, миграция 066) — false', async () => {
+    setup({ debug: true })
+    const on = useCustomization()
+    await on.init()
+    expect(on.debug.value).toBe(true)
+    setup()
+    const off = useCustomization()
+    await off.init()
+    expect(off.debug.value).toBe(false)
+  })
+
+  it('без режима отладки tryOn ничего не делает', async () => {
+    setup({ total: 0 })
+    const c = useCustomization()
+    await c.init()
+    expect(c.tryOn('day_gauge', 'day_glow')).toBe(false)
+    expect(c.tried.value).toEqual({})
+    expect(localStorage.getItem('site_day_gauge')).toBeNull()
+  })
+
+  it('примерка закрытого предмета: виден локально (кэш страниц), на сервер НЕ пишется, выбор и покупки не меняются', async () => {
+    setup({ debug: true, total: 0 })
+    const c = useCustomization()
+    await c.init()
+    h.calls = []
+    h.rpcCalls = []
+    expect(c.statusOf('day_glow')).not.toBe('owned')
+    expect(c.tryOn('day_gauge', 'day_glow')).toBe(true)
+    expect(c.tried.value).toEqual({ day_gauge: 'day_glow' })
+    expect(localStorage.getItem('site_day_gauge')).not.toBeNull() // страницы применят вид по кэшу
+    expect(serverWrites()).toEqual([]) // ни update profiles, ни insert/upsert user_customizations / shop_items
+    expect(h.rpcCalls).toEqual([])
+    expect(c.selected.value).toEqual({}) // серверный выбор не тронут
+    expect(c.statusOf('day_glow')).not.toBe('selected')
+  })
+
+  it('чужая категория или несуществующий предмет — отказ', async () => {
+    setup({ debug: true })
+    const c = useCustomization()
+    await c.init()
+    expect(c.tryOn('avatar_frame', 'day_glow')).toBe(false)
+    expect(c.tryOn('day_gauge', 'нет_такого')).toBe(false)
+    expect(c.tried.value).toEqual({})
+  })
+
+  it('«Снять примерку» и «Сбросить» откатывают кэш к серверному выбору', async () => {
+    setup({ debug: true, selected: { day_gauge: 'day_thick' }, owned: [{ item_key: 'day_thick', source: 'points', unlocked_at: null }] })
+    const c = useCustomization()
+    await c.init()
+    const real = localStorage.getItem('site_day_gauge')
+    c.tryOn('day_gauge', 'day_glow')
+    expect(localStorage.getItem('site_day_gauge')).not.toBe(real)
+    expect(c.untryOn('day_gauge')).toBe(true)
+    expect(localStorage.getItem('site_day_gauge')).toBe(real)
+    expect(c.untryOn('day_gauge')).toBe(false)
+    c.tryOn('day_gauge', 'day_glow')
+    c.resetTryOn()
+    expect(c.tried.value).toEqual({})
+    expect(localStorage.getItem('site_day_gauge')).toBe(real)
+  })
+
+  it('настоящий выбор в той же категории перекрывает примерку; примерки других категорий остаются', async () => {
+    setup({ debug: true, owned: [{ item_key: 'day_thick', source: 'points', unlocked_at: null }] })
+    const c = useCustomization()
+    await c.init()
+    c.tryOn('day_gauge', 'day_glow')
+    c.tryOn('week_gauge', 'week_wave')
+    expect(await c.choose('day_gauge', 'day_thick')).toBe(true)
+    expect(c.tried.value).toEqual({ week_gauge: 'week_wave' })
+    expect(c.selected.value).toEqual({ day_gauge: 'day_thick' })
+    expect(h.calls.filter((x) => x.op === 'update').length).toBe(1) // записан только настоящий выбор
+  })
+
+  it('перезагрузка (load) сбрасывает примерку и возвращает кэш к серверному выбору', async () => {
+    setup({ debug: true })
+    const c = useCustomization()
+    await c.init()
+    c.tryOn('day_gauge', 'day_glow')
+    expect(localStorage.getItem('site_day_gauge')).not.toBeNull()
+    await c.init() // повторная загрузка данных на той же странице
+    expect(c.tried.value).toEqual({})
+    expect(localStorage.getItem('site_day_gauge')).toBeNull()
+  })
+})

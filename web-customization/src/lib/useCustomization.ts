@@ -50,6 +50,10 @@ export function useCustomization() {
   const error = ref<string | null>(null)
   const actionError = ref<string | null>(null)
   const busyKey = ref<string | null>(null)
+  // Режим отладки (47.4/47.6 срез 5b): флаг читается из profiles.debug_mode (миграция 066; нет колонки/ошибка — false, страница как раньше).
+  // Примерка — ТОЛЬКО на клиенте: tried живёт в памяти, на сервер не пишется, при загрузке страницы сбрасывается.
+  const debug = ref(false)
+  const tried = ref<Selected>({})
 
   const state = (): CustomState => ({ unlocked: unlocked.value, selected: selected.value, balance: balance.value, achievements: achievements.value })
   const statusOf = (key: string) => {
@@ -98,13 +102,16 @@ export function useCustomization() {
   async function load(userId: string) {
     loading.value = true
     try {
-      const [ownedRes, profileRes, achRes, bal] = await Promise.all([
+      const [ownedRes, profileRes, achRes, bal, debugRes] = await Promise.all([
         sb.from('user_customizations').select('item_key, source, unlocked_at').eq('user_id', userId),
         sb.from('profiles').select('customization').eq('user_id', userId).maybeSingle(),
         sb.from('user_achievements').select('key').eq('user_id', userId),
         loadBalance(userId),
+        sb.from('profiles').select('debug_mode').eq('user_id', userId).maybeSingle(),
       ])
       balance.value = bal
+      debug.value = !debugRes?.error && (debugRes?.data as { debug_mode?: boolean } | null)?.debug_mode === true
+      tried.value = {} // перезагрузка = откат примерки (ниже кэши страниц снова пишутся из серверного выбора)
       achievements.value = new Set(((achRes.data || []) as { key: string }[]).map((r) => r.key).filter((k) => k !== '_baseline'))
       apiMissing.value = !!ownedRes.error || !!profileRes.error
       if (apiMissing.value) {
@@ -211,6 +218,42 @@ export function useCustomization() {
     }
   }
 
+  // Локальные эффекты выбора: события и кэши страниц (без записи на сервер). Нужны и настоящему выбору (`choose`), и примерке (`tryOn`).
+  function applyLocal(next: Selected) {
+    notifyCustomizationChanged({ avatar_frame: next.avatar_frame ?? null }) // 9:41: левое меню и Дашборд меняют рамку без обновления
+    writeCachedCollapseStyle(parseCollapseStyle(next.collapse_style)) // вид сворачивания: страницы применяют его по кэшу, не дожидаясь сети (BACKLOG 498)
+    writeCachedDayGauge(parseDayGauge(next.day_gauge)) // вид спидометра дня (53.2 срез 2)
+    writeCachedWaterItem(parseWaterItem(next.water_anim)) // анимация воды (54.9): шапка и Дашборд применяют её по кэшу
+    writeCachedWaterGlass(parseWaterGlass(next.water_glass)) // вид стакана воды (57.2б)
+    writeCachedWeekGauge(parseWeekGauge(next.week_gauge)) // вид спидометра недели (53.2): шапка и Дашборд применяют его по кэшу
+  }
+
+  // «Примерить» (режим отладки, 47.6 срез 5b): предмет показывается на этом устройстве, но НЕ пишется ни в user_customizations, ни в
+  // profiles.customization, не списывает монеты и не выдаёт достижений (иначе другие увидели бы платный предмет — отчёт docs/SECURITY_AUDIT_47_6.md).
+  // Откат — «Снять примерку», «Сбросить примерку» или перезагрузка страницы. Без режима отладки ничего не делает.
+  function tryOn(category: Category, key: string): boolean {
+    actionError.value = null
+    if (!debug.value || auth.value.status !== 'ready' || apiMissing.value) return false
+    const item = itemByKey(key)
+    if (!item || item.category !== category) return false
+    tried.value = { ...tried.value, [category]: key }
+    applyLocal({ ...selected.value, ...tried.value })
+    return true
+  }
+  function untryOn(category: Category): boolean {
+    if (!(category in tried.value)) return false
+    const rest = { ...tried.value }
+    delete rest[category]
+    tried.value = rest
+    applyLocal({ ...selected.value, ...rest })
+    return true
+  }
+  function resetTryOn() {
+    if (!Object.keys(tried.value).length) return
+    tried.value = {}
+    applyLocal(selected.value)
+  }
+
   // Надеть (key) или снять (null) предмет категории. Пишем весь объект выбора в profiles.customization.
   async function choose(category: Category, key: string | null): Promise<boolean> {
     actionError.value = null
@@ -222,12 +265,11 @@ export function useCustomization() {
       const { error: err } = await sb.from('profiles').update({ customization: next }).eq('user_id', auth.value.userId)
       if (err) throw new Error(err.message)
       selected.value = next
-      notifyCustomizationChanged({ avatar_frame: next.avatar_frame ?? null }) // 9:41: левое меню и Дашборд меняют рамку без обновления
-      writeCachedCollapseStyle(parseCollapseStyle(next.collapse_style)) // вид сворачивания: страницы применяют его по кэшу, не дожидаясь сети (BACKLOG 498)
-      writeCachedDayGauge(parseDayGauge(next.day_gauge)) // вид спидометра дня (53.2 срез 2)
-      writeCachedWaterItem(parseWaterItem(next.water_anim)) // анимация воды (54.9): шапка и Дашборд применяют её по кэшу
-      writeCachedWaterGlass(parseWaterGlass(next.water_glass)) // вид стакана воды (57.2б)
-      writeCachedWeekGauge(parseWeekGauge(next.week_gauge)) // вид спидометра недели (53.2): шапка и Дашборд применяют его по кэшу
+      // выбрали по-настоящему — примерка этой категории больше не нужна; остальные примерки остаются
+      const rest = { ...tried.value }
+      delete rest[category]
+      tried.value = rest
+      applyLocal({ ...next, ...rest })
       return true
     } catch (e) {
       actionError.value = t('cust_select_error') + friendlyError(e, 'save')
@@ -237,5 +279,5 @@ export function useCustomization() {
     }
   }
 
-  return { auth, unlocked, selected, balance, achievements, apiMissing, loading, error, actionError, busyKey, state, statusOf, init, buy, choose }
+  return { auth, unlocked, selected, balance, achievements, apiMissing, loading, error, actionError, busyKey, debug, tried, state, statusOf, init, buy, choose, tryOn, untryOn, resetTryOn }
 }

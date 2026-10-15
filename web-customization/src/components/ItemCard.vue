@@ -13,8 +13,8 @@ import WaterGlassPreview from './WaterGlassPreview.vue'
 import { BY_ITEM } from '../lib/waterGlass'
 
 // Карточка предмета кастомизации: превью (круг-аватар с рамкой), название, условие/цена и одно действие по статусу.
-const props = defineProps<{ item: CustomItem; status: ItemStatus; balance: number | null; busy: boolean; disabled: boolean }>()
-const emit = defineEmits<{ buy: []; choose: []; unchoose: [] }>()
+const props = defineProps<{ item: CustomItem; status: ItemStatus; balance: number | null; busy: boolean; disabled: boolean; debug?: boolean; tried?: boolean }>()
+const emit = defineEmits<{ buy: []; choose: []; unchoose: []; tryon: []; untryon: [] }>()
 
 const rarity = computed(() => rarityOfItem(props.item.key))
 const name = computed(() => t(('cust_item_' + props.item.key) as never))
@@ -69,5 +69,11 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
     <button v-else-if="status === 'owned'" class="px-3 py-1 text-sm" :disabled="disabled || busy" data-testid="choose" @click="emit('choose')">{{ t('cust_select') }}</button>
     <button v-else-if="status === 'selected'" class="secondary px-3 py-1 text-sm" :disabled="disabled || busy" data-testid="unchoose" @click="emit('unchoose')">{{ t('cust_selected') }} · {{ t('cust_unselect') }}</button>
     <span v-else class="dim text-xs" data-testid="locked">{{ t('cust_locked') }}</span>
+    <!-- Режим отладки (47.6 срез 5b): закрытый/платный предмет можно ПРИМЕРИТЬ — только на этом устройстве, ничего не сохраняется -->
+    <template v-if="debug && (status === 'locked' || status === 'short' || status === 'buyable')">
+      <button v-if="!tried" class="secondary px-3 py-1 text-sm" :disabled="disabled" data-testid="tryon" @click="emit('tryon')">{{ t('cust_tryon') }}</button>
+      <button v-else class="secondary px-3 py-1 text-sm" data-testid="untryon" @click="emit('untryon')">{{ t('cust_tryon_off') }}</button>
+      <p v-if="tried" class="dim m-0 text-xs" data-testid="tryon-note">{{ t('cust_tryon_note') }}</p>
+    </template>
   </div>
 </template>

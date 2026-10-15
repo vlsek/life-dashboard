@@ -32,7 +32,7 @@ import { t } from './lib/i18n'
 import { ALL_TAB, groupCounts, groupOfSection, groupsFor, migrateStoredTab, readTab, resolveTab, showsSection, writeTab } from './lib/pageTabs'
 import { THEME_UNLOCK, type ThemeKey } from './lib/theme'
 
-const { auth, balance, achievements, apiMissing, loading, error, actionError, busyKey, selected, statusOf, init, buy, choose } = useCustomization()
+const { auth, balance, achievements, apiMissing, loading, error, actionError, busyKey, selected, debug, tried, statusOf, init, buy, choose, tryOn, untryOn, resetTryOn } = useCustomization()
 onMounted(init)
 
 // Темы: до 4 «любимых» попадают в выпадающий список тем бокового меню (решение владельца 2026-10-04). С v3.42 шесть тем — награды за
@@ -168,6 +168,10 @@ function goToSection(id: string) {
 
         <p v-if="apiMissing" class="mb-4 text-sm" style="color: var(--danger)" data-testid="need-migration">{{ t('cust_need_migration') }}</p>
         <p v-if="actionError" class="mb-3 text-sm" style="color: var(--danger)" data-testid="action-error">{{ actionError }}</p>
+        <div v-if="debug" class="card mb-3 flex flex-wrap items-center gap-2 text-sm" data-testid="debug-banner">
+          <span class="dim">{{ t('cust_debug_banner') }}</span>
+          <button v-if="Object.keys(tried).length" type="button" class="secondary px-3 py-1 text-sm" data-testid="tryon-reset" @click="resetTryOn">{{ t('cust_tryon_reset') }}</button>
+        </div>
 
         <CurrentSelection :rows="nowRows" :collapsed="isCollapsed('section:now')" @toggle="toggle('section:now')" @go="goToSection" />
 
@@ -258,7 +262,11 @@ function goToSection(id: string) {
                 :balance="balance"
                 :busy="busyKey === it.key"
                 :disabled="apiMissing || !!busyKey"
+                :debug="debug"
+                :tried="tried[it.category] === it.key"
                 @buy="buy(it.key)"
+                @tryon="tryOn(it.category, it.key)"
+                @untryon="untryOn(it.category)"
                 @choose="choose(it.category, it.key)"
                 @unchoose="choose(it.category, null)"
               />
