@@ -11,6 +11,7 @@ export interface PlannedEntry {
   done?: boolean // только у custom; у goal «выполнено» берётся из самой цели
   bonus?: boolean // доп. пункт: не в базовые 100%, при выполнении +% сверху
   time?: string // «HH:MM» — необязательное время напоминания (v1.20); классика поле не знает и не трогает
+  repeat?: string // id повторяющегося пункта (plan_repeats, миграция 087), из которого создан этот пункт; по нему считается «N раз в неделю»
   doneAt?: string // «HH:MM» — когда пункт отмечен выполненным (BACKLOG 61.4); ставится само при галке на сегодняшнем дне, снимается вместе с галкой
 }
 
@@ -43,10 +44,11 @@ export function normalizePlanned(raw: unknown): PlannedEntry[] {
 // Все операции возвращают НОВЫЙ массив — компонент сначала показывает результат, потом сохраняет.
 // `done` — «уже сделано»: пункт создаётся выполненным (то, что человек сделал не из списка целей и
 // хочет засчитать в прогресс дня/недели, не отмечая потом галочкой).
-export function addCustom(planned: PlannedEntry[], rawText: string, time?: string | null, done = false): PlannedEntry[] {
+export function addCustom(planned: PlannedEntry[], rawText: string, time?: string | null, done = false, repeat?: string | null): PlannedEntry[] {
   const text = rawText.trim()
   if (!text) return planned
   const entry: PlannedEntry = { type: 'custom', text, done }
+  if (repeat) entry.repeat = repeat
   if (isValidTime(time)) entry.time = time
   return [...planned, entry]
 }

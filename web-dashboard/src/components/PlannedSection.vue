@@ -10,8 +10,10 @@ import { vCollapse } from '../lib/collapseMotion'
 import PlannedAddGoalModal from './PlannedAddGoalModal.vue'
 import PlannedCarryOverModal from './PlannedCarryOverModal.vue'
 import PlannedNewGoalModal from './PlannedNewGoalModal.vue'
+import PlannedRepeatsModal from './PlannedRepeatsModal.vue'
 import { ensureCategory, hasHorizonColumn, hasWeightColumn, loadBodyWeight, loadMyCategories, type GoalFormInput } from '../lib/newGoal'
 import { usePlanned } from '../lib/usePlanned'
+import { usePlanRepeats } from '../lib/usePlanRepeats'
 import { doneOnDay, goalRowKind, stageLabel, type CarryCandidate, type PlanGoal, type PlannedEntry } from '../lib/planned'
 import { todayStr } from '../lib/date'
 import { t } from '../lib/i18n'
@@ -29,10 +31,16 @@ const emit = defineEmits<{ 'update:date': [value: string] }>()
 const day = computed(() => props.date ?? todayStr())
 const { planned, goals, loaded, error, savedTick, load, addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals: monthGoalsOf } = usePlanned()
 
+// Повторяющиеся пункты (BACKLOG 1054, миграция 087): нет таблицы — блок и кнопка просто не показываются
+const rep = usePlanRepeats()
+const repeatsOpen = ref(false)
 watch(
   [() => props.userId, day],
   ([uid, d]) => {
-    if (uid) load(uid, d)
+    if (uid) {
+      load(uid, d)
+      void rep.load(uid, d)
+    }
   },
   { immediate: true },
 )
@@ -70,6 +78,8 @@ const carryCandidates = ref<CarryCandidate[] | null>(null)
 
 // BACKLOG 1052: «Цели месяца» под таблицей (только сегодня); зависит от goals/planned, поэтому пересчитывается сама
 const monthGoalRows = computed(() => (goals.value, planned.value, monthGoalsOf()))
+// «Повторяющиеся на сегодня»: предлагаются только на сегодняшнем дне; отметка создаёт обычный выполненный пункт плана с repeat
+const repeatRows = computed(() => (planned.value, rep.repeats.value, rep.weekNotes.value, day.value === todayStr() ? rep.dueOn(day.value, planned.value) : []))
 const doneGoals = computed(() => doneOnDay(goals.value, planned.value, day.value))
 // «Карточка со сводкой» (BACKLOG 498 срез 3): «Выполнено N из M» у свёрнутого блока
 const plannedSummaryText = computed(() => plannedSummary(planned.value, goals.value))
@@ -262,6 +272,18 @@ const collapsed = ref(false)
       </ul>
     </div>
 
+    <!-- BACKLOG 1054: повторяющиеся пункты, которые сегодня «по расписанию»; отметка ставит в план обычный выполненный пункт -->
+    <div v-if="repeatRows.length" class="mt-2" data-test="repeat-due">
+      <p class="dim mb-1 text-xs">{{ t('dash_repeat_due_h') }}</p>
+      <ul class="m-0 flex list-none flex-col gap-1 p-0 text-sm">
+        <li v-for="r in repeatRows" :key="r.id" class="flex items-center gap-2" data-test="repeat-due-item">
+          <input type="checkbox" :checked="false" data-test="repeat-due-check" @change="addCustomItem(r.text, r.time, true, r.id)" />
+          <span class="min-w-0 flex-1 break-words">{{ r.text }}</span>
+          <span v-if="r.time" class="dim text-xs">{{ r.time }}</span>
+        </li>
+      </ul>
+    </div>
+
     <div class="mt-2 flex flex-wrap gap-2" data-test="add-row">
       <input ref="textInput" v-model="newText" type="text" class="min-w-40 flex-1" :class="{ 'plan-invalid': emptyInvalid, 'plan-shake': shaking }" :aria-invalid="emptyInvalid ? 'true' : undefined" :placeholder="t('dash_planned_custom_placeholder')" data-test="custom-input" @input="emptyInvalid = false" @keydown.enter.prevent="addCustom" />
       <button type="button" class="secondary" data-test="add-custom" @click="addCustom"><EmojiText :text="t('add_btn')" /></button>
@@ -282,6 +304,7 @@ const collapsed = ref(false)
         </label>
       </div>
       <p class="dim mb-0 mt-2 text-xs"><EmojiText :text="t('dash_planned_bonus_hint')" /></p>
+      <button v-if="rep.available.value" type="button" class="secondary mt-2" data-test="repeats-open" @click="repeatsOpen = true"><EmojiText :text="t('dash_repeat_manage_btn')" /></button>
 
       <div v-if="perm !== 'unsupported' && perm !== 'granted'" class="mt-2 text-sm" data-test="notify">
         <button v-if="perm === 'default'" type="button" class="secondary" data-test="notify-enable" @click="enableNotifications"><EmojiText :text="t('plan_notify_enable_btn')" /></button>
@@ -295,6 +318,7 @@ const collapsed = ref(false)
   </section>
 
   <PlannedAddGoalModal v-if="goalPicker" :goals="goalPicker" @close="goalPicker = null" @pick="pickGoal" />
+  <PlannedRepeatsModal v-if="repeatsOpen" :repeats="rep.repeats.value" :add="(text, time, schedule) => rep.add(userId as string, text, time, schedule)" :remove="rep.remove" @close="repeatsOpen = false" />
   <PlannedNewGoalModal v-if="newGoalOpen" :categories="myCategories" :no-category-labels="noCategoryLabels()" :horizon-column="horizonColumn" :weight-column="weightColumn" :current-weight="bodyWeight" :submit="submitNewGoal" @close="newGoalOpen = false" />
   <PlannedCarryOverModal v-if="carryCandidates" :candidates="carryCandidates" @close="carryCandidates = null" @add="addCarried" />
 </template>
