@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.77";
+const SITE_VERSION = "5.78";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.78", date: "2026-10-15 18:10", changes: [
+        "Исправлен баг на компьютере: при прокрутке ниже первого экрана (Page Down, колесо) пропадала шапка страницы. Теперь шапка остаётся наверху на всех страницах сайта, а фон тянется на всю длину страницы.",
+    ]},
     { version: "5.77", date: "2026-10-15 10:03", changes: [
         "Новая тема «Осенняя» (🍂 Autumn Harvest): тёплый светлый осенний день — кремовый фон, ржаво-янтарный акцент, мягкие тёплые тени и «листовые» пятна в углах фона. Открыта сразу, выбирается в «Настройках» и в «Кастомизации → Темы». «Простое оформление» и высокий контраст убирают пятна и тень. Без миграций."
     ]},
@@ -2342,6 +2345,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.78", date: "2026-10-15 18:10", changes: [
+        "Fixed a desktop bug: when you scrolled below the first screen (Page Down, mouse wheel), the page header disappeared. The header now stays on top on every page of the site, and the background covers the whole length of the page.",
+    ]},
     { version: "5.77", date: "2026-10-15 10:03", changes: [
         "New theme “Autumn Harvest” (🍂): a warm light autumn day — cream background, rust-amber accent, soft warm shadows and “leaf” glows in the background corners. Available right away; pick it in Settings or Customization → Themes. “Simple look” and high contrast remove the glows and shadow. No migrations."
     ]},
