@@ -1,6 +1,13 @@
 {
-  "version": "5.76",
+  "version": "5.77",
   "en": [
+    {
+      "version": "5.77",
+      "date": "2026-10-15 10:03",
+      "changes": [
+        "New theme “Autumn Harvest” (🍂): a warm light autumn day — cream background, rust-amber accent, soft warm shadows and “leaf” glows in the background corners. Available right away; pick it in Settings or Customization → Themes. “Simple look” and high contrast remove the glows and shadow. No migrations."
+      ]
+    },
     {
       "version": "5.76",
       "date": "2026-10-15 10:05",
@@ -4100,6 +4107,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.77",
+      "date": "2026-10-15 10:03",
+      "changes": [
+        "Новая тема «Осенняя» (🍂 Autumn Harvest): тёплый светлый осенний день — кремовый фон, ржаво-янтарный акцент, мягкие тёплые тени и «листовые» пятна в углах фона. Открыта сразу, выбирается в «Настройках» и в «Кастомизации → Темы». «Простое оформление» и высокий контраст убирают пятна и тень. Без миграций."
+      ]
+    },
     {
       "version": "5.76",
       "date": "2026-10-15 10:05",

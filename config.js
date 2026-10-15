@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.76";
+const SITE_VERSION = "5.77";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.77", date: "2026-10-15 10:03", changes: [
+        "Новая тема «Осенняя» (🍂 Autumn Harvest): тёплый светлый осенний день — кремовый фон, ржаво-янтарный акцент, мягкие тёплые тени и «листовые» пятна в углах фона. Открыта сразу, выбирается в «Настройках» и в «Кастомизации → Темы». «Простое оформление» и высокий контраст убирают пятна и тень. Без миграций."
+    ]},
     { version: "5.76", date: "2026-10-15 10:05", changes: [
         "«Тренировки»: над вкладками появился блок «Сегодня» — что уже сделано за день и кнопка «+ подход» прямо в нём (копия последнего подхода). Новая вкладка «Журнал» показывает записи по дням, свежие сверху. Вкладки теперь идут так: «Журнал» · «Карта мышц» · «Прогрессия» · «Упражнения» (BACKLOG 44.5б, срез 1).",
         "«Кастомизация», сворачивание блоков: два новых вида маркера по 100 баллов — «Точка» (закрашена у раскрытого блока, кольцо у свёрнутого) и «Двойная стрелка». Выбранный вид применяется на Дашборде и в Тренировках.",
@@ -2339,6 +2342,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.77", date: "2026-10-15 10:03", changes: [
+        "New theme “Autumn Harvest” (🍂): a warm light autumn day — cream background, rust-amber accent, soft warm shadows and “leaf” glows in the background corners. Available right away; pick it in Settings or Customization → Themes. “Simple look” and high contrast remove the glows and shadow. No migrations."
+    ]},
     { version: "5.76", date: "2026-10-15 10:05", changes: [
         "Workouts: a new “Today” block above the tabs shows what you have done today, with a “+ set” button right in it (copies the last set). The new “Journal” tab lists entries by day, newest first. Tabs now read: Journal · Muscle map · Progress · Exercises (BACKLOG 44.5b, slice 1).",
         "Customization, block collapse: two new marker styles for 100 points each — “Dot” (solid when a block is open, a ring when folded) and “Double arrow”. The chosen style applies on the Dashboard and in Workouts.",
