@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.74";
+const SITE_VERSION = "5.75";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.75", date: "2026-10-15 06:30", changes: [
+        "«Планы» на главной: повторяющиеся пункты. В «Дополнительно» появилась кнопка «Повторяющиеся пункты…» — можно завести пункт с расписанием: каждый день, по выбранным дням недели или несколько раз в неделю (с необязательным временем). На сегодняшнем дне под таблицей показан список «Повторяющиеся на сегодня»: отметка ставит в план обычный выполненный пункт; «N раз в неделю» предлагается каждый день, пока за неделю не набрано N. Требует миграцию 087; без неё блока и кнопки нет, «Планы» работают как раньше.",
+    ]},
     { version: "5.74", date: "2026-10-15 09:36", changes: [
         "Кастомизация: режим отладки теперь что-то делает — у закрытых и платных предметов появилась кнопка «Примерить» (видна только администратору с включённым режимом, баннер сверху и «Сбросить примерку»). Примерка работает только на этом устройстве: ничего не покупается, не сохраняется на сервере и не видно другим, а после перезагрузки страницы исчезает. Без миграций (нужна 066 с режимом отладки)."
     ]},
@@ -2332,6 +2335,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.75", date: "2026-10-15 06:30", changes: [
+        "Plans on the home page: repeating items. Under “More” there is a new “Repeating items…” button — create an item with a schedule: every day, on chosen weekdays or several times a week (with an optional time). On today, a “Repeating today” list appears under the table: ticking an item puts a regular completed item into the plan; “N times a week” items are offered every day until N is reached for the week. Needs migration 087; without it the block and the button are hidden and Plans work as before.",
+    ]},
     { version: "5.74", date: "2026-10-15 09:36", changes: [
         "Customization: debug mode now does something — locked and paid items get a “Try on” button (shown only to an admin with debug mode on, with a banner on top and “Reset try-on”). Try-on works on this device only: nothing is bought, saved on the server or visible to others, and it disappears when the page reloads. No migrations (needs 066 with debug mode)."
     ]},

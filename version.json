@@ -1,6 +1,13 @@
 {
-  "version": "5.74",
+  "version": "5.75",
   "en": [
+    {
+      "version": "5.75",
+      "date": "2026-10-15 06:30",
+      "changes": [
+        "Plans on the home page: repeating items. Under “More” there is a new “Repeating items…” button — create an item with a schedule: every day, on chosen weekdays or several times a week (with an optional time). On today, a “Repeating today” list appears under the table: ticking an item puts a regular completed item into the plan; “N times a week” items are offered every day until N is reached for the week. Needs migration 087; without it the block and the button are hidden and Plans work as before."
+      ]
+    },
     {
       "version": "5.74",
       "date": "2026-10-15 09:36",
@@ -4085,6 +4092,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.75",
+      "date": "2026-10-15 06:30",
+      "changes": [
+        "«Планы» на главной: повторяющиеся пункты. В «Дополнительно» появилась кнопка «Повторяющиеся пункты…» — можно завести пункт с расписанием: каждый день, по выбранным дням недели или несколько раз в неделю (с необязательным временем). На сегодняшнем дне под таблицей показан список «Повторяющиеся на сегодня»: отметка ставит в план обычный выполненный пункт; «N раз в неделю» предлагается каждый день, пока за неделю не набрано N. Требует миграцию 087; без неё блока и кнопки нет, «Планы» работают как раньше."
+      ]
+    },
     {
       "version": "5.74",
       "date": "2026-10-15 09:36",
