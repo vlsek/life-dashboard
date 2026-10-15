@@ -103,6 +103,12 @@ describe('syncUiSettings', () => {
   it('список ключей — без дублей', () => {
     expect(new Set(SYNC_KEYS).size).toBe(SYNC_KEYS.length)
   })
+  it('«Календарь»: настройка «Показывать» (calendar_show) уходит на сервер и приходит на новое устройство (BACKLOG 44.8 срез 2)', () => {
+    expect(SYNC_KEYS).toContain('calendar_show')
+    const off = '{"stats":false,"weeks":false}'
+    expect(planSync(['calendar_show'], { calendar_show: off }, {}, null).push).toEqual({ calendar_show: off })
+    expect(planSync(['calendar_show'], {}, { calendar_show: off }, null).pull).toEqual({ calendar_show: off })
+  })
 })
 
 // ---- BACKLOG 48.3, срез 2: расположение и вид между устройствами

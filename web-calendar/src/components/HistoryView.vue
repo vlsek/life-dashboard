@@ -11,18 +11,24 @@ import Icon from './Icon.vue'
 import MonthCategoryChart from './MonthCategoryChart.vue'
 import { doneCount, openDeadlines } from '../lib/calendar'
 import type { GoalDeadline, PlannedItem } from '../lib/types'
+import { defaultShow, type CalendarShow } from '../lib/calendarShow'
 
 // Две роли одной сетки (BACKLOG 44.8, просьба владельца 2026-10-07: «календарь в Истории реализован лучше»):
 //  · mode='history' (по умолчанию) — как раньше: клик по дню открывает итоги дня, заголовок и список недель, будущие месяцы недоступны;
 //  · mode='calendar' — вкладка «Календарь»: та же сетка БЕЗ прогресса дня (48.1: только планы), с бейджами планов и
 //    дедлайнов целей на днях; клик по дню отдаёт дату наверх (там открывается форма планов), будущие месяцы доступны, месяц сообщается наверх.
-const props = defineProps<{ mode?: 'history' | 'calendar'; planned?: Record<string, PlannedItem[]>; deadlines?: Record<string, GoalDeadline[]> }>()
+const props = withDefaults(defineProps<{ mode?: 'history' | 'calendar'; planned?: Record<string, PlannedItem[]>; deadlines?: Record<string, GoalDeadline[]>; show?: CalendarShow }>(), { show: () => defaultShow() })
 const emit = defineEmits<{ selectDay: [dateStr: string]; monthChange: [year: number, month: number] }>()
 const isCalendar = computed(() => props.mode === 'calendar')
 // BACKLOG 48.1 (владелец 2026-10-08: «в обычном календаре не надо показывать прогресс дня, только во вкладке календаря история; в обычном только планы»):
 // прогресс дня (заливка, %, золотая обводка >100%, колонка недели, статистика месяца) — ТОЛЬКО во вкладке «История»; в «Календаре» остаются планы и дедлайны.
-const showProgress = computed(() => !isCalendar.value)
-const gridCols = computed(() => (isCalendar.value ? 'repeat(7, minmax(0, 1fr))' : 'repeat(7, minmax(0, 1fr)) minmax(0, 1.05fr)'))
+// «Показывать …» (44.8 срез 2): каждую часть можно выключить; сетка месяца остаётся всегда
+const showProgress = computed(() => !isCalendar.value && props.show.progress)
+const showWeekCol = computed(() => !isCalendar.value && props.show.weekcol)
+const showStats = computed(() => !isCalendar.value && props.show.stats)
+const showChart = computed(() => !isCalendar.value && props.show.chart)
+const showWeeks = computed(() => !isCalendar.value && props.show.weeks)
+const gridCols = computed(() => (showWeekCol.value ? 'repeat(7, minmax(0, 1fr)) minmax(0, 1.05fr)' : 'repeat(7, minmax(0, 1fr))'))
 
 const { auth, ctx, error } = useAuthAndData()
 
@@ -229,7 +235,7 @@ function onTouchEnd(e: TouchEvent) {
           </button>
         </div>
 
-        <div v-if="!isCalendar" class="mb-3 grid grid-cols-3 gap-2" data-test="hist-stats">
+        <div v-if="showStats" class="mb-3 grid grid-cols-3 gap-2" data-test="hist-stats">
           <div
             v-for="s in [
               [monthGrid.avg == null ? '—' : monthGrid.avg + '%', t('hist_stat_avg')],
@@ -245,12 +251,12 @@ function onTouchEnd(e: TouchEvent) {
           </div>
         </div>
 
-        <MonthCategoryChart v-if="!isCalendar" :ctx="ctx as HistoryContext" :year="viewYear" :month="viewMonth" />
+        <MonthCategoryChart v-if="showChart" :ctx="ctx as HistoryContext" :year="viewYear" :month="viewMonth" />
 
         <div class="no-edge-swipe mb-2 flex flex-col gap-1" data-no-swipe data-test="hist-grid" @touchstart="onTouchStart" @touchend="onTouchEnd">
           <div class="grid gap-1" :style="{ gridTemplateColumns: gridCols }">
             <div v-for="n in weekdayNames" :key="n" class="py-0.5 text-center text-[0.72em]" style="color: var(--text-dim)">{{ n }}</div>
-            <div v-if="!isCalendar" class="py-0.5 text-center text-[0.72em]" style="color: var(--text-dim)">{{ t('hist_week_col') }}</div>
+            <div v-if="showWeekCol" class="py-0.5 text-center text-[0.72em]" style="color: var(--text-dim)">{{ t('hist_week_col') }}</div>
           </div>
 
           <div v-for="(row, ri) in monthGrid.rows" :key="ri" class="grid gap-1" :style="{ gridTemplateColumns: gridCols }">
@@ -280,15 +286,15 @@ function onTouchEnd(e: TouchEvent) {
               @click="onCellClick(cell.dateStr)"
             >
               <span v-if="cell.dayNum" class="text-[0.78em] font-semibold">{{ cell.dayNum }}</span>
-              <span v-if="isCalendar && (planBadge(cell.dateStr) || deadlineBadge(cell.dateStr))" class="absolute right-0.5 top-0.5 flex flex-col items-end gap-px text-[0.6em] leading-none">
-                <span v-if="deadlineBadge(cell.dateStr)" class="cal-deadline" :class="{ 'cal-deadline-done': deadlineBadge(cell.dateStr)!.allDone }" :title="t('cal_deadline_title')" data-test="cal-deadline"><Icon name="goals" />{{ deadlineBadge(cell.dateStr)!.count }}</span>
-                <span v-if="planBadge(cell.dateStr)" class="cal-badge" data-test="cal-badge"><template v-if="planBadge(cell.dateStr)!.all"><Icon name="done" /></template><template v-else><Icon name="pin" />{{ planBadge(cell.dateStr)!.done }}/{{ planBadge(cell.dateStr)!.total }}</template></span>
+              <span v-if="isCalendar && ((show.plans && planBadge(cell.dateStr)) || (show.deadlines && deadlineBadge(cell.dateStr)))" class="absolute right-0.5 top-0.5 flex flex-col items-end gap-px text-[0.6em] leading-none">
+                <span v-if="show.deadlines && deadlineBadge(cell.dateStr)" class="cal-deadline" :class="{ 'cal-deadline-done': deadlineBadge(cell.dateStr)!.allDone }" :title="t('cal_deadline_title')" data-test="cal-deadline"><Icon name="goals" />{{ deadlineBadge(cell.dateStr)!.count }}</span>
+                <span v-if="show.plans && planBadge(cell.dateStr)" class="cal-badge" data-test="cal-badge"><template v-if="planBadge(cell.dateStr)!.all"><Icon name="done" /></template><template v-else><Icon name="pin" />{{ planBadge(cell.dateStr)!.done }}/{{ planBadge(cell.dateStr)!.total }}</template></span>
               </span>
               <span v-if="showProgress && cell.hasStats" class="self-end text-[0.68em] font-semibold">{{ cell.pct }}%</span>
             </button>
 
             <div
-              v-if="!isCalendar"
+              v-if="showWeekCol"
               class="flex items-center justify-center rounded-lg border"
               data-test="hist-weekcol"
               :style="{
@@ -305,9 +311,9 @@ function onTouchEnd(e: TouchEvent) {
           </div>
         </div>
 
-        <h2 v-if="!isCalendar" class="mb-2 mt-6 text-lg font-bold"><EmojiText :text="t('hist_weeks_h2')" /></h2>
-        <p v-if="!isCalendar && recentWeeks.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('hist_no_data') }}</p>
-        <div v-for="w in (isCalendar ? [] : recentWeeks)" :key="w.label" class="my-2 flex items-center gap-2.5">
+        <h2 v-if="showWeeks" class="mb-2 mt-6 text-lg font-bold"><EmojiText :text="t('hist_weeks_h2')" /></h2>
+        <p v-if="showWeeks && recentWeeks.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('hist_no_data') }}</p>
+        <div v-for="w in (showWeeks ? recentWeeks : [])" :key="w.label" class="my-2 flex items-center gap-2.5">
           <div class="w-[124px] shrink-0 text-sm">{{ w.label }}</div>
           <div class="h-2.5 flex-1 overflow-hidden rounded-md border" style="border-color: var(--border); background: var(--bg-card)">
             <div

@@ -6,6 +6,8 @@ import { useCalendar } from './lib/useCalendar'
 import { t } from './lib/i18n'
 import type { PlannedItem } from './lib/types'
 import HistoryView from './components/HistoryView.vue'
+import CalendarShowToggles from './components/CalendarShowToggles.vue'
+import { loadShow, saveShow, type ShowKey } from './lib/calendarShow'
 
 const { auth, byDate, deadlines, init, loadMonth, savePlanned } = useCalendar()
 
@@ -38,6 +40,13 @@ onMounted(async () => {
   await reloadMonth()
 })
 
+// «Показывать …» (44.8 срез 2): что видно на вкладках; выключенное хранится в localStorage `calendar_show` и синхронизируется в профиль шапкой
+const show = ref(loadShow())
+function toggleShow(k: ShowKey) {
+  show.value = { ...show.value, [k]: !show.value[k] }
+  saveShow(show.value)
+}
+
 const openDate = ref<string | null>(null)
 function openDay(dateStr: string) {
   openDate.value = dateStr
@@ -58,13 +67,15 @@ async function onSaveDay(items: PlannedItem[]) {
       <button type="button" class="flex-1 rounded-lg px-3 py-2 text-sm font-medium" :style="{ background: view === 'history' ? 'var(--accent)' : 'transparent', color: view === 'history' ? 'var(--accent-text)' : 'var(--text)' }" data-test="history-tab" @click="setView('history')">{{ t('hist_title') }}</button>
     </div>
 
+    <CalendarShowToggles :view="view" :show="show" @toggle="toggleShow" />
+
     <template v-if="view === 'history'">
-      <HistoryView />
+      <HistoryView :show="show" />
     </template>
     <template v-else>
     <!-- Сетка «Календаря» = сетка «Истории» (заливка дня по прогрессу, %, колонка недели, статистика месяца) + бейджи планов и дедлайнов целей;
          свайп по сетке и шапке месяца не выдвигает боковые плашки (внутри HistoryView — no-edge-swipe / data-no-swipe) -->
-    <HistoryView mode="calendar" :planned="byDate" :deadlines="deadlines" data-test="calendar-grid-view" @select-day="openDay" @month-change="onMonthChange" />
+    <HistoryView mode="calendar" :show="show" :planned="byDate" :deadlines="deadlines" data-test="calendar-grid-view" @select-day="openDay" @month-change="onMonthChange" />
 
     <DayModal
       v-if="openDate"
