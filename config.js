@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.78";
+const SITE_VERSION = "5.79";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.79", date: "2026-10-14 12:40", changes: [
+        "Новая метрика-упражнение: под полем «Название» появилась кнопка «Подобрать название по схеме тела» — та же схема, что в «Тренировках» (зелёные мышцы — работали за последние 4 дня, выбор мышцы и упражнения подставляет название в поле). Код подбора вынесен в общий модуль, Тренировки работают как раньше. Без миграций.",
+    ]},
     { version: "5.78", date: "2026-10-15 18:10", changes: [
         "Исправлен баг на компьютере: при прокрутке ниже первого экрана (Page Down, колесо) пропадала шапка страницы. Теперь шапка остаётся наверху на всех страницах сайта, а фон тянется на всю длину страницы.",
     ]},
@@ -2345,6 +2348,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.79", date: "2026-10-14 12:40", changes: [
+        "New exercise metric: a \"Pick a name by body diagram\" button now appears under the Name field — the same diagram as in Workouts (green muscles were worked in the last 4 days; picking a muscle and an exercise fills in the name). The picker code moved to a shared module; Workouts behave as before. No migrations.",
+    ]},
     { version: "5.78", date: "2026-10-15 18:10", changes: [
         "Fixed a desktop bug: when you scrolled below the first screen (Page Down, mouse wheel), the page header disappeared. The header now stays on top on every page of the site, and the background covers the whole length of the page.",
     ]},

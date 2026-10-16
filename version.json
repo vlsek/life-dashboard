@@ -1,6 +1,13 @@
 {
-  "version": "5.78",
+  "version": "5.79",
   "en": [
+    {
+      "version": "5.79",
+      "date": "2026-10-14 12:40",
+      "changes": [
+        "New exercise metric: a \"Pick a name by body diagram\" button now appears under the Name field — the same diagram as in Workouts (green muscles were worked in the last 4 days; picking a muscle and an exercise fills in the name). The picker code moved to a shared module; Workouts behave as before. No migrations."
+      ]
+    },
     {
       "version": "5.78",
       "date": "2026-10-15 18:10",
@@ -4114,6 +4121,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.79",
+      "date": "2026-10-14 12:40",
+      "changes": [
+        "Новая метрика-упражнение: под полем «Название» появилась кнопка «Подобрать название по схеме тела» — та же схема, что в «Тренировках» (зелёные мышцы — работали за последние 4 дня, выбор мышцы и упражнения подставляет название в поле). Код подбора вынесен в общий модуль, Тренировки работают как раньше. Без миграций."
+      ]
+    },
     {
       "version": "5.78",
       "date": "2026-10-15 18:10",
