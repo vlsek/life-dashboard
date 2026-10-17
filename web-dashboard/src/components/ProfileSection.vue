@@ -189,7 +189,7 @@ function openForm(p: BodyParam | 'new') {
         :title="week.title"
         :label="t('dash_week_progress_label')"
         :size="48"
-        :shape="week.shape === 'classic' ? 'circle' : week.shape === 'bars' || week.shape === 'dots' || week.shape === 'steps' || week.shape === 'wave' || week.shape === 'teeth' ? week.shape : 'heptagon'"
+        :shape="week.shape === 'classic' ? 'circle' : week.shape === 'bars' || week.shape === 'dots' || week.shape === 'steps' || week.shape === 'wave' || week.shape === 'teeth' || week.shape === 'valley' || week.shape === 'slope' ? week.shape : 'heptagon'"
         :days="week.days"
         @click="emit('progress-settings', 'week')"
       />

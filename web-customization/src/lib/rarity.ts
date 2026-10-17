@@ -67,6 +67,8 @@ export const ITEM_RARITY: Record<string, Rarity> = {
   week_steps: 'uncommon',
   week_wave: 'uncommon', // 150
   week_teeth: 'common', // 100
+  week_valley: 'uncommon', // 150 (59.4)
+  week_slope: 'common', // 100
   day_dashed: 'common', // виды спидометра дня (53.2 срез 2): 100 → обычный, 150 → необычный
   day_glow: 'uncommon',
   day_ticks: 'uncommon', // 150

@@ -1,7 +1,7 @@
 export type DayPlace = 'avatar' | 'header' | 'off'
 export type WeekPlace = 'profile' | 'header' | 'off'
 // Вид недели в шапке и правой панели: семиугольник (сторона = день недели) или прежний (квадрат / дуга).
-export type WeekShape = 'heptagon' | 'classic' | 'bars' | 'dots' | 'steps' | 'wave' | 'teeth'
+export type WeekShape = 'heptagon' | 'classic' | 'bars' | 'dots' | 'steps' | 'wave' | 'teeth' | 'valley' | 'slope'
 
 export interface DayProgressSettings {
   enabled: boolean

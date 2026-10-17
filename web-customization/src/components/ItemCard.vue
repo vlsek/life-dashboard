@@ -10,6 +10,7 @@ import WeekGaugePreview from './WeekGaugePreview.vue'
 import DayGaugePreview from './DayGaugePreview.vue'
 import WaterSavedAnim from './WaterSavedAnim.vue'
 import { WATER_ITEMS } from '../lib/waterAnim'
+import { parseWeekGauge } from '../lib/weekGauge'
 import WaterGlassPreview from './WaterGlassPreview.vue'
 import { BY_ITEM } from '../lib/waterGlass'
 
@@ -26,6 +27,10 @@ const isWeekGauge = computed(() => props.item.category === 'week_gauge')
 const isDayGauge = computed(() => props.item.category === 'day_gauge')
 const isWaterGlass = computed(() => props.item.category === 'water_glass')
 const isWaterAnim = computed(() => props.item.category === 'water_anim')
+const weekPreviewVariant = computed(() => {
+  const s = parseWeekGauge(props.item.key) // вид — из реестра предметов (lib/weekGauge.ts); «семиугольник» в предметах недели не бывает
+  return s === 'heptagon' ? 'classic' : s
+})
 const waterVariant = computed(() => WATER_ITEMS[props.item.key] ?? 'rain') // вид анимации — из реестра предметов (lib/waterAnim.ts)
 const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.item.achievement) as never) : ''))
 </script>
@@ -41,7 +46,7 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
       <CollapsePreview :variant="item.key === 'collapse_summary' ? 'summary' : item.key === 'collapse_plus' ? 'plus' : item.key === 'collapse_caret' ? 'caret' : item.key === 'collapse_dot' ? 'dot' : item.key === 'collapse_double' ? 'double' : 'accordion'" />
     </span>
     <span v-else-if="isWeekGauge" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="week-gauge-preview">
-      <WeekGaugePreview :variant="item.key === 'week_bars' ? 'bars' : item.key === 'week_dots' ? 'dots' : item.key === 'week_steps' ? 'steps' : item.key === 'week_wave' ? 'wave' : item.key === 'week_teeth' ? 'teeth' : 'classic'" />
+      <WeekGaugePreview :variant="weekPreviewVariant" />
     </span>
     <span v-else-if="isDayGauge" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="day-gauge-preview">
       <DayGaugePreview :variant="item.key === 'day_glow' ? 'glow' : item.key === 'day_ticks' ? 'ticks' : item.key === 'day_gradient' ? 'gradient' : item.key === 'day_thick' ? 'thick' : item.key === 'day_rainbow' ? 'rainbow' : item.key === 'day_thin' ? 'thin' : item.key === 'day_sunset' ? 'sunset' : 'dashed'" />

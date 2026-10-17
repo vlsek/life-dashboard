@@ -1,8 +1,13 @@
 <script setup lang="ts">
 // Мини-картинка «как это выглядит» для предметов «Спидометр прогресса недели» (BACKLOG 53.2): классическое кольцо и семь столбиков на примере недели
 // (пн–чт прошли, сегодня — пятница, дальше пусто). Только превью, настоящие виды рисуют шапка и Дашборд.
-defineProps<{ variant: 'classic' | 'bars' | 'dots' | 'steps' | 'wave' | 'teeth' }>()
+defineProps<{ variant: 'classic' | 'bars' | 'dots' | 'steps' | 'wave' | 'teeth' | 'valley' | 'slope' }>()
 const dotFill = [1, 0.7, 0.9, 0.5, 0.25, 0, 0]
+// Высота столбика дня i в долях: «Волна» — дугой, «Долина» — перевёрнутой дугой, «Спуск» — лесенкой вниз (как в WeekAlt.vue шапки/Дашборда)
+const trackPct = (variant: string, i: number): number => {
+  const arc = Math.sin(Math.PI * (i + 0.5) / 7)
+  return variant === 'valley' ? 1 - 0.6 * arc : variant === 'slope' ? 0.34 + 0.66 * (6 - i) / 6 : 0.4 + 0.6 * arc
+}
 const dotPos = dotFill.map((_, i) => [28 + 20 * Math.cos(-Math.PI / 2 + (i * 2 * Math.PI) / 7), 28 + 20 * Math.sin(-Math.PI / 2 + (i * 2 * Math.PI) / 7)])
 const fills = [1, 0.7, 0.9, 0.5, 0.25, 0, 0]
 const C = 2 * Math.PI * 22
@@ -27,10 +32,10 @@ const C = 2 * Math.PI * 22
       <rect v-if="i === 4" :x="1.5 + i * 9.5" :y="50.5 - (16 + 36 * i / 6)" width="9" :height="(16 + 36 * i / 6) + 3" rx="3" stroke="var(--text-dim)" stroke-width="1" />
     </g>
   </svg>
-  <svg v-else-if="variant === 'wave'" viewBox="0 0 70 56" width="70" height="56" fill="none" aria-hidden="true" data-testid="week-preview-wave">
+  <svg v-else-if="variant === 'wave' || variant === 'valley' || variant === 'slope'" viewBox="0 0 70 56" width="70" height="56" fill="none" aria-hidden="true" :data-testid="'week-preview-' + variant">
     <g v-for="(f, i) in dotFill" :key="i">
-      <rect :x="3 + i * 9.5" :y="52 - 52 * (0.4 + 0.6 * Math.sin(Math.PI * (i + 0.5) / 7))" width="6" :height="52 * (0.4 + 0.6 * Math.sin(Math.PI * (i + 0.5) / 7))" rx="2" fill="var(--border)" />
-      <rect v-if="f > 0" :x="3 + i * 9.5" :y="52 - 52 * (0.4 + 0.6 * Math.sin(Math.PI * (i + 0.5) / 7)) * f" width="6" :height="52 * (0.4 + 0.6 * Math.sin(Math.PI * (i + 0.5) / 7)) * f" rx="2" fill="var(--accent)" />
+      <rect :x="3 + i * 9.5" :y="52 - 52 * trackPct(variant, i)" width="6" :height="52 * trackPct(variant, i)" rx="2" fill="var(--border)" />
+      <rect v-if="f > 0" :x="3 + i * 9.5" :y="52 - 52 * trackPct(variant, i) * f" width="6" :height="52 * trackPct(variant, i) * f" rx="2" fill="var(--accent)" />
     </g>
   </svg>
   <svg v-else-if="variant === 'teeth'" viewBox="0 0 70 56" width="70" height="56" fill="none" aria-hidden="true" data-testid="week-preview-teeth">
