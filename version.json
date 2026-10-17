@@ -1,6 +1,13 @@
 {
-  "version": "5.88",
+  "version": "5.89",
   "en": [
+    {
+      "version": "5.89",
+      "date": "2026-10-14 16:10",
+      "changes": [
+        "Workouts, Exercises tab: the \"Variation\" field in a set row is no longer clipped on phones — it now sits on its own line under the set, so the \"Variation (optional)\" hint reads in full. No migrations."
+      ]
+    },
     {
       "version": "5.88",
       "date": "2026-10-17 12:30",
@@ -4185,6 +4192,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.89",
+      "date": "2026-10-14 16:10",
+      "changes": [
+        "«Тренировки», вкладка «Упражнения»: в строке подхода поле «Особенность» больше не обрезается на телефоне — оно теперь на своей строке под подходом, подсказка «Особенность (необязательно)» читается целиком. Без миграций."
+      ]
+    },
     {
       "version": "5.88",
       "date": "2026-10-17 12:30",
