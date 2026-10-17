@@ -57,10 +57,10 @@ describe('ChartLinePicker: выбор стиля линии (BACKLOG 55.2 сре
     localStorage.setItem('site_lang', 'ru')
   })
 
-  it('внутри раздела графиков: три карточки, по умолчанию «Обычная»; у «с областью» есть градиент, у «обычной» — нет', () => {
+  it('внутри раздела графиков: пять карточек, по умолчанию «Обычная»; у «с областью» есть градиент, у «обычной» — нет', () => {
     const w = mount(ChartMarkerPicker)
     expect(w.find('[data-testid="line-picker"]').exists()).toBe(true)
-    expect(w.findAll('[data-testid^="line-"][data-active]')).toHaveLength(3)
+    expect(w.findAll('[data-testid^="line-"][data-active]')).toHaveLength(5)
     expect(w.find('[data-testid="line-line"]').attributes('data-active')).toBe('true')
     expect(w.find('[data-testid="line-area"] svg').html()).toContain('linearGradient')
     expect(w.find('[data-testid="line-line"] svg').html()).not.toContain('Gradient')

@@ -1,9 +1,10 @@
 // Стили ЛИНИИ графика (BACKLOG 55.2 срез 3, обзор «градиентная область + сглаживание»): обычная (прежняя, по умолчанию) ·
-// сглаженная · сглаженная с градиентной областью под линией. Выбор — localStorage `chart_line`, меняется в «Кастомизации».
+// сглаженная · сглаженная с градиентной областью под линией. Срез 7г: «ступени» (steps — значение держится до следующего замера, углы только
+// прямые: честно для веса и привычек) и «неон» (glow — та же монотонная кривая с мягким свечением под линией). Выбор — localStorage `chart_line`, меняется в «Кастомизации».
 // ЭТОТ ФАЙЛ копируется в web-customization/src/lib/ БЕЗ изменений (scripts/apply_chart_marker.py; тест сверяет) — правь здесь.
 // Сглаживание — монотонная кубическая интерполяция (Fritsch–Carlson): кривая НЕ вылетает выше/ниже реальных значений,
 // поэтому «пика, которого не было» на графике не бывает (важно для честности цифр).
-export const CHART_LINES = ['line', 'smooth', 'area'] as const
+export const CHART_LINES = ['line', 'smooth', 'area', 'steps', 'glow'] as const
 export type ChartLine = (typeof CHART_LINES)[number]
 export const DEFAULT_CHART_LINE: ChartLine = 'line'
 export const CHART_LINE_KEY = 'chart_line'
@@ -72,6 +73,16 @@ export function monotonePath(pts: Pt[]): string {
   return d
 }
 
+// Ступенчатый путь «M x y H … V …»: от точки идём горизонтально до следующего замера и только там меняем высоту (step-after) —
+// значение «держится» до нового замера, а не плавно перетекает. Выше/ниже реальных значений не бывает по построению.
+export function stepPath(pts: Pt[]): string {
+  const n = pts.length
+  if (n === 0) return ''
+  let d = `M${n1(pts[0][0])} ${n1(pts[0][1])}`
+  for (let i = 1; i < n; i++) d += `H${n1(pts[i][0])}V${n1(pts[i][1])}`
+  return d
+}
+
 // <defs> с вертикальным градиентом области (цвет → прозрачность) для стиля «area»; для остальных — пустая строка.
 export function lineDefs(style: ChartLine, uid: string, color: string): string {
   if (style !== 'area') return ''
@@ -82,8 +93,10 @@ export function lineDefs(style: ChartLine, uid: string, color: string): string {
 // Для стиля «line» не используется: прежняя отрисовка отрезками остаётся в ChartBlock как была.
 export function runParts(style: ChartLine, run: Pt[], color: string, baseY: number, uid: string): string {
   if (run.length < 2 || style === 'line') return ''
-  const d = monotonePath(run)
+  const d = style === 'steps' ? stepPath(run) : monotonePath(run)
   let g = ''
+  // «неон»: широкий размытый двойник линии под основной; класс ch-area — чтобы при анимации «draw» свечение проявлялось вместе с областью, а не раньше линии
+  if (style === 'glow') g += `<path class="ch-area ch-glow" d="${d}" fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity=".3" style="filter: blur(3px)" />`
   if (style === 'area') {
     const last = run[run.length - 1]
     const first = run[0]

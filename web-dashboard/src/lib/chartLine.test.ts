@@ -18,8 +18,8 @@ const mountChart = (ys: (number | null)[]) => mount(ChartBlock, { props: { title
 describe('chartLine: стили линии графика (BACKLOG 55.2 срез 3)', () => {
   beforeEach(() => localStorage.clear())
 
-  it('три стиля; по умолчанию прежняя «обычная»; мусор в хранилище игнорируется', () => {
-    expect([...CHART_LINES]).toEqual(['line', 'smooth', 'area'])
+  it('пять стилей (срез 7г добавил «steps» и «glow»); по умолчанию прежняя «обычная»; мусор в хранилище игнорируется', () => {
+    expect([...CHART_LINES]).toEqual(['line', 'smooth', 'area', 'steps', 'glow'])
     expect(DEFAULT_CHART_LINE).toBe('line')
     expect(readChartLine()).toBe('line')
     localStorage.setItem(CHART_LINE_KEY, 'area')
