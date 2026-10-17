@@ -1,6 +1,13 @@
 {
-  "version": "5.81",
+  "version": "5.82",
   "en": [
+    {
+      "version": "5.82",
+      "date": "2026-10-17 08:16",
+      "changes": [
+        "Customization: two new water animations — “Bounce” (the glass hops up and lands with a little spring, 100 points) and “Pulse” (the glass gently “breathes” twice, 150 points). The “Water animation” section grew from five to seven items. They can be bought once migration 089 is applied in Supabase."
+      ]
+    },
     {
       "version": "5.81",
       "date": "2026-10-17 09:05",
@@ -4136,6 +4143,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.82",
+      "date": "2026-10-17 08:16",
+      "changes": [
+        "Кастомизация: две новые анимации воды — «Прыжок» (стакан подпрыгивает и приземляется с пружинкой, 100 баллов) и «Пульс» (стакан дважды мягко «дышит», 150 баллов). Раздел «Анимация воды» вырос с пяти до семи предметов. Купить можно после применения миграции 089 в Supabase."
+      ]
+    },
     {
       "version": "5.81",
       "date": "2026-10-17 09:05",
