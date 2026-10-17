@@ -2380,3 +2380,37 @@ html[data-motion='off'] .splash-bars *, html[data-motion='off'] .splash-pulse * 
   .chart-draw .ch-bar { animation: none; }
 }
 html[data-motion='off'] .chart-draw .ch-bar { animation: none; }
+
+/* streak-flame-more:start */
+/* Новые виды огонька серии (BACKLOG 44.18в, срез 2): «Уголёк» (.sf-ember) и «Свеча» (.sf-candle); «Огненное кольцо» берёт готовый .splash-ring.
+   Ступень серии — data-tier 1/2/3 (7+/30+/100+ дней): свечение и скорость растут, со ступени 2 — искры (spark-rise общий со .splash-live).
+   Анимации гасят prefers-reduced-motion и общий выключатель html[data-motion='off']. БЛОК ОДИНАКОВ в web-dashboard и web-customization. */
+.sf-ember, .sf-candle { --sf-speed: 1; --sf-glow: 0.35; display: inline-block; vertical-align: middle; }
+.sf-ember[data-tier='2'], .sf-candle[data-tier='2'] { --sf-speed: 0.85; --sf-glow: 0.55; }
+.sf-ember[data-tier='3'], .sf-candle[data-tier='3'] { --sf-speed: 0.7; --sf-glow: 0.75; }
+.sf-ember .ember-halo, .sf-candle .candle-glow { fill: var(--accent); opacity: var(--sf-glow); transform-box: fill-box; transform-origin: 50% 50%; animation: sf-pulse calc(2.4s * var(--sf-speed)) ease-in-out infinite; }
+.sf-candle .candle-glow { opacity: calc(var(--sf-glow) * 0.45); filter: blur(3px); } /* мягкий ореол, а не плоский диск */
+.sf-ember .ember-rock { fill: color-mix(in srgb, var(--accent) 22%, #2a2a30); }
+.sf-ember .ember-crack { fill: none; stroke: var(--accent); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; animation: sf-glowline calc(2.4s * var(--sf-speed)) ease-in-out infinite; }
+.sf-ember .ember-core { fill: color-mix(in srgb, var(--accent) 35%, #ffffff); transform-box: fill-box; transform-origin: 50% 50%; animation: sf-pulse calc(1.6s * var(--sf-speed)) ease-in-out -0.4s infinite; }
+.sf-ember[data-tier='3'] .ember-core { fill: color-mix(in srgb, var(--accent) 12%, #ffffff); }
+.sf-candle .candle-body { fill: color-mix(in srgb, var(--text, #888888) 22%, var(--bg-card, #ffffff)); stroke: color-mix(in srgb, var(--text, #888888) 35%, transparent); stroke-width: 1; }
+.sf-candle .candle-drip { fill: color-mix(in srgb, var(--text, #888888) 30%, var(--bg-card, #ffffff)); }
+.sf-candle .candle-wick { stroke: color-mix(in srgb, var(--text, #888888) 70%, transparent); stroke-width: 2; stroke-linecap: round; }
+.sf-candle .candle-flame { transform-box: fill-box; transform-origin: 50% 100%; animation: sf-flicker calc(1.4s * var(--sf-speed)) ease-in-out infinite; }
+.sf-candle .candle-flame-out { fill: var(--accent); }
+.sf-candle .candle-flame-in { fill: color-mix(in srgb, var(--accent) 30%, #ffffff); }
+.sf-candle[data-tier='3'] .candle-flame-in { fill: color-mix(in srgb, var(--accent) 10%, #ffffff); }
+.sf-ember .spark, .sf-candle .spark { fill: color-mix(in srgb, var(--accent) 45%, #ffffff); opacity: 0; animation: spark-rise var(--d, 2s) ease-out var(--o, 0s) infinite; }
+.sf-ember[data-tier='1'] .spark, .sf-candle[data-tier='1'] .spark,
+.sf-ember[data-tier='2'] .spark-b, .sf-candle[data-tier='2'] .spark-b { display: none; }
+@keyframes sf-pulse { 0%, 100% { transform: scale(0.94); } 50% { transform: scale(1.06); } }
+@keyframes sf-glowline { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+@keyframes sf-flicker { 0%, 100% { transform: scale(1, 1) skewX(0deg); } 30% { transform: scale(0.94, 1.06) skewX(-3deg); } 60% { transform: scale(1.04, 0.96) skewX(2deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .sf-ember, .sf-ember *, .sf-candle, .sf-candle * { animation: none !important; }
+  .sf-ember .spark, .sf-candle .spark { opacity: 0; }
+}
+html[data-motion='off'] .sf-ember, html[data-motion='off'] .sf-ember *,
+html[data-motion='off'] .sf-candle, html[data-motion='off'] .sf-candle * { animation: none !important; }
+/* streak-flame-more:end */
