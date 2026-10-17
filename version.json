@@ -1,6 +1,13 @@
 {
-  "version": "5.85",
+  "version": "5.86",
   "en": [
+    {
+      "version": "5.86",
+      "date": "2026-10-17 09:55",
+      "changes": [
+        "Customization, weekly gauge: a new “Teeth” style for 100 points — seven bars, tall and short in turn like the teeth of a comb; each fills from the bottom with that day’s progress. Shown in the header and on the Dashboard."
+      ]
+    },
     {
       "version": "5.85",
       "date": "2026-10-17 08:30",
@@ -4164,6 +4171,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.86",
+      "date": "2026-10-17 09:55",
+      "changes": [
+        "«Кастомизация», спидометр недели: новый вид «Зубцы» за 100 баллов — семь столбиков через один высокий и низкий, как зубцы гребня; каждый заливается снизу по прогрессу своего дня. Показывается в шапке и на Дашборде."
+      ]
+    },
     {
       "version": "5.85",
       "date": "2026-10-17 08:30",

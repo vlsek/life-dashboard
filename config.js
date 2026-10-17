@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.85";
+const SITE_VERSION = "5.86";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.86", date: "2026-10-17 09:55", changes: [
+        "«Кастомизация», спидометр недели: новый вид «Зубцы» за 100 баллов — семь столбиков через один высокий и низкий, как зубцы гребня; каждый заливается снизу по прогрессу своего дня. Показывается в шапке и на Дашборде.",
+    ]},
     { version: "5.85", date: "2026-10-17 08:30", changes: [
         "Новая тема «Ледяная» (❄️ Snowfield): светлая холодная — инеевый голубой фон, глубокий синий акцент, чёткие небольшие скругления, холодные тени и голубые «ледяные блики» в углах фона. Открыта сразу, выбирается в «Настройках» и в «Кастомизации → Темы». «Простое оформление» и высокий контраст убирают блики и тень. Без миграций."
     ]},
@@ -2367,6 +2370,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.86", date: "2026-10-17 09:55", changes: [
+        "Customization, weekly gauge: a new “Teeth” style for 100 points — seven bars, tall and short in turn like the teeth of a comb; each fills from the bottom with that day’s progress. Shown in the header and on the Dashboard.",
+    ]},
     { version: "5.85", date: "2026-10-17 08:30", changes: [
         "New theme “Snowfield” (❄️): a light, cool look — frosty blue background, deep blue accent, crisp small corners, cool shadows and pale-blue “ice glints” in the background corners. Available right away; pick it in Settings or Customization → Themes. “Simple look” and high contrast remove the glints and shadow. No migrations."
     ]},
