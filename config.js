@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.98";
+const SITE_VERSION = "5.99";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.99", date: "2026-10-17 18:48", changes: [
+        "«Кастомизация» → графики → «Мини-графики»: у маленького графика за 7 дней под числовой метрикой появился вид — «Линия» (как раньше), «Область», «Столбики» или «Точки». Столбики растут от нуля, чтобы высота не врала; у точек нет соединяющей линии; пропущенный день остаётся пропуском. Сам график по-прежнему включается отдельным переключателем «Мини-графики». Выбор виден при следующем открытии страницы.",
+    ]},
     { version: "5.98", date: "2026-10-17 17:00", changes: [
         "«Кастомизация», вид сворачивания блоков: два новых маркера — «Квадрат» за 100 баллов (закрашен у раскрытого блока, контур у свёрнутого) и «Гамбургер» за 150 баллов (три полоски у свёрнутого блока, две у раскрытого). Работают на Дашборде и в Тренировках.",
     ]},
@@ -2406,6 +2409,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.99", date: "2026-10-17 18:48", changes: [
+        "Customization → charts → “Mini-charts”: the small 7-day chart under a number metric now has a look — “Line” (as before), “Area”, “Bars” or “Dots”. Bars grow from zero so the height never lies; dots have no connecting line; a missed day stays a gap. The chart itself is still switched on by the separate “Mini-charts” toggle. The choice shows the next time the page opens.",
+    ]},
     { version: "5.98", date: "2026-10-17 17:00", changes: [
         "Customization, block-collapse marker: two new styles — “Square” for 100 points (filled when a block is open, an outline when folded) and “Burger” for 150 points (three lines when folded, two when open). Work on the Dashboard and in Workouts.",
     ]},
