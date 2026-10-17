@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.91";
+const SITE_VERSION = "5.92";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.92", date: "2026-10-17 14:35", changes: [
+        "Кастомизация: два новых вида спидометра недели — «Долина» (семь столбиков перевёрнутой дугой: выше по краям, ниже в середине недели, 150 баллов) и «Спуск» (лесенка вниз: самый высокий столбик в понедельник, самый низкий в воскресенье, 100 баллов). Раздел «Вид недели» вырос до восьми предметов. Купить можно после применения миграции 092 в Supabase."
+    ]},
     { version: "5.91", date: "2026-10-17 11:28", changes: [
         "«Кастомизация» → «Вид графика»: два новых бесплатных вида — «Точки» (только маркеры без соединяющей линии) и «Леденцы» (тонкий стебель от нуля с кружком на конце); теперь видов четыре. У точек и леденцов нет стилей линии и прогноза, у леденцов шкала от нуля, как у столбцов. Графики подхватят выбор при следующем открытии страницы.",
     ]},
@@ -2385,6 +2388,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.92", date: "2026-10-17 14:35", changes: [
+        "Customization: two new week gauge styles — “Valley” (seven bars in an inverted arch: tallest at the edges, lowest in the middle of the week, 150 points) and “Slope” (stairs going down: the tallest bar on Monday, the shortest on Sunday, 100 points). The “Week view” section grew to eight items. They can be bought once migration 092 is applied in Supabase."
+    ]},
     { version: "5.91", date: "2026-10-17 11:28", changes: [
         "Customization → “Chart type”: two new free looks — “Dots” (just the markers, no connecting line) and “Lollipops” (a thin stem from zero with a dot on top); there are now four. Dots and lollipops have no line styles or forecast, and lollipops start from zero like bars. Charts pick up the choice the next time the page opens.",
     ]},
