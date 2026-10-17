@@ -13,7 +13,7 @@ describe('виды спидометра дня (53.2 срез 2)', () => {
     expect(priceOf(itemByKey('day_glow')!)).toBe(150)
     expect(priceOf(itemByKey('day_ticks')!)).toBe(150)
     expect(priceOf(itemByKey('day_gradient')!)).toBe(250)
-    expect(ITEMS.filter((i) => i.category === 'day_gauge')).toHaveLength(8)
+    expect(ITEMS.filter((i) => i.category === 'day_gauge')).toHaveLength(10)
     expect(rarityOfItem('day_ticks')).toBe('uncommon')
     expect(rarityOfItem('day_gradient')).toBe('rare')
     expect(rarityOfItem('day_dashed')).toBe('common')
@@ -107,6 +107,22 @@ describe('виды спидометра дня (53.2 срез 2)', () => {
     expect(dayGradientStops('sunset')[1].offset).toBe('50%')
     expect(dayUsesGradient('sunset')).toBe(true)
     expect(dayUsesGradient('thin')).toBe(false)
+  })
+  it('срез 6: «Океан» и «Аврора» — предметы, цены, виды, градиенты, кэш', () => {
+    expect(priceOf(itemByKey('day_ocean')!)).toBe(150)
+    expect(priceOf(itemByKey('day_aurora')!)).toBe(250)
+    expect(parseDayGauge('day_ocean')).toBe('ocean')
+    expect(parseDayGauge('day_aurora')).toBe('aurora')
+    expect(dayGradientStops('ocean')).toHaveLength(3)
+    expect(dayGradientStops('aurora')).toHaveLength(4)
+    expect(dayGradientStops('aurora')[3].offset).toBe('100%')
+    expect(dayGradientStops('ocean')[0].color).not.toBe(dayGradientStops('aurora')[0].color)
+    expect(dayUsesGradient('ocean') && dayUsesGradient('aurora')).toBe(true)
+    for (const k of ['ocean', 'aurora'] as const) {
+      writeCachedDayGauge(k)
+      expect(readCachedDayGauge()).toBe(k)
+    }
+    writeCachedDayGauge('ring')
   })
   it('кэш помнит новые виды', () => {
     writeCachedDayGauge('thin')

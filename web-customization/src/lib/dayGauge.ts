@@ -3,11 +3,11 @@
 // Выбор лежит в profiles.customization.day_gauge (ключ предмета); страницы применяют его БЕЗ ожидания сети — через кэш в localStorage (как вид
 // недели): кэш пишет «Кастомизация» при выборе, шапка и Дашборд сверяются с профилем в фоне. Чистая логика (без Vue/сети).
 // Пилоты изолированы, поэтому файл ЕСТЬ в web-customization, web-header и web-dashboard (менять ВМЕСТЕ — страж в collapseStyleCopies.test.ts).
-export type DayGaugeStyle = 'ring' | 'dashed' | 'glow' | 'ticks' | 'gradient' | 'thick' | 'rainbow' | 'thin' | 'sunset'
+export type DayGaugeStyle = 'ring' | 'dashed' | 'glow' | 'ticks' | 'gradient' | 'thick' | 'rainbow' | 'thin' | 'sunset' | 'ocean' | 'aurora'
 
 export const DAY_GAUGE_CACHE_KEY = 'site_day_gauge'
 
-const BY_ITEM: Record<string, DayGaugeStyle> = { day_dashed: 'dashed', day_glow: 'glow', day_ticks: 'ticks', day_gradient: 'gradient', day_thick: 'thick', day_rainbow: 'rainbow', day_thin: 'thin', day_sunset: 'sunset' }
+const BY_ITEM: Record<string, DayGaugeStyle> = { day_dashed: 'dashed', day_glow: 'glow', day_ticks: 'ticks', day_gradient: 'gradient', day_thick: 'thick', day_rainbow: 'rainbow', day_thin: 'thin', day_sunset: 'sunset', day_ocean: 'ocean', day_aurora: 'aurora' }
 
 export function parseDayGauge(raw: unknown): DayGaugeStyle {
   return typeof raw === 'string' && Object.prototype.hasOwnProperty.call(BY_ITEM, raw) ? BY_ITEM[raw] : 'ring'
@@ -16,7 +16,7 @@ export function parseDayGauge(raw: unknown): DayGaugeStyle {
 export function readCachedDayGauge(): DayGaugeStyle {
   try {
     const v = localStorage.getItem(DAY_GAUGE_CACHE_KEY)
-    return v === 'dashed' || v === 'glow' || v === 'ticks' || v === 'gradient' || v === 'thick' || v === 'rainbow' || v === 'thin' || v === 'sunset' ? v : 'ring'
+    return v === 'dashed' || v === 'glow' || v === 'ticks' || v === 'gradient' || v === 'thick' || v === 'rainbow' || v === 'thin' || v === 'sunset' || v === 'ocean' || v === 'aurora' ? v : 'ring'
   } catch {
     return 'ring'
   }
@@ -93,12 +93,15 @@ export function dayRingWidths(style: DayGaugeStyle): { track: number; arc: numbe
 
 // «Закат»: оранжевый → розовый → фиолетовый.
 export const DAY_SUNSET_STOPS = ['#fb923c', '#f43f5e', '#a855f7'] as const
+// «Океан»: бирюзовый → синий → индиго. «Аврора»: зелёный → бирюзовый → фиолетовый → розовый.
+export const DAY_OCEAN_STOPS = ['#22d3ee', '#3b82f6', '#6366f1'] as const
+export const DAY_AURORA_STOPS = ['#34d399', '#22d3ee', '#a78bfa', '#f472b6'] as const
 // «Радуга»: дуга красится градиентом из четырёх цветов (бирюзовый → зелёный → золотой → розовый).
 export const DAY_RAINBOW_STOPS = ['#38bdf8', '#4ade80', '#f5b301', '#f472b6'] as const
 // Опорные точки градиента для видов «градиент» и «радуга».
 export function dayGradientStops(style: DayGaugeStyle): { offset: string; color: string }[] {
-  const cols: readonly string[] = style === 'rainbow' ? DAY_RAINBOW_STOPS : style === 'sunset' ? DAY_SUNSET_STOPS : DAY_GRADIENT_STOPS
+  const cols: readonly string[] = style === 'rainbow' ? DAY_RAINBOW_STOPS : style === 'sunset' ? DAY_SUNSET_STOPS : style === 'ocean' ? DAY_OCEAN_STOPS : style === 'aurora' ? DAY_AURORA_STOPS : DAY_GRADIENT_STOPS
   return cols.map((color, i) => ({ offset: `${Math.round((i / (cols.length - 1)) * 100)}%`, color }))
 }
 // Виду нужен градиент вместо цвета акцента.
-export const dayUsesGradient = (style: DayGaugeStyle): boolean => style === 'gradient' || style === 'rainbow' || style === 'sunset'
+export const dayUsesGradient = (style: DayGaugeStyle): boolean => style === 'gradient' || style === 'rainbow' || style === 'sunset' || style === 'ocean' || style === 'aurora'

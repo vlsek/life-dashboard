@@ -81,6 +81,8 @@ export const ITEMS: readonly CustomItem[] = [
   // срез 5 (агент 3, «где меньше всего»): «Нить» — 100, «Закат» — 150
   { key: 'day_thin', category: 'day_gauge', source: 'points', tier: 'low' },
   { key: 'day_sunset', category: 'day_gauge', source: 'points', tier: 'mid' },
+  { key: 'day_ocean', category: 'day_gauge', source: 'points', tier: 'mid' },
+  { key: 'day_aurora', category: 'day_gauge', source: 'points', tier: 'high' },
   // Анимация питья воды (BACKLOG 54.9, агент 3): три платных вида; бесплатные (волна, капли, рябь, пузырьки, струя, всплеск) — во вкладке «Анимация воды».
   { key: 'water_rain', category: 'water_anim', source: 'points', tier: 'low' },
   { key: 'water_tide', category: 'water_anim', source: 'points', tier: 'mid' },
