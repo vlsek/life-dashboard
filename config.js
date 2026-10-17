@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.01";
+const SITE_VERSION = "6.02";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.02", date: "2026-10-17 13:30", changes: [
+        "Тема «Чернильная бумага»: пунктирная кнопка «＋» (например, добавление языка) больше не получает сплошное кольцо поверх пунктирной рамки. Без миграций.",
+    ]},
     { version: "6.01", date: "2026-10-17 21:55", changes: [
         "Дашборд: при создании ежедневной метрики по умолчанию выбирается тип «Подходы» (повторения + особенность) и он стоит первым в списке, «Число» — вторым. У «Числа» убран пример «отжимания» (теперь — вода, шаги), под выбором типа появилась подсказка, чем типы отличаются. В онбординге «Отжимания» тоже создаются подходами. Уже заведённые метрики не меняются. Без миграций."
     ]},
@@ -2415,6 +2418,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.02", date: "2026-10-17 13:30", changes: [
+        "Vintage Paper theme: the dashed \"+\" button (for example, adding a language) no longer gets a solid ring on top of its dashed border. No migrations.",
+    ]},
     { version: "6.01", date: "2026-10-17 21:55", changes: [
         "Dashboard: when creating a daily metric, “Sets” (reps + variation) is now selected by default and listed first, with “Number” second. The “Number” label no longer uses push-ups as an example (now water, steps), and a hint under the type selector explains the difference. Onboarding also creates “Push-ups” as sets. Existing metrics are unchanged. No migrations."
     ]},

@@ -1,6 +1,13 @@
 {
-  "version": "6.01",
+  "version": "6.02",
   "en": [
+    {
+      "version": "6.02",
+      "date": "2026-10-17 13:30",
+      "changes": [
+        "Vintage Paper theme: the dashed \"+\" button (for example, adding a language) no longer gets a solid ring on top of its dashed border. No migrations."
+      ]
+    },
     {
       "version": "6.01",
       "date": "2026-10-17 21:55",
@@ -4276,6 +4283,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.02",
+      "date": "2026-10-17 13:30",
+      "changes": [
+        "Тема «Чернильная бумага»: пунктирная кнопка «＋» (например, добавление языка) больше не получает сплошное кольцо поверх пунктирной рамки. Без миграций."
+      ]
+    },
     {
       "version": "6.01",
       "date": "2026-10-17 21:55",
