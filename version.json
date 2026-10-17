@@ -1,6 +1,13 @@
 {
-  "version": "5.99",
+  "version": "6.00",
   "en": [
+    {
+      "version": "6.00",
+      "date": "2026-10-17 21:50",
+      "changes": [
+        "Customization, water animation: two new ones — “Tilt” for 100 points (the glass tips over like a sip and swings back) and “Flash” for 150 points (the glass flashes with light twice). Play in the header and on the Dashboard."
+      ]
+    },
     {
       "version": "5.99",
       "date": "2026-10-17 18:48",
@@ -4262,6 +4269,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.00",
+      "date": "2026-10-17 21:50",
+      "changes": [
+        "«Кастомизация», анимация воды: две новые — «Наклон» за 100 баллов (стакан наклоняется, как при глотке, и возвращается) и «Вспышка» за 150 баллов (стакан дважды вспыхивает светом). Играют в шапке и на Дашборде."
+      ]
+    },
     {
       "version": "5.99",
       "date": "2026-10-17 18:48",

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.99";
+const SITE_VERSION = "6.00";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.00", date: "2026-10-17 21:50", changes: [
+        "«Кастомизация», анимация воды: две новые — «Наклон» за 100 баллов (стакан наклоняется, как при глотке, и возвращается) и «Вспышка» за 150 баллов (стакан дважды вспыхивает светом). Играют в шапке и на Дашборде.",
+    ]},
     { version: "5.99", date: "2026-10-17 18:48", changes: [
         "«Кастомизация» → графики → «Мини-графики»: у маленького графика за 7 дней под числовой метрикой появился вид — «Линия» (как раньше), «Область», «Столбики» или «Точки». Столбики растут от нуля, чтобы высота не врала; у точек нет соединяющей линии; пропущенный день остаётся пропуском. Сам график по-прежнему включается отдельным переключателем «Мини-графики». Выбор виден при следующем открытии страницы.",
     ]},
@@ -2409,6 +2412,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.00", date: "2026-10-17 21:50", changes: [
+        "Customization, water animation: two new ones — “Tilt” for 100 points (the glass tips over like a sip and swings back) and “Flash” for 150 points (the glass flashes with light twice). Play in the header and on the Dashboard.",
+    ]},
     { version: "5.99", date: "2026-10-17 18:48", changes: [
         "Customization → charts → “Mini-charts”: the small 7-day chart under a number metric now has a look — “Line” (as before), “Area”, “Bars” or “Dots”. Bars grow from zero so the height never lies; dots have no connecting line; a missed day stays a gap. The chart itself is still switched on by the separate “Mini-charts” toggle. The choice shows the next time the page opens.",
     ]},
