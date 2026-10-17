@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.87";
+const SITE_VERSION = "5.88";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.88", date: "2026-10-17 12:30", changes: [
+        "Несколько записей на одном устройстве (до 3). В боковом меню под именем появилась строка «Записи»: переключитесь на другую запись или нажмите «Добавить запись» — вы войдёте во вторую, а первая останется. То же есть на странице «Аккаунт». Кнопка «Выйти» при нескольких записях спросит, из какой выйти или из всех сразу. На странице входа видны уже сохранённые записи, войти можно одним нажатием. При переключении страница перезагружается; данные у каждой записи свои.\"
+    ]},
     { version: "5.87", date: "2026-10-17 08:58", changes: [
         "Новая тема «Огненная» (🔥 Ember): тёмная тёплая — угольно-коричневый фон, оранжевый акцент, мягкие скругления, тёплое свечение карточек и «угли» у нижнего края и в углу фона. Открыта сразу, выбирается в «Настройках» и в «Кастомизации → Темы». «Простое оформление» и высокий контраст убирают свечение. Без миграций."
     ]},
@@ -2373,6 +2376,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.88", date: "2026-10-17 12:30", changes: [
+        "Several accounts on one device (up to 3). A new “Accounts” row under your name in the side menu lets you switch to another account or tap “Add account” — you sign in to a second one and the first stays. The same is on the Account page. When there are several accounts, “Log out” asks which one to log out of, or all at once. The sign-in page shows the accounts already saved here, one tap to continue. Switching reloads the page; each account keeps its own data.\"
+    ]},
     { version: "5.87", date: "2026-10-17 08:58", changes: [
         "New theme “Ember” (🔥): a dark, warm look — charcoal-brown background, orange accent, soft rounded corners, a warm glow on cards and “embers” along the bottom edge and in a corner of the background. Available right away; pick it in Settings or Customization → Themes. “Simple look” and high contrast remove the glow. No migrations."
     ]},
