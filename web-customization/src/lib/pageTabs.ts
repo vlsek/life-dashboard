@@ -2,23 +2,12 @@
 // потом — 13+ вкладок плоским рядом («свалено в кучу»). Теперь вкладки — это ГРУППЫ ПО ЗАДАЧЕ человека (оформление, главная и прогресс, вода,
 // графики, загрузка), внутри группы — прежние разделы. «Все» (последней) возвращает всю ленту. Выбор помним на устройстве.
 // Новый раздел (категория каталога, секция) без записи в SECTION_GROUP попадает в группу «Прочее» — не теряется; страж-тест требует явной группы у всех категорий каталога.
-export type GroupId = 'look' | 'home' | 'water' | 'charts' | 'loading' | 'other'
+import { SLOTS, type GroupId } from './slots'
+export type { GroupId }
 export const GROUP_ORDER: readonly GroupId[] = ['look', 'home', 'water', 'charts', 'loading', 'other']
 
-export const SECTION_GROUP: Readonly<Record<string, GroupId>> = {
-  themes: 'look',
-  avatar_frame: 'look',
-  bodymodel: 'look',
-  collapse_style: 'home',
-  week_gauge: 'home',
-  day_gauge: 'home',
-  streakflame: 'home',
-  wateranim: 'water',
-  water_anim: 'water',
-  water_glass: 'water',
-  'chart-markers': 'charts',
-  splash: 'loading',
-}
+// Группа раздела берётся из реестра слотов (`slots.ts`, BACKLOG 64.1): один источник вместо отдельной таблицы
+export const SECTION_GROUP: Readonly<Record<string, GroupId>> = Object.fromEntries(SLOTS.map((s) => [s.id, s.group]))
 export const groupOfSection = (sectionId: string): GroupId => SECTION_GROUP[sectionId] ?? 'other'
 
 // Группы, в которых сейчас есть хотя бы один раздел, в заданном порядке

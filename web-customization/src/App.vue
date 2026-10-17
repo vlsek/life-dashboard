@@ -29,6 +29,7 @@ import { useFavoriteThemes } from './lib/useFavoriteThemes'
 import { useCustomization } from './lib/useCustomization'
 import { CATEGORY_ORDER, ITEMS } from './lib/customization'
 import { t } from './lib/i18n'
+import { freeTotal } from './lib/slots'
 import { ALL_TAB, groupCounts, groupOfSection, groupsFor, migrateStoredTab, readTab, resolveTab, showsSection, writeTab } from './lib/pageTabs'
 import { THEME_UNLOCK, type ThemeKey } from './lib/theme'
 
@@ -218,26 +219,26 @@ function goToSection(id: string) {
 
         <!-- Заставка загрузки (BACKLOG 16, срез 2): 4 бесплатных варианта, выбор в localStorage -->
         <!-- Маркеры графиков (BACKLOG 13:54): 4 бесплатных стиля, выбор в localStorage -->
-        <SectionGroup v-if="freeShown && showsSection(tab, 'chart-markers')" id="chart-markers" :title="t('cust_sec_markers')" :total="4" :owned="4" :collapsed="isCollapsed('section:chart-markers')" @toggle="toggle('section:chart-markers')">
+        <SectionGroup v-if="freeShown && showsSection(tab, 'chart-markers')" id="chart-markers" :title="t('cust_sec_markers')" :total="freeTotal('chart-markers')" :owned="freeTotal('chart-markers')" :collapsed="isCollapsed('section:chart-markers')" @toggle="toggle('section:chart-markers')">
           <ChartMarkerPicker />
         </SectionGroup>
 
-        <SectionGroup v-if="freeShown && showsSection(tab, 'splash')" id="splash" :title="t('cust_sec_splash')" :total="4" :owned="4" :collapsed="isCollapsed('section:splash')" @toggle="toggle('section:splash')">
+        <SectionGroup v-if="freeShown && showsSection(tab, 'splash')" id="splash" :title="t('cust_sec_splash')" :total="freeTotal('splash')" :owned="freeTotal('splash')" :collapsed="isCollapsed('section:splash')" @toggle="toggle('section:splash')">
           <SplashPicker />
         </SectionGroup>
 
         <!-- Огонёк серии (BACKLOG 44.18в, срез 1): 2 бесплатных варианта, выбор в localStorage -->
-        <SectionGroup v-if="freeShown && showsSection(tab, 'streakflame')" id="streakflame" :title="t('cust_sec_streakflame')" :total="2" :owned="2" :collapsed="isCollapsed('section:streakflame')" @toggle="toggle('section:streakflame')">
+        <SectionGroup v-if="freeShown && showsSection(tab, 'streakflame')" id="streakflame" :title="t('cust_sec_streakflame')" :total="freeTotal('streakflame')" :owned="freeTotal('streakflame')" :collapsed="isCollapsed('section:streakflame')" @toggle="toggle('section:streakflame')">
           <StreakFlamePicker />
         </SectionGroup>
 
         <!-- Анимация воды (BACKLOG 54.8): «По теме» + 6 бесплатных вариантов, выбор в localStorage (общий с «Настройками» шапки) -->
-        <SectionGroup v-if="freeShown && showsSection(tab, 'wateranim')" id="wateranim" :title="t('cust_sec_wateranim')" :total="7" :owned="7" :collapsed="isCollapsed('section:wateranim')" @toggle="toggle('section:wateranim')">
+        <SectionGroup v-if="freeShown && showsSection(tab, 'wateranim')" id="wateranim" :title="t('cust_sec_wateranim')" :total="freeTotal('wateranim')" :owned="freeTotal('wateranim')" :collapsed="isCollapsed('section:wateranim')" @toggle="toggle('section:wateranim')">
           <WaterAnimPicker />
         </SectionGroup>
 
         <!-- Модель тела карты мышц (BACKLOG 59.2 срез 2): «По полу» + 5 моделей, выбор в localStorage (общий с «Тренировками») -->
-        <SectionGroup v-if="freeShown && showsSection(tab, 'bodymodel')" id="bodymodel" :title="t('cust_sec_bodymodel')" :total="5" :owned="5" :collapsed="isCollapsed('section:bodymodel')" @toggle="toggle('section:bodymodel')">
+        <SectionGroup v-if="freeShown && showsSection(tab, 'bodymodel')" id="bodymodel" :title="t('cust_sec_bodymodel')" :total="freeTotal('bodymodel')" :owned="freeTotal('bodymodel')" :collapsed="isCollapsed('section:bodymodel')" @toggle="toggle('section:bodymodel')">
           <BodyModelPicker />
         </SectionGroup>
 

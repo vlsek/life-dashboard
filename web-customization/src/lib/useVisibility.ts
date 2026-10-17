@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue'
+import { SLOTS } from './slots'
 import type { CustomItem, ItemStatus } from './customization'
 
 // Переключатель видимости на странице «Кастомизация» (BACKLOG 47.1, владелец 2026-10-07): «получено / за достижения / за монеты».
@@ -50,7 +51,8 @@ export function useVisibility() {
 // Бесплатные разделы-выборы (маркеры графиков, заставка, огонёк, анимация воды, модель тела): все варианты уже «у человека», то есть
 // относятся к группе «Получено» (BACKLOG 61.7: раньше они игнорировали переключатели — при снятой «Получено» страница выглядела
 // непустой, а сообщение «ничего нет» всё равно показывалось). Число = сколько вариантов в разделе (то же, что `total` у раздела).
-export const FREE_SECTIONS = { 'chart-markers': 4, splash: 4, streakflame: 2, wateranim: 7, bodymodel: 5 } as const
-export type FreeSection = keyof typeof FREE_SECTIONS
+// Числа — из реестра слотов (`slots.ts`, BACKLOG 64.1): раньше они были вписаны здесь, в шаблоне страницы и в тестах по отдельности
+export type FreeSection = 'chart-markers' | 'splash' | 'streakflame' | 'wateranim' | 'bodymodel'
+export const FREE_SECTIONS = Object.fromEntries(SLOTS.filter((s) => s.kind === 'free').map((s) => [s.id, s.total ?? 0])) as Record<FreeSection, number>
 export const FREE_SECTION_IDS = Object.keys(FREE_SECTIONS) as FreeSection[]
 export const FREE_SECTIONS_TOTAL: number = FREE_SECTION_IDS.reduce((n, k) => n + FREE_SECTIONS[k], 0)
