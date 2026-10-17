@@ -11,7 +11,7 @@ import { dayGaugeStyle } from '../lib/useDayGauge'
 // Бейдж прогресса в шапке (режим "header") — рисуется в #topbar-right из AppShell через Teleport.
 // День — круг, неделя — скруглённый квадрат с пунктирной дорожкой, чтобы отличались с первого взгляда
 // (портировано из renderHeaderProgressBadge()/renderHeaderWeekBadge() в dashboard.js).
-const props = defineProps<{ kind: 'day' | 'week'; basePct: number; bonusPct: number; totalPct: number; title: string; shape?: 'heptagon' | 'classic' | 'bars' | 'dots' | 'steps' | 'wave'; days?: WeekDaySegment[] | null }>()
+const props = defineProps<{ kind: 'day' | 'week'; basePct: number; bonusPct: number; totalPct: number; title: string; shape?: 'heptagon' | 'classic' | 'bars' | 'dots' | 'steps' | 'wave' | 'teeth'; days?: WeekDaySegment[] | null }>()
 const emit = defineEmits<{ click: [] }>()
 
 // цель Teleport должна уже быть в DOM — включаем бейдж после монтирования
