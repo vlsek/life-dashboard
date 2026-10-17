@@ -159,9 +159,9 @@ describe('Вид графика «Линия / Столбцы» в «Касто�
     localStorage.setItem('site_lang', 'ru')
   })
 
-  it('две карточки с живым предпросмотром; по умолчанию «Линия»; у «Столбцов» — скруглённые столбцы и нулевая линия', () => {
+  it('четыре карточки с живым предпросмотром; по умолчанию «Линия»; у «Столбцов» — скруглённые столбцы и нулевая линия', () => {
     const w = mount(ChartMarkerPicker)
-    expect(w.findAll('[data-testid^="kind-"][data-active]')).toHaveLength(2)
+    expect(w.findAll('[data-testid^="kind-"][data-active]')).toHaveLength(4)
     expect(w.find('[data-testid="kind-line"]').attributes('data-active')).toBe('true')
     expect(w.find('[data-testid="kind-bars"]').text()).toContain('Столбцы')
     expect(w.find('[data-testid="kind-bars"] svg').findAll('path').length).toBe(6)

@@ -12,7 +12,7 @@ import RecordBadge from './RecordBadge.vue'
 import { RECORDS_EVENT, formatRecordDate, formatRecordValue, recordsEnabled, type RecordInfo } from '../lib/records'
 import type { VariationRecord } from '../lib/variationChart'
 import { markerDefs, markerParts, nextMarkerUid, readChartMarker } from '../lib/chartMarker'
-import { FORECAST_DAYS, addDaysIso, barDefs, barPath, goalZoneSpan, lineDefs, readChartAnim, readChartForecast, readChartGoalZone, readChartKind, readChartLine, runParts, stackSpans, trendForecast, type Pt } from '../lib/chartLine'
+import { FORECAST_DAYS, addDaysIso, barDefs, barPath, goalZoneSpan, lineDefs, readChartAnim, readChartForecast, readChartGoalZone, kindDrawsLine, kindFromZero, readChartKind, readChartLine, runParts, stackSpans, trendForecast, type Pt } from '../lib/chartLine'
 
 const props = withDefaults(
   defineProps<{
@@ -73,7 +73,11 @@ const drawAnim = readChartAnim() === 'draw'
 // Прогноз вперёд (55.2 срез 6): `localStorage.chart_forecast` = trend → пунктир на 3 дня по линейному тренду; по умолчанию выключен.
 const forecastOn = readChartForecast() === 'trend'
 // Вид графика (55.2 срез 7): `localStorage.chart_kind` = bars → столбцы (с нуля, у метрик с особенностями — составные); по умолчанию линия. В столбцах прогноза нет.
-const barsOn = readChartKind() === 'bars'
+const kind = readChartKind()
+const barsOn = kind === 'bars'
+// Срез 7в: «Точки» (dots) — только маркеры без линии; «Леденцы» (lollipop) — стебель от нуля с кружком. Оба без прогноза и стилей линии; леденцы — шкала от нуля.
+const dotsOn = kind === 'dots'
+const lollipopOn = kind === 'lollipop'
 // Зона цели (55.2 срез 8): `localStorage.chart_goalzone` = on → мягкая полоса по ту сторону цели, где «хорошо» (по направлению цели метрики); по умолчанию выключена.
 const goalZoneOn = readChartGoalZone() === 'on'
 
@@ -102,7 +106,7 @@ const geom = computed(() => {
   const values = withValues.map((p) => p.y as number)
   if (props.goalValue != null) values.push(props.goalValue)
   // прогноз вперёд (необязательный): строится от последнего дня графика, учитывается в масштабе и сдвигает шаг по X
-  const fcValues = forecastOn && !barsOn
+  const fcValues = forecastOn && kindDrawsLine(kind)
     ? trendForecast(
         points.flatMap((p, i) => (p.y != null ? [[i, p.y as number] as Pt] : [])),
         points.length - 1,
@@ -110,7 +114,7 @@ const geom = computed(() => {
       )
     : null
   if (fcValues) values.push(...fcValues)
-  if (barsOn) values.push(0) // столбцы растут от нуля: высота не должна врать
+  if (kindFromZero(kind)) values.push(0) // столбцы и леденцы растут от нуля: высота не должна врать
   let min = Math.min(...values)
   let max = Math.max(...values)
   if (min === max) {
@@ -174,6 +178,27 @@ function barsSvg(g: NonNullable<typeof geom.value>): string {
   return svg
 }
 
+// «Леденцы» (55.2 срез 7в): стебель от нуля до значения и кружок на конце (у метрик с особенностями подходов — кружок-диаграмма, как у линии).
+function lollipopSvg(g: NonNullable<typeof geom.value>): string {
+  const { w, h, pad, min, range, coords } = g
+  const yBase = h - pad - ((0 - min) / range) * (h - pad * 2)
+  const labelEvery = Math.max(1, Math.ceil(coords.filter((c) => c.y != null).length / 12))
+  let svg = `<line x1="${pad}" y1="${yBase.toFixed(1)}" x2="${(w - pad).toFixed(1)}" y2="${yBase.toFixed(1)}" stroke="var(--border)" stroke-width="1" />`
+  let shown = 0
+  for (const c of coords) {
+    if (c.y == null || c.value == null) continue
+    svg += `<line class="ch-stem" data-test="lollipop-stem" x1="${c.x.toFixed(1)}" y1="${yBase.toFixed(1)}" x2="${c.x.toFixed(1)}" y2="${c.y.toFixed(1)}" stroke="${props.color}" stroke-width="2.2" stroke-linecap="round" opacity="0.75" />`
+    svg += colored.value && c.shares && c.shares.length ? pieMarker(c.x, c.y, c.label, c.shares) : `<circle data-test="lollipop-point" cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="5" fill="${props.color}" />`
+    if (shown % labelEvery === 0) {
+      const above = c.value >= 0
+      svg += `<text x="${c.x.toFixed(1)}" y="${(above ? c.y - 11 : c.y + 18).toFixed(1)}" font-size="11" fill="var(--text)" text-anchor="middle">${c.value}${props.unit || ''}</text>`
+      svg += `<text x="${c.x.toFixed(1)}" y="${h - 8}" font-size="10" fill="var(--text-dim)" text-anchor="middle">${c.label}</text>`
+    }
+    shown++
+  }
+  return svg
+}
+
 const innerSvg = computed<string | null>(() => {
   const g = geom.value
   if (!g) return null
@@ -194,12 +219,13 @@ const innerSvg = computed<string | null>(() => {
     goal += `<line x1="${pad}" y1="${gy.toFixed(1)}" x2="${(w - pad).toFixed(1)}" y2="${gy.toFixed(1)}" stroke="var(--text-dim)" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.85" />`
     const goalText = props.goalLabel || `${props.goalValue}${props.unit || ''}`
     const goalTextY = gy < pad + 10 ? gy + 12 : gy - 5
-    goal += `<text x="${(w - pad).toFixed(1)}" y="${goalTextY.toFixed(1)}" font-size="10" fill="var(--text-dim)"${barsOn ? ' stroke="var(--bg-card)" stroke-width="3" paint-order="stroke"' : ''} text-anchor="end">${goalText}</text>`
+    goal += `<text x="${(w - pad).toFixed(1)}" y="${goalTextY.toFixed(1)}" font-size="10" fill="var(--text-dim)"${barsOn || lollipopOn ? ' stroke="var(--bg-card)" stroke-width="3" paint-order="stroke"' : ''} text-anchor="end">${goalText}</text>`
   }
 
-  if (!barsOn) svg += goal
+  if (!barsOn && !lollipopOn) svg += goal
 
   if (barsOn) return svg + barsSvg(g) + goal
+  if (lollipopOn) return svg + lollipopSvg(g) + goal
 
   let lastReal: { x: number; y: number } | null = null
   let gapBetween = false
@@ -213,6 +239,11 @@ const innerSvg = computed<string | null>(() => {
       if (lastReal) gapBetween = true
       continue
     }
+    if (dotsOn) {
+      lastReal = { x: c.x, y: c.y } // «Точки»: соединяющей линии и пунктирных мостиков нет
+      gapBetween = false
+      continue
+    }
     if (lastReal) {
       if (lineStyle === 'line' || gapBetween) {
         const dash = gapBetween ? ` stroke-dasharray="5,4"` : ''
@@ -224,7 +255,7 @@ const innerSvg = computed<string | null>(() => {
     lastReal = { x: c.x, y: c.y }
     gapBetween = false
   }
-  if (lineStyle !== 'line') flushRun()
+  if (lineStyle !== 'line' && !dotsOn) flushRun()
 
   const labelEvery = Math.max(1, Math.ceil(coords.filter((c) => c.y != null).length / 12))
   let shown = 0

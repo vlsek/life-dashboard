@@ -261,8 +261,8 @@ describe('столбчатый вид графика (BACKLOG 55.2 срез 7)',
   })
   const barTop = (html: string): number[] => [...html.matchAll(/data-test="bar-point"[^>]*d="[^"]*?Q[\d.]+ ([\d.]+)/g)].map((m) => Number(m[1]))
 
-  it('два вида; по умолчанию «line»; мусор игнорируется; запись работает', () => {
-    expect([...CHART_KINDS]).toEqual(['line', 'bars'])
+  it('четыре вида (срез 7в добавил «dots» и «lollipop»); по умолчанию «line»; мусор игнорируется; запись работает', () => {
+    expect([...CHART_KINDS]).toEqual(['line', 'bars', 'dots', 'lollipop'])
     expect(DEFAULT_CHART_KIND).toBe('line')
     expect(readChartKind()).toBe('line')
     localStorage.setItem(CHART_KIND_KEY, 'pie')

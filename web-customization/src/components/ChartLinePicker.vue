@@ -32,6 +32,7 @@ const toggleExtra = (key: ExtraKey) => {
 }
 
 // Вид графика (55.2 срез 7): «Линия» (по умолчанию) / «Столбцы» — столбец на день с данными, от нуля; у метрик с особенностями подходов — составной.
+// Срез 7в: «Точки» (только маркеры) и «Леденцы» (стебель от нуля с кружком).
 const kind = ref<ChartKind>(readChartKind())
 const kindSaved = ref(true)
 const kindLabel = (v: ChartKind): string => t(('chart_kind_' + v) as never)
@@ -45,6 +46,16 @@ const kindPreview = (v: ChartKind): string => {
     const pts = BAR_SAMPLE.map((y, i) => [14 + i * 32, 48 - y] as Pt)
     let s = pts.slice(1).map((p, i) => `<line x1="${pts[i][0]}" y1="${pts[i][1]}" x2="${p[0]}" y2="${p[1]}" stroke="var(--accent)" stroke-width="2.5" />`).join('')
     for (const [x, y] of pts) s += `<circle cx="${x}" cy="${y}" r="3.2" fill="var(--accent)" />`
+    return s
+  }
+  if (v === 'dots') {
+    let s = ''
+    BAR_SAMPLE.forEach((y, i) => (s += `<circle cx="${14 + i * 32}" cy="${48 - y}" r="3.6" fill="var(--accent)" />`))
+    return s
+  }
+  if (v === 'lollipop') {
+    let s = '<line x1="2" y1="48" x2="186" y2="48" stroke="var(--border)" stroke-width="1" />'
+    BAR_SAMPLE.forEach((y, i) => (s += `<line x1="${14 + i * 32}" y1="48" x2="${14 + i * 32}" y2="${48 - y}" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" opacity="0.75" /><circle cx="${14 + i * 32}" cy="${48 - y}" r="4.4" fill="var(--accent)" />`))
     return s
   }
   let s = barDefs('kp', 'var(--accent)')

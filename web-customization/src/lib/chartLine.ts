@@ -196,9 +196,15 @@ export function addDaysIso(date: string, days: number): string {
 // «line» — по умолчанию (как раньше); «bars» — столбец на каждый день с данными: с нуля (чтобы высота не врала), скруглённая верхушка,
 // у метрик с «особенностями» подходов — составной столбец (сегменты в цветах легенды). Хранится в localStorage `chart_kind`.
 // В столбцах стили маркеров/линии/прогноза не применяются (маркеры-диаграммы заменяют сегменты, а линии и прогноза нет).
-export const CHART_KINDS = ['line', 'bars'] as const
+// Срез 7в: «dots» — только точки без соединяющей линии (маркеры и подписи как у линии; линии, области и прогноза нет — они про «ход»);
+// «lollipop» — «леденцы»: тонкий стебель от нуля до значения и кружок-маркер на конце (шкала от нуля, как у столбцов; прогноза нет).
+export const CHART_KINDS = ['line', 'bars', 'dots', 'lollipop'] as const
 export type ChartKind = (typeof CHART_KINDS)[number]
 export const DEFAULT_CHART_KIND: ChartKind = 'line'
+
+// Какие виды рисуют ЛИНИЮ графика (стили линии и прогноз имеют смысл только у «line») и какие растут от нуля (шкала включает 0, чтобы высота не врала).
+export const kindDrawsLine = (k: ChartKind): boolean => k === 'line'
+export const kindFromZero = (k: ChartKind): boolean => k === 'bars' || k === 'lollipop'
 export const CHART_KIND_KEY = 'chart_kind'
 
 export const isChartKind = (v: unknown): v is ChartKind => (CHART_KINDS as readonly unknown[]).includes(v)
