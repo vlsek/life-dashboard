@@ -1,6 +1,13 @@
 {
-  "version": "5.84",
+  "version": "5.85",
   "en": [
+    {
+      "version": "5.85",
+      "date": "2026-10-17 08:30",
+      "changes": [
+        "New theme “Snowfield” (❄️): a light, cool look — frosty blue background, deep blue accent, crisp small corners, cool shadows and pale-blue “ice glints” in the background corners. Available right away; pick it in Settings or Customization → Themes. “Simple look” and high contrast remove the glints and shadow. No migrations."
+      ]
+    },
     {
       "version": "5.84",
       "date": "2026-10-14 14:10",
@@ -4157,6 +4164,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.85",
+      "date": "2026-10-17 08:30",
+      "changes": [
+        "Новая тема «Ледяная» (❄️ Snowfield): светлая холодная — инеевый голубой фон, глубокий синий акцент, чёткие небольшие скругления, холодные тени и голубые «ледяные блики» в углах фона. Открыта сразу, выбирается в «Настройках» и в «Кастомизации → Темы». «Простое оформление» и высокий контраст убирают блики и тень. Без миграций."
+      ]
+    },
     {
       "version": "5.84",
       "date": "2026-10-14 14:10",

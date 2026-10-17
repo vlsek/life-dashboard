@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.84";
+const SITE_VERSION = "5.85";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.85", date: "2026-10-17 08:30", changes: [
+        "Новая тема «Ледяная» (❄️ Snowfield): светлая холодная — инеевый голубой фон, глубокий синий акцент, чёткие небольшие скругления, холодные тени и голубые «ледяные блики» в углах фона. Открыта сразу, выбирается в «Настройках» и в «Кастомизации → Темы». «Простое оформление» и высокий контраст убирают блики и тень. Без миграций."
+    ]},
     { version: "5.84", date: "2026-10-14 14:10", changes: [
         "Тема «Чернильная бумага»: у кнопок-карточек и чипов (например, подсказки схемы тела при создании метрики) больше нет двойной рваной рамки — тема рисовала сплошное кольцо поверх уже пунктирной рамки. Без миграций.",
     ]},
@@ -2364,6 +2367,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.85", date: "2026-10-17 08:30", changes: [
+        "New theme “Snowfield” (❄️): a light, cool look — frosty blue background, deep blue accent, crisp small corners, cool shadows and pale-blue “ice glints” in the background corners. Available right away; pick it in Settings or Customization → Themes. “Simple look” and high contrast remove the glints and shadow. No migrations."
+    ]},
     { version: "5.84", date: "2026-10-14 14:10", changes: [
         "Vintage Paper theme: card-style buttons and chips (for example, the body-diagram suggestions when creating a metric) no longer have a double jagged border — the theme drew a solid ring on top of an already dashed border. No migrations.",
     ]},
