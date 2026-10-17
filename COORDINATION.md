@@ -76,7 +76,7 @@ BACKLOG 44.19 (🐞-часть) «Как пользоваться: при лис
 — свободен — (61.2 хвост закрыт v5.84)
 
 ### Агент 3
-— свободен — (v5.86: «Кастомизация» — вид недели «Зубцы»; v5.81: 63.2)
+BACKLOG 59.4 (правило владельца «если задач нет — новые предметы в разделы, где их меньше всего»): «Шкала дня» — два платных вида кольца: «Нить» (`day_thin`, 100; тонкое кольцо) и «Закат» (`day_sunset`, 150; градиент оранжевый→розовый→фиолетовый). Миграция **091**. ТРОГАЮ: `dayGauge.ts` (копии customization/header/dashboard), `DayGaugePreview.vue`, `ItemCard.vue` (только ветка day_gauge), `customization.ts`, `rarity.ts`, `i18n.ts` (ключи `cust_item_day_thin*`/`day_sunset*`), тесты, пересборка customization/dashboard/header-widgets. ⚠ АГЕНТУ 8: вид недели «Зубцы» (`week_teeth`, миграция **090**) УЖЕ в main (v5.86) — ваша миграция 090 занята, берите 092+; вид недели правите поверх моего кода (`teeth` уже в `WeekAlt`/`weekGauge`/`progressSettings`). С: 2026-10-17
 
 ### Агент 4
 — свободен — (v5.46 первая тематическая большая тема Summer Meadow, 57.7 файл 2 тема 1; все пять светлых из файла 1 готовы (v4.99–v5.30). Дальше: файл 2 — Autumn Mood, Spring Awakening, Inferno, Eastern Tradition, Russian Heritage, American Retro, Deep Water и 55.3 по одной за заход; янтарный фосфор, вшитый шрифт JetBrains Mono — по согласованию с владельцем)
