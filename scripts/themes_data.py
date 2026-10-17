@@ -64,6 +64,8 @@ P={
  'autumn':('light','🍂 Autumn Harvest','🍂 Осенняя',dict(bg='#fbf3e8',card='#fffaf2',border='#dcc3a3',text='#3b2415',dim='#74553f',accent='#b0471a',at='#ffffff',ok='#4a7a2c',bad='#b3261e',hist='#6a8f3a',**LIGHT_W)),
  # --- BACKLOG 55.3 (срез 2): Сакура / Cherry Blossom — светлая нежно-розовая тема (молочно-розовый фон, малиновый акцент, лепестковые пятна, очень мягкие формы) ---
  'sakura':('light','🌸 Cherry Blossom','🌸 Сакура',dict(bg='#fdf1f4',card='#fffafb',border='#eac3cf',text='#3d1f2b',dim='#7a5563',accent='#b8325f',at='#ffffff',ok='#3f7d4e',bad='#b3261e',hist='#c0587c',**LIGHT_W)),
+ # --- BACKLOG 55.3 (срез 3): Ледяная / Snowfield — светлая холодная тема (инеевый голубой фон, глубокий синий акцент, холодные тени, ледяные блики; чёткие небольшие скругления) ---
+ 'snow':('light','❄️ Snowfield','❄️ Ледяная',dict(bg='#eef6fb',card='#ffffff',border='#b7d3e6',text='#12293b',dim='#46667e',accent='#1769aa',at='#ffffff',ok='#2e7d52',bad='#b3261e',hist='#3b8fc4',**LIGHT_W)),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
 
@@ -423,6 +425,31 @@ CHAR = {
         reduced='  --default-transition-duration: 0s;',
         contrast='  --bg-pattern: none;\n  --shadow-card: none;',
     ),
+    # Ледяная (55.3, срез 3): чёткие небольшие скругления (6/8/10/14px), холодные синие тени, «ледяные блики» (голубое вверху слева, белёсо-синее внизу справа); без частиц — только CSS.
+    # «Простое оформление» и prefers-contrast: more убирают блики и тень; prefers-reduced-motion — переходы.
+    'snow': dict(
+        tw='''  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --radius-2xl: 14px;
+  --shadow-card: 0 2px 10px rgba(23, 105, 170, 0.12);
+  --bg-pattern: radial-gradient(circle at 0% 0%, rgba(150, 205, 240, 0.40), transparent 42%), radial-gradient(circle at 100% 100%, rgba(190, 225, 245, 0.35), transparent 44%);
+  --bg-pattern-size: auto;
+  --default-transition-duration: 0.16s;
+  --default-transition-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);''',
+        root='''  --radius-card: 8px;
+  --radius-modal: 10px;
+  --radius-control: 8px;
+  --shadow-card: 0 2px 10px rgba(23, 105, 170, 0.12);
+  --bg-pattern: radial-gradient(circle at 0% 0%, rgba(150, 205, 240, 0.40), transparent 42%), radial-gradient(circle at 100% 100%, rgba(190, 225, 245, 0.35), transparent 44%);
+  --bg-pattern-size: auto;''',
+        rules=[
+            (['body'], 'background-image: var(--bg-pattern); background-size: var(--bg-pattern-size);'),
+            (['.card', '.modal', '[style*="var(--bg-card)"]'], 'box-shadow: var(--shadow-card);'),
+        ],
+        reduced='  --default-transition-duration: 0s;',
+        contrast='  --bg-pattern: none;\n  --shadow-card: none;',
+    ),
 }
 assert all(k in P for k in CHAR)
 
@@ -430,14 +457,14 @@ assert all(k in P for k in CHAR)
 # вариант вручную в «Настройках» шапки (ручной выбор главнее). Словарь ОТДЕЛЬНО от CHAR; тема без записи = спокойная волна. Генератор apply_themes.py
 # пишет из него `themeWater.ts` в web-header и web-dashboard. Подбор по характеру темы: HUD и терминал — «рябь» (расходящиеся круги, как скан),
 # синтвейв — «капли» (пружинные), спокойная ночная — «волна».
-THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave', 'velvet': 'drops', 'frost': 'ripple', 'alpine': 'wave', 'matcha': 'drops', 'cyberday': 'ripple', 'vintage': 'wave', 'glass': 'wave', 'meadow': 'ripple', 'autumn': 'drops', 'sakura': 'ripple'}
+THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave', 'velvet': 'drops', 'frost': 'ripple', 'alpine': 'wave', 'matcha': 'drops', 'cyberday': 'ripple', 'vintage': 'wave', 'glass': 'wave', 'meadow': 'ripple', 'autumn': 'drops', 'sakura': 'ripple', 'snow': 'wave'}
 assert all(k in CHAR for k in THEME_WATER) and all(v in ('wave', 'drops', 'ripple') for v in THEME_WATER.values())
 
 # Заставка загрузки (лоадер страниц) у больших тем (BACKLOG 55.5, срез 2): вариант из реестра SPLASH_VARIANTS (classic | flame | ring | tongues) — действует,
 # ЕСЛИ вариант не выбран вручную (ручной выбор и `?splash=` главнее). Тема без записи = «живое пламя». Генератор пишет `themeLoader.ts` и вставляет
 # запасной вариант в скрипт выбора заставки во всех web-*/index.html (статичная заставка берёт его до загрузки бандла). Подбор по характеру: HUD —
 # «кольцо» (скан), синтвейв — «три языка» (неоновое пламя), терминал — «классика» (простая), спокойная ночная — «живое пламя».
-THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame', 'velvet': 'flame', 'frost': 'ring', 'alpine': 'classic', 'matcha': 'flame', 'cyberday': 'tongues', 'vintage': 'classic', 'glass': 'ring', 'meadow': 'flame', 'autumn': 'flame', 'sakura': 'ring'}
+THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame', 'velvet': 'flame', 'frost': 'ring', 'alpine': 'classic', 'matcha': 'flame', 'cyberday': 'tongues', 'vintage': 'classic', 'glass': 'ring', 'meadow': 'flame', 'autumn': 'flame', 'sakura': 'ring', 'snow': 'classic'}
 assert all(k in CHAR for k in THEME_LOADER) and all(v in ('classic', 'flame', 'ring', 'tongues') for v in THEME_LOADER.values())
 
 # Темы-награды (решение владельца 2026-10-06): тема → ключ достижения, НАГРАДОЙ за которое она открывается (4-я, самая трудная ступень

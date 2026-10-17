@@ -143,6 +143,7 @@ export const THEME_RARITY: Record<ThemeKey, Rarity> = {
   meadow: 'common',
   autumn: 'common',
   sakura: 'common',
+  snow: 'common',
 }
 
 export const rarityOfItem = (key: string): Rarity => ITEM_RARITY[key] ?? 'common'

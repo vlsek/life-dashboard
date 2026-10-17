@@ -15,4 +15,5 @@ export const THEME_LOADER: Record<string, 'classic' | 'flame' | 'ring' | 'tongue
   meadow: 'flame',
   autumn: 'flame',
   sakura: 'ring',
+  snow: 'classic',
 }

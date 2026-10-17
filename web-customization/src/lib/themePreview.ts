@@ -50,4 +50,5 @@ export const THEME_PREVIEW: Record<ThemeKey, ThemePreview> = {
   meadow: { bg: '#f2f7f4', card: '#ffffff', accent: '#2e7d32', text: '#1b3a28', success: '#2e7d32', water: '#3f95e0', kind: 'light' },
   autumn: { bg: '#fbf3e8', card: '#fffaf2', accent: '#b0471a', text: '#3b2415', success: '#4a7a2c', water: '#3f95e0', kind: 'light' },
   sakura: { bg: '#fdf1f4', card: '#fffafb', accent: '#b8325f', text: '#3d1f2b', success: '#3f7d4e', water: '#3f95e0', kind: 'light' },
+  snow: { bg: '#eef6fb', card: '#ffffff', accent: '#1769aa', text: '#12293b', success: '#2e7d52', water: '#3f95e0', kind: 'light' },
 }

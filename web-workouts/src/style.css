@@ -968,6 +968,32 @@ html.theme-sakura {
   --chart-none: #6b7280;
   --chart-other: #8a909c;
 }
+
+html.theme-snow {
+  --bg: #eef6fb;
+  --bg-card: #ffffff;
+  --border: #b7d3e6;
+  --text: #12293b;
+  --text-dim: #46667e;
+  --accent: #1769aa;
+  --accent-text: #ffffff;
+  --success: #2e7d52;
+  --danger: #b3261e;
+  --hist-ok: #3b8fc4;
+  --water-top: #3f95e0;
+  --water-bottom: #1560b8;
+  --water-line: #1560b8;
+  --chart-1: #1769aa;
+  --chart-2: #af291d;
+  --chart-3: #a0731a;
+  --chart-4: #199a5a;
+  --chart-5: #721daf;
+  --chart-6: #af1d72;
+  --chart-7: #291daf;
+  --chart-8: #1b9ba7;
+  --chart-none: #6b7280;
+  --chart-other: #9095a0;
+}
 /* themes:end */
 
 /* design-tokens:start (генерируется scripts/apply_themes.py — не править руками; BACKLOG 50.1а) */
@@ -1371,6 +1397,36 @@ html[data-simple='on'].theme-sakura {
     --default-transition-duration: 0s;
   }
 }
+
+/* большая тема: snow */
+html.theme-snow {
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --radius-2xl: 14px;
+  --shadow-card: 0 2px 10px rgba(23, 105, 170, 0.12);
+  --bg-pattern: radial-gradient(circle at 0% 0%, rgba(150, 205, 240, 0.40), transparent 42%), radial-gradient(circle at 100% 100%, rgba(190, 225, 245, 0.35), transparent 44%);
+  --bg-pattern-size: auto;
+  --default-transition-duration: 0.16s;
+  --default-transition-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+html.theme-snow body { background-image: var(--bg-pattern); background-size: var(--bg-pattern-size); }
+html.theme-snow .card, html.theme-snow .modal, html.theme-snow [style*="var(--bg-card)"] { box-shadow: var(--shadow-card); }
+html[data-simple='on'].theme-snow {
+  --bg-pattern: none;
+  --shadow-card: none;
+}
+@media (prefers-contrast: more) {
+  html.theme-snow {
+    --bg-pattern: none;
+    --shadow-card: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-snow {
+    --default-transition-duration: 0s;
+  }
+}
 /* design-tokens:end */
 /* themes-scheme */
 html.theme-nord,
@@ -1405,7 +1461,8 @@ html.theme-vintage,
 html.theme-glass,
 html.theme-meadow,
 html.theme-autumn,
-html.theme-sakura { color-scheme: light; }
+html.theme-sakura,
+html.theme-snow { color-scheme: light; }
 
 /* Высота страницы — «не меньше экрана», а не «ровно экран» (BACKLOG 63.1): при height:100% контейнер #app кончался на первом экране,
    и «липкая» шапка (sticky) уезжала вместе с прокруткой, как только листали ниже первой страницы (Page Down на ПК). */
