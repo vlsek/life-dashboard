@@ -531,6 +531,8 @@ describe('большая тема vintage (светлая): характер', (
       expect(btn, f).toContain(':not(.gh-secach-head)')
       // 61.2 (остаток): кнопки с inline `padding: 0` (ряды «Сейчас выбрано», счётчик баллов) — кольцо резало буквы вплотную
       expect(btn, f).toContain(":not([style*='padding: 0px'])")
+      // 61.2 (хвост): у кнопки с inline `var(--bg-card)` рамка уже пунктирная (правило карточек) — кольцо поверх давало двойной рваный край
+      expect(btn, f).toContain(":not([style*='var(--bg-card)'])")
     }
   })
   it('под «Простое оформление» и prefers-contrast блока нет: эффектов у темы нет, нечего отключать', () => {
