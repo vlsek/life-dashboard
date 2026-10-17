@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.86";
+const SITE_VERSION = "5.87";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.87", date: "2026-10-17 08:58", changes: [
+        "Новая тема «Огненная» (🔥 Ember): тёмная тёплая — угольно-коричневый фон, оранжевый акцент, мягкие скругления, тёплое свечение карточек и «угли» у нижнего края и в углу фона. Открыта сразу, выбирается в «Настройках» и в «Кастомизации → Темы». «Простое оформление» и высокий контраст убирают свечение. Без миграций."
+    ]},
     { version: "5.86", date: "2026-10-17 09:55", changes: [
         "«Кастомизация», спидометр недели: новый вид «Зубцы» за 100 баллов — семь столбиков через один высокий и низкий, как зубцы гребня; каждый заливается снизу по прогрессу своего дня. Показывается в шапке и на Дашборде.",
     ]},
@@ -2370,6 +2373,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.87", date: "2026-10-17 08:58", changes: [
+        "New theme “Ember” (🔥): a dark, warm look — charcoal-brown background, orange accent, soft rounded corners, a warm glow on cards and “embers” along the bottom edge and in a corner of the background. Available right away; pick it in Settings or Customization → Themes. “Simple look” and high contrast remove the glow. No migrations."
+    ]},
     { version: "5.86", date: "2026-10-17 09:55", changes: [
         "Customization, weekly gauge: a new “Teeth” style for 100 points — seven bars, tall and short in turn like the teeth of a comb; each fills from the bottom with that day’s progress. Shown in the header and on the Dashboard.",
     ]},
