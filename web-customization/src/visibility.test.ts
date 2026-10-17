@@ -122,7 +122,7 @@ describe('страница «Кастомизация»: фильтр видим
     expect(cards(w)).toHaveLength(ITEMS.length)
     const counts = w.findAll('[data-testid="vis-count"]').map((n) => Number(n.text()))
     const themes = themeCards(w).length
-    expect(themes).toBe(40) // все 40 тем видны
+    expect(themes).toBe(41) // все 41 тема видны
     expect(counts.reduce((a, b) => a + b, 0)).toBe(ITEMS.length + themes + FREE_SECTIONS_TOTAL) // каждый предмет, тема и вариант бесплатных выборов — ровно в одной группе
     // за достижения: ещё не выданные рамки-награды + 6 закрытых тем; получено: 2 рамки + 5 открытых тем; за монеты: остальные платные
     expect(counts[1]).toBe(ITEMS.filter((i) => i.source === 'achievement' && i.key !== 'frame_gold').length + lockedThemes.length)
@@ -178,7 +178,7 @@ describe('страница «Кастомизация»: фильтр видим
     expect(w.find('[data-testid="item-frame_inferno"]').exists()).toBe(false)
     expect(w.find('[data-testid="item-frame_gold"]').exists()).toBe(true) // уже выдана — «получено»
     const shown = themeCards(w)
-    expect(shown).toHaveLength(40 - lockedThemes.length) // шесть тем-наград закрыты — скрыты, открытые (в том числе двенадцать новых) остались
+    expect(shown).toHaveLength(41 - lockedThemes.length) // шесть тем-наград закрыты — скрыты, открытые (в том числе двенадцать новых) остались
     expect(shown.every((n) => n.attributes('data-locked') === 'false')).toBe(true)
     w.unmount()
   })

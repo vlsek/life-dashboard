@@ -41,6 +41,7 @@ export const THEME_KEYS = {
   snow: 'theme_snow',
   ember: 'theme_ember',
   grass: 'theme_grass',
+  clinic: 'theme_clinic',
 } as const
 
 export type ThemeKey = keyof typeof THEME_KEYS
@@ -86,6 +87,7 @@ const THEME_BG_COLORS: Record<ThemeKey, string> = {
   snow: '#eef6fb',
   ember: '#1c0f0a',
   grass: '#f4faea',
+  clinic: '#eefaf6',
 }
 
 export function getTheme(): ThemeKey {

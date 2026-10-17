@@ -70,6 +70,8 @@ P={
  'ember':('dark','🔥 Ember','🔥 Огненная',dict(bg='#1c0f0a',card='#2a1710',border='#5a2f1e',text='#ffe9d6',dim='#d4a98a',accent='#ff7a2f',at='#1c0f0a',ok='#8fd16a',bad='#ff6b6b',hist='#ffb347',**DARK_W)),
  # --- BACKLOG 55.3 (срез 5): Травяная / Fresh Grass — светлая свежая жёлто-зелёная тема (молодая трава: салатовый фон, сочный зелёный акцент, «травяное» свечение снизу) ---
  'grass':('light','🌱 Fresh Grass','🌱 Травяная',dict(bg='#f4faea',card='#ffffff',border='#bcd89a',text='#1f3312',dim='#4f6c38',accent='#3f7d14',at='#ffffff',ok='#2f7d4a',bad='#b3261e',hist='#7cb342',**LIGHT_W)),
+ # --- BACKLOG 55.3 (срез 6): Мятная больничная / Mint Clinic — светлая стерильно-чистая мятно-бирюзовая тема (почти белый мятный фон, бирюзовый акцент, малые чёткие скругления, едва заметные блики) ---
+ 'clinic':('light','🩺 Mint Clinic','🩺 Мятная больничная',dict(bg='#eefaf6',card='#ffffff',border='#b5e0d2',text='#10342b',dim='#3f6b5e',accent='#00796b',at='#ffffff',ok='#2e7d52',bad='#c62828',hist='#26a69a',**LIGHT_W)),
 }
 NEW = [k for k in P if k not in ('dark', 'monet', 'light', 'pink')]
 
@@ -504,6 +506,31 @@ CHAR = {
         reduced='  --default-transition-duration: 0s;',
         contrast='  --bg-pattern: none;\n  --shadow-card: none;',
     ),
+    # Мятная больничная (55.3, срез 6): стерильно-чистая; малые чёткие формы (4/6/8/12px), очень лёгкая бирюзовая тень, едва заметные мятные блики (вверху справа и внизу слева); без частиц — только CSS.
+    # «Простое оформление» и prefers-contrast: more убирают блики и тень; prefers-reduced-motion — переходы.
+    'clinic': dict(
+        tw='''  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-2xl: 12px;
+  --shadow-card: 0 1px 4px rgba(0, 121, 107, 0.10);
+  --bg-pattern: radial-gradient(circle at 100% 0%, rgba(128, 203, 196, 0.32), transparent 42%), radial-gradient(circle at 0% 100%, rgba(178, 235, 222, 0.28), transparent 42%);
+  --bg-pattern-size: auto;
+  --default-transition-duration: 0.18s;
+  --default-transition-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);''',
+        root='''  --radius-card: 6px;
+  --radius-modal: 8px;
+  --radius-control: 6px;
+  --shadow-card: 0 1px 4px rgba(0, 121, 107, 0.10);
+  --bg-pattern: radial-gradient(circle at 100% 0%, rgba(128, 203, 196, 0.32), transparent 42%), radial-gradient(circle at 0% 100%, rgba(178, 235, 222, 0.28), transparent 42%);
+  --bg-pattern-size: auto;''',
+        rules=[
+            (['body'], 'background-image: var(--bg-pattern); background-size: var(--bg-pattern-size);'),
+            (['.card', '.modal', '[style*="var(--bg-card)"]'], 'box-shadow: var(--shadow-card);'),
+        ],
+        reduced='  --default-transition-duration: 0s;',
+        contrast='  --bg-pattern: none;\n  --shadow-card: none;',
+    ),
 }
 assert all(k in P for k in CHAR)
 
@@ -511,14 +538,14 @@ assert all(k in P for k in CHAR)
 # вариант вручную в «Настройках» шапки (ручной выбор главнее). Словарь ОТДЕЛЬНО от CHAR; тема без записи = спокойная волна. Генератор apply_themes.py
 # пишет из него `themeWater.ts` в web-header и web-dashboard. Подбор по характеру темы: HUD и терминал — «рябь» (расходящиеся круги, как скан),
 # синтвейв — «капли» (пружинные), спокойная ночная — «волна».
-THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave', 'velvet': 'drops', 'frost': 'ripple', 'alpine': 'wave', 'matcha': 'drops', 'cyberday': 'ripple', 'vintage': 'wave', 'glass': 'wave', 'meadow': 'ripple', 'autumn': 'drops', 'sakura': 'ripple', 'snow': 'wave', 'ember': 'drops', 'grass': 'wave'}
+THEME_WATER = {'emerald': 'ripple', 'moonlight': 'drops', 'phosphor': 'ripple', 'nightfall': 'wave', 'velvet': 'drops', 'frost': 'ripple', 'alpine': 'wave', 'matcha': 'drops', 'cyberday': 'ripple', 'vintage': 'wave', 'glass': 'wave', 'meadow': 'ripple', 'autumn': 'drops', 'sakura': 'ripple', 'snow': 'wave', 'ember': 'drops', 'grass': 'wave', 'clinic': 'ripple'}
 assert all(k in CHAR for k in THEME_WATER) and all(v in ('wave', 'drops', 'ripple') for v in THEME_WATER.values())
 
 # Заставка загрузки (лоадер страниц) у больших тем (BACKLOG 55.5, срез 2): вариант из реестра SPLASH_VARIANTS (classic | flame | ring | tongues) — действует,
 # ЕСЛИ вариант не выбран вручную (ручной выбор и `?splash=` главнее). Тема без записи = «живое пламя». Генератор пишет `themeLoader.ts` и вставляет
 # запасной вариант в скрипт выбора заставки во всех web-*/index.html (статичная заставка берёт его до загрузки бандла). Подбор по характеру: HUD —
 # «кольцо» (скан), синтвейв — «три языка» (неоновое пламя), терминал — «классика» (простая), спокойная ночная — «живое пламя».
-THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame', 'velvet': 'flame', 'frost': 'ring', 'alpine': 'classic', 'matcha': 'flame', 'cyberday': 'tongues', 'vintage': 'classic', 'glass': 'ring', 'meadow': 'flame', 'autumn': 'flame', 'sakura': 'ring', 'snow': 'classic', 'ember': 'flame', 'grass': 'ring'}
+THEME_LOADER = {'emerald': 'ring', 'moonlight': 'tongues', 'phosphor': 'classic', 'nightfall': 'flame', 'velvet': 'flame', 'frost': 'ring', 'alpine': 'classic', 'matcha': 'flame', 'cyberday': 'tongues', 'vintage': 'classic', 'glass': 'ring', 'meadow': 'flame', 'autumn': 'flame', 'sakura': 'ring', 'snow': 'classic', 'ember': 'flame', 'grass': 'ring', 'clinic': 'classic'}
 assert all(k in CHAR for k in THEME_LOADER) and all(v in ('classic', 'flame', 'ring', 'tongues') for v in THEME_LOADER.values())
 
 # Темы-награды (решение владельца 2026-10-06): тема → ключ достижения, НАГРАДОЙ за которое она открывается (4-я, самая трудная ступень

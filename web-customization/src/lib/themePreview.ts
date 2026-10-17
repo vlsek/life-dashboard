@@ -53,4 +53,5 @@ export const THEME_PREVIEW: Record<ThemeKey, ThemePreview> = {
   snow: { bg: '#eef6fb', card: '#ffffff', accent: '#1769aa', text: '#12293b', success: '#2e7d52', water: '#3f95e0', kind: 'light' },
   ember: { bg: '#1c0f0a', card: '#2a1710', accent: '#ff7a2f', text: '#ffe9d6', success: '#8fd16a', water: '#63b3f5', kind: 'dark' },
   grass: { bg: '#f4faea', card: '#ffffff', accent: '#3f7d14', text: '#1f3312', success: '#2f7d4a', water: '#3f95e0', kind: 'light' },
+  clinic: { bg: '#eefaf6', card: '#ffffff', accent: '#00796b', text: '#10342b', success: '#2e7d52', water: '#3f95e0', kind: 'light' },
 }

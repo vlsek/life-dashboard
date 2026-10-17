@@ -36,6 +36,7 @@ describe('«Простое оформление»: CSS гасит эффекты
   snow: ['--bg-pattern: none;', '--shadow-card: none;'], // ледяная: ледяные блики и холодная тень (BACKLOG 55.3, срез 3)
   ember: ['--bg-pattern: none;', '--shadow-card: none;'], // огненная: свечение углей и тёплая тень (BACKLOG 55.3, срез 4)
   grass: ['--bg-pattern: none;', '--shadow-card: none;'], // травяная: травяное свечение и зелёная тень (BACKLOG 55.3, срез 5)
+  clinic: ['--bg-pattern: none;', '--shadow-card: none;'], // мятная больничная: мятные блики и лёгкая тень (BACKLOG 55.3, срез 6)
     glass: ['--blur-glass: none;', '--bg-pattern: none;', '--shadow-card: none;', '--glass-alpha: 100%;'], // бизнес-стекло: без размытия, световых пятен, тени и прозрачности
   }
   for (const f of [...pilots.map((d: string) => d + '/src/style.css'), 'style.css']) {

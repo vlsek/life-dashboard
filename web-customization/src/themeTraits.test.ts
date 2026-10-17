@@ -107,10 +107,10 @@ describe('glass (бизнес-стекло)', () => {
   it('цвета, мягкие скругления, мягкие тени, световые пятна на фоне, стеклянные панели, гладкая анимация', () => {
     expect(THEME_TRAITS.glass).toEqual(['palette', 'corners_soft', 'soft_shadows', 'aurora_bg', 'glass_panels', 'smooth_anim'])
   })
-  it('«стеклянные панели» — только у glass, «световые пятна» — у glass, meadow (солнечное пятно) и autumn (листовые пятна) sakura (лепестковые пятна) snow (ледяные блики) ember (угли) и grass (травяное свечение); у moonlight сетка из точек, а не «пятна»; у frost зернистость', () => {
+  it('«стеклянные панели» — только у glass, «световые пятна» — у glass, meadow (солнечное пятно) и autumn (листовые пятна) sakura (лепестковые пятна) snow (ледяные блики) ember (угли) grass (травяное свечение) и clinic (мятные блики); у moonlight сетка из точек, а не «пятна»; у frost зернистость', () => {
     for (const k of Object.keys(THEME_TRAITS)) {
       if (k !== 'glass') expect(THEME_TRAITS[k], k).not.toContain('glass_panels')
-      if (k !== 'glass' && k !== 'meadow' && k !== 'autumn' && k !== 'sakura' && k !== 'snow' && k !== 'ember' && k !== 'grass') expect(THEME_TRAITS[k], k).not.toContain('aurora_bg')
+      if (k !== 'glass' && k !== 'meadow' && k !== 'autumn' && k !== 'sakura' && k !== 'snow' && k !== 'ember' && k !== 'grass' && k !== 'clinic') expect(THEME_TRAITS[k], k).not.toContain('aurora_bg')
     }
     expect(THEME_TRAITS.moonlight).toContain('dot_pattern')
     expect(THEME_TRAITS.frost).toContain('grain')
@@ -144,6 +144,12 @@ describe('ember (Огненная, 55.3)', () => {
 describe('grass (Травяная, 55.3)', () => {
   it('палитра, мягкие тени, травяное свечение, гладкие анимации; углы не «мягкие» (6/10/12/16) — без тяжёлых слоёв', () => {
     expect(THEME_TRAITS.grass).toEqual(['palette', 'soft_shadows', 'aurora_bg', 'smooth_anim'])
+  })
+})
+
+describe('clinic (Мятная больничная, 55.3)', () => {
+  it('палитра, мягкие тени, мятные блики, гладкие анимации; углы чёткие (4/6/8/12) — без тяжёлых слоёв', () => {
+    expect(THEME_TRAITS.clinic).toEqual(['palette', 'soft_shadows', 'aurora_bg', 'smooth_anim'])
   })
 })
 
