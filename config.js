@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.94";
+const SITE_VERSION = "5.95";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.95", date: "2026-10-17 15:00", changes: [
+        "«Кастомизация»: счётчики «открыто/всего» у разделов «Огонь серии», «Заставка», «Анимация воды» и других показывали устаревшие числа (например, у огонька серии было 2 вместо 5). Теперь число считается от настоящего списка вариантов и само растёт, когда добавляется новый. Внутри — первый шаг большой уборки раздела: все разделы собраны в единый список «слотов».\"
+    ]},
     { version: "5.94", date: "2026-10-17 11:55", changes: [
         "«Кастомизация» → «Стиль линии графика»: два новых бесплатных стиля — «Ступени» (значение держится до следующего замера, только прямые углы — честно для веса и привычек) и «Неон» (плавная линия с мягким свечением); теперь стилей пять. Графики подхватят выбор при следующем открытии страницы.",
     ]},
@@ -2394,6 +2397,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.95", date: "2026-10-17 15:00", changes: [
+        "Customization: the “opened/total” counters of the Streak flame, Loading screen, Water animation and other sections showed outdated numbers (for example, 2 instead of 5 for the streak flame). The number is now counted from the real list of variants and grows by itself when a new one is added. Under the hood this is the first step of a bigger tidy-up of the section: all sections are gathered into one list of “slots”.\"
+    ]},
     { version: "5.94", date: "2026-10-17 11:55", changes: [
         "Customization → “Chart line style”: two new free styles — “Steps” (the value holds until the next measurement, straight corners only — honest for weight and habits) and “Neon glow” (a smooth line with a soft glow); there are now five. Charts pick up the choice the next time the page opens.",
     ]},
