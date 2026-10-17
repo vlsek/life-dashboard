@@ -14,9 +14,10 @@ vi.mock('./lib/supabase', () => ({
 import App from './App.vue'
 
 const sess = (id: string) => JSON.stringify({ access_token: `at-${id}`, refresh_token: `rt-${id}`, user: { id, email: `${id}@x.io` } })
+let clock = 1000
 const save = (id: string) => {
   localStorage.setItem(AUTH_KEY, sess(id))
-  captureCurrent()
+  captureCurrent(++clock) // время задаём явно: «последняя снятая» не должна зависеть от того, в одну ли миллисекунду сняты записи
 }
 const setSearch = (s: string) => window.history.replaceState({}, '', '/login/' + s)
 const hrefSet = vi.fn()
