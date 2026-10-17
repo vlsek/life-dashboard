@@ -6,7 +6,6 @@ import type { Metric } from './lib/types'
 // Миграция 054 / BACKLOG 19, 30: метрика, связанная с упражнением «Тренировок», на Дашборде — подходы правятся только в «Тренировках» (таблица для чтения);
 // добавить новый подход можно прямо здесь быстрым вводом — он уходит в «Тренировки» (BACKLOG 44.5а).
 const metric = (o: Partial<Metric> = {}) => ({ id: 'm1', user_id: 'u', name: 'Подтягивания', icon: null, type: 'sets', unit: null, goal_value: null, goal_direction: 'at_least', schedule: null, category_id: null, position: 1, ...o }) as Metric
-const sets = [{ reps: 10, variation: null, time: '09:00' }, { reps: 8, variation: null, time: null }]
 
 describe('NumberMetricField связанной метрики', () => {
   it('итог, подпись связи, ссылка и ОДНО поле быстрого ввода (62.1); правки итога нет (оба режима ввода)', () => {
