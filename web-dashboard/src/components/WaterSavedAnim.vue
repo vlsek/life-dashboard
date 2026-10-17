@@ -231,6 +231,19 @@ const WAVE_BACK = 'q3 1.4 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0'
 .water-saved[data-variant='glow'] .ws-ripple { animation-delay: 0.6s; }
 .water-saved[data-variant='glow'] .water-saved-badge { animation-delay: 0.9s; }
 .water-saved[data-variant='glow'] .water-saved-check { animation-delay: 1.05s; }
+/* bounce (59.4, платный «Прыжок»): вода набирается, а стакан подпрыгивает и приземляется с пружинкой */
+.water-saved[data-variant='bounce'] .ws-bubble, .water-saved[data-variant='bounce'] .ws-drop, .water-saved[data-variant='bounce'] .ws-ripple-2 { display: none; }
+.water-saved[data-variant='bounce'] svg { transform-origin: 50% 100%; animation: water-saved-bounce 1.3s cubic-bezier(0.3, 0.7, 0.4, 1) both; }
+.water-saved[data-variant='bounce'] .water-saved-fill { animation-duration: 0.6s; }
+.water-saved[data-variant='bounce'] .ws-ripple { animation-delay: 0.6s; }
+.water-saved[data-variant='bounce'] .water-saved-badge { animation-delay: 0.9s; }
+.water-saved[data-variant='bounce'] .water-saved-check { animation-delay: 1.05s; }
+/* pulse (59.4, платный «Пульс»): вода набирается, а стакан дважды мягко «дышит» */
+.water-saved[data-variant='pulse'] .ws-bubble, .water-saved[data-variant='pulse'] .ws-drop, .water-saved[data-variant='pulse'] .ws-ripple-2 { display: none; }
+.water-saved[data-variant='pulse'] svg { transform-origin: 50% 50%; animation: water-saved-pulse 1.4s ease-in-out both; }
+.water-saved[data-variant='pulse'] .ws-ripple { animation-delay: 0.6s; }
+.water-saved[data-variant='pulse'] .water-saved-badge { animation-delay: 0.9s; }
+.water-saved[data-variant='pulse'] .water-saved-check { animation-delay: 1.05s; }
 /* Пример в плитке «Кастомизации» (BACKLOG 57.2): не оверлей, а маленький стакан, анимация повторяется */
 .water-saved.water-saved-inline { position: relative; inset: auto; z-index: auto; display: inline-flex; }
 .water-saved-inline svg { width: 44px; height: 55px; padding: 6px 8px; border-radius: 14px; box-shadow: none; filter: none; }
@@ -306,6 +319,21 @@ const WAVE_BACK = 'q3 1.4 6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0 t6 0'
   0% { filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.22)); }
   45% { filter: drop-shadow(0 0 22px var(--water-line)) drop-shadow(0 0 8px var(--water-top)); }
   100% { filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.22)); }
+}
+@keyframes water-saved-bounce {
+  0% { transform: translateY(0) scale(1, 1); }
+  20% { transform: translateY(-14px) scale(0.95, 1.06); }
+  40% { transform: translateY(0) scale(1.08, 0.92); }
+  60% { transform: translateY(-5px) scale(0.98, 1.03); }
+  80% { transform: translateY(0) scale(1.03, 0.97); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+@keyframes water-saved-pulse {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.14); }
+  50% { transform: scale(0.97); }
+  75% { transform: scale(1.07); }
+  100% { transform: scale(1); }
 }
 @keyframes water-saved-spark {
   0% { opacity: 0; transform: scale(0.2) rotate(0deg); }

@@ -83,6 +83,8 @@ export const ITEM_RARITY: Record<string, Rarity> = {
   water_sparkle: 'rare',
   water_sway: 'uncommon', // 59.4: тарифы 150/250
   water_glow: 'rare',
+  water_bounce: 'common', // 59.4: низкий тариф (100)
+  water_pulse: 'uncommon', // средний тариф (150)
 }
 
 // Темы. Исходные четыре и «Высокий контраст» (доступность — прятать за наградой нельзя) — обычные. Остальные шесть — «закрываемые»

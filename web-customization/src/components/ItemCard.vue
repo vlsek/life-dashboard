@@ -9,6 +9,7 @@ import CollapsePreview from './CollapsePreview.vue'
 import WeekGaugePreview from './WeekGaugePreview.vue'
 import DayGaugePreview from './DayGaugePreview.vue'
 import WaterSavedAnim from './WaterSavedAnim.vue'
+import { WATER_ITEMS } from '../lib/waterAnim'
 import WaterGlassPreview from './WaterGlassPreview.vue'
 import { BY_ITEM } from '../lib/waterGlass'
 
@@ -25,7 +26,7 @@ const isWeekGauge = computed(() => props.item.category === 'week_gauge')
 const isDayGauge = computed(() => props.item.category === 'day_gauge')
 const isWaterGlass = computed(() => props.item.category === 'water_glass')
 const isWaterAnim = computed(() => props.item.category === 'water_anim')
-const waterVariant = computed(() => (props.item.key === 'water_tide' ? 'tide' : props.item.key === 'water_sparkle' ? 'sparkle' : props.item.key === 'water_sway' ? 'sway' : props.item.key === 'water_glow' ? 'glow' : 'rain') as 'rain' | 'tide' | 'sparkle' | 'sway' | 'glow')
+const waterVariant = computed(() => WATER_ITEMS[props.item.key] ?? 'rain') // вид анимации — из реестра предметов (lib/waterAnim.ts)
 const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.item.achievement) as never) : ''))
 </script>
 
