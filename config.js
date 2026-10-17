@@ -488,7 +488,7 @@ const CHANGELOG_RU = [
         "Кастомизация: два новых бесплатных вида огонька серии — «Факел» (факел с деревянной рукоятью и широким пламенем) и «Искра» (сверкающая звезда с пульсирующим сердцем). Раздел «Огонь серии» вырос с пяти до семи видов. Выбор виден на Дашборде со следующей загрузки; на ступенях серии 30 и 100 дней свечение ярче, появляются искры. Без миграций."
     ]},
     { version: "6.03", date: "2026-10-18 12:00", changes: [
-        "«Кастомизация»: страница стала понятнее. Вместо длинной ленты с вкладками теперь витрина: по ячейке на каждое место, где видна вещь (темы, рамка аватара, шкалы, огонёк серии, вода, графики, заставка). В ячейке сразу видно, что надето сейчас, и сколько открыто. Нажмите на ячейку — откроются варианты этого раздела, кнопка «Назад» (и «Назад» на телефоне) возвращает на витрину. Прежняя лента доступна кнопкой «Всё одним списком». Дальше — единая карточка предметов и «Образы».\"
+        "«Кастомизация»: страница стала понятнее. Вместо длинной ленты с вкладками теперь витрина: по ячейке на каждое место, где видна вещь (темы, рамка аватара, шкалы, огонёк серии, вода, графики, заставка). В ячейке сразу видно, что надето сейчас, и сколько открыто. Нажмите на ячейку — откроются варианты этого раздела, кнопка «Назад» (и «Назад» на телефоне) возвращает на витрину. Прежняя лента доступна кнопкой «Всё одним списком». Дальше — единая карточка предметов и «Образы»."
     ]},
     { version: "6.02", date: "2026-10-17 13:30", changes: [
         "Тема «Чернильная бумага»: пунктирная кнопка «＋» (например, добавление языка) больше не получает сплошное кольцо поверх пунктирной рамки. Без миграций.",
@@ -2428,7 +2428,7 @@ const CHANGELOG_EN = [
         "Customization: two new free streak flame looks — “Torch” (a torch with a wooden handle and a wide flame) and “Spark” (a twinkling star with a pulsing core). The “Streak flame” section grew from five to seven looks. The choice shows on the Dashboard from the next load; at 30 and 100 day streak tiers the glow is brighter and sparks appear. No migrations."
     ]},
     { version: "6.03", date: "2026-10-18 12:00", changes: [
-        "Customization: the page is easier to use. Instead of a long feed with tabs there is now a showcase: one cell for each place where an item is visible (themes, avatar frame, gauges, streak flame, water, charts, loading screen). A cell shows what you are wearing now and how much is unlocked. Tap a cell to see the options of that section; the “Back” button (and the phone’s Back) returns to the showcase. The previous feed is available with “Everything in one list”. Next: a single item card and “Looks”.\"
+        "Customization: the page is easier to use. Instead of a long feed with tabs there is now a showcase: one cell for each place where an item is visible (themes, avatar frame, gauges, streak flame, water, charts, loading screen). A cell shows what you are wearing now and how much is unlocked. Tap a cell to see the options of that section; the “Back” button (and the phone’s Back) returns to the showcase. The previous feed is available with “Everything in one list”. Next: a single item card and “Looks”."
     ]},
     { version: "6.02", date: "2026-10-17 13:30", changes: [
         "Vintage Paper theme: the dashed \"+\" button (for example, adding a language) no longer gets a solid ring on top of its dashed border. No migrations.",
