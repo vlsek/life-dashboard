@@ -1,6 +1,13 @@
 {
-  "version": "6.04",
+  "version": "6.05",
   "en": [
+    {
+      "version": "6.05",
+      "date": "2026-10-17 23:55",
+      "changes": [
+        "Customization, daily gauge: two new ring styles — “Ocean” for 150 points (turquoise, blue, indigo gradient) and “Aurora” for 250 points (northern-lights colours: green, turquoise, violet, pink). Shown in the header and on the Dashboard."
+      ]
+    },
     {
       "version": "6.04",
       "date": "2026-10-17 21:58",
@@ -4297,6 +4304,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.05",
+      "date": "2026-10-17 23:55",
+      "changes": [
+        "«Кастомизация», спидометр дня: два новых вида кольца — «Океан» за 150 баллов (градиент бирюзовый, синий, индиго) и «Аврора» за 250 баллов (цвета северного сияния: зелёный, бирюзовый, фиолетовый, розовый). Показываются в шапке и на Дашборде."
+      ]
+    },
     {
       "version": "6.04",
       "date": "2026-10-17 21:58",

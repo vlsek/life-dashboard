@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.04";
+const SITE_VERSION = "6.05";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.05", date: "2026-10-17 23:55", changes: [
+        "«Кастомизация», спидометр дня: два новых вида кольца — «Океан» за 150 баллов (градиент бирюзовый, синий, индиго) и «Аврора» за 250 баллов (цвета северного сияния: зелёный, бирюзовый, фиолетовый, розовый). Показываются в шапке и на Дашборде.",
+    ]},
     { version: "6.04", date: "2026-10-17 21:58", changes: [
         "Кастомизация: два новых бесплатных вида огонька серии — «Факел» (факел с деревянной рукоятью и широким пламенем) и «Искра» (сверкающая звезда с пульсирующим сердцем). Раздел «Огонь серии» вырос с пяти до семи видов. Выбор виден на Дашборде со следующей загрузки; на ступенях серии 30 и 100 дней свечение ярче, появляются искры. Без миграций."
     ]},
@@ -2424,6 +2427,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.05", date: "2026-10-17 23:55", changes: [
+        "Customization, daily gauge: two new ring styles — “Ocean” for 150 points (turquoise, blue, indigo gradient) and “Aurora” for 250 points (northern-lights colours: green, turquoise, violet, pink). Shown in the header and on the Dashboard.",
+    ]},
     { version: "6.04", date: "2026-10-17 21:58", changes: [
         "Customization: two new free streak flame looks — “Torch” (a torch with a wooden handle and a wide flame) and “Spark” (a twinkling star with a pulsing core). The “Streak flame” section grew from five to seven looks. The choice shows on the Dashboard from the next load; at 30 and 100 day streak tiers the glow is brighter and sparks appear. No migrations."
     ]},
