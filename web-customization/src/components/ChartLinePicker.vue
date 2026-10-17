@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { CHART_KINDS, CHART_LINES, barDefs, barPath, lineDefs, readChartAnim, readChartForecast, readChartGoalZone, readChartKind, readChartLine, readChartSparks, runParts, writeChartAnim, writeChartForecast, writeChartGoalZone, writeChartKind, writeChartLine, writeChartSparks, type ChartKind, type ChartLine, type Pt } from '../lib/chartLine'
+import { CHART_KINDS, CHART_LINES, CHART_SPARK_STYLES, barDefs, barPath, lineDefs, readChartAnim, readChartForecast, readChartGoalZone, readChartKind, readChartLine, readChartSparks, readChartSparkStyle, runParts, writeChartAnim, writeChartForecast, writeChartGoalZone, writeChartKind, writeChartLine, writeChartSparks, writeChartSparkStyle, type ChartKind, type ChartLine, type ChartSparkStyle, type Pt } from '../lib/chartLine'
+import { sparkInner } from '../lib/sparkline'
 import { t } from '../lib/i18n'
 
 // Выбор стиля ЛИНИИ графика (BACKLOG 55.2 срез 3): обычная · сглаженная · сглаженная с областью. Бесплатно; localStorage `chart_line`;
@@ -64,6 +65,17 @@ const kindPreview = (v: ChartKind): string => {
   })
   return s + '<line x1="2" y1="48" x2="186" y2="48" stroke="var(--border)" stroke-width="1" />'
 }
+
+// Вид мини-графика (55.2 срез 7д): линия (как сейчас) / область / столбики / точки; предпросмотр рисует та же sparkInner(), что и карточка метрики на Дашборде.
+const sparkStyle = ref<ChartSparkStyle>(readChartSparkStyle())
+const sparkSaved = ref(true)
+const sparkLabel = (v: ChartSparkStyle): string => t(('chart_spark_' + v) as never)
+const chooseSpark = (v: ChartSparkStyle) => {
+  sparkSaved.value = writeChartSparkStyle(v)
+  if (sparkSaved.value) sparkStyle.value = v
+}
+const SPARK_SAMPLE = [3, 5, 4, 7, 6, 9, 8]
+const sparkPreview = (v: ChartSparkStyle): string => sparkInner(SPARK_SAMPLE, v) ?? ''
 
 const SAMPLE: Pt[] = [[14, 36], [46, 14], [78, 32], [110, 18], [142, 40], [174, 20]]
 const preview = (v: ChartLine): string => {
@@ -134,6 +146,33 @@ const preview = (v: ChartLine): string => {
           @click="choose(v)"
         >
           {{ current === v ? t('cust_splash_selected') : t('cust_splash_choose') }}
+        </button>
+      </div>
+    </div>
+    <h4 class="mb-1 mt-5 text-sm font-semibold">{{ t('cust_sub_spark_style') }}</h4>
+    <p class="dim mb-2 text-xs">{{ t('cust_sec_spark_style_hint') }}</p>
+    <p v-if="!sparkSaved" class="mb-2 text-xs" style="color: var(--danger, #e5484d)" role="alert" data-testid="sparkstyle-save-error">{{ t('cust_splash_save_error') }}</p>
+    <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr))">
+      <div
+        v-for="v in CHART_SPARK_STYLES"
+        :key="v"
+        class="flex flex-col gap-2 rounded-xl border p-3"
+        :style="{ background: 'var(--bg-card)', borderColor: sparkStyle === v ? 'var(--accent)' : 'var(--border)' }"
+        :data-testid="'sparkstyle-' + v"
+        :data-active="sparkStyle === v"
+      >
+        <svg viewBox="0 0 64 20" width="100%" height="40" role="img" :aria-label="sparkLabel(v)" v-html="sparkPreview(v)"></svg>
+        <p class="m-0 text-sm font-medium">{{ sparkLabel(v) }}</p>
+        <button
+          type="button"
+          class="secondary px-2 py-1 text-sm"
+          :disabled="sparkStyle === v"
+          :aria-pressed="sparkStyle === v"
+          :aria-label="sparkLabel(v) + ': ' + (sparkStyle === v ? t('cust_splash_selected') : t('cust_splash_choose'))"
+          data-testid="sparkstyle-choose"
+          @click="chooseSpark(v)"
+        >
+          {{ sparkStyle === v ? t('cust_splash_selected') : t('cust_splash_choose') }}
         </button>
       </div>
     </div>

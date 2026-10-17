@@ -317,6 +317,35 @@ export type ChartSparks = (typeof CHART_SPARKS)[number]
 export const DEFAULT_CHART_SPARKS: ChartSparks = 'off'
 export const CHART_SPARKS_KEY = 'chart_sparks'
 
+// Вид мини-графика (55.2 срез 7д): «line» — линия с кружком на последней точке (как было, по умолчанию), «area» — линия с мягкой областью под ней,
+// «bars» — столбики от нуля, «dots» — только точки. Сам вкл/выкл — `chart_sparks`; вид — `chart_spark_style`. Бесплатно. Рисует sparkInner() (lib/sparkline.ts).
+export const CHART_SPARK_STYLES = ['line', 'area', 'bars', 'dots'] as const
+export type ChartSparkStyle = (typeof CHART_SPARK_STYLES)[number]
+export const DEFAULT_CHART_SPARK_STYLE: ChartSparkStyle = 'line'
+export const CHART_SPARK_STYLE_KEY = 'chart_spark_style'
+
+export const isChartSparkStyle = (v: unknown): v is ChartSparkStyle => (CHART_SPARK_STYLES as readonly unknown[]).includes(v)
+
+export function readChartSparkStyle(): ChartSparkStyle {
+  try {
+    const stored = localStorage.getItem(CHART_SPARK_STYLE_KEY)
+    if (isChartSparkStyle(stored)) return stored
+  } catch {
+    /* нет localStorage — по умолчанию */
+  }
+  return DEFAULT_CHART_SPARK_STYLE
+}
+
+// true, если выбор удалось запомнить.
+export function writeChartSparkStyle(v: ChartSparkStyle): boolean {
+  try {
+    localStorage.setItem(CHART_SPARK_STYLE_KEY, v)
+    return true
+  } catch {
+    return false
+  }
+}
+
 export const isChartSparks = (v: unknown): v is ChartSparks => (CHART_SPARKS as readonly unknown[]).includes(v)
 
 export function readChartSparks(): ChartSparks {
