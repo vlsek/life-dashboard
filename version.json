@@ -1,6 +1,13 @@
 {
-  "version": "5.97",
+  "version": "5.98",
   "en": [
+    {
+      "version": "5.98",
+      "date": "2026-10-17 17:00",
+      "changes": [
+        "Customization, block-collapse marker: two new styles — “Square” for 100 points (filled when a block is open, an outline when folded) and “Burger” for 150 points (three lines when folded, two when open). Work on the Dashboard and in Workouts."
+      ]
+    },
     {
       "version": "5.97",
       "date": "2026-10-17 16:00",
@@ -4248,6 +4255,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.98",
+      "date": "2026-10-17 17:00",
+      "changes": [
+        "«Кастомизация», вид сворачивания блоков: два новых маркера — «Квадрат» за 100 баллов (закрашен у раскрытого блока, контур у свёрнутого) и «Гамбургер» за 150 баллов (три полоски у свёрнутого блока, две у раскрытого). Работают на Дашборде и в Тренировках."
+      ]
+    },
     {
       "version": "5.97",
       "date": "2026-10-17 16:00",

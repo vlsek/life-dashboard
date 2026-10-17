@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.97";
+const SITE_VERSION = "5.98";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.98", date: "2026-10-17 17:00", changes: [
+        "«Кастомизация», вид сворачивания блоков: два новых маркера — «Квадрат» за 100 баллов (закрашен у раскрытого блока, контур у свёрнутого) и «Гамбургер» за 150 баллов (три полоски у свёрнутого блока, две у раскрытого). Работают на Дашборде и в Тренировках.",
+    ]},
     { version: "5.97", date: "2026-10-17 16:00", changes: [
         "«Кастомизация», вид стакана воды: две новые формы — «Мензурка» за 150 баллов (с лабораторными делениями) и «Кувшин» за 250 баллов (пузатый, с ручкой). Показываются в шапке и на Дашборде.",
     ]},
@@ -2403,6 +2406,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.98", date: "2026-10-17 17:00", changes: [
+        "Customization, block-collapse marker: two new styles — “Square” for 100 points (filled when a block is open, an outline when folded) and “Burger” for 150 points (three lines when folded, two when open). Work on the Dashboard and in Workouts.",
+    ]},
     { version: "5.97", date: "2026-10-17 16:00", changes: [
         "Customization, water glass style: two new shapes — “Beaker” for 150 points (with lab measuring marks) and “Pitcher” for 250 points (round-bellied, with a handle). Shown in the header and on the Dashboard.",
     ]},
