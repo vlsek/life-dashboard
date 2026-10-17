@@ -13,6 +13,8 @@ export interface SetCell {
 
 export interface SetRow {
   time: string | null
+  /** «особенность» строки (BACKLOG 63.2): одна на строку, при Л+П уходит в оба подхода */
+  variation?: string | null
   cells: Partial<Record<CellKey, SetCell>>
 }
 
@@ -27,6 +29,7 @@ export function blankRow(bilateral: boolean, time: string | null = null): SetRow
 }
 
 const toCell = (s: WorkoutSet): SetCell => ({ reps: s.reps, weight: s.weight, duration: s.duration })
+const varOf = (v: string | null | undefined): { variation?: string } => (typeof v === 'string' && v.trim() ? { variation: v.trim() } : {})
 const otherSide = (side: 'L' | 'R') => (side === 'L' ? 'R' : 'L')
 
 // Подходы → строки. Идущие подряд L+R (в любом порядке) склеиваются в одну строку; одиночная
@@ -37,16 +40,17 @@ export function toRows(sets: WorkoutSet[]): SetRow[] {
     const s = sets[i]
     if (s.side === 'L' || s.side === 'R') {
       const next = sets[i + 1]
-      const row: SetRow = { time: s.time, cells: { [s.side]: toCell(s) } }
+      const row: SetRow = { time: s.time, cells: { [s.side]: toCell(s) }, ...varOf(s.variation) }
       if (next && next.side === otherSide(s.side)) {
         row.cells[next.side as 'L' | 'R'] = toCell(next)
+        if (!row.variation) Object.assign(row, varOf(next.variation))
         i++
       } else {
         row.cells[otherSide(s.side)] = blankCell()
       }
       rows.push(row)
     } else {
-      rows.push({ time: s.time, cells: { P: toCell(s) } })
+      rows.push({ time: s.time, cells: { P: toCell(s) }, ...varOf(s.variation) })
     }
   }
   return rows
@@ -59,7 +63,7 @@ export function fromRows(rows: SetRow[]): WorkoutSet[] {
     for (const key of CELL_ORDER) {
       const c = row.cells[key]
       if (!c) continue
-      out.push({ reps: c.reps, weight: c.weight, time: row.time, duration: c.duration, side: key === 'P' ? null : key })
+      out.push({ reps: c.reps, weight: c.weight, time: row.time, duration: c.duration, side: key === 'P' ? null : key, ...varOf(row.variation) })
     }
   }
   return out

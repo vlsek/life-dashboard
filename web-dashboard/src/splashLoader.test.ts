@@ -178,9 +178,11 @@ describe('index.html: фон html следует за текущей темой 
     expect(html).not.toMatch(/html \{ background: var\(--pre-bg[^}]*\}/)
   })
 
-  it('body по-прежнему красится var(--bg) в style.css, а у html/body/#app есть height: 100%', () => {
+  it('body по-прежнему красится var(--bg) в style.css, а высота html/body/#app — не меньше экрана (min-height, 63.1: height:100% обрывал фон и шапку на первом экране)', () => {
     expect(css).toMatch(/body \{[^}]*background: var\(--bg\)/)
-    expect(css).toMatch(/html,\s*body,\s*#app \{\s*height: 100%;/)
+    expect(css).toMatch(/html \{\s*min-height: 100%;/)
+    expect(css).toMatch(/body,\s*#app \{\s*min-height: 100vh;/)
+    expect(css).not.toMatch(/html,\s*body,\s*#app \{\s*height: 100%;/)
   })
 })
 

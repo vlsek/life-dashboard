@@ -79,18 +79,18 @@ export function formatSets(
   unitFallback = '',
 ): string {
   if (!sets || !sets.length) return '—'
-  const at = (s: WorkoutSet) => (s.time ? ` (${s.time})` : '')
+  const at = (s: WorkoutSet) => (s.time ? ` (${s.time})` : '') + (s.variation ? ` «${s.variation}»` : '')
   const dur = (s: WorkoutSet) =>
     exercise.tracks_duration && s.duration
       ? ` · ${paceText(s.reps ?? 0, s.duration, exercise.value_label, perHourLabel, durationUnitLabel)}`
       : ''
   if (exercise.tracks_weight) {
-    return sets.map((s) => (s.weight != null ? `${s.reps}×${s.weight}${exercise.unit || unitFallback}` : `${s.reps}`) + dur(s) + at(s)).join(', ')
+    return sets.map((s) => (s.weight != null ? `${s.reps ?? "—"}×${s.weight}${exercise.unit || unitFallback}` : `${s.reps ?? "—"}`) + dur(s) + at(s)).join(', ')
   }
   const unitSuffix = repUnit(exercise) ? ` ${repUnit(exercise)}` : ''
   // Доп. вес («Утяжеление») измеряется в весовых единицах (кг), а не в единицах самого упражнения.
   const extra = (s: WorkoutSet) => (s.weight != null && s.weight > 0 ? ` (+${s.weight}${unitFallback})` : '')
-  return sets.map((s) => `${s.reps}${unitSuffix}` + extra(s) + dur(s) + at(s)).join(', ')
+  return sets.map((s) => `${s.reps ?? '—'}${unitSuffix}` + extra(s) + dur(s) + at(s)).join(', ')
 }
 
 // Порядок фиксированных категорий; свободные (старые произвольные) идут после по
@@ -147,5 +147,6 @@ export function cleanSets(sets: WorkoutSet[]): WorkoutSet[] {
             ? parseFloat(s.duration) || 0
             : s.duration,
       side: s.side || null,
+      ...(typeof s.variation === 'string' && s.variation.trim() ? { variation: s.variation.trim() } : {}),
     }))
 }

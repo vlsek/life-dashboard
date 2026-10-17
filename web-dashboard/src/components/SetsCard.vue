@@ -14,7 +14,6 @@ import CollapseChevron from './CollapseChevron.vue'
 import SavedTick from './SavedTick.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import { t } from '../lib/i18n'
-import { parseQuickReps } from '../lib/linkedSets'
 import { newSet, parseReps, parseTime, parseVariation, removeSet, setsSummary, updateSet, variationLabels } from '../lib/setsBlock'
 import type { SetRow } from '../lib/setsBlock'
 import type { Metric } from '../lib/types'
@@ -27,7 +26,10 @@ const emit = defineEmits<{
   change: [sets: SetRow[]]
   remember: [text: string]
   forget: [label: string]
-  quickAdd: [reps: number]
+  // Связанная метрика (BACKLOG 63.2): правки идут в «Тренировки» по номеру строки, а не списком целиком
+  rowEdit: [index: number, patch: Partial<SetRow>]
+  rowRemove: [index: number]
+  rowAdd: []
 }>()
 
 // если за день уже что-то есть — сразу развёрнуто, иначе свёрнуто
@@ -37,28 +39,28 @@ const open = ref(props.sets.length > 0)
 const summary = computed(() => setsSummary(props.sets))
 const labels = computed(() => variationLabels(props.metric))
 
-// Быстрый ввод для связанной метрики (BACKLOG 44.5а «насквозь»): подход уходит в «Тренировки», метрика пересчитывается оттуда
-const quickReps = ref('')
-const quickValid = computed(() => parseQuickReps(quickReps.value) !== null)
-function quickAdd() {
-  const n = parseQuickReps(quickReps.value)
-  if (n === null) return
-  emit('quickAdd', n)
-  quickReps.value = ''
+// Строки правятся одинаково у обычной и связанной метрики; у связанной правка уходит наверх по номеру строки (63.2), а подходы пишутся в «Тренировки»
+function edit(i: number, patch: Partial<SetRow>) {
+  if (linked.value) emit('rowEdit', i, patch)
+  else emit('change', updateSet(props.sets, i, patch))
 }
-
+function remove(i: number) {
+  if (linked.value) emit('rowRemove', i)
+  else emit('change', removeSet(props.sets, i))
+}
 function add() {
   open.value = true
-  emit('change', [...props.sets, newSet()])
+  if (linked.value) emit('rowAdd')
+  else emit('change', [...props.sets, newSet()])
 }
 function onReps(i: number, e: Event) {
-  emit('change', updateSet(props.sets, i, { reps: parseReps((e.target as HTMLInputElement).value) }))
+  edit(i, { reps: parseReps((e.target as HTMLInputElement).value) })
 }
 function onTime(i: number, e: Event) {
-  emit('change', updateSet(props.sets, i, { time: parseTime((e.target as HTMLInputElement).value) }))
+  edit(i, { time: parseTime((e.target as HTMLInputElement).value) })
 }
 function onVariation(i: number, text: string) {
-  emit('change', updateSet(props.sets, i, { variation: parseVariation(text) }))
+  edit(i, { variation: parseVariation(text) })
   emit('remember', text)
 }
 </script>
@@ -78,38 +80,7 @@ function onVariation(i: number, text: string) {
     <MetricSpark v-if="spark && readChartSparks() === 'on'" :values="spark" :unit="' ' + t('dash_sets_reps_word')" />
     <RecordBadge v-if="record" kind="metrics" :record="record" :unit="' ' + t('dash_sets_reps_word')" class="mt-0.5" />
 
-    <div v-if="linked" v-collapse="open" class="mt-2" data-test="sets-linked">
-      <div v-if="sets.length > 0" class="overflow-x-auto">
-        <table class="sets-table w-full text-sm" data-test="sets-table-readonly">
-          <tbody>
-            <tr v-for="(s, i) in sets" :key="i" class="align-middle" data-test="set-row-readonly">
-              <td class="dim pl-2 pr-1">{{ i + 1 }}</td>
-              <td class="set-plate"><span class="dim">{{ s.time ?? '—' }}</span></td>
-              <td class="set-plate"><strong>{{ s.reps ?? '—' }}</strong></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="mt-2 flex items-center gap-2" data-test="sets-quick">
-        <input
-          v-model="quickReps"
-          type="number"
-          step="any"
-          min="0"
-          inputmode="decimal"
-          :placeholder="t('dash_linked_quick_placeholder')"
-          style="width: 90px"
-          data-test="sets-quick-reps"
-          @keydown.enter.prevent="quickAdd"
-        />
-        <button type="button" :disabled="!quickValid" data-test="sets-quick-add" @click="quickAdd">{{ t('dash_linked_quick_add') }}</button>
-      </div>
-      <p class="dim mt-1 text-sm" data-test="sets-linked-hint">
-        {{ t('dash_metric_linked_hint') }}
-        <a href="/workouts/" class="underline" data-test="sets-linked-open">{{ t('dash_metric_linked_open') }}</a>
-      </p>
-    </div>
-    <div v-else v-collapse="open" class="mt-2">
+    <div v-collapse="open" class="mt-2" :data-test="linked ? 'sets-linked' : undefined">
       <div v-if="sets.length > 0" class="overflow-x-auto">
         <table class="sets-table w-full text-sm" data-test="sets-table">
           <tbody>
@@ -125,13 +96,17 @@ function onVariation(i: number, text: string) {
                 <VariationCombo :model-value="s.variation" :labels="labels" @commit="onVariation(i, $event)" @forget="emit('forget', $event)" />
               </td>
               <td>
-                <button type="button" class="danger" style="padding: 2px 8px" @click="emit('change', removeSet(sets, i))"><Icon name="x" /></button>
+                <button type="button" class="danger" style="padding: 2px 8px" @click="remove(i)"><Icon name="x" /></button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-      <button type="button" class="secondary" @click="add"><EmojiText :text="t('dash_sets_add_btn')" /></button>
+      <button type="button" class="secondary" data-test="sets-add" @click="add"><EmojiText :text="t('dash_sets_add_btn')" /></button>
+      <p v-if="linked" class="dim mt-1 text-sm" data-test="sets-linked-hint">
+        {{ t('dash_metric_linked_hint') }}
+        <a href="/workouts/" class="underline" data-test="sets-linked-open">{{ t('dash_metric_linked_open') }}</a>
+      </p>
     </div>
   </div>
 </template>

@@ -4,7 +4,7 @@ import { t } from '../lib/i18n'
 import { CELL_ORDER, toRows } from '../lib/sides'
 import type { CellKey } from '../lib/sides'
 import { defaultWeightUnit } from '../lib/weightUnit'
-import { removeRowAt, setCellValue, setRowTime } from '../lib/entrySets'
+import { removeRowAt, setCellValue, setRowTime, setRowVariation } from '../lib/entrySets'
 import type { CellField } from '../lib/entrySets'
 import type { Exercise, WorkoutSet } from '../lib/types'
 import Icon from './Icon.vue'
@@ -29,6 +29,10 @@ function onCell(i: number, k: CellKey, field: CellField, e: Event) {
 }
 function onTime(i: number, e: Event) {
   const next = setRowTime(props.sets, i, (e.target as HTMLInputElement).value)
+  if (next) emit('change', next)
+}
+function onVariation(i: number, e: Event) {
+  const next = setRowVariation(props.sets, i, (e.target as HTMLInputElement).value)
   if (next) emit('change', next)
 }
 function onRemove(i: number) {
@@ -81,6 +85,7 @@ function onRemove(i: number) {
                   />
                 </template>
               </div>
+              <input type="text" :value="rows[i].variation ?? ''" :placeholder="t('workouts_variation_placeholder')" maxlength="60" class="es-input mt-1 w-full" data-testid="entry-set-variation" @change="onVariation(i, $event)" />
             </td>
             <td class="pb-1 text-right">
               <button

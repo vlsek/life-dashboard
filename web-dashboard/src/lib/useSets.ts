@@ -4,8 +4,9 @@ import { t } from './i18n'
 import { notifyDataChanged } from './events'
 import { emitPointsFloat, pointsDelta } from './pointsFloat'
 import { forgetVariationOptions, normalizeSets, rememberVariationOptions } from './setsBlock'
-import { mirrorSets } from './linkedSets'
-import { appendRepsToDay } from './linkedEntries'
+import { addDayRow, editDayRow, mirrorSets, removeDayRow } from './linkedSets'
+import type { DayEdit, DayEntry } from './linkedSets'
+import { applyDayEdit, loadDayEntries } from './linkedEntries'
 import type { SetRow } from './setsBlock'
 import type { Metric, MetricValue } from './types'
 
@@ -83,18 +84,8 @@ export function useSets() {
     }
   }
 
-  // Быстрый ввод подхода для метрики, связанной с упражнением (BACKLOG 44.5а «насквозь»): сначала запись «Тренировок» за сегодня (источник правды),
-  // потом пересчёт значения метрики из всех записей упражнения за день. Ошибка на любом шаге — понятный текст, ничего не «досчитываем» втихую.
-  async function addLinkedSet(m: Metric, reps: number): Promise<boolean> {
-    const exerciseId = m.source_exercise_id
-    if (!exerciseId || !userId || !date) return false
-    const before = setsByMetric.value[m.id]
-    const res = await appendRepsToDay(userId, date, exerciseId, reps)
-    if (res.error) {
-      error.value = t('dash_metric_save_error') + m.name + '»: ' + friendlyError(res.error)
-      return false
-    }
-    const value = mirrorSets(res.rows)
+  // Общий хвост правок связанной метрики: значение дня = подходы из «Тренировок», пишем зеркало, вспышка, пересчёт стриков и очков.
+  async function commitLinkedValue(m: Metric, before: SetRow[] | undefined, value: SetRow[]): Promise<boolean> {
     setsByMetric.value = { ...setsByMetric.value, [m.id]: value }
     const { error: err } = await sb.from('daily_values').upsert({ user_id: userId, date, metric_id: m.id, value }, { onConflict: 'user_id,date,metric_id' })
     if (err) {
@@ -107,6 +98,29 @@ export function useSets() {
     emitPointsFloat(pointsDelta(m, before as unknown as MetricValue, value as unknown as MetricValue, date || undefined))
     return true
   }
+
+  // Правка подходов связанной метрики «столбиком» (BACKLOG 63.2): читаем записи дня, строим план, пишем в «Тренировки», затем зеркало метрики.
+  async function mutateLinked(m: Metric, make: (entries: DayEntry[]) => DayEdit | null): Promise<boolean> {
+    const exerciseId = m.source_exercise_id
+    if (!exerciseId || !userId || !date) return false
+    const before = setsByMetric.value[m.id]
+    const res = await loadDayEntries(userId, date, exerciseId)
+    if (res.error) {
+      error.value = t('dash_metric_save_error') + m.name + '»: ' + friendlyError(res.error)
+      return false
+    }
+    const edit = make(res.entries)
+    if (!edit) return false
+    const w = await applyDayEdit(userId, date, exerciseId, edit)
+    if (w.error) {
+      error.value = t('dash_metric_save_error') + m.name + '»: ' + friendlyError(w.error)
+      return false
+    }
+    return commitLinkedValue(m, before, mirrorSets(edit.rows))
+  }
+  const editLinkedRow = (m: Metric, index: number, patch: Partial<SetRow>) => mutateLinked(m, (e) => editDayRow(e, index, patch))
+  const removeLinkedRow = (m: Metric, index: number) => mutateLinked(m, (e) => removeDayRow(e, index))
+  const addLinkedRow = (m: Metric) => mutateLinked(m, (e) => addDayRow(e))
 
   function patchMetric(id: string, options: Metric['options']) {
     metrics.value = metrics.value.map((m) => (m.id === id ? { ...m, options } : m))
@@ -130,5 +144,5 @@ export function useSets() {
     patchMetric(m.id, options)
   }
 
-  return { metrics, setsByMetric, error, loaded, flashed, load, saveSets, addLinkedSet, rememberVariation, forgetVariation }
+  return { metrics, setsByMetric, error, loaded, flashed, load, saveSets, editLinkedRow, removeLinkedRow, addLinkedRow, rememberVariation, forgetVariation }
 }

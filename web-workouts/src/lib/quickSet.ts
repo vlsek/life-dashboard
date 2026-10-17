@@ -15,7 +15,7 @@ export function appendCopiedSet(sets: WorkoutSet[], now: string | null): QuickSe
   const rows = toRows(sets)
   if (rows.length === 0) return null // первого подхода ещё нет — его вносят окном записи
   const last = rows[rows.length - 1]
-  const copy: SetRow = { time: now, cells: {} }
+  const copy: SetRow = { time: now, cells: {}, ...(last.variation ? { variation: last.variation } : {}) } // «особенность» (63.2) копируется вместе со значениями
   for (const key of Object.keys(last.cells) as (keyof SetRow['cells'])[]) {
     const cell = last.cells[key]
     if (cell) copy.cells[key] = { ...cell }

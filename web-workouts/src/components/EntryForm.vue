@@ -135,6 +135,7 @@ const unitLabel = () => props.exercise.unit || defaultWeightUnit()
               </template>
             </div>
 
+            <input v-model="row.variation" type="text" maxlength="60" class="modal-input" style="min-width: 0; flex: 1 1 140px" :placeholder="t('workouts_variation_placeholder')" data-testid="set-variation" />
             <div class="flex items-center gap-1.5">
               <input v-model="row.time" type="time" class="modal-input" style="width: 96px" :title="t('sets_time_title')" />
               <button type="button" class="rounded-lg border px-2 py-1" style="border-color: var(--border); color: var(--danger, #e05555)" @click="removeRow(i)">

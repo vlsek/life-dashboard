@@ -5,6 +5,8 @@ export interface WorkoutSet {
   time: string | null
   duration: number | null
   side: 'L' | 'R' | null
+  // «Особенность» подхода (BACKLOG 63.2: хват, темп, вариант …) — как у «Подходов» на Дашборде. Необязательное поле в jsonb: у старых записей его нет, миграций нет.
+  variation?: string | null
 }
 
 export interface Exercise {

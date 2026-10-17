@@ -37,6 +37,14 @@ export function setRowTime(sets: WorkoutSet[], rowIndex: number, time: string): 
   return finish(rows)
 }
 
+// «Особенность» строки: пусто — убрать. Строка без повторов пропадёт в cleanSets, как и при правке других полей.
+export function setRowVariation(sets: WorkoutSet[], rowIndex: number, text: string): WorkoutSet[] | null {
+  const rows = toRows(sets)
+  if (!rows[rowIndex]) return null
+  rows[rowIndex].variation = text.trim() || null
+  return finish(rows)
+}
+
 // Убрать строку; единственную не убирают — запись удаляется своей кнопкой
 export function removeRowAt(sets: WorkoutSet[], rowIndex: number): WorkoutSet[] | null {
   const rows = toRows(sets)
