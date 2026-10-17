@@ -313,7 +313,7 @@ CHAR = {
         rules=[
             (['.card', '.modal', '[style*="var(--bg-card)"]'], 'border-style: var(--border-style);'),
             (['h1', 'h2', 'h3', 'h4'], 'font-family: var(--font-heading);'),
-            (["button:not(.secondary):not(.danger):not(:disabled):not(.gh-secach-head):not([style*='padding: 0px']):not([style*='var(--bg-card)'])"], 'background: transparent; color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent);'),
+            (["button:not(.secondary):not(.danger):not(:disabled):not(.gh-secach-head):not([style*='padding: 0px']):not([style*='var(--bg-card)']):not(.border-dashed)"], 'background: transparent; color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent);'),
         ],
         reduced='  --default-transition-duration: 0s;',
     ),
