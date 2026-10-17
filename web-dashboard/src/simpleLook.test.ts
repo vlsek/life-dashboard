@@ -34,6 +34,7 @@ describe('«Простое оформление»: CSS гасит эффекты
   autumn: ['--bg-pattern: none;', '--shadow-card: none;'], // осенняя: листовые пятна и тёплая тень (BACKLOG 55.3, срез 1)
   sakura: ['--bg-pattern: none;', '--shadow-card: none;'], // сакура: лепестковые пятна и розовая тень (BACKLOG 55.3, срез 2)
   snow: ['--bg-pattern: none;', '--shadow-card: none;'], // ледяная: ледяные блики и холодная тень (BACKLOG 55.3, срез 3)
+  ember: ['--bg-pattern: none;', '--shadow-card: none;'], // огненная: свечение углей и тёплая тень (BACKLOG 55.3, срез 4)
     glass: ['--blur-glass: none;', '--bg-pattern: none;', '--shadow-card: none;', '--glass-alpha: 100%;'], // бизнес-стекло: без размытия, световых пятен, тени и прозрачности
   }
   for (const f of [...pilots.map((d: string) => d + '/src/style.css'), 'style.css']) {

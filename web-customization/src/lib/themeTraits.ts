@@ -18,4 +18,5 @@ export const THEME_TRAITS: Record<string, ThemeTrait[]> = {
   autumn: ['palette', 'corners_soft', 'soft_shadows', 'aurora_bg', 'smooth_anim'],
   sakura: ['palette', 'corners_soft', 'soft_shadows', 'aurora_bg', 'smooth_anim'],
   snow: ['palette', 'soft_shadows', 'aurora_bg', 'smooth_anim'],
+  ember: ['palette', 'corners_soft', 'soft_shadows', 'aurora_bg', 'smooth_anim'],
 }

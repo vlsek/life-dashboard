@@ -130,10 +130,10 @@ describe('большая тема emerald: характер', () => {
   it('при prefers-reduced-motion анимации темы мгновенные (только у Tailwind-страниц)', () => {
     for (const d of pilots) expect(read(d + '/src/style.css')).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-emerald \{\s*--default-transition-duration: 0s;/)
   })
-  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine, matcha, cyberday, vintage, glass, meadow, autumn, sakura, snow) — остальные темы не переопределены', () => {
+  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine, matcha, cyberday, vintage, glass, meadow, autumn, sakura, snow, ember) — остальные темы не переопределены', () => {
     for (const f of files) {
       const region = read(f).match(REGION)![0]
-      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha', 'cyberday', 'vintage', 'glass', 'meadow', 'autumn', 'sakura', 'snow'])
+      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha', 'cyberday', 'vintage', 'glass', 'meadow', 'autumn', 'sakura', 'snow', 'ember'])
     }
   })
 })
@@ -803,5 +803,47 @@ describe('большая тема snow (светлая ледяная, 55.3): х
     expect([get('bg'), get('bg-card'), get('accent')]).toEqual(['#eef6fb', '#ffffff', '#1769aa'])
     const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
     expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).not.toContain('snow')
+  })
+})
+
+describe('большая тема ember (тёмная огненная, 55.3): характер', () => {
+  const block = (css: string): string => {
+    const m = css.match(/\/\* большая тема: ember \*\/\nhtml\.theme-ember \{[^}]*\}/)
+    expect(m, 'нет блока характера').not.toBeNull()
+    return m![0]
+  }
+  for (const d of pilots) {
+    it(d + ': округлые формы, лёгкая тёплая тень, свечение углей, гладкая анимация, отключения', () => {
+      const css = read(d + '/src/style.css')
+      const b = block(css)
+      expect([decl(b, '--radius-md'), decl(b, '--radius-lg'), decl(b, '--radius-xl'), decl(b, '--radius-2xl')]).toEqual(['8px', '10px', '12px', '16px'])
+      expect(decl(b, '--shadow-card')).toBe('0 2px 14px rgba(255, 122, 47, 0.18)')
+      expect(decl(b, '--bg-pattern')).toContain('rgba(255, 90, 20')
+      expect(decl(b, '--bg-pattern-size')).toBe('auto')
+      expect(decl(b, '--default-transition-timing-function')).toBe('cubic-bezier(0.2, 0.7, 0.2, 1)')
+      expect(css).toMatch(/html\[data-simple='on'\]\.theme-ember \{\s*--bg-pattern: none;\s*--shadow-card: none;/)
+      expect(css).toMatch(/@media \(prefers-contrast: more\) \{\s*html\.theme-ember \{\s*--bg-pattern: none;\s*--shadow-card: none;/)
+      expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-ember \{\s*--default-transition-duration: 0s;/)
+    })
+  }
+  it('корень: 10/12/10 и та же тень', () => {
+    const b = block(read('style.css'))
+    expect([decl(b, '--radius-card'), decl(b, '--radius-modal'), decl(b, '--radius-control')]).toEqual(['10px', '12px', '10px'])
+    expect(decl(b, '--shadow-card')).toBe('0 2px 14px rgba(255, 122, 47, 0.18)')
+  })
+  it('два правила только под html.theme-ember: пятна на body и тень карточек', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      const lines = region.split('\n').filter((l) => l.startsWith('html.theme-ember ') && l.includes('{ '))
+      expect(lines.length, f).toBe(2)
+      for (const l of lines) for (const sel of l.split('{')[0].split(',')) expect(sel.trim(), f).toMatch(/^html\.theme-ember /)
+    }
+  })
+  it('тёмная тёплая палитра: угольно-коричневый фон, тёмные карточки, оранжевый акцент; текст на акценте тёмный, галочка тёмная (в списке тёмных галочек)', () => {
+    const css = read('web-dashboard/src/style.css')
+    const get = (name: string) => css.match(new RegExp('html\\.theme-ember \\{[^}]*--' + name + ':\\s*(#[0-9a-fA-F]{6})'))![1].toLowerCase()
+    expect([get('bg'), get('bg-card'), get('accent')]).toEqual(['#1c0f0a', '#2a1710', '#ff7a2f'])
+    const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
+    expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).toContain('ember')
   })
 })

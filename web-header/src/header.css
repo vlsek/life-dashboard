@@ -80,6 +80,7 @@ html.theme-meadow .gh-root { --water-top: #3f95e0; --water-bottom: #1560b8; --wa
 html.theme-autumn .gh-root { --water-top: #3f95e0; --water-bottom: #1560b8; --water-line: #1560b8; }
 html.theme-sakura .gh-root { --water-top: #3f95e0; --water-bottom: #1560b8; --water-line: #1560b8; }
 html.theme-snow .gh-root { --water-top: #3f95e0; --water-bottom: #1560b8; --water-line: #1560b8; }
+html.theme-ember .gh-root { --water-top: #63b3f5; --water-bottom: #2f86dc; --water-line: #4aa3ee; }
 html.theme-nord .gh-root,
 html.theme-mocha .gh-root,
 html.theme-amoled .gh-root,
@@ -97,7 +98,8 @@ html.theme-moonlight .gh-root,
 html.theme-phosphor .gh-root,
 html.theme-nightfall .gh-root,
 html.theme-velvet .gh-root,
-html.theme-frost .gh-root {
+html.theme-frost .gh-root,
+html.theme-ember .gh-root {
   --water-gold: #f0b429;
 }
 html.theme-mint .gh-root,
@@ -564,7 +566,8 @@ html.theme-emerald input[type='checkbox']:checked,
 html.theme-phosphor input[type='checkbox']:checked,
 html.theme-nightfall input[type='checkbox']:checked,
 html.theme-velvet input[type='checkbox']:checked,
-html.theme-frost input[type='checkbox']:checked {
+html.theme-frost input[type='checkbox']:checked,
+html.theme-ember input[type='checkbox']:checked {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.4l2.6 2.6L10 3.4' fill='none' stroke='%231c1108' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 input[type='checkbox']:focus-visible {

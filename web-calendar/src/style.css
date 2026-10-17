@@ -992,6 +992,32 @@ html.theme-snow {
   --chart-none: #6b7280;
   --chart-other: #9095a0;
 }
+
+html.theme-ember {
+  --bg: #1c0f0a;
+  --bg-card: #2a1710;
+  --border: #5a2f1e;
+  --text: #ffe9d6;
+  --text-dim: #d4a98a;
+  --accent: #ff7a2f;
+  --accent-text: #1c0f0a;
+  --success: #8fd16a;
+  --danger: #ff6b6b;
+  --hist-ok: #ffb347;
+  --water-top: #63b3f5;
+  --water-bottom: #2f86dc;
+  --water-line: #4aa3ee;
+  --chart-1: #ff7a2f;
+  --chart-2: #5c97eb;
+  --chart-3: #49e999;
+  --chart-4: #af5ceb;
+  --chart-5: #72e3ee;
+  --chart-6: #eb5caf;
+  --chart-7: #685ceb;
+  --chart-8: #efef80;
+  --chart-none: #9aa0a6;
+  --chart-other: #666a6f;
+}
 /* themes:end */
 
 /* design-tokens:start (генерируется scripts/apply_themes.py — не править руками; BACKLOG 50.1а) */
@@ -1425,6 +1451,36 @@ html[data-simple='on'].theme-snow {
     --default-transition-duration: 0s;
   }
 }
+
+/* большая тема: ember */
+html.theme-ember {
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --shadow-card: 0 2px 14px rgba(255, 122, 47, 0.18);
+  --bg-pattern: radial-gradient(circle at 50% 118%, rgba(255, 90, 20, 0.30), transparent 55%), radial-gradient(circle at 100% 0%, rgba(255, 150, 60, 0.14), transparent 40%);
+  --bg-pattern-size: auto;
+  --default-transition-duration: 0.18s;
+  --default-transition-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+html.theme-ember body { background-image: var(--bg-pattern); background-size: var(--bg-pattern-size); }
+html.theme-ember .card, html.theme-ember .modal, html.theme-ember [style*="var(--bg-card)"] { box-shadow: var(--shadow-card); }
+html[data-simple='on'].theme-ember {
+  --bg-pattern: none;
+  --shadow-card: none;
+}
+@media (prefers-contrast: more) {
+  html.theme-ember {
+    --bg-pattern: none;
+    --shadow-card: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-ember {
+    --default-transition-duration: 0s;
+  }
+}
 /* design-tokens:end */
 /* themes-scheme */
 html.theme-nord,
@@ -1444,7 +1500,8 @@ html.theme-moonlight,
 html.theme-phosphor,
 html.theme-nightfall,
 html.theme-velvet,
-html.theme-frost { color-scheme: dark; }
+html.theme-frost,
+html.theme-ember { color-scheme: dark; }
 html.theme-mint,
 html.theme-sepia,
 html.theme-solarlight,
@@ -1736,7 +1793,8 @@ html.theme-emerald input[type='checkbox']:checked,
 html.theme-phosphor input[type='checkbox']:checked,
 html.theme-nightfall input[type='checkbox']:checked,
 html.theme-velvet input[type='checkbox']:checked,
-html.theme-frost input[type='checkbox']:checked {
+html.theme-frost input[type='checkbox']:checked,
+html.theme-ember input[type='checkbox']:checked {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.4l2.6 2.6L10 3.4' fill='none' stroke='%231c1108' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 input[type='checkbox']:focus-visible {

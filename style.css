@@ -942,6 +942,32 @@ html.theme-snow {
   --chart-none: #6b7280;
   --chart-other: #9095a0;
 }
+
+html.theme-ember {
+  --bg: #1c0f0a;
+  --bg-card: #2a1710;
+  --border: #5a2f1e;
+  --text: #ffe9d6;
+  --text-dim: #d4a98a;
+  --accent: #ff7a2f;
+  --accent-text: #1c0f0a;
+  --success: #8fd16a;
+  --danger: #ff6b6b;
+  --hist-ok: #ffb347;
+  --water-top: #63b3f5;
+  --water-bottom: #2f86dc;
+  --water-line: #4aa3ee;
+  --chart-1: #ff7a2f;
+  --chart-2: #5c97eb;
+  --chart-3: #49e999;
+  --chart-4: #af5ceb;
+  --chart-5: #72e3ee;
+  --chart-6: #eb5caf;
+  --chart-7: #685ceb;
+  --chart-8: #efef80;
+  --chart-none: #9aa0a6;
+  --chart-other: #666a6f;
+}
 html.theme-nord,
 html.theme-mocha,
 html.theme-amoled,
@@ -959,7 +985,8 @@ html.theme-moonlight,
 html.theme-phosphor,
 html.theme-nightfall,
 html.theme-velvet,
-html.theme-frost { color-scheme: dark; }
+html.theme-frost,
+html.theme-ember { color-scheme: dark; }
 html.theme-mint,
 html.theme-sepia,
 html.theme-solarlight,
@@ -1285,6 +1312,28 @@ html[data-simple='on'].theme-snow {
 }
 @media (prefers-contrast: more) {
   html.theme-snow {
+    --bg-pattern: none;
+    --shadow-card: none;
+  }
+}
+
+/* большая тема: ember */
+html.theme-ember {
+  --radius-card: 10px;
+  --radius-modal: 12px;
+  --radius-control: 10px;
+  --shadow-card: 0 2px 14px rgba(255, 122, 47, 0.18);
+  --bg-pattern: radial-gradient(circle at 50% 118%, rgba(255, 90, 20, 0.30), transparent 55%), radial-gradient(circle at 100% 0%, rgba(255, 150, 60, 0.14), transparent 40%);
+  --bg-pattern-size: auto;
+}
+html.theme-ember body { background-image: var(--bg-pattern); background-size: var(--bg-pattern-size); }
+html.theme-ember .card, html.theme-ember .modal, html.theme-ember [style*="var(--bg-card)"] { box-shadow: var(--shadow-card); }
+html[data-simple='on'].theme-ember {
+  --bg-pattern: none;
+  --shadow-card: none;
+}
+@media (prefers-contrast: more) {
+  html.theme-ember {
     --bg-pattern: none;
     --shadow-card: none;
   }
