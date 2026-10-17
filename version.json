@@ -1,6 +1,13 @@
 {
-  "version": "6.00",
+  "version": "6.01",
   "en": [
+    {
+      "version": "6.01",
+      "date": "2026-10-17 21:55",
+      "changes": [
+        "Dashboard: when creating a daily metric, “Sets” (reps + variation) is now selected by default and listed first, with “Number” second. The “Number” label no longer uses push-ups as an example (now water, steps), and a hint under the type selector explains the difference. Onboarding also creates “Push-ups” as sets. Existing metrics are unchanged. No migrations."
+      ]
+    },
     {
       "version": "6.00",
       "date": "2026-10-17 21:50",
@@ -4269,6 +4276,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.01",
+      "date": "2026-10-17 21:55",
+      "changes": [
+        "Дашборд: при создании ежедневной метрики по умолчанию выбирается тип «Подходы» (повторения + особенность) и он стоит первым в списке, «Число» — вторым. У «Числа» убран пример «отжимания» (теперь — вода, шаги), под выбором типа появилась подсказка, чем типы отличаются. В онбординге «Отжимания» тоже создаются подходами. Уже заведённые метрики не меняются. Без миграций."
+      ]
+    },
     {
       "version": "6.00",
       "date": "2026-10-17 21:50",

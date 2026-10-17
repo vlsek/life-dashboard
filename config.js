@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.00";
+const SITE_VERSION = "6.01";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.01", date: "2026-10-17 21:55", changes: [
+        "Дашборд: при создании ежедневной метрики по умолчанию выбирается тип «Подходы» (повторения + особенность) и он стоит первым в списке, «Число» — вторым. У «Числа» убран пример «отжимания» (теперь — вода, шаги), под выбором типа появилась подсказка, чем типы отличаются. В онбординге «Отжимания» тоже создаются подходами. Уже заведённые метрики не меняются. Без миграций."
+    ]},
     { version: "6.00", date: "2026-10-17 21:50", changes: [
         "«Кастомизация», анимация воды: две новые — «Наклон» за 100 баллов (стакан наклоняется, как при глотке, и возвращается) и «Вспышка» за 150 баллов (стакан дважды вспыхивает светом). Играют в шапке и на Дашборде.",
     ]},
@@ -2412,6 +2415,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.01", date: "2026-10-17 21:55", changes: [
+        "Dashboard: when creating a daily metric, “Sets” (reps + variation) is now selected by default and listed first, with “Number” second. The “Number” label no longer uses push-ups as an example (now water, steps), and a hint under the type selector explains the difference. Onboarding also creates “Push-ups” as sets. Existing metrics are unchanged. No migrations."
+    ]},
     { version: "6.00", date: "2026-10-17 21:50", changes: [
         "Customization, water animation: two new ones — “Tilt” for 100 points (the glass tips over like a sip and swings back) and “Flash” for 150 points (the glass flashes with light twice). Play in the header and on the Dashboard.",
     ]},
