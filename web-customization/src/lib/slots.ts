@@ -1,4 +1,9 @@
+import { BODY_MODELS } from './bodyModel'
+import { CHART_MARKERS } from './chartMarker'
 import type { Category } from './customization'
+import { SPLASH_VARIANTS } from './splashVariant'
+import { STREAK_FLAME_VARIANTS } from './streakFlameVariant'
+import { WATER_ANIMS } from './waterAnim'
 
 // Слоты «Кастомизации» (BACKLOG 64.1, срез 1; docs/CUSTOMIZATION_REDESIGN.md): СЛОТ — место, где человек видит вещь (тема, рамка аватара, шкала дня …).
 // Это единый реестр: из него выводятся группы вкладок (`pageTabs.ts`), число «бесплатных» вариантов у раздела и заголовки. Новый предмет каталога
@@ -10,7 +15,7 @@ export type GroupId = 'look' | 'home' | 'water' | 'charts' | 'loading' | 'other'
 export type SlotKind =
   | 'themes' // большие темы (отдельный список `theme.ts`, награды и покупки по редкости)
   | 'catalog' // предметы каталога `customization.ts` одной категории (покупка за баллы или награда за достижение)
-  | 'free' // варианты без цены (пикер раздела); `total` — сколько их
+  | 'free' // варианты без цены (пикер раздела); `variants` — их реестр, число считается от него
 
 export interface Slot {
   /** id раздела: `id` секции на странице, `data-section` у «Сейчас выбрано», ключ вкладки */
@@ -21,8 +26,8 @@ export interface Slot {
   titleKey: SlotTitleKey
   /** категория каталога (только kind: 'catalog') */
   category?: Category
-  /** число вариантов (только kind: 'free') — раньше было вписано в шаблон страницы */
-  total?: number
+  /** реестр вариантов пикера (только kind: 'free'): сколько их — столько и в счётчике «n/m»; пункт «по теме/авто» не считается. Раньше число было вписано в шаблон и устаревало (огонёк серии: 2 вместо 5, заставка: 4 вместо 7) */
+  variants?: readonly string[]
 }
 
 export type SlotTitleKey =
@@ -43,16 +48,16 @@ export type SlotTitleKey =
 export const SLOTS: readonly Slot[] = [
   { id: 'themes', kind: 'themes', group: 'look', titleKey: 'cust_sec_themes' },
   { id: 'avatar_frame', kind: 'catalog', group: 'look', titleKey: 'cust_cat_avatar_frame', category: 'avatar_frame' },
-  { id: 'bodymodel', kind: 'free', group: 'look', titleKey: 'cust_sec_bodymodel', total: 5 },
+  { id: 'bodymodel', kind: 'free', group: 'look', titleKey: 'cust_sec_bodymodel', variants: BODY_MODELS },
   { id: 'collapse_style', kind: 'catalog', group: 'home', titleKey: 'cust_cat_collapse_style', category: 'collapse_style' },
   { id: 'week_gauge', kind: 'catalog', group: 'home', titleKey: 'cust_cat_week_gauge', category: 'week_gauge' },
   { id: 'day_gauge', kind: 'catalog', group: 'home', titleKey: 'cust_cat_day_gauge', category: 'day_gauge' },
-  { id: 'streakflame', kind: 'free', group: 'home', titleKey: 'cust_sec_streakflame', total: 2 },
-  { id: 'wateranim', kind: 'free', group: 'water', titleKey: 'cust_sec_wateranim', total: 7 },
+  { id: 'streakflame', kind: 'free', group: 'home', titleKey: 'cust_sec_streakflame', variants: STREAK_FLAME_VARIANTS },
+  { id: 'wateranim', kind: 'free', group: 'water', titleKey: 'cust_sec_wateranim', variants: WATER_ANIMS },
   { id: 'water_anim', kind: 'catalog', group: 'water', titleKey: 'cust_cat_water_anim', category: 'water_anim' },
   { id: 'water_glass', kind: 'catalog', group: 'water', titleKey: 'cust_cat_water_glass', category: 'water_glass' },
-  { id: 'chart-markers', kind: 'free', group: 'charts', titleKey: 'cust_sec_markers', total: 4 },
-  { id: 'splash', kind: 'free', group: 'loading', titleKey: 'cust_sec_splash', total: 4 },
+  { id: 'chart-markers', kind: 'free', group: 'charts', titleKey: 'cust_sec_markers', variants: CHART_MARKERS },
+  { id: 'splash', kind: 'free', group: 'loading', titleKey: 'cust_sec_splash', variants: SPLASH_VARIANTS },
 ]
 
 const BY_ID: ReadonlyMap<string, Slot> = new Map(SLOTS.map((s) => [s.id, s]))
@@ -60,5 +65,5 @@ export const slotOf = (id: string): Slot | undefined => BY_ID.get(id)
 // Сколько вариантов у «бесплатного» слота (все открыты); у остальных 0
 export const freeTotal = (id: string): number => {
   const s = BY_ID.get(id)
-  return s && s.kind === 'free' ? s.total ?? 0 : 0
+  return s && s.kind === 'free' ? s.variants?.length ?? 0 : 0
 }

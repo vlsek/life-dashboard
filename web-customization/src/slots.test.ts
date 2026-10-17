@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import appSource from './App.vue?raw'
+import { BODY_MODELS } from './lib/bodyModel'
+import { CHART_MARKERS } from './lib/chartMarker'
 import { CATEGORY_ORDER, ITEMS } from './lib/customization'
+import { SPLASH_VARIANTS } from './lib/splashVariant'
+import { STREAK_FLAME_VARIANTS } from './lib/streakFlameVariant'
+import { WATER_ANIMS } from './lib/waterAnim'
 import { t } from './lib/i18n'
 import { GROUP_ORDER, SECTION_GROUP, groupOfSection } from './lib/pageTabs'
 import { SLOTS, freeTotal, slotOf } from './lib/slots'
@@ -14,9 +19,9 @@ describe('реестр слотов', () => {
     expect(new Set(SLOTS.map((s) => s.id)).size).toBe(SLOTS.length)
     for (const s of SLOTS) {
       expect(GROUP_ORDER, s.id).toContain(s.group)
-      if (s.kind === 'free') expect(s.total, s.id).toBeGreaterThan(0)
+      if (s.kind === 'free') expect(s.variants?.length, s.id).toBeGreaterThan(0)
       if (s.kind === 'catalog') expect(s.category, s.id).toBeTruthy()
-      if (s.kind !== 'free') expect(s.total, s.id).toBeUndefined()
+      if (s.kind !== 'free') expect(s.variants, s.id).toBeUndefined()
       if (s.kind !== 'catalog') expect(s.category, s.id).toBeUndefined()
     }
   })
@@ -55,10 +60,17 @@ describe('производные таблицы совпадают с реест
     expect(Object.keys(SECTION_GROUP).sort()).toEqual(SLOTS.map((s) => s.id).sort())
     expect(groupOfSection('brand_new')).toBe('other')
   })
-  it('FREE_SECTIONS и freeTotal — из реестра: те же числа, что до переноса (4, 4, 2, 7, 5)', () => {
-    expect(FREE_SECTIONS).toEqual({ 'chart-markers': 4, splash: 4, streakflame: 2, wateranim: 7, bodymodel: 5 })
-    expect(FREE_SECTIONS_TOTAL).toBe(22)
-    expect(freeTotal('splash')).toBe(4)
+  it('число вариантов считается от настоящих реестров пикеров, а не вписано числом (новый вариант сразу попадает в счётчик)', () => {
+    expect(FREE_SECTIONS).toEqual({
+      'chart-markers': CHART_MARKERS.length,
+      splash: SPLASH_VARIANTS.length,
+      streakflame: STREAK_FLAME_VARIANTS.length,
+      wateranim: WATER_ANIMS.length,
+      bodymodel: BODY_MODELS.length,
+    })
+    expect(FREE_SECTIONS_TOTAL).toBe(CHART_MARKERS.length + SPLASH_VARIANTS.length + STREAK_FLAME_VARIANTS.length + WATER_ANIMS.length + BODY_MODELS.length)
+    expect(freeTotal('splash')).toBe(SPLASH_VARIANTS.length)
+    expect(freeTotal('streakflame')).toBeGreaterThanOrEqual(5) // v5.83: пять видов, а в шаблоне было 2
     expect(freeTotal('themes')).toBe(0)
     expect(freeTotal('нет такого')).toBe(0)
   })
