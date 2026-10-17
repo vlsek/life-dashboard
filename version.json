@@ -1,6 +1,13 @@
 {
-  "version": "5.93",
+  "version": "5.94",
   "en": [
+    {
+      "version": "5.94",
+      "date": "2026-10-17 11:55",
+      "changes": [
+        "Customization → “Chart line style”: two new free styles — “Steps” (the value holds until the next measurement, straight corners only — honest for weight and habits) and “Neon glow” (a smooth line with a soft glow); there are now five. Charts pick up the choice the next time the page opens."
+      ]
+    },
     {
       "version": "5.93",
       "date": "2026-10-17 14:43",
@@ -4220,6 +4227,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.94",
+      "date": "2026-10-17 11:55",
+      "changes": [
+        "«Кастомизация» → «Стиль линии графика»: два новых бесплатных стиля — «Ступени» (значение держится до следующего замера, только прямые углы — честно для веса и привычек) и «Неон» (плавная линия с мягким свечением); теперь стилей пять. Графики подхватят выбор при следующем открытии страницы."
+      ]
+    },
     {
       "version": "5.93",
       "date": "2026-10-17 14:43",

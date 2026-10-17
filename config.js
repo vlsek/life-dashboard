@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.93";
+const SITE_VERSION = "5.94";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.94", date: "2026-10-17 11:55", changes: [
+        "«Кастомизация» → «Стиль линии графика»: два новых бесплатных стиля — «Ступени» (значение держится до следующего замера, только прямые углы — честно для веса и привычек) и «Неон» (плавная линия с мягким свечением); теперь стилей пять. Графики подхватят выбор при следующем открытии страницы.",
+    ]},
     { version: "5.93", date: "2026-10-17 14:43", changes: [
         "Новая тема «Травяная» (🌱 Fresh Grass): светлая свежая жёлто-зелёная — салатовый фон, сочный зелёный акцент, зелёные тени и «травяное» свечение у нижнего края и светло-жёлтый блик в углу фона. Открыта сразу, выбирается в «Настройках» и в «Кастомизации → Темы». «Простое оформление» и высокий контраст убирают свечение и тень. Без миграций."
     ]},
@@ -2391,6 +2394,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.94", date: "2026-10-17 11:55", changes: [
+        "Customization → “Chart line style”: two new free styles — “Steps” (the value holds until the next measurement, straight corners only — honest for weight and habits) and “Neon glow” (a smooth line with a soft glow); there are now five. Charts pick up the choice the next time the page opens.",
+    ]},
     { version: "5.93", date: "2026-10-17 14:43", changes: [
         "New theme “Fresh Grass” (🌱): a light, fresh yellow-green look — lime background, vivid green accent, green shadows and a “grassy” glow along the bottom edge with a pale-yellow glint in a corner. Available right away; pick it in Settings or Customization → Themes. “Simple look” and high contrast remove the glow and shadow. No migrations."
     ]},
