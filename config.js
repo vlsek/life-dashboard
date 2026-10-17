@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.89";
+const SITE_VERSION = "5.90";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.90", date: "2026-10-17 15:00", changes: [
+        "«Кастомизация», спидометр дня: два новых вида кольца — «Нить» за 100 баллов (тонкое, как нитка, ненавязчивое кольцо) и «Закат» за 150 баллов (кольцо с градиентом заката: оранжевый, розовый, фиолетовый). Показываются в шапке и на Дашборде.",
+    ]},
     { version: "5.89", date: "2026-10-14 16:10", changes: [
         "«Тренировки», вкладка «Упражнения»: в строке подхода поле «Особенность» больше не обрезается на телефоне — оно теперь на своей строке под подходом, подсказка «Особенность (необязательно)» читается целиком. Без миграций.",
     ]},
@@ -2379,6 +2382,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.90", date: "2026-10-17 15:00", changes: [
+        "Customization, daily gauge: two new ring styles — “Thread” for 100 points (a hair-thin, unobtrusive ring) and “Sunset” for 150 points (a ring with a sunset gradient: orange, pink, violet). Shown in the header and on the Dashboard.",
+    ]},
     { version: "5.89", date: "2026-10-14 16:10", changes: [
         "Workouts, Exercises tab: the \"Variation\" field in a set row is no longer clipped on phones — it now sits on its own line under the set, so the \"Variation (optional)\" hint reads in full. No migrations.",
     ]},

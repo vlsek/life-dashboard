@@ -1,6 +1,13 @@
 {
-  "version": "5.89",
+  "version": "5.90",
   "en": [
+    {
+      "version": "5.90",
+      "date": "2026-10-17 15:00",
+      "changes": [
+        "Customization, daily gauge: two new ring styles — “Thread” for 100 points (a hair-thin, unobtrusive ring) and “Sunset” for 150 points (a ring with a sunset gradient: orange, pink, violet). Shown in the header and on the Dashboard."
+      ]
+    },
     {
       "version": "5.89",
       "date": "2026-10-14 16:10",
@@ -4192,6 +4199,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.90",
+      "date": "2026-10-17 15:00",
+      "changes": [
+        "«Кастомизация», спидометр дня: два новых вида кольца — «Нить» за 100 баллов (тонкое, как нитка, ненавязчивое кольцо) и «Закат» за 150 баллов (кольцо с градиентом заката: оранжевый, розовый, фиолетовый). Показываются в шапке и на Дашборде."
+      ]
+    },
     {
       "version": "5.89",
       "date": "2026-10-14 16:10",
