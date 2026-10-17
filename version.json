@@ -1,6 +1,13 @@
 {
-  "version": "5.79",
+  "version": "5.80",
   "en": [
+    {
+      "version": "5.80",
+      "date": "2026-10-17 08:11",
+      "changes": [
+        "New theme “Cherry Blossom” (🌸): a light, delicate pink — milky pink background, raspberry accent, the softest rounded corners, pink shadows and “petal” glows in the background corners. Available right away; pick it in Settings or Customization → Themes. “Simple look” and high contrast remove the glows and shadow. No migrations."
+      ]
+    },
     {
       "version": "5.79",
       "date": "2026-10-14 12:40",
@@ -4121,6 +4128,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.80",
+      "date": "2026-10-17 08:11",
+      "changes": [
+        "Новая тема «Сакура» (🌸 Cherry Blossom): светлая нежно-розовая — молочно-розовый фон, малиновый акцент, самые мягкие скругления, розовые тени и «лепестковые» пятна в углах фона. Открыта сразу, выбирается в «Настройках» и в «Кастомизации → Темы». «Простое оформление» и высокий контраст убирают пятна и тень. Без миграций."
+      ]
+    },
     {
       "version": "5.79",
       "date": "2026-10-14 12:40",

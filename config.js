@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.79";
+const SITE_VERSION = "5.80";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.80", date: "2026-10-17 08:11", changes: [
+        "Новая тема «Сакура» (🌸 Cherry Blossom): светлая нежно-розовая — молочно-розовый фон, малиновый акцент, самые мягкие скругления, розовые тени и «лепестковые» пятна в углах фона. Открыта сразу, выбирается в «Настройках» и в «Кастомизации → Темы». «Простое оформление» и высокий контраст убирают пятна и тень. Без миграций."
+    ]},
     { version: "5.79", date: "2026-10-14 12:40", changes: [
         "Новая метрика-упражнение: под полем «Название» появилась кнопка «Подобрать название по схеме тела» — та же схема, что в «Тренировках» (зелёные мышцы — работали за последние 4 дня, выбор мышцы и упражнения подставляет название в поле). Код подбора вынесен в общий модуль, Тренировки работают как раньше. Без миграций.",
     ]},
@@ -2348,6 +2351,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.80", date: "2026-10-17 08:11", changes: [
+        "New theme “Cherry Blossom” (🌸): a light, delicate pink — milky pink background, raspberry accent, the softest rounded corners, pink shadows and “petal” glows in the background corners. Available right away; pick it in Settings or Customization → Themes. “Simple look” and high contrast remove the glows and shadow. No migrations."
+    ]},
     { version: "5.79", date: "2026-10-14 12:40", changes: [
         "New exercise metric: a \"Pick a name by body diagram\" button now appears under the Name field — the same diagram as in Workouts (green muscles were worked in the last 4 days; picking a muscle and an exercise fills in the name). The picker code moved to a shared module; Workouts behave as before. No migrations.",
     ]},
