@@ -25,6 +25,18 @@ describe('CollapseChevron: вид маркера', () => {
     expect(mount(CollapseChevron, { props: { collapsed: true } }).find('circle').attributes('fill')).toBe('none')
     collapseStyle.value = 'chevron'
   })
+  it('квадрат: закрашен у раскрытого, контур у свёрнутого', () => {
+    collapseStyle.value = 'square'
+    expect(mount(CollapseChevron, { props: { collapsed: false } }).find('rect').attributes('fill')).toBe('currentColor')
+    expect(mount(CollapseChevron, { props: { collapsed: true } }).find('rect').attributes('fill')).toBe('none')
+    collapseStyle.value = 'chevron'
+  })
+  it('гамбургер: две полоски у раскрытого, три у свёрнутого', () => {
+    collapseStyle.value = 'burger'
+    expect(mount(CollapseChevron, { props: { collapsed: false } }).findAll('path')).toHaveLength(2)
+    expect(mount(CollapseChevron, { props: { collapsed: true } }).findAll('path')).toHaveLength(3)
+    collapseStyle.value = 'chevron'
+  })
   it('двойная стрелка: два штриха', () => {
     collapseStyle.value = 'double'
     expect(mount(CollapseChevron, { props: { collapsed: false } }).findAll('path')).toHaveLength(2)

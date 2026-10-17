@@ -97,3 +97,29 @@ describe('вид сворачивания: «Точка» и «Двойная с
     writeCachedCollapseStyle('chevron')
   })
 })
+
+describe('вид сворачивания: «Квадрат» и «Гамбургер»', () => {
+  it('цены 100 и 150, редкость, названия и описания на двух языках', () => {
+    expect(priceOf(itemByKey('collapse_square')!)).toBe(100)
+    expect(priceOf(itemByKey('collapse_burger')!)).toBe(150)
+    expect(rarityOfItem('collapse_square')).toBe('common')
+    expect(rarityOfItem('collapse_burger')).toBe('uncommon')
+    for (const key of ['collapse_square', 'collapse_burger']) {
+      expect(itemByKey(key)).toMatchObject({ category: 'collapse_style', source: 'points' })
+      for (const lang of ['ru', 'en']) {
+        localStorage.setItem('site_lang', lang)
+        expect(t(('cust_item_' + key) as never).length).toBeGreaterThan(2)
+        expect(t(('cust_item_' + key + '_desc') as never).length).toBeGreaterThan(10)
+      }
+    }
+  })
+  it('ключ предмета → вид маркера; кэш помнит оба', () => {
+    expect(parseCollapseStyle('collapse_square')).toBe('square')
+    expect(parseCollapseStyle('collapse_burger')).toBe('burger')
+    for (const s of ['square', 'burger'] as const) {
+      writeCachedCollapseStyle(s)
+      expect(readCachedCollapseStyle()).toBe(s)
+    }
+    writeCachedCollapseStyle('chevron')
+  })
+})

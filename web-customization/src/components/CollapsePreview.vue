@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Мини-картинка «как это выглядит» для предметов «Вид сворачивания блоков» (карточка в «Кастомизации»): три блока, один раскрыт.
 // Аккордеон — раскрыт только один, остальные свёрнуты; сводка — у свёрнутых справа короткая строка итога.
-defineProps<{ variant: 'accordion' | 'summary' | 'plus' | 'caret' | 'dot' | 'double' }>()
+defineProps<{ variant: 'accordion' | 'summary' | 'plus' | 'caret' | 'dot' | 'double' | 'square' | 'burger' }>()
 </script>
 
 <template>
@@ -12,18 +12,24 @@ defineProps<{ variant: 'accordion' | 'summary' | 'plus' | 'caret' | 'dot' | 'dou
     <path v-else-if="variant === 'caret'" d="M66 8h8l-4 5z" fill="currentColor" style="stroke: var(--accent); fill: var(--accent)" />
     <circle v-else-if="variant === 'dot'" cx="70" cy="10" r="3.5" fill="currentColor" style="stroke: var(--accent); fill: var(--accent)" />
     <path v-else-if="variant === 'double'" d="M66 5l4 4 4-4M66 10l4 4 4-4" style="stroke: var(--accent)" />
+    <rect v-else-if="variant === 'square'" x="66" y="6.5" width="8" height="8" rx="2" fill="currentColor" style="stroke: var(--accent); fill: var(--accent)" />
+    <path v-else-if="variant === 'burger'" d="M66 8h8M66 13h8" style="stroke: var(--accent)" />
     <path v-else d="M66 8l4 4 4-4" style="stroke: var(--accent)" />
     <rect x="2" y="33" width="76" height="9" rx="4.5" opacity="0.7" />
     <path v-if="variant === 'plus'" d="M67 37.5h6M70 34.5v6" opacity="0.7" />
     <path v-else-if="variant === 'caret'" d="M67 35h6l-3 4z" fill="currentColor" opacity="0.7" />
     <circle v-else-if="variant === 'dot'" cx="70" cy="37.5" r="3" opacity="0.7" />
     <path v-else-if="variant === 'double'" d="M66 33l4 3 4-3M66 37l4 3 4-3" opacity="0.7" />
+    <rect v-else-if="variant === 'square'" x="67" y="34.5" width="6" height="6" rx="1.5" opacity="0.7" />
+    <path v-else-if="variant === 'burger'" d="M67 35h6M67 37.5h6M67 40h6" opacity="0.7" />
     <path v-else d="M66 37.5l4 3 4-3" opacity="0.7" />
     <rect x="2" y="46" width="76" height="9" rx="4.5" opacity="0.7" />
     <path v-if="variant === 'plus'" d="M67 50.5h6M70 47.5v6" opacity="0.7" />
     <path v-else-if="variant === 'caret'" d="M67 48h6l-3 4z" fill="currentColor" opacity="0.7" />
     <circle v-else-if="variant === 'dot'" cx="70" cy="50.5" r="3" opacity="0.7" />
     <path v-else-if="variant === 'double'" d="M66 46l4 3 4-3M66 50l4 3 4-3" opacity="0.7" />
+    <rect v-else-if="variant === 'square'" x="67" y="47.5" width="6" height="6" rx="1.5" opacity="0.7" />
+    <path v-else-if="variant === 'burger'" d="M67 48h6M67 50.5h6M67 53h6" opacity="0.7" />
     <path v-else d="M66 50.5l4 3 4-3" opacity="0.7" />
     <path v-if="variant === 'summary'" d="M42 37.5h16M42 50.5h12" opacity="0.7" />
   </svg>
