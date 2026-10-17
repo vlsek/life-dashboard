@@ -10,18 +10,27 @@ describe('вид стакана воды (57.2б)', () => {
   it('предметы: кружка 100, бутылка 150, колба 150, бокал 250; категория в порядке', () => {
     expect(CATEGORY_ORDER).toContain('water_glass')
     expect(['glass_mug', 'glass_bottle', 'glass_flask', 'glass_goblet'].map((k) => priceOf(itemByKey(k)!))).toEqual([100, 150, 150, 250])
-    expect(ITEMS.filter((i) => i.category === 'water_glass')).toHaveLength(6)
+    expect(ITEMS.filter((i) => i.category === 'water_glass')).toHaveLength(8)
     expect(rarityOfItem('glass_goblet')).toBe('rare')
+    expect(['glass_beaker', 'glass_pitcher'].map((k) => priceOf(itemByKey(k)!))).toEqual([150, 250])
+    expect(rarityOfItem('glass_beaker')).toBe('uncommon')
+    expect(rarityOfItem('glass_pitcher')).toBe('rare')
   })
   it('разбор: неизвестное и пустое → обычный стакан', () => {
     expect(parseWaterGlass('glass_bottle')).toBe('bottle')
     expect(parseWaterGlass('nope')).toBe('glass')
     expect(parseWaterGlass(undefined)).toBe('glass')
-    expect(Object.keys(BY_ITEM)).toHaveLength(6)
+    expect(parseWaterGlass('glass_beaker')).toBe('beaker')
+    expect(parseWaterGlass('glass_pitcher')).toBe('pitcher')
+    expect(Object.keys(BY_ITEM)).toHaveLength(8)
   })
   it('кэш: запись и чтение; обычный стакан кэш очищает', () => {
     writeCachedWaterGlass('flask')
     expect(readCachedWaterGlass()).toBe('flask')
+    for (const k of ['beaker', 'pitcher'] as const) {
+      writeCachedWaterGlass(k)
+      expect(readCachedWaterGlass()).toBe(k)
+    }
     writeCachedWaterGlass('glass')
     expect(localStorage.getItem(WATER_GLASS_CACHE_KEY)).toBeNull()
     expect(readCachedWaterGlass()).toBe('glass')

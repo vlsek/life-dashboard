@@ -3,11 +3,11 @@
 // Выбор лежит в profiles.customization.water_glass (ключ предмета); страницы применяют его БЕЗ ожидания сети — через кэш в localStorage
 // (как вид спидометра): кэш пишет «Кастомизация» при выборе, шапка и Дашборд сверяются с профилем в фоне. Чистая логика (без Vue/сети).
 // Пилоты изолированы, поэтому файл ЕСТЬ в web-customization, web-header и web-dashboard (менять ВМЕСТЕ — страж в collapseStyleCopies.test.ts).
-export type WaterGlassStyle = 'glass' | 'mug' | 'bottle' | 'flask' | 'goblet' | 'tumbler' | 'jar'
+export type WaterGlassStyle = 'glass' | 'mug' | 'bottle' | 'flask' | 'goblet' | 'tumbler' | 'jar' | 'beaker' | 'pitcher'
 
 export const WATER_GLASS_CACHE_KEY = 'site_water_glass'
 
-export const BY_ITEM: Record<string, WaterGlassStyle> = { glass_mug: 'mug', glass_bottle: 'bottle', glass_flask: 'flask', glass_goblet: 'goblet', glass_tumbler: 'tumbler', glass_jar: 'jar' }
+export const BY_ITEM: Record<string, WaterGlassStyle> = { glass_mug: 'mug', glass_bottle: 'bottle', glass_flask: 'flask', glass_goblet: 'goblet', glass_tumbler: 'tumbler', glass_jar: 'jar', glass_beaker: 'beaker', glass_pitcher: 'pitcher' }
 
 export function parseWaterGlass(raw: unknown): WaterGlassStyle {
   return typeof raw === 'string' && Object.prototype.hasOwnProperty.call(BY_ITEM, raw) ? BY_ITEM[raw] : 'glass'
@@ -16,7 +16,7 @@ export function parseWaterGlass(raw: unknown): WaterGlassStyle {
 export function readCachedWaterGlass(): WaterGlassStyle {
   try {
     const v = localStorage.getItem(WATER_GLASS_CACHE_KEY)
-    return v === 'mug' || v === 'bottle' || v === 'flask' || v === 'goblet' || v === 'tumbler' || v === 'jar' ? v : 'glass'
+    return v === 'mug' || v === 'bottle' || v === 'flask' || v === 'goblet' || v === 'tumbler' || v === 'jar' || v === 'beaker' || v === 'pitcher' ? v : 'glass'
   } catch {
     return 'glass'
   }
@@ -90,6 +90,20 @@ export const GLASS_SHAPES: Record<WaterGlassStyle, GlassShape> = {
     bottom: 25.6,
     lines: ['M5 3.6h14v3.2H5z', 'M4.6 6.8h14.8'], // крышка и горлышко
     shine: 'M6.2 12l0.4 11',
+  },
+  beaker: {
+    body: 'M5 4h14v19.5q0 2.7-2.7 2.7H7.7Q5 26.2 5 23.5z',
+    top: 5,
+    bottom: 24.6,
+    lines: ['M4 4h16', 'M5 9h3.2', 'M5 14h3.2', 'M5 19h3.2'], // ободок и деления мензурки
+    shine: 'M16.6 8v12',
+  },
+  pitcher: {
+    body: 'M5.5 4.5h10.5v2.6q2.2 1.9 2.2 5.4v10q0 3.5-3.5 3.5H7q-3.5 0-3.5-3.5v-10q0-3.5 2-5.4z',
+    top: 8,
+    bottom: 25.2,
+    lines: ['M5.5 4.5h10.5', 'M18.2 11h1.5q2.3 0 2.3 3.6t-2.3 3.6h-1.5'], // ободок и ручка
+    shine: 'M6.2 12l0.4 9',
   },
 }
 

@@ -94,6 +94,8 @@ export const ITEMS: readonly CustomItem[] = [
   { key: 'glass_goblet', category: 'water_glass', source: 'points', tier: 'high' },
   { key: 'glass_tumbler', category: 'water_glass', source: 'points', tier: 'low' },
   { key: 'glass_jar', category: 'water_glass', source: 'points', tier: 'mid' },
+  { key: 'glass_beaker', category: 'water_glass', source: 'points', tier: 'mid' },
+  { key: 'glass_pitcher', category: 'water_glass', source: 'points', tier: 'high' },
 ]
 
 export const itemByKey = (key: string): CustomItem | undefined => ITEMS.find((i) => i.key === key)
