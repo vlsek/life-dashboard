@@ -1,6 +1,13 @@
 {
-  "version": "5.90",
+  "version": "5.91",
   "en": [
+    {
+      "version": "5.91",
+      "date": "2026-10-17 11:28",
+      "changes": [
+        "Customization → “Chart type”: two new free looks — “Dots” (just the markers, no connecting line) and “Lollipops” (a thin stem from zero with a dot on top); there are now four. Dots and lollipops have no line styles or forecast, and lollipops start from zero like bars. Charts pick up the choice the next time the page opens."
+      ]
+    },
     {
       "version": "5.90",
       "date": "2026-10-17 15:00",
@@ -4199,6 +4206,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.91",
+      "date": "2026-10-17 11:28",
+      "changes": [
+        "«Кастомизация» → «Вид графика»: два новых бесплатных вида — «Точки» (только маркеры без соединяющей линии) и «Леденцы» (тонкий стебель от нуля с кружком на конце); теперь видов четыре. У точек и леденцов нет стилей линии и прогноза, у леденцов шкала от нуля, как у столбцов. Графики подхватят выбор при следующем открытии страницы."
+      ]
+    },
     {
       "version": "5.90",
       "date": "2026-10-17 15:00",

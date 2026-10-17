@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.90";
+const SITE_VERSION = "5.91";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.91", date: "2026-10-17 11:28", changes: [
+        "«Кастомизация» → «Вид графика»: два новых бесплатных вида — «Точки» (только маркеры без соединяющей линии) и «Леденцы» (тонкий стебель от нуля с кружком на конце); теперь видов четыре. У точек и леденцов нет стилей линии и прогноза, у леденцов шкала от нуля, как у столбцов. Графики подхватят выбор при следующем открытии страницы.",
+    ]},
     { version: "5.90", date: "2026-10-17 15:00", changes: [
         "«Кастомизация», спидометр дня: два новых вида кольца — «Нить» за 100 баллов (тонкое, как нитка, ненавязчивое кольцо) и «Закат» за 150 баллов (кольцо с градиентом заката: оранжевый, розовый, фиолетовый). Показываются в шапке и на Дашборде.",
     ]},
@@ -2382,6 +2385,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.91", date: "2026-10-17 11:28", changes: [
+        "Customization → “Chart type”: two new free looks — “Dots” (just the markers, no connecting line) and “Lollipops” (a thin stem from zero with a dot on top); there are now four. Dots and lollipops have no line styles or forecast, and lollipops start from zero like bars. Charts pick up the choice the next time the page opens.",
+    ]},
     { version: "5.90", date: "2026-10-17 15:00", changes: [
         "Customization, daily gauge: two new ring styles — “Thread” for 100 points (a hair-thin, unobtrusive ring) and “Sunset” for 150 points (a ring with a sunset gradient: orange, pink, violet). Shown in the header and on the Dashboard.",
     ]},
