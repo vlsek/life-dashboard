@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.83";
+const SITE_VERSION = "5.84";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.84", date: "2026-10-14 14:10", changes: [
+        "Тема «Чернильная бумага»: у кнопок-карточек и чипов (например, подсказки схемы тела при создании метрики) больше нет двойной рваной рамки — тема рисовала сплошное кольцо поверх уже пунктирной рамки. Без миграций.",
+    ]},
     { version: "5.83", date: "2026-10-17 05:19", changes: [
         "«Кастомизация» → «Пламя серии»: три новых бесплатных вида огонька рядом с серией дней — «Огненное кольцо», «Уголёк» и «Свеча» (теперь их пять). Все растут вместе с серией: от 7 дней, ярче и быстрее с 30 и 100 дней, со ступени 30 дней вылетают искры; анимацию гасит «уменьшить движение» и общий выключатель анимаций. Выбор виден на Дашборде со следующей загрузки.",
     ]},
@@ -2361,6 +2364,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.84", date: "2026-10-14 14:10", changes: [
+        "Vintage Paper theme: card-style buttons and chips (for example, the body-diagram suggestions when creating a metric) no longer have a double jagged border — the theme drew a solid ring on top of an already dashed border. No migrations.",
+    ]},
     { version: "5.83", date: "2026-10-17 05:19", changes: [
         "Customization → “Streak flame”: three new free looks for the flame next to your streak — “Fire ring”, “Ember” and “Candle” (five in total). They all grow with your streak: from 7 days, brighter and faster at 30 and 100 days, with sparks from the 30-day step; the animation is switched off by “reduce motion” and the global animation switch. The choice shows on the Dashboard from the next load.",
     ]},
