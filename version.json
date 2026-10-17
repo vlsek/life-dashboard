@@ -1,6 +1,13 @@
 {
-  "version": "5.96",
+  "version": "5.97",
   "en": [
+    {
+      "version": "5.97",
+      "date": "2026-10-17 16:00",
+      "changes": [
+        "Customization, water glass style: two new shapes — “Beaker” for 150 points (with lab measuring marks) and “Pitcher” for 250 points (round-bellied, with a handle). Shown in the header and on the Dashboard."
+      ]
+    },
     {
       "version": "5.96",
       "date": "2026-10-17 15:01",
@@ -4241,6 +4248,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.97",
+      "date": "2026-10-17 16:00",
+      "changes": [
+        "«Кастомизация», вид стакана воды: две новые формы — «Мензурка» за 150 баллов (с лабораторными делениями) и «Кувшин» за 250 баллов (пузатый, с ручкой). Показываются в шапке и на Дашборде."
+      ]
+    },
     {
       "version": "5.96",
       "date": "2026-10-17 15:01",

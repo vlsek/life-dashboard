@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.96";
+const SITE_VERSION = "5.97";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.97", date: "2026-10-17 16:00", changes: [
+        "«Кастомизация», вид стакана воды: две новые формы — «Мензурка» за 150 баллов (с лабораторными делениями) и «Кувшин» за 250 баллов (пузатый, с ручкой). Показываются в шапке и на Дашборде.",
+    ]},
     { version: "5.96", date: "2026-10-17 15:01", changes: [
         "Новая тема «Мятная больничная» (🩺 Mint Clinic): светлая стерильно-чистая мятно-бирюзовая — мятный фон, бирюзовый акцент, малые чёткие скругления, очень лёгкая тень и едва заметные мятные блики в углах фона. Открыта сразу, выбирается в «Настройках» и в «Кастомизации → Темы». «Простое оформление» и высокий контраст убирают блики и тень. Без миграций."
     ]},
@@ -2400,6 +2403,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.97", date: "2026-10-17 16:00", changes: [
+        "Customization, water glass style: two new shapes — “Beaker” for 150 points (with lab measuring marks) and “Pitcher” for 250 points (round-bellied, with a handle). Shown in the header and on the Dashboard.",
+    ]},
     { version: "5.96", date: "2026-10-17 15:01", changes: [
         "New theme “Mint Clinic” (🩺): a light, spotless mint-teal look — mint background, teal accent, small crisp corners, a very light shadow and barely visible mint glints in the background corners. Available right away; pick it in Settings or Customization → Themes. “Simple look” and high contrast remove the glints and shadow. No migrations."
     ]},
