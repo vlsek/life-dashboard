@@ -479,11 +479,15 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.80";
+const SITE_VERSION = "5.81";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.81", date: "2026-10-17 09:05", changes: [
+        "Подходы упражнения, привязанного к тренировкам, на Дашборде теперь «столбиком», как у обычной метрики: каждая строка — время, повторы и «особенность» подхода; можно править прямо в строке, добавлять «+ подход» (копия предыдущего) и удалять. Всё сохраняется в «Тренировки».",
+        "«Тренировки»: у каждого подхода появилось необязательное поле «Особенность» (и в строках записи, и в окне «Подробно…»); оно видно в тексте записи и переходит на Дашборд. «+ подход» копирует и её.",
+    ]},
     { version: "5.80", date: "2026-10-17 08:11", changes: [
         "Новая тема «Сакура» (🌸 Cherry Blossom): светлая нежно-розовая — молочно-розовый фон, малиновый акцент, самые мягкие скругления, розовые тени и «лепестковые» пятна в углах фона. Открыта сразу, выбирается в «Настройках» и в «Кастомизации → Темы». «Простое оформление» и высокий контраст убирают пятна и тень. Без миграций."
     ]},
@@ -2351,6 +2355,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.81", date: "2026-10-17 09:05", changes: [
+        "Sets of an exercise linked to Workouts now appear “in a column” on the Dashboard, like a regular metric: each row has time, reps and a set “variation”; edit right in the row, add a “+ set” (copies the previous one) or remove it. Everything is saved to Workouts.",
+        "Workouts: every set now has an optional “Variation” field (in the entry rows and in the “Details…” window); it shows in the entry text and carries over to the Dashboard. “+ set” copies it too.",
+    ]},
     { version: "5.80", date: "2026-10-17 08:11", changes: [
         "New theme “Cherry Blossom” (🌸): a light, delicate pink — milky pink background, raspberry accent, the softest rounded corners, pink shadows and “petal” glows in the background corners. Available right away; pick it in Settings or Customization → Themes. “Simple look” and high contrast remove the glows and shadow. No migrations."
     ]},
