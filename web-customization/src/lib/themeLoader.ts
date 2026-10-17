@@ -17,4 +17,5 @@ export const THEME_LOADER: Record<string, 'classic' | 'flame' | 'ring' | 'tongue
   sakura: 'ring',
   snow: 'classic',
   ember: 'flame',
+  grass: 'ring',
 }

@@ -40,6 +40,7 @@ export const THEME_KEYS = {
   sakura: 'theme_sakura',
   snow: 'theme_snow',
   ember: 'theme_ember',
+  grass: 'theme_grass',
 } as const
 
 export type ThemeKey = keyof typeof THEME_KEYS
@@ -84,6 +85,7 @@ const THEME_BG_COLORS: Record<ThemeKey, string> = {
   sakura: '#fdf1f4',
   snow: '#eef6fb',
   ember: '#1c0f0a',
+  grass: '#f4faea',
 }
 
 export function getTheme(): ThemeKey {

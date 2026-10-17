@@ -38,6 +38,7 @@ const THEME_KEYS = {
     sakura: "theme_sakura",
     snow: "theme_snow",
     ember: "theme_ember",
+    grass: "theme_grass",
 };
 
 // Цвета фона по темам — держим в синхронизации с --bg из style.css
@@ -81,6 +82,7 @@ const THEME_BG_COLORS = {
     sakura: "#fdf1f4",
     snow: "#eef6fb",
     ember: "#1c0f0a",
+    grass: "#f4faea",
 };
 
 function getTheme() {

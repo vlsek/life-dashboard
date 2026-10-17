@@ -17,4 +17,5 @@ export const THEME_WATER: Record<string, 'wave' | 'drops' | 'ripple'> = {
   sakura: 'ripple',
   snow: 'wave',
   ember: 'drops',
+  grass: 'wave',
 }

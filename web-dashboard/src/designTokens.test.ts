@@ -130,10 +130,10 @@ describe('большая тема emerald: характер', () => {
   it('при prefers-reduced-motion анимации темы мгновенные (только у Tailwind-страниц)', () => {
     for (const d of pilots) expect(read(d + '/src/style.css')).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-emerald \{\s*--default-transition-duration: 0s;/)
   })
-  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine, matcha, cyberday, vintage, glass, meadow, autumn, sakura, snow, ember) — остальные темы не переопределены', () => {
+  it('блоки характера есть только у больших тем (emerald, moonlight, phosphor, nightfall, velvet, frost, alpine, matcha, cyberday, vintage, glass, meadow, autumn, sakura, snow, ember, grass) — остальные темы не переопределены', () => {
     for (const f of files) {
       const region = read(f).match(REGION)![0]
-      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha', 'cyberday', 'vintage', 'glass', 'meadow', 'autumn', 'sakura', 'snow', 'ember'])
+      expect([...region.matchAll(/\/\* большая тема: (\w+) \*\//g)].map((m) => m[1]), f).toEqual(['emerald', 'moonlight', 'phosphor', 'nightfall', 'velvet', 'frost', 'alpine', 'matcha', 'cyberday', 'vintage', 'glass', 'meadow', 'autumn', 'sakura', 'snow', 'ember', 'grass'])
     }
   })
 })
@@ -845,5 +845,47 @@ describe('большая тема ember (тёмная огненная, 55.3): �
     expect([get('bg'), get('bg-card'), get('accent')]).toEqual(['#1c0f0a', '#2a1710', '#ff7a2f'])
     const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
     expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).toContain('ember')
+  })
+})
+
+describe('большая тема grass (светлая травяная, 55.3): характер', () => {
+  const block = (css: string): string => {
+    const m = css.match(/\/\* большая тема: grass \*\/\nhtml\.theme-grass \{[^}]*\}/)
+    expect(m, 'нет блока характера').not.toBeNull()
+    return m![0]
+  }
+  for (const d of pilots) {
+    it(d + ': округлые формы, лёгкая тёплая тень, травяное свечение, гладкая анимация, отключения', () => {
+      const css = read(d + '/src/style.css')
+      const b = block(css)
+      expect([decl(b, '--radius-md'), decl(b, '--radius-lg'), decl(b, '--radius-xl'), decl(b, '--radius-2xl')]).toEqual(['6px', '10px', '12px', '16px'])
+      expect(decl(b, '--shadow-card')).toBe('0 2px 10px rgba(63, 125, 20, 0.14)')
+      expect(decl(b, '--bg-pattern')).toContain('rgba(124, 179, 66')
+      expect(decl(b, '--bg-pattern-size')).toBe('auto')
+      expect(decl(b, '--default-transition-timing-function')).toBe('cubic-bezier(0.2, 0.7, 0.2, 1)')
+      expect(css).toMatch(/html\[data-simple='on'\]\.theme-grass \{\s*--bg-pattern: none;\s*--shadow-card: none;/)
+      expect(css).toMatch(/@media \(prefers-contrast: more\) \{\s*html\.theme-grass \{\s*--bg-pattern: none;\s*--shadow-card: none;/)
+      expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*html\.theme-grass \{\s*--default-transition-duration: 0s;/)
+    })
+  }
+  it('корень: 10/12/8 и та же тень', () => {
+    const b = block(read('style.css'))
+    expect([decl(b, '--radius-card'), decl(b, '--radius-modal'), decl(b, '--radius-control')]).toEqual(['10px', '12px', '8px'])
+    expect(decl(b, '--shadow-card')).toBe('0 2px 10px rgba(63, 125, 20, 0.14)')
+  })
+  it('два правила только под html.theme-grass: пятна на body и тень карточек', () => {
+    for (const f of files) {
+      const region = read(f).match(REGION)![0]
+      const lines = region.split('\n').filter((l) => l.startsWith('html.theme-grass ') && l.includes('{ '))
+      expect(lines.length, f).toBe(2)
+      for (const l of lines) for (const sel of l.split('{')[0].split(',')) expect(sel.trim(), f).toMatch(/^html\.theme-grass /)
+    }
+  })
+  it('светлая свежая палитра: салатовый фон, белые карточки, сочный зелёный акцент; белый текст на акценте, галочка белая (вне списка тёмных галочек)', () => {
+    const css = read('web-dashboard/src/style.css')
+    const get = (name: string) => css.match(new RegExp('html\\.theme-grass \\{[^}]*--' + name + ':\\s*(#[0-9a-fA-F]{6})'))![1].toLowerCase()
+    expect([get('bg'), get('bg-card'), get('accent')]).toEqual(['#f4faea', '#ffffff', '#3f7d14'])
+    const m = /((?:html\.theme-\w+ input\[type='checkbox'\]:checked,?\s*)+)\{[^}]*background-image/.exec(css)
+    expect([...m![1].matchAll(/html\.theme-(\w+) input/g)].map((x) => x[1])).not.toContain('grass')
   })
 })

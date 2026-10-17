@@ -52,4 +52,5 @@ export const THEME_PREVIEW: Record<ThemeKey, ThemePreview> = {
   sakura: { bg: '#fdf1f4', card: '#fffafb', accent: '#b8325f', text: '#3d1f2b', success: '#3f7d4e', water: '#3f95e0', kind: 'light' },
   snow: { bg: '#eef6fb', card: '#ffffff', accent: '#1769aa', text: '#12293b', success: '#2e7d52', water: '#3f95e0', kind: 'light' },
   ember: { bg: '#1c0f0a', card: '#2a1710', accent: '#ff7a2f', text: '#ffe9d6', success: '#8fd16a', water: '#63b3f5', kind: 'dark' },
+  grass: { bg: '#f4faea', card: '#ffffff', accent: '#3f7d14', text: '#1f3312', success: '#2f7d4a', water: '#3f95e0', kind: 'light' },
 }
