@@ -8,6 +8,8 @@ import { loadUnlockedKeys, sectionFor } from './lib/sectionAchievements'
 import AchievementToast from './components/AchievementToast.vue'
 import { clearUnseen, hasUnseen, markUnseen, watchDot } from './lib/achievementDot'
 import { startAchievementWatcher, WATCH_SKIP, type WatchItem } from './lib/achievementWatcher'
+import LogoutChooser from './components/LogoutChooser.vue'
+import { captureCurrent } from '../../shared/accounts/accounts'
 
 // Точка входа глобального хедера (BACKLOG 2.3). Подключается на странице одним
 // <script type="module" src="/header-widgets/header.js"></script>. Ждёт, пока страница (Vue AppShell) нарисует
@@ -120,8 +122,39 @@ async function startPresence() {
   }
 }
 
+// BACKLOG 1081: окно «из какой выйти», когда на устройстве несколько записей. logout() пилотов вызывает его, если шапка есть на странице.
+let chooserApp: ReturnType<typeof createApp> | null = null
+function showLogoutChooser() {
+  if (chooserApp) return
+  ensureStyle()
+  const host = document.createElement('div')
+  host.id = 'gh-logout-chooser'
+  document.body.appendChild(host)
+  const close = () => {
+    chooserApp?.unmount()
+    chooserApp = null
+    host.remove()
+  }
+  chooserApp = createApp(LogoutChooser, { onClose: close })
+  chooserApp.mount(host)
+}
+
+// Склад записей: текущая сессия снимается при загрузке страницы и при каждом обновлении токена, чтобы у записи всегда были свежие токены
+function trackAccounts() {
+  captureCurrent()
+  ;(window as unknown as { lifeLogoutChooser?: () => void }).lifeLogoutChooser = showLogoutChooser
+  try {
+    sb.auth.onAuthStateChange((event) => {
+      if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') captureCurrent()
+    })
+  } catch {
+    /* без подписки токены снимаются при переключении и при загрузке страницы */
+  }
+}
+
 function start() {
   if (SKIP.test(location.pathname)) return
+  trackAccounts()
   // «Достижения» открыты — точка больше не нужна; на остальных страницах держим её, пока она не снята (52.1 срез 5)
   if (/^\/achievements(\/|\.html|$)/.test(location.pathname)) clearUnseen()
   else if (hasUnseen()) {

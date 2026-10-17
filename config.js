@@ -4281,8 +4281,18 @@ async function requireAuth() {
 }
 
 async function logout() {
+    // BACKLOG 1081: старые страницы выходят только из ТЕКУЩЕЙ записи и убирают её из списка записей устройства (accounts_v1);
+    // остались другие — одна из них становится активной (логика та же, что finishLogout в shared/accounts/accounts.ts)
+    var authKey = "sb-haxmgtflegsfpxieaydv-auth-token", storeKey = "accounts_v1", curId = null;
+    try { var cur = JSON.parse(localStorage.getItem(authKey) || "null"); curId = cur && cur.user && cur.user.id || null; } catch (e) {}
     await sb.auth.signOut();
-    window.location.href = "/login/";
+    var next = null;
+    try {
+        var rest = (JSON.parse(localStorage.getItem(storeKey) || "[]") || []).filter(function (a) { return curId && a && a.id !== curId; });
+        if (rest.length) { localStorage.setItem(storeKey, JSON.stringify(rest)); next = rest[0].session; } else { localStorage.removeItem(storeKey); }
+        if (next && !localStorage.getItem(authKey)) localStorage.setItem(authKey, next);
+    } catch (e) {}
+    window.location.href = next ? "/" : "/login/";
 }
 
 // Текущее время "ЧЧ:ММ" — для отметки времени подхода

@@ -11,6 +11,7 @@ import { useAvatar } from './lib/useAvatar'
 import { frameClass, frameShadow } from './lib/customFrame'
 import Icon from './components/Icon.vue'
 import Toast from './components/Toast.vue'
+import DeviceAccounts from './components/DeviceAccounts.vue'
 import EmojiText from './components/EmojiText.vue'
 import { authErrorText } from './lib/authError'
 
@@ -197,6 +198,8 @@ const googleLinkedRest = computed(() => t('acc_google_linked').replace(/^\u2705\
           </button>
         </template>
       </div>
+
+      <DeviceAccounts />
 
       <a
         v-if="isAdmin"

@@ -175,3 +175,13 @@ export function sessionsToRevoke(): { id: string; session: string }[] {
     .filter((a) => !cur || a.id !== cur.id)
     .map((a) => ({ id: a.id, session: a.session }))
 }
+
+// После серверного signOut текущей записи (id взят ДО выхода): убрать её из склада. 'switched' — осталась другая запись, она уже активна (дальше на главную);
+// 'none' — записей нет (на страницу входа). Без id (сессии не было) склад чистится целиком.
+export function finishLogout(id: string | null): 'switched' | 'none' {
+  if (!id) {
+    clearAll()
+    return 'none'
+  }
+  return removeAccount(id)
+}

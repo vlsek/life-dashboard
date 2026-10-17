@@ -6,6 +6,7 @@ import { useLogin } from './lib/useLogin'
 import { t } from './lib/i18n'
 import EmojiText from './components/EmojiText.vue'
 import SplashFlameLive from './components/splash/SplashFlameLive.vue'
+import SavedAccounts from './components/SavedAccounts.vue'
 
 const { mode, email, password, msg, msgKind, busy, setMode, submit, signInWithGoogle, checkExistingSession } = useLogin()
 onMounted(checkExistingSession)
@@ -18,6 +19,8 @@ onMounted(checkExistingSession)
     <!-- Живое пламя в цвете акцента выбранной темы (BACKLOG 746): тот же компонент и стили, что у заставки и логотипа в шапке -->
     <SplashFlameLive :size="64" data-test="login-flame" class="mb-2" />
     <h1 class="mb-4 text-center text-2xl font-semibold"><EmojiText :text="t('login_title')" /></h1>
+
+    <SavedAccounts />
 
     <div class="w-full max-w-[360px] rounded-lg border p-4" style="border-color: var(--border); background: var(--bg-card)">
       <!-- Переключатель «Вход / Регистрация» — сегментированный: активная вкладка выглядит нажатой кнопкой, а не просто подчёркнутым словом (BACKLOG 58.5) -->

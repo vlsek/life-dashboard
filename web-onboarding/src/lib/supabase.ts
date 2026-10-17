@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { accountCount, finishLogout, readCurrent } from '../../../shared/accounts/accounts'
 
 // Тот же проект и тот же анонимный ключ, что и у остального сайта (config.js). Поскольку
 // страница раздаётся с того же домена (life-dashboard.orneryhero.workers.dev/<страница>/),
@@ -10,6 +11,13 @@ const SUPABASE_ANON_KEY = 'sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF'
 export const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 export async function logout() {
+  // BACKLOG 1081: при нескольких записях «из какой выйти» спрашивает окно шапки; запись одна (или шапки на странице нет) — выходим из текущей, как раньше
+  const chooser = (window as unknown as { lifeLogoutChooser?: () => void }).lifeLogoutChooser
+  if (chooser && accountCount() > 1) {
+    chooser()
+    return
+  }
+  const id = readCurrent()?.id ?? null
   await sb.auth.signOut()
-  window.location.href = '/login/'
+  window.location.href = finishLogout(id) === 'switched' ? '/' : '/login/'
 }

@@ -3,6 +3,7 @@ import { sb } from './supabase'
 import { authErrorText } from './authError'
 import { postAuthTarget, ROUTES } from './routes'
 import { t } from './i18n'
+import { captureCurrent } from '../../../shared/accounts/accounts'
 
 export type Mode = 'login' | 'register'
 // Тип сообщения под формой (BACKLOG 58.5): ошибка — красным и сразу над кнопкой, остальное — спокойным цветом
@@ -27,6 +28,7 @@ export function useLogin() {
     const { data } = await sb.auth.getSession()
     const session = data.session
     if (!session) return
+    captureCurrent() // BACKLOG 1081: новая запись сразу попадает в список записей устройства (страницу онбординга шапка пропускает)
     const { data: profile } = await sb.from('profiles').select('onboarded').eq('user_id', session.user.id).maybeSingle()
     window.location.href = postAuthTarget(profile)
   }

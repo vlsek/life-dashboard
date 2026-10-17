@@ -6,6 +6,7 @@ import { frameClass, frameShadow } from '../lib/customFrame'
 import type { WeekDaySegment } from '../lib/progress'
 import type { WeekShape } from '../lib/progressSettings'
 import DayWeekBadge from './DayWeekBadge.vue'
+import AccountSwitcher from './AccountSwitcher.vue'
 
 // Верх левого бокового меню (BACKLOG 6.2): аватар, имя, почта — ссылка на Аккаунт; по опции «Прогресс в меню»
 // (BACKLOG 2.3) — кольца дня и недели с процентами (клик — сводка). Рисуется Teleport'ом в #sidebar-top из AppShell.
@@ -25,6 +26,7 @@ const label = computed(() => profileLabel(props.displayName, props.email))
         <span v-if="email && displayName" class="gh-dim gh-side-email">{{ email }}</span>
       </span>
     </a>
+    <AccountSwitcher />
     <div v-if="showProgress && (day || week)" class="gh-side-progress" data-test="sidebar-progress">
       <div v-if="day" class="gh-side-ring">
         <DayWeekBadge kind="day" v-bind="day" @click="emit('open-summary', 'day')" />

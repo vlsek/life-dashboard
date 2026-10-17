@@ -639,3 +639,11 @@ html.gh-has-secach #app { height: auto; min-height: 0; } /* 58.6: min-height:100
 html[data-motion='off'] .gh-achtoast { animation: none; }
 @media (prefers-reduced-motion: reduce) { .gh-achtoast { animation: none; } }
 .gh-ach-dot { display: inline-block; width: 8px; height: 8px; margin-left: 6px; border-radius: 50%; background: var(--danger, #e5484d); vertical-align: middle; flex: none; }
+/* Записи на устройстве (BACKLOG 1081): строка под именем в боковом меню и окно «из какой выйти» */
+.gh-acc { margin: 2px 0 4px; }
+.gh-acc-toggle { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 8px; border: 0; border-radius: 8px; background: transparent; color: var(--text-dim, #999); font: inherit; font-size: 12px; cursor: pointer; min-height: 0; text-align: left; }
+.gh-acc-list { list-style: none; margin: 2px 0 0; padding: 0; }
+.gh-acc-item { display: block; width: 100%; box-sizing: border-box; padding: 5px 8px; border: 0; border-radius: 8px; background: transparent; color: var(--text, #eee); font: inherit; font-size: 12px; text-align: left; cursor: pointer; min-height: 0; overflow-wrap: anywhere; }
+.gh-acc-active { cursor: default; font-weight: 600; }
+.gh-acc-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+
