@@ -24,6 +24,11 @@ vi.mock('./lib/supabase', () => {
 
 import App from './App.vue'
 
+// BACKLOG 64.1 срез 2: страница открывается витриной слотов; эти тесты про содержимое разделов — открываем «Всё одним списком»
+beforeEach(() => {
+  location.hash = '#slot=all'
+})
+
 beforeEach(() => {
   localStorage.clear()
   localStorage.setItem('cust_tab', 'all') // эти тесты про всю ленту разделов; вкладки — в pageTabs.test.ts (54.7)

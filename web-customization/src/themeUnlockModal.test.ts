@@ -23,6 +23,11 @@ vi.mock('./lib/supabase', () => {
 })
 import App from './App.vue'
 
+// BACKLOG 64.1 срез 2: страница открывается витриной слотов; эти тесты про содержимое разделов — открываем «Всё одним списком»
+beforeEach(() => {
+  location.hash = '#slot=all'
+})
+
 beforeEach(() => {
   localStorage.clear()
   localStorage.setItem('site_lang', 'ru')

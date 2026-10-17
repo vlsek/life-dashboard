@@ -29,6 +29,11 @@ import { THEME_UNLOCK } from './lib/theme'
 import { FREE_SECTIONS_TOTAL, FREE_SECTION_IDS, VISIBILITY_KEY, allVisible, groupOfItem, groupOfTheme, readVisibility, useVisibility } from './lib/useVisibility'
 import source from './App.vue?raw'
 
+// BACKLOG 64.1 срез 2: страница открывается витриной слотов; эти тесты про содержимое разделов — открываем «Всё одним списком»
+beforeEach(() => {
+  location.hash = '#slot=all'
+})
+
 beforeEach(() => {
   vi.restoreAllMocks() // в тесте про недоступное хранилище localStorage.setItem подменён
   localStorage.clear()
@@ -134,8 +139,6 @@ describe('страница «Кастомизация»: фильтр видим
     h.owned = owned
     const w = await mountPage()
     const present = () => FREE_SECTION_IDS.filter((id) => w.find(`[data-section="${id}"]`).exists())
-    await w.find('[data-testid="cust-tab-all"]').trigger('click')
-    await flushPromises()
     expect(present()).toEqual(FREE_SECTION_IDS)
     await chip(w, 'owned').trigger('click')
     await flushPromises()
