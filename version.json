@@ -1,6 +1,13 @@
 {
-  "version": "5.82",
+  "version": "5.83",
   "en": [
+    {
+      "version": "5.83",
+      "date": "2026-10-17 05:19",
+      "changes": [
+        "Customization → “Streak flame”: three new free looks for the flame next to your streak — “Fire ring”, “Ember” and “Candle” (five in total). They all grow with your streak: from 7 days, brighter and faster at 30 and 100 days, with sparks from the 30-day step; the animation is switched off by “reduce motion” and the global animation switch. The choice shows on the Dashboard from the next load."
+      ]
+    },
     {
       "version": "5.82",
       "date": "2026-10-17 08:16",
@@ -4143,6 +4150,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.83",
+      "date": "2026-10-17 05:19",
+      "changes": [
+        "«Кастомизация» → «Пламя серии»: три новых бесплатных вида огонька рядом с серией дней — «Огненное кольцо», «Уголёк» и «Свеча» (теперь их пять). Все растут вместе с серией: от 7 дней, ярче и быстрее с 30 и 100 дней, со ступени 30 дней вылетают искры; анимацию гасит «уменьшить движение» и общий выключатель анимаций. Выбор виден на Дашборде со следующей загрузки."
+      ]
+    },
     {
       "version": "5.82",
       "date": "2026-10-17 08:16",

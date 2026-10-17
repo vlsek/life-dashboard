@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.82";
+const SITE_VERSION = "5.83";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.83", date: "2026-10-17 05:19", changes: [
+        "«Кастомизация» → «Пламя серии»: три новых бесплатных вида огонька рядом с серией дней — «Огненное кольцо», «Уголёк» и «Свеча» (теперь их пять). Все растут вместе с серией: от 7 дней, ярче и быстрее с 30 и 100 дней, со ступени 30 дней вылетают искры; анимацию гасит «уменьшить движение» и общий выключатель анимаций. Выбор виден на Дашборде со следующей загрузки.",
+    ]},
     { version: "5.82", date: "2026-10-17 08:16", changes: [
         "Кастомизация: две новые анимации воды — «Прыжок» (стакан подпрыгивает и приземляется с пружинкой, 100 баллов) и «Пульс» (стакан дважды мягко «дышит», 150 баллов). Раздел «Анимация воды» вырос с пяти до семи предметов. Купить можно после применения миграции 089 в Supabase."
     ]},
@@ -2358,6 +2361,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.83", date: "2026-10-17 05:19", changes: [
+        "Customization → “Streak flame”: three new free looks for the flame next to your streak — “Fire ring”, “Ember” and “Candle” (five in total). They all grow with your streak: from 7 days, brighter and faster at 30 and 100 days, with sparks from the 30-day step; the animation is switched off by “reduce motion” and the global animation switch. The choice shows on the Dashboard from the next load.",
+    ]},
     { version: "5.82", date: "2026-10-17 08:16", changes: [
         "Customization: two new water animations — “Bounce” (the glass hops up and lands with a little spring, 100 points) and “Pulse” (the glass gently “breathes” twice, 150 points). The “Water animation” section grew from five to seven items. They can be bought once migration 089 is applied in Supabase."
     ]},
