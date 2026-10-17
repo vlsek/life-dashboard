@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "5.92";
+const SITE_VERSION = "5.93";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "5.93", date: "2026-10-17 14:43", changes: [
+        "Новая тема «Травяная» (🌱 Fresh Grass): светлая свежая жёлто-зелёная — салатовый фон, сочный зелёный акцент, зелёные тени и «травяное» свечение у нижнего края и светло-жёлтый блик в углу фона. Открыта сразу, выбирается в «Настройках» и в «Кастомизации → Темы». «Простое оформление» и высокий контраст убирают свечение и тень. Без миграций."
+    ]},
     { version: "5.92", date: "2026-10-17 14:35", changes: [
         "Кастомизация: два новых вида спидометра недели — «Долина» (семь столбиков перевёрнутой дугой: выше по краям, ниже в середине недели, 150 баллов) и «Спуск» (лесенка вниз: самый высокий столбик в понедельник, самый низкий в воскресенье, 100 баллов). Раздел «Вид недели» вырос до восьми предметов. Купить можно после применения миграции 092 в Supabase."
     ]},
@@ -2388,6 +2391,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "5.93", date: "2026-10-17 14:43", changes: [
+        "New theme “Fresh Grass” (🌱): a light, fresh yellow-green look — lime background, vivid green accent, green shadows and a “grassy” glow along the bottom edge with a pale-yellow glint in a corner. Available right away; pick it in Settings or Customization → Themes. “Simple look” and high contrast remove the glow and shadow. No migrations."
+    ]},
     { version: "5.92", date: "2026-10-17 14:35", changes: [
         "Customization: two new week gauge styles — “Valley” (seven bars in an inverted arch: tallest at the edges, lowest in the middle of the week, 150 points) and “Slope” (stairs going down: the tallest bar on Monday, the shortest on Sunday, 100 points). The “Week view” section grew to eight items. They can be bought once migration 092 is applied in Supabase."
     ]},

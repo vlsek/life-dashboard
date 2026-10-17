@@ -1,6 +1,13 @@
 {
-  "version": "5.92",
+  "version": "5.93",
   "en": [
+    {
+      "version": "5.93",
+      "date": "2026-10-17 14:43",
+      "changes": [
+        "New theme “Fresh Grass” (🌱): a light, fresh yellow-green look — lime background, vivid green accent, green shadows and a “grassy” glow along the bottom edge with a pale-yellow glint in a corner. Available right away; pick it in Settings or Customization → Themes. “Simple look” and high contrast remove the glow and shadow. No migrations."
+      ]
+    },
     {
       "version": "5.92",
       "date": "2026-10-17 14:35",
@@ -4213,6 +4220,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "5.93",
+      "date": "2026-10-17 14:43",
+      "changes": [
+        "Новая тема «Травяная» (🌱 Fresh Grass): светлая свежая жёлто-зелёная — салатовый фон, сочный зелёный акцент, зелёные тени и «травяное» свечение у нижнего края и светло-жёлтый блик в углу фона. Открыта сразу, выбирается в «Настройках» и в «Кастомизации → Темы». «Простое оформление» и высокий контраст убирают свечение и тень. Без миграций."
+      ]
+    },
     {
       "version": "5.92",
       "date": "2026-10-17 14:35",
