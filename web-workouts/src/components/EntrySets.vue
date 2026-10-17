@@ -46,7 +46,8 @@ function onRemove(i: number) {
     <div class="overflow-x-auto">
       <table class="w-full text-sm">
         <tbody>
-          <tr v-for="(_, i) in rows" :key="i" class="align-middle" data-testid="entry-set-row">
+          <template v-for="(_, i) in rows" :key="i">
+          <tr class="align-middle" data-testid="entry-set-row">
             <td class="pr-1 text-xs" style="color: var(--text-dim)">{{ i + 1 }}</td>
             <td class="pr-1 pb-1">
               <input type="time" :value="rows[i].time ?? ''" :title="t('sets_time_title')" class="es-input" style="width: 96px" data-testid="entry-set-time" @change="onTime(i, $event)" />
@@ -85,7 +86,6 @@ function onRemove(i: number) {
                   />
                 </template>
               </div>
-              <input type="text" :value="rows[i].variation ?? ''" :placeholder="t('workouts_variation_placeholder')" maxlength="60" class="es-input mt-1 w-full" data-testid="entry-set-variation" @change="onVariation(i, $event)" />
             </td>
             <td class="pb-1 text-right">
               <button
@@ -102,6 +102,14 @@ function onRemove(i: number) {
               </button>
             </td>
           </tr>
+          <!-- BACKLOG 44.5б: «Особенность» — на своей строке во всю ширину таблицы; в средней ячейке на 390 px подсказка обрезалась -->
+          <tr data-testid="entry-set-variation-row">
+            <td></td>
+            <td colspan="2" class="pr-1 pb-2">
+              <input type="text" :value="rows[i].variation ?? ''" :placeholder="t('workouts_variation_placeholder')" maxlength="60" class="es-input w-full" data-testid="entry-set-variation" @change="onVariation(i, $event)" />
+            </td>
+          </tr>
+          </template>
         </tbody>
       </table>
     </div>

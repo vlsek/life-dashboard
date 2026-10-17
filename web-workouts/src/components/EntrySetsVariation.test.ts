@@ -22,4 +22,17 @@ describe('EntrySets: особенность подхода', () => {
     expect(out[1].variation).toBe('медленно')
     expect(out[0].variation).toBe('узкий хват')
   })
+  // BACKLOG 44.5б: на телефоне (390 px) подсказка «Особенность (необязательно)» обрезалась — поле сидело в узкой средней ячейке рядом с повторениями
+  it('«Особенность» — на своей строке во всю ширину (colspan), а не в ячейке с повторениями', () => {
+    const w = mount(EntrySets, { props: { exercise: ex, sets } })
+    const rows = w.findAll('[data-testid="entry-set-variation-row"]')
+    expect(rows).toHaveLength(2)
+    for (const r of rows) {
+      expect(r.find('[data-testid="entry-set-variation"]').exists()).toBe(true)
+      expect(r.find('td[colspan="2"]').exists()).toBe(true)
+    }
+    for (const row of w.findAll('[data-testid="entry-set-row"]')) {
+      expect(row.find('[data-testid="entry-set-variation"]').exists()).toBe(false)
+    }
+  })
 })
