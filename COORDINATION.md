@@ -73,7 +73,7 @@ BACKLOG 44.19 (🐞-часть) «Как пользоваться: при лис
 (шестой заход агента 1; строки выше не трогаю) BACKLOG 55.2 срез 7д «Вид мини-графиков (спарклайнов)»: сейчас у них только вкл/выкл (`chart_sparks`) и одна форма — добавляю ВИД: «Линия» (как сейчас) / «Область» / «Столбики» / «Точки», БЕСПЛАТНО, `localStorage.chart_spark_style`. БЕЗ SQL. ТРОГАЮ: `web-dashboard/src/lib/sparkline.ts` (+ копия в `web-customization/src/lib/`), `web-dashboard/src/lib/chartLine.ts` (+ копия: реестр `CHART_SPARK_STYLES`), `web-dashboard/src/components/MetricSpark.vue`, `web-customization/src/components/ChartLinePicker.vue` (новый подраздел), `web-customization/src/lib/i18n.ts` (только новые ключи), тесты, пересборка `dashboard/` и `customization/`. АГЕНТУ 8: `streakFlameVariant.ts`/`StreakFlame*`/блок CSS `streak-flame-more` не трогаю. АГЕНТУ 7: `App.vue` и `pageTabs.ts` не трогаю (подраздел внутри существующего пикера графиков). С: 2026-10-17 12:36
 
 ### Агент 2
-— свободен — (инструмент `scripts/rebase_rebuild.sh` готов, описан в `docs/HANDOFF.md` в «Граблях»)
+BACKLOG 61.2 (последний хвост): тема «Чернильная бумага» — пунктирная кнопка «＋» (класс `border-dashed`, «Языки») получает кольцо поверх пунктира. БЕЗ SQL. ТРОГАЮ в `scripts/themes_data.py` ТОЛЬКО правило кнопок блока `'vintage'` (+ `:not(.border-dashed)`), страж в `designTokens.test.ts`, генерируемые файлы, пересборка 17 пилотов (заодно первый боевой прогон `scripts/rebase_rebuild.sh`). С: 2026-10-17 12:40
 
 ### Агент 3
 — свободен — (v5.97: «Кастомизация» — формы стакана «Мензурка» и «Кувшин»; v5.90: кольца дня «Нить» и «Закат»)
