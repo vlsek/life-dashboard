@@ -2,7 +2,7 @@
 import { daySegments, dayTicks, DAY_GLOW_FILTER, dayGradientStops } from '../lib/dayGauge'
 // Мини-картинка «как это выглядит» для предметов «Спидометр прогресса дня» (BACKLOG 53.2 срез 2): кольцо на примере дня, заполненного на 62 %.
 // Только превью, настоящие кольца рисуют шапка и Дашборд.
-defineProps<{ variant: 'dashed' | 'glow' | 'ticks' | 'gradient' | 'thick' | 'rainbow' }>()
+defineProps<{ variant: 'dashed' | 'glow' | 'ticks' | 'gradient' | 'thick' | 'rainbow' | 'thin' | 'sunset' }>()
 const segs = daySegments(28, 28, 22, 0.62, 0)
 const C = 2 * Math.PI * 22
 const ticks = dayTicks(28, 28, 22, 0.62, 4)
@@ -20,10 +20,10 @@ const ticks = dayTicks(28, 28, 22, 0.62, 4)
     <circle cx="28" cy="28" r="22" stroke="var(--accent)" stroke-width="3" :stroke-dasharray="`${C * 0.62} ${C}`" />
     <line v-for="(tk, i) in ticks" :key="i" :x1="tk.x1" :y1="tk.y1" :x2="tk.x2" :y2="tk.y2" :stroke="tk.lit ? 'var(--accent)' : 'var(--border)'" stroke-width="1.8" />
   </svg>
-  <svg v-else-if="variant === 'gradient' || variant === 'rainbow' || variant === 'thick'" viewBox="0 0 56 56" width="56" height="56" fill="none" stroke-linecap="round" aria-hidden="true" style="transform: rotate(-90deg)">
-    <defs><linearGradient :id="`day-grad-prev-${variant}`" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="56" y2="56"><stop v-for="(st, si) in dayGradientStops(variant === 'rainbow' ? 'rainbow' : 'gradient')" :key="si" :offset="st.offset" :stop-color="st.color" /></linearGradient></defs>
-    <circle cx="28" cy="28" r="22" stroke="var(--border)" :stroke-width="variant === 'thick' ? 7 : 4" />
-    <circle cx="28" cy="28" r="22" :stroke="variant === 'thick' ? 'var(--accent)' : `url(#day-grad-prev-${variant})`" :stroke-width="variant === 'thick' ? 7 : 4" :stroke-dasharray="`${C * 0.62} ${C}`" />
+  <svg v-else-if="variant === 'gradient' || variant === 'rainbow' || variant === 'thick' || variant === 'thin' || variant === 'sunset'" viewBox="0 0 56 56" width="56" height="56" fill="none" stroke-linecap="round" aria-hidden="true" style="transform: rotate(-90deg)">
+    <defs><linearGradient :id="`day-grad-prev-${variant}`" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="56" y2="56"><stop v-for="(st, si) in dayGradientStops(variant === 'rainbow' || variant === 'sunset' ? variant : 'gradient')" :key="si" :offset="st.offset" :stop-color="st.color" /></linearGradient></defs>
+    <circle cx="28" cy="28" r="22" stroke="var(--border)" :stroke-width="variant === 'thick' ? 7 : variant === 'thin' ? 1.6 : 4" />
+    <circle cx="28" cy="28" r="22" :stroke="variant === 'thick' || variant === 'thin' ? 'var(--accent)' : `url(#day-grad-prev-${variant})`" :stroke-width="variant === 'thick' ? 7 : variant === 'thin' ? 2.4 : 4" :stroke-dasharray="`${C * 0.62} ${C}`" />
   </svg>
   <svg v-else viewBox="0 0 56 56" width="56" height="56" fill="none" stroke-linecap="round" aria-hidden="true" style="transform: rotate(-90deg)">
     <circle cx="28" cy="28" r="22" stroke="var(--border)" stroke-width="4" />
