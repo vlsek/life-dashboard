@@ -18,7 +18,7 @@ const props = defineProps<{
   size?: number // размер SVG в px
   title: string
   label?: string // подпись под кольцом (например "Неделя") — если не задана, не рисуется
-  shape?: 'circle' | 'heptagon' | 'bars' | 'dots' | 'steps' | 'wave' // bars — «семь столбиков» (BACKLOG 53.2); heptagon — кольцо недели: 7 сторон = 7 дней (BACKLOG 2.3), линия толще
+  shape?: 'circle' | 'heptagon' | 'bars' | 'dots' | 'steps' | 'wave' | 'teeth' // bars — «семь столбиков» (BACKLOG 53.2); heptagon — кольцо недели: 7 сторон = 7 дней (BACKLOG 2.3), линия толще
   days?: WeekDaySegment[] | null // у heptagon: прогресс каждого дня → каждая сторона заливается по СВОЕМУ дню (BACKLOG 17:05); нет — общий процент по периметру
 }>()
 
@@ -30,7 +30,7 @@ const offsetBonus = computed(() => circumference.value * (1 - bonusFraction.valu
 const center = computed(() => (props.size ?? 52) / 2)
 const isHeptagon = computed(() => props.shape === 'heptagon')
 const isBars = computed(() => props.shape === 'bars' && props.days?.length === 7)
-const altVariant = computed(() => ((props.shape === 'dots' || props.shape === 'steps' || props.shape === 'wave') && props.days?.length === 7 ? props.shape : null))
+const altVariant = computed(() => ((props.shape === 'dots' || props.shape === 'steps' || props.shape === 'wave' || props.shape === 'teeth') && props.days?.length === 7 ? props.shape : null))
 const perDay = computed(() => isHeptagon.value && props.days?.length === 7)
 const segs = computed(() =>
   perDay.value && props.days

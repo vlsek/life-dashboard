@@ -17,6 +17,11 @@ describe('разбор и кэш', () => {
     writeCachedWeekGauge('wave')
     expect(readCachedWeekGauge()).toBe('wave')
   })
+  it('week_teeth → teeth; кэш помнит', () => {
+    expect(parseWeekGauge('week_teeth')).toBe('teeth')
+    writeCachedWeekGauge('teeth')
+    expect(readCachedWeekGauge()).toBe('teeth')
+  })
   it('week_dots → dots, week_steps → steps; кэш помнит оба', () => {
     expect(parseWeekGauge('week_dots')).toBe('dots')
     expect(parseWeekGauge('week_steps')).toBe('steps')
@@ -48,13 +53,22 @@ describe('WeekAlt', () => {
     expect(fills).toHaveLength(5)
     expect(w.findAll('[data-test="week-step-today"]')).toHaveLength(1)
   })
+  it('зубцы: высокий и низкий через один, заливка по дню', () => {
+    const w = mount(WeekAlt, { props: { days, size: 104, variant: 'teeth' } })
+    const tracks = w.findAll('[data-test="week-step"] rect:first-child').map((e) => Number(e.attributes('height')))
+    expect(tracks).toHaveLength(7)
+    for (let i = 0; i < 7; i += 2) expect(tracks[i]).toBeGreaterThan(tracks[i + 1] ?? 0)
+    expect(tracks[1]).toBeLessThan(tracks[0])
+    expect(tracks[2]).toBeCloseTo(tracks[0], 5)
+    expect(w.findAll('[data-test="week-step-fill"]')).toHaveLength(5)
+  })
   it('на мелком значке (< 44 px) бонус не рисуется', () => {
     expect(mount(WeekAlt, { props: { days, size: 32, variant: 'dots' } }).find('[data-test="week-dot-bonus"]').exists()).toBe(false)
   })
 })
 
 describe('бейдж и панель шапки рисуют новые виды', () => {
-  for (const shape of ['dots', 'steps', 'wave'] as const) {
+  for (const shape of ['dots', 'steps', 'wave', 'teeth'] as const) {
     it(`DayWeekBadge: ${shape}`, () => {
       const w = mount(DayWeekBadge, { props: { ...props, shape, days } })
       expect(w.find(`[data-test="week-${shape}"]`).exists()).toBe(true)

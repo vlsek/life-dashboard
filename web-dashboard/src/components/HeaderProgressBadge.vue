@@ -23,7 +23,7 @@ const circle = computed(() => circleGeometry(13, props.basePct, props.bonusPct))
 const sevenDays = computed(() => props.kind === 'week' && props.days?.length === 7)
 const hept = computed(() => sevenDays.value && (props.shape ?? 'heptagon') === 'heptagon')
 const bars = computed(() => sevenDays.value && props.shape === 'bars')
-const alt = computed(() => (sevenDays.value && (props.shape === 'dots' || props.shape === 'steps' || props.shape === 'wave') ? props.shape : null))
+const alt = computed(() => (sevenDays.value && (props.shape === 'dots' || props.shape === 'steps' || props.shape === 'wave' || props.shape === 'teeth') ? props.shape : null))
 const daySegs = computed(() => daySegments(16, 16, 13, props.basePct, props.bonusPct))
 // в бейдже штрихи снаружи кольца: внутри лежит процент
 const dayTickList = computed(() => dayTicks(16, 16, 18.4, props.basePct, 1.4))

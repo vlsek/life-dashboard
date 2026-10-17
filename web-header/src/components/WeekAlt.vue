@@ -6,7 +6,7 @@ import type { WeekDaySegment } from '../lib/progress'
 // заполняется кругом внутри по прогрессу СВОЕГО дня; «Ступеньки» — семь столбиков растущей высоты (лесенка к воскресенью), заливка снизу вверх по
 // дню. Сегодняшний день обведён; бонус ⭐ дня — золотая обводка (только на значках от 44 px). Анимаций нет.
 // КОПИЯ в web-dashboard/src/components/WeekAlt.vue (страж weekBadgeParity.test.ts там).
-const props = defineProps<{ days: WeekDaySegment[]; size: number; variant: 'dots' | 'steps' | 'wave' }>()
+const props = defineProps<{ days: WeekDaySegment[]; size: number; variant: 'dots' | 'steps' | 'wave' | 'teeth' }>()
 
 const clamp = (n: number) => Math.max(0, Math.min(1, n))
 const showBonus = computed(() => props.size >= 44)
@@ -26,7 +26,7 @@ const steps = computed(() => {
   const w = (props.size - gap * 8) / 7
   const full = props.size - 4
   return props.days.map((d, i) => {
-    const track = full * (props.variant === 'wave' ? 0.4 + 0.6 * Math.sin((Math.PI * (i + 0.5)) / 7) : 0.34 + (0.66 * i) / 6) // «Волна» — дугой: ниже по краям, выше в середине недели
+    const track = full * (props.variant === 'wave' ? 0.4 + 0.6 * Math.sin((Math.PI * (i + 0.5)) / 7) : props.variant === 'teeth' ? (i % 2 === 0 ? 1 : 0.55) : 0.34 + (0.66 * i) / 6) // «Волна» — дугой: ниже по краям, выше в середине недели; «Зубцы» — через один высокий/низкий
     return { x: gap + i * (w + gap), w, y: 2 + full - track, track, h: track * clamp(d.fill), bonus: track * clamp(d.bonus), today: d.state === 'today', date: d.date, state: d.state }
   })
 })

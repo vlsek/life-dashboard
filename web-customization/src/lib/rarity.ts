@@ -66,6 +66,7 @@ export const ITEM_RARITY: Record<string, Rarity> = {
   week_dots: 'common', // 59.3: новые виды недели — по тарифам 100/150
   week_steps: 'uncommon',
   week_wave: 'uncommon', // 150
+  week_teeth: 'common', // 100
   day_dashed: 'common', // виды спидометра дня (53.2 срез 2): 100 → обычный, 150 → необычный
   day_glow: 'uncommon',
   day_ticks: 'uncommon', // 150

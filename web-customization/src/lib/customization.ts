@@ -64,6 +64,7 @@ export const ITEMS: readonly CustomItem[] = [
   { key: 'week_dots', category: 'week_gauge', source: 'points', tier: 'low' },
   { key: 'week_steps', category: 'week_gauge', source: 'points', tier: 'mid' },
   { key: 'week_wave', category: 'week_gauge', source: 'points', tier: 'mid' },
+  { key: 'week_teeth', category: 'week_gauge', source: 'points', tier: 'low' },
   // Вид спидометра ДНЯ (BACKLOG 53.2, срез 2; на усмотрение агента 1): обычное кольцо — у всех бесплатно, «пунктирное кольцо» — 100, «кольцо со свечением» — 150.
   { key: 'day_dashed', category: 'day_gauge', source: 'points', tier: 'low' },
   { key: 'day_glow', category: 'day_gauge', source: 'points', tier: 'mid' },
