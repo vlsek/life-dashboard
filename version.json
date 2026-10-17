@@ -1,6 +1,13 @@
 {
-  "version": "6.03",
+  "version": "6.04",
   "en": [
+    {
+      "version": "6.04",
+      "date": "2026-10-17 21:58",
+      "changes": [
+        "Customization: two new free streak flame looks — “Torch” (a torch with a wooden handle and a wide flame) and “Spark” (a twinkling star with a pulsing core). The “Streak flame” section grew from five to seven looks. The choice shows on the Dashboard from the next load; at 30 and 100 day streak tiers the glow is brighter and sparks appear. No migrations."
+      ]
+    },
     {
       "version": "6.03",
       "date": "2026-10-18 12:00",
@@ -4288,6 +4295,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.04",
+      "date": "2026-10-17 21:58",
+      "changes": [
+        "Кастомизация: два новых бесплатных вида огонька серии — «Факел» (факел с деревянной рукоятью и широким пламенем) и «Искра» (сверкающая звезда с пульсирующим сердцем). Раздел «Огонь серии» вырос с пяти до семи видов. Выбор виден на Дашборде со следующей загрузки; на ступенях серии 30 и 100 дней свечение ярче, появляются искры. Без миграций."
+      ]
+    },
     {
       "version": "6.03",
       "date": "2026-10-18 12:00",

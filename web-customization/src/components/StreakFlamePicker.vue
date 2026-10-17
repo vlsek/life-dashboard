@@ -5,11 +5,13 @@ import SplashFlameLive from './splash/SplashFlameLive.vue'
 import SplashFlameTongues from './splash/SplashFlameTongues.vue'
 import StreakCandle from './splash/StreakCandle.vue'
 import StreakEmber from './splash/StreakEmber.vue'
+import StreakSpark from './splash/StreakSpark.vue'
+import StreakTorch from './splash/StreakTorch.vue'
 import { STREAK_FLAME_VARIANTS, readStreakFlameVariant, writeStreakFlameVariant, type StreakFlameVariant } from '../lib/streakFlameVariant'
 import { t } from '../lib/i18n'
 
 // Выбор вида огонька серии (BACKLOG 44.18в): «Единое пламя» (как сейчас), «Три языка» (прежнее пламя с искрами), срез 2 — «Огненное кольцо»,
-// «Уголёк» и «Свеча» (у них в предпросмотре ступень серии 3: видны и свечение, и искры). Все бесплатные; выбор запоминается в localStorage (`streak_flame_variant`) и виден на Дашборде со следующей загрузки.
+// «Уголёк» и «Свеча», срез 3 — «Факел» и «Искра» (у них в предпросмотре ступень серии 3: видны и свечение, и искры). Все бесплатные; выбор запоминается в localStorage (`streak_flame_variant`) и виден на Дашборде со следующей загрузки.
 // Предпросмотр живой (те же компоненты и CSS, что у заставки), без анимации при «уменьшить движение».
 const current = ref<StreakFlameVariant>(readStreakFlameVariant())
 const saved = ref(true)
@@ -38,6 +40,8 @@ const choose = (v: StreakFlameVariant) => {
           <SplashFireRing v-else-if="v === 'ring'" />
           <StreakEmber v-else-if="v === 'ember'" data-tier="3" />
           <StreakCandle v-else-if="v === 'candle'" data-tier="3" />
+          <StreakTorch v-else-if="v === 'torch'" data-tier="3" />
+          <StreakSpark v-else-if="v === 'spark'" data-tier="3" />
           <SplashFlameTongues v-else :size="48" />
         </div>
         <p class="m-0 text-sm font-medium">{{ label(v) }}</p>

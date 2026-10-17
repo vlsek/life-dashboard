@@ -15,18 +15,20 @@ describe('StreakFlamePicker: новые виды', () => {
     localStorage.setItem('site_lang', 'ru')
   })
 
-  it('пять карточек с подписями; у каждой живой предпросмотр своим компонентом', () => {
-    expect([...STREAK_FLAME_VARIANTS]).toEqual(['flame', 'tongues', 'ring', 'ember', 'candle'])
+  it('семь карточек с подписями; у каждой живой предпросмотр своим компонентом', () => {
+    expect([...STREAK_FLAME_VARIANTS]).toEqual(['flame', 'tongues', 'ring', 'ember', 'candle', 'torch', 'spark'])
     const w = mount(StreakFlamePicker)
-    expect(w.findAll('[data-testid^="streakflame-"][data-active]')).toHaveLength(5)
-    for (const label of ['Единое пламя', 'Три языка', 'Огненное кольцо', 'Уголёк', 'Свеча']) expect(w.text()).toContain(label)
+    expect(w.findAll('[data-testid^="streakflame-"][data-active]')).toHaveLength(7)
+    for (const label of ['Единое пламя', 'Три языка', 'Огненное кольцо', 'Уголёк', 'Свеча', 'Факел', 'Искра']) expect(w.text()).toContain(label)
     expect(w.find('[data-testid="streakflame-ring"] svg.splash-ring').exists()).toBe(true)
     // «Уголёк» и «Свеча» в предпросмотре показаны на ступени 3 (видны и свечение, и искры)
     expect(w.find('[data-testid="streakflame-ember"] svg.sf-ember').attributes('data-tier')).toBe('3')
     expect(w.find('[data-testid="streakflame-candle"] svg.sf-candle').attributes('data-tier')).toBe('3')
+    expect(w.find('[data-testid="streakflame-torch"] svg.sf-torch').attributes('data-tier')).toBe('3')
+    expect(w.find('[data-testid="streakflame-spark"] svg.sf-star').attributes('data-tier')).toBe('3')
   })
 
-  it.each(['ring', 'ember', 'candle'] as const)('«Выбрать» для «%s» запоминает вид и переключает активную карточку', async (v) => {
+  it.each(['ring', 'ember', 'candle', 'torch', 'spark'] as const)('«Выбрать» для «%s» запоминает вид и переключает активную карточку', async (v) => {
     const w = mount(StreakFlamePicker)
     await w.find(`[data-testid="streakflame-${v}"] [data-testid="streakflame-choose"]`).trigger('click')
     expect(localStorage.getItem(STREAK_FLAME_VARIANT_KEY)).toBe(v)
@@ -41,12 +43,12 @@ describe('StreakFlamePicker: новые виды', () => {
     localStorage.setItem('site_lang', 'en')
     const en = mount(StreakFlamePicker)
     expect(en.text()).toContain('All looks are free')
-    for (const label of ['Fire ring', 'Ember', 'Candle']) expect(en.text()).toContain(label)
+    for (const label of ['Fire ring', 'Ember', 'Candle', 'Torch', 'Spark']) expect(en.text()).toContain(label)
   })
 })
 
 describe('копии новых видов в web-dashboard совпадают с этими (страж)', () => {
-  it.each(['StreakEmber.vue', 'StreakCandle.vue'])('компонент %s', async (f) => {
+  it.each(['StreakEmber.vue', 'StreakCandle.vue', 'StreakTorch.vue', 'StreakSpark.vue'])('компонент %s', async (f) => {
     expect(await readSrc('../../web-dashboard/src/components/splash/' + f)).toBe(await readSrc('./components/splash/' + f))
   })
   it('блок CSS «streak-flame-more» одинаков в style.css обоих пилотов', async () => {

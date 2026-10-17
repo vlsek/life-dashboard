@@ -2640,10 +2640,31 @@ html[data-motion='off'] .chart-draw .ch-bar { animation: none; }
 @keyframes sf-pulse { 0%, 100% { transform: scale(0.94); } 50% { transform: scale(1.06); } }
 @keyframes sf-glowline { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
 @keyframes sf-flicker { 0%, 100% { transform: scale(1, 1) skewX(0deg); } 30% { transform: scale(0.94, 1.06) skewX(-3deg); } 60% { transform: scale(1.04, 0.96) skewX(2deg); } }
+/* срез 3 (44.18в): «Факел» (.sf-torch) и «Искра» (.sf-star) — те же ступени серии и общие keyframes spark-rise/sf-pulse/sf-flicker */
+.sf-torch, .sf-star { --sf-speed: 1; --sf-glow: 0.35; display: inline-block; vertical-align: middle; }
+.sf-torch[data-tier='2'], .sf-star[data-tier='2'] { --sf-speed: 0.85; --sf-glow: 0.55; }
+.sf-torch[data-tier='3'], .sf-star[data-tier='3'] { --sf-speed: 0.7; --sf-glow: 0.75; }
+.sf-torch .torch-glow { fill: var(--accent); opacity: calc(var(--sf-glow) * 0.45); filter: blur(3px); transform-box: fill-box; transform-origin: 50% 50%; animation: sf-pulse calc(2.4s * var(--sf-speed)) ease-in-out infinite; }
+.sf-torch .torch-handle { fill: color-mix(in srgb, var(--text, #888888) 38%, var(--bg-card, #ffffff)); stroke: color-mix(in srgb, var(--text, #888888) 45%, transparent); stroke-width: 1; }
+.sf-torch .torch-band { fill: color-mix(in srgb, var(--accent) 35%, var(--bg-card, #ffffff)); }
+.sf-torch .torch-flame { transform-box: fill-box; transform-origin: 50% 100%; animation: sf-flicker calc(1.2s * var(--sf-speed)) ease-in-out infinite; }
+.sf-torch .torch-flame-out { fill: var(--accent); }
+.sf-torch .torch-flame-in { fill: color-mix(in srgb, var(--accent) 30%, #ffffff); }
+.sf-torch[data-tier='3'] .torch-flame-in { fill: color-mix(in srgb, var(--accent) 10%, #ffffff); }
+.sf-star .star-halo { fill: var(--accent); opacity: calc(var(--sf-glow) * 0.5); filter: blur(4px); transform-box: fill-box; transform-origin: 50% 50%; animation: sf-pulse calc(2.4s * var(--sf-speed)) ease-in-out infinite; }
+.sf-star .star-rays { fill: var(--accent); transform-box: fill-box; transform-origin: 50% 50%; animation: sf-spin calc(9s * var(--sf-speed)) linear infinite; }
+.sf-star .star-rays-b { fill: color-mix(in srgb, var(--accent) 45%, #ffffff); animation-direction: reverse; animation-duration: calc(6s * var(--sf-speed)); }
+.sf-star .star-core { fill: color-mix(in srgb, var(--accent) 12%, #ffffff); transform-box: fill-box; transform-origin: 50% 50%; animation: sf-pulse calc(1.6s * var(--sf-speed)) ease-in-out -0.4s infinite; }
+.sf-torch .spark, .sf-star .spark { fill: color-mix(in srgb, var(--accent) 45%, #ffffff); opacity: 0; animation: spark-rise var(--d, 2s) ease-out var(--o, 0s) infinite; }
+.sf-torch[data-tier='1'] .spark, .sf-star[data-tier='1'] .spark,
+.sf-torch[data-tier='2'] .spark-b, .sf-star[data-tier='2'] .spark-b { display: none; }
+@keyframes sf-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) {
-  .sf-ember, .sf-ember *, .sf-candle, .sf-candle * { animation: none !important; }
-  .sf-ember .spark, .sf-candle .spark { opacity: 0; }
+  .sf-ember, .sf-ember *, .sf-candle, .sf-candle *, .sf-torch, .sf-torch *, .sf-star, .sf-star * { animation: none !important; }
+  .sf-ember .spark, .sf-candle .spark, .sf-torch .spark, .sf-star .spark { opacity: 0; }
 }
 html[data-motion='off'] .sf-ember, html[data-motion='off'] .sf-ember *,
-html[data-motion='off'] .sf-candle, html[data-motion='off'] .sf-candle * { animation: none !important; }
+html[data-motion='off'] .sf-candle, html[data-motion='off'] .sf-candle *,
+html[data-motion='off'] .sf-torch, html[data-motion='off'] .sf-torch *,
+html[data-motion='off'] .sf-star, html[data-motion='off'] .sf-star * { animation: none !important; }
 /* streak-flame-more:end */

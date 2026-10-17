@@ -15,8 +15,8 @@ import {
 describe('streakFlameVariant: реестр', () => {
   beforeEach(() => localStorage.clear())
 
-  it('пять вариантов (срез 2 добавил кольцо, уголёк и свечу), по умолчанию — единое пламя', () => {
-    expect([...STREAK_FLAME_VARIANTS]).toEqual(['flame', 'tongues', 'ring', 'ember', 'candle'])
+  it('семь вариантов (срез 2 добавил кольцо, уголёк и свечу, срез 3 — факел и искру), по умолчанию — единое пламя', () => {
+    expect([...STREAK_FLAME_VARIANTS]).toEqual(['flame', 'tongues', 'ring', 'ember', 'candle', 'torch', 'spark'])
     expect(DEFAULT_STREAK_FLAME_VARIANT).toBe('flame')
     expect(readStreakFlameVariant()).toBe('flame')
   })

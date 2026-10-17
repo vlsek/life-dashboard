@@ -15,11 +15,13 @@ import SplashFireRing from './splash/SplashFireRing.vue'
 import SplashFlameTongues from './splash/SplashFlameTongues.vue'
 import StreakCandle from './splash/StreakCandle.vue'
 import StreakEmber from './splash/StreakEmber.vue'
+import StreakSpark from './splash/StreakSpark.vue'
+import StreakTorch from './splash/StreakTorch.vue'
 
 const props = defineProps<{ lit: boolean; days?: number; size?: number }>()
 // size — сторона живого пламени в px (по умолчанию 22; у метрики со стриком — меньше, в строку названия)
 const tier = computed(() => (props.lit ? streakFlameTier(props.days) : 0))
-// Вид живого пламени (BACKLOG 44.18в): «единое пламя» (по умолчанию), «три языка», «огненное кольцо», «уголёк» или «свеча»; выбирается в «Кастомизации», читаем при показе
+// Вид живого пламени (BACKLOG 44.18в): «единое пламя» (по умолчанию), «три языка», «огненное кольцо», «уголёк», «свеча», «факел» или «искра»; выбирается в «Кастомизации», читаем при показе
 const variant = readStreakFlameVariant()
 
 const SPARKS = [
@@ -70,6 +72,8 @@ const sparks = computed(() => SPARKS.slice(0, tier.value >= 3 ? 4 : tier.value >
   />
   <StreakEmber v-else-if="lit && tier > 0 && variant === 'ember'" :width="size ?? 22" :height="size ?? 22" :data-tier="tier" data-test="streak-flame-ember" />
   <StreakCandle v-else-if="lit && tier > 0 && variant === 'candle'" :width="size ?? 22" :height="size ?? 22" :data-tier="tier" data-test="streak-flame-candle" />
+  <StreakTorch v-else-if="lit && tier > 0 && variant === 'torch'" :width="size ?? 22" :height="size ?? 22" :data-tier="tier" data-test="streak-flame-torch" />
+  <StreakSpark v-else-if="lit && tier > 0 && variant === 'spark'" :width="size ?? 22" :height="size ?? 22" :data-tier="tier" data-test="streak-flame-spark" />
   <!-- «Три языка» (44.18в): то же пламя заставки (SplashFlameTongues, у него размер задан атрибутами — переопределяем width/height);
        ступень 1 (7+ дней) — без искр (правило .streak-tongues[data-tier='1'] .spark в style.css), ступени 2–3 (30+/100+) — с искрами -->
   <SplashFlameTongues

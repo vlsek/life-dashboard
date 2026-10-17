@@ -1,9 +1,9 @@
-// Вид огонька серии (стрика) — BACKLOG 44.18в: пять бесплатных вариантов. Срез 1: «Единое пламя» (flame) — нынешнее живое пламя
+// Вид огонька серии (стрика) — BACKLOG 44.18в: семь бесплатных вариантов (срез 3 — «Факел» (torch) и «Искра» (spark)). Срез 1: «Единое пламя» (flame) — нынешнее живое пламя
 // заставки, «Три языка» (tongues) — прежнее пламя из трёх языков с искрами. Срез 2: «Огненное кольцо» (ring) — кольцо заставки с огоньком,
 // «Уголёк» (ember) — тлеющий уголь, «Свеча» (candle) — свеча с живым язычком. Выбор делается в «Кастомизации» и запоминается в
 // localStorage (`streak_flame_variant`, тот же origin у всех страниц); Дашборд читает его при показе огонька, поэтому новый вид
 // виден со следующей загрузки. КОПИЯ лежит в web-dashboard и web-customization (менять ВМЕСТЕ — страж streakFlamePicker.test.ts).
-export const STREAK_FLAME_VARIANTS = ['flame', 'tongues', 'ring', 'ember', 'candle'] as const
+export const STREAK_FLAME_VARIANTS = ['flame', 'tongues', 'ring', 'ember', 'candle', 'torch', 'spark'] as const
 export type StreakFlameVariant = (typeof STREAK_FLAME_VARIANTS)[number]
 export const DEFAULT_STREAK_FLAME_VARIANT: StreakFlameVariant = 'flame'
 export const STREAK_FLAME_VARIANT_KEY = 'streak_flame_variant'

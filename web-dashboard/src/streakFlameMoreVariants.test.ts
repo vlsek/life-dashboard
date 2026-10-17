@@ -5,11 +5,13 @@ import { mount } from '@vue/test-utils'
 import StreakFlame from './components/StreakFlame.vue'
 import { STREAK_FLAME_VARIANT_KEY, writeStreakFlameVariant } from './lib/streakFlameVariant'
 
-// BACKLOG 44.18в (срез 2): новые бесплатные виды огонька серии — «Огненное кольцо» (ring), «Уголёк» (ember), «Свеча» (candle).
+// BACKLOG 44.18в (срез 2/3): новые бесплатные виды огонька серии — «Огненное кольцо» (ring), «Уголёк» (ember), «Свеча» (candle), «Факел» (torch), «Искра» (spark).
 const CASES = [
   { variant: 'ring', test: 'streak-flame-ring', cls: 'streak-ring' },
   { variant: 'ember', test: 'streak-flame-ember', cls: 'sf-ember' },
   { variant: 'candle', test: 'streak-flame-candle', cls: 'sf-candle' },
+  { variant: 'torch', test: 'streak-flame-torch', cls: 'sf-torch' },
+  { variant: 'spark', test: 'streak-flame-spark', cls: 'sf-star' },
 ] as const
 const hasAny = (w: ReturnType<typeof mount>) => CASES.some((c) => w.find(`[data-test="${c.test}"]`).exists())
 
@@ -57,6 +59,17 @@ describe('StreakFlame: разметка новых видов', () => {
     for (const k of ['.candle-body', '.candle-wick', '.candle-flame-out', '.candle-flame-in']) expect(c.find(k).exists()).toBe(true)
     expect(c.findAll('.spark')).toHaveLength(3)
   })
+  it('«Факел»: ореол, рукоять, лента, пламя из двух слоёв и три искры; «Искра»: гало, две вращающиеся звезды, сердце и три искорки', () => {
+    writeStreakFlameVariant('torch')
+    const t = mount(StreakFlame, { props: { lit: true, days: 100 } })
+    for (const k of ['.torch-glow', '.torch-handle', '.torch-band', '.torch-flame-out', '.torch-flame-in']) expect(t.find(k).exists(), k).toBe(true)
+    expect(t.findAll('.spark')).toHaveLength(3)
+    writeStreakFlameVariant('spark')
+    const s = mount(StreakFlame, { props: { lit: true, days: 100 } })
+    for (const k of ['.star-halo', '.star-rays', '.star-rays-b', '.star-core']) expect(s.find(k).exists(), k).toBe(true)
+    expect(s.findAll('.star-rays')).toHaveLength(2)
+    expect(s.findAll('.spark')).toHaveLength(3)
+  })
   it('в хранилище лежит неизвестный вид — единое пламя', () => {
     localStorage.setItem(STREAK_FLAME_VARIANT_KEY, 'dragon')
     expect(mount(StreakFlame, { props: { lit: true, days: 30 } }).find('[data-test="streak-flame-live"]').exists()).toBe(true)
@@ -69,11 +82,15 @@ describe('CSS новых видов (style.css)', () => {
     expect(css).toContain(".sf-ember[data-tier='1'] .spark, .sf-candle[data-tier='1'] .spark,")
     expect(css).toContain(".sf-ember[data-tier='2'] .spark-b, .sf-candle[data-tier='2'] .spark-b { display: none; }")
     expect(css).toContain(".sf-ember[data-tier='3'], .sf-candle[data-tier='3'] { --sf-speed: 0.7; --sf-glow: 0.75; }")
+    // срез 3: «Факел» и «Искра» живут по тем же ступеням
+    expect(css).toContain(".sf-torch[data-tier='1'] .spark, .sf-star[data-tier='1'] .spark,")
+    expect(css).toContain(".sf-torch[data-tier='2'] .spark-b, .sf-star[data-tier='2'] .spark-b { display: none; }")
+    expect(css).toContain(".sf-torch[data-tier='3'], .sf-star[data-tier='3'] { --sf-speed: 0.7; --sf-glow: 0.75; }")
+    expect(css).toContain('@keyframes sf-spin')
   })
   it('анимации гасятся и системным «уменьшить движение», и общим выключателем html[data-motion=off]', () => {
     const block = css.slice(css.indexOf('/* streak-flame-more:start */'), css.indexOf('/* streak-flame-more:end */'))
-    expect(block).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*\.sf-ember, \.sf-ember \*, \.sf-candle, \.sf-candle \* \{ animation: none !important; \}/)
-    expect(block).toContain("html[data-motion='off'] .sf-ember")
-    expect(block).toContain("html[data-motion='off'] .sf-candle")
+    expect(block).toMatch(/@media \(prefers-reduced-motion: reduce\) \{\s*\.sf-ember, \.sf-ember \*, \.sf-candle, \.sf-candle \*, \.sf-torch, \.sf-torch \*, \.sf-star, \.sf-star \* \{ animation: none !important; \}/)
+    for (const cls of ['sf-ember', 'sf-candle', 'sf-torch', 'sf-star']) expect(block, cls).toContain(`html[data-motion='off'] .${cls}`)
   })
 })
