@@ -170,7 +170,8 @@ export function emptyForm(): MetricFormValues {
   return {
     name: '',
     icon: 'svg:pin',
-    type: 'number',
+    // BACKLOG 65.1 (владелец): новая метрика по умолчанию — «Подходы» (повторения + особенность): так заводят отжимания и другие упражнения; «Число» — вторым в списке
+    type: 'sets',
     goalDirection: 'at_least',
     goalValue: 0,
     unit: '',

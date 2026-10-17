@@ -1,4 +1,4 @@
-export type MetricType = 'boolean' | 'multiselect' | 'number'
+export type MetricType = 'boolean' | 'multiselect' | 'number' | 'sets'
 export type GoalDirection = 'at_least' | 'at_most'
 export type Usecase = 'goals' | 'planner' | 'both'
 export type GoalType = 'lose_weight' | 'gain_muscle' | 'learn_skill' | 'general_fitness'

@@ -208,7 +208,7 @@ describe('track-only mode / count_streak', () => {
     expect(emptyForm()).toMatchObject({ trackOnly: false, countStreak: true })
   })
   it('effectiveForm neutralises goal, schedule, streak import and streak in track-only mode', () => {
-    const f = { ...emptyForm(), name: 'W', goalValue: 80, goalDirection: 'at_most' as const, scheduleKind: 'weekly' as const, streakImportDays: '12', trackOnly: true }
+    const f = { ...emptyForm(), type: 'number' as const, name: 'W', goalValue: 80, goalDirection: 'at_most' as const, scheduleKind: 'weekly' as const, streakImportDays: '12', trackOnly: true }
     expect(effectiveForm(f)).toMatchObject({ goalValue: 0, goalDirection: 'at_least', scheduleKind: 'daily', streakImportDays: '', countStreak: false })
   })
   it('track-only does not apply to other types', () => {
@@ -227,7 +227,7 @@ describe('track-only mode / count_streak', () => {
     expect(fieldsEnabledForForm({ type: 'boolean', trackOnly: false })).toMatchObject({ trackOnlyAvailable: false, goal: false, unit: false, schedule: true })
   })
   it('countStreakFields: written when off, or when the column already exists; skipped when on without the column', () => {
-    const f = emptyForm()
+    const f = { ...emptyForm(), type: 'number' as const } // «просто записывать значение» есть только у числа
     expect(countStreakFields(f, null)).toEqual({})
     expect(countStreakFields({ ...f, countStreak: false }, null)).toEqual({ count_streak: false })
     expect(countStreakFields(f, metric({ count_streak: true }))).toEqual({ count_streak: true })
@@ -235,7 +235,7 @@ describe('track-only mode / count_streak', () => {
     expect(countStreakFields({ ...f, trackOnly: true }, null)).toEqual({ count_streak: false })
   })
   it('buildInsertRow in track-only mode saves a neutral metric with the streak off', () => {
-    const f = { ...emptyForm(), name: ' Weight ', unit: 'kg', goalValue: 70, scheduleKind: 'weekly' as const, trackOnly: true }
+    const f = { ...emptyForm(), type: 'number' as const, name: ' Weight ', unit: 'kg', goalValue: 70, scheduleKind: 'weekly' as const, trackOnly: true }
     const row = buildInsertRow(f, 'u1', 3, null)
     expect(row).toMatchObject({ name: 'Weight', unit: 'kg', goal_value: 0, goal_direction: 'at_least', count_streak: false })
     expect('schedule' in row).toBe(false)
@@ -260,7 +260,7 @@ describe('track-only mode / count_streak', () => {
 
 // BACKLOG «Форма метрики: слишком много всего»: сколько настроек в «Дополнительно» отличаются от умолчаний (по ним блок раскрывается сам)
 describe('countAdvancedChanges', () => {
-  const base = () => emptyForm()
+  const base = () => ({ ...emptyForm(), type: 'number' as const }) // эти проверки — про «Число»; у «Подходов» своё (ниже)
   it('форма по умолчанию — 0', () => {
     expect(countAdvancedChanges(base())).toBe(0)
   })

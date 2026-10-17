@@ -14,6 +14,7 @@ function metric(o: Partial<Metric> = {}): Metric {
 describe('MetricFormModal', () => {
   it('"just record a value" disables goal, schedule, streak and import but keeps the unit', async () => {
     const w = mount(MetricFormModal, { props: { existing: null, categories: [] } })
+    await w.find('select').setValue('number') // по умолчанию «Подходы» (65.1), «просто записывать значение» — у числа
     const dis = (sel: string) => (w.find(sel).element as HTMLInputElement).disabled
     expect(dis('[data-test="count-streak"]')).toBe(false)
     await w.find('[data-test="track-only"]').setValue(true)
@@ -35,6 +36,8 @@ describe('MetricFormModal', () => {
   })
   it('the track-only switch is offered only for a number metric', async () => {
     const w = mount(MetricFormModal, { props: { existing: null, categories: [] } })
+    expect(w.find('[data-test="track-only-block"]').exists()).toBe(false) // по умолчанию «Подходы»
+    await w.find('select').setValue('number')
     expect(w.find('[data-test="track-only-block"]').exists()).toBe(true)
     await w.find('select').setValue('boolean')
     await nextTick()
@@ -43,6 +46,7 @@ describe('MetricFormModal', () => {
   })
   it('emits the track-only form on save and opens an existing track-only metric with the switch on', async () => {
     const w = mount(MetricFormModal, { props: { existing: null, categories: [] } })
+    await w.find('select').setValue('number')
     await w.find('input[type="text"]').setValue('Weight')
     await w.find('[data-test="track-only"]').setValue(true)
     await w.findAll('button').at(-1)!.trigger('click')
@@ -58,13 +62,13 @@ describe('MetricFormModal', () => {
     expect(w.emitted('save')).toBeUndefined()
     w.unmount()
   })
-  it('emits save with the typed name and default type', async () => {
+  it('emits save with the typed name and default type (Sets — 65.1)', async () => {
     const w = mount(MetricFormModal, { props: { existing: null, categories: [] } })
     await w.find('input[type="text"]').setValue('Reading')
     await w.findAll('button').at(-1)!.trigger('click')
     const form = w.emitted('save')![0][0] as { name: string; type: string }
     expect(form.name).toBe('Reading')
-    expect(form.type).toBe('number')
+    expect(form.type).toBe('sets')
     w.unmount()
   })
   it('prefills from an existing metric and disables goal fields for boolean', async () => {

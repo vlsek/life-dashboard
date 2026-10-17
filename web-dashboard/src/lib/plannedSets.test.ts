@@ -167,7 +167,10 @@ describe('MetricFormModal: planned sets field', () => {
   const field = '[data-test="planned-sets"]'
   it('hidden for a non-sets type and when the column is not available', async () => {
     const w = mount(MetricFormModal, { props: { existing: null, categories: [], plannedSetsAvailable: true } })
-    expect(w.find(field).exists()).toBe(false) // тип по умолчанию — число
+    expect(w.find(field).exists()).toBe(true) // тип по умолчанию — «Подходы» (65.1)
+    await w.findAll('select')[0].setValue('number')
+    await nextTick()
+    expect(w.find(field).exists()).toBe(false)
     await w.findAll('select')[0].setValue('sets')
     await nextTick()
     expect(w.find(field).exists()).toBe(true)

@@ -128,3 +128,17 @@ describe('вода: норма считается автоматически (BA
     expect(metricDescription({ type: 'number', goal_direction: 'at_least', goal_value: 100, unit: '' }, labels)).toBe('at least 100')
   })
 })
+
+describe('65.1: «Отжимания» в онбординге — подходы, а не число', () => {
+  it('RU и EN: отжимания — тип «sets»; вода, калории, шаги, белок остаются числами', () => {
+    for (const lang of ['ru', 'en'] as const) {
+      const all = [...baseMetrics(lang), ...goalMetrics(lang, 'lose_weight'), ...goalMetrics(lang, 'gain_muscle')]
+      expect(all.find((m) => m.key === 'pushups')?.type).toBe('sets')
+      for (const k of ['water', 'calories', 'steps', 'protein']) expect(all.find((m) => m.key === k)?.type).toBe('number')
+    }
+  })
+  it('описание метрики-подходов в онбординге не падает и содержит цель', () => {
+    const m = baseMetrics('ru').find((x) => x.key === 'pushups')!
+    expect(metricDescription(m, { bool: 'да/нет', multiselect: 'выбор', lessThan: 'не более', atLeast: 'не менее' })).toBe('не менее 100')
+  })
+})

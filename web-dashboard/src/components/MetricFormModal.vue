@@ -69,11 +69,13 @@ const dim = (on: boolean) => ({ opacity: on ? 1 : 0.4 })
 
       <label class="mt-2 block text-sm">{{ t('dash_metric_field_type') }}</label>
       <select v-model="form.type" class="w-full">
+        <option value="sets">{{ t('dash_metric_type_sets') }}</option>
         <option value="number">{{ t('dash_metric_type_number') }}</option>
         <option value="boolean">{{ t('dash_metric_type_boolean') }}</option>
         <option value="multiselect">{{ t('dash_metric_type_multiselect') }}</option>
-        <option value="sets">{{ t('dash_metric_type_sets') }}</option>
       </select>
+      <!-- Чем отличаются типы (BACKLOG 65.1): «Число» — одна величина за день, «Подходы» — упражнение с повторениями и особенностью -->
+      <p class="dim mt-1 text-xs" data-test="type-hint">{{ t(('dash_metric_type_hint_' + form.type) as never) }}</p>
 
       <!-- Связь с упражнением из «Тренировок»: подходы вводятся один раз (BACKLOG 19, срез 2) -->
       <div v-if="linkChoiceShown" class="mt-2" data-test="exercise-link-block">

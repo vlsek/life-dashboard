@@ -186,6 +186,8 @@ describe('форма метрики: варианты списком', () => {
 
   it('варианты видны только там, где нужны: у числа и «да/нет» блока нет, у «Выбора» — на виду, у «Подходов» — в «Дополнительно»', async () => {
     const w = mount(MetricFormModal, { props: { existing: null, categories: [] } })
+    await w.find('select').setValue('number') // по умолчанию «Подходы» (65.1)
+    await nextTick()
     expect(w.find('[data-test="options-editor"]').exists()).toBe(false) // число
     await w.find('select').setValue('multiselect')
     await nextTick()

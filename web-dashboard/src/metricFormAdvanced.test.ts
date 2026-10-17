@@ -26,8 +26,9 @@ describe('форма метрики: основное и «Дополнител�
     w.unmount()
   })
 
-  it('всё остальное — внутри блока: направление цели, режим ввода, расписание, категория, серия и её импорт', () => {
+  it('всё остальное — внутри блока: направление цели, режим ввода, расписание, категория, серия и её импорт', async () => {
     const w = mountNew()
+    await w.find('select').setValue('number') // по умолчанию «Подходы» (65.1); режим ввода и «просто записывать значение» — у числа
     const inside = (sel: string) => w.find(sel).element.closest('[data-test="advanced-block"]') !== null
     const selects = w.findAll('select')
     expect(selects).toHaveLength(5) // тип + направление + режим ввода + расписание + категория, порядок в DOM прежний
@@ -92,6 +93,7 @@ describe('форма метрики: основное и «Дополнител�
 
   it('сохранение при свёрнутом блоке даёт настройки по умолчанию, как раньше', async () => {
     const w = mountNew()
+    await w.find('select').setValue('number')
     await w.find('input[type="text"]').setValue('  Вода ')
     await w.find('.modal-actions button:last-child').trigger('click')
     const row = buildInsertRow(w.emitted('save')![0][0] as MetricFormValues, 'u1', 0, null) as Record<string, unknown>

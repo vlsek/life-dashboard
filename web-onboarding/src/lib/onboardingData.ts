@@ -21,7 +21,7 @@ export function goalOptions(lang: 'en' | 'ru'): { value: GoalType; label: string
 export function baseMetrics(lang: 'en' | 'ru'): MetricTemplate[] {
   if (lang === 'en')
     return [
-      { key: 'pushups', name: 'Push-ups', icon: '💪', type: 'number', goal_value: 100, goal_direction: 'at_least', unit: '' },
+      { key: 'pushups', name: 'Push-ups', icon: '💪', type: 'sets', goal_value: 100, goal_direction: 'at_least', unit: '' },
       { key: 'water', name: 'Water', icon: '💧', type: 'number', goal_direction: 'at_least', unit: 'ml' },
       { key: 'study', name: 'Study', icon: '📚', type: 'boolean', ask_note: true }, // BACKLOG 867: по умолчанию просто «учился» + необязательное «что учил»
       { key: 'calories', name: 'Calories', icon: '🍽️', type: 'number', goal_value: 2000, goal_direction: 'at_most', unit: 'kcal' },
@@ -42,7 +42,7 @@ export function baseMetrics(lang: 'en' | 'ru'): MetricTemplate[] {
       },
     ]
   return [
-    { key: 'pushups', name: 'Отжимания', icon: '💪', type: 'number', goal_value: 100, goal_direction: 'at_least', unit: '' },
+    { key: 'pushups', name: 'Отжимания', icon: '💪', type: 'sets', goal_value: 100, goal_direction: 'at_least', unit: '' },
     { key: 'water', name: 'Вода', icon: '💧', type: 'number', goal_direction: 'at_least', unit: 'мл' },
     { key: 'study', name: 'Учёба', icon: '📚', type: 'boolean', ask_note: true }, // BACKLOG 867: по умолчанию просто «учился» + необязательное «что учил»
     { key: 'calories', name: 'Калории', icon: '🍽️', type: 'number', goal_value: 2000, goal_direction: 'at_most', unit: 'ккал' },
