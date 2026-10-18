@@ -88,7 +88,7 @@ describe('ProfileSection использует семиугольник для н
     // @ts-ignore — в проекте нет типов node, а vitest выполняется в node (как в StreakFlameTheme.test.ts).
     const { readFileSync } = await import('node:fs')
     const src: string = readFileSync('src/components/ProfileSection.vue', 'utf-8')
-    expect(src).toMatch(/<ProgressRing[\s\S]*?:shape="week\.shape === 'classic' \? 'circle' : week\.shape === 'bars' \|\| week\.shape === 'dots' \|\| week\.shape === 'steps' \|\| week\.shape === 'wave' \|\| week\.shape === 'teeth' \|\| week\.shape === 'valley' \|\| week\.shape === 'slope' \|\| week\.shape === 'peak' \|\| week\.shape === 'saw' \? week\.shape : 'heptagon'"[\s\S]*?:days="week\.days"[\s\S]*?\/>/)
+    expect(src).toMatch(/<ProgressRing[\s\S]*?:shape="week\.shape === 'classic' \? 'circle' : week\.shape === 'bars' \|\| week\.shape === 'dots' \|\| week\.shape === 'steps' \|\| week\.shape === 'wave' \|\| week\.shape === 'teeth' \|\| week\.shape === 'valley' \|\| week\.shape === 'slope' \|\| week\.shape === 'peak' \|\| week\.shape === 'saw' \|\| week\.shape === 'towers' \|\| week\.shape === 'weekend' \? week\.shape : 'heptagon'"[\s\S]*?:days="week\.days"[\s\S]*?\/>/)
     expect(src).not.toMatch(/<AvatarProgress[^>]*shape=/)
   })
 })
