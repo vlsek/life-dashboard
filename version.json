@@ -1,6 +1,13 @@
 {
-  "version": "6.06",
+  "version": "6.07",
   "en": [
+    {
+      "version": "6.07",
+      "date": "2026-10-18 08:00",
+      "changes": [
+        "Customization, weekly gauge: two new styles — “Peak” for 100 points (seven bars with the summit on Thursday) and “Saw” for 150 points (three ramps in a row). Shown in the header and on the Dashboard."
+      ]
+    },
     {
       "version": "6.06",
       "date": "2026-10-18 07:31",
@@ -4311,6 +4318,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.07",
+      "date": "2026-10-18 08:00",
+      "changes": [
+        "«Кастомизация», спидометр недели: два новых вида — «Пик» за 100 баллов (семь столбиков, вершина в четверг) и «Пила» за 150 баллов (три подъёма подряд). Показываются в шапке и на Дашборде."
+      ]
+    },
     {
       "version": "6.06",
       "date": "2026-10-18 07:31",

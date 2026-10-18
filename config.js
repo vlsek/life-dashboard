@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.06";
+const SITE_VERSION = "6.07";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.07", date: "2026-10-18 08:00", changes: [
+        "«Кастомизация», спидометр недели: два новых вида — «Пик» за 100 баллов (семь столбиков, вершина в четверг) и «Пила» за 150 баллов (три подъёма подряд). Показываются в шапке и на Дашборде.",
+    ]},
     { version: "6.06", date: "2026-10-18 07:31", changes: [
         "Кастомизация → Графики → «Маркер точек»: два новых бесплатных стиля — «Наклейка» (белая вырезная кайма с тенью, как у стикера) и «Неон» (мягкие светящиеся ореолы и яркое ядро). Теперь стилей шесть; выбор запоминается, графики берут его при открытии страницы. Без миграций."
     ]},
@@ -2430,6 +2433,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.07", date: "2026-10-18 08:00", changes: [
+        "Customization, weekly gauge: two new styles — “Peak” for 100 points (seven bars with the summit on Thursday) and “Saw” for 150 points (three ramps in a row). Shown in the header and on the Dashboard.",
+    ]},
     { version: "6.06", date: "2026-10-18 07:31", changes: [
         "Customization → Charts → “Point marker”: two new free styles — “Sticker” (a white die-cut border with a shadow, like a sticker) and “Neon” (soft glowing halos and a bright core). There are now six styles; your choice is remembered and charts pick it up when the page opens. No migrations."
     ]},
