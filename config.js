@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.15";
+const SITE_VERSION = "6.16";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.16", date: "2026-10-18 19:53", changes: [
+        "Тексты проще: подсказки «Сообщества» и «Достижений» стали короче и на «ты», а вместо «примените миграцию в Supabase» (это видел обычный пользователь) теперь короткое понятное сообщение: в «Достижениях» — «значки пока хранятся на этом устройстве», в «Кастомизации» — «пока недоступна, попробуй позже». Подсказка про миграцию осталась только в консоли разработчика. Без миграций."
+    ]},
     { version: "6.15", date: "2026-10-18 16:50", changes: [
         "«Планы» на главной → «Повторяющиеся пункты…»: созданный пункт теперь можно изменить — кнопка ✎ переносит его в форму (название, время, расписание), «Сохранить» записывает правку, «Не менять» выходит без записи; раньше приходилось удалять и заводить заново. А на будущих днях под таблицей показывается «По расписанию на этот день» — какие повторяющиеся пункты («каждый день» и «по дням недели») придутся на этот день; отметить пункт по-прежнему можно только сегодня.",
     ]},
@@ -2457,6 +2460,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.16", date: "2026-10-18 19:53", changes: [
+        "Simpler texts: hints in Community and Achievements are shorter and friendlier, and instead of “apply the migration in Supabase” (which ordinary users saw) there is now a short, clear message: in Achievements “badges are saved on this device for now”, in Customization “not available yet, try again later”. The migration hint now lives only in the developer console. No migrations."
+    ]},
     { version: "6.15", date: "2026-10-18 16:50", changes: [
         "Plans on the home page → “Repeating items…”: a created item can now be edited — the ✎ button moves it into the form (title, time, schedule), “Save” writes the change and “Cancel editing” leaves without saving; before you had to delete and re-create it. And on future days a “By schedule on this day” list appears under the table — the repeating items (“every day” and “on chosen weekdays”) that fall on that day; an item can still be ticked only today.",
     ]},
