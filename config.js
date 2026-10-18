@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.14";
+const SITE_VERSION = "6.15";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.15", date: "2026-10-18 16:50", changes: [
+        "«Планы» на главной → «Повторяющиеся пункты…»: созданный пункт теперь можно изменить — кнопка ✎ переносит его в форму (название, время, расписание), «Сохранить» записывает правку, «Не менять» выходит без записи; раньше приходилось удалять и заводить заново. А на будущих днях под таблицей показывается «По расписанию на этот день» — какие повторяющиеся пункты («каждый день» и «по дням недели») придутся на этот день; отметить пункт по-прежнему можно только сегодня.",
+    ]},
     { version: "6.14", date: "2026-10-18 10:50", changes: [
         "«Кастомизация», анимация воды: две новые — «Дрожь» за 100 баллов (стакан быстро дрожит из стороны в сторону) и «Падение» за 150 баллов (стакан падает сверху и мягко приземляется). Играют в шапке и на Дашборде.",
     ]},
@@ -2454,6 +2457,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.15", date: "2026-10-18 16:50", changes: [
+        "Plans on the home page → “Repeating items…”: a created item can now be edited — the ✎ button moves it into the form (title, time, schedule), “Save” writes the change and “Cancel editing” leaves without saving; before you had to delete and re-create it. And on future days a “By schedule on this day” list appears under the table — the repeating items (“every day” and “on chosen weekdays”) that fall on that day; an item can still be ticked only today.",
+    ]},
     { version: "6.14", date: "2026-10-18 10:50", changes: [
         "Customization, water animation: two new ones — “Shake” for 100 points (the glass trembles from side to side) and “Drop” for 150 points (the glass drops in from above and lands softly). Play in the header and on the Dashboard.",
     ]},

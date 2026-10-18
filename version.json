@@ -1,6 +1,13 @@
 {
-  "version": "6.14",
+  "version": "6.15",
   "en": [
+    {
+      "version": "6.15",
+      "date": "2026-10-18 16:50",
+      "changes": [
+        "Plans on the home page → “Repeating items…”: a created item can now be edited — the ✎ button moves it into the form (title, time, schedule), “Save” writes the change and “Cancel editing” leaves without saving; before you had to delete and re-create it. And on future days a “By schedule on this day” list appears under the table — the repeating items (“every day” and “on chosen weekdays”) that fall on that day; an item can still be ticked only today."
+      ]
+    },
     {
       "version": "6.14",
       "date": "2026-10-18 10:50",
@@ -4367,6 +4374,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.15",
+      "date": "2026-10-18 16:50",
+      "changes": [
+        "«Планы» на главной → «Повторяющиеся пункты…»: созданный пункт теперь можно изменить — кнопка ✎ переносит его в форму (название, время, расписание), «Сохранить» записывает правку, «Не менять» выходит без записи; раньше приходилось удалять и заводить заново. А на будущих днях под таблицей показывается «По расписанию на этот день» — какие повторяющиеся пункты («каждый день» и «по дням недели») придутся на этот день; отметить пункт по-прежнему можно только сегодня."
+      ]
+    },
     {
       "version": "6.14",
       "date": "2026-10-18 10:50",
