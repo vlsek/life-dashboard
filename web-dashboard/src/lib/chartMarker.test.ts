@@ -14,8 +14,8 @@ const mountChart = () => mount(ChartBlock, { props: { title: 'Отжимания
 describe('chartMarker: стили маркеров-мини-диаграмм (BACKLOG 13:54)', () => {
   beforeEach(() => localStorage.clear())
 
-  it('шесть стилей; по умолчанию прежний плоский; мусор в хранилище игнорируется', () => {
-    expect([...CHART_MARKERS]).toEqual(['flat', 'glass', 'drop', 'outline', 'sticker', 'neon'])
+  it('восемь стилей (срез 7е добавил «ring» и «target» к «sticker»/«neon»); по умолчанию прежний плоский; мусор в хранилище игнорируется', () => {
+    expect([...CHART_MARKERS]).toEqual(['flat', 'glass', 'drop', 'outline', 'sticker', 'neon', 'ring', 'target'])
     expect(DEFAULT_CHART_MARKER).toBe('flat')
     expect(readChartMarker()).toBe('flat')
     localStorage.setItem(CHART_MARKER_KEY, 'glass')

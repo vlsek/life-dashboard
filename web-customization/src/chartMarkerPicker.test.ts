@@ -11,11 +11,11 @@ describe('ChartMarkerPicker: выбор стиля маркеров график
     localStorage.setItem('site_lang', 'ru')
   })
 
-  it('шесть карточек с живым предпросмотром; по умолчанию выбран «Плоский»; стекло и капля имеют свои градиенты', () => {
+  it('восемь карточек с живым предпросмотром; по умолчанию выбран «Плоский»; стекло и капля имеют свои градиенты', () => {
     const w = mount(ChartMarkerPicker)
-    expect(w.findAll('[data-testid^="marker-"][data-active]')).toHaveLength(6)
+    expect(w.findAll('[data-testid^="marker-"][data-active]')).toHaveLength(8)
     expect(w.find('[data-testid="marker-flat"]').attributes('data-active')).toBe('true')
-    for (const v of ['flat', 'glass', 'drop', 'outline', 'sticker', 'neon']) expect(w.find(`[data-testid="marker-${v}"] svg`).findAll('[data-test="pie-point"], path').length, v).toBeGreaterThan(4)
+    for (const v of ['flat', 'glass', 'drop', 'outline', 'sticker', 'neon', 'ring', 'target']) expect(w.find(`[data-testid="marker-${v}"] svg`).findAll('[data-test="pie-point"], path').length, v).toBeGreaterThan(4)
     expect(w.find('[data-testid="marker-glass"] svg').html()).toContain('radialGradient')
     expect(w.find('[data-testid="marker-drop"] svg').html()).toContain('linearGradient')
     expect(w.find('[data-testid="marker-flat"] svg').html()).not.toContain('Gradient')

@@ -3,7 +3,9 @@
 // `chart_marker`, меняется в «Кастомизации». ЭТОТ ФАЙЛ копируется в web-customization/src/lib/ БЕЗ изменений
 // (scripts/apply_chart_marker.py; тест сверяет) — правь здесь. Чистые строки SVG, без фильтров и backdrop-filter:
 // «стекло» и «капля» — градиенты и обводка. Градиенты — в <defs> с уникальным id на график (markerDefs).
-export const CHART_MARKERS = ['flat', 'glass', 'drop', 'outline', 'sticker', 'neon'] as const
+// Срез 7е: «кольцо» (ring) — диаграмма-бублик с отверстием в центре; «мишень» (target) — тонкое внешнее кольцо и уменьшенная диаграмма внутри.
+// Оба — только круги/пути/группа с transform: без фильтров и градиентов (defs не нужны).
+export const CHART_MARKERS = ['flat', 'glass', 'drop', 'outline', 'sticker', 'neon', 'ring', 'target'] as const
 export type ChartMarker = (typeof CHART_MARKERS)[number]
 export const DEFAULT_CHART_MARKER: ChartMarker = 'flat'
 export const CHART_MARKER_KEY = 'chart_marker'
@@ -93,6 +95,22 @@ export function markerParts(style: ChartMarker, slices: MarkerSlice[], x: number
         ? `<circle cx="${cx}" cy="${cy}" r="${r - 0.6}" fill="${s.color}" fill-opacity=".3" stroke="${s.color}" stroke-width="1.3"/>`
         : `<path d="${s.path}" fill="${s.color}" fill-opacity=".3" stroke="${s.color}" stroke-width="1.3" stroke-linejoin="round"/>`
     g += `<circle cx="${cx}" cy="${cy}" r="1.1" fill="var(--bg-card)"/>`
+  } else if (style === 'ring') {
+    // бублик: те же сектора, в центре отверстие цвета карточки (радиус — доля от r, чтобы читались и тонкие сектора)
+    for (const s of slices)
+      g += s.full
+        ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${s.color}" stroke="var(--bg-card)" stroke-width="1" />`
+        : `<path d="${s.path}" fill="${s.color}" stroke="var(--bg-card)" stroke-width=".8" stroke-linejoin="round" />`
+    g += `<circle cx="${cx}" cy="${cy}" r="${f1(r * 0.46)}" fill="var(--bg-card)" />`
+  } else if (style === 'target') {
+    // мишень: внешнее тонкое кольцо цвета первого сектора и уменьшенная (×0.62) диаграмма внутри; масштаб вокруг центра маркера
+    g += `<circle cx="${cx}" cy="${cy}" r="${f1(r)}" fill="none" stroke="${slices[0].color}" stroke-width="1.2" stroke-opacity=".75" />`
+    g += `<g transform="translate(${cx} ${cy}) scale(.62) translate(-${cx} -${cy})">`
+    for (const s of slices)
+      g += s.full
+        ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${s.color}" stroke="var(--bg-card)" stroke-width="1.5" />`
+        : `<path d="${s.path}" fill="${s.color}" stroke="var(--bg-card)" stroke-width="1.2" stroke-linejoin="round" />`
+    g += '</g>'
   } else {
     // flat — РОВНО прежний вид (не менять: на нём держатся тесты и привычка)
     for (const s of slices)
