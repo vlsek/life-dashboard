@@ -1,4 +1,4 @@
-import { SLOTS } from './slots'
+import { SLOTS, canonicalSlot } from './slots'
 
 // Навигация «витрина ↔ слот» страницы «Кастомизация» (BACKLOG 64.1, срез 2). Состояние лежит в адресе: `#slot=<id>` — открыт слот, `#slot=all` —
 // все разделы одним списком (прежняя лента), пусто — витрина. Так кнопка «Назад» на телефоне возвращает из слота на витрину, а перезагрузка
@@ -14,7 +14,7 @@ export function parseSlotHash(hash: string, valid: readonly string[] = SLOTS.map
   } catch {
     return '' // битая запись (%E0%A4%A) — витрина, а не ошибка страницы
   }
-  return id === SLOT_ALL || valid.includes(id) ? id : ''
+  return id === SLOT_ALL ? id : valid.includes(id) ? canonicalSlot(id) : '' // вложенный слот (например, базовые анимации воды) открывает родителя
 }
 
 export const slotHash = (id: string): string => (id ? PREFIX + encodeURIComponent(id) : '')

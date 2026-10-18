@@ -31,7 +31,7 @@ import { useFavoriteThemes } from './lib/useFavoriteThemes'
 import { useCustomization } from './lib/useCustomization'
 import { CATEGORY_ORDER, ITEMS, priceOf } from './lib/customization'
 import { t } from './lib/i18n'
-import { SLOTS, freeTotal } from './lib/slots'
+import { SLOTS, childSlots, freeTotal, topSlots } from './lib/slots'
 import { GROUP_ORDER } from './lib/pageTabs'
 import { SLOT_ALL, readSlot, writeSlot } from './lib/slotNav'
 import { stripEmoji } from './lib/emojiText'
@@ -102,7 +102,8 @@ const syncSlot = () => (openSlot.value = readSlot())
 onMounted(() => window.addEventListener('hashchange', syncSlot))
 onBeforeUnmount(() => window.removeEventListener('hashchange', syncSlot))
 const inSlot = computed(() => openSlot.value !== '')
-const isOpen = (id: string): boolean => openSlot.value === SLOT_ALL || openSlot.value === id
+// слот-«ребёнок» (базовые анимации воды) открывается вместе с родителем — один экран «Анимация воды»
+const isOpen = (id: string): boolean => openSlot.value === SLOT_ALL || openSlot.value === id || SLOTS.find((x) => x.id === id)?.parent === openSlot.value
 function open(id: string) {
   writeSlot(id)
   syncSlot()
@@ -136,6 +137,7 @@ const modeCounts = computed<Record<SlotMode, number>>(() => {
   const n: Record<VisGroup, number> = { owned: 0, achievement: 0, coins: 0 }
   if (slotDef.value?.kind === 'themes') for (const g of themeBuckets) for (const k of g.items) n[themeGroup(k)]++
   else if (slotDef.value?.kind === 'catalog') for (const c of categories.value) if (c.category === slotDef.value.id) for (const g of c.groups) for (const i of g.items) n[groupOfItem(i, statusOf(i.key))]++
+  for (const ch of childSlots(openSlot.value)) n.owned += slotCounts.value[ch.id]?.total ?? 0 // вложенные «бесплатные» слоты целиком «мои» (например, базовые анимации воды)
   return { all: n.owned + n.achievement + n.coins, mine: n.owned, shop: n.achievement + n.coins }
 })
 const flatItems = computed(() => {
@@ -179,19 +181,26 @@ const cells = computed(() =>
   GROUP_ORDER.map((g) => ({
     group: g as string,
     label: t(('cust_grp_' + g) as never),
-    items: SLOTS.filter((sl) => sl.group === g && slotVisible(sl.id)).map((sl) => {
-      const rs = nowRows.value.filter((r) => r.section === sl.id)
-      const c = slotCounts.value[sl.id]
+    items: topSlots().filter((sl) => sl.group === g && [sl, ...childSlots(sl.id)].some((x) => slotVisible(x.id))).map((sl) => {
+      const own = [sl, ...childSlots(sl.id)] // слот и вложенные в него (одна ячейка, одно число «открыто/всего»)
+      const rs = nowRows.value.filter((r) => own.some((x) => x.id === r.section))
+      const cs = own.map((x) => slotCounts.value[x.id]).filter(Boolean)
+      const shown = rs.filter((r) => r.custom).length ? rs.filter((r) => r.custom) : rs.slice(0, 1) // у слота с вложенным показываем то, что выбрано своё, иначе первое значение
       return {
         id: sl.id,
         title: t(sl.titleKey as never),
-        value: rs.map((r) => [r.valueKey, ...(r.extraKeys ?? [])].map((k) => stripEmoji(t(k as never))).join(' · ')).join(' · '),
-        count: c ? c.owned + '/' + c.total : '',
+        value: (own.length > 1 ? shown : rs).map((r) => [r.valueKey, ...(r.extraKeys ?? [])].map((k) => stripEmoji(t(k as never))).join(' · ')).join(' · '),
+        count: cs.length ? cs.reduce((n, c) => n + c.owned, 0) + '/' + cs.reduce((n, c) => n + c.total, 0) : '',
         custom: rs.some((r) => r.custom),
       }
     }),
   })).filter((g) => g.items.length),
 )
+// «открыто/всего» открытого слота вместе с вложенными (у «Анимации воды» — базовые + дополнительные)
+const openTotals = computed(() => {
+  const own = [openSlot.value, ...childSlots(openSlot.value).map((x) => x.id)].map((id) => slotCounts.value[id]).filter(Boolean)
+  return own.length ? { owned: own.reduce((n, c) => n + c.owned, 0), total: own.reduce((n, c) => n + c.total, 0) } : null
+})
 const openTitle = computed(() => (openSlot.value === SLOT_ALL ? t('cust_all_title') : stripEmoji(t((SLOTS.find((x) => x.id === openSlot.value)?.titleKey ?? 'cust_all_title') as never))))
 </script>
 
@@ -242,7 +251,7 @@ const openTitle = computed(() => (openSlot.value === SLOT_ALL ? t('cust_all_titl
         <template v-else>
           <div class="mb-3 flex items-center gap-3">
             <button type="button" class="secondary px-3 py-1.5 text-sm" data-testid="slot-back" @click="closeSlot">← {{ t('cust_back') }}</button>
-            <h2 class="text-base font-medium" data-testid="slot-title">{{ openTitle }} <span v-if="slotCounts[openSlot]" class="dim text-xs font-normal" data-testid="slot-title-count">{{ slotCounts[openSlot].owned }}/{{ slotCounts[openSlot].total }}</span></h2>
+            <h2 class="text-base font-medium" data-testid="slot-title">{{ openTitle }} <span v-if="openTotals" class="dim text-xs font-normal" data-testid="slot-title-count">{{ openTotals.owned }}/{{ openTotals.total }}</span></h2>
           </div>
           <SlotToolbar v-if="hasToolbar" v-model:mode="modeModel" v-model:query="query" v-model:sort="sort" :counts="modeCounts" :price-sort="slotDef?.kind === 'catalog'" />
           <VisibilityChips v-else-if="openSlot === SLOT_ALL" :state="vis.state.value" :counts="visCounts" @toggle="vis.toggle" />
@@ -306,6 +315,7 @@ const openTitle = computed(() => (openSlot.value === SLOT_ALL ? t('cust_all_titl
         </SectionGroup>
 
         <!-- Анимация воды (BACKLOG 54.8): «По теме» + 6 бесплатных вариантов, выбор в localStorage (общий с «Настройками» шапки) -->
+        <h3 v-if="single && openSlot === 'water_anim' && freeShown" class="mb-1 text-sm font-medium" style="color: var(--text-dim)" data-testid="water-base-title">{{ t('cust_water_base') }}</h3>
         <SectionGroup :bare="single" v-if="freeShown && isOpen('wateranim')" id="wateranim" :title="t('cust_sec_wateranim')" :total="freeTotal('wateranim')" :owned="freeTotal('wateranim')" :collapsed="isCollapsed('section:wateranim')" @toggle="toggle('section:wateranim')">
           <WaterAnimPicker />
         </SectionGroup>
@@ -315,7 +325,8 @@ const openTitle = computed(() => (openSlot.value === SLOT_ALL ? t('cust_all_titl
           <BodyModelPicker />
         </SectionGroup>
 
-        <SectionGroup :bare="single" v-for="c in shownCategories" :key="c.category" :id="c.category" :title="t(('cust_cat_' + c.category) as never)" :total="c.total" :owned="c.owned" :collapsed="isCollapsed('section:' + c.category)" @toggle="toggle('section:' + c.category)">
+        <SectionGroup :bare="single" v-for="c in shownCategories" :key="c.category" :id="c.category" :title="c.category === 'water_anim' && !single ? t('cust_cat_water_anim') + ' · ' + t('cust_water_extra') : t(('cust_cat_' + c.category) as never)" :total="c.total" :owned="c.owned" :collapsed="isCollapsed('section:' + c.category)" @toggle="toggle('section:' + c.category)">
+          <h3 v-if="single && c.category === 'water_anim'" class="mb-1 mt-2 text-sm font-medium" style="color: var(--text-dim)" data-testid="water-extra-title">{{ t('cust_water_extra') }}</h3>
           <p class="dim mb-2 text-xs">{{ t('cust_cat_hint') }}</p>
           <div v-if="single" class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr))" data-testid="slot-grid">
             <ItemCard
