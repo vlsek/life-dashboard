@@ -1,6 +1,13 @@
 {
-  "version": "6.09",
+  "version": "6.10",
   "en": [
+    {
+      "version": "6.10",
+      "date": "2026-10-18 04:39",
+      "changes": [
+        "Customization → charts → “Markers”: two new free styles for the little pie-chart dots on charts of metrics with set variations — “Ring” (a donut with a hole in the middle) and “Target” (a thin outer ring with a smaller pie inside). Together with “Sticker” and “Neon”, added in parallel, there are now eight styles. The section hint no longer states a count, which kept going stale. Charts pick up the choice the next time the page opens."
+      ]
+    },
     {
       "version": "6.09",
       "date": "2026-10-17 16:00",
@@ -4332,6 +4339,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.10",
+      "date": "2026-10-18 04:39",
+      "changes": [
+        "«Кастомизация» → графики → «Маркеры»: два новых бесплатных стиля кружков-мини-диаграмм на графиках метрик с особенностями подходов — «Кольцо» (диаграмма-бублик с отверстием в центре) и «Мишень» (тонкое внешнее кольцо и уменьшенная диаграмма внутри). Вместе с «Наклейкой» и «Неоном», добавленными параллельно, стилей теперь восемь. Заодно подсказка раздела больше не называет число стилей — оно устаревало. Графики подхватят выбор при следующем открытии страницы."
+      ]
+    },
     {
       "version": "6.09",
       "date": "2026-10-17 16:00",

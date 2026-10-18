@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.09";
+const SITE_VERSION = "6.10";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.10", date: "2026-10-18 04:39", changes: [
+        "«Кастомизация» → графики → «Маркеры»: два новых бесплатных стиля кружков-мини-диаграмм на графиках метрик с особенностями подходов — «Кольцо» (диаграмма-бублик с отверстием в центре) и «Мишень» (тонкое внешнее кольцо и уменьшенная диаграмма внутри). Вместе с «Наклейкой» и «Неоном», добавленными параллельно, стилей теперь восемь. Заодно подсказка раздела больше не называет число стилей — оно устаревало. Графики подхватят выбор при следующем открытии страницы.",
+    ]},
     { version: "6.09", date: "2026-10-17 16:00", changes: [
         "Тур онбординга стал короче и написан на «ты» (7 шагов, те же темы): меньше текста для новичка. Тексты тура теперь лежат в одном месте и раскатываются во все разделы одним скриптом, чтобы копии не расходились. Без миграций.",
     ]},
@@ -2439,6 +2442,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.10", date: "2026-10-18 04:39", changes: [
+        "Customization → charts → “Markers”: two new free styles for the little pie-chart dots on charts of metrics with set variations — “Ring” (a donut with a hole in the middle) and “Target” (a thin outer ring with a smaller pie inside). Together with “Sticker” and “Neon”, added in parallel, there are now eight styles. The section hint no longer states a count, which kept going stale. Charts pick up the choice the next time the page opens.",
+    ]},
     { version: "6.09", date: "2026-10-17 16:00", changes: [
         "The onboarding tour is shorter and addressed to you directly (7 steps, same topics): less text for a newcomer. The tour texts now live in one place and are rolled out to every section by one script, so the copies cannot drift apart. No migrations.",
     ]},
