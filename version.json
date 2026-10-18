@@ -1,6 +1,13 @@
 {
-  "version": "6.08",
+  "version": "6.09",
   "en": [
+    {
+      "version": "6.09",
+      "date": "2026-10-17 16:00",
+      "changes": [
+        "The onboarding tour is shorter and addressed to you directly (7 steps, same topics): less text for a newcomer. The tour texts now live in one place and are rolled out to every section by one script, so the copies cannot drift apart. No migrations."
+      ]
+    },
     {
       "version": "6.08",
       "date": "2026-10-18 16:30",
@@ -4325,6 +4332,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.09",
+      "date": "2026-10-17 16:00",
+      "changes": [
+        "Тур онбординга стал короче и написан на «ты» (7 шагов, те же темы): меньше текста для новичка. Тексты тура теперь лежат в одном месте и раскатываются во все разделы одним скриптом, чтобы копии не расходились. Без миграций."
+      ]
+    },
     {
       "version": "6.08",
       "date": "2026-10-18 16:30",

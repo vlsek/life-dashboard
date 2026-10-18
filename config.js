@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.08";
+const SITE_VERSION = "6.09";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.09", date: "2026-10-17 16:00", changes: [
+        "Тур онбординга стал короче и написан на «ты» (7 шагов, те же темы): меньше текста для новичка. Тексты тура теперь лежат в одном месте и раскатываются во все разделы одним скриптом, чтобы копии не расходились. Без миграций.",
+    ]},
     { version: "6.08", date: "2026-10-18 16:30", changes: [
         "«Кастомизация»: внутри раздела стало удобнее искать и выбирать. Открыв раздел (например, рамки аватарки или темы), вы видите переключатель «Все · Мои · Магазин» с числами, поиск по названию и сортировку (по редкости, по цене, по названию). Предметы идут одним списком, а редкость подписана на самой карточке. Раньше они были разложены по сворачиваемым группам редкости — эта лента осталась по кнопке «Всё одним списком»."
     ]},
@@ -2436,6 +2439,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.09", date: "2026-10-17 16:00", changes: [
+        "The onboarding tour is shorter and addressed to you directly (7 steps, same topics): less text for a newcomer. The tour texts now live in one place and are rolled out to every section by one script, so the copies cannot drift apart. No migrations.",
+    ]},
     { version: "6.08", date: "2026-10-18 16:30", changes: [
         "Customization: it is easier to browse and pick inside a section. When you open a section (for example avatar frames or themes) you get an “All · Mine · Shop” switch with counts, search by name and sorting (by rarity, price or name). Items are one list, and the rarity is written on the card itself. They used to be split into collapsible rarity groups — that feed is still available with “Everything in one list”."
     ]},
