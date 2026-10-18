@@ -3,11 +3,11 @@
 // Выбор лежит в profiles.customization.water_glass (ключ предмета); страницы применяют его БЕЗ ожидания сети — через кэш в localStorage
 // (как вид спидометра): кэш пишет «Кастомизация» при выборе, шапка и Дашборд сверяются с профилем в фоне. Чистая логика (без Vue/сети).
 // Пилоты изолированы, поэтому файл ЕСТЬ в web-customization, web-header и web-dashboard (менять ВМЕСТЕ — страж в collapseStyleCopies.test.ts).
-export type WaterGlassStyle = 'glass' | 'mug' | 'bottle' | 'flask' | 'goblet' | 'tumbler' | 'jar' | 'beaker' | 'pitcher'
+export type WaterGlassStyle = 'glass' | 'mug' | 'bottle' | 'flask' | 'goblet' | 'tumbler' | 'jar' | 'beaker' | 'pitcher' | 'carafe' | 'teacup'
 
 export const WATER_GLASS_CACHE_KEY = 'site_water_glass'
 
-export const BY_ITEM: Record<string, WaterGlassStyle> = { glass_mug: 'mug', glass_bottle: 'bottle', glass_flask: 'flask', glass_goblet: 'goblet', glass_tumbler: 'tumbler', glass_jar: 'jar', glass_beaker: 'beaker', glass_pitcher: 'pitcher' }
+export const BY_ITEM: Record<string, WaterGlassStyle> = { glass_mug: 'mug', glass_bottle: 'bottle', glass_flask: 'flask', glass_goblet: 'goblet', glass_tumbler: 'tumbler', glass_jar: 'jar', glass_beaker: 'beaker', glass_pitcher: 'pitcher', glass_carafe: 'carafe', glass_teacup: 'teacup' }
 
 export function parseWaterGlass(raw: unknown): WaterGlassStyle {
   return typeof raw === 'string' && Object.prototype.hasOwnProperty.call(BY_ITEM, raw) ? BY_ITEM[raw] : 'glass'
@@ -16,7 +16,7 @@ export function parseWaterGlass(raw: unknown): WaterGlassStyle {
 export function readCachedWaterGlass(): WaterGlassStyle {
   try {
     const v = localStorage.getItem(WATER_GLASS_CACHE_KEY)
-    return v === 'mug' || v === 'bottle' || v === 'flask' || v === 'goblet' || v === 'tumbler' || v === 'jar' || v === 'beaker' || v === 'pitcher' ? v : 'glass'
+    return v === 'mug' || v === 'bottle' || v === 'flask' || v === 'goblet' || v === 'tumbler' || v === 'jar' || v === 'beaker' || v === 'pitcher' || v === 'carafe' || v === 'teacup' ? v : 'glass'
   } catch {
     return 'glass'
   }
@@ -104,6 +104,20 @@ export const GLASS_SHAPES: Record<WaterGlassStyle, GlassShape> = {
     bottom: 25.2,
     lines: ['M5.5 4.5h10.5', 'M18.2 11h1.5q2.3 0 2.3 3.6t-2.3 3.6h-1.5'], // ободок и ручка
     shine: 'M6.2 12l0.4 9',
+  },
+  carafe: {
+    body: 'M10 3h4v6q5.5 2.2 5.5 9 0 8-7.5 8T4.5 18q0-6.8 5.5-9z',
+    top: 11,
+    bottom: 25.2,
+    lines: ['M9 3h6'], // ободок горлышка
+    shine: 'M8 17l0.4 4',
+  },
+  teacup: {
+    body: 'M4 8h13v7q0 5-5 5H9q-5 0-5-5z',
+    top: 9,
+    bottom: 19.4,
+    lines: ['M4 8h13', 'M17 10h1.5q2.5 0 2.5 3t-2.5 3H16.5', 'M2.5 24h16'], // ободок, ручка и блюдце
+    shine: 'M6.4 11l0.3 4',
   },
 }
 
