@@ -1,6 +1,13 @@
 {
-  "version": "6.13",
+  "version": "6.14",
   "en": [
+    {
+      "version": "6.14",
+      "date": "2026-10-18 10:50",
+      "changes": [
+        "Customization, water animation: two new ones — “Shake” for 100 points (the glass trembles from side to side) and “Drop” for 150 points (the glass drops in from above and lands softly). Play in the header and on the Dashboard."
+      ]
+    },
     {
       "version": "6.13",
       "date": "2026-10-18 09:10",
@@ -4360,6 +4367,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.14",
+      "date": "2026-10-18 10:50",
+      "changes": [
+        "«Кастомизация», анимация воды: две новые — «Дрожь» за 100 баллов (стакан быстро дрожит из стороны в сторону) и «Падение» за 150 баллов (стакан падает сверху и мягко приземляется). Играют в шапке и на Дашборде."
+      ]
+    },
     {
       "version": "6.13",
       "date": "2026-10-18 09:10",

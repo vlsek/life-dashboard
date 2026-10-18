@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.13";
+const SITE_VERSION = "6.14";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.14", date: "2026-10-18 10:50", changes: [
+        "«Кастомизация», анимация воды: две новые — «Дрожь» за 100 баллов (стакан быстро дрожит из стороны в сторону) и «Падение» за 150 баллов (стакан падает сверху и мягко приземляется). Играют в шапке и на Дашборде.",
+    ]},
     { version: "6.13", date: "2026-10-18 09:10", changes: [
         "«Кастомизация», вид стакана воды: две новые формы — «Графин» за 150 баллов (круглый, с узким горлышком) и «Чашка» за 100 баллов (с ручкой и блюдцем). Показываются в шапке и на Дашборде.",
     ]},
@@ -2451,6 +2454,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.14", date: "2026-10-18 10:50", changes: [
+        "Customization, water animation: two new ones — “Shake” for 100 points (the glass trembles from side to side) and “Drop” for 150 points (the glass drops in from above and lands softly). Play in the header and on the Dashboard.",
+    ]},
     { version: "6.13", date: "2026-10-18 09:10", changes: [
         "Customization, water glass style: two new shapes — “Carafe” for 150 points (round, with a narrow neck) and “Teacup” for 100 points (with a handle and a saucer). Shown in the header and on the Dashboard.",
     ]},
