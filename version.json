@@ -1,6 +1,13 @@
 {
-  "version": "6.19",
+  "version": "6.20",
   "en": [
+    {
+      "version": "6.20",
+      "date": "2026-10-18 23:00",
+      "changes": [
+        "Customization, weekly gauge: two new styles — “Towers” for 100 points (a tall bar every third day) and “Weekend” for 150 points (Saturday and Sunday stand taller than weekdays). Shown in the header and on the Dashboard."
+      ]
+    },
     {
       "version": "6.19",
       "date": "2026-10-18 21:10",
@@ -4402,6 +4409,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.20",
+      "date": "2026-10-18 23:00",
+      "changes": [
+        "«Кастомизация», спидометр недели: два новых вида — «Башни» за 100 баллов (высокие столбики через каждые три дня) и «Выходные» за 150 баллов (суббота и воскресенье выше будней). Показываются в шапке и на Дашборде."
+      ]
+    },
     {
       "version": "6.19",
       "date": "2026-10-18 21:10",

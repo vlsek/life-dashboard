@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.19";
+const SITE_VERSION = "6.20";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.20", date: "2026-10-18 23:00", changes: [
+        "«Кастомизация», спидометр недели: два новых вида — «Башни» за 100 баллов (высокие столбики через каждые три дня) и «Выходные» за 150 баллов (суббота и воскресенье выше будней). Показываются в шапке и на Дашборде.",
+    ]},
     { version: "6.19", date: "2026-10-18 21:10", changes: [
         "Тексты стали короче и на «ты»: «Тренировки» (шаблоны, разминка, ввод подходов, двусторонние упражнения), подсказки календаря, челленджей, магазина и установки приложения. Если не получилось сохранить профиль при входе, вместо технической подсказки про миграцию — спокойный текст (подробность ушла в консоль). Без миграций.",
     ]},
@@ -2469,6 +2472,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.20", date: "2026-10-18 23:00", changes: [
+        "Customization, weekly gauge: two new styles — “Towers” for 100 points (a tall bar every third day) and “Weekend” for 150 points (Saturday and Sunday stand taller than weekdays). Shown in the header and on the Dashboard.",
+    ]},
     { version: "6.19", date: "2026-10-18 21:10", changes: [
         "Texts are shorter and addressed to you: Workouts (templates, warm-up, set entry, two-sided exercises), calendar, challenges, shop and app-install hints. If saving the profile fails at sign-up, a calm message replaces the technical migration hint (the detail moved to the console). No migrations.",
     ]},
