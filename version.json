@@ -1,6 +1,13 @@
 {
-  "version": "6.12",
+  "version": "6.13",
   "en": [
+    {
+      "version": "6.13",
+      "date": "2026-10-18 09:10",
+      "changes": [
+        "Customization, water glass style: two new shapes — “Carafe” for 150 points (round, with a narrow neck) and “Teacup” for 100 points (with a handle and a saucer). Shown in the header and on the Dashboard."
+      ]
+    },
     {
       "version": "6.12",
       "date": "2026-10-18 08:02",
@@ -4353,6 +4360,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.13",
+      "date": "2026-10-18 09:10",
+      "changes": [
+        "«Кастомизация», вид стакана воды: две новые формы — «Графин» за 150 баллов (круглый, с узким горлышком) и «Чашка» за 100 баллов (с ручкой и блюдцем). Показываются в шапке и на Дашборде."
+      ]
+    },
     {
       "version": "6.12",
       "date": "2026-10-18 08:02",
