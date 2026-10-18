@@ -1,6 +1,8 @@
-import { describe, expect, it } from 'vitest'
+// @ts-ignore — в проекте нет типов node; vitest выполняется в node (как в designTokens.test.ts)
 import { execSync } from 'node:child_process'
+// @ts-ignore — то же
 import { readdirSync, readFileSync } from 'node:fs'
+import { describe, expect, it } from 'vitest'
 
 // BACKLOG 935/49.5 (одобрено владельцем 2026-10-17): тур онбординга короче и на «ты». Тексты — в scripts/apply_tour_texts.py,
 // оттуда они раскатываются в словарь КАЖДОГО пилота (tour_1..7_text). Правка руками в одном словаре разводит копии — тест это ловит.
@@ -12,7 +14,7 @@ describe('тур онбординга: тексты в одном месте', (
     expect(run('python3 scripts/apply_tour_texts.py --check')).toContain('изменено файлов: 0')
   })
   it('тур есть в словарях всех пилотов, где он нужен (не меньше 15), по 7 шагов на язык', () => {
-    const dirs = readdirSync('..').filter((d) => d.startsWith('web-'))
+    const dirs = (readdirSync('..') as string[]).filter((d: string) => d.startsWith('web-'))
     let withTour = 0
     for (const d of dirs) {
       let src = ''
