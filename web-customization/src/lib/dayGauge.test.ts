@@ -13,7 +13,7 @@ describe('виды спидометра дня (53.2 срез 2)', () => {
     expect(priceOf(itemByKey('day_glow')!)).toBe(150)
     expect(priceOf(itemByKey('day_ticks')!)).toBe(150)
     expect(priceOf(itemByKey('day_gradient')!)).toBe(250)
-    expect(ITEMS.filter((i) => i.category === 'day_gauge')).toHaveLength(10)
+    expect(ITEMS.filter((i) => i.category === 'day_gauge')).toHaveLength(12)
     expect(rarityOfItem('day_ticks')).toBe('uncommon')
     expect(rarityOfItem('day_gradient')).toBe('rare')
     expect(rarityOfItem('day_dashed')).toBe('common')
@@ -119,6 +119,21 @@ describe('виды спидометра дня (53.2 срез 2)', () => {
     expect(dayGradientStops('ocean')[0].color).not.toBe(dayGradientStops('aurora')[0].color)
     expect(dayUsesGradient('ocean') && dayUsesGradient('aurora')).toBe(true)
     for (const k of ['ocean', 'aurora'] as const) {
+      writeCachedDayGauge(k)
+      expect(readCachedDayGauge()).toBe(k)
+    }
+    writeCachedDayGauge('ring')
+  })
+  it('срез 7: «Мята» и «Жар» — предметы, цены, виды, градиенты, кэш', () => {
+    expect(priceOf(itemByKey('day_mint')!)).toBe(100)
+    expect(priceOf(itemByKey('day_ember')!)).toBe(150)
+    expect(parseDayGauge('day_mint')).toBe('mint')
+    expect(parseDayGauge('day_ember')).toBe('ember')
+    expect(dayGradientStops('mint')).toHaveLength(2)
+    expect(dayGradientStops('ember')).toHaveLength(3)
+    expect(dayGradientStops('ember')[2].color).toBe('#dc2626')
+    expect(dayUsesGradient('mint') && dayUsesGradient('ember')).toBe(true)
+    for (const k of ['mint', 'ember'] as const) {
       writeCachedDayGauge(k)
       expect(readCachedDayGauge()).toBe(k)
     }
