@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.07";
+const SITE_VERSION = "6.08";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.08", date: "2026-10-18 16:30", changes: [
+        "«Кастомизация»: внутри раздела стало удобнее искать и выбирать. Открыв раздел (например, рамки аватарки или темы), вы видите переключатель «Все · Мои · Магазин» с числами, поиск по названию и сортировку (по редкости, по цене, по названию). Предметы идут одним списком, а редкость подписана на самой карточке. Раньше они были разложены по сворачиваемым группам редкости — эта лента осталась по кнопке «Всё одним списком»."
+    ]},
     { version: "6.07", date: "2026-10-18 08:00", changes: [
         "«Кастомизация», спидометр недели: два новых вида — «Пик» за 100 баллов (семь столбиков, вершина в четверг) и «Пила» за 150 баллов (три подъёма подряд). Показываются в шапке и на Дашборде.",
     ]},
@@ -2433,6 +2436,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.08", date: "2026-10-18 16:30", changes: [
+        "Customization: it is easier to browse and pick inside a section. When you open a section (for example avatar frames or themes) you get an “All · Mine · Shop” switch with counts, search by name and sorting (by rarity, price or name). Items are one list, and the rarity is written on the card itself. They used to be split into collapsible rarity groups — that feed is still available with “Everything in one list”."
+    ]},
     { version: "6.07", date: "2026-10-18 08:00", changes: [
         "Customization, weekly gauge: two new styles — “Peak” for 100 points (seven bars with the summit on Thursday) and “Saw” for 150 points (three ramps in a row). Shown in the header and on the Dashboard.",
     ]},
