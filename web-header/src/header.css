@@ -284,6 +284,18 @@ html.theme-clinic .gh-root {
 .water-saved[data-variant="flash"] .ws-ripple { animation-delay: 0.6s; }
 .water-saved[data-variant="flash"] .water-saved-badge { animation-delay: 0.9s; }
 .water-saved[data-variant="flash"] .water-saved-check { animation-delay: 1.05s; }
+/* shake (платная «Дрожь»): вода набирается, а стакан быстро дрожит из стороны в сторону и успокаивается */
+.water-saved[data-variant="shake"] .ws-bubble, .water-saved[data-variant="shake"] .ws-drop, .water-saved[data-variant="shake"] .ws-ripple-2 { display: none; }
+.water-saved[data-variant="shake"] svg { transform-origin: 50% 100%; animation: water-saved-shake 1.2s ease-in-out both; }
+.water-saved[data-variant="shake"] .ws-ripple { animation-delay: 0.6s; }
+.water-saved[data-variant="shake"] .water-saved-badge { animation-delay: 0.9s; }
+.water-saved[data-variant="shake"] .water-saved-check { animation-delay: 1.05s; }
+/* drop (платное «Падение»): стакан падает сверху, мягко приземляется, и вода набирается */
+.water-saved[data-variant="drop"] .ws-bubble, .water-saved[data-variant="drop"] .ws-drop, .water-saved[data-variant="drop"] .ws-ripple-2 { display: none; }
+.water-saved[data-variant="drop"] svg { transform-origin: 50% 100%; animation: water-saved-drop 1.2s cubic-bezier(0.3, 0.8, 0.4, 1) both; }
+.water-saved[data-variant="drop"] .ws-ripple { animation-delay: 0.6s; }
+.water-saved[data-variant="drop"] .water-saved-badge { animation-delay: 0.9s; }
+.water-saved[data-variant="drop"] .water-saved-check { animation-delay: 1.05s; }
 /* Пример в плитке «Кастомизации» (BACKLOG 57.2): не оверлей, а маленький стакан, анимация повторяется */
 .water-saved.water-saved-inline { position: relative; inset: auto; z-index: auto; display: inline-flex; }
 .water-saved-inline svg { width: 44px; height: 55px; padding: 6px 8px; border-radius: 14px; box-shadow: none; filter: none; }
@@ -387,6 +399,22 @@ html.theme-clinic .gh-root {
   40% { filter: brightness(1); }
   60% { filter: brightness(1.7) saturate(1.2); }
   100% { filter: brightness(1); }
+}
+@keyframes water-saved-shake {
+  0% { transform: translateX(0); }
+  15% { transform: translateX(-5px) rotate(-3deg); }
+  30% { transform: translateX(5px) rotate(3deg); }
+  45% { transform: translateX(-4px) rotate(-2deg); }
+  60% { transform: translateX(4px) rotate(2deg); }
+  80% { transform: translateX(-1px); }
+  100% { transform: translateX(0); }
+}
+@keyframes water-saved-drop {
+  0% { transform: translateY(-34px); opacity: 0; }
+  45% { transform: translateY(0) scale(1.06, 0.94); opacity: 1; }
+  65% { transform: translateY(-6px) scale(0.98, 1.03); }
+  85% { transform: translateY(0) scale(1.02, 0.98); }
+  100% { transform: translateY(0) scale(1, 1); opacity: 1; }
 }
 @keyframes water-saved-spark {
   0% { opacity: 0; transform: scale(0.2) rotate(0deg); }
