@@ -1,6 +1,13 @@
 {
-  "version": "6.16",
+  "version": "6.17",
   "en": [
+    {
+      "version": "6.17",
+      "date": "2026-10-18 20:10",
+      "changes": [
+        "Customization, daily gauge: two new ring styles — “Mint” for 100 points (a green-to-turquoise gradient) and “Ember” for 150 points (yellow, orange, red). Shown in the header and on the Dashboard."
+      ]
+    },
     {
       "version": "6.16",
       "date": "2026-10-18 19:53",
@@ -4381,6 +4388,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.17",
+      "date": "2026-10-18 20:10",
+      "changes": [
+        "«Кастомизация», спидометр дня: два новых вида кольца — «Мята» за 100 баллов (градиент от зелёного к бирюзовому) и «Жар» за 150 баллов (жёлтый, оранжевый, красный). Показываются в шапке и на Дашборде."
+      ]
+    },
     {
       "version": "6.16",
       "date": "2026-10-18 19:53",

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.16";
+const SITE_VERSION = "6.17";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.17", date: "2026-10-18 20:10", changes: [
+        "«Кастомизация», спидометр дня: два новых вида кольца — «Мята» за 100 баллов (градиент от зелёного к бирюзовому) и «Жар» за 150 баллов (жёлтый, оранжевый, красный). Показываются в шапке и на Дашборде.",
+    ]},
     { version: "6.16", date: "2026-10-18 19:53", changes: [
         "Тексты проще: подсказки «Сообщества» и «Достижений» стали короче и на «ты», а вместо «примените миграцию в Supabase» (это видел обычный пользователь) теперь короткое понятное сообщение: в «Достижениях» — «значки пока хранятся на этом устройстве», в «Кастомизации» — «пока недоступна, попробуй позже». Подсказка про миграцию осталась только в консоли разработчика. Без миграций."
     ]},
@@ -2460,6 +2463,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.17", date: "2026-10-18 20:10", changes: [
+        "Customization, daily gauge: two new ring styles — “Mint” for 100 points (a green-to-turquoise gradient) and “Ember” for 150 points (yellow, orange, red). Shown in the header and on the Dashboard.",
+    ]},
     { version: "6.16", date: "2026-10-18 19:53", changes: [
         "Simpler texts: hints in Community and Achievements are shorter and friendlier, and instead of “apply the migration in Supabase” (which ordinary users saw) there is now a short, clear message: in Achievements “badges are saved on this device for now”, in Customization “not available yet, try again later”. The migration hint now lives only in the developer console. No migrations."
     ]},
