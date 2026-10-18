@@ -1,6 +1,13 @@
 {
-  "version": "6.10",
+  "version": "6.11",
   "en": [
+    {
+      "version": "6.11",
+      "date": "2026-10-18 08:30",
+      "changes": [
+        "Customization, block-collapse marker: two new styles — “Long arrow” for 100 points (an arrow with a stem) and “Ring” for 150 points (empty when a block is open, with a dot when folded). Work on the Dashboard and in Workouts."
+      ]
+    },
     {
       "version": "6.10",
       "date": "2026-10-18 04:39",
@@ -4339,6 +4346,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.11",
+      "date": "2026-10-18 08:30",
+      "changes": [
+        "«Кастомизация», вид сворачивания блоков: два новых маркера — «Длинная стрелка» за 100 баллов (стрелка со стержнем) и «Кольцо» за 150 баллов (пустое у раскрытого блока, с точкой у свёрнутого). Работают на Дашборде и в Тренировках."
+      ]
+    },
     {
       "version": "6.10",
       "date": "2026-10-18 04:39",

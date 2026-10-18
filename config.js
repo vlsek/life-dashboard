@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.10";
+const SITE_VERSION = "6.11";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.11", date: "2026-10-18 08:30", changes: [
+        "«Кастомизация», вид сворачивания блоков: два новых маркера — «Длинная стрелка» за 100 баллов (стрелка со стержнем) и «Кольцо» за 150 баллов (пустое у раскрытого блока, с точкой у свёрнутого). Работают на Дашборде и в Тренировках.",
+    ]},
     { version: "6.10", date: "2026-10-18 04:39", changes: [
         "«Кастомизация» → графики → «Маркеры»: два новых бесплатных стиля кружков-мини-диаграмм на графиках метрик с особенностями подходов — «Кольцо» (диаграмма-бублик с отверстием в центре) и «Мишень» (тонкое внешнее кольцо и уменьшенная диаграмма внутри). Вместе с «Наклейкой» и «Неоном», добавленными параллельно, стилей теперь восемь. Заодно подсказка раздела больше не называет число стилей — оно устаревало. Графики подхватят выбор при следующем открытии страницы.",
     ]},
@@ -2442,6 +2445,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.11", date: "2026-10-18 08:30", changes: [
+        "Customization, block-collapse marker: two new styles — “Long arrow” for 100 points (an arrow with a stem) and “Ring” for 150 points (empty when a block is open, with a dot when folded). Work on the Dashboard and in Workouts.",
+    ]},
     { version: "6.10", date: "2026-10-18 04:39", changes: [
         "Customization → charts → “Markers”: two new free styles for the little pie-chart dots on charts of metrics with set variations — “Ring” (a donut with a hole in the middle) and “Target” (a thin outer ring with a smaller pie inside). Together with “Sticker” and “Neon”, added in parallel, there are now eight styles. The section hint no longer states a count, which kept going stale. Charts pick up the choice the next time the page opens.",
     ]},
