@@ -66,10 +66,12 @@ describe('страница «Достижения»', () => {
     w.unmount()
   })
 
-  it('без миграции (режим устройства) показывается подсказка про миграцию 039', async () => {
+  it('без миграции (режим устройства) показывается короткая заметка «хранятся на этом устройстве» — без слов про миграцию и Supabase', async () => {
     hold.mode.value = 'local'
     const w = await mountApp()
-    expect(w.find('[data-testid="achievements-local-note"]').text()).toContain('039')
+    const note = w.find('[data-testid="achievements-local-note"]').text()
+    expect(note).toContain('на этом устройстве')
+    expect(note).not.toMatch(/миграц|Supabase|SQL|039/i)
     w.unmount()
   })
 

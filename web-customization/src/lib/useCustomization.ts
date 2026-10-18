@@ -115,6 +115,8 @@ export function useCustomization() {
       achievements.value = new Set(((achRes.data || []) as { key: string }[]).map((r) => r.key).filter((k) => k !== '_baseline'))
       apiMissing.value = !!ownedRes.error || !!profileRes.error
       if (apiMissing.value) {
+        // пользователю — нейтральный текст (cust_need_migration), разработчику — подсказка про миграцию здесь (49.5, блок B)
+        console.error('Customization: таблица не создана или недоступна — примените миграцию 048 в Supabase (SQL editor)', ownedRes.error ?? profileRes.error)
         unlocked.value = {}
         selected.value = {}
         return

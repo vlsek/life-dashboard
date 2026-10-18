@@ -248,14 +248,14 @@ const translations = {
         // community page — static markup
         comm_title: "Community",
         comm_h1: "🏆 Community",
-        comm_privacy_1: "Others can see: your public name (set below), total points, streak, and your \"what I did today\" note — if you wrote one.",
+        comm_privacy_1: "Others can see: your public name (set below), total points, streak and your “what I did today” note — if you wrote one.",
         comm_privacy_2: "The \"Compare by activity\" section below is NOT a setting — it's already visible to everyone by default: the total for a specific activity (e.g. total push-ups), if you have a metric linked to that category. Only your <em>raw daily data</em> is private (e.g. exactly how much water you drank on a specific Tuesday) — nobody but you can see that.",
         comm_friends_h2: "🤝 Friends",
         comm_leaderboard_h2: "🥇 Leaderboard (all time)",
         comm_scope_everyone: "Everyone",
         comm_scope_friends: "Friends only",
         comm_category_h2: "📊 Compare by activity",
-        comm_category_intro: "E.g. \"who has more points for push-ups\" — compares only people whose metric is linked to the same category.",
+        comm_category_intro: "E.g. “who has more points for push-ups”: only people with a metric in this category are compared.",
         comm_today_h2: "📝 What they did today",
 
         // onboarding page
@@ -1053,14 +1053,14 @@ const translations = {
         // community page — static markup
         comm_title: "Сообщество",
         comm_h1: "🏆 Сообщество",
-        comm_privacy_1: "Другим видно: твоё публичное имя (задаётся ниже), сумму баллов, streak, и заметку \"что сделал сегодня\" — если сам её написал.",
+        comm_privacy_1: "Другим видно: публичное имя (задаётся ниже), сумма баллов, серия и заметка «что сделал сегодня» — если ты её написал.",
         comm_privacy_2: "В разделе \"Сравнение по активностям\" ниже — это НЕ настройка, это уже видно всем по умолчанию: суммарное число по конкретной активности (например, сколько всего отжиманий), если у тебя есть метрика, привязанная к этой категории. Приватны только твои <em>сырые данные по дням</em> (например, ровно сколько мл воды ты выпил именно во вторник) — их не видит никто, кроме тебя.",
         comm_friends_h2: "🤝 Друзья",
         comm_leaderboard_h2: "🥇 Лидерборд (всё время)",
         comm_scope_everyone: "Все",
         comm_scope_friends: "Только друзья",
         comm_category_h2: "📊 Сравнение по активности",
-        comm_category_intro: "Например «у кого больше баллов по отжиманиям» — сравнивает только тех, у кого метрика привязана к той же категории.",
+        comm_category_intro: "Например, «у кого больше баллов по отжиманиям»: сравниваются только те, у кого метрика в этой категории.",
         comm_today_h2: "📝 Что сделали сегодня",
 
         // onboarding page

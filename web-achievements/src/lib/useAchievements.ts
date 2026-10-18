@@ -125,6 +125,8 @@ export function useAchievements() {
       newlyUnlocked.value = rec.newlyUnlocked
       // дописываем новое и то, что раньше жило только на устройстве; сбой записи страницу не ломает
       mode.value = await saveUnlocked(userId, loaded.mode, { ...loaded.backfill, ...rec.added }, rec.unlocked)
+      // пользователю — «хранятся на этом устройстве» (ach_local_note), разработчику — подсказка про миграцию здесь (49.5, блок B)
+      if (mode.value === 'local') console.warn('Achievements: значки хранятся только на устройстве — примените миграцию 039 в Supabase (SQL editor)')
       // монетки за открытые значки (ступени 1 и 2): один раз на значок, задним числом тоже; сбой выдачи страницу не ломает
       if (REWARD_STATUS.coins === 'active') grantedCoins.value = (await grantCoinBonuses(sb as unknown as Parameters<typeof grantCoinBonuses>[0], userId, Object.keys(rec.unlocked))).granted
     } catch (e) {
