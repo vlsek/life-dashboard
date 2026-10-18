@@ -9,7 +9,7 @@ import EmojiText from './EmojiText.vue'
 
 // Карточка темы: превью (цвета самой темы, независимо от выбранной сейчас), название, «Применить» и сердечко «любимая». Закрытая тема-награда
 // (v3.42): образец виден, но «Применить» и сердечка нет — вместо них замок и «Награда за «…»».
-const props = defineProps<{ themeKey: ThemeKey; active: boolean; favorite: boolean; canToggle: boolean; locked?: boolean; unlockText?: string }>()
+const props = defineProps<{ themeKey: ThemeKey; active: boolean; favorite: boolean; canToggle: boolean; locked?: boolean; unlockText?: string; showRarity?: boolean }>()
 const emit = defineEmits<{ apply: []; toggleFavorite: []; showUnlock: [] }>()
 
 const rarity = computed(() => rarityOfTheme(props.themeKey))
@@ -43,7 +43,8 @@ const favLabel = computed(() => (props.favorite ? t('cust_theme_fav_remove') : p
     </svg>
     <div class="flex items-center justify-between gap-1">
       <p class="m-0 text-sm font-medium"><EmojiText :text="label" /></p>
-      <button
+      <p v-if="showRarity" class="m-0 text-xs font-medium" :style="{ color: RARITY_COLOR[rarity] }" data-testid="item-rarity">● {{ t(('cust_rarity_' + rarity) as never) }}</p>
+            <button
         v-if="!locked"
         type="button"
         class="secondary px-1.5 py-1"

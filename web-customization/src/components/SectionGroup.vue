@@ -6,7 +6,7 @@ import EmojiText from './EmojiText.vue'
 
 // Раздел страницы «Кастомизация» (Темы, Рамки, Стаканы …; BACKLOG 51.3): заголовок-кнопка со счётчиком «открыто/всего» и
 // сворачиваемое содержимое. Содержимое только скрывается (v-show): кнопки «Применить»/«Купить», группы редкости и их состояние не теряются.
-const props = defineProps<{ id: string; title: string; total: number; owned: number; collapsed: boolean }>()
+const props = defineProps<{ id: string; title: string; total: number; owned: number; collapsed: boolean; bare?: boolean }>()
 const emit = defineEmits<{ toggle: [] }>()
 
 const counter = computed(() => props.owned + '/' + props.total)
@@ -15,7 +15,8 @@ const aria = computed(() => t('cust_section_toggle').replace('{name}', stripEmoj
 
 <template>
   <section class="mb-6" :data-section="id" :data-collapsed="collapsed">
-    <h2 class="text-base font-medium">
+    <!-- bare (64.1 срез 3): раздел открыт отдельным слотом — заголовок и счётчик уже в шапке слота, сворачивать нечего -->
+    <h2 v-if="!bare" class="text-base font-medium">
       <button type="button" class="sg-head" :aria-expanded="!collapsed" :aria-controls="'sg-' + id" :aria-label="aria" data-testid="section-toggle" @click="emit('toggle')">
         <span class="sg-name"><EmojiText :text="title" /></span>
         <span class="sg-count" data-testid="section-count">{{ counter }}</span>
@@ -24,7 +25,7 @@ const aria = computed(() => t('cust_section_toggle').replace('{name}', stripEmoj
         </svg>
       </button>
     </h2>
-    <div v-show="!collapsed" :id="'sg-' + id" class="mt-1.5" data-testid="section-body">
+    <div v-show="bare || !collapsed" :id="'sg-' + id" class="mt-1.5" data-testid="section-body">
       <slot />
     </div>
   </section>

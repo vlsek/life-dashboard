@@ -44,8 +44,17 @@ export function useVisibility() {
       /* хранилище недоступно (приватный режим) — выбор действует до перезагрузки */
     }
   }
+  // Задать сразу все три группы (режимы слота «Все · Мои · Магазин», 64.1 срез 3)
+  function set(next: Visibility): void {
+    state.value = { ...next }
+    try {
+      localStorage.setItem(VISIBILITY_KEY, JSON.stringify(state.value))
+    } catch {
+      /* хранилище недоступно — выбор действует до перезагрузки */
+    }
+  }
   const noneVisible = computed(() => VIS_GROUPS.every((g) => !state.value[g]))
-  return { state, isVisible, toggle, noneVisible }
+  return { state, isVisible, toggle, set, noneVisible }
 }
 
 // Бесплатные разделы-выборы (маркеры графиков, заставка, огонёк, анимация воды, модель тела): все варианты уже «у человека», то есть

@@ -13,10 +13,12 @@ import WaterAnimPicker from './components/WaterAnimPicker.vue'
 import BodyModelPicker from './components/BodyModelPicker.vue'
 import RarityGroup from './components/RarityGroup.vue'
 import VisibilityChips from './components/VisibilityChips.vue'
-import { FREE_SECTIONS, FREE_SECTIONS_TOTAL, groupOfItem, groupOfTheme, useVisibility, type FreeSection, type VisGroup } from './lib/useVisibility'
+import { FREE_SECTIONS, FREE_SECTIONS_TOTAL, allVisible, groupOfItem, groupOfTheme, useVisibility, type FreeSection, type VisGroup } from './lib/useVisibility'
 import { useCollapsed } from './lib/useCollapsed'
 import SectionGroup from './components/SectionGroup.vue'
 import SlotCell from './components/SlotCell.vue'
+import SlotToolbar from './components/SlotToolbar.vue'
+import { matchesQuery, modeOfVis, sortSlotItems, visOfMode, type SlotMode, type SlotSort } from './lib/slotView'
 import { selectionRows } from './lib/currentSelection'
 import { readSplashChoice } from './lib/splashVariant'
 import { readStreakFlameVariant } from './lib/streakFlameVariant'
@@ -24,16 +26,16 @@ import { getWaterAnimChoice } from './lib/waterAnim'
 import { readBodyModelChoice } from './lib/bodyModel'
 import { readChartMarker } from './lib/chartMarker'
 import { readChartAnim, readChartForecast, readChartGoalZone, readChartKind, readChartLine, readChartSparks } from './lib/chartLine'
-import { itemGroups, themeGroups } from './lib/rarity'
+import { itemGroups, rarityOfItem, rarityOfTheme, themeGroups } from './lib/rarity'
 import { useFavoriteThemes } from './lib/useFavoriteThemes'
 import { useCustomization } from './lib/useCustomization'
-import { CATEGORY_ORDER, ITEMS } from './lib/customization'
+import { CATEGORY_ORDER, ITEMS, priceOf } from './lib/customization'
 import { t } from './lib/i18n'
 import { SLOTS, freeTotal } from './lib/slots'
 import { GROUP_ORDER } from './lib/pageTabs'
 import { SLOT_ALL, readSlot, writeSlot } from './lib/slotNav'
 import { stripEmoji } from './lib/emojiText'
-import { THEME_UNLOCK, type ThemeKey } from './lib/theme'
+import { THEME_KEYS, THEME_UNLOCK, type ThemeKey } from './lib/theme'
 
 const { auth, balance, achievements, apiMissing, loading, error, actionError, busyKey, selected, debug, tried, statusOf, init, buy, choose, tryOn, untryOn, resetTryOn } = useCustomization()
 onMounted(init)
@@ -112,6 +114,42 @@ function closeSlot() {
 }
 const shownCategories = computed(() => visibleCategories.value.filter((c) => isOpen(c.category)))
 
+// Экран одного слота (64.1, срез 3): «Все · Мои · Магазин», поиск, сортировка, плоский список с редкостью на карточке. В «Всё одним списком» — прежняя лента.
+const single = computed(() => inSlot.value && openSlot.value !== SLOT_ALL)
+const slotDef = computed(() => SLOTS.find((x) => x.id === openSlot.value))
+const hasToolbar = computed(() => single.value && (slotDef.value?.kind === 'themes' || slotDef.value?.kind === 'catalog'))
+const query = ref('')
+const sort = ref<SlotSort>('rarity')
+const mode = computed<SlotMode>(() => modeOfVis(vis.state.value))
+const modeModel = computed<SlotMode>({ get: () => mode.value, set: (m) => vis.set(visOfMode(m)) })
+// Каждый слот открывается с чистого листа: «Все», без поиска, по редкости (иначе фильтр из прошлого слота прятал бы предметы без объяснения)
+watch(openSlot, (id) => {
+  if (id && id !== SLOT_ALL) {
+    query.value = ''
+    sort.value = 'rarity'
+    vis.set(allVisible())
+  }
+}, { immediate: true })
+const itemLabel = (key: string): string => stripEmoji(t(('cust_item_' + key) as never))
+const themeLabel = (k: ThemeKey): string => stripEmoji(t(THEME_KEYS[k] as never))
+const modeCounts = computed<Record<SlotMode, number>>(() => {
+  const n: Record<VisGroup, number> = { owned: 0, achievement: 0, coins: 0 }
+  if (slotDef.value?.kind === 'themes') for (const g of themeBuckets) for (const k of g.items) n[themeGroup(k)]++
+  else if (slotDef.value?.kind === 'catalog') for (const c of categories.value) if (c.category === slotDef.value.id) for (const g of c.groups) for (const i of g.items) n[groupOfItem(i, statusOf(i.key))]++
+  return { all: n.owned + n.achievement + n.coins, mine: n.owned, shop: n.achievement + n.coins }
+})
+const flatItems = computed(() => {
+  const c = visibleCategories.value.find((x) => x.category === openSlot.value)
+  if (!c) return []
+  const list = c.groups.flatMap((g) => g.shown).filter((i) => matchesQuery(itemLabel(i.key), query.value))
+  return sortSlotItems(list, sort.value, { rarity: (i) => rarityOfItem(i.key), price: (i) => priceOf(i) ?? 0, label: (i) => itemLabel(i.key) })
+})
+const flatThemes = computed(() => {
+  const list = visibleThemeBuckets.value.flatMap((g) => g.shown).filter((k) => matchesQuery(themeLabel(k), query.value))
+  return sortSlotItems(list, sort.value, { rarity: (k) => rarityOfTheme(k), label: themeLabel })
+})
+const slotEmpty = computed(() => hasToolbar.value && (slotDef.value?.kind === 'themes' ? !flatThemes.value.length : !flatItems.value.length))
+
 // «Сейчас выбрано» (61.6 срез 1). Мелкие выборы (заставка, вода, модель тела …) лежат в localStorage и меняются внутри своих карточек, поэтому
 // сводку пересчитываем после любого клика по странице (`tick`), а не подписываемся на каждое хранилище по отдельности.
 const tick = ref(0)
@@ -163,7 +201,7 @@ const openTitle = computed(() => (openSlot.value === SLOT_ALL ? t('cust_all_titl
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4" @click="bump">
     <h1 class="mb-1 text-xl font-semibold"><EmojiText :text="t('cust_title')" /></h1>
     <p class="dim mb-2 text-sm">{{ t('cust_intro') }}</p>
-    <p v-if="inSlot" class="dim mb-4 text-xs" data-testid="rarity-hint">{{ t('cust_rarity_hint') }}</p>
+    <p v-if="openSlot === SLOT_ALL" class="dim mb-4 text-xs" data-testid="rarity-hint">{{ t('cust_rarity_hint') }}</p>
 
     <p v-if="auth.status === 'loading' || (auth.status === 'ready' && loading)" class="dim">…</p>
 
@@ -204,15 +242,34 @@ const openTitle = computed(() => (openSlot.value === SLOT_ALL ? t('cust_all_titl
         <template v-else>
           <div class="mb-3 flex items-center gap-3">
             <button type="button" class="secondary px-3 py-1.5 text-sm" data-testid="slot-back" @click="closeSlot">← {{ t('cust_back') }}</button>
-            <h2 class="text-base font-medium" data-testid="slot-title">{{ openTitle }}</h2>
+            <h2 class="text-base font-medium" data-testid="slot-title">{{ openTitle }} <span v-if="slotCounts[openSlot]" class="dim text-xs font-normal" data-testid="slot-title-count">{{ slotCounts[openSlot].owned }}/{{ slotCounts[openSlot].total }}</span></h2>
           </div>
-          <VisibilityChips :state="vis.state.value" :counts="visCounts" @toggle="vis.toggle" />
-          <p v-if="nothingShown" class="dim mb-4 text-sm" data-testid="vis-empty">{{ vis.noneVisible.value ? t('cust_vis_empty_none') : t('cust_vis_empty') }}</p>
+          <SlotToolbar v-if="hasToolbar" v-model:mode="modeModel" v-model:query="query" v-model:sort="sort" :counts="modeCounts" :price-sort="slotDef?.kind === 'catalog'" />
+          <VisibilityChips v-else-if="openSlot === SLOT_ALL" :state="vis.state.value" :counts="visCounts" @toggle="vis.toggle" />
+          <p v-if="nothingShown && !hasToolbar" class="dim mb-4 text-sm" data-testid="vis-empty">{{ vis.noneVisible.value ? t('cust_vis_empty_none') : t('cust_vis_empty') }}</p>
+          <p v-if="slotEmpty" class="dim mb-4 text-sm" data-testid="slot-empty">{{ query.trim() ? t('cust_search_empty') : t('cust_vis_empty') }}</p>
         </template>
 
-        <SectionGroup v-if="visibleThemeBuckets.length && isOpen('themes')" id="themes" :title="t('cust_sec_themes')" :total="themeTotal" :owned="themeOwnedTotal" :collapsed="isCollapsed('section:themes')" @toggle="toggle('section:themes')">
+        <SectionGroup :bare="single" v-if="visibleThemeBuckets.length && isOpen('themes')" id="themes" :title="t('cust_sec_themes')" :total="themeTotal" :owned="themeOwnedTotal" :collapsed="isCollapsed('section:themes')" @toggle="toggle('section:themes')">
           <p class="dim mb-1 text-xs">{{ t('cust_sec_themes_hint') }}</p>
           <p class="dim mb-2 text-xs" data-testid="fav-count">{{ t('cust_theme_fav_count').replace('{n}', String(themes.favorites.value.length)).replace('{max}', String(themes.max)) }}</p>
+          <div v-if="single" class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr))" data-testid="slot-grid">
+            <ThemeCard
+              v-for="k in flatThemes"
+              :key="k"
+              :theme-key="k"
+              show-rarity
+              :active="themes.current.value === k"
+              :favorite="themes.isFavorite(k)"
+              :can-toggle="themes.canToggle(k)"
+              :locked="themes.isLocked(k)"
+              :unlock-text="unlockText(k)"
+              @apply="themes.apply(k)"
+              @show-unlock="unlockFor = k"
+              @toggle-favorite="themes.toggleFavorite(k)"
+            />
+          </div>
+          <template v-else>
           <RarityGroup v-for="g in visibleThemeBuckets" :key="g.rarity" :id="'themes:' + g.rarity" :rarity="g.rarity" :total="g.items.length" :owned="themeOwned(g.items)" :collapsed="isCollapsed('themes:' + g.rarity)" @toggle="toggle('themes:' + g.rarity)">
             <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr))">
               <ThemeCard
@@ -230,35 +287,56 @@ const openTitle = computed(() => (openSlot.value === SLOT_ALL ? t('cust_all_titl
               />
             </div>
           </RarityGroup>
+          </template>
         </SectionGroup>
 
         <!-- Заставка загрузки (BACKLOG 16, срез 2): 4 бесплатных варианта, выбор в localStorage -->
         <!-- Маркеры графиков (BACKLOG 13:54): 4 бесплатных стиля, выбор в localStorage -->
-        <SectionGroup v-if="freeShown && isOpen('chart-markers')" id="chart-markers" :title="t('cust_sec_markers')" :total="freeTotal('chart-markers')" :owned="freeTotal('chart-markers')" :collapsed="isCollapsed('section:chart-markers')" @toggle="toggle('section:chart-markers')">
+        <SectionGroup :bare="single" v-if="freeShown && isOpen('chart-markers')" id="chart-markers" :title="t('cust_sec_markers')" :total="freeTotal('chart-markers')" :owned="freeTotal('chart-markers')" :collapsed="isCollapsed('section:chart-markers')" @toggle="toggle('section:chart-markers')">
           <ChartMarkerPicker />
         </SectionGroup>
 
-        <SectionGroup v-if="freeShown && isOpen('splash')" id="splash" :title="t('cust_sec_splash')" :total="freeTotal('splash')" :owned="freeTotal('splash')" :collapsed="isCollapsed('section:splash')" @toggle="toggle('section:splash')">
+        <SectionGroup :bare="single" v-if="freeShown && isOpen('splash')" id="splash" :title="t('cust_sec_splash')" :total="freeTotal('splash')" :owned="freeTotal('splash')" :collapsed="isCollapsed('section:splash')" @toggle="toggle('section:splash')">
           <SplashPicker />
         </SectionGroup>
 
         <!-- Огонёк серии (BACKLOG 44.18в, срез 1): 2 бесплатных варианта, выбор в localStorage -->
-        <SectionGroup v-if="freeShown && isOpen('streakflame')" id="streakflame" :title="t('cust_sec_streakflame')" :total="freeTotal('streakflame')" :owned="freeTotal('streakflame')" :collapsed="isCollapsed('section:streakflame')" @toggle="toggle('section:streakflame')">
+        <SectionGroup :bare="single" v-if="freeShown && isOpen('streakflame')" id="streakflame" :title="t('cust_sec_streakflame')" :total="freeTotal('streakflame')" :owned="freeTotal('streakflame')" :collapsed="isCollapsed('section:streakflame')" @toggle="toggle('section:streakflame')">
           <StreakFlamePicker />
         </SectionGroup>
 
         <!-- Анимация воды (BACKLOG 54.8): «По теме» + 6 бесплатных вариантов, выбор в localStorage (общий с «Настройками» шапки) -->
-        <SectionGroup v-if="freeShown && isOpen('wateranim')" id="wateranim" :title="t('cust_sec_wateranim')" :total="freeTotal('wateranim')" :owned="freeTotal('wateranim')" :collapsed="isCollapsed('section:wateranim')" @toggle="toggle('section:wateranim')">
+        <SectionGroup :bare="single" v-if="freeShown && isOpen('wateranim')" id="wateranim" :title="t('cust_sec_wateranim')" :total="freeTotal('wateranim')" :owned="freeTotal('wateranim')" :collapsed="isCollapsed('section:wateranim')" @toggle="toggle('section:wateranim')">
           <WaterAnimPicker />
         </SectionGroup>
 
         <!-- Модель тела карты мышц (BACKLOG 59.2 срез 2): «По полу» + 5 моделей, выбор в localStorage (общий с «Тренировками») -->
-        <SectionGroup v-if="freeShown && isOpen('bodymodel')" id="bodymodel" :title="t('cust_sec_bodymodel')" :total="freeTotal('bodymodel')" :owned="freeTotal('bodymodel')" :collapsed="isCollapsed('section:bodymodel')" @toggle="toggle('section:bodymodel')">
+        <SectionGroup :bare="single" v-if="freeShown && isOpen('bodymodel')" id="bodymodel" :title="t('cust_sec_bodymodel')" :total="freeTotal('bodymodel')" :owned="freeTotal('bodymodel')" :collapsed="isCollapsed('section:bodymodel')" @toggle="toggle('section:bodymodel')">
           <BodyModelPicker />
         </SectionGroup>
 
-        <SectionGroup v-for="c in shownCategories" :key="c.category" :id="c.category" :title="t(('cust_cat_' + c.category) as never)" :total="c.total" :owned="c.owned" :collapsed="isCollapsed('section:' + c.category)" @toggle="toggle('section:' + c.category)">
+        <SectionGroup :bare="single" v-for="c in shownCategories" :key="c.category" :id="c.category" :title="t(('cust_cat_' + c.category) as never)" :total="c.total" :owned="c.owned" :collapsed="isCollapsed('section:' + c.category)" @toggle="toggle('section:' + c.category)">
           <p class="dim mb-2 text-xs">{{ t('cust_cat_hint') }}</p>
+          <div v-if="single" class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr))" data-testid="slot-grid">
+            <ItemCard
+              v-for="it in flatItems"
+              :key="it.key"
+              :item="it"
+              show-rarity
+              :status="statusOf(it.key)"
+              :balance="balance"
+              :busy="busyKey === it.key"
+              :disabled="apiMissing || !!busyKey"
+              :debug="debug"
+              :tried="tried[it.category] === it.key"
+              @buy="buy(it.key)"
+              @tryon="tryOn(it.category, it.key)"
+              @untryon="untryOn(it.category)"
+              @choose="choose(it.category, it.key)"
+              @unchoose="choose(it.category, null)"
+            />
+          </div>
+          <template v-else>
           <RarityGroup
             v-for="g in c.groups"
             :key="g.rarity"
@@ -288,6 +366,7 @@ const openTitle = computed(() => (openSlot.value === SLOT_ALL ? t('cust_all_titl
               />
             </div>
           </RarityGroup>
+          </template>
         </SectionGroup>
 
         <p class="dim text-xs">{{ t('cust_soon') }}</p>

@@ -15,7 +15,7 @@ import WaterGlassPreview from './WaterGlassPreview.vue'
 import { BY_ITEM } from '../lib/waterGlass'
 
 // Карточка предмета кастомизации: превью (круг-аватар с рамкой), название, условие/цена и одно действие по статусу.
-const props = defineProps<{ item: CustomItem; status: ItemStatus; balance: number | null; busy: boolean; disabled: boolean; debug?: boolean; tried?: boolean }>()
+const props = defineProps<{ item: CustomItem; status: ItemStatus; balance: number | null; busy: boolean; disabled: boolean; debug?: boolean; tried?: boolean; showRarity?: boolean }>()
 const emit = defineEmits<{ buy: []; choose: []; unchoose: []; tryon: []; untryon: [] }>()
 
 const rarity = computed(() => rarityOfItem(props.item.key))
@@ -65,7 +65,8 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
       aria-hidden="true"
     >A</span>
     <p class="m-0 text-sm font-medium">{{ name }}</p>
-    <p v-if="isCollapseStyle || isWeekGauge || isDayGauge || isWaterAnim || isWaterGlass" class="dim m-0 text-xs" data-testid="item-desc">{{ t(('cust_item_' + item.key + '_desc') as never) }}</p>
+    <p v-if="showRarity" class="m-0 text-xs font-medium" :style="{ color: RARITY_COLOR[rarity] }" data-testid="item-rarity">● {{ t(('cust_rarity_' + rarity) as never) }}</p>
+        <p v-if="isCollapseStyle || isWeekGauge || isDayGauge || isWaterAnim || isWaterGlass" class="dim m-0 text-xs" data-testid="item-desc">{{ t(('cust_item_' + item.key + '_desc') as never) }}</p>
     <p v-if="frameClass(item.key)" class="dim m-0 text-xs" data-testid="animated">{{ t('cust_animated') }}</p>
     <p v-if="item.source === 'achievement'" class="dim m-0 text-xs"><Icon name="medal" /> {{ t('cust_reward_for') }} «{{ reward }}»</p>
     <p v-else-if="status === 'owned' || status === 'selected'" class="dim m-0 text-xs">{{ t('cust_owned') }}</p>
