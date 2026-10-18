@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.18";
+const SITE_VERSION = "6.19";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.19", date: "2026-10-18 21:10", changes: [
+        "Тексты стали короче и на «ты»: «Тренировки» (шаблоны, разминка, ввод подходов, двусторонние упражнения), подсказки календаря, челленджей, магазина и установки приложения. Если не получилось сохранить профиль при входе, вместо технической подсказки про миграцию — спокойный текст (подробность ушла в консоль). Без миграций.",
+    ]},
     { version: "6.18", date: "2026-10-19 11:00", changes: [
         "«Кастомизация»: два раздела про воду («Анимация воды» и «Анимация воды (предметы)») теперь один слот «Анимация воды»: сверху базовые анимации, ниже дополнительные предметы. На витрине — одна ячейка с общим счётчиком «открыто/всего», внутри слота счётчики и переключатель «Все · Мои · Магазин» считают оба списка вместе."
     ]},
@@ -2466,6 +2469,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.19", date: "2026-10-18 21:10", changes: [
+        "Texts are shorter and addressed to you: Workouts (templates, warm-up, set entry, two-sided exercises), calendar, challenges, shop and app-install hints. If saving the profile fails at sign-up, a calm message replaces the technical migration hint (the detail moved to the console). No migrations.",
+    ]},
     { version: "6.18", date: "2026-10-19 11:00", changes: [
         "Customization: the two water sections (“Water animation” and “Water animation (items)”) are now one “Water animation” slot: the basic animations on top and the extra items below. The showcase has a single cell with one “unlocked/total” counter, and inside the slot the counters and the “All · Mine · Shop” switch count both lists together."
     ]},
