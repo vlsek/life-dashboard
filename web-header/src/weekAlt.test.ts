@@ -72,13 +72,30 @@ describe('WeekAlt', () => {
     expect(w.findAll('[data-test="week-step-fill"]')).toHaveLength(5)
   })
   // 59.4: форма столбиков зависит от вида — «Волна» дугой, «Долина» перевёрнутой дугой, «Спуск» лесенкой вниз
-  const trackHeights = (variant: 'steps' | 'wave' | 'teeth' | 'valley' | 'slope') =>
+  const trackHeights = (variant: 'steps' | 'wave' | 'teeth' | 'valley' | 'slope' | 'peak' | 'saw') =>
     mount(WeekAlt, { props: { days, size: 104, variant } }).findAll('[data-test="week-step"] rect:first-child').map((e) => Number(e.attributes('height')))
   it('спуск: семь столбиков убывающей высоты (лесенка вниз к воскресенью)', () => {
     const h = trackHeights('slope')
     expect(h).toHaveLength(7)
     for (let i = 1; i < 7; i++) expect(h[i]).toBeLessThan(h[i - 1])
     expect(trackHeights('steps')[6]).toBeCloseTo(h[0], 5) // зеркало «Ступенек»
+  })
+  it('пик: вершина в четверг, края равны; пила: три подъёма подряд', () => {
+    const p = trackHeights('peak')
+    expect(p).toHaveLength(7)
+    expect(Math.max(...p)).toBe(p[3])
+    expect(p[0]).toBeCloseTo(p[6], 5)
+    expect(p[1]).toBeGreaterThan(p[0])
+    const s = trackHeights('saw')
+    expect(s[0]).toBeLessThan(s[1])
+    expect(s[1]).toBeLessThan(s[2])
+    expect(s[3]).toBeLessThan(s[2])
+    expect(s[5]).toBeCloseTo(s[2], 5)
+    expect(parseWeekGauge('week_peak')).toBe('peak')
+    expect(parseWeekGauge('week_saw')).toBe('saw')
+    writeCachedWeekGauge('saw')
+    expect(readCachedWeekGauge()).toBe('saw')
+    writeCachedWeekGauge('heptagon')
   })
   it('долина: выше по краям, ниже всего в середине; волна — наоборот; зубцы через один не изменились', () => {
     const v = trackHeights('valley')
@@ -99,7 +116,7 @@ describe('WeekAlt', () => {
 })
 
 describe('бейдж и панель шапки рисуют новые виды', () => {
-  for (const shape of ['dots', 'steps', 'wave', 'teeth', 'valley', 'slope'] as const) {
+  for (const shape of ['dots', 'steps', 'wave', 'teeth', 'valley', 'slope', 'peak', 'saw'] as const) {
     it(`DayWeekBadge: ${shape}`, () => {
       const w = mount(DayWeekBadge, { props: { ...props, shape, days } })
       expect(w.find(`[data-test="week-${shape}"]`).exists()).toBe(true)

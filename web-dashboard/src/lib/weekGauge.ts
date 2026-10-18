@@ -3,12 +3,12 @@
 // Выбор лежит в profiles.customization.week_gauge (ключ предмета); страницы применяют его БЕЗ ожидания сети — через кэш в localStorage (как вид
 // сворачивания блоков): кэш пишет «Кастомизация» при выборе, шапка и Дашборд сверяются с профилем в фоне. Чистая логика (без Vue/сети).
 // Пилоты изолированы, поэтому файл ЕСТЬ в web-customization, web-header и web-dashboard (менять ВМЕСТЕ — страж weekGaugeCopies.test.ts в web-customization).
-export type WeekGaugeStyle = 'heptagon' | 'classic' | 'bars' | 'dots' | 'steps' | 'wave' | 'teeth' | 'valley' | 'slope'
+export type WeekGaugeStyle = 'heptagon' | 'classic' | 'bars' | 'dots' | 'steps' | 'wave' | 'teeth' | 'valley' | 'slope' | 'peak' | 'saw'
 
 export const WEEK_GAUGE_CACHE_KEY = 'site_week_gauge'
 
 // Ключ предмета из реестра «Кастомизации» → вид; всё неизвестное и пустое — семиугольник.
-const BY_ITEM: Record<string, WeekGaugeStyle> = { week_classic: 'classic', week_bars: 'bars', week_dots: 'dots', week_steps: 'steps', week_wave: 'wave', week_teeth: 'teeth', week_valley: 'valley', week_slope: 'slope' }
+const BY_ITEM: Record<string, WeekGaugeStyle> = { week_classic: 'classic', week_bars: 'bars', week_dots: 'dots', week_steps: 'steps', week_wave: 'wave', week_teeth: 'teeth', week_valley: 'valley', week_slope: 'slope', week_peak: 'peak', week_saw: 'saw' }
 
 export function parseWeekGauge(raw: unknown): WeekGaugeStyle {
   return typeof raw === 'string' && Object.prototype.hasOwnProperty.call(BY_ITEM, raw) ? BY_ITEM[raw] : 'heptagon'
@@ -17,7 +17,7 @@ export function parseWeekGauge(raw: unknown): WeekGaugeStyle {
 export function readCachedWeekGauge(): WeekGaugeStyle {
   try {
     const v = localStorage.getItem(WEEK_GAUGE_CACHE_KEY)
-    return v === 'classic' || v === 'bars' || v === 'dots' || v === 'steps' || v === 'wave' || v === 'teeth' || v === 'valley' || v === 'slope' ? v : 'heptagon'
+    return v === 'classic' || v === 'bars' || v === 'dots' || v === 'steps' || v === 'wave' || v === 'teeth' || v === 'valley' || v === 'slope' || v === 'peak' || v === 'saw' ? v : 'heptagon'
   } catch {
     return 'heptagon'
   }

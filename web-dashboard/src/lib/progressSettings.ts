@@ -1,7 +1,7 @@
 export type DayPlace = 'avatar' | 'header' | 'off'
 export type WeekPlace = 'profile' | 'header' | 'off'
 // Вид недели (общий ключ с глобальным хедером): семиугольник — сторона = день недели; «прежний» — в Дашборде круг, в шапке квадрат/дуга.
-export type WeekShape = 'heptagon' | 'classic' | 'bars' | 'dots' | 'steps' | 'wave' | 'teeth' | 'valley' | 'slope'
+export type WeekShape = 'heptagon' | 'classic' | 'bars' | 'dots' | 'steps' | 'wave' | 'teeth' | 'valley' | 'slope' | 'peak' | 'saw'
 
 export interface DayProgressSettings {
   enabled: boolean

@@ -6,18 +6,20 @@ import type { WeekDaySegment } from '../lib/progress'
 // заполняется кругом внутри по прогрессу СВОЕГО дня; «Ступеньки» — семь столбиков растущей высоты (лесенка к воскресенью), заливка снизу вверх по
 // дню. Сегодняшний день обведён; бонус ⭐ дня — золотая обводка (только на значках от 44 px). Анимаций нет.
 // КОПИЯ в web-dashboard/src/components/WeekAlt.vue (страж weekBadgeParity.test.ts там).
-const props = defineProps<{ days: WeekDaySegment[]; size: number; variant: 'dots' | 'steps' | 'wave' | 'teeth' | 'valley' | 'slope' }>()
+const props = defineProps<{ days: WeekDaySegment[]; size: number; variant: 'dots' | 'steps' | 'wave' | 'teeth' | 'valley' | 'slope' | 'peak' | 'saw' }>()
 
 const clamp = (n: number) => Math.max(0, Math.min(1, n))
 
 // Высота столбика дня i (0..6) в долях полной: «Ступеньки» — лесенка вверх, «Волна» — дугой (ниже по краям, выше в середине недели),
 // «Зубцы» — через один высокий и низкий, «Долина» — перевёрнутой дугой (выше по краям, ниже в середине), «Спуск» — лесенка вниз к воскресенью.
-function trackShare(variant: 'dots' | 'steps' | 'wave' | 'teeth' | 'valley' | 'slope', i: number): number {
+function trackShare(variant: 'dots' | 'steps' | 'wave' | 'teeth' | 'valley' | 'slope' | 'peak' | 'saw', i: number): number {
   const arc = Math.sin((Math.PI * (i + 0.5)) / 7)
   if (variant === 'wave') return 0.4 + 0.6 * arc
   if (variant === 'teeth') return i % 2 === 0 ? 1 : 0.55
   if (variant === 'valley') return 1 - 0.6 * arc
   if (variant === 'slope') return 0.34 + (0.66 * (6 - i)) / 6
+  if (variant === 'peak') return 0.34 + 0.66 * (1 - Math.abs(i - 3) / 3)
+  if (variant === 'saw') return 0.4 + 0.3 * (i % 3)
   return 0.34 + (0.66 * i) / 6
 }
 const showBonus = computed(() => props.size >= 44)
