@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.12";
+const SITE_VERSION = "6.13";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.13", date: "2026-10-18 09:10", changes: [
+        "«Кастомизация», вид стакана воды: две новые формы — «Графин» за 150 баллов (круглый, с узким горлышком) и «Чашка» за 100 баллов (с ручкой и блюдцем). Показываются в шапке и на Дашборде.",
+    ]},
     { version: "6.12", date: "2026-10-18 08:02", changes: [
         "Тексты проще: подсказки Дашборда, справка про норму воды и настройки шапки стали короче и на «ты» (14 подсказок: подходы-план, расчёт нормы воды по весу и росту, период графиков, порядок блоков, напоминания, рекорды и др.). Смысл тот же, меньше стены текста. Без миграций."
     ]},
@@ -2448,6 +2451,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.13", date: "2026-10-18 09:10", changes: [
+        "Customization, water glass style: two new shapes — “Carafe” for 150 points (round, with a narrow neck) and “Teacup” for 100 points (with a handle and a saucer). Shown in the header and on the Dashboard.",
+    ]},
     { version: "6.12", date: "2026-10-18 08:02", changes: [
         "Simpler texts: Dashboard hints, the water-goal explanation and the header settings are shorter and friendlier (14 hints: sets plan, how the water goal is calculated from weight and height, chart period, block order, reminders, records and more). Same meaning, less wall of text. No migrations."
     ]},
