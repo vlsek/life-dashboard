@@ -66,6 +66,17 @@ export function repeatsDueOn(repeats: PlanRepeat[], day: string, planToday: Plan
   })
 }
 
+// Что придётся на БУДУЩИЙ день `day` по расписанию (BACKLOG 1054 срез 2): только «каждый день» и «по дням недели» — их день известен заранее;
+// «N раз в неделю» заранее не расписать (зависит от отметок), поэтому здесь его нет. Пункт, уже стоящий в плане этого дня, не дублируется.
+export function repeatsScheduledOn(repeats: PlanRepeat[], day: string, planDay: PlannedEntry[]): PlanRepeat[] {
+  return repeats.filter((r) => {
+    if (planDay.some((e) => e.repeat === r.id)) return false
+    const s = r.schedule
+    if (!s) return true
+    return s.type === 'days' && s.days.includes(weekdayOf(day))
+  })
+}
+
 // Краткая подпись расписания: «каждый день», «Пн Ср Пт», «3 раза в неделю». weekdayNames — 7 подписей, понедельник первым.
 export function repeatSummary(s: RepeatSchedule, weekdayNames: string[], everyDay: string, perWeek: (n: number) => string): string {
   if (!s) return everyDay

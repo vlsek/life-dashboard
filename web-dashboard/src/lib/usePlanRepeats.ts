@@ -3,7 +3,7 @@ import { sb } from './supabase'
 import { addDaysIso, mondayOf } from './date'
 import { friendlyError } from './friendlyError'
 import { normalizePlanned, type PlannedEntry } from './planned'
-import { repeatsDueOn, toPlanRepeat, type PlanRepeat, type RepeatSchedule } from './planRepeats'
+import { repeatsDueOn, repeatsScheduledOn, toPlanRepeat, type PlanRepeat, type RepeatSchedule } from './planRepeats'
 
 // Композабл повторяющихся пунктов «Планов» (BACKLOG 1054, миграция 087). Нет таблицы (миграция не применена) — список пуст и
 // available = false: блок и окно просто не показываются, «Планы» работают как раньше.
@@ -34,6 +34,9 @@ export function usePlanRepeats() {
   // Что предложить на день `day` при текущем плане дня.
   const dueOn = (day: string, planToday: PlannedEntry[]): PlanRepeat[] => repeatsDueOn(repeats.value, day, planToday, weekNotes.value)
 
+  // Что придётся на будущий день по расписанию (без «N раз в неделю») — показывается без чекбокса.
+  const scheduledOn = (day: string, planDay: PlannedEntry[]): PlanRepeat[] => repeatsScheduledOn(repeats.value, day, planDay)
+
   // Добавить повторяющийся пункт; ошибка записи летит вызывающему (окно показывает её и остаётся открытым).
   async function add(userId: string, text: string, time: string | null, schedule: RepeatSchedule): Promise<void> {
     const row: Record<string, unknown> = { user_id: userId, text: text.trim(), schedule }
@@ -41,6 +44,15 @@ export function usePlanRepeats() {
     const { data, error: e } = await sb.from('plan_repeats').insert(row).select('id, text, time, schedule').single()
     if (e || !data) throw e ?? new Error('no data')
     repeats.value = [...repeats.value, toPlanRepeat(data as { id: string; text: string; time?: string | null; schedule?: unknown })]
+  }
+
+  // Изменить повторяющийся пункт (текст, время, расписание). Ошибка записи летит вызывающему (окно показывает её, остаётся в режиме правки);
+  // список меняется только после успешной записи — до неё в нём прежние значения.
+  async function update(id: string, text: string, time: string | null, schedule: RepeatSchedule): Promise<void> {
+    const row = { text: text.trim(), time: time || null, schedule }
+    const { error: e } = await sb.from('plan_repeats').update(row).eq('id', id)
+    if (e) throw e
+    repeats.value = repeats.value.map((r) => (r.id === id ? { ...r, text: row.text, time: row.time, schedule: row.schedule } : r))
   }
 
   async function remove(id: string): Promise<boolean> {
@@ -56,5 +68,5 @@ export function usePlanRepeats() {
     return true
   }
 
-  return { repeats, weekNotes, available, error, load, dueOn, add, remove }
+  return { repeats, weekNotes, available, error, load, dueOn, scheduledOn, add, update, remove }
 }

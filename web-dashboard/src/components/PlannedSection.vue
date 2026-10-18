@@ -80,6 +80,8 @@ const carryCandidates = ref<CarryCandidate[] | null>(null)
 const monthGoalRows = computed(() => (goals.value, planned.value, monthGoalsOf()))
 // «Повторяющиеся на сегодня»: предлагаются только на сегодняшнем дне; отметка создаёт обычный выполненный пункт плана с repeat
 const repeatRows = computed(() => (planned.value, rep.repeats.value, rep.weekNotes.value, day.value === todayStr() ? rep.dueOn(day.value, planned.value) : []))
+// Будущий день (BACKLOG 1054 срез 2): что придётся на него по расписанию — просто список, без чекбокса (отметить можно только сегодня)
+const repeatPreview = computed(() => (planned.value, rep.repeats.value, day.value > todayStr() ? rep.scheduledOn(day.value, planned.value) : []))
 const doneGoals = computed(() => doneOnDay(goals.value, planned.value, day.value))
 // «Карточка со сводкой» (BACKLOG 498 срез 3): «Выполнено N из M» у свёрнутого блока
 const plannedSummaryText = computed(() => plannedSummary(planned.value, goals.value))
@@ -284,6 +286,16 @@ const collapsed = ref(false)
       </ul>
     </div>
 
+    <div v-if="repeatPreview.length" class="mt-2" data-test="repeat-preview">
+      <p class="dim mb-1 text-xs">{{ t('dash_repeat_future_h') }}</p>
+      <ul class="m-0 flex list-none flex-col gap-1 p-0 text-sm">
+        <li v-for="r in repeatPreview" :key="r.id" class="flex items-center gap-2" data-test="repeat-preview-item">
+          <span class="min-w-0 flex-1 break-words">{{ r.text }}</span>
+          <span v-if="r.time" class="dim text-xs">{{ r.time }}</span>
+        </li>
+      </ul>
+    </div>
+
     <div class="mt-2 flex flex-wrap gap-2" data-test="add-row">
       <input ref="textInput" v-model="newText" type="text" class="min-w-40 flex-1" :class="{ 'plan-invalid': emptyInvalid, 'plan-shake': shaking }" :aria-invalid="emptyInvalid ? 'true' : undefined" :placeholder="t('dash_planned_custom_placeholder')" data-test="custom-input" @input="emptyInvalid = false" @keydown.enter.prevent="addCustom" />
       <button type="button" class="secondary" data-test="add-custom" @click="addCustom"><EmojiText :text="t('add_btn')" /></button>
@@ -318,7 +330,7 @@ const collapsed = ref(false)
   </section>
 
   <PlannedAddGoalModal v-if="goalPicker" :goals="goalPicker" @close="goalPicker = null" @pick="pickGoal" />
-  <PlannedRepeatsModal v-if="repeatsOpen" :repeats="rep.repeats.value" :add="(text, time, schedule) => rep.add(userId as string, text, time, schedule)" :remove="rep.remove" @close="repeatsOpen = false" />
+  <PlannedRepeatsModal v-if="repeatsOpen" :repeats="rep.repeats.value" :add="(text, time, schedule) => rep.add(userId as string, text, time, schedule)" :update="rep.update" :remove="rep.remove" @close="repeatsOpen = false" />
   <PlannedNewGoalModal v-if="newGoalOpen" :categories="myCategories" :no-category-labels="noCategoryLabels()" :horizon-column="horizonColumn" :weight-column="weightColumn" :current-weight="bodyWeight" :submit="submitNewGoal" @close="newGoalOpen = false" />
   <PlannedCarryOverModal v-if="carryCandidates" :candidates="carryCandidates" @close="carryCandidates = null" @add="addCarried" />
 </template>

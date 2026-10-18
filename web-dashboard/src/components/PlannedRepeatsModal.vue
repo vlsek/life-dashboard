@@ -2,11 +2,16 @@
 import { ref } from 'vue'
 import { friendlyError } from '../lib/friendlyError'
 import { t } from '../lib/i18n'
-import { WEEK_ORDER, buildRepeatSchedule, repeatSummary, type PlanRepeat, type RepeatKind, type RepeatSchedule } from '../lib/planRepeats'
+import { WEEK_ORDER, buildRepeatSchedule, repeatKindOf, repeatSummary, type PlanRepeat, type RepeatKind, type RepeatSchedule } from '../lib/planRepeats'
 
-// Повторяющиеся пункты «Планов» (BACKLOG 1054, миграция 087): список + добавление. Расписание — как у метрик: каждый день / по дням недели / N раз в неделю.
+// Повторяющиеся пункты «Планов» (BACKLOG 1054, миграция 087): список + добавление + правка (срез 2: ✎ переносит пункт в форму, «Сохранить» пишет изменения). Расписание — как у метрик: каждый день / по дням недели / N раз в неделю.
 // add — запись пункта (родитель пишет в базу); её ошибка показывается ПОД полями, окно остаётся открытым, введённое не пропадает.
-const props = defineProps<{ repeats: PlanRepeat[]; add: (text: string, time: string | null, schedule: RepeatSchedule) => Promise<void>; remove: (id: string) => Promise<boolean> }>()
+const props = defineProps<{
+  repeats: PlanRepeat[]
+  add: (text: string, time: string | null, schedule: RepeatSchedule) => Promise<void>
+  update: (id: string, text: string, time: string | null, schedule: RepeatSchedule) => Promise<void>
+  remove: (id: string) => Promise<boolean>
+}>()
 const emit = defineEmits<{ close: [] }>()
 
 const text = ref('')
@@ -15,6 +20,7 @@ const kind = ref<RepeatKind>('daily')
 const days = ref<number[]>([1, 3, 5])
 const perWeek = ref(3)
 const saving = ref(false)
+const editingId = ref<string | null>(null) // id пункта, который сейчас правится (форма заполнена его значениями); null — добавление нового
 const problem = ref<string | null>(null)
 
 const weekdayNames = () => t('dash_weekdays_short').split(',')
@@ -22,6 +28,28 @@ const summary = (r: PlanRepeat) => repeatSummary(r.schedule, weekdayNames(), t('
 function toggleDay(d: number) {
   days.value = days.value.includes(d) ? days.value.filter((x) => x !== d) : [...days.value, d]
   problem.value = null
+}
+
+function resetForm() {
+  editingId.value = null
+  text.value = ''
+  time.value = ''
+  kind.value = 'daily'
+  days.value = [1, 3, 5]
+  perWeek.value = 3
+  problem.value = null
+}
+function startEdit(r: PlanRepeat) {
+  editingId.value = r.id
+  text.value = r.text
+  time.value = r.time ?? ''
+  kind.value = repeatKindOf(r.schedule)
+  days.value = r.schedule?.type === 'days' ? [...r.schedule.days] : [1, 3, 5]
+  perWeek.value = r.schedule?.type === 'weekly' ? r.schedule.min : 3
+  problem.value = null
+}
+async function removeItem(id: string) {
+  if (await props.remove(id)) if (editingId.value === id) resetForm() // удалили то, что правили, — форму очищаем
 }
 
 async function submit() {
@@ -37,9 +65,10 @@ async function submit() {
   problem.value = null
   saving.value = true
   try {
-    await props.add(text.value, time.value || null, buildRepeatSchedule(kind.value, days.value, perWeek.value))
-    text.value = ''
-    time.value = ''
+    const schedule = buildRepeatSchedule(kind.value, days.value, perWeek.value)
+    if (editingId.value) await props.update(editingId.value, text.value, time.value || null, schedule)
+    else await props.add(text.value, time.value || null, schedule)
+    resetForm()
   } catch (e) {
     problem.value = friendlyError(e)
   } finally {
@@ -55,13 +84,15 @@ async function submit() {
 
       <p v-if="!repeats.length" class="dim mt-2 text-sm" data-test="repeat-empty">{{ t('dash_repeat_empty') }}</p>
       <ul v-else class="m-0 mt-2 flex list-none flex-col gap-1 p-0 text-sm" data-test="repeat-list">
-        <li v-for="r in repeats" :key="r.id" class="flex items-center gap-2" data-test="repeat-item">
+        <li v-for="r in repeats" :key="r.id" class="flex items-center gap-2" :aria-current="editingId === r.id ? 'true' : undefined" :style="editingId === r.id ? 'outline: 1px solid var(--accent); border-radius: 6px' : undefined" data-test="repeat-item">
           <span class="min-w-0 flex-1 break-words">{{ r.text }}<span v-if="r.time" class="dim"> · {{ r.time }}</span></span>
           <span class="dim text-xs" data-test="repeat-summary">{{ summary(r) }}</span>
-          <button type="button" class="secondary" :aria-label="t('dash_repeat_delete')" data-test="repeat-delete" @click="props.remove(r.id)">✕</button>
+          <button type="button" class="secondary" :aria-label="t('dash_repeat_edit')" data-test="repeat-edit" @click="startEdit(r)">✎</button>
+          <button type="button" class="secondary" :aria-label="t('dash_repeat_delete')" data-test="repeat-delete" @click="removeItem(r.id)">✕</button>
         </li>
       </ul>
 
+      <p v-if="editingId" class="dim mb-0 mt-3 text-xs" data-test="repeat-editing-hint">{{ t('dash_repeat_editing_hint') }}</p>
       <label class="mt-3 block text-sm">{{ t('dash_repeat_text') }}</label>
       <input v-model="text" type="text" class="w-full" maxlength="120" data-test="repeat-text" @input="problem = null" @keydown.enter.prevent="submit" />
 
@@ -90,7 +121,8 @@ async function submit() {
 
       <div class="modal-actions">
         <button type="button" class="secondary" data-test="repeat-close" @click="emit('close')">{{ t('cancel') }}</button>
-        <button type="button" data-test="repeat-add" :disabled="saving" @click="submit">{{ t('dash_repeat_add_btn') }}</button>
+        <button v-if="editingId" type="button" class="secondary" data-test="repeat-edit-cancel" @click="resetForm">{{ t('dash_repeat_edit_cancel') }}</button>
+        <button type="button" data-test="repeat-add" :disabled="saving" @click="submit">{{ editingId ? t('dash_repeat_save_btn') : t('dash_repeat_add_btn') }}</button>
       </div>
     </div>
   </div>
