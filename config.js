@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.11";
+const SITE_VERSION = "6.12";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.12", date: "2026-10-18 08:02", changes: [
+        "Тексты проще: подсказки Дашборда, справка про норму воды и настройки шапки стали короче и на «ты» (14 подсказок: подходы-план, расчёт нормы воды по весу и росту, период графиков, порядок блоков, напоминания, рекорды и др.). Смысл тот же, меньше стены текста. Без миграций."
+    ]},
     { version: "6.11", date: "2026-10-18 08:30", changes: [
         "«Кастомизация», вид сворачивания блоков: два новых маркера — «Длинная стрелка» за 100 баллов (стрелка со стержнем) и «Кольцо» за 150 баллов (пустое у раскрытого блока, с точкой у свёрнутого). Работают на Дашборде и в Тренировках.",
     ]},
@@ -2445,6 +2448,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.12", date: "2026-10-18 08:02", changes: [
+        "Simpler texts: Dashboard hints, the water-goal explanation and the header settings are shorter and friendlier (14 hints: sets plan, how the water goal is calculated from weight and height, chart period, block order, reminders, records and more). Same meaning, less wall of text. No migrations."
+    ]},
     { version: "6.11", date: "2026-10-18 08:30", changes: [
         "Customization, block-collapse marker: two new styles — “Long arrow” for 100 points (an arrow with a stem) and “Ring” for 150 points (empty when a block is open, with a dot when folded). Work on the Dashboard and in Workouts.",
     ]},
