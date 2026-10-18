@@ -1,9 +1,9 @@
 // Стили маркеров-мини-диаграмм на графиках (BACKLOG 13:54 «кружки в духе liquid glass»; владелец 2026-10-10: «мне все варианты
-// нравятся, давай добавим в раздел кастомизации»): плоский (прежний, по умолчанию) · стекло · капля · контур. Выбор — localStorage
+// нравятся, давай добавим в раздел кастомизации»): плоский (прежний, по умолчанию) · стекло · капля · контур · наклейка · неон. Выбор — localStorage
 // `chart_marker`, меняется в «Кастомизации». ЭТОТ ФАЙЛ копируется в web-customization/src/lib/ БЕЗ изменений
 // (scripts/apply_chart_marker.py; тест сверяет) — правь здесь. Чистые строки SVG, без фильтров и backdrop-filter:
 // «стекло» и «капля» — градиенты и обводка. Градиенты — в <defs> с уникальным id на график (markerDefs).
-export const CHART_MARKERS = ['flat', 'glass', 'drop', 'outline'] as const
+export const CHART_MARKERS = ['flat', 'glass', 'drop', 'outline', 'sticker', 'neon'] as const
 export type ChartMarker = (typeof CHART_MARKERS)[number]
 export const DEFAULT_CHART_MARKER: ChartMarker = 'flat'
 export const CHART_MARKER_KEY = 'chart_marker'
@@ -70,6 +70,23 @@ export function markerParts(style: ChartMarker, slices: MarkerSlice[], x: number
         ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${s.color}"/>`
         : `<path d="${s.path}" fill="${s.color}" stroke="var(--bg-card)" stroke-opacity=".7" stroke-width=".7"/>`
     g += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#${uid}-dr)"/><ellipse cx="${f1(x - 2.1)}" cy="${f1(y - 2.6)}" rx="2.3" ry="1.3" fill="#fff" opacity=".55" transform="rotate(-35 ${f1(x - 2.1)} ${f1(y - 2.6)})"/>`
+  } else if (style === 'sticker') {
+    // «Наклейка» (правило владельца: новые предметы в малые разделы): белая вырезная кайма, лёгкая тень под ней, сектора плотные
+    g += `<ellipse cx="${cx}" cy="${f1(y + r * 0.9)}" rx="${f1(r + 1.4)}" ry="${f1(r * 0.55)}" fill="#000" opacity=".18"/>`
+    g += `<circle cx="${cx}" cy="${cy}" r="${r + 1.9}" fill="var(--bg-card)" stroke="var(--border)" stroke-width=".6"/>`
+    for (const s of slices)
+      g += s.full
+        ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${s.color}"/>`
+        : `<path d="${s.path}" fill="${s.color}" stroke="var(--bg-card)" stroke-width=".9" stroke-linejoin="round"/>`
+    g += `<ellipse cx="${f1(x - 2.2)}" cy="${f1(y - 2.7)}" rx="2" ry="1.1" fill="#fff" opacity=".5" transform="rotate(-35 ${f1(x - 2.2)} ${f1(y - 2.7)})"/>`
+  } else if (style === 'neon') {
+    // «Неон»: два мягких ореола цветом сектора, тонкое светящееся кольцо и яркое ядро; сектора полупрозрачные
+    g += `<circle cx="${cx}" cy="${cy}" r="${r + 3.2}" fill="${slices[0].color}" opacity=".1"/><circle cx="${cx}" cy="${cy}" r="${r + 1.6}" fill="${slices[0].color}" opacity=".18"/>`
+    for (const s of slices)
+      g += s.full
+        ? `<circle cx="${cx}" cy="${cy}" r="${r - 0.6}" fill="${s.color}" fill-opacity=".22" stroke="${s.color}" stroke-width="1.2"/>`
+        : `<path d="${s.path}" fill="${s.color}" fill-opacity=".22" stroke="${s.color}" stroke-width="1.2" stroke-linejoin="round"/>`
+    g += `<circle cx="${cx}" cy="${cy}" r="${f1(r - 2.6)}" fill="none" stroke="${slices[0].color}" stroke-opacity=".7" stroke-width=".6"/><circle cx="${cx}" cy="${cy}" r="1.5" fill="${slices[0].color}"/>`
   } else if (style === 'outline') {
     for (const s of slices)
       g += s.full

@@ -14,8 +14,8 @@ const mountChart = () => mount(ChartBlock, { props: { title: 'Отжимания
 describe('chartMarker: стили маркеров-мини-диаграмм (BACKLOG 13:54)', () => {
   beforeEach(() => localStorage.clear())
 
-  it('четыре стиля; по умолчанию прежний плоский; мусор в хранилище игнорируется', () => {
-    expect([...CHART_MARKERS]).toEqual(['flat', 'glass', 'drop', 'outline'])
+  it('шесть стилей; по умолчанию прежний плоский; мусор в хранилище игнорируется', () => {
+    expect([...CHART_MARKERS]).toEqual(['flat', 'glass', 'drop', 'outline', 'sticker', 'neon'])
     expect(DEFAULT_CHART_MARKER).toBe('flat')
     expect(readChartMarker()).toBe('flat')
     localStorage.setItem(CHART_MARKER_KEY, 'glass')
@@ -66,5 +66,43 @@ describe('chartMarker: стили маркеров-мини-диаграмм (BA
     localStorage.setItem(CHART_MARKER_KEY, 'drop')
     const ids = [mountChart(), mountChart()].map((w) => w.html().match(/id="(cm\d+-dr)"/)![1])
     expect(ids[0]).not.toBe(ids[1])
+  })
+})
+
+// Правило владельца «новые предметы в малые разделы»: «Наклейка» и «Неон» (бесплатные, чистые строки SVG, без фильтров)
+describe('chartMarker: «Наклейка» и «Неон»', () => {
+  it('наклейка: белая кайма и тень под ней, сектора плотные, блик; нет <defs>', () => {
+    const g = markerParts('sticker', slices, 10, 10, 6.5, 'u9')
+    expect(g).toContain('r="8.4"') // кайма: r + 1.9
+    expect(g).toContain('fill="var(--bg-card)"')
+    expect(g).toContain('opacity=".18"') // тень
+    expect(g).not.toContain('url(#')
+    expect(markerDefs('sticker', 'u9')).toBe('')
+    expect((g.match(/<path /g) ?? []).length).toBe(slices.length)
+  })
+  it('неон: два ореола, полупрозрачные сектора с обводкой цвета, ядро; нет <defs>', () => {
+    const g = markerParts('neon', slices, 10, 10, 6.5, 'u9')
+    expect(g).toContain('r="9.7"') // внешний ореол: r + 3.2
+    expect(g).toContain('fill-opacity=".22"')
+    expect(g).toContain('r="1.5"') // ядро
+    expect(markerDefs('neon', 'u9')).toBe('')
+    expect((g.match(/<path /g) ?? []).length).toBe(slices.length)
+  })
+  it('целый круг (один цвет) рисуется без path у обоих стилей; пустой список — пустая строка', () => {
+    const one = previewSlices([7], 10, 10, 6.5)
+    for (const st of ['sticker', 'neon'] as const) {
+      expect(markerParts(st, one, 10, 10, 6.5, 'u')).not.toContain('<path')
+      expect(markerParts(st, [], 10, 10, 6.5, 'u')).toBe('')
+    }
+  })
+  it('все шесть стилей рисуют по-разному', () => {
+    const outs = (['flat', 'glass', 'drop', 'outline', 'sticker', 'neon'] as const).map((st) => markerParts(st, slices, 10, 10, 6.5, 'u'))
+    expect(new Set(outs).size).toBe(6)
+  })
+  it('график рисует выбранный стиль: «Неон» и «Наклейка» из localStorage', () => {
+    localStorage.setItem(CHART_MARKER_KEY, 'neon')
+    expect(mountChart().html()).toContain('r="1.5"')
+    localStorage.setItem(CHART_MARKER_KEY, 'sticker')
+    expect(mountChart().html()).toContain('stroke="var(--border)"')
   })
 })
