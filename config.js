@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.17";
+const SITE_VERSION = "6.18";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.18", date: "2026-10-19 11:00", changes: [
+        "«Кастомизация»: два раздела про воду («Анимация воды» и «Анимация воды (предметы)») теперь один слот «Анимация воды»: сверху базовые анимации, ниже дополнительные предметы. На витрине — одна ячейка с общим счётчиком «открыто/всего», внутри слота счётчики и переключатель «Все · Мои · Магазин» считают оба списка вместе."
+    ]},
     { version: "6.17", date: "2026-10-18 20:10", changes: [
         "«Кастомизация», спидометр дня: два новых вида кольца — «Мята» за 100 баллов (градиент от зелёного к бирюзовому) и «Жар» за 150 баллов (жёлтый, оранжевый, красный). Показываются в шапке и на Дашборде.",
     ]},
@@ -2463,6 +2466,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.18", date: "2026-10-19 11:00", changes: [
+        "Customization: the two water sections (“Water animation” and “Water animation (items)”) are now one “Water animation” slot: the basic animations on top and the extra items below. The showcase has a single cell with one “unlocked/total” counter, and inside the slot the counters and the “All · Mine · Shop” switch count both lists together."
+    ]},
     { version: "6.17", date: "2026-10-18 20:10", changes: [
         "Customization, daily gauge: two new ring styles — “Mint” for 100 points (a green-to-turquoise gradient) and “Ember” for 150 points (yellow, orange, red). Shown in the header and on the Dashboard.",
     ]},

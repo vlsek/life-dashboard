@@ -1,6 +1,13 @@
 {
-  "version": "6.17",
+  "version": "6.18",
   "en": [
+    {
+      "version": "6.18",
+      "date": "2026-10-19 11:00",
+      "changes": [
+        "Customization: the two water sections (“Water animation” and “Water animation (items)”) are now one “Water animation” slot: the basic animations on top and the extra items below. The showcase has a single cell with one “unlocked/total” counter, and inside the slot the counters and the “All · Mine · Shop” switch count both lists together."
+      ]
+    },
     {
       "version": "6.17",
       "date": "2026-10-18 20:10",
@@ -4388,6 +4395,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.18",
+      "date": "2026-10-19 11:00",
+      "changes": [
+        "«Кастомизация»: два раздела про воду («Анимация воды» и «Анимация воды (предметы)») теперь один слот «Анимация воды»: сверху базовые анимации, ниже дополнительные предметы. На витрине — одна ячейка с общим счётчиком «открыто/всего», внутри слота счётчики и переключатель «Все · Мои · Магазин» считают оба списка вместе."
+      ]
+    },
     {
       "version": "6.17",
       "date": "2026-10-18 20:10",
