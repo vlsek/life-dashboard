@@ -59,6 +59,8 @@ export const ITEMS: readonly CustomItem[] = [
   { key: 'collapse_double', category: 'collapse_style', source: 'points', tier: 'low' },
   { key: 'collapse_square', category: 'collapse_style', source: 'points', tier: 'low' },
   { key: 'collapse_burger', category: 'collapse_style', source: 'points', tier: 'mid' },
+  { key: 'collapse_arrow', category: 'collapse_style', source: 'points', tier: 'low' },
+  { key: 'collapse_ring', category: 'collapse_style', source: 'points', tier: 'mid' },
   // Вид спидометра недели (BACKLOG 53.2, срез 1; список и цены — на усмотрение агента 1 по разрешению владельца 2026-10-10): «семиугольник по дням» —
   // у всех бесплатно (это «ничего не выбрано»), «классическое кольцо» — 100, «семь столбиков» — 150. Вид СПИДОМЕТРА ДНЯ — следующим срезом.
   { key: 'week_classic', category: 'week_gauge', source: 'points', tier: 'low' },

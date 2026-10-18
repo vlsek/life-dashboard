@@ -43,7 +43,7 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
     :data-rarity="rarity"
   >
     <span v-if="isCollapseStyle" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="collapse-preview">
-      <CollapsePreview :variant="item.key === 'collapse_summary' ? 'summary' : item.key === 'collapse_plus' ? 'plus' : item.key === 'collapse_caret' ? 'caret' : item.key === 'collapse_dot' ? 'dot' : item.key === 'collapse_double' ? 'double' : item.key === 'collapse_square' ? 'square' : item.key === 'collapse_burger' ? 'burger' : 'accordion'" />
+      <CollapsePreview :variant="item.key === 'collapse_summary' ? 'summary' : item.key === 'collapse_plus' ? 'plus' : item.key === 'collapse_caret' ? 'caret' : item.key === 'collapse_dot' ? 'dot' : item.key === 'collapse_double' ? 'double' : item.key === 'collapse_square' ? 'square' : item.key === 'collapse_burger' ? 'burger' : item.key === 'collapse_arrow' ? 'arrow' : item.key === 'collapse_ring' ? 'ring' : 'accordion'" />
     </span>
     <span v-else-if="isWeekGauge" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="week-gauge-preview">
       <WeekGaugePreview :variant="weekPreviewVariant" />

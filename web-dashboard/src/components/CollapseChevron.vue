@@ -38,6 +38,11 @@ defineProps<{ collapsed: boolean }>()
       <path d="M5 16h14" />
       <path v-if="collapsed" d="M5 12h14" />
     </template>
+    <path v-else-if="collapseStyle === 'arrow'" d="M12 5v14M6 13l6 6 6-6" />
+    <template v-else-if="collapseStyle === 'ring'">
+      <circle cx="12" cy="12" r="7" />
+      <circle v-if="collapsed" cx="12" cy="12" r="2.4" fill="currentColor" stroke="none" />
+    </template>
     <path v-else d="M6 9l6 6 6-6" />
   </svg>
 </template>

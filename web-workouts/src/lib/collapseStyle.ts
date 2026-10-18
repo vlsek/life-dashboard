@@ -3,12 +3,12 @@
 // а страницы Дашборда/Workouts применяют его БЕЗ ожидания сети — через кэш в localStorage (как тема): кэш пишет страница «Кастомизация»
 // при выборе, а сами страницы сверяются с профилем в фоне. Чистая логика (без Vue/сети). Пилоты изолированы, поэтому КОПИЯ лежит в
 // web-customization и web-dashboard (менять ВМЕСТЕ — страж collapseStyleCopies.test.ts в web-customization сверяет файлы).
-export type CollapseStyle = 'chevron' | 'accordion' | 'summary' | 'plus' | 'caret' | 'dot' | 'double' | 'square' | 'burger'
+export type CollapseStyle = 'chevron' | 'accordion' | 'summary' | 'plus' | 'caret' | 'dot' | 'double' | 'square' | 'burger' | 'arrow' | 'ring'
 
 export const COLLAPSE_STYLE_CACHE_KEY = 'site_collapse_style'
 
 // Ключ предмета из реестра «Кастомизации» → вариант; всё неизвестное и пустое — базовый шеврон.
-const BY_ITEM: Record<string, CollapseStyle> = { collapse_accordion: 'accordion', collapse_summary: 'summary', collapse_plus: 'plus', collapse_caret: 'caret', collapse_dot: 'dot', collapse_double: 'double', collapse_square: 'square', collapse_burger: 'burger' }
+const BY_ITEM: Record<string, CollapseStyle> = { collapse_accordion: 'accordion', collapse_summary: 'summary', collapse_plus: 'plus', collapse_caret: 'caret', collapse_dot: 'dot', collapse_double: 'double', collapse_square: 'square', collapse_burger: 'burger', collapse_arrow: 'arrow', collapse_ring: 'ring' }
 
 export function parseCollapseStyle(raw: unknown): CollapseStyle {
   return typeof raw === 'string' && Object.prototype.hasOwnProperty.call(BY_ITEM, raw) ? BY_ITEM[raw] : 'chevron'
@@ -17,7 +17,7 @@ export function parseCollapseStyle(raw: unknown): CollapseStyle {
 export function readCachedCollapseStyle(): CollapseStyle {
   try {
     const v = localStorage.getItem(COLLAPSE_STYLE_CACHE_KEY)
-    return v === 'accordion' || v === 'summary' || v === 'plus' || v === 'caret' || v === 'dot' || v === 'double' || v === 'square' || v === 'burger' ? v : 'chevron'
+    return v === 'accordion' || v === 'summary' || v === 'plus' || v === 'caret' || v === 'dot' || v === 'double' || v === 'square' || v === 'burger' || v === 'arrow' || v === 'ring' ? v : 'chevron'
   } catch {
     return 'chevron'
   }

@@ -123,3 +123,29 @@ describe('вид сворачивания: «Квадрат» и «Гамбур�
     writeCachedCollapseStyle('chevron')
   })
 })
+
+describe('вид сворачивания: «Длинная стрелка» и «Кольцо»', () => {
+  it('цены 100 и 150, редкость, названия и описания на двух языках', () => {
+    expect(priceOf(itemByKey('collapse_arrow')!)).toBe(100)
+    expect(priceOf(itemByKey('collapse_ring')!)).toBe(150)
+    expect(rarityOfItem('collapse_arrow')).toBe('common')
+    expect(rarityOfItem('collapse_ring')).toBe('uncommon')
+    for (const key of ['collapse_arrow', 'collapse_ring']) {
+      expect(itemByKey(key)).toMatchObject({ category: 'collapse_style', source: 'points' })
+      for (const lang of ['ru', 'en']) {
+        localStorage.setItem('site_lang', lang)
+        expect(t(('cust_item_' + key) as never).length).toBeGreaterThan(2)
+        expect(t(('cust_item_' + key + '_desc') as never).length).toBeGreaterThan(10)
+      }
+    }
+  })
+  it('ключ предмета → вид маркера; кэш помнит оба', () => {
+    expect(parseCollapseStyle('collapse_arrow')).toBe('arrow')
+    expect(parseCollapseStyle('collapse_ring')).toBe('ring')
+    for (const s of ['arrow', 'ring'] as const) {
+      writeCachedCollapseStyle(s)
+      expect(readCachedCollapseStyle()).toBe(s)
+    }
+    writeCachedCollapseStyle('chevron')
+  })
+})
