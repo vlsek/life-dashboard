@@ -20,7 +20,7 @@ describe('ReorderPanel', () => {
   it('заголовок, подсказка, три карточки блоков и кнопка «Готово»', () => {
     const w = mount(ReorderPanel, { props: { modelValue: items() } })
     expect(w.text()).toContain('Порядок блоков')
-    expect(w.text()).toContain('Перетащите блок')
+    expect(w.text()).toContain('Перетаскивай блоки')
     expect(w.findAll('[data-test="layout-row"]')).toHaveLength(3)
     expect(w.find('[data-test="reorder-done"]').text()).toBe('Готово')
     w.unmount()

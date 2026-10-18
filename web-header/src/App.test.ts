@@ -434,7 +434,7 @@ describe('норма воды: справка и «Считать автомат
     w.unmount()
   })
 
-  it('справка (i): встроенная плашка; при зафиксированной норме честно говорит «зафиксирована» и показывает, что дал бы расчёт по весу; при авто — «рассчитана по весу»; везде — что вода из еды не входит', async () => {
+  it('справка (i): встроенная плашка; при зафиксированной норме честно говорит «зафиксирована» и показывает, что дал бы расчёт по весу; при авто — «считается по твоему весу»; везде — что вода из еды не входит', async () => {
     const info = (w: ReturnType<typeof mount>) => w.find('[data-test="water-info"]')
     setup({ metrics: [manual], body_parameters: [weightParam], body_parameter_values: [{ parameter_id: 'bp', value: 70, date: today }] })
     let w = mount(App)
@@ -455,10 +455,10 @@ describe('норма воды: справка и «Считать автомат
     await flushPromises()
     await openWater(w)
     await w.find('.gh-modal button[style*="border-radius: 50%"]').trigger('click')
-    expect(info(w).text()).toContain('Рассчитана автоматически')
+    expect(info(w).text()).toContain('Считается по твоему последнему весу')
     expect(info(w).text()).toContain('70 кг × 26 мл = 1820') // роста нет → формула по весу
-    expect(info(w).text()).toContain('Укажите рост')
-    expect(info(w).text()).toContain('Считается только то, что вы пьёте')
+    expect(info(w).text()).toContain('Укажи рост')
+    expect(info(w).text()).toContain('Считается только то, что ты пьёшь')
     w.unmount()
   })
 })

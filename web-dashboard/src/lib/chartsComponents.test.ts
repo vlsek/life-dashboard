@@ -20,11 +20,11 @@ describe('ChartsConfigModal', () => {
     localStorage.setItem('site_lang', 'ru')
     const w = mount(ChartsConfigModal, { props: { series, entries: [{ key: 'points', goal: null }], period: PERIOD } })
     expect(w.find('[data-test="period-all-label"]').text()).toBe('Период для всех графиков')
-    expect(w.find('[data-test="period-all-hint"]').text()).toContain('свой период')
+    expect(w.find('[data-test="period-all-hint"]').text()).toContain('отдельного графика')
     localStorage.setItem('site_lang', 'en')
     const e = mount(ChartsConfigModal, { props: { series, entries: [{ key: 'points', goal: null }], period: PERIOD } })
     expect(e.find('[data-test="period-all-label"]').text()).toBe('Period for all charts')
-    expect(e.find('[data-test="period-all-hint"]').text()).toContain('own period')
+    expect(e.find('[data-test="period-all-hint"]').text()).toContain('single chart')
     localStorage.removeItem('site_lang')
   })
   it('порядок, цель и удаление отражаются в эмитимом результате', async () => {

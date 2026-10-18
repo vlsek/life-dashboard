@@ -24,10 +24,10 @@ beforeEach(() => {
 })
 
 describe('WaterModal: справка о норме и возврат к авто-расчёту', () => {
-  it('норма автоматическая: справка говорит «рассчитана автоматически по весу», кнопки возврата нет', async () => {
+  it('норма автоматическая: справка говорит «считается по твоему последнему весу», кнопки возврата нет', async () => {
     const w = mount(WaterModal, { props: props(null) })
     await w.find(infoBtn).trigger('click')
-    expect(plate(w).text()).toContain('Рассчитана автоматически')
+    expect(plate(w).text()).toContain('Считается по твоему последнему весу')
     expect(plate(w).text()).toContain('70')
     expect(plate(w).text()).toContain('1820')
     expect(plate(w).text()).not.toContain('зафиксирована')
@@ -74,7 +74,7 @@ describe('WaterModal: поправка на воду из еды (v2.49)', () =>
       const w = mount(WaterModal, { props: p })
       expect(plate(w).exists()).toBe(false)
       await w.find(infoBtn).trigger('click')
-      expect(plate(w).text()).toContain('Считается только то, что вы пьёте')
+      expect(plate(w).text()).toContain('Считается только то, что ты пьёшь')
       expect(plate(w).text()).toContain('вода из еды')
       w.unmount()
     }
@@ -101,11 +101,11 @@ describe('WaterModal: рост в авто-норме (BACKLOG 17)', () => {
   it('известен рост: справка называет вес, рост, площадь поверхности тела (Мостеллер) и итог', async () => {
     const w = mount(WaterModal, { props: props(null, 1840, 70, 175) })
     await w.find(infoBtn).trigger('click')
-    expect(plate(w).text()).toContain('по весу и росту')
+    expect(plate(w).text()).toContain('площадь тела')
     expect(plate(w).text()).toContain('70 кг')
     expect(plate(w).text()).toContain('175 см')
     expect(plate(w).text()).toContain('1.84')
-    expect(plate(w).text()).toContain('Мостеллера')
+    expect(plate(w).text()).toContain('Мостеллер')
     expect(plate(w).text()).toContain('1000 мл/м²')
     expect(plate(w).text()).toContain('1840')
     w.unmount()
@@ -115,7 +115,7 @@ describe('WaterModal: рост в авто-норме (BACKLOG 17)', () => {
     const w = mount(WaterModal, { props: props(null, 1820, 70, null) })
     await w.find(infoBtn).trigger('click')
     expect(plate(w).text()).toContain('70 кг × 26 мл = 1820')
-    expect(plate(w).text()).toContain('Укажите рост')
+    expect(plate(w).text()).toContain('Укажи рост')
     w.unmount()
   })
 
