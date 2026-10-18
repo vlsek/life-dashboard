@@ -93,25 +93,25 @@ const DICT = {
     tour_done: "Let's go!",
     tour_1_title: 'Welcome!',
     tour_1_text:
-      'This is your personal dashboard: one place for daily habits, goals, skills, workouts and progress.\n\nA short tour — 7 quick steps. You can reopen it any time from the side menu ("How it works").',
+      'This is your personal dashboard: habits, goals, skills, workouts and progress in one place.\n\nThe tour is 7 short steps; you can reopen it any time from the menu ("How it works").',
     tour_2_title: 'Dashboard',
     tour_2_text:
-      'Every day you tick off your daily metrics (yes/no, numbers, sets) and can add items to "Planned for today". The circle shows how much of the day is done (the History section shows every day and week as a calendar), the flame is your streak, and points are what you earn for completed things.\n\nThe ⚙️ icons next to blocks let you customize what is shown.',
+      'Every day, tick off your metrics and add items to "Planned for today". The circle shows how much of the day is done, the flame is your streak, and points add up for what you finish. The ⚙️ icons by blocks control what is shown.',
     tour_3_title: 'Goals',
     tour_3_text:
-      "Your goals live in the Goals section. Split a big goal into stages, mark progress, and drop any goal into today's plan so it counts toward your day and week.",
+      'Goals live in the Goals section: split a big one into stages and add it to today\'s plan — it then counts toward your day and week.',
     tour_4_title: 'Skills, workouts, English',
     tour_4_text:
-      '🥋 Skills — things you are mastering, with progress and books.\n🏋️ Workouts — exercises and sets (reps, weight, time), plus ready-made programs.\n🌐 Languages — a vocabulary for any language you learn: add the words you meet, mark what you learned.',
+      '🥋 Skills — what you are mastering, with progress and books.\n🏋️ Workouts — exercises and sets, ready-made programs.\n🌐 Languages — a vocabulary: add words, mark the ones you\'ve learned.',
     tour_5_title: 'Challenges, shop, community',
     tour_5_text:
-      '🏁 Challenges — pick one from the catalog or create your own to push yourself.\n🛍️ Shop — spend earned points on things you allow yourself to buy.\n🏆 Community — add friends and compare on the leaderboard. Others only see what you allow.',
+      '🏁 Challenges — ready-made ones from the catalog, or your own.\n🛍️ Shop — spend points on things you "allow yourself to buy".\n🏆 Community — friends and a leaderboard; others only see what you allow.',
     tour_6_title: 'Calendar and milestones',
     tour_6_text:
-      "Tap a day in the calendar to write a plan or a note — it goes straight into what you did that day. Handy for looking back and planning ahead.\n\n🚩 Milestones — recurring things with a date (an oil change, consumables): note when you did it and how often to repeat, and the page shows what's due.",
+      'Tap a day in the calendar — write a plan or a note, and it goes into that day\'s summary.\n\n🚩 Milestones — recurring things with a date (an oil change): mark when you did it, and the page tells you when it\'s due again.',
     tour_7_title: 'Getting around',
     tour_7_text:
-      "☰ opens the side menu (language, theme, account, install as an app). »»» reveals quick links to every section. 💧 in the header is the water tracker: tap it to log water, also for past days.\n\nThat's it — enjoy!",
+      '☰ — the menu (language, theme, account, install). »»» — quick links to sections. 💧 — the water tracker, including past days.\n\nThat\'s it — enjoy!',
     about_title: '👤 About the creator',
     about_creator_text: 'DevOps engineer. Life Dashboard is his personal project, improved bit by bit.',
     about_portfolio_link: 'Resume →',
@@ -248,25 +248,25 @@ const DICT = {
     tour_done: 'Поехали!',
     tour_1_title: 'Добро пожаловать!',
     tour_1_text:
-      'Это твой личный дашборд: в одном месте ежедневные привычки, цели, навыки, тренировки и прогресс.\n\nКороткий тур — 7 быстрых шагов. Открыть его снова можно в любой момент из бокового меню («Как пользоваться»).',
+      'Это твой личный дашборд: привычки, цели, навыки, тренировки и прогресс в одном месте.\n\nТур — 7 коротких шагов; открыть его снова можно в меню («Как пользоваться»).',
     tour_2_title: 'Дашборд',
     tour_2_text:
-      'Каждый день отмечаешь ежедневные метрики (да/нет, числа, подходы) и можешь добавлять пункты в «Запланировано на сегодня». Кружок показывает, насколько выполнен день (раздел «История» показывает каждый день и неделю календарём), огонёк — твоя серия, а баллы копятся за выполненное.\n\nИконки ⚙️ рядом с блоками позволяют настроить, что показывать.',
+      'Каждый день отмечай метрики и добавляй пункты в «Запланировано на сегодня». Кружок — выполнение дня, огонёк — серия, баллы копятся за сделанное. ⚙️ у блоков — что показывать.',
     tour_3_title: 'Цели',
     tour_3_text:
-      'Цели живут в разделе «Цели». Большую цель можно разбить на этапы, отмечать прогресс и закидывать в план на сегодня — тогда она идёт в счёт дня и недели.',
+      'Цели — в разделе «Цели»: разбивай большую на этапы и добавляй в план на сегодня — она пойдёт в счёт дня и недели.',
     tour_4_title: 'Навыки, тренировки, английский',
     tour_4_text:
-      '🥋 Навыки — то, что осваиваешь, с прогрессом и книгами.\n🏋️ Тренировки — упражнения и подходы (повторения, вес, время), плюс готовые программы.\n🌐 Языки — словарь для любого изучаемого языка: добавляй слова, которые встретил, отмечай выученные.',
+      '🥋 Навыки — что осваиваешь, с прогрессом и книгами.\n🏋️ Тренировки — упражнения и подходы, готовые программы.\n🌐 Языки — словарь: добавляй слова, отмечай выученные.',
     tour_5_title: 'Челленджи, магазин, сообщество',
     tour_5_text:
-      '🏁 Челленджи — выбери из каталога или создай свой, чтобы себя подтолкнуть.\n🛍️ Магазин — трать накопленные баллы на то, что «разрешаешь себе купить».\n🏆 Сообщество — добавляй друзей и сравнивайся в лидерборде. Другие видят только то, что ты разрешил.',
+      '🏁 Челленджи — готовые из каталога или свои.\n🛍️ Магазин — трать баллы на то, что «разрешаешь себе купить».\n🏆 Сообщество — друзья и лидерборд; другие видят только то, что ты разрешил.',
     tour_6_title: 'Календарь и вехи',
     tour_6_text:
-      'Нажми на день в календаре, чтобы записать план или заметку — она сразу попадёт в то, что ты сделал за этот день. Удобно оглядываться назад и планировать вперёд.\n\n🚩 Вехи — регулярные дела с датой (замена масла, расходники): отметь, когда сделал и как часто повторять, и раздел покажет, что пора.',
+      'Нажми на день в календаре — запиши план или заметку, они попадут в итог этого дня.\n\n🚩 Вехи — регулярные дела с датой (замена масла): отметь, когда сделал, и раздел подскажет, когда пора снова.',
     tour_7_title: 'Как ориентироваться',
     tour_7_text:
-      '☰ открывает боковое меню (язык, тема, аккаунт, установка как приложения). »»» раскрывает быстрые ссылки на все разделы. 💧 в шапке — трекер воды: нажми, чтобы внести воду, в том числе за прошлые дни.\n\nВот и всё — приятного пользования!',
+      '☰ — меню (язык, тема, аккаунт, установка). »»» — быстрые ссылки на разделы. 💧 — трекер воды, в том числе за прошлые дни.\n\nВот и всё — приятного пользования!',
     about_title: '👤 О создателе',
     about_creator_text: 'DevOps-инженер. Life Dashboard — его личный проект, который он понемногу развивает.',
     about_portfolio_link: 'Резюме →',
