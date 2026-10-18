@@ -146,6 +146,8 @@ async function onSubmit() {
   }
   const res = await complete(auth.value.userId, answers, identity(), bodyParamLabels)
   if (!res.ok) {
+    // техническая подсказка — в консоль (BACKLOG 935: пользователю — нейтральный текст)
+    console.warn('[onboarding] профиль не сохранён — вероятно, в Supabase не прогнана migrations/001_categories_follows_onboarding.sql (нужные поля профиля)')
     errorMsg.value = friendlyError(res.error, 'save') + '\n\n' + t('onb_migration_hint_001b')
     busy.value = false
     return
@@ -165,6 +167,7 @@ async function onSkip() {
   saveDayProgressSettings('both')
   const res = await skip(auth.value.userId, identity(), starterMetrics(lang))
   if (!res.ok) {
+    console.warn('[onboarding] профиль не сохранён — вероятно, в Supabase не прогнана migrations/001_categories_follows_onboarding.sql (поле onboarded)')
     errorMsg.value = friendlyError(res.error, 'save') + '\n\n' + t('onb_migration_hint_001')
     busy.value = false
     return

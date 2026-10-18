@@ -16,7 +16,7 @@ describe('ShopIdea: описание идеи магазина', () => {
     expect(w.find('[data-testid="idea-banner-title"]').text()).toBe('Лавка наград')
     const text = w.find('[data-testid="idea-banner-text"]').text()
     expect(text).toContain('без чувства вины')
-    expect(text).toContain('Кастомизация')
+    expect(text).toContain('Кастомизации')
     expect(w.find('[data-testid="idea-short-line"]').exists()).toBe(false)
     expect(w.find('[data-testid="idea-info"]').exists()).toBe(false)
     w.unmount()
@@ -48,7 +48,7 @@ describe('ShopIdea: описание идеи магазина', () => {
     await w.find('[data-testid="idea-info"]').trigger('click')
     expect(w.find('[role="dialog"]').attributes('aria-modal')).toBe('true')
     expect(w.find('[data-testid="idea-modal-title"]').text()).toBe('Лавка наград')
-    expect(w.find('[data-testid="idea-modal-text"]').text()).toContain('накопи нужную сумму и купи')
+    expect(w.find('[data-testid="idea-modal-text"]').text()).toContain('накопи и купи')
 
     await w.find('[data-testid="idea-modal"]').trigger('click')
     expect(w.find('[data-testid="idea-modal"]').exists()).toBe(true)
