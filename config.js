@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.05";
+const SITE_VERSION = "6.06";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.06", date: "2026-10-18 07:31", changes: [
+        "Кастомизация → Графики → «Маркер точек»: два новых бесплатных стиля — «Наклейка» (белая вырезная кайма с тенью, как у стикера) и «Неон» (мягкие светящиеся ореолы и яркое ядро). Теперь стилей шесть; выбор запоминается, графики берут его при открытии страницы. Без миграций."
+    ]},
     { version: "6.05", date: "2026-10-17 23:55", changes: [
         "«Кастомизация», спидометр дня: два новых вида кольца — «Океан» за 150 баллов (градиент бирюзовый, синий, индиго) и «Аврора» за 250 баллов (цвета северного сияния: зелёный, бирюзовый, фиолетовый, розовый). Показываются в шапке и на Дашборде.",
     ]},
@@ -2427,6 +2430,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.06", date: "2026-10-18 07:31", changes: [
+        "Customization → Charts → “Point marker”: two new free styles — “Sticker” (a white die-cut border with a shadow, like a sticker) and “Neon” (soft glowing halos and a bright core). There are now six styles; your choice is remembered and charts pick it up when the page opens. No migrations."
+    ]},
     { version: "6.05", date: "2026-10-17 23:55", changes: [
         "Customization, daily gauge: two new ring styles — “Ocean” for 150 points (turquoise, blue, indigo gradient) and “Aurora” for 250 points (northern-lights colours: green, turquoise, violet, pink). Shown in the header and on the Dashboard.",
     ]},
