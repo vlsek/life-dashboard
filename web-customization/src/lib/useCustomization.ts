@@ -8,6 +8,7 @@ import { sb } from './supabase'
 import { fmtDate } from './date'
 import { t } from './i18n'
 import {
+  CATEGORY_ORDER,
   ITEMS,
   achievementUnlocks,
   composeBalance,
@@ -281,5 +282,31 @@ export function useCustomization() {
     }
   }
 
-  return { auth, unlocked, selected, balance, achievements, apiMissing, loading, error, actionError, busyKey, debug, tried, state, statusOf, init, buy, choose, tryOn, untryOn, resetTryOn }
+  // Применить выбор каталога ЦЕЛИКОМ одним запросом («Образы», 64.1 срез 5): берутся только то, что у человека открыто и лежит в своей категории
+  // (мусор и закрытое отбрасываются), чего нет в `next` — снимается. Возвращает число применённых предметов или null при ошибке.
+  async function applyAll(next: Record<string, string | null>): Promise<number | null> {
+    actionError.value = null
+    if (auth.value.status !== 'ready' || apiMissing.value || busyKey.value) return null
+    const clean: Selected = {}
+    for (const cat of CATEGORY_ORDER) {
+      const key = next[cat]
+      if (key && unlocked.value[key] && itemByKey(key)?.category === cat) clean[cat] = key
+    }
+    busyKey.value = 'looks'
+    try {
+      const { error: err } = await sb.from('profiles').update({ customization: clean }).eq('user_id', auth.value.userId)
+      if (err) throw new Error(err.message)
+      selected.value = clean
+      tried.value = {}
+      applyLocal(clean)
+      return Object.keys(clean).length
+    } catch (e) {
+      actionError.value = t('cust_select_error') + friendlyError(e, 'save')
+      return null
+    } finally {
+      busyKey.value = null
+    }
+  }
+
+  return { auth, unlocked, selected, balance, achievements, apiMissing, loading, error, actionError, busyKey, debug, tried, state, statusOf, init, buy, choose, applyAll, tryOn, untryOn, resetTryOn }
 }

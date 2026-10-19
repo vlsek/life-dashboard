@@ -17,6 +17,8 @@ import { FREE_SECTIONS, FREE_SECTIONS_TOTAL, allVisible, groupOfItem, groupOfThe
 import { useCollapsed } from './lib/useCollapsed'
 import SectionGroup from './components/SectionGroup.vue'
 import SlotCell from './components/SlotCell.vue'
+import LooksPanel from './components/LooksPanel.vue'
+import { MAX_LOOKS, captureLook, deleteLook, freeLookId, loadLooks, planApply, renameLook, saveLook, type Look } from './lib/looks'
 import SlotToolbar from './components/SlotToolbar.vue'
 import { matchesQuery, modeOfVis, sortSlotItems, visOfMode, type SlotMode, type SlotSort } from './lib/slotView'
 import { selectionRows } from './lib/currentSelection'
@@ -29,7 +31,7 @@ import { readChartAnim, readChartForecast, readChartGoalZone, readChartKind, rea
 import { itemGroups, rarityOfItem, rarityOfTheme, themeGroups } from './lib/rarity'
 import { useFavoriteThemes } from './lib/useFavoriteThemes'
 import { useCustomization } from './lib/useCustomization'
-import { CATEGORY_ORDER, ITEMS, priceOf } from './lib/customization'
+import { CATEGORY_ORDER, ITEMS, itemByKey, priceOf } from './lib/customization'
 import { t } from './lib/i18n'
 import { SLOTS, childSlots, freeTotal, topSlots } from './lib/slots'
 import { GROUP_ORDER } from './lib/pageTabs'
@@ -37,7 +39,7 @@ import { SLOT_ALL, readSlot, writeSlot } from './lib/slotNav'
 import { stripEmoji } from './lib/emojiText'
 import { THEME_KEYS, THEME_UNLOCK, type ThemeKey } from './lib/theme'
 
-const { auth, balance, achievements, apiMissing, loading, error, actionError, busyKey, selected, debug, tried, statusOf, init, buy, choose, tryOn, untryOn, resetTryOn } = useCustomization()
+const { auth, balance, achievements, apiMissing, loading, error, actionError, busyKey, selected, unlocked, debug, tried, statusOf, init, buy, choose, applyAll, tryOn, untryOn, resetTryOn } = useCustomization()
 onMounted(init)
 
 // Темы: до 4 «любимых» попадают в выпадающий список тем бокового меню (решение владельца 2026-10-04). С v3.42 шесть тем — награды за
@@ -171,12 +173,12 @@ const nowRows = computed(() => {
 })
 // Ячейки витрины: по слоту — что надето сейчас (из «Сейчас выбрано»), «открыто/всего», подсветка «выбрано своё». Слот без видимого содержимого не показываем.
 const slotCounts = computed<Record<string, { owned: number; total: number }>>(() => {
-  const m: Record<string, { owned: number; total: number }> = { themes: { owned: themeOwnedTotal.value, total: themeTotal } }
+  const m: Record<string, { owned: number; total: number }> = { themes: { owned: themeOwnedTotal.value, total: themeTotal }, looks: { owned: looks.value.length, total: MAX_LOOKS } }
   for (const id of Object.keys(FREE_SECTIONS) as FreeSection[]) m[id] = { owned: FREE_SECTIONS[id], total: FREE_SECTIONS[id] }
   for (const c of categories.value) m[c.category] = { owned: c.owned, total: c.total }
   return m
 })
-const slotVisible = (id: string): boolean => (id === 'themes' ? visibleThemeBuckets.value.length > 0 : id in FREE_SECTIONS ? freeShown.value : visibleCategories.value.some((c) => c.category === id))
+const slotVisible = (id: string): boolean => (id === 'looks' ? true : id === 'themes' ? visibleThemeBuckets.value.length > 0 : id in FREE_SECTIONS ? freeShown.value : visibleCategories.value.some((c) => c.category === id))
 const cells = computed(() =>
   GROUP_ORDER.map((g) => ({
     group: g as string,
@@ -189,7 +191,7 @@ const cells = computed(() =>
       return {
         id: sl.id,
         title: t(sl.titleKey as never),
-        value: (own.length > 1 ? shown : rs).map((r) => [r.valueKey, ...(r.extraKeys ?? [])].map((k) => stripEmoji(t(k as never))).join(' · ')).join(' · '),
+        value: sl.kind === 'looks' ? (looks.value.length ? looks.value.map((l) => l.name).join(' · ') : t('cust_look_none')) : (own.length > 1 ? shown : rs).map((r) => [r.valueKey, ...(r.extraKeys ?? [])].map((k) => stripEmoji(t(k as never))).join(' · ')).join(' · '),
         count: cs.length ? cs.reduce((n, c) => n + c.owned, 0) + '/' + cs.reduce((n, c) => n + c.total, 0) : '',
         custom: rs.some((r) => r.custom),
       }
@@ -202,6 +204,67 @@ const openTotals = computed(() => {
   return own.length ? { owned: own.reduce((n, c) => n + c.owned, 0), total: own.reduce((n, c) => n + c.total, 0) } : null
 })
 const openTitle = computed(() => (openSlot.value === SLOT_ALL ? t('cust_all_title') : stripEmoji(t((SLOTS.find((x) => x.id === openSlot.value)?.titleKey ?? 'cust_all_title') as never))))
+
+// «Образы» (64.1 срез 5b): сохранить текущий вид, надеть, переименовать, удалить. Надевание пишет выбор каталога одним запросом, тему и ключи пикеров —
+// на устройство, и перезагружает страницу; сообщение переживает перезагрузку через sessionStorage.
+const NOTE_KEY = 'cust_look_note'
+const looks = ref<Look[]>(loadLooks(localStorage))
+const looksBusy = ref(false)
+const looksError = ref<string | null>(null)
+const lookNote = ref<{ name: string; skipped: number } | null>(null)
+try {
+  const raw = sessionStorage.getItem(NOTE_KEY)
+  if (raw) {
+    sessionStorage.removeItem(NOTE_KEY)
+    const v = JSON.parse(raw) as { name?: unknown; skipped?: unknown }
+    if (typeof v.name === 'string') lookNote.value = { name: v.name, skipped: typeof v.skipped === 'number' ? v.skipped : 0 }
+  }
+} catch {
+  /* сообщения не будет — образ всё равно надет */
+}
+const reloadLooks = () => (looks.value = loadLooks(localStorage))
+function saveCurrentLook(name: string) {
+  looksError.value = null
+  const id = freeLookId(looks.value)
+  if (!id) return
+  const l = captureLook(id, name, { theme: themes.current.value, selected: selected.value }, (k) => localStorage.getItem(k))
+  if (!saveLook(localStorage, l)) looksError.value = t('cust_look_save_fail')
+  reloadLooks()
+}
+function renameLookTo(id: string, name: string) {
+  renameLook(localStorage, id, name)
+  reloadLooks()
+}
+function removeLook(id: string) {
+  deleteLook(localStorage, id)
+  reloadLooks()
+}
+async function wearLook(id: string) {
+  const l = looks.value.find((x) => x.id === id)
+  if (!l || looksBusy.value) return
+  looksBusy.value = true
+  looksError.value = null
+  const plan = planApply(
+    l,
+    (c, k) => !!unlocked.value[k] && itemByKey(k)?.category === c,
+    (th) => !themes.isLocked(th as ThemeKey),
+  )
+  const applied = await applyAll(plan.selected)
+  if (applied === null) {
+    looksBusy.value = false
+    looksError.value = t('cust_look_wear_fail')
+    return
+  }
+  if (plan.theme) themes.apply(plan.theme as ThemeKey)
+  try {
+    for (const [k, v] of Object.entries(plan.prefsSet)) localStorage.setItem(k, v)
+    for (const k of plan.prefsRemove) localStorage.removeItem(k)
+    sessionStorage.setItem(NOTE_KEY, JSON.stringify({ name: l.name, skipped: plan.skipped }))
+  } catch {
+    /* хранилище недоступно — выбор каталога и тема уже применены */
+  }
+  window.location.reload()
+}
 </script>
 
 <template>
@@ -233,6 +296,9 @@ const openTitle = computed(() => (openSlot.value === SLOT_ALL ? t('cust_all_titl
           <button v-if="Object.keys(tried).length" type="button" class="secondary px-3 py-1 text-sm" data-testid="tryon-reset" @click="resetTryOn">{{ t('cust_tryon_reset') }}</button>
         </div>
 
+        <p v-if="lookNote" class="mb-3 rounded-lg border p-2 text-sm" style="border-color: var(--accent); background: var(--bg-card)" role="status" data-testid="look-note">
+          {{ t('cust_look_applied').replace('{name}', lookNote.name) }}<template v-if="lookNote.skipped"> {{ t('cust_look_skipped').replace('{n}', String(lookNote.skipped)) }}</template>
+        </p>
         <!-- Витрина: ячейки слотов по группам (что надето сейчас, n/m); нажатие открывает слот -->
         <template v-if="!inSlot">
           <p class="dim mb-3 text-xs" data-testid="slots-hint">{{ t('cust_slots_hint') }}</p>
@@ -258,6 +324,10 @@ const openTitle = computed(() => (openSlot.value === SLOT_ALL ? t('cust_all_titl
           <p v-if="nothingShown && !hasToolbar" class="dim mb-4 text-sm" data-testid="vis-empty">{{ vis.noneVisible.value ? t('cust_vis_empty_none') : t('cust_vis_empty') }}</p>
           <p v-if="slotEmpty" class="dim mb-4 text-sm" data-testid="slot-empty">{{ query.trim() ? t('cust_search_empty') : t('cust_vis_empty') }}</p>
         </template>
+
+        <SectionGroup :bare="single" v-if="isOpen('looks')" id="looks" :title="t('cust_sec_looks')" :total="MAX_LOOKS" :owned="looks.length" :collapsed="isCollapsed('section:looks')" @toggle="toggle('section:looks')">
+          <LooksPanel :looks="looks" :busy="looksBusy" :error="looksError" @save="saveCurrentLook" @wear="wearLook" @rename="renameLookTo" @remove="removeLook" />
+        </SectionGroup>
 
         <SectionGroup :bare="single" v-if="visibleThemeBuckets.length && isOpen('themes')" id="themes" :title="t('cust_sec_themes')" :total="themeTotal" :owned="themeOwnedTotal" :collapsed="isCollapsed('section:themes')" @toggle="toggle('section:themes')">
           <p class="dim mb-1 text-xs">{{ t('cust_sec_themes_hint') }}</p>

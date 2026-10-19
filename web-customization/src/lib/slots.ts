@@ -15,6 +15,7 @@ export type GroupId = 'look' | 'home' | 'water' | 'charts' | 'loading' | 'other'
 export type SlotKind =
   | 'themes' // большие темы (отдельный список `theme.ts`, награды и покупки по редкости)
   | 'catalog' // предметы каталога `customization.ts` одной категории (покупка за баллы или награда за достижение)
+  | 'looks' // «Образы» (64.1 срез 5): сохранённые сочетания оформления; не предметы — своего каталога и вариантов нет
   | 'free' // варианты без цены (пикер раздела); `variants` — их реестр, число считается от него
 
 export interface Slot {
@@ -33,6 +34,7 @@ export interface Slot {
 }
 
 export type SlotTitleKey =
+  | 'cust_sec_looks'
   | 'cust_sec_themes'
   | 'cust_cat_avatar_frame'
   | 'cust_sec_bodymodel'
@@ -48,6 +50,7 @@ export type SlotTitleKey =
 
 // Порядок = порядок на странице внутри группы
 export const SLOTS: readonly Slot[] = [
+  { id: 'looks', kind: 'looks', group: 'look', titleKey: 'cust_sec_looks' },
   { id: 'themes', kind: 'themes', group: 'look', titleKey: 'cust_sec_themes' },
   { id: 'avatar_frame', kind: 'catalog', group: 'look', titleKey: 'cust_cat_avatar_frame', category: 'avatar_frame' },
   { id: 'bodymodel', kind: 'free', group: 'look', titleKey: 'cust_sec_bodymodel', variants: BODY_MODELS },
