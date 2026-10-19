@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.24";
+const SITE_VERSION = "6.25";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.25", date: "2026-10-19 16:00", changes: [
+        "В шапке появилась плашка-облачко офлайн-режима: показывает, что нет сети или сколько записей ждёт отправки. По нажатию — список; если сервер отклонил запись, её можно повторить или удалить.",
+    ]},
     { version: "6.24", date: "2026-10-19 14:34", changes: [
         "Понятные сообщения вместо технических: если какая-то возможность ещё не подключена в базе (настройки метрик, график, горизонт цели «На неделю», связь упражнений с метриками, слова, вехи, челленджи, тренировки), ты теперь видишь короткое «пока недоступно, попробуй позже», а не «примени миграцию NNN в Supabase (SQL editor)». Подсказка про нужную миграцию осталась в консоли разработчика. Заодно «с вами» → «с тобой» в поздравлении за навык. Без миграций."
     ]},
@@ -2484,6 +2487,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.25", date: "2026-10-19 16:00", changes: [
+        "A cloud badge for offline mode appears in the header: it shows there is no connection or how many entries wait to be sent. Tap it for the list; if the server rejected an entry you can retry or discard it.",
+    ]},
     { version: "6.24", date: "2026-10-19 14:34", changes: [
         "Clear messages instead of technical ones: when a feature is not connected in the database yet (metric settings, charts, the “For the week” goal horizon, exercise-to-metric links, words, milestones, challenges, workouts), you now see a short “not available yet, try again later” instead of “apply migration NNN in Supabase (SQL editor)”. The migration hint stays in the developer console. No migrations."
     ]},

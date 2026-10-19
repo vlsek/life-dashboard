@@ -1,6 +1,13 @@
 {
-  "version": "6.24",
+  "version": "6.25",
   "en": [
+    {
+      "version": "6.25",
+      "date": "2026-10-19 16:00",
+      "changes": [
+        "A cloud badge for offline mode appears in the header: it shows there is no connection or how many entries wait to be sent. Tap it for the list; if the server rejected an entry you can retry or discard it."
+      ]
+    },
     {
       "version": "6.24",
       "date": "2026-10-19 14:34",
@@ -4437,6 +4444,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.25",
+      "date": "2026-10-19 16:00",
+      "changes": [
+        "В шапке появилась плашка-облачко офлайн-режима: показывает, что нет сети или сколько записей ждёт отправки. По нажатию — список; если сервер отклонил запись, её можно повторить или удалить."
+      ]
+    },
     {
       "version": "6.24",
       "date": "2026-10-19 14:34",
