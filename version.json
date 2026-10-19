@@ -1,6 +1,13 @@
 {
-  "version": "6.20",
+  "version": "6.21",
   "en": [
+    {
+      "version": "6.21",
+      "date": "2026-10-19 08:46",
+      "changes": [
+        "Friendly “you” everywhere: in the Russian interface (Dashboard, Goals, Workouts, Shop, Community, Achievements, Calendar, Challenges, Skills, Languages, Milestones, Account, header and onboarding) the remaining formal address forms were replaced with the informal one. Where two people are meant (“you are friends now”) it is left as is. No migrations."
+      ]
+    },
     {
       "version": "6.20",
       "date": "2026-10-18 23:00",
@@ -4409,6 +4416,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.21",
+      "date": "2026-10-19 08:46",
+      "changes": [
+        "Везде обращение на «ты»: в русском интерфейсе (Дашборд, Цели, Тренировки, Магазин, Сообщество, Достижения, Календарь, Челленджи, Навыки, Языки, Вехи, Аккаунт, шапка и онбординг) оставшиеся формы «вы» и «добавьте/введите/выберите…» заменены на «ты» («добавь/введи/выбери…»). Там, где речь о двоих («Теперь вы друзья»), оставлено как есть. Без миграций."
+      ]
+    },
     {
       "version": "6.20",
       "date": "2026-10-18 23:00",

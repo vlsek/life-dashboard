@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.20";
+const SITE_VERSION = "6.21";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.21", date: "2026-10-19 08:46", changes: [
+        "Везде обращение на «ты»: в русском интерфейсе (Дашборд, Цели, Тренировки, Магазин, Сообщество, Достижения, Календарь, Челленджи, Навыки, Языки, Вехи, Аккаунт, шапка и онбординг) оставшиеся формы «вы» и «добавьте/введите/выберите…» заменены на «ты» («добавь/введи/выбери…»). Там, где речь о двоих («Теперь вы друзья»), оставлено как есть. Без миграций."
+    ]},
     { version: "6.20", date: "2026-10-18 23:00", changes: [
         "«Кастомизация», спидометр недели: два новых вида — «Башни» за 100 баллов (высокие столбики через каждые три дня) и «Выходные» за 150 баллов (суббота и воскресенье выше будней). Показываются в шапке и на Дашборде.",
     ]},
@@ -2472,6 +2475,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.21", date: "2026-10-19 08:46", changes: [
+        "Friendly “you” everywhere: in the Russian interface (Dashboard, Goals, Workouts, Shop, Community, Achievements, Calendar, Challenges, Skills, Languages, Milestones, Account, header and onboarding) the remaining formal address forms were replaced with the informal one. Where two people are meant (“you are friends now”) it is left as is. No migrations."
+    ]},
     { version: "6.20", date: "2026-10-18 23:00", changes: [
         "Customization, weekly gauge: two new styles — “Towers” for 100 points (a tall bar every third day) and “Weekend” for 150 points (Saturday and Sunday stand taller than weekdays). Shown in the header and on the Dashboard.",
     ]},
