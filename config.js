@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.22";
+const SITE_VERSION = "6.23";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.23", date: "2026-10-19 15:00", changes: [
+        "Офлайн-режим: значения параметров тела (вес и другие) из Профиля тоже сохраняются через очередь — без сети запись уйдёт позже.",
+    ]},
     { version: "6.22", date: "2026-10-19 11:00", changes: [
         "Подготовка к офлайн-режиму: отметки метрик, подходы, заметки к галочкам и «Что полезного сделал» на Дашборде теперь пишутся через очередь — без сети запись сохранится на устройстве и уйдёт, когда связь появится. Пока без индикатора «ждёт синхронизации» (он будет отдельно).",
     ]},
@@ -2478,6 +2481,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.23", date: "2026-10-19 15:00", changes: [
+        "Offline mode: body parameter values (weight and others) from the Profile are also saved through the queue — without a connection the entry is sent later.",
+    ]},
     { version: "6.22", date: "2026-10-19 11:00", changes: [
         "Offline groundwork: metric check-ins, sets, tick notes and “What did I do today” on the Dashboard are now written through a queue — without a connection the entry is kept on the device and sent when the network is back. No “waiting to sync” indicator yet (coming separately).",
     ]},

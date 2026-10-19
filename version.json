@@ -1,6 +1,13 @@
 {
-  "version": "6.22",
+  "version": "6.23",
   "en": [
+    {
+      "version": "6.23",
+      "date": "2026-10-19 15:00",
+      "changes": [
+        "Offline mode: body parameter values (weight and others) from the Profile are also saved through the queue — without a connection the entry is sent later."
+      ]
+    },
     {
       "version": "6.22",
       "date": "2026-10-19 11:00",
@@ -4423,6 +4430,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.23",
+      "date": "2026-10-19 15:00",
+      "changes": [
+        "Офлайн-режим: значения параметров тела (вес и другие) из Профиля тоже сохраняются через очередь — без сети запись уйдёт позже."
+      ]
+    },
     {
       "version": "6.22",
       "date": "2026-10-19 11:00",
