@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import CatalogModal from './components/CatalogModal.vue'
 import CustomChallengeForm from './components/CustomChallengeForm.vue'
@@ -37,6 +37,10 @@ const {
   abandonChallenge,
 } = useChallenges()
 onMounted(init)
+// пользователю — «попробуй позже» (ch_migration_hint), разработчику — какая миграция нужна (BACKLOG 935, блок B)
+watch(error, (e) => {
+  if (e) console.warn('[challenges] челленджи не загрузились — вероятно, не прогнана migrations/019_challenges.sql в Supabase', e)
+})
 
 const active = computed(() => instances.value.filter((ch) => !ch.completed))
 const completed = computed(() => instances.value.filter((ch) => ch.completed))

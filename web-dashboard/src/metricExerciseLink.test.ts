@@ -100,11 +100,12 @@ describe('сохранение: addMetric', () => {
     expect(h.inserts.filter((i) => i.table === 'workout_exercises')).toHaveLength(0)
     expect('source_exercise_id' in h.inserts.find((i) => i.table === 'metrics')!.row).toBe(false)
   })
-  it('нет колонки (миграция 054 не применена): подсказка про миграцию', async () => {
+  it('нет колонки (миграция 054 не применена): человеку «пока недоступна», номер миграции — в консоль', async () => {
     h.metricError = { message: "Could not find the 'source_exercise_id' column of 'metrics' in the schema cache" }
     const { ok, api } = await run(form({ exerciseLink: 'ex1' }))
     expect(ok).toBe(false)
-    expect(api.error.value).toContain('054')
+    expect(api.error.value).toContain('пока недоступна')
+    expect(api.error.value).not.toMatch(/миграц|054|Supabase|SQL/i)
   })
   it('список упражнений подгружается вместе с метриками', async () => {
     h.exercises = exercises

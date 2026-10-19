@@ -74,7 +74,9 @@ async function save() {
     })
   } catch (e) {
     // горизонт «На неделю» без миграции 086: база отклоняет значение проверкой goals_horizon_check — говорим, что делать
-    submitError.value = /goals_horizon_check/.test(String((e as { message?: unknown } | null)?.message ?? '')) ? t('goals_horizon_need_086') : friendlyError(e)
+    const horizonMissing = /goals_horizon_check/.test(String((e as { message?: unknown } | null)?.message ?? ''))
+    if (horizonMissing) console.warn('[dashboard] горизонт «На неделю» не сохранён — примени миграцию 086 в Supabase (SQL editor)')
+    submitError.value = horizonMissing ? t('goals_horizon_need_086') : friendlyError(e)
   } finally {
     saving.value = false
   }

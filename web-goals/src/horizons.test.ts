@@ -99,7 +99,7 @@ describe('форма цели: горизонт', () => {
     expect((submit.mock.calls[1] as unknown as [GoalFormInput])[0]).toMatchObject({ horizon: 'month', deadline: '' })
     w.unmount()
   })
-  it('«На неделю» без миграции 086: база отклоняет значение — человеку говорят про миграцию, а не «проверьте данные»', async () => {
+  it('«На неделю» без миграции 086: база отклоняет значение — человеку говорят «пока недоступно» (про миграцию — только в консоли)', async () => {
     const submit = vi.fn(async () => {
       throw { message: 'new row for relation "goals" violates check constraint "goals_horizon_check"', code: '23514' }
     })
@@ -108,7 +108,9 @@ describe('форма цели: горизонт', () => {
     await w.find('[data-test="goal-form-save"]').trigger('click')
     await Promise.resolve()
     await Promise.resolve()
-    expect(w.find('[data-test="goal-form-error"]').text()).toContain('086')
+    const shown = w.find('[data-test="goal-form-error"]').text()
+    expect(shown).toContain('пока недоступен')
+    expect(shown).not.toMatch(/миграц|086|Supabase/i)
     w.unmount()
   })
 })

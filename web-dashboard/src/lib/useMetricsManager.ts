@@ -44,13 +44,18 @@ export function useMetricsManager(onChanged?: () => void) {
   // Текст ошибки сохранения: понятная фраза + (если ошибка про отсутствующую колонку) подсказка про миграцию. Сырое сообщение Supabase не показываем.
   function saveErrorText(err: { message?: unknown }): string {
     const message = String(err?.message ?? '')
-    const hint = /schedule/i.test(message) ? ' — ' + t('dash_schedule_migration_hint')
-      : /streak_import/i.test(message) ? ' — ' + t('dash_streak_import_migration_hint')
-      : /count_streak/i.test(message) ? ' — ' + t('dash_count_streak_migration_hint')
-      : /planned_sets/i.test(message) ? ' — ' + t('dash_planned_sets_migration_hint')
-      : /ask_note/i.test(message) ? ' — ' + t('dash_ask_note_migration_hint')
-      : /source_exercise/i.test(message) ? ' — ' + t('dash_exercise_link_migration_hint') : ''
-    return friendlyError(err) + hint
+    // Пользователю — нейтральное «эта настройка пока недоступна»; какую именно миграцию применить — разработчику в консоль (BACKLOG 935, блок B)
+    const known: [RegExp, string, string][] = [
+      [/schedule/i, 'dash_schedule_migration_hint', '021'],
+      [/streak_import/i, 'dash_streak_import_migration_hint', '026'],
+      [/count_streak/i, 'dash_count_streak_migration_hint', '031'],
+      [/planned_sets/i, 'dash_planned_sets_migration_hint', '041'],
+      [/ask_note/i, 'dash_ask_note_migration_hint', '058'],
+      [/source_exercise/i, 'dash_exercise_link_migration_hint', '054'],
+    ]
+    const hit = known.find(([re]) => re.test(message))
+    if (hit) console.warn(`[dashboard] колонка метрики не найдена — примени миграцию ${hit[2]} в Supabase (SQL editor)`)
+    return friendlyError(err) + (hit ? ' — ' + t(hit[1] as never) : '')
   }
 
   // '__new__' → создать категорию с названием из поля формы (раньше — системный prompt(), BACKLOG 573). Пустое название — без категории;

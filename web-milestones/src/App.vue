@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import MilestoneFormModal from './components/MilestoneFormModal.vue'
 import MarkDoneModal from './components/MarkDoneModal.vue'
@@ -45,7 +45,11 @@ function chipColor(level: ReturnType<typeof statusLevel>['level']): string {
   return 'var(--text-dim)'
 }
 
-const errorHint = computed(() => (error.value && /milestones|relation|schema cache/i.test(error.value) ? ' — ' + t('ms_migration_hint') : ''))
+const tableMissing = (e: string | null) => !!e && /milestones|relation|schema cache/i.test(e)
+const errorHint = computed(() => (tableMissing(error.value) ? ' — ' + t('ms_migration_hint') : ''))
+watch(error, (e) => {
+  if (tableMissing(e)) console.warn('[milestones] раздел не загрузился — примени миграцию 022 в Supabase (SQL editor)', e)
+})
 
 function chipText(m: Milestone): string | null {
   const { level, days } = statusLevel(m.due_date)

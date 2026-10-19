@@ -56,7 +56,10 @@ export function useCharts() {
   // Сохранить выбор/порядок/цели. Возвращает текст ошибки или null.
   async function saveEntries(order: ChartEntry[]): Promise<string | null> {
     const { error: e } = await sb.from('profiles').upsert({ user_id: userId, dashboard_charts: order })
-    if (e) return friendlyError(e) + '\n\n' + t('dash_charts_save_error_hint')
+    if (e) {
+      console.warn('[dashboard] график не сохранён — вероятно, не прогнана migrations/004_leaderboard_privacy.sql в Supabase (поле profiles.dashboard_charts)')
+      return friendlyError(e) + '\n\n' + t('dash_charts_save_error_hint')
+    }
     entries.value = order.filter((o) => series.value[o.key])
     return null
   }

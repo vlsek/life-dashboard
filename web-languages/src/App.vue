@@ -106,7 +106,9 @@ async function onSave(res: WordFormInput) {
     else await addWord(auth.value.userId, res)
     formOpen.value = false
   } catch (e) {
-    const hint = /lang/i.test(errMsg(e)) ? ' — ' + t('eng_lang_migration_hint') : '' // подсказка про миграцию — по сырому тексту, сам он не показывается
+    const langMissing = /lang/i.test(errMsg(e)) // по сырому тексту ошибки; сам он пользователю не показывается
+    if (langMissing) console.warn('[languages] слово не сохранено — примени миграцию 024 в Supabase (SQL editor)')
+    const hint = langMissing ? ' — ' + t('eng_lang_migration_hint') : ''
     saveError.value = friendlyError(e, 'save') + hint
   }
 }

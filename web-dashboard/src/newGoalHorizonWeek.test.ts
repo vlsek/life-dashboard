@@ -20,7 +20,7 @@ describe('«На неделю» в окне «Новая цель» на гла�
     expect(row).toMatchObject({ horizon: 'week' })
     expect(row).not.toHaveProperty('deadline')
   })
-  it('база отклонила «На неделю» (нет миграции 086) — понятный текст про миграцию, окно не закрывается', async () => {
+  it('база отклонила «На неделю» (нет миграции 086) — человеку «пока недоступен», про миграцию только в консоли; окно не закрывается', async () => {
     const submit = vi.fn(async () => {
       throw { message: 'new row for relation "goals" violates check constraint "goals_horizon_check"', code: '23514' }
     })
@@ -31,7 +31,9 @@ describe('«На неделю» в окне «Новая цель» на гла�
     await w.find('[data-test="goal-form-save"]').trigger('click')
     await Promise.resolve()
     await Promise.resolve()
-    expect(w.find('[data-test="goal-form-error"]').text()).toContain('086')
+    const shown = w.find('[data-test="goal-form-error"]').text()
+    expect(shown).toContain('пока недоступен')
+    expect(shown).not.toMatch(/миграц|086|Supabase/i)
     w.unmount()
   })
 })

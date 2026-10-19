@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { t } from '../lib/i18n'
 import { LINKABLE_TYPES, type LinkedMetric } from '../lib/metricLink'
 import type { Exercise } from '../lib/types'
@@ -9,6 +9,8 @@ import EmojiText from './EmojiText.vue'
 // само. Окно: связанные метрики (с «Отвязать»), список подходящих заведённых метрик, «Создать метрику».
 const props = defineProps<{ exercise: Exercise; metrics: LinkedMetric[]; supported: boolean; busy?: boolean }>()
 const emit = defineEmits<{ close: []; link: [LinkedMetric]; unlink: [LinkedMetric]; create: [] }>()
+
+watch(() => props.supported, (ok) => { if (!ok) console.warn('[workouts] связь упражнений с метриками недоступна — примени миграцию 054 в Supabase (SQL editor)') }, { immediate: true })
 
 const linked = computed(() => props.metrics.filter((m) => m.source_exercise_id === props.exercise.id))
 const candidates = computed(() => props.metrics.filter((m) => LINKABLE_TYPES.includes(m.type) && m.source_exercise_id !== props.exercise.id))

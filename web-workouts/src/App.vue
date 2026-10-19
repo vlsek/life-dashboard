@@ -52,6 +52,10 @@ import { friendlyError } from './lib/friendlyError'
 const wk = useWorkouts()
 const meas = useMeasurements()
 const { auth, exercises, entries, loadError, studyRecent, bodyWeightKg, entriesFor, metricLinks } = wk
+// пользователю — «попробуй позже» (workouts_migration_hint), разработчику — какая миграция нужна (BACKLOG 935, блок B)
+watch(loadError, (e) => {
+  if (e) console.warn('[workouts] тренировки не загрузились — вероятно, не прогнана migrations/013_workouts.sql в Supabase', e)
+})
 
 const defaultUnit = () => defaultWeightUnit()
 const defaultValueLabel = () => t('workouts_default_value_label')
@@ -64,6 +68,7 @@ function saveErrorText(e: unknown): string {
     : /bilateral/i.test(m)
       ? ' — ' + t('workouts_bilateral_migration_hint')
       : ''
+  if (hint) console.warn(`[workouts] упражнение не сохранено — примени миграцию ${/tracks_duration/i.test(m) ? '027' : '028'} в Supabase (SQL editor)`)
   return friendlyError(e, 'save') + hint
 }
 
