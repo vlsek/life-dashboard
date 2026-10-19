@@ -1,5 +1,6 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { sb } from './supabase'
+import { dailyValueKey, qUpsert } from './outboxClient'
 import { findWaterMetric } from './water'
 import { withWaterGoal } from './waterGoal'
 import { dropWaterIfOff, ensureTrackWater } from './waterTracking'
@@ -110,9 +111,7 @@ export function useDailyMetrics() {
   async function setNote(m: Metric, raw: string) {
     const text = raw.trim().slice(0, 500)
     if ((notes.value[m.id] ?? '') === text) return true
-    const { error: err } = await sb
-      .from('daily_values')
-      .upsert({ user_id: userId, date, metric_id: m.id, value: !!pending.value[m.id], note: text === '' ? null : text }, { onConflict: 'user_id,date,metric_id' })
+    const { error: err } = await qUpsert(userId, 'daily_values', dailyValueKey(date, m.id), { user_id: userId, date, metric_id: m.id, value: !!pending.value[m.id], note: text === '' ? null : text }, 'user_id,date,metric_id')
     if (err) {
       error.value = friendlyError(err, 'save')
       return false
@@ -150,9 +149,7 @@ export function useDailyMetrics() {
   // before — значение метрики до правки: по переходу «выполнена ↔ нет» понимаем, начислился ли балл, и показываем «+1 / −1»
   // (BACKLOG 14, 11:11). Анимация — только после подтверждённой записи, чтобы не обещать балл, которого не будет.
   async function autoSave(m: Metric, value: MetricValue, before?: MetricValue) {
-    const { error: err } = await sb
-      .from('daily_values')
-      .upsert({ user_id: userId, date, metric_id: m.id, value }, { onConflict: 'user_id,date,metric_id' })
+    const { error: err } = await qUpsert(userId, 'daily_values', dailyValueKey(date, m.id), { user_id: userId, date, metric_id: m.id, value }, 'user_id,date,metric_id')
     if (err) {
       error.value = friendlyError(err)
       return false
@@ -223,22 +220,10 @@ export function useDailyMetrics() {
   // задевая planned_goals), и лишь если строки за этот день ещё нет — insert.
   async function persistItems(next: string[]) {
     items.value = next
-    const { data, error: err } = await sb
-      .from('daily_notes')
-      .update({ items: next })
-      .eq('user_id', userId)
-      .eq('date', date)
-      .select('date')
+    const { error: err } = await qUpsert(userId, 'daily_notes', `daily_notes:${date}`, { user_id: userId, date, items: next }, 'user_id,date')
     if (err) {
       error.value = friendlyError(err)
       return false
-    }
-    if (!data || data.length === 0) {
-      const { error: insErr } = await sb.from('daily_notes').insert({ user_id: userId, date, items: next, planned_goals: [] })
-      if (insErr) {
-        error.value = friendlyError(insErr)
-        return false
-      }
     }
     error.value = null
     notifyDataChanged({ source: 'day', date })
@@ -257,7 +242,7 @@ export function useDailyMetrics() {
     const rows = owned.value.map((m) => ({ user_id: userId, date, metric_id: m.id, value: valueToSave(m, pending.value) }))
     let ok = true
     if (rows.length > 0) {
-      const { error: err } = await sb.from('daily_values').upsert(rows, { onConflict: 'user_id,date,metric_id' })
+      const { error: err } = await qUpsert(userId, 'daily_values', `daily_values:${date}:*day`, rows, 'user_id,date,metric_id')
       if (err) {
         error.value = friendlyError(err)
         ok = false

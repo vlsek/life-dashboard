@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.21";
+const SITE_VERSION = "6.22";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.22", date: "2026-10-19 11:00", changes: [
+        "Подготовка к офлайн-режиму: отметки метрик, подходы, заметки к галочкам и «Что полезного сделал» на Дашборде теперь пишутся через очередь — без сети запись сохранится на устройстве и уйдёт, когда связь появится. Пока без индикатора «ждёт синхронизации» (он будет отдельно).",
+    ]},
     { version: "6.21", date: "2026-10-19 08:46", changes: [
         "Везде обращение на «ты»: в русском интерфейсе (Дашборд, Цели, Тренировки, Магазин, Сообщество, Достижения, Календарь, Челленджи, Навыки, Языки, Вехи, Аккаунт, шапка и онбординг) оставшиеся формы «вы» и «добавьте/введите/выберите…» заменены на «ты» («добавь/введи/выбери…»). Там, где речь о двоих («Теперь вы друзья»), оставлено как есть. Без миграций."
     ]},
@@ -2475,6 +2478,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.22", date: "2026-10-19 11:00", changes: [
+        "Offline groundwork: metric check-ins, sets, tick notes and “What did I do today” on the Dashboard are now written through a queue — without a connection the entry is kept on the device and sent when the network is back. No “waiting to sync” indicator yet (coming separately).",
+    ]},
     { version: "6.21", date: "2026-10-19 08:46", changes: [
         "Friendly “you” everywhere: in the Russian interface (Dashboard, Goals, Workouts, Shop, Community, Achievements, Calendar, Challenges, Skills, Languages, Milestones, Account, header and onboarding) the remaining formal address forms were replaced with the informal one. Where two people are meant (“you are friends now”) it is left as is. No migrations."
     ]},

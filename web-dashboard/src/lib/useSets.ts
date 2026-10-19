@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
+import { dailyValueKey, qUpdate, qUpsert } from './outboxClient'
 import { t } from './i18n'
 import { notifyDataChanged } from './events'
 import { emitPointsFloat, pointsDelta } from './pointsFloat'
@@ -71,9 +72,7 @@ export function useSets() {
   async function saveSets(m: Metric, sets: SetRow[]) {
     const before = setsByMetric.value[m.id] // до правки — по нему видно, перешла ли метрика в «выполнено» (+1) или обратно (−1)
     setsByMetric.value = { ...setsByMetric.value, [m.id]: sets }
-    const { error: err } = await sb
-      .from('daily_values')
-      .upsert({ user_id: userId, date, metric_id: m.id, value: sets }, { onConflict: 'user_id,date,metric_id' })
+    const { error: err } = await qUpsert(userId, 'daily_values', dailyValueKey(date, m.id), { user_id: userId, date, metric_id: m.id, value: sets }, 'user_id,date,metric_id')
     if (err) error.value = t('dash_metric_save_error') + m.name + '»: ' + friendlyError(err)
     else {
       error.value = null
@@ -87,7 +86,7 @@ export function useSets() {
   // Общий хвост правок связанной метрики: значение дня = подходы из «Тренировок», пишем зеркало, вспышка, пересчёт стриков и очков.
   async function commitLinkedValue(m: Metric, before: SetRow[] | undefined, value: SetRow[]): Promise<boolean> {
     setsByMetric.value = { ...setsByMetric.value, [m.id]: value }
-    const { error: err } = await sb.from('daily_values').upsert({ user_id: userId, date, metric_id: m.id, value }, { onConflict: 'user_id,date,metric_id' })
+    const { error: err } = await qUpsert(userId, 'daily_values', dailyValueKey(date, m.id), { user_id: userId, date, metric_id: m.id, value }, 'user_id,date,metric_id')
     if (err) {
       error.value = t('dash_metric_save_error') + m.name + '»: ' + friendlyError(err)
       return false
@@ -130,13 +129,13 @@ export function useSets() {
   async function rememberVariation(m: Metric, text: string) {
     const options = rememberVariationOptions(m, text)
     if (!options) return
-    const { error: err } = await sb.from('metrics').update({ options }).eq('id', m.id)
+    const { error: err } = await qUpdate(userId, 'metrics', `metrics:${m.id}:options`, { options }, { id: m.id })
     if (!err) patchMetric(m.id, options)
   }
 
   async function forgetVariation(m: Metric, label: string) {
     const options = forgetVariationOptions(m, label)
-    const { error: err } = await sb.from('metrics').update({ options }).eq('id', m.id)
+    const { error: err } = await qUpdate(userId, 'metrics', `metrics:${m.id}:options`, { options }, { id: m.id })
     if (err) {
       error.value = friendlyError(err)
       return

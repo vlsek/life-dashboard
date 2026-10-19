@@ -12,7 +12,7 @@ export interface OutboxEntry {
   key: string // ключ порядка и склейки: таблица + естественный ключ строки (например `daily_values:2026-10-19:<metric>`)
   table: string
   op: OutboxOp
-  payload?: Record<string, unknown>
+  payload?: Record<string, unknown> | Record<string, unknown>[]
   match?: Record<string, unknown> // для update/delete: условие `eq` по каждому полю
   onConflict?: string // для upsert
   clientTs: number
@@ -41,7 +41,7 @@ export interface SbTable {
 export interface SbLike { from(table: string): SbTable }
 
 export type WriteInput = Pick<OutboxEntry, 'key' | 'table' | 'op'> & Partial<Pick<OutboxEntry, 'payload' | 'match' | 'onConflict'>>
-export type WriteResult = { status: 'sent' } | { status: 'queued' } | { status: 'rejected'; error: string }
+export type WriteResult = { status: 'sent' } | { status: 'queued' } | { status: 'rejected'; error: string; raw?: SbError }
 
 export type OutboxState = 'idle' | 'offline' | 'syncing' | 'pending' | 'error'
 export interface OutboxStatus { state: OutboxState; pending: number; failed: number }
@@ -200,7 +200,7 @@ export function createOutbox(deps: OutboxDeps): Outbox {
       await enqueue(input, userId, res.error.message)
       return { status: 'queued' }
     }
-    return { status: 'rejected', error: res.error.message ?? 'rejected' }
+    return { status: 'rejected', error: res.error.message ?? 'rejected', raw: res.error }
   }
 
   const flush = async (): Promise<void> => {

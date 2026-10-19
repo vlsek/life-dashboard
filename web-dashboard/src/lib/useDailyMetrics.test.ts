@@ -166,7 +166,7 @@ describe('useDailyMetrics: score reacts to other blocks via DATA_CHANGED', () =>
 })
 
 describe('useDailyMetrics: «Что полезного сделал»', () => {
-  it('addItem trims, appends, and inserts a new daily_notes row when none exists yet', async () => {
+  it('addItem trims, appends, and upserts one daily_notes row (items only, planned_goals untouched)', async () => {
     h.metricsData = []
     h.noteData = null
     const dm = setup()
@@ -174,7 +174,8 @@ describe('useDailyMetrics: «Что полезного сделал»', () => {
     const ok = await dm.addItem('  Fixed the bug  ')
     expect(ok).toBe(true)
     expect(dm.items.value).toEqual(['Fixed the bug'])
-    expect(h.calls.some((c) => c.op === 'insert' && c.table === 'daily_notes')).toBe(true)
+    const up = h.calls.find((c) => c.op === 'upsert' && c.table === 'daily_notes')
+    expect(up.payload).toEqual({ user_id: 'u1', date: '2026-09-28', items: ['Fixed the bug'] })
   })
 
   it('a blank item is a no-op', async () => {
@@ -184,13 +185,13 @@ describe('useDailyMetrics: «Что полезного сделал»', () => {
     expect(h.calls.length).toBe(0)
   })
 
-  it('removeItem drops by index and updates the existing row (no insert)', async () => {
+  it('removeItem drops by index and upserts items for the day', async () => {
     h.noteData = { items: ['A', 'B'] }
     const dm = setup()
     await dm.load('u1', '2026-09-28')
     await dm.removeItem(0)
     expect(dm.items.value).toEqual(['B'])
-    expect(h.calls.some((c) => c.op === 'update' && c.table === 'daily_notes')).toBe(true)
+    expect(h.calls.find((c) => c.op === 'upsert' && c.table === 'daily_notes').payload.items).toEqual(['B'])
     expect(h.calls.some((c) => c.op === 'insert')).toBe(false)
   })
 })
