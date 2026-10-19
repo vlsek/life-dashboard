@@ -103,6 +103,13 @@ describe('syncUiSettings', () => {
   it('список ключей — без дублей', () => {
     expect(new Set(SYNC_KEYS).size).toBe(SYNC_KEYS.length)
   })
+  it('«Кастомизация»: образы (cust_look_<id>) — префиксные ключи: уходят на сервер и приходят на другое устройство (BACKLOG 64.1 срез 5)', () => {
+    expect(SYNC_PREFIXES).toContain('cust_look_')
+    expect(prefixOf('cust_look_l3')).toBe('cust_look_')
+    const v = '{"n":"Осень","t":"mocha","s":{},"p":{"splash_variant":"orbit"}}'
+    expect(planSync(['cust_look_l1'], { cust_look_l1: v }, {}, null).push).toEqual({ cust_look_l1: v })
+    expect(planSync(['cust_look_l1'], {}, { cust_look_l1: v }, null).pull).toEqual({ cust_look_l1: v })
+  })
   it('«Календарь»: настройка «Показывать» (calendar_show) уходит на сервер и приходит на новое устройство (BACKLOG 44.8 срез 2)', () => {
     expect(SYNC_KEYS).toContain('calendar_show')
     const off = '{"stats":false,"weeks":false}'

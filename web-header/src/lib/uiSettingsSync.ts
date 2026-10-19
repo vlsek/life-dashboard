@@ -50,6 +50,7 @@ export const SYNC_PREFIXES = [
   'goals_section_', // «Цели»: свёрнутые разделы
   'skills_section_', // «Навыки»: свёрнутые разделы
   'workouts_ex_collapsed:', // «Тренировки»: свёрнутые карточки упражнений
+  'cust_look_', // «Кастомизация»: образы — сохранённые сочетания оформления, по ключу на образ (BACKLOG 64.1 срез 5)
 ] as const
 export const MAX_KEYS_PER_PREFIX = 60
 export const MAX_VALUE_LEN = 2000 // длиннее — не синхронизируем (мусор/случайный большой JSON не должен раздувать профиль)
