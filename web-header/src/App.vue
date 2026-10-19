@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import { sb } from './lib/supabase'
 import { getLang, t } from './lib/i18n'
 import { progressPercent } from './lib/progress'
@@ -21,6 +21,8 @@ import FavoriteHeart from './components/FavoriteHeart.vue'
 import PageWidgetButton from './components/PageWidgetButton.vue'
 import { useLayout } from './lib/useLayout'
 import { isWidgetOn, pageWidgetKind, widgetToggleLayout } from './lib/pageWidget'
+import OfflineBadge from './components/OfflineBadge.vue'
+import { useOutboxView, type OutboxView } from './lib/outboxClient'
 import SidebarTop from './components/SidebarTop.vue'
 import PointsFloat from './components/PointsFloat.vue'
 import { useSidebarProfile } from './lib/sidebarProfile'
@@ -40,6 +42,8 @@ const props = defineProps<{ panelOnly?: boolean }>()
 // (там свои). Без сессии — молчим (страница сама отправит на вход). Ничего не показываем, пока не загрузились данные,
 // чтобы шапка не «прыгала».
 const userId = ref<string | null>(null)
+const outboxView = shallowRef<OutboxView | null>(null)
+onBeforeUnmount(() => outboxView.value?.stop())
 const userEmail = ref<string | null>(null)
 const sideProfile = useSidebarProfile()
 // Левое меню (BACKLOG 6.2): блок профиля рисуем в #sidebar-top, который AppShell ставит первым в <nav>; нет якоря — ничего не делаем
@@ -55,6 +59,7 @@ onMounted(async () => {
   const uid = data.session?.user.id
   if (!uid) return
   userId.value = uid
+  outboxView.value = useOutboxView(uid)
   userEmail.value = data.session?.user.email ?? null
   sidebarTarget.value = document.getElementById('sidebar-top')
   void sideProfile.load(uid, data.session?.user)
@@ -231,6 +236,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
     <PointsFloat v-if="!props.panelOnly" />
     <FavoriteHeart v-if="pageKey && !props.panelOnly" :active="isFavorite" @toggle="onToggleFavorite" />
     <PageWidgetButton v-if="widgetKind && layoutApi.loaded.value && !props.panelOnly" :on="widgetOn" :busy="widgetBusy" @toggle="onToggleWidget" />
+    <OfflineBadge v-if="outboxView" :view="outboxView" />
     <!-- значок «пауза включена» виден и на Дашборде (BACKLOG 48.7) -->
     <button v-if="pause?.status === 'active'" type="button" class="gh-badge" data-test="pause-badge" :title="t('hdr_pause_badge')" :aria-label="t('hdr_pause_badge')" @click="globalSettingsOpen = true">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--accent, #6c8cff)" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2" /><rect x="14" y="5" width="4" height="14" rx="1.2" /></svg>

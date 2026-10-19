@@ -704,3 +704,11 @@ html[data-motion='off'] .gh-achtoast { animation: none; }
 .gh-acc-active { cursor: default; font-weight: 600; }
 .gh-acc-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
 
+.gh-off { color: var(--text-dim, #999); }
+.gh-off-pending { color: var(--accent, #6c8cff); }
+.gh-off-error { color: var(--danger, #e5484d); }
+.gh-off-n { position: absolute; top: -2px; right: -2px; min-width: 14px; height: 14px; padding: 0 3px; box-sizing: border-box; border-radius: 7px; background: currentColor; font-size: 9px; font-weight: 700; line-height: 14px; text-align: center; }
+.gh-off-n { color: #fff; background: var(--accent, #6c8cff); }
+.gh-off-error .gh-off-n { background: var(--danger, #e5484d); }
+.gh-off-item { margin-bottom: 10px; }
+.gh-off-err { font-size: 12px; margin: 2px 0 6px; word-break: break-word; }
