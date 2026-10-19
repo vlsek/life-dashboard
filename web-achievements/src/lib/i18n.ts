@@ -540,7 +540,7 @@ const DICT = {
     ach_t_milestones_5: 'Пять вех',
     ach_t_milestones_10: 'Десять вех',
     ach_t_milestones_25: 'Всё по плану',
-    ach_new_msg_skills: 'Новый навык теперь с вами навсегда. Отличная работа.',
+    ach_new_msg_skills: 'Новый навык теперь с тобой навсегда. Отличная работа.',
     ach_new_msg_milestones: 'Важное делается вовремя — так и вышло.',
     ach_new_msg_goals_streak: 'Цель за целью, день за днём — так и делаются большие дела.',
     ach_rarity_common: 'Обычная',

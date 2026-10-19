@@ -9,7 +9,7 @@ const ROOT = '..'
 const pilots: string[] = readdirSync(ROOT).filter((d: string) => d.startsWith('web-') && d !== 'web-customization')
 const PLURAL_YOU_KEYS = new Set(['comm_friend_now_friends_toast', 'comm_friend_already_toast'])
 const NOUN_WHITELIST = new Set(['сайте', 'приоритете'])
-const FORMAL = /(?<![а-яёА-ЯЁ])(вы|вам|вас|ваш[а-яё]*|можете|хотите|видите|знаете|делаете|отмечаете|[а-яё]*(?:йте|ьте|ите))(?![а-яёА-ЯЁ])/gi
+const FORMAL = /(?<![а-яёА-ЯЁ])(вы|вам|вами|вас|ваш[а-яё]*|можете|хотите|видите|знаете|делаете|отмечаете|[а-яё]*(?:йте|ьте|ите))(?![а-яёА-ЯЁ])/gi
 
 function ruLines(file: string): { key: string; text: string }[] {
   const L = readFileSync(file, 'utf-8').split('\n')
