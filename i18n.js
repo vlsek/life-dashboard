@@ -1132,7 +1132,7 @@ const translations = {
         acc_current_email_label: "Текущая почта",
         acc_new_email_label: "Новая почта",
         acc_change_email_btn: "Сменить почту",
-        acc_email_invalid: "Введите корректный email.",
+        acc_email_invalid: "Введи корректный email.",
         acc_email_same: "Это и есть твоя текущая почта.",
         acc_email_change_requested_toast: "Письмо с подтверждением отправлено на обе почты ✉️",
 
@@ -1499,7 +1499,7 @@ const translations = {
         login_unknown_error: "неизвестная ошибка",
         login_unknown_error_console: "неизвестная ошибка — смотри консоль (F12)",
         login_error_code: "(код ",
-        login_please_wait: "Подождите…",
+        login_please_wait: "Подожди…",
         login_fill_fields: "Заполни email и пароль.",
         login_error_prefix: "Ошибка: ",
         login_network_error_prefix: "Сетевая ошибка: ",

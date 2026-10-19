@@ -16,7 +16,7 @@ describe('BlockDragHandle', () => {
   it('ручка с подписью, pointer-события уходят родителю вместе с ключом блока', async () => {
     const w = mount(BlockDragHandle, { props: { blockKey: 'charts' } })
     const b = w.find('[data-test="block-drag-handle"]')
-    expect(b.attributes('aria-label')).toContain('Потяните')
+    expect(b.attributes('aria-label')).toContain('Потяни')
     expect(b.attributes('style')).toContain('touch-action: none')
     b.element.dispatchEvent(new MouseEvent('pointerdown', { clientY: 50, bubbles: true, button: 0 }))
     expect(w.emitted('down')![0][1]).toBe('charts')

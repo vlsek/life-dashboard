@@ -75,15 +75,15 @@ describe('сравнение по активности', () => {
     w2.unmount()
   })
 
-  it('одно главное значение по режиму и сортировка по нему; «Вы на N месте из M»', async () => {
+  it('одно главное значение по режиму и сортировка по нему; «Ты на N месте из M»', async () => {
     const w = mountIt()
     await flushPromises()
     const mains = () => w.findAll('[data-testid="category-main-value"]').map((x) => x.text())
     expect(mains()).toEqual(['100', '80', '10']) // по сумме
-    expect(w.find('[data-testid="category-my-place"]').text()).toBe('Вы на 2 месте из 3')
+    expect(w.find('[data-testid="category-my-place"]').text()).toBe('Ты на 2 месте из 3')
     await w.findAll('[data-testid="category-modes"] button')[1].trigger('click') // по баллам
     expect(mains()).toEqual(['9', '5', '1'])
-    expect(w.find('[data-testid="category-my-place"]').text()).toBe('Вы на 1 месте из 3')
+    expect(w.find('[data-testid="category-my-place"]').text()).toBe('Ты на 1 месте из 3')
     await w.findAll('[data-testid="category-modes"] button')[2].trigger('click') // по серии
     expect(mains()).toEqual(['6 дн.', '2 дн.', '—'])
     w.unmount()

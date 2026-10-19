@@ -47,7 +47,7 @@ describe('ChallengeDoneModal', () => {
     const w = mount(ChallengeDoneModal, { props: { challenge: ch(), summary, doneCount: 3 } })
     expect(w.find('[data-test="done-title"]').text()).toContain('Отжимания')
     expect(w.find('[data-test="done-summary"]').text()).toBe('Выполнено дней: 2 из 3')
-    expect(w.find('[data-test="done-nth"]').text()).toBe('Это ваш завершённый челлендж номер 3.')
+    expect(w.find('[data-test="done-nth"]').text()).toBe('Это твой завершённый челлендж номер 3.')
     expect(w.find('[data-test="done-achievement"]').exists()).toBe(false)
   })
   it('шаг лесенки (1-й, 5-й, 10-й, 25-й): сообщение об открытом достижении и ссылка на «Достижения»', () => {
@@ -128,6 +128,6 @@ describe('страница челленджей: завершение', () => {
     await w.findAll('button').find((b) => /Отметить завершённым/.test(b.text()))!.trigger('click')
     await flushPromises()
     expect(w.find('[data-test="challenge-done"]').exists()).toBe(false)
-    expect(h.confirm).toHaveBeenCalledWith('Не удалось отметить челлендж завершённым. Попробуйте ещё раз.', { infoOnly: true })
+    expect(h.confirm).toHaveBeenCalledWith('Не удалось отметить челлендж завершённым. Попробуй ещё раз.', { infoOnly: true })
   })
 })

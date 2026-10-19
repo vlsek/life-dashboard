@@ -83,7 +83,7 @@ describe('MuscleMap', () => {
   it('если своих упражнений на мышцу нет — говорит об этом, но подсказывает из справочника', async () => {
     const w = await openMap([], [bench])
     await zone(w, 'calves').trigger('click')
-    expect(w.find('[data-testid="muscle-detail"]').text()).toContain('Ни одно из ваших упражнений')
+    expect(w.find('[data-testid="muscle-detail"]').text()).toContain('Ни одно из твоих упражнений')
     expect(w.find('[data-testid="muscle-suggestions"]').text()).toContain('Подъёмы на носки')
   })
 

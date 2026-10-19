@@ -66,7 +66,7 @@ describe('Вехи: вкладки категорий и шаблоны', () => 
     h.rows = []
     const w = await mountApp()
     await w.get('[data-test="ms-templates-btn"]').trigger('click')
-    expect(w.get('[data-test="tpl-health-note"]').text()).toContain('уточните у врача')
+    expect(w.get('[data-test="tpl-health-note"]').text()).toContain('уточни у врача')
     await w.get('[data-test="tpl-cat-health"] [data-test="tpl-pick"]').trigger('click')
     expect(w.find('[data-test="templates-modal"]').exists()).toBe(false)
     const inputs = w.findAll('input').map((i) => (i.element as HTMLInputElement).value)

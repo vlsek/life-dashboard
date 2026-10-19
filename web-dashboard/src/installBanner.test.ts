@@ -80,7 +80,7 @@ describe('InstallBanner', () => {
     const { w } = await mk()
     const { prompt } = fireInstallEvent()
     await flushPromises()
-    expect(w.text()).toContain('Установите приложение')
+    expect(w.text()).toContain('Установи приложение')
     await w.find('[data-test="install-btn"]').trigger('click')
     await flushPromises()
     expect(prompt).toHaveBeenCalledTimes(1)

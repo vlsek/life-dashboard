@@ -157,7 +157,7 @@ const DICT = {
     nav_open_menu: 'Открыть меню',
     nav_more: 'Остальные разделы',
     nav_favorites: 'Избранное',
-    nav_favorites_empty: 'Добавьте страницы в избранное — сердечком вверху страницы',
+    nav_favorites_empty: 'Добавь страницы в избранное — сердечком вверху страницы',
     nav_dashboard: '🏠 Дашборд',
     nav_goals: '🎯 Цели',
     nav_skills: '🥋 Навыки',

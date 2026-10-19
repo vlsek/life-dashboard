@@ -60,10 +60,10 @@ describe('LayoutModal: виджеты на главной', () => {
     w.unmount()
   })
 
-  it('выбранный товар уже куплен/удалён (нет в списке): галочка стоит, в выборе «— выберите товар —»', () => {
+  it('выбранный товар уже куплен/удалён (нет в списке): галочка стоит, в выборе «— выбери товар —»', () => {
     const w = mount(LayoutModal, { props: { initial: withWidgetConfig(defaultLayout(), { savings: 'gone' }), widgetOptions: opts } })
     expect((w.find('[data-test="savings-toggle"]').element as HTMLInputElement).checked).toBe(true)
-    expect(w.find('[data-test="savings-pick"]').text()).toContain('выберите товар')
+    expect(w.find('[data-test="savings-pick"]').text()).toContain('выбери товар')
     w.unmount()
   })
 

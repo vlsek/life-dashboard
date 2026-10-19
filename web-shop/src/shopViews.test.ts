@@ -67,7 +67,7 @@ describe('Магазин — вид «Витрина» (по умолчанию)
     expect(w.findAll('[data-testid="shop-card"]')).toHaveLength(1)
     const w2 = setup(0, [item('movie', 150)])
     await w2.find('[data-filter="affordable"]').trigger('click')
-    expect(w2.find('[data-testid="empty-filter"]').text()).toContain('копите дальше')
+    expect(w2.find('[data-testid="empty-filter"]').text()).toContain('копи дальше')
   })
   it('buy on an affordable card calls buyItem with its id; unaffordable shows the shortfall', async () => {
     const w = setup()
@@ -90,7 +90,7 @@ describe('Магазин — вид «Список с копилкой»', () =>
     expect(localStorage.getItem('shop_view')).toBe('list')
     expect(w.find('[data-testid="section-affordable"]').findAll('[data-testid="shop-row"]')).toHaveLength(2)
     expect(w.find('[data-testid="section-saving"]').findAll('[data-testid="shop-row"]')).toHaveLength(1)
-    expect(w.find('[data-testid="goal-label"]').text()).toBe('Копите на: shoes, 800')
+    expect(w.find('[data-testid="goal-label"]').text()).toBe('Копи на: shoes, 800')
     expect(w.find('[data-testid="goal-bar"]').attributes('aria-valuenow')).toBe('37') // 300 из 800
     expect(w.find('[data-testid="row-left"]').text()).toBe('ещё 500')
   })
