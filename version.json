@@ -1,6 +1,13 @@
 {
-  "version": "6.35",
+  "version": "6.36",
   "en": [
+    {
+      "version": "6.36",
+      "date": "2026-10-20 19:38",
+      "changes": [
+        "Customization → “Icon style”: a sixth style — “Duotone”. Closed shapes of icons (circles, the gear, bag, bin, calendar, envelope, trophy…) get a soft tint, while open lines (arrows, plus, charts, check marks) stay a plain stroke. Like the other styles it applies at once on all pages, syncs between devices and is part of “Looks”. Free."
+      ]
+    },
     {
       "version": "6.35",
       "date": "2026-10-20 22:31",
@@ -4514,6 +4521,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.36",
+      "date": "2026-10-20 19:38",
+      "changes": [
+        "«Кастомизация» → «Стиль иконок»: шестой стиль — «Дуотон». Замкнутые фигуры иконок (кружки, шестерёнка, сумка, корзина, календарь, письмо, кубок…) получают мягкую тонировку, а открытые линии (стрелки, плюс, графики, галочки) остаются обычным штрихом. Как и остальные стили — применяется сразу на всех страницах, переносится между устройствами и входит в «Образы». Бесплатно."
+      ]
+    },
     {
       "version": "6.35",
       "date": "2026-10-20 22:31",

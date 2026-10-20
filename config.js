@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.35";
+const SITE_VERSION = "6.36";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.36", date: "2026-10-20 19:38", changes: [
+        "«Кастомизация» → «Стиль иконок»: шестой стиль — «Дуотон». Замкнутые фигуры иконок (кружки, шестерёнка, сумка, корзина, календарь, письмо, кубок…) получают мягкую тонировку, а открытые линии (стрелки, плюс, графики, галочки) остаются обычным штрихом. Как и остальные стили — применяется сразу на всех страницах, переносится между устройствами и входит в «Образы». Бесплатно.",
+    ]},
     { version: "6.35", date: "2026-10-20 22:31", changes: [
         "Вода работает без сети: стакан, правка суммы и «Отменить» теперь записываются даже без интернета — приложение принимает запись у себя и отправляет её, когда связь появится (ни одна запись не теряется и не дублируется). Если сумма дня неизвестна и сети нет, показывается понятное сообщение вместо неверного числа. Работает и в окне воды на Дашборде, и в шапке. Без миграций."
     ]},
@@ -2517,6 +2520,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.36", date: "2026-10-20 19:38", changes: [
+        "Customization → “Icon style”: a sixth style — “Duotone”. Closed shapes of icons (circles, the gear, bag, bin, calendar, envelope, trophy…) get a soft tint, while open lines (arrows, plus, charts, check marks) stay a plain stroke. Like the other styles it applies at once on all pages, syncs between devices and is part of “Looks”. Free.",
+    ]},
     { version: "6.35", date: "2026-10-20 22:31", changes: [
         "Water works offline: a glass, editing the total and “Undo” are now recorded even without internet — the app accepts the entry locally and sends it when the connection returns (no entry is lost or duplicated). If the day total is unknown and there is no network, a clear message is shown instead of a wrong number. Works in both the Dashboard water window and the header. No migrations."
     ]},
