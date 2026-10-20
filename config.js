@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.27";
+const SITE_VERSION = "6.28";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.28", date: "2026-10-19 10:30", changes: [
+        "Приложение запускается без интернета: страницы и их файлы теперь сохраняются на устройстве при заходе (данные показываются из последней сохранённой копии; запись без сети появится следующим этапом). Браузеру отправляется просьба не удалять хранилище сайта при нехватке места. Без миграций.",
+    ]},
     { version: "6.27", date: "2026-10-20 10:17", changes: [
         "Кастомизация: первые рамки аватарки не кругом — орнамент вокруг аватара выходит за его контур. «Лавровый венок» (250 баллов, ветви листьев с золотой лентой), «Лианы» (150 баллов, извилистый стебель с листьями и цветами) и «Вензель» (250 баллов, золотое кольцо с завитками и ромбами). Рамки видны в левом меню, в «Аккаунте», в Сообществе и в превью «Кастомизации»; на Дашборде у них пока только цвет дуги прогресса. Купить можно после применения миграции 103 в Supabase."
     ]},
@@ -2493,6 +2496,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.28", date: "2026-10-19 10:30", changes: [
+        "The app now starts without internet: pages and their files are saved on the device when you open them (data is shown from the last saved copy; writing offline comes in the next stage). The browser is asked not to clear the site storage when space runs low. No migrations.",
+    ]},
     { version: "6.27", date: "2026-10-20 10:17", changes: [
         "Customization: the first non-circular avatar frames — an ornament around the avatar extends beyond its outline. “Laurel wreath” (250 points, leaf branches with a golden ribbon), “Vines” (150 points, a winding stem with leaves and flowers) and “Flourish” (250 points, a golden ring with scrolls and diamonds). The frames show in the left menu, on the Account page, in Community and in the Customization preview; on the Dashboard they only colour the progress arc for now. They can be bought once migration 103 is applied in Supabase."
     ]},

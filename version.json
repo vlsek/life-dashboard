@@ -1,6 +1,13 @@
 {
-  "version": "6.27",
+  "version": "6.28",
   "en": [
+    {
+      "version": "6.28",
+      "date": "2026-10-19 10:30",
+      "changes": [
+        "The app now starts without internet: pages and their files are saved on the device when you open them (data is shown from the last saved copy; writing offline comes in the next stage). The browser is asked not to clear the site storage when space runs low. No migrations."
+      ]
+    },
     {
       "version": "6.27",
       "date": "2026-10-20 10:17",
@@ -4458,6 +4465,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.28",
+      "date": "2026-10-19 10:30",
+      "changes": [
+        "Приложение запускается без интернета: страницы и их файлы теперь сохраняются на устройстве при заходе (данные показываются из последней сохранённой копии; запись без сети появится следующим этапом). Браузеру отправляется просьба не удалять хранилище сайта при нехватке места. Без миграций."
+      ]
+    },
     {
       "version": "6.27",
       "date": "2026-10-20 10:17",
