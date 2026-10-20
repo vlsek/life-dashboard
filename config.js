@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.29";
+const SITE_VERSION = "6.30";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.30", date: "2026-10-20 12:00", changes: [
+        "Без сети больше не выбрасывает на страницу входа: если токен входа истёк, пока не было связи, приложение сохраняет твою сессию и откроется офлайн; как только сеть появится, вход обновится сам.",
+    ]},
     { version: "6.29", date: "2026-10-20 07:35", changes: [
         "«Кастомизация» → новый раздел «Стиль иконок»: как выглядят ВСЕ иконки на всех страницах — «Контур» (как раньше), «Тонкий», «Жирный», «Угловатый» (торцы и углы без скруглений) или «Двойной штрих» (смещённая полупрозрачная копия). Выбор применяется сразу, без перезагрузки, переносится между вашими устройствами и входит в «Образы». Все стили бесплатные.",
     ]},
@@ -2499,6 +2502,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.30", date: "2026-10-20 12:00", changes: [
+        "Being offline no longer throws you to the sign-in page: if your sign-in token expired while there was no connection, the app keeps your session and opens offline; once the network is back the sign-in refreshes by itself.",
+    ]},
     { version: "6.29", date: "2026-10-20 07:35", changes: [
         "Customization → a new “Icon style” section: how ALL icons on all pages look — “Outline” (as before), “Thin”, “Bold”, “Angular” (square ends and sharp corners) or “Double stroke” (an offset translucent copy). The choice applies at once, without a reload, syncs between your devices and is part of “Looks”. All styles are free.",
     ]},

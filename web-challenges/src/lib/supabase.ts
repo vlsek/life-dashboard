@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { patchOfflineSession } from '../../../shared/offline-session/offlineSession'
 import { accountCount, finishLogout, readCurrent } from '../../../shared/accounts/accounts'
 
 // Тот же проект и тот же анонимный ключ, что и у остального сайта (config.js). Поскольку
@@ -8,7 +9,7 @@ import { accountCount, finishLogout, readCurrent } from '../../../shared/account
 const SUPABASE_URL = 'https://haxmgtflegsfpxieaydv.supabase.co'
 const SUPABASE_ANON_KEY = 'sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF'
 
-export const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+export const sb = patchOfflineSession(createClient(SUPABASE_URL, SUPABASE_ANON_KEY))
 
 export async function logout() {
   // BACKLOG 1081: при нескольких записях «из какой выйти» спрашивает окно шапки; запись одна (или шапки на странице нет) — выходим из текущей, как раньше

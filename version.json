@@ -1,6 +1,13 @@
 {
-  "version": "6.29",
+  "version": "6.30",
   "en": [
+    {
+      "version": "6.30",
+      "date": "2026-10-20 12:00",
+      "changes": [
+        "Being offline no longer throws you to the sign-in page: if your sign-in token expired while there was no connection, the app keeps your session and opens offline; once the network is back the sign-in refreshes by itself."
+      ]
+    },
     {
       "version": "6.29",
       "date": "2026-10-20 07:35",
@@ -4472,6 +4479,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.30",
+      "date": "2026-10-20 12:00",
+      "changes": [
+        "Без сети больше не выбрасывает на страницу входа: если токен входа истёк, пока не было связи, приложение сохраняет твою сессию и откроется офлайн; как только сеть появится, вход обновится сам."
+      ]
+    },
     {
       "version": "6.29",
       "date": "2026-10-20 07:35",

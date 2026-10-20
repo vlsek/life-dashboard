@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { patchOfflineSession } from '../../../shared/offline-session/offlineSession'
 
 // Тот же проект и тот же анонимный ключ, что и у остального сайта (config.js). Поскольку
 // страница раздаётся с того же домена (life-dashboard.orneryhero.workers.dev/<страница>/),
@@ -7,4 +8,4 @@ import { createClient } from '@supabase/supabase-js'
 const SUPABASE_URL = 'https://haxmgtflegsfpxieaydv.supabase.co'
 const SUPABASE_ANON_KEY = 'sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF'
 
-export const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+export const sb = patchOfflineSession(createClient(SUPABASE_URL, SUPABASE_ANON_KEY))
