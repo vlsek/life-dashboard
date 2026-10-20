@@ -1,0 +1,44 @@
+# Сборка отладочного APK (BACKLOG 66.6). Запуск вручную: GitHub → Actions → «Android APK» → Run workflow.
+# Берёт собранный сайт из репозитория (то, что лежит в корневых папках), кладёт его в оболочку Capacitor и собирает app-debug.apk —
+# готовый файл появится внизу страницы запуска в «Artifacts». Подпись отладочная (для установки на свой телефон); ключи релиза (Play Store, 66.10)
+# сюда НЕ кладём — они только в секретах репозитория владельца.
+name: Android APK
+on:
+  workflow_dispatch:
+  push:
+    tags: ['android-v*']
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: android-app/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Установить зависимости и тест сборки www
+        working-directory: android-app
+        run: |
+          npm ci
+          npm test
+      - name: Собрать www из корня сайта и создать Android-проект
+        working-directory: android-app
+        run: |
+          node scripts/build-www.mjs
+          npx cap add android
+          npx capacitor-assets generate --android --iconBackgroundColor '#121212' --iconBackgroundColorDark '#121212'
+          npx cap sync android
+      - name: Собрать отладочный APK
+        working-directory: android-app/android
+        run: ./gradlew assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: life-dashboard-debug-apk
+          path: android-app/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error

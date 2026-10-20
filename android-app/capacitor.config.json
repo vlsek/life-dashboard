@@ -1,0 +1,19 @@
+{
+  "appId": "com.vlsek.lifedashboard",
+  "appName": "Life Dashboard",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#121212"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false,
+      "backgroundColor": "#121212",
+      "androidScaleType": "CENTER_INSIDE"
+    }
+  }
+}

@@ -30,3 +30,8 @@ web-onboarding/dist
 # Python
 __pycache__/
 *.pyc
+
+# Android-оболочка (BACKLOG 66.6): www и android/ генерируются сборкой, не коммитятся
+android-app/node_modules
+android-app/www
+android-app/android
