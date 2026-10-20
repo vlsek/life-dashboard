@@ -18,7 +18,7 @@ const props = defineProps<{
   normMl: number
   autoNormMl: number | null
   weightKg: number | null
-  getMlForDate: (dateStr: string) => Promise<number>
+  getMlForDate: (dateStr: string) => Promise<number | null> // null — день не прочитать (нет сети), оставляем число как было
   savedTick?: number
   goalSavedTick?: number
   heightCm?: number | null
@@ -55,7 +55,8 @@ async function onDateChange(e: Event) {
   timeStr.value = ''
   timeTouched.value = false
   void props.loadDayLog?.(picked)
-  amountMl.value = await props.getMlForDate(picked)
+  const known = await props.getMlForDate(picked)
+  if (known !== null) amountMl.value = known
 }
 
 function addMl(ml: number) {

@@ -141,7 +141,7 @@ describe('глобальный хедер (App.vue)', () => {
   })
 
   it('нет сети при записи воды: стакан принят локально — ошибки нет, сумма растёт (66.5а)', async () => {
-    db.upsertError = { message: 'TypeError: Failed to fetch', status: 0 }
+    db.upsertError = { message: 'TypeError: Failed to fetch' }
     setup({ metrics: [waterMetric], daily_values: [] })
     const w = mount(App)
     await flushPromises()
