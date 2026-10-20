@@ -1,7 +1,8 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
-import { fmtDate } from './date'
+import { addDaysIso, fmtDate } from './date'
 import { groupDeadlines, normalizePlanned } from './calendar'
+import { HORIZON_DAYS, buildToday, type GoalRow, type TodaySummary } from './todaySummary'
 import type { GoalDeadline, PlannedItem } from './types'
 import { friendlyError } from './friendlyError'
 
@@ -59,11 +60,25 @@ export function useCalendar() {
     deadlines.value = goalsRes.error ? {} : groupDeadlines(goalsRes.data)
   }
 
+  // Карточка «Сегодня» (44.8 срез 4): свой запрос — не зависит от того, какой месяц листает сетка. Ошибка чтения = карточки нет, страница работает.
+  const today = ref<TodaySummary | null>(null)
+  async function loadToday(userId: string, todayIso: string) {
+    const [noteRes, goalsRes] = await Promise.all([
+      sb.from('daily_notes').select('planned_goals').eq('user_id', userId).eq('date', todayIso).maybeSingle(),
+      sb.from('goals').select('id, name, done, deadline').eq('user_id', userId).eq('done', false).not('deadline', 'is', null).lte('deadline', addDaysIso(todayIso, HORIZON_DAYS)),
+    ])
+    if (noteRes.error || goalsRes.error) {
+      today.value = null
+      return
+    }
+    today.value = buildToday(todayIso, normalizePlanned(noteRes.data?.planned_goals), (goalsRes.data ?? []) as GoalRow[])
+  }
+
   async function savePlanned(userId: string, dateStr: string, planned: PlannedItem[]) {
     const { error: err } = await sb.from('daily_notes').upsert({ user_id: userId, date: dateStr, planned_goals: planned }, { onConflict: 'user_id,date' })
     if (err) throw err
     byDate.value = { ...byDate.value, [dateStr]: planned }
   }
 
-  return { auth, byDate, deadlines, error, init, loadMonth, savePlanned }
+  return { auth, byDate, deadlines, error, today, init, loadMonth, loadToday, savePlanned }
 }

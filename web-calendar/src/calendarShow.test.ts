@@ -129,9 +129,9 @@ describe('панель «Показывать»', () => {
     await w.find('[data-test="cal-show-weeks"]').trigger('click')
     expect(w.emitted('toggle')).toEqual([['weeks']])
   })
-  it('на вкладке «Календарь» — только планы и сроки целей', async () => {
+  it('на вкладке «Календарь» — карточка «Сегодня», планы и сроки целей', async () => {
     const w = mount(CalendarShowToggles, { props: { view: 'calendar', show: defaultShow() } })
     await w.find('[data-test="cal-show-toggle"]').trigger('click')
-    expect(w.findAll('[data-test^="cal-show-"][aria-pressed]').map((b) => b.attributes('data-test'))).toEqual(['cal-show-plans', 'cal-show-deadlines'])
+    expect(w.findAll('[data-test^="cal-show-"][aria-pressed]').map((b) => b.attributes('data-test'))).toEqual(['cal-show-today', 'cal-show-plans', 'cal-show-deadlines'])
   })
 })
