@@ -1,5 +1,6 @@
 {
   "version": "6.36",
+  "min_supported": "1.00",
   "en": [
     {
       "version": "6.36",

@@ -47,8 +47,16 @@ def parse_site_version():
     return js_str(m.group(1))
 
 
+def parse_min_supported():
+    m = re.search(r'const MIN_SUPPORTED_VERSION\s*=\s*(' + STR + r')', config)
+    if not m:
+        raise SystemExit("MIN_SUPPORTED_VERSION not found in config.js (BACKLOG 66.11)")
+    return js_str(m.group(1))
+
+
 data = {
     "version": parse_site_version(),
+    "min_supported": parse_min_supported(),
     "en": parse_changelog("CHANGELOG_EN"),
     "ru": parse_changelog("CHANGELOG_RU"),
 }
@@ -58,6 +66,9 @@ assert data["en"][0]["version"] == data["version"], "topmost CHANGELOG_EN entry 
 # Формат версии X.YY (BACKLOG, решение владельца 2026-10-05): минор — РОВНО две цифры, после 2.99 идёт 3.00 (НЕ 2.100 и НЕ 3.7).
 # Скрипты бампа должны делать f"{мажор}.{минор + 1:02d}" и при 99 переходить на следующий мажор. Ломается — релиз не собирается.
 VERSION_RE = re.compile(r"^\d+\.\d{2}$")
+# min_supported — тот же формат и не выше текущей версии (иначе все оболочки считались бы устаревшими)
+assert VERSION_RE.match(data["min_supported"]), f"MIN_SUPPORTED_VERSION {data['min_supported']!r} not in X.YY format"
+assert tuple(int(x) for x in data["min_supported"].split(".")) <= tuple(int(x) for x in data["version"].split(".")), "MIN_SUPPORTED_VERSION is above SITE_VERSION"
 def _key(v):
     a, b = v.split(".")
     return (int(a), int(b))
