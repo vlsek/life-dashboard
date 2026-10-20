@@ -410,7 +410,7 @@ ICON_SCRIPT = """    <script>
       // «Стиль иконок» (BACKLOG 44.18г): выбор человека → <html data-icon-style> до первой отрисовки (правила — в src/style.css, блок icon-style)
       try {
         var is = localStorage.getItem('icon_style')
-        if (['thin', 'bold', 'square', 'shadow'].indexOf(is) >= 0) document.documentElement.setAttribute('data-icon-style', is)
+        if (['thin', 'bold', 'square', 'shadow', 'duotone'].indexOf(is) >= 0) document.documentElement.setAttribute('data-icon-style', is)
       } catch (e) {}
     </script>
   """
@@ -420,6 +420,8 @@ def icon_rules():
     src = open('web-customization/src/lib/iconStyle.ts', encoding='utf-8').read()
     shadow = re.search(r"export const ICON_SHADOW = '([^']+)'", src).group(1)
     selector = re.search(r'export const ICON_SELECTOR = "([^"]+)"', src).group(1)
+    fill_targets = re.search(r'export const ICON_FILL_TARGETS = "([^"]+)"', src).group(1)
+    duo_opacity = re.search(r'export const ICON_DUOTONE_OPACITY = ([0-9.]+)', src).group(1)
     body = re.search(r'export const ICON_STYLE_RULES[^=]*= \{(.*?)\n\}', src, re.S).group(1)
     lines = []
     for m in re.finditer(r'^\s+(\w+): \{ ([^}]*) \},?$', body, re.M):
@@ -435,7 +437,13 @@ def icon_rules():
                 decl.append('stroke-linejoin: %s;' % v)
             elif k == 'shadow' and v == 'true':
                 decl.append('filter: %s;' % shadow)
-        lines.append("html[data-icon-style='%s'] %s { %s }" % (m.group(1), selector, ' '.join(decl)))
+            elif k == 'duotone' and v == 'true':
+                decl = None
+                break
+        if decl is None:  # «дуотон»: заливка только замкнутых фигур
+            lines.append("html[data-icon-style='%s'] %s %s { fill: currentColor; fill-opacity: %s; }" % (m.group(1), selector, fill_targets, duo_opacity))
+        else:
+            lines.append("html[data-icon-style='%s'] %s { %s }" % (m.group(1), selector, ' '.join(decl)))
     assert lines, 'не нашёл правил в iconStyle.ts'
     return '\n'.join(lines)
 
@@ -448,9 +456,11 @@ def icon_css(t):
 
 
 def icon_index_html(t):
-    if 'icon_style' not in t:
-        t = t.replace('</head>', ICON_SCRIPT + '</head>', 1)
-    return t
+    # скрипт уже вставлен — обновляем его содержимое (список допустимых значений меняется со стилями); нет — вставляем перед </head>
+    m = re.search(r'    <script>\n      // «Стиль иконок» \(BACKLOG 44\.18г\).*?</script>\n  ', t, re.S)
+    if m:
+        return t[:m.start()] + ICON_SCRIPT + t[m.end():]
+    return t.replace('</head>', ICON_SCRIPT + '</head>', 1)
 
 for d in sorted(glob.glob('web-*')):
     if glob.glob(d + '/src/style.css') and glob.glob(d + '/src/lib/theme.ts'):

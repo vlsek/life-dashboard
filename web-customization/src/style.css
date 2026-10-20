@@ -2232,4 +2232,5 @@ html[data-icon-style='thin'] svg[viewBox='0 0 24 24'][stroke='currentColor'] { s
 html[data-icon-style='bold'] svg[viewBox='0 0 24 24'][stroke='currentColor'] { stroke-width: 2.7; }
 html[data-icon-style='square'] svg[viewBox='0 0 24 24'][stroke='currentColor'] { stroke-linecap: butt; stroke-linejoin: miter; }
 html[data-icon-style='shadow'] svg[viewBox='0 0 24 24'][stroke='currentColor'] { filter: drop-shadow(1.2px 1.2px 0 color-mix(in srgb, currentColor 32%, transparent)); }
+html[data-icon-style='duotone'] svg[viewBox='0 0 24 24'][stroke='currentColor'] :is(circle, ellipse, rect, polygon, path[d$='z' i]) { fill: currentColor; fill-opacity: 0.18; }
 /* icon-style:end */

@@ -1,10 +1,10 @@
 // «Стиль иконок» (BACKLOG 44.18г, одобрено владельцем 2026-10-19): как выглядят ВСЕ иконки на всех страницах — «Контур» (как сейчас), «Тонкий», «Жирный»,
-// «Угловатый» (торцы и углы без скруглений) и «Двойной штрих» (смещённая полупрозрачная копия). Бесплатно, выбор в localStorage `icon_style`
+// «Угловатый» (торцы и углы без скруглений), «Двойной штрих» (смещённая полупрозрачная копия) и «Дуотон» (мягкая заливка замкнутых фигур, срез 2). Бесплатно, выбор в localStorage `icon_style`
 // (синхронизируется между устройствами — SYNC_KEYS шапки; входит в «Образы» — PREF_KEYS). «Контур» — значение по умолчанию: ключа и атрибута нет, внешний вид не меняется.
 // Применение: <html data-icon-style="…"> (до первой отрисовки ставит скрипт в <head> страниц, его генерирует scripts/apply_themes.py) + один CSS-блок
 // `icon-style` в style.css каждого пилота поверх зашитых атрибутов иконок (`svg[viewBox='0 0 24 24'][stroke='currentColor']`). Значения ниже — ЕДИНЫЙ источник:
 // из них же строится CSS (apply_themes.py читает их тестом-стражем) и предпросмотр в пикере.
-export const ICON_STYLES = ['outline', 'thin', 'bold', 'square', 'shadow'] as const
+export const ICON_STYLES = ['outline', 'thin', 'bold', 'square', 'shadow', 'duotone'] as const
 export type IconStyle = (typeof ICON_STYLES)[number]
 export const DEFAULT_ICON_STYLE: IconStyle = 'outline'
 export const ICON_STYLE_KEY = 'icon_style'
@@ -16,14 +16,20 @@ export interface IconStyleRule {
   linejoin?: 'miter' | 'round'
   /** смещённая полупрозрачная копия под штрихом */
   shadow?: boolean
+  /** мягкая заливка ТОЛЬКО замкнутых фигур (круг, эллипс, прямоугольник, многоугольник, контур на «z»); открытые линии остаются штрихом */
+  duotone?: boolean
 }
 export const ICON_STYLE_RULES: Record<Exclude<IconStyle, 'outline'>, IconStyleRule> = {
   thin: { strokeWidth: 1.2 },
   bold: { strokeWidth: 2.7 },
   square: { linecap: 'butt', linejoin: 'miter' },
   shadow: { shadow: true },
+  duotone: { duotone: true },
 }
 export const ICON_SHADOW = 'drop-shadow(1.2px 1.2px 0 color-mix(in srgb, currentColor 32%, transparent))'
+// Замкнутые фигуры иконки (дуотон заливает только их — заливка открытой галочки или стрелки дала бы «лодочку»)
+export const ICON_FILL_TARGETS = ":is(circle, ellipse, rect, polygon, path[d$='z' i])"
+export const ICON_DUOTONE_OPACITY = 0.18
 export const ICON_SELECTOR = "svg[viewBox='0 0 24 24'][stroke='currentColor']"
 
 export const isIconStyle = (v: unknown): v is IconStyle => (ICON_STYLES as readonly unknown[]).includes(v)
@@ -67,6 +73,10 @@ export function iconStyleCss(): string {
     if (r.linecap) decl.push(`stroke-linecap: ${r.linecap};`)
     if (r.linejoin) decl.push(`stroke-linejoin: ${r.linejoin};`)
     if (r.shadow) decl.push(`filter: ${ICON_SHADOW};`)
+    if (r.duotone) {
+      lines.push(`html[data-icon-style='${k}'] ${ICON_SELECTOR} ${ICON_FILL_TARGETS} { fill: currentColor; fill-opacity: ${ICON_DUOTONE_OPACITY}; }`)
+      continue
+    }
     lines.push(`html[data-icon-style='${k}'] ${ICON_SELECTOR} { ${decl.join(' ')} }`)
   }
   return lines.join('\n')

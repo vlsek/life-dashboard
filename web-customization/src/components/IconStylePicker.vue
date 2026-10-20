@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { ICON_PATHS } from '../lib/icons'
-import { ICON_SHADOW, ICON_STYLES, ICON_STYLE_RULES, readIconStyle, writeIconStyle, type IconStyle } from '../lib/iconStyle'
+import { ICON_DUOTONE_OPACITY, ICON_SHADOW, ICON_STYLES, ICON_STYLE_RULES, readIconStyle, writeIconStyle, type IconStyle } from '../lib/iconStyle'
 import { t } from '../lib/i18n'
 
 // Выбор стиля иконок (BACKLOG 44.18г): пять бесплатных карточек. Предпросмотр — те же значения (ICON_STYLE_RULES), что в CSS страниц, на пяти разных иконках.
@@ -20,7 +20,8 @@ const attrs = (v: IconStyle) => {
     'stroke-width': ('strokeWidth' in r && r.strokeWidth) || 1.9,
     'stroke-linecap': ('linecap' in r && r.linecap) || 'round',
     'stroke-linejoin': ('linejoin' in r && r.linejoin) || 'round',
-    style: 'shadow' in r && r.shadow ? `filter: ${ICON_SHADOW}` : undefined,
+    style: 'shadow' in r && r.shadow ? `filter: ${ICON_SHADOW}` : 'duotone' in r && r.duotone ? `--duo: ${ICON_DUOTONE_OPACITY}` : undefined,
+    class: 'duotone' in r && r.duotone ? 'iconstyle-duo' : undefined,
   }
 }
 </script>
@@ -57,3 +58,11 @@ const attrs = (v: IconStyle) => {
     </div>
   </div>
 </template>
+
+<style scoped>
+/* предпросмотр «Дуотона»: та же заливка только замкнутых фигур, что в style.css страниц (ICON_FILL_TARGETS) */
+.iconstyle-duo :deep(:is(circle, ellipse, rect, polygon, path[d$='z' i])) {
+  fill: currentColor;
+  fill-opacity: var(--duo);
+}
+</style>
