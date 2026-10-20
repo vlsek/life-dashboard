@@ -28,6 +28,9 @@ OUT = os.path.join(ROOT, 'sw-assets.js')
 
 # Файлы корня, которые страницы пилотов подгружают сами (без хэша в имени): меняются на месте, поэтому sw.js берёт их «сеть, потом кэш».
 ROOT_RUNTIME = ['/manifest.json', '/version.json', '/favicon.svg']
+# /version.json меняется при КАЖДОМ релизе (gen_version_json.py идёт уже после сборки) и отдаётся «сеть, потом кэш» — в хэш версии кэша его не берём,
+# иначе список «устаревал» бы после каждой записи релиза. Страницы пилотов меняют версию кэша сами (новые хэшированные имена файлов).
+HASH_EXCLUDE = {'/version.json'}
 ICONS_DIR = 'icons'
 
 
@@ -68,6 +71,8 @@ def build():
     # версия — по содержимому всех файлов списка (страницы — по их index.html)
     h = hashlib.sha1()
     for url in sorted(set(pages + assets + runtime)):
+        if url in HASH_EXCLUDE:
+            continue
         path = url.lstrip('/')
         if url.endswith('/'):
             path += 'index.html'
