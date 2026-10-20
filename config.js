@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.25";
+const SITE_VERSION = "6.26";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.26", date: "2026-10-19 16:00", changes: [
+        "«Кастомизация»: появились «Образы». Настройте вид как нравится (тему, рамку аватара, шкалы, огонёк серии, воду, графики, заставку) и нажмите «Сохранить текущий вид» — до 5 образов с вашими названиями. Потом любой образ надевается одним нажатием: всё переключится сразу, страница перезагрузится. Если часть предметов из образа вам пока недоступна, они пропускаются, и вам об этом скажут. Образы сохраняются в профиле и доступны на других устройствах — вместе с выбором заставки, огонька и настроек графиков, которые раньше хранились только на одном устройстве."
+    ]},
     { version: "6.25", date: "2026-10-19 16:00", changes: [
         "В шапке появилась плашка-облачко офлайн-режима: показывает, что нет сети или сколько записей ждёт отправки. По нажатию — список; если сервер отклонил запись, её можно повторить или удалить.",
     ]},
@@ -2487,6 +2490,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.26", date: "2026-10-19 16:00", changes: [
+        "Customization: “Looks” are here. Set things up the way you like (theme, avatar frame, gauges, streak flame, water, charts, loading screen) and tap “Save current look” — up to 5 looks with your own names. Then any look can be put on in one tap: everything switches at once and the page reloads. If some items from a look are not available to you yet, they are skipped and you are told so. Looks are saved to your profile and available on your other devices — together with the choice of loading screen, flame and chart settings that used to stay on a single device."
+    ]},
     { version: "6.25", date: "2026-10-19 16:00", changes: [
         "A cloud badge for offline mode appears in the header: it shows there is no connection or how many entries wait to be sent. Tap it for the list; if the server rejected an entry you can retry or discard it.",
     ]},
