@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.26";
+const SITE_VERSION = "6.27";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.27", date: "2026-10-20 10:17", changes: [
+        "Кастомизация: первые рамки аватарки не кругом — орнамент вокруг аватара выходит за его контур. «Лавровый венок» (250 баллов, ветви листьев с золотой лентой), «Лианы» (150 баллов, извилистый стебель с листьями и цветами) и «Вензель» (250 баллов, золотое кольцо с завитками и ромбами). Рамки видны в левом меню, в «Аккаунте», в Сообществе и в превью «Кастомизации»; на Дашборде у них пока только цвет дуги прогресса. Купить можно после применения миграции 103 в Supabase."
+    ]},
     { version: "6.26", date: "2026-10-19 16:00", changes: [
         "«Кастомизация»: появились «Образы». Настройте вид как нравится (тему, рамку аватара, шкалы, огонёк серии, воду, графики, заставку) и нажмите «Сохранить текущий вид» — до 5 образов с вашими названиями. Потом любой образ надевается одним нажатием: всё переключится сразу, страница перезагрузится. Если часть предметов из образа вам пока недоступна, они пропускаются, и вам об этом скажут. Образы сохраняются в профиле и доступны на других устройствах — вместе с выбором заставки, огонька и настроек графиков, которые раньше хранились только на одном устройстве."
     ]},
@@ -2490,6 +2493,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.27", date: "2026-10-20 10:17", changes: [
+        "Customization: the first non-circular avatar frames — an ornament around the avatar extends beyond its outline. “Laurel wreath” (250 points, leaf branches with a golden ribbon), “Vines” (150 points, a winding stem with leaves and flowers) and “Flourish” (250 points, a golden ring with scrolls and diamonds). The frames show in the left menu, on the Account page, in Community and in the Customization preview; on the Dashboard they only colour the progress arc for now. They can be bought once migration 103 is applied in Supabase."
+    ]},
     { version: "6.26", date: "2026-10-19 16:00", changes: [
         "Customization: “Looks” are here. Set things up the way you like (theme, avatar frame, gauges, streak flame, water, charts, loading screen) and tap “Save current look” — up to 5 looks with your own names. Then any look can be put on in one tap: everything switches at once and the page reloads. If some items from a look are not available to you yet, they are skipped and you are told so. Looks are saved to your profile and available on your other devices — together with the choice of loading screen, flame and chart settings that used to stay on a single device."
     ]},

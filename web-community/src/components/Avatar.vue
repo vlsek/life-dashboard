@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { initials } from '../lib/leaderboardView'
 import { frameClass, frameShadow } from '../lib/customFrame'
+import FrameDecor from './FrameDecor.vue'
 // Аватар: картинка или круг с инициалами в цвете акцента.
 defineProps<{ name: string | null; url: string | null; size?: number; frame?: string | null }>()
 </script>
 
 <template>
+  <FrameDecor :frame="frame">
   <img v-if="url" :src="url" class="flex-shrink-0 rounded-full object-cover" :class="frameClass(frame)" :style="{ width: (size ?? 32) + 'px', height: (size ?? 32) + 'px', boxShadow: frameShadow(frame) }" alt="" />
   <span
     v-else
@@ -14,4 +16,5 @@ defineProps<{ name: string | null; url: string | null; size?: number; frame?: st
     :style="{ width: (size ?? 32) + 'px', height: (size ?? 32) + 'px', fontSize: Math.round((size ?? 32) * 0.36) + 'px', background: 'var(--accent)', color: 'var(--on-accent, #fff)', opacity: 0.9, boxShadow: frameShadow(frame) }"
     aria-hidden="true"
   >{{ initials(name) }}</span>
+  </FrameDecor>
 </template>

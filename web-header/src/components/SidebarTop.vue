@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { t } from '../lib/i18n'
 import { profileLabel } from '../lib/sidebarProfile'
 import { frameClass, frameShadow } from '../lib/customFrame'
+import FrameDecor from './FrameDecor.vue'
 import type { WeekDaySegment } from '../lib/progress'
 import type { WeekShape } from '../lib/progressSettings'
 import DayWeekBadge from './DayWeekBadge.vue'
@@ -19,8 +20,10 @@ const label = computed(() => profileLabel(props.displayName, props.email))
 <template>
   <div class="gh-side" data-test="sidebar-top">
     <a href="/account/" class="gh-side-user" data-test="sidebar-user" :title="t('nav_account_title')">
+      <FrameDecor :frame="avatarFrame">
       <img v-if="avatarUrl" :src="avatarUrl" alt="" class="gh-side-avatar" :class="frameClass(avatarFrame)" :style="{ boxShadow: frameShadow(avatarFrame) }" data-test="sidebar-avatar" />
       <span v-else class="gh-side-avatar gh-side-initial" :class="frameClass(avatarFrame)" :style="{ boxShadow: frameShadow(avatarFrame) }" data-test="sidebar-initial">{{ label.initial }}</span>
+      </FrameDecor>
       <span class="gh-side-text">
         <span class="gh-side-name" data-test="sidebar-name">{{ label.name }}</span>
         <span v-if="email && displayName" class="gh-dim gh-side-email">{{ email }}</span>

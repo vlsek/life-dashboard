@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { t } from '../lib/i18n'
 import { frameClass, frameShadow } from '../lib/frames'
+import FrameDecor from './FrameDecor.vue'
 import { RARITY_COLOR, rarityOfItem } from '../lib/rarity'
 import { priceOf, shortBy, type CustomItem, type ItemStatus } from '../lib/customization'
 import Icon from './Icon.vue'
@@ -57,13 +58,14 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
     <span v-else-if="isWaterGlass" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="water-glass-preview">
       <WaterGlassPreview :style-key="BY_ITEM[item.key] ?? 'glass'" />
     </span>
-    <span
-      v-else
-      class="flex h-14 w-14 items-center justify-center rounded-full text-lg font-medium"
-      :class="frameClass(item.key)"
-      :style="{ background: 'var(--accent)', color: 'var(--accent-text, #fff)', boxShadow: frameShadow(item.key), opacity: status === 'locked' || status === 'short' ? 0.55 : 1 }"
-      aria-hidden="true"
-    >A</span>
+    <FrameDecor v-else :frame="item.key">
+      <span
+        class="flex h-14 w-14 items-center justify-center rounded-full text-lg font-medium"
+        :class="frameClass(item.key)"
+        :style="{ background: 'var(--accent)', color: 'var(--accent-text, #fff)', boxShadow: frameShadow(item.key), opacity: status === 'locked' || status === 'short' ? 0.55 : 1 }"
+        aria-hidden="true"
+      >A</span>
+    </FrameDecor>
     <p class="m-0 text-sm font-medium">{{ name }}</p>
     <p v-if="showRarity" class="m-0 text-xs font-medium" :style="{ color: RARITY_COLOR[rarity] }" data-testid="item-rarity">● {{ t(('cust_rarity_' + rarity) as never) }}</p>
         <p v-if="isCollapseStyle || isWeekGauge || isDayGauge || isWaterAnim || isWaterGlass" class="dim m-0 text-xs" data-testid="item-desc">{{ t(('cust_item_' + item.key + '_desc') as never) }}</p>

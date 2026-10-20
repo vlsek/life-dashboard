@@ -36,6 +36,10 @@ const RING: Record<string, FrameRingStyle> = {
   frame_breath: { stops: ['#2fd1c5'], glow: 'rgba(47, 209, 197, 0.5)', anim: 'ring-frame-breath' },
   frame_comet: { stops: ['#7cc4ff'], glow: 'rgba(124, 196, 255, 0.65)', anim: 'ring-frame-comet' },
   frame_glitch: { stops: ['#00e5ff'], glow: null, anim: 'ring-frame-glitch' },
+  // Рамки-орнаменты (44.18з): сам орнамент рисуют SVG-слои вокруг аватара в меню, Аккаунте и Сообществе; здесь — только цвет дуги прогресса
+  frame_wreath: { stops: ['#d9ad3b', '#3f9b4a'], glow: null, anim: null },
+  frame_vines: { stops: ['#3a8f4a', '#4fae5a'], glow: null, anim: null },
+  frame_flourish: { stops: ['#d9ad3b', '#a67c14'], glow: null, anim: null },
 }
 
 export const FRAME_RING_KEYS = Object.keys(RING)

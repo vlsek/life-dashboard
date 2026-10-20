@@ -49,6 +49,10 @@ export const ITEMS: readonly CustomItem[] = [
   { key: 'frame_breath', category: 'avatar_frame', source: 'points', tier: 'mid' },
   { key: 'frame_comet', category: 'avatar_frame', source: 'points', tier: 'high' },
   { key: 'frame_glitch', category: 'avatar_frame', source: 'points', tier: 'high' },
+  // 44.18з: рамки-орнаменты вне круга (SVG-слой вокруг аватара, lib/frameDecor.ts)
+  { key: 'frame_wreath', category: 'avatar_frame', source: 'points', tier: 'high' },
+  { key: 'frame_vines', category: 'avatar_frame', source: 'points', tier: 'mid' },
+  { key: 'frame_flourish', category: 'avatar_frame', source: 'points', tier: 'high' },
   // Вид сворачивания блоков (BACKLOG 498): базовый шеврон бесплатен у всех (это «ничего не выбрано»); «аккордеон» — 150 (владелец 2026-10-03)
   { key: 'collapse_accordion', category: 'collapse_style', source: 'points', tier: 'mid' },
   // «Карточка со сводкой» (BACKLOG 498 срез 3): свёрнутый блок показывает справа от заголовка короткую строку итога; высокий тариф = 250 (владелец 2026-10-03)

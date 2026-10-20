@@ -33,6 +33,10 @@ export const FRAME_SHADOWS: Record<string, string> = {
   frame_breath: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #2fd1c5, 0 0 10px 2px rgba(47, 209, 197, 0.5)',
   frame_comet: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #7cc4ff, 8px -6px 10px 1px rgba(124, 196, 255, 0.65)',
   frame_glitch: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #00e5ff, 2px 0 0 4px rgba(255, 0, 170, 0.8)',
+  // Рамки-орнаменты (BACKLOG 44.18з): орнамент рисует SVG-слой вокруг аватара (frameDecor.ts), здесь — тонкое кольцо под ним.
+  frame_wreath: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #d9ad3b, 0 0 8px 1px rgba(217, 173, 59, 0.35)',
+  frame_vines: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #3a8f4a',
+  frame_flourish: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #d9ad3b',
 }
 
 // Какие рамки анимированы: ключ → имя CSS-класса с animation.

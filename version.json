@@ -1,6 +1,13 @@
 {
-  "version": "6.26",
+  "version": "6.27",
   "en": [
+    {
+      "version": "6.27",
+      "date": "2026-10-20 10:17",
+      "changes": [
+        "Customization: the first non-circular avatar frames — an ornament around the avatar extends beyond its outline. “Laurel wreath” (250 points, leaf branches with a golden ribbon), “Vines” (150 points, a winding stem with leaves and flowers) and “Flourish” (250 points, a golden ring with scrolls and diamonds). The frames show in the left menu, on the Account page, in Community and in the Customization preview; on the Dashboard they only colour the progress arc for now. They can be bought once migration 103 is applied in Supabase."
+      ]
+    },
     {
       "version": "6.26",
       "date": "2026-10-19 16:00",
@@ -4451,6 +4458,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.27",
+      "date": "2026-10-20 10:17",
+      "changes": [
+        "Кастомизация: первые рамки аватарки не кругом — орнамент вокруг аватара выходит за его контур. «Лавровый венок» (250 баллов, ветви листьев с золотой лентой), «Лианы» (150 баллов, извилистый стебель с листьями и цветами) и «Вензель» (250 баллов, золотое кольцо с завитками и ромбами). Рамки видны в левом меню, в «Аккаунте», в Сообществе и в превью «Кастомизации»; на Дашборде у них пока только цвет дуги прогресса. Купить можно после применения миграции 103 в Supabase."
+      ]
+    },
     {
       "version": "6.26",
       "date": "2026-10-19 16:00",
