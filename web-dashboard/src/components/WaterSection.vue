@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import WaterModal from './WaterModal.vue'
 import GlassSvg from './GlassSvg.vue'
 import { useWater } from '../lib/useWater'
 import { getLang, t } from '../lib/i18n'
+import { onWaterAddRequest } from '../lib/waterQuickAdd'
+import { todayStr } from '../lib/date'
 
 // Единственная точка подключения блока «Вода» в App.vue — сама сеть спрятана здесь, чтобы у
 // App.vue было минимум изменений при параллельном переносе других блоков дашборда (см.
@@ -40,6 +42,10 @@ const goalSavedMsg = ref<'manual' | 'auto' | 'height'>('manual')
 async function onAdd(ml: number, dateStr: string, drankAt?: number) {
   if ((await addMl(ml, dateStr, drankAt)) !== null) savedTick.value++
 }
+// Быстрое добавление из напоминания о воде (BACKLOG 67.1): плашка шлёт событие, запись — обычным путём (стакан, баллы, «Отменить», офлайн-очередь)
+let offQuickAdd: (() => void) | null = null
+onMounted(() => { offQuickAdd = onWaterAddRequest((ml) => { void onAdd(ml, todayStr()) }) })
+onBeforeUnmount(() => offQuickAdd?.())
 // Отмена последнего добавления и правка суммы за день (BACKLOG 12): та же «записалось»-анимация после подтверждённой записи
 async function onUndo(dateStr: string) {
   const v = await undoLast(dateStr)

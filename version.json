@@ -1,6 +1,13 @@
 {
-  "version": "6.33",
+  "version": "6.34",
   "en": [
+    {
+      "version": "6.34",
+      "date": "2026-10-20 23:30",
+      "changes": [
+        "The water reminder is no longer just dismissable: it has “+ 200 ml”, “+ 1 l” and “+ Custom” buttons right in the banner. Water is saved as usual — with the glass, points and the Undo button."
+      ]
+    },
     {
       "version": "6.33",
       "date": "2026-10-20 22:23",
@@ -4500,6 +4507,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.34",
+      "date": "2026-10-20 23:30",
+      "changes": [
+        "Напоминание о воде теперь не только закрывается: прямо в плашке есть кнопки «+ 200 мл», «+ 1 л» и «+ Своё» (свой объём). Вода записывается как обычно — со стаканом, баллами и кнопкой «Отменить»."
+      ]
+    },
     {
       "version": "6.33",
       "date": "2026-10-20 22:23",

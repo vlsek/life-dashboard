@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.33";
+const SITE_VERSION = "6.34";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.34", date: "2026-10-20 23:30", changes: [
+        "Напоминание о воде теперь не только закрывается: прямо в плашке есть кнопки «+ 200 мл», «+ 1 л» и «+ Своё» (свой объём). Вода записывается как обычно — со стаканом, баллами и кнопкой «Отменить».",
+    ]},
     { version: "6.33", date: "2026-10-20 22:23", changes: [
         "Кастомизация: рамки аватарки не кругом — ещё две и новое место. «Шина» (150 баллов: покрышка с протектором) и «Штурвал» (250 баллов: деревянный обод с восемью рукоятями). Орнамент рамок («Лавровый венок», «Лианы», «Вензель», «Шина», «Штурвал») теперь рисуется и на Дашборде вокруг аватарки профиля, под дугой прогресса дня. Купить новые рамки можно после применения миграции 104 в Supabase."
     ]},
@@ -2511,6 +2514,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.34", date: "2026-10-20 23:30", changes: [
+        "The water reminder is no longer just dismissable: it has “+ 200 ml”, “+ 1 l” and “+ Custom” buttons right in the banner. Water is saved as usual — with the glass, points and the Undo button.",
+    ]},
     { version: "6.33", date: "2026-10-20 22:23", changes: [
         "Customization: more non-circular avatar frames, and a new place for them. “Tyre” (150 points: a tyre with tread) and “Ship wheel” (250 points: a wooden rim with eight handles). The frame ornament (“Laurel wreath”, “Vines”, “Flourish”, “Tyre”, “Ship wheel”) is now also drawn on the Dashboard around the profile avatar, under the day progress arc. The new frames can be bought once migration 104 is applied in Supabase."
     ]},

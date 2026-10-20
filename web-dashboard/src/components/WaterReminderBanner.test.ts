@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import WaterReminderBanner from './WaterReminderBanner.vue'
+import { onWaterAddRequest } from '../lib/waterQuickAdd'
 
 beforeEach(() => localStorage.setItem('site_lang', 'ru'))
 
@@ -31,5 +32,44 @@ describe('WaterReminderBanner', () => {
   it('a drunk amount above the goal shows "0 left", not a negative number', () => {
     const w = mount(WaterReminderBanner, { props: { ml: 2600, goal: 2000 } })
     expect(w.find('[data-test="water-reminder-text"]').text()).toContain('осталось 0 мл')
+  })
+})
+
+describe('WaterReminderBanner: быстрое добавление (BACKLOG 67.1)', () => {
+  it('«+200 мл» и «+1 л» просят добавить воду и закрывают плашку', async () => {
+    const got: number[] = []
+    const off = onWaterAddRequest((ml) => got.push(ml))
+    const w = mount(WaterReminderBanner, { props: { ml: 300, goal: 2000 } })
+    expect(w.find('[data-test="water-reminder-add-200"]').text()).toBe('+ 200 мл')
+    expect(w.find('[data-test="water-reminder-add-1000"]').text()).toBe('+ 1 л')
+    await w.find('[data-test="water-reminder-add-200"]').trigger('click')
+    await w.find('[data-test="water-reminder-add-1000"]').trigger('click')
+    expect(got).toEqual([200, 1000])
+    expect(w.emitted('dismiss')).toHaveLength(2)
+    off()
+  })
+  it('«Своё»: поле, Enter/«Добавить» добавляет, плашка закрывается', async () => {
+    const got: number[] = []
+    const off = onWaterAddRequest((ml) => got.push(ml))
+    const w = mount(WaterReminderBanner, { props: { ml: 300, goal: 2000 } })
+    expect(w.find('[data-test="water-reminder-custom"]').exists()).toBe(false)
+    await w.find('[data-test="water-reminder-custom-toggle"]').trigger('click')
+    await w.find('[data-test="water-reminder-custom-input"]').setValue('350')
+    await w.find('[data-test="water-reminder-custom"]').trigger('submit')
+    expect(got).toEqual([350])
+    expect(w.emitted('dismiss')).toHaveLength(1)
+    off()
+  })
+  it('«Своё» с неверным числом: подсказка, ничего не пишется, плашка остаётся', async () => {
+    const got: number[] = []
+    const off = onWaterAddRequest((ml) => got.push(ml))
+    const w = mount(WaterReminderBanner, { props: { ml: 300, goal: 2000 } })
+    await w.find('[data-test="water-reminder-custom-toggle"]').trigger('click')
+    await w.find('[data-test="water-reminder-custom-input"]').setValue('0')
+    await w.find('[data-test="water-reminder-custom"]').trigger('submit')
+    expect(w.find('[data-test="water-reminder-custom-error"]').exists()).toBe(true)
+    expect(got).toEqual([])
+    expect(w.emitted('dismiss')).toBeUndefined()
+    off()
   })
 })
