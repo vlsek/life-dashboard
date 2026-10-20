@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.34";
+const SITE_VERSION = "6.35";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.35", date: "2026-10-20 22:31", changes: [
+        "Вода работает без сети: стакан, правка суммы и «Отменить» теперь записываются даже без интернета — приложение принимает запись у себя и отправляет её, когда связь появится (ни одна запись не теряется и не дублируется). Если сумма дня неизвестна и сети нет, показывается понятное сообщение вместо неверного числа. Работает и в окне воды на Дашборде, и в шапке. Без миграций."
+    ]},
     { version: "6.34", date: "2026-10-20 23:30", changes: [
         "Напоминание о воде теперь не только закрывается: прямо в плашке есть кнопки «+ 200 мл», «+ 1 л» и «+ Своё» (свой объём). Вода записывается как обычно — со стаканом, баллами и кнопкой «Отменить».",
     ]},
@@ -2514,6 +2517,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.35", date: "2026-10-20 22:31", changes: [
+        "Water works offline: a glass, editing the total and “Undo” are now recorded even without internet — the app accepts the entry locally and sends it when the connection returns (no entry is lost or duplicated). If the day total is unknown and there is no network, a clear message is shown instead of a wrong number. Works in both the Dashboard water window and the header. No migrations."
+    ]},
     { version: "6.34", date: "2026-10-20 23:30", changes: [
         "The water reminder is no longer just dismissable: it has “+ 200 ml”, “+ 1 l” and “+ Custom” buttons right in the banner. Water is saved as usual — with the glass, points and the Undo button.",
     ]},

@@ -1,6 +1,13 @@
 {
-  "version": "6.34",
+  "version": "6.35",
   "en": [
+    {
+      "version": "6.35",
+      "date": "2026-10-20 22:31",
+      "changes": [
+        "Water works offline: a glass, editing the total and “Undo” are now recorded even without internet — the app accepts the entry locally and sends it when the connection returns (no entry is lost or duplicated). If the day total is unknown and there is no network, a clear message is shown instead of a wrong number. Works in both the Dashboard water window and the header. No migrations."
+      ]
+    },
     {
       "version": "6.34",
       "date": "2026-10-20 23:30",
@@ -4507,6 +4514,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.35",
+      "date": "2026-10-20 22:31",
+      "changes": [
+        "Вода работает без сети: стакан, правка суммы и «Отменить» теперь записываются даже без интернета — приложение принимает запись у себя и отправляет её, когда связь появится (ни одна запись не теряется и не дублируется). Если сумма дня неизвестна и сети нет, показывается понятное сообщение вместо неверного числа. Работает и в окне воды на Дашборде, и в шапке. Без миграций."
+      ]
+    },
     {
       "version": "6.34",
       "date": "2026-10-20 23:30",
