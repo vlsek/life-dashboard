@@ -61,7 +61,7 @@ export function useVisibility() {
 // относятся к группе «Получено» (BACKLOG 61.7: раньше они игнорировали переключатели — при снятой «Получено» страница выглядела
 // непустой, а сообщение «ничего нет» всё равно показывалось). Число = сколько вариантов в разделе (то же, что `total` у раздела).
 // Числа — из реестра слотов (`slots.ts`, BACKLOG 64.1): раньше они были вписаны здесь, в шаблоне страницы и в тестах по отдельности
-export type FreeSection = 'chart-markers' | 'splash' | 'streakflame' | 'wateranim' | 'bodymodel'
+export type FreeSection = 'chart-markers' | 'splash' | 'streakflame' | 'wateranim' | 'bodymodel' | 'iconstyle'
 export const FREE_SECTIONS = Object.fromEntries(SLOTS.filter((s) => s.kind === 'free').map((s) => [s.id, s.variants?.length ?? 0])) as Record<FreeSection, number>
 export const FREE_SECTION_IDS = Object.keys(FREE_SECTIONS) as FreeSection[]
 export const FREE_SECTIONS_TOTAL: number = FREE_SECTION_IDS.reduce((n, k) => n + FREE_SECTIONS[k], 0)

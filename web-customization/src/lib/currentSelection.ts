@@ -1,6 +1,7 @@
 // «Сейчас выбрано» (BACKLOG 61.6 срез 1, остаток 59.1): одна сводка вверху страницы «Кастомизация» — что включено сейчас по каждому разделу,
 // чтобы не листать всю страницу ради ответа «а что у меня стоит?». Строка = раздел витрины + название выбранного значения; тап по строке ведёт к разделу.
 // Чистая функция без обращения к DOM и localStorage: читатели значений приходят снаружи (App.vue даёт настоящие, тесты — подставные).
+import type { IconStyle } from './iconStyle'
 import { CATEGORY_ORDER, itemByKey, type Category, type Selected } from './customization'
 import type { SplashVariant } from './splashVariant'
 import type { StreakFlameVariant } from './streakFlameVariant'
@@ -35,6 +36,8 @@ export interface SelectionReaders {
   /** null — модель «по полу профиля» */
   bodyModel: BodyModel | null
   chartMarker: ChartMarker
+  /** стиль иконок (44.18г); не задан — «Контур» */
+  iconStyle?: IconStyle
   /** вид, стиль линии и дополнения графиков (всё в localStorage, меняется в разделе «Графики») */
   chart: { kind: ChartKind; line: ChartLine; anim: ChartAnim; forecast: ChartForecast; goalZone: ChartGoalZone; sparks: ChartSparks }
 }
@@ -57,6 +60,7 @@ export function selectionRows(r: SelectionReaders): SelectionRow[] {
   rows.push({ section: 'splash', titleKey: 'cust_sec_splash', valueKey: r.splash === 'auto' ? 'cust_splash_auto' : 'splash_variant_' + r.splash, custom: r.splash !== 'auto' })
   rows.push({ section: 'streakflame', titleKey: 'cust_sec_streakflame', valueKey: 'cust_streakflame_' + r.streakFlame, custom: r.streakFlame !== 'flame' })
   rows.push({ section: 'wateranim', titleKey: 'cust_sec_wateranim', valueKey: 'cust_wateranim_' + r.waterAnim, custom: r.waterAnim !== 'auto' })
+  rows.push({ section: 'iconstyle', titleKey: 'cust_sec_iconstyle', valueKey: 'cust_iconstyle_' + (r.iconStyle ?? 'outline'), custom: (r.iconStyle ?? 'outline') !== 'outline' })
   rows.push({ section: 'bodymodel', titleKey: 'cust_sec_bodymodel', valueKey: r.bodyModel ? 'cust_body_' + r.bodyModel : 'cust_body_auto', custom: r.bodyModel !== null })
   rows.push({ section: 'chart-markers', titleKey: 'cust_sec_markers', valueKey: 'chart_marker_' + r.chartMarker, custom: r.chartMarker !== 'flat' })
   // «Линия графика» (61.6 срез 2, после настроек графиков 55.2): вид и стиль + включённые дополнения одной строкой. Тот же раздел «Графики», что и у маркеров.

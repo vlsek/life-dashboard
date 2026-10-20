@@ -399,12 +399,67 @@ def index_html(t):
     return t
 
 
+
+# ---------- «Стиль иконок» (BACKLOG 44.18г) ----------
+# <html data-icon-style> ставит скрипт в <head> до первой отрисовки; правила — один блок `icon-style` в style.css пилотов поверх зашитых
+# атрибутов иконок. Значения стилей — в web-customization/src/lib/iconStyle.ts (единый источник: ICON_STYLE_RULES, ICON_SHADOW, ICON_SELECTOR);
+# здесь они только печатаются в CSS, а страж-тест (web-customization/src/iconStyle.test.ts) сверяет блок с iconStyleCss().
+ICON_START = '/* icon-style:start (генерируется scripts/apply_themes.py из web-customization/src/lib/iconStyle.ts — не править руками; BACKLOG 44.18г) */'
+ICON_END = '/* icon-style:end */'
+ICON_SCRIPT = """    <script>
+      // «Стиль иконок» (BACKLOG 44.18г): выбор человека → <html data-icon-style> до первой отрисовки (правила — в src/style.css, блок icon-style)
+      try {
+        var is = localStorage.getItem('icon_style')
+        if (['thin', 'bold', 'square', 'shadow'].indexOf(is) >= 0) document.documentElement.setAttribute('data-icon-style', is)
+      } catch (e) {}
+    </script>
+  """
+
+
+def icon_rules():
+    src = open('web-customization/src/lib/iconStyle.ts', encoding='utf-8').read()
+    shadow = re.search(r"export const ICON_SHADOW = '([^']+)'", src).group(1)
+    selector = re.search(r'export const ICON_SELECTOR = "([^"]+)"', src).group(1)
+    body = re.search(r'export const ICON_STYLE_RULES[^=]*= \{(.*?)\n\}', src, re.S).group(1)
+    lines = []
+    for m in re.finditer(r'^\s+(\w+): \{ ([^}]*) \},?$', body, re.M):
+        decl = []
+        for part in m.group(2).split(','):
+            k, v = [x.strip() for x in part.split(':', 1)]
+            v = v.strip("'")
+            if k == 'strokeWidth':
+                decl.append('stroke-width: %s;' % v)
+            elif k == 'linecap':
+                decl.append('stroke-linecap: %s;' % v)
+            elif k == 'linejoin':
+                decl.append('stroke-linejoin: %s;' % v)
+            elif k == 'shadow' and v == 'true':
+                decl.append('filter: %s;' % shadow)
+        lines.append("html[data-icon-style='%s'] %s { %s }" % (m.group(1), selector, ' '.join(decl)))
+    assert lines, 'не нашёл правил в iconStyle.ts'
+    return '\n'.join(lines)
+
+
+def icon_css(t):
+    reg = ICON_START + '\n' + icon_rules() + '\n' + ICON_END
+    if ICON_START in t:
+        return re.sub(re.escape(ICON_START) + r'.*?' + re.escape(ICON_END), lambda m: reg, t, count=1, flags=re.S)
+    return t.rstrip('\n') + '\n\n' + reg + '\n'
+
+
+def icon_index_html(t):
+    if 'icon_style' not in t:
+        t = t.replace('</head>', ICON_SCRIPT + '</head>', 1)
+    return t
+
 for d in sorted(glob.glob('web-*')):
     if glob.glob(d + '/src/style.css') and glob.glob(d + '/src/lib/theme.ts'):
         rw(d + '/src/style.css', lambda t: dark_checks(tokenize(pilot_css(t), True)))
         rw(d + '/src/lib/theme.ts', theme_ts)
         rw(d + '/src/lib/i18n.ts', i18n_ts)
         rw(d + '/index.html', index_html)
+        rw(d + '/src/style.css', icon_css)
+        rw(d + '/index.html', icon_index_html)
 
 def write_preview():
     path = 'web-customization/src/lib/themePreview.ts'

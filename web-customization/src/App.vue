@@ -11,6 +11,7 @@ import ChartMarkerPicker from './components/ChartMarkerPicker.vue'
 import StreakFlamePicker from './components/StreakFlamePicker.vue'
 import WaterAnimPicker from './components/WaterAnimPicker.vue'
 import BodyModelPicker from './components/BodyModelPicker.vue'
+import IconStylePicker from './components/IconStylePicker.vue'
 import RarityGroup from './components/RarityGroup.vue'
 import VisibilityChips from './components/VisibilityChips.vue'
 import { FREE_SECTIONS, FREE_SECTIONS_TOTAL, allVisible, groupOfItem, groupOfTheme, useVisibility, type FreeSection, type VisGroup } from './lib/useVisibility'
@@ -27,6 +28,7 @@ import { readStreakFlameVariant } from './lib/streakFlameVariant'
 import { getWaterAnimChoice } from './lib/waterAnim'
 import { readBodyModelChoice } from './lib/bodyModel'
 import { readChartMarker } from './lib/chartMarker'
+import { readIconStyle } from './lib/iconStyle'
 import { readChartAnim, readChartForecast, readChartGoalZone, readChartKind, readChartLine, readChartSparks } from './lib/chartLine'
 import { itemGroups, rarityOfItem, rarityOfTheme, themeGroups } from './lib/rarity'
 import { useFavoriteThemes } from './lib/useFavoriteThemes'
@@ -168,6 +170,7 @@ const nowRows = computed(() => {
     waterAnim: getWaterAnimChoice(),
     bodyModel: readBodyModelChoice(),
     chartMarker: readChartMarker(),
+    iconStyle: readIconStyle(),
     chart: { kind: readChartKind(), line: readChartLine(), anim: readChartAnim(), forecast: readChartForecast(), goalZone: readChartGoalZone(), sparks: readChartSparks() },
   })
 })
@@ -377,6 +380,11 @@ async function wearLook(id: string) {
 
         <SectionGroup :bare="single" v-if="freeShown && isOpen('splash')" id="splash" :title="t('cust_sec_splash')" :total="freeTotal('splash')" :owned="freeTotal('splash')" :collapsed="isCollapsed('section:splash')" @toggle="toggle('section:splash')">
           <SplashPicker />
+        </SectionGroup>
+
+        <!-- Стиль иконок (BACKLOG 44.18г): 5 бесплатных стилей всех иконок, выбор в localStorage и сразу на <html> -->
+        <SectionGroup :bare="single" v-if="freeShown && isOpen('iconstyle')" id="iconstyle" :title="t('cust_sec_iconstyle')" :total="freeTotal('iconstyle')" :owned="freeTotal('iconstyle')" :collapsed="isCollapsed('section:iconstyle')" @toggle="toggle('section:iconstyle')">
+          <IconStylePicker />
         </SectionGroup>
 
         <!-- Огонёк серии (BACKLOG 44.18в, срез 1): 2 бесплатных варианта, выбор в localStorage -->

@@ -1,5 +1,6 @@
 import { CHART_ANIM_KEY, CHART_FORECAST_KEY, CHART_GOALZONE_KEY, CHART_KIND_KEY, CHART_LINE_KEY, CHART_SPARKS_KEY, CHART_SPARK_STYLE_KEY } from './chartLine'
 import { CHART_MARKER_KEY } from './chartMarker'
+import { ICON_STYLE_KEY } from './iconStyle'
 import { CATEGORY_ORDER } from './customization'
 import { SPLASH_VARIANT_KEY } from './splashVariant'
 import { STREAK_FLAME_VARIANT_KEY } from './streakFlameVariant'
@@ -27,6 +28,7 @@ export const PREF_KEYS: readonly string[] = [
   CHART_GOALZONE_KEY,
   CHART_SPARKS_KEY,
   CHART_SPARK_STYLE_KEY,
+  ICON_STYLE_KEY,
   'workouts_body_model',
 ]
 

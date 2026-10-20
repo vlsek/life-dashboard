@@ -1,3 +1,4 @@
+import { ICON_STYLES } from './lib/iconStyle'
 import { beforeEach, describe, expect, it } from 'vitest'
 import appSource from './App.vue?raw'
 import { BODY_MODELS } from './lib/bodyModel'
@@ -67,8 +68,9 @@ describe('производные таблицы совпадают с реест
       streakflame: STREAK_FLAME_VARIANTS.length,
       wateranim: WATER_ANIMS.length,
       bodymodel: BODY_MODELS.length,
+      iconstyle: ICON_STYLES.length,
     })
-    expect(FREE_SECTIONS_TOTAL).toBe(CHART_MARKERS.length + SPLASH_VARIANTS.length + STREAK_FLAME_VARIANTS.length + WATER_ANIMS.length + BODY_MODELS.length)
+    expect(FREE_SECTIONS_TOTAL).toBe(CHART_MARKERS.length + SPLASH_VARIANTS.length + STREAK_FLAME_VARIANTS.length + WATER_ANIMS.length + BODY_MODELS.length + ICON_STYLES.length)
     expect(freeTotal('splash')).toBe(SPLASH_VARIANTS.length)
     expect(freeTotal('streakflame')).toBeGreaterThanOrEqual(5) // v5.83: пять видов, а в шаблоне было 2
     expect(freeTotal('themes')).toBe(0)

@@ -1996,3 +1996,10 @@ html[data-motion='off'] .cd-ring { display: none; }
   html { font-size: var(--phone-scale); }
 }
 /* phone-scale:end */
+
+/* icon-style:start (генерируется scripts/apply_themes.py из web-customization/src/lib/iconStyle.ts — не править руками; BACKLOG 44.18г) */
+html[data-icon-style='thin'] svg[viewBox='0 0 24 24'][stroke='currentColor'] { stroke-width: 1.2; }
+html[data-icon-style='bold'] svg[viewBox='0 0 24 24'][stroke='currentColor'] { stroke-width: 2.7; }
+html[data-icon-style='square'] svg[viewBox='0 0 24 24'][stroke='currentColor'] { stroke-linecap: butt; stroke-linejoin: miter; }
+html[data-icon-style='shadow'] svg[viewBox='0 0 24 24'][stroke='currentColor'] { filter: drop-shadow(1.2px 1.2px 0 color-mix(in srgb, currentColor 32%, transparent)); }
+/* icon-style:end */

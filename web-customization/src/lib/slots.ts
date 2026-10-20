@@ -1,5 +1,6 @@
 import { BODY_MODELS } from './bodyModel'
 import { CHART_MARKERS } from './chartMarker'
+import { ICON_STYLES } from './iconStyle'
 import type { Category } from './customization'
 import { SPLASH_VARIANTS } from './splashVariant'
 import { STREAK_FLAME_VARIANTS } from './streakFlameVariant'
@@ -38,6 +39,7 @@ export type SlotTitleKey =
   | 'cust_sec_themes'
   | 'cust_cat_avatar_frame'
   | 'cust_sec_bodymodel'
+  | 'cust_sec_iconstyle'
   | 'cust_cat_collapse_style'
   | 'cust_cat_day_gauge'
   | 'cust_cat_week_gauge'
@@ -54,6 +56,7 @@ export const SLOTS: readonly Slot[] = [
   { id: 'themes', kind: 'themes', group: 'look', titleKey: 'cust_sec_themes' },
   { id: 'avatar_frame', kind: 'catalog', group: 'look', titleKey: 'cust_cat_avatar_frame', category: 'avatar_frame' },
   { id: 'bodymodel', kind: 'free', group: 'look', titleKey: 'cust_sec_bodymodel', variants: BODY_MODELS },
+  { id: 'iconstyle', kind: 'free', group: 'look', titleKey: 'cust_sec_iconstyle', variants: ICON_STYLES },
   { id: 'collapse_style', kind: 'catalog', group: 'home', titleKey: 'cust_cat_collapse_style', category: 'collapse_style' },
   { id: 'week_gauge', kind: 'catalog', group: 'home', titleKey: 'cust_cat_week_gauge', category: 'week_gauge' },
   { id: 'day_gauge', kind: 'catalog', group: 'home', titleKey: 'cust_cat_day_gauge', category: 'day_gauge' },
