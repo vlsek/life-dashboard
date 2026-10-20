@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.28";
+const SITE_VERSION = "6.29";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.29", date: "2026-10-20 07:35", changes: [
+        "«Кастомизация» → новый раздел «Стиль иконок»: как выглядят ВСЕ иконки на всех страницах — «Контур» (как раньше), «Тонкий», «Жирный», «Угловатый» (торцы и углы без скруглений) или «Двойной штрих» (смещённая полупрозрачная копия). Выбор применяется сразу, без перезагрузки, переносится между вашими устройствами и входит в «Образы». Все стили бесплатные.",
+    ]},
     { version: "6.28", date: "2026-10-19 10:30", changes: [
         "Приложение запускается без интернета: страницы и их файлы теперь сохраняются на устройстве при заходе (данные показываются из последней сохранённой копии; запись без сети появится следующим этапом). Браузеру отправляется просьба не удалять хранилище сайта при нехватке места. Без миграций.",
     ]},
@@ -2496,6 +2499,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.29", date: "2026-10-20 07:35", changes: [
+        "Customization → a new “Icon style” section: how ALL icons on all pages look — “Outline” (as before), “Thin”, “Bold”, “Angular” (square ends and sharp corners) or “Double stroke” (an offset translucent copy). The choice applies at once, without a reload, syncs between your devices and is part of “Looks”. All styles are free.",
+    ]},
     { version: "6.28", date: "2026-10-19 10:30", changes: [
         "The app now starts without internet: pages and their files are saved on the device when you open them (data is shown from the last saved copy; writing offline comes in the next stage). The browser is asked not to clear the site storage when space runs low. No migrations.",
     ]},

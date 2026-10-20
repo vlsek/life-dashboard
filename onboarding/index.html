@@ -50,8 +50,15 @@
         if (localStorage.getItem('site_simple') === 'on') document.documentElement.setAttribute('data-simple', 'on')
       } catch (e) {}
     </script>
-    <script type="module" crossorigin src="/onboarding/assets/index-D-q2f917.js"></script>
-    <link rel="stylesheet" crossorigin href="/onboarding/assets/index-lB6r8DQY.css">
+      <script>
+      // «Стиль иконок» (BACKLOG 44.18г): выбор человека → <html data-icon-style> до первой отрисовки (правила — в src/style.css, блок icon-style)
+      try {
+        var is = localStorage.getItem('icon_style')
+        if (['thin', 'bold', 'square', 'shadow'].indexOf(is) >= 0) document.documentElement.setAttribute('data-icon-style', is)
+      } catch (e) {}
+    </script>
+    <script type="module" crossorigin src="/onboarding/assets/index-uUo4dVbd.js"></script>
+    <link rel="stylesheet" crossorigin href="/onboarding/assets/index-dLsjX2yj.css">
   </head>
   <body>
     <div id="app">

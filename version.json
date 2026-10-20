@@ -1,6 +1,13 @@
 {
-  "version": "6.28",
+  "version": "6.29",
   "en": [
+    {
+      "version": "6.29",
+      "date": "2026-10-20 07:35",
+      "changes": [
+        "Customization → a new “Icon style” section: how ALL icons on all pages look — “Outline” (as before), “Thin”, “Bold”, “Angular” (square ends and sharp corners) or “Double stroke” (an offset translucent copy). The choice applies at once, without a reload, syncs between your devices and is part of “Looks”. All styles are free."
+      ]
+    },
     {
       "version": "6.28",
       "date": "2026-10-19 10:30",
@@ -4465,6 +4472,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.29",
+      "date": "2026-10-20 07:35",
+      "changes": [
+        "«Кастомизация» → новый раздел «Стиль иконок»: как выглядят ВСЕ иконки на всех страницах — «Контур» (как раньше), «Тонкий», «Жирный», «Угловатый» (торцы и углы без скруглений) или «Двойной штрих» (смещённая полупрозрачная копия). Выбор применяется сразу, без перезагрузки, переносится между вашими устройствами и входит в «Образы». Все стили бесплатные."
+      ]
+    },
     {
       "version": "6.28",
       "date": "2026-10-19 10:30",

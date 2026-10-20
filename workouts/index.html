@@ -48,8 +48,15 @@
         if (localStorage.getItem('site_simple') === 'on') document.documentElement.setAttribute('data-simple', 'on')
       } catch (e) {}
     </script>
-    <script type="module" crossorigin src="/workouts/assets/index-CTkNRNHy.js"></script>
-    <link rel="stylesheet" crossorigin href="/workouts/assets/index-BOPeITqG.css">
+      <script>
+      // «Стиль иконок» (BACKLOG 44.18г): выбор человека → <html data-icon-style> до первой отрисовки (правила — в src/style.css, блок icon-style)
+      try {
+        var is = localStorage.getItem('icon_style')
+        if (['thin', 'bold', 'square', 'shadow'].indexOf(is) >= 0) document.documentElement.setAttribute('data-icon-style', is)
+      } catch (e) {}
+    </script>
+    <script type="module" crossorigin src="/workouts/assets/index-DdKBdJe6.js"></script>
+    <link rel="stylesheet" crossorigin href="/workouts/assets/index-BHk9Q4wA.css">
   </head>
   <body>
     <div id="app">
