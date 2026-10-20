@@ -1,8 +1,8 @@
-// Рамки-орнаменты «не кругом» (BACKLOG 44.18з, срез 1): SVG-слой ВОКРУГ аватара, выходящий за его контур (венок, лианы, вензель).
+// Рамки-орнаменты «не кругом» (BACKLOG 44.18з, срезы 1–2): SVG-слой ВОКРУГ аватара, выходящий за его контур (венок, лианы, вензель, шина, штурвал).
 // Система координат слоя — viewBox 0..100, аватар — круг радиуса 50 в центре (50,50), поэтому слой совпадает с боксом аватара при любом
 // размере, а рисунок лежит снаружи круга (радиус ≈ 50–66) и виден за счёт `overflow: visible` у <svg> (см. FrameDecor.vue).
 // Обычный box-shadow рамки (frames.ts) остаётся тонким кольцом под орнаментом. Рамки без орнамента сюда не попадают и рисуются как раньше.
-// КОПИЯ живёт в web-header, web-community и web-account (аватар в меню, Сообществе, Аккаунте) — менять ВМЕСТЕ, страж frameDecor.test.ts.
+// КОПИЯ живёт в web-header, web-community, web-account и web-dashboard (аватар в меню, Сообществе, Аккаунте, на Дашборде) — менять ВМЕСТЕ, страж frameDecor.test.ts.
 const f1 = (n: number): string => String(Math.round(n * 10) / 10)
 const rad = (deg: number): number => (deg * Math.PI) / 180
 // Точка на радиусе r под углом deg (по часовой стрелке от оси X, как в SVG).
@@ -69,7 +69,32 @@ function flourish(): string {
   return g
 }
 
-const BUILDERS: Record<string, () => string> = { frame_wreath: wreath, frame_vines: vines, frame_flourish: flourish }
+// «Шина»: тёмное покрышечное кольцо с протектором (24 радиальных блока) и светлой боковиной; тонкий светлый контур, чтобы читалась и на тёмном фоне.
+function tyre(): string {
+  let g = '<circle cx="50" cy="50" r="56.5" fill="none" stroke="#2c2d33" stroke-width="8.5" />'
+  for (let i = 0; i < 24; i++) g += `<rect x="48.3" y="${f1(50 - 60.7)}" width="3.4" height="7" rx="0.8" fill="${i % 2 ? '#6b6e7b' : '#5a5d69'}" transform="rotate(${i * 15} 50 50)" />`
+  g += '<circle cx="50" cy="50" r="52.2" fill="none" stroke="#a9adb7" stroke-width=".9" /><circle cx="50" cy="50" r="60.9" fill="none" stroke="#8a8f9a" stroke-width=".7" stroke-opacity=".7" />'
+  const [vx, vy] = pt(-90, 56.5)
+  g += `<circle cx="${f1(vx)}" cy="${f1(vy)}" r="1.5" fill="#d9ad3b" />`
+  return g
+}
+
+// «Штурвал»: деревянный обод с латунными заклёпками и восемь рукоятей с набалдашниками, торчащие наружу.
+function helm(): string {
+  let g = '<circle cx="50" cy="50" r="54" fill="none" stroke="#7a4b21" stroke-width="3.6" /><circle cx="50" cy="50" r="52.7" fill="none" stroke="#b7843f" stroke-width=".8" />'
+  for (let k = 0; k < 8; k++) {
+    const a = k * 45
+    const [x1, y1] = pt(a, 55.5)
+    const [x2, y2] = pt(a, 63)
+    const [x3, y3] = pt(a, 65)
+    g += `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(x2)}" y2="${f1(y2)}" stroke="#7a4b21" stroke-width="3.2" stroke-linecap="round" /><circle cx="${f1(x3)}" cy="${f1(y3)}" r="2.7" fill="#b7843f" stroke="#7a4b21" stroke-width=".7" />`
+    const [sx, sy] = pt(a + 22.5, 54)
+    g += `<circle cx="${f1(sx)}" cy="${f1(sy)}" r="1" fill="#e3c06a" />`
+  }
+  return g
+}
+
+const BUILDERS: Record<string, () => string> = { frame_wreath: wreath, frame_vines: vines, frame_flourish: flourish, frame_tyre: tyre, frame_helm: helm }
 const cache = new Map<string, string>()
 
 // SVG-разметка орнамента для рамки (внутренность <svg viewBox="0 0 100 100">); нет орнамента или неизвестный ключ — пустая строка.

@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.32";
+const SITE_VERSION = "6.33";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.33", date: "2026-10-20 22:23", changes: [
+        "Кастомизация: рамки аватарки не кругом — ещё две и новое место. «Шина» (150 баллов: покрышка с протектором) и «Штурвал» (250 баллов: деревянный обод с восемью рукоятями). Орнамент рамок («Лавровый венок», «Лианы», «Вензель», «Шина», «Штурвал») теперь рисуется и на Дашборде вокруг аватарки профиля, под дугой прогресса дня. Купить новые рамки можно после применения миграции 104 в Supabase."
+    ]},
     { version: "6.32", date: "2026-10-20 12:00", changes: [
         "«Календарь»: над сеткой месяца появилась карточка «Сегодня». В ней планы на сегодня («Планы: 1 из 5», первые пункты с отметками) и ближайшие сроки целей на две недели вперёд — просроченные подсвечены. Кнопка «Открыть день» открывает окно плана на сегодня; если планов нет, кнопка предлагает запланировать день. Карточка не зависит от того, какой месяц вы листаете, и обновляется после сохранения дня. Её можно скрыть в «Показывать»."
     ]},
@@ -2508,6 +2511,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.33", date: "2026-10-20 22:23", changes: [
+        "Customization: more non-circular avatar frames, and a new place for them. “Tyre” (150 points: a tyre with tread) and “Ship wheel” (250 points: a wooden rim with eight handles). The frame ornament (“Laurel wreath”, “Vines”, “Flourish”, “Tyre”, “Ship wheel”) is now also drawn on the Dashboard around the profile avatar, under the day progress arc. The new frames can be bought once migration 104 is applied in Supabase."
+    ]},
     { version: "6.32", date: "2026-10-20 12:00", changes: [
         "Calendar: a “Today” card now sits above the month grid. It shows today’s plans (“Plans: 1 of 5”, the first items with checkmarks) and the nearest goal deadlines over the next two weeks — overdue ones are highlighted. “Open day” opens today’s plan window; when there are no plans the button offers to plan the day. The card does not depend on which month you are browsing and refreshes after you save a day. You can hide it in “Show”."
     ]},

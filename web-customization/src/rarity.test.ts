@@ -110,7 +110,7 @@ describe('страница: группы по редкости и сворачи
     await flushPromises()
     expect(w.find('[data-testid="rarity-themes:common"] [data-testid="rarity-count"]').text()).toBe('35/35') // пять исходных + двенадцать новых + двенадцать больших тем (BACKLOG 45.4), все обычные и открытые
     expect(w.find('[data-testid="rarity-avatar_frame:common"] [data-testid="rarity-count"]').text()).toBe('0/4')
-    expect(w.find('[data-testid="rarity-avatar_frame:rare"] [data-testid="rarity-count"]').text()).toBe('0/15')
+    expect(w.find('[data-testid="rarity-avatar_frame:rare"] [data-testid="rarity-count"]').text()).toBe('0/16')
     expect(w.find('[data-testid="rarity-avatar_frame:epic"] [data-testid="rarity-count"]').text()).toBe('0/4')
     w.unmount()
   })

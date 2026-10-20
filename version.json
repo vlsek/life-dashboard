@@ -1,6 +1,13 @@
 {
-  "version": "6.32",
+  "version": "6.33",
   "en": [
+    {
+      "version": "6.33",
+      "date": "2026-10-20 22:23",
+      "changes": [
+        "Customization: more non-circular avatar frames, and a new place for them. “Tyre” (150 points: a tyre with tread) and “Ship wheel” (250 points: a wooden rim with eight handles). The frame ornament (“Laurel wreath”, “Vines”, “Flourish”, “Tyre”, “Ship wheel”) is now also drawn on the Dashboard around the profile avatar, under the day progress arc. The new frames can be bought once migration 104 is applied in Supabase."
+      ]
+    },
     {
       "version": "6.32",
       "date": "2026-10-20 12:00",
@@ -4493,6 +4500,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.33",
+      "date": "2026-10-20 22:23",
+      "changes": [
+        "Кастомизация: рамки аватарки не кругом — ещё две и новое место. «Шина» (150 баллов: покрышка с протектором) и «Штурвал» (250 баллов: деревянный обод с восемью рукоятями). Орнамент рамок («Лавровый венок», «Лианы», «Вензель», «Шина», «Штурвал») теперь рисуется и на Дашборде вокруг аватарки профиля, под дугой прогресса дня. Купить новые рамки можно после применения миграции 104 в Supabase."
+      ]
+    },
     {
       "version": "6.32",
       "date": "2026-10-20 12:00",

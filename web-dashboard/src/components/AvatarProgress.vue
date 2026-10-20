@@ -6,6 +6,7 @@ import type { RingData } from '../lib/ringPlacement'
 import { t } from '../lib/i18n'
 import { stripEmoji } from '../lib/emojiText'
 import { frameRing } from '../lib/frameRing'
+import { frameDecor } from '../lib/frameDecor'
 import { daySegments, dayTicks, DAY_GLOW_FILTER, dayRingWidths, dayGradientStops, dayUsesGradient } from '../lib/dayGauge'
 import { dayGaugeStyle } from '../lib/useDayGauge'
 
@@ -17,6 +18,8 @@ const emit = defineEmits<{ pick: []; settings: [] }>()
 
 const geo = computed(() => (props.ring ? circleGeometry(24, props.ring.basePct, props.ring.bonusPct) : null))
 const fr = computed(() => frameRing(props.frame))
+// Рамка-орнамент «не кругом» (BACKLOG 44.18з, срез 2): SVG-слой ПОД кольцом прогресса. Его бокс = кольцо 52px (внутренний радиус орнамента = внешний край дуги), рисунок выходит за бокс (overflow: visible).
+const decor = computed(() => frameDecor(props.frame))
 const GRAD_ID = 'avatar-ring-grad'
 const arcStroke = computed(() => (!fr.value ? 'var(--accent)' : fr.value.stops.length > 1 ? `url(#${GRAD_ID})` : fr.value.stops[0]))
 const arcFilter = computed(() => (fr.value?.glow ? `drop-shadow(0 0 3px ${fr.value.glow})` : dayGaugeStyle.value === 'glow' ? DAY_GLOW_FILTER : undefined)) // свечение вида «Кастомизации» уступает свечению рамки
@@ -38,6 +41,9 @@ const segs = computed(() => (props.ring ? daySegments(26, 26, 24, props.ring.bas
         <img v-if="avatarUrl" :src="avatarUrl" alt="" class="h-11 w-11 rounded-full border-2 object-cover" style="border-color: var(--border); background: var(--bg)" />
         <span v-else class="flex h-11 w-11 items-center justify-center rounded-full border-2 text-xl" style="border-color: var(--border); background: var(--bg)"><Icon name="user" /></span>
       </button>
+
+      <!-- eslint-disable-next-line vue/no-v-html -- разметка из собственного реестра (frameDecor.ts), пользовательских данных тут нет -->
+      <svg v-if="decor" class="pointer-events-none absolute inset-0" width="52" height="52" viewBox="0 0 100 100" style="overflow: visible" aria-hidden="true" data-test="avatar-decor" :data-frame="frame" v-html="decor"></svg>
 
       <svg v-if="ring && geo" class="pointer-events-none absolute inset-0" width="52" height="52" viewBox="0 0 52 52" style="transform: rotate(-90deg)" data-test="avatar-ring" :data-frame="fr ? frame : null">
         <defs v-if="fr && fr.stops.length > 1">

@@ -17,7 +17,7 @@ const count = (s: string, re: RegExp) => (s.match(re) ?? []).length
 // BACKLOG 44.18з (срез 1): рамки-орнаменты «не кругом» — SVG-слой вокруг аватара (lib/frameDecor.ts + FrameDecor.vue).
 describe('реестр орнаментов', () => {
   it('три рамки с орнаментом: венок, лианы, вензель; у остальных и у мусора — пустая строка', () => {
-    expect(FRAME_DECOR_KEYS).toEqual(['frame_wreath', 'frame_vines', 'frame_flourish'])
+    expect(FRAME_DECOR_KEYS).toEqual(['frame_wreath', 'frame_vines', 'frame_flourish', 'frame_tyre', 'frame_helm'])
     for (const k of FRAME_DECOR_KEYS) expect(frameDecor(k).length, k).toBeGreaterThan(200)
     for (const k of ['frame_neon', 'frame_gold', 'нет_такой', '', null, undefined]) expect(frameDecor(k as never)).toBe('')
   })
@@ -42,6 +42,14 @@ describe('реестр орнаментов', () => {
       for (const v of pts) expect(v, k).toBeGreaterThan(-20)
       for (const v of pts) expect(v, k).toBeLessThan(120)
     }
+  })
+  it('«Шина»: покрышка, 24 блока протектора, светлая боковина и вентиль; «Штурвал»: обод и восемь рукоятей с набалдашниками', () => {
+    const ty = frameDecor('frame_tyre')
+    expect(count(ty, /<rect /g)).toBe(24)
+    expect(count(ty, /<circle /g)).toBe(4) // покрышка, боковина, внешний контур, вентиль
+    const h = frameDecor('frame_helm')
+    expect(count(h, /<line /g)).toBe(8)
+    expect(count(h, /<circle /g)).toBe(2 + 8 + 8) // два кольца обода, восемь набалдашников, восемь заклёпок
   })
   it('результат стабилен: повторный вызов возвращает ту же строку', () => {
     expect(frameDecor('frame_wreath')).toBe(frameDecor('frame_wreath'))
@@ -81,12 +89,12 @@ describe('каталог и копии', () => {
       expect(t(`cust_item_${k}` as never), k).not.toBe('')
     }
   })
-  it('копии frameDecor.ts и FrameDecor.vue в web-header, web-community и web-account совпадают с оригиналом (страж)', async () => {
+  it('копии frameDecor.ts (header, community, account, dashboard) и FrameDecor.vue (header, community, account) совпадают с оригиналом (страж)', async () => {
     const ts = body(await readSrc('./lib/frameDecor.ts'))
     const vue = (await readSrc('./components/FrameDecor.vue')).trim()
-    for (const d of ['web-header', 'web-community', 'web-account']) {
+    for (const d of ['web-header', 'web-community', 'web-account', 'web-dashboard']) {
       expect(body(await readSrc(`../../${d}/src/lib/frameDecor.ts`)), d).toBe(ts)
-      expect((await readSrc(`../../${d}/src/components/FrameDecor.vue`)).trim(), d).toBe(vue)
+      if (d !== 'web-dashboard') expect((await readSrc(`../../${d}/src/components/FrameDecor.vue`)).trim(), d).toBe(vue) // в Дашборде свой слой в AvatarProgress.vue
     }
   })
 })

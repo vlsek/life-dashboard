@@ -58,6 +58,8 @@ export const ITEM_RARITY: Record<string, Rarity> = {
   frame_wreath: 'rare', // 250 (44.18з)
   frame_vines: 'uncommon', // 150
   frame_flourish: 'rare', // 250
+  frame_tyre: 'uncommon', // 150 (44.18з срез 2)
+  frame_helm: 'rare', // 250
   collapse_accordion: 'uncommon', // как другие предметы за средний тариф (150)
   collapse_summary: 'rare', // как другие предметы за высокий тариф (250)
   collapse_plus: 'common', // низкий тариф (100)

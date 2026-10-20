@@ -40,6 +40,8 @@ const RING: Record<string, FrameRingStyle> = {
   frame_wreath: { stops: ['#d9ad3b', '#3f9b4a'], glow: null, anim: null },
   frame_vines: { stops: ['#3a8f4a', '#4fae5a'], glow: null, anim: null },
   frame_flourish: { stops: ['#d9ad3b', '#a67c14'], glow: null, anim: null },
+  frame_tyre: { stops: ['#6b6e7b', '#454751'], glow: null, anim: null },
+  frame_helm: { stops: ['#b7843f', '#7a4b21'], glow: null, anim: null },
 }
 
 export const FRAME_RING_KEYS = Object.keys(RING)

@@ -35,6 +35,8 @@ export const FRAME_SHADOWS: Record<string, string> = {
   frame_wreath: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #d9ad3b, 0 0 8px 1px rgba(217, 173, 59, 0.35)',
   frame_vines: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #3a8f4a',
   frame_flourish: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #d9ad3b',
+  frame_tyre: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #6b6e7b',
+  frame_helm: '0 0 0 2px var(--bg-card, #fff), 0 0 0 4px #b7843f',
 }
 
 // Какие рамки анимированы: ключ → имя CSS-класса с animation.

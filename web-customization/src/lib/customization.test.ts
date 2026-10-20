@@ -37,7 +37,7 @@ describe('реестр', () => {
     for (const i of ITEMS.filter((x) => x.category === 'avatar_frame')) expect(FRAME_SHADOWS[i.key], i.key).toBeTruthy()
   })
   it('itemsOf делит по источнику', () => {
-    expect(itemsOf('avatar_frame', 'points').map((i) => i.key)).toEqual(['frame_neon', 'frame_aurora', 'frame_flame', 'frame_rainbow', 'frame_mint', 'frame_sky', 'frame_graphite', 'frame_coral', 'frame_sunset', 'frame_breath', 'frame_comet', 'frame_glitch', 'frame_wreath', 'frame_vines', 'frame_flourish'])
+    expect(itemsOf('avatar_frame', 'points').map((i) => i.key)).toEqual(['frame_neon', 'frame_aurora', 'frame_flame', 'frame_rainbow', 'frame_mint', 'frame_sky', 'frame_graphite', 'frame_coral', 'frame_sunset', 'frame_breath', 'frame_comet', 'frame_glitch', 'frame_wreath', 'frame_vines', 'frame_flourish', 'frame_tyre', 'frame_helm'])
     expect(itemsOf('avatar_frame', 'achievement').map((i) => i.key)).toEqual(['frame_gold', 'frame_inferno', 'frame_pulse', 'frame_royal', 'frame_ink', 'frame_neuron', 'frame_target', 'frame_gear', 'frame_bookmark', 'frame_steel', 'frame_cup', 'frame_beacon', 'frame_rare_challenges', 'frame_rare_milestones'])
   })
 })
@@ -155,7 +155,7 @@ describe('рамки за монеты, серия 46.2(а): много пред
   it('монетных рамок теперь больше, чем рамок только за достижения (правило баланса владельца)', () => {
     const frames = ITEMS.filter((i) => i.category === 'avatar_frame')
     expect(frames.filter((i) => i.source === 'points').length).toBeGreaterThan(frames.filter((i) => i.source === 'achievement').length * 0.6)
-    expect(frames.filter((i) => i.source === 'points').length).toBe(15)
+    expect(frames.filter((i) => i.source === 'points').length).toBe(17)
   })
 })
 
