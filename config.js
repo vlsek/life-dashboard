@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.30";
+const SITE_VERSION = "6.31";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.31", date: "2026-10-20 13:00", changes: [
+        "Офлайн-чтение: страницы запоминают последние загруженные данные и без сети показывают их (списки, графики, настройки — то, что ты открывал раньше). При выходе из аккаунта эти данные стираются.",
+    ]},
     { version: "6.30", date: "2026-10-20 12:00", changes: [
         "Без сети больше не выбрасывает на страницу входа: если токен входа истёк, пока не было связи, приложение сохраняет твою сессию и откроется офлайн; как только сеть появится, вход обновится сам.",
     ]},
@@ -2502,6 +2505,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.31", date: "2026-10-20 13:00", changes: [
+        "Offline reading: pages remember the last data they loaded and show it without a connection (lists, charts, settings — whatever you opened before). When you sign out, this data is erased.",
+    ]},
     { version: "6.30", date: "2026-10-20 12:00", changes: [
         "Being offline no longer throws you to the sign-in page: if your sign-in token expired while there was no connection, the app keeps your session and opens offline; once the network is back the sign-in refreshes by itself.",
     ]},

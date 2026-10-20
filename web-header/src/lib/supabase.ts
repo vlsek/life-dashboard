@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { patchOfflineSession } from '../../../shared/offline-session/offlineSession'
+import { cachingFetch, clearReadCacheOnSignOut, sharedReadStore } from '../../../shared/offline-read/offlineRead'
 
 // Тот же проект и тот же анонимный ключ, что и у остального сайта (config.js). Поскольку
 // страница раздаётся с того же домена (life-dashboard.orneryhero.workers.dev/<страница>/),
@@ -8,4 +9,5 @@ import { patchOfflineSession } from '../../../shared/offline-session/offlineSess
 const SUPABASE_URL = 'https://haxmgtflegsfpxieaydv.supabase.co'
 const SUPABASE_ANON_KEY = 'sb_publishable_jvg_Y0JtOC66Edj1WbAgqg_n0LfjWAF'
 
-export const sb = patchOfflineSession(createClient(SUPABASE_URL, SUPABASE_ANON_KEY))
+export const sb = patchOfflineSession(createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { fetch: cachingFetch } }))
+clearReadCacheOnSignOut(sb, sharedReadStore) // офлайн-чтение (BACKLOG 66.12): при выходе кэш чтения стирается
