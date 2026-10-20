@@ -2,7 +2,7 @@
 // страницы по мере подключения); IndexedDB общая для всех страниц сайта, поэтому шапка видит их операции, опрашивая хранилище.
 import { ref, type Ref } from 'vue'
 import { sb } from './supabase'
-import { createOutbox, indexedDbStorage, memoryStorage, startAutoFlush, type Outbox, type OutboxEntry, type OutboxStatus, type SbLike } from './offlineOutbox'
+import { createOutbox, indexedDbStorage, memoryStorage, startAutoFlush, type Outbox, type OutboxEntry, type OutboxStatus, type SbError, type SbLike } from './offlineOutbox'
 
 let box: Outbox | null = null
 export function getOutbox(): Outbox {
@@ -16,6 +16,23 @@ export function getOutbox(): Outbox {
 export function setOutboxForTests(o: Outbox | null): void { box = o }
 
 export const POLL_MS = 4000
+
+// Запись из шапки (BACKLOG 66.5а, вода): те же помощники, что в Дашборде. Авто-сброс очереди запускает useOutboxView.
+export interface QResult { error: SbError | null; queued: boolean }
+async function run(userId: string, input: Parameters<Outbox['write']>[0]): Promise<QResult> {
+  const o = getOutbox()
+  o.setUser(userId)
+  const r = await o.write(input)
+  if (r.status === 'rejected') return { error: r.raw ?? { message: r.error }, queued: false }
+  return { error: null, queued: r.status === 'queued' }
+}
+export const qUpsert = (userId: string, table: string, key: string, payload: Record<string, unknown> | Record<string, unknown>[], onConflict: string): Promise<QResult> =>
+  run(userId, { table, op: 'upsert', key, payload, onConflict })
+export const qInsert = (userId: string, table: string, key: string, payload: Record<string, unknown>): Promise<QResult> =>
+  run(userId, { table, op: 'insert', key, payload })
+export const qDelete = (userId: string, table: string, key: string, match: Record<string, unknown>): Promise<QResult> =>
+  run(userId, { table, op: 'delete', key, match })
+export const dailyValueKey = (date: string, metricId: string): string => `daily_values:${date}:${metricId}`
 
 export interface OutboxView {
   status: Ref<OutboxStatus>

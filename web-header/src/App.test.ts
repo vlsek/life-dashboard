@@ -126,15 +126,29 @@ describe('глобальный хедер (App.vue)', () => {
   })
 
   it('ошибка записи воды показывается в окне (а стакан из шапки не пропадает)', async () => {
-    db.upsertError = { message: 'TypeError: Failed to fetch (https://abcd1234.supabase.co/rest/v1/daily_values)' }
+    // не «нет сети» (она теперь принимается локально, см. waterOffline.test.ts), а отказ сервера: сырой текст драйвера до человека не доходит
+    db.upsertError = { code: '23514', message: 'new row violates check constraint (https://abcd1234.supabase.co/rest/v1/daily_values) TypeError fetch' }
     setup({ metrics: [waterMetric], daily_values: [] })
     const w = mount(App)
     await flushPromises()
     await w.find('[data-test="water-badge"]').trigger('click')
     await w.find('[data-test="add-200"]').trigger('click')
     await flushPromises()
-    expect(w.find('[data-test="water-save-error"]').text()).toContain('Нет связи с сервером')
+    expect(w.find('[data-test="water-save-error"]').exists()).toBe(true)
     expect(w.find('[data-test="water-save-error"]').text()).not.toMatch(/supabase|https?:|daily_values|fetch|TypeError/i) // BACKLOG 942: сырой текст драйвера до человека не доходит
+    expect(w.find('[data-test="water-badge"]').exists()).toBe(true)
+    w.unmount()
+  })
+
+  it('нет сети при записи воды: стакан принят локально — ошибки нет, сумма растёт (66.5а)', async () => {
+    db.upsertError = { message: 'TypeError: Failed to fetch', status: 0 }
+    setup({ metrics: [waterMetric], daily_values: [] })
+    const w = mount(App)
+    await flushPromises()
+    await w.find('[data-test="water-badge"]').trigger('click')
+    await w.find('[data-test="add-200"]').trigger('click')
+    await flushPromises()
+    expect(w.find('[data-test="water-save-error"]').exists()).toBe(false)
     expect(w.find('[data-test="water-badge"]').exists()).toBe(true)
     w.unmount()
   })

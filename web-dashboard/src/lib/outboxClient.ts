@@ -43,4 +43,10 @@ export const qUpsert = (userId: string, table: string, key: string, payload: Rec
 export const qUpdate = (userId: string, table: string, key: string, payload: Record<string, unknown>, match: Record<string, unknown>): Promise<QResult> =>
   run(userId, { table, op: 'update', key, payload, match })
 
+export const qInsert = (userId: string, table: string, key: string, payload: Record<string, unknown>): Promise<QResult> =>
+  run(userId, { table, op: 'insert', key, payload })
+
+export const qDelete = (userId: string, table: string, key: string, match: Record<string, unknown>): Promise<QResult> =>
+  run(userId, { table, op: 'delete', key, match })
+
 export const dailyValueKey = (date: string, metricId: string): string => `daily_values:${date}:${metricId}`

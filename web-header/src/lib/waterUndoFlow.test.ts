@@ -12,6 +12,9 @@ vi.mock('./supabase', () => ({
         eq: (c: string, v: string) => ((f[c] = v), chain),
         order: () => chain,
         limit: () => chain,
+        // таблицы журнала в этой заглушке нет (миграция 036 не применена) — работает запасной журнал из записей устройства
+        insert: () => Promise.resolve({ error: { code: '42P01', message: 'relation "water_log" does not exist' } }),
+        delete: () => chain,
         maybeSingle: () => Promise.resolve({ data: table === 'daily_values' && f.date in db.store ? { value: db.store[f.date] } : null, error: null }),
         upsert: (row: any) => {
           if (db.failWrite) return Promise.resolve({ error: { message: 'boom' } })
@@ -27,6 +30,9 @@ vi.mock('./supabase', () => ({
 }))
 
 import { useWater } from './useWater'
+import { setOutboxForTests } from './outboxClient'
+import { createOutbox, memoryStorage } from './offlineOutbox'
+import { sb } from './supabase'
 import { todayStr } from './date'
 
 const D = todayStr()
@@ -39,6 +45,7 @@ async function fresh(goal: number | null = null) {
 }
 
 beforeEach(() => {
+  setOutboxForTests(createOutbox({ client: sb as never, storage: memoryStorage() })) // чистая очередь на каждый тест: ключи log1… не должны липнуть между тестами
   db.store = {}
   db.failWrite = false
   localStorage.clear()

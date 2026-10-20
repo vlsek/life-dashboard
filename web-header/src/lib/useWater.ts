@@ -1,9 +1,11 @@
 import { computed, ref } from 'vue'
 import { sb } from './supabase'
+import { dailyValueKey, qDelete, qInsert, qUpsert } from './outboxClient'
 import { notifyDataChanged } from './events'
 import { emitPointsFloat, pointsDelta } from './pointsFloat'
 import { fmtDate, todayStr } from './date'
 import { friendlyError } from './friendlyError'
+import { t } from './i18n'
 import { effectiveNormMl, findWaterMetric, findWeightParam, nextWaterValue } from './water'
 import { createWriteQueue } from './writeQueue'
 import { autoNormFromBody, validHeightCm, resetWaterGoalCache } from './waterGoal'
@@ -52,6 +54,9 @@ export function useWater() {
     logTail = logTail.then(job).catch(() => {})
     return logTail
   }
+  // Последние известные суммы дней (читали из БД или сами записали): без сети чтение дня недоступно, а «прибавить к текущему» нужно знать (BACKLOG 66.5а).
+  const dayCache = new Map<string, number>()
+  const newId = (): string => (typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `${Date.now().toString(16)}-${Math.random().toString(16).slice(2)}`)
   let userId = ''
 
   const normMl = computed(() => effectiveNormMl(metric.value?.goal_value, autoNormMl.value))
@@ -120,18 +125,28 @@ export function useWater() {
       .eq('date', fmtDate(new Date()))
       .maybeSingle()
     todayMl.value = (data?.value as number) ?? 0
+    dayCache.set(fmtDate(new Date()), todayMl.value)
   }
 
-  async function getMlForDate(dateStr: string): Promise<number> {
+  // Текущая сумма дня. Не удалось прочитать (нет сети) — берём последнюю известную; если и её нет, null: «прибавлять к неизвестному» нельзя,
+  // иначе офлайн-запись затёрла бы настоящую сумму (BACKLOG 66.5а).
+  async function getMlForDate(dateStr: string): Promise<number | null> {
     if (!metric.value) return 0
-    const { data } = await sb
+    const { data, error: readErr } = await sb
       .from('daily_values')
       .select('value')
       .eq('user_id', userId)
       .eq('metric_id', metric.value.id)
       .eq('date', dateStr)
       .maybeSingle()
-    return (data?.value as number) ?? 0
+    if (readErr) return dayCache.get(dateStr) ?? null
+    const v = (data?.value as number) ?? 0
+    dayCache.set(dateStr, v)
+    return v
+  }
+  function unknownDay(): null {
+    saveError.value = t('dash_water_offline_unknown')
+    return null
   }
 
   function setStack(dateStr: string, stack: UndoEntry[]) {
@@ -144,14 +159,14 @@ export function useWater() {
   // Копия логики из web-dashboard/src/lib/useWater.ts (BACKLOG 12); анимация баллов — слой PointsFloat шапки (BACKLOG 469).
   async function writeDay(dateStr: string, current: number, next: number, record = true, drankAt?: number, kind: WaterLogKind = 'add'): Promise<number | null> {
     if (!metric.value) return null
-    const { error: upErr } = await sb
-      .from('daily_values')
-      .upsert({ user_id: userId, metric_id: metric.value.id, date: dateStr, value: next }, { onConflict: 'user_id,date,metric_id' })
+    // через очередь офлайн-записей (66.5а): онлайн — сразу как раньше, без сети — «принято локально», уйдёт при появлении сети
+    const { error: upErr } = await qUpsert(userId, 'daily_values', dailyValueKey(dateStr, metric.value.id), { user_id: userId, metric_id: metric.value.id, date: dateStr, value: next }, 'user_id,date,metric_id')
     if (upErr) {
       saveError.value = friendlyError(upErr, 'save')
       return null
     }
     saveError.value = null
+    dayCache.set(dateStr, next)
     if (dateStr === fmtDate(new Date())) todayMl.value = nextWaterValue(next, pendingToday) // + ещё не подтверждённые нажатия очереди
     if (record) {
       // Когда выпито: выбранное в окне время; иначе сейчас (сегодня) / 12:00 (прошлый день, вода задним числом).
@@ -169,17 +184,16 @@ export function useWater() {
   // (enqueueLog глотает ошибки); нет таблицы — запоминаем это и дальше не пытаемся.
   async function insertLog(dateStr: string, current: number, next: number, kind: WaterLogKind, at: number): Promise<void> {
     if (logAvailable.value === false || next === current) return
-    const { data, error: err } = await sb
-      .from('water_log')
-      .insert(buildLogInsert(userId, dateStr, next - current, next, kind, at))
-      .select('id, drank_at, delta_ml, total_after_ml, kind')
-      .single()
+    // id строки создаёт клиент: повторная отправка из очереди не даст дубль (BACKLOG 66.5а)
+    const id = newId()
+    const payload = { id, ...buildLogInsert(userId, dateStr, next - current, next, kind, at) }
+    const { error: err, queued } = await qInsert(userId, 'water_log', `water_log:${id}`, payload)
     if (err) {
       if (isMissingTable(err)) logAvailable.value = false
       return
     }
-    logAvailable.value = true
-    const row = rowFromDb(data as never)
+    if (!queued) logAvailable.value = true
+    const row = rowFromDb({ id, drank_at: payload.drank_at, delta_ml: payload.delta_ml, total_after_ml: payload.total_after_ml, kind })
     if (!row) return
     const stack = undoStacks.value[dateStr] ?? []
     const idx = stack.findIndex((e) => e.at === at && e.next === next && !e.logId)
@@ -188,7 +202,7 @@ export function useWater() {
   }
 
   async function deleteLog(dateStr: string, logId: string): Promise<void> {
-    const { error: err } = await sb.from('water_log').delete().eq('id', logId).eq('user_id', userId)
+    const { error: err } = await qDelete(userId, 'water_log', `water_log:${logId}`, { id: logId, user_id: userId })
     if (err) return
     serverLogs.value = { ...serverLogs.value, [dateStr]: (serverLogs.value[dateStr] ?? []).filter((r) => r.id !== logId) }
   }
@@ -235,7 +249,7 @@ export function useWater() {
       let res: number | null = null
       try {
         const current = await getMlForDate(dateStr)
-        res = await writeDay(dateStr, current, nextWaterValue(current, deltaMl), true, drankAt, 'add')
+        res = current === null ? unknownDay() : await writeDay(dateStr, current, nextWaterValue(current, deltaMl), true, drankAt, 'add')
       } finally {
         if (isToday && res === null) todayMl.value = nextWaterValue(todayMl.value, -deltaMl) // запись не удалась — убираем оптимистичную добавку
       }
@@ -248,6 +262,7 @@ export function useWater() {
     if (!metric.value || !Number.isFinite(ml) || ml < 0) return null
     return writeQueue.run(async () => {
       const current = await getMlForDate(dateStr)
+      if (current === null) return unknownDay()
       const next = Math.round(ml)
       if (next === current) return current
       return writeDay(dateStr, current, next, true, drankAt, 'edit')
@@ -265,6 +280,7 @@ export function useWater() {
       const top = stack[stack.length - 1]
       if (!top) return null
       const current = await getMlForDate(dateStr)
+      if (current === null) return unknownDay()
       if (!stackCanUndo(stack, current)) {
         setStack(dateStr, [])
         return null
@@ -289,6 +305,7 @@ export function useWater() {
       const row = dayLog(dateStr).rows.find((r) => r.id === rowId)
       if (!row) return null
       const current = await getMlForDate(dateStr)
+      if (current === null) return unknownDay()
       const { stack: nextStack, total } = removeRowFromStack(undoStacks.value[dateStr] ?? [], row, current)
       const res = total === current ? current : await writeDay(dateStr, current, total, false)
       if (res === null) return null

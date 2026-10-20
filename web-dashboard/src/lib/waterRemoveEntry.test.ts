@@ -28,6 +28,7 @@ vi.mock('./supabase', () => ({
           return chain
         },
         eq: (c: string, v: string) => ((f[c] = v), chain),
+        match: (o: Record<string, string>) => (Object.assign(f, o), chain), // удаление из очереди офлайн-записей идёт через .match({...})
         order: () => chain,
         limit: () => chain,
         single: () => {
@@ -35,11 +36,15 @@ vi.mock('./supabase', () => ({
           if (db.logFail) return Promise.resolve({ data: null, error: { code: 'XX000', message: 'boom' } })
           return Promise.resolve({ data: wl, error: null })
         },
+        // вставка идёт через очередь офлайн-записей (66.5а): id строки создаёт клиент (crypto.randomUUID замещён в beforeEach на log1, log2, …),
+        // ответ — { error }, как у supabase-js при `await insert(...)` без select
         insert: (row: any) => {
           db.inserts.push(row)
-          wl = { id: 'log' + ++db.seq, ...row }
+          wl = { ...row }
           if (!db.logMissing && !db.logFail) db.log.push(wl)
-          return chain
+          if (db.logMissing) return Promise.resolve({ error: { code: '42P01', message: 'relation "water_log" does not exist' } })
+          if (db.logFail) return Promise.resolve({ error: { code: 'XX000', message: 'boom' } })
+          return Promise.resolve({ error: null })
         },
         delete: () => ((op = 'delete'), chain),
         maybeSingle: () => Promise.resolve({ data: table === 'daily_values' && f.date in db.store ? { value: db.store[f.date] } : null, error: null }),
@@ -69,6 +74,9 @@ vi.mock('./supabase', () => ({
 }))
 
 import { useWater } from './useWater'
+import { setOutboxForTests } from './outboxClient'
+import { createOutbox, memoryStorage } from './offlineOutbox'
+import { sb } from './supabase'
 import { todayStr } from './date'
 import { timeToMs } from './waterLog'
 
@@ -89,6 +97,9 @@ async function addThree(w: Awaited<ReturnType<typeof fresh>>) {
 }
 
 beforeEach(() => {
+  setOutboxForTests(createOutbox({ client: sb as never, storage: memoryStorage() })) // чистая очередь на каждый тест: ключи log1… не должны липнуть между тестами
+  let uuidN = 0
+  vi.spyOn(globalThis.crypto, 'randomUUID').mockImplementation((() => 'log' + ++uuidN) as never)
   db.store = {}
   db.log = []
   db.logMissing = false
