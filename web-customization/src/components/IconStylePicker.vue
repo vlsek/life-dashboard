@@ -39,7 +39,7 @@ const attrs = (v: IconStyle) => {
         :data-active="current === v"
       >
         <div class="flex items-center justify-between gap-1" style="color: var(--text)" data-testid="iconstyle-preview">
-          <svg v-for="n in SAMPLE" :key="n" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" v-bind="attrs(v)" v-html="(ICON_PATHS as Record<string, string>)[n]"></svg>
+          <svg v-for="n in SAMPLE" :key="n" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" aria-hidden="true" v-bind="attrs(v)" v-html="(ICON_PATHS as Record<string, string>)[n]"></svg>
         </div>
         <p class="m-0 text-sm font-medium">{{ label(v) }}</p>
         <button
