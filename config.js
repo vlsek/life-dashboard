@@ -479,11 +479,14 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.31";
+const SITE_VERSION = "6.32";
 
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.32", date: "2026-10-20 12:00", changes: [
+        "«Календарь»: над сеткой месяца появилась карточка «Сегодня». В ней планы на сегодня («Планы: 1 из 5», первые пункты с отметками) и ближайшие сроки целей на две недели вперёд — просроченные подсвечены. Кнопка «Открыть день» открывает окно плана на сегодня; если планов нет, кнопка предлагает запланировать день. Карточка не зависит от того, какой месяц вы листаете, и обновляется после сохранения дня. Её можно скрыть в «Показывать»."
+    ]},
     { version: "6.31", date: "2026-10-20 13:00", changes: [
         "Офлайн-чтение: страницы запоминают последние загруженные данные и без сети показывают их (списки, графики, настройки — то, что ты открывал раньше). При выходе из аккаунта эти данные стираются.",
     ]},
@@ -2505,6 +2508,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.32", date: "2026-10-20 12:00", changes: [
+        "Calendar: a “Today” card now sits above the month grid. It shows today’s plans (“Plans: 1 of 5”, the first items with checkmarks) and the nearest goal deadlines over the next two weeks — overdue ones are highlighted. “Open day” opens today’s plan window; when there are no plans the button offers to plan the day. The card does not depend on which month you are browsing and refreshes after you save a day. You can hide it in “Show”."
+    ]},
     { version: "6.31", date: "2026-10-20 13:00", changes: [
         "Offline reading: pages remember the last data they loaded and show it without a connection (lists, charts, settings — whatever you opened before). When you sign out, this data is erased.",
     ]},
