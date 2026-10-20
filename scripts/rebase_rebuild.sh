@@ -10,7 +10,8 @@
 #   3. `python3 scripts/apply_themes.py` (если сообщит «изменено файлов» > 0 — файлы тем разошлись, смотрите git status).
 #   4. Пересобирает (`npm run build`, это vue-tsc + vite) пилоты, у которых менялись исходники — у upstream ИЛИ у вас
 #      (shared/ считается изменением всех пилотов). Можно задать список вручную: PILOTS="workouts dashboard" scripts/rebase_rebuild.sh
-#   5. Коммитит собранное одним коммитом «WIP rebuilt on merged sources».
+#   5. `python3 scripts/gen_sw_assets.py` — обновляет sw-assets.js (список предкэша service worker'а, BACKLOG 66.3; без него офлайн-старт
+#      не увидит новые файлы сборки) и коммитит собранное одним коммитом «WIP rebuilt on merged sources».
 #
 # Чего НЕ делает: не пушит, не поднимает версию, не трогает config.js / CHANGELOG / ROADMAP / BACKLOG / COORDINATION. Версию берите
 # ПОСЛЕ этого скрипта (git fetch → SITE_VERSION в origin/main + 1), оформляйте релизным коммитом и пушьте сразу; если `git fetch`
@@ -32,8 +33,9 @@ for d in web-*/; do
 done
 OUTDIRS=" ${OUT[*]} "
 
-is_built_path() { # файл лежит в собранной папке?
+is_built_path() { # файл лежит в собранной папке (или это sw-assets.js — его генерирует scripts/gen_sw_assets.py после пересборки)?
   local top=${1%%/*}
+  [ "$1" = "sw-assets.js" ] && return 0
   [[ "$OUTDIRS" == *" $top "* ]]
 }
 
@@ -56,7 +58,7 @@ if [ "$(git rev-list --count HEAD..origin/main)" != "0" ]; then
     for f in $U; do
       git checkout --ours -- "$f" 2>/dev/null || git rm -q --cached "$f" 2>/dev/null
     done
-    git add -A $(for d in "${!OUT[@]}"; do echo "${OUT[$d]}"; done | sort -u) 2>/dev/null
+    git add -A $(for d in "${!OUT[@]}"; do echo "${OUT[$d]}"; done | sort -u) sw-assets.js 2>/dev/null
     GIT_EDITOR=true git rebase --continue >/dev/null 2>&1
   done
   if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
@@ -88,7 +90,9 @@ for p in $TODO; do
   if (cd "$d" && timeout 280 npm run build > "/tmp/rebuild_$p.log" 2>&1); then echo "  $p: ок"; else echo "  $p: СБОРКА УПАЛА (лог /tmp/rebuild_$p.log)"; FAILED="$FAILED $p"; fi
 done
 
-git add -A $(for d in "${!OUT[@]}"; do echo "${OUT[$d]}"; done | sort -u) 2>/dev/null
+# список предкэша service worker'а (BACKLOG 66.3): после КАЖДОЙ пересборки пилотов; не нужен — пишет «без изменений»
+python3 scripts/gen_sw_assets.py
+git add -A $(for d in "${!OUT[@]}"; do echo "${OUT[$d]}"; done | sort -u) sw-assets.js 2>/dev/null
 if ! git diff --cached --quiet; then git commit -q -m "WIP rebuilt on merged sources"; echo "закоммичена пересборка"; fi
 
 git fetch -q
