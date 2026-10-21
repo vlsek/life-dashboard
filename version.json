@@ -1,7 +1,14 @@
 {
-  "version": "6.37",
+  "version": "6.38",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.38",
+      "date": "2026-10-21 12:00",
+      "changes": [
+        "Customization: two new water glass shapes — “Highball” (a tall slim glass with a straw, 100 points) and “Barrel” (a round barrel with hoops, 150 points). The chosen shape is used for the water icon in the header and on the Dashboard. Migration 105 is needed for them to appear in the shop."
+      ]
+    },
     {
       "version": "6.37",
       "date": "2026-10-20 17:00",
@@ -4529,6 +4536,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.38",
+      "date": "2026-10-21 12:00",
+      "changes": [
+        "«Кастомизация»: две новые формы стакана воды — «Хайбол» (высокий узкий стакан с соломинкой, 100 баллов) и «Бочонок» (круглый бочонок с обручами, 150 баллов). Выбранная форма применяется к значку воды в шапке и на Дашборде. Чтобы они появились в магазине, нужна миграция 105."
+      ]
+    },
     {
       "version": "6.37",
       "date": "2026-10-20 17:00",

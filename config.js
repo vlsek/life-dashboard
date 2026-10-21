@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.37";
+const SITE_VERSION = "6.38";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.38", date: "2026-10-21 12:00", changes: [
+        "«Кастомизация»: две новые формы стакана воды — «Хайбол» (высокий узкий стакан с соломинкой, 100 баллов) и «Бочонок» (круглый бочонок с обручами, 150 баллов). Выбранная форма применяется к значку воды в шапке и на Дашборде. Чтобы они появились в магазине, нужна миграция 105."
+    ]},
     { version: "6.37", date: "2026-10-20 17:00", changes: [
         "Когда выходит новая версия приложения, внизу экрана появляется плашка «Доступна новая версия» с кнопкой «Обновить» (можно отложить кнопкой «Позже»). Для приложения на телефоне добавлена проверка минимально поддерживаемой версии. Без миграций.",
     ]},
@@ -2527,6 +2530,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.38", date: "2026-10-21 12:00", changes: [
+        "Customization: two new water glass shapes — “Highball” (a tall slim glass with a straw, 100 points) and “Barrel” (a round barrel with hoops, 150 points). The chosen shape is used for the water icon in the header and on the Dashboard. Migration 105 is needed for them to appear in the shop."
+    ]},
     { version: "6.37", date: "2026-10-20 17:00", changes: [
         "When a new version of the app is released, a \"A new version is available\" note with an \"Update\" button appears at the bottom of the screen (you can postpone it with \"Later\"). The phone app also gets a check for the minimum supported version. No migrations.",
     ]},

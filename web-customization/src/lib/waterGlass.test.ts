@@ -17,7 +17,7 @@ describe('вид стакана воды (57.2б)', () => {
     expect(['glass_carafe', 'glass_teacup'].map((k) => priceOf(itemByKey(k)!))).toEqual([150, 100])
     expect(rarityOfItem('glass_carafe')).toBe('uncommon')
     expect(rarityOfItem('glass_teacup')).toBe('common')
-    // «Хайбол» 100 и «Бочонок» 150 (миграция 104)
+    // «Хайбол» 100 и «Бочонок» 150 (миграция 105)
     expect(['glass_highball', 'glass_barrel'].map((k) => priceOf(itemByKey(k)!))).toEqual([100, 150])
     expect(rarityOfItem('glass_highball')).toBe('common')
     expect(rarityOfItem('glass_barrel')).toBe('uncommon')
