@@ -1,7 +1,14 @@
 {
-  "version": "6.39",
+  "version": "6.40",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.40",
+      "date": "2026-10-21 16:10",
+      "changes": [
+        "Rewards shop: a “Bought: …” note with a small animation now appears after a purchase."
+      ]
+    },
     {
       "version": "6.39",
       "date": "2026-10-21 07:00",
@@ -4543,6 +4550,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.40",
+      "date": "2026-10-21 16:10",
+      "changes": [
+        "Магазин наград: после покупки появляется плашка «Куплено: …» с небольшой анимацией."
+      ]
+    },
     {
       "version": "6.39",
       "date": "2026-10-21 07:00",

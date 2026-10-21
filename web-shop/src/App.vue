@@ -33,10 +33,17 @@ const archiveOpen = ref(false)
 const archiveShown = computed(() => archiveOpen.value || items.value.length === 0)
 // Ошибка действия (покупка/перенос): в режиме огоньков БД не даст потратить больше накопленного — показываем понятный текст
 const actionError = ref<string | null>(null)
+// Подтверждение покупки (67.2): короткая плашка «Куплено: …», сама исчезает через 4 с
+const justBought = ref<string | null>(null)
+let boughtTimer: ReturnType<typeof setTimeout> | undefined
 async function onBuy(id: string) {
   actionError.value = null
+  const name = items.value.find((i) => i.id === id)?.name ?? null
   try {
     await buyItem(id)
+    justBought.value = name
+    clearTimeout(boughtTimer)
+    boughtTimer = setTimeout(() => (justBought.value = null), 4000)
   } catch (e) {
     actionError.value = e instanceof Error ? e.message : String(e)
   }
@@ -90,6 +97,7 @@ async function onUpload(file: File): Promise<string | null> {
 
     <BalanceCard :balance="balance" :variant="view === 'list' ? 'list' : 'grid'" :goal="goal" />
 
+    <p v-if="justBought" class="goal-pop mb-2 rounded-xl border px-3 py-2 text-sm font-medium" style="border-color: var(--accent)" role="status" data-testid="bought-toast"><EmojiText :text="t('shop_bought_toast')" /> {{ justBought }}</p>
     <p v-if="actionError" class="mb-2 text-sm" style="color: var(--danger)" role="alert" data-testid="action-error">{{ actionError }}</p>
     <p v-if="error" class="dim">{{ t('comm_load_error') }} {{ error }}</p>
     <p v-else-if="items.length === 0" class="dim">{{ t('shop_list_empty') }}</p>

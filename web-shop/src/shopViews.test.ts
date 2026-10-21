@@ -197,3 +197,19 @@ describe('Магазин — «Список»: кольцо баланса (ма
     expect(w.find('[data-testid="goal-bar"]').exists()).toBe(true)
   })
 })
+
+describe('Магазин — подтверждение покупки', () => {
+  it('shows a "Куплено" note with the item name after a successful buy; none on failure', async () => {
+    localStorage.setItem('shop_view', 'grid')
+    h.buyItem.mockResolvedValue(undefined)
+    const w = setup(300)
+    await w.findAll('[data-testid="shop-card"]')[1].find('[data-testid="buy-btn"]').trigger('click')
+    await flushPromises()
+    expect(w.find('[data-testid="bought-toast"]').text()).toContain('movie')
+    h.buyItem.mockRejectedValue(new Error('x'))
+    const w2 = setup(300)
+    await w2.findAll('[data-testid="shop-card"]')[1].find('[data-testid="buy-btn"]').trigger('click')
+    await flushPromises()
+    expect(w2.find('[data-testid="bought-toast"]').exists()).toBe(false)
+  })
+})

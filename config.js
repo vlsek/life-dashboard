@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.39";
+const SITE_VERSION = "6.40";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.40", date: "2026-10-21 16:10", changes: [
+        "Магазин наград: после покупки появляется плашка «Куплено: …» с небольшой анимацией.",
+    ]},
     { version: "6.39", date: "2026-10-21 07:00", changes: [
         "Магазин наград: новый вид «Цель» — крупная карточка ближайшей награды с полосой «сколько накоплено» и оценкой «≈ N дн. в вашем темпе», ниже список с прогрессом. Теперь три вида на выбор — «Цель» (по умолчанию), «Витрина» и «Список»; уже выбранный вид сохраняется.",
     ]},
@@ -2533,6 +2536,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.40", date: "2026-10-21 16:10", changes: [
+        "Rewards shop: a “Bought: …” note with a small animation now appears after a purchase.",
+    ]},
     { version: "6.39", date: "2026-10-21 07:00", changes: [
         "Rewards shop: a new “Goal” view — a big card for the next reward with a saved-so-far bar and an “≈ N d at your pace” estimate, and a list with progress below. Three views to choose from now — “Goal” (default), “Showcase” and “List”; a view you already picked is kept.",
     ]},
