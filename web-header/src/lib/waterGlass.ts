@@ -3,11 +3,11 @@
 // Выбор лежит в profiles.customization.water_glass (ключ предмета); страницы применяют его БЕЗ ожидания сети — через кэш в localStorage
 // (как вид спидометра): кэш пишет «Кастомизация» при выборе, шапка и Дашборд сверяются с профилем в фоне. Чистая логика (без Vue/сети).
 // Пилоты изолированы, поэтому файл ЕСТЬ в web-customization, web-header и web-dashboard (менять ВМЕСТЕ — страж в collapseStyleCopies.test.ts).
-export type WaterGlassStyle = 'glass' | 'mug' | 'bottle' | 'flask' | 'goblet' | 'tumbler' | 'jar' | 'beaker' | 'pitcher' | 'carafe' | 'teacup'
+export type WaterGlassStyle = 'glass' | 'mug' | 'bottle' | 'flask' | 'goblet' | 'tumbler' | 'jar' | 'beaker' | 'pitcher' | 'carafe' | 'teacup' | 'highball' | 'barrel'
 
 export const WATER_GLASS_CACHE_KEY = 'site_water_glass'
 
-export const BY_ITEM: Record<string, WaterGlassStyle> = { glass_mug: 'mug', glass_bottle: 'bottle', glass_flask: 'flask', glass_goblet: 'goblet', glass_tumbler: 'tumbler', glass_jar: 'jar', glass_beaker: 'beaker', glass_pitcher: 'pitcher', glass_carafe: 'carafe', glass_teacup: 'teacup' }
+export const BY_ITEM: Record<string, WaterGlassStyle> = { glass_mug: 'mug', glass_bottle: 'bottle', glass_flask: 'flask', glass_goblet: 'goblet', glass_tumbler: 'tumbler', glass_jar: 'jar', glass_beaker: 'beaker', glass_pitcher: 'pitcher', glass_carafe: 'carafe', glass_teacup: 'teacup', glass_highball: 'highball', glass_barrel: 'barrel' }
 
 export function parseWaterGlass(raw: unknown): WaterGlassStyle {
   return typeof raw === 'string' && Object.prototype.hasOwnProperty.call(BY_ITEM, raw) ? BY_ITEM[raw] : 'glass'
@@ -16,7 +16,7 @@ export function parseWaterGlass(raw: unknown): WaterGlassStyle {
 export function readCachedWaterGlass(): WaterGlassStyle {
   try {
     const v = localStorage.getItem(WATER_GLASS_CACHE_KEY)
-    return v === 'mug' || v === 'bottle' || v === 'flask' || v === 'goblet' || v === 'tumbler' || v === 'jar' || v === 'beaker' || v === 'pitcher' || v === 'carafe' || v === 'teacup' ? v : 'glass'
+    return v === 'mug' || v === 'bottle' || v === 'flask' || v === 'goblet' || v === 'tumbler' || v === 'jar' || v === 'beaker' || v === 'pitcher' || v === 'carafe' || v === 'teacup' || v === 'highball' || v === 'barrel' ? v : 'glass'
   } catch {
     return 'glass'
   }
@@ -118,6 +118,20 @@ export const GLASS_SHAPES: Record<WaterGlassStyle, GlassShape> = {
     bottom: 19.4,
     lines: ['M4 8h13', 'M17 10h1.5q2.5 0 2.5 3t-2.5 3H16.5', 'M2.5 24h16'], // ободок, ручка и блюдце
     shine: 'M6.4 11l0.3 4',
+  },
+  highball: {
+    body: 'M7.6 3.8h8.8v19.2q0 3.2-3.2 3.2h-2.4q-3.2 0-3.2-3.2z',
+    top: 5,
+    bottom: 24.8,
+    lines: ['M7.6 3.8a4.4 .9 0 1 0 8.8 0a4.4 .9 0 1 0 -8.8 0', 'M14.2 1l-2.6 12'], // ободок и соломинка
+    shine: 'M14.2 8v12',
+  },
+  barrel: {
+    body: 'M5.2 5h13.6c2.6 4.4 2.6 15.6 0 20H5.2C2.6 20.6 2.6 9.4 5.2 5z',
+    top: 6,
+    bottom: 24,
+    lines: ['M5.2 5a6.8 1.1 0 1 0 13.6 0a6.8 1.1 0 1 0 -13.6 0', 'M3.5 10.6h17', 'M3.2 19.4h17.6'], // крышка-ободок и два обруча
+    shine: 'M6.8 9v12',
   },
 }
 

@@ -104,6 +104,8 @@ export const ITEM_RARITY: Record<string, Rarity> = {
   glass_pitcher: 'rare', // 250
   glass_carafe: 'uncommon', // 150
   glass_teacup: 'common', // 100
+  glass_highball: 'common', // 100
+  glass_barrel: 'uncommon', // 150
   water_rain: 'common', // анимации воды (54.9): 100 → обычный, 150 → необычный, 250 → редкий
   water_tide: 'uncommon',
   water_sparkle: 'rare',
