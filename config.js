@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.38";
+const SITE_VERSION = "6.39";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.39", date: "2026-10-21 07:00", changes: [
+        "Магазин наград: новый вид «Цель» — крупная карточка ближайшей награды с полосой «сколько накоплено» и оценкой «≈ N дн. в вашем темпе», ниже список с прогрессом. Теперь три вида на выбор — «Цель» (по умолчанию), «Витрина» и «Список»; уже выбранный вид сохраняется.",
+    ]},
     { version: "6.38", date: "2026-10-21 12:00", changes: [
         "«Кастомизация»: две новые формы стакана воды — «Хайбол» (высокий узкий стакан с соломинкой, 100 баллов) и «Бочонок» (круглый бочонок с обручами, 150 баллов). Выбранная форма применяется к значку воды в шапке и на Дашборде. Чтобы они появились в магазине, нужна миграция 105."
     ]},
@@ -2530,6 +2533,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.39", date: "2026-10-21 07:00", changes: [
+        "Rewards shop: a new “Goal” view — a big card for the next reward with a saved-so-far bar and an “≈ N d at your pace” estimate, and a list with progress below. Three views to choose from now — “Goal” (default), “Showcase” and “List”; a view you already picked is kept.",
+    ]},
     { version: "6.38", date: "2026-10-21 12:00", changes: [
         "Customization: two new water glass shapes — “Highball” (a tall slim glass with a straw, 100 points) and “Barrel” (a round barrel with hoops, 150 points). The chosen shape is used for the water icon in the header and on the Dashboard. Migration 105 is needed for them to appear in the shop."
     ]},

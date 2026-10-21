@@ -27,6 +27,7 @@ function setup() {
 beforeEach(() => {
   localStorage.clear()
   localStorage.setItem('site_lang', 'ru')
+  localStorage.setItem('shop_view', 'grid')
   document.body.innerHTML = ''
 })
 

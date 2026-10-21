@@ -39,7 +39,7 @@ const saving = computed(() => !props.item.redeemed && !p.value.canBuy)
     </div>
 
     <button v-if="!item.redeemed && p.canBuy && balance !== null" class="shrink-0 px-3 py-1 text-sm" data-testid="buy-btn" @click="emit('buy', item.id)"><EmojiText :text="t('shop_buy_btn')" /></button>
-    <span class="flex shrink-0 whitespace-nowrap">
+    <span class="flex shrink-0 whitespace-nowrap opacity-60 transition-opacity focus-within:opacity-100 hover:opacity-100" data-testid="item-actions">
       <button class="secondary mr-1 px-2" :aria-label="t('shop_edit_title')" data-testid="edit-btn" @click="emit('edit', item)"><Icon name="edit" /></button>
       <button class="danger px-2" data-testid="delete-btn" @click="emit('remove', item)"><Icon name="trash" /></button>
     </span>

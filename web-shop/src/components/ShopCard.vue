@@ -29,10 +29,10 @@ const emit = defineEmits<{ buy: [id: string]; edit: [item: ShopItem]; remove: [i
     <div class="mt-2">
       <span v-if="item.redeemed" class="dim text-sm"><EmojiText :text="t('shop_bought_prefix')" /> {{ fmtDateRu(item.redeemed_date) }}</span>
       <button v-else-if="balance !== null && balance >= item.cost" data-testid="buy-btn" @click="emit('buy', item.id)"><EmojiText :text="t('shop_buy_btn')" /></button>
-      <button v-else disabled>{{ t('shop_not_enough') }} {{ balance !== null ? item.cost - balance : item.cost }} <CoinIcon /></button>
+      <button v-else disabled class="secondary" style="opacity: 0.75">{{ t('shop_not_enough') }} {{ balance !== null ? item.cost - balance : item.cost }} <CoinIcon /></button>
     </div>
 
-    <div class="mt-auto whitespace-nowrap pt-2">
+    <div class="mt-auto whitespace-nowrap pt-2 opacity-60 transition-opacity focus-within:opacity-100 hover:opacity-100" data-testid="item-actions">
       <button class="secondary mr-1 px-2" :aria-label="t('shop_edit_title')" data-testid="edit-btn" @click="emit('edit', item)"><Icon name="edit" /></button>
       <button class="danger px-2" data-testid="delete-btn" @click="emit('remove', item)"><Icon name="trash" /></button>
     </div>

@@ -30,14 +30,25 @@ const goalProgress = computed(() => (props.goal && props.balance ? itemProgress(
     </template>
 
     <template v-else>
-      <div class="flex flex-wrap items-baseline justify-between gap-2">
-        <strong class="inline-flex items-center gap-1.5 text-lg" data-testid="balance-value">{{ balance.balance }} {{ sparksMode ? t('shop_sparks_word') : t('shop_points_word') }} <CoinIcon /></strong>
-        <span v-if="goal" class="dim text-sm" data-testid="goal-label">{{ t('shop_saving_for') }} {{ goal.name }}, {{ goal.cost }}</span>
+      <div class="flex items-center gap-4">
+        <div class="relative h-20 w-20 shrink-0" data-testid="balance-ring">
+          <svg viewBox="0 0 88 88" class="h-full w-full" aria-hidden="true">
+            <circle cx="44" cy="44" r="38" fill="none" stroke="var(--border)" stroke-width="10" />
+            <circle cx="44" cy="44" r="38" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="239" :stroke-dashoffset="239 - (239 * (goalProgress?.pct ?? 0)) / 100" transform="rotate(-90 44 44)" />
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <strong class="text-lg leading-none" data-testid="balance-value">{{ balance.balance }}</strong>
+            <span class="dim text-[11px]">{{ sparksMode ? t('shop_sparks_word') : t('shop_points_word') }}</span>
+          </div>
+        </div>
+        <div class="min-w-0 flex-1">
+          <div v-if="goal" class="text-sm font-semibold" data-testid="goal-label">{{ t('shop_saving_for') }} {{ goal.name }}, {{ goal.cost }}</div>
+          <div v-if="goalProgress" class="mt-2 h-2 w-full overflow-hidden rounded-full" style="background: var(--border)" role="progressbar" :aria-valuenow="goalProgress.pct" aria-valuemin="0" aria-valuemax="100" data-testid="goal-bar">
+            <div class="h-full rounded-full" :style="{ width: goalProgress.pct + '%', background: 'var(--accent)', transition: 'width 0.4s ease' }" />
+          </div>
+          <div class="dim mt-1.5 text-xs">{{ t('shop_total_earned') }} {{ balance.total }} · {{ t('shop_total_spent') }} {{ balance.spent }}</div>
+        </div>
       </div>
-      <div v-if="goalProgress" class="mt-2 h-2 w-full overflow-hidden rounded-full" style="background: var(--border)" role="progressbar" :aria-valuenow="goalProgress.pct" aria-valuemin="0" aria-valuemax="100" data-testid="goal-bar">
-        <div class="h-full rounded-full" :style="{ width: goalProgress.pct + '%', background: 'var(--accent)', transition: 'width 0.4s ease' }" />
-      </div>
-      <div class="dim mt-1.5 text-xs">{{ t('shop_total_earned') }} {{ balance.total }} · {{ t('shop_total_spent') }} {{ balance.spent }}</div>
     </template>
   </div>
 </template>

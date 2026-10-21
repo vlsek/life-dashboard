@@ -5,7 +5,8 @@ import type { ShopView } from '../lib/shopView'
 defineProps<{ modelValue: ShopView }>()
 const emit = defineEmits<{ 'update:modelValue': [view: ShopView] }>()
 
-const options: { value: ShopView; labelKey: 'shop_view_grid' | 'shop_view_list' }[] = [
+const options: { value: ShopView; labelKey: 'shop_view_focus' | 'shop_view_grid' | 'shop_view_list' }[] = [
+  { value: 'focus', labelKey: 'shop_view_focus' },
   { value: 'grid', labelKey: 'shop_view_grid' },
   { value: 'list', labelKey: 'shop_view_list' },
 ]

@@ -1,7 +1,14 @@
 {
-  "version": "6.38",
+  "version": "6.39",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.39",
+      "date": "2026-10-21 07:00",
+      "changes": [
+        "Rewards shop: a new “Goal” view — a big card for the next reward with a saved-so-far bar and an “≈ N d at your pace” estimate, and a list with progress below. Three views to choose from now — “Goal” (default), “Showcase” and “List”; a view you already picked is kept."
+      ]
+    },
     {
       "version": "6.38",
       "date": "2026-10-21 12:00",
@@ -4536,6 +4543,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.39",
+      "date": "2026-10-21 07:00",
+      "changes": [
+        "Магазин наград: новый вид «Цель» — крупная карточка ближайшей награды с полосой «сколько накоплено» и оценкой «≈ N дн. в вашем темпе», ниже список с прогрессом. Теперь три вида на выбор — «Цель» (по умолчанию), «Витрина» и «Список»; уже выбранный вид сохраняется."
+      ]
+    },
     {
       "version": "6.38",
       "date": "2026-10-21 12:00",

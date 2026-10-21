@@ -64,6 +64,7 @@ async function mountApp() {
 beforeEach(() => {
   localStorage.clear()
   localStorage.setItem('site_lang', 'ru')
+  localStorage.setItem('shop_view', 'grid')
   localStorage.setItem('shop_idea_seen', '1')
   document.body.innerHTML = ''
   sparksMode.value = false

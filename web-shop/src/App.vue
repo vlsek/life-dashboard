@@ -7,6 +7,7 @@ import ShopCard from './components/ShopCard.vue'
 import ShopFilters from './components/ShopFilters.vue'
 import ShopIdea from './components/ShopIdea.vue'
 import ShopRow from './components/ShopRow.vue'
+import NextGoalHero from './components/NextGoalHero.vue'
 import ArchivedRow from './components/ArchivedRow.vue'
 import { sparksMode } from './lib/sparks'
 import { dailyRate } from './lib/priceScale'
@@ -54,6 +55,7 @@ const counts = computed(() => filterCounts(items.value, have.value))
 const shown = computed(() => filterItems(items.value, have.value, filter.value))
 const groups = computed(() => splitItems(items.value, have.value))
 const goal = computed(() => savingGoal(items.value, have.value))
+const rate = computed(() => dailyRate(balance.value?.total, createdAt.value, sparksMode.value))
 
 const formTarget = ref<ShopItem | 'new' | null>(null)
 
@@ -86,11 +88,21 @@ async function onUpload(file: File): Promise<string | null> {
       <ViewSwitch v-model="view" />
     </div>
 
-    <BalanceCard :balance="balance" :variant="view" :goal="goal" />
+    <BalanceCard :balance="balance" :variant="view === 'list' ? 'list' : 'grid'" :goal="goal" />
 
     <p v-if="actionError" class="mb-2 text-sm" style="color: var(--danger)" role="alert" data-testid="action-error">{{ actionError }}</p>
     <p v-if="error" class="dim">{{ t('comm_load_error') }} {{ error }}</p>
     <p v-else-if="items.length === 0" class="dim">{{ t('shop_list_empty') }}</p>
+
+    <!-- Цель (67.2): карточка ближайшей награды, чипы и строки с прогрессом -->
+    <template v-else-if="view === 'focus'">
+      <NextGoalHero :goal="goal" :balance="have" :rate="rate" :ready-count="groups.affordable.length" />
+      <ShopFilters v-model="filter" :counts="counts" />
+      <p v-if="shown.length === 0" class="dim text-sm" data-testid="empty-filter">{{ filter === 'affordable' ? (sparksMode ? t('shop_empty_affordable_sparks') : t('shop_empty_affordable')) : t('shop_empty_filter') }}</p>
+      <div v-else class="flex flex-col gap-1.5" data-testid="focus-view">
+        <ShopRow v-for="item in shown" :key="item.id" :item="item" :balance="have" @buy="onBuy" @edit="formTarget = $event" @remove="onDelete" />
+      </div>
+    </template>
 
     <!-- Витрина: чипы-фильтры и сетка карточек -->
     <template v-else-if="view === 'grid'">

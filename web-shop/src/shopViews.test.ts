@@ -27,6 +27,8 @@ function setup(balance: number | null = 300, items?: ShopItem[]) {
       ],
     ),
     balance: ref(balance === null ? null : { total: balance + 100, spent: 100, balance }),
+    createdAt: ref(null),
+    archived: ref([]),
     error: ref(null),
     init: vi.fn(),
     addItem: vi.fn(),
@@ -41,6 +43,7 @@ function setup(balance: number | null = 300, items?: ShopItem[]) {
 beforeEach(() => {
   localStorage.clear()
   localStorage.setItem('site_lang', 'ru')
+  localStorage.setItem('shop_view', 'grid')
   h.buyItem.mockReset()
   h.deleteItem.mockReset()
   document.body.innerHTML = ''
@@ -154,5 +157,43 @@ describe('Магазин — пустые и загрузочные состоя
     expect(w.text()).toContain('Список пуст')
     const loading = setup(null)
     expect(loading.find('[data-testid="balance-card"]').text()).toContain('Загрузка')
+  })
+})
+
+describe('Магазин — вид «Цель» (по умолчанию для новых)', () => {
+  it('is the default, shows the next goal hero and rows, switcher has three options', () => {
+    localStorage.removeItem('shop_view')
+    const w = setup(300)
+    expect(w.find('[data-testid="focus-view"]').exists()).toBe(true)
+    expect(w.find('[data-testid="goal-hero-name"]').text()).toBe('shoes')
+    expect(w.find('[data-testid="goal-hero-bar"]').attributes('aria-valuenow')).toBe('37')
+    expect(w.find('[data-testid="goal-hero-days"]').exists()).toBe(true)
+    expect(w.findAll('[data-testid="shop-row"]')).toHaveLength(4)
+    expect(w.findAll('[data-testid="view-switch"] button')).toHaveLength(3)
+  })
+  it('switching to the showcase and back persists the choice', async () => {
+    localStorage.removeItem('shop_view')
+    const w = setup(300)
+    await w.find('[data-view="grid"]').trigger('click')
+    expect(w.find('[data-testid="grid-view"]').exists()).toBe(true)
+    expect(localStorage.getItem('shop_view')).toBe('grid')
+    await w.find('[data-view="focus"]').trigger('click')
+    expect(w.find('[data-testid="focus-view"]').exists()).toBe(true)
+  })
+  it('without a saving goal shows the "can buy now" note instead of the hero', () => {
+    localStorage.removeItem('shop_view')
+    const w = setup(1000)
+    expect(w.find('[data-testid="goal-hero"]').exists()).toBe(false)
+    expect(w.find('[data-testid="goal-hero-ready"]').exists()).toBe(true)
+  })
+})
+
+describe('Магазин — «Список»: кольцо баланса (макет C)', () => {
+  it('shows the ring with the balance and the goal bar', () => {
+    localStorage.setItem('shop_view', 'list')
+    const w = setup(300)
+    expect(w.find('[data-testid="balance-ring"]').exists()).toBe(true)
+    expect(w.find('[data-testid="balance-value"]').text()).toBe('300')
+    expect(w.find('[data-testid="goal-bar"]').exists()).toBe(true)
   })
 })
