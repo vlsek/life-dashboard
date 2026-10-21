@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.36";
+const SITE_VERSION = "6.37";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.37", date: "2026-10-20 17:00", changes: [
+        "Когда выходит новая версия приложения, внизу экрана появляется плашка «Доступна новая версия» с кнопкой «Обновить» (можно отложить кнопкой «Позже»). Для приложения на телефоне добавлена проверка минимально поддерживаемой версии. Без миграций.",
+    ]},
     { version: "6.36", date: "2026-10-20 19:38", changes: [
         "«Кастомизация» → «Стиль иконок»: шестой стиль — «Дуотон». Замкнутые фигуры иконок (кружки, шестерёнка, сумка, корзина, календарь, письмо, кубок…) получают мягкую тонировку, а открытые линии (стрелки, плюс, графики, галочки) остаются обычным штрихом. Как и остальные стили — применяется сразу на всех страницах, переносится между устройствами и входит в «Образы». Бесплатно.",
     ]},
@@ -2524,6 +2527,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.37", date: "2026-10-20 17:00", changes: [
+        "When a new version of the app is released, a \"A new version is available\" note with an \"Update\" button appears at the bottom of the screen (you can postpone it with \"Later\"). The phone app also gets a check for the minimum supported version. No migrations.",
+    ]},
     { version: "6.36", date: "2026-10-20 19:38", changes: [
         "Customization → “Icon style”: a sixth style — “Duotone”. Closed shapes of icons (circles, the gear, bag, bin, calendar, envelope, trophy…) get a soft tint, while open lines (arrows, plus, charts, check marks) stay a plain stroke. Like the other styles it applies at once on all pages, syncs between devices and is part of “Looks”. Free.",
     ]},

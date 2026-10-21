@@ -1,7 +1,14 @@
 {
-  "version": "6.36",
+  "version": "6.37",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.37",
+      "date": "2026-10-20 17:00",
+      "changes": [
+        "When a new version of the app is released, a \"A new version is available\" note with an \"Update\" button appears at the bottom of the screen (you can postpone it with \"Later\"). The phone app also gets a check for the minimum supported version. No migrations."
+      ]
+    },
     {
       "version": "6.36",
       "date": "2026-10-20 19:38",
@@ -4522,6 +4529,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.37",
+      "date": "2026-10-20 17:00",
+      "changes": [
+        "Когда выходит новая версия приложения, внизу экрана появляется плашка «Доступна новая версия» с кнопкой «Обновить» (можно отложить кнопкой «Позже»). Для приложения на телефоне добавлена проверка минимально поддерживаемой версии. Без миграций."
+      ]
+    },
     {
       "version": "6.36",
       "date": "2026-10-20 19:38",
