@@ -8,7 +8,7 @@ const mountAv = (frame: string | null | undefined) => mount(AvatarProgress, { pr
 
 describe('AvatarProgress: рамки-орнаменты', () => {
   it('у «Шины» и «Штурвала» есть SVG-слой под кольцом, в боксе кольца 52px, рисунок выходит за бокс', () => {
-    for (const frame of ['frame_wreath', 'frame_tyre', 'frame_helm']) {
+    for (const frame of ['frame_wreath', 'frame_tyre', 'frame_helm', 'frame_ferris', 'frame_baroque']) {
       const w = mountAv(frame)
       const d = w.get('svg[data-test="avatar-decor"]')
       expect(d.attributes('width')).toBe('52')

@@ -1,4 +1,4 @@
-// Рамки-орнаменты «не кругом» (BACKLOG 44.18з, срезы 1–2): SVG-слой ВОКРУГ аватара, выходящий за его контур (венок, лианы, вензель, шина, штурвал).
+// Рамки-орнаменты «не кругом» (BACKLOG 44.18з, срезы 1–3): SVG-слой ВОКРУГ аватара, выходящий за его контур (венок, лианы, вензель, шина, штурвал, колесо обозрения, барокко).
 // Система координат слоя — viewBox 0..100, аватар — круг радиуса 50 в центре (50,50), поэтому слой совпадает с боксом аватара при любом
 // размере, а рисунок лежит снаружи круга (радиус ≈ 50–66) и виден за счёт `overflow: visible` у <svg> (см. FrameDecor.vue).
 // Обычный box-shadow рамки (frames.ts) остаётся тонким кольцом под орнаментом. Рамки без орнамента сюда не попадают и рисуются как раньше.
@@ -94,7 +94,37 @@ function helm(): string {
   return g
 }
 
-const BUILDERS: Record<string, () => string> = { frame_wreath: wreath, frame_vines: vines, frame_flourish: flourish, frame_tyre: tyre, frame_helm: helm }
+// «Колесо обозрения»: тонкий стальной обод и двенадцать цветных кабинок на коротких стойках, вынесенных наружу.
+function ferris(): string {
+  const colors = ['#ff6b6b', '#ffa94d', '#ffd43b', '#8ce99a', '#38d9a9', '#4dabf7', '#748ffc', '#da77f2', '#f783ac', '#ff8787', '#ffc078', '#69db7c']
+  let g = '<circle cx="50" cy="50" r="55" fill="none" stroke="#8a93a6" stroke-width="1.5" /><circle cx="50" cy="50" r="52.6" fill="none" stroke="#b5bccb" stroke-width=".7" />'
+  for (let k = 0; k < 12; k++) {
+    const a = k * 30 - 90
+    const [x1, y1] = pt(a, 55)
+    const [x2, y2] = pt(a, 58.3)
+    const [cx, cy] = pt(a, 61.6)
+    g += `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(x2)}" y2="${f1(y2)}" stroke="#8a93a6" stroke-width="1.1" /><circle cx="${f1(cx)}" cy="${f1(cy)}" r="3.5" fill="${colors[k]}" stroke="#ffffff" stroke-width=".8" />`
+  }
+  return g
+}
+
+// «Барокко»: двойной золотой обод, жемчужины по кругу и четыре лилии по сторонам света.
+function baroque(): string {
+  let g = '<circle cx="50" cy="50" r="52.4" fill="none" stroke="#d9ad3b" stroke-width="1.7" /><circle cx="50" cy="50" r="55" fill="none" stroke="#c4921f" stroke-width=".7" />'
+  for (let i = 0; i < 24; i++) {
+    if (i % 6 === 0) continue // на сторонах света стоят лилии
+    const [x, y] = pt(i * 15, 53.7)
+    g += `<circle cx="${f1(x)}" cy="${f1(y)}" r="1.15" fill="#f1e2b0" stroke="#c4921f" stroke-width=".4" />`
+  }
+  const lily = 'M0 0C-3 -4 -3 -9 0 -14C3 -9 3 -4 0 0ZM-1 -1C-6 -1 -9 -6 -6.5 -10C-5.5 -6.5 -3.5 -4.5 -1 -3ZM1 -1C6 -1 9 -6 6.5 -10C5.5 -6.5 3.5 -4.5 1 -3Z'
+  for (const a of [0, 90, 180, 270]) {
+    const [x, y] = pt(a - 90, 55)
+    g += `<g transform="translate(${f1(x)} ${f1(y)}) rotate(${a})"><path d="${lily}" fill="#d9ad3b" stroke="#a67c14" stroke-width=".6" stroke-linejoin="round" /><rect x="-3.2" y="0" width="6.4" height="1.6" rx=".6" fill="#c4921f" /></g>`
+  }
+  return g
+}
+
+const BUILDERS: Record<string, () => string> = { frame_wreath: wreath, frame_vines: vines, frame_flourish: flourish, frame_tyre: tyre, frame_helm: helm, frame_ferris: ferris, frame_baroque: baroque }
 const cache = new Map<string, string>()
 
 // SVG-разметка орнамента для рамки (внутренность <svg viewBox="0 0 100 100">); нет орнамента или неизвестный ключ — пустая строка.

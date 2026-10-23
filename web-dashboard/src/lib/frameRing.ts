@@ -42,6 +42,8 @@ const RING: Record<string, FrameRingStyle> = {
   frame_flourish: { stops: ['#d9ad3b', '#a67c14'], glow: null, anim: null },
   frame_tyre: { stops: ['#6b6e7b', '#454751'], glow: null, anim: null },
   frame_helm: { stops: ['#b7843f', '#7a4b21'], glow: null, anim: null },
+  frame_ferris: { stops: ['#8a93a6', '#4dabf7'], glow: null, anim: null },
+  frame_baroque: { stops: ['#e3c06a', '#a67c14'], glow: null, anim: null },
 }
 
 export const FRAME_RING_KEYS = Object.keys(RING)

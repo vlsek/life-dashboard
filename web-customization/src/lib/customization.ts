@@ -55,6 +55,8 @@ export const ITEMS: readonly CustomItem[] = [
   { key: 'frame_flourish', category: 'avatar_frame', source: 'points', tier: 'high' },
   { key: 'frame_tyre', category: 'avatar_frame', source: 'points', tier: 'mid' },
   { key: 'frame_helm', category: 'avatar_frame', source: 'points', tier: 'high' },
+  { key: 'frame_ferris', category: 'avatar_frame', source: 'points', tier: 'mid' },
+  { key: 'frame_baroque', category: 'avatar_frame', source: 'points', tier: 'high' },
   // Вид сворачивания блоков (BACKLOG 498): базовый шеврон бесплатен у всех (это «ничего не выбрано»); «аккордеон» — 150 (владелец 2026-10-03)
   { key: 'collapse_accordion', category: 'collapse_style', source: 'points', tier: 'mid' },
   // «Карточка со сводкой» (BACKLOG 498 срез 3): свёрнутый блок показывает справа от заголовка короткую строку итога; высокий тариф = 250 (владелец 2026-10-03)

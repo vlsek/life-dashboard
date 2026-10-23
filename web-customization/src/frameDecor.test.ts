@@ -17,7 +17,7 @@ const count = (s: string, re: RegExp) => (s.match(re) ?? []).length
 // BACKLOG 44.18з (срез 1): рамки-орнаменты «не кругом» — SVG-слой вокруг аватара (lib/frameDecor.ts + FrameDecor.vue).
 describe('реестр орнаментов', () => {
   it('три рамки с орнаментом: венок, лианы, вензель; у остальных и у мусора — пустая строка', () => {
-    expect(FRAME_DECOR_KEYS).toEqual(['frame_wreath', 'frame_vines', 'frame_flourish', 'frame_tyre', 'frame_helm'])
+    expect(FRAME_DECOR_KEYS).toEqual(['frame_wreath', 'frame_vines', 'frame_flourish', 'frame_tyre', 'frame_helm', 'frame_ferris', 'frame_baroque'])
     for (const k of FRAME_DECOR_KEYS) expect(frameDecor(k).length, k).toBeGreaterThan(200)
     for (const k of ['frame_neon', 'frame_gold', 'нет_такой', '', null, undefined]) expect(frameDecor(k as never)).toBe('')
   })
@@ -50,6 +50,16 @@ describe('реестр орнаментов', () => {
     const h = frameDecor('frame_helm')
     expect(count(h, /<line /g)).toBe(8)
     expect(count(h, /<circle /g)).toBe(2 + 8 + 8) // два кольца обода, восемь набалдашников, восемь заклёпок
+  })
+  it('«Колесо обозрения»: два обода и 12 цветных кабинок на стойках; «Барокко»: два обода, 20 жемчужин и 4 лилии', () => {
+    const f = frameDecor('frame_ferris')
+    expect(count(f, /<line /g)).toBe(12)
+    expect(count(f, /<circle /g)).toBe(2 + 12)
+    expect(new Set([...f.matchAll(/r="3\.5" fill="(#\w+)"/g)].map((m) => m[1])).size).toBe(12) // у каждой кабинки свой цвет
+    const b = frameDecor('frame_baroque')
+    expect(count(b, /<circle /g)).toBe(2 + 20) // два обода и жемчужины (24 места минус четыре под лилии)
+    expect(count(b, /<g transform=/g)).toBe(4)
+    expect(count(b, /<path /g)).toBe(4)
   })
   it('результат стабилен: повторный вызов возвращает ту же строку', () => {
     expect(frameDecor('frame_wreath')).toBe(frameDecor('frame_wreath'))

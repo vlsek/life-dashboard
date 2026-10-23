@@ -1,7 +1,7 @@
 // АВТОГЕНЕРАЦИЯ: scripts/gen_sw_assets.py (BACKLOG 66.3). Не править руками; запускать после каждой пересборки пилотов.
 // Подключается из sw.js (importScripts): изменился этот файл → браузер ставит новый service worker и новый кэш ld-shell-<version>.
 self.LD_SW = {
-  version: "a4ae58f571",
+  version: "35c2ab2670",
   pages: [
     "/account/",
     "/achievements/",
@@ -22,8 +22,7 @@ self.LD_SW = {
     "/workouts/",
   ],
   assets: [
-    "/account/assets/index-Bh3OJKTA.js",
-    "/account/assets/index-DKPzJGpM.js",
+    "/account/assets/index-CYqE2Erk.js",
     "/account/assets/index-KZxqKjtP.css",
     "/achievements/assets/index-CJTPCVdf.css",
     "/achievements/assets/index-DIIesIUE.js",
@@ -39,13 +38,12 @@ self.LD_SW = {
     "/challenges/assets/index-CaDZoUMi.js",
     "/challenges/assets/index-D1ubj9Y1.css",
     "/challenges/assets/index-Dw0x7L39.css",
-    "/community/assets/index-B6gfId-G.js",
-    "/community/assets/index-C9c1Fv3F.js",
     "/community/assets/index-DuFBbFSZ.css",
+    "/community/assets/index-G_vbgsTx.js",
     "/customization/assets/index-BAwDCSS4.css",
-    "/customization/assets/index-DNOG2o38.js",
+    "/customization/assets/index-J6gojjJn.js",
+    "/dashboard/assets/index-DCZ-jyDb.js",
     "/dashboard/assets/index-DNip7_pp.css",
-    "/dashboard/assets/index-DYZk-N8R.js",
     "/goals/assets/index-BfWcmz44.js",
     "/goals/assets/index-CD_Tt2iE.css",
     "/goals/assets/index-DSyr--3Y.css",
