@@ -48,6 +48,16 @@ describe('CollapseChevron: вид маркера', () => {
     expect(mount(CollapseChevron, { props: { collapsed: true } }).findAll('circle')).toHaveLength(2)
     collapseStyle.value = 'chevron'
   })
+  it('ромб и звезда: закрашены у раскрытого, контур у свёрнутого, без поворота', () => {
+    for (const st of ['diamond', 'star'] as const) {
+      collapseStyle.value = st
+      expect(mount(CollapseChevron, { props: { collapsed: false } }).find('path').attributes('fill')).toBe('currentColor')
+      const w = mount(CollapseChevron, { props: { collapsed: true } })
+      expect(w.find('path').attributes('fill')).toBe('none')
+      expect(w.find('svg').attributes('data-marker')).toBe(st)
+    }
+    collapseStyle.value = 'chevron'
+  })
   it('двойная стрелка: два штриха', () => {
     collapseStyle.value = 'double'
     expect(mount(CollapseChevron, { props: { collapsed: false } }).findAll('path')).toHaveLength(2)

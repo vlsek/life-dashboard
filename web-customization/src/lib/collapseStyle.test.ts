@@ -149,3 +149,29 @@ describe('вид сворачивания: «Длинная стрелка» и 
     writeCachedCollapseStyle('chevron')
   })
 })
+
+describe('вид сворачивания: «Ромб» и «Звезда»', () => {
+  it('цены 100 и 150, редкость, названия и описания на двух языках', () => {
+    expect(priceOf(itemByKey('collapse_diamond')!)).toBe(100)
+    expect(priceOf(itemByKey('collapse_star')!)).toBe(150)
+    expect(rarityOfItem('collapse_diamond')).toBe('common')
+    expect(rarityOfItem('collapse_star')).toBe('uncommon')
+    for (const key of ['collapse_diamond', 'collapse_star']) {
+      expect(itemByKey(key)).toMatchObject({ category: 'collapse_style', source: 'points' })
+      for (const lang of ['ru', 'en']) {
+        localStorage.setItem('site_lang', lang)
+        expect(t(('cust_item_' + key) as never).length).toBeGreaterThan(2)
+        expect(t(('cust_item_' + key + '_desc') as never).length).toBeGreaterThan(10)
+      }
+    }
+  })
+  it('ключ предмета → вид маркера; кэш помнит оба', () => {
+    expect(parseCollapseStyle('collapse_diamond')).toBe('diamond')
+    expect(parseCollapseStyle('collapse_star')).toBe('star')
+    for (const s of ['diamond', 'star'] as const) {
+      writeCachedCollapseStyle(s)
+      expect(readCachedCollapseStyle()).toBe(s)
+    }
+    writeCachedCollapseStyle('chevron')
+  })
+})

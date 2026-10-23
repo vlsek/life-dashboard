@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.43";
+const SITE_VERSION = "6.44";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.44", date: "2026-10-23 10:30", changes: [
+        "Кастомизация, «Вид сворачивания блоков»: два новых маркера — «Ромб» (100) и «Звезда» (150); закрашены у раскрытого блока, контур у свёрнутого. Нужна миграция 107.",
+    ]},
     { version: "6.43", date: "2026-10-23 10:00", changes: [
         "Офлайн: если часы на телефоне сбились или откатились назад, записи из очереди больше не зависают в ожидании — они уходят при первой же связи. Текст в магазине («в твоём темпе») приведён к «ты».",
     ]},
@@ -2545,6 +2548,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.44", date: "2026-10-23 10:30", changes: [
+        "Customization, “Block fold marker”: two new markers — “Diamond” (100) and “Star” (150); filled while a block is open, an outline when folded. Needs migration 107.",
+    ]},
     { version: "6.43", date: "2026-10-23 10:00", changes: [
         "Offline: if the phone clock was reset or rolled back, queued records no longer get stuck waiting — they are sent at the first connection. Shop wording fixed to the informal “you”.",
     ]},

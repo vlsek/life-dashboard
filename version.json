@@ -1,7 +1,14 @@
 {
-  "version": "6.43",
+  "version": "6.44",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.44",
+      "date": "2026-10-23 10:30",
+      "changes": [
+        "Customization, “Block fold marker”: two new markers — “Diamond” (100) and “Star” (150); filled while a block is open, an outline when folded. Needs migration 107."
+      ]
+    },
     {
       "version": "6.43",
       "date": "2026-10-23 10:00",
@@ -4571,6 +4578,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.44",
+      "date": "2026-10-23 10:30",
+      "changes": [
+        "Кастомизация, «Вид сворачивания блоков»: два новых маркера — «Ромб» (100) и «Звезда» (150); закрашены у раскрытого блока, контур у свёрнутого. Нужна миграция 107."
+      ]
+    },
     {
       "version": "6.43",
       "date": "2026-10-23 10:00",
