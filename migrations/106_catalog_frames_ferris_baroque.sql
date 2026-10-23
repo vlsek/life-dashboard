@@ -1,5 +1,5 @@
--- 105: каталог цен — ещё две платные рамки-орнамента «Колесо обозрения» и «Барокко» (BACKLOG 44.18з, срез 3).
--- ПРИМЕНЯТЬ В SUPABASE SQL EDITOR ПОСЛЕ 104 (одним запуском; повторный запуск безопасен: on conflict do update).
+-- 106: каталог цен — ещё две платные рамки-орнамента «Колесо обозрения» и «Барокко» (BACKLOG 44.18з, срез 3).
+-- ПРИМЕНЯТЬ В SUPABASE SQL EDITOR ПОСЛЕ 105 (одним запуском; повторный запуск безопасен: on conflict do update).
 -- Цену и источник предмета знает СЕРВЕР (customization_catalog); пока этих строк нет, покупка отвечает «неизвестный предмет», а остальное работает как раньше.
 -- Список должен совпадать с клиентским реестром web-customization/src/lib/customization.ts (проверяет тест catalogSync.test.ts).
 -- Откат: delete from customization_catalog where item_key in ('frame_ferris','frame_baroque');
