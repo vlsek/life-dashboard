@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.41";
+const SITE_VERSION = "6.42";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.42", date: "2026-10-23 09:10", changes: [
+        "Магазин наград: если в нём пока ничего нет, вместо сухой строки показывается карточка с кнопкой «Добавить награду».",
+    ]},
     { version: "6.41", date: "2026-10-23 08:39", changes: [
         "Кастомизация: ещё две рамки аватарки не кругом — «Колесо обозрения» (150 баллов: тонкий обод и двенадцать разноцветных кабинок) и «Барокко» (250 баллов: двойной золотой обод, жемчужины и четыре лилии по сторонам света). Они видны в левом меню, «Аккаунте», Сообществе, на Дашборде и в превью «Кастомизации». Купить можно после применения миграции 106 в Supabase."
     ]},
@@ -2539,6 +2542,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.42", date: "2026-10-23 09:10", changes: [
+        "Rewards shop: when it is empty you now see a card with an “Add a reward” button instead of a plain line.",
+    ]},
     { version: "6.41", date: "2026-10-23 08:39", changes: [
         "Customization: two more non-circular avatar frames — “Ferris wheel” (150 points: a thin rim with twelve colourful cabins) and “Baroque” (250 points: a double golden rim, pearls and four lilies at the cardinal points). They show in the left menu, on the Account page, in Community, on the Dashboard and in the Customization preview. They can be bought once migration 106 is applied in Supabase."
     ]},

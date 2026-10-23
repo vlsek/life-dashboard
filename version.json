@@ -1,7 +1,14 @@
 {
-  "version": "6.41",
+  "version": "6.42",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.42",
+      "date": "2026-10-23 09:10",
+      "changes": [
+        "Rewards shop: when it is empty you now see a card with an “Add a reward” button instead of a plain line."
+      ]
+    },
     {
       "version": "6.41",
       "date": "2026-10-23 08:39",
@@ -4557,6 +4564,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.42",
+      "date": "2026-10-23 09:10",
+      "changes": [
+        "Магазин наград: если в нём пока ничего нет, вместо сухой строки показывается карточка с кнопкой «Добавить награду»."
+      ]
+    },
     {
       "version": "6.41",
       "date": "2026-10-23 08:39",

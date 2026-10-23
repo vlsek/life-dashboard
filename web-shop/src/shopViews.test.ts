@@ -213,3 +213,12 @@ describe('Магазин — подтверждение покупки', () => {
     expect(w2.find('[data-testid="bought-toast"]').exists()).toBe(false)
   })
 })
+
+describe('Магазин — пустое состояние', () => {
+  it('empty shop shows a card with an add button that opens the form', async () => {
+    const w = setup(300, [])
+    expect(w.find('[data-testid="shop-empty"]').exists()).toBe(true)
+    await w.find('[data-testid="empty-add"]').trigger('click')
+    expect(document.body.querySelector('form, [role="dialog"], .modal, [data-testid="item-form"]')).toBeTruthy()
+  })
+})

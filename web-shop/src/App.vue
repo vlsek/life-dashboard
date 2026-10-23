@@ -18,6 +18,7 @@ import { filterCounts, filterItems, savingGoal, splitItems, type ShopFilter } fr
 import { loadShopView, saveShopView } from './lib/shopView'
 import type { ShopItem, ShopItemFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
+import Icon from './components/Icon.vue'
 import { confirmDialog } from './lib/confirmDialog'
 
 const { auth, items, archived, balance, createdAt, error, init, addItem, updateItem, buyItem, transferArchived, deleteItem, uploadImage } = useShop()
@@ -100,7 +101,12 @@ async function onUpload(file: File): Promise<string | null> {
     <p v-if="justBought" class="goal-pop mb-2 rounded-xl border px-3 py-2 text-sm font-medium" style="border-color: var(--accent)" role="status" data-testid="bought-toast"><EmojiText :text="t('shop_bought_toast')" /> {{ justBought }}</p>
     <p v-if="actionError" class="mb-2 text-sm" style="color: var(--danger)" role="alert" data-testid="action-error">{{ actionError }}</p>
     <p v-if="error" class="dim">{{ t('comm_load_error') }} {{ error }}</p>
-    <p v-else-if="items.length === 0" class="dim">{{ t('shop_list_empty') }}</p>
+    <div v-else-if="items.length === 0" class="card flex flex-col items-center gap-2 rounded-2xl border p-6 text-center" style="border-color: var(--border)" data-testid="shop-empty">
+      <span class="text-4xl" style="color: var(--accent)" aria-hidden="true"><Icon name="gift" /></span>
+      <p class="m-0 font-semibold">{{ t('shop_empty_title') }}</p>
+      <p class="dim m-0 text-sm">{{ t('shop_list_empty') }}</p>
+      <button class="mt-1 rounded-lg px-4 py-2 text-sm" data-testid="empty-add" @click="formTarget = 'new'"><EmojiText :text="t('shop_add_item_btn')" /></button>
+    </div>
 
     <!-- Цель (67.2): карточка ближайшей награды, чипы и строки с прогрессом -->
     <template v-else-if="view === 'focus'">
