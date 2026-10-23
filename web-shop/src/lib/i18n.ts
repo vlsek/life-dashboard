@@ -363,7 +363,7 @@ const DICT = {
     shop_bought_toast: '✅ Куплено:',
     shop_goal_next: 'Ближайшая цель',
     shop_goal_of: 'из',
-    shop_goal_days: '≈ {n} дн. в вашем темпе',
+    shop_goal_days: '≈ {n} дн. в твоём темпе',
     shop_goal_all_ready: 'Можно взять что-то прямо сейчас',
     shop_view_list: 'Список',
     shop_filter_all: 'Все',

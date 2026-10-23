@@ -215,7 +215,7 @@ export function createOutbox(deps: OutboxDeps): Outbox {
           if (e.userId !== user) continue
           if (e.status === 'failed') { blockedKeys.add(e.key); continue } // решение человека; следующие по ключу ждут
           if (blockedKeys.has(e.key)) continue
-          if (e.nextTryAt > now()) { blockedKeys.add(e.key); continue }
+          if (e.nextTryAt > now() && e.nextTryAt - now() <= BACKOFF_MAX_MS) { blockedKeys.add(e.key); continue } // срок дальше максимума backoff — часы телефона откатили назад, ждать не нужно
           const res = await apply(e)
           if (!res.error || (e.op === 'insert' && isDuplicate(res.error))) { await storage.remove(e.id); continue }
           blockedKeys.add(e.key)

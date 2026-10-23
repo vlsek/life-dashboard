@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi, afterEach } from 'vitest'
 import { createOutbox, isRetryable, memoryStorage, type SbLike, type SbResult } from './offlineOutbox'
 
 type Call = { table: string; op: string; arg: unknown }
@@ -146,5 +146,66 @@ describe('offlineOutbox', () => {
     expect(isRetryable({ status: 400 })).toBe(false)
     expect(isRetryable({ code: '23503', message: 'fk' })).toBe(false)
     expect(isRetryable(null)).toBe(false)
+  })
+})
+
+afterEach(() => vi.unstubAllGlobals())
+
+describe('offlineOutbox: нагрузка и граничные случаи (BACKLOG 66.7)', () => {
+  it('очередь на 100 записей разных ключей уходит вся, по порядку, ничего не теряется', async () => {
+    const { ob, calls, o } = mk(() => ok, { online: false, t: 0 })
+    for (let i = 0; i < 100; i++) await ob.write({ key: 'k' + i, table: 't', op: 'insert', payload: { i } })
+    expect((await ob.list()).length).toBe(100)
+    o.online = true
+    await ob.flush()
+    expect(calls).toHaveLength(100)
+    expect(calls.map((c) => (c.arg as { i: number }).i)).toEqual(Array.from({ length: 100 }, (_, i) => i))
+    expect(ob.status().pending).toBe(0)
+  })
+  it('100 upsert одного ключа склеиваются: на сервер уходит одна, последняя', async () => {
+    const { ob, calls, o } = mk(() => ok, { online: false, t: 0 })
+    for (let i = 0; i < 100; i++) await ob.write({ key: 'same', table: 't', op: 'upsert', payload: { v: i } })
+    o.online = true
+    await ob.flush()
+    expect(calls).toHaveLength(1)
+    expect((calls[0].arg as { v: number }).v).toBe(99)
+  })
+  it('две вкладки с общим хранилищем: Web Lock пускает одну, записи не дублируются', async () => {
+    let held = false
+    vi.stubGlobal('navigator', { locks: { request: async (_n: string, _o: unknown, cb: (l: unknown) => Promise<void>) => { if (held) return cb(null); held = true; try { await cb({}) } finally { held = false } } } })
+    const storage = memoryStorage()
+    const calls: Call[] = []
+    const mkTab = () => {
+      const f = fake(async (c) => { calls.push(c); await new Promise((r) => setTimeout(r, 5)); return ok })
+      const ob = createOutbox({ client: f.client, storage, now: () => 0, isOnline: () => false })
+      ob.setUser('u1')
+      return ob
+    }
+    const a = mkTab()
+    for (let i = 0; i < 10; i++) await a.write({ key: 'k' + i, table: 't', op: 'insert', payload: { i } })
+    const online = { v: true }
+    const mkOn = () => {
+      const f = fake(async (c) => { calls.push(c); await new Promise((r) => setTimeout(r, 5)); return ok })
+      const ob = createOutbox({ client: f.client, storage, now: () => 0, isOnline: () => online.v })
+      ob.setUser('u1')
+      return ob
+    }
+    const t1 = mkOn(), t2 = mkOn()
+    await Promise.all([t1.flush(), t2.flush()])
+    expect(calls).toHaveLength(10)
+    expect((await t1.list()).length).toBe(0)
+  })
+  it('часы откатили назад: ожидающая повтора запись не зависает на месяцы', async () => {
+    let fail = true
+    const { ob, calls, o } = mk(() => (fail ? netErr : ok), { online: false, t: 1_900_000_000_000 })
+    await ob.write({ key: 'k', table: 't', op: 'insert', payload: {} })
+    o.online = true
+    await ob.flush()
+    expect(calls).toHaveLength(1)
+    fail = false
+    o.t = 1_000_000 // часы телефона сбросили в прошлое
+    await ob.flush()
+    expect(calls).toHaveLength(2)
+    expect(ob.status().pending).toBe(0)
   })
 })
