@@ -50,7 +50,7 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
       <WeekGaugePreview :variant="weekPreviewVariant" />
     </span>
     <span v-else-if="isDayGauge" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="day-gauge-preview">
-      <DayGaugePreview :variant="item.key === 'day_glow' ? 'glow' : item.key === 'day_ticks' ? 'ticks' : item.key === 'day_gradient' ? 'gradient' : item.key === 'day_thick' ? 'thick' : item.key === 'day_rainbow' ? 'rainbow' : item.key === 'day_thin' ? 'thin' : item.key === 'day_sunset' ? 'sunset' : item.key === 'day_ocean' ? 'ocean' : item.key === 'day_aurora' ? 'aurora' : item.key === 'day_mint' ? 'mint' : item.key === 'day_ember' ? 'ember' : 'dashed'" />
+      <DayGaugePreview :variant="item.key === 'day_glow' ? 'glow' : item.key === 'day_ticks' ? 'ticks' : item.key === 'day_gradient' ? 'gradient' : item.key === 'day_thick' ? 'thick' : item.key === 'day_rainbow' ? 'rainbow' : item.key === 'day_thin' ? 'thin' : item.key === 'day_sunset' ? 'sunset' : item.key === 'day_ocean' ? 'ocean' : item.key === 'day_aurora' ? 'aurora' : item.key === 'day_mint' ? 'mint' : item.key === 'day_ember' ? 'ember' : item.key === 'day_lavender' ? 'lavender' : item.key === 'day_gold' ? 'gold' : 'dashed'" />
     </span>
     <span v-else-if="isWaterAnim" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="water-anim-preview">
       <WaterSavedAnim :tick="0" inline loop :demo="waterVariant" />

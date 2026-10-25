@@ -13,7 +13,7 @@ describe('виды спидометра дня (53.2 срез 2)', () => {
     expect(priceOf(itemByKey('day_glow')!)).toBe(150)
     expect(priceOf(itemByKey('day_ticks')!)).toBe(150)
     expect(priceOf(itemByKey('day_gradient')!)).toBe(250)
-    expect(ITEMS.filter((i) => i.category === 'day_gauge')).toHaveLength(12)
+    expect(ITEMS.filter((i) => i.category === 'day_gauge')).toHaveLength(14)
     expect(rarityOfItem('day_ticks')).toBe('uncommon')
     expect(rarityOfItem('day_gradient')).toBe('rare')
     expect(rarityOfItem('day_dashed')).toBe('common')
@@ -145,5 +145,27 @@ describe('виды спидометра дня (53.2 срез 2)', () => {
     writeCachedDayGauge('sunset')
     expect(readCachedDayGauge()).toBe('sunset')
     writeCachedDayGauge('ring')
+  })
+
+  it('«Лаванда» и «Золото» — предметы, цены, редкость, виды, градиенты, кэш, тексты', () => {
+    expect(priceOf(itemByKey('day_lavender')!)).toBe(100)
+    expect(priceOf(itemByKey('day_gold')!)).toBe(150)
+    expect(rarityOfItem('day_lavender')).toBe('common')
+    expect(rarityOfItem('day_gold')).toBe('uncommon')
+    expect(parseDayGauge('day_lavender')).toBe('lavender')
+    expect(parseDayGauge('day_gold')).toBe('gold')
+    expect(dayGradientStops('lavender')).toHaveLength(3)
+    expect(dayGradientStops('gold')[0].color).toBe('#fde68a')
+    expect(dayUsesGradient('lavender') && dayUsesGradient('gold')).toBe(true)
+    for (const k of ['lavender', 'gold'] as const) {
+      writeCachedDayGauge(k)
+      expect(readCachedDayGauge()).toBe(k)
+    }
+    writeCachedDayGauge('ring')
+    for (const key of ['day_lavender', 'day_gold']) for (const lang of ['ru', 'en']) {
+      localStorage.setItem('site_lang', lang)
+      expect(t(('cust_item_' + key) as never).length).toBeGreaterThan(2)
+      expect(t(('cust_item_' + key + '_desc') as never).length).toBeGreaterThan(10)
+    }
   })
 })

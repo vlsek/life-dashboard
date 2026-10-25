@@ -1,7 +1,14 @@
 {
-  "version": "6.46",
+  "version": "6.47",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.47",
+      "date": "2026-10-25 20:00",
+      "changes": [
+        "Customization, “Day progress gauge”: two new colored day rings — “Lavender” (lilac to violet, 100) and “Gold” (pale yellow to amber, 150). Needs migration 109."
+      ]
+    },
     {
       "version": "6.46",
       "date": "2026-10-25 08:40",
@@ -4592,6 +4599,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.47",
+      "date": "2026-10-25 20:00",
+      "changes": [
+        "Кастомизация, «Спидометр прогресса дня»: два новых цветных кольца дня — «Лаванда» (сиреневый → фиолетовый, 100) и «Золото» (светло-жёлтый → янтарный, 150). Нужна миграция 109."
+      ]
+    },
     {
       "version": "6.46",
       "date": "2026-10-25 08:40",

@@ -3,11 +3,11 @@
 // Выбор лежит в profiles.customization.day_gauge (ключ предмета); страницы применяют его БЕЗ ожидания сети — через кэш в localStorage (как вид
 // недели): кэш пишет «Кастомизация» при выборе, шапка и Дашборд сверяются с профилем в фоне. Чистая логика (без Vue/сети).
 // Пилоты изолированы, поэтому файл ЕСТЬ в web-customization, web-header и web-dashboard (менять ВМЕСТЕ — страж в collapseStyleCopies.test.ts).
-export type DayGaugeStyle = 'ring' | 'dashed' | 'glow' | 'ticks' | 'gradient' | 'thick' | 'rainbow' | 'thin' | 'sunset' | 'ocean' | 'aurora' | 'mint' | 'ember'
+export type DayGaugeStyle = 'ring' | 'dashed' | 'glow' | 'ticks' | 'gradient' | 'thick' | 'rainbow' | 'thin' | 'sunset' | 'ocean' | 'aurora' | 'mint' | 'ember' | 'lavender' | 'gold'
 
 export const DAY_GAUGE_CACHE_KEY = 'site_day_gauge'
 
-const BY_ITEM: Record<string, DayGaugeStyle> = { day_dashed: 'dashed', day_glow: 'glow', day_ticks: 'ticks', day_gradient: 'gradient', day_thick: 'thick', day_rainbow: 'rainbow', day_thin: 'thin', day_sunset: 'sunset', day_ocean: 'ocean', day_aurora: 'aurora', day_mint: 'mint', day_ember: 'ember' }
+const BY_ITEM: Record<string, DayGaugeStyle> = { day_dashed: 'dashed', day_glow: 'glow', day_ticks: 'ticks', day_gradient: 'gradient', day_thick: 'thick', day_rainbow: 'rainbow', day_thin: 'thin', day_sunset: 'sunset', day_ocean: 'ocean', day_aurora: 'aurora', day_mint: 'mint', day_ember: 'ember', day_lavender: 'lavender', day_gold: 'gold' }
 
 export function parseDayGauge(raw: unknown): DayGaugeStyle {
   return typeof raw === 'string' && Object.prototype.hasOwnProperty.call(BY_ITEM, raw) ? BY_ITEM[raw] : 'ring'
@@ -16,7 +16,7 @@ export function parseDayGauge(raw: unknown): DayGaugeStyle {
 export function readCachedDayGauge(): DayGaugeStyle {
   try {
     const v = localStorage.getItem(DAY_GAUGE_CACHE_KEY)
-    return v === 'dashed' || v === 'glow' || v === 'ticks' || v === 'gradient' || v === 'thick' || v === 'rainbow' || v === 'thin' || v === 'sunset' || v === 'ocean' || v === 'aurora' || v === 'mint' || v === 'ember' ? v : 'ring'
+    return v === 'dashed' || v === 'glow' || v === 'ticks' || v === 'gradient' || v === 'thick' || v === 'rainbow' || v === 'thin' || v === 'sunset' || v === 'ocean' || v === 'aurora' || v === 'mint' || v === 'ember' || v === 'lavender' || v === 'gold' ? v : 'ring'
   } catch {
     return 'ring'
   }
@@ -99,12 +99,15 @@ export const DAY_AURORA_STOPS = ['#34d399', '#22d3ee', '#a78bfa', '#f472b6'] as 
 // «Мята»: зелёный → бирюзовый. «Жар»: жёлтый → оранжевый → красный.
 export const DAY_MINT_STOPS = ['#34d399', '#2dd4bf'] as const
 export const DAY_EMBER_STOPS = ['#facc15', '#f97316', '#dc2626'] as const
+// «Лаванда»: сиреневый → фиолетовый. «Золото»: светло-жёлтый → янтарный.
+export const DAY_LAVENDER_STOPS = ['#c4b5fd', '#a78bfa', '#8b5cf6'] as const
+export const DAY_GOLD_STOPS = ['#fde68a', '#fbbf24', '#d97706'] as const
 // «Радуга»: дуга красится градиентом из четырёх цветов (бирюзовый → зелёный → золотой → розовый).
 export const DAY_RAINBOW_STOPS = ['#38bdf8', '#4ade80', '#f5b301', '#f472b6'] as const
 // Опорные точки градиента для видов «градиент» и «радуга».
 export function dayGradientStops(style: DayGaugeStyle): { offset: string; color: string }[] {
-  const cols: readonly string[] = style === 'rainbow' ? DAY_RAINBOW_STOPS : style === 'sunset' ? DAY_SUNSET_STOPS : style === 'ocean' ? DAY_OCEAN_STOPS : style === 'aurora' ? DAY_AURORA_STOPS : style === 'mint' ? DAY_MINT_STOPS : style === 'ember' ? DAY_EMBER_STOPS : DAY_GRADIENT_STOPS
+  const cols: readonly string[] = style === 'rainbow' ? DAY_RAINBOW_STOPS : style === 'sunset' ? DAY_SUNSET_STOPS : style === 'ocean' ? DAY_OCEAN_STOPS : style === 'aurora' ? DAY_AURORA_STOPS : style === 'mint' ? DAY_MINT_STOPS : style === 'ember' ? DAY_EMBER_STOPS : style === 'lavender' ? DAY_LAVENDER_STOPS : style === 'gold' ? DAY_GOLD_STOPS : DAY_GRADIENT_STOPS
   return cols.map((color, i) => ({ offset: `${Math.round((i / (cols.length - 1)) * 100)}%`, color }))
 }
 // Виду нужен градиент вместо цвета акцента.
-export const dayUsesGradient = (style: DayGaugeStyle): boolean => style === 'gradient' || style === 'rainbow' || style === 'sunset' || style === 'ocean' || style === 'aurora' || style === 'mint' || style === 'ember'
+export const dayUsesGradient = (style: DayGaugeStyle): boolean => style === 'gradient' || style === 'rainbow' || style === 'sunset' || style === 'ocean' || style === 'aurora' || style === 'mint' || style === 'ember' || style === 'lavender' || style === 'gold'

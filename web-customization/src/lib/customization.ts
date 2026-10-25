@@ -101,6 +101,8 @@ export const ITEMS: readonly CustomItem[] = [
   { key: 'day_aurora', category: 'day_gauge', source: 'points', tier: 'high' },
   { key: 'day_mint', category: 'day_gauge', source: 'points', tier: 'low' },
   { key: 'day_ember', category: 'day_gauge', source: 'points', tier: 'mid' },
+  { key: 'day_lavender', category: 'day_gauge', source: 'points', tier: 'low' },
+  { key: 'day_gold', category: 'day_gauge', source: 'points', tier: 'mid' },
   // Анимация питья воды (BACKLOG 54.9, агент 3): три платных вида; бесплатные (волна, капли, рябь, пузырьки, струя, всплеск) — во вкладке «Анимация воды».
   { key: 'water_rain', category: 'water_anim', source: 'points', tier: 'low' },
   { key: 'water_tide', category: 'water_anim', source: 'points', tier: 'mid' },
