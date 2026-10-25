@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.47";
+const SITE_VERSION = "6.48";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.48", date: "2026-10-22 12:00", changes: [
+        "«Кастомизация»: новый вид маркера сворачивания блоков — «Стрелка в кружке» (100 баллов): стрелка внутри кружка, которая поворачивается вправо, когда блок свёрнут. Работает на Дашборде и в «Тренировках». Чтобы вид появился в магазине, нужна миграция 110. Заодно исправлено превью видов сворачивания: раньше для нового вида оно могло показываться как обычный шеврон."
+    ]},
     { version: "6.47", date: "2026-10-25 20:00", changes: [
         "Кастомизация, «Спидометр прогресса дня»: два новых цветных кольца дня — «Лаванда» (сиреневый → фиолетовый, 100) и «Золото» (светло-жёлтый → янтарный, 150). Нужна миграция 109.",
     ]},
@@ -2557,6 +2560,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.48", date: "2026-10-22 12:00", changes: [
+        "Customization: a new block-collapse marker — “Circled arrow” (100 points): an arrow inside a circle that turns to the right when a block is collapsed. Works on the Dashboard and in Workouts. Migration 110 is needed for it to appear in the shop. Also fixed the preview of collapse styles: for a new style it could previously show a plain chevron."
+    ]},
     { version: "6.47", date: "2026-10-25 20:00", changes: [
         "Customization, “Day progress gauge”: two new colored day rings — “Lavender” (lilac to violet, 100) and “Gold” (pale yellow to amber, 150). Needs migration 109.",
     ]},

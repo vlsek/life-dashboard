@@ -1,6 +1,6 @@
 -- ============================================================================
 -- СВОДНЫЙ ФАЙЛ ОЖИДАЮЩИХ МИГРАЦИЙ (собран скриптом scripts/build_pending_migrations.py, руками не править)
--- Состав (42 файлов): 20 миграций из раздела «Ждёт владельца» COORDINATION.md (пункты «применить миграцию …») + 22 «страховочных» миграций
+-- Состав (44 файлов): 22 миграций из раздела «Ждёт владельца» COORDINATION.md (пункты «применить миграцию …») + 22 «страховочных» миграций
 -- каталога цен (*catalog*: только insert … on conflict do update — безопасны всегда; агенты не всегда вписывают их в «Ждёт владельца»,
 -- а предмет без строки каталога купить нельзя: «неизвестный предмет»).
 -- КАК ПРИМЕНЯТЬ: Supabase → SQL Editor → вставить ВЕСЬ этот файл → Run. Порядок — по номерам (так и требуют пункты «ПОСЛЕ NNN»).
@@ -50,6 +50,8 @@
 --   106_catalog_frames_ferris_baroque   [ждёт владельца]
 --   107_catalog_collapse_star_diamond   [ждёт владельца]
 --   108_catalog_water_anim_spin_rise   [ждёт владельца]
+--   109_catalog_day_lavender_gold   [ждёт владельца]
+--   110_catalog_collapse_circle   [ждёт владельца]
 -- ============================================================================
 
 -- ----------------------------------------------------------------------------
@@ -1313,4 +1315,29 @@ on conflict (item_key) do update set category = excluded.category, source = excl
 insert into customization_catalog (item_key, category, source, price, achievement_key) values
   ('water_spin', 'water_anim', 'points', 100, null),
   ('water_rise', 'water_anim', 'points', 150, null)
+on conflict (item_key) do update set category = excluded.category, source = excluded.source, price = excluded.price, achievement_key = excluded.achievement_key;
+
+-- ----------------------------------------------------------------------------
+-- ФАЙЛ: migrations/109_catalog_day_lavender_gold.sql   [ждёт владельца]
+-- ----------------------------------------------------------------------------
+-- 109: каталог цен — ещё два платных кольца дня «Лаванда» (100) и «Золото» (150) (агент 3; «предметы кастомизации, которых меньше всего»).
+-- ПРИМЕНЯТЬ В SUPABASE SQL EDITOR ПОСЛЕ 072 (одним запуском; повторный запуск безопасен: on conflict do update).
+-- Список должен совпадать с клиентским реестром web-customization/src/lib/customization.ts (проверяет тест catalogSync.test.ts).
+-- Откат: delete from customization_catalog where item_key in ('day_lavender','day_gold');
+
+insert into customization_catalog (item_key, category, source, price, achievement_key) values
+  ('day_lavender', 'day_gauge', 'points', 100, null),
+  ('day_gold', 'day_gauge', 'points', 150, null)
+on conflict (item_key) do update set category = excluded.category, source = excluded.source, price = excluded.price, achievement_key = excluded.achievement_key;
+
+-- ----------------------------------------------------------------------------
+-- ФАЙЛ: migrations/110_catalog_collapse_circle.sql   [ждёт владельца]
+-- ----------------------------------------------------------------------------
+-- 110: каталог цен — ещё один платный вид маркера сворачивания блоков «Стрелка в кружке» (100) (агент 7; правило «если задач нет — предметы кастомизации там, где их меньше всего»).
+-- ПРИМЕНЯТЬ В SUPABASE SQL EDITOR ПОСЛЕ 072 (одним запуском; повторный запуск безопасен: on conflict do update).
+-- Список должен совпадать с клиентским реестром web-customization/src/lib/customization.ts (проверяет тест catalogSync.test.ts).
+-- Откат: delete from customization_catalog where item_key = 'collapse_circle';
+
+insert into customization_catalog (item_key, category, source, price, achievement_key) values
+  ('collapse_circle', 'collapse_style', 'points', 100, null)
 on conflict (item_key) do update set category = excluded.category, source = excluded.source, price = excluded.price, achievement_key = excluded.achievement_key;

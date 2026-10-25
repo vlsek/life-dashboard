@@ -1,7 +1,14 @@
 {
-  "version": "6.47",
+  "version": "6.48",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.48",
+      "date": "2026-10-22 12:00",
+      "changes": [
+        "Customization: a new block-collapse marker — “Circled arrow” (100 points): an arrow inside a circle that turns to the right when a block is collapsed. Works on the Dashboard and in Workouts. Migration 110 is needed for it to appear in the shop. Also fixed the preview of collapse styles: for a new style it could previously show a plain chevron."
+      ]
+    },
     {
       "version": "6.47",
       "date": "2026-10-25 20:00",
@@ -4599,6 +4606,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.48",
+      "date": "2026-10-22 12:00",
+      "changes": [
+        "«Кастомизация»: новый вид маркера сворачивания блоков — «Стрелка в кружке» (100 баллов): стрелка внутри кружка, которая поворачивается вправо, когда блок свёрнут. Работает на Дашборде и в «Тренировках». Чтобы вид появился в магазине, нужна миграция 110. Заодно исправлено превью видов сворачивания: раньше для нового вида оно могло показываться как обычный шеврон."
+      ]
+    },
     {
       "version": "6.47",
       "date": "2026-10-25 20:00",
