@@ -22,7 +22,7 @@ vi.mock('./supabase', () => ({
         insert: (row: unknown) => (h.calls.push({ table, op: 'insert', arg: row, filters: {} }), Object.assign(done('noop'), chain)),
         upsert: (row: unknown, opts: unknown) => done('upsert', { row, opts }),
         update: (patch: unknown) => ({ eq: (c: string, v: unknown) => ((filters[c] = v), { eq: (c2: string, v2: unknown) => ((filters[c2] = v2), done('update', patch)) }) }),
-        delete: () => ({ eq: (c: string, v: unknown) => ((filters[c] = v), { eq: (c2: string, v2: unknown) => ((filters[c2] = v2), { eq: (c3: string, v3: unknown) => ((filters[c3] = v3), done('delete')) }) }) }),
+        delete: () => ({ match: (o: Record<string, unknown>) => (Object.assign(filters, o), done('delete')), eq: (c: string, v: unknown) => ((filters[c] = v), { eq: (c2: string, v2: unknown) => ((filters[c2] = v2), { eq: (c3: string, v3: unknown) => ((filters[c3] = v3), done('delete')) }) }) }),
       })
       return chain
     },

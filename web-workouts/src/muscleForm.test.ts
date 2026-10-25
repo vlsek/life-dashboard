@@ -90,7 +90,10 @@ vi.mock('./lib/supabase', () => ({
         limit: () => chain,
         maybeSingle: () => Promise.resolve({ data: null, error: null }),
         insert: () => Promise.resolve({ error: h.fail ? { message: 'boom' } : null }),
-        update: () => ({ eq: () => Promise.resolve({ error: h.fail ? { message: 'boom' } : null }) }),
+        update: () => {
+          const r = () => Promise.resolve({ error: h.fail ? { message: 'boom' } : null })
+          return { eq: r, match: r } // очередь офлайн-записей (66.5в) шлёт update через .match({...})
+        },
       }
       return chain
     },

@@ -6,6 +6,8 @@ import { getMuscleOverride, renameMuscleOverride, setMuscleOverride } from './mu
 import { planMuscleSync, type SyncRow } from './muscleSync'
 import { createLinkedMetric, linkMetric, loadMetricLinks, syncLinkedMetrics, unlinkMetric, type LinkedMetric } from './metricLink'
 import { todayStr } from './date'
+import { outboxFor, qDelete, qInsert, qUpdate } from './outboxClient'
+import { applyPendingWorkouts, WORKOUT_TABLES } from './workoutOverlay'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry } from './types'
 
 export type AuthState =
@@ -23,6 +25,33 @@ export function useWorkouts() {
   const bodyWeightKg = ref<number | null>(null)
   // Метрики дня и их связь с упражнениями (миграция 054). supported=false — колонки нет, раздел работает как раньше.
   const metricLinks = ref<{ supported: boolean; metrics: LinkedMetric[] }>({ supported: false, metrics: [] })
+  const newId = (): string => (typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `${Date.now().toString(16)}-${Math.random().toString(16).slice(2)}`)
+  // Чей пользователь пишет: вошедший; запасной вариант — владелец самой строки (в ней есть user_id)
+  const uid = (fallback?: string): string => {
+    const a = auth.value
+    const id = a.status === 'ready' ? a.userId : fallback
+    if (!id) throw new Error('not ready')
+    return id
+  }
+
+  // ---- офлайн-запись (BACKLOG 66.5в) ----
+  // Запись уходит через очередь: онлайн — сразу, без сети — «принято локально». Список на экране = данные сервера (или кэша чтения) + ещё не отправленные записи.
+  async function overlayPending(userId: string) {
+    try {
+      const pending = (await outboxFor(userId).list()).filter((e) => (WORKOUT_TABLES as readonly string[]).includes(e.table))
+      if (!pending.length) return
+      const r = applyPendingWorkouts(exercises.value, entries.value, pending)
+      exercises.value = r.exercises
+      entries.value = r.entries
+    } catch {
+      /* очередь недоступна — показываем данные как есть */
+    }
+  }
+  // После записи: отправили сразу — перечитываем с сервера, как раньше; приняли локально — достаточно наложить очередь на то, что на экране.
+  async function afterWrite(queued: boolean) {
+    if (queued) await overlayPending(uid(entries.value[0]?.user_id ?? exercises.value[0]?.user_id))
+    else await reload()
+  }
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -43,6 +72,12 @@ export function useWorkouts() {
     }
 
     auth.value = { status: 'ready', userId, userEmail }
+    // очередь разгрузилась (появилась сеть) — перечитываем, чтобы увидеть то, что на сервере на самом деле
+    let lastPending = 0
+    outboxFor(userId).subscribe((st) => {
+      if (st.pending < lastPending) void reload()
+      lastPending = st.pending
+    })
     await load(userId)
   }
 
@@ -60,6 +95,7 @@ export function useWorkouts() {
     loadError.value = null
     exercises.value = (ex || []) as Exercise[]
     entries.value = (en || []) as WorkoutEntry[]
+    await overlayPending(userId)
     await syncMuscleGroups(exercises.value)
     await Promise.all([loadStudyRecent(userId), loadBodyWeight(userId), loadLinks(userId)])
   }
@@ -191,7 +227,35 @@ export function useWorkouts() {
     return entries.value.filter((e) => e.exercise_id === exerciseId)
   }
 
+  // Есть ли в базе необязательная колонка (027/028/038): видно по уже загруженным упражнениям (select * отдаёт все колонки таблицы).
+  const hasColumn = (name: string): boolean => exercises.value.some((e) => name in e)
+
   async function addExercise(userId: string, res: ExerciseFormInput, defaultUnit: string, defaultValueLabel: string) {
+    const needsExtras = !!(res.tracks_duration || res.bilateral || res.muscles?.length)
+    const known = (!res.tracks_duration || hasColumn('tracks_duration')) && (!res.bilateral || hasColumn('bilateral')) && (!res.muscles?.length || hasColumn('muscle_groups'))
+    if (needsExtras && !known) return addExerciseLegacy(userId, res, defaultUnit, defaultValueLabel) // колонок не видно (первое упражнение) — прежний путь, онлайн
+    const id = newId() // id создаёт клиент: повторная отправка из очереди не даст дубль
+    const row: Record<string, unknown> = {
+      id,
+      user_id: userId,
+      name: res.name.trim(),
+      category: res.category?.trim() || null,
+      unit: unitToSave(res, defaultUnit),
+      tracks_weight: res.tracks_weight !== 'no',
+      value_label: res.value_label?.trim() || defaultValueLabel,
+    }
+    if (res.tracks_duration) row.tracks_duration = true
+    if (res.bilateral) row.bilateral = true
+    if (res.muscles?.length) row.muscle_groups = [...res.muscles]
+    const { error, queued } = await qInsert(userId, 'workout_exercises', `workout_exercises:${id}`, row)
+    if (error) throw error
+    // Свои группы мышц (BACKLOG 22 «12:33»): только после успешной записи, по названию; undefined — не трогаем
+    if (res.muscles !== undefined) setMuscleOverride(res.name, res.muscles)
+    await afterWrite(queued)
+  }
+
+  // Прежний путь (до 66.5в): база без необязательных колонок или колонки ещё не видны — вставляем базовую строку, затем узнаём, какие колонки есть, и патчим.
+  async function addExerciseLegacy(userId: string, res: ExerciseFormInput, defaultUnit: string, defaultValueLabel: string) {
     const { error } = await sb.from('workout_exercises').insert({
       user_id: userId,
       name: res.name.trim(),
@@ -201,11 +265,7 @@ export function useWorkouts() {
       value_label: res.value_label?.trim() || defaultValueLabel,
     })
     if (error) throw error
-    // Свои группы мышц (BACKLOG 22 «12:33»): только после успешной записи, по названию; undefined — не трогаем
     if (res.muscles !== undefined) setMuscleOverride(res.name, res.muscles)
-    // Длительность/билатеральность для новой записи — отдельным апдейтом, аналогично
-    // streak_import у метрик: сначала вставляем базовую строку, потом узнаём, есть ли у
-    // неё эти колонки (мигрирована ли база), и патчим при необходимости.
     if (res.tracks_duration || res.bilateral || res.muscles?.length) {
       const { data: created } = await sb
         .from('workout_exercises')
@@ -227,9 +287,12 @@ export function useWorkouts() {
   }
 
   async function editExercise(existing: Exercise, res: ExerciseFormInput, defaultUnit: string, defaultValueLabel: string) {
-    const { error } = await sb
-      .from('workout_exercises')
-      .update({
+    const userId = uid(existing.user_id)
+    const { error, queued } = await qUpdate(
+      userId,
+      'workout_exercises',
+      `workout_exercises:${existing.id}`,
+      {
         name: res.name.trim(),
         category: res.category?.trim() || null,
         unit: unitToSave(res, defaultUnit),
@@ -238,47 +301,43 @@ export function useWorkouts() {
         ...exerciseDurationField(res.tracks_duration, existing),
         ...exerciseBilateralField(res.bilateral, existing),
         ...exerciseMusclesField(res.muscles, existing),
-      })
-      .eq('id', existing.id)
+      },
+      { id: existing.id },
+    )
     if (error) throw error
     // Переименование не должно терять свою привязку к мышцам; затем применяем выбор из формы (undefined — не менять)
     renameMuscleOverride(existing.name, res.name.trim())
     if (res.muscles !== undefined) setMuscleOverride(res.name, res.muscles)
-    await reload()
+    await afterWrite(queued)
   }
 
   async function deleteExercise(id: string) {
-    const { error } = await sb.from('workout_exercises').delete().eq('id', id)
+    const { error, queued } = await qDelete(uid(exercises.value.find((e) => e.id === id)?.user_id), 'workout_exercises', `workout_exercises:${id}`, { id })
     if (error) throw error
-    await reload()
+    await afterWrite(queued)
   }
 
   async function addEntry(exerciseId: string, userId: string, res: EntryFormInput) {
-    const { error } = await sb.from('workout_entries').insert({
-      user_id: userId,
-      exercise_id: exerciseId,
-      date: res.date,
-      sets: res.sets,
-      notes: res.notes,
-    })
+    const id = newId() // id создаёт клиент: повторная отправка из очереди не даст дубль
+    const { error, queued } = await qInsert(userId, 'workout_entries', `workout_entries:${id}`, { id, user_id: userId, exercise_id: exerciseId, date: res.date, sets: res.sets, notes: res.notes })
     if (error) throw error
-    await reload()
+    await afterWrite(queued)
     await mirror(exerciseId, [res.date])
   }
 
   async function editEntry(entryId: string, res: EntryFormInput) {
     const old = entries.value.find((e) => e.id === entryId)
-    const { error } = await sb.from('workout_entries').update({ date: res.date, sets: res.sets, notes: res.notes }).eq('id', entryId)
+    const { error, queued } = await qUpdate(uid(old?.user_id), 'workout_entries', `workout_entries:${entryId}`, { date: res.date, sets: res.sets, notes: res.notes }, { id: entryId })
     if (error) throw error
-    await reload()
+    await afterWrite(queued)
     if (old) await mirror(old.exercise_id, [old.date, res.date])
   }
 
   async function deleteEntry(id: string) {
     const old = entries.value.find((e) => e.id === id)
-    const { error } = await sb.from('workout_entries').delete().eq('id', id)
+    const { error, queued } = await qDelete(uid(old?.user_id), 'workout_entries', `workout_entries:${id}`, { id })
     if (error) throw error
-    await reload()
+    await afterWrite(queued)
     if (old) await mirror(old.exercise_id, [old.date])
   }
 

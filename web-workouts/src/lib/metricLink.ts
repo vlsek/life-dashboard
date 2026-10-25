@@ -1,4 +1,5 @@
 import { sb } from './supabase'
+import { qDelete, qUpsert } from './outboxClient'
 import type { WorkoutEntry, WorkoutSet } from './types'
 
 // Связь «метрика дня ↔ упражнение» (BACKLOG 19 «13:06», 30, «8:29 — третий раз»; миграция 054, решение владельца 2026-10-06:
@@ -114,10 +115,12 @@ export async function syncLinkedMetrics(
   for (const m of linked.filter((x) => x.source_exercise_id === exerciseId)) {
     for (const date of [...new Set(dates)]) {
       const value = metricValueFor(m.type, setsOfDay(entries, exerciseId, date))
+      // через очередь офлайн-записей (66.5в): зеркало в метрике дня не теряется, если сети нет
+      const key = `daily_values:${date}:${m.id}`
       const res =
         value === null
-          ? await sb.from('daily_values').delete().eq('user_id', userId).eq('metric_id', m.id).eq('date', date)
-          : await sb.from('daily_values').upsert({ user_id: userId, date, metric_id: m.id, value }, { onConflict: 'user_id,date,metric_id' })
+          ? await qDelete(userId, 'daily_values', key, { user_id: userId, metric_id: m.id, date })
+          : await qUpsert(userId, 'daily_values', key, { user_id: userId, date, metric_id: m.id, value }, 'user_id,date,metric_id')
       if (res.error) failures++
     }
   }

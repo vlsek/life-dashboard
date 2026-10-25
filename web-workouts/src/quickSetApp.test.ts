@@ -24,7 +24,8 @@ vi.mock('./lib/supabase', () => ({
           Promise.resolve({ data: table === 'workout_exercises' ? h.exercises : table === 'workout_entries' ? h.entries : [], error: null }).then(res, rej),
         insert: (row: unknown) => (h.inserted.push(row), Promise.resolve({ error: null })),
         upsert: () => Promise.resolve({ error: null }),
-        update: (patch: Record<string, unknown>) => ({
+        update: (patch: Record<string, unknown>) => (() => {
+        const q: any = {
           eq: (_c: string, id: string) => {
             if (table === 'workout_entries') {
               h.updates.push({ patch, id })
@@ -32,7 +33,10 @@ vi.mock('./lib/supabase', () => ({
             }
             return Promise.resolve({ error: h.updateError })
           },
-        }),
+        }
+        q.match = (o: Record<string, string>) => q.eq('id', o.id) // очередь офлайн-записей (66.5в) отправляет update/delete через .match({...})
+        return q
+      })(),
       }
       return chain
     },

@@ -23,7 +23,10 @@ vi.mock('./lib/supabase', () => ({
         maybeSingle: () => Promise.resolve({ data: table === 'profiles' ? { onboarded: true } : h.created, error: null }),
         then: (res: (v: unknown) => unknown) => Promise.resolve({ data: table === 'workout_exercises' ? h.rows : [], error: null }).then(res),
         insert: (row: Record<string, unknown>) => (h.inserted.push(row), Promise.resolve({ error: null })),
-        update: (patch: Record<string, unknown>) => ({ eq: (_c: string, id: string) => (h.updates.push({ patch, id }), Promise.resolve({ error: null })) }),
+        update: (patch: Record<string, unknown>) => {
+          const run = (id: string) => (h.updates.push({ patch, id }), Promise.resolve({ error: null }))
+          return { eq: (_c: string, id: string) => run(id), match: (o: Record<string, string>) => run(o.id) } // очередь офлайн-записей (66.5в) шлёт update через .match({...})
+        },
       }
       return chain
     },

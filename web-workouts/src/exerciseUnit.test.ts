@@ -97,7 +97,7 @@ vi.mock('./lib/supabase', () => ({
     auth: { getSession: () => new Promise(() => {}) },
     from: () => ({
       insert: (row: any) => ((h.inserted = row), Promise.resolve({ error: null })),
-      update: (row: any) => ((h.updated = row), { eq: () => Promise.resolve({ error: null }) }),
+      update: (row: any) => ((h.updated = row), { eq: () => Promise.resolve({ error: null }), match: () => Promise.resolve({ error: null }) }), // .match — очередь офлайн-записей (66.5в)
     }),
   },
 }))

@@ -23,13 +23,21 @@ vi.mock('./lib/supabase', () => ({
           Promise.resolve({ data: table === 'workout_exercises' ? h.exercises : table === 'workout_entries' ? h.entries : [], error: null }).then(res, rej),
         insert: () => Promise.resolve({ error: null }),
         upsert: () => Promise.resolve({ error: null }),
-        update: () => ({ eq: () => Promise.resolve({ error: null }) }),
-        delete: () => ({
+        update: () => (() => {
+        const q: any = { eq: () => Promise.resolve({ error: null }) }
+        q.match = (o: Record<string, string>) => q.eq('id', o.id) // очередь офлайн-записей (66.5в) отправляет update/delete через .match({...})
+        return q
+      })(),
+        delete: () => (() => {
+        const q: any = {
           eq: (_c: string, id: string) => {
             h.deleted.push({ table, id })
             return Promise.resolve({ error: null })
           },
-        }),
+        }
+        q.match = (o: Record<string, string>) => q.eq('id', o.id) // очередь офлайн-записей (66.5в) отправляет update/delete через .match({...})
+        return q
+      })(),
       }
       return chain
     },

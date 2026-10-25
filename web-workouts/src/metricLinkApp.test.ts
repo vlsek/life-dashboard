@@ -29,6 +29,11 @@ vi.mock('./lib/supabase', () => ({
           const patch = arg as Row
           p.eq = (c: string, v: unknown) => ((call.filters[c] = v), (h.entries = h.entries.map((e) => (e[c] === v ? { ...e, ...patch } : e))), p)
         }
+        // очередь офлайн-записей (66.5в) шлёт update/delete через .match({...}) — то же, что цепочка .eq(...)
+        ;(p as any).match = (o: Record<string, unknown>) => {
+          for (const [c, v] of Object.entries(o)) p.eq(c, v)
+          return p
+        }
         return p
       }
       const chain: Record<string, unknown> = {
