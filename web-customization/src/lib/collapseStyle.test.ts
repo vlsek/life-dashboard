@@ -177,7 +177,7 @@ describe('вид сворачивания: «Ромб» и «Звезда»', ()
 })
 
 describe('вид сворачивания: «Стрелка в кружке»', () => {
-  it('цена 100 (миграция 109), обычная редкость, название и описание на двух языках', () => {
+  it('цена 100 (миграция 110), обычная редкость, название и описание на двух языках', () => {
     const it = itemByKey('collapse_circle')!
     expect(it).toMatchObject({ category: 'collapse_style', source: 'points' })
     expect(priceOf(it)).toBe(100)
