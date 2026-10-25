@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.45";
+const SITE_VERSION = "6.46";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.46", date: "2026-10-25 08:40", changes: [
+        "Кастомизация, «Анимация воды»: две новые анимации записи воды — «Оборот» (стакан делает полный оборот, 100) и «Всплытие» (стакан плавно всплывает снизу, 150). Нужна миграция 108.",
+    ]},
     { version: "6.45", date: "2026-10-25 07:13", changes: [
         "Тренировки работают без сети: подход можно добавить, изменить или удалить, а упражнение создать, переименовать или удалить даже без интернета — запись сразу видна в списке, а на сервер уйдёт сама, когда связь появится (без потерь и дублей). Связанные с упражнением метрики дня обновляются так же. Без миграций."
     ]},
@@ -2551,6 +2554,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.46", date: "2026-10-25 08:40", changes: [
+        "Customization, “Water animation”: two new water-saved animations — “Spin” (the glass makes a full turn, 100) and “Rise” (the glass floats up from below, 150). Needs migration 108.",
+    ]},
     { version: "6.45", date: "2026-10-25 07:13", changes: [
         "Workouts work offline: you can add, edit or delete a set, and create, rename or delete an exercise even without internet — the change shows up in the list right away and is sent to the server by itself once the connection returns (no loss, no duplicates). Daily metrics linked to an exercise are updated the same way. No migrations."
     ]},

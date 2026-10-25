@@ -9,13 +9,13 @@ import { WATER_ITEMS, parseWaterItem } from './lib/waterAnim'
 const water = ITEMS.filter((i) => i.category === 'water_anim')
 
 describe('предметы «Анимация воды»', () => {
-  it('одиннадцать предметов за баллы по ступеням 100/150/250/150/250/100/150/100/150/100/150 (в т.ч. «Дрожь» и «Падение»); категория есть в порядке разделов', () => {
-    expect(water.map((i) => i.key)).toEqual(['water_rain', 'water_tide', 'water_sparkle', 'water_sway', 'water_glow', 'water_bounce', 'water_pulse', 'water_tilt', 'water_flash', 'water_shake', 'water_drop'])
-    expect(water.map(priceOf)).toEqual([100, 150, 250, 150, 250, 100, 150, 100, 150, 100, 150])
+  it('тринадцать предметов за баллы по ступеням 100/150/250/150/250/100/150/100/150/100/150/100/150 (в т.ч. «Дрожь» и «Падение»); категория есть в порядке разделов', () => {
+    expect(water.map((i) => i.key)).toEqual(['water_rain', 'water_tide', 'water_sparkle', 'water_sway', 'water_glow', 'water_bounce', 'water_pulse', 'water_tilt', 'water_flash', 'water_shake', 'water_drop', 'water_spin', 'water_rise'])
+    expect(water.map(priceOf)).toEqual([100, 150, 250, 150, 250, 100, 150, 100, 150, 100, 150, 100, 150])
     expect(CATEGORY_ORDER).toContain('water_anim')
   })
   it('редкость растёт с ценой', () => {
-    expect(water.map((i) => rarityOfItem(i.key))).toEqual(['common', 'uncommon', 'rare', 'uncommon', 'rare', 'common', 'uncommon', 'common', 'uncommon', 'common', 'uncommon'])
+    expect(water.map((i) => rarityOfItem(i.key))).toEqual(['common', 'uncommon', 'rare', 'uncommon', 'rare', 'common', 'uncommon', 'common', 'uncommon', 'common', 'uncommon', 'common', 'uncommon'])
   })
   it('вид из ключа предмета: каждый предмет реестра соответствует виду анимации', () => {
     for (const i of water) expect(parseWaterItem(i.key), i.key).toBe(WATER_ITEMS[i.key])
@@ -39,7 +39,7 @@ describe('предметы «Анимация воды»', () => {
 })
 
 describe('у платных анимаций воды нет кнопки «Показать» — пример идёт сам (BACKLOG 58.1)', () => {
-  for (const key of ['water_rain', 'water_tide', 'water_sparkle', 'water_sway', 'water_glow', 'water_bounce', 'water_pulse', 'water_tilt', 'water_flash', 'water_shake', 'water_drop']) {
+  for (const key of ['water_rain', 'water_tide', 'water_sparkle', 'water_sway', 'water_glow', 'water_bounce', 'water_pulse', 'water_tilt', 'water_flash', 'water_shake', 'water_drop', 'water_spin', 'water_rise']) {
     it(`${key}: живой пример есть, кнопки нет`, async () => {
       const item = ITEMS.find((i) => i.key === key)!
       const w = mount(ItemCard, { props: { item, status: 'locked', balance: 0, busy: false, disabled: false }, attachTo: document.body })

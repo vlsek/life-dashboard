@@ -113,6 +113,8 @@ export const ITEMS: readonly CustomItem[] = [
   { key: 'water_flash', category: 'water_anim', source: 'points', tier: 'mid' },
   { key: 'water_shake', category: 'water_anim', source: 'points', tier: 'low' },
   { key: 'water_drop', category: 'water_anim', source: 'points', tier: 'mid' },
+  { key: 'water_spin', category: 'water_anim', source: 'points', tier: 'low' },
+  { key: 'water_rise', category: 'water_anim', source: 'points', tier: 'mid' },
   // Вид САМОГО стакана воды (BACKLOG 57.2б, уточнение владельца 13:14; агент 1): обычный стакан — у всех бесплатно, остальные — предметы.
   { key: 'glass_mug', category: 'water_glass', source: 'points', tier: 'low' },
   { key: 'glass_bottle', category: 'water_glass', source: 'points', tier: 'mid' },

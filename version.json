@@ -1,7 +1,14 @@
 {
-  "version": "6.45",
+  "version": "6.46",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.46",
+      "date": "2026-10-25 08:40",
+      "changes": [
+        "Customization, “Water animation”: two new water-saved animations — “Spin” (the glass makes a full turn, 100) and “Rise” (the glass floats up from below, 150). Needs migration 108."
+      ]
+    },
     {
       "version": "6.45",
       "date": "2026-10-25 07:13",
@@ -4585,6 +4592,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.46",
+      "date": "2026-10-25 08:40",
+      "changes": [
+        "Кастомизация, «Анимация воды»: две новые анимации записи воды — «Оборот» (стакан делает полный оборот, 100) и «Всплытие» (стакан плавно всплывает снизу, 150). Нужна миграция 108."
+      ]
+    },
     {
       "version": "6.45",
       "date": "2026-10-25 07:13",

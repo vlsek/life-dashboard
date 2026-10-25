@@ -296,6 +296,18 @@ html.theme-clinic .gh-root {
 .water-saved[data-variant="drop"] .ws-ripple { animation-delay: 0.6s; }
 .water-saved[data-variant="drop"] .water-saved-badge { animation-delay: 0.9s; }
 .water-saved[data-variant="drop"] .water-saved-check { animation-delay: 1.05s; }
+/* spin (платная «Оборот»): стакан делает полный оборот, пока набирается вода */
+.water-saved[data-variant="spin"] .ws-bubble, .water-saved[data-variant="spin"] .ws-drop, .water-saved[data-variant="spin"] .ws-ripple-2 { display: none; }
+.water-saved[data-variant="spin"] svg { transform-origin: 50% 50%; animation: water-saved-spin 1.2s ease-in-out both; }
+.water-saved[data-variant="spin"] .ws-ripple { animation-delay: 0.6s; }
+.water-saved[data-variant="spin"] .water-saved-badge { animation-delay: 0.9s; }
+.water-saved[data-variant="spin"] .water-saved-check { animation-delay: 1.05s; }
+/* rise (платная «Всплытие»): стакан плавно всплывает снизу, и вода набирается */
+.water-saved[data-variant="rise"] .ws-bubble, .water-saved[data-variant="rise"] .ws-drop, .water-saved[data-variant="rise"] .ws-ripple-2 { display: none; }
+.water-saved[data-variant="rise"] svg { transform-origin: 50% 50%; animation: water-saved-rise 1.2s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+.water-saved[data-variant="rise"] .ws-ripple { animation-delay: 0.6s; }
+.water-saved[data-variant="rise"] .water-saved-badge { animation-delay: 0.9s; }
+.water-saved[data-variant="rise"] .water-saved-check { animation-delay: 1.05s; }
 /* Пример в плитке «Кастомизации» (BACKLOG 57.2): не оверлей, а маленький стакан, анимация повторяется */
 .water-saved.water-saved-inline { position: relative; inset: auto; z-index: auto; display: inline-flex; }
 .water-saved-inline svg { width: 44px; height: 55px; padding: 6px 8px; border-radius: 14px; box-shadow: none; filter: none; }
@@ -415,6 +427,14 @@ html.theme-clinic .gh-root {
   65% { transform: translateY(-6px) scale(0.98, 1.03); }
   85% { transform: translateY(0) scale(1.02, 0.98); }
   100% { transform: translateY(0) scale(1, 1); opacity: 1; }
+}
+@keyframes water-saved-spin {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+@keyframes water-saved-rise {
+  0% { transform: translateY(30px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
 }
 @keyframes water-saved-spark {
   0% { opacity: 0; transform: scale(0.2) rotate(0deg); }
