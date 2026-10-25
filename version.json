@@ -1,7 +1,14 @@
 {
-  "version": "6.44",
+  "version": "6.45",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.45",
+      "date": "2026-10-25 07:13",
+      "changes": [
+        "Workouts work offline: you can add, edit or delete a set, and create, rename or delete an exercise even without internet — the change shows up in the list right away and is sent to the server by itself once the connection returns (no loss, no duplicates). Daily metrics linked to an exercise are updated the same way. No migrations."
+      ]
+    },
     {
       "version": "6.44",
       "date": "2026-10-23 10:30",
@@ -4578,6 +4585,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.45",
+      "date": "2026-10-25 07:13",
+      "changes": [
+        "Тренировки работают без сети: подход можно добавить, изменить или удалить, а упражнение создать, переименовать или удалить даже без интернета — запись сразу видна в списке, а на сервер уйдёт сама, когда связь появится (без потерь и дублей). Связанные с упражнением метрики дня обновляются так же. Без миграций."
+      ]
+    },
     {
       "version": "6.44",
       "date": "2026-10-23 10:30",
