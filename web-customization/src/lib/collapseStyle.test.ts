@@ -175,3 +175,24 @@ describe('вид сворачивания: «Ромб» и «Звезда»', ()
     writeCachedCollapseStyle('chevron')
   })
 })
+
+describe('вид сворачивания: «Стрелка в кружке»', () => {
+  it('цена 100 (миграция 109), обычная редкость, название и описание на двух языках', () => {
+    const it = itemByKey('collapse_circle')!
+    expect(it).toMatchObject({ category: 'collapse_style', source: 'points' })
+    expect(priceOf(it)).toBe(100)
+    expect(rarityOfItem('collapse_circle')).toBe('common')
+    for (const lang of ['ru', 'en']) {
+      localStorage.setItem('site_lang', lang)
+      expect(t('cust_item_collapse_circle' as never).length).toBeGreaterThan(2)
+      expect(t('cust_item_collapse_circle_desc' as never).length).toBeGreaterThan(10)
+    }
+  })
+  it('ключ предмета → вид «circle»; кэш его помнит', () => {
+    expect(parseCollapseStyle('collapse_circle')).toBe('circle')
+    writeCachedCollapseStyle('circle')
+    expect(readCachedCollapseStyle()).toBe('circle')
+    writeCachedCollapseStyle('chevron')
+  })
+})
+

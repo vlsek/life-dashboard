@@ -45,6 +45,10 @@ defineProps<{ collapsed: boolean }>()
     </template>
     <path v-else-if="collapseStyle === 'diamond'" d="M12 4l7 8-7 8-7-8z" :fill="collapsed ? 'none' : 'currentColor'" stroke-width="1.6" />
     <path v-else-if="collapseStyle === 'star'" d="M12 4l2.4 5 5.4.7-4 3.8 1 5.4L12 16.2 7.2 18.9l1-5.4-4-3.8 5.4-.7z" :fill="collapsed ? 'none' : 'currentColor'" stroke-width="1.6" />
+    <template v-else-if="collapseStyle === 'circle'">
+      <circle cx="12" cy="12" r="8.5" stroke-width="1.6" />
+      <path d="M8.6 10.6l3.4 3.4 3.4-3.4" stroke-width="1.8" />
+    </template>
     <path v-else d="M6 9l6 6 6-6" />
   </svg>
 </template>

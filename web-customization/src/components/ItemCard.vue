@@ -24,6 +24,13 @@ const name = computed(() => t(('cust_item_' + props.item.key) as never))
 const price = computed(() => priceOf(props.item))
 const missing = computed(() => shortBy(props.item, props.balance))
 const isCollapseStyle = computed(() => props.item.category === 'collapse_style')
+// Превью вида сворачивания берётся из ключа предмета (`collapse_<вариант>`): новый вариант достаточно добавить в CollapsePreview и в этот список
+// (раньше длинная цепочка «? :» молча рисовала неизвестный ключ как «Аккордеон» — страж collapsePreviewAll.test.ts ловит такое)
+const COLLAPSE_VARIANTS = ['accordion', 'summary', 'plus', 'caret', 'dot', 'double', 'square', 'burger', 'arrow', 'ring', 'diamond', 'star', 'circle'] as const
+const collapseVariant = computed(() => {
+  const v = props.item.key.replace(/^collapse_/, '')
+  return ((COLLAPSE_VARIANTS as readonly string[]).includes(v) ? v : 'accordion') as (typeof COLLAPSE_VARIANTS)[number]
+})
 const isWeekGauge = computed(() => props.item.category === 'week_gauge')
 const isDayGauge = computed(() => props.item.category === 'day_gauge')
 const isWaterGlass = computed(() => props.item.category === 'water_glass')
@@ -44,7 +51,7 @@ const reward = computed(() => (props.item.achievement ? t(('cust_ach_' + props.i
     :data-rarity="rarity"
   >
     <span v-if="isCollapseStyle" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="collapse-preview">
-      <CollapsePreview :variant="item.key === 'collapse_summary' ? 'summary' : item.key === 'collapse_plus' ? 'plus' : item.key === 'collapse_caret' ? 'caret' : item.key === 'collapse_dot' ? 'dot' : item.key === 'collapse_double' ? 'double' : item.key === 'collapse_square' ? 'square' : item.key === 'collapse_burger' ? 'burger' : item.key === 'collapse_arrow' ? 'arrow' : item.key === 'collapse_ring' ? 'ring' : item.key === 'collapse_diamond' ? 'diamond' : item.key === 'collapse_star' ? 'star' : 'accordion'" />
+      <CollapsePreview :variant="collapseVariant" />
     </span>
     <span v-else-if="isWeekGauge" :style="{ opacity: status === 'locked' || status === 'short' ? 0.55 : 1, color: 'var(--text)' }" data-testid="week-gauge-preview">
       <WeekGaugePreview :variant="weekPreviewVariant" />
