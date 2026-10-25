@@ -10,7 +10,8 @@
 #   3. `python3 scripts/apply_themes.py` (если сообщит «изменено файлов» > 0 — файлы тем разошлись, смотрите git status).
 #   4. Пересобирает (`npm run build`, это vue-tsc + vite) пилоты, у которых менялись исходники — у upstream ИЛИ у вас
 #      (shared/ считается изменением всех пилотов). Можно задать список вручную: PILOTS="workouts dashboard" scripts/rebase_rebuild.sh
-#   5. `python3 scripts/gen_sw_assets.py` — обновляет sw-assets.js (список предкэша service worker'а, BACKLOG 66.3; без него офлайн-старт
+#   5. `python3 scripts/check_built.py` (нет маркеров конфликта, бандлы разбираются; при провале коммит НЕ создаётся) и
+#      `python3 scripts/gen_sw_assets.py` — обновляет sw-assets.js (список предкэша service worker'а, BACKLOG 66.3; без него офлайн-старт
 #      не увидит новые файлы сборки) и коммитит собранное одним коммитом «WIP rebuilt on merged sources».
 #
 # Чего НЕ делает: не пушит, не поднимает версию, не трогает config.js / CHANGELOG / ROADMAP / BACKLOG / COORDINATION. Версию берите
@@ -92,6 +93,13 @@ done
 
 # список предкэша service worker'а (BACKLOG 66.3): после КАЖДОЙ пересборки пилотов; не нужен — пишет «без изменений»
 python3 scripts/gen_sw_assets.py
+
+# цела ли сборка: нет маркеров конфликта слияния (git ставит 7 ИЛИ 8 символов), главные бандлы разбираются. Авария 21–23.10.2026: коммит
+# этого скрипта выложил account и community с маркерами — обе страницы были пустыми двое суток. Не коммитим сломанное.
+if ! python3 scripts/check_built.py; then
+  echo "СТОП: коммит не создан. Пересоберите указанные пилоты (npm run build) или откатите: git checkout origin/main -- <папка>"
+  exit 1
+fi
 git add -A $(for d in "${!OUT[@]}"; do echo "${OUT[$d]}"; done | sort -u) sw-assets.js 2>/dev/null
 if ! git diff --cached --quiet; then git commit -q -m "WIP rebuilt on merged sources"; echo "закоммичена пересборка"; fi
 
