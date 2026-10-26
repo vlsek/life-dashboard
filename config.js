@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.48";
+const SITE_VERSION = "6.49";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.49", date: "2026-10-26 07:40", changes: [
+        "Магазин наград: кнопка удаления больше не горит красным на каждой карточке — красной она становится только при наведении.",
+    ]},
     { version: "6.48", date: "2026-10-22 12:00", changes: [
         "«Кастомизация»: новый вид маркера сворачивания блоков — «Стрелка в кружке» (100 баллов): стрелка внутри кружка, которая поворачивается вправо, когда блок свёрнут. Работает на Дашборде и в «Тренировках». Чтобы вид появился в магазине, нужна миграция 110. Заодно исправлено превью видов сворачивания: раньше для нового вида оно могло показываться как обычный шеврон."
     ]},
@@ -2560,6 +2563,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.49", date: "2026-10-26 07:40", changes: [
+        "Rewards shop: the delete button no longer glows red on every card — it turns red only on hover.",
+    ]},
     { version: "6.48", date: "2026-10-22 12:00", changes: [
         "Customization: a new block-collapse marker — “Circled arrow” (100 points): an arrow inside a circle that turns to the right when a block is collapsed. Works on the Dashboard and in Workouts. Migration 110 is needed for it to appear in the shop. Also fixed the preview of collapse styles: for a new style it could previously show a plain chevron."
     ]},

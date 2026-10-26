@@ -1,7 +1,14 @@
 {
-  "version": "6.48",
+  "version": "6.49",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.49",
+      "date": "2026-10-26 07:40",
+      "changes": [
+        "Rewards shop: the delete button no longer glows red on every card — it turns red only on hover."
+      ]
+    },
     {
       "version": "6.48",
       "date": "2026-10-22 12:00",
@@ -4606,6 +4613,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.49",
+      "date": "2026-10-26 07:40",
+      "changes": [
+        "Магазин наград: кнопка удаления больше не горит красным на каждой карточке — красной она становится только при наведении."
+      ]
+    },
     {
       "version": "6.48",
       "date": "2026-10-22 12:00",

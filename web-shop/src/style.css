@@ -1982,3 +1982,6 @@ html[data-icon-style='duotone'] svg[viewBox='0 0 24 24'][stroke='currentColor'] 
 @keyframes goal-pop { from { transform: scale(0.96); opacity: 0 } to { transform: scale(1); opacity: 1 } }
 .goal-pop { animation: goal-pop 0.25s ease-out }
 @media (prefers-reduced-motion: reduce) { .goal-pop { animation: none } }
+
+/* Правка/удаление на карточках и в строках: спокойные, красный цвет удаления — только при наведении/фокусе (67.2) */
+[data-testid='item-actions'] button.danger:not(:hover):not(:focus-visible) { background: transparent; color: var(--text-dim); border-color: var(--border); }
