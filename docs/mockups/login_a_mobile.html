@@ -1,0 +1,23 @@
+<!doctype html><meta charset="utf-8"><style>
+:root{--bg:#f7f3ed;--card:#fff;--text:#2a1f17;--dim:#8a7b6c;--accent:#db8029;--border:#e3dacd}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px system-ui,sans-serif;min-height:100vh;position:relative;overflow:hidden}
+.glow{position:absolute;left:50%;top:-120px;width:520px;height:520px;transform:translateX(-50%);background:radial-gradient(circle,rgba(219,128,41,.28),rgba(219,128,41,0) 65%)}
+.corner{position:absolute;right:14px;top:14px;display:flex;gap:8px}
+.ic{height:36px;min-width:36px;border:1px solid var(--border);background:rgba(255,255,255,.7);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:13px;padding:0 10px;color:var(--text)}
+.wrap{position:relative;max-width:360px;margin:0 auto;padding:78px 20px 24px;text-align:center}
+.flame{width:84px;height:84px;margin:0 auto 6px;filter:drop-shadow(0 6px 18px rgba(219,128,41,.45))}
+h1{margin:8px 0 4px;font-size:26px}.tag{margin:0 0 22px;color:var(--dim);font-size:14px;line-height:1.4}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px;text-align:left;box-shadow:0 8px 30px rgba(120,80,30,.08)}
+.seg{display:flex;background:var(--bg);border-radius:12px;padding:3px;margin-bottom:14px}.seg b,.seg span{flex:1;text-align:center;padding:9px;border-radius:10px;font-size:15px}.seg b{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15)}.seg span{color:var(--dim)}
+label{display:block;font-size:13px;color:var(--dim);margin:10px 0 5px}.in{height:48px;border:1px solid var(--border);border-radius:12px;background:#fbf9f5;padding:0 14px;display:flex;align-items:center;color:#b9ab9b}
+.btn{height:50px;border-radius:14px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;margin:16px 0 12px}
+.or{display:flex;align-items:center;gap:10px;color:var(--dim);font-size:13px;margin-bottom:12px}.or i{flex:1;height:1px;background:var(--border)}
+.g{height:48px;border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;justify-content:center;gap:8px}
+.foot{margin-top:16px;color:var(--dim);font-size:13px}</style>
+<div class="glow"></div><div class="corner"><div class="ic">🌐 RU</div><div class="ic">☀️</div></div>
+<div class="wrap"><svg class="flame" viewBox="0 0 24 24"><path fill="#db8029" d="M12 2c1 3.5 5.5 6 5.5 11a5.5 5.5 0 0 1-11 0c0-2 .8-3.4 2-4.8.2 1.6.9 2.5 1.8 3C10 8 10.5 5 12 2z"/><path fill="#f4c28f" d="M12 11c.6 1.6 2.6 2.7 2.6 4.6a2.6 2.6 0 0 1-5.2 0c0-1.2.6-2 1.2-2.7.2.6.5 1 1 1.2-.2-1 .2-2.4.4-3.1z"/></svg>
+<h1>Личный дашборд</h1><p class="tag">Привычки, цели, тренировки и вода — в одном месте</p>
+<div class="card"><div class="seg"><b>Вход</b><span>Регистрация</span></div>
+<label>Email</label><div class="in">name@example.com</div><label>Пароль</label><div class="in">••••••••</div>
+<div class="btn">Войти</div><div class="or"><i></i>или<i></i></div><div class="g"><b style="color:#4285f4">G</b> Продолжить с Google</div></div>
+<div class="foot">▸ О проекте</div></div>

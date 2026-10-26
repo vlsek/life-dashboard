@@ -1,0 +1,22 @@
+<!doctype html><meta charset="utf-8"><style>
+:root{--bg:#f7f3ed;--card:#fff;--text:#2a1f17;--dim:#8a7b6c;--accent:#db8029;--border:#e3dacd}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px system-ui,sans-serif;min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr}
+.brand{position:relative;background:linear-gradient(160deg,#e8923a,#c9651c 70%);color:#fff;padding:56px 54px;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.brand:before{content:"";position:absolute;right:-140px;bottom:-140px;width:460px;height:460px;border-radius:50%;background:rgba(255,255,255,.1)}
+.brand svg{width:96px;height:96px;filter:drop-shadow(0 8px 20px rgba(0,0,0,.25))}.brand h1{margin:18px 0 8px;font-size:34px}.brand p{margin:0 0 26px;opacity:.9;font-size:17px;line-height:1.45;max-width:380px}
+.brand ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}.brand li{display:flex;gap:12px;align-items:center;font-size:16px}.brand li b{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center}
+.side{position:relative;display:flex;align-items:center;justify-content:center;padding:40px}.corner{position:absolute;right:22px;top:22px;display:flex;gap:8px}
+.ic{height:36px;min-width:36px;border:1px solid var(--border);background:#fff;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:13px;padding:0 10px}
+.card{width:100%;max-width:380px}.card h2{margin:0 0 4px;font-size:26px}.card .sub{margin:0 0 18px;color:var(--dim)}
+.seg{display:flex;background:#efe8dd;border-radius:12px;padding:3px;margin-bottom:14px}.seg b,.seg span{flex:1;text-align:center;padding:9px;border-radius:10px;font-size:15px}.seg b{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15)}.seg span{color:var(--dim)}
+label{display:block;font-size:13px;color:var(--dim);margin:10px 0 5px}.in{height:48px;border:1px solid var(--border);border-radius:12px;background:#fff;padding:0 14px;display:flex;align-items:center;color:#b9ab9b}
+.btn{height:50px;border-radius:14px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;margin:16px 0 12px}
+.or{display:flex;align-items:center;gap:10px;color:var(--dim);font-size:13px;margin-bottom:12px}.or i{flex:1;height:1px;background:var(--border)}
+.g{height:48px;border:1px solid var(--border);background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:8px}</style>
+<div class="brand"><svg viewBox="0 0 24 24"><path fill="#fff" d="M12 2c1 3.5 5.5 6 5.5 11a5.5 5.5 0 0 1-11 0c0-2 .8-3.4 2-4.8.2 1.6.9 2.5 1.8 3C10 8 10.5 5 12 2z"/><path fill="#ffd9ae" d="M12 11c.6 1.6 2.6 2.7 2.6 4.6a2.6 2.6 0 0 1-5.2 0c0-1.2.6-2 1.2-2.7.2.6.5 1 1 1.2-.2-1 .2-2.4.4-3.1z"/></svg>
+<h1>Личный дашборд</h1><p>Всё, что вы делаете каждый день, — в одном месте. Без лишнего.</p>
+<ul><li><b>🔥</b>Огоньки серий и привычки</li><li><b>🎯</b>Цели и планы по дням</li><li><b>💧</b>Вода, тренировки, показатели тела</li></ul></div>
+<div class="side"><div class="corner"><div class="ic">🌐 RU</div><div class="ic">☀️</div></div>
+<div class="card"><h2>С возвращением</h2><p class="sub">Войдите, чтобы продолжить</p><div class="seg"><b>Вход</b><span>Регистрация</span></div>
+<label>Email</label><div class="in">name@example.com</div><label>Пароль</label><div class="in">••••••••</div>
+<div class="btn">Войти</div><div class="or"><i></i>или<i></i></div><div class="g"><b style="color:#4285f4">G</b> Продолжить с Google</div></div></div>
