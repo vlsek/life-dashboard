@@ -1,0 +1,8 @@
+# Объекты, исключённые из пробы: на схеме после ВСЕХ миграций их нет (удалены/переименованы позже). Формат: миграция|вид|объект.
+# Файл пишется командой build_migration_probe.py --prune …; руками не править.
+002_streaks_english_books_shop|policy|users upload own shop images on objects
+002_streaks_english_books_shop|policy|users update own shop images on objects
+002_streaks_english_books_shop|policy|users delete own shop images on objects
+012_planned_goals_jsonb|column|daily_notes.planned_goals_new
+048_customization|policy|own user_customizations on user_customizations
+051_achievement_bonuses|policy|grant own achievement_bonuses on achievement_bonuses
