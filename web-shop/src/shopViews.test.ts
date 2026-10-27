@@ -222,3 +222,18 @@ describe('Магазин — пустое состояние', () => {
     expect(document.body.querySelector('form, [role="dialog"], .modal, [data-testid="item-form"]')).toBeTruthy()
   })
 })
+
+describe('Магазин — первый заход: одна плашка, а не две', () => {
+  it('пока идея не прочитана, общая подсказка страницы заранее помечена увиденной', () => {
+    localStorage.removeItem('shop_idea_seen')
+    setup(300)
+    expect(Object.keys(localStorage).some((k) => /hint/i.test(k) && localStorage.getItem(k))).toBe(true)
+  })
+  it('в виде «Цель» баланс — одна компактная строка', () => {
+    localStorage.removeItem('shop_view')
+    const w = setup(300)
+    expect(w.find('[data-testid="balance-card"]').classes()).toContain('card')
+    expect(w.find('[data-testid="balance-value"]').text()).toContain('300')
+    expect(w.find('[data-testid="balance-card"] .text-2xl').exists()).toBe(false)
+  })
+})

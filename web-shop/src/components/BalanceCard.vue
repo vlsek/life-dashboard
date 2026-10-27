@@ -8,13 +8,18 @@ import EmojiText from './EmojiText.vue'
 import { sparksMode } from '../lib/sparks'
 
 // Баланс. В «Витрине» — крупное число и итоги; в «Списке» — число и полоса прогресса к ближайшей цели копилки.
-const props = defineProps<{ balance: { total: number; spent: number; balance: number } | null; variant: 'grid' | 'list'; goal?: ShopItem | null }>()
+const props = defineProps<{ balance: { total: number; spent: number; balance: number } | null; variant: 'grid' | 'list' | 'compact'; goal?: ShopItem | null }>()
 const goalProgress = computed(() => (props.goal && props.balance ? itemProgress(props.goal.cost, props.balance.balance) : null))
 </script>
 
 <template>
-  <div class="card mb-3 rounded-xl border p-3.5" style="border-color: var(--border)" data-testid="balance-card">
+  <div class="card mb-3 rounded-xl border px-3.5 py-2.5" style="border-color: var(--border)" data-testid="balance-card">
     <span v-if="!balance" class="dim">{{ t('loading_ellipsis') }}</span>
+
+    <div v-else-if="variant === 'compact'" class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+      <span class="inline-flex items-center gap-1.5 text-lg font-semibold" data-testid="balance-value">{{ balance.balance }} <CoinIcon /></span>
+      <span class="dim text-xs">{{ t('shop_total_earned') }} {{ balance.total }} · {{ t('shop_total_spent') }} {{ balance.spent }}</span>
+    </div>
 
     <template v-else-if="variant === 'grid'">
       <div class="flex flex-wrap items-center justify-between gap-3">

@@ -16,6 +16,8 @@ import { useShop } from './lib/useShop'
 import { t } from './lib/i18n'
 import { filterCounts, filterItems, savingGoal, splitItems, type ShopFilter } from './lib/shopGroups'
 import { loadShopView, saveShopView } from './lib/shopView'
+import { loadIdeaSeen } from './lib/shopIdea'
+import { markHintSeen } from './lib/pageHints'
 import type { ShopItem, ShopItemFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import Icon from './components/Icon.vue'
@@ -23,6 +25,8 @@ import { confirmDialog } from './lib/confirmDialog'
 
 const { auth, items, archived, balance, createdAt, error, init, addItem, updateItem, buyItem, transferArchived, deleteItem, uploadImage } = useShop()
 onMounted(init)
+// Первый заход: полное описание идеи уже показывает плашка «Лавка наград» — общую подсказку страницы заранее считаем увиденной (она остаётся за значком «i»), чтобы две плашки не стояли друг над другом
+if (!loadIdeaSeen()) markHintSeen('shop')
 
 // Вид страницы (BACKLOG 392): «Витрина» или «Список с копилкой», запоминается на устройстве.
 const view = ref(loadShopView())
@@ -96,7 +100,7 @@ async function onUpload(file: File): Promise<string | null> {
       <ViewSwitch v-model="view" />
     </div>
 
-    <BalanceCard :balance="balance" :variant="view === 'list' ? 'list' : 'grid'" :goal="goal" />
+    <BalanceCard :balance="balance" :variant="view === 'list' ? 'list' : view === 'focus' ? 'compact' : 'grid'" :goal="goal" />
 
     <p v-if="justBought" class="goal-pop mb-2 rounded-xl border px-3 py-2 text-sm font-medium" style="border-color: var(--accent)" role="status" data-testid="bought-toast"><EmojiText :text="t('shop_bought_toast')" /> {{ justBought }}</p>
     <p v-if="actionError" class="mb-2 text-sm" style="color: var(--danger)" role="alert" data-testid="action-error">{{ actionError }}</p>

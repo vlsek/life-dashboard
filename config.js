@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.49";
+const SITE_VERSION = "6.50";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.50", date: "2026-10-27 09:50", changes: [
+        "Магазин наград: при первом заходе вместо двух плашек подряд показывается одна («Лавка наград»), а в виде «Цель» баланс стал компактной строкой над карточкой цели.",
+    ]},
     { version: "6.49", date: "2026-10-26 07:40", changes: [
         "Магазин наград: кнопка удаления больше не горит красным на каждой карточке — красной она становится только при наведении.",
     ]},
@@ -2563,6 +2566,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.50", date: "2026-10-27 09:50", changes: [
+        "Rewards shop: the first visit now shows one banner (“The Rewards Stall”) instead of two in a row, and in the “Goal” view the balance is a compact line above the goal card.",
+    ]},
     { version: "6.49", date: "2026-10-26 07:40", changes: [
         "Rewards shop: the delete button no longer glows red on every card — it turns red only on hover.",
     ]},

@@ -1,7 +1,14 @@
 {
-  "version": "6.49",
+  "version": "6.50",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.50",
+      "date": "2026-10-27 09:50",
+      "changes": [
+        "Rewards shop: the first visit now shows one banner (“The Rewards Stall”) instead of two in a row, and in the “Goal” view the balance is a compact line above the goal card."
+      ]
+    },
     {
       "version": "6.49",
       "date": "2026-10-26 07:40",
@@ -4613,6 +4620,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.50",
+      "date": "2026-10-27 09:50",
+      "changes": [
+        "Магазин наград: при первом заходе вместо двух плашек подряд показывается одна («Лавка наград»), а в виде «Цель» баланс стал компактной строкой над карточкой цели."
+      ]
+    },
     {
       "version": "6.49",
       "date": "2026-10-26 07:40",
