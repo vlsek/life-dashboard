@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useVocab } from './lib/useVocab'
-import { addableLangs, buildTabs, getLangFilter, getSavedTabs, langName, resolveActiveTab, setLangFilter, setLastLang, setSavedTabs } from './lib/vocab'
+import { addableLangs, buildTabs, getLangFilter, getSavedTabs, resolveActiveTab, setLangFilter, setLastLang, setSavedTabs } from './lib/vocab'
 import { t } from './lib/i18n'
 import AppShell from './components/AppShell.vue'
 import WordForm from './components/WordForm.vue'
@@ -10,7 +10,7 @@ import IdiomCard from './components/IdiomCard.vue'
 import FlashCard from './components/FlashCard.vue'
 import ProgressRing from './components/ProgressRing.vue'
 import { hasIdioms } from './lib/idioms'
-import Icon from './components/Icon.vue'
+import WordRow from './components/WordRow.vue'
 import type { VocabWord, WordFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
@@ -173,73 +173,19 @@ async function onDelete(id: string) {
 
       <h3 class="mb-2 font-bold"><EmojiText :text="t('eng_learning_h3')" /></h3>
       <p v-if="activeWords.length === 0" class="mb-5 text-sm" style="color: var(--text-dim)">{{ t('eng_nothing_to_learn') }}</p>
-      <div v-else class="mb-5 overflow-x-auto rounded-xl border" style="border-color: var(--border)">
-        <table class="w-full text-sm">
-          <tbody>
-            <tr v-for="w in activeWords" :key="w.id" class="border-b last:border-0" style="border-color: var(--border)">
-              <td class="w-[1%] px-3 py-2">
-                <input type="checkbox" :checked="w.learned" @change="toggleLearned(w)" />
-              </td>
-              <td class="px-3 py-2 font-semibold">
-                {{ w.word }}
-                <span
-                  v-if="effectiveFilter === 'all'"
-                  class="ml-1.5 rounded-lg border px-1.5 py-0.5 align-middle text-[0.65em]"
-                  style="border-color: var(--border); color: var(--text-dim)"
-                  :title="langName(w.lang || 'en')"
-                >
-                  {{ (w.lang || 'en').toUpperCase() }}
-                </span>
-              </td>
-              <td class="px-3 py-2">{{ w.translation || '—' }}</td>
-              <td class="px-3 py-2 text-[0.85em]" style="color: var(--text-dim)">{{ w.example }}</td>
-              <td class="whitespace-nowrap px-3 py-2 text-right">
-                <button type="button" class="mr-1 rounded p-1" style="color: var(--text-dim)" @click="openEdit(w)">
-                  <Icon name="edit" />
-                </button>
-                <button type="button" class="rounded p-1" style="color: var(--danger, #e05555)" @click="onDelete(w.id)">
-                  <Icon name="trash" />
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <template v-else>
+      <ul class="m-0 list-none overflow-hidden rounded-xl border p-0 mb-5" style="border-color: var(--border); background: var(--bg-card)">
+        <WordRow v-for="w in activeWords" :key="w.id" :word="w" :show-lang="effectiveFilter === 'all'" @toggle="toggleLearned" @edit="openEdit" @remove="onDelete" />
+      </ul>
+      </template>
 
       <h2 class="mb-2 font-bold"><EmojiText :text="t('eng_learned_h2')" /></h2>
       <p v-if="doneWords.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('eng_nothing_learned') }}</p>
-      <div v-else class="overflow-x-auto rounded-xl border" style="border-color: var(--border)">
-        <table class="w-full text-sm">
-          <tbody>
-            <tr v-for="w in doneWords" :key="w.id" class="border-b last:border-0" style="border-color: var(--border)">
-              <td class="w-[1%] px-3 py-2">
-                <input type="checkbox" :checked="w.learned" @change="toggleLearned(w)" />
-              </td>
-              <td class="px-3 py-2 font-semibold line-through" style="color: var(--text-dim)">
-                {{ w.word }}
-                <span
-                  v-if="effectiveFilter === 'all'"
-                  class="ml-1.5 rounded-lg border px-1.5 py-0.5 align-middle text-[0.65em] no-underline"
-                  style="border-color: var(--border)"
-                  :title="langName(w.lang || 'en')"
-                >
-                  {{ (w.lang || 'en').toUpperCase() }}
-                </span>
-              </td>
-              <td class="px-3 py-2">{{ w.translation || '—' }}</td>
-              <td class="px-3 py-2 text-[0.85em]" style="color: var(--text-dim)">{{ w.example }}</td>
-              <td class="whitespace-nowrap px-3 py-2 text-right">
-                <button type="button" class="mr-1 rounded p-1" style="color: var(--text-dim)" @click="openEdit(w)">
-                  <Icon name="edit" />
-                </button>
-                <button type="button" class="rounded p-1" style="color: var(--danger, #e05555)" @click="onDelete(w.id)">
-                  <Icon name="trash" />
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <template v-else>
+      <ul class="m-0 list-none overflow-hidden rounded-xl border p-0" style="border-color: var(--border); background: var(--bg-card)">
+        <WordRow v-for="w in doneWords" :key="w.id" :word="w" :show-lang="effectiveFilter === 'all'" @toggle="toggleLearned" @edit="openEdit" @remove="onDelete" />
+      </ul>
+      </template>
     </template>
   </main>
 

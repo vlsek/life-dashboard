@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.50";
+const SITE_VERSION = "6.51";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.51", date: "2026-10-27 13:00", changes: [
+        "«Изучение языков»: слова в списках теперь не в широкой таблице, а в аккуратных строках — слово и перевод сверху, пример курсивом под ними; на телефоне больше ничего не уезжает за край экрана, корзина красная только при наведении.",
+    ]},
     { version: "6.50", date: "2026-10-27 09:50", changes: [
         "Магазин наград: при первом заходе вместо двух плашек подряд показывается одна («Лавка наград»), а в виде «Цель» баланс стал компактной строкой над карточкой цели.",
     ]},
@@ -2566,6 +2569,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.51", date: "2026-10-27 13:00", changes: [
+        "Language learning: the word lists are no longer a wide table but tidy rows — word and translation on top, the example in italics below; nothing runs off the screen on a phone, and the trash icon turns red only on hover.",
+    ]},
     { version: "6.50", date: "2026-10-27 09:50", changes: [
         "Rewards shop: the first visit now shows one banner (“The Rewards Stall”) instead of two in a row, and in the “Goal” view the balance is a compact line above the goal card.",
     ]},

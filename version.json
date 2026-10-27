@@ -1,7 +1,14 @@
 {
-  "version": "6.50",
+  "version": "6.51",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.51",
+      "date": "2026-10-27 13:00",
+      "changes": [
+        "Language learning: the word lists are no longer a wide table but tidy rows — word and translation on top, the example in italics below; nothing runs off the screen on a phone, and the trash icon turns red only on hover."
+      ]
+    },
     {
       "version": "6.50",
       "date": "2026-10-27 09:50",
@@ -4620,6 +4627,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.51",
+      "date": "2026-10-27 13:00",
+      "changes": [
+        "«Изучение языков»: слова в списках теперь не в широкой таблице, а в аккуратных строках — слово и перевод сверху, пример курсивом под ними; на телефоне больше ничего не уезжает за край экрана, корзина красная только при наведении."
+      ]
+    },
     {
       "version": "6.50",
       "date": "2026-10-27 09:50",
