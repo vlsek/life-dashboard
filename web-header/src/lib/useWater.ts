@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue'
 import { sb } from './supabase'
-import { dailyValueKey, qDelete, qInsert, qUpsert } from './outboxClient'
+import { dailyValueKey, pendingUpsertValue, qDelete, qInsert, qUpsert } from './outboxClient'
 import { notifyDataChanged } from './events'
 import { emitPointsFloat, pointsDelta } from './pointsFloat'
 import { fmtDate, todayStr } from './date'
@@ -132,6 +132,14 @@ export function useWater() {
   // иначе офлайн-запись затёрла бы настоящую сумму (BACKLOG 66.5а).
   async function getMlForDate(dateStr: string): Promise<number | null> {
     if (!metric.value) return 0
+    // Своя ещё не отправленная запись новее чтения: без сети чтение отдаёт устаревший кэш, и без этого вторая запись затёрла бы первую
+    const mine = await pendingUpsertValue(userId, dailyValueKey(dateStr, metric.value.id))
+    if (mine !== null) {
+      dayCache.set(dateStr, mine)
+      return mine
+    }
+    // Браузер знает, что сети нет, и мы эту сумму уже видели в сессии — чтение отдало бы кэш (устаревший), берём свою
+    if (typeof navigator !== 'undefined' && navigator.onLine === false && dayCache.has(dateStr)) return dayCache.get(dateStr) as number
     const { data, error: readErr } = await sb
       .from('daily_values')
       .select('value')

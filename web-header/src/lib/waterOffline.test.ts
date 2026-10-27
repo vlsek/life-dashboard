@@ -8,6 +8,7 @@ const db = vi.hoisted(() => ({
   log: [] as { id: string; date: string; delta_ml: number }[],
   metric: null as any,
   rejectUpsert: false,
+  staleRead: null as number | null,
   inserts: 0,
 }))
 vi.mock('./supabase', () => ({
@@ -23,6 +24,7 @@ vi.mock('./supabase', () => ({
         order: () => chain,
         limit: () => chain,
         maybeSingle: () => {
+          if (db.staleRead !== null) return Promise.resolve({ data: table === 'daily_values' ? { value: db.staleRead } : null, error: null }) // кэш чтения: ответ без ошибки, но старый
           if (!db.online) return Promise.resolve({ data: null, error: netErr })
           return Promise.resolve({ data: table === 'daily_values' && f.date in db.store ? { value: db.store[f.date] } : null, error: null })
         },
@@ -79,6 +81,7 @@ beforeEach(() => {
   db.store = {}
   db.log = []
   db.rejectUpsert = false
+  db.staleRead = null
   db.inserts = 0
   let n = 0
   vi.spyOn(globalThis.crypto, 'randomUUID').mockImplementation((() => 'id' + ++n) as never) // очередь тоже берёт randomUUID для своих записей, поэтому номера не считаем
@@ -178,5 +181,38 @@ describe('вода без сети (66.5а)', () => {
     expect(await w.addMl(250, D)).toBeNull()
     expect(w.saveError.value).toBeTruthy()
     expect(await box.list()).toEqual([])
+  })
+})
+
+describe('устаревшее чтение без сети (кэш чтения) не затирает свою ожидающую запись', () => {
+  it('два стакана подряд без сети, а чтение «успешно» отдаёт старую сумму (как кэш): итог 500, а не 250', async () => {
+    const w = await fresh()
+    db.store[D] = 100
+    db.online = false
+    db.staleRead = 100 // чтение «из кэша»: без ошибки, но старое значение
+    await w.addMl(150, D)
+    await w.addMl(250, D)
+    await w.flushLog()
+    expect(w.todayMl.value).toBe(500)
+    db.staleRead = null
+    db.online = true
+    await box.flush()
+    expect(db.store[D]).toBe(500)
+  })
+})
+
+describe('браузер офлайн (navigator.onLine = false): берём свою последнюю сумму, а не устаревшее чтение', () => {
+  it('стакан онлайн, потом стакан без сети при «успешном» старом чтении: итог 400, а не 200', async () => {
+    const w = await fresh()
+    expect(await w.addMl(200, D)).toBe(200) // онлайн; сумма дня запомнена
+    db.online = false
+    db.staleRead = 0 // кэш чтения помнит старое: «0 мл»
+    const spy = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false)
+    expect(await w.addMl(200, D)).toBe(400)
+    spy.mockRestore()
+    db.staleRead = null
+    db.online = true
+    await box.flush()
+    expect(db.store[D]).toBe(400)
   })
 })

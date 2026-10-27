@@ -34,6 +34,21 @@ export const qDelete = (userId: string, table: string, key: string, match: Recor
   run(userId, { table, op: 'delete', key, match })
 export const dailyValueKey = (date: string, metricId: string): string => `daily_values:${date}:${metricId}`
 
+// Значение, которое мы САМИ ещё не отправили на сервер (ожидающий upsert по ключу): оно новее всего, что отдаст чтение — особенно без сети, когда чтение
+// берётся из кэша и устарело (BACKLOG 66.5а). null — ожидающей записи нет.
+export async function pendingUpsertValue(userId: string, key: string): Promise<number | null> {
+  try {
+    const o = getOutbox()
+    o.setUser(userId)
+    const e = (await o.list()).filter((x) => x.key === key && x.op === 'upsert' && x.status === 'pending').sort((a, b) => b.seq - a.seq)[0]
+    const v = e && e.payload && !Array.isArray(e.payload) ? e.payload.value : undefined
+    return typeof v === 'number' ? v : null
+  } catch {
+    return null
+  }
+}
+
+
 export interface OutboxView {
   status: Ref<OutboxStatus>
   entries: Ref<OutboxEntry[]>
