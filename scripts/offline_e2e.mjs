@@ -23,7 +23,13 @@ const jwt = `${b64({ alg: 'HS256', typ: 'JWT' })}.${b64({ sub: uid, role: 'authe
 const session = { access_token: jwt, refresh_token: 'r', expires_in: 36000, expires_at: now + 36000, token_type: 'bearer', user: { id: uid, aud: 'authenticated', role: 'authenticated', email: 't@e.com', app_metadata: {}, user_metadata: {} } }
 const metric = { id: 'aaaaaaaa-0000-0000-0000-000000000001', user_id: uid, name: 'Зарядка', icon: null, type: 'boolean', unit: null, goal_value: null, goal_direction: null, schedule: null, category_id: null, position: 1, active: true, created_at: '2026-01-01T00:00:00Z' }
 
-const server = { down: false, dailyValues: [], writes: 0 }
+// Вода и тренировки (66.7, остаток после 66.5а/в): метрика воды, одно упражнение и сегодняшняя запись с одним подходом
+const waterMetric = { id: 'aaaaaaaa-0000-0000-0000-0000000000w1', user_id: uid, name: 'Вода', icon: 'svg:droplet', type: 'number', unit: 'мл', goal_value: 2000, goal_direction: null, schedule: null, category_id: null, position: 1, active: true }
+const todayIso = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` })()
+const exercise = { id: 'eeeeeeee-0000-0000-0000-000000000001', user_id: uid, name: 'Отжимания', category: null, unit: null, tracks_weight: false, value_label: 'Повторы', created_at: '2026-10-01T00:00:00Z' }
+const server = { down: false, dailyValues: [], waterLog: [], entries: [{ id: 'ffffffff-0000-0000-0000-000000000001', user_id: uid, exercise_id: exercise.id, date: todayIso, sets: [{ reps: 10 }], notes: null }], entryPatches: 0, writes: 0 }
+const eqParams = (u) => [...new URL(u).searchParams.entries()].filter(([, v]) => v.startsWith('eq.')).map(([k, v]) => [k, v.slice(3)])
+const matches = (row, u) => eqParams(u).every(([k, v]) => !(k in row) || String(row[k]) === v)
 const cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': '*', 'access-control-expose-headers': '*' }
 let failed = 0
 const check = (ok, msg) => { console.log((ok ? 'ok   ' : 'FAIL ') + msg); if (!ok) failed++ }
@@ -45,7 +51,27 @@ try {
     const prof = { user_id: uid, onboarded: true, display_name: 'Тест' }
     let body = single ? '{}' : '[]'
     if (u.includes('/rest/v1/profiles')) body = JSON.stringify(single ? prof : [prof])
-    else if (u.includes('/rest/v1/metrics') && r.method() === 'GET') body = JSON.stringify([metric])
+    else if (u.includes('/rest/v1/metrics') && r.method() === 'GET') body = JSON.stringify([metric, waterMetric])
+    else if (u.includes('/rest/v1/water_log')) {
+      if (r.method() === 'POST') {
+        const row = JSON.parse(r.postData() || '{}')
+        if (server.waterLog.some((x) => x.id === row.id)) return r.respond({ status: 409, contentType: 'application/json', headers: cors, body: JSON.stringify({ code: '23505', message: 'duplicate key' }) })
+        server.waterLog.push(row)
+        return r.respond({ status: 201, headers: cors, body: '' })
+      }
+      if (r.method() === 'GET') body = JSON.stringify(server.waterLog.filter((x) => matches(x, u)))
+    } else if (u.includes('/rest/v1/workout_exercises') && r.method() === 'GET') body = JSON.stringify([exercise])
+    else if (u.includes('/rest/v1/workout_entries')) {
+      if (r.method() === 'PATCH') {
+        const id = (eqParams(u).find(([k]) => k === 'id') || [])[1]
+        const patch = JSON.parse(r.postData() || '{}')
+        const i = server.entries.findIndex((x) => x.id === id)
+        if (i >= 0) server.entries[i] = { ...server.entries[i], ...patch }
+        server.entryPatches++
+        return r.respond({ status: 204, headers: cors, body: '' })
+      }
+      if (r.method() === 'GET') body = JSON.stringify(server.entries)
+    }
     else if (u.includes('/rest/v1/daily_values')) {
       if (r.method() === 'POST') {
         server.writes++
@@ -57,10 +83,12 @@ try {
         }
         return r.respond({ status: 201, headers: cors, body: '' })
       }
-      if (r.method() === 'GET') body = JSON.stringify(server.dailyValues)
+      if (r.method() === 'GET') body = JSON.stringify(server.dailyValues.filter((x) => matches(x, u)))
     }
     return r.respond({ status: 200, contentType: 'application/json', headers: cors, body })
   })
+  // клик «изнутри» страницы: не зависит от геометрии (значок воды в шапке на узком экране может быть без своего места)
+  const jsClick = (selector) => p.evaluate((q) => { const el = document.querySelector(q); if (!el) return false; el.click(); return true }, selector)
   const outboxCount = () => p.evaluate(() => new Promise((res) => {
     const rq = indexedDB.open('ld-outbox')
     rq.onerror = () => res(-1)
@@ -98,6 +126,42 @@ try {
   check(await until(async () => (await outboxCount()) === 0), 'онлайн снова: очередь опустела')
   check(server.writes > writesBefore, 'онлайн снова: запись дошла на сервер')
   check(server.dailyValues.length === 1 && server.dailyValues[0].value === false, 'на сервере одна строка с последним значением (без дублей)')
+
+  // 3б. Вода без сети (66.5а): стакан онлайн → стакан офлайн (в очереди сумма дня + строка журнала) → сеть вернулась → всё на сервере, без дублей
+  check(await jsClick('[data-test=water-badge]'), 'вода: нажали значок воды')
+  check(await until(() => p.$('[data-test=water-modal]').then(Boolean)), 'вода: окно воды открылось из шапки')
+  check(await jsClick('[data-test=add-200]'), 'вода: нажали +200 мл (онлайн)')
+  check(await until(() => server.waterLog.length === 1 && server.dailyValues.some((x) => x.metric_id === waterMetric.id && x.value === 200)), 'вода онлайн: 200 мл дошли на сервер (сумма дня + журнал)')
+  check(await until(async () => (await outboxCount()) === 0), 'вода онлайн: очередь пуста')
+  server.down = true
+  // как «режим в самолёте»: запросы падают (server.down), и браузер сообщает navigator.onLine = false (puppeteer с перехватом запросов этого не делает сам)
+  await p.evaluate(() => { window.__olDesc = Object.getOwnPropertyDescriptor(Navigator.prototype, 'onLine'); Object.defineProperty(Navigator.prototype, 'onLine', { get: () => false, configurable: true }); window.dispatchEvent(new Event('offline')) })
+  check(await jsClick('[data-test=add-200]'), 'вода: нажали +200 мл (без сети)')
+  check(await until(async () => (await outboxCount()) === 2), 'вода офлайн: в очереди сумма дня и строка журнала (2)')
+  check(server.waterLog.length === 1, 'вода офлайн: на сервер ничего не ушло')
+  check(!(await p.$('[data-test=water-save-error]')), 'вода офлайн: ошибки в окне нет (запись принята локально)')
+  server.down = false
+  await p.evaluate(() => { Object.defineProperty(Navigator.prototype, 'onLine', window.__olDesc); window.dispatchEvent(new Event('online')) })
+  check(await until(async () => (await outboxCount()) === 0), 'вода: сеть вернулась — очередь опустела')
+  check(server.waterLog.length === 2 && new Set(server.waterLog.map((x) => x.id)).size === 2, 'вода: на сервере ровно две строки журнала с разными id (без дублей)')
+  check(server.dailyValues.filter((x) => x.metric_id === waterMetric.id).length === 1 && server.dailyValues.find((x) => x.metric_id === waterMetric.id).value === 400, 'вода: сумма дня на сервере 400, одна строка')
+  await p.evaluate(() => document.querySelector('[data-test=water-modal]')?.click())
+
+  // 3в. Тренировки без сети (66.5в): «+ подход» к сегодняшней записи → в очередь → сеть вернулась → подход на сервере один раз
+  await p.goto('http://localhost:8099/workouts/', { waitUntil: 'networkidle2' })
+  check(await until(async () => (await p.evaluate(() => document.body.innerText)).includes('Отжимания'), 10000), 'тренировки: упражнение «Отжимания» нарисовано')
+  const quick = '[data-testid=quick-add-set]'
+  check(await until(() => p.$(quick).then(Boolean), 8000), 'тренировки: у сегодняшней записи есть «+ подход»')
+  server.down = true
+  check(await jsClick(quick), 'тренировки: нажали «+ подход» (без сети)')
+  check(await until(async () => (await outboxCount()) === 1), 'тренировки офлайн: правка записи легла в очередь (1)')
+  check(server.entries[0].sets.length === 1 && server.entryPatches === 0, 'тренировки офлайн: на сервер ничего не ушло')
+  check(await until(async () => (await p.$$('[data-testid=entry-set-row]')).length === 2, 4000), 'тренировки офлайн: новый подход сразу виден в списке (2 строки)')
+  server.down = false
+  await p.evaluate(() => window.dispatchEvent(new Event('online')))
+  check(await until(async () => (await outboxCount()) === 0), 'тренировки: сеть вернулась — очередь опустела')
+  check(server.entryPatches === 1 && server.entries[0].sets.length === 2, 'тренировки: на сервере у записи два подхода, правка пришла один раз')
+  await p.goto('http://localhost:8099/dashboard/', { waitUntil: 'networkidle2' })
 
   // 4. Перезагрузка без сети: страница открывается из кэша, данные читаются из офлайн-кэша
   server.down = true
