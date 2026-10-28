@@ -10,6 +10,7 @@ import { clearUnseen, hasUnseen, markUnseen, watchDot } from './lib/achievementD
 import { startAchievementWatcher, WATCH_SKIP, type WatchItem } from './lib/achievementWatcher'
 import LogoutChooser from './components/LogoutChooser.vue'
 import { captureCurrent } from '../../shared/accounts/accounts'
+import { startIconPacks } from './lib/iconPacks'
 
 // Точка входа глобального хедера (BACKLOG 2.3). Подключается на странице одним
 // <script type="module" src="/header-widgets/header.js"></script>. Ждёт, пока страница (Vue AppShell) нарисует
@@ -154,6 +155,7 @@ function trackAccounts() {
 
 function start() {
   if (SKIP.test(location.pathname)) return
+  startIconPacks() // наборы иконок (44.18г срез 3): подмена «Контура» на выбранный набор на ЛЮБОЙ странице с шапкой, не дожидаясь самой шапки
   trackAccounts()
   // «Достижения» открыты — точка больше не нужна; на остальных страницах держим её, пока она не снята (52.1 срез 5)
   if (/^\/achievements(\/|\.html|$)/.test(location.pathname)) clearUnseen()
