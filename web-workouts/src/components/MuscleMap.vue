@@ -113,6 +113,30 @@ const untrained = computed(() => untrainedMuscles(stats.value, MUSCLE_IDS))
 const maxDays = computed(() => Math.max(1, ...stats.value.map((s) => s.days)))
 const unmapped = computed(() => unmappedExercises(props.exercises))
 
+type MuscleVisualStyle = 'anatomy' | 'atlas' | 'tech'
+const MUSCLE_STYLE_KEY = 'workouts_musclemap_visual_style'
+function readMuscleVisualStyle(): MuscleVisualStyle {
+  try {
+    const value = localStorage.getItem(MUSCLE_STYLE_KEY)
+    return value === 'atlas' || value === 'tech' || value === 'anatomy' ? value : 'anatomy'
+  } catch {
+    return 'anatomy'
+  }
+}
+const visualStyle = ref<MuscleVisualStyle>(readMuscleVisualStyle())
+const visualStyles: { key: MuscleVisualStyle; ru: string; en: string; hintRu: string; hintEn: string }[] = [
+  { key: 'anatomy', ru: 'Анатомия', en: 'Anatomy', hintRu: 'Анатомическая студия · акцент на задействованных мышцах', hintEn: 'Anatomy studio · highlight recently trained muscles' },
+  { key: 'atlas', ru: 'Атлас', en: 'Atlas', hintRu: 'Минималистичные контуры · спокойная карта', hintEn: 'Minimal outlines · a quiet muscle atlas' },
+  { key: 'tech', ru: 'Техно', en: 'Tech', hintRu: 'Технические контуры · футуристичный режим', hintEn: 'Technical outlines · a futuristic mode' },
+]
+function setVisualStyle(value: MuscleVisualStyle) {
+  visualStyle.value = value
+  try {
+    localStorage.setItem(MUSCLE_STYLE_KEY, value)
+  } catch {
+    /* оформление не критично */
+  }
+}
 const selected = ref<MuscleId | null>(null)
 // «Добавить запись» в блоке «Ваши упражнения» (BACKLOG 44.5ж, срез 2): встроенная строка под упражнением, окно — по «Подробно…» и для Л/П
 const addingEx = ref<string | null>(null)
@@ -178,11 +202,30 @@ const views = computed<{ key: 'front' | 'back'; label: DictKey; shapes: MuscleSh
 ])
 function shapeStyle(m: MuscleId) {
   const isDone = done.value.has(m)
+  const isSelected = selected.value === m
+  if (visualStyle.value === 'atlas') {
+    return {
+      fill: isSelected ? 'var(--accent)' : isDone ? 'var(--text-dim)' : 'var(--bg-card)',
+      opacity: isSelected ? 0.92 : isDone ? 0.72 : 0.42,
+      stroke: isSelected ? 'var(--accent)' : 'var(--text-dim)',
+      strokeWidth: isSelected ? 2 : 0.85,
+      cursor: 'pointer',
+    }
+  }
+  if (visualStyle.value === 'tech') {
+    return {
+      fill: isSelected ? 'var(--accent)' : isDone ? 'var(--success)' : 'var(--bg)',
+      opacity: isSelected ? 0.95 : isDone ? 0.68 : 0.2,
+      stroke: isSelected ? 'var(--accent)' : isDone ? 'var(--success)' : 'var(--accent)',
+      strokeWidth: isSelected ? 2.2 : 0.75,
+      cursor: 'pointer',
+    }
+  }
   return {
-    fill: isDone ? 'var(--success)' : 'var(--text-dim)',
-    opacity: isDone ? 0.9 : 0.35,
-    stroke: selected.value === m ? 'var(--accent)' : 'transparent',
-    strokeWidth: 1.6,
+    fill: isSelected ? 'var(--accent)' : isDone ? 'var(--success)' : 'var(--text-dim)',
+    opacity: isSelected ? 0.98 : isDone ? 0.88 : 0.24,
+    stroke: isSelected ? 'var(--accent)' : 'var(--border)',
+    strokeWidth: isSelected ? 2 : 0.55,
     cursor: 'pointer',
   }
 }
@@ -208,9 +251,28 @@ function shapeStyle(m: MuscleId) {
     <div v-if="embedded || open" :class="embedded ? '' : 'mt-3'" data-testid="muscle-map-body">
       <p class="m-0 mb-3 text-[0.85em]" style="color: var(--text-dim)">{{ t('workouts_muscles_hint') }}</p>
 
+      <div class="muscle-style-picker mb-3" role="group" :aria-label="getLang() === 'ru' ? 'Стиль карты мышц' : 'Muscle map style'" data-testid="muscle-style-picker">
+        <button
+          v-for="style in visualStyles"
+          :key="style.key"
+          type="button"
+          class="muscle-style-option"
+          :class="{ 'is-active': visualStyle === style.key }"
+          :aria-pressed="visualStyle === style.key"
+          :data-style="style.key"
+          @click="setVisualStyle(style.key)"
+        >
+          <span class="muscle-style-preview" :class="'preview-' + style.key" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>{{ getLang() === 'ru' ? style.ru : style.en }}</span>
+        </button>
+      </div>
+      <p class="muscle-style-caption mb-3 text-center text-[0.75em]" style="color: var(--text-dim)">
+        {{ getLang() === 'ru' ? visualStyles.find(s => s.key === visualStyle)?.hintRu : visualStyles.find(s => s.key === visualStyle)?.hintEn }}
+      </p>
+
       <div class="flex flex-wrap justify-center gap-4">
         <figure v-for="v in views" :key="v.key" class="m-0 text-center">
-          <svg viewBox="0 0 100 190" class="h-64 w-32" role="group" :aria-label="t(v.label)">
+          <svg viewBox="0 0 100 190" :class="['muscle-map-svg', 'muscle-map-svg--' + visualStyle]" class="h-64 w-32" role="group" :aria-label="t(v.label)">
             <circle :cx="geometry.head.cx" :cy="geometry.head.cy" :r="geometry.head.r" :fill="props.studyRecent ? 'var(--success)' : 'none'" :fill-opacity="props.studyRecent ? 0.9 : 1" :stroke="props.studyRecent ? 'var(--success)' : 'var(--border)'" stroke-width="1.2" data-testid="muscle-head" />
             <path
               :d="geometry.outline"
@@ -377,6 +439,89 @@ function shapeStyle(m: MuscleId) {
 </template>
 
 <style scoped>
+.muscle-style-picker {
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+.muscle-style-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 40px;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--bg);
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease;
+}
+.muscle-style-option:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.muscle-style-option.is-active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.muscle-style-option:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.muscle-style-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  width: 20px;
+  height: 22px;
+  justify-content: center;
+}
+.muscle-style-preview i {
+  display: block;
+  width: 4px;
+  height: 13px;
+  border-radius: 3px;
+  background: var(--text-dim);
+}
+.preview-anatomy i:first-child { height: 9px; background: var(--success); }
+.preview-anatomy i:nth-child(2) { height: 17px; background: var(--success); }
+.preview-anatomy i:last-child { height: 12px; background: var(--text-dim); }
+.preview-atlas i { background: transparent; border: 1px solid var(--text-dim); }
+.preview-atlas i:nth-child(2) { height: 17px; border-color: var(--accent); }
+.preview-tech i { border: 1px solid var(--accent); background: color-mix(in srgb, var(--accent) 28%, transparent); }
+.preview-tech i:nth-child(2) { height: 18px; box-shadow: 0 0 5px color-mix(in srgb, var(--accent) 50%, transparent); }
+.muscle-map-svg {
+  max-width: 100%;
+  overflow: visible;
+}
+.muscle-map-svg--anatomy [data-muscle]:hover,
+.muscle-map-svg--anatomy [data-muscle]:focus-visible {
+  filter: drop-shadow(0 0 2px var(--success));
+}
+.muscle-map-svg--atlas [data-muscle]:hover,
+.muscle-map-svg--atlas [data-muscle]:focus-visible {
+  filter: drop-shadow(0 0 1px var(--accent));
+}
+.muscle-map-svg--tech {
+  background-image: radial-gradient(color-mix(in srgb, var(--accent) 12%, transparent) 0.7px, transparent 0.7px);
+  background-size: 7px 7px;
+  border-radius: 1rem;
+}
+.muscle-map-svg--tech [data-muscle] {
+  filter: drop-shadow(0 0 1px color-mix(in srgb, var(--accent) 30%, transparent));
+}
+.muscle-map-svg--tech [data-muscle]:hover,
+.muscle-map-svg--tech [data-muscle]:focus-visible {
+  filter: drop-shadow(0 0 3px var(--accent));
+}
+@media (prefers-reduced-motion: reduce) {
+  .muscle-style-option { transition: none; }
+}
 .row-pick {
   cursor: pointer;
   border-radius: 6px;
