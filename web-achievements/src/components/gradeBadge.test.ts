@@ -33,11 +33,11 @@ describe('таблицы грейдов и иконок (страж)', () => {
       expect(keys.some((k) => gradeOf(k) === r), 'нет достижений грейда ' + r).toBe(true)
     }
   })
-  it('иконки существуют в библиотеке, внутри одной группы все разные', () => {
+  it('иконки существуют в библиотеке и уникальны у каждого достижения', () => {
     for (const a of ACHIEVEMENTS) expect(a.icon in ICON_PATHS, a.key + ' → ' + a.icon).toBe(true)
-    const byGroup = new Map<string, string[]>()
-    for (const a of ACHIEVEMENTS) byGroup.set(a.group, [...(byGroup.get(a.group) || []), a.icon])
-    for (const [g, icons] of byGroup) expect(new Set(icons).size, 'повторы иконок в группе ' + g + ': ' + icons.join(',')).toBe(icons.length)
+    const byIcon = new Map<string, string[]>()
+    for (const a of ACHIEVEMENTS) byIcon.set(a.icon, [...(byIcon.get(a.icon) || []), a.key])
+    for (const [icon, keys] of byIcon) expect(keys, 'повтор иконки ' + icon + ': ' + keys.join(',')).toHaveLength(1)
   })
   it('реестр отдаёт иконку из таблицы', () => {
     for (const a of ACHIEVEMENTS) expect(a.icon, a.key).toBe(ICON_BY_KEY[a.key])
