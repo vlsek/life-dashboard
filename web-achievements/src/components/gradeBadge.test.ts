@@ -103,6 +103,20 @@ describe('GradeBadge: форма по грейду', () => {
     expect(w.findAll('svg').length).toBe(2)
     expect(w.attributes('style')).toContain('width: 96px')
   })
+  it('класс анимации назначается только открытому легендарному значку', () => {
+    const legendaryOn = mount(GradeBadge, { props: { grade: 'legendary', icon: 'trophy', unlocked: true } })
+    const legendaryOff = mount(GradeBadge, { props: { grade: 'legendary', icon: 'trophy', unlocked: false } })
+    const epicOn = mount(GradeBadge, { props: { grade: 'epic', icon: 'trophy', unlocked: true } })
+
+    expect(legendaryOn.classes()).toContain('is-on')
+    expect(legendaryOn.classes()).toContain('g-legendary')
+    expect(legendaryOff.classes()).toContain('is-off')
+    expect(legendaryOff.classes()).toContain('g-legendary')
+    expect(epicOn.classes()).toContain('is-on')
+    expect(epicOn.classes()).toContain('g-epic')
+    expect(legendaryOff.classes()).not.toContain('is-on')
+    expect(epicOn.classes()).not.toContain('g-legendary')
+  })
   it('пульс свечения только у открытого легендарного; в «уменьшить движение» гасится; цвет не из акцента темы', () => {
     const src: string = readFileSync('src/components/GradeBadge.vue', 'utf-8')
     expect(src).toMatch(/\.is-on\.g-legendary\s*\{[^}]*animation:\s*gb-glow/)
