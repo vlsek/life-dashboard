@@ -105,7 +105,11 @@ const color = computed(() => RARITY_COLOR[props.grade])
   from { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--g) 55%, transparent)); }
   to { filter: drop-shadow(0 0 12px color-mix(in srgb, var(--g) 85%, transparent)); }
 }
+:global(html[data-motion='off']) .grade-badge {
+  animation: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .grade-badge { animation: none; }
+  .grade-badge.is-on.g-legendary { animation: none; }
 }
 </style>
