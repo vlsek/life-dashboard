@@ -209,6 +209,7 @@ function shapeStyle(m: MuscleId) {
       opacity: isSelected ? 0.9 : isDone ? 0.58 : 0.95,
       stroke: isSelected ? 'var(--accent)' : 'var(--text-dim)',
       strokeWidth: isSelected ? 2 : 0.85,
+      strokeDasharray: !isDone && !isSelected ? '1.2 0.8' : 'none',
       cursor: 'pointer',
     }
   }
@@ -218,6 +219,7 @@ function shapeStyle(m: MuscleId) {
       opacity: isSelected ? 0.95 : isDone ? 0.68 : 0.2,
       stroke: isSelected ? 'var(--accent)' : isDone ? 'var(--success)' : 'var(--accent)',
       strokeWidth: isSelected ? 2.2 : 0.75,
+      strokeDasharray: !isDone && !isSelected ? '1.2 0.8' : 'none',
       cursor: 'pointer',
     }
   }
@@ -226,6 +228,7 @@ function shapeStyle(m: MuscleId) {
     opacity: isSelected ? 0.98 : isDone ? 0.88 : 0.24,
     stroke: isSelected ? 'var(--accent)' : 'var(--border)',
     strokeWidth: isSelected ? 2 : 0.55,
+    strokeDasharray: !isDone && !isSelected ? '1.2 0.8' : 'none',
     cursor: 'pointer',
   }
 }
@@ -312,9 +315,9 @@ function shapeStyle(m: MuscleId) {
 
       <div v-if="studyRecent" class="mt-2 text-center text-[0.8em]" style="color: var(--success)" data-testid="muscle-head-study">{{ t('workouts_muscles_head_study') }}</div>
 
-      <div class="mt-2 flex flex-wrap justify-center gap-4 text-[0.8em]" style="color: var(--text-dim)">
-        <span><span style="color: var(--success)">■</span> {{ t('workouts_muscles_legend_done') }}</span>
-        <span><span style="opacity: 0.5">■</span> {{ t('workouts_muscles_legend_idle') }}</span>
+      <div class="mt-2 flex flex-wrap justify-center gap-4 text-[0.8em]" style="color: var(--text-dim)" data-testid="muscle-map-legend">
+        <span class="inline-flex items-center gap-1.5"><span class="muscle-legend-mark muscle-legend-mark--done" aria-hidden="true"></span> {{ t('workouts_muscles_legend_done') }}</span>
+        <span class="inline-flex items-center gap-1.5"><span class="muscle-legend-mark muscle-legend-mark--idle" aria-hidden="true"></span> {{ t('workouts_muscles_legend_idle') }}</span>
       </div>
 
       <div v-if="selected" class="mt-3 rounded-lg border p-3 text-sm" style="border-color: var(--border); background: var(--bg)" data-testid="muscle-detail" ref="detailEl">
@@ -506,6 +509,20 @@ function shapeStyle(m: MuscleId) {
 .muscle-map-svg {
   max-width: 100%;
   overflow: visible;
+}
+.muscle-legend-mark {
+  display: inline-block;
+  width: 1.15rem;
+  height: 0;
+  border-top-width: 2px;
+}
+.muscle-legend-mark--done {
+  border-top-style: solid;
+  border-color: var(--success);
+}
+.muscle-legend-mark--idle {
+  border-top-style: dashed;
+  border-color: var(--text-dim);
 }
 .muscle-map-svg--anatomy [data-muscle]:hover,
 .muscle-map-svg--anatomy [data-muscle]:focus-visible {
