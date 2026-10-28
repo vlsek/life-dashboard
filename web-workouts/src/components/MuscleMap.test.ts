@@ -490,4 +490,24 @@ describe('MuscleMap: visual packs (BACKLOG 70.2)', () => {
       expect(target.attributes('aria-pressed')).toBe('false')
     }
   })
+
+  it('keeps both body projections in sync and shows the technical overlay only in Tech mode', async () => {
+    const w = await openMap([], [bench])
+    const projections = () => w.findAll('svg[data-visual-style]')
+    expect(projections()).toHaveLength(2)
+    expect(projections().map((svg) => svg.attributes('data-visual-style'))).toEqual(['anatomy', 'anatomy'])
+    expect(w.findAll('.muscle-tech-overlay')).toHaveLength(0)
+
+    await w.find('[data-style="atlas"]').trigger('click')
+    expect(projections().map((svg) => svg.attributes('data-visual-style'))).toEqual(['atlas', 'atlas'])
+    expect(w.findAll('.muscle-tech-overlay')).toHaveLength(0)
+
+    await w.find('[data-style="tech"]').trigger('click')
+    expect(projections().map((svg) => svg.attributes('data-visual-style'))).toEqual(['tech', 'tech'])
+    expect(w.findAll('.muscle-tech-overlay')).toHaveLength(2)
+
+    await w.find('[data-style="anatomy"]').trigger('click')
+    expect(projections().map((svg) => svg.attributes('data-visual-style'))).toEqual(['anatomy', 'anatomy'])
+    expect(w.findAll('.muscle-tech-overlay')).toHaveLength(0)
+  })
 })
