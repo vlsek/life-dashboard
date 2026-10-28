@@ -1,0 +1,60 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>73.1 Сводка прогресса — макет</title><style>
+:root{--bg:#f7f3ed;--card:#fff;--text:#2a1f17;--dim:#8a7b6c;--accent:#db8029;--border:#e3dacd;--ok:#2f9e5b;--bad:#c0504d;--mute:#efe8dd}
+@media(prefers-color-scheme:dark){:root{--bg:#171310;--card:#221c17;--text:#f1e9df;--dim:#a39382;--accent:#e8993f;--border:#3a3027;--ok:#4cc17f;--bad:#e07a76;--mute:#2d251e}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui,sans-serif;padding:16px 16px 48px;max-width:760px;margin-inline:auto}
+h1{font-size:18px;margin:0 0 4px}h2{font-size:13px;margin:26px 0 8px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.note{font-size:13px;color:var(--dim);margin:0 0 10px}.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:10px}
+.seg{display:flex;background:var(--mute);border-radius:12px;padding:3px;margin:8px 0 12px}.seg span,.seg b{flex:1;text-align:center;padding:9px 0;border-radius:10px;font-size:14px;min-height:44px;display:flex;align-items:center;justify-content:center}.seg b{background:var(--card);box-shadow:0 1px 2px #0002}
+.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.nav i{font-style:normal;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:12px}.nav b{font-size:16px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tile{background:var(--mute);border-radius:12px;padding:10px}.tile .v{font-size:22px;font-weight:700}.tile .l{font-size:12px;color:var(--dim)}
+.up{color:var(--ok)}.down{color:var(--bad)}.dim{color:var(--dim)}.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border);min-height:44px}.row:first-of-type{border-top:0}
+.bar{height:8px;background:var(--mute);border-radius:99px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--accent)}
+.gap{background:repeating-linear-gradient(90deg,var(--mute) 0 6px,transparent 6px 10px);height:8px;border-radius:99px;margin-top:6px}
+.spark{display:flex;gap:2px;align-items:flex-end;height:22px;width:84px}.spark i{flex:1;background:var(--accent);border-radius:2px}.spark i.n{background:var(--mute)}
+.story{font-size:16px;line-height:1.5}.story b{white-space:nowrap}.tag{font-size:12px;padding:2px 8px;border:1px solid var(--border);border-radius:99px;color:var(--dim)}
+table{width:100%;border-collapse:collapse;font-size:14px}th{font-weight:600;color:var(--dim);text-align:left;font-size:12px;padding:4px 0}td{padding:10px 0;border-top:1px solid var(--border)}td:not(:first-child),th:not(:first-child){text-align:right}
+</style>
+<h1>Сводка прогресса за период</h1>
+<p class="note">Макет 73.1: три варианта одного экрана «Неделя / Месяц / Год». Данные выдуманные. Показан телефон 360–390 px; на ПК карточки встают в 2 колонки. Тёмная тема — автоматом.</p>
+
+<h2>Вариант А — «Итоги плитками»</h2>
+<div class="card">
+<div class="seg"><span>Неделя</span><b>Месяц</b><span>Год</span></div>
+<div class="nav"><i>‹</i><b>Октябрь 2026</b><i>›</i></div>
+<div class="tiles">
+<div class="tile"><div class="v">78%</div><div class="l">средний прогресс дня</div><div class="l up">▲ +6 п.п. к сентябрю</div></div>
+<div class="tile"><div class="v">9 из 28</div><div class="l">дней на 100%</div><div class="l dim">сентябрь: 7 из 30</div></div>
+<div class="tile"><div class="v">3</div><div class="l">цели выполнено</div><div class="l dim">этапов пройдено: 8</div></div>
+<div class="tile"><div class="v">11</div><div class="l">тренировок</div><div class="l up">▲ +2 к сентябрю</div></div>
+</div>
+<div class="note" style="margin-top:10px">Учтено 28 дней из 28 · 3 дня пропущены вами — серию не рвут</div>
+</div>
+<div class="card"><div class="l dim" style="font-size:12px">Стало лучше</div>
+<div class="row"><span>💧 Вода</span><span class="up">▲ 2,1 → 2,6 л в день</span></div>
+<div class="row"><span>📖 Чтение</span><span class="up">▲ 22 → 31 стр.</span></div>
+<div class="l dim" style="font-size:12px;margin-top:10px">Стало хуже</div>
+<div class="row"><span>😴 Сон до 23:00</span><span class="down">▼ 18 → 12 дней</span></div>
+<div class="l dim" style="font-size:12px;margin-top:10px">Мало данных — не сравниваем</div>
+<div class="row"><span>⚖️ Вес</span><span class="dim">4 замера из 28</span></div></div>
+
+<h2>Вариант Б — «Рассказ»</h2>
+<div class="card"><div class="seg"><span>Неделя</span><b>Месяц</b><span>Год</span></div>
+<p class="story">В октябре ты закрыл <b>9 дней на 100%</b> — на 2 больше, чем в сентябре. Лучше всего пошла <b>вода</b> (2,6 л в день), просел <b>сон до 23:00</b>. Выполнено <b>3 цели</b>, сделано <b>11 тренировок</b>.</p>
+<div class="row"><span>Прогресс дня по неделям</span><span class="spark"><i style="height:55%"></i><i style="height:70%"></i><i style="height:82%"></i><i style="height:90%"></i></span></div>
+<div class="row"><span>Тренировки по неделям</span><span class="spark"><i style="height:40%"></i><i style="height:60%"></i><i style="height:80%"></i><i style="height:60%"></i></span></div>
+<div class="note" style="margin-top:8px">Текст собирается по простым правилам из чисел — без «умных» догадок. Если данных мало, фраза не пишется.</div></div>
+
+<h2>Вариант В — «Таблица сравнения»</h2>
+<div class="card"><div class="seg"><span>Неделя</span><b>Месяц</b><span>Год</span></div>
+<table><tr><th>Метрика</th><th>Сент.</th><th>Окт.</th><th>Δ</th></tr>
+<tr><td>💧 Вода, л/день</td><td>2,1</td><td>2,6</td><td class="up">▲ 0,5</td></tr>
+<tr><td>📖 Чтение, стр.</td><td>22</td><td>31</td><td class="up">▲ 9</td></tr>
+<tr><td>😴 Сон до 23:00</td><td>18</td><td>12</td><td class="down">▼ 6</td></tr>
+<tr><td>🏋️ Тренировки</td><td>9</td><td>11</td><td class="up">▲ 2</td></tr>
+<tr><td>⚖️ Вес</td><td class="dim">—</td><td class="dim">—</td><td class="dim">мало данных</td></tr></table>
+<div class="note" style="margin-top:8px">Стрелка — ещё и текстом (▲/▼ и знак), не только цветом. Строку можно открыть: график периода.</div></div>
+
+<h2>Состояния, которые нужны в любом варианте</h2>
+<div class="card"><b>Новый период, данных почти нет</b><div class="gap"></div><p class="note" style="margin:8px 0 0">«Пока 2 дня из 7 — сводка появится, когда наберётся хотя бы 3.»</p></div>
+<div class="card"><b>Год, а ведёшь с августа</b><div class="bar"><i style="width:34%"></i></div><p class="note" style="margin:8px 0 0">«Данные есть за 3 месяца из 12 — сравнение с прошлым годом недоступно.»</p></div>
+<div class="card"><b>Ошибка загрузки</b><p class="note" style="margin:8px 0 0">«Не удалось загрузить сводку. [Повторить]» · офлайн: «Показаны данные на 27 октября».</p></div>
