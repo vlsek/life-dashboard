@@ -125,9 +125,9 @@ function readMuscleVisualStyle(): MuscleVisualStyle {
 }
 const visualStyle = ref<MuscleVisualStyle>(readMuscleVisualStyle())
 const visualStyles: { key: MuscleVisualStyle; ru: string; en: string; hintRu: string; hintEn: string }[] = [
-  { key: 'anatomy', ru: 'Анатомия', en: 'Anatomy', hintRu: 'Анатомическая студия · акцент на задействованных мышцах', hintEn: 'Anatomy studio · highlight recently trained muscles' },
-  { key: 'atlas', ru: 'Атлас', en: 'Atlas', hintRu: 'Минималистичные контуры · спокойная карта', hintEn: 'Minimal outlines · a quiet muscle atlas' },
-  { key: 'tech', ru: 'Техно', en: 'Tech', hintRu: 'Технические контуры · футуристичный режим', hintEn: 'Technical outlines · a futuristic mode' },
+  { key: 'anatomy', ru: 'Анатомия', en: 'Anatomy', hintRu: 'Плотная заливка · зелёным отмечены недавно задействованные мышцы', hintEn: 'Solid tissue shading · recently trained muscles are highlighted in green' },
+  { key: 'atlas', ru: 'Атлас', en: 'Atlas', hintRu: 'Лаконичная схема · контуры важнее заливки', hintEn: 'Minimal atlas · outlines take priority over fills' },
+  { key: 'tech', ru: 'Техно', en: 'Tech', hintRu: 'Кибернетическая сетка · контуры и координатные метки', hintEn: 'Cybernetic grid · technical outlines and coordinate marks' },
 ]
 function setVisualStyle(value: MuscleVisualStyle) {
   visualStyle.value = value
