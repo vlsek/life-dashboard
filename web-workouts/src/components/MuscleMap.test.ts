@@ -462,6 +462,18 @@ describe('MuscleMap: visual packs (BACKLOG 70.2)', () => {
     expect(fallback.find('svg[data-visual-style]').attributes('data-visual-style')).toBe('anatomy')
   })
 
+  it('uses line pattern as well as color to distinguish trained and idle muscles', async () => {
+    const w = await openMap([entry('bench', '2026-09-29')], [bench])
+    const idle = w.find('[data-muscle="quads"]')
+    const done = w.find('[data-muscle="chest"]')
+    expect(idle.attributes('data-state')).toBe('idle')
+    expect(idle.find('path').attributes('style')).toContain('stroke-dasharray: 1.2 0.8')
+    expect(done.attributes('data-state')).toBe('done')
+    expect(done.find('path').attributes('style')).toContain('stroke-dasharray: none')
+    expect(w.find('[data-testid="muscle-map-legend"] .muscle-legend-mark--done').classes()).toContain('muscle-legend-mark--done')
+    expect(w.find('[data-testid="muscle-map-legend"] .muscle-legend-mark--idle').classes()).toContain('muscle-legend-mark--idle')
+  })
+
   it('keeps keyboard activation on muscle targets available in every pack', async () => {
     const w = await openMap([], [bench])
     for (const style of ['anatomy', 'atlas', 'tech']) {
