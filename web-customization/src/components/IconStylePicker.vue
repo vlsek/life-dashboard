@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { ICON_PATHS } from '../lib/icons'
-import { ICON_DUOTONE_OPACITY, ICON_SHADOW, ICON_STYLES, ICON_STYLE_RULES, readIconStyle, writeIconStyle, type IconStyle } from '../lib/iconStyle'
+import { ICON_STYLES, loadPackIcons, readIconStyle, writeIconStyle, type IconStyle, type PackIcons } from '../lib/iconStyle'
 import { t } from '../lib/i18n'
 
-// Выбор стиля иконок (BACKLOG 44.18г): пять бесплатных карточек. Предпросмотр — те же значения (ICON_STYLE_RULES), что в CSS страниц, на пяти разных иконках.
-// Выбор применяется сразу (атрибут на <html>), запоминается в localStorage `icon_style`.
+// Выбор набора иконок (BACKLOG 44.18г, срез 3): четыре карточки — «Контур», «Заливка», «Дуотон», «Пиксели». Предпросмотр берёт НАСТОЯЩИЕ данные наборов
+// (те же файлы, что подменщик в шапке), поэтому показывает именно то, что будет на страницах. Пока набор грузится (или нет сети) — «Контур» вместо него.
+// Выбор применяется сразу, запоминается в localStorage `icon_style`.
 const current = ref<IconStyle>(readIconStyle())
 const saved = ref(true)
 const label = (v: IconStyle): string => t(('cust_iconstyle_' + v) as never)
@@ -14,15 +15,22 @@ const choose = (v: IconStyle) => {
   if (saved.value) current.value = v
 }
 const SAMPLE = ['home', 'goals', 'dumbbell', 'droplet', 'star'] as const
-const attrs = (v: IconStyle) => {
-  const r = v === 'outline' ? {} : ICON_STYLE_RULES[v]
-  return {
-    'stroke-width': ('strokeWidth' in r && r.strokeWidth) || 1.9,
-    'stroke-linecap': ('linecap' in r && r.linecap) || 'round',
-    'stroke-linejoin': ('linejoin' in r && r.linejoin) || 'round',
-    style: 'shadow' in r && r.shadow ? `filter: ${ICON_SHADOW}` : 'duotone' in r && r.duotone ? `--duo: ${ICON_DUOTONE_OPACITY}` : undefined,
-    class: 'duotone' in r && r.duotone ? 'iconstyle-duo' : undefined,
+const loaded = reactive<Partial<Record<IconStyle, PackIcons>>>({})
+onMounted(() => {
+  for (const s of ICON_STYLES) {
+    if (s === 'outline') continue
+    loadPackIcons(s)
+      .then((icons) => (loaded[s] = icons))
+      .catch(() => {
+        /* без сети остаётся «Контур» в карточке */
+      })
   }
+})
+// Разметка иконки n в наборе v; нет набора/пары — «Контур» (как поступит и подменщик).
+const view = (v: IconStyle, n: string) => {
+  const e = v === 'outline' ? undefined : loaded[v]?.[n]
+  if (!e) return { outline: true, vb: '0 0 24 24', html: (ICON_PATHS as Record<string, string>)[n] ?? '', attrs: {} as Record<string, string> }
+  return { outline: false, vb: e.vb, html: e.h, attrs: e.a ?? {} }
 }
 </script>
 
@@ -40,7 +48,24 @@ const attrs = (v: IconStyle) => {
         :data-active="current === v"
       >
         <div class="flex items-center justify-between gap-1" style="color: var(--text)" data-testid="iconstyle-preview">
-          <svg v-for="n in SAMPLE" :key="n" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" aria-hidden="true" v-bind="attrs(v)" v-html="(ICON_PATHS as Record<string, string>)[n]"></svg>
+          <!-- data-ip-skip: страничный подменщик не должен «исправлять» предпросмотр (иначе карточка «Контур» показала бы текущий набор) -->
+          <svg
+            v-for="n in SAMPLE"
+            :key="n"
+            data-ip-skip
+            :data-pack="view(v, n).outline ? 'outline' : v"
+            :viewBox="view(v, n).vb"
+            width="26"
+            height="26"
+            :fill="view(v, n).outline ? 'none' : 'currentColor'"
+            :stroke="view(v, n).outline ? 'currentColor' : undefined"
+            :stroke-width="view(v, n).outline ? 1.9 : undefined"
+            :stroke-linecap="view(v, n).outline ? 'round' : undefined"
+            :stroke-linejoin="view(v, n).outline ? 'round' : undefined"
+            aria-hidden="true"
+            v-bind="view(v, n).attrs"
+            v-html="view(v, n).html"
+          ></svg>
         </div>
         <p class="m-0 text-sm font-medium">{{ label(v) }}</p>
         <button
@@ -58,11 +83,3 @@ const attrs = (v: IconStyle) => {
     </div>
   </div>
 </template>
-
-<style scoped>
-/* предпросмотр «Дуотона»: та же заливка только замкнутых фигур, что в style.css страниц (ICON_FILL_TARGETS) */
-.iconstyle-duo :deep(:is(circle, ellipse, rect, polygon, path[d$='z' i])) {
-  fill: currentColor;
-  fill-opacity: var(--duo);
-}
-</style>
