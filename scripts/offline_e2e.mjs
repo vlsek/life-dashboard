@@ -27,7 +27,7 @@ const metric = { id: 'aaaaaaaa-0000-0000-0000-000000000001', user_id: uid, name:
 const waterMetric = { id: 'aaaaaaaa-0000-0000-0000-0000000000w1', user_id: uid, name: 'Вода', icon: 'svg:droplet', type: 'number', unit: 'мл', goal_value: 2000, goal_direction: null, schedule: null, category_id: null, position: 1, active: true }
 const todayIso = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` })()
 const exercise = { id: 'eeeeeeee-0000-0000-0000-000000000001', user_id: uid, name: 'Отжимания', category: null, unit: null, tracks_weight: false, value_label: 'Повторы', created_at: '2026-10-01T00:00:00Z' }
-const server = { down: false, dailyValues: [], waterLog: [], entries: [{ id: 'ffffffff-0000-0000-0000-000000000001', user_id: uid, exercise_id: exercise.id, date: todayIso, sets: [{ reps: 10 }], notes: null }], entryPatches: 0, writes: 0 }
+const server = { down: false, fail503: false, dailyValues: [], waterLog: [], entries: [{ id: 'ffffffff-0000-0000-0000-000000000001', user_id: uid, exercise_id: exercise.id, date: todayIso, sets: [{ reps: 10 }], notes: null }], entryPatches: 0, writes: 0 }
 const eqParams = (u) => [...new URL(u).searchParams.entries()].filter(([, v]) => v.startsWith('eq.')).map(([k, v]) => [k, v.slice(3)])
 const matches = (row, u) => eqParams(u).every(([k, v]) => !(k in row) || String(row[k]) === v)
 const cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': '*', 'access-control-expose-headers': '*' }
@@ -42,10 +42,11 @@ try {
   await p.setViewport({ width: 390, height: 844 })
   await p.evaluateOnNewDocument((s) => { localStorage.setItem('sb-haxmgtflegsfpxieaydv-auth-token', JSON.stringify(s)); localStorage.setItem('lang', 'ru') }, session)
   await p.setRequestInterception(true)
-  p.on('request', (r) => {
+  const onReq = (r) => {
     const u = r.url()
     if (!u.includes('.supabase.co')) return r.continue()
     if (server.down) return r.abort('internetdisconnected')
+    if (server.fail503 && r.method() !== 'GET' && r.method() !== 'OPTIONS') return r.respond({ status: 503, contentType: 'application/json', headers: cors, body: '{"message":"unavailable"}' })
     if (r.method() === 'OPTIONS') return r.respond({ status: 204, headers: cors })
     const single = (r.headers()['accept'] || '').includes('vnd.pgrst.object')
     const prof = { user_id: uid, onboarded: true, display_name: 'Тест' }
@@ -86,7 +87,8 @@ try {
       if (r.method() === 'GET') body = JSON.stringify(server.dailyValues.filter((x) => matches(x, u)))
     }
     return r.respond({ status: 200, contentType: 'application/json', headers: cors, body })
-  })
+  }
+  p.on('request', onReq)
   // клик «изнутри» страницы: не зависит от геометрии (значок воды в шапке на узком экране может быть без своего места)
   const jsClick = (selector) => p.evaluate((q) => { const el = document.querySelector(q); if (!el) return false; el.click(); return true }, selector)
   const outboxCount = () => p.evaluate(() => new Promise((res) => {
@@ -161,6 +163,79 @@ try {
   await p.evaluate(() => window.dispatchEvent(new Event('online')))
   check(await until(async () => (await outboxCount()) === 0), 'тренировки: сеть вернулась — очередь опустела')
   check(server.entryPatches === 1 && server.entries[0].sets.length === 2, 'тренировки: на сервере у записи два подхода, правка пришла один раз')
+  await p.goto('http://localhost:8099/dashboard/', { waitUntil: 'networkidle2' })
+
+
+  // ---- 66.7 остаток: «очередь на 100 записей», «две вкладки», «часы вперёд/назад» (вода: каждая +200 = сумма дня + строка журнала) ----
+  const goOffline = (pg) => pg.evaluate(() => { if (!window.__olDesc) window.__olDesc = Object.getOwnPropertyDescriptor(Navigator.prototype, 'onLine'); Object.defineProperty(Navigator.prototype, 'onLine', { get: () => false, configurable: true }); window.dispatchEvent(new Event('offline')) })
+  const goOnline = (pg) => pg.evaluate(() => { if (window.__olDesc) Object.defineProperty(Navigator.prototype, 'onLine', window.__olDesc); window.dispatchEvent(new Event('online')) })
+  const waterSum = () => (server.dailyValues.find((x) => x.metric_id === waterMetric.id) || {}).value
+  const tapWater = async (pg, n) => { for (let i = 0; i < n; i++) { await pg.evaluate(() => document.querySelector('[data-test=add-200]')?.click()); await sleep(25) } }
+  const openWater = async (pg) => { await pg.evaluate(() => document.querySelector('[data-test=water-badge]')?.click()); return until(() => pg.$('[data-test=water-modal]').then(Boolean)) }
+  const closeWater = (pg) => pg.evaluate(() => document.querySelector('[data-test=water-modal]')?.click())
+
+  // 3г. Очередь на 100 стаканов без сети → сеть вернулась → всё на сервере, ровно по одному разу
+  const logBase = server.waterLog.length, sumBase = waterSum()
+  check(await openWater(p), 'очередь 100: окно воды открыто')
+  server.down = true; await goOffline(p)
+  await tapWater(p, 100)
+  const queued = await until(async () => (await outboxCount()) >= 99, 15000)
+  check(queued, `очередь 100: в очереди ${await outboxCount()} записей (100 строк журнала + склеенная сумма дня, не меньше 99 в момент замера)`)
+  check(server.waterLog.length === logBase, 'очередь 100: на сервер до сети ничего не ушло')
+  server.down = false; await goOnline(p)
+  check(await until(async () => (await outboxCount()) === 0, 30000), 'очередь 100: сеть вернулась — очередь опустела')
+  check(server.waterLog.length === logBase + 100 && new Set(server.waterLog.map((x) => x.id)).size === server.waterLog.length, `очередь 100: в журнале воды +100 строк, id уникальны (${server.waterLog.length - logBase})`)
+  check(waterSum() === sumBase + 100 * 200, `очередь 100: сумма дня ${sumBase} → ${waterSum()} (ждём ${sumBase + 20000})`)
+  await closeWater(p)
+
+  // 3д. Две вкладки: у обеих накопилась очередь, сеть возвращается обеим сразу — дублей нет (Web Locks: сливает одна)
+  const p2 = await br.newPage()
+  await p2.setViewport({ width: 390, height: 844 })
+  await p2.evaluateOnNewDocument((s) => { localStorage.setItem('sb-haxmgtflegsfpxieaydv-auth-token', JSON.stringify(s)); localStorage.setItem('lang', 'ru') }, session)
+  await p2.setRequestInterception(true)
+  p2.on('request', onReq)
+  await p2.goto('http://localhost:8099/dashboard/', { waitUntil: 'networkidle2' })
+  const logTabs = server.waterLog.length
+  check(await openWater(p), 'две вкладки: окно воды в первой')
+  check(await openWater(p2), 'две вкладки: окно воды во второй')
+  server.down = true; await goOffline(p); await goOffline(p2)
+  await tapWater(p, 3); await tapWater(p2, 4)
+  check(await until(async () => (await outboxCount()) >= 7, 10000), `две вкладки: очередь общая на обе вкладки (${await outboxCount()} записей: 7 строк журнала + склеенная сумма дня)`)
+  check((await outboxCount()) <= 14, 'две вкладки: записей не больше, чем 2 на нажатие (сумма дня склеивается по ключу)')
+  server.down = false; await goOnline(p); await goOnline(p2)
+  check(await until(async () => (await outboxCount()) === 0, 30000), 'две вкладки: после сети очередь пуста')
+  check(server.waterLog.length === logTabs + 7 && new Set(server.waterLog.map((x) => x.id)).size === server.waterLog.length, `две вкладки: 7 нажатий = ровно 7 новых строк журнала без дублей (${server.waterLog.length - logTabs})`)
+  console.log(`info  две вкладки: сумма дня на сервере ${waterSum()} (если у вкладок разные локальные суммы, возможна потеря — смотреть)`)
+  await closeWater(p); await p2.close()
+
+  // 3е. Часы вперёд: записали без сети «сегодня», на телефоне перевели часы на +26 ч, сеть вернулась — строка осталась на СВОЕЙ дате
+  const shiftClock = (pg, ms) => pg.evaluate((d) => { const O = window.__RealDate || (window.__RealDate = Date); class D extends O { constructor(...a) { if (a.length) super(...a); else super(O.now() + d) } static now() { return O.now() + d } } window.Date = D }, ms)
+  const rowsBefore = server.dailyValues.filter((x) => x.metric_id === waterMetric.id).length
+  check(await openWater(p), 'часы вперёд: окно воды открыто')
+  server.down = true; await goOffline(p)
+  await tapWater(p, 1)
+  check(await until(async () => (await outboxCount()) >= 1), 'часы вперёд: запись легла в очередь')
+  await shiftClock(p, 26 * 3600 * 1000)
+  server.down = false; await goOnline(p)
+  check(await until(async () => (await outboxCount()) === 0, 20000), 'часы вперёд: очередь опустела')
+  const wRows = server.dailyValues.filter((x) => x.metric_id === waterMetric.id)
+  check(wRows.length === rowsBefore && wRows.every((x) => x.date === todayIso), 'часы вперёд: запись осталась на дате, когда её сделали (не уехала на завтра), новых строк нет')
+  await closeWater(p)
+
+  // 3ж. Часы назад: запись ждёт в очереди, сервер отвечает 503 (backoff), часы откатили на 3 суток — очередь не должна «застрять» до новой даты
+  await p.reload({ waitUntil: 'networkidle2' })
+  check(await openWater(p), 'часы назад: окно воды открыто после перезагрузки')
+  server.down = true; await goOffline(p)
+  await tapWater(p, 1)
+  check(await until(async () => (await outboxCount()) >= 1), 'часы назад: запись легла в очередь без сети')
+  server.down = false; server.fail503 = true; await goOnline(p)
+  await sleep(2500)
+  check((await outboxCount()) >= 1, 'часы назад: при 503 запись осталась в очереди (ждёт повтор)')
+  await shiftClock(p, -3 * 24 * 3600 * 1000)
+  server.fail503 = false
+  await p.evaluate(() => window.dispatchEvent(new Event('online')))
+  check(await until(async () => (await outboxCount()) === 0, 20000), 'часы назад: часы откатили на 3 суток — очередь всё равно ушла, не застряла')
+  await closeWater(p)
   await p.goto('http://localhost:8099/dashboard/', { waitUntil: 'networkidle2' })
 
   // 4. Перезагрузка без сети: страница открывается из кэша, данные читаются из офлайн-кэша

@@ -208,4 +208,19 @@ describe('offlineOutbox: нагрузка и граничные случаи (BA
     expect(calls).toHaveLength(2)
     expect(ob.status().pending).toBe(0)
   })
+  it('503 приходит в результате (status), а не в error: запись остаётся в очереди и повторяется, а не «отклонена»', async () => {
+    const { ob, o } = mk(() => ({ error: { message: 'unavailable' }, status: 503 }))
+    expect((await ob.write({ key: 'k', table: 't', op: 'insert', payload: { id: 'x' } })).status).toBe('queued')
+    expect(ob.status().failed).toBe(0)
+    expect(ob.status().pending).toBe(1)
+    o.t = 120000
+    await ob.flush()
+    const st = ob.status()
+    expect(st.failed).toBe(0)
+    expect(st.pending).toBe(1)
+  })
+  it('400 в результате (status) — по-прежнему отказ сервера, запись «failed»', async () => {
+    const { ob } = mk(() => ({ error: { message: 'bad' }, status: 400 }))
+    expect((await ob.write({ key: 'k', table: 't', op: 'insert', payload: { id: 'x' } })).status).toBe('rejected')
+  })
 })

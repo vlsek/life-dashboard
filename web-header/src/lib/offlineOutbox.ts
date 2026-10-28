@@ -160,13 +160,15 @@ export function createOutbox(deps: OutboxDeps): Outbox {
     return all
   }
 
+  // supabase-js кладёт HTTP-статус в сам результат, а не в error: переносим его в error.status, иначе 5xx/429 не распознаются как временные (isRetryable) и запись зря «отклоняется».
+  const withStatus = (r: SbResult): SbResult => (r.error && r.error.status == null && typeof r.status === 'number' ? { ...r, error: { ...r.error, status: r.status } } : r)
   const apply = async (e: Pick<OutboxEntry, 'table' | 'op' | 'payload' | 'match' | 'onConflict'>): Promise<SbResult> => {
     try {
       const t = deps.client.from(e.table)
-      if (e.op === 'insert') return await t.insert(e.payload ?? {})
-      if (e.op === 'upsert') return await t.upsert(e.payload ?? {}, e.onConflict ? { onConflict: e.onConflict } : undefined)
-      if (e.op === 'update') return await t.update(e.payload ?? {}).match(e.match ?? {})
-      return await t.delete().match(e.match ?? {})
+      if (e.op === 'insert') return withStatus(await t.insert(e.payload ?? {}))
+      if (e.op === 'upsert') return withStatus(await t.upsert(e.payload ?? {}, e.onConflict ? { onConflict: e.onConflict } : undefined))
+      if (e.op === 'update') return withStatus(await t.update(e.payload ?? {}).match(e.match ?? {}))
+      return withStatus(await t.delete().match(e.match ?? {}))
     } catch (err) {
       return { error: { message: err instanceof Error ? err.message : String(err), status: 0 } }
     }
