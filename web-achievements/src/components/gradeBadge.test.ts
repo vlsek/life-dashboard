@@ -96,7 +96,8 @@ describe('GradeBadge: форма по грейду', () => {
   it('пульс свечения только у открытого легендарного; в «уменьшить движение» гасится; цвет не из акцента темы', () => {
     const src: string = readFileSync('src/components/GradeBadge.vue', 'utf-8')
     expect(src).toMatch(/\.is-on\.g-legendary\s*\{[^}]*animation:\s*gb-glow/)
-    expect(src).toMatch(/@media \(prefers-reduced-motion: reduce\)\s*\{\s*\.grade-badge\s*\{\s*animation:\s*none/)
+    expect(src).toMatch(/:global\(html\[data-motion='off'\]\) \.grade-badge\s*\{\s*animation:\s*none !important/)
+    expect(src).toMatch(/@media \(prefers-reduced-motion: reduce\)\s*\{\s*\.grade-badge\.is-on\.g-legendary\s*\{\s*animation:\s*none/)
     expect(src).not.toContain('var(--accent)')
   })
 })
