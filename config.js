@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.51";
+const SITE_VERSION = "6.52";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.52", date: "2026-10-28 13:03", changes: [
+        "Вода без сети стала надёжнее: если связи нет, а телефон показывает устаревшую сумму за день, новый стакан больше не затирает предыдущий — приложение берёт твою последнюю ещё не отправленную запись. Сумма за день и журнал стаканов после появления сети совпадают. Без миграций."
+    ]},
     { version: "6.51", date: "2026-10-27 13:00", changes: [
         "«Изучение языков»: слова в списках теперь не в широкой таблице, а в аккуратных строках — слово и перевод сверху, пример курсивом под ними; на телефоне больше ничего не уезжает за край экрана, корзина красная только при наведении.",
     ]},
@@ -2569,6 +2572,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.52", date: "2026-10-28 13:03", changes: [
+        "Water is more reliable offline: when there is no connection and the phone shows an outdated day total, a new glass no longer overwrites the previous one — the app uses your latest not-yet-sent entry. The day total and the glass log match once the network is back. No migrations."
+    ]},
     { version: "6.51", date: "2026-10-27 13:00", changes: [
         "Language learning: the word lists are no longer a wide table but tidy rows — word and translation on top, the example in italics below; nothing runs off the screen on a phone, and the trash icon turns red only on hover.",
     ]},

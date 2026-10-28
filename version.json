@@ -1,7 +1,14 @@
 {
-  "version": "6.51",
+  "version": "6.52",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.52",
+      "date": "2026-10-28 13:03",
+      "changes": [
+        "Water is more reliable offline: when there is no connection and the phone shows an outdated day total, a new glass no longer overwrites the previous one — the app uses your latest not-yet-sent entry. The day total and the glass log match once the network is back. No migrations."
+      ]
+    },
     {
       "version": "6.51",
       "date": "2026-10-27 13:00",
@@ -4627,6 +4634,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.52",
+      "date": "2026-10-28 13:03",
+      "changes": [
+        "Вода без сети стала надёжнее: если связи нет, а телефон показывает устаревшую сумму за день, новый стакан больше не затирает предыдущий — приложение берёт твою последнюю ещё не отправленную запись. Сумма за день и журнал стаканов после появления сети совпадают. Без миграций."
+      ]
+    },
     {
       "version": "6.51",
       "date": "2026-10-27 13:00",
