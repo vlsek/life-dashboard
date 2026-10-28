@@ -1,7 +1,14 @@
 {
-  "version": "6.52",
+  "version": "6.53",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.53",
+      "date": "2026-10-28 14:40",
+      "changes": [
+        "Shop: buying feels livelier — a quick burst of sparks around the \"Bought\" notice, and on the balance the number blinks and a \"−N\" floats up showing what you spent. Works in all three views (Goal, Showcase, List), nothing overflows on a phone; animations are off when reduced motion is on. No migrations."
+      ]
+    },
     {
       "version": "6.52",
       "date": "2026-10-28 13:03",
@@ -4634,6 +4641,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.53",
+      "date": "2026-10-28 14:40",
+      "changes": [
+        "«Магазин»: покупка стала живее — над списком на секунду вспыхивают искры у плашки «Куплено», а на балансе коротко мигает число и всплывает «−N» (сколько потрачено). Работает во всех трёх видах («Цель», «Витрина», «Список»), на телефоне ничего не уезжает; при включённом «уменьшении движения» анимации отключены. Без миграций."
+      ]
+    },
     {
       "version": "6.52",
       "date": "2026-10-28 13:03",

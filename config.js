@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.52";
+const SITE_VERSION = "6.53";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.53", date: "2026-10-28 14:40", changes: [
+        "«Магазин»: покупка стала живее — над списком на секунду вспыхивают искры у плашки «Куплено», а на балансе коротко мигает число и всплывает «−N» (сколько потрачено). Работает во всех трёх видах («Цель», «Витрина», «Список»), на телефоне ничего не уезжает; при включённом «уменьшении движения» анимации отключены. Без миграций."
+    ]},
     { version: "6.52", date: "2026-10-28 13:03", changes: [
         "Вода без сети стала надёжнее: если связи нет, а телефон показывает устаревшую сумму за день, новый стакан больше не затирает предыдущий — приложение берёт твою последнюю ещё не отправленную запись. Сумма за день и журнал стаканов после появления сети совпадают. Без миграций."
     ]},
@@ -2572,6 +2575,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.53", date: "2026-10-28 14:40", changes: [
+        "Shop: buying feels livelier — a quick burst of sparks around the \"Bought\" notice, and on the balance the number blinks and a \"−N\" floats up showing what you spent. Works in all three views (Goal, Showcase, List), nothing overflows on a phone; animations are off when reduced motion is on. No migrations."
+    ]},
     { version: "6.52", date: "2026-10-28 13:03", changes: [
         "Water is more reliable offline: when there is no connection and the phone shows an outdated day total, a new glass no longer overwrites the previous one — the app uses your latest not-yet-sent entry. The day total and the glass log match once the network is back. No migrations."
     ]},
