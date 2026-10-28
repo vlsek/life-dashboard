@@ -488,6 +488,12 @@ describe('MuscleMap: visual packs (BACKLOG 70.2)', () => {
       expect(w.find('[data-testid="muscle-detail"]').exists()).toBe(true)
       await target.trigger('keydown.enter')
       expect(target.attributes('aria-pressed')).toBe('false')
+
+      await target.trigger('keydown.space')
+      expect(target.attributes('aria-pressed')).toBe('true')
+      expect(target.attributes('data-selected')).toBe('true')
+      await target.trigger('keydown.space')
+      expect(target.attributes('aria-pressed')).toBe('false')
     }
   })
 
