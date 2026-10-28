@@ -8,6 +8,7 @@ import AchievementUnlockedModal from './AchievementUnlockedModal.vue'
 import { ACHIEVEMENTS, evaluate, type Counters } from '../lib/achievements'
 import { GRADE, ICON_BY_KEY, gradeOf } from '../lib/grade'
 import { ICON_PATHS } from '../lib/icons'
+import { HIDDEN_ACHIEVEMENTS } from '../lib/hiddenAchievements'
 import { RARITIES, RARITY_COLOR } from '../lib/rewards'
 import i18nRaw from '../lib/i18n.ts?raw'
 
@@ -41,6 +42,15 @@ describe('таблицы грейдов и иконок (страж)', () => {
   })
   it('реестр отдаёт иконку из таблицы', () => {
     for (const a of ACHIEVEMENTS) expect(a.icon, a.key).toBe(ICON_BY_KEY[a.key])
+  })
+  it('секретные достижения тоже имеют уникальные валидные иконки, не повторяющиеся у обычных', () => {
+    const all = [...ACHIEVEMENTS, ...HIDDEN_ACHIEVEMENTS]
+    const byIcon = new Map<string, string[]>()
+    for (const a of all) {
+      expect(a.icon in ICON_PATHS, a.key + ' → ' + a.icon).toBe(true)
+      byIcon.set(a.icon, [...(byIcon.get(a.icon) || []), a.key])
+    }
+    for (const [icon, keys] of byIcon) expect(keys, 'повтор иконки ' + icon + ': ' + keys.join(',')).toHaveLength(1)
   })
   it('грейд внутри группы не убывает с порогом; вершины лесенок — не ниже эпического (кроме серий и баллов с «легендарными»)', () => {
     const order = RARITIES as readonly string[]
