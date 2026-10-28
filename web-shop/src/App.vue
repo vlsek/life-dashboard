@@ -102,7 +102,7 @@ async function onUpload(file: File): Promise<string | null> {
 
     <BalanceCard :balance="balance" :variant="view === 'list' ? 'list' : view === 'focus' ? 'compact' : 'grid'" :goal="goal" />
 
-    <p v-if="justBought" class="goal-pop mb-2 rounded-xl border px-3 py-2 text-sm font-medium" style="border-color: var(--accent)" role="status" data-testid="bought-toast"><EmojiText :text="t('shop_bought_toast')" /> {{ justBought }}</p>
+    <p v-if="justBought" class="goal-pop bought-toast relative mb-2 rounded-xl border px-3 py-2 text-sm font-medium" style="border-color: var(--accent)" role="status" data-testid="bought-toast"><span class="bought-burst" aria-hidden="true" data-testid="bought-burst"><i v-for="n in 6" :key="n" :style="{ '--a': n * 60 + 'deg' }" /></span><EmojiText :text="t('shop_bought_toast')" /> {{ justBought }}</p>
     <p v-if="actionError" class="mb-2 text-sm" style="color: var(--danger)" role="alert" data-testid="action-error">{{ actionError }}</p>
     <p v-if="error" class="dim">{{ t('comm_load_error') }} {{ error }}</p>
     <div v-else-if="items.length === 0" class="card flex flex-col items-center gap-2 rounded-2xl border p-6 text-center" style="border-color: var(--border)" data-testid="shop-empty">

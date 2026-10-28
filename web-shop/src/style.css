@@ -1985,3 +1985,19 @@ html[data-icon-style='duotone'] svg[viewBox='0 0 24 24'][stroke='currentColor'] 
 
 /* Правка/удаление на карточках и в строках: спокойные, красный цвет удаления — только при наведении/фокусе (67.2) */
 [data-testid='item-actions'] button.danger:not(:hover):not(:focus-visible) { background: transparent; color: var(--text-dim); border-color: var(--border); }
+
+/* Анимация покупки (67.2): всплеск искр у плашки «Куплено» и «−N» на балансе; без движения при prefers-reduced-motion */
+.bought-toast { overflow: visible }
+.bought-burst { position: absolute; left: 1.1rem; top: 50%; width: 0; height: 0; pointer-events: none }
+.bought-burst i { position: absolute; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0; animation: bought-spark 0.7s ease-out forwards }
+@keyframes bought-spark { 0% { opacity: 1; transform: rotate(var(--a)) translateY(0) scale(1) } 100% { opacity: 0; transform: rotate(var(--a)) translateY(-26px) scale(0.4) } }
+.balance-delta { position: absolute; left: 100%; top: 0; margin-left: 0.5rem; font-size: 0.9rem; font-weight: 700; line-height: 1.6; color: var(--accent); white-space: nowrap; pointer-events: none; animation: balance-delta-rise 1.4s ease-out forwards }
+.balance-delta--ring { left: auto; right: -0.25rem; top: -0.25rem; margin-left: 0 }
+@keyframes balance-delta-rise { 0% { opacity: 0; transform: translateY(6px) } 15% { opacity: 1 } 100% { opacity: 0; transform: translateY(-18px) } }
+.balance-spent [data-testid='balance-value'] { animation: balance-tick 0.45s ease-out }
+@keyframes balance-tick { 0% { transform: scale(1.12) } 100% { transform: scale(1) } }
+@media (prefers-reduced-motion: reduce) {
+  .bought-burst i, .balance-spent [data-testid='balance-value'] { animation: none }
+  .bought-burst { display: none }
+  .balance-delta { animation: none; opacity: 1 }
+}

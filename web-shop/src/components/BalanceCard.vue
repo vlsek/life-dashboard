@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { t } from '../lib/i18n'
 import { itemProgress } from '../lib/shopProgress'
 import type { ShopItem } from '../lib/types'
@@ -10,14 +10,28 @@ import { sparksMode } from '../lib/sparks'
 // Баланс. В «Витрине» — крупное число и итоги; в «Списке» — число и полоса прогресса к ближайшей цели копилки.
 const props = defineProps<{ balance: { total: number; spent: number; balance: number } | null; variant: 'grid' | 'list' | 'compact'; goal?: ShopItem | null }>()
 const goalProgress = computed(() => (props.goal && props.balance ? itemProgress(props.goal.cost, props.balance.balance) : null))
+
+// Анимация покупки (67.2): когда баланс уменьшился, на карточке коротко всплывает «−N», само число мигает
+const spentDelta = ref(0)
+let deltaTimer: ReturnType<typeof setTimeout> | undefined
+watch(
+  () => props.balance?.balance,
+  (now, before) => {
+    if (typeof now !== 'number' || typeof before !== 'number' || now >= before) return
+    spentDelta.value = before - now
+    clearTimeout(deltaTimer)
+    deltaTimer = setTimeout(() => (spentDelta.value = 0), 1400)
+  },
+)
+onBeforeUnmount(() => clearTimeout(deltaTimer))
 </script>
 
 <template>
-  <div class="card mb-3 rounded-xl border px-3.5 py-2.5" style="border-color: var(--border)" data-testid="balance-card">
+  <div class="card balance-card relative mb-3 rounded-xl border px-3.5 py-2.5" :class="{ 'balance-spent': spentDelta > 0 }" style="border-color: var(--border)" data-testid="balance-card">
     <span v-if="!balance" class="dim">{{ t('loading_ellipsis') }}</span>
 
     <div v-else-if="variant === 'compact'" class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-      <span class="inline-flex items-center gap-1.5 text-lg font-semibold" data-testid="balance-value">{{ balance.balance }} <CoinIcon /></span>
+      <span class="relative inline-flex items-center gap-1.5 text-lg font-semibold" data-testid="balance-value">{{ balance.balance }} <CoinIcon /><span v-if="spentDelta > 0" class="balance-delta" aria-hidden="true" data-testid="balance-delta">−{{ spentDelta }}</span></span>
       <span class="dim text-xs">{{ t('shop_total_earned') }} {{ balance.total }} · {{ t('shop_total_spent') }} {{ balance.spent }}</span>
     </div>
 
@@ -25,7 +39,7 @@ const goalProgress = computed(() => (props.goal && props.balance ? itemProgress(
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
           <div class="dim text-xs"><EmojiText :text="sparksMode ? t('shop_balance_label_sparks') : t('dash_balance_label')" /></div>
-          <div class="inline-flex items-center gap-1.5 text-2xl font-semibold" data-testid="balance-value">{{ balance.balance }} <CoinIcon /></div>
+          <div class="relative inline-flex items-center gap-1.5 text-2xl font-semibold" data-testid="balance-value">{{ balance.balance }} <CoinIcon /><span v-if="spentDelta > 0" class="balance-delta" aria-hidden="true" data-testid="balance-delta">−{{ spentDelta }}</span></div>
         </div>
         <div class="dim text-right text-sm">
           <div>{{ t('shop_total_earned') }} {{ balance.total }}</div>
@@ -37,6 +51,7 @@ const goalProgress = computed(() => (props.goal && props.balance ? itemProgress(
     <template v-else>
       <div class="flex items-center gap-4">
         <div class="relative h-20 w-20 shrink-0" data-testid="balance-ring">
+          <span v-if="spentDelta > 0" class="balance-delta balance-delta--ring" aria-hidden="true" data-testid="balance-delta">−{{ spentDelta }}</span>
           <svg viewBox="0 0 88 88" class="h-full w-full" aria-hidden="true">
             <circle cx="44" cy="44" r="38" fill="none" stroke="var(--border)" stroke-width="10" />
             <circle cx="44" cy="44" r="38" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="239" :stroke-dashoffset="239 - (239 * (goalProgress?.pct ?? 0)) / 100" transform="rotate(-90 44 44)" />
