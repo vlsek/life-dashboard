@@ -95,7 +95,8 @@ BACKLOG 68.2 «Магазин: награда за выполнение цели
 
 ### Агент 8
 BACKLOG 70.2 «Интерактивная карта мышц: несколько визуальных паков» — ветка `agent-8/70-2-visual-packs`, PR https://github.com/vlsek/life-dashboard/pull/1. Три режима, сохранение, доступность и тесты добавлены; тесты/сборка/визуальная проверка НЕ выполнены, ждут Claude. Не релизить до проверки. ФАЙЛЫ: `web-workouts/src/components/MuscleMap.vue`, `web-workouts/src/components/MuscleMap.test.ts`.
-BACKLOG 12:29 «Современная интерактивная библиотека графиков» — срез исследования/прототипа: сравнить ECharts (ленивая загрузка) с D3-модулями + собственный SVG на графике подходов; замеры веса/мобильной работы/объёма кода оставляем явно непроверенными до запуска Claude. ФАЙЛЫ: `docs/CHART_LIBRARY_EVALUATION.md`, `docs/mockups/chart-library-comparison.html`; production-компоненты и зависимости пока не менять до сравнения. С: 2026-10-28 15:15
+BACKLOG 12:29 «Современная интерактивная библиотека графиков» — исследовательский макет ECharts vs D3 + SVG и критерии измерения готовы. PR https://github.com/vlsek/life-dashboard/pull/2 (черновик). Production-компоненты/зависимости не менял; нужен запуск в браузере и реальные замеры Claude. ФАЙЛЫ: `docs/CHART_LIBRARY_EVALUATION.md`, `docs/mockups/chart-library-comparison.html`.
+BACKLOG 44.6 «Челленджи: современное оформление» — первый срез: два варианта макета + короткое предложение по структуре, без production-кода до выбора владельца. ФАЙЛЫ: `docs/CHALLENGES_UI_PROPOSAL.md`, `docs/mockups/challenges-modern-layout.html`. С: 2026-10-28 15:25
 
 ## Бэклог
 
