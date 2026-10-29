@@ -1,7 +1,14 @@
 {
-  "version": "6.67",
+  "version": "6.68",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.68",
+      "date": "2026-10-29 11:30",
+      "changes": [
+        "In the Android app: a short vibration when you tap “+” on water (nothing changes in the browser). The groundwork for water and workout reminders is in place; their settings screen comes later. No migrations."
+      ]
+    },
     {
       "version": "6.67",
       "date": "2026-10-29 08:57",
@@ -4739,6 +4746,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.68",
+      "date": "2026-10-29 11:30",
+      "changes": [
+        "В приложении для Android — отклик вибрацией при нажатии «+» у воды (в браузере ничего не меняется). Подготовлена основа для напоминаний о воде и тренировке; экран их настройки будет позже. Без миграций."
+      ]
+    },
     {
       "version": "6.67",
       "date": "2026-10-29 08:57",

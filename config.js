@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.67";
+const SITE_VERSION = "6.68";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.68", date: "2026-10-29 11:30", changes: [
+        "В приложении для Android — отклик вибрацией при нажатии «+» у воды (в браузере ничего не меняется). Подготовлена основа для напоминаний о воде и тренировке; экран их настройки будет позже. Без миграций."
+    ]},
     { version: "6.67", date: "2026-10-29 08:57", changes: [
         "Телефон: кнопки и вкладки, которые были мельче 32 px (вкладки «Магазина», фильтры «Достижений», чипы «Навыков», стрелки «Календаря», кнопка версии), теперь не меньше 32 px — попасть пальцем легче. Крупные кнопки не изменились. То же теперь на «Дашборде», «Тренировках» и в «Кастомизации». Без миграций."
     ]},
@@ -2617,6 +2620,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.68", date: "2026-10-29 11:30", changes: [
+        "In the Android app: a short vibration when you tap “+” on water (nothing changes in the browser). The groundwork for water and workout reminders is in place; their settings screen comes later. No migrations."
+    ]},
     { version: "6.67", date: "2026-10-29 08:57", changes: [
         "Phone: buttons and tabs that were smaller than 32 px (Shop tabs, Achievements filters, Skills chips, Calendar arrows, the version button) are now at least 32 px, so they are easier to tap. Larger buttons are unchanged. The same now applies to Dashboard, Workouts and Customization. No migrations."
     ]},
