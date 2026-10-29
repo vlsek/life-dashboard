@@ -30,7 +30,7 @@ grant usage on schema public, auth to anon, authenticated, service_role;
 SQL
 apply() { cp "$1" "$TMP/f.sql"; chmod 644 "$TMP/f.sql"; su postgres -c "psql -d pt -v ON_ERROR_STOP=0 -q -f $TMP/f.sql" 2>&1 | grep -i error | head -4 | sed "s|^|  [$(basename "$1")] |"; }
 apply "$REPO/schema.sql"
-for f in "$REPO"/migrations/0*.sql; do
+for f in "$REPO"/migrations/[0-9][0-9][0-9]_*.sql; do
   n=$(basename "$f" | cut -c1-3)
   [ "$((10#$n))" -gt "$((10#$LAST))" ] && break
   apply "$f"
@@ -42,8 +42,8 @@ if [ -n "$SCEN" ]; then
   python3 - "$TMP/scenario.out" <<'PY'
 import sys
 t=open(sys.argv[1],encoding='utf-8',errors='replace').read().split('\n')
-rows=[l for l in t if '|' in l]
-print('сценарий: OK', sum('| OK' in l for l in rows), 'из', len(rows), '| расхождений', sum('РАСХОЖДЕНИЕ' in l for l in rows))
+rows=[l for l in t if '|' in l or l.startswith(('OK ', 'РАСХОЖДЕНИЕ'))]
+print('сценарий: OK', sum(l.startswith('OK ') or '| OK' in l for l in rows), 'из', len(rows), '| расхождений', sum('РАСХОЖДЕНИЕ' in l for l in rows))
 for l in rows:
     if 'РАСХОЖДЕНИЕ' in l: print('  ', l[:160])
 for l in t:
