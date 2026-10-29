@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.71";
+const SITE_VERSION = "6.72";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.72", date: "2026-10-29 19:03", changes: [
+        "Дашборд: в списке «Осталось на сегодня» теперь и пункты плана — свои пункты без отметки. Пункт со временем стоит выше всех и показывает время, без времени — после ежедневных метрик. Отметить пункт можно одним касанием прямо из списка. Пункты-цели пока остаются только в блоке «Планы». Без миграций."
+    ]},
     { version: "6.71", date: "2026-10-29 13:00", changes: [
         "В приложении для Android в «Настройках» появился раздел «Напоминания на телефоне»: напоминание выпить воды (с какого до какого часа и как часто) и напоминание о тренировке (время и дни недели). Настройки хранятся на этом телефоне. В браузере раздела нет. Без миграций."
     ]},
@@ -2629,6 +2632,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.72", date: "2026-10-29 19:03", changes: [
+        "Dashboard: the \"Left for today\" list now includes plan items — your own unticked ones. An item with a time goes first and shows it; one without a time comes after the daily metrics. Tick an item with one tap right from the list. Goal items stay in the Plans block only for now. No migrations."
+    ]},
     { version: "6.71", date: "2026-10-29 13:00", changes: [
         "In the Android app, Settings has a new “Phone reminders” section: a water reminder (from/to hour and how often) and a workout reminder (time and weekdays). The settings are kept on this phone. The section does not appear in the browser. No migrations."
     ]},

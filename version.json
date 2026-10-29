@@ -1,7 +1,14 @@
 {
-  "version": "6.71",
+  "version": "6.72",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.72",
+      "date": "2026-10-29 19:03",
+      "changes": [
+        "Dashboard: the \"Left for today\" list now includes plan items — your own unticked ones. An item with a time goes first and shows it; one without a time comes after the daily metrics. Tick an item with one tap right from the list. Goal items stay in the Plans block only for now. No migrations."
+      ]
+    },
     {
       "version": "6.71",
       "date": "2026-10-29 13:00",
@@ -4767,6 +4774,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.72",
+      "date": "2026-10-29 19:03",
+      "changes": [
+        "Дашборд: в списке «Осталось на сегодня» теперь и пункты плана — свои пункты без отметки. Пункт со временем стоит выше всех и показывает время, без времени — после ежедневных метрик. Отметить пункт можно одним касанием прямо из списка. Пункты-цели пока остаются только в блоке «Планы». Без миграций."
+      ]
+    },
     {
       "version": "6.71",
       "date": "2026-10-29 13:00",
