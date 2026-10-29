@@ -6,10 +6,12 @@
   fill.json     — «Заливка»  (Phosphor Icons, вариант fill, MIT)
   duotone.json  — «Дуотон»   (Phosphor Icons, вариант duotone, MIT — двухслойный)
   pixel.json    — «Пиксели»  (НАШИ иконки, растеризованные на сетку 16×16: цельный набор, покрывает все имена)
+  sketch.json   — «Рукописный» (НАШИ иконки, перерисованные дрожащей линией «от руки»: те же формы, штрих слегка гуляет; покрывает все имена)
 
 Запуск (нужны: npm и playwright с Chrome; пакет Phosphor НЕ хранится в репозитории):
   cd /tmp && npm pack @phosphor-icons/core && mkdir -p ph && tar -xzf phosphor-icons-core-*.tgz -C ph
   python3 scripts/gen_icon_packs.py /tmp/ph/package/assets
+Только «Рукописный» (Phosphor не нужен, остальные файлы не трогаются):  python3 scripts/gen_icon_packs.py --only sketch
 
 Лицензии наборов — docs/THIRD_PARTY_ICONS.md. Генератор идемпотентен: те же входные данные → те же файлы.
 """
@@ -57,6 +59,9 @@ PH = {
 PIXEL_GRID = 16        # клеток по стороне
 PIXEL_STROKE = 1.9     # толщина штриха при растеризации «Контура»
 PIXEL_THRESHOLD = 0.35  # доля покрытия клетки, начиная с которой она «чёрная»
+SKETCH_STEP = 1.0      # шаг выборки точек вдоль контура, в единицах viewBox 24×24
+SKETCH_WOBBLE = 0.6    # размах «дрожания руки», те же единицы
+CHROME = os.environ.get('ICON_PACK_CHROME', '/opt/google/chrome/chrome')
 
 
 def js_unescape(t):
@@ -109,7 +114,7 @@ def pixel_pack(outline):
     px = 192  # кратно N
     icons = {}
     with sync_playwright() as p:
-        b = p.chromium.launch(executable_path='/opt/google/chrome/chrome', args=['--no-sandbox'])
+        b = p.chromium.launch(executable_path=CHROME, args=['--no-sandbox'])
         pg = b.new_page(viewport={'width': px, 'height': px})
         tmp = '/tmp/_icon_pix.png'
         for n in sorted(outline):
@@ -138,6 +143,62 @@ def pixel_pack(outline):
     return icons
 
 
+SKETCH_JS = """
+([markup, step, amp, seed]) => {
+  const NS = 'http://www.w3.org/2000/svg'
+  const svg = document.createElementNS(NS, 'svg')
+  svg.setAttribute('viewBox', '0 0 24 24')
+  document.body.appendChild(svg)
+  svg.innerHTML = markup
+  // «дрожание» — гладкая функция координат (не случайный шум): замкнутые фигуры остаются замкнутыми, стыки линий сходятся
+  const w = (x, y) => [
+    amp * (Math.sin(0.55 * y + seed) + 0.5 * Math.sin(1.1 * x + 2.1 * seed)) / 1.5,
+    amp * (Math.sin(0.5 * x + 1.3 * seed) + 0.5 * Math.sin(1.2 * y + 0.7 * seed)) / 1.5,
+  ]
+  const out = []
+  let kept = 0
+  for (const el of svg.children) {
+    const fill = el.getAttribute('fill')
+    if (!(el instanceof SVGGeometryElement) || (fill && fill !== 'none')) { out.push(el.outerHTML); kept++; continue }
+    const L = el.getTotalLength()
+    if (!(L > 0)) continue
+    const n = Math.max(2, Math.ceil(L / step))
+    let d = ''
+    let prev = null
+    for (let i = 0; i <= n; i++) {
+      const pt = el.getPointAtLength((L * i) / n)
+      const [dx, dy] = w(pt.x, pt.y)
+      const x = Math.round((pt.x + dx) * 10) / 10
+      const y = Math.round((pt.y + dy) * 10) / 10
+      const jump = prev && Math.hypot(pt.x - prev.x, pt.y - prev.y) > (L / n) * 2 + 0.5 // перерыв между подконтурами одного <path>
+      d += (!prev || jump ? 'M' : 'L') + x + ' ' + y
+      prev = pt
+    }
+    out.push('<path d="' + d + '"/>')
+  }
+  svg.remove()
+  return out.join('')
+}
+"""
+
+
+def sketch_pack(outline):
+    """«Рукописный»: каждая фигура «Контура» пересэмплируется вдоль длины (getPointAtLength в Chromium) и сдвигается гладкой функцией — линия «гуляет»."""
+    from playwright.sync_api import sync_playwright
+    icons = {}
+    with sync_playwright() as p:
+        b = p.chromium.launch(executable_path=CHROME, args=['--no-sandbox'])
+        pg = b.new_page()
+        pg.set_content('<body></body>')
+        for n in sorted(outline):
+            seed = (sum(ord(c) * (i + 1) for i, c in enumerate(n)) % 628) / 100  # у каждой иконки своя «рука»
+            h = pg.evaluate(SKETCH_JS, [outline[n], SKETCH_STEP, SKETCH_WOBBLE, seed])
+            if h:
+                icons[n] = {'vb': '0 0 24 24', 'h': h, 'a': {'fill': 'none', 'stroke': 'currentColor', 'stroke-width': '1.8', 'stroke-linecap': 'round', 'stroke-linejoin': 'round'}}
+        b.close()
+    return icons
+
+
 def write(name, obj):
     os.makedirs(OUT, exist_ok=True)
     with open(os.path.join(OUT, name + '.json'), 'w', encoding='utf-8') as f:
@@ -145,9 +206,23 @@ def write(name, obj):
         f.write('\n')
 
 
+def only_sketch():
+    outline = {}
+    by_markup = {}
+    for n, m in sorted(outline_icons().items()):
+        if m not in by_markup:
+            by_markup[m] = n
+            outline[n] = m
+    sk = sketch_pack(outline)
+    write('sketch', {'pack': 'sketch', 'title': 'Рукописный', 'license': 'Перерисовка собственных иконок проекта', 'icons': sk})
+    print(f'sketch: {len(sk)}/{len(outline)} иконок')
+
+
 def main():
     if len(sys.argv) < 2:
         sys.exit(__doc__)
+    if sys.argv[1:] == ['--only', 'sketch']:
+        return only_sketch()
     assets = sys.argv[1]
     outline_all = outline_icons()
     # Одинаковая разметка под разными именами (trash/trash2 — одна иконка) = один канонический ключ: иконку узнают именно по разметке,
@@ -169,6 +244,9 @@ def main():
     pix = pixel_pack(outline)
     write('pixel', {'pack': 'pixel', 'title': 'Пиксели', 'license': 'Растеризация собственных иконок проекта', 'icons': pix})
     report['pixel'] = (len(pix), [n for n in names if n not in pix])
+    sk = sketch_pack(outline)
+    write('sketch', {'pack': 'sketch', 'title': 'Рукописный', 'license': 'Перерисовка собственных иконок проекта', 'icons': sk})
+    report['sketch'] = (len(sk), [n for n in names if n not in sk])
     for k, (n, miss) in report.items():
         print(f'{k}: {n}/{len(names)} иконок; без пары: {miss}')
 

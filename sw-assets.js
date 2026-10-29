@@ -1,7 +1,7 @@
 // АВТОГЕНЕРАЦИЯ: scripts/gen_sw_assets.py (BACKLOG 66.3). Не править руками; запускать после каждой пересборки пилотов.
 // Подключается из sw.js (importScripts): изменился этот файл → браузер ставит новый service worker и новый кэш ld-shell-<version>.
 self.LD_SW = {
-  version: "a97b4d30a8",
+  version: "af786cdfc2",
   pages: [
     "/account/",
     "/achievements/",
@@ -34,8 +34,8 @@ self.LD_SW = {
     "/challenges/assets/index-DpFQcfUc.css",
     "/community/assets/index-C-HxqM8D.js",
     "/community/assets/index-DoULIdz1.css",
+    "/customization/assets/index-CYhU4JFs.js",
     "/customization/assets/index-b6LTgbb0.css",
-    "/customization/assets/index-oRg0q3SR.js",
     "/dashboard/assets/index-BNvU9Fbf.js",
     "/dashboard/assets/index-BlnIpYnI.css",
     "/goals/assets/index-B41cGwQz.css",
@@ -73,6 +73,7 @@ self.LD_SW = {
     "/header-widgets/icon-packs/fill.json",
     "/header-widgets/icon-packs/index.json",
     "/header-widgets/icon-packs/pixel.json",
+    "/header-widgets/icon-packs/sketch.json",
     "/history/favicon.svg",
     "/icons/apple-touch-icon.png",
     "/icons/icon-192.png",

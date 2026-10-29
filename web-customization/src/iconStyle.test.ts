@@ -18,7 +18,7 @@ describe('реестр и хранение', () => {
     document.documentElement.removeAttribute('data-icon-style')
   })
   it('четыре набора, по умолчанию «Контур»; мусор и прежние стили штриха (thin/bold/square/shadow) читаются как «Контур»', () => {
-    expect([...ICON_STYLES]).toEqual(['outline', 'fill', 'duotone', 'pixel'])
+    expect([...ICON_STYLES]).toEqual(['outline', 'fill', 'duotone', 'pixel', 'sketch'])
     expect(readIconStyle()).toBe('outline')
     for (const old of ['neon', 'thin', 'bold', 'square', 'shadow']) {
       localStorage.setItem(ICON_STYLE_KEY, old)
@@ -43,14 +43,14 @@ describe('реестр и хранение', () => {
 })
 
 describe('страницы и данные', () => {
-  it('в index.html КАЖДОГО пилота до первой отрисовки ставится data-icon-style; допустимы только три «не контур» набора', async () => {
+  it('в index.html КАЖДОГО пилота до первой отрисовки ставится data-icon-style; допустимы только четыре «не контур» набора', async () => {
     const fs = await fsMod()
     const pilots = fs.readdirSync(ROOT).filter((d) => d.startsWith('web-') && fs.existsSync(ROOT + d + '/src/lib/theme.ts'))
     expect(pilots.length).toBeGreaterThanOrEqual(15)
     for (const d of pilots) {
       const html = fs.readFileSync(ROOT + d + '/index.html', 'utf-8')
       expect(html, d).toContain("localStorage.getItem('icon_style')")
-      expect(html, d).toContain("['fill', 'duotone', 'pixel'].indexOf(is) >= 0")
+      expect(html, d).toContain("['fill', 'duotone', 'pixel', 'sketch'].indexOf(is) >= 0")
       expect(html.indexOf("localStorage.getItem('icon_style')"), d).toBeLessThan(html.indexOf('</head>'))
       expect(html.split("localStorage.getItem('icon_style')").length - 1, d).toBe(1)
     }
@@ -101,13 +101,13 @@ describe('пикер', () => {
   })
   it('четыре карточки, по умолчанию «Контур»; в каждой пять иконок; подписи RU/EN', () => {
     const w = mount(IconStylePicker)
-    expect(w.findAll('[data-testid^="iconstyle-"][data-active]')).toHaveLength(4)
+    expect(w.findAll('[data-testid^="iconstyle-"][data-active]')).toHaveLength(5)
     expect(w.find('[data-testid="iconstyle-outline"]').attributes('data-active')).toBe('true')
     for (const v of ICON_STYLES) expect(w.find(`[data-testid="iconstyle-${v}"] [data-testid="iconstyle-preview"]`).findAll('svg')).toHaveLength(5)
-    for (const label of ['Контур', 'Заливка', 'Дуотон', 'Пиксели']) expect(w.text()).toContain(label)
+    for (const label of ['Контур', 'Заливка', 'Дуотон', 'Пиксели', 'Рукописный']) expect(w.text()).toContain(label)
     localStorage.setItem('site_lang', 'en')
     const en = mount(IconStylePicker)
-    for (const label of ['Outline', 'Solid', 'Duotone', 'Pixels']) expect(en.text()).toContain(label)
+    for (const label of ['Outline', 'Solid', 'Duotone', 'Pixels', 'Sketch']) expect(en.text()).toContain(label)
   })
   it('предпросмотр берёт данные набора (после загрузки), а «Контур» рисуется штрихом; до загрузки и без сети — «Контур»', async () => {
     const w = mount(IconStylePicker)
@@ -126,7 +126,7 @@ describe('пикер', () => {
     await new Promise((r) => setTimeout(r, 0))
     expect(off.find('[data-testid="iconstyle-fill"] svg').attributes('data-pack')).toBe('outline')
   })
-  it.each(['fill', 'duotone', 'pixel'] as const)('«Выбрать» для «%s»: пишет ключ, сразу ставит атрибут на <html>, переключает карточку', async (v) => {
+  it.each(['fill', 'duotone', 'pixel', 'sketch'] as const)('«Выбрать» для «%s»: пишет ключ, сразу ставит атрибут на <html>, переключает карточку', async (v) => {
     const w = mount(IconStylePicker)
     await w.find(`[data-testid="iconstyle-${v}"] [data-testid="iconstyle-choose"]`).trigger('click')
     expect(localStorage.getItem('icon_style')).toBe(v)

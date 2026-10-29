@@ -211,7 +211,7 @@ describe('настоящие данные наборов (web-header/public/icon
         expect(icons[n].vb, `${s}/${n}`).toMatch(/^0 0 \d+ \d+$/)
         expect(icons[n].h.length, `${s}/${n}`).toBeGreaterThan(10)
       }
-      if (s === 'pixel') expect(have.length).toBe(names.length)
+      if (s === 'pixel' || s === 'sketch') expect(have.length).toBe(names.length)
       else expect(have.length).toBeGreaterThanOrEqual(125)
     }
   })
@@ -219,6 +219,12 @@ describe('настоящие данные наборов (web-header/public/icon
     for (const [n, e] of Object.entries(read('pixel').icons as PackData)) {
       expect(e.vb, n).toBe('0 0 16 16')
       expect(e.a, n).toEqual({ 'shape-rendering': 'crispEdges' })
+    }
+  })
+  it('«Рукописный»: рисуется штрихом на сетке 24×24 (fill none, stroke currentColor), без зависимости от стилей страницы', () => {
+    for (const [n, e] of Object.entries(read('sketch').icons as PackData)) {
+      expect(e.vb, n).toBe('0 0 24 24')
+      expect(e.a, n).toMatchObject({ fill: 'none', stroke: 'currentColor', 'stroke-linecap': 'round' })
     }
   })
   it('лицензии: у Phosphor-наборов указана MIT, а файл со сторонними лицензиями лежит в репозитории', () => {
