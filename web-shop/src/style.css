@@ -1993,3 +1993,15 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
   .bought-burst { display: none }
   .balance-delta { animation: none; opacity: 1 }
 }
+
+/* Минимум цели нажатия на телефоне (BACKLOG 576 / 60.2 п.4): аудит Chromium 390 px нашёл кнопки 24–27 px (вкладки «Магазина»,
+   фильтры «Достижений», чипы «Навыков», стрелки «Календаря»). Правило только ПОДТЯГИВАЕТ мелкое до 32 px (min-*), крупные кнопки не меняет.
+   Исключены: значок-подсказка `.ph-btn` (зона нажатия расширена через ::after), абсолютно позиционированные крестики/точки. Источник — `scripts/apply_tap_targets.py`. */
+/* tap-targets */
+@media (max-width: 640px) {
+  button:not(.ph-btn):not([class*='absolute']),
+  a[href].secondary {
+    min-height: 32px;
+    min-width: 32px;
+  }
+}
