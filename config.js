@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.55";
+const SITE_VERSION = "6.56";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.56", date: "2026-10-29 01:04", changes: [
+        "«Календарь» → «История»: новая карточка «Сводка за период» — неделя, месяц или год со сравнением с прошлым периодом: средний прогресс дня, дни на 100%, дни с тренировками, выполненные цели из планов, а ниже — что стало лучше и что хуже (стрелка и знак, не только цвет). Сравнение показывается, только если в обоих периодах отслежено не меньше 60% дней, иначе пишем «мало данных»; метрики без цели меняются нейтрально, без оценки «лучше/хуже»; пропущенные дни не считаются невыполненными. Есть таблица «Все метрики» и переключатель в «Показывать». Без миграций."
+    ]},
     { version: "6.55", date: "2026-10-29 04:20", changes: [
         "«Достижения»: у каждого из 61 достижения (51 видимое и 10 секретных) теперь своя иконка — раньше многие были одинаковыми. Свечение легендарных значков больше не мигает, если выключено движение (системная настройка или общий выключатель анимаций). «Карта мышц»: непотренированные мышцы показаны пунктиром, потренированные — сплошным контуром, так что различие видно не только по цвету; выбранная мышца озвучивается для скринридеров; режимы «Анатомия», «Атлас» и «Техно» стали заметнее отличаться друг от друга. Без миграций."
     ]},
@@ -2581,6 +2584,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.56", date: "2026-10-29 01:04", changes: [
+        "Calendar → History: new “Period summary” card — week, month or year compared with the previous period: average day progress, days at 100%, workout days, plan goals done, and below it what got better and what slipped (arrow and sign, not just colour). The comparison only appears when at least 60% of days were tracked in both periods, otherwise it says “not enough data”; metrics without a goal change neutrally, with no better/worse verdict; skipped days are not counted as missed. There is an “All metrics” table and a switch in “Show”. No migrations."
+    ]},
     { version: "6.55", date: "2026-10-29 04:20", changes: [
         "Achievements: each of the 61 achievements (51 visible and 10 secret) now has its own icon — many used to share one. The glow on legendary badges no longer pulses when motion is turned off (system setting or the site-wide animation switch). Muscle map: untrained muscles are drawn dashed and trained ones with a solid outline, so the difference is visible without relying on colour; the selected muscle is announced to screen readers; the Anatomy, Atlas and Tech modes now look more distinct. No migrations."
     ]},

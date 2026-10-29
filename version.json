@@ -1,7 +1,14 @@
 {
-  "version": "6.55",
+  "version": "6.56",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.56",
+      "date": "2026-10-29 01:04",
+      "changes": [
+        "Calendar → History: new “Period summary” card — week, month or year compared with the previous period: average day progress, days at 100%, workout days, plan goals done, and below it what got better and what slipped (arrow and sign, not just colour). The comparison only appears when at least 60% of days were tracked in both periods, otherwise it says “not enough data”; metrics without a goal change neutrally, with no better/worse verdict; skipped days are not counted as missed. There is an “All metrics” table and a switch in “Show”. No migrations."
+      ]
+    },
     {
       "version": "6.55",
       "date": "2026-10-29 04:20",
@@ -4655,6 +4662,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.56",
+      "date": "2026-10-29 01:04",
+      "changes": [
+        "«Календарь» → «История»: новая карточка «Сводка за период» — неделя, месяц или год со сравнением с прошлым периодом: средний прогресс дня, дни на 100%, дни с тренировками, выполненные цели из планов, а ниже — что стало лучше и что хуже (стрелка и знак, не только цвет). Сравнение показывается, только если в обоих периодах отслежено не меньше 60% дней, иначе пишем «мало данных»; метрики без цели меняются нейтрально, без оценки «лучше/хуже»; пропущенные дни не считаются невыполненными. Есть таблица «Все метрики» и переключатель в «Показывать». Без миграций."
+      ]
+    },
     {
       "version": "6.55",
       "date": "2026-10-29 04:20",
