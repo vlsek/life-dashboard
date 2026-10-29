@@ -1,7 +1,14 @@
 {
-  "version": "6.54",
+  "version": "6.55",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.55",
+      "date": "2026-10-29 04:20",
+      "changes": [
+        "Achievements: each of the 61 achievements (51 visible and 10 secret) now has its own icon — many used to share one. The glow on legendary badges no longer pulses when motion is turned off (system setting or the site-wide animation switch). Muscle map: untrained muscles are drawn dashed and trained ones with a solid outline, so the difference is visible without relying on colour; the selected muscle is announced to screen readers; the Anatomy, Atlas and Tech modes now look more distinct. No migrations."
+      ]
+    },
     {
       "version": "6.54",
       "date": "2026-10-28 20:23",
@@ -4648,6 +4655,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.55",
+      "date": "2026-10-29 04:20",
+      "changes": [
+        "«Достижения»: у каждого из 61 достижения (51 видимое и 10 секретных) теперь своя иконка — раньше многие были одинаковыми. Свечение легендарных значков больше не мигает, если выключено движение (системная настройка или общий выключатель анимаций). «Карта мышц»: непотренированные мышцы показаны пунктиром, потренированные — сплошным контуром, так что различие видно не только по цвету; выбранная мышца озвучивается для скринридеров; режимы «Анатомия», «Атлас» и «Техно» стали заметнее отличаться друг от друга. Без миграций."
+      ]
+    },
     {
       "version": "6.54",
       "date": "2026-10-28 20:23",

@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.54";
+const SITE_VERSION = "6.55";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.55", date: "2026-10-29 04:20", changes: [
+        "«Достижения»: у каждого из 61 достижения (51 видимое и 10 секретных) теперь своя иконка — раньше многие были одинаковыми. Свечение легендарных значков больше не мигает, если выключено движение (системная настройка или общий выключатель анимаций). «Карта мышц»: непотренированные мышцы показаны пунктиром, потренированные — сплошным контуром, так что различие видно не только по цвету; выбранная мышца озвучивается для скринридеров; режимы «Анатомия», «Атлас» и «Техно» стали заметнее отличаться друг от друга. Без миграций."
+    ]},
     { version: "6.54", date: "2026-10-28 20:23", changes: [
         "«Кастомизация» → «Стиль иконок»: вместо «тоньше/жирнее» — настоящие наборы с другой графикой: «Контур» (как раньше), «Заливка» (сплошные значки), «Дуотон» (контур с мягкой подложкой второго тона) и «Пиксели» (8-битная сетка 16×16). Выбор действует на всех страницах сразу, помнится и едет между устройствами; наборы кэшируются для работы без сети. Прежние стили штриха убраны (кто их выбрал — вернулся на «Контур»). Без миграций."
     ]},
@@ -2578,6 +2581,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.55", date: "2026-10-29 04:20", changes: [
+        "Achievements: each of the 61 achievements (51 visible and 10 secret) now has its own icon — many used to share one. The glow on legendary badges no longer pulses when motion is turned off (system setting or the site-wide animation switch). Muscle map: untrained muscles are drawn dashed and trained ones with a solid outline, so the difference is visible without relying on colour; the selected muscle is announced to screen readers; the Anatomy, Atlas and Tech modes now look more distinct. No migrations."
+    ]},
     { version: "6.54", date: "2026-10-28 20:23", changes: [
         "Customization → Icon style: instead of thinner/bolder strokes there are now real icon sets with different artwork — Outline (as before), Solid (filled glyphs), Duotone (outline with a soft second-tone fill) and Pixels (8-bit 16×16 grid). The choice applies to every page at once, is remembered and synced across devices; the sets are cached for offline use. The old stroke styles are gone (anyone who picked them is back on Outline). No migrations."
     ]},
