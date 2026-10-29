@@ -8,6 +8,7 @@ import AchievementUnlockedModal from './AchievementUnlockedModal.vue'
 import { ACHIEVEMENTS, evaluate, type Counters } from '../lib/achievements'
 import { GRADE, ICON_BY_KEY, gradeOf } from '../lib/grade'
 import { ICON_PATHS } from '../lib/icons'
+import { HIDDEN_ACHIEVEMENTS } from '../lib/hiddenAchievements'
 import { RARITIES, RARITY_COLOR } from '../lib/rewards'
 import i18nRaw from '../lib/i18n.ts?raw'
 
@@ -33,14 +34,23 @@ describe('таблицы грейдов и иконок (страж)', () => {
       expect(keys.some((k) => gradeOf(k) === r), 'нет достижений грейда ' + r).toBe(true)
     }
   })
-  it('иконки существуют в библиотеке, внутри одной группы все разные', () => {
+  it('иконки существуют в библиотеке и уникальны у каждого достижения', () => {
     for (const a of ACHIEVEMENTS) expect(a.icon in ICON_PATHS, a.key + ' → ' + a.icon).toBe(true)
-    const byGroup = new Map<string, string[]>()
-    for (const a of ACHIEVEMENTS) byGroup.set(a.group, [...(byGroup.get(a.group) || []), a.icon])
-    for (const [g, icons] of byGroup) expect(new Set(icons).size, 'повторы иконок в группе ' + g + ': ' + icons.join(',')).toBe(icons.length)
+    const byIcon = new Map<string, string[]>()
+    for (const a of ACHIEVEMENTS) byIcon.set(a.icon, [...(byIcon.get(a.icon) || []), a.key])
+    for (const [icon, keys] of byIcon) expect(keys, 'повтор иконки ' + icon + ': ' + keys.join(',')).toHaveLength(1)
   })
   it('реестр отдаёт иконку из таблицы', () => {
     for (const a of ACHIEVEMENTS) expect(a.icon, a.key).toBe(ICON_BY_KEY[a.key])
+  })
+  it('секретные достижения тоже имеют уникальные валидные иконки, не повторяющиеся у обычных', () => {
+    const all = [...ACHIEVEMENTS, ...HIDDEN_ACHIEVEMENTS]
+    const byIcon = new Map<string, string[]>()
+    for (const a of all) {
+      expect(a.icon in ICON_PATHS, a.key + ' → ' + a.icon).toBe(true)
+      byIcon.set(a.icon, [...(byIcon.get(a.icon) || []), a.key])
+    }
+    for (const [icon, keys] of byIcon) expect(keys, 'повтор иконки ' + icon + ': ' + keys.join(',')).toHaveLength(1)
   })
   it('грейд внутри группы не убывает с порогом; вершины лесенок — не ниже эпического (кроме серий и баллов с «легендарными»)', () => {
     const order = RARITIES as readonly string[]
@@ -93,10 +103,25 @@ describe('GradeBadge: форма по грейду', () => {
     expect(w.findAll('svg').length).toBe(2)
     expect(w.attributes('style')).toContain('width: 96px')
   })
+  it('класс анимации назначается только открытому легендарному значку', () => {
+    const legendaryOn = mount(GradeBadge, { props: { grade: 'legendary', icon: 'trophy', unlocked: true } })
+    const legendaryOff = mount(GradeBadge, { props: { grade: 'legendary', icon: 'trophy', unlocked: false } })
+    const epicOn = mount(GradeBadge, { props: { grade: 'epic', icon: 'trophy', unlocked: true } })
+
+    expect(legendaryOn.classes()).toContain('is-on')
+    expect(legendaryOn.classes()).toContain('g-legendary')
+    expect(legendaryOff.classes()).toContain('is-off')
+    expect(legendaryOff.classes()).toContain('g-legendary')
+    expect(epicOn.classes()).toContain('is-on')
+    expect(epicOn.classes()).toContain('g-epic')
+    expect(legendaryOff.classes()).not.toContain('is-on')
+    expect(epicOn.classes()).not.toContain('g-legendary')
+  })
   it('пульс свечения только у открытого легендарного; в «уменьшить движение» гасится; цвет не из акцента темы', () => {
     const src: string = readFileSync('src/components/GradeBadge.vue', 'utf-8')
     expect(src).toMatch(/\.is-on\.g-legendary\s*\{[^}]*animation:\s*gb-glow/)
-    expect(src).toMatch(/@media \(prefers-reduced-motion: reduce\)\s*\{\s*\.grade-badge\s*\{\s*animation:\s*none/)
+    expect(src).toMatch(/:global\(html\[data-motion='off'\]\) \.grade-badge\s*\{\s*animation:\s*none !important/)
+    expect(src).toMatch(/@media \(prefers-reduced-motion: reduce\)\s*\{\s*\.grade-badge\.is-on\.g-legendary\s*\{\s*animation:\s*none/)
     expect(src).not.toContain('var(--accent)')
   })
 })

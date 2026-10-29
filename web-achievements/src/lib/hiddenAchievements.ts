@@ -14,16 +14,16 @@ export const SECTION_TARGET = SECTION_COUNTERS.length
 export const sectionsUsed = (c: Counters): number => SECTION_COUNTERS.filter((k) => (c[k] || 0) >= 1).length
 
 export const HIDDEN_ACHIEVEMENTS: readonly HiddenDef[] = [
-  { key: 'secret_year', group: 'secret', counter: 'streakBest', target: 365, icon: 'trophy' },
-  { key: 'secret_perfect_200', group: 'secret', counter: 'perfectDays', target: 200, icon: 'party' },
-  { key: 'secret_points_5000', group: 'secret', counter: 'pointsTotal', target: 5000, icon: 'piggybank' },
-  { key: 'secret_marks_1000', group: 'secret', counter: 'metricDone', target: 1000, icon: 'sparkles' },
-  { key: 'secret_weight_100', group: 'secret', counter: 'weightEntries', target: 100, icon: 'scale' },
-  { key: 'secret_all_rounder', group: 'secret', counter: 'goalsDone', target: SECTION_TARGET, icon: 'compass', compose: sectionsUsed },
-  { key: 'secret_mega_3', group: 'secret', counter: 'megaWeeks', target: 3, icon: 'pulse' },
-  { key: 'secret_words_500', group: 'secret', counter: 'wordsAdded', target: 500, icon: 'brain' },
-  { key: 'secret_workouts_500', group: 'secret', counter: 'workoutDays', target: 500, icon: 'boxing' },
-  { key: 'secret_milestones_100', group: 'secret', counter: 'milestonesDone', target: 100, icon: 'hourglass' },
+  { key: 'secret_year', group: 'secret', counter: 'streakBest', target: 365, icon: 'tree' },
+  { key: 'secret_perfect_200', group: 'secret', counter: 'perfectDays', target: 200, icon: 'flower' },
+  { key: 'secret_points_5000', group: 'secret', counter: 'pointsTotal', target: 5000, icon: 'receipt' },
+  { key: 'secret_marks_1000', group: 'secret', counter: 'metricDone', target: 1000, icon: 'history' },
+  { key: 'secret_weight_100', group: 'secret', counter: 'weightEntries', target: 100, icon: 'medical' },
+  { key: 'secret_all_rounder', group: 'secret', counter: 'goalsDone', target: SECTION_TARGET, icon: 'briefcase', compose: sectionsUsed },
+  { key: 'secret_mega_3', group: 'secret', counter: 'megaWeeks', target: 3, icon: 'cloud' },
+  { key: 'secret_words_500', group: 'secret', counter: 'wordsAdded', target: 500, icon: 'laptop' },
+  { key: 'secret_workouts_500', group: 'secret', counter: 'workoutDays', target: 500, icon: 'bike' },
+  { key: 'secret_milestones_100', group: 'secret', counter: 'milestonesDone', target: 100, icon: 'bell' },
 ]
 
 export const isHiddenKey = (key: string): boolean => HIDDEN_ACHIEVEMENTS.some((d) => d.key === key)
