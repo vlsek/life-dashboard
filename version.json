@@ -1,7 +1,14 @@
 {
-  "version": "6.73",
+  "version": "6.74",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.74",
+      "date": "2026-10-29 19:07",
+      "changes": [
+        "When a page cannot load its data (no connection, server hiccup), the message now has a “Try again” button, so you no longer have to reload the whole page. Offline, it also says “You are offline — check your connection”. Done in Shop, Goals, Skills (and books), Achievements, Milestones and Challenges; in the Shop the old error message disappears after a successful retry."
+      ]
+    },
     {
       "version": "6.73",
       "date": "2026-10-29 14:30",
@@ -4781,6 +4788,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.74",
+      "date": "2026-10-29 19:07",
+      "changes": [
+        "Если страница не смогла загрузить данные (нет связи, сбой сервера), теперь под сообщением есть кнопка «Повторить»: не нужно перезагружать страницу. Без сети добавляется подсказка «Нет сети — проверь подключение». Сделано в «Магазине», «Целях», «Навыках» (и книгах), «Достижениях», «Вехах» и «Челленджах»; в «Магазине» после успешного повтора старое сообщение об ошибке исчезает."
+      ]
+    },
     {
       "version": "6.73",
       "date": "2026-10-29 14:30",
