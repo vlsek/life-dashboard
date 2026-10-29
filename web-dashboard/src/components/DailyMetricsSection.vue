@@ -12,6 +12,8 @@ import SavedTick from './SavedTick.vue'
 import DateStepper from './DateStepper.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import UsefulTodayList from './UsefulTodayList.vue'
+import TodayRemaining from './TodayRemaining.vue'
+import { remainingToday } from '../lib/todayRemaining'
 import { useDailyMetrics } from '../lib/useDailyMetrics'
 import { useMetricRecords } from '../lib/useMetricRecords'
 import { isRemaining } from '../lib/daily'
@@ -77,6 +79,19 @@ const collapsed = ref(false)
 // «Карточка со сводкой» (BACKLOG 498 срез 3): «Баллы N / M» — те же баллы за день, что внутри блока
 const dailySummary = computed(() => pointsSummary(score.value.points, score.value.total))
 const numberValue = (id: string) => pending.value[id] as number | undefined
+// «Осталось на сегодня» (BACKLOG 75.2, срез 1): только для сегодняшнего дня; булева закрывается тут же, числовая — переход к плашке
+const remainingRows = computed(() =>
+  date.value === todayStr() ? remainingToday([...numbers.value, ...booleans.value, ...multiselects.value], pending.value, date.value) : [],
+)
+function onRemainingDone(id: string) {
+  const m = booleans.value.find((x) => x.id === id)
+  if (m) void setBoolean(m, true)
+}
+function onRemainingJump(id: string) {
+  const el = document.querySelector(`[data-metric-id="${CSS.escape(id)}"]`)
+  const calm = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
+  el?.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'center' })
+}
 const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.value[id] as string[]) : [])
 </script>
 
@@ -101,6 +116,8 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
       <p v-if="!loaded" class="dim text-sm">{{ t('loading_ellipsis') }}</p>
 
       <template v-else>
+        <TodayRemaining v-if="remainingRows.length > 0" :rows="remainingRows" @done="onRemainingDone" @jump="onRemainingJump" />
+
         <!-- BACKLOG 23 (13:25): каждый параметр — в своей мини-плашке, иначе несколько подряд сливаются в одну массу -->
         <div v-if="numbers.length > 0" class="field-grid">
           <div v-for="m in numbers" :key="date + m.id" class="metric-plate" :class="{ 'metric-plate-saved': !!flashed[m.id] }" data-test="metric-plate">
