@@ -12,9 +12,9 @@ export function getLang(): 'en' | 'ru' {
 
 const DICT = {
   en: {
-    theme_dark: '🌑 Dark',
+    theme_dark: 'Dark',
     theme_monet: '🎨 Monet',
-    theme_light: '☀️ Light',
+    theme_light: 'Light',
     theme_label: 'Theme',
     theme_pink: '🌸 Pink',
     theme_mint: '🌿 Mint',
@@ -54,7 +54,8 @@ const DICT = {
     theme_ember: '🔥 Ember',
     theme_grass: '🌱 Fresh Grass',
     theme_clinic: '🩺 Mint Clinic',
-    login_title: '🔐 Personal Dashboard',
+    login_title: 'Personal Dashboard',
+    login_subtitle: 'Habits, goals and progress — in one place',
     tab_login: 'Log in',
     tab_register: 'Sign up',
     email_label: 'Email',
@@ -89,9 +90,9 @@ const DICT = {
     password_toggle_hide: 'Hide password',
   },
   ru: {
-    theme_dark: '🌑 Тёмная',
+    theme_dark: 'Тёмная',
     theme_monet: '🎨 Monet',
-    theme_light: '☀️ Светлая',
+    theme_light: 'Светлая',
     theme_label: 'Тема',
     theme_pink: '🌸 Розовая',
     theme_mint: '🌿 Mint (мятная)',
@@ -131,7 +132,8 @@ const DICT = {
     theme_ember: '🔥 Огненная',
     theme_grass: '🌱 Травяная',
     theme_clinic: '🩺 Мятная больничная',
-    login_title: '🔐 Личный дашборд',
+    login_title: 'Личный дашборд',
+    login_subtitle: 'Привычки, цели и прогресс — в одном месте',
     tab_login: 'Вход',
     tab_register: 'Регистрация',
     email_label: 'Email',

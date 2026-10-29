@@ -14,18 +14,19 @@ const shown = ref(false)
 </script>
 
 <template>
-  <div class="relative">
+  <div class="auth-field">
+    <Icon name="lock" class="auth-field-icon" />
     <input
       v-model="value"
       :type="shown ? 'text' : 'password'"
-      class="auth-input w-full pr-12"
+      class="auth-input has-icon w-full pr-12"
       :autocomplete="autocomplete"
       :placeholder="placeholder"
       data-test="login-password"
     />
     <button
       type="button"
-      class="auth-eye absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer"
+      class="auth-eye secondary absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer"
       style="color: var(--text-dim)"
       :aria-label="shown ? t('password_toggle_hide') : t('password_toggle_show')"
       @click="shown = !shown"

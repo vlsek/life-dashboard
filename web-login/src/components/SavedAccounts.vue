@@ -19,14 +19,14 @@ function cancelAdd() {
 </script>
 
 <template>
-  <div v-if="accounts.length || adding" class="mb-3 w-full max-w-[360px] rounded-lg border p-3 text-sm" style="border-color: var(--border); background: var(--bg-card)" data-test="saved-accounts">
+  <div v-if="accounts.length || adding" class="login-saved" data-test="saved-accounts">
     <p v-if="adding" class="mb-2" data-test="saved-adding">{{ t('acc_adding_hint') }}</p>
     <p v-if="accounts.length" class="mb-1.5" style="color: var(--text-dim)">{{ t('acc_saved_title') }}</p>
     <button
       v-for="a in accounts"
       :key="a.id"
       type="button"
-      class="mb-1.5 block w-full cursor-pointer rounded-lg border px-3 py-2 text-left"
+      class="login-saved-btn mb-1.5 block w-full cursor-pointer text-left"
       style="border-color: var(--border); color: var(--text); background: transparent"
       :data-test="'saved-' + a.id"
       @click="enter(a.id)"
