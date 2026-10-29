@@ -1,24 +1,12 @@
-<<<<<<< Updated upstream
 // @ts-ignore — в проекте нет типов node, а vitest выполняется в node (как в dateTimeAllPilots.test.ts)
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 // @ts-ignore — то же
 import { join, resolve } from 'node:path'
-=======
->>>>>>> Stashed changes
 import { describe, expect, it } from 'vitest'
-// @ts-ignore — в проекте нет типов node, а vitest выполняется в node (как в pendingMigrationsBundle.test.ts).
-import { readdirSync, readFileSync, statSync } from 'node:fs'
-// @ts-ignore
-import { join, resolve } from 'node:path'
-declare const __dirname: string
 
 // BACKLOG 74.3: ошибка загрузки показывается через LoadError.vue («Повторить», role=alert), а не серым <p> без повтора.
-<<<<<<< Updated upstream
-// Страж читает исходники всех пилотов. Пока в ALLOW — места, до которых очередь не дошла (срез 2); при переводе на LoadError убрать из списка.
-declare const __dirname: string // есть в vitest (node); типов node в проекте нет
-=======
 // Страж читает исходники всех пилотов. ALLOW — места, где серый текст оставлен сознательно (после среза 2 — пусто: исключения добавлять только с причиной).
->>>>>>> Stashed changes
+declare const __dirname: string // есть в vitest (node); типов node в проекте нет
 const ROOT = resolve(__dirname, '..', '..')
 const PILOTS_DONE = ['web-shop', 'web-goals', 'web-skills', 'web-achievements', 'web-milestones', 'web-challenges', 'web-dashboard', 'web-community']
 const ALLOW: string[] = []
@@ -32,11 +20,7 @@ function vueFiles(dir: string): string[] {
 const rel = (p: string) => p.slice(ROOT.length + 1).split('\\').join('/')
 
 describe('ошибки загрузки: «Повторить» везде', () => {
-<<<<<<< Updated upstream
-  const files = readdirSync(ROOT).filter((n: string) => n.startsWith('web-') && statSync(join(ROOT, n, 'src')).isDirectory()).flatMap((n: string) => vueFiles(join(ROOT, n, 'src')))
-=======
   const files: string[] = readdirSync(ROOT).filter((n: string) => n.startsWith('web-') && statSync(join(ROOT, n, 'src')).isDirectory()).flatMap((n: string) => vueFiles(join(ROOT, n, 'src')))
->>>>>>> Stashed changes
 
   it('голый <p …>{{ t(\'comm_load_error\') }}…</p> остаётся только там, где его сознательно оставили (ALLOW)', () => {
     const bare = files.filter((f: string) => !f.endsWith('/LoadError.vue') && /<p [^>]*>\s*\{\{\s*t\('comm_load_error'\)\s*\}\}/.test(readFileSync(f, 'utf-8'))).map(rel).sort()

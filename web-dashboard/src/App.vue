@@ -65,11 +65,7 @@ import type { DayProgressSettings } from './lib/progressSettings'
 // с общей выбранной датой (см. DailyMetricsSection.vue). Раскладка блоков (показать/скрыть/переставить) —
 // lib/layout.ts + useLayout.ts + LayoutModal.vue, колонка profiles.dashboard_layout общая с классикой.
 
-<<<<<<< Updated upstream
-const { auth, streaks, habitScores, perfectInfo, dayProgress, weekProgress, weekDays, summaries, progressSettings, loadError, accountCreatedAt, init, saveProgressSettings } = useDashboard()
-=======
-const { auth, streaks, perfectInfo, dayProgress, weekProgress, weekDays, summaries, progressSettings, loadError, accountCreatedAt, init, refresh, saveProgressSettings } = useDashboard()
->>>>>>> Stashed changes
+const { auth, streaks, habitScores, perfectInfo, dayProgress, weekProgress, weekDays, summaries, progressSettings, loadError, accountCreatedAt, init, refresh, saveProgressSettings } = useDashboard()
 // Список метрик изменили через шестерёнку «Ежедневных метрик» (BACKLOG 40): перечитываем общие данные и просим графики пересобраться
 const metricsRev = ref(0)
 async function onMetricsChanged() {
