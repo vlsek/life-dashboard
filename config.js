@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.72";
+const SITE_VERSION = "6.73";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.73", date: "2026-10-29 14:30", changes: [
+        "В приложении для Android в «Тренировках» — короткий отклик вибрацией, когда запись или подход сохранились (в браузере ничего не меняется). Без миграций."
+    ]},
     { version: "6.72", date: "2026-10-29 19:03", changes: [
         "Дашборд: в списке «Осталось на сегодня» теперь и пункты плана — свои пункты без отметки. Пункт со временем стоит выше всех и показывает время, без времени — после ежедневных метрик. Отметить пункт можно одним касанием прямо из списка. Пункты-цели пока остаются только в блоке «Планы». Без миграций."
     ]},
@@ -2632,6 +2635,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.73", date: "2026-10-29 14:30", changes: [
+        "In the Android app, Workouts gives a short vibration when an entry or a set is saved (nothing changes in the browser). No migrations."
+    ]},
     { version: "6.72", date: "2026-10-29 19:03", changes: [
         "Dashboard: the \"Left for today\" list now includes plan items — your own unticked ones. An item with a time goes first and shows it; one without a time comes after the daily metrics. Tick an item with one tap right from the list. Goal items stay in the Plans block only for now. No migrations."
     ]},

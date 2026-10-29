@@ -1,7 +1,14 @@
 {
-  "version": "6.72",
+  "version": "6.73",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.73",
+      "date": "2026-10-29 14:30",
+      "changes": [
+        "In the Android app, Workouts gives a short vibration when an entry or a set is saved (nothing changes in the browser). No migrations."
+      ]
+    },
     {
       "version": "6.72",
       "date": "2026-10-29 19:03",
@@ -4774,6 +4781,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.73",
+      "date": "2026-10-29 14:30",
+      "changes": [
+        "В приложении для Android в «Тренировках» — короткий отклик вибрацией, когда запись или подход сохранились (в браузере ничего не меняется). Без миграций."
+      ]
+    },
     {
       "version": "6.72",
       "date": "2026-10-29 19:03",
