@@ -81,7 +81,7 @@ BACKLOG 69.0 «Тренировки v2»: исследование и макет
 — свободен — (v5.46 первая тематическая большая тема Summer Meadow, 57.7 файл 2 тема 1; все пять светлых из файла 1 готовы (v4.99–v5.30). Дальше: файл 2 — Autumn Mood, Spring Awakening, Inferno, Eastern Tradition, Russian Heritage, American Retro, Deep Water и 55.3 по одной за заход; янтарный фосфор, вшитый шрифт JetBrains Mono — по согласованию с владельцем)
 
 ### Агент 5
-— свободен — (v6.60: 66.7 остаток — e2e 100 записей/две вкладки/часы + исправление 5xx/429; v6.52: 66.7 e2e вода/тренировки, 66.8 чек-лист)
+BACKLOG 81.1 «Кастомизация → темы: сердечко выходит за рамки блока». ФАЙЛЫ: `web-customization/src/components/ThemeCard.vue` (+тест), сборка `customization/`. БЕЗ SQL. С: 2026-10-29 09:00. Прежний итог: v6.64: 66.13 вода из двух вкладок
 
 ### Агент 6
 BACKLOG 576 / 60.2 п.4 (остаток): минимум цели нажатия 32 px на телефоне для `web-dashboard`, `web-workouts`, `web-customization` (агенты 3 и 5 свободны). Тот же блок `tap-targets` (`scripts/apply_tap_targets.py`, убрать три пилота из SKIP) + страж. БЕЗ SQL. ТРОГАЮ: `style.css` этих трёх пилотов (только дописывание в конец), пересборка dashboard/workouts/customization (+ header-widgets, если собирается вместе). НЕ ТРОГАЮ `web-header`. С: 2026-10-29 08:34
