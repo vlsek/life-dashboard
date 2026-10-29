@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import IconStylePicker from './components/IconStylePicker.vue'
-import { applyIconStyle, ICON_DUOTONE_OPACITY, ICON_FILL_TARGETS, ICON_STYLES, ICON_STYLE_KEY, ICON_STYLE_RULES, iconStyleCss, readIconStyle, writeIconStyle } from './lib/iconStyle'
+import { applyIconStyle, ICON_STYLES, ICON_STYLE_KEY, readIconStyle, resetPackCacheForTests, setPackFetcher, writeIconStyle } from './lib/iconStyle'
 import { PREF_KEYS } from './lib/looks'
 import { selectionRows } from './lib/currentSelection'
 import { SLOTS, freeTotal, slotOf } from './lib/slots'
@@ -11,81 +11,63 @@ async function fsMod(): Promise<{ readFileSync: (p: string, enc: string) => stri
 }
 const ROOT = '../' // vitest запускается из каталога пилота (web-customization)
 
-// BACKLOG 44.18г: «Стиль иконок» — как выглядят все иконки на всех страницах (одобрено владельцем 2026-10-19).
+// BACKLOG 44.18г (срез 3): «Стиль иконок» — НАБОРЫ с другой графикой (Контур / Заливка / Дуотон / Пиксели).
 describe('реестр и хранение', () => {
   beforeEach(() => {
     localStorage.clear()
     document.documentElement.removeAttribute('data-icon-style')
   })
-  it('шесть стилей (срез 2 добавил «Дуотон»), по умолчанию «Контур»; мусор в хранилище игнорируется', () => {
-    expect([...ICON_STYLES]).toEqual(['outline', 'thin', 'bold', 'square', 'shadow', 'duotone'])
+  it('четыре набора, по умолчанию «Контур»; мусор и прежние стили штриха (thin/bold/square/shadow) читаются как «Контур»', () => {
+    expect([...ICON_STYLES]).toEqual(['outline', 'fill', 'duotone', 'pixel'])
     expect(readIconStyle()).toBe('outline')
-    localStorage.setItem(ICON_STYLE_KEY, 'neon')
-    expect(readIconStyle()).toBe('outline')
+    for (const old of ['neon', 'thin', 'bold', 'square', 'shadow']) {
+      localStorage.setItem(ICON_STYLE_KEY, old)
+      expect(readIconStyle(), old).toBe('outline')
+    }
   })
-  it('запись стиля сразу ставит атрибут на <html>; «Контур» снимает и атрибут, и ключ (по умолчанию — «нет значения»)', () => {
-    expect(writeIconStyle('bold')).toBe(true)
-    expect(localStorage.getItem(ICON_STYLE_KEY)).toBe('bold')
-    expect(document.documentElement.getAttribute('data-icon-style')).toBe('bold')
-    writeIconStyle('square')
-    expect(document.documentElement.getAttribute('data-icon-style')).toBe('square')
+  it('запись набора сразу ставит атрибут на <html>; «Контур» снимает и атрибут, и ключ', () => {
+    expect(writeIconStyle('fill')).toBe(true)
+    expect(localStorage.getItem(ICON_STYLE_KEY)).toBe('fill')
+    expect(document.documentElement.getAttribute('data-icon-style')).toBe('fill')
+    writeIconStyle('pixel')
+    expect(document.documentElement.getAttribute('data-icon-style')).toBe('pixel')
     expect(writeIconStyle('outline')).toBe(true)
     expect(localStorage.getItem(ICON_STYLE_KEY)).toBeNull()
     expect(document.documentElement.hasAttribute('data-icon-style')).toBe(false)
   })
   it('applyIconStyle() без аргумента берёт сохранённое (как при загрузке страницы)', () => {
-    localStorage.setItem(ICON_STYLE_KEY, 'thin')
+    localStorage.setItem(ICON_STYLE_KEY, 'duotone')
     applyIconStyle()
-    expect(document.documentElement.getAttribute('data-icon-style')).toBe('thin')
+    expect(document.documentElement.getAttribute('data-icon-style')).toBe('duotone')
   })
 })
 
-describe('CSS-правила: единый источник и страж', () => {
-  it('«Контур» правил не имеет (внешний вид по умолчанию не меняется); остальные меняют ровно своё', () => {
-    expect(Object.keys(ICON_STYLE_RULES)).toEqual(['thin', 'bold', 'square', 'shadow', 'duotone'])
-    const css = iconStyleCss()
-    expect(css).not.toContain("'outline'")
-    expect(css).toContain("html[data-icon-style='thin'] svg[viewBox='0 0 24 24'][stroke='currentColor'] { stroke-width: 1.2; }")
-    expect(css).toContain('stroke-linecap: butt; stroke-linejoin: miter;')
-    expect(css).toContain('filter: drop-shadow(')
-    expect(ICON_STYLE_RULES.thin.strokeWidth!).toBeLessThan(1.9) // тоньше «Контура»
-    expect(ICON_STYLE_RULES.bold.strokeWidth!).toBeGreaterThan(1.9) // толще «Контура»
-  })
-  it('«Дуотон»: заливает ТОЛЬКО замкнутые фигуры (круг, эллипс, прямоугольник, многоугольник, контур на «z»), открытые линии штрихом', () => {
-    const css = iconStyleCss()
-    const line = css.split('\n').find((l) => l.includes("'duotone'"))!
-    expect(line).toContain(ICON_FILL_TARGETS)
-    expect(ICON_FILL_TARGETS).toBe(":is(circle, ellipse, rect, polygon, path[d$='z' i])")
-    expect(line).toContain(`fill: currentColor; fill-opacity: ${ICON_DUOTONE_OPACITY};`)
-    expect(ICON_DUOTONE_OPACITY).toBeGreaterThan(0.08)
-    expect(ICON_DUOTONE_OPACITY).toBeLessThan(0.3) // мягкая тонировка: внутренние штрихи того же цвета остаются видны
-    expect(line).not.toMatch(/\bpath\s*\{/) // не «заливай всё»: правило только на замкнутые
-  })
-  it('в style.css КАЖДОГО пилота стоит блок icon-style, точно совпадающий с iconStyleCss() (генерирует apply_themes.py)', async () => {
+describe('страницы и данные', () => {
+  it('в index.html КАЖДОГО пилота до первой отрисовки ставится data-icon-style; допустимы только три «не контур» набора', async () => {
     const fs = await fsMod()
     const pilots = fs.readdirSync(ROOT).filter((d) => d.startsWith('web-') && fs.existsSync(ROOT + d + '/src/lib/theme.ts'))
     expect(pilots.length).toBeGreaterThanOrEqual(15)
     for (const d of pilots) {
-      const css = fs.readFileSync(ROOT + d + '/src/style.css', 'utf-8')
-      const a = css.indexOf('/* icon-style:start')
-      const b = css.indexOf('/* icon-style:end */')
-      expect(a, d + ': нет icon-style:start').toBeGreaterThan(-1)
-      const body = css.slice(css.indexOf('\n', a) + 1, b).trim()
-      expect(body, d).toBe(iconStyleCss())
-    }
-  })
-  it('в index.html КАЖДОГО пилота до первой отрисовки ставится data-icon-style; допустимы только пять «не контур» значений', async () => {
-    const fs = await fsMod()
-    const pilots = fs.readdirSync(ROOT).filter((d) => d.startsWith('web-') && fs.existsSync(ROOT + d + '/src/lib/theme.ts'))
-    for (const d of pilots) {
       const html = fs.readFileSync(ROOT + d + '/index.html', 'utf-8')
       expect(html, d).toContain("localStorage.getItem('icon_style')")
-      expect(html, d).toContain("['thin', 'bold', 'square', 'shadow', 'duotone'].indexOf(is) >= 0")
-      expect(html.indexOf("localStorage.getItem('icon_style')"), d).toBeLessThan(html.indexOf('</head>')) // в <head>, а не после
-      expect(html.split("localStorage.getItem('icon_style')").length - 1, d).toBe(1) // не продублирован
+      expect(html, d).toContain("['fill', 'duotone', 'pixel'].indexOf(is) >= 0")
+      expect(html.indexOf("localStorage.getItem('icon_style')"), d).toBeLessThan(html.indexOf('</head>'))
+      expect(html.split("localStorage.getItem('icon_style')").length - 1, d).toBe(1)
     }
   })
-  it('шапка синхронизирует ключ между устройствами (SYNC_KEYS), образ запоминает стиль (PREF_KEYS)', async () => {
+  it('в style.css пилотов НЕТ блока прежних стилей штриха (его удалил apply_themes.py)', async () => {
+    const fs = await fsMod()
+    const pilots = fs.readdirSync(ROOT).filter((d) => d.startsWith('web-') && fs.existsSync(ROOT + d + '/src/lib/theme.ts'))
+    for (const d of pilots) expect(fs.readFileSync(ROOT + d + '/src/style.css', 'utf-8'), d).not.toContain('icon-style:start')
+  })
+  it('файлы наборов есть и содержат иконки; пикер и подменщик берут их из одного места', async () => {
+    const fs = await fsMod()
+    for (const s of ICON_STYLES.filter((x) => x !== 'outline')) {
+      const j = JSON.parse(fs.readFileSync(ROOT + 'web-header/public/icon-packs/' + s + '.json', 'utf-8')) as { icons: Record<string, unknown> }
+      expect(Object.keys(j.icons).length, s).toBeGreaterThan(100)
+    }
+  })
+  it('шапка синхронизирует ключ между устройствами (SYNC_KEYS), образ запоминает набор (PREF_KEYS)', async () => {
     const fs = await fsMod()
     expect(fs.readFileSync(ROOT + 'web-header/src/lib/uiSettingsSync.ts', 'utf-8')).toContain("'icon_style',")
     expect(PREF_KEYS).toContain(ICON_STYLE_KEY)
@@ -104,40 +86,47 @@ describe('слот в Кастомизации', () => {
     const base = { theme: 'dark', selected: {}, splash: 'auto', streakFlame: 'flame', waterAnim: 'auto', bodyModel: null, chartMarker: 'flat', chart: { kind: 'line', line: 'line', anim: 'none', forecast: 'off', goalZone: 'off', sparks: 'off' } } as never
     const row = (r: unknown) => (selectionRows(r as never) as { section: string; valueKey: string; custom: boolean }[]).find((x) => x.section === 'iconstyle')!
     expect(row(base)).toMatchObject({ valueKey: 'cust_iconstyle_outline', custom: false })
-    expect(row({ ...(base as object), iconStyle: 'bold' })).toMatchObject({ valueKey: 'cust_iconstyle_bold', custom: true })
+    expect(row({ ...(base as object), iconStyle: 'fill' })).toMatchObject({ valueKey: 'cust_iconstyle_fill', custom: true })
   })
 })
 
 describe('пикер', () => {
+  const ICONS = Object.fromEntries(['home', 'goals', 'dumbbell', 'droplet', 'star'].map((n) => [n, { vb: '0 0 256 256', h: '<path d="M0 0h8v8z"/>' }]))
   beforeEach(() => {
     localStorage.clear()
     localStorage.setItem('site_lang', 'ru')
     document.documentElement.removeAttribute('data-icon-style')
+    resetPackCacheForTests()
+    setPackFetcher(async () => ({ icons: ICONS }))
   })
-  it('шесть карточек, по умолчанию «Контур»; в каждой пять разных иконок; подписи RU/EN', () => {
+  it('четыре карточки, по умолчанию «Контур»; в каждой пять иконок; подписи RU/EN', () => {
     const w = mount(IconStylePicker)
-    expect(w.findAll('[data-testid^="iconstyle-"][data-active]')).toHaveLength(6)
+    expect(w.findAll('[data-testid^="iconstyle-"][data-active]')).toHaveLength(4)
     expect(w.find('[data-testid="iconstyle-outline"]').attributes('data-active')).toBe('true')
     for (const v of ICON_STYLES) expect(w.find(`[data-testid="iconstyle-${v}"] [data-testid="iconstyle-preview"]`).findAll('svg')).toHaveLength(5)
-    for (const label of ['Контур', 'Тонкий', 'Жирный', 'Угловатый', 'Двойной штрих', 'Дуотон']) expect(w.text()).toContain(label)
+    for (const label of ['Контур', 'Заливка', 'Дуотон', 'Пиксели']) expect(w.text()).toContain(label)
     localStorage.setItem('site_lang', 'en')
     const en = mount(IconStylePicker)
-    for (const label of ['Outline', 'Thin', 'Bold', 'Angular', 'Double stroke', 'Duotone']) expect(en.text()).toContain(label)
+    for (const label of ['Outline', 'Solid', 'Duotone', 'Pixels']) expect(en.text()).toContain(label)
   })
-  it('предпросмотр рисуется теми же значениями, что в CSS: толщина, концы штриха, тень', () => {
+  it('предпросмотр берёт данные набора (после загрузки), а «Контур» рисуется штрихом; до загрузки и без сети — «Контур»', async () => {
     const w = mount(IconStylePicker)
+    await new Promise((r) => setTimeout(r, 0))
+    await w.vm.$nextTick()
     const first = (v: string) => w.find(`[data-testid="iconstyle-${v}"] svg`)
     expect(first('outline').attributes('stroke-width')).toBe('1.9')
-    expect(first('thin').attributes('stroke-width')).toBe(String(ICON_STYLE_RULES.thin.strokeWidth))
-    expect(first('bold').attributes('stroke-width')).toBe(String(ICON_STYLE_RULES.bold.strokeWidth))
-    expect(first('square').attributes('stroke-linecap')).toBe('butt')
-    expect(first('square').attributes('stroke-linejoin')).toBe('miter')
-    expect(first('shadow').attributes('style')).toContain('drop-shadow')
-    expect(first('outline').attributes('style')).toBeUndefined()
-    expect(first('duotone').classes()).toContain('iconstyle-duo')
-    expect(first('duotone').attributes('style')).toContain(`--duo: ${ICON_DUOTONE_OPACITY}`)
+    expect(first('fill').attributes('viewBox')).toBe('0 0 256 256')
+    expect(first('fill').attributes('data-pack')).toBe('fill')
+    expect(first('pixel').attributes('data-ip-skip')).toBeDefined()
+    resetPackCacheForTests()
+    setPackFetcher(async () => {
+      throw new Error('offline')
+    })
+    const off = mount(IconStylePicker)
+    await new Promise((r) => setTimeout(r, 0))
+    expect(off.find('[data-testid="iconstyle-fill"] svg').attributes('data-pack')).toBe('outline')
   })
-  it.each(['thin', 'bold', 'square', 'shadow', 'duotone'] as const)('«Выбрать» для «%s»: пишет ключ, сразу ставит атрибут на <html>, переключает карточку', async (v) => {
+  it.each(['fill', 'duotone', 'pixel'] as const)('«Выбрать» для «%s»: пишет ключ, сразу ставит атрибут на <html>, переключает карточку', async (v) => {
     const w = mount(IconStylePicker)
     await w.find(`[data-testid="iconstyle-${v}"] [data-testid="iconstyle-choose"]`).trigger('click')
     expect(localStorage.getItem('icon_style')).toBe(v)
@@ -148,7 +137,7 @@ describe('пикер', () => {
   })
   it('вернуть «Контур»: ключ и атрибут снимаются', async () => {
     const w = mount(IconStylePicker)
-    await w.find('[data-testid="iconstyle-bold"] [data-testid="iconstyle-choose"]').trigger('click')
+    await w.find('[data-testid="iconstyle-fill"] [data-testid="iconstyle-choose"]').trigger('click')
     await w.find('[data-testid="iconstyle-outline"] [data-testid="iconstyle-choose"]').trigger('click')
     expect(localStorage.getItem('icon_style')).toBeNull()
     expect(document.documentElement.hasAttribute('data-icon-style')).toBe(false)

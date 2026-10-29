@@ -1,7 +1,14 @@
 {
-  "version": "6.53",
+  "version": "6.54",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.54",
+      "date": "2026-10-28 20:23",
+      "changes": [
+        "Customization → Icon style: instead of thinner/bolder strokes there are now real icon sets with different artwork — Outline (as before), Solid (filled glyphs), Duotone (outline with a soft second-tone fill) and Pixels (8-bit 16×16 grid). The choice applies to every page at once, is remembered and synced across devices; the sets are cached for offline use. The old stroke styles are gone (anyone who picked them is back on Outline). No migrations."
+      ]
+    },
     {
       "version": "6.53",
       "date": "2026-10-28 14:40",
@@ -4641,6 +4648,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.54",
+      "date": "2026-10-28 20:23",
+      "changes": [
+        "«Кастомизация» → «Стиль иконок»: вместо «тоньше/жирнее» — настоящие наборы с другой графикой: «Контур» (как раньше), «Заливка» (сплошные значки), «Дуотон» (контур с мягкой подложкой второго тона) и «Пиксели» (8-битная сетка 16×16). Выбор действует на всех страницах сразу, помнится и едет между устройствами; наборы кэшируются для работы без сети. Прежние стили штриха убраны (кто их выбрал — вернулся на «Контур»). Без миграций."
+      ]
+    },
     {
       "version": "6.53",
       "date": "2026-10-28 14:40",

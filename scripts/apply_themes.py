@@ -400,59 +400,25 @@ def index_html(t):
 
 
 
-# ---------- «Стиль иконок» (BACKLOG 44.18г) ----------
-# <html data-icon-style> ставит скрипт в <head> до первой отрисовки; правила — один блок `icon-style` в style.css пилотов поверх зашитых
-# атрибутов иконок. Значения стилей — в web-customization/src/lib/iconStyle.ts (единый источник: ICON_STYLE_RULES, ICON_SHADOW, ICON_SELECTOR);
-# здесь они только печатаются в CSS, а страж-тест (web-customization/src/iconStyle.test.ts) сверяет блок с iconStyleCss().
-ICON_START = '/* icon-style:start (генерируется scripts/apply_themes.py из web-customization/src/lib/iconStyle.ts — не править руками; BACKLOG 44.18г) */'
+# ---------- «Стиль иконок» (BACKLOG 44.18г, срез 3: НАБОРЫ) ----------
+# <html data-icon-style> ставит скрипт в <head> до первой отрисовки; сами иконки подменяет рантайм-подменщик в шапке (web-header/src/lib/iconPacks.ts).
+# CSS-блок `icon-style` прежних стилей штриха (v6.29/v6.36) больше не нужен — icon_css его УДАЛЯЕТ из style.css пилотов.
+ICON_START = '/* icon-style:start'
 ICON_END = '/* icon-style:end */'
 ICON_SCRIPT = """    <script>
-      // «Стиль иконок» (BACKLOG 44.18г): выбор человека → <html data-icon-style> до первой отрисовки (правила — в src/style.css, блок icon-style)
+      // «Стиль иконок» (BACKLOG 44.18г): выбор человека → <html data-icon-style> до первой отрисовки; иконки подменяет подменщик в шапке (iconPacks.ts)
       try {
         var is = localStorage.getItem('icon_style')
-        if (['thin', 'bold', 'square', 'shadow', 'duotone'].indexOf(is) >= 0) document.documentElement.setAttribute('data-icon-style', is)
+        if (['fill', 'duotone', 'pixel'].indexOf(is) >= 0) document.documentElement.setAttribute('data-icon-style', is)
       } catch (e) {}
     </script>
   """
 
 
-def icon_rules():
-    src = open('web-customization/src/lib/iconStyle.ts', encoding='utf-8').read()
-    shadow = re.search(r"export const ICON_SHADOW = '([^']+)'", src).group(1)
-    selector = re.search(r'export const ICON_SELECTOR = "([^"]+)"', src).group(1)
-    fill_targets = re.search(r'export const ICON_FILL_TARGETS = "([^"]+)"', src).group(1)
-    duo_opacity = re.search(r'export const ICON_DUOTONE_OPACITY = ([0-9.]+)', src).group(1)
-    body = re.search(r'export const ICON_STYLE_RULES[^=]*= \{(.*?)\n\}', src, re.S).group(1)
-    lines = []
-    for m in re.finditer(r'^\s+(\w+): \{ ([^}]*) \},?$', body, re.M):
-        decl = []
-        for part in m.group(2).split(','):
-            k, v = [x.strip() for x in part.split(':', 1)]
-            v = v.strip("'")
-            if k == 'strokeWidth':
-                decl.append('stroke-width: %s;' % v)
-            elif k == 'linecap':
-                decl.append('stroke-linecap: %s;' % v)
-            elif k == 'linejoin':
-                decl.append('stroke-linejoin: %s;' % v)
-            elif k == 'shadow' and v == 'true':
-                decl.append('filter: %s;' % shadow)
-            elif k == 'duotone' and v == 'true':
-                decl = None
-                break
-        if decl is None:  # «дуотон»: заливка только замкнутых фигур
-            lines.append("html[data-icon-style='%s'] %s %s { fill: currentColor; fill-opacity: %s; }" % (m.group(1), selector, fill_targets, duo_opacity))
-        else:
-            lines.append("html[data-icon-style='%s'] %s { %s }" % (m.group(1), selector, ' '.join(decl)))
-    assert lines, 'не нашёл правил в iconStyle.ts'
-    return '\n'.join(lines)
-
-
 def icon_css(t):
-    reg = ICON_START + '\n' + icon_rules() + '\n' + ICON_END
-    if ICON_START in t:
-        return re.sub(re.escape(ICON_START) + r'.*?' + re.escape(ICON_END), lambda m: reg, t, count=1, flags=re.S)
-    return t.rstrip('\n') + '\n\n' + reg + '\n'
+    if ICON_START not in t:
+        return t
+    return re.sub(r'\n*' + re.escape(ICON_START) + r'.*?' + re.escape(ICON_END) + r'\n?', '\n', t, count=1, flags=re.S).rstrip('\n') + '\n'
 
 
 def icon_index_html(t):

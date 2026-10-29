@@ -145,10 +145,10 @@
       } catch (e) {}
     </script>
       <script>
-      // «Стиль иконок» (BACKLOG 44.18г): выбор человека → <html data-icon-style> до первой отрисовки (правила — в src/style.css, блок icon-style)
+      // «Стиль иконок» (BACKLOG 44.18г): выбор человека → <html data-icon-style> до первой отрисовки; иконки подменяет подменщик в шапке (iconPacks.ts)
       try {
         var is = localStorage.getItem('icon_style')
-        if (['thin', 'bold', 'square', 'shadow', 'duotone'].indexOf(is) >= 0) document.documentElement.setAttribute('data-icon-style', is)
+        if (['fill', 'duotone', 'pixel'].indexOf(is) >= 0) document.documentElement.setAttribute('data-icon-style', is)
       } catch (e) {}
     </script>
   </head>

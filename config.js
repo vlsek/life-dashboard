@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.53";
+const SITE_VERSION = "6.54";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.54", date: "2026-10-28 20:23", changes: [
+        "«Кастомизация» → «Стиль иконок»: вместо «тоньше/жирнее» — настоящие наборы с другой графикой: «Контур» (как раньше), «Заливка» (сплошные значки), «Дуотон» (контур с мягкой подложкой второго тона) и «Пиксели» (8-битная сетка 16×16). Выбор действует на всех страницах сразу, помнится и едет между устройствами; наборы кэшируются для работы без сети. Прежние стили штриха убраны (кто их выбрал — вернулся на «Контур»). Без миграций."
+    ]},
     { version: "6.53", date: "2026-10-28 14:40", changes: [
         "«Магазин»: покупка стала живее — над списком на секунду вспыхивают искры у плашки «Куплено», а на балансе коротко мигает число и всплывает «−N» (сколько потрачено). Работает во всех трёх видах («Цель», «Витрина», «Список»), на телефоне ничего не уезжает; при включённом «уменьшении движения» анимации отключены. Без миграций."
     ]},
@@ -2575,6 +2578,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.54", date: "2026-10-28 20:23", changes: [
+        "Customization → Icon style: instead of thinner/bolder strokes there are now real icon sets with different artwork — Outline (as before), Solid (filled glyphs), Duotone (outline with a soft second-tone fill) and Pixels (8-bit 16×16 grid). The choice applies to every page at once, is remembered and synced across devices; the sets are cached for offline use. The old stroke styles are gone (anyone who picked them is back on Outline). No migrations."
+    ]},
     { version: "6.53", date: "2026-10-28 14:40", changes: [
         "Shop: buying feels livelier — a quick burst of sparks around the \"Bought\" notice, and on the balance the number blinks and a \"−N\" floats up showing what you spent. Works in all three views (Goal, Showcase, List), nothing overflows on a phone; animations are off when reduced motion is on. No migrations."
     ]},

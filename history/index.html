@@ -51,14 +51,14 @@
       } catch (e) {}
     </script>
       <script>
-      // «Стиль иконок» (BACKLOG 44.18г): выбор человека → <html data-icon-style> до первой отрисовки (правила — в src/style.css, блок icon-style)
+      // «Стиль иконок» (BACKLOG 44.18г): выбор человека → <html data-icon-style> до первой отрисовки; иконки подменяет подменщик в шапке (iconPacks.ts)
       try {
         var is = localStorage.getItem('icon_style')
-        if (['thin', 'bold', 'square', 'shadow', 'duotone'].indexOf(is) >= 0) document.documentElement.setAttribute('data-icon-style', is)
+        if (['fill', 'duotone', 'pixel'].indexOf(is) >= 0) document.documentElement.setAttribute('data-icon-style', is)
       } catch (e) {}
     </script>
-    <script type="module" crossorigin src="/history/assets/index-DVxNKYKq.js"></script>
-    <link rel="stylesheet" crossorigin href="/history/assets/index-D5knK6Pr.css">
+    <script type="module" crossorigin src="/history/assets/index-CvKjUgYK.js"></script>
+    <link rel="stylesheet" crossorigin href="/history/assets/index-ICKrKAfF.css">
   </head>
   <body>
     <div id="app">
