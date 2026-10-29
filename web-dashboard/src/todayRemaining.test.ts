@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import TodayRemaining from './components/TodayRemaining.vue'
 import { remainingToday } from './lib/todayRemaining'
+import { PLAN_MARK, planSnapshotOf, requestPlanMark, type PlanMarkDetail } from './lib/planBridge'
 import type { Metric } from './lib/types'
 
 // «Осталось на сегодня» (BACKLOG 75.2, срез 1): что попадает в список, в каком порядке и как отмечается.
@@ -79,5 +80,55 @@ describe('TodayRemaining', () => {
     await w.get('[data-test="today-left-go"]').trigger('click')
     expect(w.emitted('done')).toEqual([['b']])
     expect(w.emitted('jump')).toEqual([['n']])
+  })
+})
+
+describe('remainingToday: пункты плана (срез 2)', () => {
+  const plan = [
+    { index: 0, text: 'Позвонить маме', time: null },
+    { index: 1, text: 'Врач', time: '18:30' },
+    { index: 2, text: 'Купить хлеб', time: '09:15' },
+  ]
+
+  it('пункты со временем идут первыми по времени, без времени — после булевых метрик', () => {
+    const ms = [metric({ id: 'b', name: 'Зарядка' }), metric({ id: 'n', type: 'number', goal_value: 10 })]
+    const rows = remainingToday(ms, { n: 4 }, DAY, plan)
+    expect(rows.map((r) => r.id)).toEqual(['plan:2', 'plan:1', 'n', 'b', 'plan:0'])
+  })
+
+  it('пункт плана закрывается одним касанием и несёт позицию и время', () => {
+    const [r] = remainingToday([], {}, DAY, [plan[1]])
+    expect(r).toMatchObject({ kind: 'plan', oneTap: true, planIndex: 1, time: '18:30', name: 'Врач', progress: null })
+  })
+
+  it('без плана результат тот же, что в срезе 1', () => {
+    expect(remainingToday([metric({ id: 'b' })], {}, DAY).map((r) => r.id)).toEqual(['b'])
+  })
+})
+
+describe('planBridge', () => {
+  it('снимок плана: только свои невыполненные пункты, индексы из полного плана', () => {
+    const snap = planSnapshotOf(DAY, [
+      { type: 'goal', text: 'Цель' },
+      { type: 'custom', text: 'Готово', done: true },
+      { type: 'custom', text: 'Дело', time: '10:00' },
+      { text: 'Без типа' },
+    ])
+    expect(snap).toEqual({ date: DAY, items: [{ index: 2, text: 'Дело', time: '10:00' }, { index: 3, text: 'Без типа', time: null }] })
+  })
+
+  it('просьба отметить: handled=true, только если блок «Планы» её принял', () => {
+    expect(requestPlanMark(DAY, 0, 'Дело')).toBe(false) // слушателя нет — например, блок скрыт
+    const on = (e: Event) => ((e as CustomEvent<PlanMarkDetail>).detail.handled = true)
+    window.addEventListener(PLAN_MARK, on)
+    expect(requestPlanMark(DAY, 0, 'Дело')).toBe(true)
+    window.removeEventListener(PLAN_MARK, on)
+  })
+
+  it('TodayRemaining показывает время пункта плана и шлёт done с его id', async () => {
+    const w = mount(TodayRemaining, { props: { rows: remainingToday([], {}, DAY, [{ index: 5, text: 'Врач', time: '18:30' }]) } })
+    expect(w.get('[data-test="today-left-time"]').text()).toBe('18:30')
+    await w.get('[data-test="today-left-check"]').trigger('click')
+    expect(w.emitted('done')).toEqual([['plan:5']])
   })
 })

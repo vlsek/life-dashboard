@@ -13,13 +13,14 @@ import DateStepper from './DateStepper.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import UsefulTodayList from './UsefulTodayList.vue'
 import TodayRemaining from './TodayRemaining.vue'
-import { remainingToday } from '../lib/todayRemaining'
+import { remainingToday, PLAN_ROW_PREFIX } from '../lib/todayRemaining'
+import { PLAN_SNAPSHOT, requestPlanMark, requestPlanSnapshot, type PlanSnapshot, type PlanSnapshotItem } from '../lib/planBridge'
 import { useDailyMetrics } from '../lib/useDailyMetrics'
 import { useMetricRecords } from '../lib/useMetricRecords'
 import { isRemaining } from '../lib/daily'
 import { todayStr } from '../lib/date'
 import { t } from '../lib/i18n'
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { MetricStreakInfo } from '../lib/metricStreaks'
 
 // Блок «Дневные метрики» (порт renderDay() из dashboard.js): листание дней, поля boolean/
@@ -79,11 +80,27 @@ const collapsed = ref(false)
 // «Карточка со сводкой» (BACKLOG 498 срез 3): «Баллы N / M» — те же баллы за день, что внутри блока
 const dailySummary = computed(() => pointsSummary(score.value.points, score.value.total))
 const numberValue = (id: string) => pending.value[id] as number | undefined
-// «Осталось на сегодня» (BACKLOG 75.2, срез 1): только для сегодняшнего дня; булева закрывается тут же, числовая — переход к плашке
+// «Осталось на сегодня» (BACKLOG 75.2): метрики + свои пункты плана (срез 2). Только для сегодняшнего дня; булева и пункт плана закрываются
+// тут же, числовая — переход к плашке. План читаем из снимка, который публикует PlannedSection (мост planBridge), — второй копии плана нет.
+const planSnap = ref<PlanSnapshot | null>(null)
+function onPlanSnapshot(e: Event) {
+  planSnap.value = (e as CustomEvent<PlanSnapshot>).detail
+}
+onMounted(() => {
+  window.addEventListener(PLAN_SNAPSHOT, onPlanSnapshot)
+  requestPlanSnapshot()
+})
+onBeforeUnmount(() => window.removeEventListener(PLAN_SNAPSHOT, onPlanSnapshot))
+const planItems = computed<PlanSnapshotItem[]>(() => (planSnap.value && planSnap.value.date === date.value ? planSnap.value.items : []))
 const remainingRows = computed(() =>
-  date.value === todayStr() ? remainingToday([...numbers.value, ...booleans.value, ...multiselects.value], pending.value, date.value) : [],
+  date.value === todayStr() ? remainingToday([...numbers.value, ...booleans.value, ...multiselects.value], pending.value, date.value, planItems.value) : [],
 )
 function onRemainingDone(id: string) {
+  if (id.startsWith(PLAN_ROW_PREFIX)) {
+    const it = planItems.value.find((x) => PLAN_ROW_PREFIX + x.index === id)
+    if (it) requestPlanMark(date.value, it.index, it.text)
+    return
+  }
   const m = booleans.value.find((x) => x.id === id)
   if (m) void setBoolean(m, true)
 }

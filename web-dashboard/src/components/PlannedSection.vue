@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { plannedSummary } from '../lib/collapseSummaries'
 import EmojiText from './EmojiText.vue'
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import Icon from './Icon.vue'
 import SectionHeading from './SectionHeading.vue'
 import DateStepper from './DateStepper.vue'
@@ -13,6 +13,7 @@ import PlannedNewGoalModal from './PlannedNewGoalModal.vue'
 import PlannedRepeatsModal from './PlannedRepeatsModal.vue'
 import { ensureCategory, hasHorizonColumn, hasWeightColumn, loadBodyWeight, loadMyCategories, type GoalFormInput } from '../lib/newGoal'
 import { usePlanned } from '../lib/usePlanned'
+import { PLAN_MARK, PLAN_REQUEST, planSnapshotOf, publishPlanSnapshot, type PlanMarkDetail } from '../lib/planBridge'
 import { usePlanRepeats } from '../lib/usePlanRepeats'
 import { doneOnDay, goalRowKind, stageLabel, type CarryCandidate, type PlanGoal, type PlannedEntry } from '../lib/planned'
 import { todayStr } from '../lib/date'
@@ -29,7 +30,31 @@ import { stripEmoji } from '../lib/emojiText'
 const props = defineProps<{ userId: string | null; date?: string; switchable?: boolean }>()
 const emit = defineEmits<{ 'update:date': [value: string] }>()
 const day = computed(() => props.date ?? todayStr())
-const { planned, goals, loaded, error, savedTick, load, addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals: monthGoalsOf } = usePlanned()
+const { planned, goals, loaded, loadedDate, error, savedTick, load, addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals: monthGoalsOf } = usePlanned()
+
+// Мост со списком «Осталось на сегодня» (BACKLOG 75.2, срез 2): публикуем снимок своих невыполненных пунктов и принимаем просьбу отметить.
+// Пишет в план только этот блок, поэтому второй копии состояния и гонки записей нет. Дату берём из loadedDate (а не из props): при листании
+// до ответа базы в `planned` ещё прошлый день.
+function publishSnapshot() {
+  if (loadedDate.value) publishPlanSnapshot(planSnapshotOf(loadedDate.value, planned.value))
+}
+watch([planned, loadedDate], publishSnapshot)
+function onPlanMark(e: Event) {
+  const d = (e as CustomEvent<PlanMarkDetail>).detail
+  const it = d && d.date === loadedDate.value ? planned.value[d.index] : undefined
+  if (!it || it.type === 'goal' || it.done || it.text !== d.text) return // пункт уже изменился — не отмечаем чужой
+  d.handled = true
+  void setItemDone(d.index, true)
+}
+onMounted(() => {
+  window.addEventListener(PLAN_REQUEST, publishSnapshot)
+  window.addEventListener(PLAN_MARK, onPlanMark)
+  publishSnapshot()
+})
+onBeforeUnmount(() => {
+  window.removeEventListener(PLAN_REQUEST, publishSnapshot)
+  window.removeEventListener(PLAN_MARK, onPlanMark)
+})
 
 // Повторяющиеся пункты (BACKLOG 1054, миграция 087): нет таблицы — блок и кнопка просто не показываются
 const rep = usePlanRepeats()

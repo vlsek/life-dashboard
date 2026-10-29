@@ -3,7 +3,7 @@ import MetricIcon from './MetricIcon.vue'
 import { t } from '../lib/i18n'
 import type { RemainingRow } from '../lib/todayRemaining'
 
-// «Осталось на сегодня» (BACKLOG 75.2, срез 1): компактный список над плашками метрик. Булева метрика закрывается одним касанием
+// «Осталось на сегодня» (BACKLOG 75.2): компактный список над плашками метрик. Булева метрика и свой пункт плана закрываются одним касанием
 // прямо отсюда (то же действие, что чекбокс), числовая показывает прогресс и «ведёт» к своей плашке, где вводится значение.
 defineProps<{ rows: RemainingRow[] }>()
 const emit = defineEmits<{ done: [id: string]; jump: [id: string] }>()
@@ -28,7 +28,8 @@ const progressText = (r: RemainingRow) => `${fmt(r.value)} / ${fmt(r.goal)}${r.u
           data-test="today-left-check"
           @click="emit('done', r.id)"
         ></button>
-        <span class="today-left-name"><MetricIcon :icon="r.icon" /> {{ r.name }}</span>
+        <span class="today-left-name"><MetricIcon v-if="r.kind !== 'plan'" :icon="r.icon" /> {{ r.name }}</span>
+        <span v-if="r.kind === 'plan' && r.time" class="today-left-time dim" data-test="today-left-time">{{ r.time }}</span>
         <template v-if="!r.oneTap">
           <span v-if="r.goal != null" class="today-left-prog dim" data-test="today-left-prog">{{ progressText(r) }}</span>
           <button type="button" class="today-left-go" data-test="today-left-go" @click="emit('jump', r.id)">{{ t('dash_today_go') }}</button>
@@ -47,6 +48,7 @@ const progressText = (r: RemainingRow) => `${fmt(r.value)} / ${fmt(r.goal)}${r.u
 .today-left-name { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
 .today-left-check { flex: none; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; padding: 0; }
 .today-left-check:hover, .today-left-check:focus-visible { background: color-mix(in srgb, var(--accent) 25%, transparent); }
+.today-left-time { flex: none; font-variant-numeric: tabular-nums; }
 .today-left-go { flex: none; background: transparent; border: 1px solid var(--border); border-radius: 8px; color: inherit; cursor: pointer; padding: 2px 10px; }
 .today-left-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 2px; background: var(--border); overflow: hidden; }
 .today-left-bar i { display: block; height: 100%; background: var(--accent); }

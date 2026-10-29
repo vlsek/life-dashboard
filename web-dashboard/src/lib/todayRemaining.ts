@@ -1,4 +1,5 @@
 import { isMetricDone, metricExpectedOn, metricNumericValue } from './metrics'
+import type { PlanSnapshotItem } from './planBridge'
 import type { Metric, MetricValue } from './types'
 
 // «Осталось на сегодня» (BACKLOG 75.2, срез 1): компактный список невыполненных на день метрик.
@@ -7,7 +8,7 @@ import type { Metric, MetricValue } from './types'
 // Порядок: сначала числовые с целью — по близости к закрытию (ближе к цели — выше), потом булевы и остальные в порядке метрик.
 export interface RemainingRow {
   id: string
-  kind: Metric['type']
+  kind: Metric['type'] | 'plan' // 'plan' — свой пункт плана дня (срез 2)
   name: string
   icon: string | null
   oneTap: boolean // булеву метрику можно закрыть прямо из списка
@@ -15,9 +16,18 @@ export interface RemainingRow {
   value: number | null
   goal: number | null
   unit: string | null
+  planIndex?: number // только у 'plan': позиция пункта в плане дня
+  time?: string | null // только у 'plan': «HH:MM»
 }
 
-export function remainingToday(metrics: readonly Metric[], pending: Readonly<Record<string, MetricValue>>, dateStr: string): RemainingRow[] {
+export const PLAN_ROW_PREFIX = 'plan:'
+
+export function remainingToday(
+  metrics: readonly Metric[],
+  pending: Readonly<Record<string, MetricValue>>,
+  dateStr: string,
+  plan: readonly PlanSnapshotItem[] = [],
+): RemainingRow[] {
   const rows: RemainingRow[] = []
   for (const m of metrics) {
     if (!metricExpectedOn(m, dateStr)) continue
@@ -38,9 +48,21 @@ export function remainingToday(metrics: readonly Metric[], pending: Readonly<Rec
       unit: m.unit,
     })
   }
-  const rank = (r: RemainingRow) => (r.progress != null ? 0 : r.oneTap ? 1 : 2)
+  // Пункты плана: со временем — раньше всего (по времени), без времени — после булевых метрик
+  for (const it of plan) {
+    rows.push({ id: PLAN_ROW_PREFIX + it.index, kind: 'plan', name: it.text, icon: null, oneTap: true, progress: null, value: null, goal: null, unit: null, planIndex: it.index, time: it.time })
+  }
+  // 0 — пункты плана со временем (по времени); 1 — числовые с целью (ближе к закрытию выше); 2 — булевы; 3 — пункты плана без времени; 4 — прочее
+  const rank = (r: RemainingRow) => (r.kind === 'plan' ? (r.time ? 0 : 3) : r.progress != null ? 1 : r.oneTap ? 2 : 4)
   return rows
     .map((r, i) => ({ r, i }))
-    .sort((a, b) => rank(a.r) - rank(b.r) || (rank(a.r) === 0 ? (b.r.progress ?? 0) - (a.r.progress ?? 0) : 0) || a.i - b.i)
+    .sort((a, b) => {
+      const ra = rank(a.r)
+      const rb = rank(b.r)
+      if (ra !== rb) return ra - rb
+      if (ra === 0) return (a.r.time ?? '').localeCompare(b.r.time ?? '') || a.i - b.i
+      if (ra === 1) return (b.r.progress ?? 0) - (a.r.progress ?? 0) || a.i - b.i
+      return a.i - b.i
+    })
     .map((x) => x.r)
 }

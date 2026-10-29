@@ -36,6 +36,7 @@ export function usePlanned() {
   // id целей с горизонтом «неделя» и «месяц» (миграции 084/086; нет колонки — запрос вернёт ошибку, и список просто пуст)
   const monthIds = ref<Set<string>>(new Set())
   const loaded = ref(false)
+  const loadedDate = ref('') // день, чей план сейчас лежит в `planned` (при листании дат до ответа базы там ещё прошлый день) — для моста planBridge
   const error = ref<string | null>(null)
   const notice = ref<string | null>(null) // информационное сообщение (в оригинале — тост)
   // Галочка «сохранено» на ~0,9 с после ПОДТВЕРЖДЁННОЙ записи плана или отметки цели (BACKLOG 784/819, срез 4); при ошибке не включается.
@@ -62,6 +63,7 @@ export function usePlanned() {
     const err = noteRes.error?.message || goalsRes.error?.message
     error.value = err ? friendlyError(err, 'load') : null
     planned.value = normalizePlanned(noteRes.data?.planned_goals)
+    loadedDate.value = dateStr
     saved = planned.value
     version++ // ответ на загрузку новее любых незавершённых откатов предыдущей даты
     goals.value = (goalsRes.data || []) as PlanGoal[]
@@ -161,7 +163,7 @@ export function usePlanned() {
   const monthGoals = () => monthGoalsFor(goals.value, monthIds.value, planned.value, date, todayStr())
 
   return {
-    planned, goals, loaded, error, notice, savedTick, load,
+    planned, goals, loaded, loadedDate, error, notice, savedTick, load,
     addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals,
   }
 }
