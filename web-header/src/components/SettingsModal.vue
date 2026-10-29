@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import EmojiText from './EmojiText.vue'
+import NativeRemindersSection from './NativeRemindersSection.vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
 import type { DashboardBlockKey, LayoutItem } from '../lib/layout'
@@ -194,6 +195,8 @@ async function changeLayout(next: LayoutItem[]) {
         <p v-if="waterItem" class="gh-dim" style="margin: 4px 0 0 0; font-size: 12px; color: var(--accent, #6c8cff)" data-test="water-anim-item-on">{{ t('hdr_water_anim_item_on') }}</p>
         <WaterSavedAnim :tick="animPreviewTick" />
       </template>
+
+      <NativeRemindersSection />
 
       <h4 style="margin-top: 16px">{{ t('hdr_settings_progress') }}</h4>
       <button type="button" class="gh-btn" data-test="open-progress" @click="emit('open-progress-settings')">{{ t('hdr_settings_progress_btn') }}</button>

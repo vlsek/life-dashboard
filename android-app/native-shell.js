@@ -54,7 +54,7 @@
   }
   var HAPTIC_MAP = { light: ['impact', 'LIGHT'], medium: ['impact', 'MEDIUM'], success: ['notification', 'SUCCESS'], warning: ['notification', 'WARNING'] }
   globalThis.__ldNative = {
-    shouldExitOnBack: shouldExitOnBack, isLightColor: isLightColor, reminderPlan: reminderPlan, allReminderIds: allReminderIds, hapticMap: HAPTIC_MAP,
+    isNative: false, shouldExitOnBack: shouldExitOnBack, isLightColor: isLightColor, reminderPlan: reminderPlan, allReminderIds: allReminderIds, hapticMap: HAPTIC_MAP,
     // В браузере — ничего не делают (возвращают false); в приложении заменяются настоящими ниже.
     haptic: function () { return Promise.resolve(false) },
     applyReminders: function () { return Promise.resolve(false) },
@@ -62,6 +62,7 @@
 
   if (!cap || !cap.isNativePlatform || !cap.isNativePlatform()) return
   var P = cap.Plugins || {}
+  globalThis.__ldNative.isNative = true
 
   if (P.App) {
     P.App.addListener('backButton', function () {

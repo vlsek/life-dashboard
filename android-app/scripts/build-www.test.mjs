@@ -76,6 +76,8 @@ test('напоминания: тренировка — дни ISO (пн=1…вс
 })
 test('в браузере (не приложение) вибро и напоминания ничего не делают', async () => {
   const n = loadShell().__ldNative
+  assert.equal(n.isNative, false)
+  assert.equal(loadShell(native({})).__ldNative.isNative, true)
   assert.equal(await n.haptic('light'), false)
   assert.equal(await n.applyReminders({ water: { enabled: true } }), false)
 })
