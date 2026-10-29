@@ -81,7 +81,7 @@ BACKLOG 69.0 «Тренировки v2»: исследование и макет
 — свободен — (v5.46 первая тематическая большая тема Summer Meadow, 57.7 файл 2 тема 1; все пять светлых из файла 1 готовы (v4.99–v5.30). Дальше: файл 2 — Autumn Mood, Spring Awakening, Inferno, Eastern Tradition, Russian Heritage, American Retro, Deep Water и 55.3 по одной за заход; янтарный фосфор, вшитый шрифт JetBrains Mono — по согласованию с владельцем)
 
 ### Агент 5
-BACKLOG 81.1 «Кастомизация → темы: сердечко выходит за рамки блока». ФАЙЛЫ: `web-customization/src/components/ThemeCard.vue` (+тест), сборка `customization/`. БЕЗ SQL. С: 2026-10-29 09:00. Прежний итог: v6.64: 66.13 вода из двух вкладок
+— свободен — (v6.66: 81.1 сердечко темы; v6.64: 66.13 вода из двух вкладок; 66.7 e2e офлайна)
 
 ### Агент 6
 BACKLOG 576 / 60.2 п.4 (остаток): минимум цели нажатия 32 px на телефоне для `web-dashboard`, `web-workouts`, `web-customization` (агенты 3 и 5 свободны). Тот же блок `tap-targets` (`scripts/apply_tap_targets.py`, убрать три пилота из SKIP) + страж. БЕЗ SQL. ТРОГАЮ: `style.css` этих трёх пилотов (только дописывание в конец), пересборка dashboard/workouts/customization (+ header-widgets, если собирается вместе). НЕ ТРОГАЮ `web-header`. С: 2026-10-29 08:34
@@ -707,3 +707,4 @@ BACKLOG 44.6 «Челленджи: современное оформление»
 - 2026-10-29 10:53 · v6.63 · агент 1 · BACKLOG 49.5 срез 1: Дашборд новичка (`newbieMode.ts`, первые 7 дней только «Метрики дня», «Показать всё», ключ `dash_show_all` в SYNC_KEYS); без SQL; пересобраны dashboard, header-widgets, calendar, sw-assets. ЗАМЕТКА ВСЕМ: в v6.61 я правил `cal_hint` в `web-calendar/i18n.ts` руками — источник правды `scripts/apply_texts.py` (тест `sharedTexts.test.ts` краснел на main до v6.63); тексты, что есть в `apply_texts.py`, править ТОЛЬКО там. Блок свободен. Дальше: 49.5 срез 2 (меню «Ещё»), 69.0 (макеты, без кода), 44.4 (категории навыков, миграция)
 - 2026-10-29 08:00 · v6.64 · агент 5 · BACKLOG 66.13: запись воды из двух вкладок под Web Locks (`createWriteQueue(lockName)`), +1 тест, e2e «две вкладки» 21800/7 строк; пилоты пересобраны. Миграций нет. Красный `apply_themes` (ICON_SHADOW) не мой. Блок свободен.
 - 2026-10-29 07:59 · v6.65 · агент 6 · BACKLOG 60.2 п.4 / 576: минимум цели нажатия 32 px на телефоне — блок `tap-targets` в `style.css` 14 пилотов (`scripts/apply_tap_targets.py`), страж `tapTargetsAllPilots.test.ts`; пересобраны 14 пилотов; dashboard/workouts/customization/header не тронуты. Миграций нет.
+- 2026-10-29 09:30 · v6.66 · агент 5 · BACKLOG 81.1: сердечко «в избранное» в карточке темы больше не выходит за рамки (flex-wrap, shrink-0; Chromium до/после, +2 теста). customization пересобран. Миграций нет. Блок свободен.

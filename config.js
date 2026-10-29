@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.65";
+const SITE_VERSION = "6.66";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.66", date: "2026-10-29 09:30", changes: [
+        "Исправлено: в «Кастомизации» у карточек тем сердечко «в избранное» вылезало за рамки карточки при длинном названии и редкости — теперь строка переносится, сердечко остаётся внутри. Без миграций."
+    ]},
     { version: "6.65", date: "2026-10-29 07:59", changes: [
         "Телефон: кнопки и вкладки, которые были мельче 32 px (вкладки «Магазина», фильтры «Достижений», чипы «Навыков», стрелки «Календаря», кнопка версии), теперь не меньше 32 px — попасть пальцем легче. Крупные кнопки не изменились; «Дашборд», «Тренировки» и «Кастомизация» — отдельным заходом. Без миграций."
     ]},
@@ -2611,6 +2614,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.66", date: "2026-10-29 09:30", changes: [
+        "Fixed: in Customization, the “favorite” heart on theme cards stuck out of the card when the name and rarity were long — the row now wraps and the heart stays inside. No migrations."
+    ]},
     { version: "6.65", date: "2026-10-29 07:59", changes: [
         "Phone: buttons and tabs that were smaller than 32 px (Shop tabs, Achievements filters, Skills chips, Calendar arrows, the version button) are now at least 32 px, so they are easier to tap. Larger buttons are unchanged; Dashboard, Workouts and Customization come in a separate pass. No migrations."
     ]},
