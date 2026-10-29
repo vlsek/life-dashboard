@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.57";
+const SITE_VERSION = "6.58";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.58", date: "2026-10-29 04:18", changes: [
+        "Исправлено: на странице «Как пользоваться» (и в ещё десятках окон) при листании пальцем по бокам выезжали левое меню и правая панель. Теперь, пока на экране любое окно, шторки по свайпу не открываются. Без миграций."
+    ]},
     { version: "6.57", date: "2026-10-29 04:09", changes: [
         "«Кастомизация» → «Стиль иконок»: новый набор «Рукописный» — те же иконки, но линия слегка гуляет, как нарисованная от руки. Всего пять наборов: «Контур», «Заливка», «Дуотон», «Пиксели», «Рукописный». Бесплатно, без миграций."
     ]},
@@ -2587,6 +2590,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.58", date: "2026-10-29 04:18", changes: [
+        "Fixed: on the “How to use” page (and dozens of other windows) swiping made the left menu and the right panel slide in from the sides. While any window is on screen, the drawers no longer open by swipe. No migrations."
+    ]},
     { version: "6.57", date: "2026-10-29 04:09", changes: [
         "Customization → Icon style: a new “Sketch” set — the same icons, but with a slightly wobbly, hand-drawn line. Five sets in total: Outline, Solid, Duotone, Pixels, Sketch. Free, no migrations."
     ]},

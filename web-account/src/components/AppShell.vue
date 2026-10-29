@@ -105,7 +105,7 @@ onUnmounted(() => window.removeEventListener('favorites:changed', syncFavorites)
 // BACKLOG «При активном всплывающем окне нельзя вызывать левую и правую шторки»: пока на странице есть окно (свои — `.modal-backdrop`, окно
 // выхода — `.logout-backdrop`, окна глобальной шапки — `.gh-backdrop`), шторки не открываются ни свайпом, ни кнопкой. Закрытие уже открытой
 // шторки это не затрагивает. Селектор общий с `web-header/src/lib/edgeSwipe.ts` (правая шторка) — менять в обоих местах.
-const MODAL_SELECTOR = '.modal-backdrop, .gh-backdrop, .logout-backdrop'
+const MODAL_SELECTOR = '.modal-backdrop, .gh-backdrop, .logout-backdrop, .fixed.inset-0.z-50'
 function isModalOpen(): boolean {
   return document.querySelector(MODAL_SELECTOR) !== null
 }

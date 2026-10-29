@@ -124,7 +124,7 @@ describe('свайп с середины экрана (BACKLOG 07:52)', () => {
 // BACKLOG «При активном всплывающем окне нельзя вызывать левую и правую шторки»
 describe('isModalOpen', () => {
   afterEach(() => {
-    document.querySelectorAll('.modal-backdrop, .gh-backdrop, .logout-backdrop, .gh-panel-backdrop').forEach((e) => e.remove())
+    document.querySelectorAll('.modal-backdrop, .gh-backdrop, .logout-backdrop, .gh-panel-backdrop, .fixed.inset-0.z-50').forEach((e) => e.remove())
   })
   const add = (cls: string) => {
     const el = document.createElement('div')
@@ -142,6 +142,12 @@ describe('isModalOpen', () => {
       el.remove()
       expect(isModalOpen(), cls).toBe(false)
     }
+  })
+  it('окна на Tailwind (`fixed inset-0 z-50`, тур «Как пользоваться») тоже окна (BACKLOG 44.19)', () => {
+    const el = add('fixed inset-0 z-50 flex items-center justify-center')
+    expect(isModalOpen()).toBe(true)
+    el.remove()
+    expect(isModalOpen()).toBe(false)
   })
   it('подложка самой правой шторки (.gh-panel-backdrop) окном не считается', () => {
     add('gh-panel-backdrop')

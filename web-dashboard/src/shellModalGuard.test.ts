@@ -12,7 +12,7 @@ beforeEach(() => {
   globalThis.fetch = vi.fn(async () => new Response(JSON.stringify({ version: '1.00', en: [], ru: [] }))) as unknown as typeof fetch
 })
 afterEach(() => {
-  document.querySelectorAll('.modal-backdrop, .gh-backdrop, .logout-backdrop').forEach((e) => e.remove())
+  document.querySelectorAll('.modal-backdrop, .gh-backdrop, .logout-backdrop, .fixed.inset-0.z-50').forEach((e) => e.remove())
 })
 
 async function mountShell() {
@@ -40,7 +40,8 @@ describe('левая шторка и всплывающие окна', () => {
     w.unmount()
   })
 
-  it.each(['modal-backdrop', 'gh-backdrop', 'logout-backdrop'])('пока на странице есть окно (.%s), свайп шторку не открывает', async (cls) => {
+  // BACKLOG 44.19 🐞: окна на Tailwind (`fixed inset-0 z-50` — тур «Как пользоваться» и ещё ~70 окон) раньше не считались окнами, и свайп по ним открывал шторки
+  it.each(['modal-backdrop', 'gh-backdrop', 'logout-backdrop', 'fixed inset-0 z-50'])('пока на странице есть окно (.%s), свайп шторку не открывает', async (cls) => {
     const w = await mountShell()
     const m = document.createElement('div')
     m.className = cls
@@ -98,7 +99,7 @@ describe('страж: правило одинаково во всех пилот
   it('в каждом AppShell есть общий селектор окон, проверка в onTouchStart и в openSidebar', () => {
     for (const f of shells) {
       const s: string = readFileSync(f, 'utf-8')
-      expect(s, f).toContain("const MODAL_SELECTOR = '.modal-backdrop, .gh-backdrop, .logout-backdrop'")
+      expect(s, f).toContain("const MODAL_SELECTOR = '.modal-backdrop, .gh-backdrop, .logout-backdrop, .fixed.inset-0.z-50'")
       expect(s, f).toMatch(/target\.closest\('\.no-edge-swipe'\) \|\| isModalOpen\(\)/)
       expect(s, f).toMatch(/function openSidebar\(\) \{\s*if \(isModalOpen\(\)\) return/)
     }
@@ -107,7 +108,7 @@ describe('страж: правило одинаково во всех пилот
   it('селектор в шапке (правая шторка) совпадает, RightPanel проверяет окно до начала свайпа', () => {
     const edge: string = readFileSync('../web-header/src/lib/edgeSwipe.ts', 'utf-8')
     const panel: string = readFileSync('../web-header/src/components/RightPanel.vue', 'utf-8')
-    expect(edge).toContain("export const MODAL_SELECTOR = '.modal-backdrop, .gh-backdrop, .logout-backdrop'")
+    expect(edge).toContain("export const MODAL_SELECTOR = '.modal-backdrop, .gh-backdrop, .logout-backdrop, .fixed.inset-0.z-50'")
     expect(panel).toMatch(/startOpenCandidate = !props\.open && startZone !== null && !isSwipeBlockedTarget\(e\.target\) && !isModalOpen\(\)/)
   })
 })
