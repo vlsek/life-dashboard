@@ -19,6 +19,7 @@ export const SYNC_KEYS = [
   'skip_prompt_off', // окно «вчерашние невыполненные»
   'water_reminders_off', // напоминание про воду
   'favorite_themes', // избранные темы (JSON)
+  'dash_show_all', // «Показать всё» на Дашборде, режим новичка (BACKLOG 49.5)
   'day_progress_settings', // что считать в кольцах дня/недели (JSON)
   // ---- срез 2: расположение и вид (BACKLOG 48.3; ключи те же, что читают пилоты — пилоты не менялись)
   'favorite_pages', // избранные страницы в боковом меню (JSON)

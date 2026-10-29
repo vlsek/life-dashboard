@@ -47,6 +47,7 @@ import { useDashboard } from './lib/useDashboard'
 import { useStreakCelebration } from './lib/useStreakCelebration'
 import { usePerfectDay } from './lib/usePerfectDay'
 import { useLayout } from './lib/useLayout'
+import { daysLeft, isBlockInNewbie, isNewbie, readShowAll, writeShowAll } from './lib/newbieMode'
 import { useBlockDrag } from './lib/blockDrag'
 import { hasWidgets, isBlockShown, type LayoutItem } from './lib/layout'
 import { loadWidgetOptions, type WidgetOptions } from './lib/widgets'
@@ -63,7 +64,7 @@ import type { DayProgressSettings } from './lib/progressSettings'
 // с общей выбранной датой (см. DailyMetricsSection.vue). Раскладка блоков (показать/скрыть/переставить) —
 // lib/layout.ts + useLayout.ts + LayoutModal.vue, колонка profiles.dashboard_layout общая с классикой.
 
-const { auth, streaks, perfectInfo, dayProgress, weekProgress, weekDays, summaries, progressSettings, loadError, init, saveProgressSettings } = useDashboard()
+const { auth, streaks, perfectInfo, dayProgress, weekProgress, weekDays, summaries, progressSettings, loadError, accountCreatedAt, init, saveProgressSettings } = useDashboard()
 // Список метрик изменили через шестерёнку «Ежедневных метрик» (BACKLOG 40): перечитываем общие данные и просим графики пересобраться
 const metricsRev = ref(0)
 async function onMetricsChanged() {
@@ -128,7 +129,16 @@ async function onBlockMove(next: LayoutItem[]) {
 }
 // Блок «Виджеты» участвует в перетаскивании, только когда он реально на экране: выбран виджет и тот загрузился (WidgetsSection → `shown`)
 const widgetsShown = ref(false)
-const blockShown = (i: LayoutItem) => isBlockShown(i) && (i.key !== 'widgets' || widgetsShown.value)
+// «Режим новичка» (BACKLOG 49.5): первые 7 дней — только «Метрики дня»; «Показать всё» открывает остальное (выбор помнится)
+const showAllBlocks = ref(readShowAll())
+const newbie = computed(() => isNewbie(accountCreatedAt.value, showAllBlocks.value))
+const newbieDaysLeft = computed(() => daysLeft(accountCreatedAt.value))
+const blockOn = (i: LayoutItem) => i.visible && (!newbie.value || isBlockInNewbie(i.key))
+function onShowAllBlocks() {
+  writeShowAll()
+  showAllBlocks.value = true
+}
+const blockShown = (i: LayoutItem) => isBlockShown(i) && blockOn(i) && (i.key !== 'widgets' || widgetsShown.value)
 const { drag: blockDrag, onDown: dragDown, onMove: dragMove, onUp: dragUp, onCancel: dragCancel, onKey: dragKey } = useBlockDrag(() => layout.value, onBlockMove, () => window.innerHeight, blockShown)
 const visibleBlockCount = computed(() => layout.value.filter(blockShown).length)
 const blockTitles = computed<Record<string, string>>(() => ({ profile: t('dash_block_profile'), charts: t('dash_charts_h2'), daily: t('dash_block_daily'), widgets: t('dash_block_widgets') }))
@@ -185,7 +195,7 @@ const weekRing = computed<RingData | null>(() =>
     : null,
 )
 // Если блок «Профиль» скрыт в раскладке, кольцам «вокруг аватарки»/«в профиле» некуда встать — показываем их бейджем в шапке.
-const profileVisible = computed(() => layout.value.some((i: LayoutItem) => i.key === 'profile' && i.visible))
+const profileVisible = computed(() => layout.value.some((i: LayoutItem) => i.key === 'profile' && blockOn(i)))
 const dayRingProfile = computed(() => (dayTarget.value === 'avatar' && profileVisible.value ? dayRing.value : null))
 const weekRingProfile = computed(() => (weekTarget.value === 'profile' && profileVisible.value ? weekRing.value : null))
 const dayRingHeader = computed(() => (dayTarget.value === 'header' || (dayTarget.value === 'avatar' && !profileVisible.value) ? dayRing.value : null))
@@ -250,7 +260,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
 
       <template v-if="layoutLoaded">
         <template v-for="item in layout" :key="item.key">
-          <template v-if="item.visible">
+          <template v-if="blockOn(item)">
             <template v-if="item.key === 'profile'">
               <SectionHeading v-model:collapsed="profileCollapsed" :title="t('dash_block_profile')" storage-key="profile">
                 <template v-if="visibleBlockCount > 1" #actions>
@@ -298,6 +308,10 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
             </template>
           </template>
         </template>
+        <div v-if="newbie" class="mb-5 rounded-xl border p-3 text-sm" style="background: var(--bg-card); border-color: var(--border)" data-test="newbie-note">
+          <p class="dim m-0">{{ t('dash_newbie_note').replace('{n}', String(newbieDaysLeft)) }}</p>
+          <button type="button" class="secondary mt-2" data-test="show-all" @click="onShowAllBlocks">{{ t('dash_newbie_show_all') }}</button>
+        </div>
       </template>
 
       <p v-if="loadError" class="dim">{{ t('comm_load_error') }} {{ loadError }}</p>

@@ -60,6 +60,8 @@ export function useDashboard() {
   onMounted(() => window.addEventListener(DATA_CHANGED, refresh))
   onBeforeUnmount(() => window.removeEventListener(DATA_CHANGED, refresh))
 
+  const accountCreatedAt = ref<string | null>(null)
+
   async function init() {
     const { data } = await sb.auth.getSession()
     const session = data.session
@@ -70,6 +72,7 @@ export function useDashboard() {
     }
     const userId = session.user.id
     const userEmail = session.user.email ?? null
+    accountCreatedAt.value = session.user.created_at ?? null // для «режима новичка» (BACKLOG 49.5)
 
     const { data: profile } = await sb.from('profiles').select('onboarded').eq('user_id', userId).maybeSingle()
     if (!profile?.onboarded) {
@@ -167,7 +170,7 @@ export function useDashboard() {
     if (currentUserId) await loadAll(currentUserId)
   }
 
-  return { auth, streaks, perfectInfo, dayProgress, weekProgress, weekDays, summaries, progressSettings, loadError, init, refresh, saveProgressSettings }
+  return { auth, streaks, perfectInfo, dayProgress, weekProgress, weekDays, summaries, progressSettings, loadError, accountCreatedAt, init, refresh, saveProgressSettings }
 }
 
 export { fmtDate }

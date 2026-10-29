@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.62";
+const SITE_VERSION = "6.63";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.63", date: "2026-10-29 10:54", changes: [
+        "Дашборд для новичков: первые 7 дней после регистрации показаны только «Метрики дня» с планом на сегодня — без профиля, графиков и виджетов, чтобы не пугать. Остальное откроется само через неделю или сразу по кнопке «Показать всё». У тех, кто с нами давно, ничего не меняется. Без миграций."
+    ]},
     { version: "6.62", date: "2026-10-29 07:45", changes: [
         "«Магазин»: награда за выполнение цели. В форме хотелки появился переключатель «За огоньки / За цель»: к своей хотелке можно привязать ещё не выполненную цель из «Целей», и награда достаётся без трат огоньков. На карточке — «🎯 За цель», название цели и полоса этапов («3 из 5»); когда цель выполнена, появляется кнопка «Получить награду». Если цель удалить, хотелка не пропадёт: её можно вернуть в магазин с ценой из архива. Награды за цель не видны друзьям в вишлисте. Нужна миграция 111 (до неё переключателя нет, магазин работает как раньше)."
     ]},
@@ -2602,6 +2605,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.63", date: "2026-10-29 10:54", changes: [
+        "Dashboard for newcomers: for the first 7 days after sign-up only “Daily metrics” with today’s plan are shown — no profile, charts or widgets, so it is not overwhelming. The rest opens by itself after a week or right away with “Show everything”. Nothing changes for existing users. No migrations."
+    ]},
     { version: "6.62", date: "2026-10-29 07:45", changes: [
         "Shop: reward for finishing a goal. The wish form has a new “For sparks / For a goal” switch: attach a goal you have not finished yet to your wish, and the reward is yours without spending sparks. The card shows “🎯 For a goal”, the goal name and a stage bar (“3 of 5”); once the goal is done a “Claim reward” button appears. If the goal is deleted the wish is not lost: you can bring it back from the archive with a price. Goal rewards are hidden from friends’ wishlists. Needs migration 111 (until then there is no switch and the shop works as before)."
     ]},
