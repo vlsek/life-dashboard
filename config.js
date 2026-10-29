@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.74";
+const SITE_VERSION = "6.75";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.75", date: "2026-10-29 16:00", changes: [
+        "«Челленджи» → свой челлендж: под полем «Длительность, дней» появились кнопки «7 дн.», «30 дн.», «100 дн.» — быстрый выбор одним нажатием; любое другое число по-прежнему можно ввести вручную. Без миграций."
+    ]},
     { version: "6.74", date: "2026-10-29 19:07", changes: [
         "Если страница не смогла загрузить данные (нет связи, сбой сервера), теперь под сообщением есть кнопка «Повторить»: не нужно перезагружать страницу. Без сети добавляется подсказка «Нет сети — проверь подключение». Сделано в «Магазине», «Целях», «Навыках» (и книгах), «Достижениях», «Вехах» и «Челленджах»; в «Магазине» после успешного повтора старое сообщение об ошибке исчезает."
     ]},
@@ -2638,6 +2641,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.75", date: "2026-10-29 16:00", changes: [
+        "Challenges → custom challenge: under the “Duration, days” field there are now “7 d”, “30 d” and “100 d” buttons for a quick pick; any other number can still be typed. No migrations."
+    ]},
     { version: "6.74", date: "2026-10-29 19:07", changes: [
         "When a page cannot load its data (no connection, server hiccup), the message now has a “Try again” button, so you no longer have to reload the whole page. Offline, it also says “You are offline — check your connection”. Done in Shop, Goals, Skills (and books), Achievements, Milestones and Challenges; in the Shop the old error message disappears after a successful retry."
     ]},

@@ -1,7 +1,14 @@
 {
-  "version": "6.74",
+  "version": "6.75",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.75",
+      "date": "2026-10-29 16:00",
+      "changes": [
+        "Challenges → custom challenge: under the “Duration, days” field there are now “7 d”, “30 d” and “100 d” buttons for a quick pick; any other number can still be typed. No migrations."
+      ]
+    },
     {
       "version": "6.74",
       "date": "2026-10-29 19:07",
@@ -4788,6 +4795,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.75",
+      "date": "2026-10-29 16:00",
+      "changes": [
+        "«Челленджи» → свой челлендж: под полем «Длительность, дней» появились кнопки «7 дн.», «30 дн.», «100 дн.» — быстрый выбор одним нажатием; любое другое число по-прежнему можно ввести вручную. Без миграций."
+      ]
+    },
     {
       "version": "6.74",
       "date": "2026-10-29 19:07",
