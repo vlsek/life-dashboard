@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.75";
+const SITE_VERSION = "6.76";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.76", date: "2026-10-29 19:27", changes: [
+        "Кнопка «Повторить» при ошибке загрузки теперь есть и на «Главной» (сводка и графики), и в «Сообществе» (рейтинг, «сегодня» и категории), а не только в «Магазине», «Целях», «Навыках», «Достижениях», «Вехах» и «Челленджах». Без сети — подсказка «Нет сети — проверь подключение». Заодно обновлён список страниц для работы без интернета (он устарел после последних сборок)."
+    ]},
     { version: "6.75", date: "2026-10-29 16:00", changes: [
         "«Челленджи» → свой челлендж: под полем «Длительность, дней» появились кнопки «7 дн.», «30 дн.», «100 дн.» — быстрый выбор одним нажатием; любое другое число по-прежнему можно ввести вручную. Без миграций."
     ]},
@@ -2641,6 +2644,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.76", date: "2026-10-29 19:27", changes: [
+        "The “Try again” button on load errors is now also on Home (summary and charts) and in Community (leaderboard, today and categories), not only in Shop, Goals, Skills, Achievements, Milestones and Challenges. Offline, it adds “You are offline — check your connection”. The list of pages available without internet was also refreshed (it had gone stale after the latest builds)."
+    ]},
     { version: "6.75", date: "2026-10-29 16:00", changes: [
         "Challenges → custom challenge: under the “Duration, days” field there are now “7 d”, “30 d” and “100 d” buttons for a quick pick; any other number can still be typed. No migrations."
     ]},

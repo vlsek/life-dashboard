@@ -74,6 +74,24 @@ SITES = {
         'html': [('<p v-if="error" class="dim">{{ t(\'comm_load_error\') }} {{ error }} — {{ t(\'ch_migration_hint\') }}</p>', '<LoadError v-if="error" :message="error" :retry="reload"> — {{ t(\'ch_migration_hint\') }}</LoadError>')],
         'script': [('  error,\n  init,\n', '  error,\n  init,\n  reload,\n')],
     },
+    # срез 2 (74.3)
+    'web-dashboard': {
+        'html': [('<p v-if="loadError" class="dim">{{ t(\'comm_load_error\') }} {{ loadError }}</p>', '<LoadError v-if="loadError" :message="loadError" :retry="refresh" />')],
+        'script': [('accountCreatedAt, init, saveProgressSettings } = useDashboard()', 'accountCreatedAt, init, refresh, saveProgressSettings } = useDashboard()')],
+        'extra': {
+            'components/ChartsSection.vue': [('<p v-if="error" class="dim text-sm">{{ t(\'comm_load_error\') }} {{ error }}</p>', '<LoadError v-if="error" :message="error" :retry="reload" />')],
+        },
+    },
+    'web-community': {
+        'html': [
+            ('<p v-if="leaderboardError" class="dim mb-5">{{ t(\'comm_load_error\') }} {{ leaderboardError }}</p>', '<LoadError v-if="leaderboardError" :message="leaderboardError" :retry="reload" />'),
+            ('<p v-if="todayError" class="dim">{{ t(\'comm_load_error\') }} {{ todayError }}</p>', '<LoadError v-if="todayError" :message="todayError" :retry="reload" />'),
+        ],
+        'script': [('init, setPeriod, unfollow,', 'init, reload, setPeriod, unfollow,')],
+        'extra': {
+            'components/CategorySection.vue': [('<p v-else-if="error" class="dim">{{ t(\'comm_load_error\') }} {{ error }}</p>', '<LoadError v-else-if="error" :message="error" :retry="refresh" />')],
+        },
+    },
 }
 
 
@@ -124,6 +142,26 @@ def main() -> None:
         if s != orig:
             app.write_text(s, encoding='utf-8')
             changed.append(f'{pilot}: App.vue')
+        for rel, edits in spec.get('extra', {}).items():
+            f = src / rel
+            t = f.read_text(encoding='utf-8')
+            t0 = t
+            for old, new in edits:
+                if new in t:
+                    continue
+                if old not in t:
+                    raise SystemExit(f'{pilot}/{rel}: не найдено «{old[:70]}»')
+                t = t.replace(old, new, 1)
+            if "import LoadError from './LoadError.vue'" not in t:
+                m = re.search(r"^import \w+ from './\w+\.vue'\n", t, re.M)
+                if m:
+                    t = t[:m.end()] + "import LoadError from './LoadError.vue'\n" + t[m.end():]
+                else:
+                    m = re.search(r"^import [^\n]+\n(?!import)", t, re.M)
+                    t = t[:m.end()] + "import LoadError from './LoadError.vue'\n" + t[m.end():]
+            if t != t0:
+                f.write_text(t, encoding='utf-8')
+                changed.append(f'{pilot}: {rel}')
     print('\n'.join(changed) if changed else 'уже применено, изменений нет')
 
 

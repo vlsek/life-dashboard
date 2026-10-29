@@ -1,7 +1,14 @@
 {
-  "version": "6.75",
+  "version": "6.76",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.76",
+      "date": "2026-10-29 19:27",
+      "changes": [
+        "The “Try again” button on load errors is now also on Home (summary and charts) and in Community (leaderboard, today and categories), not only in Shop, Goals, Skills, Achievements, Milestones and Challenges. Offline, it adds “You are offline — check your connection”. The list of pages available without internet was also refreshed (it had gone stale after the latest builds)."
+      ]
+    },
     {
       "version": "6.75",
       "date": "2026-10-29 16:00",
@@ -4795,6 +4802,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.76",
+      "date": "2026-10-29 19:27",
+      "changes": [
+        "Кнопка «Повторить» при ошибке загрузки теперь есть и на «Главной» (сводка и графики), и в «Сообществе» (рейтинг, «сегодня» и категории), а не только в «Магазине», «Целях», «Навыках», «Достижениях», «Вехах» и «Челленджах». Без сети — подсказка «Нет сети — проверь подключение». Заодно обновлён список страниц для работы без интернета (он устарел после последних сборок)."
+      ]
+    },
     {
       "version": "6.75",
       "date": "2026-10-29 16:00",

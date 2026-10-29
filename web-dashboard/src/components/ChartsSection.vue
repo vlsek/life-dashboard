@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import EmojiText from './EmojiText.vue'
+import LoadError from './LoadError.vue'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import ChartBlock from './ChartBlock.vue'
 import ChartsConfigModal from './ChartsConfigModal.vue'
@@ -127,7 +128,7 @@ function onPeriodApplied() {
 
 <template>
   <template v-if="loaded">
-    <p v-if="error" class="dim text-sm">{{ t('comm_load_error') }} {{ error }}</p>
+    <LoadError v-if="error" :message="error" :retry="reload" />
 
     <div v-else class="card">
       <!-- «Настроить графики» (слева) и выбор периода первого графика (справа) — в одной строке (BACKLOG раздел 28); пока графиков нет — кнопка одна -->

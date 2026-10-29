@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import EmojiText from './components/EmojiText.vue'
+import LoadError from './components/LoadError.vue'
 import { onMounted, ref, computed } from 'vue'
 import { loadCollapseStyle } from './lib/useCollapseStyle'
 import AppShell from './components/AppShell.vue'
@@ -64,7 +65,11 @@ import type { DayProgressSettings } from './lib/progressSettings'
 // с общей выбранной датой (см. DailyMetricsSection.vue). Раскладка блоков (показать/скрыть/переставить) —
 // lib/layout.ts + useLayout.ts + LayoutModal.vue, колонка profiles.dashboard_layout общая с классикой.
 
+<<<<<<< Updated upstream
 const { auth, streaks, habitScores, perfectInfo, dayProgress, weekProgress, weekDays, summaries, progressSettings, loadError, accountCreatedAt, init, saveProgressSettings } = useDashboard()
+=======
+const { auth, streaks, perfectInfo, dayProgress, weekProgress, weekDays, summaries, progressSettings, loadError, accountCreatedAt, init, refresh, saveProgressSettings } = useDashboard()
+>>>>>>> Stashed changes
 // Список метрик изменили через шестерёнку «Ежедневных метрик» (BACKLOG 40): перечитываем общие данные и просим графики пересобраться
 const metricsRev = ref(0)
 async function onMetricsChanged() {
@@ -314,7 +319,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
         </div>
       </template>
 
-      <p v-if="loadError" class="dim">{{ t('comm_load_error') }} {{ loadError }}</p>
+      <LoadError v-if="loadError" :message="loadError" :retry="refresh" />
 
       <template v-else>
         <template v-if="streaks.length > 0">
