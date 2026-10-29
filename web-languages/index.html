@@ -146,7 +146,7 @@
       // «Стиль иконок» (BACKLOG 44.18г): выбор человека → <html data-icon-style> до первой отрисовки; иконки подменяет подменщик в шапке (iconPacks.ts)
       try {
         var is = localStorage.getItem('icon_style')
-        if (['fill', 'duotone', 'pixel', 'sketch'].indexOf(is) >= 0) document.documentElement.setAttribute('data-icon-style', is)
+        if (['fill', 'duotone', 'pixel', 'sketch', 'accent'].indexOf(is) >= 0) document.documentElement.setAttribute('data-icon-style', is)
       } catch (e) {}
     </script>
   </head>

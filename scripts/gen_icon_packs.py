@@ -6,12 +6,14 @@
   fill.json     — «Заливка»  (Phosphor Icons, вариант fill, MIT)
   duotone.json  — «Дуотон»   (Phosphor Icons, вариант duotone, MIT — двухслойный)
   pixel.json    — «Пиксели»  (НАШИ иконки, растеризованные на сетку 16×16: цельный набор, покрывает все имена)
+  accent.json   — «Акцентный» (из «Дуотона»: подложка второго тона красится в акцентный цвет текущей темы, контур — цвет текста)
   sketch.json   — «Рукописный» (НАШИ иконки, перерисованные дрожащей линией «от руки»: те же формы, штрих слегка гуляет; покрывает все имена)
 
 Запуск (нужны: npm и playwright с Chrome; пакет Phosphor НЕ хранится в репозитории):
   cd /tmp && npm pack @phosphor-icons/core && mkdir -p ph && tar -xzf phosphor-icons-core-*.tgz -C ph
   python3 scripts/gen_icon_packs.py /tmp/ph/package/assets
-Только «Рукописный» (Phosphor не нужен, остальные файлы не трогаются):  python3 scripts/gen_icon_packs.py --only sketch
+Только «Рукописный» или «Акцентный» (Phosphor не нужен, остальные файлы не трогаются; «Акцентный» берёт готовый duotone.json):
+  python3 scripts/gen_icon_packs.py --only sketch   |   python3 scripts/gen_icon_packs.py --only accent
 
 Лицензии наборов — docs/THIRD_PARTY_ICONS.md. Генератор идемпотентен: те же входные данные → те же файлы.
 """
@@ -199,11 +201,30 @@ def sketch_pack(outline):
     return icons
 
 
+def accent_pack():
+    """«Акцентный»: тот же двухслойный рисунок, что «Дуотон», но подложка (слой opacity=0.2) красится в --accent темы, а не в цвет текста."""
+    src = json.load(open(os.path.join(OUT, 'duotone.json'), encoding='utf-8'))['icons']
+    icons = {}
+    for n, e in src.items():
+        h = e['h']
+        assert 'opacity="0.2"' in h, n
+        icons[n] = {'vb': e['vb'], 'h': h.replace('opacity="0.2"', 'style="fill:var(--accent);opacity:0.55"'), 'a': e.get('a', {})}
+        if not icons[n]['a']:
+            del icons[n]['a']
+    return icons
+
+
 def write(name, obj):
     os.makedirs(OUT, exist_ok=True)
     with open(os.path.join(OUT, name + '.json'), 'w', encoding='utf-8') as f:
         json.dump(obj, f, ensure_ascii=False, separators=(',', ':'), sort_keys=True)
         f.write('\n')
+
+
+def only_accent():
+    ac = accent_pack()
+    write('accent', {'pack': 'accent', 'title': 'Акцентный', 'license': 'Производная от Phosphor Icons duotone, MIT, © 2020-present Phosphor Icons', 'icons': ac})
+    print(f'accent: {len(ac)} иконок')
 
 
 def only_sketch():
@@ -223,6 +244,8 @@ def main():
         sys.exit(__doc__)
     if sys.argv[1:] == ['--only', 'sketch']:
         return only_sketch()
+    if sys.argv[1:] == ['--only', 'accent']:
+        return only_accent()
     assets = sys.argv[1]
     outline_all = outline_icons()
     # Одинаковая разметка под разными именами (trash/trash2 — одна иконка) = один канонический ключ: иконку узнают именно по разметке,
@@ -244,6 +267,9 @@ def main():
     pix = pixel_pack(outline)
     write('pixel', {'pack': 'pixel', 'title': 'Пиксели', 'license': 'Растеризация собственных иконок проекта', 'icons': pix})
     report['pixel'] = (len(pix), [n for n in names if n not in pix])
+    ac = accent_pack()
+    write('accent', {'pack': 'accent', 'title': 'Акцентный', 'license': 'Производная от Phosphor Icons duotone, MIT, © 2020-present Phosphor Icons', 'icons': ac})
+    report['accent'] = (len(ac), [n for n in names if n not in ac])
     sk = sketch_pack(outline)
     write('sketch', {'pack': 'sketch', 'title': 'Рукописный', 'license': 'Перерисовка собственных иконок проекта', 'icons': sk})
     report['sketch'] = (len(sk), [n for n in names if n not in sk])

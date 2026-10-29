@@ -1,7 +1,7 @@
 // АВТОГЕНЕРАЦИЯ: scripts/gen_sw_assets.py (BACKLOG 66.3). Не править руками; запускать после каждой пересборки пилотов.
 // Подключается из sw.js (importScripts): изменился этот файл → браузер ставит новый service worker и новый кэш ld-shell-<version>.
 self.LD_SW = {
-  version: "2cd8650efb",
+  version: "e4984f1948",
   pages: [
     "/account/",
     "/achievements/",
@@ -34,7 +34,7 @@ self.LD_SW = {
     "/challenges/assets/index-e3nsu89Y.js",
     "/community/assets/index-DEWqo2vF.js",
     "/community/assets/index-DoULIdz1.css",
-    "/customization/assets/index-DqFzieez.js",
+    "/customization/assets/index-CiIjhisv.js",
     "/customization/assets/index-b6LTgbb0.css",
     "/dashboard/assets/index-B5yoyF4E.js",
     "/dashboard/assets/index-BlnIpYnI.css",
@@ -69,6 +69,7 @@ self.LD_SW = {
     "/favicon.svg",
     "/goals/favicon.svg",
     "/header-widgets/header.js",
+    "/header-widgets/icon-packs/accent.json",
     "/header-widgets/icon-packs/duotone.json",
     "/header-widgets/icon-packs/fill.json",
     "/header-widgets/icon-packs/index.json",

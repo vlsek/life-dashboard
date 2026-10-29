@@ -227,9 +227,20 @@ describe('настоящие данные наборов (web-header/public/icon
       expect(e.a, n).toMatchObject({ fill: 'none', stroke: 'currentColor', 'stroke-linecap': 'round' })
     }
   })
+  it('«Акцентный»: та же геометрия, что у «Дуотона», подложка красится в --accent темы (а не в цвет текста)', () => {
+    const duo = read('duotone').icons as PackData
+    const acc = read('accent').icons as PackData
+    expect(Object.keys(acc).length).toBe(Object.keys(duo).length)
+    for (const [n, e] of Object.entries(acc)) {
+      expect(e.vb, n).toBe(duo[n].vb)
+      expect(e.h, n).toContain('fill:var(--accent)')
+      expect(e.h, n).not.toContain('opacity="0.2"')
+    }
+  })
   it('лицензии: у Phosphor-наборов указана MIT, а файл со сторонними лицензиями лежит в репозитории', () => {
     expect(read('fill').license).toContain('MIT')
     expect(read('duotone').license).toContain('MIT')
+    expect(read('accent').license).toContain('MIT')
     expect(existsSync('../docs/THIRD_PARTY_ICONS.md')).toBe(true)
   })
 })

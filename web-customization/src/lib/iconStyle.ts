@@ -7,7 +7,7 @@
 // (до первой отрисовки его ставит скрипт в <head> страниц — генерирует scripts/apply_themes.py). Подмену иконок на странице делает рантайм-подменщик в шапке
 // (web-header/src/lib/iconPacks.ts; данные наборов — /header-widgets/icon-packs/*.json, генерирует scripts/gen_icon_packs.py). Прежние значения
 // thin/bold/square/shadow (стили штриха, v6.29) больше не существуют и читаются как «Контур».
-export const ICON_STYLES = ['outline', 'fill', 'duotone', 'pixel', 'sketch'] as const
+export const ICON_STYLES = ['outline', 'fill', 'duotone', 'pixel', 'sketch', 'accent'] as const
 export type IconStyle = (typeof ICON_STYLES)[number]
 export const DEFAULT_ICON_STYLE: IconStyle = 'outline'
 export const ICON_STYLE_KEY = 'icon_style'

@@ -1,7 +1,14 @@
 {
-  "version": "6.58",
+  "version": "6.59",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.59",
+      "date": "2026-10-29 04:28",
+      "changes": [
+        "Customization → Icon style: a sixth set, “Accent” — two-tone icons: outline in the text color, tint in your theme accent color (changes with the theme). Free, no migrations."
+      ]
+    },
     {
       "version": "6.58",
       "date": "2026-10-29 04:18",
@@ -4676,6 +4683,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.59",
+      "date": "2026-10-29 04:28",
+      "changes": [
+        "«Кастомизация» → «Стиль иконок»: шестой набор «Акцентный» — двухцветные иконки: контур цветом текста, подложка цветом акцента вашей темы (меняется вместе с темой). Бесплатно, без миграций."
+      ]
+    },
     {
       "version": "6.58",
       "date": "2026-10-29 04:18",

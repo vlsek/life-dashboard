@@ -5,7 +5,7 @@
 // `icon-style-change`). Иконки без пары в наборе остаются «Контуром». Нет сети/файла — тоже «Контур» (страница не ломается).
 // Данные наборов генерирует scripts/gen_icon_packs.py (лежат в web-header/public/icon-packs/, Vite копирует их в /header-widgets/icon-packs/).
 
-export const PACK_STYLES = ['fill', 'duotone', 'pixel', 'sketch'] as const
+export const PACK_STYLES = ['fill', 'duotone', 'pixel', 'sketch', 'accent'] as const
 export type PackStyle = (typeof PACK_STYLES)[number]
 export const ICON_STYLE_ATTR = 'data-icon-style'
 export const ICON_STYLE_EVENT = 'icon-style-change'
