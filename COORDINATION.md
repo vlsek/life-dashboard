@@ -73,7 +73,7 @@ BACKLOG 44.4 «Навыки» срез 2 (РЕШЕНИЕ ВЛАДЕЛЬЦА 2026
 — свободен — (68.1 закрыт v6.70)
 
 ### Агент 3
-— свободен — (69.0 «Тренировки v2»: исследование и макеты готовы, ждут выбора владельца; v6.55 проверка и релиз работы агента 8; v6.53 магазин — анимация покупки)
+BACKLOG 69.1 «Тренировки v2 — контракт данных»: документ `docs/WORKOUTS_V2_CONTRACT.md` + АДДИТИВНАЯ миграция **113** `migrations/113_workout_sessions.sql` (таблицы `workout_sessions`, `workout_routines`, `workout_routine_items`, колонки `workout_entries.session_id/position/superset_group`, `profiles.workout_settings`), сценарий `scripts/sql_harness/scenario_113_*.sql` и `docs/sql-checks/113_*`, чистые типы и правила `web-workouts/src/lib/sessionContract.ts` (+тест; в UI пока НЕ подключается, версия не нужна). Номер 113 — после `fetch` (112 у агента 1). `web-workouts/src` кроме нового файла не трогаю. С: 2026-10-29 22:20
 
 Прежний итог: (v6.20: шкала недели «Башни» и «Выходные»; v6.17: кольца дня; v6.14: анимации воды)
 
