@@ -41,13 +41,13 @@ const favLabel = computed(() => (props.favorite ? t('cust_theme_fav_remove') : p
       <rect x="84" y="14" width="9" height="30" rx="2" :fill="pv.accent" data-testid="preview-bar" />
       <rect x="58" y="10" width="26" height="3" rx="1.5" :fill="pv.text" fill-opacity="0.75" />
     </svg>
-    <div class="flex items-center justify-between gap-1">
-      <p class="m-0 text-sm font-medium"><EmojiText :text="label" /></p>
+    <div class="flex flex-wrap items-center justify-between gap-1" data-testid="theme-head">
+      <p class="m-0 min-w-0 break-words text-sm font-medium"><EmojiText :text="label" /></p>
       <p v-if="showRarity" class="m-0 text-xs font-medium" :style="{ color: RARITY_COLOR[rarity] }" data-testid="item-rarity">● {{ t(('cust_rarity_' + rarity) as never) }}</p>
             <button
         v-if="!locked"
         type="button"
-        class="secondary px-1.5 py-1"
+        class="secondary shrink-0 px-1.5 py-1"
         :style="{ color: favorite ? 'var(--accent)' : 'var(--text-dim)', opacity: !favorite && !canToggle ? 0.45 : 1 }"
         :aria-pressed="favorite"
         :aria-label="favLabel"
