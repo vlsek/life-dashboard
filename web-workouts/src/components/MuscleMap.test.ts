@@ -424,3 +424,96 @@ describe('MuscleMap: клик по строке списка и график п�
     expect(h(0)).toBe('2px')
   })
 })
+
+
+describe('MuscleMap: visual packs (BACKLOG 70.2)', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    localStorage.setItem('site_lang', 'ru')
+  })
+
+  it('all three packs switch the SVG presentation and expose the active mode', async () => {
+    const w = await openMap([], [bench])
+    const svg = () => w.find('svg[data-visual-style]')
+    expect(svg().attributes('data-visual-style')).toBe('anatomy')
+    expect(svg().classes()).toContain('muscle-map-svg--anatomy')
+
+    await w.find('[data-style="atlas"]').trigger('click')
+    expect(svg().attributes('data-visual-style')).toBe('atlas')
+    expect(svg().classes()).toContain('muscle-map-svg--atlas')
+    expect(w.find('[data-style="atlas"]').attributes('aria-pressed')).toBe('true')
+
+    await w.find('[data-style="tech"]').trigger('click')
+    expect(svg().attributes('data-visual-style')).toBe('tech')
+    expect(svg().classes()).toContain('muscle-map-svg--tech')
+    expect(svg().find('.muscle-tech-overlay').exists()).toBe(true)
+  })
+
+  it('persists the selected pack and falls back safely for an unknown stored value', async () => {
+    const w = await openMap([], [bench])
+    await w.find('[data-style="tech"]').trigger('click')
+    expect(localStorage.getItem('workouts_musclemap_visual_style')).toBe('tech')
+
+    const again = mount(MuscleMap, { props: { entries: [], exercises: [bench], today: TODAY } })
+    expect(again.find('svg[data-visual-style]').attributes('data-visual-style')).toBe('tech')
+
+    localStorage.setItem('workouts_musclemap_visual_style', 'ultraviolet')
+    const fallback = mount(MuscleMap, { props: { entries: [], exercises: [bench], today: TODAY } })
+    expect(fallback.find('svg[data-visual-style]').attributes('data-visual-style')).toBe('anatomy')
+  })
+
+  it('uses line pattern as well as color to distinguish trained and idle muscles', async () => {
+    const w = await openMap([entry('bench', '2026-09-29')], [bench])
+    const idle = w.find('[data-muscle="quads"]')
+    const done = w.find('[data-muscle="chest"]')
+    expect(idle.attributes('data-state')).toBe('idle')
+    expect(idle.find('path').attributes('style')).toContain('stroke-dasharray: 1.2 0.8')
+    expect(done.attributes('data-state')).toBe('done')
+    expect(done.find('path').attributes('style')).toContain('stroke-dasharray: none')
+    expect(w.find('[data-testid="muscle-map-legend"] .muscle-legend-mark--done').classes()).toContain('muscle-legend-mark--done')
+    expect(w.find('[data-testid="muscle-map-legend"] .muscle-legend-mark--idle').classes()).toContain('muscle-legend-mark--idle')
+  })
+
+  it('keeps keyboard activation on muscle targets available in every pack', async () => {
+    const w = await openMap([], [bench])
+    for (const style of ['anatomy', 'atlas', 'tech']) {
+      await w.find(`[data-style="${style}"]`).trigger('click')
+      const target = w.find('[data-muscle="chest"]')
+      expect(target.attributes('tabindex')).toBe('0')
+      expect(target.attributes('role')).toBe('button')
+      expect(target.attributes('aria-pressed')).toBe('false')
+      await target.trigger('keydown.enter')
+      expect(target.attributes('aria-pressed')).toBe('true')
+      expect(target.attributes('data-selected')).toBe('true')
+      expect(w.find('[data-testid="muscle-detail"]').exists()).toBe(true)
+      await target.trigger('keydown.enter')
+      expect(target.attributes('aria-pressed')).toBe('false')
+
+      await target.trigger('keydown.space')
+      expect(target.attributes('aria-pressed')).toBe('true')
+      expect(target.attributes('data-selected')).toBe('true')
+      await target.trigger('keydown.space')
+      expect(target.attributes('aria-pressed')).toBe('false')
+    }
+  })
+
+  it('keeps both body projections in sync and shows the technical overlay only in Tech mode', async () => {
+    const w = await openMap([], [bench])
+    const projections = () => w.findAll('svg[data-visual-style]')
+    expect(projections()).toHaveLength(2)
+    expect(projections().map((svg) => svg.attributes('data-visual-style'))).toEqual(['anatomy', 'anatomy'])
+    expect(w.findAll('.muscle-tech-overlay')).toHaveLength(0)
+
+    await w.find('[data-style="atlas"]').trigger('click')
+    expect(projections().map((svg) => svg.attributes('data-visual-style'))).toEqual(['atlas', 'atlas'])
+    expect(w.findAll('.muscle-tech-overlay')).toHaveLength(0)
+
+    await w.find('[data-style="tech"]').trigger('click')
+    expect(projections().map((svg) => svg.attributes('data-visual-style'))).toEqual(['tech', 'tech'])
+    expect(w.findAll('.muscle-tech-overlay')).toHaveLength(2)
+
+    await w.find('[data-style="anatomy"]').trigger('click')
+    expect(projections().map((svg) => svg.attributes('data-visual-style'))).toEqual(['anatomy', 'anatomy'])
+    expect(w.findAll('.muscle-tech-overlay')).toHaveLength(0)
+  })
+})

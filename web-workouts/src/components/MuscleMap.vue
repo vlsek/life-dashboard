@@ -125,9 +125,9 @@ function readMuscleVisualStyle(): MuscleVisualStyle {
 }
 const visualStyle = ref<MuscleVisualStyle>(readMuscleVisualStyle())
 const visualStyles: { key: MuscleVisualStyle; ru: string; en: string; hintRu: string; hintEn: string }[] = [
-  { key: 'anatomy', ru: 'Анатомия', en: 'Anatomy', hintRu: 'Анатомическая студия · акцент на задействованных мышцах', hintEn: 'Anatomy studio · highlight recently trained muscles' },
-  { key: 'atlas', ru: 'Атлас', en: 'Atlas', hintRu: 'Минималистичные контуры · спокойная карта', hintEn: 'Minimal outlines · a quiet muscle atlas' },
-  { key: 'tech', ru: 'Техно', en: 'Tech', hintRu: 'Технические контуры · футуристичный режим', hintEn: 'Technical outlines · a futuristic mode' },
+  { key: 'anatomy', ru: 'Анатомия', en: 'Anatomy', hintRu: 'Плотная заливка · зелёным отмечены недавно задействованные мышцы', hintEn: 'Solid tissue shading · recently trained muscles are highlighted in green' },
+  { key: 'atlas', ru: 'Атлас', en: 'Atlas', hintRu: 'Лаконичная схема · контуры важнее заливки', hintEn: 'Minimal atlas · outlines take priority over fills' },
+  { key: 'tech', ru: 'Техно', en: 'Tech', hintRu: 'Кибернетическая сетка · контуры и координатные метки', hintEn: 'Cybernetic grid · technical outlines and coordinate marks' },
 ]
 function setVisualStyle(value: MuscleVisualStyle) {
   visualStyle.value = value
@@ -205,10 +205,11 @@ function shapeStyle(m: MuscleId) {
   const isSelected = selected.value === m
   if (visualStyle.value === 'atlas') {
     return {
-      fill: isSelected ? 'var(--accent)' : isDone ? 'var(--text-dim)' : 'var(--bg-card)',
-      opacity: isSelected ? 0.92 : isDone ? 0.72 : 0.42,
+      fill: isSelected ? 'var(--accent)' : isDone ? 'var(--text-dim)' : 'transparent',
+      opacity: isSelected ? 0.9 : isDone ? 0.58 : 0.95,
       stroke: isSelected ? 'var(--accent)' : 'var(--text-dim)',
       strokeWidth: isSelected ? 2 : 0.85,
+      strokeDasharray: !isDone && !isSelected ? '1.2 0.8' : 'none',
       cursor: 'pointer',
     }
   }
@@ -218,6 +219,7 @@ function shapeStyle(m: MuscleId) {
       opacity: isSelected ? 0.95 : isDone ? 0.68 : 0.2,
       stroke: isSelected ? 'var(--accent)' : isDone ? 'var(--success)' : 'var(--accent)',
       strokeWidth: isSelected ? 2.2 : 0.75,
+      strokeDasharray: !isDone && !isSelected ? '1.2 0.8' : 'none',
       cursor: 'pointer',
     }
   }
@@ -226,6 +228,7 @@ function shapeStyle(m: MuscleId) {
     opacity: isSelected ? 0.98 : isDone ? 0.88 : 0.24,
     stroke: isSelected ? 'var(--accent)' : 'var(--border)',
     strokeWidth: isSelected ? 2 : 0.55,
+    strokeDasharray: !isDone && !isSelected ? '1.2 0.8' : 'none',
     cursor: 'pointer',
   }
 }
@@ -272,7 +275,7 @@ function shapeStyle(m: MuscleId) {
 
       <div class="flex flex-wrap justify-center gap-4">
         <figure v-for="v in views" :key="v.key" class="m-0 text-center">
-          <svg viewBox="0 0 100 190" :class="['muscle-map-svg', 'muscle-map-svg--' + visualStyle]" class="h-64 w-32" role="group" :aria-label="t(v.label)">
+          <svg viewBox="0 0 100 190" :class="['muscle-map-svg', 'muscle-map-svg--' + visualStyle]" :data-visual-style="visualStyle" class="h-64 w-32" role="group" :aria-label="t(v.label)">
             <circle :cx="geometry.head.cx" :cy="geometry.head.cy" :r="geometry.head.r" :fill="props.studyRecent ? 'var(--success)' : 'none'" :fill-opacity="props.studyRecent ? 0.9 : 1" :stroke="props.studyRecent ? 'var(--success)' : 'var(--border)'" stroke-width="1.2" data-testid="muscle-head" />
             <path
               :d="geometry.outline"
@@ -282,14 +285,22 @@ function shapeStyle(m: MuscleId) {
               stroke-linejoin="round"
               data-testid="body-outline"
             />
+            <g v-if="visualStyle === 'tech'" aria-hidden="true" class="muscle-tech-overlay" pointer-events="none">
+              <path d="M12 43H88 M12 55H88 M12 67H88 M12 79H88 M12 91H88 M12 103H88 M12 115H88 M12 127H88 M12 139H88 M12 151H88" fill="none" stroke="var(--accent)" stroke-width="0.35" stroke-dasharray="1 2" opacity="0.42" />
+              <path d="M8 44V36H16 M84 36H92V44 M8 150V158H16 M84 158H92V150" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.8" />
+              <circle cx="50" cy="29" r="2" fill="none" stroke="var(--accent)" stroke-width="0.7" />
+              <path d="M46 29H42 M54 29H58 M50 25V22 M50 33V36" stroke="var(--accent)" stroke-width="0.6" opacity="0.85" />
+            </g>
             <path v-if="v.key === 'back'" d="M50 35 L50 112" fill="none" stroke="var(--border)" stroke-width="0.7" stroke-dasharray="2 3" opacity="0.65" />
             <g
               v-for="(s, i) in v.shapes"
               :key="v.key + i"
               :data-muscle="s.muscle"
               :data-state="done.has(s.muscle) ? 'done' : 'idle'"
+              :data-selected="selected === s.muscle"
               role="button"
               tabindex="0"
+              :aria-pressed="selected === s.muscle"
               :aria-label="muscleName(s.muscle)"
               @click="select(s.muscle)"
               @keydown.enter.prevent="select(s.muscle)"
@@ -304,9 +315,9 @@ function shapeStyle(m: MuscleId) {
 
       <div v-if="studyRecent" class="mt-2 text-center text-[0.8em]" style="color: var(--success)" data-testid="muscle-head-study">{{ t('workouts_muscles_head_study') }}</div>
 
-      <div class="mt-2 flex flex-wrap justify-center gap-4 text-[0.8em]" style="color: var(--text-dim)">
-        <span><span style="color: var(--success)">■</span> {{ t('workouts_muscles_legend_done') }}</span>
-        <span><span style="opacity: 0.5">■</span> {{ t('workouts_muscles_legend_idle') }}</span>
+      <div class="mt-2 flex flex-wrap justify-center gap-4 text-[0.8em]" style="color: var(--text-dim)" data-testid="muscle-map-legend">
+        <span class="inline-flex items-center gap-1.5"><span class="muscle-legend-mark muscle-legend-mark--done" aria-hidden="true"></span> {{ t('workouts_muscles_legend_done') }}</span>
+        <span class="inline-flex items-center gap-1.5"><span class="muscle-legend-mark muscle-legend-mark--idle" aria-hidden="true"></span> {{ t('workouts_muscles_legend_idle') }}</span>
       </div>
 
       <div v-if="selected" class="mt-3 rounded-lg border p-3 text-sm" style="border-color: var(--border); background: var(--bg)" data-testid="muscle-detail" ref="detailEl">
@@ -499,6 +510,20 @@ function shapeStyle(m: MuscleId) {
   max-width: 100%;
   overflow: visible;
 }
+.muscle-legend-mark {
+  display: inline-block;
+  width: 1.15rem;
+  height: 0;
+  border-top-width: 2px;
+}
+.muscle-legend-mark--done {
+  border-top-style: solid;
+  border-color: var(--success);
+}
+.muscle-legend-mark--idle {
+  border-top-style: dashed;
+  border-color: var(--text-dim);
+}
 .muscle-map-svg--anatomy [data-muscle]:hover,
 .muscle-map-svg--anatomy [data-muscle]:focus-visible {
   filter: drop-shadow(0 0 2px var(--success));
@@ -507,13 +532,34 @@ function shapeStyle(m: MuscleId) {
 .muscle-map-svg--atlas [data-muscle]:focus-visible {
   filter: drop-shadow(0 0 1px var(--accent));
 }
-.muscle-map-svg--tech {
-  background-image: radial-gradient(color-mix(in srgb, var(--accent) 12%, transparent) 0.7px, transparent 0.7px);
-  background-size: 7px 7px;
+.muscle-map-svg--anatomy {
+  background: radial-gradient(ellipse at 50% 48%, color-mix(in srgb, var(--success) 7%, transparent), transparent 68%);
   border-radius: 1rem;
+}
+.muscle-map-svg--anatomy [data-muscle][data-state='done'] {
+  filter: drop-shadow(0 0 1.2px color-mix(in srgb, var(--success) 55%, transparent));
+}
+.muscle-map-svg--atlas {
+  background: color-mix(in srgb, var(--bg-card) 70%, transparent);
+  border-radius: 0.4rem;
+}
+.muscle-map-svg--atlas [data-muscle] {
+  stroke-linejoin: round;
+}
+.muscle-map-svg--tech {
+  background-image: linear-gradient(135deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent 60%);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  border-radius: 0.65rem;
 }
 .muscle-map-svg--tech [data-muscle] {
   filter: drop-shadow(0 0 1px color-mix(in srgb, var(--accent) 30%, transparent));
+  stroke-linejoin: bevel;
+}
+.muscle-map-svg--tech [data-muscle] > * {
+  vector-effect: non-scaling-stroke;
+}
+.muscle-map-svg--tech .muscle-tech-overlay {
+  opacity: 0.9;
 }
 .muscle-map-svg--tech [data-muscle]:hover,
 .muscle-map-svg--tech [data-muscle]:focus-visible {
