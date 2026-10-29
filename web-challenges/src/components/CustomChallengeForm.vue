@@ -5,6 +5,9 @@ import { fieldsEnabledForType, formFromChallenge } from '../lib/challenges'
 import type { Challenge, ChallengeType, CustomChallengeFormInput, SourceExercise, SourceMetric } from '../lib/types'
 
 // Без `challenge` — создание своего челленджа; с `challenge` — правка существующего (тип фиксирован).
+// Быстрый выбор длительности (BACKLOG 76.7): 7 / 30 / 100 дней одним нажатием; поле выше остаётся для любого другого числа
+const DURATION_PRESETS = [7, 30, 100]
+
 const props = defineProps<{ challenge?: Challenge; metrics?: SourceMetric[]; exercises?: SourceExercise[] }>()
 const emit = defineEmits<{ close: []; save: [res: CustomChallengeFormInput] }>()
 
@@ -84,6 +87,20 @@ function save() {
 
       <label class="mt-2 block text-sm" :style="{ opacity: enabled.duration ? 1 : 0.4 }">{{ t('ch_field_duration') }}</label>
       <input v-model.number="duration" type="number" class="w-full" :disabled="!enabled.duration" :style="{ opacity: enabled.duration ? 1 : 0.4 }" />
+      <div v-if="enabled.duration" class="mt-1 flex flex-wrap gap-1.5" data-testid="duration-chips">
+        <button
+          v-for="d in DURATION_PRESETS"
+          :key="d"
+          type="button"
+          class="secondary px-2 py-1 text-xs"
+          :aria-pressed="duration === d"
+          :style="duration === d ? { borderColor: 'var(--accent, #6c8cff)', color: 'var(--accent, #6c8cff)' } : {}"
+          :data-testid="'duration-chip-' + d"
+          @click="duration = d"
+        >
+          {{ d }} {{ t('ch_days_short') }}
+        </button>
+      </div>
 
       <label class="mt-2 block text-sm" :style="{ opacity: enabled.dailyTarget ? 1 : 0.4 }">{{ t('ch_field_daily_target') }}</label>
       <input v-model.number="dailyTarget" type="number" class="w-full" :disabled="!enabled.dailyTarget" :style="{ opacity: enabled.dailyTarget ? 1 : 0.4 }" />
