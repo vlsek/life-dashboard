@@ -1,7 +1,14 @@
 {
-  "version": "6.56",
+  "version": "6.57",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.57",
+      "date": "2026-10-29 04:09",
+      "changes": [
+        "Customization → Icon style: a new “Sketch” set — the same icons, but with a slightly wobbly, hand-drawn line. Five sets in total: Outline, Solid, Duotone, Pixels, Sketch. Free, no migrations."
+      ]
+    },
     {
       "version": "6.56",
       "date": "2026-10-29 01:04",
@@ -4662,6 +4669,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.57",
+      "date": "2026-10-29 04:09",
+      "changes": [
+        "«Кастомизация» → «Стиль иконок»: новый набор «Рукописный» — те же иконки, но линия слегка гуляет, как нарисованная от руки. Всего пять наборов: «Контур», «Заливка», «Дуотон», «Пиксели», «Рукописный». Бесплатно, без миграций."
+      ]
+    },
     {
       "version": "6.56",
       "date": "2026-10-29 01:04",

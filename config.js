@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.56";
+const SITE_VERSION = "6.57";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.57", date: "2026-10-29 04:09", changes: [
+        "«Кастомизация» → «Стиль иконок»: новый набор «Рукописный» — те же иконки, но линия слегка гуляет, как нарисованная от руки. Всего пять наборов: «Контур», «Заливка», «Дуотон», «Пиксели», «Рукописный». Бесплатно, без миграций."
+    ]},
     { version: "6.56", date: "2026-10-29 01:04", changes: [
         "«Календарь» → «История»: новая карточка «Сводка за период» — неделя, месяц или год со сравнением с прошлым периодом: средний прогресс дня, дни на 100%, дни с тренировками, выполненные цели из планов, а ниже — что стало лучше и что хуже (стрелка и знак, не только цвет). Сравнение показывается, только если в обоих периодах отслежено не меньше 60% дней, иначе пишем «мало данных»; метрики без цели меняются нейтрально, без оценки «лучше/хуже»; пропущенные дни не считаются невыполненными. Есть таблица «Все метрики» и переключатель в «Показывать». Без миграций."
     ]},
@@ -2584,6 +2587,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.57", date: "2026-10-29 04:09", changes: [
+        "Customization → Icon style: a new “Sketch” set — the same icons, but with a slightly wobbly, hand-drawn line. Five sets in total: Outline, Solid, Duotone, Pixels, Sketch. Free, no migrations."
+    ]},
     { version: "6.56", date: "2026-10-29 01:04", changes: [
         "Calendar → History: new “Period summary” card — week, month or year compared with the previous period: average day progress, days at 100%, workout days, plan goals done, and below it what got better and what slipped (arrow and sign, not just colour). The comparison only appears when at least 60% of days were tracked in both periods, otherwise it says “not enough data”; metrics without a goal change neutrally, with no better/worse verdict; skipped days are not counted as missed. There is an “All metrics” table and a switch in “Show”. No migrations."
     ]},
