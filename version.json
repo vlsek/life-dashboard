@@ -1,7 +1,14 @@
 {
-  "version": "6.76",
+  "version": "6.77",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.77",
+      "date": "2026-10-29 17:30",
+      "changes": [
+        "Calendar: below the month grid there is an “Export month (.ics)” button — the day plans and goal deadlines of the shown month download as a file that opens in Google Calendar, Apple Calendar and Outlook (all-day events, completed items marked with a check). If the month is empty, the button says so. No migrations."
+      ]
+    },
     {
       "version": "6.76",
       "date": "2026-10-29 19:27",
@@ -4802,6 +4809,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.77",
+      "date": "2026-10-29 17:30",
+      "changes": [
+        "«Календарь»: под сеткой месяца кнопка «Экспорт месяца (.ics)» — планы дней и сроки целей показанного месяца скачиваются файлом, который открывается в Google Календаре, Apple Календаре и Outlook (события на весь день, выполненное с галочкой). Если в месяце ничего нет, кнопка сообщит об этом. Без миграций."
+      ]
+    },
     {
       "version": "6.76",
       "date": "2026-10-29 19:27",

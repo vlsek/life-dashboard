@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.76";
+const SITE_VERSION = "6.77";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.77", date: "2026-10-29 17:30", changes: [
+        "«Календарь»: под сеткой месяца кнопка «Экспорт месяца (.ics)» — планы дней и сроки целей показанного месяца скачиваются файлом, который открывается в Google Календаре, Apple Календаре и Outlook (события на весь день, выполненное с галочкой). Если в месяце ничего нет, кнопка сообщит об этом. Без миграций."
+    ]},
     { version: "6.76", date: "2026-10-29 19:27", changes: [
         "Кнопка «Повторить» при ошибке загрузки теперь есть и на «Главной» (сводка и графики), и в «Сообществе» (рейтинг, «сегодня» и категории), а не только в «Магазине», «Целях», «Навыках», «Достижениях», «Вехах» и «Челленджах». Без сети — подсказка «Нет сети — проверь подключение». Заодно обновлён список страниц для работы без интернета (он устарел после последних сборок)."
     ]},
@@ -2644,6 +2647,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.77", date: "2026-10-29 17:30", changes: [
+        "Calendar: below the month grid there is an “Export month (.ics)” button — the day plans and goal deadlines of the shown month download as a file that opens in Google Calendar, Apple Calendar and Outlook (all-day events, completed items marked with a check). If the month is empty, the button says so. No migrations."
+    ]},
     { version: "6.76", date: "2026-10-29 19:27", changes: [
         "The “Try again” button on load errors is now also on Home (summary and charts) and in Community (leaderboard, today and categories), not only in Shop, Goals, Skills, Achievements, Milestones and Challenges. Offline, it adds “You are offline — check your connection”. The list of pages available without internet was also refreshed (it had gone stale after the latest builds)."
     ]},
