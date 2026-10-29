@@ -21,6 +21,7 @@ vi.mock('./lib/historyStats', () => ({
   dayStats: (_c: unknown, d: string) => (d.endsWith('-10') ? { pct: 120, total: 3, bonusPct: 0 } : { pct: 40, total: 2, bonusPct: 0 }),
   weekStats: () => ({ pct: 70, total: 5, bonusPct: 0 }),
 }))
+vi.mock('./components/PeriodSummaryCard.vue', () => ({ default: { template: '<div data-test="hist-summary-stub" />', props: ['ctx'] } })) // 73.1: сводка за период тут не проверяется (свои тесты: periodSummary.test.ts, periodSummaryCard.test.ts)
 vi.mock('./components/DayDetailModal.vue', () => ({ default: { template: '<div data-test="detail-modal" />', props: ['ctx', 'dateStr'] } }))
 
 import HistoryView from './components/HistoryView.vue'

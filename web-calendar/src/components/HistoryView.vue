@@ -9,6 +9,7 @@ import DayDetailModal from './DayDetailModal.vue'
 import EmojiText from './EmojiText.vue'
 import Icon from './Icon.vue'
 import MonthCategoryChart from './MonthCategoryChart.vue'
+import PeriodSummaryCard from './PeriodSummaryCard.vue'
 import { doneCount, openDeadlines } from '../lib/calendar'
 import type { GoalDeadline, PlannedItem } from '../lib/types'
 import { defaultShow, type CalendarShow } from '../lib/calendarShow'
@@ -23,6 +24,7 @@ const isCalendar = computed(() => props.mode === 'calendar')
 // BACKLOG 48.1 (владелец 2026-10-08: «в обычном календаре не надо показывать прогресс дня, только во вкладке календаря история; в обычном только планы»):
 // прогресс дня (заливка, %, золотая обводка >100%, колонка недели, статистика месяца) — ТОЛЬКО во вкладке «История»; в «Календаре» остаются планы и дедлайны.
 // «Показывать …» (44.8 срез 2): каждую часть можно выключить; сетка месяца остаётся всегда
+const showSummary = computed(() => !isCalendar.value && props.show.summary)
 const showProgress = computed(() => !isCalendar.value && props.show.progress)
 const showWeekCol = computed(() => !isCalendar.value && props.show.weekcol)
 const showStats = computed(() => !isCalendar.value && props.show.stats)
@@ -242,6 +244,8 @@ function onTouchEnd(e: TouchEvent) {
             {{ t('hist_today_btn') }}
           </button>
         </div>
+
+        <PeriodSummaryCard v-if="showSummary" :ctx="ctx as HistoryContext" />
 
         <div v-if="showStats" class="mb-3 grid grid-cols-3 gap-2" data-test="hist-stats">
           <div

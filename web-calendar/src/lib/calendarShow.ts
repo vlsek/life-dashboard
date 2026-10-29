@@ -3,16 +3,16 @@
 // Сетка месяца есть всегда: её отключить нельзя — это и есть страница.
 export const SHOW_KEY = 'calendar_show'
 
-export type ShowKey = 'today' | 'plans' | 'deadlines' | 'progress' | 'weekcol' | 'stats' | 'chart' | 'weeks'
+export type ShowKey = 'today' | 'plans' | 'deadlines' | 'summary' | 'progress' | 'weekcol' | 'stats' | 'chart' | 'weeks'
 export type CalendarShow = Record<ShowKey, boolean>
 
 // Какие части относятся к какой вкладке (порядок — порядок «чипов» на экране)
 export const CALENDAR_PARTS: ShowKey[] = ['today', 'plans', 'deadlines']
-export const HISTORY_PARTS: ShowKey[] = ['progress', 'weekcol', 'stats', 'chart', 'weeks']
+export const HISTORY_PARTS: ShowKey[] = ['summary', 'progress', 'weekcol', 'stats', 'chart', 'weeks']
 export const ALL_PARTS: ShowKey[] = [...CALENDAR_PARTS, ...HISTORY_PARTS]
 
 export function defaultShow(): CalendarShow {
-  return { today: true, plans: true, deadlines: true, progress: true, weekcol: true, stats: true, chart: true, weeks: true }
+  return { today: true, plans: true, deadlines: true, summary: true, progress: true, weekcol: true, stats: true, chart: true, weeks: true }
 }
 
 // Из строки хранилища: мусор, не-объект, неизвестные ключи и не-булевы значения игнорируются (остаётся «показывать»)

@@ -20,6 +20,7 @@ vi.mock('./lib/historyStats', () => ({
   dayStats: () => ({ pct: 40, total: 2, bonusPct: 0 }),
   weekStats: () => ({ pct: 70, total: 5, bonusPct: 0 }),
 }))
+vi.mock('./components/PeriodSummaryCard.vue', () => ({ default: { template: '<div data-test="hist-summary-stub" />', props: ['ctx'] } })) // 73.1: сводка за период тут не проверяется (свои тесты: periodSummary.test.ts, periodSummaryCard.test.ts)
 vi.mock('./components/DayDetailModal.vue', () => ({ default: { template: '<div />', props: ['ctx', 'dateStr'] } }))
 vi.mock('./components/MonthCategoryChart.vue', () => ({ default: { template: '<div data-test="month-chart" />', props: ['ctx', 'year', 'month'] } }))
 
@@ -122,7 +123,7 @@ describe('панель «Показывать»', () => {
     expect(w.find('[data-test="cal-show-panel"]').exists()).toBe(false)
     expect(w.find('[data-test="cal-show-hidden"]').text()).toContain('2')
     await w.find('[data-test="cal-show-toggle"]').trigger('click')
-    for (const k of ['progress', 'weekcol', 'stats', 'chart', 'weeks']) expect(w.find(`[data-test="cal-show-${k}"]`).exists(), k).toBe(true)
+    for (const k of ['summary', 'progress', 'weekcol', 'stats', 'chart', 'weeks']) expect(w.find(`[data-test="cal-show-${k}"]`).exists(), k).toBe(true)
     expect(w.find('[data-test="cal-show-plans"]').exists()).toBe(false)
     expect(w.find('[data-test="cal-show-stats"]').attributes('aria-pressed')).toBe('false')
     expect(w.find('[data-test="cal-show-progress"]').attributes('aria-pressed')).toBe('true')

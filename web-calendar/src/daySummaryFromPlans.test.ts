@@ -21,6 +21,7 @@ vi.mock('./lib/historyStats', () => ({
   dayStats: () => ({ pct: 40, total: 2, bonusPct: 0 }),
   weekStats: () => ({ pct: 70, total: 5, bonusPct: 0 }),
 }))
+vi.mock('./components/PeriodSummaryCard.vue', () => ({ default: { template: '<div data-test="hist-summary-stub" />', props: ['ctx'] } })) // 73.1: сводка за период тут не проверяется (свои тесты: periodSummary.test.ts, periodSummaryCard.test.ts)
 vi.mock('./components/DayDetailModal.vue', () => ({ default: { template: '<div data-test="detail-modal">{{ dateStr }}</div>', props: ['ctx', 'dateStr'] } }))
 vi.mock('./components/MonthCategoryChart.vue', () => ({ default: { template: '<div />', props: ['ctx', 'year', 'month'] } }))
 
