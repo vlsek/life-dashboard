@@ -1,7 +1,14 @@
 {
-  "version": "6.63",
+  "version": "6.64",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.64",
+      "date": "2026-10-29 08:00",
+      "changes": [
+        "Fixed: water logged from two tabs at the same time could lose part of the taps in the day total — writes now take a shared browser lock, so the tabs wait for each other. No migrations."
+      ]
+    },
     {
       "version": "6.63",
       "date": "2026-10-29 10:54",
@@ -4711,6 +4718,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.64",
+      "date": "2026-10-29 08:00",
+      "changes": [
+        "Исправлено: вода, записанная одновременно из двух вкладок, могла потерять часть нажатий в сумме дня — запись теперь идёт по общей блокировке браузера, вкладки ждут друг друга. Без миграций."
+      ]
+    },
     {
       "version": "6.63",
       "date": "2026-10-29 10:54",
