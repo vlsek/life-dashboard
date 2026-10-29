@@ -7,12 +7,13 @@ import type { ShopItem } from '../lib/types'
 import CoinIcon from './CoinIcon.vue'
 import EmojiText from './EmojiText.vue'
 import Icon from './Icon.vue'
+import GoalRewardInfo from './GoalRewardInfo.vue'
 
 // Строка товара для вида «Список с копилкой»: миниатюра, название, цена, прогресс (если копится), действие.
 const props = defineProps<{ item: ShopItem; balance: number | null }>()
-const emit = defineEmits<{ buy: [id: string]; edit: [item: ShopItem]; remove: [item: ShopItem] }>()
+const emit = defineEmits<{ buy: [id: string]; claim: [id: string]; edit: [item: ShopItem]; remove: [item: ShopItem] }>()
 const p = computed(() => itemProgress(props.item.cost, props.balance ?? 0))
-const saving = computed(() => !props.item.redeemed && !p.value.canBuy)
+const saving = computed(() => !props.item.redeemed && !props.item.reward && !p.value.canBuy)
 </script>
 
 <template>
@@ -27,18 +28,21 @@ const saving = computed(() => !props.item.redeemed && !p.value.canBuy)
         <a v-if="item.link" :href="item.link" target="_blank" rel="noopener" style="color: inherit">{{ item.name }}</a>
         <template v-else>{{ item.name }}</template>
       </div>
-      <div v-if="item.redeemed" class="dim text-xs"><EmojiText :text="t('shop_bought_prefix')" /> {{ fmtDateRu(item.redeemed_date) }}</div>
+      <div v-if="item.redeemed" class="dim text-xs"><EmojiText :text="item.reward ? t('shop_reward_got') : t('shop_bought_prefix')" /> {{ fmtDateRu(item.redeemed_date) }}</div>
+      <GoalRewardInfo v-else-if="item.reward" :reward="item.reward" />
       <div v-else-if="saving" class="mt-1 h-1.5 w-full overflow-hidden rounded-full" style="background: var(--border)" role="progressbar" :aria-valuenow="p.pct" aria-valuemin="0" aria-valuemax="100">
         <div class="h-full rounded-full" :style="{ width: p.pct + '%', background: 'var(--accent)' }" />
       </div>
     </div>
 
-    <div class="shrink-0 text-right">
+    <div v-if="!item.reward" class="shrink-0 text-right">
       <div class="inline-flex items-center gap-1 text-sm font-medium">{{ item.cost }} <CoinIcon :force-coin="item.legacy_coins" /></div>
       <div v-if="saving" class="dim text-xs" data-testid="row-left">{{ t('shop_left') }} {{ p.missing }}</div>
     </div>
 
-    <button v-if="!item.redeemed && p.canBuy && balance !== null" class="shrink-0 px-3 py-1 text-sm" data-testid="buy-btn" @click="emit('buy', item.id)"><EmojiText :text="t('shop_buy_btn')" /></button>
+    <button v-if="!item.redeemed && item.reward?.status === 'ready'" class="shrink-0 px-3 py-1 text-sm" data-testid="claim-btn" @click="emit('claim', item.id)"><EmojiText :text="t('shop_reward_claim')" /></button>
+    <span v-else-if="!item.redeemed && item.reward" class="sr-only" data-testid="claim-wait">{{ t('shop_reward_wait') }}</span>
+    <button v-else-if="!item.redeemed && p.canBuy && balance !== null" class="shrink-0 px-3 py-1 text-sm" data-testid="buy-btn" @click="emit('buy', item.id)"><EmojiText :text="t('shop_buy_btn')" /></button>
     <span class="flex shrink-0 whitespace-nowrap opacity-60 transition-opacity focus-within:opacity-100 hover:opacity-100" data-testid="item-actions">
       <button class="secondary mr-1 px-2" :aria-label="t('shop_edit_title')" data-testid="edit-btn" @click="emit('edit', item)"><Icon name="edit" /></button>
       <button class="danger px-2" data-testid="delete-btn" @click="emit('remove', item)"><Icon name="trash" /></button>

@@ -18,6 +18,7 @@ export function splitItems(items: ShopItem[], balance: number | null): ShopGroup
   const bought: ShopItem[] = []
   for (const it of items) {
     if (it.redeemed) bought.push(it)
+    else if (it.reward) (it.reward.status === 'ready' ? affordable : saving).push(it) // награда за цель: «можно получить», когда цель выполнена; баланс не при чём
     else if (balance !== null && have >= it.cost) affordable.push(it)
     else saving.push(it)
   }
@@ -28,7 +29,7 @@ export function splitItems(items: ShopItem[], balance: number | null): ShopGroup
 // Цель, на которую копим: ближайшая по цене из тех, на что баллов ещё не хватает. Нет такой — null.
 export function savingGoal(items: ShopItem[], balance: number | null): ShopItem | null {
   if (balance === null) return null
-  return splitItems(items, balance).saving[0] ?? null
+  return splitItems(items, balance).saving.find((it) => !it.reward) ?? null // копим только на вещи за огоньки: у награды за цель цены нет
 }
 
 export function filterItems(items: ShopItem[], balance: number | null, filter: ShopFilter): ShopItem[] {

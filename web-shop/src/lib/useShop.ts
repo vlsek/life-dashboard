@@ -10,6 +10,7 @@ import { errorKind, friendlyError } from './friendlyError'
 import { isCustomizationPurchase } from './customizationPurchase'
 import { DEFAULT_RUB_PER_SPARK, DEFAULT_SPARKS_COST, coinsToSparksSuggestion, parseSparksRow, purchaseErrorKey, rubPerSpark, sparksMode } from './sparks'
 import { t } from './i18n'
+import { goalRewardErrorText, rewardState, type GoalLite } from './goalReward'
 
 // Пауза перед повторной попыткой загрузки фото при сетевом сбое (мс).
 export const UPLOAD_RETRY_MS = 800
@@ -28,6 +29,7 @@ export function useShop() {
   const archived = ref<ShopItem[]>([])
   const balance = ref<{ total: number; spent: number; bonus?: number; balance: number } | null>(null)
   const error = ref<string | null>(null)
+  const goals = ref<GoalLite[]>([]) // цели человека — для «награды за цель» (миграция 111); нет доступа/ошибка — пустой список, магазин работает как раньше
   const createdAt = ref<string | null>(null) // дата регистрации — для «справедливой цены» по среднему заработку (58.4)
 
   async function init() {
@@ -53,7 +55,32 @@ export function useShop() {
     // Режим огоньков: миграция 057 применена, если работает sync_streak_sparks() (она же начисляет и возвращает баланс). Иначе — монеты, как раньше.
     sparksMode.value = await syncSparks()
     if (sparksMode.value) await loadRubRate()
+    await loadGoals(userId)
     await Promise.all([sparksMode.value ? Promise.resolve() : loadBalance(userId), loadItems(userId)])
+  }
+
+  async function loadGoals(userId: string) {
+    try {
+      // Миграция 111 ещё не применена (нет колонки shop_items.goal_id) — награды за цель недоступны: список целей пуст, переключатель «За цель» не показывается
+      const probe = await sb.from('shop_items').select('goal_id').limit(1)
+      if (probe.error) {
+        goals.value = []
+        return
+      }
+      const { data, error: err } = await sb.from('goals').select('id, name, stages, current_stage, done').eq('user_id', userId)
+      goals.value = err ? [] : ((data || []) as GoalLite[])
+    } catch {
+      goals.value = []
+    }
+  }
+
+  // Награда за цель: добавляем к строке вид награды (статус и прогресс цели). Полученная награда помнит название цели (reward_goal_name).
+  function withReward(it: ShopItem): ShopItem {
+    if (!it.goal_id && !it.reward_goal_name) return it
+    const st = rewardState(it, goals.value)
+    if (st.status === 'claimed') return { ...it, cost: 0, reward: { status: 'claimed', goalName: it.reward_goal_name ?? null, progress: null } }
+    if (st.status === 'in_progress' || st.status === 'ready') return { ...it, cost: 0, reward: { status: st.status, goalName: st.goal?.name ?? null, progress: st.progress } }
+    return it // цель не нашлась в списке — как обычная вещь (в магазине огоньков уйдёт в архив «задать цену»)
   }
 
   // Начислить огоньки за сделанное (сегодня и вчера) и получить баланс — одним вызовом.
@@ -122,7 +149,7 @@ export function useShop() {
       return
     }
     // покупки «Кастомизации» лежат в той же таблице — в списке магазина их не показываем (баланс их учитывает отдельно, в loadBalance)
-    const rows = ((data || []) as ShopItem[]).filter((it) => !isCustomizationPurchase(it.name))
+    const rows = ((data || []) as ShopItem[]).filter((it) => !isCustomizationPurchase(it.name)).map(withReward)
     if (!sparksMode.value) {
       items.value = rows
       archived.value = []
@@ -133,7 +160,8 @@ export function useShop() {
     const view: ShopItem[] = []
     const old: ShopItem[] = []
     for (const it of rows) {
-      if (it.cost_sparks != null) view.push({ ...it, cost: it.cost_sparks })
+      if (it.reward) view.push(it) // награда за цель: цены нет, в «историю монет» и в архив не попадает
+      else if (it.cost_sparks != null) view.push({ ...it, cost: it.cost_sparks })
       else if (it.redeemed) view.push({ ...it, legacy_coins: true })
       else old.push(it)
     }
@@ -144,26 +172,27 @@ export function useShop() {
   async function reload() {
     if (auth.value.status !== 'ready') return
     if (sparksMode.value) {
-      await Promise.all([syncSparks(), loadItems(auth.value.userId)])
+      await Promise.all([syncSparks(), loadGoals(auth.value.userId), loadItems(auth.value.userId)])
       return
     }
-    await Promise.all([loadBalance(auth.value.userId), loadItems(auth.value.userId)])
+    await Promise.all([loadBalance(auth.value.userId), loadGoals(auth.value.userId), loadItems(auth.value.userId)])
   }
 
   async function addItem(userId: string, res: ShopItemFormInput) {
     const base = { user_id: userId, name: res.name.trim(), link: res.link.trim() || null, image_url: res.image_url, redeemed: false }
     // в режиме огоньков цена хранится в cost_sparks, а cost = 0 — расчёт монет на других страницах не затрагивается
-    const row = sparksMode.value ? { ...base, cost: 0, cost_sparks: res.cost > 0 ? Math.round(res.cost) : DEFAULT_SPARKS_COST } : { ...base, cost: res.cost || 100 }
+    const row = res.goal_id ? { ...base, cost: 0, cost_sparks: null, goal_id: res.goal_id } : sparksMode.value ? { ...base, cost: 0, cost_sparks: res.cost > 0 ? Math.round(res.cost) : DEFAULT_SPARKS_COST } : { ...base, cost: res.cost || 100 }
     const { error: err } = await sb.from('shop_items').insert(row)
-    if (err) throw err
+    if (err) throw new Error(goalRewardErrorText(err) ?? friendlyError(err, 'save'), { cause: err })
     await reload()
   }
 
   async function updateItem(id: string, res: ShopItemFormInput) {
     const base = { name: res.name.trim(), link: res.link.trim() || null, image_url: res.image_url }
-    const row = sparksMode.value ? { ...base, cost: 0, cost_sparks: res.cost > 0 ? Math.round(res.cost) : DEFAULT_SPARKS_COST } : { ...base, cost: res.cost || 100 }
+    // переключатель «За огоньки / За цель»: при «За цель» цена снимается, при возврате «за огоньки» привязка к цели снимается (goal_id = null)
+    const row = res.goal_id ? { ...base, cost: 0, cost_sparks: null, goal_id: res.goal_id } : sparksMode.value ? { ...base, cost: 0, cost_sparks: res.cost > 0 ? Math.round(res.cost) : DEFAULT_SPARKS_COST, goal_id: null } : { ...base, cost: res.cost || 100, goal_id: null }
     const { error: err } = await sb.from('shop_items').update(row).eq('id', id)
-    if (err) throw err
+    if (err) throw new Error(goalRewardErrorText(err) ?? friendlyError(err, 'save'), { cause: err })
     await reload()
   }
 
@@ -177,6 +206,16 @@ export function useShop() {
         throw new Error(t(key))
       }
       throw err
+    }
+    await reload()
+  }
+
+  // «Получить награду» (миграция 111): серверная функция сама проверяет, что цель выполнена; понятные тексты на коды GR001–GR006
+  async function claimReward(id: string) {
+    const { error: err } = await sb.rpc('claim_goal_reward', { p_item_id: id, p_date: todayStr() })
+    if (err) {
+      await reload()
+      throw new Error(goalRewardErrorText(err) ?? friendlyError(err, 'save'), { cause: err })
     }
     await reload()
   }
@@ -213,5 +252,5 @@ export function useShop() {
     return data.publicUrl
   }
 
-  return { auth, items, archived, balance, createdAt, error, init, addItem, updateItem, buyItem, transferArchived, deleteItem, uploadImage }
+  return { auth, items, archived, balance, goals, createdAt, error, init, addItem, updateItem, buyItem, claimReward, transferArchived, deleteItem, uploadImage }
 }

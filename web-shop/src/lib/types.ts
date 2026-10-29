@@ -60,6 +60,10 @@ export interface ShopItem {
   archived?: boolean
   // купленная ДО перехода вещь: её `cost` — в монетах (история), показываем с иконкой монеты
   legacy_coins?: boolean
+  // миграция 111 («награда за цель»): привязанная цель, снимок её названия в момент получения; reward считает useShop (rewardState)
+  goal_id?: string | null
+  reward_goal_name?: string | null
+  reward?: { status: 'in_progress' | 'ready' | 'claimed'; goalName: string | null; progress: { done: number; total: number } | null }
 }
 
 export interface ShopItemFormInput {
@@ -67,4 +71,5 @@ export interface ShopItemFormInput {
   link: string
   cost: number
   image_url: string | null
+  goal_id?: string | null // «За цель» (миграция 111): привязанная цель, цена не нужна; нет — обычная хотелка
 }

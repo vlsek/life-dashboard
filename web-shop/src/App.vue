@@ -23,7 +23,7 @@ import EmojiText from './components/EmojiText.vue'
 import Icon from './components/Icon.vue'
 import { confirmDialog } from './lib/confirmDialog'
 
-const { auth, items, archived, balance, createdAt, error, init, addItem, updateItem, buyItem, transferArchived, deleteItem, uploadImage } = useShop()
+const { auth, items, archived, balance, goals, createdAt, error, init, addItem, updateItem, buyItem, claimReward, transferArchived, deleteItem, uploadImage } = useShop()
 onMounted(init)
 // Первый заход: полное описание идеи уже показывает плашка «Лавка наград» — общую подсказку страницы заранее считаем увиденной (она остаётся за значком «i»), чтобы две плашки не стояли друг над другом
 if (!loadIdeaSeen()) markHintSeen('shop')
@@ -53,6 +53,20 @@ async function onBuy(id: string) {
     actionError.value = e instanceof Error ? e.message : String(e)
   }
 }
+// «Получить награду» за выполненную цель (68.2): та же плашка-подтверждение, что и при покупке, но с текстом про награду
+const justClaimed = ref<string | null>(null)
+async function onClaim(id: string) {
+  actionError.value = null
+  const name = items.value.find((i) => i.id === id)?.name ?? null
+  try {
+    await claimReward(id)
+    justClaimed.value = name
+    clearTimeout(boughtTimer)
+    boughtTimer = setTimeout(() => (justClaimed.value = null), 4000)
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : String(e)
+  }
+}
 async function onTransfer(id: string, sparks: number) {
   actionError.value = null
   try {
@@ -71,10 +85,17 @@ const rate = computed(() => dailyRate(balance.value?.total, createdAt.value, spa
 
 const formTarget = ref<ShopItem | 'new' | null>(null)
 
+const saveError = ref<string | null>(null) // ошибка сохранения показывается внутри формы (понятный текст, в том числе про цель — миграция 111)
 async function onSaveForm(res: ShopItemFormInput) {
   const target = formTarget.value
-  if (target === 'new') await addItem((auth.value as { userId: string }).userId, res)
-  else if (target) await updateItem(target.id, res)
+  saveError.value = null
+  try {
+    if (target === 'new') await addItem((auth.value as { userId: string }).userId, res)
+    else if (target) await updateItem(target.id, res)
+  } catch (e) {
+    saveError.value = e instanceof Error ? e.message : String(e)
+    return // форма остаётся открытой — можно поправить и сохранить снова
+  }
   formTarget.value = null
 }
 
@@ -103,6 +124,7 @@ async function onUpload(file: File): Promise<string | null> {
     <BalanceCard :balance="balance" :variant="view === 'list' ? 'list' : view === 'focus' ? 'compact' : 'grid'" :goal="goal" />
 
     <p v-if="justBought" class="goal-pop bought-toast relative mb-2 rounded-xl border px-3 py-2 text-sm font-medium" style="border-color: var(--accent)" role="status" data-testid="bought-toast"><span class="bought-burst" aria-hidden="true" data-testid="bought-burst"><i v-for="n in 6" :key="n" :style="{ '--a': n * 60 + 'deg' }" /></span><EmojiText :text="t('shop_bought_toast')" /> {{ justBought }}</p>
+    <p v-if="justClaimed" class="goal-pop bought-toast relative mb-2 rounded-xl border px-3 py-2 text-sm font-medium" style="border-color: var(--accent)" role="status" data-testid="claimed-toast"><span class="bought-burst" aria-hidden="true" data-testid="claimed-burst"><i v-for="n in 6" :key="n" :style="{ '--a': n * 60 + 'deg' }" /></span><EmojiText :text="t('shop_reward_toast')" /> {{ justClaimed }}</p>
     <p v-if="actionError" class="mb-2 text-sm" style="color: var(--danger)" role="alert" data-testid="action-error">{{ actionError }}</p>
     <p v-if="error" class="dim">{{ t('comm_load_error') }} {{ error }}</p>
     <div v-else-if="items.length === 0" class="card flex flex-col items-center gap-2 rounded-2xl border p-6 text-center" style="border-color: var(--border)" data-testid="shop-empty">
@@ -118,7 +140,7 @@ async function onUpload(file: File): Promise<string | null> {
       <ShopFilters v-model="filter" :counts="counts" />
       <p v-if="shown.length === 0" class="dim text-sm" data-testid="empty-filter">{{ filter === 'affordable' ? (sparksMode ? t('shop_empty_affordable_sparks') : t('shop_empty_affordable')) : t('shop_empty_filter') }}</p>
       <div v-else class="flex flex-col gap-1.5" data-testid="focus-view">
-        <ShopRow v-for="item in shown" :key="item.id" :item="item" :balance="have" @buy="onBuy" @edit="formTarget = $event" @remove="onDelete" />
+        <ShopRow v-for="item in shown" :key="item.id" :item="item" :balance="have" @buy="onBuy" @claim="onClaim" @edit="formTarget = $event" @remove="onDelete" />
       </div>
     </template>
 
@@ -127,7 +149,7 @@ async function onUpload(file: File): Promise<string | null> {
       <ShopFilters v-model="filter" :counts="counts" />
       <p v-if="shown.length === 0" class="dim text-sm" data-testid="empty-filter">{{ filter === 'affordable' ? (sparksMode ? t('shop_empty_affordable_sparks') : t('shop_empty_affordable')) : t('shop_empty_filter') }}</p>
       <div v-else class="grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-3" data-testid="grid-view">
-        <ShopCard v-for="item in shown" :key="item.id" :item="item" :balance="have" @buy="onBuy" @edit="formTarget = $event" @remove="onDelete" />
+        <ShopCard v-for="item in shown" :key="item.id" :item="item" :balance="have" @buy="onBuy" @claim="onClaim" @edit="formTarget = $event" @remove="onDelete" />
       </div>
     </template>
 
@@ -136,13 +158,13 @@ async function onUpload(file: File): Promise<string | null> {
       <section v-if="groups.affordable.length" data-testid="section-affordable">
         <h2 class="dim mb-1.5 text-sm font-medium"><EmojiText :text="t('shop_section_affordable')" /></h2>
         <div class="flex flex-col gap-1.5">
-          <ShopRow v-for="item in groups.affordable" :key="item.id" :item="item" :balance="have" @buy="onBuy" @edit="formTarget = $event" @remove="onDelete" />
+          <ShopRow v-for="item in groups.affordable" :key="item.id" :item="item" :balance="have" @buy="onBuy" @claim="onClaim" @edit="formTarget = $event" @remove="onDelete" />
         </div>
       </section>
       <section v-if="groups.saving.length" data-testid="section-saving">
         <h2 class="dim mb-1.5 text-sm font-medium"><EmojiText :text="t('shop_section_saving')" /></h2>
         <div class="flex flex-col gap-1.5">
-          <ShopRow v-for="item in groups.saving" :key="item.id" :item="item" :balance="have" @buy="onBuy" @edit="formTarget = $event" @remove="onDelete" />
+          <ShopRow v-for="item in groups.saving" :key="item.id" :item="item" :balance="have" @buy="onBuy" @claim="onClaim" @edit="formTarget = $event" @remove="onDelete" />
         </div>
       </section>
       <p v-if="!groups.affordable.length && !groups.saving.length" class="dim text-sm">{{ t('shop_empty_filter') }}</p>
@@ -158,7 +180,7 @@ async function onUpload(file: File): Promise<string | null> {
           <span aria-hidden="true">{{ boughtOpen ? '▴' : '▾' }}</span>
         </button>
         <div v-if="boughtOpen" class="mt-1.5 flex flex-col gap-1.5">
-          <ShopRow v-for="item in groups.bought" :key="item.id" :item="item" :balance="have" @buy="onBuy" @edit="formTarget = $event" @remove="onDelete" />
+          <ShopRow v-for="item in groups.bought" :key="item.id" :item="item" :balance="have" @buy="onBuy" @claim="onClaim" @edit="formTarget = $event" @remove="onDelete" />
         </div>
       </section>
     </div>
@@ -181,6 +203,6 @@ async function onUpload(file: File): Promise<string | null> {
       </div>
     </section>
 
-    <ItemForm v-if="formTarget" :existing="formTarget === 'new' ? null : formTarget" :daily-rate="dailyRate(balance?.total, createdAt, sparksMode)" :upload-image="onUpload" @close="formTarget = null" @save="onSaveForm" />
+    <ItemForm v-if="formTarget" :existing="formTarget === 'new' ? null : formTarget" :daily-rate="dailyRate(balance?.total, createdAt, sparksMode)" :upload-image="onUpload" :goals="goals" :error="saveError" @close="formTarget = null; saveError = null" @save="onSaveForm" />
   </main>
 </template>

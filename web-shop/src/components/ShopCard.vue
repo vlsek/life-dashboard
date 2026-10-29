@@ -6,10 +6,11 @@ import CoinIcon from './CoinIcon.vue'
 import EmojiText from './EmojiText.vue'
 import Icon from './Icon.vue'
 import ItemProgressBar from './ItemProgressBar.vue'
+import GoalRewardInfo from './GoalRewardInfo.vue'
 
 // Карточка товара для вида «Витрина».
 defineProps<{ item: ShopItem; balance: number | null }>()
-const emit = defineEmits<{ buy: [id: string]; edit: [item: ShopItem]; remove: [item: ShopItem] }>()
+const emit = defineEmits<{ buy: [id: string]; claim: [id: string]; edit: [item: ShopItem]; remove: [item: ShopItem] }>()
 </script>
 
 <template>
@@ -23,11 +24,16 @@ const emit = defineEmits<{ buy: [id: string]; edit: [item: ShopItem]; remove: [i
       <a v-if="item.link" :href="item.link" target="_blank" rel="noopener" style="color: inherit" class="inline-flex items-center gap-1">{{ item.name }} <Icon name="link" /></a>
       <template v-else>{{ item.name }}</template>
     </div>
-    <div class="inline-flex items-center gap-1 font-medium">{{ item.cost }} <CoinIcon :force-coin="item.legacy_coins" /></div>
-    <ItemProgressBar v-if="!item.redeemed && balance !== null" :cost="item.cost" :balance="balance" />
+    <GoalRewardInfo v-if="item.reward" :reward="item.reward" />
+    <template v-else>
+      <div class="inline-flex items-center gap-1 font-medium">{{ item.cost }} <CoinIcon :force-coin="item.legacy_coins" /></div>
+      <ItemProgressBar v-if="!item.redeemed && balance !== null" :cost="item.cost" :balance="balance" />
+    </template>
 
     <div class="mt-2">
-      <span v-if="item.redeemed" class="dim text-sm"><EmojiText :text="t('shop_bought_prefix')" /> {{ fmtDateRu(item.redeemed_date) }}</span>
+      <span v-if="item.redeemed" class="dim text-sm"><EmojiText :text="item.reward ? t('shop_reward_got') : t('shop_bought_prefix')" /> {{ fmtDateRu(item.redeemed_date) }}</span>
+      <button v-else-if="item.reward?.status === 'ready'" data-testid="claim-btn" @click="emit('claim', item.id)"><EmojiText :text="t('shop_reward_claim')" /></button>
+      <button v-else-if="item.reward" disabled class="secondary" style="opacity: 0.75" data-testid="claim-wait">{{ t('shop_reward_wait') }}</button>
       <button v-else-if="balance !== null && balance >= item.cost" data-testid="buy-btn" @click="emit('buy', item.id)"><EmojiText :text="t('shop_buy_btn')" /></button>
       <button v-else disabled class="secondary" style="opacity: 0.75">{{ t('shop_not_enough') }} {{ balance !== null ? item.cost - balance : item.cost }} <CoinIcon /></button>
     </div>
