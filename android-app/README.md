@@ -33,3 +33,11 @@ APK: `android/app/build/outputs/apk/debug/app-debug.apk`.
 
 ## Обновление
 Сайт внутри приложения — копия на момент сборки. Новая версия сайта = новая сборка APK (плашка «доступна новая версия» — пункт 66.11).
+
+## Вибро и напоминания (BACKLOG 66.9, срез 1)
+
+Слой `native-shell.js` даёт странице `__ldNative.haptic(kind)` (`light` / `medium` / `success` / `warning`) и `__ldNative.applyReminders(settings)`. В браузере обе функции ничего не делают.
+`settings = { water: { enabled, fromHour, toHour, everyHours }, workout: { enabled, time: 'HH:MM', weekdays: [1..7] } }`, дни ISO (1 = понедельник). План напоминаний считает чистая `reminderPlan` (покрыта `npm test`); id уведомлений стабильны (вода 1000–1023, тренировка 2001–2007), перед постановкой старые отменяются.
+Плагины `@capacitor/haptics` и `@capacitor/local-notifications` — в `package.json`; после `npm run sync` попадают в проект Android.
+**Не проверено на телефоне** (нет Android SDK): запрос разрешения на уведомления (Android 13+), срабатывание в нужное время, поведение после перезагрузки телефона. Если в сгенерированном `AndroidManifest.xml` не окажется `POST_NOTIFICATIONS`, добавить его в шаге сборки. Экран настроек напоминаний («Аккаунт») — следующий срез.
+

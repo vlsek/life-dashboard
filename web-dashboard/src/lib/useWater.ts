@@ -7,6 +7,7 @@ import { fmtDate, todayStr } from './date'
 import { t } from './i18n'
 import { effectiveNormMl, findWaterMetric, findWeightParam, nextWaterValue } from './water'
 import { createWriteQueue } from './writeQueue'
+import { haptic } from './nativeFeedback'
 import { autoNormFromBody, validHeightCm, resetWaterGoalCache } from './waterGoal'
 import type { BodyParameter } from './water'
 import { canUndo as stackCanUndo, loadStacks, pushEntry, removeRowFromStack, saveStack, type UndoEntry } from './waterUndo'
@@ -248,6 +249,7 @@ export function useWater() {
   async function addMl(deltaMl: number, dateStr: string, drankAt?: number): Promise<number | null> {
     if (!metric.value) return null
     const isToday = dateStr === fmtDate(new Date())
+    if (deltaMl > 0) haptic('light') // отклик сразу при нажатии «+» (в приложении Android; в браузере ничего)
     if (isToday) {
       pendingToday += deltaMl
       todayMl.value = nextWaterValue(todayMl.value, deltaMl)
