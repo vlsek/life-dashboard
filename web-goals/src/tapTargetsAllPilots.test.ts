@@ -4,9 +4,9 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs'
 
 // «Страж» (BACKLOG 576 / 60.2 п.4): в style.css каждого пилота есть блок `tap-targets` — на телефоне (≤640 px)
 // кнопки подтягиваются до 32 px. Блок меняется только в scripts/apply_tap_targets.py.
-// Зоны агентов 3/5 (dashboard, workouts, customization) и web-header (отдельный бандл) вне охвата.
+// web-header — отдельный бандл (header.css), вне охвата.
 const ROOT = '..'
-const EXEMPT = ['web-dashboard', 'web-workouts', 'web-customization', 'web-header']
+const EXEMPT = ['web-header']
 const read = (path: string): string => readFileSync(path, 'utf-8')
 const pilots: string[] = (readdirSync(ROOT) as string[]).filter(
   (d: string) => /^web-/.test(d) && !EXEMPT.includes(d) && existsSync(`${ROOT}/${d}/src/style.css`),

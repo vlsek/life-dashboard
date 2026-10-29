@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Дописывает в КОНЕЦ web-*/src/style.css единый блок «минимум цели нажатия на телефоне» (BACKLOG 576 / 60.2 п.4).
 Идемпотентно (маркер `/* tap-targets */`). Блок меняется ТОЛЬКО здесь, потом `python3 scripts/apply_tap_targets.py` и пересборка пилотов.
-Не затрагивает web-dashboard, web-workouts, web-customization (зоны агентов 3/5) и web-header (отдельный бандл header.css)."""
+Не затрагивает web-header (отдельный бандл header.css). Охват: все остальные пилоты, включая dashboard/workouts/customization (с v6.66)."""
 import glob, io
 
-SKIP = ('web-dashboard', 'web-workouts', 'web-customization', 'web-header')
+SKIP = ('web-header',)
 BLOCK = r"""
 /* Минимум цели нажатия на телефоне (BACKLOG 576 / 60.2 п.4): аудит Chromium 390 px нашёл кнопки 24–27 px (вкладки «Магазина»,
    фильтры «Достижений», чипы «Навыков», стрелки «Календаря»). Правило только ПОДТЯГИВАЕТ мелкое до 32 px (min-*), крупные кнопки не меняет.
