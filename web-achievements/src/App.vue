@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import EmojiText from './components/EmojiText.vue'
+import LoadError from './components/LoadError.vue'
 import AppShell from './components/AppShell.vue'
 import AchievementCard from './components/AchievementCard.vue'
 import AchievementUnlockedModal from './components/AchievementUnlockedModal.vue'
@@ -14,7 +15,7 @@ import { RARITIES, RARITY_COLOR } from './lib/rewards'
 import { t } from './lib/i18n'
 import type { DictKey } from './lib/i18n'
 
-const { auth, states, hiddenStates, unlocked, newlyUnlocked, mode, error, loading, init } = useAchievements()
+const { auth, states, hiddenStates, unlocked, newlyUnlocked, mode, error, loading, init, reload } = useAchievements()
 onMounted(init)
 
 // Поздравление показываем один раз: после закрытия список очищается (в хранилище достижение уже записано, повторно не придёт).
@@ -51,7 +52,7 @@ const overallPercent = computed(() => (total.value ? Math.round((openCount.value
     <p v-if="auth.status === 'loading' || (auth.status === 'ready' && loading && !states.length)" class="dim">…</p>
 
     <template v-else-if="auth.status === 'ready'">
-      <p v-if="error" class="dim">{{ t('comm_load_error') }} {{ error }}</p>
+      <LoadError v-if="error" :message="error" :retry="reload" />
 
       <template v-else>
         <div class="mb-5 rounded-xl border p-3" style="background: var(--bg-card); border-color: var(--border)" data-testid="achievements-summary">

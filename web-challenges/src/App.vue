@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
+import LoadError from './components/LoadError.vue'
 import CatalogModal from './components/CatalogModal.vue'
 import CustomChallengeForm from './components/CustomChallengeForm.vue'
 import DailyChallengeCard from './components/DailyChallengeCard.vue'
@@ -27,6 +28,7 @@ const {
   sourceExerciseName,
   error,
   init,
+  reload,
   startFromTemplate,
   startCustom,
   updateChallenge,
@@ -114,7 +116,7 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
 
     <template v-else-if="auth.status === 'ready'">
       <h2 class="mb-2 mt-4 text-base font-medium"><EmojiText :text="t('ch_active_h2')" /></h2>
-      <p v-if="error" class="dim">{{ t('comm_load_error') }} {{ error }} — {{ t('ch_migration_hint') }}</p>
+      <LoadError v-if="error" :message="error" :retry="reload"> — {{ t('ch_migration_hint') }}</LoadError>
       <template v-else>
         <p v-if="active.length === 0" class="dim">{{ t('ch_no_active') }}</p>
         <template v-for="ch in active" :key="ch.id">
