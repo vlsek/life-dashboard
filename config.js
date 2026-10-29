@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.59";
+const SITE_VERSION = "6.60";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.60", date: "2026-10-29 06:00", changes: [
+        "Исправлено: если сервер отвечал 503/429 (временный сбой), запись без сети помечалась «отклонена» и не отправлялась повторно — теперь остаётся в очереди и уходит позже. Внутри: автотесты офлайна проверяют очередь на 100 записей, две вкладки и перевод часов вперёд/назад. Без миграций."
+    ]},
     { version: "6.59", date: "2026-10-29 04:28", changes: [
         "«Кастомизация» → «Стиль иконок»: шестой набор «Акцентный» — двухцветные иконки: контур цветом текста, подложка цветом акцента вашей темы (меняется вместе с темой). Бесплатно, без миграций."
     ]},
@@ -2593,6 +2596,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.60", date: "2026-10-29 06:00", changes: [
+        "Fixed: when the server answered 503/429 (a temporary failure), an offline write was marked “rejected” and never retried — it now stays in the queue and is sent later. Under the hood: offline autotests cover a 100-entry queue, two tabs and clock changes. No migrations."
+    ]},
     { version: "6.59", date: "2026-10-29 04:28", changes: [
         "Customization → Icon style: a sixth set, “Accent” — two-tone icons: outline in the text color, tint in your theme accent color (changes with the theme). Free, no migrations."
     ]},

@@ -1,7 +1,14 @@
 {
-  "version": "6.59",
+  "version": "6.60",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.60",
+      "date": "2026-10-29 06:00",
+      "changes": [
+        "Fixed: when the server answered 503/429 (a temporary failure), an offline write was marked “rejected” and never retried — it now stays in the queue and is sent later. Under the hood: offline autotests cover a 100-entry queue, two tabs and clock changes. No migrations."
+      ]
+    },
     {
       "version": "6.59",
       "date": "2026-10-29 04:28",
@@ -4683,6 +4690,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.60",
+      "date": "2026-10-29 06:00",
+      "changes": [
+        "Исправлено: если сервер отвечал 503/429 (временный сбой), запись без сети помечалась «отклонена» и не отправлялась повторно — теперь остаётся в очереди и уходит позже. Внутри: автотесты офлайна проверяют очередь на 100 записей, две вкладки и перевод часов вперёд/назад. Без миграций."
+      ]
+    },
     {
       "version": "6.59",
       "date": "2026-10-29 04:28",
