@@ -185,6 +185,8 @@ function paint(){
  document.getElementById('sideKicker').textContent=info[mode].kicker;
  document.getElementById('front').style.display=view==='front'?'':'none';
  document.getElementById('back').style.display=view==='back'?'':'none';
+ document.querySelector('.anatomy-extra-front').style.display=mode==='anatomy'&&view==='front'?'block':'none';
+ document.querySelector('.anatomy-extra-back').style.display=mode==='anatomy'&&view==='back'?'block':'none';
  document.querySelector('.atlas-front-labels').style.display=view==='front'?'':'none';
  document.querySelector('.atlas-back-labels').style.display=view==='back'?'':'none';
  document.querySelectorAll('[data-muscle]').forEach(el=>{
