@@ -17,6 +17,18 @@ import os, re, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 COORD = os.path.join(ROOT, 'COORDINATION.md')
 OUT = os.path.join(ROOT, 'docs', 'pending_migrations_bundle.sql')
+BASELINE = os.path.join(ROOT, 'docs', 'sql-checks', 'migrations_applied_baseline.txt')  # «применено по N включительно» — подтверждение владельца
+
+
+def baseline():
+    """Номер, по который (включительно) владелец подтвердил применение. Миграции с номером <= baseline в сводку не идут. Нет файла — 0."""
+    if not os.path.exists(BASELINE):
+        return 0
+    for line in open(BASELINE, encoding='utf-8'):
+        line = line.strip()
+        if line and not line.startswith('#') and line.isdigit():
+            return int(line)
+    return 0
 
 
 def read(p):
@@ -103,7 +115,10 @@ def lint(name, sql):
 def main():
     check = '--check' in sys.argv
     pend, applied = pending_names(read(COORD))
-    cat = catalog_names() - pend
+    base = baseline()
+    below = sorted(n for n in (pend | catalog_names()) if int(n[:3]) <= base)  # применено владельцем (<= базовой линии)
+    pend = {n for n in pend if int(n[:3]) > base}
+    cat = {n for n in catalog_names() - pend if int(n[:3]) > base}
     names = sorted(pend | cat, key=sort_key)
     missing = [n for n in names if not os.path.exists(os.path.join(ROOT, 'migrations', n + '.sql'))]
     if missing:
@@ -117,10 +132,26 @@ def main():
     # одинаковые номера — не ошибка, но стоит знать
     nums = [n[:3] for n in names]
     dup = sorted({x for x in nums if nums.count(x) > 1})
+    if not parts:
+        text = '\n'.join([
+            '-- ============================================================================',
+            '-- СВОДНЫЙ ФАЙЛ ОЖИДАЮЩИХ МИГРАЦИЙ (собран скриптом scripts/build_pending_migrations.py, руками не править)',
+            '-- СЕЙЧАС ОЖИДАЮЩИХ МИГРАЦИЙ НЕТ: владелец подтвердил применение по %03d включительно.' % base,
+            '-- Когда агенты добавят новые миграции (номер больше %03d), они появятся в этом файле автоматически — открывайте только его.' % base,
+            '-- ============================================================================',
+            "select 'ожидающих миграций нет (применено по %03d)' as \"результат\";" % base,
+        ]) + '\n'
+        print('В сводке: 0 файлов (применено по %03d включительно; пропущено как применённые: %d)' % (base, len(below)))
+        if not check:
+            with open(OUT, 'w', encoding='utf-8') as f:
+                f.write(text)
+            print('записан', os.path.relpath(OUT, ROOT), '(пустая сводка)')
+        return
 
     head = [
         '-- ============================================================================',
         '-- СВОДНЫЙ ФАЙЛ ОЖИДАЮЩИХ МИГРАЦИЙ (собран скриптом scripts/build_pending_migrations.py, руками не править)',
+        '-- Владелец подтвердил применение по %03d включительно — всё, что новее, ниже.' % base,
         '-- Состав (%d файлов): %d миграций из раздела «Ждёт владельца» COORDINATION.md (пункты «применить миграцию …») + %d «страховочных» миграций' % (len(parts), len(pend), len(cat)),
         '-- каталога цен (*catalog*: только insert … on conflict do update — безопасны всегда; агенты не всегда вписывают их в «Ждёт владельца»,',
         '-- а предмет без строки каталога купить нельзя: «неизвестный предмет»).',
