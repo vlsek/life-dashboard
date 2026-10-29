@@ -1,7 +1,14 @@
 {
-  "version": "6.66",
+  "version": "6.67",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.67",
+      "date": "2026-10-29 08:57",
+      "changes": [
+        "Phone: buttons and tabs that were smaller than 32 px (Shop tabs, Achievements filters, Skills chips, Calendar arrows, the version button) are now at least 32 px, so they are easier to tap. Larger buttons are unchanged. The same now applies to Dashboard, Workouts and Customization. No migrations."
+      ]
+    },
     {
       "version": "6.66",
       "date": "2026-10-29 09:30",
@@ -4732,6 +4739,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.67",
+      "date": "2026-10-29 08:57",
+      "changes": [
+        "Телефон: кнопки и вкладки, которые были мельче 32 px (вкладки «Магазина», фильтры «Достижений», чипы «Навыков», стрелки «Календаря», кнопка версии), теперь не меньше 32 px — попасть пальцем легче. Крупные кнопки не изменились. То же теперь на «Дашборде», «Тренировках» и в «Кастомизации». Без миграций."
+      ]
+    },
     {
       "version": "6.66",
       "date": "2026-10-29 09:30",
