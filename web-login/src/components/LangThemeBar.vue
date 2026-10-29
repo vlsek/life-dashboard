@@ -6,7 +6,7 @@ import { getTheme, setTheme, LOGIN_THEMES, type ThemeKey } from '../lib/theme'
 // Вход (BACKLOG 49.8, оформление — BACKLOG 68.1): вместо выпадашки из 23 тем — язык и выбор «Светлая / Тёмная». Теперь это ДВЕ компактные пилюли
 // (язык слева, тема справа) вместо ряда из четырёх одинаковых кнопок с эмодзи. Тема — солнце и луна в одной пилюле: выбор явный, у каждой кнопки есть
 // aria-pressed и имя для скринридера. Весь остальной выбор тем — в «Кастомизации» после входа. Если у человека уже выбрана другая тема,
-// ни одна из двух не подсвечена. Класс `secondary` — не стилевой, а сигнал темам («Чернильная бумага» и др.): это не обычная кнопка, не рисовать на ней свою рамку и не сбрасывать фон выбранной пилюли.
+// ни одна из двух не подсвечена. Подписи — login_theme_* (без эмодзи): theme_light/theme_dark с эмодзи принадлежат генератору apply_themes.py и нужны в списках тем. Класс `secondary` — не стилевой, а сигнал темам («Чернильная бумага» и др.): это не обычная кнопка, не рисовать на ней свою рамку и не сбрасывать фон выбранной пилюли.
 const lang = getLang()
 const themeVal = ref<ThemeKey>(getTheme())
 
@@ -39,8 +39,8 @@ function pickTheme(k: ThemeKey) {
         class="bar-btn seg-btn seg-icon secondary cursor-pointer"
         :class="{ 'seg-on': themeVal === k }"
         :aria-pressed="themeVal === k"
-        :aria-label="t(('theme_' + k) as DictKey)"
-        :title="t(('theme_' + k) as DictKey)"
+        :aria-label="t(('login_theme_' + k) as DictKey)"
+        :title="t(('login_theme_' + k) as DictKey)"
         :data-theme-btn="k"
         @click="pickTheme(k)"
       >

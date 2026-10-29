@@ -40,6 +40,13 @@ is_built_path() { # файл лежит в собранной папке (или
   [[ "$OUTDIRS" == *" $top "* ]]
 }
 
+# git pull --rebase молча отказывается, если в дереве есть несохранённые изменения (например, локальные сборки после `npm run build`) —
+# раньше скрипт шёл дальше на СТАРОЙ базе и собирал/коммитил поверх неё. Теперь останавливаемся сразу.
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "СТОП: есть незакоммиченные изменения — закоммитьте их (git add -A <папки>; git commit) или откатите; иначе git pull --rebase откажется"
+  git status --short | head -8
+  exit 2
+fi
 git fetch -q || { echo "git fetch не удался"; exit 2; }
 OLDBASE=$(git merge-base HEAD origin/main)
 MINE=$(git diff --name-only "$OLDBASE" HEAD)
@@ -64,6 +71,10 @@ if [ "$(git rev-list --count HEAD..origin/main)" != "0" ]; then
   done
   if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
     echo "rebase не завершён — смотрите git status"; exit 1
+  fi
+  git fetch -q
+  if [ "$(git rev-list --count HEAD..origin/main)" != "0" ] && [ ! -d .git/rebase-merge ]; then
+    echo "СТОП: после git pull --rebase всё ещё позади origin/main на $(git rev-list --count HEAD..origin/main) коммит(ов) — pull не удался, смотрите git status"; exit 2
   fi
 else
   echo "origin/main не ушёл вперёд — ребейз не нужен"

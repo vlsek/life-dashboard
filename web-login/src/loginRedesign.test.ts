@@ -76,7 +76,10 @@ describe('вход (68.1): панель языка и темы', () => {
       expect(b.find('svg').exists()).toBe(true)
       expect(b.text()).toBe('')
     }
-    expect(readFileSync('src/lib/i18n.ts', 'utf-8')).not.toMatch(/theme_(light|dark):\s*'[^']*[☀🌑]/u)
+    // подписи иконок — свои ключи login_theme_* (без эмодзи); theme_light/theme_dark с эмодзи генерирует scripts/apply_themes.py — их руками не правим
+    const dict = readFileSync('src/lib/i18n.ts', 'utf-8')
+    expect(dict).toMatch(/login_theme_light: '[^☀🌑'][^']*'/u)
+    expect(dict).not.toMatch(/login_theme_(light|dark): '[^']*[☀🌑]/u)
   })
   it('кнопки панели — класс secondary, чтобы темы («Чернильная бумага») не сбрасывали фон выбранной пилюли и не рисовали рамку; то же у глаза пароля', () => {
     const bar = readFileSync('src/components/LangThemeBar.vue', 'utf-8')
