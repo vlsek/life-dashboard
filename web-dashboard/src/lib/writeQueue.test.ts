@@ -99,4 +99,20 @@ describe('createWriteQueue', () => {
     await Promise.all([a, b])
     expect(order).toEqual(['q2', 'q1'])
   })
+  it('две очереди с одним именем блокировки (две вкладки) выполняют задания строго по одному', async () => {
+    const held = new Map<string, Promise<unknown>>()
+    const locks = { request: (name: string, job: () => Promise<unknown>) => { const p = (held.get(name) ?? Promise.resolve()).then(job); held.set(name, p.catch(() => undefined)); return p } }
+    Object.defineProperty(globalThis, 'navigator', { value: { locks }, configurable: true })
+    try {
+      const q1 = createWriteQueue('w')
+      const q2 = createWriteQueue('w')
+      const order: string[] = []
+      const a = q1.run(async () => { order.push('a1'); await sleep(15); order.push('a2') })
+      const b = q2.run(async () => { order.push('b1'); await sleep(1); order.push('b2') })
+      await Promise.all([a, b])
+      expect(order).toEqual(['a1', 'a2', 'b1', 'b2'])
+    } finally {
+      Reflect.deleteProperty(globalThis, 'navigator')
+    }
+  })
 })

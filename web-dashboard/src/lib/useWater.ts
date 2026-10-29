@@ -47,7 +47,7 @@ export function useWater() {
   const logAvailable = ref<boolean | null>(null)
   // Очередь записей значения дня (BACKLOG 24 🐞 «23:16»): добавление/правка/отмена идут строго по одной, а «сегодня» обновляется
   // сразу, оптимистично: pendingToday — сколько мл уже нажато, но ещё не подтверждено записью (чтобы при серии нажатий число не «прыгало назад»).
-  const writeQueue = createWriteQueue()
+  const writeQueue = createWriteQueue('ld-water-write')
   let pendingToday = 0
   let logTail: Promise<unknown> = Promise.resolve()
   function enqueueLog(job: () => Promise<void>) {

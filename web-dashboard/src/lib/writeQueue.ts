@@ -10,11 +10,17 @@ export interface WriteQueue {
   idle(): Promise<void>
 }
 
-export function createWriteQueue(): WriteQueue {
+// lockName — межвкладочная блокировка (Web Locks): «прочитать → прибавить → записать» из двух вкладок идёт строго по очереди, иначе вкладка,
+// начавшая чтение раньше записи соседа, затирает его сумму (BACKLOG 66.13). Без поддержки Web Locks работает как раньше (в пределах вкладки).
+export function createWriteQueue(lockName?: string): WriteQueue {
   let tail: Promise<void> = Promise.resolve()
+  const exec = <T>(job: () => Promise<T>): Promise<T> => {
+    const locks = typeof navigator !== 'undefined' ? (navigator as Navigator & { locks?: LockManager }).locks : undefined
+    return lockName && locks ? (locks.request(lockName, job) as Promise<T>) : job()
+  }
   return {
     run<T>(job: () => Promise<T>): Promise<T> {
-      const result = tail.then(job)
+      const result = tail.then(() => exec(job))
       tail = result.then(
         () => undefined,
         () => undefined,
