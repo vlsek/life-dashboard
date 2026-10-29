@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.69";
+const SITE_VERSION = "6.70";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.70", date: "2026-10-27 14:00", changes: [
+        "Страница входа и регистрации обновлена: вверху компактные переключатели языка (EN/RU) и темы (солнце/луна), рядом с пламенем — название и подзаголовок «Привычки, цели и прогресс — в одном месте», в полях почты и пароля появились иконки, фон мягко светится цветом выбранной темы, на кнопке «Войти» видно, что идёт загрузка. Выбор светлой и тёмной темы остался прямо на входе. Без миграций.",
+    ]},
     { version: "6.69", date: "2026-10-29 13:40", changes: [
         "Дашборд: над ежедневными метриками появился список «Осталось на сегодня» — невыполненное на сегодня одним взглядом. Булевую метрику можно отметить одним касанием прямо из списка, у числовых виден прогресс (например, 3 / 8 стаканов) и кнопка «К полю». Ближе к закрытию — выше. Лимиты («не больше N»), «N раз в неделю» и пропущенные дни в список не попадают. Пункты плана добавим следующим шагом. Без миграций."
     ]},
@@ -2623,8 +2626,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.70", date: "2026-10-27 14:00", changes: [
+        "The sign-in and sign-up page has been refreshed: compact language (EN/RU) and theme (sun/moon) switches at the top, the title with a subtitle \"Habits, goals and progress — in one place\" next to the flame, icons inside the email and password fields, a soft glow in the chosen theme's colour, and a loading indicator on the sign-in button. Choosing the light or dark theme is still available right on the sign-in page. No migrations.",
+    ]},
     { version: "6.69", date: "2026-10-29 13:40", changes: [
-        "Dashboard: a new "Left for today" list sits above the daily metrics — what is still undone today at a glance. Tick a yes/no metric with one tap right from the list; number metrics show progress (for example 3 / 8 glasses) and a "Go to field" button. Closer to done means higher up. Limits ("at most N"), "N times a week" and skipped days are left out. Plan items come in the next step. No migrations."
+        "Dashboard: a new \"Left for today\" list sits above the daily metrics — what is still undone today at a glance. Tick a yes/no metric with one tap right from the list; number metrics show progress (for example 3 / 8 glasses) and a \"Go to field\" button. Closer to done means higher up. Limits (\"at most N\"), \"N times a week\" and skipped days are left out. Plan items come in the next step. No migrations."
     ]},
     { version: "6.68", date: "2026-10-29 11:30", changes: [
         "In the Android app: a short vibration when you tap “+” on water (nothing changes in the browser). The groundwork for water and workout reminders is in place; their settings screen comes later. No migrations."

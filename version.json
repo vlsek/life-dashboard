@@ -1,16 +1,19 @@
 {
-  "version": "6.69",
+  "version": "6.70",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.70",
+      "date": "2026-10-27 14:00",
+      "changes": [
+        "The sign-in and sign-up page has been refreshed: compact language (EN/RU) and theme (sun/moon) switches at the top, the title with a subtitle \"Habits, goals and progress — in one place\" next to the flame, icons inside the email and password fields, a soft glow in the chosen theme's colour, and a loading indicator on the sign-in button. Choosing the light or dark theme is still available right on the sign-in page. No migrations."
+      ]
+    },
     {
       "version": "6.69",
       "date": "2026-10-29 13:40",
       "changes": [
-        "Dashboard: a new ",
-        " list sits above the daily metrics — what is still undone today at a glance. Tick a yes/no metric with one tap right from the list; number metrics show progress (for example 3 / 8 glasses) and a ",
-        " button. Closer to done means higher up. Limits (",
-        "), ",
-        " and skipped days are left out. Plan items come in the next step. No migrations."
+        "Dashboard: a new \"Left for today\" list sits above the daily metrics — what is still undone today at a glance. Tick a yes/no metric with one tap right from the list; number metrics show progress (for example 3 / 8 glasses) and a \"Go to field\" button. Closer to done means higher up. Limits (\"at most N\"), \"N times a week\" and skipped days are left out. Plan items come in the next step. No migrations."
       ]
     },
     {
@@ -4757,6 +4760,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.70",
+      "date": "2026-10-27 14:00",
+      "changes": [
+        "Страница входа и регистрации обновлена: вверху компактные переключатели языка (EN/RU) и темы (солнце/луна), рядом с пламенем — название и подзаголовок «Привычки, цели и прогресс — в одном месте», в полях почты и пароля появились иконки, фон мягко светится цветом выбранной темы, на кнопке «Войти» видно, что идёт загрузка. Выбор светлой и тёмной темы остался прямо на входе. Без миграций."
+      ]
+    },
     {
       "version": "6.69",
       "date": "2026-10-29 13:40",
