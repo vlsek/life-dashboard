@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { haptic } from './lib/nativeFeedback'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useWorkouts } from './lib/useWorkouts'
 import { defaultWeightUnit } from './lib/weightUnit'
@@ -235,6 +236,7 @@ async function onSaveEntry(res: EntryFormInput) {
     else await wk.addEntry(exercise.id, auth.value.userId, res)
     entryForm.value = null
     showToast(t('workouts_toast_saved'))
+    haptic('success')
   } catch (e) {
     showToast(friendlyError(e, 'save'), 'error')
     console.error(e)
@@ -254,6 +256,7 @@ async function onQuickAddEntry(exercise: Exercise, res: EntryFormInput, done: (o
       await wk.addEntry(exercise.id, auth.value.userId, res)
       showToast(t('workouts_toast_saved'))
     }
+    haptic('success')
     done(true)
   } catch (e) {
     showToast(friendlyError(e, 'save'), 'error')
@@ -273,6 +276,7 @@ async function quickSets(entry: WorkoutEntry, change: (sets: WorkoutEntry['sets'
   try {
     await wk.editEntry(entry.id, { date: entry.date, sets: res.sets, notes: entry.notes })
     showToast(t(toastKey).replace('{n}', String(res.count)))
+    if (toastKey === 'workouts_toast_set_added') haptic('light') // «+ подход» — лёгкий отклик; «− подход» без вибро
   } catch (e) {
     showToast(friendlyError(e, 'save'), 'error')
     console.error(e)
