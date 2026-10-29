@@ -1,7 +1,14 @@
 {
-  "version": "6.60",
+  "version": "6.61",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.61",
+      "date": "2026-10-29 10:43",
+      "changes": [
+        "Texts: Customization now consistently uses the informal “you” (Russian version mixed “ты” and “вы”), and several hints got shorter — Looks, Themes, Rarity, the intro and “Coming next”. No migrations."
+      ]
+    },
     {
       "version": "6.60",
       "date": "2026-10-29 06:00",
@@ -4690,6 +4697,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.61",
+      "date": "2026-10-29 10:43",
+      "changes": [
+        "Тексты: в «Кастомизации» везде обращение на «ты» (раньше было смешано с «вы»), несколько подсказок стали короче — «Образы», «Темы», «Редкость», вступление и «Скоро». Без миграций."
+      ]
+    },
     {
       "version": "6.60",
       "date": "2026-10-29 06:00",

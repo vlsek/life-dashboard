@@ -81,7 +81,7 @@ describe('страница «Кастомизация»: раздел «Темы
     expect(cards).toHaveLength(41)
     expect(w.findAll('[data-section="themes"] [data-favorite="true"]').map((c) => c.attributes('data-testid'))).toEqual(['theme-dark', 'theme-monet', 'theme-light', 'theme-pink'])
     expect(w.find('[data-testid="fav-count"]').text()).toBe('Любимых: 4 из 4')
-    expect(w.find('[data-section="themes"]').text()).toContain('Шесть тем — награды за достижения')
+    expect(w.find('[data-section="themes"]').text()).toContain('Темы — награды за достижения')
   })
 
   it('секция тем идёт до рамок аватарок', async () => {
