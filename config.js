@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.70";
+const SITE_VERSION = "6.71";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.71", date: "2026-10-29 13:00", changes: [
+        "В приложении для Android в «Настройках» появился раздел «Напоминания на телефоне»: напоминание выпить воды (с какого до какого часа и как часто) и напоминание о тренировке (время и дни недели). Настройки хранятся на этом телефоне. В браузере раздела нет. Без миграций."
+    ]},
     { version: "6.70", date: "2026-10-27 14:00", changes: [
         "Страница входа и регистрации обновлена: вверху компактные переключатели языка (EN/RU) и темы (солнце/луна), рядом с пламенем — название и подзаголовок «Привычки, цели и прогресс — в одном месте», в полях почты и пароля появились иконки, фон мягко светится цветом выбранной темы, на кнопке «Войти» видно, что идёт загрузка. Выбор светлой и тёмной темы остался прямо на входе. Без миграций.",
     ]},
@@ -2626,6 +2629,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.71", date: "2026-10-29 13:00", changes: [
+        "In the Android app, Settings has a new “Phone reminders” section: a water reminder (from/to hour and how often) and a workout reminder (time and weekdays). The settings are kept on this phone. The section does not appear in the browser. No migrations."
+    ]},
     { version: "6.70", date: "2026-10-27 14:00", changes: [
         "The sign-in and sign-up page has been refreshed: compact language (EN/RU) and theme (sun/moon) switches at the top, the title with a subtitle \"Habits, goals and progress — in one place\" next to the flame, icons inside the email and password fields, a soft glow in the chosen theme's colour, and a loading indicator on the sign-in button. Choosing the light or dark theme is still available right on the sign-in page. No migrations.",
     ]},

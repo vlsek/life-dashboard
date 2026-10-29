@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import NativeRemindersSection from './NativeRemindersSection.vue'
-import { trackWater } from '../lib/waterTracking'
+import { trackWater as realTrackWater } from '../lib/waterTracking'
 
+const trackWater = realTrackWater as unknown as { value: boolean } // в моке это обычная ссылка, а тип — computed только для чтения
 // «Отслеживать воду» в настоящем модуле — computed только для чтения; подменяем изменяемой ссылкой
 vi.mock('../lib/waterTracking', async () => ({ trackWater: (await import('vue')).ref(true) }))
 

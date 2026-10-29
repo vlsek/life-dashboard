@@ -1,7 +1,14 @@
 {
-  "version": "6.70",
+  "version": "6.71",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.71",
+      "date": "2026-10-29 13:00",
+      "changes": [
+        "In the Android app, Settings has a new “Phone reminders” section: a water reminder (from/to hour and how often) and a workout reminder (time and weekdays). The settings are kept on this phone. The section does not appear in the browser. No migrations."
+      ]
+    },
     {
       "version": "6.70",
       "date": "2026-10-27 14:00",
@@ -4760,6 +4767,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.71",
+      "date": "2026-10-29 13:00",
+      "changes": [
+        "В приложении для Android в «Настройках» появился раздел «Напоминания на телефоне»: напоминание выпить воды (с какого до какого часа и как часто) и напоминание о тренировке (время и дни недели). Настройки хранятся на этом телефоне. В браузере раздела нет. Без миграций."
+      ]
+    },
     {
       "version": "6.70",
       "date": "2026-10-27 14:00",
