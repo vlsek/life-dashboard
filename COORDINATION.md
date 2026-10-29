@@ -81,7 +81,7 @@ BACKLOG 69.0 «Тренировки v2»: исследование и макет
 — свободен — (v5.46 первая тематическая большая тема Summer Meadow, 57.7 файл 2 тема 1; все пять светлых из файла 1 готовы (v4.99–v5.30). Дальше: файл 2 — Autumn Mood, Spring Awakening, Inferno, Eastern Tradition, Russian Heritage, American Retro, Deep Water и 55.3 по одной за заход; янтарный фосфор, вшитый шрифт JetBrains Mono — по согласованию с владельцем)
 
 ### Агент 5
-— свободен — (v6.66: 81.1 сердечко темы; v6.64: 66.13 вода из двух вкладок; 66.7 e2e офлайна)
+BACKLOG 66.9 срез 1 «Нативные плюсы»: вибро + локальные напоминания (вода, тренировка) в слое `android-app/native-shell.js`, плагины haptics/local-notifications, хук вибро при «+» воды в `web-dashboard/src/lib/useWater.ts`. ФАЙЛЫ: `android-app/*`, `useWater.ts`, сборка `dashboard/`. БЕЗ SQL. НА ТЕЛЕФОНЕ НЕ ПРОВЕРИТЬ (нет Android SDK). С: 2026-10-29 10:30. Прежний итог: v6.66: 81.1 сердечко темы
 
 ### Агент 6
 — свободен — (v6.67: 576 остаток — минимум цели нажатия 32 px в dashboard/workouts/customization; v6.65: 14 остальных пилотов)
