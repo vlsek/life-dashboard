@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import LoadError from './components/LoadError.vue'
+import ReadingGoalCard from './components/ReadingGoalCard.vue'
 import SkillForm from './components/SkillForm.vue'
 import SkillCard from './components/SkillCard.vue'
 import CoinIcon from './components/CoinIcon.vue'
@@ -199,6 +200,7 @@ async function onDeleteBook(b: Book) {
 
       <LoadError v-if="booksError" :message="booksError" :retry="reloadBooks" />
       <template v-else>
+        <ReadingGoalCard :books="books" />
         <CollapsibleSection id="books_todo" :title="t('skills_books_to_read_h3')" :count="activeBooks.length">
         <p v-if="activeBooks.length === 0" class="dim">{{ t('skills_book_list_empty') }}</p>
         <div v-else class="table-scroll overflow-x-auto" data-test="table-scroll">
