@@ -1,7 +1,14 @@
 {
-  "version": "6.77",
+  "version": "6.78",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.78",
+      "date": "2026-10-30 04:15",
+      "changes": [
+        "Dashboard: next to the streak, every daily metric now shows a habit strength, a smooth score from 0 to 100 percent. A completed day raises it and a miss lowers it, but a single miss after a long streak barely moves it. Metrics without a streak show the score too; it stays hidden until 7 days are counted. Weekly-count and at-most metrics are not scored. No migrations."
+      ]
+    },
     {
       "version": "6.77",
       "date": "2026-10-29 17:30",
@@ -4809,6 +4816,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.78",
+      "date": "2026-10-30 04:15",
+      "changes": [
+        "Дашборд: рядом с серией у каждой ежедневной метрики появилась «сила привычки» — плавная оценка от 0 до 100 процентов. Выполнение поднимает её, пропуск понижает, но один пропуск после длинной серии почти ничего не ломает. Метрики без серии тоже показывают оценку; пока учтено меньше 7 дней, её нет. «N раз в неделю» и лимиты «не больше N» в оценку не входят. Без миграций."
+      ]
+    },
     {
       "version": "6.77",
       "date": "2026-10-29 17:30",

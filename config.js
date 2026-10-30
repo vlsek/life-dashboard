@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.77";
+const SITE_VERSION = "6.78";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.78", date: "2026-10-30 04:15", changes: [
+        "Дашборд: рядом с серией у каждой ежедневной метрики появилась «сила привычки» — плавная оценка от 0 до 100 процентов. Выполнение поднимает её, пропуск понижает, но один пропуск после длинной серии почти ничего не ломает. Метрики без серии тоже показывают оценку; пока учтено меньше 7 дней, её нет. «N раз в неделю» и лимиты «не больше N» в оценку не входят. Без миграций."
+    ]},
     { version: "6.77", date: "2026-10-29 17:30", changes: [
         "«Календарь»: под сеткой месяца кнопка «Экспорт месяца (.ics)» — планы дней и сроки целей показанного месяца скачиваются файлом, который открывается в Google Календаре, Apple Календаре и Outlook (события на весь день, выполненное с галочкой). Если в месяце ничего нет, кнопка сообщит об этом. Без миграций."
     ]},
@@ -2647,6 +2650,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.78", date: "2026-10-30 04:15", changes: [
+        "Dashboard: next to the streak, every daily metric now shows a habit strength, a smooth score from 0 to 100 percent. A completed day raises it and a miss lowers it, but a single miss after a long streak barely moves it. Metrics without a streak show the score too; it stays hidden until 7 days are counted. Weekly-count and at-most metrics are not scored. No migrations."
+    ]},
     { version: "6.77", date: "2026-10-29 17:30", changes: [
         "Calendar: below the month grid there is an “Export month (.ics)” button — the day plans and goal deadlines of the shown month download as a file that opens in Google Calendar, Apple Calendar and Outlook (all-day events, completed items marked with a check). If the month is empty, the button says so. No migrations."
     ]},
