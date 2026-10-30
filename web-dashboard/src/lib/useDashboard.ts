@@ -5,6 +5,7 @@ import { getLang } from './i18n'
 import { fmtDate, todayStr } from './date'
 import { computeStreakItemsPure, type StreakItem } from './streaks'
 import { computeHabitScores, type HabitScore } from './habitScore'
+import type { YearGridData } from './yearGrid'
 import { computeDayProgressPure, computeWeekDaySegments, computeWeekProgressPure, getWeekDates, type WeekDaySegment, type ProgressResult, type PlannedItem, type GoalLite } from './progress'
 import { daySummary, weekSummary, type ProgressSummary } from './progressSummary'
 import { getDayProgressSettings, setDayProgressSettings, type DayProgressSettings } from './progressSettings'
@@ -25,6 +26,7 @@ export type AuthState =
 export function useDashboard() {
   const auth = ref<AuthState>({ status: 'loading' })
   const streaks = ref<StreakItem[]>([])
+  const yearData = ref<YearGridData | null>(null) // данные для год-сетки (BACKLOG 75.8): уже загруженное, второго запроса нет
   const habitScores = ref<Record<string, HabitScore>>({}) // «сила привычки» по метрикам (BACKLOG 75.1)
   const perfectInfo = ref<PerfectDayInfo | null>(null) // для окна «Идеальный день!» (usePerfectDay.ts)
   const dayProgress = ref<ProgressResult | null>(null)
@@ -135,6 +137,12 @@ export function useDashboard() {
 
     streaks.value = computeStreakItemsPure(metrics, byDay, noteDays, new Date())
     habitScores.value = computeHabitScores(metrics, byDay, new Date())
+    const yearNotes: Record<string, string[]> = {}
+    for (const [d, n] of Object.entries(notesByDate)) {
+      const items = (n.items || []).filter((x): x is string => typeof x === 'string' && x.trim() !== '')
+      if (items.length) yearNotes[d] = items
+    }
+    yearData.value = { metrics, byDay, notes: yearNotes, today: new Date() }
 
     const settings = getDayProgressSettings()
     progressSettings.value = settings
@@ -173,7 +181,7 @@ export function useDashboard() {
     if (currentUserId) await loadAll(currentUserId)
   }
 
-  return { auth, streaks, habitScores, perfectInfo, dayProgress, weekProgress, weekDays, summaries, progressSettings, loadError, accountCreatedAt, init, refresh, saveProgressSettings }
+  return { auth, streaks, habitScores, yearData, perfectInfo, dayProgress, weekProgress, weekDays, summaries, progressSettings, loadError, accountCreatedAt, init, refresh, saveProgressSettings }
 }
 
 export { fmtDate }

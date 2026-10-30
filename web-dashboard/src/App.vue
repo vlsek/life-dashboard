@@ -8,6 +8,7 @@ import StreakFlame from './components/StreakFlame.vue'
 import MetricIcon from './components/MetricIcon.vue'
 import WaterSection from './components/WaterSection.vue'
 import ChartsSection from './components/ChartsSection.vue'
+import YearGrid from './components/YearGrid.vue'
 import HeaderProgressBadge from './components/HeaderProgressBadge.vue'
 import { syncWeekGauge, weekGaugeStyle } from './lib/useWeekGauge'
 import { syncDayGauge } from './lib/useDayGauge'
@@ -65,7 +66,7 @@ import type { DayProgressSettings } from './lib/progressSettings'
 // с общей выбранной датой (см. DailyMetricsSection.vue). Раскладка блоков (показать/скрыть/переставить) —
 // lib/layout.ts + useLayout.ts + LayoutModal.vue, колонка profiles.dashboard_layout общая с классикой.
 
-const { auth, streaks, habitScores, perfectInfo, dayProgress, weekProgress, weekDays, summaries, progressSettings, loadError, accountCreatedAt, init, refresh, saveProgressSettings } = useDashboard()
+const { auth, streaks, habitScores, yearData, perfectInfo, dayProgress, weekProgress, weekDays, summaries, progressSettings, loadError, accountCreatedAt, init, refresh, saveProgressSettings } = useDashboard()
 // Список метрик изменили через шестерёнку «Ежедневных метрик» (BACKLOG 40): перечитываем общие данные и просим графики пересобраться
 const metricsRev = ref(0)
 async function onMetricsChanged() {
@@ -305,6 +306,7 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
               </SectionHeading>
               <div v-collapse="!chartsCollapsed" class="mb-5">
                 <ChartsSection :user-id="auth.userId" :metric-streaks="metricStreaks" :reload-key="metricsRev" @state="chartsState = $event" />
+                <YearGrid :data="yearData" />
               </div>
             </template>
           </template>
