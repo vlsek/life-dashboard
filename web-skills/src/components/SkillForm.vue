@@ -1,21 +1,25 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { t } from '../lib/i18n'
+import { matchCategory } from '../lib/skillsView'
 import type { SkillFormInput } from '../lib/types'
 
-const props = defineProps<{ isEdit: boolean; initial: SkillFormInput }>()
+// categoryEnabled — есть ли в базе колонка skills.category (миграция 112): без неё поле категории не показываем. categories — свои уже введённые категории (подсказка).
+const props = withDefaults(defineProps<{ isEdit: boolean; initial: SkillFormInput; categories?: string[]; categoryEnabled?: boolean }>(), { categories: () => [], categoryEnabled: false })
 const emit = defineEmits<{ close: []; save: [SkillFormInput] }>()
 
 const name = ref(props.initial.name)
 const step = ref(props.initial.step)
 const points = ref(props.initial.points)
+const category = ref(props.initial.category ?? '')
 
 const nameInput = ref<HTMLInputElement | null>(null)
 onMounted(() => nameInput.value?.focus())
 
 function onSubmit() {
   if (!name.value.trim()) return
-  emit('save', { name: name.value, step: Number(step.value) || 0, points: Number(points.value) || 0 })
+  // «выбор из своих»: совпало без учёта регистра с существующей категорией — берём её написание, чтобы «спорт» и «Спорт» не разъехались
+  emit('save', { name: name.value, step: Number(step.value) || 0, points: Number(points.value) || 0, category: matchCategory(category.value, props.categories) ?? '' })
 }
 </script>
 
@@ -28,6 +32,14 @@ function onSubmit() {
         <label class="flex flex-col gap-1 text-sm">
           {{ t('skills_field_name') }}
           <input ref="nameInput" v-model="name" type="text" required class="modal-input" />
+        </label>
+
+        <label v-if="categoryEnabled" class="flex flex-col gap-1 text-sm">
+          {{ t('skills_field_category') }}
+          <input v-model="category" type="text" maxlength="40" list="skill-categories" class="modal-input" :placeholder="t('skills_category_ph')" data-test="skill-category" autocomplete="off" />
+          <datalist id="skill-categories">
+            <option v-for="c in categories" :key="c" :value="c" />
+          </datalist>
         </label>
 
         <label class="flex flex-col gap-1 text-sm">
