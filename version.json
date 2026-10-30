@@ -1,7 +1,14 @@
 {
-  "version": "6.79",
+  "version": "6.80",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.80",
+      "date": "2026-10-30 12:00",
+      "changes": [
+        "Goals: an active multi-stage goal with a deadline now shows “Need ~N stages a week” under its chips. Once the goal is at least a week old, your pace and an “on track” or “behind” verdict appear next to it; with less history there is no verdict. Simple goals and goals without a deadline show nothing. No migrations."
+      ]
+    },
     {
       "version": "6.79",
       "date": "2026-10-29 19:30",
@@ -4823,6 +4830,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.80",
+      "date": "2026-10-30 12:00",
+      "changes": [
+        "Цели: у активной многоэтапной цели со сроком под чипами появилась строка «Нужно ~N эт. в неделю». Когда цели не меньше недели, рядом показывается твой темп и вердикт «успеваешь» или «отстаёшь»; пока истории мало, вердикта нет. У простых целей и целей без срока строки нет. Без миграций."
+      ]
+    },
     {
       "version": "6.79",
       "date": "2026-10-29 19:30",
