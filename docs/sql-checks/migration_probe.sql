@@ -6,7 +6,7 @@
 -- Это эвристика по тексту миграций, а не доказательство: миграция, которая только ИЗМЕНЯЕТ данные или тело функции, помечается «ℹ️»,
 -- а переименованный позже объект мог быть отсеян. Не уверены — пришлите результат целиком.
 -- Проверено: полностью мигрированная схема → ни одной ❌/⚠️; схема только с 001–056 → не хватает ровно у 057+.
--- Всего миграций в пробе: 110 (из них без проверяемых объектов: 2); объектов: 347.
+-- Всего миграций в пробе: 112 (из них без проверяемых объектов: 2); объектов: 374.
 -- Отсеяно как исчезнувшие/переименованные позже (на полностью мигрированной схеме их нет): 6.
 -- ============================================================================
 with probe(migration, kind, object, present) as (values
@@ -357,6 +357,33 @@ with probe(migration, kind, object, present) as (values
   ('109_catalog_day_lavender_gold', 'catalog', 'day_lavender', case when to_regclass('public.customization_catalog') is null then false else (xpath('/row/c/text()', query_to_xml(format('select count(*) as c from customization_catalog where item_key = %L', 'day_lavender'), false, true, '')))[1]::text::int > 0 end),
   ('109_catalog_day_lavender_gold', 'catalog', 'day_gold', case when to_regclass('public.customization_catalog') is null then false else (xpath('/row/c/text()', query_to_xml(format('select count(*) as c from customization_catalog where item_key = %L', 'day_gold'), false, true, '')))[1]::text::int > 0 end),
   ('110_catalog_collapse_circle', 'catalog', 'collapse_circle', case when to_regclass('public.customization_catalog') is null then false else (xpath('/row/c/text()', query_to_xml(format('select count(*) as c from customization_catalog where item_key = %L', 'collapse_circle'), false, true, '')))[1]::text::int > 0 end),
+  ('111_goal_reward', 'function', 'goal_is_done', exists(select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname = 'goal_is_done')),
+  ('111_goal_reward', 'function', 'shop_items_goal_guard', exists(select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname = 'shop_items_goal_guard')),
+  ('111_goal_reward', 'function', 'claim_goal_reward', exists(select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname = 'claim_goal_reward')),
+  ('111_goal_reward', 'function', 'get_friend_wishlist', exists(select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname = 'get_friend_wishlist')),
+  ('111_goal_reward', 'index', 'shop_items_goal_id_idx', exists(select 1 from pg_indexes where indexname = 'shop_items_goal_id_idx')),
+  ('111_goal_reward', 'trigger', 'shop_items_goal_guard', exists(select 1 from pg_trigger where tgname = 'shop_items_goal_guard' and not tgisinternal)),
+  ('111_goal_reward', 'column', 'shop_items.goal_id', exists(select 1 from information_schema.columns where table_schema = 'public' and table_name = 'shop_items' and column_name = 'goal_id')),
+  ('111_goal_reward', 'column', 'shop_items.reward_goal_name', exists(select 1 from information_schema.columns where table_schema = 'public' and table_name = 'shop_items' and column_name = 'reward_goal_name')),
+  ('113_workout_sessions', 'function', 'workout_touch_updated_at', exists(select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname = 'workout_touch_updated_at')),
+  ('113_workout_sessions', 'table', 'workout_routines', to_regclass('public.workout_routines') is not null),
+  ('113_workout_sessions', 'table', 'workout_routine_items', to_regclass('public.workout_routine_items') is not null),
+  ('113_workout_sessions', 'table', 'workout_sessions', to_regclass('public.workout_sessions') is not null),
+  ('113_workout_sessions', 'index', 'workout_routines_user_idx', exists(select 1 from pg_indexes where indexname = 'workout_routines_user_idx')),
+  ('113_workout_sessions', 'index', 'workout_routine_items_routine_idx', exists(select 1 from pg_indexes where indexname = 'workout_routine_items_routine_idx')),
+  ('113_workout_sessions', 'index', 'workout_routine_items_exercise_idx', exists(select 1 from pg_indexes where indexname = 'workout_routine_items_exercise_idx')),
+  ('113_workout_sessions', 'index', 'workout_sessions_user_date_idx', exists(select 1 from pg_indexes where indexname = 'workout_sessions_user_date_idx')),
+  ('113_workout_sessions', 'index', 'workout_sessions_one_active_idx', exists(select 1 from pg_indexes where indexname = 'workout_sessions_one_active_idx')),
+  ('113_workout_sessions', 'index', 'workout_entries_session_idx', exists(select 1 from pg_indexes where indexname = 'workout_entries_session_idx')),
+  ('113_workout_sessions', 'trigger', 'workout_routines_touch', exists(select 1 from pg_trigger where tgname = 'workout_routines_touch' and not tgisinternal)),
+  ('113_workout_sessions', 'trigger', 'workout_sessions_touch', exists(select 1 from pg_trigger where tgname = 'workout_sessions_touch' and not tgisinternal)),
+  ('113_workout_sessions', 'policy', 'own workout_routines on workout_routines', exists(select 1 from pg_policies where policyname = 'own workout_routines' and tablename = 'workout_routines')),
+  ('113_workout_sessions', 'policy', 'own workout_routine_items on workout_routine_items', exists(select 1 from pg_policies where policyname = 'own workout_routine_items' and tablename = 'workout_routine_items')),
+  ('113_workout_sessions', 'policy', 'own workout_sessions on workout_sessions', exists(select 1 from pg_policies where policyname = 'own workout_sessions' and tablename = 'workout_sessions')),
+  ('113_workout_sessions', 'column', 'workout_entries.session_id', exists(select 1 from information_schema.columns where table_schema = 'public' and table_name = 'workout_entries' and column_name = 'session_id')),
+  ('113_workout_sessions', 'column', 'workout_entries.position', exists(select 1 from information_schema.columns where table_schema = 'public' and table_name = 'workout_entries' and column_name = 'position')),
+  ('113_workout_sessions', 'column', 'workout_entries.superset_group', exists(select 1 from information_schema.columns where table_schema = 'public' and table_name = 'workout_entries' and column_name = 'superset_group')),
+  ('113_workout_sessions', 'column', 'profiles.workout_settings', exists(select 1 from information_schema.columns where table_schema = 'public' and table_name = 'profiles' and column_name = 'workout_settings')),
   ('012_planned_goals_jsonb', 'нет', 'нет проверяемых объектов', null::boolean),
   ('086_goal_horizon_week', 'нет', 'нет проверяемых объектов', null::boolean)
 ),
