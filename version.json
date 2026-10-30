@@ -1,7 +1,14 @@
 {
-  "version": "6.78",
+  "version": "6.79",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.79",
+      "date": "2026-10-29 19:30",
+      "changes": [
+        "Skills → Books: a new “Reading goal” card above the list: set how many books you want to read this year and see a progress ring, an “ahead of / behind plan by N books” line, your average pace and monthly bars (by the date a book was marked as read). The goal is kept on this device. No migrations."
+      ]
+    },
     {
       "version": "6.78",
       "date": "2026-10-30 04:15",
@@ -4816,6 +4823,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.79",
+      "date": "2026-10-29 19:30",
+      "changes": [
+        "«Навыки» → «Книги»: над списком появилась карточка «Цель чтения»: поставь, сколько книг хочешь прочитать за год, и увидишь кольцо прогресса, подпись «опережаешь / отстаёшь от плана на N книг», средний темп и столбики по месяцам (по дате, когда книга отмечена прочитанной). Цель хранится на этом устройстве. Без миграций."
+      ]
+    },
     {
       "version": "6.78",
       "date": "2026-10-30 04:15",
