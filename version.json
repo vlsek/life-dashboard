@@ -1,7 +1,14 @@
 {
-  "version": "6.80",
+  "version": "6.81",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.81",
+      "date": "2026-10-29 04:25",
+      "changes": [
+        "Shop and Community: while data is still loading, the page now says “Loading…” instead of “Nothing here yet” / “Empty for now”. On a slow connection a false empty state used to flash for a second, as if there were no items or friends. If loading fails you get an error with a “Try again” button, and a real empty state only appears after the answer."
+      ]
+    },
     {
       "version": "6.80",
       "date": "2026-10-30 12:00",
@@ -4830,6 +4837,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.81",
+      "date": "2026-10-29 04:25",
+      "changes": [
+        "«Магазин» и «Сообщество»: пока данные ещё грузятся, страница теперь пишет «Загрузка…», а не «Пока ничего нет» / «Пока пусто». Раньше на медленной сети на секунду мелькала ложная пустота, как будто вещей или друзей нет. Если загрузка не удалась, показывается ошибка с кнопкой «Повторить», а настоящая пустота — только после ответа."
+      ]
+    },
     {
       "version": "6.80",
       "date": "2026-10-30 12:00",
