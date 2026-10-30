@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import ChartBlock from './ChartBlock.vue'
+import LoadError from './LoadError.vue'
 import PeriodPicker from './PeriodPicker.vue'
 import Icon from './Icon.vue'
 import { useCategories } from '../lib/useCategories'
@@ -121,7 +122,7 @@ onMounted(async () => {
         <p class="dim mb-2.5 text-xs" data-testid="category-mode-hint">{{ t(hintKey as any) }}</p>
 
         <p v-if="rowsLoading" class="dim">…</p>
-        <p v-else-if="error" class="dim">{{ t('comm_load_error') }} {{ error }}</p>
+        <LoadError v-else-if="error" :message="error" :retry="refresh" />
         <p v-else-if="visibleRows.length === 0" class="dim">{{ t('comm_nobody_tracking') }}</p>
         <template v-else>
           <p v-if="myPlace" class="mb-2 text-sm font-medium" style="color: var(--accent)" data-testid="category-my-place">{{ t('comm_my_place').replace('{n}', String(myPlace.rank)).replace('{m}', String(myPlace.total)) }}</p>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
+import LoadError from './components/LoadError.vue'
 import MilestoneFormModal from './components/MilestoneFormModal.vue'
 import MarkDoneModal from './components/MarkDoneModal.vue'
 import HistoryModal from './components/HistoryModal.vue'
@@ -16,7 +17,7 @@ import Icon from './components/Icon.vue'
 import { confirmDialog } from './lib/confirmDialog'
 import { friendlyError } from './lib/friendlyError'
 
-const { auth, items, error, init, addMilestone, updateMilestone, markDone, deleteMilestone } = useMilestones()
+const { auth, items, error, init, reload, addMilestone, updateMilestone, markDone, deleteMilestone } = useMilestones()
 onMounted(init)
 
 const noCategory = computed(() => t('ms_no_category'))
@@ -187,7 +188,7 @@ function closeHistory() {
     <p v-if="auth.status === 'loading'" class="dim">…</p>
 
     <template v-else-if="auth.status === 'ready'">
-      <p v-if="error" class="dim">{{ t('comm_load_error') }} {{ error }}{{ errorHint }}</p>
+      <LoadError v-if="error" :message="error" :retry="reload">{{ errorHint }}</LoadError>
       <p v-if="saveError" class="mb-3 text-sm" style="color: var(--danger)">{{ saveError }}</p>
 
       <template v-if="!error">

@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.73";
+const SITE_VERSION = "6.77";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,18 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.77", date: "2026-10-29 17:30", changes: [
+        "«Календарь»: под сеткой месяца кнопка «Экспорт месяца (.ics)» — планы дней и сроки целей показанного месяца скачиваются файлом, который открывается в Google Календаре, Apple Календаре и Outlook (события на весь день, выполненное с галочкой). Если в месяце ничего нет, кнопка сообщит об этом. Без миграций."
+    ]},
+    { version: "6.76", date: "2026-10-29 19:27", changes: [
+        "Кнопка «Повторить» при ошибке загрузки теперь есть и на «Главной» (сводка и графики), и в «Сообществе» (рейтинг, «сегодня» и категории), а не только в «Магазине», «Целях», «Навыках», «Достижениях», «Вехах» и «Челленджах». Без сети — подсказка «Нет сети — проверь подключение». Заодно обновлён список страниц для работы без интернета (он устарел после последних сборок)."
+    ]},
+    { version: "6.75", date: "2026-10-29 16:00", changes: [
+        "«Челленджи» → свой челлендж: под полем «Длительность, дней» появились кнопки «7 дн.», «30 дн.», «100 дн.» — быстрый выбор одним нажатием; любое другое число по-прежнему можно ввести вручную. Без миграций."
+    ]},
+    { version: "6.74", date: "2026-10-29 19:07", changes: [
+        "Если страница не смогла загрузить данные (нет связи, сбой сервера), теперь под сообщением есть кнопка «Повторить»: не нужно перезагружать страницу. Без сети добавляется подсказка «Нет сети — проверь подключение». Сделано в «Магазине», «Целях», «Навыках» (и книгах), «Достижениях», «Вехах» и «Челленджах»; в «Магазине» после успешного повтора старое сообщение об ошибке исчезает."
+    ]},
     { version: "6.73", date: "2026-10-29 14:30", changes: [
         "В приложении для Android в «Тренировках» — короткий отклик вибрацией, когда запись или подход сохранились (в браузере ничего не меняется). Без миграций."
     ]},
@@ -2635,6 +2647,18 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.77", date: "2026-10-29 17:30", changes: [
+        "Calendar: below the month grid there is an “Export month (.ics)” button — the day plans and goal deadlines of the shown month download as a file that opens in Google Calendar, Apple Calendar and Outlook (all-day events, completed items marked with a check). If the month is empty, the button says so. No migrations."
+    ]},
+    { version: "6.76", date: "2026-10-29 19:27", changes: [
+        "The “Try again” button on load errors is now also on Home (summary and charts) and in Community (leaderboard, today and categories), not only in Shop, Goals, Skills, Achievements, Milestones and Challenges. Offline, it adds “You are offline — check your connection”. The list of pages available without internet was also refreshed (it had gone stale after the latest builds)."
+    ]},
+    { version: "6.75", date: "2026-10-29 16:00", changes: [
+        "Challenges → custom challenge: under the “Duration, days” field there are now “7 d”, “30 d” and “100 d” buttons for a quick pick; any other number can still be typed. No migrations."
+    ]},
+    { version: "6.74", date: "2026-10-29 19:07", changes: [
+        "When a page cannot load its data (no connection, server hiccup), the message now has a “Try again” button, so you no longer have to reload the whole page. Offline, it also says “You are offline — check your connection”. Done in Shop, Goals, Skills (and books), Achievements, Milestones and Challenges; in the Shop the old error message disappears after a successful retry."
+    ]},
     { version: "6.73", date: "2026-10-29 14:30", changes: [
         "In the Android app, Workouts gives a short vibration when an entry or a set is saved (nothing changes in the browser). No migrations."
     ]},

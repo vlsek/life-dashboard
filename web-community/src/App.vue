@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
+import LoadError from './components/LoadError.vue'
 import Icon from './components/Icon.vue'
 import ProfileModal from './components/ProfileModal.vue'
 import AchievementFeed from './components/AchievementFeed.vue'
@@ -31,7 +32,7 @@ const {
   auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
   leaderboard, leaderboardError, period, periodApi, badges, frames, myFrame, today, todayError, profile,
   feed, feedApi, myFeedPick, feedPickApi, saveFeedPick,
-  init, setPeriod, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
+  init, reload, setPeriod, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
 } = useCommunity()
 // «В сети» / «был(а) N назад» у друзей (BACKLOG 48.2): отметки раз в минуту, пока страница открыта; подпись пересчитывается тем же тиком
 const presenceMap = ref<Map<string, string>>(new Map())
@@ -254,7 +255,7 @@ const openedProfile = computed(() => {
       </div>
 
       <div v-show="tab === 'rating'" data-testid="tab-rating">
-      <p v-if="leaderboardError" class="dim mb-5">{{ t('comm_load_error') }} {{ leaderboardError }}</p>
+      <LoadError v-if="leaderboardError" :message="leaderboardError" :retry="reload" />
       <p v-else-if="visibleLeaderboard.length === 0" class="dim mb-5">{{ t('comm_empty') }}</p>
       <template v-else>
         <Podium :slots="podium" :my-id="myId" :badges="badges" :frames="frames" class="mb-3" @open="openedProfileId = $event" />
@@ -278,7 +279,7 @@ const openedProfile = computed(() => {
       <!-- Сегодня -->
       <h2 class="mb-2 text-lg font-medium"><EmojiText :text="t('comm_today_h2')" /></h2>
       <div class="card mb-5 rounded-lg border p-3.5" style="border-color: var(--border)">
-        <p v-if="todayError" class="dim">{{ t('comm_load_error') }} {{ todayError }}</p>
+        <LoadError v-if="todayError" :message="todayError" :retry="reload" />
         <p v-else-if="visibleToday.length === 0" class="dim">{{ t('comm_empty') }}</p>
         <div v-for="row in visibleToday" :key="row.user_id" class="flex gap-3 border-b py-2.5 last:border-0" style="border-color: var(--border)">
           <Avatar :name="row.display_name" :url="row.avatar_url" :size="40" :frame="frames.get(row.user_id)" />

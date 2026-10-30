@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
+import LoadError from './components/LoadError.vue'
 import GoalCard from './components/GoalCard.vue'
 import GoalForm from './components/GoalForm.vue'
 import SavedTick from './components/SavedTick.vue'
@@ -175,7 +176,7 @@ async function onDelete(g: Goal) {
     <p v-if="auth.status === 'loading'" class="dim">…</p>
 
     <template v-else-if="auth.status === 'ready'">
-      <p v-if="error" class="dim">{{ t('comm_load_error') }} {{ loadError }}</p>
+      <LoadError v-if="error" :message="loadError" :retry="reload" />
 
       <GoalInvites
         v-if="invites.available.value"

@@ -171,6 +171,7 @@ export function useShop() {
 
   async function reload() {
     if (auth.value.status !== 'ready') return
+    error.value = null // повтор после ошибки загрузки («Повторить»): старое сообщение уходит, новое появится, только если опять не вышло
     if (sparksMode.value) {
       await Promise.all([syncSparks(), loadGoals(auth.value.userId), loadItems(auth.value.userId)])
       return
@@ -252,5 +253,5 @@ export function useShop() {
     return data.publicUrl
   }
 
-  return { auth, items, archived, balance, goals, createdAt, error, init, addItem, updateItem, buyItem, claimReward, transferArchived, deleteItem, uploadImage }
+  return { auth, items, archived, balance, goals, createdAt, error, init, reload, addItem, updateItem, buyItem, claimReward, transferArchived, deleteItem, uploadImage }
 }

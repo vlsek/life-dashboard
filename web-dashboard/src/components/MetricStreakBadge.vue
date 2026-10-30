@@ -17,9 +17,17 @@ const title = computed(() => (props.info.todayCounted ? '' : t('dash_streak_not_
 </script>
 
 <template>
-  <span class="metric-streak" :class="{ unlit: !info.todayCounted }" :title="title" data-test="metric-streak">
-    <StreakFlame v-if="live" lit :days="info.streak" :size="16" />
-    <Icon v-else name="flame" extra-style="width: 0.95em; height: 0.95em; vertical-align: -0.12em" /><span class="n">{{ text }}</span>
+  <span
+    class="metric-streak"
+    :class="{ unlit: info.streak > 0 && !info.todayCounted, 'score-only': info.streak <= 0 }"
+    :title="title"
+    :data-test="info.streak > 0 ? 'metric-streak' : 'metric-score-only'"
+  >
+    <template v-if="info.streak > 0">
+      <StreakFlame v-if="live" lit :days="info.streak" :size="16" />
+      <Icon v-else name="flame" extra-style="width: 0.95em; height: 0.95em; vertical-align: -0.12em" /><span class="n">{{ text }}</span>
+    </template>
+    <span v-if="info.score != null" class="habit-score" :title="t('dash_habit_score_title')" data-test="habit-score">{{ info.score }}%</span>
   </span>
 </template>
 
@@ -43,5 +51,19 @@ const title = computed(() => (props.info.todayCounted ? '' : t('dash_streak_not_
   background: transparent;
   border: 1px solid var(--border);
   opacity: 0.85;
+}
+.habit-score {
+  margin-left: 4px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+.metric-streak.score-only {
+  margin-left: 6px;
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid var(--border);
+}
+.metric-streak.score-only .habit-score {
+  margin-left: 0;
 }
 </style>

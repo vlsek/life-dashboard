@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
+import LoadError from './components/LoadError.vue'
 import SkillForm from './components/SkillForm.vue'
 import SkillCard from './components/SkillCard.vue'
 import CoinIcon from './components/CoinIcon.vue'
@@ -17,8 +18,8 @@ import { confirmDialog } from './lib/confirmDialog'
 import CollapsibleSection from './components/CollapsibleSection.vue'
 import { filterSkills, normalizeSort, sortSkills, SORT_KEY, type SkillSort } from './lib/skillsView'
 
-const { auth, items: skills, error: skillsError, init, addSkill, updateSkill, deleteSkill, bumpProgress, toggleMastered } = useSkills()
-const { items: books, error: booksError, load: loadBooks, addBook, updateBook, deleteBook, toggleDone: toggleBookDone } = useBooks()
+const { auth, items: skills, error: skillsError, init, reload: reloadSkills, addSkill, updateSkill, deleteSkill, bumpProgress, toggleMastered } = useSkills()
+const { items: books, error: booksError, load: loadBooks, reload: reloadBooks, addBook, updateBook, deleteBook, toggleDone: toggleBookDone } = useBooks()
 
 onMounted(init)
 watch(auth, (v) => {
@@ -123,7 +124,7 @@ async function onDeleteBook(b: Book) {
     <p v-if="auth.status === 'loading'" class="dim">…</p>
 
     <template v-else-if="auth.status === 'ready'">
-      <p v-if="skillsError" class="dim">{{ t('comm_load_error') }} {{ skillsError }}</p>
+      <LoadError v-if="skillsError" :message="skillsError" :retry="reloadSkills" />
 
       <template v-else>
         <CollapsibleSection id="ideas" :title="t('skills_suggestions_h3')" :count="suggestions.length">
@@ -196,7 +197,7 @@ async function onDeleteBook(b: Book) {
         </button>
       </div>
 
-      <p v-if="booksError" class="dim">{{ t('comm_load_error') }} {{ booksError }}</p>
+      <LoadError v-if="booksError" :message="booksError" :retry="reloadBooks" />
       <template v-else>
         <CollapsibleSection id="books_todo" :title="t('skills_books_to_read_h3')" :count="activeBooks.length">
         <p v-if="activeBooks.length === 0" class="dim">{{ t('skills_book_list_empty') }}</p>

@@ -10,6 +10,7 @@ import TodayCard from './components/TodayCard.vue'
 import { todayStr } from './lib/date'
 import CalendarShowToggles from './components/CalendarShowToggles.vue'
 import { loadShow, saveShow, type ShowKey } from './lib/calendarShow'
+import { buildIcs, icsFileName, icsItemsFromMonth } from './lib/ics'
 
 const { auth, byDate, deadlines, today, init, loadMonth, loadToday, savePlanned } = useCalendar()
 
@@ -54,6 +55,23 @@ function toggleShow(k: ShowKey) {
   saveShow(show.value)
 }
 
+// Экспорт показанного месяца в .ics (BACKLOG 76.5): планы дней и сроки целей, что уже загружено для сетки
+const icsEmpty = ref(false)
+function exportIcs() {
+  const items = icsItemsFromMonth(byDate.value, deadlines.value, t('cal_ics_deadline'))
+  icsEmpty.value = items.length === 0
+  if (icsEmpty.value) return
+  const blob = new Blob([buildIcs(items)], { type: 'text/calendar;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = icsFileName(shownYear.value, shownMonth.value)
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+
 const openDate = ref<string | null>(null)
 function openDay(dateStr: string) {
   openDate.value = dateStr
@@ -85,6 +103,11 @@ async function onSaveDay(items: PlannedItem[]) {
          свайп по сетке и шапке месяца не выдвигает боковые плашки (внутри HistoryView — no-edge-swipe / data-no-swipe) -->
     <TodayCard v-if="show.today && today" :summary="today" :date="todayIso" @open="openDay" />
     <HistoryView ref="grid" mode="calendar" :show="show" :planned="byDate" :deadlines="deadlines" data-test="calendar-grid-view" @select-day="openDay" @month-change="onMonthChange" />
+
+    <div class="mt-3 flex flex-wrap items-center gap-2">
+      <button type="button" class="secondary px-3 py-2 text-sm" data-test="export-ics" @click="exportIcs">{{ t('cal_ics_btn') }}</button>
+      <span v-if="icsEmpty" class="text-xs" style="color: var(--text-dim)" role="status" data-test="export-ics-empty">{{ t('cal_ics_empty') }}</span>
+    </div>
 
     <DayModal
       v-if="openDate"
