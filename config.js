@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.78";
+const SITE_VERSION = "6.79";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.79", date: "2026-10-29 19:30", changes: [
+        "«Навыки» → «Книги»: над списком появилась карточка «Цель чтения»: поставь, сколько книг хочешь прочитать за год, и увидишь кольцо прогресса, подпись «опережаешь / отстаёшь от плана на N книг», средний темп и столбики по месяцам (по дате, когда книга отмечена прочитанной). Цель хранится на этом устройстве. Без миграций."
+    ]},
     { version: "6.78", date: "2026-10-30 04:15", changes: [
         "Дашборд: рядом с серией у каждой ежедневной метрики появилась «сила привычки» — плавная оценка от 0 до 100 процентов. Выполнение поднимает её, пропуск понижает, но один пропуск после длинной серии почти ничего не ломает. Метрики без серии тоже показывают оценку; пока учтено меньше 7 дней, её нет. «N раз в неделю» и лимиты «не больше N» в оценку не входят. Без миграций."
     ]},
@@ -2650,6 +2653,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.79", date: "2026-10-29 19:30", changes: [
+        "Skills → Books: a new “Reading goal” card above the list: set how many books you want to read this year and see a progress ring, an “ahead of / behind plan by N books” line, your average pace and monthly bars (by the date a book was marked as read). The goal is kept on this device. No migrations."
+    ]},
     { version: "6.78", date: "2026-10-30 04:15", changes: [
         "Dashboard: next to the streak, every daily metric now shows a habit strength, a smooth score from 0 to 100 percent. A completed day raises it and a miss lowers it, but a single miss after a long streak barely moves it. Metrics without a streak show the score too; it stays hidden until 7 days are counted. Weekly-count and at-most metrics are not scored. No migrations."
     ]},
