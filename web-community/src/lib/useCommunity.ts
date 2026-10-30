@@ -30,6 +30,7 @@ export function useCommunity() {
   const friendsApi = ref(false)
   const leaderboard = ref<LeaderboardRow[]>([])
   const leaderboardError = ref<string | null>(null)
+  const loaded = ref(false) // первая загрузка закончилась (успехом или ошибкой): до этого «пока никого» / «пусто» показывать нельзя — ложная пустота
   // период лидерборда; periodApi=false — миграция 046 не применена: переключатель скрыт, всё как раньше («всё время»)
   const period = ref<Period>('all')
   const periodApi = ref(true)
@@ -74,7 +75,12 @@ export function useCommunity() {
   async function reload() {
     if (auth.value.status !== 'ready') return
     const userId = auth.value.userId
-    await Promise.all([loadFriends(userId), loadLeaderboard(), loadBadges(), loadFeed(), loadFrames(), loadToday(), loadOwnProfile(userId)])
+    if (leaderboardError.value || todayError.value) loaded.value = false // повтор после ошибки: снова «Загрузка…», а не «пока никого»
+    try {
+      await Promise.all([loadFriends(userId), loadLeaderboard(), loadBadges(), loadFeed(), loadFrames(), loadToday(), loadOwnProfile(userId)])
+    } finally {
+      loaded.value = true
+    }
   }
 
   async function loadFriends(userId: string) {
@@ -269,7 +275,7 @@ export function useCommunity() {
 
   return {
     auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
-    leaderboard, leaderboardError, period, periodApi, badges, frames, myFrame, today, todayError, profile,
+    loaded, leaderboard, leaderboardError, period, periodApi, badges, frames, myFrame, today, todayError, profile,
     feed, feedApi, myFeedPick, feedPickApi, saveFeedPick,
     init, reload, setPeriod, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
   }

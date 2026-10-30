@@ -24,7 +24,7 @@ import EmojiText from './components/EmojiText.vue'
 import Icon from './components/Icon.vue'
 import { confirmDialog } from './lib/confirmDialog'
 
-const { auth, items, archived, balance, goals, createdAt, error, init, addItem, updateItem, buyItem, claimReward, reload, transferArchived, deleteItem, uploadImage } = useShop()
+const { auth, items, archived, balance, goals, loaded, createdAt, error, init, addItem, updateItem, buyItem, claimReward, reload, transferArchived, deleteItem, uploadImage } = useShop()
 onMounted(init)
 // Первый заход: полное описание идеи уже показывает плашка «Лавка наград» — общую подсказку страницы заранее считаем увиденной (она остаётся за значком «i»), чтобы две плашки не стояли друг над другом
 if (!loadIdeaSeen()) markHintSeen('shop')
@@ -128,6 +128,7 @@ async function onUpload(file: File): Promise<string | null> {
     <p v-if="justClaimed" class="goal-pop bought-toast relative mb-2 rounded-xl border px-3 py-2 text-sm font-medium" style="border-color: var(--accent)" role="status" data-testid="claimed-toast"><span class="bought-burst" aria-hidden="true" data-testid="claimed-burst"><i v-for="n in 6" :key="n" :style="{ '--a': n * 60 + 'deg' }" /></span><EmojiText :text="t('shop_reward_toast')" /> {{ justClaimed }}</p>
     <p v-if="actionError" class="mb-2 text-sm" style="color: var(--danger)" role="alert" data-testid="action-error">{{ actionError }}</p>
     <LoadError v-if="error" :message="error" :retry="reload" />
+    <p v-else-if="!loaded" class="dim" role="status" data-testid="shop-loading">{{ t('load_loading') }}</p>
     <div v-else-if="items.length === 0" class="card flex flex-col items-center gap-2 rounded-2xl border p-6 text-center" style="border-color: var(--border)" data-testid="shop-empty">
       <span class="text-4xl" style="color: var(--accent)" aria-hidden="true"><Icon name="gift" /></span>
       <p class="m-0 font-semibold">{{ t('shop_empty_title') }}</p>

@@ -29,6 +29,7 @@ export function useShop() {
   const archived = ref<ShopItem[]>([])
   const balance = ref<{ total: number; spent: number; bonus?: number; balance: number } | null>(null)
   const error = ref<string | null>(null)
+  const loaded = ref(false) // первая загрузка закончилась (успехом или ошибкой): до этого «пока ничего нет» показывать нельзя — это ложная пустота
   const goals = ref<GoalLite[]>([]) // цели человека — для «награды за цель» (миграция 111); нет доступа/ошибка — пустой список, магазин работает как раньше
   const createdAt = ref<string | null>(null) // дата регистрации — для «справедливой цены» по среднему заработку (58.4)
 
@@ -55,8 +56,12 @@ export function useShop() {
     // Режим огоньков: миграция 057 применена, если работает sync_streak_sparks() (она же начисляет и возвращает баланс). Иначе — монеты, как раньше.
     sparksMode.value = await syncSparks()
     if (sparksMode.value) await loadRubRate()
-    await loadGoals(userId)
-    await Promise.all([sparksMode.value ? Promise.resolve() : loadBalance(userId), loadItems(userId)])
+    try {
+      await loadGoals(userId)
+      await Promise.all([sparksMode.value ? Promise.resolve() : loadBalance(userId), loadItems(userId)])
+    } finally {
+      loaded.value = true
+    }
   }
 
   async function loadGoals(userId: string) {
@@ -171,12 +176,17 @@ export function useShop() {
 
   async function reload() {
     if (auth.value.status !== 'ready') return
+    if (error.value) loaded.value = false // повтор после ошибки: пока грузим заново, снова «Загрузка…», а не «пока ничего нет»
     error.value = null // повтор после ошибки загрузки («Повторить»): старое сообщение уходит, новое появится, только если опять не вышло
-    if (sparksMode.value) {
-      await Promise.all([syncSparks(), loadGoals(auth.value.userId), loadItems(auth.value.userId)])
-      return
+    try {
+      if (sparksMode.value) {
+        await Promise.all([syncSparks(), loadGoals(auth.value.userId), loadItems(auth.value.userId)])
+        return
+      }
+      await Promise.all([loadBalance(auth.value.userId), loadGoals(auth.value.userId), loadItems(auth.value.userId)])
+    } finally {
+      loaded.value = true
     }
-    await Promise.all([loadBalance(auth.value.userId), loadGoals(auth.value.userId), loadItems(auth.value.userId)])
   }
 
   async function addItem(userId: string, res: ShopItemFormInput) {
@@ -253,5 +263,5 @@ export function useShop() {
     return data.publicUrl
   }
 
-  return { auth, items, archived, balance, goals, createdAt, error, init, reload, addItem, updateItem, buyItem, claimReward, transferArchived, deleteItem, uploadImage }
+  return { auth, items, archived, balance, goals, loaded, createdAt, error, init, reload, addItem, updateItem, buyItem, claimReward, transferArchived, deleteItem, uploadImage }
 }

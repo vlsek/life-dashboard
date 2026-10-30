@@ -30,6 +30,7 @@ function setup(balance: number | null = 300, items?: ShopItem[]) {
     createdAt: ref(null),
     archived: ref([]),
     error: ref(null),
+    loaded: ref(true), // первая загрузка закончилась (без этого App показывает «Загрузка…»)
     init: vi.fn(),
     addItem: vi.fn(),
     updateItem: vi.fn(),

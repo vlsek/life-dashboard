@@ -14,6 +14,7 @@ function setup() {
     items: ref([{ id: 'movie', user_id: 'u', name: 'movie', link: null, cost: 150, image_url: null, redeemed: false, redeemed_date: null }]),
     balance: ref({ total: 400, spent: 100, balance: 300 }),
     error: ref(null),
+    loaded: ref(true), // первая загрузка закончилась (без этого App показывает «Загрузка…»)
     init: vi.fn(),
     addItem: vi.fn(),
     updateItem: vi.fn(),

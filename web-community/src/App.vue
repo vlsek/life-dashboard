@@ -30,7 +30,7 @@ import { loadTab, saveTab, type TabKey } from './lib/tabs'
 
 const {
   auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
-  leaderboard, leaderboardError, period, periodApi, badges, frames, myFrame, today, todayError, profile,
+  loaded, leaderboard, leaderboardError, period, periodApi, badges, frames, myFrame, today, todayError, profile,
   feed, feedApi, myFeedPick, feedPickApi, saveFeedPick,
   init, reload, setPeriod, unfollow, follow, sendFriendRequest, respondToRequest, removeFriend, saveProfile,
 } = useCommunity()
@@ -256,6 +256,7 @@ const openedProfile = computed(() => {
 
       <div v-show="tab === 'rating'" data-testid="tab-rating">
       <LoadError v-if="leaderboardError" :message="leaderboardError" :retry="reload" />
+      <p v-else-if="!loaded" class="dim mb-5" role="status" data-testid="comm-loading">{{ t('load_loading') }}</p>
       <p v-else-if="visibleLeaderboard.length === 0" class="dim mb-5">{{ t('comm_empty') }}</p>
       <template v-else>
         <Podium :slots="podium" :my-id="myId" :badges="badges" :frames="frames" class="mb-3" @open="openedProfileId = $event" />
@@ -280,6 +281,7 @@ const openedProfile = computed(() => {
       <h2 class="mb-2 text-lg font-medium"><EmojiText :text="t('comm_today_h2')" /></h2>
       <div class="card mb-5 rounded-lg border p-3.5" style="border-color: var(--border)">
         <LoadError v-if="todayError" :message="todayError" :retry="reload" />
+        <p v-else-if="!loaded" class="dim" role="status" data-testid="comm-today-loading">{{ t('load_loading') }}</p>
         <p v-else-if="visibleToday.length === 0" class="dim">{{ t('comm_empty') }}</p>
         <div v-for="row in visibleToday" :key="row.user_id" class="flex gap-3 border-b py-2.5 last:border-0" style="border-color: var(--border)">
           <Avatar :name="row.display_name" :url="row.avatar_url" :size="40" :frame="frames.get(row.user_id)" />
@@ -298,7 +300,7 @@ const openedProfile = computed(() => {
       <template v-if="feedApi">
         <h2 class="mb-2 text-lg font-medium"><EmojiText :text="t('comm_feed_h2')" /></h2>
         <div class="card mb-5 rounded-lg border p-3.5" style="border-color: var(--border)">
-          <AchievementFeed :rows="visibleFeed" :my-id="myId" :frames="frames" @open="openedProfileId = $event" />
+          <AchievementFeed :rows="visibleFeed" :loaded="loaded" :my-id="myId" :frames="frames" @open="openedProfileId = $event" />
           <p class="dim mb-0 mt-2 text-xs">{{ t('comm_feed_hint') }}</p>
         </div>
       </template>

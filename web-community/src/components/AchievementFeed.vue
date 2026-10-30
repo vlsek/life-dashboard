@@ -8,7 +8,7 @@ import type { FeedRow } from '../lib/types'
 
 // Лента достижений (BACKLOG 395): «кто что открыл» — только те значки, которые человек сам выбрал показывать (до 5).
 // Клик по строке раскрывает профиль человека (все его достижения).
-defineProps<{ rows: FeedRow[]; myId: string; frames?: Map<string, string> }>()
+withDefaults(defineProps<{ rows: FeedRow[]; myId: string; frames?: Map<string, string>; loaded?: boolean }>(), { loaded: true })
 const emit = defineEmits<{ open: [userId: string] }>()
 const title = (key: string) => t(('comm_badge_' + key) as never)
 function when(iso: string): string {
@@ -21,7 +21,8 @@ function when(iso: string): string {
 
 <template>
   <div data-testid="achievement-feed">
-    <p v-if="rows.length === 0" class="dim m-0" data-testid="feed-empty">{{ t('comm_feed_empty') }}</p>
+    <p v-if="!loaded" class="dim m-0" role="status" data-testid="feed-loading">{{ t('load_loading') }}</p>
+    <p v-else-if="rows.length === 0" class="dim m-0" data-testid="feed-empty">{{ t('comm_feed_empty') }}</p>
     <div
       v-for="(r, i) in rows"
       :key="r.user_id + r.key"
