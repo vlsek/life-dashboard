@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.79";
+const SITE_VERSION = "6.80";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.80", date: "2026-10-30 12:00", changes: [
+        "Цели: у активной многоэтапной цели со сроком под чипами появилась строка «Нужно ~N эт. в неделю». Когда цели не меньше недели, рядом показывается твой темп и вердикт «успеваешь» или «отстаёшь»; пока истории мало, вердикта нет. У простых целей и целей без срока строки нет. Без миграций."
+    ]},
     { version: "6.79", date: "2026-10-29 19:30", changes: [
         "«Навыки» → «Книги»: над списком появилась карточка «Цель чтения»: поставь, сколько книг хочешь прочитать за год, и увидишь кольцо прогресса, подпись «опережаешь / отстаёшь от плана на N книг», средний темп и столбики по месяцам (по дате, когда книга отмечена прочитанной). Цель хранится на этом устройстве. Без миграций."
     ]},
@@ -2653,6 +2656,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.80", date: "2026-10-30 12:00", changes: [
+        "Goals: an active multi-stage goal with a deadline now shows “Need ~N stages a week” under its chips. Once the goal is at least a week old, your pace and an “on track” or “behind” verdict appear next to it; with less history there is no verdict. Simple goals and goals without a deadline show nothing. No migrations."
+    ]},
     { version: "6.79", date: "2026-10-29 19:30", changes: [
         "Skills → Books: a new “Reading goal” card above the list: set how many books you want to read this year and see a progress ring, an “ahead of / behind plan by N books” line, your average pace and monthly bars (by the date a book was marked as read). The goal is kept on this device. No migrations."
     ]},

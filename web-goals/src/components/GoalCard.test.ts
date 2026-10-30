@@ -115,3 +115,15 @@ describe('GoalCard: chips', () => {
     expect(w.find('[data-test="goal-deadline"]').exists()).toBe(false)
   })
 })
+
+describe('GoalCard: прогноз «успеваю ли к сроку» (76.11)', () => {
+  const future = (d: number) => { const x = new Date(); x.setDate(x.getDate() + d); const p = (n: number) => String(n).padStart(2, '0'); return `${x.getFullYear()}-${p(x.getMonth() + 1)}-${p(x.getDate())}` }
+  it('у многоэтапной цели со сроком показывает «нужно в неделю»', () => {
+    const w = mountCard({ stages: 4, current_stage: 0, deadline: future(14), created_at: new Date().toISOString() })
+    expect(w.find('[data-test="goal-forecast"]').text()).toContain('2')
+  })
+  it('у простой цели и цели без срока строки нет', () => {
+    expect(mountCard({ deadline: future(14) }).find('[data-test="goal-forecast"]').exists()).toBe(false)
+    expect(mountCard({ stages: 4 }).find('[data-test="goal-forecast"]').exists()).toBe(false)
+  })
+})
