@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.81";
+const SITE_VERSION = "6.82";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.82", date: "2026-10-30 04:31", changes: [
+        "Дашборд: в блоке «Графики» появилась годовая сетка — квадрат на каждый день за год. Можно выбрать «Идеальные дни» (выполнено всё нужное в этот день) или одну метрику. Состояния различаются не только цветом: выполнено — заливка, пропуск — контур, выходной по расписанию — точка, сегодняшний день — пунктир; под сеткой есть подписи. Нажми на день, чтобы увидеть значение и заметки дня; работают и стрелки на клавиатуре. Дни до первой записи не считаются пропусками. Без миграций."
+    ]},
     { version: "6.81", date: "2026-10-29 04:25", changes: [
         "«Магазин» и «Сообщество»: пока данные ещё грузятся, страница теперь пишет «Загрузка…», а не «Пока ничего нет» / «Пока пусто». Раньше на медленной сети на секунду мелькала ложная пустота, как будто вещей или друзей нет. Если загрузка не удалась, показывается ошибка с кнопкой «Повторить», а настоящая пустота — только после ответа."
     ]},
@@ -2659,6 +2662,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.82", date: "2026-10-30 04:31", changes: [
+        "Dashboard: the Charts block now has a year grid, one square per day for the past year. Pick Perfect days (everything due that day done) or a single metric. States are told apart by more than color: done is filled, missed is an outline, a scheduled rest day is a dot, today is dashed, and labels sit below the grid. Tap a day to see its value and notes; arrow keys work too. Days before your first entry are not counted as misses. No migrations."
+    ]},
     { version: "6.81", date: "2026-10-29 04:25", changes: [
         "Shop and Community: while data is still loading, the page now says “Loading…” instead of “Nothing here yet” / “Empty for now”. On a slow connection a false empty state used to flash for a second, as if there were no items or friends. If loading fails you get an error with a “Try again” button, and a real empty state only appears after the answer."
     ]},
