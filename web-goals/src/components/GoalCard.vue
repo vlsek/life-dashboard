@@ -4,6 +4,7 @@ import CoinIcon from './CoinIcon.vue'
 import Icon from './Icon.vue'
 import SavedTick from './SavedTick.vue'
 import { deadlineLevel, stagePercent, stageProgress, stageTapTarget } from '../lib/goals'
+import { forecastGoal } from '../lib/forecast'
 import { t } from '../lib/i18n'
 import type { Goal } from '../lib/types'
 import { parseWeight, weightProgress, weightSpecOf } from '../lib/weightGoal'
@@ -49,6 +50,15 @@ const diffChip = computed(() => {
   const g = props.goal
   if (!g.difficulty) return null
   return { text: t(`goals_diff_${g.difficulty}` as 'goals_diff_easy'), color: diffColor[g.difficulty] || 'var(--text-dim)' }
+})
+// 76.11: «успеваю ли к сроку» — только у активной многоэтапной цели со сроком
+const forecast = computed(() => {
+  const f = forecastGoal(props.goal)
+  if (!f) return null
+  const n = (x: number) => String(x).replace('.', ',')
+  const parts = [t('goals_forecast_need').replace('{n}', n(f.needPerWeek))]
+  if (f.pacePerWeek != null) parts.push(t('goals_forecast_pace').replace('{n}', n(f.pacePerWeek)))
+  return { status: f.status, text: parts.join(' · '), verdict: f.status === 'ontrack' ? t('goals_forecast_ontrack') : f.status === 'behind' ? t('goals_forecast_behind') : '' }
 })
 const deadlineChip = computed(() => {
   const g = props.goal
@@ -101,6 +111,8 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
           <span v-if="deadlineChip" class="whitespace-nowrap rounded-full border px-2 py-0.5" :style="{ borderColor: deadlineChip.color, color: deadlineChip.color }" data-test="goal-deadline">{{ deadlineChip.text }}</span>
           <span class="ml-auto whitespace-nowrap rounded-full border px-2 py-0.5" style="border-color: var(--border)" data-test="goal-points">{{ goal.points ?? 5 }} <CoinIcon /></span>
         </div>
+
+        <p v-if="forecast" class="dim m-0 mt-1 text-xs" data-test="goal-forecast">{{ forecast.text }}<template v-if="forecast.verdict"> — <span :data-status="forecast.status" :style="{ color: forecast.status === 'behind' ? '#e0a93b' : 'var(--text-dim)' }">{{ forecast.verdict }}</span></template></p>
 
         <!-- цель на вес: полоса к целевому весу, «осталось N кг», ввод текущего веса -->
         <div v-if="wProg && wSpec" class="mt-2" data-test="goal-weight">
