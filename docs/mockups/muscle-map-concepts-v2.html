@@ -105,6 +105,11 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
 .mode-anatomy.layer-deep .anatomy-deep-front [data-state=none],.mode-anatomy.layer-deep .anatomy-deep-back [data-state=none]{fill:#55474b;stroke:#a18b89;opacity:.55}
 .mode-anatomy.layer-deep .anatomy-deep-front .is-selected,.mode-anatomy.layer-deep .anatomy-deep-back .is-selected{fill:#ffd166;stroke:#fff1c4;stroke-width:1.2}
 
+
+/* C / exoskeleton: a selected muscle drives its linked mechanical nodes. */
+.tech-joints [data-linked-muscle]{transition:r .15s,fill .15s,filter .15s,stroke .15s}
+.tech-joints [data-linked-muscle].is-linked{r:3.2;fill:#fff0a8;stroke:#ffad42;stroke-width:1.1;filter:drop-shadow(0 0 2.4px #ffad42)}
+
 </style>
 </head>
 <body class="mode-anatomy">
@@ -218,7 +223,7 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
               <path class="tech-shell" data-muscle="abs" d="M42 57 L49 57 L49 87 L42 85Z M51 57 L58 57 L58 85 L51 87Z"/>
               <path class="tech-shell" data-muscle="quads" d="M35 94 L48 96 L46 129 L39 135 L33 119Z M65 94 L52 96 L54 129 L61 135 L67 119Z"/>
               <path class="tech-shell" data-muscle="calves" d="M37 137 L46 137 L43 174 L35 176Z M63 137 L54 137 L57 174 L65 176Z"/>
-              <g class="tech-joints" aria-hidden="true"><circle cx="50" cy="41" r="2.2"/><circle cx="24" cy="51" r="2.2"/><circle cx="76" cy="51" r="2.2"/><circle cx="25" cy="72" r="1.8"/><circle cx="75" cy="72" r="1.8"/><circle cx="50" cy="91" r="2.4"/><circle cx="40" cy="132" r="2.5"/><circle cx="60" cy="132" r="2.5"/></g>
+              <g class="tech-joints" aria-hidden="true"><circle data-linked-muscle="chest" cx="50" cy="41" r="2.2"/><circle data-linked-muscle="shoulders" cx="24" cy="51" r="2.2"/><circle data-linked-muscle="shoulders" cx="76" cy="51" r="2.2"/><circle data-linked-muscle="biceps" cx="25" cy="72" r="1.8"/><circle data-linked-muscle="biceps" cx="75" cy="72" r="1.8"/><circle data-linked-muscle="forearms" cx="25" cy="96" r="1.8"/><circle data-linked-muscle="forearms" cx="75" cy="96" r="1.8"/><circle data-linked-muscle="abs" cx="50" cy="91" r="2.4"/><circle data-linked-muscle="quads" cx="40" cy="132" r="2.5"/><circle data-linked-muscle="quads" cx="60" cy="132" r="2.5"/><circle data-linked-muscle="calves" cx="40" cy="174" r="1.8"/><circle data-linked-muscle="calves" cx="60" cy="174" r="1.8"/></g>
               <g class="tech-markers" aria-hidden="true"><path d="M50 29 L50 34 M44 44 H56 M44 61 H56 M44 78 H56 M31 99 H69 M34 145 H46 M54 145 H66"/></g>
             </g>
             <g class="tech-geometry tech-back-geometry">
@@ -232,7 +237,7 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
               <path class="tech-shell" data-muscle="glutes" d="M38 91 L49 91 L49 108 L40 108 L35 99Z M62 91 L51 91 L51 108 L60 108 L65 99Z"/>
               <path class="tech-shell" data-muscle="hamstrings" d="M35 109 L48 109 L46 143 L39 147 L33 124Z M65 109 L52 109 L54 143 L61 147 L67 124Z"/>
               <path class="tech-shell" data-muscle="calves" d="M37 148 L46 148 L43 175 L35 176Z M63 148 L54 148 L57 175 L65 176Z"/>
-              <g class="tech-joints" aria-hidden="true"><circle cx="50" cy="41" r="2.2"/><circle cx="24" cy="51" r="2.2"/><circle cx="76" cy="51" r="2.2"/><circle cx="25" cy="72" r="1.8"/><circle cx="75" cy="72" r="1.8"/><circle cx="50" cy="91" r="2.4"/><circle cx="40" cy="132" r="2.5"/><circle cx="60" cy="132" r="2.5"/></g>
+              <g class="tech-joints" aria-hidden="true"><circle data-linked-muscle="back" cx="50" cy="41" r="2.2"/><circle data-linked-muscle="shoulders" cx="24" cy="51" r="2.2"/><circle data-linked-muscle="shoulders" cx="76" cy="51" r="2.2"/><circle data-linked-muscle="triceps" cx="25" cy="72" r="1.8"/><circle data-linked-muscle="triceps" cx="75" cy="72" r="1.8"/><circle data-linked-muscle="forearms" cx="25" cy="96" r="1.8"/><circle data-linked-muscle="forearms" cx="75" cy="96" r="1.8"/><circle data-linked-muscle="lower_back" cx="50" cy="91" r="2.4"/><circle data-linked-muscle="glutes" cx="40" cy="104" r="2.1"/><circle data-linked-muscle="glutes" cx="60" cy="104" r="2.1"/><circle data-linked-muscle="hamstrings" cx="40" cy="132" r="2.5"/><circle data-linked-muscle="hamstrings" cx="60" cy="132" r="2.5"/><circle data-linked-muscle="calves" cx="40" cy="174" r="1.8"/><circle data-linked-muscle="calves" cx="60" cy="174" r="1.8"/></g>
               <g class="tech-markers" aria-hidden="true"><path d="M50 29 L50 34 M44 44 H56 M44 61 H56 M44 78 H56 M31 99 H69 M34 145 H46 M54 145 H66"/></g>
             </g>
             <g class="anatomy-deep-front" aria-label="Глубокие мышцы передней поверхности">
@@ -352,7 +357,7 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
         <div class="mode-readout" aria-hidden="true">
           <div class="readout anatomy-readout"><span>ANATOMY / LAYER 02</span><b>Поверхностная группа</b><small>Форма и соседние мышечные слои</small></div>
           <div class="readout atlas-readout"><span>ATLAS / INDEX 04</span><b>Нагрузка за период</b><small>Сначала сравнение значений, затем детализация выбранной группы</small></div>
-          <div class="readout tech-readout"><span>UNIT 07 / TELEMETRY</span><b><i></i> SIGNAL RECEIVED</b><small>Источник: записанные подходы · DEMO CHANNEL</small></div>
+          <div class="readout tech-readout"><span>UNIT 07 / TELEMETRY</span><b><i></i> SIGNAL RECEIVED</b><small id="techChannel">Источник: записанные подходы · DEMO CHANNEL</small></div>
         </div>
         <div>
           <div class="muscle-list-title" id="muscleListTitle">ВЫБОР БЕЗ КАРТЫ / ПЕРЕДНЯЯ ПРОЕКЦИЯ</div>
@@ -411,6 +416,9 @@ function paint(){
  document.querySelectorAll('[data-layer]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.layer===layer)));
  document.querySelector('.atlas-front-labels').style.display=view==='front'?'':'none';
  document.querySelector('.atlas-back-labels').style.display=view==='back'?'':'none';
+ document.querySelectorAll('.tech-joints [data-linked-muscle]').forEach(el=>el.classList.toggle('is-linked',el.dataset.linkedMuscle===selected));
+ const channelCodes={shoulders:'AX-01',chest:'TH-02',biceps:'AR-03',forearms:'AR-04',abs:'CO-05',quads:'LG-06',calves:'LG-07',back:'SP-02',triceps:'AR-03B',lower_back:'SP-05',glutes:'LG-06B',hamstrings:'LG-07B'};
+ const techChannel=document.getElementById('techChannel');if(techChannel)techChannel.textContent='CHANNEL '+(channelCodes[selected]||'SYS-00')+' · '+(names[selected]||'MUSCLE').toUpperCase()+' / DEMO TELEMETRY';
  document.querySelectorAll('[data-muscle]').forEach(el=>{
   if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
   if(!el.hasAttribute('role')) el.setAttribute('role','button');
