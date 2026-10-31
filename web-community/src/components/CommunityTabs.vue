@@ -4,14 +4,14 @@ import { t } from '../lib/i18n'
 import type { DictKey } from '../lib/i18n'
 
 // Полоса вкладок «Сообщества»; на «Друзьях» — число входящих заявок (BACKLOG 44.13, срез 1)
-defineProps<{ modelValue: TabKey; requests?: number }>()
+withDefaults(defineProps<{ modelValue: TabKey; requests?: number; tabs?: readonly TabKey[] }>(), { requests: 0, tabs: () => TABS })
 const emit = defineEmits<{ 'update:modelValue': [TabKey] }>()
 </script>
 
 <template>
   <div class="mb-4 flex gap-1 overflow-x-auto border-b" style="border-color: var(--border)" role="tablist" :aria-label="t('comm_tabs_label')" data-testid="comm-tabs">
     <button
-      v-for="k in TABS"
+      v-for="k in tabs"
       :key="k"
       type="button"
       role="tab"

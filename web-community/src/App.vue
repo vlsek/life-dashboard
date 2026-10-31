@@ -26,7 +26,7 @@ import { loadFriendsPresence, presenceLabel } from './lib/presence'
 import { PERIODS, formatPoints, myPlace, podiumSlots, restRows, type Period } from './lib/leaderboardView'
 import { friendlyError } from './lib/friendlyError'
 import CommunityTabs from './components/CommunityTabs.vue'
-import { loadTab, saveTab, type TabKey } from './lib/tabs'
+import { effectiveTab, loadNoCompete, loadTab, saveNoCompete, saveTab, tabsFor, type TabKey } from './lib/tabs'
 
 const {
   auth, friendIds, followProfiles, acceptedProfiles, requests, friendsApi,
@@ -54,8 +54,15 @@ onMounted(init)
 
 const scope = ref<Scope>('everyone')
 // Вкладка страницы (BACKLOG 44.13): последняя открытая запоминается
-const tab = ref<TabKey>(loadTab())
+const noCompete = ref(loadNoCompete()) // «Без соревнований» (78.4)
+const shownTabs = computed(() => tabsFor(noCompete.value))
+const tab = ref<TabKey>(effectiveTab(loadTab(), noCompete.value))
 watch(tab, saveTab)
+function onNoCompete(e: Event) {
+  noCompete.value = (e.target as HTMLInputElement).checked
+  saveNoCompete(noCompete.value)
+  tab.value = effectiveTab(tab.value, noCompete.value)
+}
 const searchQuery = ref('')
 const followBusy = ref(false)
 const followMsg = ref<{ text: string; error: boolean } | null>(null)
@@ -234,14 +241,18 @@ const openedProfile = computed(() => {
       :avatar-url="myPlaceAll?.row.avatar_url ?? null"
       :points="myPlaceAll ? myPlaceAll.row.total_points : null"
       :streak="myPlaceAll?.row.perfect_streak ?? 0"
-      :rank="myPlaceAll?.rank ?? null"
+      :rank="noCompete ? null : (myPlaceAll?.rank ?? null)"
       :badges="badges.get(myId)"
       :frame="myFrame"
       @edit="showProfileModal = true"
     />
 
     <template v-if="auth.status === 'ready'">
-      <CommunityTabs v-model="tab" :requests="incomingRequests.length" />
+      <CommunityTabs v-model="tab" :requests="incomingRequests.length" :tabs="shownTabs" />
+      <label class="dim mb-3 flex cursor-pointer items-start gap-2 text-sm" data-testid="no-compete-toggle">
+        <input type="checkbox" class="mt-0.5" :checked="noCompete" data-testid="no-compete-input" @change="onNoCompete" />
+        <span>{{ t('comm_no_compete_label') }} <span class="text-xs">— {{ t('comm_no_compete_hint') }}</span></span>
+      </label>
 
       <!-- Область и период: общие для рейтинга, ленты и сравнения; на «Друзьях» не нужны -->
       <div v-if="tab !== 'friends'" class="mb-3 flex flex-wrap items-center justify-between gap-2">
