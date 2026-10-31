@@ -8,6 +8,7 @@ import { withWaterGoal } from './waterGoal'
 import { prepareImage, safeExt } from './imageResize'
 import { errorKind, friendlyError } from './friendlyError'
 import { isCustomizationPurchase } from './customizationPurchase'
+import { journalSince, ymd, type JournalSource, type SparkRow } from './sparksJournal'
 import { DEFAULT_RUB_PER_SPARK, DEFAULT_SPARKS_COST, coinsToSparksSuggestion, parseSparksRow, purchaseErrorKey, rubPerSpark, sparksMode } from './sparks'
 import { t } from './i18n'
 import { goalRewardErrorText, rewardState, type GoalLite } from './goalReward'
@@ -263,5 +264,20 @@ export function useShop() {
     return data.publicUrl
   }
 
-  return { auth, items, archived, balance, goals, loaded, createdAt, error, init, reload, addItem, updateItem, buyItem, claimReward, transferArchived, deleteItem, uploadImage }
+  // Журнал огоньков за 30 дней (78.5): только чтение по RLS «own streak_sparks read» (057); ошибка летит наружу — компонент покажет «повторить»
+  async function loadSparksJournal(userId: string): Promise<JournalSource> {
+    const since = journalSince(ymd(new Date()))
+    const [rows, mets, cfg] = await Promise.all([
+      sb.from('streak_sparks').select('day,metric_id,amount').eq('user_id', userId).gte('day', since),
+      sb.from('metrics').select('id,name').eq('user_id', userId),
+      sb.from('sparks_config').select('num').eq('key', 'daily_cap').maybeSingle(),
+    ])
+    if (rows.error) throw rows.error
+    const names: Record<string, string> = {}
+    for (const m of ((mets.data || []) as { id: string; name: string }[])) names[m.id] = m.name // сбой чтения метрик не критичен: останется «удалённая метрика»
+    const cap = (cfg.data as { num?: number | null } | null)?.num
+    return { rows: (rows.data || []) as SparkRow[], names, cap: typeof cap === 'number' ? cap : null }
+  }
+
+  return { loadSparksJournal, auth, items, archived, balance, goals, loaded, createdAt, error, init, reload, addItem, updateItem, buyItem, claimReward, transferArchived, deleteItem, uploadImage }
 }
