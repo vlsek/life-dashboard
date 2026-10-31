@@ -1,7 +1,14 @@
 {
-  "version": "6.83",
+  "version": "6.84",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.84",
+      "date": "2026-10-31 18:00",
+      "changes": [
+        "Workouts: a “Start workout” button opens a screen with a stopwatch. Add exercises, enter weight and reps with the “previous time” hint next to them, and tick each set; tap the set number to mark it as warm-up (W), drop set (D) or to failure (F). “Finish” saves everything as one workout; a workout with no completed sets isn’t saved. Closing the tab doesn’t lose it. Works without the new migration — entries are saved the old way."
+      ]
+    },
     {
       "version": "6.83",
       "date": "2026-10-29 21:00",
@@ -4851,6 +4858,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.84",
+      "date": "2026-10-31 18:00",
+      "changes": [
+        "«Тренировки»: кнопка «Начать тренировку» — открывается экран с секундомером. Добавляй упражнения, вводи вес и повторы, подсказка «прошлый раз» рядом, отмечай подход галочкой; нажми на номер подхода, чтобы пометить его разминкой (W), сбросом (D) или подходом до отказа (F). «Завершить» сохраняет всё одной тренировкой, пустую тренировку без выполненных подходов не сохраняет. Закрыл вкладку — тренировка не потерялась. Работает и без новой миграции, записи сохраняются как раньше."
+      ]
+    },
     {
       "version": "6.83",
       "date": "2026-10-29 21:00",
