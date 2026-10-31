@@ -4,6 +4,8 @@ import AppShell from './components/AppShell.vue'
 import LoadError from './components/LoadError.vue'
 import GoalCard from './components/GoalCard.vue'
 import GoalForm from './components/GoalForm.vue'
+import GoalTemplatesModal from './components/GoalTemplatesModal.vue'
+import { templateDraft, type GoalTemplate } from './lib/goalTemplates'
 import SavedTick from './components/SavedTick.vue'
 import Icon from './components/Icon.vue'
 import PointsFloat from './components/PointsFloat.vue'
@@ -121,15 +123,28 @@ const formInitial = computed<GoalFormInitial>(() => {
   if (g && g !== 'new') {
     return { name: g.name, points: g.points ?? 5, category: g.category, stages: g.stages ?? 1, difficulty: g.difficulty, deadline: g.deadline ?? '', horizon: g.horizon ?? null, weightMode: g.weight_mode ?? null, weightStart: g.weight_start ?? null, weightTarget: g.weight_target ?? null }
   }
-  return { name: '', points: 5, category: '', stages: 1, difficulty: null, deadline: '' }
+  return formDraft.value ?? { name: '', points: 5, category: '', stages: 1, difficulty: null, deadline: '' }
 })
+// Шаблоны целей (76.8): выбранный шаблон открывает обычную форму с заполненными полями
+const formDraft = ref<GoalFormInitial | null>(null)
+const templatesOpen = ref(false)
+const haveTemplates = computed(() => new Set(items.value.map((g) => g.name.trim().toLowerCase())))
+function onPickTemplate(tpl: GoalTemplate) {
+  templatesOpen.value = false
+  formDraft.value = templateDraft(tpl, getLang() === 'en' ? 'en' : 'ru')
+  formTarget.value = 'new'
+}
+function closeForm() {
+  formTarget.value = null
+  formDraft.value = null
+}
 // Ошибка записи НЕ глотается здесь: она летит в GoalForm, который покажет понятный текст и оставит форму открытой.
 async function onSaveForm(res: GoalFormInput) {
   const target = formTarget.value
   if (target === 'new') await addGoal((auth.value as { userId: string }).userId, res, noCategory.value)
   else if (target) await updateGoal(target, res, noCategory.value)
   void goalCats.ensure(res.category ?? '', noCategoryLabels) // новая категория запоминается в списке; сбой записи цель не задевает
-  formTarget.value = null
+  closeForm()
 }
 
 async function onDelete(g: Goal) {
@@ -145,7 +160,10 @@ async function onDelete(g: Goal) {
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
     <div class="mb-4 flex items-center justify-between">
       <h1 class="text-xl font-semibold"><EmojiText :text="t('goals_h1')" /></h1>
-      <button class="rounded-lg px-3 py-1.5 text-sm" data-test="goal-add" @click="formTarget = 'new'"><EmojiText :text="t('goals_add_btn')" /></button>
+      <div class="flex items-center gap-2">
+        <button class="secondary rounded-lg px-3 py-1.5 text-sm" data-test="goal-templates-btn" @click="templatesOpen = true">{{ t('goals_tpl_btn') }}</button>
+        <button class="rounded-lg px-3 py-1.5 text-sm" data-test="goal-add" @click="formDraft = null; formTarget = 'new'"><EmojiText :text="t('goals_add_btn')" /></button>
+      </div>
     </div>
 
     <p v-if="goalsStreak.streak.value" class="dim mb-3 mt-0 text-sm" data-test="goals-streak">
@@ -276,7 +294,8 @@ async function onDelete(g: Goal) {
       </div>
     </template>
 
-    <GoalForm v-if="formTarget" :is-edit="formTarget !== 'new'" :initial="formInitial" :categories="myCategories" :no-category-labels="noCategoryLabels" :horizon-column="hasHorizon" :weight-column="hasWeight" :current-weight="bodyWeight" :submit="onSaveForm" @close="formTarget = null" />
+    <GoalForm v-if="formTarget" :is-edit="formTarget !== 'new'" :initial="formInitial" :categories="myCategories" :no-category-labels="noCategoryLabels" :horizon-column="hasHorizon" :weight-column="hasWeight" :current-weight="bodyWeight" :submit="onSaveForm" @close="closeForm" />
+    <GoalTemplatesModal v-if="templatesOpen" :have="haveTemplates" @pick="onPickTemplate" @close="templatesOpen = false" />
   </main>
 </template>
 
