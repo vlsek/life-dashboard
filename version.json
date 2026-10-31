@@ -1,7 +1,14 @@
 {
-  "version": "6.93",
+  "version": "6.94",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.94",
+      "date": "2026-10-30 18:00",
+      "changes": [
+        "Keyboard shortcuts for the computer: press g, then a letter, to open a page (g d Dashboard, g g Goals, g s Skills, g w Workouts, g c Challenges, g l Languages, g k Calendar, g m Milestones, g h Shop, g a Achievements, g t Customization, g o Community). The ? key shows a cheat sheet. They stay quiet while you type in a field, when a window is open and with Ctrl/Cmd/Alt. A checkbox in Global settings turns them off, and that choice follows you to your other devices. No migrations."
+      ]
+    },
     {
       "version": "6.93",
       "date": "2026-10-31 22:00",
@@ -4921,6 +4928,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.94",
+      "date": "2026-10-30 18:00",
+      "changes": [
+        "Горячие клавиши для компьютера: нажми g, затем букву — и откроется страница (g d — Дашборд, g g — Цели, g s — Навыки, g w — Тренировки, g c — Челленджи, g l — Языки, g k — Календарь, g m — Вехи, g h — Магазин, g a — Достижения, g t — Кастомизация, g o — Сообщество). Клавиша ? показывает шпаргалку. Не срабатывают, пока ты печатаешь в поле, при открытом окне и с Ctrl/Cmd/Alt. Выключаются галочкой в «Глобальных настройках» и этот выбор следует за тобой на других устройствах. Без миграций."
+      ]
+    },
     {
       "version": "6.93",
       "date": "2026-10-31 22:00",
