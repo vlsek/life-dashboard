@@ -110,6 +110,15 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
 .tech-joints [data-linked-muscle]{transition:r .15s,fill .15s,filter .15s,stroke .15s}
 .tech-joints [data-linked-muscle].is-linked{r:3.2;fill:#fff0a8;stroke:#ffad42;stroke-width:1.1;filter:drop-shadow(0 0 2.4px #ffad42)}
 
+
+/* B / precision atlas: numbered anatomical index tied to the selectable group list. */
+.atlas-callouts{display:none}
+.atlas-index-markers{pointer-events:none}
+.atlas-index-markers circle{fill:#f7fbff;stroke:#416c8c;stroke-width:.45}
+.atlas-index-markers text{fill:#234c6b;stroke:none;font:1.9px ui-monospace,monospace;text-anchor:middle;font-weight:700}
+.mode-atlas .atlas-index-markers circle{fill:#fff;stroke:#3e7399}
+.mode-atlas .atlas-index-markers text{fill:#244f70}
+
 </style>
 </head>
 <body class="mode-anatomy">
@@ -193,6 +202,15 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
                 <path d="M23 45 L8 39 H3 M37 48 L8 59 H3 M22 82 L8 82 H3 M43 71 L8 103 H3 M36 111 L8 127 H3 M40 151 L8 157 H3"/>
                 <path d="M77 45 L92 39 H97 M63 48 L92 59 H97 M78 82 L92 82 H97 M57 71 L92 103 H97 M64 111 L92 127 H97 M60 151 L92 157 H97"/>
                 <g class="atlas-index"><text x="2" y="37">01</text><text x="2" y="57">02</text><text x="2" y="80">03</text><text x="2" y="101">04</text><text x="2" y="125">05</text><text x="2" y="155">06</text><text x="92" y="37">01</text><text x="92" y="57">02</text><text x="92" y="80">03</text><text x="92" y="101">04</text><text x="92" y="125">05</text><text x="92" y="155">06</text></g>
+<g class="atlas-index-markers" aria-hidden="true">
+              <g transform="translate(31 45)"><circle r="2.1"/><text y=".85">01</text></g>
+              <g transform="translate(42 49)"><circle r="2.1"/><text y=".85">02</text></g>
+              <g transform="translate(25 62)"><circle r="2.1"/><text y=".85">03</text></g>
+              <g transform="translate(22 84)"><circle r="2.1"/><text y=".85">04</text></g>
+              <g transform="translate(50 72)"><circle r="2.1"/><text y=".85">05</text></g>
+              <g transform="translate(40 112)"><circle r="2.1"/><text y=".85">06</text></g>
+              <g transform="translate(40 154)"><circle r="2.1"/><text y=".85">07</text></g>
+            </g>
               </g>
             </g>
             <g class="atlas-geometry atlas-back-geometry">
@@ -210,6 +228,16 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
                 <path d="M24 45 L8 39 H3 M38 51 L8 59 H3 M22 82 L8 82 H3 M45 83 L8 103 H3 M38 100 L8 127 H3 M40 151 L8 157 H3"/>
                 <path d="M76 45 L92 39 H97 M62 51 L92 59 H97 M78 82 L92 82 H97 M55 83 L92 103 H97 M62 100 L92 127 H97 M60 151 L92 157 H97"/>
                 <g class="atlas-index"><text x="2" y="37">01</text><text x="2" y="57">02</text><text x="2" y="80">03</text><text x="2" y="101">04</text><text x="2" y="125">05</text><text x="2" y="155">06</text><text x="92" y="37">01</text><text x="92" y="57">02</text><text x="92" y="80">03</text><text x="92" y="101">04</text><text x="92" y="125">05</text><text x="92" y="155">06</text></g>
+<g class="atlas-index-markers" aria-hidden="true">
+              <g transform="translate(31 45)"><circle r="2.1"/><text y=".85">01</text></g>
+              <g transform="translate(43 57)"><circle r="2.1"/><text y=".85">02</text></g>
+              <g transform="translate(25 62)"><circle r="2.1"/><text y=".85">03</text></g>
+              <g transform="translate(22 84)"><circle r="2.1"/><text y=".85">04</text></g>
+              <g transform="translate(50 83)"><circle r="2.1"/><text y=".85">05</text></g>
+              <g transform="translate(40 99)"><circle r="2.1"/><text y=".85">06</text></g>
+              <g transform="translate(40 124)"><circle r="2.1"/><text y=".85">07</text></g>
+              <g transform="translate(40 157)"><circle r="2.1"/><text y=".85">08</text></g>
+            </g>
               </g>
             </g>
             <!-- C / EXOSKELETON: mechanical shells, rails, actuators and joints. -->
@@ -390,6 +418,7 @@ const info={
  tech:{name:'C / EXOSKELETON UI',title:'C — экзоскелет',text:'C заменяет органическую форму механической конструкцией: силовые рёбра, сочленения и бронепластины. Каждая мышечная группа сопоставлена отдельному сегменту, но визуально это уже не человеческий манекен.',kicker:'UNIT 07 / BIO-METRICS'}
 };
 const demo={shoulders:[4,24],chest:[6,42],biceps:[2,12],forearms:[0,0],abs:[4,24],quads:[3,18],calves:[2,12],back:[5,34],triceps:[3,18],lower_back:[2,12],glutes:[3,18],hamstrings:[3,18]};
+const atlasIndex={front:{shoulders:'01',chest:'02',biceps:'03',forearms:'04',abs:'05',quads:'06',calves:'07'},back:{shoulders:'01',back:'02',triceps:'03',forearms:'04',lower_back:'05',glutes:'06',hamstrings:'07',calves:'08'}};
 let mode='anatomy',view='front',heat='recent',layer='surface',selected='chest';
 function announceSelection(){
  const live=document.getElementById('selectionAnnounce');
@@ -432,11 +461,11 @@ function paint(){
  const list=document.getElementById('muscleList');
  list.replaceChildren(...visibleIds.map(id=>{
   const button=document.createElement('button');button.type='button';button.dataset.listMuscle=id;
-  button.textContent=names[id]||id;button.setAttribute('aria-pressed',String(id===selected));
+  button.textContent=mode==='atlas'?(atlasIndex[view][id]||'--')+' · '+(names[id]||id):(names[id]||id);button.setAttribute('aria-pressed',String(id===selected));
   button.addEventListener('click',()=>{selected=id;paint();announceSelection();focusMuscle(id)});
   return button;
  }));
- document.getElementById('muscleListTitle').textContent='ВЫБОР БЕЗ КАРТЫ / '+(view==='front'?'ПЕРЕДНЯЯ ПРОЕКЦИЯ':'ЗАДНЯЯ ПРОЕКЦИЯ');
+ document.getElementById('muscleListTitle').textContent=(mode==='atlas'?'ATLAS INDEX / ':'ВЫБОР БЕЗ КАРТЫ / ')+(view==='front'?'ПЕРЕДНЯЯ ПРОЕКЦИЯ':'ЗАДНЯЯ ПРОЕКЦИЯ');
  const n=names[selected]||'Мышца';document.getElementById('muscleTitle').textContent=n;document.getElementById('selectionTitle').textContent='Выбрана: '+n.toLowerCase();
  const vals=demo[selected]||[0,0];document.getElementById('metricSessions').textContent=heat==='recent'?vals[0]:Math.max(0,Math.round(vals[1]/6));
  document.getElementById('metricSets').textContent=heat==='recent'?vals[1]:vals[1]*2;
