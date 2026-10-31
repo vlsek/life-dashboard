@@ -2,7 +2,7 @@
 import EmojiText from './EmojiText.vue'
 import NativeRemindersSection from './NativeRemindersSection.vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { getLang, t } from '../lib/i18n'
+import { getLang, t, type DictKey } from '../lib/i18n'
 import type { DashboardBlockKey, LayoutItem } from '../lib/layout'
 import BlockOrderList from './BlockOrderList.vue'
 import PauseSection from './PauseSection.vue'
