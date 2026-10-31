@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.94";
+const SITE_VERSION = "6.95";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.95", date: "2026-10-31 19:00", changes: [
+        "Аватар и имя в боковом меню больше не пропадают при плохой связи: последние известные берутся с устройства и обновляются, когда сеть вернётся.",
+    ]},
     { version: "6.94", date: "2026-10-30 18:00", changes: [
         "Горячие клавиши для компьютера: нажми g, затем букву — и откроется страница (g d — Дашборд, g g — Цели, g s — Навыки, g w — Тренировки, g c — Челленджи, g l — Языки, g k — Календарь, g m — Вехи, g h — Магазин, g a — Достижения, g t — Кастомизация, g o — Сообщество). Клавиша ? показывает шпаргалку. Не срабатывают, пока ты печатаешь в поле, при открытом окне и с Ctrl/Cmd/Alt. Выключаются галочкой в «Глобальных настройках» и этот выбор следует за тобой на других устройствах. Без миграций."
     ]},
@@ -2698,6 +2701,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.95", date: "2026-10-31 19:00", changes: [
+        "The avatar and name in the sidebar no longer disappear on a bad connection: the last known ones are taken from the device and refreshed when the network is back.",
+    ]},
     { version: "6.94", date: "2026-10-30 18:00", changes: [
         "Keyboard shortcuts for the computer: press g, then a letter, to open a page (g d Dashboard, g g Goals, g s Skills, g w Workouts, g c Challenges, g l Languages, g k Calendar, g m Milestones, g h Shop, g a Achievements, g t Customization, g o Community). The ? key shows a cheat sheet. They stay quiet while you type in a field, when a window is open and with Ctrl/Cmd/Alt. A checkbox in Global settings turns them off, and that choice follows you to your other devices. No migrations."
     ]},
