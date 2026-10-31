@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.89";
+const SITE_VERSION = "6.90";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.90", date: "2026-10-30 16:00", changes: [
+        "Сообщество: под вкладками появилась галочка «Без соревнований». Включаешь, и пропадают «Рейтинг», «Сравнение», подиум и твоё место в шапке профиля; «Лента» и «Друзья» остаются. Выбор запоминается и подтягивается на других твоих устройствах вместе с остальными настройками оформления. Видимость в чужом рейтинге это не меняет. Без миграций."
+    ]},
     { version: "6.89", date: "2026-10-31 21:10", changes: [
         "«Тренировки»: рутины. Во время тренировки нажми «В рутину», дай название — набор упражнений запомнится. На странице появился блок «Мои рутины»: кнопка «Начать» открывает тренировку сразу с этими упражнениями и нужным числом пустых подходов, прошлые веса подсказываются рядом. Пока рутины хранятся на этом устройстве, синхронизация между устройствами будет следующим шагом.",
     ]},
@@ -2683,6 +2686,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.90", date: "2026-10-30 16:00", changes: [
+        "Community: a new “No competition” checkbox sits under the tabs. Turn it on to hide Ranking, Compare, the podium and your place in the profile header; Feed and Friends stay. The choice is remembered and follows you to your other devices together with your other look-and-feel settings. It does not change whether others see you in their ranking. No migrations."
+    ]},
     { version: "6.89", date: "2026-10-31 21:10", changes: [
         "Workouts: routines. During a workout tap “Save as routine” and name it — the set of exercises is remembered. A new “My routines” block on the page has a “Start” button that opens a workout with those exercises and the right number of empty sets, with your previous weights hinted alongside. For now routines are stored on this device; syncing across devices is the next step.",
     ]},
