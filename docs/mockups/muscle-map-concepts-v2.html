@@ -91,6 +91,19 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
 .mode-tech .tech-shell:focus-visible{outline:none;stroke:#fff;stroke-width:1.5}
 .mode-anatomy .atlas-geometry,.mode-anatomy .tech-geometry{display:none}
 
+
+/* A / anatomical layer switch: surface and deep structures are distinct views. */
+.layer-control{display:none}
+.mode-anatomy .layer-control{display:inline-flex}
+.mode-anatomy .anatomy-deep-front,.mode-anatomy .anatomy-deep-back{display:none;pointer-events:none}
+.mode-anatomy.layer-deep .anatomy-extra-front,.mode-anatomy.layer-deep .anatomy-extra-back{display:none!important}
+.mode-anatomy.layer-deep .anatomy-deep-front,.mode-anatomy.layer-deep.view-back .anatomy-deep-back{display:block;pointer-events:auto}
+.mode-anatomy.layer-deep.view-back .anatomy-deep-front{display:none}
+.mode-anatomy.layer-deep .anatomy-deep-front [data-muscle],.mode-anatomy.layer-deep .anatomy-deep-back [data-muscle]{pointer-events:auto;cursor:pointer;fill:#8e4c52;stroke:#f1b29e;stroke-width:.48;stroke-linejoin:round;filter:drop-shadow(0 .4px .5px #160b0b)}
+.mode-anatomy.layer-deep .anatomy-deep-front [data-state=done],.mode-anatomy.layer-deep .anatomy-deep-back [data-state=done]{fill:#e88c6c;stroke:#ffe0a1}
+.mode-anatomy.layer-deep .anatomy-deep-front [data-state=none],.mode-anatomy.layer-deep .anatomy-deep-back [data-state=none]{fill:#55474b;stroke:#a18b89;opacity:.55}
+.mode-anatomy.layer-deep .anatomy-deep-front .is-selected,.mode-anatomy.layer-deep .anatomy-deep-back .is-selected{fill:#ffd166;stroke:#fff1c4;stroke-width:1.2}
+
 </style>
 </head>
 <body class="mode-anatomy">
@@ -109,6 +122,8 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
     <div class="toolbar">
       <span class="mode-name" id="modeName">A / ANATOMICAL STUDIO</span>
       <span class="spacer"></span>
+      <button class="pill layer-control" data-layer="surface" aria-pressed="true">Поверхностный слой</button>
+      <button class="pill layer-control" data-layer="deep" aria-pressed="false">Глубокий слой</button>
       <button class="pill" data-view="front" aria-pressed="true">Спереди</button>
       <button class="pill" data-view="back" aria-pressed="false">Сзади</button>
       <button class="pill" data-heat="recent" aria-pressed="true">Недавно</button>
@@ -218,6 +233,26 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
               <path class="tech-shell" data-muscle="calves" d="M37 148 L46 148 L43 175 L35 176Z M63 148 L54 148 L57 175 L65 176Z"/>
               <g class="tech-joints" aria-hidden="true"><circle cx="50" cy="41" r="2.2"/><circle cx="24" cy="51" r="2.2"/><circle cx="76" cy="51" r="2.2"/><circle cx="25" cy="72" r="1.8"/><circle cx="75" cy="72" r="1.8"/><circle cx="50" cy="91" r="2.4"/><circle cx="40" cy="132" r="2.5"/><circle cx="60" cy="132" r="2.5"/></g>
               <g class="tech-markers" aria-hidden="true"><path d="M50 29 L50 34 M44 44 H56 M44 61 H56 M44 78 H56 M31 99 H69 M34 145 H46 M54 145 H66"/></g>
+            </g>
+            <g class="anatomy-deep-front" aria-label="Глубокие мышцы передней поверхности">
+              <path data-muscle="shoulders" class="deep" d="M30 41 Q34 42 36 46 L33 50 Q29 48 28 45Z M70 41 Q66 42 64 46 L67 50 Q71 48 72 45Z"/>
+              <path data-muscle="chest" class="deep" d="M39 43 Q44 41 48 45 L47 54 Q42 54 39 50Z M61 43 Q56 41 52 45 L53 54 Q58 54 61 50Z"/>
+              <path data-muscle="biceps" class="deep" d="M25 54 Q28 56 27 64 L25 68 Q22 64 23 59Z M75 54 Q72 56 73 64 L75 68 Q78 64 77 59Z"/>
+              <path data-muscle="abs" class="deep" d="M41 58 Q45 56 49 59 L49 85 Q45 88 41 84Z M59 58 Q55 56 51 59 L51 85 Q55 88 59 84Z"/>
+              <path data-muscle="abs" class="deep" d="M35 62 Q38 60 40 65 L39 75 Q37 77 34 73Z M65 62 Q62 60 60 65 L61 75 Q63 77 66 73Z"/>
+              <path data-muscle="quads" class="deep" d="M43 96 Q47 94 48 101 L46 122 Q44 128 41 130 L40 115Z M57 96 Q53 94 52 101 L54 122 Q56 128 59 130 L60 115Z"/>
+              <path data-muscle="calves" class="deep" d="M43 140 Q46 143 44 155 L41 169 Q38 173 37 168 L39 149Z M57 140 Q54 143 56 155 L59 169 Q62 173 63 168 L61 149Z"/>
+              <path class="separation" d="M50 57 V88 M39 43 Q44 47 48 46 M61 43 Q56 47 52 46 M44 97 L46 119 M56 97 L54 119"/>
+            </g>
+            <g class="anatomy-deep-back" aria-label="Глубокие мышцы задней поверхности">
+              <path data-muscle="shoulders" class="deep" d="M30 41 Q34 42 36 46 L33 50 Q29 48 28 45Z M70 41 Q66 42 64 46 L67 50 Q71 48 72 45Z"/>
+              <path data-muscle="back" class="deep" d="M39 43 Q44 41 48 46 L46 68 Q43 73 40 65Z M61 43 Q56 41 52 46 L54 68 Q57 73 60 65Z"/>
+              <path data-muscle="triceps" class="deep" d="M23 55 Q27 55 27 63 L25 69 Q21 66 22 60Z M77 55 Q73 55 73 63 L75 69 Q79 66 78 60Z"/>
+              <path data-muscle="lower_back" class="deep" d="M44 72 Q48 70 49 75 L48 89 Q45 92 43 87Z M56 72 Q52 70 51 75 L52 89 Q55 92 57 87Z"/>
+              <path data-muscle="glutes" class="deep" d="M39 93 Q44 90 49 95 L48 104 Q44 108 40 103Z M61 93 Q56 90 51 95 L52 104 Q56 108 60 103Z"/>
+              <path data-muscle="hamstrings" class="deep" d="M40 109 Q44 108 47 112 L45 134 Q43 140 40 140 L37 125Z M60 109 Q56 108 53 112 L55 134 Q57 140 60 140 L63 125Z"/>
+              <path data-muscle="calves" class="deep" d="M42 145 Q46 144 45 153 L42 171 Q39 175 37 171 L39 153Z M58 145 Q54 144 55 153 L58 171 Q61 175 63 171 L61 153Z"/>
+              <path class="separation" d="M50 42 V90 M43 45 Q46 54 47 65 M57 45 Q54 54 53 65 M44 111 Q47 123 44 135 M56 111 Q53 123 56 135"/>
             </g>
             <g class="detail-lines" aria-hidden="true">
               <path d="M50 23 L50 36 M38 41 Q50 47 62 41 M39 55 Q50 60 61 55 M43 64 L57 64 M43 72 L57 72 M42 80 L58 80 M35 99 Q50 104 65 99 M39 119 L47 119 M53 119 L61 119"/>
@@ -347,7 +382,7 @@ const info={
  tech:{name:'C / EXOSKELETON UI',title:'C — экзоскелет',text:'C заменяет органическую форму механической конструкцией: силовые рёбра, сочленения и бронепластины. Каждая мышечная группа сопоставлена отдельному сегменту, но визуально это уже не человеческий манекен.',kicker:'UNIT 07 / BIO-METRICS'}
 };
 const demo={shoulders:[4,24],chest:[6,42],biceps:[2,12],forearms:[0,0],abs:[4,24],quads:[3,18],calves:[2,12],back:[5,34],triceps:[3,18],lower_back:[2,12],glutes:[3,18],hamstrings:[3,18]};
-let mode='anatomy',view='front',heat='recent',selected='chest';
+let mode='anatomy',view='front',heat='recent',layer='surface',selected='chest';
 function announceSelection(){
  const live=document.getElementById('selectionAnnounce');
  if(!live) return;
@@ -356,7 +391,7 @@ function announceSelection(){
  live.textContent=label+'. '+(hasData?'Есть записи за выбранный период.':'Нет записей за выбранный период.');
 }
 function paint(){
- body.classList.remove('mode-anatomy','mode-atlas','mode-tech','view-front','view-back');body.classList.add('mode-'+mode,'view-'+view);
+ body.classList.remove('mode-anatomy','mode-atlas','mode-tech','view-front','view-back','layer-surface','layer-deep');body.classList.add('mode-'+mode,'view-'+view,'layer-'+layer);
  document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
  document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===view)));
  document.querySelectorAll('[data-heat]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.heat===heat)));
@@ -366,8 +401,11 @@ function paint(){
  document.getElementById('sideKicker').textContent=info[mode].kicker;
  document.getElementById('front').style.display=view==='front'?'':'none';
  document.getElementById('back').style.display=view==='back'?'':'none';
- document.querySelector('.anatomy-extra-front').style.display=mode==='anatomy'&&view==='front'?'block':'none';
- document.querySelector('.anatomy-extra-back').style.display=mode==='anatomy'&&view==='back'?'block':'none';
+ document.querySelector('.anatomy-extra-front').style.display=mode==='anatomy'&&view==='front'&&layer==='surface'?'block':'none';
+ document.querySelector('.anatomy-extra-back').style.display=mode==='anatomy'&&view==='back'&&layer==='surface'?'block':'none';
+ document.querySelector('.anatomy-deep-front').style.display=mode==='anatomy'&&view==='front'&&layer==='deep'?'block':'none';
+ document.querySelector('.anatomy-deep-back').style.display=mode==='anatomy'&&view==='back'&&layer==='deep'?'block':'none';
+ document.querySelectorAll('[data-layer]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.layer===layer)));
  document.querySelector('.atlas-front-labels').style.display=view==='front'?'':'none';
  document.querySelector('.atlas-back-labels').style.display=view==='back'?'':'none';
  document.querySelectorAll('[data-muscle]').forEach(el=>{
@@ -399,6 +437,8 @@ function paint(){
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;paint()}));
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.view;selected=view==='front'?'chest':'back';paint();announceSelection()}));
 document.querySelectorAll('[data-heat]').forEach(b=>b.addEventListener('click',()=>{heat=b.dataset.heat;paint()}));
+document.querySelectorAll('[data-layer]').forEach(b=>b.addEventListener('click',()=>{layer=b.dataset.layer;paint();announceSelection()}));
+
 function visibleMuscleTargets(){
  return [...document.querySelectorAll('[data-muscle]')].filter(el=>el.getClientRects().length>0);
 }
