@@ -10,6 +10,7 @@ vi.mock('./lib/useGoals', () => ({
     auth: ref({ status: 'ready', userId: 'u1', userEmail: 'a@b.c' }),
     items: api.itemsRef,
     error: ref(null),
+    loaded: ref(true), // первая загрузка закончилась (без этого App показывает «Загрузка…»)
     flashed: ref({}),
     init: () => {},
     addGoal: api.addGoal,

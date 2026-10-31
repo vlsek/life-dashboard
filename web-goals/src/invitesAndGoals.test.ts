@@ -11,6 +11,7 @@ vi.mock('./lib/useGoals', () => ({
     auth: ref({ status: 'ready', userId: 'u', userEmail: 'a@b.c' }),
     items: ref([goal({ id: 'a', name: 'Бег' }), goal({ id: 'b', name: 'Сделана', done: true, done_date: '2026-10-03' })]),
     error: ref(null),
+    loaded: ref(true), // первая загрузка закончилась (без этого App показывает «Загрузка…»)
     flashed: ref({}),
     init: () => {},
     reload: async () => {},

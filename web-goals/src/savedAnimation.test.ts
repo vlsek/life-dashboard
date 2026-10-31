@@ -15,6 +15,7 @@ vi.mock('./lib/useGoals', () => ({
     auth: ref({ status: 'ready', userId: 'u', userEmail: 'a@b.c' }),
     items: h.items,
     error: ref(null),
+    loaded: ref(true), // первая загрузка закончилась (без этого App показывает «Загрузка…»)
     flashed: h.flashed,
     init: () => {},
     addGoal: vi.fn(), updateGoal: vi.fn(), deleteGoal: vi.fn(), toggleGoal: vi.fn(), stepGoal: vi.fn(), setStage: vi.fn(),

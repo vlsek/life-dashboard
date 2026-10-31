@@ -17,7 +17,7 @@ import Icon from './components/Icon.vue'
 import { confirmDialog } from './lib/confirmDialog'
 import { friendlyError } from './lib/friendlyError'
 
-const { auth, items, error, init, reload, addMilestone, updateMilestone, markDone, deleteMilestone } = useMilestones()
+const { auth, items, error, loaded, init, reload, addMilestone, updateMilestone, markDone, deleteMilestone } = useMilestones()
 onMounted(init)
 
 const noCategory = computed(() => t('ms_no_category'))
@@ -198,7 +198,8 @@ function closeHistory() {
           <span v-if="sum.soon" style="color: #e0a93b">{{ t('ms_summary_soon') }} {{ sum.soon }}</span>
         </p>
 
-        <p v-if="active.length === 0" class="dim">{{ t('ms_no_active') }}</p>
+        <p v-if="!loaded" class="dim" role="status" data-testid="loading-active">{{ t('load_loading') }}</p>
+        <p v-else-if="active.length === 0" class="dim">{{ t('ms_no_active') }}</p>
 
         <div v-if="tabs.length > 2" class="mb-4 flex flex-wrap gap-1.5" role="tablist" data-test="category-tabs">
           <button
@@ -252,7 +253,8 @@ function closeHistory() {
         </div>
 
         <h3 class="mb-2 mt-6 text-base font-medium"><EmojiText :text="t('ms_done_h2')" /></h3>
-        <p v-if="done.length === 0" class="dim">{{ t('ms_no_done') }}</p>
+        <p v-if="!loaded" class="dim" role="status" data-testid="loading-done">{{ t('load_loading') }}</p>
+        <p v-else-if="done.length === 0" class="dim">{{ t('ms_no_done') }}</p>
         <div v-else class="table-scroll overflow-x-auto" data-test="table-scroll">
           <table class="w-full">
             <tbody>

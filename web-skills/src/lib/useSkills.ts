@@ -21,6 +21,7 @@ export function useSkills() {
   const error = ref<string | null>(null)
   // Есть ли колонка skills.category (миграция 112): по первой загруженной строке, у пустого списка — пробным запросом. Нет колонки — работаем как раньше.
   const hasCategory = ref(false)
+  const loaded = ref(false) // первая загрузка закончилась (успехом или ошибкой): до этого «нет …» показывать нельзя — ложная пустота
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -45,6 +46,14 @@ export function useSkills() {
   }
 
   async function load(userId: string) {
+    try {
+      await loadData(userId)
+    } finally {
+      loaded.value = true
+    }
+  }
+
+  async function loadData(userId: string) {
     const { data, error: err } = await sb.from('skills').select('*').eq('user_id', userId).order('created_at')
     if (err) {
       error.value = friendlyError(err, 'load')
@@ -99,5 +108,5 @@ export function useSkills() {
     await reload()
   }
 
-  return { auth, items, error, hasCategory, init, reload, addSkill, updateSkill, deleteSkill, bumpProgress, toggleMastered }
+  return { auth, items, error, hasCategory, loaded, init, reload, addSkill, updateSkill, deleteSkill, bumpProgress, toggleMastered }
 }

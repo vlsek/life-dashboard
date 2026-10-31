@@ -20,6 +20,7 @@ export function useGoals() {
   const auth = ref<AuthState>({ status: 'loading' })
   const items = ref<Goal[]>([])
   const error = ref<string | null>(null)
+  const loaded = ref(false) // первая загрузка закончилась (успехом или ошибкой): до этого «нет …» показывать нельзя — ложная пустота
   // Есть ли колонка goals.horizon (миграция 084): определяем по загруженным целям, а у пустого списка — пробным запросом. Нет колонки — работаем как раньше.
   const hasHorizon = ref(false)
   // Есть ли колонки goals.weight_* (миграция 085) — так же; и последнее измерение веса тела (источник истины для целей на вес).
@@ -59,6 +60,14 @@ export function useGoals() {
   }
 
   async function load(userId: string) {
+    try {
+      await loadData(userId)
+    } finally {
+      loaded.value = true
+    }
+  }
+
+  async function loadData(userId: string) {
     const { data, error: err } = await sb.from('goals').select('*').eq('user_id', userId).order('created_at')
     if (err) {
       error.value = err.message // «Цели» показывают ошибку через friendlyError в App.vue (loadError) — здесь сырой текст нужен для классификации
@@ -155,5 +164,5 @@ export function useGoals() {
     flash(g.id)
   }
 
-  return { auth, items, error, hasHorizon, hasWeight, bodyWeight, logWeight, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage }
+  return { auth, items, error, loaded, hasHorizon, hasWeight, bodyWeight, logWeight, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage }
 }

@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.86";
+const SITE_VERSION = "6.88";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,12 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.88", date: "2026-10-29 14:35", changes: [
+        "«Цели», «Челленджи», «Вехи» и «Навыки» (и книги): пока список ещё грузится, страница пишет «Загрузка…», а не «Нет активных целей» / «Нет активных вех» / «Список книг пуст». Раньше на медленной сети на секунду мелькала ложная пустота. Настоящая пустота показывается только после ответа сервера, а при сбое — ошибка с кнопкой «Повторить»."
+    ]},
+    { version: "6.87", date: "2026-10-31 14:34", changes: [
+        "Дашборд: по воскресеньям и понедельникам появляется карточка «Итоги недели» — без стены графиков, только главное: сколько отметок по метрикам выполнено, лучший день, метрика с лучшей динамикой к прошлой неделе (если данных достаточно) и поле «Что изменишь на следующей неделе?». Заметка и скрытие хранятся на этом устройстве. Дни до первой записи пропусками не считаются. Без миграций."
+    ]},
     { version: "6.86", date: "2026-10-31 19:30", changes: [
         "«Тренировки»: рекорды прямо во время тренировки. Отметил подход галочкой и побил свой лучший вес, повторы на том же весе, расчётный 1ПМ, объём подхода или время — под строкой появляется «★ Рекорд веса · 62,5 кг × 8» и всплывает уведомление. Разминка рекордов не даёт, равный результат — не рекорд, первый подход в жизни упражнения — тоже.",
     ]},
@@ -2674,6 +2680,12 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.88", date: "2026-10-29 14:35", changes: [
+        "Goals, Challenges, Milestones and Skills (and books): while a list is still loading the page now says “Loading…” instead of “No active goals” / “No active milestones” / “Book list is empty”. On a slow connection a false empty state used to flash for a second. A real empty state only appears after the server answers, and on failure you get an error with a “Try again” button."
+    ]},
+    { version: "6.87", date: "2026-10-31 14:34", changes: [
+        "Dashboard: on Sundays and Mondays a Weekly summary card appears, with no wall of charts, only what matters: how many metric check-ins you completed, your best day, the metric that improved most compared with last week (when there is enough data), and a field for what you will change next week. The note and the dismissal are stored on this device. Days before your first entry are not counted as misses. No migrations."
+    ]},
     { version: "6.86", date: "2026-10-31 19:30", changes: [
         "Workouts: records right during a workout. Tick a set that beats your best weight, reps at the same weight, estimated 1RM, set volume or time, and a “★ Weight record · 62.5 kg × 8” line appears under it along with a notice. Warm-up sets never count, a tie isn’t a record, and neither is the very first set ever logged for an exercise.",
     ]},

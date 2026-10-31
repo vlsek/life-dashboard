@@ -1,7 +1,21 @@
 {
-  "version": "6.86",
+  "version": "6.88",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.88",
+      "date": "2026-10-29 14:35",
+      "changes": [
+        "Goals, Challenges, Milestones and Skills (and books): while a list is still loading the page now says “Loading…” instead of “No active goals” / “No active milestones” / “Book list is empty”. On a slow connection a false empty state used to flash for a second. A real empty state only appears after the server answers, and on failure you get an error with a “Try again” button."
+      ]
+    },
+    {
+      "version": "6.87",
+      "date": "2026-10-31 14:34",
+      "changes": [
+        "Dashboard: on Sundays and Mondays a Weekly summary card appears, with no wall of charts, only what matters: how many metric check-ins you completed, your best day, the metric that improved most compared with last week (when there is enough data), and a field for what you will change next week. The note and the dismissal are stored on this device. Days before your first entry are not counted as misses. No migrations."
+      ]
+    },
     {
       "version": "6.86",
       "date": "2026-10-31 19:30",
@@ -4872,6 +4886,20 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.88",
+      "date": "2026-10-29 14:35",
+      "changes": [
+        "«Цели», «Челленджи», «Вехи» и «Навыки» (и книги): пока список ещё грузится, страница пишет «Загрузка…», а не «Нет активных целей» / «Нет активных вех» / «Список книг пуст». Раньше на медленной сети на секунду мелькала ложная пустота. Настоящая пустота показывается только после ответа сервера, а при сбое — ошибка с кнопкой «Повторить»."
+      ]
+    },
+    {
+      "version": "6.87",
+      "date": "2026-10-31 14:34",
+      "changes": [
+        "Дашборд: по воскресеньям и понедельникам появляется карточка «Итоги недели» — без стены графиков, только главное: сколько отметок по метрикам выполнено, лучший день, метрика с лучшей динамикой к прошлой неделе (если данных достаточно) и поле «Что изменишь на следующей неделе?». Заметка и скрытие хранятся на этом устройстве. Дни до первой записи пропусками не считаются. Без миграций."
+      ]
+    },
     {
       "version": "6.86",
       "date": "2026-10-31 19:30",

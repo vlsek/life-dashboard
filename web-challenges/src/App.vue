@@ -27,6 +27,7 @@ const {
   exercises,
   sourceExerciseName,
   error,
+  loaded,
   init,
   reload,
   startFromTemplate,
@@ -118,7 +119,8 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
       <h2 class="mb-2 mt-4 text-base font-medium"><EmojiText :text="t('ch_active_h2')" /></h2>
       <LoadError v-if="error" :message="error" :retry="reload"> — {{ t('ch_migration_hint') }}</LoadError>
       <template v-else>
-        <p v-if="active.length === 0" class="dim">{{ t('ch_no_active') }}</p>
+        <p v-if="!loaded" class="dim" role="status" data-testid="loading-active">{{ t('load_loading') }}</p>
+        <p v-else-if="active.length === 0" class="dim">{{ t('ch_no_active') }}</p>
         <template v-for="ch in active" :key="ch.id">
           <CumulativeChallengeCard
             v-if="ch.type === 'cumulative_count'"
@@ -143,7 +145,8 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
         </template>
 
         <h2 class="mb-2 mt-6 text-base font-medium"><EmojiText :text="t('ch_completed_h2')" /></h2>
-        <p v-if="completed.length === 0" class="dim">{{ t('ch_no_completed') }}</p>
+        <p v-if="!loaded" class="dim" role="status" data-testid="loading-completed">{{ t('load_loading') }}</p>
+        <p v-else-if="completed.length === 0" class="dim">{{ t('ch_no_completed') }}</p>
         <CompletedFeed v-else :items="completed" :entries-for="entriesFor" />
       </template>
     </template>
