@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.85";
+const SITE_VERSION = "6.86";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.86", date: "2026-10-31 19:30", changes: [
+        "«Тренировки»: рекорды прямо во время тренировки. Отметил подход галочкой и побил свой лучший вес, повторы на том же весе, расчётный 1ПМ, объём подхода или время — под строкой появляется «★ Рекорд веса · 62,5 кг × 8» и всплывает уведомление. Разминка рекордов не даёт, равный результат — не рекорд, первый подход в жизни упражнения — тоже.",
+    ]},
     { version: "6.85", date: "2026-10-31 18:00", changes: [
         "«Тренировки»: кнопка «Начать тренировку» — открывается экран с секундомером. Добавляй упражнения, вводи вес и повторы, подсказка «прошлый раз» рядом, отмечай подход галочкой; нажми на номер подхода, чтобы пометить его разминкой (W), сбросом (D) или подходом до отказа (F). «Завершить» сохраняет всё одной тренировкой, пустую тренировку без выполненных подходов не сохраняет. Закрыл вкладку — тренировка не потерялась. Работает и без новой миграции, записи сохраняются как раньше.",
     { version: "6.84", date: "2026-10-30 14:00", changes: [
@@ -2670,6 +2673,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.86", date: "2026-10-31 19:30", changes: [
+        "Workouts: records right during a workout. Tick a set that beats your best weight, reps at the same weight, estimated 1RM, set volume or time, and a “★ Weight record · 62.5 kg × 8” line appears under it along with a notice. Warm-up sets never count, a tie isn’t a record, and neither is the very first set ever logged for an exercise.",
+    ]},
     { version: "6.85", date: "2026-10-31 18:00", changes: [
         "Workouts: a “Start workout” button opens a screen with a stopwatch. Add exercises, enter weight and reps with the “previous time” hint next to them, and tick each set; tap the set number to mark it as warm-up (W), drop set (D) or to failure (F). “Finish” saves everything as one workout; a workout with no completed sets isn’t saved. Closing the tab doesn’t lose it. Works without the new migration — entries are saved the old way.",
     { version: "6.84", date: "2026-10-30 14:00", changes: [
