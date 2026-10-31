@@ -8,6 +8,8 @@ import { createLinkedMetric, linkMetric, loadMetricLinks, syncLinkedMetrics, unl
 import { todayStr } from './date'
 import { outboxFor, qDelete, qInsert, qUpdate } from './outboxClient'
 import { applyPendingWorkouts, WORKOUT_TABLES } from './workoutOverlay'
+import { entryRow, sessionRow, type FinishResult } from './activeWorkout'
+import { sessionsAvailable } from './sessionProbe'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry } from './types'
 
 export type AuthState =
@@ -325,6 +327,22 @@ export function useWorkouts() {
     await mirror(exerciseId, [res.date])
   }
 
+  // Сохранить завершённую активную тренировку (BACKLOG 69.2): сессия (если миграция 113 применена) + записи по упражнениям. Сначала сессия, потом записи
+  // (внешний ключ); очередь повторяет операции по порядку, id клиентские — без дублей.
+  async function addWorkout(userId: string, res: FinishResult) {
+    const withSession = res.session != null
+    if (res.session) {
+      const { error } = await qInsert(userId, 'workout_sessions', `workout_sessions:${res.session.id}`, sessionRow(userId, res.session))
+      if (error) throw error
+    }
+    for (const e of res.entries) {
+      const { error } = await qInsert(userId, 'workout_entries', `workout_entries:${e.id}`, entryRow(userId, e, withSession))
+      if (error) throw error
+    }
+    await afterWrite(false)
+    for (const e of res.entries) await mirror(e.exercise_id, [e.date])
+  }
+
   async function editEntry(entryId: string, res: EntryFormInput) {
     const old = entries.value.find((e) => e.id === entryId)
     const { error, queued } = await qUpdate(uid(old?.user_id), 'workout_entries', `workout_entries:${entryId}`, { date: res.date, sets: res.sets, notes: res.notes }, { id: entryId })
@@ -416,6 +434,8 @@ export function useWorkouts() {
     addEntry,
     editEntry,
     deleteEntry,
+    addWorkout,
+    sessionsAvailable,
     applyTemplateExercises,
   }
 }

@@ -26,6 +26,9 @@ import ProgressionTrees from './components/ProgressionTrees.vue'
 import GrowthList from './components/GrowthList.vue'
 import WeekStreak from './components/WeekStreak.vue'
 import TodayPanel from './components/TodayPanel.vue'
+import ActiveWorkout from './components/ActiveWorkout.vue'
+import { useActiveWorkout } from './lib/useActiveWorkout'
+import { canSave, finishDraft } from './lib/activeWorkout'
 import JournalList from './components/JournalList.vue'
 import ExerciseForm from './components/ExerciseForm.vue'
 import EntryForm from './components/EntryForm.vue'
@@ -336,6 +339,32 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
   }
 }
 
+// ---- активная тренировка (BACKLOG 69.2) ----
+const aw = useActiveWorkout()
+const awBusy = ref(false)
+async function onFinishWorkout() {
+  const d = aw.draft.value
+  if (!d || awBusy.value || auth.value.status !== 'ready') return
+  if (!canSave(d)) return showToast(t('aw_nothing'), 'error')
+  awBusy.value = true
+  try {
+    const res = finishDraft(d, new Date().toISOString(), await wk.sessionsAvailable())
+    await wk.addWorkout(auth.value.userId, res)
+    aw.discard()
+    showToast(t('aw_saved'))
+    haptic('success')
+  } catch (e) {
+    showToast(friendlyError(e, 'save'), 'error') // черновик остаётся — можно повторить
+    console.error(e)
+  } finally {
+    awBusy.value = false
+  }
+}
+async function onCancelWorkout() {
+  if (!(await confirmDialog(t('aw_confirm_cancel')))) return
+  aw.discard()
+}
+
 // ---- активная программа (BACKLOG 3.3) ----
 // Хранится в profiles.workout_program (миграция 040) и в localStorage; текущую неделю карточка считает по дате старта.
 const activeProgram = ref<ActiveProgram | null>(readProgram())
@@ -404,10 +433,20 @@ function onToggleProgramWeek(week: number) {
 
 <template>
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
+  <ActiveWorkout v-if="aw.active.value && auth.status === 'ready'" :exercises="exercises" :entries="entries" :unit="defaultUnit()" :busy="awBusy" @finish="onFinishWorkout" @cancel="onCancelWorkout" />
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-6">
     <h1 class="mb-3 text-xl font-bold"><EmojiText :text="t('workouts_h1')" /></h1>
 
     <div class="mb-4 flex flex-wrap gap-2">
+      <button
+        type="button"
+        class="rounded-lg px-4 py-2 text-sm font-semibold"
+        style="background: var(--success); color: #fff; min-height: 44px"
+        data-testid="aw-start"
+        @click="aw.start()"
+      >
+        {{ t('aw_start') }}
+      </button>
       <button
         type="button"
         class="rounded-lg px-4 py-2 text-sm font-medium"

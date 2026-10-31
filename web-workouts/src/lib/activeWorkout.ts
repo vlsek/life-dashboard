@@ -114,3 +114,25 @@ export function loadDraft(store: Store): ActiveDraft | null {
     return { v: 1, id: o.id, name: typeof o.name === 'string' ? o.name : null, date: o.date, started_at: o.started_at, routine_id: typeof o.routine_id === 'string' ? o.routine_id : null, notes: typeof o.notes === 'string' ? o.notes : null, exercises }
   } catch { return null }
 }
+
+// Строки для вставки в БД. Без таблицы сессий (withSession=false) колонок session_id/position/superset_group в запросе НЕТ вовсе:
+// до миграции 113 такой столбец сломал бы вставку.
+export function sessionRow(userId: string, s: SessionPayload): Record<string, unknown> { return { ...s, user_id: userId } }
+export function entryRow(userId: string, e: EntryPayload, withSession: boolean): Record<string, unknown> {
+  const base = { id: e.id, user_id: userId, exercise_id: e.exercise_id, date: e.date, sets: e.sets, notes: e.notes }
+  return withSession ? { ...base, session_id: e.session_id, position: e.position, superset_group: e.superset_group } : base
+}
+
+// Подсказка «прошлый раз»: рабочий подход с тем же номером из последней записи упражнения ДО даты тренировки.
+// Разминка и невыполненные подходы в подсказку не идут (BACKLOG 69.4).
+export function previousSet(entries: readonly { exercise_id: string; date: string; sets: SetV2[] }[], exerciseId: string, beforeDate: string, index: number): SetV2 | null {
+  let best: { date: string; sets: SetV2[] } | null = null
+  for (const e of entries) {
+    if (e.exercise_id !== exerciseId || e.date >= beforeDate) continue
+    const w = (e.sets || []).filter(isWorking)
+    if (w.length && (!best || e.date > best.date)) best = { date: e.date, sets: w }
+  }
+  return best ? (best.sets[index] ?? null) : null
+}
+export const previousText = (s: SetV2 | null, unit: string): string =>
+  !s ? '' : s.weight ? `${s.weight}${unit}×${s.reps ?? ''}` : s.reps ? String(s.reps) : s.duration ? `${s.duration}'` : ''

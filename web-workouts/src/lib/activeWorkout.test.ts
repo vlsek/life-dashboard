@@ -60,3 +60,20 @@ describe('время и хранение', () => {
     expect(saveDraft(d, { getItem: () => null, removeItem: () => {}, setItem: () => { throw new Error('quota') } })).toBe(false)
   })
 })
+
+import { entryRow, previousSet, previousText } from './activeWorkout'
+describe('строки для БД и подсказка «прошлый раз»', () => {
+  const base = { id: 'e', exercise_id: 'x', date: '2026-10-30', sets: [], notes: null, session_id: 's', position: 0, superset_group: null }
+  it('без таблицы сессий колонок v2 в строке нет вовсе', () => {
+    expect(entryRow('u', base, false)).not.toHaveProperty('session_id')
+    expect(entryRow('u', base, true)).toMatchObject({ session_id: 's', position: 0, user_id: 'u' })
+  })
+  it('подсказка: последняя запись ДО даты, рабочие подходы по номеру; разминка не считается', () => {
+    const e = (date: string, sets: object[]) => ({ exercise_id: 'x', date, sets: sets as never })
+    const entries = [e('2026-10-10', [{ reps: 5, weight: 50 }]), e('2026-10-20', [{ reps: 10, weight: 20, type: 'warmup' }, { reps: 8, weight: 60 }, { reps: 6, weight: 65 }]), e('2026-10-30', [{ reps: 1, weight: 1 }])]
+    expect(previousSet(entries, 'x', '2026-10-30', 0)).toMatchObject({ reps: 8, weight: 60 })
+    expect(previousSet(entries, 'x', '2026-10-30', 2)).toBeNull()
+    expect(previousSet(entries, 'y', '2026-10-30', 0)).toBeNull()
+    expect(previousText({ reps: 8, weight: 60, time: null, duration: null, side: null }, 'kg')).toBe('60kg×8')
+  })
+})
