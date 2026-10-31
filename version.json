@@ -1,7 +1,14 @@
 {
-  "version": "6.95",
+  "version": "6.96",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.96",
+      "date": "2026-10-31 23:00",
+      "changes": [
+        "Workouts: after “Finish” a summary window opens — time, working sets, total volume, number of exercises, records you broke and the muscles worked. Warm-up sets don’t count toward sets or volume."
+      ]
+    },
     {
       "version": "6.95",
       "date": "2026-10-31 19:00",
@@ -4935,6 +4942,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.96",
+      "date": "2026-10-31 23:00",
+      "changes": [
+        "«Тренировки»: после «Завершить» открывается окно итогов — время, рабочие подходы, общий объём, число упражнений, побитые рекорды и задействованные мышцы. Разминка в подходы и объём не входит."
+      ]
+    },
     {
       "version": "6.95",
       "date": "2026-10-31 19:00",

@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.95";
+const SITE_VERSION = "6.96";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.96", date: "2026-10-31 23:00", changes: [
+        "«Тренировки»: после «Завершить» открывается окно итогов — время, рабочие подходы, общий объём, число упражнений, побитые рекорды и задействованные мышцы. Разминка в подходы и объём не входит.",
+    ]},
     { version: "6.95", date: "2026-10-31 19:00", changes: [
         "Аватар и имя в боковом меню больше не пропадают при плохой связи: последние известные берутся с устройства и обновляются, когда сеть вернётся.",
     ]},
@@ -2701,6 +2704,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.96", date: "2026-10-31 23:00", changes: [
+        "Workouts: after “Finish” a summary window opens — time, working sets, total volume, number of exercises, records you broke and the muscles worked. Warm-up sets don’t count toward sets or volume.",
+    ]},
     { version: "6.95", date: "2026-10-31 19:00", changes: [
         "The avatar and name in the sidebar no longer disappear on a bad connection: the last known ones are taken from the device and refreshed when the network is back.",
     ]},
