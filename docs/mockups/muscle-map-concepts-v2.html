@@ -93,6 +93,7 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
 
 
 /* A / anatomical layer switch: surface and deep structures are distinct views. */
+.mode-anatomy #front>.model-muscle,.mode-anatomy #back>.model-muscle{display:none}
 .layer-control{display:none}
 .mode-anatomy .layer-control{display:inline-flex}
 .mode-anatomy .anatomy-deep-front,.mode-anatomy .anatomy-deep-back{display:none;pointer-events:none}
@@ -238,6 +239,7 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
               <path data-muscle="shoulders" class="deep" d="M30 41 Q34 42 36 46 L33 50 Q29 48 28 45Z M70 41 Q66 42 64 46 L67 50 Q71 48 72 45Z"/>
               <path data-muscle="chest" class="deep" d="M39 43 Q44 41 48 45 L47 54 Q42 54 39 50Z M61 43 Q56 41 52 45 L53 54 Q58 54 61 50Z"/>
               <path data-muscle="biceps" class="deep" d="M25 54 Q28 56 27 64 L25 68 Q22 64 23 59Z M75 54 Q72 56 73 64 L75 68 Q78 64 77 59Z"/>
+              <path data-muscle="forearms" class="deep" d="M21 74 Q25 72 27 77 L24 94 Q22 97 20 93Z M79 74 Q75 72 73 77 L76 94 Q78 97 80 93Z"/>
               <path data-muscle="abs" class="deep" d="M41 58 Q45 56 49 59 L49 85 Q45 88 41 84Z M59 58 Q55 56 51 59 L51 85 Q55 88 59 84Z"/>
               <path data-muscle="abs" class="deep" d="M35 62 Q38 60 40 65 L39 75 Q37 77 34 73Z M65 62 Q62 60 60 65 L61 75 Q63 77 66 73Z"/>
               <path data-muscle="quads" class="deep" d="M43 96 Q47 94 48 101 L46 122 Q44 128 41 130 L40 115Z M57 96 Q53 94 52 101 L54 122 Q56 128 59 130 L60 115Z"/>
@@ -248,6 +250,7 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
               <path data-muscle="shoulders" class="deep" d="M30 41 Q34 42 36 46 L33 50 Q29 48 28 45Z M70 41 Q66 42 64 46 L67 50 Q71 48 72 45Z"/>
               <path data-muscle="back" class="deep" d="M39 43 Q44 41 48 46 L46 68 Q43 73 40 65Z M61 43 Q56 41 52 46 L54 68 Q57 73 60 65Z"/>
               <path data-muscle="triceps" class="deep" d="M23 55 Q27 55 27 63 L25 69 Q21 66 22 60Z M77 55 Q73 55 73 63 L75 69 Q79 66 78 60Z"/>
+              <path data-muscle="forearms" class="deep" d="M21 74 Q25 72 27 77 L24 94 Q22 97 20 93Z M79 74 Q75 72 73 77 L76 94 Q78 97 80 93Z"/>
               <path data-muscle="lower_back" class="deep" d="M44 72 Q48 70 49 75 L48 89 Q45 92 43 87Z M56 72 Q52 70 51 75 L52 89 Q55 92 57 87Z"/>
               <path data-muscle="glutes" class="deep" d="M39 93 Q44 90 49 95 L48 104 Q44 108 40 103Z M61 93 Q56 90 51 95 L52 104 Q56 108 60 103Z"/>
               <path data-muscle="hamstrings" class="deep" d="M40 109 Q44 108 47 112 L45 134 Q43 140 40 140 L37 125Z M60 109 Q56 108 53 112 L55 134 Q57 140 60 140 L63 125Z"/>
@@ -395,7 +398,7 @@ function paint(){
  document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
  document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===view)));
  document.querySelectorAll('[data-heat]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.heat===heat)));
- document.getElementById('modeName').textContent=info[mode].name;
+ document.getElementById('modeName').textContent=info[mode].name+(mode==='anatomy'?' / '+(layer==='deep'?'DEEP LAYER':'SURFACE LAYER'):'');
  document.getElementById('copyTitle').textContent=info[mode].title;
  document.getElementById('copyText').textContent=info[mode].text;
  document.getElementById('sideKicker').textContent=info[mode].kicker;
