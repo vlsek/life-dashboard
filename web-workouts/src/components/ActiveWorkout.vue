@@ -45,6 +45,10 @@ function openSaveRoutine() { routineName.value = draft.value?.name ?? ''; saving
 function saveRoutine() {
   if (draft.value && rt.saveFromDraft(draft.value, routineName.value)) { savingRoutine.value = false; showToast(t('rt_saved')) }
 }
+// «Прошлый раз» (69.6): подход с тем же номером из последней тренировки; тап по подсказке подставляет числа
+const prevFor = (exerciseId: string, i: number) => previousSet(props.entries, exerciseId, draft.value?.date ?? '9999', i)
+const fillAll = (entryId: string, exerciseId: string) => aw.fillAllPrev(entryId, (i) => prevFor(exerciseId, i))
+const hasPrev = (exerciseId: string) => prevFor(exerciseId, 0) !== null
 const picking = ref(false)
 const query = ref('')
 const pickList = computed(() => {
@@ -142,7 +146,17 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
           <button type="button" class="rounded-md text-sm font-semibold" style="min-height: 44px; color: var(--text-dim)" :aria-label="t('aw_set_type') + (TYPE_LABEL(setType(s)) ? ': ' + TYPE_LABEL(setType(s)) : '')" :title="TYPE_LABEL(setType(s))" @click="cycleType(e.id, i, setType(s))">
             {{ label(e.id, i) }}
           </button>
-          <span class="truncate text-center text-xs" style="color: var(--text-dim)">{{ previousText(previousSet(entries, e.exercise_id, draft.date, i), unitOf(exById.get(e.exercise_id))) || '—' }}</span>
+          <button
+            type="button"
+            class="truncate rounded-md text-center text-xs"
+            style="color: var(--text-dim); min-height: 44px"
+            :disabled="!prevFor(e.exercise_id, i)"
+            :aria-label="t('aw_use_prev')"
+            :data-testid="'aw-prev-' + ei + '-' + i"
+            @click="aw.applyPrev(e.id, i, prevFor(e.exercise_id, i))"
+          >
+            {{ previousText(prevFor(e.exercise_id, i), unitOf(exById.get(e.exercise_id))) || '—' }}
+          </button>
           <input
             v-if="exById.get(e.exercise_id)?.tracks_weight"
             type="text"
@@ -171,6 +185,7 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
             :style="'min-height: 44px; border-color: var(--border);' + (s.done === true ? 'background: var(--success); color: #fff' : 'color: var(--text-dim)')"
             :aria-pressed="s.done === true"
             :aria-label="t('aw_set_done')"
+            :data-testid="'aw-tick-' + ei + '-' + i"
             @click="onTick(e.id, i)"
           >
             ✓
@@ -181,7 +196,10 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
           ★ {{ t(('aw_pr_' + prKind(e.id, i)) as DictKey) }} · {{ prSetText(s, unitOf(exById.get(e.exercise_id))) }}
         </div>
         </template>
-        <button type="button" class="mt-2 w-full rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--accent); min-height: 44px" @click="aw.addSet(e.id)">{{ t('aw_add_set') }}</button>
+        <div class="mt-2 flex gap-2">
+          <button type="button" class="flex-1 rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--accent); min-height: 44px" @click="aw.addSet(e.id)">{{ t('aw_add_set') }}</button>
+          <button v-if="hasPrev(e.exercise_id)" type="button" class="flex-1 rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--text); min-height: 44px" :data-testid="'aw-fill-' + ei" @click="fillAll(e.id, e.exercise_id)">{{ t('aw_fill_prev') }}</button>
+        </div>
       </section>
 
       <button type="button" class="w-full rounded-xl border-2 border-dashed py-3 text-sm font-medium" style="border-color: var(--accent); color: var(--accent); min-height: 48px" data-testid="aw-add-exercise" @click="picking = true">

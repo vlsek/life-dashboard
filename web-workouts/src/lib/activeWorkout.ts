@@ -136,3 +136,22 @@ export function previousSet(entries: readonly { exercise_id: string; date: strin
 }
 export const previousText = (s: SetV2 | null, unit: string): string =>
   !s ? '' : s.weight ? `${s.weight}${unit}×${s.reps ?? ''}` : s.reps ? String(s.reps) : s.duration ? `${s.duration}'` : ''
+
+// Подстановка «прошлого раза» (BACKLOG 69.6): значения прошлого подхода попадают в поля, но «выполнен» НЕ ставится (серая подсказка не пишется в данные, пока не нажали ✓).
+const fromPrev = (p: SetV2): Partial<SetV2> => ({ reps: p.reps ?? null, weight: p.weight ?? null, duration: p.duration ?? null })
+export function applyPrevious(d: ActiveDraft, entryId: string, i: number, prev: SetV2 | null): ActiveDraft {
+  return prev ? updateSet(d, entryId, i, fromPrev(prev)) : d
+}
+const isBlank = (s: SetV2) => s.reps == null && s.weight == null && s.duration == null
+// «Подставить прошлое для всех подходов»: только ПУСТЫЕ подходы (набранное руками не затираем); подходов больше, чем было в прошлый раз, берут последний прошлый
+export function fillAllPrevious(d: ActiveDraft, entryId: string, prevAt: (index: number) => SetV2 | null): ActiveDraft {
+  const e = d.exercises.find((x) => x.id === entryId)
+  if (!e) return d
+  let out = d, last: SetV2 | null = null
+  e.sets.forEach((s, i) => {
+    const p = prevAt(i) ?? last
+    if (prevAt(i)) last = prevAt(i)
+    if (isBlank(s) && p) out = updateSet(out, entryId, i, fromPrev(p))
+  })
+  return out
+}

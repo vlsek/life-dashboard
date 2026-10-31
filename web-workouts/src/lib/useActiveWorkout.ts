@@ -1,7 +1,7 @@
 // Состояние активной тренировки (BACKLOG 69.2): один черновик на вкладку/устройство, живёт в localStorage, секундомер тикает раз в секунду.
 // Вся логика — в activeWorkout.ts (чистые функции); здесь только реактивность и сохранение после каждого изменения.
 import { computed, ref } from 'vue'
-import { addExercise, addSet, elapsedSeconds, loadDraft, moveExercise, newDraft, removeExercise, removeSet, saveDraft, setSetType, toggleDone, updateSet, type ActiveDraft } from './activeWorkout'
+import { addExercise, addSet, applyPrevious, fillAllPrevious, elapsedSeconds, loadDraft, moveExercise, newDraft, removeExercise, removeSet, saveDraft, setSetType, toggleDone, updateSet, type ActiveDraft } from './activeWorkout'
 import type { SetType, SetV2 } from './sessionContract'
 
 const store = (): Storage | null => { try { return localStorage } catch { return null } }
@@ -39,6 +39,8 @@ export function useActiveWorkout() {
     addSet: (id: string) => { if (draft.value) apply(addSet(d(), id)) },
     removeSet: (id: string, i: number) => { if (draft.value) apply(removeSet(d(), id, i)) },
     update: (id: string, i: number, change: Partial<SetV2>) => { if (draft.value) apply(updateSet(d(), id, i, change)) },
+    applyPrev: (id: string, i: number, prev: SetV2 | null) => { if (draft.value) apply(applyPrevious(d(), id, i, prev)) },
+    fillAllPrev: (id: string, prevAt: (i: number) => SetV2 | null) => { if (draft.value) apply(fillAllPrevious(d(), id, prevAt)) },
     toggleDone: (id: string, i: number) => { if (draft.value) apply(toggleDone(d(), id, i)) },
     setType: (id: string, i: number, type: SetType) => { if (draft.value) apply(setSetType(d(), id, i, type)) },
   }

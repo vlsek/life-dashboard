@@ -49,7 +49,7 @@ async function fillAndFinish(w: ReturnType<typeof mount>) {
   const inputs = q(w, 'aw-set-0-0').findAll('input')
   await inputs[0].setValue('60')
   await inputs[1].setValue('8')
-  await q(w, 'aw-set-0-0').findAll('button')[1].trigger('click') // ✓
+  await q(w, 'aw-tick-0-0').trigger('click') // ✓
   await q(w, 'aw-finish').trigger('click')
   await flushPromises(); await flushPromises()
 }
@@ -110,7 +110,7 @@ describe('активная тренировка', () => {
     await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
     const inputs = q(w, 'aw-set-0-0').findAll('input')
     await inputs[0].setValue('60'); await inputs[1].setValue('8')
-    await q(w, 'aw-set-0-0').findAll('button')[1].trigger('click')
+    await q(w, 'aw-tick-0-0').trigger('click')
     expect(q(w, 'aw-pr-0-0').exists()).toBe(false)
     await inputs[0].setValue('62.5')
     expect(q(w, 'aw-pr-0-0').text()).toContain('Рекорд веса')
@@ -133,6 +133,21 @@ describe('активная тренировка', () => {
     expect(q(w2, 'active-workout').exists()).toBe(true)
     expect(q(w2, 'aw-ex-0').text()).toContain('Жим лёжа')
     w2.unmount()
+  })
+
+  it('прошлое: тап по подсказке подставляет числа без ✓; «Подставить прошлое» заполняет пустые подходы', async () => {
+    h.entries = [{ id: 'old', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }, { reps: 6, weight: 65, time: null, duration: null, side: null }], notes: null }]
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
+    await q(w, 'aw-prev-0-0').trigger('click')
+    let inputs = q(w, 'aw-set-0-0').findAll('input')
+    expect((inputs[0].element as HTMLInputElement).value).toBe('60'); expect((inputs[1].element as HTMLInputElement).value).toBe('8')
+    expect(q(w, 'aw-tick-0-0').attributes('aria-pressed')).toBe('false')
+    await w.find('[data-testid="aw-ex-0"]').findAll('button').find((b) => b.text() === '+ Подход')!.trigger('click')
+    await q(w, 'aw-fill-0').trigger('click')
+    inputs = q(w, 'aw-set-0-1').findAll('input')
+    expect((inputs[0].element as HTMLInputElement).value).toBe('60') // добавленный подход скопировал 60×8; подставка не затирает введённое
+    w.unmount()
   })
 })
 

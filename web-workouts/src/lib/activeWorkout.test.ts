@@ -1,3 +1,4 @@
+import type { SetV2 } from './sessionContract'
 import { describe, expect, it } from 'vitest'
 import { addExercise, addSet, canSave, doneSetCount, elapsedSeconds, finishDraft, formatElapsed, loadDraft, moveExercise, newDraft, removeExercise, removeSet, saveDraft, setSetType, toggleDone, updateSet, workingDoneSets, DRAFT_KEY } from './activeWorkout'
 
@@ -75,5 +76,22 @@ describe('строки для БД и подсказка «прошлый раз
     expect(previousSet(entries, 'x', '2026-10-30', 2)).toBeNull()
     expect(previousSet(entries, 'y', '2026-10-30', 0)).toBeNull()
     expect(previousText({ reps: 8, weight: 60, time: null, duration: null, side: null }, 'kg')).toBe('60kg×8')
+  })
+})
+
+import { applyPrevious, fillAllPrevious } from './activeWorkout'
+describe('подстановка прошлого', () => {
+  const prev = (r: number, w: number): SetV2 => ({ reps: r, weight: w, time: null, duration: null, side: null })
+  it('в подход попадают числа, но не «выполнен»; без прошлого — тот же объект', () => {
+    let d = addExercise(newDraft('s', new Date(2026, 9, 31)), 'e1', 'x')
+    const r = applyPrevious(d, 'e1', 0, prev(8, 60))
+    expect(r.exercises[0].sets[0]).toMatchObject({ reps: 8, weight: 60, done: false }); expect(applyPrevious(d, 'e1', 0, null)).toBe(d)
+  })
+  it('для всех: только пустые, лишние берут последний прошлый, введённое не затирается', () => {
+    let d = addExercise(newDraft('s', new Date(2026, 9, 31)), 'e1', 'x')
+    d = addSet(addSet(d, 'e1'), 'e1') // 3 подхода (копия пустого — пустые)
+    d = updateSet(d, 'e1', 1, { reps: 5, weight: 100 })
+    const r = fillAllPrevious(d, 'e1', (i) => (i === 0 ? prev(8, 60) : null))
+    expect(r.exercises[0].sets.map((s) => [s.reps, s.weight])).toEqual([[8, 60], [5, 100], [8, 60]])
   })
 })
