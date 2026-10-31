@@ -115,7 +115,11 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
 
 
 /* B / precision atlas: numbered anatomical index tied to the selectable group list. */
-.atlas-callouts{display:block}.atlas-callouts > path,.atlas-callouts > .atlas-index{display:none}
+.atlas-callouts{display:block}
+.atlas-callouts > path{display:block;fill:none;stroke:#7b91a4;stroke-width:.55;stroke-dasharray:1.4 1;opacity:.95}
+.atlas-callouts > .atlas-index{display:none}
+.atlas-reference-grid{fill:none;stroke:#9aabba;stroke-width:.22;stroke-dasharray:.7 1.5;opacity:.34;pointer-events:none}
+.atlas-reference-grid text{fill:#71879a;stroke:none;font:2px ui-monospace,monospace;text-anchor:middle;letter-spacing:.12em}
 .atlas-index-markers{pointer-events:none}
 .atlas-index-markers circle{fill:#f7fbff;stroke:#416c8c;stroke-width:.45}
 .atlas-index-markers text{fill:#234c6b;stroke:none;font:1.9px ui-monospace,monospace;text-anchor:middle;font-weight:700}
@@ -192,6 +196,11 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
 
             <!-- B / PRECISION ATLAS: independent flat zones with indexed callouts. -->
             <g class="atlas-geometry atlas-front-geometry">
+              <g class="atlas-reference-grid" aria-hidden="true">
+                <path d="M12 27 V178 M50 27 V178 M88 27 V178 M12 30 H88 M12 50 H88 M12 70 H88 M12 90 H88 M12 110 H88 M12 130 H88 M12 150 H88 M12 170 H88"/>
+                <path d="M8 30 H12 M8 50 H12 M8 70 H12 M8 90 H12 M8 110 H12 M8 130 H12 M8 150 H12 M8 170 H12 M88 30 H92 M88 50 H92 M88 70 H92 M88 90 H92 M88 110 H92 M88 130 H92 M88 150 H92 M88 170 H92"/>
+                <text x="50" y="24">AXIS / 00</text>
+              </g>
               <circle class="atlas-silhouette" cx="50" cy="14" r="8.5"/>
               <path class="atlas-silhouette" d="M44 27 Q50 30 56 27 L61 34 Q72 35 77 44 L81 70 L75 98 L69 119 L67 153 L63 181 L55 181 L50 146 L45 181 L37 181 L33 153 L31 119 L25 98 L19 70 L23 44 Q28 35 39 34Z"/>
               <path class="atlas-zone" data-muscle="shoulders" d="M29 38 Q23 40 23 48 L34 53 L40 43 L37 38Z M71 38 Q77 40 77 48 L66 53 L60 43 L63 38Z"/>
@@ -217,6 +226,11 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
               </g>
             </g>
             <g class="atlas-geometry atlas-back-geometry">
+              <g class="atlas-reference-grid" aria-hidden="true">
+                <path d="M12 27 V178 M50 27 V178 M88 27 V178 M12 30 H88 M12 50 H88 M12 70 H88 M12 90 H88 M12 110 H88 M12 130 H88 M12 150 H88 M12 170 H88"/>
+                <path d="M8 30 H12 M8 50 H12 M8 70 H12 M8 90 H12 M8 110 H12 M8 130 H12 M8 150 H12 M8 170 H12 M88 30 H92 M88 50 H92 M88 70 H92 M88 90 H92 M88 110 H92 M88 130 H92 M88 150 H92 M88 170 H92"/>
+                <text x="50" y="24">AXIS / 00</text>
+              </g>
               <circle class="atlas-silhouette" cx="50" cy="14" r="8.5"/>
               <path class="atlas-silhouette" d="M44 27 Q50 30 56 27 L61 34 Q72 35 77 44 L81 70 L75 98 L69 119 L67 153 L63 181 L55 181 L50 146 L45 181 L37 181 L33 153 L31 119 L25 98 L19 70 L23 44 Q28 35 39 34Z"/>
               <path class="atlas-zone" data-muscle="shoulders" d="M29 38 Q23 40 23 48 L34 53 L40 43 L37 38Z M71 38 Q77 40 77 48 L66 53 L60 43 L63 38Z"/>
@@ -483,7 +497,7 @@ function paint(){
  const list=document.getElementById('muscleList');
  list.replaceChildren(...visibleIds.map(id=>{
   const button=document.createElement('button');button.type='button';button.dataset.listMuscle=id;
-  button.textContent=mode==='atlas'?(atlasIndex[view][id]||'--')+' · '+(names[id]||id):(names[id]||id);button.setAttribute('aria-pressed',String(id===selected));
+  button.textContent=mode==='atlas'?(atlasIndex[view][id]||'--')+'  /  '+(names[id]||id):(names[id]||id);button.setAttribute('aria-label',mode==='atlas'?'Индекс '+(atlasIndex[view][id]||'неизвестен')+'. '+(names[id]||id):(names[id]||id));button.setAttribute('aria-pressed',String(id===selected));
   button.addEventListener('click',()=>{selected=id;paint();announceSelection();focusMuscle(id)});
   return button;
  }));
