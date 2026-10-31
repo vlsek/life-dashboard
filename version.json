@@ -1,7 +1,14 @@
 {
-  "version": "6.87",
+  "version": "6.88",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.88",
+      "date": "2026-10-29 14:35",
+      "changes": [
+        "Goals, Challenges, Milestones and Skills (and books): while a list is still loading the page now says “Loading…” instead of “No active goals” / “No active milestones” / “Book list is empty”. On a slow connection a false empty state used to flash for a second. A real empty state only appears after the server answers, and on failure you get an error with a “Try again” button."
+      ]
+    },
     {
       "version": "6.87",
       "date": "2026-10-31 14:34",
@@ -4879,6 +4886,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.88",
+      "date": "2026-10-29 14:35",
+      "changes": [
+        "«Цели», «Челленджи», «Вехи» и «Навыки» (и книги): пока список ещё грузится, страница пишет «Загрузка…», а не «Нет активных целей» / «Нет активных вех» / «Список книг пуст». Раньше на медленной сети на секунду мелькала ложная пустота. Настоящая пустота показывается только после ответа сервера, а при сбое — ошибка с кнопкой «Повторить»."
+      ]
+    },
     {
       "version": "6.87",
       "date": "2026-10-31 14:34",
