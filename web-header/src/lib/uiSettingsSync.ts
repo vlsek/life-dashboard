@@ -26,6 +26,7 @@ export const SYNC_KEYS = [
   'goal_deadline_reminder_off', // напоминание о сроках целей выключено
   'community_tab', // «Сообщество»: последняя вкладка
   'community_category', // «Сообщество»: последняя категория сравнения
+  'community_no_compete', // «Сообщество»: «Без соревнований» (BACKLOG 78.4)
   'cust_tab', // «Кастомизация»: вкладка
   'cust_collapsed', // «Кастомизация»: свёрнутые разделы и группы (JSON)
   'cust_visibility', // «Кастомизация»: что показывать (JSON)
