@@ -15,6 +15,53 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
 .mode-tech .workspace{border-color:#15536a;box-shadow:0 0 0 1px #0e5262,0 24px 70px #0008}.mode-tech .toolbar{border-color:#15536a}.mode-tech .toolbar .pill{background:#081c28;border-color:#175164}.mode-tech .toolbar .pill[aria-pressed=true]{background:#ffad42;border-color:#ffad42;color:#1a160c}.mode-tech .side{background:#081720;border-color:#15536a}.mode-tech .metric,.mode-tech .selection{background:#0d2631;border-color:#1b5867}.mode-tech .bar{background:#153746}.mode-tech .bar i{background:linear-gradient(90deg,#00bcd4,#a3fff3)}.mode-tech .side .kicker{color:#3ee2f0}.mode-tech .selection button{background:#ffad42;color:#20180b}
 @media(max-width:800px){.page{padding:18px 12px 36px}.head{display:block}.head p{margin-top:12px}.concepts{grid-template-columns:1fr;gap:8px}.concept{display:grid;grid-template-columns:94px 1fr;column-gap:12px;align-items:center}.swatch{grid-row:span 2;height:62px}.concept strong{margin:0 0 3px}.workspace-body{grid-template-columns:1fr}.visual{min-height:390px;padding:12px}.body-svg{width:min(100%,340px);max-height:470px}.side{border-left:0;border-top:1px solid var(--line);padding:18px}.concept-copy{display:block}.concept-copy p{margin-top:5px}}
 @media(max-width:420px){.head h1{font-size:28px}.toolbar{gap:6px;padding:10px}.pill{padding:7px 9px;font-size:11px}.visual{min-height:330px}.side h2{font-size:22px}.metric b{font-size:21px}}
+
+/* Each direction changes information architecture, not only palette. */
+.mode-anatomy .workspace-body{grid-template-columns:minmax(0,1.55fr) minmax(270px,.72fr)}
+.mode-anatomy .visual{min-height:560px}
+.mode-anatomy .body-svg{width:min(100%,490px)}
+.mode-atlas .workspace-body{grid-template-columns:minmax(300px,.92fr) minmax(0,1.08fr)}
+.mode-atlas .visual{order:2;min-height:500px;background:#eaf0f4}
+.mode-atlas .side{order:1;border-left:0;border-right:1px solid #cbd5df;background:#f7f9fb;color:#26384a;gap:14px}
+.mode-atlas .side .kicker,.mode-atlas .muscle-list-title{color:#62778c}
+.mode-atlas .side h2{font-family:Georgia,serif;font-weight:500;font-size:29px;color:#24394d}
+.mode-atlas .side p,.mode-atlas .metric span{color:#63778b}
+.mode-atlas .metric{background:#fff;border:1px solid #d5dee6;border-radius:3px}
+.mode-atlas .metric b{font-family:Georgia,serif;color:#244d70}
+.mode-atlas .bar{background:#dce4eb;border-radius:0}
+.mode-atlas .bar i{background:#4c83ad;border-radius:0}
+.mode-atlas .selection{background:#fff;border:1px solid #cbd5df;border-left:3px solid #2d78ac;border-radius:3px}
+.mode-atlas .selection h3{color:#24435e}
+.mode-atlas .selection button{background:#2d78ac;color:#fff;border-radius:3px}
+.mode-tech .workspace-body{grid-template-columns:minmax(0,1.2fr) minmax(290px,.8fr)}
+.mode-tech .visual{min-height:560px}
+.mode-tech .side{background:linear-gradient(180deg,#0b1b25,#08121b);border-left:1px solid #155064;gap:14px}
+.mode-tech .side .kicker,.mode-tech .muscle-list-title{color:#35cfe0}
+.mode-tech .metric{background:#091923;border:1px solid #155064;border-radius:3px;box-shadow:inset 2px 0 #1db8cb}
+.mode-tech .metric b{font:700 25px ui-monospace,monospace;color:#8df5ee}
+.mode-tech .bar{height:4px;background:#123443;border-radius:0}
+.mode-tech .bar i{background:#1bc4d5;border-radius:0}
+.mode-tech .selection{background:#101f29;border:1px solid #1a697c;border-radius:3px}
+.mode-tech .selection h3{font-family:ui-monospace,monospace;color:#ffbd62}
+.mode-tech .selection button{background:#ffad42;color:#1d160c;border-radius:2px}
+.mode-readout{border-bottom:1px solid #2a3542;padding:0 0 13px}
+.readout{display:none}
+.readout span{display:block;font:10px ui-monospace,monospace;letter-spacing:.14em;margin-bottom:6px}
+.readout b{display:block;font-size:14px}
+.readout small{display:block;margin-top:3px;color:#91a0b5;font-size:11px}
+.mode-anatomy .anatomy-readout{display:block;color:#e9b09e}
+.mode-atlas .mode-readout{border-color:#d5dee6}
+.mode-atlas .atlas-readout{display:block;color:#315d7c}
+.mode-atlas .readout small{color:#63778b}
+.mode-tech .mode-readout{border-color:#155064}
+.mode-tech .tech-readout{display:block;color:#42d9e6}
+.tech-readout i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#65f3c1;box-shadow:0 0 8px #65f3c1;margin-right:6px}
+@media(max-width:760px){
+ .mode-atlas .workspace-body,.mode-tech .workspace-body,.mode-anatomy .workspace-body{grid-template-columns:minmax(0,1fr)}
+ .mode-atlas .visual{order:0}
+ .mode-atlas .side{order:0;border-right:0;border-top:1px solid #cbd5df}
+ .mode-anatomy .visual,.mode-tech .visual{min-height:390px}
+}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -173,6 +220,11 @@ button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1240px;margin:a
         </svg>
       </div>
       <aside class="side">
+        <div class="mode-readout" aria-hidden="true">
+          <div class="readout anatomy-readout"><span>ANATOMY / LAYER 02</span><b>Поверхностная группа</b><small>Форма и соседние мышечные слои</small></div>
+          <div class="readout atlas-readout"><span>ATLAS / INDEX 04</span><b>Нагрузка за период</b><small>Сначала сравнение значений, затем детализация выбранной группы</small></div>
+          <div class="readout tech-readout"><span>UNIT 07 / TELEMETRY</span><b><i></i> SIGNAL RECEIVED</b><small>Источник: записанные подходы · DEMO CHANNEL</small></div>
+        </div>
         <div>
           <div class="muscle-list-title" id="muscleListTitle">ВЫБОР БЕЗ КАРТЫ / ПЕРЕДНЯЯ ПРОЕКЦИЯ</div>
           <div class="muscle-list" id="muscleList" aria-label="Список групп мышц"></div>
