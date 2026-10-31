@@ -492,7 +492,8 @@ const CHANGELOG_RU = [
         "«Тренировки»: рекорды прямо во время тренировки. Отметил подход галочкой и побил свой лучший вес, повторы на том же весе, расчётный 1ПМ, объём подхода или время — под строкой появляется «★ Рекорд веса · 62,5 кг × 8» и всплывает уведомление. Разминка рекордов не даёт, равный результат — не рекорд, первый подход в жизни упражнения — тоже.",
     ]},
     { version: "6.85", date: "2026-10-31 18:00", changes: [
-        "«Тренировки»: кнопка «Начать тренировку» — открывается экран с секундомером. Добавляй упражнения, вводи вес и повторы, подсказка «прошлый раз» рядом, отмечай подход галочкой; нажми на номер подхода, чтобы пометить его разминкой (W), сбросом (D) или подходом до отказа (F). «Завершить» сохраняет всё одной тренировкой, пустую тренировку без выполненных подходов не сохраняет. Закрыл вкладку — тренировка не потерялась. Работает и без новой миграции, записи сохраняются как раньше.",
+        "«Тренировки»: кнопка «Начать тренировку» — открывается экран с секундомером. Добавляй упражнения, вводи вес и повторы, подсказка «прошлый раз» рядом, отмечай подход галочкой; нажми на номер подхода, чтобы пометить его разминкой (W), сбросом (D) или подходом до отказа (F). «Завершить» сохраняет всё одной тренировкой, пустую тренировку без выполненных подходов не сохраняет. Закрыл вкладку — тренировка не потерялась. Работает и без новой миграции, записи сохраняются как раньше."
+    ]},
     { version: "6.84", date: "2026-10-30 14:00", changes: [
         "Цели: рядом с «Добавить» появилась кнопка «Шаблоны» — каталог из 16 готовых целей по группам (спорт, здоровье, учёба, финансы, дом, творчество). Выбираешь шаблон, и обычная форма цели открывается уже заполненной: название, категория, число этапов и сложность; осталось поправить что нужно, поставить срок и сохранить. Если такая цель у тебя уже есть, она помечена «уже добавлено». Без миграций."
     ]},
@@ -2677,7 +2678,8 @@ const CHANGELOG_EN = [
         "Workouts: records right during a workout. Tick a set that beats your best weight, reps at the same weight, estimated 1RM, set volume or time, and a “★ Weight record · 62.5 kg × 8” line appears under it along with a notice. Warm-up sets never count, a tie isn’t a record, and neither is the very first set ever logged for an exercise.",
     ]},
     { version: "6.85", date: "2026-10-31 18:00", changes: [
-        "Workouts: a “Start workout” button opens a screen with a stopwatch. Add exercises, enter weight and reps with the “previous time” hint next to them, and tick each set; tap the set number to mark it as warm-up (W), drop set (D) or to failure (F). “Finish” saves everything as one workout; a workout with no completed sets isn’t saved. Closing the tab doesn’t lose it. Works without the new migration — entries are saved the old way.",
+        "Workouts: a “Start workout” button opens a screen with a stopwatch. Add exercises, enter weight and reps with the “previous time” hint next to them, and tick each set; tap the set number to mark it as warm-up (W), drop set (D) or to failure (F). “Finish” saves everything as one workout; a workout with no completed sets isn’t saved. Closing the tab doesn’t lose it. Works without the new migration — entries are saved the old way."
+    ]},
     { version: "6.84", date: "2026-10-30 14:00", changes: [
         "Goals: next to “Add” there is a new “Templates” button with a catalogue of 16 ready-made goals in groups (sport, health, study, money, home, creative). Pick one and the usual goal form opens pre-filled with the name, category, number of stages and difficulty; tweak what you need, set a deadline and save. A goal you already have is marked “already added”. No migrations."
     ]},

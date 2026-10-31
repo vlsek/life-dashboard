@@ -49,12 +49,12 @@ describe('собранные файлы целы (нет маркеров кон
     }
     expect(bad, 'файлы с маркерами конфликта (пересоберите пилот из слитых исходников, а не коммитьте как есть)').toEqual([])
   })
-  it('главный бандл каждой страницы и /header-widgets/header.js — корректный ES-модуль (node --check)', () => {
+  it('главный бандл каждой страницы, /header-widgets/header.js и config.js — корректный JS (node --check)', () => {
     const tmp = mkdtempSync(`${tmpdir()}/ld-bundles-`)
     const bad: string[] = []
     let checked = 0
-    const check = (rel: string) => {
-      const dst = `${tmp}/b${checked++}.mjs`
+    const check = (rel: string, ext = 'mjs') => {
+      const dst = `${tmp}/b${checked++}.${ext}`
       copyFileSync(`${ROOT}/${rel}`, dst)
       try { execSync(`node --check ${dst}`, { stdio: 'pipe' }) } catch (e) { bad.push(`${rel}: ${String((e as { stderr?: unknown }).stderr ?? e).split('\n').slice(0, 3).join(' ')}`) }
     }
@@ -64,7 +64,8 @@ describe('собранные файлы целы (нет маркеров кон
       for (const m of html.matchAll(/(?:src)="\/(?:[^"]*assets\/[^"]+\.js)"/g)) check(m[0].slice(5, -1).replace(/^\//, ''))
     }
     check('header-widgets/header.js')
-    expect(checked).toBeGreaterThanOrEqual(18)
+    check('config.js', 'cjs') // классический скрипт, не модуль (в нём допустимы повторные function). Версия и CHANGELOG: потерянная `]},` или лишняя кавычка в записи релиза ломают весь сайт (v6.69, v6.85)
+    expect(checked).toBeGreaterThanOrEqual(19)
     expect(bad).toEqual([])
   })
   it('version.json — корректный JSON с версией и min_supported', () => {
