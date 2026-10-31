@@ -9,6 +9,7 @@ import MetricIcon from './components/MetricIcon.vue'
 import WaterSection from './components/WaterSection.vue'
 import ChartsSection from './components/ChartsSection.vue'
 import YearGrid from './components/YearGrid.vue'
+import WeeklyRitual from './components/WeeklyRitual.vue'
 import HeaderProgressBadge from './components/HeaderProgressBadge.vue'
 import { syncWeekGauge, weekGaugeStyle } from './lib/useWeekGauge'
 import { syncDayGauge } from './lib/useDayGauge'
@@ -91,6 +92,7 @@ const { goals: deadlineGoals, visible: deadlineVisible, load: loadDeadlineRemind
 const { visible: waterReminderVisible, ml: waterReminderMl, goal: waterReminderGoal, load: loadWaterReminder, dismiss: dismissWaterReminder } = useWaterReminder()
 const { layout, loaded: layoutLoaded, saveError: layoutError, load: loadLayout, save: saveLayout } = useLayout()
 const { visible: planReminders, load: loadPlanReminders, dismiss: dismissPlanReminder } = usePlanReminders()
+const ritualVisible = ref(false) // недельный ритуал (75.6) виден — старый баннер «недоделанная неделя» в этот момент не дублируем
 const { milestonesReminder, weekendReminderVisible, loadMilestonesReminder, dismissMilestonesReminder, checkWeekendReminder, dismissWeekendReminder } = useReminders()
 onMounted(async () => {
   await init()
@@ -241,12 +243,13 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
     <template v-else-if="auth.status === 'ready'">
       <ReminderBanners
         :milestones-reminder="milestonesReminder"
-        :weekend-reminder-visible="weekendReminderVisible"
+        :weekend-reminder-visible="weekendReminderVisible && !ritualVisible"
         :week-total-pct="weekProgress ? progressPercent(weekProgress) : 0"
         @dismiss-milestones="dismissMilestonesReminder"
         @dismiss-weekend="dismissWeekendReminder"
         @open-week="summaryKind = 'week'"
       />
+      <WeeklyRitual :data="yearData" @visible="ritualVisible = $event" />
       <InstallBanner />
       <PlanReminderBanner :items="planReminders" @dismiss="dismissPlanReminder" />
       <WaterReminderBanner v-if="trackWater && waterReminderVisible" :ml="waterReminderMl" :goal="waterReminderGoal" @dismiss="dismissWaterReminder" />
