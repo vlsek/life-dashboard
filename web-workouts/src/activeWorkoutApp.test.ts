@@ -6,6 +6,7 @@ const h = vi.hoisted(() => ({
   exercises: [] as Record<string, unknown>[],
   inserted: [] as { table: string; row: Record<string, unknown> }[],
   sessionsTable: true,
+  entries: [] as Record<string, unknown>[],
 }))
 
 vi.mock('./lib/supabase', () => ({
@@ -20,7 +21,7 @@ vi.mock('./lib/supabase', () => ({
         maybeSingle: () => Promise.resolve({ data: table === 'profiles' ? { onboarded: true, workout_program: null } : null, error: null }),
         then: (res: (v: unknown) => unknown, rej?: (e: unknown) => unknown) => {
           if (table === 'workout_sessions' && !h.sessionsTable) return Promise.resolve({ data: null, error: { code: 'PGRST205', message: 'Could not find the table in the schema cache' } }).then(res, rej)
-          return Promise.resolve({ data: table === 'workout_exercises' ? h.exercises : [], error: null }).then(res, rej)
+          return Promise.resolve({ data: table === 'workout_exercises' ? h.exercises : table === 'workout_entries' ? h.entries : [], error: null }).then(res, rej)
         },
         insert: (row: Record<string, unknown>) => (h.inserted.push({ table, row }), Promise.resolve({ error: null })),
         upsert: () => Promise.resolve({ error: null }),
@@ -55,7 +56,7 @@ async function fillAndFinish(w: ReturnType<typeof mount>) {
 
 beforeEach(() => {
   localStorage.clear(); localStorage.setItem('site_lang', 'ru')
-  h.exercises = [ex]; h.inserted = []; h.sessionsTable = true
+  h.exercises = [ex]; h.entries = []; h.inserted = []; h.sessionsTable = true
   useActiveWorkout().discard()
   resetSessionProbe()
 })
@@ -102,4 +103,19 @@ describe('активная тренировка', () => {
     expect(h.inserted[0].row).not.toHaveProperty('session_id')
     w.unmount()
   })
+
+  it('рекорд: при ✓ выше прошлого лучшего веса — строка «Рекорд веса» и тост; равный вес — без плашки', async () => {
+    h.entries = [{ id: 'old', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }], notes: null }]
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
+    const inputs = q(w, 'aw-set-0-0').findAll('input')
+    await inputs[0].setValue('60'); await inputs[1].setValue('8')
+    await q(w, 'aw-set-0-0').findAll('button')[1].trigger('click')
+    expect(q(w, 'aw-pr-0-0').exists()).toBe(false)
+    await inputs[0].setValue('62.5')
+    expect(q(w, 'aw-pr-0-0').text()).toContain('Рекорд веса')
+    expect(q(w, 'aw-pr-0-0').text()).toContain('62,5')
+    w.unmount()
+  })
 })
+

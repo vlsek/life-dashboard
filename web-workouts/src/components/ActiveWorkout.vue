@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { useActiveWorkout } from '../lib/useActiveWorkout'
 import { doneSetCount, formatElapsed, previousSet, previousText } from '../lib/activeWorkout'
 import { parseNum } from '../lib/entrySets'
 import { setType, SET_TYPES } from '../lib/sessionContract'
-import { t } from '../lib/i18n'
+import { t, type DictKey } from '../lib/i18n'
+import { prSetText, setRecords, topKind } from '../lib/records'
+import { showToast } from '../lib/toast'
+import { haptic } from '../lib/nativeFeedback'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 
 // Экран активной тренировки (BACKLOG 69.2, макет A): липкая шапка с секундомером, блоки упражнений со строками подходов «№ · прошлый раз · вес · повторы · ✓».
@@ -14,6 +17,25 @@ const emit = defineEmits<{ finish: []; cancel: [] }>()
 const aw = useActiveWorkout()
 const draft = computed(() => aw.draft.value)
 const exById = computed(() => new Map(props.exercises.map((e) => [e.id, e])))
+// Рекорды (69.9): по каждому упражнению — какие рекорды побил каждый выполненный подход (история = записи ДО даты тренировки)
+const prMap = computed(() => {
+  const m = new Map<string, ReturnType<typeof setRecords>>()
+  const d = draft.value
+  if (!d) return m
+  for (const e of d.exercises) m.set(e.id, setRecords(props.entries.filter((x) => x.exercise_id === e.exercise_id && x.date < d.date), e.sets))
+  return m
+})
+const prKind = (entryId: string, i: number) => topKind(prMap.value.get(entryId)?.[i] ?? [])
+async function onTick(entryId: string, i: number) {
+  aw.toggleDone(entryId, i)
+  await nextTick()
+  const k = prKind(entryId, i)
+  const e = draft.value?.exercises.find((x) => x.id === entryId)
+  if (k && e) {
+    showToast(t('aw_pr_toast').replace('{x}', prSetText(e.sets[i], unitOf(exById.value.get(e.exercise_id)))))
+    haptic('success')
+  }
+}
 const picking = ref(false)
 const query = ref('')
 const pickList = computed(() => {
@@ -95,9 +117,8 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
           <span class="text-center">{{ exById.get(e.exercise_id)?.tracks_duration ? t('aw_minutes') : t('aw_reps') }}</span>
           <span></span><span></span>
         </div>
+        <template v-for="(s, i) in e.sets" :key="i">
         <div
-          v-for="(s, i) in e.sets"
-          :key="i"
           class="mt-1 grid items-center gap-2 rounded-md"
           :style="'grid-template-columns: 40px 1fr 1fr 1fr 44px 28px;' + (s.done === true ? 'background: color-mix(in srgb, var(--success) 18%, transparent)' : '')"
           :data-testid="'aw-set-' + ei + '-' + i"
@@ -134,12 +155,16 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
             :style="'min-height: 44px; border-color: var(--border);' + (s.done === true ? 'background: var(--success); color: #fff' : 'color: var(--text-dim)')"
             :aria-pressed="s.done === true"
             :aria-label="t('aw_set_done')"
-            @click="aw.toggleDone(e.id, i)"
+            @click="onTick(e.id, i)"
           >
             ✓
           </button>
           <button type="button" class="text-sm" style="color: var(--text-dim); min-height: 44px" :aria-label="t('aw_remove_set')" @click="aw.removeSet(e.id, i)">×</button>
         </div>
+        <div v-if="prKind(e.id, i)" class="mt-0.5 text-xs font-semibold" style="color: var(--accent)" :data-testid="'aw-pr-' + ei + '-' + i">
+          ★ {{ t(('aw_pr_' + prKind(e.id, i)) as DictKey) }} · {{ prSetText(s, unitOf(exById.get(e.exercise_id))) }}
+        </div>
+        </template>
         <button type="button" class="mt-2 w-full rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--accent); min-height: 44px" @click="aw.addSet(e.id)">{{ t('aw_add_set') }}</button>
       </section>
 
