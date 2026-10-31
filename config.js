@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.84";
+const SITE_VERSION = "6.85";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,8 +488,10 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
-    { version: "6.84", date: "2026-10-31 18:00", changes: [
+    { version: "6.85", date: "2026-10-31 18:00", changes: [
         "«Тренировки»: кнопка «Начать тренировку» — открывается экран с секундомером. Добавляй упражнения, вводи вес и повторы, подсказка «прошлый раз» рядом, отмечай подход галочкой; нажми на номер подхода, чтобы пометить его разминкой (W), сбросом (D) или подходом до отказа (F). «Завершить» сохраняет всё одной тренировкой, пустую тренировку без выполненных подходов не сохраняет. Закрыл вкладку — тренировка не потерялась. Работает и без новой миграции, записи сохраняются как раньше.",
+    { version: "6.84", date: "2026-10-30 14:00", changes: [
+        "Цели: рядом с «Добавить» появилась кнопка «Шаблоны» — каталог из 16 готовых целей по группам (спорт, здоровье, учёба, финансы, дом, творчество). Выбираешь шаблон, и обычная форма цели открывается уже заполненной: название, категория, число этапов и сложность; осталось поправить что нужно, поставить срок и сохранить. Если такая цель у тебя уже есть, она помечена «уже добавлено». Без миграций."
     ]},
     { version: "6.83", date: "2026-10-29 21:00", changes: [
         "«Навыки» → «Книги»: кнопка «Импорт CSV» — загрузи экспорт из Goodreads (My Books → Import and export → Export Library), и книги добавятся списком: прочитанные с датой прочтения, «хочу прочитать» и «читаю» — в планы. Перед добавлением видно, сколько книг будет добавлено, а книги, которые уже есть (по названию и автору), пропускаются. Баллы за импортированные прочитанные не начисляются. Оценки и страницы пока не переносятся. Без миграций."
@@ -2668,8 +2670,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
-    { version: "6.84", date: "2026-10-31 18:00", changes: [
+    { version: "6.85", date: "2026-10-31 18:00", changes: [
         "Workouts: a “Start workout” button opens a screen with a stopwatch. Add exercises, enter weight and reps with the “previous time” hint next to them, and tick each set; tap the set number to mark it as warm-up (W), drop set (D) or to failure (F). “Finish” saves everything as one workout; a workout with no completed sets isn’t saved. Closing the tab doesn’t lose it. Works without the new migration — entries are saved the old way.",
+    { version: "6.84", date: "2026-10-30 14:00", changes: [
+        "Goals: next to “Add” there is a new “Templates” button with a catalogue of 16 ready-made goals in groups (sport, health, study, money, home, creative). Pick one and the usual goal form opens pre-filled with the name, category, number of stages and difficulty; tweak what you need, set a deadline and save. A goal you already have is marked “already added”. No migrations."
     ]},
     { version: "6.83", date: "2026-10-29 21:00", changes: [
         "Skills → Books: a new “Import CSV” button — upload your Goodreads export (My Books → Import and export → Export Library) and the books are added in one go: read books with their date read, “to read” and “currently reading” go to your plans. You see how many books will be added first, and books you already have (by title and author) are skipped. Imported read books give no points. Ratings and page counts are not imported yet. No migrations."
