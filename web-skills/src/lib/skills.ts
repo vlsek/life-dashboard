@@ -1,3 +1,4 @@
+import { normalizeCategory } from './skillsView'
 import type { SkillFormInput } from './types'
 
 // Текстовый прогресс-бар — 1:1 с bar() из skills.js.
@@ -42,8 +43,11 @@ export function suggestionsFor(lang: 'en' | 'ru', existingNames: Set<string>): S
 }
 
 // Патч на insert/update — 1:1 с addSkill()/editSkill() в skills.js (step/points по умолчанию 10).
-export function buildSkillRow(res: SkillFormInput): { name: string; step: number; points: number } {
-  return { name: res.name.trim(), step: res.step || 10, points: res.points || 10 }
+// opts.categoryColumn — есть ли в базе колонка skills.category (миграция 112): без неё категорию НЕ пишем (иначе запись упала бы).
+export function buildSkillRow(res: SkillFormInput, opts: { categoryColumn?: boolean } = {}): { name: string; step: number; points: number; category?: string | null } {
+  const row: { name: string; step: number; points: number; category?: string | null } = { name: res.name.trim(), step: res.step || 10, points: res.points || 10 }
+  if (opts.categoryColumn) row.category = normalizeCategory(res.category)
+  return row
 }
 
 // Процент прогресса навыка для полоски: целое 0..100, пустое/битое значение — 0 (BACKLOG 22, 11:58).

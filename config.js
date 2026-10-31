@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.82";
+const SITE_VERSION = "6.83";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.83", date: "2026-10-29 21:00", changes: [
+        "«Навыки» → «Книги»: кнопка «Импорт CSV» — загрузи экспорт из Goodreads (My Books → Import and export → Export Library), и книги добавятся списком: прочитанные с датой прочтения, «хочу прочитать» и «читаю» — в планы. Перед добавлением видно, сколько книг будет добавлено, а книги, которые уже есть (по названию и автору), пропускаются. Баллы за импортированные прочитанные не начисляются. Оценки и страницы пока не переносятся. Без миграций."
+    ]},
     { version: "6.82", date: "2026-10-30 04:31", changes: [
         "Дашборд: в блоке «Графики» появилась годовая сетка — квадрат на каждый день за год. Можно выбрать «Идеальные дни» (выполнено всё нужное в этот день) или одну метрику. Состояния различаются не только цветом: выполнено — заливка, пропуск — контур, выходной по расписанию — точка, сегодняшний день — пунктир; под сеткой есть подписи. Нажми на день, чтобы увидеть значение и заметки дня; работают и стрелки на клавиатуре. Дни до первой записи не считаются пропусками. Без миграций."
     ]},
@@ -2662,6 +2665,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.83", date: "2026-10-29 21:00", changes: [
+        "Skills → Books: a new “Import CSV” button — upload your Goodreads export (My Books → Import and export → Export Library) and the books are added in one go: read books with their date read, “to read” and “currently reading” go to your plans. You see how many books will be added first, and books you already have (by title and author) are skipped. Imported read books give no points. Ratings and page counts are not imported yet. No migrations."
+    ]},
     { version: "6.82", date: "2026-10-30 04:31", changes: [
         "Dashboard: the Charts block now has a year grid, one square per day for the past year. Pick Perfect days (everything due that day done) or a single metric. States are told apart by more than color: done is filled, missed is an outline, a scheduled rest day is a dot, today is dashed, and labels sit below the grid. Tap a day to see its value and notes; arrow keys work too. Days before your first entry are not counted as misses. No migrations."
     ]},

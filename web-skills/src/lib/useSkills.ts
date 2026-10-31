@@ -19,6 +19,8 @@ export function useSkills() {
   const auth = ref<AuthState>({ status: 'loading' })
   const items = ref<Skill[]>([])
   const error = ref<string | null>(null)
+  // Есть ли колонка skills.category (миграция 112): по первой загруженной строке, у пустого списка — пробным запросом. Нет колонки — работаем как раньше.
+  const hasCategory = ref(false)
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -50,6 +52,8 @@ export function useSkills() {
     }
     error.value = null
     items.value = (data || []) as Skill[]
+    if (items.value.length) hasCategory.value = 'category' in items.value[0]
+    else hasCategory.value = !(await sb.from('skills').select('category').limit(1)).error
   }
 
   async function reload() {
@@ -57,14 +61,14 @@ export function useSkills() {
   }
 
   async function addSkill(userId: string, res: SkillFormInput) {
-    const row = buildSkillRow(res)
+    const row = buildSkillRow(res, { categoryColumn: hasCategory.value })
     const { error: err } = await sb.from('skills').insert({ user_id: userId, progress: 0, mastered: false, ...row })
     if (err) throw err
     await reload()
   }
 
   async function updateSkill(id: string, res: SkillFormInput) {
-    const row = buildSkillRow(res)
+    const row = buildSkillRow(res, { categoryColumn: hasCategory.value })
     const { error: err } = await sb.from('skills').update(row).eq('id', id)
     if (err) throw err
     await reload()
@@ -95,5 +99,5 @@ export function useSkills() {
     await reload()
   }
 
-  return { auth, items, error, init, reload, addSkill, updateSkill, deleteSkill, bumpProgress, toggleMastered }
+  return { auth, items, error, hasCategory, init, reload, addSkill, updateSkill, deleteSkill, bumpProgress, toggleMastered }
 }

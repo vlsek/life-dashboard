@@ -1,3 +1,4 @@
+import { importRows, type ImportedBook } from './importGoodreads'
 import { ref } from 'vue'
 import { sb } from './supabase'
 import { todayStr } from './date'
@@ -42,6 +43,19 @@ export function useBooks() {
     await reload()
   }
 
+  // Импорт пачкой (BACKLOG 77.9): вставляем порциями по 100, чтобы не упереться в лимит запроса; после — одна перезагрузка списка.
+  async function importBooks(userId: string, books: ImportedBook[]) {
+    const rows = importRows(userId, books, BOOK_DEFAULT_POINTS)
+    for (let i = 0; i < rows.length; i += 100) {
+      const { error: err } = await sb.from('books').insert(rows.slice(i, i + 100))
+      if (err) {
+        if (i > 0) await reload() // часть уже вставлена — покажем её
+        throw err
+      }
+    }
+    await reload()
+  }
+
   async function updateBook(id: string, res: BookFormInput) {
     const row = buildRow(res)
     const { error: err } = await sb.from('books').update(row).eq('id', id)
@@ -66,5 +80,5 @@ export function useBooks() {
     await reload()
   }
 
-  return { items, error, load, reload, addBook, updateBook, deleteBook, toggleDone }
+  return { items, error, load, reload, addBook, importBooks, updateBook, deleteBook, toggleDone }
 }

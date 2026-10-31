@@ -6,6 +6,7 @@ export interface Skill {
   mastered: boolean
   step: number
   points: number
+  category?: string | null // миграция 112; нет колонки/значения — «Без категории»
   created_at: string
 }
 
@@ -13,6 +14,7 @@ export interface SkillFormInput {
   name: string
   step: number
   points: number
+  category?: string
 }
 
 export type BookStatus = 'to_read' | 'done'

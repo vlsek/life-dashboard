@@ -3,8 +3,10 @@ import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import LoadError from './components/LoadError.vue'
 import ReadingGoalCard from './components/ReadingGoalCard.vue'
+import ImportBooksModal from './components/ImportBooksModal.vue'
+import type { ImportedBook } from './lib/importGoodreads'
 import SkillForm from './components/SkillForm.vue'
-import SkillCard from './components/SkillCard.vue'
+import ActiveSkillsList from './components/ActiveSkillsList.vue'
 import CoinIcon from './components/CoinIcon.vue'
 import Icon from './components/Icon.vue'
 import BookForm from './components/BookForm.vue'
@@ -17,10 +19,10 @@ import type { Skill, SkillFormInput, Book, BookFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
 import CollapsibleSection from './components/CollapsibleSection.vue'
-import { filterSkills, normalizeSort, sortSkills, SORT_KEY, type SkillSort } from './lib/skillsView'
+import { categoryOptions, filterSkills, normalizeSort, sortSkills, SORT_KEY, type SkillSort } from './lib/skillsView'
 
-const { auth, items: skills, error: skillsError, init, reload: reloadSkills, addSkill, updateSkill, deleteSkill, bumpProgress, toggleMastered } = useSkills()
-const { items: books, error: booksError, load: loadBooks, reload: reloadBooks, addBook, updateBook, deleteBook, toggleDone: toggleBookDone } = useBooks()
+const { auth, items: skills, error: skillsError, hasCategory, init, reload: reloadSkills, addSkill, updateSkill, deleteSkill, bumpProgress, toggleMastered } = useSkills()
+const { items: books, error: booksError, load: loadBooks, reload: reloadBooks, addBook, importBooks, updateBook, deleteBook, toggleDone: toggleBookDone } = useBooks()
 
 onMounted(init)
 watch(auth, (v) => {
@@ -48,6 +50,7 @@ watch(sortMode, (v) => {
 })
 const query = ref('')
 const shownActive = computed(() => sortSkills(filterSkills(active.value, query.value), sortMode.value))
+const myCategories = computed(() => categoryOptions(skills.value)) // свои уже введённые категории — подсказка в форме (миграция 112)
 const suggestions = computed(() => suggestionsFor(getLang(), new Set(skills.value.map((s) => s.name))))
 
 const activeBooks = computed(() => books.value.filter((b) => b.status !== 'done'))
@@ -64,8 +67,8 @@ const skillFormTarget = ref<Skill | 'new' | null>(null)
 const skillFormPrefill = ref<string | null>(null) // имя из "быстрой идеи", если открыли форму оттуда
 const skillFormInitial = computed<SkillFormInput>(() => {
   const s = skillFormTarget.value
-  if (s && s !== 'new') return { name: s.name, step: s.step ?? 10, points: s.points ?? 10 }
-  return { name: skillFormPrefill.value ?? '', step: 10, points: 10 }
+  if (s && s !== 'new') return { name: s.name, step: s.step ?? 10, points: s.points ?? 10, category: s.category ?? '' }
+  return { name: skillFormPrefill.value ?? '', step: 10, points: 10, category: '' }
 })
 function openAddSkill(prefillName?: string) {
   skillFormPrefill.value = prefillName ?? null
@@ -102,6 +105,23 @@ async function onSaveBook(res: BookFormInput) {
     await addBook(auth.value.userId, res)
   } else if (target) {
     await updateBook(target.id, res)
+  }
+}
+// Импорт из Goodreads (BACKLOG 77.9)
+const importOpen = ref(false)
+const importBusy = ref(false)
+const importError = ref('')
+async function onImportBooks(list: ImportedBook[]) {
+  if (auth.value.status !== 'ready') return
+  importBusy.value = true
+  importError.value = ''
+  try {
+    await importBooks(auth.value.userId, list)
+    importOpen.value = false
+  } catch (e) {
+    importError.value = t('gr_fail') + (e instanceof Error ? e.message : String((e as { message?: string })?.message ?? e))
+  } finally {
+    importBusy.value = false
   }
 }
 async function onDeleteBook(b: Book) {
@@ -156,17 +176,7 @@ async function onDeleteBook(b: Book) {
               </select>
             </div>
             <p v-if="shownActive.length === 0" class="dim" data-test="skills-no-match">{{ t('skills_no_match') }}</p>
-            <div v-else class="flex flex-col gap-2">
-              <SkillCard
-                v-for="s in shownActive"
-                :key="s.id"
-                :skill="s"
-                @bump="bumpProgress(s, $event)"
-                @mastered="toggleMastered(s)"
-                @edit="skillFormTarget = s"
-                @delete="onDeleteSkill(s)"
-              />
-            </div>
+            <ActiveSkillsList v-else :skills="shownActive" @bump="(s, d) => bumpProgress(s, d)" @mastered="toggleMastered" @edit="(s) => (skillFormTarget = s)" @delete="onDeleteSkill" />
           </template>
         </CollapsibleSection>
 
@@ -193,9 +203,12 @@ async function onDeleteBook(b: Book) {
 
       <div class="mb-4 flex items-center justify-between">
         <h2 class="text-lg font-semibold"><EmojiText :text="t('skills_books_h2')" /></h2>
-        <button class="rounded-lg px-3 py-1.5 text-sm" style="background: var(--accent); color: var(--accent-text)" @click="bookFormTarget = 'new'">
-          <EmojiText :text="t('skills_add_book_btn')" />
-        </button>
+        <div class="flex items-center gap-2">
+          <button type="button" class="secondary rounded-lg px-3 py-1.5 text-sm" data-test="gr-open" @click="importError = ''; importOpen = true">{{ t('gr_btn') }}</button>
+          <button class="rounded-lg px-3 py-1.5 text-sm" style="background: var(--accent); color: var(--accent-text)" @click="bookFormTarget = 'new'">
+            <EmojiText :text="t('skills_add_book_btn')" />
+          </button>
+        </div>
       </div>
 
       <LoadError v-if="booksError" :message="booksError" :retry="reloadBooks" />
@@ -242,7 +255,8 @@ async function onDeleteBook(b: Book) {
       </template>
     </template>
 
-    <SkillForm v-if="skillFormTarget" :is-edit="skillFormTarget !== 'new'" :initial="skillFormInitial" @close="skillFormTarget = null" @save="onSaveSkill" />
+    <SkillForm v-if="skillFormTarget" :is-edit="skillFormTarget !== 'new'" :initial="skillFormInitial" :categories="myCategories" :category-enabled="hasCategory" @close="skillFormTarget = null" @save="onSaveSkill" />
+    <ImportBooksModal v-if="importOpen" :existing="books" :busy="importBusy" :error="importError" @close="importOpen = false" @confirm="onImportBooks" />
     <BookForm v-if="bookFormTarget" :is-edit="bookFormTarget !== 'new'" :initial="bookFormInitial" @close="bookFormTarget = null" @save="onSaveBook" />
   </main>
 </template>
