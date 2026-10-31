@@ -1,7 +1,14 @@
 {
-  "version": "6.92",
+  "version": "6.93",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.93",
+      "date": "2026-10-31 22:00",
+      "changes": [
+        "Workouts: in an active workout, tapping the grey “previous time” hint fills that set with the weight and reps, and a “Fill from last time” button under the exercise fills all empty sets at once (anything you already typed stays). The hint doesn’t count as a completed set until you tick it."
+      ]
+    },
     {
       "version": "6.92",
       "date": "2026-10-31 18:00",
@@ -4914,6 +4921,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.93",
+      "date": "2026-10-31 22:00",
+      "changes": [
+        "«Тренировки»: в активной тренировке тап по серой подсказке «прошлый раз» подставляет вес и повторы в этот подход, а кнопка «Подставить прошлое» под упражнением заполняет все пустые подходы сразу (то, что ты уже ввёл, не затирается). Подсказка не считается выполненным подходом, пока не нажата галочка."
+      ]
+    },
     {
       "version": "6.92",
       "date": "2026-10-31 18:00",

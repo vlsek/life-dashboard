@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.92";
+const SITE_VERSION = "6.93";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.93", date: "2026-10-31 22:00", changes: [
+        "«Тренировки»: в активной тренировке тап по серой подсказке «прошлый раз» подставляет вес и повторы в этот подход, а кнопка «Подставить прошлое» под упражнением заполняет все пустые подходы сразу (то, что ты уже ввёл, не затирается). Подсказка не считается выполненным подходом, пока не нажата галочка.",
+    ]},
     { version: "6.92", date: "2026-10-31 18:00", changes: [
         "«Навыки»: у навыка можно задать категорию (выбор из своих или новая, до 40 символов), и список «В процессе» разбивается на сворачиваемые секции по категориям. Работает после применения миграции 112; до неё страница выглядит как раньше.",
     ]},
@@ -2692,6 +2695,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.93", date: "2026-10-31 22:00", changes: [
+        "Workouts: in an active workout, tapping the grey “previous time” hint fills that set with the weight and reps, and a “Fill from last time” button under the exercise fills all empty sets at once (anything you already typed stays). The hint doesn’t count as a completed set until you tick it.",
+    ]},
     { version: "6.92", date: "2026-10-31 18:00", changes: [
         "Skills: a skill can have a category (pick one of yours or type a new one, up to 40 characters), and the “In progress” list splits into collapsible category sections. Works once migration 112 is applied; until then the page looks as before.",
     ]},
