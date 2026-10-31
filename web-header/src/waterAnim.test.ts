@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { flushPromises, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 // @ts-ignore — в проекте нет типов node, а vitest выполняется в node (как в других стражах пилота).
 import { readFileSync } from 'node:fs'
@@ -21,7 +21,6 @@ vi.mock('./lib/supabase', () => {
 import { DEFAULT_WATER_ANIM, WATER_ANIMS, WATER_ANIM_KEY, getWaterAnim, getWaterAnimChoice, sanitizeWaterAnim, setWaterAnim } from './lib/waterAnim'
 import { THEME_WATER } from './lib/themeWater'
 import WaterSavedAnim from './components/WaterSavedAnim.vue'
-import SettingsModal from './components/SettingsModal.vue'
 
 const read = (p: string): string => readFileSync(p, 'utf-8')
 const css: string = read('src/header.css')
@@ -204,46 +203,23 @@ describe('CSS анимации в header.css (страж)', () => {
   })
 })
 
-describe('«Настройки»: анимация воды', () => {
-  const open = async () => {
-    const w = mount(SettingsModal, { props: { userId: 'u1' }, global: { stubs: { transition: false } } })
-    await flushPromises()
-    return w
-  }
-  it('список: «По теме» и шесть вариантов; по умолчанию выбрано «По теме» (на обычной теме играет волна)', async () => {
-    const w = await open()
-    const sel = w.find('[data-test="water-anim-select"]')
-    expect(sel.findAll('option').map((o) => o.attributes('value'))).toEqual(['auto', 'wave', 'drops', 'ripple', 'bubbles', 'pour', 'splash'])
-    expect((sel.element as HTMLSelectElement).value).toBe('auto')
-    expect(sel.find('option[value="auto"]').text()).toBe('По теме')
-    expect(sel.find('option[value="wave"]').text()).toBe('Волна (спокойная)')
-    w.unmount()
+describe('выбор анимации воды живёт в «Кастомизации», а не в общих настройках', () => {
+  it('шапка больше не содержит второй селектор или отдельное превью выбора', () => {
+    const settings = read('src/components/SettingsModal.vue')
+    expect(settings).not.toContain('water-anim-select')
+    expect(settings).not.toContain('water-anim-preview')
+    expect(settings).not.toContain('WaterSavedAnim')
+    expect(settings).not.toContain('onWaterAnim')
+    // Напоминания о воде остаются в глобальных настройках — это другая функция.
+    expect(settings).toContain('water-reminders')
   })
-  it('«По теме» после ручного выбора снимает его; явная «волна» запоминается', async () => {
-    const w = await open()
-    const sel = w.find('[data-test="water-anim-select"]')
-    await sel.setValue('wave')
-    expect(localStorage.getItem(WATER_ANIM_KEY)).toBe('wave')
-    await sel.setValue('auto')
-    expect(localStorage.getItem(WATER_ANIM_KEY)).toBeNull()
-    w.unmount()
-  })
-  it('выбор запоминается и сразу проигрывается выбранный вариант', async () => {
-    const w = await open()
-    expect(w.find('[data-test="water-saved"]').exists()).toBe(false)
-    await w.find('[data-test="water-anim-select"]').setValue('drops')
-    await vi.advanceTimersByTimeAsync(10)
-    expect(localStorage.getItem(WATER_ANIM_KEY)).toBe('drops')
-    expect(w.find('[data-test="water-saved"]').attributes('data-variant')).toBe('drops')
-    w.unmount()
-  })
-  it('«Показать» проигрывает текущий вариант без добавления воды', async () => {
-    localStorage.setItem(WATER_ANIM_KEY, 'ripple')
-    const w = await open()
-    await w.find('[data-test="water-anim-preview"]').trigger('click')
-    await vi.advanceTimersByTimeAsync(10)
-    expect(w.find('[data-test="water-saved"]').attributes('data-variant')).toBe('ripple')
-    w.unmount()
+  it('пикер в Кастомизации остаётся владельцем выбора и использует общий ключ', () => {
+    const picker = read('../web-customization/src/components/WaterAnimPicker.vue')
+    const customizationTest = read('../web-customization/src/waterAnimPicker.test.ts')
+    expect(picker).toContain('setWaterAnim')
+    expect(picker).toContain('wateranim-picker')
+    expect(customizationTest).toContain('WATER_ANIM_KEY')
+    expect(customizationTest).toContain('выбор варианта пишется')
   })
 })
 
