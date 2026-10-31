@@ -13,6 +13,7 @@ import { useLayout } from '../lib/useLayout'
 import { friendlyError } from '../lib/friendlyError'
 import { ensureTrackWater, saveTrackWater, trackWater } from '../lib/waterTracking'
 import { loadShowOnline, saveShowOnline } from '../lib/presenceSetting'
+import { hotkeysEnabled, setHotkeysEnabled } from '../lib/hotkeys'
 import { THEME_KEYS, celebrationsEnabled, skipPromptEnabled, setSkipPromptEnabled, setSidebarProgress, sidebarProgress, getTheme, setCelebrationsEnabled, setLangAndReload, setMotionOff, setSimpleLook, setTheme, setWaterRemindersEnabled, systemReducedMotion, userMotionOff, userSimpleLook, waterRemindersEnabled, type ThemeKey } from '../lib/prefs'
 
 // «Глобальные настройки» (BACKLOG 6.2): единое окно со всеми настройками, которые раньше были разбросаны по страницам
@@ -47,6 +48,11 @@ const motionOff = ref(userMotionOff() || systemReduced)
 const simpleLook = ref(userSimpleLook())
 const celebrate = ref(celebrationsEnabled())
 const skipPrompt = ref(skipPromptEnabled())
+const hotkeys = ref(hotkeysEnabled())
+function onHotkeys(e: Event) {
+  hotkeys.value = (e.target as HTMLInputElement).checked
+  setHotkeysEnabled(hotkeys.value)
+}
 const waterReminders = ref(waterRemindersEnabled())
 // «Отслеживать воду» (BACKLOG 932): флаг в профиле; при выключении прячутся стакан, окно воды, напоминания и учёт воды в кольцах/сериях (прошлое остаётся)
 const waterSaving = ref(false)
@@ -175,6 +181,11 @@ async function changeLayout(next: LayoutItem[]) {
         {{ t('skip_prompt_setting') }}
       </label>
       <p class="gh-dim" style="margin: 2px 0 8px 24px; font-size: 12px">{{ t('skip_prompt_setting_hint') }}</p>
+      <label class="gh-check">
+        <input type="checkbox" :checked="hotkeys" data-test="hotkeys-setting" @change="onHotkeys" />
+        {{ t('hk_setting') }}
+      </label>
+      <p class="gh-dim" style="margin: 2px 0 8px 24px; font-size: 12px">{{ t('hk_setting_hint') }}</p>
       <template v-if="trackWater">
         <label class="gh-check">
           <input type="checkbox" :checked="waterReminders" data-test="water-reminders" @change="onWaterReminders" />

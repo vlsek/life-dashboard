@@ -16,6 +16,8 @@ import ProgressSummaryModal from './components/ProgressSummaryModal.vue'
 import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import RightPanel, { type GaugeData } from './components/RightPanel.vue'
 import SettingsModal from './components/SettingsModal.vue'
+import HotkeysModal from './components/HotkeysModal.vue'
+import { createHotkeyHandler } from './lib/hotkeys'
 import { loadPauseState, type PauseState } from './lib/pause'
 import FavoriteHeart from './components/FavoriteHeart.vue'
 import PageWidgetButton from './components/PageWidgetButton.vue'
@@ -44,6 +46,10 @@ const props = defineProps<{ panelOnly?: boolean }>()
 const userId = ref<string | null>(null)
 const outboxView = shallowRef<OutboxView | null>(null)
 onBeforeUnmount(() => outboxView.value?.stop())
+// Горячие клавиши (79.8): один слушатель на страницу; «g» + буква — переход, «?» — шпаргалка
+const onHotkey = createHotkeyHandler({ navigate: (href) => { location.href = href } })
+onMounted(() => document.addEventListener('keydown', onHotkey))
+onBeforeUnmount(() => document.removeEventListener('keydown', onHotkey))
 const userEmail = ref<string | null>(null)
 const sideProfile = useSidebarProfile()
 // Левое меню (BACKLOG 6.2): блок профиля рисуем в #sidebar-top, который AppShell ставит первым в <nav>; нет якоря — ничего не делаем
@@ -267,6 +273,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
       @undo-water="onPanelUndoWater"
       @open-settings="panelOpen = false; globalSettingsOpen = true"
     />
+    <HotkeysModal />
     <SettingsModal
       v-if="globalSettingsOpen && userId"
       :user-id="userId"
