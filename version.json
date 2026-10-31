@@ -1,7 +1,14 @@
 {
-  "version": "6.83",
+  "version": "6.84",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.84",
+      "date": "2026-10-30 14:00",
+      "changes": [
+        "Goals: next to “Add” there is a new “Templates” button with a catalogue of 16 ready-made goals in groups (sport, health, study, money, home, creative). Pick one and the usual goal form opens pre-filled with the name, category, number of stages and difficulty; tweak what you need, set a deadline and save. A goal you already have is marked “already added”. No migrations."
+      ]
+    },
     {
       "version": "6.83",
       "date": "2026-10-29 21:00",
@@ -4851,6 +4858,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.84",
+      "date": "2026-10-30 14:00",
+      "changes": [
+        "Цели: рядом с «Добавить» появилась кнопка «Шаблоны» — каталог из 16 готовых целей по группам (спорт, здоровье, учёба, финансы, дом, творчество). Выбираешь шаблон, и обычная форма цели открывается уже заполненной: название, категория, число этапов и сложность; осталось поправить что нужно, поставить срок и сохранить. Если такая цель у тебя уже есть, она помечена «уже добавлено». Без миграций."
+      ]
+    },
     {
       "version": "6.83",
       "date": "2026-10-29 21:00",
