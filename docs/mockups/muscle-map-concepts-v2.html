@@ -236,7 +236,29 @@ function paint(){
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;paint()}));
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.view;selected=view==='front'?'chest':'back';paint()}));
 document.querySelectorAll('[data-heat]').forEach(b=>b.addEventListener('click',()=>{heat=b.dataset.heat;paint()}));
-document.querySelectorAll('[data-muscle]').forEach(el=>{el.addEventListener('click',()=>{selected=el.dataset.muscle;paint()});el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selected=el.dataset.muscle;paint()}})});
+function visibleMuscleTargets(){
+ return [...document.querySelectorAll('[data-muscle]')].filter(el=>el.getClientRects().length>0);
+}
+function focusMuscle(id){
+ const target=visibleMuscleTargets().find(el=>el.dataset.muscle===id);
+ if(target) target.focus();
+}
+document.querySelectorAll('[data-muscle]').forEach(el=>{
+ el.addEventListener('click',()=>{selected=el.dataset.muscle;paint()});
+ el.addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();selected=el.dataset.muscle;paint();return}
+  if(e.key==='Escape'){e.preventDefault();selected=null;paint();return}
+  const keys=['ArrowRight','ArrowDown','ArrowLeft','ArrowUp','Home','End'];
+  if(!keys.includes(e.key)) return;
+  const ids=[...new Set(visibleMuscleTargets().map(node=>node.dataset.muscle))];
+  if(!ids.length) return;
+  e.preventDefault();
+  const current=ids.indexOf(el.dataset.muscle);
+  const next=e.key==='Home'?0:e.key==='End'?ids.length-1:
+   (current+(e.key==='ArrowRight'||e.key==='ArrowDown'?1:-1)+ids.length)%ids.length;
+  selected=ids[next];paint();focusMuscle(selected);
+ });
+});
 document.getElementById('addButton').addEventListener('click',()=>{document.getElementById('selectionText').textContent='В production эта кнопка вызовет существующий сценарий добавления записи для связанных упражнений.'});
 paint();
 </script>
