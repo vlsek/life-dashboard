@@ -15,6 +15,7 @@ export function useMilestones() {
   const auth = ref<AuthState>({ status: 'loading' })
   const items = ref<Milestone[]>([])
   const error = ref<string | null>(null)
+  const loaded = ref(false) // первая загрузка закончилась (успехом или ошибкой): до этого «нет …» показывать нельзя — ложная пустота
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -39,6 +40,14 @@ export function useMilestones() {
   }
 
   async function load(userId: string) {
+    try {
+      await loadData(userId)
+    } finally {
+      loaded.value = true
+    }
+  }
+
+  async function loadData(userId: string) {
     const { data, error: err } = await sb.from('milestones').select('*').eq('user_id', userId).order('created_at')
     if (err) {
       error.value = friendlyError(err, 'load')
@@ -82,5 +91,5 @@ export function useMilestones() {
     await reload()
   }
 
-  return { auth, items, error, init, reload, addMilestone, updateMilestone, markDone, deleteMilestone }
+  return { auth, items, error, loaded, init, reload, addMilestone, updateMilestone, markDone, deleteMilestone }
 }

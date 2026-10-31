@@ -15,9 +15,18 @@ const BOOK_DEFAULT_POINTS = 10
 export function useBooks() {
   const items = ref<Book[]>([])
   const error = ref<string | null>(null)
+  const loaded = ref(false) // первая загрузка закончилась (успехом или ошибкой): до этого «нет …» показывать нельзя — ложная пустота
   let currentUserId: string | null = null
 
   async function load(userId: string) {
+    try {
+      await loadData(userId)
+    } finally {
+      loaded.value = true
+    }
+  }
+
+  async function loadData(userId: string) {
     currentUserId = userId
     const { data, error: err } = await sb.from('books').select('*').eq('user_id', userId).order('created_at')
     if (err) {
@@ -80,5 +89,5 @@ export function useBooks() {
     await reload()
   }
 
-  return { items, error, load, reload, addBook, importBooks, updateBook, deleteBook, toggleDone }
+  return { items, error, loaded, load, reload, addBook, importBooks, updateBook, deleteBook, toggleDone }
 }

@@ -21,8 +21,8 @@ import { confirmDialog } from './lib/confirmDialog'
 import CollapsibleSection from './components/CollapsibleSection.vue'
 import { categoryOptions, filterSkills, normalizeSort, sortSkills, SORT_KEY, type SkillSort } from './lib/skillsView'
 
-const { auth, items: skills, error: skillsError, hasCategory, init, reload: reloadSkills, addSkill, updateSkill, deleteSkill, bumpProgress, toggleMastered } = useSkills()
-const { items: books, error: booksError, load: loadBooks, reload: reloadBooks, addBook, importBooks, updateBook, deleteBook, toggleDone: toggleBookDone } = useBooks()
+const { auth, items: skills, error: skillsError, loaded: skillsLoaded, hasCategory, init, reload: reloadSkills, addSkill, updateSkill, deleteSkill, bumpProgress, toggleMastered } = useSkills()
+const { items: books, error: booksError, loaded: booksLoaded, load: loadBooks, reload: reloadBooks, addBook, importBooks, updateBook, deleteBook, toggleDone: toggleBookDone } = useBooks()
 
 onMounted(init)
 watch(auth, (v) => {
@@ -165,7 +165,8 @@ async function onDeleteBook(b: Book) {
         </CollapsibleSection>
 
         <CollapsibleSection id="active" :title="t('skills_active_h3')" :count="active.length">
-          <p v-if="active.length === 0" class="dim">{{ t('skills_none_active') }}</p>
+          <p v-if="!skillsLoaded" class="dim" role="status" data-testid="loading-active">{{ t('load_loading') }}</p>
+          <p v-else-if="active.length === 0" class="dim">{{ t('skills_none_active') }}</p>
           <template v-else>
             <div v-if="active.length > 3" class="mb-2 flex flex-wrap items-center gap-2" data-test="skills-tools">
               <input v-model="query" type="search" class="min-w-0 flex-1 rounded-lg border px-3 py-1.5 text-sm" style="border-color: var(--border); background: var(--bg); color: var(--text)" :placeholder="t('skills_search_ph')" :aria-label="t('skills_search_ph')" data-test="skills-search" />
@@ -181,7 +182,8 @@ async function onDeleteBook(b: Book) {
         </CollapsibleSection>
 
         <CollapsibleSection id="mastered" :title="t('skills_mastered_h2')" :count="mastered.length">
-        <p v-if="mastered.length === 0" class="dim">{{ t('skills_none_mastered') }}</p>
+        <p v-if="!skillsLoaded" class="dim" role="status" data-testid="loading-mastered">{{ t('load_loading') }}</p>
+        <p v-else-if="mastered.length === 0" class="dim">{{ t('skills_none_mastered') }}</p>
         <div v-else class="table-scroll overflow-x-auto" data-test="table-scroll">
           <table class="w-full">
             <tbody>
@@ -215,7 +217,8 @@ async function onDeleteBook(b: Book) {
       <template v-else>
         <ReadingGoalCard :books="books" />
         <CollapsibleSection id="books_todo" :title="t('skills_books_to_read_h3')" :count="activeBooks.length">
-        <p v-if="activeBooks.length === 0" class="dim">{{ t('skills_book_list_empty') }}</p>
+        <p v-if="!booksLoaded" class="dim" role="status" data-testid="loading-activeBooks">{{ t('load_loading') }}</p>
+        <p v-else-if="activeBooks.length === 0" class="dim">{{ t('skills_book_list_empty') }}</p>
         <div v-else class="table-scroll overflow-x-auto" data-test="table-scroll">
           <table class="mb-6 w-full">
             <tbody>
@@ -234,7 +237,8 @@ async function onDeleteBook(b: Book) {
         </CollapsibleSection>
 
         <CollapsibleSection id="books_done" :title="t('skills_books_done_h3')" :count="doneBooks.length">
-        <p v-if="doneBooks.length === 0" class="dim">{{ t('skills_book_none_read') }}</p>
+        <p v-if="!booksLoaded" class="dim" role="status" data-testid="loading-doneBooks">{{ t('load_loading') }}</p>
+        <p v-else-if="doneBooks.length === 0" class="dim">{{ t('skills_book_none_read') }}</p>
         <div v-else class="table-scroll overflow-x-auto" data-test="table-scroll">
           <table class="w-full">
             <tbody>

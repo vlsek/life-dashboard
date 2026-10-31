@@ -27,7 +27,7 @@ import { confirmDialog } from './lib/confirmDialog'
 import { friendlyError } from './lib/friendlyError'
 import { isDeadlineReminderEnabled, setDeadlineReminderEnabled } from './lib/deadlineReminderSetting'
 
-const { auth, items, error, hasHorizon, hasWeight, bodyWeight, logWeight, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
+const { auth, items, error, loaded, hasHorizon, hasWeight, bodyWeight, logWeight, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
 onMounted(init)
 
 // Серия по целям (BACKLOG 60.1, миграция 079): грузим при входе и после каждой отметки цели (число выполненных изменилось)
@@ -209,7 +209,8 @@ async function onDelete(g: Goal) {
 
       <!-- Приглашения друзей и список целей — независимо друг от друга (раньше `v-else` прятал весь список, когда миграция 063 применена). -->
       <div data-test="goals-body">
-        <p v-if="active.length === 0" class="dim">{{ t('goals_no_active') }}</p>
+        <p v-if="!loaded" class="dim" role="status" data-testid="loading-active">{{ t('load_loading') }}</p>
+        <p v-else-if="active.length === 0" class="dim">{{ t('goals_no_active') }}</p>
 
         <div v-if="active.length" class="mb-3 flex gap-2" role="group" :aria-label="t('goals_view_aria')" data-test="goals-view-switch">
           <button v-for="v in (['category', 'horizon'] as const)" :key="v" type="button" class="rounded-lg px-3 py-1 text-sm" :class="{ secondary: view !== v }" :aria-pressed="view === v" :data-test="'goals-view-' + v" @click="setView(v)">
@@ -260,7 +261,8 @@ async function onDelete(g: Goal) {
         <p class="dim text-sm">{{ t('goals_points_earned') }} {{ summary.earned }} / {{ summary.possible }}</p>
 
         <CollapsibleSection id="done" :title="t('goals_done_h2')" :count="done.length" :default-open="false">
-          <p v-if="done.length === 0" class="dim">{{ t('goals_no_done') }}</p>
+          <p v-if="!loaded" class="dim" role="status" data-testid="loading-done">{{ t('load_loading') }}</p>
+          <p v-else-if="done.length === 0" class="dim">{{ t('goals_no_done') }}</p>
           <ul v-else class="m-0 flex list-none flex-col gap-1.5 p-0" data-test="goals-done">
             <li
               v-for="g in done"

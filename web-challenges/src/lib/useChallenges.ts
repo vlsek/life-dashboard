@@ -17,6 +17,7 @@ export function useChallenges() {
   const instances = ref<Challenge[]>([])
   const entriesByChallenge = ref<Record<string, ChallengeEntry[]>>({})
   const error = ref<string | null>(null)
+  const loaded = ref(false) // первая загрузка закончилась (успехом или ошибкой): до этого «нет …» показывать нельзя — ложная пустота
   // Метрики пользователя (для выбора источника значений) и значения источников по дням: challengeId -> дата -> число.
   const metrics = ref<SourceMetric[]>([])
   const sourceValues = ref<Record<string, Record<string, number>>>({})
@@ -46,6 +47,14 @@ export function useChallenges() {
   }
 
   async function load(userId: string) {
+    try {
+      await loadData(userId)
+    } finally {
+      loaded.value = true
+    }
+  }
+
+  async function loadData(userId: string) {
     const { data: rows, error: err } = await sb
       .from('challenge_instances')
       .select('*')
@@ -256,7 +265,7 @@ export function useChallenges() {
     sourceMetricName,
     exercises,
     sourceExerciseName,
-    error,
+    error, loaded,
     init,
     reload,
     startFromTemplate,
