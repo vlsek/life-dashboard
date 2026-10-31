@@ -1,7 +1,14 @@
 {
-  "version": "6.82",
+  "version": "6.83",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.83",
+      "date": "2026-10-29 21:00",
+      "changes": [
+        "Skills → Books: a new “Import CSV” button — upload your Goodreads export (My Books → Import and export → Export Library) and the books are added in one go: read books with their date read, “to read” and “currently reading” go to your plans. You see how many books will be added first, and books you already have (by title and author) are skipped. Imported read books give no points. Ratings and page counts are not imported yet. No migrations."
+      ]
+    },
     {
       "version": "6.82",
       "date": "2026-10-30 04:31",
@@ -4844,6 +4851,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.83",
+      "date": "2026-10-29 21:00",
+      "changes": [
+        "«Навыки» → «Книги»: кнопка «Импорт CSV» — загрузи экспорт из Goodreads (My Books → Import and export → Export Library), и книги добавятся списком: прочитанные с датой прочтения, «хочу прочитать» и «читаю» — в планы. Перед добавлением видно, сколько книг будет добавлено, а книги, которые уже есть (по названию и автору), пропускаются. Баллы за импортированные прочитанные не начисляются. Оценки и страницы пока не переносятся. Без миграций."
+      ]
+    },
     {
       "version": "6.82",
       "date": "2026-10-30 04:31",
