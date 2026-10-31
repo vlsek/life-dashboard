@@ -1,7 +1,14 @@
 {
-  "version": "6.96",
+  "version": "6.97",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.97",
+      "date": "2026-10-31 19:30",
+      "changes": [
+        "Workouts → muscle map: three colouring modes — “Recently” (as before), “Sets” (denser colour means more sets over 7/30/90 days; no sets means “no data”) and “Coverage” (which groups your exercises cover). Your choice is remembered."
+      ]
+    },
     {
       "version": "6.96",
       "date": "2026-10-31 23:00",
@@ -4942,6 +4949,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.97",
+      "date": "2026-10-31 19:30",
+      "changes": [
+        "«Тренировки» → карта мышц: три режима окраски — «Недавно» (как раньше), «Подходы» (чем плотнее цвет, тем больше подходов за 7/30/90 дней; нет подходов — «нет данных») и «Охват» (на какие группы есть твои упражнения). Выбор запоминается."
+      ]
+    },
     {
       "version": "6.96",
       "date": "2026-10-31 23:00",
