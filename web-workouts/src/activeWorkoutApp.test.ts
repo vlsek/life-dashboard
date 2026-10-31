@@ -117,5 +117,22 @@ describe('активная тренировка', () => {
     expect(q(w, 'aw-pr-0-0').text()).toContain('62,5')
     w.unmount()
   })
+
+  it('рутина: «В рутину» запоминает упражнения, на странице появляется карточка, «Начать» открывает тренировку с этими упражнениями', async () => {
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
+    await q(w, 'aw-save-routine').trigger('click')
+    await q(w, 'aw-routine-name').setValue('Грудь')
+    await q(w, 'aw-routine-ok').trigger('click')
+    expect(JSON.parse(localStorage.getItem('workouts.routines.v1')!)[0]).toMatchObject({ name: 'Грудь', items: [{ exercise_id: 'e1' }] })
+    w.unmount()
+    useActiveWorkout().discard()
+    const w2 = await mountApp()
+    expect(w2.find('[data-testid="routines"]').text()).toContain('Грудь')
+    await w2.find('[data-testid^="routine-start-"]').trigger('click')
+    expect(q(w2, 'active-workout').exists()).toBe(true)
+    expect(q(w2, 'aw-ex-0').text()).toContain('Жим лёжа')
+    w2.unmount()
+  })
 })
 

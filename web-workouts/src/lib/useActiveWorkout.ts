@@ -31,6 +31,7 @@ export function useActiveWorkout() {
     elapsed: computed(() => (draft.value ? elapsedSeconds(draft.value, nowMs.value) : 0)),
     start: (opts: { name?: string | null; routine_id?: string | null } = {}) => { if (!draft.value) apply(newDraft(newId(), new Date(), opts)) },
     discard: () => apply(null),
+    startWith: (d: ActiveDraft) => { if (!draft.value) apply(d) },
     setName: (name: string) => { if (draft.value) apply({ ...d(), name: name.slice(0, 80) || null }) },
     addExercise: (exerciseId: string) => { if (draft.value) apply(addExercise(d(), newId(), exerciseId)) },
     removeExercise: (id: string) => { if (draft.value) apply(removeExercise(d(), id)) },

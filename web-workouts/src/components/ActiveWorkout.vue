@@ -7,6 +7,7 @@ import { setType, SET_TYPES } from '../lib/sessionContract'
 import { t, type DictKey } from '../lib/i18n'
 import { prSetText, setRecords, topKind } from '../lib/records'
 import { showToast } from '../lib/toast'
+import { useRoutines } from '../lib/useRoutines'
 import { haptic } from '../lib/nativeFeedback'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 
@@ -35,6 +36,14 @@ async function onTick(entryId: string, i: number) {
     showToast(t('aw_pr_toast').replace('{x}', prSetText(e.sets[i], unitOf(exById.value.get(e.exercise_id)))))
     haptic('success')
   }
+}
+// «В рутину» (69.7): запоминаем набор упражнений этой тренировки
+const rt = useRoutines()
+const savingRoutine = ref(false)
+const routineName = ref('')
+function openSaveRoutine() { routineName.value = draft.value?.name ?? ''; savingRoutine.value = true }
+function saveRoutine() {
+  if (draft.value && rt.saveFromDraft(draft.value, routineName.value)) { savingRoutine.value = false; showToast(t('rt_saved')) }
 }
 const picking = ref(false)
 const query = ref('')
@@ -98,6 +107,13 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
         </button>
       </div>
       <div class="mx-auto mt-1 max-w-3xl text-center text-xs" style="color: var(--text-dim)">{{ t('aw_done_sets').replace('{n}', String(doneSetCount(draft))) }}</div>
+      <div v-if="draft.exercises.length" class="mx-auto mt-1 flex max-w-3xl items-center justify-center gap-2 text-xs">
+        <button v-if="!savingRoutine" type="button" class="px-2 py-1" style="color: var(--accent); min-height: 32px" data-testid="aw-save-routine" @click="openSaveRoutine">{{ t('rt_save') }}</button>
+        <template v-else>
+          <input v-model="routineName" maxlength="80" :placeholder="t('rt_name_ph')" class="rounded-md border px-2 py-1" style="border-color: var(--border); background: var(--bg); color: var(--text); min-height: 36px" data-testid="aw-routine-name" @keyup.enter="saveRoutine" />
+          <button type="button" class="rounded-md px-3 py-1 font-semibold" style="background: var(--accent); color: var(--accent-text); min-height: 36px" data-testid="aw-routine-ok" @click="saveRoutine">{{ t('rt_ok') }}</button>
+        </template>
+      </div>
     </header>
 
     <main class="mx-auto max-w-3xl px-4 pb-24 pt-4">

@@ -27,6 +27,8 @@ import GrowthList from './components/GrowthList.vue'
 import WeekStreak from './components/WeekStreak.vue'
 import TodayPanel from './components/TodayPanel.vue'
 import ActiveWorkout from './components/ActiveWorkout.vue'
+import RoutinesList from './components/RoutinesList.vue'
+import { draftFromRoutine, type Routine } from './lib/routines'
 import { useActiveWorkout } from './lib/useActiveWorkout'
 import { canSave, finishDraft } from './lib/activeWorkout'
 import JournalList from './components/JournalList.vue'
@@ -360,6 +362,13 @@ async function onFinishWorkout() {
     awBusy.value = false
   }
 }
+function onStartRoutine(r: Routine) {
+  if (aw.active.value) return
+  const ids = new Set(exercises.value.map((e) => e.id))
+  const d = draftFromRoutine(r, crypto.randomUUID(), new Date(), () => crypto.randomUUID(), ids)
+  if (d.exercises.length < r.items.length) showToast(t('rt_missing'))
+  aw.startWith(d)
+}
 async function onCancelWorkout() {
   if (!(await confirmDialog(t('aw_confirm_cancel')))) return
   aw.discard()
@@ -474,6 +483,8 @@ function onToggleProgramWeek(week: number) {
         {{ t('workouts_toast_save_error') }}{{ loadError }} — {{ t('workouts_migration_hint') }}
       </p>
       <p v-else-if="exercises.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('workouts_empty') }}</p>
+
+      <RoutinesList v-if="exercises.length > 0" :exercises="exercises" :disabled="aw.active.value" @start="onStartRoutine" />
 
       <TodayPanel v-if="exercises.length > 0" :entries="entries" :exercises="exercises" :busy-id="quickBusyId" @add-set="onAddSet" />
 
