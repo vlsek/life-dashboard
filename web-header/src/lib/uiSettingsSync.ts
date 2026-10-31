@@ -18,6 +18,7 @@ export const SYNC_KEYS = [
   'streak_celebrations_off', // поздравления за серии
   'skip_prompt_off', // окно «вчерашние невыполненные»
   'water_reminders_off', // напоминание про воду
+  'hotkeys_off', // горячие клавиши шапки выключены (BACKLOG 79.8)
   'favorite_themes', // избранные темы (JSON)
   'dash_show_all', // «Показать всё» на Дашборде, режим новичка (BACKLOG 49.5)
   'day_progress_settings', // что считать в кольцах дня/недели (JSON)
