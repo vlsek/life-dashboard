@@ -98,11 +98,25 @@ function showAchievementToast(items: WatchItem[]) {
   toastApp.mount(host)
 }
 
+// BACKLOG 49.5 срез 2: дата регистрации (auth) → localStorage `account_created_at` для «меню новичка» в AppShell страниц (там нет доступа к сессии);
+// событие сообщает уже открытой странице, что дата появилась (первый заход после входа). Ключ не синхронизируется: он про аккаунт, а не про устройство.
+function publishAccountCreatedAt(createdAt: string | null | undefined) {
+  if (!createdAt) return
+  try {
+    if (localStorage.getItem('account_created_at') === createdAt) return
+    localStorage.setItem('account_created_at', createdAt)
+  } catch {
+    return
+  }
+  window.dispatchEvent(new Event('account-created-at'))
+}
+
 async function startWatcher() {
   if (WATCH_SKIP.test(location.pathname)) return
   try {
     const { data } = await sb.auth.getSession()
     if (!data.session) return
+    publishAccountCreatedAt(data.session.user.created_at)
     startAchievementWatcher(showAchievementToast, { createdAt: data.session.user.created_at ?? null })
   } catch {
     /* без поздравления на странице — не страшно */

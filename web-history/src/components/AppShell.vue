@@ -99,6 +99,35 @@ const syncFavorites = () => (favorites.value = readFavorites())
 const BOTTOM_KEYS = ['customization']
 const sidebarPages = pages.filter((p) => !BOTTOM_KEYS.includes(p.key))
 const bottomPages = BOTTOM_KEYS.map((k) => pages.find((p) => p.key === k)).filter((p): p is NavPage => !!p)
+// BACKLOG 49.5 срез 2 «Меню новичка» (решение владельца 2026-10-29): первые 7 дней после регистрации в боковом меню — 6 главных пунктов и кнопка «Ещё»
+// (открытая страница видна всегда); «Показать всё» на Дашборде (`dash_show_all`) или 7 дней — и меню полное. Дату регистрации кладёт в localStorage
+// `account_created_at` бандл шапки (и сообщает событием `account-created-at`). Этот блок общий для всех AppShell.vue — менять ВМЕСТЕ (сверяет shellMenuNewbie.test.ts).
+const NEWBIE_MENU_KEYS = ['dashboard', 'goals', 'skills', 'workouts', 'calendar', 'shop']
+function readCreatedAt(): string | null {
+  try {
+    return localStorage.getItem('account_created_at')
+  } catch {
+    return null
+  }
+}
+function readShowAll(): boolean {
+  try {
+    return localStorage.getItem('dash_show_all') === '1'
+  } catch {
+    return false
+  }
+}
+const createdAt = ref<string | null>(readCreatedAt())
+const syncCreatedAt = () => (createdAt.value = readCreatedAt())
+const menuMore = ref(false)
+const newbieMenu = computed(() => {
+  const t0 = createdAt.value ? Date.parse(createdAt.value) : NaN
+  return Number.isFinite(t0) && t0 <= Date.now() + 3600_000 && Date.now() - t0 < 7 * 86400_000 && !readShowAll()
+})
+const shownSidebarPages = computed(() => (newbieMenu.value && !menuMore.value ? sidebarPages.filter((p) => NEWBIE_MENU_KEYS.includes(p.key) || p.key === active) : sidebarPages))
+const hiddenMenuCount = computed(() => sidebarPages.length - shownSidebarPages.value.length)
+onMounted(() => window.addEventListener('account-created-at', syncCreatedAt))
+onUnmounted(() => window.removeEventListener('account-created-at', syncCreatedAt))
 const quickPages = computed(() => pages.filter((p) => p.key !== 'dashboard' && favorites.value.includes(p.key)))
 onMounted(() => window.addEventListener('favorites:changed', syncFavorites))
 onUnmounted(() => window.removeEventListener('favorites:changed', syncFavorites))
@@ -307,7 +336,7 @@ onUnmounted(() => {
     <div id="sidebar-top"></div>
 
     <a
-      v-for="p in sidebarPages"
+      v-for="p in shownSidebarPages"
       :key="p.key"
       :href="p.href"
       class="flex items-center gap-2.5 rounded-lg px-3 py-2.5"
@@ -317,6 +346,16 @@ onUnmounted(() => {
       <Icon :name="p.icon" />
       <span>{{ plainLabel(p.labelKey) }}</span>
     </a>
+
+    <button
+      v-if="hiddenMenuCount > 0"
+      type="button"
+      class="secondary flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-left"
+      data-testid="menu-more"
+      @click="menuMore = true"
+    >
+      <span>{{ t('nav_more_menu') }} ({{ hiddenMenuCount }})</span>
+    </button>
 
     <div class="my-1 border-t" style="border-color: var(--border)"></div>
 
