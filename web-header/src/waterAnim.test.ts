@@ -212,6 +212,9 @@ describe('выбор анимации воды живёт в «Кастомиз�
     expect(settings).not.toContain('onWaterAnim')
     // Напоминания о воде остаются в глобальных настройках — это другая функция.
     expect(settings).toContain('water-reminders')
+    // Страж также ловит потерю типа, используемого селектором тем в том же компоненте.
+    expect(settings).toContain("type DictKey")
+    expect(settings).toContain('THEME_KEYS[key] as DictKey')
   })
   it('пикер в Кастомизации остаётся владельцем выбора и использует общий ключ', () => {
     const picker = read('../web-customization/src/components/WaterAnimPicker.vue')
