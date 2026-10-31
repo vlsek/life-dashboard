@@ -3,6 +3,8 @@ import { computed, onMounted, ref, watch } from 'vue'
 import AppShell from './components/AppShell.vue'
 import LoadError from './components/LoadError.vue'
 import ReadingGoalCard from './components/ReadingGoalCard.vue'
+import ImportBooksModal from './components/ImportBooksModal.vue'
+import type { ImportedBook } from './lib/importGoodreads'
 import SkillForm from './components/SkillForm.vue'
 import ActiveSkillsList from './components/ActiveSkillsList.vue'
 import CoinIcon from './components/CoinIcon.vue'
@@ -20,7 +22,7 @@ import CollapsibleSection from './components/CollapsibleSection.vue'
 import { categoryOptions, filterSkills, normalizeSort, sortSkills, SORT_KEY, type SkillSort } from './lib/skillsView'
 
 const { auth, items: skills, error: skillsError, hasCategory, init, reload: reloadSkills, addSkill, updateSkill, deleteSkill, bumpProgress, toggleMastered } = useSkills()
-const { items: books, error: booksError, load: loadBooks, reload: reloadBooks, addBook, updateBook, deleteBook, toggleDone: toggleBookDone } = useBooks()
+const { items: books, error: booksError, load: loadBooks, reload: reloadBooks, addBook, importBooks, updateBook, deleteBook, toggleDone: toggleBookDone } = useBooks()
 
 onMounted(init)
 watch(auth, (v) => {
@@ -105,6 +107,23 @@ async function onSaveBook(res: BookFormInput) {
     await updateBook(target.id, res)
   }
 }
+// Импорт из Goodreads (BACKLOG 77.9)
+const importOpen = ref(false)
+const importBusy = ref(false)
+const importError = ref('')
+async function onImportBooks(list: ImportedBook[]) {
+  if (auth.value.status !== 'ready') return
+  importBusy.value = true
+  importError.value = ''
+  try {
+    await importBooks(auth.value.userId, list)
+    importOpen.value = false
+  } catch (e) {
+    importError.value = t('gr_fail') + (e instanceof Error ? e.message : String((e as { message?: string })?.message ?? e))
+  } finally {
+    importBusy.value = false
+  }
+}
 async function onDeleteBook(b: Book) {
   if (!(await confirmDialog(t('skills_book_confirm_delete')))) return
   await deleteBook(b.id)
@@ -184,9 +203,12 @@ async function onDeleteBook(b: Book) {
 
       <div class="mb-4 flex items-center justify-between">
         <h2 class="text-lg font-semibold"><EmojiText :text="t('skills_books_h2')" /></h2>
-        <button class="rounded-lg px-3 py-1.5 text-sm" style="background: var(--accent); color: var(--accent-text)" @click="bookFormTarget = 'new'">
-          <EmojiText :text="t('skills_add_book_btn')" />
-        </button>
+        <div class="flex items-center gap-2">
+          <button type="button" class="secondary rounded-lg px-3 py-1.5 text-sm" data-test="gr-open" @click="importError = ''; importOpen = true">{{ t('gr_btn') }}</button>
+          <button class="rounded-lg px-3 py-1.5 text-sm" style="background: var(--accent); color: var(--accent-text)" @click="bookFormTarget = 'new'">
+            <EmojiText :text="t('skills_add_book_btn')" />
+          </button>
+        </div>
       </div>
 
       <LoadError v-if="booksError" :message="booksError" :retry="reloadBooks" />
@@ -234,6 +256,7 @@ async function onDeleteBook(b: Book) {
     </template>
 
     <SkillForm v-if="skillFormTarget" :is-edit="skillFormTarget !== 'new'" :initial="skillFormInitial" :categories="myCategories" :category-enabled="hasCategory" @close="skillFormTarget = null" @save="onSaveSkill" />
+    <ImportBooksModal v-if="importOpen" :existing="books" :busy="importBusy" :error="importError" @close="importOpen = false" @confirm="onImportBooks" />
     <BookForm v-if="bookFormTarget" :is-edit="bookFormTarget !== 'new'" :initial="bookFormInitial" @close="bookFormTarget = null" @save="onSaveBook" />
   </main>
 </template>
