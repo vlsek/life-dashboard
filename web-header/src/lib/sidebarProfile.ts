@@ -5,6 +5,27 @@ import { googleProfile } from './googleProfile'
 import { onCustomizationChanged } from './customizationEvents'
 import { onAvatarChanged } from './avatarEvents'
 
+// Кэш блока профиля на устройстве: без него при медленной/пропавшей сети (запрос профиля не дошёл) в меню вместо фото появляется буква,
+// и аватар «то есть, то нет». Показываем последнее известное сразу, свежее из базы его обновляет; ошибка запроса ничего не стирает.
+export const SIDEBAR_CACHE_KEY = 'sidebar_profile_cache'
+export interface SidebarCache { userId: string; displayName: string | null; avatarUrl: string | null; avatarFrame: string | null }
+export function readSidebarCache(userId: string): SidebarCache | null {
+  try {
+    const v = JSON.parse(localStorage.getItem(SIDEBAR_CACHE_KEY) || 'null') as Partial<SidebarCache> | null
+    if (!v || v.userId !== userId) return null
+    return { userId, displayName: v.displayName ?? null, avatarUrl: v.avatarUrl ?? null, avatarFrame: v.avatarFrame ?? null }
+  } catch {
+    return null
+  }
+}
+export function writeSidebarCache(c: SidebarCache): void {
+  try {
+    localStorage.setItem(SIDEBAR_CACHE_KEY, JSON.stringify(c))
+  } catch {
+    /* хранилище недоступно — не критично */
+  }
+}
+
 // Данные для блока профиля в левом меню (BACKLOG 6.2): имя и аватар из profiles. Почта приходит из сессии (App.vue).
 // Любая ошибка (нет колонки/сети) — просто остаёмся без имени и аватара: блок покажет почту и букву.
 export function useSidebarProfile() {
@@ -19,21 +40,38 @@ export function useSidebarProfile() {
   // BACKLOG 44.17: сменили аватар в «Аккаунте» / на Дашборде (или в соседней вкладке) — в левом меню он меняется сразу.
   const offAvatar = onAvatarChanged((d) => {
     avatarUrl.value = d.avatar_url
+    try {
+      const c = JSON.parse(localStorage.getItem(SIDEBAR_CACHE_KEY) || 'null') as SidebarCache | null
+      if (c) writeSidebarCache({ ...c, avatarUrl: d.avatar_url })
+    } catch {
+      /* не критично */
+    }
   })
   if (getCurrentScope()) onScopeDispose(() => { off(); offAvatar() })
 
   async function load(userId: string, authUser?: { user_metadata?: Record<string, unknown> | null } | null) {
+    const cached = readSidebarCache(userId)
+    if (cached) {
+      displayName.value = cached.displayName
+      avatarUrl.value = cached.avatarUrl
+      avatarFrame.value = cached.avatarFrame && frameShadow(cached.avatarFrame) ? cached.avatarFrame : null
+    }
+    const save = () => writeSidebarCache({ userId, displayName: displayName.value, avatarUrl: avatarUrl.value, avatarFrame: avatarFrame.value })
     const { data, error } = await sb.from('profiles').select('display_name, avatar_url').eq('user_id', userId).maybeSingle()
     if (error) return
     const row = data as { display_name?: string | null; avatar_url?: string | null } | null
     displayName.value = row?.display_name?.trim() || null
     avatarUrl.value = row?.avatar_url || null
     await fillFromGoogle(userId, authUser)
+    save()
     // выбранная рамка — ОТДЕЛЬНЫМ запросом: если миграция 048 не применена, имя и аватар выше всё равно покажутся
     const fr = await sb.from('profiles').select('customization').eq('user_id', userId).maybeSingle()
     const cz = (fr.error ? null : (fr.data as { customization?: Record<string, unknown> | null } | null)?.customization) || null
     const key = cz && typeof cz.avatar_frame === 'string' ? cz.avatar_frame : null
-    avatarFrame.value = key && frameShadow(key) ? key : null
+    if (!fr.error) {
+      avatarFrame.value = key && frameShadow(key) ? key : null
+      save()
+    }
   }
 
   // Имя профиля обязательно (BACKLOG 841), при входе через Google подставляется из аккаунта (BACKLOG 766): у УЖЕ зарегистрированных с пустым

@@ -1,7 +1,14 @@
 {
-  "version": "6.94",
+  "version": "6.95",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.95",
+      "date": "2026-10-31 19:00",
+      "changes": [
+        "The avatar and name in the sidebar no longer disappear on a bad connection: the last known ones are taken from the device and refreshed when the network is back."
+      ]
+    },
     {
       "version": "6.94",
       "date": "2026-10-30 18:00",
@@ -4928,6 +4935,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.95",
+      "date": "2026-10-31 19:00",
+      "changes": [
+        "Аватар и имя в боковом меню больше не пропадают при плохой связи: последние известные берутся с устройства и обновляются, когда сеть вернётся."
+      ]
+    },
     {
       "version": "6.94",
       "date": "2026-10-30 18:00",
