@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.88";
+const SITE_VERSION = "6.89";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.89", date: "2026-10-31 21:10", changes: [
+        "«Тренировки»: рутины. Во время тренировки нажми «В рутину», дай название — набор упражнений запомнится. На странице появился блок «Мои рутины»: кнопка «Начать» открывает тренировку сразу с этими упражнениями и нужным числом пустых подходов, прошлые веса подсказываются рядом. Пока рутины хранятся на этом устройстве, синхронизация между устройствами будет следующим шагом.",
+    ]},
     { version: "6.88", date: "2026-10-29 14:35", changes: [
         "«Цели», «Челленджи», «Вехи» и «Навыки» (и книги): пока список ещё грузится, страница пишет «Загрузка…», а не «Нет активных целей» / «Нет активных вех» / «Список книг пуст». Раньше на медленной сети на секунду мелькала ложная пустота. Настоящая пустота показывается только после ответа сервера, а при сбое — ошибка с кнопкой «Повторить»."
     ]},
@@ -2680,6 +2683,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.89", date: "2026-10-31 21:10", changes: [
+        "Workouts: routines. During a workout tap “Save as routine” and name it — the set of exercises is remembered. A new “My routines” block on the page has a “Start” button that opens a workout with those exercises and the right number of empty sets, with your previous weights hinted alongside. For now routines are stored on this device; syncing across devices is the next step.",
+    ]},
     { version: "6.88", date: "2026-10-29 14:35", changes: [
         "Goals, Challenges, Milestones and Skills (and books): while a list is still loading the page now says “Loading…” instead of “No active goals” / “No active milestones” / “Book list is empty”. On a slow connection a false empty state used to flash for a second. A real empty state only appears after the server answers, and on failure you get an error with a “Try again” button."
     ]},

@@ -1,7 +1,14 @@
 {
-  "version": "6.88",
+  "version": "6.89",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.89",
+      "date": "2026-10-31 21:10",
+      "changes": [
+        "Workouts: routines. During a workout tap “Save as routine” and name it — the set of exercises is remembered. A new “My routines” block on the page has a “Start” button that opens a workout with those exercises and the right number of empty sets, with your previous weights hinted alongside. For now routines are stored on this device; syncing across devices is the next step."
+      ]
+    },
     {
       "version": "6.88",
       "date": "2026-10-29 14:35",
@@ -4886,6 +4893,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.89",
+      "date": "2026-10-31 21:10",
+      "changes": [
+        "«Тренировки»: рутины. Во время тренировки нажми «В рутину», дай название — набор упражнений запомнится. На странице появился блок «Мои рутины»: кнопка «Начать» открывает тренировку сразу с этими упражнениями и нужным числом пустых подходов, прошлые веса подсказываются рядом. Пока рутины хранятся на этом устройстве, синхронизация между устройствами будет следующим шагом."
+      ]
+    },
     {
       "version": "6.88",
       "date": "2026-10-29 14:35",
