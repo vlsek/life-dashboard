@@ -28,6 +28,8 @@ import WeekStreak from './components/WeekStreak.vue'
 import TodayPanel from './components/TodayPanel.vue'
 import ActiveWorkout from './components/ActiveWorkout.vue'
 import RoutinesList from './components/RoutinesList.vue'
+import WorkoutSummary from './components/WorkoutSummary.vue'
+import { summarize, type WorkoutSummaryData } from './lib/summary'
 import { draftFromRoutine, type Routine } from './lib/routines'
 import { useActiveWorkout } from './lib/useActiveWorkout'
 import { canSave, finishDraft } from './lib/activeWorkout'
@@ -344,15 +346,18 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
 // ---- активная тренировка (BACKLOG 69.2) ----
 const aw = useActiveWorkout()
 const awBusy = ref(false)
+const summary = ref<WorkoutSummaryData | null>(null)
 async function onFinishWorkout() {
   const d = aw.draft.value
   if (!d || awBusy.value || auth.value.status !== 'ready') return
   if (!canSave(d)) return showToast(t('aw_nothing'), 'error')
   awBusy.value = true
   try {
+    const data = summarize(d, exercises.value, entries.value, Date.now()) // до записи: история ещё без этой тренировки
     const res = finishDraft(d, new Date().toISOString(), await wk.sessionsAvailable())
     await wk.addWorkout(auth.value.userId, res)
     aw.discard()
+    summary.value = data
     showToast(t('aw_saved'))
     haptic('success')
   } catch (e) {
@@ -443,6 +448,7 @@ function onToggleProgramWeek(week: number) {
 <template>
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
   <ActiveWorkout v-if="aw.active.value && auth.status === 'ready'" :exercises="exercises" :entries="entries" :unit="defaultUnit()" :busy="awBusy" @finish="onFinishWorkout" @cancel="onCancelWorkout" />
+  <WorkoutSummary v-if="summary" :data="summary" :exercises="exercises" :unit="defaultUnit()" @close="summary = null" />
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-6">
     <h1 class="mb-3 text-xl font-bold"><EmojiText :text="t('workouts_h1')" /></h1>
 
