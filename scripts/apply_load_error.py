@@ -82,6 +82,10 @@ SITES = {
             'components/HistoryView.vue': [('<LoadError v-if="error" :message="error" :retry="reload" />', '<LoadError v-if="error" :message="error" :retry="reload" />')],
         },
     },
+    'web-customization': {  # ошибка ЗАГРУЗКИ была подписана «Не удалось сохранить выбор» и прятала всю страницу без повтора
+        'html': [('<p v-if="error" class="dim">{{ t(\'cust_select_error\') }}{{ error }}</p>', '<LoadError v-if="error" :message="error" :retry="reload" />')],
+        'script': [('untryOn, resetTryOn } = useCustomization()', 'untryOn, resetTryOn, reload } = useCustomization()', 'resetTryOn, reload }')],
+    },
     'web-languages': {
         'html': [('<p v-if="error" class="mb-3 text-sm" style="color: var(--text-dim)">{{ t(\'dash_save_error_generic\') }}{{ error }}</p>', '<LoadError v-if="error" :message="error" :retry="reload" />')],
         'script': [('deleteWord, toggleLearned } = useVocab()', 'deleteWord, toggleLearned, reload } = useVocab()')],
