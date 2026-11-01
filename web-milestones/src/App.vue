@@ -6,6 +6,7 @@ import MilestoneFormModal from './components/MilestoneFormModal.vue'
 import MarkDoneModal from './components/MarkDoneModal.vue'
 import HistoryModal from './components/HistoryModal.vue'
 import TemplatesModal from './components/TemplatesModal.vue'
+import YearTimelineModal from './components/YearTimelineModal.vue'
 import { ALL_TAB, buildCategoryTabs, getSavedCategory, resolveCategory, saveCategory } from './lib/categoryTabs'
 import { templateDraft, type MilestoneTemplate } from './lib/milestoneTemplates'
 import { useMilestones } from './lib/useMilestones'
@@ -91,6 +92,7 @@ function nextKmText(m: Milestone): string | null {
 const formTarget = ref<Milestone | 'new' | null>(null)
 const formDraft = ref<Partial<MilestoneFormInput> | null>(null)
 const templatesOpen = ref(false)
+const timelineOpen = ref(false) // лента вех на год (BACKLOG 76.10)
 const haveTemplates = computed(() => new Set(items.value.map((m) => m.name.trim().toLowerCase())))
 function onPickTemplate(tpl: MilestoneTemplate) {
   templatesOpen.value = false
@@ -178,6 +180,7 @@ function closeHistory() {
     <div class="mb-4 flex items-center justify-between">
       <h1 class="text-xl font-semibold"><EmojiText :text="t('nav_milestones')" /></h1>
       <div v-if="auth.status === 'ready'" class="flex gap-2">
+        <button class="secondary rounded-lg px-3 py-1.5 text-sm" data-test="ms-timeline-btn" @click="timelineOpen = true">{{ t('ms_tl_btn') }}</button>
         <button class="secondary rounded-lg px-3 py-1.5 text-sm" data-test="ms-templates-btn" @click="templatesOpen = true">{{ t('ms_templates_btn') }}</button>
         <button class="rounded-lg px-3 py-1.5 text-sm" style="background: var(--accent); color: var(--accent-text)" @click="openAddForm">
           <EmojiText :text="t('ms_add_btn')" />
@@ -280,6 +283,7 @@ function closeHistory() {
       @submit="onFormSubmit"
       @close="closeForm"
     />
+    <YearTimelineModal v-if="timelineOpen" :items="items" @close="timelineOpen = false" />
     <TemplatesModal v-if="templatesOpen" :have="haveTemplates" @pick="onPickTemplate" @close="templatesOpen = false" />
     <MarkDoneModal v-if="markDoneTarget" :milestone="markDoneTarget" @submit="onMarkDoneSubmit" @close="closeMarkDone" />
     <HistoryModal v-if="historyTarget" :milestone="historyTarget" @close="closeHistory" />
