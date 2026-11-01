@@ -13,15 +13,19 @@ import DateStepper from './DateStepper.vue'
 import { vCollapse } from '../lib/collapseMotion'
 import UsefulTodayList from './UsefulTodayList.vue'
 import TodayRemaining from './TodayRemaining.vue'
+import MetricQuickActions from './MetricQuickActions.vue'
+import { createLongPress, longPressBind } from '../lib/longPress'
+import { quickActions, skipMetricDay, type QuickActionId } from '../lib/metricQuickActions'
 import { remainingToday, PLAN_ROW_PREFIX } from '../lib/todayRemaining'
 import { PLAN_SNAPSHOT, requestPlanMark, requestPlanSnapshot, type PlanSnapshot, type PlanSnapshotItem } from '../lib/planBridge'
 import { useDailyMetrics } from '../lib/useDailyMetrics'
 import { useMetricRecords } from '../lib/useMetricRecords'
 import { isRemaining } from '../lib/daily'
-import { todayStr } from '../lib/date'
+import { addDaysIso, todayStr } from '../lib/date'
 import { t } from '../lib/i18n'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { MetricStreakInfo } from '../lib/metricStreaks'
+import type { Metric } from '../lib/types'
 
 // Блок «Дневные метрики» (порт renderDay() из dashboard.js): листание дней, поля boolean/
 // number/multiselect с автосохранением, «Подходы» и «Цели на сегодня» встроены сюда же с той
@@ -80,6 +84,58 @@ const collapsed = ref(false)
 // «Карточка со сводкой» (BACKLOG 498 срез 3): «Баллы N / M» — те же баллы за день, что внутри блока
 const dailySummary = computed(() => pointsSummary(score.value.points, score.value.total))
 const numberValue = (id: string) => pending.value[id] as number | undefined
+
+// Быстрые действия на плашке (BACKLOG 75.9, срез 1): удержание / правый клик / Shift+F10 на плашке ИЛИ видимая кнопка ⋯ — открывают полосу
+// действий под плашкой (одна открытая за раз). Жест — ускоритель, кнопка и клавиатура — полноценный путь.
+const qaOpen = ref<string | null>(null)
+const qaError = ref('')
+const qaBusy = ref(false)
+const allMetrics = computed(() => [...numbers.value, ...booleans.value, ...multiselects.value])
+const metricById = (id: string) => allMetrics.value.find((m) => m.id === id)
+function actionsOf(m: Metric): QuickActionId[] {
+  const today = todayStr()
+  return quickActions(m, { date: date.value, today, yesterday: addDaysIso(today, -1), value: pending.value[m.id] })
+}
+function openQa(m: Metric) {
+  if (actionsOf(m).length === 0) return
+  qaError.value = ''
+  qaOpen.value = m.id
+}
+function closeQa(refocus = true) {
+  const id = qaOpen.value
+  qaOpen.value = null
+  qaError.value = ''
+  if (refocus && id) void nextTick(() => document.querySelector<HTMLElement>(`[data-qa-toggle="${CSS.escape(id)}"]`)?.focus())
+}
+const longPresses = new Map<string, ReturnType<typeof createLongPress>>()
+function plateBind(m: Metric) {
+  let lp = longPresses.get(m.id)
+  if (!lp) {
+    lp = createLongPress({ onTrigger: () => { const cur = metricById(m.id); if (cur) openQa(cur) } })
+    longPresses.set(m.id, lp)
+  }
+  return longPressBind(lp)
+}
+onBeforeUnmount(() => longPresses.forEach((lp) => lp.cancel()))
+const focusIn = (id: string, sel: string) => nextTick(() => document.querySelector<HTMLElement>(`[data-metric-id="${CSS.escape(id)}"] ${sel}`)?.focus())
+async function onQaAct(m: Metric, a: QuickActionId) {
+  if (a === 'skip') {
+    if (qaBusy.value) return
+    qaBusy.value = true
+    qaError.value = ''
+    const err = await skipMetricDay(m, date.value)
+    qaBusy.value = false
+    if (err) {
+      qaError.value = err
+      return
+    }
+    closeQa(false)
+    await onMetricsChanged() // перечитать СВОЙ список (в нём теперь skipped_days) и сообщить родителю: серии, кольца, баллы
+    return
+  }
+  closeQa(false)
+  void focusIn(m.id, a === 'note' ? '[data-test="metric-note"]' : 'input:not([type=checkbox])')
+}
 // «Осталось на сегодня» (BACKLOG 75.2): метрики + свои пункты плана (срез 2). Только для сегодняшнего дня; булева и пункт плана закрываются
 // тут же, числовая — переход к плашке. План читаем из снимка, который публикует PlannedSection (мост planBridge), — второй копии плана нет.
 const planSnap = ref<PlanSnapshot | null>(null)
@@ -137,7 +193,8 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
 
         <!-- BACKLOG 23 (13:25): каждый параметр — в своей мини-плашке, иначе несколько подряд сливаются в одну массу -->
         <div v-if="numbers.length > 0" class="field-grid">
-          <div v-for="m in numbers" :key="date + m.id" class="metric-plate" :class="{ 'metric-plate-saved': !!flashed[m.id] }" data-test="metric-plate">
+          <div v-for="m in numbers" :key="date + m.id" class="metric-plate" :class="{ 'metric-plate-saved': !!flashed[m.id], 'qa-has': actionsOf(m).length > 0 }" v-bind="plateBind(m)" data-test="metric-plate">
+            <button v-if="actionsOf(m).length > 0" type="button" class="qa-toggle secondary" :aria-label="t('qa_open') + ': ' + m.name" :aria-expanded="qaOpen === m.id" :data-qa-toggle="m.id" data-test="qa-toggle" @click="qaOpen === m.id ? closeQa() : openQa(m)">⋯</button>
             <SavedTick :show="!!flashed[m.id]" />
             <NumberMetricField
               :metric="m"
@@ -152,10 +209,12 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
               @fix="fixTotal(m, $event)"
               @quick-add="addLinkedReps(m, $event)"
             />
+            <MetricQuickActions v-if="qaOpen === m.id" :name="m.name" :actions="actionsOf(m)" :error="qaError" :busy="qaBusy" @act="onQaAct(m, $event)" @close="closeQa()" />
           </div>
         </div>
 
-        <div v-for="m in booleans" :key="date + m.id" class="metric-plate metric-plate-stack" :class="{ 'metric-plate-saved': !!flashed[m.id] }" data-test="metric-plate">
+        <div v-for="m in booleans" :key="date + m.id" class="metric-plate metric-plate-stack" :class="{ 'metric-plate-saved': !!flashed[m.id], 'qa-has': actionsOf(m).length > 0 }" v-bind="plateBind(m)" data-test="metric-plate">
+            <button v-if="actionsOf(m).length > 0" type="button" class="qa-toggle secondary" :aria-label="t('qa_open') + ': ' + m.name" :aria-expanded="qaOpen === m.id" :data-qa-toggle="m.id" data-test="qa-toggle" @click="qaOpen === m.id ? closeQa() : openQa(m)">⋯</button>
           <SavedTick :show="!!flashed[m.id]" />
           <BooleanMetricRow
             :metric="m"
@@ -166,9 +225,11 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
             @toggle="setBoolean(m, $event)"
             @note="setNote(m, $event)"
           />
+          <MetricQuickActions v-if="qaOpen === m.id" :name="m.name" :actions="actionsOf(m)" :error="qaError" :busy="qaBusy" @act="onQaAct(m, $event)" @close="closeQa()" />
         </div>
 
-        <div v-for="m in multiselects" :key="date + m.id" class="metric-plate metric-plate-stack" :class="{ 'metric-plate-saved': !!flashed[m.id] }" data-test="metric-plate">
+        <div v-for="m in multiselects" :key="date + m.id" class="metric-plate metric-plate-stack" :class="{ 'metric-plate-saved': !!flashed[m.id], 'qa-has': actionsOf(m).length > 0 }" v-bind="plateBind(m)" data-test="metric-plate">
+            <button v-if="actionsOf(m).length > 0" type="button" class="qa-toggle secondary" :aria-label="t('qa_open') + ': ' + m.name" :aria-expanded="qaOpen === m.id" :data-qa-toggle="m.id" data-test="qa-toggle" @click="qaOpen === m.id ? closeQa() : openQa(m)">⋯</button>
           <SavedTick :show="!!flashed[m.id]" />
           <MultiselectMetric
             :metric="m"
@@ -177,6 +238,7 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
             :streak="props.metricStreaks?.[m.id]"
             @toggle="toggleOpt(m, $event)"
           />
+          <MetricQuickActions v-if="qaOpen === m.id" :name="m.name" :actions="actionsOf(m)" :error="qaError" :busy="qaBusy" @act="onQaAct(m, $event)" @close="closeQa()" />
         </div>
 
       </template>
@@ -242,6 +304,10 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
 .metric-plate-stack {
   margin-bottom: 8px;
 }
+/* Быстрые действия (BACKLOG 75.9): видимая кнопка ⋯ в углу плашки — путь без жеста (удержание на плашке открывает то же самое) */
+.qa-has { padding-right: 40px; }
+.qa-toggle { position: absolute; top: 4px; right: 4px; padding: 0; border: 0; background: transparent; color: var(--text-dim); font-weight: 700; line-height: 1; cursor: pointer; }
+.qa-toggle:hover, .qa-toggle:focus-visible, .qa-toggle[aria-expanded='true'] { color: var(--accent); }
 /* BACKLOG 23:25: после подтверждённой записи плашка коротко вспыхивает мягкой зелёной рамкой (вместе с галочкой в углу) */
 .metric-plate-saved {
   animation: metric-plate-saved 0.9s ease-out;
