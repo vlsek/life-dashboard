@@ -1,7 +1,14 @@
 {
-  "version": "7.08",
+  "version": "7.09",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.09",
+      "date": "2026-10-30 22:00",
+      "changes": [
+        "Muscle map: chips “Today”, “7 days ago”, “14 days ago” and “30 days ago” now sit above the map. Pick a date and the map, sets, stats and workout list are recalculated as if that day were today; a caption shows which date you are looking at. While you look at the past, the “add entry” buttons are hidden so a set cannot land in the wrong place. No migrations."
+      ]
+    },
     {
       "version": "7.08",
       "date": "2026-11-01 07:00",
@@ -13,9 +20,13 @@
       "version": "7.07",
       "date": "2026-11-01 08:00",
       "changes": [
-        "Workouts: a “Repeat last workout” button opens a workout with the same exercises as last time and the same number of empty sets, with your previous weights hinted alongside.",
-        "7.06",
-        "2026-11-01 13:00",
+        "Workouts: a “Repeat last workout” button opens a workout with the same exercises as last time and the same number of empty sets, with your previous weights hinted alongside."
+      ]
+    },
+    {
+      "version": "7.06",
+      "date": "2026-11-01 13:00",
+      "changes": [
         "Milestones: a new “Timeline” button — by month you can see what is done (from the history), what is planned (the next date and its repeats by interval until the end of the year) and what is overdue; each status is labelled with a word and an icon, and years can be flipped with arrows. Mileage-only milestones appear only once done (they have no dates). No migrations."
       ]
     },
@@ -5023,6 +5034,13 @@
   ],
   "ru": [
     {
+      "version": "7.09",
+      "date": "2026-10-30 22:00",
+      "changes": [
+        "Карта мышц: над картой появились чипы «Сегодня», «7 дн. назад», «14 дн. назад» и «30 дн. назад». Выбираешь дату, и карта, подходы, статистика и список тренировок пересчитываются на тот день, как будто он сегодня; под картой подпись, на какую дату она показана. Пока смотришь прошлое, кнопки «добавить запись» скрыты, чтобы не записать подход не туда. Без миграций."
+      ]
+    },
+    {
       "version": "7.08",
       "date": "2026-11-01 07:00",
       "changes": [
@@ -5033,9 +5051,13 @@
       "version": "7.07",
       "date": "2026-11-01 08:00",
       "changes": [
-        "«Тренировки»: кнопка «Повторить прошлую» — открывает тренировку с теми же упражнениями, что были в последний раз, и таким же числом пустых подходов; прошлые веса подсказываются рядом.",
-        "7.06",
-        "2026-11-01 13:00",
+        "«Тренировки»: кнопка «Повторить прошлую» — открывает тренировку с теми же упражнениями, что были в последний раз, и таким же числом пустых подходов; прошлые веса подсказываются рядом."
+      ]
+    },
+    {
+      "version": "7.06",
+      "date": "2026-11-01 13:00",
+      "changes": [
         "«Вехи»: кнопка «Лента на год» — по месяцам видно, что уже сделано (по истории отметок), что запланировано (ближайшая дата и её повторы по интервалу до конца года) и что просрочено; статус подписан словом и значком, годы листаются стрелками. Вехи с интервалом только по пробегу в ленте показаны, только когда уже сделаны (у них нет дат). Без миграций."
       ]
     },

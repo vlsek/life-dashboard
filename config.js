@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.08";
+const SITE_VERSION = "7.09";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.09", date: "2026-10-30 22:00", changes: [
+        "Карта мышц: над картой появились чипы «Сегодня», «7 дн. назад», «14 дн. назад» и «30 дн. назад». Выбираешь дату, и карта, подходы, статистика и список тренировок пересчитываются на тот день, как будто он сегодня; под картой подпись, на какую дату она показана. Пока смотришь прошлое, кнопки «добавить запись» скрыты, чтобы не записать подход не туда. Без миграций."
+    ]},
     { version: "7.08", date: "2026-11-01 07:00", changes: [
         "«Достижения»: появился блок «Коллекции» — четыре набора из достижений разных разделов («Разгон», «Железная привычка», «Знания», «Сила воли») с полосой «N из M». Нажми на значок — откроется карточка достижения.",
     ]},
@@ -2740,6 +2743,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.09", date: "2026-10-30 22:00", changes: [
+        "Muscle map: chips “Today”, “7 days ago”, “14 days ago” and “30 days ago” now sit above the map. Pick a date and the map, sets, stats and workout list are recalculated as if that day were today; a caption shows which date you are looking at. While you look at the past, the “add entry” buttons are hidden so a set cannot land in the wrong place. No migrations."
+    ]},
     { version: "7.08", date: "2026-11-01 07:00", changes: [
         "Achievements: a new “Collections” block — four sets of achievements from different sections (“Momentum”, “Iron habit”, “Knowledge”, “Willpower”) with an “N of M” bar. Tap a badge to jump to the achievement card.",
     ]},
