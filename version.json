@@ -1,7 +1,14 @@
 {
-  "version": "7.07",
+  "version": "7.08",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.08",
+      "date": "2026-11-01 07:00",
+      "changes": [
+        "Achievements: a new “Collections” block — four sets of achievements from different sections (“Momentum”, “Iron habit”, “Knowledge”, “Willpower”) with an “N of M” bar. Tap a badge to jump to the achievement card."
+      ]
+    },
     {
       "version": "7.07",
       "date": "2026-11-01 08:00",
@@ -5015,6 +5022,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.08",
+      "date": "2026-11-01 07:00",
+      "changes": [
+        "«Достижения»: появился блок «Коллекции» — четыре набора из достижений разных разделов («Разгон», «Железная привычка», «Знания», «Сила воли») с полосой «N из M». Нажми на значок — откроется карточка достижения."
+      ]
+    },
     {
       "version": "7.07",
       "date": "2026-11-01 08:00",
