@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.99";
+const SITE_VERSION = "7.00";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.00", date: "2026-10-31 21:00", changes: [
+        "«Настройки»: выбор анимации «записалось» при добавлении воды убран из окна настроек — он остался в одном месте, в «Кастомизации» (там тот же выбор: «По теме» и шесть бесплатных вариантов, с примерами). Выбранный раньше вариант сохраняется. Без миграций."
+    ]},
     { version: "6.99", date: "2026-11-01 05:30", changes: [
         "«Достижения»: «Недавно открытые» и «Ближе всего к открытию» в витрине стали кликабельными — по клику раскрывается нужная категория, список прокручивается к карточке и она коротко подсвечивается.",
     ]},
@@ -2713,6 +2716,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.00", date: "2026-10-31 21:00", changes: [
+        "Settings: the “saved” water animation picker is removed from the settings window — it now lives in one place, Customization (the same choice: “By theme” and six free variants, with previews). Your previous choice is kept. No migrations."
+    ]},
     { version: "6.99", date: "2026-11-01 05:30", changes: [
         "Achievements: “Recently unlocked” and “Closest to unlocking” in the showcase are now clickable — a click opens the right category, scrolls to the card and briefly highlights it.",
     ]},
