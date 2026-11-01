@@ -48,7 +48,7 @@ export function setsVolume(sets: readonly SetV2[]): number {
   return t
 }
 // Рабочие подходы записи (без разминки и невыполненных); у старых записей без полей type/done — все подходы
-export const workingOf = <T extends SetExtras>(sets: readonly T[] | null | undefined): T[] => (sets ?? []).filter(isWorking)
+export const workingOf = <T extends object>(sets: readonly T[] | null | undefined): T[] => (sets ?? []).filter((s) => isWorking(s as SetExtras))
 export const workingSetCount = (sets: readonly SetV2[]): number => sets.filter(isWorking).length
 
 export interface SessionView {

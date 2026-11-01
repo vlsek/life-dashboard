@@ -219,5 +219,20 @@ describe('активная тренировка', () => {
     await q(w, 'aw-tick-0-0').trigger('click'); expect(q(w, 'rest-timer').exists()).toBe(false)
     w.unmount()
   })
+
+  it('RPE: колонка включается настройкой, значение попадает в подход при сохранении', async () => {
+    localStorage.removeItem('workouts.rpe.v1')
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
+    expect(q(w, 'aw-rpe-0-0').exists()).toBe(false)
+    await q(w, 'aw-rpe-setting').trigger('click')
+    await q(w, 'aw-rpe-0-0').setValue('8.5')
+    const inputs = q(w, 'aw-set-0-0').findAll('input'); await inputs[0].setValue('60'); await inputs[1].setValue('5')
+    await q(w, 'aw-tick-0-0').trigger('click'); await q(w, 'aw-finish').trigger('click'); await flushPromises(); await flushPromises()
+    const e = h.inserted.find((x) => x.table === 'workout_entries')!.row
+    expect((e.sets as { rpe: number }[])[0].rpe).toBe(8.5)
+    expect(localStorage.getItem('workouts.rpe.v1')).toBe('1')
+    w.unmount()
+  })
 })
 

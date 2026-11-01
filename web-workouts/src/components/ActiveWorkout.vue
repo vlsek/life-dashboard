@@ -9,6 +9,7 @@ import { prSetText, setRecords, topKind } from '../lib/records'
 import { showToast } from '../lib/toast'
 import { useRoutines } from '../lib/useRoutines'
 import { useRestTimer } from '../lib/useRestTimer'
+import { normalizeRpe } from '../lib/sessionContract'
 import { shouldRestAfter } from '../lib/restTimer'
 import RestTimer from './RestTimer.vue'
 import { haptic } from '../lib/nativeFeedback'
@@ -31,6 +32,14 @@ const prMap = computed(() => {
 })
 const prKind = (entryId: string, i: number) => topKind(prMap.value.get(entryId)?.[i] ?? [])
 const rest = useRestTimer()
+// RPE (69.4): колонка в строке подхода, включается на устройстве
+const RPE_KEY = 'workouts.rpe.v1'
+const readRpe = (): boolean => { try { return localStorage.getItem(RPE_KEY) === '1' } catch { return false } }
+const rpeOn = ref(readRpe())
+function toggleRpe() { rpeOn.value = !rpeOn.value; try { localStorage.setItem(RPE_KEY, rpeOn.value ? '1' : '0') } catch { /* настройка не критична */ } }
+const RPE_VALUES = [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
+const cols = computed(() => (rpeOn.value ? '40px 1fr 1fr 1fr 64px 44px 28px' : '40px 1fr 1fr 1fr 44px 28px'))
+const onRpe = (entryId: string, i: number, ev: Event) => aw.update(entryId, i, { rpe: normalizeRpe(Number((ev.target as HTMLSelectElement).value)) })
 // Экран не гаснет, пока идёт тренировка (Screen Wake Lock); не поддерживается — молча пропускаем
 let wake: { release: () => Promise<void> } | null = null
 async function lockScreen() { try { wake = (await (navigator as unknown as { wakeLock?: { request: (k: string) => Promise<{ release: () => Promise<void> }> } }).wakeLock?.request('screen')) ?? null } catch { wake = null } }
@@ -131,6 +140,7 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
       </div>
       <div class="mx-auto mt-1 max-w-3xl text-center text-xs" style="color: var(--text-dim)">{{ t('aw_done_sets').replace('{n}', String(doneSetCount(draft))) }}</div>
       <div v-if="draft.exercises.length" class="mx-auto mt-1 flex max-w-3xl items-center justify-center gap-2 text-xs">
+        <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 32px" :aria-pressed="rpeOn" data-testid="aw-rpe-setting" @click="toggleRpe">{{ t('aw_rpe_setting') }}: {{ rpeOn ? t('aw_on') : t('aw_rest_off') }}</button>
         <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 32px" data-testid="aw-rest-setting" @click="rest.cycleSetting()">{{ t('aw_rest_setting') }}: {{ rest.seconds.value ? rest.seconds.value + ' ' + t('sm_sec') : t('aw_rest_off') }}</button>
         <button v-if="!savingRoutine" type="button" class="px-2 py-1" style="color: var(--accent); min-height: 32px" data-testid="aw-save-routine" @click="openSaveRoutine">{{ t('rt_save') }}</button>
         <template v-else>
@@ -152,17 +162,18 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
           <button type="button" class="px-2 py-2 text-sm" style="color: var(--text-dim); min-width: 40px; min-height: 40px" :aria-label="t('aw_move_down')" :disabled="ei === draft.exercises.length - 1" @click="aw.move(e.id, 1)">↓</button>
           <button type="button" class="px-2 py-2 text-sm" style="color: var(--danger); min-width: 40px; min-height: 40px" :aria-label="t('aw_remove_exercise')" @click="aw.removeExercise(e.id)">✕</button>
         </div>
-        <div class="grid items-center gap-2 text-xs" style="grid-template-columns: 40px 1fr 1fr 1fr 44px 28px; color: var(--text-dim)">
+        <div class="grid items-center gap-2 text-xs" :style="'grid-template-columns: ' + cols + '; color: var(--text-dim)'">
           <span class="text-center">#</span>
           <span class="text-center">{{ t('aw_prev') }}</span>
           <span class="text-center">{{ exById.get(e.exercise_id)?.tracks_weight ? t('aw_weight') + ', ' + unitOf(exById.get(e.exercise_id)) : t('aw_value') }}</span>
           <span class="text-center">{{ exById.get(e.exercise_id)?.tracks_duration ? t('aw_minutes') : t('aw_reps') }}</span>
+          <span v-if="rpeOn" class="text-center">{{ t('aw_rpe') }}</span>
           <span></span><span></span>
         </div>
         <template v-for="(s, i) in e.sets" :key="i">
         <div
           class="mt-1 grid items-center gap-2 rounded-md"
-          :style="'grid-template-columns: 40px 1fr 1fr 1fr 44px 28px;' + (s.done === true ? 'background: color-mix(in srgb, var(--success) 18%, transparent)' : '')"
+          :style="'grid-template-columns: ' + cols + ';' + (s.done === true ? 'background: color-mix(in srgb, var(--success) 18%, transparent)' : '')"
           :data-testid="'aw-set-' + ei + '-' + i"
         >
           <button type="button" class="rounded-md text-sm font-semibold" style="min-height: 44px; color: var(--text-dim)" :aria-label="t('aw_set_type') + (TYPE_LABEL(setType(s)) ? ': ' + TYPE_LABEL(setType(s)) : '')" :title="TYPE_LABEL(setType(s))" @click="cycleType(e.id, i, setType(s))">
@@ -201,6 +212,10 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
             @input="onNum(e.id, i, 'duration', $event)"
           />
           <input v-else type="text" inputmode="numeric" :value="s.reps ?? ''" :class="inputCls" :style="inputStyle" :aria-label="t('aw_reps')" @input="onNum(e.id, i, 'reps', $event)" />
+          <select v-if="rpeOn" :value="s.rpe ?? ''" :class="inputCls" style="min-height: 44px; padding: 0 2px; border-color: var(--border); background: var(--bg); color: var(--text)" :aria-label="t('aw_rpe')" :data-testid="'aw-rpe-' + ei + '-' + i" @change="onRpe(e.id, i, $event)">
+            <option value="">—</option>
+            <option v-for="v in RPE_VALUES" :key="v" :value="v">{{ String(v).replace('.', ',') }}</option>
+          </select>
           <button
             type="button"
             class="rounded-md border text-lg"
