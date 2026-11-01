@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
-import { ref } from 'vue'
 
 // BACKLOG 74.3 (срез 4): ошибка загрузки «Истории» — LoadError с «Повторить»; повтор настоящего composable сбрасывает старую ошибку.
 const h = vi.hoisted(() => ({ fail: true }))
