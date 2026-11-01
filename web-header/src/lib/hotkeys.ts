@@ -42,6 +42,8 @@ export function setHotkeysEnabled(on: boolean): void {
 
 // Окно-шпаргалка (общее для App.vue и слушателя)
 export const hotkeysHelpOpen = ref(false)
+// Командная палитра (79.1): открывается по Ctrl/Cmd+K и «/»
+export const paletteOpen = ref(false)
 
 function isTypingTarget(el: EventTarget | null): boolean {
   const e = el as HTMLElement | null
@@ -69,9 +71,26 @@ export function createHotkeyHandler(deps: HotkeyDeps): (e: KeyboardEvent) => voi
   const doc = deps.doc ?? document
   let gAt = 0
   return (e: KeyboardEvent) => {
-    if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || e.repeat) return
+    if (e.defaultPrevented || e.repeat) return
+    // Ctrl/Cmd+K — палитра работает и из поля ввода (как везде); без Shift/Alt
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === 'k') {
+      if (!enabled()) return
+      if (dialogOpen(doc) && !paletteOpen.value) return
+      e.preventDefault()
+      gAt = 0
+      paletteOpen.value = !paletteOpen.value
+      return
+    }
+    if (e.ctrlKey || e.metaKey || e.altKey) return
     if (isTypingTarget(e.target)) return
     if (!enabled()) return
+    if (e.key === '/' && !e.shiftKey) {
+      if (dialogOpen(doc)) return
+      gAt = 0
+      e.preventDefault()
+      paletteOpen.value = true
+      return
+    }
     if (e.key === 'Escape' && hotkeysHelpOpen.value) {
       hotkeysHelpOpen.value = false
       return

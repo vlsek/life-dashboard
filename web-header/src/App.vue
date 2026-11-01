@@ -17,7 +17,9 @@ import ProgressSettingsModal from './components/ProgressSettingsModal.vue'
 import RightPanel, { type GaugeData } from './components/RightPanel.vue'
 import SettingsModal from './components/SettingsModal.vue'
 import HotkeysModal from './components/HotkeysModal.vue'
-import { createHotkeyHandler } from './lib/hotkeys'
+import CommandPalette from './components/CommandPalette.vue'
+import type { PaletteItem } from './lib/palette'
+import { createHotkeyHandler, hotkeysHelpOpen, paletteOpen } from './lib/hotkeys'
 import { loadPauseState, type PauseState } from './lib/pause'
 import FavoriteHeart from './components/FavoriteHeart.vue'
 import PageWidgetButton from './components/PageWidgetButton.vue'
@@ -47,6 +49,13 @@ const props = defineProps<{ panelOnly?: boolean }>()
 const userId = ref<string | null>(null)
 const outboxView = shallowRef<OutboxView | null>(null)
 onBeforeUnmount(() => outboxView.value?.stop())
+// Командная палитра (79.1): страница — переход, действие — окно шапки
+function onPalettePick(it: PaletteItem) {
+  paletteOpen.value = false
+  if (it.kind === 'page' && it.href) location.href = it.href
+  else if (it.id === 'action:settings') globalSettingsOpen.value = true
+  else if (it.id === 'action:hotkeys') hotkeysHelpOpen.value = true
+}
 // Горячие клавиши (79.8): один слушатель на страницу; «g» + буква — переход, «?» — шпаргалка
 const onHotkey = createHotkeyHandler({ navigate: (href) => { location.href = href } })
 onMounted(() => document.addEventListener('keydown', onHotkey))
@@ -276,6 +285,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
       @open-settings="panelOpen = false; globalSettingsOpen = true"
     />
     <HotkeysModal />
+    <CommandPalette v-if="paletteOpen" @pick="onPalettePick" @close="paletteOpen = false" />
     <SettingsModal
       v-if="globalSettingsOpen && userId"
       :user-id="userId"
