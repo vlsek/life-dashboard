@@ -7,9 +7,10 @@ import type { SetType, SetV2 } from './sessionContract'
 export interface DraftExercise { id: string; exercise_id: string; superset_group: number | null; note: string | null; sets: SetV2[] }
 export interface ActiveDraft {
   v: 1; id: string; name: string | null; date: string; started_at: string
+  manual_minutes?: number | null // тренировка задним числом: длительность в минутах (секундомера нет)
   routine_id: string | null; notes: string | null; exercises: DraftExercise[]
 }
-export interface SessionPayload { id: string; name: string | null; date: string; started_at: string; finished_at: string; routine_id: string | null; notes: string | null; source: 'live' }
+export interface SessionPayload { id: string; name: string | null; date: string; started_at: string; finished_at: string; routine_id: string | null; notes: string | null; source: 'live' | 'manual' }
 export interface EntryPayload { id: string; exercise_id: string; date: string; sets: SetV2[]; notes: string | null; session_id: string | null; position: number | null; superset_group: number | null }
 export interface FinishResult { session: SessionPayload | null; entries: EntryPayload[] }
 
@@ -22,7 +23,7 @@ const emptySet = (): SetV2 => ({ reps: null, weight: null, time: null, duration:
 export function newDraft(id: string, now: Date, opts: { name?: string | null; routine_id?: string | null; date?: string } = {}): ActiveDraft {
   const pad = (n: number) => String(n).padStart(2, '0')
   const local = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}` // локальная дата начала, как у workout_entries.date
-  return { v: 1, id, name: opts.name?.trim() || null, date: opts.date ?? local, started_at: now.toISOString(), routine_id: opts.routine_id ?? null, notes: null, exercises: [] }
+  return { v: 1, manual_minutes: null, id, name: opts.name?.trim() || null, date: opts.date ?? local, started_at: now.toISOString(), routine_id: opts.routine_id ?? null, notes: null, exercises: [] }
 }
 
 // Все изменения возвращают НОВЫЙ черновик; «нельзя» (лимит, нет такого упражнения) — тот же объект, чтобы вызывающий мог сравнить по ссылке.
@@ -76,18 +77,21 @@ export const workingDoneSets = (d: ActiveDraft): number => d.exercises.reduce((n
 export function finishDraft(d: ActiveDraft, nowIso: string, withSession = true): FinishResult {
   if (!canSave(d)) return { session: null, entries: [] }
   const kept = d.exercises.filter(e => countedSets(e).length > 0)
-  const finished = Date.parse(nowIso) >= Date.parse(d.started_at) ? nowIso : d.started_at
+  const manual = typeof d.manual_minutes === 'number' && d.manual_minutes > 0
+  const startMs = Date.parse(d.started_at)
+  const finished = manual ? new Date(startMs + d.manual_minutes! * 60000).toISOString() : Date.parse(nowIso) >= startMs ? nowIso : d.started_at
   const entries: EntryPayload[] = kept.map((e, i) => ({
     id: e.id, exercise_id: e.exercise_id, date: d.date, sets: countedSets(e).map(s => ({ ...s, done: true })), notes: e.note?.trim() || null,
     session_id: withSession ? d.id : null, position: withSession ? i : null, superset_group: withSession ? e.superset_group : null,
   }))
   const session: SessionPayload | null = withSession
-    ? { id: d.id, name: d.name, date: d.date, started_at: d.started_at, finished_at: finished, routine_id: d.routine_id, notes: d.notes?.trim() || null, source: 'live' }
+    ? { id: d.id, name: d.name, date: d.date, started_at: d.started_at, finished_at: finished, routine_id: d.routine_id, notes: d.notes?.trim() || null, source: manual ? 'manual' : 'live' }
     : null
   return { session, entries }
 }
 
 export function elapsedSeconds(d: ActiveDraft, nowMs: number): number {
+  if (typeof d.manual_minutes === 'number') return d.manual_minutes * 60 // задним числом секундомера нет
   const s = Date.parse(d.started_at)
   return Number.isFinite(s) && nowMs > s ? Math.floor((nowMs - s) / 1000) : 0
 }
@@ -111,7 +115,7 @@ export function loadDraft(store: Store): ActiveDraft | null {
     const exercises: DraftExercise[] = o.exercises
       .filter((e: any) => e && typeof e.id === 'string' && typeof e.exercise_id === 'string' && Array.isArray(e.sets))
       .map((e: any) => ({ id: e.id, exercise_id: e.exercise_id, superset_group: Number.isInteger(e.superset_group) ? e.superset_group : null, note: typeof e.note === 'string' ? e.note : null, sets: e.sets.filter((s: any) => s && typeof s === 'object') }))
-    return { v: 1, id: o.id, name: typeof o.name === 'string' ? o.name : null, date: o.date, started_at: o.started_at, routine_id: typeof o.routine_id === 'string' ? o.routine_id : null, notes: typeof o.notes === 'string' ? o.notes : null, exercises }
+    return { v: 1, manual_minutes: Number.isInteger(o.manual_minutes) && o.manual_minutes > 0 && o.manual_minutes <= 1440 ? o.manual_minutes : null, id: o.id, name: typeof o.name === 'string' ? o.name : null, date: o.date, started_at: o.started_at, routine_id: typeof o.routine_id === 'string' ? o.routine_id : null, notes: typeof o.notes === 'string' ? o.notes : null, exercises }
   } catch { return null }
 }
 
@@ -154,4 +158,16 @@ export function fillAllPrevious(d: ActiveDraft, entryId: string, prevAt: (index:
     if (isBlank(s) && p) out = updateSet(out, entryId, i, fromPrev(p))
   })
   return out
+}
+
+// Тренировка задним числом (BACKLOG 69.2, срез 3): дата YYYY-MM-DD, время начала HH:MM (локальное), длительность в минутах. Некорректный ввод → null.
+export function newPastDraft(id: string, date: string, time: string, minutes: number, opts: { name?: string | null } = {}): ActiveDraft | null {
+  const dm = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date), tm = /^(\d{1,2}):(\d{2})$/.exec(time)
+  if (!dm || !tm || !Number.isInteger(minutes) || minutes < 1 || minutes > 1440) return null
+  const [y, mo, da, h, mi] = [+dm[1], +dm[2], +dm[3], +tm[1], +tm[2]]
+  if (h > 23 || mi > 59) return null
+  const start = new Date(y, mo - 1, da, h, mi, 0)
+  if (start.getFullYear() !== y || start.getMonth() !== mo - 1 || start.getDate() !== da) return null
+  const d = newDraft(id, start, { name: opts.name, date })
+  return { ...d, manual_minutes: minutes }
 }

@@ -95,3 +95,21 @@ describe('подстановка прошлого', () => {
     expect(r.exercises[0].sets.map((s) => [s.reps, s.weight])).toEqual([[8, 60], [5, 100], [8, 60]])
   })
 })
+
+import { newPastDraft } from './activeWorkout'
+describe('тренировка задним числом', () => {
+  it('дата/время/длительность → черновик с manual_minutes; конец = начало + длительность, source manual', () => {
+    const d = newPastDraft('p', '2026-10-25', '18:30', 75)!
+    expect(d.date).toBe('2026-10-25'); expect(d.manual_minutes).toBe(75); expect(elapsedSeconds(d, Date.now())).toBe(4500)
+    let x = addExercise(d, 'e', 'x'); x = updateSet(x, 'e', 0, { reps: 5, weight: 50 }); x = toggleDone(x, 'e', 0)
+    const r = finishDraft(x, new Date().toISOString())
+    expect(r.session!.source).toBe('manual'); expect(Date.parse(r.session!.finished_at) - Date.parse(r.session!.started_at)).toBe(75 * 60000)
+    expect(r.session!.date).toBe('2026-10-25'); expect(r.entries[0].date).toBe('2026-10-25')
+  })
+  it('мусор → null; manual_minutes переживает сохранение', () => {
+    expect(newPastDraft('p', '2026-02-30', '10:00', 30)).toBeNull(); expect(newPastDraft('p', '2026-10-25', '25:00', 30)).toBeNull()
+    expect(newPastDraft('p', '2026-10-25', '10:00', 0)).toBeNull(); expect(newPastDraft('p', 'x', '10:00', 30)).toBeNull()
+    const s = { m: new Map<string, string>(), getItem(k: string) { return this.m.get(k) ?? null }, setItem(k: string, v: string) { this.m.set(k, v) }, removeItem(k: string) { this.m.delete(k) } }
+    const d = newPastDraft('p', '2026-10-25', '10:00', 30)!; saveDraft(d, s); expect(loadDraft(s)!.manual_minutes).toBe(30)
+  })
+})

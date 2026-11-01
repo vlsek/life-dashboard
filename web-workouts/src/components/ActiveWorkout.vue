@@ -89,6 +89,7 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
         </button>
         <div class="min-w-0 flex-1 text-center">
           <div class="text-xl font-bold tabular-nums" data-testid="aw-timer" aria-live="off">{{ formatElapsed(aw.elapsed.value) }}</div>
+          <div v-if="draft.manual_minutes" class="text-xs" style="color: var(--accent)" data-testid="aw-past-badge">{{ t('aw_past_badge').replace('{date}', draft.date) }}</div>
           <input
             :value="draft.name ?? ''"
             :placeholder="t('aw_title_ph')"

@@ -29,7 +29,7 @@ export function summarize(d: ActiveDraft, exercises: readonly Exercise[], entrie
     for (const m of exById.get(e.exercise_id)?.muscle_groups ?? []) if (!muscles.includes(m)) muscles.push(m)
   }
   const start = Date.parse(d.started_at)
-  return { minutes: Number.isFinite(start) && nowMs > start ? Math.round((nowMs - start) / 60000) : 0, exerciseCount, workingSets, volume: Math.round(volume * 10) / 10, records, muscles }
+  return { minutes: typeof d.manual_minutes === 'number' ? d.manual_minutes : Number.isFinite(start) && nowMs > start ? Math.round((nowMs - start) / 60000) : 0, exerciseCount, workingSets, volume: Math.round(volume * 10) / 10, records, muscles }
 }
 // 1250 → «1 250»; дробные — с запятой
 export const fmtVolume = (v: number): string => String(v).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ' ')

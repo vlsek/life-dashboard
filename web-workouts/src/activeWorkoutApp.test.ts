@@ -152,5 +152,21 @@ describe('активная тренировка', () => {
     expect((inputs[0].element as HTMLInputElement).value).toBe('60') // добавленный подход скопировал 60×8; подставка не затирает введённое
     w.unmount()
   })
+
+  it('прошедшая тренировка: дата/время/минуты → тот же экран, «Завершить» пишет сессию source=manual на выбранную дату', async () => {
+    const w = await mountApp()
+    await q(w, 'aw-past').trigger('click')
+    await q(w, 'past-date').setValue('2026-10-20'); await q(w, 'past-time').setValue('18:30'); await q(w, 'past-minutes').setValue('45')
+    await q(w, 'past-form').trigger('submit')
+    expect(q(w, 'aw-past-badge').text()).toContain('2026-10-20')
+    expect(q(w, 'aw-timer').text()).toBe('45:00')
+    await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
+    const inputs = q(w, 'aw-set-0-0').findAll('input'); await inputs[0].setValue('50'); await inputs[1].setValue('5')
+    await q(w, 'aw-tick-0-0').trigger('click'); await q(w, 'aw-finish').trigger('click'); await flushPromises(); await flushPromises()
+    const [s, e] = h.inserted.map((x) => x.row)
+    expect(s).toMatchObject({ source: 'manual', date: '2026-10-20' }); expect(e).toMatchObject({ date: '2026-10-20' })
+    expect(Date.parse(s.finished_at as string) - Date.parse(s.started_at as string)).toBe(45 * 60000)
+    w.unmount()
+  })
 })
 

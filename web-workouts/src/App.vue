@@ -29,6 +29,8 @@ import TodayPanel from './components/TodayPanel.vue'
 import ActiveWorkout from './components/ActiveWorkout.vue'
 import RoutinesList from './components/RoutinesList.vue'
 import WorkoutSummary from './components/WorkoutSummary.vue'
+import PastWorkoutForm from './components/PastWorkoutForm.vue'
+import type { ActiveDraft } from './lib/activeWorkout'
 import { summarize, type WorkoutSummaryData } from './lib/summary'
 import { draftFromRoutine, type Routine } from './lib/routines'
 import { useActiveWorkout } from './lib/useActiveWorkout'
@@ -347,6 +349,11 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
 const aw = useActiveWorkout()
 const awBusy = ref(false)
 const summary = ref<WorkoutSummaryData | null>(null)
+const pastForm = ref(false)
+function onStartPast(d: ActiveDraft) {
+  pastForm.value = false
+  aw.startWith(d)
+}
 async function onFinishWorkout() {
   const d = aw.draft.value
   if (!d || awBusy.value || auth.value.status !== 'ready') return
@@ -448,6 +455,7 @@ function onToggleProgramWeek(week: number) {
 <template>
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
   <ActiveWorkout v-if="aw.active.value && auth.status === 'ready'" :exercises="exercises" :entries="entries" :unit="defaultUnit()" :busy="awBusy" @finish="onFinishWorkout" @cancel="onCancelWorkout" />
+  <PastWorkoutForm v-if="pastForm" @start="onStartPast" @close="pastForm = false" />
   <WorkoutSummary v-if="summary" :data="summary" :exercises="exercises" :unit="defaultUnit()" @close="summary = null" />
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-6">
     <h1 class="mb-3 text-xl font-bold"><EmojiText :text="t('workouts_h1')" /></h1>
@@ -461,6 +469,16 @@ function onToggleProgramWeek(week: number) {
         @click="aw.start()"
       >
         {{ t('aw_start') }}
+      </button>
+      <button
+        type="button"
+        class="rounded-lg border px-4 py-2 text-sm"
+        style="border-color: var(--border); background: var(--bg-card); color: var(--text); min-height: 44px"
+        :disabled="aw.active.value"
+        data-testid="aw-past"
+        @click="pastForm = true"
+      >
+        {{ t('aw_past_btn') }}
       </button>
       <button
         type="button"
