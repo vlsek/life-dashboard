@@ -27,6 +27,7 @@ import {
 
 import { friendlyError } from './friendlyError'
 import { createGoal, type GoalFormInput } from './newGoal'
+import { addToNextDay, canPostpone } from './planPostpone'
 // Композабл блока «Планы» (раньше «Цели на сегодня») (план на день). Портировано из renderPlanned()/
 // openCarryOverModal() в dashboard.js. load(userId, date) — после auth 'ready' и при смене даты.
 // После КАЖДОЙ записи шлёт dashboard:data-changed — кольца дня/недели и стрики пересчитает useDashboard.
@@ -105,6 +106,33 @@ export function usePlanned() {
   const toggleItemBonus = (index: number) => persist(toggleBonus(planned.value, index))
   // Время выполнения ставится само (BACKLOG 61.4), но только когда открыт СЕГОДНЯШНИЙ день: отметка в плане прошлого дня «сейчас» была бы ложью.
   const nowIfToday = () => (date === todayStr() ? nowHHMM() : null)
+  // «Отложить на завтра» (BACKLOG 75.9, срез 2): пункт переезжает в план СЛЕДУЮЩЕГО дня. Порядок важен: сначала дописываем завтра (читаем план
+  // завтра, добавляем без дубля), и только потом снимаем с сегодняшнего. Если первый шаг не удался — пункт остаётся сегодня (ничего не теряем);
+  // если не удался второй — пункт лежит в обоих днях (дубль лучше потери), а ошибка показана. Возвращает true, если пункт больше не сегодняшний.
+  async function postponeItem(index: number): Promise<boolean> {
+    const it = planned.value[index]
+    if (!it || !canPostpone(it) || !userId) return false
+    const target = addDaysIso(date, 1)
+    const { data, error: readErr } = await sb.from('daily_notes').select('planned_goals').eq('user_id', userId).eq('date', target).maybeSingle()
+    if (readErr) {
+      error.value = friendlyError(readErr, 'load')
+      return false
+    }
+    const { list, duplicate } = addToNextDay(normalizePlanned(data?.planned_goals), it)
+    if (!duplicate) {
+      const { error: writeErr } = await sb.from('daily_notes').upsert({ user_id: userId, date: target, planned_goals: list }, { onConflict: 'user_id,date' })
+      if (writeErr) {
+        error.value = friendlyError(writeErr)
+        return false
+      }
+      notifyDataChanged({ source: 'plan', date: target })
+    }
+    // за время запросов список мог измениться — ищем тот же пункт заново (сначала по ссылке, затем по тексту и времени)
+    let at = planned.value.indexOf(it)
+    if (at < 0) at = planned.value.findIndex((x) => canPostpone(x) && x.text === it.text && (x.time ?? '') === (it.time ?? ''))
+    if (at < 0) return true // уже снят
+    return removeItem(at)
+  }
   const setItemDone = (index: number, done: boolean) => persist(setCustomDone(planned.value, index, done, nowIfToday()))
   const editItem = (index: number, patch: { text: string; time?: string | null; doneAt?: string | null }) => persist(editCustom(planned.value, index, patch))
   const setItemTime = (index: number, time: string | null) => persist(setTimeAt(planned.value, index, time))
@@ -164,6 +192,6 @@ export function usePlanned() {
 
   return {
     planned, goals, loaded, loadedDate, error, notice, savedTick, load,
-    addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals,
+    addCustomItem, addGoalItem, createGoalInPlan, removeItem, postponeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals,
   }
 }

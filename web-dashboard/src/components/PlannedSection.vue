@@ -14,6 +14,8 @@ import PlannedRepeatsModal from './PlannedRepeatsModal.vue'
 import { ensureCategory, hasHorizonColumn, hasWeightColumn, loadBodyWeight, loadMyCategories, type GoalFormInput } from '../lib/newGoal'
 import { usePlanned } from '../lib/usePlanned'
 import { PLAN_MARK, PLAN_REQUEST, planSnapshotOf, publishPlanSnapshot, type PlanMarkDetail } from '../lib/planBridge'
+import { canPostpone } from '../lib/planPostpone'
+import { useRowSwipe } from '../lib/useRowSwipe'
 import { usePlanRepeats } from '../lib/usePlanRepeats'
 import { doneOnDay, goalRowKind, stageLabel, type CarryCandidate, type PlanGoal, type PlannedEntry } from '../lib/planned'
 import { todayStr } from '../lib/date'
@@ -30,7 +32,7 @@ import { stripEmoji } from '../lib/emojiText'
 const props = defineProps<{ userId: string | null; date?: string; switchable?: boolean }>()
 const emit = defineEmits<{ 'update:date': [value: string] }>()
 const day = computed(() => props.date ?? todayStr())
-const { planned, goals, loaded, loadedDate, error, savedTick, load, addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals: monthGoalsOf } = usePlanned()
+const { planned, goals, loaded, loadedDate, error, postponeItem, savedTick, load, addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals: monthGoalsOf } = usePlanned()
 
 // Мост со списком «Осталось на сегодня» (BACKLOG 75.2, срез 2): публикуем снимок своих невыполненных пунктов и принимаем просьбу отметить.
 // Пишет в план только этот блок, поэтому второй копии состояния и гонки записей нет. Дату берём из loadedDate (а не из props): при листании
@@ -55,6 +57,20 @@ onBeforeUnmount(() => {
   window.removeEventListener(PLAN_REQUEST, publishSnapshot)
   window.removeEventListener(PLAN_MARK, onPlanMark)
 })
+
+// Свайп по строке плана (BACKLOG 75.9, срез 2): вправо — выполнить, влево — перенести на завтра. Жест — ускоритель: у строки есть ✓ и кнопка «на завтра».
+// Только свои невыполненные пункты (пункт-цель и повторяющийся не двигаем — см. planPostpone.ts).
+async function postpone(i: number) {
+  const ok = await postponeItem(i)
+  if (ok) notice.value = t('plan_postponed')
+}
+const swipe = useRowSwipe({
+  canRight: (i) => planned.value[i]?.type !== 'goal' && !planned.value[i]?.done,
+  canLeft: (i) => canPostpone(planned.value[i]),
+  onRight: (i) => void setItemDone(i, true),
+  onLeft: (i) => void postpone(i),
+})
+onBeforeUnmount(() => swipe.cancel())
 
 // Повторяющиеся пункты (BACKLOG 1054, миграция 087): нет таблицы — блок и кнопка просто не показываются
 const rep = usePlanRepeats()
@@ -218,7 +234,15 @@ const collapsed = ref(false)
     <div v-else class="table-scroll overflow-x-auto" data-test="table-scroll">
       <table>
         <tbody>
-          <tr v-for="(item, i) in planned" :key="i + item.text" data-test="item">
+          <tr
+            v-for="(item, i) in planned"
+            :key="i + item.text"
+            class="plan-row"
+            :class="{ 'swipe-right': swipe.hintFor(i) === 'right', 'swipe-left': swipe.hintFor(i) === 'left' }"
+            :style="swipe.styleFor(i)"
+            v-bind="swipe.bind(i)"
+            data-test="item"
+          >
             <template v-if="item.type === 'goal'">
               <template v-if="goalRowKind(goalOf(item)) === 'missing'">
                 <td style="color: #e0a93b"><Icon name="alert" /></td>
@@ -256,6 +280,7 @@ const collapsed = ref(false)
                   <button type="button" class="secondary px-2 py-0.5" :title="stripEmoji(t('dash_planned_bonus_toggle_title'))" data-test="bonus" @click="toggleItemBonus(i)">
                     <Icon name="star" :extra-style="item.bonus ? 'color:#e0a93b; fill:#e0a93b;' : 'opacity:0.55;'" />
                   </button>
+                  <button v-if="canPostpone(item)" type="button" class="secondary px-2 py-0.5" :title="t('plan_postpone_title')" :aria-label="t('plan_postpone_title')" data-test="postpone" @click="postpone(i)"><Icon name="chevron_right" /></button>
                 </td>
               </template>
             </template>
@@ -391,4 +416,10 @@ const collapsed = ref(false)
   padding-right: 0.75rem;
   white-space: nowrap;
 }
+/* Свайп по строке (75.9, срез 2): вертикальный скролл остаётся за браузером, горизонтальное движение — наше; подсказка направления — цветом фона */
+.plan-row { touch-action: pan-y; transition: transform 0.15s ease; }
+.plan-row.swipe-right { background: color-mix(in srgb, var(--success) 22%, transparent); }
+.plan-row.swipe-left { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+@media (prefers-reduced-motion: reduce) { .plan-row { transition: none; } }
+:global(html[data-motion='off']) .plan-row { transition: none; }
 </style>
