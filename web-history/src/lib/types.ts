@@ -59,6 +59,8 @@ export interface DailyNote {
   date: string
   items?: (string | { text: string })[]
   planned_goals?: (string | PlannedItem)[]
+  mood?: number | null // самочувствие дня 1–5 (BACKLOG 75.3, миграция 114)
+  notes?: string | null // короткая заметка о дне (BACKLOG 75.3)
 }
 
 export interface Goal {

@@ -1,7 +1,14 @@
 {
-  "version": "7.17",
+  "version": "7.18",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.18",
+      "date": "2026-11-01 12:50",
+      "changes": [
+        "History: the day window now also shows “How the day went” — the rating and note (same as in Calendar)."
+      ]
+    },
     {
       "version": "7.17",
       "date": "2026-11-01 12:30",
@@ -5089,6 +5096,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.18",
+      "date": "2026-11-01 12:50",
+      "changes": [
+        "«История»: окно дня тоже показывает «Как прошёл день» — оценку и заметку (как в «Календаре»)."
+      ]
+    },
     {
       "version": "7.17",
       "date": "2026-11-01 12:30",
