@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.04";
+const SITE_VERSION = "7.06";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,12 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.06", date: "2026-11-01 08:00", changes: [
+        "«Тренировки»: кнопка «Повторить прошлую» — открывает тренировку с теми же упражнениями, что были в последний раз, и таким же числом пустых подходов; прошлые веса подсказываются рядом.",
+    ]},
+    { version: "7.05", date: "2026-11-01 06:30", changes: [
+        "«Тренировки» → карта мышц: у каждой зоны подпись для скринридера теперь говорит и состояние («Грудь, недавно в работе», «подходов за 30 дн.: 6», «нет данных»), а не только цвет.",
+    ]},
     { version: "7.04", date: "2026-11-01 06:00", changes: [
         "«Тренировки»: в панели мышцы на карте появились кнопки «Упражнения» и «В журнале» — они оставляют в списках только упражнения и записи на эту мышцу. Над списком чип «Фильтр: мышца» со сбросом.",
     ]},
@@ -2728,6 +2734,12 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.06", date: "2026-11-01 08:00", changes: [
+        "Workouts: a “Repeat last workout” button opens a workout with the same exercises as last time and the same number of empty sets, with your previous weights hinted alongside.",
+    ]},
+    { version: "7.05", date: "2026-11-01 06:30", changes: [
+        "Workouts → muscle map: each zone’s screen-reader label now also states its status (“Chest, worked recently”, “6 sets in 30 days”, “no data”), not just colour.",
+    ]},
     { version: "7.04", date: "2026-11-01 06:00", changes: [
         "Workouts: the muscle panel on the map now has “Exercises” and “In the journal” buttons — they keep only the exercises and entries for that muscle. A “Filter: muscle” chip above the list clears it.",
     ]},

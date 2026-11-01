@@ -548,4 +548,15 @@ describe('MuscleMap: visual packs (BACKLOG 70.2)', () => {
     await w.find('[data-testid="muscle-filter-exercises"]').trigger('click')
     expect(w.emitted('filter')).toEqual([['chest', 'journal'], ['chest', 'exercises']])
   })
+
+  it('подпись зоны для скринридера несёт и состояние, а не только цвет (70.5)', async () => {
+    const w = await openMap([entry('bench', '2026-09-20'), entry('bench', '2026-09-29')], [bench])
+    expect(zone(w, 'chest').attributes('aria-label')).toBe('Грудь, недавно в работе')
+    expect(zone(w, 'calves').attributes('aria-label')).toBe('Икры, давно не в работе')
+    await w.find('[data-testid="muscle-heat-volume"]').trigger('click')
+    expect(zone(w, 'chest').attributes('aria-label')).toBe('Грудь, подходов за 30 дн.: 2')
+    expect(zone(w, 'calves').attributes('aria-label')).toBe('Икры, нет данных')
+    await w.find('[data-testid="muscle-heat-covered"]').trigger('click')
+    expect(zone(w, 'chest').attributes('aria-label')).toBe('Грудь, есть упражнение')
+  })
 })

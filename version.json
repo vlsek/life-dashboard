@@ -1,7 +1,21 @@
 {
-  "version": "7.04",
+  "version": "7.06",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.06",
+      "date": "2026-11-01 08:00",
+      "changes": [
+        "Workouts: a “Repeat last workout” button opens a workout with the same exercises as last time and the same number of empty sets, with your previous weights hinted alongside."
+      ]
+    },
+    {
+      "version": "7.05",
+      "date": "2026-11-01 06:30",
+      "changes": [
+        "Workouts → muscle map: each zone’s screen-reader label now also states its status (“Chest, worked recently”, “6 sets in 30 days”, “no data”), not just colour."
+      ]
+    },
     {
       "version": "7.04",
       "date": "2026-11-01 06:00",
@@ -4998,6 +5012,20 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.06",
+      "date": "2026-11-01 08:00",
+      "changes": [
+        "«Тренировки»: кнопка «Повторить прошлую» — открывает тренировку с теми же упражнениями, что были в последний раз, и таким же числом пустых подходов; прошлые веса подсказываются рядом."
+      ]
+    },
+    {
+      "version": "7.05",
+      "date": "2026-11-01 06:30",
+      "changes": [
+        "«Тренировки» → карта мышц: у каждой зоны подпись для скринридера теперь говорит и состояние («Грудь, недавно в работе», «подходов за 30 дн.: 6», «нет данных»), а не только цвет."
+      ]
+    },
     {
       "version": "7.04",
       "date": "2026-11-01 06:00",
