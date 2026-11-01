@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.08";
+const SITE_VERSION = "7.10";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,11 +488,18 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.10", date: "2026-11-01 09:30", changes: [
+        "«Тренировки»: суперсеты. В активной тренировке между упражнениями появилась кнопка «Суперсет со следующим» — упражнения объединяются в одну группу с цветной полосой слева; «Разъединить суперсет» рвёт группу. Группа сохраняется в записях и в рутинах.",
+    ]},
+    { version: "7.09", date: "2026-10-30 22:00", changes: [
+        "Карта мышц: над картой появились чипы «Сегодня», «7 дн. назад», «14 дн. назад» и «30 дн. назад». Выбираешь дату, и карта, подходы, статистика и список тренировок пересчитываются на тот день, как будто он сегодня; под картой подпись, на какую дату она показана. Пока смотришь прошлое, кнопки «добавить запись» скрыты, чтобы не записать подход не туда. Без миграций."
+    ]},
     { version: "7.08", date: "2026-11-01 07:00", changes: [
         "«Достижения»: появился блок «Коллекции» — четыре набора из достижений разных разделов («Разгон», «Железная привычка», «Знания», «Сила воли») с полосой «N из M». Нажми на значок — откроется карточка достижения.",
     ]},
     { version: "7.07", date: "2026-11-01 08:00", changes: [
         "«Тренировки»: кнопка «Повторить прошлую» — открывает тренировку с теми же упражнениями, что были в последний раз, и таким же числом пустых подходов; прошлые веса подсказываются рядом.",
+    ]},
     { version: "7.06", date: "2026-11-01 13:00", changes: [
         "«Вехи»: кнопка «Лента на год» — по месяцам видно, что уже сделано (по истории отметок), что запланировано (ближайшая дата и её повторы по интервалу до конца года) и что просрочено; статус подписан словом и значком, годы листаются стрелками. Вехи с интервалом только по пробегу в ленте показаны, только когда уже сделаны (у них нет дат). Без миграций."
     ]},
@@ -2739,11 +2746,18 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.10", date: "2026-11-01 09:30", changes: [
+        "Workouts: supersets. In an active workout a “Superset with next” button between exercises joins them into one group with a coloured bar on the left; “Split superset here” breaks the group. The group is saved with the entries and in routines.",
+    ]},
+    { version: "7.09", date: "2026-10-30 22:00", changes: [
+        "Muscle map: chips “Today”, “7 days ago”, “14 days ago” and “30 days ago” now sit above the map. Pick a date and the map, sets, stats and workout list are recalculated as if that day were today; a caption shows which date you are looking at. While you look at the past, the “add entry” buttons are hidden so a set cannot land in the wrong place. No migrations."
+    ]},
     { version: "7.08", date: "2026-11-01 07:00", changes: [
         "Achievements: a new “Collections” block — four sets of achievements from different sections (“Momentum”, “Iron habit”, “Knowledge”, “Willpower”) with an “N of M” bar. Tap a badge to jump to the achievement card.",
     ]},
     { version: "7.07", date: "2026-11-01 08:00", changes: [
         "Workouts: a “Repeat last workout” button opens a workout with the same exercises as last time and the same number of empty sets, with your previous weights hinted alongside.",
+    ]},
     { version: "7.06", date: "2026-11-01 13:00", changes: [
         "Milestones: a new “Timeline” button — by month you can see what is done (from the history), what is planned (the next date and its repeats by interval until the end of the year) and what is overdue; each status is labelled with a word and an icon, and years can be flipped with arrows. Mileage-only milestones appear only once done (they have no dates). No migrations."
     ]},

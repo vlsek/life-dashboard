@@ -560,3 +560,50 @@ describe('MuscleMap: visual packs (BACKLOG 70.2)', () => {
     expect(zone(w, 'chest').attributes('aria-label')).toBe('Грудь, есть упражнение')
   })
 })
+
+describe('MuscleMap: карта за дату (80.7)', () => {
+  beforeEach(() => localStorage.clear()) // раскрытие карты хранится в localStorage — иначе клик заголовка её свернёт
+  // жим 2 дня назад (грудь «сделана»), приседания 10 дней назад
+  const entries = [entry('bench', '2026-09-28'), entry('squat', '2026-09-20')]
+  it('по умолчанию «Сегодня»: чипы есть, подписи про прошлое нет', async () => {
+    const w = await openMap(entries, [bench, squat])
+    expect(w.find('[data-testid="muscle-asof-0"]').attributes('aria-pressed')).toBe('true')
+    expect(w.find('[data-testid="muscle-asof-caption"]').exists()).toBe(false)
+    expect(zone(w, 'chest').attributes('data-state')).toBe('done')
+  })
+  it('«7 дн. назад»: записи позже не учитываются (грудь бледнеет), приседания тогда были свежие', async () => {
+    const w = await openMap(entries, [bench, squat])
+    await w.find('[data-testid="muscle-asof-7"]').trigger('click')
+    expect(w.find('[data-testid="muscle-asof-caption"]').text()).toContain('23.09.2026')
+    expect(zone(w, 'chest').attributes('data-state')).toBe('idle')
+    expect(zone(w, 'quads').attributes('data-state')).toBe('done')
+  })
+  it('на выбранную дату видна прошлая тренировка, даже если позже была новая (запись позже не затирает)', async () => {
+    const w = await openMap([entry('bench', '2026-09-22'), entry('bench', '2026-09-28')], [bench])
+    expect(zone(w, 'chest').attributes('data-state')).toBe('done') // сегодня — свежая от 28-го
+    await w.find('[data-testid="muscle-asof-7"]').trigger('click') // 23.09: последняя тренировка груди была 22-го
+    expect(zone(w, 'chest').attributes('data-state')).toBe('done')
+    await w.find('[data-testid="muscle-asof-30"]').trigger('click') // 31.08: ещё ничего не было
+    expect(zone(w, 'chest').attributes('data-state')).toBe('idle')
+    expect(w.text()).toContain('31.08.2026')
+  })
+  it('панель мышцы на выбранную дату не показывает тренировки после неё', async () => {
+    const w = await openMap([entry('bench', '2026-09-22'), entry('bench', '2026-09-28')], [bench])
+    await zone(w, 'chest').trigger('click')
+    expect(w.findAll('[data-testid="muscle-session"]')).toHaveLength(2)
+    await w.find('[data-testid="muscle-asof-7"]').trigger('click')
+    const rows = w.findAll('[data-testid="muscle-session"]')
+    expect(rows).toHaveLength(1)
+    expect(rows[0].text()).toContain('22')
+  })
+  it('в прошлом кнопок «добавить запись» нет, возврат на «Сегодня» возвращает их и цвета', async () => {
+    const w = await openMap(entries, [bench, squat])
+    await zone(w, 'chest').trigger('click')
+    expect(w.findAll('[data-testid="muscle-add-entry"]').length).toBeGreaterThan(0)
+    await w.find('[data-testid="muscle-asof-14"]').trigger('click')
+    expect(w.find('[data-testid="muscle-add-entry"]').exists()).toBe(false)
+    await w.find('[data-testid="muscle-asof-0"]').trigger('click')
+    expect(w.findAll('[data-testid="muscle-add-entry"]').length).toBeGreaterThan(0)
+    expect(zone(w, 'chest').attributes('data-state')).toBe('done')
+  })
+})

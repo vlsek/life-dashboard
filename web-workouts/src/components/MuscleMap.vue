@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { usuallySkipped } from '../lib/genderTips'
 import EmojiText from './EmojiText.vue'
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
-import { todayStr } from '../lib/date'
+import { addDaysIso, fmtRu, todayStr } from '../lib/date'
 import { MUSCLE_IDS, referenceFor, ruleForExercise, type MuscleId } from '../lib/muscles'
 import type { MuscleShape } from '../lib/muscleShapes'
 import { bodyGeometry, type BodyModel } from '../lib/bodyModel'
@@ -69,7 +69,13 @@ function toggle() {
   if (open.value) announceOpened()
 }
 
-const today = computed(() => props.today ?? todayStr())
+// «Карта за дату» (BACKLOG 80.7): чипы сдвигают «сегодня» назад на 7/14/30 дней; расчёты (`lastTrainedByMuscle`, подходы, сессии) сами не берут записи позже «сегодня», добавлять записи в прошлое отсюда нельзя
+const ASOF_OFFSETS = [0, 7, 14, 30] as const
+const asOf = ref<number>(0)
+const baseToday = computed(() => props.today ?? todayStr())
+const today = computed(() => (asOf.value ? addDaysIso(baseToday.value, -asOf.value) : baseToday.value))
+const viewingPast = computed(() => asOf.value > 0)
+
 const last = computed(() => lastTrainedByMuscle(props.entries, props.exercises, today.value))
 const done = computed(() => new Set(MUSCLE_IDS.filter((m) => isTrainedRecently(last.value[m], today.value))))
 // «Когда тренировали»: по каждой мышце — сегодня / вчера / N дн. назад (+ дата) или «ещё не тренировали»; давно не тренированные сверху.
@@ -168,6 +174,7 @@ function setVisualStyle(value: MuscleVisualStyle) {
 const selected = ref<MuscleId | null>(null)
 // «Добавить запись» в блоке «Ваши упражнения» (BACKLOG 44.5ж, срез 2): встроенная строка под упражнением, окно — по «Подробно…» и для Л/П
 const addingEx = ref<string | null>(null)
+watch(asOf, () => (addingEx.value = null)) // строка добавления не должна пережить переход в прошлое (80.7)
 function onAddClick(ex: Exercise) {
   if (canInlineAdd(ex)) addingEx.value = addingEx.value === ex.id ? null : ex.id
   else emit('add-entry', ex)
@@ -293,6 +300,21 @@ function shapeStyle(m: MuscleId) {
     <div v-if="embedded || open" :class="embedded ? '' : 'mt-3'" data-testid="muscle-map-body">
       <p class="m-0 mb-3 text-[0.85em]" style="color: var(--text-dim)">{{ t('workouts_muscles_hint') }}</p>
 
+      <div class="mb-2 flex flex-wrap items-center justify-center gap-1.5" role="group" :aria-label="t('workouts_muscles_asof_label')" data-testid="muscle-asof-picker">
+        <button
+          v-for="n in ASOF_OFFSETS"
+          :key="n"
+          type="button"
+          class="rounded-lg border px-2.5 py-1 text-[0.8em]"
+          :aria-pressed="asOf === n"
+          :style="asOf === n ? 'border-color: var(--accent); color: var(--accent); background: transparent' : 'border-color: var(--border); color: var(--text-dim); background: transparent'"
+          :data-testid="'muscle-asof-' + n"
+          @click="asOf = n"
+        >
+          {{ n === 0 ? t('workouts_muscles_asof_today') : t('workouts_muscles_asof_ago').replace('{n}', String(n)) }}
+        </button>
+      </div>
+      <p v-if="viewingPast" class="m-0 mb-2 text-center text-[0.75em]" style="color: var(--text-dim)" data-testid="muscle-asof-caption">{{ t('workouts_muscles_asof_caption').replace('{date}', fmtRu(today)) }}</p>
       <div class="mb-2 flex flex-wrap items-center justify-center gap-1.5" role="group" :aria-label="t('workouts_heat_label')" data-testid="muscle-heat-picker">
         <button
           v-for="hm in HEAT_MODES"
@@ -427,6 +449,7 @@ function shapeStyle(m: MuscleId) {
             <div class="flex items-center justify-between gap-2">
               <span>{{ capFirst(ex.name) }}</span>
               <button
+                v-if="!viewingPast"
                 type="button"
                 class="rounded-lg border px-2 py-1 text-[0.8em]"
                 style="border-color: var(--border); color: var(--text)"
