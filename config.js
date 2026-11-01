@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.02";
+const SITE_VERSION = "7.03";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.03", date: "2026-11-01 07:00", changes: [
+        "Плашка «Идёт тренировка» в шапке на всех страницах: пока тренировка не завершена, в шапке горит оранжевая плашка с секундомером (например 42:10) — нажми, и вернёшься в «Тренировки» к своему экрану. На самой странице тренировок плашки нет.",
+    ]},
     { version: "7.02", date: "2026-10-29 02:16", changes: [
         "«Языки»: пока слова ещё грузятся, страница пишет «Загрузка…», а не «Нечего учить»; если загрузка не удалась, появляется понятное «Не удалось загрузить: …» с кнопкой «Повторить» (раньше было «Не удалось сохранить» и без повтора). «История» в «Календаре»: при сбое загрузки тоже есть «Повторить», а после успешного повтора старое сообщение исчезает."
     ]},
@@ -2722,6 +2725,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.03", date: "2026-11-01 07:00", changes: [
+        "“Workout in progress” badge in the header on every page: while a workout is unfinished, an orange badge with the stopwatch (e.g. 42:10) shows in the header — tap it to jump back to your workout screen in Workouts. It isn’t shown on the Workouts page itself.",
+    ]},
     { version: "7.02", date: "2026-10-29 02:16", changes: [
         "Languages: while words are still loading the page says “Loading…” instead of “Nothing to learn”; if loading fails you now get a clear “Couldn’t load: …” with a “Try again” button (it used to say “Couldn’t save” and had no retry). History in Calendar: a failed load now also has “Try again”, and after a successful retry the old message disappears."
     ]},
