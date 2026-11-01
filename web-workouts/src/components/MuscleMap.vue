@@ -35,6 +35,8 @@ import { useAccordionMember } from '../lib/useCollapseStyle'
 const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string; studyRecent?: boolean; embedded?: boolean; model?: BodyModel; gender?: 'male' | 'female' | null }>()
 const emit = defineEmits<{ 'add-entry': [exercise: Exercise]; 'quick-add-entry': [exercise: Exercise, input: EntryFormInput, done: (ok: boolean) => void] }>()
 
+import { HEAT_KEY, HEAT_LEVELS, HEAT_MODES, coveredMuscles, heatLevel, normalizeHeatMode, setsByMuscle, type HeatMode } from '../lib/muscleHeat'
+
 const OPEN_KEY = 'workouts_musclemap_open'
 function readOpen(): boolean {
   try {
@@ -108,6 +110,32 @@ function setPeriod(p: StatsPeriod) {
   }
 }
 // Все группы, которые были в работе за период (а не только топ), по убыванию числа дней.
+// Режим окраски карты (BACKLOG 70.3): «недавно» / «подходов за период» / «охват упражнениями»; период — тот же, что у статистики ниже
+function readHeat(): HeatMode {
+  try {
+    return normalizeHeatMode(localStorage.getItem(HEAT_KEY))
+  } catch {
+    return 'recent'
+  }
+}
+const heatMode = ref<HeatMode>(readHeat())
+function setHeatMode(m: HeatMode) {
+  heatMode.value = m
+  try {
+    localStorage.setItem(HEAT_KEY, m)
+  } catch {
+    /* режим не критичен */
+  }
+}
+const setsMap = computed(() => setsByMuscle(props.entries, props.exercises, today.value, periodStart(today.value, period.value)))
+const setsMax = computed(() => Math.max(0, ...setsMap.value.values()))
+const covered = computed(() => coveredMuscles(props.exercises))
+// ступень 0..4 для режима volume; для covered — 1 или 0; для recent — null (красит прежняя логика)
+function heat(m: MuscleId): number | null {
+  if (heatMode.value === 'volume') return heatLevel(setsMap.value.get(m) ?? 0, setsMax.value)
+  if (heatMode.value === 'covered') return covered.value.has(m) ? 1 : 0
+  return null
+}
 const stats = computed(() => trainingDaysByMuscle(props.entries, props.exercises, today.value, periodStart(today.value, period.value)))
 const untrained = computed(() => untrainedMuscles(stats.value, MUSCLE_IDS))
 const maxDays = computed(() => Math.max(1, ...stats.value.map((s) => s.days)))
@@ -201,12 +229,13 @@ const views = computed<{ key: 'front' | 'back'; label: DictKey; shapes: MuscleSh
   { key: 'back', label: 'workouts_muscles_back', shapes: geometry.value.back },
 ])
 function shapeStyle(m: MuscleId) {
-  const isDone = done.value.has(m)
+  const lvl = heat(m)
+  const isDone = lvl === null ? done.value.has(m) : lvl > 0
   const isSelected = selected.value === m
   if (visualStyle.value === 'atlas') {
     return {
       fill: isSelected ? 'var(--accent)' : isDone ? 'var(--text-dim)' : 'transparent',
-      opacity: isSelected ? 0.9 : isDone ? 0.58 : 0.95,
+      opacity: isSelected ? 0.9 : isDone ? (heatMode.value === 'volume' && lvl ? 0.25 + (0.5 * lvl) / HEAT_LEVELS : 0.58) : 0.95,
       stroke: isSelected ? 'var(--accent)' : 'var(--text-dim)',
       strokeWidth: isSelected ? 2 : 0.85,
       strokeDasharray: !isDone && !isSelected ? '1.2 0.8' : 'none',
@@ -216,7 +245,7 @@ function shapeStyle(m: MuscleId) {
   if (visualStyle.value === 'tech') {
     return {
       fill: isSelected ? 'var(--accent)' : isDone ? 'var(--success)' : 'var(--bg)',
-      opacity: isSelected ? 0.95 : isDone ? 0.68 : 0.2,
+      opacity: isSelected ? 0.95 : isDone ? (heatMode.value === 'volume' && lvl ? 0.25 + (0.55 * lvl) / HEAT_LEVELS : 0.68) : 0.2,
       stroke: isSelected ? 'var(--accent)' : isDone ? 'var(--success)' : 'var(--accent)',
       strokeWidth: isSelected ? 2.2 : 0.75,
       strokeDasharray: !isDone && !isSelected ? '1.2 0.8' : 'none',
@@ -225,7 +254,7 @@ function shapeStyle(m: MuscleId) {
   }
   return {
     fill: isSelected ? 'var(--accent)' : isDone ? 'var(--success)' : 'var(--text-dim)',
-    opacity: isSelected ? 0.98 : isDone ? 0.88 : 0.24,
+    opacity: isSelected ? 0.98 : isDone ? (heatMode.value === 'volume' && lvl ? 0.3 + (0.6 * lvl) / HEAT_LEVELS : 0.88) : 0.24,
     stroke: isSelected ? 'var(--accent)' : 'var(--border)',
     strokeWidth: isSelected ? 2 : 0.55,
     strokeDasharray: !isDone && !isSelected ? '1.2 0.8' : 'none',
@@ -253,6 +282,25 @@ function shapeStyle(m: MuscleId) {
 
     <div v-if="embedded || open" :class="embedded ? '' : 'mt-3'" data-testid="muscle-map-body">
       <p class="m-0 mb-3 text-[0.85em]" style="color: var(--text-dim)">{{ t('workouts_muscles_hint') }}</p>
+
+      <div class="mb-2 flex flex-wrap items-center justify-center gap-1.5" role="group" :aria-label="t('workouts_heat_label')" data-testid="muscle-heat-picker">
+        <button
+          v-for="hm in HEAT_MODES"
+          :key="hm"
+          type="button"
+          class="rounded-lg border px-2.5 py-1 text-[0.8em]"
+          :aria-pressed="heatMode === hm"
+          :style="heatMode === hm ? 'border-color: var(--accent); color: var(--accent); background: transparent' : 'border-color: var(--border); color: var(--text-dim); background: transparent'"
+          :data-testid="'muscle-heat-' + hm"
+          @click="setHeatMode(hm)"
+        >
+          {{ t(('workouts_heat_' + hm) as DictKey) }}
+        </button>
+      </div>
+      <p v-if="heatMode !== 'recent'" class="m-0 mb-2 text-center text-[0.75em]" style="color: var(--text-dim)" data-testid="muscle-heat-caption">
+        {{ heatMode === 'volume' ? t('workouts_heat_volume_cap').replace('{n}', String(period)) : t('workouts_heat_covered_cap') }}
+        <template v-if="heatMode === 'volume' && setsMax === 0"> {{ t('workouts_heat_no_data') }}</template>
+      </p>
 
       <div class="muscle-style-picker mb-3" role="group" :aria-label="getLang() === 'ru' ? 'Стиль карты мышц' : 'Muscle map style'" data-testid="muscle-style-picker">
         <button
@@ -296,7 +344,8 @@ function shapeStyle(m: MuscleId) {
               v-for="(s, i) in v.shapes"
               :key="v.key + i"
               :data-muscle="s.muscle"
-              :data-state="done.has(s.muscle) ? 'done' : 'idle'"
+              :data-state="(heat(s.muscle) === null ? done.has(s.muscle) : (heat(s.muscle) ?? 0) > 0) ? 'done' : 'idle'"
+              :data-heat="heat(s.muscle) ?? undefined"
               :data-selected="selected === s.muscle"
               role="button"
               tabindex="0"
@@ -316,8 +365,8 @@ function shapeStyle(m: MuscleId) {
       <div v-if="studyRecent" class="mt-2 text-center text-[0.8em]" style="color: var(--success)" data-testid="muscle-head-study">{{ t('workouts_muscles_head_study') }}</div>
 
       <div class="mt-2 flex flex-wrap justify-center gap-4 text-[0.8em]" style="color: var(--text-dim)" data-testid="muscle-map-legend">
-        <span class="inline-flex items-center gap-1.5"><span class="muscle-legend-mark muscle-legend-mark--done" aria-hidden="true"></span> {{ t('workouts_muscles_legend_done') }}</span>
-        <span class="inline-flex items-center gap-1.5"><span class="muscle-legend-mark muscle-legend-mark--idle" aria-hidden="true"></span> {{ t('workouts_muscles_legend_idle') }}</span>
+        <span class="inline-flex items-center gap-1.5"><span class="muscle-legend-mark muscle-legend-mark--done" aria-hidden="true"></span> {{ heatMode === 'recent' ? t('workouts_muscles_legend_done') : heatMode === 'volume' ? t('workouts_heat_legend_volume') : t('workouts_heat_legend_covered') }}</span>
+        <span class="inline-flex items-center gap-1.5"><span class="muscle-legend-mark muscle-legend-mark--idle" aria-hidden="true"></span> {{ heatMode === 'recent' ? t('workouts_muscles_legend_idle') : t('workouts_heat_legend_none') }}</span>
       </div>
 
       <div v-if="selected" class="mt-3 rounded-lg border p-3 text-sm" style="border-color: var(--border); background: var(--bg)" data-testid="muscle-detail" ref="detailEl">

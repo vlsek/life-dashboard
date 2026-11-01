@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.96";
+const SITE_VERSION = "6.97";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.97", date: "2026-10-31 19:30", changes: [
+        "«Тренировки» → карта мышц: три режима окраски — «Недавно» (как раньше), «Подходы» (чем плотнее цвет, тем больше подходов за 7/30/90 дней; нет подходов — «нет данных») и «Охват» (на какие группы есть твои упражнения). Выбор запоминается.",
+    ]},
     { version: "6.96", date: "2026-10-31 23:00", changes: [
         "«Тренировки»: после «Завершить» открывается окно итогов — время, рабочие подходы, общий объём, число упражнений, побитые рекорды и задействованные мышцы. Разминка в подходы и объём не входит.",
     ]},
@@ -2704,6 +2707,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.97", date: "2026-10-31 19:30", changes: [
+        "Workouts → muscle map: three colouring modes — “Recently” (as before), “Sets” (denser colour means more sets over 7/30/90 days; no sets means “no data”) and “Coverage” (which groups your exercises cover). Your choice is remembered.",
+    ]},
     { version: "6.96", date: "2026-10-31 23:00", changes: [
         "Workouts: after “Finish” a summary window opens — time, working sets, total volume, number of exercises, records you broke and the muscles worked. Warm-up sets don’t count toward sets or volume.",
     ]},

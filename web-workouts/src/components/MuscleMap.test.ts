@@ -516,4 +516,28 @@ describe('MuscleMap: visual packs (BACKLOG 70.2)', () => {
     expect(projections().map((svg) => svg.attributes('data-visual-style'))).toEqual(['anatomy', 'anatomy'])
     expect(w.findAll('.muscle-tech-overlay')).toHaveLength(0)
   })
+
+  it('режимы окраски (70.3): «Подходы» — плотность по числу подходов, нет подходов — нет данных; «Охват» — только группы с упражнением', async () => {
+    const w = await openMap([entry('bench', '2026-09-20'), entry('bench', '2026-09-21'), entry('squat', '2026-09-22')], [bench, squat])
+    // по умолчанию — «Недавно»: данных за 4 дня нет, всё серое, подписи режима нет
+    expect(zone(w, 'chest').attributes('data-state')).toBe('idle')
+    expect(w.find('[data-testid="muscle-heat-caption"]').exists()).toBe(false)
+    await w.find('[data-testid="muscle-heat-volume"]').trigger('click')
+    expect(localStorage.getItem('workouts_musclemap_heat')).toBe('volume')
+    expect(zone(w, 'chest').attributes('data-state')).toBe('done')
+    expect(Number(zone(w, 'chest').attributes('data-heat'))).toBeGreaterThan(Number(zone(w, 'quads').attributes('data-heat')))
+    expect(zone(w, 'calves').attributes('data-state')).toBe('idle')
+    expect(w.find('[data-testid="muscle-heat-caption"]').text()).toContain('30')
+    await w.find('[data-testid="muscle-heat-covered"]').trigger('click')
+    expect(zone(w, 'quads').attributes('data-state')).toBe('done')
+    expect(zone(w, 'calves').attributes('data-state')).toBe('idle')
+    expect(w.find('[data-testid="muscle-heat-caption"]').text()).toContain('не нагрузка')
+  })
+
+  it('режим «Подходы» без подходов за период честно пишет, что данных нет', async () => {
+    const w = await openMap([], [bench])
+    await w.find('[data-testid="muscle-heat-volume"]').trigger('click')
+    expect(w.find('[data-testid="muscle-heat-caption"]').text()).toContain('пока нет')
+    expect(zone(w, 'chest').attributes('data-state')).toBe('idle')
+  })
 })
