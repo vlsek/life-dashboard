@@ -18,6 +18,7 @@ import RightPanel, { type GaugeData } from './components/RightPanel.vue'
 import SettingsModal from './components/SettingsModal.vue'
 import HotkeysModal from './components/HotkeysModal.vue'
 import CommandPalette from './components/CommandPalette.vue'
+import PaletteButton from './components/PaletteButton.vue'
 import type { PaletteItem } from './lib/palette'
 import { createHotkeyHandler, hotkeysHelpOpen, paletteOpen } from './lib/hotkeys'
 import { loadPauseState, type PauseState } from './lib/pause'
@@ -253,6 +254,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
     <FavoriteHeart v-if="pageKey && !props.panelOnly" :active="isFavorite" @toggle="onToggleFavorite" />
     <PageWidgetButton v-if="widgetKind && layoutApi.loaded.value && !props.panelOnly" :on="widgetOn" :busy="widgetBusy" @toggle="onToggleWidget" />
     <OfflineBadge v-if="outboxView" :view="outboxView" />
+    <PaletteButton v-if="!props.panelOnly" @open="paletteOpen = true" />
     <ActiveWorkoutBadge v-if="!props.panelOnly" />
     <!-- значок «пауза включена» виден и на Дашборде (BACKLOG 48.7) -->
     <button v-if="pause?.status === 'active'" type="button" class="gh-badge" data-test="pause-badge" :title="t('hdr_pause_badge')" :aria-label="t('hdr_pause_badge')" @click="globalSettingsOpen = true">
