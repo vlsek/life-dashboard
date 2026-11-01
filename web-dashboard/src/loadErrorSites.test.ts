@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest'
 // Страж читает исходники всех пилотов. ALLOW — места, где серый текст оставлен сознательно (после среза 2 — пусто: исключения добавлять только с причиной).
 declare const __dirname: string // есть в vitest (node); типов node в проекте нет
 const ROOT = resolve(__dirname, '..', '..')
-const PILOTS_DONE = ['web-shop', 'web-goals', 'web-skills', 'web-achievements', 'web-milestones', 'web-challenges', 'web-dashboard', 'web-community', 'web-languages']
+const PILOTS_DONE = ['web-shop', 'web-goals', 'web-skills', 'web-achievements', 'web-milestones', 'web-challenges', 'web-dashboard', 'web-community', 'web-languages', 'web-customization']
 const ALLOW: string[] = []
 
 function vueFiles(dir: string): string[] {

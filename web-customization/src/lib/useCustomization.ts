@@ -308,5 +308,10 @@ export function useCustomization() {
     }
   }
 
-  return { auth, unlocked, selected, balance, achievements, apiMissing, loading, error, actionError, busyKey, debug, tried, state, statusOf, init, buy, choose, applyAll, tryOn, untryOn, resetTryOn }
+  // «Повторить» из LoadError (BACKLOG 74.3): перезагрузка без перезагрузки страницы
+  async function reload() {
+    if (auth.value.status === 'ready') await load(auth.value.userId)
+  }
+
+  return { auth, unlocked, selected, balance, achievements, apiMissing, loading, error, actionError, busyKey, debug, tried, state, statusOf, init, reload, buy, choose, applyAll, tryOn, untryOn, resetTryOn }
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import EmojiText from './components/EmojiText.vue'
+import LoadError from './components/LoadError.vue'
 import AppShell from './components/AppShell.vue'
 import ItemCard from './components/ItemCard.vue'
 import Icon from './components/Icon.vue'
@@ -41,7 +42,7 @@ import { SLOT_ALL, readSlot, writeSlot } from './lib/slotNav'
 import { stripEmoji } from './lib/emojiText'
 import { THEME_KEYS, THEME_UNLOCK, type ThemeKey } from './lib/theme'
 
-const { auth, balance, achievements, apiMissing, loading, error, actionError, busyKey, selected, unlocked, debug, tried, statusOf, init, buy, choose, applyAll, tryOn, untryOn, resetTryOn } = useCustomization()
+const { auth, balance, achievements, apiMissing, loading, error, actionError, busyKey, selected, unlocked, debug, tried, statusOf, init, buy, choose, applyAll, tryOn, untryOn, resetTryOn, reload } = useCustomization()
 onMounted(init)
 
 // Темы: до 4 «любимых» попадают в выпадающий список тем бокового меню (решение владельца 2026-10-04). С v3.42 шесть тем — награды за
@@ -281,7 +282,7 @@ async function wearLook(id: string) {
     <p v-if="auth.status === 'loading' || (auth.status === 'ready' && loading)" class="dim">…</p>
 
     <template v-else-if="auth.status === 'ready'">
-      <p v-if="error" class="dim">{{ t('cust_select_error') }}{{ error }}</p>
+      <LoadError v-if="error" :message="error" :retry="reload" />
 
       <template v-else>
         <div class="mb-4 flex items-baseline justify-between rounded-xl border p-3" style="background: var(--bg-card); border-color: var(--border)" data-testid="balance">
