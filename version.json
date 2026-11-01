@@ -1,7 +1,14 @@
 {
-  "version": "6.97",
+  "version": "6.98",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.98",
+      "date": "2026-10-30 20:00",
+      "changes": [
+        "Shop: a collapsible “Where my sparks come from” block now sits under the balance. For the last 30 days it shows how many sparks each day brought and for which metrics, what you bought and what is left, and explains the daily cap: only a limited number of sparks is added per day, so extra completed metrics on a full day add nothing. The journal loads only when you open it. No migrations."
+      ]
+    },
     {
       "version": "6.97",
       "date": "2026-10-31 19:30",
@@ -4949,6 +4956,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.98",
+      "date": "2026-10-30 20:00",
+      "changes": [
+        "Магазин: под балансом появился раскрывающийся блок «Откуда мои огоньки». Он показывает за последние 30 дней, сколько огоньков и за какие метрики начислено в каждый день, что ты купил и сколько осталось, и объясняет потолок: в день начисляется не больше положенного числа огоньков, поэтому лишние выполненные метрики в полный день ничего не добавляют. Журнал грузится только при раскрытии. Без миграций."
+      ]
+    },
     {
       "version": "6.97",
       "date": "2026-10-31 19:30",
