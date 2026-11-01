@@ -1,7 +1,7 @@
 // Состояние активной тренировки (BACKLOG 69.2): один черновик на вкладку/устройство, живёт в localStorage, секундомер тикает раз в секунду.
 // Вся логика — в activeWorkout.ts (чистые функции); здесь только реактивность и сохранение после каждого изменения.
 import { computed, ref } from 'vue'
-import { addExercise, addSet, applyPrevious, fillAllPrevious, elapsedSeconds, loadDraft, moveExercise, newDraft, removeExercise, removeSet, saveDraft, setSetType, toggleDone, updateSet, type ActiveDraft } from './activeWorkout'
+import { addExercise, addSet, applyPrevious, fillAllPrevious, elapsedSeconds, loadDraft, moveExercise, newDraft, toggleSupersetWithNext, removeExercise, removeSet, saveDraft, setSetType, toggleDone, updateSet, type ActiveDraft } from './activeWorkout'
 import type { SetType, SetV2 } from './sessionContract'
 
 const store = (): Storage | null => { try { return localStorage } catch { return null } }
@@ -36,6 +36,7 @@ export function useActiveWorkout() {
     addExercise: (exerciseId: string) => { if (draft.value) apply(addExercise(d(), newId(), exerciseId)) },
     removeExercise: (id: string) => { if (draft.value) apply(removeExercise(d(), id)) },
     move: (id: string, delta: -1 | 1) => { if (draft.value) apply(moveExercise(d(), id, delta)) },
+    superset: (id: string) => { if (draft.value) apply(toggleSupersetWithNext(d(), id)) },
     addSet: (id: string) => { if (draft.value) apply(addSet(d(), id)) },
     removeSet: (id: string, i: number) => { if (draft.value) apply(removeSet(d(), id, i)) },
     update: (id: string, i: number, change: Partial<SetV2>) => { if (draft.value) apply(updateSet(d(), id, i, change)) },

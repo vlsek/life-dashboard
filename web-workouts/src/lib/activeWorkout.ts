@@ -32,13 +32,13 @@ export function addExercise(d: ActiveDraft, entryId: string, exerciseId: string)
   return { ...d, exercises: [...d.exercises, { id: entryId, exercise_id: exerciseId, superset_group: null, note: null, sets: [emptySet()] }] }
 }
 export function removeExercise(d: ActiveDraft, entryId: string): ActiveDraft {
-  return d.exercises.some(e => e.id === entryId) ? { ...d, exercises: d.exercises.filter(e => e.id !== entryId) } : d
+  return d.exercises.some(e => e.id === entryId) ? normalizeSupersets({ ...d, exercises: d.exercises.filter(e => e.id !== entryId) }) : d
 }
 export function moveExercise(d: ActiveDraft, entryId: string, delta: -1 | 1): ActiveDraft {
   const i = d.exercises.findIndex(e => e.id === entryId), j = i + delta
   if (i < 0 || j < 0 || j >= d.exercises.length) return d
   const ex = [...d.exercises]; [ex[i], ex[j]] = [ex[j], ex[i]]
-  return { ...d, exercises: ex }
+  return normalizeSupersets({ ...d, exercises: ex })
 }
 const patch = (d: ActiveDraft, entryId: string, f: (e: DraftExercise) => DraftExercise): ActiveDraft => {
   let changed = false
@@ -191,3 +191,40 @@ export function draftFromLast(entries: readonly HistEntry[], existingExerciseIds
 }
 export const lastWorkoutDate = (entries: readonly { date: string; sets: readonly unknown[] }[]): string | null =>
   entries.reduce<string | null>((m, e) => ((e.sets?.length ?? 0) > 0 && (!m || e.date > m) ? e.date : m), null)
+
+// Суперсеты (BACKLOG 69.8): группа = номер superset_group у НЕСКОЛЬКИХ упражнений ПОДРЯД. Одиночные и разорванные группы сбрасываются, номера идут 1..n по порядку.
+// Если ничего менять не надо — возвращается тот же объект.
+export function normalizeSupersets(d: ActiveDraft): ActiveDraft {
+  const out: (number | null)[] = d.exercises.map(() => null)
+  let next = 0, i = 0
+  while (i < d.exercises.length) {
+    const g = d.exercises[i].superset_group
+    let j = i + 1
+    if (g != null) while (j < d.exercises.length && d.exercises[j].superset_group === g) j++
+    if (g != null && j - i >= 2) { next++; for (let k = i; k < j; k++) out[k] = next }
+    i = j
+  }
+  if (d.exercises.every((e, k) => (e.superset_group ?? null) === out[k])) return d
+  return { ...d, exercises: d.exercises.map((e, k) => ({ ...e, superset_group: out[k] })) }
+}
+// «Объединить со следующим» / «Разъединить»: если это упражнение и следующее уже в одной группе — убираем СЛЕДУЮЩЕЕ и всё после него из группы (разрыв здесь); иначе соединяем
+export function toggleSupersetWithNext(d: ActiveDraft, entryId: string): ActiveDraft {
+  const i = d.exercises.findIndex((e) => e.id === entryId)
+  if (i < 0 || i >= d.exercises.length - 1) return d
+  const a = d.exercises[i], b = d.exercises[i + 1]
+  if (a.superset_group != null && a.superset_group === b.superset_group) {
+    const g = a.superset_group
+    // разрываем: хвост группы (с i+1) получает «пустую» группу, нормализация сбросит одиночек
+    const ex = d.exercises.map((e, idx) => (idx >= i + 1 && e.superset_group === g ? { ...e, superset_group: 1000 } : e))
+    return normalizeSupersets({ ...d, exercises: ex })
+  }
+  const g = a.superset_group ?? b.superset_group ?? 1000 + i
+  const ex = d.exercises.map((e, idx) => (idx === i || idx === i + 1 || (b.superset_group != null && e.superset_group === b.superset_group) || (a.superset_group != null && e.superset_group === a.superset_group) ? { ...e, superset_group: g } : e))
+  return normalizeSupersets({ ...d, exercises: ex })
+}
+export const supersetPos = (d: ActiveDraft, i: number): 'none' | 'start' | 'mid' | 'end' => {
+  const g = d.exercises[i]?.superset_group ?? null
+  if (g == null) return 'none'
+  const prev = i > 0 && d.exercises[i - 1].superset_group === g, next = i < d.exercises.length - 1 && d.exercises[i + 1].superset_group === g
+  return prev && next ? 'mid' : prev ? 'end' : 'start'
+}

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref } from 'vue'
 import { useActiveWorkout } from '../lib/useActiveWorkout'
-import { doneSetCount, formatElapsed, previousSet, previousText } from '../lib/activeWorkout'
+import { supersetPos, doneSetCount, formatElapsed, previousSet, previousText } from '../lib/activeWorkout'
 import { parseNum } from '../lib/entrySets'
 import { setType, SET_TYPES } from '../lib/sessionContract'
 import { t, type DictKey } from '../lib/i18n'
@@ -49,6 +49,11 @@ function saveRoutine() {
 const prevFor = (exerciseId: string, i: number) => previousSet(props.entries, exerciseId, draft.value?.date ?? '9999', i)
 const fillAll = (entryId: string, exerciseId: string) => aw.fillAllPrev(entryId, (i) => prevFor(exerciseId, i))
 const hasPrev = (exerciseId: string) => prevFor(exerciseId, 0) !== null
+// Суперсеты (69.8): цветная скобка слева у группы, кнопка между соседними упражнениями
+const SS_COLORS = ['#e07a1f', '#3d8fd1', '#8a5cc2', '#3aa57a']
+const ssColor = (g: number | null) => (g == null ? 'transparent' : SS_COLORS[(g - 1) % SS_COLORS.length])
+const ssPos = (i: number) => (draft.value ? supersetPos(draft.value, i) : 'none')
+const joined = (i: number) => !!draft.value && draft.value.exercises[i].superset_group != null && draft.value.exercises[i].superset_group === draft.value.exercises[i + 1]?.superset_group
 const picking = ref(false)
 const query = ref('')
 const pickList = computed(() => {
@@ -124,7 +129,8 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
     <main class="mx-auto max-w-3xl px-4 pb-24 pt-4">
       <p v-if="draft.exercises.length === 0" class="py-6 text-center text-sm" style="color: var(--text-dim)">{{ t('aw_empty') }}</p>
 
-      <section v-for="(e, ei) in draft.exercises" :key="e.id" class="mb-4 rounded-xl border p-3" style="border-color: var(--border); background: var(--bg-card)" :data-testid="'aw-ex-' + ei">
+      <template v-for="(e, ei) in draft.exercises" :key="e.id">
+      <section class="rounded-xl border p-3" :class="ssPos(ei) === 'start' || ssPos(ei) === 'mid' ? 'mb-0' : 'mb-1'" :style="'border-color: var(--border); background: var(--bg-card); border-left: 5px solid ' + ssColor(e.superset_group)" :data-testid="'aw-ex-' + ei" :data-superset="e.superset_group ?? ''">
         <div class="mb-2 flex items-center gap-1">
           <h2 class="min-w-0 flex-1 truncate font-semibold">{{ exById.get(e.exercise_id)?.name ?? '—' }}</h2>
           <button type="button" class="px-2 py-2 text-sm" style="color: var(--text-dim); min-width: 40px; min-height: 40px" :aria-label="t('aw_move_up')" :disabled="ei === 0" @click="aw.move(e.id, -1)">↑</button>
@@ -202,6 +208,10 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
           <button v-if="hasPrev(e.exercise_id)" type="button" class="flex-1 rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--text); min-height: 44px" :data-testid="'aw-fill-' + ei" @click="fillAll(e.id, e.exercise_id)">{{ t('aw_fill_prev') }}</button>
         </div>
       </section>
+      <div v-if="ei < draft.exercises.length - 1" class="mb-1 text-center">
+        <button type="button" class="px-3 py-1 text-xs" :style="'min-height: 32px; color: ' + (joined(ei) ? ssColor(e.superset_group) : 'var(--text-dim)')" :data-testid="'aw-ss-' + ei" @click="aw.superset(e.id)">{{ joined(ei) ? t('aw_ss_split') : t('aw_ss_join') }}</button>
+      </div>
+      </template>
 
       <button type="button" class="w-full rounded-xl border-2 border-dashed py-3 text-sm font-medium" style="border-color: var(--accent); color: var(--accent); min-height: 48px" data-testid="aw-add-exercise" @click="picking = true">
         {{ t('aw_add_exercise') }}

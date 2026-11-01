@@ -132,3 +132,28 @@ describe('повторить прошлую', () => {
     expect(lastWorkoutDate([en('1', 'a', '2026-10-20', 1), en('2', 'a', '2026-10-22', 0)])).toBe('2026-10-20')
   })
 })
+
+import { normalizeSupersets, supersetPos, toggleSupersetWithNext } from './activeWorkout'
+describe('суперсеты', () => {
+  const four = () => ['a', 'b', 'c', 'd'].reduce((d, id) => addExercise(d, id, 'x' + id), newDraft('s', new Date(2026, 10, 1)))
+  const groups = (d: ReturnType<typeof four>) => d.exercises.map((e) => e.superset_group)
+  it('объединить со следующим; ещё раз со следующим достраивает группу; на последнем — ничего', () => {
+    let d = toggleSupersetWithNext(four(), 'a'); expect(groups(d)).toEqual([1, 1, null, null])
+    d = toggleSupersetWithNext(d, 'b'); expect(groups(d)).toEqual([1, 1, 1, null]); expect(supersetPos(d, 0)).toBe('start'); expect(supersetPos(d, 1)).toBe('mid'); expect(supersetPos(d, 2)).toBe('end'); expect(supersetPos(d, 3)).toBe('none')
+    expect(toggleSupersetWithNext(d, 'd')).toBe(d)
+  })
+  it('соединяет две группы в одну; разъединить рвёт после выбранного, одиночки сбрасываются', () => {
+    let d = toggleSupersetWithNext(toggleSupersetWithNext(four(), 'a'), 'c'); expect(groups(d)).toEqual([1, 1, 2, 2])
+    d = toggleSupersetWithNext(d, 'b'); expect(groups(d)).toEqual([1, 1, 1, 1])
+    d = toggleSupersetWithNext(d, 'b'); expect(groups(d)).toEqual([1, 1, 2, 2]) // разрыв между b и c: обе половины — пары
+    d = toggleSupersetWithNext(d, 'a'); expect(groups(d)).toEqual([null, null, 1, 1]) // номера пересчитаны; разъединили пару — остались одиночки, сброшены
+  })
+  it('перемещение и удаление не оставляют разорванных и одиночных групп', () => {
+    let d = toggleSupersetWithNext(toggleSupersetWithNext(four(), 'a'), 'b') // a,b,c в группе 1
+    expect(groups(removeExercise(d, 'b'))).toEqual([1, 1, null]) // a,c остались подряд
+    expect(groups(removeExercise(removeExercise(d, 'b'), 'c'))).toEqual([null, null])
+    expect(groups(moveExercise(d, 'a', 1))).toEqual([1, 1, 1, null]) // перестановка внутри группы
+    expect(groups(moveExercise(d, 'c', 1))).toEqual([1, 1, null, null]) // c ушла из группы за её пределы
+    expect(normalizeSupersets(d)).toBe(d)
+  })
+})

@@ -181,5 +181,23 @@ describe('активная тренировка', () => {
     expect(q(w, 'aw-prev-0-1').text()).toContain('65')
     w.unmount()
   })
+
+  it('суперсет: кнопка между упражнениями объединяет и разъединяет; группа сохраняется в записи', async () => {
+    h.exercises = [ex, { ...ex, id: 'e2', name: 'Разводка' }]
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click')
+    for (const id of ['e1', 'e2']) { await q(w, 'aw-add-exercise').trigger('click'); await q(w, `aw-pick-${id}`).trigger('click') }
+    expect(q(w, 'aw-ss-0').text()).toContain('Суперсет со следующим')
+    await q(w, 'aw-ss-0').trigger('click')
+    expect(q(w, 'aw-ex-0').attributes('data-superset')).toBe('1'); expect(q(w, 'aw-ex-1').attributes('data-superset')).toBe('1')
+    expect(q(w, 'aw-ss-0').text()).toContain('Разъединить')
+    for (const i of [0, 1]) {
+      const inputs = q(w, `aw-set-${i}-0`).findAll('input'); await inputs[0].setValue('20'); await inputs[1].setValue('10'); await q(w, `aw-tick-${i}-0`).trigger('click')
+    }
+    await q(w, 'aw-finish').trigger('click'); await flushPromises(); await flushPromises()
+    const entries = h.inserted.filter((x) => x.table === 'workout_entries').map((x) => x.row)
+    expect(entries.map((e) => e.superset_group)).toEqual([1, 1])
+    w.unmount()
+  })
 })
 
