@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.12";
+const SITE_VERSION = "7.13";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.13", date: "2026-10-29 08:39", changes: [
+        "«Кастомизация»: если данные страницы не загрузились, теперь честно написано «Не удалось загрузить: …» (раньше — «Не удалось сохранить выбор») и есть кнопка «Повторить», так что страницу не нужно перезагружать вручную."
+    ]},
     { version: "7.12", date: "2026-11-01 08:35", changes: [
         "Дашборд: у невыполненных метрик в «Ежедневных метриках» появилась кнопка ⋯ с быстрыми действиями. То же открывает удержание пальца на плашке (или правый клик, или Shift+F10). «Пропустить день» — серия не прервётся (два шага, чтобы не нажать случайно; отменить это в приложении нельзя), «Заметка» — к полю заметки, «Значение» — к полю числа. При удержании короткое вибро. Без миграций."
     ]},
@@ -2752,6 +2755,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.13", date: "2026-10-29 08:39", changes: [
+        "Customization: when the page data fails to load it now honestly says “Couldn’t load: …” (it used to say “Couldn’t save the choice”) and offers a “Try again” button, so you no longer have to reload the page by hand."
+    ]},
     { version: "7.12", date: "2026-11-01 08:35", changes: [
         "Dashboard: metrics you have not finished yet now have a ⋯ button with quick actions in Daily metrics. Pressing and holding a metric opens the same thing (so do right-click and Shift+F10). Skip this day keeps your streak intact (two steps so it is not tapped by accident; it cannot be undone in the app), Note jumps to the note field, Value jumps to the number field. A short vibration confirms the hold. No migrations."
     ]},

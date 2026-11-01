@@ -1,7 +1,14 @@
 {
-  "version": "7.12",
+  "version": "7.13",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.13",
+      "date": "2026-10-29 08:39",
+      "changes": [
+        "Customization: when the page data fails to load it now honestly says “Couldn’t load: …” (it used to say “Couldn’t save the choice”) and offers a “Try again” button, so you no longer have to reload the page by hand."
+      ]
+    },
     {
       "version": "7.12",
       "date": "2026-11-01 08:35",
@@ -5054,6 +5061,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.13",
+      "date": "2026-10-29 08:39",
+      "changes": [
+        "«Кастомизация»: если данные страницы не загрузились, теперь честно написано «Не удалось загрузить: …» (раньше — «Не удалось сохранить выбор») и есть кнопка «Повторить», так что страницу не нужно перезагружать вручную."
+      ]
+    },
     {
       "version": "7.12",
       "date": "2026-11-01 08:35",
