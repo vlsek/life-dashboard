@@ -113,3 +113,22 @@ describe('тренировка задним числом', () => {
     const d = newPastDraft('p', '2026-10-25', '10:00', 30)!; saveDraft(d, s); expect(loadDraft(s)!.manual_minutes).toBe(30)
   })
 })
+
+import { draftFromLast, lastWorkoutDate } from './activeWorkout'
+describe('повторить прошлую', () => {
+  const en = (id: string, exercise_id: string, date: string, n: number, x: object = {}) => ({ id, exercise_id, date, sets: Array.from({ length: n }, () => ({ reps: 5, weight: 50, time: null, duration: null, side: null }) as SetV2), ...x })
+  it('берёт упражнения самого свежего дня по порядку; подходов столько же, разминка не в счёт; пропавшие упражнения пропускаются', () => {
+    const list = [en('1', 'a', '2026-10-20', 3), en('2', 'b', '2026-10-25', 2, { position: 1 }), en('3', 'a', '2026-10-25', 4, { position: 0 }), en('4', 'gone', '2026-10-25', 3)]
+    let n = 0
+    const d = draftFromLast(list, new Set(['a', 'b']), 'd', new Date(2026, 10, 1), () => 'id' + n++)!
+    expect(d.exercises.map((e) => [e.exercise_id, e.sets.length])).toEqual([['a', 4], ['b', 2]])
+    expect(d.exercises[0].sets.every((s) => s.reps === null && s.done === false)).toBe(true)
+    const w = [{ ...en('5', 'a', '2026-10-26', 3), sets: [{ reps: 8, weight: 20, type: 'warmup' }, { reps: 5, weight: 50 }] as SetV2[] }]
+    expect(draftFromLast(w as never, new Set(['a']), 'd', new Date(), () => 'x')!.exercises[0].sets).toHaveLength(1)
+  })
+  it('нет записей с подходами → null; дата последней тренировки', () => {
+    expect(draftFromLast([], new Set(['a']), 'd', new Date(), () => 'x')).toBeNull()
+    expect(draftFromLast([en('1', 'a', '2026-10-20', 0)], new Set(['a']), 'd', new Date(), () => 'x')).toBeNull()
+    expect(lastWorkoutDate([en('1', 'a', '2026-10-20', 1), en('2', 'a', '2026-10-22', 0)])).toBe('2026-10-20')
+  })
+})

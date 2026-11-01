@@ -168,5 +168,18 @@ describe('активная тренировка', () => {
     expect(Date.parse(s.finished_at as string) - Date.parse(s.started_at as string)).toBe(45 * 60000)
     w.unmount()
   })
+
+  it('«Повторить прошлую»: кнопка только когда есть история; открывает тренировку с упражнениями последнего дня', async () => {
+    let w = await mountApp()
+    expect(q(w, 'aw-repeat').exists()).toBe(false)
+    w.unmount()
+    h.entries = [{ id: 'old', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }, { reps: 6, weight: 65, time: null, duration: null, side: null }], notes: null }]
+    w = await mountApp()
+    await q(w, 'aw-repeat').trigger('click')
+    expect(q(w, 'aw-ex-0').text()).toContain('Жим лёжа')
+    expect(q(w, 'aw-ex-0').findAll('[data-testid^="aw-set-0-"]')).toHaveLength(2)
+    expect(q(w, 'aw-prev-0-1').text()).toContain('65')
+    w.unmount()
+  })
 })
 

@@ -37,7 +37,7 @@ import type { ActiveDraft } from './lib/activeWorkout'
 import { summarize, type WorkoutSummaryData } from './lib/summary'
 import { draftFromRoutine, type Routine } from './lib/routines'
 import { useActiveWorkout } from './lib/useActiveWorkout'
-import { canSave, finishDraft } from './lib/activeWorkout'
+import { canSave, draftFromLast, finishDraft, lastWorkoutDate } from './lib/activeWorkout'
 import JournalList from './components/JournalList.vue'
 import ExerciseForm from './components/ExerciseForm.vue'
 import EntryForm from './components/EntryForm.vue'
@@ -362,6 +362,12 @@ const aw = useActiveWorkout()
 const awBusy = ref(false)
 const summary = ref<WorkoutSummaryData | null>(null)
 const pastForm = ref(false)
+const lastDate = computed(() => lastWorkoutDate(entries.value))
+function onRepeatLast() {
+  if (aw.active.value) return
+  const d = draftFromLast(entries.value as never, new Set(exercises.value.map((e) => e.id)), crypto.randomUUID(), new Date(), () => crypto.randomUUID())
+  if (d) aw.startWith(d)
+}
 function onStartPast(d: ActiveDraft) {
   pastForm.value = false
   aw.startWith(d)
@@ -491,6 +497,18 @@ function onToggleProgramWeek(week: number) {
         @click="pastForm = true"
       >
         {{ t('aw_past_btn') }}
+      </button>
+      <button
+        v-if="lastDate"
+        type="button"
+        class="rounded-lg border px-4 py-2 text-sm"
+        style="border-color: var(--border); background: var(--bg-card); color: var(--text); min-height: 44px"
+        :disabled="aw.active.value"
+        :title="lastDate"
+        data-testid="aw-repeat"
+        @click="onRepeatLast"
+      >
+        {{ t('aw_repeat') }}
       </button>
       <button
         type="button"

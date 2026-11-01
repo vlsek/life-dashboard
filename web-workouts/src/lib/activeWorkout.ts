@@ -171,3 +171,23 @@ export function newPastDraft(id: string, date: string, time: string, minutes: nu
   const d = newDraft(id, start, { name: opts.name, date })
   return { ...d, manual_minutes: minutes }
 }
+
+// «Повторить прошлую» (BACKLOG 69.2, срез 5): упражнения самого свежего дня тренировок (в порядке position, затем как пришли), подходы пустые — по числу рабочих
+// подходов прошлого раза (минимум 1); числа подставит «прошлый раз» (69.6). Нет записей с подходами → null.
+type HistEntry = { id: string; exercise_id: string; date: string; sets: readonly SetV2[]; position?: number | null; superset_group?: number | null }
+export function draftFromLast(entries: readonly HistEntry[], existingExerciseIds: ReadonlySet<string>, draftId: string, now: Date, newEntryId: () => string, name: string | null = null): ActiveDraft | null {
+  const usable = entries.filter((e) => (e.sets?.length ?? 0) > 0 && existingExerciseIds.has(e.exercise_id))
+  if (!usable.length) return null
+  const day = usable.reduce((m, e) => (e.date > m ? e.date : m), '')
+  const same = usable.map((e, i) => ({ e, i })).filter((x) => x.e.date === day)
+  same.sort((a, b) => ((a.e.position ?? 1e9) - (b.e.position ?? 1e9)) || a.i - b.i)
+  const d = newDraft(draftId, now, { name })
+  const seen = new Set<string>()
+  d.exercises = same.filter(({ e }) => !seen.has(e.exercise_id) && !!seen.add(e.exercise_id)).slice(0, MAX_EXERCISES).map(({ e }) => ({
+    id: newEntryId(), exercise_id: e.exercise_id, superset_group: e.superset_group ?? null, note: null,
+    sets: Array.from({ length: Math.min(MAX_SETS, Math.max(1, e.sets.filter(isWorking).length)) }, emptySet),
+  }))
+  return d
+}
+export const lastWorkoutDate = (entries: readonly { date: string; sets: readonly unknown[] }[]): string | null =>
+  entries.reduce<string | null>((m, e) => ((e.sets?.length ?? 0) > 0 && (!m || e.date > m) ? e.date : m), null)
