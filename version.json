@@ -1,7 +1,14 @@
 {
-  "version": "7.13",
+  "version": "7.14",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.14",
+      "date": "2026-11-01 12:30",
+      "changes": [
+        "Workouts: rest timer. After you tick a set, a countdown (90 seconds by default) starts in the workout header with −15, +15 and Skip buttons; when it ends you get a vibration and a notice. Cycle the length with the “Rest timer” button (60 / 90 / 120 / 180 seconds or off). In a superset, rest starts after the last exercise of the group. The screen stays on during a workout."
+      ]
+    },
     {
       "version": "7.13",
       "date": "2026-10-29 08:39",
@@ -5061,6 +5068,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.14",
+      "date": "2026-11-01 12:30",
+      "changes": [
+        "«Тренировки»: таймер отдыха. После галочки у подхода в шапке экрана тренировки запускается обратный отсчёт (по умолчанию 90 секунд) с кнопками −15, +15 и «Пропустить»; в конце — вибрация и уведомление. Время можно переключить кнопкой «Таймер отдыха» (60 / 90 / 120 / 180 секунд или выкл). В суперсете отдых начинается после последнего упражнения группы. Пока идёт тренировка, экран не гаснет."
+      ]
+    },
     {
       "version": "7.13",
       "date": "2026-10-29 08:39",

@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.13";
+const SITE_VERSION = "7.14";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.14", date: "2026-11-01 12:30", changes: [
+        "«Тренировки»: таймер отдыха. После галочки у подхода в шапке экрана тренировки запускается обратный отсчёт (по умолчанию 90 секунд) с кнопками −15, +15 и «Пропустить»; в конце — вибрация и уведомление. Время можно переключить кнопкой «Таймер отдыха» (60 / 90 / 120 / 180 секунд или выкл). В суперсете отдых начинается после последнего упражнения группы. Пока идёт тренировка, экран не гаснет.",
+    ]},
     { version: "7.13", date: "2026-10-29 08:39", changes: [
         "«Кастомизация»: если данные страницы не загрузились, теперь честно написано «Не удалось загрузить: …» (раньше — «Не удалось сохранить выбор») и есть кнопка «Повторить», так что страницу не нужно перезагружать вручную."
     ]},
@@ -2755,6 +2758,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.14", date: "2026-11-01 12:30", changes: [
+        "Workouts: rest timer. After you tick a set, a countdown (90 seconds by default) starts in the workout header with −15, +15 and Skip buttons; when it ends you get a vibration and a notice. Cycle the length with the “Rest timer” button (60 / 90 / 120 / 180 seconds or off). In a superset, rest starts after the last exercise of the group. The screen stays on during a workout.",
+    ]},
     { version: "7.13", date: "2026-10-29 08:39", changes: [
         "Customization: when the page data fails to load it now honestly says “Couldn’t load: …” (it used to say “Couldn’t save the choice”) and offers a “Try again” button, so you no longer have to reload the page by hand."
     ]},
