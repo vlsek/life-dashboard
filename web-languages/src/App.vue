@@ -4,6 +4,7 @@ import { useVocab } from './lib/useVocab'
 import { addableLangs, buildTabs, getLangFilter, getSavedTabs, resolveActiveTab, setLangFilter, setLastLang, setSavedTabs } from './lib/vocab'
 import { t } from './lib/i18n'
 import AppShell from './components/AppShell.vue'
+import LoadError from './components/LoadError.vue'
 import WordForm from './components/WordForm.vue'
 import DictionaryTabs from './components/DictionaryTabs.vue'
 import IdiomCard from './components/IdiomCard.vue'
@@ -17,7 +18,7 @@ import { confirmDialog } from './lib/confirmDialog'
 import { errMsg } from './lib/errMsg'
 import { friendlyError } from './lib/friendlyError'
 
-const { auth, words, error, addWord, editWord, deleteWord, toggleLearned } = useVocab()
+const { auth, words, error, loaded, addWord, editWord, deleteWord, toggleLearned, reload } = useVocab()
 
 const filter = ref(getLangFilter())
 function setFilter(code: string) {
@@ -134,7 +135,7 @@ async function onDelete(id: string) {
     </div>
 
     <template v-else>
-      <p v-if="error" class="mb-3 text-sm" style="color: var(--text-dim)">{{ t('dash_save_error_generic') }}{{ error }}</p>
+      <LoadError v-if="error" :message="error" :retry="reload" />
       <p v-if="saveError" class="mb-3 text-sm" style="color: var(--text-dim)">{{ saveError }}</p>
 
       <DictionaryTabs
@@ -172,7 +173,8 @@ async function onDelete(id: string) {
       </button>
 
       <h3 class="mb-2 font-bold"><EmojiText :text="t('eng_learning_h3')" /></h3>
-      <p v-if="activeWords.length === 0" class="mb-5 text-sm" style="color: var(--text-dim)">{{ t('eng_nothing_to_learn') }}</p>
+      <p v-if="!loaded" class="dim" role="status" data-testid="loading-activeWords">{{ t('load_loading') }}</p>
+      <p v-else-if="activeWords.length === 0" class="mb-5 text-sm" style="color: var(--text-dim)">{{ t('eng_nothing_to_learn') }}</p>
       <template v-else>
       <ul class="m-0 list-none overflow-hidden rounded-xl border p-0 mb-5" style="border-color: var(--border); background: var(--bg-card)">
         <WordRow v-for="w in activeWords" :key="w.id" :word="w" :show-lang="effectiveFilter === 'all'" @toggle="toggleLearned" @edit="openEdit" @remove="onDelete" />
@@ -180,7 +182,8 @@ async function onDelete(id: string) {
       </template>
 
       <h2 class="mb-2 font-bold"><EmojiText :text="t('eng_learned_h2')" /></h2>
-      <p v-if="doneWords.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('eng_nothing_learned') }}</p>
+      <p v-if="!loaded" class="dim" role="status" data-testid="loading-doneWords">{{ t('load_loading') }}</p>
+      <p v-else-if="doneWords.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('eng_nothing_learned') }}</p>
       <template v-else>
       <ul class="m-0 list-none overflow-hidden rounded-xl border p-0" style="border-color: var(--border); background: var(--bg-card)">
         <WordRow v-for="w in doneWords" :key="w.id" :word="w" :show-lang="effectiveFilter === 'all'" @toggle="toggleLearned" @edit="openEdit" @remove="onDelete" />

@@ -11,11 +11,12 @@ declare const __dirname: string // есть в vitest (node); типов node в
 const ROOT = resolve(__dirname, '..', '..')
 const read = (f: string): string => readFileSync(resolve(ROOT, f), 'utf-8')
 
-const COMPOSABLES = ['web-goals/src/lib/useGoals.ts', 'web-challenges/src/lib/useChallenges.ts', 'web-milestones/src/lib/useMilestones.ts', 'web-skills/src/lib/useSkills.ts', 'web-skills/src/lib/useBooks.ts']
+const COMPOSABLES = ['web-goals/src/lib/useGoals.ts', 'web-challenges/src/lib/useChallenges.ts', 'web-milestones/src/lib/useMilestones.ts', 'web-skills/src/lib/useSkills.ts', 'web-skills/src/lib/useBooks.ts', 'web-languages/src/lib/useVocab.ts']
 const EMPTIES: Record<string, string[]> = {
   'web-goals/src/App.vue': ['active.length === 0', 'done.length === 0'],
   'web-challenges/src/App.vue': ['active.length === 0', 'completed.length === 0'],
   'web-milestones/src/App.vue': ['active.length === 0', 'done.length === 0'],
+  'web-languages/src/App.vue': ['activeWords.length === 0', 'doneWords.length === 0'],
   'web-skills/src/App.vue': ['active.length === 0', 'mastered.length === 0', 'activeBooks.length === 0', 'doneBooks.length === 0'],
 }
 const HAND_MADE = [
@@ -56,7 +57,7 @@ describe('«Загрузка…» вместо ложной пустоты: ис
   })
 
   it('ключ load_loading есть на двух языках в каждом пилоте', () => {
-    for (const p of ['web-goals', 'web-challenges', 'web-milestones', 'web-skills', 'web-shop', 'web-community']) {
+    for (const p of ['web-goals', 'web-challenges', 'web-milestones', 'web-skills', 'web-languages', 'web-shop', 'web-community']) {
       expect((read(`${p}/src/lib/i18n.ts`).match(/load_loading:/g) || []).length, p).toBe(2)
     }
   })
