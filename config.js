@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.07";
+const SITE_VERSION = "7.08";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.08", date: "2026-11-01 07:00", changes: [
+        "«Достижения»: появился блок «Коллекции» — четыре набора из достижений разных разделов («Разгон», «Железная привычка», «Знания», «Сила воли») с полосой «N из M». Нажми на значок — откроется карточка достижения.",
+    ]},
     { version: "7.07", date: "2026-11-01 08:00", changes: [
         "«Тренировки»: кнопка «Повторить прошлую» — открывает тренировку с теми же упражнениями, что были в последний раз, и таким же числом пустых подходов; прошлые веса подсказываются рядом.",
     { version: "7.06", date: "2026-11-01 13:00", changes: [
@@ -2736,6 +2739,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.08", date: "2026-11-01 07:00", changes: [
+        "Achievements: a new “Collections” block — four sets of achievements from different sections (“Momentum”, “Iron habit”, “Knowledge”, “Willpower”) with an “N of M” bar. Tap a badge to jump to the achievement card.",
+    ]},
     { version: "7.07", date: "2026-11-01 08:00", changes: [
         "Workouts: a “Repeat last workout” button opens a workout with the same exercises as last time and the same number of empty sets, with your previous weights hinted alongside.",
     { version: "7.06", date: "2026-11-01 13:00", changes: [

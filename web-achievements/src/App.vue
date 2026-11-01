@@ -6,6 +6,7 @@ import AppShell from './components/AppShell.vue'
 import AchievementCard from './components/AchievementCard.vue'
 import AchievementUnlockedModal from './components/AchievementUnlockedModal.vue'
 import AchievementShowcase from './components/AchievementShowcase.vue'
+import AchievementCollections from './components/AchievementCollections.vue'
 import CollapseChevron from './components/CollapseChevron.vue'
 import { useAchievements } from './lib/useAchievements'
 import { groupStates, isUnlocked } from './lib/achievements'
@@ -77,6 +78,7 @@ const overallPercent = computed(() => (total.value ? Math.round((openCount.value
         </div>
 
         <AchievementShowcase :states="states" :unlocked="unlocked" @pick="pickFromShowcase" />
+        <AchievementCollections :states="states" :unlocked="unlocked" @pick="pickFromShowcase" />
 
         <div class="mb-4 flex flex-wrap items-center gap-2" role="group" :aria-label="t('ach_filter_label')" data-testid="grade-filter">
           <button type="button" class="grade-chip rounded-full border px-3 py-1 text-xs" :class="{ 'grade-chip-on': gradeFilter === 'all' }" :aria-pressed="gradeFilter === 'all'" data-testid="grade-chip" data-grade="all" @click="gradeFilter = 'all'">{{ t('ach_filter_all') }}</button>

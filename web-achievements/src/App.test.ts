@@ -183,6 +183,19 @@ describe('категории свёрнуты по умолчанию (BACKLOG 3
     w.unmount()
   })
 
+  it('блок «Коллекции»: полоса «N из M», нажатие на значок ведёт к карточке (78.6)', async () => {
+    hold.unlocked.value = { first_weight: '2026-10-05T10:00:00Z', challenges_1: null }
+    const w = await mountApp()
+    const col = w.find('[data-testid="collection"][data-id="momentum"]')
+    expect(col.exists()).toBe(true)
+    expect(col.find('[data-testid="collection-count"]').text()).toBe('2 из 5')
+    expect(w.find('#ach-first_weight').exists()).toBe(false)
+    await col.find('[data-testid="collection-item"][data-key="first_weight"]').trigger('click')
+    await flushPromises()
+    expect(w.find('#ach-first_weight').classes()).toContain('ach-flash')
+    w.unmount()
+  })
+
   it('витрина «Недавно открытые» и «Ближе всего»; на закрытой карточке есть «осталось N»', async () => {
     const w0 = ACHIEVEMENTS.filter((a) => a.counter === 'wordsAdded').sort((a, b) => a.target - b.target)
     hold.states.value = evaluate({ ...ZERO, wordsAdded: Math.max(1, Math.floor(w0[0].target / 2)) })
