@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import EmojiText from './components/EmojiText.vue'
 import LoadError from './components/LoadError.vue'
 import AppShell from './components/AppShell.vue'
@@ -9,6 +9,8 @@ import AchievementShowcase from './components/AchievementShowcase.vue'
 import CollapseChevron from './components/CollapseChevron.vue'
 import { useAchievements } from './lib/useAchievements'
 import { groupStates, isUnlocked } from './lib/achievements'
+import { gradeOf } from './lib/grade'
+import { flashCard } from './lib/flashCard'
 import { groupTitle } from './lib/achievementText'
 import { filterGroups, type GradeFilter } from './lib/showcase'
 import { RARITIES, RARITY_COLOR } from './lib/rewards'
@@ -35,6 +37,15 @@ function toggle(group: string) {
   if (next.has(group)) next.delete(group)
   else next.add(group)
   expanded.value = next
+}
+// Клик по «Недавно открытым» / «Ближе всего» в витрине (BACKLOG 81.2): раскрыть нужную группу (и снять фильтр, если он прячет эту карточку),
+// проскроллить к карточке и коротко подсветить её.
+function pickFromShowcase(key: string) {
+  const st = states.value.find((x) => x.def.key === key)
+  if (!st) return
+  if (gradeFilter.value !== 'all' && gradeFilter.value !== gradeOf(key)) gradeFilter.value = 'all'
+  if (!expanded.value.has(st.def.group)) expanded.value = new Set([...expanded.value, st.def.group])
+  void nextTick(() => flashCard(document.getElementById('ach-' + key)))
 }
 const foundSecret = computed(() => hiddenStates.value.filter((s) => isUnlocked(s.def.key, unlocked.value)))
 const total = computed(() => states.value.length)
@@ -65,7 +76,7 @@ const overallPercent = computed(() => (total.value ? Math.round((openCount.value
           </div>
         </div>
 
-        <AchievementShowcase :states="states" :unlocked="unlocked" />
+        <AchievementShowcase :states="states" :unlocked="unlocked" @pick="pickFromShowcase" />
 
         <div class="mb-4 flex flex-wrap items-center gap-2" role="group" :aria-label="t('ach_filter_label')" data-testid="grade-filter">
           <button type="button" class="grade-chip rounded-full border px-3 py-1 text-xs" :class="{ 'grade-chip-on': gradeFilter === 'all' }" :aria-pressed="gradeFilter === 'all'" data-testid="grade-chip" data-grade="all" @click="gradeFilter = 'all'">{{ t('ach_filter_all') }}</button>

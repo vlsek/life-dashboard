@@ -11,6 +11,8 @@ import ShopRow from './components/ShopRow.vue'
 import NextGoalHero from './components/NextGoalHero.vue'
 import ArchivedRow from './components/ArchivedRow.vue'
 import { sparksMode } from './lib/sparks'
+import SparksJournal from './components/SparksJournal.vue'
+import type { Purchase } from './lib/sparksJournal'
 import { dailyRate } from './lib/priceScale'
 import ViewSwitch from './components/ViewSwitch.vue'
 import { useShop } from './lib/useShop'
@@ -24,7 +26,7 @@ import EmojiText from './components/EmojiText.vue'
 import Icon from './components/Icon.vue'
 import { confirmDialog } from './lib/confirmDialog'
 
-const { auth, items, archived, balance, goals, loaded, createdAt, error, init, addItem, updateItem, buyItem, claimReward, reload, transferArchived, deleteItem, uploadImage } = useShop()
+const { loadSparksJournal, auth, items, archived, balance, goals, loaded, createdAt, error, init, addItem, updateItem, buyItem, claimReward, reload, transferArchived, deleteItem, uploadImage } = useShop()
 onMounted(init)
 // Первый заход: полное описание идеи уже показывает плашка «Лавка наград» — общую подсказку страницы заранее считаем увиденной (она остаётся за значком «i»), чтобы две плашки не стояли друг над другом
 if (!loadIdeaSeen()) markHintSeen('shop')
@@ -82,6 +84,8 @@ const counts = computed(() => filterCounts(items.value, have.value))
 const shown = computed(() => filterItems(items.value, have.value, filter.value))
 const groups = computed(() => splitItems(items.value, have.value))
 const goal = computed(() => savingGoal(items.value, have.value))
+// Покупки за огоньки для журнала (78.5): купленные вещи с датой; бесплатные (награда за цель, цена 0) в журнал трат не идут
+const journalPurchases = computed<Purchase[]>(() => items.value.filter((it) => it.redeemed && it.redeemed_date && it.cost > 0).map((it) => ({ name: it.name, cost: it.cost, date: it.redeemed_date as string })))
 const rate = computed(() => dailyRate(balance.value?.total, createdAt.value, sparksMode.value))
 
 const formTarget = ref<ShopItem | 'new' | null>(null)
@@ -123,6 +127,7 @@ async function onUpload(file: File): Promise<string | null> {
     </div>
 
     <BalanceCard :balance="balance" :variant="view === 'list' ? 'list' : view === 'focus' ? 'compact' : 'grid'" :goal="goal" />
+    <SparksJournal v-if="sparksMode && auth.status === 'ready'" :load="() => loadSparksJournal((auth as { userId: string }).userId)" :purchases="journalPurchases" :balance="balance ? balance.balance : null" />
 
     <p v-if="justBought" class="goal-pop bought-toast relative mb-2 rounded-xl border px-3 py-2 text-sm font-medium" style="border-color: var(--accent)" role="status" data-testid="bought-toast"><span class="bought-burst" aria-hidden="true" data-testid="bought-burst"><i v-for="n in 6" :key="n" :style="{ '--a': n * 60 + 'deg' }" /></span><EmojiText :text="t('shop_bought_toast')" /> {{ justBought }}</p>
     <p v-if="justClaimed" class="goal-pop bought-toast relative mb-2 rounded-xl border px-3 py-2 text-sm font-medium" style="border-color: var(--accent)" role="status" data-testid="claimed-toast"><span class="bought-burst" aria-hidden="true" data-testid="claimed-burst"><i v-for="n in 6" :key="n" :style="{ '--a': n * 60 + 'deg' }" /></span><EmojiText :text="t('shop_reward_toast')" /> {{ justClaimed }}</p>

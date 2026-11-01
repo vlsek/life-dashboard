@@ -42,6 +42,7 @@ const when = computed(() => {
     class="ach-card flex flex-col items-center rounded-xl border p-3 text-center"
     :class="unlocked ? 'ach-unlocked' : 'ach-locked'"
     :data-state="unlocked ? 'unlocked' : 'locked'"
+    :id="'ach-' + state.def.key"
     :data-key="state.def.key"
     :style="cardStyle"
     :data-grade="grade"
