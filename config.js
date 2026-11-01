@@ -493,6 +493,7 @@ const CHANGELOG_RU = [
     ]},
     { version: "7.07", date: "2026-11-01 08:00", changes: [
         "«Тренировки»: кнопка «Повторить прошлую» — открывает тренировку с теми же упражнениями, что были в последний раз, и таким же числом пустых подходов; прошлые веса подсказываются рядом.",
+    ]},
     { version: "7.06", date: "2026-11-01 13:00", changes: [
         "«Вехи»: кнопка «Лента на год» — по месяцам видно, что уже сделано (по истории отметок), что запланировано (ближайшая дата и её повторы по интервалу до конца года) и что просрочено; статус подписан словом и значком, годы листаются стрелками. Вехи с интервалом только по пробегу в ленте показаны, только когда уже сделаны (у них нет дат). Без миграций."
     ]},
@@ -2744,6 +2745,7 @@ const CHANGELOG_EN = [
     ]},
     { version: "7.07", date: "2026-11-01 08:00", changes: [
         "Workouts: a “Repeat last workout” button opens a workout with the same exercises as last time and the same number of empty sets, with your previous weights hinted alongside.",
+    ]},
     { version: "7.06", date: "2026-11-01 13:00", changes: [
         "Milestones: a new “Timeline” button — by month you can see what is done (from the history), what is planned (the next date and its repeats by interval until the end of the year) and what is overdue; each status is labelled with a word and an icon, and years can be flipped with arrows. Mileage-only milestones appear only once done (they have no dates). No migrations."
     ]},
