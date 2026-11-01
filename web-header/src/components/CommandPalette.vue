@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { getLang, t } from '../lib/i18n'
-import { PALETTE_ITEMS, filterPalette, type PaletteItem } from '../lib/palette'
+import { PALETTE_ITEMS, availableItems, filterPalette, type PaletteItem } from '../lib/palette'
 
 // Командная палитра (BACKLOG 79.1, срез 1): ↑↓ — выбор, Enter — открыть, Esc или клик по фону — закрыть.
+const props = withDefaults(defineProps<{ water?: boolean }>(), { water: false })
 const emit = defineEmits<{ pick: [PaletteItem]; close: [] }>()
 const lang = getLang() === 'en' ? 'en' : 'ru'
 const query = ref('')
 const active = ref(0)
 const input = ref<HTMLInputElement | null>(null)
-const results = computed(() => filterPalette(PALETTE_ITEMS, query.value))
+const results = computed(() => filterPalette(availableItems(PALETTE_ITEMS, { water: props.water }), query.value))
 watch(query, () => (active.value = 0))
 onMounted(() => nextTick(() => input.value?.focus()))
 

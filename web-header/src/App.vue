@@ -54,6 +54,7 @@ onBeforeUnmount(() => outboxView.value?.stop())
 function onPalettePick(it: PaletteItem) {
   paletteOpen.value = false
   if (it.kind === 'page' && it.href) location.href = it.href
+  else if (it.id === 'action:water') waterOpen.value = true
   else if (it.id === 'action:settings') globalSettingsOpen.value = true
   else if (it.id === 'action:hotkeys') hotkeysHelpOpen.value = true
 }
@@ -287,7 +288,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
       @open-settings="panelOpen = false; globalSettingsOpen = true"
     />
     <HotkeysModal />
-    <CommandPalette v-if="paletteOpen" @pick="onPalettePick" @close="paletteOpen = false" />
+    <CommandPalette v-if="paletteOpen" :water="waterVisible" @pick="onPalettePick" @close="paletteOpen = false" />
     <SettingsModal
       v-if="globalSettingsOpen && userId"
       :user-id="userId"

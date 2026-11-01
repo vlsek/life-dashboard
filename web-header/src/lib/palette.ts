@@ -3,10 +3,11 @@
 import { HOTKEY_PAGES } from './hotkeys'
 
 export type PaletteKind = 'page' | 'action'
-export interface PaletteItem { id: string; kind: PaletteKind; ru: string; en: string; href?: string; hint?: string }
+export interface PaletteItem { id: string; kind: PaletteKind; ru: string; en: string; href?: string; hint?: string; needs?: 'water' } // needs — пункт показывается, только если условие выполнено
 
 export const PALETTE_ITEMS: readonly PaletteItem[] = [
   ...HOTKEY_PAGES.map((p): PaletteItem => ({ id: 'page:' + p.letter, kind: 'page', ru: p.ru, en: p.en, href: p.href, hint: 'g ' + p.letter })),
+  { id: 'action:water', kind: 'action', ru: 'Вода: записать стакан', en: 'Water: log a drink', needs: 'water' },
   { id: 'action:settings', kind: 'action', ru: 'Глобальные настройки', en: 'Global settings' },
   { id: 'action:hotkeys', kind: 'action', ru: 'Горячие клавиши', en: 'Keyboard shortcuts', hint: '?' },
 ]
@@ -40,4 +41,9 @@ export function filterPalette(items: readonly PaletteItem[], query: string): Pal
     .filter((x) => x.s >= 0)
     .sort((a, b) => a.s - b.s || a.i - b.i)
     .map((x) => x.it)
+}
+
+// Пункты, доступные сейчас: «вода» только при включённом учёте воды и существующей метрике (иначе окно воды не откроется)
+export function availableItems(items: readonly PaletteItem[], ctx: { water: boolean }): PaletteItem[] {
+  return items.filter((i) => !i.needs || (i.needs === 'water' && ctx.water))
 }
