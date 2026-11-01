@@ -14,6 +14,8 @@ import { vCollapse } from '../lib/collapseMotion'
 import UsefulTodayList from './UsefulTodayList.vue'
 import TodayRemaining from './TodayRemaining.vue'
 import MetricQuickActions from './MetricQuickActions.vue'
+import DayReflection from './DayReflection.vue'
+import { useDayReflection } from '../lib/useDayReflection'
 import { createLongPress, longPressBind } from '../lib/longPress'
 import { quickActions, skipMetricDay, type QuickActionId } from '../lib/metricQuickActions'
 import { remainingToday, PLAN_ROW_PREFIX } from '../lib/todayRemaining'
@@ -71,9 +73,23 @@ watch(
   { immediate: true },
 )
 
+// Оценка и заметка дня (BACKLOG 75.3, миграция 114): грузятся с днём, пишутся вместе с «Сохранить день»
+const reflectError = ref(false)
+const reflection = useDayReflection()
+watch(
+  () => [props.userId, date.value] as const,
+  ([uid, d]) => {
+    if (uid) void reflection.load(uid, d)
+  },
+  { immediate: true },
+)
 const savedMsg = ref(false)
 async function onSaveDay() {
-  const ok = await saveDay()
+  const ok1 = await saveDay()
+  const ok2 = props.userId ? await reflection.save(props.userId, date.value) : true
+  const ok = ok1 && ok2
+  if (!ok2) reflectError.value = true
+  else reflectError.value = false
   if (ok) {
     savedMsg.value = true
     setTimeout(() => (savedMsg.value = false), 2000)
@@ -250,12 +266,15 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
 
     <!-- BACKLOG раздел 34: «Сохранить день» — в самом низу, после самой нижней метрики («Подходы»), а не посередине — так очевидно, что это
          последний шаг. Подходы пишутся своими кнопками сразу и на эту кнопку не влияют. Итог дня («Баллы») стоит рядом с ней. -->
+    <DayReflection v-if="loaded && reflection.supported.value" v-model:mood="reflection.mood.value" v-model:note="reflection.note.value" />
+
     <div v-if="loaded" class="mt-4" data-test="save-day-bar">
       <div class="save-row">
         <button type="button" class="save-day-btn" :disabled="saving" data-test="save-day" @click="onSaveDay">{{ saving ? t('dash_saving_btn') : t('dash_save_day_btn') }}</button>
         <span class="score-pill"><EmojiText :text="t('dash_score_label')" /> <strong>{{ score.points }} / {{ score.total }}</strong></span>
       </div>
       <p v-if="savedMsg" class="m-0 mt-2 text-sm" style="color: var(--success)">{{ t('dash_day_saved_toast') }}</p>
+      <p v-if="reflectError" class="m-0 mt-2 text-sm" style="color: var(--danger, #c0392b)" role="alert" data-test="reflect-error">{{ t('dash_reflect_error') }}</p>
     </div>
 
     <!-- BACKLOG 23:00: «Что полезного сделал за день» — свёрнутым по умолчанию и в самом низу блока ежедневных метрик.

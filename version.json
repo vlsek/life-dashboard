@@ -1,7 +1,14 @@
 {
-  "version": "7.15",
+  "version": "7.16",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.16",
+      "date": "2026-11-01 12:00",
+      "changes": [
+        "Dashboard → Daily metrics: above “Save day” there is now a “How was the day?” block — a 1–5 rating and a short note, saved together with “Save day”. Needs migration 114 (the block stays hidden until then)."
+      ]
+    },
     {
       "version": "7.15",
       "date": "2026-11-01 14:00",
@@ -5075,6 +5082,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.16",
+      "date": "2026-11-01 12:00",
+      "changes": [
+        "«Дашборд» → «Ежедневные метрики»: над «Сохранить день» появился блок «Как прошёл день?» — самочувствие от 1 до 5 и короткая заметка. Пишется вместе с «Сохранить день». Нужна миграция 114 (до неё блок не виден)."
+      ]
+    },
     {
       "version": "7.15",
       "date": "2026-11-01 14:00",

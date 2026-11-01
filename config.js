@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.15";
+const SITE_VERSION = "7.16";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.16", date: "2026-11-01 12:00", changes: [
+        "«Дашборд» → «Ежедневные метрики»: над «Сохранить день» появился блок «Как прошёл день?» — самочувствие от 1 до 5 и короткая заметка. Пишется вместе с «Сохранить день». Нужна миграция 114 (до неё блок не виден).",
+    ]},
     { version: "7.15", date: "2026-11-01 14:00", changes: [
         "Шапка: в верхней строке появилась кнопка-лупа «Быстрый поиск». Касание открывает командную палитру (переход на нужную страницу или действие по набору букв), так что с телефона и планшета, где нет Ctrl+K и клавиши «/», она теперь тоже доступна. Кнопка работает независимо от галочки «Горячие клавиши» в «Глобальных настройках». Без миграций."
     ]},
@@ -2761,6 +2764,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.16", date: "2026-11-01 12:00", changes: [
+        "Dashboard → Daily metrics: above “Save day” there is now a “How was the day?” block — a 1–5 rating and a short note, saved together with “Save day”. Needs migration 114 (the block stays hidden until then).",
+    ]},
     { version: "7.15", date: "2026-11-01 14:00", changes: [
         "Header: a magnifier button “Quick search” now sits in the top bar. Tap it to open the command palette (jump to a page or run an action by typing a few letters), so it is available on a phone or tablet too, where there is no Ctrl+K or “/” key. The button works regardless of the “Keyboard shortcuts” checkbox in Global settings. No migrations."
     ]},
