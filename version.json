@@ -1,7 +1,14 @@
 {
-  "version": "7.14",
+  "version": "7.15",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.15",
+      "date": "2026-11-01 14:00",
+      "changes": [
+        "Header: a magnifier button “Quick search” now sits in the top bar. Tap it to open the command palette (jump to a page or run an action by typing a few letters), so it is available on a phone or tablet too, where there is no Ctrl+K or “/” key. The button works regardless of the “Keyboard shortcuts” checkbox in Global settings. No migrations."
+      ]
+    },
     {
       "version": "7.14",
       "date": "2026-11-01 12:30",
@@ -5068,6 +5075,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.15",
+      "date": "2026-11-01 14:00",
+      "changes": [
+        "Шапка: в верхней строке появилась кнопка-лупа «Быстрый поиск». Касание открывает командную палитру (переход на нужную страницу или действие по набору букв), так что с телефона и планшета, где нет Ctrl+K и клавиши «/», она теперь тоже доступна. Кнопка работает независимо от галочки «Горячие клавиши» в «Глобальных настройках». Без миграций."
+      ]
+    },
     {
       "version": "7.14",
       "date": "2026-11-01 12:30",
