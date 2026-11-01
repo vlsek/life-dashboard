@@ -14,6 +14,7 @@ export function useVocab() {
   const auth = ref<AuthState>({ status: 'loading' })
   const words = ref<VocabWord[]>([])
   const error = ref<string | null>(null)
+  const loaded = ref(false) // первая загрузка закончилась (успехом или ошибкой): до этого «нет …» показывать нельзя — ложная пустота
 
   async function init() {
     const { data } = await sb.auth.getSession()
@@ -38,6 +39,14 @@ export function useVocab() {
   }
 
   async function load(userId: string) {
+    try {
+      await loadData(userId)
+    } finally {
+      loaded.value = true
+    }
+  }
+
+  async function loadData(userId: string) {
     const { data, error: err } = await sb
       .from('vocabulary')
       .select('*')
@@ -104,5 +113,5 @@ export function useVocab() {
 
   init()
 
-  return { auth, words, error, addWord, editWord, deleteWord, toggleLearned, reload }
+  return { auth, words, error, loaded, addWord, editWord, deleteWord, toggleLearned, reload }
 }

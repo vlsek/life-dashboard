@@ -60,7 +60,7 @@ SITES = {
             ('<p v-if="skillsError" class="dim">{{ t(\'comm_load_error\') }} {{ skillsError }}</p>', '<LoadError v-if="skillsError" :message="skillsError" :retry="reloadSkills" />'),
             ('<p v-if="booksError" class="dim">{{ t(\'comm_load_error\') }} {{ booksError }}</p>', '<LoadError v-if="booksError" :message="booksError" :retry="reloadBooks" />'),
         ],
-        'script': [('error: skillsError, init,', 'error: skillsError, init, reload: reloadSkills,'), ('load: loadBooks,', 'load: loadBooks, reload: reloadBooks,')],
+        'script': [('error: skillsError, init,', 'error: skillsError, init, reload: reloadSkills,', 'reload: reloadSkills'), ('load: loadBooks,', 'load: loadBooks, reload: reloadBooks,', 'reload: reloadBooks')],
     },
     'web-achievements': {
         'html': [('<p v-if="error" class="dim">{{ t(\'comm_load_error\') }} {{ error }}</p>', '<LoadError v-if="error" :message="error" :retry="reload" />')],
@@ -68,11 +68,23 @@ SITES = {
     },
     'web-milestones': {
         'html': [('<p v-if="error" class="dim">{{ t(\'comm_load_error\') }} {{ error }}{{ errorHint }}</p>', '<LoadError v-if="error" :message="error" :retry="reload">{{ errorHint }}</LoadError>')],
-        'script': [('const { auth, items, error, init, addMilestone', 'const { auth, items, error, init, reload, addMilestone')],
+        'script': [('const { auth, items, error, init, addMilestone', 'const { auth, items, error, init, reload, addMilestone', 'reload, addMilestone')],
     },
     'web-challenges': {
         'html': [('<p v-if="error" class="dim">{{ t(\'comm_load_error\') }} {{ error }} — {{ t(\'ch_migration_hint\') }}</p>', '<LoadError v-if="error" :message="error" :retry="reload"> — {{ t(\'ch_migration_hint\') }}</LoadError>')],
-        'script': [('  error,\n  init,\n', '  error,\n  init,\n  reload,\n')],
+        'script': [('  error,\n  init,\n', '  error,\n  init,\n  reload,\n', '  reload,\n  startFromTemplate')],
+    },
+    # срез 4 (74.3): пилоты, где ошибка загрузки была голым <p> без ключа comm_load_error
+    'web-calendar': {  # «История» живёт в компоненте HistoryView (в App.vue ошибки нет): компонент и ключи — отсюда, подключение — extra
+        'html': None,
+        'script': [],
+        'extra': {
+            'components/HistoryView.vue': [('<LoadError v-if="error" :message="error" :retry="reload" />', '<LoadError v-if="error" :message="error" :retry="reload" />')],
+        },
+    },
+    'web-languages': {
+        'html': [('<p v-if="error" class="mb-3 text-sm" style="color: var(--text-dim)">{{ t(\'dash_save_error_generic\') }}{{ error }}</p>', '<LoadError v-if="error" :message="error" :retry="reload" />')],
+        'script': [('deleteWord, toggleLearned } = useVocab()', 'deleteWord, toggleLearned, reload } = useVocab()')],
     },
     # срез 2 (74.3)
     'web-dashboard': {
@@ -111,6 +123,25 @@ def patch_i18n(path: Path) -> bool:
             k1, v1, k2, v2 = KEYS[lang]
             out.append(f'{ind}{k1}: {q}{v1}{q},')
             out.append(f'{ind}{k2}: {q}{v2}{q},')
+    if seen == 0:
+        # пилот без comm_load_error (languages): добавляем ключ целиком после loading_ellipsis
+        out, seen2 = [], 0
+        for ln in lines:
+            out.append(ln)
+            m = re.match(r'^(\s*)loading_ellipsis: (.*)$', ln)
+            if m:
+                lang = 'en' if seen2 == 0 else 'ru'
+                q = '"' if m.group(2).startswith('"') else "'"
+                k1, v1, k2, v2 = KEYS[lang]
+                base = {'en': "Couldn\\'t load:" if q == "'" else "Couldn't load:", 'ru': 'Не удалось загрузить:'}[lang]
+                out.append(f'{m.group(1)}comm_load_error: {q}{base}{q},')
+                out.append(f'{m.group(1)}{k1}: {q}{v1}{q},')
+                out.append(f'{m.group(1)}{k2}: {q}{v2}{q},')
+                seen2 += 1
+        if seen2 != 2:
+            raise SystemExit(f'{path}: нет ни comm_load_error, ни loading_ellipsis')
+        path.write_text('\n'.join(out), encoding='utf-8')
+        return True
     if seen != 2:
         raise SystemExit(f'{path}: ожидалось 2 строки comm_load_error, найдено {seen}')
     path.write_text('\n'.join(out), encoding='utf-8')
@@ -128,18 +159,19 @@ def main() -> None:
         if patch_i18n(src / 'lib' / 'i18n.ts'):
             changed.append(f'{pilot}: i18n')
         app = src / 'App.vue'
-        s = app.read_text(encoding='utf-8')
+        s = app.read_text(encoding='utf-8') if spec['html'] is not None else ''
         orig = s
-        for old, new in spec['html'] + spec['script']:
-            if new in s:
+        for pair in (spec['html'] or []) + spec['script']:
+            old, new = pair[0], pair[1]
+            if new in s or (len(pair) == 3 and pair[2] in s):
                 continue
             if old not in s:
                 raise SystemExit(f'{pilot}/App.vue: не найдено «{old[:70]}»')
             s = s.replace(old, new, 1)
-        if "import LoadError from './components/LoadError.vue'" not in s:
+        if spec['html'] is not None and "import LoadError from './components/LoadError.vue'" not in s:
             m = re.search(r"^import \w+ from './components/\w+\.vue'\n", s, re.M)
             s = s[:m.end()] + "import LoadError from './components/LoadError.vue'\n" + s[m.end():]
-        if s != orig:
+        if spec['html'] is not None and s != orig:
             app.write_text(s, encoding='utf-8')
             changed.append(f'{pilot}: App.vue')
         for rel, edits in spec.get('extra', {}).items():

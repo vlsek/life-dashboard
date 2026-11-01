@@ -124,14 +124,20 @@ export function useAuthAndData() {
         firstDate,
         today: todayStr(),
       }
+      error.value = null // успешный повтор после ошибки: старое сообщение уходит
     } catch (e) {
       error.value = friendlyError(e, 'load')
     }
   }
 
+  // «Повторить» из LoadError (BACKLOG 74.3): перезагрузка данных без перезагрузки страницы
+  async function reload() {
+    if (auth.value.status === 'ready') await loadData(auth.value.userId)
+  }
+
   init()
 
-  return { auth, ctx, error }
+  return { auth, ctx, error, reload }
 }
 
 export { fmtDate }

@@ -27,11 +27,16 @@ SITES = {
         'app': [('const { auth, items, error, init, reload,', 'const { auth, items, error, loaded, init, reload,')],
         'empties': [('active.length === 0', 'loaded'), ('done.length === 0', 'loaded')],
     },
+    'web-languages': {
+        'composables': ['lib/useVocab.ts'],
+        'app': [('const { auth, words, error, ', 'const { auth, words, error, loaded, ')],
+        'empties': [('activeWords.length === 0', 'loaded'), ('doneWords.length === 0', 'loaded')],
+    },
     'web-skills': {
         'composables': ['lib/useSkills.ts', 'lib/useBooks.ts'],
         'app': [
-            ('error: skillsError, init,', 'error: skillsError, loaded: skillsLoaded, init,'),
-            ('error: booksError, load: loadBooks,', 'error: booksError, loaded: booksLoaded, load: loadBooks,'),
+            ('error: skillsError, init,', 'error: skillsError, loaded: skillsLoaded, init,', 'loaded: skillsLoaded'),
+            ('error: booksError, load: loadBooks,', 'error: booksError, loaded: booksLoaded, load: loadBooks,', 'loaded: booksLoaded'),
         ],
         'empties': [('active.length === 0', 'skillsLoaded'), ('mastered.length === 0', 'skillsLoaded'), ('activeBooks.length === 0', 'booksLoaded'), ('doneBooks.length === 0', 'booksLoaded')],
     },
@@ -84,8 +89,9 @@ def patch_i18n(path: Path) -> bool:
 def patch_app(path: Path, spec: dict) -> bool:
     s = path.read_text(encoding='utf-8')
     orig = s
-    for old, new in spec['app']:
-        if new in s:
+    for pair in spec['app']:
+        old, new = pair[0], pair[1]
+        if new in s or (len(pair) == 3 and pair[2] in s):
             continue
         if old not in s:
             raise SystemExit(f'{path}: не найдено «{old[:60]}»')
@@ -93,7 +99,7 @@ def patch_app(path: Path, spec: dict) -> bool:
     for cond, flag in spec['empties']:
         if f'<p v-else-if="{cond}"' in s:
             continue
-        pat = re.compile(rf'([ \t]*)<p v-if="{re.escape(cond)}" (class="[^"]*")>')
+        pat = re.compile(rf'([ \t]*)<p v-if="{re.escape(cond)}" ([^>]*)>')
         m = pat.search(s)
         if not m:
             raise SystemExit(f'{path}: не найдено пустое состояние «{cond}»')

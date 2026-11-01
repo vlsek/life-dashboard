@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest'
 // Страж читает исходники всех пилотов. ALLOW — места, где серый текст оставлен сознательно (после среза 2 — пусто: исключения добавлять только с причиной).
 declare const __dirname: string // есть в vitest (node); типов node в проекте нет
 const ROOT = resolve(__dirname, '..', '..')
-const PILOTS_DONE = ['web-shop', 'web-goals', 'web-skills', 'web-achievements', 'web-milestones', 'web-challenges', 'web-dashboard', 'web-community']
+const PILOTS_DONE = ['web-shop', 'web-goals', 'web-skills', 'web-achievements', 'web-milestones', 'web-challenges', 'web-dashboard', 'web-community', 'web-languages']
 const ALLOW: string[] = []
 
 function vueFiles(dir: string): string[] {
@@ -32,6 +32,19 @@ describe('ошибки загрузки: «Повторить» везде', () 
       const app = readFileSync(join(ROOT, p, 'src', 'App.vue'), 'utf-8')
       expect(app, p).toMatch(/<LoadError [^>]*:retry="\w+"/)
       expect(ALLOW.some((a) => a.startsWith(p + '/')), p).toBe(false)
+    }
+  })
+
+  it('«История» (web-calendar): LoadError подключён в HistoryView, копия и ключи на месте', () => {
+    const view = readFileSync(join(ROOT, 'web-calendar', 'src', 'components', 'HistoryView.vue'), 'utf-8')
+    expect(view).toMatch(/<LoadError [^>]*:retry="reload"/)
+    const first = readFileSync(join(ROOT, PILOTS_DONE[0], 'src', 'components', 'LoadError.vue'), 'utf-8')
+    expect(readFileSync(join(ROOT, 'web-calendar', 'src', 'components', 'LoadError.vue'), 'utf-8')).toBe(first)
+    const i18n = readFileSync(join(ROOT, 'web-calendar', 'src', 'lib', 'i18n.ts'), 'utf-8')
+    expect((i18n.match(/load_retry:/g) || []).length).toBe(2)
+    expect((i18n.match(/load_offline:/g) || []).length).toBe(2)
+    for (const f of ['web-calendar', 'web-history']) {
+      expect(readFileSync(join(ROOT, f, 'src', 'lib', 'useHistoryData.ts'), 'utf-8'), f).toMatch(/async function reload\(\)/)
     }
   })
 

@@ -6,6 +6,7 @@ import { dayStats, hasData, weekStats } from '../lib/historyStats'
 import type { HistoryContext } from '../lib/historyStats'
 import { locale, t } from '../lib/i18n'
 import DayDetailModal from './DayDetailModal.vue'
+import LoadError from './LoadError.vue'
 import EmojiText from './EmojiText.vue'
 import Icon from './Icon.vue'
 import MonthCategoryChart from './MonthCategoryChart.vue'
@@ -32,7 +33,7 @@ const showChart = computed(() => !isCalendar.value && props.show.chart)
 const showWeeks = computed(() => !isCalendar.value && props.show.weeks)
 const gridCols = computed(() => (showWeekCol.value ? 'repeat(7, minmax(0, 1fr)) minmax(0, 1.05fr)' : 'repeat(7, minmax(0, 1fr))'))
 
-const { auth, ctx, error } = useAuthAndData()
+const { auth, ctx, error, reload } = useAuthAndData()
 
 const now = new Date()
 const viewYear = ref(now.getFullYear())
@@ -205,7 +206,7 @@ function onTouchEnd(e: TouchEvent) {
       <p class="mb-4 text-sm" style="color: var(--text-dim)">{{ t('hist_intro') }}</p>
     </template>
 
-    <p v-if="error" class="mb-3 text-sm" style="color: var(--danger)">{{ error }}</p>
+    <LoadError v-if="error" :message="error" :retry="reload" />
 
     <div v-if="auth.status === 'loading' || auth.status === 'redirecting'" class="text-sm" style="color: var(--text-dim)">…</div>
 
