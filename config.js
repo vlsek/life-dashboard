@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.10";
+const SITE_VERSION = "7.11";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.11", date: "2026-11-01 12:00", changes: [
+        "Шапка: появилась командная палитра. Нажми Ctrl+K (на Mac Cmd+K) или клавишу «/», начни печатать, и список сузится до нужных страниц и действий: «Цели», «Навыки», «Календарь», «Глобальные настройки», «Горячие клавиши» и других. Стрелки ↑↓ выбирают, Enter открывает, Esc закрывает; английские названия тоже находятся. Работает вместе с горячими клавишами и выключается той же галочкой в «Глобальных настройках». Поиск по твоим целям, навыкам и заметкам появится позже. Без миграций."
+    ]},
     { version: "7.10", date: "2026-11-01 09:30", changes: [
         "«Тренировки»: суперсеты. В активной тренировке между упражнениями появилась кнопка «Суперсет со следующим» — упражнения объединяются в одну группу с цветной полосой слева; «Разъединить суперсет» рвёт группу. Группа сохраняется в записях и в рутинах.",
     ]},
@@ -2746,6 +2749,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.11", date: "2026-11-01 12:00", changes: [
+        "Header: a command palette is here. Press Ctrl+K (Cmd+K on a Mac) or the “/” key, start typing and the list narrows down to the pages and actions you need: Goals, Skills, Calendar, Global settings, Keyboard shortcuts and more. ↑↓ choose, Enter opens, Esc closes; Russian names are found too. It works with the keyboard shortcuts and is turned off by the same checkbox in Global settings. Search through your own goals, skills and notes comes later. No migrations."
+    ]},
     { version: "7.10", date: "2026-11-01 09:30", changes: [
         "Workouts: supersets. In an active workout a “Superset with next” button between exercises joins them into one group with a coloured bar on the left; “Split superset here” breaks the group. The group is saved with the entries and in routines.",
     ]},
