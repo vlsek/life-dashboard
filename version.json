@@ -1,7 +1,14 @@
 {
-  "version": "7.10",
+  "version": "7.11",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.11",
+      "date": "2026-11-01 12:00",
+      "changes": [
+        "Header: a command palette is here. Press Ctrl+K (Cmd+K on a Mac) or the “/” key, start typing and the list narrows down to the pages and actions you need: Goals, Skills, Calendar, Global settings, Keyboard shortcuts and more. ↑↓ choose, Enter opens, Esc closes; Russian names are found too. It works with the keyboard shortcuts and is turned off by the same checkbox in Global settings. Search through your own goals, skills and notes comes later. No migrations."
+      ]
+    },
     {
       "version": "7.10",
       "date": "2026-11-01 09:30",
@@ -5040,6 +5047,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.11",
+      "date": "2026-11-01 12:00",
+      "changes": [
+        "Шапка: появилась командная палитра. Нажми Ctrl+K (на Mac Cmd+K) или клавишу «/», начни печатать, и список сузится до нужных страниц и действий: «Цели», «Навыки», «Календарь», «Глобальные настройки», «Горячие клавиши» и других. Стрелки ↑↓ выбирают, Enter открывает, Esc закрывает; английские названия тоже находятся. Работает вместе с горячими клавишами и выключается той же галочкой в «Глобальных настройках». Поиск по твоим целям, навыкам и заметкам появится позже. Без миграций."
+      ]
+    },
     {
       "version": "7.10",
       "date": "2026-11-01 09:30",
