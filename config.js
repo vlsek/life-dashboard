@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.18";
+const SITE_VERSION = "7.19";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.19", date: "2026-11-01 16:00", changes: [
+        "Шапка: в командной палитре (Ctrl+K, «/» или кнопка-лупа) появилось действие «Вода: записать стакан». Оно открывает обычное окно воды, так что стакан можно записать, не покидая страницы и не ища иконку воды. Пункт виден только когда учёт воды включён и метрика воды есть. Без миграций."
+    ]},
     { version: "7.18", date: "2026-11-01 12:50", changes: [
         "«История»: окно дня тоже показывает «Как прошёл день» — оценку и заметку (как в «Календаре»).",
     ]},
@@ -2770,6 +2773,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.19", date: "2026-11-01 16:00", changes: [
+        "Header: the command palette (Ctrl+K, “/” or the magnifier button) has a new action “Water: log a drink”. It opens the regular water window, so you can log a glass without leaving the page or looking for the water icon. The item shows up only when water tracking is on and a water metric exists. No migrations."
+    ]},
     { version: "7.18", date: "2026-11-01 12:50", changes: [
         "History: the day window now also shows “How the day went” — the rating and note (same as in Calendar).",
     ]},
