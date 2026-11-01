@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "6.98";
+const SITE_VERSION = "6.99";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "6.99", date: "2026-11-01 05:30", changes: [
+        "«Достижения»: «Недавно открытые» и «Ближе всего к открытию» в витрине стали кликабельными — по клику раскрывается нужная категория, список прокручивается к карточке и она коротко подсвечивается.",
+    ]},
     { version: "6.98", date: "2026-10-30 20:00", changes: [
         "Магазин: под балансом появился раскрывающийся блок «Откуда мои огоньки». Он показывает за последние 30 дней, сколько огоньков и за какие метрики начислено в каждый день, что ты купил и сколько осталось, и объясняет потолок: в день начисляется не больше положенного числа огоньков, поэтому лишние выполненные метрики в полный день ничего не добавляют. Журнал грузится только при раскрытии. Без миграций."
     ]},
@@ -2710,6 +2713,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "6.99", date: "2026-11-01 05:30", changes: [
+        "Achievements: “Recently unlocked” and “Closest to unlocking” in the showcase are now clickable — a click opens the right category, scrolls to the card and briefly highlights it.",
+    ]},
     { version: "6.98", date: "2026-10-30 20:00", changes: [
         "Shop: a collapsible “Where my sparks come from” block now sits under the balance. For the last 30 days it shows how many sparks each day brought and for which metrics, what you bought and what is left, and explains the daily cap: only a limited number of sparks is added per day, so extra completed metrics on a full day add nothing. The journal loads only when you open it. No migrations."
     ]},

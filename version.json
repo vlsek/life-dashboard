@@ -1,7 +1,14 @@
 {
-  "version": "6.98",
+  "version": "6.99",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "6.99",
+      "date": "2026-11-01 05:30",
+      "changes": [
+        "Achievements: “Recently unlocked” and “Closest to unlocking” in the showcase are now clickable — a click opens the right category, scrolls to the card and briefly highlights it."
+      ]
+    },
     {
       "version": "6.98",
       "date": "2026-10-30 20:00",
@@ -4956,6 +4963,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "6.99",
+      "date": "2026-11-01 05:30",
+      "changes": [
+        "«Достижения»: «Недавно открытые» и «Ближе всего к открытию» в витрине стали кликабельными — по клику раскрывается нужная категория, список прокручивается к карточке и она коротко подсвечивается."
+      ]
+    },
     {
       "version": "6.98",
       "date": "2026-10-30 20:00",

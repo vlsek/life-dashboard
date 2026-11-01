@@ -163,6 +163,26 @@ describe('категории свёрнуты по умолчанию (BACKLOG 3
     w.unmount()
   })
 
+  it('клик по «Недавно открытому» раскрывает его группу, подсвечивает карточку и снимает фильтр, который её прятал (81.2)', async () => {
+    const key = ACHIEVEMENTS[0].key
+    hold.unlocked.value = { [key]: '2026-10-05T10:00:00Z' }
+    const w = await mountApp()
+    expect(w.find('#ach-' + key).exists()).toBe(false) // группы свёрнуты
+    await w.find('[data-testid="showcase-recent"] [data-testid="showcase-pick"]').trigger('click')
+    await flushPromises()
+    const card = w.find('#ach-' + key)
+    expect(card.exists()).toBe(true)
+    expect(card.classes()).toContain('ach-flash')
+    // фильтр по другому грейду прячет карточку — клик по витрине его снимает
+    const other = w.findAll('[data-testid="grade-chip"]').find((c) => c.attributes('data-grade') !== 'all' && c.attributes('data-grade') !== w.find('#ach-' + key).attributes('data-grade'))!
+    await other.trigger('click')
+    expect(w.find('#ach-' + key).exists()).toBe(false)
+    await w.find('[data-testid="showcase-recent"] [data-testid="showcase-pick"]').trigger('click')
+    await flushPromises()
+    expect(w.find('#ach-' + key).exists()).toBe(true)
+    w.unmount()
+  })
+
   it('витрина «Недавно открытые» и «Ближе всего»; на закрытой карточке есть «осталось N»', async () => {
     const w0 = ACHIEVEMENTS.filter((a) => a.counter === 'wordsAdded').sort((a, b) => a.target - b.target)
     hold.states.value = evaluate({ ...ZERO, wordsAdded: Math.max(1, Math.floor(w0[0].target / 2)) })
