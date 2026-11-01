@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.00";
+const SITE_VERSION = "7.01";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.01", date: "2026-11-01 06:00", changes: [
+        "«Тренировки»: кнопка «Добавить прошедшую» — тренировка задним числом. Выбираешь дату, время начала и длительность, дальше тот же экран: упражнения, подходы, рекорды, итоги. В истории она сохраняется на выбранный день.",
+    ]},
     { version: "7.00", date: "2026-10-31 21:00", changes: [
         "«Настройки»: выбор анимации «записалось» при добавлении воды убран из окна настроек — он остался в одном месте, в «Кастомизации» (там тот же выбор: «По теме» и шесть бесплатных вариантов, с примерами). Выбранный раньше вариант сохраняется. Без миграций."
     ]},
@@ -2716,6 +2719,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.01", date: "2026-11-01 06:00", changes: [
+        "Workouts: an “Add a past workout” button logs a workout after the fact. Pick the date, start time and duration, then use the same screen — exercises, sets, records and the summary. It’s saved on the day you chose.",
+    ]},
     { version: "7.00", date: "2026-10-31 21:00", changes: [
         "Settings: the “saved” water animation picker is removed from the settings window — it now lives in one place, Customization (the same choice: “By theme” and six free variants, with previews). Your previous choice is kept. No migrations."
     ]},

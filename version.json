@@ -1,7 +1,14 @@
 {
-  "version": "7.00",
+  "version": "7.01",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.01",
+      "date": "2026-11-01 06:00",
+      "changes": [
+        "Workouts: an “Add a past workout” button logs a workout after the fact. Pick the date, start time and duration, then use the same screen — exercises, sets, records and the summary. It’s saved on the day you chose."
+      ]
+    },
     {
       "version": "7.00",
       "date": "2026-10-31 21:00",
@@ -4970,6 +4977,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.01",
+      "date": "2026-11-01 06:00",
+      "changes": [
+        "«Тренировки»: кнопка «Добавить прошедшую» — тренировка задним числом. Выбираешь дату, время начала и длительность, дальше тот же экран: упражнения, подходы, рекорды, итоги. В истории она сохраняется на выбранный день."
+      ]
+    },
     {
       "version": "7.00",
       "date": "2026-10-31 21:00",
