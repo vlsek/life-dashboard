@@ -1,7 +1,14 @@
 {
-  "version": "7.01",
+  "version": "7.02",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.02",
+      "date": "2026-10-29 02:16",
+      "changes": [
+        "Languages: while words are still loading the page says “Loading…” instead of “Nothing to learn”; if loading fails you now get a clear “Couldn’t load: …” with a “Try again” button (it used to say “Couldn’t save” and had no retry). History in Calendar: a failed load now also has “Try again”, and after a successful retry the old message disappears."
+      ]
+    },
     {
       "version": "7.01",
       "date": "2026-11-01 06:00",
@@ -4977,6 +4984,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.02",
+      "date": "2026-10-29 02:16",
+      "changes": [
+        "«Языки»: пока слова ещё грузятся, страница пишет «Загрузка…», а не «Нечего учить»; если загрузка не удалась, появляется понятное «Не удалось загрузить: …» с кнопкой «Повторить» (раньше было «Не удалось сохранить» и без повтора). «История» в «Календаре»: при сбое загрузки тоже есть «Повторить», а после успешного повтора старое сообщение исчезает."
+      ]
+    },
     {
       "version": "7.01",
       "date": "2026-11-01 06:00",
