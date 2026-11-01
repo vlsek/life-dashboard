@@ -223,6 +223,16 @@ const suggestions = computed(() => {
   return [...list.filter((s) => !s.skip), ...list.filter((s) => s.skip)]
 })
 
+// Подпись зоны для скринридера: название + что показывает окраска (иначе состояние передаётся только цветом)
+function zoneLabel(m: MuscleId): string {
+  const lvl = heat(m)
+  const name = muscleName(m)
+  let status: string
+  if (heatMode.value === 'volume') status = (lvl ?? 0) > 0 ? t('workouts_zone_sets').replace('{n}', String(setsMap.value.get(m) ?? 0)).replace('{d}', String(period.value)) : t('workouts_zone_none')
+  else if (heatMode.value === 'covered') status = lvl ? t('workouts_zone_covered') : t('workouts_zone_none')
+  else status = done.value.has(m) ? t('workouts_zone_recent') : t('workouts_zone_idle')
+  return `${name}, ${status}`
+}
 const geometry = computed(() => bodyGeometry(props.model ?? 'male'))
 const views = computed<{ key: 'front' | 'back'; label: DictKey; shapes: MuscleShape[] }[]>(() => [
   { key: 'front', label: 'workouts_muscles_front', shapes: geometry.value.front },
@@ -350,7 +360,7 @@ function shapeStyle(m: MuscleId) {
               role="button"
               tabindex="0"
               :aria-pressed="selected === s.muscle"
-              :aria-label="muscleName(s.muscle)"
+              :aria-label="zoneLabel(s.muscle)"
               @click="select(s.muscle)"
               @keydown.enter.prevent="select(s.muscle)"
               @keydown.space.prevent="select(s.muscle)"
