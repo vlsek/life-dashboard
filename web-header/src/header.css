@@ -732,3 +732,6 @@ html[data-motion='off'] .gh-achtoast { animation: none; }
 .gh-off-error .gh-off-n { background: var(--danger, #e5484d); }
 .gh-off-item { margin-bottom: 10px; }
 .gh-off-err { font-size: 12px; margin: 2px 0 6px; word-break: break-word; }
+/* Плашка «Идёт тренировка» (69.2 срез 4) */
+.gh-aw { flex: none; display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 8px; border-radius: 14px; background: var(--accent, #6c8cff); color: var(--accent-text, #fff); font-size: 12px; font-weight: 700; text-decoration: none; font-variant-numeric: tabular-nums; }
+.gh-aw-t { line-height: 1; }

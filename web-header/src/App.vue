@@ -24,6 +24,7 @@ import PageWidgetButton from './components/PageWidgetButton.vue'
 import { useLayout } from './lib/useLayout'
 import { isWidgetOn, pageWidgetKind, widgetToggleLayout } from './lib/pageWidget'
 import OfflineBadge from './components/OfflineBadge.vue'
+import ActiveWorkoutBadge from './components/ActiveWorkoutBadge.vue'
 import { useOutboxView, type OutboxView } from './lib/outboxClient'
 import SidebarTop from './components/SidebarTop.vue'
 import PointsFloat from './components/PointsFloat.vue'
@@ -243,6 +244,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
     <FavoriteHeart v-if="pageKey && !props.panelOnly" :active="isFavorite" @toggle="onToggleFavorite" />
     <PageWidgetButton v-if="widgetKind && layoutApi.loaded.value && !props.panelOnly" :on="widgetOn" :busy="widgetBusy" @toggle="onToggleWidget" />
     <OfflineBadge v-if="outboxView" :view="outboxView" />
+    <ActiveWorkoutBadge v-if="!props.panelOnly" />
     <!-- значок «пауза включена» виден и на Дашборде (BACKLOG 48.7) -->
     <button v-if="pause?.status === 'active'" type="button" class="gh-badge" data-test="pause-badge" :title="t('hdr_pause_badge')" :aria-label="t('hdr_pause_badge')" @click="globalSettingsOpen = true">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--accent, #6c8cff)" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2" /><rect x="14" y="5" width="4" height="14" rx="1.2" /></svg>
