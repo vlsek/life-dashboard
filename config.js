@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.16";
+const SITE_VERSION = "7.17";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.17", date: "2026-11-01 12:30", changes: [
+        "«Календарь» / «История»: в окне дня появился блок «Как прошёл день» — самочувствие и заметка, которые ты оставил на Дашборде (нужна миграция 114).",
+    ]},
     { version: "7.16", date: "2026-11-01 12:00", changes: [
         "«Дашборд» → «Ежедневные метрики»: над «Сохранить день» появился блок «Как прошёл день?» — самочувствие от 1 до 5 и короткая заметка. Пишется вместе с «Сохранить день». Нужна миграция 114 (до неё блок не виден).",
     ]},
@@ -2764,6 +2767,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.17", date: "2026-11-01 12:30", changes: [
+        "Calendar / History: the day window now shows a “How the day went” block — the rating and note you left on the Dashboard (needs migration 114).",
+    ]},
     { version: "7.16", date: "2026-11-01 12:00", changes: [
         "Dashboard → Daily metrics: above “Save day” there is now a “How was the day?” block — a 1–5 rating and a short note, saved together with “Save day”. Needs migration 114 (the block stays hidden until then).",
     ]},

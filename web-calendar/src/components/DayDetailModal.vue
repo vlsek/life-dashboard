@@ -5,6 +5,8 @@ import { dayStats, hasData, plannedItemDone, plannedOf } from '../lib/historySta
 import { isMetricDone, metricExpectedOn, metricSchedule } from '../lib/historyMetrics'
 import type { Metric, MetricValue, SetEntry } from '../lib/historyTypes'
 import { locale, t } from '../lib/i18n'
+import type { DictKey } from '../lib/i18n'
+import { reflectionOf } from '../lib/reflection'
 import MetricIcon from './MetricIcon.vue'
 import Icon from './Icon.vue'
 
@@ -64,6 +66,7 @@ const plannedRows = computed(() =>
   })),
 )
 
+const reflection = computed(() => reflectionOf(props.ctx.notesByDate[props.dateStr]))
 const notes = computed<string[]>(() => {
   const raw = props.ctx.notesByDate[props.dateStr]?.items || []
   return raw.map((n) => (typeof n === 'string' ? n : (n?.text ?? '')))
@@ -122,6 +125,12 @@ const notes = computed<string[]>(() => {
             </span>
             <span v-if="r.item.bonus" style="color: #e0a93b"><Icon name="star" /></span>
           </div>
+        </template>
+
+        <template v-if="reflection">
+          <h4 class="mb-1.5 mt-3.5 font-semibold">{{ t('hist_reflect_h') }}</h4>
+          <p v-if="reflection.mood" class="m-0" data-test="day-mood">{{ t('hist_reflect_mood') }}: <strong>{{ reflection.mood }} / 5</strong> — {{ t(('hist_reflect_mood_' + reflection.mood) as DictKey) }}</p>
+          <p v-if="reflection.note" class="m-0 mt-1 whitespace-pre-wrap" data-test="day-note">{{ reflection.note }}</p>
         </template>
 
         <template v-if="notes.length">

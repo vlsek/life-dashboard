@@ -1,7 +1,14 @@
 {
-  "version": "7.16",
+  "version": "7.17",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.17",
+      "date": "2026-11-01 12:30",
+      "changes": [
+        "Calendar / History: the day window now shows a “How the day went” block — the rating and note you left on the Dashboard (needs migration 114)."
+      ]
+    },
     {
       "version": "7.16",
       "date": "2026-11-01 12:00",
@@ -5082,6 +5089,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.17",
+      "date": "2026-11-01 12:30",
+      "changes": [
+        "«Календарь» / «История»: в окне дня появился блок «Как прошёл день» — самочувствие и заметка, которые ты оставил на Дашборде (нужна миграция 114)."
+      ]
+    },
     {
       "version": "7.16",
       "date": "2026-11-01 12:00",
