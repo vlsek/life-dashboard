@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.06";
+const SITE_VERSION = "7.07";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,8 +488,10 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
-    { version: "7.06", date: "2026-11-01 08:00", changes: [
+    { version: "7.07", date: "2026-11-01 08:00", changes: [
         "«Тренировки»: кнопка «Повторить прошлую» — открывает тренировку с теми же упражнениями, что были в последний раз, и таким же числом пустых подходов; прошлые веса подсказываются рядом.",
+    { version: "7.06", date: "2026-11-01 13:00", changes: [
+        "«Вехи»: кнопка «Лента на год» — по месяцам видно, что уже сделано (по истории отметок), что запланировано (ближайшая дата и её повторы по интервалу до конца года) и что просрочено; статус подписан словом и значком, годы листаются стрелками. Вехи с интервалом только по пробегу в ленте показаны, только когда уже сделаны (у них нет дат). Без миграций."
     ]},
     { version: "7.05", date: "2026-11-01 06:30", changes: [
         "«Тренировки» → карта мышц: у каждой зоны подпись для скринридера теперь говорит и состояние («Грудь, недавно в работе», «подходов за 30 дн.: 6», «нет данных»), а не только цвет.",
@@ -2734,8 +2736,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
-    { version: "7.06", date: "2026-11-01 08:00", changes: [
+    { version: "7.07", date: "2026-11-01 08:00", changes: [
         "Workouts: a “Repeat last workout” button opens a workout with the same exercises as last time and the same number of empty sets, with your previous weights hinted alongside.",
+    { version: "7.06", date: "2026-11-01 13:00", changes: [
+        "Milestones: a new “Timeline” button — by month you can see what is done (from the history), what is planned (the next date and its repeats by interval until the end of the year) and what is overdue; each status is labelled with a word and an icon, and years can be flipped with arrows. Mileage-only milestones appear only once done (they have no dates). No migrations."
     ]},
     { version: "7.05", date: "2026-11-01 06:30", changes: [
         "Workouts → muscle map: each zone’s screen-reader label now also states its status (“Chest, worked recently”, “6 sets in 30 days”, “no data”), not just colour.",
