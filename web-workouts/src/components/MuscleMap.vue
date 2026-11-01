@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { usuallySkipped } from '../lib/genderTips'
 import EmojiText from './EmojiText.vue'
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
 import { addDaysIso, fmtRu, todayStr } from '../lib/date'
 import { MUSCLE_IDS, referenceFor, ruleForExercise, type MuscleId } from '../lib/muscles'
