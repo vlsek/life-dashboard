@@ -17,6 +17,9 @@ import ExerciseCard from './components/ExerciseCard.vue'
 import WarmupReminder from './components/WarmupReminder.vue'
 import OverviewChart from './components/OverviewChart.vue'
 import MuscleMap from './components/MuscleMap.vue'
+import MuscleFilterChip from './components/MuscleFilterChip.vue'
+import { entriesForMuscle, exercisesForMuscle } from './lib/muscleFilter'
+import type { MuscleId } from './lib/muscles'
 import { fetchProfileGender } from './lib/bodyGender'
 import { useMeasurements } from './lib/useMeasurements'
 import MeasurementsSection from './components/MeasurementsSection.vue'
@@ -88,9 +91,18 @@ function categoryLabel(key: string): string {
   if (isKnownCategory(key)) return t(('workouts_cat_' + key) as 'workouts_cat_upper')
   return key
 }
+// Фильтр по мышце (BACKLOG 70.4): ставится кнопками в панели мышцы на карте, снимается чипом над списками «Упражнения» и «Журнал»
+const muscleFilter = ref<MuscleId | null>(null)
+const shownExercises = computed(() => exercisesForMuscle(exercises.value, muscleFilter.value))
+const shownEntries = computed(() => entriesForMuscle(entries.value, exercises.value, muscleFilter.value))
+function applyMuscleFilter(m: MuscleId, tab: 'journal' | 'exercises') {
+  muscleFilter.value = m
+  setTab(tab)
+}
+const filterMuscleName = computed(() => (muscleFilter.value ? t(('workouts_muscle_' + muscleFilter.value) as 'workouts_muscle_chest') : ''))
 const groups = computed(() => {
   const map = new Map<string, Exercise[]>()
-  for (const ex of exercises.value) {
+  for (const ex of shownExercises.value) {
     const key = ex.category?.trim() || ''
     if (!map.has(key)) map.set(key, [])
     map.get(key)!.push(ex)
@@ -529,7 +541,8 @@ function onToggleProgramWeek(week: number) {
       </div>
 
       <div v-show="pageTab === 'journal'" data-testid="tab-journal">
-        <JournalList :entries="entries" :exercises="exercises" />
+        <MuscleFilterChip v-if="muscleFilter" :name="filterMuscleName" @clear="muscleFilter = null" />
+        <JournalList :entries="shownEntries" :exercises="exercises" />
       </div>
 
       <div v-show="pageTab === 'map'" data-testid="tab-map">
@@ -555,6 +568,7 @@ function onToggleProgramWeek(week: number) {
           :entries="entries"
           :exercises="exercises"
           :study-recent="studyRecent"
+          @filter="applyMuscleFilter"
           @add-entry="(ex) => (entryForm = { exercise: ex, existing: null })"
           @quick-add-entry="(ex, res, done) => onQuickAddEntry(ex, res, done)"
         />
@@ -595,6 +609,8 @@ function onToggleProgramWeek(week: number) {
 
       <WarmupReminder v-if="showWarmup" @dismiss="dismissWarmup" />
 
+      <MuscleFilterChip v-if="muscleFilter" :name="filterMuscleName" @clear="muscleFilter = null" />
+      <p v-if="muscleFilter && shownExercises.length === 0" class="text-sm" style="color: var(--text-dim)" data-testid="muscle-filter-empty">{{ t('workouts_filter_none') }}</p>
       <section v-for="g in groups" :key="g.key">
         <div
           class="collapse-head mb-2.5 mt-6 flex items-center gap-2"

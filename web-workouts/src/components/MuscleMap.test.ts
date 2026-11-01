@@ -540,4 +540,12 @@ describe('MuscleMap: visual packs (BACKLOG 70.2)', () => {
     expect(w.find('[data-testid="muscle-heat-caption"]').text()).toContain('пока нет')
     expect(zone(w, 'chest').attributes('data-state')).toBe('idle')
   })
+
+  it('панель мышцы: кнопки «Упражнения» и «В журнале» отдают мышцу и вкладку наружу (70.4)', async () => {
+    const w = await openMap([entry('bench', '2026-09-29')], [bench])
+    await zone(w, 'chest').trigger('click')
+    await w.find('[data-testid="muscle-filter-journal"]').trigger('click')
+    await w.find('[data-testid="muscle-filter-exercises"]').trigger('click')
+    expect(w.emitted('filter')).toEqual([['chest', 'journal'], ['chest', 'exercises']])
+  })
 })

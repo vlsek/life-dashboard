@@ -33,7 +33,7 @@ import { useAccordionMember } from '../lib/useCollapseStyle'
 // серые — нет. Клик по мышце — её упражнения (свои с кнопкой «Добавить запись» + подсказки из справочника).
 // `embedded` — карта лежит в своей вкладке «Карта мышц» (BACKLOG 54.2): заголовок-кнопка не нужна, тело всегда раскрыто, в аккордеон блоков не входит.
 const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string; studyRecent?: boolean; embedded?: boolean; model?: BodyModel; gender?: 'male' | 'female' | null }>()
-const emit = defineEmits<{ 'add-entry': [exercise: Exercise]; 'quick-add-entry': [exercise: Exercise, input: EntryFormInput, done: (ok: boolean) => void] }>()
+const emit = defineEmits<{ filter: [muscle: MuscleId, tab: 'journal' | 'exercises']; 'add-entry': [exercise: Exercise]; 'quick-add-entry': [exercise: Exercise, input: EntryFormInput, done: (ok: boolean) => void] }>()
 
 import { HEAT_KEY, HEAT_LEVELS, HEAT_MODES, coveredMuscles, heatLevel, normalizeHeatMode, setsByMuscle, type HeatMode } from '../lib/muscleHeat'
 
@@ -370,7 +370,13 @@ function shapeStyle(m: MuscleId) {
       </div>
 
       <div v-if="selected" class="mt-3 rounded-lg border p-3 text-sm" style="border-color: var(--border); background: var(--bg)" data-testid="muscle-detail" ref="detailEl">
-        <div class="font-bold">{{ muscleName(selected) }}</div>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="font-bold">{{ muscleName(selected) }}</div>
+          <div class="flex gap-1.5 text-[0.8em]">
+            <button type="button" class="rounded-lg border px-2 py-1" style="border-color: var(--border); background: transparent; color: var(--accent)" data-testid="muscle-filter-exercises" @click="emit('filter', selected, 'exercises')">{{ t('workouts_filter_exercises') }}</button>
+            <button type="button" class="rounded-lg border px-2 py-1" style="border-color: var(--border); background: transparent; color: var(--accent)" data-testid="muscle-filter-journal" @click="emit('filter', selected, 'journal')">{{ t('workouts_filter_journal') }}</button>
+          </div>
+        </div>
         <div class="mb-2 text-[0.85em]" style="color: var(--text-dim)">
           {{ t('workouts_muscles_last') }}
           <template v-if="last[selected]"><span data-testid="muscle-last-ago">{{ agoText(last[selected]) }}</span> ({{ ruDate(last[selected] as string) }})</template>
