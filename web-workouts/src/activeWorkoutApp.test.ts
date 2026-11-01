@@ -199,5 +199,25 @@ describe('активная тренировка', () => {
     expect(entries.map((e) => e.superset_group)).toEqual([1, 1])
     w.unmount()
   })
+
+  it('таймер отдыха: после ✓ появляется плашка с остатком; ±15 и «Пропустить» работают; в настройке «выкл» — плашки нет', async () => {
+    localStorage.removeItem('workouts.restSeconds.v1')
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
+    const inputs = q(w, 'aw-set-0-0').findAll('input'); await inputs[0].setValue('50'); await inputs[1].setValue('5')
+    expect(q(w, 'rest-timer').exists()).toBe(false)
+    await q(w, 'aw-tick-0-0').trigger('click')
+    expect(q(w, 'rest-timer').exists()).toBe(true)
+    expect(q(w, 'rest-left').text()).toMatch(/^01:(2\d|30)$/) // 90 секунд по умолчанию
+    await q(w, 'rest-plus').trigger('click'); expect(q(w, 'rest-left').text()).toMatch(/^01:(4\d|45)$/)
+    await q(w, 'rest-skip').trigger('click'); expect(q(w, 'rest-timer').exists()).toBe(false)
+    await q(w, 'aw-tick-0-0').trigger('click') // снять ✓ — таймер не запускается
+    expect(q(w, 'rest-timer').exists()).toBe(false)
+    // выключаем: 90 → 120 → 180 → выкл
+    for (let i = 0; i < 3; i++) await q(w, 'aw-rest-setting').trigger('click')
+    expect(q(w, 'aw-rest-setting').text()).toContain('выкл')
+    await q(w, 'aw-tick-0-0').trigger('click'); expect(q(w, 'rest-timer').exists()).toBe(false)
+    w.unmount()
+  })
 })
 

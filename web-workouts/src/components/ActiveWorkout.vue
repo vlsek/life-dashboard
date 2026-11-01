@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useActiveWorkout } from '../lib/useActiveWorkout'
 import { supersetPos, doneSetCount, formatElapsed, previousSet, previousText } from '../lib/activeWorkout'
 import { parseNum } from '../lib/entrySets'
@@ -8,6 +8,9 @@ import { t, type DictKey } from '../lib/i18n'
 import { prSetText, setRecords, topKind } from '../lib/records'
 import { showToast } from '../lib/toast'
 import { useRoutines } from '../lib/useRoutines'
+import { useRestTimer } from '../lib/useRestTimer'
+import { shouldRestAfter } from '../lib/restTimer'
+import RestTimer from './RestTimer.vue'
 import { haptic } from '../lib/nativeFeedback'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 
@@ -27,9 +30,19 @@ const prMap = computed(() => {
   return m
 })
 const prKind = (entryId: string, i: number) => topKind(prMap.value.get(entryId)?.[i] ?? [])
+const rest = useRestTimer()
+// Экран не гаснет, пока идёт тренировка (Screen Wake Lock); не поддерживается — молча пропускаем
+let wake: { release: () => Promise<void> } | null = null
+async function lockScreen() { try { wake = (await (navigator as unknown as { wakeLock?: { request: (k: string) => Promise<{ release: () => Promise<void> }> } }).wakeLock?.request('screen')) ?? null } catch { wake = null } }
+const onVisible = () => { if (document.visibilityState === 'visible' && !wake) void lockScreen() }
+onMounted(() => { void lockScreen(); document.addEventListener('visibilitychange', onVisible) })
+onBeforeUnmount(() => { document.removeEventListener('visibilitychange', onVisible); void wake?.release().catch(() => undefined); wake = null; rest.skip() })
 async function onTick(entryId: string, i: number) {
+  const before = draft.value?.exercises.find((x) => x.id === entryId)?.sets[i]?.done === true
   aw.toggleDone(entryId, i)
   await nextTick()
+  const ei = draft.value?.exercises.findIndex((x) => x.id === entryId) ?? -1
+  if (!before && ei >= 0 && draft.value && shouldRestAfter(draft.value, ei)) rest.start() // отдых после выполненного подхода (в суперсете — после последнего в группе)
   const k = prKind(entryId, i)
   const e = draft.value?.exercises.find((x) => x.id === entryId)
   if (k && e) {
@@ -118,12 +131,14 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
       </div>
       <div class="mx-auto mt-1 max-w-3xl text-center text-xs" style="color: var(--text-dim)">{{ t('aw_done_sets').replace('{n}', String(doneSetCount(draft))) }}</div>
       <div v-if="draft.exercises.length" class="mx-auto mt-1 flex max-w-3xl items-center justify-center gap-2 text-xs">
+        <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 32px" data-testid="aw-rest-setting" @click="rest.cycleSetting()">{{ t('aw_rest_setting') }}: {{ rest.seconds.value ? rest.seconds.value + ' ' + t('sm_sec') : t('aw_rest_off') }}</button>
         <button v-if="!savingRoutine" type="button" class="px-2 py-1" style="color: var(--accent); min-height: 32px" data-testid="aw-save-routine" @click="openSaveRoutine">{{ t('rt_save') }}</button>
         <template v-else>
           <input v-model="routineName" maxlength="80" :placeholder="t('rt_name_ph')" class="rounded-md border px-2 py-1" style="border-color: var(--border); background: var(--bg); color: var(--text); min-height: 36px" data-testid="aw-routine-name" @keyup.enter="saveRoutine" />
           <button type="button" class="rounded-md px-3 py-1 font-semibold" style="background: var(--accent); color: var(--accent-text); min-height: 36px" data-testid="aw-routine-ok" @click="saveRoutine">{{ t('rt_ok') }}</button>
         </template>
       </div>
+      <div class="mx-auto max-w-3xl"><RestTimer /></div>
     </header>
 
     <main class="mx-auto max-w-3xl px-4 pb-24 pt-4">
