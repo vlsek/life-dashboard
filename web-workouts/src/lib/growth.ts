@@ -2,6 +2,7 @@
 // предыдущих 28 дней. Лучший подход — по «силе»: у упражнений с весом оценка разового максимума (вес × (1 + повторы / 30)), у остальных — повторы.
 // Чистые функции без обращения к DOM; текст «было → стало» собирает bestSetRecord на отфильтрованных записях, как рекорды карточки.
 import { addDaysIso } from './date'
+import { workingOf } from './sessionContract'
 import { bestSetRecord } from './workouts'
 import type { Exercise, WorkoutEntry } from './types'
 
@@ -34,7 +35,7 @@ function windowEntries(entries: WorkoutEntry[], from: string, to: string): Worko
 function bestScore(entries: WorkoutEntry[], exercise: Exercise): number | null {
   let best: number | null = null
   for (const e of entries) {
-    for (const s of e.sets ?? []) {
+    for (const s of workingOf(e.sets)) {
       const v = setScore(exercise, s.reps, s.weight)
       if (v != null && (best == null || v > best)) best = v
     }

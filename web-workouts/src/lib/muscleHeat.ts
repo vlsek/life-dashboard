@@ -1,4 +1,5 @@
 import { musclesForExercise, type MuscleId } from './muscles'
+import { workingOf } from './sessionContract'
 import type { Exercise, WorkoutEntry } from './types'
 
 // BACKLOG 70.3 «Тепловая карта нагрузки»: три режима окраски карты мышц. Чистая логика без сети и Vue.
@@ -23,8 +24,9 @@ export function setsByMuscle(entries: EntryLite[], exercises: ExLite[], today: s
   for (const ex of exercises) byEx.set(ex.id, musclesForExercise(ex.name))
   const out = new Map<MuscleId, number>()
   for (const e of entries) {
-    if (e.sets.length === 0 || e.date > today || e.date < sinceIso) continue
-    for (const m of byEx.get(e.exercise_id) ?? []) out.set(m, (out.get(m) ?? 0) + e.sets.length)
+    const n = workingOf(e.sets).length
+    if (n === 0 || e.date > today || e.date < sinceIso) continue
+    for (const m of byEx.get(e.exercise_id) ?? []) out.set(m, (out.get(m) ?? 0) + n)
   }
   return out
 }

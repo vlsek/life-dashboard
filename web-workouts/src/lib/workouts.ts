@@ -1,4 +1,5 @@
 import type { Exercise, WorkoutEntry, WorkoutSet } from './types'
+import { workingOf } from './sessionContract'
 import { repUnit } from './weightUnit'
 
 export interface BestRecord {
@@ -16,7 +17,7 @@ export function bestSetRecord(
 ): BestRecord | null {
   let best: { weight: number | null; extra: number; reps: number; date: string } | null = null
   for (const e of entries) {
-    for (const s of e.sets || []) {
+    for (const s of workingOf(e.sets)) {
       if (s.reps == null) continue
       if (sideFilter && s.side !== sideFilter) continue
       const w = exercise.tracks_weight ? (s.weight ?? 0) : null
@@ -59,7 +60,7 @@ export function bestPaceRecord(
   if (!exercise.tracks_duration) return null
   let best: { perHour: number; text: string; date: string } | null = null
   for (const e of entries) {
-    for (const s of e.sets || []) {
+    for (const s of workingOf(e.sets)) {
       if (s.reps == null || !s.duration) continue
       if (sideFilter && s.side !== sideFilter) continue
       const perHour = (s.reps / s.duration) * 60

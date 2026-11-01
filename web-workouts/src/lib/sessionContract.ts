@@ -47,6 +47,8 @@ export function setsVolume(sets: readonly SetV2[]): number {
   for (const s of sets) if (isWorking(s) && s.reps && s.weight) t += s.reps * s.weight
   return t
 }
+// Рабочие подходы записи (без разминки и невыполненных); у старых записей без полей type/done — все подходы
+export const workingOf = <T extends SetExtras>(sets: readonly T[] | null | undefined): T[] => (sets ?? []).filter(isWorking)
 export const workingSetCount = (sets: readonly SetV2[]): number => sets.filter(isWorking).length
 
 export interface SessionView {

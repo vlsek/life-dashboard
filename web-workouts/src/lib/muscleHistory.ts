@@ -1,4 +1,5 @@
 import { addDaysIso } from './date'
+import { workingOf } from './sessionContract'
 import { musclesForExercise, type MuscleId } from './muscles'
 import type { MuscleLastRow } from './muscleStats'
 import type { Exercise, WorkoutEntry } from './types'
@@ -88,8 +89,8 @@ export function muscleSessions(entries: EntryLite[], exercises: ExLite[], today:
     if (!s) days.set(e.date, (s = { date: e.date, exercises: [], sets: 0, reps: 0 }))
     const name = names.get(e.exercise_id)
     if (name && !s.exercises.includes(name)) s.exercises.push(name)
-    s.sets += e.sets.length
-    for (const set of e.sets) if (typeof set.reps === 'number' && set.reps > 0) s.reps += set.reps
+    s.sets += workingOf(e.sets).length
+    for (const set of workingOf(e.sets)) if (typeof set.reps === 'number' && set.reps > 0) s.reps += set.reps
   }
   return [...days.values()].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
 }

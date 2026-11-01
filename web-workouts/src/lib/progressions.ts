@@ -1,4 +1,5 @@
 import { normalizeName } from './muscles'
+import { workingOf } from './sessionContract'
 import type { Exercise, WorkoutEntry } from './types'
 
 // Деревья прогрессии упражнений (BACKLOG 3.3, первый срез). Каждая цепочка — ступени от лёгкой к
@@ -159,7 +160,7 @@ export function chainState(chain: ProgressionChain, exercises: Exercise[], entri
     let best = 0
     for (const e of entries) {
       if (!ids.has(e.exercise_id) || e.date > today) continue
-      for (const s of e.sets) if (s.reps != null && s.reps > best) best = s.reps
+      for (const s of workingOf(e.sets)) if (s.reps != null && s.reps > best) best = s.reps
     }
     return { step, status: 'locked', best, exercises: exs }
   })
