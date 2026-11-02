@@ -18,9 +18,10 @@ import RightPanel, { type GaugeData } from './components/RightPanel.vue'
 import SettingsModal from './components/SettingsModal.vue'
 import HotkeysModal from './components/HotkeysModal.vue'
 import CommandPalette from './components/CommandPalette.vue'
+import HelpModal from './components/HelpModal.vue'
 import PaletteButton from './components/PaletteButton.vue'
 import type { PaletteItem } from './lib/palette'
-import { createHotkeyHandler, hotkeysHelpOpen, paletteOpen } from './lib/hotkeys'
+import { createHotkeyHandler, helpOpen, hotkeysHelpOpen, paletteOpen } from './lib/hotkeys'
 import { applyBadge, badgeCount } from './lib/appBadge'
 import { readQuick, withoutQuick } from './lib/quickAction'
 import { loadPauseState, type PauseState } from './lib/pause'
@@ -59,6 +60,7 @@ function onPalettePick(it: PaletteItem) {
   else if (it.id === 'action:water') waterOpen.value = true
   else if (it.id === 'action:settings') globalSettingsOpen.value = true
   else if (it.id === 'action:hotkeys') hotkeysHelpOpen.value = true
+  else if (it.id === 'action:help') helpOpen.value = true
 }
 // Горячие клавиши (79.8): один слушатель на страницу; «g» + буква — переход, «?» — шпаргалка
 const onHotkey = createHotkeyHandler({ navigate: (href) => { location.href = href } })
@@ -309,6 +311,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
       @open-settings="panelOpen = false; globalSettingsOpen = true"
     />
     <HotkeysModal />
+    <HelpModal />
     <CommandPalette v-if="paletteOpen" :water="waterVisible" @pick="onPalettePick" @close="paletteOpen = false" />
     <SettingsModal
       v-if="globalSettingsOpen && userId"

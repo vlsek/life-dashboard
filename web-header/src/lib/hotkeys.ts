@@ -42,6 +42,8 @@ export function setHotkeysEnabled(on: boolean): void {
 
 // Окно-шпаргалка (общее для App.vue и слушателя)
 export const hotkeysHelpOpen = ref(false)
+// Справка с поиском (79.10): открывается из палитры и настроек
+export const helpOpen = ref(false)
 // Командная палитра (79.1): открывается по Ctrl/Cmd+K и «/»
 export const paletteOpen = ref(false)
 
