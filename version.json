@@ -1,7 +1,14 @@
 {
-  "version": "7.41",
+  "version": "7.42",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.42",
+      "date": "2026-11-02 18:00",
+      "changes": [
+        "Workouts: under the muscle map there is a new “Share as a picture” button. It builds a PNG “My training week” with sets per muscle group and totals for the chosen period. Preview first, then Download or Share. No name, avatar or weight on the picture."
+      ]
+    },
     {
       "version": "7.41",
       "date": "2026-11-02 14:00",
@@ -5257,6 +5264,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.42",
+      "date": "2026-11-02 18:00",
+      "changes": [
+        "«Тренировки»: под картой мышц появилась кнопка «Поделиться картинкой» — собирает PNG «Моя неделя тренировок» с подходами по группам мышц и итогами за выбранный период. Сначала превью, потом «Скачать» или «Отправить». На картинке нет имени, аватара и веса."
+      ]
+    },
     {
       "version": "7.41",
       "date": "2026-11-02 14:00",

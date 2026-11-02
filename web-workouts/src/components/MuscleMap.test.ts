@@ -71,6 +71,12 @@ describe('MuscleMap', () => {
     expect(w.find('[data-testid="muscle-readiness"]').exists()).toBe(false)
   })
 
+  it('под картой есть кнопка «Поделиться картинкой» (80.10)', async () => {
+    const w = await openMap([entry('bench', '2026-09-29')], [bench, squat])
+    expect(w.find('[data-testid="share-open"]').text()).toBe('Поделиться картинкой')
+    expect(w.find('[data-testid="share-preview"]').exists()).toBe(false)
+  })
+
   it('клик по серой мышце показывает свои упражнения и подсказки; кнопка добавляет запись', async () => {
     const w = await openMap([entry('bench', '2026-09-29')], [bench, squat])
     await zone(w, 'quads').trigger('click')
