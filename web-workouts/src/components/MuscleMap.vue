@@ -35,6 +35,7 @@ import { useAccordionMember } from '../lib/useCollapseStyle'
 const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string; studyRecent?: boolean; embedded?: boolean; model?: BodyModel; gender?: 'male' | 'female' | null }>()
 const emit = defineEmits<{ filter: [muscle: MuscleId, tab: 'journal' | 'exercises']; 'add-entry': [exercise: Exercise]; 'quick-add-entry': [exercise: Exercise, input: EntryFormInput, done: (ok: boolean) => void] }>()
 
+import BalanceBars from './BalanceBars.vue'
 import { HEAT_KEY, HEAT_LEVELS, HEAT_MODES, coveredMuscles, heatLevel, normalizeHeatMode, setsByMuscle, type HeatMode } from '../lib/muscleHeat'
 
 const OPEN_KEY = 'workouts_musclemap_open'
@@ -400,6 +401,8 @@ function shapeStyle(m: MuscleId) {
         <span class="inline-flex items-center gap-1.5"><span class="muscle-legend-mark muscle-legend-mark--done" aria-hidden="true"></span> {{ heatMode === 'recent' ? t('workouts_muscles_legend_done') : heatMode === 'volume' ? t('workouts_heat_legend_volume') : t('workouts_heat_legend_covered') }}</span>
         <span class="inline-flex items-center gap-1.5"><span class="muscle-legend-mark muscle-legend-mark--idle" aria-hidden="true"></span> {{ heatMode === 'recent' ? t('workouts_muscles_legend_idle') : t('workouts_heat_legend_none') }}</span>
       </div>
+
+      <BalanceBars :entries="entries" :exercises="exercises" :today="today" :since="periodStart(today, period)" :days="period" />
 
       <div v-if="selected" class="mt-3 rounded-lg border p-3 text-sm" style="border-color: var(--border); background: var(--bg)" data-testid="muscle-detail" ref="detailEl">
         <div class="flex flex-wrap items-center justify-between gap-2">

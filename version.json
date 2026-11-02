@@ -1,7 +1,14 @@
 {
-  "version": "7.27",
+  "version": "7.28",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.28",
+      "date": "2026-11-02 09:20",
+      "changes": [
+        "Workouts: below the muscle map there is a new “Balance” block with three bars — push/pull, upper/lower and left/right (by reps, e.g. “the left side is 18% behind”). With too few sets or no side recorded it says so instead of guessing."
+      ]
+    },
     {
       "version": "7.27",
       "date": "2026-11-02 10:30",
@@ -5159,6 +5166,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.28",
+      "date": "2026-11-02 09:20",
+      "changes": [
+        "«Тренировки»: под картой мышц появился блок «Баланс»: три полоски — толкай/тяни, верх/низ и левая/правая сторона (по повторам, «левая сторона отстаёт на 18%»). Если подходов мало или сторона не указана, честно пишем «подходов пока мало»."
+      ]
+    },
     {
       "version": "7.27",
       "date": "2026-11-02 10:30",
