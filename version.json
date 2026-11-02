@@ -1,7 +1,14 @@
 {
-  "version": "7.30",
+  "version": "7.31",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.31",
+      "date": "2026-11-02 10:40",
+      "changes": [
+        "Workouts: in “Sets” mode the muscle map now colours groups against a guide of 10 sets a week (scaled for other periods) instead of against your busiest group. The muscle tooltip shows the guide. It is a guide, not a rule."
+      ]
+    },
     {
       "version": "7.30",
       "date": "2026-11-02 10:00",
@@ -5180,6 +5187,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.31",
+      "date": "2026-11-02 10:40",
+      "changes": [
+        "«Тренировки»: в режиме «Подходы» карта мышц красит группы относительно ориентира — 10 подходов в неделю (для другого периода пропорционально), а не относительно самой нагруженной группы. В подсказке к мышце виден ориентир. Это ориентир, а не предписание."
+      ]
+    },
     {
       "version": "7.30",
       "date": "2026-11-02 10:00",

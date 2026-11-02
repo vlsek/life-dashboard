@@ -37,6 +37,7 @@ const emit = defineEmits<{ filter: [muscle: MuscleId, tab: 'journal' | 'exercise
 
 import TodayFocus from './TodayFocus.vue'
 import BalanceBars from './BalanceBars.vue'
+import { WEEK_TARGET } from '../lib/todayFocus'
 import { HEAT_KEY, HEAT_LEVELS, HEAT_MODES, coveredMuscles, heatLevel, normalizeHeatMode, setsByMuscle, type HeatMode } from '../lib/muscleHeat'
 
 const OPEN_KEY = 'workouts_musclemap_open'
@@ -137,10 +138,12 @@ function setHeatMode(m: HeatMode) {
 }
 const setsMap = computed(() => setsByMuscle(props.entries, props.exercises, today.value, periodStart(today.value, period.value)))
 const setsMax = computed(() => Math.max(0, ...setsMap.value.values()))
+// BACKLOG 80.1: ступени считаются от цели (10 подходов в неделю, на другой период — пропорционально), а не от самой нагруженной группы
+const goal = computed(() => Math.max(1, Math.round((WEEK_TARGET * period.value) / 7)))
 const covered = computed(() => coveredMuscles(props.exercises))
 // ступень 0..4 для режима volume; для covered — 1 или 0; для recent — null (красит прежняя логика)
 function heat(m: MuscleId): number | null {
-  if (heatMode.value === 'volume') return heatLevel(setsMap.value.get(m) ?? 0, setsMax.value)
+  if (heatMode.value === 'volume') return heatLevel(setsMap.value.get(m) ?? 0, goal.value)
   if (heatMode.value === 'covered') return covered.value.has(m) ? 1 : 0
   return null
 }
@@ -237,7 +240,7 @@ function zoneLabel(m: MuscleId): string {
   const lvl = heat(m)
   const name = muscleName(m)
   let status: string
-  if (heatMode.value === 'volume') status = (lvl ?? 0) > 0 ? t('workouts_zone_sets').replace('{n}', String(setsMap.value.get(m) ?? 0)).replace('{d}', String(period.value)) : t('workouts_zone_none')
+  if (heatMode.value === 'volume') status = (lvl ?? 0) > 0 ? t('workouts_zone_sets').replace('{n}', String(setsMap.value.get(m) ?? 0)).replace('{d}', String(period.value)) + ' ' + t('workouts_zone_goal').replace('{g}', String(goal.value)) : t('workouts_zone_none')
   else if (heatMode.value === 'covered') status = lvl ? t('workouts_zone_covered') : t('workouts_zone_none')
   else status = done.value.has(m) ? t('workouts_zone_recent') : t('workouts_zone_idle')
   return `${name}, ${status}`
@@ -334,7 +337,7 @@ function shapeStyle(m: MuscleId) {
         </button>
       </div>
       <p v-if="heatMode !== 'recent'" class="m-0 mb-2 text-center text-[0.75em]" style="color: var(--text-dim)" data-testid="muscle-heat-caption">
-        {{ heatMode === 'volume' ? t('workouts_heat_volume_cap').replace('{n}', String(period)) : t('workouts_heat_covered_cap') }}
+        {{ heatMode === 'volume' ? t('workouts_heat_volume_cap').replace('{n}', String(period)).replace('{g}', String(goal)) : t('workouts_heat_covered_cap') }}
         <template v-if="heatMode === 'volume' && setsMax === 0"> {{ t('workouts_heat_no_data') }}</template>
       </p>
 
