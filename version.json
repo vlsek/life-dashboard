@@ -1,7 +1,14 @@
 {
-  "version": "7.35",
+  "version": "7.36",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.36",
+      "date": "2026-11-02 13:10",
+      "changes": [
+        "Workouts: in the “Journal” tab each exercise of a day now shows its “Best set” (by estimated 1RM; warm-ups and unfinished sets are ignored) and, if you beat your earlier result that day, a “★ … record” mark. A record is measured against entries BEFORE that day; the very first entry of an exercise is never a record. No migrations."
+      ]
+    },
     {
       "version": "7.35",
       "date": "2026-11-02 12:00",
@@ -5215,6 +5222,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.36",
+      "date": "2026-11-02 13:10",
+      "changes": [
+        "Тренировки: во вкладке «Журнал» у каждого упражнения за день теперь видно «Лучший подход» (по оценке 1ПМ; разминка и невыполненные не считаются) и, если ты в этот день побил свой прошлый результат, отметку «★ Рекорд …». Рекорд считается относительно записей ДО этого дня; самая первая запись упражнения рекордом не считается. Без миграций."
+      ]
+    },
     {
       "version": "7.35",
       "date": "2026-11-02 12:00",
