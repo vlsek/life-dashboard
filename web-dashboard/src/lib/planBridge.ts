@@ -1,4 +1,4 @@
-import type { PlannedEntry } from './planned'
+import { goalRowKind, type PlanGoal, type PlannedEntry } from './planned'
 
 // Мост «План ↔ список „Осталось на сегодня“» (BACKLOG 75.2, срез 2). У блоков страницы нет общего стора (см. events.ts),
 // поэтому план остаётся у ЕДИНСТВЕННОГО писателя — PlannedSection: он публикует снимок своих невыполненных пунктов, а список читает
@@ -12,6 +12,7 @@ export interface PlanSnapshotItem {
   index: number // позиция пункта в плане дня (нужна, чтобы PlannedSection нашёл его же)
   text: string
   time: string | null // «HH:MM» — время напоминания, если стоит
+  goal?: boolean // пункт-ЦЕЛЬ (срез 3): отметка идёт через setGoalDone, а не через done пункта
 }
 export interface PlanSnapshot {
   date: string
@@ -22,14 +23,24 @@ export interface PlanMarkDetail {
   index: number
   text: string
   handled: boolean
+  goal?: boolean // просьба отметить пункт-цель (одноэтапную)
 }
 
-// Только свои пункты (type !== 'goal') и только невыполненные: «выполнено» у пункта-цели берётся из самой цели — это следующий срез.
-export function planSnapshotOf(date: string, planned: readonly PlannedEntry[]): PlanSnapshot {
+// Свои невыполненные пункты и (срез 3) одноэтапные цели, ещё не выполненные: именно у них в плане стоит чекбокс. Многоэтапная цель закрывается
+// этапами в «Целях» — одним касанием её не закрыть, поэтому в список «осталось» она не попадает; цель, которой уже нет (удалена), тоже.
+// Без `goals` (старые вызовы) пункты-цели пропускаются, как раньше.
+export function planSnapshotOf(date: string, planned: readonly PlannedEntry[], goals: readonly PlanGoal[] = []): PlanSnapshot {
   const items: PlanSnapshotItem[] = []
   planned.forEach((p, index) => {
-    if (p.type === 'goal' || p.done) return
-    items.push({ index, text: p.text, time: typeof p.time === 'string' && p.time ? p.time : null })
+    const time = typeof p.time === 'string' && p.time ? p.time : null
+    if (p.type === 'goal') {
+      const g = goals.find((x) => x.name === p.text)
+      if (!g || goalRowKind(g) !== 'single' || g.done) return
+      items.push({ index, text: p.text, time, goal: true })
+      return
+    }
+    if (p.done) return
+    items.push({ index, text: p.text, time })
   })
   return { date, items }
 }
@@ -38,8 +49,8 @@ export const publishPlanSnapshot = (snapshot: PlanSnapshot) => window.dispatchEv
 export const requestPlanSnapshot = () => window.dispatchEvent(new Event(PLAN_REQUEST))
 
 // Просьба отметить пункт. Возвращает true, только если PlannedSection её принял (синхронный dispatch — флаг ставится до возврата).
-export function requestPlanMark(date: string, index: number, text: string): boolean {
-  const detail: PlanMarkDetail = { date, index, text, handled: false }
+export function requestPlanMark(date: string, index: number, text: string, goal = false): boolean {
+  const detail: PlanMarkDetail = { date, index, text, handled: false, ...(goal ? { goal: true } : {}) }
   window.dispatchEvent(new CustomEvent<PlanMarkDetail>(PLAN_MARK, { detail }))
   return detail.handled
 }

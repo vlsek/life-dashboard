@@ -170,7 +170,7 @@ const remainingRows = computed(() =>
 function onRemainingDone(id: string) {
   if (id.startsWith(PLAN_ROW_PREFIX)) {
     const it = planItems.value.find((x) => PLAN_ROW_PREFIX + x.index === id)
-    if (it) requestPlanMark(date.value, it.index, it.text)
+    if (it) requestPlanMark(date.value, it.index, it.text, !!it.goal)
     return
   }
   const m = booleans.value.find((x) => x.id === id)

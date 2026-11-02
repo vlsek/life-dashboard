@@ -18,6 +18,7 @@ export interface RemainingRow {
   unit: string | null
   planIndex?: number // только у 'plan': позиция пункта в плане дня
   time?: string | null // только у 'plan': «HH:MM»
+  planGoal?: boolean // только у 'plan': это пункт-цель (срез 3)
 }
 
 export const PLAN_ROW_PREFIX = 'plan:'
@@ -50,7 +51,7 @@ export function remainingToday(
   }
   // Пункты плана: со временем — раньше всего (по времени), без времени — после булевых метрик
   for (const it of plan) {
-    rows.push({ id: PLAN_ROW_PREFIX + it.index, kind: 'plan', name: it.text, icon: null, oneTap: true, progress: null, value: null, goal: null, unit: null, planIndex: it.index, time: it.time })
+    rows.push({ id: PLAN_ROW_PREFIX + it.index, kind: 'plan', name: it.text, icon: null, oneTap: true, progress: null, value: null, goal: null, unit: null, planIndex: it.index, time: it.time, ...(it.goal ? { planGoal: true } : {}) })
   }
   // 0 — пункты плана со временем (по времени); 1 — числовые с целью (ближе к закрытию выше); 2 — булевы; 3 — пункты плана без времени; 4 — прочее
   const rank = (r: RemainingRow) => (r.kind === 'plan' ? (r.time ? 0 : 3) : r.progress != null ? 1 : r.oneTap ? 2 : 4)

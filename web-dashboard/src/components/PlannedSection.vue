@@ -38,13 +38,22 @@ const { planned, goals, loaded, loadedDate, error, postponeItem, savedTick, load
 // Пишет в план только этот блок, поэтому второй копии состояния и гонки записей нет. Дату берём из loadedDate (а не из props): при листании
 // до ответа базы в `planned` ещё прошлый день.
 function publishSnapshot() {
-  if (loadedDate.value) publishPlanSnapshot(planSnapshotOf(loadedDate.value, planned.value))
+  if (loadedDate.value) publishPlanSnapshot(planSnapshotOf(loadedDate.value, planned.value, goals.value))
 }
-watch([planned, loadedDate], publishSnapshot)
+watch([planned, goals, loadedDate], publishSnapshot)
 function onPlanMark(e: Event) {
   const d = (e as CustomEvent<PlanMarkDetail>).detail
   const it = d && d.date === loadedDate.value ? planned.value[d.index] : undefined
-  if (!it || it.type === 'goal' || it.done || it.text !== d.text) return // пункт уже изменился — не отмечаем чужой
+  if (!it || it.text !== d.text) return // пункт уже изменился — не отмечаем чужой
+  if (d.goal) {
+    // одноэтапная цель, ещё не выполненная: тот же путь, что у чекбокса в строке плана
+    const g = it.type === 'goal' ? goalOf(it) : undefined
+    if (!g || goalRowKind(g) !== 'single' || g.done) return
+    d.handled = true
+    void setGoalDone(g, true, loadedDate.value)
+    return
+  }
+  if (it.type === 'goal' || it.done) return
   d.handled = true
   void setItemDone(d.index, true)
 }

@@ -29,6 +29,7 @@ const progressText = (r: RemainingRow) => `${fmt(r.value)} / ${fmt(r.goal)}${r.u
           @click="emit('done', r.id)"
         ></button>
         <span class="today-left-name"><MetricIcon v-if="r.kind !== 'plan'" :icon="r.icon" /> {{ r.name }}</span>
+        <span v-if="r.planGoal" class="today-left-tag dim" data-test="today-left-goal">{{ t('dash_today_goal_tag') }}</span>
         <span v-if="r.kind === 'plan' && r.time" class="today-left-time dim" data-test="today-left-time">{{ r.time }}</span>
         <template v-if="!r.oneTap">
           <span v-if="r.goal != null" class="today-left-prog dim" data-test="today-left-prog">{{ progressText(r) }}</span>
@@ -48,6 +49,7 @@ const progressText = (r: RemainingRow) => `${fmt(r.value)} / ${fmt(r.goal)}${r.u
 .today-left-name { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
 .today-left-check { flex: none; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; padding: 0; }
 .today-left-check:hover, .today-left-check:focus-visible { background: color-mix(in srgb, var(--accent) 25%, transparent); }
+.today-left-tag { flex: none; font-size: 0.85em; }
 .today-left-time { flex: none; font-variant-numeric: tabular-nums; }
 .today-left-go { flex: none; background: transparent; border: 1px solid var(--border); border-radius: 8px; color: inherit; cursor: pointer; padding: 2px 10px; }
 .today-left-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 2px; background: var(--border); overflow: hidden; }
