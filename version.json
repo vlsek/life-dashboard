@@ -1,7 +1,14 @@
 {
-  "version": "7.25",
+  "version": "7.26",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.26",
+      "date": "2026-11-02 06:08",
+      "changes": [
+        "Dashboard: the Left for today list now also shows goals from your plan: single-step ones that are not done yet, tagged goal. You can complete such a goal with one tap right from the list, just like the checkbox in the plan. Multi-step goals do not appear there: they are completed stage by stage in the Goals section. No migrations."
+      ]
+    },
     {
       "version": "7.25",
       "date": "2026-10-29 06:08",
@@ -5145,6 +5152,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.26",
+      "date": "2026-11-02 06:08",
+      "changes": [
+        "Дашборд: в списке «Осталось на сегодня» теперь и цели из плана — одноэтапные, ещё не выполненные, с пометкой «цель». Закрыть такую цель можно одним касанием прямо из списка, так же как чекбоксом в плане. Многоэтапные цели в список не попадают: они закрываются этапами в разделе «Цели». Без миграций."
+      ]
+    },
     {
       "version": "7.25",
       "date": "2026-10-29 06:08",

@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.25";
+const SITE_VERSION = "7.26";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.26", date: "2026-11-02 06:08", changes: [
+        "Дашборд: в списке «Осталось на сегодня» теперь и цели из плана — одноэтапные, ещё не выполненные, с пометкой «цель». Закрыть такую цель можно одним касанием прямо из списка, так же как чекбоксом в плане. Многоэтапные цели в список не попадают: они закрываются этапами в разделе «Цели». Без миграций."
+    ]},
     { version: "7.25", date: "2026-10-29 06:08", changes: [
         "Награда за цель: в списке «Магазина» полученная награда помнит название цели. На «Главной» виджет «Коплю на товар» больше не предлагает награды за цель (у них нет цены, копить не на что), а журнал баллов не пишет строку «−0» для вещей, которые баллов не тратят (награда за цель, вещь за огоньки)."
     ]},
@@ -2791,6 +2794,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.26", date: "2026-11-02 06:08", changes: [
+        "Dashboard: the Left for today list now also shows goals from your plan: single-step ones that are not done yet, tagged goal. You can complete such a goal with one tap right from the list, just like the checkbox in the plan. Multi-step goals do not appear there: they are completed stage by stage in the Goals section. No migrations."
+    ]},
     { version: "7.25", date: "2026-10-29 06:08", changes: [
         "Goal reward: in the Shop list a claimed reward remembers the goal name. On Home the “Saving for an item” widget no longer offers goal rewards (they have no price, there is nothing to save for), and the points log no longer shows a “−0” line for items that spend no points (goal rewards, items bought with sparks)."
     ]},
