@@ -36,7 +36,7 @@ import WorkoutSummary from './components/WorkoutSummary.vue'
 import PastWorkoutForm from './components/PastWorkoutForm.vue'
 import type { ActiveDraft } from './lib/activeWorkout'
 import { summarize, type WorkoutSummaryData } from './lib/summary'
-import { draftFromRoutine, type Routine } from './lib/routines'
+import { draftFromRoutine, routineDiffers, type Routine } from './lib/routines'
 import { useActiveWorkout } from './lib/useActiveWorkout'
 import { canSave, draftFromLast, finishDraft, lastWorkoutDate } from './lib/activeWorkout'
 import JournalList from './components/JournalList.vue'
@@ -373,6 +373,7 @@ function onStartPast(d: ActiveDraft) {
   pastForm.value = false
   aw.startWith(d)
 }
+const routinesStore = useRoutines()
 async function onFinishWorkout() {
   const d = aw.draft.value
   if (!d || awBusy.value || auth.value.status !== 'ready') return
@@ -381,11 +382,19 @@ async function onFinishWorkout() {
   try {
     const data = summarize(d, exercises.value, entries.value, Date.now()) // до записи: история ещё без этой тренировки
     const res = finishDraft(d, new Date().toISOString(), await wk.sessionsAvailable())
+    const rid = d.routine_id
+    const routine = rid ? routinesStore.routines.value.find((r) => r.id === rid) : undefined
+    // ссылка сессии на рутину — только если рутина есть на сервере (внешний ключ миграции 113), иначе null
+    if (res.session && !(routine && routinesStore.synced.value)) res.session.routine_id = null
     await wk.addWorkout(auth.value.userId, res)
     aw.discard()
     summary.value = data
     showToast(t('aw_saved'))
     haptic('success')
+    // «обновить рутину под сегодняшнюю тренировку?» — только если что-то изменилось
+    if (routine && routineDiffers(routine, d)) {
+      void confirmDialog(t('rt_update_ask').replace('{name}', routine.name), { okLabel: t('rt_update_ok') }).then((yes) => { if (yes) routinesStore.updateFromDraft(routine.id, d) })
+    }
   } catch (e) {
     showToast(friendlyError(e, 'save'), 'error') // черновик остаётся — можно повторить
     console.error(e)

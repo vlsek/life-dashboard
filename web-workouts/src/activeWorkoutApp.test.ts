@@ -149,6 +149,25 @@ describe('активная тренировка', () => {
     useRoutines().routines.value = []
   })
 
+  it('рутина: после тренировки с изменённым числом подходов предлагает обновить рутину; «Обновить» меняет шаблон', async () => {
+    useRoutines().routines.value = [{ id: 'r1', name: 'Грудь', updated_at: '2026-01-01T00:00:00Z', items: [{ exercise_id: 'e1', target_sets: 1, superset_group: null }] }]
+    const w = await mountApp()
+    await w.find('[data-testid="routine-start-r1"]').trigger('click')
+    const inputs = q(w, 'aw-set-0-0').findAll('input')
+    await inputs[0].setValue('60'); await inputs[1].setValue('8')
+    await q(w, 'aw-tick-0-0').trigger('click')
+    await q(w, 'aw-add-set-0').trigger('click') // 2 подхода вместо 1 по шаблону
+    await q(w, 'aw-finish').trigger('click')
+    await flushPromises(); await flushPromises()
+    expect(w.find('[data-test="confirm-dialog-text"]').text()).toContain('Обновить рутину «Грудь»')
+    expect(useRoutines().routines.value[0].items[0].target_sets).toBe(1)
+    await w.find('[data-test="confirm-dialog-ok"]').trigger('click')
+    await flushPromises()
+    expect(useRoutines().routines.value[0].items[0].target_sets).toBe(2)
+    w.unmount()
+    useRoutines().routines.value = []
+  })
+
   it('прошлое: тап по подсказке подставляет числа без ✓; «Подставить прошлое» заполняет пустые подходы', async () => {
     h.entries = [{ id: 'old', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }, { reps: 6, weight: 65, time: null, duration: null, side: null }], notes: null }]
     const w = await mountApp()

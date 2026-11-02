@@ -15,12 +15,22 @@ export function routineFromDraft(d: ActiveDraft, id: string, name: string, nowIs
 }
 // «Начать из рутины»: черновик с упражнениями и пустыми подходами (число — из шаблона); упражнения, которых уже нет, пропускаются
 export function draftFromRoutine(r: Routine, draftId: string, now: Date, newEntryId: () => string, existingExerciseIds: ReadonlySet<string>): ActiveDraft {
-  const d = newDraft(draftId, now, { name: r.name })
+  const d = newDraft(draftId, now, { name: r.name, routine_id: r.id })
   d.exercises = r.items.filter((i) => existingExerciseIds.has(i.exercise_id)).map((i) => ({
     id: newEntryId(), exercise_id: i.exercise_id, superset_group: i.superset_group, note: null,
     sets: Array.from({ length: i.target_sets }, () => ({ reps: null, weight: null, time: null, duration: null, side: null, done: false })),
   }))
   return d
+}
+// Рутина «под сегодняшнюю тренировку»: порядок, число подходов и суперсеты как в черновике. Пустые упражнения (без единого подхода) не берём.
+const itemsOfDraft = (d: ActiveDraft): RoutineItem[] => d.exercises.filter((e) => e.sets.length > 0).map((e) => ({ exercise_id: e.exercise_id, target_sets: Math.min(20, Math.max(1, e.sets.length)), superset_group: e.superset_group }))
+export function routineDiffers(r: Routine, d: ActiveDraft): boolean {
+  const a = itemsOfDraft(d)
+  return a.length > 0 && JSON.stringify(a) !== JSON.stringify(r.items.map(({ exercise_id, target_sets, superset_group }) => ({ exercise_id, target_sets, superset_group })))
+}
+export function updateRoutineFromDraft(list: readonly Routine[], id: string, d: ActiveDraft, nowIso: string): Routine[] {
+  const items = itemsOfDraft(d)
+  return items.length ? list.map((x) => (x.id === id ? { ...x, items, updated_at: nowIso } : x)) : [...list]
 }
 export const upsertRoutine = (list: readonly Routine[], r: Routine): Routine[] => {
   const i = list.findIndex((x) => x.id === r.id)

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { addExercise, addSet, newDraft } from './activeWorkout'
-import { duplicateRoutine, draftFromRoutine, loadRoutines, removeRoutine, renameRoutine, routineFromDraft, ROUTINES_KEY, saveRoutines, upsertRoutine } from './routines'
+import { routineDiffers, updateRoutineFromDraft, duplicateRoutine, draftFromRoutine, loadRoutines, removeRoutine, renameRoutine, routineFromDraft, ROUTINES_KEY, saveRoutines, upsertRoutine } from './routines'
 
 const now = new Date(2026, 9, 31, 20, 0, 0)
 const base = () => addSet(addExercise(addExercise(newDraft('d', now), 'a', 'x1'), 'b', 'x2'), 'a') // x1: 2 подхода, x2: 1
@@ -48,5 +48,21 @@ describe('рутины: дублирование', () => {
     const long = { ...base, name: 'x'.repeat(80) }
     expect(duplicateRoutine([long], 'a', 'n', '(copy)', '').copy!.name.length).toBeLessThanOrEqual(80)
     expect(duplicateRoutine([base], 'zzz', 'n', 's', '').copy).toBeNull()
+  })
+})
+
+describe('рутины: обновить под тренировку', () => {
+  const r = { id: 'a', name: 'Грудь', updated_at: '2026-01-01', items: [{ exercise_id: 'e1', target_sets: 3, superset_group: null }] }
+  const draftWith = (n: number, ex = 'e1') => { let d = addExercise(newDraft('d', new Date(), { routine_id: 'a' }), 'x1', ex); for (let i = 1; i < n; i++) d = addSet(d, 'x1'); return d }
+  it('те же упражнения и подходы — различий нет; другое число подходов или другое упражнение — есть', () => {
+    expect(routineDiffers(r, draftWith(3))).toBe(false)
+    expect(routineDiffers(r, draftWith(5))).toBe(true)
+    expect(routineDiffers(r, draftWith(3, 'e2'))).toBe(true)
+  })
+  it('обновление меняет состав и updated_at только у нужной рутины', () => {
+    const other = { ...r, id: 'b' }
+    const out = updateRoutineFromDraft([r, other], 'a', draftWith(5), '2026-03-01')
+    expect(out[0]).toMatchObject({ updated_at: '2026-03-01', items: [{ exercise_id: 'e1', target_sets: 5 }] })
+    expect(out[1]).toEqual(other)
   })
 })

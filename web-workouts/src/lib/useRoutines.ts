@@ -1,6 +1,6 @@
 // Рутины на устройстве (BACKLOG 69.7, срез 1): реактивный список поверх routines.ts; после каждого изменения пишется в localStorage.
 import { ref } from 'vue'
-import { duplicateRoutine, loadRoutines, removeRoutine, renameRoutine, routineFromDraft, saveRoutines, upsertRoutine, type Routine } from './routines'
+import { duplicateRoutine, loadRoutines, removeRoutine, renameRoutine, updateRoutineFromDraft, routineFromDraft, saveRoutines, upsertRoutine, type Routine } from './routines'
 import type { ActiveDraft } from './activeWorkout'
 import { sb } from './supabase'
 import { qDelete, qUpsert } from './outboxClient'
@@ -29,6 +29,7 @@ export function useRoutines() {
   return {
     routines,
     synced,
+    updateFromDraft: (id: string, d: ActiveDraft) => { commit(updateRoutineFromDraft(routines.value, id, d, new Date().toISOString())); pushOne(id) },
     duplicate: (id: string, suffix: string): Routine | null => {
       const r = duplicateRoutine(routines.value, id, newId(), suffix, new Date().toISOString())
       if (r.copy) { commit(r.list); pushOne(r.copy.id) }

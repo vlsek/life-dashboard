@@ -234,7 +234,7 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
         </div>
         </template>
         <div class="mt-2 flex gap-2">
-          <button type="button" class="flex-1 rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--accent); min-height: 44px" @click="aw.addSet(e.id)">{{ t('aw_add_set') }}</button>
+          <button type="button" class="flex-1 rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--accent); min-height: 44px" :data-testid="'aw-add-set-' + ei" @click="aw.addSet(e.id)">{{ t('aw_add_set') }}</button>
           <button v-if="hasPrev(e.exercise_id)" type="button" class="flex-1 rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--text); min-height: 44px" :data-testid="'aw-fill-' + ei" @click="fillAll(e.id, e.exercise_id)">{{ t('aw_fill_prev') }}</button>
         </div>
       </section>
