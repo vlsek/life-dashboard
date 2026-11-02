@@ -7,6 +7,7 @@ import ChartsConfigModal from './ChartsConfigModal.vue'
 import ChartPeriodModal from './ChartPeriodModal.vue'
 import ChartEditValues from './ChartEditValues.vue'
 import Icon from './Icon.vue'
+import InsightsCard from './InsightsCard.vue'
 import { BODY_PARAMS_CHANGED, BODY_VALUES_CHANGED, useCharts } from '../lib/useCharts'
 import { canEditValues, entryGoal, type ChartEntry } from '../lib/chartSeries'
 import { effectivePeriod, loadOwnPeriod } from '../lib/chartPeriods'
@@ -135,6 +136,8 @@ function onPeriodApplied() {
       <div v-if="withData().length === 0" class="mb-3.5 flex justify-start" data-test="charts-head">
         <button type="button" class="secondary" data-test="configure" @click="((configError = null), (showConfig = true))"><EmojiText :text="t('dash_charts_configure_btn')" /></button>
       </div>
+
+      <InsightsCard :user-id="userId" />
 
       <p v-if="entries.length === 0" class="dim">{{ t('dash_charts_empty') }}</p>
       <p v-else-if="withData().length === 0" class="dim">{{ t('dash_charts_no_data_yet') }}</p>
