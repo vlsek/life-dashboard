@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.34";
+const SITE_VERSION = "7.35";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.35", date: "2026-11-02 12:00", changes: [
+        "Календарь: пункт плана можно перенести на другой день. В окне дня у каждого обычного пункта есть кнопка «→»: она открывает быстрый выбор «Завтра», «+7 дней» или любую дату. Пункт появляется в плане выбранного дня (даже если тот день в другом месяце) как невыполненный и исчезает из текущего. Если запись не удалась, окно остаётся открытым с сообщением, ничего не теряется. Пункты-цели не переносятся: у них свой срок. Перетаскивание по клеткам добавим отдельно. Без миграций."
+    ]},
     { version: "7.34", date: "2026-11-02 12:00", changes: [
         "«Достижения»: у собранной коллекции появилась отметка «Набор собран» и акцентная рамка, а в заголовке блока — счётчик «наборов собрано: N из M».",
     ]},
@@ -2818,6 +2821,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.35", date: "2026-11-02 12:00", changes: [
+        "Calendar: a plan item can now be moved to another day. In the day window every regular item has a “→” button that opens a quick choice: “Tomorrow”, “+7 days” or any date. The item appears in the chosen day’s plan (even in another month) as not done and disappears from the current one. If saving fails, the window stays open with a message and nothing is lost. Goal items are not moved: they have their own deadline. Dragging between cells will come separately. No migrations."
+    ]},
     { version: "7.34", date: "2026-11-02 12:00", changes: [
         "Achievements: a completed collection now shows a “Set complete” mark and an accent frame, and the block heading shows “sets complete: N of M”.",
     ]},
