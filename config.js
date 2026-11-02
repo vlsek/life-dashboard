@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.20";
+const SITE_VERSION = "7.22";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,8 +488,13 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
-    { version: "7.20", date: "2026-11-02 09:20", changes: [
+    { version: "7.22", date: "2026-11-02 09:20", changes: [
         "Тренировки: разминочные и невыполненные подходы больше не попадают в рекорды, графики, прогресс и карту мышц — считаются только рабочие. В активной тренировке можно включить колонку RPE (усилие 6–10 с шагом 0,5): кнопка «RPE: вкл» под названием. Настройка хранится на устройстве.",
+    { version: "7.21", date: "2026-11-01 16:30", changes: [
+        "«Аккаунт»: новая карточка «Мои данные» — можно скачать всё, что хранится о тебе (метрики и значения по дням, заметки и планы, цели, навыки, книги, слова, вехи, воду, тренировки, параметры тела, челленджи, достижения и другое) одним файлом JSON или архивом CSV (по файлу на таблицу, с README). Файл собирается на твоём устройстве и никуда не отправляется. Без миграций."
+    ]},
+    { version: "7.20", date: "2026-11-02 05:55", changes: [
+        "Дашборд: строки плана теперь понимают свайп — вправо отметить выполненным, влево перенести на завтра. У каждого своего невыполненного пункта есть и видимая кнопка со стрелкой «Перенести на завтра». Пункт записывается в план следующего дня (без дубля, со временем напоминания), и только потом убирается из сегодняшнего: если запись не удалась, он остаётся на сегодня. Пункты-цели и повторяющиеся пункты перенести нельзя. Без миграций."
     ]},
     { version: "7.19", date: "2026-11-01 16:00", changes: [
         "Шапка: в командной палитре (Ctrl+K, «/» или кнопка-лупа) появилось действие «Вода: записать стакан». Оно открывает обычное окно воды, так что стакан можно записать, не покидая страницы и не ища иконку воды. Пункт виден только когда учёт воды включён и метрика воды есть. Без миграций."
@@ -2776,8 +2781,13 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
-    { version: "7.20", date: "2026-11-02 09:20", changes: [
+    { version: "7.22", date: "2026-11-02 09:20", changes: [
         "Workouts: warm-up and unfinished sets no longer count toward records, charts, progress or the muscle map — only working sets do. The active workout can show an RPE column (effort 6–10 in 0.5 steps): the “RPE: on” button under the title. The setting is stored on the device.",
+    { version: "7.21", date: "2026-11-01 16:30", changes: [
+        "Account: a new “My data” card — download everything stored about you (metrics and daily values, notes and plans, goals, skills, books, words, milestones, water, workouts, body parameters, challenges, achievements and more) as one JSON file or a CSV archive (one file per table, with a README). The file is built on your device and is not sent anywhere. No migrations."
+    ]},
+    { version: "7.20", date: "2026-11-02 05:55", changes: [
+        "Dashboard: plan rows now understand a swipe: right marks an item done, left moves it to tomorrow. Every unfinished item of your own also has a visible arrow button, Move to tomorrow. The item is written into the next day's plan first (no duplicates, reminder time kept) and only then removed from today, so if the write fails it stays on today. Goal items and repeating items cannot be moved. No migrations."
     ]},
     { version: "7.19", date: "2026-11-01 16:00", changes: [
         "Header: the command palette (Ctrl+K, “/” or the magnifier button) has a new action “Water: log a drink”. It opens the regular water window, so you can log a glass without leaving the page or looking for the water icon. The item shows up only when water tracking is on and a water metric exists. No migrations."
