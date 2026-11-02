@@ -1,7 +1,14 @@
 {
-  "version": "7.24",
+  "version": "7.25",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.25",
+      "date": "2026-10-29 06:08",
+      "changes": [
+        "Goal reward: in the Shop list a claimed reward remembers the goal name. On Home the “Saving for an item” widget no longer offers goal rewards (they have no price, there is nothing to save for), and the points log no longer shows a “−0” line for items that spend no points (goal rewards, items bought with sparks)."
+      ]
+    },
     {
       "version": "7.24",
       "date": "2026-11-01 20:00",
@@ -5138,6 +5145,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.25",
+      "date": "2026-10-29 06:08",
+      "changes": [
+        "Награда за цель: в списке «Магазина» полученная награда помнит название цели. На «Главной» виджет «Коплю на товар» больше не предлагает награды за цель (у них нет цены, копить не на что), а журнал баллов не пишет строку «−0» для вещей, которые баллов не тратят (награда за цель, вещь за огоньки)."
+      ]
+    },
     {
       "version": "7.24",
       "date": "2026-11-01 20:00",
