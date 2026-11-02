@@ -40,5 +40,46 @@
       "purpose": "monochrome"
     }
   ],
-  "id": "/login.html"
+  "id": "/login.html",
+  "shortcuts": [
+    {
+      "name": "Сегодня",
+      "short_name": "Сегодня",
+      "description": "Открыть Дашборд",
+      "url": "/dashboard/",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "+ вода",
+      "short_name": "+ вода",
+      "description": "Записать стакан воды",
+      "url": "/dashboard/?quick=water",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Тренировка",
+      "short_name": "Тренировка",
+      "description": "Открыть тренировки",
+      "url": "/workouts/",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
 }
