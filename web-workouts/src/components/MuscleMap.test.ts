@@ -60,6 +60,17 @@ describe('MuscleMap', () => {
     expect(zone(w, 'calves').attributes('data-state')).toBe('idle')
   })
 
+  it('панель мышцы показывает готовность по дням после последней тренировки (80.3)', async () => {
+    const w = await openMap([entry('bench', '2026-09-29'), entry('squat', '2026-09-27')], [bench, squat])
+    await zone(w, 'chest').trigger('click')
+    expect(w.find('[data-testid="muscle-readiness"]').attributes('data-readiness')).toBe('recovering')
+    expect(w.find('[data-testid="muscle-readiness"]').text()).toContain('оценка, не диагноз')
+    await zone(w, 'quads').trigger('click')
+    expect(w.find('[data-testid="muscle-readiness"]').attributes('data-readiness')).toBe('ready')
+    await zone(w, 'calves').trigger('click')
+    expect(w.find('[data-testid="muscle-readiness"]').exists()).toBe(false)
+  })
+
   it('клик по серой мышце показывает свои упражнения и подсказки; кнопка добавляет запись', async () => {
     const w = await openMap([entry('bench', '2026-09-29')], [bench, squat])
     await zone(w, 'quads').trigger('click')

@@ -35,6 +35,7 @@ import { useAccordionMember } from '../lib/useCollapseStyle'
 const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string; studyRecent?: boolean; embedded?: boolean; model?: BodyModel; gender?: 'male' | 'female' | null }>()
 const emit = defineEmits<{ filter: [muscle: MuscleId, tab: 'journal' | 'exercises']; 'add-entry': [exercise: Exercise]; 'quick-add-entry': [exercise: Exercise, input: EntryFormInput, done: (ok: boolean) => void] }>()
 
+import { readiness } from '../lib/muscleReadiness'
 import TodayFocus from './TodayFocus.vue'
 import BalanceBars from './BalanceBars.vue'
 import { WEEK_TARGET } from '../lib/todayFocus'
@@ -210,6 +211,7 @@ function pickFromList(m: MuscleId) {
 const SESSIONS_SHOWN = 5
 const showAllSessions = ref(false)
 const sessions = computed(() => (selected.value ? muscleSessions(props.entries, props.exercises, today.value, selected.value) : []))
+const ready = computed(() => (selected.value && sessions.value[0] ? readiness(sessions.value[0].date, sessions.value[0].sets, today.value) : null))
 const sessionsShown = computed(() => (showAllSessions.value ? sessions.value : sessions.value.slice(0, SESSIONS_SHOWN)))
 // Нагрузка по неделям: подходы за каждые 7 дней, 8 недель (мини-график в панели и текстовая сводка для скринридеров)
 const weeks = computed(() => weeklyLoad(sessions.value, today.value))
@@ -422,6 +424,9 @@ function shapeStyle(m: MuscleId) {
           {{ t('workouts_muscles_last') }}
           <template v-if="last[selected]"><span data-testid="muscle-last-ago">{{ agoText(last[selected]) }}</span> ({{ ruDate(last[selected] as string) }})</template>
           <template v-else>{{ t('workouts_muscles_never') }}</template>
+        </div>
+        <div v-if="ready" class="mb-2 text-[0.85em]" style="color: var(--text-dim)" data-testid="muscle-readiness" :data-readiness="ready">
+          {{ t(('workouts_ready_' + ready) as DictKey) }} <span class="text-[0.9em]">{{ t('workouts_ready_note') }}</span>
         </div>
 
         <template v-if="sessions.length">

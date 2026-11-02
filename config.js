@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.31";
+const SITE_VERSION = "7.32";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.32", date: "2026-11-02 11:20", changes: [
+        "«Тренировки»: в панели мышцы на карте появилась строка «Готовность»: «только что нагружена» → «восстанавливается» → «готова». Ориентир — 2 дня отдыха, после тяжёлой тренировки (8+ подходов) на день дольше. Это оценка, не диагноз.",
+    ]},
     { version: "7.31", date: "2026-11-02 10:40", changes: [
         "«Тренировки»: в режиме «Подходы» карта мышц красит группы относительно ориентира — 10 подходов в неделю (для другого периода пропорционально), а не относительно самой нагруженной группы. В подсказке к мышце виден ориентир. Это ориентир, а не предписание.",
     ]},
@@ -2809,6 +2812,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.32", date: "2026-11-02 11:20", changes: [
+        "Workouts: the muscle panel on the map now shows “Readiness”: just loaded → recovering → ready. The guide is 2 rest days, one more after a heavy session (8+ sets). It is an estimate, not a diagnosis.",
+    ]},
     { version: "7.31", date: "2026-11-02 10:40", changes: [
         "Workouts: in “Sets” mode the muscle map now colours groups against a guide of 10 sets a week (scaled for other periods) instead of against your busiest group. The muscle tooltip shows the guide. It is a guide, not a rule.",
     ]},

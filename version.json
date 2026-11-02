@@ -1,7 +1,14 @@
 {
-  "version": "7.31",
+  "version": "7.32",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.32",
+      "date": "2026-11-02 11:20",
+      "changes": [
+        "Workouts: the muscle panel on the map now shows “Readiness”: just loaded → recovering → ready. The guide is 2 rest days, one more after a heavy session (8+ sets). It is an estimate, not a diagnosis."
+      ]
+    },
     {
       "version": "7.31",
       "date": "2026-11-02 10:40",
@@ -5187,6 +5194,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.32",
+      "date": "2026-11-02 11:20",
+      "changes": [
+        "«Тренировки»: в панели мышцы на карте появилась строка «Готовность»: «только что нагружена» → «восстанавливается» → «готова». Ориентир — 2 дня отдыха, после тяжёлой тренировки (8+ подходов) на день дольше. Это оценка, не диагноз."
+      ]
+    },
     {
       "version": "7.31",
       "date": "2026-11-02 10:40",
