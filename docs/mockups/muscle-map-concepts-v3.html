@@ -51,6 +51,12 @@ button:focus-visible,[tabindex]:focus-visible{outline:2px solid white;outline-of
 @media(max-width:780px){.page{padding:18px 12px 38px}header{display:block}header p{margin-top:12px}.directions{grid-template-columns:1fr}.direction{display:grid;grid-template-columns:92px 1fr;column-gap:12px;align-items:center}.sample{grid-row:span 2}.stage-body{grid-template-columns:1fr}.visual{min-height:390px;padding:12px}.model{width:min(100%,360px);max-height:470px}.side{border-left:0;border-top:1px solid var(--line);padding:18px}}
 @media(max-width:420px){h1{font-size:29px}.toolbar{gap:6px}.pill{padding:7px 9px;font-size:11px}.visual{min-height:340px}.side h2{font-size:23px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+
+/* Distinct data encoding per model; selection is deliberately independent of heat. */
+.mode-a .anatomy-model [data-state=done]{fill:url(#fleshHot);stroke:#ffe2ac}
+.mode-b .atlas-model [data-state=done]{fill:#78aeca;stroke:#245a7d}
+.mode-c .machine-model [data-state=done]{fill:#0e7580;stroke:#9affed;filter:drop-shadow(0 0 2px #3de7e8)}
+.model [data-muscle].selected{fill:#ffcc68!important;stroke:#fff3bc!important}
 </style>
 </head>
 <body class="mode-a view-front">
