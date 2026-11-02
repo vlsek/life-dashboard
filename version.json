@@ -1,7 +1,14 @@
 {
-  "version": "7.38",
+  "version": "7.39",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.39",
+      "date": "2026-11-02 12:59",
+      "changes": [
+        "Dashboard: the Your week card now includes your plan and goals. The line Plan: done X of Y items is counted the way the week ring is (bonus items and deleted goals are left out), Goals completed counts goals closed during this very week, and Last week’s takeaway reminds you what you wrote a week earlier. If a week had only plan items or goals and no metrics, the card still appears. No migrations."
+      ]
+    },
     {
       "version": "7.38",
       "date": "2026-11-02 16:10",
@@ -5236,6 +5243,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.39",
+      "date": "2026-11-02 12:59",
+      "changes": [
+        "Дашборд: в карточку «Итоги недели» добавились план и цели. Строка «План: выполнено X из Y пунктов» считается как в кольце недели (бонусные пункты не в счёте, удалённые цели тоже), «Закрыто целей» — цели, закрытые именно на этой неделе, а «Вывод прошлой недели» напоминает, что ты записал неделей раньше. Если за неделю были только план или цели без метрик, карточка тоже появится. Без миграций."
+      ]
+    },
     {
       "version": "7.38",
       "date": "2026-11-02 16:10",
