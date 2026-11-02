@@ -37,6 +37,7 @@ const emit = defineEmits<{ filter: [muscle: MuscleId, tab: 'journal' | 'exercise
 
 import { readiness } from '../lib/muscleReadiness'
 import TodayFocus from './TodayFocus.vue'
+import ShareMapCard from './ShareMapCard.vue'
 import BalanceBars from './BalanceBars.vue'
 import { WEEK_TARGET } from '../lib/todayFocus'
 import { HEAT_KEY, HEAT_LEVELS, HEAT_MODES, coveredMuscles, heatLevel, normalizeHeatMode, setsByMuscle, type HeatMode } from '../lib/muscleHeat'
@@ -411,6 +412,7 @@ function shapeStyle(m: MuscleId) {
       </div>
 
       <BalanceBars :entries="entries" :exercises="exercises" :today="today" :since="periodStart(today, period)" :days="period" />
+      <ShareMapCard :entries="entries" :exercises="exercises" :today="today" :since="periodStart(today, period)" :days="period" />
 
       <div v-if="selected" class="mt-3 rounded-lg border p-3 text-sm" style="border-color: var(--border); background: var(--bg)" data-testid="muscle-detail" ref="detailEl">
         <div class="flex flex-wrap items-center justify-between gap-2">

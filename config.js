@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.42";
+const SITE_VERSION = "7.43";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,8 +488,10 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
-    { version: "7.42", date: "2026-11-02 17:00", changes: [
+    { version: "7.43", date: "2026-11-02 17:00", changes: [
         "Тренировки: под названием упражнения в активной тренировке появилась подсказка прогрессии: «В прошлый раз 3×10 на 60 кг — попробуй 62,5 кг» (если все подходы на верхней границе 10 повторов — прибавить вес, иначе — на повтор больше). Только для упражнений с весом; выключается кнопкой «Подсказка» вверху экрана.",
+    { version: "7.42", date: "2026-11-02 18:00", changes: [
+        "«Тренировки»: под картой мышц появилась кнопка «Поделиться картинкой» — собирает PNG «Моя неделя тренировок» с подходами по группам мышц и итогами за выбранный период. Сначала превью, потом «Скачать» или «Отправить». На картинке нет имени, аватара и веса.",
     ]},
     { version: "7.41", date: "2026-11-02 14:00", changes: [
         "Тренировки: во вкладке «Журнал» в заголовке каждого дня появился «Объём» (сумма вес × повторы рабочих подходов; разминка и невыполненные не считаются), а над списком — выбор месяца, если записи есть больше чем за один месяц. Без миграций.",
@@ -2842,8 +2844,10 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
-    { version: "7.42", date: "2026-11-02 17:00", changes: [
+    { version: "7.43", date: "2026-11-02 17:00", changes: [
         "Workouts: a progression hint appears under each exercise name in the active workout: “Last time 3×10 at 60 kg — try 62.5 kg” (if all sets hit the 10-rep ceiling, add weight; otherwise one more rep). Weighted exercises only; turn it off with the “Hint” button at the top of the screen.",
+    { version: "7.42", date: "2026-11-02 18:00", changes: [
+        "Workouts: under the muscle map there is a new “Share as a picture” button. It builds a PNG “My training week” with sets per muscle group and totals for the chosen period. Preview first, then Download or Share. No name, avatar or weight on the picture.",
     ]},
     { version: "7.41", date: "2026-11-02 14:00", changes: [
         "Workouts: in the “Journal” tab each day header now shows its “Volume” (sum of weight × reps of working sets; warm-ups and unfinished sets are ignored), and a month picker appears above the list when entries span more than one month. No migrations.",
