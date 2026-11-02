@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.38";
+const SITE_VERSION = "7.42";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,8 +488,21 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.42", date: "2026-11-02 17:00", changes: [
+        "Тренировки: под названием упражнения в активной тренировке появилась подсказка прогрессии: «В прошлый раз 3×10 на 60 кг — попробуй 62,5 кг» (если все подходы на верхней границе 10 повторов — прибавить вес, иначе — на повтор больше). Только для упражнений с весом; выключается кнопкой «Подсказка» вверху экрана.",
+    ]},
+    { version: "7.41", date: "2026-11-02 14:00", changes: [
+        "Тренировки: во вкладке «Журнал» в заголовке каждого дня появился «Объём» (сумма вес × повторы рабочих подходов; разминка и невыполненные не считаются), а над списком — выбор месяца, если записи есть больше чем за один месяц. Без миграций.",
+    ]},
+    { version: "7.40", date: "2026-11-02 17:10", changes: [
+        "«Главная»: карточка «Что замечено» теперь сравнивает самочувствие ещё и по тренировкам — «в дни с тренировкой самочувствие в среднем X из 5, в остальные — Y». Те же пороги: 30+ дней оценок и заметная разница; «корреляция ≠ причина».",
+    ]},
+    { version: "7.39", date: "2026-11-02 12:59", changes: [
+        "Дашборд: в карточку «Итоги недели» добавились план и цели. Строка «План: выполнено X из Y пунктов» считается как в кольце недели (бонусные пункты не в счёте, удалённые цели тоже), «Закрыто целей» — цели, закрытые именно на этой неделе, а «Вывод прошлой недели» напоминает, что ты записал неделей раньше. Если за неделю были только план или цели без метрик, карточка тоже появится. Без миграций."
+    ]},
     { version: "7.38", date: "2026-11-02 16:10", changes: [
-        "Тренировки: в активной тренировке можно переключить «Прошлое: прошлый раз / лучший». «Лучший» подставляет подходы из тренировки с самым тяжёлым рабочим подходом (разминка не считается). Выбор хранится на устройстве.",
+        "Тренировки: в активной тренировке можно переключить «Прошлое: прошлый раз / лучший». «Лучший» подставляет подходы из тренировки с самым тяжёлым рабочим подходом (разминка не считается). Выбор хранится на устройстве."
+    ]},
     { version: "7.37", date: "2026-11-02 16:30", changes: [
         "«Главная»: в блоке «Графики» появилась карточка «Что замечено» — сравнивает твоё самочувствие в дни с выполненной водой и в остальные. Показывается только при 30+ днях оценок и заметной разнице, всегда с пометкой «корреляция ≠ причина».",
     ]},
@@ -2829,8 +2842,21 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.42", date: "2026-11-02 17:00", changes: [
+        "Workouts: a progression hint appears under each exercise name in the active workout: “Last time 3×10 at 60 kg — try 62.5 kg” (if all sets hit the 10-rep ceiling, add weight; otherwise one more rep). Weighted exercises only; turn it off with the “Hint” button at the top of the screen.",
+    ]},
+    { version: "7.41", date: "2026-11-02 14:00", changes: [
+        "Workouts: in the “Journal” tab each day header now shows its “Volume” (sum of weight × reps of working sets; warm-ups and unfinished sets are ignored), and a month picker appears above the list when entries span more than one month. No migrations.",
+    ]},
+    { version: "7.40", date: "2026-11-02 17:10", changes: [
+        "Dashboard: the “What we noticed” card now also compares your mood on workout days and other days. Same thresholds: 30+ rated days and a clear difference; correlation is not causation.",
+    ]},
+    { version: "7.39", date: "2026-11-02 12:59", changes: [
+        "Dashboard: the Your week card now includes your plan and goals. The line Plan: done X of Y items is counted the way the week ring is (bonus items and deleted goals are left out), Goals completed counts goals closed during this very week, and Last week’s takeaway reminds you what you wrote a week earlier. If a week had only plan items or goals and no metrics, the card still appears. No migrations."
+    ]},
     { version: "7.38", date: "2026-11-02 16:10", changes: [
-        "Workouts: the active workout has a “Previous: last time / best” switch. “Best” fills in sets from the workout with your heaviest working set (warm-ups don’t count). The choice is stored on the device.",
+        "Workouts: the active workout has a “Previous: last time / best” switch. “Best” fills in sets from the workout with your heaviest working set (warm-ups don’t count). The choice is stored on the device."
+    ]},
     { version: "7.37", date: "2026-11-02 16:30", changes: [
         "Dashboard: the Charts block has a new “What we noticed” card comparing your mood on days you hit your water goal and on other days. It appears only with 30+ rated days and a clear difference, always marked “correlation is not causation”.",
     ]},

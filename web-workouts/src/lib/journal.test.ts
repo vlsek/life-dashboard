@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { bestSet, countSets, entryRecord, journalDays, todayItems } from './journal'
+import { bestSet, countSets, entryRecord, journalDays, journalMonths, todayItems } from './journal'
 import type { Exercise, WorkoutEntry } from './types'
 
 const ex = (id: string): Exercise => ({ id, name: id, category: 'upper', tracks_weight: true } as unknown as Exercise)
@@ -61,5 +61,20 @@ describe('лента истории: лучший подход и рекорд (
     expect(days[0].items[0].best).toMatchObject({ reps: 5, weight: 60 })
     expect(days[0].items[0].record).toBe('weight')
     expect(days[1].items[0].record).toBeNull()
+  })
+})
+
+describe('лента истории: объём дня и фильтр по месяцу (69.11 срез 2)', () => {
+  const e1 = withSets('1', 'a', '2026-09-30', [{ reps: 5, weight: 50 }])
+  const e2 = withSets('2', 'a', '2026-10-08', [{ reps: 5, weight: 60 }, { reps: 10, weight: 20 }, { reps: 10, weight: 100, type: 'warmup' }, { reps: 3, weight: 200, done: false }])
+  it('объём дня — только рабочие подходы', () => {
+    const days = journalDays([e1, e2], exs)
+    expect(days[0].volume).toBe(5 * 60 + 10 * 20)
+    expect(days[1].volume).toBe(250)
+  })
+  it('месяцы свежие сверху; фильтр оставляет дни месяца, лимит считается после фильтра', () => {
+    expect(journalMonths([e1, e2])).toEqual(['2026-10', '2026-09'])
+    expect(journalDays([e1, e2], exs, 30, '2026-09').map((d) => d.date)).toEqual(['2026-09-30'])
+    expect(journalDays([e1, e2], exs, 30, null)).toHaveLength(2)
   })
 })

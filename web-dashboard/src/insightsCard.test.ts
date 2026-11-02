@@ -3,7 +3,8 @@ import { mount } from '@vue/test-utils'
 import { ref } from 'vue'
 
 const water = ref<unknown>(null)
-vi.mock('./lib/useInsights', () => ({ useInsights: () => ({ water, load: vi.fn() }) }))
+const workout = ref<unknown>(null)
+vi.mock('./lib/useInsights', () => ({ useInsights: () => ({ water, workout, load: vi.fn() }) }))
 import InsightsCard from './components/InsightsCard.vue'
 
 describe('InsightsCard', () => {
@@ -15,5 +16,12 @@ describe('InsightsCard', () => {
     await w.vm.$nextTick()
     expect(w.find('[data-testid="insight-water"]').text()).toContain('4.1 из 5')
     expect(w.find('[data-testid="insights"]').text()).toContain('Корреляция ≠ причина')
+  })
+  it('инсайт про тренировку показывается сам по себе', async () => {
+    water.value = null
+    workout.value = { withAvg: 4, withoutAvg: 3, nWith: 12, nWithout: 20, diff: 1 }
+    const w = mount(InsightsCard, { props: { userId: 'u1' } })
+    expect(w.find('[data-testid="insight-workout"]').text()).toContain('В дни с тренировкой')
+    expect(w.find('[data-testid="insight-water"]').exists()).toBe(false)
   })
 })

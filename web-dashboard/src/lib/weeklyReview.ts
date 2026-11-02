@@ -1,5 +1,6 @@
 import { addDaysIso, fmtDate } from './date'
 import { isMetricDone, metricExpectedOn } from './metrics'
+import { isPlannedItemDone, type GoalLite, type PlannedItem } from './progress'
 import { gridMetrics } from './yearGrid'
 import type { Metric } from './types'
 
@@ -17,6 +18,13 @@ export interface WeeklyReview {
   total: number // …из нужных по расписанию
   bestDay: { date: string; done: number; total: number } | null
   bestMetric: { id: string; name: string; thisDone: number; thisTotal: number; prevDone: number; prevTotal: number } | null
+  plan: { done: number; total: number } | null // пункты плана за неделю (срез 2): выполнено из запланированных, бонусные не считаются
+  goalsClosed: number | null // цели, закрытые за неделю (done_date внутри недели); нет — null
+}
+
+export interface WeeklyExtra {
+  planned?: Readonly<Record<string, readonly PlannedItem[]>>
+  goals?: readonly (GoalLite & { done_date?: string | null })[]
 }
 
 // Какую неделю разбираем: в воскресенье — текущую (пн…вс), в понедельник — только что закончившуюся; в остальные дни ритуала нет.
@@ -60,7 +68,7 @@ function tally(ms: readonly Metric[], byDay: ByDay, from: string, to: string, fi
   return out
 }
 
-export function buildWeeklyReview(metrics: readonly Metric[], byDay: ByDay, weekStart: string, today: Date): WeeklyReview | null {
+export function buildWeeklyReview(metrics: readonly Metric[], byDay: ByDay, weekStart: string, today: Date, extra: WeeklyExtra = {}): WeeklyReview | null {
   const ms = gridMetrics(metrics).filter((m) => m.count_streak !== false)
   const todayStr = fmtDate(today)
   const weekEnd = addDaysIso(weekStart, 6)
@@ -69,8 +77,32 @@ export function buildWeeklyReview(metrics: readonly Metric[], byDay: ByDay, week
     const row = byDay[d] || {}
     for (const m of ms) if (row[m.id] !== undefined && (firstOf[m.id] === undefined || d < firstOf[m.id])) firstOf[m.id] = d
   }
-  const cur = tally(ms, byDay, weekStart, weekEnd < todayStr ? weekEnd : todayStr, firstOf)
-  if (cur.total === 0) return null
+  const lastDay = weekEnd < todayStr ? weekEnd : todayStr
+  const cur = tally(ms, byDay, weekStart, lastDay, firstOf)
+
+  // План (срез 2): считаем так же, как кольцо недели — бонусные пункты не в знаменателе, удалённая цель не в счёте (isPlannedItemDone → undefined)
+  let plan: WeeklyReview['plan'] = null
+  if (extra.planned) {
+    let pd = 0
+    let pt = 0
+    for (let d = weekStart; d <= lastDay; d = addDaysIso(d, 1)) {
+      for (const p of extra.planned[d] ?? []) {
+        if (p.bonus) continue
+        const r = isPlannedItemDone(p as PlannedItem, (extra.goals ?? []) as GoalLite[])
+        if (r === undefined) continue
+        pt++
+        if (r) pd++
+      }
+    }
+    if (pt > 0) plan = { done: pd, total: pt }
+  }
+  // Цели, закрытые за неделю: по дате закрытия, а не по «сейчас выполнена» (цель из прошлого месяца в итог этой недели не попадает)
+  let goalsClosed: number | null = null
+  if (extra.goals) {
+    const n = extra.goals.filter((g) => g.done && !!g.done_date && g.done_date >= weekStart && g.done_date <= lastDay).length
+    if (n > 0) goalsClosed = n
+  }
+  if (cur.total === 0 && !plan && !goalsClosed) return null
   const prevStart = addDaysIso(weekStart, -7)
   const prev = tally(ms, byDay, prevStart, addDaysIso(weekStart, -1), firstOf)
 
@@ -93,7 +125,7 @@ export function buildWeeklyReview(metrics: readonly Metric[], byDay: ByDay, week
       bestMetric = { id: m.id, name: m.name, thisDone: a.done, thisTotal: a.total, prevDone: b.done, prevTotal: b.total }
     }
   }
-  return { weekStart, weekEnd, done: cur.done, total: cur.total, bestDay, bestMetric }
+  return { weekStart, weekEnd, done: cur.done, total: cur.total, bestDay, bestMetric, plan, goalsClosed }
 }
 
 // Заметка «что изменить на следующей» и «скрыто» хранятся на устройстве (SQL нет; между устройствами не синхронизируются).

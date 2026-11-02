@@ -3,7 +3,7 @@
 import type { Exercise, WorkoutEntry } from './types'
 import { PR_ORDER, e1rm, setRecords, topKind } from './records'
 import type { PRKind } from './records'
-import { isDone, isWorking } from './sessionContract'
+import { isDone, isWorking, setsVolume } from './sessionContract'
 import type { SetV2 } from './sessionContract'
 
 export interface JournalItem {
@@ -17,6 +17,8 @@ export interface JournalDay {
   date: string
   items: JournalItem[]
   setCount: number
+  // Срез 2 (69.11): объём дня = Σ вес×повторы рабочих подходов (0 — нет подходов с весом)
+  volume?: number
 }
 
 const firstTime = (e: WorkoutEntry): string => e.sets.find((s) => s.time)?.time ?? '99:99'
@@ -38,14 +40,14 @@ export const todayItems = (entries: readonly WorkoutEntry[], exercises: readonly
 export const countSets = (items: readonly JournalItem[]): number => items.reduce((n, i) => n + i.entry.sets.length, 0)
 
 // Дни с записями, свежие сверху; не больше `limit` дней (по умолчанию 30)
-export function journalDays(entries: readonly WorkoutEntry[], exercises: readonly Exercise[], limit = 30): JournalDay[] {
-  const dates = [...new Set(entries.map((e) => e.date))].sort().reverse()
+export function journalDays(entries: readonly WorkoutEntry[], exercises: readonly Exercise[], limit = 30, month: string | null = null): JournalDay[] {
+  const dates = [...new Set(entries.map((e) => e.date))].filter((d) => !month || d.startsWith(month)).sort().reverse()
   const days: JournalDay[] = []
   for (const date of dates) {
     const items = itemsOf(entries, exercises, date)
     if (items.length === 0) continue
     for (const i of items) { i.best = bestSet(i.entry.sets as SetV2[]); i.record = entryRecord(i.entry, entries) }
-    days.push({ date, items, setCount: countSets(items) })
+    days.push({ date, items, setCount: countSets(items), volume: dayVolume(items) })
     if (days.length >= limit) break
   }
   return days
@@ -69,3 +71,8 @@ export function entryRecord(entry: WorkoutEntry, entries: readonly WorkoutEntry[
   const kinds = setRecords(history as { sets: SetV2[] }[], sets).flat()
   return topKind([...new Set(kinds)].sort((a, b) => PR_ORDER.indexOf(a) - PR_ORDER.indexOf(b)))
 }
+
+export const dayVolume = (items: readonly JournalItem[]): number => items.reduce((n, i) => n + setsVolume(i.entry.sets as SetV2[]), 0)
+
+// Месяцы (YYYY-MM), в которых есть записи, свежие сверху — для фильтра ленты
+export const journalMonths = (entries: readonly WorkoutEntry[]): string[] => [...new Set(entries.map((e) => e.date.slice(0, 7)))].sort().reverse()

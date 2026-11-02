@@ -1,5 +1,6 @@
 import { addDaysIso, fmtDate } from './date'
 import { isMetricDone, metricExpectedOn, metricNumericValue, metricSchedule } from './metrics'
+import type { GoalLite, PlannedItem } from './progress'
 import type { Metric } from './types'
 
 // Год-сетка (BACKLOG 75.8): квадраты по дням за последние ~год — выполнено / пропущено / выходной. Режим — «идеальные дни» (как серия «идеальный день»:
@@ -25,6 +26,8 @@ export interface YearGridData {
   byDay: Record<string, Record<string, unknown>>
   notes: Record<string, string[]> // «что полезного сделал за день» по датам (daily_notes.items)
   today: Date
+  planned?: Record<string, PlannedItem[]> // планы по дням (daily_notes.planned_goals) — для итогов недели (75.6 срез 2)
+  goals?: (GoalLite & { done_date?: string | null })[] // цели (имя, этапы, done, done_date)
 }
 export const PERFECT_MODE = 'perfect'
 export const GRID_DAYS = 364
