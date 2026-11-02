@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Карта мышц — независимые модели v3</title>
+<style>
+:root{color-scheme:dark;--bg:#090d12;--panel:#111923;--line:#293747;--ink:#edf3f8;--muted:#8fa0b3;--accent:#c4f17b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Inter,system-ui,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}.page{max-width:1320px;margin:auto;padding:28px 18px 60px}
+.eyebrow{font:700 10px ui-monospace,monospace;letter-spacing:.18em;color:var(--accent)}
+header{display:flex;justify-content:space-between;align-items:end;gap:24px;margin:12px 0 24px}h1{font-size:clamp(28px,4vw,48px);letter-spacing:-.05em;line-height:1;margin:0;max-width:760px}header p{max-width:360px;color:var(--muted);margin:0}
+.directions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0}
+.direction{border:1px solid var(--line);background:#111923;border-radius:12px;padding:14px;text-align:left;min-width:0}
+.direction[aria-pressed=true]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.direction b{display:block;margin:7px 0 3px}.direction small{color:var(--muted);display:block}.tag{font:10px ui-monospace,monospace;color:var(--accent);letter-spacing:.12em}
+.sample{height:54px;border-radius:7px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.sample svg{height:52px;width:100%}.sample-a{background:#291c20}.sample-b{background:#edf2f5}.sample-c{background:#071c27}
+.stage{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#0e151e}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:12px;border-bottom:1px solid var(--line)}
+.spacer{flex:1}.pill{background:#172330;border:1px solid #354658;border-radius:999px;padding:8px 12px;font-size:12px}
+.pill[aria-pressed=true]{background:var(--accent);color:#18220e;border-color:var(--accent);font-weight:700}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid white;outline-offset:3px}
+.stage-body{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.75fr);min-height:570px}
+.visual{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;overflow:hidden;padding:20px;background:radial-gradient(ellipse at 50% 48%,#1b2937,#0c131b 70%)}
+.visual:before{content:"";position:absolute;inset:0;background-image:linear-gradient(#52677b22 1px,transparent 1px),linear-gradient(90deg,#52677b22 1px,transparent 1px);background-size:28px 28px;mask-image:linear-gradient(transparent,#000 15%,#000 85%,transparent)}
+.model{position:relative;z-index:1;width:min(100%,500px);max-height:570px;height:auto;overflow:visible}
+.model [data-muscle]{cursor:pointer;transition:fill .16s,stroke .16s,filter .16s,opacity .16s}
+.model [data-muscle][data-state=done]{filter:drop-shadow(0 0 2px #ffcf8a)}
+.model [data-muscle][data-state=none]{opacity:.38;stroke-dasharray:1 1}
+.model [data-muscle].selected{stroke:#fff3bc!important;stroke-width:1.5!important;filter:drop-shadow(0 0 4px #ffe49a)!important}
+.model [data-muscle]:focus-visible{outline:none;stroke:#fff!important;stroke-width:1.6!important}
+.view-back .front-model{display:none}.view-front .back-model{display:none}
+.atlas-model,.machine-model{display:none}
+.mode-b .anatomy-model,.mode-c .anatomy-model{display:none}
+.mode-b .atlas-model,.mode-c .machine-model{display:block}
+.mode-b .visual{background:#eaf0f4}.mode-b .visual:before{background-image:linear-gradient(#6c829422 1px,transparent 1px),linear-gradient(90deg,#6c829422 1px,transparent 1px);background-size:20px 20px}
+.mode-c .visual{background:radial-gradient(ellipse at 50% 45%,#0b3442,#07121b 72%)}
+.mode-c .visual:before{background-image:linear-gradient(#00d9f522 1px,transparent 1px),linear-gradient(90deg,#00d9f522 1px,transparent 1px);background-size:16px 16px}
+.side{padding:22px;background:#111923;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:17px}
+.side .kicker{font:10px ui-monospace,monospace;letter-spacing:.13em;color:#91a4b8}
+.side h2{font-size:26px;letter-spacing:-.04em;margin:5px 0}.side p{margin:0;color:var(--muted)}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}.metric{background:#1a2633;border:1px solid #2c3c4d;border-radius:9px;padding:12px}.metric b{display:block;font-size:25px}.metric span{font-size:11px;color:var(--muted)}
+.list{display:grid;grid-template-columns:1fr 1fr;gap:6px}.list button{background:#172330;border:1px solid #34485b;border-radius:7px;padding:8px;text-align:left;font-size:12px}
+.list button[aria-pressed=true]{border-color:var(--accent);background:#293a26;color:#f3ffdc}
+.mode-b .stage{background:#f4f7f9;color:#21374a;border-color:#c6d3dd}.mode-b .toolbar{border-color:#cbd6df}.mode-b .pill{background:white;color:#31485c;border-color:#c5d1db}.mode-b .pill[aria-pressed=true]{background:#286b98;color:white;border-color:#286b98}
+.mode-b .side{background:#f5f8fa;color:#20384d;border-color:#cbd6df}.mode-b .side .kicker{color:#52738c}.mode-b .side p,.mode-b .metric span{color:#61778a}.mode-b .metric{background:white;border-color:#d1dce4;border-radius:3px}.mode-b .metric b{font-family:Georgia,serif;color:#245778}.mode-b .list button{background:white;color:#31485c;border-color:#c5d1db}.mode-b .list button[aria-pressed=true]{background:#286b98;color:white}
+.mode-c .stage{border-color:#155365;box-shadow:0 0 0 1px #0c3b4a}.mode-c .toolbar{border-color:#155365}.mode-c .pill{background:#0a202b;border-color:#1a5b6c}.mode-c .pill[aria-pressed=true]{background:#ffb34c;color:#20170b;border-color:#ffb34c}.mode-c .side{background:#091a24;border-color:#155365}.mode-c .side .kicker{color:#43d8e5}.mode-c .metric{background:#0d2631;border-color:#1b5969;border-radius:3px}.mode-c .metric b{font:700 24px ui-monospace,monospace;color:#9cf3e9}.mode-c .list button{background:#0d2631;border-color:#1b5969;color:#b8eaf0}.mode-c .list button[aria-pressed=true]{background:#ffb34c;color:#1d160b}
+.explain{border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font-size:12px}.explain b{color:var(--ink);display:block;margin-bottom:5px}
+.status{font-size:11px;color:#9eafbf;border-top:1px solid #2c3c4d;padding-top:12px}
+@media(max-width:780px){.page{padding:18px 12px 38px}header{display:block}header p{margin-top:12px}.directions{grid-template-columns:1fr}.direction{display:grid;grid-template-columns:92px 1fr;column-gap:12px;align-items:center}.sample{grid-row:span 2}.stage-body{grid-template-columns:1fr}.visual{min-height:390px;padding:12px}.model{width:min(100%,360px);max-height:470px}.side{border-left:0;border-top:1px solid var(--line);padding:18px}}
+@media(max-width:420px){h1{font-size:29px}.toolbar{gap:6px}.pill{padding:7px 9px;font-size:11px}.visual{min-height:340px}.side h2{font-size:23px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+
+/* Distinct data encoding per model; selection is deliberately independent of heat. */
+.mode-a .anatomy-model [data-state=done]{fill:url(#fleshHot);stroke:#ffe2ac}
+.mode-b .atlas-model [data-state=done]{fill:#78aeca;stroke:#245a7d}
+.mode-c .machine-model [data-state=done]{fill:#0e7580;stroke:#9affed;filter:drop-shadow(0 0 2px #3de7e8)}
+.model [data-muscle].selected{fill:#ffcc68!important;stroke:#fff3bc!important}
+</style>
+</head>
+<body class="mode-a view-front">
+<main class="page">
+<div class="eyebrow">LIFE DASHBOARD / MUSCLE MAP / ART DIRECTION 03</div>
+<header><h1>Три модели.<br>Три разных способа видеть тело.</h1><p>Это не три темы оформления. У каждого направления своя геометрия, собственная логика выбора и отдельный визуальный язык. Данные и идентификаторы мышц остаются общими.</p></header>
+<div class="directions" role="group" aria-label="Визуальные направления">
+<button class="direction" data-mode="a" aria-pressed="true"><span class="sample sample-a"><svg viewBox="0 0 100 55"><path d="M45 5Q50 1 55 5L59 17 70 23 65 49 35 49 30 23 41 17Z" fill="#a85c52" stroke="#f0b49b" stroke-width="2"/><path d="M40 21Q47 18 49 24L47 39 39 36Z M60 21Q53 18 51 24L53 39 61 36Z" fill="#e59a7c" stroke="#ffd0b5"/></svg></span><span class="tag">A / ANATOMICAL PLATE</span><b>Анатомическая иллюстрация</b><small>Мышечные брюшки, фасции, слои и естественная асимметрия формы.</small></button>
+<button class="direction" data-mode="b" aria-pressed="false"><span class="sample sample-b"><svg viewBox="0 0 100 55"><path d="M45 4H55L61 14 72 18 67 50H33L28 18 39 14Z" fill="#f9fbfc" stroke="#60788e"/><path d="M39 18H49V27H37Z M51 18H61V27H51Z M36 29H48V43H36Z M52 29H64V43H52Z" fill="#8fb8d4" stroke="#416f8f"/><g fill="#244f70" font-size="5"><text x="40" y="24">01</text><text x="53" y="24">02</text><text x="39" y="38">03</text><text x="54" y="38">04</text></g></svg></span><span class="tag">B / INDEX ATLAS</span><b>Научный атлас</b><small>Плоская карта регионов, индексы, координаты и выносные подписи.</small></button>
+<button class="direction" data-mode="c" aria-pressed="false"><span class="sample sample-c"><svg viewBox="0 0 100 55"><path d="M50 3L59 9 57 18 50 22 43 18 41 9Z M39 20L29 25 32 36 43 33 47 24 M61 20L71 25 68 36 57 33 53 24 M44 34L40 50 M56 34L60 50" fill="none" stroke="#32d4df" stroke-width="2"/><path d="M40 22L50 25 60 22 58 34H42Z" fill="#155064" stroke="#8af1ed"/><g fill="#ffb34c"><circle cx="31" cy="35" r="2"/><circle cx="69" cy="35" r="2"/><circle cx="40" cy="49" r="2"/><circle cx="60" cy="49" r="2"/></g></svg></span><span class="tag">C / MECHANICAL FRAME</span><b>Механический каркас</b><small>Шарниры, силовые рёбра и сменные бронепластины вместо мышц.</small></button>
+</div>
+<section class="stage" aria-label="Интерактивная демонстрация">
+<div class="toolbar"><span class="tag" id="modeLabel">A / ANATOMICAL PLATE</span><span class="spacer"></span><button class="pill" data-view="front" aria-pressed="true">Спереди</button><button class="pill" data-view="back" aria-pressed="false">Сзади</button><button class="pill" data-data="recent" aria-pressed="true">Недавно</button><button class="pill" data-data="volume" aria-pressed="false">Объём / 30 дн.</button></div>
+<div class="stage-body">
+<div class="visual">
+<svg class="model anatomy-model" viewBox="0 0 100 190" role="group" aria-label="Анатомическая модель">
+<defs><linearGradient id="flesh" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f0b9a1"/><stop offset=".48" stop-color="#b96559"/><stop offset="1" stop-color="#633b43"/></linearGradient><linearGradient id="fleshHot"><stop stop-color="#ffe0a0"/><stop offset=".5" stop-color="#f18a69"/><stop offset="1" stop-color="#a9434a"/></linearGradient></defs>
+<g class="front-model">
+<path d="M45 20L43 29Q35 32 27 36Q19 42 18 58L14 94Q15 101 20 99L28 69 31 91Q34 106 32 121L30 179H44L49 139 51 139 56 179H70L68 121Q66 106 69 91L72 69 80 99Q85 101 86 94L82 58Q81 42 73 36Q65 32 57 29L55 20Z" fill="#2b2428" stroke="#b98779" stroke-width=".7"/>
+<path data-muscle="shoulders" d="M29 38Q21 40 22 49Q25 56 34 51L40 44Q37 38 29 38Z M71 38Q79 40 78 49Q75 56 66 51L60 44Q63 38 71 38Z" fill="url(#flesh)" stroke="#f4c0a8" stroke-width=".65"/>
+<path data-muscle="chest" d="M38 40Q44 36 49 42L49 56Q42 58 36 51Q34 45 38 40Z M62 40Q56 36 51 42L51 56Q58 58 64 51Q66 45 62 40Z" fill="url(#flesh)" stroke="#f4c0a8" stroke-width=".65"/>
+<path data-muscle="biceps" d="M24 52Q20 55 20 64Q21 73 27 71Q31 65 28 54Z M76 52Q80 55 80 64Q79 73 73 71Q69 65 72 54Z" fill="url(#flesh)" stroke="#f4c0a8" stroke-width=".65"/>
+<path data-muscle="forearms" d="M21 72Q18 81 20 96Q22 100 26 96L30 76Q27 70 21 72Z M79 72Q82 81 80 96Q78 100 74 96L70 76Q73 70 79 72Z" fill="url(#flesh)" stroke="#f4c0a8" stroke-width=".65"/>
+<path data-muscle="abs" d="M42 57Q46 54 49 58V88Q46 91 42 87Z M58 57Q54 54 51 58V88Q54 91 58 87Z" fill="url(#flesh)" stroke="#f4c0a8" stroke-width=".65"/>
+<path data-muscle="quads" d="M35 93Q41 89 48 96L46 126Q43 135 38 135Q33 125 34 109Z M65 93Q59 89 52 96L54 126Q57 135 62 135Q67 125 66 109Z" fill="url(#flesh)" stroke="#f4c0a8" stroke-width=".65"/>
+<path data-muscle="calves" d="M37 136Q42 131 46 139L43 173Q39 179 35 173Q34 154 37 136Z M63 136Q58 131 54 139L57 173Q61 179 65 173Q66 154 63 136Z" fill="url(#flesh)" stroke="#f4c0a8" stroke-width=".65"/>
+<g fill="none" stroke="#6c3038" stroke-width=".6"><path d="M40 43Q44 48 47 46M60 43Q56 48 53 46M43 60V85M47 60V85M53 60V85M57 60V85M37 99Q41 109 40 126M63 99Q59 109 60 126M40 141Q43 152 40 168M60 141Q57 152 60 168"/></g>
+</g>
+<g class="back-model">
+<path d="M45 20L43 29Q35 32 27 36Q19 42 18 58L14 94Q15 101 20 99L28 69 31 91Q34 106 32 121L30 179H44L49 139 51 139 56 179H70L68 121Q66 106 69 91L72 69 80 99Q85 101 86 94L82 58Q81 42 73 36Q65 32 57 29L55 20Z" fill="#2b2428" stroke="#b98779" stroke-width=".7"/>
+<path data-muscle="shoulders" d="M29 38Q21 40 22 49Q25 56 34 51L40 44Q37 38 29 38Z M71 38Q79 40 78 49Q75 56 66 51L60 44Q63 38 71 38Z" fill="url(#flesh)" stroke="#f4c0a8" stroke-width=".65"/>
+<path data-muscle="back" d="M39 38Q44 34 50 42Q56 34 61 38L66 53Q62 69 55 77L50 72 45 77Q38 69 34 53Z" fill="url(#flesh)" stroke="#f4c0a8" stroke-width=".65"/>
+<path data-muscle="triceps" d="M24 52Q20 55 20 64Q21 73 27 71Q31 65 28 54Z M76 52Q80 55 80 64Q79 73 73 71Q69 65 72 54Z" fill="url(#flesh)" stroke="#f4c0a8" stroke-width=".65"/>
+<path data-muscle="forearms" d="M21 72Q18 81 20 96Q22 100 26 96L30 76Q27 70 21 72Z M79 72Q82 81 80 96Q78 100 74 96L70 76Q73 70 79 72Z" fill="url(#flesh)" stroke="#f4c0a8" stroke-width=".65"/>
+<path data-muscle="lower_back" d="M43 75Q50 70 57 75L59 90Q50 96 41 90Z" fill="url(#flesh)" stroke="#f4c0a8" stroke-width=".65"/>
+<path data-muscle="glutes" d="M38 91Q43 85 50 92Q57 85 62 91Q65 103 56 110L50 105 44 110Q35 103 38 91Z" fill="url(#flesh)" stroke="#f4c0a8" stroke-width=".65"/>
+<path data-muscle="hamstrings" d="M35 109Q41 104 48 111L46 143Q41 151 37 143Q33 127 35 109Z M65 109Q59 104 52 111L54 143Q59 151 63 143Q67 127 65 109Z" fill="url(#flesh)" stroke="#f4c0a8" stroke-width=".65"/>
+<path data-muscle="calves" d="M37 144Q42 139 46 147L43 174Q39 179 35 174Q34 159 37 144Z M63 144Q58 139 54 147L57 174Q61 179 65 174Q66 159 63 144Z" fill="url(#flesh)" stroke="#f4c0a8" stroke-width=".65"/>
+<g fill="none" stroke="#6c3038" stroke-width=".6"><path d="M50 42V73M42 45Q45 56 48 64M58 45Q55 56 52 64M43 111Q46 123 42 139M57 111Q54 123 58 139M40 148Q43 158 40 170M60 148Q57 158 60 170"/></g>
+</g>
+</svg>
+<svg class="model atlas-model" viewBox="0 0 100 190" role="group" aria-label="Индексная карта атласа">
+<g class="front-model">
+<circle cx="50" cy="14" r="8" fill="#f9fbfc" stroke="#60788e" stroke-width=".7"/><path d="M43 25L57 25 64 34 76 40 81 70 74 98 68 119 66 180 56 180 50 145 44 180 34 180 32 119 26 98 19 70 24 40 36 34Z" fill="#f9fbfc" stroke="#60788e" stroke-width=".7"/>
+<g fill="#d4e2eb" stroke="#60788e" stroke-width=".6"><path data-muscle="shoulders" d="M28 38L39 39 42 49 32 55 23 49Z M72 38L61 39 58 49 68 55 77 49Z"/><path data-muscle="chest" d="M39 40H49V57H36L34 48Z M61 40H51V57H64L66 48Z"/><path data-muscle="biceps" d="M23 54H31L29 72H21Z M77 54H69L71 72H79Z"/><path data-muscle="forearms" d="M21 74L29 75 26 97H19Z M79 74L71 75 74 97H81Z"/><path data-muscle="abs" d="M42 58H49V87H42Z M51 58H58V87H51Z"/><path data-muscle="quads" d="M35 94H48L46 132H36L33 112Z M65 94H52L54 132H64L67 112Z"/><path data-muscle="calves" d="M37 136H46L43 175H35Z M63 136H54L57 175H65Z"/></g>
+<g fill="none" stroke="#66859a" stroke-width=".4" stroke-dasharray="1 1"><path d="M24 45L6 37H2 M36 47L6 61H2 M24 82L6 87H2 M45 70L6 112H2 M38 110L6 142H2 M60 151L94 163H98"/></g>
+<g fill="#f8fbfd" stroke="#416f8f" stroke-width=".45" font-family="ui-monospace,monospace" font-size="2.5" text-anchor="middle"><circle cx="24" cy="45" r="2.2"/><circle cx="36" cy="47" r="2.2"/><circle cx="24" cy="82" r="2.2"/><circle cx="45" cy="70" r="2.2"/><circle cx="38" cy="110" r="2.2"/><text x="24" y="45.8" fill="#244f70" stroke="none">01</text><text x="36" y="47.8" fill="#244f70" stroke="none">02</text><text x="24" y="82.8" fill="#244f70" stroke="none">03</text><text x="45" y="70.8" fill="#244f70" stroke="none">04</text><text x="38" y="110.8" fill="#244f70" stroke="none">05</text></g>
+</g>
+<g class="back-model">
+<circle cx="50" cy="14" r="8" fill="#f9fbfc" stroke="#60788e" stroke-width=".7"/><path d="M43 25L57 25 64 34 76 40 81 70 74 98 68 119 66 180 56 180 50 145 44 180 34 180 32 119 26 98 19 70 24 40 36 34Z" fill="#f9fbfc" stroke="#60788e" stroke-width=".7"/>
+<g fill="#d4e2eb" stroke="#60788e" stroke-width=".6"><path data-muscle="shoulders" d="M28 38L39 39 42 49 32 55 23 49Z M72 38L61 39 58 49 68 55 77 49Z"/><path data-muscle="back" d="M39 39L49 42 47 75 39 70 34 51Z M61 39L51 42 53 75 61 70 66 51Z"/><path data-muscle="triceps" d="M23 54H31L29 72H21Z M77 54H69L71 72H79Z"/><path data-muscle="forearms" d="M21 74L29 75 26 97H19Z M79 74L71 75 74 97H81Z"/><path data-muscle="lower_back" d="M43 76H57L59 91H41Z"/><path data-muscle="glutes" d="M38 92H49V108H40L35 100Z M62 92H51V108H60L65 100Z"/><path data-muscle="hamstrings" d="M35 109H48L46 144H37L33 124Z M65 109H52L54 144H63L67 124Z"/><path data-muscle="calves" d="M37 146H46L43 175H35Z M63 146H54L57 175H65Z"/></g>
+<g fill="none" stroke="#66859a" stroke-width=".4" stroke-dasharray="1 1"><path d="M24 45L6 37H2 M40 50L6 61H2 M24 82L6 87H2 M50 82L6 112H2 M40 100L6 142H2 M60 151L94 163H98"/></g>
+<g fill="#f8fbfd" stroke="#416f8f" stroke-width=".45" font-family="ui-monospace,monospace" font-size="2.5" text-anchor="middle"><circle cx="24" cy="45" r="2.2"/><circle cx="40" cy="50" r="2.2"/><circle cx="24" cy="82" r="2.2"/><circle cx="50" cy="82" r="2.2"/><circle cx="40" cy="100" r="2.2"/><text x="24" y="45.8" fill="#244f70" stroke="none">01</text><text x="40" y="50.8" fill="#244f70" stroke="none">02</text><text x="24" y="82.8" fill="#244f70" stroke="none">03</text><text x="50" y="82.8" fill="#244f70" stroke="none">04</text><text x="40" y="100.8" fill="#244f70" stroke="none">05</text></g>
+</g>
+</svg>
+<svg class="model machine-model" viewBox="0 0 100 190" role="group" aria-label="Механический каркас">
+<g class="front-model">
+<path d="M50 5L58 10 58 19 52 25H48L42 19 42 10Z M50 25V178 M35 36L27 45 23 70 20 96 M65 36L73 45 77 70 80 96 M39 91L37 132 40 180 M61 91L63 132 60 180" fill="none" stroke="#36d4df" stroke-width="1.5"/>
+<g fill="#123d4d" stroke="#65e5eb" stroke-width=".8" stroke-linejoin="bevel"><path data-muscle="shoulders" d="M28 36L40 40 36 54 24 55 20 46Z M72 36L60 40 64 54 76 55 80 46Z"/><path data-muscle="chest" d="M39 41L49 44 49 58 37 55 34 47Z M61 41L51 44 51 58 63 55 66 47Z"/><path data-muscle="biceps" d="M23 54L31 55 29 72 21 71 19 63Z M77 54L69 55 71 72 79 71 81 63Z"/><path data-muscle="forearms" d="M21 74L29 76 26 97 19 96 18 85Z M79 74L71 76 74 97 81 96 82 85Z"/><path data-muscle="abs" d="M42 58H49V87H42Z M51 58H58V87H51Z"/><path data-muscle="quads" d="M35 94L48 96 46 130 39 136 33 119Z M65 94L52 96 54 130 61 136 67 119Z"/><path data-muscle="calves" d="M37 138H46L43 175H35Z M63 138H54L57 175H65Z"/></g>
+<g fill="#ffb64c" stroke="#fff0b8" stroke-width=".6"><circle cx="24" cy="52" r="2.4"/><circle cx="76" cy="52" r="2.4"/><circle cx="25" cy="73" r="2"/><circle cx="75" cy="73" r="2"/><circle cx="50" cy="91" r="2.6"/><circle cx="40" cy="133" r="2.5"/><circle cx="60" cy="133" r="2.5"/><circle cx="40" cy="175" r="2"/><circle cx="60" cy="175" r="2"/></g>
+<g fill="none" stroke="#8df4ed" stroke-width=".5"><path d="M40 44L50 50 60 44 M44 62H56 M44 78H56 M31 99H69 M34 145H46 M54 145H66"/></g>
+</g>
+<g class="back-model">
+<path d="M50 5L58 10 58 19 52 25H48L42 19 42 10Z M50 25V178 M35 36L27 45 23 70 20 96 M65 36L73 45 77 70 80 96 M39 91L37 132 40 180 M61 91L63 132 60 180" fill="none" stroke="#36d4df" stroke-width="1.5"/>
+<g fill="#123d4d" stroke="#65e5eb" stroke-width=".8" stroke-linejoin="bevel"><path data-muscle="shoulders" d="M28 36L40 40 36 54 24 55 20 46Z M72 36L60 40 64 54 76 55 80 46Z"/><path data-muscle="back" d="M39 40L49 44 47 75 39 71 34 51Z M61 40L51 44 53 75 61 71 66 51Z"/><path data-muscle="triceps" d="M23 54L31 55 29 72 21 71 19 63Z M77 54L69 55 71 72 79 71 81 63Z"/><path data-muscle="forearms" d="M21 74L29 76 26 97 19 96 18 85Z M79 74L71 76 74 97 81 96 82 85Z"/><path data-muscle="lower_back" d="M43 76H57L59 91H41Z"/><path data-muscle="glutes" d="M38 92H49V108H40L35 100Z M62 92H51V108H60L65 100Z"/><path data-muscle="hamstrings" d="M35 109L48 109 46 144 39 148 33 124Z M65 109L52 109 54 144 61 148 67 124Z"/><path data-muscle="calves" d="M37 148H46L43 175H35Z M63 148H54L57 175H65Z"/></g>
+<g fill="#ffb64c" stroke="#fff0b8" stroke-width=".6"><circle cx="24" cy="52" r="2.4"/><circle cx="76" cy="52" r="2.4"/><circle cx="25" cy="73" r="2"/><circle cx="75" cy="73" r="2"/><circle cx="50" cy="91" r="2.6"/><circle cx="40" cy="133" r="2.5"/><circle cx="60" cy="133" r="2.5"/><circle cx="40" cy="175" r="2"/><circle cx="60" cy="175" r="2"/></g>
+<g fill="none" stroke="#8df4ed" stroke-width=".5"><path d="M40 44L50 50 60 44 M44 62H56 M44 78H56 M31 99H69 M34 145H46 M54 145H66"/></g>
+</g>
+</svg>
+</div>
+<aside class="side"><div><div class="kicker" id="kicker">ANATOMY / SELECTED STRUCTURE</div><h2 id="muscleName">Грудные мышцы</h2><p id="description">Выбери область на модели или в списке. Подсветка показывает только демонстрационные записи.</p></div>
+<div class="metrics"><div class="metric"><b id="sessions">6</b><span>тренировочных дней</span></div><div class="metric"><b id="sets">42</b><span>учтённых подхода</span></div></div>
+<div><div class="kicker" style="margin-bottom:9px">ГРУППЫ / ВЫБОР С КЛАВИАТУРЫ</div><div class="list" id="muscleList"></div></div>
+<div class="explain"><b id="conceptTitle">A — анатомическая иллюстрация</b><span id="conceptText">Объёмные мышечные брюшки, фасциальные разделения и послойная подача. Цель — ощущение анатомического атласа, а не абстрактного торса.</span></div>
+<div class="status" id="status" aria-live="polite">Демонстрационные данные. Отсутствие записи не означает нулевую нагрузку.</div></aside>
+</div>
+</section>
+<p class="status">Самостоятельный концептуальный макет. Никаких production-компонентов, запросов к БД или изменений пользовательских данных.</p>
+</main>
+<script>
+const body=document.body;
+const names={shoulders:'Плечи',chest:'Грудные мышцы',biceps:'Бицепсы',forearms:'Предплечья',abs:'Пресс',quads:'Квадрицепсы',calves:'Икры',back:'Спина',triceps:'Трицепсы',lower_back:'Поясница',glutes:'Ягодичные мышцы',hamstrings:'Бицепсы бедра'};
+const data={shoulders:[4,24],chest:[6,42],biceps:[2,12],forearms:[0,0],abs:[4,24],quads:[3,18],calves:[2,12],back:[5,34],triceps:[3,18],lower_back:[2,12],glutes:[3,18],hamstrings:[3,18]};
+const copy={
+a:['A / ANATOMICAL PLATE','A — анатомическая иллюстрация','Объёмные мышечные брюшки, фасциальные разделения и послойная подача. Геометрия намеренно органическая: форма сегментов различается по функциям и не собирается из одинаковых плиток.'],
+b:['B / INDEX ATLAS','B — научный атлас','Самостоятельная плоская карта с зонами, номерами и выносными линиями. Никакого общего SVG тела: собственный контур, собственные области и индексная логика. Хорошо подходит для точного выбора и плотных подписей.'],
+c:['C / MECHANICAL FRAME','C — механический каркас','Тело переосмыслено как инженерная система: бронепластины, силовые связи и шарниры. Сегменты не имитируют мышечные брюшки; выбор зоны подсвечивает соответствующий механический узел.']
+};
+let mode='a',view='front',period='recent',selected='chest';
+function visibleTargets(){return [...document.querySelectorAll('.mode-'+mode+' .'+view+'-model [data-muscle]')];}
+function focusSelected(){const el=visibleTargets().find(x=>x.dataset.muscle===selected);if(el)el.focus();}
+function render(){
+ body.classList.remove('mode-a','mode-b','mode-c','view-front','view-back');body.classList.add('mode-'+mode,'view-'+view);
+ document.querySelectorAll('[data-mode]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.mode===mode)));
+ document.querySelectorAll('[data-view]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.view===view)));
+ document.querySelectorAll('[data-data]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.data===period)));
+ document.getElementById('modeLabel').textContent=copy[mode][0];document.getElementById('conceptTitle').textContent=copy[mode][1];document.getElementById('conceptText').textContent=copy[mode][2];
+ document.getElementById('kicker').textContent=mode==='a'?'ANATOMY / SELECTED STRUCTURE':mode==='b'?'ATLAS / REGION INDEX':'FRAME / NODE TELEMETRY';
+ document.querySelectorAll('.model [data-muscle]').forEach(el=>{
+  const id=el.dataset.muscle,vals=data[id]||[0,0],has=period==='recent'?vals[0]>0:vals[1]>0;
+  el.dataset.state=has?'done':'none';el.classList.toggle('selected',id===selected);
+  el.setAttribute('tabindex','0');el.setAttribute('role','button');el.setAttribute('aria-pressed',String(id===selected));
+  el.setAttribute('aria-label',(names[id]||id)+(has?', есть записи':', нет записей'));
+ });
+ const ids=[...new Set(visibleTargets().map(x=>x.dataset.muscle))],list=document.getElementById('muscleList');
+ list.replaceChildren(...ids.map(id=>{const b=document.createElement('button');b.type='button';b.textContent=names[id]||id;b.setAttribute('aria-pressed',String(id===selected));b.addEventListener('click',()=>{selected=id;render();focusSelected()});return b}));
+ const vals=data[selected]||[0,0],has=period==='recent'?vals[0]>0:vals[1]>0;
+ document.getElementById('muscleName').textContent=names[selected]||'Мышца';
+ document.getElementById('sessions').textContent=period==='recent'?vals[0]:Math.round(vals[1]/6);
+ document.getElementById('sets').textContent=vals[1];
+ document.getElementById('description').textContent=has?'Есть демонстрационные записи за выбранный период. В реальном интерфейсе здесь будут связанные упражнения и история.':'За выбранный период нет записей. Это не нулевая измеренная нагрузка.';
+ document.getElementById('status').textContent=has?'Выбрано: '+(names[selected]||selected)+'. Данные синтетические, не оценка реальной активации.':'Для '+(names[selected]||selected)+' нет записей в выбранном периоде.';
+}
+document.querySelectorAll('[data-mode]').forEach(x=>x.addEventListener('click',()=>{mode=x.dataset.mode;selected=view==='front'?'chest':'back';render()}));
+document.querySelectorAll('[data-view]').forEach(x=>x.addEventListener('click',()=>{view=x.dataset.view;selected=view==='front'?'chest':'back';render()}));
+document.querySelectorAll('[data-data]').forEach(x=>x.addEventListener('click',()=>{period=x.dataset.data;render()}));
+document.querySelectorAll('.model [data-muscle]').forEach(el=>{
+ el.addEventListener('click',()=>{selected=el.dataset.muscle;render()});
+ el.addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();selected=el.dataset.muscle;render()}
+  else if(e.key==='Escape'){selected=null;render()}
+  else if(['ArrowRight','ArrowDown','ArrowLeft','ArrowUp','Home','End'].includes(e.key)){
+   e.preventDefault();const ids=[...new Set(visibleTargets().map(x=>x.dataset.muscle))];if(!ids.length)return;
+   const i=ids.indexOf(el.dataset.muscle),next=e.key==='Home'?0:e.key==='End'?ids.length-1:(i+(['ArrowRight','ArrowDown'].includes(e.key)?1:-1)+ids.length)%ids.length;
+   selected=ids[next];render();focusSelected();
+  }
+ });
+});
+render();
+</script>
+</body>
+</html>
