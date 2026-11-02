@@ -18,4 +18,12 @@ describe('JournalList: лучший подход и рекорд', () => {
     expect(rec).toHaveLength(1)
     expect(w.findAll('[data-testid="journal-day"]')[0].find('[data-testid="journal-record"]').exists()).toBe(true)
   })
+  it('объём дня виден; выбор месяца скрывает остальные дни', async () => {
+    const w = mount(JournalList, { props: { entries: [en('1', '2026-09-20', 50), en('2', '2026-10-08', 55)], exercises: [ex] } })
+    expect(w.findAll('[data-testid="journal-volume"]')[0].text()).toContain('275')
+    await w.get('[data-testid="journal-month"]').setValue('2026-09')
+    const days = w.findAll('[data-testid="journal-day"]')
+    expect(days).toHaveLength(1)
+    expect(days[0].text()).toContain('250')
+  })
 })
