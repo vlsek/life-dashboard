@@ -182,6 +182,17 @@ describe('активная тренировка', () => {
     w.unmount()
   })
 
+  it('подсказка прогрессии: после 3×10 на 60 предлагает 62,5; настройкой выключается', async () => {
+    h.entries = [{ id: 'o1', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [10, 10, 10].map((r) => ({ reps: r, weight: 60, time: null, duration: null, side: null })), notes: null }]
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
+    expect(q(w, 'aw-hint-0').text()).toContain('3×10')
+    expect(q(w, 'aw-hint-0').text()).toContain('62.5')
+    await q(w, 'aw-hint-setting').trigger('click')
+    expect(q(w, 'aw-hint-0').exists()).toBe(false)
+    w.unmount()
+  })
+
   it('прошлое: тап по подсказке подставляет числа без ✓; «Подставить прошлое» заполняет пустые подходы', async () => {
     h.entries = [{ id: 'old', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }, { reps: 6, weight: 65, time: null, duration: null, side: null }], notes: null }]
     const w = await mountApp()

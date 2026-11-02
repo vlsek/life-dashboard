@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useActiveWorkout } from '../lib/useActiveWorkout'
-import { supersetPos, doneSetCount, formatElapsed, previousSet, previousText, type PrevSource } from '../lib/activeWorkout'
+import { progressionHint } from '../lib/progressionHint'
+import { supersetPos, doneSetCount, formatElapsed, previousSet, previousSets, previousText, type PrevSource } from '../lib/activeWorkout'
 import { parseNum } from '../lib/entrySets'
 import { setType, SET_TYPES } from '../lib/sessionContract'
 import { t, type DictKey } from '../lib/i18n'
@@ -42,6 +43,17 @@ const PREV_KEY = 'workouts.prevSource.v1'
 const readPrev = (): PrevSource => { try { return localStorage.getItem(PREV_KEY) === 'best' ? 'best' : 'last' } catch { return 'last' } }
 const prevSource = ref<PrevSource>(readPrev())
 function togglePrevSource() { prevSource.value = prevSource.value === 'best' ? 'last' : 'best'; try { localStorage.setItem(PREV_KEY, prevSource.value) } catch { /* настройка не критична */ } }
+const HINT_KEY = 'workouts.hint.v1'
+const hintOn = ref((() => { try { return localStorage.getItem(HINT_KEY) !== '0' } catch { return true } })())
+function toggleHint() { hintOn.value = !hintOn.value; try { localStorage.setItem(HINT_KEY, hintOn.value ? '1' : '0') } catch { /* не критично */ } }
+const hintFor = (exerciseId: string) => progressionHint(previousSets(props.entries, exerciseId, draft.value?.date ?? '9999', prevSource.value), unitOf(exById.value.get(exerciseId)))
+function hintText(exerciseId: string): string {
+  const h = hintFor(exerciseId)
+  if (!h) return ''
+  const u = unitOf(exById.value.get(exerciseId))
+  const was = `${h.sets}×${h.reps} ${t('aw_hint_on')} ${h.weight}${u}`
+  return h.kind === 'weight' ? `${t('aw_hint_last')} ${was} — ${t('aw_hint_try')} ${h.next}${u}` : `${t('aw_hint_last')} ${was} — ${t('aw_hint_try')} ${h.weight}${u}×${h.next}`
+}
 const cols = computed(() => (rpeOn.value ? '40px 1fr 1fr 1fr 64px 44px 28px' : '40px 1fr 1fr 1fr 44px 28px'))
 const onRpe = (entryId: string, i: number, ev: Event) => aw.update(entryId, i, { rpe: normalizeRpe(Number((ev.target as HTMLSelectElement).value)) })
 // Экран не гаснет, пока идёт тренировка (Screen Wake Lock); не поддерживается — молча пропускаем
@@ -144,6 +156,7 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
       </div>
       <div class="mx-auto mt-1 max-w-3xl text-center text-xs" style="color: var(--text-dim)">{{ t('aw_done_sets').replace('{n}', String(doneSetCount(draft))) }}</div>
       <div v-if="draft.exercises.length" class="mx-auto mt-1 flex max-w-3xl items-center justify-center gap-2 text-xs">
+        <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 32px" :aria-pressed="hintOn" data-testid="aw-hint-setting" @click="toggleHint">{{ t('aw_hint_setting') }}: {{ hintOn ? t('aw_on') : t('aw_rest_off') }}</button>
         <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 32px" data-testid="aw-prev-source" @click="togglePrevSource">{{ t('aw_prev_source') }}: {{ prevSource === 'best' ? t('aw_prev_best') : t('aw_prev_last') }}</button>
         <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 32px" :aria-pressed="rpeOn" data-testid="aw-rpe-setting" @click="toggleRpe">{{ t('aw_rpe_setting') }}: {{ rpeOn ? t('aw_on') : t('aw_rest_off') }}</button>
         <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 32px" data-testid="aw-rest-setting" @click="rest.cycleSetting()">{{ t('aw_rest_setting') }}: {{ rest.seconds.value ? rest.seconds.value + ' ' + t('sm_sec') : t('aw_rest_off') }}</button>
@@ -167,6 +180,7 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
           <button type="button" class="px-2 py-2 text-sm" style="color: var(--text-dim); min-width: 40px; min-height: 40px" :aria-label="t('aw_move_down')" :disabled="ei === draft.exercises.length - 1" @click="aw.move(e.id, 1)">↓</button>
           <button type="button" class="px-2 py-2 text-sm" style="color: var(--danger); min-width: 40px; min-height: 40px" :aria-label="t('aw_remove_exercise')" @click="aw.removeExercise(e.id)">✕</button>
         </div>
+        <p v-if="hintOn && hintFor(e.exercise_id)" class="mb-2 text-xs" style="color: var(--text-dim)" :data-testid="'aw-hint-' + ei">{{ hintText(e.exercise_id) }}</p>
         <div class="grid items-center gap-2 text-xs" :style="'grid-template-columns: ' + cols + '; color: var(--text-dim)'">
           <span class="text-center">#</span>
           <span class="text-center">{{ t('aw_prev') }}</span>
