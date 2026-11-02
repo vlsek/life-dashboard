@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.39";
+const SITE_VERSION = "7.40";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.40", date: "2026-11-02 17:10", changes: [
+        "«Главная»: карточка «Что замечено» теперь сравнивает самочувствие ещё и по тренировкам — «в дни с тренировкой самочувствие в среднем X из 5, в остальные — Y». Те же пороги: 30+ дней оценок и заметная разница; «корреляция ≠ причина».",
+    ]},
     { version: "7.39", date: "2026-11-02 12:59", changes: [
         "Дашборд: в карточку «Итоги недели» добавились план и цели. Строка «План: выполнено X из Y пунктов» считается как в кольце недели (бонусные пункты не в счёте, удалённые цели тоже), «Закрыто целей» — цели, закрытые именно на этой неделе, а «Вывод прошлой недели» напоминает, что ты записал неделей раньше. Если за неделю были только план или цели без метрик, карточка тоже появится. Без миграций."
     ]},
@@ -2833,6 +2836,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.40", date: "2026-11-02 17:10", changes: [
+        "Dashboard: the “What we noticed” card now also compares your mood on workout days and other days. Same thresholds: 30+ rated days and a clear difference; correlation is not causation.",
+    ]},
     { version: "7.39", date: "2026-11-02 12:59", changes: [
         "Dashboard: the Your week card now includes your plan and goals. The line Plan: done X of Y items is counted the way the week ring is (bonus items and deleted goals are left out), Goals completed counts goals closed during this very week, and Last week’s takeaway reminds you what you wrote a week earlier. If a week had only plan items or goals and no metrics, the card still appears. No migrations."
     ]},

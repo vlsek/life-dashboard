@@ -1,7 +1,14 @@
 {
-  "version": "7.39",
+  "version": "7.40",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.40",
+      "date": "2026-11-02 17:10",
+      "changes": [
+        "Dashboard: the “What we noticed” card now also compares your mood on workout days and other days. Same thresholds: 30+ rated days and a clear difference; correlation is not causation."
+      ]
+    },
     {
       "version": "7.39",
       "date": "2026-11-02 12:59",
@@ -5243,6 +5250,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.40",
+      "date": "2026-11-02 17:10",
+      "changes": [
+        "«Главная»: карточка «Что замечено» теперь сравнивает самочувствие ещё и по тренировкам — «в дни с тренировкой самочувствие в среднем X из 5, в остальные — Y». Те же пороги: 30+ дней оценок и заметная разница; «корреляция ≠ причина»."
+      ]
+    },
     {
       "version": "7.39",
       "date": "2026-11-02 12:59",
