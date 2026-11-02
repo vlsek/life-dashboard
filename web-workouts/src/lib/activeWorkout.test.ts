@@ -157,3 +157,23 @@ describe('суперсеты', () => {
     expect(normalizeSupersets(d)).toBe(d)
   })
 })
+
+describe('прошлое: источник «лучший»', () => {
+  const st = (w: number, r: number) => ({ reps: r, weight: w, time: null, duration: null, side: null })
+  const entries = [
+    { exercise_id: 'x', date: '2026-10-01', sets: [st(100, 3), st(100, 2)] },
+    { exercise_id: 'x', date: '2026-10-20', sets: [st(60, 8)] },
+    { exercise_id: 'x', date: '2026-10-25', sets: [{ ...st(120, 1), type: 'warmup' as const }, st(70, 5)] },
+  ]
+  it('«прошлый раз» — последняя тренировка, «лучший» — с самым тяжёлым рабочим подходом (разминка не считается)', () => {
+    expect(previousSet(entries, 'x', '2026-11-01', 0, 'last')).toMatchObject({ weight: 70 })
+    expect(previousSet(entries, 'x', '2026-11-01', 0, 'best')).toMatchObject({ weight: 100, reps: 3 })
+    expect(previousSet(entries, 'x', '2026-11-01', 1, 'best')).toMatchObject({ weight: 100, reps: 2 })
+  })
+  it('при равном весе лучшей считается более свежая; без истории — null', () => {
+    const e = [{ exercise_id: 'x', date: '2026-10-01', sets: [st(80, 5)] }, { exercise_id: 'x', date: '2026-10-10', sets: [st(80, 6)] }]
+    expect(previousSet(e, 'x', '2026-11-01', 0, 'best')).toMatchObject({ reps: 6 })
+    expect(previousSet([], 'x', '2026-11-01', 0, 'best')).toBeNull()
+  })
+})
+

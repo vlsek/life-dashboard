@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useActiveWorkout } from '../lib/useActiveWorkout'
-import { supersetPos, doneSetCount, formatElapsed, previousSet, previousText } from '../lib/activeWorkout'
+import { supersetPos, doneSetCount, formatElapsed, previousSet, previousText, type PrevSource } from '../lib/activeWorkout'
 import { parseNum } from '../lib/entrySets'
 import { setType, SET_TYPES } from '../lib/sessionContract'
 import { t, type DictKey } from '../lib/i18n'
@@ -38,6 +38,10 @@ const readRpe = (): boolean => { try { return localStorage.getItem(RPE_KEY) === 
 const rpeOn = ref(readRpe())
 function toggleRpe() { rpeOn.value = !rpeOn.value; try { localStorage.setItem(RPE_KEY, rpeOn.value ? '1' : '0') } catch { /* настройка не критична */ } }
 const RPE_VALUES = [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
+const PREV_KEY = 'workouts.prevSource.v1'
+const readPrev = (): PrevSource => { try { return localStorage.getItem(PREV_KEY) === 'best' ? 'best' : 'last' } catch { return 'last' } }
+const prevSource = ref<PrevSource>(readPrev())
+function togglePrevSource() { prevSource.value = prevSource.value === 'best' ? 'last' : 'best'; try { localStorage.setItem(PREV_KEY, prevSource.value) } catch { /* настройка не критична */ } }
 const cols = computed(() => (rpeOn.value ? '40px 1fr 1fr 1fr 64px 44px 28px' : '40px 1fr 1fr 1fr 44px 28px'))
 const onRpe = (entryId: string, i: number, ev: Event) => aw.update(entryId, i, { rpe: normalizeRpe(Number((ev.target as HTMLSelectElement).value)) })
 // Экран не гаснет, пока идёт тренировка (Screen Wake Lock); не поддерживается — молча пропускаем
@@ -68,7 +72,7 @@ function saveRoutine() {
   if (draft.value && rt.saveFromDraft(draft.value, routineName.value)) { savingRoutine.value = false; showToast(t('rt_saved')) }
 }
 // «Прошлый раз» (69.6): подход с тем же номером из последней тренировки; тап по подсказке подставляет числа
-const prevFor = (exerciseId: string, i: number) => previousSet(props.entries, exerciseId, draft.value?.date ?? '9999', i)
+const prevFor = (exerciseId: string, i: number) => previousSet(props.entries, exerciseId, draft.value?.date ?? '9999', i, prevSource.value)
 const fillAll = (entryId: string, exerciseId: string) => aw.fillAllPrev(entryId, (i) => prevFor(exerciseId, i))
 const hasPrev = (exerciseId: string) => prevFor(exerciseId, 0) !== null
 // Суперсеты (69.8): цветная скобка слева у группы, кнопка между соседними упражнениями
@@ -140,6 +144,7 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
       </div>
       <div class="mx-auto mt-1 max-w-3xl text-center text-xs" style="color: var(--text-dim)">{{ t('aw_done_sets').replace('{n}', String(doneSetCount(draft))) }}</div>
       <div v-if="draft.exercises.length" class="mx-auto mt-1 flex max-w-3xl items-center justify-center gap-2 text-xs">
+        <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 32px" data-testid="aw-prev-source" @click="togglePrevSource">{{ t('aw_prev_source') }}: {{ prevSource === 'best' ? t('aw_prev_best') : t('aw_prev_last') }}</button>
         <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 32px" :aria-pressed="rpeOn" data-testid="aw-rpe-setting" @click="toggleRpe">{{ t('aw_rpe_setting') }}: {{ rpeOn ? t('aw_on') : t('aw_rest_off') }}</button>
         <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 32px" data-testid="aw-rest-setting" @click="rest.cycleSetting()">{{ t('aw_rest_setting') }}: {{ rest.seconds.value ? rest.seconds.value + ' ' + t('sm_sec') : t('aw_rest_off') }}</button>
         <button v-if="!savingRoutine" type="button" class="px-2 py-1" style="color: var(--accent); min-height: 32px" data-testid="aw-save-routine" @click="openSaveRoutine">{{ t('rt_save') }}</button>

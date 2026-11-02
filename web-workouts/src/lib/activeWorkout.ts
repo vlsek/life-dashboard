@@ -129,12 +129,16 @@ export function entryRow(userId: string, e: EntryPayload, withSession: boolean):
 
 // Подсказка «прошлый раз»: рабочий подход с тем же номером из последней записи упражнения ДО даты тренировки.
 // Разминка и невыполненные подходы в подсказку не идут (BACKLOG 69.4).
-export function previousSet(entries: readonly { exercise_id: string; date: string; sets: SetV2[] }[], exerciseId: string, beforeDate: string, index: number): SetV2 | null {
-  let best: { date: string; sets: SetV2[] } | null = null
+export type PrevSource = 'last' | 'best'
+// Источник «прошлого раза»: 'last' — последняя тренировка с упражнением; 'best' — тренировка с самым тяжёлым рабочим подходом (при равенстве — более свежая)
+export function previousSet(entries: readonly { exercise_id: string; date: string; sets: SetV2[] }[], exerciseId: string, beforeDate: string, index: number, source: PrevSource = 'last'): SetV2 | null {
+  let best: { date: string; sets: SetV2[]; top: number } | null = null
   for (const e of entries) {
     if (e.exercise_id !== exerciseId || e.date >= beforeDate) continue
     const w = (e.sets || []).filter(isWorking)
-    if (w.length && (!best || e.date > best.date)) best = { date: e.date, sets: w }
+    if (!w.length) continue
+    const top = source === 'best' ? Math.max(...w.map((x) => x.weight ?? 0)) : 0
+    if (!best || (source === 'best' && top > best.top) || ((source === 'last' || top === best.top) && e.date > best.date)) best = { date: e.date, sets: w, top }
   }
   return best ? (best.sets[index] ?? null) : null
 }

@@ -168,6 +168,20 @@ describe('активная тренировка', () => {
     useRoutines().routines.value = []
   })
 
+  it('прошлое: переключатель «лучший» подставляет подход с самым тяжёлым весом', async () => {
+    h.entries = [
+      { id: 'o1', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 3, weight: 100, time: null, duration: null, side: null }], notes: null },
+      { id: 'o2', user_id: 'u1', exercise_id: 'e1', date: '2026-02-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }], notes: null },
+    ]
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
+    expect(q(w, 'aw-prev-0-0').text()).toContain('60')
+    await q(w, 'aw-prev-source').trigger('click')
+    expect(q(w, 'aw-prev-0-0').text()).toContain('100')
+    expect(localStorage.getItem('workouts.prevSource.v1')).toBe('best')
+    w.unmount()
+  })
+
   it('прошлое: тап по подсказке подставляет числа без ✓; «Подставить прошлое» заполняет пустые подходы', async () => {
     h.entries = [{ id: 'old', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }, { reps: 6, weight: 65, time: null, duration: null, side: null }], notes: null }]
     const w = await mountApp()
