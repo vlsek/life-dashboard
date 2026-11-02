@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.34";
+const SITE_VERSION = "7.35";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.35", date: "2026-11-02 16:10", changes: [
+        "Тренировки: в активной тренировке можно переключить «Прошлое: прошлый раз / лучший». «Лучший» подставляет подходы из тренировки с самым тяжёлым рабочим подходом (разминка не считается). Выбор хранится на устройстве.",
+    ]},
     { version: "7.34", date: "2026-11-02 12:00", changes: [
         "«Достижения»: у собранной коллекции появилась отметка «Набор собран» и акцентная рамка, а в заголовке блока — счётчик «наборов собрано: N из M».",
     ]},
@@ -2818,6 +2821,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.35", date: "2026-11-02 16:10", changes: [
+        "Workouts: the active workout has a “Previous: last time / best” switch. “Best” fills in sets from the workout with your heaviest working set (warm-ups don’t count). The choice is stored on the device.",
+    ]},
     { version: "7.34", date: "2026-11-02 12:00", changes: [
         "Achievements: a completed collection now shows a “Set complete” mark and an accent frame, and the block heading shows “sets complete: N of M”.",
     ]},

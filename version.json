@@ -1,7 +1,14 @@
 {
-  "version": "7.34",
+  "version": "7.35",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.35",
+      "date": "2026-11-02 16:10",
+      "changes": [
+        "Workouts: the active workout has a “Previous: last time / best” switch. “Best” fills in sets from the workout with your heaviest working set (warm-ups don’t count). The choice is stored on the device."
+      ]
+    },
     {
       "version": "7.34",
       "date": "2026-11-02 12:00",
@@ -5208,6 +5215,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.35",
+      "date": "2026-11-02 16:10",
+      "changes": [
+        "Тренировки: в активной тренировке можно переключить «Прошлое: прошлый раз / лучший». «Лучший» подставляет подходы из тренировки с самым тяжёлым рабочим подходом (разминка не считается). Выбор хранится на устройстве."
+      ]
+    },
     {
       "version": "7.34",
       "date": "2026-11-02 12:00",
