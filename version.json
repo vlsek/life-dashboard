@@ -1,14 +1,21 @@
 {
-  "version": "7.37",
+  "version": "7.38",
   "min_supported": "1.00",
   "en": [
     {
-      "version": "7.37",
+      "version": "7.38",
       "date": "2026-11-02 16:10",
       "changes": [
         "Workouts: the active workout has a “Previous: last time / best” switch. “Best” fills in sets from the workout with your heaviest working set (warm-ups don’t count). The choice is stored on the device.",
-        "7.36",
-        "2026-11-02 13:10",
+        "7.37",
+        "2026-11-02 16:30",
+        "Dashboard: the Charts block has a new “What we noticed” card comparing your mood on days you hit your water goal and on other days. It appears only with 30+ rated days and a clear difference, always marked “correlation is not causation”."
+      ]
+    },
+    {
+      "version": "7.36",
+      "date": "2026-11-02 13:10",
+      "changes": [
         "Workouts: in the “Journal” tab each exercise of a day now shows its “Best set” (by estimated 1RM; warm-ups and unfinished sets are ignored) and, if you beat your earlier result that day, a “★ … record” mark. A record is measured against entries BEFORE that day; the very first entry of an exercise is never a record. No migrations."
       ]
     },
@@ -5226,12 +5233,19 @@
   ],
   "ru": [
     {
-      "version": "7.37",
+      "version": "7.38",
       "date": "2026-11-02 16:10",
       "changes": [
         "Тренировки: в активной тренировке можно переключить «Прошлое: прошлый раз / лучший». «Лучший» подставляет подходы из тренировки с самым тяжёлым рабочим подходом (разминка не считается). Выбор хранится на устройстве.",
-        "7.36",
-        "2026-11-02 13:10",
+        "7.37",
+        "2026-11-02 16:30",
+        "«Главная»: в блоке «Графики» появилась карточка «Что замечено» — сравнивает твоё самочувствие в дни с выполненной водой и в остальные. Показывается только при 30+ днях оценок и заметной разнице, всегда с пометкой «корреляция ≠ причина»."
+      ]
+    },
+    {
+      "version": "7.36",
+      "date": "2026-11-02 13:10",
+      "changes": [
         "Тренировки: во вкладке «Журнал» у каждого упражнения за день теперь видно «Лучший подход» (по оценке 1ПМ; разминка и невыполненные не считаются) и, если ты в этот день побил свой прошлый результат, отметку «★ Рекорд …». Рекорд считается относительно записей ДО этого дня; самая первая запись упражнения рекордом не считается. Без миграций."
       ]
     },

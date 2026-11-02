@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.37";
+const SITE_VERSION = "7.38";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,8 +488,11 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
-    { version: "7.37", date: "2026-11-02 16:10", changes: [
+    { version: "7.38", date: "2026-11-02 16:10", changes: [
         "Тренировки: в активной тренировке можно переключить «Прошлое: прошлый раз / лучший». «Лучший» подставляет подходы из тренировки с самым тяжёлым рабочим подходом (разминка не считается). Выбор хранится на устройстве.",
+    { version: "7.37", date: "2026-11-02 16:30", changes: [
+        "«Главная»: в блоке «Графики» появилась карточка «Что замечено» — сравнивает твоё самочувствие в дни с выполненной водой и в остальные. Показывается только при 30+ днях оценок и заметной разнице, всегда с пометкой «корреляция ≠ причина».",
+    ]},
     { version: "7.36", date: "2026-11-02 13:10", changes: [
         "Тренировки: во вкладке «Журнал» у каждого упражнения за день теперь видно «Лучший подход» (по оценке 1ПМ; разминка и невыполненные не считаются) и, если ты в этот день побил свой прошлый результат, отметку «★ Рекорд …». Рекорд считается относительно записей ДО этого дня; самая первая запись упражнения рекордом не считается. Без миграций.",
     ]},
@@ -2826,8 +2829,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
-    { version: "7.37", date: "2026-11-02 16:10", changes: [
+    { version: "7.38", date: "2026-11-02 16:10", changes: [
         "Workouts: the active workout has a “Previous: last time / best” switch. “Best” fills in sets from the workout with your heaviest working set (warm-ups don’t count). The choice is stored on the device.",
+    { version: "7.37", date: "2026-11-02 16:30", changes: [
+        "Dashboard: the Charts block has a new “What we noticed” card comparing your mood on days you hit your water goal and on other days. It appears only with 30+ rated days and a clear difference, always marked “correlation is not causation”.",
+    ]},
     { version: "7.36", date: "2026-11-02 13:10", changes: [
         "Workouts: in the “Journal” tab each exercise of a day now shows its “Best set” (by estimated 1RM; warm-ups and unfinished sets are ignored) and, if you beat your earlier result that day, a “★ … record” mark. A record is measured against entries BEFORE that day; the very first entry of an exercise is never a record. No migrations.",
     ]},
