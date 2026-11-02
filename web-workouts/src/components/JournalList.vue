@@ -6,6 +6,8 @@ import { defaultWeightUnit } from '../lib/weightUnit'
 import { capFirst } from '../lib/exerciseNames'
 import { fmtRu } from '../lib/date'
 import { t } from '../lib/i18n'
+import type { DictKey } from '../lib/i18n'
+import { prSetText } from '../lib/records'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 
 // Вкладка «Журнал» (BACKLOG 44.5б, срез 1): записи по дням, свежие сверху — один взгляд вместо поиска по карточкам упражнений.
@@ -25,6 +27,10 @@ const daySummary = (n: number, sets: number) => t('workouts_today_summary').repl
       <ul class="m-0 mt-1 list-none p-0">
         <li v-for="i in d.items" :key="i.entry.id" class="border-t py-1.5 first:border-t-0" style="border-color: var(--border)" data-testid="journal-row">
           <div class="text-sm font-medium">{{ capFirst(i.exercise.name) }}</div>
+          <div v-if="i.best" class="text-xs" data-testid="journal-best">
+            <span style="color: var(--text-dim)">{{ t('workouts_journal_best') }}: </span><span class="font-medium">{{ prSetText(i.best, defaultWeightUnit()) }}</span>
+            <span v-if="i.record" class="ml-1 font-semibold" style="color: var(--warn, #d9a400)" data-testid="journal-record">★ {{ t(('aw_pr_' + i.record) as DictKey) }}</span>
+          </div>
           <div class="text-xs" style="color: var(--text-dim)">{{ formatSets(i.entry.sets, i.exercise, t('workouts_per_hour'), t('workouts_duration_unit'), defaultWeightUnit()) }}</div>
         </li>
       </ul>

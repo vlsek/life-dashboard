@@ -1,10 +1,17 @@
 // «Сегодня» и «Журнал» (BACKLOG 44.5б, срез 1): записи по дням одним списком — без перебора карточек упражнений.
 // Чистые функции: даты приходят строками YYYY-MM-DD, DOM и localStorage не трогаем.
 import type { Exercise, WorkoutEntry } from './types'
+import { PR_ORDER, e1rm, setRecords, topKind } from './records'
+import type { PRKind } from './records'
+import { isDone, isWorking } from './sessionContract'
+import type { SetV2 } from './sessionContract'
 
 export interface JournalItem {
   entry: WorkoutEntry
   exercise: Exercise
+  // Лента истории (BACKLOG 69.11, срез 1): лучший рабочий подход записи и главный рекорд дня (относительно записей ДО этого дня). Заполняет journalDays.
+  best?: SetV2 | null
+  record?: PRKind | null
 }
 export interface JournalDay {
   date: string
@@ -37,8 +44,28 @@ export function journalDays(entries: readonly WorkoutEntry[], exercises: readonl
   for (const date of dates) {
     const items = itemsOf(entries, exercises, date)
     if (items.length === 0) continue
+    for (const i of items) { i.best = bestSet(i.entry.sets as SetV2[]); i.record = entryRecord(i.entry, entries) }
     days.push({ date, items, setCount: countSets(items) })
     if (days.length >= limit) break
   }
   return days
+}
+
+// Лучший рабочий подход: с весом — по оценке 1ПМ, без веса — по повторам, на время — по длительности. Нет подходов с значением — null.
+const score = (s: SetV2): number => ((s.weight ?? 0) > 0 && (s.reps ?? 0) > 0 ? e1rm(s.weight as number, s.reps as number) : (s.reps ?? 0) > 0 ? (s.reps as number) : (s.duration ?? 0))
+export function bestSet(sets: readonly SetV2[]): SetV2 | null {
+  let best: SetV2 | null = null
+  for (const s of sets) {
+    if (!isWorking(s) || score(s) <= 0) continue
+    if (best === null || score(s) > score(best)) best = s
+  }
+  return best
+}
+
+// Главный рекорд записи: подходы дня против истории упражнения строго ДО этой даты (записи того же дня рекорда друг другу не дают)
+export function entryRecord(entry: WorkoutEntry, entries: readonly WorkoutEntry[]): PRKind | null {
+  const history = entries.filter((e) => e.exercise_id === entry.exercise_id && e.date < entry.date)
+  const sets = (entry.sets as SetV2[]).map((s) => ({ ...s, done: isDone(s) }))
+  const kinds = setRecords(history as { sets: SetV2[] }[], sets).flat()
+  return topKind([...new Set(kinds)].sort((a, b) => PR_ORDER.indexOf(a) - PR_ORDER.indexOf(b)))
 }
