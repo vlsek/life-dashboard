@@ -1,7 +1,14 @@
 {
-  "version": "7.20",
+  "version": "7.21",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.21",
+      "date": "2026-11-01 16:30",
+      "changes": [
+        "Account: a new “My data” card — download everything stored about you (metrics and daily values, notes and plans, goals, skills, books, words, milestones, water, workouts, body parameters, challenges, achievements and more) as one JSON file or a CSV archive (one file per table, with a README). The file is built on your device and is not sent anywhere. No migrations."
+      ]
+    },
     {
       "version": "7.20",
       "date": "2026-11-02 05:55",
@@ -5110,6 +5117,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.21",
+      "date": "2026-11-01 16:30",
+      "changes": [
+        "«Аккаунт»: новая карточка «Мои данные» — можно скачать всё, что хранится о тебе (метрики и значения по дням, заметки и планы, цели, навыки, книги, слова, вехи, воду, тренировки, параметры тела, челленджи, достижения и другое) одним файлом JSON или архивом CSV (по файлу на таблицу, с README). Файл собирается на твоём устройстве и никуда не отправляется. Без миграций."
+      ]
+    },
     {
       "version": "7.20",
       "date": "2026-11-02 05:55",

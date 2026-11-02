@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.20";
+const SITE_VERSION = "7.21";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.21", date: "2026-11-01 16:30", changes: [
+        "«Аккаунт»: новая карточка «Мои данные» — можно скачать всё, что хранится о тебе (метрики и значения по дням, заметки и планы, цели, навыки, книги, слова, вехи, воду, тренировки, параметры тела, челленджи, достижения и другое) одним файлом JSON или архивом CSV (по файлу на таблицу, с README). Файл собирается на твоём устройстве и никуда не отправляется. Без миграций."
+    ]},
     { version: "7.20", date: "2026-11-02 05:55", changes: [
         "Дашборд: строки плана теперь понимают свайп — вправо отметить выполненным, влево перенести на завтра. У каждого своего невыполненного пункта есть и видимая кнопка со стрелкой «Перенести на завтра». Пункт записывается в план следующего дня (без дубля, со временем напоминания), и только потом убирается из сегодняшнего: если запись не удалась, он остаётся на сегодня. Пункты-цели и повторяющиеся пункты перенести нельзя. Без миграций."
     ]},
@@ -2776,6 +2779,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.21", date: "2026-11-01 16:30", changes: [
+        "Account: a new “My data” card — download everything stored about you (metrics and daily values, notes and plans, goals, skills, books, words, milestones, water, workouts, body parameters, challenges, achievements and more) as one JSON file or a CSV archive (one file per table, with a README). The file is built on your device and is not sent anywhere. No migrations."
+    ]},
     { version: "7.20", date: "2026-11-02 05:55", changes: [
         "Dashboard: plan rows now understand a swipe: right marks an item done, left moves it to tomorrow. Every unfinished item of your own also has a visible arrow button, Move to tomorrow. The item is written into the next day's plan first (no duplicates, reminder time kept) and only then removed from today, so if the write fails it stays on today. Goal items and repeating items cannot be moved. No migrations."
     ]},
