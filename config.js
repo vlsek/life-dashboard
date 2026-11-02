@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.40";
+const SITE_VERSION = "7.41";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.41", date: "2026-11-02 14:00", changes: [
+        "Тренировки: во вкладке «Журнал» в заголовке каждого дня появился «Объём» (сумма вес × повторы рабочих подходов; разминка и невыполненные не считаются), а над списком — выбор месяца, если записи есть больше чем за один месяц. Без миграций.",
+    ]},
     { version: "7.40", date: "2026-11-02 17:10", changes: [
         "«Главная»: карточка «Что замечено» теперь сравнивает самочувствие ещё и по тренировкам — «в дни с тренировкой самочувствие в среднем X из 5, в остальные — Y». Те же пороги: 30+ дней оценок и заметная разница; «корреляция ≠ причина».",
     ]},
@@ -2836,6 +2839,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.41", date: "2026-11-02 14:00", changes: [
+        "Workouts: in the “Journal” tab each day header now shows its “Volume” (sum of weight × reps of working sets; warm-ups and unfinished sets are ignored), and a month picker appears above the list when entries span more than one month. No migrations.",
+    ]},
     { version: "7.40", date: "2026-11-02 17:10", changes: [
         "Dashboard: the “What we noticed” card now also compares your mood on workout days and other days. Same thresholds: 30+ rated days and a clear difference; correlation is not causation.",
     ]},

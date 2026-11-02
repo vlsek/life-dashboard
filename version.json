@@ -1,7 +1,14 @@
 {
-  "version": "7.40",
+  "version": "7.41",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.41",
+      "date": "2026-11-02 14:00",
+      "changes": [
+        "Workouts: in the “Journal” tab each day header now shows its “Volume” (sum of weight × reps of working sets; warm-ups and unfinished sets are ignored), and a month picker appears above the list when entries span more than one month. No migrations."
+      ]
+    },
     {
       "version": "7.40",
       "date": "2026-11-02 17:10",
@@ -5250,6 +5257,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.41",
+      "date": "2026-11-02 14:00",
+      "changes": [
+        "Тренировки: во вкладке «Журнал» в заголовке каждого дня появился «Объём» (сумма вес × повторы рабочих подходов; разминка и невыполненные не считаются), а над списком — выбор месяца, если записи есть больше чем за один месяц. Без миграций."
+      ]
+    },
     {
       "version": "7.40",
       "date": "2026-11-02 17:10",
