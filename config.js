@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.19";
+const SITE_VERSION = "7.20";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.20", date: "2026-11-02 05:55", changes: [
+        "Дашборд: строки плана теперь понимают свайп — вправо отметить выполненным, влево перенести на завтра. У каждого своего невыполненного пункта есть и видимая кнопка со стрелкой «Перенести на завтра». Пункт записывается в план следующего дня (без дубля, со временем напоминания), и только потом убирается из сегодняшнего: если запись не удалась, он остаётся на сегодня. Пункты-цели и повторяющиеся пункты перенести нельзя. Без миграций."
+    ]},
     { version: "7.19", date: "2026-11-01 16:00", changes: [
         "Шапка: в командной палитре (Ctrl+K, «/» или кнопка-лупа) появилось действие «Вода: записать стакан». Оно открывает обычное окно воды, так что стакан можно записать, не покидая страницы и не ища иконку воды. Пункт виден только когда учёт воды включён и метрика воды есть. Без миграций."
     ]},
@@ -2773,6 +2776,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.20", date: "2026-11-02 05:55", changes: [
+        "Dashboard: plan rows now understand a swipe: right marks an item done, left moves it to tomorrow. Every unfinished item of your own also has a visible arrow button, Move to tomorrow. The item is written into the next day's plan first (no duplicates, reminder time kept) and only then removed from today, so if the write fails it stays on today. Goal items and repeating items cannot be moved. No migrations."
+    ]},
     { version: "7.19", date: "2026-11-01 16:00", changes: [
         "Header: the command palette (Ctrl+K, “/” or the magnifier button) has a new action “Water: log a drink”. It opens the regular water window, so you can log a glass without leaving the page or looking for the water icon. The item shows up only when water tracking is on and a water metric exists. No migrations."
     ]},

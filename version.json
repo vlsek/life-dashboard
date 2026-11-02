@@ -1,7 +1,14 @@
 {
-  "version": "7.19",
+  "version": "7.20",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.20",
+      "date": "2026-11-02 05:55",
+      "changes": [
+        "Dashboard: plan rows now understand a swipe: right marks an item done, left moves it to tomorrow. Every unfinished item of your own also has a visible arrow button, Move to tomorrow. The item is written into the next day's plan first (no duplicates, reminder time kept) and only then removed from today, so if the write fails it stays on today. Goal items and repeating items cannot be moved. No migrations."
+      ]
+    },
     {
       "version": "7.19",
       "date": "2026-11-01 16:00",
@@ -5103,6 +5110,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.20",
+      "date": "2026-11-02 05:55",
+      "changes": [
+        "Дашборд: строки плана теперь понимают свайп — вправо отметить выполненным, влево перенести на завтра. У каждого своего невыполненного пункта есть и видимая кнопка со стрелкой «Перенести на завтра». Пункт записывается в план следующего дня (без дубля, со временем напоминания), и только потом убирается из сегодняшнего: если запись не удалась, он остаётся на сегодня. Пункты-цели и повторяющиеся пункты перенести нельзя. Без миграций."
+      ]
+    },
     {
       "version": "7.19",
       "date": "2026-11-01 16:00",
