@@ -1,7 +1,14 @@
 {
-  "version": "7.26",
+  "version": "7.27",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.27",
+      "date": "2026-11-02 10:30",
+      "changes": [
+        "Workouts: routines are now stored in your account, not only on the phone, so they show up on every device (needs migration 113; without it everything works as before, on the device). Renaming and deleting sync too, and offline edits wait in the queue."
+      ]
+    },
     {
       "version": "7.26",
       "date": "2026-11-02 06:08",
@@ -5152,6 +5159,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.27",
+      "date": "2026-11-02 10:30",
+      "changes": [
+        "Тренировки: рутины теперь хранятся в аккаунте, а не только на телефоне — они видны на всех устройствах (нужна миграция 113; без неё всё работает как раньше, на устройстве). Переименование и удаление тоже синхронизируются, офлайн правки встают в очередь."
+      ]
+    },
     {
       "version": "7.26",
       "date": "2026-11-02 06:08",
