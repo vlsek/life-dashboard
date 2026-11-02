@@ -490,6 +490,7 @@ const MIN_SUPPORTED_VERSION = "1.00";
 const CHANGELOG_RU = [
     { version: "7.23", date: "2026-11-02 09:20", changes: [
         "Тренировки: разминочные и невыполненные подходы больше не попадают в рекорды, графики, прогресс и карту мышц — считаются только рабочие. В активной тренировке можно включить колонку RPE (усилие 6–10 с шагом 0,5): кнопка «RPE: вкл» под названием. Настройка хранится на устройстве.",
+    ]},
     { version: "7.22", date: "2026-11-01 18:00", changes: [
         "Установленное приложение: у иконки на домашнем экране появились ярлыки («Сегодня», «+ вода», «Тренировка») — долгое нажатие или правая кнопка показывают их. «+ вода» открывает Дашборд сразу с окном записи воды. Кроме того, на иконке приложения теперь отображается число невыполненного за сегодня (если твой браузер или система поддерживают бейджи). Без миграций."
     ]},
@@ -2786,6 +2787,7 @@ const CHANGELOG_RU = [
 const CHANGELOG_EN = [
     { version: "7.23", date: "2026-11-02 09:20", changes: [
         "Workouts: warm-up and unfinished sets no longer count toward records, charts, progress or the muscle map — only working sets do. The active workout can show an RPE column (effort 6–10 in 0.5 steps): the “RPE: on” button under the title. The setting is stored on the device.",
+    ]},
     { version: "7.22", date: "2026-11-01 18:00", changes: [
         "Installed app: the icon on your home screen now has shortcuts (“Today”, “+ water”, “Workout”) — long-press or right-click to see them. “+ water” opens the Dashboard with the water logging window already open. The app icon also shows how many things are left undone today (if your browser or system supports badges). No migrations."
     ]},
