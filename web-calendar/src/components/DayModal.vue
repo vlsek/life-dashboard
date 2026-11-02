@@ -2,10 +2,11 @@
 import { ref } from 'vue'
 import { t, getLang } from '../lib/i18n'
 import type { GoalDeadline, PlannedItem } from '../lib/types'
+import { hasEvents, type LifeEvents } from '../lib/lifeEvents'
 import EmojiText from './EmojiText.vue'
 import Icon from './Icon.vue'
 
-const props = defineProps<{ dateStr: string; initial: PlannedItem[]; deadlines?: GoalDeadline[]; hasSummary?: boolean }>()
+const props = defineProps<{ dateStr: string; initial: PlannedItem[]; deadlines?: GoalDeadline[]; events?: LifeEvents | null; hasSummary?: boolean }>()
 const emit = defineEmits<{ close: []; save: [items: PlannedItem[]]; summary: [] }>()
 
 const items = ref<PlannedItem[]>(props.initial.map((p) => ({ ...p })))
@@ -48,6 +49,14 @@ function save() {
           <Icon name="goals" />
           <span :class="{ 'line-through opacity-60': g.done }">{{ g.name }}</span>
         </div>
+      </div>
+
+      <!-- события жизни (76.1): тренировка, день челленджа, срок вехи; только чтение, правятся в своих разделах -->
+      <div v-if="hasEvents(events)" class="mb-2" data-test="day-events">
+        <p class="dim mb-1 text-xs">{{ t('cal_events_h') }}</p>
+        <div v-if="events!.workouts > 0" class="flex items-center gap-2 py-0.5 text-sm" data-test="day-event-workout"><span class="cal-dot cal-dot-workout"></span>{{ t('cal_ev_workout') }}: {{ events!.workouts }} {{ t('cal_ev_workout_n') }}</div>
+        <div v-for="c in events!.challenges" :key="c.id" class="flex items-center gap-2 py-0.5 text-sm" data-test="day-event-challenge"><span class="cal-dot cal-dot-challenge"></span>{{ t('cal_ev_challenge') }}: {{ c.title }}<template v-if="c.day"> ({{ t('cal_ev_day') }} {{ c.day }})</template></div>
+        <div v-for="m in events!.milestones" :key="m.id" class="flex items-center gap-2 py-0.5 text-sm" data-test="day-event-milestone"><span class="cal-dot cal-dot-milestone"></span>{{ t('cal_ev_milestone') }}: {{ m.name }}</div>
       </div>
 
       <p v-if="items.length === 0" class="dim">{{ t('cal_empty') }}</p>

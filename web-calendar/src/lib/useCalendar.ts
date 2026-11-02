@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
 import { addDaysIso, fmtDate } from './date'
+import { groupLifeEvents, type LifeEvents } from './lifeEvents'
 import { groupDeadlines, normalizePlanned } from './calendar'
 import { HORIZON_DAYS, buildToday, type GoalRow, type TodaySummary } from './todaySummary'
 import type { GoalDeadline, PlannedItem } from './types'
@@ -17,6 +18,7 @@ export function useCalendar() {
   const auth = ref<AuthState>({ status: 'loading' })
   const byDate = ref<Record<string, PlannedItem[]>>({})
   const deadlines = ref<Record<string, GoalDeadline[]>>({})
+  const events = ref<Record<string, LifeEvents>>({}) // «события жизни» (76.1): тренировки, дни челленджей, сроки вех
   const error = ref<string | null>(null)
 
   async function init() {
@@ -58,6 +60,33 @@ export function useCalendar() {
     byDate.value = next
     // ошибка чтения целей календарь не ломает: просто нет маркеров сроков
     deadlines.value = goalsRes.error ? {} : groupDeadlines(goalsRes.data)
+    await loadEvents(userId, from, to)
+  }
+
+  // Чужие разделы только на чтение; любая ошибка просто убирает точки событий — календарь и планы не затрагиваются
+  async function loadEvents(userId: string, from: string, to: string) {
+    try {
+      const [wRes, eRes, mRes] = await Promise.all([
+        sb.from('workout_entries').select('date').eq('user_id', userId).gte('date', from).lte('date', to),
+        sb.from('challenge_entries').select('date, challenge_id').eq('user_id', userId).gte('date', from).lte('date', to),
+        sb.from('milestones').select('id, name, due_date').eq('user_id', userId).gte('due_date', from).lte('due_date', to),
+      ])
+      const entries = eRes.error ? [] : eRes.data || []
+      const ids = [...new Set(entries.map((e: { challenge_id: string }) => e.challenge_id))]
+      let instances: { id: string; title: string; start_date: string | null }[] = []
+      if (ids.length) {
+        const iRes = await sb.from('challenge_instances').select('id, title, start_date').in('id', ids)
+        if (!iRes.error) instances = iRes.data || []
+      }
+      events.value = groupLifeEvents({
+        workouts: wRes.error ? [] : wRes.data,
+        challengeEntries: entries,
+        instances,
+        milestones: mRes.error ? [] : mRes.data,
+      })
+    } catch {
+      events.value = {}
+    }
   }
 
   // Карточка «Сегодня» (44.8 срез 4): свой запрос — не зависит от того, какой месяц листает сетка. Ошибка чтения = карточки нет, страница работает.
@@ -80,5 +109,5 @@ export function useCalendar() {
     byDate.value = { ...byDate.value, [dateStr]: planned }
   }
 
-  return { auth, byDate, deadlines, error, today, init, loadMonth, loadToday, savePlanned }
+  return { auth, byDate, deadlines, events, error, today, init, loadMonth, loadToday, savePlanned }
 }
