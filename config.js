@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.33";
+const SITE_VERSION = "7.34";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.34", date: "2026-11-02 12:00", changes: [
+        "«Достижения»: у собранной коллекции появилась отметка «Набор собран» и акцентная рамка, а в заголовке блока — счётчик «наборов собрано: N из M».",
+    ]},
     { version: "7.33", date: "2026-11-02 12:00", changes: [
         "Тренировки: если ты начал тренировку из рутины и изменил упражнения или число подходов, после «Завершить» приложение спросит, обновить ли рутину под сегодняшнюю тренировку. Сохранённая тренировка теперь помнит, по какой рутине шла (если рутины есть в аккаунте).",
     ]},
@@ -2815,6 +2818,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.34", date: "2026-11-02 12:00", changes: [
+        "Achievements: a completed collection now shows a “Set complete” mark and an accent frame, and the block heading shows “sets complete: N of M”.",
+    ]},
     { version: "7.33", date: "2026-11-02 12:00", changes: [
         "Workouts: if you started from a routine and changed the exercises or the number of sets, tapping “Finish” now asks whether to update the routine to match today’s workout. A saved workout also remembers which routine it followed (when routines are stored in your account).",
     ]},

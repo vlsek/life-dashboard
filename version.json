@@ -1,7 +1,14 @@
 {
-  "version": "7.33",
+  "version": "7.34",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.34",
+      "date": "2026-11-02 12:00",
+      "changes": [
+        "Achievements: a completed collection now shows a “Set complete” mark and an accent frame, and the block heading shows “sets complete: N of M”."
+      ]
+    },
     {
       "version": "7.33",
       "date": "2026-11-02 12:00",
@@ -5201,6 +5208,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.34",
+      "date": "2026-11-02 12:00",
+      "changes": [
+        "«Достижения»: у собранной коллекции появилась отметка «Набор собран» и акцентная рамка, а в заголовке блока — счётчик «наборов собрано: N из M»."
+      ]
+    },
     {
       "version": "7.33",
       "date": "2026-11-02 12:00",

@@ -196,6 +196,15 @@ describe('категории свёрнуты по умолчанию (BACKLOG 3
     w.unmount()
   })
 
+  it('собранный набор получает отметку «Набор собран», счётчик наборов растёт (78.6)', async () => {
+    hold.unlocked.value = { first_weight: '2026-10-05T10:00:00Z', points_100: '2026-10-05T10:00:00Z', challenges_1: '2026-10-05T10:00:00Z', perfect_days_1: '2026-10-05T10:00:00Z', mega_productivity: '2026-10-05T10:00:00Z' }
+    const w = await mountApp()
+    expect(w.find('[data-testid="collection"][data-id="momentum"] [data-testid="collection-complete"]').text()).toBe('Набор собран')
+    expect(w.find('[data-testid="collection"][data-id="iron_habit"] [data-testid="collection-complete"]').exists()).toBe(false)
+    expect(w.find('[data-testid="collections-done"]').text()).toContain('1 из 4')
+    w.unmount()
+  })
+
   it('витрина «Недавно открытые» и «Ближе всего»; на закрытой карточке есть «осталось N»', async () => {
     const w0 = ACHIEVEMENTS.filter((a) => a.counter === 'wordsAdded').sort((a, b) => a.target - b.target)
     hold.states.value = evaluate({ ...ZERO, wordsAdded: Math.max(1, Math.floor(w0[0].target / 2)) })
