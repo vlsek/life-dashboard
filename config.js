@@ -489,7 +489,8 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
     { version: "7.38", date: "2026-11-02 16:10", changes: [
-        "Тренировки: в активной тренировке можно переключить «Прошлое: прошлый раз / лучший». «Лучший» подставляет подходы из тренировки с самым тяжёлым рабочим подходом (разминка не считается). Выбор хранится на устройстве.",
+        "Тренировки: в активной тренировке можно переключить «Прошлое: прошлый раз / лучший». «Лучший» подставляет подходы из тренировки с самым тяжёлым рабочим подходом (разминка не считается). Выбор хранится на устройстве."
+    ]},
     { version: "7.37", date: "2026-11-02 16:30", changes: [
         "«Главная»: в блоке «Графики» появилась карточка «Что замечено» — сравнивает твоё самочувствие в дни с выполненной водой и в остальные. Показывается только при 30+ днях оценок и заметной разнице, всегда с пометкой «корреляция ≠ причина».",
     ]},
@@ -2830,7 +2831,8 @@ const CHANGELOG_RU = [
 ];
 const CHANGELOG_EN = [
     { version: "7.38", date: "2026-11-02 16:10", changes: [
-        "Workouts: the active workout has a “Previous: last time / best” switch. “Best” fills in sets from the workout with your heaviest working set (warm-ups don’t count). The choice is stored on the device.",
+        "Workouts: the active workout has a “Previous: last time / best” switch. “Best” fills in sets from the workout with your heaviest working set (warm-ups don’t count). The choice is stored on the device."
+    ]},
     { version: "7.37", date: "2026-11-02 16:30", changes: [
         "Dashboard: the Charts block has a new “What we noticed” card comparing your mood on days you hit your water goal and on other days. It appears only with 30+ rated days and a clear difference, always marked “correlation is not causation”.",
     ]},
