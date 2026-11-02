@@ -35,6 +35,7 @@ import { useAccordionMember } from '../lib/useCollapseStyle'
 const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string; studyRecent?: boolean; embedded?: boolean; model?: BodyModel; gender?: 'male' | 'female' | null }>()
 const emit = defineEmits<{ filter: [muscle: MuscleId, tab: 'journal' | 'exercises']; 'add-entry': [exercise: Exercise]; 'quick-add-entry': [exercise: Exercise, input: EntryFormInput, done: (ok: boolean) => void] }>()
 
+import TodayFocus from './TodayFocus.vue'
 import BalanceBars from './BalanceBars.vue'
 import { HEAT_KEY, HEAT_LEVELS, HEAT_MODES, coveredMuscles, heatLevel, normalizeHeatMode, setsByMuscle, type HeatMode } from '../lib/muscleHeat'
 
@@ -300,6 +301,8 @@ function shapeStyle(m: MuscleId) {
 
     <div v-if="embedded || open" :class="embedded ? '' : 'mt-3'" data-testid="muscle-map-body">
       <p class="m-0 mb-3 text-[0.85em]" style="color: var(--text-dim)">{{ t('workouts_muscles_hint') }}</p>
+
+      <TodayFocus :entries="entries" :exercises="exercises" :today="today" />
 
       <div class="mb-2 flex flex-wrap items-center justify-center gap-1.5" role="group" :aria-label="t('workouts_muscles_asof_label')" data-testid="muscle-asof-picker">
         <button

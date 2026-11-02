@@ -1,7 +1,14 @@
 {
-  "version": "7.29",
+  "version": "7.30",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.30",
+      "date": "2026-11-02 10:00",
+      "changes": [
+        "Workouts: above the muscle map there is a new “What to train today” block — 2–3 groups with the fewest working sets this week and enough rest (“Back 4/10, rest 3 d”). Warm-up sets no longer count in the “Balance” block."
+      ]
+    },
     {
       "version": "7.29",
       "date": "2026-11-02 11:10",
@@ -5173,6 +5180,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.30",
+      "date": "2026-11-02 10:00",
+      "changes": [
+        "«Тренировки»: над картой мышц появился блок «Что тренировать сегодня» — 2–3 группы, где за неделю меньше всего рабочих подходов и хватает отдыха («Спина 4/10, отдых 3 дн.»). Заодно разминочные подходы больше не попадают в блок «Баланс»."
+      ]
+    },
     {
       "version": "7.29",
       "date": "2026-11-02 11:10",
