@@ -98,6 +98,18 @@ export function useAuthAndData() {
       for (const n of notes) {
         notesByDate[n.date] = n
       }
+      // Оценка и заметка дня (BACKLOG 75.3, миграция 114) — отдельным запросом: без миграции история работает как раньше
+      try {
+        const refl = await fetchAllRows<{ date: string; mood: number | null; notes: string | null }>((from, to) =>
+          sb.from('daily_notes').select('date, mood, notes').eq('user_id', userId).order('date').range(from, to),
+        )
+        for (const r of refl) {
+          if (r.mood == null && !(r.notes ?? '').trim()) continue
+          notesByDate[r.date] = { ...(notesByDate[r.date] ?? { date: r.date }), mood: r.mood, notes: r.notes }
+        }
+      } catch {
+        /* колонки нет или сеть — просто без оценок */
+      }
       let firstDate: string | null = null
       for (const d of [...Object.keys(byDate), ...Object.keys(notesByDate)]) {
         if (!firstDate || d < firstDate) firstDate = d

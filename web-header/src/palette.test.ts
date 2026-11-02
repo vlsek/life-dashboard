@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { PALETTE_ITEMS, filterPalette, norm } from './lib/palette'
+import { PALETTE_ITEMS, availableItems, filterPalette, norm } from './lib/palette'
 import { createHotkeyHandler, hotkeysHelpOpen, paletteOpen } from './lib/hotkeys'
 import CommandPalette from './components/CommandPalette.vue'
 
@@ -82,7 +82,7 @@ describe('сочетания Ctrl/Cmd+K и /', () => {
 describe('CommandPalette', () => {
   it('показывает все пункты; набор букв сужает список; Enter отдаёт выбранный', async () => {
     const w = mount(CommandPalette, { attachTo: document.body })
-    expect(w.findAll('[data-test="palette-item"]')).toHaveLength(PALETTE_ITEMS.length)
+    expect(w.findAll('[data-test="palette-item"]')).toHaveLength(availableItems(PALETTE_ITEMS, { water: false }).length) // «Вода» без учёта воды не показывается
     await w.find('[data-test="palette-input"]').setValue('цел')
     expect(w.findAll('[data-test="palette-item"]')[0].text()).toMatch(/Цели|Goals/)
     await w.find('[data-test="palette-input"]').trigger('keydown', { key: 'Enter' })

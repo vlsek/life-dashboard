@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.14";
+const SITE_VERSION = "7.19";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,21 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.19", date: "2026-11-01 16:00", changes: [
+        "Шапка: в командной палитре (Ctrl+K, «/» или кнопка-лупа) появилось действие «Вода: записать стакан». Оно открывает обычное окно воды, так что стакан можно записать, не покидая страницы и не ища иконку воды. Пункт виден только когда учёт воды включён и метрика воды есть. Без миграций."
+    ]},
+    { version: "7.18", date: "2026-11-01 12:50", changes: [
+        "«История»: окно дня тоже показывает «Как прошёл день» — оценку и заметку (как в «Календаре»).",
+    ]},
+    { version: "7.17", date: "2026-11-01 12:30", changes: [
+        "«Календарь» / «История»: в окне дня появился блок «Как прошёл день» — самочувствие и заметка, которые ты оставил на Дашборде (нужна миграция 114).",
+    ]},
+    { version: "7.16", date: "2026-11-01 12:00", changes: [
+        "«Дашборд» → «Ежедневные метрики»: над «Сохранить день» появился блок «Как прошёл день?» — самочувствие от 1 до 5 и короткая заметка. Пишется вместе с «Сохранить день». Нужна миграция 114 (до неё блок не виден).",
+    ]},
+    { version: "7.15", date: "2026-11-01 14:00", changes: [
+        "Шапка: в верхней строке появилась кнопка-лупа «Быстрый поиск». Касание открывает командную палитру (переход на нужную страницу или действие по набору букв), так что с телефона и планшета, где нет Ctrl+K и клавиши «/», она теперь тоже доступна. Кнопка работает независимо от галочки «Горячие клавиши» в «Глобальных настройках». Без миграций."
+    ]},
     { version: "7.14", date: "2026-11-01 12:30", changes: [
         "«Тренировки»: таймер отдыха. После галочки у подхода в шапке экрана тренировки запускается обратный отсчёт (по умолчанию 90 секунд) с кнопками −15, +15 и «Пропустить»; в конце — вибрация и уведомление. Время можно переключить кнопкой «Таймер отдыха» (60 / 90 / 120 / 180 секунд или выкл). В суперсете отдых начинается после последнего упражнения группы. Пока идёт тренировка, экран не гаснет.",
     ]},
@@ -2758,6 +2773,21 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.19", date: "2026-11-01 16:00", changes: [
+        "Header: the command palette (Ctrl+K, “/” or the magnifier button) has a new action “Water: log a drink”. It opens the regular water window, so you can log a glass without leaving the page or looking for the water icon. The item shows up only when water tracking is on and a water metric exists. No migrations."
+    ]},
+    { version: "7.18", date: "2026-11-01 12:50", changes: [
+        "History: the day window now also shows “How the day went” — the rating and note (same as in Calendar).",
+    ]},
+    { version: "7.17", date: "2026-11-01 12:30", changes: [
+        "Calendar / History: the day window now shows a “How the day went” block — the rating and note you left on the Dashboard (needs migration 114).",
+    ]},
+    { version: "7.16", date: "2026-11-01 12:00", changes: [
+        "Dashboard → Daily metrics: above “Save day” there is now a “How was the day?” block — a 1–5 rating and a short note, saved together with “Save day”. Needs migration 114 (the block stays hidden until then).",
+    ]},
+    { version: "7.15", date: "2026-11-01 14:00", changes: [
+        "Header: a magnifier button “Quick search” now sits in the top bar. Tap it to open the command palette (jump to a page or run an action by typing a few letters), so it is available on a phone or tablet too, where there is no Ctrl+K or “/” key. The button works regardless of the “Keyboard shortcuts” checkbox in Global settings. No migrations."
+    ]},
     { version: "7.14", date: "2026-11-01 12:30", changes: [
         "Workouts: rest timer. After you tick a set, a countdown (90 seconds by default) starts in the workout header with −15, +15 and Skip buttons; when it ends you get a vibration and a notice. Cycle the length with the “Rest timer” button (60 / 90 / 120 / 180 seconds or off). In a superset, rest starts after the last exercise of the group. The screen stays on during a workout.",
     ]},

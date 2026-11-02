@@ -1,7 +1,42 @@
 {
-  "version": "7.14",
+  "version": "7.19",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.19",
+      "date": "2026-11-01 16:00",
+      "changes": [
+        "Header: the command palette (Ctrl+K, “/” or the magnifier button) has a new action “Water: log a drink”. It opens the regular water window, so you can log a glass without leaving the page or looking for the water icon. The item shows up only when water tracking is on and a water metric exists. No migrations."
+      ]
+    },
+    {
+      "version": "7.18",
+      "date": "2026-11-01 12:50",
+      "changes": [
+        "History: the day window now also shows “How the day went” — the rating and note (same as in Calendar)."
+      ]
+    },
+    {
+      "version": "7.17",
+      "date": "2026-11-01 12:30",
+      "changes": [
+        "Calendar / History: the day window now shows a “How the day went” block — the rating and note you left on the Dashboard (needs migration 114)."
+      ]
+    },
+    {
+      "version": "7.16",
+      "date": "2026-11-01 12:00",
+      "changes": [
+        "Dashboard → Daily metrics: above “Save day” there is now a “How was the day?” block — a 1–5 rating and a short note, saved together with “Save day”. Needs migration 114 (the block stays hidden until then)."
+      ]
+    },
+    {
+      "version": "7.15",
+      "date": "2026-11-01 14:00",
+      "changes": [
+        "Header: a magnifier button “Quick search” now sits in the top bar. Tap it to open the command palette (jump to a page or run an action by typing a few letters), so it is available on a phone or tablet too, where there is no Ctrl+K or “/” key. The button works regardless of the “Keyboard shortcuts” checkbox in Global settings. No migrations."
+      ]
+    },
     {
       "version": "7.14",
       "date": "2026-11-01 12:30",
@@ -5068,6 +5103,41 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.19",
+      "date": "2026-11-01 16:00",
+      "changes": [
+        "Шапка: в командной палитре (Ctrl+K, «/» или кнопка-лупа) появилось действие «Вода: записать стакан». Оно открывает обычное окно воды, так что стакан можно записать, не покидая страницы и не ища иконку воды. Пункт виден только когда учёт воды включён и метрика воды есть. Без миграций."
+      ]
+    },
+    {
+      "version": "7.18",
+      "date": "2026-11-01 12:50",
+      "changes": [
+        "«История»: окно дня тоже показывает «Как прошёл день» — оценку и заметку (как в «Календаре»)."
+      ]
+    },
+    {
+      "version": "7.17",
+      "date": "2026-11-01 12:30",
+      "changes": [
+        "«Календарь» / «История»: в окне дня появился блок «Как прошёл день» — самочувствие и заметка, которые ты оставил на Дашборде (нужна миграция 114)."
+      ]
+    },
+    {
+      "version": "7.16",
+      "date": "2026-11-01 12:00",
+      "changes": [
+        "«Дашборд» → «Ежедневные метрики»: над «Сохранить день» появился блок «Как прошёл день?» — самочувствие от 1 до 5 и короткая заметка. Пишется вместе с «Сохранить день». Нужна миграция 114 (до неё блок не виден)."
+      ]
+    },
+    {
+      "version": "7.15",
+      "date": "2026-11-01 14:00",
+      "changes": [
+        "Шапка: в верхней строке появилась кнопка-лупа «Быстрый поиск». Касание открывает командную палитру (переход на нужную страницу или действие по набору букв), так что с телефона и планшета, где нет Ctrl+K и клавиши «/», она теперь тоже доступна. Кнопка работает независимо от галочки «Горячие клавиши» в «Глобальных настройках». Без миграций."
+      ]
+    },
     {
       "version": "7.14",
       "date": "2026-11-01 12:30",

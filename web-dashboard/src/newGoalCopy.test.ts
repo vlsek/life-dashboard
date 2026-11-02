@@ -81,7 +81,7 @@ describe('копия окна совпадает с GoalForm.vue из web-goals'
     for (const frag of ['type="number" min="1"', 'maxlength="40"', 'type="date"', 'const NEW = \'\\u0000new\'']) expect(theirs).toContain(frag)
   })
   it('значения по умолчанию новой цели те же, что у формы «Новая цель» в web-goals (1 этап, сложность не задана); поля «Баллы» нет ни там, ни здесь', () => {
-    expect(read('../web-goals/src/App.vue')).toContain("return { name: '', points: 5, category: '', stages: 1, difficulty: null, deadline: '' }")
+    expect(read('../web-goals/src/App.vue')).toContain("return formDraft.value ?? { name: '', points: 5, category: '', stages: 1, difficulty: null, deadline: '' }")
     expect(mineSrc).toContain('const stages = ref(1)')
     expect(mineSrc).toContain('const difficulty = ref<Difficulty>(null)')
     expect(mineSrc).not.toContain('goals_field_points')
