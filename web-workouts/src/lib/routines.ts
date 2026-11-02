@@ -27,6 +27,14 @@ export const upsertRoutine = (list: readonly Routine[], r: Routine): Routine[] =
   const next = i >= 0 ? list.map((x, k) => (k === i ? r : x)) : [r, ...list]
   return next.slice(0, MAX_ROUTINES)
 }
+// «Дублировать»: копия сразу после оригинала с новым id и пометкой в названии (длина названия ограничена 80)
+export function duplicateRoutine(list: readonly Routine[], id: string, newId: string, suffix: string, nowIso: string): { list: Routine[]; copy: Routine | null } {
+  const i = list.findIndex((x) => x.id === id)
+  if (i < 0 || list.length >= MAX_ROUTINES) return { list: [...list], copy: null }
+  const src = list[i]
+  const copy: Routine = { id: newId, name: `${src.name.slice(0, 80 - suffix.length - 1)} ${suffix}`.trim(), items: src.items.map((x) => ({ ...x })), updated_at: nowIso }
+  return { list: [...list.slice(0, i + 1), copy, ...list.slice(i + 1)], copy }
+}
 export const removeRoutine = (list: readonly Routine[], id: string): Routine[] => list.filter((x) => x.id !== id)
 export const renameRoutine = (list: readonly Routine[], id: string, name: string, nowIso: string): Routine[] => {
   const nm = name.trim().slice(0, 80)

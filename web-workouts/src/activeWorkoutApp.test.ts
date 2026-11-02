@@ -33,6 +33,7 @@ vi.mock('./lib/supabase', () => ({
 
 import App from './App.vue'
 import { useActiveWorkout } from './lib/useActiveWorkout'
+import { useRoutines } from './lib/useRoutines'
 import { resetSessionProbe } from './lib/sessionProbe'
 
 const ex = { id: 'e1', user_id: 'u1', name: 'Жим лёжа', category: 'upper', tracks_weight: true, unit: 'kg', value_label: null, suggested_scheme: null, created_at: '2026-01-01' }
@@ -136,6 +137,16 @@ describe('активная тренировка', () => {
     expect(q(w2, 'active-workout').exists()).toBe(true)
     expect(q(w2, 'aw-ex-0').text()).toContain('Жим лёжа')
     w2.unmount()
+  })
+
+  it('рутина: «Дублировать» добавляет копию в список', async () => {
+    useRoutines().routines.value = [{ id: 'r1', name: 'Грудь', updated_at: '', items: [{ exercise_id: 'e1', target_sets: 3, superset_group: null }] }]
+    const w = await mountApp()
+    await w.find('[data-testid="routine-dup-r1"]').trigger('click')
+    expect(w.findAll('[data-testid^="routine-start-"]')).toHaveLength(2)
+    expect(w.find('[data-testid="routines"]').text()).toContain('Грудь (копия)')
+    w.unmount()
+    useRoutines().routines.value = []
   })
 
   it('прошлое: тап по подсказке подставляет числа без ✓; «Подставить прошлое» заполняет пустые подходы', async () => {

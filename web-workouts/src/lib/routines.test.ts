@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { addExercise, addSet, newDraft } from './activeWorkout'
-import { draftFromRoutine, loadRoutines, removeRoutine, renameRoutine, routineFromDraft, ROUTINES_KEY, saveRoutines, upsertRoutine } from './routines'
+import { duplicateRoutine, draftFromRoutine, loadRoutines, removeRoutine, renameRoutine, routineFromDraft, ROUTINES_KEY, saveRoutines, upsertRoutine } from './routines'
 
 const now = new Date(2026, 9, 31, 20, 0, 0)
 const base = () => addSet(addExercise(addExercise(newDraft('d', now), 'a', 'x1'), 'b', 'x2'), 'a') // x1: 2 подхода, x2: 1
@@ -32,5 +32,21 @@ describe('рутины', () => {
     expect(loadRoutines(s)).toEqual([{ id: 'a', name: 'ok', items: [{ exercise_id: 'x', target_sets: 20, superset_group: null }], updated_at: '' }])
     s.m.set(ROUTINES_KEY, '{oops'); expect(loadRoutines(s)).toEqual([])
     expect(saveRoutines(l, { getItem: () => null, setItem: () => { throw new Error('q') } })).toBe(false)
+  })
+})
+
+describe('рутины: дублирование', () => {
+  const base = { id: 'a', name: 'Грудь', updated_at: '2026-01-01', items: [{ exercise_id: 'e1', target_sets: 3, superset_group: null }] }
+  it('копия идёт сразу после оригинала, с новым id и пометкой; пункты не общие', () => {
+    const { list, copy } = duplicateRoutine([base, { ...base, id: 'b', name: 'Ноги' }], 'a', 'n1', '(копия)', '2026-02-01')
+    expect(list.map((r) => r.id)).toEqual(['a', 'n1', 'b'])
+    expect(copy).toMatchObject({ id: 'n1', name: 'Грудь (копия)', updated_at: '2026-02-01' })
+    copy!.items[0].target_sets = 9
+    expect(base.items[0].target_sets).toBe(3)
+  })
+  it('длинное название укорачивается до 80; нет рутины — ничего не меняется', () => {
+    const long = { ...base, name: 'x'.repeat(80) }
+    expect(duplicateRoutine([long], 'a', 'n', '(copy)', '').copy!.name.length).toBeLessThanOrEqual(80)
+    expect(duplicateRoutine([base], 'zzz', 'n', 's', '').copy).toBeNull()
   })
 })

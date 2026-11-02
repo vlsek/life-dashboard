@@ -27,9 +27,10 @@ async function remove(r: Routine) {
           <div class="truncate text-xs" style="color: var(--text-dim)">{{ t('rt_count').replace('{n}', String(r.items.length)) }}<template v-if="brief(r)"> · {{ brief(r) }}</template></div>
         </div>
         <button type="button" class="rounded-lg px-4 py-2 text-sm font-semibold" style="background: var(--success); color: #fff; min-height: 44px" :disabled="disabled" :data-testid="'routine-start-' + r.id" @click="emit('start', r)">{{ t('rt_start') }}</button>
+        <button type="button" class="px-2 py-2" style="color: var(--text-dim); min-width: 40px; min-height: 44px" :aria-label="t('rt_duplicate')" :data-testid="'routine-dup-' + r.id" @click="rt.duplicate(r.id, t('rt_copy_suffix'))">⧉</button>
         <button type="button" class="px-2 py-2" style="color: var(--text-dim); min-width: 40px; min-height: 44px" :aria-label="t('rt_delete')" @click="remove(r)">✕</button>
       </div>
     </div>
-    <p class="mt-1 text-xs" style="color: var(--text-dim)">{{ t('rt_device_note') }}</p>
+    <p v-if="!rt.synced.value" class="mt-1 text-xs" style="color: var(--text-dim)">{{ t('rt_device_note') }}</p>
   </section>
 </template>
