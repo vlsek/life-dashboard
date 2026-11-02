@@ -21,6 +21,8 @@ import CommandPalette from './components/CommandPalette.vue'
 import PaletteButton from './components/PaletteButton.vue'
 import type { PaletteItem } from './lib/palette'
 import { createHotkeyHandler, hotkeysHelpOpen, paletteOpen } from './lib/hotkeys'
+import { applyBadge, badgeCount } from './lib/appBadge'
+import { readQuick, withoutQuick } from './lib/quickAction'
 import { loadPauseState, type PauseState } from './lib/pause'
 import FavoriteHeart from './components/FavoriteHeart.vue'
 import PageWidgetButton from './components/PageWidgetButton.vue'
@@ -117,6 +119,25 @@ const unitLabel = computed(() => (getLang() === 'en' ? 'ml' : 'мл'))
 const waterVisible = computed(() => trackWater.value && waterLoaded.value && !waterError.value && !!metric.value)
 
 const waterOpen = ref(false)
+// Ярлык «+ вода» установленного приложения (79.5): ?quick=water открывает окно воды, когда оно доступно; параметр убираем из адреса
+let pendingQuick = readQuick(location.search)
+function clearQuickFromUrl() {
+  pendingQuick = null
+  try {
+    history.replaceState(history.state, '', withoutQuick(location.href))
+  } catch {
+    /* адрес не поменять — не страшно */
+  }
+}
+watch([ready, waterVisible], ([r, visible]) => {
+  if (!pendingQuick || !r) return
+  if (pendingQuick === 'water' && visible) waterOpen.value = true
+  clearQuickFromUrl() // готовность есть: либо открыли, либо воды нет (учёт выключен) — повторять незачем
+}, { immediate: true })
+// Бейдж на иконке приложения (79.5): сколько невыполненного за сегодня
+watch([ready, () => badgeCount(day.value)], ([r, n]) => {
+  if (r) void applyBadge(n)
+}, { immediate: true })
 watch(trackWater, (on) => {
   if (!on) waterOpen.value = false // выключили, пока окно воды было открыто
 })
