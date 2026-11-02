@@ -1,7 +1,14 @@
 {
-  "version": "7.23",
+  "version": "7.24",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.24",
+      "date": "2026-11-01 20:00",
+      "changes": [
+        "Calendar: month cells now show coloured event markers — a green circle for a workout day, a yellow square for a challenge day and a blue diamond for a milestone due date. In the day window they expand into a list: how many workout entries, “Challenge: name (day N)” and which milestone is due. A new “Life events” chip under “Show” hides the markers if you do not need them. The data is only read from the workouts, challenges and milestones sections, and a read failure does not break the calendar. No migrations."
+      ]
+    },
     {
       "version": "7.23",
       "date": "2026-11-02 09:20",
@@ -5131,6 +5138,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.24",
+      "date": "2026-11-01 20:00",
+      "changes": [
+        "Календарь: в клетках месяца появились цветные значки событий — зелёный круг для дня с тренировкой, жёлтый квадрат для дня челленджа, синий ромб для срока вехи. В окне дня они раскрываются в список: сколько записей тренировки, «Челлендж: название (день N)» и какая веха должна быть сделана. Новая кнопка «События жизни» в «Показывать» отключает значки, если они не нужны. Данные только читаются из разделов тренировок, челленджей и вех; сбой чтения не ломает календарь. Без миграций."
+      ]
+    },
     {
       "version": "7.23",
       "date": "2026-11-02 09:20",

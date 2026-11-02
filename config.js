@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.23";
+const SITE_VERSION = "7.24";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.24", date: "2026-11-01 20:00", changes: [
+        "Календарь: в клетках месяца появились цветные значки событий — зелёный круг для дня с тренировкой, жёлтый квадрат для дня челленджа, синий ромб для срока вехи. В окне дня они раскрываются в список: сколько записей тренировки, «Челлендж: название (день N)» и какая веха должна быть сделана. Новая кнопка «События жизни» в «Показывать» отключает значки, если они не нужны. Данные только читаются из разделов тренировок, челленджей и вех; сбой чтения не ломает календарь. Без миграций."
+    ]},
     { version: "7.23", date: "2026-11-02 09:20", changes: [
         "Тренировки: разминочные и невыполненные подходы больше не попадают в рекорды, графики, прогресс и карту мышц — считаются только рабочие. В активной тренировке можно включить колонку RPE (усилие 6–10 с шагом 0,5): кнопка «RPE: вкл» под названием. Настройка хранится на устройстве.",
     ]},
@@ -2785,6 +2788,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.24", date: "2026-11-01 20:00", changes: [
+        "Calendar: month cells now show coloured event markers — a green circle for a workout day, a yellow square for a challenge day and a blue diamond for a milestone due date. In the day window they expand into a list: how many workout entries, “Challenge: name (day N)” and which milestone is due. A new “Life events” chip under “Show” hides the markers if you do not need them. The data is only read from the workouts, challenges and milestones sections, and a read failure does not break the calendar. No migrations."
+    ]},
     { version: "7.23", date: "2026-11-02 09:20", changes: [
         "Workouts: warm-up and unfinished sets no longer count toward records, charts, progress or the muscle map — only working sets do. The active workout can show an RPE column (effort 6–10 in 0.5 steps): the “RPE: on” button under the title. The setting is stored on the device.",
     ]},
