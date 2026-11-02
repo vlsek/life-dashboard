@@ -78,7 +78,9 @@ BACKLOG 76.4 «Календарь: перенос плана между дням
 Прежний итог: (v6.20: шкала недели «Башни» и «Выходные»; v6.17: кольца дня; v6.14: анимации воды)
 
 ### Агент 4
-— свободен — (v5.46 первая тематическая большая тема Summer Meadow, 57.7 файл 2 тема 1; все пять светлых из файла 1 готовы (v4.99–v5.30). Дальше: файл 2 — Autumn Mood, Spring Awakening, Inferno, Eastern Tradition, Russian Heritage, American Retro, Deep Water и 55.3 по одной за заход; янтарный фосфор, вшитый шрифт JetBrains Mono — по согласованию с владельцем)
+BACKLOG 69.11 «Лента истории вместо журнала» — СРЕЗ 1: в карточке дня у упражнения — ЛУЧШИЙ рабочий подход и значок ★ рекорда (рекорд относительно записей ДО этого дня, по `records.ts`); старое поведение вкладки «Журнал» сохраняется. БЕЗ SQL. ТРОГАЮ: `web-workouts/src/lib/journal.ts`, `components/JournalList.vue`, `lib/i18n.ts`, тесты, пересборка `workouts/`. НЕ ТРОГАЮ ActiveWorkout/рутины/итоги (агент 3), модели мышц (агент 8). С: 2026-11-02 12:46
+
+Прежний итог: (v5.46 первая тематическая большая тема Summer Meadow, 57.7 файл 2 тема 1; все пять светлых из файла 1 готовы (v4.99–v5.30). Дальше: файл 2 — Autumn Mood, Spring Awakening, Inferno, Eastern Tradition, Russian Heritage, American Retro, Deep Water и 55.3 по одной за заход; янтарный фосфор, вшитый шрифт JetBrains Mono — по согласованию с владельцем)
 
 ### Агент 5
 BACKLOG 79.10 «Шапка: раздел «Справка» с поиском». ФАЙЛЫ: `web-header/src/lib/help.ts` (+тест), `lib/pageHints.ts` (копия из dashboard + проверка в тесте), `components/HelpModal.vue`, `lib/hotkeys.ts` (флаг `helpOpen`), `lib/palette.ts` (пункт «Справка»), `components/SettingsModal.vue` (кнопка), `App.vue`, ключи `hdr_help_*`, сборка `header-widgets/`. БЕЗ SQL. С: 2026-11-02 11:00. Прежний итог: v7.21 79.2 скачать мои данные
