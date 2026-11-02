@@ -109,5 +109,14 @@ export function useCalendar() {
     byDate.value = { ...byDate.value, [dateStr]: planned }
   }
 
-  return { auth, byDate, deadlines, events, error, today, init, loadMonth, loadToday, savePlanned }
+  // Перенос пункта плана на другой день (76.4): целевой день читается из базы (он может быть вне показанного месяца).
+  // Порядок записи: сначала целевой день, потом исходный — при сбое второй записи пункт лишь продублируется, но не пропадёт.
+  async function movePlanned(userId: string, from: string, to: string, remaining: PlannedItem[], moved: PlannedItem) {
+    const { data, error: err } = await sb.from('daily_notes').select('planned_goals').eq('user_id', userId).eq('date', to).maybeSingle()
+    if (err) throw err
+    await savePlanned(userId, to, [...normalizePlanned(data?.planned_goals), { type: 'custom', text: moved.text, done: false }])
+    await savePlanned(userId, from, remaining)
+  }
+
+  return { auth, byDate, deadlines, events, error, today, init, loadMonth, loadToday, savePlanned, movePlanned }
 }

@@ -8,11 +8,12 @@ import type { PlannedItem } from './lib/types'
 import HistoryView from './components/HistoryView.vue'
 import TodayCard from './components/TodayCard.vue'
 import { todayStr } from './lib/date'
+import { friendlyError } from './lib/friendlyError'
 import CalendarShowToggles from './components/CalendarShowToggles.vue'
 import { loadShow, saveShow, type ShowKey } from './lib/calendarShow'
 import { buildIcs, icsFileName, icsItemsFromMonth } from './lib/ics'
 
-const { auth, byDate, deadlines, events, today, init, loadMonth, loadToday, savePlanned } = useCalendar()
+const { auth, byDate, deadlines, events, today, init, loadMonth, loadToday, savePlanned, movePlanned } = useCalendar()
 
 const initialView = new URLSearchParams(window.location.search).get('view') === 'history' ? 'history' : 'calendar'
 const view = ref<'calendar' | 'history'>(initialView)
@@ -76,6 +77,19 @@ const openDate = ref<string | null>(null)
 function openDay(dateStr: string) {
   openDate.value = dateStr
 }
+const moveError = ref<string | null>(null)
+async function onMoveDay(p: { items: PlannedItem[]; index: number; to: string }) {
+  if (auth.value.status !== 'ready' || !openDate.value) return
+  moveError.value = null
+  try {
+    await movePlanned(auth.value.userId, openDate.value, p.to, p.items.filter((_, i) => i !== p.index), p.items[p.index])
+  } catch (e) {
+    moveError.value = friendlyError(e, 'save') // окно остаётся открытым: ничего не потеряно, можно повторить
+    return
+  }
+  openDate.value = null
+  await reloadToday()
+}
 async function onSaveDay(items: PlannedItem[]) {
   if (auth.value.status !== 'ready' || !openDate.value) return
   await savePlanned(auth.value.userId, openDate.value, items)
@@ -118,7 +132,9 @@ async function onSaveDay(items: PlannedItem[]) {
       :has-summary="!!grid?.hasSummary(openDate)"
       @summary="grid?.openSummary(openDate)"
       @close="openDate = null"
+      :move-error="moveError"
       @save="onSaveDay"
+      @move="onMoveDay"
     />
     </template>
   </main>
