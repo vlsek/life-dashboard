@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useRoutines } from './lib/useRoutines'
 import { haptic } from './lib/nativeFeedback'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useWorkouts } from './lib/useWorkouts'
@@ -429,6 +430,7 @@ watch(
   async (status) => {
     if (status !== 'ready' || auth.value.status !== 'ready') return
     void fetchProfileGender(auth.value.userId).then((g) => (profileGender.value = g))
+    void useRoutines().sync(auth.value.userId) // рутины с сервера (69.7 срез 2); нет миграции 113 — остаются на устройстве
     void meas.load(auth.value.userId) // замеры тела (57.1): нет таблицы (миграция 074) — блок скрыт
     void loadCollapseStyle(auth.value.userId) // вид сворачивания блоков из «Кастомизации» (BACKLOG 498); до ответа — кэш
     try {
