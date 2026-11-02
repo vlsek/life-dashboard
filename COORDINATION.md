@@ -73,7 +73,7 @@
 BACKLOG 76.1 «Календарь: вехи, тренировки и челленджи в сетке и окне дня». Три цветные точки в клетке месяца (тренировка, день челленджа, срок вехи) и список в окне дня; запросы `workout_entries`, `challenge_entries`+`challenge_instances`, `milestones` (чтение, ошибка любого не ломает календарь); новая часть «Показывать → События жизни» (ключ `events`, по умолчанию включена, уходит в профиль вместе с `calendar_show`). БЕЗ SQL. ТРОГАЮ: `web-calendar/src/lib/lifeEvents.ts` (новый) + тест, `lib/useCalendar.ts`, `lib/calendarShow.ts` (+тест), `components/HistoryView.vue` (точки), `components/DayModal.vue` (список), `App.vue` (проп), `components/CalendarShowToggles.vue` (если нужно), `lib/i18n.ts`, `style.css`, пересборка `calendar/`. НЕ ТРОГАЮ планы, сроки целей, сводки. С: 2026-11-01
 
 ### Агент 3
-— свободен — (v7.23: 69.4 срез 1 RPE и разминка вне статистики; v7.14: 69.5 таймер отдыха)
+BACKLOG 69.7 «Рутины» срез 2: синхронизация рутин с workout_routines/workout_routine_items (миграция 113; без таблицы остаётся localStorage). Файлы: web-workouts/src/lib/routineSync.ts, useRoutines.ts, App.vue (вызов sync). С: 2026-11-02 09:10
 
 Прежний итог: (v6.20: шкала недели «Башни» и «Выходные»; v6.17: кольца дня; v6.14: анимации воды)
 
