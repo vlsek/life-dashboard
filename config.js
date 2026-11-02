@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.21";
+const SITE_VERSION = "7.22";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.22", date: "2026-11-01 18:00", changes: [
+        "Установленное приложение: у иконки на домашнем экране появились ярлыки («Сегодня», «+ вода», «Тренировка») — долгое нажатие или правая кнопка показывают их. «+ вода» открывает Дашборд сразу с окном записи воды. Кроме того, на иконке приложения теперь отображается число невыполненного за сегодня (если твой браузер или система поддерживают бейджи). Без миграций."
+    ]},
     { version: "7.21", date: "2026-11-01 16:30", changes: [
         "«Аккаунт»: новая карточка «Мои данные» — можно скачать всё, что хранится о тебе (метрики и значения по дням, заметки и планы, цели, навыки, книги, слова, вехи, воду, тренировки, параметры тела, челленджи, достижения и другое) одним файлом JSON или архивом CSV (по файлу на таблицу, с README). Файл собирается на твоём устройстве и никуда не отправляется. Без миграций."
     ]},
@@ -2779,6 +2782,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.22", date: "2026-11-01 18:00", changes: [
+        "Installed app: the icon on your home screen now has shortcuts (“Today”, “+ water”, “Workout”) — long-press or right-click to see them. “+ water” opens the Dashboard with the water logging window already open. The app icon also shows how many things are left undone today (if your browser or system supports badges). No migrations."
+    ]},
     { version: "7.21", date: "2026-11-01 16:30", changes: [
         "Account: a new “My data” card — download everything stored about you (metrics and daily values, notes and plans, goals, skills, books, words, milestones, water, workouts, body parameters, challenges, achievements and more) as one JSON file or a CSV archive (one file per table, with a README). The file is built on your device and is not sent anywhere. No migrations."
     ]},

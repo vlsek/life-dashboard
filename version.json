@@ -1,7 +1,14 @@
 {
-  "version": "7.21",
+  "version": "7.22",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.22",
+      "date": "2026-11-01 18:00",
+      "changes": [
+        "Installed app: the icon on your home screen now has shortcuts (“Today”, “+ water”, “Workout”) — long-press or right-click to see them. “+ water” opens the Dashboard with the water logging window already open. The app icon also shows how many things are left undone today (if your browser or system supports badges). No migrations."
+      ]
+    },
     {
       "version": "7.21",
       "date": "2026-11-01 16:30",
@@ -5117,6 +5124,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.22",
+      "date": "2026-11-01 18:00",
+      "changes": [
+        "Установленное приложение: у иконки на домашнем экране появились ярлыки («Сегодня», «+ вода», «Тренировка») — долгое нажатие или правая кнопка показывают их. «+ вода» открывает Дашборд сразу с окном записи воды. Кроме того, на иконке приложения теперь отображается число невыполненного за сегодня (если твой браузер или система поддерживают бейджи). Без миграций."
+      ]
+    },
     {
       "version": "7.21",
       "date": "2026-11-01 16:30",
