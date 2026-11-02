@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.19";
+const SITE_VERSION = "7.20";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.20", date: "2026-11-02 09:20", changes: [
+        "Тренировки: разминочные и невыполненные подходы больше не попадают в рекорды, графики, прогресс и карту мышц — считаются только рабочие. В активной тренировке можно включить колонку RPE (усилие 6–10 с шагом 0,5): кнопка «RPE: вкл» под названием. Настройка хранится на устройстве.",
+    ]},
     { version: "7.19", date: "2026-11-01 16:00", changes: [
         "Шапка: в командной палитре (Ctrl+K, «/» или кнопка-лупа) появилось действие «Вода: записать стакан». Оно открывает обычное окно воды, так что стакан можно записать, не покидая страницы и не ища иконку воды. Пункт виден только когда учёт воды включён и метрика воды есть. Без миграций."
     ]},
@@ -2773,6 +2776,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.20", date: "2026-11-02 09:20", changes: [
+        "Workouts: warm-up and unfinished sets no longer count toward records, charts, progress or the muscle map — only working sets do. The active workout can show an RPE column (effort 6–10 in 0.5 steps): the “RPE: on” button under the title. The setting is stored on the device.",
+    ]},
     { version: "7.19", date: "2026-11-01 16:00", changes: [
         "Header: the command palette (Ctrl+K, “/” or the magnifier button) has a new action “Water: log a drink”. It opens the regular water window, so you can log a glass without leaving the page or looking for the water icon. The item shows up only when water tracking is on and a water metric exists. No migrations."
     ]},

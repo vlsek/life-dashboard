@@ -1,7 +1,14 @@
 {
-  "version": "7.19",
+  "version": "7.20",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.20",
+      "date": "2026-11-02 09:20",
+      "changes": [
+        "Workouts: warm-up and unfinished sets no longer count toward records, charts, progress or the muscle map — only working sets do. The active workout can show an RPE column (effort 6–10 in 0.5 steps): the “RPE: on” button under the title. The setting is stored on the device."
+      ]
+    },
     {
       "version": "7.19",
       "date": "2026-11-01 16:00",
@@ -5103,6 +5110,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.20",
+      "date": "2026-11-02 09:20",
+      "changes": [
+        "Тренировки: разминочные и невыполненные подходы больше не попадают в рекорды, графики, прогресс и карту мышц — считаются только рабочие. В активной тренировке можно включить колонку RPE (усилие 6–10 с шагом 0,5): кнопка «RPE: вкл» под названием. Настройка хранится на устройстве."
+      ]
+    },
     {
       "version": "7.19",
       "date": "2026-11-01 16:00",
