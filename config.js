@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.27";
+const SITE_VERSION = "7.29";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,12 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.29", date: "2026-11-02 11:10", changes: [
+        "Тренировки: у рутины появилась кнопка «Дублировать» (⧉) — копия встаёт сразу после оригинала. Подпись «Рутины хранятся на этом устройстве» теперь показывается только тогда, когда рутины не синхронизируются с аккаунтом.",
+    ]},
+    { version: "7.28", date: "2026-11-02 09:20", changes: [
+        "«Тренировки»: под картой мышц появился блок «Баланс»: три полоски — толкай/тяни, верх/низ и левая/правая сторона (по повторам, «левая сторона отстаёт на 18%»). Если подходов мало или сторона не указана, честно пишем «подходов пока мало».",
+    ]},
     { version: "7.27", date: "2026-11-02 10:30", changes: [
         "Тренировки: рутины теперь хранятся в аккаунте, а не только на телефоне — они видны на всех устройствах (нужна миграция 113; без неё всё работает как раньше, на устройстве). Переименование и удаление тоже синхронизируются, офлайн правки встают в очередь.",
     ]},
@@ -2797,6 +2803,12 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.29", date: "2026-11-02 11:10", changes: [
+        "Workouts: routines got a “Duplicate” button (⧉) — the copy appears right after the original. The “Routines are stored on this device” note now shows only when routines are not synced with your account.",
+    ]},
+    { version: "7.28", date: "2026-11-02 09:20", changes: [
+        "Workouts: below the muscle map there is a new “Balance” block with three bars — push/pull, upper/lower and left/right (by reps, e.g. “the left side is 18% behind”). With too few sets or no side recorded it says so instead of guessing.",
+    ]},
     { version: "7.27", date: "2026-11-02 10:30", changes: [
         "Workouts: routines are now stored in your account, not only on the phone, so they show up on every device (needs migration 113; without it everything works as before, on the device). Renaming and deleting sync too, and offline edits wait in the queue.",
     ]},
