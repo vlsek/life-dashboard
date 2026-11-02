@@ -1967,4 +1967,5 @@ input[type='time']::-webkit-calendar-picker-indicator:hover {
 /* Коллекции достижений (BACKLOG 78.6) */
 .col-pick { background: transparent; border: 0; padding: 0.15rem; border-radius: 0.5rem; cursor: pointer; }
 .col-pick:hover, .col-pick:focus-visible { background: color-mix(in srgb, var(--accent) 12%, transparent); }
-.col-complete { border-color: var(--accent) !important; }
+.col-complete { border-color: var(--accent) !important; box-shadow: 0 0 0 1px var(--accent) inset; }
+.col-done-label { color: var(--accent); }
