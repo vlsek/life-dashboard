@@ -154,6 +154,15 @@ describe('Магазин: награды за цель в виде «Списо�
     await flushPromises()
     expect(h.claims[0].p_item_id).toBe('book')
   })
+
+  it('полученная награда в списке помнит название цели', async () => {
+    localStorage.setItem('shop_view', 'list')
+    const w = await mountApp()
+    await w.find('[data-testid="bought-toggle"]').trigger('click') // секция «Куплено» свёрнута по умолчанию
+    const got = w.findAll('[data-testid="shop-row"]').find((r) => r.text().includes('Часы'))!
+    expect(got.text()).toContain('Награда получена')
+    expect(got.find('[data-testid="reward-goal"]').text()).toBe('Старая цель')
+  })
 })
 
 describe('Магазин: «Получить награду»', () => {

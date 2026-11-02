@@ -28,7 +28,7 @@ const saving = computed(() => !props.item.redeemed && !props.item.reward && !p.v
         <a v-if="item.link" :href="item.link" target="_blank" rel="noopener" style="color: inherit">{{ item.name }}</a>
         <template v-else>{{ item.name }}</template>
       </div>
-      <div v-if="item.redeemed" class="dim text-xs"><EmojiText :text="item.reward ? t('shop_reward_got') : t('shop_bought_prefix')" /> {{ fmtDateRu(item.redeemed_date) }}</div>
+      <div v-if="item.redeemed" class="dim text-xs"><EmojiText :text="item.reward ? t('shop_reward_got') : t('shop_bought_prefix')" /> {{ fmtDateRu(item.redeemed_date) }}<template v-if="item.reward?.goalName"> · <span data-testid="reward-goal">{{ item.reward.goalName }}</span></template></div>
       <GoalRewardInfo v-else-if="item.reward" :reward="item.reward" />
       <div v-else-if="saving" class="mt-1 h-1.5 w-full overflow-hidden rounded-full" style="background: var(--border)" role="progressbar" :aria-valuenow="p.pct" aria-valuemin="0" aria-valuemax="100">
         <div class="h-full rounded-full" :style="{ width: p.pct + '%', background: 'var(--accent)' }" />
