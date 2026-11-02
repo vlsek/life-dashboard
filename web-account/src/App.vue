@@ -13,6 +13,7 @@ import FrameDecor from './components/FrameDecor.vue'
 import Icon from './components/Icon.vue'
 import Toast from './components/Toast.vue'
 import DeviceAccounts from './components/DeviceAccounts.vue'
+import MyDataCard from './components/MyDataCard.vue'
 import EmojiText from './components/EmojiText.vue'
 import { authErrorText } from './lib/authError'
 
@@ -201,6 +202,8 @@ const googleLinkedRest = computed(() => t('acc_google_linked').replace(/^\u2705\
           </button>
         </template>
       </div>
+
+      <MyDataCard v-if="auth.status === 'ready'" :user-id="auth.userId" />
 
       <DeviceAccounts />
 
