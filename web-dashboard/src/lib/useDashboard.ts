@@ -106,7 +106,7 @@ export function useDashboard() {
       fetchAllRows<{ date: string; items?: unknown[]; planned_goals?: PlannedItem[] }>((from, to) =>
         sb.from('daily_notes').select('date, items, planned_goals').eq('user_id', userId).order('date').range(from, to),
       ),
-      sb.from('goals').select('name, stages, done, current_stage').eq('user_id', userId),
+      sb.from('goals').select('name, stages, done, current_stage, done_date').eq('user_id', userId),
       // названия категорий — только для диаграммы «по категориям» (BACKLOG 656 а); ошибка не мешает остальному
       sb.from('metric_categories').select('id, label_ru, label_en'),
     ])
@@ -142,7 +142,9 @@ export function useDashboard() {
       const items = (n.items || []).filter((x): x is string => typeof x === 'string' && x.trim() !== '')
       if (items.length) yearNotes[d] = items
     }
-    yearData.value = { metrics, byDay, notes: yearNotes, today: new Date() }
+    const yearPlanned: Record<string, PlannedItem[]> = {}
+    for (const [d, n] of Object.entries(notesByDate)) if (Array.isArray(n.planned_goals) && n.planned_goals.length) yearPlanned[d] = n.planned_goals
+    yearData.value = { metrics, byDay, notes: yearNotes, today: new Date(), planned: yearPlanned, goals: (goalsRes.data || []) as NonNullable<YearGridData['goals']> }
 
     const settings = getDayProgressSettings()
     progressSettings.value = settings

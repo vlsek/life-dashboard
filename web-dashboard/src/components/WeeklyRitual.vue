@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { getLang, t } from '../lib/i18n'
 import { buildWeeklyReview, dismissWeekly, isWeeklyDismissed, loadWeeklyNote, reviewWeekStart, saveWeeklyNote } from '../lib/weeklyReview'
+import { addDaysIso } from '../lib/date'
 import type { YearGridData } from '../lib/yearGrid'
 
 // Недельный ритуал (BACKLOG 75.6): карточка в воскресенье и понедельник за закрывающуюся неделю — три факта и одно поле «что изменить».
@@ -14,7 +15,7 @@ const dismissedTick = ref(0)
 const review = computed(() => {
   void dismissedTick.value
   if (!props.data || !weekStart.value || isWeeklyDismissed(weekStart.value)) return null
-  return buildWeeklyReview(props.data.metrics, props.data.byDay, weekStart.value, props.data.today)
+  return buildWeeklyReview(props.data.metrics, props.data.byDay, weekStart.value, props.data.today, { planned: props.data.planned, goals: props.data.goals })
 })
 watch(() => !!review.value, (v) => emit('visible', v), { immediate: true })
 
@@ -32,7 +33,11 @@ function close() {
 }
 
 const fmtDay = (iso: string) => new Intl.DateTimeFormat(getLang() === 'ru' ? 'ru-RU' : 'en-US', { weekday: 'short', day: 'numeric', month: 'long' }).format(new Date(iso + 'T12:00:00'))
-const doneLine = computed(() => (review.value ? `${t('wr_done_prefix')} ${review.value.done} ${t('wr_of')} ${review.value.total} ${t('wr_marks')}` : ''))
+// Вывод, записанный неделей раньше: замыкаем петлю «решил — проверил» (читаем с устройства; нет записи — строки нет)
+const lastTakeaway = computed(() => (weekStart.value ? loadWeeklyNote(addDaysIso(weekStart.value, -7)) : ''))
+const planLine = computed(() => (review.value?.plan ? `${t('wr_plan_prefix')} ${review.value.plan.done} ${t('wr_of')} ${review.value.plan.total} ${t('wr_plan_items')}` : ''))
+const goalsLine = computed(() => (review.value?.goalsClosed ? `${t('wr_goals_closed')}: ${review.value.goalsClosed}` : ''))
+const doneLine = computed(() => (review.value && review.value.total > 0 ? `${t('wr_done_prefix')} ${review.value.done} ${t('wr_of')} ${review.value.total} ${t('wr_marks')}` : ''))
 const bestDayLine = computed(() => (review.value?.bestDay ? `${fmtDay(review.value.bestDay.date)} — ${review.value.bestDay.done} ${t('wr_of')} ${review.value.bestDay.total}` : ''))
 const bestMetricLine = computed(() => {
   const m = review.value?.bestMetric
@@ -47,10 +52,13 @@ const bestMetricLine = computed(() => {
       <button type="button" class="secondary px-2" :aria-label="t('wr_dismiss')" data-test="wr-dismiss" @click="close">×</button>
     </div>
     <ul class="wr-list">
-      <li data-test="wr-done">{{ doneLine }}</li>
+      <li v-if="doneLine" data-test="wr-done">{{ doneLine }}</li>
+      <li v-if="planLine" data-test="wr-plan">{{ planLine }}</li>
+      <li v-if="goalsLine" data-test="wr-goals">{{ goalsLine }}</li>
       <li v-if="bestDayLine" data-test="wr-best-day"><span class="dim">{{ t('wr_best_day') }}:</span> {{ bestDayLine }}</li>
       <li v-if="bestMetricLine" data-test="wr-best-metric"><span class="dim">{{ t('wr_best_metric') }}:</span> {{ bestMetricLine }}</li>
     </ul>
+    <p v-if="lastTakeaway" class="wr-prev" data-test="wr-prev"><span class="dim">{{ t('wr_prev_takeaway') }}:</span> {{ lastTakeaway }}</p>
     <label class="wr-label" for="wr-note">{{ t('wr_note_label') }}</label>
     <div class="wr-note">
       <input id="wr-note" v-model="note" type="text" maxlength="280" :placeholder="t('wr_note_ph')" data-test="wr-note" @input="saved = false" @keydown.enter.prevent="save" />
@@ -64,6 +72,7 @@ const bestMetricLine = computed(() => {
 .wr { border-color: var(--accent); background: var(--bg-card); }
 .wr-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .wr-list { list-style: none; margin: 6px 0; padding: 0; display: grid; gap: 2px; }
+.wr-prev { margin: 4px 0 0; overflow-wrap: anywhere; }
 .wr-label { display: block; margin-top: 6px; }
 .wr-note { display: flex; gap: 6px; margin-top: 4px; }
 .wr-note input { flex: 1 1 auto; min-width: 0; }
