@@ -1,4 +1,5 @@
 import { musclesForExercise, type MuscleId } from './muscles'
+import { workingOf } from './sessionContract'
 import type { Exercise, WorkoutEntry } from './types'
 
 // BACKLOG 80.6 «Баланс: толкай/тяни, верх/низ, лево/право», срез 1. Три отношения подходов за период. Чистая логика без сети и Vue.
@@ -38,14 +39,15 @@ export function muscleBalance(entries: EntryLite[], exercises: ExLite[], today: 
   for (const ex of exercises) musc.set(ex.id, musclesForExercise(ex.name))
   let push = 0, pull = 0, upper = 0, lower = 0, l = 0, r = 0, lReps = 0, rReps = 0
   for (const e of entries) {
-    if (e.sets.length === 0 || e.date > today || e.date < sinceIso) continue
+    const work = workingOf(e.sets)
+    if (work.length === 0 || e.date > today || e.date < sinceIso) continue
     const ms = musc.get(e.exercise_id) ?? []
-    const n = e.sets.length
+    const n = work.length
     if (hits(ms, PUSH)) push += n
     if (hits(ms, PULL)) pull += n
     if (hits(ms, UPPER)) upper += n
     if (hits(ms, LOWER)) lower += n
-    for (const s of e.sets) {
+    for (const s of work) {
       if (s.side === 'L') { l++; lReps += s.reps ?? 0 }
       else if (s.side === 'R') { r++; rReps += s.reps ?? 0 }
     }

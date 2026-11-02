@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.29";
+const SITE_VERSION = "7.33";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,18 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.33", date: "2026-11-02 12:00", changes: [
+        "Тренировки: если ты начал тренировку из рутины и изменил упражнения или число подходов, после «Завершить» приложение спросит, обновить ли рутину под сегодняшнюю тренировку. Сохранённая тренировка теперь помнит, по какой рутине шла (если рутины есть в аккаунте).",
+    ]},
+    { version: "7.32", date: "2026-11-02 11:20", changes: [
+        "«Тренировки»: в панели мышцы на карте появилась строка «Готовность»: «только что нагружена» → «восстанавливается» → «готова». Ориентир — 2 дня отдыха, после тяжёлой тренировки (8+ подходов) на день дольше. Это оценка, не диагноз.",
+    ]},
+    { version: "7.31", date: "2026-11-02 10:40", changes: [
+        "«Тренировки»: в режиме «Подходы» карта мышц красит группы относительно ориентира — 10 подходов в неделю (для другого периода пропорционально), а не относительно самой нагруженной группы. В подсказке к мышце виден ориентир. Это ориентир, а не предписание.",
+    ]},
+    { version: "7.30", date: "2026-11-02 10:00", changes: [
+        "«Тренировки»: над картой мышц появился блок «Что тренировать сегодня» — 2–3 группы, где за неделю меньше всего рабочих подходов и хватает отдыха («Спина 4/10, отдых 3 дн.»). Заодно разминочные подходы больше не попадают в блок «Баланс».",
+    ]},
     { version: "7.29", date: "2026-11-02 11:10", changes: [
         "Тренировки: у рутины появилась кнопка «Дублировать» (⧉) — копия встаёт сразу после оригинала. Подпись «Рутины хранятся на этом устройстве» теперь показывается только тогда, когда рутины не синхронизируются с аккаунтом.",
     ]},
@@ -2803,6 +2815,18 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.33", date: "2026-11-02 12:00", changes: [
+        "Workouts: if you started from a routine and changed the exercises or the number of sets, tapping “Finish” now asks whether to update the routine to match today’s workout. A saved workout also remembers which routine it followed (when routines are stored in your account).",
+    ]},
+    { version: "7.32", date: "2026-11-02 11:20", changes: [
+        "Workouts: the muscle panel on the map now shows “Readiness”: just loaded → recovering → ready. The guide is 2 rest days, one more after a heavy session (8+ sets). It is an estimate, not a diagnosis.",
+    ]},
+    { version: "7.31", date: "2026-11-02 10:40", changes: [
+        "Workouts: in “Sets” mode the muscle map now colours groups against a guide of 10 sets a week (scaled for other periods) instead of against your busiest group. The muscle tooltip shows the guide. It is a guide, not a rule.",
+    ]},
+    { version: "7.30", date: "2026-11-02 10:00", changes: [
+        "Workouts: above the muscle map there is a new “What to train today” block — 2–3 groups with the fewest working sets this week and enough rest (“Back 4/10, rest 3 d”). Warm-up sets no longer count in the “Balance” block.",
+    ]},
     { version: "7.29", date: "2026-11-02 11:10", changes: [
         "Workouts: routines got a “Duplicate” button (⧉) — the copy appears right after the original. The “Routines are stored on this device” note now shows only when routines are not synced with your account.",
     ]},

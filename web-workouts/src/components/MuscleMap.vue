@@ -35,7 +35,10 @@ import { useAccordionMember } from '../lib/useCollapseStyle'
 const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today?: string; studyRecent?: boolean; embedded?: boolean; model?: BodyModel; gender?: 'male' | 'female' | null }>()
 const emit = defineEmits<{ filter: [muscle: MuscleId, tab: 'journal' | 'exercises']; 'add-entry': [exercise: Exercise]; 'quick-add-entry': [exercise: Exercise, input: EntryFormInput, done: (ok: boolean) => void] }>()
 
+import { readiness } from '../lib/muscleReadiness'
+import TodayFocus from './TodayFocus.vue'
 import BalanceBars from './BalanceBars.vue'
+import { WEEK_TARGET } from '../lib/todayFocus'
 import { HEAT_KEY, HEAT_LEVELS, HEAT_MODES, coveredMuscles, heatLevel, normalizeHeatMode, setsByMuscle, type HeatMode } from '../lib/muscleHeat'
 
 const OPEN_KEY = 'workouts_musclemap_open'
@@ -136,10 +139,12 @@ function setHeatMode(m: HeatMode) {
 }
 const setsMap = computed(() => setsByMuscle(props.entries, props.exercises, today.value, periodStart(today.value, period.value)))
 const setsMax = computed(() => Math.max(0, ...setsMap.value.values()))
+// BACKLOG 80.1: ступени считаются от цели (10 подходов в неделю, на другой период — пропорционально), а не от самой нагруженной группы
+const goal = computed(() => Math.max(1, Math.round((WEEK_TARGET * period.value) / 7)))
 const covered = computed(() => coveredMuscles(props.exercises))
 // ступень 0..4 для режима volume; для covered — 1 или 0; для recent — null (красит прежняя логика)
 function heat(m: MuscleId): number | null {
-  if (heatMode.value === 'volume') return heatLevel(setsMap.value.get(m) ?? 0, setsMax.value)
+  if (heatMode.value === 'volume') return heatLevel(setsMap.value.get(m) ?? 0, goal.value)
   if (heatMode.value === 'covered') return covered.value.has(m) ? 1 : 0
   return null
 }
@@ -206,6 +211,7 @@ function pickFromList(m: MuscleId) {
 const SESSIONS_SHOWN = 5
 const showAllSessions = ref(false)
 const sessions = computed(() => (selected.value ? muscleSessions(props.entries, props.exercises, today.value, selected.value) : []))
+const ready = computed(() => (selected.value && sessions.value[0] ? readiness(sessions.value[0].date, sessions.value[0].sets, today.value) : null))
 const sessionsShown = computed(() => (showAllSessions.value ? sessions.value : sessions.value.slice(0, SESSIONS_SHOWN)))
 // Нагрузка по неделям: подходы за каждые 7 дней, 8 недель (мини-график в панели и текстовая сводка для скринридеров)
 const weeks = computed(() => weeklyLoad(sessions.value, today.value))
@@ -236,7 +242,7 @@ function zoneLabel(m: MuscleId): string {
   const lvl = heat(m)
   const name = muscleName(m)
   let status: string
-  if (heatMode.value === 'volume') status = (lvl ?? 0) > 0 ? t('workouts_zone_sets').replace('{n}', String(setsMap.value.get(m) ?? 0)).replace('{d}', String(period.value)) : t('workouts_zone_none')
+  if (heatMode.value === 'volume') status = (lvl ?? 0) > 0 ? t('workouts_zone_sets').replace('{n}', String(setsMap.value.get(m) ?? 0)).replace('{d}', String(period.value)) + ' ' + t('workouts_zone_goal').replace('{g}', String(goal.value)) : t('workouts_zone_none')
   else if (heatMode.value === 'covered') status = lvl ? t('workouts_zone_covered') : t('workouts_zone_none')
   else status = done.value.has(m) ? t('workouts_zone_recent') : t('workouts_zone_idle')
   return `${name}, ${status}`
@@ -301,6 +307,8 @@ function shapeStyle(m: MuscleId) {
     <div v-if="embedded || open" :class="embedded ? '' : 'mt-3'" data-testid="muscle-map-body">
       <p class="m-0 mb-3 text-[0.85em]" style="color: var(--text-dim)">{{ t('workouts_muscles_hint') }}</p>
 
+      <TodayFocus :entries="entries" :exercises="exercises" :today="today" />
+
       <div class="mb-2 flex flex-wrap items-center justify-center gap-1.5" role="group" :aria-label="t('workouts_muscles_asof_label')" data-testid="muscle-asof-picker">
         <button
           v-for="n in ASOF_OFFSETS"
@@ -331,7 +339,7 @@ function shapeStyle(m: MuscleId) {
         </button>
       </div>
       <p v-if="heatMode !== 'recent'" class="m-0 mb-2 text-center text-[0.75em]" style="color: var(--text-dim)" data-testid="muscle-heat-caption">
-        {{ heatMode === 'volume' ? t('workouts_heat_volume_cap').replace('{n}', String(period)) : t('workouts_heat_covered_cap') }}
+        {{ heatMode === 'volume' ? t('workouts_heat_volume_cap').replace('{n}', String(period)).replace('{g}', String(goal)) : t('workouts_heat_covered_cap') }}
         <template v-if="heatMode === 'volume' && setsMax === 0"> {{ t('workouts_heat_no_data') }}</template>
       </p>
 
@@ -416,6 +424,9 @@ function shapeStyle(m: MuscleId) {
           {{ t('workouts_muscles_last') }}
           <template v-if="last[selected]"><span data-testid="muscle-last-ago">{{ agoText(last[selected]) }}</span> ({{ ruDate(last[selected] as string) }})</template>
           <template v-else>{{ t('workouts_muscles_never') }}</template>
+        </div>
+        <div v-if="ready" class="mb-2 text-[0.85em]" style="color: var(--text-dim)" data-testid="muscle-readiness" :data-readiness="ready">
+          {{ t(('workouts_ready_' + ready) as DictKey) }} <span class="text-[0.9em]">{{ t('workouts_ready_note') }}</span>
         </div>
 
         <template v-if="sessions.length">

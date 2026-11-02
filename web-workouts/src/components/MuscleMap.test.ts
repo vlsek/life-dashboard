@@ -60,6 +60,17 @@ describe('MuscleMap', () => {
     expect(zone(w, 'calves').attributes('data-state')).toBe('idle')
   })
 
+  it('панель мышцы показывает готовность по дням после последней тренировки (80.3)', async () => {
+    const w = await openMap([entry('bench', '2026-09-29'), entry('squat', '2026-09-27')], [bench, squat])
+    await zone(w, 'chest').trigger('click')
+    expect(w.find('[data-testid="muscle-readiness"]').attributes('data-readiness')).toBe('recovering')
+    expect(w.find('[data-testid="muscle-readiness"]').text()).toContain('оценка, не диагноз')
+    await zone(w, 'quads').trigger('click')
+    expect(w.find('[data-testid="muscle-readiness"]').attributes('data-readiness')).toBe('ready')
+    await zone(w, 'calves').trigger('click')
+    expect(w.find('[data-testid="muscle-readiness"]').exists()).toBe(false)
+  })
+
   it('клик по серой мышце показывает свои упражнения и подсказки; кнопка добавляет запись', async () => {
     const w = await openMap([entry('bench', '2026-09-29')], [bench, squat])
     await zone(w, 'quads').trigger('click')
@@ -518,7 +529,9 @@ describe('MuscleMap: visual packs (BACKLOG 70.2)', () => {
   })
 
   it('режимы окраски (70.3): «Подходы» — плотность по числу подходов, нет подходов — нет данных; «Охват» — только группы с упражнением', async () => {
-    const w = await openMap([entry('bench', '2026-09-20'), entry('bench', '2026-09-21'), entry('squat', '2026-09-22')], [bench, squat])
+    // 20 подходов груди против 1 у ног: ступени идут от ориентира (43 подхода за 30 дней), а не от самой нагруженной группы (80.1)
+    const many = Array.from({ length: 20 }, () => entry('bench', '2026-09-20'))
+    const w = await openMap([...many, entry('squat', '2026-09-22')], [bench, squat])
     // по умолчанию — «Недавно»: данных за 4 дня нет, всё серое, подписи режима нет
     expect(zone(w, 'chest').attributes('data-state')).toBe('idle')
     expect(w.find('[data-testid="muscle-heat-caption"]').exists()).toBe(false)
@@ -526,6 +539,7 @@ describe('MuscleMap: visual packs (BACKLOG 70.2)', () => {
     expect(localStorage.getItem('workouts_musclemap_heat')).toBe('volume')
     expect(zone(w, 'chest').attributes('data-state')).toBe('done')
     expect(Number(zone(w, 'chest').attributes('data-heat'))).toBeGreaterThan(Number(zone(w, 'quads').attributes('data-heat')))
+    expect(zone(w, 'chest').attributes('data-heat')).toBe('2') // 20 из 43 — вторая ступень; от максимума было бы 4
     expect(zone(w, 'calves').attributes('data-state')).toBe('idle')
     expect(w.find('[data-testid="muscle-heat-caption"]').text()).toContain('30')
     await w.find('[data-testid="muscle-heat-covered"]').trigger('click')
@@ -554,7 +568,7 @@ describe('MuscleMap: visual packs (BACKLOG 70.2)', () => {
     expect(zone(w, 'chest').attributes('aria-label')).toBe('Грудь, недавно в работе')
     expect(zone(w, 'calves').attributes('aria-label')).toBe('Икры, давно не в работе')
     await w.find('[data-testid="muscle-heat-volume"]').trigger('click')
-    expect(zone(w, 'chest').attributes('aria-label')).toBe('Грудь, подходов за 30 дн.: 2')
+    expect(zone(w, 'chest').attributes('aria-label')).toBe('Грудь, подходов за 30 дн.: 2 (ориентир: 43)')
     expect(zone(w, 'calves').attributes('aria-label')).toBe('Икры, нет данных')
     await w.find('[data-testid="muscle-heat-covered"]').trigger('click')
     expect(zone(w, 'chest').attributes('aria-label')).toBe('Грудь, есть упражнение')
