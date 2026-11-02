@@ -75,7 +75,8 @@ export function buildPointsLog(
       const coins = Number(b.coins)
       if (Number.isFinite(coins) && coins > 0 && fmtDate(new Date(b.granted_at)) === date) entries.push({ kind: 'bonus', label: b.key, icon: null, points: coins })
     }
-    for (const p of purchases) if (p.redeemed_date === date) entries.push({ kind: 'spent', label: p.name, icon: null, points: -(p.cost ?? 0) })
+    // в журнале баллов — только покупки за баллы (cost > 0): вещь за огоньки и награда за цель баллов не тратят, строка «−0» только путала бы
+    for (const p of purchases) if (p.redeemed_date === date && (p.cost ?? 0) > 0) entries.push({ kind: 'spent', label: p.name, icon: null, points: -(p.cost ?? 0) })
     const earned = roundPoints(entries.filter((e) => e.points > 0).reduce((s, e) => s + e.points, 0))
     const spent = roundPoints(-entries.filter((e) => e.points < 0).reduce((s, e) => s + e.points, 0))
     return { date, entries, earned, spent }

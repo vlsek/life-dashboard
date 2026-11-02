@@ -1,14 +1,39 @@
 {
-  "version": "7.23",
+  "version": "7.26",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.26",
+      "date": "2026-11-02 06:08",
+      "changes": [
+        "Dashboard: the Left for today list now also shows goals from your plan: single-step ones that are not done yet, tagged goal. You can complete such a goal with one tap right from the list, just like the checkbox in the plan. Multi-step goals do not appear there: they are completed stage by stage in the Goals section. No migrations."
+      ]
+    },
+    {
+      "version": "7.25",
+      "date": "2026-10-29 06:08",
+      "changes": [
+        "Goal reward: in the Shop list a claimed reward remembers the goal name. On Home the “Saving for an item” widget no longer offers goal rewards (they have no price, there is nothing to save for), and the points log no longer shows a “−0” line for items that spend no points (goal rewards, items bought with sparks)."
+      ]
+    },
+    {
+      "version": "7.24",
+      "date": "2026-11-01 20:00",
+      "changes": [
+        "Calendar: month cells now show coloured event markers — a green circle for a workout day, a yellow square for a challenge day and a blue diamond for a milestone due date. In the day window they expand into a list: how many workout entries, “Challenge: name (day N)” and which milestone is due. A new “Life events” chip under “Show” hides the markers if you do not need them. The data is only read from the workouts, challenges and milestones sections, and a read failure does not break the calendar. No migrations."
+      ]
+    },
     {
       "version": "7.23",
       "date": "2026-11-02 09:20",
       "changes": [
-        "Workouts: warm-up and unfinished sets no longer count toward records, charts, progress or the muscle map — only working sets do. The active workout can show an RPE column (effort 6–10 in 0.5 steps): the “RPE: on” button under the title. The setting is stored on the device.",
-        "7.22",
-        "2026-11-01 18:00",
+        "Workouts: warm-up and unfinished sets no longer count toward records, charts, progress or the muscle map — only working sets do. The active workout can show an RPE column (effort 6–10 in 0.5 steps): the “RPE: on” button under the title. The setting is stored on the device."
+      ]
+    },
+    {
+      "version": "7.22",
+      "date": "2026-11-01 18:00",
+      "changes": [
         "Installed app: the icon on your home screen now has shortcuts (“Today”, “+ water”, “Workout”) — long-press or right-click to see them. “+ water” opens the Dashboard with the water logging window already open. The app icon also shows how many things are left undone today (if your browser or system supports badges). No migrations."
       ]
     },
@@ -5128,12 +5153,37 @@
   ],
   "ru": [
     {
+      "version": "7.26",
+      "date": "2026-11-02 06:08",
+      "changes": [
+        "Дашборд: в списке «Осталось на сегодня» теперь и цели из плана — одноэтапные, ещё не выполненные, с пометкой «цель». Закрыть такую цель можно одним касанием прямо из списка, так же как чекбоксом в плане. Многоэтапные цели в список не попадают: они закрываются этапами в разделе «Цели». Без миграций."
+      ]
+    },
+    {
+      "version": "7.25",
+      "date": "2026-10-29 06:08",
+      "changes": [
+        "Награда за цель: в списке «Магазина» полученная награда помнит название цели. На «Главной» виджет «Коплю на товар» больше не предлагает награды за цель (у них нет цены, копить не на что), а журнал баллов не пишет строку «−0» для вещей, которые баллов не тратят (награда за цель, вещь за огоньки)."
+      ]
+    },
+    {
+      "version": "7.24",
+      "date": "2026-11-01 20:00",
+      "changes": [
+        "Календарь: в клетках месяца появились цветные значки событий — зелёный круг для дня с тренировкой, жёлтый квадрат для дня челленджа, синий ромб для срока вехи. В окне дня они раскрываются в список: сколько записей тренировки, «Челлендж: название (день N)» и какая веха должна быть сделана. Новая кнопка «События жизни» в «Показывать» отключает значки, если они не нужны. Данные только читаются из разделов тренировок, челленджей и вех; сбой чтения не ломает календарь. Без миграций."
+      ]
+    },
+    {
       "version": "7.23",
       "date": "2026-11-02 09:20",
       "changes": [
-        "Тренировки: разминочные и невыполненные подходы больше не попадают в рекорды, графики, прогресс и карту мышц — считаются только рабочие. В активной тренировке можно включить колонку RPE (усилие 6–10 с шагом 0,5): кнопка «RPE: вкл» под названием. Настройка хранится на устройстве.",
-        "7.22",
-        "2026-11-01 18:00",
+        "Тренировки: разминочные и невыполненные подходы больше не попадают в рекорды, графики, прогресс и карту мышц — считаются только рабочие. В активной тренировке можно включить колонку RPE (усилие 6–10 с шагом 0,5): кнопка «RPE: вкл» под названием. Настройка хранится на устройстве."
+      ]
+    },
+    {
+      "version": "7.22",
+      "date": "2026-11-01 18:00",
+      "changes": [
         "Установленное приложение: у иконки на домашнем экране появились ярлыки («Сегодня», «+ вода», «Тренировка») — долгое нажатие или правая кнопка показывают их. «+ вода» открывает Дашборд сразу с окном записи воды. Кроме того, на иконке приложения теперь отображается число невыполненного за сегодня (если твой браузер или система поддерживают бейджи). Без миграций."
       ]
     },

@@ -12,7 +12,7 @@ import CalendarShowToggles from './components/CalendarShowToggles.vue'
 import { loadShow, saveShow, type ShowKey } from './lib/calendarShow'
 import { buildIcs, icsFileName, icsItemsFromMonth } from './lib/ics'
 
-const { auth, byDate, deadlines, today, init, loadMonth, loadToday, savePlanned } = useCalendar()
+const { auth, byDate, deadlines, events, today, init, loadMonth, loadToday, savePlanned } = useCalendar()
 
 const initialView = new URLSearchParams(window.location.search).get('view') === 'history' ? 'history' : 'calendar'
 const view = ref<'calendar' | 'history'>(initialView)
@@ -102,7 +102,7 @@ async function onSaveDay(items: PlannedItem[]) {
     <!-- Сетка «Календаря» = сетка «Истории» (заливка дня по прогрессу, %, колонка недели, статистика месяца) + бейджи планов и дедлайнов целей;
          свайп по сетке и шапке месяца не выдвигает боковые плашки (внутри HistoryView — no-edge-swipe / data-no-swipe) -->
     <TodayCard v-if="show.today && today" :summary="today" :date="todayIso" @open="openDay" />
-    <HistoryView ref="grid" mode="calendar" :show="show" :planned="byDate" :deadlines="deadlines" data-test="calendar-grid-view" @select-day="openDay" @month-change="onMonthChange" />
+    <HistoryView ref="grid" mode="calendar" :show="show" :planned="byDate" :deadlines="deadlines" :events="events" data-test="calendar-grid-view" @select-day="openDay" @month-change="onMonthChange" />
 
     <div class="mt-3 flex flex-wrap items-center gap-2">
       <button type="button" class="secondary px-3 py-2 text-sm" data-test="export-ics" @click="exportIcs">{{ t('cal_ics_btn') }}</button>
@@ -114,6 +114,7 @@ async function onSaveDay(items: PlannedItem[]) {
       :date-str="openDate"
       :initial="byDate[openDate] || []"
       :deadlines="deadlines[openDate] || []"
+      :events="events[openDate] || null"
       :has-summary="!!grid?.hasSummary(openDate)"
       @summary="grid?.openSummary(openDate)"
       @close="openDate = null"

@@ -30,14 +30,19 @@ export function itemProgress(cost: number, balance: number): ItemProgress {
 }
 
 const COLS = 'id, name, cost, link, redeemed'
-type Row = { id: string; name: string; cost: number | null; link: string | null; redeemed?: boolean | null }
+// goal_id — «награда за цель» (миграция 111, BACKLOG 68.2): у такой вещи цены нет (cost = 0), копить на неё нельзя — она открывается выполнением цели.
+// Пока миграция не применена, колонки нет и запрос с ней падает — тогда повторяем без неё (наград за цель в этом случае и быть не может).
+const COLS_GOAL = `${COLS}, goal_id`
+type Row = { id: string; name: string; cost: number | null; link: string | null; redeemed?: boolean | null; goal_id?: string | null }
 const toOption = (r: Row): ShopOption => ({ id: r.id, name: r.name, cost: r.cost ?? 0, link: r.link ?? null })
 
 // Товары, на которые ещё можно копить (не куплены) — для выбора в окне раскладки.
 export async function loadOpenShopItems(userId: string): Promise<ShopOption[]> {
-  const { data, error } = await sb.from('shop_items').select(COLS).eq('user_id', userId).eq('redeemed', false).order('created_at')
-  if (error) return []
-  return ((data || []) as Row[]).map(toOption)
+  const open = (cols: string) => sb.from('shop_items').select(cols).eq('user_id', userId).eq('redeemed', false).order('created_at')
+  let res = await open(COLS_GOAL)
+  if (res.error) res = await open(COLS)
+  if (res.error) return []
+  return ((res.data || []) as unknown as Row[]).filter((r) => !r.goal_id).map(toOption)
 }
 
 export type SavingsState = 'loading' | 'ready' | 'empty' | 'error'
@@ -51,14 +56,16 @@ export function useSavingsWidget() {
   async function load(userId: string, itemId: string) {
     state.value = 'loading'
     error.value = ''
-    const [itemRes, balRes] = await Promise.all([sb.from('shop_items').select(COLS).eq('user_id', userId).eq('id', itemId).maybeSingle(), loadBalance(userId)])
+    const pick = (cols: string) => sb.from('shop_items').select(cols).eq('user_id', userId).eq('id', itemId).maybeSingle()
+    const [firstRes, balRes] = await Promise.all([pick(COLS_GOAL), loadBalance(userId)])
+    const itemRes = firstRes.error ? await pick(COLS) : firstRes // колонки goal_id ещё нет (миграция 111 не применена)
     if (itemRes.error) {
       error.value = friendlyError(itemRes.error, 'load')
       state.value = 'error'
       return
     }
     const row = itemRes.data as Row | null
-    if (!row || row.redeemed) {
+    if (!row || row.redeemed || row.goal_id) { // награда за цель — копить не на что (цены нет)
       item.value = null
       state.value = 'empty'
       return

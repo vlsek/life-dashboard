@@ -1703,6 +1703,33 @@ body {
 .cal-deadline-done {
   opacity: 0.5;
 }
+.cal-dots {
+  position: absolute;
+  left: 3px;
+  bottom: 3px;
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  pointer-events: none;
+}
+.cal-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  flex: none;
+}
+.cal-dot-workout {
+  border-radius: 50%;
+  background: #4caf7d;
+}
+.cal-dot-challenge {
+  border-radius: 2px;
+  background: #e0a93b;
+}
+.cal-dot-milestone {
+  background: #6a9cf3;
+  transform: rotate(45deg) scale(0.9);
+}
 .cal-today {
   border-color: var(--accent) !important;
 }

@@ -5,6 +5,7 @@ import { addDaysIso, fmtDate, mondayOf, parseIso } from '../lib/date'
 import { dayStats, hasData, weekStats } from '../lib/historyStats'
 import type { HistoryContext } from '../lib/historyStats'
 import { locale, t } from '../lib/i18n'
+import { hasEvents, type LifeEvents } from '../lib/lifeEvents'
 import DayDetailModal from './DayDetailModal.vue'
 import LoadError from './LoadError.vue'
 import EmojiText from './EmojiText.vue'
@@ -19,7 +20,7 @@ import { defaultShow, type CalendarShow } from '../lib/calendarShow'
 //  · mode='history' (по умолчанию) — как раньше: клик по дню открывает итоги дня, заголовок и список недель, будущие месяцы недоступны;
 //  · mode='calendar' — вкладка «Календарь»: та же сетка БЕЗ прогресса дня (48.1: только планы), с бейджами планов и
 //    дедлайнов целей на днях; клик по дню отдаёт дату наверх (там открывается форма планов), будущие месяцы доступны, месяц сообщается наверх.
-const props = withDefaults(defineProps<{ mode?: 'history' | 'calendar'; planned?: Record<string, PlannedItem[]>; deadlines?: Record<string, GoalDeadline[]>; show?: CalendarShow }>(), { show: () => defaultShow() })
+const props = withDefaults(defineProps<{ mode?: 'history' | 'calendar'; planned?: Record<string, PlannedItem[]>; deadlines?: Record<string, GoalDeadline[]>; events?: Record<string, LifeEvents>; show?: CalendarShow }>(), { show: () => defaultShow() })
 const emit = defineEmits<{ selectDay: [dateStr: string]; monthChange: [year: number, month: number] }>()
 const isCalendar = computed(() => props.mode === 'calendar')
 // BACKLOG 48.1 (владелец 2026-10-08: «в обычном календаре не надо показывать прогресс дня, только во вкладке календаря история; в обычном только планы»):
@@ -77,6 +78,12 @@ function deadlineBadge(dateStr: string | null) {
   const list = dateStr ? props.deadlines?.[dateStr] : undefined
   if (!list || !list.length) return null
   return { count: list.length, allDone: openDeadlines(list) === 0 }
+}
+// Точки «событий жизни» (76.1): разные формы и цвета — тренировка, день челленджа, срок вехи; полный список в окне дня
+function eventDots(dateStr: string | null) {
+  const e = dateStr ? props.events?.[dateStr] : undefined
+  if (!hasEvents(e)) return null
+  return { workout: e!.workouts > 0, challenge: e!.challenges.length > 0, milestone: e!.milestones.length > 0 }
 }
 function onCellClick(dateStr: string | null) {
   if (!dateStr) return
@@ -302,6 +309,11 @@ function onTouchEnd(e: TouchEvent) {
               <span v-if="isCalendar && ((show.plans && planBadge(cell.dateStr)) || (show.deadlines && deadlineBadge(cell.dateStr)))" class="absolute right-0.5 top-0.5 flex flex-col items-end gap-px text-[0.6em] leading-none">
                 <span v-if="show.deadlines && deadlineBadge(cell.dateStr)" class="cal-deadline" :class="{ 'cal-deadline-done': deadlineBadge(cell.dateStr)!.allDone }" :title="t('cal_deadline_title')" data-test="cal-deadline"><Icon name="goals" />{{ deadlineBadge(cell.dateStr)!.count }}</span>
                 <span v-if="show.plans && planBadge(cell.dateStr)" class="cal-badge" data-test="cal-badge"><template v-if="planBadge(cell.dateStr)!.all"><Icon name="done" /></template><template v-else><Icon name="pin" />{{ planBadge(cell.dateStr)!.done }}/{{ planBadge(cell.dateStr)!.total }}</template></span>
+              </span>
+              <span v-if="isCalendar && show.events && eventDots(cell.dateStr)" class="cal-dots" data-test="cal-events">
+                <span v-if="eventDots(cell.dateStr)!.workout" class="cal-dot cal-dot-workout" :title="t('cal_ev_workout')" data-test="cal-dot-workout"></span>
+                <span v-if="eventDots(cell.dateStr)!.challenge" class="cal-dot cal-dot-challenge" :title="t('cal_ev_challenge')" data-test="cal-dot-challenge"></span>
+                <span v-if="eventDots(cell.dateStr)!.milestone" class="cal-dot cal-dot-milestone" :title="t('cal_ev_milestone')" data-test="cal-dot-milestone"></span>
               </span>
               <span v-if="showProgress && cell.hasStats" class="self-end text-[0.68em] font-semibold">{{ cell.pct }}%</span>
             </button>
