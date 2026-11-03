@@ -1,6 +1,6 @@
 // Реактивная обвязка таймера отдыха (BACKLOG 69.5): одно состояние на вкладку; по окончании — вибрация и уведомление в приложении, плашка гаснет сама.
 import { computed, ref } from 'vue'
-import { adjustRest, isRestDone, nextPreset, readRestSeconds, restLeft, restProgress, startRest, writeRestSeconds, type RestState } from './restTimer'
+import { nextExerciseRest, readRestByExercise, restFor, writeRestByExercise, type RestByExercise, adjustRest, isRestDone, nextPreset, readRestSeconds, restLeft, restProgress, startRest, writeRestSeconds, type RestState } from './restTimer'
 import { defaultAudio, playRestBeep, readRestSound, writeRestSound } from './restSound'
 import { haptic } from './nativeFeedback'
 import { showToast } from './toast'
@@ -10,6 +10,7 @@ const store = (): Storage | null => { try { return localStorage } catch { return
 const state = ref<RestState | null>(null)
 const nowMs = ref(Date.now())
 const seconds = ref(store() ? readRestSeconds(store()!) : 90)
+const byEx = ref<RestByExercise>(store() ? readRestByExercise(store()!) : {})
 const sound = ref(store() ? readRestSound(store()!) : false)
 let timer: ReturnType<typeof setInterval> | null = null
 
@@ -34,7 +35,14 @@ export function useRestTimer() {
     toggleSound() { sound.value = !sound.value; if (store()) writeRestSound(sound.value, store()!); if (sound.value) playRestBeep(defaultAudio()) /* проба звука */ },
     left: computed(() => (state.value ? restLeft(state.value, nowMs.value) : 0)),
     progress: computed(() => (state.value ? restProgress(state.value, nowMs.value) : 0)),
-    start() { nowMs.value = Date.now(); state.value = startRest(nowMs.value, seconds.value); if (state.value) ensureTimer() },
+    byEx,
+    secondsFor: (exerciseId: string) => restFor(byEx.value, exerciseId, seconds.value),
+    cycleFor(exerciseId: string) {
+      const next = nextExerciseRest(byEx.value[exerciseId]), m = { ...byEx.value }
+      if (next === undefined) delete m[exerciseId]; else m[exerciseId] = next
+      byEx.value = m; if (store()) writeRestByExercise(m, store()!)
+    },
+    start(exerciseId?: string) { nowMs.value = Date.now(); state.value = startRest(nowMs.value, exerciseId ? restFor(byEx.value, exerciseId, seconds.value) : seconds.value); if (state.value) ensureTimer() },
     adjust(delta: number) { if (state.value) { nowMs.value = Date.now(); state.value = adjustRest(state.value, nowMs.value, delta) } },
     skip() { state.value = null; stop() },
     cycleSetting() { seconds.value = nextPreset(seconds.value); if (store()) writeRestSeconds(seconds.value, store()!); if (!seconds.value) { state.value = null; stop() } },

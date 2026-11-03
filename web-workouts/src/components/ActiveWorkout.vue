@@ -46,6 +46,11 @@ function togglePrevSource() { prevSource.value = prevSource.value === 'best' ? '
 const HINT_KEY = 'workouts.hint.v1'
 const hintOn = ref((() => { try { return localStorage.getItem(HINT_KEY) !== '0' } catch { return true } })())
 function toggleHint() { hintOn.value = !hintOn.value; try { localStorage.setItem(HINT_KEY, hintOn.value ? '1' : '0') } catch { /* не критично */ } }
+const restLabel = (exerciseId: string): string => {
+  const own = rest.byEx.value[exerciseId]
+  if (own === undefined) return t('aw_rest_default')
+  return own ? own + ' ' + t('sm_sec') : t('aw_rest_off')
+}
 const hintFor = (exerciseId: string) => progressionHint(previousSets(props.entries, exerciseId, draft.value?.date ?? '9999', prevSource.value), unitOf(exById.value.get(exerciseId)))
 function hintText(exerciseId: string): string {
   const h = hintFor(exerciseId)
@@ -67,7 +72,7 @@ async function onTick(entryId: string, i: number) {
   aw.toggleDone(entryId, i)
   await nextTick()
   const ei = draft.value?.exercises.findIndex((x) => x.id === entryId) ?? -1
-  if (!before && ei >= 0 && draft.value && shouldRestAfter(draft.value, ei)) rest.start() // отдых после выполненного подхода (в суперсете — после последнего в группе)
+  if (!before && ei >= 0 && draft.value && shouldRestAfter(draft.value, ei)) rest.start(draft.value.exercises[ei].exercise_id) // отдых после выполненного подхода (в суперсете — после последнего в группе)
   const k = prKind(entryId, i)
   const e = draft.value?.exercises.find((x) => x.id === entryId)
   if (k && e) {
@@ -181,6 +186,7 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
           <button type="button" class="px-2 py-2 text-sm" style="color: var(--text-dim); min-width: 40px; min-height: 40px" :aria-label="t('aw_move_down')" :disabled="ei === draft.exercises.length - 1" @click="aw.move(e.id, 1)">↓</button>
           <button type="button" class="px-2 py-2 text-sm" style="color: var(--danger); min-width: 40px; min-height: 40px" :aria-label="t('aw_remove_exercise')" @click="aw.removeExercise(e.id)">✕</button>
         </div>
+        <button type="button" class="mb-1 mr-2 rounded-full border px-3 py-1 text-xs" style="border-color: var(--border); color: var(--text-dim); min-height: 32px" :data-testid="'aw-rest-ex-' + ei" @click="rest.cycleFor(e.exercise_id)">{{ t('aw_rest_ex') }}: {{ restLabel(e.exercise_id) }}</button>
         <p v-if="hintOn && hintFor(e.exercise_id)" class="mb-2 text-xs" style="color: var(--text-dim)" :data-testid="'aw-hint-' + ei">{{ hintText(e.exercise_id) }}</p>
         <div class="grid items-center gap-2 text-xs" :style="'grid-template-columns: ' + cols + '; color: var(--text-dim)'">
           <span class="text-center">#</span>

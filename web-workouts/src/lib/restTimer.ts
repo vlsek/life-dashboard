@@ -35,3 +35,24 @@ export function readRestSeconds(store: Store): number {
   } catch { return 90 }
 }
 export function writeRestSeconds(n: number, store: Store): void { try { store.setItem(REST_STORE_KEY, String(n)) } catch { /* настройка не критична */ } }
+
+// Своё время отдыха у упражнения (BACKLOG 69.5, срез 3): хранится на устройстве по id упражнения; нет записи — общая настройка.
+export const REST_BY_EX_KEY = 'workouts.restByExercise.v1'
+export type RestByExercise = Record<string, number>
+export function readRestByExercise(store: Store): RestByExercise {
+  try {
+    const o = JSON.parse(store.getItem(REST_BY_EX_KEY) || '{}')
+    if (!o || typeof o !== 'object' || Array.isArray(o)) return {}
+    const out: RestByExercise = {}
+    for (const [k, v] of Object.entries(o)) if ((REST_PRESETS as readonly number[]).includes(v as number)) out[k] = v as number
+    return out
+  } catch { return {} }
+}
+export function writeRestByExercise(m: RestByExercise, store: Store): void { try { store.setItem(REST_BY_EX_KEY, JSON.stringify(m)) } catch { /* не критично */ } }
+// Цикл: «как у всех» (undefined) → выкл → 60 → 90 → 120 → 180 → снова «как у всех»
+export const nextExerciseRest = (cur: number | undefined): number | undefined => {
+  if (cur === undefined) return REST_PRESETS[0]
+  const i = REST_PRESETS.indexOf(cur as (typeof REST_PRESETS)[number])
+  return i >= 0 && i < REST_PRESETS.length - 1 ? REST_PRESETS[i + 1] : undefined
+}
+export const restFor = (m: RestByExercise, exerciseId: string, base: number): number => m[exerciseId] ?? base

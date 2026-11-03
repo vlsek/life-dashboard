@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { addExercise, newDraft, toggleSupersetWithNext } from './activeWorkout'
-import { adjustRest, isRestDone, nextPreset, readRestSeconds, REST_MAX, REST_STORE_KEY, restLeft, restProgress, shouldRestAfter, startRest, writeRestSeconds } from './restTimer'
+import { adjustRest, isRestDone, nextPreset, readRestSeconds, REST_MAX, REST_STORE_KEY, restLeft, restProgress, shouldRestAfter, startRest, writeRestSeconds, nextExerciseRest, readRestByExercise, restFor, writeRestByExercise } from './restTimer'
 
 describe('таймер отдыха', () => {
   it('старт: метка окончания; 0 секунд = выключено', () => {
@@ -23,5 +23,24 @@ describe('таймер отдыха', () => {
     expect([0, 60, 90, 120, 180].map(nextPreset)).toEqual([60, 90, 120, 180, 0])
     const m = new Map<string, string>(); const s = { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => { m.set(k, v) } }
     expect(readRestSeconds(s)).toBe(90); writeRestSeconds(0, s); expect(readRestSeconds(s)).toBe(0); m.set(REST_STORE_KEY, '77'); expect(readRestSeconds(s)).toBe(90)
+  })
+})
+
+describe('своё время отдыха у упражнения', () => {
+  it('цикл: как у всех → выкл → 60 → 90 → 120 → 180 → как у всех', () => {
+    const seq: (number | undefined)[] = [undefined]
+    for (let i = 0; i < 6; i++) seq.push(nextExerciseRest(seq[i]))
+    expect(seq).toEqual([undefined, 0, 60, 90, 120, 180, undefined])
+  })
+  it('restFor: своё значение (в т.ч. 0) главнее общей настройки', () => {
+    expect(restFor({ a: 60, b: 0 }, 'a', 90)).toBe(60)
+    expect(restFor({ a: 60, b: 0 }, 'b', 90)).toBe(0)
+    expect(restFor({ a: 60 }, 'z', 90)).toBe(90)
+  })
+  it('хранение: мусор и непредустановленные значения отбрасываются', () => {
+    const m = new Map<string, string>(); const st = { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v) }
+    writeRestByExercise({ a: 120 }, st); expect(readRestByExercise(st)).toEqual({ a: 120 })
+    m.set('workouts.restByExercise.v1', JSON.stringify({ a: 77, b: 60, c: 'x' })); expect(readRestByExercise(st)).toEqual({ b: 60 })
+    m.set('workouts.restByExercise.v1', '[1]'); expect(readRestByExercise(st)).toEqual({})
   })
 })

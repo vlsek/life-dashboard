@@ -36,6 +36,7 @@ vi.mock('./lib/supabase', () => ({
 import App from './App.vue'
 import { useActiveWorkout } from './lib/useActiveWorkout'
 import { useRoutines } from './lib/useRoutines'
+import { useRestTimer } from './lib/useRestTimer'
 import { resetSessionProbe } from './lib/sessionProbe'
 
 const ex = { id: 'e1', user_id: 'u1', name: 'Жим лёжа', category: 'upper', tracks_weight: true, unit: 'kg', value_label: null, suggested_scheme: null, created_at: '2026-01-01' }
@@ -243,6 +244,24 @@ describe('активная тренировка', () => {
     await q(w, 'aw-rest-sound').trigger('click')
     expect(localStorage.getItem('workouts.restSound.v1')).toBe('0')
     w.unmount()
+  })
+
+  it('отдых у упражнения: свой таймер 60 с вместо общих 90; «выкл» — отсчёта нет', async () => {
+    const rt = useRestTimer()
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
+    expect(q(w, 'aw-rest-ex-0').text()).toContain('как у всех')
+    await q(w, 'aw-rest-ex-0').trigger('click'); await q(w, 'aw-rest-ex-0').trigger('click') // выкл → 60
+    expect(q(w, 'aw-rest-ex-0').text()).toContain('60')
+    const inputs = q(w, 'aw-set-0-0').findAll('input')
+    await inputs[0].setValue('60'); await inputs[1].setValue('8')
+    await q(w, 'aw-tick-0-0').trigger('click'); await flushPromises()
+    expect(rt.state.value?.total).toBe(60)
+    rt.skip()
+    await q(w, 'aw-rest-ex-0').trigger('click'); await q(w, 'aw-rest-ex-0').trigger('click'); await q(w, 'aw-rest-ex-0').trigger('click'); await q(w, 'aw-rest-ex-0').trigger('click') // 90,120,180,как у всех
+    expect(q(w, 'aw-rest-ex-0').text()).toContain('как у всех')
+    w.unmount()
+    rt.byEx.value = {}
   })
 
   it('прошлое: тап по подсказке подставляет числа без ✓; «Подставить прошлое» заполняет пустые подходы', async () => {
