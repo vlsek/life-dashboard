@@ -490,6 +490,7 @@ const MIN_SUPPORTED_VERSION = "1.00";
 const CHANGELOG_RU = [
     { version: "7.51", date: "2026-11-03 08:10", changes: [
         "Тренировки: в окне итогов после «Завершить» можно изменить название и добавить заметку к тренировке (нужна миграция 113 — без неё кнопки нет).",
+    ]},
     { version: "7.50", date: "2026-11-02 16:10", changes: [
         "Тренировки: во вкладке «Журнал» над списком появился мини-календарь месяца (последний месяц с записями или выбранный в списке): у дней с тренировками стоит точка, тап по такому дню оставляет в ленте только его, повторный тап возвращает всё. Без миграций.",
     ]},
@@ -2870,6 +2871,7 @@ const CHANGELOG_RU = [
 const CHANGELOG_EN = [
     { version: "7.51", date: "2026-11-03 08:10", changes: [
         "Workouts: the summary window after “Finish” lets you rename the workout and add a note (needs migration 113 — without it the button is hidden).",
+    ]},
     { version: "7.50", date: "2026-11-02 16:10", changes: [
         "Workouts: the “Journal” tab now has a mini month calendar above the list (the latest month with entries, or the one picked in the list): days with workouts get a dot, tapping such a day leaves only it in the feed, tapping again brings everything back. No migrations.",
     ]},
