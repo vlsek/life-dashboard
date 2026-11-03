@@ -490,6 +490,7 @@ const MIN_SUPPORTED_VERSION = "1.00";
 const CHANGELOG_RU = [
     { version: "7.56", date: "2026-11-03 13:40", changes: [
         "Тренировки: у каждого упражнения в активной тренировке появилась кнопка «Отдых» — своё время отдыха (как у всех / выкл / 60 / 90 / 120 / 180 с). Таймер после подхода берёт время этого упражнения; выбор хранится на устройстве.",
+    ]},
     { version: "7.55", date: "2026-11-02 18:10", changes: [
         "Тренировки: во вкладке «Журнал» появился выбор рутины — «Все рутины» или одна из твоих, по которой уже были тренировки; в ленте остаются только подходы тех тренировок, что начаты по выбранной рутине. Список появляется, когда есть хотя бы одна такая тренировка. Без миграций.",
     ]},
@@ -2885,6 +2886,7 @@ const CHANGELOG_RU = [
 const CHANGELOG_EN = [
     { version: "7.56", date: "2026-11-03 13:40", changes: [
         "Workouts: each exercise in the active workout has a “Rest” button with its own rest time (default / off / 60 / 90 / 120 / 180 s). The timer after a set uses that exercise’s time; the choice is stored on the device.",
+    ]},
     { version: "7.55", date: "2026-11-02 18:10", changes: [
         "Workouts: the “Journal” tab now has a routine picker — “All routines” or one of yours that already has workouts; the feed keeps only the sets of workouts started from the chosen routine. The picker appears once at least one such workout exists. No migrations.",
     ]},
