@@ -40,11 +40,12 @@ export const todayItems = (entries: readonly WorkoutEntry[], exercises: readonly
 export const countSets = (items: readonly JournalItem[]): number => items.reduce((n, i) => n + i.entry.sets.length, 0)
 
 // Дни с записями, свежие сверху; не больше `limit` дней (по умолчанию 30)
-export function journalDays(entries: readonly WorkoutEntry[], exercises: readonly Exercise[], limit = 30, month: string | null = null): JournalDay[] {
+export function journalDays(entries: readonly WorkoutEntry[], exercises: readonly Exercise[], limit = 30, month: string | null = null, query = ''): JournalDay[] {
+  const q = query.trim().toLowerCase()
   const dates = [...new Set(entries.map((e) => e.date))].filter((d) => !month || d.startsWith(month)).sort().reverse()
   const days: JournalDay[] = []
   for (const date of dates) {
-    const items = itemsOf(entries, exercises, date)
+    const items = itemsOf(entries, exercises, date).filter((i) => !q || i.exercise.name.toLowerCase().includes(q)) // поиск (69.11 срез 3): по названию упражнения
     if (items.length === 0) continue
     for (const i of items) { i.best = bestSet(i.entry.sets as SetV2[]); i.record = entryRecord(i.entry, entries) }
     days.push({ date, items, setCount: countSets(items), volume: dayVolume(items) })

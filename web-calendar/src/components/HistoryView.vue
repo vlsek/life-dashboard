@@ -6,6 +6,7 @@ import { dayStats, hasData, weekStats } from '../lib/historyStats'
 import type { HistoryContext } from '../lib/historyStats'
 import { locale, t } from '../lib/i18n'
 import { hasEvents, type LifeEvents } from '../lib/lifeEvents'
+import { reflectionOf } from '../lib/reflection'
 import DayDetailModal from './DayDetailModal.vue'
 import LoadError from './LoadError.vue'
 import EmojiText from './EmojiText.vue'
@@ -84,6 +85,11 @@ function eventDots(dateStr: string | null) {
   const e = dateStr ? props.events?.[dateStr] : undefined
   if (!hasEvents(e)) return null
   return { workout: e!.workouts > 0, challenge: e!.challenges.length > 0, milestone: e!.milestones.length > 0 }
+}
+// Оценка дня (75.3) маленьким кружком на ячейке «Календаря»: цвет от красного (1) к зелёному (5), цифра внутри; нет оценки — нет кружка
+function moodOf(dateStr: string | null): number | null {
+  if (!dateStr || !ctx.value) return null
+  return reflectionOf(ctx.value.notesByDate?.[dateStr])?.mood ?? null
 }
 function onCellClick(dateStr: string | null) {
   if (!dateStr) return
@@ -315,6 +321,7 @@ function onTouchEnd(e: TouchEvent) {
                 <span v-if="eventDots(cell.dateStr)!.challenge" class="cal-dot cal-dot-challenge" :title="t('cal_ev_challenge')" data-test="cal-dot-challenge"></span>
                 <span v-if="eventDots(cell.dateStr)!.milestone" class="cal-dot cal-dot-milestone" :title="t('cal_ev_milestone')" data-test="cal-dot-milestone"></span>
               </span>
+              <span v-if="isCalendar && moodOf(cell.dateStr)" class="cal-mood" :class="'cal-mood-' + moodOf(cell.dateStr)" :title="t('hist_reflect_mood') + ': ' + moodOf(cell.dateStr) + '/5'" data-test="cal-mood">{{ moodOf(cell.dateStr) }}</span>
               <span v-if="showProgress && cell.hasStats" class="self-end text-[0.68em] font-semibold">{{ cell.pct }}%</span>
             </button>
 

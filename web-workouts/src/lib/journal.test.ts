@@ -78,3 +78,20 @@ describe('лента истории: объём дня и фильтр по ме
     expect(journalDays([e1, e2], exs, 30, null)).toHaveLength(2)
   })
 })
+
+describe('лента истории: поиск (69.11 срез 3)', () => {
+  const exn = (id: string, name: string): Exercise => ({ id, name, category: 'upper', tracks_weight: true } as unknown as Exercise)
+  const list = [exn('a', 'Жим лёжа'), exn('b', 'Присед')]
+  const entries = [withSets('1', 'a', '2026-10-01', [{ reps: 5, weight: 50 }]), withSets('2', 'b', '2026-10-01', [{ reps: 5, weight: 80 }]), withSets('3', 'b', '2026-10-02', [{ reps: 5, weight: 85 }])]
+  it('оставляет подходящие упражнения, регистр и пробелы по краям не важны, пересчитывает подходы', () => {
+    const d = journalDays(entries, list, 30, null, '  ЖИМ ')
+    expect(d).toHaveLength(1)
+    expect(d[0].items.map((i) => i.exercise.id)).toEqual(['a'])
+    expect(d[0].setCount).toBe(1)
+  })
+  it('дни без совпадений пропускаются, пустой запрос — всё', () => {
+    expect(journalDays(entries, list, 30, null, 'присед').map((x) => x.date)).toEqual(['2026-10-02', '2026-10-01'])
+    expect(journalDays(entries, list, 30, null, '')).toHaveLength(2)
+    expect(journalDays(entries, list, 30, null, 'нет такого')).toHaveLength(0)
+  })
+})

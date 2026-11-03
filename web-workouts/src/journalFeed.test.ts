@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import JournalList from './components/JournalList.vue'
+import { t } from './lib/i18n'
 import type { Exercise, WorkoutEntry } from './lib/types'
 
 // Лента истории (69.11 срез 1): в карточке дня у упражнения видно лучший подход и ★ рекорда
@@ -25,5 +26,13 @@ describe('JournalList: лучший подход и рекорд', () => {
     const days = w.findAll('[data-testid="journal-day"]')
     expect(days).toHaveLength(1)
     expect(days[0].text()).toContain('250')
+  })
+  it('поиск скрывает несовпадающие, при пустом результате — «Ничего не найдено»', async () => {
+    const w = mount(JournalList, { props: { entries: [en('1', '2026-10-08', 55)], exercises: [ex] } })
+    await w.get('[data-testid="journal-search"]').setValue('жим')
+    expect(w.findAll('[data-testid="journal-row"]')).toHaveLength(1)
+    await w.get('[data-testid="journal-search"]').setValue('zzz')
+    expect(w.findAll('[data-testid="journal-row"]')).toHaveLength(0)
+    expect(w.get('[data-testid="journal-empty"]').text()).toBe(t('workouts_journal_nothing'))
   })
 })

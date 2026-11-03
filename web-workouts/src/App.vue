@@ -15,6 +15,7 @@ import { showToast } from './lib/toast'
 import { appendCopiedSet } from './lib/quickSet'
 import { planInlineSave } from './lib/inlineEntry'
 import AppShell from './components/AppShell.vue'
+import LoadError from './components/LoadError.vue'
 import ExerciseCard from './components/ExerciseCard.vue'
 import WarmupReminder from './components/WarmupReminder.vue'
 import OverviewChart from './components/OverviewChart.vue'
@@ -66,7 +67,7 @@ import { friendlyError } from './lib/friendlyError'
 // на каждом упражнении (ExerciseChart в ExerciseCard) и общий график объёма тренировок.
 const wk = useWorkouts()
 const meas = useMeasurements()
-const { auth, exercises, entries, loadError, studyRecent, bodyWeightKg, entriesFor, metricLinks } = wk
+const { auth, exercises, entries, loadError, loaded, reload, studyRecent, bodyWeightKg, entriesFor, metricLinks } = wk
 // пользователю — «попробуй позже» (workouts_migration_hint), разработчику — какая миграция нужна (BACKLOG 935, блок B)
 watch(loadError, (e) => {
   if (e) console.warn('[workouts] тренировки не загрузились — вероятно, не прогнана migrations/013_workouts.sql в Supabase', e)
@@ -559,9 +560,8 @@ function onToggleProgramWeek(week: number) {
     </div>
 
     <template v-else>
-      <p v-if="loadError" class="text-sm" style="color: var(--text-dim)">
-        {{ t('workouts_toast_save_error') }}{{ loadError }} — {{ t('workouts_migration_hint') }}
-      </p>
+      <LoadError v-if="loadError" :message="loadError" :retry="reload"> — {{ t('workouts_migration_hint') }}</LoadError>
+      <p v-else-if="!loaded" class="text-sm" style="color: var(--text-dim)" role="status" data-testid="loading-exercises">{{ t('load_loading') }}</p>
       <p v-else-if="exercises.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('workouts_empty') }}</p>
 
       <RoutinesList v-if="exercises.length > 0" :exercises="exercises" :disabled="aw.active.value" @start="onStartRoutine" />
@@ -616,7 +616,7 @@ function onToggleProgramWeek(week: number) {
           @add-entry="(ex) => (entryForm = { exercise: ex, existing: null })"
           @quick-add-entry="(ex, res, done) => onQuickAddEntry(ex, res, done)"
         />
-        <p v-if="exercises.length === 0" class="-mt-2 mb-3 text-xs" style="color: var(--text-dim)" data-testid="muscles-empty-hint">{{ t('workouts_muscles_empty') }}</p>
+        <p v-if="loaded && exercises.length === 0" class="-mt-2 mb-3 text-xs" style="color: var(--text-dim)" data-testid="muscles-empty-hint">{{ t('workouts_muscles_empty') }}</p>
         <MeasurementsSection
           v-if="meas.supported.value && auth.status === 'ready'"
           :rows="meas.rows.value"
@@ -639,7 +639,7 @@ function onToggleProgramWeek(week: number) {
           @add-entry="(ex) => (entryForm = { exercise: ex, existing: null })"
           @quick-add-entry="(ex, res, done) => onQuickAddEntry(ex, res, done)"
         />
-        <p v-if="exercises.length === 0" class="text-sm" style="color: var(--text-dim)" data-testid="progress-empty-hint">{{ t('workouts_progress_empty') }}</p>
+        <p v-if="loaded && exercises.length === 0" class="text-sm" style="color: var(--text-dim)" data-testid="progress-empty-hint">{{ t('workouts_progress_empty') }}</p>
       </div>
 
       <div v-show="pageTab === 'exercises'" data-testid="tab-exercises">

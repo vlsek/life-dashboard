@@ -10,6 +10,7 @@ export const PALETTE_ITEMS: readonly PaletteItem[] = [
   { id: 'action:water', kind: 'action', ru: 'Вода: записать стакан', en: 'Water: log a drink', needs: 'water' },
   { id: 'action:settings', kind: 'action', ru: 'Глобальные настройки', en: 'Global settings' },
   { id: 'action:hotkeys', kind: 'action', ru: 'Горячие клавиши', en: 'Keyboard shortcuts', hint: '?' },
+  { id: 'action:help', kind: 'action', ru: 'Справка', en: 'Help' },
 ]
 
 // ё = е, регистр не важен; ищем по обоим языкам сразу (английское название работает и в русском интерфейсе)

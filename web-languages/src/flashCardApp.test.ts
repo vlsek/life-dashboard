@@ -42,3 +42,26 @@ describe('Языки: карточка «Повторение» на стран�
     expect(w.find('[data-test="flashcard"]').exists()).toBe(false)
   })
 })
+
+describe('Языки: режимы тренировки (77.7)', () => {
+  it('переключатель режимов: по умолчанию карточки, «Выбор» и «Ввод» показывают тренировку вместо карточки, «Карточки» возвращает', async () => {
+    h.words = [word('1', 'one'), word('2', 'two'), word('3', 'three')]
+    const w = mount(App)
+    await flushPromises()
+    expect(w.find('[data-test="flashcard"]').exists()).toBe(true)
+    expect(w.find('[data-test="quiz"]').exists()).toBe(false)
+    await w.get('[data-test="practice-mode-choice"]').trigger('click')
+    expect(w.find('[data-test="flashcard"]').exists()).toBe(false)
+    expect(w.findAll('[data-test="quiz-option"]').length).toBeGreaterThan(1)
+    await w.get('[data-test="practice-mode-type"]').trigger('click')
+    expect(w.find('[data-test="quiz-input"]').exists()).toBe(true)
+    await w.get('[data-test="practice-mode-cards"]').trigger('click')
+    expect(w.find('[data-test="flashcard"]').exists()).toBe(true)
+  })
+  it('нет невыученных слов — переключателя нет', async () => {
+    h.words = [word('1', 'known', true)]
+    const w = mount(App)
+    await flushPromises()
+    expect(w.find('[data-test="practice-modes"]').exists()).toBe(false)
+  })
+})

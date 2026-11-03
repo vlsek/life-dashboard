@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.44";
+const SITE_VERSION = "7.50";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,11 +488,30 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.50", date: "2026-11-03 08:10", changes: [
+        "Тренировки: в окне итогов после «Завершить» можно изменить название и добавить заметку к тренировке (нужна миграция 113 — без неё кнопки нет).",
+    ]},
+    { version: "7.49", date: "2026-11-02 02:02", changes: [
+        "«Тренировки»: пока упражнения ещё грузятся, страница пишет «Загрузка…», а не «Пока нет упражнений». Если загрузка не удалась, теперь честно сказано «Не удалось загрузить» (раньше — «Не удалось сохранить» и технический текст базы данных) и есть кнопка «Повторить»."
+    ]},
+    { version: "7.48", date: "2026-11-02 14:00", changes: [
+        "Языки: рядом с карточками появились два режима тренировки слов. «Выбор» — выбери перевод из четырёх вариантов (неверные берутся из твоих же слов). «Ввод» — набери перевод сам; регистр, ударения и лишние пробелы не считаются ошибкой, а если у слова несколько переводов через запятую, подойдёт любой. В обоих режимах можно переключить направление «слово → перевод» или «перевод → слово». В конце раунда видно, сколько верно, и список слов, которые стоит повторить. Выученными слова при этом не отмечаются: оценки для интервального повторения появятся позже. Без миграций."
+    ]},
+    { version: "7.47", date: "2026-11-02 14:50", changes: [
+        "Тренировки: во вкладке «Журнал» появился поиск по названию упражнения (регистр не важен): остаются только подходящие упражнения, дни без совпадений скрываются, а если ничего не нашлось — подпись «Ничего не найдено». Без миграций.",
+    ]},
+    { version: "7.46", date: "2026-11-03 05:20", changes: [
+        "«Календарь»: у дней с оценкой самочувствия в ячейке месяца появился маленький цветной кружок с цифрой 1–5 (от красного к зелёному). Нет оценки — нет кружка.",
+    ]},
+    { version: "7.45", date: "2026-11-02 12:30", changes: [
+        "Новая «Справка» с поиском: открывается из «Настроек» (кнопка «Справка») и из палитры команд (Ctrl/Cmd + K → «Справка»). Внутри — как работают баллы, серии, норма воды, офлайн и что значат значки, а также подсказка по каждой странице со ссылкой «Открыть страницу →». Поиск ищет по названию и тексту, регистр и «ё» не важны. Без миграций."
+    ]},
     { version: "7.44", date: "2026-11-03 05:10", changes: [
         "Тренировки: у каждого упражнения появилась кнопка-кубок «Рекорды». В окне — лучший вес, оценка 1ПМ, лучший объём подхода, максимум повторов и время (с датой, когда впервые достигнуто), а также максимум повторов на каждом весе. Разминочные подходы не учитываются.",
     ]},
     { version: "7.43", date: "2026-11-02 17:00", changes: [
         "Тренировки: под названием упражнения в активной тренировке появилась подсказка прогрессии: «В прошлый раз 3×10 на 60 кг — попробуй 62,5 кг» (если все подходы на верхней границе 10 повторов — прибавить вес, иначе — на повтор больше). Только для упражнений с весом; выключается кнопкой «Подсказка» вверху экрана.",
+    ]},
     { version: "7.42", date: "2026-11-02 18:00", changes: [
         "«Тренировки»: под картой мышц появилась кнопка «Поделиться картинкой» — собирает PNG «Моя неделя тренировок» с подходами по группам мышц и итогами за выбранный период. Сначала превью, потом «Скачать» или «Отправить». На картинке нет имени, аватара и веса.",
     ]},
@@ -2847,11 +2866,30 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.50", date: "2026-11-03 08:10", changes: [
+        "Workouts: the summary window after “Finish” lets you rename the workout and add a note (needs migration 113 — without it the button is hidden).",
+    ]},
+    { version: "7.49", date: "2026-11-02 02:02", changes: [
+        "Workouts: while exercises are still loading the page says “Loading…” instead of “No exercises yet”. If loading fails it now honestly says “Couldn’t load” (it used to say “Couldn’t save” and show the database’s technical text) and offers a “Try again” button."
+    ]},
+    { version: "7.48", date: "2026-11-02 14:00", changes: [
+        "Languages: two word practice modes now sit next to the cards. “Choice” — pick the translation from four options (wrong ones come from your own words). “Typing” — type the translation yourself; case, accents and extra spaces are not counted as mistakes, and if a word has several translations separated by commas, any of them is accepted. In both modes you can switch the direction between “word → translation” and “translation → word”. At the end of a round you see how many were right and a list of words worth repeating. Words are not marked as learned by this: grades for spaced repetition will come later. No migrations."
+    ]},
+    { version: "7.47", date: "2026-11-02 14:50", changes: [
+        "Workouts: the “Journal” tab now has a search by exercise name (case-insensitive): only matching exercises stay, days with no matches are hidden, and if nothing is found you see “Nothing found”. No migrations.",
+    ]},
+    { version: "7.46", date: "2026-11-03 05:20", changes: [
+        "Calendar: days with a mood rating now show a small coloured circle with the 1–5 digit on the month cell (red to green). No rating, no circle.",
+    ]},
+    { version: "7.45", date: "2026-11-02 12:30", changes: [
+        "A new searchable “Help”: open it from Settings (the “Help” button) or from the command palette (Ctrl/Cmd + K → “Help”). It covers how points, streaks, the water goal and offline work, what the icons mean, and a hint for every page with an “Open the page →” link. The search looks through titles and text; case does not matter. No migrations."
+    ]},
     { version: "7.44", date: "2026-11-03 05:10", changes: [
         "Workouts: every exercise now has a trophy “Records” button. The window shows your best weight, estimated 1RM, best set volume, most reps and time (with the date first reached), plus max reps at each weight. Warm-up sets are not counted.",
     ]},
     { version: "7.43", date: "2026-11-02 17:00", changes: [
         "Workouts: a progression hint appears under each exercise name in the active workout: “Last time 3×10 at 60 kg — try 62.5 kg” (if all sets hit the 10-rep ceiling, add weight; otherwise one more rep). Weighted exercises only; turn it off with the “Hint” button at the top of the screen.",
+    ]},
     { version: "7.42", date: "2026-11-02 18:00", changes: [
         "Workouts: under the muscle map there is a new “Share as a picture” button. It builds a PNG “My training week” with sets per muscle group and totals for the chosen period. Preview first, then Download or Share. No name, avatar or weight on the picture.",
     ]},

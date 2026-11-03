@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { sb } from './supabase'
+import { friendlyError } from './friendlyError'
 import { exerciseBilateralField, exerciseDurationField, exerciseMusclesField } from './workouts'
 import { unitToSave } from './weightUnit'
 import { getMuscleOverride, renameMuscleOverride, setMuscleOverride } from './muscles'
@@ -22,6 +23,7 @@ export function useWorkouts() {
   const exercises = ref<Exercise[]>([])
   const entries = ref<WorkoutEntry[]>([])
   const loadError = ref<string | null>(null)
+  const loaded = ref(false) // первая загрузка закончилась (успехом или ошибкой): до этого «Пока нет упражнений» показывать нельзя — ложная пустота
   const studyRecent = ref(false)
   // null = вес не задан в метриках тела: калории не считаем (раньше молча подставляли 70 кг)
   const bodyWeightKg = ref<number | null>(null)
@@ -84,14 +86,22 @@ export function useWorkouts() {
   }
 
   async function load(userId: string) {
+    try {
+      await loadData(userId)
+    } finally {
+      loaded.value = true
+    }
+  }
+
+  async function loadData(userId: string) {
     const { data: ex, error: exErr } = await sb.from('workout_exercises').select('*').eq('user_id', userId).order('created_at')
     if (exErr) {
-      loadError.value = exErr.message
+      loadError.value = friendlyError(exErr, 'load')
       return
     }
     const { data: en, error: enErr } = await sb.from('workout_entries').select('*').eq('user_id', userId).order('date')
     if (enErr) {
-      loadError.value = enErr.message
+      loadError.value = friendlyError(enErr, 'load')
       return
     }
     loadError.value = null
@@ -430,6 +440,8 @@ export function useWorkouts() {
     exercises,
     entries,
     loadError,
+    loaded,
+    reload,
     studyRecent,
     bodyWeightKg,
     metricLinks,

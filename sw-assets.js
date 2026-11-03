@@ -1,7 +1,7 @@
 // АВТОГЕНЕРАЦИЯ: scripts/gen_sw_assets.py (BACKLOG 66.3). Не править руками; запускать после каждой пересборки пилотов.
 // Подключается из sw.js (importScripts): изменился этот файл → браузер ставит новый service worker и новый кэш ld-shell-<version>.
 self.LD_SW = {
-  version: "dc3a775a84",
+  version: "b99384fed4",
   pages: [
     "/account/",
     "/achievements/",
@@ -28,8 +28,8 @@ self.LD_SW = {
     "/achievements/assets/index-DGMhMUCS.js",
     "/admin/assets/index-CYd7P2OH.css",
     "/admin/assets/index-Cwf3gS0K.js",
-    "/calendar/assets/index-CqNQSN2Q.js",
-    "/calendar/assets/index-SCWUrAH6.css",
+    "/calendar/assets/index-CQpUl2q4.js",
+    "/calendar/assets/index-DFNBUBcU.css",
     "/challenges/assets/index-0UzCIVPR.css",
     "/challenges/assets/index-BcFGIgGn.js",
     "/community/assets/index-CcQMKe-m.css",
@@ -42,8 +42,8 @@ self.LD_SW = {
     "/goals/assets/index-CfdtHHL_.css",
     "/history/assets/index-CQobi1h3.js",
     "/history/assets/index-hStMnsSX.css",
-    "/languages/assets/index-B1Q4hObp.js",
-    "/languages/assets/index-D5gYXvgV.css",
+    "/languages/assets/index-Bzxaw71W.js",
+    "/languages/assets/index-CFdKCM0q.css",
     "/login/assets/index-BMRUamOF.js",
     "/login/assets/index-kBn1z3Bn.css",
     "/milestones/assets/index-B3Tn0w-R.js",
@@ -54,8 +54,8 @@ self.LD_SW = {
     "/shop/assets/index-I6ZhTyXH.css",
     "/skills/assets/index-Cbhbtw7D.js",
     "/skills/assets/index-DXIg-0Km.css",
-    "/workouts/assets/index--VhCTgCy.js",
-    "/workouts/assets/index-DaQAJpQR.css",
+    "/workouts/assets/index-BWrcd51s.js",
+    "/workouts/assets/index-CaPpl9xD.css",
   ],
   runtime: [
     "/account/favicon.svg",

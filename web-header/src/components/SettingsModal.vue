@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import EmojiText from './EmojiText.vue'
 import NativeRemindersSection from './NativeRemindersSection.vue'
+import { helpOpen } from '../lib/hotkeys'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { getLang, t, type DictKey } from '../lib/i18n'
 import type { DashboardBlockKey, LayoutItem } from '../lib/layout'
@@ -181,6 +182,8 @@ async function changeLayout(next: LayoutItem[]) {
         </label>
         <p class="gh-dim" style="margin: 2px 0 8px 24px; font-size: 12px">{{ t('water_reminders_setting_hint') }}</p>
       </template>
+
+      <p style="margin: 12px 0 0"><button type="button" class="secondary" data-test="settings-help" @click="helpOpen = true">{{ t('hdr_help_btn') }}</button></p>
 
       <NativeRemindersSection />
 
