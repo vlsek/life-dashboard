@@ -1,7 +1,14 @@
 {
-  "version": "7.56",
+  "version": "7.57",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.57",
+      "date": "2026-11-03 14:20",
+      "changes": [
+        "Workouts: each exercise in the active workout has a “Note” button — jot down what matters (seat height, grip, how it felt). The note is saved with the entry and shown next time as a “Last note” reminder."
+      ]
+    },
     {
       "version": "7.56",
       "date": "2026-11-03 13:40",
@@ -5362,6 +5369,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.57",
+      "date": "2026-11-03 14:20",
+      "changes": [
+        "Тренировки: у каждого упражнения в активной тренировке появилась кнопка «Заметка» — можно записать, что важно (высота сиденья, хват, как зашло). Заметка сохраняется в записи, а в следующий раз ты увидишь её как напоминание «Прошлая заметка»."
+      ]
+    },
     {
       "version": "7.56",
       "date": "2026-11-03 13:40",
