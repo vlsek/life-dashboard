@@ -1,7 +1,14 @@
 {
-  "version": "7.47",
+  "version": "7.48",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.48",
+      "date": "2026-11-02 14:00",
+      "changes": [
+        "Languages: two word practice modes now sit next to the cards. “Choice” — pick the translation from four options (wrong ones come from your own words). “Typing” — type the translation yourself; case, accents and extra spaces are not counted as mistakes, and if a word has several translations separated by commas, any of them is accepted. In both modes you can switch the direction between “word → translation” and “translation → word”. At the end of a round you see how many were right and a list of words worth repeating. Words are not marked as learned by this: grades for spaced repetition will come later. No migrations."
+      ]
+    },
     {
       "version": "7.47",
       "date": "2026-11-02 14:50",
@@ -5299,6 +5306,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.48",
+      "date": "2026-11-02 14:00",
+      "changes": [
+        "Языки: рядом с карточками появились два режима тренировки слов. «Выбор» — выбери перевод из четырёх вариантов (неверные берутся из твоих же слов). «Ввод» — набери перевод сам; регистр, ударения и лишние пробелы не считаются ошибкой, а если у слова несколько переводов через запятую, подойдёт любой. В обоих режимах можно переключить направление «слово → перевод» или «перевод → слово». В конце раунда видно, сколько верно, и список слов, которые стоит повторить. Выученными слова при этом не отмечаются: оценки для интервального повторения появятся позже. Без миграций."
+      ]
+    },
     {
       "version": "7.47",
       "date": "2026-11-02 14:50",

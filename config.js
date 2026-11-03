@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.47";
+const SITE_VERSION = "7.48";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.48", date: "2026-11-02 14:00", changes: [
+        "Языки: рядом с карточками появились два режима тренировки слов. «Выбор» — выбери перевод из четырёх вариантов (неверные берутся из твоих же слов). «Ввод» — набери перевод сам; регистр, ударения и лишние пробелы не считаются ошибкой, а если у слова несколько переводов через запятую, подойдёт любой. В обоих режимах можно переключить направление «слово → перевод» или «перевод → слово». В конце раунда видно, сколько верно, и список слов, которые стоит повторить. Выученными слова при этом не отмечаются: оценки для интервального повторения появятся позже. Без миграций."
+    ]},
     { version: "7.47", date: "2026-11-02 14:50", changes: [
         "Тренировки: во вкладке «Журнал» появился поиск по названию упражнения (регистр не важен): остаются только подходящие упражнения, дни без совпадений скрываются, а если ничего не нашлось — подпись «Ничего не найдено». Без миграций.",
     ]},
@@ -2857,6 +2860,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.48", date: "2026-11-02 14:00", changes: [
+        "Languages: two word practice modes now sit next to the cards. “Choice” — pick the translation from four options (wrong ones come from your own words). “Typing” — type the translation yourself; case, accents and extra spaces are not counted as mistakes, and if a word has several translations separated by commas, any of them is accepted. In both modes you can switch the direction between “word → translation” and “translation → word”. At the end of a round you see how many were right and a list of words worth repeating. Words are not marked as learned by this: grades for spaced repetition will come later. No migrations."
+    ]},
     { version: "7.47", date: "2026-11-02 14:50", changes: [
         "Workouts: the “Journal” tab now has a search by exercise name (case-insensitive): only matching exercises stay, days with no matches are hidden, and if nothing is found you see “Nothing found”. No migrations.",
     ]},
