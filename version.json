@@ -1,7 +1,14 @@
 {
-  "version": "7.48",
+  "version": "7.49",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.49",
+      "date": "2026-11-02 02:02",
+      "changes": [
+        "Workouts: while exercises are still loading the page says “Loading…” instead of “No exercises yet”. If loading fails it now honestly says “Couldn’t load” (it used to say “Couldn’t save” and show the database’s technical text) and offers a “Try again” button."
+      ]
+    },
     {
       "version": "7.48",
       "date": "2026-11-02 14:00",
@@ -5306,6 +5313,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.49",
+      "date": "2026-11-02 02:02",
+      "changes": [
+        "«Тренировки»: пока упражнения ещё грузятся, страница пишет «Загрузка…», а не «Пока нет упражнений». Если загрузка не удалась, теперь честно сказано «Не удалось загрузить» (раньше — «Не удалось сохранить» и технический текст базы данных) и есть кнопка «Повторить»."
+      ]
+    },
     {
       "version": "7.48",
       "date": "2026-11-02 14:00",

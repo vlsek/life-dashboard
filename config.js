@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.48";
+const SITE_VERSION = "7.49";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.49", date: "2026-11-02 02:02", changes: [
+        "«Тренировки»: пока упражнения ещё грузятся, страница пишет «Загрузка…», а не «Пока нет упражнений». Если загрузка не удалась, теперь честно сказано «Не удалось загрузить» (раньше — «Не удалось сохранить» и технический текст базы данных) и есть кнопка «Повторить»."
+    ]},
     { version: "7.48", date: "2026-11-02 14:00", changes: [
         "Языки: рядом с карточками появились два режима тренировки слов. «Выбор» — выбери перевод из четырёх вариантов (неверные берутся из твоих же слов). «Ввод» — набери перевод сам; регистр, ударения и лишние пробелы не считаются ошибкой, а если у слова несколько переводов через запятую, подойдёт любой. В обоих режимах можно переключить направление «слово → перевод» или «перевод → слово». В конце раунда видно, сколько верно, и список слов, которые стоит повторить. Выученными слова при этом не отмечаются: оценки для интервального повторения появятся позже. Без миграций."
     ]},
@@ -2860,6 +2863,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.49", date: "2026-11-02 02:02", changes: [
+        "Workouts: while exercises are still loading the page says “Loading…” instead of “No exercises yet”. If loading fails it now honestly says “Couldn’t load” (it used to say “Couldn’t save” and show the database’s technical text) and offers a “Try again” button."
+    ]},
     { version: "7.48", date: "2026-11-02 14:00", changes: [
         "Languages: two word practice modes now sit next to the cards. “Choice” — pick the translation from four options (wrong ones come from your own words). “Typing” — type the translation yourself; case, accents and extra spaces are not counted as mistakes, and if a word has several translations separated by commas, any of them is accepted. In both modes you can switch the direction between “word → translation” and “translation → word”. At the end of a round you see how many were right and a list of words worth repeating. Words are not marked as learned by this: grades for spaced repetition will come later. No migrations."
     ]},
