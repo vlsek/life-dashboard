@@ -86,6 +86,10 @@ SITES = {
         'html': [('<p v-if="error" class="dim">{{ t(\'cust_select_error\') }}{{ error }}</p>', '<LoadError v-if="error" :message="error" :retry="reload" />')],
         'script': [('untryOn, resetTryOn } = useCustomization()', 'untryOn, resetTryOn, reload } = useCustomization()', 'resetTryOn, reload }')],
     },
+    'web-workouts': {  # ошибка загрузки: сырой текст базы + «Не удалось сохранить:» без повтора; разметку App.vue правим вручную (многострочная)
+        'html': [],
+        'script': [],
+    },
     'web-languages': {
         'html': [('<p v-if="error" class="mb-3 text-sm" style="color: var(--text-dim)">{{ t(\'dash_save_error_generic\') }}{{ error }}</p>', '<LoadError v-if="error" :message="error" :retry="reload" />')],
         'script': [('deleteWord, toggleLearned } = useVocab()', 'deleteWord, toggleLearned, reload } = useVocab()')],
@@ -129,10 +133,11 @@ def patch_i18n(path: Path) -> bool:
             out.append(f'{ind}{k2}: {q}{v2}{q},')
     if seen == 0:
         # пилот без comm_load_error (languages): добавляем ключ целиком после loading_ellipsis
+        anchor = 'loading_ellipsis' if 'loading_ellipsis:' in s else 'workouts_loading'  # у пилота без comm_load_error вставляем рядом с «Загрузка…»
         out, seen2 = [], 0
         for ln in lines:
             out.append(ln)
-            m = re.match(r'^(\s*)loading_ellipsis: (.*)$', ln)
+            m = re.match(rf'^(\s*){anchor}: (.*)$', ln)
             if m:
                 lang = 'en' if seen2 == 0 else 'ru'
                 q = '"' if m.group(2).startswith('"') else "'"
@@ -143,7 +148,7 @@ def patch_i18n(path: Path) -> bool:
                 out.append(f'{m.group(1)}{k2}: {q}{v2}{q},')
                 seen2 += 1
         if seen2 != 2:
-            raise SystemExit(f'{path}: нет ни comm_load_error, ни loading_ellipsis')
+            raise SystemExit(f'{path}: нет ни comm_load_error, ни loading_ellipsis/workouts_loading')
         path.write_text('\n'.join(out), encoding='utf-8')
         return True
     if seen != 2:
