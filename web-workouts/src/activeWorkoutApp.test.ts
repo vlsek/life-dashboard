@@ -280,6 +280,22 @@ describe('активная тренировка', () => {
     w.unmount()
   })
 
+  it('Enter в поле подхода переходит к следующему полю: вес → повторы → вес следующего подхода; в конце клавиатура убирается', async () => {
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
+    await q(w, 'aw-add-set-0').trigger('click')
+    const inputs = [...document.querySelectorAll<HTMLInputElement>('[data-testid="active-workout"] input[data-nav]')]
+    expect(inputs).toHaveLength(4)
+    inputs[0].focus()
+    for (const k of [1, 2, 3]) {
+      await w.findAll('input[data-nav]')[k - 1].trigger('keydown', { key: 'Enter' })
+      expect(document.activeElement).toBe(inputs[k])
+    }
+    await w.findAll('input[data-nav]')[3].trigger('keydown', { key: 'Enter' })
+    expect(document.activeElement).not.toBe(inputs[3])
+    w.unmount()
+  })
+
   it('прошлое: тап по подсказке подставляет числа без ✓; «Подставить прошлое» заполняет пустые подходы', async () => {
     h.entries = [{ id: 'old', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }, { reps: 6, weight: 65, time: null, duration: null, side: null }], notes: null }]
     const w = await mountApp()

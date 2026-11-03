@@ -46,6 +46,13 @@ function togglePrevSource() { prevSource.value = prevSource.value === 'best' ? '
 const HINT_KEY = 'workouts.hint.v1'
 const hintOn = ref((() => { try { return localStorage.getItem(HINT_KEY) !== '0' } catch { return true } })())
 function toggleHint() { hintOn.value = !hintOn.value; try { localStorage.setItem(HINT_KEY, hintOn.value ? '1' : '0') } catch { /* не критично */ } }
+// Enter / «Далее» на клавиатуре прыгает к следующему полю ввода (вес → повторы → вес следующего подхода …); на последнем поле — убирает клавиатуру
+function onEnter(ev: KeyboardEvent) {
+  const cur = ev.target as HTMLElement
+  const all = Array.from(document.querySelectorAll<HTMLInputElement>('[data-testid="active-workout"] input[data-nav]'))
+  const next = all[all.indexOf(cur as HTMLInputElement) + 1]
+  if (next) { next.focus(); next.select?.() } else cur.blur()
+}
 const noteOpen = ref<Record<string, boolean>>({})
 const prevNote = (exerciseId: string) => lastNote(props.entries, exerciseId, draft.value?.date ?? '9999')
 const restLabel = (exerciseId: string): string => {
@@ -229,9 +236,12 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
             :class="inputCls"
             :style="inputStyle"
             :aria-label="t('aw_weight')"
+            enterkeyhint="next"
+            data-nav
             @input="onNum(e.id, i, 'weight', $event)"
+            @keydown.enter.prevent="onEnter($event)"
           />
-          <input v-else type="text" inputmode="decimal" :value="s.weight ?? ''" :class="inputCls" :style="inputStyle" :aria-label="t('aw_value')" @input="onNum(e.id, i, 'weight', $event)" />
+          <input v-else type="text" inputmode="decimal" :value="s.weight ?? ''" :class="inputCls" :style="inputStyle" :aria-label="t('aw_value')" enterkeyhint="next" data-nav @input="onNum(e.id, i, 'weight', $event)" @keydown.enter.prevent="onEnter($event)" />
           <input
             v-if="exById.get(e.exercise_id)?.tracks_duration"
             type="text"
@@ -240,9 +250,12 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
             :class="inputCls"
             :style="inputStyle"
             :aria-label="t('aw_minutes')"
+            enterkeyhint="next"
+            data-nav
             @input="onNum(e.id, i, 'duration', $event)"
+            @keydown.enter.prevent="onEnter($event)"
           />
-          <input v-else type="text" inputmode="numeric" :value="s.reps ?? ''" :class="inputCls" :style="inputStyle" :aria-label="t('aw_reps')" @input="onNum(e.id, i, 'reps', $event)" />
+          <input v-else type="text" inputmode="numeric" :value="s.reps ?? ''" :class="inputCls" :style="inputStyle" :aria-label="t('aw_reps')" enterkeyhint="next" data-nav @input="onNum(e.id, i, 'reps', $event)" @keydown.enter.prevent="onEnter($event)" />
           <select v-if="rpeOn" :value="s.rpe ?? ''" :class="inputCls" style="min-height: 44px; padding: 0 2px; border-color: var(--border); background: var(--bg); color: var(--text)" :aria-label="t('aw_rpe')" :data-testid="'aw-rpe-' + ei + '-' + i" @change="onRpe(e.id, i, $event)">
             <option value="">—</option>
             <option v-for="v in RPE_VALUES" :key="v" :value="v">{{ String(v).replace('.', ',') }}</option>
