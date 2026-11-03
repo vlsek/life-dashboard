@@ -1,6 +1,7 @@
 // Реактивная обвязка таймера отдыха (BACKLOG 69.5): одно состояние на вкладку; по окончании — вибрация и уведомление в приложении, плашка гаснет сама.
 import { computed, ref } from 'vue'
 import { adjustRest, isRestDone, nextPreset, readRestSeconds, restLeft, restProgress, startRest, writeRestSeconds, type RestState } from './restTimer'
+import { defaultAudio, playRestBeep, readRestSound, writeRestSound } from './restSound'
 import { haptic } from './nativeFeedback'
 import { showToast } from './toast'
 import { t } from './i18n'
@@ -9,6 +10,7 @@ const store = (): Storage | null => { try { return localStorage } catch { return
 const state = ref<RestState | null>(null)
 const nowMs = ref(Date.now())
 const seconds = ref(store() ? readRestSeconds(store()!) : 90)
+const sound = ref(store() ? readRestSound(store()!) : false)
 let timer: ReturnType<typeof setInterval> | null = null
 
 function stop() { if (timer) { clearInterval(timer); timer = null } }
@@ -18,6 +20,7 @@ function tick() {
     state.value = null; stop()
     try { navigator.vibrate?.([200, 100, 200]) } catch { /* вибро — по возможности */ }
     haptic('success')
+    if (sound.value) playRestBeep(defaultAudio())
     showToast(t('aw_rest_done'))
   }
 }
@@ -27,6 +30,8 @@ export function useRestTimer() {
   return {
     state,
     seconds,
+    sound,
+    toggleSound() { sound.value = !sound.value; if (store()) writeRestSound(sound.value, store()!); if (sound.value) playRestBeep(defaultAudio()) /* проба звука */ },
     left: computed(() => (state.value ? restLeft(state.value, nowMs.value) : 0)),
     progress: computed(() => (state.value ? restProgress(state.value, nowMs.value) : 0)),
     start() { nowMs.value = Date.now(); state.value = startRest(nowMs.value, seconds.value); if (state.value) ensureTimer() },

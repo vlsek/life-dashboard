@@ -234,6 +234,17 @@ describe('активная тренировка', () => {
     w.unmount()
   })
 
+  it('звук отдыха: кнопка включает и запоминает на устройстве', async () => {
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
+    expect(q(w, 'aw-rest-sound').text()).toContain('Звук')
+    await q(w, 'aw-rest-sound').trigger('click')
+    expect(localStorage.getItem('workouts.restSound.v1')).toBe('1')
+    await q(w, 'aw-rest-sound').trigger('click')
+    expect(localStorage.getItem('workouts.restSound.v1')).toBe('0')
+    w.unmount()
+  })
+
   it('прошлое: тап по подсказке подставляет числа без ✓; «Подставить прошлое» заполняет пустые подходы', async () => {
     h.entries = [{ id: 'old', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }, { reps: 6, weight: 65, time: null, duration: null, side: null }], notes: null }]
     const w = await mountApp()
