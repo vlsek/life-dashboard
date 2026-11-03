@@ -28,6 +28,7 @@ import {
 import { friendlyError } from './friendlyError'
 import { createGoal, type GoalFormInput } from './newGoal'
 import { addToNextDay, canPostpone } from './planPostpone'
+import { applyTemplate, type TemplateItem } from './planTemplates'
 // Композабл блока «Планы» (раньше «Цели на сегодня») (план на день). Портировано из renderPlanned()/
 // openCarryOverModal() в dashboard.js. load(userId, date) — после auth 'ready' и при смене даты.
 // После КАЖДОЙ записи шлёт dashboard:data-changed — кольца дня/недели и стрики пересчитает useDashboard.
@@ -106,6 +107,14 @@ export function usePlanned() {
   const toggleItemBonus = (index: number) => persist(toggleBonus(planned.value, index))
   // Время выполнения ставится само (BACKLOG 61.4), но только когда открыт СЕГОДНЯШНИЙ день: отметка в плане прошлого дня «сейчас» была бы ложью.
   const nowIfToday = () => (date === todayStr() ? nowHHMM() : null)
+  // Применить шаблон дня (BACKLOG 75.12): пункты, которых в дне ещё нет, дописываются в конец невыполненными; уже имеющиеся (тот же текст
+  // и время) не дублируются. null — запись не удалась (ошибка уже показана), иначе сколько добавлено и сколько уже было.
+  async function applyTemplateItems(items: TemplateItem[]): Promise<{ added: number; skipped: number } | null> {
+    const r = applyTemplate(planned.value, items)
+    if (r.added === 0) return { added: 0, skipped: r.skipped }
+    const ok = await persist(r.list)
+    return ok ? { added: r.added, skipped: r.skipped } : null
+  }
   // «Отложить на завтра» (BACKLOG 75.9, срез 2): пункт переезжает в план СЛЕДУЮЩЕГО дня. Порядок важен: сначала дописываем завтра (читаем план
   // завтра, добавляем без дубля), и только потом снимаем с сегодняшнего. Если первый шаг не удался — пункт остаётся сегодня (ничего не теряем);
   // если не удался второй — пункт лежит в обоих днях (дубль лучше потери), а ошибка показана. Возвращает true, если пункт больше не сегодняшний.
@@ -192,6 +201,6 @@ export function usePlanned() {
 
   return {
     planned, goals, loaded, loadedDate, error, notice, savedTick, load,
-    addCustomItem, addGoalItem, createGoalInPlan, removeItem, postponeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals,
+    addCustomItem, addGoalItem, createGoalInPlan, removeItem, postponeItem, applyTemplateItems, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals,
   }
 }
