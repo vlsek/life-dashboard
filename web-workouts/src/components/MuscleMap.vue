@@ -39,6 +39,7 @@ import { readiness } from '../lib/muscleReadiness'
 import TodayFocus from './TodayFocus.vue'
 import ShareMapCard from './ShareMapCard.vue'
 import BalanceBars from './BalanceBars.vue'
+import { GOAL_PRESETS, goalFor, muscleGoals, setGoal } from '../lib/muscleGoals'
 import { WEEK_TARGET } from '../lib/todayFocus'
 import { HEAT_KEY, HEAT_LEVELS, HEAT_MODES, coveredMuscles, heatLevel, normalizeHeatMode, setsByMuscle, type HeatMode } from '../lib/muscleHeat'
 
@@ -141,11 +142,12 @@ function setHeatMode(m: HeatMode) {
 const setsMap = computed(() => setsByMuscle(props.entries, props.exercises, today.value, periodStart(today.value, period.value)))
 const setsMax = computed(() => Math.max(0, ...setsMap.value.values()))
 // BACKLOG 80.1: ступени считаются от цели (10 подходов в неделю, на другой период — пропорционально), а не от самой нагруженной группы
-const goal = computed(() => Math.max(1, Math.round((WEEK_TARGET * period.value) / 7)))
+const goalOf = (m: MuscleId) => Math.max(1, Math.round((goalFor(muscleGoals.value, m) * period.value) / 7))
+const goal = computed(() => Math.max(1, Math.round((WEEK_TARGET * period.value) / 7))) // подпись режима: цель по умолчанию
 const covered = computed(() => coveredMuscles(props.exercises))
 // ступень 0..4 для режима volume; для covered — 1 или 0; для recent — null (красит прежняя логика)
 function heat(m: MuscleId): number | null {
-  if (heatMode.value === 'volume') return heatLevel(setsMap.value.get(m) ?? 0, goal.value)
+  if (heatMode.value === 'volume') return heatLevel(setsMap.value.get(m) ?? 0, goalOf(m))
   if (heatMode.value === 'covered') return covered.value.has(m) ? 1 : 0
   return null
 }
@@ -243,7 +245,7 @@ function zoneLabel(m: MuscleId): string {
   const lvl = heat(m)
   const name = muscleName(m)
   let status: string
-  if (heatMode.value === 'volume') status = (lvl ?? 0) > 0 ? t('workouts_zone_sets').replace('{n}', String(setsMap.value.get(m) ?? 0)).replace('{d}', String(period.value)) + ' ' + t('workouts_zone_goal').replace('{g}', String(goal.value)) : t('workouts_zone_none')
+  if (heatMode.value === 'volume') status = (lvl ?? 0) > 0 ? t('workouts_zone_sets').replace('{n}', String(setsMap.value.get(m) ?? 0)).replace('{d}', String(period.value)) + ' ' + t('workouts_zone_goal').replace('{g}', String(goalOf(m))) : t('workouts_zone_none')
   else if (heatMode.value === 'covered') status = lvl ? t('workouts_zone_covered') : t('workouts_zone_none')
   else status = done.value.has(m) ? t('workouts_zone_recent') : t('workouts_zone_idle')
   return `${name}, ${status}`
@@ -426,6 +428,21 @@ function shapeStyle(m: MuscleId) {
           {{ t('workouts_muscles_last') }}
           <template v-if="last[selected]"><span data-testid="muscle-last-ago">{{ agoText(last[selected]) }}</span> ({{ ruDate(last[selected] as string) }})</template>
           <template v-else>{{ t('workouts_muscles_never') }}</template>
+        </div>
+        <div class="mb-2 flex flex-wrap items-center gap-1.5 text-[0.85em]" role="group" :aria-label="t('workouts_goal_label')" data-testid="muscle-goal">
+          <span style="color: var(--text-dim)">{{ t('workouts_goal_label') }}</span>
+          <button
+            v-for="p in GOAL_PRESETS"
+            :key="p.id"
+            type="button"
+            class="rounded-lg border px-2 py-0.5 text-[0.9em]"
+            :aria-pressed="goalFor(muscleGoals, selected) === p.n"
+            :style="goalFor(muscleGoals, selected) === p.n ? 'border-color: var(--accent); color: var(--accent); background: transparent' : 'border-color: var(--border); color: var(--text-dim); background: transparent'"
+            :data-testid="'goal-preset-' + p.id"
+            @click="setGoal(selected, p.n)"
+          >
+            {{ t(('workouts_goal_' + p.id) as DictKey) }} {{ p.n }}
+          </button>
         </div>
         <div v-if="ready" class="mb-2 text-[0.85em]" style="color: var(--text-dim)" data-testid="muscle-readiness" :data-readiness="ready">
           {{ t(('workouts_ready_' + ready) as DictKey) }} <span class="text-[0.9em]">{{ t('workouts_ready_note') }}</span>

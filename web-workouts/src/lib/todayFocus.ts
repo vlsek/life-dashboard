@@ -16,7 +16,7 @@ type EntryLite = Pick<WorkoutEntry, 'exercise_id' | 'date' | 'sets'>
 
 const dayNum = (iso: string) => Math.floor(Date.parse(iso + 'T00:00:00Z') / 86400000)
 
-export function todayFocus(entries: EntryLite[], exercises: ExLite[], today: string, target = WEEK_TARGET): FocusItem[] {
+export function todayFocus(entries: EntryLite[], exercises: ExLite[], today: string, goals: Partial<Record<MuscleId, number>> = {}): FocusItem[] {
   const byEx = new Map<string, MuscleId[]>()
   for (const ex of exercises) byEx.set(ex.id, musclesForExercise(ex.name))
   const t0 = dayNum(today)
@@ -35,6 +35,7 @@ export function todayFocus(entries: EntryLite[], exercises: ExLite[], today: str
   for (const m of coveredMuscles(exercises)) {
     const s = sets.get(m) ?? 0
     const rest = last.has(m) ? t0 - (last.get(m) as number) : null
+    const target = goals[m] ?? WEEK_TARGET // свои цели по группам (80.5)
     if (s >= target || (rest !== null && rest < MIN_REST_DAYS)) continue
     out.push({ muscle: m, sets: s, target, restDays: rest })
   }

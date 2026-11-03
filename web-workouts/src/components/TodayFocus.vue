@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { muscleGoals } from '../lib/muscleGoals'
 import { todayFocus } from '../lib/todayFocus'
 import { t, type DictKey } from '../lib/i18n'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 
 // «Что тренировать сегодня» (BACKLOG 80.4): группы с наибольшим дефицитом подходов за неделю и достаточным отдыхом.
 const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today: string }>()
-const items = computed(() => todayFocus(props.entries, props.exercises, props.today))
+const items = computed(() => todayFocus(props.entries, props.exercises, props.today, muscleGoals.value))
 const rest = (d: number | null) => (d === null ? t('workouts_focus_never') : t('workouts_focus_rest').replace('{n}', String(d)))
 </script>
 

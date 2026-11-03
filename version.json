@@ -1,7 +1,14 @@
 {
-  "version": "7.58",
+  "version": "7.59",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.59",
+      "date": "2026-11-03 15:00",
+      "changes": [
+        "Workouts: the muscle panel on the map lets you set a weekly goal — Maintain 6, Normal 10 or Priority 15 sets. The goal changes the map colour in “Sets” mode and the “What to train today” list. Syncing between devices needs migration 117; without it the goal is kept on this device."
+      ]
+    },
     {
       "version": "7.58",
       "date": "2026-11-03 14:10",
@@ -5376,6 +5383,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.59",
+      "date": "2026-11-03 15:00",
+      "changes": [
+        "«Тренировки»: в панели мышцы на карте можно задать свою цель в неделю — «Поддержка 6», «Обычная 10» или «Приоритет 15» подходов. Цель меняет цвет карты в режиме «Подходы» и список «Что тренировать сегодня». Для синхронизации между устройствами нужна миграция 117; без неё цель хранится на этом устройстве."
+      ]
+    },
     {
       "version": "7.58",
       "date": "2026-11-03 14:10",

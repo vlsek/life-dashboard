@@ -49,6 +49,7 @@ import TemplatesModal from './components/TemplatesModal.vue'
 import ProgramCard from './components/ProgramCard.vue'
 import { PROGRAM_EVENT, readProgram, startProgram, toggleWeekDone, writeProgram, type ActiveProgram } from './lib/program'
 import { saveProgramToProfile, syncProgramFromProfile } from './lib/programSync'
+import { syncGoalsFromProfile } from './lib/muscleGoals'
 import { workoutTemplates } from './lib/templates'
 import Toast from './components/Toast.vue'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry, WorkoutTemplate } from './lib/types'
@@ -459,6 +460,7 @@ watch(
     void loadCollapseStyle(auth.value.userId) // вид сворачивания блоков из «Кастомизации» (BACKLOG 498); до ответа — кэш
     try {
       activeProgram.value = await syncProgramFromProfile(auth.value.userId)
+      void syncGoalsFromProfile(auth.value.userId)
     } catch (e) {
       console.error(e)
     }
