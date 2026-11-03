@@ -41,12 +41,12 @@ export const todayItems = (entries: readonly WorkoutEntry[], exercises: readonly
 export const countSets = (items: readonly JournalItem[]): number => items.reduce((n, i) => n + i.entry.sets.length, 0)
 
 // Дни с записями, свежие сверху; не больше `limit` дней (по умолчанию 30)
-export function journalDays(entries: readonly WorkoutEntry[], exercises: readonly Exercise[], limit = 30, month: string | null = null, query = '', onlyDate: string | null = null): JournalDay[] {
+export function journalDays(entries: readonly WorkoutEntry[], exercises: readonly Exercise[], limit = 30, month: string | null = null, query = '', onlyDate: string | null = null, onlyEntryIds: ReadonlySet<string> | null = null): JournalDay[] {
   const q = query.trim().toLowerCase()
   const dates = [...new Set(entries.map((e) => e.date))].filter((d) => !month || d.startsWith(month)).filter((d) => !onlyDate || d === onlyDate).sort().reverse()
   const days: JournalDay[] = []
   for (const date of dates) {
-    const items = itemsOf(entries, exercises, date).filter((i) => !q || i.exercise.name.toLowerCase().includes(q)) // поиск (69.11 срез 3): по названию упражнения
+    const items = itemsOf(entries, exercises, date).filter((i) => !onlyEntryIds || onlyEntryIds.has(i.entry.id)).filter((i) => !q || i.exercise.name.toLowerCase().includes(q)) // поиск (69.11 срез 3): по названию упражнения
     if (items.length === 0) continue
     for (const i of items) { i.best = bestSet(i.entry.sets as SetV2[]); i.record = entryRecord(i.entry, entries) }
     days.push({ date, items, setCount: countSets(items), volume: dayVolume(items) })
@@ -102,4 +102,16 @@ export function monthGrid(month: string, activeDates: ReadonlySet<string>): CalC
 // Длительность тренировок за день, мин (69.11 срез 5): только ЗАВЕРШЁННЫЕ сессии этой даты, сумма; 0 — нет данных (неявная тренировка, ручная запись без времени)
 export function dayMinutes(sessions: readonly WorkoutSession[], date: string): number {
   return sessions.reduce((n, s) => (s.date === date && s.finished_at ? n + (sessionMinutes(s, 0) ?? 0) : n), 0)
+}
+
+// Фильтр по рутине (69.11 срез 6): записи, чья сессия запущена по этой рутине (session_id → routine_id)
+export function entryIdsOfRoutine(entries: readonly WorkoutEntry[], sessions: readonly WorkoutSession[], routineId: string): Set<string> {
+  const sids = new Set(sessions.filter((s) => s.routine_id === routineId).map((s) => s.id))
+  return new Set(entries.filter((e) => e.session_id != null && sids.has(e.session_id)).map((e) => e.id))
+}
+
+// Рутины, по которым есть тренировки в ленте: только известные (удалённая рутина в списке не нужна), в порядке списка рутин
+export function routinesWithWorkouts<R extends { id: string }>(routines: readonly R[], sessions: readonly WorkoutSession[]): R[] {
+  const used = new Set(sessions.map((s) => s.routine_id).filter((x): x is string => !!x))
+  return routines.filter((r) => used.has(r.id))
 }

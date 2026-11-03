@@ -33,6 +33,7 @@ export interface WorkoutEntry {
   date: string
   sets: WorkoutSet[]
   notes: string | null
+  session_id?: string | null // миграция 113: тренировка, к которой относится запись (нет — «неявная» за день)
 }
 
 export interface ExerciseFormInput {

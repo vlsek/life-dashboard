@@ -586,7 +586,7 @@ function onToggleProgramWeek(week: number) {
 
       <div v-show="pageTab === 'journal'" data-testid="tab-journal">
         <MuscleFilterChip v-if="muscleFilter" :name="filterMuscleName" @clear="muscleFilter = null" />
-        <JournalList :entries="shownEntries" :exercises="exercises" :sessions="sessions" />
+        <JournalList :entries="shownEntries" :exercises="exercises" :sessions="sessions" :routines="routinesStore.routines.value" />
       </div>
 
       <div v-show="pageTab === 'map'" data-testid="tab-map">

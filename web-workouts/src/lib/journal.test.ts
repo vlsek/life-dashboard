@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { bestSet, countSets, entryRecord, journalDays, journalMonths, monthGrid, dayMinutes, todayItems } from './journal'
+import { bestSet, countSets, entryRecord, journalDays, journalMonths, monthGrid, dayMinutes, entryIdsOfRoutine, routinesWithWorkouts, todayItems } from './journal'
 import type { Exercise, WorkoutEntry } from './types'
 
 const ex = (id: string): Exercise => ({ id, name: id, category: 'upper', tracks_weight: true } as unknown as Exercise)
@@ -132,5 +132,26 @@ describe('лента истории: длительность дня (69.11 ср
     expect(dayMinutes(list, '2026-10-09')).toBe(60)
     expect(dayMinutes(list, '2026-10-10')).toBe(0)
     expect(dayMinutes([], '2026-10-08')).toBe(0)
+  })
+})
+
+describe('лента истории: фильтр по рутине (69.11 срез 6)', () => {
+  const ses = (id: string, routine_id: string | null) => ({ id, user_id: 'u', name: null, date: '2026-10-08', started_at: '2026-10-08T10:00:00Z', finished_at: null, routine_id, notes: null, source: 'live' as const })
+  const mk = (id: string, session_id: string | null, date = '2026-10-08') => ({ ...withSets(id, 'a', date, [{ reps: 5, weight: 50 }]), session_id })
+  it('записи рутины — по session_id → routine_id; без сессии и чужие не попадают', () => {
+    const entries = [mk('1', 's1'), mk('2', 's2'), mk('3', null), mk('4', 'нет-такой')]
+    const ids = entryIdsOfRoutine(entries as never, [ses('s1', 'r1'), ses('s2', 'r2')], 'r1')
+    expect([...ids]).toEqual(['1'])
+  })
+  it('список рутин — только с тренировками, удалённые (неизвестные) не показываются', () => {
+    const rs = [{ id: 'r1', name: 'Грудь' }, { id: 'r2', name: 'Ноги' }, { id: 'r3', name: 'Спина' }]
+    expect(routinesWithWorkouts(rs, [ses('s1', 'r1'), ses('s2', 'r3'), ses('s3', 'удалена'), ses('s4', null)]).map((r) => r.id)).toEqual(['r1', 'r3'])
+    expect(routinesWithWorkouts(rs, [])).toEqual([])
+  })
+  it('journalDays оставляет только записи из набора, пустые дни пропускает', () => {
+    const e1 = mk('1', 's1', '2026-10-01'), e2 = mk('2', 's2', '2026-10-08')
+    const d = journalDays([e1, e2] as never, exs, 30, null, '', null, new Set(['2']))
+    expect(d.map((x) => x.date)).toEqual(['2026-10-08'])
+    expect(journalDays([e1, e2] as never, exs, 30, null, '', null, new Set())).toHaveLength(0)
   })
 })
