@@ -11,6 +11,7 @@ import { outboxFor, qDelete, qInsert, qUpdate } from './outboxClient'
 import { applyPendingWorkouts, WORKOUT_TABLES } from './workoutOverlay'
 import { entryRow, sessionRow, type FinishResult } from './activeWorkout'
 import { sessionsAvailable } from './sessionProbe'
+import type { WorkoutSession } from './sessionContract'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry } from './types'
 
 export type AuthState =
@@ -22,6 +23,8 @@ export function useWorkouts() {
   const auth = ref<AuthState>({ status: 'loading' })
   const exercises = ref<Exercise[]>([])
   const entries = ref<WorkoutEntry[]>([])
+  // Тренировки-сессии (миграция 113) для ленты истории (69.11 срез 5). Нет таблицы или сбой — пусто, раздел работает как раньше.
+  const sessions = ref<WorkoutSession[]>([])
   const loadError = ref<string | null>(null)
   const loaded = ref(false) // первая загрузка закончилась (успехом или ошибкой): до этого «Пока нет упражнений» показывать нельзя — ложная пустота
   const studyRecent = ref(false)
@@ -107,11 +110,22 @@ export function useWorkouts() {
     loadError.value = null
     exercises.value = (ex || []) as Exercise[]
     entries.value = (en || []) as WorkoutEntry[]
+    await loadSessions(userId)
     await overlayPending(userId)
     await syncMuscleGroups(exercises.value)
     await Promise.all([loadStudyRecent(userId), loadBodyWeight(userId), loadLinks(userId)])
   }
 
+
+  async function loadSessions(userId: string) {
+    try {
+      if (!(await sessionsAvailable())) { sessions.value = []; return }
+      const { data, error } = await sb.from('workout_sessions').select('*').eq('user_id', userId).order('date', { ascending: false }).limit(500)
+      if (!error) sessions.value = (data || []) as WorkoutSession[]
+    } catch {
+      // сбой сети: оставляем прежний список, раздел остаётся рабочим
+    }
+  }
 
   async function loadBodyWeight(userId: string) {
     const { data: params } = await sb.from('body_parameters').select('id, name, unit').eq('user_id', userId).eq('active', true)
@@ -439,6 +453,7 @@ export function useWorkouts() {
     auth,
     exercises,
     entries,
+    sessions,
     loadError,
     loaded,
     reload,

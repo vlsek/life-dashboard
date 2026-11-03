@@ -4,7 +4,8 @@ import type { Exercise, WorkoutEntry } from './types'
 import { PR_ORDER, e1rm, setRecords, topKind } from './records'
 import type { PRKind } from './records'
 import { isDone, isWorking, setsVolume } from './sessionContract'
-import type { SetV2 } from './sessionContract'
+import { sessionMinutes } from './sessionContract'
+import type { SetV2, WorkoutSession } from './sessionContract'
 
 export interface JournalItem {
   entry: WorkoutEntry
@@ -96,4 +97,9 @@ export function monthGrid(month: string, activeDates: ReadonlySet<string>): CalC
   const weeks: CalCell[][] = []
   for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7))
   return weeks
+}
+
+// Длительность тренировок за день, мин (69.11 срез 5): только ЗАВЕРШЁННЫЕ сессии этой даты, сумма; 0 — нет данных (неявная тренировка, ручная запись без времени)
+export function dayMinutes(sessions: readonly WorkoutSession[], date: string): number {
+  return sessions.reduce((n, s) => (s.date === date && s.finished_at ? n + (sessionMinutes(s, 0) ?? 0) : n), 0)
 }

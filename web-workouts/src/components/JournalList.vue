@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import JournalCalendar from './JournalCalendar.vue'
-import { journalDays, journalMonths } from '../lib/journal'
+import { dayMinutes, journalDays, journalMonths } from '../lib/journal'
 import { formatSets } from '../lib/workouts'
 import { defaultWeightUnit } from '../lib/weightUnit'
 import { capFirst } from '../lib/exerciseNames'
@@ -9,10 +9,11 @@ import { fmtRu } from '../lib/date'
 import { t } from '../lib/i18n'
 import type { DictKey } from '../lib/i18n'
 import { prSetText } from '../lib/records'
+import type { WorkoutSession } from '../lib/sessionContract'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 
 // Вкладка «Журнал» (BACKLOG 44.5б, срез 1): записи по дням, свежие сверху — один взгляд вместо поиска по карточкам упражнений.
-const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[] }>()
+const props = withDefaults(defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; sessions?: WorkoutSession[] }>(), { sessions: () => [] })
 const month = ref('')
 const query = ref('')
 const months = computed(() => journalMonths(props.entries))
@@ -22,6 +23,7 @@ const activeDates = computed(() => [...new Set(props.entries.filter((e) => e.dat
 watch(month, () => { day.value = null })
 const days = computed(() => journalDays(props.entries, props.exercises, 30, month.value || null, query.value, day.value))
 const fmtVol = (v: number) => `${Math.round(v).toLocaleString('ru-RU')} ${defaultWeightUnit()}`
+const fmtMin = (date: string) => { const m = dayMinutes(props.sessions, date); return m > 0 ? `${m} ${t('workouts_duration_unit')}` : '' }
 const daySummary = (n: number, sets: number) => t('workouts_today_summary').replace('{ex}', String(n)).replace('{n}', String(sets))
 </script>
 
@@ -37,7 +39,7 @@ const daySummary = (n: number, sets: number) => t('workouts_today_summary').repl
     <section v-for="d in days" :key="d.date" class="mb-3 rounded-xl border p-3.5" style="border-color: var(--border); background: var(--bg-card)" data-testid="journal-day">
       <div class="flex items-baseline justify-between gap-2">
         <h3 class="m-0 font-bold" data-testid="journal-date">{{ fmtRu(d.date) }}</h3>
-        <span class="text-xs" style="color: var(--text-dim)">{{ daySummary(d.items.length, d.setCount) }}<template v-if="d.volume"> · <span data-testid="journal-volume">{{ t('workouts_journal_volume') }} {{ fmtVol(d.volume) }}</span></template></span>
+        <span class="text-xs" style="color: var(--text-dim)">{{ daySummary(d.items.length, d.setCount) }}<template v-if="d.volume"> · <span data-testid="journal-volume">{{ t('workouts_journal_volume') }} {{ fmtVol(d.volume) }}</span></template><template v-if="fmtMin(d.date)"> · <span data-testid="journal-duration">{{ t('workouts_journal_duration') }} {{ fmtMin(d.date) }}</span></template></span>
       </div>
       <ul class="m-0 mt-1 list-none p-0">
         <li v-for="i in d.items" :key="i.entry.id" class="border-t py-1.5 first:border-t-0" style="border-color: var(--border)" data-testid="journal-row">

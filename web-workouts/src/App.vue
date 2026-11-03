@@ -67,7 +67,7 @@ import { friendlyError } from './lib/friendlyError'
 // на каждом упражнении (ExerciseChart в ExerciseCard) и общий график объёма тренировок.
 const wk = useWorkouts()
 const meas = useMeasurements()
-const { auth, exercises, entries, loadError, loaded, reload, studyRecent, bodyWeightKg, entriesFor, metricLinks } = wk
+const { auth, exercises, entries, sessions, loadError, loaded, reload, studyRecent, bodyWeightKg, entriesFor, metricLinks } = wk
 // пользователю — «попробуй позже» (workouts_migration_hint), разработчику — какая миграция нужна (BACKLOG 935, блок B)
 watch(loadError, (e) => {
   if (e) console.warn('[workouts] тренировки не загрузились — вероятно, не прогнана migrations/013_workouts.sql в Supabase', e)
@@ -586,7 +586,7 @@ function onToggleProgramWeek(week: number) {
 
       <div v-show="pageTab === 'journal'" data-testid="tab-journal">
         <MuscleFilterChip v-if="muscleFilter" :name="filterMuscleName" @clear="muscleFilter = null" />
-        <JournalList :entries="shownEntries" :exercises="exercises" />
+        <JournalList :entries="shownEntries" :exercises="exercises" :sessions="sessions" />
       </div>
 
       <div v-show="pageTab === 'map'" data-testid="tab-map">
