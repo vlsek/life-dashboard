@@ -54,4 +54,15 @@ describe('JournalList: лучший подход и рекорд', () => {
     const bare = mount(JournalList, { props: { entries, exercises: [ex] } })
     expect(bare.find('[data-testid="journal-duration"]').exists()).toBe(false)
   })
+  it('фильтр по рутине: список только при наличии тренировок по рутинам, выбор оставляет её дни', async () => {
+    const mk = (id: string, date: string, session_id: string) => ({ ...en(id, date, 55), session_id }) as WorkoutEntry
+    const ses = (id: string, routine_id: string | null, date: string) => ({ id, user_id: 'u', name: null, date, started_at: `${date}T10:00:00Z`, finished_at: `${date}T11:00:00Z`, routine_id, notes: null, source: 'live' as const })
+    const props = { entries: [mk('1', '2026-10-01', 's1'), mk('2', '2026-10-08', 's2')], exercises: [ex], sessions: [ses('s1', 'r1', '2026-10-01'), ses('s2', 'r2', '2026-10-08')], routines: [{ id: 'r1', name: 'Грудь' }, { id: 'r2', name: 'Ноги' }] }
+    const w = mount(JournalList, { props })
+    await w.get('[data-testid="journal-routine"]').setValue('r2')
+    const days = w.findAll('[data-testid="journal-day"]')
+    expect(days).toHaveLength(1)
+    expect(days[0].get('[data-testid="journal-date"]').text()).toContain('8')
+    expect(mount(JournalList, { props: { ...props, sessions: [] } }).find('[data-testid="journal-routine"]').exists()).toBe(false)
+  })
 })

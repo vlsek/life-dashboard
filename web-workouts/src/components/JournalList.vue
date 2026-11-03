@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import JournalCalendar from './JournalCalendar.vue'
-import { dayMinutes, journalDays, journalMonths } from '../lib/journal'
+import { dayMinutes, entryIdsOfRoutine, journalDays, journalMonths, routinesWithWorkouts } from '../lib/journal'
 import { formatSets } from '../lib/workouts'
 import { defaultWeightUnit } from '../lib/weightUnit'
 import { capFirst } from '../lib/exerciseNames'
@@ -13,15 +13,18 @@ import type { WorkoutSession } from '../lib/sessionContract'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 
 // Вкладка «Журнал» (BACKLOG 44.5б, срез 1): записи по дням, свежие сверху — один взгляд вместо поиска по карточкам упражнений.
-const props = withDefaults(defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; sessions?: WorkoutSession[] }>(), { sessions: () => [] })
+const props = withDefaults(defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; sessions?: WorkoutSession[]; routines?: { id: string; name: string }[] }>(), { sessions: () => [], routines: () => [] })
 const month = ref('')
 const query = ref('')
 const months = computed(() => journalMonths(props.entries))
 const day = ref<string | null>(null)
+const routineId = ref('')
+const routineOptions = computed(() => routinesWithWorkouts(props.routines, props.sessions))
+const routineIds = computed(() => (routineId.value ? entryIdsOfRoutine(props.entries, props.sessions, routineId.value) : null))
 const calMonth = computed(() => month.value || months.value[0] || '')
 const activeDates = computed(() => [...new Set(props.entries.filter((e) => e.date.startsWith(calMonth.value)).map((e) => e.date))])
 watch(month, () => { day.value = null })
-const days = computed(() => journalDays(props.entries, props.exercises, 30, month.value || null, query.value, day.value))
+const days = computed(() => journalDays(props.entries, props.exercises, 30, month.value || null, query.value, day.value, routineIds.value))
 const fmtVol = (v: number) => `${Math.round(v).toLocaleString('ru-RU')} ${defaultWeightUnit()}`
 const fmtMin = (date: string) => { const m = dayMinutes(props.sessions, date); return m > 0 ? `${m} ${t('workouts_duration_unit')}` : '' }
 const daySummary = (n: number, sets: number) => t('workouts_today_summary').replace('{ex}', String(n)).replace('{n}', String(sets))
@@ -33,6 +36,10 @@ const daySummary = (n: number, sets: number) => t('workouts_today_summary').repl
     <select v-if="months.length > 1" v-model="month" class="mb-3 rounded-lg border px-2 py-1 text-sm" style="border-color: var(--border); background: var(--bg-card); color: var(--text)" data-testid="journal-month">
       <option value="">{{ t('workouts_journal_all_months') }}</option>
       <option v-for="m in months" :key="m" :value="m">{{ m }}</option>
+    </select>
+    <select v-if="routineOptions.length > 0" v-model="routineId" class="mb-3 ml-2 rounded-lg border px-2 py-1 text-sm" style="border-color: var(--border); background: var(--bg-card); color: var(--text)" data-testid="journal-routine">
+      <option value="">{{ t('workouts_journal_all_routines') }}</option>
+      <option v-for="r in routineOptions" :key="r.id" :value="r.id">{{ r.name }}</option>
     </select>
     <JournalCalendar v-if="calMonth" :month="calMonth" :active-dates="activeDates" :selected="day" @select="day = $event" />
     <p v-if="days.length === 0" class="text-sm" style="color: var(--text-dim)" data-testid="journal-empty">{{ entries.length > 0 ? t('workouts_journal_nothing') : t('workouts_journal_empty') }}</p>
