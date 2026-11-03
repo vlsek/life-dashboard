@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.45";
+const SITE_VERSION = "7.46";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.46", date: "2026-11-03 05:20", changes: [
+        "«Календарь»: у дней с оценкой самочувствия в ячейке месяца появился маленький цветной кружок с цифрой 1–5 (от красного к зелёному). Нет оценки — нет кружка.",
+    ]},
     { version: "7.45", date: "2026-11-02 12:30", changes: [
         "Новая «Справка» с поиском: открывается из «Настроек» (кнопка «Справка») и из палитры команд (Ctrl/Cmd + K → «Справка»). Внутри — как работают баллы, серии, норма воды, офлайн и что значат значки, а также подсказка по каждой странице со ссылкой «Открыть страницу →». Поиск ищет по названию и тексту, регистр и «ё» не важны. Без миграций."
     ]},
@@ -2851,6 +2854,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.46", date: "2026-11-03 05:20", changes: [
+        "Calendar: days with a mood rating now show a small coloured circle with the 1–5 digit on the month cell (red to green). No rating, no circle.",
+    ]},
     { version: "7.45", date: "2026-11-02 12:30", changes: [
         "A new searchable “Help”: open it from Settings (the “Help” button) or from the command palette (Ctrl/Cmd + K → “Help”). It covers how points, streaks, the water goal and offline work, what the icons mean, and a hint for every page with an “Open the page →” link. The search looks through titles and text; case does not matter. No migrations."
     ]},

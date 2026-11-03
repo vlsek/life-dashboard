@@ -1718,6 +1718,12 @@ body {
   height: 7px;
   flex: none;
 }
+.cal-mood { position: absolute; left: 2px; bottom: 2px; width: 14px; height: 14px; border-radius: 50%; font-size: 0.6rem; line-height: 14px; text-align: center; font-weight: 700; color: #111; }
+.cal-mood-1 { background: #e5675f; }
+.cal-mood-2 { background: #e8914a; }
+.cal-mood-3 { background: #e6c04a; }
+.cal-mood-4 { background: #9ccc65; }
+.cal-mood-5 { background: #4fbf6a; }
 .cal-dot-workout {
   border-radius: 50%;
   background: #4caf7d;
