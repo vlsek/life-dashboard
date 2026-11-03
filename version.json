@@ -1,7 +1,14 @@
 {
-  "version": "7.59",
+  "version": "7.60",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.60",
+      "date": "2026-11-03 21:50",
+      "changes": [
+        "Workouts: in the active workout, the keyboard’s “Next” / Enter key now jumps to the next set field (weight → reps → next set’s weight) and closes the keyboard on the last one. No need to tap every field."
+      ]
+    },
     {
       "version": "7.59",
       "date": "2026-11-03 15:00",
@@ -5383,6 +5390,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.60",
+      "date": "2026-11-03 21:50",
+      "changes": [
+        "Тренировки: в активной тренировке кнопка «Далее» / Enter на клавиатуре телефона переходит к следующему полю подхода (вес → повторы → вес следующего подхода), а на последнем поле убирает клавиатуру. Не нужно тыкать в каждое поле."
+      ]
+    },
     {
       "version": "7.59",
       "date": "2026-11-03 15:00",
