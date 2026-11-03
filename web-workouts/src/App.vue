@@ -390,7 +390,7 @@ async function onFinishWorkout() {
     if (res.session && !(routine && routinesStore.synced.value)) res.session.routine_id = null
     await wk.addWorkout(auth.value.userId, res)
     aw.discard()
-    summary.value = data
+    summary.value = { ...data, sessionId: res.session?.id ?? null, name: res.session?.name ?? null, notes: res.session?.notes ?? null }
     showToast(t('aw_saved'))
     haptic('success')
     // «обновить рутину под сегодняшнюю тренировку?» — только если что-то изменилось
@@ -402,6 +402,18 @@ async function onFinishWorkout() {
     console.error(e)
   } finally {
     awBusy.value = false
+  }
+}
+async function onSaveSessionMeta(v: { name: string | null; notes: string | null }) {
+  const cur = summary.value
+  if (!cur?.sessionId || auth.value.status !== 'ready') return
+  try {
+    const r = await wk.updateSession(auth.value.userId, cur.sessionId, v)
+    summary.value = { ...cur, ...r }
+    showToast(t('sm_meta_saved'))
+  } catch (e) {
+    showToast(friendlyError(e, 'save'), 'error')
+    console.error(e)
   }
 }
 function onStartRoutine(r: Routine) {
@@ -488,7 +500,7 @@ function onToggleProgramWeek(week: number) {
   <ActiveWorkout v-if="aw.active.value && auth.status === 'ready'" :exercises="exercises" :entries="entries" :unit="defaultUnit()" :busy="awBusy" @finish="onFinishWorkout" @cancel="onCancelWorkout" />
   <PastWorkoutForm v-if="pastForm" @start="onStartPast" @close="pastForm = false" />
   <RecordsModal v-if="recordsFor" :exercise="recordsFor" :entries="entries" :unit="defaultUnit()" @close="recordsFor = null" />
-  <WorkoutSummary v-if="summary" :data="summary" :exercises="exercises" :unit="defaultUnit()" @close="summary = null" />
+  <WorkoutSummary v-if="summary" :data="summary" :exercises="exercises" :unit="defaultUnit()" @close="summary = null" @save-meta="onSaveSessionMeta" />
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-6">
     <h1 class="mb-3 text-xl font-bold"><EmojiText :text="t('workouts_h1')" /></h1>
 

@@ -8,6 +8,7 @@ export interface SummaryRecord { exerciseId: string; kind: PRKind; reps: number 
 export interface WorkoutSummaryData {
   minutes: number; exerciseCount: number; workingSets: number; volume: number
   records: SummaryRecord[]; muscles: string[] // id мышц из упражнений, без повторов, в порядке появления
+  sessionId?: string | null; name?: string | null; notes?: string | null // сохранённая сессия (если есть таблица миграции 113): можно изменить название и заметку
 }
 
 export function summarize(d: ActiveDraft, exercises: readonly Exercise[], entries: readonly WorkoutEntry[], nowMs: number): WorkoutSummaryData {

@@ -343,6 +343,15 @@ export function useWorkouts() {
     for (const e of res.entries) await mirror(e.exercise_id, [e.date])
   }
 
+  // «Изменить название/заметку» в итогах тренировки (69.10): пустое название — без названия
+  async function updateSession(userId: string, id: string, v: { name: string | null; notes: string | null }) {
+    const name = v.name?.trim().slice(0, 80) || null
+    const notes = v.notes?.trim().slice(0, 2000) || null
+    const { error } = await qUpdate(userId, 'workout_sessions', `workout_sessions:${id}:meta`, { name, notes }, { id })
+    if (error) throw error
+    return { name, notes }
+  }
+
   async function editEntry(entryId: string, res: EntryFormInput) {
     const old = entries.value.find((e) => e.id === entryId)
     const { error, queued } = await qUpdate(uid(old?.user_id), 'workout_entries', `workout_entries:${entryId}`, { date: res.date, sets: res.sets, notes: res.notes }, { id: entryId })
@@ -435,6 +444,7 @@ export function useWorkouts() {
     editEntry,
     deleteEntry,
     addWorkout,
+    updateSession,
     sessionsAvailable,
     applyTemplateExercises,
   }

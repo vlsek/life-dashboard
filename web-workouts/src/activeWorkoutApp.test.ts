@@ -5,6 +5,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 const h = vi.hoisted(() => ({
   exercises: [] as Record<string, unknown>[],
   inserted: [] as { table: string; row: Record<string, unknown> }[],
+  updated: [] as { table: string; row: Record<string, unknown>; match: unknown }[],
   sessionsTable: true,
   entries: [] as Record<string, unknown>[],
 }))
@@ -25,6 +26,7 @@ vi.mock('./lib/supabase', () => ({
         },
         insert: (row: Record<string, unknown>) => (h.inserted.push({ table, row }), Promise.resolve({ error: null })),
         upsert: () => Promise.resolve({ error: null }),
+        update: (row: Record<string, unknown>) => ({ match: (m: unknown) => (h.updated.push({ table, row, match: m }), Promise.resolve({ error: null })) }),
       }
       return chain
     },
@@ -57,7 +59,7 @@ async function fillAndFinish(w: ReturnType<typeof mount>) {
 
 beforeEach(() => {
   localStorage.clear(); localStorage.setItem('site_lang', 'ru')
-  h.exercises = [ex]; h.entries = []; h.inserted = []; h.sessionsTable = true
+  h.exercises = [ex]; h.entries = []; h.inserted = []; h.updated = []; h.sessionsTable = true
   useActiveWorkout().discard()
   resetSessionProbe()
 })
@@ -205,6 +207,30 @@ describe('активная тренировка', () => {
     expect(q(w, 'rec-repsat').text()).toContain('× 8')
     await q(w, 'records-close').trigger('click')
     expect(q(w, 'records-modal').exists()).toBe(false)
+    w.unmount()
+  })
+
+  it('итоги: «Изменить название / заметку» сохраняет их в сессию', async () => {
+    const w = await mountApp()
+    await fillAndFinish(w)
+    expect(q(w, 'workout-summary').exists()).toBe(true)
+    await q(w, 'sm-edit-meta').trigger('click')
+    await q(w, 'sm-name').setValue('Грудь и спина')
+    await q(w, 'sm-notes').setValue('Лёгкий день')
+    await q(w, 'sm-save-meta').trigger('click')
+    await flushPromises()
+    const sid = h.inserted.find((x) => x.table === 'workout_sessions')!.row.id
+    expect(h.updated).toEqual([{ table: 'workout_sessions', row: { name: 'Грудь и спина', notes: 'Лёгкий день' }, match: { id: sid } }])
+    expect(q(w, 'sm-meta').text()).toContain('Грудь и спина')
+    w.unmount()
+  })
+
+  it('итоги без таблицы сессий: правки названия нет', async () => {
+    h.sessionsTable = false
+    const w = await mountApp()
+    await fillAndFinish(w)
+    expect(q(w, 'workout-summary').exists()).toBe(true)
+    expect(q(w, 'sm-edit-meta').exists()).toBe(false)
     w.unmount()
   })
 

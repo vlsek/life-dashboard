@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { t, type DictKey } from '../lib/i18n'
 import { fmtVolume, type WorkoutSummaryData } from '../lib/summary'
 import { prSetText } from '../lib/records'
@@ -7,7 +7,12 @@ import type { Exercise } from '../lib/types'
 
 // Окно итогов после «Завершить» (BACKLOG 69.10, срез 1): плитки (время, подходы, объём, упражнения), рекорды, задействованные мышцы.
 const props = defineProps<{ data: WorkoutSummaryData; exercises: Exercise[]; unit: string }>()
-const emit = defineEmits<{ close: [] }>()
+const emit = defineEmits<{ close: []; saveMeta: [{ name: string | null; notes: string | null }] }>()
+// «Изменить название/заметку» — только у сохранённой сессии (есть таблица миграции 113)
+const editing = ref(false)
+const nameDraft = ref(props.data.name ?? '')
+const notesDraft = ref(props.data.notes ?? '')
+function saveMeta() { emit('saveMeta', { name: nameDraft.value || null, notes: notesDraft.value || null }); editing.value = false }
 const names = computed(() => new Map(props.exercises.map((e) => [e.id, e])))
 const unitOf = (id: string) => names.value.get(id)?.unit || props.unit
 const muscleName = (m: string) => t(('workouts_muscle_' + m) as DictKey)
@@ -41,6 +46,17 @@ const tiles = computed(() => [
         <h3 class="mb-1 text-sm font-semibold" style="color: var(--text-dim)">{{ t('sm_muscles') }}</h3>
         <div class="flex flex-wrap gap-1.5">
           <span v-for="m in data.muscles" :key="m" class="rounded-full border px-3 py-1 text-xs" style="border-color: var(--border)">{{ muscleName(m) }}</span>
+        </div>
+      </div>
+      <div v-if="data.sessionId" class="mb-4" data-testid="sm-meta">
+        <template v-if="!editing">
+          <p v-if="data.name || data.notes" class="mb-1 text-sm"><b v-if="data.name">{{ data.name }}</b><span v-if="data.name && data.notes"> — </span><span style="color: var(--text-dim)">{{ data.notes }}</span></p>
+          <button type="button" class="text-sm underline" style="color: var(--accent); min-height: 36px" data-testid="sm-edit-meta" @click="editing = true">{{ t('sm_edit_meta') }}</button>
+        </template>
+        <div v-else class="flex flex-col gap-2">
+          <input v-model="nameDraft" maxlength="80" class="w-full rounded-lg border px-3 py-2" style="border-color: var(--border); background: var(--bg); color: var(--text); min-height: 44px" :placeholder="t('sm_name_ph')" data-testid="sm-name" />
+          <textarea v-model="notesDraft" maxlength="2000" rows="3" class="w-full rounded-lg border px-3 py-2" style="border-color: var(--border); background: var(--bg); color: var(--text)" :placeholder="t('sm_notes_ph')" data-testid="sm-notes"></textarea>
+          <button type="button" class="rounded-lg border py-2 text-sm font-semibold" style="border-color: var(--accent); color: var(--accent); min-height: 44px" data-testid="sm-save-meta" @click="saveMeta">{{ t('rt_ok') }}</button>
         </div>
       </div>
       <button type="button" class="w-full rounded-lg py-3 font-semibold" style="background: var(--accent); color: var(--accent-text); min-height: 48px" data-testid="sm-close" @click="emit('close')">{{ t('sm_done') }}</button>
