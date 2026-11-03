@@ -62,7 +62,7 @@ describe('время и хранение', () => {
   })
 })
 
-import { entryRow, previousSet, previousText } from './activeWorkout'
+import { entryRow, lastNote, setExerciseNote, previousSet, previousText } from './activeWorkout'
 describe('строки для БД и подсказка «прошлый раз»', () => {
   const base = { id: 'e', exercise_id: 'x', date: '2026-10-30', sets: [], notes: null, session_id: 's', position: 0, superset_group: null }
   it('без таблицы сессий колонок v2 в строке нет вовсе', () => {
@@ -174,6 +174,27 @@ describe('прошлое: источник «лучший»', () => {
     const e = [{ exercise_id: 'x', date: '2026-10-01', sets: [st(80, 5)] }, { exercise_id: 'x', date: '2026-10-10', sets: [st(80, 6)] }]
     expect(previousSet(e, 'x', '2026-11-01', 0, 'best')).toMatchObject({ reps: 6 })
     expect(previousSet([], 'x', '2026-11-01', 0, 'best')).toBeNull()
+  })
+})
+
+describe('заметка к упражнению', () => {
+  it('setExerciseNote: ставит, обрезает до 500, пустая — null, чужие не трогает', () => {
+    let d = addExercise(addExercise(newDraft('d', new Date()), 'a', 'e1'), 'b', 'e2')
+    d = setExerciseNote(d, 'a', 'хват уже')
+    expect(d.exercises.map((e) => e.note)).toEqual(['хват уже', null])
+    expect(setExerciseNote(d, 'a', 'x'.repeat(900)).exercises[0].note).toHaveLength(500)
+    expect(setExerciseNote(d, 'a', '').exercises[0].note).toBeNull()
+  })
+  it('заметка попадает в запись при сохранении', () => {
+    let d = addExercise(newDraft('d', new Date()), 'a', 'e1')
+    d = toggleDone(updateSet(d, 'a', 0, { reps: 5, weight: 50 }), 'a', 0)
+    expect(finishDraft(setExerciseNote(d, 'a', ' низкий упор '), new Date().toISOString(), false).entries[0].notes).toBe('низкий упор')
+  })
+  it('lastNote: самая свежая до даты, пустые игнорируются', () => {
+    const e = [{ exercise_id: 'x', date: '2026-01-01', notes: 'старая' }, { exercise_id: 'x', date: '2026-02-01', notes: ' новая ' }, { exercise_id: 'x', date: '2026-03-01', notes: '  ' }, { exercise_id: 'y', date: '2026-02-15', notes: 'чужая' }]
+    expect(lastNote(e, 'x', '2026-04-01')).toBe('новая')
+    expect(lastNote(e, 'x', '2026-02-01')).toBe('старая')
+    expect(lastNote(e, 'z', '2026-04-01')).toBeNull()
   })
 })
 

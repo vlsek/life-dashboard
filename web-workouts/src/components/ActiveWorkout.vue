@@ -2,7 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useActiveWorkout } from '../lib/useActiveWorkout'
 import { progressionHint } from '../lib/progressionHint'
-import { supersetPos, doneSetCount, formatElapsed, previousSet, previousSets, previousText, type PrevSource } from '../lib/activeWorkout'
+import { supersetPos, doneSetCount, formatElapsed, previousSet, previousSets, previousText, lastNote, NOTE_MAX, type PrevSource } from '../lib/activeWorkout'
 import { parseNum } from '../lib/entrySets'
 import { setType, SET_TYPES } from '../lib/sessionContract'
 import { t, type DictKey } from '../lib/i18n'
@@ -46,6 +46,8 @@ function togglePrevSource() { prevSource.value = prevSource.value === 'best' ? '
 const HINT_KEY = 'workouts.hint.v1'
 const hintOn = ref((() => { try { return localStorage.getItem(HINT_KEY) !== '0' } catch { return true } })())
 function toggleHint() { hintOn.value = !hintOn.value; try { localStorage.setItem(HINT_KEY, hintOn.value ? '1' : '0') } catch { /* не критично */ } }
+const noteOpen = ref<Record<string, boolean>>({})
+const prevNote = (exerciseId: string) => lastNote(props.entries, exerciseId, draft.value?.date ?? '9999')
 const restLabel = (exerciseId: string): string => {
   const own = rest.byEx.value[exerciseId]
   if (own === undefined) return t('aw_rest_default')
@@ -187,6 +189,9 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
           <button type="button" class="px-2 py-2 text-sm" style="color: var(--danger); min-width: 40px; min-height: 40px" :aria-label="t('aw_remove_exercise')" @click="aw.removeExercise(e.id)">✕</button>
         </div>
         <button type="button" class="mb-1 mr-2 rounded-full border px-3 py-1 text-xs" style="border-color: var(--border); color: var(--text-dim); min-height: 32px" :data-testid="'aw-rest-ex-' + ei" @click="rest.cycleFor(e.exercise_id)">{{ t('aw_rest_ex') }}: {{ restLabel(e.exercise_id) }}</button>
+        <button type="button" class="mb-1 mr-2 rounded-full border px-3 py-1 text-xs" style="border-color: var(--border); color: var(--text-dim); min-height: 32px" :data-testid="'aw-note-btn-' + ei" @click="noteOpen[e.id] = !noteOpen[e.id]">{{ t('aw_note') }}<template v-if="e.note"> ✓</template></button>
+        <textarea v-if="noteOpen[e.id] || e.note" :value="e.note ?? ''" :maxlength="NOTE_MAX" rows="2" class="mb-2 w-full rounded-lg border px-3 py-2 text-sm" style="border-color: var(--border); background: var(--bg); color: var(--text)" :placeholder="t('aw_note_ph')" :data-testid="'aw-note-' + ei" @input="aw.setNote(e.id, ($event.target as HTMLTextAreaElement).value)"></textarea>
+        <p v-if="prevNote(e.exercise_id) && !e.note" class="mb-2 text-xs italic" style="color: var(--text-dim)" :data-testid="'aw-prevnote-' + ei">{{ t('aw_prev_note') }}: {{ prevNote(e.exercise_id) }}</p>
         <p v-if="hintOn && hintFor(e.exercise_id)" class="mb-2 text-xs" style="color: var(--text-dim)" :data-testid="'aw-hint-' + ei">{{ hintText(e.exercise_id) }}</p>
         <div class="grid items-center gap-2 text-xs" :style="'grid-template-columns: ' + cols + '; color: var(--text-dim)'">
           <span class="text-center">#</span>

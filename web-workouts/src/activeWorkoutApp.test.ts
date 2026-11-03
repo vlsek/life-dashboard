@@ -264,6 +264,22 @@ describe('активная тренировка', () => {
     rt.byEx.value = {}
   })
 
+  it('заметка к упражнению: пишется в запись; прошлая заметка видна как напоминание', async () => {
+    h.entries = [{ id: 'o1', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 5, weight: 50, time: null, duration: null, side: null }], notes: 'сиденье на 4' }]
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
+    expect(q(w, 'aw-prevnote-0').text()).toContain('сиденье на 4')
+    await q(w, 'aw-note-btn-0').trigger('click')
+    await q(w, 'aw-note-0').setValue('сиденье на 5')
+    const inputs = q(w, 'aw-set-0-0').findAll('input')
+    await inputs[0].setValue('55'); await inputs[1].setValue('5')
+    await q(w, 'aw-tick-0-0').trigger('click')
+    await q(w, 'aw-finish').trigger('click')
+    await flushPromises(); await flushPromises()
+    expect(h.inserted.find((x) => x.table === 'workout_entries')!.row.notes).toBe('сиденье на 5')
+    w.unmount()
+  })
+
   it('прошлое: тап по подсказке подставляет числа без ✓; «Подставить прошлое» заполняет пустые подходы', async () => {
     h.entries = [{ id: 'old', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }, { reps: 6, weight: 65, time: null, duration: null, side: null }], notes: null }]
     const w = await mountApp()

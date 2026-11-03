@@ -144,6 +144,19 @@ export function previousSets(entries: readonly { exercise_id: string; date: stri
 }
 export const previousSet = (entries: readonly { exercise_id: string; date: string; sets: SetV2[] }[], exerciseId: string, beforeDate: string, index: number, source: PrevSource = 'last'): SetV2 | null =>
   previousSets(entries, exerciseId, beforeDate, source)[index] ?? null
+// Заметка к упражнению в тренировке (69.2): до 500 знаков, пустая = нет заметки
+export const NOTE_MAX = 500
+export const setExerciseNote = (d: ActiveDraft, entryId: string, note: string): ActiveDraft =>
+  ({ ...d, exercises: d.exercises.map((e) => (e.id === entryId ? { ...e, note: note.slice(0, NOTE_MAX) || null } : e)) })
+// Самая свежая заметка к упражнению до даты тренировки — показываем как напоминание («в прошлый раз: …»)
+export function lastNote(entries: readonly { exercise_id: string; date: string; notes?: string | null }[], exerciseId: string, beforeDate: string): string | null {
+  let best: { date: string; note: string } | null = null
+  for (const e of entries) {
+    const n = e.notes?.trim()
+    if (e.exercise_id === exerciseId && e.date < beforeDate && n && (!best || e.date > best.date)) best = { date: e.date, note: n }
+  }
+  return best?.note ?? null
+}
 export const previousText = (s: SetV2 | null, unit: string): string =>
   !s ? '' : s.weight ? `${s.weight}${unit}×${s.reps ?? ''}` : s.reps ? String(s.reps) : s.duration ? `${s.duration}'` : ''
 
