@@ -1,7 +1,14 @@
 {
-  "version": "7.54",
+  "version": "7.55",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.55",
+      "date": "2026-11-02 18:10",
+      "changes": [
+        "Workouts: the “Journal” tab now has a routine picker — “All routines” or one of yours that already has workouts; the feed keeps only the sets of workouts started from the chosen routine. The picker appears once at least one such workout exists. No migrations."
+      ]
+    },
     {
       "version": "7.54",
       "date": "2026-11-03 13:10",
@@ -5348,6 +5355,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.55",
+      "date": "2026-11-02 18:10",
+      "changes": [
+        "Тренировки: во вкладке «Журнал» появился выбор рутины — «Все рутины» или одна из твоих, по которой уже были тренировки; в ленте остаются только подходы тех тренировок, что начаты по выбранной рутине. Список появляется, когда есть хотя бы одна такая тренировка. Без миграций."
+      ]
+    },
     {
       "version": "7.54",
       "date": "2026-11-03 13:10",
