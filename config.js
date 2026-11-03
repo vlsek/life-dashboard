@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.44";
+const SITE_VERSION = "7.45";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.45", date: "2026-11-02 12:30", changes: [
+        "Новая «Справка» с поиском: открывается из «Настроек» (кнопка «Справка») и из палитры команд (Ctrl/Cmd + K → «Справка»). Внутри — как работают баллы, серии, норма воды, офлайн и что значат значки, а также подсказка по каждой странице со ссылкой «Открыть страницу →». Поиск ищет по названию и тексту, регистр и «ё» не важны. Без миграций."
+    ]},
     { version: "7.44", date: "2026-11-03 05:10", changes: [
         "Тренировки: у каждого упражнения появилась кнопка-кубок «Рекорды». В окне — лучший вес, оценка 1ПМ, лучший объём подхода, максимум повторов и время (с датой, когда впервые достигнуто), а также максимум повторов на каждом весе. Разминочные подходы не учитываются.",
     ]},
@@ -2847,6 +2850,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.45", date: "2026-11-02 12:30", changes: [
+        "A new searchable “Help”: open it from Settings (the “Help” button) or from the command palette (Ctrl/Cmd + K → “Help”). It covers how points, streaks, the water goal and offline work, what the icons mean, and a hint for every page with an “Open the page →” link. The search looks through titles and text; case does not matter. No migrations."
+    ]},
     { version: "7.44", date: "2026-11-03 05:10", changes: [
         "Workouts: every exercise now has a trophy “Records” button. The window shows your best weight, estimated 1RM, best set volume, most reps and time (with the date first reached), plus max reps at each weight. Warm-up sets are not counted.",
     ]},

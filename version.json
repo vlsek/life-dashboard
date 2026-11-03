@@ -1,7 +1,14 @@
 {
-  "version": "7.44",
+  "version": "7.45",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.45",
+      "date": "2026-11-02 12:30",
+      "changes": [
+        "A new searchable “Help”: open it from Settings (the “Help” button) or from the command palette (Ctrl/Cmd + K → “Help”). It covers how points, streaks, the water goal and offline work, what the icons mean, and a hint for every page with an “Open the page →” link. The search looks through titles and text; case does not matter. No migrations."
+      ]
+    },
     {
       "version": "7.44",
       "date": "2026-11-03 05:10",
@@ -5274,6 +5281,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.45",
+      "date": "2026-11-02 12:30",
+      "changes": [
+        "Новая «Справка» с поиском: открывается из «Настроек» (кнопка «Справка») и из палитры команд (Ctrl/Cmd + K → «Справка»). Внутри — как работают баллы, серии, норма воды, офлайн и что значат значки, а также подсказка по каждой странице со ссылкой «Открыть страницу →». Поиск ищет по названию и тексту, регистр и «ё» не важны. Без миграций."
+      ]
+    },
     {
       "version": "7.44",
       "date": "2026-11-03 05:10",
