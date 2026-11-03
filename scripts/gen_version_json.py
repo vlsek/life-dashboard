@@ -10,8 +10,23 @@ import json
 import re
 import pathlib
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+import os
+import shutil
+import subprocess
+
+# GEN_VERSION_ROOT — только для тестов скрипта (чужая папка с config.js, в неё же пишется version.json)
+ROOT = pathlib.Path(os.environ.get("GEN_VERSION_ROOT") or pathlib.Path(__file__).resolve().parent.parent)
 config = (ROOT / "config.js").read_text(encoding="utf-8")
+
+# Защита от поломки config.js при слиянии: на мерже у записи журнала дважды терялся закрывающий `]},` (v7.07, v7.23, v7.35),
+# регулярные выражения ниже такое проглатывают, а сайт целиком перестаёт разбирать config.js. Поэтому сначала настоящий синтаксический разбор.
+_node = shutil.which("node")
+if _node:
+    _chk = subprocess.run([_node, "--check", str(ROOT / "config.js")], capture_output=True, text=True)
+    if _chk.returncode != 0:
+        raise SystemExit("config.js не разбирается как JavaScript (node --check). Частая причина — слияние потеряло закрывающий `]},` у записи журнала.\n" + _chk.stderr.strip())
+else:
+    print("предупреждение: node не найден — синтаксис config.js не проверен")
 
 
 def js_str(raw: str) -> str:
@@ -28,6 +43,7 @@ def parse_changelog(array_name: str):
     if not m:
         raise SystemExit(f"{array_name} not found in config.js")
     body = m.group(1)
+    declared = len(re.findall(r"\{\s*version:", body))
     entries = []
     for em in re.finditer(
         r'\{\s*version:\s*(' + STR + r'),\s*date:\s*(' + STR + r'),\s*changes:\s*\[(.*?)\]\s*\},?',
@@ -37,6 +53,9 @@ def parse_changelog(array_name: str):
         date = js_str(em.group(2))
         changes = [js_str(c.group(0)) for c in re.finditer(STR, em.group(3))]
         entries.append({"version": version, "date": date, "changes": changes})
+    # каждая объявленная запись должна быть разобрана: потерянная скобка склеивает две записи в одну
+    if declared != len(entries):
+        raise SystemExit(f"{array_name}: объявлено записей {declared}, разобрано {len(entries)} — проверь скобки `]}},` у соседних записей")
     return entries
 
 

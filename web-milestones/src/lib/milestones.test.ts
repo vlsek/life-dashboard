@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { addInterval, daysUntil, statusLevel, buildRow, groupActiveByCategory, sortDone, summary } from './milestones'
+import { remindDaysOf, addInterval, daysUntil, statusLevel, buildRow, groupActiveByCategory, sortDone, summary } from './milestones'
 import type { Milestone } from './types'
 
 describe('addInterval', () => {
@@ -138,5 +138,20 @@ describe('summary', () => {
       milestone({ due_date: null }),
     ]
     expect(summary(items, today)).toEqual({ overdue: 1, soon: 1 })
+  })
+})
+
+describe('remindDaysOf (76.6)', () => {
+  it('пусто и мусор → null; целое 0..365; дробное округляется вниз; больше года — 365', () => {
+    for (const v of [null, undefined, '', 'abc', -3]) expect(remindDaysOf(v as never)).toBeNull()
+    expect(remindDaysOf(0)).toBe(0)
+    expect(remindDaysOf('14')).toBe(14)
+    expect(remindDaysOf(2.9)).toBe(2)
+    expect(remindDaysOf(1000)).toBe(365)
+  })
+  it('buildRow кладёт remind_days в строку', () => {
+    const base = { name: 'Масло', category: '', last_date: '', interval_value: 0, interval_unit: 'month' as const, due_date: '2026-12-01', last_km: 0, interval_km: 0, note: '' }
+    expect(buildRow({ ...base, remind_days: 30 }, 'Без категории').remind_days).toBe(30)
+    expect(buildRow(base, 'Без категории').remind_days).toBeNull()
   })
 })

@@ -19,6 +19,7 @@ export interface Milestone {
   last_km: number | null
   interval_km: number | null
   note: string | null
+  remind_days?: number | null // за сколько дней до срока напоминать на Дашборде; null — 7 (миграция 116)
   history: MilestoneHistoryEntry[]
   done: boolean
   created_at: string
@@ -35,4 +36,5 @@ export interface MilestoneFormInput {
   last_km: number
   interval_km: number
   note: string
+  remind_days?: number | string | null
 }

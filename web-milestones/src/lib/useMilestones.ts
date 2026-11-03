@@ -61,14 +61,24 @@ export function useMilestones() {
     if (auth.value.status === 'ready') await load(auth.value.userId)
   }
 
+  // Миграция 116 не накатана: колонки remind_days нет — сохраняем без неё (остальное работает как раньше).
+  const noRemindColumn = (e: { code?: string; message?: string } | null) => !!e && (e.code === '42703' || e.code === 'PGRST204' || /remind_days/i.test(e.message ?? ''))
+  const withoutRemind = (row: Record<string, unknown>) => {
+    const { remind_days: _drop, ...rest } = row
+    void _drop
+    return rest
+  }
+
   async function addMilestone(userId: string, row: ReturnType<typeof import('./milestones').buildRow>) {
-    const { error: err } = await sb.from('milestones').insert({ user_id: userId, history: [], done: false, ...row })
+    let { error: err } = await sb.from('milestones').insert({ user_id: userId, history: [], done: false, ...row })
+    if (noRemindColumn(err)) ({ error: err } = await sb.from('milestones').insert({ user_id: userId, history: [], done: false, ...withoutRemind(row) }))
     if (err) throw err
     await reload()
   }
 
   async function updateMilestone(id: string, row: ReturnType<typeof import('./milestones').buildRow>) {
-    const { error: err } = await sb.from('milestones').update(row).eq('id', id)
+    let { error: err } = await sb.from('milestones').update(row).eq('id', id)
+    if (noRemindColumn(err)) ({ error: err } = await sb.from('milestones').update(withoutRemind(row)).eq('id', id))
     if (err) throw err
     await reload()
   }

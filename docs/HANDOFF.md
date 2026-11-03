@@ -218,6 +218,7 @@ changelog на обоих языках с датой и временем → к�
 - ЗАЯВИТЬ задачу ДО кода отдельным коммитом: свой блок «Агент 2» в COORDINATION.md (что трогаю / что НЕ трогаю / метка времени) + пометка [~ агент 2, дата] в BACKLOG.
   Чужие файлы (то, что заявили другие агенты) не трогать. Если пересечение неизбежно — минимальная правка и pull --rebase.
 - Конец задачи: версия в config.js (SITE_VERSION и записи CHANGELOG_RU/EN сверху), scripts/gen_version_json.py, scripts/check_dead_links.py, запись в ROADMAP, [x] в BACKLOG,
+- `scripts/gen_version_json.py` теперь сам проверяет `config.js`: настоящий `node --check` и «объявлено записей = разобрано». Если он падает с «config.js не разбирается» — после слияния потерялся закрывающий `]},` у записи журнала (так ломалось на v7.07, v7.23, v7.35): найди запись без `]},`, верни скобку, повтори; НЕ пушь версию, пока скрипт не прошёл. Тест скрипта — `web-dashboard/src/genVersionGuard.test.ts`.
   журнал и «свободен» в COORDINATION, пересборка затронутых пилотов (cd web-X && npm run build; npm ci, если нет node_modules), тесты затронутых пилотов И web-dashboard
   (стражи «все пилоты», ~1770 тестов), pull --rebase, push. ФОРМАТ ВЕРСИИ X.YY: минор ровно две цифры, после 3.99 — 4.00 (f"{мажор}.{минор+1:02d}"), не 3.7 и не 2.100.
 - SQL проверять на PostgreSQL 16: scripts/sql_harness/run.sh NNN сценарий.sql (apt install postgresql; pg_ctlcluster 16 main start). К миграции NNN всегда:

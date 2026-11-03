@@ -46,4 +46,12 @@ describe('JournalList: лучший подход и рекорд', () => {
     await cell('2026-10-05').trigger('click') // день без записей не кликается
     expect(w.findAll('[data-testid="journal-day"]')).toHaveLength(2)
   })
+  it('длительность тренировки показана в заголовке дня, без сессий её нет', async () => {
+    const entries = [en('1', '2026-10-08', 55)]
+    const sessions = [{ id: 's', user_id: 'u', name: null, date: '2026-10-08', started_at: '2026-10-08T10:00:00Z', finished_at: '2026-10-08T10:47:00Z', routine_id: null, notes: null, source: 'live' as const }]
+    const w = mount(JournalList, { props: { entries, exercises: [ex], sessions } })
+    expect(w.get('[data-testid="journal-duration"]').text()).toContain('47')
+    const bare = mount(JournalList, { props: { entries, exercises: [ex] } })
+    expect(bare.find('[data-testid="journal-duration"]').exists()).toBe(false)
+  })
 })

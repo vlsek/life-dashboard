@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { bestSet, countSets, entryRecord, journalDays, journalMonths, monthGrid, todayItems } from './journal'
+import { bestSet, countSets, entryRecord, journalDays, journalMonths, monthGrid, dayMinutes, todayItems } from './journal'
 import type { Exercise, WorkoutEntry } from './types'
 
 const ex = (id: string): Exercise => ({ id, name: id, category: 'upper', tracks_weight: true } as unknown as Exercise)
@@ -115,5 +115,22 @@ describe('лента истории: календарь месяца (69.11 ср
     const e2 = withSets('2', 'a', '2026-10-08', [{ reps: 5, weight: 55 }])
     expect(journalDays([e1, e2], exs, 30, null, '', '2026-10-08').map((d) => d.date)).toEqual(['2026-10-08'])
     expect(journalDays([e1, e2], exs, 30, null, '', null)).toHaveLength(2)
+  })
+})
+
+describe('лента истории: длительность дня (69.11 срез 5)', () => {
+  const sess = (id: string, date: string, start: string, end: string | null) => ({ id, user_id: 'u', name: null, date, started_at: start, finished_at: end, routine_id: null, notes: null, source: 'live' as const })
+  it('сумма завершённых сессий даты в минутах; идущая, чужая дата и обратный порядок времени не считаются', () => {
+    const list = [
+      sess('1', '2026-10-08', '2026-10-08T10:00:00Z', '2026-10-08T10:52:00Z'),
+      sess('2', '2026-10-08', '2026-10-08T18:00:00Z', '2026-10-08T18:08:00Z'),
+      sess('3', '2026-10-08', '2026-10-08T20:00:00Z', null),
+      sess('4', '2026-10-09', '2026-10-09T10:00:00Z', '2026-10-09T11:00:00Z'),
+      sess('5', '2026-10-08', '2026-10-08T22:00:00Z', '2026-10-08T21:00:00Z'),
+    ]
+    expect(dayMinutes(list, '2026-10-08')).toBe(60)
+    expect(dayMinutes(list, '2026-10-09')).toBe(60)
+    expect(dayMinutes(list, '2026-10-10')).toBe(0)
+    expect(dayMinutes([], '2026-10-08')).toBe(0)
   })
 })

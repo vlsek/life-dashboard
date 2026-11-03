@@ -42,6 +42,13 @@ export function statusLevel(dueDate: string | null, today: Date = new Date()): {
 // Собирает строку для базы из значений формы. Если задан интервал и дата последнего раза —
 // срок считается сам; иначе берётся дата, введённая вручную (разовая веха).
 // Портировано 1:1 из buildRow() в milestones.js.
+// «Напомнить за N дней»: пусто/мусор → null (по умолчанию 7), иначе целое 0..365.
+export function remindDaysOf(v: number | string | null | undefined): number | null {
+  if (v === null || v === undefined || v === '') return null
+  const n = Math.floor(Number(v))
+  return Number.isFinite(n) && n >= 0 ? Math.min(365, n) : null
+}
+
 export function buildRow(res: MilestoneFormInput, noCategoryLabel: string) {
   const value = Math.max(0, Math.floor(res.interval_value || 0))
   let due: string | null = res.due_date || null
@@ -56,6 +63,7 @@ export function buildRow(res: MilestoneFormInput, noCategoryLabel: string) {
     last_km: res.last_km || null,
     interval_km: res.interval_km || null,
     note: res.note?.trim() || null,
+    remind_days: remindDaysOf(res.remind_days),
   }
 }
 
