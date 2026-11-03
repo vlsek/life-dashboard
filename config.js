@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.49";
+const SITE_VERSION = "7.50";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.50", date: "2026-11-02 16:10", changes: [
+        "Тренировки: во вкладке «Журнал» над списком появился мини-календарь месяца (последний месяц с записями или выбранный в списке): у дней с тренировками стоит точка, тап по такому дню оставляет в ленте только его, повторный тап возвращает всё. Без миграций.",
+    ]},
     { version: "7.49", date: "2026-11-02 02:02", changes: [
         "«Тренировки»: пока упражнения ещё грузятся, страница пишет «Загрузка…», а не «Пока нет упражнений». Если загрузка не удалась, теперь честно сказано «Не удалось загрузить» (раньше — «Не удалось сохранить» и технический текст базы данных) и есть кнопка «Повторить»."
     ]},
@@ -2863,6 +2866,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.50", date: "2026-11-02 16:10", changes: [
+        "Workouts: the “Journal” tab now has a mini month calendar above the list (the latest month with entries, or the one picked in the list): days with workouts get a dot, tapping such a day leaves only it in the feed, tapping again brings everything back. No migrations.",
+    ]},
     { version: "7.49", date: "2026-11-02 02:02", changes: [
         "Workouts: while exercises are still loading the page says “Loading…” instead of “No exercises yet”. If loading fails it now honestly says “Couldn’t load” (it used to say “Couldn’t save” and show the database’s technical text) and offers a “Try again” button."
     ]},
