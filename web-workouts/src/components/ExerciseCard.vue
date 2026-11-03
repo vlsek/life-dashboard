@@ -29,6 +29,7 @@ const emit = defineEmits<{
   quickAddEntry: [EntryFormInput, (ok: boolean) => void]
   editExercise: []
   linkMetric: []
+  showRecords: []
   deleteExercise: []
   editEntry: [WorkoutEntry]
   deleteEntry: [WorkoutEntry]
@@ -173,6 +174,9 @@ const collapsedSummary = computed(() => {
         @click="emit('linkMetric')"
       >
         <Icon name="link" />
+      </button>
+      <button type="button" class="rounded-lg border px-2.5 py-1.5" style="border-color: var(--border); color: var(--text)" :title="t('rec_btn')" :aria-label="t('rec_btn')" data-testid="exercise-records" @click="emit('showRecords')">
+        <Icon name="trophy" />
       </button>
       <button type="button" class="rounded-lg border px-2.5 py-1.5" style="border-color: var(--border); color: var(--text)" @click="emit('editExercise')">
         <Icon name="edit" />

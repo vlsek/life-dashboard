@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRoutines } from './lib/useRoutines'
+import RecordsModal from './components/RecordsModal.vue'
 import { haptic } from './lib/nativeFeedback'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useWorkouts } from './lib/useWorkouts'
@@ -362,6 +363,7 @@ async function onApplyTemplate(tpl: WorkoutTemplate) {
 const aw = useActiveWorkout()
 const awBusy = ref(false)
 const summary = ref<WorkoutSummaryData | null>(null)
+const recordsFor = ref<Exercise | null>(null)
 const pastForm = ref(false)
 const lastDate = computed(() => lastWorkoutDate(entries.value))
 function onRepeatLast() {
@@ -485,6 +487,7 @@ function onToggleProgramWeek(week: number) {
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
   <ActiveWorkout v-if="aw.active.value && auth.status === 'ready'" :exercises="exercises" :entries="entries" :unit="defaultUnit()" :busy="awBusy" @finish="onFinishWorkout" @cancel="onCancelWorkout" />
   <PastWorkoutForm v-if="pastForm" @start="onStartPast" @close="pastForm = false" />
+  <RecordsModal v-if="recordsFor" :exercise="recordsFor" :entries="entries" :unit="defaultUnit()" @close="recordsFor = null" />
   <WorkoutSummary v-if="summary" :data="summary" :exercises="exercises" :unit="defaultUnit()" @close="summary = null" />
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-6">
     <h1 class="mb-3 text-xl font-bold"><EmojiText :text="t('workouts_h1')" /></h1>
@@ -669,6 +672,7 @@ function onToggleProgramWeek(week: number) {
             @add-entry="entryForm = { exercise: ex, existing: null }"
             @quick-add-entry="(res, done) => onQuickAddEntry(ex, res, done)"
             @link-metric="linkModal = ex"
+            @show-records="recordsFor = ex"
             @edit-exercise="exerciseForm = { existing: ex }"
             @delete-exercise="onDeleteExercise(ex)"
             @edit-entry="(e) => (entryForm = { exercise: ex, existing: e })"

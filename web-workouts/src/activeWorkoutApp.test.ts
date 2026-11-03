@@ -193,6 +193,21 @@ describe('активная тренировка', () => {
     w.unmount()
   })
 
+  it('«Рекорды» у упражнения: окно показывает лучший вес с датой и повторы на весах', async () => {
+    h.entries = [
+      { id: 'o1', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 5, weight: 100, time: null, duration: null, side: null }], notes: null },
+      { id: 'o2', user_id: 'u1', exercise_id: 'e1', date: '2026-02-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }], notes: null },
+    ]
+    const w = await mountApp()
+    await w.find('[data-testid="exercise-records"]').trigger('click')
+    expect(q(w, 'rec-weight').text()).toContain('100')
+    expect(q(w, 'rec-weight').text()).toContain('2026-01-01')
+    expect(q(w, 'rec-repsat').text()).toContain('× 8')
+    await q(w, 'records-close').trigger('click')
+    expect(q(w, 'records-modal').exists()).toBe(false)
+    w.unmount()
+  })
+
   it('прошлое: тап по подсказке подставляет числа без ✓; «Подставить прошлое» заполняет пустые подходы', async () => {
     h.entries = [{ id: 'old', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }, { reps: 6, weight: 65, time: null, duration: null, side: null }], notes: null }]
     const w = await mountApp()

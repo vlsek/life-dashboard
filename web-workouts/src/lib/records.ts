@@ -54,3 +54,31 @@ export const topKind = (kinds: readonly PRKind[]): PRKind | null => kinds[0] ?? 
 
 // Текст плашки: «62,5 кг × 8»
 export const prSetText = (s: SetV2, unit: string): string => (s.weight ? `${String(s.weight).replace('.', ',')} ${unit} × ${s.reps ?? ''}`.trim() : s.reps ? String(s.reps) : s.duration ? `${s.duration}'` : '')
+
+// Страница «Рекорды» упражнения (BACKLOG 69.9, срез 2): лучшие значения за всё время с датой, когда впервые достигнуты. Только рабочие подходы (разминка не считается).
+export interface BestRow { value: number; date: string; weight: number | null; reps: number | null }
+export interface ExerciseBests {
+  weight: BestRow | null; e1rm: BestRow | null; volume: BestRow | null; reps: BestRow | null; duration: BestRow | null
+  repsAt: { weight: number; reps: number; date: string }[] // макс. повторов на каждом весе, от тяжёлых к лёгким
+}
+export function exerciseBests(entries: readonly { date: string; sets: readonly SetV2[] | null }[], maxRepRows = 8): ExerciseBests {
+  const out: ExerciseBests = { weight: null, e1rm: null, volume: null, reps: null, duration: null, repsAt: [] }
+  const at = new Map<number, { reps: number; date: string }>()
+  const better = (cur: BestRow | null, value: number, date: string, weight: number | null, reps: number | null): BestRow =>
+    !cur || value > cur.value || (value === cur.value && date < cur.date) ? { value, date, weight, reps } : cur
+  for (const e of entries) for (const s of e.sets ?? []) {
+    if (!isWorking(s)) continue
+    const w = s.weight ?? 0, r = s.reps ?? 0, d = s.duration ?? 0
+    if (w > 0 && r > 0) {
+      out.weight = better(out.weight, w, e.date, w, r)
+      out.e1rm = better(out.e1rm, e1rm(w, r), e.date, w, r)
+      out.volume = better(out.volume, w * r, e.date, w, r)
+      const c = at.get(w)
+      if (!c || r > c.reps || (r === c.reps && e.date < c.date)) at.set(w, { reps: r, date: e.date })
+    }
+    if (r > 0) out.reps = better(out.reps, r, e.date, w > 0 ? w : null, r)
+    if (d > 0) out.duration = better(out.duration, d, e.date, null, null)
+  }
+  out.repsAt = [...at].map(([weight, v]) => ({ weight, ...v })).sort((a, b) => b.weight - a.weight).slice(0, maxRepRows)
+  return out
+}
