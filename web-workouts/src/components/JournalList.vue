@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import JournalCalendar from './JournalCalendar.vue'
 import { journalDays, journalMonths } from '../lib/journal'
 import { formatSets } from '../lib/workouts'
 import { defaultWeightUnit } from '../lib/weightUnit'
@@ -15,7 +16,11 @@ const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[] }>()
 const month = ref('')
 const query = ref('')
 const months = computed(() => journalMonths(props.entries))
-const days = computed(() => journalDays(props.entries, props.exercises, 30, month.value || null, query.value))
+const day = ref<string | null>(null)
+const calMonth = computed(() => month.value || months.value[0] || '')
+const activeDates = computed(() => [...new Set(props.entries.filter((e) => e.date.startsWith(calMonth.value)).map((e) => e.date))])
+watch(month, () => { day.value = null })
+const days = computed(() => journalDays(props.entries, props.exercises, 30, month.value || null, query.value, day.value))
 const fmtVol = (v: number) => `${Math.round(v).toLocaleString('ru-RU')} ${defaultWeightUnit()}`
 const daySummary = (n: number, sets: number) => t('workouts_today_summary').replace('{ex}', String(n)).replace('{n}', String(sets))
 </script>
@@ -27,6 +32,7 @@ const daySummary = (n: number, sets: number) => t('workouts_today_summary').repl
       <option value="">{{ t('workouts_journal_all_months') }}</option>
       <option v-for="m in months" :key="m" :value="m">{{ m }}</option>
     </select>
+    <JournalCalendar v-if="calMonth" :month="calMonth" :active-dates="activeDates" :selected="day" @select="day = $event" />
     <p v-if="days.length === 0" class="text-sm" style="color: var(--text-dim)" data-testid="journal-empty">{{ entries.length > 0 ? t('workouts_journal_nothing') : t('workouts_journal_empty') }}</p>
     <section v-for="d in days" :key="d.date" class="mb-3 rounded-xl border p-3.5" style="border-color: var(--border); background: var(--bg-card)" data-testid="journal-day">
       <div class="flex items-baseline justify-between gap-2">

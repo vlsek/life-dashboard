@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { bestSet, countSets, entryRecord, journalDays, journalMonths, todayItems } from './journal'
+import { bestSet, countSets, entryRecord, journalDays, journalMonths, monthGrid, todayItems } from './journal'
 import type { Exercise, WorkoutEntry } from './types'
 
 const ex = (id: string): Exercise => ({ id, name: id, category: 'upper', tracks_weight: true } as unknown as Exercise)
@@ -93,5 +93,27 @@ describe('лента истории: поиск (69.11 срез 3)', () => {
     expect(journalDays(entries, list, 30, null, 'присед').map((x) => x.date)).toEqual(['2026-10-02', '2026-10-01'])
     expect(journalDays(entries, list, 30, null, '')).toHaveLength(2)
     expect(journalDays(entries, list, 30, null, 'нет такого')).toHaveLength(0)
+  })
+})
+
+describe('лента истории: календарь месяца (69.11 срез 4)', () => {
+  it('сетка: недели с понедельника, пустые клетки по краям, активные дни помечены', () => {
+    const g = monthGrid('2026-11', new Set(['2026-11-03', '2026-11-30']))
+    expect(g.every((w) => w.length === 7)).toBe(true)
+    expect(g[0].filter((c) => c.date === null)).toHaveLength(6) // 1 ноября 2026 — воскресенье
+    expect(g[0][6]).toMatchObject({ date: '2026-11-01', day: 1, active: false })
+    const flat = g.flat().filter((c) => c.date)
+    expect(flat).toHaveLength(30)
+    expect(flat.filter((c) => c.active).map((c) => c.date)).toEqual(['2026-11-03', '2026-11-30'])
+  })
+  it('февраль високосного года и месяц, начинающийся с понедельника', () => {
+    expect(monthGrid('2028-02', new Set()).flat().filter((c) => c.date)).toHaveLength(29)
+    expect(monthGrid('2026-06', new Set())[0][0]).toMatchObject({ date: '2026-06-01' }) // понедельник
+  })
+  it('фильтр по одному дню', () => {
+    const e1 = withSets('1', 'a', '2026-10-01', [{ reps: 5, weight: 50 }])
+    const e2 = withSets('2', 'a', '2026-10-08', [{ reps: 5, weight: 55 }])
+    expect(journalDays([e1, e2], exs, 30, null, '', '2026-10-08').map((d) => d.date)).toEqual(['2026-10-08'])
+    expect(journalDays([e1, e2], exs, 30, null, '', null)).toHaveLength(2)
   })
 })
