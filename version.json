@@ -1,7 +1,14 @@
 {
-  "version": "7.54",
+  "version": "7.55",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.55",
+      "date": "2026-11-03 13:40",
+      "changes": [
+        "Workouts: each exercise in the active workout has a “Rest” button with its own rest time (default / off / 60 / 90 / 120 / 180 s). The timer after a set uses that exercise’s time; the choice is stored on the device."
+      ]
+    },
     {
       "version": "7.54",
       "date": "2026-11-03 13:10",
@@ -5348,6 +5355,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.55",
+      "date": "2026-11-03 13:40",
+      "changes": [
+        "Тренировки: у каждого упражнения в активной тренировке появилась кнопка «Отдых» — своё время отдыха (как у всех / выкл / 60 / 90 / 120 / 180 с). Таймер после подхода берёт время этого упражнения; выбор хранится на устройстве."
+      ]
+    },
     {
       "version": "7.54",
       "date": "2026-11-03 13:10",
