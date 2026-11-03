@@ -1,7 +1,14 @@
 {
-  "version": "7.57",
+  "version": "7.58",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.58",
+      "date": "2026-11-03 14:10",
+      "changes": [
+        "Challenges: in a daily challenge one missed day inside a streak is now forgiven — the streak is not reset and an “Insurance used” badge appears. There is one insurance per challenge; a second miss breaks the streak."
+      ]
+    },
     {
       "version": "7.57",
       "date": "2026-11-03 14:20",
@@ -5369,6 +5376,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.58",
+      "date": "2026-11-03 14:10",
+      "changes": [
+        "«Челленджи»: в ежедневном челлендже один пропущенный день внутри серии теперь прощается — серия не обнуляется, а рядом появляется значок «Страховка сработала». Страховка одна на челлендж, второй пропуск серию обрывает."
+      ]
+    },
     {
       "version": "7.57",
       "date": "2026-11-03 14:20",

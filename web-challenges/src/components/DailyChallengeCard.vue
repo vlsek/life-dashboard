@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { getLang, t } from '../lib/i18n'
-import { computeDailyStats, currentStreak, defaultDayIdx, hasAutoSource, isMetricEntry } from '../lib/challenges'
+import { computeDailyStats, graceStreak, defaultDayIdx, hasAutoSource, isMetricEntry } from '../lib/challenges'
 import { daysLabel } from '../lib/catalogMeta'
 import ProgressRing from './ProgressRing.vue'
 import { todayStr } from '../lib/date'
@@ -19,7 +19,8 @@ const emit = defineEmits<{
 
 const stats = computed(() => computeDailyStats(props.challenge, props.entries, todayStr()))
 const percent = computed(() => (stats.value.duration ? (stats.value.completedCount / stats.value.duration) * 100 : 0))
-const streak = computed(() => currentStreak(stats.value.doneDays))
+const grace = computed(() => graceStreak(stats.value.doneDays))
+const streak = computed(() => grace.value.streak)
 const daysLeft = computed(() => Math.max(0, stats.value.duration - 1 - stats.value.todayIdx))
 
 // Выбранный день: null — по умолчанию (сегодня; после конца челленджа — последний день).
@@ -98,6 +99,7 @@ function dotStyle(d: { i: number; isFuture: boolean; done: boolean; isToday: boo
         </div>
         <div class="mt-1 flex flex-wrap gap-1.5 text-xs">
           <span v-if="streak >= 2" class="chip" data-testid="streak-chip"><EmojiText text="🔥" /> {{ t('ch_streak_label') }} {{ streak }}</span>
+          <span v-if="streak >= 2 && grace.forgiven" class="chip" data-testid="grace-chip" :title="t('ch_grace_title')">{{ t('ch_grace_label') }}</span>
           <span v-if="!stats.isOver && daysLeft > 0" class="chip" data-testid="left-chip">{{ t('ch_left_label') }} {{ daysLabel(daysLeft, getLang()) }}</span>
         </div>
       </div>

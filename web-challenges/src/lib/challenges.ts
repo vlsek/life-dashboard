@@ -110,6 +110,31 @@ export function currentStreak(days: readonly Pick<DayDot, 'done' | 'isFuture' | 
   return n
 }
 
+// BACKLOG 76.12 «страховка на 1 пропуск»: ОДИН пропущенный день внутри серии прощается (серия не обнуляется, сам день в счёт не идёт).
+// Страховка одна на весь челлендж и считается из самих отметок — ничего не хранится: второй пропуск (дальше назад по времени) серию обрывает.
+// Пропуск в самом начале челленджа (раньше первой отметки) прощать нечего — серия там и так заканчивается.
+export function graceStreak(days: readonly Pick<DayDot, 'done' | 'isFuture' | 'isToday'>[]): { streak: number; forgiven: boolean } {
+  let i = days.findIndex((d) => d.isToday)
+  if (i < 0) i = days.reduce((last, d, k) => (d.isFuture ? last : k), -1)
+  if (i < 0) return { streak: 0, forgiven: false }
+  if (!days[i].done && days[i].isToday) i--
+  let n = 0
+  let forgiven = false
+  for (; i >= 0; i--) {
+    if (days[i].done) {
+      n++
+      continue
+    }
+    // пропуск: прощаем, если страховка свободна и перед ним (раньше по времени) есть выполненный день
+    if (!forgiven && i > 0 && days[i - 1].done) {
+      forgiven = true
+      continue
+    }
+    break
+  }
+  return { streak: n, forgiven }
+}
+
 // Портировано из renderCumulativeChallengeCard() в challenges.js (только расчёт).
 export function computeCumulativeStats(ch: Pick<Challenge, 'target_count' | 'item_label'>, entries: ChallengeEntry[]): CumulativeStats {
   const count = entries.reduce((sum, e) => sum + (e.value || 0), 0)

@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.57";
+const SITE_VERSION = "7.58";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.58", date: "2026-11-03 14:10", changes: [
+        "«Челленджи»: в ежедневном челлендже один пропущенный день внутри серии теперь прощается — серия не обнуляется, а рядом появляется значок «Страховка сработала». Страховка одна на челлендж, второй пропуск серию обрывает.",
+    ]},
     { version: "7.57", date: "2026-11-03 14:20", changes: [
         "Тренировки: у каждого упражнения в активной тренировке появилась кнопка «Заметка» — можно записать, что важно (высота сиденья, хват, как зашло). Заметка сохраняется в записи, а в следующий раз ты увидишь её как напоминание «Прошлая заметка».",
     ]},
@@ -2887,6 +2890,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.58", date: "2026-11-03 14:10", changes: [
+        "Challenges: in a daily challenge one missed day inside a streak is now forgiven — the streak is not reset and an “Insurance used” badge appears. There is one insurance per challenge; a second miss breaks the streak.",
+    ]},
     { version: "7.57", date: "2026-11-03 14:20", changes: [
         "Workouts: each exercise in the active workout has a “Note” button — jot down what matters (seat height, grip, how it felt). The note is saved with the entry and shown next time as a “Last note” reminder.",
     ]},

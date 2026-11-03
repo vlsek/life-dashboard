@@ -103,6 +103,16 @@ describe('DailyChallengeCard — кольцо, серия, остаток (BACKL
     expect(w.find('[data-testid="left-chip"]').text()).toContain('осталось 3 дня')
   })
 
+  it('76.12: один пропущенный день внутри серии прощается — серия не рвётся, виден значок «Страховка сработала»', () => {
+    // выполнены дни 0 и 2, день 1 пропущен, сегодня (3) ещё не отмечено
+    const w = mount(DailyChallengeCard, { props: { challenge: ch(), entries: [en(day(0), 20), en(day(2), 25)] } })
+    expect(w.find('[data-testid="streak-chip"]').text()).toContain('Серия 2')
+    expect(w.find('[data-testid="grace-chip"]').text()).toBe('Страховка сработала')
+    // без пропусков значка страховки нет
+    const w2 = mount(DailyChallengeCard, { props: { challenge: ch(), entries: [en(day(1), 20), en(day(2), 25)] } })
+    expect(w2.find('[data-testid="grace-chip"]').exists()).toBe(false)
+  })
+
   it('серия из одного дня и пустой челлендж — значка серии нет', () => {
     const w = mount(DailyChallengeCard, { props: { challenge: ch(), entries: [en(day(2), 20)] } })
     expect(w.find('[data-testid="streak-chip"]').exists()).toBe(false)
