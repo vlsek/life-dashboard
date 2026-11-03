@@ -17,6 +17,7 @@ const due_date = ref(props.existing?.due_date ?? props.draft?.due_date ?? '')
 const last_km = ref(props.existing?.last_km ?? props.draft?.last_km ?? 0)
 const interval_km = ref(props.existing?.interval_km ?? props.draft?.interval_km ?? 0)
 const note = ref(props.existing?.note ?? props.draft?.note ?? '')
+const remind_days = ref<number | string>(props.existing?.remind_days ?? '')
 
 const today = todayStr()
 const nameInput = ref<HTMLInputElement | null>(null)
@@ -42,6 +43,7 @@ function onSubmit() {
     last_km: Number(last_km.value) || 0,
     interval_km: Number(interval_km.value) || 0,
     note: note.value,
+    remind_days: remind_days.value,
   }
   emit('submit', res)
 }
@@ -96,6 +98,12 @@ function onSubmit() {
             <input v-model.number="interval_km" type="number" min="0" class="modal-input" />
           </label>
         </div>
+
+        <label class="flex flex-col gap-1 text-sm">
+          {{ t('ms_field_remind') }}
+          <input v-model="remind_days" type="number" min="0" max="365" placeholder="7" class="modal-input" data-test="remind-days" />
+          <span class="dim text-xs">{{ t('ms_field_remind_hint') }}</span>
+        </label>
 
         <label class="flex flex-col gap-1 text-sm">
           {{ t('ms_field_note') }}

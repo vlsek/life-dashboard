@@ -6,6 +6,17 @@ describe('classifyMilestoneReminders', () => {
     const rows = [{ due_date: '2026-09-20' }, { due_date: '2026-09-28' }, { due_date: '2026-10-01' }]
     expect(classifyMilestoneReminders(rows, '2026-09-28')).toEqual({ overdue: 1, soon: 2 })
   })
+  it('76.6: порог «скоро» у вехи свой — remind_days; пусто — 7 дней; 0 — только в день срока', () => {
+    const today = '2026-09-28'
+    // срок через 20 дней: за 30 — напоминаем, за 7 (пусто) и за 0 — нет
+    expect(classifyMilestoneReminders([{ due_date: '2026-10-18', remind_days: 30 }], today)).toEqual({ overdue: 0, soon: 1 })
+    expect(classifyMilestoneReminders([{ due_date: '2026-10-18', remind_days: null }], today)).toEqual({ overdue: 0, soon: 0 })
+    expect(classifyMilestoneReminders([{ due_date: '2026-10-18' }], today)).toEqual({ overdue: 0, soon: 0 })
+    // 0 — только в день срока (завтра ещё рано), просрочка считается всегда
+    expect(classifyMilestoneReminders([{ due_date: '2026-09-29', remind_days: 0 }], today)).toEqual({ overdue: 0, soon: 0 })
+    expect(classifyMilestoneReminders([{ due_date: '2026-09-28', remind_days: 0 }], today)).toEqual({ overdue: 0, soon: 1 })
+    expect(classifyMilestoneReminders([{ due_date: '2026-09-27', remind_days: 0 }], today)).toEqual({ overdue: 1, soon: 0 })
+  })
   it('empty input -> zero counts', () => {
     expect(classifyMilestoneReminders([], '2026-09-28')).toEqual({ overdue: 0, soon: 0 })
   })

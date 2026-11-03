@@ -1,7 +1,14 @@
 {
-  "version": "7.51",
+  "version": "7.52",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.52",
+      "date": "2026-11-03 09:10",
+      "changes": [
+        "Milestones: the milestone form has a new “Remind me … days before the due date” field (empty means 7 days, 0 means only on the day). The Dashboard milestones banner uses each milestone's own threshold. Needs migration 116; without it everything works as before."
+      ]
+    },
     {
       "version": "7.51",
       "date": "2026-11-03 08:10",
@@ -5327,6 +5334,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.52",
+      "date": "2026-11-03 09:10",
+      "changes": [
+        "«Вехи»: в форме вехи появилось поле «Напомнить за … дней до срока» (пусто — за 7 дней, 0 — только в день срока). Плашка о вехах на Дашборде учитывает этот порог у каждой вехи. Нужна миграция 116; без неё всё работает как раньше."
+      ]
+    },
     {
       "version": "7.51",
       "date": "2026-11-03 08:10",

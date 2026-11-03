@@ -12,14 +12,20 @@ export interface MilestoneReminderCounts {
   soon: number
 }
 
-// Разбивка на "просрочено"/"срок в ближайшую неделю" — портировано из checkMilestonesReminder().
-// Вход — уже отфильтрованный запрос (done=false, due_date<=today+7d), эта функция только считает.
-export function classifyMilestoneReminders(rows: { due_date: string }[], todayStr: string): MilestoneReminderCounts {
+// Разбивка на "просрочено"/"скоро" — портировано из checkMilestonesReminder(). «Скоро» — срок не позже сегодня + remind_days вехи
+// (BACKLOG 76.6, миграция 116; пусто — 7 дней, как раньше). Вход — строки не выполненных вех со сроком, эта функция только считает.
+export const DEFAULT_REMIND_DAYS = 7
+export const MAX_REMIND_DAYS = 365
+export function classifyMilestoneReminders(rows: { due_date: string; remind_days?: number | null }[], todayStr: string): MilestoneReminderCounts {
   let overdue = 0
   let soon = 0
   for (const r of rows) {
-    if (r.due_date < todayStr) overdue++
-    else soon++
+    if (r.due_date < todayStr) {
+      overdue++
+      continue
+    }
+    const d = typeof r.remind_days === 'number' && r.remind_days >= 0 ? Math.min(MAX_REMIND_DAYS, Math.floor(r.remind_days)) : DEFAULT_REMIND_DAYS
+    if (r.due_date <= addDaysIso(todayStr, d)) soon++
   }
   return { overdue, soon }
 }
