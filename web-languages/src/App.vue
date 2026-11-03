@@ -9,6 +9,7 @@ import WordForm from './components/WordForm.vue'
 import DictionaryTabs from './components/DictionaryTabs.vue'
 import IdiomCard from './components/IdiomCard.vue'
 import FlashCard from './components/FlashCard.vue'
+import QuizMode from './components/QuizMode.vue'
 import ProgressRing from './components/ProgressRing.vue'
 import { hasIdioms } from './lib/idioms'
 import WordRow from './components/WordRow.vue'
@@ -21,6 +22,7 @@ import { friendlyError } from './lib/friendlyError'
 const { auth, words, error, loaded, addWord, editWord, deleteWord, toggleLearned, reload } = useVocab()
 
 const filter = ref(getLangFilter())
+const practiceMode = ref<'cards' | 'choice' | 'type'>('cards') // режим тренировки (77.7): карточки, выбор из четырёх, ввод
 function setFilter(code: string) {
   filter.value = code
   setLangFilter(code)
@@ -152,7 +154,11 @@ async function onDelete(id: string) {
         {{ t('eng_tab_empty') }}
       </p>
 
-      <FlashCard :words="activeWords" @learned="toggleLearned" />
+      <div v-if="activeWords.length" class="mb-2 flex flex-wrap items-center gap-1 text-sm" role="group" :aria-label="t('quiz_mode_label')" data-test="practice-modes">
+        <button v-for="m in (['cards', 'choice', 'type'] as const)" :key="m" type="button" class="secondary rounded-lg border px-3 py-1" :aria-pressed="practiceMode === m" :data-test="'practice-mode-' + m" @click="practiceMode = m">{{ t(('quiz_mode_' + m) as 'quiz_mode_cards') }}</button>
+      </div>
+      <FlashCard v-if="practiceMode === 'cards'" :words="activeWords" @learned="toggleLearned" />
+      <QuizMode v-else :words="activeWords" :mode="practiceMode" />
 
       <div class="mb-4 flex items-center gap-4 rounded-xl border p-4 text-sm" style="border-color: var(--border); background: var(--bg-card)" data-test="learn-stats">
         <ProgressRing :percent="learnedPercent" :size="64" :label="t('eng_learned_label')" />
