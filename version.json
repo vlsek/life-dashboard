@@ -1,7 +1,14 @@
 {
-  "version": "7.43",
+  "version": "7.44",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.44",
+      "date": "2026-11-03 05:10",
+      "changes": [
+        "Workouts: every exercise now has a trophy “Records” button. The window shows your best weight, estimated 1RM, best set volume, most reps and time (with the date first reached), plus max reps at each weight. Warm-up sets are not counted."
+      ]
+    },
     {
       "version": "7.43",
       "date": "2026-11-02 17:00",
@@ -5267,6 +5274,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.44",
+      "date": "2026-11-03 05:10",
+      "changes": [
+        "Тренировки: у каждого упражнения появилась кнопка-кубок «Рекорды». В окне — лучший вес, оценка 1ПМ, лучший объём подхода, максимум повторов и время (с датой, когда впервые достигнуто), а также максимум повторов на каждом весе. Разминочные подходы не учитываются."
+      ]
+    },
     {
       "version": "7.43",
       "date": "2026-11-02 17:00",

@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.43";
+const SITE_VERSION = "7.44";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.44", date: "2026-11-03 05:10", changes: [
+        "Тренировки: у каждого упражнения появилась кнопка-кубок «Рекорды». В окне — лучший вес, оценка 1ПМ, лучший объём подхода, максимум повторов и время (с датой, когда впервые достигнуто), а также максимум повторов на каждом весе. Разминочные подходы не учитываются.",
+    ]},
     { version: "7.43", date: "2026-11-02 17:00", changes: [
         "Тренировки: под названием упражнения в активной тренировке появилась подсказка прогрессии: «В прошлый раз 3×10 на 60 кг — попробуй 62,5 кг» (если все подходы на верхней границе 10 повторов — прибавить вес, иначе — на повтор больше). Только для упражнений с весом; выключается кнопкой «Подсказка» вверху экрана.",
     { version: "7.42", date: "2026-11-02 18:00", changes: [
@@ -2844,6 +2847,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.44", date: "2026-11-03 05:10", changes: [
+        "Workouts: every exercise now has a trophy “Records” button. The window shows your best weight, estimated 1RM, best set volume, most reps and time (with the date first reached), plus max reps at each weight. Warm-up sets are not counted.",
+    ]},
     { version: "7.43", date: "2026-11-02 17:00", changes: [
         "Workouts: a progression hint appears under each exercise name in the active workout: “Last time 3×10 at 60 kg — try 62.5 kg” (if all sets hit the 10-rep ceiling, add weight; otherwise one more rep). Weighted exercises only; turn it off with the “Hint” button at the top of the screen.",
     { version: "7.42", date: "2026-11-02 18:00", changes: [
