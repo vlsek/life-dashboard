@@ -1,7 +1,14 @@
 {
-  "version": "7.52",
+  "version": "7.53",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.53",
+      "date": "2026-11-02 17:10",
+      "changes": [
+        "Workouts: the “Journal” now knows about whole workouts — a day header shows “Duration” next to the volume (the sum of that day’s finished workouts by start and end time). If the workouts table is missing or does not respond, everything works as before, just without duration. No migrations."
+      ]
+    },
     {
       "version": "7.52",
       "date": "2026-11-03 09:10",
@@ -5334,6 +5341,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.53",
+      "date": "2026-11-02 17:10",
+      "changes": [
+        "Тренировки: «Журнал» теперь знает про тренировки целиком — в заголовке дня рядом с объёмом показывается «Длительность» (сумма завершённых тренировок этого дня по времени начала и конца). Если таблицы тренировок в базе нет или она не отвечает, всё работает как раньше, без длительности. Без миграций."
+      ]
+    },
     {
       "version": "7.52",
       "date": "2026-11-03 09:10",

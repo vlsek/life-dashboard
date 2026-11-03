@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.52";
+const SITE_VERSION = "7.53";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.53", date: "2026-11-02 17:10", changes: [
+        "Тренировки: «Журнал» теперь знает про тренировки целиком — в заголовке дня рядом с объёмом показывается «Длительность» (сумма завершённых тренировок этого дня по времени начала и конца). Если таблицы тренировок в базе нет или она не отвечает, всё работает как раньше, без длительности. Без миграций.",
+    ]},
     { version: "7.52", date: "2026-11-03 09:10", changes: [
         "«Вехи»: в форме вехи появилось поле «Напомнить за … дней до срока» (пусто — за 7 дней, 0 — только в день срока). Плашка о вехах на Дашборде учитывает этот порог у каждой вехи. Нужна миграция 116; без неё всё работает как раньше.",
     ]},
@@ -2872,6 +2875,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.53", date: "2026-11-02 17:10", changes: [
+        "Workouts: the “Journal” now knows about whole workouts — a day header shows “Duration” next to the volume (the sum of that day’s finished workouts by start and end time). If the workouts table is missing or does not respond, everything works as before, just without duration. No migrations.",
+    ]},
     { version: "7.52", date: "2026-11-03 09:10", changes: [
         "Milestones: the milestone form has a new “Remind me … days before the due date” field (empty means 7 days, 0 means only on the day). The Dashboard milestones banner uses each milestone's own threshold. Needs migration 116; without it everything works as before.",
     ]},
