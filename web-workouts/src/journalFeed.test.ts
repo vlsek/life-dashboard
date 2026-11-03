@@ -35,4 +35,15 @@ describe('JournalList: лучший подход и рекорд', () => {
     expect(w.findAll('[data-testid="journal-row"]')).toHaveLength(0)
     expect(w.get('[data-testid="journal-empty"]').text()).toBe(t('workouts_journal_nothing'))
   })
+  it('календарь: точки у дней с записями, тап показывает только день, повторный тап снимает', async () => {
+    const w = mount(JournalList, { props: { entries: [en('1', '2026-10-01', 50), en('2', '2026-10-08', 55)], exercises: [ex] } })
+    expect(w.findAll('[data-testid="journal-cal-dot"]')).toHaveLength(2)
+    const cell = (d: string) => w.get(`[data-testid="journal-cal-day"][data-date="${d}"]`)
+    await cell('2026-10-01').trigger('click')
+    expect(w.findAll('[data-testid="journal-day"]')).toHaveLength(1)
+    await cell('2026-10-01').trigger('click')
+    expect(w.findAll('[data-testid="journal-day"]')).toHaveLength(2)
+    await cell('2026-10-05').trigger('click') // день без записей не кликается
+    expect(w.findAll('[data-testid="journal-day"]')).toHaveLength(2)
+  })
 })

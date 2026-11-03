@@ -40,9 +40,9 @@ export const todayItems = (entries: readonly WorkoutEntry[], exercises: readonly
 export const countSets = (items: readonly JournalItem[]): number => items.reduce((n, i) => n + i.entry.sets.length, 0)
 
 // Дни с записями, свежие сверху; не больше `limit` дней (по умолчанию 30)
-export function journalDays(entries: readonly WorkoutEntry[], exercises: readonly Exercise[], limit = 30, month: string | null = null, query = ''): JournalDay[] {
+export function journalDays(entries: readonly WorkoutEntry[], exercises: readonly Exercise[], limit = 30, month: string | null = null, query = '', onlyDate: string | null = null): JournalDay[] {
   const q = query.trim().toLowerCase()
-  const dates = [...new Set(entries.map((e) => e.date))].filter((d) => !month || d.startsWith(month)).sort().reverse()
+  const dates = [...new Set(entries.map((e) => e.date))].filter((d) => !month || d.startsWith(month)).filter((d) => !onlyDate || d === onlyDate).sort().reverse()
   const days: JournalDay[] = []
   for (const date of dates) {
     const items = itemsOf(entries, exercises, date).filter((i) => !q || i.exercise.name.toLowerCase().includes(q)) // поиск (69.11 срез 3): по названию упражнения
@@ -77,3 +77,23 @@ export const dayVolume = (items: readonly JournalItem[]): number => items.reduce
 
 // Месяцы (YYYY-MM), в которых есть записи, свежие сверху — для фильтра ленты
 export const journalMonths = (entries: readonly WorkoutEntry[]): string[] => [...new Set(entries.map((e) => e.date.slice(0, 7)))].sort().reverse()
+
+export interface CalCell { date: string | null; day: number; active: boolean }
+
+// Сетка месяца (69.11 срез 4): недели с понедельника; пустые клетки date=null; active — в этот день есть записи
+export function monthGrid(month: string, activeDates: ReadonlySet<string>): CalCell[][] {
+  const [y, m] = month.split('-').map(Number)
+  const first = new Date(Date.UTC(y, m - 1, 1))
+  const lead = (first.getUTCDay() + 6) % 7
+  const total = new Date(Date.UTC(y, m, 0)).getUTCDate()
+  const cells: CalCell[] = []
+  for (let i = 0; i < lead; i++) cells.push({ date: null, day: 0, active: false })
+  for (let d = 1; d <= total; d++) {
+    const date = `${month}-${String(d).padStart(2, '0')}`
+    cells.push({ date, day: d, active: activeDates.has(date) })
+  }
+  while (cells.length % 7 !== 0) cells.push({ date: null, day: 0, active: false })
+  const weeks: CalCell[][] = []
+  for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7))
+  return weeks
+}
