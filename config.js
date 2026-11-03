@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.46";
+const SITE_VERSION = "7.47";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.47", date: "2026-11-02 14:50", changes: [
+        "Тренировки: во вкладке «Журнал» появился поиск по названию упражнения (регистр не важен): остаются только подходящие упражнения, дни без совпадений скрываются, а если ничего не нашлось — подпись «Ничего не найдено». Без миграций.",
+    ]},
     { version: "7.46", date: "2026-11-03 05:20", changes: [
         "«Календарь»: у дней с оценкой самочувствия в ячейке месяца появился маленький цветной кружок с цифрой 1–5 (от красного к зелёному). Нет оценки — нет кружка.",
     ]},
@@ -2854,6 +2857,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.47", date: "2026-11-02 14:50", changes: [
+        "Workouts: the “Journal” tab now has a search by exercise name (case-insensitive): only matching exercises stay, days with no matches are hidden, and if nothing is found you see “Nothing found”. No migrations.",
+    ]},
     { version: "7.46", date: "2026-11-03 05:20", changes: [
         "Calendar: days with a mood rating now show a small coloured circle with the 1–5 digit on the month cell (red to green). No rating, no circle.",
     ]},

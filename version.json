@@ -1,7 +1,14 @@
 {
-  "version": "7.46",
+  "version": "7.47",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.47",
+      "date": "2026-11-02 14:50",
+      "changes": [
+        "Workouts: the “Journal” tab now has a search by exercise name (case-insensitive): only matching exercises stay, days with no matches are hidden, and if nothing is found you see “Nothing found”. No migrations."
+      ]
+    },
     {
       "version": "7.46",
       "date": "2026-11-03 05:20",
@@ -5292,6 +5299,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.47",
+      "date": "2026-11-02 14:50",
+      "changes": [
+        "Тренировки: во вкладке «Журнал» появился поиск по названию упражнения (регистр не важен): остаются только подходящие упражнения, дни без совпадений скрываются, а если ничего не нашлось — подпись «Ничего не найдено». Без миграций."
+      ]
+    },
     {
       "version": "7.46",
       "date": "2026-11-03 05:20",
