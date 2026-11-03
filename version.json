@@ -1,7 +1,14 @@
 {
-  "version": "7.59",
+  "version": "7.60",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.60",
+      "date": "2026-11-02 19:10",
+      "changes": [
+        "Workouts: the “Journal” tab now has a “By day / By workout” switch (shown once workouts exist in the database). In “By workout” mode a day with several workouts is split into separate cards, each with the workout or routine name, volume and its own duration; sets without a workout stay in one card for the day. No migrations."
+      ]
+    },
     {
       "version": "7.59",
       "date": "2026-11-03 15:00",
@@ -5383,6 +5390,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.60",
+      "date": "2026-11-02 19:10",
+      "changes": [
+        "Тренировки: во вкладке «Журнал» появился переключатель «По дням / По тренировкам» (виден, когда в базе есть тренировки). В режиме «По тренировкам» день, в котором было несколько тренировок, делится на отдельные карточки: у каждой название тренировки или рутины, объём и своя длительность; подходы без тренировки собраны в одну карточку дня. Без миграций."
+      ]
+    },
     {
       "version": "7.59",
       "date": "2026-11-03 15:00",
