@@ -11,6 +11,7 @@ import { outboxFor, qDelete, qInsert, qUpdate } from './outboxClient'
 import { applyPendingWorkouts, WORKOUT_TABLES } from './workoutOverlay'
 import { entryRow, sessionRow, type FinishResult } from './activeWorkout'
 import { sessionsAvailable } from './sessionProbe'
+import { restoreRow } from './entryRestore'
 import type { WorkoutSession } from './sessionContract'
 import type { EntryFormInput, Exercise, ExerciseFormInput, WorkoutEntry } from './types'
 
@@ -392,6 +393,18 @@ export function useWorkouts() {
     if (old) await mirror(old.exercise_id, [old.date])
   }
 
+  // «Отменить» удаление записей Журнала (69.11 срез 9): вставка тех же строк с теми же id; очередь выполнит после удаления по порядку
+  async function restoreEntries(list: WorkoutEntry[]) {
+    let anyQueued = false
+    for (const e of list) {
+      const { error, queued } = await qInsert(uid(e.user_id), 'workout_entries', `workout_entries:${e.id}`, restoreRow(e))
+      if (error) throw error
+      anyQueued = anyQueued || queued
+    }
+    await afterWrite(anyQueued)
+    for (const e of list) await mirror(e.exercise_id, [e.date])
+  }
+
   // ---- связь с метриками дня (BACKLOG 19/30; миграция 054) ----
   // Прошлые дни не трогаем (значения метрики остаются как были); пересчитываем только сегодня — после переноса сегодняшних ручных подходов в тренировку.
   async function linkExerciseMetric(exercise: Exercise, metric: LinkedMetric): Promise<{ imported: boolean }> {
@@ -470,6 +483,7 @@ export function useWorkouts() {
     addEntry,
     editEntry,
     deleteEntry,
+    restoreEntries,
     addWorkout,
     updateSession,
     sessionsAvailable,

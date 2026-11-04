@@ -26,7 +26,9 @@ describe('nextLadderStep', () => {
 
 describe('CompletedFeed (лента завершённых)', () => {
   it('карточка на челлендж: итог «выполнено дней X из N», дата; новые сверху', () => {
-    const items = [ch('a', { completed_at: '2026-09-10T12:00:00Z' }), ch('b', { completed_at: '2026-09-25T12:00:00Z' })]
+    // момент завершения — локальный полдень: дата в карточке показывается в ЛОКАЛЬНОМ поясе, поэтому тест не должен зависеть от пояса (полдень по UTC в UTC+14 уже следующий день)
+    const localNoon = (y: number, m: number, d: number) => new Date(y, m - 1, d, 12).toISOString()
+    const items = [ch('a', { completed_at: localNoon(2026, 9, 10) }), ch('b', { completed_at: localNoon(2026, 9, 25) })]
     const w = mount(CompletedFeed, { props: { items, entriesFor: (c: Challenge) => done(c.id) } })
     const cards = w.findAll('[data-testid="feed-card"]')
     expect(cards).toHaveLength(2)
