@@ -374,6 +374,7 @@ export function useWorkouts() {
     const notes = v.notes?.trim().slice(0, 2000) || null
     const { error } = await qUpdate(userId, 'workout_sessions', `workout_sessions:${id}:meta`, { name, notes }, { id })
     if (error) throw error
+    sessions.value = sessions.value.map((x) => (x.id === id ? { ...x, name, notes } : x)) // лента истории (69.11 срез 10) видит правку сразу
     return { name, notes }
   }
 

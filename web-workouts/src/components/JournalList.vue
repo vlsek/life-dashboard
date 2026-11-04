@@ -28,20 +28,26 @@ const activeDates = computed(() => [...new Set(props.entries.filter((e) => e.dat
 watch(month, () => { day.value = null })
 const days = computed(() => journalDays(props.entries, props.exercises, 30, month.value || null, query.value, day.value, routineIds.value))
 const view = ref<'days' | 'workouts'>('days')
-interface Block { key: string; date: string; title: string; duration: string; items: JournalItem[]; setCount: number; volume: number; entries: WorkoutEntry[] }
+interface Block { key: string; date: string; title: string; duration: string; items: JournalItem[]; setCount: number; volume: number; entries: WorkoutEntry[]; sessionId: string | null; sessionName: string; notes: string }
 // Меню карточки (69.11 срез 8): само ничего не пишет — события обрабатывает App (старт тренировки, рутины, удаление записей)
-const emit = defineEmits<{ (e: 'repeat', entries: WorkoutEntry[]): void; (e: 'save-routine', entries: WorkoutEntry[], name: string): void; (e: 'delete', entries: WorkoutEntry[]): void }>()
+const emit = defineEmits<{ (e: 'repeat', entries: WorkoutEntry[]): void; (e: 'save-routine', entries: WorkoutEntry[], name: string): void; (e: 'delete', entries: WorkoutEntry[]): void; (e: 'edit-session', id: string, v: { name: string | null; notes: string | null }): void }>()
+// Правка названия/заметки тренировки (69.11 срез 10): только у карточки с известной сессией; форма внутри карточки, пишет App
+const editingKey = ref<string | null>(null)
+const nameDraft = ref('')
+const notesDraft = ref('')
+const startEdit = (b: Block) => { editingKey.value = b.key; nameDraft.value = b.sessionName; notesDraft.value = b.notes }
+const saveEdit = (b: Block) => { if (b.sessionId) emit('edit-session', b.sessionId, { name: nameDraft.value.trim() || null, notes: notesDraft.value.trim() || null }); editingKey.value = null }
 const routineName = (b: Block) => b.title || fmtRu(b.date)
 const fmtDur = (m: number | null) => (m != null && m > 0 ? `${m} ${t('workouts_duration_unit')}` : '')
 const blocks = computed<Block[]>(() => {
   if (view.value === 'workouts' && props.sessions.length > 0) {
     return splitByWorkout(days.value, props.sessions).map((c) => ({
-      key: c.key, date: c.date, items: c.items, setCount: c.setCount, volume: c.volume, entries: c.items.map((i) => i.entry),
+      key: c.key, date: c.date, items: c.items, setCount: c.setCount, volume: c.volume, entries: c.items.map((i) => i.entry), sessionId: c.session?.id ?? null, sessionName: c.session?.name ?? '', notes: c.session?.notes ?? '',
       title: c.session ? (c.session.name || props.routines.find((r) => r.id === c.session?.routine_id)?.name || '') : '',
       duration: c.session?.finished_at ? fmtDur(sessionMinutes(c.session, 0)) : '',
     }))
   }
-  return days.value.map((d) => ({ key: d.date, date: d.date, items: d.items, setCount: d.setCount, volume: d.volume ?? 0, entries: d.items.map((i) => i.entry), title: '', duration: fmtMin(d.date) }))
+  return days.value.map((d) => ({ key: d.date, date: d.date, items: d.items, setCount: d.setCount, volume: d.volume ?? 0, entries: d.items.map((i) => i.entry), sessionId: null, sessionName: '', notes: '', title: '', duration: fmtMin(d.date) }))
 })
 const fmtVol = (v: number) => `${Math.round(v).toLocaleString('ru-RU')} ${defaultWeightUnit()}`
 const fmtMin = (date: string) => { const m = dayMinutes(props.sessions, date); return m > 0 ? `${m} ${t('workouts_duration_unit')}` : '' }
@@ -70,6 +76,15 @@ const daySummary = (n: number, sets: number) => t('workouts_today_summary').repl
         <h3 class="m-0 font-bold" data-testid="journal-date">{{ fmtRu(d.date) }}<span v-if="d.title" class="ml-2 text-sm font-medium" style="color: var(--text-dim)" data-testid="journal-workout-title">{{ d.title }}</span></h3>
         <span class="text-xs" style="color: var(--text-dim)">{{ daySummary(d.items.length, d.setCount) }}<template v-if="d.volume"> · <span data-testid="journal-volume">{{ t('workouts_journal_volume') }} {{ fmtVol(d.volume) }}</span></template><template v-if="d.duration"> · <span data-testid="journal-duration">{{ t('workouts_journal_duration') }} {{ d.duration }}</span></template></span>
       </div>
+      <p v-if="d.notes && editingKey !== d.key" class="m-0 mt-1 whitespace-pre-line text-xs" style="color: var(--text-dim)" data-testid="journal-notes">{{ d.notes }}</p>
+      <div v-if="editingKey === d.key && d.sessionId" class="mt-2 grid gap-2" data-testid="journal-edit-form">
+        <input v-model="nameDraft" maxlength="80" class="w-full rounded-lg border px-3 py-2 text-sm" style="border-color: var(--border); background: var(--bg); color: var(--text); min-height: 40px" :placeholder="t('sm_name_ph')" data-testid="journal-edit-name" />
+        <textarea v-model="notesDraft" maxlength="2000" rows="3" class="w-full rounded-lg border px-3 py-2 text-sm" style="border-color: var(--border); background: var(--bg); color: var(--text)" :placeholder="t('sm_notes_ph')" data-testid="journal-edit-notes"></textarea>
+        <div class="flex gap-3 text-sm">
+          <button type="button" class="border-0 bg-transparent p-0 font-semibold" style="color: var(--accent, #4f8cff); min-height: 32px" data-testid="journal-edit-save" @click="saveEdit(d)">{{ t('workouts_journal_save') }}</button>
+          <button type="button" class="border-0 bg-transparent p-0" style="color: var(--text-dim); min-height: 32px" data-testid="journal-edit-cancel" @click="editingKey = null">{{ t('workouts_journal_cancel') }}</button>
+        </div>
+      </div>
       <ul class="m-0 mt-1 list-none p-0">
         <li v-for="i in d.items" :key="i.entry.id" class="border-t py-1.5 first:border-t-0" style="border-color: var(--border)" data-testid="journal-row">
           <div class="text-sm font-medium">{{ capFirst(i.exercise.name) }}</div>
@@ -83,6 +98,7 @@ const daySummary = (n: number, sets: number) => t('workouts_today_summary').repl
       <div class="mt-2 flex gap-4 border-t pt-2 text-xs" style="border-color: var(--border)" data-testid="journal-actions">
         <button type="button" class="border-0 bg-transparent p-0" style="color: var(--accent, #4f8cff); min-height: 28px" data-testid="journal-repeat" @click="emit('repeat', d.entries)">{{ t('workouts_journal_repeat') }}</button>
         <button type="button" class="border-0 bg-transparent p-0" style="color: var(--accent, #4f8cff); min-height: 28px" data-testid="journal-to-routine" @click="emit('save-routine', d.entries, routineName(d))">{{ t('rt_save') }}</button>
+        <button v-if="d.sessionId" type="button" class="border-0 bg-transparent p-0" style="color: var(--accent, #4f8cff); min-height: 28px" data-testid="journal-edit" @click="startEdit(d)">{{ t('workouts_journal_edit') }}</button>
         <button type="button" class="ml-auto border-0 bg-transparent p-0" style="color: var(--danger, #d64545); min-height: 28px" data-testid="journal-delete" @click="emit('delete', d.entries)">{{ t('workouts_journal_delete') }}</button>
       </div>
     </section>
