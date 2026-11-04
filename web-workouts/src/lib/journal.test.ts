@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { bestSet, countSets, entryRecord, journalDays, journalMonths, monthGrid, dayMinutes, entryIdsOfRoutine, routinesWithWorkouts, todayItems } from './journal'
+import { bestSet, countSets, entryRecord, journalDays, journalMonths, monthGrid, dayMinutes, entryIdsOfRoutine, routinesWithWorkouts, splitByWorkout, todayItems } from './journal'
 import type { Exercise, WorkoutEntry } from './types'
 
 const ex = (id: string): Exercise => ({ id, name: id, category: 'upper', tracks_weight: true } as unknown as Exercise)
@@ -153,5 +153,27 @@ describe('лента истории: фильтр по рутине (69.11 ср�
     const d = journalDays([e1, e2] as never, exs, 30, null, '', null, new Set(['2']))
     expect(d.map((x) => x.date)).toEqual(['2026-10-08'])
     expect(journalDays([e1, e2] as never, exs, 30, null, '', null, new Set())).toHaveLength(0)
+  })
+})
+
+describe('лента истории: показ по тренировкам (69.11 срез 7)', () => {
+  const ses = (id: string, start: string) => ({ id, user_id: 'u', name: null, date: '2026-10-08', started_at: start, finished_at: null, routine_id: null, notes: null, source: 'live' as const })
+  const mk = (id: string, exercise_id: string, session_id: string | null) => ({ ...withSets(id, exercise_id, '2026-10-08', [{ reps: 5, weight: 50 }]), session_id })
+  const list = [{ id: 'a', name: 'Жим', category: 'upper', tracks_weight: true }, { id: 'b', name: 'Присед', category: 'legs', tracks_weight: true }, { id: 'c', name: 'Тяга', category: 'back', tracks_weight: true }] as never
+  it('день делится по сессиям: поздняя сессия выше, записи без сессии — последней «неявной» карточкой', () => {
+    const entries = [mk('1', 'a', 's1'), mk('2', 'b', 's2'), mk('3', 'c', null), mk('4', 'a', 'нет-такой')] as never
+    const days = journalDays(entries, list)
+    const cards = splitByWorkout(days, [ses('s1', '2026-10-08T08:00:00Z'), ses('s2', '2026-10-08T18:00:00Z')])
+    expect(cards.map((c) => c.key)).toEqual(['s2', 's1', 'implicit:2026-10-08'])
+    expect(cards[2].session).toBeNull()
+    expect(cards[2].items.map((i) => i.entry.id)).toEqual(['3', '4'])
+    expect(cards.map((c) => c.setCount)).toEqual([1, 1, 2])
+    expect(cards[0].volume).toBe(250)
+  })
+  it('без сессий — одна карточка на день, как раньше', () => {
+    const entries = [mk('1', 'a', null), mk('2', 'b', null)] as never
+    const cards = splitByWorkout(journalDays(entries, list), [])
+    expect(cards).toHaveLength(1)
+    expect(cards[0].items).toHaveLength(2)
   })
 })

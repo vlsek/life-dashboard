@@ -65,4 +65,21 @@ describe('JournalList: лучший подход и рекорд', () => {
     expect(days[0].get('[data-testid="journal-date"]').text()).toContain('8')
     expect(mount(JournalList, { props: { ...props, sessions: [] } }).find('[data-testid="journal-routine"]').exists()).toBe(false)
   })
+  it('«По тренировкам»: день с двумя тренировками — две карточки с названием рутины и своей длительностью', async () => {
+    const mk = (id: string, session_id: string) => ({ ...en(id, '2026-10-08', 55), session_id }) as WorkoutEntry
+    const ses = (id: string, routine_id: string | null, start: string, end: string) => ({ id, user_id: 'u', name: null, date: '2026-10-08', started_at: start, finished_at: end, routine_id, notes: null, source: 'live' as const })
+    const sessions = [ses('s1', 'r1', '2026-10-08T08:00:00Z', '2026-10-08T08:40:00Z'), ses('s2', null, '2026-10-08T18:00:00Z', '2026-10-08T18:25:00Z')]
+    const w = mount(JournalList, { props: { entries: [mk('1', 's1'), mk('2', 's2')], exercises: [ex], sessions, routines: [{ id: 'r1', name: 'Грудь' }] } })
+    expect(w.findAll('[data-testid="journal-day"]')).toHaveLength(1)
+    expect(w.get('[data-testid="journal-duration"]').text()).toContain('65')
+    await w.get('[data-testid="journal-view-workouts"]').trigger('click')
+    const cards = w.findAll('[data-testid="journal-day"]')
+    expect(cards).toHaveLength(2)
+    expect(cards[0].get('[data-testid="journal-duration"]').text()).toContain('25')
+    expect(cards[1].get('[data-testid="journal-workout-title"]').text()).toBe('Грудь')
+    expect(cards[1].get('[data-testid="journal-duration"]').text()).toContain('40')
+    await w.get('[data-testid="journal-view-days"]').trigger('click')
+    expect(w.findAll('[data-testid="journal-day"]')).toHaveLength(1)
+    expect(mount(JournalList, { props: { entries: [en('1', '2026-10-08', 55)], exercises: [ex] } }).find('[data-testid="journal-view"]').exists()).toBe(false)
+  })
 })

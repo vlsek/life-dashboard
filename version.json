@@ -1,12 +1,19 @@
 {
-  "version": "7.60",
+  "version": "7.61",
   "min_supported": "1.00",
   "en": [
     {
-      "version": "7.60",
+      "version": "7.61",
       "date": "2026-11-03 21:50",
       "changes": [
         "Workouts: in the active workout, the keyboard’s “Next” / Enter key now jumps to the next set field (weight → reps → next set’s weight) and closes the keyboard on the last one. No need to tap every field."
+      ]
+    },
+    {
+      "version": "7.60",
+      "date": "2026-11-02 19:10",
+      "changes": [
+        "Workouts: the “Journal” tab now has a “By day / By workout” switch (shown once workouts exist in the database). In “By workout” mode a day with several workouts is split into separate cards, each with the workout or routine name, volume and its own duration; sets without a workout stay in one card for the day. No migrations."
       ]
     },
     {
@@ -5391,10 +5398,17 @@
   ],
   "ru": [
     {
-      "version": "7.60",
+      "version": "7.61",
       "date": "2026-11-03 21:50",
       "changes": [
         "Тренировки: в активной тренировке кнопка «Далее» / Enter на клавиатуре телефона переходит к следующему полю подхода (вес → повторы → вес следующего подхода), а на последнем поле убирает клавиатуру. Не нужно тыкать в каждое поле."
+      ]
+    },
+    {
+      "version": "7.60",
+      "date": "2026-11-02 19:10",
+      "changes": [
+        "Тренировки: во вкладке «Журнал» появился переключатель «По дням / По тренировкам» (виден, когда в базе есть тренировки). В режиме «По тренировкам» день, в котором было несколько тренировок, делится на отдельные карточки: у каждой название тренировки или рутины, объём и своя длительность; подходы без тренировки собраны в одну карточку дня. Без миграций."
       ]
     },
     {

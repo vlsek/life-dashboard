@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.60";
+const SITE_VERSION = "7.61";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,8 +488,11 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
-    { version: "7.60", date: "2026-11-03 21:50", changes: [
+    { version: "7.61", date: "2026-11-03 21:50", changes: [
         "Тренировки: в активной тренировке кнопка «Далее» / Enter на клавиатуре телефона переходит к следующему полю подхода (вес → повторы → вес следующего подхода), а на последнем поле убирает клавиатуру. Не нужно тыкать в каждое поле.",
+    ]},
+    { version: "7.60", date: "2026-11-02 19:10", changes: [
+        "Тренировки: во вкладке «Журнал» появился переключатель «По дням / По тренировкам» (виден, когда в базе есть тренировки). В режиме «По тренировкам» день, в котором было несколько тренировок, делится на отдельные карточки: у каждой название тренировки или рутины, объём и своя длительность; подходы без тренировки собраны в одну карточку дня. Без миграций.",
     ]},
     { version: "7.59", date: "2026-11-03 15:00", changes: [
         "«Тренировки»: в панели мышцы на карте можно задать свою цель в неделю — «Поддержка 6», «Обычная 10» или «Приоритет 15» подходов. Цель меняет цвет карты в режиме «Подходы» и список «Что тренировать сегодня». Для синхронизации между устройствами нужна миграция 117; без неё цель хранится на этом устройстве.",
@@ -2896,8 +2899,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
-    { version: "7.60", date: "2026-11-03 21:50", changes: [
+    { version: "7.61", date: "2026-11-03 21:50", changes: [
         "Workouts: in the active workout, the keyboard’s “Next” / Enter key now jumps to the next set field (weight → reps → next set’s weight) and closes the keyboard on the last one. No need to tap every field.",
+    ]},
+    { version: "7.60", date: "2026-11-02 19:10", changes: [
+        "Workouts: the “Journal” tab now has a “By day / By workout” switch (shown once workouts exist in the database). In “By workout” mode a day with several workouts is split into separate cards, each with the workout or routine name, volume and its own duration; sets without a workout stay in one card for the day. No migrations.",
     ]},
     { version: "7.59", date: "2026-11-03 15:00", changes: [
         "Workouts: the muscle panel on the map lets you set a weekly goal — Maintain 6, Normal 10 or Priority 15 sets. The goal changes the map colour in “Sets” mode and the “What to train today” list. Syncing between devices needs migration 117; without it the goal is kept on this device.",

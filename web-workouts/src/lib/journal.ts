@@ -115,3 +115,24 @@ export function routinesWithWorkouts<R extends { id: string }>(routines: readonl
   const used = new Set(sessions.map((s) => s.routine_id).filter((x): x is string => !!x))
   return routines.filter((r) => used.has(r.id))
 }
+
+export interface JournalCard { key: string; date: string; session: WorkoutSession | null; items: JournalItem[]; setCount: number; volume: number }
+
+// Показ по тренировкам (69.11 срез 7): день делится на карточки по сессиям записей (session_id → известная сессия), записи без сессии — одна «неявная» карточка дня.
+// Внутри дня: сессии от поздней к ранней по началу, «неявная» в конце; порядок упражнений в карточке — как в дне.
+export function splitByWorkout(days: readonly JournalDay[], sessions: readonly WorkoutSession[]): JournalCard[] {
+  const byId = new Map(sessions.map((s) => [s.id, s]))
+  const cards: JournalCard[] = []
+  for (const d of days) {
+    const groups = new Map<string, JournalItem[]>()
+    for (const i of d.items) {
+      const sid = i.entry.session_id
+      const key = sid && byId.has(sid) ? sid : `implicit:${d.date}`
+      groups.set(key, [...(groups.get(key) ?? []), i])
+    }
+    const part = [...groups.entries()].map(([key, items]) => ({ key, session: byId.get(key) ?? null, items }))
+    part.sort((a, b) => (a.session && b.session ? b.session.started_at.localeCompare(a.session.started_at) : a.session ? -1 : b.session ? 1 : 0))
+    for (const g of part) cards.push({ key: g.key, date: d.date, session: g.session, items: g.items, setCount: countSets(g.items), volume: dayVolume(g.items) })
+  }
+  return cards
+}
