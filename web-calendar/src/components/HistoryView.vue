@@ -308,6 +308,8 @@ function onTouchEnd(e: TouchEvent) {
                 textShadow: showProgress && cell.hasStats && cell.fill >= 55 ? '0 1px 2px rgba(0,0,0,0.4)' : undefined,
               }"
               :disabled="!cell.dateStr"
+              :aria-hidden="cell.dateStr ? undefined : 'true'"
+              :tabindex="cell.dateStr ? undefined : -1"
               :data-date="cell.dateStr ?? undefined"
               @click="onCellClick(cell.dateStr)"
             >

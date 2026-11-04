@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.71";
+const SITE_VERSION = "7.72";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.72", date: "2026-11-04 11:00", changes: [
+        "Доступность на всех страницах: у выбора темы в сайдбаре появилось название для скринридера, пустые ячейки календаря не фокусируются и скрыты, у полос прогресса «Коллекций» есть название, вкладки словарей устроены по правилам.",
+    ]},
     { version: "7.71", date: "2026-11-04 11:30", changes: [
         "Тренировки: шапка активной тренировки стала компактнее — настройки (подсказка, источник «прошлого», RPE, таймер отдыха, звук) спрятаны под кнопку «⚙ Настройки», рядом остаётся «В рутину». Больше места под упражнения на телефоне.",
     ]},
@@ -2926,6 +2929,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.72", date: "2026-11-04 11:00", changes: [
+        "Accessibility on all pages: the sidebar theme picker now has a name for screen readers, empty calendar cells are hidden and not focusable, the Collections progress bars have names, and the dictionary tabs are structured correctly.",
+    ]},
     { version: "7.71", date: "2026-11-04 11:30", changes: [
         "Workouts: the active workout header is more compact — the settings (hint, “previous” source, RPE, rest timer, sound) are tucked under a “⚙ Settings” button, with “Save as routine” staying next to it. More room for exercises on a phone.",
     ]},

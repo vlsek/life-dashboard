@@ -1,7 +1,14 @@
 {
-  "version": "7.71",
+  "version": "7.72",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.72",
+      "date": "2026-11-04 11:00",
+      "changes": [
+        "Accessibility on all pages: the sidebar theme picker now has a name for screen readers, empty calendar cells are hidden and not focusable, the Collections progress bars have names, and the dictionary tabs are structured correctly."
+      ]
+    },
     {
       "version": "7.71",
       "date": "2026-11-04 11:30",
@@ -5460,6 +5467,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.72",
+      "date": "2026-11-04 11:00",
+      "changes": [
+        "Доступность на всех страницах: у выбора темы в сайдбаре появилось название для скринридера, пустые ячейки календаря не фокусируются и скрыты, у полос прогресса «Коллекций» есть название, вкладки словарей устроены по правилам."
+      ]
+    },
     {
       "version": "7.71",
       "date": "2026-11-04 11:30",

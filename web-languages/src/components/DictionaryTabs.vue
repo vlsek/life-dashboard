@@ -34,7 +34,8 @@ const activeTab = () => props.tabs.find((tab) => tab.code === props.active)
 
 <template>
   <div class="mb-3" data-test="dictionary-tabs">
-    <div class="flex items-center gap-1.5 overflow-x-auto pb-1" role="tablist" :aria-label="t('eng_tabs_label')">
+    <div class="flex items-center gap-1.5 overflow-x-auto pb-1">
+      <div class="flex items-center gap-1.5" role="tablist" :aria-label="t('eng_tabs_label')">
       <button
         v-if="tabs.length > 1"
         type="button"
@@ -68,6 +69,7 @@ const activeTab = () => props.tabs.find((tab) => tab.code === props.active)
       >
         {{ tab.label }} · {{ tab.count }}
       </button>
+      </div>
       <button
         v-if="addable.length"
         type="button"
