@@ -373,6 +373,28 @@ function onRepeatLast() {
   const d = draftFromLast(entries.value as never, new Set(exercises.value.map((e) => e.id)), crypto.randomUUID(), new Date(), () => crypto.randomUUID())
   if (d) aw.startWith(d)
 }
+// Меню карточки «Журнала» (69.11 срез 8): набор упражнений карточки → черновик (пустые подходы по числу рабочих), рутина, удаление всех записей карточки
+const journalDraft = (es: WorkoutEntry[]) => draftFromLast(es as never, new Set(exercises.value.map((e) => e.id)), crypto.randomUUID(), new Date(), () => crypto.randomUUID())
+function onJournalRepeat(es: WorkoutEntry[]) {
+  if (aw.active.value) return
+  const d = journalDraft(es)
+  if (d) aw.startWith(d)
+  else showToast(t('rt_missing'))
+}
+function onJournalRoutine(es: WorkoutEntry[], name: string) {
+  const d = journalDraft(es)
+  if (d && routinesStore.saveFromDraft(d, name)) showToast(t('rt_saved'))
+  else showToast(t('rt_missing'))
+}
+async function onJournalDelete(es: WorkoutEntry[]) {
+  if (!(await confirmDialog(t('workouts_journal_confirm_delete').replace('{n}', String(es.length))))) return
+  try {
+    for (const e of es) await wk.deleteEntry(e.id)
+  } catch (e) {
+    showToast(friendlyError(e, 'save'), 'error')
+    console.error(e)
+  }
+}
 function onStartPast(d: ActiveDraft) {
   pastForm.value = false
   aw.startWith(d)
@@ -588,7 +610,7 @@ function onToggleProgramWeek(week: number) {
 
       <div v-show="pageTab === 'journal'" data-testid="tab-journal">
         <MuscleFilterChip v-if="muscleFilter" :name="filterMuscleName" @clear="muscleFilter = null" />
-        <JournalList :entries="shownEntries" :exercises="exercises" :sessions="sessions" :routines="routinesStore.routines.value" />
+        <JournalList :entries="shownEntries" :exercises="exercises" :sessions="sessions" :routines="routinesStore.routines.value" @repeat="onJournalRepeat" @save-routine="onJournalRoutine" @delete="onJournalDelete" />
       </div>
 
       <div v-show="pageTab === 'map'" data-testid="tab-map">
