@@ -1,7 +1,14 @@
 {
-  "version": "7.66",
+  "version": "7.67",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.67",
+      "date": "2026-11-03 11:00",
+      "changes": [
+        "Workouts: after “Delete” on a “Journal” card a toast “Deleted entries: N” with an “Undo” button appears — it brings the entries back (same sets and notes), even offline. A toast with a button stays for 7 seconds. No migrations."
+      ]
+    },
     {
       "version": "7.66",
       "date": "2026-11-02 05:17",
@@ -5432,6 +5439,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.67",
+      "date": "2026-11-03 11:00",
+      "changes": [
+        "Тренировки: после «Удалить» на карточке «Журнала» внизу появляется подсказка «Удалено записей: N» с кнопкой «Отменить» — она возвращает записи (те же подходы и заметки), даже если ты без сети. Подсказка с кнопкой держится 7 секунд. Без миграций."
+      ]
+    },
     {
       "version": "7.66",
       "date": "2026-11-02 05:17",
