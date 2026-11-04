@@ -386,6 +386,16 @@ function onJournalRoutine(es: WorkoutEntry[], name: string) {
   if (d && routinesStore.saveFromDraft(d, name)) showToast(t('rt_saved'))
   else showToast(t('rt_missing'))
 }
+async function onJournalEditSession(id: string, v: { name: string | null; notes: string | null }) {
+  if (auth.value.status !== 'ready') return
+  try {
+    await wk.updateSession(auth.value.userId, id, v)
+    showToast(t('sm_meta_saved'))
+  } catch (e) {
+    showToast(friendlyError(e, 'save'), 'error')
+    console.error(e)
+  }
+}
 async function onJournalDelete(es: WorkoutEntry[]) {
   if (!(await confirmDialog(t('workouts_journal_confirm_delete').replace('{n}', String(es.length))))) return
   const done: WorkoutEntry[] = []
@@ -615,7 +625,7 @@ function onToggleProgramWeek(week: number) {
 
       <div v-show="pageTab === 'journal'" data-testid="tab-journal">
         <MuscleFilterChip v-if="muscleFilter" :name="filterMuscleName" @clear="muscleFilter = null" />
-        <JournalList :entries="shownEntries" :exercises="exercises" :sessions="sessions" :routines="routinesStore.routines.value" @repeat="onJournalRepeat" @save-routine="onJournalRoutine" @delete="onJournalDelete" />
+        <JournalList :entries="shownEntries" :exercises="exercises" :sessions="sessions" :routines="routinesStore.routines.value" @repeat="onJournalRepeat" @save-routine="onJournalRoutine" @delete="onJournalDelete" @edit-session="onJournalEditSession" />
       </div>
 
       <div v-show="pageTab === 'map'" data-testid="tab-map">

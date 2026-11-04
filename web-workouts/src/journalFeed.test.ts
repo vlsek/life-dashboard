@@ -105,4 +105,32 @@ describe('JournalList: лучший подход и рекорд', () => {
     await w.get('[data-testid="journal-delete"]').trigger('click')
     expect((w.emitted('delete')![0][0] as WorkoutEntry[]).map((e) => e.id).sort()).toEqual(['1', '2'])
   })
+  it('правка тренировки: «Изменить» только у карточки с сессией, форма отдаёт название и заметку, заметка видна на карточке', async () => {
+    const mk = (id: string, session_id: string | null) => ({ ...en(id, '2026-10-08', 55), session_id }) as WorkoutEntry
+    const sessions = [{ id: 's1', user_id: 'u', name: 'Грудь', date: '2026-10-08', started_at: '2026-10-08T08:00:00Z', finished_at: null, routine_id: null, notes: 'тяжело', source: 'live' as const }]
+    const w = mount(JournalList, { props: { entries: [mk('1', 's1'), mk('2', null)], exercises: [ex], sessions } })
+    expect(w.find('[data-testid="journal-edit"]').exists()).toBe(false) // «по дням»: карточка дня — не тренировка
+    await w.get('[data-testid="journal-view-workouts"]').trigger('click')
+    const cards = w.findAll('[data-testid="journal-day"]')
+    expect(cards).toHaveLength(2)
+    expect(cards[0].get('[data-testid="journal-notes"]').text()).toBe('тяжело')
+    expect(cards[1].find('[data-testid="journal-edit"]').exists()).toBe(false) // неявная тренировка — без сессии
+    await cards[0].get('[data-testid="journal-edit"]').trigger('click')
+    expect((w.get('[data-testid="journal-edit-name"]').element as HTMLInputElement).value).toBe('Грудь')
+    await w.get('[data-testid="journal-edit-name"]').setValue('  Грудь + трицепс ')
+    await w.get('[data-testid="journal-edit-notes"]').setValue('')
+    await w.get('[data-testid="journal-edit-save"]').trigger('click')
+    expect(w.emitted('edit-session')![0]).toEqual(['s1', { name: 'Грудь + трицепс', notes: null }])
+    expect(w.find('[data-testid="journal-edit-form"]').exists()).toBe(false)
+  })
+  it('правка: «Отмена» ничего не отправляет', async () => {
+    const mk = (id: string) => ({ ...en(id, '2026-10-08', 55), session_id: 's1' }) as WorkoutEntry
+    const sessions = [{ id: 's1', user_id: 'u', name: null, date: '2026-10-08', started_at: '2026-10-08T08:00:00Z', finished_at: null, routine_id: null, notes: null, source: 'live' as const }]
+    const w = mount(JournalList, { props: { entries: [mk('1')], exercises: [ex], sessions } })
+    await w.get('[data-testid="journal-view-workouts"]').trigger('click')
+    await w.get('[data-testid="journal-edit"]').trigger('click')
+    await w.get('[data-testid="journal-edit-cancel"]').trigger('click')
+    expect(w.emitted('edit-session')).toBeUndefined()
+    expect(w.find('[data-testid="journal-edit-form"]').exists()).toBe(false)
+  })
 })

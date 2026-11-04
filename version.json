@@ -1,12 +1,19 @@
 {
-  "version": "7.69",
+  "version": "7.70",
   "min_supported": "1.00",
   "en": [
     {
-      "version": "7.69",
+      "version": "7.70",
       "date": "2026-11-04 11:30",
       "changes": [
         "Workouts: the active workout header is more compact — the settings (hint, “previous” source, RPE, rest timer, sound) are tucked under a “⚙ Settings” button, with “Save as routine” staying next to it. More room for exercises on a phone."
+      ]
+    },
+    {
+      "version": "7.69",
+      "date": "2026-11-03 12:00",
+      "changes": [
+        "Workouts: in “By workout” mode a “Journal” card now has an “Edit” button — fix the workout name and note right in the feed (like in the post-workout summary). The note is now shown on the card itself. Sets without a workout and the “By day” mode have no button: there is nothing to edit there. No migrations."
       ]
     },
     {
@@ -5454,10 +5461,17 @@
   ],
   "ru": [
     {
-      "version": "7.69",
+      "version": "7.70",
       "date": "2026-11-04 11:30",
       "changes": [
         "Тренировки: шапка активной тренировки стала компактнее — настройки (подсказка, источник «прошлого», RPE, таймер отдыха, звук) спрятаны под кнопку «⚙ Настройки», рядом остаётся «В рутину». Больше места под упражнения на телефоне."
+      ]
+    },
+    {
+      "version": "7.69",
+      "date": "2026-11-03 12:00",
+      "changes": [
+        "Тренировки: в режиме «По тренировкам» у карточки «Журнала» появилась кнопка «Изменить» — можно поправить название и заметку тренировки прямо в ленте (как в итогах после тренировки). Заметка теперь видна на самой карточке. У подходов без тренировки и в режиме «По дням» кнопки нет: править там нечего. Без миграций."
       ]
     },
     {

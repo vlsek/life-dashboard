@@ -12,6 +12,8 @@ vi.mock('./supabase', () => ({
         eq: () => chain,
         order: () => chain,
         limit: () => chain,
+        update: () => chain,
+        match: () => Promise.resolve({ error: null }),
         maybeSingle: () => Promise.resolve({ data: table === 'profiles' ? { onboarded: true, workout_program: null } : null, error: null }),
         then: (res: (v: unknown) => unknown, rej?: (e: unknown) => unknown) => {
           if (table === 'workout_sessions') {
@@ -65,5 +67,14 @@ describe('useWorkouts: загрузка сессий', () => {
     expect(wk.sessions.value).toEqual([])
     expect(wk.loadError.value).toBeNull()
     expect(wk.loaded.value).toBe(true)
+  })
+  it('updateSession сразу обновляет название и заметку в списке сессий (лента истории)', async () => {
+    const wk = await ready()
+    expect(wk.sessions.value[0].name).toBeNull()
+    const r = await wk.updateSession('u1', 's1', { name: '  Ноги ', notes: ' заметка ' })
+    expect(r).toEqual({ name: 'Ноги', notes: 'заметка' })
+    expect(wk.sessions.value[0]).toMatchObject({ id: 's1', name: 'Ноги', notes: 'заметка' })
+    await wk.updateSession('u1', 's1', { name: '', notes: null })
+    expect(wk.sessions.value[0]).toMatchObject({ name: null, notes: null })
   })
 })
