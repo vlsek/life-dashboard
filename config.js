@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.65";
+const SITE_VERSION = "7.66";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.66", date: "2026-11-02 05:17", changes: [
+        "«Цели»: прогноз «успеваешь / отстаёшь» теперь считает возраст цели по календарным дням вашего часового пояса. Раньше он считался сутками от момента создания и занижался на день: темп получался чуть завышенным (до 4% у цели месячного возраста), а фраза «рано судить» держалась на день дольше нужного."
+    ]},
     { version: "7.65", date: "2026-11-04 09:10", changes: [
         "Сайдбар: номер версии и «Что нового» больше не пропадают при сбое загрузки — последняя известная версия и история запоминаются на устройстве и показываются, если файл версии не загрузился (нет сети, 404). Исправление во всех страницах.",
     ]},
@@ -2911,6 +2914,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.66", date: "2026-11-02 05:17", changes: [
+        "Goals: the “on track / behind” forecast now counts a goal’s age in calendar days of your own time zone. It used to count whole 24-hour periods from the moment of creation and came out a day short: the pace looked slightly too high (up to 4% for a month-old goal) and “too early to judge” lasted a day longer than needed."
+    ]},
     { version: "7.65", date: "2026-11-04 09:10", changes: [
         "Sidebar: the version number and “What's new” no longer disappear when loading fails — the last known version and history are stored on the device and shown if the version file cannot be loaded (offline, 404). Fixed on all pages.",
     ]},
