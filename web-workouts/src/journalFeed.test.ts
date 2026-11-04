@@ -82,4 +82,27 @@ describe('JournalList: лучший подход и рекорд', () => {
     expect(w.findAll('[data-testid="journal-day"]')).toHaveLength(1)
     expect(mount(JournalList, { props: { entries: [en('1', '2026-10-08', 55)], exercises: [ex] } }).find('[data-testid="journal-view"]').exists()).toBe(false)
   })
+  it('меню карточки: «Повторить», «В рутину» и «Удалить» отдают записи именно этой карточки', async () => {
+    const mk = (id: string, session_id: string) => ({ ...en(id, '2026-10-08', 55), session_id }) as WorkoutEntry
+    const ses = (id: string, name: string | null, start: string) => ({ id, user_id: 'u', name, date: '2026-10-08', started_at: start, finished_at: null, routine_id: null, notes: null, source: 'live' as const })
+    const sessions = [ses('s1', 'Грудь', '2026-10-08T08:00:00Z'), ses('s2', null, '2026-10-08T18:00:00Z')]
+    const w = mount(JournalList, { props: { entries: [mk('1', 's1'), mk('2', 's2')], exercises: [ex], sessions } })
+    await w.get('[data-testid="journal-view-workouts"]').trigger('click')
+    const cards = w.findAll('[data-testid="journal-day"]')
+    expect(cards).toHaveLength(2)
+    await cards[1].get('[data-testid="journal-repeat"]').trigger('click')
+    expect((w.emitted('repeat')![0][0] as WorkoutEntry[]).map((e) => e.id)).toEqual(['1'])
+    await cards[1].get('[data-testid="journal-to-routine"]').trigger('click')
+    expect(w.emitted('save-routine')![0][1]).toBe('Грудь')
+    await cards[0].get('[data-testid="journal-to-routine"]').trigger('click')
+    expect(typeof w.emitted('save-routine')![1][1]).toBe('string')
+    expect((w.emitted('save-routine')![1][1] as string).length).toBeGreaterThan(0)
+    await cards[0].get('[data-testid="journal-delete"]').trigger('click')
+    expect((w.emitted('delete')![0][0] as WorkoutEntry[]).map((e) => e.id)).toEqual(['2'])
+  })
+  it('в режиме «По дням» меню отдаёт все записи дня', async () => {
+    const w = mount(JournalList, { props: { entries: [en('1', '2026-10-08', 55), { ...en('2', '2026-10-08', 60) }], exercises: [ex] } })
+    await w.get('[data-testid="journal-delete"]').trigger('click')
+    expect((w.emitted('delete')![0][0] as WorkoutEntry[]).map((e) => e.id).sort()).toEqual(['1', '2'])
+  })
 })

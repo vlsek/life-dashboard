@@ -28,17 +28,20 @@ const activeDates = computed(() => [...new Set(props.entries.filter((e) => e.dat
 watch(month, () => { day.value = null })
 const days = computed(() => journalDays(props.entries, props.exercises, 30, month.value || null, query.value, day.value, routineIds.value))
 const view = ref<'days' | 'workouts'>('days')
-interface Block { key: string; date: string; title: string; duration: string; items: JournalItem[]; setCount: number; volume: number }
+interface Block { key: string; date: string; title: string; duration: string; items: JournalItem[]; setCount: number; volume: number; entries: WorkoutEntry[] }
+// Меню карточки (69.11 срез 8): само ничего не пишет — события обрабатывает App (старт тренировки, рутины, удаление записей)
+const emit = defineEmits<{ (e: 'repeat', entries: WorkoutEntry[]): void; (e: 'save-routine', entries: WorkoutEntry[], name: string): void; (e: 'delete', entries: WorkoutEntry[]): void }>()
+const routineName = (b: Block) => b.title || fmtRu(b.date)
 const fmtDur = (m: number | null) => (m != null && m > 0 ? `${m} ${t('workouts_duration_unit')}` : '')
 const blocks = computed<Block[]>(() => {
   if (view.value === 'workouts' && props.sessions.length > 0) {
     return splitByWorkout(days.value, props.sessions).map((c) => ({
-      key: c.key, date: c.date, items: c.items, setCount: c.setCount, volume: c.volume,
+      key: c.key, date: c.date, items: c.items, setCount: c.setCount, volume: c.volume, entries: c.items.map((i) => i.entry),
       title: c.session ? (c.session.name || props.routines.find((r) => r.id === c.session?.routine_id)?.name || '') : '',
       duration: c.session?.finished_at ? fmtDur(sessionMinutes(c.session, 0)) : '',
     }))
   }
-  return days.value.map((d) => ({ key: d.date, date: d.date, items: d.items, setCount: d.setCount, volume: d.volume ?? 0, title: '', duration: fmtMin(d.date) }))
+  return days.value.map((d) => ({ key: d.date, date: d.date, items: d.items, setCount: d.setCount, volume: d.volume ?? 0, entries: d.items.map((i) => i.entry), title: '', duration: fmtMin(d.date) }))
 })
 const fmtVol = (v: number) => `${Math.round(v).toLocaleString('ru-RU')} ${defaultWeightUnit()}`
 const fmtMin = (date: string) => { const m = dayMinutes(props.sessions, date); return m > 0 ? `${m} ${t('workouts_duration_unit')}` : '' }
@@ -77,6 +80,11 @@ const daySummary = (n: number, sets: number) => t('workouts_today_summary').repl
           <div class="text-xs" style="color: var(--text-dim)">{{ formatSets(i.entry.sets, i.exercise, t('workouts_per_hour'), t('workouts_duration_unit'), defaultWeightUnit()) }}</div>
         </li>
       </ul>
+      <div class="mt-2 flex gap-4 border-t pt-2 text-xs" style="border-color: var(--border)" data-testid="journal-actions">
+        <button type="button" class="border-0 bg-transparent p-0" style="color: var(--accent, #4f8cff); min-height: 28px" data-testid="journal-repeat" @click="emit('repeat', d.entries)">{{ t('workouts_journal_repeat') }}</button>
+        <button type="button" class="border-0 bg-transparent p-0" style="color: var(--accent, #4f8cff); min-height: 28px" data-testid="journal-to-routine" @click="emit('save-routine', d.entries, routineName(d))">{{ t('rt_save') }}</button>
+        <button type="button" class="ml-auto border-0 bg-transparent p-0" style="color: var(--danger, #d64545); min-height: 28px" data-testid="journal-delete" @click="emit('delete', d.entries)">{{ t('workouts_journal_delete') }}</button>
+      </div>
     </section>
   </div>
 </template>

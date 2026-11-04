@@ -21,10 +21,14 @@ function values(pilot: string, key: string): string[] {
 }
 const keyOf = (s: string): string | null => s.match(/t\('([a-z0-9_]+)'/)?.[1] ?? null
 
+// Страницы, где значок рядом с h1 — не эмодзи, а брендовое живое пламя (BACKLOG 746): вход (login-flame слева от заголовка)
+const NO_H1_ICON = new Set(['web-login/src/App.vue'])
+
 describe('значок у заголовков страниц (h1)', () => {
   for (const pilot of pilots) {
     for (const f of vueFiles(pilot)) {
       const src = readFileSync(`${ROOT}/${f}`, 'utf-8')
+      if (NO_H1_ICON.has(f)) continue
       for (const m of src.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/g)) {
         it(`${f}: h1 через EmojiText, строка начинается со значка`, () => {
           const inner = m[1].replace(/\s+/g, ' ')
