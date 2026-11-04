@@ -388,12 +388,17 @@ function onJournalRoutine(es: WorkoutEntry[], name: string) {
 }
 async function onJournalDelete(es: WorkoutEntry[]) {
   if (!(await confirmDialog(t('workouts_journal_confirm_delete').replace('{n}', String(es.length))))) return
+  const done: WorkoutEntry[] = []
   try {
-    for (const e of es) await wk.deleteEntry(e.id)
+    for (const e of es) { await wk.deleteEntry(e.id); done.push(e) }
   } catch (e) {
     showToast(friendlyError(e, 'save'), 'error')
     console.error(e)
   }
+  if (done.length === 0) return
+  showToast(t('workouts_journal_deleted').replace('{n}', String(done.length)), 'success', {
+    action: { label: t('workouts_journal_undo'), run: () => { void wk.restoreEntries(done).then(() => showToast(t('workouts_journal_restored'))).catch((err) => { showToast(friendlyError(err, 'save'), 'error'); console.error(err) }) } },
+  })
 }
 function onStartPast(d: ActiveDraft) {
   pastForm.value = false

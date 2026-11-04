@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toast } from '../lib/toast'
+import { runToastAction, toast } from '../lib/toast'
 </script>
 
 <template>
@@ -16,6 +16,7 @@ import { toast } from '../lib/toast'
       }"
     >
       {{ toast.message }}
+      <button v-if="toast.action" type="button" class="ml-3 border-0 bg-transparent p-0 font-semibold" style="color: var(--accent, #4f8cff); min-height: 28px" data-testid="toast-action" @click="runToastAction">{{ toast.action.label }}</button>
     </div>
   </Transition>
 </template>

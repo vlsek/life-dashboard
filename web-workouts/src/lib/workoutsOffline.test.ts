@@ -162,3 +162,45 @@ describe('тренировки без сети (66.5в)', () => {
     expect(wk.entries.value).toEqual([])
   })
 })
+
+describe('«Отменить» удаление записей Журнала (69.11 срез 9)', () => {
+  it('онлайн: удалённая запись возвращается с тем же id, подходами и заметкой', async () => {
+    const wk = await ready()
+    await wk.addEntry('e1', 'u1', { date: '2026-10-20', sets: [{ reps: 12 } as never], notes: 'утро' })
+    const old = { ...wk.entries.value[0] }
+    await wk.deleteEntry(old.id)
+    expect(db.entries).toHaveLength(0)
+    await wk.restoreEntries([old])
+    expect(db.entries).toHaveLength(1)
+    expect(db.entries[0]).toMatchObject({ id: old.id, exercise_id: 'e1', date: '2026-10-20', notes: 'утро' })
+    expect(db.entries[0].sets).toEqual([{ reps: 12 }])
+    expect(wk.entries.value.map((e) => e.id)).toEqual([old.id])
+  })
+
+  it('без сети: удаление и возврат встают в очередь по порядку, после сброса запись одна', async () => {
+    const wk = await ready()
+    await wk.addEntry('e1', 'u1', { date: '2026-10-20', sets: [{ reps: 7 } as never], notes: null })
+    const old = { ...wk.entries.value[0] }
+    db.online = false
+    await wk.deleteEntry(old.id)
+    expect(wk.entries.value).toEqual([])
+    await wk.restoreEntries([old])
+    expect(wk.entries.value.map((e) => e.id)).toEqual([old.id])
+    db.online = true
+    await box.flush()
+    expect(db.entries.map((e) => e.id)).toEqual([old.id])
+    expect(await box.list()).toEqual([])
+  })
+
+  it('несколько записей карточки возвращаются все', async () => {
+    const wk = await ready()
+    await wk.addEntry('e1', 'u1', { date: '2026-10-20', sets: [{ reps: 1 } as never], notes: null })
+    await wk.addEntry('e1', 'u1', { date: '2026-10-20', sets: [{ reps: 2 } as never], notes: null })
+    const olds = wk.entries.value.map((e) => ({ ...e }))
+    for (const e of olds) await wk.deleteEntry(e.id)
+    expect(db.entries).toHaveLength(0)
+    await wk.restoreEntries(olds)
+    expect(db.entries.map((e) => e.id).sort()).toEqual(olds.map((e) => e.id).sort())
+  })
+})
+
