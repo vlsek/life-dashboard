@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.68";
+const SITE_VERSION = "7.69";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.69", date: "2026-11-03 12:00", changes: [
+        "Тренировки: в режиме «По тренировкам» у карточки «Журнала» появилась кнопка «Изменить» — можно поправить название и заметку тренировки прямо в ленте (как в итогах после тренировки). Заметка теперь видна на самой карточке. У подходов без тренировки и в режиме «По дням» кнопки нет: править там нечего. Без миграций.",
+    ]},
     { version: "7.68", date: "2026-11-04 09:10", changes: [
         "Тренировки: в полях подхода работают клавиши ↑ / ↓ — вес меняется на 2,5 кг (5 lb), повторы и минуты — на 1. Удобно с внешней клавиатурой и на компьютере.",
     ]},
@@ -2920,6 +2923,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.69", date: "2026-11-03 12:00", changes: [
+        "Workouts: in “By workout” mode a “Journal” card now has an “Edit” button — fix the workout name and note right in the feed (like in the post-workout summary). The note is now shown on the card itself. Sets without a workout and the “By day” mode have no button: there is nothing to edit there. No migrations.",
+    ]},
     { version: "7.68", date: "2026-11-04 09:10", changes: [
         "Workouts: the ↑ / ↓ keys now work in set fields — weight changes by 2.5 kg (5 lb), reps and minutes by 1. Handy with an external keyboard and on desktop.",
     ]},
