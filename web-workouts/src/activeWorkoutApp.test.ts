@@ -311,6 +311,17 @@ describe('активная тренировка', () => {
     w.unmount()
   })
 
+  it('настройки тренировки свёрнуты под «⚙ Настройки» и раскрываются по тапу', async () => {
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
+    const panel = () => q(w, 'aw-settings').element as HTMLElement
+    expect(panel().style.display).toBe('none')
+    await q(w, 'aw-settings-toggle').trigger('click')
+    expect(panel().style.display).not.toBe('none')
+    expect(q(w, 'aw-settings-toggle').attributes('aria-expanded')).toBe('true')
+    w.unmount()
+  })
+
   it('прошлое: тап по подсказке подставляет числа без ✓; «Подставить прошлое» заполняет пустые подходы', async () => {
     h.entries = [{ id: 'old', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }, { reps: 6, weight: 65, time: null, duration: null, side: null }], notes: null }]
     const w = await mountApp()

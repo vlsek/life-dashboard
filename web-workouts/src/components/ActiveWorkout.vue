@@ -53,6 +53,7 @@ function onEnter(ev: KeyboardEvent) {
   const next = all[all.indexOf(cur as HTMLInputElement) + 1]
   if (next) { next.focus(); next.select?.() } else cur.blur()
 }
+const settingsOpen = ref(false)
 const noteOpen = ref<Record<string, boolean>>({})
 const prevNote = (exerciseId: string) => lastNote(props.entries, exerciseId, draft.value?.date ?? '9999')
 const restLabel = (exerciseId: string): string => {
@@ -176,12 +177,15 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
         </button>
       </div>
       <div class="mx-auto mt-1 max-w-3xl text-center text-xs" style="color: var(--text-dim)">{{ t('aw_done_sets').replace('{n}', String(doneSetCount(draft))) }}</div>
-      <div v-if="draft.exercises.length" class="mx-auto mt-1 flex max-w-3xl items-center justify-center gap-2 text-xs">
-        <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 32px" :aria-pressed="hintOn" data-testid="aw-hint-setting" @click="toggleHint">{{ t('aw_hint_setting') }}: {{ hintOn ? t('aw_on') : t('aw_rest_off') }}</button>
-        <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 32px" data-testid="aw-prev-source" @click="togglePrevSource">{{ t('aw_prev_source') }}: {{ prevSource === 'best' ? t('aw_prev_best') : t('aw_prev_last') }}</button>
-        <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 32px" :aria-pressed="rpeOn" data-testid="aw-rpe-setting" @click="toggleRpe">{{ t('aw_rpe_setting') }}: {{ rpeOn ? t('aw_on') : t('aw_rest_off') }}</button>
-        <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 32px" data-testid="aw-rest-setting" @click="rest.cycleSetting()">{{ t('aw_rest_setting') }}: {{ rest.seconds.value ? rest.seconds.value + ' ' + t('sm_sec') : t('aw_rest_off') }}</button>
-        <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 32px" :aria-pressed="rest.sound.value" data-testid="aw-rest-sound" @click="rest.toggleSound()">{{ t('aw_sound') }}: {{ rest.sound.value ? t('aw_on') : t('aw_rest_off') }}</button>
+      <div v-if="draft.exercises.length" class="mx-auto mt-1 flex max-w-3xl flex-wrap items-center justify-center gap-2 text-xs">
+        <button type="button" class="whitespace-nowrap px-2 py-1" style="color: var(--text-dim); min-height: 32px" :aria-expanded="settingsOpen" data-testid="aw-settings-toggle" @click="settingsOpen = !settingsOpen">⚙ {{ t('aw_settings') }}</button>
+        <div v-show="settingsOpen" class="flex w-full flex-wrap justify-center gap-x-1" data-testid="aw-settings" style="order: 5">
+        <button type="button" class="whitespace-nowrap px-2 py-1" style="color: var(--text-dim); min-height: 32px" :aria-pressed="hintOn" data-testid="aw-hint-setting" @click="toggleHint">{{ t('aw_hint_setting') }}: {{ hintOn ? t('aw_on') : t('aw_rest_off') }}</button>
+        <button type="button" class="whitespace-nowrap px-2 py-1" style="color: var(--text-dim); min-height: 32px" data-testid="aw-prev-source" @click="togglePrevSource">{{ t('aw_prev_source') }}: {{ prevSource === 'best' ? t('aw_prev_best') : t('aw_prev_last') }}</button>
+        <button type="button" class="whitespace-nowrap px-2 py-1" style="color: var(--text-dim); min-height: 32px" :aria-pressed="rpeOn" data-testid="aw-rpe-setting" @click="toggleRpe">{{ t('aw_rpe_setting') }}: {{ rpeOn ? t('aw_on') : t('aw_rest_off') }}</button>
+        <button type="button" class="whitespace-nowrap px-2 py-1" style="color: var(--text-dim); min-height: 32px" data-testid="aw-rest-setting" @click="rest.cycleSetting()">{{ t('aw_rest_setting') }}: {{ rest.seconds.value ? rest.seconds.value + ' ' + t('sm_sec') : t('aw_rest_off') }}</button>
+        <button type="button" class="whitespace-nowrap px-2 py-1" style="color: var(--text-dim); min-height: 32px" :aria-pressed="rest.sound.value" data-testid="aw-rest-sound" @click="rest.toggleSound()">{{ t('aw_sound') }}: {{ rest.sound.value ? t('aw_on') : t('aw_rest_off') }}</button>
+        </div>
         <button v-if="!savingRoutine" type="button" class="px-2 py-1" style="color: var(--accent); min-height: 32px" data-testid="aw-save-routine" @click="openSaveRoutine">{{ t('rt_save') }}</button>
         <template v-else>
           <input v-model="routineName" maxlength="80" :placeholder="t('rt_name_ph')" class="rounded-md border px-2 py-1" style="border-color: var(--border); background: var(--bg); color: var(--text); min-height: 36px" data-testid="aw-routine-name" @keyup.enter="saveRoutine" />
