@@ -1,7 +1,14 @@
 {
-  "version": "7.68",
+  "version": "7.69",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.69",
+      "date": "2026-11-04 11:30",
+      "changes": [
+        "Workouts: the active workout header is more compact — the settings (hint, “previous” source, RPE, rest timer, sound) are tucked under a “⚙ Settings” button, with “Save as routine” staying next to it. More room for exercises on a phone."
+      ]
+    },
     {
       "version": "7.68",
       "date": "2026-11-04 09:10",
@@ -5446,6 +5453,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.69",
+      "date": "2026-11-04 11:30",
+      "changes": [
+        "Тренировки: шапка активной тренировки стала компактнее — настройки (подсказка, источник «прошлого», RPE, таймер отдыха, звук) спрятаны под кнопку «⚙ Настройки», рядом остаётся «В рутину». Больше места под упражнения на телефоне."
+      ]
+    },
     {
       "version": "7.68",
       "date": "2026-11-04 09:10",
