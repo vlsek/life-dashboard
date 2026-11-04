@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.64";
+const SITE_VERSION = "7.65";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.65", date: "2026-11-04 09:10", changes: [
+        "Сайдбар: номер версии и «Что нового» больше не пропадают при сбое загрузки — последняя известная версия и история запоминаются на устройстве и показываются, если файл версии не загрузился (нет сети, 404). Исправление во всех страницах.",
+    ]},
     { version: "7.64", date: "2026-11-03 10:00", changes: [
         "Тренировки: у каждой карточки в «Журнале» появились три действия — «Повторить» (начать тренировку с теми же упражнениями; подходы пустые, по числу рабочих подходов того раза), «В рутину» (сохранить набор упражнений как рутину; название — имя тренировки или дата) и «Удалить» (убрать все записи этой карточки после подтверждения). Без миграций.",
     ]},
@@ -2908,6 +2911,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.65", date: "2026-11-04 09:10", changes: [
+        "Sidebar: the version number and “What's new” no longer disappear when loading fails — the last known version and history are stored on the device and shown if the version file cannot be loaded (offline, 404). Fixed on all pages.",
+    ]},
     { version: "7.64", date: "2026-11-03 10:00", changes: [
         "Workouts: every “Journal” card now has three actions — “Repeat” (start a workout with the same exercises; sets are empty, as many as the working sets of that time), “Save as routine” (save the exercise set as a routine; named after the workout or its date) and “Delete” (remove all entries of that card after confirmation). No migrations.",
     ]},

@@ -1,7 +1,14 @@
 {
-  "version": "7.64",
+  "version": "7.65",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.65",
+      "date": "2026-11-04 09:10",
+      "changes": [
+        "Sidebar: the version number and “What's new” no longer disappear when loading fails — the last known version and history are stored on the device and shown if the version file cannot be loaded (offline, 404). Fixed on all pages."
+      ]
+    },
     {
       "version": "7.64",
       "date": "2026-11-03 10:00",
@@ -5418,6 +5425,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.65",
+      "date": "2026-11-04 09:10",
+      "changes": [
+        "Сайдбар: номер версии и «Что нового» больше не пропадают при сбое загрузки — последняя известная версия и история запоминаются на устройстве и показываются, если файл версии не загрузился (нет сети, 404). Исправление во всех страницах."
+      ]
+    },
     {
       "version": "7.64",
       "date": "2026-11-03 10:00",
