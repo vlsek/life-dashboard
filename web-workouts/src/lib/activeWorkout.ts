@@ -157,6 +157,12 @@ export function lastNote(entries: readonly { exercise_id: string; date: string; 
   }
   return best?.note ?? null
 }
+// Шаг поля клавишами ↑/↓ (69.3): пустое поле + ↑ даёт шаг, ↓ ниже нуля не уходит (остаётся 0); результат без хвостов дробей
+export function stepNumber(cur: number | null | undefined, dir: 1 | -1, step: number): number {
+  const base = typeof cur === 'number' && Number.isFinite(cur) ? cur : 0
+  return Math.max(0, Math.round((base + dir * step) * 100) / 100)
+}
+export const weightStep = (unit: string): number => (unit === 'lb' ? 5 : 2.5)
 export const previousText = (s: SetV2 | null, unit: string): string =>
   !s ? '' : s.weight ? `${s.weight}${unit}×${s.reps ?? ''}` : s.reps ? String(s.reps) : s.duration ? `${s.duration}'` : ''
 

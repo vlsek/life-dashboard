@@ -2,7 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useActiveWorkout } from '../lib/useActiveWorkout'
 import { progressionHint } from '../lib/progressionHint'
-import { supersetPos, doneSetCount, formatElapsed, previousSet, previousSets, previousText, lastNote, NOTE_MAX, type PrevSource } from '../lib/activeWorkout'
+import { supersetPos, doneSetCount, formatElapsed, previousSet, previousSets, previousText, lastNote, stepNumber, weightStep, NOTE_MAX, type PrevSource } from '../lib/activeWorkout'
 import { parseNum } from '../lib/entrySets'
 import { setType, SET_TYPES } from '../lib/sessionContract'
 import { t, type DictKey } from '../lib/i18n'
@@ -128,6 +128,13 @@ function label(entryId: string, i: number): string {
   return String(e.sets.slice(0, i + 1).filter((s) => setType(s) === 'normal').length)
 }
 const onNum = (entryId: string, i: number, field: 'weight' | 'reps' | 'duration', ev: Event) => aw.update(entryId, i, { [field]: parseNum((ev.target as HTMLInputElement).value) })
+// ↑/↓ в поле меняет значение на шаг: вес — 2,5 кг (5 lb), повторы/минуты — 1
+function onStep(entryId: string, i: number, field: 'weight' | 'reps' | 'duration', step: number, dir: 1 | -1, ev: KeyboardEvent) {
+  ev.preventDefault()
+  const s = draft.value?.exercises.find((x) => x.id === entryId)?.sets[i]
+  aw.update(entryId, i, { [field]: stepNumber(s?.[field] as number | null | undefined, dir, step) })
+}
+const stepOf = (exerciseId: string) => weightStep(unitOf(exById.value.get(exerciseId)))
 function pick(id: string) {
   aw.addExercise(id)
   picking.value = false
@@ -239,9 +246,11 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
             enterkeyhint="next"
             data-nav
             @input="onNum(e.id, i, 'weight', $event)"
+            @keydown.up="onStep(e.id, i, 'weight', stepOf(e.exercise_id), 1, $event)"
+            @keydown.down="onStep(e.id, i, 'weight', stepOf(e.exercise_id), -1, $event)"
             @keydown.enter.prevent="onEnter($event)"
           />
-          <input v-else type="text" inputmode="decimal" :value="s.weight ?? ''" :class="inputCls" :style="inputStyle" :aria-label="t('aw_value')" enterkeyhint="next" data-nav @input="onNum(e.id, i, 'weight', $event)" @keydown.enter.prevent="onEnter($event)" />
+          <input v-else type="text" inputmode="decimal" :value="s.weight ?? ''" :class="inputCls" :style="inputStyle" :aria-label="t('aw_value')" enterkeyhint="next" data-nav @input="onNum(e.id, i, 'weight', $event)" @keydown.up="onStep(e.id, i, 'weight', 1, 1, $event)" @keydown.down="onStep(e.id, i, 'weight', 1, -1, $event)" @keydown.enter.prevent="onEnter($event)" />
           <input
             v-if="exById.get(e.exercise_id)?.tracks_duration"
             type="text"
@@ -253,9 +262,11 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
             enterkeyhint="next"
             data-nav
             @input="onNum(e.id, i, 'duration', $event)"
+            @keydown.up="onStep(e.id, i, 'duration', 1, 1, $event)"
+            @keydown.down="onStep(e.id, i, 'duration', 1, -1, $event)"
             @keydown.enter.prevent="onEnter($event)"
           />
-          <input v-else type="text" inputmode="numeric" :value="s.reps ?? ''" :class="inputCls" :style="inputStyle" :aria-label="t('aw_reps')" enterkeyhint="next" data-nav @input="onNum(e.id, i, 'reps', $event)" @keydown.enter.prevent="onEnter($event)" />
+          <input v-else type="text" inputmode="numeric" :value="s.reps ?? ''" :class="inputCls" :style="inputStyle" :aria-label="t('aw_reps')" enterkeyhint="next" data-nav @input="onNum(e.id, i, 'reps', $event)" @keydown.up="onStep(e.id, i, 'reps', 1, 1, $event)" @keydown.down="onStep(e.id, i, 'reps', 1, -1, $event)" @keydown.enter.prevent="onEnter($event)" />
           <select v-if="rpeOn" :value="s.rpe ?? ''" :class="inputCls" style="min-height: 44px; padding: 0 2px; border-color: var(--border); background: var(--bg); color: var(--text)" :aria-label="t('aw_rpe')" :data-testid="'aw-rpe-' + ei + '-' + i" @change="onRpe(e.id, i, $event)">
             <option value="">—</option>
             <option v-for="v in RPE_VALUES" :key="v" :value="v">{{ String(v).replace('.', ',') }}</option>

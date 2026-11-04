@@ -296,6 +296,21 @@ describe('активная тренировка', () => {
     w.unmount()
   })
 
+  it('↑/↓ в полях подхода: вес меняется на 2,5, повторы на 1', async () => {
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
+    let inputs = q(w, 'aw-set-0-0').findAll('input')
+    await inputs[0].setValue('60')
+    await inputs[0].trigger('keydown', { key: 'ArrowUp' })
+    inputs = q(w, 'aw-set-0-0').findAll('input')
+    expect((inputs[0].element as HTMLInputElement).value).toBe('62.5')
+    await inputs[1].trigger('keydown', { key: 'ArrowUp' }); await q(w, 'aw-set-0-0').findAll('input')[1].trigger('keydown', { key: 'ArrowUp' })
+    expect((q(w, 'aw-set-0-0').findAll('input')[1].element as HTMLInputElement).value).toBe('2')
+    await q(w, 'aw-set-0-0').findAll('input')[1].trigger('keydown', { key: 'ArrowDown' })
+    expect((q(w, 'aw-set-0-0').findAll('input')[1].element as HTMLInputElement).value).toBe('1')
+    w.unmount()
+  })
+
   it('прошлое: тап по подсказке подставляет числа без ✓; «Подставить прошлое» заполняет пустые подходы', async () => {
     h.entries = [{ id: 'old', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }, { reps: 6, weight: 65, time: null, duration: null, side: null }], notes: null }]
     const w = await mountApp()
