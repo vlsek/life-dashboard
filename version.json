@@ -1,7 +1,14 @@
 {
-  "version": "7.62",
+  "version": "7.63",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.63",
+      "date": "2026-11-04 05:01",
+      "changes": [
+        "Dashboard, Plans: day templates are here. In the block settings there is a Day templates button: save this day's plan as a template (Workday, Day off) and apply it to any day with one tap. Only your own items with their time and bonus are saved (not goals or repeating items), and applying a template never duplicates items that are already in the day. It works once migration 115 is applied; until then the button is hidden."
+      ]
+    },
     {
       "version": "7.62",
       "date": "2026-11-03 12:00",
@@ -5404,6 +5411,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.63",
+      "date": "2026-11-04 05:01",
+      "changes": [
+        "Дашборд, «Планы»: появились шаблоны дня. В настройках блока кнопка «Шаблоны дня»: сохрани план этого дня как шаблон («Рабочий день», «Выходной») и применяй его к любому дню одним касанием. В шаблон попадают только свои пункты со временем и бонусом (цели и повторяющиеся пункты нет), при применении пункты, которые уже есть в дне, не дублируются. Работает после применения миграции 115; пока её нет, кнопки не будет."
+      ]
+    },
     {
       "version": "7.62",
       "date": "2026-11-03 12:00",

@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.62";
+const SITE_VERSION = "7.63";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.63", date: "2026-11-04 05:01", changes: [
+        "Дашборд, «Планы»: появились шаблоны дня. В настройках блока кнопка «Шаблоны дня»: сохрани план этого дня как шаблон («Рабочий день», «Выходной») и применяй его к любому дню одним касанием. В шаблон попадают только свои пункты со временем и бонусом (цели и повторяющиеся пункты нет), при применении пункты, которые уже есть в дне, не дублируются. Работает после применения миграции 115; пока её нет, кнопки не будет."
+    ]},
     { version: "7.62", date: "2026-11-03 12:00", changes: [
         "Аккаунт: под «Мои данные» появилась карточка «Проверить файл выгрузки». Выбираешь JSON, скачанный из «Мои данные», и видишь, что в нём лежит: дату выгрузки, число строк по каждой таблице и, если файл твой, сколько дней значений метрик и заметок в нём новые, а сколько уже есть у тебя. Если в файле есть значения метрик, которых у тебя нет, тебя предупредят. Это только проверка: ничего не записывается и не меняется, а само восстановление из файла появится позже. Заодно поправлены значок заголовка «Мои данные» и один тест. Без миграций."
     ]},
@@ -2902,6 +2905,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.63", date: "2026-11-04 05:01", changes: [
+        "Dashboard, Plans: day templates are here. In the block settings there is a Day templates button: save this day's plan as a template (Workday, Day off) and apply it to any day with one tap. Only your own items with their time and bonus are saved (not goals or repeating items), and applying a template never duplicates items that are already in the day. It works once migration 115 is applied; until then the button is hidden."
+    ]},
     { version: "7.62", date: "2026-11-03 12:00", changes: [
         "Account: a new “Check a backup file” card sits under “My data”. Pick the JSON you downloaded from “My data” and you will see what is inside: the export date, the number of rows per table and, if the file is yours, how many days of metric values and notes in it are new and how many you already have. You are warned about values that point to a metric you do not have. This is only a check: nothing is written or changed, and actually restoring from a file will come later. The “My data” heading icon and one test were also fixed. No migrations."
     ]},
