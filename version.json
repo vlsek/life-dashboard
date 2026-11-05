@@ -1,7 +1,14 @@
 {
-  "version": "7.75",
+  "version": "7.76",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.76",
+      "date": "2026-11-02 04:46",
+      "changes": [
+        "Dates in your own time zone: the “study in the last 3 days” window on the muscle map (Workouts) and the date in the data export file name (Account) used to be computed in UTC and slipped by a day in the first hours after midnight (or late in the evening). They now use your local date."
+      ]
+    },
     {
       "version": "7.75",
       "date": "2026-11-05 08:10",
@@ -5481,6 +5488,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.76",
+      "date": "2026-11-02 04:46",
+      "changes": [
+        "Даты по вашему часовому поясу: окно «учёба за последние 3 дня» на карте мышц («Тренировки») и дата в имени файла выгрузки данных («Аккаунт») раньше считались по UTC и в первые часы после полуночи (или поздним вечером) съезжали на сутки. Теперь используется локальная дата."
+      ]
+    },
     {
       "version": "7.75",
       "date": "2026-11-05 08:10",

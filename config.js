@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.75";
+const SITE_VERSION = "7.76";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.76", date: "2026-11-02 04:46", changes: [
+        "Даты по вашему часовому поясу: окно «учёба за последние 3 дня» на карте мышц («Тренировки») и дата в имени файла выгрузки данных («Аккаунт») раньше считались по UTC и в первые часы после полуночи (или поздним вечером) съезжали на сутки. Теперь используется локальная дата."
+    ]},
     { version: "7.75", date: "2026-11-05 08:10", changes: [
         "Тренировки: суперсеты теперь вводятся попеременно — после галочки у подхода курсор сам переходит в поле следующего упражнения группы (А1 → Б1 → А2 → Б2), не нужно искать и листать. Таймер отдыха по-прежнему стартует после последнего упражнения группы.",
     ]},
@@ -2935,6 +2938,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.76", date: "2026-11-02 04:46", changes: [
+        "Dates in your own time zone: the “study in the last 3 days” window on the muscle map (Workouts) and the date in the data export file name (Account) used to be computed in UTC and slipped by a day in the first hours after midnight (or late in the evening). They now use your local date."
+    ]},
     { version: "7.75", date: "2026-11-05 08:10", changes: [
         "Workouts: supersets are now entered alternately — after you tick a set, the cursor jumps to the next exercise of the group (A1 → B1 → A2 → B2), no hunting and scrolling. The rest timer still starts after the last exercise of the group.",
     ]},
