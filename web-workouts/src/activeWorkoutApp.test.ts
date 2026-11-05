@@ -322,6 +322,19 @@ describe('активная тренировка', () => {
     w.unmount()
   })
 
+  it('выбор упражнения: недавние сверху и с датой, поиск без учёта регистра', async () => {
+    h.exercises = [ex, { ...ex, id: 'e2', name: 'Разводка' }, { ...ex, id: 'e3', name: 'Присед' }]
+    h.entries = [{ id: 'o1', user_id: 'u1', exercise_id: 'e3', date: '2026-02-01', sets: [{ reps: 5, weight: 50, time: null, duration: null, side: null }], notes: null }]
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click')
+    const ids = w.findAll('[data-testid^="aw-pick-"]').map((b) => b.attributes('data-testid'))
+    expect(ids[0]).toBe('aw-pick-e3')
+    expect(q(w, 'aw-pick-e3').text()).toContain('2026-02-01')
+    await q(w, 'aw-search').setValue('РАЗВ')
+    expect(w.findAll('[data-testid^="aw-pick-"]').map((b) => b.attributes('data-testid'))).toEqual(['aw-pick-e2'])
+    w.unmount()
+  })
+
   it('прошлое: тап по подсказке подставляет числа без ✓; «Подставить прошлое» заполняет пустые подходы', async () => {
     h.entries = [{ id: 'old', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }, { reps: 6, weight: 65, time: null, duration: null, side: null }], notes: null }]
     const w = await mountApp()

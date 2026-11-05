@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useActiveWorkout } from '../lib/useActiveWorkout'
+import { rankExercises } from '../lib/exercisePick'
 import { progressionHint } from '../lib/progressionHint'
 import { supersetPos, doneSetCount, formatElapsed, previousSet, previousSets, previousText, lastNote, nextSupersetTarget, stepNumber, weightStep, NOTE_MAX, type PrevSource } from '../lib/activeWorkout'
 import { parseNum } from '../lib/entrySets'
@@ -114,10 +115,7 @@ const ssPos = (i: number) => (draft.value ? supersetPos(draft.value, i) : 'none'
 const joined = (i: number) => !!draft.value && draft.value.exercises[i].superset_group != null && draft.value.exercises[i].superset_group === draft.value.exercises[i + 1]?.superset_group
 const picking = ref(false)
 const query = ref('')
-const pickList = computed(() => {
-  const q = query.value.trim().toLowerCase()
-  return props.exercises.filter((e) => !q || e.name.toLowerCase().includes(q))
-})
+const pickList = computed(() => rankExercises(props.exercises, props.entries, query.value))
 const unitOf = (ex: Exercise | undefined) => ex?.unit || props.unit
 const TYPE_MARK: Record<string, string> = { normal: '', warmup: 'W', drop: 'D', failure: 'F' }
 const TYPE_LABEL = (ty: string): string => (ty === 'warmup' ? t('aw_type_warmup') : ty === 'drop' ? t('aw_type_drop') : ty === 'failure' ? t('aw_type_failure') : '')
@@ -321,8 +319,8 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
         <input v-model="query" type="text" :placeholder="t('aw_search')" class="mb-2 w-full rounded-md border px-3 py-2" style="border-color: var(--border); background: var(--bg); color: var(--text); min-height: 44px" data-testid="aw-search" />
         <p v-if="exercises.length === 0" class="py-4 text-sm" style="color: var(--text-dim)">{{ t('aw_no_exercises') }}</p>
         <ul class="overflow-y-auto">
-          <li v-for="ex in pickList" :key="ex.id">
-            <button type="button" class="w-full rounded-md px-3 py-3 text-left" style="min-height: 48px" :data-testid="'aw-pick-' + ex.id" @click="pick(ex.id)">{{ ex.name }}</button>
+          <li v-for="row in pickList" :key="row.exercise.id">
+            <button type="button" class="flex w-full items-baseline justify-between gap-2 rounded-md px-3 py-3 text-left" style="min-height: 48px" :data-testid="'aw-pick-' + row.exercise.id" @click="pick(row.exercise.id)"><span>{{ row.exercise.name }}</span><span v-if="row.last" class="shrink-0 text-xs" style="color: var(--text-dim)">{{ row.last }}</span></button>
           </li>
         </ul>
       </div>
