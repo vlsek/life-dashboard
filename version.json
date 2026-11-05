@@ -1,9 +1,9 @@
 {
-  "version": "7.74",
+  "version": "7.75",
   "min_supported": "1.00",
   "en": [
     {
-      "version": "7.74",
+      "version": "7.75",
       "date": "2026-11-05 08:10",
       "changes": [
         "Workouts: supersets are now entered alternately — after you tick a set, the cursor jumps to the next exercise of the group (A1 → B1 → A2 → B2), no hunting and scrolling. The rest timer still starts after the last exercise of the group."
@@ -5482,7 +5482,7 @@
   ],
   "ru": [
     {
-      "version": "7.74",
+      "version": "7.75",
       "date": "2026-11-05 08:10",
       "changes": [
         "Тренировки: суперсеты теперь вводятся попеременно — после галочки у подхода курсор сам переходит в поле следующего упражнения группы (А1 → Б1 → А2 → Б2), не нужно искать и листать. Таймер отдыха по-прежнему стартует после последнего упражнения группы."
