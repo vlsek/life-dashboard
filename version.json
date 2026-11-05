@@ -1,7 +1,14 @@
 {
-  "version": "7.76",
+  "version": "7.77",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.77",
+      "date": "2026-11-05 04:47",
+      "changes": [
+        "Dashboard, Plans: there is now an evening step. The Wrap up the day button (shown while your own unfinished items remain in the plan) opens What to move to tomorrow: all such items are ticked, untick one to keep it on today. The ticked ones move into the next day's plan in one action, without duplicates, keeping time and bonus. If saving tomorrow fails, everything stays as it was. The window opens only on the button, with no reminders. No migrations."
+      ]
+    },
     {
       "version": "7.76",
       "date": "2026-11-02 04:46",
@@ -5488,6 +5495,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.77",
+      "date": "2026-11-05 04:47",
+      "changes": [
+        "Дашборд, «Планы»: появился вечерний шаг. Кнопка «Подвести итог дня» (есть, пока в плане остались свои невыполненные пункты) открывает окно «Что перенести на завтра?»: все такие пункты отмечены, снимешь галочку — пункт останется на сегодня. Выбранные переезжают в план следующего дня одним действием, без дублей, со временем и бонусом. Если запись на завтра не удалась, всё остаётся как было. Окно открывается только по кнопке, без напоминаний. Без миграций."
+      ]
+    },
     {
       "version": "7.76",
       "date": "2026-11-02 04:46",

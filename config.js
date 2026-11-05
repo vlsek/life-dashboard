@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.76";
+const SITE_VERSION = "7.77";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.77", date: "2026-11-05 04:47", changes: [
+        "Дашборд, «Планы»: появился вечерний шаг. Кнопка «Подвести итог дня» (есть, пока в плане остались свои невыполненные пункты) открывает окно «Что перенести на завтра?»: все такие пункты отмечены, снимешь галочку — пункт останется на сегодня. Выбранные переезжают в план следующего дня одним действием, без дублей, со временем и бонусом. Если запись на завтра не удалась, всё остаётся как было. Окно открывается только по кнопке, без напоминаний. Без миграций."
+    ]},
     { version: "7.76", date: "2026-11-02 04:46", changes: [
         "Даты по вашему часовому поясу: окно «учёба за последние 3 дня» на карте мышц («Тренировки») и дата в имени файла выгрузки данных («Аккаунт») раньше считались по UTC и в первые часы после полуночи (или поздним вечером) съезжали на сутки. Теперь используется локальная дата."
     ]},
@@ -2938,6 +2941,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.77", date: "2026-11-05 04:47", changes: [
+        "Dashboard, Plans: there is now an evening step. The Wrap up the day button (shown while your own unfinished items remain in the plan) opens What to move to tomorrow: all such items are ticked, untick one to keep it on today. The ticked ones move into the next day's plan in one action, without duplicates, keeping time and bonus. If saving tomorrow fails, everything stays as it was. The window opens only on the button, with no reminders. No migrations."
+    ]},
     { version: "7.76", date: "2026-11-02 04:46", changes: [
         "Dates in your own time zone: the “study in the last 3 days” window on the muscle map (Workouts) and the date in the data export file name (Account) used to be computed in UTC and slipped by a day in the first hours after midnight (or late in the evening). They now use your local date."
     ]},
