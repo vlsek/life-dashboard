@@ -183,4 +183,6 @@ export function exportCsvZip(r: ExportResult, lang: 'ru' | 'en', now: Date = new
   return buildZip(files, now)
 }
 
-export const exportFileName = (kind: 'json' | 'zip', now: Date = new Date()) => `life-dashboard-data-${now.toISOString().slice(0, 10)}.${kind}`
+// Дата в имени файла — ЛОКАЛЬНАЯ (toISOString — UTC: после полуночи по Вильнюсу в имени оказывалась вчерашняя дата)
+const localDate = (d: Date): string => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+export const exportFileName = (kind: 'json' | 'zip', now: Date = new Date()) => `life-dashboard-data-${localDate(now)}.${kind}`
