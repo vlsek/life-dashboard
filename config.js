@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.73";
+const SITE_VERSION = "7.74";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,8 +488,11 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
-    { version: "7.73", date: "2026-11-05 08:10", changes: [
+    { version: "7.74", date: "2026-11-05 08:10", changes: [
         "Тренировки: суперсеты теперь вводятся попеременно — после галочки у подхода курсор сам переходит в поле следующего упражнения группы (А1 → Б1 → А2 → Б2), не нужно искать и листать. Таймер отдыха по-прежнему стартует после последнего упражнения группы.",
+    ]},
+    { version: "7.73", date: "2026-11-03 14:00", changes: [
+        "Тренировки: рядом с «Типовыми программами» появилась кнопка «Блины» — калькулятор: вводишь нужный вес, выбираешь гриф (20 или 15 кг, в фунтах 45 или 35), и он показывает, какие блины повесить на каждую сторону, и сколько получится на штанге. Если подходящих блинов нет, пишет, чего не хватает. Свой набор блинов (например, без 25 или с 1,25) задаётся здесь же и запоминается на устройстве. Без миграций.",
     ]},
     { version: "7.72", date: "2026-11-04 11:00", changes: [
         "Доступность на всех страницах: у выбора темы в сайдбаре появилось название для скринридера, пустые ячейки календаря не фокусируются и скрыты, у полос прогресса «Коллекций» есть название, вкладки словарей устроены по правилам.",
@@ -2932,8 +2935,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
-    { version: "7.73", date: "2026-11-05 08:10", changes: [
+    { version: "7.74", date: "2026-11-05 08:10", changes: [
         "Workouts: supersets are now entered alternately — after you tick a set, the cursor jumps to the next exercise of the group (A1 → B1 → A2 → B2), no hunting and scrolling. The rest timer still starts after the last exercise of the group.",
+    ]},
+    { version: "7.73", date: "2026-11-03 14:00", changes: [
+        "Workouts: next to “Workout templates” there is a new “Plates” button — a calculator: enter the target weight, pick the bar (20 or 15 kg, 45 or 35 lb) and it shows which plates to load on each side and what the bar will weigh. If no suitable plates exist it says how much is missing. Your own plate set (say, without 25 or with 1.25) is set right there and remembered on the device. No migrations.",
     ]},
     { version: "7.72", date: "2026-11-04 11:00", changes: [
         "Accessibility on all pages: the sidebar theme picker now has a name for screen readers, empty calendar cells are hidden and not focusable, the Collections progress bars have names, and the dictionary tabs are structured correctly.",

@@ -46,6 +46,7 @@ import ExerciseForm from './components/ExerciseForm.vue'
 import EntryForm from './components/EntryForm.vue'
 import MetricLinkModal from './components/MetricLinkModal.vue'
 import TemplatesModal from './components/TemplatesModal.vue'
+import PlateCalculator from './components/PlateCalculator.vue'
 import ProgramCard from './components/ProgramCard.vue'
 import { PROGRAM_EVENT, readProgram, startProgram, toggleWeekDone, writeProgram, type ActiveProgram } from './lib/program'
 import { saveProgramToProfile, syncProgramFromProfile } from './lib/programSync'
@@ -198,6 +199,7 @@ const onLinkMetric = (m: LinkedMetric) =>
 const onUnlinkMetric = (m: LinkedMetric) => runLink(async () => (await wk.unlinkExerciseMetric(m.id), t('workouts_ml_toast_unlinked')))
 const onCreateMetric = () => runLink(async () => (await wk.createMetricForExercise(linkModal.value!), t('workouts_ml_toast_created')))
 const templatesOpen = ref(false)
+const platesOpen = ref(false)
 
 // Мышцы, тренированные за последние 4 дня, — для подбора типового упражнения по схеме тела в форме «Добавить упражнение» (BACKLOG 763)
 const recentMuscles = computed(() => {
@@ -592,6 +594,15 @@ function onToggleProgramWeek(week: number) {
       >
         <EmojiText :text="t('workouts_templates_btn')" />
       </button>
+      <button
+        type="button"
+        class="rounded-lg border px-4 py-2 text-sm"
+        style="border-color: var(--border); background: var(--bg-card); color: var(--text); min-height: 44px"
+        data-testid="plates-open"
+        @click="platesOpen = true"
+      >
+        <EmojiText :text="t('workouts_plates_btn')" />
+      </button>
     </div>
 
     <div v-if="auth.status === 'loading' || auth.status === 'redirecting'" class="text-sm" style="color: var(--text-dim)">
@@ -741,6 +752,7 @@ function onToggleProgramWeek(week: number) {
   <ExerciseForm v-if="exerciseForm" :existing="exerciseForm.existing" :recent-muscles="recentMuscles" :model="bodyModel" @close="exerciseForm = null" @save="onSaveExercise" />
   <MetricLinkModal v-if="linkModal" :exercise="linkModal" :metrics="metricLinks.metrics" :supported="metricLinks.supported" :busy="linkBusy" @close="linkModal = null" @link="onLinkMetric" @unlink="onUnlinkMetric" @create="onCreateMetric" />
   <EntryForm v-if="entryForm" :exercise="entryForm.exercise" :existing="entryForm.existing" @close="entryForm = null" @save="onSaveEntry" />
+  <PlateCalculator v-if="platesOpen" :unit="defaultUnit()" @close="platesOpen = false" />
   <TemplatesModal v-if="templatesOpen" :active-title="activeTemplate?.title ?? null" @close="templatesOpen = false" @apply="onApplyTemplate" @start="onStartProgram" />
   <Toast />
 </template>
