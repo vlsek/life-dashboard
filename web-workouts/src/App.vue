@@ -214,6 +214,8 @@ type PageTab = 'journal' | 'map' | 'progress' | 'exercises'
 const PAGE_TABS = ['journal', 'map', 'progress', 'exercises'] as const
 const TAB_LABEL: Record<PageTab, 'workouts_tab_journal' | 'workouts_tab_exercises' | 'workouts_tab_map' | 'workouts_tab_progress'> = { journal: 'workouts_tab_journal', exercises: 'workouts_tab_exercises', map: 'workouts_tab_map', progress: 'workouts_tab_progress' }
 const TAB_KEY = 'workouts_tab'
+// Значки вкладок для нижней панели на телефоне (69.17); только из набора с SVG-аналогами
+const TAB_ICON: Record<PageTab, string> = { journal: '📅', exercises: '🏋', map: '🧘', progress: '📈' }
 function readTab(): PageTab {
   try {
     const v = localStorage.getItem(TAB_KEY)
@@ -543,14 +545,14 @@ function onToggleProgramWeek(week: number) {
   <PastWorkoutForm v-if="pastForm" @start="onStartPast" @close="pastForm = false" />
   <RecordsModal v-if="recordsFor" :exercise="recordsFor" :entries="entries" :unit="defaultUnit()" @close="recordsFor = null" />
   <WorkoutSummary v-if="summary" :data="summary" :exercises="exercises" :unit="defaultUnit()" @close="summary = null" @save-meta="onSaveSessionMeta" />
-  <main class="mx-auto max-w-3xl px-4 pb-16 pt-6">
+  <main class="mx-auto max-w-3xl px-4 pb-24 pt-6 sm:pb-16">
     <h1 class="mb-3 text-xl font-bold"><EmojiText :text="t('workouts_h1')" /></h1>
 
-    <div class="mb-4 flex flex-wrap gap-2">
+    <div class="mb-4 flex flex-wrap gap-2" data-testid="start-actions">
       <button
         type="button"
-        class="rounded-lg px-4 py-2 text-sm font-semibold"
-        style="background: var(--success); color: #fff; min-height: 44px"
+        class="w-full rounded-xl px-5 py-3 text-base font-bold sm:w-auto"
+        style="background: var(--accent); color: var(--accent-text); min-height: 56px"
         data-testid="aw-start"
         @click="aw.start()"
       >
@@ -558,7 +560,7 @@ function onToggleProgramWeek(week: number) {
       </button>
       <button
         type="button"
-        class="rounded-lg border px-4 py-2 text-sm"
+        class="flex-1 basis-[calc(50%-0.25rem)] rounded-lg border px-4 py-2 text-sm sm:flex-none sm:basis-auto"
         style="border-color: var(--border); background: var(--bg-card); color: var(--text); min-height: 44px"
         :disabled="aw.active.value"
         data-testid="aw-past"
@@ -569,7 +571,7 @@ function onToggleProgramWeek(week: number) {
       <button
         v-if="lastDate"
         type="button"
-        class="rounded-lg border px-4 py-2 text-sm"
+        class="flex-1 basis-[calc(50%-0.25rem)] rounded-lg border px-4 py-2 text-sm sm:flex-none sm:basis-auto"
         style="border-color: var(--border); background: var(--bg-card); color: var(--text); min-height: 44px"
         :disabled="aw.active.value"
         :title="lastDate"
@@ -580,16 +582,18 @@ function onToggleProgramWeek(week: number) {
       </button>
       <button
         type="button"
-        class="rounded-lg px-4 py-2 text-sm font-medium"
-        style="background: var(--accent); color: var(--accent-text)"
+        class="flex-1 basis-[calc(50%-0.25rem)] rounded-lg border px-4 py-2 text-sm sm:flex-none sm:basis-auto"
+        style="border-color: var(--border); background: var(--bg-card); color: var(--text); min-height: 44px"
+        data-testid="add-exercise-btn"
         @click="exerciseForm = { existing: null }"
       >
         <EmojiText :text="t('workouts_add_exercise_btn')" />
       </button>
       <button
         type="button"
-        class="rounded-lg border px-4 py-2 text-sm"
-        style="border-color: var(--border); background: var(--bg-card); color: var(--text)"
+        class="flex-1 basis-[calc(50%-0.25rem)] rounded-lg border px-4 py-2 text-sm sm:flex-none sm:basis-auto"
+        style="border-color: var(--border); background: var(--bg-card); color: var(--text); min-height: 44px"
+        data-testid="templates-btn"
         @click="templatesOpen = true"
       >
         <EmojiText :text="t('workouts_templates_btn')" />
@@ -618,19 +622,25 @@ function onToggleProgramWeek(week: number) {
 
       <TodayPanel v-if="exercises.length > 0" :entries="entries" :exercises="exercises" :busy-id="quickBusyId" @add-set="onAddSet" />
 
-      <div class="mb-4 flex flex-wrap gap-1.5" role="tablist" data-testid="page-tabs">
+      <!-- вкладки раздела (69.17): на телефоне — нижняя панель с иконками, на ПК — переключатель-таблетки; те же кнопки, role=tab и адрес ?tab= -->
+      <div
+        class="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-[var(--border)] bg-[var(--bg-card)] pb-[env(safe-area-inset-bottom)] sm:static sm:z-auto sm:mb-4 sm:flex sm:flex-wrap sm:gap-1.5 sm:border-0 sm:bg-transparent sm:pb-0"
+        role="tablist"
+        data-testid="page-tabs"
+      >
         <button
           v-for="tab in PAGE_TABS"
           :key="tab"
           type="button"
           role="tab"
-          class="rounded-full border px-4 py-1.5 text-sm"
+          class="flex min-h-[56px] flex-col items-center justify-center gap-0.5 border-0 px-1 py-2 text-[0.7rem] sm:min-h-0 sm:flex-row sm:gap-0 sm:rounded-full sm:border sm:px-4 sm:py-1.5 sm:text-sm"
           :aria-selected="pageTab === tab"
           :style="pageTab === tab ? 'border-color: var(--accent); color: var(--accent); background: transparent' : 'border-color: var(--border); color: var(--text-dim); background: transparent'"
           :data-testid="'page-tab-' + tab"
           @click="setTab(tab)"
         >
-          {{ t(TAB_LABEL[tab]) }}
+          <span class="text-lg leading-none sm:hidden" aria-hidden="true"><EmojiText :text="TAB_ICON[tab]" /></span>
+          <span>{{ t(TAB_LABEL[tab]) }}</span>
         </button>
       </div>
 
