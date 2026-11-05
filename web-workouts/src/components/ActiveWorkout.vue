@@ -2,7 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useActiveWorkout } from '../lib/useActiveWorkout'
 import { progressionHint } from '../lib/progressionHint'
-import { supersetPos, doneSetCount, formatElapsed, previousSet, previousSets, previousText, lastNote, stepNumber, weightStep, NOTE_MAX, type PrevSource } from '../lib/activeWorkout'
+import { supersetPos, doneSetCount, formatElapsed, previousSet, previousSets, previousText, lastNote, nextSupersetTarget, stepNumber, weightStep, NOTE_MAX, type PrevSource } from '../lib/activeWorkout'
 import { parseNum } from '../lib/entrySets'
 import { setType, SET_TYPES } from '../lib/sessionContract'
 import { t, type DictKey } from '../lib/i18n'
@@ -83,6 +83,11 @@ async function onTick(entryId: string, i: number) {
   await nextTick()
   const ei = draft.value?.exercises.findIndex((x) => x.id === entryId) ?? -1
   if (!before && ei >= 0 && draft.value && shouldRestAfter(draft.value, ei)) rest.start(draft.value.exercises[ei].exercise_id) // отдых после выполненного подхода (в суперсете — после последнего в группе)
+  // суперсет: ввод идёт попеременно — курсор сразу в поле следующего упражнения группы
+  if (!before && ei >= 0 && draft.value) {
+    const target = nextSupersetTarget(draft.value, ei, i)
+    if (target) { await nextTick(); (document.querySelector(`[data-testid="aw-set-${target.ei}-${target.i}"] input`) as HTMLInputElement | null)?.focus() }
+  }
   const k = prKind(entryId, i)
   const e = draft.value?.exercises.find((x) => x.id === entryId)
   if (k && e) {

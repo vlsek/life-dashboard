@@ -247,6 +247,24 @@ export function toggleSupersetWithNext(d: ActiveDraft, entryId: string): ActiveD
   const ex = d.exercises.map((e, idx) => (idx === i || idx === i + 1 || (b.superset_group != null && e.superset_group === b.superset_group) || (a.superset_group != null && e.superset_group === a.superset_group) ? { ...e, superset_group: g } : e))
   return normalizeSupersets({ ...d, exercises: ex })
 }
+// Ввод попеременно (69.8): после ✓ в суперсете — к какому подходу перейти. Идём по кругу по упражнениям группы: следующее упражнение — тот же номер подхода,
+// после последнего в группе — первое упражнение со следующим номером. Невыполненный подход с таким номером берём первым; нет такого — null (раунд закончен).
+export function nextSupersetTarget(d: ActiveDraft, ei: number, i: number): { ei: number; i: number } | null {
+  const g = d.exercises[ei]?.superset_group ?? null
+  if (g == null) return null
+  let lo = ei, hi = ei
+  while (lo > 0 && d.exercises[lo - 1].superset_group === g) lo--
+  while (hi < d.exercises.length - 1 && d.exercises[hi + 1].superset_group === g) hi++
+  const size = hi - lo + 1
+  if (size < 2) return null
+  for (let k = 1; k <= size; k++) {
+    const idx = lo + ((ei - lo + k) % size)
+    const round = i + (idx <= ei ? 1 : 0)
+    const set = d.exercises[idx].sets[round]
+    if (set && set.done !== true) return { ei: idx, i: round }
+  }
+  return null
+}
 export const supersetPos = (d: ActiveDraft, i: number): 'none' | 'start' | 'mid' | 'end' => {
   const g = d.exercises[i]?.superset_group ?? null
   if (g == null) return 'none'

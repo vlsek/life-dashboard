@@ -366,6 +366,19 @@ describe('активная тренировка', () => {
     w.unmount()
   })
 
+  it('суперсет: после ✓ курсор сам переходит в поле следующего упражнения группы (ввод попеременно)', async () => {
+    h.exercises = [ex, { ...ex, id: 'e2', name: 'Разводка' }]
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click')
+    for (const id of ['e1', 'e2']) { await q(w, 'aw-add-exercise').trigger('click'); await q(w, `aw-pick-${id}`).trigger('click') }
+    await q(w, 'aw-ss-0').trigger('click')
+    const a = q(w, 'aw-set-0-0').findAll('input')
+    await a[0].setValue('60'); await a[1].setValue('8')
+    await q(w, 'aw-tick-0-0').trigger('click'); await flushPromises()
+    expect(document.activeElement).toBe(q(w, 'aw-set-1-0').find('input').element)
+    w.unmount()
+  })
+
   it('суперсет: кнопка между упражнениями объединяет и разъединяет; группа сохраняется в записи', async () => {
     h.exercises = [ex, { ...ex, id: 'e2', name: 'Разводка' }]
     const w = await mountApp()

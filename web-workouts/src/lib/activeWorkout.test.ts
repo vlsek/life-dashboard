@@ -62,7 +62,7 @@ describe('время и хранение', () => {
   })
 })
 
-import { stepNumber, weightStep, entryRow, lastNote, setExerciseNote, previousSet, previousText } from './activeWorkout'
+import { nextSupersetTarget, stepNumber, weightStep, entryRow, lastNote, setExerciseNote, previousSet, previousText } from './activeWorkout'
 describe('строки для БД и подсказка «прошлый раз»', () => {
   const base = { id: 'e', exercise_id: 'x', date: '2026-10-30', sets: [], notes: null, session_id: 's', position: 0, superset_group: null }
   it('без таблицы сессий колонок v2 в строке нет вовсе', () => {
@@ -208,5 +208,29 @@ describe('шаг поля клавишами ↑/↓', () => {
     expect(stepNumber(undefined, -1, 1)).toBe(0)
   })
   it('шаг веса: 2,5 для кг, 5 для lb', () => { expect(weightStep('kg')).toBe(2.5); expect(weightStep('lb')).toBe(5) })
+})
+
+describe('суперсет: ввод попеременно', () => {
+  // A, B — суперсет; C — отдельно. По 2 подхода
+  const mk = () => {
+    let d = newDraft('d', new Date())
+    for (const [id, ex] of [['a', 'e1'], ['b', 'e2'], ['c', 'e3']] as const) { d = addExercise(d, id, ex); d = addSet(d, id) }
+    return toggleSupersetWithNext(d, 'a')
+  }
+  it('A1 → B1 → A2 → B2 → конец раунда', () => {
+    const d = mk()
+    expect(nextSupersetTarget(d, 0, 0)).toEqual({ ei: 1, i: 0 })
+    const d2 = toggleDone(d, 'a', 0), d3 = toggleDone(d2, 'b', 0)
+    expect(nextSupersetTarget(d3, 1, 0)).toEqual({ ei: 0, i: 1 })
+    const d4 = toggleDone(d3, 'a', 1)
+    expect(nextSupersetTarget(d4, 0, 1)).toEqual({ ei: 1, i: 1 })
+    expect(nextSupersetTarget(toggleDone(d4, 'b', 1), 1, 1)).toBeNull()
+  })
+  it('не суперсет — null; у соседа нет такого подхода — берём следующий по кругу, иначе null', () => {
+    const d = mk()
+    expect(nextSupersetTarget(d, 2, 0)).toBeNull()
+    const short = removeSet(removeSet(d, 'b', 1), 'b', 0) // у B подходов нет
+    expect(nextSupersetTarget(short, 0, 0)).toEqual({ ei: 0, i: 1 })
+  })
 })
 
