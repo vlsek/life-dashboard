@@ -26,7 +26,7 @@ const completed = computed(() => cols.value.filter((c) => c.complete).length)
           <h3 class="m-0 text-sm font-medium">{{ t(('ach_col_' + c.id) as DictKey) }}</h3>
           <span class="dim text-xs" data-testid="collection-count">{{ t('ach_col_count').replace('{done}', String(c.done)).replace('{total}', String(c.total)) }}</span>
         </div>
-        <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full" style="background: color-mix(in srgb, var(--text-dim) 25%, transparent)" role="progressbar" :aria-valuemin="0" :aria-valuemax="c.total" :aria-valuenow="c.done">
+        <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full" style="background: color-mix(in srgb, var(--text-dim) 25%, transparent)" role="progressbar" :aria-label="t(('ach_col_' + c.id) as DictKey)" :aria-valuemin="0" :aria-valuemax="c.total" :aria-valuenow="c.done">
           <div class="h-full rounded-full" :style="{ width: (c.total ? (c.done / c.total) * 100 : 0) + '%', background: 'var(--accent)' }"></div>
         </div>
         <p v-if="c.complete" class="col-done-label m-0 mt-2 text-xs font-medium" data-testid="collection-complete">{{ t('ach_col_complete') }}</p>

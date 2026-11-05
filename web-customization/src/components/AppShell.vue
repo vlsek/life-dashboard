@@ -418,6 +418,7 @@ onUnmounted(() => {
       style="background: var(--bg); color: var(--text); border-color: var(--border)"
       :value="themeVal"
       data-test="sidebar-theme-select"
+      :aria-label="t('theme_select_aria')"
       @change="onThemeChange"
     >
       <option v-for="key in themeOptions" :key="key" :value="key">{{ t(THEME_KEYS[key] as DictKey) }}</option>

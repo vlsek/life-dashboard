@@ -48,4 +48,15 @@ describe('кружок оценки дня в календаре', () => {
     await flushPromises()
     expect(w.find('[data-test="cal-mood"]').exists()).toBe(false)
   })
+  it('пустые ячейки-отступы сетки скрыты от скринридера и не берут фокус (axe: button-name)', async () => {
+    const w = mount(HistoryView, { props: { mode: 'calendar', show: defaultShow() } })
+    await flushPromises()
+    const empties = w.findAll('button[disabled]:not([data-date])')
+    expect(empties.length).toBeGreaterThan(0)
+    for (const b of empties) {
+      expect(b.attributes('aria-hidden')).toBe('true')
+      expect(b.attributes('tabindex')).toBe('-1')
+    }
+    expect(w.find(`[data-date="${day(3)}"]`).attributes('aria-hidden')).toBeUndefined()
+  })
 })

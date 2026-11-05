@@ -405,6 +405,7 @@ onUnmounted(() => {
       class="mx-1 mt-2 rounded-lg border px-2 py-1.5 text-sm"
       style="background: var(--bg); color: var(--text); border-color: var(--border)"
       :value="themeVal"
+      :aria-label="t('theme_select_aria')"
       @change="onThemeChange"
     >
       <option v-for="key in themeOptions" :key="key" :value="key">{{ t(THEME_KEYS[key] as DictKey) }}</option>
