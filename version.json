@@ -1,7 +1,14 @@
 {
-  "version": "7.79",
+  "version": "7.80",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.80",
+      "date": "2026-11-05 09:30",
+      "changes": [
+        "Theme: the accent is darker in the Dark (#3d72d4), Light (#a85a14) and Pink (#cc2a62) themes — white text on buttons is now readable (contrast at least 4.5 instead of about 3). Other themes already had enough contrast."
+      ]
+    },
     {
       "version": "7.79",
       "date": "2026-11-03 15:40",
@@ -5509,6 +5516,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.80",
+      "date": "2026-11-05 09:30",
+      "changes": [
+        "Тема: акцент стал темнее у тёмной (#3d72d4), светлой (#a85a14) и розовой (#cc2a62) тем — белый текст на кнопках теперь читается (контраст не ниже 4,5 вместо 3). У остальных тем контраст уже был достаточным."
+      ]
+    },
     {
       "version": "7.79",
       "date": "2026-11-03 15:40",

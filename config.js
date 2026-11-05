@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.79";
+const SITE_VERSION = "7.80";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.80", date: "2026-11-05 09:30", changes: [
+        "Тема: акцент стал темнее у тёмной (#3d72d4), светлой (#a85a14) и розовой (#cc2a62) тем — белый текст на кнопках теперь читается (контраст не ниже 4,5 вместо 3). У остальных тем контраст уже был достаточным.",
+    ]},
     { version: "7.79", date: "2026-11-03 15:40", changes: [
         "Тренировки: у упражнения с весом в активной тренировке появилась кнопка «Разминка» — она добавляет в начало упражнения три разминочных подхода (тип W, не выполнены): 40%, 60% и 80% рабочего веса на 8, 5 и 3 повтора, вес округляется до ближайших 2,5 кг (5 lb). Рабочий вес берётся из твоего первого введённого подхода, а если его ещё нет — из самого тяжёлого рабочего подхода прошлой тренировки. Разминочные подходы не считаются в объём, рекорды и итоги. Кнопка исчезает, когда разминка уже добавлена. Без миграций.",
     ]},
@@ -2947,6 +2950,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.80", date: "2026-11-05 09:30", changes: [
+        "Theme: the accent is darker in the Dark (#3d72d4), Light (#a85a14) and Pink (#cc2a62) themes — white text on buttons is now readable (contrast at least 4.5 instead of about 3). Other themes already had enough contrast.",
+    ]},
     { version: "7.79", date: "2026-11-03 15:40", changes: [
         "Workouts: a weighted exercise in the active workout now has a “Warm-up” button — it adds three warm-up sets (type W, not done) at the start of the exercise: 40%, 60% and 80% of the working weight for 8, 5 and 3 reps, with the weight rounded to the nearest 2.5 kg (5 lb). The working weight comes from your first entered set, or, if there is none yet, from the heaviest working set of the previous workout. Warm-up sets do not count towards volume, records or summaries. The button disappears once a warm-up is added. No migrations.",
     ]},
