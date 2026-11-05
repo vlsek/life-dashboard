@@ -23,3 +23,28 @@ export function addToNextDay(tomorrow: readonly PlannedEntry[], it: PlannedEntry
   if (tomorrow.some((x) => !x.done && sameItem(x, it))) return { list: [...tomorrow], duplicate: true }
   return { list: [...tomorrow, entryForNextDay(it)], duplicate: false }
 }
+
+// ── Вечерний шаг (BACKLOG 75.12, срез 2): перенести сразу несколько пунктов ──
+// Кандидаты на перенос — те же, что и у переноса одного пункта (canPostpone), с их позицией в плане дня.
+export function postponeCandidates(planned: readonly PlannedEntry[]): { index: number; item: PlannedEntry }[] {
+  const out: { index: number; item: PlannedEntry }[] = []
+  planned.forEach((item, index) => {
+    if (canPostpone(item)) out.push({ index, item })
+  })
+  return out
+}
+
+// Дописать несколько пунктов в план завтра по очереди с теми же правилами, что у одного: такой же невыполненный пункт там уже есть — не дублируем.
+// `moved` — какие из переданных пунктов «переехали» (добавлены или уже были завтра): именно их потом снимаем с сегодняшнего дня.
+export function addManyToNextDay(tomorrow: readonly PlannedEntry[], items: readonly PlannedEntry[]): { list: PlannedEntry[]; added: number; duplicates: number } {
+  let list: PlannedEntry[] = [...tomorrow]
+  let added = 0
+  let duplicates = 0
+  for (const it of items) {
+    const r = addToNextDay(list, it)
+    list = r.list
+    if (r.duplicate) duplicates++
+    else added++
+  }
+  return { list, added, duplicates }
+}

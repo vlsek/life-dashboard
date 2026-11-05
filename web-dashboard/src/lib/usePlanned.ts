@@ -27,7 +27,7 @@ import {
 
 import { friendlyError } from './friendlyError'
 import { createGoal, type GoalFormInput } from './newGoal'
-import { addToNextDay, canPostpone } from './planPostpone'
+import { addManyToNextDay, addToNextDay, canPostpone } from './planPostpone'
 import { applyTemplate, type TemplateItem } from './planTemplates'
 // Композабл блока «Планы» (раньше «Цели на сегодня») (план на день). Портировано из renderPlanned()/
 // openCarryOverModal() в dashboard.js. load(userId, date) — после auth 'ready' и при смене даты.
@@ -142,6 +142,35 @@ export function usePlanned() {
     if (at < 0) return true // уже снят
     return removeItem(at)
   }
+  // Перенести на завтра несколько пунктов за один раз (вечерний шаг, BACKLOG 75.12 срез 2). Порядок и гарантии те же, что у postponeItem:
+  // сначала план завтра (читаем, дописываем без дублей, ОДНА запись), потом одним сохранением снимаем эти пункты с сегодняшнего.
+  // Сбой первого шага — всё остаётся сегодня; второго — пункты в обоих днях (дубль лучше потери). Возвращает сколько пунктов снято с сегодняшнего
+  // дня и сколько из них завтра уже было, либо null при сбое.
+  async function postponeMany(indices: number[]): Promise<{ moved: number; alreadyThere: number } | null> {
+    const picked = [...new Set(indices)].map((i) => planned.value[i]).filter((x): x is PlannedEntry => !!x && canPostpone(x))
+    if (!picked.length || !userId) return null
+    const target = addDaysIso(date, 1)
+    const { data, error: readErr } = await sb.from('daily_notes').select('planned_goals').eq('user_id', userId).eq('date', target).maybeSingle()
+    if (readErr) {
+      error.value = friendlyError(readErr, 'load')
+      return null
+    }
+    const { list, added, duplicates } = addManyToNextDay(normalizePlanned(data?.planned_goals), picked)
+    if (added > 0) {
+      const { error: writeErr } = await sb.from('daily_notes').upsert({ user_id: userId, date: target, planned_goals: list }, { onConflict: 'user_id,date' })
+      if (writeErr) {
+        error.value = friendlyError(writeErr)
+        return null
+      }
+      notifyDataChanged({ source: 'plan', date: target })
+    }
+    // за время запросов список мог измениться: снимаем те же пункты (по ссылке, иначе по тексту и времени), чужие и изменённые не трогаем
+    const gone = (x: PlannedEntry) => picked.some((p) => p === x || (canPostpone(x) && x.text === p.text && (x.time ?? '') === (p.time ?? '')))
+    const next = planned.value.filter((x) => !gone(x))
+    const moved = planned.value.length - next.length
+    if (moved > 0 && !(await persist(next))) return null
+    return { moved, alreadyThere: duplicates }
+  }
   const setItemDone = (index: number, done: boolean) => persist(setCustomDone(planned.value, index, done, nowIfToday()))
   const editItem = (index: number, patch: { text: string; time?: string | null; doneAt?: string | null }) => persist(editCustom(planned.value, index, patch))
   const setItemTime = (index: number, time: string | null) => persist(setTimeAt(planned.value, index, time))
@@ -201,6 +230,6 @@ export function usePlanned() {
 
   return {
     planned, goals, loaded, loadedDate, error, notice, savedTick, load,
-    addCustomItem, addGoalItem, createGoalInPlan, removeItem, postponeItem, applyTemplateItems, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals,
+    addCustomItem, addGoalItem, createGoalInPlan, removeItem, postponeItem, postponeMany, applyTemplateItems, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals,
   }
 }

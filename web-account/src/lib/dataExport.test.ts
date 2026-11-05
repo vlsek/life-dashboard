@@ -106,8 +106,12 @@ describe('JSON и README', () => {
     expect(readme(r, 'en', tables)).toContain('books.csv — Books (1)')
   })
   it('имя файла с датой', () => {
-    expect(exportFileName('json', new Date('2026-11-01T10:00:00Z'))).toBe('life-dashboard-data-2026-11-01.json')
-    expect(exportFileName('zip', new Date('2026-11-01T10:00:00Z'))).toBe('life-dashboard-data-2026-11-01.zip')
+    expect(exportFileName('json', new Date(2026, 10, 1, 12))).toBe('life-dashboard-data-2026-11-01.json')
+    expect(exportFileName('zip', new Date(2026, 10, 1, 12))).toBe('life-dashboard-data-2026-11-01.zip')
+    // дата в имени — ЛОКАЛЬНАЯ, в любом часовом поясе: после полуночи и поздним вечером (toISOString давал бы вчера/завтра по UTC)
+    expect(exportFileName('json', new Date(2026, 10, 2, 0, 30))).toBe('life-dashboard-data-2026-11-02.json')
+    expect(exportFileName('json', new Date(2026, 10, 1, 23, 45))).toBe('life-dashboard-data-2026-11-01.json')
+    expect(exportFileName('zip', new Date(2027, 0, 1, 0, 5))).toBe('life-dashboard-data-2027-01-01.zip')
   })
 })
 

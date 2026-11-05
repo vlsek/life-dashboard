@@ -10,12 +10,13 @@ import { vCollapse } from '../lib/collapseMotion'
 import PlannedAddGoalModal from './PlannedAddGoalModal.vue'
 import PlannedCarryOverModal from './PlannedCarryOverModal.vue'
 import PlanTemplatesModal from './PlanTemplatesModal.vue'
+import PlanWrapUpModal from './PlanWrapUpModal.vue'
 import PlannedNewGoalModal from './PlannedNewGoalModal.vue'
 import PlannedRepeatsModal from './PlannedRepeatsModal.vue'
 import { ensureCategory, hasHorizonColumn, hasWeightColumn, loadBodyWeight, loadMyCategories, type GoalFormInput } from '../lib/newGoal'
 import { usePlanned } from '../lib/usePlanned'
 import { PLAN_MARK, PLAN_REQUEST, planSnapshotOf, publishPlanSnapshot, type PlanMarkDetail } from '../lib/planBridge'
-import { canPostpone } from '../lib/planPostpone'
+import { canPostpone, postponeCandidates } from '../lib/planPostpone'
 import { useRowSwipe } from '../lib/useRowSwipe'
 import { usePlanRepeats } from '../lib/usePlanRepeats'
 import { usePlanTemplates } from '../lib/usePlanTemplates'
@@ -35,7 +36,7 @@ import { stripEmoji } from '../lib/emojiText'
 const props = defineProps<{ userId: string | null; date?: string; switchable?: boolean }>()
 const emit = defineEmits<{ 'update:date': [value: string] }>()
 const day = computed(() => props.date ?? todayStr())
-const { planned, goals, loaded, loadedDate, error, postponeItem, applyTemplateItems, savedTick, load, addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals: monthGoalsOf } = usePlanned()
+const { planned, goals, loaded, loadedDate, error, postponeItem, postponeMany, applyTemplateItems, savedTick, load, addCustomItem, addGoalItem, createGoalInPlan, removeItem, toggleItemBonus, setItemDone, editItem, setItemTime, setGoalDone, loadCarryOver, carryOver, availableGoals, monthGoals: monthGoalsOf } = usePlanned()
 
 // Мост со списком «Осталось на сегодня» (BACKLOG 75.2, срез 2): публикуем снимок своих невыполненных пунктов и принимаем просьбу отметить.
 // Пишет в план только этот блок, поэтому второй копии состояния и гонки записей нет. Дату берём из loadedDate (а не из props): при листании
@@ -84,6 +85,24 @@ const swipe = useRowSwipe({
 })
 onBeforeUnmount(() => swipe.cancel())
 
+// Вечерний шаг (BACKLOG 75.12, срез 2): окно «что перенести на завтра» — только по кнопке, без всплывающих напоминаний.
+const wrapUpOpen = ref(false)
+const wrapUpError = ref('')
+const wrapUpBusy = ref(false)
+const wrapUpItems = computed(() => postponeCandidates(planned.value))
+async function wrapUpMove(indices: number[]) {
+  if (wrapUpBusy.value) return
+  wrapUpBusy.value = true
+  wrapUpError.value = ''
+  const r = await postponeMany(indices)
+  wrapUpBusy.value = false
+  if (!r) {
+    wrapUpError.value = t('wu_err')
+    return
+  }
+  wrapUpOpen.value = false
+  notice.value = `${t('wu_moved')} ${r.moved}` + (r.alreadyThere ? ` · ${t('wu_already')} ${r.alreadyThere}` : '')
+}
 // Шаблоны дня (BACKLOG 75.12, миграция 115): нет таблицы — кнопка и окно просто не показываются. Список грузим один раз на пользователя
 // (в отличие от повторов он не зависит от дня).
 const tpl = usePlanTemplates()
@@ -398,6 +417,7 @@ const collapsed = ref(false)
       <p class="dim mb-0 mt-2 text-xs"><EmojiText :text="t('dash_planned_bonus_hint')" /></p>
       <button v-if="rep.available.value" type="button" class="secondary mt-2" data-test="repeats-open" @click="repeatsOpen = true"><EmojiText :text="t('dash_repeat_manage_btn')" /></button>
       <button v-if="tpl.available.value" type="button" class="secondary mt-2" data-test="templates-open" @click="templatesOpen = true">{{ t('pt_btn') }}</button>
+      <button v-if="wrapUpItems.length > 0" type="button" class="secondary mt-2" data-test="wrapup-open" @click="wrapUpOpen = true">{{ t('wu_btn') }}</button>
 
       <div v-if="perm !== 'unsupported' && perm !== 'granted'" class="mt-2 text-sm" data-test="notify">
         <button v-if="perm === 'default'" type="button" class="secondary" data-test="notify-enable" @click="enableNotifications"><EmojiText :text="t('plan_notify_enable_btn')" /></button>
@@ -411,6 +431,7 @@ const collapsed = ref(false)
   </section>
 
   <PlannedAddGoalModal v-if="goalPicker" :goals="goalPicker" @close="goalPicker = null" @pick="pickGoal" />
+  <PlanWrapUpModal v-if="wrapUpOpen" :items="wrapUpItems" :busy="wrapUpBusy" :error="wrapUpError" @close="wrapUpOpen = false; wrapUpError = ''" @move="wrapUpMove" />
   <PlanTemplatesModal v-if="templatesOpen" :templates="tpl.templates.value" :savable-count="itemsFromPlan(planned).length" :save="saveTemplate" :remove="tpl.remove" @close="templatesOpen = false" @apply="applyTpl" />
   <PlannedRepeatsModal v-if="repeatsOpen" :repeats="rep.repeats.value" :add="(text, time, schedule) => rep.add(userId as string, text, time, schedule)" :update="rep.update" :remove="rep.remove" @close="repeatsOpen = false" />
   <PlannedNewGoalModal v-if="newGoalOpen" :categories="myCategories" :no-category-labels="noCategoryLabels()" :horizon-column="horizonColumn" :weight-column="weightColumn" :current-weight="bodyWeight" :submit="submitNewGoal" @close="newGoalOpen = false" />

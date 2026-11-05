@@ -6,7 +6,7 @@ import { unitToSave } from './weightUnit'
 import { getMuscleOverride, renameMuscleOverride, setMuscleOverride } from './muscles'
 import { planMuscleSync, type SyncRow } from './muscleSync'
 import { createLinkedMetric, linkMetric, loadMetricLinks, syncLinkedMetrics, unlinkMetric, type LinkedMetric } from './metricLink'
-import { todayStr } from './date'
+import { fmtDate, todayStr } from './date'
 import { outboxFor, qDelete, qInsert, qUpdate } from './outboxClient'
 import { applyPendingWorkouts, WORKOUT_TABLES } from './workoutOverlay'
 import { entryRow, sessionRow, type FinishResult } from './activeWorkout'
@@ -149,7 +149,7 @@ export function useWorkouts() {
     studyRecent.value = false
     const since = new Date()
     since.setDate(since.getDate() - 3)
-    const sinceIso = since.toISOString().slice(0, 10)
+    const sinceIso = fmtDate(since) // локальная дата (toISOString — это UTC: ночью по Вильнюсу окно «3 дня» съезжало на сутки)
 
     const { data: categories } = await sb.from('metric_categories').select('id, key, label_ru, label_en')
     const studyCategoryIds = (categories || [])
