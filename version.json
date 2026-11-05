@@ -1,7 +1,14 @@
 {
-  "version": "7.78",
+  "version": "7.79",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.79",
+      "date": "2026-11-03 15:40",
+      "changes": [
+        "Workouts: a weighted exercise in the active workout now has a “Warm-up” button — it adds three warm-up sets (type W, not done) at the start of the exercise: 40%, 60% and 80% of the working weight for 8, 5 and 3 reps, with the weight rounded to the nearest 2.5 kg (5 lb). The working weight comes from your first entered set, or, if there is none yet, from the heaviest working set of the previous workout. Warm-up sets do not count towards volume, records or summaries. The button disappears once a warm-up is added. No migrations."
+      ]
+    },
     {
       "version": "7.78",
       "date": "2026-11-05 09:00",
@@ -5502,6 +5509,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.79",
+      "date": "2026-11-03 15:40",
+      "changes": [
+        "Тренировки: у упражнения с весом в активной тренировке появилась кнопка «Разминка» — она добавляет в начало упражнения три разминочных подхода (тип W, не выполнены): 40%, 60% и 80% рабочего веса на 8, 5 и 3 повтора, вес округляется до ближайших 2,5 кг (5 lb). Рабочий вес берётся из твоего первого введённого подхода, а если его ещё нет — из самого тяжёлого рабочего подхода прошлой тренировки. Разминочные подходы не считаются в объём, рекорды и итоги. Кнопка исчезает, когда разминка уже добавлена. Без миграций."
+      ]
+    },
     {
       "version": "7.78",
       "date": "2026-11-05 09:00",
