@@ -35,24 +35,44 @@ export interface WeeklyStreakResult {
 
 // Серия для метрики "не менее N раз в неделю": считается в неделях (пн-вс). Текущая неделя,
 // пока норма не добрана, серию не рвёт — просто ещё не засчитана.
-export function computeWeeklyStreak(doneDays: string[], min: number, todayDate: Date): WeeklyStreakResult {
+export function computeWeeklyStreak(doneDays: string[], min: number, todayDate: Date, isPaused: (d: string) => boolean = () => false): WeeklyStreakResult {
   const counts: Record<string, number> = {}
   doneDays.forEach((d) => {
     const k = weekStartStr(d)
     counts[k] = (counts[k] || 0) + 1
   })
+  // BACKLOG 81.5: пауза (отпуск/больничный). Неделя, целиком на паузе, не считается и не рвёт серию; на частично паузной неделе норма
+  // уменьшается до числа непаузных дней, если иначе её не набрать.
+  const pausedIn = (weekStart: Date): number => {
+    let n = 0
+    for (let k = 0; k < 7; k++) {
+      const d = new Date(weekStart)
+      d.setDate(d.getDate() + k)
+      if (isPaused(fmtDate(d))) n++
+    }
+    return n
+  }
+  const need = (weekStart: Date): number => Math.min(min, 7 - pausedIn(weekStart))
   const cur = new Date(weekStartStr(fmtDate(todayDate)) + 'T00:00:00')
   const curCount = counts[fmtDate(cur)] || 0
-  let streak = curCount >= min ? 1 : 0
+  const curPaused = pausedIn(cur)
+  const curNeed = curPaused >= 7 ? 0 : need(cur)
+  let streak = curPaused < 7 && curCount >= curNeed ? 1 : 0
   for (let i = 0; i < 520; i++) {
     cur.setDate(cur.getDate() - 7)
-    if ((counts[fmtDate(cur)] || 0) >= min) streak++
+    if (pausedIn(cur) >= 7) continue
+    if ((counts[fmtDate(cur)] || 0) >= need(cur)) streak++
     else break
   }
-  // под угрозой, если добрать норму можно только выполняя метрику каждый из оставшихся дней
-  const needed = min - curCount
-  const daysLeft = 7 - ((todayDate.getDay() + 6) % 7) // включая сегодня
-  return { streak, atRisk: needed > 0 && needed >= daysLeft }
+  // под угрозой, если добрать норму можно только выполняя метрику каждый из оставшихся (непаузных) дней
+  const needed = curNeed - curCount
+  let daysLeft = 0
+  for (let k = (todayDate.getDay() + 6) % 7; k < 7; k++) {
+    const d = new Date(weekStartStr(fmtDate(todayDate)) + 'T00:00:00')
+    d.setDate(d.getDate() + k)
+    if (!isPaused(fmtDate(d))) daysLeft++
+  }
+  return { streak, atRisk: curPaused < 7 && needed > 0 && needed >= daysLeft }
 }
 
 // Серия для метрики "не чаще N раз в неделю": в отличие от "не менее", превышение лимита нельзя
@@ -156,7 +176,7 @@ export function computeStreakItemsPure(
     const doneDays = new Set(Object.keys(byDay).filter((d) => isMetricDone(m, byDay[d][m.id] as any, d)))
     const sched = metricSchedule(m)
     if (sched?.type === 'weekly') {
-      const w = computeWeeklyStreak([...doneDays], sched.min, today)
+      const w = computeWeeklyStreak([...doneDays], sched.min, today, isPaused)
       if (w.streak > 0) items.push({ kind: 'metric', metric: m, streak: w.streak, unit: 'w', todayCounted: !w.atRisk })
       continue
     }

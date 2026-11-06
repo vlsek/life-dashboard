@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.95";
+const SITE_VERSION = "7.96";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.96", date: "2026-11-06 16:00", changes: [
+        "«Дашборд»: пауза «Отпуск / больничный» теперь учитывается и в недельных сериях («N раз в неделю»): неделя целиком на паузе не рвёт серию и не считается, на частично паузной неделе норма уменьшается до числа непаузных дней.",
+    ]},
     { version: "7.95", date: "2026-11-04 12:10", changes: [
         "Магазин: проверил его в настоящем браузере (телефон и ПК, светлая и тёмная тема, все три вида) и исправил найденное. Очень длинное название вещи без пробелов больше не вылезает за карточку в «Витрине» и не раздвигает страницу. У кнопки удаления вещи появилась подпись для скринридеров («Удалить товар»). Кнопка подсказки «как это работает» и переключатель «Откуда мои огоньки» на компьютере стали достаточно крупными, чтобы в них было легко попасть. Без миграций.",
     ]},
@@ -2995,6 +2998,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.96", date: "2026-11-06 16:00", changes: [
+        "Dashboard: the “Vacation / sick leave” pause now also applies to weekly streaks (“N times a week”): a fully paused week neither breaks nor counts, and on a partly paused week the target shrinks to the number of unpaused days.",
+    ]},
     { version: "7.95", date: "2026-11-04 12:10", changes: [
         "Shop: checked in a real browser (phone and desktop, light and dark theme, all three views) and fixed what turned up. A very long item name without spaces no longer sticks out of the card in “Showcase” and widen the page. The item delete button now has a label for screen readers (“Delete item”). The “how it works” hint button and the “Where my sparks come from” toggle are now big enough to hit easily on a desktop. No migrations.",
     ]},

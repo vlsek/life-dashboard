@@ -103,3 +103,34 @@ describe('pause state', () => {
     expect(pauses.value).toEqual([])
   })
 })
+
+describe('weekly streaks with pauses', () => {
+  // сегодня — вторник 2026-11-10; недели пн–вс: 11-02, 11-09, 10-26, 10-19
+  const tue = new Date(2026, 10, 10)
+  const days = (...d: string[]) => d
+  const range = (a: string, b: string) => (d: string) => d >= a && d <= b
+  it('no pause: unchanged', async () => {
+    const { computeWeeklyStreak } = await import('./streaks')
+    const done = days('2026-11-03', '2026-11-04', '2026-11-05', '2026-10-27', '2026-10-28', '2026-10-29')
+    expect(computeWeeklyStreak(done, 3, tue).streak).toBe(2)
+  })
+  it('fully paused week is skipped, does not break and does not count', async () => {
+    const { computeWeeklyStreak } = await import('./streaks')
+    const done = days('2026-10-27', '2026-10-28', '2026-10-29') // неделя 10-26 выполнена; неделя 11-02 — целиком пауза
+    expect(computeWeeklyStreak(done, 3, tue).streak).toBe(0)
+    expect(computeWeeklyStreak(done, 3, tue, range('2026-11-02', '2026-11-08')).streak).toBe(1)
+  })
+  it('partly paused week needs only the unpaused days', async () => {
+    const { computeWeeklyStreak } = await import('./streaks')
+    // норма 5 раз в неделю; неделя 11-02: пауза 4 дня (пн–чт) → достаточно 3 выполнений
+    const done = days('2026-11-06', '2026-11-07', '2026-11-08')
+    expect(computeWeeklyStreak(done, 5, tue).streak).toBe(0)
+    expect(computeWeeklyStreak(done, 5, tue, range('2026-11-02', '2026-11-05')).streak).toBe(1)
+  })
+  it('current week fully paused is not at risk', async () => {
+    const { computeWeeklyStreak } = await import('./streaks')
+    const r = computeWeeklyStreak(days('2026-11-03', '2026-11-04', '2026-11-05'), 3, tue, range('2026-11-09', '2026-11-15'))
+    expect(r.atRisk).toBe(false)
+    expect(r.streak).toBe(1)
+  })
+})

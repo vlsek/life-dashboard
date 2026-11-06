@@ -1,7 +1,14 @@
 {
-  "version": "7.95",
+  "version": "7.96",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.96",
+      "date": "2026-11-06 16:00",
+      "changes": [
+        "Dashboard: the “Vacation / sick leave” pause now also applies to weekly streaks (“N times a week”): a fully paused week neither breaks nor counts, and on a partly paused week the target shrinks to the number of unpaused days."
+      ]
+    },
     {
       "version": "7.95",
       "date": "2026-11-04 12:10",
@@ -5621,6 +5628,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.96",
+      "date": "2026-11-06 16:00",
+      "changes": [
+        "«Дашборд»: пауза «Отпуск / больничный» теперь учитывается и в недельных сериях («N раз в неделю»): неделя целиком на паузе не рвёт серию и не считается, на частично паузной неделе норма уменьшается до числа непаузных дней."
+      ]
+    },
     {
       "version": "7.95",
       "date": "2026-11-04 12:10",
