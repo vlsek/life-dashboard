@@ -27,7 +27,7 @@ import App from './App.vue'
 import Toast from './components/Toast.vue'
 import { showToast } from './lib/toast'
 
-const ex = { id: 'e1', user_id: 'u1', name: 'Жим', category: 'Грудь', tracks_weight: true, unit: 'кг', value_label: null, suggested_scheme: null, tracks_duration: false, created_at: '2026-01-01' }
+const ex = { id: 'e1', user_id: 'u1', name: 'Жим лёжа', category: 'Грудь', tracks_weight: true, unit: 'кг', value_label: null, suggested_scheme: null, tracks_duration: false, created_at: '2026-01-01' }
 async function mountApp() {
   const w = mount(App, { attachTo: document.body })
   await flushPromises()
@@ -95,6 +95,24 @@ describe('главная «Тренировки» (69.17, срез 1)', () => {
     const t = mount(Toast, { global: { stubs: { transition: false } } })
     expect(t.html()).toContain('bottom-20')
     t.unmount()
+    w.unmount()
+  })
+})
+
+describe('главная «Тренировки»: срез 2 — карточка «Сегодня можно тренировать» и «Недавние»', () => {
+  it('на странице есть карточка фокуса над кнопками действий (при наличии упражнений)', async () => {
+    const w = await mountApp()
+    const focus = w.find('[data-testid="start-focus"]')
+    expect(focus.exists()).toBe(true)
+    const html = w.html()
+    expect(html.indexOf('data-testid="start-focus"')).toBeLessThan(html.indexOf('data-testid="start-actions"'))
+    w.unmount()
+  })
+  it('без упражнений ни карточки фокуса, ни недавних нет', async () => {
+    h.exercises = []
+    const w = await mountApp()
+    expect(w.find('[data-testid="start-focus"]').exists()).toBe(false)
+    expect(w.find('[data-testid="recent-workouts"]').exists()).toBe(false)
     w.unmount()
   })
 })

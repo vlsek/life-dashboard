@@ -34,6 +34,8 @@ import WeekStreak from './components/WeekStreak.vue'
 import TodayPanel from './components/TodayPanel.vue'
 import ActiveWorkout from './components/ActiveWorkout.vue'
 import RoutinesList from './components/RoutinesList.vue'
+import StartFocus from './components/StartFocus.vue'
+import RecentWorkouts from './components/RecentWorkouts.vue'
 import WorkoutSummary from './components/WorkoutSummary.vue'
 import PastWorkoutForm from './components/PastWorkoutForm.vue'
 import type { ActiveDraft } from './lib/activeWorkout'
@@ -548,6 +550,8 @@ function onToggleProgramWeek(week: number) {
   <main class="mx-auto max-w-3xl px-4 pb-24 pt-6 sm:pb-16">
     <h1 class="mb-3 text-xl font-bold"><EmojiText :text="t('workouts_h1')" /></h1>
 
+    <StartFocus v-if="auth.status === 'ready'" :entries="entries" :exercises="exercises" :today="todayStr()" />
+
     <div class="mb-4 flex flex-wrap gap-2" data-testid="start-actions">
       <button
         type="button"
@@ -619,6 +623,8 @@ function onToggleProgramWeek(week: number) {
       <p v-else-if="exercises.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('workouts_empty') }}</p>
 
       <RoutinesList v-if="exercises.length > 0" :exercises="exercises" :disabled="aw.active.value" @start="onStartRoutine" />
+
+      <RecentWorkouts v-if="exercises.length > 0" :entries="entries" :exercises="exercises" :sessions="sessions" :today="todayStr()" @open-journal="setTab('journal')" />
 
       <TodayPanel v-if="exercises.length > 0" :entries="entries" :exercises="exercises" :busy-id="quickBusyId" @add-set="onAddSet" />
 
