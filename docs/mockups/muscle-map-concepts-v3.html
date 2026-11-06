@@ -149,6 +149,7 @@ c:['C / MECHANICAL FRAME','C — механический каркас','Тел�
 let mode='a',view='front',period='recent',selected='chest';
 function visibleTargets(){return [...document.querySelectorAll('.mode-'+mode+' .'+view+'-model [data-muscle]')];}
 function focusSelected(){const el=visibleTargets().find(x=>x.dataset.muscle===selected);if(el)el.focus();}
+function focusListSelected(){const el=[...document.querySelectorAll('#muscleList button')].find(x=>x.dataset.muscle===selected);if(el)el.focus();}
 function render(){
  body.classList.remove('mode-a','mode-b','mode-c','view-front','view-back');body.classList.add('mode-'+mode,'view-'+view);
  document.querySelectorAll('[data-mode]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.mode===mode)));
@@ -162,9 +163,9 @@ function render(){
   el.setAttribute('tabindex','0');el.setAttribute('role','button');el.setAttribute('aria-pressed',String(id===selected));
   el.setAttribute('aria-label',(names[id]||id)+(has?', есть записи':', нет записей'));
  });
- document.querySelectorAll('.machine-model [data-node-for]').forEach(el=>el.classList.toggle('node-selected',el.dataset.nodeFor===selected));
+ document.querySelectorAll('.machine-model [data-node-for]').forEach(el=>{const inActiveProjection=el.closest('.'+view+'-model')!==null;el.classList.toggle('node-selected',inActiveProjection&&el.dataset.nodeFor===selected)});
  const ids=[...new Set(visibleTargets().map(x=>x.dataset.muscle))],list=document.getElementById('muscleList');
- list.replaceChildren(...ids.map(id=>{const b=document.createElement('button');b.type='button';b.textContent=names[id]||id;b.setAttribute('aria-pressed',String(id===selected));b.addEventListener('click',()=>{selected=id;render();focusSelected()});return b}));
+ list.replaceChildren(...ids.map(id=>{const b=document.createElement('button');b.type='button';b.dataset.muscle=id;b.textContent=names[id]||id;b.setAttribute('aria-pressed',String(id===selected));b.addEventListener('click',()=>{selected=id;render();focusListSelected()});return b}));
  const vals=data[selected]||[0,0],has=period==='recent'?vals[0]>0:vals[1]>0;
  document.getElementById('muscleName').textContent=names[selected]||'Мышца';
  document.getElementById('sessions').textContent=period==='recent'?vals[0]:Math.round(vals[1]/6);
