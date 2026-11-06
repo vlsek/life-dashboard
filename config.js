@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.89";
+const SITE_VERSION = "7.90";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.90", date: "2026-11-04 10:00", changes: [
+        "Магазин: покупка стала надёжнее. Двойное нажатие «Купить» больше не отправляет покупку дважды, а если вещь уже куплена (список устарел), магазин так и скажет — «Эта вещь уже куплена», не перезаписывая дату покупки. Если при покупке, переносе из архива или удалении пропала связь, вместо технического текста с адресом сервера покажется понятное «Нет связи с сервером». Без миграций.",
+    ]},
     { version: "7.89", date: "2026-11-06 11:00", changes: [
         "Тренировки: в окне упражнения (кнопка-кубок) добавилась вкладка «О нём»: категория, целевые мышцы (свои или по справочнику), рекомендуемая схема и сколько тренировок с этим упражнением уже было — с датой первой и последней.",
     ]},
@@ -2977,6 +2980,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.90", date: "2026-11-04 10:00", changes: [
+        "Shop: buying is now more reliable. Double-tapping “Buy” no longer sends the purchase twice, and if an item is already bought (the list was stale) the shop says so — “This item is already bought” — without overwriting the purchase date. If the connection drops during a purchase, a transfer from the archive or a delete, you now see a clear “No connection to the server” instead of technical text with the server address. No migrations.",
+    ]},
     { version: "7.89", date: "2026-11-06 11:00", changes: [
         "Workouts: the exercise window (trophy button) got an “About” tab: category, target muscles (your own or from the reference), suggested scheme and how many workouts you have done with it — with the first and last dates.",
     ]},

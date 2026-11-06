@@ -1,7 +1,14 @@
 {
-  "version": "7.89",
+  "version": "7.90",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.90",
+      "date": "2026-11-04 10:00",
+      "changes": [
+        "Shop: buying is now more reliable. Double-tapping “Buy” no longer sends the purchase twice, and if an item is already bought (the list was stale) the shop says so — “This item is already bought” — without overwriting the purchase date. If the connection drops during a purchase, a transfer from the archive or a delete, you now see a clear “No connection to the server” instead of technical text with the server address. No migrations."
+      ]
+    },
     {
       "version": "7.89",
       "date": "2026-11-06 11:00",
@@ -5579,6 +5586,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.90",
+      "date": "2026-11-04 10:00",
+      "changes": [
+        "Магазин: покупка стала надёжнее. Двойное нажатие «Купить» больше не отправляет покупку дважды, а если вещь уже куплена (список устарел), магазин так и скажет — «Эта вещь уже куплена», не перезаписывая дату покупки. Если при покупке, переносе из архива или удалении пропала связь, вместо технического текста с адресом сервера покажется понятное «Нет связи с сервером». Без миграций."
+      ]
+    },
     {
       "version": "7.89",
       "date": "2026-11-06 11:00",
