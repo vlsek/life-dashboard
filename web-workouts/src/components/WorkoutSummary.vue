@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { t, type DictKey } from '../lib/i18n'
 import { fmtVolume, type WorkoutSummaryData } from '../lib/summary'
 import { prSetText } from '../lib/records'
+import ShareSummaryCard from './ShareSummaryCard.vue'
 import type { Exercise } from '../lib/types'
 
 // Окно итогов после «Завершить» (BACKLOG 69.10, срез 1): плитки (время, подходы, объём, упражнения), рекорды, задействованные мышцы.
@@ -59,6 +60,7 @@ const tiles = computed(() => [
           <button type="button" class="rounded-lg border py-2 text-sm font-semibold" style="border-color: var(--accent); color: var(--accent); min-height: 44px" data-testid="sm-save-meta" @click="saveMeta">{{ t('rt_ok') }}</button>
         </div>
       </div>
+      <ShareSummaryCard :data="data" :exercises="exercises" :unit="unit" :date="new Date().toLocaleDateString()" />
       <button type="button" class="w-full rounded-lg py-3 font-semibold" style="background: var(--accent); color: var(--accent-text); min-height: 48px" data-testid="sm-close" @click="emit('close')">{{ t('sm_done') }}</button>
     </div>
   </div>

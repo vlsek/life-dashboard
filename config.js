@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.02";
+const SITE_VERSION = "8.03";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.03", date: "2026-11-07 12:00", changes: [
+        "Тренировки: в итогах после «Завершить» появилась кнопка «Поделиться картинкой». Собирается карточка 1080×1350 — название тренировки (или «Тренировка завершена»), дата, время, рабочие подходы, объём, упражнения, до пяти рекордов и список мышц; без аватара и заметки. Сначала превью, потом «Скачать» или «Отправить» (если телефон умеет делиться файлом).",
+    ]},
     { version: "8.02", date: "2026-11-03 19:00", changes: [
         "Тренировки: рутины на главной теперь карусель карточек, как в утверждённом макете. Каждая рутина — карточка с названием, числом упражнений, составом (до трёх упражнений) и крупной кнопкой «Начать»; рядом копирование и удаление. Карточки листаются пальцем вбок и «примагничиваются»; на компьютере они фиксированной ширины. Старт, копирование и удаление работают как раньше, удаление по-прежнему спрашивает подтверждение. Без миграций."
     ]},
@@ -3016,6 +3019,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.03", date: "2026-11-07 12:00", changes: [
+        "Workouts: the summary after “Finish” now has a “Share as a picture” button. It builds a 1080×1350 card with the workout name (or “Workout finished”), date, time, working sets, volume, exercises, up to five records and the muscles list; no avatar and no note. Preview first, then “Download” or “Share” (if the phone can share a file).",
+    ]},
     { version: "8.02", date: "2026-11-03 19:00", changes: [
         "Workouts: routines on the home screen are now a carousel of cards, as in the approved mockup. Each routine is a card with its name, number of exercises, a short list (up to three exercises) and a big “Start” button; copy and delete sit next to it. Cards swipe sideways and snap into place; on a computer they have a fixed width. Start, copy and delete work as before, and deleting still asks for confirmation. No migrations."
     ]},

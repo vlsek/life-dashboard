@@ -1,7 +1,14 @@
 {
-  "version": "8.02",
+  "version": "8.03",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.03",
+      "date": "2026-11-07 12:00",
+      "changes": [
+        "Workouts: the summary after “Finish” now has a “Share as a picture” button. It builds a 1080×1350 card with the workout name (or “Workout finished”), date, time, working sets, volume, exercises, up to five records and the muscles list; no avatar and no note. Preview first, then “Download” or “Share” (if the phone can share a file)."
+      ]
+    },
     {
       "version": "8.02",
       "date": "2026-11-03 19:00",
@@ -5670,6 +5677,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.03",
+      "date": "2026-11-07 12:00",
+      "changes": [
+        "Тренировки: в итогах после «Завершить» появилась кнопка «Поделиться картинкой». Собирается карточка 1080×1350 — название тренировки (или «Тренировка завершена»), дата, время, рабочие подходы, объём, упражнения, до пяти рекордов и список мышц; без аватара и заметки. Сначала превью, потом «Скачать» или «Отправить» (если телефон умеет делиться файлом)."
+      ]
+    },
     {
       "version": "8.02",
       "date": "2026-11-03 19:00",
