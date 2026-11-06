@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
-import { exerciseBests, prSetText } from '../lib/records'
+import { exerciseBests, exerciseHistory, prSetText } from '../lib/records'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 
 // «Рекорды» упражнения (BACKLOG 69.9, срез 2): лучшие значения за всё время и «повторы на весе».
 const props = defineProps<{ exercise: Exercise; entries: WorkoutEntry[]; unit: string }>()
 const emit = defineEmits<{ close: [] }>()
+const tab = ref<'records' | 'history'>('records')
+const history = computed(() => exerciseHistory(props.entries.filter((e) => e.exercise_id === props.exercise.id)))
 const unit = computed(() => props.exercise.unit || props.unit)
 const b = computed(() => exerciseBests(props.entries.filter((e) => e.exercise_id === props.exercise.id)))
 const num = (v: number) => String(Math.round(v * 10) / 10).replace('.', ',')
@@ -25,6 +27,19 @@ const rows = computed(() => {
   <div class="fixed inset-0 z-[70] flex items-end justify-center sm:items-center" style="background: rgba(0, 0, 0, 0.6)" data-testid="records-modal" @click.self="emit('close')">
     <div class="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-2xl border p-5 sm:rounded-2xl" style="background: var(--bg-card); border-color: var(--border); color: var(--text)" role="dialog" aria-modal="true">
       <h2 class="mb-3 text-lg font-bold">★ {{ t('rec_title') }} — {{ exercise.name }}</h2>
+      <div class="mb-3 flex gap-2" role="tablist">
+        <button v-for="k in (['records', 'history'] as const)" :key="k" type="button" role="tab" class="flex-1 rounded-lg border py-2 text-sm" :style="'min-height: 40px; border-color: ' + (tab === k ? 'var(--accent)' : 'var(--border)') + '; color: ' + (tab === k ? 'var(--accent)' : 'var(--text-dim)')" :aria-selected="tab === k" :data-testid="'rec-tab-' + k" @click="tab = k">{{ k === 'records' ? t('rec_tab_records') : t('rec_tab_history') }}</button>
+      </div>
+      <template v-if="tab === 'history'">
+        <p v-if="!history.length" class="py-4 text-sm" style="color: var(--text-dim)" data-testid="hist-empty">{{ t('rec_hist_empty') }}</p>
+        <ul v-else class="mb-4 text-sm" data-testid="hist-list">
+          <li v-for="h in history" :key="h.date" class="border-b py-2" style="border-color: var(--border)" :data-testid="'hist-' + h.date">
+            <div class="flex justify-between gap-2"><b>{{ h.date }}</b><span class="text-xs" style="color: var(--text-dim)"><template v-if="h.volume">{{ num(h.volume) }} {{ unit }} · </template>{{ h.sets.length }} {{ t('rec_sets') }}<template v-if="h.warmups"> · +{{ h.warmups }} W</template></span></div>
+            <div class="tabular-nums" style="color: var(--text-dim)">{{ h.sets.join(' · ') }}</div>
+          </li>
+        </ul>
+      </template>
+      <template v-else>
       <p v-if="!rows.length" class="py-4 text-sm" style="color: var(--text-dim)" data-testid="records-empty">{{ t('rec_empty') }}</p>
       <ul v-else class="mb-4 text-sm">
         <li v-for="r in rows" :key="r.k" class="flex items-baseline justify-between gap-2 border-b py-2" style="border-color: var(--border)" :data-testid="'rec-' + r.k">
@@ -38,6 +53,7 @@ const rows = computed(() => {
           <li v-for="r in b.repsAt" :key="r.weight" class="flex justify-between py-0.5"><span class="tabular-nums">{{ num(r.weight) }} {{ unit }}</span><span><b>× {{ r.reps }}</b> <span class="text-xs" style="color: var(--text-dim)">{{ r.date }}</span></span></li>
         </ul>
       </div>
+      </template>
       <button type="button" class="w-full rounded-lg border py-2 text-sm" style="border-color: var(--border); min-height: 44px" data-testid="records-close" @click="emit('close')">{{ t('close') }}</button>
     </div>
   </div>

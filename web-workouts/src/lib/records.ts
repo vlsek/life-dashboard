@@ -1,6 +1,6 @@
 // Рекорды прямо во время тренировки (BACKLOG 69.9, срез 1): чистая логика. Рабочие подходы выполненные (без разминки), история — записи ДО даты тренировки.
 // Первый подход в жизни упражнения рекордом не считаем (шум), равное значение — не рекорд. Внутри одной тренировки планка растёт: второй такой же подход не рекорд.
-import { isWorking } from './sessionContract'
+import { isDone, isWorking, setType } from './sessionContract'
 import type { SetV2 } from './sessionContract'
 
 export type PRKind = 'weight' | 'e1rm' | 'reps' | 'volume' | 'duration'
@@ -81,4 +81,26 @@ export function exerciseBests(entries: readonly { date: string; sets: readonly S
   }
   out.repsAt = [...at].map(([weight, v]) => ({ weight, ...v })).sort((a, b) => b.weight - a.weight).slice(0, maxRepRows)
   return out
+}
+
+// История упражнения (BACKLOG 69.12, срез 1): тренировки от свежих к старым, подходы коротко «60×8». Разминка — только числом.
+export interface HistoryRow { date: string; sets: string[]; warmups: number; volume: number }
+const shortSet = (s: SetV2): string => {
+  const w = s.weight ?? 0, r = s.reps ?? 0
+  return w > 0 ? `${String(w).replace('.', ',')}×${r || ''}`.replace(/×$/, '') : r > 0 ? String(r) : s.duration ? `${s.duration}'` : ''
+}
+export function exerciseHistory(entries: readonly { date: string; sets: readonly SetV2[] | null }[], limit = 30): HistoryRow[] {
+  const by = new Map<string, HistoryRow>()
+  for (const e of entries) {
+    const row = by.get(e.date) ?? { date: e.date, sets: [], warmups: 0, volume: 0 }
+    for (const s of e.sets ?? []) {
+      if (setType(s) === 'warmup') { row.warmups++; continue }
+      if (!isDone(s)) continue
+      const t = shortSet(s)
+      if (t) row.sets.push(t)
+      row.volume += (s.weight ?? 0) * (s.reps ?? 0)
+    }
+    by.set(e.date, row)
+  }
+  return [...by.values()].filter((r) => r.sets.length || r.warmups).sort((a, b) => b.date.localeCompare(a.date)).slice(0, limit)
 }

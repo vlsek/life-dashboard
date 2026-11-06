@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { e1rm, prSetText, setRecords, topKind, exerciseBests } from './records'
+import { e1rm, prSetText, setRecords, topKind, exerciseBests, exerciseHistory } from './records'
 import type { SetV2 } from './sessionContract'
 
 const st = (reps: number | null, weight: number | null, x: Partial<SetV2> = {}): SetV2 => ({ reps, weight, time: null, duration: null, side: null, done: true, ...x })
@@ -56,5 +56,24 @@ describe('exerciseBests (страница «Рекорды»)', () => {
     expect(exerciseBests([])).toMatchObject({ weight: null, reps: null, repsAt: [] })
     const b = exerciseBests([{ date: '2026-01-01', sets: [{ reps: 15, weight: null, time: null, duration: 20, side: null }] }])
     expect(b.reps).toMatchObject({ value: 15, weight: null }); expect(b.duration?.value).toBe(20); expect(b.weight).toBeNull()
+  })
+})
+
+describe('exerciseHistory', () => {
+  const st = (weight: number | null, reps: number | null, extra: object = {}) => ({ reps, weight, time: null, duration: null, side: null, ...extra })
+  it('свежие сверху; подходы коротко; разминка числом; невыполненные не показываются; одна дата из двух записей сливается', () => {
+    const h = exerciseHistory([
+      { date: '2026-01-01', sets: [st(60, 8), st(62.5, 6)] },
+      { date: '2026-02-01', sets: [st(40, 10, { type: 'warmup' }), st(70, 5), st(70, 5, { done: false })] },
+      { date: '2026-02-01', sets: [st(null, 12)] },
+    ])
+    expect(h.map((r) => r.date)).toEqual(['2026-02-01', '2026-01-01'])
+    expect(h[0]).toMatchObject({ sets: ['70×5', '12'], warmups: 1, volume: 350 })
+    expect(h[1].sets).toEqual(['60×8', '62,5×6'])
+  })
+  it('лимит и пустые дни', () => {
+    const many = Array.from({ length: 40 }, (_, i) => ({ date: `2026-01-${String(i + 1).padStart(2, '0')}`, sets: [st(10, 5)] }))
+    expect(exerciseHistory(many, 5)).toHaveLength(5)
+    expect(exerciseHistory([{ date: '2026-01-01', sets: [] }])).toEqual([])
   })
 })
