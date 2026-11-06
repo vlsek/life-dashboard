@@ -3,6 +3,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useActiveWorkout } from '../lib/useActiveWorkout'
 import { categoriesOf, rankExercises } from '../lib/exercisePick'
 import { progressionHint } from '../lib/progressionHint'
+import PlateCalculator from './PlateCalculator.vue'
 import { warmupPlan, workingWeightFor, hasWarmup, parseScheme, formatScheme, readScheme, writeScheme, resetScheme } from '../lib/warmupGen'
 import { supersetPos, doneSetCount, formatElapsed, previousSet, previousSets, previousText, lastNote, nextSupersetTarget, stepNumber, weightStep, NOTE_MAX, type PrevSource } from '../lib/activeWorkout'
 import { parseNum } from '../lib/entrySets'
@@ -110,6 +111,12 @@ const prevFor = (exerciseId: string, i: number) => previousSet(props.entries, ex
 const fillAll = (entryId: string, exerciseId: string) => aw.fillAllPrev(entryId, (i) => prevFor(exerciseId, i))
 const hasPrev = (exerciseId: string) => prevFor(exerciseId, 0) !== null
 // Разминка (69.15 срез 2): план от рабочего веса (свой первый подход, иначе прошлая тренировка); кнопка только у упражнений с весом, когда плана ещё нет в подходах
+// Калькулятор блинов из тренировки (69.15 срез 4): сразу с рабочим весом упражнения (свой первый подход, иначе прошлая тренировка), в единице упражнения
+const platesFor = ref<{ unit: string; weight: number | null } | null>(null)
+function openPlates(e: { exercise_id: string; sets: SetV2[] }) {
+  const w = workingWeightFor(e.sets, previousSets(props.entries, e.exercise_id, draft.value?.date ?? '9999', prevSource.value))
+  platesFor.value = { unit: unitOf(exById.value.get(e.exercise_id)), weight: w }
+}
 const warmupScheme = ref(readScheme())
 const warmupText = ref(formatScheme(warmupScheme.value))
 function onWarmupScheme() { const p = parseScheme(warmupText.value); if (p) { warmupScheme.value = p; writeScheme(p) } } // пока печатают негодное — прежняя схема остаётся
@@ -314,9 +321,10 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
           ★ {{ t(('aw_pr_' + prKind(e.id, i)) as DictKey) }} · {{ prSetText(s, unitOf(exById.get(e.exercise_id))) }}
         </div>
         </template>
-        <div class="mt-2 flex gap-2">
+        <div class="mt-2 flex flex-wrap gap-2">
           <button type="button" class="flex-1 rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--accent); min-height: 44px" :data-testid="'aw-add-set-' + ei" @click="aw.addSet(e.id)">{{ t('aw_add_set') }}</button>
-          <button v-if="warmupFor(e).length" type="button" class="flex-1 rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--text); min-height: 44px" :title="t('aw_warmup_title')" :data-testid="'aw-warmup-' + ei" @click="aw.insertWarmup(e.id, warmupFor(e))">{{ t('aw_warmup') }}</button>
+          <button v-if="exById.get(e.exercise_id)?.tracks_weight" type="button" class="min-w-[6rem] flex-1 rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--text); min-height: 44px" :title="t('aw_plates_title')" :data-testid="'aw-plates-' + ei" @click="openPlates(e)">{{ t('aw_plates') }}</button>
+          <button v-if="warmupFor(e).length" type="button" class="min-w-[6rem] flex-1 rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--text); min-height: 44px" :title="t('aw_warmup_title')" :data-testid="'aw-warmup-' + ei" @click="aw.insertWarmup(e.id, warmupFor(e))">{{ t('aw_warmup') }}</button>
           <button v-if="hasPrev(e.exercise_id)" type="button" class="flex-1 rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--text); min-height: 44px" :data-testid="'aw-fill-' + ei" @click="fillAll(e.id, e.exercise_id)">{{ t('aw_fill_prev') }}</button>
         </div>
       </section>
@@ -330,6 +338,7 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
       </button>
     </main>
 
+    <PlateCalculator v-if="platesFor" :unit="platesFor.unit" :initial="platesFor.weight" @close="platesFor = null" />
     <div v-if="picking" class="fixed inset-0 z-[60] flex items-end justify-center sm:items-center" style="background: rgba(0, 0, 0, 0.6)" @click.self="picking = false">
       <div class="flex max-h-[80vh] w-full max-w-md flex-col rounded-t-2xl border p-4 sm:rounded-2xl" style="background: var(--bg-card); border-color: var(--border)" role="dialog" :aria-label="t('aw_pick_title')">
         <div class="mb-2 flex items-center justify-between">
