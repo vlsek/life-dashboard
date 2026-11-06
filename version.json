@@ -1,7 +1,14 @@
 {
-  "version": "7.81",
+  "version": "7.82",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.82",
+      "date": "2026-11-04 14:00",
+      "changes": [
+        "Achievements: the “New achievement” window has a new “Share” button — it builds a nice picture (grade badge, title, what it was for, date) and opens the system share sheet; if your phone or browser cannot do that, the picture is saved as a file. No migrations."
+      ]
+    },
     {
       "version": "7.81",
       "date": "2026-11-03 14:00",
@@ -5523,6 +5530,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.82",
+      "date": "2026-11-04 14:00",
+      "changes": [
+        "«Достижения»: в окне «Новое достижение» появилась кнопка «Поделиться» — она собирает красивую картинку (значок по грейду, название, за что получено, дата) и открывает системное «Поделиться»; если телефон или браузер так не умеют, картинка сохраняется файлом. Без миграций."
+      ]
+    },
     {
       "version": "7.81",
       "date": "2026-11-03 14:00",

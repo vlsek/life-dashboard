@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.81";
+const SITE_VERSION = "7.82";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.82", date: "2026-11-04 14:00", changes: [
+        "«Достижения»: в окне «Новое достижение» появилась кнопка «Поделиться» — она собирает красивую картинку (значок по грейду, название, за что получено, дата) и открывает системное «Поделиться»; если телефон или браузер так не умеют, картинка сохраняется файлом. Без миграций."
+    ]},
     { version: "7.81", date: "2026-11-03 14:00", changes: [
         "Тренировки: обновил главную раздела по утверждённому макету. «Начать тренировку» теперь одна большая кнопка на всю ширину, остальные действия (добавить прошедшую, повторить прошлую, добавить упражнение, типовые программы) — вторичные и расположены парами. Вкладки «Журнал», «Карта мышц», «Прогрессия» и «Упражнения» на телефоне стали нижней панелью с иконками, всегда под большим пальцем; на компьютере остались переключателем сверху. Сообщения-подсказки поднимаются над нижней панелью. Все кнопки работают как раньше, адреса вкладок не изменились. Без миграций."
     ]},
@@ -2953,6 +2956,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.82", date: "2026-11-04 14:00", changes: [
+        "Achievements: the “New achievement” window has a new “Share” button — it builds a nice picture (grade badge, title, what it was for, date) and opens the system share sheet; if your phone or browser cannot do that, the picture is saved as a file. No migrations."
+    ]},
     { version: "7.81", date: "2026-11-03 14:00", changes: [
         "Workouts: refreshed the section home to follow the approved mockup. “Start workout” is now one big full-width button, and the other actions (add a past workout, repeat the last one, add an exercise, templates) are secondary and arranged in pairs. On a phone the “Journal”, “Muscle map”, “Progression” and “Exercises” tabs became a bottom bar with icons, always under your thumb; on a computer they remain a switch at the top. Toast messages sit above the bottom bar. All buttons work as before and tab links did not change. No migrations."
     ]},
