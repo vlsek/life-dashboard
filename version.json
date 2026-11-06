@@ -1,7 +1,14 @@
 {
-  "version": "7.85",
+  "version": "7.86",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.86",
+      "date": "2026-11-06 10:00",
+      "changes": [
+        "Workouts: the exercise window (trophy button) now has two tabs — “Records” and “History”. History lists workouts newest first: sets in short form (“60×8 · 62.5×6”), volume and set count, warm-ups as a number."
+      ]
+    },
     {
       "version": "7.85",
       "date": "2026-11-06 05:26",
@@ -5551,6 +5558,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.86",
+      "date": "2026-11-06 10:00",
+      "changes": [
+        "Тренировки: окно упражнения (кнопка-кубок) теперь с двумя вкладками — «Рекорды» и «История». В истории — тренировки от свежих к старым: подходы коротко («60×8 · 62,5×6»), объём и число подходов, разминка числом."
+      ]
+    },
     {
       "version": "7.85",
       "date": "2026-11-06 05:26",
