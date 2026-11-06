@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.82";
+const SITE_VERSION = "7.83";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.83", date: "2026-11-03 16:40", changes: [
+        "Тренировки: схему разминки теперь можно настроить — в активной тренировке в «⚙ Настройки» появилась строка «Схема разминки» (по умолчанию 40x8, 60x5, 80x3: процент рабочего веса и повторы). Схема запоминается на устройстве, кнопка «По умолчанию» возвращает прежнюю. Если ввод непонятен (например, 42,5x6 — дробные пишутся через точку), схема не меняется и работает прежняя. Без миграций.",
+    ]},
     { version: "7.82", date: "2026-11-04 14:00", changes: [
         "«Достижения»: в окне «Новое достижение» появилась кнопка «Поделиться» — она собирает красивую картинку (значок по грейду, название, за что получено, дата) и открывает системное «Поделиться»; если телефон или браузер так не умеют, картинка сохраняется файлом. Без миграций."
     ]},
@@ -2956,6 +2959,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.83", date: "2026-11-03 16:40", changes: [
+        "Workouts: the warm-up scheme is now configurable — the active workout’s “⚙ Settings” has a “Warm-up scheme” row (default 40x8, 60x5, 80x3: percent of the working weight and reps). The scheme is remembered on the device, and “Default” restores the original. If the input is not understood (for example 42,5x6 — decimals use a dot), the scheme does not change and the previous one keeps working. No migrations.",
+    ]},
     { version: "7.82", date: "2026-11-04 14:00", changes: [
         "Achievements: the “New achievement” window has a new “Share” button — it builds a nice picture (grade badge, title, what it was for, date) and opens the system share sheet; if your phone or browser cannot do that, the picture is saved as a file. No migrations."
     ]},

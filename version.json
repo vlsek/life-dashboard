@@ -1,7 +1,14 @@
 {
-  "version": "7.82",
+  "version": "7.83",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.83",
+      "date": "2026-11-03 16:40",
+      "changes": [
+        "Workouts: the warm-up scheme is now configurable — the active workout’s “⚙ Settings” has a “Warm-up scheme” row (default 40x8, 60x5, 80x3: percent of the working weight and reps). The scheme is remembered on the device, and “Default” restores the original. If the input is not understood (for example 42,5x6 — decimals use a dot), the scheme does not change and the previous one keeps working. No migrations."
+      ]
+    },
     {
       "version": "7.82",
       "date": "2026-11-04 14:00",
@@ -5530,6 +5537,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.83",
+      "date": "2026-11-03 16:40",
+      "changes": [
+        "Тренировки: схему разминки теперь можно настроить — в активной тренировке в «⚙ Настройки» появилась строка «Схема разминки» (по умолчанию 40x8, 60x5, 80x3: процент рабочего веса и повторы). Схема запоминается на устройстве, кнопка «По умолчанию» возвращает прежнюю. Если ввод непонятен (например, 42,5x6 — дробные пишутся через точку), схема не меняется и работает прежняя. Без миграций."
+      ]
+    },
     {
       "version": "7.82",
       "date": "2026-11-04 14:00",
