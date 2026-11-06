@@ -12,14 +12,20 @@ export function usePlanTemplates() {
   const available = ref(false)
 
   async function load(userId: string) {
-    const { data, error } = await sb.from('plan_templates').select('id, name, items').eq('user_id', userId).order('created_at', { ascending: true })
-    if (error) {
+    try {
+      const { data, error } = await sb.from('plan_templates').select('id, name, items').eq('user_id', userId).order('created_at', { ascending: true })
+      if (error) {
+        templates.value = []
+        available.value = false
+        return
+      }
+      available.value = true
+      templates.value = ((data || []) as { id: string; name: string; items: unknown }[]).map(toPlanTemplate).filter((x): x is PlanTemplate => x !== null)
+    } catch {
+      // сеть оборвалась или клиент вернул что-то неожиданное: функция недоступна, «Планы» работают как раньше (а не необработанная ошибка в консоли)
       templates.value = []
       available.value = false
-      return
     }
-    available.value = true
-    templates.value = ((data || []) as { id: string; name: string; items: unknown }[]).map(toPlanTemplate).filter((x): x is PlanTemplate => x !== null)
   }
 
   // Сохранить новый шаблон. Лимит проверяем сами до запроса (не гоняем лишний), дубль названия и прочее — по коду ответа базы.
