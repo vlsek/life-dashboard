@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.100";
+const SITE_VERSION = "8.00";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,7 +488,7 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
-    { version: "7.100", date: "2026-11-04 14:10", changes: [
+    { version: "8.00", date: "2026-11-04 14:10", changes: [
         "Магазин: купленные вещи стали читаемее. Раньше вся карточка купленной вещи была сильно приглушена, и название с датой покупки почти сливались с фоном; теперь карточка обычной яркости, а покупка видна по зачёркнутому названию и подписи «Куплено». Без миграций.",
     ]},
     { version: "7.99", date: "2026-11-06 23:30", changes: [
@@ -3010,7 +3010,7 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
-    { version: "7.100", date: "2026-11-04 14:10", changes: [
+    { version: "8.00", date: "2026-11-04 14:10", changes: [
         "Shop: bought items are easier to read. The whole card of a bought item used to be heavily faded, so the name and the purchase date almost blended into the background; now the card has normal brightness, and a purchase is shown by the struck-through name and the “Bought” label. No migrations.",
     ]},
     { version: "7.99", date: "2026-11-06 23:30", changes: [

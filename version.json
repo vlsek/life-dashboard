@@ -1,7 +1,14 @@
 {
-  "version": "7.99",
+  "version": "8.00",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.00",
+      "date": "2026-11-04 14:10",
+      "changes": [
+        "Shop: bought items are easier to read. The whole card of a bought item used to be heavily faded, so the name and the purchase date almost blended into the background; now the card has normal brightness, and a purchase is shown by the struck-through name and the “Bought” label. No migrations."
+      ]
+    },
     {
       "version": "7.99",
       "date": "2026-11-06 23:30",
@@ -5649,6 +5656,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.00",
+      "date": "2026-11-04 14:10",
+      "changes": [
+        "Магазин: купленные вещи стали читаемее. Раньше вся карточка купленной вещи была сильно приглушена, и название с датой покупки почти сливались с фоном; теперь карточка обычной яркости, а покупка видна по зачёркнутому названию и подписи «Куплено». Без миграций."
+      ]
+    },
     {
       "version": "7.99",
       "date": "2026-11-06 23:30",
