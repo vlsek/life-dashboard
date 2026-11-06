@@ -31,7 +31,7 @@ const cap = computed(() => source.value?.cap ?? null)
 
 <template>
   <section class="card mb-3 rounded-xl border px-3.5 py-2" style="border-color: var(--border)" data-testid="sparks-journal">
-    <button type="button" class="secondary flex w-full items-center justify-between border-0 bg-transparent p-0 text-left text-sm" :aria-expanded="open" data-testid="journal-toggle" @click="toggle">
+    <button type="button" class="secondary flex min-h-6 w-full items-center justify-between border-0 bg-transparent p-0 text-left text-sm" :aria-expanded="open" data-testid="journal-toggle" @click="toggle">
       <span>{{ t('shop_journal_title') }}</span>
       <span aria-hidden="true">{{ open ? '▾' : '▸' }}</span>
     </button>

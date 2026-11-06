@@ -38,7 +38,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
       <span data-testid="idea-short">{{ (sparksMode ? t('shop_idea_short_sparks') : t('shop_idea_short')) }}</span>
       <button
         type="button"
-        class="secondary inline-flex shrink-0 items-center rounded-full border-0 bg-transparent p-0.5 text-base"
+        class="secondary inline-flex min-h-6 min-w-6 shrink-0 items-center justify-center rounded-full border-0 bg-transparent p-0.5 text-base"
         style="color: var(--text-dim); background: transparent"
         :aria-label="t('shop_idea_how')"
         :title="t('shop_idea_how')"

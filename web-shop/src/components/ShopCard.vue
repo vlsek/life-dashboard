@@ -20,7 +20,7 @@ const emit = defineEmits<{ buy: [id: string]; claim: [id: string]; edit: [item: 
       <Icon name="gift" />
     </div>
 
-    <div class="mb-1 font-semibold" :class="{ 'line-through opacity-60': item.redeemed }">
+    <div class="mb-1 font-semibold" style="overflow-wrap: anywhere" :class="{ 'line-through opacity-60': item.redeemed }" data-testid="shop-card-name">
       <a v-if="item.link" :href="item.link" target="_blank" rel="noopener" style="color: inherit" class="inline-flex items-center gap-1">{{ item.name }} <Icon name="link" /></a>
       <template v-else>{{ item.name }}</template>
     </div>
@@ -40,7 +40,7 @@ const emit = defineEmits<{ buy: [id: string]; claim: [id: string]; edit: [item: 
 
     <div class="mt-auto whitespace-nowrap pt-2 opacity-60 transition-opacity focus-within:opacity-100 hover:opacity-100" data-testid="item-actions">
       <button class="secondary mr-1 px-2" :aria-label="t('shop_edit_title')" data-testid="edit-btn" @click="emit('edit', item)"><Icon name="edit" /></button>
-      <button class="danger px-2" data-testid="delete-btn" @click="emit('remove', item)"><Icon name="trash" /></button>
+      <button class="danger px-2" :aria-label="t('shop_delete_title')" data-testid="delete-btn" @click="emit('remove', item)"><Icon name="trash" /></button>
     </div>
   </div>
 </template>
