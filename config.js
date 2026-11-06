@@ -491,6 +491,12 @@ const CHANGELOG_RU = [
     { version: "7.89", date: "2026-11-06 11:00", changes: [
         "Тренировки: в окне упражнения (кнопка-кубок) добавилась вкладка «О нём»: категория, целевые мышцы (свои или по справочнику), рекомендуемая схема и сколько тренировок с этим упражнением уже было — с датой первой и последней.",
     ]},
+    { version: "7.88", date: "2026-11-06 09:45", changes: [
+        "«Дашборд»: заголовки сворачиваемых секций больше не содержат вложенных кнопок — шестерёнка и ручка перетаскивания вынесены рядом, скринридер и клавиатура работают точнее; сворачивание по клику на заголовок осталось.",
+    ]},
+    { version: "7.87", date: "2026-11-03 17:40", changes: [
+        "Тренировки: у каждого упражнения с весом в активной тренировке появилась кнопка «Блины» — она открывает калькулятор блинов сразу с рабочим весом этого упражнения (из твоего первого введённого подхода, а если его нет — из прошлой тренировки) и в единице упражнения (кг или lb). Не нужно выходить из тренировки и вводить вес заново. Без миграций.",
+    ]},
     { version: "7.86", date: "2026-11-06 10:00", changes: [
         "Тренировки: окно упражнения (кнопка-кубок) теперь с двумя вкладками — «Рекорды» и «История». В истории — тренировки от свежих к старым: подходы коротко («60×8 · 62,5×6»), объём и число подходов, разминка числом.",
     ]},
@@ -2973,6 +2979,12 @@ const CHANGELOG_RU = [
 const CHANGELOG_EN = [
     { version: "7.89", date: "2026-11-06 11:00", changes: [
         "Workouts: the exercise window (trophy button) got an “About” tab: category, target muscles (your own or from the reference), suggested scheme and how many workouts you have done with it — with the first and last dates.",
+    ]},
+    { version: "7.88", date: "2026-11-06 09:45", changes: [
+        "Dashboard: collapsible section headings no longer nest buttons — the gear and drag handle sit beside the heading, so screen readers and keyboard navigation work more reliably; click-to-collapse is unchanged.",
+    ]},
+    { version: "7.87", date: "2026-11-03 17:40", changes: [
+        "Workouts: every weighted exercise in the active workout now has a “Plates” button — it opens the plate calculator right away with that exercise’s working weight (from your first entered set, or, if there is none, from the previous workout) and in the exercise’s unit (kg or lb). No need to leave the workout and retype the weight. No migrations.",
     ]},
     { version: "7.86", date: "2026-11-06 10:00", changes: [
         "Workouts: the exercise window (trophy button) now has two tabs — “Records” and “History”. History lists workouts newest first: sets in short form (“60×8 · 62.5×6”), volume and set count, warm-ups as a number.",

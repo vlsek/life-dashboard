@@ -5,7 +5,6 @@ import { hasStoredCollapsed, readCollapsed, writeCollapsed } from '../lib/collap
 import { useAccordionMember } from '../lib/useCollapseStyle'
 import CollapseChevron from './CollapseChevron.vue'
 import CollapseSummary from './CollapseSummary.vue'
-import { collapseStyle } from '../lib/useCollapseStyle'
 import EmojiText from './EmojiText.vue'
 
 // Заголовок секции: кликабельна вся шапка, справа шеврон (BACKLOG 9; в классике createCollapsibleSection остаётся со стрелкой). Состояние — v-model:collapsed,
@@ -45,22 +44,25 @@ function toggle() {
 </script>
 
 <template>
-  <div
-    class="collapse-head mb-2 flex items-center gap-2"
-    role="button"
-    tabindex="0"
-    data-test="collapse-toggle"
-    :aria-expanded="!collapsed"
-    :title="collapsed ? t('dash_expand_btn') : t('dash_collapse_btn')"
-    @click="toggle"
-    @keydown.enter.prevent="toggle"
-    @keydown.space.prevent="toggle"
-  >
-    <h2 class="text-lg font-semibold"><EmojiText :text="title" /></h2>
-    <CollapseChevron :collapsed="collapsed" />
-    <!-- «карточка со сводкой» (BACKLOG 498 срез 3): итог свёрнутого блока справа от заголовка -->
-    <CollapseSummary :text="summary" :collapsed="collapsed" />
-    <!-- слот под ручку перетаскивания блока (BlockDragHandle): клик/клавиши внутри не сворачивают секцию -->
-    <span v-if="$slots.actions" class="flex items-center" :class="collapseStyle === 'summary' && collapsed && summary ? 'ml-2' : 'ml-auto'" @click.stop @keydown.stop><slot name="actions" /></span>
+  <!-- кнопка-шапка и слот действий — соседи, а не вложены друг в друга (axe: nested-interactive; внутри role=button не должно быть фокусируемого) -->
+  <div class="mb-2 flex items-center gap-2" data-test="collapse-row">
+    <div
+      class="collapse-head flex flex-1 items-center gap-2"
+      role="button"
+      tabindex="0"
+      data-test="collapse-toggle"
+      :aria-expanded="!collapsed"
+      :title="collapsed ? t('dash_expand_btn') : t('dash_collapse_btn')"
+      @click="toggle"
+      @keydown.enter.prevent="toggle"
+      @keydown.space.prevent="toggle"
+    >
+      <h2 class="text-lg font-semibold"><EmojiText :text="title" /></h2>
+      <CollapseChevron :collapsed="collapsed" />
+      <!-- «карточка со сводкой» (BACKLOG 498 срез 3): итог свёрнутого блока справа от заголовка -->
+      <CollapseSummary :text="summary" :collapsed="collapsed" />
+    </div>
+    <!-- слот под ручку перетаскивания блока (BlockDragHandle): вне кнопки-шапки, поэтому клик/клавиши внутри не сворачивают секцию -->
+    <span v-if="$slots.actions" class="flex items-center" data-test="collapse-actions"><slot name="actions" /></span>
   </div>
 </template>

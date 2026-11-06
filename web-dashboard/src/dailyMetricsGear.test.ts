@@ -26,8 +26,9 @@ const mountSection = (slots?: Record<string, string>) =>
 describe('шестерёнка в заголовке «Ежедневные метрики»', () => {
   it('значок настроек стоит в строке заголовка, с подписью для чтения с экрана, без текстовой кнопки «Метрики дня»', () => {
     const w = mountSection()
-    const head = w.find('[data-test="collapse-toggle"]')
+    const head = w.find('[data-test="collapse-row"]') // шапка-кнопка и действия — соседи в одной строке (74.5: без вложенных кнопок)
     const gear = head.find('[data-test="metrics-manager-gear"]')
+    expect(w.find('[data-test="collapse-toggle"]').find('[data-test="metrics-manager-gear"]').exists()).toBe(false)
     expect(gear.exists()).toBe(true)
     expect(gear.find('svg').exists()).toBe(true)
     expect(gear.attributes('aria-label')).toBe('Метрики дня')
@@ -51,7 +52,8 @@ describe('шестерёнка в заголовке «Ежедневные ме
     const w = mountSection({ actions: '<span data-test="drag-stub">drag</span>' })
     const group = w.find('[data-test="metrics-manager-gear"]').element.parentElement!
     expect(group.querySelector('[data-test="drag-stub"]')).not.toBeNull()
-    expect(w.find('[data-test="collapse-toggle"]').find('[data-test="drag-stub"]').exists()).toBe(true)
+    expect(w.find('[data-test="collapse-row"]').find('[data-test="drag-stub"]').exists()).toBe(true)
+    expect(w.find('[data-test="collapse-toggle"]').find('[data-test="drag-stub"]').exists()).toBe(false) // не внутри кнопки-шапки
     w.unmount()
   })
 

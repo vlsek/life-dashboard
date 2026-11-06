@@ -4,11 +4,11 @@ import { t } from '../lib/i18n'
 import { BARS, DEFAULT_PLATES, formatPlates, parsePlates, plateSystem, platesPerSide, readPlates, writePlates } from '../lib/plates'
 
 // Калькулятор блинов (BACKLOG 69.15, срез 1): целевой вес → блины на каждую сторону. Набор блинов — свой, помнится на устройстве.
-const props = defineProps<{ unit: string }>()
+const props = defineProps<{ unit: string; initial?: number | null }>()
 const emit = defineEmits<{ close: [] }>()
 const system = computed(() => plateSystem(props.unit))
 const unitLabel = computed(() => (system.value === 'lb' ? 'lb' : t('workouts_default_unit')))
-const target = ref('')
+const target = ref(props.initial && props.initial > 0 ? String(props.initial) : '') // из активной тренировки — сразу рабочий вес упражнения
 const bar = ref(BARS[system.value][0])
 const plates = ref(readPlates(system.value))
 const platesText = ref(formatPlates(plates.value))
