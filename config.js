@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.96";
+const SITE_VERSION = "7.97";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.97", date: "2026-11-06 17:40", changes: [
+        "«Достижения»: «лучшая серия идеальных дней» теперь тоже учитывает паузу «Отпуск / больничный» — день паузы не обрывает рекордную серию.",
+    ]},
     { version: "7.96", date: "2026-11-06 16:00", changes: [
         "«Дашборд»: пауза «Отпуск / больничный» теперь учитывается и в недельных сериях («N раз в неделю»): неделя целиком на паузе не рвёт серию и не считается, на частично паузной неделе норма уменьшается до числа непаузных дней.",
     ]},
@@ -2998,6 +3001,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.97", date: "2026-11-06 17:40", changes: [
+        "Achievements: the “best perfect-days streak” now respects the “Vacation / sick leave” pause — a paused day no longer breaks the record streak.",
+    ]},
     { version: "7.96", date: "2026-11-06 16:00", changes: [
         "Dashboard: the “Vacation / sick leave” pause now also applies to weekly streaks (“N times a week”): a fully paused week neither breaks nor counts, and on a partly paused week the target shrinks to the number of unpaused days.",
     ]},

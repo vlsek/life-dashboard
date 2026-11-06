@@ -65,7 +65,7 @@ export function useAchievements() {
   async function load(userId: string) {
     loading.value = true
     try {
-      const [metricsRes, valuesRes, goalsRes, skillsRes, booksRes, workoutsRes, challengesRes, weightCount, notesRes, allGoalsRes, wordsAddedRes, wordsLearnedRes, milestonesRes, goalsStreakRes] = await Promise.all([
+      const [metricsRes, valuesRes, goalsRes, skillsRes, booksRes, workoutsRes, challengesRes, weightCount, notesRes, allGoalsRes, wordsAddedRes, wordsLearnedRes, milestonesRes, goalsStreakRes, pausesRes] = await Promise.all([
         sb.from('metrics').select('*').eq('user_id', userId).eq('active', true),
         // постранично: Supabase отдаёт максимум 1000 строк за запрос, иначе счётчики считались бы по обрезанной истории
         fetchAllRows<ValueRow>((from, to) => sb.from('daily_values').select('date, metric_id, value').eq('user_id', userId).order('date').order('metric_id').range(from, to)),
@@ -85,6 +85,8 @@ export function useAchievements() {
         sb.from('milestones').select('history, done').eq('user_id', userId),
         // «Серия по целям» (BACKLOG 60.1): RPC миграции 079; нет функции/ошибка — 0 (открытые значки не пропадают)
         sb.rpc('get_my_goals_streak'),
+        // паузы серий (BACKLOG 81.5, миграция 119): нет колонки/ошибка — паузы не учитываются
+        sb.from('profiles').select('pauses').eq('user_id', userId).maybeSingle(),
       ])
       const err = metricsRes.error?.message || valuesRes.error || goalsRes.error?.message || skillsRes.error?.message || booksRes.error?.message || workoutsRes.error
       if (err) {
@@ -109,6 +111,7 @@ export function useAchievements() {
         milestonesDone: milestonesRes.error ? 0 : countMilestoneMarks((milestonesRes.data || []) as { history?: unknown[] | null; done?: boolean | null }[]),
         // ошибка заметок/целей не ломает страницу — недель выше 100% тогда 0 (открытые достижения не пропадают)
         megaWeeks: notesRes.error || allGoalsRes.error ? 0 : countMegaWeeks({ metrics, values: valuesRes.rows, planned: notesRes.rows, goals: (allGoalsRes.data || []) as GoalLite[], settings: getDayProgressSettings(), today: new Date() }),
+        pauses: pausesRes.error || !Array.isArray((pausesRes.data as { pauses?: unknown } | null)?.pauses) ? [] : ((pausesRes.data as { pauses: { from: string; to: string | null }[] }).pauses),
         today: new Date(),
       })
       counters.value = c

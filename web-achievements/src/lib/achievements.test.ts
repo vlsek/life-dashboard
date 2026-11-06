@@ -157,6 +157,15 @@ describe('bestPerfectStreak', () => {
     expect(bestPerfectStreak(m, byDay as never, today)).toBe(3)
   })
 
+  it('пауза (отпуск/больничный, 81.5): пропущенный день на паузе не рвёт серию, а открытая пауза не мешает', () => {
+    const m = [metric({ id: 'a' })]
+    const byDay: Record<string, Record<string, never>> = {}
+    for (const r of rows('a', [1, 2, 3, 5, 6])) (byDay[r.date] ||= {})[r.metric_id] = r.value
+    expect(bestPerfectStreak(m, byDay as never, today, [{ from: '2026-10-04', to: '2026-10-04' }])).toBe(5)
+    expect(bestPerfectStreak(m, byDay as never, today, [{ from: '2026-10-07', to: null }])).toBe(3)
+    expect(bestPerfectStreak(m, byDay as never, today, [{ from: '2026-10-08', to: '2026-10-09' }])).toBe(3)
+  })
+
   it('невыполненная метрика в дне рвёт «идеальный день»', () => {
     const m = [metric({ id: 'a' }), metric({ id: 'b' })]
     const byDay = {
