@@ -148,6 +148,7 @@ c:['C / MECHANICAL FRAME','C — механический каркас','Тел�
 };
 let mode='a',view='front',period='recent',selected='chest';
 function visibleTargets(){return [...document.querySelectorAll('.mode-'+mode+' .'+view+'-model [data-muscle]')];}
+function focusSelected(){const el=visibleTargets().find(x=>x.dataset.muscle===selected);if(el)el.focus();}
 function focusListSelected(){const el=[...document.querySelectorAll('#muscleList button')].find(x=>x.dataset.muscle===selected);if(el)el.focus();}
 function render(){
  body.classList.remove('mode-a','mode-b','mode-c','view-front','view-back');body.classList.add('mode-'+mode,'view-'+view);
