@@ -1,7 +1,14 @@
 {
-  "version": "7.84",
+  "version": "7.85",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.85",
+      "date": "2026-11-06 05:26",
+      "changes": [
+        "Dashboard, Plans: if the connection drops while the block opens, repeating items and day templates no longer raise a hidden error: those features are simply unavailable for a moment and the plan itself works as usual. The full check run also gives an honest result again. No migrations."
+      ]
+    },
     {
       "version": "7.84",
       "date": "2026-11-06 09:00",
@@ -5544,6 +5551,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.85",
+      "date": "2026-11-06 05:26",
+      "changes": [
+        "Дашборд, «Планы»: если при открытии блока оборвалась связь, повторяющиеся пункты и шаблоны дня больше не вызывают скрытую ошибку: эти возможности просто временно недоступны, а сам план работает как обычно. Заодно полный прогон проверок снова даёт честный результат. Без миграций."
+      ]
+    },
     {
       "version": "7.84",
       "date": "2026-11-06 09:00",

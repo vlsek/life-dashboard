@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.84";
+const SITE_VERSION = "7.85";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.85", date: "2026-11-06 05:26", changes: [
+        "Дашборд, «Планы»: если при открытии блока оборвалась связь, повторяющиеся пункты и шаблоны дня больше не вызывают скрытую ошибку: эти возможности просто временно недоступны, а сам план работает как обычно. Заодно полный прогон проверок снова даёт честный результат. Без миграций."
+    ]},
     { version: "7.84", date: "2026-11-06 09:00", changes: [
         "Тренировки: в окне «Добавить упражнение» появились чипы категорий (Грудь, Ноги …) над списком — тапни, чтобы показать только нужную группу; «Все» возвращает полный список. Работает вместе с поиском.",
     ]},
@@ -2962,6 +2965,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.85", date: "2026-11-06 05:26", changes: [
+        "Dashboard, Plans: if the connection drops while the block opens, repeating items and day templates no longer raise a hidden error: those features are simply unavailable for a moment and the plan itself works as usual. The full check run also gives an honest result again. No migrations."
+    ]},
     { version: "7.84", date: "2026-11-06 09:00", changes: [
         "Workouts: the “Add exercise” window now has category chips (Chest, Legs …) above the list — tap one to show only that group; “All” brings back the full list. Works together with search.",
     ]},
