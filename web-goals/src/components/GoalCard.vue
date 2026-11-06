@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import CoinIcon from './CoinIcon.vue'
 import Icon from './Icon.vue'
 import SavedTick from './SavedTick.vue'
+import { normalizeRepeat } from '../lib/repeatGoal'
 import { deadlineLevel, stagePercent, stageProgress, stageTapTarget } from '../lib/goals'
 import { forecastGoal } from '../lib/forecast'
 import { t } from '../lib/i18n'
@@ -60,6 +61,10 @@ const forecast = computed(() => {
   if (f.pacePerWeek != null) parts.push(t('goals_forecast_pace').replace('{n}', n(f.pacePerWeek)))
   return { status: f.status, text: parts.join(' · '), verdict: f.status === 'ontrack' ? t('goals_forecast_ontrack') : f.status === 'behind' ? t('goals_forecast_behind') : '' }
 })
+const repeatLabel = computed(() => {
+  const r = normalizeRepeat(props.goal.repeat_every)
+  return r ? t(('goals_repeat_chip_' + r) as 'goals_repeat_chip_week') : null
+})
 const deadlineChip = computed(() => {
   const g = props.goal
   if (!g.deadline || g.done) return null
@@ -108,6 +113,7 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
         <!-- чипы: сложность и срок слева, баллы справа в той же строке (58.8: раньше баллы сжимали заголовок и оставляли пустоту справа) -->
         <div class="mt-1 flex flex-wrap items-center gap-1.5 text-xs" data-test="goal-chips">
           <span v-if="diffChip" class="whitespace-nowrap rounded-full border px-2 py-0.5" :style="{ borderColor: diffChip.color, color: diffChip.color }" data-test="goal-diff">{{ diffChip.text }}</span>
+          <span v-if="repeatLabel" class="whitespace-nowrap rounded-full border px-2 py-0.5" style="border-color: var(--border); color: var(--text-dim)" data-test="goal-repeat">{{ repeatLabel }}</span>
           <span v-if="deadlineChip" class="whitespace-nowrap rounded-full border px-2 py-0.5" :style="{ borderColor: deadlineChip.color, color: deadlineChip.color }" data-test="goal-deadline">{{ deadlineChip.text }}</span>
           <span class="ml-auto whitespace-nowrap rounded-full border px-2 py-0.5" style="border-color: var(--border)" data-test="goal-points">{{ goal.points ?? 5 }} <CoinIcon /></span>
         </div>

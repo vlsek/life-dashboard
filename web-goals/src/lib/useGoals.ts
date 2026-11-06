@@ -5,6 +5,7 @@ import { buildInsertRow, buildUpdateRow, stageResult, stepStage } from './goals'
 import type { Goal, GoalFormInput } from './types'
 import { weightProgress, weightSpecOf } from './weightGoal'
 import { completionDelta, emitPointsFloat } from './pointsFloat'
+import { buildNextRow, canRepeat, normalizeRepeat } from './repeatGoal'
 
 // Очки цели по умолчанию — как в балансе (balance.ts / web-shop points.ts): пусто → 5
 const GOAL_DEFAULT_POINTS = 5
@@ -25,6 +26,8 @@ export function useGoals() {
   const hasHorizon = ref(false)
   // Есть ли колонки goals.weight_* (миграция 085) — так же; и последнее измерение веса тела (источник истины для целей на вес).
   const hasWeight = ref(false)
+  // Есть ли колонка goals.repeat_every (миграция 120, BACKLOG 81.4) — так же; нет колонки — «Повтор» в форме не показываем.
+  const hasRepeat = ref(false)
   const bodyWeight = ref<number | null>(null)
   // id целей, у которых только что подтвердилась запись: на ~0,9 с показываем галочку «сохранено» (BACKLOG 23:25 / 815, срез 3)
   const flashed = ref<Record<string, boolean>>({})
@@ -79,6 +82,8 @@ export function useGoals() {
     else hasHorizon.value = !(await sb.from('goals').select('horizon').limit(1)).error
     if (items.value.length) hasWeight.value = 'weight_mode' in items.value[0]
     else hasWeight.value = !(await sb.from('goals').select('weight_mode').limit(1)).error
+    if (items.value.length) hasRepeat.value = 'repeat_every' in items.value[0]
+    else hasRepeat.value = !(await sb.from('goals').select('repeat_every').limit(1)).error
     await loadBodyWeight(userId)
   }
 
@@ -94,14 +99,14 @@ export function useGoals() {
   }
 
   async function addGoal(userId: string, res: GoalFormInput, noCategoryLabel: string) {
-    const row = buildInsertRow(res, noCategoryLabel, { horizonColumn: hasHorizon.value, weightColumn: hasWeight.value })
+    const row = buildInsertRow(res, noCategoryLabel, { horizonColumn: hasHorizon.value, weightColumn: hasWeight.value, repeatColumn: hasRepeat.value })
     const { error: err } = await sb.from('goals').insert({ user_id: userId, ...row })
     if (err) throw err
     await reload()
   }
 
   async function updateGoal(existing: Goal, res: GoalFormInput, noCategoryLabel: string) {
-    const patch = buildUpdateRow(res, existing, noCategoryLabel, { horizonColumn: hasHorizon.value, weightColumn: hasWeight.value })
+    const patch = buildUpdateRow(res, existing, noCategoryLabel, { horizonColumn: hasHorizon.value, weightColumn: hasWeight.value, repeatColumn: hasRepeat.value })
     const { error: err } = await sb.from('goals').update(patch).eq('id', existing.id)
     if (err) throw err
     // правка числа этапов может сама закрыть/открыть многоэтапную цель (patch.done) — баллы идут по новым очкам цели
@@ -116,11 +121,32 @@ export function useGoals() {
     await reload()
   }
 
+  // BACKLOG 81.4: выполнили повторяющуюся цель — создаём следующую (один раз: id хранится в repeat_next_id); сняли выполнение — убираем нетронутую следующую.
+  // Любая ошибка здесь не должна ломать саму отметку: цель уже сохранена, повтор — надстройка.
+  async function afterDoneChange(g: Goal, wasDone: boolean, nowDone: boolean) {
+    try {
+      if (!normalizeRepeat(g.repeat_every) || !canRepeat(g)) return
+      if (nowDone && !wasDone && !g.repeat_next_id) {
+        const { data, error: e1 } = await sb.from('goals').insert(buildNextRow(g, todayStr())).select('id').single()
+        if (e1 || !data) return
+        await sb.from('goals').update({ repeat_next_id: (data as { id: string }).id }).eq('id', g.id)
+      } else if (!nowDone && wasDone && g.repeat_next_id) {
+        const { data } = await sb.from('goals').select('id, done, current_stage').eq('id', g.repeat_next_id).maybeSingle()
+        const n = data as { id: string; done: boolean; current_stage: number } | null
+        if (n && !n.done && !(n.current_stage > 0)) await sb.from('goals').delete().eq('id', n.id)
+        await sb.from('goals').update({ repeat_next_id: null }).eq('id', g.id)
+      }
+    } catch (e) {
+      console.warn('[goals] повтор цели не обработан', e)
+    }
+  }
+
   async function toggleGoal(g: Goal) {
     const done = !g.done
     const { error: err } = await sb.from('goals').update({ done, done_date: done ? todayStr() : null }).eq('id', g.id)
     if (err) throw err
     emitPointsFloat(completionDelta(!!g.done, done, g.points, GOAL_DEFAULT_POINTS))
+    await afterDoneChange(g, !!g.done, done)
     await reload()
     flash(g.id)
   }
@@ -130,6 +156,7 @@ export function useGoals() {
     const { error: err } = await sb.from('goals').update({ current_stage, done, done_date: done ? todayStr() : null }).eq('id', g.id)
     if (err) throw err
     emitPointsFloat(completionDelta(!!g.done, done, g.points, GOAL_DEFAULT_POINTS))
+    await afterDoneChange(g, !!g.done, done)
     await reload()
     flash(g.id)
   }
@@ -140,6 +167,7 @@ export function useGoals() {
     const { error: err } = await sb.from('goals').update({ current_stage, done, done_date: done ? todayStr() : null }).eq('id', g.id)
     if (err) throw err
     emitPointsFloat(completionDelta(!!g.done, done, g.points, GOAL_DEFAULT_POINTS))
+    await afterDoneChange(g, !!g.done, done)
     await reload()
     flash(g.id)
   }
@@ -164,5 +192,5 @@ export function useGoals() {
     flash(g.id)
   }
 
-  return { auth, items, error, loaded, hasHorizon, hasWeight, bodyWeight, logWeight, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage }
+  return { auth, items, error, loaded, hasHorizon, hasWeight, hasRepeat, bodyWeight, logWeight, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage }
 }

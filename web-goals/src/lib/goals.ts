@@ -1,11 +1,20 @@
 import type { Difficulty, Goal, GoalFormInput } from './types'
 import { horizonFields } from './horizons'
 import { weightFields } from './weightGoal'
+import { normalizeRepeat } from './repeatGoal'
 
 // opts.horizonColumn — есть ли в базе колонка goals.horizon (миграция 084); без неё горизонт сводится к сроку (см. horizons.ts).
 export interface GoalWriteOpts {
   horizonColumn?: boolean
   weightColumn?: boolean // есть ли колонки goals.weight_* (миграция 085)
+  repeatColumn?: boolean // есть ли колонка goals.repeat_every (миграция 120, BACKLOG 81.4)
+}
+
+// Повтор пишем только если колонка есть; у цели на вес и без конкретного срока повтора нет (его не от чего считать).
+export function repeatFields(res: Pick<GoalFormInput, 'repeat' | 'weightMode' | 'deadline'>, enabled: boolean): { repeat_every?: string | null } {
+  if (!enabled) return {}
+  const r = normalizeRepeat(res.repeat)
+  return { repeat_every: r && !res.weightMode && res.deadline ? r : null }
 }
 
 // Текстовый прогресс-бар из блоков — портировано 1:1 из bar() в goals.js.
@@ -73,6 +82,7 @@ export function buildInsertRow(res: GoalFormInput, noCategoryLabel: string, opts
     ...goalExtraFields(res, null),
     ...(res.horizon !== undefined || opts.horizonColumn ? horizonFields(res, !!opts.horizonColumn, false) : {}),
     ...weightFields(res, !!opts.weightColumn),
+    ...repeatFields(res, !!opts.repeatColumn),
   }
 }
 
@@ -89,6 +99,7 @@ export function buildUpdateRow(res: GoalFormInput, existing: Goal, noCategoryLab
     ...goalExtraFields(res, existing),
     ...(res.horizon !== undefined || opts.horizonColumn ? horizonFields(res, !!opts.horizonColumn) : {}),
     ...weightFields(res, !!opts.weightColumn),
+    ...repeatFields(res, !!opts.repeatColumn),
   }
   if (existing.current_stage > stages) patch.current_stage = stages
   if (stages > 1) patch.done = (existing.current_stage ?? 0) >= stages

@@ -5,12 +5,13 @@ import { friendlyError } from '../lib/friendlyError'
 import type { Difficulty, GoalFormInitial, GoalFormInput } from '../lib/types'
 import { matchCategory } from '../lib/categories'
 import { pointsAfterEdit } from '../lib/goals'
+import { normalizeRepeat, type Repeat } from '../lib/repeatGoal'
 import { parseWeight, validateWeight, type WeightMode } from '../lib/weightGoal'
 import { HORIZON_KEYS, effectiveHorizon, horizonOptions, type Horizon } from '../lib/horizons'
 
 // submit — запись цели (родитель добавляет/правит и закрывает форму при успехе). Ошибка записи показывается ПОД полями (форма остаётся
 // открытой, введённое не пропадает); пока идёт запись, «Сохранить» заблокирована — двойной тап не создаёт две цели.
-const props = withDefaults(defineProps<{ isEdit: boolean; initial: GoalFormInitial; submit: (res: GoalFormInput) => Promise<void>; categories?: string[]; noCategoryLabels?: string[]; horizonColumn?: boolean; weightColumn?: boolean; currentWeight?: number | null }>(), { categories: () => [], noCategoryLabels: () => [], horizonColumn: false, weightColumn: false, currentWeight: null })
+const props = withDefaults(defineProps<{ isEdit: boolean; initial: GoalFormInitial; submit: (res: GoalFormInput) => Promise<void>; categories?: string[]; noCategoryLabels?: string[]; horizonColumn?: boolean; weightColumn?: boolean; repeatColumn?: boolean; currentWeight?: number | null }>(), { categories: () => [], noCategoryLabels: () => [], horizonColumn: false, weightColumn: false, repeatColumn: false, currentWeight: null })
 const emit = defineEmits<{ close: [] }>()
 
 const name = ref(props.initial.name)
@@ -28,6 +29,8 @@ const deadline = ref(props.initial.deadline)
 const options = computed(() => horizonOptions(props.horizonColumn))
 const horizon = ref<Horizon>(effectiveHorizon({ deadline: props.initial.deadline, horizon: props.initial.horizon }))
 const dateMissing = ref(false)
+// Повтор (BACKLOG 81.4, миграция 120): только у обычной цели с конкретным сроком — следующий срок считается от него.
+const repeat = ref<Repeat | ''>(normalizeRepeat(props.initial.repeat) ?? '')
 // Вид цели (BACKLOG 1085): обычная / «Сбросить вес» / «Набрать вес» (только если в базе есть колонки, миграция 085; у уже весовой цели — всегда).
 // Старт по умолчанию — последний вес тела; цель — в нужную сторону от старта.
 type Kind = 'plain' | WeightMode
@@ -77,6 +80,7 @@ async function save() {
       difficulty: difficulty.value,
       deadline: horizon.value === 'day' ? deadline.value : '',
       horizon: horizon.value,
+      repeat: kind.value === 'plain' && horizon.value === 'day' && repeat.value ? repeat.value : null,
       ...(kind.value === 'plain' ? {} : { weightMode: kind.value, weightStart: wStart, weightTarget: wTarget }), // у обычной цели ключей веса нет — weightFields() сам обнулит вес в базе
     })
   } catch (e) {
@@ -144,6 +148,16 @@ async function save() {
       <template v-if="horizon === 'day'">
         <label class="mt-2 block text-sm">{{ t('goals_field_date') }}</label>
         <input v-model="deadline" type="date" class="w-full" data-test="goal-deadline" :aria-invalid="dateMissing" @input="dateMissing = false" />
+        <template v-if="repeatColumn && kind === 'plain'">
+          <label class="mt-2 block text-sm">{{ t('goals_field_repeat') }}</label>
+          <select v-model="repeat" class="w-full" data-test="goal-repeat-select">
+            <option value="">{{ t('goals_repeat_none') }}</option>
+            <option value="week">{{ t('goals_repeat_week') }}</option>
+            <option value="month">{{ t('goals_repeat_month') }}</option>
+            <option value="year">{{ t('goals_repeat_year') }}</option>
+          </select>
+          <p v-if="repeat" class="dim mt-1 text-xs" data-test="goal-repeat-hint">{{ t('goals_repeat_hint') }}</p>
+        </template>
       </template>
 
       <p v-if="errorText" class="mt-3 text-sm" style="color: var(--danger)" role="alert" data-test="goal-form-error">{{ errorText }}</p>

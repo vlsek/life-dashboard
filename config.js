@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.98";
+const SITE_VERSION = "7.99";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.99", date: "2026-11-06 23:30", changes: [
+        "«Цели»: повторяющиеся цели — в форме цели со сроком появилось поле «Повтор» (каждую неделю / месяц / год). Когда цель выполнена, следующая создаётся сама со сроком через период (например, оплата счетов раз в месяц); снял отметку — нетронутая следующая убирается. Нужна миграция 120 (без неё поля «Повтор» нет).",
+    ]},
     { version: "7.98", date: "2026-11-07 09:00", changes: [
         "Тренировки: исправлено — разминочные и невыполненные подходы больше не раздувают метрику дня, связанную с упражнением, и счётчик «сегодня» на карточке упражнения (раньше разминка засчитывалась как рабочий подход). Старые записи считаются как раньше.",
     ]},
@@ -3004,6 +3007,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.99", date: "2026-11-06 23:30", changes: [
+        "Goals: recurring goals — a goal with a due date now has a “Repeat” field (weekly / monthly / yearly). When you complete it, the next one is created automatically with the due date one period later (e.g. paying bills monthly); un-complete it and the untouched next one is removed. Needs migration 120 (without it there is no “Repeat” field).",
+    ]},
     { version: "7.98", date: "2026-11-07 09:00", changes: [
         "Workouts: fixed — warm-up and unfinished sets no longer inflate the daily metric linked to an exercise or the “today” counter on the exercise card (warm-ups used to count as working sets). Old entries count as before.",
     ]},

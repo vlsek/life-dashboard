@@ -19,6 +19,8 @@ export interface Goal {
   weight_mode?: WeightMode | null // миграция 085: цель на вес («сбросить»/«набрать»); текущий вес — из body_stats
   weight_start?: number | null
   weight_target?: number | null
+  repeat_every?: 'week' | 'month' | 'year' | null // миграция 120: повтор (BACKLOG 81.4); нет колонки/значения — не повторяется
+  repeat_next_id?: string | null // созданная при выполнении следующая цель (не плодим дубликаты при повторной отметке)
   created_at: string
 }
 
@@ -34,6 +36,7 @@ export interface GoalFormInput {
   weightMode?: WeightMode | null // цель на вес (миграция 085); null/нет — обычная цель
   weightStart?: number | null
   weightTarget?: number | null
+  repeat?: 'week' | 'month' | 'year' | null // повтор цели (миграция 120)
 }
 
 // Начальные значения формы: то же + текущие баллы цели (только для показа строки «Баллы: N»; в базу из формы не уходят).

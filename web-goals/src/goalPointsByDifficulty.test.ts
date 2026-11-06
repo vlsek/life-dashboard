@@ -50,7 +50,7 @@ describe('форма цели: баллы по сложности', () => {
     await Promise.resolve()
     expect(submit).toHaveBeenCalledTimes(1)
     const res = (submit.mock.calls[0] as unknown as [GoalFormInput])[0]
-    expect(res).toEqual({ name: 'Пробежать 10 км', category: '', stages: 1, difficulty: 'hard', deadline: '', horizon: 'now' })
+    expect(res).toEqual({ name: 'Пробежать 10 км', category: '', stages: 1, difficulty: 'hard', deadline: '', horizon: 'now', repeat: null })
     expect(res).not.toHaveProperty('points')
     w.unmount()
   })
