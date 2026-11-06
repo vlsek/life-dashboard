@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { t } from '../lib/i18n'
+import { t, type DictKey } from '../lib/i18n'
+import { musclesForExercise, type MuscleId } from '../lib/muscles'
 import { exerciseBests, exerciseHistory, prSetText } from '../lib/records'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 
 // «Рекорды» упражнения (BACKLOG 69.9, срез 2): лучшие значения за всё время и «повторы на весе».
 const props = defineProps<{ exercise: Exercise; entries: WorkoutEntry[]; unit: string }>()
 const emit = defineEmits<{ close: [] }>()
-const tab = ref<'records' | 'history'>('records')
+const tab = ref<'about' | 'records' | 'history'>('records')
+// «О упражнении»: целевые мышцы (свои из карточки, иначе по справочнику), категория, схема, сколько раз делал
+const muscles = computed<MuscleId[]>(() => (props.exercise.muscle_groups?.length ? (props.exercise.muscle_groups as MuscleId[]) : musclesForExercise(props.exercise.name)))
+const muscleName = (m: MuscleId) => t(`workouts_muscle_${m}` as DictKey)
+const days = computed(() => [...new Set(props.entries.filter((e) => e.exercise_id === props.exercise.id).map((e) => e.date))].sort())
 const history = computed(() => exerciseHistory(props.entries.filter((e) => e.exercise_id === props.exercise.id)))
 const unit = computed(() => props.exercise.unit || props.unit)
 const b = computed(() => exerciseBests(props.entries.filter((e) => e.exercise_id === props.exercise.id)))
@@ -28,9 +33,19 @@ const rows = computed(() => {
     <div class="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-2xl border p-5 sm:rounded-2xl" style="background: var(--bg-card); border-color: var(--border); color: var(--text)" role="dialog" aria-modal="true">
       <h2 class="mb-3 text-lg font-bold">★ {{ t('rec_title') }} — {{ exercise.name }}</h2>
       <div class="mb-3 flex gap-2" role="tablist">
-        <button v-for="k in (['records', 'history'] as const)" :key="k" type="button" role="tab" class="flex-1 rounded-lg border py-2 text-sm" :style="'min-height: 40px; border-color: ' + (tab === k ? 'var(--accent)' : 'var(--border)') + '; color: ' + (tab === k ? 'var(--accent)' : 'var(--text-dim)')" :aria-selected="tab === k" :data-testid="'rec-tab-' + k" @click="tab = k">{{ k === 'records' ? t('rec_tab_records') : t('rec_tab_history') }}</button>
+        <button v-for="k in (['about', 'records', 'history'] as const)" :key="k" type="button" role="tab" class="flex-1 rounded-lg border py-2 text-sm" :style="'min-height: 40px; border-color: ' + (tab === k ? 'var(--accent)' : 'var(--border)') + '; color: ' + (tab === k ? 'var(--accent)' : 'var(--text-dim)')" :aria-selected="tab === k" :data-testid="'rec-tab-' + k" @click="tab = k">{{ k === 'about' ? t('rec_tab_about') : k === 'records' ? t('rec_tab_records') : t('rec_tab_history') }}</button>
       </div>
-      <template v-if="tab === 'history'">
+      <div v-if="tab === 'about'" class="mb-4 text-sm" data-testid="rec-about">
+        <p class="mb-3" style="color: var(--text-dim)">
+          <template v-if="exercise.category">{{ exercise.category }} · </template>{{ exercise.tracks_weight ? t('rec_kind_weight') + ', ' + unit : t('rec_kind_reps') }}<template v-if="exercise.tracks_duration"> · {{ t('rec_kind_time') }}</template>
+        </p>
+        <h3 class="mb-1 font-semibold" style="color: var(--accent)">{{ t('rec_muscles') }}</h3>
+        <p v-if="!muscles.length" style="color: var(--text-dim)" data-testid="about-nomuscles">{{ t('rec_muscles_none') }}</p>
+        <ul v-else class="mb-3 flex flex-wrap gap-1.5" data-testid="about-muscles"><li v-for="m in muscles" :key="m" class="rounded-full border px-3 py-1 text-xs" style="border-color: var(--border)">{{ muscleName(m) }}</li></ul>
+        <p v-if="exercise.suggested_scheme" class="mb-2"><span style="color: var(--text-dim)">{{ t('rec_scheme') }}:</span> {{ exercise.suggested_scheme }}</p>
+        <p data-testid="about-count"><span style="color: var(--text-dim)">{{ t('rec_done') }}:</span> <b>{{ days.length }}</b><template v-if="days.length"> · {{ t('rec_first') }} {{ days[0] }} · {{ t('rec_last') }} {{ days[days.length - 1] }}</template></p>
+      </div>
+      <template v-else-if="tab === 'history'">
         <p v-if="!history.length" class="py-4 text-sm" style="color: var(--text-dim)" data-testid="hist-empty">{{ t('rec_hist_empty') }}</p>
         <ul v-else class="mb-4 text-sm" data-testid="hist-list">
           <li v-for="h in history" :key="h.date" class="border-b py-2" style="border-color: var(--border)" :data-testid="'hist-' + h.date">

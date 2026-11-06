@@ -362,6 +362,22 @@ describe('активная тренировка', () => {
     w.unmount()
   })
 
+  it('карточка упражнения: вкладка «О нём» — мышцы, категория и сколько раз делал', async () => {
+    h.exercises = [{ ...ex, name: 'Жим лёжа', category: 'Грудь' }]
+    h.entries = [
+      { id: 'o1', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }], notes: null },
+      { id: 'o2', user_id: 'u1', exercise_id: 'e1', date: '2026-02-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }], notes: null },
+    ]
+    const w = await mountApp()
+    await w.find('[data-testid="exercise-records"]').trigger('click')
+    await q(w, 'rec-tab-about').trigger('click')
+    expect(q(w, 'rec-about').text()).toContain('Грудь')
+    expect(q(w, 'about-muscles').text()).toContain('Грудь') // жим лёжа → грудь по справочнику
+    expect(q(w, 'about-count').text()).toContain('2')
+    expect(q(w, 'about-count').text()).toContain('2026-02-01')
+    w.unmount()
+  })
+
   it('прошлое: тап по подсказке подставляет числа без ✓; «Подставить прошлое» заполняет пустые подходы', async () => {
     h.entries = [{ id: 'old', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [{ reps: 8, weight: 60, time: null, duration: null, side: null }, { reps: 6, weight: 65, time: null, duration: null, side: null }], notes: null }]
     const w = await mountApp()
