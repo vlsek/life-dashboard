@@ -51,3 +51,44 @@ export function insertWarmup(d: ActiveDraft, entryId: string, plan: readonly War
   })
   return changed ? { ...d, exercises } : d
 }
+
+// ---- Настройка схемы (69.15, срез 3) ----
+export const WARMUP_KEY = 'workouts.warmupScheme.v1'
+export const MAX_WARMUP_STEPS = 6
+
+// Схема из текста «40x8, 60x5, 80x3»: шаги через запятую или точку с запятой, «процент × повторы» с разделителем x / х / × / *, знак % необязателен.
+// Дробный процент — ТОЛЬКО через точку (запятая всегда разделяет шаги). Разбор СТРОГИЙ: процент строго между 0 и 100, повторы целые 1–30, шагов не больше
+// MAX_WARMUP_STEPS; если хоть один шаг негоден, схема отклоняется целиком (null) — чтобы опечатка вроде «42,5x6» не превратилась молча в шаг «5x6».
+export function parseScheme(text: string): WarmupStep[] | null {
+  const out: WarmupStep[] = []
+  for (const tok of text.split(/[,;]+/)) {
+    if (!tok.trim()) continue
+    const m = tok.trim().match(/^(\d+(?:\.\d+)?)\s*%?\s*[xXхХ×*]\s*(\d+)$/)
+    if (!m) return null
+    const pct = Number(m[1])
+    const reps = Number(m[2])
+    if (!(pct > 0 && pct < 100) || !(reps >= 1 && reps <= 30)) return null
+    out.push({ pct: pct / 100, reps })
+  }
+  return out.length && out.length <= MAX_WARMUP_STEPS ? out : null
+}
+
+export const formatScheme = (scheme: readonly WarmupStep[]): string => scheme.map((s) => `${Math.round(s.pct * 1000) / 10}x${s.reps}`).join(', ')
+
+export function readScheme(): WarmupStep[] {
+  try {
+    const raw = localStorage.getItem(WARMUP_KEY)
+    const parsed = raw ? parseScheme(raw) : null
+    if (parsed) return parsed
+  } catch { /* нет доступа к storage — схема по умолчанию */ }
+  return DEFAULT_WARMUP.map((s) => ({ ...s }))
+}
+
+export function writeScheme(scheme: readonly WarmupStep[]): void {
+  try { localStorage.setItem(WARMUP_KEY, formatScheme(scheme)) } catch { /* настройка не критична */ }
+}
+
+export function resetScheme(): WarmupStep[] {
+  try { localStorage.removeItem(WARMUP_KEY) } catch { /* ignore */ }
+  return DEFAULT_WARMUP.map((s) => ({ ...s }))
+}

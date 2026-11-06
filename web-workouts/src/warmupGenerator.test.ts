@@ -86,4 +86,23 @@ describe('кнопка «Разминка»', () => {
     await q(w, 'aw-warmup-0').trigger('click')
     expect(useActiveWorkout().draft.value!.exercises[0].sets.slice(0, 3).map((s) => s.weight)).toEqual([32.5, 47.5, 65])
   })
+
+  it('схема из настроек: поле в панели «Настройки» меняет разминку, хранится, негодный ввод игнорируется, «По умолчанию» возвращает', async () => {
+    const w = await mountApp()
+    await startWith(w, 'e1')
+    await q(w, 'aw-set-0-0').findAll('input')[0].setValue('100')
+    await q(w, 'aw-settings-toggle').trigger('click')
+    expect((q(w, 'aw-warmup-scheme').element as HTMLInputElement).value).toBe('40x8, 60x5, 80x3')
+    await q(w, 'aw-warmup-scheme').setValue('50x10')
+    expect(localStorage.getItem('workouts.warmupScheme.v1')).toBe('50x10')
+    await q(w, 'aw-warmup-scheme').setValue('ерунда') // пока печатают негодное — прежняя схема работает
+    expect(localStorage.getItem('workouts.warmupScheme.v1')).toBe('50x10')
+    await q(w, 'aw-warmup-0').trigger('click')
+    const sets = useActiveWorkout().draft.value!.exercises[0].sets
+    expect(sets.map((s) => [s.weight, s.reps, s.type ?? null])).toEqual([[50, 10, 'warmup'], [100, null, null]])
+    await q(w, 'aw-warmup-scheme-reset').trigger('click')
+    expect(localStorage.getItem('workouts.warmupScheme.v1')).toBeNull()
+    expect((q(w, 'aw-warmup-scheme').element as HTMLInputElement).value).toBe('40x8, 60x5, 80x3')
+  })
 })
+
