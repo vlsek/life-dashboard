@@ -11,7 +11,7 @@ html.theme-dark {
   --border: #333333;
   --text: #e6e6e6;
   --text-dim: #9a9a9a;
-  --accent: #5b8def;
+  --accent: #3d72d4;
   --accent-text: #ffffff;
   --success: #4caf6a;
   --danger: #e05252;
@@ -19,7 +19,7 @@ html.theme-dark {
   --water-top: #63b3f5;
   --water-bottom: #2f86dc;
   --water-line: #4aa3ee;
-  --chart-1: #5b8def;
+  --chart-1: #3d72d4;
   --chart-2: #eb685c;
   --chart-3: #e9b54e;
   --chart-4: #49e999;
@@ -63,7 +63,7 @@ html.theme-light {
   --border: #e2dccf;
   --text: #2b2118;
   --text-dim: #8a7a63;
-  --accent: #d97f2a;
+  --accent: #a85a14;
   --accent-text: #ffffff;
   --success: #4c9a5f;
   --danger: #c94f3f;
@@ -71,7 +71,7 @@ html.theme-light {
   --water-top: #3f95e0;
   --water-bottom: #1560b8;
   --water-line: #1560b8;
-  --chart-1: #ca7524;
+  --chart-1: #a85a14;
   --chart-2: #1d5aaf;
   --chart-3: #199a5a;
   --chart-4: #721daf;
@@ -89,7 +89,7 @@ html.theme-pink {
   --border: #ffb8ce;
   --text: #5c1a33;
   --text-dim: #a8577a;
-  --accent: #ff4f81;
+  --accent: #cc2a62;
   --accent-text: #ffffff;
   --success: #4c9a5f;
   --danger: #d9534f;
@@ -97,7 +97,7 @@ html.theme-pink {
   --water-top: #3184d6;
   --water-bottom: #1359b0;
   --water-line: #1359b0;
-  --chart-1: #ff084e;
+  --chart-1: #cc2a62;
   --chart-2: #1d5aaf;
   --chart-3: #a0731a;
   --chart-4: #189155;
@@ -1909,7 +1909,6 @@ input[type='checkbox']:checked {
    ставим тёмную. Список ведёт страж web-dashboard/src/checkboxesAllPilots.test.ts: считает контраст по корневому style.css, так что
    новая тема со светлым акцентом без записи здесь не пройдёт тесты. */
 html.theme-monet input[type='checkbox']:checked,
-html.theme-light input[type='checkbox']:checked,
 html.theme-nord input[type='checkbox']:checked,
 html.theme-mocha input[type='checkbox']:checked,
 html.theme-amoled input[type='checkbox']:checked,

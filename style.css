@@ -4,7 +4,7 @@
     --border: #333333;
     --text: #e6e6e6;
     --text-dim: #9a9a9a;
-    --accent: #5b8def;
+    --accent: #3d72d4;
     --accent-text: #ffffff;
     --success: #4caf6a;
     --danger: #e05252;
@@ -16,7 +16,7 @@ html.theme-dark {
     --border: #333333;
     --text: #e6e6e6;
     --text-dim: #9a9a9a;
-    --accent: #5b8def;
+    --accent: #3d72d4;
     --accent-text: #ffffff;
     --success: #4caf6a;
     --danger: #e05252;
@@ -40,7 +40,7 @@ html.theme-light {
     --border: #e2dccf;
     --text: #2b2118;
     --text-dim: #8a7a63;
-    --accent: #d97f2a;
+    --accent: #a85a14;
     --accent-text: #ffffff;
     --success: #4c9a5f;
     --danger: #c94f3f;
@@ -52,7 +52,7 @@ html.theme-pink {
     --border: #ffb8ce;
     --text: #5c1a33;
     --text-dim: #a8577a;
-    --accent: #ff4f81;
+    --accent: #cc2a62;
     --accent-text: #ffffff;
     --success: #4c9a5f;
     --danger: #d9534f;

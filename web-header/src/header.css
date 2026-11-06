@@ -626,7 +626,6 @@ input[type='checkbox']:checked {
    ставим тёмную. Список ведёт страж web-dashboard/src/checkboxesAllPilots.test.ts: считает контраст по корневому style.css, так что
    новая тема со светлым акцентом без записи здесь не пройдёт тесты. */
 html.theme-monet input[type='checkbox']:checked,
-html.theme-light input[type='checkbox']:checked,
 html.theme-nord input[type='checkbox']:checked,
 html.theme-mocha input[type='checkbox']:checked,
 html.theme-amoled input[type='checkbox']:checked,

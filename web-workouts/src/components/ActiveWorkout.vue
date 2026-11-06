@@ -3,9 +3,10 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useActiveWorkout } from '../lib/useActiveWorkout'
 import { categoriesOf, rankExercises } from '../lib/exercisePick'
 import { progressionHint } from '../lib/progressionHint'
+import { warmupPlan, workingWeightFor, hasWarmup } from '../lib/warmupGen'
 import { supersetPos, doneSetCount, formatElapsed, previousSet, previousSets, previousText, lastNote, nextSupersetTarget, stepNumber, weightStep, NOTE_MAX, type PrevSource } from '../lib/activeWorkout'
 import { parseNum } from '../lib/entrySets'
-import { setType, SET_TYPES } from '../lib/sessionContract'
+import { setType, SET_TYPES, type SetV2 } from '../lib/sessionContract'
 import { t, type DictKey } from '../lib/i18n'
 import { prSetText, setRecords, topKind } from '../lib/records'
 import { showToast } from '../lib/toast'
@@ -108,6 +109,12 @@ function saveRoutine() {
 const prevFor = (exerciseId: string, i: number) => previousSet(props.entries, exerciseId, draft.value?.date ?? '9999', i, prevSource.value)
 const fillAll = (entryId: string, exerciseId: string) => aw.fillAllPrev(entryId, (i) => prevFor(exerciseId, i))
 const hasPrev = (exerciseId: string) => prevFor(exerciseId, 0) !== null
+// Разминка (69.15 срез 2): план от рабочего веса (свой первый подход, иначе прошлая тренировка); кнопка только у упражнений с весом, когда плана ещё нет в подходах
+const warmupFor = (e: { id: string; exercise_id: string; sets: SetV2[] }) => {
+  if (!exById.value.get(e.exercise_id)?.tracks_weight || hasWarmup(e.sets)) return []
+  const w = workingWeightFor(e.sets, previousSets(props.entries, e.exercise_id, draft.value?.date ?? '9999', prevSource.value))
+  return w ? warmupPlan(w, stepOf(e.exercise_id)) : []
+}
 // Суперсеты (69.8): цветная скобка слева у группы, кнопка между соседними упражнениями
 const SS_COLORS = ['#e07a1f', '#3d8fd1', '#8a5cc2', '#3aa57a']
 const ssColor = (g: number | null) => (g == null ? 'transparent' : SS_COLORS[(g - 1) % SS_COLORS.length])
@@ -300,6 +307,7 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
         </template>
         <div class="mt-2 flex gap-2">
           <button type="button" class="flex-1 rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--accent); min-height: 44px" :data-testid="'aw-add-set-' + ei" @click="aw.addSet(e.id)">{{ t('aw_add_set') }}</button>
+          <button v-if="warmupFor(e).length" type="button" class="flex-1 rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--text); min-height: 44px" :title="t('aw_warmup_title')" :data-testid="'aw-warmup-' + ei" @click="aw.insertWarmup(e.id, warmupFor(e))">{{ t('aw_warmup') }}</button>
           <button v-if="hasPrev(e.exercise_id)" type="button" class="flex-1 rounded-md border py-2 text-sm" style="border-color: var(--border); color: var(--text); min-height: 44px" :data-testid="'aw-fill-' + ei" @click="fillAll(e.id, e.exercise_id)">{{ t('aw_fill_prev') }}</button>
         </div>
       </section>
