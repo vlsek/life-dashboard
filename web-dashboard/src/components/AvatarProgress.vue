@@ -69,7 +69,7 @@ const segs = computed(() => (props.ring ? daySegments(26, 26, 24, props.ring.bas
 
       <button
         type="button"
-        class="absolute flex items-center justify-center rounded-full p-0"
+        class="gear-btn absolute flex items-center justify-center rounded-full p-0"
         style="bottom: -3px; right: -3px; width: 19px; height: 19px; min-height: 0; background: var(--accent); color: var(--accent-text); border: 2px solid var(--bg); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45); font-size: 11px; line-height: 1"
         :title="stripEmoji(t('dash_day_progress_settings_title'))"
         data-test="avatar-gear"
@@ -81,3 +81,13 @@ const segs = computed(() => (props.ring ? daySegments(26, 26, 24, props.ring.bas
     <div v-if="ring" class="dim whitespace-nowrap text-center" style="font-size: 0.72em">{{ ring.totalPct }}%</div>
   </div>
 </template>
+
+<style scoped>
+/* Шестерёнка на аватаре нарисована 19×19 (значок поверх кружка), а палец крупнее: зона нажатия ≈ 45 px за счёт псевдоэлемента, картинка не меняется
+   (приём из аудита 60.2, как у кнопки «О странице»; найдено scripts/visual_regression.py — было меньше 24 px, ниже минимума WCAG 2.2 AA). */
+.gear-btn::after {
+  content: '';
+  position: absolute;
+  inset: -13px;
+}
+</style>

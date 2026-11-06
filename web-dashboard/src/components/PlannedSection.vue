@@ -409,7 +409,7 @@ const collapsed = ref(false)
       <summary class="dim cursor-pointer text-xs">{{ t('dash_planned_more') }}</summary>
       <div class="mt-2 flex flex-wrap items-center gap-2">
         <input v-model="newTime" type="time" class="plan-time" :title="t('plan_time_label')" data-test="new-time" />
-        <label class="inline-flex items-center gap-1 text-sm" :title="t('dash_planned_done_already_title')">
+        <label class="inline-flex items-center gap-1 text-sm" style="min-height: 32px" :title="t('dash_planned_done_already_title')">
           <input v-model="newDone" type="checkbox" data-test="new-done" />
           {{ t('dash_planned_done_already') }}
         </label>
@@ -441,6 +441,7 @@ const collapsed = ref(false)
 <style scoped>
 .plan-time {
   width: 7.5rem;
+  min-height: 32px; /* поле времени было 19 px высотой — ниже минимума WCAG 2.2 AA для зоны нажатия (visual_regression.py) */
 }
 /* Пустой план при «Добавить» (BACKLOG 38): красная рамка + короткая встряска. Без движения при prefers-reduced-motion и data-motion="off" — остаётся подсветка. */
 .plan-invalid {
