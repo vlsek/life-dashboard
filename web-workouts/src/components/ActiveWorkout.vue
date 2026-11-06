@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useActiveWorkout } from '../lib/useActiveWorkout'
-import { rankExercises } from '../lib/exercisePick'
+import { categoriesOf, rankExercises } from '../lib/exercisePick'
 import { progressionHint } from '../lib/progressionHint'
 import { supersetPos, doneSetCount, formatElapsed, previousSet, previousSets, previousText, lastNote, nextSupersetTarget, stepNumber, weightStep, NOTE_MAX, type PrevSource } from '../lib/activeWorkout'
 import { parseNum } from '../lib/entrySets'
@@ -115,7 +115,9 @@ const ssPos = (i: number) => (draft.value ? supersetPos(draft.value, i) : 'none'
 const joined = (i: number) => !!draft.value && draft.value.exercises[i].superset_group != null && draft.value.exercises[i].superset_group === draft.value.exercises[i + 1]?.superset_group
 const picking = ref(false)
 const query = ref('')
-const pickList = computed(() => rankExercises(props.exercises, props.entries, query.value))
+const pickCategory = ref<string | null>(null)
+const pickCategories = computed(() => categoriesOf(props.exercises))
+const pickList = computed(() => rankExercises(props.exercises, props.entries, query.value, pickCategory.value))
 const unitOf = (ex: Exercise | undefined) => ex?.unit || props.unit
 const TYPE_MARK: Record<string, string> = { normal: '', warmup: 'W', drop: 'D', failure: 'F' }
 const TYPE_LABEL = (ty: string): string => (ty === 'warmup' ? t('aw_type_warmup') : ty === 'drop' ? t('aw_type_drop') : ty === 'failure' ? t('aw_type_failure') : '')
@@ -143,6 +145,7 @@ function pick(id: string) {
   aw.addExercise(id)
   picking.value = false
   query.value = ''
+  pickCategory.value = null
 }
 const inputCls = 'w-full rounded-md border px-2 py-2 text-center text-base'
 const inputStyle = 'border-color: var(--border); background: var(--bg); color: var(--text); min-height: 44px'
@@ -317,6 +320,9 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
           <button type="button" class="px-2 py-1" style="color: var(--text-dim); min-height: 40px" @click="picking = false">✕</button>
         </div>
         <input v-model="query" type="text" :placeholder="t('aw_search')" class="mb-2 w-full rounded-md border px-3 py-2" style="border-color: var(--border); background: var(--bg); color: var(--text); min-height: 44px" data-testid="aw-search" />
+        <div v-if="pickCategories.length > 1" class="mb-2 flex gap-1 overflow-x-auto pb-1" data-testid="aw-pick-cats">
+          <button v-for="c in [null, ...pickCategories]" :key="c ?? '_all'" type="button" class="shrink-0 whitespace-nowrap rounded-full border px-3 py-1 text-xs" :style="'min-height: 32px; border-color: ' + (pickCategory === c ? 'var(--accent)' : 'var(--border)') + '; color: ' + (pickCategory === c ? 'var(--accent)' : 'var(--text-dim)')" :aria-pressed="pickCategory === c" :data-testid="'aw-cat-' + (c ?? 'all')" @click="pickCategory = c">{{ c ?? t('aw_cat_all') }}</button>
+        </div>
         <p v-if="exercises.length === 0" class="py-4 text-sm" style="color: var(--text-dim)">{{ t('aw_no_exercises') }}</p>
         <ul class="overflow-y-auto">
           <li v-for="row in pickList" :key="row.exercise.id">
