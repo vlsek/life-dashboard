@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.90";
+const SITE_VERSION = "7.91";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.91", date: "2026-11-06 10:30", changes: [
+        "Подсказка страницы: кнопка «ОК» теперь читается на тёмных темах — текст обычным цветом вместо акцентного (контраст 3.6 → выше 4.5), рамка осталась акцентной.",
+    ]},
     { version: "7.90", date: "2026-11-04 10:00", changes: [
         "Магазин: покупка стала надёжнее. Двойное нажатие «Купить» больше не отправляет покупку дважды, а если вещь уже куплена (список устарел), магазин так и скажет — «Эта вещь уже куплена», не перезаписывая дату покупки. Если при покупке, переносе из архива или удалении пропала связь, вместо технического текста с адресом сервера покажется понятное «Нет связи с сервером». Без миграций.",
     ]},
@@ -2980,6 +2983,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.91", date: "2026-11-06 10:30", changes: [
+        "Page hint: the “OK” button is now readable on dark themes — normal text colour instead of the accent (contrast 3.6 → above 4.5); the border keeps the accent.",
+    ]},
     { version: "7.90", date: "2026-11-04 10:00", changes: [
         "Shop: buying is now more reliable. Double-tapping “Buy” no longer sends the purchase twice, and if an item is already bought (the list was stale) the shop says so — “This item is already bought” — without overwriting the purchase date. If the connection drops during a purchase, a transfer from the archive or a delete, you now see a clear “No connection to the server” instead of technical text with the server address. No migrations.",
     ]},

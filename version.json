@@ -1,7 +1,14 @@
 {
-  "version": "7.90",
+  "version": "7.91",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.91",
+      "date": "2026-11-06 10:30",
+      "changes": [
+        "Page hint: the “OK” button is now readable on dark themes — normal text colour instead of the accent (contrast 3.6 → above 4.5); the border keeps the accent."
+      ]
+    },
     {
       "version": "7.90",
       "date": "2026-11-04 10:00",
@@ -5586,6 +5593,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.91",
+      "date": "2026-11-06 10:30",
+      "changes": [
+        "Подсказка страницы: кнопка «ОК» теперь читается на тёмных темах — текст обычным цветом вместо акцентного (контраст 3.6 → выше 4.5), рамка осталась акцентной."
+      ]
+    },
     {
       "version": "7.90",
       "date": "2026-11-04 10:00",
