@@ -11,7 +11,7 @@ import type { DictKey } from '../lib/i18n'
 import type { AchievementState } from '../lib/achievements'
 
 // Одна карточка достижения: открытое — цветное (значок в акцентном кружке, дата), закрытое — тусклое (замок, условие, прогресс-бар).
-const props = defineProps<{ state: AchievementState; unlocked: boolean; unlockedAt: string | null }>()
+const props = defineProps<{ state: AchievementState; unlocked: boolean; unlockedAt: string | null; peerPercent?: number | null }>()
 
 const title = computed(() => achievementTitle(props.state.def))
 // ГРЕЙД самого достижения (BACKLOG 44.12; lib/grade.ts) — задаёт форму значка, полоску и свечение карточки. Редкость НАГРАДЫ (ниже, rarity) — отдельная.
@@ -28,6 +28,8 @@ const rarity = computed(() => (reward.value ? rewardRarity(props.state.def.key) 
 const condition = computed(() => achievementCondition(props.state.def))
 const shownValue = computed(() => Math.min(props.state.value, props.state.def.target))
 const percent = computed(() => Math.round(props.state.progress * 100))
+// «Открыли N% людей» (BACKLOG 78.8): только если база отдала данные (миграция 118, выборка ≥ 20 человек); 0 — «меньше 1%»
+const peers = computed(() => (props.peerPercent == null ? '' : props.peerPercent === 0 ? t('ach_peers_less') : t('ach_peers').replace('{n}', String(props.peerPercent))))
 const when = computed(() => {
   if (!props.unlocked) return ''
   if (!props.unlockedAt) return t('ach_unlocked_before')
@@ -66,6 +68,8 @@ const when = computed(() => {
       <span class="ach-rarity-dot" :style="{ background: RARITY_COLOR[rarity] }" aria-hidden="true"></span>
       <span>{{ t('ach_reward_rarity').replace('{r}', t(('ach_rarity_' + rarity) as DictKey)) }}</span>
     </div>
+
+    <div v-if="peers" class="ach-peers dim mt-0.5 text-xs" data-testid="achievement-peers">{{ peers }}</div>
 
     <template v-if="unlocked">
       <div class="ach-when mt-2 text-xs" data-testid="achievement-when">{{ when }}</div>
