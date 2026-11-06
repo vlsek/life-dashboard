@@ -1,7 +1,21 @@
 {
-  "version": "7.96",
+  "version": "7.98",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.98",
+      "date": "2026-11-07 09:00",
+      "changes": [
+        "Workouts: fixed — warm-up and unfinished sets no longer inflate the daily metric linked to an exercise or the “today” counter on the exercise card (warm-ups used to count as working sets). Old entries count as before."
+      ]
+    },
+    {
+      "version": "7.97",
+      "date": "2026-11-06 17:40",
+      "changes": [
+        "Achievements: the “best perfect-days streak” now respects the “Vacation / sick leave” pause — a paused day no longer breaks the record streak."
+      ]
+    },
     {
       "version": "7.96",
       "date": "2026-11-06 16:00",
@@ -5628,6 +5642,20 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.98",
+      "date": "2026-11-07 09:00",
+      "changes": [
+        "Тренировки: исправлено — разминочные и невыполненные подходы больше не раздувают метрику дня, связанную с упражнением, и счётчик «сегодня» на карточке упражнения (раньше разминка засчитывалась как рабочий подход). Старые записи считаются как раньше."
+      ]
+    },
+    {
+      "version": "7.97",
+      "date": "2026-11-06 17:40",
+      "changes": [
+        "«Достижения»: «лучшая серия идеальных дней» теперь тоже учитывает паузу «Отпуск / больничный» — день паузы не обрывает рекордную серию."
+      ]
+    },
     {
       "version": "7.96",
       "date": "2026-11-06 16:00",

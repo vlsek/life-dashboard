@@ -175,6 +175,7 @@ export interface CounterInput {
   wordsLearned?: number // «Языки»: слов выучено (не передан — 0)
   goalsStreakBest?: number // «Серия по целям»: лучшая серия из RPC (не передан — 0)
   milestonesDone?: number // «Вехи»: отметок выполнения (считает countMilestoneMarks; не передан — 0)
+  pauses?: { from: string; to: string | null }[] // BACKLOG 81.5: паузы серий (profiles.pauses); не переданы — нет пауз
   today: Date
 }
 
@@ -203,7 +204,17 @@ export function countPerfectDays(metrics: Metric[], byDay: Record<string, Record
 // Лучшая серия «идеальных дней» за всю историю — по тем же правилам, что серия на Дашборде (computeStreakItemsPure):
 // метрики с count_streak=false не участвуют; день без обязательных по расписанию метрик серию не рвёт и не считается.
 // Незавершённый СЕГОДНЯ не обнуляет серию (смотрим по дням до сегодняшнего включительно, но сегодняшний неполный пропускаем).
-export function bestPerfectStreak(metrics: Metric[], byDay: Record<string, Record<string, MetricValue>>, today: Date): number {
+// Попадает ли день в паузу (отпуск/больничный, BACKLOG 81.5): to = null — «до отмены». Копия логики web-dashboard/src/lib/pauses.ts (isPausedOn).
+export function pausedOn(pauses: { from: string; to: string | null }[] | undefined, day: string): boolean {
+  return (pauses || []).some((p) => typeof p?.from === 'string' && p.from <= day && (p.to === null || (typeof p.to === 'string' && day <= p.to)))
+}
+
+export function bestPerfectStreak(
+  metrics: Metric[],
+  byDay: Record<string, Record<string, MetricValue>>,
+  today: Date,
+  pauses?: { from: string; to: string | null }[],
+): number {
   const ms = (metrics || []).filter((m) => m.count_streak !== false)
   const days = Object.keys(byDay).sort()
   if (!ms.length || !days.length) return 0
@@ -221,8 +232,8 @@ export function bestPerfectStreak(metrics: Metric[], byDay: Record<string, Recor
     if (isPerfect(d)) {
       run++
       if (run > best) best = run
-    } else if (expectedOn(d).length === 0) {
-      // день отдыха по расписанию: серию не рвёт
+    } else if (expectedOn(d).length === 0 || pausedOn(pauses, d)) {
+      // день отдыха по расписанию или пауза (отпуск/больничный, 81.5): серию не рвёт
     } else if (d === todayStr) {
       // сегодня ещё не закончился: не рвём серию (она уже учтена вчерашним днём)
     } else {
@@ -255,7 +266,7 @@ export function computeCounters(input: CounterInput): Counters {
   const otherPoints = sum(input.doneGoals, 5) + sum(input.masteredSkills, 10) + sum(input.doneBooks, 10)
   const pointsTotal = (dailyTenths + Math.round(otherPoints * 10)) / 10
   return {
-    streakBest: bestPerfectStreak(input.metrics, byDay, input.today),
+    streakBest: bestPerfectStreak(input.metrics, byDay, input.today, input.pauses),
     perfectDays: countPerfectDays(input.metrics, byDay, input.today),
     pointsTotal,
     metricDone,

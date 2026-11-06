@@ -9,6 +9,7 @@ import AchievementShowcase from './components/AchievementShowcase.vue'
 import AchievementCollections from './components/AchievementCollections.vue'
 import CollapseChevron from './components/CollapseChevron.vue'
 import { useAchievements } from './lib/useAchievements'
+import { useAchievementRarity } from './lib/useAchievementRarity'
 import { groupStates, isUnlocked } from './lib/achievements'
 import { gradeOf } from './lib/grade'
 import { flashCard } from './lib/flashCard'
@@ -20,6 +21,9 @@ import type { DictKey } from './lib/i18n'
 
 const { auth, states, hiddenStates, unlocked, newlyUnlocked, mode, error, loading, init, reload } = useAchievements()
 onMounted(init)
+// «Открыли N% людей» (BACKLOG 78.8, миграция 118): грузим после входа; нет данных — строки на карточках нет
+const rarity = useAchievementRarity()
+watch(() => auth.value.status, (st) => { if (st === 'ready') void rarity.load() })
 
 // Поздравление показываем один раз: после закрытия список очищается (в хранилище достижение уже записано, повторно не придёт).
 const celebrate = ref<string[]>([])
@@ -101,6 +105,7 @@ const overallPercent = computed(() => (total.value ? Math.round((openCount.value
               :state="s"
               :unlocked="isUnlocked(s.def.key, unlocked)"
               :unlocked-at="unlocked[s.def.key] ?? null"
+              :peer-percent="rarity.percentOf(s.def.key)"
             />
           </div>
         </section>
@@ -109,7 +114,7 @@ const overallPercent = computed(() => (total.value ? Math.round((openCount.value
           <h2 class="mb-1 text-base font-medium"><EmojiText :text="t('ach_secret_title')" /> <span class="dim text-xs">{{ t('ach_secret_found').replace('{n}', String(foundSecret.length)) }}</span></h2>
           <p class="dim mb-2 text-xs">{{ t('ach_secret_hint') }}</p>
           <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <AchievementCard v-for="s in foundSecret" :key="s.def.key" :state="s" :unlocked="true" :unlocked-at="unlocked[s.def.key] ?? null" />
+            <AchievementCard v-for="s in foundSecret" :key="s.def.key" :state="s" :unlocked="true" :unlocked-at="unlocked[s.def.key] ?? null" :peer-percent="rarity.percentOf(s.def.key)" />
           </div>
         </section>
 
