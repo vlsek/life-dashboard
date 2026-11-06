@@ -3,7 +3,8 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import Icon from './Icon.vue'
 import GradeBadge from './GradeBadge.vue'
 import { gradeOf } from '../lib/grade'
-import { t } from '../lib/i18n'
+import { locale, t } from '../lib/i18n'
+import { cardFileName, renderCardBlob, shareOrDownload } from '../lib/shareCard'
 import type { DictKey } from '../lib/i18n'
 import { achievementCondition, achievementTitle, rewardText } from '../lib/achievementText'
 import { RARITY_COLOR, rewardFor, rewardIcon, rewardRarity } from '../lib/rewards'
@@ -31,6 +32,34 @@ function advance() {
   else index.value++
 }
 
+// «Поделиться» (BACKLOG 78.3): картинка-карточка достижения; Web Share, а если нельзя — скачать файл
+const sharing = ref(false)
+const shareStatus = ref('')
+async function share() {
+  const s = current.value
+  if (!s || sharing.value) return
+  sharing.value = true
+  shareStatus.value = ''
+  try {
+    const spec = {
+      grade: grade.value,
+      icon: s.def.icon,
+      title: achievementTitle(s.def),
+      gradeLabel: t(('ach_grade_' + grade.value) as DictKey),
+      condition: achievementCondition(s.def),
+      message: message.value,
+      appName: 'Life Dashboard',
+      dateText: new Date().toLocaleDateString(locale(), { day: 'numeric', month: 'long', year: 'numeric' }),
+    }
+    const blob = await renderCardBlob(spec)
+    const r = await shareOrDownload(blob, cardFileName(s.def.key), t('ach_share_text'))
+    if (r === 'downloaded') shareStatus.value = t('ach_share_saved')
+  } catch {
+    shareStatus.value = t('ach_share_fail')
+  } finally {
+    sharing.value = false
+  }
+}
 const button = ref<HTMLButtonElement | null>(null)
 function onKey(e: KeyboardEvent) {
   if (e.key === 'Escape') emit('close')
@@ -76,7 +105,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
       </div>
       <div v-if="many" class="dim mt-2 text-xs" data-testid="unlocked-counter">{{ counter }}</div>
 
-      <button ref="button" type="button" class="mt-4 w-full rounded-lg px-4 py-2" style="background: var(--accent); color: var(--accent-text)" data-testid="unlocked-next" @click="advance">
+      <button type="button" class="secondary mt-4 w-full rounded-lg px-4 py-2" :disabled="sharing" data-testid="unlocked-share" @click="share">{{ t('ach_share_btn') }}</button>
+      <div v-if="shareStatus" class="dim mt-1 text-xs" role="status" data-testid="unlocked-share-status">{{ shareStatus }}</div>
+
+      <button ref="button" type="button" class="mt-2 w-full rounded-lg px-4 py-2" style="background: var(--accent); color: var(--accent-text)" data-testid="unlocked-next" @click="advance">
         {{ isLast ? t('ach_new_close') : t('ach_new_next') }}
       </button>
     </div>
