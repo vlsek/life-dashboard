@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.00";
+const SITE_VERSION = "8.01";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.01", date: "2026-11-02 19:29", changes: [
+        "Крупнее зона нажатия на телефоне: шестерёнка на аватаре «Главной» (значок прежний, нажимаемая область стала примерно в 2,5 раза шире), поле времени и «уже сделано» в плане дня, заголовки сворачиваемых блоков и кнопка «+» добавления словаря в «Языках». Картинка почти не изменилась, но попасть пальцем стало проще."
+    ]},
     { version: "8.00", date: "2026-11-04 14:10", changes: [
         "Магазин: купленные вещи стали читаемее. Раньше вся карточка купленной вещи была сильно приглушена, и название с датой покупки почти сливались с фоном; теперь карточка обычной яркости, а покупка видна по зачёркнутому названию и подписи «Куплено». Без миграций.",
     ]},
@@ -3010,6 +3013,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.01", date: "2026-11-02 19:29", changes: [
+        "Larger tap areas on the phone: the gear on the Home avatar (same icon, the tappable area is about 2.5 times wider), the time field and “already done” in the day plan, the headings of collapsible blocks and the “+” add-dictionary button in Languages. The picture is almost unchanged, but it is easier to hit with a finger."
+    ]},
     { version: "8.00", date: "2026-11-04 14:10", changes: [
         "Shop: bought items are easier to read. The whole card of a bought item used to be heavily faded, so the name and the purchase date almost blended into the background; now the card has normal brightness, and a purchase is shown by the struck-through name and the “Bought” label. No migrations.",
     ]},

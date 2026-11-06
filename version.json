@@ -1,7 +1,14 @@
 {
-  "version": "8.00",
+  "version": "8.01",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.01",
+      "date": "2026-11-02 19:29",
+      "changes": [
+        "Larger tap areas on the phone: the gear on the Home avatar (same icon, the tappable area is about 2.5 times wider), the time field and “already done” in the day plan, the headings of collapsible blocks and the “+” add-dictionary button in Languages. The picture is almost unchanged, but it is easier to hit with a finger."
+      ]
+    },
     {
       "version": "8.00",
       "date": "2026-11-04 14:10",
@@ -5656,6 +5663,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.01",
+      "date": "2026-11-02 19:29",
+      "changes": [
+        "Крупнее зона нажатия на телефоне: шестерёнка на аватаре «Главной» (значок прежний, нажимаемая область стала примерно в 2,5 раза шире), поле времени и «уже сделано» в плане дня, заголовки сворачиваемых блоков и кнопка «+» добавления словаря в «Языках». Картинка почти не изменилась, но попасть пальцем стало проще."
+      ]
+    },
     {
       "version": "8.00",
       "date": "2026-11-04 14:10",
