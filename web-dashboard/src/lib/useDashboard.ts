@@ -12,6 +12,7 @@ import { getDayProgressSettings, setDayProgressSettings, type DayProgressSetting
 import { DATA_CHANGED } from './events'
 import { syncUserTimezone } from './timezone'
 import { withWaterGoal } from './waterGoal'
+import { isPausedOn, syncPausesFromProfile, pauses } from './pauses'
 import { dropWaterIfOff, ensureTrackWater } from './waterTracking'
 import type { Metric } from './types'
 
@@ -135,7 +136,8 @@ export function useDashboard() {
     )
     const allGoals = (goalsRes.data || []) as GoalLite[]
 
-    streaks.value = computeStreakItemsPure(metrics, byDay, noteDays, new Date())
+    await syncPausesFromProfile(userId).catch(() => pauses.value) // 81.5: паузы (отпуск/больничный); сбой — берём то, что на устройстве
+    streaks.value = computeStreakItemsPure(metrics, byDay, noteDays, new Date(), (d) => isPausedOn(pauses.value, d))
     habitScores.value = computeHabitScores(metrics, byDay, new Date())
     const yearNotes: Record<string, string[]> = {}
     for (const [d, n] of Object.entries(notesByDate)) {

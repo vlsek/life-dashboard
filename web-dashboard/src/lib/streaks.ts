@@ -115,6 +115,7 @@ export function computeStreakItemsPure(
   byDay: Record<string, Record<string, unknown>>,
   noteDays: Set<string>,
   today: Date,
+  isPaused: (d: string) => boolean = () => false, // BACKLOG 81.5: день паузы (отпуск/больничный) серию не рвёт и не считается
 ): StreakItem[] {
   const todayStr3 = fmtDate(today)
   // Точка отсчёта у КАЖДОЙ серии своя (BACKLOG 22.1 🐞 «пунктир огонька пропал»): если серия сегодня уже засчитана — считаем
@@ -140,7 +141,7 @@ export function computeStreakItemsPure(
         return exp.length > 0 && exp.every((m) => isMetricDone(m, byDay[d][m.id] as any, d))
       }),
     )
-    const isSkip = (d: string) => expectedOn(d).length === 0
+    const isSkip = (d: string) => expectedOn(d).length === 0 || isPaused(d)
     const todayIsRest = isSkip(todayStr3) && !perfectDays.has(todayStr3)
     const todayCounted = perfectDays.has(todayStr3) || todayIsRest
     items.push({
@@ -169,8 +170,8 @@ export function computeStreakItemsPure(
       if (w.streak > 0) items.push({ kind: 'metric', metric: m, streak: w.streak, unit: 'w', todayCounted: !w.atRisk })
       continue
     }
-    const isSkip = (d: string) => !metricExpectedOn(m, d) && !doneDays.has(d)
-    const todayCounted = doneDays.has(todayStr3) || !metricExpectedOn(m, todayStr3)
+    const isSkip = (d: string) => (!metricExpectedOn(m, d) && !doneDays.has(d)) || isPaused(d)
+    const todayCounted = doneDays.has(todayStr3) || !metricExpectedOn(m, todayStr3) || isPaused(todayStr3)
     const startFrom = startFor(todayCounted)
     let streak = computeStreakSkipping(doneDays, isSkip, startFrom)
     // Импортированный стрик (см. migrations/026): добавляется поверх посчитанного, только пока
@@ -183,8 +184,8 @@ export function computeStreakItemsPure(
   }
 
   // серия "заполнил заметку дня"
-  const noteToday = noteDays.has(todayStr3)
-  items.push({ kind: 'note_filled', streak: computeStreak(noteDays, startFor(noteToday)), todayCounted: noteToday })
+  const noteToday = noteDays.has(todayStr3) || isPaused(todayStr3)
+  items.push({ kind: 'note_filled', streak: computeStreakSkipping(noteDays, isPaused, startFor(noteToday)), todayCounted: noteToday })
 
   // серии в днях — выше, недельные (в неделях) — ниже: числа в разных единицах не сравниваем
   items.sort((a, b) => Number(a.unit === 'w') - Number(b.unit === 'w') || b.streak - a.streak)

@@ -27,6 +27,7 @@ import SplashLoader from './components/SplashLoader.vue'
 import PointsFloat from './components/PointsFloat.vue'
 import StreakMilestoneModal from './components/StreakMilestoneModal.vue'
 import PerfectDayModal from './components/PerfectDayModal.vue'
+import StreakPause from './components/StreakPause.vue'
 import PlanReminderBanner from './components/PlanReminderBanner.vue'
 import InstallBanner from './components/InstallBanner.vue'
 import ProfileSection from './components/ProfileSection.vue'
@@ -353,6 +354,8 @@ async function onSaveProgressSettings(s: DayProgressSettings) {
                   </div>
                 </div>
               </div>
+
+              <StreakPause />
 
               <div class="mt-4 flex justify-end">
                 <button

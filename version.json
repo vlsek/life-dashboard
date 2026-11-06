@@ -1,7 +1,14 @@
 {
-  "version": "7.93",
+  "version": "7.94",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.94",
+      "date": "2026-11-06 15:00",
+      "changes": [
+        "Dashboard → Streaks: “Vacation / sick leave” pause — on paused days a miss no longer breaks streaks (metrics, perfect days, day note) and is not counted; anything done still counts. A date range or “until I end it”. Needs migration 119 (otherwise the pause is stored on this device only)."
+      ]
+    },
     {
       "version": "7.93",
       "date": "2026-11-03 17:00",
@@ -5607,6 +5614,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.94",
+      "date": "2026-11-06 15:00",
+      "changes": [
+        "«Дашборд» → «Серии»: пауза «Отпуск / больничный» — в дни паузы пропуск не рвёт серии (по метрикам, идеальные дни, заметка) и не считается; сделанное засчитывается. Диапазон дат или «пока не закончу». Нужна миграция 119 (иначе пауза хранится только на этом устройстве)."
+      ]
+    },
     {
       "version": "7.93",
       "date": "2026-11-03 17:00",
