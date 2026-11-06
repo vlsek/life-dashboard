@@ -3,7 +3,7 @@
 Запуск: python3 scripts/shop_audit.py [каталог_для_скриншотов]  (сначала: cd web-shop && npm run build; нужен playwright, Chromium /opt/google/chrome/chrome).
 Что смотрит: три вида магазина (Цель / Витрина / Список) × телефон 390 и ПК 1280 × светлая и тёмная тема, с данными (дорогая вещь, длинное название,
 купленные, архив). Ищет: горизонтальную прокрутку страницы, элементы за краем экрана (вне горизонтальных контейнеров прокрутки), цели нажатия мельче порога (32 px на телефоне — критерий проекта, 24 px на ПК — WCAG 2.2 AA; мельче 44 на телефоне — «предупреждения»), кнопки/ссылки без доступного имени, картинки без alt, поля без подписи, ошибки консоли и страницы.
-Это проверка вёрстки и доступности, не логики; контраст цветов тут не считается. Пишет сводку в консоль, скриншоты — в каталог (по умолчанию /tmp/shopaudit)."""
+Это проверка вёрстки и доступности, не логики. Контраст текста (WCAG AA 4,5:1, крупный 3:1; с учётом прозрачности предков и opacity) выводится отдельным разделом по цветовым парам: общие цвета темы — замечания, STRICT_CONTRAST=1 делает их отказом. Пишет сводку в консоль, скриншоты — в каталог (по умолчанию /tmp/shopaudit)."""
 import json, os, subprocess, sys, time
 from playwright.sync_api import sync_playwright
 
@@ -78,6 +78,35 @@ JS = r"""
       if (!labelled) out.noLabel.push(desc(el) + (el.getAttribute('placeholder') ? ' (есть только placeholder)' : ''))
     }
   }
+
+  // контраст текста (WCAG 2.x): цвет текста с учётом прозрачности цепочки предков против эффективного фона (первый непрозрачный предок, полупрозрачные смешиваются)
+  const parse = (c) => { const m = c.match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(/[ ,\/]+/).filter(Boolean).map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 && !Number.isNaN(p[3]) ? p[3] : 1 } }
+  const over = (fg, bg) => ({ r: fg.r * fg.a + bg.r * (1 - fg.a), g: fg.g * fg.a + bg.g * (1 - fg.a), b: fg.b * fg.a + bg.b * (1 - fg.a), a: 1 })
+  const bgOf = (el) => { const chain = []; for (let p = el; p; p = p.parentElement) { const c = parse(getComputedStyle(p).backgroundColor); if (c && c.a > 0) { chain.push(c); if (c.a >= 1) break } } let acc = { r: 255, g: 255, b: 255, a: 1 }; if (!chain.length || chain[chain.length - 1].a < 1) acc = parse(getComputedStyle(document.body).backgroundColor) && parse(getComputedStyle(document.body).backgroundColor).a >= 1 ? parse(getComputedStyle(document.body).backgroundColor) : acc; for (let i = chain.length - 1; i >= 0; i--) acc = over(chain[i], acc); return acc }
+  const opacityOf = (el) => { let o = 1; for (let p = el; p; p = p.parentElement) o *= Number(getComputedStyle(p).opacity); return o }
+  const lum = (c) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4) }; return 0.2126 * f(c.r) + 0.7152 * f(c.g) + 0.0722 * f(c.b) }
+  out.contrast = []
+  const seen = new Set()
+  for (const el of document.querySelectorAll('body *')) {
+    if (!vis(el) || el.closest('[aria-hidden=true]')) continue
+    const own = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim().length > 0)
+    if (!own) continue
+    const cs = getComputedStyle(el)
+    const fgRaw = parse(cs.color); if (!fgRaw) continue
+    const bg = bgOf(el)
+    const op = opacityOf(el)
+    const fg = over({ ...fgRaw, a: fgRaw.a * op }, bg)
+    const L1 = lum(fg), L2 = lum(bg)
+    const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05)
+    const px = parseFloat(cs.fontSize), bold = Number(cs.fontWeight) >= 700
+    const large = px >= 24 || (px >= 18.66 && bold)
+    const need = large ? 3 : 4.5
+    const disabled = el.disabled || el.closest('[disabled]')
+    if (ratio < need && !disabled) {
+      const key = desc(el) + '|' + ratio.toFixed(2)
+      if (!seen.has(key)) { seen.add(key); out.contrast.push(desc(el) + ' ' + ratio.toFixed(2) + ':1 (нужно ' + need + ', ' + cs.color + ' на rgb(' + Math.round(bg.r) + ',' + Math.round(bg.g) + ',' + Math.round(bg.b) + '))' ) }
+    }
+  }
   for (const img of document.querySelectorAll('img')) if (vis(img) && !img.hasAttribute('alt')) out.noAlt.push(img.getAttribute('src') || 'img')
   return out
 }
@@ -131,6 +160,21 @@ def main():
         print(('FAIL ' if probs else 'OK   ') + r['id'] + ' (карточек: %d)%s' % (r['cards'], warn))
         for pr in probs: print('       - ' + pr)
         bad += 1 if probs else 0
+    # Контраст текста — отдельным разделом: большая часть находок упирается в общие цвета темы (--text-dim, акцент) ВСЕХ разделов сайта, поэтому по умолчанию
+    # это замечания, а не отказ прогона; STRICT_CONTRAST=1 делает их отказом (когда палитра будет приведена к WCAG AA).
+    import re
+    from collections import defaultdict
+    pairs = defaultdict(set)
+    for r in report:
+        for c in r['contrast']:
+            m = re.match(r'(.*) ([\d.]+):1 \(нужно ([\d.]+), (rgb\([^)]*\)) на (rgb\([^)]*\))\)', c)
+            if m: pairs[(m.group(4), m.group(5), m.group(2), m.group(3))].add(m.group(1))
+    if pairs:
+        print('\nКОНТРАСТ ниже WCAG AA (по цветовым парам; замечания палитры, не отказ без STRICT_CONTRAST=1):')
+        for (fg, bg, ratio, need), els in sorted(pairs.items(), key=lambda kv: float(kv[0][2])):
+            print('  %s:1 (нужно %s) %s на %s — %d эл., например: %s' % (ratio, need, fg, bg, len(els), '; '.join(sorted(els)[:3])))
+    if os.environ.get('STRICT_CONTRAST') == '1' and pairs:
+        bad += 1
     print('\nИТОГО: %s' % ('всё OK' if not bad else 'ПРОБЛЕМНЫХ ПРОГОНОВ: %d из %d' % (bad, len(report))))
     print('скриншоты:', OUT)
     json.dump(report, open(os.path.join(OUT, 'report.json'), 'w'), ensure_ascii=False, indent=1)

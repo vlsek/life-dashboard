@@ -36,3 +36,27 @@ describe('ShopCard: длинное название', () => {
     expect(w.get('[data-testid="shop-card-name"]').attributes('style')).toContain('overflow-wrap: anywhere')
   })
 })
+
+describe('купленная вещь: читаемость (контраст)', () => {
+  // Раньше карточка целиком была с opacity-70, а название ещё и с opacity-60: текст получался 2,4–3,5:1 (WCAG AA — 4,5:1). Отличие осталось: зачёркивание и подпись «Куплено».
+  it('карточка не затемняется целиком, название зачёркнуто и лишь слегка приглушено', () => {
+    const w = mount(ShopCard, { props: { item: mk({ redeemed: true, redeemed_date: '2026-10-01' }), balance: 100 } })
+    expect(w.get('[data-testid="shop-card"]').classes()).not.toContain('opacity-70')
+    const name = w.get('[data-testid="shop-card-name"]').classes()
+    expect(name).toContain('line-through')
+    expect(name).toContain('opacity-80')
+    expect(name).not.toContain('opacity-60')
+  })
+  it('строка списка: то же приглушение названия', () => {
+    const w = mount(ShopRow, { props: { item: mk({ redeemed: true, redeemed_date: '2026-10-01' }), balance: 100 } })
+    const name = w.get('[data-testid="shop-row-name"]').classes()
+    expect(name).toContain('line-through')
+    expect(name).toContain('opacity-80')
+    expect(name).not.toContain('opacity-60')
+  })
+  it('не купленная вещь без зачёркивания и приглушения', () => {
+    const w = mount(ShopCard, { props: { item: mk(), balance: 100 } })
+    expect(w.get('[data-testid="shop-card-name"]').classes()).not.toContain('line-through')
+  })
+})
+

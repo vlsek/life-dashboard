@@ -14,13 +14,13 @@ const emit = defineEmits<{ buy: [id: string]; claim: [id: string]; edit: [item: 
 </script>
 
 <template>
-  <div class="card flex flex-col rounded-xl border p-3.5" style="border-color: var(--border)" :class="{ 'opacity-70': item.redeemed }" data-testid="shop-card">
+  <div class="card flex flex-col rounded-xl border p-3.5" style="border-color: var(--border)" data-testid="shop-card">
     <img v-if="item.image_url" :src="item.image_url" class="mb-2.5 w-full rounded-lg object-cover" style="height: 120px" alt="" />
     <div v-else class="mb-2.5 flex w-full items-center justify-center rounded-lg text-3xl" style="height: 72px; background: var(--bg); color: var(--accent)" aria-hidden="true">
       <Icon name="gift" />
     </div>
 
-    <div class="mb-1 font-semibold" style="overflow-wrap: anywhere" :class="{ 'line-through opacity-60': item.redeemed }" data-testid="shop-card-name">
+    <div class="mb-1 font-semibold" style="overflow-wrap: anywhere" :class="{ 'line-through opacity-80': item.redeemed }" data-testid="shop-card-name">
       <a v-if="item.link" :href="item.link" target="_blank" rel="noopener" style="color: inherit" class="inline-flex items-center gap-1">{{ item.name }} <Icon name="link" /></a>
       <template v-else>{{ item.name }}</template>
     </div>

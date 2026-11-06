@@ -24,7 +24,7 @@ const saving = computed(() => !props.item.redeemed && !props.item.reward && !p.v
     </div>
 
     <div class="min-w-0 flex-1">
-      <div class="truncate text-sm font-semibold" :class="{ 'line-through opacity-60': item.redeemed }">
+      <div class="truncate text-sm font-semibold" :class="{ 'line-through opacity-80': item.redeemed }" data-testid="shop-row-name">
         <a v-if="item.link" :href="item.link" target="_blank" rel="noopener" style="color: inherit">{{ item.name }}</a>
         <template v-else>{{ item.name }}</template>
       </div>
