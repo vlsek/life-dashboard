@@ -62,7 +62,7 @@ describe('время и хранение', () => {
   })
 })
 
-import { nextSupersetTarget, stepNumber, weightStep, entryRow, lastNote, setExerciseNote, previousSet, previousText } from './activeWorkout'
+import { insertSet, nextSupersetTarget, stepNumber, weightStep, entryRow, lastNote, setExerciseNote, previousSet, previousText } from './activeWorkout'
 describe('строки для БД и подсказка «прошлый раз»', () => {
   const base = { id: 'e', exercise_id: 'x', date: '2026-10-30', sets: [], notes: null, session_id: 's', position: 0, superset_group: null }
   it('без таблицы сессий колонок v2 в строке нет вовсе', () => {
@@ -231,6 +231,20 @@ describe('суперсет: ввод попеременно', () => {
     expect(nextSupersetTarget(d, 2, 0)).toBeNull()
     const short = removeSet(removeSet(d, 'b', 1), 'b', 0) // у B подходов нет
     expect(nextSupersetTarget(short, 0, 0)).toEqual({ ei: 0, i: 1 })
+  })
+})
+
+describe('вернуть удалённый подход', () => {
+  it('insertSet кладёт подход на прежнее место; индекс за пределами — в конец', () => {
+    let d = addExercise(newDraft('d', new Date()), 'a', 'e1')
+    d = addSet(addSet(d, 'a'), 'a')
+    d = updateSet(updateSet(updateSet(d, 'a', 0, { weight: 10 }), 'a', 1, { weight: 20 }), 'a', 2, { weight: 30 })
+    const gone = d.exercises[0].sets[1]
+    const removed = removeSet(d, 'a', 1)
+    expect(removed.exercises[0].sets.map((s) => s.weight)).toEqual([10, 30])
+    expect(insertSet(removed, 'a', 1, gone).exercises[0].sets.map((s) => s.weight)).toEqual([10, 20, 30])
+    expect(insertSet(removed, 'a', 99, gone).exercises[0].sets.map((s) => s.weight)).toEqual([10, 30, 20])
+    expect(insertSet(removed, 'zzz', 0, gone)).toEqual(removed)
   })
 })
 

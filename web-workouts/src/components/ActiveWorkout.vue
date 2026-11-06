@@ -57,6 +57,14 @@ function onEnter(ev: KeyboardEvent) {
   if (next) { next.focus(); next.select?.() } else cur.blur()
 }
 const settingsOpen = ref(false)
+// Удаление подхода: сразу, но с «Отменить» в тосте — случайный тап не стоит потерянных цифр
+function onRemoveSet(entryId: string, i: number) {
+  const set = draft.value?.exercises.find((x) => x.id === entryId)?.sets[i]
+  if (!set) return
+  const snapshot = { ...set }
+  aw.removeSet(entryId, i)
+  showToast(t('aw_set_removed'), 'success', { action: { label: t('workouts_journal_undo'), run: () => aw.insertSet(entryId, i, snapshot) } })
+}
 const noteOpen = ref<Record<string, boolean>>({})
 const prevNote = (exerciseId: string) => lastNote(props.entries, exerciseId, draft.value?.date ?? '9999')
 const restLabel = (exerciseId: string): string => {
@@ -315,7 +323,7 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
           >
             ✓
           </button>
-          <button type="button" class="text-sm" style="color: var(--text-dim); min-height: 44px" :aria-label="t('aw_remove_set')" @click="aw.removeSet(e.id, i)">×</button>
+          <button type="button" class="text-sm" style="color: var(--text-dim); min-height: 44px" :aria-label="t('aw_remove_set')" :data-testid="'aw-rm-' + ei + '-' + i" @click="onRemoveSet(e.id, i)">×</button>
         </div>
         <div v-if="prKind(e.id, i)" class="mt-0.5 text-xs font-semibold" style="color: var(--accent)" :data-testid="'aw-pr-' + ei + '-' + i">
           ★ {{ t(('aw_pr_' + prKind(e.id, i)) as DictKey) }} · {{ prSetText(s, unitOf(exById.get(e.exercise_id))) }}

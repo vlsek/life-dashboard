@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.89";
+const SITE_VERSION = "7.92";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.92", date: "2026-11-06 14:30", changes: [
+        "Тренировки: удаление подхода (×) в активной тренировке теперь с кнопкой «Отменить» в уведомлении — случайный тап больше не стоит потерянных цифр. Подход возвращается на прежнее место.",
+    ]},
     { version: "7.89", date: "2026-11-06 11:00", changes: [
         "Тренировки: в окне упражнения (кнопка-кубок) добавилась вкладка «О нём»: категория, целевые мышцы (свои или по справочнику), рекомендуемая схема и сколько тренировок с этим упражнением уже было — с датой первой и последней.",
     ]},
@@ -2977,6 +2980,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.92", date: "2026-11-06 14:30", changes: [
+        "Workouts: removing a set (×) in the active workout now shows an “Undo” button in the toast — an accidental tap no longer costs you your numbers. The set returns to its original place.",
+    ]},
     { version: "7.89", date: "2026-11-06 11:00", changes: [
         "Workouts: the exercise window (trophy button) got an “About” tab: category, target muscles (your own or from the reference), suggested scheme and how many workouts you have done with it — with the first and last dates.",
     ]},

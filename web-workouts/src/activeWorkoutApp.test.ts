@@ -35,6 +35,7 @@ vi.mock('./lib/supabase', () => ({
 
 import App from './App.vue'
 import { useActiveWorkout } from './lib/useActiveWorkout'
+import { runToastAction } from './lib/toast'
 import { useRoutines } from './lib/useRoutines'
 import { useRestTimer } from './lib/useRestTimer'
 import { resetSessionProbe } from './lib/sessionProbe'
@@ -375,6 +376,21 @@ describe('активная тренировка', () => {
     expect(q(w, 'about-muscles').text()).toContain('Грудь') // жим лёжа → грудь по справочнику
     expect(q(w, 'about-count').text()).toContain('2')
     expect(q(w, 'about-count').text()).toContain('2026-02-01')
+    w.unmount()
+  })
+
+  it('удаление подхода: тост «Отменить» возвращает подход на место', async () => {
+    const w = await mountApp()
+    await q(w, 'aw-start').trigger('click'); await q(w, 'aw-add-exercise').trigger('click'); await q(w, 'aw-pick-e1').trigger('click')
+    await q(w, 'aw-add-set-0').trigger('click')
+    await q(w, 'aw-set-0-0').findAll('input')[0].setValue('55')
+    await q(w, 'aw-set-0-1').findAll('input')[0].setValue('65')
+    await q(w, 'aw-rm-0-0').trigger('click')
+    expect(w.findAll('[data-testid^="aw-set-0-"]')).toHaveLength(1)
+    expect((q(w, 'aw-set-0-0').findAll('input')[0].element as HTMLInputElement).value).toBe('65')
+    runToastAction(); await flushPromises()
+    expect(w.findAll('[data-testid^="aw-set-0-"]')).toHaveLength(2)
+    expect((q(w, 'aw-set-0-0').findAll('input')[0].element as HTMLInputElement).value).toBe('55')
     w.unmount()
   })
 

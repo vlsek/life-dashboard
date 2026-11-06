@@ -2,7 +2,7 @@
 // Вся логика — в activeWorkout.ts (чистые функции); здесь только реактивность и сохранение после каждого изменения.
 import { computed, ref } from 'vue'
 import { insertWarmup, type WarmupSet } from './warmupGen'
-import { addExercise, addSet, applyPrevious, fillAllPrevious, elapsedSeconds, loadDraft, moveExercise, newDraft, toggleSupersetWithNext, removeExercise, removeSet, saveDraft, setExerciseNote, setSetType, toggleDone, updateSet, type ActiveDraft } from './activeWorkout'
+import { addExercise, addSet, applyPrevious, fillAllPrevious, elapsedSeconds, loadDraft, moveExercise, newDraft, toggleSupersetWithNext, removeExercise, removeSet, insertSet, saveDraft, setExerciseNote, setSetType, toggleDone, updateSet, type ActiveDraft } from './activeWorkout'
 import type { SetType, SetV2 } from './sessionContract'
 
 const store = (): Storage | null => { try { return localStorage } catch { return null } }
@@ -41,6 +41,7 @@ export function useActiveWorkout() {
     superset: (id: string) => { if (draft.value) apply(toggleSupersetWithNext(d(), id)) },
     addSet: (id: string) => { if (draft.value) apply(addSet(d(), id)) },
     removeSet: (id: string, i: number) => { if (draft.value) apply(removeSet(d(), id, i)) },
+    insertSet: (id: string, i: number, set: SetV2) => { if (draft.value) apply(insertSet(d(), id, i, set)) },
     update: (id: string, i: number, change: Partial<SetV2>) => { if (draft.value) apply(updateSet(d(), id, i, change)) },
     applyPrev: (id: string, i: number, prev: SetV2 | null) => { if (draft.value) apply(applyPrevious(d(), id, i, prev)) },
     insertWarmup: (id: string, plan: readonly WarmupSet[]) => { if (draft.value) apply(insertWarmup(d(), id, plan)) },

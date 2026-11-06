@@ -63,6 +63,10 @@ export const setSetType = (d: ActiveDraft, entryId: string, i: number, type: Set
 export const removeSet = (d: ActiveDraft, entryId: string, i: number): ActiveDraft =>
   patch(d, entryId, e => i < 0 || i >= e.sets.length ? e : { ...e, sets: e.sets.filter((_, k) => k !== i) })
 
+// Вернуть удалённый подход на прежнее место (кнопка «Отменить» в тосте); индекс за пределами — в конец
+export const insertSet = (d: ActiveDraft, entryId: string, i: number, set: SetV2): ActiveDraft =>
+  patch(d, entryId, e => { const at = Math.min(Math.max(0, i), e.sets.length); return { ...e, sets: [...e.sets.slice(0, at), set, ...e.sets.slice(at)] } })
+
 // Выполненный подход «имеет смысл», если есть повторы или длительность (пустая галочка без чисел не считается)
 const hasValue = (s: SetV2) => (s.reps ?? 0) > 0 || (s.duration ?? 0) > 0
 export const countedSets = (e: DraftExercise): SetV2[] => e.sets.filter(s => s.done === true && hasValue(s))
