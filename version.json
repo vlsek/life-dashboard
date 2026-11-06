@@ -1,7 +1,14 @@
 {
-  "version": "7.94",
+  "version": "7.95",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.95",
+      "date": "2026-11-04 12:10",
+      "changes": [
+        "Shop: checked in a real browser (phone and desktop, light and dark theme, all three views) and fixed what turned up. A very long item name without spaces no longer sticks out of the card in “Showcase” and widen the page. The item delete button now has a label for screen readers (“Delete item”). The “how it works” hint button and the “Where my sparks come from” toggle are now big enough to hit easily on a desktop. No migrations."
+      ]
+    },
     {
       "version": "7.94",
       "date": "2026-11-06 15:00",
@@ -5614,6 +5621,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.95",
+      "date": "2026-11-04 12:10",
+      "changes": [
+        "Магазин: проверил его в настоящем браузере (телефон и ПК, светлая и тёмная тема, все три вида) и исправил найденное. Очень длинное название вещи без пробелов больше не вылезает за карточку в «Витрине» и не раздвигает страницу. У кнопки удаления вещи появилась подпись для скринридеров («Удалить товар»). Кнопка подсказки «как это работает» и переключатель «Откуда мои огоньки» на компьютере стали достаточно крупными, чтобы в них было легко попасть. Без миграций."
+      ]
+    },
     {
       "version": "7.94",
       "date": "2026-11-06 15:00",

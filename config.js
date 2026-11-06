@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.94";
+const SITE_VERSION = "7.95";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.95", date: "2026-11-04 12:10", changes: [
+        "Магазин: проверил его в настоящем браузере (телефон и ПК, светлая и тёмная тема, все три вида) и исправил найденное. Очень длинное название вещи без пробелов больше не вылезает за карточку в «Витрине» и не раздвигает страницу. У кнопки удаления вещи появилась подпись для скринридеров («Удалить товар»). Кнопка подсказки «как это работает» и переключатель «Откуда мои огоньки» на компьютере стали достаточно крупными, чтобы в них было легко попасть. Без миграций.",
+    ]},
     { version: "7.94", date: "2026-11-06 15:00", changes: [
         "«Дашборд» → «Серии»: пауза «Отпуск / больничный» — в дни паузы пропуск не рвёт серии (по метрикам, идеальные дни, заметка) и не считается; сделанное засчитывается. Диапазон дат или «пока не закончу». Нужна миграция 119 (иначе пауза хранится только на этом устройстве).",
     ]},
@@ -2992,6 +2995,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.95", date: "2026-11-04 12:10", changes: [
+        "Shop: checked in a real browser (phone and desktop, light and dark theme, all three views) and fixed what turned up. A very long item name without spaces no longer sticks out of the card in “Showcase” and widen the page. The item delete button now has a label for screen readers (“Delete item”). The “how it works” hint button and the “Where my sparks come from” toggle are now big enough to hit easily on a desktop. No migrations.",
+    ]},
     { version: "7.94", date: "2026-11-06 15:00", changes: [
         "Dashboard → Streaks: “Vacation / sick leave” pause — on paused days a miss no longer breaks streaks (metrics, perfect days, day note) and is not counted; anything done still counts. A date range or “until I end it”. Needs migration 119 (otherwise the pause is stored on this device only).",
     ]},
