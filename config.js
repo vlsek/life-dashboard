@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.96";
+const SITE_VERSION = "7.95";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.95", date: "2026-11-07 09:00", changes: [
+        "Тренировки: исправлено — разминочные и невыполненные подходы больше не раздувают метрику дня, связанную с упражнением, и счётчик «сегодня» на карточке упражнения (раньше разминка засчитывалась как рабочий подход). Старые записи считаются как раньше.",
+    ]},
     { version: "7.96", date: "2026-11-06 16:00", changes: [
         "«Дашборд»: пауза «Отпуск / больничный» теперь учитывается и в недельных сериях («N раз в неделю»): неделя целиком на паузе не рвёт серию и не считается, на частично паузной неделе норма уменьшается до числа непаузных дней.",
     ]},
@@ -2998,6 +3001,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.95", date: "2026-11-07 09:00", changes: [
+        "Workouts: fixed — warm-up and unfinished sets no longer inflate the daily metric linked to an exercise or the “today” counter on the exercise card (warm-ups used to count as working sets). Old entries count as before.",
+    ]},
     { version: "7.96", date: "2026-11-06 16:00", changes: [
         "Dashboard: the “Vacation / sick leave” pause now also applies to weekly streaks (“N times a week”): a fully paused week neither breaks nor counts, and on a partly paused week the target shrinks to the number of unpaused days.",
     ]},

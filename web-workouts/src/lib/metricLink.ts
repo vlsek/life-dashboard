@@ -1,6 +1,7 @@
 import { sb } from './supabase'
 import { qDelete, qUpsert } from './outboxClient'
 import type { WorkoutEntry, WorkoutSet } from './types'
+import { workingOf } from './sessionContract'
 
 // Связь «метрика дня ↔ упражнение» (BACKLOG 19 «13:06», 30, «8:29 — третий раз»; миграция 054, решение владельца 2026-10-06:
 // подходы вводятся ОДИН раз, тренировка и метрика считаются вместе). «Тренировки» — единственный источник правды: после каждой правки
@@ -41,13 +42,13 @@ export function plannedSetsOn(log: unknown, date: string): number | null {
   return typeof n === 'number' && Number.isInteger(n) && n > 0 ? n : null
 }
 
-// Подходы упражнения за дату — из всех записей этого дня, по порядку времени (подходы без времени — в порядке записи, после тех, что со временем).
+// Подходы упражнения за дату — РАБОЧИЕ подходы всех записей этого дня, по порядку времени (подходы без времени — в порядке записи, после тех, что со временем).
 export function setsOfDay(entries: WorkoutEntry[], exerciseId: string, date: string): WorkoutSet[] {
   const out: { s: WorkoutSet; i: number }[] = []
   let i = 0
   for (const e of entries) {
     if (e.exercise_id !== exerciseId || e.date !== date) continue
-    for (const s of e.sets || []) out.push({ s, i: i++ })
+    for (const s of workingOf(e.sets)) out.push({ s, i: i++ }) // разминка и невыполненные подходы метрику дня не раздувают (69.4)
   }
   out.sort((a, b) => {
     const ta = a.s.time ?? '\uffff'

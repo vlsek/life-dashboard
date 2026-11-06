@@ -57,6 +57,20 @@ describe('setsOfDay / metricValueFor', () => {
   })
 })
 
+describe('setsOfDay: разминка не считается', () => {
+  const mk = (sets: object[]): WorkoutEntry[] => [{ id: 'a', user_id: 'u', exercise_id: 'x', date: '2026-01-01', notes: null, sets: sets as WorkoutSet[] } as unknown as WorkoutEntry]
+  it('разминочные и невыполненные подходы в метрику дня не попадают; старые подходы без полей type/done — считаются', () => {
+    const sets = [{ reps: 10, weight: 20, type: 'warmup' }, { reps: 8, weight: 60 }, { reps: 8, weight: 60, done: false }, { reps: 6, weight: 60, type: 'drop', done: true }]
+    const got = setsOfDay(mk(sets), 'x', '2026-01-01')
+    expect(got.map((s) => s.reps)).toEqual([8, 6])
+    expect(metricValueFor('number', got)).toBe(14)
+    expect(metricValueFor('sets', got) as unknown[]).toHaveLength(2)
+  })
+  it('только разминка — значения дня нет (null)', () => {
+    expect(metricValueFor('number', setsOfDay(mk([{ reps: 10, weight: 20, type: 'warmup' }]), 'x', '2026-01-01'))).toBeNull()
+  })
+})
+
 describe('setsFromMetricValue (импорт сегодняшнего значения)', () => {
   it('список подходов → подходы тренировки без веса; нулевые и пустые отбрасываются', () => {
     expect(setsFromMetricValue([{ reps: 10, variation: 'узкие', time: '08:00' }, { reps: 0, variation: null, time: null }, { reps: null }])).toEqual([S(10, '08:00')])
