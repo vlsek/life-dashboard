@@ -3,7 +3,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useActiveWorkout } from '../lib/useActiveWorkout'
 import { categoriesOf, rankExercises } from '../lib/exercisePick'
 import { progressionHint } from '../lib/progressionHint'
-import { warmupPlan, workingWeightFor, hasWarmup } from '../lib/warmupGen'
+import { warmupPlan, workingWeightFor, hasWarmup, parseScheme, formatScheme, readScheme, writeScheme, resetScheme } from '../lib/warmupGen'
 import { supersetPos, doneSetCount, formatElapsed, previousSet, previousSets, previousText, lastNote, nextSupersetTarget, stepNumber, weightStep, NOTE_MAX, type PrevSource } from '../lib/activeWorkout'
 import { parseNum } from '../lib/entrySets'
 import { setType, SET_TYPES, type SetV2 } from '../lib/sessionContract'
@@ -110,10 +110,14 @@ const prevFor = (exerciseId: string, i: number) => previousSet(props.entries, ex
 const fillAll = (entryId: string, exerciseId: string) => aw.fillAllPrev(entryId, (i) => prevFor(exerciseId, i))
 const hasPrev = (exerciseId: string) => prevFor(exerciseId, 0) !== null
 // Разминка (69.15 срез 2): план от рабочего веса (свой первый подход, иначе прошлая тренировка); кнопка только у упражнений с весом, когда плана ещё нет в подходах
+const warmupScheme = ref(readScheme())
+const warmupText = ref(formatScheme(warmupScheme.value))
+function onWarmupScheme() { const p = parseScheme(warmupText.value); if (p) { warmupScheme.value = p; writeScheme(p) } } // пока печатают негодное — прежняя схема остаётся
+function onWarmupReset() { warmupScheme.value = resetScheme(); warmupText.value = formatScheme(warmupScheme.value) }
 const warmupFor = (e: { id: string; exercise_id: string; sets: SetV2[] }) => {
   if (!exById.value.get(e.exercise_id)?.tracks_weight || hasWarmup(e.sets)) return []
   const w = workingWeightFor(e.sets, previousSets(props.entries, e.exercise_id, draft.value?.date ?? '9999', prevSource.value))
-  return w ? warmupPlan(w, stepOf(e.exercise_id)) : []
+  return w ? warmupPlan(w, stepOf(e.exercise_id), warmupScheme.value) : []
 }
 // Суперсеты (69.8): цветная скобка слева у группы, кнопка между соседними упражнениями
 const SS_COLORS = ['#e07a1f', '#3d8fd1', '#8a5cc2', '#3aa57a']
@@ -198,6 +202,11 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
         <button type="button" class="whitespace-nowrap px-2 py-1" style="color: var(--text-dim); min-height: 32px" :aria-pressed="rpeOn" data-testid="aw-rpe-setting" @click="toggleRpe">{{ t('aw_rpe_setting') }}: {{ rpeOn ? t('aw_on') : t('aw_rest_off') }}</button>
         <button type="button" class="whitespace-nowrap px-2 py-1" style="color: var(--text-dim); min-height: 32px" data-testid="aw-rest-setting" @click="rest.cycleSetting()">{{ t('aw_rest_setting') }}: {{ rest.seconds.value ? rest.seconds.value + ' ' + t('sm_sec') : t('aw_rest_off') }}</button>
         <button type="button" class="whitespace-nowrap px-2 py-1" style="color: var(--text-dim); min-height: 32px" :aria-pressed="rest.sound.value" data-testid="aw-rest-sound" @click="rest.toggleSound()">{{ t('aw_sound') }}: {{ rest.sound.value ? t('aw_on') : t('aw_rest_off') }}</button>
+        <label class="flex w-full items-center justify-center gap-2 px-2 py-1 text-xs" style="color: var(--text-dim)">
+          {{ t('aw_warmup_scheme') }}:
+          <input v-model="warmupText" type="text" class="w-40 rounded-md border px-2 py-1" style="border-color: var(--border); background: var(--bg); color: var(--text); min-height: 32px" :title="t('aw_warmup_scheme_hint')" :aria-label="t('aw_warmup_scheme') + ': ' + t('aw_warmup_scheme_hint')" data-testid="aw-warmup-scheme" @input="onWarmupScheme" />
+          <button type="button" class="border-0 bg-transparent px-1" style="color: var(--accent); min-height: 32px" data-testid="aw-warmup-scheme-reset" @click="onWarmupReset">{{ t('aw_warmup_scheme_reset') }}</button>
+        </label>
         </div>
         <button v-if="!savingRoutine" type="button" class="px-2 py-1" style="color: var(--accent); min-height: 32px" data-testid="aw-save-routine" @click="openSaveRoutine">{{ t('rt_save') }}</button>
         <template v-else>

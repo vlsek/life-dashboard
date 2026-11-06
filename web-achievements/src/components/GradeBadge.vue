@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import Icon from './Icon.vue'
 import { RARITY_COLOR, type Rarity } from '../lib/rewards'
+import { EPIC, HEX, LEGEND } from '../lib/gradeShape'
 
 // Значок достижения по ГРЕЙДУ (BACKLOG 44.12): форма и цвет зависят от грейда — обычное: круг; необычное: круг с внутренним кольцом;
 // редкое: шестиугольник; эпическое: звезда-вспышка со свечением; легендарное: солнце с лучами, кольцом и мягким пульсом свечения.
@@ -9,19 +10,8 @@ import { RARITY_COLOR, type Rarity } from '../lib/rewards'
 // иконка), текст остаётся цветом темы; пульс гасится и общим выключателем анимаций (html[data-motion=off]), и prefers-reduced-motion.
 const props = withDefaults(defineProps<{ grade: Rarity; icon: string; unlocked: boolean; size?: number }>(), { size: 56 })
 
-// Лучи: n вершин, чередуем внешний и внутренний радиус (центр 32,32 в системе 64×64)
-function burst(n: number, rOut: number, rIn: number): string {
-  const pts: string[] = []
-  for (let i = 0; i < n * 2; i++) {
-    const r = i % 2 === 0 ? rOut : rIn
-    const a = (Math.PI * i) / n - Math.PI / 2
-    pts.push(`${(32 + r * Math.cos(a)).toFixed(2)},${(32 + r * Math.sin(a)).toFixed(2)}`)
-  }
-  return pts.join(' ')
-}
-const HEX = '32,3 57.1,17.5 57.1,46.5 32,61 6.9,46.5 6.9,17.5'
-const EPIC = burst(10, 31, 25)
-const LEGEND = burst(14, 31.5, 26.5)
+const EPIC_PTS = EPIC
+const LEGEND_PTS = LEGEND
 const color = computed(() => RARITY_COLOR[props.grade])
 </script>
 
@@ -37,8 +27,8 @@ const color = computed(() => RARITY_COLOR[props.grade])
       <circle v-if="grade === 'common' || grade === 'uncommon'" class="gb-body" cx="32" cy="32" r="28" />
       <circle v-if="grade === 'uncommon'" class="gb-inner" cx="32" cy="32" r="22" />
       <polygon v-if="grade === 'rare'" class="gb-body" :points="HEX" />
-      <polygon v-if="grade === 'epic'" class="gb-body" :points="EPIC" />
-      <polygon v-if="grade === 'legendary'" class="gb-body" :points="LEGEND" />
+      <polygon v-if="grade === 'epic'" class="gb-body" :points="EPIC_PTS" />
+      <polygon v-if="grade === 'legendary'" class="gb-body" :points="LEGEND_PTS" />
       <circle v-if="grade === 'legendary'" class="gb-inner" cx="32" cy="32" r="20" />
     </svg>
     <span class="gb-icon" :style="{ fontSize: Math.round(size * 0.44) + 'px' }"><Icon :name="icon" /></span>

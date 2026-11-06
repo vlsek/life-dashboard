@@ -6,7 +6,7 @@ import { runToastAction, toast } from '../lib/toast'
   <Transition name="toast-fade">
     <div
       v-if="toast"
-      class="fixed bottom-6 left-1/2 z-50 rounded-lg border border-l-4 px-4 py-2.5 text-sm shadow-lg"
+      class="fixed bottom-20 left-1/2 z-50 sm:bottom-6 rounded-lg border border-l-4 px-4 py-2.5 text-sm shadow-lg"
       style="transform: translateX(-50%)"
       :style="{
         background: 'var(--bg-card)',

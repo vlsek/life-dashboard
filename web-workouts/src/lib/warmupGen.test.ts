@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_WARMUP, hasWarmup, insertWarmup, warmupPlan, workingWeightFor } from './warmupGen'
+import { beforeEach } from 'vitest'
+import { DEFAULT_WARMUP, MAX_WARMUP_STEPS, WARMUP_KEY, formatScheme, hasWarmup, insertWarmup, parseScheme, readScheme, resetScheme, warmupPlan, workingWeightFor, writeScheme } from './warmupGen'
 import { MAX_SETS, newDraft, type ActiveDraft } from './activeWorkout'
 import type { SetV2 } from './sessionContract'
 
@@ -70,5 +71,49 @@ describe('insertWarmup', () => {
     expect(insertWarmup(full, 'x1', plan).exercises[0].sets).toHaveLength(MAX_SETS)
     const max = draftWith(Array.from({ length: MAX_SETS }, () => set({ weight: 100 })))
     expect(insertWarmup(max, 'x1', plan)).toBe(max)
+  })
+})
+
+describe('настройка схемы разминки (69.15 срез 3)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('разбор: разделители x / х / × / *, знак %, пробелы, запятая и точка с запятой между шагами', () => {
+    expect(parseScheme('40x8, 60x5, 80x3')).toEqual([{ pct: 0.4, reps: 8 }, { pct: 0.6, reps: 5 }, { pct: 0.8, reps: 3 }])
+    expect(parseScheme(' 50 % × 10 ; 75%х4 ; 90*1')).toEqual([{ pct: 0.5, reps: 10 }, { pct: 0.75, reps: 4 }, { pct: 0.9, reps: 1 }])
+  })
+  it('дробный процент — только через точку; «42,5x6» отклоняется целиком, а не превращается в шаг «5x6»', () => {
+    expect(parseScheme('42.5x6')).toEqual([{ pct: 0.425, reps: 6 }])
+    expect(parseScheme('42,5x6')).toBeNull()
+    expect(parseScheme('40x8, 62,5x4')).toBeNull()
+  })
+  it('строгий разбор: любой негодный шаг (процент не в (0,100), повторы не 1–30, мусор) отклоняет всю схему', () => {
+    for (const bad of ['0x5', '100x5', '120x5', '50x0', '50x31', 'abc', '60x5, abc', '40x8, 6', 'x8', '60x'] ) expect(parseScheme(bad)).toBeNull()
+    expect(parseScheme('')).toBeNull()
+    expect(parseScheme(' ,; ')).toBeNull()
+    expect(parseScheme('60x5,, 70x3;')).toEqual([{ pct: 0.6, reps: 5 }, { pct: 0.7, reps: 3 }]) // пустые куски между разделителями — не ошибка
+  })
+  it('шагов больше MAX_WARMUP_STEPS — схема отклоняется, ровно MAX_WARMUP_STEPS принимается', () => {
+    const mk = (n: number) => Array.from({ length: n }, (_, i) => `${10 + i * 5}x5`).join(', ')
+    expect(parseScheme(mk(MAX_WARMUP_STEPS))).toHaveLength(MAX_WARMUP_STEPS)
+    expect(parseScheme(mk(MAX_WARMUP_STEPS + 1))).toBeNull()
+  })
+  it('formatScheme → parseScheme возвращает ту же схему, в том числе с дробным процентом', () => {
+    expect(formatScheme(DEFAULT_WARMUP)).toBe('40x8, 60x5, 80x3')
+    expect(parseScheme(formatScheme(DEFAULT_WARMUP))).toEqual([...DEFAULT_WARMUP])
+    const odd = [{ pct: 0.425, reps: 6 }]
+    expect(parseScheme(formatScheme(odd))).toEqual(odd)
+  })
+  it('хранение: по умолчанию, сохранённая схема, битое значение и сброс', () => {
+    expect(readScheme()).toEqual([...DEFAULT_WARMUP])
+    writeScheme([{ pct: 0.5, reps: 10 }])
+    expect(readScheme()).toEqual([{ pct: 0.5, reps: 10 }])
+    localStorage.setItem(WARMUP_KEY, 'не схема')
+    expect(readScheme()).toEqual([...DEFAULT_WARMUP])
+    writeScheme([{ pct: 0.5, reps: 10 }])
+    expect(resetScheme()).toEqual([...DEFAULT_WARMUP])
+    expect(localStorage.getItem(WARMUP_KEY)).toBeNull()
+  })
+  it('своя схема меняет план', () => {
+    expect(warmupPlan(100, 2.5, parseScheme('50x10, 70x4')!)).toEqual([{ weight: 50, reps: 10 }, { weight: 70, reps: 4 }])
   })
 })

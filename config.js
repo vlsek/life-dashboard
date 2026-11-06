@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.81";
+const SITE_VERSION = "7.84";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,8 +488,17 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
-    { version: "7.81", date: "2026-11-06 09:00", changes: [
+    { version: "7.84", date: "2026-11-06 09:00", changes: [
         "Тренировки: в окне «Добавить упражнение» появились чипы категорий (Грудь, Ноги …) над списком — тапни, чтобы показать только нужную группу; «Все» возвращает полный список. Работает вместе с поиском.",
+    ]},
+    { version: "7.83", date: "2026-11-03 16:40", changes: [
+        "Тренировки: схему разминки теперь можно настроить — в активной тренировке в «⚙ Настройки» появилась строка «Схема разминки» (по умолчанию 40x8, 60x5, 80x3: процент рабочего веса и повторы). Схема запоминается на устройстве, кнопка «По умолчанию» возвращает прежнюю. Если ввод непонятен (например, 42,5x6 — дробные пишутся через точку), схема не меняется и работает прежняя. Без миграций.",
+    ]},
+    { version: "7.82", date: "2026-11-04 14:00", changes: [
+        "«Достижения»: в окне «Новое достижение» появилась кнопка «Поделиться» — она собирает красивую картинку (значок по грейду, название, за что получено, дата) и открывает системное «Поделиться»; если телефон или браузер так не умеют, картинка сохраняется файлом. Без миграций."
+    ]},
+    { version: "7.81", date: "2026-11-03 14:00", changes: [
+        "Тренировки: обновил главную раздела по утверждённому макету. «Начать тренировку» теперь одна большая кнопка на всю ширину, остальные действия (добавить прошедшую, повторить прошлую, добавить упражнение, типовые программы) — вторичные и расположены парами. Вкладки «Журнал», «Карта мышц», «Прогрессия» и «Упражнения» на телефоне стали нижней панелью с иконками, всегда под большим пальцем; на компьютере остались переключателем сверху. Сообщения-подсказки поднимаются над нижней панелью. Все кнопки работают как раньше, адреса вкладок не изменились. Без миграций."
     ]},
     { version: "7.80", date: "2026-11-05 09:30", changes: [
         "Тема: акцент стал темнее у тёмной (#3d72d4), светлой (#a85a14) и розовой (#cc2a62) тем — белый текст на кнопках теперь читается (контраст не ниже 4,5 вместо 3). У остальных тем контраст уже был достаточным.",
@@ -2953,8 +2962,17 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
-    { version: "7.81", date: "2026-11-06 09:00", changes: [
+    { version: "7.84", date: "2026-11-06 09:00", changes: [
         "Workouts: the “Add exercise” window now has category chips (Chest, Legs …) above the list — tap one to show only that group; “All” brings back the full list. Works together with search.",
+    ]},
+    { version: "7.83", date: "2026-11-03 16:40", changes: [
+        "Workouts: the warm-up scheme is now configurable — the active workout’s “⚙ Settings” has a “Warm-up scheme” row (default 40x8, 60x5, 80x3: percent of the working weight and reps). The scheme is remembered on the device, and “Default” restores the original. If the input is not understood (for example 42,5x6 — decimals use a dot), the scheme does not change and the previous one keeps working. No migrations.",
+    ]},
+    { version: "7.82", date: "2026-11-04 14:00", changes: [
+        "Achievements: the “New achievement” window has a new “Share” button — it builds a nice picture (grade badge, title, what it was for, date) and opens the system share sheet; if your phone or browser cannot do that, the picture is saved as a file. No migrations."
+    ]},
+    { version: "7.81", date: "2026-11-03 14:00", changes: [
+        "Workouts: refreshed the section home to follow the approved mockup. “Start workout” is now one big full-width button, and the other actions (add a past workout, repeat the last one, add an exercise, templates) are secondary and arranged in pairs. On a phone the “Journal”, “Muscle map”, “Progression” and “Exercises” tabs became a bottom bar with icons, always under your thumb; on a computer they remain a switch at the top. Toast messages sit above the bottom bar. All buttons work as before and tab links did not change. No migrations."
     ]},
     { version: "7.80", date: "2026-11-05 09:30", changes: [
         "Theme: the accent is darker in the Dark (#3d72d4), Light (#a85a14) and Pink (#cc2a62) themes — white text on buttons is now readable (contrast at least 4.5 instead of about 3). Other themes already had enough contrast.",
