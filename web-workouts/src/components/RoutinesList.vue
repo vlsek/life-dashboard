@@ -19,16 +19,18 @@ async function remove(r: Routine) {
 
 <template>
   <section v-if="rt.routines.value.length" class="mb-4" data-testid="routines">
-    <h2 class="mb-2 text-sm font-semibold" style="color: var(--text-dim)">{{ t('rt_title') }}</h2>
-    <div class="flex flex-col gap-2">
-      <div v-for="r in rt.routines.value" :key="r.id" class="flex items-center gap-2 rounded-xl border p-3" style="border-color: var(--border); background: var(--bg-card)" :data-testid="'routine-' + r.id">
-        <div class="min-w-0 flex-1">
-          <div class="truncate font-semibold">{{ r.name }}</div>
-          <div class="truncate text-xs" style="color: var(--text-dim)">{{ t('rt_count').replace('{n}', String(r.items.length)) }}<template v-if="brief(r)"> · {{ brief(r) }}</template></div>
+    <h2 class="mb-2 text-xs font-semibold uppercase tracking-wide" style="color: var(--text-dim)">{{ t('rt_title') }}</h2>
+    <!-- карусель карточек (69.17, срез 3, макет v2): горизонтальная прокрутка с привязкой; на ПК карточки фиксированной ширины -->
+    <div class="-mx-4 flex scroll-pl-4 snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-1" data-testid="routines-carousel">
+      <div v-for="r in rt.routines.value" :key="r.id" class="flex w-[72%] shrink-0 snap-start flex-col rounded-xl border p-3 sm:w-64" style="border-color: var(--border); background: var(--bg-card)" :data-testid="'routine-' + r.id">
+        <div class="truncate font-semibold">{{ r.name }}</div>
+        <div class="text-xs" style="color: var(--text-dim)">{{ t('rt_count').replace('{n}', String(r.items.length)) }}</div>
+        <div class="mt-1 line-clamp-2 min-h-[2rem] text-xs" style="color: var(--text-dim)" data-testid="routine-brief">{{ brief(r) }}</div>
+        <div class="mt-2 flex items-center gap-1">
+          <button type="button" class="flex-1 rounded-lg px-4 py-2 text-sm font-bold" style="background: var(--accent); color: var(--accent-text); min-height: 44px" :disabled="disabled" :data-testid="'routine-start-' + r.id" @click="emit('start', r)">{{ t('rt_start') }}</button>
+          <button type="button" class="px-2 py-2" style="color: var(--text-dim); min-width: 40px; min-height: 44px" :aria-label="t('rt_duplicate')" :data-testid="'routine-dup-' + r.id" @click="rt.duplicate(r.id, t('rt_copy_suffix'))">⧉</button>
+          <button type="button" class="px-2 py-2" style="color: var(--text-dim); min-width: 40px; min-height: 44px" :aria-label="t('rt_delete')" :data-testid="'routine-del-' + r.id" @click="remove(r)">✕</button>
         </div>
-        <button type="button" class="rounded-lg px-4 py-2 text-sm font-semibold" style="background: var(--success); color: #fff; min-height: 44px" :disabled="disabled" :data-testid="'routine-start-' + r.id" @click="emit('start', r)">{{ t('rt_start') }}</button>
-        <button type="button" class="px-2 py-2" style="color: var(--text-dim); min-width: 40px; min-height: 44px" :aria-label="t('rt_duplicate')" :data-testid="'routine-dup-' + r.id" @click="rt.duplicate(r.id, t('rt_copy_suffix'))">⧉</button>
-        <button type="button" class="px-2 py-2" style="color: var(--text-dim); min-width: 40px; min-height: 44px" :aria-label="t('rt_delete')" @click="remove(r)">✕</button>
       </div>
     </div>
     <p v-if="!rt.synced.value" class="mt-1 text-xs" style="color: var(--text-dim)">{{ t('rt_device_note') }}</p>
