@@ -44,7 +44,10 @@ const actionError = ref<string | null>(null)
 // Подтверждение покупки (67.2): короткая плашка «Куплено: …», сама исчезает через 4 с
 const justBought = ref<string | null>(null)
 let boughtTimer: ReturnType<typeof setTimeout> | undefined
+const buying = new Set<string>() // покупки в пути: повторное нажатие «Купить», пока идёт запрос, игнорируется (72.5)
 async function onBuy(id: string) {
+  if (buying.has(id)) return
+  buying.add(id)
   actionError.value = null
   const name = items.value.find((i) => i.id === id)?.name ?? null
   try {
@@ -54,6 +57,8 @@ async function onBuy(id: string) {
     boughtTimer = setTimeout(() => (justBought.value = null), 4000)
   } catch (e) {
     actionError.value = e instanceof Error ? e.message : String(e)
+  } finally {
+    buying.delete(id)
   }
 }
 // «Получить награду» за выполненную цель (68.2): та же плашка-подтверждение, что и при покупке, но с текстом про награду

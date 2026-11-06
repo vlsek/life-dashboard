@@ -491,6 +491,12 @@ const CHANGELOG_RU = [
     { version: "7.92", date: "2026-11-06 14:30", changes: [
         "Тренировки: удаление подхода (×) в активной тренировке теперь с кнопкой «Отменить» в уведомлении — случайный тап больше не стоит потерянных цифр. Подход возвращается на прежнее место.",
     ]},
+    { version: "7.91", date: "2026-11-06 10:30", changes: [
+        "Подсказка страницы: кнопка «ОК» теперь читается на тёмных темах — текст обычным цветом вместо акцентного (контраст 3.6 → выше 4.5), рамка осталась акцентной.",
+    ]},
+    { version: "7.90", date: "2026-11-04 10:00", changes: [
+        "Магазин: покупка стала надёжнее. Двойное нажатие «Купить» больше не отправляет покупку дважды, а если вещь уже куплена (список устарел), магазин так и скажет — «Эта вещь уже куплена», не перезаписывая дату покупки. Если при покупке, переносе из архива или удалении пропала связь, вместо технического текста с адресом сервера покажется понятное «Нет связи с сервером». Без миграций.",
+    ]},
     { version: "7.89", date: "2026-11-06 11:00", changes: [
         "Тренировки: в окне упражнения (кнопка-кубок) добавилась вкладка «О нём»: категория, целевые мышцы (свои или по справочнику), рекомендуемая схема и сколько тренировок с этим упражнением уже было — с датой первой и последней.",
     ]},
@@ -2982,6 +2988,12 @@ const CHANGELOG_RU = [
 const CHANGELOG_EN = [
     { version: "7.92", date: "2026-11-06 14:30", changes: [
         "Workouts: removing a set (×) in the active workout now shows an “Undo” button in the toast — an accidental tap no longer costs you your numbers. The set returns to its original place.",
+    ]},
+    { version: "7.91", date: "2026-11-06 10:30", changes: [
+        "Page hint: the “OK” button is now readable on dark themes — normal text colour instead of the accent (contrast 3.6 → above 4.5); the border keeps the accent.",
+    ]},
+    { version: "7.90", date: "2026-11-04 10:00", changes: [
+        "Shop: buying is now more reliable. Double-tapping “Buy” no longer sends the purchase twice, and if an item is already bought (the list was stale) the shop says so — “This item is already bought” — without overwriting the purchase date. If the connection drops during a purchase, a transfer from the archive or a delete, you now see a clear “No connection to the server” instead of technical text with the server address. No migrations.",
     ]},
     { version: "7.89", date: "2026-11-06 11:00", changes: [
         "Workouts: the exercise window (trophy button) got an “About” tab: category, target muscles (your own or from the reference), suggested scheme and how many workouts you have done with it — with the first and last dates.",

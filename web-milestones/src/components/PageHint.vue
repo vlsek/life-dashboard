@@ -99,7 +99,7 @@ function toggle() {
 }
 .ph-ok {
   border: 1px solid var(--accent);
-  color: var(--accent);
+  color: var(--text);
   background: transparent;
   border-radius: 0.6rem;
   padding: 0.55rem 1rem;

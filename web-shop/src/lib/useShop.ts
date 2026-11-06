@@ -209,6 +209,11 @@ export function useShop() {
   }
 
   async function buyItem(id: string) {
+    // список мог устареть (повторное нажатие, другая вкладка): купленное второй раз не отправляем — иначе дата покупки перезапишется
+    if (items.value.find((i) => i.id === id)?.redeemed) {
+      await reload()
+      throw new Error(t('shop_already_bought'))
+    }
     const { error: err } = await sb.from('shop_items').update({ redeemed: true, redeemed_date: todayStr() }).eq('id', id)
     if (err) {
       // защита в БД (миграция 057): нельзя потратить больше огоньков, чем накоплено — показываем понятный текст, а не код ошибки
@@ -217,7 +222,7 @@ export function useShop() {
         await reload()
         throw new Error(t(key))
       }
-      throw err
+      throw new Error(friendlyError(err, 'save'), { cause: err }) // сеть/права/прочее — понятный текст, а не сырой от драйвера
     }
     await reload()
   }
@@ -236,13 +241,13 @@ export function useShop() {
   async function transferArchived(id: string, sparksCost: number) {
     const price = Math.max(1, Math.round(sparksCost || coinsToSparksSuggestion(archived.value.find((a) => a.id === id)?.cost ?? 0)))
     const { error: err } = await sb.from('shop_items').update({ cost: 0, cost_sparks: price, archived: false }).eq('id', id)
-    if (err) throw err
+    if (err) throw new Error(friendlyError(err, 'save'), { cause: err })
     await reload()
   }
 
   async function deleteItem(id: string) {
     const { error: err } = await sb.from('shop_items').delete().eq('id', id)
-    if (err) throw err
+    if (err) throw new Error(friendlyError(err, 'delete'), { cause: err })
     await reload()
   }
 
