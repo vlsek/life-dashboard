@@ -1,7 +1,14 @@
 {
-  "version": "7.87",
+  "version": "7.88",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.88",
+      "date": "2026-11-06 09:45",
+      "changes": [
+        "Dashboard: collapsible section headings no longer nest buttons — the gear and drag handle sit beside the heading, so screen readers and keyboard navigation work more reliably; click-to-collapse is unchanged."
+      ]
+    },
     {
       "version": "7.87",
       "date": "2026-11-03 17:40",
@@ -5565,6 +5572,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.88",
+      "date": "2026-11-06 09:45",
+      "changes": [
+        "«Дашборд»: заголовки сворачиваемых секций больше не содержат вложенных кнопок — шестерёнка и ручка перетаскивания вынесены рядом, скринридер и клавиатура работают точнее; сворачивание по клику на заголовок осталось."
+      ]
+    },
     {
       "version": "7.87",
       "date": "2026-11-03 17:40",

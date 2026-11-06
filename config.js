@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "7.87";
+const SITE_VERSION = "7.88";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "7.88", date: "2026-11-06 09:45", changes: [
+        "«Дашборд»: заголовки сворачиваемых секций больше не содержат вложенных кнопок — шестерёнка и ручка перетаскивания вынесены рядом, скринридер и клавиатура работают точнее; сворачивание по клику на заголовок осталось.",
+    ]},
     { version: "7.87", date: "2026-11-03 17:40", changes: [
         "Тренировки: у каждого упражнения с весом в активной тренировке появилась кнопка «Блины» — она открывает калькулятор блинов сразу с рабочим весом этого упражнения (из твоего первого введённого подхода, а если его нет — из прошлой тренировки) и в единице упражнения (кг или lb). Не нужно выходить из тренировки и вводить вес заново. Без миграций.",
     ]},
@@ -2971,6 +2974,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "7.88", date: "2026-11-06 09:45", changes: [
+        "Dashboard: collapsible section headings no longer nest buttons — the gear and drag handle sit beside the heading, so screen readers and keyboard navigation work more reliably; click-to-collapse is unchanged.",
+    ]},
     { version: "7.87", date: "2026-11-03 17:40", changes: [
         "Workouts: every weighted exercise in the active workout now has a “Plates” button — it opens the plate calculator right away with that exercise’s working weight (from your first entered set, or, if there is none, from the previous workout) and in the exercise’s unit (kg or lb). No need to leave the workout and retype the weight. No migrations.",
     ]},
