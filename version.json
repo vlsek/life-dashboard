@@ -1,7 +1,14 @@
 {
-  "version": "7.92",
+  "version": "7.93",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "7.93",
+      "date": "2026-11-03 17:00",
+      "changes": [
+        "Workouts: the section home is now closer to the approved mockup. At the top there is a “You can train today” card: up to three muscle groups that are short of sets this week and already rested, with a “sets of target” count. Below the routines there is a “Recent workouts” block: the last two workouts as cards with the name, when it was and how long it took, volume, number of sets, best sets and records; the “Whole journal” link opens the journal. The data comes from what is already loaded and nothing is written. No migrations."
+      ]
+    },
     {
       "version": "7.92",
       "date": "2026-11-06 14:30",
@@ -5600,6 +5607,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "7.93",
+      "date": "2026-11-03 17:00",
+      "changes": [
+        "Тренировки: главная раздела стала ближе к утверждённому макету. Вверху появилась карточка «Сегодня можно тренировать»: до трёх групп мышц, которым не хватает подходов за неделю и которые уже отдохнули, с счётом «подходов из цели». Под рутинами добавился блок «Недавние тренировки»: две последние тренировки карточками с названием, когда это было и сколько длилось, объёмом, числом подходов, лучшими подходами и рекордами; ссылка «Весь журнал» открывает журнал. Данные берутся из уже загруженного, ничего не пишется. Без миграций."
+      ]
+    },
     {
       "version": "7.92",
       "date": "2026-11-06 14:30",
