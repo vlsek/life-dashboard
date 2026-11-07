@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Карта мышц A — независимая геометрия</title>
+<style>
+:root{color-scheme:dark;--bg:#10151c;--panel:#19232e;--line:#344353;--text:#e9edf2;--muted:#9aa9b8;--accent:#f2a47e;--hot:#8ed6a8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,sans-serif}
+main{max-width:1240px;margin:auto;padding:28px 20px 50px}
+h1{font-size:clamp(25px,4vw,38px);letter-spacing:-.04em;margin:0 0 8px}
+p{color:var(--muted);margin:0 0 18px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:18px 0}
+button{font:inherit;color:inherit;background:#202c39;border:1px solid var(--line);border-radius:9px;padding:9px 12px;cursor:pointer}
+button[aria-pressed=true]{border-color:var(--accent);background:#45342e;color:#fff}
+button:focus-visible,[data-muscle]:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.card{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
+.card h2{font-size:14px;letter-spacing:.04em;margin:0 0 8px;color:#c8d4df}
+svg{width:100%;height:auto;max-height:470px;display:block;margin:auto;overflow:visible}
+.outline{fill:#242f3a;stroke:#8b9bab;stroke-width:.8;stroke-linejoin:round}
+.muscle{fill:#b66f5f;stroke:#e5a08a;stroke-width:.65;stroke-linejoin:round;cursor:pointer;transition:fill .15s,opacity .15s}
+.muscle[data-layer=deep]{fill:#754c55;stroke:#c07c79}
+.muscle:hover{fill:#e3a17f}
+.muscle.selected{fill:#f2bd68!important;stroke:#fff1cf!important;stroke-width:1.5!important;opacity:1!important}
+.muscle[data-state=trained]{fill:var(--hot)}
+.muscle[data-layer=deep].selected{fill:#f2bd68!important}
+.head{fill:#242f3a;stroke:#8b9bab;stroke-width:.8}
+.deep-off [data-layer=deep]{display:none}
+.key{display:flex;flex-wrap:wrap;gap:7px;margin:18px 0}
+.key button{font-size:12px;padding:7px 9px}
+.note{border:1px solid var(--line);border-radius:12px;padding:12px;color:var(--muted);margin-top:16px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){main{padding:18px 10px 35px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.card{padding:7px}.card h2{font-size:11px}button{padding:8px 9px}}
+</style>
+</head>
+<body>
+<main>
+<h1>A / Анатомическая студия</h1>
+<p>Изолированный геометрический прототип. Четыре отдельно нарисованные проекции; выбор группы синхронизируется между всеми доступными областями. Это учебная схема, не медицинский атлас.</p>
+<div class="toolbar">
+<button id="deep" aria-pressed="true">Глубокий слой: включён</button>
+<button id="clear">Сбросить выбор</button>
+<span id="status" role="status" aria-live="polite">Выбери группу мышц</span>
+</div>
+<div class="key" id="muscles" aria-label="Выбор мышечной группы"></div>
+<div class="grid" id="maps">
+<article class="card">
+<h2>MALE · FRONT</h2>
+<svg viewBox="0 0 100 190" role="group" aria-label="Мужская модель, спереди">
+<circle class="head" cx="50" cy="14" r="9"/>
+<path class="outline" d="M45 22L44 29Q35 32 27 36Q19 42 18 58L14 94Q15 101 20 99L28 69 31 91Q34 106 32 121L30 179H44L49 139H51L56 179H70L68 121Q66 106 69 91L72 69 80 99Q85 101 86 94L82 58Q81 42 73 36Q65 32 56 29L55 22Z"/>
+<g class="muscle" data-muscle="shoulders" tabindex="0" role="button" aria-pressed="false" aria-label="Плечи"><path d="M29 38Q21 40 22 49Q25 56 34 51L40 44Q37 38 29 38Z M71 38Q79 40 78 49Q75 56 66 51L60 44Q63 38 71 38Z"/></g>
+<g class="muscle" data-muscle="chest" tabindex="0" role="button" aria-pressed="false" aria-label="Грудь"><path d="M38 40Q44 36 49 42L49 56Q42 58 36 51Q34 45 38 40Z M62 40Q56 36 51 42L51 56Q58 58 64 51Q66 45 62 40Z"/></g>
+<g class="muscle" data-muscle="biceps" tabindex="0" role="button" aria-pressed="false" aria-label="Бицепсы"><path d="M24 52Q20 55 20 64Q21 73 27 71Q31 65 28 54Z M76 52Q80 55 80 64Q79 73 73 71Q69 65 72 54Z"/></g>
+<g class="muscle" data-muscle="forearms" tabindex="0" role="button" aria-pressed="false" aria-label="Предплечья"><path d="M21 72Q18 81 20 96Q22 100 26 96L30 76Q27 70 21 72Z M79 72Q82 81 80 96Q78 100 74 96L70 76Q73 70 79 72Z"/></g>
+<g class="muscle" data-muscle="abs" tabindex="0" role="button" aria-pressed="false" aria-label="Пресс"><path d="M42 57Q46 54 49 58V88Q46 91 42 87Z M58 57Q54 54 51 58V88Q54 91 58 87Z"/></g>
+<g class="muscle" data-muscle="abs" data-layer="deep" tabindex="0" role="button" aria-pressed="false" aria-label="Глубокий слой пресса"><path d="M38 61Q41 59 43 63L42 83Q39 84 37 80Z M62 61Q59 59 57 63L58 83Q61 84 63 80Z"/></g>
+<g class="muscle" data-muscle="quads" tabindex="0" role="button" aria-pressed="false" aria-label="Квадрицепсы"><path d="M35 93Q41 89 48 96L46 126Q43 135 38 135Q33 125 34 109Z M65 93Q59 89 52 96L54 126Q57 135 62 135Q67 125 66 109Z"/></g>
+<g class="muscle" data-muscle="calves" tabindex="0" role="button" aria-pressed="false" aria-label="Икры"><path d="M37 136Q42 131 46 139L43 173Q39 179 35 173Q34 154 37 136Z M63 136Q58 131 54 139L57 173Q61 179 65 173Q66 154 63 136Z"/></g>
+</svg>
+</article>
+<article class="card">
+<h2>MALE · BACK</h2>
+<svg viewBox="0 0 100 190" role="group" aria-label="Мужская модель, сзади">
+<circle class="head" cx="50" cy="14" r="9"/>
+<path class="outline" d="M45 22L44 29Q35 32 27 36Q19 42 18 58L14 94Q15 101 20 99L28 69 31 91Q34 106 32 121L30 179H44L49 139H51L56 179H70L68 121Q66 106 69 91L72 69 80 99Q85 101 86 94L82 58Q81 42 73 36Q65 32 56 29L55 22Z"/>
+<g class="muscle" data-muscle="shoulders" tabindex="0" role="button" aria-pressed="false" aria-label="Плечи"><path d="M29 38Q21 40 22 49Q25 56 34 51L40 44Q37 38 29 38Z M71 38Q79 40 78 49Q75 56 66 51L60 44Q63 38 71 38Z"/></g>
+<g class="muscle" data-muscle="back" tabindex="0" role="button" aria-pressed="false" aria-label="Спина"><path d="M38 36Q43 33 50 40Q57 33 62 36L68 54Q65 69 57 78L50 72 43 78Q35 69 32 54Z"/></g>
+<g class="muscle" data-muscle="back" data-layer="deep" tabindex="0" role="button" aria-pressed="false" aria-label="Глубокий слой спины"><path d="M43 43Q47 40 50 45Q53 40 57 43L56 62 50 68 44 62Z"/></g>
+<g class="muscle" data-muscle="triceps" tabindex="0" role="button" aria-pressed="false" aria-label="Трицепсы"><path d="M24 52Q20 55 20 64Q21 73 27 71Q31 65 28 54Z M76 52Q80 55 80 64Q79 73 73 71Q69 65 72 54Z"/></g>
+<g class="muscle" data-muscle="forearms" tabindex="0" role="button" aria-pressed="false" aria-label="Предплечья"><path d="M21 72Q18 81 20 96Q22 100 26 96L30 76Q27 70 21 72Z M79 72Q82 81 80 96Q78 100 74 96L70 76Q73 70 79 72Z"/></g>
+<g class="muscle" data-muscle="lower_back" tabindex="0" role="button" aria-pressed="false" aria-label="Поясница"><path d="M43 74Q47 70 50 76Q53 70 57 74L58 91Q54 96 50 91Q46 96 42 91Z"/></g>
+<g class="muscle" data-muscle="glutes" tabindex="0" role="button" aria-pressed="false" aria-label="Ягодицы"><path d="M38 91Q44 86 50 92Q56 86 62 91Q65 101 58 109Q53 111 50 104Q47 111 42 109Q35 101 38 91Z"/></g>
+<g class="muscle" data-muscle="hamstrings" tabindex="0" role="button" aria-pressed="false" aria-label="Бицепсы бедра"><path d="M35 108Q41 104 47 110L46 139Q42 146 38 145Q33 131 34 118Z M65 108Q59 104 53 110L54 139Q58 146 62 145Q67 131 66 118Z"/></g>
+<g class="muscle" data-muscle="calves" tabindex="0" role="button" aria-pressed="false" aria-label="Икры"><path d="M37 145Q42 140 46 147L43 174Q39 180 35 174Q34 160 37 145Z M63 145Q58 140 54 147L57 174Q61 180 65 174Q66 160 63 145Z"/></g>
+</svg>
+</article>
+<article class="card">
+<h2>FEMALE · FRONT</h2>
+<svg viewBox="0 0 100 190" role="group" aria-label="Женская модель, спереди">
+<circle class="head" cx="50" cy="14" r="9"/>
+<path class="outline" d="M45 22L44 29Q37 31 31 36Q23 42 22 57L18 91Q18 98 23 97L30 70 33 92Q34 104 35 116L32 179H45L49 139H51L55 179H68L65 116Q66 104 67 92L70 70 77 97Q82 98 82 91L78 57Q77 42 69 36Q63 31 56 29L55 22Z"/>
+<g class="muscle" data-muscle="shoulders" tabindex="0" role="button" aria-pressed="false" aria-label="Плечи"><path d="M31 39Q25 41 26 49Q29 54 36 50L40 44Q37 39 31 39Z M69 39Q75 41 74 49Q71 54 64 50L60 44Q63 39 69 39Z"/></g>
+<g class="muscle" data-muscle="chest" tabindex="0" role="button" aria-pressed="false" aria-label="Грудь"><path d="M39 41Q44 38 49 43L49 55Q43 58 38 52Q36 46 39 41Z M61 41Q56 38 51 43L51 55Q57 58 62 52Q64 46 61 41Z"/></g>
+<g class="muscle" data-muscle="biceps" tabindex="0" role="button" aria-pressed="false" aria-label="Бицепсы"><path d="M28 52Q24 56 25 64Q26 71 31 69Q34 63 32 54Z M72 52Q76 56 75 64Q74 71 69 69Q66 63 68 54Z"/></g>
+<g class="muscle" data-muscle="forearms" tabindex="0" role="button" aria-pressed="false" aria-label="Предплечья"><path d="M26 71Q23 81 25 95Q27 99 31 95L34 76Q32 70 26 71Z M74 71Q77 81 75 95Q73 99 69 95L66 76Q68 70 74 71Z"/></g>
+<g class="muscle" data-muscle="abs" tabindex="0" role="button" aria-pressed="false" aria-label="Пресс"><path d="M43 57Q47 55 49 58V88Q46 90 43 87Z M57 57Q53 55 51 58V88Q54 90 57 87Z"/></g>
+<g class="muscle" data-muscle="abs" data-layer="deep" tabindex="0" role="button" aria-pressed="false" aria-label="Глубокий слой пресса"><path d="M39 63Q42 60 44 64L43 82Q40 84 38 80Z M61 63Q58 60 56 64L57 82Q60 84 62 80Z"/></g>
+<g class="muscle" data-muscle="quads" tabindex="0" role="button" aria-pressed="false" aria-label="Квадрицепсы"><path d="M37 94Q42 91 48 97L46 127Q43 135 39 135Q35 126 36 110Z M63 94Q58 91 52 97L54 127Q57 135 61 135Q65 126 64 110Z"/></g>
+<g class="muscle" data-muscle="calves" tabindex="0" role="button" aria-pressed="false" aria-label="Икры"><path d="M39 136Q43 132 46 140L43 173Q40 178 37 173Q36 155 39 136Z M61 136Q57 132 54 140L57 173Q60 178 63 173Q64 155 61 136Z"/></g>
+</svg>
+</article>
+<article class="card">
+<h2>FEMALE · BACK</h2>
+<svg viewBox="0 0 100 190" role="group" aria-label="Женская модель, сзади">
+<circle class="head" cx="50" cy="14" r="9"/>
+<path class="outline" d="M45 22L44 29Q37 31 31 36Q23 42 22 57L18 91Q18 98 23 97L30 70 33 92Q34 104 35 116L32 179H45L49 139H51L55 179H68L65 116Q66 104 67 92L70 70 77 97Q82 98 82 91L78 57Q77 42 69 36Q63 31 56 29L55 22Z"/>
+<g class="muscle" data-muscle="shoulders" tabindex="0" role="button" aria-pressed="false" aria-label="Плечи"><path d="M31 39Q25 41 26 49Q29 54 36 50L40 44Q37 39 31 39Z M69 39Q75 41 74 49Q71 54 64 50L60 44Q63 39 69 39Z"/></g>
+<g class="muscle" data-muscle="back" tabindex="0" role="button" aria-pressed="false" aria-label="Спина"><path d="M39 36Q44 34 50 40Q56 34 61 36L65 54Q63 68 56 77L50 72 44 77Q37 68 35 54Z"/></g>
+<g class="muscle" data-muscle="back" data-layer="deep" tabindex="0" role="button" aria-pressed="false" aria-label="Глубокий слой спины"><path d="M44 44Q47 41 50 46Q53 41 56 44L55 62 50 68 45 62Z"/></g>
+<g class="muscle" data-muscle="triceps" tabindex="0" role="button" aria-pressed="false" aria-label="Трицепсы"><path d="M28 52Q24 56 25 64Q26 71 31 69Q34 63 32 54Z M72 52Q76 56 75 64Q74 71 69 69Q66 63 68 54Z"/></g>
+<g class="muscle" data-muscle="forearms" tabindex="0" role="button" aria-pressed="false" aria-label="Предплечья"><path d="M26 71Q23 81 25 95Q27 99 31 95L34 76Q32 70 26 71Z M74 71Q77 81 75 95Q73 99 69 95L66 76Q68 70 74 71Z"/></g>
+<g class="muscle" data-muscle="lower_back" tabindex="0" role="button" aria-pressed="false" aria-label="Поясница"><path d="M44 75Q47 71 50 76Q53 71 56 75L57 92Q54 96 50 92Q46 96 43 92Z"/></g>
+<g class="muscle" data-muscle="glutes" tabindex="0" role="button" aria-pressed="false" aria-label="Ягодицы"><path d="M37 91Q44 86 50 92Q56 86 63 91Q66 102 58 111Q53 113 50 105Q47 113 42 111Q34 102 37 91Z"/></g>
+<g class="muscle" data-muscle="hamstrings" tabindex="0" role="button" aria-pressed="false" aria-label="Бицепсы бедра"><path d="M37 109Q42 105 47 111L46 139Q43 146 39 145Q35 132 36 118Z M63 109Q58 105 53 111L54 139Q57 146 61 145Q65 132 64 118Z"/></g>
+<g class="muscle" data-muscle="calves" tabindex="0" role="button" aria-pressed="false" aria-label="Икры"><path d="M39 145Q43 141 46 148L43 174Q40 179 37 174Q36 161 39 145Z M61 145Q57 141 54 148L57 174Q60 179 63 174Q64 161 61 145Z"/></g>
+</svg>
+</article>
+</div>
+<div class="note">Проверка покрытия: shoulders, forearms и calves присутствуют на обеих проекциях; остальные группы показаны с анатомически ожидаемой стороны. Выбор по MuscleId синхронно подсвечивает все соответствующие регионы. Глубокие области показаны отдельно и могут скрываться независимо от поверхностных.</div>
+</main>
+<script>
+const labels={chest:'Грудь',shoulders:'Плечи',biceps:'Бицепсы',triceps:'Трицепсы',forearms:'Предплечья',abs:'Пресс',back:'Спина',lower_back:'Поясница',glutes:'Ягодицы',quads:'Квадрицепсы',hamstrings:'Бицепсы бедра',calves:'Икры'};
+let selected='';
+const buttons=document.getElementById('muscles');
+Object.keys(labels).forEach(id=>{const b=document.createElement('button');b.type='button';b.textContent=labels[id];b.dataset.id=id;b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>choose(id));buttons.appendChild(b)});
+function choose(id){selected=id;document.querySelectorAll('[data-muscle]').forEach(el=>{const active=el.dataset.muscle===id;el.classList.toggle('selected',active);el.setAttribute('aria-pressed',String(active))});document.querySelectorAll('#muscles button').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.id===id)));document.getElementById('status').textContent=labels[id]+' — выбрана во всех проекциях'}
+document.querySelectorAll('[data-muscle]').forEach(el=>{el.addEventListener('click',()=>choose(el.dataset.muscle));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(el.dataset.muscle)}})});
+document.getElementById('deep').addEventListener('click',e=>{const on=e.currentTarget.getAttribute('aria-pressed')!=='true';e.currentTarget.setAttribute('aria-pressed',String(on));e.currentTarget.textContent=on?'Глубокий слой: включён':'Глубокий слой: выключен';document.getElementById('maps').classList.toggle('deep-off',!on)});
+document.getElementById('clear').addEventListener('click',()=>{selected='';document.querySelectorAll('[data-muscle]').forEach(el=>{el.classList.remove('selected');el.setAttribute('aria-pressed','false')});document.querySelectorAll('#muscles button').forEach(el=>el.setAttribute('aria-pressed','false'));document.getElementById('status').textContent='Выбери группу мышц'});
+</script>
+</body>
+</html>
