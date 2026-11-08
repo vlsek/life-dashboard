@@ -1,6 +1,6 @@
 import type { SetV2 } from './sessionContract'
 import { describe, expect, it } from 'vitest'
-import { addExercise, addSet, canSave, doneSetCount, elapsedSeconds, finishDraft, formatElapsed, loadDraft, moveExercise, newDraft, removeExercise, removeSet, saveDraft, setSetType, toggleDone, updateSet, workingDoneSets, DRAFT_KEY } from './activeWorkout'
+import { scopeToRoutine, previousSets, addExercise, addSet, canSave, doneSetCount, elapsedSeconds, finishDraft, formatElapsed, loadDraft, moveExercise, newDraft, removeExercise, removeSet, saveDraft, setSetType, toggleDone, updateSet, workingDoneSets, DRAFT_KEY } from './activeWorkout'
 
 const start = new Date(2026, 9, 30, 9, 0, 0)
 const mk = () => addExercise(addExercise(newDraft('s1', start, { name: ' Грудь ' }), 'e1', 'x1'), 'e2', 'x2')
@@ -248,3 +248,24 @@ describe('вернуть удалённый подход', () => {
   })
 })
 
+
+describe('scopeToRoutine (69.6: прошлое из этой рутины)', () => {
+  const w = (weight: number) => [{ weight, reps: 5, done: true }] as never
+  const entries = [
+    { exercise_id: 'x', date: '2026-10-01', sets: w(50), session_id: 'sA' },
+    { exercise_id: 'x', date: '2026-10-10', sets: w(80), session_id: null },
+    { exercise_id: 'y', date: '2026-10-01', sets: w(20), session_id: 'sB' },
+  ]
+  const sessions = [{ id: 'sA', routine_id: 'r1' }, { id: 'sB', routine_id: 'r2' }]
+  it('без рутины или без сессий рутины — вся история', () => {
+    expect(scopeToRoutine(entries, sessions, null, 'x', '2026-11-01')).toBe(entries)
+    expect(scopeToRoutine(entries, sessions, 'rZ', 'x', '2026-11-01')).toBe(entries)
+  })
+  it('берёт только тренировки этой рутины, если по упражнению там есть подходы', () => {
+    const s = scopeToRoutine(entries, sessions, 'r1', 'x', '2026-11-01')
+    expect(previousSets(s, 'x', '2026-11-01')[0].weight).toBe(50) // а не 80 из последней тренировки вне рутины
+  })
+  it('нет подходов этого упражнения в рутине — запасной вариант: вся история', () => {
+    expect(scopeToRoutine(entries, sessions, 'r2', 'x', '2026-11-01')).toBe(entries)
+  })
+})

@@ -146,6 +146,14 @@ export function previousSets(entries: readonly { exercise_id: string; date: stri
   }
   return best ? best.sets : []
 }
+// «Прошлое из этой рутины» (69.6): если тренировка запущена из рутины и по упражнению есть рабочие подходы в прошлых тренировках ЭТОЙ рутины — берём только их; иначе — вся история
+export function scopeToRoutine<T extends { exercise_id: string; date: string; sets: SetV2[]; session_id?: string | null }>(entries: readonly T[], sessions: readonly { id: string; routine_id: string | null }[], routineId: string | null | undefined, exerciseId: string, beforeDate: string): readonly T[] {
+  if (!routineId) return entries
+  const ids = new Set(sessions.filter((s) => s.routine_id === routineId).map((s) => s.id))
+  if (!ids.size) return entries
+  const scoped = entries.filter((e) => e.session_id != null && ids.has(e.session_id))
+  return previousSets(scoped, exerciseId, beforeDate).length ? scoped : entries
+}
 export const previousSet = (entries: readonly { exercise_id: string; date: string; sets: SetV2[] }[], exerciseId: string, beforeDate: string, index: number, source: PrevSource = 'last'): SetV2 | null =>
   previousSets(entries, exerciseId, beforeDate, source)[index] ?? null
 // Заметка к упражнению в тренировке (69.2): до 500 знаков, пустая = нет заметки

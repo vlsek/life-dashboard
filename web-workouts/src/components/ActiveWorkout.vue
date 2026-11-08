@@ -5,7 +5,7 @@ import { categoriesOf, musclesOf, rankExercises } from '../lib/exercisePick'
 import { progressionHint } from '../lib/progressionHint'
 import PlateCalculator from './PlateCalculator.vue'
 import { warmupPlan, workingWeightFor, hasWarmup, parseScheme, formatScheme, readScheme, writeScheme, resetScheme } from '../lib/warmupGen'
-import { supersetPos, doneSetCount, formatElapsed, previousSet, previousSets, previousText, lastNote, nextSupersetTarget, stepNumber, weightStep, NOTE_MAX, type PrevSource } from '../lib/activeWorkout'
+import { supersetPos, doneSetCount, formatElapsed, previousSet, previousSets, scopeToRoutine, previousText, lastNote, nextSupersetTarget, stepNumber, weightStep, NOTE_MAX, type PrevSource } from '../lib/activeWorkout'
 import { parseNum } from '../lib/entrySets'
 import { setType, SET_TYPES, type SetV2 } from '../lib/sessionContract'
 import { t, type DictKey } from '../lib/i18n'
@@ -21,7 +21,7 @@ import type { Exercise, WorkoutEntry } from '../lib/types'
 
 // Экран активной тренировки (BACKLOG 69.2, макет A): липкая шапка с секундомером, блоки упражнений со строками подходов «№ · прошлый раз · вес · повторы · ✓».
 // Данные черновика — useActiveWorkout (localStorage); сохранение в Supabase делает App.vue по событию finish.
-const props = defineProps<{ exercises: Exercise[]; entries: WorkoutEntry[]; unit: string; busy: boolean }>()
+const props = withDefaults(defineProps<{ exercises: Exercise[]; entries: WorkoutEntry[]; unit: string; busy: boolean; sessions?: { id: string; routine_id: string | null }[] }>(), { sessions: () => [] })
 const emit = defineEmits<{ finish: []; cancel: [] }>()
 const aw = useActiveWorkout()
 const draft = computed(() => aw.draft.value)
@@ -72,7 +72,8 @@ const restLabel = (exerciseId: string): string => {
   if (own === undefined) return t('aw_rest_default')
   return own ? own + ' ' + t('sm_sec') : t('aw_rest_off')
 }
-const hintFor = (exerciseId: string) => progressionHint(previousSets(props.entries, exerciseId, draft.value?.date ?? '9999', prevSource.value), unitOf(exById.value.get(exerciseId)))
+const prevEntries = (exerciseId: string) => scopeToRoutine(props.entries, props.sessions, draft.value?.routine_id, exerciseId, draft.value?.date ?? '9999')
+const hintFor = (exerciseId: string) => progressionHint(previousSets(prevEntries(exerciseId), exerciseId, draft.value?.date ?? '9999', prevSource.value), unitOf(exById.value.get(exerciseId)))
 function hintText(exerciseId: string): string {
   const h = hintFor(exerciseId)
   if (!h) return ''
@@ -115,14 +116,14 @@ function saveRoutine() {
   if (draft.value && rt.saveFromDraft(draft.value, routineName.value)) { savingRoutine.value = false; showToast(t('rt_saved')) }
 }
 // «Прошлый раз» (69.6): подход с тем же номером из последней тренировки; тап по подсказке подставляет числа
-const prevFor = (exerciseId: string, i: number) => previousSet(props.entries, exerciseId, draft.value?.date ?? '9999', i, prevSource.value)
+const prevFor = (exerciseId: string, i: number) => previousSet(prevEntries(exerciseId), exerciseId, draft.value?.date ?? '9999', i, prevSource.value)
 const fillAll = (entryId: string, exerciseId: string) => aw.fillAllPrev(entryId, (i) => prevFor(exerciseId, i))
 const hasPrev = (exerciseId: string) => prevFor(exerciseId, 0) !== null
 // Разминка (69.15 срез 2): план от рабочего веса (свой первый подход, иначе прошлая тренировка); кнопка только у упражнений с весом, когда плана ещё нет в подходах
 // Калькулятор блинов из тренировки (69.15 срез 4): сразу с рабочим весом упражнения (свой первый подход, иначе прошлая тренировка), в единице упражнения
 const platesFor = ref<{ unit: string; weight: number | null } | null>(null)
 function openPlates(e: { exercise_id: string; sets: SetV2[] }) {
-  const w = workingWeightFor(e.sets, previousSets(props.entries, e.exercise_id, draft.value?.date ?? '9999', prevSource.value))
+  const w = workingWeightFor(e.sets, previousSets(prevEntries(e.exercise_id), e.exercise_id, draft.value?.date ?? '9999', prevSource.value))
   platesFor.value = { unit: unitOf(exById.value.get(e.exercise_id)), weight: w }
 }
 const warmupScheme = ref(readScheme())
@@ -131,7 +132,7 @@ function onWarmupScheme() { const p = parseScheme(warmupText.value); if (p) { wa
 function onWarmupReset() { warmupScheme.value = resetScheme(); warmupText.value = formatScheme(warmupScheme.value) }
 const warmupFor = (e: { id: string; exercise_id: string; sets: SetV2[] }) => {
   if (!exById.value.get(e.exercise_id)?.tracks_weight || hasWarmup(e.sets)) return []
-  const w = workingWeightFor(e.sets, previousSets(props.entries, e.exercise_id, draft.value?.date ?? '9999', prevSource.value))
+  const w = workingWeightFor(e.sets, previousSets(prevEntries(e.exercise_id), e.exercise_id, draft.value?.date ?? '9999', prevSource.value))
   return w ? warmupPlan(w, stepOf(e.exercise_id), warmupScheme.value) : []
 }
 // Суперсеты (69.8): цветная скобка слева у группы, кнопка между соседними упражнениями
