@@ -4,7 +4,8 @@ import { t, type DictKey } from '../lib/i18n'
 import { fmtVolume, type WorkoutSummaryData } from '../lib/summary'
 import { prSetText } from '../lib/records'
 import ShareSummaryCard from './ShareSummaryCard.vue'
-import { bodyGeometry, type BodyModel } from '../lib/bodyModel'
+import BodyHighlight from './BodyHighlight.vue'
+import type { BodyModel } from '../lib/bodyModel'
 import type { Exercise } from '../lib/types'
 
 // Окно итогов после «Завершить» (BACKLOG 69.10, срез 1): плитки (время, подходы, объём, упражнения), рекорды, задействованные мышцы.
@@ -15,9 +16,6 @@ const editing = ref(false)
 const nameDraft = ref(props.data.name ?? '')
 const notesDraft = ref(props.data.notes ?? '')
 function saveMeta() { emit('saveMeta', { name: nameDraft.value || null, notes: notesDraft.value || null }); editing.value = false }
-const geometry = computed(() => bodyGeometry(props.model ?? 'male'))
-const bodyViews = computed(() => [{ key: 'front', label: 'workouts_muscles_front' as DictKey, shapes: geometry.value.front }, { key: 'back', label: 'workouts_muscles_back' as DictKey, shapes: geometry.value.back }])
-const worked = computed(() => new Set<string>(props.data.muscles))
 const names = computed(() => new Map(props.exercises.map((e) => [e.id, e])))
 const unitOf = (id: string) => names.value.get(id)?.unit || props.unit
 const muscleName = (m: string) => t(('workouts_muscle_' + m) as DictKey)
@@ -49,16 +47,7 @@ const tiles = computed(() => [
       </div>
       <div v-if="data.muscles.length" class="mb-4" data-testid="sm-muscles">
         <h3 class="mb-1 text-sm font-semibold" style="color: var(--text-dim)">{{ t('sm_muscles') }}</h3>
-        <div class="mb-2 flex justify-center gap-4" data-testid="sm-body">
-          <figure v-for="v in bodyViews" :key="v.key" class="m-0 text-center">
-            <svg viewBox="0 0 100 190" class="h-40 w-20" role="img" :aria-label="t(v.label)">
-              <circle :cx="geometry.head.cx" :cy="geometry.head.cy" :r="geometry.head.r" fill="none" stroke="var(--border)" />
-              <path :d="geometry.outline" fill="none" stroke="var(--border)" stroke-width="1.2" stroke-linejoin="round" />
-              <path v-for="(sh, i) in v.shapes" :key="v.key + i" v-bind="sh.attrs" :data-muscle="sh.muscle" :data-state="worked.has(sh.muscle) ? 'done' : 'idle'" :fill="worked.has(sh.muscle) ? 'var(--accent)' : 'transparent'" :fill-opacity="worked.has(sh.muscle) ? 0.75 : 1" stroke="var(--text-dim)" stroke-width="0.6" />
-            </svg>
-            <figcaption class="text-xs" style="color: var(--text-dim)">{{ t(v.label) }}</figcaption>
-          </figure>
-        </div>
+        <BodyHighlight :muscles="data.muscles" :model="model" data-testid="sm-body" />
         <div class="flex flex-wrap gap-1.5">
           <span v-for="m in data.muscles" :key="m" class="rounded-full border px-3 py-1 text-xs" style="border-color: var(--border)">{{ muscleName(m) }}</span>
         </div>

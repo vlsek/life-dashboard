@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { t, type DictKey } from '../lib/i18n'
+import BodyHighlight from './BodyHighlight.vue'
+import type { BodyModel } from '../lib/bodyModel'
 import { musclesForExercise, type MuscleId } from '../lib/muscles'
 import { exerciseBests, exerciseHistory, prSetText } from '../lib/records'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 
 // «Рекорды» упражнения (BACKLOG 69.9, срез 2): лучшие значения за всё время и «повторы на весе».
-const props = defineProps<{ exercise: Exercise; entries: WorkoutEntry[]; unit: string }>()
+const props = defineProps<{ exercise: Exercise; entries: WorkoutEntry[]; unit: string; model?: BodyModel }>()
 const emit = defineEmits<{ close: [] }>()
 const tab = ref<'about' | 'records' | 'history'>('records')
 // «О упражнении»: целевые мышцы (свои из карточки, иначе по справочнику), категория, схема, сколько раз делал
@@ -41,7 +43,8 @@ const rows = computed(() => {
         </p>
         <h3 class="mb-1 font-semibold" style="color: var(--accent)">{{ t('rec_muscles') }}</h3>
         <p v-if="!muscles.length" style="color: var(--text-dim)" data-testid="about-nomuscles">{{ t('rec_muscles_none') }}</p>
-        <ul v-else class="mb-3 flex flex-wrap gap-1.5" data-testid="about-muscles"><li v-for="m in muscles" :key="m" class="rounded-full border px-3 py-1 text-xs" style="border-color: var(--border)">{{ muscleName(m) }}</li></ul>
+        <BodyHighlight v-else :muscles="muscles" :model="model" data-testid="about-body" />
+        <ul v-if="muscles.length" class="mb-3 flex flex-wrap gap-1.5" data-testid="about-muscles"><li v-for="m in muscles" :key="m" class="rounded-full border px-3 py-1 text-xs" style="border-color: var(--border)">{{ muscleName(m) }}</li></ul>
         <p v-if="exercise.suggested_scheme" class="mb-2"><span style="color: var(--text-dim)">{{ t('rec_scheme') }}:</span> {{ exercise.suggested_scheme }}</p>
         <p data-testid="about-count"><span style="color: var(--text-dim)">{{ t('rec_done') }}:</span> <b>{{ days.length }}</b><template v-if="days.length"> · {{ t('rec_first') }} {{ days[0] }} · {{ t('rec_last') }} {{ days[days.length - 1] }}</template></p>
       </div>
