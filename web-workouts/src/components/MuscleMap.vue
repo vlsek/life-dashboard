@@ -310,7 +310,7 @@ function shapeStyle(m: MuscleId) {
     <div v-if="embedded || open" :class="embedded ? '' : 'mt-3'" data-testid="muscle-map-body">
       <p class="m-0 mb-3 text-[0.85em]" style="color: var(--text-dim)">{{ t('workouts_muscles_hint') }}</p>
 
-      <TodayFocus :entries="entries" :exercises="exercises" :today="today" />
+      <TodayFocus :entries="entries" :exercises="exercises" :today="today" @pick="emit('filter', $event, 'exercises')" />
 
       <div class="mb-2 flex flex-wrap items-center justify-center gap-1.5" role="group" :aria-label="t('workouts_muscles_asof_label')" data-testid="muscle-asof-picker">
         <button

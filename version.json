@@ -1,7 +1,14 @@
 {
-  "version": "8.05",
+  "version": "8.06",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.06",
+      "date": "2026-11-08 22:30",
+      "changes": [
+        "Workouts → “What to train today”: each group now has a “Pick exercises” button that opens the exercise list filtered by that muscle."
+      ]
+    },
     {
       "version": "8.05",
       "date": "2026-11-08 22:00",
@@ -5691,6 +5698,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.06",
+      "date": "2026-11-08 22:30",
+      "changes": [
+        "«Тренировки» → «Что тренировать сегодня»: у каждой группы кнопка «Выбрать упражнения» — открывает список упражнений, отфильтрованный по этой мышце."
+      ]
+    },
     {
       "version": "8.05",
       "date": "2026-11-08 22:00",

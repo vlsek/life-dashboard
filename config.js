@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.05";
+const SITE_VERSION = "8.06";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.06", date: "2026-11-08 22:30", changes: [
+        "«Тренировки» → «Что тренировать сегодня»: у каждой группы кнопка «Выбрать упражнения» — открывает список упражнений, отфильтрованный по этой мышце.",
+    ]},
     { version: "8.05", date: "2026-11-08 22:00", changes: [
         "Тренировки: в итогах после «Завершить» появилась карта тела (спереди и сзади) — задействованные мышцы закрашены, остальные контуром; список мышц остался под картой.",
     ]},
@@ -3025,6 +3028,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.06", date: "2026-11-08 22:30", changes: [
+        "Workouts → “What to train today”: each group now has a “Pick exercises” button that opens the exercise list filtered by that muscle.",
+    ]},
     { version: "8.05", date: "2026-11-08 22:00", changes: [
         "Workouts: the summary after “Finish” now shows a body map (front and back) with the muscles you worked filled in and the rest outlined; the muscle list stays below it.",
     ]},
