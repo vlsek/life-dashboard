@@ -1,5 +1,5 @@
 -- Сценарий для run.sh 122: этапы навыка (миграция 122, BACKLOG 77.12). Печатает OK / РАСХОЖДЕНИЕ. Только тестовая БД стенда.
-set ON_ERROR_STOP 1
+\set ON_ERROR_STOP 1
 \pset format unaligned
 \pset tuples_only on
 create temp table res(n serial, name text, expected text, got text);
