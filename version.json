@@ -1,7 +1,14 @@
 {
-  "version": "8.10",
+  "version": "8.11",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.11",
+      "date": "2026-11-08 23:00",
+      "changes": [
+        "Workouts: on the “Share as a picture” card, long exercise names and the muscle list no longer run past the edge — the line is cut with “…”."
+      ]
+    },
     {
       "version": "8.10",
       "date": "2026-11-03 21:00",
@@ -5726,6 +5733,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.11",
+      "date": "2026-11-08 23:00",
+      "changes": [
+        "Тренировки: на картинке «Поделиться» длинные названия упражнений и список мышц больше не выходят за край — строка обрезается с «…»."
+      ]
+    },
     {
       "version": "8.10",
       "date": "2026-11-03 21:00",

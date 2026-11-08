@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { summaryCardModel, drawSummaryCard, SUMMARY_CARD_MAX_RECORDS, SUMMARY_CARD_MAX_MUSCLES, SUMMARY_CARD_NAME_MAX } from './lib/summaryCard'
+import { fitText, summaryCardModel, drawSummaryCard, SUMMARY_CARD_MAX_RECORDS, SUMMARY_CARD_MAX_MUSCLES, SUMMARY_CARD_NAME_MAX } from './lib/summaryCard'
 import { fmtVolume, type WorkoutSummaryData } from './lib/summary'
 
 const L = { title: 'Done', time: 'Time', min: 'min', sets: 'Sets', volume: 'Vol', exercises: 'Ex', records: 'PR', moreRecords: (n: number) => `+${n}`, recordLine: (r: { exerciseId: string }) => 'rec ' + r.exerciseId, muscle: (m: string) => 'm_' + m }
@@ -29,7 +29,7 @@ describe('summaryCardModel', () => {
 describe('drawSummaryCard', () => {
   it('рисует заголовок, плитки и рекорды на ctx', () => {
     const texts: string[] = []
-    const g = new Proxy({ fillText: (s: string) => texts.push(s) } as Record<string, unknown>, { get: (t, k) => (k in t ? t[k as string] : () => undefined), set: () => true })
+    const g = new Proxy({ fillText: (s: string) => texts.push(s), measureText: (s: string) => ({ width: s.length * 10 }) } as Record<string, unknown>, { get: (t, k) => (k in t ? t[k as string] : () => undefined), set: () => true })
     const canvas = { getContext: () => g } as unknown as HTMLCanvasElement
     const m = summaryCardModel(base({ records: [rec(1), rec(2), rec(3), rec(4), rec(5), rec(6)], muscles: ['a', 'b'] }), 'кг', 'D', L)
     drawSummaryCard(canvas, m, L, { bg: '#000', text: '#fff', dim: '#999', accent: '#00f' })
@@ -39,5 +39,16 @@ describe('drawSummaryCard', () => {
     expect(texts).toContain('rec e1')
     expect(texts).toContain('+1')
     expect(texts).toContain('m_a · m_b')
+  })
+})
+
+describe('fitText', () => {
+  const g = { measureText: (s: string) => ({ width: s.length * 10 }) }
+  it('короткая строка не меняется, длинная обрезается с «…» и помещается', () => {
+    expect(fitText(g, 'abc', 100)).toBe('abc')
+    const r = fitText(g, 'x'.repeat(50), 100)
+    expect(r.endsWith('…')).toBe(true)
+    expect(r.length * 10).toBeLessThanOrEqual(100)
+    expect(r.length).toBeGreaterThan(5)
   })
 })

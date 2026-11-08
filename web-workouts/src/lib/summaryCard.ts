@@ -30,6 +30,15 @@ export function summaryCardModel(d: WorkoutSummaryData, unit: string, date: stri
   }
 }
 
+// Обрезаем строку «…», чтобы она не выходила за правый край карточки
+export function fitText(g: { measureText: (s: string) => { width: number } }, text: string, maxW: number): string {
+  if (g.measureText(text).width <= maxW) return text
+  let lo = 0, hi = text.length
+  while (lo < hi) { const mid = Math.ceil((lo + hi) / 2); if (g.measureText(text.slice(0, mid) + '…').width <= maxW) lo = mid; else hi = mid - 1 }
+  return text.slice(0, lo).trimEnd() + '…'
+}
+const TEXT_MAX_W = SUMMARY_CARD_W - 160
+
 export function drawSummaryCard(canvas: HTMLCanvasElement, m: SummaryCardModel, l: Pick<SummaryCardLabels, 'records' | 'moreRecords'>, c: { bg: string; text: string; dim: string; accent: string }): void {
   canvas.width = SUMMARY_CARD_W
   canvas.height = SUMMARY_CARD_H
@@ -40,7 +49,7 @@ export function drawSummaryCard(canvas: HTMLCanvasElement, m: SummaryCardModel, 
   g.textBaseline = 'alphabetic'
   g.fillStyle = c.text
   g.font = '700 64px system-ui, sans-serif'
-  g.fillText(m.title, 80, 140)
+  g.fillText(fitText(g, m.title, TEXT_MAX_W), 80, 140)
   g.fillStyle = c.dim
   g.font = '400 36px system-ui, sans-serif'
   g.fillText(m.date, 80, 200)
@@ -66,13 +75,13 @@ export function drawSummaryCard(canvas: HTMLCanvasElement, m: SummaryCardModel, 
     y += 20
     g.fillStyle = c.text
     g.font = '400 34px system-ui, sans-serif'
-    for (const r of m.records) { y += 54; g.fillText(r, 80, y) }
+    for (const r of m.records) { y += 54; g.fillText(fitText(g, r, TEXT_MAX_W), 80, y) }
     if (m.moreRecords > 0) { y += 54; g.fillStyle = c.dim; g.fillText(l.moreRecords(m.moreRecords), 80, y) }
     y += 60
   }
   if (m.muscles.length) {
     g.fillStyle = c.dim
     g.font = '400 34px system-ui, sans-serif'
-    g.fillText(m.muscles.join(' · '), 80, Math.min(y + 40, SUMMARY_CARD_H - 80))
+    g.fillText(fitText(g, m.muscles.join(' · '), TEXT_MAX_W), 80, Math.min(y + 40, SUMMARY_CARD_H - 80))
   }
 }
