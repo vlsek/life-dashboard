@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.09";
+const SITE_VERSION = "8.10";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.10", date: "2026-11-03 21:00", changes: [
+        "Тренировки: в карточке «Сегодня можно тренировать» появился маленький силуэт тела спереди и сзади, на котором подсвечены рекомендованные группы мышц. Он рисуется той же моделью тела, что и «Карта мышц» (мужская, женская и другие), и ничего не требует нажимать: просто сразу видно, что сегодня на очереди. Без миграций."
+    ]},
     { version: "8.09", date: "2026-11-08 23:00", changes: [
         "«Тренировки» → карта мышц: рядом с чипами «Сегодня / 7 / 14 / 30 дн. назад» появились кнопки «‹ ›» — карта сдвигается на день назад или вперёд (до 90 дней).",
     ]},
@@ -3037,6 +3040,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.10", date: "2026-11-03 21:00", changes: [
+        "Workouts: the “You can train today” card now shows a small body silhouette, front and back, with the recommended muscle groups highlighted. It uses the same body model as the “Muscle map” (male, female and the others) and needs no tapping: you see at a glance what is next today. No migrations."
+    ]},
     { version: "8.09", date: "2026-11-08 23:00", changes: [
         "Workouts → muscle map: next to the “Today / 7 / 14 / 30 days ago” chips there are now “‹ ›” buttons — step the map one day back or forward (up to 90 days).",
     ]},

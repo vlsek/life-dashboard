@@ -1,7 +1,14 @@
 {
-  "version": "8.09",
+  "version": "8.10",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.10",
+      "date": "2026-11-03 21:00",
+      "changes": [
+        "Workouts: the “You can train today” card now shows a small body silhouette, front and back, with the recommended muscle groups highlighted. It uses the same body model as the “Muscle map” (male, female and the others) and needs no tapping: you see at a glance what is next today. No migrations."
+      ]
+    },
     {
       "version": "8.09",
       "date": "2026-11-08 23:00",
@@ -5719,6 +5726,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.10",
+      "date": "2026-11-03 21:00",
+      "changes": [
+        "Тренировки: в карточке «Сегодня можно тренировать» появился маленький силуэт тела спереди и сзади, на котором подсвечены рекомендованные группы мышц. Он рисуется той же моделью тела, что и «Карта мышц» (мужская, женская и другие), и ничего не требует нажимать: просто сразу видно, что сегодня на очереди. Без миграций."
+      ]
+    },
     {
       "version": "8.09",
       "date": "2026-11-08 23:00",
