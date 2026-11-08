@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.16";
+const SITE_VERSION = "8.17";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.17", date: "2026-11-09 01:00", changes: [
+        "«Навыки»: у навыка можно задать этапы (по одному в строке) — отмечаешь их галочками, процент считается сам, все этапы — навык освоен. Без этапов всё по-старому (кнопки −/+ шага). Нужна миграция 122.",
+    ]},
     { version: "8.16", date: "2026-11-09 00:30", changes: [
         "Тренировки: в окне упражнения (кубок), на вкладке «О нём», теперь есть карта тела спереди и сзади — мышцы этого упражнения закрашены. Те же мышцы списком остаются под картой.",
     ]},
@@ -3058,6 +3061,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.17", date: "2026-11-09 01:00", changes: [
+        "Skills: a skill can have stages (one per line) — tick them off, the percent is calculated automatically, all stages ticked means mastered. Without stages nothing changes (the −/+ step buttons). Needs migration 122.",
+    ]},
     { version: "8.16", date: "2026-11-09 00:30", changes: [
         "Workouts: in the exercise window (trophy), on the “About” tab, there is now a body map (front and back) with this exercise’s muscles filled in. The same muscles stay listed under the map.",
     ]},

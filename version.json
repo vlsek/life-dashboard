@@ -1,7 +1,14 @@
 {
-  "version": "8.16",
+  "version": "8.17",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.17",
+      "date": "2026-11-09 01:00",
+      "changes": [
+        "Skills: a skill can have stages (one per line) — tick them off, the percent is calculated automatically, all stages ticked means mastered. Without stages nothing changes (the −/+ step buttons). Needs migration 122."
+      ]
+    },
     {
       "version": "8.16",
       "date": "2026-11-09 00:30",
@@ -5768,6 +5775,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.17",
+      "date": "2026-11-09 01:00",
+      "changes": [
+        "«Навыки»: у навыка можно задать этапы (по одному в строке) — отмечаешь их галочками, процент считается сам, все этапы — навык освоен. Без этапов всё по-старому (кнопки −/+ шага). Нужна миграция 122."
+      ]
+    },
     {
       "version": "8.16",
       "date": "2026-11-09 00:30",

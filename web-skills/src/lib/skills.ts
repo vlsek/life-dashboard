@@ -1,5 +1,6 @@
 import { normalizeCategory } from './skillsView'
-import type { SkillFormInput } from './types'
+import { checklistFromText, normalizeChecklist } from './skillChecklist'
+import type { Skill, SkillFormInput } from './types'
 
 // Текстовый прогресс-бар — 1:1 с bar() из skills.js.
 export function bar(pct: number, width = 16): string {
@@ -44,9 +45,16 @@ export function suggestionsFor(lang: 'en' | 'ru', existingNames: Set<string>): S
 
 // Патч на insert/update — 1:1 с addSkill()/editSkill() в skills.js (step/points по умолчанию 10).
 // opts.categoryColumn — есть ли в базе колонка skills.category (миграция 112): без неё категорию НЕ пишем (иначе запись упала бы).
-export function buildSkillRow(res: SkillFormInput, opts: { categoryColumn?: boolean } = {}): { name: string; step: number; points: number; category?: string | null } {
-  const row: { name: string; step: number; points: number; category?: string | null } = { name: res.name.trim(), step: res.step || 10, points: res.points || 10 }
+export function buildSkillRow(
+  res: SkillFormInput,
+  opts: { categoryColumn?: boolean; checklistColumn?: boolean; existing?: Pick<Skill, 'checklist'> | null } = {},
+): { name: string; step: number; points: number; category?: string | null; checklist?: { name: string; done: boolean }[] | null } {
+  const row: { name: string; step: number; points: number; category?: string | null; checklist?: { name: string; done: boolean }[] | null } = { name: res.name.trim(), step: res.step || 10, points: res.points || 10 }
   if (opts.categoryColumn) row.category = normalizeCategory(res.category)
+  if (opts.checklistColumn) {
+    const list = checklistFromText(res.checklistText ?? '', normalizeChecklist(opts.existing?.checklist))
+    row.checklist = list.length ? list : null
+  }
   return row
 }
 

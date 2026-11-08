@@ -15,13 +15,14 @@ import { useSkills } from './lib/useSkills'
 import { useBooks } from './lib/useBooks'
 import { suggestionsFor } from './lib/skills'
 import { t, getLang } from './lib/i18n'
+import { checklistToText, normalizeChecklist } from './lib/skillChecklist'
 import type { Skill, SkillFormInput, Book, BookFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
 import CollapsibleSection from './components/CollapsibleSection.vue'
 import { categoryOptions, filterSkills, normalizeSort, sortSkills, SORT_KEY, type SkillSort } from './lib/skillsView'
 
-const { auth, items: skills, error: skillsError, loaded: skillsLoaded, hasCategory, init, reload: reloadSkills, addSkill, updateSkill, deleteSkill, bumpProgress, toggleMastered } = useSkills()
+const { auth, items: skills, error: skillsError, loaded: skillsLoaded, hasCategory, hasChecklist, init, reload: reloadSkills, addSkill, updateSkill, deleteSkill, bumpProgress, toggleChecklistItem, toggleMastered } = useSkills()
 const { items: books, error: booksError, loaded: booksLoaded, load: loadBooks, reload: reloadBooks, addBook, importBooks, updateBook, deleteBook, toggleDone: toggleBookDone } = useBooks()
 
 onMounted(init)
@@ -67,7 +68,7 @@ const skillFormTarget = ref<Skill | 'new' | null>(null)
 const skillFormPrefill = ref<string | null>(null) // имя из "быстрой идеи", если открыли форму оттуда
 const skillFormInitial = computed<SkillFormInput>(() => {
   const s = skillFormTarget.value
-  if (s && s !== 'new') return { name: s.name, step: s.step ?? 10, points: s.points ?? 10, category: s.category ?? '' }
+  if (s && s !== 'new') return { name: s.name, step: s.step ?? 10, points: s.points ?? 10, category: s.category ?? '', checklistText: checklistToText(normalizeChecklist(s.checklist)) }
   return { name: skillFormPrefill.value ?? '', step: 10, points: 10, category: '' }
 })
 function openAddSkill(prefillName?: string) {
@@ -177,7 +178,7 @@ async function onDeleteBook(b: Book) {
               </select>
             </div>
             <p v-if="shownActive.length === 0" class="dim" data-test="skills-no-match">{{ t('skills_no_match') }}</p>
-            <ActiveSkillsList v-else :skills="shownActive" @bump="(s, d) => bumpProgress(s, d)" @mastered="toggleMastered" @edit="(s) => (skillFormTarget = s)" @delete="onDeleteSkill" />
+            <ActiveSkillsList v-else :skills="shownActive" @bump="(s, d) => bumpProgress(s, d)" @item="(s, i) => toggleChecklistItem(s, i)" @mastered="toggleMastered" @edit="(s) => (skillFormTarget = s)" @delete="onDeleteSkill" />
           </template>
         </CollapsibleSection>
 
@@ -259,7 +260,7 @@ async function onDeleteBook(b: Book) {
       </template>
     </template>
 
-    <SkillForm v-if="skillFormTarget" :is-edit="skillFormTarget !== 'new'" :initial="skillFormInitial" :categories="myCategories" :category-enabled="hasCategory" @close="skillFormTarget = null" @save="onSaveSkill" />
+    <SkillForm v-if="skillFormTarget" :is-edit="skillFormTarget !== 'new'" :initial="skillFormInitial" :categories="myCategories" :category-enabled="hasCategory" :checklist-enabled="hasChecklist" @close="skillFormTarget = null" @save="onSaveSkill" />
     <ImportBooksModal v-if="importOpen" :existing="books" :busy="importBusy" :error="importError" @close="importOpen = false" @confirm="onImportBooks" />
     <BookForm v-if="bookFormTarget" :is-edit="bookFormTarget !== 'new'" :initial="bookFormInitial" @close="bookFormTarget = null" @save="onSaveBook" />
   </main>

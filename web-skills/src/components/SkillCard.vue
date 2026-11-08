@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import CoinIcon from './CoinIcon.vue'
 import Icon from './Icon.vue'
 import { skillPercent } from '../lib/skills'
+import { normalizeChecklist } from '../lib/skillChecklist'
 import { t } from '../lib/i18n'
 import type { Skill } from '../lib/types'
 
@@ -10,7 +11,8 @@ import type { Skill } from '../lib/types'
 // Современный прогресс-бар (скруглённый, цвет акцента темы, плавное заполнение — как у товаров магазина), «N%», шаги −/+,
 // круглая отметка «освоено» и иконка баллов-монеты вместо эмодзи ⭐. Логика (bumpProgress/toggleMastered) снаружи, без изменений.
 const props = defineProps<{ skill: Skill }>()
-const emit = defineEmits<{ bump: [dir: 1 | -1]; mastered: []; edit: []; delete: [] }>()
+const emit = defineEmits<{ bump: [dir: 1 | -1]; mastered: []; edit: []; delete: []; item: [index: number] }>()
+const checklist = computed(() => normalizeChecklist(props.skill.checklist)) // этапы (77.12): есть — процент по ним, кнопок −/+ нет
 
 const pct = computed(() => skillPercent(props.skill.progress))
 const step = computed(() => props.skill.step ?? 10)
@@ -49,9 +51,20 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
           <span class="dim whitespace-nowrap text-xs" data-test="skill-percent">{{ pct }}%</span>
         </div>
 
+        <ul v-if="checklist.length" class="m-0 mt-2 list-none p-0" data-test="skill-checklist">
+          <li v-for="(it, i) in checklist" :key="i">
+            <button type="button" role="checkbox" :aria-checked="it.done" class="flex w-full items-center gap-2 border-0 bg-transparent p-1 text-left text-sm" style="background: transparent; color: var(--text)" data-test="skill-checklist-item" @click="emit('item', i)">
+              <span class="skill-check shrink-0" :class="{ 'skill-check-on': it.done }" aria-hidden="true"></span>
+              <span :style="it.done ? 'color: var(--text-dim); text-decoration: line-through' : ''">{{ it.name }}</span>
+            </button>
+          </li>
+        </ul>
+
         <div class="mt-2 flex items-center gap-1.5" data-test="skill-footer">
-          <button type="button" class="secondary px-2 text-xs" :aria-label="t('skills_step_down_aria')" data-test="skill-down" @click="emit('bump', -1)">−{{ step }}%</button>
-          <button type="button" class="secondary px-2 text-xs" :aria-label="t('skills_step_up_aria')" data-test="skill-up" @click="emit('bump', 1)">+{{ step }}%</button>
+          <template v-if="!checklist.length">
+            <button type="button" class="secondary px-2 text-xs" :aria-label="t('skills_step_down_aria')" data-test="skill-down" @click="emit('bump', -1)">−{{ step }}%</button>
+            <button type="button" class="secondary px-2 text-xs" :aria-label="t('skills_step_up_aria')" data-test="skill-up" @click="emit('bump', 1)">+{{ step }}%</button>
+          </template>
           <span class="ml-auto inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-xs" style="border-color: var(--border)" data-test="skill-points">
             {{ skill.points ?? 10 }} <CoinIcon />
           </span>
@@ -84,5 +97,13 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
   border: 2px solid var(--border);
   background: transparent;
   cursor: pointer;
+}
+.skill-check-on {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+[data-test='skill-checklist-item'] .skill-check {
+  width: 1.25rem;
+  height: 1.25rem;
 }
 </style>

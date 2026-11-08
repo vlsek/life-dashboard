@@ -7,6 +7,7 @@ export interface Skill {
   step: number
   points: number
   category?: string | null // миграция 112; нет колонки/значения — «Без категории»
+  checklist?: { name: string; done: boolean }[] | null // миграция 122: этапы навыка; непустой — прогресс считается по ним
   created_at: string
 }
 
@@ -15,6 +16,7 @@ export interface SkillFormInput {
   step: number
   points: number
   category?: string
+  checklistText?: string // этапы по одному в строке (миграция 122); пусто — без чек-листа
 }
 
 export type BookStatus = 'to_read' | 'done'

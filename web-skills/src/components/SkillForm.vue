@@ -5,13 +5,14 @@ import { matchCategory } from '../lib/skillsView'
 import type { SkillFormInput } from '../lib/types'
 
 // categoryEnabled — есть ли в базе колонка skills.category (миграция 112): без неё поле категории не показываем. categories — свои уже введённые категории (подсказка).
-const props = withDefaults(defineProps<{ isEdit: boolean; initial: SkillFormInput; categories?: string[]; categoryEnabled?: boolean }>(), { categories: () => [], categoryEnabled: false })
+const props = withDefaults(defineProps<{ isEdit: boolean; initial: SkillFormInput; categories?: string[]; categoryEnabled?: boolean; checklistEnabled?: boolean }>(), { categories: () => [], categoryEnabled: false, checklistEnabled: false })
 const emit = defineEmits<{ close: []; save: [SkillFormInput] }>()
 
 const name = ref(props.initial.name)
 const step = ref(props.initial.step)
 const points = ref(props.initial.points)
 const category = ref(props.initial.category ?? '')
+const checklistText = ref(props.initial.checklistText ?? '') // этапы (77.12, миграция 122): по одному в строке
 
 const nameInput = ref<HTMLInputElement | null>(null)
 onMounted(() => nameInput.value?.focus())
@@ -19,7 +20,7 @@ onMounted(() => nameInput.value?.focus())
 function onSubmit() {
   if (!name.value.trim()) return
   // «выбор из своих»: совпало без учёта регистра с существующей категорией — берём её написание, чтобы «спорт» и «Спорт» не разъехались
-  emit('save', { name: name.value, step: Number(step.value) || 0, points: Number(points.value) || 0, category: matchCategory(category.value, props.categories) ?? '' })
+  emit('save', { name: name.value, step: Number(step.value) || 0, points: Number(points.value) || 0, category: matchCategory(category.value, props.categories) ?? '', checklistText: checklistText.value })
 }
 </script>
 
@@ -42,7 +43,13 @@ function onSubmit() {
           </datalist>
         </label>
 
-        <label class="flex flex-col gap-1 text-sm">
+        <label v-if="checklistEnabled" class="flex flex-col gap-1 text-sm">
+          {{ t('skills_field_checklist') }}
+          <textarea v-model="checklistText" rows="4" class="modal-input" :placeholder="t('skills_checklist_ph')" data-test="skill-checklist"></textarea>
+          <span class="dim text-xs">{{ t('skills_checklist_hint') }}</span>
+        </label>
+
+        <label v-if="!checklistText.trim()" class="flex flex-col gap-1 text-sm">
           {{ t('skills_field_step') }}
           <input v-model.number="step" type="number" min="1" max="100" class="modal-input" />
         </label>
