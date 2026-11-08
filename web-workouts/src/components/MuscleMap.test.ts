@@ -616,6 +616,21 @@ describe('MuscleMap: карта за дату (80.7)', () => {
     expect(rows).toHaveLength(1)
     expect(rows[0].text()).toContain('22')
   })
+  it('шаги «‹ ›»: день назад/вперёд, на «Сегодня» вперёд выключено', async () => {
+    const w = await openMap(entries, [bench, squat])
+    const prev = () => w.find('[data-testid="muscle-asof-prev"]')
+    const next = () => w.find('[data-testid="muscle-asof-next"]')
+    expect(next().attributes('disabled')).toBeDefined()
+    await prev().trigger('click')
+    expect(w.find('[data-testid="muscle-asof-caption"]').text()).toContain('29.09.2026') // сегодня 30.09
+    await prev().trigger('click')
+    expect(w.find('[data-testid="muscle-asof-caption"]').text()).toContain('28.09.2026')
+    expect(zone(w, 'chest').attributes('data-state')).toBe('done')
+    await next().trigger('click')
+    await next().trigger('click')
+    expect(w.find('[data-testid="muscle-asof-caption"]').exists()).toBe(false)
+    expect(next().attributes('disabled')).toBeDefined()
+  })
   it('в прошлом кнопок «добавить запись» нет, возврат на «Сегодня» возвращает их и цвета', async () => {
     const w = await openMap(entries, [bench, squat])
     await zone(w, 'chest').trigger('click')

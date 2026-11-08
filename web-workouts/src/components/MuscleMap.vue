@@ -78,6 +78,8 @@ function toggle() {
 // «Карта за дату» (BACKLOG 80.7): чипы сдвигают «сегодня» назад на 7/14/30 дней; расчёты (`lastTrainedByMuscle`, подходы, сессии) сами не берут записи позже «сегодня», добавлять записи в прошлое отсюда нельзя
 const ASOF_OFFSETS = [0, 7, 14, 30] as const
 const asOf = ref<number>(0)
+const ASOF_MAX = 90 // шаг «‹ день» не уводит дальше трёх месяцев назад
+const stepAsOf = (d: number) => (asOf.value = Math.min(ASOF_MAX, Math.max(0, asOf.value + d)))
 const baseToday = computed(() => props.today ?? todayStr())
 const today = computed(() => (asOf.value ? addDaysIso(baseToday.value, -asOf.value) : baseToday.value))
 const viewingPast = computed(() => asOf.value > 0)
@@ -313,6 +315,7 @@ function shapeStyle(m: MuscleId) {
       <TodayFocus :entries="entries" :exercises="exercises" :today="today" @pick="emit('filter', $event, 'exercises')" />
 
       <div class="mb-2 flex flex-wrap items-center justify-center gap-1.5" role="group" :aria-label="t('workouts_muscles_asof_label')" data-testid="muscle-asof-picker">
+        <button type="button" class="rounded-lg border px-2.5 py-1 text-[0.8em]" style="border-color: var(--border); color: var(--text-dim); background: transparent" :disabled="asOf >= ASOF_MAX" :aria-label="t('workouts_muscles_asof_prev')" data-testid="muscle-asof-prev" @click="stepAsOf(1)">‹</button>
         <button
           v-for="n in ASOF_OFFSETS"
           :key="n"
@@ -325,6 +328,7 @@ function shapeStyle(m: MuscleId) {
         >
           {{ n === 0 ? t('workouts_muscles_asof_today') : t('workouts_muscles_asof_ago').replace('{n}', String(n)) }}
         </button>
+        <button type="button" class="rounded-lg border px-2.5 py-1 text-[0.8em]" style="border-color: var(--border); color: var(--text-dim); background: transparent" :disabled="asOf <= 0" :aria-label="t('workouts_muscles_asof_next')" data-testid="muscle-asof-next" @click="stepAsOf(-1)">›</button>
       </div>
       <p v-if="viewingPast" class="m-0 mb-2 text-center text-[0.75em]" style="color: var(--text-dim)" data-testid="muscle-asof-caption">{{ t('workouts_muscles_asof_caption').replace('{date}', fmtRu(today)) }}</p>
       <div class="mb-2 flex flex-wrap items-center justify-center gap-1.5" role="group" :aria-label="t('workouts_heat_label')" data-testid="muscle-heat-picker">

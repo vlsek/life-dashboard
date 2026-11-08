@@ -1,7 +1,14 @@
 {
-  "version": "8.08",
+  "version": "8.09",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.09",
+      "date": "2026-11-08 23:00",
+      "changes": [
+        "Workouts → muscle map: next to the “Today / 7 / 14 / 30 days ago” chips there are now “‹ ›” buttons — step the map one day back or forward (up to 90 days)."
+      ]
+    },
     {
       "version": "8.08",
       "date": "2026-11-05 10:00",
@@ -5712,6 +5719,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.09",
+      "date": "2026-11-08 23:00",
+      "changes": [
+        "«Тренировки» → карта мышц: рядом с чипами «Сегодня / 7 / 14 / 30 дн. назад» появились кнопки «‹ ›» — карта сдвигается на день назад или вперёд (до 90 дней)."
+      ]
+    },
     {
       "version": "8.08",
       "date": "2026-11-05 10:00",

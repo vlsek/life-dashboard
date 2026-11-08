@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.08";
+const SITE_VERSION = "8.09";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.09", date: "2026-11-08 23:00", changes: [
+        "«Тренировки» → карта мышц: рядом с чипами «Сегодня / 7 / 14 / 30 дн. назад» появились кнопки «‹ ›» — карта сдвигается на день назад или вперёд (до 90 дней).",
+    ]},
     { version: "8.08", date: "2026-11-05 10:00", changes: [
         "Магазин: окна стали удобнее с клавиатуры. В форме «Добавить/изменить товар» фокус сразу попадает в поле названия, Tab ходит по кругу внутри окна, Esc закрывает его, а после закрытия фокус возвращается на кнопку, с которой окно открыли. Подписи полей теперь привязаны к полям (для скринридеров), у окна есть название и роль диалога. То же — в окне подсказки «ⓘ». А после подтверждения удаления фокус возвращается на корзину, а не теряется. Без миграций.",
     ]},
@@ -3034,6 +3037,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.09", date: "2026-11-08 23:00", changes: [
+        "Workouts → muscle map: next to the “Today / 7 / 14 / 30 days ago” chips there are now “‹ ›” buttons — step the map one day back or forward (up to 90 days).",
+    ]},
     { version: "8.08", date: "2026-11-05 10:00", changes: [
         "Shop: dialogs are easier to use with a keyboard. In the “Add/edit item” form focus goes straight to the name field, Tab cycles inside the dialog, Esc closes it, and after closing focus returns to the button that opened it. Field labels are now bound to their fields (for screen readers), and the dialog has a title and a dialog role. The “ⓘ” hint dialog works the same way. And after the delete confirmation focus returns to the trash button instead of being lost. No migrations.",
     ]},
