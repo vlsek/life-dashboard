@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.15";
+const SITE_VERSION = "8.16";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.16", date: "2026-11-09 00:30", changes: [
+        "Тренировки: в окне упражнения (кубок), на вкладке «О нём», теперь есть карта тела спереди и сзади — мышцы этого упражнения закрашены. Те же мышцы списком остаются под картой.",
+    ]},
     { version: "8.15", date: "2026-11-04 10:00", changes: [
         "Тренировки: вкладки раздела переименованы по утверждённому макету: «Журнал» стал «Историей», «Карта мышц» — «Мышцами». Ссылка на главной тоже теперь «Вся история →». «Прогрессия» и «Упражнения» остались как были. Всё содержимое вкладок и адреса прежние. Без миграций."
     ]},
@@ -3055,6 +3058,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.16", date: "2026-11-09 00:30", changes: [
+        "Workouts: in the exercise window (trophy), on the “About” tab, there is now a body map (front and back) with this exercise’s muscles filled in. The same muscles stay listed under the map.",
+    ]},
     { version: "8.15", date: "2026-11-04 10:00", changes: [
         "Workouts: the section tabs are renamed to follow the approved mockup: “Journal” is now “History” and “Muscle map” is now “Muscles”. The link on the home screen now reads “All history →”. “Progress” and “Exercises” stay as they were. Tab contents and links are unchanged. No migrations."
     ]},

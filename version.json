@@ -1,7 +1,14 @@
 {
-  "version": "8.15",
+  "version": "8.16",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.16",
+      "date": "2026-11-09 00:30",
+      "changes": [
+        "Workouts: in the exercise window (trophy), on the “About” tab, there is now a body map (front and back) with this exercise’s muscles filled in. The same muscles stay listed under the map."
+      ]
+    },
     {
       "version": "8.15",
       "date": "2026-11-04 10:00",
@@ -5761,6 +5768,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.16",
+      "date": "2026-11-09 00:30",
+      "changes": [
+        "Тренировки: в окне упражнения (кубок), на вкладке «О нём», теперь есть карта тела спереди и сзади — мышцы этого упражнения закрашены. Те же мышцы списком остаются под картой."
+      ]
+    },
     {
       "version": "8.15",
       "date": "2026-11-04 10:00",
