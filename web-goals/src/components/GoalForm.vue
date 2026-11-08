@@ -11,7 +11,7 @@ import { HORIZON_KEYS, effectiveHorizon, horizonOptions, type Horizon } from '..
 
 // submit — запись цели (родитель добавляет/правит и закрывает форму при успехе). Ошибка записи показывается ПОД полями (форма остаётся
 // открытой, введённое не пропадает); пока идёт запись, «Сохранить» заблокирована — двойной тап не создаёт две цели.
-const props = withDefaults(defineProps<{ isEdit: boolean; initial: GoalFormInitial; submit: (res: GoalFormInput) => Promise<void>; categories?: string[]; noCategoryLabels?: string[]; horizonColumn?: boolean; weightColumn?: boolean; repeatColumn?: boolean; currentWeight?: number | null }>(), { categories: () => [], noCategoryLabels: () => [], horizonColumn: false, weightColumn: false, repeatColumn: false, currentWeight: null })
+const props = withDefaults(defineProps<{ isEdit: boolean; initial: GoalFormInitial; submit: (res: GoalFormInput) => Promise<void>; categories?: string[]; noCategoryLabels?: string[]; horizonColumn?: boolean; weightColumn?: boolean; repeatColumn?: boolean; stepsColumn?: boolean; currentWeight?: number | null }>(), { categories: () => [], noCategoryLabels: () => [], horizonColumn: false, weightColumn: false, repeatColumn: false, stepsColumn: false, currentWeight: null })
 const emit = defineEmits<{ close: [] }>()
 
 const name = ref(props.initial.name)
@@ -29,6 +29,8 @@ const deadline = ref(props.initial.deadline)
 const options = computed(() => horizonOptions(props.horizonColumn))
 const horizon = ref<Horizon>(effectiveHorizon({ deadline: props.initial.deadline, horizon: props.initial.horizon }))
 const dateMissing = ref(false)
+// Названия этапов (BACKLOG 76.2, миграция 121): по одному в строке, у цели с несколькими этапами
+const stepNamesText = ref((props.initial.stepNames ?? []).join('\n'))
 // Повтор (BACKLOG 81.4, миграция 120): только у обычной цели с конкретным сроком — следующий срок считается от него.
 const repeat = ref<Repeat | ''>(normalizeRepeat(props.initial.repeat) ?? '')
 // Вид цели (BACKLOG 1085): обычная / «Сбросить вес» / «Набрать вес» (только если в базе есть колонки, миграция 085; у уже весовой цели — всегда).
@@ -80,6 +82,7 @@ async function save() {
       difficulty: difficulty.value,
       deadline: horizon.value === 'day' ? deadline.value : '',
       horizon: horizon.value,
+      stepNames: stepNamesText.value.split('\n'),
       repeat: kind.value === 'plain' && horizon.value === 'day' && repeat.value ? repeat.value : null,
       ...(kind.value === 'plain' ? {} : { weightMode: kind.value, weightStart: wStart, weightTarget: wTarget }), // у обычной цели ключей веса нет — weightFields() сам обнулит вес в базе
     })
@@ -129,6 +132,11 @@ async function save() {
       <template v-else>
         <label class="mt-2 block text-sm">{{ t('goals_field_stages') }}</label>
         <input v-model.number="stages" type="number" min="1" class="w-full" />
+        <template v-if="stepsColumn && stages > 1">
+          <label class="mt-2 block text-sm" for="goal-step-names">{{ t('goals_field_step_names') }}</label>
+          <textarea id="goal-step-names" v-model="stepNamesText" rows="3" class="w-full" :placeholder="t('goals_step_names_ph')" data-test="goal-step-names"></textarea>
+          <p class="dim mt-1 text-xs">{{ t('goals_step_names_hint') }}</p>
+        </template>
       </template>
 
       <label class="mt-2 block text-sm">{{ t('goals_field_difficulty') }}</label>

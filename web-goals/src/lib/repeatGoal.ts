@@ -59,6 +59,7 @@ export function buildNextRow(g: Goal, today: string): Record<string, unknown> {
     repeat_every: every,
   }
   if ('difficulty' in g) row.difficulty = g.difficulty
+  if (g.step_names?.length) row.step_names = g.step_names // следующий период — те же названия этапов
   if ('horizon' in g) row.horizon = 'day'
   return row
 }

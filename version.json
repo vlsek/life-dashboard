@@ -1,7 +1,14 @@
 {
-  "version": "8.13",
+  "version": "8.14",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.14",
+      "date": "2026-11-09 00:10",
+      "changes": [
+        "Goals: a multi-stage goal can now have named stages (“Estimate”, “Materials”, “Painting”) shown in the card’s stage list. Needs migration 121 (without it there is no names field); progress and points are unchanged."
+      ]
+    },
     {
       "version": "8.13",
       "date": "2026-11-09 00:00",
@@ -5747,6 +5754,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.14",
+      "date": "2026-11-09 00:10",
+      "changes": [
+        "«Цели»: у цели с несколькими этапами можно задать названия этапов («Смета», «Материалы», «Покраска») — они видны в списке этапов на карточке. Нужна миграция 121 (без неё поля названий нет); прогресс и баллы не меняются."
+      ]
+    },
     {
       "version": "8.13",
       "date": "2026-11-09 00:00",

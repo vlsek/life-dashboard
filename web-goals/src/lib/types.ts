@@ -20,6 +20,7 @@ export interface Goal {
   weight_start?: number | null
   weight_target?: number | null
   repeat_every?: 'week' | 'month' | 'year' | null // миграция 120: повтор (BACKLOG 81.4); нет колонки/значения — не повторяется
+  step_names?: string[] | null // миграция 121: названия этапов (BACKLOG 76.2); позиция = номер этапа
   repeat_next_id?: string | null // созданная при выполнении следующая цель (не плодим дубликаты при повторной отметке)
   created_at: string
 }
@@ -37,6 +38,7 @@ export interface GoalFormInput {
   weightStart?: number | null
   weightTarget?: number | null
   repeat?: 'week' | 'month' | 'year' | null // повтор цели (миграция 120)
+  stepNames?: string[] // названия этапов (миграция 121); пустой массив — без названий
 }
 
 // Начальные значения формы: то же + текущие баллы цели (только для показа строки «Баллы: N»; в базу из формы не уходят).

@@ -28,6 +28,8 @@ export function useGoals() {
   const hasWeight = ref(false)
   // Есть ли колонка goals.repeat_every (миграция 120, BACKLOG 81.4) — так же; нет колонки — «Повтор» в форме не показываем.
   const hasRepeat = ref(false)
+  // Есть ли колонка goals.step_names (миграция 121, BACKLOG 76.2) — так же; нет колонки — поле «Названия этапов» не показываем.
+  const hasSteps = ref(false)
   const bodyWeight = ref<number | null>(null)
   // id целей, у которых только что подтвердилась запись: на ~0,9 с показываем галочку «сохранено» (BACKLOG 23:25 / 815, срез 3)
   const flashed = ref<Record<string, boolean>>({})
@@ -84,6 +86,8 @@ export function useGoals() {
     else hasWeight.value = !(await sb.from('goals').select('weight_mode').limit(1)).error
     if (items.value.length) hasRepeat.value = 'repeat_every' in items.value[0]
     else hasRepeat.value = !(await sb.from('goals').select('repeat_every').limit(1)).error
+    if (items.value.length) hasSteps.value = 'step_names' in items.value[0]
+    else hasSteps.value = !(await sb.from('goals').select('step_names').limit(1)).error
     await loadBodyWeight(userId)
   }
 
@@ -99,14 +103,14 @@ export function useGoals() {
   }
 
   async function addGoal(userId: string, res: GoalFormInput, noCategoryLabel: string) {
-    const row = buildInsertRow(res, noCategoryLabel, { horizonColumn: hasHorizon.value, weightColumn: hasWeight.value, repeatColumn: hasRepeat.value })
+    const row = buildInsertRow(res, noCategoryLabel, { horizonColumn: hasHorizon.value, weightColumn: hasWeight.value, repeatColumn: hasRepeat.value, stepsColumn: hasSteps.value })
     const { error: err } = await sb.from('goals').insert({ user_id: userId, ...row })
     if (err) throw err
     await reload()
   }
 
   async function updateGoal(existing: Goal, res: GoalFormInput, noCategoryLabel: string) {
-    const patch = buildUpdateRow(res, existing, noCategoryLabel, { horizonColumn: hasHorizon.value, weightColumn: hasWeight.value, repeatColumn: hasRepeat.value })
+    const patch = buildUpdateRow(res, existing, noCategoryLabel, { horizonColumn: hasHorizon.value, weightColumn: hasWeight.value, repeatColumn: hasRepeat.value, stepsColumn: hasSteps.value })
     const { error: err } = await sb.from('goals').update(patch).eq('id', existing.id)
     if (err) throw err
     // правка числа этапов может сама закрыть/открыть многоэтапную цель (patch.done) — баллы идут по новым очкам цели
@@ -192,5 +196,5 @@ export function useGoals() {
     flash(g.id)
   }
 
-  return { auth, items, error, loaded, hasHorizon, hasWeight, hasRepeat, bodyWeight, logWeight, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage }
+  return { auth, items, error, loaded, hasHorizon, hasWeight, hasRepeat, hasSteps, bodyWeight, logWeight, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage }
 }

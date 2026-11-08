@@ -8,6 +8,29 @@ export interface GoalWriteOpts {
   horizonColumn?: boolean
   weightColumn?: boolean // есть ли колонки goals.weight_* (миграция 085)
   repeatColumn?: boolean // есть ли колонка goals.repeat_every (миграция 120, BACKLOG 81.4)
+  stepsColumn?: boolean // есть ли колонка goals.step_names (миграция 121, BACKLOG 76.2)
+}
+
+export const STEP_NAME_MAX = 80
+// Названия этапов: обрезаем пробелы и длину, лишние (сверх числа этапов) отбрасываем, пустые хвосты убираем; пустое имя в середине остаётся «Этап N».
+export function normalizeStepNames(raw: unknown, stages: number): string[] {
+  if (!Array.isArray(raw)) return []
+  const names = raw.slice(0, Math.max(1, stages)).map((x) => (typeof x === 'string' ? x.trim().slice(0, STEP_NAME_MAX) : ''))
+  while (names.length && !names[names.length - 1]) names.pop()
+  return names
+}
+
+// Название этапа k (1-based) для показа: своё или «Этап k».
+export function stepLabel(names: string[] | null | undefined, k: number, fallback: string): string {
+  const n = names?.[k - 1]
+  return n ? n : `${fallback} ${k}`
+}
+
+// Колонку пишем только если она есть; одноэтапная цель и цель на вес названий не имеют.
+export function stepNamesFields(res: Pick<GoalFormInput, 'stepNames' | 'stages' | 'weightMode'>, enabled: boolean): { step_names?: string[] | null } {
+  if (!enabled) return {}
+  const names = res.weightMode || (res.stages ?? 1) < 2 ? [] : normalizeStepNames(res.stepNames, res.stages)
+  return { step_names: names.length ? names : null }
 }
 
 // Повтор пишем только если колонка есть; у цели на вес и без конкретного срока повтора нет (его не от чего считать).
@@ -83,6 +106,7 @@ export function buildInsertRow(res: GoalFormInput, noCategoryLabel: string, opts
     ...(res.horizon !== undefined || opts.horizonColumn ? horizonFields(res, !!opts.horizonColumn, false) : {}),
     ...weightFields(res, !!opts.weightColumn),
     ...repeatFields(res, !!opts.repeatColumn),
+    ...stepNamesFields(res, !!opts.stepsColumn),
   }
 }
 
@@ -100,6 +124,7 @@ export function buildUpdateRow(res: GoalFormInput, existing: Goal, noCategoryLab
     ...(res.horizon !== undefined || opts.horizonColumn ? horizonFields(res, !!opts.horizonColumn) : {}),
     ...weightFields(res, !!opts.weightColumn),
     ...repeatFields(res, !!opts.repeatColumn),
+    ...stepNamesFields(res, !!opts.stepsColumn),
   }
   if (existing.current_stage > stages) patch.current_stage = stages
   if (stages > 1) patch.done = (existing.current_stage ?? 0) >= stages

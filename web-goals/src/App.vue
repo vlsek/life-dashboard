@@ -27,7 +27,7 @@ import { confirmDialog } from './lib/confirmDialog'
 import { friendlyError } from './lib/friendlyError'
 import { isDeadlineReminderEnabled, setDeadlineReminderEnabled } from './lib/deadlineReminderSetting'
 
-const { auth, items, error, loaded, hasHorizon, hasWeight, hasRepeat, bodyWeight, logWeight, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
+const { auth, items, error, loaded, hasHorizon, hasWeight, hasRepeat, hasSteps, bodyWeight, logWeight, flashed, init, reload, addGoal, updateGoal, deleteGoal, toggleGoal, stepGoal, setStage } = useGoals()
 onMounted(init)
 
 // Серия по целям (BACKLOG 60.1, миграция 079): грузим при входе и после каждой отметки цели (число выполненных изменилось)
@@ -121,7 +121,7 @@ const formTarget = ref<Goal | 'new' | null>(null)
 const formInitial = computed<GoalFormInitial>(() => {
   const g = formTarget.value
   if (g && g !== 'new') {
-    return { name: g.name, points: g.points ?? 5, category: g.category, stages: g.stages ?? 1, difficulty: g.difficulty, deadline: g.deadline ?? '', horizon: g.horizon ?? null, weightMode: g.weight_mode ?? null, weightStart: g.weight_start ?? null, weightTarget: g.weight_target ?? null, repeat: g.repeat_every ?? null }
+    return { name: g.name, points: g.points ?? 5, category: g.category, stages: g.stages ?? 1, difficulty: g.difficulty, deadline: g.deadline ?? '', horizon: g.horizon ?? null, weightMode: g.weight_mode ?? null, weightStart: g.weight_start ?? null, weightTarget: g.weight_target ?? null, repeat: g.repeat_every ?? null, stepNames: g.step_names ?? [] }
   }
   return formDraft.value ?? { name: '', points: 5, category: '', stages: 1, difficulty: null, deadline: '' }
 })
@@ -296,7 +296,7 @@ async function onDelete(g: Goal) {
       </div>
     </template>
 
-    <GoalForm v-if="formTarget" :is-edit="formTarget !== 'new'" :initial="formInitial" :categories="myCategories" :no-category-labels="noCategoryLabels" :horizon-column="hasHorizon" :weight-column="hasWeight" :repeat-column="hasRepeat" :current-weight="bodyWeight" :submit="onSaveForm" @close="closeForm" />
+    <GoalForm v-if="formTarget" :is-edit="formTarget !== 'new'" :initial="formInitial" :categories="myCategories" :no-category-labels="noCategoryLabels" :horizon-column="hasHorizon" :weight-column="hasWeight" :repeat-column="hasRepeat" :steps-column="hasSteps" :current-weight="bodyWeight" :submit="onSaveForm" @close="closeForm" />
     <GoalTemplatesModal v-if="templatesOpen" :have="haveTemplates" @pick="onPickTemplate" @close="templatesOpen = false" />
   </main>
 </template>

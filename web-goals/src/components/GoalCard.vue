@@ -4,7 +4,7 @@ import CoinIcon from './CoinIcon.vue'
 import Icon from './Icon.vue'
 import SavedTick from './SavedTick.vue'
 import { normalizeRepeat } from '../lib/repeatGoal'
-import { deadlineLevel, stagePercent, stageProgress, stageTapTarget } from '../lib/goals'
+import { deadlineLevel, stagePercent, stageProgress, stageTapTarget, stepLabel } from '../lib/goals'
 import { forecastGoal } from '../lib/forecast'
 import { t } from '../lib/i18n'
 import type { Goal } from '../lib/types'
@@ -194,12 +194,12 @@ const iconBtn = 'display:inline-flex;align-items:center;justify-content:center;w
             type="button"
             class="goal-stage flex w-full items-center gap-3 text-left"
             :class="{ 'goal-stage-on': k <= current }"
-            :aria-label="`${t('goals_stage_n')} ${k}: ${k <= current ? t('goals_stage_done_aria') : t('goals_stage_todo_aria')}`"
+              :aria-label="`${stepLabel(goal.step_names, k, t('goals_stage_n'))}: ${k <= current ? t('goals_stage_done_aria') : t('goals_stage_todo_aria')}`"
             data-test="goal-stage"
             @click="tapStage(k)"
           >
             <span class="goal-check goal-check-sm shrink-0" :class="{ 'goal-check-on': k <= current }"><Icon v-if="k <= current" name="check" /></span>
-            <span class="text-sm">{{ t('goals_stage_n') }} {{ k }}</span>
+            <span class="text-sm" data-test="goal-stage-name">{{ stepLabel(goal.step_names, k, t('goals_stage_n')) }}</span>
           </button>
         </li>
       </ol>
