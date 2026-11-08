@@ -546,7 +546,7 @@ function onToggleProgramWeek(week: number) {
   <ActiveWorkout v-if="aw.active.value && auth.status === 'ready'" :exercises="exercises" :entries="entries" :unit="defaultUnit()" :busy="awBusy" @finish="onFinishWorkout" @cancel="onCancelWorkout" />
   <PastWorkoutForm v-if="pastForm" @start="onStartPast" @close="pastForm = false" />
   <RecordsModal v-if="recordsFor" :exercise="recordsFor" :entries="entries" :unit="defaultUnit()" @close="recordsFor = null" />
-  <WorkoutSummary v-if="summary" :data="summary" :exercises="exercises" :unit="defaultUnit()" @close="summary = null" @save-meta="onSaveSessionMeta" />
+  <WorkoutSummary v-if="summary" :data="summary" :exercises="exercises" :unit="defaultUnit()" :model="bodyModel" @close="summary = null" @save-meta="onSaveSessionMeta" />
   <main class="mx-auto max-w-3xl px-4 pb-24 pt-6 sm:pb-16">
     <h1 class="mb-3 text-xl font-bold"><EmojiText :text="t('workouts_h1')" /></h1>
 

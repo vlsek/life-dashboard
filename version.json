@@ -1,7 +1,14 @@
 {
-  "version": "8.04",
+  "version": "8.05",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.05",
+      "date": "2026-11-08 22:00",
+      "changes": [
+        "Workouts: the summary after “Finish” now shows a body map (front and back) with the muscles you worked filled in and the rest outlined; the muscle list stays below it."
+      ]
+    },
     {
       "version": "8.04",
       "date": "2026-11-08 18:44",
@@ -5684,6 +5691,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.05",
+      "date": "2026-11-08 22:00",
+      "changes": [
+        "Тренировки: в итогах после «Завершить» появилась карта тела (спереди и сзади) — задействованные мышцы закрашены, остальные контуром; список мышц остался под картой."
+      ]
+    },
     {
       "version": "8.04",
       "date": "2026-11-08 18:44",

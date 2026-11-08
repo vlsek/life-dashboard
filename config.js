@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.04";
+const SITE_VERSION = "8.05";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.05", date: "2026-11-08 22:00", changes: [
+        "Тренировки: в итогах после «Завершить» появилась карта тела (спереди и сзади) — задействованные мышцы закрашены, остальные контуром; список мышц остался под картой.",
+    ]},
     { version: "8.04", date: "2026-11-08 18:44", changes: [
         "Достижения: на карточке достижения появилась строка «Открыли N% людей» — сколько пользователей раздела уже открыли его, по настоящим данным. Показывается только когда в разделе набралось не меньше 20 человек, иначе строки нет, чтобы процент ничего не выдавал. Из базы приходят только числа, без имён. Работает после применения миграции 118; пока её нет, страница выглядит как раньше."
     ]},
@@ -3022,6 +3025,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.05", date: "2026-11-08 22:00", changes: [
+        "Workouts: the summary after “Finish” now shows a body map (front and back) with the muscles you worked filled in and the rest outlined; the muscle list stays below it.",
+    ]},
     { version: "8.04", date: "2026-11-08 18:44", changes: [
         "Achievements: an achievement card now shows Opened by N% of people, the share of the section's users who already unlocked it, based on real data. It appears only once at least 20 people are in the section, so a percentage never gives anyone away. Only numbers come from the database, no names. It works once migration 118 is applied; until then the page looks as before."
     ]},
