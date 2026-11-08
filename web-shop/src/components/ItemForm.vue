@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
+import { useModalA11y } from '../lib/modalA11y'
 import { friendlyError } from '../lib/friendlyError'
 import { DEFAULT_SPARKS_COST, rubPerSpark, rubToSparks, sparksMode } from '../lib/sparks'
 import { SCALES, suggestPrice, type ScaleId } from '../lib/priceScale'
@@ -9,6 +10,10 @@ import type { ShopItem, ShopItemFormInput } from '../lib/types'
 
 const props = defineProps<{ existing: ShopItem | null; uploadImage: (file: File) => Promise<string | null>; dailyRate?: number; goals?: GoalLite[]; error?: string | null }>()
 const emit = defineEmits<{ close: []; save: [res: ShopItemFormInput] }>()
+
+// Окно: фокус внутрь, ловушка Tab, Esc = «Отмена», возврат фокуса на кнопку (72.5)
+const root = ref<HTMLElement | null>(null)
+useModalA11y(root, { onClose: () => emit('close') })
 
 const name = ref(props.existing?.name ?? '')
 const link = ref(props.existing?.link ?? '')
@@ -72,14 +77,14 @@ function save() {
 
 <template>
   <div class="modal-backdrop" @click.self="emit('close')">
-    <div class="modal">
-      <h3>{{ props.existing ? t('shop_edit_title') : t('shop_new_title') }}</h3>
+    <div ref="root" class="modal" role="dialog" aria-modal="true" aria-labelledby="item-form-title">
+      <h3 id="item-form-title">{{ props.existing ? t('shop_edit_title') : t('shop_new_title') }}</h3>
 
-      <label class="mt-2 block text-sm">{{ t('shop_field_name') }}</label>
-      <input v-model="name" type="text" class="w-full" />
+      <label class="mt-2 block text-sm" for="item-form-name">{{ t('shop_field_name') }}</label>
+      <input id="item-form-name" v-model="name" type="text" class="w-full" />
 
-      <label class="mt-2 block text-sm">{{ t('shop_field_link') }}</label>
-      <input v-model="link" type="text" class="w-full" placeholder="https://..." />
+      <label class="mt-2 block text-sm" for="item-form-link">{{ t('shop_field_link') }}</label>
+      <input id="item-form-link" v-model="link" type="text" class="w-full" placeholder="https://..." />
 
       <div v-if="showMode" class="mt-2" data-testid="pay-mode">
         <label class="block text-sm">{{ t('shop_pay_label') }}</label>
@@ -111,18 +116,18 @@ function save() {
         <p class="dim mb-0 mt-1 text-xs">{{ t('shop_scale_hint') }}</p>
       </div>
 
-      <label class="mt-2 block text-sm">{{ sparksMode ? t('shop_field_cost_sparks') : t('shop_field_cost') }}</label>
-      <input v-model.number="cost" type="number" class="w-full" data-testid="cost-input" />
+      <label class="mt-2 block text-sm" for="item-form-cost">{{ sparksMode ? t('shop_field_cost_sparks') : t('shop_field_cost') }}</label>
+      <input id="item-form-cost" v-model.number="cost" type="number" class="w-full" data-testid="cost-input" />
       <div v-if="sparksMode" class="mt-1.5 flex flex-wrap items-center gap-2 text-sm" data-testid="calc-row">
-        <label class="dim">{{ t('shop_calc_label') }}</label>
-        <input v-model.number="rub" type="number" min="0" class="w-28" placeholder="₽" data-testid="rub-input" @input="onRub" />
+        <label class="dim" for="item-form-rub">{{ t('shop_calc_label') }}</label>
+        <input id="item-form-rub" v-model.number="rub" type="number" min="0" class="w-28" placeholder="₽" data-testid="rub-input" @input="onRub" />
         <span class="dim text-xs">{{ t('shop_calc_hint').replace('{rate}', String(rubPerSpark)) }}</span>
       </div>
       </template>
 
-      <label class="mt-2 block text-sm">{{ t('shop_field_image') }}</label>
-      <input v-model="imageUrl" type="text" class="w-full" placeholder="https://..." />
-      <input type="file" accept="image/*" class="mt-2 block text-sm" @change="onFileChange" />
+      <label class="mt-2 block text-sm" for="item-form-image">{{ t('shop_field_image') }}</label>
+      <input id="item-form-image" v-model="imageUrl" type="text" class="w-full" placeholder="https://..." />
+      <input type="file" accept="image/*" class="mt-2 block text-sm" :aria-label="t('shop_field_image')" @change="onFileChange" />
       <p v-if="uploading" class="dim mt-1 text-xs" data-test="shop-uploading">{{ t('shop_uploading') }}</p>
       <p v-if="uploadError" class="mt-1 text-xs" style="color: var(--danger)" role="alert" data-test="shop-upload-error">{{ uploadError }}</p>
       <img v-if="imageUrl" :src="imageUrl" class="mt-2 max-h-32 max-w-full rounded-lg object-cover" />

@@ -6,11 +6,14 @@ import Icon from './Icon.vue'
 import { t } from '../lib/i18n'
 import { loadIdeaSeen, saveIdeaSeen } from '../lib/shopIdea'
 import { sparksMode } from '../lib/sparks'
+import { useModalA11y } from '../lib/modalA11y'
 
 // Описание идеи магазина. Первый заход — плашка с полным текстом и кнопкой «Понятно»; после неё (и при всех следующих заходах) —
 // короткая строка под заголовком и значок ⓘ, открывающий окно с полным текстом. Окно закрывается кнопкой, фоном и Esc.
 const seen = ref(loadIdeaSeen())
 const open = ref(false)
+const dialog = ref<HTMLElement | null>(null) // окно с полным текстом: фокус внутрь при открытии, Tab по кругу, возврат фокуса на «ⓘ» (72.5)
+useModalA11y(dialog) // Esc здесь обрабатывает onKey ниже
 
 function dismiss() {
   seen.value = true
@@ -50,7 +53,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     </p>
 
     <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4" data-testid="idea-backdrop" @click.self="open = false">
-      <div class="w-full max-w-sm rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)" role="dialog" aria-modal="true" :aria-label="stripEmoji(t('shop_idea_title'))" data-testid="idea-modal">
+      <div class="w-full max-w-sm rounded-2xl border p-5" style="background: var(--bg-card); border-color: var(--border); color: var(--text)" ref="dialog" role="dialog" aria-modal="true" :aria-label="stripEmoji(t('shop_idea_title'))" data-testid="idea-modal">
         <h2 class="mb-2 text-lg font-semibold" data-testid="idea-modal-title">{{ stripEmoji(t('shop_idea_title')) }}</h2>
         <p class="text-sm" data-testid="idea-modal-text">{{ sparksMode ? t('shop_idea_full_sparks') : t('shop_idea_full') }}</p>
         <button type="button" class="mt-4 w-full rounded-lg px-4 py-2" data-testid="idea-close" @click="open = false">{{ t('close') }}</button>
