@@ -1,7 +1,14 @@
 {
-  "version": "8.14",
+  "version": "8.15",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.15",
+      "date": "2026-11-04 10:00",
+      "changes": [
+        "Workouts: the section tabs are renamed to follow the approved mockup: “Journal” is now “History” and “Muscle map” is now “Muscles”. The link on the home screen now reads “All history →”. “Progress” and “Exercises” stay as they were. Tab contents and links are unchanged. No migrations."
+      ]
+    },
     {
       "version": "8.14",
       "date": "2026-11-09 00:10",
@@ -5754,6 +5761,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.15",
+      "date": "2026-11-04 10:00",
+      "changes": [
+        "Тренировки: вкладки раздела переименованы по утверждённому макету: «Журнал» стал «Историей», «Карта мышц» — «Мышцами». Ссылка на главной тоже теперь «Вся история →». «Прогрессия» и «Упражнения» остались как были. Всё содержимое вкладок и адреса прежние. Без миграций."
+      ]
+    },
     {
       "version": "8.14",
       "date": "2026-11-09 00:10",
