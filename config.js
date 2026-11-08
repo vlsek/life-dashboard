@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.11";
+const SITE_VERSION = "8.12";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,8 +488,11 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
-    { version: "8.11", date: "2026-11-08 23:00", changes: [
+    { version: "8.12", date: "2026-11-08 23:00", changes: [
         "Тренировки: на картинке «Поделиться» длинные названия упражнений и список мышц больше не выходят за край — строка обрезается с «…».",
+    ]},
+    { version: "8.11", date: "2026-11-08 23:30", changes: [
+        "«Магазин»: в форме хотелки появилась кнопка «Найти фото» — по названию ищется до 5 картинок (каталог свободных изображений Openverse), тап по превью ставит выбранное как фото товара.",
     ]},
     { version: "8.10", date: "2026-11-03 21:00", changes: [
         "Тренировки: в карточке «Сегодня можно тренировать» появился маленький силуэт тела спереди и сзади, на котором подсвечены рекомендованные группы мышц. Он рисуется той же моделью тела, что и «Карта мышц» (мужская, женская и другие), и ничего не требует нажимать: просто сразу видно, что сегодня на очереди. Без миграций."
@@ -3043,8 +3046,11 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
-    { version: "8.11", date: "2026-11-08 23:00", changes: [
+    { version: "8.12", date: "2026-11-08 23:00", changes: [
         "Workouts: on the “Share as a picture” card, long exercise names and the muscle list no longer run past the edge — the line is cut with “…”.",
+    ]},
+    { version: "8.11", date: "2026-11-08 23:30", changes: [
+        "Shop: the wish form now has a “Find a photo” button — it searches up to 5 images by the name (Openverse free-licence catalogue); tap a preview to use it as the item photo.",
     ]},
     { version: "8.10", date: "2026-11-03 21:00", changes: [
         "Workouts: the “You can train today” card now shows a small body silhouette, front and back, with the recommended muscle groups highlighted. It uses the same body model as the “Muscle map” (male, female and the others) and needs no tapping: you see at a glance what is next today. No migrations."
