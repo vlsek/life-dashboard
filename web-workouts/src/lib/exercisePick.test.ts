@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { categoriesOf, rankExercises } from './exercisePick'
+import { categoriesOf, musclesOf, rankExercises } from './exercisePick'
 import type { Exercise } from './types'
 
 const ex = (id: string, name: string) => ({ id, name } as Exercise)
@@ -33,3 +33,16 @@ describe('фильтр по категории', () => {
   })
 })
 
+
+describe('фильтр по мышце (69.13)', () => {
+  const m = (id: string, g?: string[]) => ({ id, name: id, muscle_groups: g } as Exercise)
+  const l = [m('a', ['chest', 'triceps']), m('b', ['legs']), m('c', ['chest']), m('d')]
+  it('rankExercises оставляет только упражнения с выбранной мышцей; вместе с категорией и поиском — пересечение', () => {
+    expect(rankExercises(l, [], '', null, 'chest').map((r) => r.exercise.id)).toEqual(['a', 'c'])
+    expect(rankExercises(l, [], 'c', null, 'chest').map((r) => r.exercise.id)).toEqual(['c'])
+    expect(rankExercises(l, [], '', null, null)).toHaveLength(4)
+  })
+  it('musclesOf: без пустых и повторов, чаще встречающиеся первыми', () => {
+    expect(musclesOf(l)).toEqual(['chest', 'legs', 'triceps'])
+  })
+})

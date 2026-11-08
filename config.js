@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.06";
+const SITE_VERSION = "8.07";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.07", date: "2026-11-08 22:30", changes: [
+        "Тренировки: в выборе упражнения для тренировки появился второй ряд чипов — фильтр по мышце («Любая мышца», грудь, ноги…). Работает вместе с категорией и поиском; в списке остаются только упражнения, у которых отмечена эта мышца.",
+    ]},
     { version: "8.06", date: "2026-11-08 22:30", changes: [
         "«Тренировки» → «Что тренировать сегодня»: у каждой группы кнопка «Выбрать упражнения» — открывает список упражнений, отфильтрованный по этой мышце.",
     ]},
@@ -3028,6 +3031,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.07", date: "2026-11-08 22:30", changes: [
+        "Workouts: the exercise picker in a workout has a second row of chips to filter by muscle (“Any muscle”, chest, legs…). It works together with category and search; only exercises with that muscle marked stay in the list.",
+    ]},
     { version: "8.06", date: "2026-11-08 22:30", changes: [
         "Workouts → “What to train today”: each group now has a “Pick exercises” button that opens the exercise list filtered by that muscle.",
     ]},

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useActiveWorkout } from '../lib/useActiveWorkout'
-import { categoriesOf, rankExercises } from '../lib/exercisePick'
+import { categoriesOf, musclesOf, rankExercises } from '../lib/exercisePick'
 import { progressionHint } from '../lib/progressionHint'
 import PlateCalculator from './PlateCalculator.vue'
 import { warmupPlan, workingWeightFor, hasWarmup, parseScheme, formatScheme, readScheme, writeScheme, resetScheme } from '../lib/warmupGen'
@@ -143,7 +143,9 @@ const picking = ref(false)
 const query = ref('')
 const pickCategory = ref<string | null>(null)
 const pickCategories = computed(() => categoriesOf(props.exercises))
-const pickList = computed(() => rankExercises(props.exercises, props.entries, query.value, pickCategory.value))
+const pickMuscle = ref<string | null>(null)
+const pickMuscles = computed(() => musclesOf(props.exercises))
+const pickList = computed(() => rankExercises(props.exercises, props.entries, query.value, pickCategory.value, pickMuscle.value))
 const unitOf = (ex: Exercise | undefined) => ex?.unit || props.unit
 const TYPE_MARK: Record<string, string> = { normal: '', warmup: 'W', drop: 'D', failure: 'F' }
 const TYPE_LABEL = (ty: string): string => (ty === 'warmup' ? t('aw_type_warmup') : ty === 'drop' ? t('aw_type_drop') : ty === 'failure' ? t('aw_type_failure') : '')
@@ -172,6 +174,7 @@ function pick(id: string) {
   picking.value = false
   query.value = ''
   pickCategory.value = null
+  pickMuscle.value = null
 }
 const inputCls = 'w-full rounded-md border px-2 py-2 text-center text-base'
 const inputStyle = 'border-color: var(--border); background: var(--bg); color: var(--text); min-height: 44px'
@@ -356,6 +359,9 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
         <input v-model="query" type="text" :placeholder="t('aw_search')" class="mb-2 w-full rounded-md border px-3 py-2" style="border-color: var(--border); background: var(--bg); color: var(--text); min-height: 44px" data-testid="aw-search" />
         <div v-if="pickCategories.length > 1" class="mb-2 flex gap-1 overflow-x-auto pb-1" data-testid="aw-pick-cats">
           <button v-for="c in [null, ...pickCategories]" :key="c ?? '_all'" type="button" class="shrink-0 whitespace-nowrap rounded-full border px-3 py-1 text-xs" :style="'min-height: 32px; border-color: ' + (pickCategory === c ? 'var(--accent)' : 'var(--border)') + '; color: ' + (pickCategory === c ? 'var(--accent)' : 'var(--text-dim)')" :aria-pressed="pickCategory === c" :data-testid="'aw-cat-' + (c ?? 'all')" @click="pickCategory = c">{{ c ?? t('aw_cat_all') }}</button>
+        </div>
+        <div v-if="pickMuscles.length > 1" class="mb-2 flex gap-1 overflow-x-auto pb-1" data-testid="aw-pick-muscles">
+          <button v-for="m in [null, ...pickMuscles]" :key="m ?? '_all'" type="button" class="shrink-0 whitespace-nowrap rounded-full border px-3 py-1 text-xs" :style="'min-height: 32px; border-color: ' + (pickMuscle === m ? 'var(--accent)' : 'var(--border)') + '; color: ' + (pickMuscle === m ? 'var(--accent)' : 'var(--text-dim)')" :aria-pressed="pickMuscle === m" :data-testid="'aw-muscle-' + (m ?? 'all')" @click="pickMuscle = m">{{ m ? t(('workouts_muscle_' + m) as DictKey) : t('aw_muscle_all') }}</button>
         </div>
         <p v-if="exercises.length === 0" class="py-4 text-sm" style="color: var(--text-dim)">{{ t('aw_no_exercises') }}</p>
         <ul class="overflow-y-auto">

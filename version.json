@@ -1,7 +1,14 @@
 {
-  "version": "8.06",
+  "version": "8.07",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.07",
+      "date": "2026-11-08 22:30",
+      "changes": [
+        "Workouts: the exercise picker in a workout has a second row of chips to filter by muscle (“Any muscle”, chest, legs…). It works together with category and search; only exercises with that muscle marked stay in the list."
+      ]
+    },
     {
       "version": "8.06",
       "date": "2026-11-08 22:30",
@@ -5698,6 +5705,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.07",
+      "date": "2026-11-08 22:30",
+      "changes": [
+        "Тренировки: в выборе упражнения для тренировки появился второй ряд чипов — фильтр по мышце («Любая мышца», грудь, ноги…). Работает вместе с категорией и поиском; в списке остаются только упражнения, у которых отмечена эта мышца."
+      ]
+    },
     {
       "version": "8.06",
       "date": "2026-11-08 22:30",
