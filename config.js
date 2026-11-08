@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.14";
+const SITE_VERSION = "8.15";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.15", date: "2026-11-04 10:00", changes: [
+        "Тренировки: вкладки раздела переименованы по утверждённому макету: «Журнал» стал «Историей», «Карта мышц» — «Мышцами». Ссылка на главной тоже теперь «Вся история →». «Прогрессия» и «Упражнения» остались как были. Всё содержимое вкладок и адреса прежние. Без миграций."
+    ]},
     { version: "8.14", date: "2026-11-09 00:10", changes: [
         "«Цели»: у цели с несколькими этапами можно задать названия этапов («Смета», «Материалы», «Покраска») — они видны в списке этапов на карточке. Нужна миграция 121 (без неё поля названий нет); прогресс и баллы не меняются.",
     ]},
@@ -3052,6 +3055,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.15", date: "2026-11-04 10:00", changes: [
+        "Workouts: the section tabs are renamed to follow the approved mockup: “Journal” is now “History” and “Muscle map” is now “Muscles”. The link on the home screen now reads “All history →”. “Progress” and “Exercises” stay as they were. Tab contents and links are unchanged. No migrations."
+    ]},
     { version: "8.14", date: "2026-11-09 00:10", changes: [
         "Goals: a multi-stage goal can now have named stages (“Estimate”, “Materials”, “Painting”) shown in the card’s stage list. Needs migration 121 (without it there is no names field); progress and points are unchanged.",
     ]},
