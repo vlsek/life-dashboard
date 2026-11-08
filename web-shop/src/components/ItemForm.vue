@@ -6,6 +6,7 @@ import { friendlyError } from '../lib/friendlyError'
 import { DEFAULT_SPARKS_COST, rubPerSpark, rubToSparks, sparksMode } from '../lib/sparks'
 import { SCALES, suggestPrice, type ScaleId } from '../lib/priceScale'
 import { selectableGoals, type GoalLite } from '../lib/goalReward'
+import { searchImages, type FoundImage } from '../lib/imageSearch'
 import type { ShopItem, ShopItemFormInput } from '../lib/types'
 
 const props = defineProps<{ existing: ShopItem | null; uploadImage: (file: File) => Promise<string | null>; dailyRate?: number; goals?: GoalLite[]; error?: string | null }>()
@@ -42,6 +43,26 @@ const goalList = computed(() => {
 const showMode = computed(() => !claimed.value && (goalList.value.length > 0 || mode.value === 'goal'))
 const formError = ref<string | null>(null)
 const imageUrl = ref<string | null>(props.existing?.image_url ?? null)
+// «Найти фото» (BACKLOG 81.6): по названию ищем несколько картинок, тап ставит выбранную
+const found = ref<FoundImage[] | null>(null) // null — ещё не искали
+const searching = ref(false)
+const searchFailed = ref(false)
+async function findPhoto() {
+  if (searching.value) return
+  searching.value = true
+  searchFailed.value = false
+  const r = await searchImages(name.value)
+  searching.value = false
+  if (r.ok) found.value = r.images
+  else {
+    found.value = null
+    searchFailed.value = true
+  }
+}
+function pickFound(img: FoundImage) {
+  imageUrl.value = img.url
+  found.value = null
+}
 const uploading = ref(false)
 const uploadError = ref<string | null>(null)
 
@@ -131,6 +152,19 @@ function save() {
       <p v-if="uploading" class="dim mt-1 text-xs" data-test="shop-uploading">{{ t('shop_uploading') }}</p>
       <p v-if="uploadError" class="mt-1 text-xs" style="color: var(--danger)" role="alert" data-test="shop-upload-error">{{ uploadError }}</p>
       <img v-if="imageUrl" :src="imageUrl" class="mt-2 max-h-32 max-w-full rounded-lg object-cover" />
+
+      <button type="button" class="secondary mt-2 text-sm" :disabled="searching || name.trim().length < 2" data-testid="find-photo" @click="findPhoto">{{ searching ? t('shop_photo_searching') : t('shop_photo_find') }}</button>
+      <p v-if="searchFailed" class="mt-1 text-xs" style="color: var(--danger)" role="alert" data-testid="find-photo-error">{{ t('shop_photo_failed') }}</p>
+      <p v-else-if="found && !found.length" class="dim mt-1 text-xs" data-testid="find-photo-empty">{{ t('shop_photo_none') }}</p>
+      <div v-if="found && found.length" class="mt-2" data-testid="find-photo-results">
+        <p class="dim m-0 mb-1 text-xs">{{ t('shop_photo_pick') }}</p>
+        <div class="flex flex-wrap gap-2">
+          <button v-for="img in found" :key="img.url" type="button" class="rounded-lg border p-0" style="border-color: var(--border); background: transparent" :aria-label="t('shop_photo_use').replace('{t}', img.title || '…')" data-testid="found-photo" @click="pickFound(img)">
+            <img :src="img.url" :alt="img.title" class="block h-20 w-20 rounded-lg object-cover" loading="lazy" />
+          </button>
+        </div>
+        <p class="dim m-0 mt-1 text-xs">{{ t('shop_photo_source') }}</p>
+      </div>
 
       <p v-if="formError || props.error" class="mt-2 text-sm" style="color: var(--danger)" role="alert" data-testid="form-error">{{ formError || props.error }}</p>
       <div class="modal-actions">
