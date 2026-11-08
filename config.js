@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.12";
+const SITE_VERSION = "8.13";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.13", date: "2026-11-09 00:00", changes: [
+        "Тренировки: если тренировка запущена из рутины, «прошлый раз» и подсказка прогрессии берутся из прошлых тренировок ЭТОЙ рутины (если по упражнению там уже есть подходы); иначе — из всей истории, как раньше. Нужна таблица сессий (миграция 113).",
+    ]},
     { version: "8.12", date: "2026-11-08 23:00", changes: [
         "Тренировки: на картинке «Поделиться» длинные названия упражнений и список мышц больше не выходят за край — строка обрезается с «…».",
     ]},
@@ -3046,6 +3049,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.13", date: "2026-11-09 00:00", changes: [
+        "Workouts: when a workout is started from a routine, the “previous” values and the progression hint come from past workouts of THAT routine (if the exercise already has sets there); otherwise from the whole history, as before. Needs the sessions table (migration 113).",
+    ]},
     { version: "8.12", date: "2026-11-08 23:00", changes: [
         "Workouts: on the “Share as a picture” card, long exercise names and the muscle list no longer run past the edge — the line is cut with “…”.",
     ]},

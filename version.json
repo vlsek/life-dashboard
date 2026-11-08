@@ -1,7 +1,14 @@
 {
-  "version": "8.12",
+  "version": "8.13",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.13",
+      "date": "2026-11-09 00:00",
+      "changes": [
+        "Workouts: when a workout is started from a routine, the “previous” values and the progression hint come from past workouts of THAT routine (if the exercise already has sets there); otherwise from the whole history, as before. Needs the sessions table (migration 113)."
+      ]
+    },
     {
       "version": "8.12",
       "date": "2026-11-08 23:00",
@@ -5740,6 +5747,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.13",
+      "date": "2026-11-09 00:00",
+      "changes": [
+        "Тренировки: если тренировка запущена из рутины, «прошлый раз» и подсказка прогрессии берутся из прошлых тренировок ЭТОЙ рутины (если по упражнению там уже есть подходы); иначе — из всей истории, как раньше. Нужна таблица сессий (миграция 113)."
+      ]
+    },
     {
       "version": "8.12",
       "date": "2026-11-08 23:00",
