@@ -112,7 +112,7 @@ describe('Тренировки: аккордеон на категориях и 
   // BACKLOG 44.5д: «Прогрессии» и общий график — отдельная вкладка, а не блок посреди упражнений
   it('вкладка «Прогрессия»: четыре вкладки, общий график и деревья прогрессий лежат в ней, а не на «Упражнениях»', async () => {
     const w = await mountApp()
-    expect(w.findAll('[data-testid^="page-tab-"]').map((b) => b.text())).toEqual(['Журнал', 'Карта мышц', 'Прогрессия', 'Упражнения'])
+    expect(w.findAll('[data-testid^="page-tab-"]').map((b) => b.text())).toEqual(['История', 'Мышцы', 'Прогрессия', 'Упражнения'])
     const exTab = w.find('[data-testid="tab-exercises"]')
     const prTab = w.find('[data-testid="tab-progress"]')
     expect(prTab.attributes('style') ?? '').toContain('display: none')
