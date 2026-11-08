@@ -1,7 +1,14 @@
 {
-  "version": "8.07",
+  "version": "8.08",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.08",
+      "date": "2026-11-05 10:00",
+      "changes": [
+        "Shop: dialogs are easier to use with a keyboard. In the “Add/edit item” form focus goes straight to the name field, Tab cycles inside the dialog, Esc closes it, and after closing focus returns to the button that opened it. Field labels are now bound to their fields (for screen readers), and the dialog has a title and a dialog role. The “ⓘ” hint dialog works the same way. And after the delete confirmation focus returns to the trash button instead of being lost. No migrations."
+      ]
+    },
     {
       "version": "8.07",
       "date": "2026-11-08 22:30",
@@ -5705,6 +5712,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.08",
+      "date": "2026-11-05 10:00",
+      "changes": [
+        "Магазин: окна стали удобнее с клавиатуры. В форме «Добавить/изменить товар» фокус сразу попадает в поле названия, Tab ходит по кругу внутри окна, Esc закрывает его, а после закрытия фокус возвращается на кнопку, с которой окно открыли. Подписи полей теперь привязаны к полям (для скринридеров), у окна есть название и роль диалога. То же — в окне подсказки «ⓘ». А после подтверждения удаления фокус возвращается на корзину, а не теряется. Без миграций."
+      ]
+    },
     {
       "version": "8.07",
       "date": "2026-11-08 22:30",
