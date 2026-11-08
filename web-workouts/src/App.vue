@@ -550,7 +550,7 @@ function onToggleProgramWeek(week: number) {
   <main class="mx-auto max-w-3xl px-4 pb-24 pt-6 sm:pb-16">
     <h1 class="mb-3 text-xl font-bold"><EmojiText :text="t('workouts_h1')" /></h1>
 
-    <StartFocus v-if="auth.status === 'ready'" :entries="entries" :exercises="exercises" :today="todayStr()" />
+    <StartFocus v-if="auth.status === 'ready'" :entries="entries" :exercises="exercises" :today="todayStr()" :model="bodyModel" />
 
     <div class="mb-4 flex flex-wrap gap-2" data-testid="start-actions">
       <button
