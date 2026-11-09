@@ -3,7 +3,7 @@
 import { newDraft, type ActiveDraft } from './activeWorkout'
 
 export interface RoutineItem { exercise_id: string; target_sets: number; superset_group: number | null }
-export interface Routine { id: string; name: string; items: RoutineItem[]; updated_at: string }
+export interface Routine { id: string; name: string; items: RoutineItem[]; updated_at: string; folder?: string | null; archived?: boolean }
 export const ROUTINES_KEY = 'workouts.routines.v1'
 export const MAX_ROUTINES = 50
 
@@ -42,7 +42,7 @@ export function duplicateRoutine(list: readonly Routine[], id: string, newId: st
   const i = list.findIndex((x) => x.id === id)
   if (i < 0 || list.length >= MAX_ROUTINES) return { list: [...list], copy: null }
   const src = list[i]
-  const copy: Routine = { id: newId, name: `${src.name.slice(0, 80 - suffix.length - 1)} ${suffix}`.trim(), items: src.items.map((x) => ({ ...x })), updated_at: nowIso }
+  const copy: Routine = { id: newId, name: `${src.name.slice(0, 80 - suffix.length - 1)} ${suffix}`.trim(), items: src.items.map((x) => ({ ...x })), updated_at: nowIso, ...(src.folder ? { folder: src.folder } : {}) }
   return { list: [...list.slice(0, i + 1), copy, ...list.slice(i + 1)], copy }
 }
 export const removeRoutine = (list: readonly Routine[], id: string): Routine[] => list.filter((x) => x.id !== id)
@@ -64,7 +64,23 @@ export function loadRoutines(store: Store): Routine[] {
       const items: RoutineItem[] = r.items
         .filter((i: any) => i && typeof i.exercise_id === 'string')
         .map((i: any) => ({ exercise_id: i.exercise_id, target_sets: Number.isInteger(i.target_sets) ? Math.min(20, Math.max(1, i.target_sets)) : 3, superset_group: Number.isInteger(i.superset_group) ? i.superset_group : null }))
-      return items.length ? [{ id: r.id, name: r.name.trim().slice(0, 80), items, updated_at: typeof r.updated_at === 'string' ? r.updated_at : '' }] : []
+      const folder = typeof r.folder === 'string' ? r.folder.trim().slice(0, FOLDER_MAX) || null : null
+      return items.length ? [{ id: r.id, name: r.name.trim().slice(0, 80), items, updated_at: typeof r.updated_at === 'string' ? r.updated_at : '', ...(folder ? { folder } : {}), ...(r.archived === true ? { archived: true } : {}) }] : []
     })
   } catch { return [] }
 }
+
+// Папки и архив рутин (69.7): колонки folder/archived есть в workout_routines (миграция 113). Архивная рутина не показывается в «Мои рутины», но не теряется.
+export const FOLDER_MAX = 60
+export const normFolder = (f: string | null | undefined): string | null => (f ?? '').trim().slice(0, FOLDER_MAX) || null
+export const setRoutineFolder = (list: readonly Routine[], id: string, folder: string | null, nowIso: string): Routine[] =>
+  list.map((x) => { if (x.id !== id) return x; const { folder: _f, ...rest } = x; const f = normFolder(folder); return { ...rest, ...(f ? { folder: f } : {}), updated_at: nowIso } })
+export const setRoutineArchived = (list: readonly Routine[], id: string, archived: boolean, nowIso: string): Routine[] =>
+  list.map((x) => { if (x.id !== id) return x; const { archived: _a, ...rest } = x; return { ...rest, ...(archived ? { archived: true } : {}), updated_at: nowIso } })
+// Группы для списка: рутины без папки первыми, затем папки по алфавиту; внутри — порядок хранения. Архивные сюда не попадают.
+export function routineGroups(list: readonly Routine[]): { folder: string | null; routines: Routine[] }[] {
+  const by = new Map<string | null, Routine[]>()
+  for (const r of list) { if (r.archived) continue; const k = r.folder ?? null; by.set(k, [...(by.get(k) ?? []), r]) }
+  return [...by.entries()].sort(([a], [b]) => (a === null ? -1 : b === null ? 1 : a.localeCompare(b))).map(([folder, routines]) => ({ folder, routines }))
+}
+export const archivedRoutines = (list: readonly Routine[]): Routine[] => list.filter((r) => r.archived)

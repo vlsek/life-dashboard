@@ -71,3 +71,29 @@ describe('RoutinesList: карусель (69.17, срез 3)', () => {
     expect(w.find('[data-testid="routine-r1"]').exists()).toBe(false)
   })
 })
+
+describe('RoutinesList: папки и архив (69.7)', () => {
+  it('папка: форма → группа с заголовком; рутина без папки остаётся без заголовка', async () => {
+    useRoutines().routines.value = [routine('r1', 'Верх', ['e1']), routine('r2', 'Ноги', ['e3'])]
+    const w = mk()
+    await w.find('[data-testid="routine-folder-r1"]').trigger('click')
+    await w.find('[data-testid="routine-folder-input-r1"]').setValue('Сплит')
+    await w.find('[data-testid="routine-folder-input-r1"]').trigger('submit')
+    await flushPromises()
+    expect(useRoutines().routines.value.find((r) => r.id === 'r1')?.folder).toBe('Сплит')
+    expect(w.find('[data-testid="routine-group-Сплит"]').text()).toContain('Верх')
+    expect(w.find('[data-testid="routine-group-none"]').text()).toContain('Ноги')
+  })
+  it('в архив: карточка исчезает, попадает в «Архив», «Вернуть» возвращает', async () => {
+    useRoutines().routines.value = [routine('r1', 'Верх', ['e1']), routine('r2', 'Ноги', ['e3'])]
+    const w = mk()
+    await w.find('[data-testid="routine-archive-r1"]').trigger('click')
+    expect(w.find('[data-testid="routine-r1"]').exists()).toBe(false)
+    expect(w.find('[data-testid="routine-r2"]').exists()).toBe(true)
+    await w.find('[data-testid="routines-archive-toggle"]').trigger('click')
+    expect(w.find('[data-testid="routine-archived-r1"]').exists()).toBe(true)
+    await w.find('[data-testid="routine-restore-r1"]').trigger('click')
+    expect(w.find('[data-testid="routine-r1"]').exists()).toBe(true)
+    expect(w.find('[data-testid="routines-archive"]').exists()).toBe(false)
+  })
+})

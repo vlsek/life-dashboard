@@ -11,12 +11,14 @@ describe('routineSync', () => {
     expect(rows.map((x) => [x.id, x.position, x.exercise_id, x.target_sets, x.superset_group, x.user_id, x.routine_id])).toEqual([['i1', 0, 'e1', 3, null, 'u', 'r1'], ['i2', 1, 'e2', 4, 1, 'u', 'r1']])
     expect(routineRow('u', R('r1', 'A', '2026-01-01'), 2)).toMatchObject({ id: 'r1', position: 2, archived: false })
   })
-  it('из сервера: порядок, архивные и пустые пропускаются, шаги ограничены', () => {
+  it('из сервера: порядок, пустые пропускаются, архивные приходят с пометкой, шаги ограничены', () => {
     const out = routinesFromRemote(
       [{ id: 'b', name: 'B', position: 1 }, { id: 'a', name: 'A', position: 0 }, { id: 'x', name: 'X', archived: true }, { id: 'e', name: 'E' }],
       [{ routine_id: 'a', exercise_id: 'e2', position: 1, target_sets: 99 }, { routine_id: 'a', exercise_id: 'e1', position: 0, target_sets: null }, { routine_id: 'b', exercise_id: 'e1' }, { routine_id: 'x', exercise_id: 'e1' }],
     )
-    expect(out.map((r) => r.id)).toEqual(['a', 'b'])
+    expect(out.map((r) => r.id)).toEqual(['a', 'x', 'b'])
+    expect(out.find((r) => r.id === 'x')?.archived).toBe(true)
+    expect(out.find((r) => r.id === 'a')?.archived).toBeUndefined()
     expect(out[0].items.map((i) => [i.exercise_id, i.target_sets])).toEqual([['e1', 3], ['e2', 20]])
   })
   it('слияние: свежее побеждает, чужого не теряем, своё отправляем', () => {
@@ -29,5 +31,15 @@ describe('routineSync', () => {
   it('равное время — сервер, ничего не отправляем', () => {
     const { merged, toPush } = mergeRoutines([R('1', 'l', '2026-01-01')], [R('1', 'r', '2026-01-01')])
     expect(merged[0].name).toBe('r'); expect(toPush).toEqual([])
+  })
+})
+
+describe('папки и архив (69.7)', () => {
+  it('routineRow пишет folder/archived; из сервера они возвращаются', () => {
+    const r = { ...R('r1', 'A', '2026-01-01'), folder: 'Сплит', archived: true }
+    expect(routineRow('u', r, 0)).toMatchObject({ folder: 'Сплит', archived: true })
+    expect(routineRow('u', R('r2', 'B', '2026-01-01'), 0)).toMatchObject({ folder: null, archived: false })
+    const out = routinesFromRemote([{ id: 'r1', name: 'A', folder: '  Сплит ', archived: true }], [{ routine_id: 'r1', exercise_id: 'e1' }])
+    expect(out[0]).toMatchObject({ folder: 'Сплит', archived: true })
   })
 })

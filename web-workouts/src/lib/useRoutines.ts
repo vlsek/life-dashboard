@@ -1,6 +1,6 @@
 // Рутины на устройстве (BACKLOG 69.7, срез 1): реактивный список поверх routines.ts; после каждого изменения пишется в localStorage.
 import { ref } from 'vue'
-import { duplicateRoutine, loadRoutines, removeRoutine, renameRoutine, updateRoutineFromDraft, routineFromDraft, saveRoutines, upsertRoutine, type Routine } from './routines'
+import { setRoutineArchived, setRoutineFolder, duplicateRoutine, loadRoutines, removeRoutine, renameRoutine, updateRoutineFromDraft, routineFromDraft, saveRoutines, upsertRoutine, type Routine } from './routines'
 import type { ActiveDraft } from './activeWorkout'
 import { sb } from './supabase'
 import { qDelete, qUpsert } from './outboxClient'
@@ -41,13 +41,15 @@ export function useRoutines() {
       return r
     },
     remove: (id: string) => { commit(removeRoutine(routines.value, id)); if (syncUser) void qDelete(syncUser, 'workout_routines', `workout_routines:${id}`, { id }) },
+    setFolder: (id: string, folder: string | null) => { commit(setRoutineFolder(routines.value, id, folder, new Date().toISOString())); pushOne(id) },
+    setArchived: (id: string, archived: boolean) => { commit(setRoutineArchived(routines.value, id, archived, new Date().toISOString())); pushOne(id) },
     rename: (id: string, name: string) => { commit(renameRoutine(routines.value, id, name, new Date().toISOString())); pushOne(id) },
     // Подтянуть рутины с сервера и слить с устройством (вызывать после входа). Нет таблицы/сеть упала — молча остаёмся на устройстве
     sync: async (userId: string): Promise<boolean> => {
       try {
         if (!(await sessionsAvailable())) { syncUser = null; synced.value = false; return false }
         const [rs, its] = await Promise.all([
-          sb.from('workout_routines').select('id,name,position,archived,updated_at').eq('user_id', userId),
+          sb.from('workout_routines').select('id,name,position,folder,archived,updated_at').eq('user_id', userId),
           sb.from('workout_routine_items').select('routine_id,exercise_id,position,target_sets,superset_group').eq('user_id', userId),
         ])
         if (rs.error || its.error) { syncUser = null; synced.value = false; return false }
