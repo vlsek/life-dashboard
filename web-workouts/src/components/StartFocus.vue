@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { muscleGoals } from '../lib/muscleGoals'
-import { todayFocus } from '../lib/todayFocus'
+import { restingMuscles, todayFocus } from '../lib/todayFocus'
 import { t, type DictKey } from '../lib/i18n'
 import type { BodyModel } from '../lib/bodyModel'
 import MiniBody from './MiniBody.vue'
@@ -10,6 +10,14 @@ import type { Exercise, WorkoutEntry } from '../lib/types'
 // «Сегодня можно тренировать» на главной (BACKLOG 69.17, срез 2, макет v2): до трёх групп мышц с наибольшим дефицитом подходов и достаточным отдыхом.
 const props = defineProps<{ entries: WorkoutEntry[]; exercises: Exercise[]; today: string; model?: BodyModel }>()
 const items = computed(() => todayFocus(props.entries, props.exercises, props.today, muscleGoals.value)) // не более 3: todayFocus уже ограничивает
+// «Отдыхают: …» — до четырёх групп, ближайшие к готовности первыми; срок — по самой скорой из них
+const resting = computed(() => restingMuscles(props.entries, props.exercises, props.today).slice(0, 4))
+const restingText = computed(() => {
+  if (!resting.value.length) return ''
+  const names = resting.value.map((r) => t(('workouts_muscle_' + r.muscle) as DictKey)).join(', ')
+  const when = resting.value[0].readyInDays <= 1 ? t('workouts_start_resting_tomorrow') : t('workouts_start_resting_day_after')
+  return t('workouts_start_resting').replace('{list}', names).replace('{when}', when)
+})
 </script>
 
 <template>
@@ -21,6 +29,7 @@ const items = computed(() => todayFocus(props.entries, props.exercises, props.to
           {{ t(('workouts_muscle_' + i.muscle) as DictKey) }}<span class="ml-1 text-xs font-normal" style="color: var(--text-dim)">{{ i.sets }}/{{ i.target }}</span>
         </span>
       </div>
+      <div v-if="restingText" class="mt-2 text-xs" style="color: var(--text-dim)" data-testid="start-focus-resting">{{ restingText }}</div>
     </div>
     <MiniBody class="shrink-0" :highlight="items.map((i) => i.muscle)" :model="model" />
   </section>

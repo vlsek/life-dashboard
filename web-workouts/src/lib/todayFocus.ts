@@ -42,3 +42,25 @@ export function todayFocus(entries: EntryLite[], exercises: ExLite[], today: str
   out.sort((a, b) => b.target - b.sets - (a.target - a.sets) || (b.restDays ?? 99) - (a.restDays ?? 99))
   return out.slice(0, MAX_FOCUS)
 }
+
+export interface RestingItem { muscle: MuscleId; readyInDays: number } // 1 — завтра, 2 — послезавтра
+
+// Группы, которые сейчас отдыхают (подпись на главной, макет v2): тренировались меньше MIN_REST_DAYS дней назад — то же правило,
+// по которому `todayFocus` их не предлагает. Только группы, на которые у человека есть упражнения. Ближайшие к готовности — первыми.
+export function restingMuscles(entries: EntryLite[], exercises: ExLite[], today: string): RestingItem[] {
+  const byEx = new Map<string, MuscleId[]>()
+  for (const ex of exercises) byEx.set(ex.id, musclesForExercise(ex.name))
+  const t0 = dayNum(today)
+  const last = new Map<MuscleId, number>()
+  for (const e of entries) {
+    const d = dayNum(e.date)
+    if (workingOf(e.sets).length === 0 || d > t0) continue
+    for (const m of byEx.get(e.exercise_id) ?? []) if (!last.has(m) || d > (last.get(m) as number)) last.set(m, d)
+  }
+  const out: RestingItem[] = []
+  for (const m of coveredMuscles(exercises)) {
+    const rest = last.has(m) ? t0 - (last.get(m) as number) : null
+    if (rest !== null && rest < MIN_REST_DAYS) out.push({ muscle: m, readyInDays: MIN_REST_DAYS - rest })
+  }
+  return out.sort((a, b) => a.readyInDays - b.readyInDays)
+}
