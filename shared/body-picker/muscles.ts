@@ -66,7 +66,7 @@ export const EXERCISE_REFERENCE: ExerciseRule[] = [
   { id: 'triceps_ext', keys: ['трицепс', 'tricep', 'французск', 'french press', 'skull'], muscles: ['triceps'], ru: 'Разгибания на трицепс', en: 'Triceps extension' },
   { id: 'wrist_curl', keys: ['предплеч', 'запяст', 'wrist', 'farmer', 'фермер'], muscles: ['forearms'], ru: 'Сгибания запястий', en: 'Wrist curl' },
   { id: 'biceps_curl', keys: ['бицепс', 'bicep', 'curl', 'сгибания рук', 'молот', 'hammer'], muscles: ['biceps', 'forearms'], ru: 'Сгибания на бицепс', en: 'Biceps curl' },
-  { id: 'abs', keys: ['пресс', 'скручиван', 'планк', 'crunch', 'plank', 'sit-up', 'situp', 'подъем ног', 'подъемы ног', 'подъем колен', 'подъемы колен', 'knee raise', 'hanging', 'leg raise', ' abs', 'ролик'], muscles: ['abs'], ru: 'Скручивания на пресс', en: 'Crunches' },
+  { id: 'abs', keys: ['пресс', 'скручиван', 'планк', 'crunch', 'plank', 'sit-up', 'situp', 'подъем ног', 'подъемы ног', 'подъем колен', 'подъемы колен', 'knee raise', 'hanging', 'leg raise', ' abs', 'ролик', 'twist', 'ab wheel', 'rollout'], muscles: ['abs'], ru: 'Скручивания на пресс', en: 'Crunches' },
   { id: 'burpee', keys: ['берпи', 'burpee'], muscles: ['chest', 'triceps', 'quads', 'abs'], ru: 'Берпи', en: 'Burpees' },
   { id: 'mountain_climber', keys: ['скалолаз', 'mountain climb'], muscles: ['abs', 'shoulders', 'quads'], ru: 'Скалолаз', en: 'Mountain climbers' },
   { id: 'jump_rope', keys: ['скакалк', 'jump rope'], muscles: ['calves', 'quads'], ru: 'Прыжки со скакалкой', en: 'Jump rope' },
