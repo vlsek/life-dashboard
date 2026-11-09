@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.17";
+const SITE_VERSION = "8.18";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.18", date: "2026-11-02 05:19", changes: [
+        "«Тренировки»: карта мышц теперь узнаёт «Русские скручивания» (Russian twist) и «Ролик для пресса» (Ab wheel, rollout) как упражнения на пресс — раньше такие названия она ни к чему не относила. Заодно заложена основа для каталога основных упражнений зала по группам мышц (70 упражнений, подсказки по технике): сам экран каталога появится следующими этапами."
+    ]},
     { version: "8.17", date: "2026-11-09 01:00", changes: [
         "«Навыки»: у навыка можно задать этапы (по одному в строке) — отмечаешь их галочками, процент считается сам, все этапы — навык освоен. Без этапов всё по-старому (кнопки −/+ шага). Нужна миграция 122.",
     ]},
@@ -3061,6 +3064,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.18", date: "2026-11-02 05:19", changes: [
+        "Workouts: the muscle map now recognises “Russian twist” and “Ab wheel / rollout” as abs exercises — such names used to map to nothing. This also lays the groundwork for a catalog of the main gym exercises grouped by muscle (70 exercises with technique cues): the catalog screen itself comes in the next stages."
+    ]},
     { version: "8.17", date: "2026-11-09 01:00", changes: [
         "Skills: a skill can have stages (one per line) — tick them off, the percent is calculated automatically, all stages ticked means mastered. Without stages nothing changes (the −/+ step buttons). Needs migration 122.",
     ]},

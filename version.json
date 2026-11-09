@@ -1,7 +1,14 @@
 {
-  "version": "8.17",
+  "version": "8.18",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.18",
+      "date": "2026-11-02 05:19",
+      "changes": [
+        "Workouts: the muscle map now recognises “Russian twist” and “Ab wheel / rollout” as abs exercises — such names used to map to nothing. This also lays the groundwork for a catalog of the main gym exercises grouped by muscle (70 exercises with technique cues): the catalog screen itself comes in the next stages."
+      ]
+    },
     {
       "version": "8.17",
       "date": "2026-11-09 01:00",
@@ -5775,6 +5782,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.18",
+      "date": "2026-11-02 05:19",
+      "changes": [
+        "«Тренировки»: карта мышц теперь узнаёт «Русские скручивания» (Russian twist) и «Ролик для пресса» (Ab wheel, rollout) как упражнения на пресс — раньше такие названия она ни к чему не относила. Заодно заложена основа для каталога основных упражнений зала по группам мышц (70 упражнений, подсказки по технике): сам экран каталога появится следующими этапами."
+      ]
+    },
     {
       "version": "8.17",
       "date": "2026-11-09 01:00",
