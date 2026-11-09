@@ -1,7 +1,14 @@
 {
-  "version": "8.23",
+  "version": "8.24",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.24",
+      "date": "2026-11-04 12:00",
+      "changes": [
+        "Workouts: under the chips in the “You can train today” card there is now a line about resting groups, for example “Resting: Chest, Triceps, Shoulders · ready tomorrow”. These are the groups you trained less than two days ago, which is exactly why they are not recommended. Up to four groups are shown and the timing follows the soonest one. No migrations."
+      ]
+    },
     {
       "version": "8.23",
       "date": "2026-11-09 10:00",
@@ -5817,6 +5824,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.24",
+      "date": "2026-11-04 12:00",
+      "changes": [
+        "Тренировки: в карточке «Сегодня можно тренировать» под чипами появилась строка про отдыхающие группы, например «Отдыхают: Грудь, Трицепс, Плечи · снова можно завтра». Это те группы, которые ты тренировал меньше двух дней назад: именно по этому правилу они не попадают в рекомендации. Показывается до четырёх групп, срок считается по самой скорой. Без миграций."
+      ]
+    },
     {
       "version": "8.23",
       "date": "2026-11-09 10:00",

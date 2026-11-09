@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.23";
+const SITE_VERSION = "8.24";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.24", date: "2026-11-04 12:00", changes: [
+        "Тренировки: в карточке «Сегодня можно тренировать» под чипами появилась строка про отдыхающие группы, например «Отдыхают: Грудь, Трицепс, Плечи · снова можно завтра». Это те группы, которые ты тренировал меньше двух дней назад: именно по этому правилу они не попадают в рекомендации. Показывается до четырёх групп, срок считается по самой скорой. Без миграций."
+    ]},
     { version: "8.23", date: "2026-11-09 10:00", changes: [
         "Тренировки: у рутины появилась цель повторов. При «В рутину» или «Обновить рутину» для каждого упражнения запоминается диапазон повторов по выполненным рабочим подходам (разминка не считается); при старте из рутины под названием упражнения видно «Цель: 8–10 повт.». Диапазон синхронизируется с сервером (колонки reps_min/reps_max из миграции 113).",
     ]},
@@ -3079,6 +3082,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.24", date: "2026-11-04 12:00", changes: [
+        "Workouts: under the chips in the “You can train today” card there is now a line about resting groups, for example “Resting: Chest, Triceps, Shoulders · ready tomorrow”. These are the groups you trained less than two days ago, which is exactly why they are not recommended. Up to four groups are shown and the timing follows the soonest one. No migrations."
+    ]},
     { version: "8.23", date: "2026-11-09 10:00", changes: [
         "Workouts: routines now have a rep target. “Save as routine” / “Update routine” remembers each exercise’s rep range from your completed working sets (warm-ups are ignored); starting from a routine shows “Target: 8–10 reps” under the exercise name. The range syncs with the server (reps_min/reps_max columns from migration 113).",
     ]},
