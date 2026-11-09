@@ -16,8 +16,15 @@ const tx = computed(() => TEXTS[getLang()])
 const okText = computed(() => (req.value?.infoOnly ? tx.value.info : req.value?.okLabel || tx.value.ok))
 
 const focusBtn = ref<HTMLButtonElement | null>(null)
-watch(req, async (r) => {
-  if (!r) return
+let opener: HTMLElement | null = null // что было в фокусе до окна (кнопка «Удалить» и т.п.) — после закрытия фокус возвращается туда (72.5)
+watch(req, async (r, prev) => {
+  if (!r) {
+    const back = opener
+    opener = null
+    if (prev && back && back.isConnected) { await nextTick(); back.focus() }
+    return
+  }
+  if (!prev) opener = document.activeElement instanceof HTMLElement && document.activeElement !== document.body ? document.activeElement : null
   await nextTick()
   focusBtn.value?.focus()
 })
