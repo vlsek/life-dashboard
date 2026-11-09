@@ -29,6 +29,8 @@ export interface Book {
   points: number
   status: BookStatus
   done_date: string | null // ISO
+  rating?: number | null // миграция 123: оценка 1..5
+  notes?: string | null // миграция 123: заметка о книге
   created_at: string
 }
 
@@ -36,4 +38,6 @@ export interface BookFormInput {
   title: string
   author: string
   points: number
+  rating?: number | null // оценка 1..5 (миграция 123)
+  notes?: string // заметка (миграция 123)
 }

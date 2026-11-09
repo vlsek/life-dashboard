@@ -3,19 +3,21 @@ import { ref, onMounted } from 'vue'
 import { t } from '../lib/i18n'
 import type { BookFormInput } from '../lib/types'
 
-const props = defineProps<{ isEdit: boolean; initial: BookFormInput }>()
+const props = defineProps<{ isEdit: boolean; initial: BookFormInput; extras?: boolean }>() // extras — есть колонки rating/notes (миграция 123)
 const emit = defineEmits<{ close: []; save: [BookFormInput] }>()
 
 const title = ref(props.initial.title)
 const author = ref(props.initial.author)
 const points = ref(props.initial.points)
+const rating = ref<string>(props.initial.rating ? String(props.initial.rating) : '')
+const notes = ref(props.initial.notes ?? '')
 
 const titleInput = ref<HTMLInputElement | null>(null)
 onMounted(() => titleInput.value?.focus())
 
 function onSubmit() {
   if (!title.value.trim()) return
-  emit('save', { title: title.value, author: author.value, points: Number(points.value) || 0 })
+  emit('save', { title: title.value, author: author.value, points: Number(points.value) || 0, rating: rating.value ? Number(rating.value) : null, notes: notes.value })
 }
 </script>
 
@@ -39,6 +41,20 @@ function onSubmit() {
           {{ t('skills_book_field_points') }}
           <input v-model.number="points" type="number" min="0" class="modal-input" />
         </label>
+
+        <template v-if="extras">
+          <label class="flex flex-col gap-1 text-sm">
+            {{ t('skills_book_field_rating') }}
+            <select v-model="rating" class="modal-input" data-test="book-rating">
+              <option value="">{{ t('skills_book_rating_none') }}</option>
+              <option v-for="n in 5" :key="n" :value="String(n)">{{ '★'.repeat(n) }}</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            {{ t('skills_book_field_notes') }}
+            <textarea v-model="notes" rows="3" maxlength="1000" class="modal-input" :placeholder="t('skills_book_notes_ph')" data-test="book-notes"></textarea>
+          </label>
+        </template>
 
         <div class="mt-2 flex justify-end gap-2">
           <button type="button" class="rounded-lg border px-4 py-2 text-sm" style="border-color: var(--border); background: var(--bg); color: var(--text)" @click="emit('close')">

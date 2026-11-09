@@ -4,6 +4,7 @@ import { sb } from './supabase'
 import { todayStr } from './date'
 import type { Book, BookFormInput } from './types'
 import { completionDelta, emitPointsFloat } from './pointsFloat'
+import { normalizeNotes, normalizeRating } from './bookExtras'
 import { friendlyError } from './friendlyError'
 
 // Очки книги по умолчанию — как в балансе: пусто → 10
@@ -16,6 +17,8 @@ export function useBooks() {
   const items = ref<Book[]>([])
   const error = ref<string | null>(null)
   const loaded = ref(false) // первая загрузка закончилась (успехом или ошибкой): до этого «нет …» показывать нельзя — ложная пустота
+  // Есть ли колонки books.rating/notes (миграция 123, BACKLOG 77.8): по первой строке, у пустого списка — пробным запросом. Нет колонок — «Оценка» и «Заметка» не показываем и не пишем.
+  const hasExtras = ref(false)
   let currentUserId: string | null = null
 
   async function load(userId: string) {
@@ -35,14 +38,21 @@ export function useBooks() {
     }
     error.value = null
     items.value = (data || []) as Book[]
+    if (items.value.length) hasExtras.value = 'rating' in items.value[0]
+    else hasExtras.value = !(await sb.from('books').select('rating, notes').limit(1)).error
   }
 
   async function reload() {
     if (currentUserId) await load(currentUserId)
   }
 
-  function buildRow(res: BookFormInput): { title: string; author: string | null; points: number } {
-    return { title: res.title.trim(), author: res.author.trim() || null, points: res.points || 10 }
+  function buildRow(res: BookFormInput): { title: string; author: string | null; points: number; rating?: number | null; notes?: string | null } {
+    const row: { title: string; author: string | null; points: number; rating?: number | null; notes?: string | null } = { title: res.title.trim(), author: res.author.trim() || null, points: res.points || 10 }
+    if (hasExtras.value) {
+      row.rating = normalizeRating(res.rating)
+      row.notes = normalizeNotes(res.notes)
+    }
+    return row
   }
 
   async function addBook(userId: string, res: BookFormInput) {
@@ -89,5 +99,5 @@ export function useBooks() {
     await reload()
   }
 
-  return { items, error, loaded, load, reload, addBook, importBooks, updateBook, deleteBook, toggleDone }
+  return { items, error, hasExtras, loaded, load, reload, addBook, importBooks, updateBook, deleteBook, toggleDone }
 }

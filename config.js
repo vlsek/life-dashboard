@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.21";
+const SITE_VERSION = "8.22";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.22", date: "2026-11-09 09:30", changes: [
+        "«Книги»: у книги можно поставить оценку (1–5 звёзд) и написать заметку (цитата, мысль) — они видны в списке прочитанных. Нужна миграция 123 (без неё этих полей нет).",
+    ]},
     { version: "8.21", date: "2026-11-05 12:30", changes: [
         "Везде, где сайт спрашивает «Удалить?» (администрирование, челленджи, главная, цели, языки, вехи, навыки), после закрытия окна фокус возвращается на кнопку, с которой оно открыто, — клавиатурой не приходится заново искать место на странице. Это то же исправление, что уже работало в магазине. Без миграций.",
     ]},
@@ -3073,6 +3076,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.22", date: "2026-11-09 09:30", changes: [
+        "Books: a book can now have a rating (1–5 stars) and a note (a quote, a thought), shown in the finished list. Needs migration 123 (without it those fields are hidden).",
+    ]},
     { version: "8.21", date: "2026-11-05 12:30", changes: [
         "Everywhere the site asks “Delete?” (admin, challenges, dashboard, goals, languages, milestones, skills), once the dialog closes focus returns to the button it was opened from — keyboard users no longer have to find their place on the page again. This is the same fix that already worked in the shop. No migrations.",
     ]},

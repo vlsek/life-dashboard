@@ -16,6 +16,7 @@ import { useBooks } from './lib/useBooks'
 import { suggestionsFor } from './lib/skills'
 import { t, getLang } from './lib/i18n'
 import { checklistToText, normalizeChecklist } from './lib/skillChecklist'
+import { stars } from './lib/bookExtras'
 import type { Skill, SkillFormInput, Book, BookFormInput } from './lib/types'
 import EmojiText from './components/EmojiText.vue'
 import { confirmDialog } from './lib/confirmDialog'
@@ -23,7 +24,7 @@ import CollapsibleSection from './components/CollapsibleSection.vue'
 import { categoryOptions, filterSkills, normalizeSort, sortSkills, SORT_KEY, type SkillSort } from './lib/skillsView'
 
 const { auth, items: skills, error: skillsError, loaded: skillsLoaded, hasCategory, hasChecklist, init, reload: reloadSkills, addSkill, updateSkill, deleteSkill, bumpProgress, toggleChecklistItem, toggleMastered } = useSkills()
-const { items: books, error: booksError, loaded: booksLoaded, load: loadBooks, reload: reloadBooks, addBook, importBooks, updateBook, deleteBook, toggleDone: toggleBookDone } = useBooks()
+const { items: books, error: booksError, loaded: booksLoaded, load: loadBooks, hasExtras: booksExtras, reload: reloadBooks, addBook, importBooks, updateBook, deleteBook, toggleDone: toggleBookDone } = useBooks()
 
 onMounted(init)
 watch(auth, (v) => {
@@ -95,7 +96,7 @@ async function onDeleteSkill(s: Skill) {
 const bookFormTarget = ref<Book | 'new' | null>(null)
 const bookFormInitial = computed<BookFormInput>(() => {
   const b = bookFormTarget.value
-  if (b && b !== 'new') return { title: b.title, author: b.author ?? '', points: b.points ?? 10 }
+  if (b && b !== 'new') return { title: b.title, author: b.author ?? '', points: b.points ?? 10, rating: b.rating ?? null, notes: b.notes ?? '' }
   return { title: '', author: '', points: 10 }
 })
 async function onSaveBook(res: BookFormInput) {
@@ -245,7 +246,11 @@ async function onDeleteBook(b: Book) {
             <tbody>
               <tr v-for="b in doneBooks" :key="b.id" class="align-top">
                 <td class="px-1 py-1.5 align-middle"><input type="checkbox" :checked="true" @change="toggleBookDone(b)" /></td>
-                <td class="done-text w-full py-1.5 pr-2">{{ b.author ? `${b.title} — ${b.author}` : b.title }}</td>
+                <td class="done-text w-full py-1.5 pr-2">
+                  {{ b.author ? `${b.title} — ${b.author}` : b.title }}
+                  <span v-if="stars(b.rating)" class="ml-1 whitespace-nowrap text-xs" style="color: var(--accent)" :aria-label="t('skills_book_rating_aria').replace('{n}', String(b.rating))" data-test="book-stars">{{ stars(b.rating) }}</span>
+                  <div v-if="b.notes" class="dim mt-0.5 whitespace-pre-line text-xs" data-test="book-notes-text">{{ b.notes }}</div>
+                </td>
                 <td class="w-px whitespace-nowrap px-2 py-1.5 align-middle text-xs">{{ b.points ?? 10 }} <CoinIcon /></td>
                 <td class="dim w-px whitespace-nowrap px-2 py-1.5 align-middle text-xs">{{ fmtRu(b.done_date) }}</td>
                 <td class="w-px whitespace-nowrap py-1.5 text-right align-middle">
@@ -262,7 +267,7 @@ async function onDeleteBook(b: Book) {
 
     <SkillForm v-if="skillFormTarget" :is-edit="skillFormTarget !== 'new'" :initial="skillFormInitial" :categories="myCategories" :category-enabled="hasCategory" :checklist-enabled="hasChecklist" @close="skillFormTarget = null" @save="onSaveSkill" />
     <ImportBooksModal v-if="importOpen" :existing="books" :busy="importBusy" :error="importError" @close="importOpen = false" @confirm="onImportBooks" />
-    <BookForm v-if="bookFormTarget" :is-edit="bookFormTarget !== 'new'" :initial="bookFormInitial" @close="bookFormTarget = null" @save="onSaveBook" />
+    <BookForm v-if="bookFormTarget" :is-edit="bookFormTarget !== 'new'" :initial="bookFormInitial" :extras="booksExtras" @close="bookFormTarget = null" @save="onSaveBook" />
   </main>
 </template>
 
