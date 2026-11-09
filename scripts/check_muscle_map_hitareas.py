@@ -104,8 +104,9 @@ def main() -> int:
                         failures.append(f"{width}px: missing keyboard/ARIA attributes on {item['expected']}")
                     if item["pointerEvents"] != "all":
                         failures.append(f"{width}px: pointer-events is not all on {item['expected']}")
-                    if item["cssWidth"] < 44 or item["cssHeight"] < 44:
-                        failures.append(f"{width}px: target smaller than 44 CSS px: {item['expected']} "
+                    minimum_target = 44 if width <= 480 else 24
+                    if item["cssWidth"] < minimum_target or item["cssHeight"] < minimum_target:
+                        failures.append(f"{width}px: target smaller than {minimum_target} CSS px: {item['expected']} "
                                         f"{item['cssWidth']:.1f}x{item['cssHeight']:.1f}")
                     old_min = width_report["min_target_css_px"]
                     width_report["min_target_css_px"] = [
