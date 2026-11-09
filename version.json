@@ -1,7 +1,14 @@
 {
-  "version": "8.20",
+  "version": "8.21",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.21",
+      "date": "2026-11-05 12:30",
+      "changes": [
+        "Everywhere the site asks “Delete?” (admin, challenges, dashboard, goals, languages, milestones, skills), once the dialog closes focus returns to the button it was opened from — keyboard users no longer have to find their place on the page again. This is the same fix that already worked in the shop. No migrations."
+      ]
+    },
     {
       "version": "8.20",
       "date": "2026-11-09 09:00",
@@ -5796,6 +5803,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.21",
+      "date": "2026-11-05 12:30",
+      "changes": [
+        "Везде, где сайт спрашивает «Удалить?» (администрирование, челленджи, главная, цели, языки, вехи, навыки), после закрытия окна фокус возвращается на кнопку, с которой оно открыто, — клавиатурой не приходится заново искать место на странице. Это то же исправление, что уже работало в магазине. Без миграций."
+      ]
+    },
     {
       "version": "8.20",
       "date": "2026-11-09 09:00",

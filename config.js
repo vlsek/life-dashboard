@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.20";
+const SITE_VERSION = "8.21";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.21", date: "2026-11-05 12:30", changes: [
+        "Везде, где сайт спрашивает «Удалить?» (администрирование, челленджи, главная, цели, языки, вехи, навыки), после закрытия окна фокус возвращается на кнопку, с которой оно открыто, — клавиатурой не приходится заново искать место на странице. Это то же исправление, что уже работало в магазине. Без миграций.",
+    ]},
     { version: "8.20", date: "2026-11-09 09:00", changes: [
         "Тренировки: у рутин появились папки и архив. Кнопка 📁 на карточке задаёт папку (подсказываются уже созданные), рутины группируются по папкам; кнопка ▤ отправляет рутину в «Архив (N)» — оттуда её можно вернуть или удалить. Папка и архив синхронизируются с сервером (колонки есть в миграции 113).",
     ]},
@@ -3070,6 +3073,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.21", date: "2026-11-05 12:30", changes: [
+        "Everywhere the site asks “Delete?” (admin, challenges, dashboard, goals, languages, milestones, skills), once the dialog closes focus returns to the button it was opened from — keyboard users no longer have to find their place on the page again. This is the same fix that already worked in the shop. No migrations.",
+    ]},
     { version: "8.20", date: "2026-11-09 09:00", changes: [
         "Workouts: routines now have folders and an archive. The 📁 button on a card sets the folder (existing ones are suggested) and routines are grouped by folder; the ▤ button moves a routine to “Archive (N)”, where you can restore or delete it. Folder and archive sync with the server (the columns are in migration 113).",
     ]},
