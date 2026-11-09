@@ -1,7 +1,14 @@
 {
-  "version": "8.21",
+  "version": "8.22",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.22",
+      "date": "2026-11-09 09:30",
+      "changes": [
+        "Books: a book can now have a rating (1–5 stars) and a note (a quote, a thought), shown in the finished list. Needs migration 123 (without it those fields are hidden)."
+      ]
+    },
     {
       "version": "8.21",
       "date": "2026-11-05 12:30",
@@ -5803,6 +5810,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.22",
+      "date": "2026-11-09 09:30",
+      "changes": [
+        "«Книги»: у книги можно поставить оценку (1–5 звёзд) и написать заметку (цитата, мысль) — они видны в списке прочитанных. Нужна миграция 123 (без неё этих полей нет)."
+      ]
+    },
     {
       "version": "8.21",
       "date": "2026-11-05 12:30",
