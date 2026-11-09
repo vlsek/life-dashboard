@@ -1,7 +1,14 @@
 {
-  "version": "8.22",
+  "version": "8.23",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.23",
+      "date": "2026-11-09 10:00",
+      "changes": [
+        "Workouts: routines now have a rep target. “Save as routine” / “Update routine” remembers each exercise’s rep range from your completed working sets (warm-ups are ignored); starting from a routine shows “Target: 8–10 reps” under the exercise name. The range syncs with the server (reps_min/reps_max columns from migration 113)."
+      ]
+    },
     {
       "version": "8.22",
       "date": "2026-11-09 09:30",
@@ -5810,6 +5817,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.23",
+      "date": "2026-11-09 10:00",
+      "changes": [
+        "Тренировки: у рутины появилась цель повторов. При «В рутину» или «Обновить рутину» для каждого упражнения запоминается диапазон повторов по выполненным рабочим подходам (разминка не считается); при старте из рутины под названием упражнения видно «Цель: 8–10 повт.». Диапазон синхронизируется с сервером (колонки reps_min/reps_max из миграции 113)."
+      ]
+    },
     {
       "version": "8.22",
       "date": "2026-11-09 09:30",

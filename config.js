@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.22";
+const SITE_VERSION = "8.23";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.23", date: "2026-11-09 10:00", changes: [
+        "Тренировки: у рутины появилась цель повторов. При «В рутину» или «Обновить рутину» для каждого упражнения запоминается диапазон повторов по выполненным рабочим подходам (разминка не считается); при старте из рутины под названием упражнения видно «Цель: 8–10 повт.». Диапазон синхронизируется с сервером (колонки reps_min/reps_max из миграции 113).",
+    ]},
     { version: "8.22", date: "2026-11-09 09:30", changes: [
         "«Книги»: у книги можно поставить оценку (1–5 звёзд) и написать заметку (цитата, мысль) — они видны в списке прочитанных. Нужна миграция 123 (без неё этих полей нет).",
     ]},
@@ -3076,6 +3079,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.23", date: "2026-11-09 10:00", changes: [
+        "Workouts: routines now have a rep target. “Save as routine” / “Update routine” remembers each exercise’s rep range from your completed working sets (warm-ups are ignored); starting from a routine shows “Target: 8–10 reps” under the exercise name. The range syncs with the server (reps_min/reps_max columns from migration 113).",
+    ]},
     { version: "8.22", date: "2026-11-09 09:30", changes: [
         "Books: a book can now have a rating (1–5 stars) and a note (a quote, a thought), shown in the finished list. Needs migration 123 (without it those fields are hidden).",
     ]},
