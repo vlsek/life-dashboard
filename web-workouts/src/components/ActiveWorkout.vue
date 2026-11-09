@@ -255,7 +255,7 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
         <div class="grid items-center gap-2 text-xs" :style="'grid-template-columns: ' + cols + '; color: var(--text-dim)'">
           <span class="text-center">#</span>
           <span class="text-center">{{ t('aw_prev') }}</span>
-          <span class="text-center">{{ exById.get(e.exercise_id)?.tracks_weight ? t('aw_weight') + ', ' + unitOf(exById.get(e.exercise_id)) : t('aw_value') }}</span>
+          <span class="text-center">{{ exById.get(e.exercise_id)?.tracks_weight ? t('aw_weight') + ', ' + unitOf(exById.get(e.exercise_id)) : t('aw_value') + ', ' + unitOf(exById.get(e.exercise_id)) }}</span>
           <span class="text-center">{{ exById.get(e.exercise_id)?.tracks_duration ? t('aw_minutes') : t('aw_reps') }}</span>
           <span v-if="rpeOn" class="text-center">{{ t('aw_rpe') }}</span>
           <span></span><span></span>

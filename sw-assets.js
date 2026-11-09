@@ -1,7 +1,7 @@
 // АВТОГЕНЕРАЦИЯ: scripts/gen_sw_assets.py (BACKLOG 66.3). Не править руками; запускать после каждой пересборки пилотов.
 // Подключается из sw.js (importScripts): изменился этот файл → браузер ставит новый service worker и новый кэш ld-shell-<version>.
 self.LD_SW = {
-  version: "3fb3e2d5ad",
+  version: "7538af1738",
   pages: [
     "/account/",
     "/achievements/",
@@ -22,12 +22,8 @@ self.LD_SW = {
     "/workouts/",
   ],
   assets: [
-    "/account/assets/index-BYRKV-UZ.js",
-    "/account/assets/index-CgEnU15e.css",
-    "/account/assets/index-CyU_zawc.js",
-    "/account/assets/index-DS0PDKrr.js",
-    "/account/assets/index-c-NpGsMm.css",
-    "/account/assets/index-kbDlK1ep.css",
+    "/account/assets/index-Cr8eLCxN.js",
+    "/account/assets/index-FFHJDgei.css",
     "/achievements/assets/index-D0BL1nZJ.js",
     "/achievements/assets/index-NJvW2TA7.css",
     "/admin/assets/index-BiyDla3B.css",
@@ -62,12 +58,10 @@ self.LD_SW = {
     "/dashboard/assets/index-DCL1LObc.css",
     "/goals/assets/index-CgLxdi_N.js",
     "/goals/assets/index-DL7l73ue.css",
-    "/history/assets/index-CQobi1h3.js",
-    "/history/assets/index-Cfgzga7z.css",
-    "/history/assets/index-TL57jaJz.js",
-    "/history/assets/index-hStMnsSX.css",
-    "/languages/assets/index-B4Wp8cNr.js",
-    "/languages/assets/index-BLdSypXC.css",
+    "/history/assets/index-0GLbsYlO.css",
+    "/history/assets/index-DQy9VcCy.js",
+    "/languages/assets/index-CyTPN-Qr.css",
+    "/languages/assets/index-DPl4qrsk.js",
     "/login/assets/index-BMRUamOF.js",
     "/login/assets/index-BRqZMMjh.css",
     "/login/assets/index-BmhjLLgs.js",
@@ -86,8 +80,8 @@ self.LD_SW = {
     "/shop/assets/index-CocHparz.js",
     "/skills/assets/index-CfHaExT0.js",
     "/skills/assets/index-DNZvr8tM.css",
-    "/workouts/assets/index-DT8TeOoh.js",
-    "/workouts/assets/index-DjY838kM.css",
+    "/workouts/assets/index-Ckqciwrr.js",
+    "/workouts/assets/index-Cu1ePFn3.css",
   ],
   runtime: [
     "/account/favicon.svg",
