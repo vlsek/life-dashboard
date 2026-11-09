@@ -56,6 +56,11 @@ def main() -> int:
                 failures.append(f"{width}px: horizontal document overflow")
             if meta["hitCount"] != 8 or len(set(meta["ids"])) != 8:
                 failures.append(f"{width}px: expected 8 unique hit paths, got {meta['hitCount']}")
+            if len(meta["regions"]) != 40 or len(set(meta["regions"])) != 40:
+                failures.append(f"{width}px: expected 40 unique regions, got {len(meta['regions'])}")
+            unresolved = [hit_id for hit_id in meta["ids"] if hit_id not in meta["regions"]]
+            if unresolved:
+                failures.append(f"{width}px: hit paths reference missing regions: {unresolved}")
 
             width_report = {"viewport": width, "sample_points": 0, "hit_mismatches": [],
                             "clicks": 0, "min_target_css_px": [None, None]}
