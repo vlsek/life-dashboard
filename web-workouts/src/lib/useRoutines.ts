@@ -50,7 +50,7 @@ export function useRoutines() {
         if (!(await sessionsAvailable())) { syncUser = null; synced.value = false; return false }
         const [rs, its] = await Promise.all([
           sb.from('workout_routines').select('id,name,position,folder,archived,updated_at').eq('user_id', userId),
-          sb.from('workout_routine_items').select('routine_id,exercise_id,position,target_sets,superset_group').eq('user_id', userId),
+          sb.from('workout_routine_items').select('routine_id,exercise_id,position,target_sets,reps_min,reps_max,superset_group').eq('user_id', userId),
         ])
         if (rs.error || its.error) { syncUser = null; synced.value = false; return false }
         syncUser = userId

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { repsTargetText } from '../lib/routines'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useActiveWorkout } from '../lib/useActiveWorkout'
 import { categoriesOf, musclesOf, rankExercises } from '../lib/exercisePick'
@@ -251,6 +252,7 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
         <button type="button" class="mb-1 mr-2 rounded-full border px-3 py-1 text-xs" style="border-color: var(--border); color: var(--text-dim); min-height: 32px" :data-testid="'aw-note-btn-' + ei" @click="noteOpen[e.id] = !noteOpen[e.id]">{{ t('aw_note') }}<template v-if="e.note"> ✓</template></button>
         <textarea v-if="noteOpen[e.id] || e.note" :value="e.note ?? ''" :maxlength="NOTE_MAX" rows="2" class="mb-2 w-full rounded-lg border px-3 py-2 text-sm" style="border-color: var(--border); background: var(--bg); color: var(--text)" :placeholder="t('aw_note_ph')" :data-testid="'aw-note-' + ei" @input="aw.setNote(e.id, ($event.target as HTMLTextAreaElement).value)"></textarea>
         <p v-if="prevNote(e.exercise_id) && !e.note" class="mb-2 text-xs italic" style="color: var(--text-dim)" :data-testid="'aw-prevnote-' + ei">{{ t('aw_prev_note') }}: {{ prevNote(e.exercise_id) }}</p>
+        <p v-if="e.reps_min" class="mb-1 text-xs" style="color: var(--text-dim)" :data-testid="'aw-target-' + ei">{{ t('aw_target_reps').replace('{r}', repsTargetText(e.reps_min, e.reps_max)) }}</p>
         <p v-if="hintOn && hintFor(e.exercise_id)" class="mb-2 text-xs" style="color: var(--text-dim)" :data-testid="'aw-hint-' + ei">{{ hintText(e.exercise_id) }}</p>
         <div class="grid items-center gap-2 text-xs" :style="'grid-template-columns: ' + cols + '; color: var(--text-dim)'">
           <span class="text-center">#</span>

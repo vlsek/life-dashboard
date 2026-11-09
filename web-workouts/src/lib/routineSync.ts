@@ -1,22 +1,23 @@
 // Синхронизация рутин с таблицами workout_routines / workout_routine_items (миграция 113, BACKLOG 69.7 срез 2). ЧИСТАЯ логика: строки для записи и слияние.
 // Правило слияния: по id; побеждает более свежий updated_at; рутина, которой нет на сервере, — на отправку; которой нет на устройстве — забираем.
+import { repsFields } from './sessionContract'
 import { normFolder, type Routine, type RoutineItem } from './routines'
 
 export type RoutineRow = { id: string; user_id: string; name: string; position: number; folder: string | null; archived: boolean; updated_at: string }
-export type RoutineItemRow = { id: string; user_id: string; routine_id: string; exercise_id: string; position: number; target_sets: number; superset_group: number | null }
+export type RoutineItemRow = { id: string; user_id: string; routine_id: string; exercise_id: string; position: number; target_sets: number; reps_min: number | null; reps_max: number | null; superset_group: number | null }
 
 export const routineRow = (userId: string, r: Routine, position: number): RoutineRow =>
   ({ id: r.id, user_id: userId, name: r.name, position, folder: r.folder ?? null, archived: r.archived === true, updated_at: r.updated_at || new Date(0).toISOString() })
 export const itemRows = (userId: string, r: Routine, newId: () => string): RoutineItemRow[] =>
-  r.items.map((i, k) => ({ id: newId(), user_id: userId, routine_id: r.id, exercise_id: i.exercise_id, position: k, target_sets: i.target_sets, superset_group: i.superset_group }))
+  r.items.map((i, k) => ({ id: newId(), user_id: userId, routine_id: r.id, exercise_id: i.exercise_id, position: k, target_sets: i.target_sets, reps_min: i.reps_min ?? null, reps_max: i.reps_max ?? null, superset_group: i.superset_group }))
 
 interface RemoteRoutine { id: string; name: string; position?: number; folder?: string | null; archived?: boolean; updated_at?: string }
-interface RemoteItem { routine_id: string; exercise_id: string; position?: number; target_sets?: number | null; superset_group?: number | null }
+interface RemoteItem { routine_id: string; exercise_id: string; position?: number; target_sets?: number | null; reps_min?: number | null; reps_max?: number | null; superset_group?: number | null }
 
 export function routinesFromRemote(rs: readonly RemoteRoutine[], items: readonly RemoteItem[]): Routine[] {
   return [...rs].sort((a, b) => (a.position ?? 0) - (b.position ?? 0)).flatMap((r): Routine[] => {
     const its: RoutineItem[] = items.filter((i) => i.routine_id === r.id).sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
-      .map((i) => ({ exercise_id: i.exercise_id, target_sets: Math.min(20, Math.max(1, i.target_sets ?? 3)), superset_group: i.superset_group ?? null }))
+      .map((i) => ({ exercise_id: i.exercise_id, target_sets: Math.min(20, Math.max(1, i.target_sets ?? 3)), superset_group: i.superset_group ?? null, ...repsFields(i.reps_min, i.reps_max) }))
     const folder = normFolder(r.folder)
     return its.length ? [{ id: r.id, name: r.name, items: its, updated_at: r.updated_at ?? '', ...(folder ? { folder } : {}), ...(r.archived ? { archived: true } : {}) }] : []
   })

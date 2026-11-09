@@ -114,3 +114,7 @@ export function readSettings(raw: unknown): WorkoutSettings {
     smart_superset: typeof o.smart_superset === 'boolean' ? o.smart_superset : d.smart_superset,
   }
 }
+
+// Цель повторов упражнения в рутине (69.7): корректный диапазон из сырых значений (хранилище, сервер) или пусто
+export const repsFields = (min: unknown, max: unknown): { reps_min?: number; reps_max?: number } =>
+  Number.isInteger(min) && (min as number) >= 1 && (min as number) <= 999 ? { reps_min: min as number, reps_max: Number.isInteger(max) && (max as number) >= (min as number) && (max as number) <= 999 ? (max as number) : (min as number) } : {}

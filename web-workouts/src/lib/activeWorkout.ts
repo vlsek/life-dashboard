@@ -1,10 +1,10 @@
 // Активная тренировка (BACKLOG 69.2, срез 1): ЧИСТАЯ логика черновика «Начать → записывать → Завершить». Без сети и без UI.
 // Черновик живёт в localStorage (закрыл вкладку — вернулся и продолжил), на «Завершить» превращается в сессию + записи по упражнениям
 // (формат контракта — docs/WORKOUTS_V2_CONTRACT.md). Идентификаторы создаёт вызывающий (uuid) — офлайн-очередь повторяет запись без дублей.
-import { isWorking } from './sessionContract'
+import { isWorking, repsFields } from './sessionContract'
 import type { SetType, SetV2 } from './sessionContract'
 
-export interface DraftExercise { id: string; exercise_id: string; superset_group: number | null; note: string | null; sets: SetV2[] }
+export interface DraftExercise { id: string; exercise_id: string; superset_group: number | null; note: string | null; sets: SetV2[]; reps_min?: number; reps_max?: number }
 export interface ActiveDraft {
   v: 1; id: string; name: string | null; date: string; started_at: string
   manual_minutes?: number | null // тренировка задним числом: длительность в минутах (секундомера нет)
@@ -118,7 +118,7 @@ export function loadDraft(store: Store): ActiveDraft | null {
     if (!o || o.v !== 1 || typeof o.id !== 'string' || typeof o.date !== 'string' || !Number.isFinite(Date.parse(o.started_at)) || !Array.isArray(o.exercises)) return null
     const exercises: DraftExercise[] = o.exercises
       .filter((e: any) => e && typeof e.id === 'string' && typeof e.exercise_id === 'string' && Array.isArray(e.sets))
-      .map((e: any) => ({ id: e.id, exercise_id: e.exercise_id, superset_group: Number.isInteger(e.superset_group) ? e.superset_group : null, note: typeof e.note === 'string' ? e.note : null, sets: e.sets.filter((s: any) => s && typeof s === 'object') }))
+      .map((e: any) => ({ id: e.id, exercise_id: e.exercise_id, superset_group: Number.isInteger(e.superset_group) ? e.superset_group : null, note: typeof e.note === 'string' ? e.note : null, ...repsFields(e.reps_min, e.reps_max), sets: e.sets.filter((s: any) => s && typeof s === 'object') }))
     return { v: 1, manual_minutes: Number.isInteger(o.manual_minutes) && o.manual_minutes > 0 && o.manual_minutes <= 1440 ? o.manual_minutes : null, id: o.id, name: typeof o.name === 'string' ? o.name : null, date: o.date, started_at: o.started_at, routine_id: typeof o.routine_id === 'string' ? o.routine_id : null, notes: typeof o.notes === 'string' ? o.notes : null, exercises }
   } catch { return null }
 }

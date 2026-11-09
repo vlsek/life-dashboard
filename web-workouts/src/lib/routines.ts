@@ -1,15 +1,22 @@
 // Рутины (BACKLOG 69.7, срез 1): шаблон тренировки «какие упражнения я делаю». ЧИСТАЯ логика + хранение на устройстве (localStorage).
 // Синхронизация с таблицами workout_routines/workout_routine_items (миграция 113) — срез 2; формат элемента совпадает с таблицей (exercise_id, position, target_sets, superset_group).
 import { newDraft, type ActiveDraft } from './activeWorkout'
+import { isWorking, repsFields, type SetV2 } from './sessionContract'
 
-export interface RoutineItem { exercise_id: string; target_sets: number; superset_group: number | null }
+export interface RoutineItem { exercise_id: string; target_sets: number; superset_group: number | null; reps_min?: number | null; reps_max?: number | null }
+// Цель повторов (69.7): диапазон min–max по выполненным рабочим подходам; нет повторов — null (колонки reps_min/reps_max есть в workout_routine_items)
+export function repsRangeOf(sets: readonly SetV2[]): { reps_min: number; reps_max: number } | null {
+  const r = sets.filter((x) => isWorking(x) && Number.isInteger(x.reps) && (x.reps as number) > 0 && (x.reps as number) <= 999).map((x) => x.reps as number)
+  return r.length ? { reps_min: Math.min(...r), reps_max: Math.max(...r) } : null
+}
+export const repsTargetText = (min: number | null | undefined, max: number | null | undefined): string => (!min ? '' : !max || max === min ? String(min) : `${min}–${max}`)
 export interface Routine { id: string; name: string; items: RoutineItem[]; updated_at: string; folder?: string | null; archived?: boolean }
 export const ROUTINES_KEY = 'workouts.routines.v1'
 export const MAX_ROUTINES = 50
 
 // «Сохранить эту тренировку как рутину»: упражнения в порядке тренировки (включая невыполненные — это шаблон), число подходов как запланировано
 export function routineFromDraft(d: ActiveDraft, id: string, name: string, nowIso: string): Routine | null {
-  const items = d.exercises.map((e) => ({ exercise_id: e.exercise_id, target_sets: Math.min(20, Math.max(1, e.sets.length)), superset_group: e.superset_group }))
+  const items = d.exercises.map((e) => ({ exercise_id: e.exercise_id, target_sets: Math.min(20, Math.max(1, e.sets.length)), superset_group: e.superset_group, ...repsOf(e) }))
   const nm = name.trim().slice(0, 80)
   return nm && items.length ? { id, name: nm, items, updated_at: nowIso } : null
 }
@@ -17,16 +24,20 @@ export function routineFromDraft(d: ActiveDraft, id: string, name: string, nowIs
 export function draftFromRoutine(r: Routine, draftId: string, now: Date, newEntryId: () => string, existingExerciseIds: ReadonlySet<string>): ActiveDraft {
   const d = newDraft(draftId, now, { name: r.name, routine_id: r.id })
   d.exercises = r.items.filter((i) => existingExerciseIds.has(i.exercise_id)).map((i) => ({
-    id: newEntryId(), exercise_id: i.exercise_id, superset_group: i.superset_group, note: null,
+    id: newEntryId(), exercise_id: i.exercise_id, superset_group: i.superset_group, note: null, ...(i.reps_min ? { reps_min: i.reps_min, reps_max: i.reps_max ?? i.reps_min } : {}),
     sets: Array.from({ length: i.target_sets }, () => ({ reps: null, weight: null, time: null, duration: null, side: null, done: false })),
   }))
   return d
 }
 // Рутина «под сегодняшнюю тренировку»: порядок, число подходов и суперсеты как в черновике. Пустые упражнения (без единого подхода) не берём.
-const itemsOfDraft = (d: ActiveDraft): RoutineItem[] => d.exercises.filter((e) => e.sets.length > 0).map((e) => ({ exercise_id: e.exercise_id, target_sets: Math.min(20, Math.max(1, e.sets.length)), superset_group: e.superset_group }))
+const repsOf = (e: ActiveDraft['exercises'][number]): { reps_min?: number; reps_max?: number } => {
+  const r = repsRangeOf(e.sets) ?? (e.reps_min ? { reps_min: e.reps_min, reps_max: e.reps_max ?? e.reps_min } : null)
+  return r ?? {}
+}
+const itemsOfDraft = (d: ActiveDraft): RoutineItem[] => d.exercises.filter((e) => e.sets.length > 0).map((e) => ({ exercise_id: e.exercise_id, target_sets: Math.min(20, Math.max(1, e.sets.length)), superset_group: e.superset_group, ...repsOf(e) }))
 export function routineDiffers(r: Routine, d: ActiveDraft): boolean {
   const a = itemsOfDraft(d)
-  return a.length > 0 && JSON.stringify(a) !== JSON.stringify(r.items.map(({ exercise_id, target_sets, superset_group }) => ({ exercise_id, target_sets, superset_group })))
+  return a.length > 0 && JSON.stringify(a.map(({ exercise_id, target_sets, superset_group }) => ({ exercise_id, target_sets, superset_group }))) !== JSON.stringify(r.items.map(({ exercise_id, target_sets, superset_group }) => ({ exercise_id, target_sets, superset_group })))
 }
 export function updateRoutineFromDraft(list: readonly Routine[], id: string, d: ActiveDraft, nowIso: string): Routine[] {
   const items = itemsOfDraft(d)
@@ -63,7 +74,7 @@ export function loadRoutines(store: Store): Routine[] {
       if (!r || typeof r.id !== 'string' || typeof r.name !== 'string' || !r.name.trim() || !Array.isArray(r.items)) return []
       const items: RoutineItem[] = r.items
         .filter((i: any) => i && typeof i.exercise_id === 'string')
-        .map((i: any) => ({ exercise_id: i.exercise_id, target_sets: Number.isInteger(i.target_sets) ? Math.min(20, Math.max(1, i.target_sets)) : 3, superset_group: Number.isInteger(i.superset_group) ? i.superset_group : null }))
+        .map((i: any) => ({ exercise_id: i.exercise_id, target_sets: Number.isInteger(i.target_sets) ? Math.min(20, Math.max(1, i.target_sets)) : 3, superset_group: Number.isInteger(i.superset_group) ? i.superset_group : null, ...repsFields(i.reps_min, i.reps_max) }))
       const folder = typeof r.folder === 'string' ? r.folder.trim().slice(0, FOLDER_MAX) || null : null
       return items.length ? [{ id: r.id, name: r.name.trim().slice(0, 80), items, updated_at: typeof r.updated_at === 'string' ? r.updated_at : '', ...(folder ? { folder } : {}), ...(r.archived === true ? { archived: true } : {}) }] : []
     })

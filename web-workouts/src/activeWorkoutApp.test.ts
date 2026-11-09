@@ -186,6 +186,20 @@ describe('активная тренировка', () => {
     w.unmount()
   })
 
+  it('цель повторов рутины: старт из рутины показывает «Цель: 8–10», у обычной тренировки строки нет', async () => {
+    useRoutines().routines.value = [{ id: 'r1', name: 'Грудь', updated_at: '2026-01-01T00:00:00Z', items: [{ exercise_id: 'e1', target_sets: 2, superset_group: null, reps_min: 8, reps_max: 10 }] }]
+    const w = await mountApp()
+    await w.find('[data-testid="routine-start-r1"]').trigger('click')
+    expect(q(w, 'aw-target-0').text()).toContain('8–10')
+    w.unmount()
+    useActiveWorkout().discard()
+    useRoutines().routines.value = []
+    const w2 = await mountApp()
+    await q(w2, 'aw-start').trigger('click'); await q(w2, 'aw-add-exercise').trigger('click'); await q(w2, 'aw-pick-e1').trigger('click')
+    expect(w2.find('[data-testid="aw-target-0"]').exists()).toBe(false)
+    w2.unmount()
+  })
+
   it('подсказка прогрессии: после 3×10 на 60 предлагает 62,5; настройкой выключается', async () => {
     h.entries = [{ id: 'o1', user_id: 'u1', exercise_id: 'e1', date: '2026-01-01', sets: [10, 10, 10].map((r) => ({ reps: r, weight: 60, time: null, duration: null, side: null })), notes: null }]
     const w = await mountApp()
