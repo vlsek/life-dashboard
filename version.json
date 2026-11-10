@@ -1,7 +1,14 @@
 {
-  "version": "8.31",
+  "version": "8.32",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.32",
+      "date": "2026-11-10 16:00",
+      "changes": [
+        "History: when there is no data for the period, a card with a chart icon, a hint (“log your day on the dashboard — progress will appear here”) and a “Go to dashboard” button replaces the grey line."
+      ]
+    },
     {
       "version": "8.31",
       "date": "2026-11-10 12:00",
@@ -5873,6 +5880,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.32",
+      "date": "2026-11-10 16:00",
+      "changes": [
+        "История: если за период данных нет, вместо серой строки — карточка с графиком, подсказкой («отмечай свой день на дашборде — прогресс появится здесь») и кнопкой «Перейти на дашборд»."
+      ]
+    },
     {
       "version": "8.31",
       "date": "2026-11-10 12:00",
