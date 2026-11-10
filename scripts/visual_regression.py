@@ -138,6 +138,9 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument('--themes', default='dark')
     ap.add_argument('--out', default='/tmp/visual')
     ap.add_argument('--baseline', default=None)
+    ap.add_argument('--report', default=None, help='путь для JSON-отчёта о проверенных страницах/темах и границах проверки')
+    ap.add_argument('--mark-production-checked', action='store_true', help='отметить отдельную ручную проверку production (сам скрипт проверяет только локальную сборку)')
+    ap.add_argument('--mark-real-device-checked', action='store_true', help='отметить отдельную ручную проверку на физическом устройстве (Chromium phone — эмуляция)')
     ap.add_argument('--threshold', type=float, default=0.005, help='доля изменившихся пикселей, выше которой страница считается изменившейся')
     ap.add_argument('--wait', type=float, default=1.5)
     ap.add_argument('--min-target', type=int, default=32, help='замечание, если зона нажатия на телефоне меньше N px (стандарт проекта — 32, аудит 60.2)')
@@ -253,8 +256,29 @@ def main(argv=None) -> int:
     finally:
         srv.shutdown()
         srv.server_close()
+    summary = {'runs': len(rows), 'hard_issues': hard, 'warnings': warn, 'changed_vs_baseline': changed if args.baseline else None}
     print('\\n'.join(rows))
     print(f'\\nстраниц×режимов: {len(rows)} | жёстких проблем: {hard} | замечаний: {warn}' + (f' | изменились относительно baseline: {changed}' if args.baseline else '') + f' | скриншоты: {out_root}')
+    print('Границы: локальные собранные папки; production: ' + ('проверен вручную' if args.mark_production_checked else 'НЕ проверен') + '; физическое устройство: ' + ('проверено вручную' if args.mark_real_device_checked else 'НЕ проверено (phone — эмуляция)'))
+    if args.report:
+        report_path = Path(args.report)
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report = {
+            'schema_version': 1,
+            'scope': 'local-built-folders',
+            'browser': 'Chromium',
+            'pages': pages,
+            'viewports': viewports,
+            'themes': themes,
+            'production_checked_manually': args.mark_production_checked,
+            'real_device_checked_manually': args.mark_real_device_checked,
+            'baseline': str(Path(args.baseline)) if args.baseline else None,
+            'screenshots': str(out_root),
+            'summary': summary,
+            'results': rows,
+        }
+        report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\\n', encoding='utf-8')
+        print(f'JSON-отчёт: {report_path}')
     return return_code
 
 
