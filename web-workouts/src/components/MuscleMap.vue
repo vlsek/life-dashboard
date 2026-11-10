@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import MuscleModelFigure from './MuscleModelFigure.vue'
 import { usuallySkipped } from '../lib/genderTips'
 import EmojiText from './EmojiText.vue'
 import { computed, nextTick, ref, watch } from 'vue'
@@ -170,9 +171,9 @@ function readMuscleVisualStyle(): MuscleVisualStyle {
 }
 const visualStyle = ref<MuscleVisualStyle>(readMuscleVisualStyle())
 const visualStyles: { key: MuscleVisualStyle; ru: string; en: string; hintRu: string; hintEn: string }[] = [
-  { key: 'anatomy', ru: 'Анатомия', en: 'Anatomy', hintRu: 'Плотная заливка · зелёным отмечены недавно задействованные мышцы', hintEn: 'Solid tissue shading · recently trained muscles are highlighted in green' },
-  { key: 'atlas', ru: 'Атлас', en: 'Atlas', hintRu: 'Лаконичная схема · контуры важнее заливки', hintEn: 'Minimal atlas · outlines take priority over fills' },
-  { key: 'tech', ru: 'Техно', en: 'Tech', hintRu: 'Кибернетическая сетка · контуры и координатные метки', hintEn: 'Cybernetic grid · technical outlines and coordinate marks' },
+  { key: 'anatomy', ru: 'Анатомия', en: 'Anatomy', hintRu: 'Тёплая анатомическая заливка · недавно задействованные мышцы выделены цветом', hintEn: 'Warm anatomical shading · recently trained muscles are highlighted' },
+  { key: 'atlas', ru: 'Атлас', en: 'Atlas', hintRu: 'Лаконичный атлас · задействованные мышцы выделены голубым, остальные — пунктиром', hintEn: 'Minimal atlas · trained muscles are blue, the others are dashed' },
+  { key: 'tech', ru: 'Техно', en: 'Tech', hintRu: 'Кибернетическая сетка · задействованные мышцы и узлы подсвечены бирюзовым', hintEn: 'Cybernetic grid · trained muscles and joints are lit in teal' },
 ]
 function setVisualStyle(value: MuscleVisualStyle) {
   visualStyle.value = value
@@ -257,6 +258,13 @@ const views = computed<{ key: 'front' | 'back'; label: DictKey; shapes: MuscleSh
   { key: 'front', label: 'workouts_muscles_front', shapes: geometry.value.front },
   { key: 'back', label: 'workouts_muscles_back', shapes: geometry.value.back },
 ])
+// Новые направления карты (A/B/C из макета, 70.1): для модели по умолчанию; у женской модели пока прежняя геометрия (отдельного рисунка нет)
+const useModelFigure = computed(() => (props.model ?? 'male') !== 'female')
+function zoneState(m: MuscleId) {
+  const lvl = heat(m)
+  const isDone = lvl === null ? done.value.has(m) : lvl > 0
+  return { done: isDone, heat: lvl, opacity: isDone && heatMode.value === 'volume' && lvl ? 0.35 + (0.65 * lvl) / HEAT_LEVELS : null }
+}
 function shapeStyle(m: MuscleId) {
   const lvl = heat(m)
   const isDone = lvl === null ? done.value.has(m) : lvl > 0
@@ -371,7 +379,18 @@ function shapeStyle(m: MuscleId) {
 
       <div class="flex flex-wrap justify-center gap-4">
         <figure v-for="v in views" :key="v.key" class="m-0 text-center">
-          <svg viewBox="0 0 100 190" :class="['muscle-map-svg', 'muscle-map-svg--' + visualStyle]" :data-visual-style="visualStyle" class="h-64 w-32" role="group" :aria-label="t(v.label)">
+          <MuscleModelFigure
+            v-if="useModelFigure"
+            :visual-style="visualStyle"
+            :view="v.key"
+            :label="t(v.label)"
+            :selected="selected"
+            :study-recent="props.studyRecent"
+            :state-of="zoneState"
+            :label-of="zoneLabel"
+            @select="select"
+          />
+          <svg v-else viewBox="0 0 100 190" :class="['muscle-map-svg', 'muscle-map-svg--' + visualStyle]" :data-visual-style="visualStyle" class="h-64 w-32" role="group" :aria-label="t(v.label)">
             <circle :cx="geometry.head.cx" :cy="geometry.head.cy" :r="geometry.head.r" :fill="props.studyRecent ? 'var(--success)' : 'none'" :fill-opacity="props.studyRecent ? 0.9 : 1" :stroke="props.studyRecent ? 'var(--success)' : 'var(--border)'" stroke-width="1.2" data-testid="muscle-head" />
             <path
               :d="geometry.outline"

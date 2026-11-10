@@ -484,9 +484,11 @@ describe('MuscleMap: visual packs (BACKLOG 70.2)', () => {
     const idle = w.find('[data-muscle="quads"]')
     const done = w.find('[data-muscle="chest"]')
     expect(idle.attributes('data-state')).toBe('idle')
-    expect(idle.find('path').attributes('style')).toContain('stroke-dasharray: 1.2 0.8')
+    // у новых направлений зона и есть фигура (path); у прежней геометрии (женская модель) путь вложен в группу
+    const shape = (z: typeof idle) => (z.element.tagName.toLowerCase() === 'path' ? z : z.find('path'))
+    expect(shape(idle).attributes('style')).toContain('stroke-dasharray: 1.2 0.8')
     expect(done.attributes('data-state')).toBe('done')
-    expect(done.find('path').attributes('style')).toContain('stroke-dasharray: none')
+    expect(shape(done).attributes('style')).toContain('stroke-dasharray: none')
     expect(w.find('[data-testid="muscle-map-legend"] .muscle-legend-mark--done').classes()).toContain('muscle-legend-mark--done')
     expect(w.find('[data-testid="muscle-map-legend"] .muscle-legend-mark--idle').classes()).toContain('muscle-legend-mark--idle')
   })
