@@ -1,7 +1,14 @@
 {
-  "version": "8.24",
+  "version": "8.25",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.25",
+      "date": "2026-11-10 09:30",
+      "changes": [
+        "Workouts: the active workout now shows a mini body map under the rest timer — the muscles of today’s session are highlighted and fill as you complete sets; the rest are dimmed."
+      ]
+    },
     {
       "version": "8.24",
       "date": "2026-11-04 12:00",
@@ -5824,6 +5831,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.25",
+      "date": "2026-11-10 09:30",
+      "changes": [
+        "«Тренировки»: в активной тренировке под таймером отдыха появилась мини-карта тела — мышцы сегодняшней сессии подсвечиваются и заливаются по мере выполненных подходов, остальные приглушены."
+      ]
+    },
     {
       "version": "8.24",
       "date": "2026-11-04 12:00",

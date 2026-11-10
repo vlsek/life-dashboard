@@ -543,7 +543,7 @@ function onToggleProgramWeek(week: number) {
 
 <template>
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
-  <ActiveWorkout v-if="aw.active.value && auth.status === 'ready'" :exercises="exercises" :entries="entries" :sessions="sessions" :unit="defaultUnit()" :busy="awBusy" @finish="onFinishWorkout" @cancel="onCancelWorkout" />
+  <ActiveWorkout v-if="aw.active.value && auth.status === 'ready'" :exercises="exercises" :entries="entries" :sessions="sessions" :unit="defaultUnit()" :busy="awBusy" :model="bodyModel" @finish="onFinishWorkout" @cancel="onCancelWorkout" />
   <PastWorkoutForm v-if="pastForm" @start="onStartPast" @close="pastForm = false" />
   <RecordsModal v-if="recordsFor" :exercise="recordsFor" :entries="entries" :unit="defaultUnit()" :model="bodyModel" @close="recordsFor = null" />
   <WorkoutSummary v-if="summary" :data="summary" :exercises="exercises" :unit="defaultUnit()" :model="bodyModel" @close="summary = null" @save-meta="onSaveSessionMeta" />

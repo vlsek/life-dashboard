@@ -17,12 +17,14 @@ import { useRestTimer } from '../lib/useRestTimer'
 import { normalizeRpe } from '../lib/sessionContract'
 import { shouldRestAfter } from '../lib/restTimer'
 import RestTimer from './RestTimer.vue'
+import SessionMuscleMap from './SessionMuscleMap.vue'
+import type { BodyModel } from '../lib/bodyModel'
 import { haptic } from '../lib/nativeFeedback'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 
 // Экран активной тренировки (BACKLOG 69.2, макет A): липкая шапка с секундомером, блоки упражнений со строками подходов «№ · прошлый раз · вес · повторы · ✓».
 // Данные черновика — useActiveWorkout (localStorage); сохранение в Supabase делает App.vue по событию finish.
-const props = withDefaults(defineProps<{ exercises: Exercise[]; entries: WorkoutEntry[]; unit: string; busy: boolean; sessions?: { id: string; routine_id: string | null }[] }>(), { sessions: () => [] })
+const props = withDefaults(defineProps<{ exercises: Exercise[]; entries: WorkoutEntry[]; unit: string; busy: boolean; sessions?: { id: string; routine_id: string | null }[]; model?: BodyModel }>(), { sessions: () => [], model: 'male' })
 const emit = defineEmits<{ finish: []; cancel: [] }>()
 const aw = useActiveWorkout()
 const draft = computed(() => aw.draft.value)
@@ -234,6 +236,7 @@ const inputStyle = 'border-color: var(--border); background: var(--bg); color: v
           <button type="button" class="rounded-md px-3 py-1 font-semibold" style="background: var(--accent); color: var(--accent-text); min-height: 36px" data-testid="aw-routine-ok" @click="saveRoutine">{{ t('rt_ok') }}</button>
         </template>
       </div>
+      <SessionMuscleMap :draft="draft.exercises" :exercises="exercises" :model="model" />
       <div class="mx-auto max-w-3xl"><RestTimer /></div>
     </header>
 
