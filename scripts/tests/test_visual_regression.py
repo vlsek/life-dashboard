@@ -36,11 +36,24 @@ class ArgumentValidationTests(unittest.TestCase):
 
     def test_accepts_multiple_pages_viewports_and_themes(self):
         _, pages, viewports, themes = vr.parse_args([
-            "shop", "goals", "--viewports", "phone,desktop", "--themes", "dark,light"
+            "shop", "goals", "--viewports", "phone,desktop", "--themes", "dark,light,monet"
         ])
         self.assertEqual(pages, ["shop", "goals"])
         self.assertEqual(viewports, ["phone", "desktop"])
-        self.assertEqual(themes, ["dark", "light"])
+        self.assertEqual(themes, ["dark", "light", "monet"])
+
+    def test_manual_environment_markers_default_to_unchecked(self):
+        args, _, _, _ = vr.parse_args([])
+        self.assertFalse(args.mark_production_checked)
+        self.assertFalse(args.mark_real_device_checked)
+
+    def test_manual_environment_markers_are_explicit(self):
+        args, _, _, _ = vr.parse_args([
+            "--mark-production-checked", "--mark-real-device-checked", "--report", "/tmp/report.json"
+        ])
+        self.assertTrue(args.mark_production_checked)
+        self.assertTrue(args.mark_real_device_checked)
+        self.assertEqual(args.report, "/tmp/report.json")
 
     def test_rejects_unknown_page(self):
         with self.assertRaises(SystemExit):
