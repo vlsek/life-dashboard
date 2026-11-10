@@ -256,19 +256,23 @@ const openedProfile = computed(() => {
 
       <!-- Область и период: общие для рейтинга, ленты и сравнения; на «Друзьях» не нужны -->
       <div v-if="tab !== 'friends'" class="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <div class="flex gap-2">
-          <button :class="{ secondary: scope !== 'everyone' }" @click="scope = 'everyone'">{{ t('comm_scope_everyone') }}</button>
-          <button :class="{ secondary: scope !== 'friends' }" @click="scope = 'friends'">{{ t('comm_scope_friends') }}</button>
+        <div class="flex flex-wrap gap-1.5" data-test="scope-switch">
+          <button class="rounded-full text-sm" style="padding: 0.3rem 0.85rem; min-height: 32px" :class="{ secondary: scope !== 'everyone' }" :aria-pressed="scope === 'everyone'" @click="scope = 'everyone'">{{ t('comm_scope_everyone') }}</button>
+          <button class="rounded-full text-sm" style="padding: 0.3rem 0.85rem; min-height: 32px" :class="{ secondary: scope !== 'friends' }" :aria-pressed="scope === 'friends'" @click="scope = 'friends'">{{ t('comm_scope_friends') }}</button>
         </div>
-        <div v-if="tab === 'rating' && periodApi" class="flex gap-2" data-testid="period-switch">
-          <button v-for="p in PERIODS" :key="p" :class="{ secondary: period !== p }" @click="setPeriod(p)">{{ periodLabels[p]() }}</button>
+        <div v-if="tab === 'rating' && periodApi" class="flex flex-wrap gap-1.5" data-testid="period-switch">
+          <button v-for="p in PERIODS" :key="p" class="rounded-full text-sm" style="padding: 0.3rem 0.85rem; min-height: 32px" :class="{ secondary: period !== p }" :aria-pressed="period === p" @click="setPeriod(p)">{{ periodLabels[p]() }}</button>
         </div>
       </div>
 
       <div v-show="tab === 'rating'" data-testid="tab-rating">
       <LoadError v-if="leaderboardError" :message="leaderboardError" :retry="reload" />
       <p v-else-if="!loaded" class="dim mb-5" role="status" data-testid="comm-loading">{{ t('load_loading') }}</p>
-      <p v-else-if="visibleLeaderboard.length === 0" class="dim mb-5">{{ t('comm_empty') }}</p>
+      <div v-else-if="visibleLeaderboard.length === 0" class="card mb-5 flex flex-col items-center gap-1 rounded-2xl border p-6 text-center" style="border-color: var(--border)" data-test="rating-empty">
+        <span class="text-4xl" aria-hidden="true">🏅</span>
+        <p class="m-0 font-semibold">{{ t('comm_empty') }}</p>
+        <p class="dim m-0 text-sm">{{ t(scope === 'friends' ? 'comm_empty_friends_hint' : 'comm_empty_hint') }}</p>
+      </div>
       <template v-else>
         <Podium :slots="podium" :my-id="myId" :badges="badges" :frames="frames" class="mb-3" @open="openedProfileId = $event" />
         <div v-if="rest.length" class="card mb-5 rounded-lg border px-3.5 py-1" style="border-color: var(--border)">
