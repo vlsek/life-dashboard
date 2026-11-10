@@ -210,6 +210,16 @@ async function onDelete(g: Goal) {
       <!-- Приглашения друзей и список целей — независимо друг от друга (раньше `v-else` прятал весь список, когда миграция 063 применена). -->
       <div data-test="goals-body">
         <p v-if="!loaded" class="dim" role="status" data-testid="loading-active">{{ t('load_loading') }}</p>
+        <!-- пусто совсем (ни активных, ни выполненных): карточка с одним понятным действием, как в «Магазине»; иначе — короткая строка -->
+        <div v-else-if="active.length === 0 && items.length === 0" class="card mb-3 flex flex-col items-center gap-2 rounded-2xl border p-6 text-center" style="border-color: var(--border)" data-test="goals-empty">
+          <span class="text-4xl" style="color: var(--accent)" aria-hidden="true"><Icon name="goals" /></span>
+          <p class="m-0 font-semibold">{{ t('goals_no_active') }}</p>
+          <p class="dim m-0 text-sm">{{ t('goals_empty_hint') }}</p>
+          <div class="mt-1 flex flex-wrap justify-center gap-2">
+            <button class="rounded-lg px-4 py-2 text-sm" data-test="goals-empty-add" @click="formDraft = null; formTarget = 'new'"><EmojiText :text="t('goals_add_btn')" /></button>
+            <button class="secondary rounded-lg px-4 py-2 text-sm" data-test="goals-empty-templates" @click="templatesOpen = true">{{ t('goals_tpl_btn') }}</button>
+          </div>
+        </div>
         <p v-else-if="active.length === 0" class="dim">{{ t('goals_no_active') }}</p>
 
         <div v-if="active.length" class="mb-3 flex gap-2" role="group" :aria-label="t('goals_view_aria')" data-test="goals-view-switch">

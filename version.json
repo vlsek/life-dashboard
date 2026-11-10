@@ -1,7 +1,14 @@
 {
-  "version": "8.27",
+  "version": "8.28",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.28",
+      "date": "2026-11-10 10:00",
+      "changes": [
+        "Page hints (the “i” at the top) are now written in the informal “you” like the rest of the Russian texts; the Goals page with no goals shows a card with “Add” and “Templates” buttons instead of a single grey line."
+      ]
+    },
     {
       "version": "8.27",
       "date": "2026-11-10 10:00",
@@ -5845,6 +5852,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.28",
+      "date": "2026-11-10 10:00",
+      "changes": [
+        "Подсказки страниц («i» вверху) переписаны на «ты», как и остальные тексты; страница «Цели» без целей теперь показывает карточку с кнопками «Добавить» и «Шаблоны» вместо одной серой строки."
+      ]
+    },
     {
       "version": "8.27",
       "date": "2026-11-10 10:00",

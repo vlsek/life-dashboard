@@ -36,6 +36,14 @@ describe('«ты» везде: нет формальных форм в русс�
       expect(bad).toEqual([])
     })
   }
+  it('подсказки страниц (lib/pageHints.ts, общая копия) тоже на «ты»', () => {
+    const src: string = readFileSync(`${ROOT}/web-dashboard/src/lib/pageHints.ts`, 'utf-8')
+    const ru = src.split('\n').filter((l: string) => /^\s*ru:\s*\{/.test(l)).join('\n')
+    const bad: string[] = []
+    for (const m of ru.matchAll(FORMAL)) if (!NOUN_WHITELIST.has(m[1].toLowerCase())) bad.push(m[1])
+    expect(ru.length).toBeGreaterThan(500)
+    expect(bad).toEqual([])
+  })
   it('«вы» остаётся только там, где это двое: «Теперь вы друзья», «Вы уже друзья»', () => {
     const ru = ruLines(`${ROOT}/web-community/src/lib/i18n.ts`)
     for (const k of PLURAL_YOU_KEYS) expect(ru.find((x) => x.key === k)?.text).toMatch(/вы друзья|Вы уже друзья/)

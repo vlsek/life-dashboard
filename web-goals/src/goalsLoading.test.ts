@@ -48,3 +48,16 @@ describe('Цели: загрузка и пустота', () => {
     w.unmount()
   })
 })
+
+describe('пустая страница целей — карточка с действием (модернизация)', () => {
+  it('нет ни активных, ни выполненных: карточка с «Добавить» и «Шаблоны»; кнопки открывают форму и шаблоны', async () => {
+    const w = mount(App, { attachTo: document.body })
+    state.loaded.value = true
+    await w.vm.$nextTick()
+    expect(w.find('[data-test="goals-empty"]').exists()).toBe(true)
+    expect(w.text()).toContain(t('goals_empty_hint'))
+    await w.get('[data-test="goals-empty-templates"]').trigger('click')
+    expect(w.find('[data-test="goal-templates-modal"]').exists()).toBe(true)
+    w.unmount()
+  })
+})

@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.27";
+const SITE_VERSION = "8.28";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.28", date: "2026-11-10 10:00", changes: [
+        "Подсказки страниц («i» вверху) переписаны на «ты», как и остальные тексты; страница «Цели» без целей теперь показывает карточку с кнопками «Добавить» и «Шаблоны» вместо одной серой строки.",
+    ]},
     { version: "8.27", date: "2026-11-10 10:00", changes: [
         "Вехи: страница переоформлена. Вместо таблицы — карточки: слева цветная полоса статуса (просрочено, сегодня, скоро), название крупнее, чипы срока и интервала под ним, большая круглая кнопка ✓. Сводка «Просрочено / Скоро» теперь цветные пилюли; шапка с кнопками переносится аккуратно на узком экране; пустая страница показывает кнопки «Добавить веху» и «Шаблоны».",
     ]},
@@ -3091,6 +3094,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.28", date: "2026-11-10 10:00", changes: [
+        "Page hints (the “i” at the top) are now written in the informal “you” like the rest of the Russian texts; the Goals page with no goals shows a card with “Add” and “Templates” buttons instead of a single grey line.",
+    ]},
     { version: "8.27", date: "2026-11-10 10:00", changes: [
         "Milestones: the page is redesigned. Cards instead of a table: a coloured status stripe on the left (overdue, today, soon), a larger title with due/interval chips below, and a big round ✓ button. The “Overdue / Soon” summary is now coloured pills; the header buttons wrap neatly on a narrow screen; the empty page shows “Add milestone” and “Templates” buttons.",
     ]},
