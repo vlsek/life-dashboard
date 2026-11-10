@@ -168,7 +168,12 @@ async function onDeleteBook(b: Book) {
 
         <CollapsibleSection id="active" :title="t('skills_active_h3')" :count="active.length">
           <p v-if="!skillsLoaded" class="dim" role="status" data-testid="loading-active">{{ t('load_loading') }}</p>
-          <p v-else-if="active.length === 0" class="dim">{{ t('skills_none_active') }}</p>
+          <div v-else-if="active.length === 0" class="card flex flex-col items-center gap-2 rounded-2xl border p-5 text-center" style="border-color: var(--border)" data-test="skills-empty">
+            <span class="text-3xl" aria-hidden="true">🌱</span>
+            <p class="m-0 font-semibold">{{ t('skills_none_active') }}</p>
+            <p class="dim m-0 text-sm">{{ t('skills_none_active_hint') }}</p>
+            <button class="mt-1 rounded-lg px-4 py-2 text-sm" style="background: var(--accent); color: var(--accent-text)" data-test="skills-empty-add" @click="openAddSkill()"><EmojiText :text="t('skills_add_btn')" /></button>
+          </div>
           <template v-else>
             <div v-if="active.length > 3" class="mb-2 flex flex-wrap items-center gap-2" data-test="skills-tools">
               <input v-model="query" type="search" class="min-w-0 flex-1 rounded-lg border px-3 py-1.5 text-sm" style="border-color: var(--border); background: var(--bg); color: var(--text)" :placeholder="t('skills_search_ph')" :aria-label="t('skills_search_ph')" data-test="skills-search" />

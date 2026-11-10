@@ -47,4 +47,14 @@ describe('Навыки и книги: загрузка и пустота', () =>
     expect(w.text()).toContain(t('skills_book_list_empty'))
     w.unmount()
   })
+  it('нет навыков — карточка с подсказкой и кнопкой «Добавить навык», которая открывает форму', async () => {
+    const w = mount(App, { attachTo: document.body })
+    state.skillsLoaded.value = true
+    await w.vm.$nextTick()
+    expect(w.find('[data-test="skills-empty"]').text()).toContain(t('skills_none_active_hint'))
+    await w.find('[data-test="skills-empty-add"]').trigger('click')
+    await w.vm.$nextTick()
+    expect(document.body.textContent).toContain(t('skills_new_title'))
+    w.unmount()
+  })
 })
