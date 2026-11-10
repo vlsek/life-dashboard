@@ -16,24 +16,37 @@ PORT = 5196
 OUT = sys.argv[1] if len(sys.argv) > 1 else '/tmp/custaudit'
 
 
-def handler(route):
-    req = route.request
-    url = req.url
-    if req.method == 'OPTIONS':
-        return route.fulfill(status=204, headers=sa.CORS)
-    single = 'vnd.pgrst.object' in (req.headers.get('accept') or '')
-    def ok(d): route.fulfill(status=200, headers={**sa.CORS, 'content-type': 'application/json', 'content-range': '0-0/*'}, body=json.dumps(d))
-    if req.method in ('POST', 'PATCH', 'PUT', 'DELETE') and '/rpc/' not in url:
-        return ok([])
-    if '/rest/v1/rpc/get_leaderboard' in url:
-        return ok([{'user_id': 'u1', 'total_points': 120}])
-    if '/rest/v1/rpc/sync_streak_sparks' in url:
-        return ok([{'earned': 120, 'spent': 25, 'balance': 95}])
-    if '/rest/v1/rpc/' in url:
-        return ok(None)
-    if '/rest/v1/profiles' in url:
-        return ok({'onboarded': True, 'customization': {}, 'debug_mode': False} if single else [{'onboarded': True}])
-    return ok(None if single else [])
+def handler_for(rich):
+    """rich=False — пустой профиль; rich=True — человек с данными: баллов 180 (хватает на дешёвые и средние рамки, на дорогие — нет), надета купленная рамка frame_neon,
+    открыта за достижение frame_gold (достижение streak_30), остальные достижения закрыты — на странице есть все статусы: надето, открыто, можно купить, не хватает, закрыто."""
+    def handler(route):
+        req = route.request
+        url = req.url
+        if req.method == 'OPTIONS':
+            return route.fulfill(status=204, headers=sa.CORS)
+        single = 'vnd.pgrst.object' in (req.headers.get('accept') or '')
+        def ok(d): route.fulfill(status=200, headers={**sa.CORS, 'content-type': 'application/json', 'content-range': '0-0/*'}, body=json.dumps(d))
+        if req.method in ('POST', 'PATCH', 'PUT', 'DELETE') and '/rpc/' not in url:
+            return ok([])
+        if '/rest/v1/rpc/get_leaderboard' in url:
+            return ok([{'user_id': 'u1', 'total_points': 180 if rich else 120}])
+        if '/rest/v1/rpc/sync_streak_sparks' in url:
+            return ok([{'earned': 120, 'spent': 25, 'balance': 95}])
+        if '/rest/v1/rpc/' in url:
+            return ok(None)
+        if '/rest/v1/profiles' in url:
+            if 'customization' in url:
+                return ok({'customization': {'avatar_frame': 'frame_neon'} if rich else {}} if single else [])
+            return ok({'onboarded': True, 'debug_mode': False} if single else [{'onboarded': True}])
+        if rich and '/rest/v1/user_customizations' in url:
+            return ok([{'item_key': 'frame_neon', 'source': 'points', 'unlocked_at': '2026-10-01T10:00:00Z'}, {'item_key': 'frame_gold', 'source': 'achievement', 'unlocked_at': '2026-10-05T10:00:00Z'}])
+        if rich and '/rest/v1/user_achievements' in url:
+            return ok([{'key': 'streak_30'}])
+        return ok(None if single else [])
+    return handler
+
+
+handler = handler_for(False)  # совместимость: прежнее имя (его берёт shop_keyboard_check-подобный код)
 
 
 def keyboard_sweep():
@@ -46,7 +59,7 @@ def keyboard_sweep():
             ctx = br.new_context(viewport={'width': 1280, 'height': 800}, service_workers='block')
             page = ctx.new_page()
             page.route('**/*', lambda r: r.continue_() if r.request.url.startswith('http://127.0.0.1') else r.abort())
-            page.route('**/*.supabase.co/**', handler)
+            page.route('**/*.supabase.co/**', handler_for(True))
             page.add_init_script("localStorage.setItem('site_lang','ru');localStorage.setItem('site_theme','light');localStorage.setItem('welcome_tour_seen','1');localStorage.setItem('page_hint_seen_customization','1');localStorage.setItem('sb-%s-auth-token', %s);" % (sa.REF, json.dumps(json.dumps(sa.SESSION))))
             page.goto('http://127.0.0.1:%d/customization/' % (PORT + 1))
             page.wait_for_selector('[data-testid="slot-cell-themes"]', timeout=10000)
@@ -81,13 +94,14 @@ def main():
     try:
         with sync_playwright() as p:
             br = p.chromium.launch(executable_path='/opt/google/chrome/chrome', args=['--no-sandbox'])
-            for state in ('default', 'show-all'):
+            for mode in ('empty', 'rich'):
+              for state in ('default', 'show-all'):
                 for vp, (w, h) in {'phone': (390, 844), 'desktop': (1280, 800)}.items():
                     for theme in ('light', 'dark'):
                         ctx = br.new_context(viewport={'width': w, 'height': h}, has_touch=(vp == 'phone'), service_workers='block')
                         page = ctx.new_page()
                         page.route('**/*', lambda r: r.continue_() if r.request.url.startswith('http://127.0.0.1') else r.abort())
-                        page.route('**/*.supabase.co/**', handler)
+                        page.route('**/*.supabase.co/**', handler_for(mode == 'rich'))
                         page.add_init_script("localStorage.setItem('site_lang','ru');localStorage.setItem('site_theme','%s');localStorage.setItem('welcome_tour_seen','1');localStorage.setItem('page_hint_seen_customization','1');localStorage.setItem('sb-%s-auth-token', %s);" % (theme, sa.REF, json.dumps(json.dumps(sa.SESSION))))
                         errs = []
                         page.on('pageerror', lambda e: errs.append('PAGE ' + str(e)[:120]))
@@ -98,6 +112,10 @@ def main():
                         except Exception:
                             errs.append('страница не отрисовалась')
                         sa.wait_ready(page)
+                        if mode == 'rich':  # самопроверка мока: данные должны дойти до страницы, иначе прогон «с данными» ничего не проверяет
+                            bal = page.locator('[data-testid="balance"]').first.inner_text() if page.locator('[data-testid="balance"]').count() else ''
+                            if '180' not in bal:
+                                errs.append('мок с данными не применился (баланс: %r)' % bal[:30])
                         if state == 'show-all':
                             btn = page.locator('[data-testid="slot-show-all"]')
                             if btn.count():
@@ -108,7 +126,7 @@ def main():
                         page.evaluate('window.__touch = %s' % ('true' if vp == 'phone' else 'false'))
                         res = page.evaluate(sa.JS)
                         res['errors'] = errs
-                        res['id'] = '%s-%s-%s' % (state, vp, theme)
+                        res['id'] = '%s-%s-%s-%s' % (mode, state, vp, theme)
                         res['cards'] = page.locator('button:visible').count()
                         page.screenshot(path=os.path.join(OUT, res['id'] + '.png'), full_page=True)
                         report.append(res)
