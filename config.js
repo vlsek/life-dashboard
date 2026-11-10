@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.34";
+const SITE_VERSION = "8.35";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.35", date: "2026-11-04 17:00", changes: [
+        "Тренировки: на вкладке «Прогрессия» сверху появилась карточка «Неделя в цифрах». Она показывает за текущую неделю (пн–вс) число дней с тренировкой, рабочих подходов и общий объём и сравнивает их с прошлой неделей («+2 (+50 %)», «как на прошлой неделе», «новое на этой неделе»), а ниже рисует столбики объёма за последние 8 недель. Разминочные подходы не считаются. Данные берутся из уже загруженных записей, ничего не пишется. Без миграций."
+    ]},
     { version: "8.34", date: "2026-11-10 17:00", changes: [
         "Сообщество: переключатели «Все / Только друзья» и периода («Неделя / Месяц / Всё время») стали компактными пилюлями (не крупными кнопками), выбранный отмечен для скринридеров; пустой рейтинг — карточка с подсказкой (для «Только друзья» — «добавь друзей на вкладке „Друзья“»).",
     ]},
@@ -3112,6 +3115,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.35", date: "2026-11-04 17:00", changes: [
+        "Workouts: the “Progress” tab now starts with a “Week in numbers” card. For the current week (Mon–Sun) it shows the number of workout days, working sets and total volume and compares them with last week (“+2 (+50 %)”, “same as last week”, “new this week”), and below it draws volume bars for the last 8 weeks. Warm-up sets are not counted. The data comes from already loaded entries and nothing is written. No migrations."
+    ]},
     { version: "8.34", date: "2026-11-10 17:00", changes: [
         "Community: the “Everyone / Friends only” and period (“Week / Month / All time”) switches are now compact pills instead of large buttons, with the selected one exposed to screen readers; an empty ranking is a card with a hint (for “Friends only”: “add friends on the Friends tab”).",
     ]},
