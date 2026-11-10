@@ -59,9 +59,15 @@ class ArgumentValidationTests(unittest.TestCase):
             with self.subTest(value=value), self.assertRaises(SystemExit):
                 vr.parse_args(["--threshold", value])
 
-    def test_rejects_negative_wait(self):
-        with self.assertRaises(SystemExit):
-            vr.parse_args(["--wait", "-0.1"])
+    def test_rejects_negative_or_non_finite_wait(self):
+        for value in ("-0.1", "nan", "inf"):
+            with self.subTest(value=value), self.assertRaises(SystemExit):
+                vr.parse_args(["--wait", value])
+
+    def test_rejects_non_finite_threshold(self):
+        for value in ("nan", "inf"):
+            with self.subTest(value=value), self.assertRaises(SystemExit):
+                vr.parse_args(["--threshold", value])
 
     def test_rejects_inconsistent_tap_target_limits(self):
         with self.assertRaises(SystemExit):
