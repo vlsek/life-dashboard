@@ -26,7 +26,6 @@ import time
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlparse
-import re
 
 ROOT = Path(__file__).resolve().parent.parent
 CHROME = os.environ.get('CHROME', '/opt/google/chrome/chrome')
@@ -184,14 +183,15 @@ def parse_args(argv=None):
 
 def main(argv=None) -> int:
     args, pages, viewports, themes = parse_args(argv)
-    from playwright.sync_api import sync_playwright
-
     session = make_session()
     srv = start_server()
     base = f'http://127.0.0.1:{srv.server_address[1]}'
     out_root = Path(args.out)
     hard, warn, changed, rows = 0, 0, 0, []
+    runner_error = None
+    return_code = 0
     try:
+        from playwright.sync_api import sync_playwright
         with sync_playwright() as pw:
             browser = pw.chromium.launch(executable_path=CHROME, args=['--no-sandbox'])
             try:
@@ -263,10 +263,15 @@ def main(argv=None) -> int:
                 return_code = 1 if hard else 0
             finally:
                 browser.close()
+    except Exception as exc:
+        runner_error = f'{type(exc).__name__}: {exc}'
+        hard += 1
+        return_code = 1
+        rows.append('ОШИБКА   runner   — ' + runner_error[:240])
     finally:
         srv.shutdown()
         srv.server_close()
-    summary = {'runs': len(rows), 'hard_issues': hard, 'warnings': warn, 'changed_vs_baseline': changed if args.baseline else None}
+    summary = {'runs': len(rows), 'hard_issues': hard, 'warnings': warn, 'changed_vs_baseline': changed if args.baseline else None, 'runner_error': runner_error}
     print('\n'.join(rows))
     print(f'\nстраниц×режимов: {len(rows)} | жёстких проблем: {hard} | замечаний: {warn}' + (f' | изменились относительно baseline: {changed}' if args.baseline else '') + f' | скриншоты: {out_root}')
     print('Границы: локальные собранные папки; production: ' + ('проверен вручную' if args.mark_production_checked else 'НЕ проверен') + '; физическое устройство: ' + ('проверено вручную' if args.mark_real_device_checked else 'НЕ проверено (phone — эмуляция)'))
@@ -285,6 +290,7 @@ def main(argv=None) -> int:
             'baseline': str(Path(args.baseline)) if args.baseline else None,
             'screenshots': str(out_root),
             'summary': summary,
+            'runner_error': runner_error,
             'results': rows,
         }
         report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
