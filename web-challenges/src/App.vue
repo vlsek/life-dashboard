@@ -108,7 +108,7 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
     <div class="mb-4 flex items-center justify-between">
       <h1 class="text-xl font-semibold"><EmojiText :text="t('ch_h1')" /></h1>
     </div>
-    <div class="mb-4 flex flex-wrap gap-2">
+    <div v-if="!(loaded && !error && active.length === 0)" class="mb-4 flex flex-wrap gap-2" data-test="ch-toolbar">
       <button @click="catalogOpen = true"><EmojiText :text="t('ch_catalog_btn')" /></button>
       <button class="secondary" @click="customFormOpen = true"><EmojiText :text="t('ch_custom_btn')" /></button>
     </div>
@@ -120,7 +120,14 @@ async function onSetDay(challengeId: string, dateStr: string, value: number) {
       <LoadError v-if="error" :message="error" :retry="reload"> — {{ t('ch_migration_hint') }}</LoadError>
       <template v-else>
         <p v-if="!loaded" class="dim" role="status" data-testid="loading-active">{{ t('load_loading') }}</p>
-        <p v-else-if="active.length === 0" class="dim">{{ t('ch_no_active') }}</p>
+        <div v-else-if="active.length === 0" class="card mb-3 flex flex-col items-center gap-2 rounded-2xl border p-6 text-center" style="border-color: var(--border)" data-test="ch-empty">
+          <span class="text-4xl" aria-hidden="true">🏆</span>
+          <p class="dim m-0 text-sm">{{ t('ch_no_active') }}</p>
+          <div class="mt-1 flex flex-wrap justify-center gap-2">
+            <button class="rounded-lg px-4 py-2 text-sm" data-test="ch-empty-catalog" @click="catalogOpen = true"><EmojiText :text="t('ch_catalog_btn')" /></button>
+            <button class="secondary rounded-lg px-4 py-2 text-sm" data-test="ch-empty-custom" @click="customFormOpen = true"><EmojiText :text="t('ch_custom_btn')" /></button>
+          </div>
+        </div>
         <template v-for="ch in active" :key="ch.id">
           <CumulativeChallengeCard
             v-if="ch.type === 'cumulative_count'"

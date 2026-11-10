@@ -36,4 +36,21 @@ describe('Челленджи: загрузка и пустота', () => {
     expect(w.text()).toContain(t('ch_no_active'))
     w.unmount()
   })
+  it('пустота — карточка с двумя действиями; верхняя панель кнопок в этом состоянии не дублируется', async () => {
+    const w = mount(App, { attachTo: document.body })
+    state.loaded.value = true
+    await w.vm.$nextTick()
+    expect(w.find('[data-test="ch-empty"]').exists()).toBe(true)
+    expect(w.find('[data-test="ch-toolbar"]').exists()).toBe(false)
+    await w.find('[data-test="ch-empty-catalog"]').trigger('click')
+    await w.vm.$nextTick()
+    expect(document.body.textContent).toContain('Каталог челленджей')
+    w.unmount()
+  })
+  it('пока грузится — пустой карточки нет, а кнопки вверху доступны', () => {
+    const w = mount(App)
+    expect(w.find('[data-test="ch-empty"]').exists()).toBe(false)
+    expect(w.find('[data-test="ch-toolbar"]').exists()).toBe(true)
+    w.unmount()
+  })
 })
