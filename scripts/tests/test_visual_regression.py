@@ -67,6 +67,23 @@ class ArgumentValidationTests(unittest.TestCase):
         with self.assertRaises(SystemExit):
             vr.parse_args(["--themes", "dark');alert(1)//"])
 
+    def test_rejects_unknown_but_syntactically_safe_theme(self):
+        with self.assertRaises(SystemExit):
+            vr.parse_args(["--themes", "ultraviolet"])
+
+    def test_rejects_duplicate_pages(self):
+        with self.assertRaises(SystemExit):
+            vr.parse_args(["shop", "shop"])
+
+    def test_rejects_same_or_nested_output_and_baseline_paths(self):
+        for output, baseline in (
+            ("/tmp/visual", "/tmp/visual"),
+            ("/tmp/visual/after", "/tmp/visual"),
+            ("/tmp/visual", "/tmp/visual/baseline"),
+        ):
+            with self.subTest(output=output, baseline=baseline), self.assertRaises(SystemExit):
+                vr.parse_args(["--out", output, "--baseline", baseline])
+
     def test_rejects_threshold_outside_zero_to_one(self):
         for value in ("-0.1", "1.1"):
             with self.subTest(value=value), self.assertRaises(SystemExit):
