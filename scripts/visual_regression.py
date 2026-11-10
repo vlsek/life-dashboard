@@ -257,8 +257,8 @@ def main(argv=None) -> int:
         srv.shutdown()
         srv.server_close()
     summary = {'runs': len(rows), 'hard_issues': hard, 'warnings': warn, 'changed_vs_baseline': changed if args.baseline else None}
-    print('\\n'.join(rows))
-    print(f'\\nстраниц×режимов: {len(rows)} | жёстких проблем: {hard} | замечаний: {warn}' + (f' | изменились относительно baseline: {changed}' if args.baseline else '') + f' | скриншоты: {out_root}')
+    print('\n'.join(rows))
+    print(f'\nстраниц×режимов: {len(rows)} | жёстких проблем: {hard} | замечаний: {warn}' + (f' | изменились относительно baseline: {changed}' if args.baseline else '') + f' | скриншоты: {out_root}')
     print('Границы: локальные собранные папки; production: ' + ('проверен вручную' if args.mark_production_checked else 'НЕ проверен') + '; физическое устройство: ' + ('проверено вручную' if args.mark_real_device_checked else 'НЕ проверено (phone — эмуляция)'))
     if args.report:
         report_path = Path(args.report)
@@ -277,7 +277,7 @@ def main(argv=None) -> int:
             'summary': summary,
             'results': rows,
         }
-        report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\\n', encoding='utf-8')
+        report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
         print(f'JSON-отчёт: {report_path}')
     return return_code
 
