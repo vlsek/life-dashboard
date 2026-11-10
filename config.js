@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.25";
+const SITE_VERSION = "8.26";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.26", date: "2026-11-04 14:00", changes: [
+        "Тренировки: в карточке рутины рядом с «Начать» теперь только кнопка «⋯». Копирование, папка, архив и удаление спрятаны в её меню, чтобы не нажать «Удалить» случайно (особенно на узком экране, где значки стояли вплотную). Меню закрывается по Esc и после действия; удаление по-прежнему просит подтверждение. Без миграций."
+    ]},
     { version: "8.25", date: "2026-11-10 09:30", changes: [
         "«Тренировки»: в активной тренировке под таймером отдыха появилась мини-карта тела — мышцы сегодняшней сессии подсвечиваются и заливаются по мере выполненных подходов, остальные приглушены.",
     ]},
@@ -3085,6 +3088,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.26", date: "2026-11-04 14:00", changes: [
+        "Workouts: next to “Start” a routine card now has only a “⋯” button. Copy, folder, archive and delete are tucked into its menu so you cannot hit “Delete” by accident (especially on a narrow screen where the icons sat shoulder to shoulder). The menu closes on Esc and after an action; deleting still asks for confirmation. No migrations."
+    ]},
     { version: "8.25", date: "2026-11-10 09:30", changes: [
         "Workouts: the active workout now shows a mini body map under the rest timer — the muscles of today’s session are highlighted and fill as you complete sets; the rest are dimmed.",
     ]},

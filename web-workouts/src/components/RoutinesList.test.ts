@@ -97,3 +97,51 @@ describe('RoutinesList: папки и архив (69.7)', () => {
     expect(w.find('[data-testid="routines-archive"]').exists()).toBe(false)
   })
 })
+
+describe('RoutinesList: меню «⋯» (69.17, срез 7)', () => {
+  const shown = (w: ReturnType<typeof mk>, id: string) => (w.get(`[data-testid="routine-menu-items-${id}"]`).element as HTMLElement).style.display !== 'none'
+  const one = () => {
+    useRoutines().routines.value = [routine('r1', 'Верх A', ['e1']), routine('r2', 'Ноги', ['e3'])]
+    return mk()
+  }
+  it('по умолчанию меню закрыто: рядом с «Начать» только «⋯»; кнопка меню отражает состояние', async () => {
+    const w = one()
+    expect(shown(w, 'r1')).toBe(false)
+    const btn = w.get('[data-testid="routine-menu-r1"]')
+    expect(btn.attributes('aria-expanded')).toBe('false')
+    await btn.trigger('click')
+    expect(shown(w, 'r1')).toBe(true)
+    expect(shown(w, 'r2')).toBe(false) // у другой карточки меню не открылось
+    expect(w.get('[data-testid="routine-menu-r1"]').attributes('aria-expanded')).toBe('true')
+    await btn.trigger('click')
+    expect(shown(w, 'r1')).toBe(false)
+  })
+  it('в меню четыре действия, они не стоят в одном ряду с «Начать»', async () => {
+    const w = one()
+    const menu = w.get('[data-testid="routine-menu-items-r1"]')
+    for (const k of ['dup', 'folder', 'archive', 'del']) expect(menu.find(`[data-testid="routine-${k}-r1"]`).exists()).toBe(true)
+    const startRow = w.get('[data-testid="routine-start-r1"]').element.parentElement as HTMLElement
+    for (const k of ['dup', 'folder', 'archive', 'del']) expect(startRow.querySelector(`[data-testid="routine-${k}-r1"]`)).toBeNull()
+    expect(startRow.querySelector('[data-testid="routine-menu-r1"]')).not.toBeNull()
+  })
+  it('Esc закрывает меню; действие (копирование) закрывает меню', async () => {
+    const w = one()
+    await w.get('[data-testid="routine-menu-r1"]').trigger('click')
+    await w.get('[data-testid="routine-r1"]').trigger('keydown', { key: 'Escape' })
+    expect(shown(w, 'r1')).toBe(false)
+    await w.get('[data-testid="routine-menu-r1"]').trigger('click')
+    await w.get('[data-testid="routine-dup-r1"]').trigger('click')
+    expect(shown(w, 'r1')).toBe(false)
+    expect(w.findAll('[data-testid^="routine-start-"]')).toHaveLength(3)
+  })
+  it('удаление из меню закрывает меню и по-прежнему спрашивает подтверждение', async () => {
+    const w = one()
+    dlg.answer = false
+    await w.get('[data-testid="routine-menu-r1"]').trigger('click')
+    await w.get('[data-testid="routine-del-r1"]').trigger('click')
+    await flushPromises()
+    expect(dlg.asked).toHaveLength(1)
+    expect(shown(w, 'r1')).toBe(false)
+    expect(w.find('[data-testid="routine-r1"]').exists()).toBe(true)
+  })
+})

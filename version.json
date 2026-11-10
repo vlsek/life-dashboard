@@ -1,7 +1,14 @@
 {
-  "version": "8.25",
+  "version": "8.26",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.26",
+      "date": "2026-11-04 14:00",
+      "changes": [
+        "Workouts: next to “Start” a routine card now has only a “⋯” button. Copy, folder, archive and delete are tucked into its menu so you cannot hit “Delete” by accident (especially on a narrow screen where the icons sat shoulder to shoulder). The menu closes on Esc and after an action; deleting still asks for confirmation. No migrations."
+      ]
+    },
     {
       "version": "8.25",
       "date": "2026-11-10 09:30",
@@ -5831,6 +5838,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.26",
+      "date": "2026-11-04 14:00",
+      "changes": [
+        "Тренировки: в карточке рутины рядом с «Начать» теперь только кнопка «⋯». Копирование, папка, архив и удаление спрятаны в её меню, чтобы не нажать «Удалить» случайно (особенно на узком экране, где значки стояли вплотную). Меню закрывается по Esc и после действия; удаление по-прежнему просит подтверждение. Без миграций."
+      ]
+    },
     {
       "version": "8.25",
       "date": "2026-11-10 09:30",
