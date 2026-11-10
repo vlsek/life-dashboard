@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.30";
+const SITE_VERSION = "8.31";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.31", date: "2026-11-10 12:00", changes: [
+        "Навыки: когда в «В процессе» пусто, вместо одной серой строки — карточка с ростком, подсказкой («выбери идею выше или добавь свой навык») и кнопкой «Добавить навык».",
+    ]},
     { version: "8.30", date: "2026-11-10 11:00", changes: [
         "Челленджи: когда активных челленджей нет, вместо серой строки — карточка с кубком и двумя кнопками «Выбрать из каталога» и «Свой челлендж» (как в Целях); верхняя панель кнопок в этот момент не дублируется.",
     ]},
@@ -3100,6 +3103,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.31", date: "2026-11-10 12:00", changes: [
+        "Skills: when “In progress” is empty, a card with a sprout, a hint (“pick an idea above or add your own skill”) and an “Add skill” button replaces the single grey line.",
+    ]},
     { version: "8.30", date: "2026-11-10 11:00", changes: [
         "Challenges: when there are no active challenges, a card with a trophy and two buttons — “Pick from catalog” and “Custom challenge” — replaces the grey line (as in Goals); the top button row is not duplicated at that moment.",
     ]},

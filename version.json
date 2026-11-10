@@ -1,7 +1,14 @@
 {
-  "version": "8.30",
+  "version": "8.31",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.31",
+      "date": "2026-11-10 12:00",
+      "changes": [
+        "Skills: when “In progress” is empty, a card with a sprout, a hint (“pick an idea above or add your own skill”) and an “Add skill” button replaces the single grey line."
+      ]
+    },
     {
       "version": "8.30",
       "date": "2026-11-10 11:00",
@@ -5866,6 +5873,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.31",
+      "date": "2026-11-10 12:00",
+      "changes": [
+        "Навыки: когда в «В процессе» пусто, вместо одной серой строки — карточка с ростком, подсказкой («выбери идею выше или добавь свой навык») и кнопкой «Добавить навык»."
+      ]
+    },
     {
       "version": "8.30",
       "date": "2026-11-10 11:00",
