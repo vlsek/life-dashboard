@@ -225,7 +225,12 @@ function onTouchEnd(e: TouchEvent) {
 
     <template v-else-if="ctx">
       <template v-if="!ctx.firstDate && !isCalendar">
-        <p class="text-sm" style="color: var(--text-dim)">{{ t('hist_no_data') }}</p>
+        <div class="flex flex-col items-center gap-2 rounded-2xl border p-6 text-center" style="border-color: var(--border)" data-test="hist-empty">
+          <span class="text-4xl" aria-hidden="true">📈</span>
+          <p class="m-0 font-semibold">{{ t('hist_no_data') }}</p>
+          <p class="m-0 text-sm" style="color: var(--text-dim)">{{ t('hist_no_data_hint') }}</p>
+          <a href="/dashboard/" class="mt-1 rounded-lg px-4 py-2 text-sm no-underline" style="background: var(--accent); color: var(--accent-text)" data-test="hist-empty-link">{{ t('hist_no_data_cta') }}</a>
+        </div>
       </template>
 
       <template v-else>

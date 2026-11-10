@@ -54,3 +54,21 @@ describe('HistoryView: ошибка загрузки', () => {
     w.unmount()
   })
 })
+
+describe('HistoryView: пустая история (современное пустое состояние)', () => {
+  it('данных нет — карточка с подсказкой и ссылкой на дашборд; при ошибке загрузки карточки нет', async () => {
+    h.fail = false
+    const w = mount(HistoryView, { props: { show: { summary: true, progress: true, weekcol: true, stats: true, chart: true, weeks: true } as never, mode: 'history' as never } })
+    for (let i = 0; i < 12; i++) await flushPromises()
+    const box = w.find('[data-test="hist-empty"]')
+    expect(box.exists()).toBe(true)
+    expect(box.text()).toContain('За этот период данных пока нет.')
+    expect(w.find('[data-test="hist-empty-link"]').attributes('href')).toBe('/dashboard/')
+    w.unmount()
+    h.fail = true
+    const w2 = mount(HistoryView, { props: { show: { summary: true, progress: true, weekcol: true, stats: true, chart: true, weeks: true } as never, mode: 'history' as never } })
+    for (let i = 0; i < 12; i++) await flushPromises()
+    expect(w2.find('[data-test="hist-empty"]').exists()).toBe(false)
+    w2.unmount()
+  })
+})
