@@ -26,7 +26,6 @@ vi.mock('./lib/supabase', () => ({
 }))
 
 import App from './App.vue'
-import { BODY_OUTLINE } from './lib/muscleShapes'
 import { FEMALE_OUTLINE } from './lib/bodyModel'
 
 async function mountApp() {
@@ -35,7 +34,9 @@ async function mountApp() {
   await flushPromises()
   return w
 }
-const outline = (w: ReturnType<typeof mount>) => w.find('[data-testid="body-outline"]').attributes('d')
+// мужская модель — новые направления карты (A/B/C, 70.1): у них нет прежнего контура `body-outline`; женская пока на прежней геометрии
+const MALE_FIGURE = 'male-figure'
+const outline = (w: ReturnType<typeof mount>) => (w.find('[data-testid="body-outline"]').exists() ? w.find('[data-testid="body-outline"]').attributes('d') : w.find('.muscle-stage').exists() ? MALE_FIGURE : undefined)
 
 beforeEach(() => {
   localStorage.clear()
@@ -45,7 +46,7 @@ beforeEach(() => {
 describe('Тренировки: модель тела карты мышц', () => {
   it('без пола и без выбора — мужская модель', async () => {
     const w = await mountApp()
-    expect(outline(w)).toBe(BODY_OUTLINE)
+    expect(outline(w)).toBe(MALE_FIGURE)
     w.unmount()
   })
 
@@ -61,11 +62,11 @@ describe('Тренировки: модель тела карты мышц', () =
     h.gender = 'female'
     const w = await mountApp()
     await w.find('[data-testid="body-model-male"]').trigger('click')
-    expect(outline(w)).toBe(BODY_OUTLINE)
+    expect(outline(w)).toBe(MALE_FIGURE)
     expect(localStorage.getItem('workouts_body_model')).toBe('male')
     w.unmount()
     const w2 = await mountApp()
-    expect(outline(w2)).toBe(BODY_OUTLINE)
+    expect(outline(w2)).toBe(MALE_FIGURE)
     w2.unmount()
   })
 })
