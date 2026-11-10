@@ -177,9 +177,9 @@ function closeHistory() {
   <AppShell :user-email="auth.status === 'ready' ? auth.userEmail : null" />
 
   <main class="mx-auto max-w-3xl px-4 pb-16 pt-4">
-    <div class="mb-4 flex items-center justify-between">
-      <h1 class="text-xl font-semibold"><EmojiText :text="t('nav_milestones')" /></h1>
-      <div v-if="auth.status === 'ready'" class="flex gap-2">
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2" data-test="ms-header">
+      <h1 class="min-w-0 text-xl font-semibold"><EmojiText :text="t('nav_milestones')" /></h1>
+      <div v-if="auth.status === 'ready'" class="flex flex-wrap gap-2">
         <button class="secondary rounded-lg px-3 py-1.5 text-sm" data-test="ms-timeline-btn" @click="timelineOpen = true">{{ t('ms_tl_btn') }}</button>
         <button class="secondary rounded-lg px-3 py-1.5 text-sm" data-test="ms-templates-btn" @click="templatesOpen = true">{{ t('ms_templates_btn') }}</button>
         <button class="rounded-lg px-3 py-1.5 text-sm" style="background: var(--accent); color: var(--accent-text)" @click="openAddForm">
@@ -195,14 +195,19 @@ function closeHistory() {
       <p v-if="saveError" class="mb-3 text-sm" style="color: var(--danger)">{{ saveError }}</p>
 
       <template v-if="!error">
-        <p v-if="sum.overdue || sum.soon" class="mb-3 text-sm">
-          <span v-if="sum.overdue" style="color: #d6336c">{{ t('ms_summary_overdue') }} {{ sum.overdue }}</span>
-          <span v-if="sum.overdue && sum.soon"> · </span>
-          <span v-if="sum.soon" style="color: #e0a93b">{{ t('ms_summary_soon') }} {{ sum.soon }}</span>
+        <p v-if="sum.overdue || sum.soon" class="mb-3 flex flex-wrap gap-2 text-sm" data-test="ms-summary">
+          <span v-if="sum.overdue" class="rounded-full px-3 py-1 font-medium" style="background: color-mix(in srgb, #d6336c 16%, transparent); color: #d6336c">{{ t('ms_summary_overdue') }} {{ sum.overdue }}</span>
+          <span v-if="sum.soon" class="rounded-full px-3 py-1 font-medium" style="background: color-mix(in srgb, #e0a93b 18%, transparent); color: #e0a93b">{{ t('ms_summary_soon') }} {{ sum.soon }}</span>
         </p>
 
         <p v-if="!loaded" class="dim" role="status" data-testid="loading-active">{{ t('load_loading') }}</p>
-        <p v-else-if="active.length === 0" class="dim">{{ t('ms_no_active') }}</p>
+        <div v-else-if="active.length === 0" class="mb-4 rounded-2xl border p-5 text-center" style="border-color: var(--border); background: var(--surface, transparent)" data-test="ms-empty">
+          <p class="dim mb-3">{{ t('ms_no_active') }}</p>
+          <div class="flex flex-wrap justify-center gap-2">
+            <button class="rounded-lg px-4 py-2 text-sm" style="background: var(--accent); color: var(--accent-text)" data-test="ms-empty-add" @click="openAddForm"><EmojiText :text="t('ms_add_btn')" /></button>
+            <button class="secondary rounded-lg px-4 py-2 text-sm" data-test="ms-empty-templates" @click="templatesOpen = true">{{ t('ms_templates_btn') }}</button>
+          </div>
+        </div>
 
         <div v-if="tabs.length > 2" class="mb-4 flex flex-wrap gap-1.5" role="tablist" data-test="category-tabs">
           <button
@@ -222,57 +227,55 @@ function closeHistory() {
 
         <div v-for="[cat, list] in grouped" :key="cat" class="mb-5">
           <h3 class="mb-2 text-base font-medium">{{ cat }}</h3>
-          <div class="table-scroll overflow-x-auto" data-test="table-scroll">
-            <table class="w-full">
-              <tbody>
-                <tr v-for="m in list" :key="m.id" class="align-top">
-                  <td class="w-px py-1.5 pr-2">
-                    <button class="secondary px-2" :title="t('ms_mark_done_btn')" @click="openMarkDone(m)">✓</button>
-                  </td>
-                  <td class="w-full py-1.5">
-                    <div>{{ m.name }}</div>
-                    <div class="mt-1 flex flex-wrap gap-1.5 text-xs">
-                      <span
-                        v-if="chipText(m)"
-                        class="whitespace-nowrap rounded-full border px-2 py-0.5"
-                        :style="{ borderColor: chipColor(statusLevel(m.due_date).level), color: chipColor(statusLevel(m.due_date).level) }"
-                        >{{ chipText(m) }}</span
-                      >
-                      <span v-if="intervalText(m)" class="dim whitespace-nowrap rounded-full border px-2 py-0.5" style="border-color: var(--border)">{{ intervalText(m) }}</span>
-                      <span v-if="lastTimeText(m)" class="dim whitespace-nowrap rounded-full border px-2 py-0.5" style="border-color: var(--border)">{{ lastTimeText(m) }}</span>
-                      <span v-if="nextKmText(m)" class="dim whitespace-nowrap rounded-full border px-2 py-0.5" style="border-color: var(--border)">{{ nextKmText(m) }}</span>
-                    </div>
-                    <div v-if="m.note" class="dim mt-1 text-xs">{{ m.note }}</div>
-                  </td>
-                  <td class="w-px py-1.5 pl-2 text-right whitespace-nowrap">
-                    <button v-if="m.history?.length" class="secondary px-2" :title="t('ms_history_title')" @click="openHistory(m)"><Icon name="history" /></button>
-                    <button class="secondary px-2" :title="t('ms_edit_btn')" @click="openEditForm(m)"><Icon name="edit" /></button>
-                    <button class="danger px-2" @click="onDelete(m)">✕</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <ul class="m-0 flex list-none flex-col gap-2 p-0">
+            <li
+              v-for="m in list"
+              :key="m.id"
+              class="flex items-start gap-3 rounded-xl border p-3"
+              :style="{ borderColor: 'var(--border)', borderLeft: '4px solid ' + (statusLevel(m.due_date).level ? chipColor(statusLevel(m.due_date).level) : 'var(--border)') }"
+              data-test="ms-card"
+            >
+              <button class="secondary shrink-0 rounded-full" style="width: 40px; height: 40px" :title="t('ms_mark_done_btn')" :aria-label="t('ms_mark_done_btn')" @click="openMarkDone(m)">✓</button>
+              <div class="min-w-0 flex-1">
+                <div class="font-medium">{{ m.name }}</div>
+                <div class="mt-1 flex flex-wrap gap-1.5 text-xs">
+                  <span
+                    v-if="chipText(m)"
+                    class="whitespace-nowrap rounded-full border px-2 py-0.5"
+                    :style="{ borderColor: chipColor(statusLevel(m.due_date).level), color: chipColor(statusLevel(m.due_date).level) }"
+                    >{{ chipText(m) }}</span
+                  >
+                  <span v-if="intervalText(m)" class="dim whitespace-nowrap rounded-full border px-2 py-0.5" style="border-color: var(--border)">{{ intervalText(m) }}</span>
+                  <span v-if="lastTimeText(m)" class="dim whitespace-nowrap rounded-full border px-2 py-0.5" style="border-color: var(--border)">{{ lastTimeText(m) }}</span>
+                  <span v-if="nextKmText(m)" class="dim whitespace-nowrap rounded-full border px-2 py-0.5" style="border-color: var(--border)">{{ nextKmText(m) }}</span>
+                </div>
+                <div v-if="m.note" class="dim mt-1 text-xs">{{ m.note }}</div>
+              </div>
+              <div class="flex shrink-0 gap-1">
+                <button v-if="m.history?.length" class="secondary px-2" :title="t('ms_history_title')" @click="openHistory(m)"><Icon name="history" /></button>
+                <button class="secondary px-2" :title="t('ms_edit_btn')" @click="openEditForm(m)"><Icon name="edit" /></button>
+                <button class="danger px-2" @click="onDelete(m)">✕</button>
+              </div>
+            </li>
+          </ul>
         </div>
 
         <h3 class="mb-2 mt-6 text-base font-medium"><EmojiText :text="t('ms_done_h2')" /></h3>
         <p v-if="!loaded" class="dim" role="status" data-testid="loading-done">{{ t('load_loading') }}</p>
         <p v-else-if="done.length === 0" class="dim">{{ t('ms_no_done') }}</p>
-        <div v-else class="table-scroll overflow-x-auto" data-test="table-scroll">
-          <table class="w-full">
-            <tbody>
-              <tr v-for="m in done" :key="m.id" class="align-top">
-                <td class="done-text w-full py-1.5">{{ m.name }}</td>
-                <td class="dim whitespace-nowrap px-2 py-1.5 text-xs">{{ fmtRu(m.last_date) }}{{ m.last_km ? ' · ' + fmtKmVal(m.last_km) : '' }}</td>
-                <td class="w-px py-1.5 pl-2 text-right whitespace-nowrap">
-                  <button v-if="m.history?.length" class="secondary px-2" :title="t('ms_history_title')" @click="openHistory(m)"><Icon name="history" /></button>
-                  <button class="secondary px-2" :title="t('ms_edit_btn')" @click="openEditForm(m)"><Icon name="edit" /></button>
-                  <button class="danger px-2" @click="onDelete(m)">✕</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <ul v-else class="m-0 flex list-none flex-col gap-1.5 p-0">
+          <li v-for="m in done" :key="m.id" class="flex items-center gap-2 rounded-lg border px-3 py-2" style="border-color: var(--border)" data-test="ms-done-card">
+            <div class="min-w-0 flex-1">
+              <div class="done-text">{{ m.name }}</div>
+              <div class="dim text-xs">{{ fmtRu(m.last_date) }}{{ m.last_km ? ' · ' + fmtKmVal(m.last_km) : '' }}</div>
+            </div>
+            <div class="flex shrink-0 gap-1">
+              <button v-if="m.history?.length" class="secondary px-2" :title="t('ms_history_title')" @click="openHistory(m)"><Icon name="history" /></button>
+              <button class="secondary px-2" :title="t('ms_edit_btn')" @click="openEditForm(m)"><Icon name="edit" /></button>
+              <button class="danger px-2" @click="onDelete(m)">✕</button>
+            </div>
+          </li>
+        </ul>
       </template>
     </template>
 

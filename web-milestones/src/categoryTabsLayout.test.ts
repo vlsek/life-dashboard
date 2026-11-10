@@ -13,14 +13,15 @@ describe('Вехи: вкладки категорий и строки табли
     expect(on).not.toMatch(/(^|;\s*)color: var\(--accent\)/)
     expect(off).toContain('background: transparent')
   })
-  it('в таблицах название занимает свободное место, кнопки — узкая колонка; кнопки действий компактные', () => {
-    const rows = [...appSource.matchAll(/<tr v-for="m in (?:list|done)" :key="m\.id" class="align-top">([\s\S]*?)<\/tr>/g)].map((m) => m[1])
-    expect(rows).toHaveLength(2)
-    for (const r of rows) {
-      expect(r).toMatch(/<td class="[^"]*w-full[^"]*">/)
-      expect(r).toMatch(/<td class="w-px py-1\.5 pl-2 text-right whitespace-nowrap">/)
-      expect(r).toContain('class="secondary px-2"')
-      expect(r).toContain('class="danger px-2"')
+  it('в списках вех — карточки: название занимает свободное место, кнопки действий компактные, у активных — круглая «✓» и полоса статуса', () => {
+    const cards = [...appSource.matchAll(/<li\s+v-for="m in (?:list|done)"([\s\S]*?)<\/li>/g)].map((m) => m[1])
+    expect(cards).toHaveLength(2)
+    for (const c of cards) {
+      expect(c).toMatch(/class="min-w-0 flex-1"/)
+      expect(c).toContain('class="secondary px-2"')
+      expect(c).toContain('class="danger px-2"')
     }
+    expect(cards[0]).toContain("borderLeft: '4px solid '")
+    expect(cards[0]).toMatch(/rounded-full[^>]*style="width: 40px; height: 40px"/)
   })
 })
