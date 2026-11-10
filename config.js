@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.33";
+const SITE_VERSION = "8.34";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.34", date: "2026-11-10 17:00", changes: [
+        "Сообщество: переключатели «Все / Только друзья» и периода («Неделя / Месяц / Всё время») стали компактными пилюлями (не крупными кнопками), выбранный отмечен для скринридеров; пустой рейтинг — карточка с подсказкой (для «Только друзья» — «добавь друзей на вкладке „Друзья“»).",
+    ]},
     { version: "8.33", date: "2026-11-07 16:00", changes: [
         "«Тренировки» → «Карта мышц»: три новых вида карты — «Анатомия» (тёплая анатомическая заливка), «Атлас» (лаконичная схема: задействованные мышцы голубым, остальные пунктиром, выноски) и «Техно» (бирюзовый каркас с узлами, подсвечиваются узлы выбранной мышцы). У каждого вида свой рисунок фигуры, выбор запоминается; нажатие, Enter и пробел по-прежнему выбирают мышцу, режимы «Недавно / Подходы / Покрытие» работают во всех трёх. Для женской модели тела пока остаётся прежний рисунок. Без миграций."
     ]},
@@ -3109,6 +3112,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.34", date: "2026-11-10 17:00", changes: [
+        "Community: the “Everyone / Friends only” and period (“Week / Month / All time”) switches are now compact pills instead of large buttons, with the selected one exposed to screen readers; an empty ranking is a card with a hint (for “Friends only”: “add friends on the Friends tab”).",
+    ]},
     { version: "8.33", date: "2026-11-07 16:00", changes: [
         "Workouts → Muscle map: three new map styles — “Anatomy” (warm anatomical shading), “Atlas” (a clean chart: trained muscles in blue, the rest dashed, callouts) and “Tech” (a teal wireframe with joints; the joints of the selected muscle light up). Each style has its own figure, your choice is remembered; tap, Enter and Space still select a muscle and the “Recently / Sets / Coverage” modes work in all three. The female body model keeps the previous drawing for now. No migrations."
     ]},

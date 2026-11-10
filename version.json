@@ -1,7 +1,14 @@
 {
-  "version": "8.33",
+  "version": "8.34",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.34",
+      "date": "2026-11-10 17:00",
+      "changes": [
+        "Community: the “Everyone / Friends only” and period (“Week / Month / All time”) switches are now compact pills instead of large buttons, with the selected one exposed to screen readers; an empty ranking is a card with a hint (for “Friends only”: “add friends on the Friends tab”)."
+      ]
+    },
     {
       "version": "8.33",
       "date": "2026-11-07 16:00",
@@ -5887,6 +5894,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.34",
+      "date": "2026-11-10 17:00",
+      "changes": [
+        "Сообщество: переключатели «Все / Только друзья» и периода («Неделя / Месяц / Всё время») стали компактными пилюлями (не крупными кнопками), выбранный отмечен для скринридеров; пустой рейтинг — карточка с подсказкой (для «Только друзья» — «добавь друзей на вкладке „Друзья“»)."
+      ]
+    },
     {
       "version": "8.33",
       "date": "2026-11-07 16:00",
