@@ -1,7 +1,14 @@
 {
-  "version": "8.29",
+  "version": "8.30",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.30",
+      "date": "2026-11-10 11:00",
+      "changes": [
+        "Challenges: when there are no active challenges, a card with a trophy and two buttons — “Pick from catalog” and “Custom challenge” — replaces the grey line (as in Goals); the top button row is not duplicated at that moment."
+      ]
+    },
     {
       "version": "8.29",
       "date": "2026-11-10 11:00",
@@ -5859,6 +5866,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.30",
+      "date": "2026-11-10 11:00",
+      "changes": [
+        "Челленджи: когда активных челленджей нет, вместо серой строки — карточка с кубком и двумя кнопками «Выбрать из каталога» и «Свой челлендж» (как в Целях); верхняя панель кнопок в этот момент не дублируется."
+      ]
+    },
     {
       "version": "8.29",
       "date": "2026-11-10 11:00",

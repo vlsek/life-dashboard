@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.29";
+const SITE_VERSION = "8.30";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.30", date: "2026-11-10 11:00", changes: [
+        "Челленджи: когда активных челленджей нет, вместо серой строки — карточка с кубком и двумя кнопками «Выбрать из каталога» и «Свой челлендж» (как в Целях); верхняя панель кнопок в этот момент не дублируется.",
+    ]},
     { version: "8.29", date: "2026-11-10 11:00", changes: [
         "«Языки»: пока нет ни одного словаря, кнопка добавления теперь подписана «Добавить словарь», а не пустой кружок с плюсом.",
     ]},
@@ -3097,6 +3100,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.30", date: "2026-11-10 11:00", changes: [
+        "Challenges: when there are no active challenges, a card with a trophy and two buttons — “Pick from catalog” and “Custom challenge” — replaces the grey line (as in Goals); the top button row is not duplicated at that moment.",
+    ]},
     { version: "8.29", date: "2026-11-10 11:00", changes: [
         "Languages: while there are no dictionaries yet, the add button is labelled “Add dictionary” instead of a bare circle with a plus.",
     ]},
