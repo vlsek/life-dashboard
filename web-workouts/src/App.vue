@@ -36,6 +36,7 @@ import ActiveWorkout from './components/ActiveWorkout.vue'
 import RoutinesList from './components/RoutinesList.vue'
 import StartFocus from './components/StartFocus.vue'
 import RecentWorkouts from './components/RecentWorkouts.vue'
+import WeekNumbers from './components/WeekNumbers.vue'
 import WorkoutSummary from './components/WorkoutSummary.vue'
 import PastWorkoutForm from './components/PastWorkoutForm.vue'
 import type { ActiveDraft } from './lib/activeWorkout'
@@ -694,6 +695,7 @@ function onToggleProgramWeek(week: number) {
       </div>
 
       <div v-show="pageTab === 'progress'" data-testid="tab-progress">
+        <WeekNumbers v-if="exercises.length > 0" :entries="entries" :exercises="exercises" :today="todayStr()" />
         <WeekStreak :entries="entries" />
         <GrowthList v-if="exercises.length > 0" :entries="entries" :exercises="exercises" />
         <OverviewChart :entries="entries" />
