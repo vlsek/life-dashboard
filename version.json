@@ -1,7 +1,14 @@
 {
-  "version": "8.28",
+  "version": "8.29",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.29",
+      "date": "2026-11-10 11:00",
+      "changes": [
+        "Languages: while there are no dictionaries yet, the add button is labelled “Add dictionary” instead of a bare circle with a plus."
+      ]
+    },
     {
       "version": "8.28",
       "date": "2026-11-10 10:00",
@@ -5852,6 +5859,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.29",
+      "date": "2026-11-10 11:00",
+      "changes": [
+        "«Языки»: пока нет ни одного словаря, кнопка добавления теперь подписана «Добавить словарь», а не пустой кружок с плюсом."
+      ]
+    },
     {
       "version": "8.28",
       "date": "2026-11-10 10:00",

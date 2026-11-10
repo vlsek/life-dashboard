@@ -80,7 +80,7 @@ const activeTab = () => props.tabs.find((tab) => tab.code === props.active)
         :aria-label="t('eng_tab_add')"
         @click="openPicker"
       >
-        ＋
+        ＋<template v-if="tabs.length === 0"> {{ t('eng_tab_add') }}</template>
       </button>
     </div>
 

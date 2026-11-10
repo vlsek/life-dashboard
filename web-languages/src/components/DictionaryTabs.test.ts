@@ -58,3 +58,10 @@ describe('DictionaryTabs', () => {
     empty.unmount()
   })
 })
+
+describe('DictionaryTabs: пустое состояние', () => {
+  it('без вкладок кнопка добавления подписана текстом', () => {
+    const w = mount(DictionaryTabs, { props: { tabs: [], active: 'all', totalCount: 0, addable: [['en', 'English']] } })
+    expect(w.find('[data-test="tab-add"]').text()).toContain('dictionary')
+  })
+})
