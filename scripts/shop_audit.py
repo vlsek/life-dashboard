@@ -113,6 +113,12 @@ JS = r"""
 """
 
 
+def wait_ready(page, timeout=10000):
+    """Страница отрисована И заставка загрузки (.pre-splash, пламя) ушла: иначе измерения гоняются с ней (проба зоны нажатия попадает в заставку, а не в кнопку)."""
+    page.wait_for_function("""() => { const o = document.querySelector('.pre-splash'); if (!o || !o.isConnected) return true; const s = getComputedStyle(o); return s.display === 'none' || s.visibility === 'hidden' || Number(s.opacity) === 0 }""", timeout=timeout)
+    page.wait_for_timeout(200)
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     srv = subprocess.Popen([sys.executable, '-m', 'http.server', str(PORT), '--bind', '127.0.0.1'], cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -138,7 +144,7 @@ def main():
                             page.wait_for_selector('text=Сверхдлинное', timeout=10000)  # вещи пришли и отрисованы (а не «Загрузка…»)
                         except Exception:
                             errs.append('вещи не отрисовались (магазин остался на «Загрузка…»)')
-                        page.wait_for_timeout(600)
+                        wait_ready(page)
                         page.evaluate('window.__touch = %s' % ('true' if vp == 'phone' else 'false'))
                         res = page.evaluate(JS)
                         res['errors'] = errs

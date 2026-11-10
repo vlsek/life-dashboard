@@ -69,7 +69,7 @@ def main():
             page.on('request', lambda r: patches.append(r.post_data or '') if r.method == 'PATCH' and 'shop_items' in r.url else None)
             page.goto('http://127.0.0.1:%d/shop/' % PORT)
             page.wait_for_selector('text=Сверхдлинное', timeout=10000)
-            page.wait_for_timeout(500)
+            sa.wait_ready(page)
 
             # A. обход Tab
             page.evaluate('document.activeElement && document.activeElement.blur()')

@@ -37,7 +37,7 @@ def run_mode(br, label, reduced, motion_off):
     page.add_init_script(init)
     page.goto('http://127.0.0.1:%d/shop/' % PORT)
     page.wait_for_selector('text=Сверхдлинное', timeout=10000)
-    page.wait_for_timeout(800)
+    sa.wait_ready(page)
     idle = page.evaluate(RUNNING)
     idle_inf = [a['name'] for a in idle if a['infinite']]
     html_motion = page.evaluate("() => document.documentElement.getAttribute('data-motion')")
