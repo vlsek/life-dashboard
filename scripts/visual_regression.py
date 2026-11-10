@@ -18,6 +18,7 @@ import base64
 import functools
 import http.server
 import json
+import math
 import os
 import sys
 import threading
@@ -157,9 +158,9 @@ def parse_args(argv=None):
         unsafe_themes = [name for name in themes if not re.fullmatch(r'[A-Za-z0-9_-]+', name)]
         if unsafe_themes:
             raise ValueError(f"--themes: недопустимые имена: {', '.join(unsafe_themes)}")
-        if not 0 <= args.threshold <= 1:
+        if not math.isfinite(args.threshold) or not 0 <= args.threshold <= 1:
             raise ValueError('--threshold должен быть в диапазоне от 0 до 1')
-        if args.wait < 0:
+        if not math.isfinite(args.wait) or args.wait < 0:
             raise ValueError('--wait не может быть отрицательным')
         if not (1 <= args.hard_target <= args.min_target <= 200):
             raise ValueError('ожидается 1 <= --hard-target <= --min-target <= 200')
