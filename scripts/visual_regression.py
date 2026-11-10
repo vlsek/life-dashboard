@@ -6,11 +6,11 @@
 состояния «пусто», не логики), замораживает время (2026-11-02 12:00) и часовой пояс (Europe/Vilnius), блокирует чужие домены и для каждой страницы проверяет:
   • итоговый адрес (не ушла ли на /login/ или /onboarding/ вместо своей страницы);  • ошибки страницы и console.error;  • локальные запросы с кодом ≥ 400;
   • горизонтальную прокрутку (scrollWidth > clientWidth);  • пустую страницу (в body почти нет текста);  • на телефоне — нажимаемые элементы: меньше 24 px — ошибка (WCAG 2.2 AA), меньше 32 px — замечание (стандарт проекта, аудит 60.2); учитывается зона нажатия, расширенная ::after.
-Скриншоты — в --out (по умолчанию /tmp/visual/<viewport>-<тема>/<страница>.png). С --baseline DIR сравнивает с прошлым прогоном (доля изменившихся пикселей, порог --threshold).
+Скриншоты — в --out (по умолчанию /tmp/visual/<viewport>-<тема>/<страница>.png). С --baseline DIR сравнивает с прошлым прогоном (доля изменившихся пикселей, порог --threshold). --report PATH сохраняет JSON с проверенными страницами/темами и явными отметками production/физического устройства; --mark-production-checked и --mark-real-device-checked — только ручные подтверждения, сам скрипт эти среды не проверяет.
 
 Использование (playwright: pip install playwright --break-system-packages; Chromium: /opt/google/chrome/chrome):
     python3 scripts/visual_regression.py                          # все страницы, телефон+ПК, тёмная тема
-    python3 scripts/visual_regression.py shop goals --themes dark,light --viewports phone
+    python3 scripts/visual_regression.py shop goals --themes dark,light,monet --viewports phone --report /tmp/visual/report.json
     python3 scripts/visual_regression.py --out /tmp/after --baseline /tmp/before     # «до/после» правки
 Код выхода 1 — есть жёсткие проблемы (предупреждения про 44 px не считаются). CLI проверяет страницы, viewport, темы, порог, задержку и размеры hit area до запуска Chromium; некорректные параметры завершаются с понятной ошибкой. Отсутствующий/недоступный baseline отмечается в отчёте, а Chromium, контексты и локальный сервер закрываются через finally. Сервер живёт внутри процесса — отдельный фоновый запуск не нужен."""
 import argparse
