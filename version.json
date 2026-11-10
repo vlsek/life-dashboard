@@ -1,7 +1,14 @@
 {
-  "version": "8.26",
+  "version": "8.27",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.27",
+      "date": "2026-11-10 10:00",
+      "changes": [
+        "Milestones: the page is redesigned. Cards instead of a table: a coloured status stripe on the left (overdue, today, soon), a larger title with due/interval chips below, and a big round ✓ button. The “Overdue / Soon” summary is now coloured pills; the header buttons wrap neatly on a narrow screen; the empty page shows “Add milestone” and “Templates” buttons."
+      ]
+    },
     {
       "version": "8.26",
       "date": "2026-11-04 14:00",
@@ -5838,6 +5845,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.27",
+      "date": "2026-11-10 10:00",
+      "changes": [
+        "Вехи: страница переоформлена. Вместо таблицы — карточки: слева цветная полоса статуса (просрочено, сегодня, скоро), название крупнее, чипы срока и интервала под ним, большая круглая кнопка ✓. Сводка «Просрочено / Скоро» теперь цветные пилюли; шапка с кнопками переносится аккуратно на узком экране; пустая страница показывает кнопки «Добавить веху» и «Шаблоны»."
+      ]
+    },
     {
       "version": "8.26",
       "date": "2026-11-04 14:00",

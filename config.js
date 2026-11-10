@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.26";
+const SITE_VERSION = "8.27";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.27", date: "2026-11-10 10:00", changes: [
+        "Вехи: страница переоформлена. Вместо таблицы — карточки: слева цветная полоса статуса (просрочено, сегодня, скоро), название крупнее, чипы срока и интервала под ним, большая круглая кнопка ✓. Сводка «Просрочено / Скоро» теперь цветные пилюли; шапка с кнопками переносится аккуратно на узком экране; пустая страница показывает кнопки «Добавить веху» и «Шаблоны».",
+    ]},
     { version: "8.26", date: "2026-11-04 14:00", changes: [
         "Тренировки: в карточке рутины рядом с «Начать» теперь только кнопка «⋯». Копирование, папка, архив и удаление спрятаны в её меню, чтобы не нажать «Удалить» случайно (особенно на узком экране, где значки стояли вплотную). Меню закрывается по Esc и после действия; удаление по-прежнему просит подтверждение. Без миграций."
     ]},
@@ -3088,6 +3091,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.27", date: "2026-11-10 10:00", changes: [
+        "Milestones: the page is redesigned. Cards instead of a table: a coloured status stripe on the left (overdue, today, soon), a larger title with due/interval chips below, and a big round ✓ button. The “Overdue / Soon” summary is now coloured pills; the header buttons wrap neatly on a narrow screen; the empty page shows “Add milestone” and “Templates” buttons.",
+    ]},
     { version: "8.26", date: "2026-11-04 14:00", changes: [
         "Workouts: next to “Start” a routine card now has only a “⋯” button. Copy, folder, archive and delete are tucked into its menu so you cannot hit “Delete” by accident (especially on a narrow screen where the icons sat shoulder to shoulder). The menu closes on Esc and after an action; deleting still asks for confirmation. No migrations."
     ]},
