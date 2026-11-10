@@ -25,8 +25,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlparse
-
-from playwright.sync_api import sync_playwright
+import re
 
 ROOT = Path(__file__).resolve().parent.parent
 CHROME = os.environ.get('CHROME', '/opt/google/chrome/chrome')
@@ -118,8 +117,21 @@ def diff_fraction(a: Path, b: Path) -> float | None:
         return None
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
+def parse_csv(raw: str, label: str, allowed=None) -> list[str]:
+    values = [item.strip() for item in raw.split(',')]
+    if not raw.strip() or any(not item for item in values):
+        raise ValueError(f"{label}: укажите непустой список через запятую")
+    if len(values) != len(set(values)):
+        raise ValueError(f"{label}: повторяющиеся значения")
+    if allowed is not None:
+        unknown = [item for item in values if item not in allowed]
+        if unknown:
+            raise ValueError(f"{label}: неизвестные значения: {', '.join(unknown)}")
+    return values
+
+
+def build_parser() -> argparse.ArgumentParser:
+    ap = argparse.ArgumentParser(description=__doc__.split('\\n')[0])
     ap.add_argument('pages', nargs='*', help='имена страниц (по умолчанию все)')
     ap.add_argument('--viewports', default='phone,desktop')
     ap.add_argument('--themes', default='dark')
@@ -129,70 +141,120 @@ def main() -> int:
     ap.add_argument('--wait', type=float, default=1.5)
     ap.add_argument('--min-target', type=int, default=32, help='замечание, если зона нажатия на телефоне меньше N px (стандарт проекта — 32, аудит 60.2)')
     ap.add_argument('--hard-target', type=int, default=24, help='ошибка, если меньше N px (WCAG 2.2 AA, критерий 2.5.8)')
-    args = ap.parse_args()
-    pages = args.pages or PAGES
+    return ap
+
+
+def parse_args(argv=None):
+    ap = build_parser()
+    args = ap.parse_args(argv)
+    try:
+        pages = args.pages or PAGES
+        unknown_pages = [name for name in pages if name not in PAGES]
+        if unknown_pages:
+            raise ValueError(f"страницы: неизвестные значения: {', '.join(unknown_pages)}")
+        viewports = parse_csv(args.viewports, '--viewports', VIEWPORTS)
+        themes = parse_csv(args.themes, '--themes')
+        unsafe_themes = [name for name in themes if not re.fullmatch(r'[A-Za-z0-9_-]+', name)]
+        if unsafe_themes:
+            raise ValueError(f"--themes: недопустимые имена: {', '.join(unsafe_themes)}")
+        if not 0 <= args.threshold <= 1:
+            raise ValueError('--threshold должен быть в диапазоне от 0 до 1')
+        if args.wait < 0:
+            raise ValueError('--wait не может быть отрицательным')
+        if not (1 <= args.hard_target <= args.min_target <= 200):
+            raise ValueError('ожидается 1 <= --hard-target <= --min-target <= 200')
+    except ValueError as exc:
+        ap.error(str(exc))
+    return args, pages, viewports, themes
+
+
+def main(argv=None) -> int:
+    args, pages, viewports, themes = parse_args(argv)
+    from playwright.sync_api import sync_playwright
+
     session = make_session()
     srv = start_server()
     base = f'http://127.0.0.1:{srv.server_address[1]}'
     out_root = Path(args.out)
     hard, warn, changed, rows = 0, 0, 0, []
-    with sync_playwright() as pw:
-        browser = pw.chromium.launch(executable_path=CHROME, args=['--no-sandbox'])
-        for vp_name in args.viewports.split(','):
-            for theme in args.themes.split(','):
-                ctx = browser.new_context(locale='ru-RU', timezone_id='Europe/Vilnius', device_scale_factor=1, service_workers='block', **VIEWPORTS[vp_name])
-                try:
-                    ctx.clock.install(time=datetime(2026, 11, 2, 12, 0, 0))
-                except Exception:
-                    pass
-                ctx.add_init_script(f"localStorage.setItem('sb-{PROJECT}-auth-token', {json.dumps(json.dumps(session))}); localStorage.setItem('site_lang','ru'); localStorage.setItem('lang','ru'); localStorage.setItem('site_theme','{theme}')")
-                ctx.route('**/*', lambda route: supabase_response(route, session) if urlparse(route.request.url).hostname and urlparse(route.request.url).hostname.endswith('supabase.co')
-                          else route.continue_() if urlparse(route.request.url).hostname == '127.0.0.1' else route.abort())
-                for page_name in pages:
-                    page = ctx.new_page()
-                    problems, notes = [], []
-                    page.on('pageerror', lambda e, p=problems: p.append('ошибка страницы: ' + str(e)[:120]))
-                    page.on('console', lambda m, p=problems: m.type == 'error' and 'net::ERR' not in m.text and 'Failed to load resource' not in m.text and p.append('console.error: ' + m.text[:120]))
-                    page.on('response', lambda r, p=problems: r.url.startswith(base) and r.status >= 400 and p.append(f'{r.status} {r.url[len(base):][:80]}'))
-                    try:
-                        page.goto(f'{base}/{page_name}/', wait_until='networkidle', timeout=30000)
-                    except Exception as e:
-                        problems.append('загрузка: ' + str(e)[:100])
-                    page.wait_for_timeout(int(args.wait * 1000))
-                    path = urlparse(page.url).path
-                    expected = EXPECTED_PATH.get(page_name, f'/{page_name}/')
-                    if not path.startswith(expected):
-                        problems.append(f'ушла на {path} вместо {expected}')
-                    info = page.evaluate(CHECK_JS, [args.min_target, args.hard_target])
-                    if info['overflow'] > 1:
-                        problems.append(f"горизонтальная прокрутка +{info['overflow']}px")
-                    if info['textLen'] < 40:
-                        problems.append(f"почти пустая страница ({info['textLen']} симв.)")
-                    if vp_name == 'phone' and info['tiny']:
-                        problems.append(f"{info['tiny']} нажимаемых элементов меньше {args.hard_target}px: {', '.join(info['tinySample'])}")
-                    if vp_name == 'phone' and info['small']:
-                        notes.append(f"{info['small']} нажимаемых элементов меньше {args.min_target}px: {', '.join(info['smallSample'])}")
-                    shot = out_root / f'{vp_name}-{theme}' / f'{page_name}.png'
-                    shot.parent.mkdir(parents=True, exist_ok=True)
-                    page.screenshot(path=str(shot), full_page=True)
-                    diff = None
-                    if args.baseline:
-                        old = Path(args.baseline) / f'{vp_name}-{theme}' / f'{page_name}.png'
-                        diff = diff_fraction(old, shot) if old.exists() else None
-                        if diff is not None and diff > args.threshold:
-                            changed += 1
-                            notes.append(f'изменилась на {diff:.1%} пикселей')
-                    hard += len(problems)
-                    warn += len(notes)
-                    status = 'ОШИБКА' if problems else ('замечание' if notes else 'ок')
-                    rows.append(f"{status:9} {vp_name:7} {theme:6} /{page_name}/  {'; '.join(problems + notes)}")
-                    page.close()
-                ctx.close()
-        browser.close()
-    srv.shutdown()
-    print('\n'.join(rows))
-    print(f'\nстраниц×режимов: {len(rows)} | жёстких проблем: {hard} | замечаний: {warn}' + (f' | изменились относительно baseline: {changed}' if args.baseline else '') + f' | скриншоты: {out_root}')
-    return 1 if hard else 0
+    try:
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch(executable_path=CHROME, args=['--no-sandbox'])
+            try:
+                for vp_name in viewports:
+                    for theme in themes:
+                        ctx = browser.new_context(locale='ru-RU', timezone_id='Europe/Vilnius', device_scale_factor=1, service_workers='block', **VIEWPORTS[vp_name])
+                        try:
+                            ctx.clock.install(time=datetime(2026, 11, 2, 12, 0, 0))
+                        except Exception:
+                            pass
+                        ctx.add_init_script(f"localStorage.setItem('sb-{PROJECT}-auth-token', {json.dumps(json.dumps(session))}); localStorage.setItem('site_lang','ru'); localStorage.setItem('lang','ru'); localStorage.setItem('site_theme','{theme}')")
+                        ctx.route('**/*', lambda route: supabase_response(route, session) if urlparse(route.request.url).hostname and urlparse(route.request.url).hostname.endswith('supabase.co')
+                                  else route.continue_() if urlparse(route.request.url).hostname == '127.0.0.1' else route.abort())
+                        try:
+                            for page_name in pages:
+                                page = ctx.new_page()
+                                problems, notes = [], []
+                                try:
+                                    page.on('pageerror', lambda e, p=problems: p.append('ошибка страницы: ' + str(e)[:120]))
+                                    page.on('console', lambda m, p=problems: m.type == 'error' and 'net::ERR' not in m.text and 'Failed to load resource' not in m.text and p.append('console.error: ' + m.text[:120]))
+                                    page.on('response', lambda r, p=problems: r.url.startswith(base) and r.status >= 400 and p.append(f'{r.status} {r.url[len(base):][:80]}'))
+                                    try:
+                                        page.goto(f'{base}/{page_name}/', wait_until='networkidle', timeout=30000)
+                                    except Exception as exc:
+                                        problems.append('загрузка: ' + str(exc)[:100])
+                                    page.wait_for_timeout(int(args.wait * 1000))
+                                    path = urlparse(page.url).path
+                                    expected = EXPECTED_PATH.get(page_name, f'/{page_name}/')
+                                    if not path.startswith(expected):
+                                        problems.append(f'ушла на {path} вместо {expected}')
+                                    try:
+                                        info = page.evaluate(CHECK_JS, [args.min_target, args.hard_target])
+                                    except Exception as exc:
+                                        info = {'overflow': 0, 'textLen': 0, 'small': 0, 'smallSample': [], 'tiny': 0, 'tinySample': []}
+                                        problems.append('проверка DOM: ' + str(exc)[:120])
+                                    if info['overflow'] > 1:
+                                        problems.append(f"горизонтальная прокрутка +{info['overflow']}px")
+                                    if info['textLen'] < 40:
+                                        problems.append(f"почти пустая страница ({info['textLen']} симв.)")
+                                    if vp_name == 'phone' and info['tiny']:
+                                        problems.append(f"{info['tiny']} нажимаемых элементов меньше {args.hard_target}px: {', '.join(info['tinySample'])}")
+                                    if vp_name == 'phone' and info['small']:
+                                        notes.append(f"{info['small']} нажимаемых элементов меньше {args.min_target}px: {', '.join(info['smallSample'])}")
+                                    shot = out_root / f'{vp_name}-{theme}' / f'{page_name}.png'
+                                    shot.parent.mkdir(parents=True, exist_ok=True)
+                                    try:
+                                        page.screenshot(path=str(shot), full_page=True)
+                                    except Exception as exc:
+                                        problems.append('скриншот: ' + str(exc)[:120])
+                                    if args.baseline:
+                                        old = Path(args.baseline) / f'{vp_name}-{theme}' / f'{page_name}.png'
+                                        if not old.exists():
+                                            notes.append('нет снимка baseline')
+                                        else:
+                                            diff = diff_fraction(old, shot) if shot.exists() else None
+                                            if diff is None:
+                                                notes.append('не удалось сравнить baseline (Pillow или файл снимка недоступен)')
+                                            elif diff > args.threshold:
+                                                changed += 1
+                                                notes.append(f'изменилась на {diff:.1%} пикселей')
+                                    hard += len(problems)
+                                    warn += len(notes)
+                                    status = 'ОШИБКА' if problems else ('замечание' if notes else 'ок')
+                                    rows.append(f"{status:9} {vp_name:7} {theme:6} /{page_name}/  {'; '.join(problems + notes)}")
+                                finally:
+                                    page.close()
+                        finally:
+                            ctx.close()
+                return_code = 1 if hard else 0
+            finally:
+                browser.close()
+    finally:
+        srv.shutdown()
+        srv.server_close()
+    print('\\n'.join(rows))
+    print(f'\\nстраниц×режимов: {len(rows)} | жёстких проблем: {hard} | замечаний: {warn}' + (f' | изменились относительно baseline: {changed}' if args.baseline else '') + f' | скриншоты: {out_root}')
+    return return_code
 
 
 if __name__ == '__main__':
