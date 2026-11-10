@@ -12,7 +12,7 @@
     python3 scripts/visual_regression.py                          # все страницы, телефон+ПК, тёмная тема
     python3 scripts/visual_regression.py shop goals --themes dark,light --viewports phone
     python3 scripts/visual_regression.py --out /tmp/after --baseline /tmp/before     # «до/после» правки
-Код выхода 1 — есть жёсткие проблемы (предупреждения про 44 px не считаются). Сервер живёт внутри процесса — отдельный фоновый запуск не нужен."""
+Код выхода 1 — есть жёсткие проблемы (предупреждения про 44 px не считаются). CLI проверяет страницы, viewport, темы, порог, задержку и размеры hit area до запуска Chromium; некорректные параметры завершаются с понятной ошибкой. Отсутствующий/недоступный baseline отмечается в отчёте, а Chromium, контексты и локальный сервер закрываются через finally. Сервер живёт внутри процесса — отдельный фоновый запуск не нужен."""
 import argparse
 import base64
 import functools
