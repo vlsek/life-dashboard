@@ -131,7 +131,7 @@ def parse_csv(raw: str, label: str, allowed=None) -> list[str]:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    ap = argparse.ArgumentParser(description=__doc__.split('\\n')[0])
+    ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('pages', nargs='*', help='имена страниц (по умолчанию все)')
     ap.add_argument('--viewports', default='phone,desktop')
     ap.add_argument('--themes', default='dark')
