@@ -2,12 +2,12 @@
 import { computed, ref } from 'vue'
 import { t } from '../lib/i18n'
 import { friendlyError } from '../lib/friendlyError'
-import { HORIZON_KEYS, horizonOptions, matchCategory, parseWeight, pointsForDifficulty, validateWeight, type Difficulty, type GoalFormInput, type Horizon, type WeightMode } from '../lib/newGoal'
+import { HORIZON_KEYS, horizonOptions, matchCategory, normalizeRepeat, parseWeight, pointsForDifficulty, validateWeight, type Difficulty, type GoalFormInput, type Horizon, type Repeat, type WeightMode } from '../lib/newGoal'
 
 // BACKLOG раздел 38: новая цель с главной — ТО ЖЕ окно, что в «Целях» (копия web-goals/src/components/GoalForm.vue для добавления; поля, порядок и
 // подписи те же, ключи goals_*). submit — запись цели + постановка в план (родитель); ошибка показывается ПОД полями, форма остаётся открытой,
 // введённое не пропадает; пока идёт запись, «Сохранить» заблокирована — двойной тап не создаёт две цели.
-const props = withDefaults(defineProps<{ submit: (res: GoalFormInput) => Promise<void>; categories?: string[]; noCategoryLabels?: string[]; horizonColumn?: boolean; weightColumn?: boolean; currentWeight?: number | null }>(), { categories: () => [], noCategoryLabels: () => [], horizonColumn: false, weightColumn: false, currentWeight: null })
+const props = withDefaults(defineProps<{ submit: (res: GoalFormInput) => Promise<void>; categories?: string[]; noCategoryLabels?: string[]; horizonColumn?: boolean; weightColumn?: boolean; repeatColumn?: boolean; stepsColumn?: boolean; currentWeight?: number | null }>(), { categories: () => [], noCategoryLabels: () => [], horizonColumn: false, weightColumn: false, repeatColumn: false, stepsColumn: false, currentWeight: null })
 const emit = defineEmits<{ close: [] }>()
 
 const name = ref('')
@@ -22,6 +22,10 @@ const deadline = ref('')
 const options = computed(() => horizonOptions(props.horizonColumn))
 const horizon = ref<Horizon>('now')
 const dateMissing = ref(false)
+// Названия этапов (BACKLOG 76.2, миграция 121): по одному в строке, у цели с несколькими этапами
+const stepNamesText = ref('')
+// Повтор (BACKLOG 81.4, миграция 120): только у обычной цели с конкретным сроком — следующий срок считается от него.
+const repeat = ref<Repeat | ''>(normalizeRepeat('') ?? '')
 // Тип цели (BACKLOG 1085): обычная / «Сбросить вес» / «Набрать вес» — только если в базе есть колонки (миграция 085). Старт — последний вес тела.
 type Kind = 'plain' | WeightMode
 const kind = ref<Kind>('plain')
@@ -70,6 +74,8 @@ async function save() {
       difficulty: difficulty.value,
       deadline: horizon.value === 'day' ? deadline.value : '',
       horizon: horizon.value,
+      stepNames: stepNamesText.value.split('\n'),
+      repeat: kind.value === 'plain' && horizon.value === 'day' && repeat.value ? repeat.value : null,
       ...(kind.value === 'plain' ? {} : { weightMode: kind.value, weightStart: wStart, weightTarget: wTarget }), // у обычной цели ключей веса нет
     })
   } catch (e) {
@@ -118,6 +124,11 @@ async function save() {
       <template v-else>
         <label class="mt-2 block text-sm">{{ t('goals_field_stages') }}</label>
         <input v-model.number="stages" type="number" min="1" class="w-full" />
+        <template v-if="stepsColumn && stages > 1">
+          <label class="mt-2 block text-sm" for="goal-step-names">{{ t('goals_field_step_names') }}</label>
+          <textarea id="goal-step-names" v-model="stepNamesText" rows="3" class="w-full" :placeholder="t('goals_step_names_ph')" data-test="goal-step-names"></textarea>
+          <p class="dim mt-1 text-xs">{{ t('goals_step_names_hint') }}</p>
+        </template>
       </template>
 
       <label class="mt-2 block text-sm">{{ t('goals_field_difficulty') }}</label>
@@ -137,6 +148,16 @@ async function save() {
       <template v-if="horizon === 'day'">
         <label class="mt-2 block text-sm">{{ t('goals_field_date') }}</label>
         <input v-model="deadline" type="date" class="w-full" data-test="goal-deadline" :aria-invalid="dateMissing" @input="dateMissing = false" />
+        <template v-if="repeatColumn && kind === 'plain'">
+          <label class="mt-2 block text-sm">{{ t('goals_field_repeat') }}</label>
+          <select v-model="repeat" class="w-full" data-test="goal-repeat-select">
+            <option value="">{{ t('goals_repeat_none') }}</option>
+            <option value="week">{{ t('goals_repeat_week') }}</option>
+            <option value="month">{{ t('goals_repeat_month') }}</option>
+            <option value="year">{{ t('goals_repeat_year') }}</option>
+          </select>
+          <p v-if="repeat" class="dim mt-1 text-xs" data-test="goal-repeat-hint">{{ t('goals_repeat_hint') }}</p>
+        </template>
       </template>
 
       <p v-if="errorText" class="mt-3 text-sm" style="color: var(--danger)" role="alert" data-test="goal-form-error">{{ errorText }}</p>

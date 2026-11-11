@@ -29,6 +29,34 @@ export function horizonFields(res: { horizon?: Horizon | null; deadline: string 
 export interface GoalWriteOpts {
   horizonColumn?: boolean
   weightColumn?: boolean // есть ли колонки goals.weight_* (миграция 085)
+  repeatColumn?: boolean // есть ли колонка goals.repeat_every (миграция 120, BACKLOG 81.4)
+  stepsColumn?: boolean // есть ли колонка goals.step_names (миграция 121, BACKLOG 76.2)
+}
+
+// Копия из web-goals: правило повтора и названия этапов (одинаковый код, страж newGoalCopy.test.ts)
+export type Repeat = 'week' | 'month' | 'year'
+export function normalizeRepeat(v: unknown): Repeat | null {
+  return v === 'week' || v === 'month' || v === 'year' ? v : null
+}
+
+export const STEP_NAME_MAX = 80
+export function normalizeStepNames(raw: unknown, stages: number): string[] {
+  if (!Array.isArray(raw)) return []
+  const names = raw.slice(0, Math.max(1, stages)).map((x) => (typeof x === 'string' ? x.trim().slice(0, STEP_NAME_MAX) : ''))
+  while (names.length && !names[names.length - 1]) names.pop()
+  return names
+}
+
+export function stepNamesFields(res: Pick<GoalFormInput, 'stepNames' | 'stages' | 'weightMode'>, enabled: boolean): { step_names?: string[] | null } {
+  if (!enabled) return {}
+  const names = res.weightMode || (res.stages ?? 1) < 2 ? [] : normalizeStepNames(res.stepNames, res.stages)
+  return { step_names: names.length ? names : null }
+}
+
+export function repeatFields(res: Pick<GoalFormInput, 'repeat' | 'weightMode' | 'deadline'>, enabled: boolean): { repeat_every?: string | null } {
+  if (!enabled) return {}
+  const r = normalizeRepeat(res.repeat)
+  return { repeat_every: r && !res.weightMode && res.deadline ? r : null }
 }
 
 // Есть ли колонка goals.horizon: пробный запрос; ошибка (колонки нет) или сбой сети — считаем, что нет.
@@ -68,6 +96,22 @@ export function weightFields(res: Pick<GoalFormInput, 'weightMode' | 'weightStar
 }
 
 // Есть ли колонки goals.weight_*: пробный запрос; ошибка или сбой сети — считаем, что нет (окно не покажет выбор «Сбросить/Набрать вес»).
+// Есть ли колонки повтора (120) и названий этапов (121): пробный запрос; ошибка/сбой сети — считаем, что нет (поля в окне скрыты).
+export async function hasRepeatColumn(): Promise<boolean> {
+  try {
+    return !(await sb.from('goals').select('repeat_every').limit(1)).error
+  } catch {
+    return false
+  }
+}
+export async function hasStepsColumn(): Promise<boolean> {
+  try {
+    return !(await sb.from('goals').select('step_names').limit(1)).error
+  } catch {
+    return false
+  }
+}
+
 export async function hasWeightColumn(): Promise<boolean> {
   try {
     return !(await sb.from('goals').select('weight_mode').limit(1)).error
@@ -98,6 +142,8 @@ export interface GoalFormInput {
   weightMode?: WeightMode | null // цель на вес (085); у обычной цели ключей веса нет
   weightStart?: number | null
   weightTarget?: number | null
+  repeat?: 'week' | 'month' | 'year' | null // повтор цели (миграция 120)
+  stepNames?: string[] // названия этапов (миграция 121); пустой массив — без названий
 }
 
 // Созданная цель в том виде, в каком её держит блок «Планы» (PlanGoal).
@@ -191,6 +237,8 @@ export function buildInsertRow(res: GoalFormInput, noCategoryLabel: string, opts
     ...goalExtraFields(res),
     ...(res.horizon !== undefined || opts.horizonColumn ? horizonFields(res, !!opts.horizonColumn, false) : {}),
     ...weightFields(res, !!opts.weightColumn),
+    ...repeatFields(res, !!opts.repeatColumn),
+    ...stepNamesFields(res, !!opts.stepsColumn),
   }
 }
 
@@ -216,7 +264,7 @@ export async function loadMyCategories(userId: string, noCategoryLabels: string[
 
 // Записать новую цель. Ошибка летит наверх (окно покажет понятный текст и останется открытым).
 export async function createGoal(userId: string, res: GoalFormInput, noCategoryLabel: string): Promise<CreatedGoal> {
-  const row = buildInsertRow(res, noCategoryLabel, { horizonColumn: await hasHorizonColumn(), weightColumn: await hasWeightColumn() })
+  const row = buildInsertRow(res, noCategoryLabel, { horizonColumn: await hasHorizonColumn(), weightColumn: await hasWeightColumn(), repeatColumn: await hasRepeatColumn(), stepsColumn: await hasStepsColumn() })
   const { data, error } = await sb.from('goals').insert({ user_id: userId, ...row }).select('id, name, stages, done, current_stage').single()
   if (error) throw error
   return data as CreatedGoal

@@ -45,7 +45,7 @@ describe('«Загрузка…» вместо ложной пустоты: ис
     for (const [f, conds] of Object.entries(EMPTIES)) {
       const s = read(f)
       for (const c of conds) {
-        const m = new RegExp(`<p v-if="!\\w+" class="dim" role="status" data-testid="loading-[\\w]+">\\{\\{ t\\('load_loading'\\) \\}\\}</p>\\s*<p v-else-if="${c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`).exec(s)
+        const m = new RegExp(`<p v-if="!\\w+" class="dim" role="status" data-testid="loading-[\\w]+">\\{\\{ t\\('load_loading'\\) \\}\\}</p>(?:\\s|<!--[\\s\\S]*?-->|<div v-else-if="[^"]*"[\\s\\S]*?\\n\\s{8}</div>)*<(?:p|div) v-else-if="${c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`).exec(s)
         expect(m, `${f}: ${c}`).not.toBeNull()
       }
     }

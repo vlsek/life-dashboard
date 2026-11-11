@@ -13,7 +13,7 @@ import PlanTemplatesModal from './PlanTemplatesModal.vue'
 import PlanWrapUpModal from './PlanWrapUpModal.vue'
 import PlannedNewGoalModal from './PlannedNewGoalModal.vue'
 import PlannedRepeatsModal from './PlannedRepeatsModal.vue'
-import { ensureCategory, hasHorizonColumn, hasWeightColumn, loadBodyWeight, loadMyCategories, type GoalFormInput } from '../lib/newGoal'
+import { ensureCategory, hasHorizonColumn, hasRepeatColumn, hasStepsColumn, hasWeightColumn, loadBodyWeight, loadMyCategories, type GoalFormInput } from '../lib/newGoal'
 import { usePlanned } from '../lib/usePlanned'
 import { PLAN_MARK, PLAN_REQUEST, planSnapshotOf, publishPlanSnapshot, type PlanMarkDetail } from '../lib/planBridge'
 import { canPostpone, postponeCandidates } from '../lib/planPostpone'
@@ -230,6 +230,8 @@ async function pickGoal(name: string) {
 // «Новая цель» (BACKLOG раздел 38): то же окно, что в «Целях» (название, баллы, категория, этапы, сложность, дедлайн). Цель создаётся в «Целях»
 // и сразу встаёт в план открытого дня; время из поля рядом с «Добавить» уходит в пункт плана (как у цели из списка).
 const newGoalOpen = ref(false)
+const repeatColumn = ref(false) // колонка повтора (миграция 120): без неё в окне нет выбора «Повтор»
+const stepsColumn = ref(false) // колонка названий этапов (миграция 121)
 const weightColumn = ref(false) // есть ли колонки цели на вес (миграция 085): без них в окне нет выбора «Сбросить/Набрать вес»
 const bodyWeight = ref<number | null>(null) // последний вес тела — старт цели на вес по умолчанию
 const horizonColumn = ref(false) // есть ли колонка горизонта (миграция 084): без неё в окне только «Сейчас» и «В конкретный день»
@@ -245,6 +247,8 @@ async function openNewGoal() {
   }
   horizonColumn.value = await hasHorizonColumn()
   weightColumn.value = await hasWeightColumn()
+  repeatColumn.value = await hasRepeatColumn()
+  stepsColumn.value = await hasStepsColumn()
   bodyWeight.value = weightColumn.value && props.userId ? await loadBodyWeight(props.userId) : null
   newGoalOpen.value = true
 }
@@ -399,10 +403,10 @@ const collapsed = ref(false)
       <input ref="textInput" v-model="newText" type="text" class="min-w-40 flex-1" :class="{ 'plan-invalid': emptyInvalid, 'plan-shake': shaking }" :aria-invalid="emptyInvalid ? 'true' : undefined" :placeholder="t('dash_planned_custom_placeholder')" data-test="custom-input" @input="emptyInvalid = false" @keydown.enter.prevent="addCustom" />
       <button type="button" class="secondary" data-test="add-custom" @click="addCustom"><EmojiText :text="t('add_btn')" /></button>
     </div>
-    <div class="mt-2 flex flex-wrap gap-2" data-test="add-links">
-      <button type="button" class="secondary" data-test="add-goal" @click="openGoalPicker"><EmojiText :text="t('dash_planned_add_from_goals_btn')" /></button>
-      <button type="button" class="secondary" data-test="new-goal" @click="openNewGoal"><EmojiText :text="t('dash_planned_new_goal_btn')" /></button>
-      <button v-if="day === todayStr()" type="button" class="secondary" data-test="carry" @click="openCarryOver"><EmojiText :text="t('dash_planned_carry_over_btn')" /></button>
+    <div class="mt-2 flex flex-wrap gap-1.5" data-test="add-links">
+      <button type="button" class="secondary rounded-full text-sm" style="padding: 0.3rem 0.85rem; min-height: 32px" data-test="add-goal" @click="openGoalPicker"><EmojiText :text="t('dash_planned_add_from_goals_btn')" /></button>
+      <button type="button" class="secondary rounded-full text-sm" style="padding: 0.3rem 0.85rem; min-height: 32px" data-test="new-goal" @click="openNewGoal"><EmojiText :text="t('dash_planned_new_goal_btn')" /></button>
+      <button v-if="day === todayStr()" type="button" class="secondary rounded-full text-sm" style="padding: 0.3rem 0.85rem; min-height: 32px" data-test="carry" @click="openCarryOver"><EmojiText :text="t('dash_planned_carry_over_btn')" /></button>
     </div>
 
     <details class="mt-2 text-sm" data-test="plan-more">
@@ -434,7 +438,7 @@ const collapsed = ref(false)
   <PlanWrapUpModal v-if="wrapUpOpen" :items="wrapUpItems" :busy="wrapUpBusy" :error="wrapUpError" @close="wrapUpOpen = false; wrapUpError = ''" @move="wrapUpMove" />
   <PlanTemplatesModal v-if="templatesOpen" :templates="tpl.templates.value" :savable-count="itemsFromPlan(planned).length" :save="saveTemplate" :remove="tpl.remove" @close="templatesOpen = false" @apply="applyTpl" />
   <PlannedRepeatsModal v-if="repeatsOpen" :repeats="rep.repeats.value" :add="(text, time, schedule) => rep.add(userId as string, text, time, schedule)" :update="rep.update" :remove="rep.remove" @close="repeatsOpen = false" />
-  <PlannedNewGoalModal v-if="newGoalOpen" :categories="myCategories" :no-category-labels="noCategoryLabels()" :horizon-column="horizonColumn" :weight-column="weightColumn" :current-weight="bodyWeight" :submit="submitNewGoal" @close="newGoalOpen = false" />
+  <PlannedNewGoalModal v-if="newGoalOpen" :categories="myCategories" :no-category-labels="noCategoryLabels()" :horizon-column="horizonColumn" :weight-column="weightColumn" :repeat-column="repeatColumn" :steps-column="stepsColumn" :current-weight="bodyWeight" :submit="submitNewGoal" @close="newGoalOpen = false" />
   <PlannedCarryOverModal v-if="carryCandidates" :candidates="carryCandidates" @close="carryCandidates = null" @add="addCarried" />
 </template>
 
