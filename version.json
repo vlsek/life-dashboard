@@ -1,7 +1,14 @@
 {
-  "version": "8.38",
+  "version": "8.39",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.39",
+      "date": "2026-11-11 17:30",
+      "changes": [
+        "First run: the name, birth date, height and weight fields have a border and a focus ring again — they used to look like plain text."
+      ]
+    },
     {
       "version": "8.38",
       "date": "2026-11-11 13:50",
@@ -5922,6 +5929,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.39",
+      "date": "2026-11-11 17:30",
+      "changes": [
+        "Первый запуск: у полей имени, даты рождения, роста и веса снова есть рамка и фокус-кольцо — раньше они выглядели как голый текст."
+      ]
+    },
     {
       "version": "8.38",
       "date": "2026-11-11 13:50",
