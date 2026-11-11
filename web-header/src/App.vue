@@ -21,7 +21,8 @@ import CommandPalette from './components/CommandPalette.vue'
 import HelpModal from './components/HelpModal.vue'
 import PaletteButton from './components/PaletteButton.vue'
 import type { PaletteItem } from './lib/palette'
-import { createHotkeyHandler, helpOpen, hotkeysHelpOpen, paletteOpen } from './lib/hotkeys'
+import { createHotkeyHandler, helpOpen, hotkeysHelpOpen, paletteOpen, quickPlanOpen } from './lib/hotkeys'
+import QuickPlanModal from './components/QuickPlanModal.vue'
 import { applyBadge, badgeCount } from './lib/appBadge'
 import { readQuick, withoutQuick } from './lib/quickAction'
 import { loadPauseState, type PauseState } from './lib/pause'
@@ -58,6 +59,7 @@ function onPalettePick(it: PaletteItem) {
   paletteOpen.value = false
   if (it.kind === 'page' && it.href) location.href = it.href
   else if (it.id === 'action:water') waterOpen.value = true
+  else if (it.id === 'action:plan') quickPlanOpen.value = true
   else if (it.id === 'action:settings') globalSettingsOpen.value = true
   else if (it.id === 'action:hotkeys') hotkeysHelpOpen.value = true
   else if (it.id === 'action:help') helpOpen.value = true
@@ -312,6 +314,7 @@ async function onSaveSettings(s: Parameters<typeof saveSettings>[0]) {
     />
     <HotkeysModal />
     <HelpModal />
+    <QuickPlanModal v-if="quickPlanOpen && userId" :user-id="userId" @close="quickPlanOpen = false" />
     <CommandPalette v-if="paletteOpen" :water="waterVisible" @pick="onPalettePick" @close="paletteOpen = false" />
     <SettingsModal
       v-if="globalSettingsOpen && userId"

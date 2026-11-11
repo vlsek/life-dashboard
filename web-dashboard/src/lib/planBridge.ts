@@ -7,6 +7,15 @@ import { goalRowKind, type PlanGoal, type PlannedEntry } from './planned'
 export const PLAN_SNAPSHOT = 'dashboard:plan-snapshot'
 export const PLAN_REQUEST = 'dashboard:plan-request'
 export const PLAN_MARK = 'dashboard:plan-mark-done'
+// Быстрый пункт из шапки (BACKLOG 79.6): web-header просит блок «Планы» добавить пункт на сегодня; тот же текст события лежит в web-header/src/lib/planQuickAdd.ts
+// (бандлы независимы; страж planQuickAddBridge.test.ts). `handled` ставит PlannedSection синхронно — шапка по нему понимает, писать ли самой.
+export const PLAN_ADD = 'dashboard:plan-add'
+export interface PlanAddDetail {
+  date: string
+  text: string
+  time: string | null
+  handled: boolean
+}
 
 export interface PlanSnapshotItem {
   index: number // позиция пункта в плане дня (нужна, чтобы PlannedSection нашёл его же)

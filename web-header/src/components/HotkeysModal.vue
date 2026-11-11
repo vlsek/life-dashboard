@@ -19,7 +19,8 @@ const lang = getLang() === 'en' ? 'en' : 'ru'
           <kbd>g</kbd> <kbd>{{ p.letter }}</kbd> — {{ p[lang] }}
         </li>
       </ul>
-      <p style="margin: 10px 0 0"><kbd>?</kbd> — {{ t('hk_toggle') }}</p>
+      <p style="margin: 10px 0 0"><kbd>n</kbd> — {{ t('hk_new_plan') }}</p>
+      <p style="margin: 4px 0 0"><kbd>?</kbd> — {{ t('hk_toggle') }}</p>
       <p style="margin: 4px 0 0"><kbd>Ctrl/Cmd</kbd> + <kbd>K</kbd> {{ t('hk_or') }} <kbd>/</kbd> — {{ t('hk_palette') }}</p>
     </div>
   </div>

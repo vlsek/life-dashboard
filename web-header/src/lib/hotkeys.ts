@@ -1,6 +1,6 @@
 // Горячие клавиши шапки для ПК (BACKLOG 79.8, срез 1): переходы «g» + буква и окно-шпаргалка по «?».
 // Не срабатывают: в полях ввода, с Ctrl/Cmd/Alt, при открытом окне (диалоге), если событие уже обработано, и когда выключены в «Настройках»
-// (ключ localStorage `hotkeys_off` = '1', синхронизируется между устройствами). «n» («+») и «/» (поиск) — после 79.6 и 79.1.
+// (ключ localStorage `hotkeys_off` = '1', синхронизируется между устройствами). «/» — палитра (79.1), «n» — пункт в план на сегодня (79.6).
 import { ref } from 'vue'
 
 export interface HotkeyPage { letter: string; href: string; ru: string; en: string }
@@ -46,6 +46,8 @@ export const hotkeysHelpOpen = ref(false)
 export const helpOpen = ref(false)
 // Командная палитра (79.1): открывается по Ctrl/Cmd+K и «/»
 export const paletteOpen = ref(false)
+// Окно «Пункт в план на сегодня» (79.6): открывается из палитры и по «n»
+export const quickPlanOpen = ref(false)
 
 function isTypingTarget(el: EventTarget | null): boolean {
   const e = el as HTMLElement | null
@@ -117,6 +119,12 @@ export function createHotkeyHandler(deps: HotkeyDeps): (e: KeyboardEvent) => voi
         e.preventDefault()
         deps.navigate(page.href)
       }
+      return
+    }
+    if (key === 'n' && !e.shiftKey) {
+      e.preventDefault()
+      gAt = 0
+      quickPlanOpen.value = true
       return
     }
     gAt = key === 'g' && !e.shiftKey ? now() : 0

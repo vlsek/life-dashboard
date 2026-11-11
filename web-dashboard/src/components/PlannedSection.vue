@@ -15,7 +15,7 @@ import PlannedNewGoalModal from './PlannedNewGoalModal.vue'
 import PlannedRepeatsModal from './PlannedRepeatsModal.vue'
 import { ensureCategory, hasHorizonColumn, hasRepeatColumn, hasStepsColumn, hasWeightColumn, loadBodyWeight, loadMyCategories, type GoalFormInput } from '../lib/newGoal'
 import { usePlanned } from '../lib/usePlanned'
-import { PLAN_MARK, PLAN_REQUEST, planSnapshotOf, publishPlanSnapshot, type PlanMarkDetail } from '../lib/planBridge'
+import { PLAN_ADD, PLAN_MARK, PLAN_REQUEST, planSnapshotOf, publishPlanSnapshot, type PlanAddDetail, type PlanMarkDetail } from '../lib/planBridge'
 import { canPostpone, postponeCandidates } from '../lib/planPostpone'
 import { useRowSwipe } from '../lib/useRowSwipe'
 import { usePlanRepeats } from '../lib/usePlanRepeats'
@@ -61,14 +61,26 @@ function onPlanMark(e: Event) {
   d.handled = true
   void setItemDone(d.index, true)
 }
+// Пункт из шапки («n» / палитра, BACKLOG 79.6): принимаем только на сегодняшний день и только если показан именно он; иначе шапка запишет сама.
+// Запись — тем же путём, что шаблон дня (applyTemplateItems): дубль (тот же текст и время) не добавляется, всё одним сохранением.
+function onPlanAdd(e: Event) {
+  const d = (e as CustomEvent<PlanAddDetail>).detail
+  if (!d || d.handled || d.date !== loadedDate.value || typeof d.text !== 'string') return
+  const text = d.text.trim()
+  if (!text || text.length > 120) return
+  d.handled = true
+  void applyTemplateItems([{ text, ...(d.time ? { time: d.time } : {}) }])
+}
 onMounted(() => {
   window.addEventListener(PLAN_REQUEST, publishSnapshot)
   window.addEventListener(PLAN_MARK, onPlanMark)
+  window.addEventListener(PLAN_ADD, onPlanAdd)
   publishSnapshot()
 })
 onBeforeUnmount(() => {
   window.removeEventListener(PLAN_REQUEST, publishSnapshot)
   window.removeEventListener(PLAN_MARK, onPlanMark)
+  window.removeEventListener(PLAN_ADD, onPlanAdd)
 })
 
 // Свайп по строке плана (BACKLOG 75.9, срез 2): вправо — выполнить, влево — перенести на завтра. Жест — ускоритель: у строки есть ✓ и кнопка «на завтра».

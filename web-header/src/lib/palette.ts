@@ -8,6 +8,7 @@ export interface PaletteItem { id: string; kind: PaletteKind; ru: string; en: st
 export const PALETTE_ITEMS: readonly PaletteItem[] = [
   ...HOTKEY_PAGES.map((p): PaletteItem => ({ id: 'page:' + p.letter, kind: 'page', ru: p.ru, en: p.en, href: p.href, hint: 'g ' + p.letter })),
   { id: 'action:water', kind: 'action', ru: 'Вода: записать стакан', en: 'Water: log a drink', needs: 'water' },
+  { id: 'action:plan', kind: 'action', ru: 'План: добавить пункт на сегодня', en: 'Plan: add an item for today', hint: 'n' },
   { id: 'action:settings', kind: 'action', ru: 'Глобальные настройки', en: 'Global settings' },
   { id: 'action:hotkeys', kind: 'action', ru: 'Горячие клавиши', en: 'Keyboard shortcuts', hint: '?' },
   { id: 'action:help', kind: 'action', ru: 'Справка', en: 'Help' },
