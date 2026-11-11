@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.36";
+const SITE_VERSION = "8.37";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.37", date: "2026-11-11 10:00", changes: [
+        "Дашборд: окно «Новая цель» в «Планах» догнало форму в «Целях» — появились «Повтор» (раз в неделю/месяц/год, у цели «В конкретный день») и «Названия этапов»; поля видны, когда в базе применены миграции 120 и 121. Кнопки «Добавить из целей / Новая цель / Незавершённое» в «Планах» стали компактными пилюлями.",
+    ]},
     { version: "8.36", date: "2026-11-04 19:00", changes: [
         "Тренировки: в карточке «Неделя в цифрах» на вкладке «Прогрессия» появился переключатель «Неделя / Месяц» и стрелки ‹ › для просмотра прошлых периодов. Числа сравниваются с предыдущим таким же периодом, а столбики показывают объём по неделям (8) или по месяцам (6), заканчиваясь выбранным периодом. Вперёд, в будущее, листать нельзя. Без миграций."
     ]},
@@ -3118,6 +3121,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.37", date: "2026-11-11 10:00", changes: [
+        "Dashboard: the “New goal” window in Plans now matches the Goals form — “Repeat” (weekly/monthly/yearly, for a “On a specific day” goal) and “Stage names” are added; the fields show once migrations 120 and 121 are applied. The “Add from goals / New goal / Unfinished” buttons in Plans are compact pills.",
+    ]},
     { version: "8.36", date: "2026-11-04 19:00", changes: [
         "Workouts: the “Week in numbers” card on the “Progress” tab now has a “Week / Month” switch and ‹ › arrows to look at past periods. The numbers are compared with the previous period of the same kind, and the bars show volume by week (8) or by month (6), ending with the selected period. You cannot page into the future. No migrations."
     ]},

@@ -1,7 +1,14 @@
 {
-  "version": "8.36",
+  "version": "8.37",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.37",
+      "date": "2026-11-11 10:00",
+      "changes": [
+        "Dashboard: the “New goal” window in Plans now matches the Goals form — “Repeat” (weekly/monthly/yearly, for a “On a specific day” goal) and “Stage names” are added; the fields show once migrations 120 and 121 are applied. The “Add from goals / New goal / Unfinished” buttons in Plans are compact pills."
+      ]
+    },
     {
       "version": "8.36",
       "date": "2026-11-04 19:00",
@@ -5908,6 +5915,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.37",
+      "date": "2026-11-11 10:00",
+      "changes": [
+        "Дашборд: окно «Новая цель» в «Планах» догнало форму в «Целях» — появились «Повтор» (раз в неделю/месяц/год, у цели «В конкретный день») и «Названия этапов»; поля видны, когда в базе применены миграции 120 и 121. Кнопки «Добавить из целей / Новая цель / Незавершённое» в «Планах» стали компактными пилюлями."
+      ]
+    },
     {
       "version": "8.36",
       "date": "2026-11-04 19:00",
