@@ -71,6 +71,9 @@ describe('Тренировки: загрузка, пустота и ошибка
     await settle()
     expect(w.find('[data-testid="loading-exercises"]').exists()).toBe(false)
     expect(w.text()).toContain(t('workouts_empty'))
+    await w.find('[data-test="workouts-empty-add"]').trigger('click')
+    await settle()
+    expect(document.body.querySelector('.modal, [role="dialog"]')).not.toBeNull()
     w.unmount()
   })
 

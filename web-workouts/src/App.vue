@@ -621,7 +621,12 @@ function onToggleProgramWeek(week: number) {
     <template v-else>
       <LoadError v-if="loadError" :message="loadError" :retry="reload"> — {{ t('workouts_migration_hint') }}</LoadError>
       <p v-else-if="!loaded" class="text-sm" style="color: var(--text-dim)" role="status" data-testid="loading-exercises">{{ t('load_loading') }}</p>
-      <p v-else-if="exercises.length === 0" class="text-sm" style="color: var(--text-dim)">{{ t('workouts_empty') }}</p>
+      <div v-else-if="exercises.length === 0" class="my-3 flex flex-col items-center gap-2 rounded-2xl border p-6 text-center" style="border-color: var(--border); background: var(--bg-card)" data-test="workouts-empty">
+        <p class="m-0 text-sm" style="color: var(--text-dim)">{{ t('workouts_empty') }}</p>
+        <button type="button" class="rounded-lg px-4 py-2 text-sm" style="background: var(--accent); color: var(--accent-text); min-height: 44px" data-test="workouts-empty-add" @click="exerciseForm = { existing: null }">
+          <EmojiText :text="t('workouts_add_exercise_btn')" />
+        </button>
+      </div>
 
       <RoutinesList v-if="exercises.length > 0" :exercises="exercises" :disabled="aw.active.value" @start="onStartRoutine" />
 

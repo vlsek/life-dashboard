@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.39";
+const SITE_VERSION = "8.40";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.40", date: "2026-11-11 17:00", changes: [
+        "«Тренировки»: пока нет упражнений, вместо серой строки между кнопками и вкладками — карточка с кнопкой «Добавить упражнение».",
+    ]},
     { version: "8.39", date: "2026-11-11 17:30", changes: [
         "Первый запуск: у полей имени, даты рождения, роста и веса снова есть рамка и фокус-кольцо — раньше они выглядели как голый текст.",
     ]},
@@ -3127,6 +3130,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.40", date: "2026-11-11 17:00", changes: [
+        "Workouts: with no exercises yet, a card with an “Add exercise” button replaces the grey line squeezed between the buttons and tabs.",
+    ]},
     { version: "8.39", date: "2026-11-11 17:30", changes: [
         "First run: the name, birth date, height and weight fields have a border and a focus ring again — they used to look like plain text.",
     ]},

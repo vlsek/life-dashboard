@@ -1,7 +1,14 @@
 {
-  "version": "8.39",
+  "version": "8.40",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.40",
+      "date": "2026-11-11 17:00",
+      "changes": [
+        "Workouts: with no exercises yet, a card with an “Add exercise” button replaces the grey line squeezed between the buttons and tabs."
+      ]
+    },
     {
       "version": "8.39",
       "date": "2026-11-11 17:30",
@@ -5929,6 +5936,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.40",
+      "date": "2026-11-11 17:00",
+      "changes": [
+        "«Тренировки»: пока нет упражнений, вместо серой строки между кнопками и вкладками — карточка с кнопкой «Добавить упражнение»."
+      ]
+    },
     {
       "version": "8.39",
       "date": "2026-11-11 17:30",
