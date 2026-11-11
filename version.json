@@ -1,7 +1,14 @@
 {
-  "version": "8.35",
+  "version": "8.36",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.36",
+      "date": "2026-11-04 19:00",
+      "changes": [
+        "Workouts: the “Week in numbers” card on the “Progress” tab now has a “Week / Month” switch and ‹ › arrows to look at past periods. The numbers are compared with the previous period of the same kind, and the bars show volume by week (8) or by month (6), ending with the selected period. You cannot page into the future. No migrations."
+      ]
+    },
     {
       "version": "8.35",
       "date": "2026-11-04 17:00",
@@ -5901,6 +5908,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.36",
+      "date": "2026-11-04 19:00",
+      "changes": [
+        "Тренировки: в карточке «Неделя в цифрах» на вкладке «Прогрессия» появился переключатель «Неделя / Месяц» и стрелки ‹ › для просмотра прошлых периодов. Числа сравниваются с предыдущим таким же периодом, а столбики показывают объём по неделям (8) или по месяцам (6), заканчиваясь выбранным периодом. Вперёд, в будущее, листать нельзя. Без миграций."
+      ]
+    },
     {
       "version": "8.35",
       "date": "2026-11-04 17:00",
