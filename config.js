@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.35";
+const SITE_VERSION = "8.36";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.36", date: "2026-11-04 19:00", changes: [
+        "Тренировки: в карточке «Неделя в цифрах» на вкладке «Прогрессия» появился переключатель «Неделя / Месяц» и стрелки ‹ › для просмотра прошлых периодов. Числа сравниваются с предыдущим таким же периодом, а столбики показывают объём по неделям (8) или по месяцам (6), заканчиваясь выбранным периодом. Вперёд, в будущее, листать нельзя. Без миграций."
+    ]},
     { version: "8.35", date: "2026-11-04 17:00", changes: [
         "Тренировки: на вкладке «Прогрессия» сверху появилась карточка «Неделя в цифрах». Она показывает за текущую неделю (пн–вс) число дней с тренировкой, рабочих подходов и общий объём и сравнивает их с прошлой неделей («+2 (+50 %)», «как на прошлой неделе», «новое на этой неделе»), а ниже рисует столбики объёма за последние 8 недель. Разминочные подходы не считаются. Данные берутся из уже загруженных записей, ничего не пишется. Без миграций."
     ]},
@@ -3115,6 +3118,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.36", date: "2026-11-04 19:00", changes: [
+        "Workouts: the “Week in numbers” card on the “Progress” tab now has a “Week / Month” switch and ‹ › arrows to look at past periods. The numbers are compared with the previous period of the same kind, and the bars show volume by week (8) or by month (6), ending with the selected period. You cannot page into the future. No migrations."
+    ]},
     { version: "8.35", date: "2026-11-04 17:00", changes: [
         "Workouts: the “Progress” tab now starts with a “Week in numbers” card. For the current week (Mon–Sun) it shows the number of workout days, working sets and total volume and compares them with last week (“+2 (+50 %)”, “same as last week”, “new this week”), and below it draws volume bars for the last 8 weeks. Warm-up sets are not counted. The data comes from already loaded entries and nothing is written. No migrations."
     ]},

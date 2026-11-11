@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { delta, hasAnyTraining, periodTotals, weekCompare, weeklyVolumes } from './lib/weekNumbers'
+import { delta, hasAnyTraining, monthlyVolumes, periodCompare, periodRange, periodTotals, weekCompare, weeklyVolumes } from './lib/weekNumbers'
 import WeekNumbers from './components/WeekNumbers.vue'
 import type { Exercise, WorkoutEntry } from './lib/types'
 
@@ -87,5 +87,76 @@ describe('WeekNumbers', () => {
   })
   it('нет тренировок за 8 недель — блока нет', () => {
     expect(mk([]).find('[data-testid="week-numbers"]').exists()).toBe(false)
+  })
+})
+
+
+describe('периоды: неделя и месяц со сдвигом назад (69.14, срез 2)', () => {
+  it('periodRange: неделя пн–вс, месяц календарный; сдвиг назад; в будущее не листается', () => {
+    expect(periodRange('week', TODAY, 0)).toEqual({ from: '2026-10-26', to: '2026-11-01' })
+    expect(periodRange('week', TODAY, -1)).toEqual({ from: '2026-10-19', to: '2026-10-25' })
+    expect(periodRange('month', TODAY, 0)).toEqual({ from: '2026-10-01', to: '2026-10-31' })
+    expect(periodRange('month', TODAY, -1)).toEqual({ from: '2026-09-01', to: '2026-09-30' })
+    expect(periodRange('month', '2026-01-15', -1)).toEqual({ from: '2025-12-01', to: '2025-12-31' }) // через границу года
+    expect(periodRange('month', '2026-03-31', -1)).toEqual({ from: '2026-02-01', to: '2026-02-28' }) // короткий месяц
+    expect(periodRange('week', TODAY, 3)).toEqual(periodRange('week', TODAY, 0))
+  })
+  it('periodCompare: месяц против прошлого месяца; weekCompare = неделя со сдвигом 0', () => {
+    const e = [en('1', 'e1', '2026-10-05', [{ reps: 10, weight: 10 }]), en('2', 'e1', '2026-10-20', [{ reps: 10, weight: 10 }, { reps: 10, weight: 10 }]), en('3', 'e1', '2026-09-10', [{ reps: 10, weight: 20 }])]
+    const m = periodCompare(e, exs, 'month', TODAY, 0)
+    expect(m.current).toMatchObject({ days: 2, sets: 3, volume: 300 })
+    expect(m.previous).toMatchObject({ days: 1, sets: 1, volume: 200 })
+    const earlier = periodCompare(e, exs, 'month', TODAY, -1) // сентябрь против августа
+    expect(earlier.current.sets).toBe(1)
+    expect(earlier.previous.sets).toBe(0)
+    expect(weekCompare(e, exs, TODAY)).toEqual(periodCompare(e, exs, 'week', TODAY, 0))
+  })
+  it('monthlyVolumes: 6 месяцев от старого к новому, последний — выбранный', () => {
+    const e = [en('1', 'e1', '2026-10-05', [{ reps: 10, weight: 10 }]), en('2', 'e1', '2026-05-10', [{ reps: 10, weight: 20 }])]
+    const v = monthlyVolumes(e, exs, TODAY)
+    expect(v).toHaveLength(6)
+    expect(v[5]).toMatchObject({ monthStart: '2026-10-01', volume: 100, current: true })
+    expect(v[0]).toMatchObject({ monthStart: '2026-05-01', volume: 200, current: false })
+  })
+})
+
+describe('WeekNumbers: период (69.14, срез 2)', () => {
+  beforeEach(() => localStorage.setItem('site_lang', 'ru'))
+  const e = [en('1', 'e1', '2026-10-27', [{ reps: 8, weight: 60 }]), en('2', 'e1', '2026-10-20', [{ reps: 8, weight: 60 }]), en('3', 'e1', '2026-10-06', [{ reps: 8, weight: 60 }]), en('4', 'e1', '2026-09-15', [{ reps: 8, weight: 60 }])]
+  const mk = () => mount(WeekNumbers, { props: { entries: e, exercises: exs, today: TODAY } })
+  it('по умолчанию неделя: заголовок — даты пн–вс; «вперёд» выключена', () => {
+    const w = mk()
+    expect(w.get('[data-testid="wk-title"]').text()).toBe('26.10 – 01.11')
+    expect(w.get('[data-testid="wk-next"]').attributes('disabled')).toBeDefined()
+    expect(w.get('[data-testid="wk-kind-week"]').attributes('aria-pressed')).toBe('true')
+  })
+  it('‹ листает на прошлую неделю: числа и заголовок меняются, › возвращает', async () => {
+    const w = mk()
+    await w.get('[data-testid="wk-prev"]').trigger('click')
+    expect(w.get('[data-testid="wk-title"]').text()).toBe('19.10 – 25.10')
+    expect(w.get('[data-testid="wk-tile-sets"] [data-testid="wk-value"]').text()).toBe('1')
+    expect(w.get('[data-testid="wk-next"]').attributes('disabled')).toBeUndefined()
+    await w.get('[data-testid="wk-next"]').trigger('click')
+    expect(w.get('[data-testid="wk-title"]').text()).toBe('26.10 – 01.11')
+  })
+  it('«Месяц»: заголовок с названием месяца, числа за октябрь, 6 столбиков; смена вида сбрасывает сдвиг', async () => {
+    const w = mk()
+    await w.get('[data-testid="wk-prev"]').trigger('click')
+    await w.get('[data-testid="wk-kind-month"]').trigger('click')
+    expect(w.get('[data-testid="wk-title"]').text()).toMatch(/октябр|October/i)
+    expect(w.get('[data-testid="wk-tile-sets"] [data-testid="wk-value"]').text()).toBe('3')
+    expect(w.findAll('[data-testid="wk-bar"]')).toHaveLength(6)
+    expect(w.get('[data-testid="wk-next"]').attributes('disabled')).toBeDefined()
+    await w.get('[data-testid="wk-prev"]').trigger('click')
+    expect(w.get('[data-testid="wk-title"]').text()).toMatch(/сентябр|September/i)
+    expect(w.get('[data-testid="wk-tile-sets"] [data-testid="wk-value"]').text()).toBe('1')
+  })
+  it('на прошлой неделе столбики заканчиваются выбранной неделей, она выделена', async () => {
+    const w = mk()
+    await w.get('[data-testid="wk-prev"]').trigger('click')
+    const bars = w.findAll('[data-testid="wk-bar"]')
+    expect(bars).toHaveLength(8)
+    expect(bars[7].attributes('data-current')).toBe('1')
+    expect(bars[7].attributes('title')).toContain('19.10')
   })
 })
