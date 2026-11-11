@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.37";
+const SITE_VERSION = "8.38";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.38", date: "2026-11-11 13:50", changes: [
+        "Шапка, на любой странице: можно быстро добавить пункт в план на сегодня. Нажми клавишу n (вне полей ввода) или открой палитру Ctrl/Cmd+K и выбери «План: добавить пункт на сегодня»: появится маленькое окно с текстом и необязательным временем. Если открыт Дашборд, пункт добавит сам блок «Планы» (без дублей), на других страницах шапка допишет его в план дня. Без сети пункт не добавляется, окно честно об этом говорит и сохраняет текст. Клавиша n добавлена и в шпаргалку по «?». Без миграций."
+    ]},
     { version: "8.37", date: "2026-11-11 10:00", changes: [
         "Дашборд: окно «Новая цель» в «Планах» догнало форму в «Целях» — появились «Повтор» (раз в неделю/месяц/год, у цели «В конкретный день») и «Названия этапов»; поля видны, когда в базе применены миграции 120 и 121. Кнопки «Добавить из целей / Новая цель / Незавершённое» в «Планах» стали компактными пилюлями.",
     ]},
@@ -3121,6 +3124,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.38", date: "2026-11-11 13:50", changes: [
+        "Header, on any page: you can quickly add an item to today's plan. Press n (outside input fields) or open the palette with Ctrl/Cmd+K and choose Plan: add an item for today: a small window asks for the text and an optional time. On the Dashboard the Plans block adds the item itself (no duplicates); on other pages the header appends it to the day's plan. Without a connection the item is not added, the window says so and keeps your text. The n key is also listed in the ? cheat sheet. No migrations."
+    ]},
     { version: "8.37", date: "2026-11-11 10:00", changes: [
         "Dashboard: the “New goal” window in Plans now matches the Goals form — “Repeat” (weekly/monthly/yearly, for a “On a specific day” goal) and “Stage names” are added; the fields show once migrations 120 and 121 are applied. The “Add from goals / New goal / Unfinished” buttons in Plans are compact pills.",
     ]},
