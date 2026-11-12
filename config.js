@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.42";
+const SITE_VERSION = "8.43";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.43", date: "2026-11-12 14:00", changes: [
+        "«Календарь»: дата в карточке «Сегодня» теперь следует языку интерфейса — на английском больше не пишется «12 ноября».",
+    ]},
     { version: "8.42", date: "2026-11-04 21:00", changes: [
         "Тренировки: в карточке «Неделя в цифрах» (вкладка «Прогрессия») появился блок «Подходов по группам мышц». Для выбранной недели или месяца показаны до восьми групп с наибольшим числом рабочих подходов: столбик, число подходов и, для недели, твоя цель по группе (риска на столбике, «12/10»); выполненная цель окрашивается зелёным. У месяца цели нет, там просто число подходов. Разминка не считается. Без миграций."
     ]},
@@ -3136,6 +3139,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.43", date: "2026-11-12 14:00", changes: [
+        "Calendar: the date in the “Today” card now follows the interface language — English no longer shows “12 ноября”.",
+    ]},
     { version: "8.42", date: "2026-11-04 21:00", changes: [
         "Workouts: the “Week in numbers” card (on the “Progress” tab) now has a “Sets by muscle group” block. For the selected week or month it shows up to eight groups with the most working sets: a bar, the number of sets and, for a week, your target for that group (a tick on the bar, “12/10”); a met target turns green. A month has no target, just the number of sets. Warm-ups are not counted. No migrations."
     ]},

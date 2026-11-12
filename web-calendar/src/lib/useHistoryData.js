@@ -1,0 +1,140 @@
+import { ref } from 'vue';
+import { sb } from './supabase';
+import { fmtDate, todayStr } from './date';
+import { withWaterGoal } from './historyWaterGoal';
+import { friendlyError } from './friendlyError';
+import { getLang } from './i18n';
+// Те же ключ и формат, что у getDayProgressSettings() в config.js — читаем настройки,
+// сохранённые на этом же устройстве через основной сайт.
+function getDayProgressSettings() {
+    const defaults = {
+        enabled: true,
+        includePlanned: true,
+        includeMetrics: true,
+        dayPlace: 'avatar',
+        weekPlace: 'profile',
+    };
+    try {
+        const raw = localStorage.getItem('day_progress_settings');
+        if (!raw)
+            return defaults;
+        const saved = JSON.parse(raw);
+        return { ...defaults, ...saved };
+    }
+    catch {
+        return defaults;
+    }
+}
+// Supabase отдаёт максимум 1000 строк за запрос — без постраничного чтения история и
+// проценты у давних пользователей считались бы по обрезанным данным (тот же баг, что
+// был и на ванильном сайте, см. v0.56).
+const PAGE_SIZE = 1000;
+async function fetchAllRows(build) {
+    const rows = [];
+    for (let from = 0;; from += PAGE_SIZE) {
+        const { data, error } = await build(from, from + PAGE_SIZE - 1);
+        if (error)
+            throw error;
+        rows.push(...(data || []));
+        if (!data || data.length < PAGE_SIZE)
+            break;
+    }
+    return rows;
+}
+export function useAuthAndData() {
+    const auth = ref({ status: 'loading' });
+    const ctx = ref(null);
+    const error = ref(null);
+    async function init() {
+        const { data } = await sb.auth.getSession();
+        const session = data.session;
+        if (!session) {
+            auth.value = { status: 'redirecting' };
+            window.location.href = '/login/';
+            return;
+        }
+        const userId = session.user.id;
+        const userEmail = session.user.email ?? null;
+        const { data: profile } = await sb.from('profiles').select('onboarded').eq('user_id', userId).maybeSingle();
+        if (!profile?.onboarded) {
+            auth.value = { status: 'redirecting' };
+            window.location.href = '/onboarding/';
+            return;
+        }
+        auth.value = { status: 'ready', userId, userEmail };
+        await loadData(userId);
+    }
+    async function loadData(userId) {
+        try {
+            const [metricsRes, values, notes, goalsRes] = await Promise.all([
+                sb.from('metrics').select('*').eq('user_id', userId).eq('active', true).order('position'),
+                fetchAllRows((from, to) => sb.from('daily_values').select('*').eq('user_id', userId).order('date').order('metric_id').range(from, to)),
+                fetchAllRows((from, to) => sb.from('daily_notes').select('date, items, planned_goals').eq('user_id', userId).order('date').range(from, to)),
+                sb.from('goals').select('name, stages, done, current_stage').eq('user_id', userId),
+            ]);
+            if (metricsRes.error)
+                throw metricsRes.error;
+            // вода «выполнена» по эффективной норме, а не по пустому goal_value (migrations/033)
+            const metrics = await withWaterGoal(userId, (metricsRes.data || []));
+            const byDate = {};
+            for (const v of values) {
+                ;
+                (byDate[v.date] ||= {})[v.metric_id] = v.value;
+            }
+            const notesByDate = {};
+            for (const n of notes) {
+                notesByDate[n.date] = n;
+            }
+            // Оценка и заметка дня (BACKLOG 75.3, миграция 114) — отдельным запросом: без миграции история работает как раньше
+            try {
+                const refl = await fetchAllRows((from, to) => sb.from('daily_notes').select('date, mood, notes').eq('user_id', userId).order('date').range(from, to));
+                for (const r of refl) {
+                    if (r.mood == null && !(r.notes ?? '').trim())
+                        continue;
+                    notesByDate[r.date] = { ...(notesByDate[r.date] ?? { date: r.date }), mood: r.mood, notes: r.notes };
+                }
+            }
+            catch {
+                /* колонки нет или сеть — просто без оценок */
+            }
+            let firstDate = null;
+            for (const d of [...Object.keys(byDate), ...Object.keys(notesByDate)]) {
+                if (!firstDate || d < firstDate)
+                    firstDate = d;
+            }
+            // названия категорий — только для диаграммы по категориям (BACKLOG 656 в); сбой запроса не мешает истории
+            const categories = {};
+            try {
+                const catsRes = await sb.from('metric_categories').select('id, label_ru, label_en');
+                for (const c of (catsRes?.data || [])) {
+                    categories[c.id] = (getLang() === 'ru' ? c.label_ru : c.label_en) || c.label_ru || c.label_en;
+                }
+            }
+            catch {
+                /* без категорий — всё в «Без категории» */
+            }
+            ctx.value = {
+                metrics,
+                byDate,
+                notesByDate,
+                goals: goalsRes.data || [],
+                categories,
+                settings: getDayProgressSettings(),
+                firstDate,
+                today: todayStr(),
+            };
+            error.value = null; // успешный повтор после ошибки: старое сообщение уходит
+        }
+        catch (e) {
+            error.value = friendlyError(e, 'load');
+        }
+    }
+    // «Повторить» из LoadError (BACKLOG 74.3): перезагрузка данных без перезагрузки страницы
+    async function reload() {
+        if (auth.value.status === 'ready')
+            await loadData(auth.value.userId);
+    }
+    init();
+    return { auth, ctx, error, reload };
+}
+export { fmtDate };

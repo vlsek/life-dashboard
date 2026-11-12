@@ -92,3 +92,16 @@ describe('настройка «Карточка «Сегодня»»', () => {
     expect(parseShow(null).today).toBe(true)
   })
 })
+
+describe('TodayCard: язык даты', () => {
+  it('дата в заголовке следует языку интерфейса, в том числе когда язык не сохранён', () => {
+    localStorage.removeItem('site_lang')
+    const w = mount(TodayCard, { props: { summary: buildToday(TODAY, [], []), date: TODAY } })
+    expect(w.text()).toMatch(/October/)
+    expect(w.text()).not.toMatch(/октября/)
+    localStorage.setItem('site_lang', 'ru')
+    const w2 = mount(TodayCard, { props: { summary: buildToday(TODAY, [], []), date: TODAY } })
+    expect(w2.text()).toMatch(/октября/)
+    localStorage.removeItem('site_lang')
+  })
+})

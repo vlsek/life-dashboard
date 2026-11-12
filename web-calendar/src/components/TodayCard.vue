@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { t } from '../lib/i18n'
+import { t, locale } from '../lib/i18n'
 import { parseIso } from '../lib/date'
 import type { TodaySummary, UpcomingGoal } from '../lib/todaySummary'
 
 // Карточка «Сегодня» над сеткой «Календаря» (BACKLOG 44.8, срез 4): планы на сегодня и ближайшие сроки целей. Только показ; день открывает кнопка.
 const props = defineProps<{ summary: TodaySummary; date: string }>()
 const emit = defineEmits<{ open: [date: string] }>()
-const title = computed(() => t('cal_today_title') + ', ' + parseIso(props.date).toLocaleDateString(localStorage.getItem('site_lang') === 'en' ? 'en-GB' : 'ru-RU', { day: 'numeric', month: 'long' }))
+const title = computed(() => t('cal_today_title') + ', ' + parseIso(props.date).toLocaleDateString(locale(), { day: 'numeric', month: 'long' }))
 const pct = computed(() => (props.summary.plannedTotal ? Math.round((props.summary.plannedDone / props.summary.plannedTotal) * 100) : 0))
 const empty = computed(() => !props.summary.plannedTotal)
 function due(g: UpcomingGoal): string {
