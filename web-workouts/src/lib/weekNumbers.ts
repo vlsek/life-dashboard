@@ -2,6 +2,9 @@
 // с разницей к прошлой неделе, плюс объём по неделям. Чтение уже загруженных записей, ничего не пишется.
 import { addDaysIso, fmtDate, mondayOf, parseIso } from './date'
 import { monthOf, weekOf } from './periodNav'
+import { setsByMuscle } from './muscleHeat'
+import { WEEK_TARGET } from './todayFocus'
+import type { MuscleId } from './muscles'
 import { setsVolume, workingOf } from './sessionContract'
 import type { SetV2 } from './sessionContract'
 import type { Exercise, WorkoutEntry } from './types'
@@ -86,4 +89,18 @@ export function monthlyVolumes(entries: readonly WorkoutEntry[], exercises: read
     out.push({ monthStart: r.from, volume: periodTotals(entries, exercises, r.from, r.to).volume, current: i === 0 })
   }
   return out
+}
+
+export interface MuscleBar { muscle: MuscleId; sets: number; target: number | null }
+export const MUSCLE_BARS_LIMIT = 8
+
+// Рабочие подходы по группам мышц за период [from, to], от большего к меньшему (до MUSCLE_BARS_LIMIT). Только группы, где подходы были.
+// target — недельная цель группы (своя из «Цели подходов» или WEEK_TARGET), только для недели; для месяца сравнивать не с чем.
+export function muscleBars(entries: readonly WorkoutEntry[], exercises: readonly Exercise[], from: string, to: string, goals: Partial<Record<MuscleId, number>> = {}, withTarget = true): MuscleBar[] {
+  const rows: MuscleBar[] = []
+  // setsByMuscle сама берёт только записи с `from` по `to` (по `to` как «сегодня») — отдельная фильтрация не нужна
+  for (const [muscle, sets] of setsByMuscle([...entries], [...exercises], to, from)) {
+    if (sets > 0) rows.push({ muscle, sets, target: withTarget ? goals[muscle] ?? WEEK_TARGET : null })
+  }
+  return rows.sort((a, b) => b.sets - a.sets || (a.muscle < b.muscle ? -1 : 1)).slice(0, MUSCLE_BARS_LIMIT)
 }

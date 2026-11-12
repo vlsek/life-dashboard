@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { delta, hasAnyTraining, monthlyVolumes, periodCompare, periodRange, periodTotals, weekCompare, weeklyVolumes } from './lib/weekNumbers'
+import { delta, hasAnyTraining, monthlyVolumes, muscleBars, MUSCLE_BARS_LIMIT, periodCompare, periodRange, periodTotals, weekCompare, weeklyVolumes } from './lib/weekNumbers'
 import WeekNumbers from './components/WeekNumbers.vue'
 import type { Exercise, WorkoutEntry } from './lib/types'
 
@@ -158,5 +158,63 @@ describe('WeekNumbers: период (69.14, срез 2)', () => {
     expect(bars).toHaveLength(8)
     expect(bars[7].attributes('data-current')).toBe('1')
     expect(bars[7].attributes('title')).toContain('19.10')
+  })
+})
+
+
+describe('muscleBars: подходы по группам мышц (69.14, срез 3)', () => {
+  const e = [
+    en('1', 'e1', '2026-10-27', [{ reps: 8, weight: 60 }, { reps: 8, weight: 60 }, { reps: 8, weight: 60 }, { reps: 10, weight: 20, type: 'warmup' }]),
+    en('2', 'e2', '2026-10-28', [{ reps: 5, weight: 100 }]),
+    en('3', 'e1', '2026-10-20', [{ reps: 8, weight: 60 }]), // прошлая неделя — в эту не попадает
+  ]
+  it('считает рабочие подходы по группам за период; разминка и другие недели не в счёт; сортировка по убыванию', () => {
+    const bars = muscleBars(e, exs, '2026-10-26', '2026-11-01')
+    const by = new Map(bars.map((b) => [b.muscle, b.sets]))
+    expect(by.get('chest')).toBe(3)
+    expect(by.get('quads')).toBe(1)
+    expect(bars.map((b) => b.sets)).toEqual([...bars.map((b) => b.sets)].sort((a, b) => b - a))
+  })
+  it('цель: недельная по умолчанию, своя из настроек; у месяца цели нет', () => {
+    const wk = muscleBars(e, exs, '2026-10-26', '2026-11-01', { chest: 14 })
+    expect(wk.find((b) => b.muscle === 'chest')?.target).toBe(14)
+    expect(wk.find((b) => b.muscle === 'quads')?.target).toBe(10)
+    expect(muscleBars(e, exs, '2026-10-01', '2026-10-31', {}, false).every((b) => b.target === null)).toBe(true)
+  })
+  it('границы включительно, будущее после конца периода не считается; пусто — пустой список; не больше лимита', () => {
+    expect(muscleBars(e, exs, '2026-10-29', '2026-10-31')).toEqual([])
+    expect(muscleBars([], exs, '2026-10-26', '2026-11-01')).toEqual([])
+    const many = Array.from({ length: 12 }, (_, i) => ex('x' + i, ['Жим лёжа', 'Приседания', 'Тяга штанги', 'Жим стоя', 'Подъём на бицепс', 'Французский жим', 'Становая тяга', 'Выпады', 'Подъём на носки', 'Скручивания', 'Тяга верхнего блока', 'Разведение гантелей'][i]))
+    const ent = many.map((x, i) => en('m' + i, x.id, '2026-10-27', [{ reps: 8, weight: 10 }]))
+    expect(muscleBars(ent, many, '2026-10-26', '2026-11-01').length).toBeLessThanOrEqual(MUSCLE_BARS_LIMIT)
+  })
+})
+
+describe('WeekNumbers: столбики по группам (69.14, срез 3)', () => {
+  beforeEach(() => localStorage.setItem('site_lang', 'ru'))
+  const e = [en('1', 'e1', '2026-10-27', Array.from({ length: 12 }, () => ({ reps: 8, weight: 60 }))), en('2', 'e2', '2026-10-28', [{ reps: 5, weight: 100 }]), en('3', 'e1', '2026-10-06', [{ reps: 8, weight: 60 }])]
+  const mk = () => mount(WeekNumbers, { props: { entries: e, exercises: exs, today: TODAY } })
+  it('строки по группам: число подходов и цель; выполненная цель окрашена иначе', () => {
+    const w = mk()
+    const rows = w.findAll('[data-testid="wk-muscle-row"]')
+    expect(rows.length).toBeGreaterThan(0)
+    const chest = rows.find((r) => /Грудь|Chest/.test(r.text()))!
+    expect(chest.get('[data-testid="wk-muscle-num"]').text()).toBe('12/10')
+    expect(chest.get('[data-testid="wk-muscle-fill"]').attributes('style')).toContain('var(--success)')
+    const quads = rows.find((r) => /Квадрицепс|Quads/.test(r.text()))!
+    expect(quads.get('[data-testid="wk-muscle-num"]').text()).toBe('1/10')
+    expect(quads.get('[data-testid="wk-muscle-fill"]').attributes('style')).toContain('var(--accent)')
+  })
+  it('месяц: те же группы без цели (число без «/»), за октябрь больше', async () => {
+    const w = mk()
+    await w.get('[data-testid="wk-kind-month"]').trigger('click')
+    const chest = w.findAll('[data-testid="wk-muscle-row"]').find((r) => /Грудь|Chest/.test(r.text()))!
+    expect(chest.get('[data-testid="wk-muscle-num"]').text()).toBe('13')
+  })
+  it('листание на неделю без подходов — блока групп нет', async () => {
+    const w = mk()
+    await w.get('[data-testid="wk-prev"]').trigger('click')
+    await w.get('[data-testid="wk-prev"]').trigger('click')
+    expect(w.find('[data-testid="wk-muscles"]').exists()).toBe(false)
   })
 })

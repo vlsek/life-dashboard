@@ -3,8 +3,10 @@ import { computed, ref, watch } from 'vue'
 import { getLang, t } from '../lib/i18n'
 import { defaultWeightUnit } from '../lib/weightUnit'
 import { fmtVolume } from '../lib/summary'
-import { delta, hasAnyTraining, monthlyVolumes, periodCompare, weeklyVolumes, type Delta, type StatsPeriod } from '../lib/weekNumbers'
+import { delta, hasAnyTraining, monthlyVolumes, muscleBars, periodCompare, weeklyVolumes, type Delta, type StatsPeriod } from '../lib/weekNumbers'
 import { parseIso } from '../lib/date'
+import { muscleGoals } from '../lib/muscleGoals'
+import type { DictKey } from '../lib/i18n'
 import type { Exercise, WorkoutEntry } from '../lib/types'
 
 // «Неделя в цифрах» (BACKLOG 69.14, срезы 1–2): три показателя периода с разницей к предыдущему и столбики объёма.
@@ -21,6 +23,9 @@ const bars = computed(() =>
     ? weeklyVolumes(props.entries, props.exercises, cmp.value.to < props.today ? cmp.value.to : props.today, 8).map((b) => ({ key: b.monday, volume: b.volume, current: b.current, label: `${b.monday.slice(8, 10)}.${b.monday.slice(5, 7)}` }))
     : monthlyVolumes(props.entries, props.exercises, cmp.value.from, 6).map((b) => ({ key: b.monthStart, volume: b.volume, current: b.current, label: b.monthStart.slice(5, 7) + '.' + b.monthStart.slice(2, 4) })),
 )
+// подходы по группам мышц за выбранный период (недельная цель — только у недели)
+const muscles = computed(() => muscleBars(props.entries, props.exercises, cmp.value.from, cmp.value.to, muscleGoals.value, kind.value === 'week'))
+const maxSets = computed(() => Math.max(1, ...muscles.value.map((m) => Math.max(m.sets, m.target ?? 0))))
 const maxVol = computed(() => Math.max(1, ...bars.value.map((b) => b.volume)))
 const unit = defaultWeightUnit()
 
@@ -66,6 +71,17 @@ const barLabel = (b: { label: string; volume: number }) => `${b.label}: ${b.volu
         <div class="text-xs" style="color: var(--text-dim)">{{ x.label }}</div>
         <div class="text-lg font-bold" data-testid="wk-value">{{ x.value }}</div>
         <div class="text-xs" :style="{ color: deltaColor(x.d) }" data-testid="wk-delta">{{ deltaText(x.d, x.fmt) }}</div>
+      </div>
+    </div>
+    <div v-if="muscles.length" class="mt-3" data-testid="wk-muscles">
+      <div class="mb-1 text-xs" style="color: var(--text-dim)">{{ t('workouts_wk_muscles') }}</div>
+      <div v-for="m in muscles" :key="m.muscle" class="mb-1 flex items-center gap-2 text-xs" data-testid="wk-muscle-row">
+        <span class="w-24 shrink-0 truncate">{{ t(('workouts_muscle_' + m.muscle) as DictKey) }}</span>
+        <span class="relative h-2 flex-1 rounded" style="background: var(--border)">
+          <span class="absolute left-0 top-0 h-2 rounded" :style="{ width: Math.round((m.sets / maxSets) * 100) + '%', background: m.target !== null && m.sets >= m.target ? 'var(--success)' : 'var(--accent)' }" data-testid="wk-muscle-fill"></span>
+          <span v-if="m.target !== null" class="absolute top-[-2px] h-3 w-px" :style="{ left: Math.round((m.target / maxSets) * 100) + '%', background: 'var(--text-dim)' }"></span>
+        </span>
+        <span class="w-10 shrink-0 text-right" data-testid="wk-muscle-num">{{ m.sets }}<template v-if="m.target !== null">/{{ m.target }}</template></span>
       </div>
     </div>
     <div class="mt-3 text-xs" style="color: var(--text-dim)">{{ kind === 'week' ? t('workouts_wk_bars') : t('workouts_wk_bars_month') }}</div>
