@@ -1,7 +1,14 @@
 {
-  "version": "8.41",
+  "version": "8.42",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.42",
+      "date": "2026-11-04 21:00",
+      "changes": [
+        "Workouts: the “Week in numbers” card (on the “Progress” tab) now has a “Sets by muscle group” block. For the selected week or month it shows up to eight groups with the most working sets: a bar, the number of sets and, for a week, your target for that group (a tick on the bar, “12/10”); a met target turns green. A month has no target, just the number of sets. Warm-ups are not counted. No migrations."
+      ]
+    },
     {
       "version": "8.41",
       "date": "2026-11-12 10:30",
@@ -5943,6 +5950,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.42",
+      "date": "2026-11-04 21:00",
+      "changes": [
+        "Тренировки: в карточке «Неделя в цифрах» (вкладка «Прогрессия») появился блок «Подходов по группам мышц». Для выбранной недели или месяца показаны до восьми групп с наибольшим числом рабочих подходов: столбик, число подходов и, для недели, твоя цель по группе (риска на столбике, «12/10»); выполненная цель окрашивается зелёным. У месяца цели нет, там просто число подходов. Разминка не считается. Без миграций."
+      ]
+    },
     {
       "version": "8.41",
       "date": "2026-11-12 10:30",
