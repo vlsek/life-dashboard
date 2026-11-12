@@ -205,6 +205,13 @@ const selectedOf = (id: string) => (Array.isArray(pending.value[id]) ? (pending.
       <p v-if="!loaded" class="dim text-sm">{{ t('loading_ellipsis') }}</p>
 
       <template v-else>
+        <!-- Метрик нет совсем (пропустили онбординг или всё удалили): вместо пустой полосы — подсказка и кнопка «Метрики дня». -->
+        <div v-if="allMetrics.length === 0" class="py-2 text-center" data-test="daily-empty">
+          <p class="m-0 mb-1 text-3xl" aria-hidden="true">📊</p>
+          <p class="m-0 mb-1 font-semibold">{{ t('dash_daily_empty_title') }}</p>
+          <p class="dim m-0 mb-3 text-sm">{{ t('dash_daily_empty_hint') }}</p>
+          <MetricsManagerSection :user-id="userId" @changed="onMetricsChanged" />
+        </div>
         <TodayRemaining v-if="remainingRows.length > 0" :rows="remainingRows" @done="onRemainingDone" @jump="onRemainingJump" />
 
         <!-- BACKLOG 23 (13:25): каждый параметр — в своей мини-плашке, иначе несколько подряд сливаются в одну массу -->

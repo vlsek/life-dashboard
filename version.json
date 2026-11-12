@@ -1,7 +1,14 @@
 {
-  "version": "8.40",
+  "version": "8.41",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.41",
+      "date": "2026-11-12 10:30",
+      "changes": [
+        "Home: when there are no daily metrics yet, a card with a hint and a Daily metrics button replaces the empty strip."
+      ]
+    },
     {
       "version": "8.40",
       "date": "2026-11-11 17:00",
@@ -5936,6 +5943,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.41",
+      "date": "2026-11-12 10:30",
+      "changes": [
+        "Главная: если метрик дня ещё нет, вместо пустой полосы — карточка с подсказкой и кнопкой «Метрики дня»."
+      ]
+    },
     {
       "version": "8.40",
       "date": "2026-11-11 17:00",
