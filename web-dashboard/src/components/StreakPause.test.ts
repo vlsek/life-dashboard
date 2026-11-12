@@ -26,6 +26,17 @@ describe('StreakPause', () => {
     expect(pauses.value[0].to).toBe(todayStr())
     window.removeEventListener(DATA_CHANGED, seen)
   })
+  it('quick «sick» button starts an open sick pause from today in one tap', async () => {
+    const seen = vi.fn()
+    window.addEventListener(DATA_CHANGED, seen)
+    const w = mount(StreakPause)
+    await w.get('[data-test="pause-sick-now"]').trigger('click')
+    expect(pauses.value).toEqual([{ from: todayStr(), to: null, kind: 'sick' }])
+    expect(seen).toHaveBeenCalledTimes(1)
+    expect(w.find('[data-test="pause-sick-now"]').exists()).toBe(false)
+    expect(w.find('[data-test="pause-active"]').exists()).toBe(true)
+    window.removeEventListener(DATA_CHANGED, seen)
+  })
   it('shows an error for a bad range and does not save', async () => {
     const w = mount(StreakPause)
     await w.get('[data-test="pause-from"]').setValue(todayStr())

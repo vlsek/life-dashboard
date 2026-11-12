@@ -1,7 +1,14 @@
 {
-  "version": "8.43",
+  "version": "8.44",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.44",
+      "date": "2026-11-12 17:00",
+      "changes": [
+        "Streaks: the Streaks window has a new “I’m sick — pause from today” button. One tap starts an open-ended sick-leave pause; end it in the same window when you recover."
+      ]
+    },
     {
       "version": "8.43",
       "date": "2026-11-12 14:00",
@@ -5957,6 +5964,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.44",
+      "date": "2026-11-12 17:00",
+      "changes": [
+        "Серии: в окне «Серии» появилась кнопка «Заболел — пауза с сегодняшнего дня». Одно нажатие включает пауза-больничный без конца, закончить можно в том же окне, когда поправишься."
+      ]
+    },
     {
       "version": "8.43",
       "date": "2026-11-12 14:00",

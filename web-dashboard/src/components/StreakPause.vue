@@ -25,6 +25,10 @@ function onAdd() {
     changed()
   }
 }
+function onSickNow() {
+  invalid.value = !addPause({ from: today, to: null, kind: 'sick' }, today)
+  if (!invalid.value) changed()
+}
 function onEnd() {
   endPauseToday(today)
   changed()
@@ -47,7 +51,14 @@ function onRemove(i: number) {
       </button>
     </div>
 
-    <div v-else class="flex flex-wrap items-center gap-2">
+    <div v-else class="mb-2">
+      <button type="button" class="rounded-lg px-3 py-1.5" style="background: var(--accent); color: var(--accent-text)" data-test="pause-sick-now" @click="onSickNow">
+        {{ t('dash_pause_sick_now') }}
+      </button>
+      <span class="dim ml-2 text-xs">{{ t('dash_pause_sick_now_hint') }}</span>
+    </div>
+
+    <div v-if="!active" class="flex flex-wrap items-center gap-2">
       <select v-model="kind" class="modal-input" :aria-label="t('dash_pause_kind_aria')" data-test="pause-kind">
         <option value="vacation">{{ t('dash_pause_kind_vacation') }}</option>
         <option value="sick">{{ t('dash_pause_kind_sick') }}</option>

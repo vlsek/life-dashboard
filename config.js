@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.43";
+const SITE_VERSION = "8.44";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.44", date: "2026-11-12 17:00", changes: [
+        "Серии: в окне «Серии» появилась кнопка «Заболел — пауза с сегодняшнего дня». Одно нажатие включает пауза-больничный без конца, закончить можно в том же окне, когда поправишься.",
+    ]},
     { version: "8.43", date: "2026-11-12 14:00", changes: [
         "«Календарь»: дата в карточке «Сегодня» теперь следует языку интерфейса — на английском больше не пишется «12 ноября».",
     ]},
@@ -3139,6 +3142,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.44", date: "2026-11-12 17:00", changes: [
+        "Streaks: the Streaks window has a new “I’m sick — pause from today” button. One tap starts an open-ended sick-leave pause; end it in the same window when you recover.",
+    ]},
     { version: "8.43", date: "2026-11-12 14:00", changes: [
         "Calendar: the date in the “Today” card now follows the interface language — English no longer shows “12 ноября”.",
     ]},
