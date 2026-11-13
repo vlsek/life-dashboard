@@ -1,7 +1,14 @@
 {
-  "version": "8.45",
+  "version": "8.46",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.46",
+      "date": "2026-11-13 22:00",
+      "changes": [
+        "Workouts: a ⏱ Timer button — interval timer (work/rest × N, a get-ready countdown, beep and vibration on each phase, settings remembered) and a stopwatch with laps."
+      ]
+    },
     {
       "version": "8.45",
       "date": "2026-11-13 11:30",
@@ -5971,6 +5978,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.46",
+      "date": "2026-11-13 22:00",
+      "changes": [
+        "Тренировки: кнопка «⏱ Таймер» — интервальный таймер «работа/отдых × N» (разминка-отсчёт, сигнал и вибрация на смене фазы, настройки запоминаются) и секундомер с кругами."
+      ]
+    },
     {
       "version": "8.45",
       "date": "2026-11-13 11:30",

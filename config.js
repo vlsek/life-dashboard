@@ -479,7 +479,7 @@ async function handleInstallClick() {
     }
 }
 
-const SITE_VERSION = "8.45";
+const SITE_VERSION = "8.46";
 // Минимальная версия оболочки-приложения (APK), совместимая с сервером (BACKLOG 66.11). Поднимать ТОЛЬКО когда схема БД/API ломает старые клиенты
 // (ставить номер релиза, с которого все изменения обязательны). Сайт (PWA) этим не пользуется — там страницы обновляет service worker.
 // Попадает в /version.json как min_supported (scripts/gen_version_json.py); оболочка с window.LD_APP_VERSION ниже него просит обновиться.
@@ -488,6 +488,9 @@ const MIN_SUPPORTED_VERSION = "1.00";
 // ==== История обновлений — короткая заметка на каждую версию, показывается по клику
 // на номер версии в сайдбаре. Добавлять новую запись сверху на RU и EN при каждом бампе версии. ====
 const CHANGELOG_RU = [
+    { version: "8.46", date: "2026-11-13 22:00", changes: [
+        "Тренировки: кнопка «⏱ Таймер» — интервальный таймер «работа/отдых × N» (разминка-отсчёт, сигнал и вибрация на смене фазы, настройки запоминаются) и секундомер с кругами.",
+    ]},
     { version: "8.45", date: "2026-11-13 11:30", changes: [
         "Магазин: у вещи за огоньки появился переключатель «Можно покупать снова» (кофе раз в неделю). Такая вещь не уходит в историю после покупки, а остаётся в магазине, на карточке видно «Куплено N раз», а каждая покупка записывается в историю. Работает после применения миграции 124.",
     ]},
@@ -3145,6 +3148,9 @@ const CHANGELOG_RU = [
     ]},
 ];
 const CHANGELOG_EN = [
+    { version: "8.46", date: "2026-11-13 22:00", changes: [
+        "Workouts: a ⏱ Timer button — interval timer (work/rest × N, a get-ready countdown, beep and vibration on each phase, settings remembered) and a stopwatch with laps.",
+    ]},
     { version: "8.45", date: "2026-11-13 11:30", changes: [
         "Shop: an item priced in sparks now has a “Can be bought again” switch (a weekly coffee). After a purchase it stays in the shop, the card shows “Bought N times”, and each purchase is saved in the history. Needs migration 124.",
     ]},
