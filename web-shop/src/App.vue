@@ -26,7 +26,7 @@ import EmojiText from './components/EmojiText.vue'
 import Icon from './components/Icon.vue'
 import { confirmDialog } from './lib/confirmDialog'
 
-const { loadSparksJournal, auth, items, archived, balance, goals, loaded, createdAt, error, init, addItem, updateItem, buyItem, claimReward, reload, transferArchived, deleteItem, uploadImage } = useShop()
+const { hasRepeat, loadSparksJournal, auth, items, archived, balance, goals, loaded, createdAt, error, init, addItem, updateItem, buyItem, claimReward, reload, transferArchived, deleteItem, uploadImage } = useShop()
 onMounted(init)
 // Первый заход: полное описание идеи уже показывает плашка «Лавка наград» — общую подсказку страницы заранее считаем увиденной (она остаётся за значком «i»), чтобы две плашки не стояли друг над другом
 if (!loadIdeaSeen()) markHintSeen('shop')
@@ -215,6 +215,6 @@ async function onUpload(file: File): Promise<string | null> {
       </div>
     </section>
 
-    <ItemForm v-if="formTarget" :existing="formTarget === 'new' ? null : formTarget" :daily-rate="dailyRate(balance?.total, createdAt, sparksMode)" :upload-image="onUpload" :goals="goals" :error="saveError" @close="formTarget = null; saveError = null" @save="onSaveForm" />
+    <ItemForm v-if="formTarget" :existing="formTarget === 'new' ? null : formTarget" :daily-rate="dailyRate(balance?.total, createdAt, sparksMode)" :upload-image="onUpload" :goals="goals" :repeat-supported="hasRepeat" :error="saveError" @close="formTarget = null; saveError = null" @save="onSaveForm" />
   </main>
 </template>

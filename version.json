@@ -1,7 +1,14 @@
 {
-  "version": "8.44",
+  "version": "8.45",
   "min_supported": "1.00",
   "en": [
+    {
+      "version": "8.45",
+      "date": "2026-11-13 11:30",
+      "changes": [
+        "Shop: an item priced in sparks now has a “Can be bought again” switch (a weekly coffee). After a purchase it stays in the shop, the card shows “Bought N times”, and each purchase is saved in the history. Needs migration 124."
+      ]
+    },
     {
       "version": "8.44",
       "date": "2026-11-12 17:00",
@@ -5964,6 +5971,13 @@
     }
   ],
   "ru": [
+    {
+      "version": "8.45",
+      "date": "2026-11-13 11:30",
+      "changes": [
+        "Магазин: у вещи за огоньки появился переключатель «Можно покупать снова» (кофе раз в неделю). Такая вещь не уходит в историю после покупки, а остаётся в магазине, на карточке видно «Куплено N раз», а каждая покупка записывается в историю. Работает после применения миграции 124."
+      ]
+    },
     {
       "version": "8.44",
       "date": "2026-11-12 17:00",

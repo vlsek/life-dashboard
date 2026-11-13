@@ -28,6 +28,7 @@ const emit = defineEmits<{ buy: [id: string]; claim: [id: string]; edit: [item: 
     <template v-else>
       <div class="inline-flex items-center gap-1 font-medium">{{ item.cost }} <CoinIcon :force-coin="item.legacy_coins" /></div>
       <ItemProgressBar v-if="!item.redeemed && balance !== null" :cost="item.cost" :balance="balance" />
+      <div v-if="item.repeatable && item.repeat_count" class="dim text-xs" data-testid="repeat-count">{{ t('shop_repeat_count').replace('{n}', String(item.repeat_count)) }}</div>
     </template>
 
     <div class="mt-2">

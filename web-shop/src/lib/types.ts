@@ -63,6 +63,10 @@ export interface ShopItem {
   // миграция 111 («награда за цель»): привязанная цель, снимок её названия в момент получения; reward считает useShop (rewardState)
   goal_id?: string | null
   reward_goal_name?: string | null
+  // миграция 124 («повторяемая награда»): вещь можно покупать снова; каждая покупка — строка-копия с repeat_of; repeat_count считает useShop
+  repeatable?: boolean
+  repeat_of?: string | null
+  repeat_count?: number
   reward?: { status: 'in_progress' | 'ready' | 'claimed'; goalName: string | null; progress: { done: number; total: number } | null }
 }
 
@@ -71,5 +75,6 @@ export interface ShopItemFormInput {
   link: string
   cost: number
   image_url: string | null
+  repeatable?: boolean // «Можно снова» (миграция 124): только за огоньки
   goal_id?: string | null // «За цель» (миграция 111): привязанная цель, цена не нужна; нет — обычная хотелка
 }

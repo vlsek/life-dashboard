@@ -9,7 +9,7 @@ import { selectableGoals, type GoalLite } from '../lib/goalReward'
 import { searchImages, type FoundImage } from '../lib/imageSearch'
 import type { ShopItem, ShopItemFormInput } from '../lib/types'
 
-const props = defineProps<{ existing: ShopItem | null; uploadImage: (file: File) => Promise<string | null>; dailyRate?: number; goals?: GoalLite[]; error?: string | null }>()
+const props = defineProps<{ existing: ShopItem | null; uploadImage: (file: File) => Promise<string | null>; dailyRate?: number; goals?: GoalLite[]; error?: string | null; repeatSupported?: boolean }>()
 const emit = defineEmits<{ close: []; save: [res: ShopItemFormInput] }>()
 
 // Окно: фокус внутрь, ловушка Tab, Esc = «Отмена», возврат фокуса на кнопку (72.5)
@@ -41,6 +41,8 @@ const goalList = computed(() => {
   return cur && !list.some((g) => g.id === cur.id) ? [cur, ...list] : list // уже привязанную цель оставляем в списке, даже если она выполнена
 })
 const showMode = computed(() => !claimed.value && (goalList.value.length > 0 || mode.value === 'goal'))
+const repeatable = ref(!!props.existing?.repeatable)
+const showRepeat = computed(() => !!props.repeatSupported && sparksMode.value && !claimed.value && mode.value === 'cost')
 const formError = ref<string | null>(null)
 const imageUrl = ref<string | null>(props.existing?.image_url ?? null)
 // «Найти фото» (BACKLOG 81.6): по названию ищем несколько картинок, тап ставит выбранную
@@ -92,7 +94,7 @@ function save() {
     formError.value = t('shop_goal_required')
     return
   }
-  emit('save', { name: name.value, link: link.value, cost: cost.value, image_url: imageUrl.value, goal_id: byGoal ? goalId.value : null })
+  emit('save', { name: name.value, link: link.value, cost: cost.value, image_url: imageUrl.value, goal_id: byGoal ? goalId.value : null, repeatable: showRepeat.value && repeatable.value })
 }
 </script>
 
@@ -144,6 +146,10 @@ function save() {
         <input id="item-form-rub" v-model.number="rub" type="number" min="0" class="w-28" placeholder="₽" data-testid="rub-input" @input="onRub" />
         <span class="dim text-xs">{{ t('shop_calc_hint').replace('{rate}', String(rubPerSpark)) }}</span>
       </div>
+      <label v-if="showRepeat" class="mt-2 flex items-start gap-2 text-sm" data-testid="repeat-row">
+        <input v-model="repeatable" type="checkbox" class="mt-0.5" data-testid="repeat-toggle" />
+        <span>{{ t('shop_repeat_label') }}<span class="dim block text-xs">{{ t('shop_repeat_hint') }}</span></span>
+      </label>
       </template>
 
       <label class="mt-2 block text-sm" for="item-form-image">{{ t('shop_field_image') }}</label>

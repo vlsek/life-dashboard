@@ -32,6 +32,7 @@ export function useShop() {
   const error = ref<string | null>(null)
   const loaded = ref(false) // первая загрузка закончилась (успехом или ошибкой): до этого «пока ничего нет» показывать нельзя — это ложная пустота
   const goals = ref<GoalLite[]>([]) // цели человека — для «награды за цель» (миграция 111); нет доступа/ошибка — пустой список, магазин работает как раньше
+  const hasRepeat = ref(false) // миграция 124 применена (есть колонка shop_items.repeatable): в форме показывается «Можно снова»
   const createdAt = ref<string | null>(null) // дата регистрации — для «справедливой цены» по среднему заработку (58.4)
 
   async function init() {
@@ -59,6 +60,7 @@ export function useShop() {
     if (sparksMode.value) await loadRubRate()
     try {
       await loadGoals(userId)
+      await loadRepeatSupport()
       await Promise.all([sparksMode.value ? Promise.resolve() : loadBalance(userId), loadItems(userId)])
     } finally {
       loaded.value = true
@@ -77,6 +79,15 @@ export function useShop() {
       goals.value = err ? [] : ((data || []) as GoalLite[])
     } catch {
       goals.value = []
+    }
+  }
+
+  async function loadRepeatSupport() {
+    try {
+      const probe = await sb.from('shop_items').select('repeatable').limit(1)
+      hasRepeat.value = !probe.error
+    } catch {
+      hasRepeat.value = false
     }
   }
 
@@ -171,7 +182,9 @@ export function useShop() {
       else if (it.redeemed) view.push({ ...it, legacy_coins: true })
       else old.push(it)
     }
-    items.value = view.sort((a, b) => a.cost - b.cost)
+    const counts = new Map<string, number>()
+    for (const it of view) if (it.repeat_of && it.redeemed) counts.set(it.repeat_of, (counts.get(it.repeat_of) ?? 0) + 1)
+    items.value = view.map((it) => (it.repeatable && counts.has(it.id) ? { ...it, repeat_count: counts.get(it.id) } : it)).sort((a, b) => a.cost - b.cost)
     archived.value = old
   }
 
@@ -194,16 +207,22 @@ export function useShop() {
     const base = { user_id: userId, name: res.name.trim(), link: res.link.trim() || null, image_url: res.image_url, redeemed: false }
     // в режиме огоньков цена хранится в cost_sparks, а cost = 0 — расчёт монет на других страницах не затрагивается
     const row = res.goal_id ? { ...base, cost: 0, cost_sparks: null, goal_id: res.goal_id } : sparksMode.value ? { ...base, cost: 0, cost_sparks: res.cost > 0 ? Math.round(res.cost) : DEFAULT_SPARKS_COST } : { ...base, cost: res.cost || 100 }
-    const { error: err } = await sb.from('shop_items').insert(row)
+    const { error: err } = await sb.from('shop_items').insert(withRepeat(row, res))
     if (err) throw new Error(goalRewardErrorText(err) ?? friendlyError(err, 'save'), { cause: err })
     await reload()
+  }
+
+  // «Можно снова» пишем, только когда миграция применена, вещь за огоньки и не награда за цель; иначе колонку не трогаем
+  function withRepeat<T extends object>(row: T, res: ShopItemFormInput): T & { repeatable?: boolean } {
+    if (!hasRepeat.value || !sparksMode.value) return row
+    return { ...row, repeatable: !res.goal_id && !!res.repeatable }
   }
 
   async function updateItem(id: string, res: ShopItemFormInput) {
     const base = { name: res.name.trim(), link: res.link.trim() || null, image_url: res.image_url }
     // переключатель «За огоньки / За цель»: при «За цель» цена снимается, при возврате «за огоньки» привязка к цели снимается (goal_id = null)
     const row = res.goal_id ? { ...base, cost: 0, cost_sparks: null, goal_id: res.goal_id } : sparksMode.value ? { ...base, cost: 0, cost_sparks: res.cost > 0 ? Math.round(res.cost) : DEFAULT_SPARKS_COST, goal_id: null } : { ...base, cost: res.cost || 100, goal_id: null }
-    const { error: err } = await sb.from('shop_items').update(row).eq('id', id)
+    const { error: err } = await sb.from('shop_items').update(withRepeat(row, res)).eq('id', id)
     if (err) throw new Error(goalRewardErrorText(err) ?? friendlyError(err, 'save'), { cause: err })
     await reload()
   }
@@ -214,7 +233,12 @@ export function useShop() {
       await reload()
       throw new Error(t('shop_already_bought'))
     }
-    const { error: err } = await sb.from('shop_items').update({ redeemed: true, redeemed_date: todayStr() }).eq('id', id)
+    const src = items.value.find((i) => i.id === id)
+    // повторяемая вещь остаётся в магазине, а покупка пишется строкой-копией (redeemed = true, repeat_of = id): «потрачено» и охрана баланса (057) работают как раньше
+    const { error: err } =
+      src?.repeatable && hasRepeat.value
+        ? await sb.from('shop_items').insert({ user_id: src.user_id, name: src.name, link: src.link, image_url: src.image_url, cost: 0, cost_sparks: src.cost, redeemed: true, redeemed_date: todayStr(), repeat_of: src.id, repeatable: false })
+        : await sb.from('shop_items').update({ redeemed: true, redeemed_date: todayStr() }).eq('id', id)
     if (err) {
       // защита в БД (миграция 057): нельзя потратить больше огоньков, чем накоплено — показываем понятный текст, а не код ошибки
       const key = purchaseErrorKey(err)
@@ -284,5 +308,5 @@ export function useShop() {
     return { rows: (rows.data || []) as SparkRow[], names, cap: typeof cap === 'number' ? cap : null }
   }
 
-  return { loadSparksJournal, auth, items, archived, balance, goals, loaded, createdAt, error, init, reload, addItem, updateItem, buyItem, claimReward, transferArchived, deleteItem, uploadImage }
+  return { hasRepeat, loadSparksJournal, auth, items, archived, balance, goals, loaded, createdAt, error, init, reload, addItem, updateItem, buyItem, claimReward, transferArchived, deleteItem, uploadImage }
 }
