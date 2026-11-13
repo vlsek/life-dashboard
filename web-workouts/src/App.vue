@@ -46,6 +46,8 @@ import { useActiveWorkout } from './lib/useActiveWorkout'
 import { canSave, draftFromLast, finishDraft, lastWorkoutDate } from './lib/activeWorkout'
 import JournalList from './components/JournalList.vue'
 import ExerciseForm from './components/ExerciseForm.vue'
+import ExerciseCatalog from './components/ExerciseCatalog.vue'
+import type { CatalogExercise } from '../../shared/exercise-catalog/catalog'
 import EntryForm from './components/EntryForm.vue'
 import MetricLinkModal from './components/MetricLinkModal.vue'
 import TemplatesModal from './components/TemplatesModal.vue'
@@ -175,7 +177,7 @@ function dismissWarmup() {
 }
 
 // ---- формы ----
-const exerciseForm = ref<{ existing: Exercise | null } | null>(null)
+const exerciseForm = ref<{ existing: Exercise | null; prefill?: { name: string; tracksWeight: boolean } | null } | null>(null)
 const entryForm = ref<{ exercise: Exercise; existing: WorkoutEntry | null } | null>(null)
 // Связь упражнения с метриками дня (BACKLOG 19/30, миграция 054)
 const linkModal = ref<Exercise | null>(null)
@@ -213,12 +215,12 @@ const recentMuscles = computed(() => {
 
 // Вкладки страницы (BACKLOG 54.2, 44.5д): «Упражнения», «Карта мышц» и «Прогрессия» (общий график и деревья прогрессий — не блоком посреди упражнений);
 // выбор помнится на устройстве.
-type PageTab = 'journal' | 'map' | 'progress' | 'exercises'
-const PAGE_TABS = ['journal', 'map', 'progress', 'exercises'] as const
-const TAB_LABEL: Record<PageTab, 'workouts_tab_journal' | 'workouts_tab_exercises' | 'workouts_tab_map' | 'workouts_tab_progress'> = { journal: 'workouts_tab_journal', exercises: 'workouts_tab_exercises', map: 'workouts_tab_map', progress: 'workouts_tab_progress' }
+type PageTab = 'journal' | 'map' | 'progress' | 'exercises' | 'catalog'
+const PAGE_TABS = ['journal', 'map', 'progress', 'exercises', 'catalog'] as const
+const TAB_LABEL: Record<PageTab, 'workouts_tab_journal' | 'workouts_tab_exercises' | 'workouts_tab_map' | 'workouts_tab_progress' | 'workouts_tab_catalog'> = { journal: 'workouts_tab_journal', exercises: 'workouts_tab_exercises', map: 'workouts_tab_map', progress: 'workouts_tab_progress', catalog: 'workouts_tab_catalog' }
 const TAB_KEY = 'workouts_tab'
 // Значки вкладок для нижней панели на телефоне (69.17); только из набора с SVG-аналогами
-const TAB_ICON: Record<PageTab, string> = { journal: '📅', exercises: '🏋', map: '🧘', progress: '📈' }
+const TAB_ICON: Record<PageTab, string> = { journal: '📅', exercises: '🏋', map: '🧘', progress: '📈', catalog: '📚' }
 function readTab(): PageTab {
   try {
     const v = localStorage.getItem(TAB_KEY)
@@ -235,6 +237,11 @@ function setTab(tab: PageTab) {
   } catch {
     /* выбор вкладки не критичен */
   }
+}
+
+// «Добавить» из каталога (BACKLOG 69.21): обычная форма нового упражнения с подставленным названием (на языке интерфейса) и «с весом/без» по оборудованию
+function onCatalogAdd(x: CatalogExercise) {
+  exerciseForm.value = { existing: null, prefill: { name: getLang() === 'ru' ? x.ru : x.en, tracksWeight: x.equipment !== 'bodyweight' } }
 }
 
 async function onSaveExercise(res: ExerciseFormInput) {
@@ -636,7 +643,7 @@ function onToggleProgramWeek(week: number) {
 
       <!-- вкладки раздела (69.17): на телефоне — нижняя панель с иконками, на ПК — переключатель-таблетки; те же кнопки, role=tab и адрес ?tab= -->
       <div
-        class="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-[var(--border)] bg-[var(--bg-card)] pb-[env(safe-area-inset-bottom)] sm:static sm:z-auto sm:mb-4 sm:flex sm:flex-wrap sm:gap-1.5 sm:border-0 sm:bg-transparent sm:pb-0"
+        class="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-[var(--border)] bg-[var(--bg-card)] pb-[env(safe-area-inset-bottom)] sm:static sm:z-auto sm:mb-4 sm:flex sm:flex-wrap sm:gap-1.5 sm:border-0 sm:bg-transparent sm:pb-0"
         role="tablist"
         data-testid="page-tabs"
       >
@@ -654,6 +661,10 @@ function onToggleProgramWeek(week: number) {
           <span class="text-lg leading-none sm:hidden" aria-hidden="true"><EmojiText :text="TAB_ICON[tab]" /></span>
           <span>{{ t(TAB_LABEL[tab]) }}</span>
         </button>
+      </div>
+
+      <div v-if="pageTab === 'catalog'" data-testid="tab-catalog">
+        <ExerciseCatalog :mine="exercises.map((e) => e.name)" :model="bodyModel" @add="onCatalogAdd" />
       </div>
 
       <div v-show="pageTab === 'journal'" data-testid="tab-journal">
@@ -772,7 +783,7 @@ function onToggleProgramWeek(week: number) {
     </template>
   </main>
 
-  <ExerciseForm v-if="exerciseForm" :existing="exerciseForm.existing" :recent-muscles="recentMuscles" :model="bodyModel" @close="exerciseForm = null" @save="onSaveExercise" />
+  <ExerciseForm v-if="exerciseForm" :existing="exerciseForm.existing" :prefill="exerciseForm.prefill" :recent-muscles="recentMuscles" :model="bodyModel" @close="exerciseForm = null" @save="onSaveExercise" />
   <MetricLinkModal v-if="linkModal" :exercise="linkModal" :metrics="metricLinks.metrics" :supported="metricLinks.supported" :busy="linkBusy" @close="linkModal = null" @link="onLinkMetric" @unlink="onUnlinkMetric" @create="onCreateMetric" />
   <EntryForm v-if="entryForm" :exercise="entryForm.exercise" :existing="entryForm.existing" @close="entryForm = null" @save="onSaveEntry" />
   <PlateCalculator v-if="platesOpen" :unit="defaultUnit()" @close="platesOpen = false" />

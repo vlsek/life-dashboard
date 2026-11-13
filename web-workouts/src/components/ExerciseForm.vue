@@ -16,17 +16,18 @@ import { getLang } from '../lib/i18n'
 // Порт openExerciseFormModal() из workouts.js: имя, категория (фиксированный список +
 // "своя категория" текстом), вести вес да/нет, подпись значения, единица, доп. флаги
 // длительности и билатеральности (Л/П).
-const props = defineProps<{ existing: Exercise | null; recentMuscles?: readonly MuscleId[]; model?: BodyModel }>()
+// prefill — «Добавить из каталога» (BACKLOG 69.21): название и «с весом/без» подставляются в НОВОЕ упражнение, остальное — обычный поток формы
+const props = defineProps<{ existing: Exercise | null; recentMuscles?: readonly MuscleId[]; model?: BodyModel; prefill?: { name: string; tracksWeight?: boolean } | null }>()
 const emit = defineEmits<{ close: []; save: [ExerciseFormInput] }>()
 
 const KNOWN_CATS = ['upper', 'lower', 'fullbody', 'custom']
 const currentCat = props.existing?.category ?? ''
 const isLegacyCustom = !!currentCat && !KNOWN_CATS.includes(currentCat)
 
-const name = ref(props.existing?.name ?? '')
+const name = ref(props.existing?.name ?? props.prefill?.name ?? '')
 const catSelect = ref(isLegacyCustom ? '__new__' : currentCat)
 const newCatName = ref(isLegacyCustom ? currentCat : '')
-const tracksWeight = ref<'yes' | 'no'>((props.existing?.tracks_weight ?? true) ? 'yes' : 'no')
+const tracksWeight = ref<'yes' | 'no'>((props.existing?.tracks_weight ?? props.prefill?.tracksWeight ?? true) ? 'yes' : 'no')
 // «Что считаем?» (BACKLOG 18): выбор из списка (повторения, секунды, минуты, км, метры, раунды) + «Другое…» со своим словом.
 // Текущее значение упражнения, если его нет среди готовых, остаётся отдельным пунктом списка.
 const OTHER_LABEL = '__other__'
@@ -118,7 +119,10 @@ const showMore = ref(!!props.existing)
 const moreSummary = computed(() => `${chosenLabel.value} · ${tracksWeight.value === 'yes' ? chosenUnit.value : t('workouts_summary_no_weight')}`)
 
 const nameInput = ref<HTMLInputElement | null>(null)
-onMounted(() => nameInput.value?.focus())
+onMounted(() => {
+  if (props.prefill) applyTypicalDefaults() // из каталога: если название — типовое упражнение, категория, «что считаем» и Л/П подставятся как при выборе из списка
+  nameInput.value?.focus()
+})
 
 function onSubmit() {
   if (!name.value.trim()) return
